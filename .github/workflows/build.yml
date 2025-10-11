@@ -4,6 +4,7 @@ on:
   push:
     branches: [ master ]
   pull_request:
+  workflow_dispatch:
 
 env:
   NODE_VERSION: "22.x"
@@ -88,7 +89,7 @@ jobs:
   release:
     runs-on: ubuntu-latest
     name: Release YouTube Music
-    if: github.repository == 'th-ch/youtube-music' && github.ref == 'refs/heads/master'
+    if: github.repository == 'michei69/pear-desktop' && github.ref == 'refs/heads/master'
     needs: build
     steps:
       - uses: actions/checkout@v5
@@ -149,7 +150,7 @@ jobs:
           name: ${{ env.VERSION_TAG }}
           replacebody: true
           body: |
-            See [changelog](https://github.com/th-ch/youtube-music/blob/master/changelog.md#${{ env.CHANGELOG_ANCHOR }}) for the list of updates and the full diff.
+            See [changelog](https://github.com/michei69/pear-desktop/blob/master/changelog.md#${{ env.CHANGELOG_ANCHOR }}) for the list of updates and the full diff.
 
             Thanks to all contributors! 🏅
 
