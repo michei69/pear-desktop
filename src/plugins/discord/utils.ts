@@ -37,7 +37,7 @@ export const buildDiscordButtons = (
   if (!config.hideGitHubButton) {
     buttons.push({
       label: 'View App On GitHub',
-      url: 'https://github.com/th-ch/youtube-music',
+      url: 'https://github.com/michei69/pear-desktop',
     });
   }
   return buttons.length ? buttons : undefined;
