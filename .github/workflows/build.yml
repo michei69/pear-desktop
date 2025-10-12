@@ -1,4 +1,4 @@
-name: Build YouTube Music
+name: Build Pear Desktop
 
 on:
   push:
@@ -11,7 +11,8 @@ env:
 
 jobs:
   build:
-    name: Build YouTube Music
+    if: github.event.pull_request.draft == false
+    name: Build Pear Desktop
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: true
@@ -154,7 +155,7 @@ jobs:
 
             Thanks to all contributors! 🏅
 
-            (Note for Windows: `YouTube-Music-Web-Setup-${{ env.VERSION_TAG }}.exe` is an installer, and `YouTube-Music-${{ env.VERSION_TAG }}.exe` is a portable version)
+            (Note for Windows: `Pear-Desktop-Web-Setup-${{ env.VERSION_TAG }}.exe` is an installer, and `Pear-Desktop-${{ env.VERSION_TAG }}.exe` is a portable version)
 
       - name: Update changelog
         if: ${{ env.VERSION_HASH == '' }}

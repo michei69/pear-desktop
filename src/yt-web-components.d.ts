@@ -35,22 +35,13 @@ declare module 'solid-js' {
       icon: Icons;
     }
 
-    interface YtmdTransProps {
+    interface PearTransProps {
       key?: string;
     }
 
-    type MduiIcons = Extract<
-      keyof HTMLElementTagNameMap,
-      `mdui-icon-${string}`
-    >;
-
-    type MduiIconElements = {
-      [k in MduiIcons]: ComponentProps<'div'>;
-    };
-
-    interface IntrinsicElements extends MDUIElements, MduiIconElements {
+    interface IntrinsicElements extends MDUIElements {
       'center': ComponentProps<'div'>;
-      'ytmd-trans': ComponentProps<'span'> & YtmdTransProps;
+      'pear-trans': ComponentProps<'span'> & PearTransProps;
       'yt-formatted-string': ComponentProps<'span'> & YtFormattedStringProps;
       'yt-button-renderer': ComponentProps<'button'> & YtButtonRendererProps;
       'yt-touch-feedback-shape': ComponentProps<'div'>;
