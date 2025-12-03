@@ -44,7 +44,7 @@ importers:
         version: 1.0.1(@types/node@24.3.0)
       '@electron/remote':
         specifier: 2.1.3
-        version: 2.1.3(electron@38.0.0)
+        version: 2.1.3(electron@38.2.0)
       '@ffmpeg.wasm/core-mt':
         specifier: 0.12.0
         version: 0.12.0
@@ -59,10 +59,10 @@ importers:
         version: 2.0.5
       '@ghostery/adblocker-electron':
         specifier: 2.11.6
-        version: 2.11.6(electron@38.0.0)
+        version: 2.11.6(electron@38.2.0)
       '@ghostery/adblocker-electron-preload':
         specifier: 2.11.6
-        version: 2.11.6(electron@38.0.0)
+        version: 2.11.6(electron@38.2.0)
       '@hono/node-server':
         specifier: 1.19.1
         version: 1.19.1(hono@4.9.6)
@@ -119,7 +119,7 @@ importers:
         version: 14.0.0
       custom-electron-prompt:
         specifier: 1.5.8
-        version: 1.5.8(electron@38.0.0)
+        version: 1.5.8(electron@38.2.0)
       deepmerge-ts:
         specifier: 7.1.5
         version: 7.1.5
@@ -250,8 +250,8 @@ importers:
         specifier: 2.3.0
         version: 2.3.0
       youtubei.js:
-        specifier: 15.0.1
-        version: 15.0.1
+        specifier: ^16.0.1
+        version: 16.0.1
       zod:
         specifier: 4.1.5
         version: 4.1.5
@@ -302,8 +302,8 @@ importers:
         specifier: 0.38.23
         version: 0.38.23
       electron:
-        specifier: 38.0.0
-        version: 38.0.0
+        specifier: 38.2.0
+        version: 38.2.0
       electron-builder:
         specifier: 26.0.12
         version: 26.0.12(electron-builder-squirrel-windows@26.0.12)
@@ -482,8 +482,8 @@ packages:
     resolution: {integrity: sha512-ruv7Ae4J5dUYULmeXw1gmb7rYRz57OWCPM57pHojnLq/3Z1CK2lNSLTCVjxVk1F/TZHwOZZrOWi0ur95BbLxNQ==}
     engines: {node: '>=6.9.0'}
 
-  '@bufbuild/protobuf@2.6.3':
-    resolution: {integrity: sha512-w/gJKME9mYN7ZoUAmSMAWXk4hkVpxRKvEJCb3dV5g9wwWdxTJJ0ayOJAVcNxtdqaxDyFuC0uz4RSGVacJ030PQ==}
+  '@bufbuild/protobuf@2.10.0':
+    resolution: {integrity: sha512-fdRs9PSrBF7QUntpZpq6BTw58fhgGJojgg39m9oFOJGZT+nip9b0so5cYY1oWl5pvemDLr0cPPsH46vwThEbpQ==}
 
   '@dehoist/romanize-thai@1.0.0':
     resolution: {integrity: sha512-6SqD4vyZ48otnypLXMh901CeQetoP5ptYOaIr58N6zDqjjoN0bHszMb5d/6AXJJQf8kIvbmSWBeuDrbAWLajPQ==}
@@ -2319,8 +2319,8 @@ packages:
     resolution: {integrity: sha512-bO3y10YikuUwUuDUQRM4KfwNkKhnpVO7IPdbsrejwN9/AABJzzTQ4GeHwyzNSrVO+tEH3/Np255a3sVZpZDjvg==}
     engines: {node: '>=8.0.0'}
 
-  electron@38.0.0:
-    resolution: {integrity: sha512-egljptiPJqbL/oamFCEY+g3RNeONWTVxZSGeyLqzK8xq106JhzuxnhJZ3sxt4DzJFaofbGyGJA37Oe9d+gVzYw==}
+  electron@38.2.0:
+    resolution: {integrity: sha512-Cw5Mb+N5NxsG0Hc1qr8I65Kt5APRrbgTtEEn3zTod30UNJRnAE1xbGk/1NOaDn3ODzI/MYn6BzT9T9zreP7xWA==}
     engines: {node: '>= 12.20.55'}
     hasBin: true
 
@@ -2570,6 +2570,9 @@ packages:
 
   exponential-backoff@3.1.2:
     resolution: {integrity: sha512-8QxYTVXUkuy7fIIoitQkPwGonB8F3Zj8eEO8Sqg9Zv/bkI7RJAzowee4gr81Hak/dUTpA2Z7VfQgoijjPNlUZA==}
+
+  exponential-backoff@3.1.3:
+    resolution: {integrity: sha512-ZgEeZXj30q+I0EN+CbSSpIyPaJ5HVQD18Z1m+u1FXbAeT94mr1zw50q4q6jiiC447Nl/YTcIYSAftiGqetwXCA==}
 
   extract-zip@2.0.1:
     resolution: {integrity: sha512-GDhU9ntwuKyGXdZBUgTIe+vXnWj0fppUEtMDL0+idd5Sta8TGpHssn/eusA9mrPr9qNDym6SxAYZjNvCn/9RBg==}
@@ -3214,9 +3217,6 @@ packages:
     resolution: {integrity: sha512-YcwCHw1kiqEeI5xRpDlPPBGL2EOpBKLwO4yIBJcXWHPj5PnA5urGq0jbyhM5KoNpypQ6VboSoxc9D8HyfvngSg==}
     engines: {node: '>=18'}
 
-  jintr@3.3.1:
-    resolution: {integrity: sha512-nnOzyhf0SLpbWuZ270Omwbj5LcXUkTcZkVnK8/veJXtSZOiATM5gMZMdmzN75FmTyj+NVgrGaPdH12zIJ24oIA==}
-
   jpeg-js@0.4.4:
     resolution: {integrity: sha512-WZzeDOEtTOBK4Mdsar0IqEU5sMr3vSV2RqkAIzUEV2BHnUfKGyswWFPFwK5EeDo93K3FohSHbLAjj0s1Wzd+dg==}
 
@@ -3479,6 +3479,10 @@ packages:
   merge2@1.4.1:
     resolution: {integrity: sha512-8q7VEgMJW4J8tcfVPy8g09NcQwZdbwFEqhe/WZkoIzjn/3TGDwtOCYtXGxA3O8tPzpczCCDgv+P2P5y00ZJOOg==}
     engines: {node: '>= 8'}
+
+  meriyah@6.1.4:
+    resolution: {integrity: sha512-Sz8FzjzI0kN13GK/6MVEsVzMZEPvOhnmmI1lU5+/1cGOiK3QUahntrNNtdVeihrO7t9JpoH75iMNXg6R6uWflQ==}
+    engines: {node: '>=18.0.0'}
 
   micromatch@4.0.8:
     resolution: {integrity: sha512-PXwfBhYu0hBCPw8Dn0E+WDYb7af3dSLVWKi3HGv84IdF4TyFoC0ysxFd0Goxw7nSv4T/PzEJQxsYsEiFCKo2BA==}
@@ -4875,8 +4879,8 @@ packages:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
 
-  youtubei.js@15.0.1:
-    resolution: {integrity: sha512-2slapqJS5NuXKHvcACEknyVz0AjH/TrXaOhDM0q2twQKa54kCmfj+7B/2nGfd20uzAe29zW1ejk2qOc4ABuGkg==}
+  youtubei.js@16.0.1:
+    resolution: {integrity: sha512-3802bCAGkBc2/G5WUTc0l/bO5mPYJbQAHL04d9hE9PnrDHoBUT8MN721Yqt4RCNncAXdHcfee9VdJy3Fhq1r5g==}
 
   zlibjs@0.3.1:
     resolution: {integrity: sha512-+J9RrgTKOmlxFSDHo0pI1xM6BLVUv+o0ZT9ANtCxGkjIVCCUdx9alUF8Gm+dGLKbkkkidWIHFDZHDMpfITt4+w==}
@@ -5021,7 +5025,7 @@ snapshots:
       '@babel/helper-string-parser': 7.27.1
       '@babel/helper-validator-identifier': 7.27.1
 
-  '@bufbuild/protobuf@2.6.3': {}
+  '@bufbuild/protobuf@2.10.0': {}
 
   '@dehoist/romanize-thai@1.0.0': {}
 
@@ -5091,7 +5095,7 @@ snapshots:
   '@electron/node-gyp@https://codeload.github.com/electron/node-gyp/tar.gz/06b29aafb7708acef8b3669835c8a7857ebc92d2':
     dependencies:
       env-paths: 2.2.1
-      exponential-backoff: 3.1.2
+      exponential-backoff: 3.1.3
       glob: 8.1.0
       graceful-fs: 4.2.11
       make-fetch-happen: 10.2.1
@@ -5143,9 +5147,9 @@ snapshots:
       - bluebird
       - supports-color
 
-  '@electron/remote@2.1.3(electron@38.0.0)':
+  '@electron/remote@2.1.3(electron@38.2.0)':
     dependencies:
-      electron: 38.0.0
+      electron: 38.2.0
 
   '@electron/universal@3.0.1':
     dependencies:
@@ -5336,16 +5340,16 @@ snapshots:
     dependencies:
       '@ghostery/adblocker-extended-selectors': 2.11.6
 
-  '@ghostery/adblocker-electron-preload@2.11.6(electron@38.0.0)':
+  '@ghostery/adblocker-electron-preload@2.11.6(electron@38.2.0)':
     dependencies:
       '@ghostery/adblocker-content': 2.11.6
-      electron: 38.0.0
+      electron: 38.2.0
 
-  '@ghostery/adblocker-electron@2.11.6(electron@38.0.0)':
+  '@ghostery/adblocker-electron@2.11.6(electron@38.2.0)':
     dependencies:
       '@ghostery/adblocker': 2.11.6
-      '@ghostery/adblocker-electron-preload': 2.11.6(electron@38.0.0)
-      electron: 38.0.0
+      '@ghostery/adblocker-electron-preload': 2.11.6(electron@38.2.0)
+      electron: 38.2.0
       tldts-experimental: 7.0.12
 
   '@ghostery/adblocker-extended-selectors@2.11.6': {}
@@ -5920,7 +5924,7 @@ snapshots:
 
   '@types/electron-localshortcut@3.1.3':
     dependencies:
-      electron: 38.0.0
+      electron: 38.2.0
     transitivePeerDependencies:
       - supports-color
 
@@ -6803,9 +6807,9 @@ snapshots:
 
   csstype@3.1.3: {}
 
-  custom-electron-prompt@1.5.8(electron@38.0.0):
+  custom-electron-prompt@1.5.8(electron@38.2.0):
     dependencies:
-      electron: 38.0.0
+      electron: 38.2.0
 
   data-uri-to-buffer@4.0.1: {}
 
@@ -7135,7 +7139,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  electron@38.0.0:
+  electron@38.2.0:
     dependencies:
       '@electron/get': 2.0.3
       '@types/node': 22.17.2
@@ -7504,6 +7508,8 @@ snapshots:
   exif-parser@0.1.12: {}
 
   exponential-backoff@3.1.2: {}
+
+  exponential-backoff@3.1.3: {}
 
   extract-zip@2.0.1:
     dependencies:
@@ -8200,10 +8206,6 @@ snapshots:
       '@jimp/types': 1.6.0
       '@jimp/utils': 1.6.0
 
-  jintr@3.3.1:
-    dependencies:
-      acorn: 8.15.0
-
   jpeg-js@0.4.4: {}
 
   js-tokens@4.0.0: {}
@@ -8469,6 +8471,8 @@ snapshots:
   merge-stream@2.0.0: {}
 
   merge2@1.4.1: {}
+
+  meriyah@6.1.4: {}
 
   micromatch@4.0.8:
     dependencies:
@@ -9904,11 +9908,10 @@ snapshots:
 
   yocto-queue@0.1.0: {}
 
-  youtubei.js@15.0.1:
+  youtubei.js@16.0.1:
     dependencies:
-      '@bufbuild/protobuf': 2.6.3
-      jintr: 3.3.1
-      undici: 6.21.3
+      '@bufbuild/protobuf': 2.10.0
+      meriyah: 6.1.4
 
   zlibjs@0.3.1: {}
 
