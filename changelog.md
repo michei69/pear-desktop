@@ -2,7 +2,15 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v3.11.3](https://github.com/michei69/pear-desktop/compare/v3.11.2...v3.11.3)
+
+- Update changelog for v3.11.2 [`020c72b`](https://github.com/michei69/pear-desktop/commit/020c72bbcefcc57ae3bfcbab2becd8a97207ecdd)
+- chore(i18n): Translated using Weblate (Georgian) [`7b0d63b`](https://github.com/michei69/pear-desktop/commit/7b0d63b6cf54c194a08377c000732677d9877666)
+- chore(i18n): Translated using Weblate (Albanian) [`3d0ad69`](https://github.com/michei69/pear-desktop/commit/3d0ad69ddb45b5cf60dfeb2ea804b296b6613c6d)
+
 #### [v3.11.2](https://github.com/michei69/pear-desktop/compare/v3.11.1...v3.11.2)
+
+> 3 December 2025
 
 - fix(album-color-theme): improve theming consistency across UI elements [`#4109`](https://github.com/michei69/pear-desktop/pull/4109)
 - fix(downloader): update youtubei.js and remove player_id [`#4069`](https://github.com/michei69/pear-desktop/pull/4069)
