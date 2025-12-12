@@ -3,11 +3,11 @@
     "console": {
       "plugins": {
         "execute-failed": "Error al ejecutar el complemento {{pluginName}}::{{contextName}}",
-        "executed-at-ms": "Complemento {{pluginName}}::{{contextName}} Ejecutó en {{ms}}ms",
+        "executed-at-ms": "Complemento {{pluginName}}::{{contextName}} se ejecutó en {{ms}}ms",
         "initialize-failed": "Error al inicializar el complemento \"{{pluginName}}\"",
         "load-all": "Cargando todos los complementos",
         "load-failed": "Error al cargar el complemento \"{{pluginName}}\"",
-        "loaded": "Complementos \"{{pluginName}}\" cargado",
+        "loaded": "Complementos \"{{pluginName}}\" cargados",
         "unload-failed": "No se ha podido descargar el complemento \"{{pluginName}}\"",
         "unloaded": "Complemento \"{{pluginName}}\" descargado"
       }
@@ -237,7 +237,8 @@
           "submenu": {
             "percent": "{{ratio}}%"
           }
-        }
+        },
+        "enable-seekbar": "Habilitar temas a la barra de búsqueda"
       },
       "name": "Tema de color del álbum"
     },
@@ -462,8 +463,8 @@
           "label": "Texto de estado",
           "submenu": {
             "artist": "Escuchando a {artist}",
-            "title": "Escuchando {song title}",
-            "pear-desktop": "Escuchando Pear Desktop"
+            "pear-desktop": "Escuchando Pear Desktop",
+            "title": "Escuchando {song title}"
           }
         }
       },

@@ -237,7 +237,8 @@
           "submenu": {
             "percent": "{{ratio}}%"
           }
-        }
+        },
+        "enable-seekbar": "啟用進度條主題樣式"
       },
       "name": "隨歌曲色調變更主題"
     },

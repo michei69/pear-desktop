@@ -237,7 +237,8 @@
           "submenu": {
             "percent": "{{ratio}}%"
           }
-        }
+        },
+        "enable-seekbar": "Ativar personalização da barra de progresso"
       },
       "name": "Tema da cor do álbum"
     },
