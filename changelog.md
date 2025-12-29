@@ -2,7 +2,44 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v3.11.4](https://github.com/michei69/pear-desktop/compare/v3.11.3...v3.11.4)
+
+- feat: apply new icon [`#4215`](https://github.com/michei69/pear-desktop/pull/4215)
+- fix(deps): update dependency semver to v7.7.3 [`#4183`](https://github.com/michei69/pear-desktop/pull/4183)
+- fix(deps): update dependency happy-dom to v20.0.11 [`#4182`](https://github.com/michei69/pear-desktop/pull/4182)
+- fix(deps): update dependency @hono/zod-validator to v0.7.6 [`#4178`](https://github.com/michei69/pear-desktop/pull/4178)
+- fix(deps): update dependency color to v5.0.3 [`#4179`](https://github.com/michei69/pear-desktop/pull/4179)
+- fix(deps): update dependency es-hangul to v2.3.8 [`#4180`](https://github.com/michei69/pear-desktop/pull/4180)
+- chore(deps): update dependency vite-plugin-solid to v2.11.10 [`#4174`](https://github.com/michei69/pear-desktop/pull/4174)
+- chore(deps): update dependency utf-8-validate to v6.0.6 [`#4173`](https://github.com/michei69/pear-desktop/pull/4173)
+- chore(deps): update dependency typescript to v5.9.3 [`#4171`](https://github.com/michei69/pear-desktop/pull/4171)
+- chore(deps): update dependency electron-vite to v4.0.1 [`#4170`](https://github.com/michei69/pear-desktop/pull/4170)
+- fix(deps): update dependency @hono/zod-openapi to v1.2.0 [`#4177`](https://github.com/michei69/pear-desktop/pull/4177)
+- chore: extend startingPages with Mixed for you entry [`#3994`](https://github.com/michei69/pear-desktop/pull/3994)
+- chore(deps): update dependency vite to v7.3.0 [`#3869`](https://github.com/michei69/pear-desktop/pull/3869)
+- "feat(api-server): add /api/v1/queue/next endpoint [`#4117`](https://github.com/michei69/pear-desktop/pull/4117)
+- fix(deps): update dependency happy-dom to v20.0.2 [security] [`#4168`](https://github.com/michei69/pear-desktop/pull/4168)
+- Fixes 2 sync and UI bugs in music-together plugin [`#4071`](https://github.com/michei69/pear-desktop/pull/4071)
+- feat(api-server): Add HTTPS support and custom certificate configuration [`#3874`](https://github.com/michei69/pear-desktop/pull/3874)
+- fix(deps): update dependency zod to v4.2.1 [`#3870`](https://github.com/michei69/pear-desktop/pull/3870)
+- fix(deps): update dependency @hono/node-server to v1.19.7 [`#3862`](https://github.com/michei69/pear-desktop/pull/3862)
+- chore(deps): update dependency ts-morph to v27.0.2 [`#4167`](https://github.com/michei69/pear-desktop/pull/4167)
+- chore(deps): update dependency discord-api-types to v0.38.37 [`#3866`](https://github.com/michei69/pear-desktop/pull/3866)
+- chore(deps): update dependency @electron/universal to v3.0.2 [`#4166`](https://github.com/michei69/pear-desktop/pull/4166)
+- fix(deps): update dependency happy-dom to v20 [security] [`#4021`](https://github.com/michei69/pear-desktop/pull/4021)
+- chore(deps): update dependency playwright to v1.55.1 [security] [`#4026`](https://github.com/michei69/pear-desktop/pull/4026)
+- chore(deps-dev): bump glob from 11.0.3 to 11.1.0 [`#4092`](https://github.com/michei69/pear-desktop/pull/4092)
+- fix(deps): update dependency virtua to v0.48.2 [`#3871`](https://github.com/michei69/pear-desktop/pull/3871)
+- chore(deps): update dependency electron to v38.7.2 [`#3867`](https://github.com/michei69/pear-desktop/pull/3867)
+- chore(deps): update dependency glob to v11.1.0 [security] [`#4091`](https://github.com/michei69/pear-desktop/pull/4091)
+- fix(deps): update dependency hono to v4.10.3 [security] [`#3880`](https://github.com/michei69/pear-desktop/pull/3880)
+- Improved compatibility [`696ff0f`](https://github.com/michei69/pear-desktop/commit/696ff0fc7a4aaba1a19dd522354c14da19bae82e)
+- chore(i18n): Translated using Weblate (French) [`f2308e5`](https://github.com/michei69/pear-desktop/commit/f2308e567d3f1ab671010bc991d2cda0ae4380b4)
+- chore(i18n): Translated using Weblate (Bosnian) [`9cad841`](https://github.com/michei69/pear-desktop/commit/9cad841efb0841be2dd90d4c2e2b14cccd36ddaa)
+
 #### [v3.11.3](https://github.com/michei69/pear-desktop/compare/v3.11.2...v3.11.3)
+
+> 12 December 2025
 
 - Update changelog for v3.11.2 [`020c72b`](https://github.com/michei69/pear-desktop/commit/020c72bbcefcc57ae3bfcbab2becd8a97207ecdd)
 - chore(i18n): Translated using Weblate (Georgian) [`7b0d63b`](https://github.com/michei69/pear-desktop/commit/7b0d63b6cf54c194a08377c000732677d9877666)
