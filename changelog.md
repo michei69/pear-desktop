@@ -2,7 +2,25 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v3.11.6](https://github.com/michei69/pear-desktop/compare/v3.11.5...v3.11.6)
+
+- chore(deps): update dependency ts-morph to v28 [`#4423`](https://github.com/michei69/pear-desktop/pull/4423)
+- fix(deps): update dependency virtua to v0.49.1 [`#4340`](https://github.com/michei69/pear-desktop/pull/4340)
+- chore(deps): update dependency builtin-modules to v5.1.0 [`#4421`](https://github.com/michei69/pear-desktop/pull/4421)
+- chore(deps): update dependency pinyin-pro to v3.28.1 [`#4414`](https://github.com/michei69/pear-desktop/pull/4414)
+- chore(deps): update dependency @babel/runtime to v7.29.2 [`#4415`](https://github.com/michei69/pear-desktop/pull/4415)
+- chore(deps): update actions/dependency-review-action digest to f5b9717 [`#4395`](https://github.com/michei69/pear-desktop/pull/4395)
+- refactor(taskbar-mediacontrol): Removed jimp dependency [`#4202`](https://github.com/michei69/pear-desktop/pull/4202)
+- chore(deps): update dependency electron to v40.8.5 [`#4342`](https://github.com/michei69/pear-desktop/pull/4342)
+- fix(api-server): add required 'alg' option to JWT middleware [`#4368`](https://github.com/michei69/pear-desktop/pull/4368)
+- fix: migrate custom element from ES5 to ES6 [`#4416`](https://github.com/michei69/pear-desktop/issues/4416)
+- chore: bump dependencies [`48d1fdf`](https://github.com/michei69/pear-desktop/commit/48d1fdf6554b0ee9bbaffea6333d8eaf9bc29d26)
+- chore: migrate Vite from v7 to v8 [`b1c880f`](https://github.com/michei69/pear-desktop/commit/b1c880f34664a35917c9b915749e15b013bac128)
+- fix: comprehensive codebase audit — lifecycle cleanup, memory leaks, performance, and correctness fixes [`6391c5e`](https://github.com/michei69/pear-desktop/commit/6391c5e4f130900b17ffd7c059c81e134756884b)
+
 #### [v3.11.5](https://github.com/michei69/pear-desktop/compare/v3.11.4...v3.11.5)
+
+> 8 March 2026
 
 - doc: installation instructions for Solus [`#4352`](https://github.com/michei69/pear-desktop/pull/4352)
 - chore(deps): update eslint monorepo to v9.39.3 [`#4337`](https://github.com/michei69/pear-desktop/pull/4337)
