@@ -8,9 +8,10 @@ type ArgsType<T> = T | string[] | undefined;
 
 const parseNumberFromArgsType = (args: ArgsType<number>) => {
   if (typeof args === 'number') {
-    return args;
+    return Number.isFinite(args) ? args : null;
   } else if (Array.isArray(args)) {
-    return Number(args[0]);
+    const parsed = Number(args[0]);
+    return Number.isFinite(parsed) ? parsed : null;
   } else {
     return null;
   }
@@ -49,7 +50,7 @@ export const getSongControls = (win: BrowserWindow) => {
     seekTo: (seconds: ArgsType<number>) => {
       const secondsNumber = parseNumberFromArgsType(seconds);
       if (secondsNumber !== null) {
-        win.webContents.send('peard:seek-to', seconds);
+        win.webContents.send('peard:seek-to', secondsNumber);
       }
     },
     goBack: (seconds: ArgsType<number>) => {
@@ -61,7 +62,7 @@ export const getSongControls = (win: BrowserWindow) => {
     goForward: (seconds: ArgsType<number>) => {
       const secondsNumber = parseNumberFromArgsType(seconds);
       if (secondsNumber !== null) {
-        win.webContents.send('peard:seek-by', seconds);
+        win.webContents.send('peard:seek-by', secondsNumber);
       }
     },
     requestShuffleInformation: () => {
@@ -71,14 +72,14 @@ export const getSongControls = (win: BrowserWindow) => {
     switchRepeat: (n: ArgsType<number> = 1) => {
       const repeat = parseNumberFromArgsType(n);
       if (repeat !== null) {
-        win.webContents.send('peard:switch-repeat', n);
+        win.webContents.send('peard:switch-repeat', repeat);
       }
     },
     // General
     setVolume: (volume: ArgsType<number>) => {
       const volumeNumber = parseNumberFromArgsType(volume);
       if (volumeNumber !== null) {
-        win.webContents.send('peard:update-volume', volume);
+        win.webContents.send('peard:update-volume', volumeNumber);
       }
     },
     setFullscreen: (isFullscreen: ArgsType<boolean>) => {
@@ -140,8 +141,14 @@ export const getSongControls = (win: BrowserWindow) => {
     clearQueue: () => win.webContents.send('peard:clear-queue'),
 
     search: (query: string, params?: string, continuation?: string) =>
-      new Promise((resolve) => {
+      new Promise<string>((resolve, reject) => {
+        const timeout = setTimeout(() => {
+          ipcMain.removeAllListeners('peard:search-results');
+          reject(new Error('Search request timed out after 30s'));
+        }, 30_000);
+
         ipcMain.once('peard:search-results', (_, result) => {
+          clearTimeout(timeout);
           resolve(result as string);
         });
         win.webContents.send('peard:search', query, params, continuation);

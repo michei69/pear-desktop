@@ -9,6 +9,8 @@ export const APP_PROTOCOL =
 
 let protocolHandler: ((cmd: string, ...args: string[]) => void) | undefined;
 
+let validCommands: Set<string> | null = null;
+
 export function setupProtocolHandler(win: BrowserWindow) {
   if (process.defaultApp && process.argv.length >= 2) {
     app.setAsDefaultProtocolClient(APP_PROTOCOL, process.execPath, [
@@ -19,11 +21,11 @@ export function setupProtocolHandler(win: BrowserWindow) {
   }
 
   const songControls = getSongControls(win);
+  validCommands = new Set(Object.keys(songControls));
 
-  protocolHandler = ((cmd: keyof typeof songControls, ...args) => {
-    if (Object.keys(songControls).includes(cmd)) {
-      // @ts-expect-error: cmd is a key of songControls
-      songControls[cmd](...args);
+  protocolHandler = ((cmd: string, ...args: unknown[]) => {
+    if (validCommands?.has(cmd)) {
+      (songControls as Record<string, (...a: unknown[]) => void>)[cmd](...args);
     }
   }) as (cmd: string, ...args: string[]) => void;
 }

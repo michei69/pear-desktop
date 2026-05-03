@@ -38,10 +38,14 @@ new MutationObserver((mutations, observer) => {
   }
 }).observe(document, { subtree: true, childList: true });
 
-loadI18n().then(async () => {
-  await setLanguage(config.get('options.language') ?? 'en');
-  await loadAllPreloadPlugins();
-});
+loadI18n()
+  .then(async () => {
+    await setLanguage(config.get('options.language') ?? 'en');
+    await loadAllPreloadPlugins();
+  })
+  .catch((err) => {
+    console.error('Failed to load preload plugins:', err);
+  });
 
 ipcRenderer.on('plugin:unload', async (_, id: string) => {
   await forceUnloadPreloadPlugin(id);
@@ -105,5 +109,11 @@ if (path) {
   webFrame.executeJavaScript(script, true, () => (blocked = false));
 }
 
-// HACK: Wait for the script to be executed
-while (blocked);
+// HACK: Wait for the script to be executed (with timeout safety)
+const startTime = Date.now();
+const TIMEOUT = 10_000;
+while (blocked && Date.now() - startTime < TIMEOUT) {
+  // Yield to prevent completely blocking the renderer
+  const start = Date.now();
+  while (Date.now() - start < 1) { /* spin */ }
+}

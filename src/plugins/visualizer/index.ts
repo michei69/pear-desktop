@@ -61,6 +61,7 @@ type RenderProps = {
   audioContext: AudioContext | null;
   audioSource: MediaElementAudioSourceNode | null;
   observer: ResizeObserver | null;
+  gainNode: GainNode | null;
 };
 
 export default createPlugin({
@@ -158,6 +159,7 @@ export default createPlugin({
       audioContext: null,
       audioSource: null,
       observer: null,
+      gainNode: null,
     } as RenderProps,
 
     createVisualizer(
@@ -190,8 +192,14 @@ export default createPlugin({
         visualizerContainer?.prepend(canvas);
       }
 
+      // Disconnect previous gainNode if present
+      if (this.props.gainNode) {
+        this.props.gainNode.disconnect();
+      }
+
       const gainNode = this.props.audioContext.createGain();
       gainNode.gain.value = 1.25;
+      this.props.gainNode = gainNode;
       this.props.audioSource.connect(gainNode);
 
       let visualizerType: {

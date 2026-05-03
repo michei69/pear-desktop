@@ -29,7 +29,7 @@ import packageJson from '../package.json';
 export type MenuTemplate = Electron.MenuItemConstructorOptions[];
 
 // True only if in-app-menu was loaded on launch
-const inAppMenuActive = await config.plugins.isEnabled('in-app-menu');
+let inAppMenuActivePromise: Promise<boolean> | undefined;
 
 const pluginEnabledMenu = async (
   plugin: string,
@@ -59,7 +59,8 @@ const pluginEnabledMenu = async (
 
 export const refreshMenu = async (win: BrowserWindow) => {
   await setApplicationMenu(win);
-  if (inAppMenuActive) {
+  inAppMenuActivePromise ??= config.plugins.isEnabled('in-app-menu');
+  if (await inAppMenuActivePromise) {
     win.webContents.send('refresh-in-app-menu');
   }
 };
@@ -119,7 +120,8 @@ export const mainMenuTemplate = async (
     }),
   );
 
-  const availablePlugins = Object.keys(await allPlugins());
+  const availablePlugins = Object.keys(allPluginsStubs);
+  const menuResultMap = new Map(menuResult);
   const pluginMenus = await Promise.all(
     availablePlugins
       .sort((a, b) => {
@@ -129,8 +131,8 @@ export const mainMenuTemplate = async (
         return aPluginLabel.localeCompare(bPluginLabel);
       })
       .map(async (id) => {
-        const predefinedTemplate = menuResult.find((it) => it[0] === id);
-        if (predefinedTemplate) return predefinedTemplate[1];
+        const predefinedTemplate = menuResultMap.get(id);
+        if (predefinedTemplate) return predefinedTemplate;
 
         const plugin = allPluginsStubs[id];
         const pluginLabel = plugin?.name?.() ?? id;
@@ -409,6 +411,7 @@ export const mainMenuTemplate = async (
                         'main.menu.options.submenu.hide-menu.dialog.message',
                       ),
                     });
+                    config.set('options.hideMenuWarned', true);
                   }
                 },
               },

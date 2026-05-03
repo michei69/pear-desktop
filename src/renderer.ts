@@ -506,12 +506,15 @@ const initObserver = async () => {
     }
   });
 
-  const observer = new MutationObserver(() => {
+  let rafId: number | undefined;
+  let observer: MutationObserver | undefined;
+
+  const checkForApi = () => {
     const playerApi = document.querySelector<Element & MusicPlayer>(
       '#movie_player',
     );
     if (playerApi) {
-      observer.disconnect();
+      observer?.disconnect();
 
       // Inject song-info provider
       setupSongInfo(playerApi);
@@ -530,12 +533,29 @@ const initObserver = async () => {
         onApiLoaded();
       }
     }
-  });
+    rafId = undefined;
+  };
 
-  observer.observe(document.documentElement, {
-    childList: true,
-    subtree: true,
-  });
+  // Try immediately first (may already be in DOM)
+  checkForApi();
+
+  // If not found, observe with rAF throttling to avoid querying on every DOM mutation
+  if (!isApiLoaded) {
+    observer = new MutationObserver(() => {
+      if (rafId !== undefined) return; // Already queued
+      rafId = requestAnimationFrame(checkForApi);
+    });
+
+    observer.observe(document.documentElement, {
+      childList: true,
+      subtree: true,
+    });
+  }
 };
 
-initObserver().then(preload).then(main);
+initObserver()
+  .then(preload)
+  .then(main)
+  .catch((err) => {
+    console.error('Failed to initialize renderer:', err);
+  });

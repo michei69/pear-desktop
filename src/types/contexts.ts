@@ -18,6 +18,7 @@ export interface BackendContext<Config extends PluginConfig>
     handle: (event: string, listener: CallableFunction) => void;
     on: (event: string, listener: CallableFunction) => void;
     removeHandler: IpcMain['removeHandler'];
+    removeAllListeners: (event: string) => void;
   };
 
   window: BrowserWindow;

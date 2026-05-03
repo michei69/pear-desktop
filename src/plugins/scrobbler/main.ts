@@ -2,6 +2,7 @@ import { type BrowserWindow } from 'electron';
 
 import {
   registerCallback,
+  unregisterCallback,
   MediaType,
   type SongInfo,
   SongInfoEvent,
@@ -32,6 +33,7 @@ export const backend = createBackend<
       setConfig: SetConfType,
     ): Promise<void>;
     setConfig?: SetConfType;
+    songInfoCallback?: (songInfo: SongInfo, event: SongInfoEvent) => void;
   },
   ScrobblerPluginConfig
 >({
@@ -72,7 +74,7 @@ export const backend = createBackend<
     await this.createSessions(config, setConfig);
     this.setConfig = setConfig;
 
-    registerCallback((songInfo: SongInfo, event) => {
+    this.songInfoCallback = (songInfo: SongInfo, event) => {
       if (event === SongInfoEvent.TimeChanged) return;
       // Set remove the old scrobble timer
       clearTimeout(scrobbleTimer);
@@ -112,7 +114,15 @@ export const backend = createBackend<
           scrobbler.setNowPlaying(songInfo, configNonnull, setConfig),
         );
       }
-    });
+    };
+
+    registerCallback(this.songInfoCallback);
+  },
+
+  stop() {
+    if (this.songInfoCallback) {
+      unregisterCallback(this.songInfoCallback);
+    }
   },
 
   async onConfigChange(newConfig: ScrobblerPluginConfig) {

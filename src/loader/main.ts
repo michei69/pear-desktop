@@ -50,6 +50,9 @@ const createContext = (
     removeHandler: (event: string) => {
       ipcMain.removeHandler(event);
     },
+    removeAllListeners: (event: string) => {
+      ipcMain.removeAllListeners(event);
+    },
   },
 
   window: win,

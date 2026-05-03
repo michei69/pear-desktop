@@ -1,6 +1,6 @@
 import { app } from 'electron';
 
-import { registerCallback, SongInfoEvent } from '@/providers/song-info';
+import { registerCallback, SongInfoEvent, unregisterCallback, type SongInfo } from '@/providers/song-info';
 import { createBackend } from '@/utils';
 
 import { DiscordService } from './discord-service';
@@ -14,6 +14,7 @@ export const backend = createBackend<
   {
     config?: DiscordPluginConfig;
     lastTimeUpdateSent: number;
+    songInfoCallback?: (songInfo: SongInfo, event: SongInfoEvent) => void;
   },
   DiscordPluginConfig
 >({
@@ -28,7 +29,7 @@ export const backend = createBackend<
       ctx.window.once('ready-to-show', () => {
         discordService?.connect(!config.autoReconnect);
 
-        registerCallback((songInfo, event) => {
+        this.songInfoCallback = (songInfo, event) => {
           if (!discordService?.isConnected()) return;
 
           if (event !== SongInfoEvent.TimeChanged) {
@@ -38,10 +39,12 @@ export const backend = createBackend<
             const now = Date.now();
             if (now - this.lastTimeUpdateSent > TIME_UPDATE_DEBOUNCE_MS) {
               discordService?.updateActivity(songInfo);
-              this.lastTimeUpdateSent = now; // Record the time of this debounced update
+              this.lastTimeUpdateSent = now;
             }
           }
-        });
+        };
+
+        registerCallback(this.songInfoCallback);
       });
     }
 
@@ -55,6 +58,9 @@ export const backend = createBackend<
   },
 
   stop() {
+    if (this.songInfoCallback) {
+      unregisterCallback(this.songInfoCallback);
+    }
     discordService?.cleanup();
   },
 

@@ -1,6 +1,6 @@
 import { createPlugin } from '@/utils';
 
-import { onConfigChange, onMainLoad } from './main';
+import { onConfigChange, onMainLoad, onStop } from './main';
 import { onMenu } from './menu';
 import { t } from '@/i18n';
 
@@ -43,6 +43,7 @@ export default createPlugin({
   menu: onMenu,
   backend: {
     start: onMainLoad,
+    stop: onStop,
     onConfigChange,
   },
 });

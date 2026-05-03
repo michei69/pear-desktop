@@ -40,50 +40,59 @@ export default createPlugin({
       'music_offtopic',
     ],
   } as SponsorBlockPluginConfig,
-  async backend({ getConfig, ipc }) {
-    const fetchSegments = async (
-      apiURL: string,
-      categories: string[],
-      videoId: string,
-    ) => {
-      const sponsorBlockURL = `${apiURL}/api/skipSegments?videoID=${videoId}&categories=${JSON.stringify(
-        categories,
-      )}`;
-      try {
-        const resp = await fetch(sponsorBlockURL, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          redirect: 'follow',
-        });
-        if (resp.status !== 200) {
+  backend: {
+    async start({ getConfig, ipc }) {
+      const fetchSegments = async (
+        apiURL: string,
+        categories: string[],
+        videoId: string,
+      ) => {
+        const sponsorBlockURL = `${apiURL}/api/skipSegments?videoID=${videoId}&categories=${JSON.stringify(
+          categories,
+        )}`;
+        try {
+          const resp = await fetch(sponsorBlockURL, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            redirect: 'follow',
+          });
+          if (resp.status !== 200) {
+            return [];
+          }
+
+          const segments = (await resp.json()) as SkipSegment[];
+          return sortSegments(
+            segments.map((submission) => submission.segment),
+          );
+        } catch (error) {
+          if (is.dev()) {
+            console.log('error on sponsorblock request:', error);
+          }
+
           return [];
         }
+      };
 
-        const segments = (await resp.json()) as SkipSegment[];
-        return sortSegments(segments.map((submission) => submission.segment));
-      } catch (error) {
-        if (is.dev()) {
-          console.log('error on sponsorblock request:', error);
-        }
+      const config = await getConfig();
 
-        return [];
-      }
-    };
+      const { apiURL, categories } = config;
 
-    const config = await getConfig();
+      const handleVideoSrcChanged = async (data: GetPlayerResponse) => {
+        const segments = await fetchSegments(
+          apiURL,
+          categories,
+          data?.videoDetails?.videoId,
+        );
+        ipc.send('sponsorblock-skip', segments);
+      };
 
-    const { apiURL, categories } = config;
-
-    ipc.on('peard:video-src-changed', async (data: GetPlayerResponse) => {
-      const segments = await fetchSegments(
-        apiURL,
-        categories,
-        data?.videoDetails?.videoId,
-      );
-      ipc.send('sponsorblock-skip', segments);
-    });
+      ipc.on('peard:video-src-changed', handleVideoSrcChanged);
+    },
+    stop({ ipc }) {
+      ipc.removeAllListeners('peard:video-src-changed');
+    },
   },
   renderer: {
     timeUpdateListener: (e: Event) => {
@@ -117,7 +126,10 @@ export default createPlugin({
       // Reset segments on song end
       video.addEventListener('emptied', this.resetSegments);
     },
-    stop() {
+    stop({ ipc }) {
+      ipc.removeAllListeners('sponsorblock-skip');
+      currentSegments = [];
+
       const video = document.querySelector<HTMLVideoElement>('video');
       if (!video) return;
 

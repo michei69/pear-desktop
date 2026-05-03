@@ -7,6 +7,7 @@ import interactive from './interactive';
 
 import {
   registerCallback,
+  unregisterCallback,
   type SongInfo,
   SongInfoEvent,
 } from '@/providers/song-info';
@@ -15,6 +16,7 @@ import type { NotificationsPluginConfig } from './index';
 import type { BackendContext } from '@/types/contexts';
 
 let config: NotificationsPluginConfig;
+let songInfoCallback: ((songInfo: SongInfo, event: SongInfoEvent) => void) | null = null;
 
 const notify = (info: SongInfo) => {
   // Send the notification
@@ -34,7 +36,7 @@ const setup = () => {
   let oldNotification: Notification;
   let currentUrl: string | undefined;
 
-  registerCallback((songInfo: SongInfo, event) => {
+  songInfoCallback = (songInfo: SongInfo, event) => {
     if (
       event !== SongInfoEvent.TimeChanged &&
       !songInfo.isPaused &&
@@ -48,7 +50,9 @@ const setup = () => {
         oldNotification = notify(songInfo);
       }, 10);
     }
-  });
+  };
+
+  registerCallback(songInfoCallback);
 };
 
 export const onMainLoad = async (
@@ -64,4 +68,11 @@ export const onMainLoad = async (
 
 export const onConfigChange = (newConfig: NotificationsPluginConfig) => {
   config = newConfig;
+};
+
+export const onStop = () => {
+  if (songInfoCallback) {
+    unregisterCallback(songInfoCallback);
+    songInfoCallback = null;
+  }
 };

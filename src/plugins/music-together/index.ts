@@ -764,13 +764,17 @@ export default createPlugin<
 
       this.stateInterval = window.setInterval(() => {
         if (this.connection?.mode !== 'host') return;
-        const index = this.queue?.selectedIndex ?? 0;
+        try {
+          const index = this.queue?.selectedIndex ?? 0;
 
-        this.connection.broadcast('SYNC_PROGRESS', {
-          progress: this.playerApi?.getCurrentTime(),
-          state: this.playerApi?.getPlayerState(),
-          index,
-        });
+          this.connection.broadcast('SYNC_PROGRESS', {
+            progress: this.playerApi?.getCurrentTime(),
+            state: this.playerApi?.getPlayerState(),
+            index,
+          });
+        } catch {
+          // Silently ignore broadcast errors to keep the interval running
+        }
       }, 1000);
 
       /* UI */

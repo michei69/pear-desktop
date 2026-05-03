@@ -88,7 +88,7 @@ declare module 'custom-electron-prompt' {
             ? string[]
             : never;
 
-  const prompt: <T extends Type>(
+  const prompt: <T extends string>(
     options?: PromptOptions<T> & { type: T },
     parent?: BrowserWindow,
   ) => Promise<PromptResult<T> | null>;

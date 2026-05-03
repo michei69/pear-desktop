@@ -12,10 +12,9 @@ export const LitElementWrapper = (props: LitElementWrapperProps) => {
   const [tagName, setTagName] = createSignal<string | null>(null);
 
   onMount(() => {
-    // Create instance to discover tag name
-    const el = new props.elementClass();
-    setTagName(el.tagName.toLowerCase());
-    el.remove();
+    // Discover tag name without instantiating element
+    const name = customElements.getName(props.elementClass);
+    setTagName(name?.toLowerCase() ?? null);
   });
 
   return (

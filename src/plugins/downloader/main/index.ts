@@ -28,6 +28,7 @@ import {
 } from './utils';
 import {
   registerCallback,
+  unregisterCallback,
   cleanupName,
   getImage,
   MediaType,
@@ -137,6 +138,7 @@ export const getCookieFromWindow = async (win: BrowserWindow) => {
 };
 
 let config: DownloaderPluginConfig;
+let cleanupFinishSetup: (() => void) | undefined;
 
 export const onMainLoad = async ({
   window: _win,
@@ -220,11 +222,15 @@ export const onMainLoad = async ({
     downloadPlaylist(url),
   );
 
-  downloadSongOnFinishSetup({ ipc, getConfig });
+  cleanupFinishSetup = downloadSongOnFinishSetup({ ipc, getConfig });
 };
 
 export const onConfigChange = (newConfig: DownloaderPluginConfig) => {
   config = newConfig;
+};
+
+export const onStop = () => {
+  cleanupFinishSetup?.();
 };
 
 export async function downloadSong(
@@ -278,7 +284,7 @@ function downloadSongOnFinishSetup({
 
   const defaultDownloadFolder = app.getPath('downloads');
 
-  registerCallback((songInfo: SongInfo, event) => {
+  const songInfoCallback = (songInfo: SongInfo, event: SongInfoEvent) => {
     if (event === SongInfoEvent.TimeChanged) {
       const elapsedSeconds = songInfo.elapsedSeconds ?? 0;
       if (elapsedSeconds > time) time = elapsedSeconds;
@@ -317,11 +323,20 @@ function downloadSongOnFinishSetup({
       duration = songInfo.songDuration;
       time = 0;
     }
-  });
+  };
 
-  ipcMain.on('peard:player-api-loaded', () => {
+  registerCallback(songInfoCallback);
+
+  const onPlayerApiLoaded = () => {
     ipc.send('peard:setup-time-changed-listener');
-  });
+  };
+
+  ipcMain.on('peard:player-api-loaded', onPlayerApiLoaded);
+
+  return () => {
+    unregisterCallback(songInfoCallback);
+    ipcMain.removeAllListeners('peard:player-api-loaded');
+  };
 }
 
 async function downloadSongUnsafe(

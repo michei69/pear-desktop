@@ -3,7 +3,7 @@ import { DefaultPresetList, type Preset } from './types';
 import style from './style.css?inline';
 
 import { createPlugin } from '@/utils';
-import { onConfigChange, onMainLoad } from './main';
+import { onConfigChange, onMainLoad, onStop } from './main';
 import { onPlayerApiReady, onRendererLoad } from './renderer';
 import { onMenu } from './menu';
 import { t } from '@/i18n';
@@ -49,6 +49,7 @@ export default createPlugin({
   menu: onMenu,
   backend: {
     start: onMainLoad,
+    stop: onStop,
     onConfigChange,
   },
   renderer: {

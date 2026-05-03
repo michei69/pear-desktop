@@ -70,6 +70,7 @@ unhandled({
 
 // Prevent window being garbage collected
 let mainWindow: Electron.BrowserWindow | null;
+let renderProcessGoneRegistered = false;
 electronUpdater.autoUpdater.autoDownload = false;
 
 const gotTheLock = app.requestSingleInstanceLock();
@@ -219,15 +220,21 @@ const initHook = async (win: BrowserWindow) => {
           if (config.enabled) {
             win.webContents.send('plugin:enable', id);
             ipcMain.emit('plugin:enable', id);
-            forceLoadMainPlugin(id, win);
+            forceLoadMainPlugin(id, win).catch((err) =>
+              console.error(`Failed to load main plugin ${id}:`, err),
+            );
           } else {
             win.webContents.send('plugin:unload', id);
             ipcMain.emit('plugin:unload', id);
-            forceUnloadMainPlugin(id, win);
+            forceUnloadMainPlugin(id, win).catch((err) =>
+              console.error(`Failed to unload main plugin ${id}:`, err),
+            );
           }
 
           if (allPluginStubs[id]?.restartNeeded) {
-            showNeedToRestartDialog(id);
+            showNeedToRestartDialog(id).catch((err) =>
+              console.error(`Failed to show restart dialog for ${id}:`, err),
+            );
           }
         }
 
@@ -274,19 +281,23 @@ const showNeedToRestartDialog = async (id: string) => {
     dialogPromise = dialog.showMessageBox(dialogOptions);
   }
 
-  dialogPromise.then((dialogOutput) => {
-    switch (dialogOutput.response) {
-      case 0: {
-        restart();
-        break;
-      }
+  dialogPromise
+    .then((dialogOutput) => {
+      switch (dialogOutput.response) {
+        case 0: {
+          restart();
+          break;
+        }
 
-      // Ignore
-      default: {
-        break;
+        // Ignore
+        default: {
+          break;
+        }
       }
-    }
-  });
+    })
+    .catch((err) => {
+      console.error('Failed to show restart dialog:', err);
+    });
 };
 
 function initTheme(win: BrowserWindow) {
@@ -433,7 +444,12 @@ async function createMainWindow() {
     }
 
     const [x, y] = win.getPosition();
-    lateSave('window-position', { x, y });
+    const savedPos = config.get('window-position') as
+      | { x: number; y: number }
+      | undefined;
+    if (savedPos?.x !== x || savedPos?.y !== y) {
+      lateSave('window-position', { x, y });
+    }
   });
 
   let winWasMaximized: boolean;
@@ -451,10 +467,15 @@ async function createMainWindow() {
       return;
     }
 
-    lateSave('window-size', {
-      width,
-      height,
-    });
+    const savedSize = config.get('window-size') as
+      | { width: number; height: number }
+      | undefined;
+    if (savedSize?.width !== width || savedSize?.height !== height) {
+      lateSave('window-size', {
+        width,
+        height,
+      });
+    }
   });
 
   const savedTimeouts: Record<string, NodeJS.Timeout | undefined> = {};
@@ -474,9 +495,12 @@ async function createMainWindow() {
     }, 600);
   }
 
-  app.on('render-process-gone', (_event, _webContents, details) => {
-    showUnresponsiveDialog(win, details);
-  });
+  if (!renderProcessGoneRegistered) {
+    renderProcessGoneRegistered = true;
+    app.on('render-process-gone', (_event, _webContents, details) => {
+      showUnresponsiveDialog(win, details);
+    });
+  }
 
   win.once('ready-to-show', () => {
     if (config.get('options.appVisible')) {
@@ -586,7 +610,7 @@ app.once('browser-window-created', (_event, win) => {
       if (
         errorCode !== -3 &&
         // Workaround for #2435
-        !new URL(validatedURL).hostname.includes('doubleclick.net')
+        !validatedURL.includes('doubleclick.net')
       ) {
         // -3 is a false positive
         win.webContents.send('log', log);
@@ -964,7 +988,7 @@ function removeContentSecurityPolicy(
           }
 
           const result = await listener.apply();
-          return { ...accumulator, ...result };
+          return { ...acc, ...result };
         },
         Promise.resolve({ cancel: false }),
       );

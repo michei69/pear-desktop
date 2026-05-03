@@ -10,6 +10,7 @@ import type { RendererContext } from '@/types/contexts';
 import type { PluginConfig, PluginDef } from '@/types/plugins';
 
 const unregisterStyleMap: Record<string, (() => void)[]> = {};
+const adoptedStyleSheetMap: Record<string, CSSStyleSheet[]> = {};
 const loadedPluginMap: Record<
   string,
   PluginDef<unknown, unknown, unknown>
@@ -44,8 +45,14 @@ export const createContext = <Config extends PluginConfig>(
 export const forceUnloadRendererPlugin = async (id: string) => {
   unregisterStyleMap[id]?.forEach((unregister) => unregister());
 
+  if (adoptedStyleSheetMap[id]) {
+    document.adoptedStyleSheets = document.adoptedStyleSheets.filter(
+      (sheet) => !adoptedStyleSheetMap[id].includes(sheet),
+    );
+    delete adoptedStyleSheetMap[id];
+  }
+
   delete unregisterStyleMap[id];
-  delete loadedPluginMap[id];
 
   const plugin = (await rendererPlugins())[id];
   if (!plugin) return;
@@ -58,6 +65,7 @@ export const forceUnloadRendererPlugin = async (id: string) => {
     document.querySelector(`style#plugin-${id}`)?.remove();
   }
   if (hasStopped || (hasStopped === null && plugin?.renderer)) {
+    delete loadedPluginMap[id];
     console.log(
       LoggerPrefix,
       t('common.console.plugins.unloaded', { pluginName: id }),
@@ -95,6 +103,8 @@ export const forceLoadRendererPlugin = async (id: string) => {
 
         return styleSheet;
       });
+
+      adoptedStyleSheetMap[id] = styleSheetList;
 
       document.adoptedStyleSheets = [
         ...document.adoptedStyleSheets,

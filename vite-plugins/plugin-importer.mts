@@ -139,6 +139,7 @@ function supportsPlatform({ platform }: { platform: string }) {
   if (typeof platform !== 'number') return true;
 
   const is = globalThis.electronIs;
+  if (!is) return true; // Renderer context: allow all
 
   if (is.windows()) return (platform & Platform.Windows) !== 0;
   if (is.macOS()) return (platform & Platform.macOS) !== 0;

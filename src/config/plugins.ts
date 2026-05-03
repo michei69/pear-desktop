@@ -31,17 +31,17 @@ export function setOptions<T>(
   exclude: string[] = ['enabled'],
 ) {
   const plugins = store.get('plugins') as Record<string, T>;
-  // HACK: This is a workaround for preventing changed options from being overwritten
+  const filteredOptions = { ...options };
   exclude.forEach((key) => {
-    if (Object.prototype.hasOwnProperty.call(options, key)) {
-      delete options[key as keyof T];
+    if (Object.prototype.hasOwnProperty.call(filteredOptions, key)) {
+      delete filteredOptions[key as keyof T];
     }
   });
   store.set('plugins', {
     ...plugins,
     [plugin]: {
       ...plugins[plugin],
-      ...options,
+      ...filteredOptions,
     },
   });
 }

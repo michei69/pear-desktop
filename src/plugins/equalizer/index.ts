@@ -18,6 +18,8 @@ export type EqualizerPluginConfig = {
 };
 
 let appliedFilters: BiquadFilterNode[] = [];
+let audioSourceNode: AudioNode | null = null;
+let audioCtx: AudioContext | null = null;
 
 export default createPlugin({
   name: () => t('plugins.equalizer.name'),
@@ -56,33 +58,51 @@ export default createPlugin({
     async start({ getConfig }) {
       const config = await getConfig();
 
-      document.addEventListener(
-        'peard:audio-can-play',
-        ({ detail: { audioSource, audioContext } }) => {
+      document.addEventListener('peard:audio-can-play', ({ detail: { audioSource, audioContext } }) => {
           const filtersToApply = config.filters.concat(
             defaultPresets
               .filter((preset) => config.presets[preset])
               .map((preset) => presetConfigs[preset]),
           );
+
+          if (filtersToApply.length === 0) return;
+
+          // Clean up previous filters if they exist
+          appliedFilters.forEach((filter) => filter.disconnect());
+          appliedFilters = [];
+
+          audioSourceNode = audioSource;
+          audioCtx = audioContext;
+
+          // Disconnect default path to avoid parallel audio
+          audioSource.disconnect(audioContext.destination);
+
+          let lastNode: AudioNode = audioSource;
           filtersToApply.forEach((filter) => {
             const biquadFilter = audioContext.createBiquadFilter();
             biquadFilter.type = filter.type;
-            biquadFilter.frequency.value = filter.frequency; // filter frequency in Hz
+            biquadFilter.frequency.value = filter.frequency;
             biquadFilter.Q.value = filter.Q;
-            biquadFilter.gain.value = filter.gain; // filter gain in dB
+            biquadFilter.gain.value = filter.gain;
 
-            audioSource.connect(biquadFilter);
-            biquadFilter.connect(audioContext.destination);
+            lastNode.connect(biquadFilter);
+            lastNode = biquadFilter;
 
             appliedFilters.push(biquadFilter);
           });
-        },
-        { once: true, passive: true },
-      );
+          lastNode.connect(audioContext.destination);
+        });
     },
     stop() {
       appliedFilters.forEach((filter) => filter.disconnect());
       appliedFilters = [];
+
+      // Restore default audio path
+      if (audioSourceNode && audioCtx) {
+        audioSourceNode.connect(audioCtx.destination);
+        audioSourceNode = null;
+        audioCtx = null;
+      }
     },
   },
 });

@@ -168,20 +168,33 @@ export default createPlugin({
     ];
   },
 
-  async backend({ getConfig, ipc }) {
-    const config = await getConfig();
+  backend: {
+    async start({ getConfig, ipc }) {
+      const config = await getConfig();
 
-    if (config.globalShortcuts?.volumeUp) {
-      globalShortcut.register(config.globalShortcuts.volumeUp, () =>
-        ipc.send('changeVolume', true),
-      );
-    }
+      if (config.globalShortcuts?.volumeUp) {
+        globalShortcut.register(config.globalShortcuts.volumeUp, () =>
+          ipc.send('changeVolume', true),
+        );
+      }
 
-    if (config.globalShortcuts?.volumeDown) {
-      globalShortcut.register(config.globalShortcuts.volumeDown, () =>
-        ipc.send('changeVolume', false),
-      );
-    }
+      if (config.globalShortcuts?.volumeDown) {
+        globalShortcut.register(config.globalShortcuts.volumeDown, () =>
+          ipc.send('changeVolume', false),
+        );
+      }
+    },
+    async stop({ getConfig }) {
+      const config = await getConfig();
+
+      if (config.globalShortcuts?.volumeUp) {
+        globalShortcut.unregister(config.globalShortcuts.volumeUp);
+      }
+
+      if (config.globalShortcuts?.volumeDown) {
+        globalShortcut.unregister(config.globalShortcuts.volumeDown);
+      }
+    },
   },
 
   renderer: {

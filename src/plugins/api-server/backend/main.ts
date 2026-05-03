@@ -10,7 +10,7 @@ import { swaggerUI } from '@hono/swagger-ui';
 import { serve } from '@hono/node-server';
 import { createNodeWebSocket } from '@hono/node-ws';
 
-import { registerCallback } from '@/providers/song-info';
+import { registerCallback, unregisterCallback } from '@/providers/song-info';
 import { createBackend } from '@/utils';
 
 import { JWTPayloadSchema } from './scheme';
@@ -34,9 +34,10 @@ export const backend = createBackend<BackendType, APIServerConfig>({
     const config = await ctx.getConfig();
 
     this.init(ctx);
-    registerCallback((songInfo) => {
+    this.songInfoCallback = (songInfo) => {
       this.songInfo = songInfo;
-    });
+    };
+    registerCallback(this.songInfoCallback);
 
     ctx.ipc.on('peard:player-api-loaded', () => {
       ctx.ipc.send('peard:setup-seeked-listener');
@@ -60,6 +61,9 @@ export const backend = createBackend<BackendType, APIServerConfig>({
     this.run(config);
   },
   stop() {
+    if (this.songInfoCallback) {
+      unregisterCallback(this.songInfoCallback);
+    }
     this.end();
   },
   onConfigChange(config) {
@@ -92,7 +96,7 @@ export const backend = createBackend<BackendType, APIServerConfig>({
 
     // for web remote control
     this.app.use('*', async (ctx, next) => {
-      ctx.header('Access-Control-Request-Private-Network', 'true');
+      ctx.header('Access-Control-Allow-Private-Network', 'true');
       await next();
     });
 
@@ -166,7 +170,7 @@ export const backend = createBackend<BackendType, APIServerConfig>({
 
     this.app.get('/swagger', swaggerUI({ url: '/doc' }));
 
-    this.injectWebSocket = ws.injectWebSocket.bind(this);
+    this.injectWebSocket = ws.injectWebSocket.bind(ws);
   },
   run(config) {
     if (!this.app) return;

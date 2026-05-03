@@ -12,7 +12,7 @@ export const startingPages: Record<string, string> = {
   'Artists': 'FEmusic_library_corpus_track_artists',
   'Subscribed Artists': 'FEmusic_library_corpus_artists',
   'Uploads': 'FEmusic_library_privately_owned_landing',
-  'Uploaded Playlists': 'FEmusic_liked_playlists',
+  'Uploaded Playlists': 'FEmusic_library_privately_owned_playlists',
   'Uploaded Songs': 'FEmusic_library_privately_owned_tracks',
   'Uploaded Albums': 'FEmusic_library_privately_owned_releases',
   'Uploaded Artists': 'FEmusic_library_privately_owned_artists',

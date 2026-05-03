@@ -58,7 +58,7 @@ export const fetchLyrics = (info: SongInfo) => {
     if (cache.state === 'loading') {
       setTimeout(() => {
         fetchLyrics(info);
-      });
+      }, 100);
       return;
     }
 

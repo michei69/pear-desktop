@@ -236,6 +236,8 @@ export default createPlugin<
         syncVideoWithTransitionAudio();
       };
 
+      let videoListeners: Array<{ event: string; fn: EventListener }> | undefined;
+
       const syncVideoWithTransitionAudio = () => {
         const video = document.querySelector('video')!;
 
@@ -244,18 +246,22 @@ export default createPlugin<
           fadeDuration: this.config?.fadeInDuration,
         });
 
+        if (videoListeners) {
+          for (const { event, fn } of videoListeners) {
+            video.removeEventListener(event, fn);
+          }
+        }
+
         transitionAudio.play();
         transitionAudio.seek(video.currentTime);
 
-        video.addEventListener('seeking', () => {
+        const onSeeking = () => {
           transitionAudio.seek(video.currentTime);
-        });
-
-        video.addEventListener('pause', () => {
+        };
+        const onPause = () => {
           transitionAudio.pause();
-        });
-
-        video.addEventListener('play', () => {
+        };
+        const onPlay = () => {
           transitionAudio.play();
           transitionAudio.seek(video.currentTime);
 
@@ -263,7 +269,7 @@ export default createPlugin<
           const videoVolume = video.volume;
           video.volume = 0;
           videoFader.fadeTo(videoVolume);
-        });
+        };
 
         // Exit just before the end for the transition
         const transitionBeforeEnd = () => {
@@ -279,7 +285,17 @@ export default createPlugin<
           }
         };
 
+        video.addEventListener('seeking', onSeeking);
+        video.addEventListener('pause', onPause);
+        video.addEventListener('play', onPlay);
         video.addEventListener('timeupdate', transitionBeforeEnd);
+
+        videoListeners = [
+          { event: 'seeking', fn: onSeeking },
+          { event: 'pause', fn: onPause },
+          { event: 'play', fn: onPlay },
+          { event: 'timeupdate', fn: transitionBeforeEnd },
+        ];
       };
 
       const crossfade = (cb: () => void) => {
