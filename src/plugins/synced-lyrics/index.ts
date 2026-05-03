@@ -21,7 +21,38 @@ export default createPlugin({
     showTimeCodes: false,
     defaultTextString: '♪',
     lineEffect: 'fancy',
+    lyricsFontSize: 'small',
     romanization: true,
+    translation: {
+      enabled: false,
+      provider: 'openai-compatible',
+      targetLanguage: 'auto',
+      providers: {
+        'openai-compatible': {
+          baseUrl: 'https://api.openai.com/v1',
+          apiKey: '',
+          model: 'gpt-4o-mini',
+          apiMode: 'auto',
+        },
+        'anthropic': {
+          apiKey: '',
+          model: 'claude-haiku-4-5-20251001',
+        },
+        'gemini': {
+          apiKey: '',
+          model: 'gemini-2.0-flash',
+        },
+        'local-cli': {
+          engine: 'claude',
+          command: '',
+          model: '',
+          timeoutSeconds: 120,
+        },
+        'google-translate': {
+          host: 'translate.google.com',
+        },
+      },
+    },
   } satisfies SyncedLyricsPluginConfig as SyncedLyricsPluginConfig,
 
   menu,

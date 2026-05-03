@@ -876,6 +876,24 @@
           },
           "tooltip": "Choose the effect to apply to the current line"
         },
+        "lyrics-font-size": {
+          "label": "Lyrics font size",
+          "submenu": {
+            "small": {
+              "label": "Small",
+              "tooltip": "Use a more compact lyrics size"
+            },
+            "medium": {
+              "label": "Medium",
+              "tooltip": "Use a balanced lyrics size"
+            },
+            "large": {
+              "label": "Large",
+              "tooltip": "Use the original larger lyrics size"
+            }
+          },
+          "tooltip": "Choose how large the lyrics text should be"
+        },
         "precise-timing": {
           "label": "Make the lyrics perfectly synced",
           "tooltip": "Calculate to the milisecond the display of the next line (can have a small impact on performance)"
@@ -909,6 +927,117 @@
             }
           },
           "tooltip": "Convert Chinese character to Traditional or Simplified"
+        },
+        "translation": {
+          "label": "Lyrics translation",
+          "tooltip": "Translate lyrics and show the translated result line-by-line for display.",
+          "enabled": {
+            "label": "Enable translation",
+            "tooltip": "Show a translated line beneath each original lyric line."
+          },
+          "provider": {
+            "label": "Provider",
+            "tooltip": "Which service to use for translation."
+          },
+          "target-language": {
+            "label": "Target language",
+            "tooltip": "The language to translate lyrics into.",
+            "options": {
+              "auto": "Follow app language",
+              "zh-CN": "简体中文",
+              "zh-TW": "繁體中文",
+              "en": "English",
+              "ja": "日本語",
+              "ko": "한국어",
+              "fr": "Français",
+              "de": "Deutsch",
+              "es": "Español",
+              "pt-BR": "Português (Brasil)",
+              "pt-PT": "Português (Portugal)",
+              "it": "Italiano",
+              "nl": "Nederlands",
+              "ru": "Русский",
+              "uk": "Українська",
+              "pl": "Polski",
+              "tr": "Türkçe",
+              "ar": "العربية",
+              "he": "עברית",
+              "fa": "فارسی",
+              "hi": "हिन्दी",
+              "bn": "বাংলা",
+              "ur": "اردو",
+              "ta": "தமிழ்",
+              "te": "తెలుగు",
+              "mr": "मराठी",
+              "id": "Bahasa Indonesia",
+              "ms": "Bahasa Melayu",
+              "vi": "Tiếng Việt",
+              "th": "ไทย",
+              "fil": "Filipino",
+              "sw": "Kiswahili",
+              "sv": "Svenska",
+              "no": "Norsk",
+              "da": "Dansk",
+              "fi": "Suomi",
+              "cs": "Čeština",
+              "ro": "Română",
+              "hu": "Magyar",
+              "el": "Ελληνικά",
+              "bg": "Български",
+              "sr": "Српски",
+              "hr": "Hrvatski",
+              "sk": "Slovenčina",
+              "lt": "Lietuvių"
+            }
+          },
+          "configure": {
+            "label": "Configure API key & model…",
+            "tooltip": "Set provider-specific translation options."
+          },
+          "clear-cache": {
+            "label": "Clear translation cache",
+            "tooltip": "Delete all cached translations stored on disk."
+          },
+          "providers": {
+            "shared": {
+              "api-key": "API key",
+              "model": "Model"
+            },
+            "openai-compatible": {
+              "name": "OpenAI compatible",
+              "prompt-title": "OpenAI-compatible settings",
+              "prompt-label": "Use OpenAI-compatible servers, including Ollama (base URL http://127.0.0.1:11434/v1, API mode auto or chat-completions).",
+              "base-url": "Base URL",
+              "api-mode": "API mode (responses / auto / chat-completions)"
+            },
+            "anthropic": {
+              "name": "Anthropic Claude",
+              "prompt-title": "Anthropic settings",
+              "prompt-label": "Uses the native Anthropic Messages API."
+            },
+            "gemini": {
+              "name": "Google Gemini",
+              "prompt-title": "Gemini settings",
+              "prompt-label": "Uses Google's Generative Language API (generateContent)."
+            },
+            "local-cli": {
+              "name": "Local CLI",
+              "prompt-title": "Local CLI settings",
+              "prompt-label": "Use a locally logged-in Claude Code, Codex, or Gemini CLI. The command and model are automatic; the CLI uses its own logged-in default.",
+              "engine": "Local CLI",
+              "engine-claude": "Claude Code",
+              "engine-codex": "Codex",
+              "engine-gemini": "Gemini CLI",
+              "command": "Command",
+              "timeout": "Timeout seconds (15-600)"
+            },
+            "google-translate": {
+              "name": "Google Translate",
+              "prompt-title": "Google Translate settings",
+              "prompt-label": "Uses the unofficial free Google Translate endpoint. No API key is required, but Google may rate-limit it.",
+              "host": "Host"
+            }
+          }
         }
       },
       "name": "Synced Lyrics",

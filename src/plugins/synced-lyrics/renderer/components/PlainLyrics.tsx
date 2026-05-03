@@ -7,9 +7,12 @@ import {
   simplifyUnicode,
 } from '../utils';
 import { config } from '../renderer';
+import { getLineTranslation } from '../translation-store';
+import { lyricsStore } from '../store';
 
 interface PlainLyricsProps {
   line: string;
+  index: number;
 }
 
 export const PlainLyrics = (props: PlainLyricsProps) => {
@@ -30,6 +33,13 @@ export const PlainLyrics = (props: PlainLyricsProps) => {
     romanize(input).then((result) => {
       setRomanization(canonicalize(result));
     });
+  });
+
+  const translation = createMemo(() => {
+    if (!config()?.translation?.enabled) return '';
+    const videoId = lyricsStore.videoId;
+    if (!videoId) return '';
+    return getLineTranslation(videoId, props.index) ?? '';
   });
 
   return (
@@ -57,6 +67,19 @@ export const PlainLyrics = (props: PlainLyricsProps) => {
           class="romaji"
           text={{
             runs: [{ text: romanization() }],
+          }}
+        />
+      </Show>
+      <Show
+        when={
+          translation() &&
+          simplifyUnicode(text()) !== simplifyUnicode(translation())
+        }
+      >
+        <yt-formatted-string
+          class="translation"
+          text={{
+            runs: [{ text: translation() }],
           }}
         />
       </Show>

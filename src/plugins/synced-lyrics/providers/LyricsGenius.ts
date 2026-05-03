@@ -36,10 +36,10 @@ export class LyricsGenius implements LyricProvider {
           primary_artist: { name: artistB },
         },
       }) => {
-        const pointsA = (titleA === title ? 1 : 0) +
-          (artistA.includes(artist) ? 1 : 0);
-        const pointsB = (titleB === title ? 1 : 0) +
-          (artistB.includes(artist) ? 1 : 0);
+        const pointsA = (titleA.toLowerCase() === title.toLowerCase() ? 1 : 0) +
+          (artistA.toLowerCase().includes(artist.toLowerCase()) ? 1 : 0);
+        const pointsB = (titleB.toLowerCase() === title.toLowerCase() ? 1 : 0) +
+          (artistB.toLowerCase().includes(artist.toLowerCase()) ? 1 : 0);
 
         return pointsB - pointsA;
       },

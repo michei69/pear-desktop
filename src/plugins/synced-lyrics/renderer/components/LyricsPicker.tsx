@@ -32,7 +32,13 @@ import {
   ProviderNameSchema,
   type ProviderState,
 } from '../../providers';
-import { currentLyrics, lyricsStore, setLyricsStore } from '../store';
+import {
+  currentLyrics,
+  hasLyricText,
+  lyricsStore,
+  setLyricsStore,
+} from '../store';
+import { isChineseTranslationTarget } from '../translation-store';
 import { _ytAPI } from '../index';
 import { config } from '../renderer';
 
@@ -49,26 +55,39 @@ export const providerIdx = createMemo(() =>
 const shouldSwitchProvider = (providerData: ProviderState) => {
   if (providerData.state === 'error') return true;
   if (providerData.state === 'fetching') return true;
-  return (
-    providerData.state === 'done' &&
-    !providerData.data?.lines &&
-    !providerData.data?.lyrics
-  );
+  return providerData.state === 'done' && !hasLyricText(providerData.data);
 };
 
-const providerBias = (p: ProviderName) =>
-  (lyricsStore.lyrics[p].state === 'done' ? 1 : -1) +
-  (lyricsStore.lyrics[p].data?.lines?.length ? 2 : -1) +
-  (lyricsStore.lyrics[p].data?.lines?.length && p === ProviderNames.YTMusic
-    ? 1
-    : 0) +
-  (lyricsStore.lyrics[p].data?.lyrics ? 1 : -1);
+const providerBias = (p: ProviderName) => {
+  const state = lyricsStore.lyrics[p];
+  const data = state.data;
+  const hasSyncedText = data?.lines?.some((line) => line.text.trim()) ?? false;
+  const hasPlainText = Boolean(data?.lyrics?.trim());
+  const hasOfficialTranslation = Boolean(
+    data?.translation?.lines?.some((line) => line.text.trim()) ||
+    data?.translation?.lyrics?.trim(),
+  );
+  const cfg = config();
+  const wantsOfficialChineseTranslation = Boolean(
+    cfg?.translation.enabled &&
+    isChineseTranslationTarget(cfg.translation.targetLanguage),
+  );
+
+  return (
+    (state.state === 'done' ? 1 : -1) +
+    (hasLyricText(data) ? 2 : -2) +
+    (hasOfficialTranslation && wantsOfficialChineseTranslation ? 3 : 0) +
+    (hasSyncedText ? 2 : -1) +
+    (hasSyncedText && p === ProviderNames.YTMusic ? 1 : 0) +
+    (hasPlainText ? 1 : -1)
+  );
+};
 
 const pickBestProvider = () => {
   const preferred = config()?.preferredProvider;
   if (preferred) {
     const data = lyricsStore.lyrics[preferred].data;
-    if (Array.isArray(data?.lines) || data?.lyrics) {
+    if (hasLyricText(data)) {
       return { provider: preferred, force: true };
     }
   }
@@ -103,7 +122,14 @@ export const LyricsPicker = (props: {
       return;
     }
 
-    const parseResult = LocalStorageSchema.safeParse(JSON.parse(value));
+    const parsedValue = (() => {
+      try {
+        return JSON.parse(value);
+      } catch {
+        return null;
+      }
+    })();
+    const parseResult = LocalStorageSchema.safeParse(parsedValue);
     if (parseResult.success) {
       setLyricsStore('provider', parseResult.data.provider);
       setStarredProvider(parseResult.data.provider);
@@ -237,8 +263,7 @@ export const LyricsPicker = (props: {
                   <Match
                     when={
                       currentLyrics().state === 'done' &&
-                      (currentLyrics().data?.lines ||
-                        currentLyrics().data?.lyrics)
+                      hasLyricText(currentLyrics().data)
                     }
                   >
                     <LitElementWrapper
@@ -249,8 +274,7 @@ export const LyricsPicker = (props: {
                   <Match
                     when={
                       currentLyrics().state === 'done' &&
-                      !currentLyrics().data?.lines &&
-                      !currentLyrics().data?.lyrics
+                      !hasLyricText(currentLyrics().data)
                     }
                   >
                     <LitElementWrapper

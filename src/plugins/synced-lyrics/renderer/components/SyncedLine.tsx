@@ -6,6 +6,8 @@ import { type LineLyrics } from '@/plugins/synced-lyrics/types';
 
 import { config, currentTime } from '../renderer';
 import { _ytAPI } from '..';
+import { getLineTranslation } from '../translation-store';
+import { lyricsStore } from '../store';
 
 import {
   canonicalize,
@@ -105,6 +107,16 @@ export const SyncedLine = (props: SyncedLineProps) => {
     });
   });
 
+  // SyncedLine receives `props.index` from the VList iteration. The list is
+  // [lyricsPicker, ...lines], so the lyric line index is `props.index - 1`.
+  const translation = createMemo(() => {
+    if (!config()?.translation?.enabled) return '';
+    const videoId = lyricsStore.videoId;
+    if (!videoId) return '';
+    const lyricIndex = props.index - 1;
+    return getLineTranslation(videoId, lyricIndex) ?? '';
+  });
+
   return (
     <Show fallback={<EmptyLine {...props} />} when={text()}>
       <div
@@ -165,6 +177,34 @@ export const SyncedLine = (props: SyncedLineProps) => {
             >
               <span class="romaji">
                 <For each={romanization().split(' ')}>
+                  {(word, index) => {
+                    return (
+                      <span
+                        style={{
+                          'transition-delay': `${index() * 0.05}s`,
+                          'animation-delay': `${index() * 0.05}s`,
+                        }}
+                      >
+                        <yt-formatted-string
+                          text={{
+                            runs: [{ text: `${word} ` }],
+                          }}
+                        />
+                      </span>
+                    );
+                  }}
+                </For>
+              </span>
+            </Show>
+
+            <Show
+              when={
+                translation() &&
+                simplifyUnicode(text()) !== simplifyUnicode(translation())
+              }
+            >
+              <span class="translation">
+                <For each={translation().split(' ')}>
                   {(word, index) => {
                     return (
                       <span

@@ -30,8 +30,8 @@
   --lyrics-font-family: Satoshi, Avenir, -apple-system, BlinkMacSystemFont,
     Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Open Sans, Helvetica Neue,
     sans-serif;
-  --lyrics-font-size: clamp(1.4rem, 1.1vmax, 3rem);
-  --lyrics-line-height: var(--ytmusic-body-line-height);
+  --lyrics-font-size: 28px;
+  --lyrics-line-height: 1.18;
   --lyrics-width: 100%;
 
   /* Inactive Lyrics */
@@ -65,8 +65,9 @@
   height: 100%;
 }
 
-.description {
-  font-size: clamp(1.4rem, 1.1vmax, 3rem) !important;
+.synced-line .description,
+.text-lyrics.description {
+  font-size: var(--lyrics-font-size) !important;
   text-align: left !important;
 }
 
@@ -81,8 +82,15 @@
 
   & .text-lyrics > .romaji {
     color: var(--ytmusic-text-secondary) !important;
-    font-size: calc(var(--lyrics-font-size) * 0.7) !important;
+    font-size: calc(var(--lyrics-font-size) * 0.84) !important;
     font-style: italic !important;
+  }
+
+  & .text-lyrics > .translation {
+    font-size: calc(var(--lyrics-font-size) * 0.7) !important;
+    font-weight: inherit !important;
+    margin-top: 0.1em;
+    filter: brightness(75%);
   }
 }
 
@@ -125,9 +133,22 @@
 
   & > .romaji {
     color: var(--ytmusic-text-secondary) !important;
-    font-size: calc(var(--lyrics-font-size) * 0.7) !important;
+    font-size: calc(var(--lyrics-font-size) * 0.84) !important;
     font-style: italic !important;
   }
+
+  & > .translation {
+    color: inherit !important;
+    font-size: calc(var(--lyrics-font-size) * 0.92) !important;
+    font-weight: inherit !important;
+    margin-top: 0.15em;
+  }
+}
+
+.text-lyrics yt-formatted-string,
+.description yt-formatted-string {
+  font-size: inherit !important;
+  line-height: inherit !important;
 }
 
 .text-lyrics > span > span {
@@ -161,6 +182,11 @@
   align-items: center;
   justify-content: space-around;
   padding-block: 1em;
+}
+
+.lyrics-picker .description {
+  font-size: 14px !important;
+  line-height: 20px !important;
 }
 
 .lyrics-picker-content {
