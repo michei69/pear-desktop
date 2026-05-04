@@ -14,9 +14,9 @@ All notable changes to this project will be documented in this file. Dates are d
 - chore(deps): update dependency electron to v40.8.5 [`#4342`](https://github.com/michei69/pear-desktop/pull/4342)
 - fix(api-server): add required 'alg' option to JWT middleware [`#4368`](https://github.com/michei69/pear-desktop/pull/4368)
 - fix: migrate custom element from ES5 to ES6 [`#4416`](https://github.com/michei69/pear-desktop/issues/4416)
+- feat: translated lyrics [`cc43b67`](https://github.com/michei69/pear-desktop/commit/cc43b676524a6e761f53d6266af438a0d1fa5ac6)
 - chore: bump dependencies [`48d1fdf`](https://github.com/michei69/pear-desktop/commit/48d1fdf6554b0ee9bbaffea6333d8eaf9bc29d26)
 - chore: migrate Vite from v7 to v8 [`b1c880f`](https://github.com/michei69/pear-desktop/commit/b1c880f34664a35917c9b915749e15b013bac128)
-- fix: comprehensive codebase audit — lifecycle cleanup, memory leaks, performance, and correctness fixes [`6391c5e`](https://github.com/michei69/pear-desktop/commit/6391c5e4f130900b17ffd7c059c81e134756884b)
 
 #### [v3.11.5](https://github.com/michei69/pear-desktop/compare/v3.11.4...v3.11.5)
 
