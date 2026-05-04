@@ -161,7 +161,8 @@
                 "default": "Default",
                 "force-show": "Pilitang ipakita",
                 "hide": "Itago",
-                "label": "Mga Like na button"
+                "label": "Mga Like na button",
+                "swap": "Swap like buttons order"
               },
               "remove-upgrade-button": "Tanggalin ang upgrade na button",
               "theme": {
@@ -237,7 +238,8 @@
           "submenu": {
             "percent": "{{ratio}}%"
           }
-        }
+        },
+        "enable-seekbar": "Enable seekbar theming"
       },
       "name": "Tema ng Kulay ng Album"
     },
@@ -288,6 +290,7 @@
     },
     "amuse": {
       "description": "Nagdaragdag ng suporta sa {{applicationName}} para sa Amuse now playing widget ng 6K Labs",
+      "name": "Amuse",
       "response": {
         "query": "Tumatakbo ang Amuse API server. Gamitin ang GET /query para makuha ang impo ng kanta."
       }
@@ -319,6 +322,22 @@
         "hostname": {
           "label": "Hostname"
         },
+        "https": {
+          "label": "HTTPS & Certificates",
+          "submenu": {
+            "cert": {
+              "dialogTitle": "Select HTTPS certificate file",
+              "label": "Certificate file (.crt/.pem)"
+            },
+            "enable-https": {
+              "label": "Enable HTTPS"
+            },
+            "key": {
+              "dialogTitle": "Select HTTPS private key file",
+              "label": "Private key file (.key/.pem)"
+            }
+          }
+        },
         "port": {
           "label": "Port"
         }
@@ -344,6 +363,9 @@
       "menu": {
         "disable": "Huwag paganahin ang Proxy Adapter",
         "enable": "Paganahin ang Proxy Adapter",
+        "hostname": {
+          "label": "Hostname"
+        },
         "port": {
           "label": "Port"
         }
@@ -391,19 +413,36 @@
         "no-captions": "Walang captions ay available para sa kantang ito"
       }
     },
+    "clock": {
+      "description": "Add a clock to the navigation bar",
+      "menu": {
+        "format": {
+          "24-hour-format": "24-Hour Format",
+          "display-seconds": "Display Seconds",
+          "label": "Format"
+        }
+      },
+      "name": "Clock"
+    },
     "compact-sidebar": {
       "description": "Laging i-set ang sidebar sa compact mode",
       "name": "Pinaliit na Sidebar"
     },
     "crossfade": {
       "description": "I-crossfade kada kanta",
+      "menu": {
+        "advanced": "Advanced"
+      },
+      "name": "Crossfade [Beta]",
       "prompt": {
         "options": {
           "multi-input": {
             "fade-in-duration": "Tagal ng pag-fade in (ms)",
             "fade-out-duration": "Tagal ng pag-fade out (ms)",
             "fade-scaling": {
-              "label": "Scaling ng pag-fade"
+              "label": "Scaling ng pag-fade",
+              "linear": "Linear",
+              "logarithmic": "Logarithmic"
             },
             "seconds-before-end": "I-crossfade sa loob ng N segundo bago ang katapusan"
           },
@@ -449,10 +488,11 @@
         "play-on-application": "Patugtugin sa {{applicationName}}",
         "set-inactivity-timeout": "I-set ang inactivity timeout",
         "set-status-display-type": {
+          "label": "Status text",
           "submenu": {
+            "application": "Kumikinig sa {{applicationName}}",
             "artist": "Nakikinig sa {artist}",
-            "title": "Nakikinig sa {song title}",
-            "application": "Kumikinig sa {{applicationName}}"
+            "title": "Nakikinig sa {song title}"
           }
         }
       },
@@ -518,6 +558,7 @@
             "title": "I-configure kung kailan magda-download"
           },
           "submenu": {
+            "advanced": "Advanced",
             "enabled": "Napagana na",
             "mode": "Sukatan ng oras",
             "percent": "Porsyento",
@@ -565,6 +606,9 @@
     },
     "lyrics-genius": {
       "description": "Nagdaragdag ng suporta sa lyrics para sa karamihan ng kanta",
+      "menu": {
+        "romanized-lyrics": "Romanized Lyrics"
+      },
       "name": "Lyrics Genius",
       "renderer": {
         "fetched-lyrics": "Kinuha ang lyrics para sa Genius"
@@ -659,7 +703,11 @@
       "menu": {
         "always-on-top": "Laging sa itaas",
         "hotkey": {
+          "label": "Hotkey",
           "prompt": {
+            "keybind-options": {
+              "hotkey": "Hotkey"
+            },
             "label": "Pumili ng hotkey sa pag-toggle ng picture-in-picture",
             "title": "Hotkey ng Picture-in-picture"
           }
@@ -694,10 +742,12 @@
             "decrease": "Bawasan ang Volume",
             "increase": "Dagdagan ang Volume"
           },
-          "label": "Pumili ng Keybind para sa Global Volume:"
+          "label": "Pumili ng Keybind para sa Global Volume:",
+          "title": "Global Volume Keybinds"
         },
         "volume-steps": {
-          "label": "Pumili ng Dagdagan/Bawasan ang volume step"
+          "label": "Pumili ng Dagdagan/Bawasan ang volume step",
+          "title": "Volume Steps"
         }
       }
     },
@@ -740,6 +790,7 @@
         "scrobble-alternative-title": "Gumamit ng alternatibong mga title",
         "scrobble-other-media": "Mag-Scrobble ng ibang media"
       },
+      "name": "Scrobbler",
       "prompt": {
         "lastfm": {
           "api-key": "API key ng Last.fm",
@@ -781,7 +832,8 @@
       "name": "I-skip ang mga Katahimikan"
     },
     "sponsorblock": {
-      "description": "Automatikong Laktawan ang di part ng kanta tulad ng intro/outro o part ng mga music video na ang kanta ay di nagple-play"
+      "description": "Automatikong Laktawan ang di part ng kanta tulad ng intro/outro o part ng mga music video na ang kanta ay di nagple-play",
+      "name": "SponsorBlock"
     },
     "synced-lyrics": {
       "description": "Nagbibigay ng naka-sync na lyrics sa mga kanta, gamit ang mga provider tulad ng LRClib.",
@@ -790,6 +842,24 @@
         "not-found": "⚠️ Walang nakitang lyrics para sa kantang ito."
       },
       "menu": {
+        "convert-chinese-character": {
+          "label": "Convert Chinese character",
+          "submenu": {
+            "disabled": {
+              "label": "Disabled",
+              "tooltip": "Disable Chinese character conversion"
+            },
+            "simplified-to-traditional": {
+              "label": "Simplified to Traditional",
+              "tooltip": "Convert Simplified Chinese to Traditional Chinese"
+            },
+            "traditional-to-simplified": {
+              "label": "Traditional to Simplified",
+              "tooltip": "Convert Traditional Chinese to Simplified Chinese"
+            }
+          },
+          "tooltip": "Convert Chinese character to Traditional or Simplified"
+        },
         "default-text-string": {
           "label": "Default na character sa pagitan ng lyrics",
           "tooltip": "Pumili ng default na character na gagamitin sa pagitan ng lyrics"
@@ -816,6 +886,24 @@
           },
           "tooltip": "Pumili ng effect na ilalapat sa kasalukuyang linya"
         },
+        "lyrics-font-size": {
+          "label": "Lyrics font size",
+          "submenu": {
+            "large": {
+              "label": "Large",
+              "tooltip": "Use the original larger lyrics size"
+            },
+            "medium": {
+              "label": "Medium",
+              "tooltip": "Use a balanced lyrics size"
+            },
+            "small": {
+              "label": "Small",
+              "tooltip": "Use a more compact lyrics size"
+            }
+          },
+          "tooltip": "Choose how large the lyrics text should be"
+        },
         "precise-timing": {
           "label": "Gawing perpektong naka-sync ang lyrics",
           "tooltip": "Kalkulahin sa millisecond ang pagpapakita ng susunod na linya (maaaring magkaroon ng maliit na epekto sa performance)"
@@ -839,6 +927,117 @@
         "show-time-codes": {
           "label": "Ipakita ang mga time code",
           "tooltip": "Ipakita ang mga time code kasunod sa lyrics"
+        },
+        "translation": {
+          "clear-cache": {
+            "label": "Clear translation cache",
+            "tooltip": "Delete all cached translations stored on disk."
+          },
+          "configure": {
+            "label": "Configure API key & model…",
+            "tooltip": "Set provider-specific translation options."
+          },
+          "enabled": {
+            "label": "Enable translation",
+            "tooltip": "Show a translated line beneath each original lyric line."
+          },
+          "label": "Lyrics translation",
+          "provider": {
+            "label": "Provider",
+            "tooltip": "Which service to use for translation."
+          },
+          "providers": {
+            "anthropic": {
+              "name": "Anthropic Claude",
+              "prompt-label": "Uses the native Anthropic Messages API.",
+              "prompt-title": "Anthropic settings"
+            },
+            "gemini": {
+              "name": "Google Gemini",
+              "prompt-label": "Uses Google's Generative Language API (generateContent).",
+              "prompt-title": "Gemini settings"
+            },
+            "google-translate": {
+              "host": "Host",
+              "name": "Google Translate",
+              "prompt-label": "Uses the unofficial free Google Translate endpoint. No API key is required, but Google may rate-limit it.",
+              "prompt-title": "Google Translate settings"
+            },
+            "local-cli": {
+              "command": "Command",
+              "engine": "Local CLI",
+              "engine-claude": "Claude Code",
+              "engine-codex": "Codex",
+              "engine-gemini": "Gemini CLI",
+              "name": "Local CLI",
+              "prompt-label": "Use a locally logged-in Claude Code, Codex, or Gemini CLI. The command and model are automatic; the CLI uses its own logged-in default.",
+              "prompt-title": "Local CLI settings",
+              "timeout": "Timeout seconds (15-600)"
+            },
+            "openai-compatible": {
+              "api-mode": "API mode (responses / auto / chat-completions)",
+              "base-url": "Base URL",
+              "name": "OpenAI compatible",
+              "prompt-label": "Use OpenAI-compatible servers, including Ollama (base URL http://127.0.0.1:11434/v1, API mode auto or chat-completions).",
+              "prompt-title": "OpenAI-compatible settings"
+            },
+            "shared": {
+              "api-key": "API key",
+              "model": "Model"
+            }
+          },
+          "target-language": {
+            "label": "Target language",
+            "options": {
+              "ar": "العربية",
+              "auto": "Follow app language",
+              "bg": "Български",
+              "bn": "বাংলা",
+              "cs": "Čeština",
+              "da": "Dansk",
+              "de": "Deutsch",
+              "el": "Ελληνικά",
+              "en": "English",
+              "es": "Español",
+              "fa": "فارسی",
+              "fi": "Suomi",
+              "fil": "Filipino",
+              "fr": "Français",
+              "he": "עברית",
+              "hi": "हिन्दी",
+              "hr": "Hrvatski",
+              "hu": "Magyar",
+              "id": "Bahasa Indonesia",
+              "it": "Italiano",
+              "ja": "日本語",
+              "ko": "한국어",
+              "lt": "Lietuvių",
+              "mr": "मराठी",
+              "ms": "Bahasa Melayu",
+              "nl": "Nederlands",
+              "no": "Norsk",
+              "pl": "Polski",
+              "pt-BR": "Português (Brasil)",
+              "pt-PT": "Português (Portugal)",
+              "ro": "Română",
+              "ru": "Русский",
+              "sk": "Slovenčina",
+              "sr": "Српски",
+              "sv": "Svenska",
+              "sw": "Kiswahili",
+              "ta": "தமிழ்",
+              "te": "తెలుగు",
+              "th": "ไทย",
+              "tr": "Türkçe",
+              "uk": "Українська",
+              "ur": "اردو",
+              "vi": "Tiếng Việt",
+              "zh-CN": "简体中文",
+              "zh-TW": "繁體中文"
+            },
+            "tooltip": "The language to translate lyrics into."
+          },
+          "tooltip": "Translate lyrics and show the translated result line-by-line for display."
         }
       },
       "name": "Pag-sync ng Lyrics",
@@ -853,17 +1052,27 @@
       }
     },
     "taskbar-mediacontrol": {
-      "description": "Kontrolin ang pag-play mula sa iyong taskbar ng Windows"
+      "description": "Kontrolin ang pag-play mula sa iyong taskbar ng Windows",
+      "name": "Taskbar Media Control"
     },
     "touchbar": {
-      "description": "Idaragdag ang TouchBar na widget para sa mga user ng macOS"
+      "description": "Idaragdag ang TouchBar na widget para sa mga user ng macOS",
+      "name": "TouchBar"
     },
     "transparent-player": {
       "description": "Gawing transparent ang app window",
       "menu": {
+        "opacity": {
+          "label": "Opacity",
+          "submenu": {
+            "percent": "{{opacity}}%"
+          }
+        },
         "type": {
           "label": "Uri",
           "submenu": {
+            "acrylic": "Acrylic",
+            "mica": "Mica",
             "none": "Wala",
             "tabbed": "Naka-tab"
           }
@@ -872,7 +1081,8 @@
       "name": "Transparent na Player"
     },
     "tuna-obs": {
-      "description": "Integrasyon kasama ang Tuna na OBS plugin"
+      "description": "Integrasyon kasama ang Tuna na OBS plugin",
+      "name": "Tuna OBS"
     },
     "unobtrusive-player": {
       "description": "Pinipigilan ang player na mag-pop up kapag nagpe-play ng kanta",
@@ -891,14 +1101,18 @@
         },
         "force-hide": "Piliting tanggalin ang video tab",
         "mode": {
+          "label": "Mode",
           "submenu": {
-            "disabled": "Di-napagana"
+            "custom": "Custom toggle",
+            "disabled": "Di-napagana",
+            "native": "Native toggle"
           }
         }
       },
       "name": "Pag-toggle ng Video",
       "templates": {
-        "button-song": "Kanta"
+        "button-song": "Kanta",
+        "button-video": "Video"
       }
     },
     "visualizer": {

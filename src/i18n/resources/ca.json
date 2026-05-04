@@ -886,6 +886,24 @@
           },
           "tooltip": "Tria l'efecte a aplicar a la línia actual"
         },
+        "lyrics-font-size": {
+          "label": "Mida de la lletra",
+          "submenu": {
+            "large": {
+              "label": "Gran",
+              "tooltip": "Utilitza la mida de lletra original més gran"
+            },
+            "medium": {
+              "label": "Mitjana",
+              "tooltip": "Utilitza una mida de lletra equilibrada"
+            },
+            "small": {
+              "label": "Petita",
+              "tooltip": "Utilitza una mida de lletra més compacta"
+            }
+          },
+          "tooltip": "Tria com de gran ha de ser el text de la lletra"
+        },
         "precise-timing": {
           "label": "Fes que les lletres es sincronitzin a la perfecció",
           "tooltip": "Calcula al mil·lisegon l'aparició de la següent línia (pot tenir un petit impacte en el rendiment)"
@@ -909,6 +927,117 @@
         "show-time-codes": {
           "label": "Mostra els codis de temps",
           "tooltip": "Mostra els codis de temps al costat de la lletra"
+        },
+        "translation": {
+          "clear-cache": {
+            "label": "Neteja la memòria cau de traducció",
+            "tooltip": "Elimina totes les traduccions emmagatzemades al disc."
+          },
+          "configure": {
+            "label": "Configura la clau API i el model…",
+            "tooltip": "Estableix les opcions de traducció específiques del proveïdor."
+          },
+          "enabled": {
+            "label": "Activa la traducció",
+            "tooltip": "Mostra una línia traduïda sota cada línia de lletra original."
+          },
+          "label": "Traducció de la lletra",
+          "provider": {
+            "label": "Proveïdor",
+            "tooltip": "Quin servei s'utilitzarà per a la traducció."
+          },
+          "providers": {
+            "anthropic": {
+              "name": "Anthropic Claude",
+              "prompt-label": "Utilitza l'API nativa de missatges d'Anthropic.",
+              "prompt-title": "Configuració d'Anthropic"
+            },
+            "gemini": {
+              "name": "Google Gemini",
+              "prompt-label": "Utilitza l'API de llenguatge generatiu de Google (generateContent).",
+              "prompt-title": "Configuració de Gemini"
+            },
+            "google-translate": {
+              "host": "Servidor",
+              "name": "Google Translate",
+              "prompt-label": "Utilitza l'extrem no oficial gratuït de Google Translate. No es requereix clau API, però Google pot limitar-ne la velocitat.",
+              "prompt-title": "Configuració de Google Translate"
+            },
+            "local-cli": {
+              "command": "Ordre",
+              "engine": "CLI local",
+              "engine-claude": "Claude Code",
+              "engine-codex": "Codex",
+              "engine-gemini": "Gemini CLI",
+              "name": "CLI local",
+              "prompt-label": "Utilitza un Claude Code, Codex o Gemini CLI iniciat sessió localment. L'ordre i el model són automàtics; el CLI utilitza el seu propi valor predeterminat.",
+              "prompt-title": "Configuració del CLI local",
+              "timeout": "Temps d'espera en segons (15-600)"
+            },
+            "openai-compatible": {
+              "api-mode": "Mode API (responses / auto / chat-completions)",
+              "base-url": "URL base",
+              "name": "Compatible amb OpenAI",
+              "prompt-label": "Utilitza servidors compatibles amb OpenAI, inclòs Ollama (URL base http://127.0.0.1:11434/v1, mode API auto o chat-completions).",
+              "prompt-title": "Configuració compatible amb OpenAI"
+            },
+            "shared": {
+              "api-key": "Clau API",
+              "model": "Model"
+            }
+          },
+          "target-language": {
+            "label": "Idioma de destinació",
+            "options": {
+              "ar": "العربية",
+              "auto": "Segueix l'idioma de l'aplicació",
+              "bg": "Български",
+              "bn": "বাংলা",
+              "cs": "Čeština",
+              "da": "Dansk",
+              "de": "Deutsch",
+              "el": "Ελληνικά",
+              "en": "English",
+              "es": "Español",
+              "fa": "فارسی",
+              "fi": "Suomi",
+              "fil": "Filipino",
+              "fr": "Français",
+              "he": "עברית",
+              "hi": "हिन्दी",
+              "hr": "Hrvatski",
+              "hu": "Magyar",
+              "id": "Bahasa Indonesia",
+              "it": "Italiano",
+              "ja": "日本語",
+              "ko": "한국어",
+              "lt": "Lietuvių",
+              "mr": "मराठी",
+              "ms": "Bahasa Melayu",
+              "nl": "Nederlands",
+              "no": "Norsk",
+              "pl": "Polski",
+              "pt-BR": "Português (Brasil)",
+              "pt-PT": "Português (Portugal)",
+              "ro": "Română",
+              "ru": "Русский",
+              "sk": "Slovenčina",
+              "sr": "Српски",
+              "sv": "Svenska",
+              "sw": "Kiswahili",
+              "ta": "தமிழ்",
+              "te": "తెలుగు",
+              "th": "ไทย",
+              "tr": "Türkçe",
+              "uk": "Українська",
+              "ur": "اردو",
+              "vi": "Tiếng Việt",
+              "zh-CN": "简体中文",
+              "zh-TW": "繁體中文"
+            },
+            "tooltip": "L'idioma al qual traduir les lletres."
+          },
+          "tooltip": "Tradueix les lletres i mostra el resultat traduït línia per línia per a la visualització."
         }
       },
       "name": "Lletres sincronitzades",

@@ -161,7 +161,8 @@
                 "default": "По подразбиране",
                 "force-show": "Принудително показване",
                 "hide": "Скриване",
-                "label": "Показване на \"Харесвам\" бутони"
+                "label": "Показване на \"Харесвам\" бутони",
+                "swap": "Размяна на реда на бутоните \"Харесвам\""
               },
               "remove-upgrade-button": "Премахване на \"Ъпгрейд\" бутона",
               "theme": {
@@ -237,7 +238,8 @@
           "submenu": {
             "percent": "{{ratio}}%"
           }
-        }
+        },
+        "enable-seekbar": "Активиране на тематизиране на лентата за търсене"
       },
       "name": "Цветова тема на албума"
     },
@@ -320,6 +322,22 @@
         "hostname": {
           "label": "Име на хост"
         },
+        "https": {
+          "label": "HTTPS и сертификати",
+          "submenu": {
+            "cert": {
+              "dialogTitle": "Изберете HTTPS сертификатен файл",
+              "label": "Сертификатен файл (.crt/.pem)"
+            },
+            "enable-https": {
+              "label": "Активиране на HTTPS"
+            },
+            "key": {
+              "dialogTitle": "Изберете HTTPS файл с частен ключ",
+              "label": "Файл с частен ключ (.key/.pem)"
+            }
+          }
+        },
         "port": {
           "label": "Порт"
         }
@@ -395,6 +413,17 @@
         "no-captions": "Няма налични надписи за тази песен"
       }
     },
+    "clock": {
+      "description": "Добавя часовник към навигационната лента",
+      "menu": {
+        "format": {
+          "24-hour-format": "24-часов формат",
+          "display-seconds": "Показване на секундите",
+          "label": "Формат"
+        }
+      },
+      "name": "Часовник"
+    },
     "compact-sidebar": {
       "description": "Винаги настройвай страничната лента в компактен режим",
       "name": "Компактна странична лента"
@@ -461,9 +490,9 @@
         "set-status-display-type": {
           "label": "Статус текст",
           "submenu": {
+            "application": "Слушам {{applicationName}}",
             "artist": "Слушам {artist}",
-            "title": "Слушам {song title}",
-            "application": "Слушам {{applicationName}}"
+            "title": "Слушам {song title}"
           }
         }
       },
@@ -813,6 +842,24 @@
         "not-found": "⚠️ За тази песен не са намерени текстове."
       },
       "menu": {
+        "convert-chinese-character": {
+          "label": "Конвертиране на китайски символи",
+          "submenu": {
+            "disabled": {
+              "label": "Изключено",
+              "tooltip": "Изключване на конвертирането на китайски символи"
+            },
+            "simplified-to-traditional": {
+              "label": "Опростен към традиционен",
+              "tooltip": "Конвертиране на опростен китайски в традиционен китайски"
+            },
+            "traditional-to-simplified": {
+              "label": "Традиционен към опростен",
+              "tooltip": "Конвертиране на традиционен китайски в опростен китайски"
+            }
+          },
+          "tooltip": "Конвертиране на китайски символи в традиционен или опростен"
+        },
         "default-text-string": {
           "label": "Подразбиращ се знак между текстовете",
           "tooltip": "Изберете знака, който да се използва за интервала между текстовете"
@@ -839,6 +886,24 @@
           },
           "tooltip": "Изберете ефекта, който да се приложи към текущия ред"
         },
+        "lyrics-font-size": {
+          "label": "Размер на шрифта на текстовете",
+          "submenu": {
+            "large": {
+              "label": "Голям",
+              "tooltip": "Използване на оригиналния по-голям размер на текстовете"
+            },
+            "medium": {
+              "label": "Среден",
+              "tooltip": "Използване на балансиран размер на текстовете"
+            },
+            "small": {
+              "label": "Малък",
+              "tooltip": "Използване на по-компактен размер на текстовете"
+            }
+          },
+          "tooltip": "Изберете колко голям да бъде текстът на текстовете"
+        },
         "precise-timing": {
           "label": "Направете текстовете перфектно синхронизирани",
           "tooltip": "Изчислете до милисекунда показването на следващия ред (може да има малък ефект върху производителността)"
@@ -862,6 +927,117 @@
         "show-time-codes": {
           "label": "Показване на временни кодове",
           "tooltip": "Показване на временни кодове до текстовете"
+        },
+        "translation": {
+          "clear-cache": {
+            "label": "Изчистване на кеша за превод",
+            "tooltip": "Изтриване на всички кеширани преводи, съхранявани на диска."
+          },
+          "configure": {
+            "label": "Конфигуриране на API ключ и модел…",
+            "tooltip": "Задаване на опции за превод, специфични за доставчика."
+          },
+          "enabled": {
+            "label": "Активиране на превод",
+            "tooltip": "Показване на преведен ред под всеки оригинален ред от текста."
+          },
+          "label": "Превод на текстове",
+          "provider": {
+            "label": "Доставчик",
+            "tooltip": "Коя услуга да се използва за превод."
+          },
+          "providers": {
+            "anthropic": {
+              "name": "Anthropic Claude",
+              "prompt-label": "Използва родния API на Anthropic Messages.",
+              "prompt-title": "Настройки на Anthropic"
+            },
+            "gemini": {
+              "name": "Google Gemini",
+              "prompt-label": "Използва Generative Language API на Google (generateContent).",
+              "prompt-title": "Настройки на Gemini"
+            },
+            "google-translate": {
+              "host": "Хост",
+              "name": "Google Translate",
+              "prompt-label": "Използва неофициалния безплатен крайточка на Google Translate. Не е необходим API ключ, но Google може да ограничи честотата на заявките.",
+              "prompt-title": "Настройки на Google Translate"
+            },
+            "local-cli": {
+              "command": "Команда",
+              "engine": "Локален CLI",
+              "engine-claude": "Claude Code",
+              "engine-codex": "Codex",
+              "engine-gemini": "Gemini CLI",
+              "name": "Локален CLI",
+              "prompt-label": "Използва локално влязъл Claude Code, Codex или Gemini CLI. Командата и моделът са автоматични; CLI използва своите собствени стойности по подразбиране, с които е влязъл.",
+              "prompt-title": "Настройки на локален CLI",
+              "timeout": "Таймаут в секунди (15-600)"
+            },
+            "openai-compatible": {
+              "api-mode": "API режим (responses / auto / chat-completions)",
+              "base-url": "Базов URL",
+              "name": "Съвместим с OpenAI",
+              "prompt-label": "Използване на сървъри, съвместими с OpenAI, включително Ollama (базов URL http://127.0.0.1:11434/v1, API режим auto или chat-completions).",
+              "prompt-title": "Настройки за съвместимост с OpenAI"
+            },
+            "shared": {
+              "api-key": "API ключ",
+              "model": "Модел"
+            }
+          },
+          "target-language": {
+            "label": "Целеви език",
+            "options": {
+              "ar": "العربية",
+              "auto": "Следване на езика на приложението",
+              "bg": "Български",
+              "bn": "বাংলা",
+              "cs": "Čeština",
+              "da": "Dansk",
+              "de": "Deutsch",
+              "el": "Ελληνικά",
+              "en": "English",
+              "es": "Español",
+              "fa": "فارسی",
+              "fi": "Suomi",
+              "fil": "Filipino",
+              "fr": "Français",
+              "he": "עברית",
+              "hi": "हिन्दी",
+              "hr": "Hrvatski",
+              "hu": "Magyar",
+              "id": "Bahasa Indonesia",
+              "it": "Italiano",
+              "ja": "日本語",
+              "ko": "한국어",
+              "lt": "Lietuvių",
+              "mr": "मराठी",
+              "ms": "Bahasa Melayu",
+              "nl": "Nederlands",
+              "no": "Norsk",
+              "pl": "Polski",
+              "pt-BR": "Português (Brasil)",
+              "pt-PT": "Português (Portugal)",
+              "ro": "Română",
+              "ru": "Русский",
+              "sk": "Slovenčina",
+              "sr": "Српски",
+              "sv": "Svenska",
+              "sw": "Kiswahili",
+              "ta": "தமிழ்",
+              "te": "తెలుగు",
+              "th": "ไทย",
+              "tr": "Türkçe",
+              "uk": "Українська",
+              "ur": "اردو",
+              "vi": "Tiếng Việt",
+              "zh-CN": "简体中文",
+              "zh-TW": "繁體中文"
+            },
+            "tooltip": "Езикът, на който да се превеждат текстовете."
+          },
+          "tooltip": "Превеждане на текстове и показване на преведения резултат ред по ред за визуализация."
         }
       },
       "name": "Синхронизирани текстове",

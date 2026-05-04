@@ -161,7 +161,8 @@
                 "default": "पूर्वनिर्धारित",
                 "force-show": "देखाउनुहोस",
                 "hide": "लुकाउनुहोस",
-                "label": "लाइक बटनहरू"
+                "label": "लाइक बटनहरू",
+                "swap": "Swap like buttons order"
               },
               "remove-upgrade-button": "अपग्रेड बटन हटाउनुहोस्",
               "theme": {
@@ -237,7 +238,8 @@
           "submenu": {
             "percent": "{{ratio}}%"
           }
-        }
+        },
+        "enable-seekbar": "Enable seekbar theming"
       },
       "name": "एल्बम रङ विषयवस्तु"
     },
@@ -320,6 +322,22 @@
         "hostname": {
           "label": "होस्टनेम"
         },
+        "https": {
+          "label": "HTTPS & Certificates",
+          "submenu": {
+            "cert": {
+              "dialogTitle": "Select HTTPS certificate file",
+              "label": "Certificate file (.crt/.pem)"
+            },
+            "enable-https": {
+              "label": "Enable HTTPS"
+            },
+            "key": {
+              "dialogTitle": "Select HTTPS private key file",
+              "label": "Private key file (.key/.pem)"
+            }
+          }
+        },
         "port": {
           "label": "पोर्ट"
         }
@@ -395,6 +413,17 @@
         "no-captions": "यो गीतको लागि कुनै क्याप्सन उपलब्ध छैन।"
       }
     },
+    "clock": {
+      "description": "Add a clock to the navigation bar",
+      "menu": {
+        "format": {
+          "24-hour-format": "24-Hour Format",
+          "display-seconds": "Display Seconds",
+          "label": "Format"
+        }
+      },
+      "name": "Clock"
+    },
     "compact-sidebar": {
       "description": "सँधै साइडबारलाई कम्प्याक्ट मोडमा सेट गर्नुहोस्",
       "name": "कम्प्याक्ट साइडबार"
@@ -421,6 +450,19 @@
         }
       }
     },
+    "custom-output-device": {
+      "description": "Configure a custom output media device for songs",
+      "menu": {
+        "device-selector": "Select Device"
+      },
+      "name": "Custom Output Device",
+      "prompt": {
+        "device-selector": {
+          "label": "Choose the output media device to be used",
+          "title": "Select Output Device"
+        }
+      }
+    },
     "disable-autoplay": {
       "description": "\"रोकिएको\" स्मोथिथिमा गीत सुरु गराउँछ",
       "menu": {
@@ -444,7 +486,15 @@
         "hide-duration-left": "बाकी समय लुकाऊ",
         "hide-github-button": "GitHub लिंक लुकाऊ",
         "play-on-application": "{{applicationName}} मा बजाउ",
-        "set-inactivity-timeout": "इनएक्टिभिटी टाइमआउट राख"
+        "set-inactivity-timeout": "इनएक्टिभिटी टाइमआउट राख",
+        "set-status-display-type": {
+          "label": "Status text",
+          "submenu": {
+            "application": "Listening to {{applicationName}}",
+            "artist": "Listening to {artist}",
+            "title": "Listening to {song title}"
+          }
+        }
       },
       "name": "डिसकार्ड रिच प्रीसेंस",
       "prompt": {
@@ -712,7 +762,12 @@
         }
       },
       "description": "भिडियो ओभरलेमा बटनको साथ भिडियो गुणस्तर परिवर्तन गर्न अनुमति दिन्छ",
-      "name": "भिडियो गुणस्तर परिवर्तनकर्ता"
+      "name": "भिडियो गुणस्तर परिवर्तनकर्ता",
+      "renderer": {
+        "quality-settings-button": {
+          "label": "Open player quality changer"
+        }
+      }
     },
     "scrobbler": {
       "description": "स्क्रोब्लिङ समर्थन थप्नुहोस् (etc. last.fm, Listenbrainz)",
@@ -731,6 +786,7 @@
         "listenbrainz": {
           "token": "ListenBrainz प्रयोगकर्ता टोकन प्रविष्ट गर्नुहोस्"
         },
+        "scrobble-alternative-artist": "Use alternative artists",
         "scrobble-alternative-title": "वैकल्पिक शीर्षकहरू प्रयोग गर्नुहोस्",
         "scrobble-other-media": "अन्य मिडियालाई स्क्रबल गर्नुहोस्"
       },
@@ -786,6 +842,24 @@
         "not-found": "⚠️ यो गीतका लागि कुनै गीतशब्द फेला परेन।"
       },
       "menu": {
+        "convert-chinese-character": {
+          "label": "Convert Chinese character",
+          "submenu": {
+            "disabled": {
+              "label": "Disabled",
+              "tooltip": "Disable Chinese character conversion"
+            },
+            "simplified-to-traditional": {
+              "label": "Simplified to Traditional",
+              "tooltip": "Convert Simplified Chinese to Traditional Chinese"
+            },
+            "traditional-to-simplified": {
+              "label": "Traditional to Simplified",
+              "tooltip": "Convert Traditional Chinese to Simplified Chinese"
+            }
+          },
+          "tooltip": "Convert Chinese character to Traditional or Simplified"
+        },
         "default-text-string": {
           "label": "पूर्वनिर्धारित अक्षर गीतशब्दहरू बीचमा",
           "tooltip": "गीतशब्दहरू बीचको खाली ठाउँका लागि प्रयोग हुने पूर्वनिर्धारित अक्षर छनोट गर्नुहोस्"
@@ -812,9 +886,35 @@
           },
           "tooltip": "हालको लाइनमा लागू गर्ने प्रभाव चयन गर्नुहोस्"
         },
+        "lyrics-font-size": {
+          "label": "Lyrics font size",
+          "submenu": {
+            "large": {
+              "label": "Large",
+              "tooltip": "Use the original larger lyrics size"
+            },
+            "medium": {
+              "label": "Medium",
+              "tooltip": "Use a balanced lyrics size"
+            },
+            "small": {
+              "label": "Small",
+              "tooltip": "Use a more compact lyrics size"
+            }
+          },
+          "tooltip": "Choose how large the lyrics text should be"
+        },
         "precise-timing": {
           "label": "गीतशब्दहरू पूर्ण रूपमा समक्रमित बनाउनुहोस्",
           "tooltip": "अर्को लाइनको प्रदर्शनलाई मिलिसेकेन्डमा गणना गर्नुहोस् (यसले प्रदर्शनमा हल्का प्रभाव पार्न सक्छ)"
+        },
+        "preferred-provider": {
+          "label": "Preferred Provider",
+          "none": {
+            "label": "None",
+            "tooltip": "No preferred provider"
+          },
+          "tooltip": "Choose the default provider to use"
         },
         "romanization": {
           "label": "रोमनकृत शब्दहरू",
@@ -827,6 +927,117 @@
         "show-time-codes": {
           "label": "समय कोडहरू देखाउनुहोस्",
           "tooltip": "गीतशब्दहरूको छेउमा समय कोडहरू देखाउनुहोस्"
+        },
+        "translation": {
+          "clear-cache": {
+            "label": "Clear translation cache",
+            "tooltip": "Delete all cached translations stored on disk."
+          },
+          "configure": {
+            "label": "Configure API key & model…",
+            "tooltip": "Set provider-specific translation options."
+          },
+          "enabled": {
+            "label": "Enable translation",
+            "tooltip": "Show a translated line beneath each original lyric line."
+          },
+          "label": "Lyrics translation",
+          "provider": {
+            "label": "Provider",
+            "tooltip": "Which service to use for translation."
+          },
+          "providers": {
+            "anthropic": {
+              "name": "Anthropic Claude",
+              "prompt-label": "Uses the native Anthropic Messages API.",
+              "prompt-title": "Anthropic settings"
+            },
+            "gemini": {
+              "name": "Google Gemini",
+              "prompt-label": "Uses Google's Generative Language API (generateContent).",
+              "prompt-title": "Gemini settings"
+            },
+            "google-translate": {
+              "host": "Host",
+              "name": "Google Translate",
+              "prompt-label": "Uses the unofficial free Google Translate endpoint. No API key is required, but Google may rate-limit it.",
+              "prompt-title": "Google Translate settings"
+            },
+            "local-cli": {
+              "command": "Command",
+              "engine": "Local CLI",
+              "engine-claude": "Claude Code",
+              "engine-codex": "Codex",
+              "engine-gemini": "Gemini CLI",
+              "name": "Local CLI",
+              "prompt-label": "Use a locally logged-in Claude Code, Codex, or Gemini CLI. The command and model are automatic; the CLI uses its own logged-in default.",
+              "prompt-title": "Local CLI settings",
+              "timeout": "Timeout seconds (15-600)"
+            },
+            "openai-compatible": {
+              "api-mode": "API mode (responses / auto / chat-completions)",
+              "base-url": "Base URL",
+              "name": "OpenAI compatible",
+              "prompt-label": "Use OpenAI-compatible servers, including Ollama (base URL http://127.0.0.1:11434/v1, API mode auto or chat-completions).",
+              "prompt-title": "OpenAI-compatible settings"
+            },
+            "shared": {
+              "api-key": "API key",
+              "model": "Model"
+            }
+          },
+          "target-language": {
+            "label": "Target language",
+            "options": {
+              "ar": "العربية",
+              "auto": "Follow app language",
+              "bg": "Български",
+              "bn": "বাংলা",
+              "cs": "Čeština",
+              "da": "Dansk",
+              "de": "Deutsch",
+              "el": "Ελληνικά",
+              "en": "English",
+              "es": "Español",
+              "fa": "فارسی",
+              "fi": "Suomi",
+              "fil": "Filipino",
+              "fr": "Français",
+              "he": "עברית",
+              "hi": "हिन्दी",
+              "hr": "Hrvatski",
+              "hu": "Magyar",
+              "id": "Bahasa Indonesia",
+              "it": "Italiano",
+              "ja": "日本語",
+              "ko": "한국어",
+              "lt": "Lietuvių",
+              "mr": "मराठी",
+              "ms": "Bahasa Melayu",
+              "nl": "Nederlands",
+              "no": "Norsk",
+              "pl": "Polski",
+              "pt-BR": "Português (Brasil)",
+              "pt-PT": "Português (Portugal)",
+              "ro": "Română",
+              "ru": "Русский",
+              "sk": "Slovenčina",
+              "sr": "Српски",
+              "sv": "Svenska",
+              "sw": "Kiswahili",
+              "ta": "தமிழ்",
+              "te": "తెలుగు",
+              "th": "ไทย",
+              "tr": "Türkçe",
+              "uk": "Українська",
+              "ur": "اردو",
+              "vi": "Tiếng Việt",
+              "zh-CN": "简体中文",
+              "zh-TW": "繁體中文"
+            },
+            "tooltip": "The language to translate lyrics into."
+          },
+          "tooltip": "Translate lyrics and show the translated result line-by-line for display."
         }
       },
       "name": "समक्रमित गीतशब्दहरू",
@@ -847,6 +1058,27 @@
     "touchbar": {
       "description": "MacOS प्रयोगकर्ताहरूका लागि टचबार विजेट थप्दछ",
       "name": "टचबार"
+    },
+    "transparent-player": {
+      "description": "Makes the app window transparent",
+      "menu": {
+        "opacity": {
+          "label": "Opacity",
+          "submenu": {
+            "percent": "{{opacity}}%"
+          }
+        },
+        "type": {
+          "label": "Type",
+          "submenu": {
+            "acrylic": "Acrylic",
+            "mica": "Mica",
+            "none": "None",
+            "tabbed": "Tabbed"
+          }
+        }
+      },
+      "name": "Transparent Player"
     },
     "tuna-obs": {
       "description": "OBS को टुना प्लगइनसँग एकीकरण",

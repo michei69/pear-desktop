@@ -1,1 +1,1126 @@
-{}
+{
+  "common": {
+    "console": {
+      "plugins": {
+        "execute-failed": "Не ўдалося выканаць плагін {{pluginName}}::{{contextName}}",
+        "executed-at-ms": "Плагін {{pluginName}}::{{contextName}} выкананы за {{ms}} мс",
+        "initialize-failed": "Не ўдалося ініцыялізаваць плагін \"{{pluginName}}\"",
+        "load-all": "Загрузка ўсіх плагінаў",
+        "load-failed": "Не ўдалося загрузіць плагін \"{{pluginName}}\"",
+        "loaded": "Плагін \"{{pluginName}}\" загружаны",
+        "unload-failed": "Не ўдалося выгрузіць плагін \"{{pluginName}}\"",
+        "unloaded": "Плагін \"{{pluginName}}\" выгружаны"
+      }
+    }
+  },
+  "language": {
+    "code": "be",
+    "local-name": "Беларуская",
+    "name": "Беларуская"
+  },
+  "main": {
+    "console": {
+      "did-finish-load": {
+        "dev-tools": "Загрузка завершана. DevTools адчынены"
+      },
+      "i18n": {
+        "loaded": "i18n загружаны"
+      },
+      "second-instance": {
+        "receive-command": "Атрымана каманда праз пратакол: \"{{command}}\""
+      },
+      "theme": {
+        "css-file-not-found": "CSS-файл \"{{cssFile}}\" не існуе, ігнаруецца"
+      },
+      "unresponsive": {
+        "details": "Памылка завісання!\n{{error}}"
+      },
+      "when-ready": {
+        "clearing-cache-after-20s": "Ачыстка кэша прыкладання"
+      },
+      "window": {
+        "tried-to-render-offscreen": "Акно спрабавала адлюстравацца па-за экранам, windowSize={{windowSize}}, displaySize={{displaySize}}, position={{position}}"
+      }
+    },
+    "dialog": {
+      "hide-menu-enabled": {
+        "detail": "Меню схавана, выкарыстоўвайце 'Alt', каб паказаць яго (або 'Escape', калі выкарыстоўваецца ўбудаванае меню)",
+        "message": "Хаванне меню ўключана",
+        "title": "Хаванне меню ўключана"
+      },
+      "need-to-restart": {
+        "buttons": {
+          "later": "Пазней",
+          "restart-now": "Перазапусціць зараз"
+        },
+        "detail": "Плагін \"{{pluginName}}\" патрабуе перазапуску, каб змены ўступілі ў сілу",
+        "message": "\"{{pluginName}}\" неабходна перазапусціць",
+        "title": "Патрабуецца перазапуск"
+      },
+      "unresponsive": {
+        "buttons": {
+          "quit": "Выйсці",
+          "relaunch": "Перазапусціць",
+          "wait": "Пачакаць"
+        },
+        "detail": "Прыносім прабачэнні за нязручнасці! Калі ласка, выберыце, што рабіць:",
+        "message": "Прыкладанне не адказвае",
+        "title": "Акно не адказвае"
+      },
+      "update-available": {
+        "buttons": {
+          "disable": "Адключыць абнаўленні",
+          "download": "Спампаваць",
+          "ok": "ОК"
+        },
+        "detail": "Даступная новая версія, якую можна спампаваць па спасылцы {{downloadLink}}",
+        "message": "Даступная новая версія",
+        "title": "Даступна абнаўленне"
+      }
+    },
+    "menu": {
+      "about": "Пра праграму",
+      "navigation": {
+        "label": "Навігацыя",
+        "submenu": {
+          "copy-current-url": "Скапіраваць бягучы URL",
+          "go-back": "Назад",
+          "go-forward": "Наперад",
+          "quit": "Выйсці",
+          "restart": "Перазапусціць праграму"
+        }
+      },
+      "options": {
+        "label": "Налады",
+        "submenu": {
+          "advanced-options": {
+            "label": "Дадатковыя налады",
+            "submenu": {
+              "auto-reset-app-cache": "Ачышчаць кэш пры старце праграмы",
+              "disable-hardware-acceleration": "Адключыць апаратнае паскарэнне",
+              "edit-config-json": "Рэдагаваць config.json",
+              "override-user-agent": "Пераазначыць User-Agent",
+              "restart-on-config-changes": "Перазапускаць пры змене канфігурацыі",
+              "set-proxy": {
+                "label": "Наладзіць проксі",
+                "prompt": {
+                  "label": "Увядзіце адрас проксі: (пакіньце пустым, каб адключыць)",
+                  "placeholder": "Прыклад: SOCKS5://127.0.0.1:9999",
+                  "title": "Наладзіць проксі"
+                }
+              },
+              "toggle-dev-tools": "Пераключыць DevTools"
+            }
+          },
+          "always-on-top": "Заўсёды зверху",
+          "auto-update": "Аўтаабнаўленне",
+          "hide-menu": {
+            "dialog": {
+              "message": "Меню будзе схавана пры наступным запуску, выкарыстоўвайце [Alt], каб паказаць яго (або ['] калі выкарыстоўваецца ўбудаванае меню)",
+              "title": "Хаванне меню ўключана"
+            },
+            "label": "Схаваць меню"
+          },
+          "language": {
+            "dialog": {
+              "message": "Мова будзе зменена пасля перазапуску",
+              "title": "Мова зменена"
+            },
+            "label": "Мова",
+            "submenu": {
+              "to-help-translate": "Хочаце дапамагчы з перакладам? Націсніце тут"
+            }
+          },
+          "resume-on-start": "Працягваць апошні трэк пры запуску",
+          "single-instance-lock": "Блакіроўка аднаго экзэмпляра",
+          "start-at-login": "Запускаць пры ўваходзе ў сістэму",
+          "starting-page": {
+            "label": "Стартавая старонка",
+            "unset": "Не зададзена"
+          },
+          "tray": {
+            "label": "Трэй",
+            "submenu": {
+              "disabled": "Адключана",
+              "enabled-and-hide-app": "Уключана і хаваць праграму",
+              "enabled-and-show-app": "Уключана і паказваць праграму",
+              "play-pause-on-click": "Прайграванне/Паўза па кліку"
+            }
+          },
+          "visual-tweaks": {
+            "label": "Візуальныя налады",
+            "submenu": {
+              "custom-window-title": {
+                "label": "Карыстальніцкі загаловак акна",
+                "prompt": {
+                  "label": "Увядзіце карыстальніцкі загаловак акна: (пакіньце пустым, каб адключыць)",
+                  "placeholder": "Прыклад: {{applicationName}}"
+                }
+              },
+              "like-buttons": {
+                "default": "Па змаўчанні",
+                "force-show": "Прымусова паказваць",
+                "hide": "Схаваць",
+                "label": "Кнопкі лайкаў",
+                "swap": "Памяняць парадак кнопак"
+              },
+              "remove-upgrade-button": "Выдаліць кнопку абнаўлення",
+              "theme": {
+                "dialog": {
+                  "button": {
+                    "cancel": "Адмена",
+                    "remove": "Выдаліць"
+                  },
+                  "remove-theme": "Вы ўпэўнены, што хочаце выдаліць карыстальніцкую тэму?",
+                  "remove-theme-message": "Гэта выдаліць карыстальніцкую тэму"
+                },
+                "label": "Тэма",
+                "submenu": {
+                  "import-css-file": "Імпартаваць карыстальніцкі CSS-файл",
+                  "no-theme": "Без тэмы"
+                }
+              }
+            }
+          }
+        }
+      },
+      "plugins": {
+        "enabled": "Уключана",
+        "label": "Плагіны",
+        "new": "НОВАЕ"
+      },
+      "view": {
+        "label": "Выгляд",
+        "submenu": {
+          "force-reload": "Прымусова абнавіць",
+          "reload": "Абнавіць",
+          "reset-zoom": "Рэальны памер",
+          "toggle-fullscreen": "На ўвесь экран",
+          "zoom-in": "Павялічыць",
+          "zoom-out": "Паменшыць"
+        }
+      }
+    },
+    "tray": {
+      "next": "Наступны",
+      "play-pause": "Прайграванне/Паўза",
+      "previous": "Папярэдні",
+      "quit": "Выйсці",
+      "restart": "Перазапусціць праграму",
+      "show": "Паказаць акно",
+      "tooltip": {
+        "default": "{{applicationName}}",
+        "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
+      }
+    }
+  },
+  "plugins": {
+    "ad-speedup": {
+      "description": "Калі прайграецца рэклама, гук адключаецца, а хуткасць прайгравання павялічваецца да 16x",
+      "name": "Паскарэнне рэкламы"
+    },
+    "adblocker": {
+      "description": "Блакіроўка ўсёй рэкламы і адсочвання ",
+      "menu": {
+        "blocker": "Блакіроўшчык"
+      },
+      "name": "Блакіроўшчык рэкламы"
+    },
+    "album-actions": {
+      "description": "Дадае кнопкі Не падабаецца, Не падабаецца, Падабаецца і Не падабаецца, каб прымяніць іх да ўсіх песень у плэйлісце ці альбоме",
+      "name": "Дзеянні з альбомам"
+    },
+    "album-color-theme": {
+      "description": "Прымяняе дынамічную тэму і візуальныя эфекты на аснове каляровай палітры альбома",
+      "menu": {
+        "color-mix-ratio": {
+          "label": "Суадносіны змешвання колераў",
+          "submenu": {
+            "percent": "{{ratio}}%"
+          }
+        },
+        "enable-seekbar": "Уключыць тэматызацыю паласы перамоткі"
+      },
+      "name": "Каляровая тэма альбома"
+    },
+    "ambient-mode": {
+      "description": "Стварае эфект асвятлення, мякка праецыруючы колеры з відэа на фон вашага экрана",
+      "menu": {
+        "blur-amount": {
+          "label": "Ступень размыцця",
+          "submenu": {
+            "pixels": "{{blurAmount}} пікселяў"
+          }
+        },
+        "buffer": {
+          "label": "Буфер",
+          "submenu": {
+            "buffer": "{{buffer}}"
+          }
+        },
+        "opacity": {
+          "label": "Празрыстасць",
+          "submenu": {
+            "percent": "{{opacity}}%"
+          }
+        },
+        "quality": {
+          "label": "Якасць",
+          "submenu": {
+            "pixels": "{{quality}} пікселяў"
+          }
+        },
+        "size": {
+          "label": "Памер",
+          "submenu": {
+            "percent": "{{size}}%"
+          }
+        },
+        "smoothness-transition": {
+          "label": "Плаўнасць пераходу",
+          "submenu": {
+            "during": "На працягу {{interpolationTime}} с"
+          }
+        },
+        "use-fullscreen": {
+          "label": "Выкарыстанне поўнаэкраннага рэжыму"
+        }
+      },
+      "name": "Рэжым навакольнага асвятлення"
+    },
+    "amuse": {
+      "description": "Дадае падтрымку {{applicationName}} для віджэта Amuse now playing ад 6K Labs",
+      "name": "Amuse",
+      "response": {
+        "query": "Сервер Amuse API запушчаны. GET /query для атрымання інфармацыі аб трэку."
+      }
+    },
+    "api-server": {
+      "description": "Дадае API-сервер для кіравання прайгравальнікам",
+      "dialog": {
+        "request": {
+          "buttons": {
+            "allow": "Дазволіць",
+            "deny": "Забараніць"
+          },
+          "message": "Дазволіць {{ID}} ({{origin}}) доступ да API?",
+          "title": "Запыт на аўтарызацыю API"
+        }
+      },
+      "menu": {
+        "auth-strategy": {
+          "label": "Стратэгія аўтарызацыі",
+          "submenu": {
+            "auth-at-first": {
+              "label": "Аўтарызацыя пры першым запыце"
+            },
+            "none": {
+              "label": "Без аўтарызацыі"
+            }
+          }
+        },
+        "hostname": {
+          "label": "Імя хоста"
+        },
+        "https": {
+          "label": "HTTPS і сертыфікаты",
+          "submenu": {
+            "cert": {
+              "dialogTitle": "Выберыце файл сертыфіката HTTPS",
+              "label": "Файл сертыфіката (.crt/.pem)"
+            },
+            "enable-https": {
+              "label": "Уключыць HTTPS"
+            },
+            "key": {
+              "dialogTitle": "Выберыце файл прыватнага ключа HTTPS",
+              "label": "Файл прыватнага ключа (.key/.pem)"
+            }
+          }
+        },
+        "port": {
+          "label": "Порт"
+        }
+      },
+      "name": "API Server [Beta]",
+      "prompt": {
+        "hostname": {
+          "label": "Увядзіце імя хоста (напрыклад, 0.0.0.0) для API-сервера:",
+          "title": "Імя хоста"
+        },
+        "port": {
+          "label": "Увядзіце порт для API-сервера:",
+          "title": "Порт"
+        }
+      }
+    },
+    "audio-compressor": {
+      "description": "Прымяняе кампрэсію да аўдыё (паніжае гучнасць самых моцных частак сігналу і павышае гучнасць самых ціхіх)",
+      "name": "Аўдыёкампрэсар"
+    },
+    "auth-proxy-adapter": {
+      "description": "Падтрымка выкарыстання аўтэнтыфікацыйных проксі-сэрвісаў",
+      "menu": {
+        "disable": "Адключыць проксі-адаптар",
+        "enable": "Уключыць проксі-адаптар",
+        "hostname": {
+          "label": "Імя хоста"
+        },
+        "port": {
+          "label": "Порт"
+        }
+      },
+      "name": "Адаптар аўтэнтыфікацыйнага проксі",
+      "prompt": {
+        "hostname": {
+          "label": "Увядзіце імя хоста для лакальнага проксі-сервера (патрабуе перазапуску):",
+          "title": "Імя хоста проксі"
+        },
+        "port": {
+          "label": "Увядзіце порт для лакальнага проксі-сервера (патрабуе перазапуску):",
+          "title": "Порт проксі"
+        }
+      }
+    },
+    "blur-nav-bar": {
+      "description": "Робіць навігацыйную панэль празрыстай і размытай",
+      "name": "Размыццё навігацыйнай панэлі"
+    },
+    "bypass-age-restrictions": {
+      "description": "Абыход праверак узросту ў музычным прайгравальніку",
+      "name": "Абыход узроставых абмежаванняў"
+    },
+    "captions-selector": {
+      "description": "Выбар субтытраў для аўдыёдарожак {{applicationName}}",
+      "menu": {
+        "autoload": "Аўтаматычна выбіраць апошнія выкарыстаныя субтытры",
+        "disable-captions": "Па змаўчанні без субтытраў"
+      },
+      "name": "Выбар субтытраў",
+      "prompt": {
+        "selector": {
+          "label": "Бягучая мова субтытраў: {{language}}",
+          "none": "Няма",
+          "title": "Выберыце мову субтытраў"
+        }
+      },
+      "templates": {
+        "title": "Адкрыць выбар субтытраў"
+      },
+      "toast": {
+        "caption-changed": "Субтытры зменены на {{language}}",
+        "caption-disabled": "Субтытры адключаны",
+        "no-captions": "Для гэтай песні няма субтытраў"
+      }
+    },
+    "clock": {
+      "description": "Дадае гадзіннік на навігацыйную панэль",
+      "menu": {
+        "format": {
+          "24-hour-format": "24-гадзінны фармат",
+          "display-seconds": "Паказваць секунды",
+          "label": "Фармат"
+        }
+      },
+      "name": "Гадзіннік"
+    },
+    "compact-sidebar": {
+      "description": "Заўсёды адлюстроўваць бакавую панэль у кампактным рэжыме",
+      "name": "Кампактная бакавая панэль"
+    },
+    "crossfade": {
+      "description": "Плаўны пераход паміж песнямі",
+      "menu": {
+        "advanced": "Пашыраныя"
+      },
+      "name": "Crossfade [Beta]",
+      "prompt": {
+        "options": {
+          "multi-input": {
+            "fade-in-duration": "Працягласць нарастання (мс)",
+            "fade-out-duration": "Працягласць затухання (мс)",
+            "fade-scaling": {
+              "label": "Шкала затухання",
+              "linear": "Лінейная",
+              "logarithmic": "Лагарыфмічная"
+            },
+            "seconds-before-end": "Crossfade за N секунд да канца"
+          },
+          "title": "Налады Crossfade"
+        }
+      }
+    },
+    "custom-output-device": {
+      "description": "Наладзіць карыстальніцкую прыладу вываду для песень",
+      "menu": {
+        "device-selector": "Выбраць прыладу"
+      },
+      "name": "Карыстальніцкая прылада вываду",
+      "prompt": {
+        "device-selector": {
+          "label": "Выберыце прыладу вываду медыя для выкарыстання",
+          "title": "Выберыце прыладу вываду"
+        }
+      }
+    },
+    "disable-autoplay": {
+      "description": "Запускае песні ў рэжыме \"паўза\"",
+      "menu": {
+        "apply-once": "Прымяняць толькі пры запуску"
+      },
+      "name": "Адключыць аўтапрайграванне"
+    },
+    "discord": {
+      "backend": {
+        "already-connected": "Спроба падключэння пры актыўным злучэнні",
+        "connected": "Падключана да Discord",
+        "disconnected": "Адключана ад Discord"
+      },
+      "description": "Пакажыце сваім сябрам, што вы слухаеце, з дапамогай Rich Presence",
+      "menu": {
+        "auto-reconnect": "Аўтаперападключэнне",
+        "clear-activity": "Ачысціць актыўнасць",
+        "clear-activity-after-timeout": "Ачышчаць актыўнасць пасля тайм-аўту",
+        "connected": "Падключана",
+        "disconnected": "Адключана",
+        "hide-duration-left": "Схаваць пакінуты час",
+        "hide-github-button": "Схаваць кнопку спасылкі на GitHub",
+        "play-on-application": "Гуляць у {{applicationName}}",
+        "set-inactivity-timeout": "Усталяваць тайм-аўт бяздзейнасці",
+        "set-status-display-type": {
+          "label": "Тэкст статусу",
+          "submenu": {
+            "application": "Слухае {{applicationName}}",
+            "artist": "Слухае {artist}",
+            "title": "Слухае {song title}"
+          }
+        }
+      },
+      "name": "Discord Rich Presence",
+      "prompt": {
+        "set-inactivity-timeout": {
+          "label": "Увядзіце тайм-аўт бяздзейнасці ў секундах:",
+          "title": "Усталяваць тайм-аўт бяздзейнасці"
+        }
+      }
+    },
+    "downloader": {
+      "backend": {
+        "dialog": {
+          "error": {
+            "buttons": {
+              "ok": "ОК"
+            },
+            "message": "Ох! Прабачце, спампаванне не ўдалося...",
+            "title": "Памылка спампавання!"
+          },
+          "start-download-playlist": {
+            "buttons": {
+              "ok": "ОК"
+            },
+            "detail": "({{playlistSize}} песень)",
+            "message": "Спампоўванне плэйліста {{playlistTitle}}",
+            "title": "Спампоўванне пачата"
+          }
+        },
+        "feedback": {
+          "conversion-progress": "Канвертаванне: {{percent}}%",
+          "converting": "Канвертаванне...",
+          "done": "Гатова: {{filePath}}",
+          "download-info": "Спампоўванне {{artist}} - {{title}} [{{videoId}}",
+          "download-progress": "Спампаванне: {{percent}}%",
+          "downloading": "Спампоўванне...",
+          "downloading-counter": "Спампоўванне {{current}}/{{total}}...",
+          "downloading-playlist": "Спампоўванне плэйліста \"{{playlistTitle}}\" - {{playlistSize}} песень ({{playlistId}})",
+          "error-while-downloading": "Памылка спампоўвання \"{{author}} - {{title}}\": {{error}}",
+          "folder-already-exists": "Тэчка {{playlistFolder}} ужо існуе",
+          "getting-playlist-info": "Атрыманне інфармацыі аб плэйлісце...",
+          "loading": "Загрузка...",
+          "playlist-has-only-one-song": "У плэйлісце толькі адзін элемент, спампоўваем яго непасрэдна",
+          "playlist-id-not-found": "ID плэйліста не знойдзены",
+          "playlist-is-empty": "Плэйліст пусты",
+          "playlist-is-mix-or-private": "Памылка атрымання звестак аб плэйлісце: пераканайцеся, што ён не прыватны і не \"Mixed for you\"\n\n{{error}}",
+          "preparing-file": "Падрыхтоўка файла...",
+          "saving": "Захаванне...",
+          "trying-to-get-playlist-id": "Спроба атрымаць ID плэйліста: {{playlistId}}",
+          "video-id-not-found": "Відэа не знойдзена",
+          "writing-id3": "Запіс тэгаў ID3..."
+        }
+      },
+      "description": "Спампоўвае MP3 / зыходнае аўдыё непасрэдна з інтэрфейсу",
+      "menu": {
+        "choose-download-folder": "Выбраць тэчку для спампоўвання",
+        "download-finish-settings": {
+          "label": "Спампоўваць па заканчэнні",
+          "prompt": {
+            "last-percent": "Пасля x працэнтаў",
+            "last-seconds": "Апошнія x секунд",
+            "title": "Наладзіць час спампоўвання"
+          },
+          "submenu": {
+            "advanced": "Пашыраныя",
+            "enabled": "Уключана",
+            "mode": "Рэжым часу",
+            "percent": "Працэнты",
+            "seconds": "Секунды"
+          }
+        },
+        "download-playlist": "Спампаваць плэйліст",
+        "presets": "Прадустаноўкі",
+        "skip-existing": "Прапускаць існуючыя файлы"
+      },
+      "name": "Спампоўшчык",
+      "renderer": {
+        "can-not-update-progress": "Немагчыма абнавіць прагрэс"
+      },
+      "templates": {
+        "button": "Спампаваць"
+      }
+    },
+    "equalizer": {
+      "description": "Дадае эквалайзер у прайгравальнік",
+      "menu": {
+        "presets": {
+          "label": "Прадустаноўкі",
+          "list": {
+            "bass-booster": "Узмацненне баса"
+          }
+        }
+      },
+      "name": "Эквалайзер"
+    },
+    "exponential-volume": {
+      "description": "Робіць паўзунок гучнасці экспанентным для больш зручнага выбару нізкіх узроўняў гучнасці.",
+      "name": "Экспанентная гучнасць"
+    },
+    "in-app-menu": {
+      "description": "Нараджае меню стыльным, цёмным ці ў колеры альбома выглядам",
+      "menu": {
+        "hide-dom-window-controls": "Схаваць DOM-элементы кіравання акном"
+      },
+      "name": "Убудаванае меню"
+    },
+    "lumiastream": {
+      "description": "Дадае падтрымку Lumia Stream",
+      "name": "Lumia Stream [Beta]"
+    },
+    "lyrics-genius": {
+      "description": "Дадае падтрымку тэкстаў для большасці песень",
+      "menu": {
+        "romanized-lyrics": "Раманізаваныя тэксты"
+      },
+      "name": "Тэксты Genius",
+      "renderer": {
+        "fetched-lyrics": "Атрыманы тэксты для Genius"
+      }
+    },
+    "music-together": {
+      "description": "Дзяліцеся плэйлістам з іншымі. Калі вядучы прайгравае песню, усе астатнія будуць чуць тое ж самае",
+      "dialog": {
+        "enter-host": "Увядзіце ID вядучага"
+      },
+      "internal": {
+        "save": "Захаваць",
+        "track-source": "Крыніца трэка",
+        "unknown-user": "Невядомы карыстальнік"
+      },
+      "menu": {
+        "click-to-copy-id": "Скапіраваць ID вядучага",
+        "close": "Зачыніць Music Together",
+        "connected-users": "Падключаныя карыстальнікі",
+        "disconnect": "Адключыць Music Together",
+        "empty-user": "Няма падключаных карыстальнікаў",
+        "host": "Вядучы Music Together",
+        "join": "Далучыцца да Music Together",
+        "permission": {
+          "all": "Дазволіць гасцям кіраваць плэйлістам і прайгравальнікам",
+          "host-only": "Толькі вядучы можа кіраваць плэйлістам і прайгравальнікам",
+          "playlist": "Дазволіць гасцям кіраваць плэйлістам"
+        },
+        "set-permission": "Змяніць дазволы кіравання",
+        "status": {
+          "disconnected": "Адключана",
+          "guest": "Падключана як госць",
+          "host": "Падключана як вядучы"
+        }
+      },
+      "name": "Music Together [Beta]",
+      "toast": {
+        "add-song-failed": "Не ўдалося дадаць песню",
+        "closed": "Music Together закрыта",
+        "disconnected": "Music Together адключана",
+        "host-failed": "Не ўдалося запусціць Music Together",
+        "id-copied": "ID вядучага скапіраваны ў буфер абмену",
+        "id-copy-failed": "Не ўдалося скапіраваць ID вядучага ў буфер абмену",
+        "join-failed": "Не ўдалося далучыцца да Music Together",
+        "joined": "Далучыліся да Music Together",
+        "permission-changed": "Дазвол Music Together зменены на \"{{permission}}\"",
+        "remove-song-failed": "Не ўдалося выдаліць песню",
+        "user-connected": "{{name}} далучыўся да Music Together",
+        "user-disconnected": "{{name}} пакінуў Music Together"
+      }
+    },
+    "navigation": {
+      "description": "Стрэлкі навігацыі Наперад/Назад, непасрэдна інтэграваныя ў інтэрфейс, як у вашым любімым браўзеры",
+      "name": "Навігацыя",
+      "templates": {
+        "back": {
+          "title": "Перайсці на папярэднюю старонку"
+        },
+        "forward": {
+          "title": "Перайсці на наступную старонку"
+        }
+      }
+    },
+    "no-google-login": {
+      "description": "Выдаляе кнопкі і спасылкі ўваходу Google з інтэрфейсу",
+      "name": "Без уваходу Google"
+    },
+    "notifications": {
+      "description": "Паказвае апавяшчэнне, калі пачынае прайгравацца песня (інтэрактыўныя апавяшчэнні даступныя ў Windows)",
+      "menu": {
+        "interactive": "Інтэрактыўныя апавяшчэнні",
+        "interactive-settings": {
+          "label": "Налады інтэрактыўнасці",
+          "submenu": {
+            "hide-button-text": "Схаваць тэкст кнопак",
+            "refresh-on-play-pause": "Абнаўляць пры прайграванні/паўзе",
+            "tray-controls": "Адкрываць/Зачыняць па кліку на трэй"
+          }
+        },
+        "priority": "Прыярытэт апавяшчэння",
+        "toast-style": "Стыль апавяшчэння",
+        "unpause-notification": "Паказваць апавяшчэнне пры зняцці з паўзы"
+      },
+      "name": "Апавяшчэнні"
+    },
+    "performance-improvement": {
+      "description": "Павышэнне прадукцыйнасці шляхам уключэння эксперыментальных скрыптоў",
+      "name": "Паляпшэнне прадукцыйнасці [Beta]"
+    },
+    "picture-in-picture": {
+      "description": "Дазваляе пераключыць праграму ў рэжым \"карцінка ў карцінцы\"",
+      "menu": {
+        "always-on-top": "Заўсёды зверху",
+        "hotkey": {
+          "label": "Гарачая клавіша",
+          "prompt": {
+            "keybind-options": {
+              "hotkey": "Гарачая клавіша"
+            },
+            "label": "Выберыце гарачую клавішу для пераключэння рэжыму \"карцінка ў карцінцы\"",
+            "title": "Гарачая клавіша \"карцінка ў карцінцы\""
+          }
+        },
+        "save-window-position": "Захоўваць пазіцыю акна",
+        "save-window-size": "Захоўваць памер акна",
+        "use-native-pip": "Выкарыстоўваць убудаваны PiP браўзера"
+      },
+      "name": "Карцінка ў карцінцы",
+      "templates": {
+        "button": "Карцінка ў карцінцы"
+      }
+    },
+    "playback-speed": {
+      "description": "Слухайце хутка, слухайце павольна! Дадае паўзунок, які кіруе хуткасцю песні",
+      "name": "Хуткасць прайгравання",
+      "templates": {
+        "button": "Хуткасць"
+      }
+    },
+    "precise-volume": {
+      "description": "Дакладнае кіраванне гучнасцю з дапамогай кола мышы/гарачых клавіш, з карыстальніцкім HUD і наладжвальнымі крокамі гучнасці",
+      "menu": {
+        "arrows-shortcuts": "Лакальнае кіраванне клавішамі-стрэлкамі",
+        "custom-volume-steps": "Усталяваць карыстальніцкія крокі гучнасці",
+        "global-shortcuts": "Глабальныя гарачыя клавішы"
+      },
+      "name": "Дакладная гучнасць",
+      "prompt": {
+        "global-shortcuts": {
+          "keybind-options": {
+            "decrease": "Паменшыць гучнасць",
+            "increase": "Павялічыць гучнасць"
+          },
+          "label": "Выберыце глабальныя клавішы гучнасці:",
+          "title": "Глабальныя клавішы гучнасці"
+        },
+        "volume-steps": {
+          "label": "Выберыце крокі павелічэння/памяншэння гучнасці",
+          "title": "Крокі гучнасці"
+        }
+      }
+    },
+    "quality-changer": {
+      "backend": {
+        "dialog": {
+          "quality-changer": {
+            "detail": "Бягучая якасць: {{quality}}",
+            "message": "Выберыце якасць відэа:",
+            "title": "Выберыце якасць відэа"
+          }
+        }
+      },
+      "description": "Дазваляе змяняць якасць відэа з дапамогай кнопкі на відэааверлеі",
+      "name": "Змяняльнік якасці відэа",
+      "renderer": {
+        "quality-settings-button": {
+          "label": "Адкрыць змяняльнік якасці прайгравальніка"
+        }
+      }
+    },
+    "scrobbler": {
+      "description": "Дадае падтрымку скроблінгу (напрыклад, last.fm, Listenbrainz)",
+      "dialog": {
+        "lastfm": {
+          "auth-failed": {
+            "message": "Не ўдалося аўтэнтыфікавацца ў Last.fm\nСхавайце ўсплывальнае акно да наступнага перазапуску.",
+            "title": "Памылка аўтэнтыфікацыі"
+          }
+        }
+      },
+      "menu": {
+        "lastfm": {
+          "api-settings": "Налады API Last.fm"
+        },
+        "listenbrainz": {
+          "token": "Увядзіце токен карыстальніка ListenBrainz"
+        },
+        "scrobble-alternative-artist": "Выкарыстоўваць альтэрнатыўных выканаўцаў",
+        "scrobble-alternative-title": "Выкарыстоўваць альтэрнатыўныя назвы",
+        "scrobble-other-media": "Скробліць іншыя медыя"
+      },
+      "name": "Скроблер",
+      "prompt": {
+        "lastfm": {
+          "api-key": "Ключ API Last.fm",
+          "api-secret": "Сакрэт API Last.fm"
+        },
+        "listenbrainz": {
+          "token": {
+            "label": "Увядзіце ваш токен карыстальніка ListenBrainz:",
+            "title": "Токен ListenBrainz"
+          }
+        }
+      }
+    },
+    "shortcuts": {
+      "description": "Дазваляе наладзіць глабальныя гарачыя клавішы для прайгравання (прайграванне/паўза/наступны/папярэдні) і адключэнне медыя OSD шляхам пераазначэння медыя-клавіш, уключэнне Ctrl/CMD + F для пошуку, уключэнне падтрымкі Linux MPRIS для медыя-клавіш і карыстальніцкія гарачыя клавішы для прасунутых карыстальнікаў",
+      "menu": {
+        "override-media-keys": "Пераазначыць медыя-клавішы",
+        "set-keybinds": "Усталяваць глабальнае кіраванне песнямі"
+      },
+      "name": "Цэтлікі (& MPRIS)",
+      "prompt": {
+        "keybind": {
+          "keybind-options": {
+            "next": "Наступны",
+            "play-pause": "Прайграванне / Паўза",
+            "previous": "Папярэдні"
+          },
+          "label": "Выберыце глабальныя клавішы для кіравання песнямі:",
+          "title": "Глабальныя клавішы"
+        }
+      }
+    },
+    "skip-disliked-songs": {
+      "description": "Прапускае песні, якія не падабаюцца",
+      "name": "Пропуск песень, якія не падабаюцца"
+    },
+    "skip-silences": {
+      "description": "Аўтаматычна прапускае цішыню ў песнях",
+      "name": "Пропуск цішыні"
+    },
+    "sponsorblock": {
+      "description": "Аўтаматычна прапускае немузычныя часткі, такія як уступы/заключэнні або часткі музычных відэа, дзе песня не гучыць",
+      "name": "SponsorBlock"
+    },
+    "synced-lyrics": {
+      "description": "Дае сінхранізаваныя тэксты песень, выкарыстоўваючы правайдэраў, такіх як LRClib.",
+      "errors": {
+        "fetch": "⚠️\tПры атрыманні тэксту адбылася памылка.\n\tПаспрабуйце яшчэ раз пазней.",
+        "not-found": "⚠️ Тэкст для гэтай песні не знойдзены."
+      },
+      "menu": {
+        "convert-chinese-character": {
+          "label": "Канвертаваць кітайскія іерогліфы",
+          "submenu": {
+            "disabled": {
+              "label": "Адключана",
+              "tooltip": "Адключыць канвертаванне кітайскіх іерогліфаў"
+            },
+            "simplified-to-traditional": {
+              "label": "Спрошчаныя ў традыцыйныя",
+              "tooltip": "Канвертаваць спрошчаныя кітайскія іерогліфы ў традыцыйныя"
+            },
+            "traditional-to-simplified": {
+              "label": "Традыцыйныя ў спрошчаныя",
+              "tooltip": "Канвертаваць традыцыйныя кітайскія іерогліфы ў спрошчаныя"
+            }
+          },
+          "tooltip": "Канвертаваць кітайскія іерогліфы ў традыцыйныя ці спрошчаныя"
+        },
+        "default-text-string": {
+          "label": "Сімвал паміж радкамі па змаўчанні",
+          "tooltip": "Выберыце сімвал па змаўчанні для прамежкаў паміж радкамі тэксту"
+        },
+        "line-effect": {
+          "label": "Эфект радка",
+          "submenu": {
+            "fancy": {
+              "label": "Стыльны",
+              "tooltip": "Выкарыстоўваць буйныя эфекты, падобныя на прыкладанне, на бягучым радку"
+            },
+            "focus": {
+              "label": "Фокус",
+              "tooltip": "Зрабіць толькі бягучы радок белым"
+            },
+            "offset": {
+              "label": "Зрушэнне",
+              "tooltip": "Зрух бягучага радка ўправа"
+            },
+            "scale": {
+              "label": "Маштаб",
+              "tooltip": "Маштабаваць бягучы радок"
+            }
+          },
+          "tooltip": "Выберыце эфект для прымянення да бягучага радка"
+        },
+        "lyrics-font-size": {
+          "label": "Памер шрыфта тэксту",
+          "submenu": {
+            "large": {
+              "label": "Вялікі",
+              "tooltip": "Выкарыстоўваць арыгінальны вялікі памер тэксту"
+            },
+            "medium": {
+              "label": "Сярэдні",
+              "tooltip": "Выкарыстоўваць збалансаваны памер тэксту"
+            },
+            "small": {
+              "label": "Малы",
+              "tooltip": "Выкарыстоўваць больш кампактны памер тэксту"
+            }
+          },
+          "tooltip": "Выберыце, наколькі вялікім павінен быць тэкст"
+        },
+        "precise-timing": {
+          "label": "Зрабіць тэксты ідэальна сінхранізаванымі",
+          "tooltip": "Разлічваць да мілісекунды адлюстраванне наступнага радка (можа мець невялікі ўплыў на прадукцыйнасць)"
+        },
+        "preferred-provider": {
+          "label": "Пераважны правайдар",
+          "none": {
+            "label": "Няма",
+            "tooltip": "Няма пераважнага правайдара"
+          },
+          "tooltip": "Выберыце правайдара па змаўчанні"
+        },
+        "romanization": {
+          "label": "Раманізаваць тэкст",
+          "tooltip": "Калі тэкст на іншай мове, спрабаваць адлюстраваць лацінскую версію."
+        },
+        "show-lyrics-even-if-inexact": {
+          "label": "Паказваць тэкст, нават калі недакладны",
+          "tooltip": "Калі песня не знойдзена, плагін спрабуе зноў з іншым пошукавым запытам.\nВынік другой спробы можа быць недакладным."
+        },
+        "show-time-codes": {
+          "label": "Паказваць часавыя коды",
+          "tooltip": "Паказваць часавыя коды побач з тэкстам"
+        },
+        "translation": {
+          "clear-cache": {
+            "label": "Ачысціць кэш перакладу",
+            "tooltip": "Выдаліць усе кэшаваныя пераклады, захаваныя на дыску."
+          },
+          "configure": {
+            "label": "Наладзіць ключ API і мадэль…",
+            "tooltip": "Усталяваць спецыфічныя для правайдара налады перакладу."
+          },
+          "enabled": {
+            "label": "Уключыць пераклад",
+            "tooltip": "Паказваць перакладзены радок пад кожным арыгінальным радком тэксту."
+          },
+          "label": "Пераклад тэкстаў",
+          "provider": {
+            "label": "Правайдар",
+            "tooltip": "Які сэрвіс выкарыстоўваць для перакладу."
+          },
+          "providers": {
+            "anthropic": {
+              "name": "Anthropic Claude",
+              "prompt-label": "Выкарыстоўвае натыўны API Anthropic Messages.",
+              "prompt-title": "Налады Anthropic"
+            },
+            "gemini": {
+              "name": "Google Gemini",
+              "prompt-label": "Выкарыстоўвае Google Generative Language API (generateContent).",
+              "prompt-title": "Налады Gemini"
+            },
+            "google-translate": {
+              "host": "Хост",
+              "name": "Google Translate",
+              "prompt-label": "Выкарыстоўвае неафіцыйны бясплатны канчатковы пункт Google Translate. Ключ API не патрабуецца, але Google можа абмяжоўваць колькасць запытаў.",
+              "prompt-title": "Налады Google Translate"
+            },
+            "local-cli": {
+              "command": "Каманда",
+              "engine": "Лакальны CLI",
+              "engine-claude": "Claude Code",
+              "engine-codex": "Codex",
+              "engine-gemini": "Gemini CLI",
+              "name": "Лакальны CLI",
+              "prompt-label": "Выкарыстоўваць лакальна аўтарызаваны Claude Code, Codex ці Gemini CLI. Каманда і мадэль вызначаюцца аўтаматычна; CLI выкарыстоўвае ўласныя налады па змаўчанні.",
+              "prompt-title": "Налады лакальнага CLI",
+              "timeout": "Тайм-аўт у секундах (15-600)"
+            },
+            "openai-compatible": {
+              "api-mode": "Рэжым API (responses / auto / chat-completions)",
+              "base-url": "Базавы URL",
+              "name": "Сумяшчальны з OpenAI",
+              "prompt-label": "Выкарыстоўваць серверы, сумяшчальныя з OpenAI, уключаючы Ollama (базавы URL http://127.0.0.1:11434/v1, рэжым API auto або chat-completions).",
+              "prompt-title": "Налады сумяшчальнасці з OpenAI"
+            },
+            "shared": {
+              "api-key": "Ключ API",
+              "model": "Мадэль"
+            }
+          },
+          "target-language": {
+            "label": "Мова перакладу",
+            "options": {
+              "ar": "العربية",
+              "auto": "Як мова прыкладання",
+              "bg": "Български",
+              "bn": "বাংলা",
+              "cs": "Čeština",
+              "da": "Dansk",
+              "de": "Deutsch",
+              "el": "Ελληνικά",
+              "en": "English",
+              "es": "Español",
+              "fa": "فارسی",
+              "fi": "Suomi",
+              "fil": "Filipino",
+              "fr": "Français",
+              "he": "עברית",
+              "hi": "हिन्दी",
+              "hr": "Hrvatski",
+              "hu": "Magyar",
+              "id": "Bahasa Indonesia",
+              "it": "Italiano",
+              "ja": "日本語",
+              "ko": "한국어",
+              "lt": "Lietuvių",
+              "mr": "मराठी",
+              "ms": "Bahasa Melayu",
+              "nl": "Nederlands",
+              "no": "Norsk",
+              "pl": "Polski",
+              "pt-BR": "Português (Brasil)",
+              "pt-PT": "Português (Portugal)",
+              "ro": "Română",
+              "ru": "Русский",
+              "sk": "Slovenčina",
+              "sr": "Српски",
+              "sv": "Svenska",
+              "sw": "Kiswahili",
+              "ta": "தமிழ்",
+              "te": "తెలుగు",
+              "th": "ไทย",
+              "tr": "Türkçe",
+              "uk": "Українська",
+              "ur": "اردو",
+              "vi": "Tiếng Việt",
+              "zh-CN": "简体中文",
+              "zh-TW": "繁體中文"
+            },
+            "tooltip": "Мова, на якую трэба перакладаць тэксты."
+          },
+          "tooltip": "Перакладаць тэксты і паказваць вынік перакладу радок за радком."
+        }
+      },
+      "name": "Сінхранізаваныя тэксты",
+      "refetch-btn": {
+        "fetching": "Атрыманне...",
+        "normal": "Абнавіць тэкст"
+      },
+      "warnings": {
+        "duration-mismatch": "⚠️ - Тэксты могуць быць не сінхранізаваны з-за несупадзення працягласці.",
+        "inexact": "⚠️ - Тэкст для гэтай песні можа быць недакладным",
+        "instrumental": "⚠️ - Гэта інструментальная песня"
+      }
+    },
+    "taskbar-mediacontrol": {
+      "description": "Кіруйце прайграваннем з панэлі задач Windows",
+      "name": "Кіраванне медыя з панэлі задач"
+    },
+    "touchbar": {
+      "description": "Дадае віджэт TouchBar для карыстальнікаў macOS",
+      "name": "TouchBar"
+    },
+    "transparent-player": {
+      "description": "Робіць акно праграмы празрыстым",
+      "menu": {
+        "opacity": {
+          "label": "Непразрыстасць",
+          "submenu": {
+            "percent": "{{opacity}}%"
+          }
+        },
+        "type": {
+          "label": "Тып",
+          "submenu": {
+            "acrylic": "Акрыл",
+            "mica": "Слюда",
+            "none": "Няма",
+            "tabbed": "З укладкамі"
+          }
+        }
+      },
+      "name": "Празрысты прайгравальнік"
+    },
+    "tuna-obs": {
+      "description": "Інтэграцыя з плагінам OBS Tuna",
+      "name": "Tuna OBS"
+    },
+    "unobtrusive-player": {
+      "description": "Прадухіляе з'яўленне прайгравальніка пры прайграванні песні",
+      "name": "Ненадакучлівы прайгравальнік"
+    },
+    "video-toggle": {
+      "description": "Дадае кнопку для пераключэння паміж рэжымамі Відэа/Песня. Можа таксама цалкам выдаліць укладку відэа",
+      "menu": {
+        "align": {
+          "label": "Выраўноўванне",
+          "submenu": {
+            "left": "Злева",
+            "middle": "Пасярэдзіне",
+            "right": "Справа"
+          }
+        },
+        "force-hide": "Прымусова выдаліць укладку відэа",
+        "mode": {
+          "label": "Рэжым",
+          "submenu": {
+            "custom": "Карыстальніцкае пераключэнне",
+            "disabled": "Адключана",
+            "native": "Стандартнае пераключэнне"
+          }
+        }
+      },
+      "name": "Пераключальнік відэа",
+      "templates": {
+        "button-song": "Песня",
+        "button-video": "Відэа"
+      }
+    },
+    "visualizer": {
+      "description": "Дадае візуалізатар у прайгравальнік",
+      "menu": {
+        "visualizer-type": "Тып візуалізатара"
+      },
+      "name": "Візуалізатар"
+    }
+  }
+}

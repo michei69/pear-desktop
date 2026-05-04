@@ -14,7 +14,7 @@
     }
   },
   "language": {
-    "code": "ba",
+    "code": "bs",
     "local-name": "Bosanski",
     "name": "Bosnian"
   },
@@ -161,7 +161,8 @@
                 "default": "Zadano",
                 "force-show": "Prinudno prikaži",
                 "hide": "Sakrij",
-                "label": "'Sviđa mi se' dugmadi"
+                "label": "'Sviđa mi se' dugmadi",
+                "swap": "Zamijeni redoslijed dugmadi za sviđanje"
               },
               "remove-upgrade-button": "Ukloni dugme za nadogradnju",
               "theme": {
@@ -208,33 +209,298 @@
       "restart": "Ponovo Pokreni Aplikaciju",
       "show": "Pokaži prozor",
       "tooltip": {
-        "default": "{{applicationName}}"
+        "default": "{{applicationName}}",
+        "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
       }
     }
   },
   "plugins": {
-    "ambient-mode": {
+    "ad-speedup": {
+      "description": "Ako se pusti reklama, utišava zvuk i postavlja brzinu reprodukcije na 16x",
+      "name": "Ubrzavanje reklama"
+    },
+    "adblocker": {
+      "description": "Blokira sve reklame i praćenje odmah po instalaciji",
       "menu": {
+        "blocker": "Bloker"
+      },
+      "name": "Bloker reklama"
+    },
+    "album-actions": {
+      "description": "Dodaje dugmad za poništavanje sviđanja, nesviđanja, sviđanja i nesviđanja kako bi se to primijenilo na sve pjesme u plejlisti ili albumu",
+      "name": "Radnje na albumu"
+    },
+    "album-color-theme": {
+      "description": "Primjenjuje dinamičku temu i vizualne efekte na osnovu albumske palete boja",
+      "menu": {
+        "color-mix-ratio": {
+          "label": "Odnos miješanja boja",
+          "submenu": {
+            "percent": "{{ratio}}%"
+          }
+        },
+        "enable-seekbar": "Omogući tematiku trake za premotavanje"
+      },
+      "name": "Tema boje albuma"
+    },
+    "ambient-mode": {
+      "description": "Primjenjuje svjetlosni efekat tako što baca nježne boje sa videa na pozadinu vašeg ekrana",
+      "menu": {
+        "blur-amount": {
+          "label": "Količina zamućenja",
+          "submenu": {
+            "pixels": "{{blurAmount}} piksela"
+          }
+        },
+        "buffer": {
+          "label": "Bafer",
+          "submenu": {
+            "buffer": "{{buffer}}"
+          }
+        },
+        "opacity": {
+          "label": "Neprozirnost",
+          "submenu": {
+            "percent": "{{opacity}}%"
+          }
+        },
         "quality": {
-          "label": "Kvalitet"
+          "label": "Kvalitet",
+          "submenu": {
+            "pixels": "{{quality}} piksela"
+          }
+        },
+        "size": {
+          "label": "Veličina",
+          "submenu": {
+            "percent": "{{size}}%"
+          }
+        },
+        "smoothness-transition": {
+          "label": "Prelaz glatkoće",
+          "submenu": {
+            "during": "Tokom {{interpolationTime}} s"
+          }
+        },
+        "use-fullscreen": {
+          "label": "Korištenje cijelog ekrana"
+        }
+      },
+      "name": "Ambijentalni mod"
+    },
+    "amuse": {
+      "description": "Dodaje podršku za {{applicationName}} za Amuse widget koji sada svira od strane 6K Labs",
+      "name": "Amuse",
+      "response": {
+        "query": "Amuse API server radi. GET /query za dobijanje informacija o pjesmi."
+      }
+    },
+    "api-server": {
+      "description": "Dodaje API server za kontrolu plejera",
+      "dialog": {
+        "request": {
+          "buttons": {
+            "allow": "Dozvoli",
+            "deny": "Odbij"
+          },
+          "message": "Dozvoliti {{ID}} ({{origin}}) pristup API-ju?",
+          "title": "Zahtjev za API autorizaciju"
+        }
+      },
+      "menu": {
+        "auth-strategy": {
+          "label": "Strategija autorizacije",
+          "submenu": {
+            "auth-at-first": {
+              "label": "Autorizuj pri prvom zahtjevu"
+            },
+            "none": {
+              "label": "Bez autorizacije"
+            }
+          }
+        },
+        "hostname": {
+          "label": "Ime domaćina"
+        },
+        "https": {
+          "label": "HTTPS & Certifikati",
+          "submenu": {
+            "cert": {
+              "dialogTitle": "Odaberite HTTPS certifikat datoteku",
+              "label": "Datoteka certifikata (.crt/.pem)"
+            },
+            "enable-https": {
+              "label": "Omogući HTTPS"
+            },
+            "key": {
+              "dialogTitle": "Odaberite HTTPS privatnu ključnu datoteku",
+              "label": "Datoteka privatnog ključa (.key/.pem)"
+            }
+          }
+        },
+        "port": {
+          "label": "Port"
+        }
+      },
+      "name": "API Server [Beta]",
+      "prompt": {
+        "hostname": {
+          "label": "Unesite ime domaćina (kao 0.0.0.0) za API server:",
+          "title": "Ime domaćina"
+        },
+        "port": {
+          "label": "Unesite port za API server:",
+          "title": "Port"
         }
       }
     },
-    "discord": {
+    "audio-compressor": {
+      "description": "Primjenjuje kompresiju na audio (snižava jačinu najglasnijih dijelova signala i podiže jačinu najtiših dijelova)",
+      "name": "Audio kompresor"
+    },
+    "auth-proxy-adapter": {
+      "description": "Podrška za korištenje usluga autentifikacijskog proxyja",
       "menu": {
+        "disable": "Onemogući proxy adapter",
+        "enable": "Omogući proxy adapter",
+        "hostname": {
+          "label": "Ime domaćina"
+        },
+        "port": {
+          "label": "Port"
+        }
+      },
+      "name": "Auth proxy adapter",
+      "prompt": {
+        "hostname": {
+          "label": "Unesite ime domaćina za lokalni proxy server (zahtijeva restart):",
+          "title": "Ime domaćina proxyja"
+        },
+        "port": {
+          "label": "Unesite port za lokalni proxy server (zahtijeva restart):",
+          "title": "Port proxyja"
+        }
+      }
+    },
+    "blur-nav-bar": {
+      "description": "Čini navigacijsku traku prozirnom i zamućenom",
+      "name": "Zamućena navigacijska traka"
+    },
+    "bypass-age-restrictions": {
+      "description": "Zaobiđite starosnu provjeru muzičkog plejera",
+      "name": "Zaobilaženje starosnih ograničenja"
+    },
+    "captions-selector": {
+      "description": "Birač titlova za {{applicationName}} audio zapise",
+      "menu": {
+        "autoload": "Automatski odaberi zadnji korišteni titl",
+        "disable-captions": "Bez titlova po defaultu"
+      },
+      "name": "Birač titlova",
+      "prompt": {
+        "selector": {
+          "label": "Trenutni jezik titlova: {{language}}",
+          "none": "Nijedan",
+          "title": "Odaberite jezik titlova"
+        }
+      },
+      "templates": {
+        "title": "Otvori birač titlova"
+      },
+      "toast": {
+        "caption-changed": "Titlovi promijenjeni u {{language}}",
+        "caption-disabled": "Titlovi onemogućeni",
+        "no-captions": "Nema dostupnih titlova za ovu pjesmu"
+      }
+    },
+    "clock": {
+      "description": "Dodaje sat na navigacijsku traku",
+      "menu": {
+        "format": {
+          "24-hour-format": "24-satni format",
+          "display-seconds": "Prikaži sekunde",
+          "label": "Format"
+        }
+      },
+      "name": "Sat"
+    },
+    "compact-sidebar": {
+      "description": "Uvijek postavlja bočnu traku u kompaktni mod",
+      "name": "Kompaktna bočna traka"
+    },
+    "crossfade": {
+      "description": "Unakrsno blijeđenje između pjesama",
+      "menu": {
+        "advanced": "Napredno"
+      },
+      "name": "Unakrsno blijeđenje [Beta]",
+      "prompt": {
+        "options": {
+          "multi-input": {
+            "fade-in-duration": "Trajanje uvođenja (ms)",
+            "fade-out-duration": "Trajanje izvođenja (ms)",
+            "fade-scaling": {
+              "label": "Skaliranje blijeđenja",
+              "linear": "Linearno",
+              "logarithmic": "Logaritamsko"
+            },
+            "seconds-before-end": "Unakrsno blijeđenje N sekundi prije kraja"
+          },
+          "title": "Opcije unakrsnog blijeđenja"
+        }
+      }
+    },
+    "custom-output-device": {
+      "description": "Konfigurišite prilagođeni izlazni medijski uređaj za pjesme",
+      "menu": {
+        "device-selector": "Odaberi uređaj"
+      },
+      "name": "Prilagođeni izlazni uređaj",
+      "prompt": {
+        "device-selector": {
+          "label": "Odaberite izlazni medijski uređaj koji će se koristiti",
+          "title": "Odaberi izlazni uređaj"
+        }
+      }
+    },
+    "disable-autoplay": {
+      "description": "Pokreće pjesmu u \"pauziranom\" modu",
+      "menu": {
+        "apply-once": "Primjenjuje se samo pri pokretanju"
+      },
+      "name": "Onemogući automatsku reprodukciju"
+    },
+    "discord": {
+      "backend": {
+        "already-connected": "Pokušaj povezivanja s aktivnom vezom",
+        "connected": "Povezan na Discord",
+        "disconnected": "Prekinuta veza s Discordom"
+      },
+      "description": "Pokažite svojim prijateljima šta slušate uz Rich Presence",
+      "menu": {
+        "auto-reconnect": "Automatsko ponovno povezivanje",
+        "clear-activity": "Očisti aktivnost",
+        "clear-activity-after-timeout": "Očisti aktivnost nakon vremenskog ograničenja",
+        "connected": "Povezan",
+        "disconnected": "Prekinut",
+        "hide-duration-left": "Sakrij preostalo vrijeme",
+        "hide-github-button": "Sakrij GitHub link dugme",
+        "play-on-application": "Pusti na {{applicationName}}",
+        "set-inactivity-timeout": "Postavi vremensko ograničenje neaktivnosti",
         "set-status-display-type": {
+          "label": "Statusni tekst",
           "submenu": {
-            "application": "Slušate {{applicationName}}",
-            "artist": "Slušate {muzičar}",
-            "title": "Slušate {naziv pesme}"
+            "application": "Sluša {{applicationName}}",
+            "artist": "Sluša {artist}",
+            "title": "Sluša {title}"
           }
         }
       },
-      "name": "Diskord Rich Presence",
+      "name": "Discord Rich Presence",
       "prompt": {
         "set-inactivity-timeout": {
-          "label": "Unesi ograničenje neaktivnosti u sekundama:",
-          "title": "Postavi ograničenje neaktivnosti"
+          "label": "Unesite vremensko ograničenje neaktivnosti u sekundama:",
+          "title": "Postavi vremensko ograničenje neaktivnosti"
         }
       }
     },
@@ -245,27 +511,616 @@
             "buttons": {
               "ok": "OK"
             },
-            "message": "Ufff! Izvinite, preuzimanje nije uspelo…",
+            "message": "Ups! Izvinite, preuzimanje nije uspjelo…",
             "title": "Greška u preuzimanju!"
           },
           "start-download-playlist": {
             "buttons": {
               "ok": "OK"
             },
-            "detail": "({{Playlist Size}} pjesme)",
-            "message": "Preuzimanje Plejliste {{playlist Title}}",
-            "title": "Preuzimanje počelo"
+            "detail": "({{PlaylistSize}} pjesama)",
+            "message": "Preuzimanje plejliste {{playlistTitle}}",
+            "title": "Preuzimanje započelo"
           }
         },
         "feedback": {
           "conversion-progress": "Pretvaranje: {{percent}}%",
           "converting": "Pretvaranje…",
-          "done": "Gotovo: {{file Path}}",
+          "done": "Gotovo: {{filePath}}",
           "download-info": "Preuzimanje {{artist}} - {{title}} [{{videoId}}",
           "download-progress": "Preuzimanje: {{percent}}%",
-          "downloading": "Preuzimanje…"
+          "downloading": "Preuzimanje…",
+          "downloading-counter": "Preuzimanje {{current}}/{{total}}…",
+          "downloading-playlist": "Preuzimanje plejliste \"{{playlistTitle}}\" - {{playlistSize}} pjesama ({{playlistId}})",
+          "error-while-downloading": "Greška pri preuzimanju \"{{author}} - {{title}}\": {{error}}",
+          "folder-already-exists": "Folder {{playlistFolder}} već postoji",
+          "getting-playlist-info": "Dobavljanje informacija o plejlisti…",
+          "loading": "Učitavanje…",
+          "playlist-has-only-one-song": "Plejlista ima samo jednu stavku, preuzimam je direktno",
+          "playlist-id-not-found": "Nije pronađen ID plejliste",
+          "playlist-is-empty": "Plejlista je prazna",
+          "playlist-is-mix-or-private": "Greška pri dobavljanju informacija o plejlisti: uvjerite se da nije privatna ili \"Miks za vas\" plejlista\n\n{{error}}",
+          "preparing-file": "Priprema datoteke…",
+          "saving": "Spremanje…",
+          "trying-to-get-playlist-id": "Pokušavam dobiti ID plejliste: {{playlistId}}",
+          "video-id-not-found": "Video nije pronađen",
+          "writing-id3": "Pisanje ID3 oznaka…"
+        }
+      },
+      "description": "Preuzima MP3 / izvorni audio direktno iz interfejsa",
+      "menu": {
+        "choose-download-folder": "Odaberite folder za preuzimanje",
+        "download-finish-settings": {
+          "label": "Preuzmi po završetku",
+          "prompt": {
+            "last-percent": "Nakon x posto",
+            "last-seconds": "Posljednjih x sekundi",
+            "title": "Konfigurišite kada preuzeti"
+          },
+          "submenu": {
+            "advanced": "Napredno",
+            "enabled": "Omogućeno",
+            "mode": "Vremenski mod",
+            "percent": "Posto",
+            "seconds": "Sekunde"
+          }
+        },
+        "download-playlist": "Preuzmi plejlistu",
+        "presets": "Unaprijed postavke",
+        "skip-existing": "Preskoči postojeće datoteke"
+      },
+      "name": "Preuzimač",
+      "renderer": {
+        "can-not-update-progress": "Nije moguće ažurirati napredak"
+      },
+      "templates": {
+        "button": "Preuzmi"
+      }
+    },
+    "equalizer": {
+      "description": "Dodaje ekvilajzer plejeru",
+      "menu": {
+        "presets": {
+          "label": "Unaprijed postavke",
+          "list": {
+            "bass-booster": "Pojačivač basa"
+          }
+        }
+      },
+      "name": "Ekvilajzer"
+    },
+    "exponential-volume": {
+      "description": "Čini klizač jačine zvuka eksponencijalnim kako bi bilo lakše odabrati niže jačine.",
+      "name": "Eksponencijalna jačina zvuka"
+    },
+    "in-app-menu": {
+      "description": "Daje menijskim trakama moderan, taman ili izgled boje albuma",
+      "menu": {
+        "hide-dom-window-controls": "Sakrij DOM kontrole prozora"
+      },
+      "name": "Meni u aplikaciji"
+    },
+    "lumiastream": {
+      "description": "Dodaje podršku za Lumia Stream",
+      "name": "Lumia Stream [Beta]"
+    },
+    "lyrics-genius": {
+      "description": "Dodaje podršku za tekstove pjesama za većinu pjesama",
+      "menu": {
+        "romanized-lyrics": "Romanizirani tekstovi"
+      },
+      "name": "Genius tekstovi",
+      "renderer": {
+        "fetched-lyrics": "Dohvaćeni tekstovi za Genius"
+      }
+    },
+    "music-together": {
+      "description": "Dijelite plejlistu s drugima. Kada domaćin pusti pjesmu, svi ostali će čuti istu pjesmu",
+      "dialog": {
+        "enter-host": "Unesite ID domaćina"
+      },
+      "internal": {
+        "save": "Spremi",
+        "track-source": "Izvor pjesme",
+        "unknown-user": "Nepoznati korisnik"
+      },
+      "menu": {
+        "click-to-copy-id": "Kopiraj ID domaćina",
+        "close": "Zatvori Music Together",
+        "connected-users": "Povezani korisnici",
+        "disconnect": "Prekini Music Together",
+        "empty-user": "Nema povezanih korisnika",
+        "host": "Music Together domaćin",
+        "join": "Pridruži se Music Together",
+        "permission": {
+          "all": "Dozvoli gostima da kontroliraju plejlistu i plejer",
+          "host-only": "Samo domaćin može kontrolirati plejlistu i plejer",
+          "playlist": "Dozvoli gostima da kontroliraju plejlistu"
+        },
+        "set-permission": "Promijeni dozvole kontrole",
+        "status": {
+          "disconnected": "Prekinut",
+          "guest": "Povezan kao gost",
+          "host": "Povezan kao domaćin"
+        }
+      },
+      "name": "Music Together [Beta]",
+      "toast": {
+        "add-song-failed": "Dodavanje pjesme nije uspjelo",
+        "closed": "Music Together zatvoren",
+        "disconnected": "Music Together prekinut",
+        "host-failed": "Pokretanje Music Together nije uspjelo",
+        "id-copied": "ID domaćina kopiran u međuspremnik",
+        "id-copy-failed": "Kopiranje ID domaćina u međuspremnik nije uspjelo",
+        "join-failed": "Pridruživanje Music Together nije uspjelo",
+        "joined": "Pridružili ste se Music Together",
+        "permission-changed": "Dozvola za Music Together promijenjena u \"{{permission}}\"",
+        "remove-song-failed": "Uklanjanje pjesme nije uspjelo",
+        "user-connected": "{{name}} se pridružio Music Together",
+        "user-disconnected": "{{name}} je napustio Music Together"
+      }
+    },
+    "navigation": {
+      "description": "Sljedeće/prethodne navigacijske strelice direktno integrirane u interfejs, kao u vašem omiljenom pretraživaču",
+      "name": "Navigacija",
+      "templates": {
+        "back": {
+          "title": "Idi na prethodnu stranicu"
+        },
+        "forward": {
+          "title": "Idi na sljedeću stranicu"
         }
       }
+    },
+    "no-google-login": {
+      "description": "Ukloni Google dugmad za prijavu i linkove iz interfejsa",
+      "name": "Bez Google prijave"
+    },
+    "notifications": {
+      "description": "Prikazuje obavijest kada pjesma počne svirati (interaktivne obavijesti su dostupne na Windowsu)",
+      "menu": {
+        "interactive": "Interaktivne obavijesti",
+        "interactive-settings": {
+          "label": "Interaktivne postavke",
+          "submenu": {
+            "hide-button-text": "Sakrij tekst dugmeta",
+            "refresh-on-play-pause": "Osvježi pri puštanju/pauzi",
+            "tray-controls": "Otvori/zatvori na klik na traku"
+          }
+        },
+        "priority": "Prioritet obavijesti",
+        "toast-style": "Stil tost obavijesti",
+        "unpause-notification": "Prikaži obavijest pri nastavku reprodukcije"
+      },
+      "name": "Obavijesti"
+    },
+    "performance-improvement": {
+      "description": "Poboljšajte performanse omogućavanjem eksperimentalnih skripti",
+      "name": "Poboljšanje performansi [Beta]"
+    },
+    "picture-in-picture": {
+      "description": "Omogućava prebacivanje aplikacije u mod slike-u-slici",
+      "menu": {
+        "always-on-top": "Uvijek na vrhu",
+        "hotkey": {
+          "label": "Prečica",
+          "prompt": {
+            "keybind-options": {
+              "hotkey": "Prečica"
+            },
+            "label": "Odaberite prečicu za uključivanje/isključivanje slike-u-slici",
+            "title": "Prečica za sliku-u-slici"
+          }
+        },
+        "save-window-position": "Spremi poziciju prozora",
+        "save-window-size": "Spremi veličinu prozora",
+        "use-native-pip": "Koristi ugrađeni PiP pretraživača"
+      },
+      "name": "Slika-u-slici",
+      "templates": {
+        "button": "Slika-u-slici"
+      }
+    },
+    "playback-speed": {
+      "description": "Slušaj brzo, slušaj sporo! Dodaje klizač koji kontrolira brzinu pjesme",
+      "name": "Brzina reprodukcije",
+      "templates": {
+        "button": "Brzina"
+      }
+    },
+    "precise-volume": {
+      "description": "Kontrolirajte jačinu zvuka precizno pomoću miša/prečica, s prilagođenim HUD-om i prilagodljivim koracima jačine",
+      "menu": {
+        "arrows-shortcuts": "Lokalne kontrole strelicama",
+        "custom-volume-steps": "Postavi prilagođene korake jačine",
+        "global-shortcuts": "Globalne prečice"
+      },
+      "name": "Precizna jačina zvuka",
+      "prompt": {
+        "global-shortcuts": {
+          "keybind-options": {
+            "decrease": "Smanji jačinu",
+            "increase": "Povećaj jačinu"
+          },
+          "label": "Odaberite globalne prečice za jačinu zvuka:",
+          "title": "Globalne prečice za jačinu"
+        },
+        "volume-steps": {
+          "label": "Odaberite korake za povećanje/smanjenje jačine zvuka",
+          "title": "Koraci jačine zvuka"
+        }
+      }
+    },
+    "quality-changer": {
+      "backend": {
+        "dialog": {
+          "quality-changer": {
+            "detail": "Trenutni kvalitet: {{quality}}",
+            "message": "Odaberite video kvalitet:",
+            "title": "Odaberite video kvalitet"
+          }
+        }
+      },
+      "description": "Omogućava promjenu video kvaliteta dugmetom na video preklopu",
+      "name": "Mjenjač video kvaliteta",
+      "renderer": {
+        "quality-settings-button": {
+          "label": "Otvori mjenjač kvaliteta plejera"
+        }
+      }
+    },
+    "scrobbler": {
+      "description": "Dodaje podršku za skrobliranje (npr. last.fm, Listenbrainz)",
+      "dialog": {
+        "lastfm": {
+          "auth-failed": {
+            "message": "Autentifikacija s Last.fm nije uspjela\nSakrij iskačući prozor do sljedećeg restartovanja.",
+            "title": "Autentifikacija nije uspjela"
+          }
+        }
+      },
+      "menu": {
+        "lastfm": {
+          "api-settings": "Last.fm API postavke"
+        },
+        "listenbrainz": {
+          "token": "Unesite ListenBrainz korisnički token"
+        },
+        "scrobble-alternative-artist": "Koristi alternativne izvođače",
+        "scrobble-alternative-title": "Koristi alternativne naslove",
+        "scrobble-other-media": "Skrobliraj druge medije"
+      },
+      "name": "Skroblir",
+      "prompt": {
+        "lastfm": {
+          "api-key": "Last.fm API ključ",
+          "api-secret": "Last.fm API tajna"
+        },
+        "listenbrainz": {
+          "token": {
+            "label": "Unesite svoj ListenBrainz korisnički token:",
+            "title": "ListenBrainz token"
+          }
+        }
+      }
+    },
+    "shortcuts": {
+      "description": "Omogućava postavljanje globalnih prečica za reprodukciju (pusti/pauza/sljedeće/prethodno) i isključivanje medijskih OSD-ova zamjenom medijskih tipki, uključivanje Ctrl/CMD + F za pretragu, uključivanje Linux MPRIS podrške za medijske tipke i prilagođene prečice za napredne korisnike",
+      "menu": {
+        "override-media-keys": "Zamijeni medijske tipke",
+        "set-keybinds": "Postavi globalne kontrole pjesama"
+      },
+      "name": "Prečice (& MPRIS)",
+      "prompt": {
+        "keybind": {
+          "keybind-options": {
+            "next": "Sljedeće",
+            "play-pause": "Pusti / Pauza",
+            "previous": "Prethodno"
+          },
+          "label": "Odaberite globalne prečice za kontrolu pjesama:",
+          "title": "Globalne prečice"
+        }
+      }
+    },
+    "skip-disliked-songs": {
+      "description": "Preskače pjesme kojima nije označeno sviđanje",
+      "name": "Preskoči pjesme bez sviđanja"
+    },
+    "skip-silences": {
+      "description": "Automatski preskače tišine u pjesmama",
+      "name": "Preskoči tišine"
+    },
+    "sponsorblock": {
+      "description": "Automatski preskače dijelove koji nisu muzika poput uvoda/završetka ili dijelova muzičkih spotova gdje pjesma ne svira",
+      "name": "SponsorBlock"
+    },
+    "synced-lyrics": {
+      "description": "Omogućava sinhronizovane tekstove za pjesme, koristeći provajdere poput LRClib.",
+      "errors": {
+        "fetch": "⚠️\tDošlo je do greške prilikom dohvaćanja teksta.\n\tMolimo pokušajte ponovo kasnije.",
+        "not-found": "⚠️ Nema teksta za ovu pjesmu."
+      },
+      "menu": {
+        "convert-chinese-character": {
+          "label": "Pretvori kineske znakove",
+          "submenu": {
+            "disabled": {
+              "label": "Onemogućeno",
+              "tooltip": "Onemogući konverziju kineskih znakova"
+            },
+            "simplified-to-traditional": {
+              "label": "Pojednostavljeno na tradicionalno",
+              "tooltip": "Pretvori pojednostavljeni kineski u tradicionalni kineski"
+            },
+            "traditional-to-simplified": {
+              "label": "Tradicionalno na pojednostavljeno",
+              "tooltip": "Pretvori tradicionalni kineski u pojednostavljeni kineski"
+            }
+          },
+          "tooltip": "Pretvori kineske znakove u tradicionalne ili pojednostavljene"
+        },
+        "default-text-string": {
+          "label": "Podrazumijevani znak između tekstova",
+          "tooltip": "Odaberite podrazumijevani znak za korištenje za razmak između tekstova"
+        },
+        "line-effect": {
+          "label": "Efekat linije",
+          "submenu": {
+            "fancy": {
+              "label": "Fensi",
+              "tooltip": "Koristite velike, efekte nalik aplikaciji na trenutnoj liniji"
+            },
+            "focus": {
+              "label": "Fokus",
+              "tooltip": "Učinite samo trenutnu liniju bijelom"
+            },
+            "offset": {
+              "label": "Pomak",
+              "tooltip": "Pomaknite trenutnu liniju udesno"
+            },
+            "scale": {
+              "label": "Skaliranje",
+              "tooltip": "Skalirajte trenutnu liniju"
+            }
+          },
+          "tooltip": "Odaberite efekat koji će se primijeniti na trenutnu liniju"
+        },
+        "lyrics-font-size": {
+          "label": "Veličina fonta teksta",
+          "submenu": {
+            "large": {
+              "label": "Velika",
+              "tooltip": "Koristite originalnu veću veličinu teksta"
+            },
+            "medium": {
+              "label": "Srednja",
+              "tooltip": "Koristite uravnoteženu veličinu teksta"
+            },
+            "small": {
+              "label": "Mala",
+              "tooltip": "Koristite kompaktniju veličinu teksta"
+            }
+          },
+          "tooltip": "Odaberite koliko velik tekst treba biti"
+        },
+        "precise-timing": {
+          "label": "Učinite tekst savršeno sinhronizovanim",
+          "tooltip": "Izračunajte do milisekunde prikaz sljedeće linije (može imati mali utjecaj na performanse)"
+        },
+        "preferred-provider": {
+          "label": "Preferirani provajder",
+          "none": {
+            "label": "Nijedan",
+            "tooltip": "Nema preferiranog provajdera"
+          },
+          "tooltip": "Odaberite podrazumijevanog provajdera za korištenje"
+        },
+        "romanization": {
+          "label": "Romaniziraj tekst",
+          "tooltip": "Ako je tekst na drugom jeziku, pokušajte prikazati latiničnu verziju."
+        },
+        "show-lyrics-even-if-inexact": {
+          "label": "Prikaži tekst čak i ako nije tačan",
+          "tooltip": "Ako pjesma nije pronađena, dodatak pokušava ponovo s drugačijim upitom za pretragu.\nRezultat iz drugog pokušaja možda nije tačan."
+        },
+        "show-time-codes": {
+          "label": "Prikaži vremenske oznake",
+          "tooltip": "Prikaži vremenske oznake pored teksta"
+        },
+        "translation": {
+          "clear-cache": {
+            "label": "Obriši keš prijevoda",
+            "tooltip": "Izbriši sve keširane prijevode pohranjene na disku."
+          },
+          "configure": {
+            "label": "Konfiguriši API ključ i model…",
+            "tooltip": "Postavite opcije prijevoda specifične za provajdera."
+          },
+          "enabled": {
+            "label": "Omogući prijevod",
+            "tooltip": "Prikaži prevedenu liniju ispod svake originalne linije teksta."
+          },
+          "label": "Prijevod teksta",
+          "provider": {
+            "label": "Provajder",
+            "tooltip": "Koja usluga će se koristiti za prijevod."
+          },
+          "providers": {
+            "anthropic": {
+              "name": "Anthropic Claude",
+              "prompt-label": "Koristi izvorni Anthropic Messages API.",
+              "prompt-title": "Anthropic postavke"
+            },
+            "gemini": {
+              "name": "Google Gemini",
+              "prompt-label": "Koristi Google's Generative Language API (generateContent).",
+              "prompt-title": "Gemini postavke"
+            },
+            "google-translate": {
+              "host": "Domaćin",
+              "name": "Google Translate",
+              "prompt-label": "Koristi neslužbeni besplatni Google Translate endpoint. API ključ nije potreban, ali Google može ograničiti brzinu.",
+              "prompt-title": "Google Translate postavke"
+            },
+            "local-cli": {
+              "command": "Komanda",
+              "engine": "Lokalni CLI",
+              "engine-claude": "Claude Code",
+              "engine-codex": "Codex",
+              "engine-gemini": "Gemini CLI",
+              "name": "Lokalni CLI",
+              "prompt-label": "Koristi lokalno prijavljeni Claude Code, Codex ili Gemini CLI. Komanda i model su automatski; CLI koristi vlastitu prijavljenu podrazumijevanu vrijednost.",
+              "prompt-title": "Lokalne CLI postavke",
+              "timeout": "Vremensko ograničenje u sekundama (15-600)"
+            },
+            "openai-compatible": {
+              "api-mode": "API mod (responses / auto / chat-completions)",
+              "base-url": "Osnovni URL",
+              "name": "OpenAI kompatibilan",
+              "prompt-label": "Koristi OpenAI-kompatibilne servere, uključujući Ollama (osnovni URL http://127.0.0.1:11434/v1, API mod auto ili chat-completions).",
+              "prompt-title": "OpenAI-kompatibilne postavke"
+            },
+            "shared": {
+              "api-key": "API ključ",
+              "model": "Model"
+            }
+          },
+          "target-language": {
+            "label": "Ciljni jezik",
+            "options": {
+              "ar": "العربية",
+              "auto": "Prati jezik aplikacije",
+              "bg": "Български",
+              "bn": "বাংলা",
+              "cs": "Čeština",
+              "da": "Dansk",
+              "de": "Deutsch",
+              "el": "Ελληνικά",
+              "en": "English",
+              "es": "Español",
+              "fa": "فارسی",
+              "fi": "Suomi",
+              "fil": "Filipino",
+              "fr": "Français",
+              "he": "עברית",
+              "hi": "हिन्दी",
+              "hr": "Hrvatski",
+              "hu": "Magyar",
+              "id": "Bahasa Indonesia",
+              "it": "Italiano",
+              "ja": "日本語",
+              "ko": "한국어",
+              "lt": "Lietuvių",
+              "mr": "मराठी",
+              "ms": "Bahasa Melayu",
+              "nl": "Nederlands",
+              "no": "Norsk",
+              "pl": "Polski",
+              "pt-BR": "Português (Brasil)",
+              "pt-PT": "Português (Portugal)",
+              "ro": "Română",
+              "ru": "Русский",
+              "sk": "Slovenčina",
+              "sr": "Српски",
+              "sv": "Svenska",
+              "sw": "Kiswahili",
+              "ta": "தமிழ்",
+              "te": "తెలుగు",
+              "th": "ไทย",
+              "tr": "Türkçe",
+              "uk": "Українська",
+              "ur": "اردو",
+              "vi": "Tiếng Việt",
+              "zh-CN": "简体中文",
+              "zh-TW": "繁體中文"
+            },
+            "tooltip": "Jezik na koji će se prevesti tekst."
+          },
+          "tooltip": "Prevedite tekst i prikažite prevedeni rezultat red po red za prikaz."
+        }
+      },
+      "name": "Sinhronizovani tekstovi",
+      "refetch-btn": {
+        "fetching": "Dohvatanje...",
+        "normal": "Ponovo dohvati tekst"
+      },
+      "warnings": {
+        "duration-mismatch": "⚠️ - Tekst možda nije sinhronizovan zbog neusklađenosti trajanja.",
+        "inexact": "⚠️ - Tekst za ovu pjesmu možda nije tačan",
+        "instrumental": "⚠️ - Ovo je instrumentalna pjesma"
+      }
+    },
+    "taskbar-mediacontrol": {
+      "description": "Kontrolirajte reprodukciju sa vaše Windows taskbar",
+      "name": "Medijska kontrola na taskbaru"
+    },
+    "touchbar": {
+      "description": "Dodaje TouchBar widget za macOS korisnike",
+      "name": "TouchBar"
+    },
+    "transparent-player": {
+      "description": "Čini prozor aplikacije prozirnim",
+      "menu": {
+        "opacity": {
+          "label": "Neprozirnost",
+          "submenu": {
+            "percent": "{{opacity}}%"
+          }
+        },
+        "type": {
+          "label": "Tip",
+          "submenu": {
+            "acrylic": "Akril",
+            "mica": "Mika",
+            "none": "Nijedan",
+            "tabbed": "S karticama"
+          }
+        }
+      },
+      "name": "Transparentni plejer"
+    },
+    "tuna-obs": {
+      "description": "Integracija s OBS-ovim dodatkom Tuna",
+      "name": "Tuna OBS"
+    },
+    "unobtrusive-player": {
+      "description": "Spriječava da plejer iskoči kada se pjesma pušta",
+      "name": "Neupadljivi plejer"
+    },
+    "video-toggle": {
+      "description": "Dodaje dugme za prebacivanje između video/pjesme moda. također može opcionalno ukloniti cijelu video karticu",
+      "menu": {
+        "align": {
+          "label": "Poravnanje",
+          "submenu": {
+            "left": "Lijevo",
+            "middle": "Sredina",
+            "right": "Desno"
+          }
+        },
+        "force-hide": "Onemogući uklanjanje video kartice",
+        "mode": {
+          "label": "Mod",
+          "submenu": {
+            "custom": "Prilagođeno prebacivanje",
+            "disabled": "Onemogućeno",
+            "native": "Ugrađeno prebacivanje"
+          }
+        }
+      },
+      "name": "Prebacivanje videa",
+      "templates": {
+        "button-song": "Pjesma",
+        "button-video": "Video"
+      }
+    },
+    "visualizer": {
+      "description": "Dodaje vizualizator plejeru",
+      "menu": {
+        "visualizer-type": "Tip vizualizatora"
+      },
+      "name": "Vizualizator"
     }
   }
 }

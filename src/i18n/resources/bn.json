@@ -231,7 +231,7 @@
       "name": "অ্যালবাম অ্যাকশনসমূহ"
     },
     "album-color-theme": {
-      "description": "অ্যালবামের রঙের উপর ভিত্তি করে ডাইনামিক থিম ও ভিজ্যুয়াল ইফেক্ট প্রয়োগ করুন",
+      "description": "অ্যালবামের রঙের উপর ভিত্তি করে ডাইনamic থিম ও ভিজ্যুয়াল ইফেক্ট প্রয়োগ করুন",
       "menu": {
         "color-mix-ratio": {
           "label": "কালার মিক্স রেশিও",
@@ -451,10 +451,17 @@
       }
     },
     "custom-output-device": {
+      "description": "গানের জন্য একটি কাস্টম আউটপুট মিডিয়া ডিভাইস কনফিগার করুন",
       "menu": {
         "device-selector": "ডিভাইস নির্বাচন করো"
       },
-      "name": "আউটপুট ডিভাইস নির্বাচন করো"
+      "name": "আউটপুট ডিভাইস নির্বাচন করো",
+      "prompt": {
+        "device-selector": {
+          "label": "ব্যবহার করার জন্য আউটপুট মিডিয়া ডিভাইস নির্বাচন করুন",
+          "title": "আউটপুট ডিভাইস নির্বাচন করুন"
+        }
+      }
     },
     "disable-autoplay": {
       "description": "গান \"পজ\" মোডে শুরু করে",
@@ -479,7 +486,15 @@
         "hide-duration-left": "অবশিষ্ট সময় লুকান",
         "hide-github-button": "গিটহাব লিঙ্ক বাটন লুকান",
         "play-on-application": "ইউটিউব মিউজিকে চালান",
-        "set-inactivity-timeout": "নিষ্ক্রিয়তার সময়সীমা সেট করুন"
+        "set-inactivity-timeout": "নিষ্ক্রিয়তার সময়সীমা সেট করুন",
+        "set-status-display-type": {
+          "label": "স্ট্যাটাস টেক্সট",
+          "submenu": {
+            "application": "{{applicationName}} শুনছেন",
+            "artist": "{artist} শুনছেন",
+            "title": "{গানের শিরোনাম} শুনছেন"
+          }
+        }
       },
       "name": "ডিসকর্ড রিচ প্রেজেন্স",
       "prompt": {
@@ -514,13 +529,13 @@
           "done": "সম্পন্ন: {{filePath}}",
           "download-info": "ডাউনলোড হচ্ছে {{artist}} - {{title}} [{{videoId}}",
           "download-progress": "ডাউনলোড: {{percent}}%",
-          "downloading": "ডাউনলোড হচ্ছে…",
+          "downloading": "ডাউনলোড করা হচ্ছে…",
           "downloading-counter": "ডাউনলোড হচ্ছে {{current}}/{{total}}…",
           "downloading-playlist": "প্লেলিস্ট \"{{playlistTitle}}\" - {{playlistSize}}টি গান ({{playlistId}}) ডাউনলোড হচ্ছে",
           "error-while-downloading": "\"{{author}} - {{title}}\" ডাউনলোড করতে সমস্যা: {{error}}",
           "folder-already-exists": "{{playlistFolder}} ফোল্ডারটি ইতিমধ্যে বিদ্যমান",
           "getting-playlist-info": "প্লেলিস্ট তথ্য নেওয়া হচ্ছে…",
-          "loading": "লোড হচ্ছে…",
+          "loading": "লোড করা হচ্ছে…",
           "playlist-has-only-one-song": "প্লেলিস্টে শুধুমাত্র একটি আইটেম আছে, সরাসরি ডাউনলোড করা হচ্ছে",
           "playlist-id-not-found": "কোনো প্লেলিস্ট আইডি পাওয়া যায়নি",
           "playlist-is-empty": "প্লেলিস্ট খালি",
@@ -771,6 +786,7 @@
         "listenbrainz": {
           "token": "ListenBrainz ব্যবহারকারী টোকেন লিখুন"
         },
+        "scrobble-alternative-artist": "বিকল্প শিল্পী ব্যবহার করুন",
         "scrobble-alternative-title": "বিকল্প শিরোনাম ব্যবহার করুন",
         "scrobble-other-media": "অন্যান্য মিডিয়া স্ক্রবল করুন"
       },
@@ -827,11 +843,22 @@
       },
       "menu": {
         "convert-chinese-character": {
+          "label": "চীনা অক্ষর রূপান্তর করুন",
           "submenu": {
             "disabled": {
-              "label": "নিষ্ক্রিয়"
+              "label": "নিষ্ক্রিয়",
+              "tooltip": "চীনা অক্ষর রূপান্তর নিষ্ক্রিয় করুন"
+            },
+            "simplified-to-traditional": {
+              "label": "সরলীকৃত থেকে ঐতিহ্যবাহী",
+              "tooltip": "সরলীকৃত চীনা অক্ষরকে ঐতিহ্যবাহী চীনা অক্ষরে রূপান্তর করুন"
+            },
+            "traditional-to-simplified": {
+              "label": "ঐতিহ্যবাহী থেকে সরলীকৃত",
+              "tooltip": "ঐতিহ্যবাহী চীনা অক্ষরকে সরলীকৃত চীনা অক্ষরে রূপান্তর করুন"
             }
-          }
+          },
+          "tooltip": "চীনা অক্ষরকে ঐতিহ্যবাহী বা সরলীকৃত রূপান্তর করুন"
         },
         "default-text-string": {
           "label": "লিরিক্সের মাঝে ডিফল্ট অক্ষর",
@@ -859,6 +886,24 @@
           },
           "tooltip": "বর্তমান লাইনে প্রয়োগ করার জন্য ইফেক্ট নির্বাচন করুন"
         },
+        "lyrics-font-size": {
+          "label": "লিরিক্স ফন্টের আকার",
+          "submenu": {
+            "large": {
+              "label": "বড়",
+              "tooltip": "মূল বড় লিরিক্সের আকার ব্যবহার করুন"
+            },
+            "medium": {
+              "label": "মাঝারি",
+              "tooltip": "একটি সুষম লিরিক্সের আকার ব্যবহার করুন"
+            },
+            "small": {
+              "label": "ছোট",
+              "tooltip": "আরও কম্প্যাক্ট লিরিক্সের আকার ব্যবহার করুন"
+            }
+          },
+          "tooltip": "লিরিক্স টেক্সট কত বড় হবে তা নির্বাচন করুন"
+        },
         "precise-timing": {
           "label": "লিরিক্স পুরোপুরি সিঙ্ক করুন",
           "tooltip": "পরবর্তী লাইন প্রদর্শনের মিলিসেকেন্ড পর্যন্ত গণনা করুন (পারফরম্যান্সে সামান্য প্রভাব পড়তে পারে)"
@@ -882,6 +927,117 @@
         "show-time-codes": {
           "label": "টাইম কোড দেখান",
           "tooltip": "লিরিক্সের পাশে টাইম কোড দেখান"
+        },
+        "translation": {
+          "clear-cache": {
+            "label": "অনুবাদ ক্যাশ সাফ করুন",
+            "tooltip": "ডিস্কে সংরক্ষিত সব ক্যাশ করা অনুবাদ মুছে ফেলুন।"
+          },
+          "configure": {
+            "label": "API কী ও মডেল কনফিগার করুন…",
+            "tooltip": "প্রোভাইডার-নির্দিষ্ট অনুবাদ অপশন সেট করুন।"
+          },
+          "enabled": {
+            "label": "অনুবাদ সক্রিয় করুন",
+            "tooltip": "প্রতিটি মূল লিরিক্স লাইনের নিচে একটি অনুবাদিত লাইন দেখান।"
+          },
+          "label": "লিরিক্স অনুবাদ",
+          "provider": {
+            "label": "প্রোভাইডার",
+            "tooltip": "অনুবাদের জন্য কোন পরিষেবা ব্যবহার করতে হবে।"
+          },
+          "providers": {
+            "anthropic": {
+              "name": "Anthropic Claude",
+              "prompt-label": "নেটিভ Anthropic Messages API ব্যবহার করে।",
+              "prompt-title": "Anthropic সেটিংস"
+            },
+            "gemini": {
+              "name": "Google Gemini",
+              "prompt-label": "Google's Generative Language API (generateContent) ব্যবহার করে।",
+              "prompt-title": "Gemini সেটিংস"
+            },
+            "google-translate": {
+              "host": "হোস্ট",
+              "name": "Google Translate",
+              "prompt-label": "অনানুষ্ঠানিক বিনামূল্যের Google Translate এন্ডপয়েন্ট ব্যবহার করে। কোন API কী প্রয়োজন নেই, তবে Google এটিকে রেট-লিমিট করতে পারে।",
+              "prompt-title": "Google Translate সেটিংস"
+            },
+            "local-cli": {
+              "command": "কমান্ড",
+              "engine": "লোকাল CLI",
+              "engine-claude": "Claude Code",
+              "engine-codex": "Codex",
+              "engine-gemini": "Gemini CLI",
+              "name": "লোকাল CLI",
+              "prompt-label": "লোকালি লগইন করা Claude Code, Codex, বা Gemini CLI ব্যবহার করুন। কমান্ড এবং মডেল স্বয়ংক্রিয়; CLI তার নিজস্ব লগইন করা ডিফল্ট ব্যবহার করে।",
+              "prompt-title": "লোকাল CLI সেটিংস",
+              "timeout": "টাইমআউট সেকেন্ড (15-600)"
+            },
+            "openai-compatible": {
+              "api-mode": "API মোড (responses / auto / chat-completions)",
+              "base-url": "বেস URL",
+              "name": "OpenAI সামঞ্জস্যপূর্ণ",
+              "prompt-label": "OpenAI-সামঞ্জস্যপূর্ণ সার্ভার ব্যবহার করুন, যার মধ্যে Ollama (বেস URL http://127.0.0.1:11434/v1, API মোড auto বা chat-completions)।",
+              "prompt-title": "OpenAI-সামঞ্জস্যপূর্ণ সেটিংস"
+            },
+            "shared": {
+              "api-key": "API কী",
+              "model": "মডেল"
+            }
+          },
+          "target-language": {
+            "label": "লক্ষ্য ভাষা",
+            "options": {
+              "ar": "العربية",
+              "auto": "অ্যাপ ভাষা অনুসরণ করুন",
+              "bg": "Български",
+              "bn": "বাংলা",
+              "cs": "Čeština",
+              "da": "Dansk",
+              "de": "Deutsch",
+              "el": "Ελληνικά",
+              "en": "English",
+              "es": "Español",
+              "fa": "فارسی",
+              "fi": "Suomi",
+              "fil": "Filipino",
+              "fr": "Français",
+              "he": "עברית",
+              "hi": "हिन्दी",
+              "hr": "Hrvatski",
+              "hu": "Magyar",
+              "id": "Bahasa Indonesia",
+              "it": "Italiano",
+              "ja": "日本語",
+              "ko": "한국어",
+              "lt": "Lietuvių",
+              "mr": "मराठी",
+              "ms": "Bahasa Melayu",
+              "nl": "Nederlands",
+              "no": "Norsk",
+              "pl": "Polski",
+              "pt-BR": "Português (Brasil)",
+              "pt-PT": "Português (Portugal)",
+              "ro": "Română",
+              "ru": "Русский",
+              "sk": "Slovenčina",
+              "sr": "Српски",
+              "sv": "Svenska",
+              "sw": "Kiswahili",
+              "ta": "தமிழ்",
+              "te": "తెలుగు",
+              "th": "ไทย",
+              "tr": "Türkçe",
+              "uk": "Українська",
+              "ur": "اردو",
+              "vi": "Tiếng Việt",
+              "zh-CN": "简体中文",
+              "zh-TW": "繁體中文"
+            },
+            "tooltip": "লিরিক্স অনুবাদ করার ভাষা।"
+          },
+          "tooltip": "লিরিক্স অনুবাদ করুন এবং প্রদর্শনের জন্য লাইন বাই লাইন অনুবাদিত ফলাফল দেখান।"
         }
       },
       "name": "সিঙ্ক করা লিরিক্স",
@@ -907,7 +1063,10 @@
       "description": "অ্যাপ উইন্ডো স্বচ্ছ করে",
       "menu": {
         "opacity": {
-          "label": "স্বচ্ছতা"
+          "label": "স্বচ্ছতা",
+          "submenu": {
+            "percent": "{{opacity}}%"
+          }
         },
         "type": {
           "label": "ধরণ",

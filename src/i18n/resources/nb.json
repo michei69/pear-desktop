@@ -142,20 +142,38 @@
             "label": "Systemkurv",
             "submenu": {
               "disabled": "Avskrudd",
+              "enabled-and-hide-app": "Enabled and hide app",
+              "enabled-and-show-app": "Enabled and show app",
               "play-pause-on-click": "Spill av/pause ved klikk"
             }
           },
           "visual-tweaks": {
             "label": "Visuelle tilpasninger",
             "submenu": {
+              "custom-window-title": {
+                "label": "Custom window title",
+                "prompt": {
+                  "label": "Enter custom window title: (leave empty to disable)",
+                  "placeholder": "Example: {{applicationName}}"
+                }
+              },
               "like-buttons": {
                 "default": "Forvalg",
                 "force-show": "Tving visning",
                 "hide": "Skjul",
-                "label": "Begunstningsknapper"
+                "label": "Begunstningsknapper",
+                "swap": "Swap like buttons order"
               },
               "remove-upgrade-button": "Fjern oppgraderingsknapp",
               "theme": {
+                "dialog": {
+                  "button": {
+                    "cancel": "Cancel",
+                    "remove": "Remove"
+                  },
+                  "remove-theme": "Are you sure you want to remove the custom theme?",
+                  "remove-theme-message": "This will remove the custom theme"
+                },
                 "label": "Drakt",
                 "submenu": {
                   "import-css-file": "Importer egendefinert CSS-fil",
@@ -168,7 +186,8 @@
       },
       "plugins": {
         "enabled": "Påskrudd",
-        "label": "Programtillegg"
+        "label": "Programtillegg",
+        "new": "NEW"
       },
       "view": {
         "label": "Vis",
@@ -188,10 +207,18 @@
       "previous": "Forrige",
       "quit": "Avslutt",
       "restart": "Programomstart",
-      "show": "Vis vindu"
+      "show": "Vis vindu",
+      "tooltip": {
+        "default": "{{applicationName}}",
+        "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
+      }
     }
   },
   "plugins": {
+    "ad-speedup": {
+      "description": "If an ad play it mutes the audio and sets playback speed to 16x",
+      "name": "Ad Speedup"
+    },
     "adblocker": {
       "description": "Stenger ute reklame og sporing",
       "menu": {
@@ -199,8 +226,21 @@
       },
       "name": "Reklameblokkering"
     },
+    "album-actions": {
+      "description": "Adds Undislike, Dislike, Like, and Unlike buttons to apply this to all songs in a playlist or album",
+      "name": "Album Actions"
+    },
     "album-color-theme": {
       "description": "Ifører dynamisk drakt og visuelle effekter basert på albumsfargepaletten",
+      "menu": {
+        "color-mix-ratio": {
+          "label": "Color mix ratio",
+          "submenu": {
+            "percent": "{{ratio}}%"
+          }
+        },
+        "enable-seekbar": "Enable seekbar theming"
+      },
       "name": "Albumsfargedrakt"
     },
     "ambient-mode": {
@@ -248,9 +288,99 @@
       },
       "name": "Omgivelsesmodus"
     },
+    "amuse": {
+      "description": "Adds {{applicationName}} support for the Amuse now playing widget by 6K Labs",
+      "name": "Amuse",
+      "response": {
+        "query": "Amuse API server is running. GET /query to get song info."
+      }
+    },
+    "api-server": {
+      "description": "Adds an API server to control the player",
+      "dialog": {
+        "request": {
+          "buttons": {
+            "allow": "Allow",
+            "deny": "Deny"
+          },
+          "message": "Allow {{ID}} ({{origin}}) to access the API?",
+          "title": "API authorization request"
+        }
+      },
+      "menu": {
+        "auth-strategy": {
+          "label": "Authorization strategy",
+          "submenu": {
+            "auth-at-first": {
+              "label": "Authorize at first request"
+            },
+            "none": {
+              "label": "No authorization"
+            }
+          }
+        },
+        "hostname": {
+          "label": "Hostname"
+        },
+        "https": {
+          "label": "HTTPS & Certificates",
+          "submenu": {
+            "cert": {
+              "dialogTitle": "Select HTTPS certificate file",
+              "label": "Certificate file (.crt/.pem)"
+            },
+            "enable-https": {
+              "label": "Enable HTTPS"
+            },
+            "key": {
+              "dialogTitle": "Select HTTPS private key file",
+              "label": "Private key file (.key/.pem)"
+            }
+          }
+        },
+        "port": {
+          "label": "Port"
+        }
+      },
+      "name": "API Server [Beta]",
+      "prompt": {
+        "hostname": {
+          "label": "Enter the hostname (like 0.0.0.0) for the API server:",
+          "title": "Hostname"
+        },
+        "port": {
+          "label": "Enter the port for the API server:",
+          "title": "Port"
+        }
+      }
+    },
     "audio-compressor": {
       "description": "Anvend kompresjon for lyd (senker lydstyrken for de kraftigste delene av signalet og øker nivået i de svakeste)",
       "name": "Lydkompressor"
+    },
+    "auth-proxy-adapter": {
+      "description": "Support for the use of authentication proxy services",
+      "menu": {
+        "disable": "Disable Proxy Adapter",
+        "enable": "Enable Proxy Adapter",
+        "hostname": {
+          "label": "Hostname"
+        },
+        "port": {
+          "label": "Port"
+        }
+      },
+      "name": "Auth Proxy Adapter",
+      "prompt": {
+        "hostname": {
+          "label": "Enter hostname for local proxy server (requires restart):",
+          "title": "Proxy Hostname"
+        },
+        "port": {
+          "label": "Enter port for local proxy server (requires restart):",
+          "title": "Proxy Port"
+        }
+      }
     },
     "blur-nav-bar": {
       "description": "Gjør navigeringsbjelken gjennomsiktig og tilslørt",
@@ -276,7 +406,23 @@
       },
       "templates": {
         "title": "Åpne undertekstvelger"
+      },
+      "toast": {
+        "caption-changed": "Caption changed to {{language}}",
+        "caption-disabled": "Captions disabled",
+        "no-captions": "No captions available for this song"
       }
+    },
+    "clock": {
+      "description": "Add a clock to the navigation bar",
+      "menu": {
+        "format": {
+          "24-hour-format": "24-Hour Format",
+          "display-seconds": "Display Seconds",
+          "label": "Format"
+        }
+      },
+      "name": "Clock"
     },
     "compact-sidebar": {
       "description": "Alltid sett sidefeltet i kompakt modus",
@@ -304,6 +450,19 @@
         }
       }
     },
+    "custom-output-device": {
+      "description": "Configure a custom output media device for songs",
+      "menu": {
+        "device-selector": "Select Device"
+      },
+      "name": "Custom Output Device",
+      "prompt": {
+        "device-selector": {
+          "label": "Choose the output media device to be used",
+          "title": "Select Output Device"
+        }
+      }
+    },
     "disable-autoplay": {
       "description": "Merkerer sporstart i «pauset» modus",
       "menu": {
@@ -327,7 +486,15 @@
         "hide-duration-left": "Skjul gjenværende tid",
         "hide-github-button": "Skjul GitHub-lenkeknapp",
         "play-on-application": "Spill på {{applicationName}}",
-        "set-inactivity-timeout": "Sett tid før tidsavbrudd"
+        "set-inactivity-timeout": "Sett tid før tidsavbrudd",
+        "set-status-display-type": {
+          "label": "Status text",
+          "submenu": {
+            "application": "Listening to {{applicationName}}",
+            "artist": "Listening to {artist}",
+            "title": "Listening to {song title}"
+          }
+        }
       },
       "name": "Rik tilstedeværelse for Discord",
       "prompt": {
@@ -383,6 +550,21 @@
       "description": "Laster ned MP3/kildelyd direkte fra grensesnittet",
       "menu": {
         "choose-download-folder": "Velg nedlastningsmappe",
+        "download-finish-settings": {
+          "label": "Download on finish",
+          "prompt": {
+            "last-percent": "After x percent",
+            "last-seconds": "Last x seconds",
+            "title": "Configure when to download"
+          },
+          "submenu": {
+            "advanced": "Advanced",
+            "enabled": "Enabled",
+            "mode": "Time mode",
+            "percent": "Percent",
+            "seconds": "Seconds"
+          }
+        },
         "download-playlist": "Last ned spilleliste",
         "presets": "Forhåndsinnstillinger",
         "skip-existing": "Hopp over eksisterende filer"
@@ -394,6 +576,18 @@
       "templates": {
         "button": "Last ned"
       }
+    },
+    "equalizer": {
+      "description": "Adds an equalizer to the player",
+      "menu": {
+        "presets": {
+          "label": "Presets",
+          "list": {
+            "bass-booster": "Bass booster"
+          }
+        }
+      },
+      "name": "Equalizer"
     },
     "exponential-volume": {
       "description": "Gjør lydstyrkekontrollen eksponentiell, slik at det er enklere velge lavere lydstyrker.",
@@ -420,9 +614,63 @@
         "fetched-lyrics": "Henter sangtekster for Genius"
       }
     },
+    "music-together": {
+      "description": "Share a playlist with others. When the host plays a song, everyone else will hear the same song",
+      "dialog": {
+        "enter-host": "Enter Host ID"
+      },
+      "internal": {
+        "save": "Save",
+        "track-source": "Track Source",
+        "unknown-user": "Unknown User"
+      },
+      "menu": {
+        "click-to-copy-id": "Copy Host ID",
+        "close": "Close Music Together",
+        "connected-users": "Connected Users",
+        "disconnect": "Disconnect Music Together",
+        "empty-user": "No connected users",
+        "host": "Music Together Host",
+        "join": "Join Music Together",
+        "permission": {
+          "all": "Allow guests to control playlist and player",
+          "host-only": "Only the host can control playlist and player",
+          "playlist": "Allow guests to control playlist"
+        },
+        "set-permission": "Change Control Permission",
+        "status": {
+          "disconnected": "Disconnected",
+          "guest": "Connected as Guest",
+          "host": "Connected as Host"
+        }
+      },
+      "name": "Music Together [Beta]",
+      "toast": {
+        "add-song-failed": "Failed to add song",
+        "closed": "Music Together closed",
+        "disconnected": "Music Together disconnected",
+        "host-failed": "Failed to host Music Together",
+        "id-copied": "Host ID copied to clipboard",
+        "id-copy-failed": "Failed to copy Host ID to clipboard",
+        "join-failed": "Failed to join Music Together",
+        "joined": "Joined Music Together",
+        "permission-changed": "Music Together permission changed to \"{{permission}}\"",
+        "remove-song-failed": "Failed to remove song",
+        "user-connected": "{{name}} joined Music Together",
+        "user-disconnected": "{{name}} left Music Together"
+      }
+    },
     "navigation": {
       "description": "Direkte integrering av neste/tilbake-navigasjonspilene i grensesnittet, som din favorittnettleser",
-      "name": "Navigasjon"
+      "name": "Navigasjon",
+      "templates": {
+        "back": {
+          "title": "Go to previous page"
+        },
+        "forward": {
+          "title": "Go to next page"
+        }
+      }
     },
     "no-google-login": {
       "description": "Fjern Google-innloggingsknapper og lenker fra grensesnittet",
@@ -441,9 +689,14 @@
           }
         },
         "priority": "Merknadsprioritet",
+        "toast-style": "Toast style",
         "unpause-notification": "Vis merknad ved oppheving av pause"
       },
       "name": "Merknader"
+    },
+    "performance-improvement": {
+      "description": "Improve performance by enabling experimental scripts",
+      "name": "Performance improvement [Beta]"
     },
     "picture-in-picture": {
       "description": "Tillater å bytte programmet til bilde-i-bilde modus",
@@ -509,7 +762,47 @@
         }
       },
       "description": "Tillat endring av videokvalitet med en knapp i videooverlaget",
-      "name": "Vindukvalitetsvelger"
+      "name": "Vindukvalitetsvelger",
+      "renderer": {
+        "quality-settings-button": {
+          "label": "Open player quality changer"
+        }
+      }
+    },
+    "scrobbler": {
+      "description": "Add scrobbling support (etc. last.fm, Listenbrainz)",
+      "dialog": {
+        "lastfm": {
+          "auth-failed": {
+            "message": "Failed to authenticate with Last.fm\nHide the popup until the next restart.",
+            "title": "Authentication Failed"
+          }
+        }
+      },
+      "menu": {
+        "lastfm": {
+          "api-settings": "Last.fm API Settings"
+        },
+        "listenbrainz": {
+          "token": "Enter ListenBrainz user token"
+        },
+        "scrobble-alternative-artist": "Use alternative artists",
+        "scrobble-alternative-title": "Use alternative titles",
+        "scrobble-other-media": "Scrobble other media"
+      },
+      "name": "Scrobbler",
+      "prompt": {
+        "lastfm": {
+          "api-key": "Last.fm API key",
+          "api-secret": "Last.fm API secret"
+        },
+        "listenbrainz": {
+          "token": {
+            "label": "Enter your ListenBrainz user token:",
+            "title": "ListenBrainz token"
+          }
+        }
+      }
     },
     "shortcuts": {
       "description": "Tillater bruk av hurtigtaster for hele programmet til avspilling (spill/pause/neste/forrige) + skru av media-videooverlag ved å overstyre mediataster + skru på Ctrl+CMD+F for å søke, pluss å egge til MPRIS støtte på linux for mediataster pluss egendefinerte hurtigtaster for avanserte brukere",
@@ -542,6 +835,222 @@
       "description": "Hopper over ikke-musikalske deler, som intro/sluttsats, eller deler av musikkvideoer der ingen musikk spilles",
       "name": "SponsorBlock"
     },
+    "synced-lyrics": {
+      "description": "Provides synced lyrics to songs, using providers like LRClib.",
+      "errors": {
+        "fetch": "⚠️\tAn error occurred while fetching the lyrics.\n\tPlease try again later.",
+        "not-found": "⚠️ No lyrics found for this song."
+      },
+      "menu": {
+        "convert-chinese-character": {
+          "label": "Convert Chinese character",
+          "submenu": {
+            "disabled": {
+              "label": "Disabled",
+              "tooltip": "Disable Chinese character conversion"
+            },
+            "simplified-to-traditional": {
+              "label": "Simplified to Traditional",
+              "tooltip": "Convert Simplified Chinese to Traditional Chinese"
+            },
+            "traditional-to-simplified": {
+              "label": "Traditional to Simplified",
+              "tooltip": "Convert Traditional Chinese to Simplified Chinese"
+            }
+          },
+          "tooltip": "Convert Chinese character to Traditional or Simplified"
+        },
+        "default-text-string": {
+          "label": "Default character between lyrics",
+          "tooltip": "Choose the default character to use for the gap between lyrics"
+        },
+        "line-effect": {
+          "label": "Line effect",
+          "submenu": {
+            "fancy": {
+              "label": "Fancy",
+              "tooltip": "Use large, app-like effects on the current line"
+            },
+            "focus": {
+              "label": "Focus",
+              "tooltip": "Make only the current line white"
+            },
+            "offset": {
+              "label": "Offset",
+              "tooltip": "Offset on the right the current line"
+            },
+            "scale": {
+              "label": "Scale",
+              "tooltip": "Scale the current line"
+            }
+          },
+          "tooltip": "Choose the effect to apply to the current line"
+        },
+        "lyrics-font-size": {
+          "label": "Lyrics font size",
+          "submenu": {
+            "large": {
+              "label": "Large",
+              "tooltip": "Use the original larger lyrics size"
+            },
+            "medium": {
+              "label": "Medium",
+              "tooltip": "Use a balanced lyrics size"
+            },
+            "small": {
+              "label": "Small",
+              "tooltip": "Use a more compact lyrics size"
+            }
+          },
+          "tooltip": "Choose how large the lyrics text should be"
+        },
+        "precise-timing": {
+          "label": "Make the lyrics perfectly synced",
+          "tooltip": "Calculate to the milisecond the display of the next line (can have a small impact on performance)"
+        },
+        "preferred-provider": {
+          "label": "Preferred Provider",
+          "none": {
+            "label": "None",
+            "tooltip": "No preferred provider"
+          },
+          "tooltip": "Choose the default provider to use"
+        },
+        "romanization": {
+          "label": "Romanize lyrics",
+          "tooltip": "If the lyrics are in a different language, try to display a latin version."
+        },
+        "show-lyrics-even-if-inexact": {
+          "label": "Show lyrics even if inexact",
+          "tooltip": "If the song is not found, the plugin tries again with a different search query.\nThe result from the second attempt may not be exact."
+        },
+        "show-time-codes": {
+          "label": "Show time codes",
+          "tooltip": "Show the time codes next to the lyrics"
+        },
+        "translation": {
+          "clear-cache": {
+            "label": "Clear translation cache",
+            "tooltip": "Delete all cached translations stored on disk."
+          },
+          "configure": {
+            "label": "Configure API key & model…",
+            "tooltip": "Set provider-specific translation options."
+          },
+          "enabled": {
+            "label": "Enable translation",
+            "tooltip": "Show a translated line beneath each original lyric line."
+          },
+          "label": "Lyrics translation",
+          "provider": {
+            "label": "Provider",
+            "tooltip": "Which service to use for translation."
+          },
+          "providers": {
+            "anthropic": {
+              "name": "Anthropic Claude",
+              "prompt-label": "Uses the native Anthropic Messages API.",
+              "prompt-title": "Anthropic settings"
+            },
+            "gemini": {
+              "name": "Google Gemini",
+              "prompt-label": "Uses Google's Generative Language API (generateContent).",
+              "prompt-title": "Gemini settings"
+            },
+            "google-translate": {
+              "host": "Host",
+              "name": "Google Translate",
+              "prompt-label": "Uses the unofficial free Google Translate endpoint. No API key is required, but Google may rate-limit it.",
+              "prompt-title": "Google Translate settings"
+            },
+            "local-cli": {
+              "command": "Command",
+              "engine": "Local CLI",
+              "engine-claude": "Claude Code",
+              "engine-codex": "Codex",
+              "engine-gemini": "Gemini CLI",
+              "name": "Local CLI",
+              "prompt-label": "Use a locally logged-in Claude Code, Codex, or Gemini CLI. The command and model are automatic; the CLI uses its own logged-in default.",
+              "prompt-title": "Local CLI settings",
+              "timeout": "Timeout seconds (15-600)"
+            },
+            "openai-compatible": {
+              "api-mode": "API mode (responses / auto / chat-completions)",
+              "base-url": "Base URL",
+              "name": "OpenAI compatible",
+              "prompt-label": "Use OpenAI-compatible servers, including Ollama (base URL http://127.0.0.1:11434/v1, API mode auto or chat-completions).",
+              "prompt-title": "OpenAI-compatible settings"
+            },
+            "shared": {
+              "api-key": "API key",
+              "model": "Model"
+            }
+          },
+          "target-language": {
+            "label": "Target language",
+            "options": {
+              "ar": "العربية",
+              "auto": "Follow app language",
+              "bg": "Български",
+              "bn": "বাংলা",
+              "cs": "Čeština",
+              "da": "Dansk",
+              "de": "Deutsch",
+              "el": "Ελληνικά",
+              "en": "English",
+              "es": "Español",
+              "fa": "فارسی",
+              "fi": "Suomi",
+              "fil": "Filipino",
+              "fr": "Français",
+              "he": "עברית",
+              "hi": "हिन्दी",
+              "hr": "Hrvatski",
+              "hu": "Magyar",
+              "id": "Bahasa Indonesia",
+              "it": "Italiano",
+              "ja": "日本語",
+              "ko": "한국어",
+              "lt": "Lietuvių",
+              "mr": "मराठी",
+              "ms": "Bahasa Melayu",
+              "nl": "Nederlands",
+              "no": "Norsk",
+              "pl": "Polski",
+              "pt-BR": "Português (Brasil)",
+              "pt-PT": "Português (Portugal)",
+              "ro": "Română",
+              "ru": "Русский",
+              "sk": "Slovenčina",
+              "sr": "Српски",
+              "sv": "Svenska",
+              "sw": "Kiswahili",
+              "ta": "தமிழ்",
+              "te": "తెలుగు",
+              "th": "ไทย",
+              "tr": "Türkçe",
+              "uk": "Українська",
+              "ur": "اردو",
+              "vi": "Tiếng Việt",
+              "zh-CN": "简体中文",
+              "zh-TW": "繁體中文"
+            },
+            "tooltip": "The language to translate lyrics into."
+          },
+          "tooltip": "Translate lyrics and show the translated result line-by-line for display."
+        }
+      },
+      "name": "Synced Lyrics",
+      "refetch-btn": {
+        "fetching": "Fetching...",
+        "normal": "Refetch lyrics"
+      },
+      "warnings": {
+        "duration-mismatch": "⚠️ - The lyrics may be out of sync due to a duration mismatch.",
+        "inexact": "⚠️ - The lyrics for this song may not be exact",
+        "instrumental": "⚠️ - This is an instrumental song"
+      }
+    },
     "taskbar-mediacontrol": {
       "description": "Kontroller avspilling fra din Windows-oppgavelinje",
       "name": "Oppgavelinje-mediakontroll"
@@ -550,9 +1059,34 @@
       "description": "Legger til et pekefelt-miniprogram for macOS-brukere",
       "name": "Pekefelt"
     },
+    "transparent-player": {
+      "description": "Makes the app window transparent",
+      "menu": {
+        "opacity": {
+          "label": "Opacity",
+          "submenu": {
+            "percent": "{{opacity}}%"
+          }
+        },
+        "type": {
+          "label": "Type",
+          "submenu": {
+            "acrylic": "Acrylic",
+            "mica": "Mica",
+            "none": "None",
+            "tabbed": "Tabbed"
+          }
+        }
+      },
+      "name": "Transparent Player"
+    },
     "tuna-obs": {
       "description": "Integrasjon med Tuna-programtillegget i OBS",
       "name": "OBS Tuna"
+    },
+    "unobtrusive-player": {
+      "description": "Prevents the player from popping up when playing a song",
+      "name": "Unobtrusive Player"
     },
     "video-toggle": {
       "description": "Leger til en knapp for å bytte mellom video/spormodus. Kan også alternativt fjerne hele videofanen.",
@@ -577,7 +1111,8 @@
       },
       "name": "Videoveksling",
       "templates": {
-        "button-song": "Spor"
+        "button-song": "Spor",
+        "button-video": "Video"
       }
     },
     "visualizer": {

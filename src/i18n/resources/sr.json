@@ -161,7 +161,8 @@
                 "default": "Podrazumevano",
                 "force-show": "Prinudno prikaži",
                 "hide": "Sakrij",
-                "label": "'Sviđa mi se' dugmići"
+                "label": "'Sviđa mi se' dugmići",
+                "swap": "Swap like buttons order"
               },
               "remove-upgrade-button": "Ukloni dugme za nadogradnju",
               "theme": {
@@ -411,6 +412,17 @@
         "caption-disabled": "Prevod onemogućen",
         "no-captions": "Za ovu pesmu nisu dostupni prevodi"
       }
+    },
+    "clock": {
+      "description": "Add a clock to the navigation bar",
+      "menu": {
+        "format": {
+          "24-hour-format": "24-Hour Format",
+          "display-seconds": "Display Seconds",
+          "label": "Format"
+        }
+      },
+      "name": "Clock"
     },
     "compact-sidebar": {
       "description": "Uvek koristi kompaktni meni sa strane",
@@ -830,6 +842,24 @@
         "not-found": "⚠️ Tekst za ovu pesmu nije pronađen."
       },
       "menu": {
+        "convert-chinese-character": {
+          "label": "Convert Chinese character",
+          "submenu": {
+            "disabled": {
+              "label": "Disabled",
+              "tooltip": "Disable Chinese character conversion"
+            },
+            "simplified-to-traditional": {
+              "label": "Simplified to Traditional",
+              "tooltip": "Convert Simplified Chinese to Traditional Chinese"
+            },
+            "traditional-to-simplified": {
+              "label": "Traditional to Simplified",
+              "tooltip": "Convert Traditional Chinese to Simplified Chinese"
+            }
+          },
+          "tooltip": "Convert Chinese character to Traditional or Simplified"
+        },
         "default-text-string": {
           "label": "Podrazumevani karakteri između tekstova pesama",
           "tooltip": "Izaberi podrazumevane karaktere koji će biti korišćeni za razmake između tekstova pesama"
@@ -856,6 +886,24 @@
           },
           "tooltip": "Izaberi efekat koji će biti primenjen na trenutnoj liniji"
         },
+        "lyrics-font-size": {
+          "label": "Lyrics font size",
+          "submenu": {
+            "large": {
+              "label": "Large",
+              "tooltip": "Use the original larger lyrics size"
+            },
+            "medium": {
+              "label": "Medium",
+              "tooltip": "Use a balanced lyrics size"
+            },
+            "small": {
+              "label": "Small",
+              "tooltip": "Use a more compact lyrics size"
+            }
+          },
+          "tooltip": "Choose how large the lyrics text should be"
+        },
         "precise-timing": {
           "label": "Učini da tekst pesme bude savršeno usklađen",
           "tooltip": "Izračunaj do milisekunde prikaz sledeće linije teksta (može malo uticati na učinak)"
@@ -879,6 +927,117 @@
         "show-time-codes": {
           "label": "Prikaži vremenske oznake",
           "tooltip": "Prikaži vremenske oznake pored teksta pesme"
+        },
+        "translation": {
+          "clear-cache": {
+            "label": "Clear translation cache",
+            "tooltip": "Delete all cached translations stored on disk."
+          },
+          "configure": {
+            "label": "Configure API key & model…",
+            "tooltip": "Set provider-specific translation options."
+          },
+          "enabled": {
+            "label": "Enable translation",
+            "tooltip": "Show a translated line beneath each original lyric line."
+          },
+          "label": "Lyrics translation",
+          "provider": {
+            "label": "Provider",
+            "tooltip": "Which service to use for translation."
+          },
+          "providers": {
+            "anthropic": {
+              "name": "Anthropic Claude",
+              "prompt-label": "Uses the native Anthropic Messages API.",
+              "prompt-title": "Anthropic settings"
+            },
+            "gemini": {
+              "name": "Google Gemini",
+              "prompt-label": "Uses Google's Generative Language API (generateContent).",
+              "prompt-title": "Gemini settings"
+            },
+            "google-translate": {
+              "host": "Host",
+              "name": "Google Translate",
+              "prompt-label": "Uses the unofficial free Google Translate endpoint. No API key is required, but Google may rate-limit it.",
+              "prompt-title": "Google Translate settings"
+            },
+            "local-cli": {
+              "command": "Command",
+              "engine": "Local CLI",
+              "engine-claude": "Claude Code",
+              "engine-codex": "Codex",
+              "engine-gemini": "Gemini CLI",
+              "name": "Local CLI",
+              "prompt-label": "Use a locally logged-in Claude Code, Codex, or Gemini CLI. The command and model are automatic; the CLI uses its own logged-in default.",
+              "prompt-title": "Local CLI settings",
+              "timeout": "Timeout seconds (15-600)"
+            },
+            "openai-compatible": {
+              "api-mode": "API mode (responses / auto / chat-completions)",
+              "base-url": "Base URL",
+              "name": "OpenAI compatible",
+              "prompt-label": "Use OpenAI-compatible servers, including Ollama (base URL http://127.0.0.1:11434/v1, API mode auto or chat-completions).",
+              "prompt-title": "OpenAI-compatible settings"
+            },
+            "shared": {
+              "api-key": "API key",
+              "model": "Model"
+            }
+          },
+          "target-language": {
+            "label": "Target language",
+            "options": {
+              "ar": "العربية",
+              "auto": "Follow app language",
+              "bg": "Български",
+              "bn": "বাংলা",
+              "cs": "Čeština",
+              "da": "Dansk",
+              "de": "Deutsch",
+              "el": "Ελληνικά",
+              "en": "English",
+              "es": "Español",
+              "fa": "فارسی",
+              "fi": "Suomi",
+              "fil": "Filipino",
+              "fr": "Français",
+              "he": "עברית",
+              "hi": "हिन्दी",
+              "hr": "Hrvatski",
+              "hu": "Magyar",
+              "id": "Bahasa Indonesia",
+              "it": "Italiano",
+              "ja": "日本語",
+              "ko": "한국어",
+              "lt": "Lietuvių",
+              "mr": "मराठी",
+              "ms": "Bahasa Melayu",
+              "nl": "Nederlands",
+              "no": "Norsk",
+              "pl": "Polski",
+              "pt-BR": "Português (Brasil)",
+              "pt-PT": "Português (Portugal)",
+              "ro": "Română",
+              "ru": "Русский",
+              "sk": "Slovenčina",
+              "sr": "Српски",
+              "sv": "Svenska",
+              "sw": "Kiswahili",
+              "ta": "தமிழ்",
+              "te": "తెలుగు",
+              "th": "ไทย",
+              "tr": "Türkçe",
+              "uk": "Українська",
+              "ur": "اردو",
+              "vi": "Tiếng Việt",
+              "zh-CN": "简体中文",
+              "zh-TW": "繁體中文"
+            },
+            "tooltip": "The language to translate lyrics into."
+          },
+          "tooltip": "Translate lyrics and show the translated result line-by-line for display."
         }
       },
       "name": "Sinhronizovani tekstovi pesama",

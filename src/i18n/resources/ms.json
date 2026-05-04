@@ -161,7 +161,8 @@
                 "default": "Lalai",
                 "force-show": "Paksa pamer",
                 "hide": "Sembunyi",
-                "label": "Butang suka"
+                "label": "Butang suka",
+                "swap": "Swap like buttons order"
               },
               "remove-upgrade-button": "Buang butang naik taraf",
               "theme": {
@@ -237,7 +238,8 @@
           "submenu": {
             "percent": "{{ratio}}%"
           }
-        }
+        },
+        "enable-seekbar": "Enable seekbar theming"
       },
       "name": "Tema Warna Album"
     },
@@ -320,6 +322,22 @@
         "hostname": {
           "label": "Nama perumah"
         },
+        "https": {
+          "label": "HTTPS & Certificates",
+          "submenu": {
+            "cert": {
+              "dialogTitle": "Select HTTPS certificate file",
+              "label": "Certificate file (.crt/.pem)"
+            },
+            "enable-https": {
+              "label": "Enable HTTPS"
+            },
+            "key": {
+              "dialogTitle": "Select HTTPS private key file",
+              "label": "Private key file (.key/.pem)"
+            }
+          }
+        },
         "port": {
           "label": "Port"
         }
@@ -395,6 +413,17 @@
         "no-captions": "Tiada sarikata untuk lagu ini"
       }
     },
+    "clock": {
+      "description": "Add a clock to the navigation bar",
+      "menu": {
+        "format": {
+          "24-hour-format": "24-Hour Format",
+          "display-seconds": "Display Seconds",
+          "label": "Format"
+        }
+      },
+      "name": "Clock"
+    },
     "compact-sidebar": {
       "description": "Sentiasa tetapkan bar sisi dalam mod padat",
       "name": "Bar Sisi Padat"
@@ -461,8 +490,8 @@
         "set-status-display-type": {
           "label": "Teks status",
           "submenu": {
-            "artist": "Sedang mendengar {artist}",
             "application": "Mendengar {{applicationName}}",
+            "artist": "Sedang mendengar {artist}",
             "title": "Sedang mendengar {tajuk lagu}"
           }
         }
@@ -557,10 +586,12 @@
             "bass-booster": "Penggalak bass"
           }
         }
-      }
+      },
+      "name": "Equalizer"
     },
     "exponential-volume": {
-      "description": "Menjadikan gelangsar kelantangan eksponen supaya lebih mudah memilih kelantangan yang lebih rendah."
+      "description": "Menjadikan gelangsar kelantangan eksponen supaya lebih mudah memilih kelantangan yang lebih rendah.",
+      "name": "Exponential Volume"
     },
     "in-app-menu": {
       "description": "Memberi bar menu rupa yang mewah, gelap atau warna album",
@@ -590,6 +621,7 @@
       },
       "internal": {
         "save": "Simpan",
+        "track-source": "Track Source",
         "unknown-user": "Pengguna tidak diketahui"
       },
       "menu": {
@@ -619,51 +651,448 @@
         "disconnected": "Music Together terputus",
         "host-failed": "Gagal untuk menjadi hos Music Together",
         "id-copied": "ID hos disalin ke papan keratan",
-        "id-copy-failed": "Gagal menyalin ID Hos ke papan keratan"
+        "id-copy-failed": "Gagal menyalin ID Hos ke papan keratan",
+        "join-failed": "Failed to join Music Together",
+        "joined": "Joined Music Together",
+        "permission-changed": "Music Together permission changed to \"{{permission}}\"",
+        "remove-song-failed": "Failed to remove song",
+        "user-connected": "{{name}} joined Music Together",
+        "user-disconnected": "{{name}} left Music Together"
       }
     },
     "navigation": {
-      "name": "Navigasi"
+      "description": "Next/Back navigation arrows directly integrated in the interface, like in your favorite browser",
+      "name": "Navigasi",
+      "templates": {
+        "back": {
+          "title": "Go to previous page"
+        },
+        "forward": {
+          "title": "Go to next page"
+        }
+      }
+    },
+    "no-google-login": {
+      "description": "Remove Google login buttons and links from the interface",
+      "name": "No Google Login"
     },
     "notifications": {
+      "description": "Display a notification when a song starts playing (interactive notifications are available on Windows)",
+      "menu": {
+        "interactive": "Interactive Notifications",
+        "interactive-settings": {
+          "label": "Interactive Settings",
+          "submenu": {
+            "hide-button-text": "Hide button text",
+            "refresh-on-play-pause": "Refresh on Play/Pause",
+            "tray-controls": "Open/Close on tray click"
+          }
+        },
+        "priority": "Notification Priority",
+        "toast-style": "Toast style",
+        "unpause-notification": "Show notification on unpause"
+      },
       "name": "Notifikasi"
     },
+    "performance-improvement": {
+      "description": "Improve performance by enabling experimental scripts",
+      "name": "Performance improvement [Beta]"
+    },
+    "picture-in-picture": {
+      "description": "Allows to switch the app to picture-in-picture mode",
+      "menu": {
+        "always-on-top": "Always on top",
+        "hotkey": {
+          "label": "Hotkey",
+          "prompt": {
+            "keybind-options": {
+              "hotkey": "Hotkey"
+            },
+            "label": "Choose a hotkey to toggle picture-in-picture",
+            "title": "Picture-in-picture Hotkey"
+          }
+        },
+        "save-window-position": "Save window position",
+        "save-window-size": "Save window size",
+        "use-native-pip": "Use browser native PiP"
+      },
+      "name": "Picture-in-picture",
+      "templates": {
+        "button": "Picture-in-picture"
+      }
+    },
+    "playback-speed": {
+      "description": "Listen fast, listen slow! Adds a slider that controls song speed",
+      "name": "Playback Speed",
+      "templates": {
+        "button": "Speed"
+      }
+    },
+    "precise-volume": {
+      "description": "Control the volume precisely using mousewheel/hotkeys, with a custom HUD and customizable volume steps",
+      "menu": {
+        "arrows-shortcuts": "Local Arrow-keys Controls",
+        "custom-volume-steps": "Set Custom Volume Steps",
+        "global-shortcuts": "Global Hotkeys"
+      },
+      "name": "Precise Volume",
+      "prompt": {
+        "global-shortcuts": {
+          "keybind-options": {
+            "decrease": "Decrease Volume",
+            "increase": "Increase Volume"
+          },
+          "label": "Choose Global Volume Keybinds:",
+          "title": "Global Volume Keybinds"
+        },
+        "volume-steps": {
+          "label": "Choose Volume Increase/Decrease Steps",
+          "title": "Volume Steps"
+        }
+      }
+    },
+    "quality-changer": {
+      "backend": {
+        "dialog": {
+          "quality-changer": {
+            "detail": "Current Quality: {{quality}}",
+            "message": "Choose Video Quality:",
+            "title": "Choose Video Quality"
+          }
+        }
+      },
+      "description": "Allows changing the video quality with a button on the video overlay",
+      "name": "Video Quality Changer",
+      "renderer": {
+        "quality-settings-button": {
+          "label": "Open player quality changer"
+        }
+      }
+    },
     "scrobbler": {
+      "description": "Add scrobbling support (etc. last.fm, Listenbrainz)",
       "dialog": {
         "lastfm": {
           "auth-failed": {
+            "message": "Failed to authenticate with Last.fm\nHide the popup until the next restart.",
             "title": "Atuntikasi Gagal"
           }
         }
       },
+      "menu": {
+        "lastfm": {
+          "api-settings": "Last.fm API Settings"
+        },
+        "listenbrainz": {
+          "token": "Enter ListenBrainz user token"
+        },
+        "scrobble-alternative-artist": "Use alternative artists",
+        "scrobble-alternative-title": "Use alternative titles",
+        "scrobble-other-media": "Scrobble other media"
+      },
+      "name": "Scrobbler",
       "prompt": {
         "lastfm": {
           "api-key": "kunci API Last.fm",
           "api-secret": "rahasia API Last.fm"
+        },
+        "listenbrainz": {
+          "token": {
+            "label": "Enter your ListenBrainz user token:",
+            "title": "ListenBrainz token"
+          }
         }
       }
     },
+    "shortcuts": {
+      "description": "Allows setting global hotkeys for playback (play/pause/next/previous) and turning off media OSD by overriding media keys, turning on Ctrl/CMD + F to search, turning on Linux MPRIS support for media keys, and custom hotkeys for advanced users",
+      "menu": {
+        "override-media-keys": "Override Media Keys",
+        "set-keybinds": "Set Global Song Controls"
+      },
+      "name": "Shortcuts (& MPRIS)",
+      "prompt": {
+        "keybind": {
+          "keybind-options": {
+            "next": "Next",
+            "play-pause": "Play / Pause",
+            "previous": "Previous"
+          },
+          "label": "Choose Global Keybinds for Songs Control:",
+          "title": "Global Keybinds"
+        }
+      }
+    },
+    "skip-disliked-songs": {
+      "description": "Skips disliked songs",
+      "name": "Skip Disliked Songs"
+    },
+    "skip-silences": {
+      "description": "Automatically skip silences sections in songs",
+      "name": "Skip Silences"
+    },
+    "sponsorblock": {
+      "description": "Automatically Skips non-music parts like intro/outro or parts of music videos where the song isn't playing",
+      "name": "SponsorBlock"
+    },
     "synced-lyrics": {
+      "description": "Provides synced lyrics to songs, using providers like LRClib.",
       "errors": {
+        "fetch": "⚠️\tAn error occurred while fetching the lyrics.\n\tPlease try again later.",
         "not-found": "⚠️ Tak ada liriks untuk lagu ini."
       },
       "menu": {
+        "convert-chinese-character": {
+          "label": "Convert Chinese character",
+          "submenu": {
+            "disabled": {
+              "label": "Disabled",
+              "tooltip": "Disable Chinese character conversion"
+            },
+            "simplified-to-traditional": {
+              "label": "Simplified to Traditional",
+              "tooltip": "Convert Simplified Chinese to Traditional Chinese"
+            },
+            "traditional-to-simplified": {
+              "label": "Traditional to Simplified",
+              "tooltip": "Convert Traditional Chinese to Simplified Chinese"
+            }
+          },
+          "tooltip": "Convert Chinese character to Traditional or Simplified"
+        },
+        "default-text-string": {
+          "label": "Default character between lyrics",
+          "tooltip": "Choose the default character to use for the gap between lyrics"
+        },
+        "line-effect": {
+          "label": "Line effect",
+          "submenu": {
+            "fancy": {
+              "label": "Fancy",
+              "tooltip": "Use large, app-like effects on the current line"
+            },
+            "focus": {
+              "label": "Focus",
+              "tooltip": "Make only the current line white"
+            },
+            "offset": {
+              "label": "Offset",
+              "tooltip": "Offset on the right the current line"
+            },
+            "scale": {
+              "label": "Scale",
+              "tooltip": "Scale the current line"
+            }
+          },
+          "tooltip": "Choose the effect to apply to the current line"
+        },
+        "lyrics-font-size": {
+          "label": "Lyrics font size",
+          "submenu": {
+            "large": {
+              "label": "Large",
+              "tooltip": "Use the original larger lyrics size"
+            },
+            "medium": {
+              "label": "Medium",
+              "tooltip": "Use a balanced lyrics size"
+            },
+            "small": {
+              "label": "Small",
+              "tooltip": "Use a more compact lyrics size"
+            }
+          },
+          "tooltip": "Choose how large the lyrics text should be"
+        },
+        "precise-timing": {
+          "label": "Make the lyrics perfectly synced",
+          "tooltip": "Calculate to the milisecond the display of the next line (can have a small impact on performance)"
+        },
+        "preferred-provider": {
+          "label": "Preferred Provider",
+          "none": {
+            "label": "None",
+            "tooltip": "No preferred provider"
+          },
+          "tooltip": "Choose the default provider to use"
+        },
+        "romanization": {
+          "label": "Romanize lyrics",
+          "tooltip": "If the lyrics are in a different language, try to display a latin version."
+        },
         "show-lyrics-even-if-inexact": {
           "label": "Tunjukkan lirik walaupun tidak tepat",
           "tooltip": "Jika lagu tidak ditemui, plugin cuba lagi dengan pertanyaan carian yang berbeza. \nHasil dari percubaan kedua mungkin tidak tepat."
         },
         "show-time-codes": {
+          "label": "Show time codes",
           "tooltip": "Tunjukkan kod masa di sebelah lirik"
+        },
+        "translation": {
+          "clear-cache": {
+            "label": "Clear translation cache",
+            "tooltip": "Delete all cached translations stored on disk."
+          },
+          "configure": {
+            "label": "Configure API key & model…",
+            "tooltip": "Set provider-specific translation options."
+          },
+          "enabled": {
+            "label": "Enable translation",
+            "tooltip": "Show a translated line beneath each original lyric line."
+          },
+          "label": "Lyrics translation",
+          "provider": {
+            "label": "Provider",
+            "tooltip": "Which service to use for translation."
+          },
+          "providers": {
+            "anthropic": {
+              "name": "Anthropic Claude",
+              "prompt-label": "Uses the native Anthropic Messages API.",
+              "prompt-title": "Anthropic settings"
+            },
+            "gemini": {
+              "name": "Google Gemini",
+              "prompt-label": "Uses Google's Generative Language API (generateContent).",
+              "prompt-title": "Gemini settings"
+            },
+            "google-translate": {
+              "host": "Host",
+              "name": "Google Translate",
+              "prompt-label": "Uses the unofficial free Google Translate endpoint. No API key is required, but Google may rate-limit it.",
+              "prompt-title": "Google Translate settings"
+            },
+            "local-cli": {
+              "command": "Command",
+              "engine": "Local CLI",
+              "engine-claude": "Claude Code",
+              "engine-codex": "Codex",
+              "engine-gemini": "Gemini CLI",
+              "name": "Local CLI",
+              "prompt-label": "Use a locally logged-in Claude Code, Codex, or Gemini CLI. The command and model are automatic; the CLI uses its own logged-in default.",
+              "prompt-title": "Local CLI settings",
+              "timeout": "Timeout seconds (15-600)"
+            },
+            "openai-compatible": {
+              "api-mode": "API mode (responses / auto / chat-completions)",
+              "base-url": "Base URL",
+              "name": "OpenAI compatible",
+              "prompt-label": "Use OpenAI-compatible servers, including Ollama (base URL http://127.0.0.1:11434/v1, API mode auto or chat-completions).",
+              "prompt-title": "OpenAI-compatible settings"
+            },
+            "shared": {
+              "api-key": "API key",
+              "model": "Model"
+            }
+          },
+          "target-language": {
+            "label": "Target language",
+            "options": {
+              "ar": "العربية",
+              "auto": "Follow app language",
+              "bg": "Български",
+              "bn": "বাংলা",
+              "cs": "Čeština",
+              "da": "Dansk",
+              "de": "Deutsch",
+              "el": "Ελληνικά",
+              "en": "English",
+              "es": "Español",
+              "fa": "فارسی",
+              "fi": "Suomi",
+              "fil": "Filipino",
+              "fr": "Français",
+              "he": "עברית",
+              "hi": "हिन्दी",
+              "hr": "Hrvatski",
+              "hu": "Magyar",
+              "id": "Bahasa Indonesia",
+              "it": "Italiano",
+              "ja": "日本語",
+              "ko": "한국어",
+              "lt": "Lietuvių",
+              "mr": "मराठी",
+              "ms": "Bahasa Melayu",
+              "nl": "Nederlands",
+              "no": "Norsk",
+              "pl": "Polski",
+              "pt-BR": "Português (Brasil)",
+              "pt-PT": "Português (Portugal)",
+              "ro": "Română",
+              "ru": "Русский",
+              "sk": "Slovenčina",
+              "sr": "Српски",
+              "sv": "Svenska",
+              "sw": "Kiswahili",
+              "ta": "தமிழ்",
+              "te": "తెలుగు",
+              "th": "ไทย",
+              "tr": "Türkçe",
+              "uk": "Українська",
+              "ur": "اردو",
+              "vi": "Tiếng Việt",
+              "zh-CN": "简体中文",
+              "zh-TW": "繁體中文"
+            },
+            "tooltip": "The language to translate lyrics into."
+          },
+          "tooltip": "Translate lyrics and show the translated result line-by-line for display."
         }
+      },
+      "name": "Synced Lyrics",
+      "refetch-btn": {
+        "fetching": "Fetching...",
+        "normal": "Refetch lyrics"
+      },
+      "warnings": {
+        "duration-mismatch": "⚠️ - The lyrics may be out of sync due to a duration mismatch.",
+        "inexact": "⚠️ - The lyrics for this song may not be exact",
+        "instrumental": "⚠️ - This is an instrumental song"
       }
     },
     "taskbar-mediacontrol": {
       "description": "Kawalan main balik dari bar tugas Windows anda",
       "name": "Kawalan Media Bar Tugas"
     },
+    "touchbar": {
+      "description": "Adds a TouchBar widget for macOS users",
+      "name": "TouchBar"
+    },
+    "transparent-player": {
+      "description": "Makes the app window transparent",
+      "menu": {
+        "opacity": {
+          "label": "Opacity",
+          "submenu": {
+            "percent": "{{opacity}}%"
+          }
+        },
+        "type": {
+          "label": "Type",
+          "submenu": {
+            "acrylic": "Acrylic",
+            "mica": "Mica",
+            "none": "None",
+            "tabbed": "Tabbed"
+          }
+        }
+      },
+      "name": "Transparent Player"
+    },
+    "tuna-obs": {
+      "description": "Integration with OBS's plugin Tuna",
+      "name": "Tuna OBS"
+    },
+    "unobtrusive-player": {
+      "description": "Prevents the player from popping up when playing a song",
+      "name": "Unobtrusive Player"
+    },
     "video-toggle": {
+      "description": "Adds a button to switch between Video/Song mode. can also optionally remove the whole video tab",
       "menu": {
         "align": {
+          "label": "Alignment",
           "submenu": {
             "left": "Kiri",
             "middle": "Tengah",
@@ -672,14 +1101,26 @@
         },
         "force-hide": "Alih Keluar Tab Video",
         "mode": {
+          "label": "Mode",
           "submenu": {
-            "disabled": "Tidak Aktif"
+            "custom": "Custom toggle",
+            "disabled": "Tidak Aktif",
+            "native": "Native toggle"
           }
         }
       },
+      "name": "Video Toggle",
       "templates": {
-        "button-song": "Lagu"
+        "button-song": "Lagu",
+        "button-video": "Video"
       }
+    },
+    "visualizer": {
+      "description": "Adds a visualizer to the player",
+      "menu": {
+        "visualizer-type": "Visualizer Type"
+      },
+      "name": "Visualizer"
     }
   }
 }
