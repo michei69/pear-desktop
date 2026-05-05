@@ -2,7 +2,7 @@
   "name": "pear-music",
   "desktopName": "com.github.th_ch.pear_music",
   "productName": "Pear Desktop",
-  "version": "3.11.6",
+  "version": "3.11.7",
   "description": "Pear Desktop App - including custom plugins",
   "main": "./dist/main/index.js",
   "type": "module",
