@@ -1,32 +1,21 @@
-<div align="center" markdown="1">
-   <sup>Special thanks to:</sup>
-   <br>
-   <br>
-   <a href="https://go.warp.dev/pear-desktop">
-      <img alt="Warp sponsorship" width="400" src="https://github.com/user-attachments/assets/8307ea56-e872-494a-8a9c-de0e296a06ed" />
-   </a>
-
-### [Warp, built for coding with multiple AI agents](https://go.warp.dev/pear-desktop)
-[Available for macOS, Linux, & Windows](https://go.warp.dev/pear-desktop)<br>
-
-</div>
-<hr>
-
 <div align="center">
 
 # :pear: Pear Desktop
 
-[![GitHub release](https://img.shields.io/github/release/pear-devs/pear-desktop.svg?style=for-the-badge)](https://github.com/pear-devs/pear-desktop/releases/)
+[![GitHub release](https://img.shields.io/github/release/michei69/pear-desktop.svg?style=for-the-badge)](https://github.com/michei69/pear-desktop/releases/)
 [![GitHub license](https://img.shields.io/github/license/pear-devs/pear-desktop.svg?style=for-the-badge)](https://github.com/pear-devs/pear-desktop/blob/master/license)
 [![eslint code style](https://img.shields.io/badge/code_style-eslint-5ed9c7.svg?style=for-the-badge)](https://github.com/pear-devs/pear-desktop/blob/master/eslint.config.mjs)
-[![Build status](https://img.shields.io/github/actions/workflow/status/pear-devs/pear-desktop/build.yml?branch=master&style=for-the-badge)](https://GitHub.com/pear-devs/pear-desktop/releases/)
-[![GitHub All Releases](https://img.shields.io/github/downloads/pear-devs/pear-desktop/total?style=for-the-badge)](https://GitHub.com/pear-devs/pear-desktop/releases/)
-<!--[![AUR](https://img.shields.io/aur/version/pear-desktop-bin?color=blueviolet&style=for-the-badge)](https://aur.archlinux.org/packages/pear-desktop-bin)-->
-[![Known Vulnerabilities](https://snyk.io/test/github/pear-devs/pear-desktop/badge.svg)](https://snyk.io/test/github/pear-devs/pear-desktop)
+[![Build status](https://img.shields.io/github/actions/workflow/status/michei69/pear-desktop/build.yml?branch=master&style=for-the-badge)](https://GitHub.com/michei69/pear-desktop/releases/)
+[![GitHub All Releases](https://img.shields.io/github/downloads/michei69/pear-desktop/total?style=for-the-badge)](https://GitHub.com/michei69/pear-desktop/releases/)
+
+[![Known Vulnerabilities](https://snyk.io/test/github/michei69/pear-desktop/badge.svg)](https://snyk.io/test/github/michei69/pear-desktop)
 
 </div>
 
-<!--![Screenshot](web/screenshot.png "Screenshot")-->
+<!-- ![Screenshot](web/screenshot.png "Screenshot") -->
+
+### Note: This is a fork of the original project. [Click here for the upstream version](https://github.com/pear-devs/pear-desktop)
+### Note: Updates may break certain features. Report any issues in [this fork's page](https://github.com/michei69/pear-desktop/issues) NOT in the official one
 
 - Native look & feel extension
 
@@ -50,8 +39,7 @@
 - [Features](#features)
 - [Translation](#translation)
 - [Download](#download)
-  - [Arch Linux](#arch-linux)
-  - [Solus](#solus)
+  - [Linux](#linux)
   - [MacOS](#macos)
   - [Windows](#windows)
     - [How to install without a network connection? (in Windows)](#how-to-install-without-a-network-connection-in-windows)
@@ -77,27 +65,24 @@ You can help with translation on [Hosted Weblate](https://bit.ly/48n5YF7).
 
 ## Download
 
-You can check out the [latest release](https://github.com/pear-devs/pear-desktop/releases/latest) to quickly find the
+You can check out the [latest release](https://github.com/michei69/pear-desktop/releases/latest) to quickly find the
 latest version.
 
-### Arch Linux
+### Linux
 
-Install the [`pear-desktop`](https://aur.archlinux.org/packages/pear-desktop) package from the AUR. For AUR installation instructions, take a look at
-this [wiki page](https://wiki.archlinux.org/index.php/Arch_User_Repository#Installing_packages).
-
-### [Solus](https://getsol.us/)
-
-```bash
-sudo eopkg install pear-desktop
-```
+Easiest way to install is via the provided **flatpak** (tested). You can also try out the other formats (deb, rpm, snap, tarball, appimage) but be aware these may or may not have issues.
 
 ### macOS
 
+Please install manually via the provided DMG.
+
+<s>
 You can install the app using Homebrew (see the [cask definition](https://github.com/pear-devs/homebrew-pear)):
 
 ```bash
 brew install pear-devs/pear/pear-desktop
 ```
+</s>
 
 If you install the app manually and get an error "is damaged and can’t be opened." when launching the app, run the following in the Terminal:
 
@@ -107,6 +92,9 @@ If you install the app manually and get an error "is damaged and can’t be open
 
 ### Windows
 
+Please install manually via the provided Web Setup. Alternatively, you can use the provided portable executable instead.
+
+<s>
 You can use the [Scoop package manager](https://scoop.sh) to install the `pear-desktop` package from
 the [`extras` bucket](https://github.com/ScoopInstaller/Extras).
 
@@ -125,6 +113,7 @@ file).*
 ```bash
 winget install pear-devs.pear-desktop
 ```
+</s>
 
 #### How to install without a network connection? (in Windows)
 
@@ -145,7 +134,7 @@ Some predefined themes are available in https://github.com/kerichdev/themes-for-
 ## Dev
 
 ```bash
-git clone https://github.com/pear-devs/pear-desktop
+git clone https://github.com/michei69/pear-desktop
 cd pear-desktop
 pnpm install --frozen-lockfile
 pnpm dev
