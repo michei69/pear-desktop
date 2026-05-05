@@ -110,10 +110,13 @@ if (path) {
 }
 
 // HACK: Wait for the script to be executed (with timeout safety)
-const startTime = Date.now();
-const TIMEOUT = 10_000;
-while (blocked && Date.now() - startTime < TIMEOUT) {
-  // Yield to prevent completely blocking the renderer
-  const start = Date.now();
-  while (Date.now() - start < 1) { /* spin */ }
-}
+// Use a self-invoking async function to avoid top-level await (CJS output)
+void (async () => {
+  if (!path && !script) return;
+
+  const startTime = Date.now();
+  const TIMEOUT = 10_000;
+  while (blocked && Date.now() - startTime < TIMEOUT) {
+    await new Promise((resolve) => setTimeout(resolve, 1));
+  }
+})();

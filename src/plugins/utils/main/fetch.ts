@@ -1,7 +1,7 @@
 import { net } from 'electron';
 
-export const getNetFetchAsFetch = () =>
-  (async (input: RequestInfo | URL, init?: RequestInit) => {
+export const getNetFetchAsFetch = (): typeof fetch =>
+  ((input: RequestInfo | URL, init?: RequestInit) => {
     const url =
       typeof input === 'string'
         ? new URL(input)
@@ -18,5 +18,5 @@ export const getNetFetchAsFetch = () =>
       input instanceof Request ? input : undefined,
     );
 
-    return net.fetch(request, init);
-  }) as typeof fetch;
+    return net.fetch(request, init) as unknown as Response;
+  }) as unknown as typeof fetch;

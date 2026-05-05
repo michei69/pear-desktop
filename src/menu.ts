@@ -531,7 +531,7 @@ export const mainMenuTemplate = async (
                   },
                 }),
               )
-              .sort((a, b) => a.label!.localeCompare(b.label!)),
+              .sort((a, b) => (a.label ?? '').localeCompare(b.label ?? '')),
           ),
         },
         { type: 'separator' },
@@ -643,23 +643,11 @@ export const mainMenuTemplate = async (
           label: t('main.menu.view.submenu.zoom-in'),
           role: 'zoomIn',
           accelerator: 'CmdOrCtrl+=',
-          visible: false,
-        },
-        {
-          label: t('main.menu.view.submenu.zoom-in'),
-          role: 'zoomIn',
-          accelerator: 'CmdOrCtrl+Plus',
         },
         {
           label: t('main.menu.view.submenu.zoom-out'),
           role: 'zoomOut',
           accelerator: 'CmdOrCtrl+-',
-        },
-        {
-          label: t('main.menu.view.submenu.zoom-out'),
-          role: 'zoomOut',
-          accelerator: 'CmdOrCtrl+Shift+-',
-          visible: false,
         },
         {
           label: t('main.menu.view.submenu.reset-zoom'),

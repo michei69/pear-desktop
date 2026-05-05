@@ -71,7 +71,9 @@ export const setupRepeatChangedListener = singleton(() => {
       ).__dataHost.getState().queue.repeatMode,
     );
   });
-  repeatObserver.observe(document.querySelector('#right-controls .repeat')!, {
+  const repeatEl = document.querySelector('#right-controls .repeat');
+  if (!repeatEl) return;
+  repeatObserver.observe(repeatEl, {
     attributeFilter: ['title'],
   });
 
@@ -193,7 +195,8 @@ export const setupAutoPlayChangedListener = singleton(() => {
     window.ipcRenderer.send('peard:autoplay-changed');
   });
 
-  observer.observe(autoplaySlider!, {
+  if (!autoplaySlider) return;
+  observer.observe(autoplaySlider, {
     attributes: true,
     childList: false,
     subtree: false,

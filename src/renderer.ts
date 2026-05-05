@@ -311,7 +311,8 @@ async function onApiLoaded() {
     },
   );
 
-  const video = document.querySelector('video')!;
+  const video = document.querySelector('video');
+  if (!video) return;
   const audioContext = new AudioContext();
   const audioSource = audioContext.createMediaElementSource(video);
   audioSource.connect(audioContext.destination);
