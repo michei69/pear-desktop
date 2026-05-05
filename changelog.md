@@ -2,15 +2,7 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
-#### [v3.11.7](https://github.com/michei69/pear-desktop/compare/v3.11.6...v3.11.7)
-
-- chore(i18n): update translation files manually [`86beaa4`](https://github.com/michei69/pear-desktop/commit/86beaa4ff1b9192c5793a9ac368e348abba04744)
-- feat: Add virtual desktop, audio-only, playback recovery, and tray hover mini-player [`f388c31`](https://github.com/michei69/pear-desktop/commit/f388c31ff09fd4b7d4e705bf55f0660c11ad76b2)
-- docs: Rewrite feature documentation for upstream readability [`f4b1f37`](https://github.com/michei69/pear-desktop/commit/f4b1f37a7443efa79f699c60085ae6211b3f5942)
-
-#### [v3.11.6](https://github.com/michei69/pear-desktop/compare/v3.11.5...v3.11.6)
-
-> 4 May 2026
+#### [v3.11.8](https://github.com/michei69/pear-desktop/compare/v3.11.5...v3.11.8)
 
 - chore(deps): update dependency ts-morph to v28 [`#4423`](https://github.com/michei69/pear-desktop/pull/4423)
 - fix(deps): update dependency virtua to v0.49.1 [`#4340`](https://github.com/michei69/pear-desktop/pull/4340)
@@ -22,9 +14,9 @@ All notable changes to this project will be documented in this file. Dates are d
 - chore(deps): update dependency electron to v40.8.5 [`#4342`](https://github.com/michei69/pear-desktop/pull/4342)
 - fix(api-server): add required 'alg' option to JWT middleware [`#4368`](https://github.com/michei69/pear-desktop/pull/4368)
 - fix: migrate custom element from ES5 to ES6 [`#4416`](https://github.com/michei69/pear-desktop/issues/4416)
+- chore(i18n): update translation files manually [`86beaa4`](https://github.com/michei69/pear-desktop/commit/86beaa4ff1b9192c5793a9ac368e348abba04744)
 - feat: translated lyrics [`cc43b67`](https://github.com/michei69/pear-desktop/commit/cc43b676524a6e761f53d6266af438a0d1fa5ac6)
-- chore: bump dependencies [`48d1fdf`](https://github.com/michei69/pear-desktop/commit/48d1fdf6554b0ee9bbaffea6333d8eaf9bc29d26)
-- chore: migrate Vite from v7 to v8 [`b1c880f`](https://github.com/michei69/pear-desktop/commit/b1c880f34664a35917c9b915749e15b013bac128)
+- hack: Revert "chore: migrate Vite from v7 to v8" [`38ede75`](https://github.com/michei69/pear-desktop/commit/38ede75f562e166e0d50c269748aec2727e460ef)
 
 #### [v3.11.5](https://github.com/michei69/pear-desktop/compare/v3.11.4...v3.11.5)
 
