@@ -18,7 +18,7 @@ import filenamify from 'filenamify';
 import { Mutex } from 'async-mutex';
 import * as NodeID3 from 'node-id3';
 import { BG, type BgConfig } from 'bgutils-js';
-import lazyVar from 'lazy-var';
+import { lazy } from 'lazy-var';
 
 import {
   cropMaxWidth,
@@ -46,7 +46,7 @@ import type { GetPlayerResponse } from '@/types/get-player-response';
 
 type CustomSongInfo = SongInfo & { trackId?: string };
 
-const ffmpeg = lazyVar.lazy(async () =>
+const ffmpeg = lazy(async () =>
   (await import('@ffmpeg.wasm/main')).createFFmpeg({
     log: false,
     logger() {}, // Console.log,

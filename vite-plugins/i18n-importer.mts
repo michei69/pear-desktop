@@ -1,4 +1,4 @@
-import { basename, resolve, extname, dirname } from 'node:path';
+import { basename, relative, resolve, extname, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { globSync } from 'glob';
@@ -27,13 +27,13 @@ export const i18nImporter = () => {
       writer.writeLine('export const languageResources = async () => {');
       writer.writeLine('  const entries = await Promise.all([');
       for (const { name, path } of plugins) {
-        const absolutePath = resolve(srcPath, '..', path).replace(
+        const relativePath = relative(resolve(srcPath, '..'), path).replace(
           /\\/g,
           '/',
         );
 
         writer.writeLine(
-          `    import('${absolutePath}').then((mod) => ({ "${name}": { translation: mod.default } })),`,
+          `    import('./${relativePath}').then((mod) => ({ "${name}": { translation: mod.default } })),`,
         );
       }
       writer.writeLine('  ]);');

@@ -25,6 +25,9 @@ export default defineConfig(({ mode }) => {
   const isDev = mode === 'development';
 
   const mainConfig: UserConfig = {
+    experimental: {
+      enableNativePlugin: true,
+    },
     plugins: [
       pluginLoader('backend'),
       viteResolve({
@@ -57,6 +60,9 @@ export default defineConfig(({ mode }) => {
   };
 
   const preloadConfig: UserConfig = {
+    experimental: {
+      enableNativePlugin: true,
+    },
     plugins: [
       pluginLoader('preload'),
       viteResolve({
@@ -87,6 +93,9 @@ export default defineConfig(({ mode }) => {
   };
 
   const rendererConfig: UserConfig = {
+    experimental: {
+      enableNativePlugin: !isDev, // Disable native plugin in development mode to avoid issues with HMR (bug in rolldown-vite)
+    },
     plugins: [
       pluginLoader('renderer'),
       viteResolve({
