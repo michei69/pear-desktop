@@ -2,7 +2,15 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v3.11.7](https://github.com/michei69/pear-desktop/compare/v3.11.6...v3.11.7)
+
+- chore(i18n): update translation files manually [`86beaa4`](https://github.com/michei69/pear-desktop/commit/86beaa4ff1b9192c5793a9ac368e348abba04744)
+- feat: Add virtual desktop, audio-only, playback recovery, and tray hover mini-player [`f388c31`](https://github.com/michei69/pear-desktop/commit/f388c31ff09fd4b7d4e705bf55f0660c11ad76b2)
+- docs: Rewrite feature documentation for upstream readability [`f4b1f37`](https://github.com/michei69/pear-desktop/commit/f4b1f37a7443efa79f699c60085ae6211b3f5942)
+
 #### [v3.11.6](https://github.com/michei69/pear-desktop/compare/v3.11.5...v3.11.6)
+
+> 4 May 2026
 
 - chore(deps): update dependency ts-morph to v28 [`#4423`](https://github.com/michei69/pear-desktop/pull/4423)
 - fix(deps): update dependency virtua to v0.49.1 [`#4340`](https://github.com/michei69/pear-desktop/pull/4340)
