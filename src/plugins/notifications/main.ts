@@ -18,6 +18,7 @@ import type { BackendContext } from '@/types/contexts';
 
 let config: NotificationsPluginConfig;
 let songInfoCallback: ((songInfo: SongInfo, event: SongInfoEvent) => void) | null = null;
+let disposeHoverPopup: (() => void) | null = null;
 
 const notify = (info: SongInfo) => {
   // Send the notification
@@ -67,11 +68,15 @@ export const onMainLoad = async (
   else setup();
 
   if (config.hoverControls) {
-    setupHoverPopup(context.window);
+    disposeHoverPopup = setupHoverPopup(context.window);
   }
 };
 
 export const onConfigChange = (newConfig: NotificationsPluginConfig) => {
+  if (!newConfig.hoverControls && disposeHoverPopup) {
+    disposeHoverPopup();
+    disposeHoverPopup = null;
+  }
   config = newConfig;
 };
 
@@ -79,5 +84,9 @@ export const onStop = () => {
   if (songInfoCallback) {
     unregisterCallback(songInfoCallback);
     songInfoCallback = null;
+  }
+  if (disposeHoverPopup) {
+    disposeHoverPopup();
+    disposeHoverPopup = null;
   }
 };

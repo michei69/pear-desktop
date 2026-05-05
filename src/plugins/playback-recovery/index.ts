@@ -22,6 +22,13 @@ export default createPlugin<
     lastGoodTime: number;
     lastGoodTimestamp: number;
     recovering: boolean;
+    log: (msg: string) => void;
+    getVideo: () => HTMLVideoElement | null;
+    hookMediaEvents: () => void;
+    _attachMediaEvents: ((video: HTMLVideoElement) => void) | null;
+    watchVideoElement: () => void;
+    startWatchdog: () => void;
+    attemptRecovery: (reason: string) => void;
   },
   PlaybackRecoveryConfig
 >({
@@ -54,6 +61,7 @@ export default createPlugin<
     api: null,
     watchdog: null,
     videoObserver: null,
+    _attachMediaEvents: null,
     consecutiveFailures: 0,
     lastGoodTime: 0,
     lastGoodTimestamp: 0,
@@ -149,7 +157,7 @@ export default createPlugin<
       if (video) attachTo(video);
 
       // Also re-attach on video element recreation (MutationObserver in watchVideoElement handles this)
-      (this as any)._attachMediaEvents = attachTo;
+      this._attachMediaEvents = attachTo;
     },
 
     watchVideoElement() {
@@ -167,12 +175,13 @@ export default createPlugin<
           for (const node of mutation.addedNodes) {
             if (node instanceof HTMLVideoElement) {
               this.log('New video element detected — re-attaching recovery hooks');
-              (this as any)._attachMediaEvents?.(node);
+              this._attachMediaEvents?.(node);
             }
           }
         }
       });
-      this.videoObserver.observe(document.body, {
+      const observerTarget = document.querySelector('ytmusic-app') || document.body;
+      this.videoObserver.observe(observerTarget, {
         childList: true,
         subtree: true,
       });

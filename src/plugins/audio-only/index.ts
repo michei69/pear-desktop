@@ -15,6 +15,9 @@ export default createPlugin<
     api: MusicPlayer | null;
     playbackModeObserver: MutationObserver | null;
     videoDataListener: ((e: Event) => void) | null;
+    setAudioOnly: () => void;
+    applyVisualMode: () => void;
+    lockPlaybackMode: (player: HTMLElement) => void;
   },
   AudioOnlyConfig
 >({

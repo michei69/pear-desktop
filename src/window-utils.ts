@@ -8,5 +8,6 @@
 export const showOnCurrentDesktop = (win: Electron.BrowserWindow) => {
   win.setVisibleOnAllWorkspaces(true);
   win.show();
+  win.focus();
   win.setVisibleOnAllWorkspaces(false);
 };

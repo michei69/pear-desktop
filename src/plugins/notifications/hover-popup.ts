@@ -20,12 +20,13 @@ const GAP = 4;
 let _isVisible = false;
 export const isHoverPopupVisible = () => _isVisible;
 
-export const setupHoverPopup = (win: BrowserWindow) => {
+export const setupHoverPopup = (win: BrowserWindow): (() => void) => {
   const songControls = getSongControls(win);
   let currentSongInfo: SongInfo | null = null;
   let popup: BrowserWindow | null = null;
   let popupReady = false;
   let mouseTracker: ReturnType<typeof setInterval> | null = null;
+  let disposed = false;
 
   const createPopup = () => {
     popup = new BrowserWindow({
@@ -149,12 +150,12 @@ export const setupHoverPopup = (win: BrowserWindow) => {
   };
 
   const doShow = () => {
+    if (disposed) return;
     if (!popup) createPopup();
     if (!popup || !currentSongInfo) return;
 
-    positionPopup();
-
     if (!_isVisible) {
+      positionPopup();
       popup.showInactive();
       _isVisible = true;
       startMouseTracking();
@@ -228,9 +229,14 @@ export const setupHoverPopup = (win: BrowserWindow) => {
     if (_isVisible) pushSongInfo();
   });
 
-  // Cleanup on quit
-  app.once('before-quit', () => {
+  // Cleanup on quit or config disable
+  const dispose = () => {
+    disposed = true;
     stopMouseTracking();
     popup?.close();
-  });
+  };
+
+  app.once('before-quit', dispose);
+
+  return dispose;
 };
