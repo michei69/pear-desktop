@@ -236,7 +236,7 @@ export default createPlugin({
 
       const videoStarted = () => {
         if (
-          api.getPlayerResponse().videoDetails?.musicVideoType ===
+          api.getPlayerResponse()?.videoDetails?.musicVideoType ===
           'MUSIC_VIDEO_TYPE_ATV'
         ) {
           // Video doesn't exist -> switch to song mode
