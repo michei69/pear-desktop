@@ -95,6 +95,7 @@
     "deepmerge-ts": "7.1.5",
     "electron-debug": "4.1.0",
     "electron-is": "3.0.0",
+    "electron-is-accelerator": "^0.2.0",
     "electron-localshortcut": "3.2.1",
     "electron-store": "11.0.2",
     "electron-unhandled": "5.0.0",
