@@ -2,14 +2,14 @@
   "common": {
     "console": {
       "plugins": {
-        "execute-failed": "اجراى {{اسمزمىنه}}::{{اسمپلاگىن}} با خطا مواجه شد",
+        "execute-failed": "اجرای افزونه {{pluginName}}::{{contextName}} با خطا مواجه شد",
         "executed-at-ms": "افزونه {{pluginName}}::{{contextName}} در {{ms}} میلی‌ثانیه اجرا شد",
-        "initialize-failed": "افزونه \"{{pluginName}}\" با خطا در حین مقداردهی اولیه مواجه شد",
+        "initialize-failed": "راه‌اندازی افزونه \"{{pluginName}}\" با خطا مواجه شد",
         "load-all": "در حال بارگذاری تمامی افزونه‌ها",
         "load-failed": "افزونه \"{{pluginName}}\" بارگیری نشد",
         "loaded": "افزونه \"{{pluginName}}\" بارگیری شد",
-        "unload-failed": "افزونه \"{{pluginName}}\" بارگذاری نشد",
-        "unloaded": "افزونه \"{{pluginName}}\" بارگذاری شد"
+        "unload-failed": "خارج‌سازی افزونه \"{{pluginName}}\" با خطا مواجه شد",
+        "unloaded": "افزونه \"{{pluginName}}\" از حافظه خارج شد"
       }
     }
   },
@@ -21,13 +21,13 @@
   "main": {
     "console": {
       "did-finish-load": {
-        "dev-tools": "بارگذاری کامل شد. DevTools باز شد"
+        "dev-tools": "بارگذاری کامل شد. ابزارهای توسعه‌دهنده باز شد"
       },
       "i18n": {
-        "loaded": "i18n بارگذاری شد"
+        "loaded": "بین‌المللی‌سازی بارگذاری شد"
       },
       "second-instance": {
-        "receive-command": "دریافت فرمان از طریق پروتکل: \"{{command}}\""
+        "receive-command": "فرمان دریافت شده از طریق پروتکل: \"{{command}}\""
       },
       "theme": {
         "css-file-not-found": "فایل CSS \"{{cssFile}}\" وجود ندارد، نادیده گرفته شد"
@@ -36,26 +36,26 @@
         "details": "خطای عدم پاسخگویی!\n{{error}}"
       },
       "when-ready": {
-        "clearing-cache-after-20s": "پاکسازی حافظه کش برنامه"
+        "clearing-cache-after-20s": "در حال پاکسازی حافظه نهان برنامه"
       },
       "window": {
-        "tried-to-render-offscreen": "پنجره تلاش کرد خارج از صفحه نمایش داده شود، اندازه پنجره={{windowSize}}، اندازه نمایشگر={{displaySize}}، موقعیت={{position}}"
+        "tried-to-render-offscreen": "پنجره تلاش کرد خارج از صفحه نمایش داده شود، اندازه‌پنجره={{windowSize}}، اندازه‌نمایشگر={{displaySize}}، موقعیت={{position}}"
       }
     },
     "dialog": {
       "hide-menu-enabled": {
         "detail": "منو مخفی است، از 'Alt' برای نمایش آن استفاده کنید (یا 'Escape' اگر از منوی داخل برنامه استفاده می‌کنید)",
         "message": "پنهان‌سازی منو فعال است",
-        "title": "پنهان کردن منو فعال شد"
+        "title": "پنهان‌سازی منو فعال شد"
       },
       "need-to-restart": {
         "buttons": {
           "later": "بعداً",
-          "restart-now": "هم‌اکنون راه‌اندازی مجدد کنید"
+          "restart-now": "اکنون راه‌اندازی مجدد"
         },
         "detail": "افزونه \"{{pluginName}}\" برای اعمال تغییرات نیاز به راه‌اندازی مجدد دارد",
         "message": "\"{{pluginName}}\" نیاز به راه‌اندازی مجدد دارد",
-        "title": "نیاز به راه‌اندازی مجدد"
+        "title": "راه‌اندازی مجدد لازم است"
       },
       "unresponsive": {
         "buttons": {
@@ -63,13 +63,13 @@
           "relaunch": "راه‌اندازی مجدد",
           "wait": "منتظر بمانید"
         },
-        "detail": "از بابت این مشکل متأسفیم! لطفاً انتخاب کنید که چه کاری انجام دهید:",
-        "message": "برنامه پاسخی نمی‌دهد",
-        "title": "پنجره بدون پاسخ"
+        "detail": "از این مشکل متأسفیم! لطفاً انتخاب کنید چه کاری انجام شود:",
+        "message": "برنامه پاسخگو نیست",
+        "title": "پنجره پاسخگو نیست"
       },
       "update-available": {
         "buttons": {
-          "disable": "غیرفعال کردن به‌روزرسانی‌ها",
+          "disable": "غیرفعال‌سازی به‌روزرسانی‌ها",
           "download": "دانلود",
           "ok": "تأیید"
         },
@@ -81,12 +81,12 @@
     "menu": {
       "about": "درباره",
       "navigation": {
-        "label": "کنترل‌های رابط",
+        "label": "ناوبری",
         "submenu": {
-          "copy-current-url": "کپی کردن لینک صفحه فعلی",
-          "go-back": "صفحه قبل",
-          "go-forward": "صفحه بعدی",
-          "quit": "خروج از برنامه",
+          "copy-current-url": "کپی آدرس فعلی",
+          "go-back": "بازگشت",
+          "go-forward": "پیشروی",
+          "quit": "خروج",
           "restart": "راه‌اندازی مجدد برنامه"
         }
       },
@@ -96,88 +96,89 @@
           "advanced-options": {
             "label": "گزینه‌های پیشرفته",
             "submenu": {
-              "auto-reset-app-cache": "ریست کردن حافظه کش برنامه هنگام شروع",
-              "disable-hardware-acceleration": "غیرفعال کردن شتاب سخت‌افزاری",
-              "edit-config-json": "config.json ویرایش",
-              "override-user-agent": "User-Agent تغییر",
-              "restart-on-config-changes": "راه‌اندازی مجدد در صورت تغییرات در پیکربندی",
+              "auto-reset-app-cache": "بازنشانی حافظه نهان هنگام شروع برنامه",
+              "disable-hardware-acceleration": "غیرفعال‌سازی شتاب سخت‌افزاری",
+              "edit-config-json": "ویرایش config.json",
+              "override-user-agent": "بازنویسی User-Agent",
+              "restart-on-config-changes": "راه‌اندازی مجدد با تغییر تنظیمات",
               "set-proxy": {
-                "label": "تنظیم پراکسی",
+                "label": "تنظیم پروکسی",
                 "prompt": {
-                  "label": "آدرس پراکسی را وارد کنید: (برای غیرفعال کردن، خالی بگذارید)",
+                  "label": "آدرس پروکسی را وارد کنید: (برای غیرفعال‌سازی خالی بگذارید)",
                   "placeholder": "مثال: SOCKS5://127.0.0.1:9999",
-                  "title": "تنظیم پراکسی"
+                  "title": "تنظیم پروکسی"
                 }
               },
-              "toggle-dev-tools": "DevTools باز کردن"
+              "toggle-dev-tools": "تغییر وضعیت ابزارهای توسعه‌دهنده"
             }
           },
-          "always-on-top": "همیشه در بالا",
+          "always-on-top": "همیشه بالای پنجره‌ها",
           "auto-update": "به‌روزرسانی خودکار",
           "hide-menu": {
             "dialog": {
-              "message": "منو در اجرای بعدی مخفی خواهد بود، از [Alt] برای نمایش استفاده کنید (یا [`] اگر از منوی داخل برنامه استفاده می‌کنید)",
+              "message": "منو در اجرای بعدی مخفی خواهد بود، برای نمایش از [Alt] استفاده کنید (یا [`] اگر از منوی داخل برنامه استفاده می‌کنید)",
               "title": "پنهان‌سازی منو فعال شد"
             },
-            "label": "پنهان کردن منو"
+            "label": "پنهان‌سازی منو"
           },
           "language": {
             "dialog": {
               "message": "زبان پس از راه‌اندازی مجدد تغییر خواهد کرد",
-              "title": "زبان تغییر کرد"
+              "title": "زبان تغییر یافت"
             },
             "label": "زبان",
             "submenu": {
-              "to-help-translate": "می‌خواهید به ترجمه کمک کنید؟ اینجا کلیک کنید"
+              "to-help-translate": "می‌خواهید در ترجمه کمک کنید؟ اینجا کلیک کنید"
             }
           },
           "resume-on-start": "ادامه آخرین آهنگ هنگام شروع برنامه",
-          "single-instance-lock": "قفل تنها یک نمونه",
-          "start-at-login": "شروع هنگام ورود",
+          "single-instance-lock": "قفل تک‌نمونه‌ای",
+          "start-at-login": "اجرا هنگام ورود به سیستم",
           "starting-page": {
             "label": "صفحه شروع",
-            "unset": "لغو تنظیم"
+            "unset": "تنظیم نشده"
           },
           "tray": {
-            "label": "نوار",
+            "label": "سینی سیستم",
             "submenu": {
               "disabled": "غیرفعال",
-              "enabled-and-hide-app": "فعال و پنهان کردن برنامه",
+              "enabled-and-hide-app": "فعال و مخفی‌سازی برنامه",
               "enabled-and-show-app": "فعال و نمایش برنامه",
+              "move-to-current-desktop": "انتقال به میزکار مجازی فعلی هنگام نمایش",
               "play-pause-on-click": "پخش/توقف با کلیک"
             }
           },
           "visual-tweaks": {
-            "label": "تغییرات ظاهری",
+            "label": "تنظیمات ظاهری",
             "submenu": {
               "custom-window-title": {
-                "label": "عنوان پنجره سفارشى",
+                "label": "عنوان سفارشی پنجره",
                 "prompt": {
-                  "label": "عنوان پنجره سفارشى را وارد کنىد: (خالى بزارىد تا غىرفعال شود)",
-                  "placeholder": "مثال :{{applicationName}}"
+                  "label": "عنوان سفارشی پنجره را وارد کنید: (برای غیرفعال‌سازی خالی بگذارید)",
+                  "placeholder": "مثال: {{applicationName}}"
                 }
               },
               "like-buttons": {
                 "default": "پیش‌فرض",
-                "force-show": "اجبار به نمایش",
-                "hide": "پنهان کردن",
+                "force-show": "نمایش اجباری",
+                "hide": "پنهان",
                 "label": "دکمه‌های پسندیدن",
-                "swap": "Swap like buttons order"
+                "swap": "جابجایی ترتیب دکمه‌های پسندیدن"
               },
               "remove-upgrade-button": "حذف دکمه ارتقا",
               "theme": {
                 "dialog": {
                   "button": {
-                    "cancel": "لغو",
+                    "cancel": "انصراف",
                     "remove": "حذف"
                   },
-                  "remove-theme": "آیا مطمئن هستید که می‌خواهید تم سفارشی را حذف کنید؟",
-                  "remove-theme-message": "این کار تم سفارشی را حذف خواهد کرد"
+                  "remove-theme": "آیا مطمئن هستید که می‌خواهید پوسته سفارشی را حذف کنید؟",
+                  "remove-theme-message": "این کار پوسته سفارشی را حذف خواهد کرد"
                 },
-                "label": "تم",
+                "label": "پوسته",
                 "submenu": {
-                  "import-css-file": "سفارشی CSS وارد کردن فایل",
-                  "no-theme": "بدون تم"
+                  "import-css-file": "وارد کردن فایل CSS سفارشی",
+                  "no-theme": "بدون پوسته"
                 }
               }
             }
@@ -185,17 +186,17 @@
         }
       },
       "plugins": {
-        "enabled": "فعال/غیرفعال کردن",
+        "enabled": "فعال",
         "label": "افزونه‌ها",
         "new": "جدید"
       },
       "view": {
-        "label": "مشاهده",
+        "label": "نمایش",
         "submenu": {
-          "force-reload": "اجبار به بارگذاری مجدد",
+          "force-reload": "بارگذاری مجدد اجباری",
           "reload": "بارگذاری مجدد",
           "reset-zoom": "اندازه واقعی",
-          "toggle-fullscreen": "تغییر به تمام‌ صفحه",
+          "toggle-fullscreen": "تغییر حالت تمام‌صفحه",
           "zoom-in": "بزرگنمایی",
           "zoom-out": "کوچکنمایی"
         }
@@ -216,22 +217,22 @@
   },
   "plugins": {
     "ad-speedup": {
-      "description": "اگر تبلیغ پخش شود، صدا را بی‌صدا کرده و سرعت پخش را به 16 برابر افزایش می‌دهد",
-      "name": "سرعت‌دهی به تبلیغ"
+      "description": "در صورت پخش تبلیغ، صدا را قطع کرده و سرعت پخش را روی ۱۶ برابر تنظیم می‌کند",
+      "name": "سرعت‌دهی تبلیغات"
     },
     "adblocker": {
-      "description": "مسدود کردن تمامی تبلیغات و ردیابی‌ها از ابتدا",
+      "description": "مسدودسازی تمام تبلیغات و ردیاب‌ها به صورت پیش‌فرض",
       "menu": {
         "blocker": "مسدودکننده"
       },
       "name": "مسدودکننده تبلیغات"
     },
     "album-actions": {
-      "description": "اضافه کردن دکمه‌های عدم پسندیدن، پسندیدن و لغو پسندیدن برای اعمال این تغییرات به تمامی آهنگ‌های یک فهرست پخش یا آلبوم",
+      "description": "افزودن دکمه‌های لغو عدم‌پسند، عدم‌پسند، پسندیدن و لغو پسندیدن برای اعمال روی همه آهنگ‌های یک فهرست پخش یا آلبوم",
       "name": "عملیات آلبوم"
     },
     "album-color-theme": {
-      "description": "اعمال یک تم پویا و جلوه‌های بصری بر اساس پالت رنگ آلبوم",
+      "description": "اعمال یک پوسته پویا و جلوه‌های بصری بر اساس پالت رنگی آلبوم",
       "menu": {
         "color-mix-ratio": {
           "label": "نسبت ترکیب رنگ",
@@ -239,12 +240,16 @@
             "percent": "{{ratio}}%"
           }
         },
-        "enable-seekbar": "Enable seekbar theming"
+        "enable-seekbar": "فعال‌سازی پوسته‌سازی نوار جستجو"
       },
-      "name": "تم رنگ آلبوم"
+      "name": "پوسته رنگی آلبوم"
+    },
+    "audio-only": {
+      "description": "فعال‌سازی اجباری حالت فقط صوتی — تمام جریان‌های ویدئویی را در سطح شبکه و پخش‌کننده مسدود می‌کند تا حافظه و پهنای باند صرفه‌جویی شود",
+      "name": "فقط صدا"
     },
     "ambient-mode": {
-      "description": "اعمال یک اثر نوری با پخش رنگ‌های ملایم از ویدئو به پس‌زمینه صفحه نمایش شما",
+      "description": "اعمال یک افکت نوری با پخش رنگ‌های ملایم از ویدئو به پس‌زمینه صفحه",
       "menu": {
         "blur-amount": {
           "label": "میزان تاری",
@@ -277,45 +282,45 @@
           }
         },
         "smoothness-transition": {
-          "label": "انتقال نرمی",
+          "label": "انتقال نرم",
           "submenu": {
             "during": "در طول {{interpolationTime}} ثانیه"
           }
         },
         "use-fullscreen": {
-          "label": "استفاده از تمام‌صفحه"
+          "label": "در حال استفاده از تمام‌صفحه"
         }
       },
       "name": "حالت محیطی"
     },
     "amuse": {
-      "description": "حالا ویجت Amuse از {{applicationName}} هم پشتیبانی می‌کنه! (توسط 6K Labs)",
+      "description": "افزودن پشتیبانی {{applicationName}} برای ویجت در حال پخش Amuse توسط 6K Labs",
       "name": "Amuse",
       "response": {
-        "query": "سرور Amuse فعال است. برای دریافت اطلاعات آهنگ، از آدرس /query استفاده کنید."
+        "query": "سرور API برنامه Amuse در حال اجراست. برای دریافت اطلاعات آهنگ از GET /query استفاده کنید."
       }
     },
     "api-server": {
-      "description": "برای کنترل پخش‌کننده API افزودن یک سرور",
+      "description": "افزودن یک سرور API برای کنترل پخش‌کننده",
       "dialog": {
         "request": {
           "buttons": {
             "allow": "اجازه",
-            "deny": "رد کردن"
+            "deny": "رد"
           },
-          "message": "اجازه دادن به {{ID}} ({{origin}}) برای دسترسی به API؟",
+          "message": "اجازه دسترسی {{ID}} ({{origin}}) به API داده شود؟",
           "title": "درخواست مجوز API"
         }
       },
       "menu": {
         "auth-strategy": {
-          "label": "استراتژی مجوز",
+          "label": "راهبرد مجوزدهی",
           "submenu": {
             "auth-at-first": {
-              "label": "مجوز در اولین درخواست"
+              "label": "مجوزدهی در اولین درخواست"
             },
             "none": {
-              "label": "بدون نیاز به مجوز"
+              "label": "بدون مجوزدهی"
             }
           }
         },
@@ -323,18 +328,18 @@
           "label": "نام میزبان"
         },
         "https": {
-          "label": "HTTPS و گواهینامه‌ها",
+          "label": "HTTPS و گواهی‌نامه‌ها",
           "submenu": {
             "cert": {
-              "dialogTitle": "پرونده گواهینامه HTTPS را انتخاب کنید",
-              "label": "پرونده گواهینامه (crt/.pem.)"
+              "dialogTitle": "انتخاب فایل گواهی HTTPS",
+              "label": "فایل گواهی (.crt/.pem)"
             },
             "enable-https": {
-              "label": "فعال کردن HTTPS"
+              "label": "فعال‌سازی HTTPS"
             },
             "key": {
-              "dialogTitle": "پرونده کلید خصوصی HTTPS را انتخاب کنید",
-              "label": "پرونده کلید خصوصی (key/.pem)"
+              "dialogTitle": "انتخاب فایل کلید خصوصی HTTPS",
+              "label": "فایل کلید خصوصی (.key/.pem)"
             }
           }
         },
@@ -342,27 +347,27 @@
           "label": "پورت"
         }
       },
-      "name": "[بتا]API سرور",
+      "name": "سرور API [بتا]",
       "prompt": {
         "hostname": {
-          "label": "وارد کنید (مثل 0.0.0.0): API نام میزبان را برای سرور",
+          "label": "نام میزبان را برای سرور API وارد کنید (مانند 0.0.0.0):",
           "title": "نام میزبان"
         },
         "port": {
-          "label": "وارد کنید: API پورت را برای سرور",
+          "label": "پورت را برای سرور API وارد کنید:",
           "title": "پورت"
         }
       }
     },
     "audio-compressor": {
-      "description": "اعمال فشرده‌سازی به صدا (کاهش حجم بلندترین بخش‌های سیگنال و افزایش حجم بخش‌های نرم‌تر)",
+      "description": "اعمال فشرده‌سازی روی صدا (کاهش حجم بلندترین بخش‌های سیگنال و افزایش حجم بخش‌های آرام‌تر)",
       "name": "فشرده‌ساز صدا"
     },
     "auth-proxy-adapter": {
-      "description": "پشتیبانی برای استفاده از سرویس‌های پروکسی احراز هویت",
+      "description": "پشتیبانی از استفاده سرویس‌های پروکسی احراز هویت",
       "menu": {
-        "disable": "غیرفعال کردن آداپتور پروکسی",
-        "enable": "فعال کردن آداپتور پروکسی",
+        "disable": "غیرفعال‌سازی آداپتور پروکسی",
+        "enable": "فعال‌سازی آداپتور پروکسی",
         "hostname": {
           "label": "نام میزبان"
         },
@@ -373,27 +378,27 @@
       "name": "آداپتور پروکسی احراز هویت",
       "prompt": {
         "hostname": {
-          "label": "نام میزبان را برای سرور پروکسی محلی وارد کنید (نیاز به راه اندازی مجدد دارد):",
-          "title": "پروکسی نام میزبان"
+          "label": "نام میزبان برای سرور پروکسی محلی را وارد کنید (نیاز به راه‌اندازی مجدد دارد):",
+          "title": "نام میزبان پروکسی"
         },
         "port": {
-          "label": "پورت مربوط به پروکسی سرور محلی را وارد کنید(نیاز به راه اندازی مجدد دارد):",
+          "label": "پورت برای سرور پروکسی محلی را وارد کنید (نیاز به راه‌اندازی مجدد دارد):",
           "title": "پورت پروکسی"
         }
       }
     },
     "blur-nav-bar": {
-      "description": "شفاف و محو کردن نوار کنترل",
-      "name": "محو کردن نوار کنترل"
+      "description": "نوار ناوبری را شفاف و محو می‌کند",
+      "name": "محو‌سازی نوار ناوبری"
     },
     "bypass-age-restrictions": {
-      "description": "دور زدن تأیید سن مىوزىک پلىر",
+      "description": "دور زدن تأیید سن پخش‌کننده موسیقی",
       "name": "دور زدن محدودیت‌های سنی"
     },
     "captions-selector": {
-      "description": "انتخاب زیرنویس برای آهنگ‌های پىر دسکتاپ",
+      "description": "انتخاب‌کننده زیرنویس برای آهنگ‌های صوتی {{applicationName}}",
       "menu": {
-        "autoload": "به طور خودکار انتخاب آخرین زیرنویس استفاده شده",
+        "autoload": "انتخاب خودکار آخرین زیرنویس استفاده شده",
         "disable-captions": "بدون زیرنویس به صورت پیش‌فرض"
       },
       "name": "انتخاب‌کننده زیرنویس",
@@ -408,98 +413,98 @@
         "title": "باز کردن انتخاب‌کننده زیرنویس"
       },
       "toast": {
-        "caption-changed": "زیرنویس تغییر کرد به {{language}}",
-        "caption-disabled": "زیرنویس غیرفعال شده",
-        "no-captions": "برای این آهنگ زیرنویسی موجود نیست"
+        "caption-changed": "زیرنویس به {{language}} تغییر یافت",
+        "caption-disabled": "زیرنویس غیرفعال شد",
+        "no-captions": "زیرنویسی برای این آهنگ موجود نیست"
       }
     },
     "clock": {
-      "description": "Add a clock to the navigation bar",
+      "description": "افزودن یک ساعت به نوار ناوبری",
       "menu": {
         "format": {
-          "24-hour-format": "24-Hour Format",
-          "display-seconds": "Display Seconds",
-          "label": "Format"
+          "24-hour-format": "فرمت ۲۴ ساعته",
+          "display-seconds": "نمایش ثانیه‌ها",
+          "label": "فرمت"
         }
       },
-      "name": "Clock"
+      "name": "ساعت"
     },
     "compact-sidebar": {
       "description": "همیشه نوار کناری را در حالت فشرده تنظیم کن",
       "name": "نوار کناری فشرده"
     },
     "crossfade": {
-      "description": "تداخل بین آهنگ‌ها",
+      "description": "محو‌سازی متقابل بین آهنگ‌ها",
       "menu": {
         "advanced": "پیشرفته"
       },
-      "name": "تداخل [بتا]",
+      "name": "محو‌سازی متقابل [بتا]",
       "prompt": {
         "options": {
           "multi-input": {
-            "fade-in-duration": "مدت زمان ورود تدریجی (میلی‌ثانیه)",
-            "fade-out-duration": "مدت زمان خروج تدریجی (میلی‌ثانیه)",
+            "fade-in-duration": "مدت زمان محو شدن ورودی (میلی‌ثانیه)",
+            "fade-out-duration": "مدت زمان محو شدن خروجی (میلی‌ثانیه)",
             "fade-scaling": {
-              "label": "مقیاس‌بندی ورود تدریجی",
+              "label": "مقیاس‌بندی محو شدن",
               "linear": "خطی",
               "logarithmic": "لگاریتمی"
             },
-            "seconds-before-end": "تداخل N ثانیه قبل از پایان"
+            "seconds-before-end": "محو‌سازی متقابل N ثانیه قبل از پایان"
           },
-          "title": "گزینه‌های تداخل"
+          "title": "گزینه‌های محو‌سازی متقابل"
         }
       }
     },
     "custom-output-device": {
-      "description": "ىک اسپىکر براى پخش آهنگها انتخاب کنىد",
+      "description": "پیکربندی یک دستگاه خروجی صدای سفارشی برای آهنگ‌ها",
       "menu": {
-        "device-selector": "دستگاه را انتخاب کنىد"
+        "device-selector": "انتخاب دستگاه"
       },
-      "name": "اسپىکر دلخواه",
+      "name": "دستگاه خروجی سفارشی",
       "prompt": {
         "device-selector": {
-          "label": "اسپىکر دلخواه را انتخاب کنىد",
-          "title": "اسپىکر دلخواهتان را انتخاب کنىد"
+          "label": "دستگاه خروجی صدا را برای استفاده انتخاب کنید",
+          "title": "انتخاب دستگاه خروجی"
         }
       }
     },
     "disable-autoplay": {
       "description": "شروع آهنگ در حالت \"توقف\"",
       "menu": {
-        "apply-once": "فقط در شروع اعمال می‌شود"
+        "apply-once": "فقط هنگام شروع برنامه اعمال شود"
       },
-      "name": "غیرفعال کردن پخش خودکار"
+      "name": "غیرفعال‌سازی پخش خودکار"
     },
     "discord": {
       "backend": {
-        "already-connected": "تلاش برای برقراری ارتباط با اتصال فعال",
+        "already-connected": "تلاش برای اتصال در حالی که اتصال فعال وجود دارد",
         "connected": "متصل به دیسکورد",
-        "disconnected": "ارتباط با دیسکورد قطع شد"
+        "disconnected": "قطع ارتباط از دیسکورد"
       },
-      "description": "Rich Presence نمایش آنچه گوش می‌دهید به دوستان با",
+      "description": "آنچه گوش می‌دهید را با Rich Presence به دوستان خود نشان دهید",
       "menu": {
-        "auto-reconnect": "اتصال خودکار",
-        "clear-activity": "پاک کردن فعالیت",
-        "clear-activity-after-timeout": "حذف فعالیت پس از اتمام زمان تعیین‌شده",
-        "connected": "اتصال برقرار شد",
-        "disconnected": "اتصال قطع شد",
-        "hide-duration-left": "مخفی کردن مدت زمان باقی‌مانده",
-        "hide-github-button": "مخفی کردن دکمه لینک گیت هاب",
-        "play-on-application": "پخش در یوتیوب موزیک",
+        "auto-reconnect": "اتصال مجدد خودکار",
+        "clear-activity": "پاکسازی فعالیت",
+        "clear-activity-after-timeout": "پاکسازی فعالیت پس از اتمام زمان",
+        "connected": "متصل",
+        "disconnected": "قطع ارتباط",
+        "hide-duration-left": "پنهان‌سازی مدت زمان باقی‌مانده",
+        "hide-github-button": "پنهان‌سازی دکمه لینک گیت‌هاب",
+        "play-on-application": "پخش در {{applicationName}}",
         "set-inactivity-timeout": "تنظیم زمان عدم فعالیت",
         "set-status-display-type": {
-          "label": "متن وضعىت",
+          "label": "متن وضعیت",
           "submenu": {
-            "application": "به پىر دسکتاپ گوش مىکند",
-            "artist": "به {artist} گوش مىکند",
-            "title": "به {song title} گوش مىکند"
+            "application": "در حال گوش دادن به {{applicationName}}",
+            "artist": "در حال گوش دادن به {artist}",
+            "title": "در حال گوش دادن به {song title}"
           }
         }
       },
       "name": "Discord Rich Presence",
       "prompt": {
         "set-inactivity-timeout": {
-          "label": "محدودیت زمان عدم فعالیت را به ثانیه وارد کنید:",
+          "label": "زمان عدم فعالیت را به ثانیه وارد کنید:",
           "title": "تنظیم زمان عدم فعالیت"
         }
       }
@@ -511,7 +516,7 @@
             "buttons": {
               "ok": "تأیید"
             },
-            "message": "اوه! متاسفیم، دانلود شکست خورد…",
+            "message": "اوه! متأسفیم، دانلود ناموفق بود…",
             "title": "خطا در دانلود!"
           },
           "start-download-playlist": {
@@ -519,8 +524,8 @@
               "ok": "تأیید"
             },
             "detail": "({{playlistSize}} آهنگ)",
-            "message": "دانلود فهرست پخش {{playlistTitle}}",
-            "title": "دانلود شروع شد"
+            "message": "در حال دانلود فهرست پخش {{playlistTitle}}",
+            "title": "دانلود آغاز شد"
           }
         },
         "feedback": {
@@ -536,22 +541,22 @@
           "folder-already-exists": "پوشه {{playlistFolder}} از قبل وجود دارد",
           "getting-playlist-info": "در حال دریافت اطلاعات فهرست پخش…",
           "loading": "در حال بارگذاری…",
-          "playlist-has-only-one-song": "فهرست پخش فقط یک آیتم دارد، به طور مستقیم دانلود می‌شود",
+          "playlist-has-only-one-song": "فهرست پخش فقط یک آیتم دارد، مستقیماً دانلود می‌شود",
           "playlist-id-not-found": "شناسه فهرست پخش یافت نشد",
           "playlist-is-empty": "فهرست پخش خالی است",
-          "playlist-is-mix-or-private": "خطا در دریافت اطلاعات فهرست پخش: اطمینان حاصل کنید که فهرست پخش خصوصی یا \"مختص شما\" نباشد\n\n{{error}}",
+          "playlist-is-mix-or-private": "خطا در دریافت اطلاعات فهرست پخش: مطمئن شوید که فهرست پخش خصوصی یا \"ترکیبی برای شما\" نیست\n\n{{error}}",
           "preparing-file": "در حال آماده‌سازی فایل…",
-          "saving": "در حال ذخیره‌سازی…",
-          "trying-to-get-playlist-id": "تلاش برای دریافت شناسه فهرست پخش: {{playlistId}}",
+          "saving": "در حال ذخیره…",
+          "trying-to-get-playlist-id": "در تلاش برای دریافت شناسه فهرست پخش: {{playlistId}}",
           "video-id-not-found": "ویدئو یافت نشد",
           "writing-id3": "در حال نوشتن تگ‌های ID3…"
         }
       },
-      "description": "دانلود MP3 / صدای منبع به طور مستقیم از رابط",
+      "description": "دانلود MP3 / صدای منبع مستقیماً از رابط کاربری",
       "menu": {
         "choose-download-folder": "انتخاب پوشه دانلود",
         "download-finish-settings": {
-          "label": "دانلود پس از پایان",
+          "label": "دانلود هنگام پایان",
           "prompt": {
             "last-percent": "پس از x درصد",
             "last-seconds": "آخرین x ثانیه",
@@ -571,51 +576,51 @@
       },
       "name": "دانلودر",
       "renderer": {
-        "can-not-update-progress": "امکان به‌روزرسانی پیشرفت نیست"
+        "can-not-update-progress": "امکان به‌روزرسانی پیشرفت وجود ندارد"
       },
       "templates": {
         "button": "دانلود"
       }
     },
     "equalizer": {
-      "description": "اضافه کردن یک اکولایزر به پخش‌کننده",
+      "description": "افزودن یک اکولایزر به پخش‌کننده",
       "menu": {
         "presets": {
-          "label": "تنظیمات از پیش تعیین شده",
+          "label": "پیش‌تنظیم‌ها",
           "list": {
-            "bass-booster": "تقویت‌کننده باس صدا"
+            "bass-booster": "تقویت‌کننده باس"
           }
         }
       },
       "name": "اکولایزر"
     },
     "exponential-volume": {
-      "description": "نوار لغزنده حجم را به صورت نمایی می‌سازد تا انتخاب حجم‌های پایین‌تر آسان‌تر شود.",
-      "name": "حجم نمایی"
+      "description": "لغزنده صدا را نمایی می‌کند تا انتخاب صداهای پایین‌تر آسان‌تر شود.",
+      "name": "صدای نمایی"
     },
     "in-app-menu": {
-      "description": "منوها را به صورت جذاب، تاریک یا با رنگ آلبوم نمایش می‌دهد",
+      "description": "به نوارهای منو ظاهری شیک، تیره یا به رنگ آلبوم می‌بخشد",
       "menu": {
-        "hide-dom-window-controls": "کنترل‌های پنجره DOM را مخفی کن"
+        "hide-dom-window-controls": "پنهان‌سازی کنترل‌های پنجره DOM"
       },
       "name": "منوی داخل برنامه"
     },
     "lumiastream": {
-      "description": "Lumia Stream افزودن پشتیبانی از",
+      "description": "افزودن پشتیبانی از Lumia Stream",
       "name": "Lumia Stream [بتا]"
     },
     "lyrics-genius": {
-      "description": "افزودن متن ترانه پشتیبان برای اکثر ترانه ها",
+      "description": "افزودن پشتیبانی از متن ترانه برای بیشتر آهنگ‌ها",
       "menu": {
-        "romanized-lyrics": "الفبای لاتین برای آهنگ‌هایی با الفبای شرقی (فینگلیش)"
+        "romanized-lyrics": "متن ترانه لاتین‌نویسی شده"
       },
-      "name": "Genius متن آهنگ",
+      "name": "متن ترانه Genius",
       "renderer": {
-        "fetched-lyrics": "بازیابی شد Genius متن ترانه توسط"
+        "fetched-lyrics": "متن ترانه از Genius دریافت شد"
       }
     },
     "music-together": {
-      "description": "اشتراک‌گذاری فهرست پخش با دیگران. وقتی میزبان آهنگی را پخش می‌کند، همه بقیه همان آهنگ را می‌شنوند",
+      "description": "به‌اشتراک‌گذاری فهرست پخش با دیگران. وقتی میزبان آهنگی پخش کند، همه همان آهنگ را می‌شنوند",
       "dialog": {
         "enter-host": "شناسه میزبان را وارد کنید"
       },
@@ -625,96 +630,104 @@
         "unknown-user": "کاربر ناشناس"
       },
       "menu": {
-        "click-to-copy-id": "کپی کردن شناسه میزبان",
+        "click-to-copy-id": "کپی شناسه میزبان",
         "close": "بستن Music Together",
         "connected-users": "کاربران متصل",
-        "disconnect": "قطع اتصال Music Together",
-        "empty-user": "هیچ کاربر متصلی وجود ندارد",
+        "disconnect": "قطع ارتباط Music Together",
+        "empty-user": "کاربر متصلی وجود ندارد",
         "host": "میزبان Music Together",
         "join": "پیوستن به Music Together",
         "permission": {
-          "all": "اجازه دادن به مهمانان برای کنترل فهرست پخش و پخش‌کننده",
+          "all": "اجازه به مهمانان برای کنترل فهرست پخش و پخش‌کننده",
           "host-only": "فقط میزبان می‌تواند فهرست پخش و پخش‌کننده را کنترل کند",
-          "playlist": "اجازه دادن به مهمانان برای کنترل فهرست پخش"
+          "playlist": "اجازه به مهمانان برای کنترل فهرست پخش"
         },
         "set-permission": "تغییر مجوز کنترل",
         "status": {
-          "disconnected": "قطع اتصال",
+          "disconnected": "قطع ارتباط",
           "guest": "متصل به عنوان مهمان",
           "host": "متصل به عنوان میزبان"
         }
       },
       "name": "Music Together [بتا]",
       "toast": {
-        "add-song-failed": "افزودن آهنگ با شکست مواجه شد",
-        "closed": "بسته شد Music Together",
-        "disconnected": "Music Together قطع اتصال",
-        "host-failed": "با شکست مواجه شد Music Together میزبانی",
-        "id-copied": "شناسه میزبان به کلیپ‌بورد کپی شد",
-        "id-copy-failed": "کپی شناسه میزبان به کلیپ‌بورد با شکست مواجه شد",
-        "join-failed": "با شکست مواجه شد Music Together پیوستن به",
-        "joined": "پیوست Music Together به",
+        "add-song-failed": "افزودن آهنگ ناموفق بود",
+        "closed": "Music Together بسته شد",
+        "disconnected": "ارتباط Music Together قطع شد",
+        "host-failed": "میزبانی Music Together ناموفق بود",
+        "id-copied": "شناسه میزبان در کلیپ‌بورد کپی شد",
+        "id-copy-failed": "کپی شناسه میزبان در کلیپ‌بورد ناموفق بود",
+        "join-failed": "پیوستن به Music Together ناموفق بود",
+        "joined": "به Music Together پیوستید",
         "permission-changed": "مجوز Music Together به \"{{permission}}\" تغییر یافت",
-        "remove-song-failed": "حذف آهنگ با شکست مواجه شد",
+        "remove-song-failed": "حذف آهنگ ناموفق بود",
         "user-connected": "{{name}} به Music Together پیوست",
         "user-disconnected": "{{name}} Music Together را ترک کرد"
       }
     },
     "navigation": {
-      "description": "بعدی/قبلی به طور مستقیم در رابط یکپارچه شده‌اند، مانند مرورگر مورد علاقه شما",
-      "name": "کنترل های رابط",
+      "description": "فلش‌های ناوبری بعدی/قبلی مستقیماً در رابط یکپارچه شده، مانند مرورگر مورد علاقه شما",
+      "name": "ناوبری",
       "templates": {
         "back": {
-          "title": "برو به صفحه قبل"
+          "title": "رفتن به صفحه قبلی"
         },
         "forward": {
-          "title": "برو به صفحه بعد"
+          "title": "رفتن به صفحه بعدی"
         }
       }
     },
     "no-google-login": {
-      "description": "حذف دکمه‌ها و لینک‌های ورود به گوگل از رابط کاربری",
-      "name": "بدون ورود به گوگل"
+      "description": "حذف دکمه‌ها و لینک‌های ورود با گوگل از رابط کاربری",
+      "name": "بدون ورود گوگل"
     },
     "notifications": {
-      "description": "نمایش اعلان هنگامی که آهنگی شروع به پخش می‌کند (اعلان‌های تعاملی در ویندوز در دسترس هستند)",
+      "description": "نمایش اعلان هنگام شروع پخش آهنگ (اعلان‌های تعاملی در ویندوز در دسترس هستند)",
       "menu": {
         "interactive": "اعلان‌های تعاملی",
         "interactive-settings": {
           "label": "تنظیمات تعاملی",
           "submenu": {
-            "hide-button-text": "مخفی کردن متن دکمه",
-            "refresh-on-play-pause": "تازه‌سازی در پخش/توقف",
-            "tray-controls": "باز/بسته شدن با کلیک روی آیکون در نوار وظیفه"
+            "hide-button-text": "پنهان‌سازی متن دکمه",
+            "hover-controls": "نمایش مینی‌پلیر هنگام حرکت ماوس روی سینی سیستم",
+            "refresh-on-play-pause": "بازنشانی هنگام پخش/توقف",
+            "tray-controls": "باز/بسته شدن با کلیک روی سینی سیستم"
           }
         },
         "priority": "اولویت اعلان",
-        "toast-style": "Toast سبک",
-        "unpause-notification": "نمایش اعلان هنگام از سرگیری پخش"
+        "toast-style": "سبک اعلان",
+        "unpause-notification": "نمایش اعلان هنگام ازسرگیری پخش"
       },
       "name": "اعلان‌ها"
     },
     "performance-improvement": {
-      "description": "بهبود عملکرد با فعال کردن اسکریپت‌های آزمایشی",
+      "description": "بهبود عملکرد با فعال‌سازی اسکریپت‌های آزمایشی",
       "name": "بهبود عملکرد [بتا]"
     },
-    "picture-in-picture": {
-      "description": "اجازه می‌دهد تا برنامه به حالت تصویر در تصویر تغییر کند",
+    "playback-recovery": {
+      "description": "بازیابی خودکار از وضعیت‌های پخش قفل‌شده، متوقف شده یا قطع شده",
       "menu": {
-        "always-on-top": "همیشه در بالا",
+        "log-to-console": "ثبت رویدادهای بازیابی در کنسول"
+      },
+      "name": "بازیابی پخش"
+    },
+    "picture-in-picture": {
+      "description": "امکان تغییر برنامه به حالت تصویر در تصویر",
+      "menu": {
+        "always-on-top": "همیشه بالای پنجره‌ها",
         "hotkey": {
           "label": "کلید میانبر",
           "prompt": {
             "keybind-options": {
               "hotkey": "کلید میانبر"
             },
-            "label": "یک کلید میانبر انتخاب کنید برای فعال/غیرفعال کردن حالت تصویر در تصویر",
-            "title": "کلید میانبر برای حالت تصویر در تصویر"
+            "label": "یک کلید میانبر برای تغییر حالت تصویر در تصویر انتخاب کنید",
+            "title": "کلید میانبر تصویر در تصویر"
           }
         },
         "save-window-position": "ذخیره موقعیت پنجره",
         "save-window-size": "ذخیره اندازه پنجره",
-        "use-native-pip": "استفاده از حالت تصویر در تصویر اصلی مرورگر"
+        "use-native-pip": "استفاده از PiP اصلی مرورگر"
       },
       "name": "تصویر در تصویر",
       "templates": {
@@ -722,18 +735,18 @@
       }
     },
     "playback-speed": {
-      "description": "به سرعت گوش بده، به آرامی گوش بده! یک دکمه کشویی برای تنظیم سرعت آهنگ اضافه شد",
+      "description": "سریع گوش کن، آهسته گوش کن! یک لغزنده برای کنترل سرعت آهنگ اضافه می‌کند",
       "name": "سرعت پخش",
       "templates": {
         "button": "سرعت"
       }
     },
     "precise-volume": {
-      "description": "کنترل دقیق صدا با استفاده از چرخ موس/میانبرها، همراه با HUD سفارشی و مراحل تنظیم حجم قابل تنظیم",
+      "description": "کنترل دقیق صدا با استفاده از چرخ ماوس/کلیدهای میانبر، همراه با نمایشگر سفارشی و گام‌های قابل تنظیم صدا",
       "menu": {
-        "arrows-shortcuts": "میانبرهای کلیدهای فلشی",
-        "custom-volume-steps": "مراحل تنظیم صدای دلخواه",
-        "global-shortcuts": "کلید های میانبر جهانی"
+        "arrows-shortcuts": "میانبرهای کلیدهای جهت‌نما محلی",
+        "custom-volume-steps": "تنظیم گام‌های سفارشی صدا",
+        "global-shortcuts": "کلیدهای میانبر سراسری"
       },
       "name": "صدای دقیق",
       "prompt": {
@@ -742,12 +755,12 @@
             "decrease": "کاهش صدا",
             "increase": "افزایش صدا"
           },
-          "label": "انتخاب کلیدهای میانبر سراسری صدا:",
-          "title": "میانبرهای کلید سراسری صدا"
+          "label": "کلیدهای میانبر سراسری صدا را انتخاب کنید:",
+          "title": "کلیدهای میانبر سراسری صدا"
         },
         "volume-steps": {
-          "label": "مراحل انتخاب افزایش/کاهش صدا",
-          "title": "سطح صدا"
+          "label": "گام‌های افزایش/کاهش صدا را انتخاب کنید",
+          "title": "گام‌های صدا"
         }
       }
     },
@@ -755,46 +768,46 @@
       "backend": {
         "dialog": {
           "quality-changer": {
-            "detail": "کیفیت کنونی: {{quality}}",
-            "message": "انتخاب کیفیت ویدیو:",
-            "title": "انتخاب کیفیت ویدیو"
+            "detail": "کیفیت فعلی: {{quality}}",
+            "message": "کیفیت ویدئو را انتخاب کنید:",
+            "title": "انتخاب کیفیت ویدئو"
           }
         }
       },
-      "description": "امکان تغییر کیفیت ویدیو با استفاده از دکمه در رابط پخش ویدیو",
-      "name": "تغییر دهنده کیفیت ویدیو",
+      "description": "امکان تغییر کیفیت ویدئو با یک دکمه روی پوشش ویدئو",
+      "name": "تغییردهنده کیفیت ویدئو",
       "renderer": {
         "quality-settings-button": {
-          "label": "باز کردن تغییر دهنده کیفیت پخش کننده"
+          "label": "باز کردن تغییردهنده کیفیت پخش‌کننده"
         }
       }
     },
     "scrobbler": {
-      "description": "اضافه کردن پشتیبانی از اسکرابلینگ (etc. last.fm, Listenbrainz)",
+      "description": "افزودن پشتیبانی اسکرابلینگ (مانند last.fm، Listenbrainz)",
       "dialog": {
         "lastfm": {
           "auth-failed": {
-            "message": "احراز هویت با Last.fm ناموفق بود\nپنجره شناور را تا راه‌اندازی مجدد بعدی مخفی کن.",
+            "message": "احراز هویت با Last.fm ناموفق بود\nپنجره بازشو را تا راه‌اندازی مجدد بعدی مخفی کنید.",
             "title": "احراز هویت ناموفق بود"
           }
         }
       },
       "menu": {
         "lastfm": {
-          "api-settings": "تنظیمات \"Last.fm \"API"
+          "api-settings": "تنظیمات API لست‌اف‌ام"
         },
         "listenbrainz": {
           "token": "توکن کاربری ListenBrainz را وارد کنید"
         },
-        "scrobble-alternative-artist": "از هنرمند دىگرى استفاده کنىد",
-        "scrobble-alternative-title": "از عناوین جایگزین استفاده کنید",
-        "scrobble-other-media": "ردیابی رسانه‌های دیگر"
+        "scrobble-alternative-artist": "استفاده از هنرمندان جایگزین",
+        "scrobble-alternative-title": "استفاده از عناوین جایگزین",
+        "scrobble-other-media": "اسکرابل کردن رسانه‌های دیگر"
       },
-      "name": "ابزار ثبت‌کننده‌ی آهنگ",
+      "name": "اسکرابلر",
       "prompt": {
         "lastfm": {
-          "api-key": "کلید Last.fm API",
-          "api-secret": "API مخفی Last.fm"
+          "api-key": "کلید API لست‌اف‌ام",
+          "api-secret": "رمز API لست‌اف‌ام"
         },
         "listenbrainz": {
           "token": {
@@ -805,9 +818,9 @@
       }
     },
     "shortcuts": {
-      "description": "امکان تنظیم میانبرهای سراسری برای کنترل (پخش/توقف/بعدی/قبلی) و خاموش کردن OSD رسانه با بازنویسی کلیدهای رسانه‌ای، فعال‌سازی Ctrl/CMD + F برای جستجو، فعال‌سازی پشتیبانی MPRIS در لینوکس برای کلیدهای رسانه‌ای، و میانبرهای سفارشی برای کاربران پیشرفته",
+      "description": "امکان تنظیم کلیدهای میانبر سراسری برای پخش (پخش/توقف/بعدی/قبلی) و خاموش کردن OSD رسانه با بازنویسی کلیدهای رسانه، فعال‌سازی Ctrl/CMD + F برای جستجو، فعال‌سازی پشتیبانی MPRIS لینوکس برای کلیدهای رسانه و کلیدهای میانبر سفارشی برای کاربران پیشرفته",
       "menu": {
-        "override-media-keys": "تغییر عملکرد کلیدهای رسانه‌",
+        "override-media-keys": "بازنویسی کلیدهای رسانه",
         "set-keybinds": "تنظیم کنترل‌های سراسری آهنگ"
       },
       "name": "میانبرها (& MPRIS)",
@@ -818,179 +831,179 @@
             "play-pause": "پخش / توقف",
             "previous": "قبلی"
           },
-          "label": "انتخاب میانبرهای سراسری برای کنترل آهنگ‌ها:",
-          "title": "میانبرهای کلیدی سراسری"
+          "label": "کلیدهای میانبر سراسری برای کنترل آهنگ‌ها را انتخاب کنید:",
+          "title": "کلیدهای میانبر سراسری"
         }
       }
     },
     "skip-disliked-songs": {
-      "description": "خودکار آهنگ های غیر موردعلاقه رد میشن",
-      "name": "رد آهنگ‌های غیر مورد علاقه"
+      "description": "رد کردن آهنگ‌های عدم‌پسندیده",
+      "name": "رد آهنگ‌های عدم‌پسندیده"
     },
     "skip-silences": {
-      "description": "رد خودکار بخش‌های بی صدا آهنگ ها",
-      "name": "رد بخش‌های بی‌صدا"
+      "description": "رد خودکار بخش‌های سکوت در آهنگ‌ها",
+      "name": "رد سکوت‌ها"
     },
     "sponsorblock": {
-      "description": "به‌طور خودکار بخش‌های غیرموسیقی مانند مقدمه/پایان یا قسمت‌هایی از ویدیوهای موسیقی که آهنگ در آن پخش نمی‌شود را رد می‌کند",
+      "description": "رد خودکار بخش‌های غیرموسیقی مانند مقدمه/پایان یا قسمت‌هایی از ویدئوهای موسیقی که آهنگ پخش نمی‌شود",
       "name": "مسدودکننده اسپانسر"
     },
     "synced-lyrics": {
-      "description": "ارائه متن ترانه‌ها به صورت هماهنگ با آهنگ‌ها، با استفاده از ارائه‌دهندگانی مانند LRClib.",
+      "description": "ارائه متن ترانه همگام‌سازی شده برای آهنگ‌ها با استفاده از ارائه‌دهندگانی مانند LRClib.",
       "errors": {
-        "fetch": "⚠️هنگام بارگیری متن ترانه خطایی رخ داده است.\n\tلطفاً بعداً دوباره تلاش کنید.",
-        "not-found": "⚠️ متنی برای این ترانه پیدا نشد."
+        "fetch": "⚠️\tهنگام دریافت متن ترانه خطایی رخ داد.\n\tلطفاً بعداً دوباره تلاش کنید.",
+        "not-found": "⚠️ متنی برای این آهنگ یافت نشد."
       },
       "menu": {
         "convert-chinese-character": {
-          "label": "Convert Chinese character",
+          "label": "تبدیل حروف چینی",
           "submenu": {
             "disabled": {
-              "label": "Disabled",
-              "tooltip": "Disable Chinese character conversion"
+              "label": "غیرفعال",
+              "tooltip": "غیرفعال‌سازی تبدیل حروف چینی"
             },
             "simplified-to-traditional": {
-              "label": "Simplified to Traditional",
-              "tooltip": "Convert Simplified Chinese to Traditional Chinese"
+              "label": "ساده‌شده به سنتی",
+              "tooltip": "تبدیل چینی ساده‌شده به چینی سنتی"
             },
             "traditional-to-simplified": {
-              "label": "Traditional to Simplified",
-              "tooltip": "Convert Traditional Chinese to Simplified Chinese"
+              "label": "سنتی به ساده‌شده",
+              "tooltip": "تبدیل چینی سنتی به چینی ساده‌شده"
             }
           },
-          "tooltip": "Convert Chinese character to Traditional or Simplified"
+          "tooltip": "تبدیل حروف چینی به سنتی یا ساده‌شده"
         },
         "default-text-string": {
-          "label": "حرف/کاراکتر پیش‌فرض بین متن‌های ترانه",
-          "tooltip": "حرف/کاراکتر پیش‌فرض را برای فاصله بین متن‌های ترانه انتخاب کنید"
+          "label": "نویسه پیش‌فرض بین متن ترانه‌ها",
+          "tooltip": "نویسه پیش‌فرض برای فاصله بین متن ترانه‌ها را انتخاب کنید"
         },
         "line-effect": {
-          "label": "افکت خط متن",
+          "label": "افکت خط",
           "submenu": {
             "fancy": {
               "label": "شیک",
-              "tooltip": "استفاده از افکت‌های بزرگ و شبیه به اپلیکیشن‌ها برای خط فعلی"
+              "tooltip": "استفاده از افکت‌های بزرگ شبیه برنامه روی خط فعلی"
             },
             "focus": {
               "label": "تمرکز",
-              "tooltip": "فقط خط فعلی رو سفید کن"
+              "tooltip": "فقط خط فعلی را سفید کن"
             },
             "offset": {
-              "label": "جابجایی",
-              "tooltip": "جابجایی خط فعلی به سمت راست"
+              "label": "انحراف",
+              "tooltip": "انحراف خط فعلی به سمت راست"
             },
             "scale": {
               "label": "مقیاس",
-              "tooltip": "تغییر اندازه خط فعلی"
+              "tooltip": "تغییر مقیاس خط فعلی"
             }
           },
-          "tooltip": "افکت مورد نظر را برای خط فعلی انتخاب کنید"
+          "tooltip": "افکت مورد نظر برای اعمال روی خط فعلی را انتخاب کنید"
         },
         "lyrics-font-size": {
-          "label": "Lyrics font size",
+          "label": "اندازه قلم متن ترانه",
           "submenu": {
             "large": {
-              "label": "Large",
-              "tooltip": "Use the original larger lyrics size"
+              "label": "بزرگ",
+              "tooltip": "استفاده از اندازه بزرگتر اصلی متن ترانه"
             },
             "medium": {
-              "label": "Medium",
-              "tooltip": "Use a balanced lyrics size"
+              "label": "متوسط",
+              "tooltip": "استفاده از اندازه متعادل متن ترانه"
             },
             "small": {
-              "label": "Small",
-              "tooltip": "Use a more compact lyrics size"
+              "label": "کوچک",
+              "tooltip": "استفاده از اندازه فشرده‌تر متن ترانه"
             }
           },
-          "tooltip": "Choose how large the lyrics text should be"
+          "tooltip": "اندازه متن ترانه را انتخاب کنید"
         },
         "precise-timing": {
-          "label": "هماهنگ‌سازی کامل متن ترانه‌",
-          "tooltip": "محاسبه دقیق نمایش خط بعدی تا میلی‌ثانیه (ممکن است تاثیر کمی بر عملکرد داشته باشد)"
+          "label": "همگام‌سازی دقیق متن ترانه",
+          "tooltip": "محاسبه نمایش خط بعدی تا میلی‌ثانیه (ممکن است تأثیر کمی بر عملکرد داشته باشد)"
         },
         "preferred-provider": {
-          "label": "منبع دلخواه",
+          "label": "ارائه‌دهنده ترجیحی",
           "none": {
-            "label": "هىچکدام",
-            "tooltip": "منبح دلخواهى انتخاب نشده"
+            "label": "هیچ‌کدام",
+            "tooltip": "بدون ارائه‌دهنده ترجیحی"
           },
-          "tooltip": "منبع دلخواهتان را انتخاب کنىد"
+          "tooltip": "ارائه‌دهنده پیش‌فرض برای استفاده را انتخاب کنید"
         },
         "romanization": {
-          "label": "اشعار رومی شده",
-          "tooltip": "اگر اشعار به زبانی متفاوت هستند، سعی کنید نسخه لاتین را نمایش دهید."
+          "label": "لاتین‌نویسی متن ترانه",
+          "tooltip": "اگر متن ترانه به زبان دیگری است، سعی کنید نسخه لاتین نمایش داده شود."
         },
         "show-lyrics-even-if-inexact": {
-          "label": "نمایش متن ترانه ها حتی اگر دقیق نباشد",
-          "tooltip": "اگر آهنگ پیدا نشد، افزونه دوباره با یک جستجوی متفاوت امتحان می‌کند.\nنتیجه‌ی این تلاش ممکن است دقیق نباشد."
+          "label": "نمایش متن ترانه حتی اگر دقیق نباشد",
+          "tooltip": "اگر آهنگ پیدا نشد، افزونه با یک جستجوی متفاوت دوباره تلاش می‌کند.\nنتیجه تلاش دوم ممکن است دقیق نباشد."
         },
         "show-time-codes": {
-          "label": "نمایش زمان‌بندی‌ها",
-          "tooltip": "نمایش زمان‌بندی‌ها کنار متن ترانه‌"
+          "label": "نمایش کدهای زمانی",
+          "tooltip": "نمایش کدهای زمانی کنار متن ترانه"
         },
         "translation": {
           "clear-cache": {
-            "label": "Clear translation cache",
-            "tooltip": "Delete all cached translations stored on disk."
+            "label": "پاکسازی حافظه نهان ترجمه",
+            "tooltip": "حذف تمام ترجمه‌های ذخیره شده در حافظه نهان روی دیسک."
           },
           "configure": {
-            "label": "Configure API key & model…",
-            "tooltip": "Set provider-specific translation options."
+            "label": "پیکربندی کلید API و مدل…",
+            "tooltip": "تنظیم گزینه‌های ترجمه مخصوص ارائه‌دهنده."
           },
           "enabled": {
-            "label": "Enable translation",
-            "tooltip": "Show a translated line beneath each original lyric line."
+            "label": "فعال‌سازی ترجمه",
+            "tooltip": "نمایش یک خط ترجمه شده زیر هر خط اصلی متن ترانه."
           },
-          "label": "Lyrics translation",
+          "label": "ترجمه متن ترانه",
           "provider": {
-            "label": "Provider",
-            "tooltip": "Which service to use for translation."
+            "label": "ارائه‌دهنده",
+            "tooltip": "کدام سرویس برای ترجمه استفاده شود."
           },
           "providers": {
             "anthropic": {
               "name": "Anthropic Claude",
-              "prompt-label": "Uses the native Anthropic Messages API.",
-              "prompt-title": "Anthropic settings"
+              "prompt-label": "از API پیام‌های اصلی Anthropic استفاده می‌کند.",
+              "prompt-title": "تنظیمات Anthropic"
             },
             "gemini": {
               "name": "Google Gemini",
-              "prompt-label": "Uses Google's Generative Language API (generateContent).",
-              "prompt-title": "Gemini settings"
+              "prompt-label": "از API زبان مولد گوگل (generateContent) استفاده می‌کند.",
+              "prompt-title": "تنظیمات Gemini"
             },
             "google-translate": {
-              "host": "Host",
+              "host": "میزبان",
               "name": "Google Translate",
-              "prompt-label": "Uses the unofficial free Google Translate endpoint. No API key is required, but Google may rate-limit it.",
-              "prompt-title": "Google Translate settings"
+              "prompt-label": "از نقطه پایانی رایگان غیررسمی Google Translate استفاده می‌کند. نیازی به کلید API نیست، اما گوگل ممکن است محدودیت نرخ اعمال کند.",
+              "prompt-title": "تنظیمات Google Translate"
             },
             "local-cli": {
-              "command": "Command",
-              "engine": "Local CLI",
+              "command": "دستور",
+              "engine": "CLI محلی",
               "engine-claude": "Claude Code",
               "engine-codex": "Codex",
               "engine-gemini": "Gemini CLI",
-              "name": "Local CLI",
-              "prompt-label": "Use a locally logged-in Claude Code, Codex, or Gemini CLI. The command and model are automatic; the CLI uses its own logged-in default.",
-              "prompt-title": "Local CLI settings",
-              "timeout": "Timeout seconds (15-600)"
+              "name": "CLI محلی",
+              "prompt-label": "از یک CLI محلی Claude Code، Codex یا Gemini با ورود به سیستم استفاده کنید. دستور و مدل خودکار هستند؛ CLI از پیش‌فرض ورود خود استفاده می‌کند.",
+              "prompt-title": "تنظیمات CLI محلی",
+              "timeout": "مهلت زمانی به ثانیه (15-600)"
             },
             "openai-compatible": {
-              "api-mode": "API mode (responses / auto / chat-completions)",
-              "base-url": "Base URL",
-              "name": "OpenAI compatible",
-              "prompt-label": "Use OpenAI-compatible servers, including Ollama (base URL http://127.0.0.1:11434/v1, API mode auto or chat-completions).",
-              "prompt-title": "OpenAI-compatible settings"
+              "api-mode": "حالت API (responses / auto / chat-completions)",
+              "base-url": "آدرس پایه",
+              "name": "سازگار با OpenAI",
+              "prompt-label": "استفاده از سرورهای سازگار با OpenAI، از جمله Ollama (آدرس پایه http://127.0.0.1:11434/v1، حالت API خودکار یا chat-completions).",
+              "prompt-title": "تنظیمات سازگار با OpenAI"
             },
             "shared": {
-              "api-key": "API key",
-              "model": "Model"
+              "api-key": "کلید API",
+              "model": "مدل"
             }
           },
           "target-language": {
-            "label": "Target language",
+            "label": "زبان مقصد",
             "options": {
               "ar": "العربية",
-              "auto": "Follow app language",
+              "auto": "پیروی از زبان برنامه",
               "bg": "Български",
               "bn": "বাংলা",
               "cs": "Čeština",
@@ -1035,92 +1048,92 @@
               "zh-CN": "简体中文",
               "zh-TW": "繁體中文"
             },
-            "tooltip": "The language to translate lyrics into."
+            "tooltip": "زبانی که متن ترانه به آن ترجمه شود."
           },
-          "tooltip": "Translate lyrics and show the translated result line-by-line for display."
+          "tooltip": "ترجمه متن ترانه و نمایش نتیجه ترجمه شده خط به خط."
         }
       },
-      "name": "متن ترانه هماهنگ شد",
+      "name": "متن ترانه همگام‌سازی شده",
       "refetch-btn": {
-        "fetching": "در حال بارگذاری...",
+        "fetching": "در حال دریافت...",
         "normal": "دریافت مجدد متن ترانه"
       },
       "warnings": {
-        "duration-mismatch": "⚠️ - ممکن است متن ترانه به دلیل عدم تطابق زمان با مشکل هماهنگی مواجه شود.",
-        "inexact": "⚠️ - ممکن است متن ترانه برای این آهنگ دقیق نباشد",
-        "instrumental": "⚠️ - این آهنگ بی کلام است"
+        "duration-mismatch": "⚠️ - ممکن است متن ترانه به دلیل عدم تطابق مدت زمان همگام نباشد.",
+        "inexact": "⚠️ - متن ترانه این آهنگ ممکن است دقیق نباشد",
+        "instrumental": "⚠️ - این یک آهنگ بی‌کلام است"
       }
     },
     "taskbar-mediacontrol": {
-      "description": "کنترل پخش از نوار وظیفه ویندوز(taskbar)",
-      "name": "کنترل رسانه از نوار وظیفه (taskbar)"
+      "description": "کنترل پخش از نوار وظیفه ویندوز",
+      "name": "کنترل رسانه نوار وظیفه"
     },
     "touchbar": {
       "description": "افزودن ویجت TouchBar برای کاربران macOS",
-      "name": "نوار لمسی"
+      "name": "TouchBar"
     },
     "transparent-player": {
-      "description": "پنجره برنامه را شفاف مىکند",
+      "description": "پنجره برنامه را شفاف می‌کند",
       "menu": {
         "opacity": {
-          "label": "تارى",
+          "label": "شفافیت",
           "submenu": {
-            "percent": "%{{تارى}}"
+            "percent": "{{opacity}}%"
           }
         },
         "type": {
           "label": "نوع",
           "submenu": {
-            "acrylic": "اکرىلىک",
-            "mica": "مىکا",
-            "none": "هىچکدام",
-            "tabbed": "نوار دار"
+            "acrylic": "اکریلیک",
+            "mica": "میکا",
+            "none": "هیچ‌کدام",
+            "tabbed": "زبانه‌ای"
           }
         }
       },
-      "name": "پلىر شفاف"
+      "name": "پخش‌کننده شفاف"
     },
     "tuna-obs": {
-      "description": "ادغام با پلاگین Tuna در OBS",
+      "description": "یکپارچه‌سازی با افزونه Tuna در OBS",
       "name": "Tuna OBS"
     },
     "unobtrusive-player": {
-      "description": "هنگام پخش یک آهنگ از پخش کننده جلوگیری می کند",
-      "name": "پخش‌کننده بی نظیر"
+      "description": "جلوگیری از ظاهر شدن پخش‌کننده هنگام پخش آهنگ",
+      "name": "پخش‌کننده نامحسوس"
     },
     "video-toggle": {
-      "description": "دکمه‌ای اضافه می‌کند برای جابجایی بین حالت ویدیو/آهنگ. همچنین به صورت اختیاری می‌تواند تب ویدیو را حذف کند",
+      "description": "افزودن یک دکمه برای جابجایی بین حالت ویدئو/آهنگ. همچنین می‌تواند به صورت اختیاری کل زبانه ویدئو را حذف کند",
       "menu": {
         "align": {
-          "label": "چینش",
+          "label": "ترازبندی",
           "submenu": {
             "left": "چپ",
-            "middle": "میانه",
+            "middle": "وسط",
             "right": "راست"
           }
         },
-        "force-hide": "حذف اجباری تب ویدیو",
+        "force-hide": "حذف اجباری زبانه ویدئو",
         "mode": {
           "label": "حالت",
           "submenu": {
-            "custom": "حالت شخصی‌سازی شده",
+            "custom": "تغییر وضعیت سفارشی",
             "disabled": "غیرفعال",
-            "native": "حالت پیشفرض"
+            "native": "تغییر وضعیت اصلی"
           }
         }
       },
-      "name": "ویدیو به آهنگ",
+      "name": "تغییر وضعیت ویدئو",
       "templates": {
-        "button-song": "ترانه",
-        "button-video": "ویدیو"
+        "button-song": "آهنگ",
+        "button-video": "ویدئو"
       }
     },
     "visualizer": {
-      "description": "اضافه کردن نمایش‌دهنده تصویری به پخش‌کننده",
+      "description": "افزودن یک نمایش‌دهنده بصری به پخش‌کننده",
       "menu": {
-        "visualizer-type": "نوع نمایش‌دهنده تصویری"
+        "visualizer-type": "نوع نمایش‌دهنده بصری"
       },
-      "name": "نمایش‌دهنده تصویری"
+      "name": "نمایش‌دهنده بصری"
     }
   }
 }

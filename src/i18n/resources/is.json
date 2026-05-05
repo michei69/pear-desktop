@@ -144,25 +144,26 @@
               "disabled": "Fötluð",
               "enabled-and-hide-app": "Bakki virkt, og fela forritsgluggi",
               "enabled-and-show-app": "Virkjað og sýna forrit",
+              "move-to-current-desktop": "Færa á núverandi sýndarskjáborð við birtingu",
               "play-pause-on-click": "Spila/hlé við smell"
             }
           },
           "visual-tweaks": {
             "label": "Sjónrænaraðlögun",
             "submenu": {
-              "custom-window-title": {
-                "label": "Custom window title",
-                "prompt": {
-                  "label": "Enter custom window title: (leave empty to disable)",
-                  "placeholder": "Example: {{applicationName}}"
-                }
-              },
               "like-buttons": {
                 "default": "Sjálfgefinn",
                 "force-show": "Þvingaðu sýna",
                 "hide": "Fela",
-                "label": "Líkartakkar",
-                "swap": "Swap like buttons order"
+                "swap": "Víxla röð líkartakka",
+                "label": "Líkartakkar"
+              },
+              "custom-window-title": {
+                "label": "Sérsniðinn gluggatitill",
+                "prompt": {
+                  "label": "Sláðu inn sérsniðinn gluggatitil (skilið eftir autt til að slökkva)",
+                  "placeholder": "Dæmi: {{applicationName}}"
+                }
               },
               "remove-upgrade-button": "Fjarlægja uppgræðartakkan",
               "theme": {
@@ -239,7 +240,7 @@
             "percent": "{{ratio}}%"
           }
         },
-        "enable-seekbar": "Enable seekbar theming"
+        "enable-seekbar": "Virkja leitarstikuþema"
       },
       "name": "Albúmlitaþema"
     },
@@ -289,10 +290,10 @@
       "name": "Umhverfishamur"
     },
     "amuse": {
-      "description": "Adds {{applicationName}} support for the Amuse now playing widget by 6K Labs",
+      "description": "Bætir {{applicationName}} stuðningi við Amuse now playing búnaðinn frá 6K Labs",
       "name": "Amuse",
       "response": {
-        "query": "Amuse API server is running. GET /query to get song info."
+        "query": "Amuse API miðlarinn er í gangi. GET /query til að fá lagaupplýsingar."
       }
     },
     "api-server": {
@@ -322,24 +323,24 @@
         "hostname": {
           "label": "Hýsitölvunafn"
         },
-        "https": {
-          "label": "HTTPS & Certificates",
-          "submenu": {
-            "cert": {
-              "dialogTitle": "Select HTTPS certificate file",
-              "label": "Certificate file (.crt/.pem)"
-            },
-            "enable-https": {
-              "label": "Enable HTTPS"
-            },
-            "key": {
-              "dialogTitle": "Select HTTPS private key file",
-              "label": "Private key file (.key/.pem)"
-            }
-          }
-        },
         "port": {
           "label": "Tengi"
+        },
+        "https": {
+          "label": "HTTPS og skilríki",
+          "submenu": {
+            "enable-https": {
+              "label": "Virkja HTTPS"
+            },
+            "cert": {
+              "label": "Skilríkjaskrá (.crt/.pem)",
+              "dialogTitle": "Veldu HTTPS skilríkjaskrá"
+            },
+            "key": {
+              "label": "Einkalykilskrá (.key/.pem)",
+              "dialogTitle": "Veldu HTTPS einkalykilskrá"
+            }
+          }
         }
       },
       "name": "API-Netþjónn [Beta]",
@@ -359,26 +360,26 @@
       "name": "Hljóðþjöppu"
     },
     "auth-proxy-adapter": {
-      "description": "Support for the use of authentication proxy services",
+      "description": "Stuðningur við notkun auðkenningar umboðsþjónustu",
       "menu": {
-        "disable": "Disable Proxy Adapter",
-        "enable": "Enable Proxy Adapter",
+        "disable": "Slökkva á umboðs millistykki",
+        "enable": "Virkja umboðs millistykki",
         "hostname": {
-          "label": "Hostname"
+          "label": "Hýsitölvunafn"
         },
         "port": {
-          "label": "Port"
+          "label": "Tengi"
         }
       },
-      "name": "Auth Proxy Adapter",
+      "name": "Auðkenningar umboðs millistykki",
       "prompt": {
         "hostname": {
-          "label": "Enter hostname for local proxy server (requires restart):",
-          "title": "Proxy Hostname"
+          "title": "Umboðs hýsitölvunafn",
+          "label": "Sláðu inn hýsitölvunafn fyrir staðbundinn umboðsmiðlara (krefst endurræsingar):"
         },
         "port": {
-          "label": "Enter port for local proxy server (requires restart):",
-          "title": "Proxy Port"
+          "title": "Umboðs tengi",
+          "label": "Sláðu inn tengi fyrir staðbundinn umboðsmiðlara (krefst endurræsingar):"
         }
       }
     },
@@ -408,21 +409,21 @@
         "title": "Opnaðu skjátextavali"
       },
       "toast": {
-        "caption-changed": "Caption changed to {{language}}",
-        "caption-disabled": "Captions disabled",
-        "no-captions": "No captions available for this song"
+        "caption-changed": "Skjátexti breytt í {{language}}",
+        "caption-disabled": "Skjátextar óvirkir",
+        "no-captions": "Engir skjátextar fáanlegir fyrir þetta lag"
       }
     },
     "clock": {
-      "description": "Add a clock to the navigation bar",
+      "description": "Bæta klukku við leiðsögustikuna",
+      "name": "Klukka",
       "menu": {
         "format": {
-          "24-hour-format": "24-Hour Format",
-          "display-seconds": "Display Seconds",
-          "label": "Format"
+          "label": "Snið",
+          "display-seconds": "Sýna sekúndur",
+          "24-hour-format": "24 klst snið"
         }
-      },
-      "name": "Clock"
+      }
     },
     "compact-sidebar": {
       "description": "Stilltu hliðarstikuna alltaf í þétta stillingu",
@@ -451,15 +452,15 @@
       }
     },
     "custom-output-device": {
-      "description": "Configure a custom output media device for songs",
+      "description": "Stilla sérsniðið úttaksmiðlunartæki fyrir lög",
       "menu": {
-        "device-selector": "Select Device"
+        "device-selector": "Veldu tæki"
       },
-      "name": "Custom Output Device",
+      "name": "Sérsniðið úttakstæki",
       "prompt": {
         "device-selector": {
-          "label": "Choose the output media device to be used",
-          "title": "Select Output Device"
+          "label": "Veldu úttaksmiðlunartækið sem á að nota",
+          "title": "Veldu úttakstæki"
         }
       }
     },
@@ -488,11 +489,11 @@
         "play-on-application": "Spilaðu á {{applicationName}}",
         "set-inactivity-timeout": "Stilltu tímamörk fyrir óvirkni",
         "set-status-display-type": {
-          "label": "Status text",
+          "label": "Stöðutexti",
           "submenu": {
-            "application": "Listening to {{applicationName}}",
-            "artist": "Listening to {artist}",
-            "title": "Listening to {song title}"
+            "application": "Hlustar á {{applicationName}}",
+            "artist": "Hlustar á {artist}",
+            "title": "Hlustar á {song title}"
           }
         }
       },
@@ -578,16 +579,16 @@
       }
     },
     "equalizer": {
-      "description": "Adds an equalizer to the player",
+      "description": "Bætir jafnara við spilarann",
       "menu": {
         "presets": {
-          "label": "Presets",
+          "label": "Forstillingar",
           "list": {
-            "bass-booster": "Bass booster"
+            "bass-booster": "Bassa magnari"
           }
         }
       },
-      "name": "Equalizer"
+      "name": "Jafnari"
     },
     "exponential-volume": {
       "description": "Gerir hljóðstyrkssleðann veldisvísis svo það er auðveldara að velja lægra hljóðstyrk.",
@@ -665,10 +666,10 @@
       "name": "Leiðsögn",
       "templates": {
         "back": {
-          "title": "Go to previous page"
+          "title": "Fara á fyrri síðu"
         },
         "forward": {
-          "title": "Go to next page"
+          "title": "Fara á næstu síðu"
         }
       }
     },
@@ -684,6 +685,7 @@
           "label": "Gagnvirkarstillingar",
           "submenu": {
             "hide-button-text": "Fela hnappatexta",
+            "hover-controls": "Sýna lítinn spilara þegar sveimað er yfir bakka",
             "refresh-on-play-pause": "Endurnýjaðu í Spilun/Hlé",
             "tray-controls": "Opna/loka á bakka smellur"
           }
@@ -695,8 +697,8 @@
       "name": "Tilkynningar"
     },
     "performance-improvement": {
-      "description": "Improve performance by enabling experimental scripts",
-      "name": "Performance improvement [Beta]"
+      "description": "Bæta afköst með því að virkja tilraunaskriftur",
+      "name": "Afkastaumbætur [Prófunarútgáfa]"
     },
     "picture-in-picture": {
       "description": "Gerir kleift að skipta forritinu yfir í mynd-í-mynd stillingu",
@@ -765,7 +767,7 @@
       "name": "Myndbandgæðisbreyting",
       "renderer": {
         "quality-settings-button": {
-          "label": "Open player quality changer"
+          "label": "Opna gæðastillingar spilara"
         }
       }
     },
@@ -786,8 +788,8 @@
         "listenbrainz": {
           "token": "Sláðu inn ListenBrainz notandalykilinn"
         },
-        "scrobble-alternative-artist": "Use alternative artists",
-        "scrobble-alternative-title": "Use alternative titles",
+        "scrobble-alternative-title": "Nota aðra titla",
+        "scrobble-alternative-artist": "Nota aðra listamenn",
         "scrobble-other-media": "Scrobble aðra fjölmiðla"
       },
       "name": "Scrobbler",
@@ -842,23 +844,13 @@
         "not-found": "⚠️ - Enginn texti fannst við þetta lag."
       },
       "menu": {
-        "convert-chinese-character": {
-          "label": "Convert Chinese character",
-          "submenu": {
-            "disabled": {
-              "label": "Disabled",
-              "tooltip": "Disable Chinese character conversion"
-            },
-            "simplified-to-traditional": {
-              "label": "Simplified to Traditional",
-              "tooltip": "Convert Simplified Chinese to Traditional Chinese"
-            },
-            "traditional-to-simplified": {
-              "label": "Traditional to Simplified",
-              "tooltip": "Convert Traditional Chinese to Simplified Chinese"
-            }
-          },
-          "tooltip": "Convert Chinese character to Traditional or Simplified"
+        "preferred-provider": {
+          "label": "Valinn veitandi",
+          "tooltip": "Veldu sjálfgefinn veitanda til að nota",
+          "none": {
+            "label": "Enginn",
+            "tooltip": "Enginn valinn veitandi"
+          }
         },
         "default-text-string": {
           "label": "Sjálfgefið tákn á milli texta",
@@ -868,8 +860,8 @@
           "label": "Línuafleiðing",
           "submenu": {
             "fancy": {
-              "label": "Fancy",
-              "tooltip": "Use large, app-like effects on the current line"
+              "label": "Glæsilegt",
+              "tooltip": "Nota stór, forritslík áhrif á núverandi línu"
             },
             "focus": {
               "label": "Brennidepill",
@@ -887,38 +879,30 @@
           "tooltip": "Veldu áhrif til að nota á núverandi línu"
         },
         "lyrics-font-size": {
-          "label": "Lyrics font size",
+          "label": "Leturstærð söngtexta",
           "submenu": {
-            "large": {
-              "label": "Large",
-              "tooltip": "Use the original larger lyrics size"
+            "small": {
+              "label": "Lítill",
+              "tooltip": "Notaðu þéttari söngtextastærð"
             },
             "medium": {
-              "label": "Medium",
-              "tooltip": "Use a balanced lyrics size"
+              "label": "Miðlungs",
+              "tooltip": "Notaðu jafnvæga söngtextastærð"
             },
-            "small": {
-              "label": "Small",
-              "tooltip": "Use a more compact lyrics size"
+            "large": {
+              "label": "Stór",
+              "tooltip": "Notaðu upprunalegu stærri söngtextastærðina"
             }
           },
-          "tooltip": "Choose how large the lyrics text should be"
+          "tooltip": "Veldu hversu stór söngtextinn á að vera"
         },
         "precise-timing": {
           "label": "Gera textana fullkomlega samstillta",
           "tooltip": "Reikna upp á millisekúndu birtingu næstu línu (getur haft lítil áhrif á frammistöðu)"
         },
-        "preferred-provider": {
-          "label": "Preferred Provider",
-          "none": {
-            "label": "None",
-            "tooltip": "No preferred provider"
-          },
-          "tooltip": "Choose the default provider to use"
-        },
         "romanization": {
-          "label": "Romanize lyrics",
-          "tooltip": "If the lyrics are in a different language, try to display a latin version."
+          "label": "Rómvæða söngtexta",
+          "tooltip": "Ef söngtextinn er á öðru tungumáli, reyndu að birta latneska útgáfu."
         },
         "show-lyrics-even-if-inexact": {
           "label": "Sýna texta, jafnvel þótt hann sé ónákvæmur",
@@ -928,116 +912,134 @@
           "label": "Sýna tímikóðar",
           "tooltip": "Sýna tímakóðana við hliðina á textanum"
         },
+        "convert-chinese-character": {
+          "label": "Umbreyta kínverskum stöfum",
+          "submenu": {
+            "disabled": {
+              "label": "Óvirkt",
+              "tooltip": "Slökkva á umbreytingu kínverskra stafa"
+            },
+            "simplified-to-traditional": {
+              "label": "Einfaldað í hefðbundið",
+              "tooltip": "Umbreyta einfölduðum kínverskum í hefðbundna kínversku"
+            },
+            "traditional-to-simplified": {
+              "label": "Hefðbundið í einfaldað",
+              "tooltip": "Umbreyta hefðbundinni kínversku í einfaldaða kínversku"
+            }
+          },
+          "tooltip": "Umbreyta kínverskum stöfum í hefðbundna eða einfaldaða"
+        },
         "translation": {
-          "clear-cache": {
-            "label": "Clear translation cache",
-            "tooltip": "Delete all cached translations stored on disk."
+          "label": "Þýðing söngtexta",
+          "tooltip": "Þýddu söngtexta og sýndu þýddu niðurstöðuna línu fyrir línu.",
+          "enabled": {
+            "label": "Virkja þýðingu",
+            "tooltip": "Sýna þýdda línu undir hverri upprunalegri söngtextalínu."
+          },
+          "provider": {
+            "label": "Veitandi",
+            "tooltip": "Hvaða þjónustu á að nota við þýðingu."
+          },
+          "target-language": {
+            "label": "Marktungumál",
+            "tooltip": "Tungumálið sem á að þýða söngtexta yfir á.",
+            "options": {
+              "auto": "Follow app language",
+              "zh-CN": "简体中文",
+              "zh-TW": "繁體中文",
+              "en": "English",
+              "ja": "日本語",
+              "ko": "한국어",
+              "fr": "Français",
+              "de": "Deutsch",
+              "es": "Español",
+              "pt-BR": "Português (Brasil)",
+              "pt-PT": "Português (Portugal)",
+              "it": "Italiano",
+              "nl": "Nederlands",
+              "ru": "Русский",
+              "uk": "Українська",
+              "pl": "Polski",
+              "tr": "Türkçe",
+              "ar": "العربية",
+              "he": "עברית",
+              "fa": "فارسی",
+              "hi": "हिन्दी",
+              "bn": "বাংলা",
+              "ur": "اردو",
+              "ta": "தமிழ்",
+              "te": "తెలుగు",
+              "mr": "मराठी",
+              "id": "Bahasa Indonesia",
+              "ms": "Bahasa Melayu",
+              "vi": "Tiếng Việt",
+              "th": "ไทย",
+              "fil": "Filipino",
+              "sw": "Kiswahili",
+              "sv": "Svenska",
+              "no": "Norsk",
+              "da": "Dansk",
+              "fi": "Suomi",
+              "cs": "Čeština",
+              "ro": "Română",
+              "hu": "Magyar",
+              "el": "Ελληνικά",
+              "bg": "Български",
+              "sr": "Српски",
+              "hr": "Hrvatski",
+              "sk": "Slovenčina",
+              "lt": "Lietuvių"
+            }
           },
           "configure": {
-            "label": "Configure API key & model…",
-            "tooltip": "Set provider-specific translation options."
+            "label": "Stilla API lykil og líkan...",
+            "tooltip": "Stilltu þýðingarvalkosti fyrir tiltekinn veitanda."
           },
-          "enabled": {
-            "label": "Enable translation",
-            "tooltip": "Show a translated line beneath each original lyric line."
-          },
-          "label": "Lyrics translation",
-          "provider": {
-            "label": "Provider",
-            "tooltip": "Which service to use for translation."
+          "clear-cache": {
+            "label": "Hreinsa þýðingarskyndiminni",
+            "tooltip": "Eyða öllum skyndiminnisþýðingum sem geymdar eru á diski."
           },
           "providers": {
+            "shared": {
+              "api-key": "API lykill",
+              "model": "Líkan"
+            },
+            "openai-compatible": {
+              "name": "OpenAI samhæft",
+              "prompt-title": "OpenAI samhæfðar stillingar",
+              "prompt-label": "Notaðu OpenAI-samhæfða miðlara, þar á meðal Ollama (grunnvistfang http://127.0.0.1:11434/v1, API hamur sjálfvirkur eða chat-completions).",
+              "base-url": "Grunnvistfang",
+              "api-mode": "API hamur (responses / sjálfvirkt / chat-completions)"
+            },
             "anthropic": {
               "name": "Anthropic Claude",
-              "prompt-label": "Uses the native Anthropic Messages API.",
-              "prompt-title": "Anthropic settings"
+              "prompt-title": "Anthropic stillingar",
+              "prompt-label": "Notar innbyggða Anthropic Messages API."
             },
             "gemini": {
               "name": "Google Gemini",
-              "prompt-label": "Uses Google's Generative Language API (generateContent).",
-              "prompt-title": "Gemini settings"
-            },
-            "google-translate": {
-              "host": "Host",
-              "name": "Google Translate",
-              "prompt-label": "Uses the unofficial free Google Translate endpoint. No API key is required, but Google may rate-limit it.",
-              "prompt-title": "Google Translate settings"
+              "prompt-title": "Gemini stillingar",
+              "prompt-label": "Notar Generative Language API Google (generateContent)."
             },
             "local-cli": {
-              "command": "Command",
-              "engine": "Local CLI",
+              "name": "Staðbundin CLI",
+              "prompt-title": "Staðbundnar CLI stillingar",
+              "prompt-label": "Notaðu staðbundið innskráð Claude Code, Codex eða Gemini CLI. Skipunin og líkanið eru sjálfvirk; CLI notar eigið sjálfgefið innskráningu.",
+              "engine": "Staðbundin CLI",
               "engine-claude": "Claude Code",
               "engine-codex": "Codex",
               "engine-gemini": "Gemini CLI",
-              "name": "Local CLI",
-              "prompt-label": "Use a locally logged-in Claude Code, Codex, or Gemini CLI. The command and model are automatic; the CLI uses its own logged-in default.",
-              "prompt-title": "Local CLI settings",
-              "timeout": "Timeout seconds (15-600)"
+              "command": "Skipun",
+              "timeout": "Tímamörk sekúndur (15-600)"
             },
-            "openai-compatible": {
-              "api-mode": "API mode (responses / auto / chat-completions)",
-              "base-url": "Base URL",
-              "name": "OpenAI compatible",
-              "prompt-label": "Use OpenAI-compatible servers, including Ollama (base URL http://127.0.0.1:11434/v1, API mode auto or chat-completions).",
-              "prompt-title": "OpenAI-compatible settings"
-            },
-            "shared": {
-              "api-key": "API key",
-              "model": "Model"
+            "google-translate": {
+              "name": "Google Translate",
+              "prompt-title": "Google Translate stillingar",
+              "prompt-label": "Notar óopinbera ókeypis Google Translate endapunktinn. Ekki þarf API lykil, en Google gæti takmarkað hraða.",
+              "host": "Hýsitölva"
             }
-          },
-          "target-language": {
-            "label": "Target language",
-            "options": {
-              "ar": "العربية",
-              "auto": "Follow app language",
-              "bg": "Български",
-              "bn": "বাংলা",
-              "cs": "Čeština",
-              "da": "Dansk",
-              "de": "Deutsch",
-              "el": "Ελληνικά",
-              "en": "English",
-              "es": "Español",
-              "fa": "فارسی",
-              "fi": "Suomi",
-              "fil": "Filipino",
-              "fr": "Français",
-              "he": "עברית",
-              "hi": "हिन्दी",
-              "hr": "Hrvatski",
-              "hu": "Magyar",
-              "id": "Bahasa Indonesia",
-              "it": "Italiano",
-              "ja": "日本語",
-              "ko": "한국어",
-              "lt": "Lietuvių",
-              "mr": "मराठी",
-              "ms": "Bahasa Melayu",
-              "nl": "Nederlands",
-              "no": "Norsk",
-              "pl": "Polski",
-              "pt-BR": "Português (Brasil)",
-              "pt-PT": "Português (Portugal)",
-              "ro": "Română",
-              "ru": "Русский",
-              "sk": "Slovenčina",
-              "sr": "Српски",
-              "sv": "Svenska",
-              "sw": "Kiswahili",
-              "ta": "தமிழ்",
-              "te": "తెలుగు",
-              "th": "ไทย",
-              "tr": "Türkçe",
-              "uk": "Українська",
-              "ur": "اردو",
-              "vi": "Tiếng Việt",
-              "zh-CN": "简体中文",
-              "zh-TW": "繁體中文"
-            },
-            "tooltip": "The language to translate lyrics into."
-          },
-          "tooltip": "Translate lyrics and show the translated result line-by-line for display."
+          }
         }
       },
       "name": "Samstilltur texti",
@@ -1060,33 +1062,33 @@
       "name": "Snertistiku"
     },
     "transparent-player": {
-      "description": "Makes the app window transparent",
+      "description": "Gerir forritsgluggann gagnsæjan",
+      "name": "Gagnsær spilari",
       "menu": {
         "opacity": {
-          "label": "Opacity",
+          "label": "Ógegnsæi",
           "submenu": {
             "percent": "{{opacity}}%"
           }
         },
         "type": {
-          "label": "Type",
+          "label": "Tegund",
           "submenu": {
-            "acrylic": "Acrylic",
-            "mica": "Mica",
-            "none": "None",
-            "tabbed": "Tabbed"
+            "acrylic": "Akryl",
+            "mica": "Míka",
+            "tabbed": "Flipar",
+            "none": "Enginn"
           }
         }
-      },
-      "name": "Transparent Player"
+      }
     },
     "tuna-obs": {
       "description": "Samþætting við OBS viðbót Tuna",
       "name": "Tuna OBS"
     },
     "unobtrusive-player": {
-      "description": "Prevents the player from popping up when playing a song",
-      "name": "Unobtrusive Player"
+      "description": "Kemur í veg fyrir að spilarinn skjóti upp þegar lag er spilað",
+      "name": "Óáberandi spilari"
     },
     "video-toggle": {
       "description": "Bætir við hnappi til að skipta á milli myndbands/lagshams. Getur einnig valfrjálst fjarlægt allan myndbandsflipann",
@@ -1112,7 +1114,7 @@
       "name": "Myndbandsrofi",
       "templates": {
         "button-song": "Lag",
-        "button-video": "Video"
+        "button-video": "Myndband"
       }
     },
     "visualizer": {
@@ -1121,6 +1123,17 @@
         "visualizer-type": "Sýndarstýringartegund"
       },
       "name": "Sýndarstýringar"
+    },
+    "audio-only": {
+      "description": "Þvingar aðeins hljóðham — lokar á alla myndbandsstrauma á net- og spilarastigi til að spara vinnsluminni og bandbreidd",
+      "name": "Aðeins hljóð"
+    },
+    "playback-recovery": {
+      "description": "Endurheimtir sjálfkrafa úr föstum, stöðvuðum eða dauðum spilunarástöndum",
+      "menu": {
+        "log-to-console": "Skrá endurheimtaratburði í stjórnborð"
+      },
+      "name": "Spilunar endurheimt"
     }
   }
 }

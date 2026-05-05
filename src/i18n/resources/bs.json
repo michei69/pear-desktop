@@ -71,7 +71,7 @@
         "buttons": {
           "disable": "Ugasite Nadogradnje",
           "download": "Skinuti",
-          "ok": "OK"
+          "ok": "U redu"
         },
         "detail": "Nova verzija je dostupna i može biti skinuta na {{downloadLink}}",
         "message": "Nova verzija je dostupna",
@@ -144,7 +144,8 @@
               "disabled": "Onemogućeno",
               "enabled-and-hide-app": "Tacna je uključena, i prozor aplikacije skrijte",
               "enabled-and-show-app": "Tacna je uključena, i prozor aplikacije prikažite",
-              "play-pause-on-click": "Pokreni/Zaustavi na klik"
+              "play-pause-on-click": "Pokreni/Zaustavi na klik",
+              "move-to-current-desktop": "Premjesti na trenutni virtuelni desktop pri prikazivanju"
             }
           },
           "visual-tweaks": {
@@ -509,14 +510,14 @@
         "dialog": {
           "error": {
             "buttons": {
-              "ok": "OK"
+              "ok": "U redu"
             },
             "message": "Ups! Izvinite, preuzimanje nije uspjelo…",
             "title": "Greška u preuzimanju!"
           },
           "start-download-playlist": {
             "buttons": {
-              "ok": "OK"
+              "ok": "U redu"
             },
             "detail": "({{PlaylistSize}} pjesama)",
             "message": "Preuzimanje plejliste {{playlistTitle}}",
@@ -685,7 +686,8 @@
           "submenu": {
             "hide-button-text": "Sakrij tekst dugmeta",
             "refresh-on-play-pause": "Osvježi pri puštanju/pauzi",
-            "tray-controls": "Otvori/zatvori na klik na traku"
+            "tray-controls": "Otvori/zatvori na klik na traku",
+            "hover-controls": "Prikazi mini-plejer pri prelasku preko trake"
           }
         },
         "priority": "Prioritet obavijesti",
@@ -1121,6 +1123,17 @@
         "visualizer-type": "Tip vizualizatora"
       },
       "name": "Vizualizator"
+    },
+    "audio-only": {
+      "description": "Forsira iskljucivo audio mod — blokira sve video tokove na mreznom i plejerskom nivou radi ustede RAM-a i propusnog opsega",
+      "name": "Samo Audio"
+    },
+    "playback-recovery": {
+      "description": "Automatski se oporavlja od zaglavljenih, usporenih ili mrtvih stanja reprodukcije",
+      "menu": {
+        "log-to-console": "Zabiljezi dogadjaje oporavka u konzolu"
+      },
+      "name": "Oporavak reprodukcije"
     }
   }
 }

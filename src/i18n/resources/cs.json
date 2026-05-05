@@ -144,7 +144,8 @@
               "disabled": "Vypnuto",
               "enabled-and-hide-app": "Povolit a skrýt aplikaci",
               "enabled-and-show-app": "Povolit a zobrazit aplikaci",
-              "play-pause-on-click": "Přehrát/Pozastavit na kliknutí"
+              "play-pause-on-click": "Přehrát/Pozastavit na kliknutí",
+              "move-to-current-desktop": "Přesunout na aktuální virtuální plochu při zobrazení"
             }
           },
           "visual-tweaks": {
@@ -685,7 +686,8 @@
           "submenu": {
             "hide-button-text": "Skrýt text tlačítka",
             "refresh-on-play-pause": "Obnovit při Přehrát/Pozastavit",
-            "tray-controls": "Otevřít/Zavřít aplikaci na kliknutí na tray ikonu"
+            "tray-controls": "Otevřít/Zavřít aplikaci na kliknutí na tray ikonu",
+            "hover-controls": "Zobrazit mini přehrávač při najetí na tray"
           }
         },
         "priority": "Priorita Oznámení",
@@ -838,7 +840,7 @@
     "synced-lyrics": {
       "description": "Poskytuje synchronizaci textů k písním, pomocí poskytovatelů, jako je LRClib.",
       "errors": {
-        "fetch": "⚠️ Při hledání textu došlo k chybě.\n \tProsím zkuste to znovu později.",
+        "fetch": "⚠️ Při hledání textu došlo k chybě.\n\tProsím zkuste to znovu později.",
         "not-found": "⚠️ Pro tuto skladbu nebyl nalezen žádný text."
       },
       "menu": {
@@ -1032,8 +1034,8 @@
               "uk": "Українська",
               "ur": "اردو",
               "vi": "Tiếng Việt",
-              "zh-CN": "简体中文",
-              "zh-TW": "繁體中文"
+              "zh-CN": "简体中文 (zjednodušená čínština)",
+              "zh-TW": "繁體中文 (tradiční čínština)"
             },
             "tooltip": "Jazyk, do kterého se mají texty přeložit."
           },
@@ -1121,6 +1123,17 @@
         "visualizer-type": "Typ vizualizéru"
       },
       "name": "Vizualizér"
+    },
+    "audio-only": {
+      "description": "Vynutí režim pouze zvuk — blokuje všechny videostreamy na úrovni sítě a přehrávače, aby se šetřila RAM a šířka pásma",
+      "name": "Pouze zvuk"
+    },
+    "playback-recovery": {
+      "description": "Automaticky obnovuje přehrávání ze zaseknutých, zastavených nebo mrtvých stavů",
+      "name": "Obnova přehrávání",
+      "menu": {
+        "log-to-console": "Zaznamenávat události obnovení do konzole"
+      }
     }
   }
 }

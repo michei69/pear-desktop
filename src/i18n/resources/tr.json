@@ -144,7 +144,8 @@
               "disabled": "Devre Dışı",
               "enabled-and-hide-app": "Uygulamayı etkinleştirin gizleyin",
               "enabled-and-show-app": "Etkinleştir ve uygulamayı göster",
-              "play-pause-on-click": "Tıklandığında Oynat/Duraklat"
+              "play-pause-on-click": "Tıklandığında Oynat/Duraklat",
+              "move-to-current-desktop": "Gösterildiğinde mevcut sanal masaüstüne taşı"
             }
           },
           "visual-tweaks": {
@@ -339,7 +340,7 @@
           }
         },
         "port": {
-          "label": "Port"
+          "label": "Bağlantı Noktası"
         }
       },
       "name": "API Sunucusu [Beta]",
@@ -367,7 +368,7 @@
           "label": "Ana makine adı"
         },
         "port": {
-          "label": "Port"
+          "label": "Bağlantı Noktası"
         }
       },
       "name": "Ara Sunucu Doğrulama Bağdaştırıcısı",
@@ -419,7 +420,7 @@
         "format": {
           "24-hour-format": "24-Saat Formatı",
           "display-seconds": "Saniyeleri Göster",
-          "label": "Format"
+          "label": "Biçim"
         }
       },
       "name": "Saat"
@@ -685,7 +686,8 @@
           "submenu": {
             "hide-button-text": "Buton metnini gizle",
             "refresh-on-play-pause": "Oynat/Duraklat'ta Yenile",
-            "tray-controls": "Tepsi tıklamasıyla Aç/Kapat"
+            "tray-controls": "Tepsi tıklamasıyla Aç/Kapat",
+            "hover-controls": "Tepsi üzerine gelince mini oynatıcıyı göster"
           }
         },
         "priority": "Bildirim Önceliği",
@@ -887,22 +889,22 @@
           "tooltip": "Geçerli satıra uygulanacak efekti seçin"
         },
         "lyrics-font-size": {
-          "label": "Lyrics font size",
+          "label": "Şarkı sözü yazı tipi boyutu",
           "submenu": {
             "large": {
-              "label": "Large",
-              "tooltip": "Use the original larger lyrics size"
+              "label": "Büyük",
+              "tooltip": "Orijinal daha büyük şarkı sözü boyutunu kullan"
             },
             "medium": {
-              "label": "Medium",
-              "tooltip": "Use a balanced lyrics size"
+              "label": "Orta",
+              "tooltip": "Dengeli bir şarkı sözü boyutu kullan"
             },
             "small": {
-              "label": "Small",
-              "tooltip": "Use a more compact lyrics size"
+              "label": "Küçük",
+              "tooltip": "Daha kompakt bir şarkı sözü boyutu kullan"
             }
           },
-          "tooltip": "Choose how large the lyrics text should be"
+          "tooltip": "Şarkı sözü metninin ne kadar büyük olacağını seçin"
         },
         "precise-timing": {
           "label": "Şarkı sözlerini mükemmel şekilde senkronize edin",
@@ -930,67 +932,67 @@
         },
         "translation": {
           "clear-cache": {
-            "label": "Clear translation cache",
-            "tooltip": "Delete all cached translations stored on disk."
+            "label": "Çeviri önbelleğini temizle",
+            "tooltip": "Diskte depolanan tüm önbelleğe alınmış çevirileri sil"
           },
           "configure": {
-            "label": "Configure API key & model…",
-            "tooltip": "Set provider-specific translation options."
+            "label": "API anahtarını ve modeli yapılandır…",
+            "tooltip": "Sağlayıcıya özel çeviri seçeneklerini ayarla"
           },
           "enabled": {
-            "label": "Enable translation",
-            "tooltip": "Show a translated line beneath each original lyric line."
+            "label": "Çeviriyi etkinleştir",
+            "tooltip": "Her orijinal şarkı sözü satırının altında çevrilmiş bir satır göster"
           },
-          "label": "Lyrics translation",
+          "label": "Şarkı sözü çevirisi",
           "provider": {
-            "label": "Provider",
-            "tooltip": "Which service to use for translation."
+            "label": "Sağlayıcı",
+            "tooltip": "Çeviri için hangi hizmetin kullanılacağı"
           },
           "providers": {
             "anthropic": {
               "name": "Anthropic Claude",
-              "prompt-label": "Uses the native Anthropic Messages API.",
-              "prompt-title": "Anthropic settings"
+              "prompt-label": "Yerel Anthropic Messages API'sini kullanır.",
+              "prompt-title": "Anthropic ayarları"
             },
             "gemini": {
               "name": "Google Gemini",
-              "prompt-label": "Uses Google's Generative Language API (generateContent).",
-              "prompt-title": "Gemini settings"
+              "prompt-label": "Google Generative Language API (generateContent) kullanır.",
+              "prompt-title": "Gemini ayarları"
             },
             "google-translate": {
-              "host": "Host",
+              "host": "Ana makine",
               "name": "Google Translate",
-              "prompt-label": "Uses the unofficial free Google Translate endpoint. No API key is required, but Google may rate-limit it.",
-              "prompt-title": "Google Translate settings"
+              "prompt-label": "Resmi olmayan ücretsiz Google Translate uç noktasını kullanır. API anahtarı gerekmez, ancak Google hız sınırlaması uygulayabilir.",
+              "prompt-title": "Google Translate ayarları"
             },
             "local-cli": {
-              "command": "Command",
-              "engine": "Local CLI",
+              "command": "Komut",
+              "engine": "Yerel CLI",
               "engine-claude": "Claude Code",
               "engine-codex": "Codex",
               "engine-gemini": "Gemini CLI",
-              "name": "Local CLI",
-              "prompt-label": "Use a locally logged-in Claude Code, Codex, or Gemini CLI. The command and model are automatic; the CLI uses its own logged-in default.",
-              "prompt-title": "Local CLI settings",
-              "timeout": "Timeout seconds (15-600)"
+              "name": "Yerel CLI",
+              "prompt-label": "Yerel olarak oturum açmış Claude Code, Codex veya Gemini CLI kullan. Komut ve model otomatiktir; CLI kendi varsayılan oturumunu kullanır.",
+              "prompt-title": "Yerel CLI ayarları",
+              "timeout": "Zaman aşımı saniyesi (15-600)"
             },
             "openai-compatible": {
-              "api-mode": "API mode (responses / auto / chat-completions)",
-              "base-url": "Base URL",
-              "name": "OpenAI compatible",
-              "prompt-label": "Use OpenAI-compatible servers, including Ollama (base URL http://127.0.0.1:11434/v1, API mode auto or chat-completions).",
-              "prompt-title": "OpenAI-compatible settings"
+              "api-mode": "API modu (responses / auto / chat-completions)",
+              "base-url": "Temel URL",
+              "name": "OpenAI uyumlu",
+              "prompt-label": "Ollama dahil OpenAI uyumlu sunucuları kullan (base URL http://127.0.0.1:11434/v1, API modu auto veya chat-completions).",
+              "prompt-title": "OpenAI uyumlu ayarlar"
             },
             "shared": {
-              "api-key": "API key",
+              "api-key": "API anahtarı",
               "model": "Model"
             }
           },
           "target-language": {
-            "label": "Target language",
+            "label": "Hedef dil",
             "options": {
               "ar": "العربية",
-              "auto": "Follow app language",
+              "auto": "Uygulama dilini takip et",
               "bg": "Български",
               "bn": "বাংলা",
               "cs": "Čeština",
@@ -1035,9 +1037,9 @@
               "zh-CN": "简体中文",
               "zh-TW": "繁體中文"
             },
-            "tooltip": "The language to translate lyrics into."
+            "tooltip": "Şarkı sözlerinin çevrileceği dil"
           },
-          "tooltip": "Translate lyrics and show the translated result line-by-line for display."
+          "tooltip": "Şarkı sözlerini çevir ve çevrilen sonucu satır satır göster"
         }
       },
       "name": "Senkronize Şarkı Sözleri",
@@ -1121,6 +1123,17 @@
         "visualizer-type": "Görselleştirici Tipi"
       },
       "name": "Görselleştirici"
+    },
+    "audio-only": {
+      "description": "Yalnızca ses modunu zorlar — RAM ve bant genişliğinden tasarruf için tüm video akışlarını ağ ve oynatıcı seviyesinde engeller",
+      "name": "Yalnızca Ses"
+    },
+    "playback-recovery": {
+      "description": "Takılı, durmuş veya ölü oynatma durumlarından otomatik olarak kurtulur",
+      "menu": {
+        "log-to-console": "Kurtarma olaylarını konsola kaydet"
+      },
+      "name": "Oynatma Kurtarma"
     }
   }
 }

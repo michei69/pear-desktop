@@ -144,7 +144,8 @@
               "disabled": "Letiltva",
               "enabled-and-hide-app": "Engedélyezve és alkalmazás elrejtése",
               "enabled-and-show-app": "Engedélyezve és alkalmazás megjelenítése",
-              "play-pause-on-click": "Lejátszás/Szünet az ikonra kattintással"
+              "play-pause-on-click": "Lejátszás/Szünet az ikonra kattintással",
+              "move-to-current-desktop": "Áthelyezés az aktuális virtuális asztalra megjelenítéskor"
             }
           },
           "visual-tweaks": {
@@ -162,7 +163,7 @@
                 "force-show": "Megjelenítés kényszerítése",
                 "hide": "Elrejtése",
                 "label": "Reakció gombok",
-                "swap": "Swap like buttons order"
+                "swap": "Tetszik gombok sorrendjének cseréje"
               },
               "remove-upgrade-button": "Előfizetés gombjának eltávolítása",
               "theme": {
@@ -239,7 +240,7 @@
             "percent": "{{ratio}}%"
           }
         },
-        "enable-seekbar": "Enable seekbar theming"
+        "enable-seekbar": "Keresősáv témázásának engedélyezése"
       },
       "name": "Album színtéma"
     },
@@ -323,18 +324,18 @@
           "label": "Kiszolgáló név"
         },
         "https": {
-          "label": "HTTPS & Certificates",
+          "label": "HTTPS és Tanúsítványok",
           "submenu": {
             "cert": {
-              "dialogTitle": "Select HTTPS certificate file",
-              "label": "Certificate file (.crt/.pem)"
+              "dialogTitle": "HTTPS tanúsítvány fájl kiválasztása",
+              "label": "Tanúsítvány fájl (.crt/.pem)"
             },
             "enable-https": {
-              "label": "Enable HTTPS"
+              "label": "HTTPS engedélyezése"
             },
             "key": {
-              "dialogTitle": "Select HTTPS private key file",
-              "label": "Private key file (.key/.pem)"
+              "dialogTitle": "HTTPS privát kulcs fájl kiválasztása",
+              "label": "Privát kulcs fájl (.key/.pem)"
             }
           }
         },
@@ -359,7 +360,7 @@
       "name": "Hangtömörítő"
     },
     "auth-proxy-adapter": {
-      "description": "Support for the use of authentication proxy services",
+      "description": "Hitelesítési proxy szolgáltatások használatának támogatása",
       "menu": {
         "disable": "Proxy adapder kikapcsolása",
         "enable": "Proxy adapter bekapcsolása",
@@ -370,7 +371,7 @@
           "label": "Port"
         }
       },
-      "name": "Auth Proxy Adapter",
+      "name": "Hitelesítési Proxy Adapter",
       "prompt": {
         "hostname": {
           "label": "Adjon meg egy hosztnevet a lokális proxy szerverhez (újraindítást igényel):",
@@ -414,15 +415,15 @@
       }
     },
     "clock": {
-      "description": "Add a clock to the navigation bar",
+      "description": "Óra hozzáadása a navigációs sávhoz",
       "menu": {
         "format": {
-          "24-hour-format": "24-Hour Format",
-          "display-seconds": "Display Seconds",
-          "label": "Format"
+          "24-hour-format": "24 órás formátum",
+          "display-seconds": "Másodpercek megjelenítése",
+          "label": "Formátum"
         }
       },
-      "name": "Clock"
+      "name": "Óra"
     },
     "compact-sidebar": {
       "description": "Mindig becsukva tartja a bal oldali savót, ahol a Kezdőlap. Felfedezés, Könyvtár és egyebek láthatók. (Amit bármikor ki lehet nyitni)",
@@ -451,11 +452,11 @@
       }
     },
     "custom-output-device": {
-      "description": "Configure a custom output media device for songs",
+      "description": "Egyedi kimeneti médiaeszköz beállítása dalokhoz",
       "menu": {
         "device-selector": "Eszköz kiválasztása"
       },
-      "name": "Saját kimeneti eszköz",
+      "name": "Egyedi Kimeneti Eszköz",
       "prompt": {
         "device-selector": {
           "label": "Válaszd ki a kimeneti eszközt",
@@ -685,7 +686,8 @@
           "submenu": {
             "hide-button-text": "Gombok szövegének elrejtése",
             "refresh-on-play-pause": "Frissítés lejátszás/szünet megnyomásakor",
-            "tray-controls": "Megnyitás/Bezárás tálca ikonra kattintva"
+            "tray-controls": "Megnyitás/Bezárás tálca ikonra kattintva",
+            "hover-controls": "Mini-lejátszó megjelenítése a tálca ikon fölé húzáskor"
           }
         },
         "priority": "Értesítési prioritás",
@@ -765,7 +767,7 @@
       "name": "Videóminőség módosító",
       "renderer": {
         "quality-settings-button": {
-          "label": "Open player quality changer"
+          "label": "Lejátszó minőség váltó megnyitása"
         }
       }
     },
@@ -786,7 +788,7 @@
         "listenbrainz": {
           "token": "Add meg a ListenBrainz felhasználói tokenedet"
         },
-        "scrobble-alternative-artist": "Use alternative artists",
+        "scrobble-alternative-artist": "Alternatív előadók használata",
         "scrobble-alternative-title": "Alternatív címek használata",
         "scrobble-other-media": "Más média scrobbelése"
       },
@@ -843,22 +845,22 @@
       },
       "menu": {
         "convert-chinese-character": {
-          "label": "Convert Chinese character",
+          "label": "Kínai karakter átalakítása",
           "submenu": {
             "disabled": {
-              "label": "Disabled",
-              "tooltip": "Disable Chinese character conversion"
+              "label": "Letiltva",
+              "tooltip": "Kínai karakter átalakítás letiltása"
             },
             "simplified-to-traditional": {
-              "label": "Simplified to Traditional",
-              "tooltip": "Convert Simplified Chinese to Traditional Chinese"
+              "label": "Egyszerűsítettről Hagyományosra",
+              "tooltip": "Egyszerűsített kínai átalakítása hagyományos kínaivá"
             },
             "traditional-to-simplified": {
-              "label": "Traditional to Simplified",
-              "tooltip": "Convert Traditional Chinese to Simplified Chinese"
+              "label": "Hagyományosról Egyszerűsítettre",
+              "tooltip": "Hagyományos kínai átalakítása egyszerűsített kínaivá"
             }
           },
-          "tooltip": "Convert Chinese character to Traditional or Simplified"
+          "tooltip": "Kínai karakter átalakítása hagyományos vagy egyszerűsített formába"
         },
         "default-text-string": {
           "label": "Alapértelmezett karakter a dalszövegek között",
@@ -887,34 +889,34 @@
           "tooltip": "Válassza ki az aktuális sorra alkalmazandó effektust"
         },
         "lyrics-font-size": {
-          "label": "Lyrics font size",
+          "label": "Dalszöveg betűméret",
           "submenu": {
             "large": {
-              "label": "Large",
-              "tooltip": "Use the original larger lyrics size"
+              "label": "Nagy",
+              "tooltip": "Az eredeti nagyobb dalszöveg méret használata"
             },
             "medium": {
-              "label": "Medium",
-              "tooltip": "Use a balanced lyrics size"
+              "label": "Közepes",
+              "tooltip": "Kiegyensúlyozott dalszöveg méret használata"
             },
             "small": {
-              "label": "Small",
-              "tooltip": "Use a more compact lyrics size"
+              "label": "Kicsi",
+              "tooltip": "Kompaktabb dalszöveg méret használata"
             }
           },
-          "tooltip": "Choose how large the lyrics text should be"
+          "tooltip": "Válaszd ki, milyen nagy legyen a dalszöveg"
         },
         "precise-timing": {
           "label": "Dalszöveg tökéletes szinkronizálása",
           "tooltip": "Számítsa ki az aktuális sor megjelenítésének idejét ezredmásodperc pontossággal (ez kis mértékben befolyásolhatja a teljesítményt)"
         },
         "preferred-provider": {
-          "label": "Preferred Provider",
+          "label": "Előnyben részesített szolgáltató",
           "none": {
-            "label": "None",
-            "tooltip": "No preferred provider"
+            "label": "Nincs",
+            "tooltip": "Nincs előnyben részesített szolgáltató"
           },
-          "tooltip": "Choose the default provider to use"
+          "tooltip": "Válaszd ki az alapértelmezett szolgáltatót"
         },
         "romanization": {
           "label": "Latin betűs szöveg",
@@ -930,21 +932,21 @@
         },
         "translation": {
           "clear-cache": {
-            "label": "Clear translation cache",
-            "tooltip": "Delete all cached translations stored on disk."
+            "label": "Fordítási gyorsítótár törlése",
+            "tooltip": "A lemezen tárolt összes gyorsítótárazott fordítás törlése."
           },
           "configure": {
-            "label": "Configure API key & model…",
-            "tooltip": "Set provider-specific translation options."
+            "label": "API kulcs és modell beállítása…",
+            "tooltip": "Szolgáltató-specifikus fordítási beállítások megadása."
           },
           "enabled": {
-            "label": "Enable translation",
-            "tooltip": "Show a translated line beneath each original lyric line."
+            "label": "Fordítás engedélyezése",
+            "tooltip": "Fordított sor megjelenítése minden eredeti dalszöveg sor alatt."
           },
-          "label": "Lyrics translation",
+          "label": "Dalszöveg fordítása",
           "provider": {
-            "label": "Provider",
-            "tooltip": "Which service to use for translation."
+            "label": "Szolgáltató",
+            "tooltip": "Melyik szolgáltatást használja a fordításhoz."
           },
           "providers": {
             "anthropic": {
@@ -987,7 +989,7 @@
             }
           },
           "target-language": {
-            "label": "Target language",
+            "label": "Célnyelv",
             "options": {
               "ar": "العربية",
               "auto": "Follow app language",
@@ -1035,9 +1037,9 @@
               "zh-CN": "简体中文",
               "zh-TW": "繁體中文"
             },
-            "tooltip": "The language to translate lyrics into."
+            "tooltip": "A nyelv, amelyre a dalszöveget fordítani kell."
           },
-          "tooltip": "Translate lyrics and show the translated result line-by-line for display."
+          "tooltip": "Dalszöveg fordítása és a lefordított eredmény soronkénti megjelenítése."
         }
       },
       "name": "Szinkronizált dalszövegek",
@@ -1060,25 +1062,25 @@
       "name": "TouchBar"
     },
     "transparent-player": {
-      "description": "Makes the app window transparent",
+      "description": "Átlátszóvá teszi az alkalmazás ablakát",
       "menu": {
         "opacity": {
-          "label": "Opacity",
+          "label": "Átlátszatlanság",
           "submenu": {
             "percent": "{{opacity}}%"
           }
         },
         "type": {
-          "label": "Type",
+          "label": "Típus",
           "submenu": {
-            "acrylic": "Acrylic",
-            "mica": "Mica",
-            "none": "None",
-            "tabbed": "Tabbed"
+            "acrylic": "Akril",
+            "mica": "Csillám",
+            "none": "Nincs",
+            "tabbed": "Füles"
           }
         }
       },
-      "name": "Transparent Player"
+      "name": "Átlátszó Lejátszó"
     },
     "tuna-obs": {
       "description": "Integráció az OBS Tuna pluginjával",
@@ -1112,7 +1114,7 @@
       "name": "Videó váltó",
       "templates": {
         "button-song": "Zeneszám",
-        "button-video": "Video"
+        "button-video": "Videó"
       }
     },
     "visualizer": {
@@ -1121,6 +1123,17 @@
         "visualizer-type": "Vizualizáció típus"
       },
       "name": "Vizualizáció"
+    },
+    "audio-only": {
+      "description": "Csak hang mód kényszerítése — blokkol minden videófolyamot hálózati és lejátszó szinten a RAM és sávszélesség megtakarítása érdekében",
+      "name": "Csak Hang"
+    },
+    "playback-recovery": {
+      "description": "Automatikusan helyreállítja az elakadt, leállt vagy hibás lejátszási állapotokat",
+      "menu": {
+        "log-to-console": "Helyreállítási események naplózása a konzolba"
+      },
+      "name": "Lejátszás Helyreállítása"
     }
   }
 }

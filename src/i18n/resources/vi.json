@@ -144,25 +144,26 @@
               "disabled": "Vô hiệu hóa",
               "enabled-and-hide-app": "Đã bật và ẩn ứng dụng",
               "enabled-and-show-app": "Đã bật và hiển thị ứng dụng",
+              "move-to-current-desktop": "Di chuyển đến màn hình ảo hiện tại khi hiển thị",
               "play-pause-on-click": "Phát/Tạm dừng khi nhấp chuột"
             }
           },
           "visual-tweaks": {
             "label": "Tinh chỉnh hình ảnh",
             "submenu": {
+              "like-buttons": {
+                "default": "Mặc định",
+                "force-show": "Tập trung hiển thị",
+                "hide": "Ẩn",
+                "swap": "Hoán đổi thứ tự nút Thích",
+                "label": "Nút thích"
+              },
               "custom-window-title": {
                 "label": "Tiêu đề cửa sổ tùy chỉnh",
                 "prompt": {
                   "label": "Nhập tiêu đề cửa sổ tùy chỉnh: (để trống để vô hiệu hóa)",
                   "placeholder": "Ví dụ: {{applicationName}}"
                 }
-              },
-              "like-buttons": {
-                "default": "Mặc định",
-                "force-show": "Tập trung hiển thị",
-                "hide": "Ẩn",
-                "label": "Nút thích",
-                "swap": "Hoán đổi thứ tự nút Thích"
               },
               "remove-upgrade-button": "Xóa nút nâng cấp",
               "theme": {
@@ -243,6 +244,10 @@
       },
       "name": "Màu nền album"
     },
+    "audio-only": {
+      "description": "Buộc chế độ chỉ phát âm thanh — chặn tất cả luồng video ở cấp mạng và trình phát để tiết kiệm RAM và băng thông",
+      "name": "Chỉ âm thanh"
+    },
     "ambient-mode": {
       "description": "Áp dụng hiệu ứng ánh sáng bằng cách truyền các màu nhẹ từ video vào nền màn hình của bạn",
       "menu": {
@@ -322,24 +327,24 @@
         "hostname": {
           "label": "Tên máy chủ"
         },
+        "port": {
+          "label": "Cổng"
+        },
         "https": {
           "label": "HTTPS & Chứng chỉ",
           "submenu": {
-            "cert": {
-              "dialogTitle": "Chọn tệp chứng chỉ HTTPS",
-              "label": "Tệp chứng chỉ (.crt/.pem)"
-            },
             "enable-https": {
               "label": "Bật HTTPS"
             },
+            "cert": {
+              "label": "Tệp chứng chỉ (.crt/.pem)",
+              "dialogTitle": "Chọn tệp chứng chỉ HTTPS"
+            },
             "key": {
-              "dialogTitle": "Chọn tệp khóa riêng HTTPS",
-              "label": "Tệp khóa riêng (.key/.pem)"
+              "label": "Tệp khóa riêng (.key/.pem)",
+              "dialogTitle": "Chọn tệp khóa riêng HTTPS"
             }
           }
-        },
-        "port": {
-          "label": "Cổng"
         }
       },
       "name": "Máy chủ API [Thử nghiệm]",
@@ -373,12 +378,12 @@
       "name": "Bộ chuyển đổi xác minh máy chủ Proxy",
       "prompt": {
         "hostname": {
-          "label": "Nhập tên của máy chủ proxy lân cận (yêu cầu khởi động lại ứng dụng):",
-          "title": "Tên máy chủ Proxy"
+          "title": "Tên máy chủ Proxy",
+          "label": "Nhập tên của máy chủ proxy lân cận (yêu cầu khởi động lại ứng dụng):"
         },
         "port": {
-          "label": "Nhập cổng của máy chủ proxy lận cận (bắt buộc khởi động lại ứng dụng):",
-          "title": "Cổng máy chủ Proxy"
+          "title": "Cổng máy chủ Proxy",
+          "label": "Nhập cổng của máy chủ proxy lận cận (bắt buộc khởi động lại ứng dụng):"
         }
       }
     },
@@ -415,14 +420,14 @@
     },
     "clock": {
       "description": "Thêm đồng hồ vào thanh điều hướng",
+      "name": "Đồng hồ",
       "menu": {
         "format": {
-          "24-hour-format": "Định dạng 24h",
+          "label": "Định dạng",
           "display-seconds": "Hiển thị giây",
-          "label": "Định dạng"
+          "24-hour-format": "Định dạng 24h"
         }
-      },
-      "name": "Đồng hồ"
+      }
     },
     "compact-sidebar": {
       "description": "Luôn đặt thanh bên ở chế độ thu gọn",
@@ -684,6 +689,7 @@
           "label": "Cài đặt tương tác",
           "submenu": {
             "hide-button-text": "Ẩn tên nút",
+            "hover-controls": "Hiển thị trình phát nhỏ khi di chuột qua khay",
             "refresh-on-play-pause": "Làm mới khi Phát/Tạm dừng",
             "tray-controls": "Mở/Đóng khi nhấp vào khay"
           }
@@ -697,6 +703,13 @@
     "performance-improvement": {
       "description": "Cải thiện hiệu suất thông qua kích hoạt scripts thử nghiệm",
       "name": "Cải thiện hiệu năng [Thử nghiệm]"
+    },
+    "playback-recovery": {
+      "description": "Tự động khôi phục từ trạng thái phát bị treo, đơ hoặc chết",
+      "menu": {
+        "log-to-console": "Ghi nhật ký sự kiện khôi phục vào bảng điều khiển"
+      },
+      "name": "Khôi phục phát lại"
     },
     "picture-in-picture": {
       "description": "Cho phép chuyển ứng dụng sang chế độ ảnh trong ảnh",
@@ -786,8 +799,8 @@
         "listenbrainz": {
           "token": "Nhập mã người dùng ListenBrainz"
         },
-        "scrobble-alternative-artist": "Dùng nghệ sĩ thay thế",
         "scrobble-alternative-title": "Dùng tiêu đề thay thế",
+        "scrobble-alternative-artist": "Dùng nghệ sĩ thay thế",
         "scrobble-other-media": "Scrobber nội dung khác"
       },
       "name": "Scrobbler",
@@ -842,23 +855,13 @@
         "not-found": "⚠️ Không tìm thấy lời cho bài hát này."
       },
       "menu": {
-        "convert-chinese-character": {
-          "label": "Chuyển đổi kí tự tiếng Trung",
-          "submenu": {
-            "disabled": {
-              "label": "Vô hiệu hóa",
-              "tooltip": "Vô hiệu hóa chuyển đổi kí tự tiếng Trung"
-            },
-            "simplified-to-traditional": {
-              "label": "Giản thể sang Phồn thể",
-              "tooltip": "Chuyển đổi tiếng Trung Giản thể sang tiếng Trung Phồn thể"
-            },
-            "traditional-to-simplified": {
-              "label": "Phồn thể sang Giản thể",
-              "tooltip": "Chuyển đổi tiếng Trung Phồn thể sang tiếng Trung Giản thể"
-            }
-          },
-          "tooltip": "Chuyển đổi kí tự tiếng Trung sang Phồn thể hoặc Giản thể"
+        "preferred-provider": {
+          "label": "Nhà cung cấp ưa thích",
+          "tooltip": "Chọn nhà cung cấp lời bài hát mặc định để sử dụng",
+          "none": {
+            "label": "Không có",
+            "tooltip": "Không có nhà cung cấp ưu thích"
+          }
         },
         "default-text-string": {
           "label": "Kí tự giữa các lời bài hát",
@@ -887,34 +890,26 @@
           "tooltip": "Chọn kiểu để áp dụng cho dòng hiện tại"
         },
         "lyrics-font-size": {
-          "label": "Lyrics font size",
+          "label": "Cỡ chữ lời bài hát",
           "submenu": {
-            "large": {
-              "label": "Large",
-              "tooltip": "Use the original larger lyrics size"
+            "small": {
+              "label": "Nhỏ",
+              "tooltip": "Sử dụng kích thước lời bài hát nhỏ gọn hơn"
             },
             "medium": {
-              "label": "Medium",
-              "tooltip": "Use a balanced lyrics size"
+              "label": "Vừa",
+              "tooltip": "Sử dụng kích thước lời bài hát cân đối"
             },
-            "small": {
-              "label": "Small",
-              "tooltip": "Use a more compact lyrics size"
+            "large": {
+              "label": "Lớn",
+              "tooltip": "Sử dụng kích thước lời bài hát lớn hơn ban đầu"
             }
           },
-          "tooltip": "Choose how large the lyrics text should be"
+          "tooltip": "Chọn kích thước chữ lời bài hát"
         },
         "precise-timing": {
           "label": "Làm cho lời bài hát được đồng bộ hoàn hảo",
           "tooltip": "Tính toán chính xác đến mili giây thời gian hiển thị dòng tiếp theo (có thể có tác động nhỏ đến hiệu suất)"
-        },
-        "preferred-provider": {
-          "label": "Nhà cung cấp ưa thích",
-          "none": {
-            "label": "Không có",
-            "tooltip": "Không có nhà cung cấp ưu thích"
-          },
-          "tooltip": "Chọn nhà cung cấp lời bài hát mặc định để sử dụng"
         },
         "romanization": {
           "label": "Chuyển lời bài hát sang chữ Latin",
@@ -928,116 +923,134 @@
           "label": "Hiện mốc thời gian",
           "tooltip": "Hiện mốc thời gian bên cạnh lời bài hát"
         },
+        "convert-chinese-character": {
+          "label": "Chuyển đổi kí tự tiếng Trung",
+          "submenu": {
+            "disabled": {
+              "label": "Vô hiệu hóa",
+              "tooltip": "Vô hiệu hóa chuyển đổi kí tự tiếng Trung"
+            },
+            "simplified-to-traditional": {
+              "label": "Giản thể sang Phồn thể",
+              "tooltip": "Chuyển đổi tiếng Trung Giản thể sang tiếng Trung Phồn thể"
+            },
+            "traditional-to-simplified": {
+              "label": "Phồn thể sang Giản thể",
+              "tooltip": "Chuyển đổi tiếng Trung Phồn thể sang tiếng Trung Giản thể"
+            }
+          },
+          "tooltip": "Chuyển đổi kí tự tiếng Trung sang Phồn thể hoặc Giản thể"
+        },
         "translation": {
-          "clear-cache": {
-            "label": "Clear translation cache",
-            "tooltip": "Delete all cached translations stored on disk."
+          "label": "Dịch lời bài hát",
+          "tooltip": "Dịch lời bài hát và hiển thị kết quả dịch theo từng dòng.",
+          "enabled": {
+            "label": "Bật dịch",
+            "tooltip": "Hiển thị dòng dịch bên dưới mỗi dòng lời gốc."
+          },
+          "provider": {
+            "label": "Nhà cung cấp",
+            "tooltip": "Dịch vụ nào được sử dụng để dịch."
+          },
+          "target-language": {
+            "label": "Ngôn ngữ đích",
+            "tooltip": "Ngôn ngữ để dịch lời bài hát sang.",
+            "options": {
+              "auto": "Theo ngôn ngữ ứng dụng",
+              "zh-CN": "简体中文",
+              "zh-TW": "繁體中文",
+              "en": "English",
+              "ja": "日本語",
+              "ko": "한국어",
+              "fr": "Français",
+              "de": "Deutsch",
+              "es": "Español",
+              "pt-BR": "Português (Brasil)",
+              "pt-PT": "Português (Portugal)",
+              "it": "Italiano",
+              "nl": "Nederlands",
+              "ru": "Русский",
+              "uk": "Українська",
+              "pl": "Polski",
+              "tr": "Türkçe",
+              "ar": "العربية",
+              "he": "עברית",
+              "fa": "فارسی",
+              "hi": "हिन्दी",
+              "bn": "বাংলা",
+              "ur": "اردو",
+              "ta": "தமிழ்",
+              "te": "తెలుగు",
+              "mr": "मराठी",
+              "id": "Bahasa Indonesia",
+              "ms": "Bahasa Melayu",
+              "vi": "Tiếng Việt",
+              "th": "ไทย",
+              "fil": "Filipino",
+              "sw": "Kiswahili",
+              "sv": "Svenska",
+              "no": "Norsk",
+              "da": "Dansk",
+              "fi": "Suomi",
+              "cs": "Čeština",
+              "ro": "Română",
+              "hu": "Magyar",
+              "el": "Ελληνικά",
+              "bg": "Български",
+              "sr": "Српски",
+              "hr": "Hrvatski",
+              "sk": "Slovenčina",
+              "lt": "Lietuvių"
+            }
           },
           "configure": {
-            "label": "Configure API key & model…",
-            "tooltip": "Set provider-specific translation options."
+            "label": "Cấu hình khóa API & mô hình…",
+            "tooltip": "Đặt tùy chọn dịch cho nhà cung cấp cụ thể."
           },
-          "enabled": {
-            "label": "Enable translation",
-            "tooltip": "Show a translated line beneath each original lyric line."
-          },
-          "label": "Lyrics translation",
-          "provider": {
-            "label": "Provider",
-            "tooltip": "Which service to use for translation."
+          "clear-cache": {
+            "label": "Xóa bộ nhớ đệm dịch",
+            "tooltip": "Xóa tất cả bản dịch đã lưu trong bộ nhớ đệm trên đĩa."
           },
           "providers": {
+            "shared": {
+              "api-key": "Khóa API",
+              "model": "Mô hình"
+            },
+            "openai-compatible": {
+              "name": "OpenAI compatible",
+              "prompt-title": "Cài đặt tương thích OpenAI",
+              "prompt-label": "Sử dụng máy chủ tương thích OpenAI, bao gồm Ollama (URL cơ sở http://127.0.0.1:11434/v1, chế độ API auto hoặc chat-completions).",
+              "base-url": "URL cơ sở",
+              "api-mode": "Chế độ API (responses / auto / chat-completions)"
+            },
             "anthropic": {
               "name": "Anthropic Claude",
-              "prompt-label": "Uses the native Anthropic Messages API.",
-              "prompt-title": "Anthropic settings"
+              "prompt-title": "Cài đặt Anthropic",
+              "prompt-label": "Sử dụng API Messages gốc của Anthropic."
             },
             "gemini": {
               "name": "Google Gemini",
-              "prompt-label": "Uses Google's Generative Language API (generateContent).",
-              "prompt-title": "Gemini settings"
-            },
-            "google-translate": {
-              "host": "Host",
-              "name": "Google Translate",
-              "prompt-label": "Uses the unofficial free Google Translate endpoint. No API key is required, but Google may rate-limit it.",
-              "prompt-title": "Google Translate settings"
+              "prompt-title": "Cài đặt Gemini",
+              "prompt-label": "Sử dụng API Generative Language của Google (generateContent)."
             },
             "local-cli": {
-              "command": "Command",
-              "engine": "Local CLI",
+              "name": "Local CLI",
+              "prompt-title": "Cài đặt CLI cục bộ",
+              "prompt-label": "Sử dụng Claude Code, Codex hoặc Gemini CLI đã đăng nhập cục bộ. Lệnh và mô hình là tự động; CLI sử dụng mặc định đã đăng nhập.",
+              "engine": "CLI cục bộ",
               "engine-claude": "Claude Code",
               "engine-codex": "Codex",
               "engine-gemini": "Gemini CLI",
-              "name": "Local CLI",
-              "prompt-label": "Use a locally logged-in Claude Code, Codex, or Gemini CLI. The command and model are automatic; the CLI uses its own logged-in default.",
-              "prompt-title": "Local CLI settings",
-              "timeout": "Timeout seconds (15-600)"
+              "command": "Lệnh",
+              "timeout": "Thời gian chờ (giây, 15-600)"
             },
-            "openai-compatible": {
-              "api-mode": "API mode (responses / auto / chat-completions)",
-              "base-url": "Base URL",
-              "name": "OpenAI compatible",
-              "prompt-label": "Use OpenAI-compatible servers, including Ollama (base URL http://127.0.0.1:11434/v1, API mode auto or chat-completions).",
-              "prompt-title": "OpenAI-compatible settings"
-            },
-            "shared": {
-              "api-key": "API key",
-              "model": "Model"
+            "google-translate": {
+              "name": "Google Translate",
+              "prompt-title": "Cài đặt Google Dịch",
+              "prompt-label": "Sử dụng điểm cuối Google Dịch miễn phí không chính thức. Không cần khóa API, nhưng Google có thể giới hạn tốc độ.",
+              "host": "Máy chủ"
             }
-          },
-          "target-language": {
-            "label": "Target language",
-            "options": {
-              "ar": "العربية",
-              "auto": "Follow app language",
-              "bg": "Български",
-              "bn": "বাংলা",
-              "cs": "Čeština",
-              "da": "Dansk",
-              "de": "Deutsch",
-              "el": "Ελληνικά",
-              "en": "English",
-              "es": "Español",
-              "fa": "فارسی",
-              "fi": "Suomi",
-              "fil": "Filipino",
-              "fr": "Français",
-              "he": "עברית",
-              "hi": "हिन्दी",
-              "hr": "Hrvatski",
-              "hu": "Magyar",
-              "id": "Bahasa Indonesia",
-              "it": "Italiano",
-              "ja": "日本語",
-              "ko": "한국어",
-              "lt": "Lietuvių",
-              "mr": "मराठी",
-              "ms": "Bahasa Melayu",
-              "nl": "Nederlands",
-              "no": "Norsk",
-              "pl": "Polski",
-              "pt-BR": "Português (Brasil)",
-              "pt-PT": "Português (Portugal)",
-              "ro": "Română",
-              "ru": "Русский",
-              "sk": "Slovenčina",
-              "sr": "Српски",
-              "sv": "Svenska",
-              "sw": "Kiswahili",
-              "ta": "தமிழ்",
-              "te": "తెలుగు",
-              "th": "ไทย",
-              "tr": "Türkçe",
-              "uk": "Українська",
-              "ur": "اردو",
-              "vi": "Tiếng Việt",
-              "zh-CN": "简体中文",
-              "zh-TW": "繁體中文"
-            },
-            "tooltip": "The language to translate lyrics into."
-          },
-          "tooltip": "Translate lyrics and show the translated result line-by-line for display."
+          }
         }
       },
       "name": "Lời bài hát được đồng bộ hoá",
@@ -1061,6 +1074,7 @@
     },
     "transparent-player": {
       "description": "Làm cho cửa sổ ứng dụng có hiệu ứng trong suốt",
+      "name": "Trình phát trong suốt",
       "menu": {
         "opacity": {
           "label": "Độ mờ",
@@ -1073,12 +1087,11 @@
           "submenu": {
             "acrylic": "Acrylic",
             "mica": "Mica",
-            "none": "Không có",
-            "tabbed": "Tabbed"
+            "tabbed": "Tabbed",
+            "none": "Không có"
           }
         }
-      },
-      "name": "Trình phát trong suốt"
+      }
     },
     "tuna-obs": {
       "description": "Tích hợp với plugin Tuna của OBS",

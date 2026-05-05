@@ -144,7 +144,8 @@
               "disabled": "हाल बन्द",
               "enabled-and-hide-app": "ट्रे इनेबल गरिएको छ र एप बन्द गरिएको छ",
               "enabled-and-show-app": "एप देखाउनुहोस्",
-              "play-pause-on-click": "क्लिकमा खेल्नुहोस्/रोक्नुहोस्"
+              "play-pause-on-click": "क्लिकमा खेल्नुहोस्/रोक्नुहोस्",
+              "move-to-current-desktop": "देखाउँदा हालको भर्चुअल डेस्कटपमा सार्नुहोस्"
             }
           },
           "visual-tweaks": {
@@ -154,7 +155,7 @@
                 "label": "अनुकूलन विन्डो शीर्षक",
                 "prompt": {
                   "label": "अनुकूलन विन्डो शीर्षक प्रविष्ट गर्नुहोस्: (असक्षम पार्न खाली छोड्नुहोस्)",
-                  "placeholder": "उदाहरण: पियर डेस्कटप"
+                  "placeholder": "उदाहरण: {{applicationName}}"
                 }
               },
               "like-buttons": {
@@ -162,7 +163,7 @@
                 "force-show": "देखाउनुहोस",
                 "hide": "लुकाउनुहोस",
                 "label": "लाइक बटनहरू",
-                "swap": "Swap like buttons order"
+                "swap": "लाइक बटनहरूको क्रम आदानप्रदान गर्नुहोस्"
               },
               "remove-upgrade-button": "अपग्रेड बटन हटाउनुहोस्",
               "theme": {
@@ -239,7 +240,7 @@
             "percent": "{{ratio}}%"
           }
         },
-        "enable-seekbar": "Enable seekbar theming"
+        "enable-seekbar": "सिकबार थिमिङ सक्षम गर्नुहोस्"
       },
       "name": "एल्बम रङ विषयवस्तु"
     },
@@ -289,7 +290,7 @@
       "name": "परिवेश मोड"
     },
     "amuse": {
-      "description": "६के ल्याब्सद्वारा अम्यूस नाउ प्लेइङ विजेटका लागि युट्युब म्युजिक समर्थन थप्दछ",
+      "description": "6K ल्याब्सद्वारा Amuse अहिले बजिरहेको विजेटको लागि {{applicationName}} समर्थन थप्दछ",
       "name": "अम्यूस",
       "response": {
         "query": "Amuse API सर्भर चलिरहेको छ। गीत जानकारी प्राप्त गर्न GET /query प्रयोग गर्नुहोस्।"
@@ -323,18 +324,18 @@
           "label": "होस्टनेम"
         },
         "https": {
-          "label": "HTTPS & Certificates",
+          "label": "HTTPS र प्रमाणपत्रहरू",
           "submenu": {
             "cert": {
-              "dialogTitle": "Select HTTPS certificate file",
-              "label": "Certificate file (.crt/.pem)"
+              "dialogTitle": "HTTPS प्रमाणपत्र फाइल चयन गर्नुहोस्",
+              "label": "प्रमाणपत्र फाइल (.crt/.pem)"
             },
             "enable-https": {
-              "label": "Enable HTTPS"
+              "label": "HTTPS सक्षम गर्नुहोस्"
             },
             "key": {
-              "dialogTitle": "Select HTTPS private key file",
-              "label": "Private key file (.key/.pem)"
+              "dialogTitle": "HTTPS निजी कुञ्जी फाइल चयन गर्नुहोस्",
+              "label": "निजी कुञ्जी फाइल (.key/.pem)"
             }
           }
         },
@@ -391,7 +392,7 @@
       "name": "उमेरका प्रतिबन्धहरू बाइपास गर्नुहोस्"
     },
     "captions-selector": {
-      "description": "युट्युब सङ्गीत अडियो ट्र्याकहरूका लागि क्याप्सन चयनकर्ता",
+      "description": "{{applicationName}} अडियो ट्र्याकहरूका लागि क्याप्सन चयनकर्ता",
       "menu": {
         "autoload": "स्वचालित रूपमा अन्तिम प्रयोग गरिएको क्याप्सन चयन गर्नुहोस्",
         "disable-captions": "पूर्वनिर्धारित रूपमा कुनै क्याप्सनहरू छैनन्"
@@ -414,15 +415,15 @@
       }
     },
     "clock": {
-      "description": "Add a clock to the navigation bar",
+      "description": "नेभिगेसन बारमा घडी थप्नुहोस्",
       "menu": {
         "format": {
-          "24-hour-format": "24-Hour Format",
-          "display-seconds": "Display Seconds",
-          "label": "Format"
+          "24-hour-format": "२४-घण्टा ढाँचा",
+          "display-seconds": "सेकेन्ड देखाउनुहोस्",
+          "label": "ढाँचा"
         }
       },
-      "name": "Clock"
+      "name": "घडी"
     },
     "compact-sidebar": {
       "description": "सँधै साइडबारलाई कम्प्याक्ट मोडमा सेट गर्नुहोस्",
@@ -451,15 +452,15 @@
       }
     },
     "custom-output-device": {
-      "description": "Configure a custom output media device for songs",
+      "description": "गीतहरूको लागि अनुकूलन आउटपुट मिडिया उपकरण कन्फिगर गर्नुहोस्",
       "menu": {
-        "device-selector": "Select Device"
+        "device-selector": "उपकरण चयन गर्नुहोस्"
       },
-      "name": "Custom Output Device",
+      "name": "अनुकूलन आउटपुट उपकरण",
       "prompt": {
         "device-selector": {
-          "label": "Choose the output media device to be used",
-          "title": "Select Output Device"
+          "label": "प्रयोग गरिने आउटपुट मिडिया उपकरण छान्नुहोस्",
+          "title": "आउटपुट उपकरण चयन गर्नुहोस्"
         }
       }
     },
@@ -488,11 +489,11 @@
         "play-on-application": "{{applicationName}} मा बजाउ",
         "set-inactivity-timeout": "इनएक्टिभिटी टाइमआउट राख",
         "set-status-display-type": {
-          "label": "Status text",
+          "label": "स्थिति पाठ",
           "submenu": {
-            "application": "Listening to {{applicationName}}",
-            "artist": "Listening to {artist}",
-            "title": "Listening to {song title}"
+            "application": "{{applicationName}} सुन्दै",
+            "artist": "{artist} सुन्दै",
+            "title": "{song title} सुन्दै"
           }
         }
       },
@@ -685,7 +686,8 @@
           "submenu": {
             "hide-button-text": "टेक्सट बटन लुकाउनुहोस्",
             "refresh-on-play-pause": "प्ले/पोजमा ताजा गर्नुहोस्",
-            "tray-controls": "ट्रेमा क्लिक गर्दा खोल्नुहोस्/बन्द गर्नुहोस्"
+            "tray-controls": "ट्रेमा क्लिक गर्दा खोल्नुहोस्/बन्द गर्नुहोस्",
+            "hover-controls": "ट्രे होभरमा मिनि-प्लेयर देखाउनुहोस्"
           }
         },
         "priority": "अधिसूचना प्राथमिकता",
@@ -765,7 +767,7 @@
       "name": "भिडियो गुणस्तर परिवर्तनकर्ता",
       "renderer": {
         "quality-settings-button": {
-          "label": "Open player quality changer"
+          "label": "प्लेयर गुणस्तर परिवर्तनकर्ता खोल्नुहोस्"
         }
       }
     },
@@ -786,7 +788,7 @@
         "listenbrainz": {
           "token": "ListenBrainz प्रयोगकर्ता टोकन प्रविष्ट गर्नुहोस्"
         },
-        "scrobble-alternative-artist": "Use alternative artists",
+        "scrobble-alternative-artist": "वैकल्पिक कलाकारहरू प्रयोग गर्नुहोस्",
         "scrobble-alternative-title": "वैकल्पिक शीर्षकहरू प्रयोग गर्नुहोस्",
         "scrobble-other-media": "अन्य मिडियालाई स्क्रबल गर्नुहोस्"
       },
@@ -843,22 +845,22 @@
       },
       "menu": {
         "convert-chinese-character": {
-          "label": "Convert Chinese character",
+          "label": "चिनियाँ अक्षर रूपान्तरण गर्नुहोस्",
           "submenu": {
             "disabled": {
-              "label": "Disabled",
-              "tooltip": "Disable Chinese character conversion"
+              "label": "अक्षम",
+              "tooltip": "चिनियाँ अक्षर रूपान्तरण अक्षम गर्नुहोस्"
             },
             "simplified-to-traditional": {
-              "label": "Simplified to Traditional",
-              "tooltip": "Convert Simplified Chinese to Traditional Chinese"
+              "label": "सरलीकृतबाट परम्परागतमा",
+              "tooltip": "सरलीकृत चिनियाँलाई परम्परागत चिनियाँमा रूपान्तरण गर्नुहोस्"
             },
             "traditional-to-simplified": {
-              "label": "Traditional to Simplified",
-              "tooltip": "Convert Traditional Chinese to Simplified Chinese"
+              "label": "परम्परागतबाट सरलीकृतमा",
+              "tooltip": "परम्परागत चिनियाँलाई सरलीकृत चिनियाँमा रूपान्तरण गर्नुहोस्"
             }
           },
-          "tooltip": "Convert Chinese character to Traditional or Simplified"
+          "tooltip": "चिनियाँ अक्षरलाई परम्परागत वा सरलीकृतमा रूपान्तरण गर्नुहोस्"
         },
         "default-text-string": {
           "label": "पूर्वनिर्धारित अक्षर गीतशब्दहरू बीचमा",
@@ -887,34 +889,34 @@
           "tooltip": "हालको लाइनमा लागू गर्ने प्रभाव चयन गर्नुहोस्"
         },
         "lyrics-font-size": {
-          "label": "Lyrics font size",
+          "label": "लिरिक्स फन्ट आकार",
           "submenu": {
             "large": {
-              "label": "Large",
-              "tooltip": "Use the original larger lyrics size"
+              "label": "ठूलो",
+              "tooltip": "मूल ठूलो लिरिक्स आकार प्रयोग गर्नुहोस्"
             },
             "medium": {
-              "label": "Medium",
-              "tooltip": "Use a balanced lyrics size"
+              "label": "मध्यम",
+              "tooltip": "सन्तुलित लिरिक्स आकार प्रयोग गर्नुहोस्"
             },
             "small": {
-              "label": "Small",
-              "tooltip": "Use a more compact lyrics size"
+              "label": "सानो",
+              "tooltip": "थप सङ्कुचित लिरिक्स आकार प्रयोग गर्नुहोस्"
             }
           },
-          "tooltip": "Choose how large the lyrics text should be"
+          "tooltip": "लिरिक्स पाठ कति ठूलो हुनुपर्छ छान्नुहोस्"
         },
         "precise-timing": {
           "label": "गीतशब्दहरू पूर्ण रूपमा समक्रमित बनाउनुहोस्",
           "tooltip": "अर्को लाइनको प्रदर्शनलाई मिलिसेकेन्डमा गणना गर्नुहोस् (यसले प्रदर्शनमा हल्का प्रभाव पार्न सक्छ)"
         },
         "preferred-provider": {
-          "label": "Preferred Provider",
+          "label": "रुचाइएको प्रदायक",
           "none": {
-            "label": "None",
-            "tooltip": "No preferred provider"
+            "label": "कुनै पनि छैन",
+            "tooltip": "कुनै रुचाइएको प्रदायक छैन"
           },
-          "tooltip": "Choose the default provider to use"
+          "tooltip": "प्रयोग गर्न पूर्वनिर्धारित प्रदायक छान्नुहोस्"
         },
         "romanization": {
           "label": "रोमनकृत शब्दहरू",
@@ -930,21 +932,21 @@
         },
         "translation": {
           "clear-cache": {
-            "label": "Clear translation cache",
-            "tooltip": "Delete all cached translations stored on disk."
+            "label": "अनुवाद क्यास खाली गर्नुहोस्",
+            "tooltip": "डिस्कमा भण्डारित सबै क्यास गरिएका अनुवादहरू मेटाउनुहोस्।"
           },
           "configure": {
-            "label": "Configure API key & model…",
-            "tooltip": "Set provider-specific translation options."
+            "label": "API कुञ्जी र मोडेल कन्फिगर गर्नुहोस्…",
+            "tooltip": "प्रदायक-विशिष्ट अनुवाद विकल्पहरू सेट गर्नुहोस्।"
           },
           "enabled": {
-            "label": "Enable translation",
-            "tooltip": "Show a translated line beneath each original lyric line."
+            "label": "अनुवाद सक्षम गर्नुहोस्",
+            "tooltip": "प्रत्येक मूल लिरिक्स लाइनको तल अनुवादित लाइन देखाउनुहोस्।"
           },
-          "label": "Lyrics translation",
+          "label": "लिरिक्स अनुवाद",
           "provider": {
-            "label": "Provider",
-            "tooltip": "Which service to use for translation."
+            "label": "प्रदायक",
+            "tooltip": "अनुवादको लागि कुन सेवा प्रयोग गर्ने।"
           },
           "providers": {
             "anthropic": {
@@ -982,15 +984,15 @@
               "prompt-title": "OpenAI-compatible settings"
             },
             "shared": {
-              "api-key": "API key",
-              "model": "Model"
+              "api-key": "API कुञ्जी",
+              "model": "मोडेल"
             }
           },
           "target-language": {
-            "label": "Target language",
+            "label": "लक्ष्य भाषा",
             "options": {
               "ar": "العربية",
-              "auto": "Follow app language",
+              "auto": "एप भाषा पछ्याउनुहोस्",
               "bg": "Български",
               "bn": "বাংলা",
               "cs": "Čeština",
@@ -1035,9 +1037,9 @@
               "zh-CN": "简体中文",
               "zh-TW": "繁體中文"
             },
-            "tooltip": "The language to translate lyrics into."
+            "tooltip": "लिरिक्स अनुवाद गर्ने भाषा।"
           },
-          "tooltip": "Translate lyrics and show the translated result line-by-line for display."
+          "tooltip": "लिरिक्स अनुवाद गर्नुहोस् र अनुवादित परिणाम लाइन-दर-लाइन प्रदर्शन गर्नुहोस्।"
         }
       },
       "name": "समक्रमित गीतशब्दहरू",
@@ -1060,25 +1062,25 @@
       "name": "टचबार"
     },
     "transparent-player": {
-      "description": "Makes the app window transparent",
+      "description": "एप विन्डोलाई पारदर्शी बनाउँछ",
       "menu": {
         "opacity": {
-          "label": "Opacity",
+          "label": "अपारदर्शिता",
           "submenu": {
             "percent": "{{opacity}}%"
           }
         },
         "type": {
-          "label": "Type",
+          "label": "प्रकार",
           "submenu": {
-            "acrylic": "Acrylic",
-            "mica": "Mica",
-            "none": "None",
-            "tabbed": "Tabbed"
+            "acrylic": "एक्रिलिक",
+            "mica": "माइका",
+            "none": "कुनै पनि छैन",
+            "tabbed": "ट्याब्ड"
           }
         }
       },
-      "name": "Transparent Player"
+      "name": "पारदर्शी प्लेयर"
     },
     "tuna-obs": {
       "description": "OBS को टुना प्लगइनसँग एकीकरण",
@@ -1121,6 +1123,17 @@
         "visualizer-type": "भिजुअलाइजरको प्रकार"
       },
       "name": "भिजुअलाइजर"
+    },
+    "audio-only": {
+      "description": "र्याम र ब्यान्डविथ बचत गर्न नेटवर्क र प्लेयर स्तरमा सबै भिडियो स्ट्रिमहरू ब्लक गर्ने अडियो-मात्र मोड जबरजस्ती गर्दछ",
+      "name": "अडियो मात्र"
+    },
+    "playback-recovery": {
+      "description": "अड्किएको, रोकिएको, वा मरेको प्लेब्याक अवस्थाबाट स्वयं पुनः प्राप्ति गर्दछ",
+      "menu": {
+        "log-to-console": "कन्सोलमा पुनःप्राप्ति घटनाहरू लग गर्नुहोस्"
+      },
+      "name": "प्लेब्याक पुनःप्राप्ति"
     }
   }
 }

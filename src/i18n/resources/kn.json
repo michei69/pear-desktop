@@ -2,14 +2,14 @@
   "common": {
     "console": {
       "plugins": {
-        "execute-failed": "Failed to execute plugin {{pluginName}}::{{contextName}}",
-        "executed-at-ms": "Plugin {{pluginName}}::{{contextName}} executed at {{ms}}ms",
-        "initialize-failed": "Failed to initialize plugin \"{{pluginName}}\"",
-        "load-all": "Loading all plugins",
-        "load-failed": "Failed to load plugin \"{{pluginName}}\"",
-        "loaded": "Plugin \"{{pluginName}}\" loaded",
-        "unload-failed": "Failed to unload plugin \"{{pluginName}}\"",
-        "unloaded": "Plugin \"{{pluginName}}\" unloaded"
+        "execute-failed": "ಪ್ಲಗಿನ್ ಅನ್ನು ಕಾರ್ಯಗತಗೊಳಿಸಲು ವಿಫಲವಾಗಿದೆ {{pluginName}}::{{contextName}}",
+        "executed-at-ms": "ಪ್ಲಗಿನ್ {{pluginName}}::{{contextName}} {{ms}}ms ನಲ್ಲಿ ಕಾರ್ಯಗತಗೊಂಡಿದೆ",
+        "initialize-failed": "ಪ್ಲಗಿನ್ \"{{pluginName}}\" ಅನ್ನು ಪ್ರಾರಂಭಿಸಲು ವಿಫಲವಾಗಿದೆ",
+        "load-all": "ಎಲ್ಲಾ ಪ್ಲಗಿನ್‌ಗಳನ್ನು ಲೋಡ್ ಮಾಡಲಾಗುತ್ತಿದೆ",
+        "load-failed": "ಪ್ಲಗಿನ್ \"{{pluginName}}\" ಲೋಡ್ ಮಾಡಲು ವಿಫಲವಾಗಿದೆ",
+        "loaded": "ಪ್ಲಗಿನ್ \"{{pluginName}}\" ಲೋಡ್ ಆಗಿದೆ",
+        "unload-failed": "ಪ್ಲಗಿನ್ \"{{pluginName}}\" ಅನ್ನು ಅನ್‌ಲೋಡ್ ಮಾಡಲು ವಿಫಲವಾಗಿದೆ",
+        "unloaded": "ಪ್ಲಗಿನ್ \"{{pluginName}}\" ಅನ್‌ಲೋಡ್ ಆಗಿದೆ"
       }
     }
   },
@@ -21,163 +21,164 @@
   "main": {
     "console": {
       "did-finish-load": {
-        "dev-tools": "Finished loading. DevTools opened"
+        "dev-tools": "ಲೋಡಿಂಗ್ ಮುಗಿದಿದೆ. DevTools ತೆರೆಯಲಾಗಿದೆ"
       },
       "i18n": {
-        "loaded": "i18n loaded"
+        "loaded": "i18n ಲೋಡ್ ಆಗಿದೆ"
       },
       "second-instance": {
-        "receive-command": "Received command over protocol: \"{{command}}\""
+        "receive-command": "ಪ್ರೋಟೋಕಾಲ್ ಮೂಲಕ ಆದೇಶ ಸ್ವೀಕರಿಸಲಾಗಿದೆ: \"{{command}}\""
       },
       "theme": {
-        "css-file-not-found": "CSS file \"{{cssFile}}\" does not exist, ignoring"
+        "css-file-not-found": "CSS ಫೈಲ್ \"{{cssFile}}\" ಅಸ್ತಿತ್ವದಲ್ಲಿಲ್ಲ, ನಿರ್ಲಕ್ಷಿಸಲಾಗುತ್ತಿದೆ"
       },
       "unresponsive": {
-        "details": "Unresponsive Error!\n{{error}}"
+        "details": "ಪ್ರತಿಕ್ರಿಯಿಸದ ದೋಷ!\n{{error}}"
       },
       "when-ready": {
-        "clearing-cache-after-20s": "Clearing app cache"
+        "clearing-cache-after-20s": "ಅಪ್ಲಿಕೇಶನ್ ಕ್ಯಾಶ್ ತೆರವುಗೊಳಿಸಲಾಗುತ್ತಿದೆ"
       },
       "window": {
-        "tried-to-render-offscreen": "Window tried to render offscreen, windowSize={{windowSize}}, displaySize={{displaySize}}, position={{position}}"
+        "tried-to-render-offscreen": "ವಿಂಡೋ ಪರದೆಯ ಹೊರಗೆ ರೆಂಡರ್ ಮಾಡಲು ಪ್ರಯತ್ನಿಸಿದೆ, windowSize={{windowSize}}, displaySize={{displaySize}}, position={{position}}"
       }
     },
     "dialog": {
       "hide-menu-enabled": {
-        "detail": "Menu is hidden, use 'Alt' to show it (or 'Escape' if using In-App Menu)",
-        "message": "Hide Menu is enabled",
-        "title": "Hide Menu Enabled"
+        "detail": "ಮೆನು ಮರೆಮಾಡಲಾಗಿದೆ, ತೋರಿಸಲು 'Alt' ಬಳಸಿ (ಅಥವಾ In-App ಮೆನು ಬಳಸುತ್ತಿದ್ದರೆ 'Escape')",
+        "message": "ಮೆನು ಮರೆಮಾಡುವಿಕೆ ಸಕ್ರಿಯಗೊಂಡಿದೆ",
+        "title": "ಮೆನು ಮರೆಮಾಡುವಿಕೆ ಸಕ್ರಿಯಗೊಂಡಿದೆ"
       },
       "need-to-restart": {
         "buttons": {
-          "later": "Later",
-          "restart-now": "Restart Now"
+          "later": "ನಂತರ",
+          "restart-now": "ಈಗ ಮರುಪ್ರಾರಂಭಿಸಿ"
         },
-        "detail": "\"{{pluginName}}\" plugin requires a restart to take effect",
-        "message": "\"{{pluginName}}\" needs to restart",
-        "title": "Restart Required"
+        "detail": "\"{{pluginName}}\" ಪ್ಲಗಿನ್ ಪರಿಣಾಮಕಾರಿಯಾಗಲು ಮರುಪ್ರಾರಂಭದ ಅಗತ್ಯವಿದೆ",
+        "message": "\"{{pluginName}}\" ಮರುಪ್ರಾರಂಭಿಸಬೇಕಾಗಿದೆ",
+        "title": "ಮರುಪ್ರಾರಂಭ ಅಗತ್ಯವಿದೆ"
       },
       "unresponsive": {
         "buttons": {
-          "quit": "Quit",
-          "relaunch": "Relaunch",
-          "wait": "Wait"
+          "quit": "ನಿರ್ಗಮಿಸಿ",
+          "relaunch": "ಮರುಪ್ರಾರಂಭಿಸಿ",
+          "wait": "ನಿರೀಕ್ಷಿಸಿ"
         },
-        "detail": "We are sorry for the inconvenience! please choose what to do:",
-        "message": "The Application is Unresponsive",
-        "title": "Window Unresponsive"
+        "detail": "ಅನಾನುಕೂಲಕ್ಕೆ ಕ್ಷಮಿಸಿ! ದಯವಿಟ್ಟು ಏನು ಮಾಡಬೇಕೆಂದು ಆಯ್ಕೆಮಾಡಿ:",
+        "message": "ಅಪ್ಲಿಕೇಶನ್ ಪ್ರತಿಕ್ರಿಯಿಸುತ್ತಿಲ್ಲ",
+        "title": "ವಿಂಡೋ ಪ್ರತಿಕ್ರಿಯಿಸುತ್ತಿಲ್ಲ"
       },
       "update-available": {
         "buttons": {
-          "disable": "Disable Updates",
-          "download": "Download",
-          "ok": "OK"
+          "disable": "ನವೀಕರಣಗಳನ್ನು ನಿಷ್ಕ್ರಿಯಗೊಳಿಸಿ",
+          "download": "ಡೌನ್‌ಲೋಡ್",
+          "ok": "ಸರಿ"
         },
-        "detail": "A new version is available and can be downloaded at {{downloadLink}}",
-        "message": "A new version is available",
-        "title": "Update Available"
+        "detail": "ಹೊಸ ಆವೃತ್ತಿ ಲಭ್ಯವಿದೆ ಮತ್ತು {{downloadLink}} ನಲ್ಲಿ ಡೌನ್‌ಲೋಡ್ ಮಾಡಬಹುದು",
+        "message": "ಹೊಸ ಆವೃತ್ತಿ ಲಭ್ಯವಿದೆ",
+        "title": "ನವೀಕರಣ ಲಭ್ಯವಿದೆ"
       }
     },
     "menu": {
-      "about": "About",
+      "about": "ಕುರಿತು",
       "navigation": {
-        "label": "Navigation",
+        "label": "ನ್ಯಾವಿಗೇಷನ್",
         "submenu": {
-          "copy-current-url": "Copy current URL",
-          "go-back": "Go back",
-          "go-forward": "Go forward",
-          "quit": "Exit",
-          "restart": "Restart App"
+          "copy-current-url": "ಪ್ರಸ್ತುತ URL ನಕಲಿಸಿ",
+          "go-back": "ಹಿಂದೆ ಹೋಗಿ",
+          "go-forward": "ಮುಂದೆ ಹೋಗಿ",
+          "quit": "ನಿರ್ಗಮಿಸಿ",
+          "restart": "ಅಪ್ಲಿಕೇಶನ್ ಮರುಪ್ರಾರಂಭಿಸಿ"
         }
       },
       "options": {
-        "label": "Options",
+        "label": "ಆಯ್ಕೆಗಳು",
         "submenu": {
           "advanced-options": {
-            "label": "Advanced options",
+            "label": "ಸುಧಾರಿತ ಆಯ್ಕೆಗಳು",
             "submenu": {
-              "auto-reset-app-cache": "Reset app cache when app starts",
-              "disable-hardware-acceleration": "Disable hardware acceleration",
-              "edit-config-json": "Edit config.json",
-              "override-user-agent": "Override User-Agent",
-              "restart-on-config-changes": "Restart on config changes",
+              "auto-reset-app-cache": "ಅಪ್ಲಿಕೇಶನ್ ಪ್ರಾರಂಭವಾದಾಗ ಕ್ಯಾಶ್ ಮರುಹೊಂದಿಸಿ",
+              "disable-hardware-acceleration": "ಹಾರ್ಡ್‌ವೇರ್ ವೇಗವರ್ಧನೆ ನಿಷ್ಕ್ರಿಯಗೊಳಿಸಿ",
+              "edit-config-json": "config.json ಸಂಪಾದಿಸಿ",
+              "override-user-agent": "User-Agent ಅತಿಕ್ರಮಿಸಿ",
+              "restart-on-config-changes": "ಕಾನ್ಫಿಗ್ ಬದಲಾವಣೆಗಳ ಮೇಲೆ ಮರುಪ್ರಾರಂಭಿಸಿ",
               "set-proxy": {
-                "label": "Set proxy",
+                "label": "ಪ್ರಾಕ್ಸಿ ಹೊಂದಿಸಿ",
                 "prompt": {
-                  "label": "Enter Proxy Address: (leave empty to disable)",
-                  "placeholder": "Example: SOCKS5://127.0.0.1:9999",
-                  "title": "Set proxy"
+                  "label": "ಪ್ರಾಕ್ಸಿ ವಿಳಾಸ ನಮೂದಿಸಿ: (ನಿಷ್ಕ್ರಿಯಗೊಳಿಸಲು ಖಾಲಿ ಬಿಡಿ)",
+                  "placeholder": "ಉದಾಹರಣೆ: SOCKS5://127.0.0.1:9999",
+                  "title": "ಪ್ರಾಕ್ಸಿ ಹೊಂದಿಸಿ"
                 }
               },
-              "toggle-dev-tools": "Toggle DevTools"
+              "toggle-dev-tools": "DevTools ಟಾಗಲ್ ಮಾಡಿ"
             }
           },
-          "always-on-top": "Always on top",
-          "auto-update": "Auto Update",
+          "always-on-top": "ಯಾವಾಗಲೂ ಮೇಲಿರಲಿ",
+          "auto-update": "ಸ್ವಯಂ ನವೀಕರಣ",
           "hide-menu": {
             "dialog": {
-              "message": "Menu will be hidden on next launch, use [Alt] to show it (or backtick [`] if using in-app-menu)",
-              "title": "Hide Menu Enabled"
+              "message": "ಮುಂದಿನ ಲಾಂಚ್‌ನಲ್ಲಿ ಮೆನು ಮರೆಮಾಡಲಾಗುವುದು, ತೋರಿಸಲು [Alt] ಬಳಸಿ (ಅಥವಾ in-app-menu ಬಳಸುತ್ತಿದ್ದರೆ [`])",
+              "title": "ಮೆನು ಮರೆಮಾಡುವಿಕೆ ಸಕ್ರಿಯಗೊಂಡಿದೆ"
             },
-            "label": "Hide Menu"
+            "label": "ಮೆನು ಮರೆಮಾಡಿ"
           },
           "language": {
             "dialog": {
-              "message": "Language will be changed after restart",
-              "title": "Language Changed"
+              "message": "ಮರುಪ್ರಾರಂಭದ ನಂತರ ಭಾಷೆ ಬದಲಾಗುತ್ತದೆ",
+              "title": "ಭಾಷೆ ಬದಲಾಗಿದೆ"
             },
-            "label": "Language",
+            "label": "ಭಾಷೆ",
             "submenu": {
-              "to-help-translate": "Want to help translate? Click here"
+              "to-help-translate": "ಅನುವಾದಿಸಲು ಸಹಾಯ ಮಾಡಲು ಬಯಸುವಿರಾ? ಇಲ್ಲಿ ಕ್ಲಿಕ್ ಮಾಡಿ"
             }
           },
-          "resume-on-start": "Resume last song when app starts",
-          "single-instance-lock": "Single Instance Lock",
-          "start-at-login": "Start at login",
+          "resume-on-start": "ಅಪ್ಲಿಕೇಶನ್ ಪ್ರಾರಂಭವಾದಾಗ ಕೊನೆಯ ಹಾಡನ್ನು ಮುಂದುವರಿಸಿ",
+          "single-instance-lock": "ಏಕ ನಿದರ್ಶನ ಲಾಕ್",
+          "start-at-login": "ಲಾಗಿನ್ ಆದಾಗ ಪ್ರಾರಂಭಿಸಿ",
           "starting-page": {
-            "label": "Starting page",
-            "unset": "Unset"
+            "label": "ಪ್ರಾರಂಭ ಪುಟ",
+            "unset": "ಅನ್‌ಸೆಟ್ ಮಾಡಿ"
           },
           "tray": {
-            "label": "Tray",
+            "label": "ಟ್ರೇ",
             "submenu": {
-              "disabled": "Disabled",
-              "enabled-and-hide-app": "Enabled and hide app",
-              "enabled-and-show-app": "Enabled and show app",
-              "play-pause-on-click": "Play/Pause on click"
+              "disabled": "ನಿಷ್ಕ್ರಿಯಗೊಳಿಸಲಾಗಿದೆ",
+              "enabled-and-hide-app": "ಸಕ್ರಿಯಗೊಳಿಸಿ ಮತ್ತು ಅಪ್ಲಿಕೇಶನ್ ಮರೆಮಾಡಿ",
+              "enabled-and-show-app": "ಸಕ್ರಿಯಗೊಳಿಸಿ ಮತ್ತು ಅಪ್ಲಿಕೇಶನ್ ತೋರಿಸಿ",
+              "move-to-current-desktop": "ತೋರಿಸುವಾಗ ಪ್ರಸ್ತುತ ವರ್ಚುವಲ್ ಡೆಸ್ಕ್‌ಟಾಪ್‌ಗೆ ಸರಿಸಿ",
+              "play-pause-on-click": "ಕ್ಲಿಕ್ ಮಾಡಿದಾಗ ಪ್ಲೇ/ವಿರಾಮ"
             }
           },
           "visual-tweaks": {
-            "label": "Visual Tweaks",
+            "label": "ದೃಶ್ಯ ಬದಲಾವಣೆಗಳು",
             "submenu": {
+              "like-buttons": {
+                "default": "ಡೀಫಾಲ್ಟ್",
+                "force-show": "ಬಲವಂತವಾಗಿ ತೋರಿಸಿ",
+                "hide": "ಮರೆಮಾಡಿ",
+                "swap": "ಲೈಕ್ ಬಟನ್‌ಗಳ ಕ್ರಮ ಬದಲಿಸಿ",
+                "label": "ಲೈಕ್ ಬಟನ್‌ಗಳು"
+              },
               "custom-window-title": {
-                "label": "Custom window title",
+                "label": "ಕಸ್ಟಮ್ ವಿಂಡೋ ಶೀರ್ಷಿಕೆ",
                 "prompt": {
-                  "label": "Enter custom window title: (leave empty to disable)",
-                  "placeholder": "Example: {{applicationName}}"
+                  "label": "ಕಸ್ಟಮ್ ವಿಂಡೋ ಶೀರ್ಷಿಕೆ ನಮೂದಿಸಿ: (ನಿಷ್ಕ್ರಿಯಗೊಳಿಸಲು ಖಾಲಿ ಬಿಡಿ)",
+                  "placeholder": "ಉದಾಹರಣೆ: {{applicationName}}"
                 }
               },
-              "like-buttons": {
-                "default": "Default",
-                "force-show": "Force show",
-                "hide": "Hide",
-                "label": "Like buttons",
-                "swap": "Swap like buttons order"
-              },
-              "remove-upgrade-button": "Remove upgrade button",
+              "remove-upgrade-button": "ಅಪ್‌ಗ್ರೇಡ್ ಬಟನ್ ತೆಗೆದುಹಾಕಿ",
               "theme": {
                 "dialog": {
                   "button": {
-                    "cancel": "Cancel",
-                    "remove": "Remove"
+                    "cancel": "ರದ್ದುಮಾಡಿ",
+                    "remove": "ತೆಗೆದುಹಾಕಿ"
                   },
-                  "remove-theme": "Are you sure you want to remove the custom theme?",
-                  "remove-theme-message": "This will remove the custom theme"
+                  "remove-theme": "ನೀವು ಕಸ್ಟಮ್ ಥೀಮ್ ತೆಗೆದುಹಾಕಲು ಖಚಿತವಾಗಿ ಬಯಸುವಿರಾ?",
+                  "remove-theme-message": "ಇದು ಕಸ್ಟಮ್ ಥೀಮ್ ಅನ್ನು ತೆಗೆದುಹಾಕುತ್ತದೆ"
                 },
-                "label": "Theme",
+                "label": "ಥೀಮ್",
                 "submenu": {
-                  "import-css-file": "Import custom CSS file",
-                  "no-theme": "No theme"
+                  "import-css-file": "ಕಸ್ಟಮ್ CSS ಫೈಲ್ ಆಮದು ಮಾಡಿ",
+                  "no-theme": "ಯಾವುದೇ ಥೀಮ್ ಇಲ್ಲ"
                 }
               }
             }
@@ -185,29 +186,29 @@
         }
       },
       "plugins": {
-        "enabled": "Enabled",
-        "label": "Plugins",
-        "new": "NEW"
+        "enabled": "ಸಕ್ರಿಯಗೊಂಡಿದೆ",
+        "label": "ಪ್ಲಗಿನ್‌ಗಳು",
+        "new": "ಹೊಸದು"
       },
       "view": {
-        "label": "View",
+        "label": "ವೀಕ್ಷಿಸಿ",
         "submenu": {
-          "force-reload": "Force Reload",
-          "reload": "Reload",
-          "reset-zoom": "Actual Size",
-          "toggle-fullscreen": "Toggle Full Screen",
-          "zoom-in": "Zoom In",
-          "zoom-out": "Zoom Out"
+          "force-reload": "ಬಲವಂತವಾಗಿ ಮರುಲೋಡ್ ಮಾಡಿ",
+          "reload": "ಮರುಲೋಡ್ ಮಾಡಿ",
+          "reset-zoom": "ನಿಜವಾದ ಗಾತ್ರ",
+          "toggle-fullscreen": "ಪೂರ್ಣ ಪರದೆ ಟಾಗಲ್ ಮಾಡಿ",
+          "zoom-in": "ದೊಡ್ಡದಾಗಿಸಿ",
+          "zoom-out": "ಚಿಕ್ಕದಾಗಿಸಿ"
         }
       }
     },
     "tray": {
-      "next": "Next",
-      "play-pause": "Play/Pause",
-      "previous": "Previous",
-      "quit": "Exit",
-      "restart": "Restart App",
-      "show": "Show window",
+      "next": "ಮುಂದಿನದು",
+      "play-pause": "ಪ್ಲೇ/ವಿರಾಮ",
+      "previous": "ಹಿಂದಿನದು",
+      "quit": "ನಿರ್ಗಮಿಸಿ",
+      "restart": "ಅಪ್ಲಿಕೇಶನ್ ಮರುಪ್ರಾರಂಭಿಸಿ",
+      "show": "ವಿಂಡೋ ತೋರಿಸಿ",
       "tooltip": {
         "default": "{{applicationName}}",
         "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
@@ -216,291 +217,295 @@
   },
   "plugins": {
     "ad-speedup": {
-      "description": "If an ad play it mutes the audio and sets playback speed to 16x",
-      "name": "Ad Speedup"
+      "description": "ಜಾಹೀರಾತು ಪ್ಲೇ ಆದರೆ ಆಡಿಯೋ ಮ್ಯೂಟ್ ಮಾಡಿ ಮತ್ತು ಪ್ಲೇಬ್ಯಾಕ್ ವೇಗವನ್ನು 16x ಗೆ ಹೊಂದಿಸುತ್ತದೆ",
+      "name": "ಜಾಹೀರಾತು ವೇಗವರ್ಧನೆ"
     },
     "adblocker": {
-      "description": "Block all ads and tracking out of the box",
+      "description": "ಎಲ್ಲಾ ಜಾಹೀರಾತುಗಳು ಮತ್ತು ಟ್ರ್ಯಾಕಿಂಗ್ ಅನ್ನು ನಿರ್ಬಂಧಿಸುತ್ತದೆ",
       "menu": {
-        "blocker": "Blocker"
+        "blocker": "ನಿರ್ಬಂಧಕ"
       },
-      "name": "Ad Blocker"
+      "name": "ಜಾಹೀರಾತು ನಿರ್ಬಂಧಕ"
     },
     "album-actions": {
-      "description": "Adds Undislike, Dislike, Like, and Unlike buttons to apply this to all songs in a playlist or album",
-      "name": "Album Actions"
+      "description": "ಎಲ್ಲಾ ಹಾಡುಗಳಿಗೆ ಅನ್‌ಡಿಸ್‌ಲೈಕ್, ಡಿಸ್‌ಲೈಕ್, ಲೈಕ್ ಮತ್ತು ಅನ್‌ಲೈಕ್ ಬಟನ್‌ಗಳನ್ನು ಸೇರಿಸುತ್ತದೆ",
+      "name": "ಆಲ್ಬಮ್ ಕ್ರಿಯೆಗಳು"
     },
     "album-color-theme": {
-      "description": "Applies a dynamic theme and visual effects based on the album color palette",
+      "description": "ಆಲ್ಬಮ್ ಬಣ್ಣದ ಪ್ಯಾಲೆಟ್ ಆಧರಿಸಿ ಡೈನಾಮಿಕ್ ಥೀಮ್ ಮತ್ತು ದೃಶ್ಯ ಪರಿಣಾಮಗಳನ್ನು ಅನ್ವಯಿಸುತ್ತದೆ",
       "menu": {
         "color-mix-ratio": {
-          "label": "Color mix ratio",
+          "label": "ಬಣ್ಣ ಮಿಶ್ರಣ ಅನುಪಾತ",
           "submenu": {
             "percent": "{{ratio}}%"
           }
         },
-        "enable-seekbar": "Enable seekbar theming"
+        "enable-seekbar": "ಸೀಕ್‌ಬಾರ್ ಥೀಮಿಂಗ್ ಸಕ್ರಿಯಗೊಳಿಸಿ"
       },
-      "name": "Album Color Theme"
+      "name": "ಆಲ್ಬಮ್ ಬಣ್ಣ ಥೀಮ್"
+    },
+    "audio-only": {
+      "description": "ಕೇವಲ-ಆಡಿಯೋ ಮೋಡ್ ಅನ್ನು ಒತ್ತಾಯಿಸುತ್ತದೆ — RAM ಮತ್ತು ಬ್ಯಾಂಡ್‌ವಿಡ್ತ್ ಉಳಿಸಲು ನೆಟ್‌ವರ್ಕ್ ಮತ್ತು ಪ್ಲೇಯರ್ ಮಟ್ಟದಲ್ಲಿ ಎಲ್ಲಾ ವೀಡಿಯೊ ಸ್ಟ್ರೀಮ್‌ಗಳನ್ನು ನಿರ್ಬಂಧಿಸುತ್ತದೆ",
+      "name": "ಕೇವಲ ಆಡಿಯೋ"
     },
     "ambient-mode": {
-      "description": "Applies a lighting effect by casting gentle colors from the video, into your screen’s background",
+      "description": "ವೀಡಿಯೊದಿಂದ ನಿಮ್ಮ ಪರದೆಯ ಹಿನ್ನೆಲೆಗೆ ಮೃದುವಾದ ಬಣ್ಣಗಳನ್ನು ಬಿತ್ತರಿಸುವ ಮೂಲಕ ಬೆಳಕಿನ ಪರಿಣಾಮವನ್ನು ಅನ್ವಯಿಸುತ್ತದೆ",
       "menu": {
         "blur-amount": {
-          "label": "Blur amount",
+          "label": "ಮಸುಕು ಪ್ರಮಾಣ",
           "submenu": {
-            "pixels": "{{blurAmount}} pixels"
+            "pixels": "{{blurAmount}} ಪಿಕ್ಸೆಲ್‌ಗಳು"
           }
         },
         "buffer": {
-          "label": "Buffer",
+          "label": "ಬಫರ್",
           "submenu": {
             "buffer": "{{buffer}}"
           }
         },
         "opacity": {
-          "label": "Opacity",
+          "label": "ಅಪಾರದರ್ಶಕತೆ",
           "submenu": {
             "percent": "{{opacity}}%"
           }
         },
         "quality": {
-          "label": "Quality",
+          "label": "ಗುಣಮಟ್ಟ",
           "submenu": {
-            "pixels": "{{quality}} pixels"
+            "pixels": "{{quality}} ಪಿಕ್ಸೆಲ್‌ಗಳು"
           }
         },
         "size": {
-          "label": "Size",
+          "label": "ಗಾತ್ರ",
           "submenu": {
             "percent": "{{size}}%"
           }
         },
         "smoothness-transition": {
-          "label": "Smoothness transition",
+          "label": "ಸಂಕ್ರಮಣದ ಮೃದುತ್ವ",
           "submenu": {
-            "during": "During {{interpolationTime}} s"
+            "during": "{{interpolationTime}} ಸೆ. ಸಮಯದಲ್ಲಿ"
           }
         },
         "use-fullscreen": {
-          "label": "Using fullscreen"
+          "label": "ಪೂರ್ಣಪರದೆ ಬಳಸುತ್ತಿದೆ"
         }
       },
-      "name": "Ambient Mode"
+      "name": "ಪರಿಸರ ಮೋಡ್"
     },
     "amuse": {
-      "description": "Adds {{applicationName}} support for the Amuse now playing widget by 6K Labs",
+      "description": "6K Labs ನ Amuse ಈಗ ಪ್ಲೇ ಆಗುತ್ತಿರುವ ವಿಜೆಟ್‌ಗೆ {{applicationName}} ಬೆಂಬಲವನ್ನು ಸೇರಿಸುತ್ತದೆ",
       "name": "Amuse",
       "response": {
-        "query": "Amuse API server is running. GET /query to get song info."
+        "query": "Amuse API ಸರ್ವರ್ ಚಾಲನೆಯಲ್ಲಿದೆ. ಹಾಡಿನ ಮಾಹಿತಿ ಪಡೆಯಲು GET /query."
       }
     },
     "api-server": {
-      "description": "Adds an API server to control the player",
+      "description": "ಪ್ಲೇಯರ್ ನಿಯಂತ್ರಿಸಲು API ಸರ್ವರ್ ಸೇರಿಸುತ್ತದೆ",
       "dialog": {
         "request": {
           "buttons": {
-            "allow": "Allow",
-            "deny": "Deny"
+            "allow": "ಅನುಮತಿಸಿ",
+            "deny": "ನಿರಾಕರಿಸಿ"
           },
-          "message": "Allow {{ID}} ({{origin}}) to access the API?",
-          "title": "API authorization request"
+          "message": "{{ID}} ({{origin}}) API ಪ್ರವೇಶಿಸಲು ಅನುಮತಿಸುವುದೇ?",
+          "title": "API ಅಧಿಕಾರ ವಿನಂತಿ"
         }
       },
       "menu": {
         "auth-strategy": {
-          "label": "Authorization strategy",
+          "label": "ಅಧಿಕಾರ ತಂತ್ರ",
           "submenu": {
             "auth-at-first": {
-              "label": "Authorize at first request"
+              "label": "ಮೊದಲ ವಿನಂತಿಯಲ್ಲಿ ಅಧಿಕೃತಗೊಳಿಸಿ"
             },
             "none": {
-              "label": "No authorization"
+              "label": "ಯಾವುದೇ ಅಧಿಕಾರವಿಲ್ಲ"
             }
           }
         },
         "hostname": {
-          "label": "Hostname"
+          "label": "ಹೋಸ್ಟ್‌ನೇಮ್"
+        },
+        "port": {
+          "label": "ಪೋರ್ಟ್"
         },
         "https": {
-          "label": "HTTPS & Certificates",
+          "label": "HTTPS ಮತ್ತು ಪ್ರಮಾಣಪತ್ರಗಳು",
           "submenu": {
-            "cert": {
-              "dialogTitle": "Select HTTPS certificate file",
-              "label": "Certificate file (.crt/.pem)"
-            },
             "enable-https": {
-              "label": "Enable HTTPS"
+              "label": "HTTPS ಸಕ್ರಿಯಗೊಳಿಸಿ"
+            },
+            "cert": {
+              "label": "ಪ್ರಮಾಣಪತ್ರ ಫೈಲ್ (.crt/.pem)",
+              "dialogTitle": "HTTPS ಪ್ರಮಾಣಪತ್ರ ಫೈಲ್ ಆಯ್ಕೆಮಾಡಿ"
             },
             "key": {
-              "dialogTitle": "Select HTTPS private key file",
-              "label": "Private key file (.key/.pem)"
+              "label": "ಖಾಸಗಿ ಕೀ ಫೈಲ್ (.key/.pem)",
+              "dialogTitle": "HTTPS ಖಾಸಗಿ ಕೀ ಫೈಲ್ ಆಯ್ಕೆಮಾಡಿ"
             }
           }
-        },
-        "port": {
-          "label": "Port"
         }
       },
-      "name": "API Server [Beta]",
+      "name": "API ಸರ್ವರ್ [Beta]",
       "prompt": {
         "hostname": {
-          "label": "Enter the hostname (like 0.0.0.0) for the API server:",
-          "title": "Hostname"
+          "label": "API ಸರ್ವರ್‌ಗಾಗಿ ಹೋಸ್ಟ್‌ನೇಮ್ ನಮೂದಿಸಿ (ಉದಾ. 0.0.0.0):",
+          "title": "ಹೋಸ್ಟ್‌ನೇಮ್"
         },
         "port": {
-          "label": "Enter the port for the API server:",
-          "title": "Port"
+          "label": "API ಸರ್ವರ್‌ಗಾಗಿ ಪೋರ್ಟ್ ನಮೂದಿಸಿ:",
+          "title": "ಪೋರ್ಟ್"
         }
       }
     },
     "audio-compressor": {
-      "description": "Apply compression to audio (lowers the volume of the loudest parts of the signal and raises the volume of the softest parts)",
-      "name": "Audio Compressor"
+      "description": "ಆಡಿಯೋಗೆ ಸಂಕೋಚನ ಅನ್ವಯಿಸುತ್ತದೆ (ಸಿಗ್ನಲ್‌ನ ಹೆಚ್ಚಿನ ಧ್ವನಿಯ ಭಾಗಗಳನ್ನು ಕಡಿಮೆ ಮಾಡುತ್ತದೆ ಮತ್ತು ಕಡಿಮೆ ಧ್ವನಿಯ ಭಾಗಗಳನ್ನು ಹೆಚ್ಚಿಸುತ್ತದೆ)",
+      "name": "ಆಡಿಯೋ ಸಂಕೋಚಕ"
     },
     "auth-proxy-adapter": {
-      "description": "Support for the use of authentication proxy services",
+      "description": "ದೃಢೀಕರಣ ಪ್ರಾಕ್ಸಿ ಸೇವೆಗಳ ಬಳಕೆಗೆ ಬೆಂಬಲ",
       "menu": {
-        "disable": "Disable Proxy Adapter",
-        "enable": "Enable Proxy Adapter",
+        "disable": "ಪ್ರಾಕ್ಸಿ ಅಡಾಪ್ಟರ್ ನಿಷ್ಕ್ರಿಯಗೊಳಿಸಿ",
+        "enable": "ಪ್ರಾಕ್ಸಿ ಅಡಾಪ್ಟರ್ ಸಕ್ರಿಯಗೊಳಿಸಿ",
         "hostname": {
-          "label": "Hostname"
+          "label": "ಹೋಸ್ಟ್‌ನೇಮ್"
         },
         "port": {
-          "label": "Port"
+          "label": "ಪೋರ್ಟ್"
         }
       },
-      "name": "Auth Proxy Adapter",
+      "name": "ಅಧಿಕೃತ ಪ್ರಾಕ್ಸಿ ಅಡಾಪ್ಟರ್",
       "prompt": {
         "hostname": {
-          "label": "Enter hostname for local proxy server (requires restart):",
-          "title": "Proxy Hostname"
+          "title": "ಪ್ರಾಕ್ಸಿ ಹೋಸ್ಟ್‌ನೇಮ್",
+          "label": "ಸ್ಥಳೀಯ ಪ್ರಾಕ್ಸಿ ಸರ್ವರ್‌ಗಾಗಿ ಹೋಸ್ಟ್‌ನೇಮ್ ನಮೂದಿಸಿ (ಮರುಪ್ರಾರಂಭ ಅಗತ್ಯವಿದೆ):"
         },
         "port": {
-          "label": "Enter port for local proxy server (requires restart):",
-          "title": "Proxy Port"
+          "title": "ಪ್ರಾಕ್ಸಿ ಪೋರ್ಟ್",
+          "label": "ಸ್ಥಳೀಯ ಪ್ರಾಕ್ಸಿ ಸರ್ವರ್‌ಗಾಗಿ ಪೋರ್ಟ್ ನಮೂದಿಸಿ (ಮರುಪ್ರಾರಂಭ ಅಗತ್ಯವಿದೆ):"
         }
       }
     },
     "blur-nav-bar": {
-      "description": "Makes navigation bar transparent and blurry",
-      "name": "Blur Navigation Bar"
+      "description": "ನ್ಯಾವಿಗೇಷನ್ ಬಾರ್ ಅನ್ನು ಪಾರದರ್ಶಕ ಮತ್ತು ಮಸುಕಾಗಿಸುತ್ತದೆ",
+      "name": "ನ್ಯಾವಿಗೇಷನ್ ಬಾರ್ ಮಸುಕು"
     },
     "bypass-age-restrictions": {
-      "description": "Bypass Music Player's age verification",
-      "name": "Bypass Age Restrictions"
+      "description": "ಸಂಗೀತ ಪ್ಲೇಯರ್‌ನ ವಯಸ್ಸಿನ ಪರಿಶೀಲನೆಯನ್ನು ಬೈಪಾಸ್ ಮಾಡುತ್ತದೆ",
+      "name": "ವಯಸ್ಸಿನ ನಿರ್ಬಂಧಗಳನ್ನು ಬೈಪಾಸ್ ಮಾಡಿ"
     },
     "captions-selector": {
-      "description": "Caption selector for {{applicationName}} audio tracks",
+      "description": "{{applicationName}} ಆಡಿಯೋ ಟ್ರ್ಯಾಕ್‌ಗಳಿಗಾಗಿ ಶೀರ್ಷಿಕೆ ಆಯ್ಕೆಗಾರ",
       "menu": {
-        "autoload": "Automatically select last used caption",
-        "disable-captions": "No captions by default"
+        "autoload": "ಕೊನೆಯದಾಗಿ ಬಳಸಿದ ಶೀರ್ಷಿಕೆಯನ್ನು ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಆಯ್ಕೆಮಾಡಿ",
+        "disable-captions": "ಪೂರ್ವನಿಯೋಜಿತವಾಗಿ ಶೀರ್ಷಿಕೆಗಳಿಲ್ಲ"
       },
-      "name": "Captions Selector",
+      "name": "ಶೀರ್ಷಿಕೆ ಆಯ್ಕೆಗಾರ",
       "prompt": {
         "selector": {
-          "label": "Current caption language: {{language}}",
-          "none": "None",
-          "title": "Select caption language"
+          "label": "ಪ್ರಸ್ತುತ ಶೀರ್ಷಿಕೆ ಭಾಷೆ: {{language}}",
+          "none": "ಯಾವುದೂ ಇಲ್ಲ",
+          "title": "ಶೀರ್ಷಿಕೆ ಭಾಷೆ ಆಯ್ಕೆಮಾಡಿ"
         }
       },
       "templates": {
-        "title": "Open captions selector"
+        "title": "ಶೀರ್ಷಿಕೆ ಆಯ್ಕೆಗಾರ ತೆರೆಯಿರಿ"
       },
       "toast": {
-        "caption-changed": "Caption changed to {{language}}",
-        "caption-disabled": "Captions disabled",
-        "no-captions": "No captions available for this song"
+        "caption-changed": "ಶೀರ್ಷಿಕೆ {{language}} ಗೆ ಬದಲಾಗಿದೆ",
+        "caption-disabled": "ಶೀರ್ಷಿಕೆಗಳು ನಿಷ್ಕ್ರಿಯಗೊಂಡಿವೆ",
+        "no-captions": "ಈ ಹಾಡಿಗೆ ಯಾವುದೇ ಶೀರ್ಷಿಕೆಗಳು ಲಭ್ಯವಿಲ್ಲ"
       }
     },
     "clock": {
-      "description": "Add a clock to the navigation bar",
+      "description": "ನ್ಯಾವಿಗೇಷನ್ ಬಾರ್‌ಗೆ ಗಡಿಯಾರ ಸೇರಿಸಿ",
+      "name": "ಗಡಿಯಾರ",
       "menu": {
         "format": {
-          "24-hour-format": "24-Hour Format",
-          "display-seconds": "Display Seconds",
-          "label": "Format"
+          "label": "ಸ್ವರೂಪ",
+          "display-seconds": "ಸೆಕೆಂಡುಗಳನ್ನು ತೋರಿಸಿ",
+          "24-hour-format": "24-ಗಂಟೆಗಳ ಸ್ವರೂಪ"
         }
-      },
-      "name": "Clock"
+      }
     },
     "compact-sidebar": {
-      "description": "Always set the sidebar in compact mode",
-      "name": "Compact Sidebar"
+      "description": "ಸೈಡ್‌ಬಾರ್ ಅನ್ನು ಯಾವಾಗಲೂ ಕಾಂಪ್ಯಾಕ್ಟ್ ಮೋಡ್‌ನಲ್ಲಿ ಇರಿಸಿ",
+      "name": "ಕಾಂಪ್ಯಾಕ್ಟ್ ಸೈಡ್‌ಬಾರ್"
     },
     "crossfade": {
-      "description": "Crossfade between songs",
+      "description": "ಹಾಡುಗಳ ನಡುವೆ ಕ್ರಾಸ್‌ಫೇಡ್",
       "menu": {
-        "advanced": "Advanced"
+        "advanced": "ಸುಧಾರಿತ"
       },
-      "name": "Crossfade [Beta]",
+      "name": "ಕ್ರಾಸ್‌ಫೇಡ್ [Beta]",
       "prompt": {
         "options": {
           "multi-input": {
-            "fade-in-duration": "Fade in duration (ms)",
-            "fade-out-duration": "Fade out duration (ms)",
+            "fade-in-duration": "ಫೇಡ್ ಇನ್ ಅವಧಿ (ms)",
+            "fade-out-duration": "ಫೇಡ್ ಔಟ್ ಅವಧಿ (ms)",
             "fade-scaling": {
-              "label": "Fade scaling",
-              "linear": "Linear",
-              "logarithmic": "Logarithmic"
+              "label": "ಫೇಡ್ ಸ್ಕೇಲಿಂಗ್",
+              "linear": "ರೇಖೀಯ",
+              "logarithmic": "ಲಾಗರಿಥಮಿಕ್"
             },
-            "seconds-before-end": "Crossfade N seconds before end"
+            "seconds-before-end": "ಮುಗಿಯುವ N ಸೆಕೆಂಡುಗಳ ಮೊದಲು ಕ್ರಾಸ್‌ಫೇಡ್"
           },
-          "title": "Crossfade options"
+          "title": "ಕ್ರಾಸ್‌ಫೇಡ್ ಆಯ್ಕೆಗಳು"
         }
       }
     },
     "custom-output-device": {
-      "description": "Configure a custom output media device for songs",
+      "description": "ಹಾಡುಗಳಿಗಾಗಿ ಕಸ್ಟಮ್ ಔಟ್‌ಪುಟ್ ಮೀಡಿಯಾ ಸಾಧನ ಕಾನ್ಫಿಗರ್ ಮಾಡಿ",
       "menu": {
-        "device-selector": "Select Device"
+        "device-selector": "ಸಾಧನ ಆಯ್ಕೆಮಾಡಿ"
       },
-      "name": "Custom Output Device",
+      "name": "ಕಸ್ಟಮ್ ಔಟ್‌ಪುಟ್ ಸಾಧನ",
       "prompt": {
         "device-selector": {
-          "label": "Choose the output media device to be used",
-          "title": "Select Output Device"
+          "label": "ಬಳಸಬೇಕಾದ ಔಟ್‌ಪುಟ್ ಮೀಡಿಯಾ ಸಾಧನ ಆಯ್ಕೆಮಾಡಿ",
+          "title": "ಔಟ್‌ಪುಟ್ ಸಾಧನ ಆಯ್ಕೆಮಾಡಿ"
         }
       }
     },
     "disable-autoplay": {
-      "description": "Makes song start in \"paused\" mode",
+      "description": "ಹಾಡನ್ನು \"ವಿರಾಮ\" ಮೋಡ್‌ನಲ್ಲಿ ಪ್ರಾರಂಭಿಸುತ್ತದೆ",
       "menu": {
-        "apply-once": "Applies only on startup"
+        "apply-once": "ಪ್ರಾರಂಭದಲ್ಲಿ ಮಾತ್ರ ಅನ್ವಯಿಸುತ್ತದೆ"
       },
-      "name": "Disable Autoplay"
+      "name": "ಸ್ವಯಂಪ್ಲೇ ನಿಷ್ಕ್ರಿಯಗೊಳಿಸಿ"
     },
     "discord": {
       "backend": {
-        "already-connected": "Attempted to connect with active connection",
-        "connected": "Connected to Discord",
-        "disconnected": "Disconnected from Discord"
+        "already-connected": "ಸಕ್ರಿಯ ಸಂಪರ್ಕದೊಂದಿಗೆ ಸಂಪರ್ಕಿಸಲು ಪ್ರಯತ್ನಿಸಲಾಗಿದೆ",
+        "connected": "Discord ಗೆ ಸಂಪರ್ಕಿಸಲಾಗಿದೆ",
+        "disconnected": "Discord ನಿಂದ ಸಂಪರ್ಕ ಕಡಿತಗೊಂಡಿದೆ"
       },
-      "description": "Show your friends what you listen to with Rich Presence",
+      "description": "Rich Presence ಮೂಲಕ ನೀವು ಏನು ಕೇಳುತ್ತಿದ್ದೀರಿ ಎಂದು ನಿಮ್ಮ ಸ್ನೇಹಿತರಿಗೆ ತೋರಿಸಿ",
       "menu": {
-        "auto-reconnect": "Auto reconnect",
-        "clear-activity": "Clear activity",
-        "clear-activity-after-timeout": "Clear activity after timeout",
-        "connected": "Connected",
-        "disconnected": "Disconnected",
-        "hide-duration-left": "Hide duration left",
-        "hide-github-button": "Hide GitHub link Button",
-        "play-on-application": "Play on {{applicationName}}",
-        "set-inactivity-timeout": "Set inactivity timeout",
+        "auto-reconnect": "ಸ್ವಯಂ ಮರುಸಂಪರ್ಕ",
+        "clear-activity": "ಚಟುವಟಿಕೆ ತೆರವುಗೊಳಿಸಿ",
+        "clear-activity-after-timeout": "ಟೈಮ್‌ಔಟ್ ನಂತರ ಚಟುವಟಿಕೆ ತೆರವುಗೊಳಿಸಿ",
+        "connected": "ಸಂಪರ್ಕಿತವಾಗಿದೆ",
+        "disconnected": "ಸಂಪರ್ಕ ಕಡಿತಗೊಂಡಿದೆ",
+        "hide-duration-left": "ಉಳಿದ ಅವಧಿಯನ್ನು ಮರೆಮಾಡಿ",
+        "hide-github-button": "GitHub ಲಿಂಕ್ ಬಟನ್ ಮರೆಮಾಡಿ",
+        "play-on-application": "{{applicationName}} ನಲ್ಲಿ ಪ್ಲೇ ಮಾಡಿ",
+        "set-inactivity-timeout": "ನಿಷ್ಕ್ರಿಯತೆಯ ಟೈಮ್‌ಔಟ್ ಹೊಂದಿಸಿ",
         "set-status-display-type": {
-          "label": "Status text",
+          "label": "ಸ್ಥಿತಿ ಪಠ್ಯ",
           "submenu": {
-            "application": "Listening to {{applicationName}}",
-            "artist": "Listening to {artist}",
-            "title": "Listening to {song title}"
+            "application": "{{applicationName}} ಕೇಳುತ್ತಿದ್ದಾರೆ",
+            "artist": "{{artist}} ಕೇಳುತ್ತಿದ್ದಾರೆ",
+            "title": "{{song title}} ಕೇಳುತ್ತಿದ್ದಾರೆ"
           }
         }
       },
       "name": "Discord Rich Presence",
       "prompt": {
         "set-inactivity-timeout": {
-          "label": "Enter inactivity timeout in seconds:",
-          "title": "Set inactivity timeout"
+          "label": "ನಿಷ್ಕ್ರಿಯತೆಯ ಟೈಮ್‌ಔಟ್ ಸೆಕೆಂಡುಗಳಲ್ಲಿ ನಮೂದಿಸಿ:",
+          "title": "ನಿಷ್ಕ್ರಿಯತೆಯ ಟೈಮ್‌ಔಟ್ ಹೊಂದಿಸಿ"
         }
       }
     },
@@ -509,245 +514,253 @@
         "dialog": {
           "error": {
             "buttons": {
-              "ok": "OK"
+              "ok": "ಸರಿ"
             },
-            "message": "Argh! Apologies, download failed…",
-            "title": "Error in download!"
+            "message": "ಕ್ಷಮಿಸಿ, ಡೌನ್‌ಲೋಡ್ ವಿಫಲವಾಗಿದೆ...",
+            "title": "ಡೌನ್‌ಲೋಡ್‌ನಲ್ಲಿ ದೋಷ!"
           },
           "start-download-playlist": {
             "buttons": {
-              "ok": "OK"
+              "ok": "ಸರಿ"
             },
-            "detail": "({{playlistSize}} songs)",
-            "message": "Downloading Playlist {{playlistTitle}}",
-            "title": "Download started"
+            "detail": "({{playlistSize}} ಹಾಡುಗಳು)",
+            "message": "ಪ್ಲೇಲಿಸ್ಟ್ ಡೌನ್‌ಲೋಡ್ ಆಗುತ್ತಿದೆ {{playlistTitle}}",
+            "title": "ಡೌನ್‌ಲೋಡ್ ಪ್ರಾರಂಭವಾಗಿದೆ"
           }
         },
         "feedback": {
-          "conversion-progress": "Conversion: {{percent}}%",
-          "converting": "Converting…",
-          "done": "Done: {{filePath}}",
-          "download-info": "Downloading {{artist}} - {{title}} [{{videoId}}",
-          "download-progress": "Download: {{percent}}%",
-          "downloading": "Downloading…",
-          "downloading-counter": "Downloading {{current}}/{{total}}…",
-          "downloading-playlist": "Downloading playlist \"{{playlistTitle}}\" - {{playlistSize}} songs ({{playlistId}})",
-          "error-while-downloading": "Error downloading \"{{author}} - {{title}}\": {{error}}",
-          "folder-already-exists": "The folder {{playlistFolder}} already exists",
-          "getting-playlist-info": "Getting playlist info…",
-          "loading": "Loading…",
-          "playlist-has-only-one-song": "Playlist has only one item, downloading it directly",
-          "playlist-id-not-found": "No playlist ID found",
-          "playlist-is-empty": "Playlist is empty",
-          "playlist-is-mix-or-private": "Error getting playlist info: make sure it isn't a private or \"Mixed for you\" playlist\n\n{{error}}",
-          "preparing-file": "Preparing file…",
-          "saving": "Saving…",
-          "trying-to-get-playlist-id": "Trying to get playlist ID: {{playlistId}}",
-          "video-id-not-found": "Video not found",
-          "writing-id3": "Writing ID3 tags…"
+          "conversion-progress": "ಪರಿವರ್ತನೆ: {{percent}}%",
+          "converting": "ಪರಿವರ್ತಿಸಲಾಗುತ್ತಿದೆ...",
+          "done": "ಮುಗಿದಿದೆ: {{filePath}}",
+          "download-info": "ಡೌನ್‌ಲೋಡ್ ಆಗುತ್ತಿದೆ {{artist}} - {{title}} [{{videoId}}",
+          "download-progress": "ಡೌನ್‌ಲೋಡ್: {{percent}}%",
+          "downloading": "ಡೌನ್‌ಲೋಡ್ ಆಗುತ್ತಿದೆ...",
+          "downloading-counter": "ಡೌನ್‌ಲೋಡ್ ಆಗುತ್ತಿದೆ {{current}}/{{total}}...",
+          "downloading-playlist": "ಪ್ಲೇಲಿಸ್ಟ್ \"{{playlistTitle}}\" ಡೌನ್‌ಲೋಡ್ ಆಗುತ್ತಿದೆ - {{playlistSize}} ಹಾಡುಗಳು ({{playlistId}})",
+          "error-while-downloading": "\"{{author}} - {{title}}\" ಡೌನ್‌ಲೋಡ್‌ನಲ್ಲಿ ದೋಷ: {{error}}",
+          "folder-already-exists": "{{playlistFolder}} ಫೋಲ್ಡರ್ ಈಗಾಗಲೇ ಅಸ್ತಿತ್ವದಲ್ಲಿದೆ",
+          "getting-playlist-info": "ಪ್ಲೇಲಿಸ್ಟ್ ಮಾಹಿತಿ ಪಡೆಯಲಾಗುತ್ತಿದೆ...",
+          "loading": "ಲೋಡ್ ಆಗುತ್ತಿದೆ...",
+          "playlist-has-only-one-song": "ಪ್ಲೇಲಿಸ್ಟ್‌ನಲ್ಲಿ ಒಂದೇ ಐಟಂ ಇದೆ, ನೇರವಾಗಿ ಡೌನ್‌ಲೋಡ್ ಮಾಡಲಾಗುತ್ತಿದೆ",
+          "playlist-id-not-found": "ಯಾವುದೇ ಪ್ಲೇಲಿಸ್ಟ್ ID ಕಂಡುಬಂದಿಲ್ಲ",
+          "playlist-is-empty": "ಪ್ಲೇಲಿಸ್ಟ್ ಖಾಲಿಯಾಗಿದೆ",
+          "playlist-is-mix-or-private": "ಪ್ಲೇಲಿಸ್ಟ್ ಮಾಹಿತಿ ಪಡೆಯುವಲ್ಲಿ ದೋಷ: ಇದು ಖಾಸಗಿ ಅಥವಾ \"ನಿಮಗಾಗಿ ಮಿಶ್ರಿತ\" ಪ್ಲೇಲಿಸ್ಟ್ ಅಲ್ಲ ಎಂದು ಖಚಿತಪಡಿಸಿಕೊಳ್ಳಿ\n\n{{error}}",
+          "preparing-file": "ಫೈಲ್ ತಯಾರಿಸಲಾಗುತ್ತಿದೆ...",
+          "saving": "ಉಳಿಸಲಾಗುತ್ತಿದೆ...",
+          "trying-to-get-playlist-id": "ಪ್ಲೇಲಿಸ್ಟ್ ID ಪಡೆಯಲು ಪ್ರಯತ್ನಿಸಲಾಗುತ್ತಿದೆ: {{playlistId}}",
+          "video-id-not-found": "ವೀಡಿಯೊ ಕಂಡುಬಂದಿಲ್ಲ",
+          "writing-id3": "ID3 ಟ್ಯಾಗ್‌ಗಳನ್ನು ಬರೆಯಲಾಗುತ್ತಿದೆ..."
         }
       },
-      "description": "Downloads MP3 / source audio directly from the interface",
+      "description": "ಇಂಟರ್‌ಫೇಸ್‌ನಿಂದ ನೇರವಾಗಿ MP3 / ಮೂಲ ಆಡಿಯೋ ಡೌನ್‌ಲೋಡ್ ಮಾಡುತ್ತದೆ",
       "menu": {
-        "choose-download-folder": "Choose download folder",
+        "choose-download-folder": "ಡೌನ್‌ಲೋಡ್ ಫೋಲ್ಡರ್ ಆಯ್ಕೆಮಾಡಿ",
         "download-finish-settings": {
-          "label": "Download on finish",
+          "label": "ಮುಗಿದಾಗ ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ",
           "prompt": {
-            "last-percent": "After x percent",
-            "last-seconds": "Last x seconds",
-            "title": "Configure when to download"
+            "last-percent": "x ಶೇಕಡಾ ನಂತರ",
+            "last-seconds": "ಕೊನೆಯ x ಸೆಕೆಂಡುಗಳು",
+            "title": "ಯಾವಾಗ ಡೌನ್‌ಲೋಡ್ ಮಾಡಬೇಕೆಂದು ಕಾನ್ಫಿಗರ್ ಮಾಡಿ"
           },
           "submenu": {
-            "advanced": "Advanced",
-            "enabled": "Enabled",
-            "mode": "Time mode",
-            "percent": "Percent",
-            "seconds": "Seconds"
+            "advanced": "ಸುಧಾರಿತ",
+            "enabled": "ಸಕ್ರಿಯಗೊಂಡಿದೆ",
+            "mode": "ಸಮಯ ಮೋಡ್",
+            "percent": "ಶೇಕಡಾ",
+            "seconds": "ಸೆಕೆಂಡುಗಳು"
           }
         },
-        "download-playlist": "Download playlist",
-        "presets": "Presets",
-        "skip-existing": "Skip existing files"
+        "download-playlist": "ಪ್ಲೇಲಿಸ್ಟ್ ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ",
+        "presets": "ಪ್ರೀಸೆಟ್‌ಗಳು",
+        "skip-existing": "ಅಸ್ತಿತ್ವದಲ್ಲಿರುವ ಫೈಲ್‌ಗಳನ್ನು ಬಿಟ್ಟುಬಿಡಿ"
       },
-      "name": "Downloader",
+      "name": "ಡೌನ್‌ಲೋಡರ್",
       "renderer": {
-        "can-not-update-progress": "Cannot update progress"
+        "can-not-update-progress": "ಪ್ರಗತಿಯನ್ನು ನವೀಕರಿಸಲು ಸಾಧ್ಯವಿಲ್ಲ"
       },
       "templates": {
-        "button": "Download"
+        "button": "ಡೌನ್‌ಲೋಡ್"
       }
     },
     "equalizer": {
-      "description": "Adds an equalizer to the player",
+      "description": "ಪ್ಲೇಯರ್‌ಗೆ ಈಕ್ವಲೈಜರ್ ಸೇರಿಸುತ್ತದೆ",
       "menu": {
         "presets": {
-          "label": "Presets",
+          "label": "ಪ್ರೀಸೆಟ್‌ಗಳು",
           "list": {
-            "bass-booster": "Bass booster"
+            "bass-booster": "ಬಾಸ್ ಬೂಸ್ಟರ್"
           }
         }
       },
-      "name": "Equalizer"
+      "name": "ಈಕ್ವಲೈಜರ್"
     },
     "exponential-volume": {
-      "description": "Makes the volume slider exponential so it's easier to select lower volumes.",
-      "name": "Exponential Volume"
+      "description": "ವಾಲ್ಯೂಮ್ ಸ್ಲೈಡರ್ ಅನ್ನು ಘಾತೀಯವಾಗಿಸುತ್ತದೆ ಇದರಿಂದ ಕಡಿಮೆ ವಾಲ್ಯೂಮ್‌ಗಳನ್ನು ಆಯ್ಕೆ ಮಾಡುವುದು ಸುಲಭ.",
+      "name": "ಘಾತೀಯ ವಾಲ್ಯೂಮ್"
     },
     "in-app-menu": {
-      "description": "Gives menu-bars a fancy, dark or album-color look",
+      "description": "ಮೆನು-ಬಾರ್‌ಗಳಿಗೆ ಆಕರ್ಷಕ, ಡಾರ್ಕ್ ಅಥವಾ ಆಲ್ಬಮ್-ಬಣ್ಣದ ನೋಟ ನೀಡುತ್ತದೆ",
       "menu": {
-        "hide-dom-window-controls": "Hide DOM window controls"
+        "hide-dom-window-controls": "DOM ವಿಂಡೋ ನಿಯಂತ್ರಣಗಳನ್ನು ಮರೆಮಾಡಿ"
       },
-      "name": "In-App Menu"
+      "name": "ಇನ್-ಆಪ್ ಮೆನು"
     },
     "lumiastream": {
-      "description": "Adds Lumia Stream support",
+      "description": "Lumia Stream ಬೆಂಬಲವನ್ನು ಸೇರಿಸುತ್ತದೆ",
       "name": "Lumia Stream [Beta]"
     },
     "lyrics-genius": {
-      "description": "Adds lyrics support for most songs",
+      "description": "ಹೆಚ್ಚಿನ ಹಾಡುಗಳಿಗೆ ಸಾಹಿತ್ಯ ಬೆಂಬಲವನ್ನು ಸೇರಿಸುತ್ತದೆ",
       "menu": {
-        "romanized-lyrics": "Romanized Lyrics"
+        "romanized-lyrics": "ರೋಮನೈಸ್ಡ್ ಸಾಹಿತ್ಯ"
       },
       "name": "Lyrics Genius",
       "renderer": {
-        "fetched-lyrics": "Fetched lyrics for Genius"
+        "fetched-lyrics": "Genius ಗಾಗಿ ಸಾಹಿತ್ಯ ಪಡೆಯಲಾಗಿದೆ"
       }
     },
     "music-together": {
-      "description": "Share a playlist with others. When the host plays a song, everyone else will hear the same song",
+      "description": "ಇತರರೊಂದಿಗೆ ಪ್ಲೇಲಿಸ್ಟ್ ಹಂಚಿಕೊಳ್ಳಿ. ಹೋಸ್ಟ್ ಹಾಡನ್ನು ಪ್ಲೇ ಮಾಡಿದಾಗ, ಎಲ್ಲರೂ ಅದೇ ಹಾಡನ್ನು ಕೇಳುತ್ತಾರೆ",
       "dialog": {
-        "enter-host": "Enter Host ID"
+        "enter-host": "ಹೋಸ್ಟ್ ID ನಮೂದಿಸಿ"
       },
       "internal": {
-        "save": "Save",
-        "track-source": "Track Source",
-        "unknown-user": "Unknown User"
+        "save": "ಉಳಿಸಿ",
+        "track-source": "ಟ್ರ್ಯಾಕ್ ಮೂಲ",
+        "unknown-user": "ಅಜ್ಞಾತ ಬಳಕೆದಾರ"
       },
       "menu": {
-        "click-to-copy-id": "Copy Host ID",
-        "close": "Close Music Together",
-        "connected-users": "Connected Users",
-        "disconnect": "Disconnect Music Together",
-        "empty-user": "No connected users",
-        "host": "Music Together Host",
-        "join": "Join Music Together",
+        "click-to-copy-id": "ಹೋಸ್ಟ್ ID ನಕಲಿಸಿ",
+        "close": "Music Together ಮುಚ್ಚಿ",
+        "connected-users": "ಸಂಪರ್ಕಿತ ಬಳಕೆದಾರರು",
+        "disconnect": "Music Together ಸಂಪರ್ಕ ಕಡಿತಗೊಳಿಸಿ",
+        "empty-user": "ಯಾವುದೇ ಸಂಪರ್ಕಿತ ಬಳಕೆದಾರರಿಲ್ಲ",
+        "host": "Music Together ಹೋಸ್ಟ್",
+        "join": "Music Together ಸೇರಿ",
         "permission": {
-          "all": "Allow guests to control playlist and player",
-          "host-only": "Only the host can control playlist and player",
-          "playlist": "Allow guests to control playlist"
+          "all": "ಅತಿಥಿಗಳಿಗೆ ಪ್ಲೇಲಿಸ್ಟ್ ಮತ್ತು ಪ್ಲೇಯರ್ ನಿಯಂತ್ರಿಸಲು ಅನುಮತಿಸಿ",
+          "host-only": "ಹೋಸ್ಟ್ ಮಾತ್ರ ಪ್ಲೇಲಿಸ್ಟ್ ಮತ್ತು ಪ್ಲೇಯರ್ ನಿಯಂತ್ರಿಸಬಹುದು",
+          "playlist": "ಅತಿಥಿಗಳಿಗೆ ಪ್ಲೇಲಿಸ್ಟ್ ನಿಯಂತ್ರಿಸಲು ಅನುಮತಿಸಿ"
         },
-        "set-permission": "Change Control Permission",
+        "set-permission": "ನಿಯಂತ್ರಣ ಅನುಮತಿ ಬದಲಾಯಿಸಿ",
         "status": {
-          "disconnected": "Disconnected",
-          "guest": "Connected as Guest",
-          "host": "Connected as Host"
+          "disconnected": "ಸಂಪರ್ಕ ಕಡಿತಗೊಂಡಿದೆ",
+          "guest": "ಅತಿಥಿಯಾಗಿ ಸಂಪರ್ಕಿತವಾಗಿದೆ",
+          "host": "ಹೋಸ್ಟ್ ಆಗಿ ಸಂಪರ್ಕಿತವಾಗಿದೆ"
         }
       },
       "name": "Music Together [Beta]",
       "toast": {
-        "add-song-failed": "Failed to add song",
-        "closed": "Music Together closed",
-        "disconnected": "Music Together disconnected",
-        "host-failed": "Failed to host Music Together",
-        "id-copied": "Host ID copied to clipboard",
-        "id-copy-failed": "Failed to copy Host ID to clipboard",
-        "join-failed": "Failed to join Music Together",
-        "joined": "Joined Music Together",
-        "permission-changed": "Music Together permission changed to \"{{permission}}\"",
-        "remove-song-failed": "Failed to remove song",
-        "user-connected": "{{name}} joined Music Together",
-        "user-disconnected": "{{name}} left Music Together"
+        "add-song-failed": "ಹಾಡು ಸೇರಿಸಲು ವಿಫಲವಾಗಿದೆ",
+        "closed": "Music Together ಮುಚ್ಚಲಾಗಿದೆ",
+        "disconnected": "Music Together ಸಂಪರ್ಕ ಕಡಿತಗೊಂಡಿದೆ",
+        "host-failed": "Music Together ಹೋಸ್ಟ್ ಮಾಡಲು ವಿಫಲವಾಗಿದೆ",
+        "id-copied": "ಹೋಸ್ಟ್ ID ಕ್ಲಿಪ್‌ಬೋರ್ಡ್‌ಗೆ ನಕಲಿಸಲಾಗಿದೆ",
+        "id-copy-failed": "ಹೋಸ್ಟ್ ID ಕ್ಲಿಪ್‌ಬೋರ್ಡ್‌ಗೆ ನಕಲಿಸಲು ವಿಫಲವಾಗಿದೆ",
+        "join-failed": "Music Together ಸೇರಲು ವಿಫಲವಾಗಿದೆ",
+        "joined": "Music Together ಸೇರಿದ್ದೀರಿ",
+        "permission-changed": "Music Together ಅನುಮತಿಯನ್ನು \"{{permission}}\" ಗೆ ಬದಲಾಯಿಸಲಾಗಿದೆ",
+        "remove-song-failed": "ಹಾಡು ತೆಗೆದುಹಾಕಲು ವಿಫಲವಾಗಿದೆ",
+        "user-connected": "{{name}} Music Together ಸೇರಿದ್ದಾರೆ",
+        "user-disconnected": "{{name}} Music Together ನಿಂದ ನಿರ್ಗಮಿಸಿದ್ದಾರೆ"
       }
     },
     "navigation": {
-      "description": "Next/Back navigation arrows directly integrated in the interface, like in your favorite browser",
+      "description": "ನಿಮ್ಮ ಮೆಚ್ಚಿನ ಬ್ರೌಸರ್‌ನಲ್ಲಿರುವಂತೆ, ಇಂಟರ್‌ಫೇಸ್‌ನಲ್ಲಿ ನೇರವಾಗಿ ಸಂಯೋಜಿತವಾದ ಮುಂದಿನ/ಹಿಂದಿನ ನ್ಯಾವಿಗೇಷನ್ ಬಾಣಗಳು",
       "name": "Navigation",
       "templates": {
         "back": {
-          "title": "Go to previous page"
+          "title": "ಹಿಂದಿನ ಪುಟಕ್ಕೆ ಹೋಗಿ"
         },
         "forward": {
-          "title": "Go to next page"
+          "title": "ಮುಂದಿನ ಪುಟಕ್ಕೆ ಹೋಗಿ"
         }
       }
     },
     "no-google-login": {
-      "description": "Remove Google login buttons and links from the interface",
-      "name": "No Google Login"
+      "description": "ಇಂಟರ್‌ಫೇಸ್‌ನಿಂದ Google ಲಾಗಿನ್ ಬಟನ್‌ಗಳು ಮತ್ತು ಲಿಂಕ್‌ಗಳನ್ನು ತೆಗೆದುಹಾಕಿ",
+      "name": "Google ಲಾಗಿನ್ ಇಲ್ಲ"
     },
     "notifications": {
-      "description": "Display a notification when a song starts playing (interactive notifications are available on Windows)",
+      "description": "ಹಾಡು ಪ್ಲೇ ಆಗಲು ಪ್ರಾರಂಭಿಸಿದಾಗ ಅಧಿಸೂಚನೆ ತೋರಿಸಿ (ಸಂವಾದಾತ್ಮಕ ಅಧಿಸೂಚನೆಗಳು Windows ನಲ್ಲಿ ಲಭ್ಯವಿದೆ)",
       "menu": {
-        "interactive": "Interactive Notifications",
+        "interactive": "ಸಂವಾದಾತ್ಮಕ ಅಧಿಸೂಚನೆಗಳು",
         "interactive-settings": {
-          "label": "Interactive Settings",
+          "label": "ಸಂವಾದಾತ್ಮಕ ಸೆಟ್ಟಿಂಗ್‌ಗಳು",
           "submenu": {
-            "hide-button-text": "Hide button text",
-            "refresh-on-play-pause": "Refresh on Play/Pause",
-            "tray-controls": "Open/Close on tray click"
+            "hide-button-text": "ಬಟನ್ ಪಠ್ಯ ಮರೆಮಾಡಿ",
+            "hover-controls": "ಟ್ರೇ ಮೇಲೆ ಹೋವರ್ ಮಾಡಿದಾಗ ಮಿನಿ-ಪ್ಲೇಯರ್ ತೋರಿಸಿ",
+            "refresh-on-play-pause": "ಪ್ಲೇ/ವಿರಾಮದಲ್ಲಿ ರಿಫ್ರೆಶ್ ಮಾಡಿ",
+            "tray-controls": "ಟ್ರೇ ಕ್ಲಿಕ್‌ನಲ್ಲಿ ತೆರೆಯಿರಿ/ಮುಚ್ಚಿ"
           }
         },
-        "priority": "Notification Priority",
-        "toast-style": "Toast style",
-        "unpause-notification": "Show notification on unpause"
+        "priority": "ಅಧಿಸೂಚನೆ ಆದ್ಯತೆ",
+        "toast-style": "ಟೋಸ್ಟ್ ಶೈಲಿ",
+        "unpause-notification": "ಅನ್‌ಪಾಸ್‌ನಲ್ಲಿ ಅಧಿಸೂಚನೆ ತೋರಿಸಿ"
       },
-      "name": "Notifications"
+      "name": "ಅಧಿಸೂಚನೆಗಳು"
     },
     "performance-improvement": {
-      "description": "Improve performance by enabling experimental scripts",
+      "description": "ಪ್ರಾಯೋಗಿಕ ಸ್ಕ್ರಿಪ್ಟ್‌ಗಳನ್ನು ಸಕ್ರಿಯಗೊಳಿಸುವ ಮೂಲಕ ಕಾರ್ಯಕ್ಷಮತೆ ಸುಧಾರಿಸಿ",
       "name": "Performance improvement [Beta]"
     },
-    "picture-in-picture": {
-      "description": "Allows to switch the app to picture-in-picture mode",
+    "playback-recovery": {
+      "description": "ಸಿಕ್ಕಿಹಾಕಿಕೊಂಡ, ಸ್ಥಗಿತಗೊಂಡ ಅಥವಾ ಡೆಡ್ ಪ್ಲೇಬ್ಯಾಕ್ ಸ್ಥಿತಿಗಳಿಂದ ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಚೇತರಿಸಿಕೊಳ್ಳುತ್ತದೆ",
       "menu": {
-        "always-on-top": "Always on top",
+        "log-to-console": "ಚೇತರಿಕೆ ಘಟನೆಗಳನ್ನು ಕನ್ಸೋಲ್‌ಗೆ ಲಾಗ್ ಮಾಡಿ"
+      },
+      "name": "ಪ್ಲೇಬ್ಯಾಕ್ ಚೇತರಿಕೆ"
+    },
+    "picture-in-picture": {
+      "description": "ಅಪ್ಲಿಕೇಶನ್ ಅನ್ನು ಪಿಕ್ಚರ್-ಇನ್-ಪಿಕ್ಚರ್ ಮೋಡ್‌ಗೆ ಬದಲಾಯಿಸಲು ಅನುಮತಿಸುತ್ತದೆ",
+      "menu": {
+        "always-on-top": "ಯಾವಾಗಲೂ ಮೇಲಿರಲಿ",
         "hotkey": {
-          "label": "Hotkey",
+          "label": "ಹಾಟ್‌ಕೀ",
           "prompt": {
             "keybind-options": {
-              "hotkey": "Hotkey"
+              "hotkey": "ಹಾಟ್‌ಕೀ"
             },
-            "label": "Choose a hotkey to toggle picture-in-picture",
-            "title": "Picture-in-picture Hotkey"
+            "label": "ಪಿಕ್ಚರ್-ಇನ್-ಪಿಕ್ಚರ್ ಟಾಗಲ್ ಮಾಡಲು ಹಾಟ್‌ಕೀ ಆಯ್ಕೆಮಾಡಿ",
+            "title": "ಪಿಕ್ಚರ್-ಇನ್-ಪಿಕ್ಚರ್ ಹಾಟ್‌ಕೀ"
           }
         },
-        "save-window-position": "Save window position",
-        "save-window-size": "Save window size",
-        "use-native-pip": "Use browser native PiP"
+        "save-window-position": "ವಿಂಡೋ ಸ್ಥಾನ ಉಳಿಸಿ",
+        "save-window-size": "ವಿಂಡೋ ಗಾತ್ರ ಉಳಿಸಿ",
+        "use-native-pip": "ಬ್ರೌಸರ್ ನೇಟಿವ್ PiP ಬಳಸಿ"
       },
-      "name": "Picture-in-picture",
+      "name": "ಪಿಕ್ಚರ್-ಇನ್-ಪಿಕ್ಚರ್",
       "templates": {
-        "button": "Picture-in-picture"
+        "button": "ಪಿಕ್ಚರ್-ಇನ್-ಪಿಕ್ಚರ್"
       }
     },
     "playback-speed": {
-      "description": "Listen fast, listen slow! Adds a slider that controls song speed",
-      "name": "Playback Speed",
+      "description": "ವೇಗವಾಗಿ ಕೇಳಿ, ನಿಧಾನವಾಗಿ ಕೇಳಿ! ಹಾಡಿನ ವೇಗವನ್ನು ನಿಯಂತ್ರಿಸುವ ಸ್ಲೈಡರ್ ಸೇರಿಸುತ್ತದೆ",
+      "name": "ಪ್ಲೇಬ್ಯಾಕ್ ವೇಗ",
       "templates": {
-        "button": "Speed"
+        "button": "ವೇಗ"
       }
     },
     "precise-volume": {
-      "description": "Control the volume precisely using mousewheel/hotkeys, with a custom HUD and customizable volume steps",
+      "description": "ಮೌಸ್‌ವೀಲ್/ಹಾಟ್‌ಕೀಗಳನ್ನು ಬಳಸಿ, ಕಸ್ಟಮ್ HUD ಮತ್ತು ಕಸ್ಟಮೈಸ್ ಮಾಡಬಹುದಾದ ವಾಲ್ಯೂಮ್ ಹಂತಗಳೊಂದಿಗೆ ವಾಲ್ಯೂಮ್ ಅನ್ನು ನಿಖರವಾಗಿ ನಿಯಂತ್ರಿಸಿ",
       "menu": {
-        "arrows-shortcuts": "Local Arrow-keys Controls",
-        "custom-volume-steps": "Set Custom Volume Steps",
-        "global-shortcuts": "Global Hotkeys"
+        "arrows-shortcuts": "ಸ್ಥಳೀಯ ಬಾಣ-ಕೀಗಳ ನಿಯಂತ್ರಣಗಳು",
+        "custom-volume-steps": "ಕಸ್ಟಮ್ ವಾಲ್ಯೂಮ್ ಹಂತಗಳನ್ನು ಹೊಂದಿಸಿ",
+        "global-shortcuts": "ಜಾಗತಿಕ ಹಾಟ್‌ಕೀಗಳು"
       },
-      "name": "Precise Volume",
+      "name": "ನಿಖರ ವಾಲ್ಯೂಮ್",
       "prompt": {
         "global-shortcuts": {
           "keybind-options": {
-            "decrease": "Decrease Volume",
-            "increase": "Increase Volume"
+            "decrease": "ವಾಲ್ಯೂಮ್ ಕಡಿಮೆ ಮಾಡಿ",
+            "increase": "ವಾಲ್ಯೂಮ್ ಹೆಚ್ಚಿಸಿ"
           },
-          "label": "Choose Global Volume Keybinds:",
-          "title": "Global Volume Keybinds"
+          "label": "ಜಾಗತಿಕ ವಾಲ್ಯೂಮ್ ಕೀಬೈಂಡ್‌ಗಳನ್ನು ಆಯ್ಕೆಮಾಡಿ:",
+          "title": "ಜಾಗತಿಕ ವಾಲ್ಯೂಮ್ ಕೀಬೈಂಡ್‌ಗಳು"
         },
         "volume-steps": {
-          "label": "Choose Volume Increase/Decrease Steps",
-          "title": "Volume Steps"
+          "label": "ವಾಲ್ಯೂಮ್ ಹೆಚ್ಚಿಸುವ/ಕಡಿಮೆ ಮಾಡುವ ಹಂತಗಳನ್ನು ಆಯ್ಕೆಮಾಡಿ",
+          "title": "ವಾಲ್ಯೂಮ್ ಹಂತಗಳು"
         }
       }
     },
@@ -755,372 +768,372 @@
       "backend": {
         "dialog": {
           "quality-changer": {
-            "detail": "Current Quality: {{quality}}",
-            "message": "Choose Video Quality:",
-            "title": "Choose Video Quality"
+            "detail": "ಪ್ರಸ್ತುತ ಗುಣಮಟ್ಟ: {{quality}}",
+            "message": "ವೀಡಿಯೊ ಗುಣಮಟ್ಟ ಆಯ್ಕೆಮಾಡಿ:",
+            "title": "ವೀಡಿಯೊ ಗುಣಮಟ್ಟ ಆಯ್ಕೆಮಾಡಿ"
           }
         }
       },
-      "description": "Allows changing the video quality with a button on the video overlay",
-      "name": "Video Quality Changer",
+      "description": "ವೀಡಿಯೊ ಓವರ್‌ಲೇ ಮೇಲಿನ ಬಟನ್‌ನೊಂದಿಗೆ ವೀಡಿಯೊ ಗುಣಮಟ್ಟ ಬದಲಾಯಿಸಲು ಅನುಮತಿಸುತ್ತದೆ",
+      "name": "ವೀಡಿಯೊ ಗುಣಮಟ್ಟ ಬದಲಾವಣೆಗಾರ",
       "renderer": {
         "quality-settings-button": {
-          "label": "Open player quality changer"
+          "label": "ಪ್ಲೇಯರ್ ಗುಣಮಟ್ಟ ಬದಲಾವಣೆಗಾರ ತೆರೆಯಿರಿ"
         }
       }
     },
     "scrobbler": {
-      "description": "Add scrobbling support (etc. last.fm, Listenbrainz)",
+      "description": "ಸ್ಕ್ರಾಬ್ಲಿಂಗ್ ಬೆಂಬಲವನ್ನು ಸೇರಿಸಿ (ಉದಾ. last.fm, Listenbrainz)",
       "dialog": {
         "lastfm": {
           "auth-failed": {
-            "message": "Failed to authenticate with Last.fm\nHide the popup until the next restart.",
-            "title": "Authentication Failed"
+            "message": "Last.fm ನೊಂದಿಗೆ ದೃಢೀಕರಿಸಲು ವಿಫಲವಾಗಿದೆ\nಮುಂದಿನ ಮರುಪ್ರಾರಂಭದವರೆಗೆ ಪಾಪ್‌ಅಪ್ ಮರೆಮಾಡಿ.",
+            "title": "ದೃಢೀಕರಣ ವಿಫಲವಾಗಿದೆ"
           }
         }
       },
       "menu": {
         "lastfm": {
-          "api-settings": "Last.fm API Settings"
+          "api-settings": "Last.fm API ಸೆಟ್ಟಿಂಗ್‌ಗಳು"
         },
         "listenbrainz": {
-          "token": "Enter ListenBrainz user token"
+          "token": "ListenBrainz ಬಳಕೆದಾರ ಟೋಕನ್ ನಮೂದಿಸಿ"
         },
-        "scrobble-alternative-artist": "Use alternative artists",
-        "scrobble-alternative-title": "Use alternative titles",
-        "scrobble-other-media": "Scrobble other media"
+        "scrobble-alternative-title": "ಪರ್ಯಾಯ ಶೀರ್ಷಿಕೆಗಳನ್ನು ಬಳಸಿ",
+        "scrobble-alternative-artist": "ಪರ್ಯಾಯ ಕಲಾವಿದರನ್ನು ಬಳಸಿ",
+        "scrobble-other-media": "ಇತರ ಮಾಧ್ಯಮವನ್ನು ಸ್ಕ್ರಾಬಲ್ ಮಾಡಿ"
       },
-      "name": "Scrobbler",
+      "name": "ಸ್ಕ್ರಾಬ್ಲರ್",
       "prompt": {
         "lastfm": {
-          "api-key": "Last.fm API key",
-          "api-secret": "Last.fm API secret"
+          "api-key": "Last.fm API ಕೀ",
+          "api-secret": "Last.fm API ಸೀಕ್ರೆಟ್"
         },
         "listenbrainz": {
           "token": {
-            "label": "Enter your ListenBrainz user token:",
-            "title": "ListenBrainz token"
+            "label": "ನಿಮ್ಮ ListenBrainz ಬಳಕೆದಾರ ಟೋಕನ್ ನಮೂದಿಸಿ:",
+            "title": "ListenBrainz ಟೋಕನ್"
           }
         }
       }
     },
     "shortcuts": {
-      "description": "Allows setting global hotkeys for playback (play/pause/next/previous) and turning off media OSD by overriding media keys, turning on Ctrl/CMD + F to search, turning on Linux MPRIS support for media keys, and custom hotkeys for advanced users",
+      "description": "ಪ್ಲೇಬ್ಯಾಕ್‌ಗಾಗಿ ಜಾಗತಿಕ ಹಾಟ್‌ಕೀಗಳನ್ನು ಹೊಂದಿಸಲು (ಪ್ಲೇ/ವಿರಾಮ/ಮುಂದಿನ/ಹಿಂದಿನ) ಮತ್ತು ಮೀಡಿಯಾ ಕೀಗಳನ್ನು ಅತಿಕ್ರಮಿಸುವ ಮೂಲಕ ಮೀಡಿಯಾ OSD ಅನ್ನು ಆಫ್ ಮಾಡಲು, ಹುಡುಕಲು Ctrl/CMD + F ಅನ್ನು ಆನ್ ಮಾಡಲು, ಮೀಡಿಯಾ ಕೀಗಳಿಗಾಗಿ Linux MPRIS ಬೆಂಬಲವನ್ನು ಆನ್ ಮಾಡಲು, ಮತ್ತು ಸುಧಾರಿತ ಬಳಕೆದಾರರಿಗಾಗಿ ಕಸ್ಟಮ್ ಹಾಟ್‌ಕೀಗಳನ್ನು ಅನುಮತಿಸುತ್ತದೆ",
       "menu": {
-        "override-media-keys": "Override Media Keys",
-        "set-keybinds": "Set Global Song Controls"
+        "override-media-keys": "ಮೀಡಿಯಾ ಕೀಗಳನ್ನು ಅತಿಕ್ರಮಿಸಿ",
+        "set-keybinds": "ಜಾಗತಿಕ ಹಾಡು ನಿಯಂತ್ರಣಗಳನ್ನು ಹೊಂದಿಸಿ"
       },
       "name": "Shortcuts (& MPRIS)",
       "prompt": {
         "keybind": {
           "keybind-options": {
-            "next": "Next",
-            "play-pause": "Play / Pause",
-            "previous": "Previous"
+            "next": "ಮುಂದಿನ",
+            "play-pause": "ಪ್ಲೇ / ವಿರಾಮ",
+            "previous": "ಹಿಂದಿನ"
           },
-          "label": "Choose Global Keybinds for Songs Control:",
-          "title": "Global Keybinds"
+          "label": "ಹಾಡಿನ ನಿಯಂತ್ರಣಕ್ಕಾಗಿ ಜಾಗತಿಕ ಕೀಬೈಂಡ್‌ಗಳನ್ನು ಆಯ್ಕೆಮಾಡಿ:",
+          "title": "ಜಾಗತಿಕ ಕೀಬೈಂಡ್‌ಗಳು"
         }
       }
     },
     "skip-disliked-songs": {
-      "description": "Skips disliked songs",
-      "name": "Skip Disliked Songs"
+      "description": "ಇಷ್ಟವಿಲ್ಲದ ಹಾಡುಗಳನ್ನು ಬಿಟ್ಟುಬಿಡುತ್ತದೆ",
+      "name": "ಇಷ್ಟವಿಲ್ಲದ ಹಾಡುಗಳನ್ನು ಬಿಟ್ಟುಬಿಡಿ"
     },
     "skip-silences": {
-      "description": "Automatically skip silences sections in songs",
-      "name": "Skip Silences"
+      "description": "ಹಾಡುಗಳಲ್ಲಿನ ಮೌನ ವಿಭಾಗಗಳನ್ನು ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಬಿಟ್ಟುಬಿಡಿ",
+      "name": "ಮೌನಗಳನ್ನು ಬಿಟ್ಟುಬಿಡಿ"
     },
     "sponsorblock": {
-      "description": "Automatically Skips non-music parts like intro/outro or parts of music videos where the song isn't playing",
+      "description": "ಪರಿಚಯ/ಸಮಾಪ್ತಿ ಅಥವಾ ಹಾಡು ಪ್ಲೇ ಆಗದ ಮ್ಯೂಸಿಕ್ ವೀಡಿಯೊಗಳ ಭಾಗಗಳಂತಹ ಸಂಗೀತವಲ್ಲದ ಭಾಗಗಳನ್ನು ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಬಿಟ್ಟುಬಿಡುತ್ತದೆ",
       "name": "SponsorBlock"
     },
     "synced-lyrics": {
-      "description": "Provides synced lyrics to songs, using providers like LRClib.",
+      "description": "LRClib ನಂತಹ ಪೂರೈಕೆದಾರರನ್ನು ಬಳಸಿಕೊಂಡು ಹಾಡುಗಳಿಗೆ ಸಿಂಕ್ ಮಾಡಿದ ಸಾಹಿತ್ಯವನ್ನು ಒದಗಿಸುತ್ತದೆ.",
       "errors": {
-        "fetch": "⚠️\tAn error occurred while fetching the lyrics.\n\tPlease try again later.",
-        "not-found": "⚠️ No lyrics found for this song."
+        "fetch": "⚠️\tಸಾಹಿತ್ಯ ಪಡೆಯುವಾಗ ದೋಷ ಸಂಭವಿಸಿದೆ.\n\tದಯವಿಟ್ಟು ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+        "not-found": "⚠️ ಈ ಹಾಡಿಗೆ ಸಾಹಿತ್ಯ ಕಂಡುಬಂದಿಲ್ಲ."
       },
       "menu": {
-        "convert-chinese-character": {
-          "label": "Convert Chinese character",
-          "submenu": {
-            "disabled": {
-              "label": "Disabled",
-              "tooltip": "Disable Chinese character conversion"
-            },
-            "simplified-to-traditional": {
-              "label": "Simplified to Traditional",
-              "tooltip": "Convert Simplified Chinese to Traditional Chinese"
-            },
-            "traditional-to-simplified": {
-              "label": "Traditional to Simplified",
-              "tooltip": "Convert Traditional Chinese to Simplified Chinese"
-            }
-          },
-          "tooltip": "Convert Chinese character to Traditional or Simplified"
+        "preferred-provider": {
+          "label": "ಆದ್ಯತೆಯ ಪೂರೈಕೆದಾರ",
+          "tooltip": "ಬಳಸಲು ಪೂರ್ವನಿಯೋಜಿತ ಪೂರೈಕೆದಾರರನ್ನು ಆಯ್ಕೆಮಾಡಿ",
+          "none": {
+            "label": "ಯಾವುದೂ ಇಲ್ಲ",
+            "tooltip": "ಯಾವುದೇ ಆದ್ಯತೆಯ ಪೂರೈಕೆದಾರ ಇಲ್ಲ"
+          }
         },
         "default-text-string": {
-          "label": "Default character between lyrics",
-          "tooltip": "Choose the default character to use for the gap between lyrics"
+          "label": "ಸಾಹಿತ್ಯದ ನಡುವಿನ ಪೂರ್ವನಿಯೋಜಿತ ಅಕ್ಷರ",
+          "tooltip": "ಸಾಹಿತ್ಯದ ನಡುವಿನ ಅಂತರಕ್ಕಾಗಿ ಬಳಸಲು ಪೂರ್ವನಿಯೋಜಿತ ಅಕ್ಷರವನ್ನು ಆಯ್ಕೆಮಾಡಿ"
         },
         "line-effect": {
-          "label": "Line effect",
+          "label": "ಸಾಲಿನ ಪರಿಣಾಮ",
           "submenu": {
             "fancy": {
-              "label": "Fancy",
-              "tooltip": "Use large, app-like effects on the current line"
+              "label": "ಫ್ಯಾನ್ಸಿ",
+              "tooltip": "ಪ್ರಸ್ತುತ ಸಾಲಿನ ಮೇಲೆ ದೊಡ್ಡ, ಅಪ್ಲಿಕೇಶನ್-ರೀತಿಯ ಪರಿಣಾಮಗಳನ್ನು ಬಳಸಿ"
             },
             "focus": {
-              "label": "Focus",
-              "tooltip": "Make only the current line white"
+              "label": "ಫೋಕಸ್",
+              "tooltip": "ಪ್ರಸ್ತುತ ಸಾಲನ್ನು ಮಾತ್ರ ಬಿಳಿಯಾಗಿಸಿ"
             },
             "offset": {
-              "label": "Offset",
-              "tooltip": "Offset on the right the current line"
+              "label": "ಆಫ್‌ಸೆಟ್",
+              "tooltip": "ಪ್ರಸ್ತುತ ಸಾಲನ್ನು ಬಲಕ್ಕೆ ಆಫ್‌ಸೆಟ್ ಮಾಡಿ"
             },
             "scale": {
-              "label": "Scale",
-              "tooltip": "Scale the current line"
+              "label": "ಸ್ಕೇಲ್",
+              "tooltip": "ಪ್ರಸ್ತುತ ಸಾಲನ್ನು ಸ್ಕೇಲ್ ಮಾಡಿ"
             }
           },
-          "tooltip": "Choose the effect to apply to the current line"
+          "tooltip": "ಪ್ರಸ್ತುತ ಸಾಲಿಗೆ ಅನ್ವಯಿಸಬೇಕಾದ ಪರಿಣಾಮವನ್ನು ಆಯ್ಕೆಮಾಡಿ"
         },
         "lyrics-font-size": {
-          "label": "Lyrics font size",
+          "label": "ಸಾಹಿತ್ಯ ಫಾಂಟ್ ಗಾತ್ರ",
           "submenu": {
-            "large": {
-              "label": "Large",
-              "tooltip": "Use the original larger lyrics size"
+            "small": {
+              "label": "ಚಿಕ್ಕದು",
+              "tooltip": "ಹೆಚ್ಚು ಕಾಂಪ್ಯಾಕ್ಟ್ ಸಾಹಿತ್ಯ ಗಾತ್ರವನ್ನು ಬಳಸಿ"
             },
             "medium": {
-              "label": "Medium",
-              "tooltip": "Use a balanced lyrics size"
+              "label": "ಮಧ್ಯಮ",
+              "tooltip": "ಸಮತೋಲಿತ ಸಾಹಿತ್ಯ ಗಾತ್ರವನ್ನು ಬಳಸಿ"
             },
-            "small": {
-              "label": "Small",
-              "tooltip": "Use a more compact lyrics size"
+            "large": {
+              "label": "ದೊಡ್ಡದು",
+              "tooltip": "ಮೂಲ ದೊಡ್ಡ ಸಾಹಿತ್ಯ ಗಾತ್ರವನ್ನು ಬಳಸಿ"
             }
           },
-          "tooltip": "Choose how large the lyrics text should be"
+          "tooltip": "ಸಾಹಿತ್ಯ ಪಠ್ಯ ಎಷ್ಟು ದೊಡ್ಡದಾಗಿರಬೇಕೆಂದು ಆಯ್ಕೆಮಾಡಿ"
         },
         "precise-timing": {
-          "label": "Make the lyrics perfectly synced",
-          "tooltip": "Calculate to the milisecond the display of the next line (can have a small impact on performance)"
-        },
-        "preferred-provider": {
-          "label": "Preferred Provider",
-          "none": {
-            "label": "None",
-            "tooltip": "No preferred provider"
-          },
-          "tooltip": "Choose the default provider to use"
+          "label": "ಸಾಹಿತ್ಯವನ್ನು ಸಂಪೂರ್ಣವಾಗಿ ಸಿಂಕ್ ಮಾಡಿ",
+          "tooltip": "ಮುಂದಿನ ಸಾಲಿನ ಪ್ರದರ್ಶನವನ್ನು ಮಿಲಿಸೆಕೆಂಡ್‌ವರೆಗೆ ಲೆಕ್ಕಹಾಕಿ (ಕಾರ್ಯಕ್ಷಮತೆಯ ಮೇಲೆ ಸಣ್ಣ ಪರಿಣಾಮ ಬೀರಬಹುದು)"
         },
         "romanization": {
-          "label": "Romanize lyrics",
-          "tooltip": "If the lyrics are in a different language, try to display a latin version."
+          "label": "ಸಾಹಿತ್ಯವನ್ನು ರೋಮನೈಸ್ ಮಾಡಿ",
+          "tooltip": "ಸಾಹಿತ್ಯವು ಬೇರೆ ಭಾಷೆಯಲ್ಲಿದ್ದರೆ, ಲ್ಯಾಟಿನ್ ಆವೃತ್ತಿಯನ್ನು ಪ್ರದರ್ಶಿಸಲು ಪ್ರಯತ್ನಿಸಿ."
         },
         "show-lyrics-even-if-inexact": {
-          "label": "Show lyrics even if inexact",
-          "tooltip": "If the song is not found, the plugin tries again with a different search query.\nThe result from the second attempt may not be exact."
+          "label": "ನಿಖರವಲ್ಲದಿದ್ದರೂ ಸಾಹಿತ್ಯ ತೋರಿಸಿ",
+          "tooltip": "ಹಾಡು ಕಂಡುಬರದಿದ್ದರೆ, ಪ್ಲಗಿನ್ ಬೇರೆ ಹುಡುಕಾಟ ಪ್ರಶ್ನೆಯೊಂದಿಗೆ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸುತ್ತದೆ.\nಎರಡನೇ ಪ್ರಯತ್ನದ ಫಲಿತಾಂಶವು ನಿಖರವಾಗಿಲ್ಲದಿರಬಹುದು."
         },
         "show-time-codes": {
-          "label": "Show time codes",
-          "tooltip": "Show the time codes next to the lyrics"
+          "label": "ಸಮಯ ಕೋಡ್‌ಗಳನ್ನು ತೋರಿಸಿ",
+          "tooltip": "ಸಾಹಿತ್ಯದ ಪಕ್ಕದಲ್ಲಿ ಸಮಯ ಕೋಡ್‌ಗಳನ್ನು ತೋರಿಸಿ"
+        },
+        "convert-chinese-character": {
+          "label": "ಚೀನೀ ಅಕ್ಷರಗಳನ್ನು ಪರಿವರ್ತಿಸಿ",
+          "submenu": {
+            "disabled": {
+              "label": "ನಿಷ್ಕ್ರಿಯಗೊಳಿಸಲಾಗಿದೆ",
+              "tooltip": "ಚೀನೀ ಅಕ್ಷರ ಪರಿವರ್ತನೆ ನಿಷ್ಕ್ರಿಯಗೊಳಿಸಿ"
+            },
+            "simplified-to-traditional": {
+              "label": "ಸರಳೀಕೃತದಿಂದ ಸಾಂಪ್ರದಾಯಿಕಕ್ಕೆ",
+              "tooltip": "ಸರಳೀಕೃತ ಚೀನೀಯನ್ನು ಸಾಂಪ್ರದಾಯಿಕ ಚೀನೀಯಾಗಿ ಪರಿವರ್ತಿಸಿ"
+            },
+            "traditional-to-simplified": {
+              "label": "ಸಾಂಪ್ರದಾಯಿಕದಿಂದ ಸರಳೀಕೃತಕ್ಕೆ",
+              "tooltip": "ಸಾಂಪ್ರದಾಯಿಕ ಚೀನೀಯನ್ನು ಸರಳೀಕೃತ ಚೀನೀಯಾಗಿ ಪರಿವರ್ತಿಸಿ"
+            }
+          },
+          "tooltip": "ಚೀನೀ ಅಕ್ಷರಗಳನ್ನು ಸಾಂಪ್ರದಾಯಿಕ ಅಥವಾ ಸರಳೀಕೃತಕ್ಕೆ ಪರಿವರ್ತಿಸಿ"
         },
         "translation": {
-          "clear-cache": {
-            "label": "Clear translation cache",
-            "tooltip": "Delete all cached translations stored on disk."
+          "label": "ಸಾಹಿತ್ಯ ಅನುವಾದ",
+          "tooltip": "ಸಾಹಿತ್ಯವನ್ನು ಅನುವಾದಿಸಿ ಮತ್ತು ಅನುವಾದಿತ ಫಲಿತಾಂಶವನ್ನು ಸಾಲು-ಸಾಲಾಗಿ ಪ್ರದರ್ಶಿಸಿ.",
+          "enabled": {
+            "label": "ಅನುವಾದ ಸಕ್ರಿಯಗೊಳಿಸಿ",
+            "tooltip": "ಪ್ರತಿ ಮೂಲ ಸಾಹಿತ್ಯ ಸಾಲಿನ ಕೆಳಗೆ ಅನುವಾದಿತ ಸಾಲನ್ನು ತೋರಿಸಿ."
+          },
+          "provider": {
+            "label": "ಪೂರೈಕೆದಾರ",
+            "tooltip": "ಅನುವಾದಕ್ಕಾಗಿ ಯಾವ ಸೇವೆಯನ್ನು ಬಳಸಬೇಕು."
+          },
+          "target-language": {
+            "label": "ಗುರಿ ಭಾಷೆ",
+            "tooltip": "ಸಾಹಿತ್ಯವನ್ನು ಯಾವ ಭಾಷೆಗೆ ಅನುವಾದಿಸಬೇಕು.",
+            "options": {
+              "auto": "Follow app language",
+              "zh-CN": "简体中文",
+              "zh-TW": "繁體中文",
+              "en": "English",
+              "ja": "日本語",
+              "ko": "한국어",
+              "fr": "Français",
+              "de": "Deutsch",
+              "es": "Español",
+              "pt-BR": "Português (Brasil)",
+              "pt-PT": "Português (Portugal)",
+              "it": "Italiano",
+              "nl": "Nederlands",
+              "ru": "Русский",
+              "uk": "Українська",
+              "pl": "Polski",
+              "tr": "Türkçe",
+              "ar": "العربية",
+              "he": "עברית",
+              "fa": "فارسی",
+              "hi": "हिन्दी",
+              "bn": "বাংলা",
+              "ur": "اردو",
+              "ta": "தமிழ்",
+              "te": "తెలుగు",
+              "mr": "मराठी",
+              "id": "Bahasa Indonesia",
+              "ms": "Bahasa Melayu",
+              "vi": "Tiếng Việt",
+              "th": "ไทย",
+              "fil": "Filipino",
+              "sw": "Kiswahili",
+              "sv": "Svenska",
+              "no": "Norsk",
+              "da": "Dansk",
+              "fi": "Suomi",
+              "cs": "Čeština",
+              "ro": "Română",
+              "hu": "Magyar",
+              "el": "Ελληνικά",
+              "bg": "Български",
+              "sr": "Српски",
+              "hr": "Hrvatski",
+              "sk": "Slovenčina",
+              "lt": "Lietuvių"
+            }
           },
           "configure": {
-            "label": "Configure API key & model…",
-            "tooltip": "Set provider-specific translation options."
+            "label": "API ಕೀ ಮತ್ತು ಮಾದರಿ ಕಾನ್ಫಿಗರ್ ಮಾಡಿ...",
+            "tooltip": "ಪೂರೈಕೆದಾರ-ನಿರ್ದಿಷ್ಟ ಅನುವಾದ ಆಯ್ಕೆಗಳನ್ನು ಹೊಂದಿಸಿ."
           },
-          "enabled": {
-            "label": "Enable translation",
-            "tooltip": "Show a translated line beneath each original lyric line."
-          },
-          "label": "Lyrics translation",
-          "provider": {
-            "label": "Provider",
-            "tooltip": "Which service to use for translation."
+          "clear-cache": {
+            "label": "ಅನುವಾದ ಕ್ಯಾಶ್ ತೆರವುಗೊಳಿಸಿ",
+            "tooltip": "ಡಿಸ್ಕ್‌ನಲ್ಲಿ ಸಂಗ್ರಹಿಸಲಾದ ಎಲ್ಲಾ ಕ್ಯಾಶ್ ಮಾಡಿದ ಅನುವಾದಗಳನ್ನು ಅಳಿಸಿ."
           },
           "providers": {
+            "shared": {
+              "api-key": "API ಕೀ",
+              "model": "ಮಾದರಿ"
+            },
+            "openai-compatible": {
+              "name": "OpenAI ಹೊಂದಾಣಿಕೆಯ",
+              "prompt-title": "OpenAI-ಹೊಂದಾಣಿಕೆಯ ಸೆಟ್ಟಿಂಗ್‌ಗಳು",
+              "prompt-label": "Ollama ಸೇರಿದಂತೆ OpenAI-ಹೊಂದಾಣಿಕೆಯ ಸರ್ವರ್‌ಗಳನ್ನು ಬಳಸಿ (ಮೂಲ URL http://127.0.0.1:11434/v1, API ಮೋಡ್ auto ಅಥವಾ chat-completions).",
+              "base-url": "ಮೂಲ URL",
+              "api-mode": "API ಮೋಡ್ (responses / auto / chat-completions)"
+            },
             "anthropic": {
               "name": "Anthropic Claude",
-              "prompt-label": "Uses the native Anthropic Messages API.",
-              "prompt-title": "Anthropic settings"
+              "prompt-title": "Anthropic settings",
+              "prompt-label": "Uses the native Anthropic Messages API."
             },
             "gemini": {
               "name": "Google Gemini",
-              "prompt-label": "Uses Google's Generative Language API (generateContent).",
-              "prompt-title": "Gemini settings"
-            },
-            "google-translate": {
-              "host": "Host",
-              "name": "Google Translate",
-              "prompt-label": "Uses the unofficial free Google Translate endpoint. No API key is required, but Google may rate-limit it.",
-              "prompt-title": "Google Translate settings"
+              "prompt-title": "Gemini settings",
+              "prompt-label": "Uses Google's Generative Language API (generateContent)."
             },
             "local-cli": {
-              "command": "Command",
+              "name": "Local CLI",
+              "prompt-title": "Local CLI settings",
+              "prompt-label": "Use a locally logged-in Claude Code, Codex, or Gemini CLI. The command and model are automatic; the CLI uses its own logged-in default.",
               "engine": "Local CLI",
               "engine-claude": "Claude Code",
               "engine-codex": "Codex",
               "engine-gemini": "Gemini CLI",
-              "name": "Local CLI",
-              "prompt-label": "Use a locally logged-in Claude Code, Codex, or Gemini CLI. The command and model are automatic; the CLI uses its own logged-in default.",
-              "prompt-title": "Local CLI settings",
+              "command": "Command",
               "timeout": "Timeout seconds (15-600)"
             },
-            "openai-compatible": {
-              "api-mode": "API mode (responses / auto / chat-completions)",
-              "base-url": "Base URL",
-              "name": "OpenAI compatible",
-              "prompt-label": "Use OpenAI-compatible servers, including Ollama (base URL http://127.0.0.1:11434/v1, API mode auto or chat-completions).",
-              "prompt-title": "OpenAI-compatible settings"
-            },
-            "shared": {
-              "api-key": "API key",
-              "model": "Model"
+            "google-translate": {
+              "name": "Google Translate",
+              "prompt-title": "Google Translate settings",
+              "prompt-label": "Uses the unofficial free Google Translate endpoint. No API key is required, but Google may rate-limit it.",
+              "host": "Host"
             }
-          },
-          "target-language": {
-            "label": "Target language",
-            "options": {
-              "ar": "العربية",
-              "auto": "Follow app language",
-              "bg": "Български",
-              "bn": "বাংলা",
-              "cs": "Čeština",
-              "da": "Dansk",
-              "de": "Deutsch",
-              "el": "Ελληνικά",
-              "en": "English",
-              "es": "Español",
-              "fa": "فارسی",
-              "fi": "Suomi",
-              "fil": "Filipino",
-              "fr": "Français",
-              "he": "עברית",
-              "hi": "हिन्दी",
-              "hr": "Hrvatski",
-              "hu": "Magyar",
-              "id": "Bahasa Indonesia",
-              "it": "Italiano",
-              "ja": "日本語",
-              "ko": "한국어",
-              "lt": "Lietuvių",
-              "mr": "मराठी",
-              "ms": "Bahasa Melayu",
-              "nl": "Nederlands",
-              "no": "Norsk",
-              "pl": "Polski",
-              "pt-BR": "Português (Brasil)",
-              "pt-PT": "Português (Portugal)",
-              "ro": "Română",
-              "ru": "Русский",
-              "sk": "Slovenčina",
-              "sr": "Српски",
-              "sv": "Svenska",
-              "sw": "Kiswahili",
-              "ta": "தமிழ்",
-              "te": "తెలుగు",
-              "th": "ไทย",
-              "tr": "Türkçe",
-              "uk": "Українська",
-              "ur": "اردو",
-              "vi": "Tiếng Việt",
-              "zh-CN": "简体中文",
-              "zh-TW": "繁體中文"
-            },
-            "tooltip": "The language to translate lyrics into."
-          },
-          "tooltip": "Translate lyrics and show the translated result line-by-line for display."
+          }
         }
       },
-      "name": "Synced Lyrics",
+      "name": "ಸಿಂಕ್ ಮಾಡಿದ ಸಾಹಿತ್ಯ",
       "refetch-btn": {
-        "fetching": "Fetching...",
-        "normal": "Refetch lyrics"
+        "fetching": "ಪಡೆಯಲಾಗುತ್ತಿದೆ...",
+        "normal": "ಸಾಹಿತ್ಯ ಮರುಪಡೆಯಿರಿ"
       },
       "warnings": {
-        "duration-mismatch": "⚠️ - The lyrics may be out of sync due to a duration mismatch.",
-        "inexact": "⚠️ - The lyrics for this song may not be exact",
-        "instrumental": "⚠️ - This is an instrumental song"
+        "duration-mismatch": "⚠️ - ಅವಧಿಯ ಹೊಂದಾಣಿಕೆಯಿಲ್ಲದ ಕಾರಣ ಸಾಹಿತ್ಯವು ಸಿಂಕ್‌ನಿಂದ ಹೊರಗಿರಬಹುದು.",
+        "inexact": "⚠️ - ಈ ಹಾಡಿನ ಸಾಹಿತ್ಯವು ನಿಖರವಾಗಿಲ್ಲದಿರಬಹುದು",
+        "instrumental": "⚠️ - ಇದು ವಾದ್ಯ ಸಂಗೀತದ ಹಾಡು"
       }
     },
     "taskbar-mediacontrol": {
-      "description": "Control playback from your Windows taskbar",
-      "name": "Taskbar Media Control"
+      "description": "ನಿಮ್ಮ Windows ಟಾಸ್ಕ್‌ಬಾರ್‌ನಿಂದ ಪ್ಲೇಬ್ಯಾಕ್ ನಿಯಂತ್ರಿಸಿ",
+      "name": "ಟಾಸ್ಕ್‌ಬಾರ್ ಮೀಡಿಯಾ ನಿಯಂತ್ರಣ"
     },
     "touchbar": {
-      "description": "Adds a TouchBar widget for macOS users",
+      "description": "macOS ಬಳಕೆದಾರರಿಗಾಗಿ TouchBar ವಿಜೆಟ್ ಸೇರಿಸುತ್ತದೆ",
       "name": "TouchBar"
     },
     "transparent-player": {
-      "description": "Makes the app window transparent",
+      "description": "ಅಪ್ಲಿಕೇಶನ್ ವಿಂಡೋವನ್ನು ಪಾರದರ್ಶಕವಾಗಿಸುತ್ತದೆ",
+      "name": "ಪಾರದರ್ಶಕ ಪ್ಲೇಯರ್",
       "menu": {
         "opacity": {
-          "label": "Opacity",
+          "label": "ಅಪಾರದರ್ಶಕತೆ",
           "submenu": {
             "percent": "{{opacity}}%"
           }
         },
         "type": {
-          "label": "Type",
+          "label": "ಪ್ರಕಾರ",
           "submenu": {
-            "acrylic": "Acrylic",
+            "acrylic": "ಅಕ್ರಿಲಿಕ್",
             "mica": "Mica",
-            "none": "None",
-            "tabbed": "Tabbed"
+            "tabbed": "ಟ್ಯಾಬ್ಡ್",
+            "none": "ಯಾವುದೂ ಇಲ್ಲ"
           }
         }
-      },
-      "name": "Transparent Player"
+      }
     },
     "tuna-obs": {
-      "description": "Integration with OBS's plugin Tuna",
+      "description": "OBS ನ ಪ್ಲಗಿನ್ Tuna ಜೊತೆ ಏಕೀಕರಣ",
       "name": "Tuna OBS"
     },
     "unobtrusive-player": {
-      "description": "Prevents the player from popping up when playing a song",
-      "name": "Unobtrusive Player"
+      "description": "ಹಾಡು ಪ್ಲೇ ಆಗುವಾಗ ಪ್ಲೇಯರ್ ಪಾಪ್ ಅಪ್ ಆಗುವುದನ್ನು ತಡೆಯುತ್ತದೆ",
+      "name": "ಅಡೆತಡೆಯಿಲ್ಲದ ಪ್ಲೇಯರ್"
     },
     "video-toggle": {
-      "description": "Adds a button to switch between Video/Song mode. can also optionally remove the whole video tab",
+      "description": "ವೀಡಿಯೊ/ಹಾಡು ಮೋಡ್ ನಡುವೆ ಬದಲಾಯಿಸಲು ಬಟನ್ ಸೇರಿಸುತ್ತದೆ. ಸಂಪೂರ್ಣ ವೀಡಿಯೊ ಟ್ಯಾಬ್ ಅನ್ನು ಸಹ ತೆಗೆದುಹಾಕಬಹುದು",
       "menu": {
         "align": {
-          "label": "Alignment",
+          "label": "ಜೋಡಣೆ",
           "submenu": {
-            "left": "Left",
-            "middle": "Middle",
-            "right": "Right"
+            "left": "ಎಡ",
+            "middle": "ಮಧ್ಯ",
+            "right": "ಬಲ"
           }
         },
-        "force-hide": "Force remove video tab",
+        "force-hide": "ವೀಡಿಯೊ ಟ್ಯಾಬ್ ಅನ್ನು ಬಲವಂತವಾಗಿ ತೆಗೆದುಹಾಕಿ",
         "mode": {
-          "label": "Mode",
+          "label": "ಮೋಡ್",
           "submenu": {
-            "custom": "Custom toggle",
-            "disabled": "Disabled",
-            "native": "Native toggle"
+            "custom": "ಕಸ್ಟಮ್ ಟಾಗಲ್",
+            "disabled": "ನಿಷ್ಕ್ರಿಯಗೊಳಿಸಲಾಗಿದೆ",
+            "native": "ನೇಟಿವ್ ಟಾಗಲ್"
           }
         }
       },
-      "name": "Video Toggle",
+      "name": "ವೀಡಿಯೊ ಟಾಗಲ್",
       "templates": {
-        "button-song": "Song",
-        "button-video": "Video"
+        "button-song": "ಹಾಡು",
+        "button-video": "ವೀಡಿಯೊ"
       }
     },
     "visualizer": {
-      "description": "Adds a visualizer to the player",
+      "description": "ಪ್ಲೇಯರ್‌ಗೆ ವಿಷುವಲೈಜರ್ ಸೇರಿಸುತ್ತದೆ",
       "menu": {
-        "visualizer-type": "Visualizer Type"
+        "visualizer-type": "ವಿಷುವಲೈಜರ್ ಪ್ರಕಾರ"
       },
-      "name": "Visualizer"
+      "name": "ವಿಷುವಲೈಜರ್"
     }
   }
 }

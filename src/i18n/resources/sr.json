@@ -144,7 +144,8 @@
               "disabled": "Onemogućeno",
               "enabled-and-hide-app": "Omogući sklanjanje aplikacije u sistemsku listu",
               "enabled-and-show-app": "Omogući i prikaži aplikaciju",
-              "play-pause-on-click": "Pokreni/Pauziraj na klik"
+              "play-pause-on-click": "Pokreni/Pauziraj na klik",
+              "move-to-current-desktop": "Premesti na trenutnu virtuelnu radnu površinu pri prikazivanju"
             }
           },
           "visual-tweaks": {
@@ -162,7 +163,7 @@
                 "force-show": "Prinudno prikaži",
                 "hide": "Sakrij",
                 "label": "'Sviđa mi se' dugmići",
-                "swap": "Swap like buttons order"
+                "swap": "Zameni redosled 'Sviđa mi se' dugmića"
               },
               "remove-upgrade-button": "Ukloni dugme za nadogradnju",
               "theme": {
@@ -414,15 +415,15 @@
       }
     },
     "clock": {
-      "description": "Add a clock to the navigation bar",
+      "description": "Dodaj sat na navigacioni meni",
       "menu": {
         "format": {
-          "24-hour-format": "24-Hour Format",
-          "display-seconds": "Display Seconds",
+          "24-hour-format": "24-časovni format",
+          "display-seconds": "Prikaži sekunde",
           "label": "Format"
         }
       },
-      "name": "Clock"
+      "name": "Sat"
     },
     "compact-sidebar": {
       "description": "Uvek koristi kompaktni meni sa strane",
@@ -685,7 +686,8 @@
           "submenu": {
             "hide-button-text": "Sakrij tekst dugmeta",
             "refresh-on-play-pause": "Osveži prilikom Pokreni/Pauziraj",
-            "tray-controls": "Otvori/Zatvori klikom na sistemsku traku"
+            "tray-controls": "Otvori/Zatvori klikom na sistemsku traku",
+            "hover-controls": "Prikaži mini-plejer pri prelasku mišem preko ikone u sistemskoj traci"
           }
         },
         "priority": "Prioritet obaveštenja",
@@ -843,22 +845,22 @@
       },
       "menu": {
         "convert-chinese-character": {
-          "label": "Convert Chinese character",
+          "label": "Konvertuj kineske karaktere",
           "submenu": {
             "disabled": {
-              "label": "Disabled",
-              "tooltip": "Disable Chinese character conversion"
+              "label": "Onemogućeno",
+              "tooltip": "Onemogući konverziju kineskih karaktera"
             },
             "simplified-to-traditional": {
-              "label": "Simplified to Traditional",
-              "tooltip": "Convert Simplified Chinese to Traditional Chinese"
+              "label": "Pojednostavljeno u Tradicionalno",
+              "tooltip": "Konvertuj pojednostavljene kineske karaktere u tradicionalne"
             },
             "traditional-to-simplified": {
-              "label": "Traditional to Simplified",
-              "tooltip": "Convert Traditional Chinese to Simplified Chinese"
+              "label": "Tradicionalno u Pojednostavljeno",
+              "tooltip": "Konvertuj tradicionalne kineske karaktere u pojednostavljene"
             }
           },
-          "tooltip": "Convert Chinese character to Traditional or Simplified"
+          "tooltip": "Konvertuj kineske karaktere u tradicionalne ili pojednostavljene"
         },
         "default-text-string": {
           "label": "Podrazumevani karakteri između tekstova pesama",
@@ -887,22 +889,22 @@
           "tooltip": "Izaberi efekat koji će biti primenjen na trenutnoj liniji"
         },
         "lyrics-font-size": {
-          "label": "Lyrics font size",
+          "label": "Veličina fonta teksta pesme",
           "submenu": {
             "large": {
-              "label": "Large",
-              "tooltip": "Use the original larger lyrics size"
+              "label": "Velika",
+              "tooltip": "Koristi originalnu veću veličinu teksta"
             },
             "medium": {
-              "label": "Medium",
-              "tooltip": "Use a balanced lyrics size"
+              "label": "Srednja",
+              "tooltip": "Koristi uravnoteženu veličinu teksta"
             },
             "small": {
-              "label": "Small",
-              "tooltip": "Use a more compact lyrics size"
+              "label": "Mala",
+              "tooltip": "Koristi kompaktniju veličinu teksta"
             }
           },
-          "tooltip": "Choose how large the lyrics text should be"
+          "tooltip": "Izaberi koliko veliki tekst pesme treba da bude"
         },
         "precise-timing": {
           "label": "Učini da tekst pesme bude savršeno usklađen",
@@ -930,67 +932,67 @@
         },
         "translation": {
           "clear-cache": {
-            "label": "Clear translation cache",
-            "tooltip": "Delete all cached translations stored on disk."
+            "label": "Očisti keš prevoda",
+            "tooltip": "Obriši sve keširane prevode sačuvane na disku."
           },
           "configure": {
-            "label": "Configure API key & model…",
-            "tooltip": "Set provider-specific translation options."
+            "label": "Konfiguriši API ključ i model…",
+            "tooltip": "Podesi opcije prevoda specifične za provajdera."
           },
           "enabled": {
-            "label": "Enable translation",
-            "tooltip": "Show a translated line beneath each original lyric line."
+            "label": "Omogući prevod",
+            "tooltip": "Prikaži prevedeni red ispod svakog originalnog reda teksta."
           },
-          "label": "Lyrics translation",
+          "label": "Prevod teksta pesme",
           "provider": {
-            "label": "Provider",
-            "tooltip": "Which service to use for translation."
+            "label": "Provajder",
+            "tooltip": "Koji servis koristiti za prevod."
           },
           "providers": {
             "anthropic": {
               "name": "Anthropic Claude",
-              "prompt-label": "Uses the native Anthropic Messages API.",
-              "prompt-title": "Anthropic settings"
+              "prompt-label": "Koristi izvorni Anthropic Messages API.",
+              "prompt-title": "Anthropic podešavanja"
             },
             "gemini": {
               "name": "Google Gemini",
-              "prompt-label": "Uses Google's Generative Language API (generateContent).",
-              "prompt-title": "Gemini settings"
+              "prompt-label": "Koristi Google-ov Generative Language API (generateContent).",
+              "prompt-title": "Gemini podešavanja"
             },
             "google-translate": {
               "host": "Host",
-              "name": "Google Translate",
-              "prompt-label": "Uses the unofficial free Google Translate endpoint. No API key is required, but Google may rate-limit it.",
-              "prompt-title": "Google Translate settings"
+              "name": "Google Prevodioc",
+              "prompt-label": "Koristi nezvanični besplatni Google Translate endpoint. API ključ nije potreban, ali Google može ograničiti broj zahteva.",
+              "prompt-title": "Podešavanja Google Prevodioca"
             },
             "local-cli": {
-              "command": "Command",
-              "engine": "Local CLI",
+              "command": "Komanda",
+              "engine": "Lokalni CLI",
               "engine-claude": "Claude Code",
               "engine-codex": "Codex",
               "engine-gemini": "Gemini CLI",
-              "name": "Local CLI",
-              "prompt-label": "Use a locally logged-in Claude Code, Codex, or Gemini CLI. The command and model are automatic; the CLI uses its own logged-in default.",
-              "prompt-title": "Local CLI settings",
-              "timeout": "Timeout seconds (15-600)"
+              "name": "Lokalni CLI",
+              "prompt-label": "Koristi lokalno prijavljeni Claude Code, Codex ili Gemini CLI. Komanda i model su automatski; CLI koristi svoj podrazumevani nalog.",
+              "prompt-title": "Podešavanja lokalnog CLI-ja",
+              "timeout": "Vremensko ograničenje u sekundama (15-600)"
             },
             "openai-compatible": {
-              "api-mode": "API mode (responses / auto / chat-completions)",
-              "base-url": "Base URL",
-              "name": "OpenAI compatible",
-              "prompt-label": "Use OpenAI-compatible servers, including Ollama (base URL http://127.0.0.1:11434/v1, API mode auto or chat-completions).",
-              "prompt-title": "OpenAI-compatible settings"
+              "api-mode": "API režim (responses / auto / chat-completions)",
+              "base-url": "Bazni URL",
+              "name": "OpenAI kompatibilan",
+              "prompt-label": "Koristi OpenAI-kompatibilne servere, uključujući Ollama (bazni URL http://127.0.0.1:11434/v1, API režim auto ili chat-completions).",
+              "prompt-title": "OpenAI-kompatibilna podešavanja"
             },
             "shared": {
-              "api-key": "API key",
+              "api-key": "API ključ",
               "model": "Model"
             }
           },
           "target-language": {
-            "label": "Target language",
+            "label": "Ciljni jezik",
             "options": {
               "ar": "العربية",
-              "auto": "Follow app language",
+              "auto": "Prati jezik aplikacije",
               "bg": "Български",
               "bn": "বাংলা",
               "cs": "Čeština",
@@ -1035,9 +1037,9 @@
               "zh-CN": "简体中文",
               "zh-TW": "繁體中文"
             },
-            "tooltip": "The language to translate lyrics into."
+            "tooltip": "Jezik na koji se prevode tekstovi pesama."
           },
-          "tooltip": "Translate lyrics and show the translated result line-by-line for display."
+          "tooltip": "Prevedi tekst pesme i prikaži prevedeni rezultat red po red."
         }
       },
       "name": "Sinhronizovani tekstovi pesama",
@@ -1121,6 +1123,17 @@
         "visualizer-type": "Tip vizualizacije"
       },
       "name": "Vizualizacija"
+    },
+    "audio-only": {
+      "description": "Forsira režim samo-zvuka — blokira sve video strimove na mrežnom i plejerskom nivou radi uštede RAM-a i propusnog opsega",
+      "name": "Samo Zvuk"
+    },
+    "playback-recovery": {
+      "description": "Automatski se oporavlja od zaglavljenih, zastalih ili mrtvih stanja reprodukcije",
+      "menu": {
+        "log-to-console": "Beleži događaje oporavka u konzolu"
+      },
+      "name": "Oporavak Reprodukcije"
     }
   }
 }

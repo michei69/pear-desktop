@@ -144,7 +144,8 @@
               "disabled": "Απενεργοποιημένο",
               "enabled-and-hide-app": "Ενεργοποιημένο και απόκρυψη της εφαρμογής",
               "enabled-and-show-app": "Ενεργοποιημένο και εμφάνιση της εφαρμογής",
-              "play-pause-on-click": "Αναπαραγωγή/Παύση με κλικ"
+              "play-pause-on-click": "Αναπαραγωγή/Παύση με κλικ",
+              "move-to-current-desktop": "Μετακίνηση στην τρέχουσα εικονική επιφάνεια εργασίας κατά την εμφάνιση"
             }
           },
           "visual-tweaks": {
@@ -239,7 +240,7 @@
             "percent": "{{ratio}}%"
           }
         },
-        "enable-seekbar": "Enable seekbar theming"
+        "enable-seekbar": "Ενεργοποίηση θέματος γραμμής αναζήτησης"
       },
       "name": "Θέμα χρωμάτων άλμπουμ"
     },
@@ -249,7 +250,7 @@
         "blur-amount": {
           "label": "Ποσότητα θολώματος",
           "submenu": {
-            "pixels": "{{blurAmount}} pixels"
+            "pixels": "{{blurAmount}} εικονοστοιχεία"
           }
         },
         "buffer": {
@@ -267,7 +268,7 @@
         "quality": {
           "label": "Ποιότητα",
           "submenu": {
-            "pixels": "{{quality}} pixels"
+            "pixels": "{{quality}} εικονοστοιχεία"
           }
         },
         "size": {
@@ -323,18 +324,18 @@
           "label": "Όνομα κεντρικού υπολογιστή"
         },
         "https": {
-          "label": "HTTPS & Certificates",
+          "label": "HTTPS και πιστοποιητικά",
           "submenu": {
             "cert": {
-              "dialogTitle": "Select HTTPS certificate file",
-              "label": "Certificate file (.crt/.pem)"
+              "dialogTitle": "Επιλέξτε αρχείο πιστοποιητικού HTTPS",
+              "label": "Αρχείο πιστοποιητικού (.crt/.pem)"
             },
             "enable-https": {
-              "label": "Enable HTTPS"
+              "label": "Ενεργοποίηση HTTPS"
             },
             "key": {
-              "dialogTitle": "Select HTTPS private key file",
-              "label": "Private key file (.key/.pem)"
+              "dialogTitle": "Επιλέξτε αρχείο ιδιωτικού κλειδιού HTTPS",
+              "label": "Αρχείο ιδιωτικού κλειδιού (.key/.pem)"
             }
           }
         },
@@ -400,7 +401,7 @@
       "prompt": {
         "selector": {
           "label": "Τρέχουσα γλώσσα λεζάντας: {{language}}",
-          "none": "None",
+          "none": "Κανένα",
           "title": "Επιλογή γλώσσας λεζάντας"
         }
       },
@@ -414,15 +415,15 @@
       }
     },
     "clock": {
-      "description": "Add a clock to the navigation bar",
+      "description": "Προσθήκη ρολογιού στη γραμμή πλοήγησης",
       "menu": {
         "format": {
-          "24-hour-format": "24-Hour Format",
-          "display-seconds": "Display Seconds",
-          "label": "Format"
+          "24-hour-format": "24ωρη μορφή",
+          "display-seconds": "Εμφάνιση δευτερολέπτων",
+          "label": "Μορφή"
         }
       },
-      "name": "Clock"
+      "name": "Ρολόι"
     },
     "compact-sidebar": {
       "description": "Να είναι πάντα συμπαγές το sidebar",
@@ -451,15 +452,15 @@
       }
     },
     "custom-output-device": {
-      "description": "Configure a custom output media device for songs",
+      "description": "Διαμόρφωση προσαρμοσμένης συσκευής εξόδου πολυμέσων για τραγούδια",
       "menu": {
-        "device-selector": "Select Device"
+        "device-selector": "Επιλογή συσκευής"
       },
-      "name": "Custom Output Device",
+      "name": "Προσαρμοσμένη συσκευή εξόδου",
       "prompt": {
         "device-selector": {
-          "label": "Choose the output media device to be used",
-          "title": "Select Output Device"
+          "label": "Επιλέξτε τη συσκευή εξόδου πολυμέσων που θα χρησιμοποιηθεί",
+          "title": "Επιλογή συσκευής εξόδου"
         }
       }
     },
@@ -488,11 +489,11 @@
         "play-on-application": "Αναπαραγωγή στο {{applicationName}}",
         "set-inactivity-timeout": "Ορισμός χρονικού ορίου αδράνειας",
         "set-status-display-type": {
-          "label": "Status text",
+          "label": "Κείμενο κατάστασης",
           "submenu": {
-            "application": "Listening to {{applicationName}}",
-            "artist": "Listening to {artist}",
-            "title": "Listening to {song title}"
+            "application": "Ακούει {{applicationName}}",
+            "artist": "Ακούει {artist}",
+            "title": "Ακούει {song title}"
           }
         }
       },
@@ -674,7 +675,7 @@
     },
     "no-google-login": {
       "description": "Αφαίρεση των κουμπιών και των συνδέσμων σύνδεσης Google από το περιβάλλον εργασίας",
-      "name": "No Google Login"
+      "name": "Χωρίς σύνδεση Google"
     },
     "notifications": {
       "description": "Εμφάνιση ειδοποίησης όταν ξεκινάει η αναπαραγωγή ενός τραγουδιού (οι διαδραστικές ειδοποιήσεις είναι διαθέσιμες στα Windows)",
@@ -685,7 +686,8 @@
           "submenu": {
             "hide-button-text": "Απόκρυψη κειμένου κουμπιού",
             "refresh-on-play-pause": "Ανανέωση σε Αναπαραγωγή/Παύση",
-            "tray-controls": "Άνοιγμα/κλείσιμο με κλικ στο δίσκο"
+            "tray-controls": "Άνοιγμα/κλείσιμο με κλικ στο δίσκο",
+            "hover-controls": "Εμφάνιση μίνι αναπαραγωγής κατά την αιώρηση του δίσκου"
           }
         },
         "priority": "Προτεραιότητα κοινοποίησης",
@@ -786,7 +788,7 @@
         "listenbrainz": {
           "token": "Εισάγετε το διακριτικό χρήστη ListenBrainz"
         },
-        "scrobble-alternative-artist": "Use alternative artists",
+        "scrobble-alternative-artist": "Χρήση εναλλακτικών καλλιτεχνών",
         "scrobble-alternative-title": "Χρήση εναλλακτικών τίτλων",
         "scrobble-other-media": "Scrobble άλλα μέσα ενημέρωσης"
       },
@@ -843,22 +845,22 @@
       },
       "menu": {
         "convert-chinese-character": {
-          "label": "Convert Chinese character",
+          "label": "Μετατροπή κινεζικών χαρακτήρων",
           "submenu": {
             "disabled": {
-              "label": "Disabled",
-              "tooltip": "Disable Chinese character conversion"
+              "label": "Απενεργοποιημένο",
+              "tooltip": "Απενεργοποίηση μετατροπής κινεζικών χαρακτήρων"
             },
             "simplified-to-traditional": {
-              "label": "Simplified to Traditional",
-              "tooltip": "Convert Simplified Chinese to Traditional Chinese"
+              "label": "Απλοποιημένα σε Παραδοσιακά",
+              "tooltip": "Μετατροπή απλοποιημένων κινεζικών σε παραδοσιακά κινεζικά"
             },
             "traditional-to-simplified": {
-              "label": "Traditional to Simplified",
-              "tooltip": "Convert Traditional Chinese to Simplified Chinese"
+              "label": "Παραδοσιακά σε Απλοποιημένα",
+              "tooltip": "Μετατροπή παραδοσιακών κινεζικών σε απλοποιημένα κινεζικά"
             }
           },
-          "tooltip": "Convert Chinese character to Traditional or Simplified"
+          "tooltip": "Μετατροπή κινεζικών χαρακτήρων σε παραδοσιακούς ή απλοποιημένους"
         },
         "default-text-string": {
           "label": "Προεπιλεγμένος χαρακτήρας μεταξύ στίχων",
@@ -887,34 +889,34 @@
           "tooltip": "Επιλέξτε το εφέ που θα εφαρμοστεί στην τρέχουσα γραμμή"
         },
         "lyrics-font-size": {
-          "label": "Lyrics font size",
+          "label": "Μέγεθος γραμματοσειράς στίχων",
           "submenu": {
             "large": {
-              "label": "Large",
-              "tooltip": "Use the original larger lyrics size"
+              "label": "Μεγάλο",
+              "tooltip": "Χρήση του αρχικού μεγαλύτερου μεγέθους στίχων"
             },
             "medium": {
-              "label": "Medium",
-              "tooltip": "Use a balanced lyrics size"
+              "label": "Μεσαίο",
+              "tooltip": "Χρήση ισορροπημένου μεγέθους στίχων"
             },
             "small": {
-              "label": "Small",
-              "tooltip": "Use a more compact lyrics size"
+              "label": "Μικρό",
+              "tooltip": "Χρήση πιο συμπαγούς μεγέθους στίχων"
             }
           },
-          "tooltip": "Choose how large the lyrics text should be"
+          "tooltip": "Επιλέξτε πόσο μεγάλο θα είναι το κείμενο των στίχων"
         },
         "precise-timing": {
           "label": "Κάντε τους στίχους τέλεια συγχρονισμένους",
           "tooltip": "Υπολογίζει με ακρίβεια χιλιοστού του δευτερολέπτου την εμφάνιση της επόμενης γραμμής (μπορεί να έχει μικρή επίπτωση στην απόδοση)"
         },
         "preferred-provider": {
-          "label": "Preferred Provider",
+          "label": "Προτιμώμενος πάροχος",
           "none": {
-            "label": "None",
-            "tooltip": "No preferred provider"
+            "label": "Κανένα",
+            "tooltip": "Κανένας προτιμώμενος πάροχος"
           },
-          "tooltip": "Choose the default provider to use"
+          "tooltip": "Επιλέξτε τον προεπιλεγμένο πάροχο"
         },
         "romanization": {
           "label": "Στίχοι Ρομαντικοποίηση",
@@ -930,67 +932,67 @@
         },
         "translation": {
           "clear-cache": {
-            "label": "Clear translation cache",
-            "tooltip": "Delete all cached translations stored on disk."
+            "label": "Εκκαθάριση προσωρινής μνήμης μετάφρασης",
+            "tooltip": "Διαγραφή όλων των αποθηκευμένων μεταφράσεων στο δίσκο."
           },
           "configure": {
-            "label": "Configure API key & model…",
-            "tooltip": "Set provider-specific translation options."
+            "label": "Διαμόρφωση κλειδιού API και μοντέλου...",
+            "tooltip": "Ορισμός επιλογών μετάφρασης ειδικών για τον πάροχο."
           },
           "enabled": {
-            "label": "Enable translation",
-            "tooltip": "Show a translated line beneath each original lyric line."
+            "label": "Ενεργοποίηση μετάφρασης",
+            "tooltip": "Εμφάνιση μεταφρασμένης γραμμής κάτω από κάθε αρχική γραμμή στίχων."
           },
-          "label": "Lyrics translation",
+          "label": "Μετάφραση στίχων",
           "provider": {
-            "label": "Provider",
-            "tooltip": "Which service to use for translation."
+            "label": "Πάροχος",
+            "tooltip": "Ποια υπηρεσία θα χρησιμοποιηθεί για μετάφραση."
           },
           "providers": {
             "anthropic": {
               "name": "Anthropic Claude",
-              "prompt-label": "Uses the native Anthropic Messages API.",
-              "prompt-title": "Anthropic settings"
+              "prompt-label": "Χρησιμοποιεί το εγγενές Anthropic Messages API.",
+              "prompt-title": "Ρυθμίσεις Anthropic"
             },
             "gemini": {
               "name": "Google Gemini",
-              "prompt-label": "Uses Google's Generative Language API (generateContent).",
-              "prompt-title": "Gemini settings"
+              "prompt-label": "Χρησιμοποιεί το Google Generative Language API (generateContent).",
+              "prompt-title": "Ρυθμίσεις Gemini"
             },
             "google-translate": {
-              "host": "Host",
-              "name": "Google Translate",
-              "prompt-label": "Uses the unofficial free Google Translate endpoint. No API key is required, but Google may rate-limit it.",
-              "prompt-title": "Google Translate settings"
+              "host": "Κεντρικός υπολογιστής",
+              "name": "Google Μετάφραση",
+              "prompt-label": "Χρησιμοποιεί το ανεπίσημο δωρεάν endpoint του Google Translate. Δεν απαιτείται κλειδί API, αλλά η Google μπορεί να περιορίσει τον ρυθμό.",
+              "prompt-title": "Ρυθμίσεις Google Μετάφρασης"
             },
             "local-cli": {
-              "command": "Command",
-              "engine": "Local CLI",
+              "command": "Εντολή",
+              "engine": "Τοπικό CLI",
               "engine-claude": "Claude Code",
               "engine-codex": "Codex",
               "engine-gemini": "Gemini CLI",
-              "name": "Local CLI",
-              "prompt-label": "Use a locally logged-in Claude Code, Codex, or Gemini CLI. The command and model are automatic; the CLI uses its own logged-in default.",
-              "prompt-title": "Local CLI settings",
-              "timeout": "Timeout seconds (15-600)"
+              "name": "Τοπικό CLI",
+              "prompt-label": "Χρήση τοπικά συνδεδεμένου Claude Code, Codex ή Gemini CLI. Η εντολή και το μοντέλο είναι αυτόματα· το CLI χρησιμοποιεί τη δική του συνδεδεμένη προεπιλογή.",
+              "prompt-title": "Ρυθμίσεις τοπικού CLI",
+              "timeout": "Δευτερόλεπτα χρονικού ορίου (15-600)"
             },
             "openai-compatible": {
-              "api-mode": "API mode (responses / auto / chat-completions)",
-              "base-url": "Base URL",
-              "name": "OpenAI compatible",
-              "prompt-label": "Use OpenAI-compatible servers, including Ollama (base URL http://127.0.0.1:11434/v1, API mode auto or chat-completions).",
-              "prompt-title": "OpenAI-compatible settings"
+              "api-mode": "Λειτουργία API (responses / auto / chat-completions)",
+              "base-url": "Βασική URL",
+              "name": "Συμβατό με OpenAI",
+              "prompt-label": "Χρήση διακομιστών συμβατών με OpenAI, συμπεριλαμβανομένου του Ollama (βασική URL http://127.0.0.1:11434/v1, λειτουργία API auto ή chat-completions).",
+              "prompt-title": "Ρυθμίσεις συμβατών με OpenAI"
             },
             "shared": {
-              "api-key": "API key",
-              "model": "Model"
+              "api-key": "Κλειδί API",
+              "model": "Μοντέλο"
             }
           },
           "target-language": {
-            "label": "Target language",
+            "label": "Γλώσσα προορισμού",
             "options": {
               "ar": "العربية",
-              "auto": "Follow app language",
+              "auto": "Ακολούθησε τη γλώσσα εφαρμογής",
               "bg": "Български",
               "bn": "বাংলা",
               "cs": "Čeština",
@@ -1035,9 +1037,9 @@
               "zh-CN": "简体中文",
               "zh-TW": "繁體中文"
             },
-            "tooltip": "The language to translate lyrics into."
+            "tooltip": "Η γλώσσα στην οποία θα μεταφραστούν οι στίχοι."
           },
-          "tooltip": "Translate lyrics and show the translated result line-by-line for display."
+          "tooltip": "Μετάφραση στίχων και εμφάνιση του μεταφρασμένου αποτελέσματος γραμμή προς γραμμή."
         }
       },
       "name": "Συγχρονισμένοι στίχοι",
@@ -1060,25 +1062,25 @@
       "name": "TouchBar"
     },
     "transparent-player": {
-      "description": "Makes the app window transparent",
+      "description": "Κάνει το παράθυρο της εφαρμογής διαφανές",
       "menu": {
         "opacity": {
-          "label": "Opacity",
+          "label": "Αδιαφάνεια",
           "submenu": {
             "percent": "{{opacity}}%"
           }
         },
         "type": {
-          "label": "Type",
+          "label": "Τύπος",
           "submenu": {
-            "acrylic": "Acrylic",
+            "acrylic": "Ακρυλικό",
             "mica": "Mica",
-            "none": "None",
-            "tabbed": "Tabbed"
+            "none": "Κανένα",
+            "tabbed": "Με καρτέλες"
           }
         }
       },
-      "name": "Transparent Player"
+      "name": "Διαφανής αναπαραγωγή"
     },
     "tuna-obs": {
       "description": "Ενσωμάτωση με το plugin Tuna του OBS",
@@ -1095,13 +1097,13 @@
           "label": "Στοίχιση",
           "submenu": {
             "left": "Αριστερά",
-            "middle": "Middle",
+            "middle": "Μέση",
             "right": "Δεξιά"
           }
         },
         "force-hide": "Αναγκαστική αφαίρεση καρτέλας βίντεο",
         "mode": {
-          "label": "Mode",
+          "label": "Λειτουργία",
           "submenu": {
             "custom": "Προσαρμοσμένη εναλλαγή",
             "disabled": "Απενεργοποιημένο",
@@ -1121,6 +1123,17 @@
         "visualizer-type": "Τύπος απεικονιστή"
       },
       "name": "Απεικονιστής"
+    },
+    "audio-only": {
+      "description": "Επιβάλει τη λειτουργία μόνο ήχου — αποκλείει όλες τις ροές βίντεο σε επίπεδο δικτύου και αναπαραγωγής για εξοικονόμηση RAM και εύρους ζώνης",
+      "name": "Μόνο ήχος"
+    },
+    "playback-recovery": {
+      "description": "Ανακτά αυτόματα από κολλημένες, σταματημένες ή νεκρές καταστάσεις αναπαραγωγής",
+      "name": "Ανάκτηση αναπαραγωγής",
+      "menu": {
+        "log-to-console": "Καταγραφή συμβάντων ανάκτησης στην κονσόλα"
+      }
     }
   }
 }

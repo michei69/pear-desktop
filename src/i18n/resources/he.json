@@ -144,16 +144,17 @@
               "disabled": "מושבת",
               "enabled-and-hide-app": "מופעל והסתר אפליקציה",
               "enabled-and-show-app": "מופעל והמציג את האפליקציה",
-              "play-pause-on-click": "הפעל/השהה בלחיצה"
+              "play-pause-on-click": "הפעל/השהה בלחיצה",
+              "move-to-current-desktop": "העבר לשולחן עבודה וירטואלי נוכחי בעת הצגה"
             }
           },
           "visual-tweaks": {
             "label": "תיקונים חזותיים",
             "submenu": {
               "custom-window-title": {
-                "label": "Custom window title",
+                "label": "כותרת חלון מותאמת אישית",
                 "prompt": {
-                  "label": "Enter custom window title: (leave empty to disable)",
+                  "label": "הזן כותרת חלון מותאמת: (השאר ריק לביטול)",
                   "placeholder": "לדוגמה: שולחן כתיבה אגסי"
                 }
               },
@@ -162,7 +163,7 @@
                 "force-show": "הפעל בכוח",
                 "hide": "הסתר",
                 "label": "כפתורי לייק",
-                "swap": "Swap like buttons order"
+                "swap": "החלף סדר כפתורי לייק"
               },
               "remove-upgrade-button": "הסר לחצן שדרוג",
               "theme": {
@@ -239,7 +240,7 @@
             "percent": "{{ratio}}%"
           }
         },
-        "enable-seekbar": "Enable seekbar theming"
+        "enable-seekbar": "הפעל עיצוב סרגל גלילה"
       },
       "name": "ערכת נושא צבע אלבום"
     },
@@ -323,18 +324,18 @@
           "label": "שם שרת אחסון"
         },
         "https": {
-          "label": "HTTPS & Certificates",
+          "label": "HTTPS ותעודות",
           "submenu": {
             "cert": {
-              "dialogTitle": "Select HTTPS certificate file",
-              "label": "Certificate file (.crt/.pem)"
+              "dialogTitle": "בחר קובץ תעודת HTTPS",
+              "label": "קובץ תעודה (.crt/.pem)"
             },
             "enable-https": {
-              "label": "Enable HTTPS"
+              "label": "הפעל HTTPS"
             },
             "key": {
-              "dialogTitle": "Select HTTPS private key file",
-              "label": "Private key file (.key/.pem)"
+              "dialogTitle": "בחר קובץ מפתח פרטי HTTPS",
+              "label": "קובץ מפתח פרטי (.key/.pem)"
             }
           }
         },
@@ -414,15 +415,15 @@
       }
     },
     "clock": {
-      "description": "Add a clock to the navigation bar",
+      "description": "הוסף שעון לשורת הניווט",
       "menu": {
         "format": {
-          "24-hour-format": "24-Hour Format",
-          "display-seconds": "Display Seconds",
-          "label": "Format"
+          "24-hour-format": "פורמט 24 שעות",
+          "display-seconds": "הצג שניות",
+          "label": "פורמט"
         }
       },
-      "name": "Clock"
+      "name": "שעון"
     },
     "compact-sidebar": {
       "description": "הגדר תמיד את סרגל הצד למצב קומפקטי",
@@ -438,33 +439,33 @@
         "options": {
           "multi-input": {
             "fade-in-duration": "תתפייד בזמן[מילישניות]",
-            "fade-out-duration": "Fade out duration (ms)",
+            "fade-out-duration": "משך דעיכה (ms)",
             "fade-scaling": {
-              "label": "Fade scaling",
+              "label": "קנה מידה של דעיכה",
               "linear": "לינארי",
               "logarithmic": "לוגריתמי"
             },
-            "seconds-before-end": "Crossfade N seconds before end"
+            "seconds-before-end": "קרוספייד N שניות לפני הסוף"
           },
-          "title": "Crossfade options"
+          "title": "אפשרויות קרוספייד"
         }
       }
     },
     "custom-output-device": {
-      "description": "Configure a custom output media device for songs",
+      "description": "הגדר התקן פלט מדיה מותאם אישית לשירים",
       "menu": {
-        "device-selector": "Select Device"
+        "device-selector": "בחר התקן"
       },
-      "name": "Custom Output Device",
+      "name": "התקן פלט מותאם אישית",
       "prompt": {
         "device-selector": {
-          "label": "Choose the output media device to be used",
-          "title": "Select Output Device"
+          "label": "בחר את התקן פלט המדיה לשימוש",
+          "title": "בחר התקן פלט"
         }
       }
     },
     "disable-autoplay": {
-      "description": "Makes song start in \"paused\" mode",
+      "description": "גורם לשיר להתחיל במצב \"מושהה\"",
       "menu": {
         "apply-once": "חל רק בהפעלה"
       },
@@ -472,35 +473,35 @@
     },
     "discord": {
       "backend": {
-        "already-connected": "Attempted to connect with active connection",
+        "already-connected": "ניסה להתחבר עם חיבור פעיל",
         "connected": "התחבר לדיסקורד",
         "disconnected": "התנתק לדיסקורד"
       },
-      "description": "Show your friends what you listen to with Rich Presence",
+      "description": "הראה לחבריך מה אתה מאזין באמצעות Rich Presence",
       "menu": {
         "auto-reconnect": "חיבור מחדש אוטומטי",
         "clear-activity": "נקה פעילות",
-        "clear-activity-after-timeout": "Clear activity after timeout",
+        "clear-activity-after-timeout": "נקה פעילות לאחר זמן קצוב",
         "connected": "מחובר",
         "disconnected": "מנותק",
-        "hide-duration-left": "Hide duration left",
+        "hide-duration-left": "הסתר זמן נותר",
         "hide-github-button": "הסתר את לחצן הקישור של GitHub",
         "play-on-application": "הפעל ביוטיוב מיוזיק",
         "set-inactivity-timeout": "הגדר פסק זמן לחוסר פעילות",
         "set-status-display-type": {
-          "label": "Status text",
+          "label": "טקסט סטטוס",
           "submenu": {
-            "application": "Listening to {{applicationName}}",
-            "artist": "Listening to {artist}",
-            "title": "Listening to {song title}"
+            "application": "מאזין ל-{{applicationName}}",
+            "artist": "מאזין ל-{artist}",
+            "title": "מאזין ל-{song title}"
           }
         }
       },
       "name": "Discord Rich Presence",
       "prompt": {
         "set-inactivity-timeout": {
-          "label": "Enter inactivity timeout in seconds:",
-          "title": "Set inactivity timeout"
+          "label": "הזן זמן קצוב לחוסר פעילות בשניות:",
+          "title": "הגדר זמן קצוב לחוסר פעילות"
         }
       }
     },
@@ -518,33 +519,33 @@
             "buttons": {
               "ok": "אוקיי"
             },
-            "detail": "({{playlistSize}} songs)",
+            "detail": "({{playlistSize}} שירים)",
             "message": "מוריד פלייליסט {{playlistTitle}}",
             "title": "הורדה התחילה"
           }
         },
         "feedback": {
-          "conversion-progress": "Conversion: {{percent}}%",
-          "converting": "Converting…",
-          "done": "Done: {{filePath}}",
-          "download-info": "Downloading {{artist}} - {{title}} [{{videoId}}",
-          "download-progress": "Download: {{percent}}%",
+          "conversion-progress": "המרה: {{percent}}%",
+          "converting": "ממיר…",
+          "done": "בוצע: {{filePath}}",
+          "download-info": "מוריד {{artist}} - {{title}} [{{videoId}}",
+          "download-progress": "הורדה: {{percent}}%",
           "downloading": "מוריד…",
-          "downloading-counter": "Downloading {{current}}/{{total}}…",
-          "downloading-playlist": "Downloading playlist \"{{playlistTitle}}\" - {{playlistSize}} songs ({{playlistId}})",
-          "error-while-downloading": "Error downloading \"{{author}} - {{title}}\": {{error}}",
-          "folder-already-exists": "The folder {{playlistFolder}} already exists",
-          "getting-playlist-info": "Getting playlist info…",
+          "downloading-counter": "מוריד {{current}}/{{total}}…",
+          "downloading-playlist": "מוריד פלייליסט \"{{playlistTitle}}\" - {{playlistSize}} שירים ({{playlistId}})",
+          "error-while-downloading": "שגיאה בהורדת \"{{author}} - {{title}}\": {{error}}",
+          "folder-already-exists": "התיקייה {{playlistFolder}} כבר קיימת",
+          "getting-playlist-info": "מקבל מידע על הפלייליסט…",
           "loading": "בטְעִינָה…",
           "playlist-has-only-one-song": "לפלייליסט יש רק פריט אחד, מוריד אותו ישירות",
           "playlist-id-not-found": "לא נמצא מזהה ID פלייליסט",
-          "playlist-is-empty": "Playlist is empty",
-          "playlist-is-mix-or-private": "Error getting playlist info: make sure it isn't a private or \"Mixed for you\" playlist\n\n{{error}}",
+          "playlist-is-empty": "הפלייליסט ריק",
+          "playlist-is-mix-or-private": "שגיאה בקבלת מידע על הפלייליסט: ודא שזו אינה פלייליסט פרטית או \"מעורבב בשבילך\"\n\n{{error}}",
           "preparing-file": "מכין קובץ…",
           "saving": "שומר…",
           "trying-to-get-playlist-id": "מנסה להשיג מזהה פלייליסט: {{playlistId}}",
           "video-id-not-found": "הסרטון לא נמצא",
-          "writing-id3": "Writing ID3 tags…"
+          "writing-id3": "כותב תגיות ID3…"
         }
       },
       "description": "מוריד MP3 / אודיו מקור ישירות מהממשק",
@@ -560,194 +561,195 @@
           "submenu": {
             "advanced": "מִתקַדֵם",
             "enabled": "מופעל",
-            "mode": "Time mode",
+            "mode": "מצב זמן",
             "percent": "אָחוּז",
             "seconds": "שניות"
           }
         },
-        "download-playlist": "Download playlist",
+        "download-playlist": "הורד פלייליסט",
         "presets": "הגדרות קבועות מראש",
         "skip-existing": "דלג על קבצים קיימים"
       },
-      "name": "Downloader",
+      "name": "מוריד",
       "renderer": {
-        "can-not-update-progress": "Cannot update progress"
+        "can-not-update-progress": "לא ניתן לעדכן התקדמות"
       },
       "templates": {
-        "button": "Download"
+        "button": "הורד"
       }
     },
     "equalizer": {
-      "description": "Adds an equalizer to the player",
+      "description": "מוסיף אקוולייזר לנגן",
       "menu": {
         "presets": {
-          "label": "Presets",
+          "label": "הגדרות מוכנות",
           "list": {
-            "bass-booster": "Bass booster"
+            "bass-booster": "מגבר בס"
           }
         }
       },
-      "name": "Equalizer"
+      "name": "אקוולייזר"
     },
     "exponential-volume": {
-      "description": "Makes the volume slider exponential so it's easier to select lower volumes.",
-      "name": "Exponential Volume"
+      "description": "הופך את מחוון הווליום למעריכי כך שקל יותר לבחור עוצמות נמוכות.",
+      "name": "ווליום מעריכי"
     },
     "in-app-menu": {
-      "description": "Gives menu-bars a fancy, dark or album-color look",
+      "description": "מעניק לסרגלי התפריטים מראה מהודר, כהה או בצבע אלבום",
       "menu": {
-        "hide-dom-window-controls": "Hide DOM window controls"
+        "hide-dom-window-controls": "הסתר פקדי חלון DOM"
       },
-      "name": "In-App Menu"
+      "name": "תפריט בתוך האפליקציה"
     },
     "lumiastream": {
-      "description": "Adds Lumia Stream support",
-      "name": "Lumia Stream [Beta]"
+      "description": "מוסיף תמיכה ב-Lumia Stream",
+      "name": "Lumia Stream [בטא]"
     },
     "lyrics-genius": {
-      "description": "Adds lyrics support for most songs",
+      "description": "מוסיף תמיכה במילים עבור רוב השירים",
       "menu": {
-        "romanized-lyrics": "Romanized Lyrics"
+        "romanized-lyrics": "מילים בתעתיק לטיני"
       },
       "name": "Lyrics Genius",
       "renderer": {
-        "fetched-lyrics": "Fetched lyrics for Genius"
+        "fetched-lyrics": "מילים נשלפו עבור Genius"
       }
     },
     "music-together": {
-      "description": "Share a playlist with others. When the host plays a song, everyone else will hear the same song",
+      "description": "שתף פלייליסט עם אחרים. כשהמארח מנגן שיר, כל השאר ישמעו את אותו השיר",
       "dialog": {
-        "enter-host": "Enter Host ID"
+        "enter-host": "הזן מזהה מארח"
       },
       "internal": {
-        "save": "Save",
-        "track-source": "Track Source",
-        "unknown-user": "Unknown User"
+        "save": "שמור",
+        "track-source": "מקור רצועה",
+        "unknown-user": "משתמש לא ידוע"
       },
       "menu": {
-        "click-to-copy-id": "Copy Host ID",
-        "close": "Close Music Together",
-        "connected-users": "Connected Users",
-        "disconnect": "Disconnect Music Together",
-        "empty-user": "No connected users",
-        "host": "Music Together Host",
-        "join": "Join Music Together",
+        "click-to-copy-id": "העתק מזהה מארח",
+        "close": "סגור Music Together",
+        "connected-users": "משתמשים מחוברים",
+        "disconnect": "נתק Music Together",
+        "empty-user": "אין משתמשים מחוברים",
+        "host": "מארח Music Together",
+        "join": "הצטרף ל-Music Together",
         "permission": {
-          "all": "Allow guests to control playlist and player",
-          "host-only": "Only the host can control playlist and player",
-          "playlist": "Allow guests to control playlist"
+          "all": "אפשר לאורחים לשלוט בפלייליסט ובנגן",
+          "host-only": "רק המארח יכול לשלוט בפלייליסט ובנגן",
+          "playlist": "אפשר לאורחים לשלוט בפלייליסט"
         },
-        "set-permission": "Change Control Permission",
+        "set-permission": "שנה הרשאת שליטה",
         "status": {
-          "disconnected": "Disconnected",
-          "guest": "Connected as Guest",
-          "host": "Connected as Host"
+          "disconnected": "מנותק",
+          "guest": "מחובר כאורח",
+          "host": "מחובר כמארח"
         }
       },
-      "name": "Music Together [Beta]",
+      "name": "Music Together [בטא]",
       "toast": {
-        "add-song-failed": "Failed to add song",
-        "closed": "Music Together closed",
-        "disconnected": "Music Together disconnected",
-        "host-failed": "Failed to host Music Together",
-        "id-copied": "Host ID copied to clipboard",
-        "id-copy-failed": "Failed to copy Host ID to clipboard",
-        "join-failed": "Failed to join Music Together",
-        "joined": "Joined Music Together",
-        "permission-changed": "Music Together permission changed to \"{{permission}}\"",
-        "remove-song-failed": "Failed to remove song",
-        "user-connected": "{{name}} joined Music Together",
-        "user-disconnected": "{{name}} left Music Together"
+        "add-song-failed": "הוספת השיר נכשלה",
+        "closed": "Music Together נסגר",
+        "disconnected": "Music Together נותק",
+        "host-failed": "אירוח Music Together נכשל",
+        "id-copied": "מזהה המארח הועתק ללוח",
+        "id-copy-failed": "העתקת מזהה המארח ללוח נכשלה",
+        "join-failed": "הצטרפות ל-Music Together נכשלה",
+        "joined": "הצטרפת ל-Music Together",
+        "permission-changed": "הרשאת Music Together שונתה ל-\"{{permission}}\"",
+        "remove-song-failed": "הסרת השיר נכשלה",
+        "user-connected": "{{name}} הצטרף ל-Music Together",
+        "user-disconnected": "{{name}} עזב את Music Together"
       }
     },
     "navigation": {
-      "description": "Next/Back navigation arrows directly integrated in the interface, like in your favorite browser",
+      "description": "חצאי ניווט קדימה/אחורה משולבים ישירות בממשק, כמו בדפדפן המועדף עליך",
       "name": "Navigation",
       "templates": {
         "back": {
-          "title": "Go to previous page"
+          "title": "עבור לדף הקודם"
         },
         "forward": {
-          "title": "Go to next page"
+          "title": "עבור לדף הבא"
         }
       }
     },
     "no-google-login": {
-      "description": "Remove Google login buttons and links from the interface",
-      "name": "No Google Login"
+      "description": "הסר כפתורי וקישורי התחברות של Google מהממשק",
+      "name": "ללא התחברות Google"
     },
     "notifications": {
-      "description": "Display a notification when a song starts playing (interactive notifications are available on Windows)",
+      "description": "הצג התראה כאשר שיר מתחיל להתנגן (התראות אינטראקטיביות זמינות ב-Windows)",
       "menu": {
-        "interactive": "Interactive Notifications",
+        "interactive": "התראות אינטראקטיביות",
         "interactive-settings": {
-          "label": "Interactive Settings",
+          "label": "הגדרות אינטראקטיביות",
           "submenu": {
-            "hide-button-text": "Hide button text",
-            "refresh-on-play-pause": "Refresh on Play/Pause",
-            "tray-controls": "Open/Close on tray click"
+            "hide-button-text": "הסתר טקסט כפתור",
+            "refresh-on-play-pause": "רענן בעת ניגון/השהיה",
+            "tray-controls": "פתח/סגור בלחיצה על המגש",
+            "hover-controls": "הצג נגן קטן בעת ריחוף על המגש"
           }
         },
-        "priority": "Notification Priority",
-        "toast-style": "Toast style",
-        "unpause-notification": "Show notification on unpause"
+        "priority": "עדיפות התראות",
+        "toast-style": "סגנון התראה",
+        "unpause-notification": "הצג התראה בעת ביטול השהיה"
       },
-      "name": "Notifications"
+      "name": "התראות"
     },
     "performance-improvement": {
-      "description": "Improve performance by enabling experimental scripts",
-      "name": "Performance improvement [Beta]"
+      "description": "שפר ביצועים על ידי הפעלת סקריפטים ניסיוניים",
+      "name": "שיפור ביצועים [בטא]"
     },
     "picture-in-picture": {
-      "description": "Allows to switch the app to picture-in-picture mode",
+      "description": "מאפשר להעביר את האפליקציה למצב תמונה-בתוך-תמונה",
       "menu": {
-        "always-on-top": "Always on top",
+        "always-on-top": "תמיד למעלה",
         "hotkey": {
-          "label": "Hotkey",
+          "label": "מקש חם",
           "prompt": {
             "keybind-options": {
-              "hotkey": "Hotkey"
+              "hotkey": "מקש חם"
             },
-            "label": "Choose a hotkey to toggle picture-in-picture",
-            "title": "Picture-in-picture Hotkey"
+            "label": "בחר מקש חם להפעלת תמונה-בתוך-תמונה",
+            "title": "מקש חם לתמונה-בתוך-תמונה"
           }
         },
-        "save-window-position": "Save window position",
-        "save-window-size": "Save window size",
-        "use-native-pip": "Use browser native PiP"
+        "save-window-position": "שמור מיקום חלון",
+        "save-window-size": "שמור גודל חלון",
+        "use-native-pip": "השתמש ב-PiP המקורי של הדפדפן"
       },
       "name": "Picture-in-picture",
       "templates": {
-        "button": "Picture-in-picture"
+        "button": "תמונה-בתוך-תמונה"
       }
     },
     "playback-speed": {
-      "description": "Listen fast, listen slow! Adds a slider that controls song speed",
+      "description": "האזן מהר, האזן לאט! מוסיף מחוון השולט במהירות השיר",
       "name": "Playback Speed",
       "templates": {
-        "button": "Speed"
+        "button": "מהירות"
       }
     },
     "precise-volume": {
-      "description": "Control the volume precisely using mousewheel/hotkeys, with a custom HUD and customizable volume steps",
+      "description": "שלוט בעוצמת הווליום במדויק באמצעות גלגלת/מקשים חמים, עם HUD מותאם אישית ושלבי ווליום ניתנים להתאמה",
       "menu": {
-        "arrows-shortcuts": "Local Arrow-keys Controls",
-        "custom-volume-steps": "Set Custom Volume Steps",
-        "global-shortcuts": "Global Hotkeys"
+        "arrows-shortcuts": "בקרות מקומיות של מקשי חצים",
+        "custom-volume-steps": "הגדר שלבי ווליום מותאמים",
+        "global-shortcuts": "מקשים חמים גלובליים"
       },
       "name": "Precise Volume",
       "prompt": {
         "global-shortcuts": {
           "keybind-options": {
-            "decrease": "Decrease Volume",
-            "increase": "Increase Volume"
+            "decrease": "הפחת ווליום",
+            "increase": "הגבר ווליום"
           },
-          "label": "Choose Global Volume Keybinds:",
-          "title": "Global Volume Keybinds"
+          "label": "בחר קיצורי ווליום גלובליים:",
+          "title": "קיצורי ווליום גלובליים"
         },
         "volume-steps": {
-          "label": "Choose Volume Increase/Decrease Steps",
-          "title": "Volume Steps"
+          "label": "בחר שלבי הגברה/הפחתת ווליום",
+          "title": "שלבי ווליום"
         }
       }
     },
@@ -755,239 +757,239 @@
       "backend": {
         "dialog": {
           "quality-changer": {
-            "detail": "Current Quality: {{quality}}",
-            "message": "Choose Video Quality:",
-            "title": "Choose Video Quality"
+            "detail": "איכות נוכחית: {{quality}}",
+            "message": "בחר איכות וידאו:",
+            "title": "בחר איכות וידאו"
           }
         }
       },
-      "description": "Allows changing the video quality with a button on the video overlay",
+      "description": "מאפשר לשנות את איכות הווידאו באמצעות כפתור על שכבת הווידאו",
       "name": "Video Quality Changer",
       "renderer": {
         "quality-settings-button": {
-          "label": "Open player quality changer"
+          "label": "פתח משנה איכות נגן"
         }
       }
     },
     "scrobbler": {
-      "description": "Add scrobbling support (etc. last.fm, Listenbrainz)",
+      "description": "הוסף תמיכת scrobbling (כגון last.fm, Listenbrainz)",
       "dialog": {
         "lastfm": {
           "auth-failed": {
-            "message": "Failed to authenticate with Last.fm\nHide the popup until the next restart.",
-            "title": "Authentication Failed"
+            "message": "האימות מול Last.fm נכשל\nהסתר את החלון הקופץ עד להפעלה מחדש.",
+            "title": "האימות נכשל"
           }
         }
       },
       "menu": {
         "lastfm": {
-          "api-settings": "Last.fm API Settings"
+          "api-settings": "הגדרות API של Last.fm"
         },
         "listenbrainz": {
-          "token": "Enter ListenBrainz user token"
+          "token": "הזן אסימון משתמש ListenBrainz"
         },
-        "scrobble-alternative-artist": "Use alternative artists",
-        "scrobble-alternative-title": "Use alternative titles",
-        "scrobble-other-media": "Scrobble other media"
+        "scrobble-alternative-artist": "השתמש באמנים חלופיים",
+        "scrobble-alternative-title": "השתמש בכותרות חלופיות",
+        "scrobble-other-media": "Scrobble מדיה אחרת"
       },
       "name": "Scrobbler",
       "prompt": {
         "lastfm": {
-          "api-key": "Last.fm API key",
-          "api-secret": "Last.fm API secret"
+          "api-key": "מפתח API של Last.fm",
+          "api-secret": "סוד API של Last.fm"
         },
         "listenbrainz": {
           "token": {
-            "label": "Enter your ListenBrainz user token:",
-            "title": "ListenBrainz token"
+            "label": "הזן את אסימון המשתמש של ListenBrainz:",
+            "title": "אסימון ListenBrainz"
           }
         }
       }
     },
     "shortcuts": {
-      "description": "Allows setting global hotkeys for playback (play/pause/next/previous) and turning off media OSD by overriding media keys, turning on Ctrl/CMD + F to search, turning on Linux MPRIS support for media keys, and custom hotkeys for advanced users",
+      "description": "מאפשר הגדרת מקשים חמים גלובליים לניגון (נגן/השהה/הבא/הקודם) וכיבוי OSD מדיה על ידי דריסת מקשי מדיה, הפעלת Ctrl/CMD + F לחיפוש, הפעלת תמיכת MPRIS בלינוקס למקשי מדיה, ומקשים חמים מותאמים אישית למשתמשים מתקדמים",
       "menu": {
-        "override-media-keys": "Override Media Keys",
-        "set-keybinds": "Set Global Song Controls"
+        "override-media-keys": "דרוס מקשי מדיה",
+        "set-keybinds": "הגדר בקרות שירים גלובליות"
       },
-      "name": "Shortcuts (& MPRIS)",
+      "name": "קיצורי דרך (& MPRIS)",
       "prompt": {
         "keybind": {
           "keybind-options": {
-            "next": "Next",
-            "play-pause": "Play / Pause",
-            "previous": "Previous"
+            "next": "הבא",
+            "play-pause": "נגן / השהה",
+            "previous": "הקודם"
           },
-          "label": "Choose Global Keybinds for Songs Control:",
-          "title": "Global Keybinds"
+          "label": "בחר קיצורי מקלדת גלובליים לשליטה בשירים:",
+          "title": "קיצורי מקלדת גלובליים"
         }
       }
     },
     "skip-disliked-songs": {
-      "description": "Skips disliked songs",
-      "name": "Skip Disliked Songs"
+      "description": "מדלג על שירים שלא אהבת",
+      "name": "דלג על שירים שלא אהבת"
     },
     "skip-silences": {
-      "description": "Automatically skip silences sections in songs",
-      "name": "Skip Silences"
+      "description": "דלג אוטומטית על קטעי שקט בשירים",
+      "name": "דלג על שקט"
     },
     "sponsorblock": {
-      "description": "Automatically Skips non-music parts like intro/outro or parts of music videos where the song isn't playing",
-      "name": "SponsorBlock"
+      "description": "מדלג אוטומטית על חלקים שאינם מוזיקה כמו פתיח/סיום או חלקים בסרטוני מוזיקה שבהם השיר לא מתנגן",
+      "name": "חסימת ספונסרים"
     },
     "synced-lyrics": {
-      "description": "Provides synced lyrics to songs, using providers like LRClib.",
+      "description": "מספק מילים מסונכרנות לשירים, באמצעות ספקים כמו LRClib.",
       "errors": {
-        "fetch": "⚠️\tAn error occurred while fetching the lyrics.\n\tPlease try again later.",
-        "not-found": "⚠️ No lyrics found for this song."
+        "fetch": "⚠️\tאירעה שגיאה במהלך שליפת המילים.\n\tאנא נסה שוב מאוחר יותר.",
+        "not-found": "⚠️ לא נמצאו מילים לשיר זה."
       },
       "menu": {
         "convert-chinese-character": {
-          "label": "Convert Chinese character",
+          "label": "המר תווים סיניים",
           "submenu": {
             "disabled": {
-              "label": "Disabled",
-              "tooltip": "Disable Chinese character conversion"
+              "label": "מושבת",
+              "tooltip": "השבת המרת תווים סיניים"
             },
             "simplified-to-traditional": {
-              "label": "Simplified to Traditional",
-              "tooltip": "Convert Simplified Chinese to Traditional Chinese"
+              "label": "מפושט למסורתי",
+              "tooltip": "המר סינית מפושטת לסינית מסורתית"
             },
             "traditional-to-simplified": {
-              "label": "Traditional to Simplified",
-              "tooltip": "Convert Traditional Chinese to Simplified Chinese"
+              "label": "מסורתי למפושט",
+              "tooltip": "המר סינית מסורתית לסינית מפושטת"
             }
           },
-          "tooltip": "Convert Chinese character to Traditional or Simplified"
+          "tooltip": "המר תווים סיניים למסורתיים או מפושטים"
         },
         "default-text-string": {
-          "label": "Default character between lyrics",
-          "tooltip": "Choose the default character to use for the gap between lyrics"
+          "label": "תו ברירת מחדל בין מילים",
+          "tooltip": "בחר את התו שישמש כברירת מחדל לרווח בין המילים"
         },
         "line-effect": {
-          "label": "Line effect",
+          "label": "אפקט שורה",
           "submenu": {
             "fancy": {
-              "label": "Fancy",
-              "tooltip": "Use large, app-like effects on the current line"
+              "label": "מהודר",
+              "tooltip": "השתמש באפקטים גדולים דמויי אפליקציה על השורה הנוכחית"
             },
             "focus": {
-              "label": "Focus",
-              "tooltip": "Make only the current line white"
+              "label": "מיקוד",
+              "tooltip": "הפוך רק את השורה הנוכחית ללבנה"
             },
             "offset": {
-              "label": "Offset",
-              "tooltip": "Offset on the right the current line"
+              "label": "הסטה",
+              "tooltip": "הסט ימינה את השורה הנוכחית"
             },
             "scale": {
-              "label": "Scale",
-              "tooltip": "Scale the current line"
+              "label": "קנה מידה",
+              "tooltip": "שנה קנה מידה של השורה הנוכחית"
             }
           },
-          "tooltip": "Choose the effect to apply to the current line"
+          "tooltip": "בחר את האפקט להחלה על השורה הנוכחית"
         },
         "lyrics-font-size": {
-          "label": "Lyrics font size",
+          "label": "גודל גופן מילים",
           "submenu": {
             "large": {
-              "label": "Large",
-              "tooltip": "Use the original larger lyrics size"
+              "label": "גדול",
+              "tooltip": "השתמש בגודל המילים הגדול המקורי"
             },
             "medium": {
-              "label": "Medium",
-              "tooltip": "Use a balanced lyrics size"
+              "label": "בינוני",
+              "tooltip": "השתמש בגודל מילים מאוזן"
             },
             "small": {
-              "label": "Small",
-              "tooltip": "Use a more compact lyrics size"
+              "label": "קטן",
+              "tooltip": "השתמש בגודל מילים קומפקטי יותר"
             }
           },
-          "tooltip": "Choose how large the lyrics text should be"
+          "tooltip": "בחר כמה גדול טקסט המילים צריך להיות"
         },
         "precise-timing": {
-          "label": "Make the lyrics perfectly synced",
-          "tooltip": "Calculate to the milisecond the display of the next line (can have a small impact on performance)"
+          "label": "הפוך את המילים למסונכרנות בצורה מושלמת",
+          "tooltip": "חשב באלפית השנייה את תצוגת השורה הבאה (עלולה להיות השפעה קלה על הביצועים)"
         },
         "preferred-provider": {
-          "label": "Preferred Provider",
+          "label": "ספק מועדף",
           "none": {
-            "label": "None",
-            "tooltip": "No preferred provider"
+            "label": "ללא",
+            "tooltip": "אין ספק מועדף"
           },
-          "tooltip": "Choose the default provider to use"
+          "tooltip": "בחר את הספק המוגדר כברירת מחדל לשימוש"
         },
         "romanization": {
-          "label": "Romanize lyrics",
-          "tooltip": "If the lyrics are in a different language, try to display a latin version."
+          "label": "תעתיק לטיני של מילים",
+          "tooltip": "אם המילים בשפה שונה, נסה להציג גרסה לטינית."
         },
         "show-lyrics-even-if-inexact": {
-          "label": "Show lyrics even if inexact",
-          "tooltip": "If the song is not found, the plugin tries again with a different search query.\nThe result from the second attempt may not be exact."
+          "label": "הצג מילים גם אם אינן מדויקות",
+          "tooltip": "אם השיר לא נמצא, התוסף מנסה שוב עם שאילתת חיפוש שונה.\nייתכן שהתוצאה מהניסיון השני לא תהיה מדויקת."
         },
         "show-time-codes": {
-          "label": "Show time codes",
-          "tooltip": "Show the time codes next to the lyrics"
+          "label": "הצג קודי זמן",
+          "tooltip": "הצג את קודי הזמן לצד המילים"
         },
         "translation": {
           "clear-cache": {
-            "label": "Clear translation cache",
-            "tooltip": "Delete all cached translations stored on disk."
+            "label": "נקה מטמון תרגומים",
+            "tooltip": "מחק את כל התרגומים השמורים במטמון בדיסק."
           },
           "configure": {
-            "label": "Configure API key & model…",
-            "tooltip": "Set provider-specific translation options."
+            "label": "הגדר מפתח API ומודל…",
+            "tooltip": "הגדר אפשרויות תרגום ספציפיות לספק."
           },
           "enabled": {
-            "label": "Enable translation",
-            "tooltip": "Show a translated line beneath each original lyric line."
+            "label": "הפעל תרגום",
+            "tooltip": "הצג שורה מתורגמת מתחת לכל שורת מילים מקורית."
           },
-          "label": "Lyrics translation",
+          "label": "תרגום מילים",
           "provider": {
-            "label": "Provider",
-            "tooltip": "Which service to use for translation."
+            "label": "ספק",
+            "tooltip": "באיזה שירות להשתמש לתרגום."
           },
           "providers": {
             "anthropic": {
               "name": "Anthropic Claude",
-              "prompt-label": "Uses the native Anthropic Messages API.",
-              "prompt-title": "Anthropic settings"
+              "prompt-label": "משתמש ב-API ההודעות המקורי של Anthropic.",
+              "prompt-title": "הגדרות Anthropic"
             },
             "gemini": {
               "name": "Google Gemini",
-              "prompt-label": "Uses Google's Generative Language API (generateContent).",
-              "prompt-title": "Gemini settings"
+              "prompt-label": "משתמש ב-API השפה הגנרטיבית של Google (generateContent).",
+              "prompt-title": "הגדרות Gemini"
             },
             "google-translate": {
-              "host": "Host",
+              "host": "מארח",
               "name": "Google Translate",
-              "prompt-label": "Uses the unofficial free Google Translate endpoint. No API key is required, but Google may rate-limit it.",
-              "prompt-title": "Google Translate settings"
+              "prompt-label": "משתמש בנקודת הקצה החינמית הלא רשמית של Google Translate. אין צורך במפתח API, אך Google עשויה להגביל את הקצב.",
+              "prompt-title": "הגדרות Google Translate"
             },
             "local-cli": {
-              "command": "Command",
-              "engine": "Local CLI",
+              "command": "פקודה",
+              "engine": "CLI מקומי",
               "engine-claude": "Claude Code",
               "engine-codex": "Codex",
               "engine-gemini": "Gemini CLI",
-              "name": "Local CLI",
-              "prompt-label": "Use a locally logged-in Claude Code, Codex, or Gemini CLI. The command and model are automatic; the CLI uses its own logged-in default.",
-              "prompt-title": "Local CLI settings",
-              "timeout": "Timeout seconds (15-600)"
+              "name": "CLI מקומי",
+              "prompt-label": "השתמש ב-Claude Code, Codex או Gemini CLI המחוברים מקומית. הפקודה והמודל אוטומטיים; ה-CLI משתמש בברירת המחדל המחוברת שלו.",
+              "prompt-title": "הגדרות CLI מקומי",
+              "timeout": "זמן קצוב בשניות (15-600)"
             },
             "openai-compatible": {
-              "api-mode": "API mode (responses / auto / chat-completions)",
-              "base-url": "Base URL",
-              "name": "OpenAI compatible",
-              "prompt-label": "Use OpenAI-compatible servers, including Ollama (base URL http://127.0.0.1:11434/v1, API mode auto or chat-completions).",
-              "prompt-title": "OpenAI-compatible settings"
+              "api-mode": "מצב API (responses / auto / chat-completions)",
+              "base-url": "כתובת בסיס",
+              "name": "תואם OpenAI",
+              "prompt-label": "השתמש בשרתים תואמי OpenAI, כולל Ollama (כתובת בסיס http://127.0.0.1:11434/v1, מצב API אוטומטי או chat-completions).",
+              "prompt-title": "הגדרות תואמות OpenAI"
             },
             "shared": {
-              "api-key": "API key",
-              "model": "Model"
+              "api-key": "מפתח API",
+              "model": "מודל"
             }
           },
           "target-language": {
-            "label": "Target language",
+            "label": "שפת יעד",
             "options": {
               "ar": "العربية",
               "auto": "Follow app language",
@@ -1035,92 +1037,103 @@
               "zh-CN": "简体中文",
               "zh-TW": "繁體中文"
             },
-            "tooltip": "The language to translate lyrics into."
+            "tooltip": "לאיזו שפה לתרגם את המילים."
           },
-          "tooltip": "Translate lyrics and show the translated result line-by-line for display."
+          "tooltip": "תרגם מילים והצג את התוצאה המתורגמת שורה אחר שורה."
         }
       },
-      "name": "Synced Lyrics",
+      "name": "מילים מסונכרנות",
       "refetch-btn": {
-        "fetching": "Fetching...",
-        "normal": "Refetch lyrics"
+        "fetching": "שולף...",
+        "normal": "שלוף מילים מחדש"
       },
       "warnings": {
-        "duration-mismatch": "⚠️ - The lyrics may be out of sync due to a duration mismatch.",
-        "inexact": "⚠️ - The lyrics for this song may not be exact",
-        "instrumental": "⚠️ - This is an instrumental song"
+        "duration-mismatch": "⚠️ - ייתכן שהמילים אינן מסונכרנות עקב אי התאמה במשך.",
+        "inexact": "⚠️ - ייתכן שהמילים לשיר זה אינן מדויקות",
+        "instrumental": "⚠️ - זהו שיר אינסטרומנטלי"
       }
     },
     "taskbar-mediacontrol": {
-      "description": "Control playback from your Windows taskbar",
-      "name": "Taskbar Media Control"
+      "description": "שלוט בניגון משורת המשימות של Windows",
+      "name": "בקרת מדיה בשורת המשימות"
     },
     "touchbar": {
-      "description": "Adds a TouchBar widget for macOS users",
+      "description": "מוסיף וידג'ט TouchBar למשתמשי macOS",
       "name": "TouchBar"
     },
     "transparent-player": {
-      "description": "Makes the app window transparent",
+      "description": "הופך את חלון האפליקציה לשקוף",
       "menu": {
         "opacity": {
-          "label": "Opacity",
+          "label": "אטימות",
           "submenu": {
             "percent": "{{opacity}}%"
           }
         },
         "type": {
-          "label": "Type",
+          "label": "סוג",
           "submenu": {
-            "acrylic": "Acrylic",
-            "mica": "Mica",
-            "none": "None",
-            "tabbed": "Tabbed"
+            "acrylic": "אקרילי",
+            "mica": "מיקה",
+            "none": "ללא",
+            "tabbed": "לשוניות"
           }
         }
       },
-      "name": "Transparent Player"
+      "name": "נגן שקוף"
     },
     "tuna-obs": {
-      "description": "Integration with OBS's plugin Tuna",
+      "description": "אינטגרציה עם תוסף Tuna של OBS",
       "name": "Tuna OBS"
     },
     "unobtrusive-player": {
-      "description": "Prevents the player from popping up when playing a song",
-      "name": "Unobtrusive Player"
+      "description": "מונע מהנגן לקפוץ בעת ניגון שיר",
+      "name": "נגן לא פולשני"
     },
     "video-toggle": {
-      "description": "Adds a button to switch between Video/Song mode. can also optionally remove the whole video tab",
+      "description": "מוסיף כפתור למעבר בין מצב וידאו/שיר. ניתן גם להסיר לחלוטין את לשונית הווידאו",
       "menu": {
         "align": {
-          "label": "Alignment",
+          "label": "יישור",
           "submenu": {
-            "left": "Left",
-            "middle": "Middle",
-            "right": "Right"
+            "left": "שמאל",
+            "middle": "מרכז",
+            "right": "ימין"
           }
         },
-        "force-hide": "Force remove video tab",
+        "force-hide": "הסר בכוח לשונית וידאו",
         "mode": {
-          "label": "Mode",
+          "label": "מצב",
           "submenu": {
-            "custom": "Custom toggle",
-            "disabled": "Disabled",
-            "native": "Native toggle"
+            "custom": "מתג מותאם",
+            "disabled": "מושבת",
+            "native": "מתג מקורי"
           }
         }
       },
-      "name": "Video Toggle",
+      "name": "מתג וידאו",
       "templates": {
-        "button-song": "Song",
-        "button-video": "Video"
+        "button-song": "שיר",
+        "button-video": "וידאו"
       }
     },
     "visualizer": {
-      "description": "Adds a visualizer to the player",
+      "description": "מוסיף ויזואלייזר לנגן",
       "menu": {
-        "visualizer-type": "Visualizer Type"
+        "visualizer-type": "סוג ויזואלייזר"
       },
-      "name": "Visualizer"
+      "name": "ויזואלייזר"
+    },
+    "audio-only": {
+      "description": "מכריח מצב שמע בלבד — חוסם את כל זרמי הווידאו ברמת הרשת והנגן כדי לחסוך בזיכרון וברוחב פס",
+      "name": "שמע בלבד"
+    },
+    "playback-recovery": {
+      "description": "משחזר אוטומטית ממצבי השמעה תקועים, קפואים או מתים",
+      "menu": {
+        "log-to-console": "תעד אירועי שחזור למסוף"
+      },
+      "name": "שחזור השמעה"
     }
   }
 }

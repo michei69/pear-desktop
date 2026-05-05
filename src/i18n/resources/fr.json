@@ -27,7 +27,7 @@
         "loaded": "i18n chargé"
       },
       "second-instance": {
-        "receive-command": "Received command over protocol : \"{{command}}\""
+        "receive-command": "Commande reçue via le protocole : \"{{command}}\""
       },
       "theme": {
         "css-file-not-found": "Le fichier de CSS \"{{cssFile}}\" n'existe pas, ignorer"
@@ -144,6 +144,7 @@
               "disabled": "Désactivé",
               "enabled-and-hide-app": "Activé et cacher l'app",
               "enabled-and-show-app": "Activé et afficher l'application",
+              "move-to-current-desktop": "Déplacer vers le bureau virtuel actuel lors de l'affichage",
               "play-pause-on-click": "Lecture/Pause au clic"
             }
           },
@@ -287,6 +288,10 @@
         }
       },
       "name": "Mode ambiant"
+    },
+    "audio-only": {
+      "description": "Force le mode audio uniquement — bloque tous les flux vidéo au niveau du réseau et du lecteur pour économiser la RAM et la bande passante",
+      "name": "Audio Uniquement"
     },
     "amuse": {
       "description": "Ajout de la prise en charge de {{applicationName}} pour le widget Amuse now playing de 6K Labs",
@@ -684,6 +689,7 @@
           "label": "Paramètres interactifs",
           "submenu": {
             "hide-button-text": "Masquer le texte du bouton",
+            "hover-controls": "Afficher le mini-lecteur au survol de la barre d'état",
             "refresh-on-play-pause": "Actualiser lors de la lecture/pause",
             "tray-controls": "Ouvrir/Fermer au clic sur l’icône de la barre des tâches"
           }
@@ -697,6 +703,13 @@
     "performance-improvement": {
       "description": "Améliorer les performances en activant les scripts expérimentaux",
       "name": "Amélioration des performances [Beta]"
+    },
+    "playback-recovery": {
+      "description": "Récupère automatiquement des états de lecture bloqués, arrêtés ou morts",
+      "menu": {
+        "log-to-console": "Enregistrer les événements de récupération dans la console"
+      },
+      "name": "Récupération de lecture"
     },
     "picture-in-picture": {
       "description": "Permet de basculer l’application en mode picture-in-picture",
@@ -887,22 +900,22 @@
           "tooltip": "Choisi l'effet à appliquer sur la ligne actuelle"
         },
         "lyrics-font-size": {
-          "label": "Lyrics font size",
+          "label": "Taille de la police des paroles",
           "submenu": {
             "large": {
-              "label": "Large",
-              "tooltip": "Use the original larger lyrics size"
+              "label": "Grand",
+              "tooltip": "Utiliser la taille originale plus large des paroles"
             },
             "medium": {
-              "label": "Medium",
-              "tooltip": "Use a balanced lyrics size"
+              "label": "Moyen",
+              "tooltip": "Utiliser une taille de paroles équilibrée"
             },
             "small": {
-              "label": "Small",
-              "tooltip": "Use a more compact lyrics size"
+              "label": "Petit",
+              "tooltip": "Utiliser une taille de paroles plus compacte"
             }
           },
-          "tooltip": "Choose how large the lyrics text should be"
+          "tooltip": "Choisissez la taille du texte des paroles"
         },
         "precise-timing": {
           "label": "Rend les paroles parfaitement synchronisées",
@@ -930,67 +943,67 @@
         },
         "translation": {
           "clear-cache": {
-            "label": "Clear translation cache",
-            "tooltip": "Delete all cached translations stored on disk."
+            "label": "Vider le cache de traduction",
+            "tooltip": "Supprimer toutes les traductions en cache stockées sur le disque."
           },
           "configure": {
-            "label": "Configure API key & model…",
-            "tooltip": "Set provider-specific translation options."
+            "label": "Configurer la clé API et le modèle…",
+            "tooltip": "Définir les options de traduction spécifiques au fournisseur."
           },
           "enabled": {
-            "label": "Enable translation",
-            "tooltip": "Show a translated line beneath each original lyric line."
+            "label": "Activer la traduction",
+            "tooltip": "Afficher une ligne traduite sous chaque ligne originale des paroles."
           },
-          "label": "Lyrics translation",
+          "label": "Traduction des paroles",
           "provider": {
-            "label": "Provider",
-            "tooltip": "Which service to use for translation."
+            "label": "Fournisseur",
+            "tooltip": "Quel service utiliser pour la traduction."
           },
           "providers": {
             "anthropic": {
               "name": "Anthropic Claude",
-              "prompt-label": "Uses the native Anthropic Messages API.",
-              "prompt-title": "Anthropic settings"
+              "prompt-label": "Utilise l'API native Anthropic Messages.",
+              "prompt-title": "Paramètres Anthropic"
             },
             "gemini": {
               "name": "Google Gemini",
-              "prompt-label": "Uses Google's Generative Language API (generateContent).",
-              "prompt-title": "Gemini settings"
+              "prompt-label": "Utilise l'API Generative Language de Google (generateContent).",
+              "prompt-title": "Paramètres Gemini"
             },
             "google-translate": {
-              "host": "Host",
-              "name": "Google Translate",
-              "prompt-label": "Uses the unofficial free Google Translate endpoint. No API key is required, but Google may rate-limit it.",
-              "prompt-title": "Google Translate settings"
+              "host": "Hôte",
+              "name": "Google Traduction",
+              "prompt-label": "Utilise le point de terminaison gratuit non officiel de Google Traduction. Aucune clé API requise, mais Google peut limiter le débit.",
+              "prompt-title": "Paramètres Google Traduction"
             },
             "local-cli": {
-              "command": "Command",
-              "engine": "Local CLI",
+              "command": "Commande",
+              "engine": "CLI local",
               "engine-claude": "Claude Code",
               "engine-codex": "Codex",
               "engine-gemini": "Gemini CLI",
-              "name": "Local CLI",
-              "prompt-label": "Use a locally logged-in Claude Code, Codex, or Gemini CLI. The command and model are automatic; the CLI uses its own logged-in default.",
-              "prompt-title": "Local CLI settings",
-              "timeout": "Timeout seconds (15-600)"
+              "name": "CLI local",
+              "prompt-label": "Utiliser un Claude Code, Codex ou Gemini CLI connecté localement. La commande et le modèle sont automatiques ; le CLI utilise sa propre valeur par défaut.",
+              "prompt-title": "Paramètres CLI local",
+              "timeout": "Délai d'expiration en secondes (15-600)"
             },
             "openai-compatible": {
-              "api-mode": "API mode (responses / auto / chat-completions)",
-              "base-url": "Base URL",
-              "name": "OpenAI compatible",
-              "prompt-label": "Use OpenAI-compatible servers, including Ollama (base URL http://127.0.0.1:11434/v1, API mode auto or chat-completions).",
-              "prompt-title": "OpenAI-compatible settings"
+              "api-mode": "Mode API (responses / auto / chat-completions)",
+              "base-url": "URL de base",
+              "name": "Compatible OpenAI",
+              "prompt-label": "Utiliser des serveurs compatibles OpenAI, y compris Ollama (URL de base http://127.0.0.1:11434/v1, mode API auto ou chat-completions).",
+              "prompt-title": "Paramètres compatibles OpenAI"
             },
             "shared": {
-              "api-key": "API key",
-              "model": "Model"
+              "api-key": "Clé API",
+              "model": "Modèle"
             }
           },
           "target-language": {
-            "label": "Target language",
+            "label": "Langue cible",
             "options": {
               "ar": "العربية",
-              "auto": "Follow app language",
+              "auto": "Suivre la langue de l'application",
               "bg": "Български",
               "bn": "বাংলা",
               "cs": "Čeština",
@@ -1035,9 +1048,9 @@
               "zh-CN": "简体中文",
               "zh-TW": "繁體中文"
             },
-            "tooltip": "The language to translate lyrics into."
+            "tooltip": "La langue dans laquelle traduire les paroles."
           },
-          "tooltip": "Translate lyrics and show the translated result line-by-line for display."
+          "tooltip": "Traduire les paroles et afficher le résultat traduit ligne par ligne."
         }
       },
       "name": "Paroles Synchronisées",

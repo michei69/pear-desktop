@@ -16,7 +16,7 @@
   "language": {
     "code": "nl",
     "local-name": "Nederlands",
-    "name": "Nederlands"
+    "name": "Dutch"
   },
   "main": {
     "console": {
@@ -144,7 +144,8 @@
               "disabled": "Uitgeschakeld",
               "enabled-and-hide-app": "Ingeschakeld en applicatie verbergen",
               "enabled-and-show-app": "Ingeschakeld en applicatie weergeven",
-              "play-pause-on-click": "Afspelen/Pauzeren bij klikken"
+              "play-pause-on-click": "Afspelen/Pauzeren bij klikken",
+              "move-to-current-desktop": "Verplaats naar huidig virtueel bureaublad bij weergave"
             }
           },
           "visual-tweaks": {
@@ -162,7 +163,7 @@
                 "force-show": "Forceren weergeven",
                 "hide": "Verbergen",
                 "label": "Vind ik leuk-knoppen",
-                "swap": "Swap like buttons order"
+                "swap": "Volgorde van vind-ik-leuk-knoppen wisselen"
               },
               "remove-upgrade-button": "Upgrade-knop verwijderen",
               "theme": {
@@ -418,8 +419,8 @@
       "menu": {
         "format": {
           "24-hour-format": "24-uursformaat",
-          "display-seconds": "Display Seconds",
-          "label": "Format"
+          "display-seconds": "Seconden weergeven",
+          "label": "Formaat"
         }
       },
       "name": "Klok"
@@ -685,7 +686,8 @@
           "submenu": {
             "hide-button-text": "Knoptekst verbergen",
             "refresh-on-play-pause": "Herlaad bij het afspelen/pauzeren",
-            "tray-controls": "Open/Sluit op tray klik"
+            "tray-controls": "Open/Sluit op tray klik",
+            "hover-controls": "Toon mini-speler bij zweven over systeemvak"
           }
         },
         "priority": "Meldingprioriteit",
@@ -843,11 +845,11 @@
       },
       "menu": {
         "convert-chinese-character": {
-          "label": "Convert Chinese character",
+          "label": "Converteer Chinees karakter",
           "submenu": {
             "disabled": {
-              "label": "Disabled",
-              "tooltip": "Disable Chinese character conversion"
+              "label": "Uitgeschakeld",
+              "tooltip": "Chinese karakterconversie uitschakelen"
             },
             "simplified-to-traditional": {
               "label": "Vereenvoudigd naar Traditioneel",
@@ -858,7 +860,7 @@
               "tooltip": "Zet Traditioneel Chinees om naar Vereenvoudigd Chinees"
             }
           },
-          "tooltip": "Convert Chinese character to Traditional or Simplified"
+          "tooltip": "Converteer Chinees karakter naar Traditioneel of Vereenvoudigd"
         },
         "default-text-string": {
           "label": "Standaardteken tussen songteksten",
@@ -887,22 +889,22 @@
           "tooltip": "Kies het effect dat u op de huidige regel wilt toepassen"
         },
         "lyrics-font-size": {
-          "label": "Lyrics font size",
+          "label": "Lettergrootte songtekst",
           "submenu": {
             "large": {
-              "label": "Large",
-              "tooltip": "Use the original larger lyrics size"
+              "label": "Groot",
+              "tooltip": "Gebruik de originele grotere songtekstgrootte"
             },
             "medium": {
-              "label": "Medium",
-              "tooltip": "Use a balanced lyrics size"
+              "label": "Middel",
+              "tooltip": "Gebruik een gebalanceerde songtekstgrootte"
             },
             "small": {
-              "label": "Small",
-              "tooltip": "Use a more compact lyrics size"
+              "label": "Klein",
+              "tooltip": "Gebruik een compactere songtekstgrootte"
             }
           },
-          "tooltip": "Choose how large the lyrics text should be"
+          "tooltip": "Kies hoe groot de songtekst moet zijn"
         },
         "precise-timing": {
           "label": "Zorg ervoor dat de songteksten perfect gesynchroniseerd zijn",
@@ -930,67 +932,67 @@
         },
         "translation": {
           "clear-cache": {
-            "label": "Clear translation cache",
-            "tooltip": "Delete all cached translations stored on disk."
+            "label": "Vertalingscache wissen",
+            "tooltip": "Verwijder alle gecachte vertalingen op schijf."
           },
           "configure": {
-            "label": "Configure API key & model…",
-            "tooltip": "Set provider-specific translation options."
+            "label": "API-sleutel & model configureren…",
+            "tooltip": "Stel providerspecifieke vertaalopties in."
           },
           "enabled": {
-            "label": "Enable translation",
-            "tooltip": "Show a translated line beneath each original lyric line."
+            "label": "Vertaling inschakelen",
+            "tooltip": "Toon een vertaalde regel onder elke originele songtekstregel."
           },
-          "label": "Lyrics translation",
+          "label": "Songtekstvertaling",
           "provider": {
             "label": "Provider",
-            "tooltip": "Which service to use for translation."
+            "tooltip": "Welke service te gebruiken voor vertaling."
           },
           "providers": {
             "anthropic": {
               "name": "Anthropic Claude",
-              "prompt-label": "Uses the native Anthropic Messages API.",
-              "prompt-title": "Anthropic settings"
+              "prompt-label": "Gebruikt de native Anthropic Messages API.",
+              "prompt-title": "Anthropic instellingen"
             },
             "gemini": {
               "name": "Google Gemini",
-              "prompt-label": "Uses Google's Generative Language API (generateContent).",
-              "prompt-title": "Gemini settings"
+              "prompt-label": "Gebruikt Google Generative Language API (generateContent).",
+              "prompt-title": "Gemini instellingen"
             },
             "google-translate": {
               "host": "Host",
               "name": "Google Translate",
-              "prompt-label": "Uses the unofficial free Google Translate endpoint. No API key is required, but Google may rate-limit it.",
-              "prompt-title": "Google Translate settings"
+              "prompt-label": "Gebruikt het onofficiële gratis Google Translate eindpunt. Geen API-sleutel nodig, maar Google kan snelheidsbeperkingen toepassen.",
+              "prompt-title": "Google Translate instellingen"
             },
             "local-cli": {
-              "command": "Command",
-              "engine": "Local CLI",
+              "command": "Opdracht",
+              "engine": "Lokale CLI",
               "engine-claude": "Claude Code",
               "engine-codex": "Codex",
               "engine-gemini": "Gemini CLI",
-              "name": "Local CLI",
-              "prompt-label": "Use a locally logged-in Claude Code, Codex, or Gemini CLI. The command and model are automatic; the CLI uses its own logged-in default.",
-              "prompt-title": "Local CLI settings",
-              "timeout": "Timeout seconds (15-600)"
+              "name": "Lokale CLI",
+              "prompt-label": "Gebruik een lokaal ingelogde Claude Code, Codex of Gemini CLI. De opdracht en model zijn automatisch; de CLI gebruikt zijn eigen ingelogde standaard.",
+              "prompt-title": "Lokale CLI instellingen",
+              "timeout": "Timeout seconden (15-600)"
             },
             "openai-compatible": {
-              "api-mode": "API mode (responses / auto / chat-completions)",
-              "base-url": "Base URL",
-              "name": "OpenAI compatible",
-              "prompt-label": "Use OpenAI-compatible servers, including Ollama (base URL http://127.0.0.1:11434/v1, API mode auto or chat-completions).",
-              "prompt-title": "OpenAI-compatible settings"
+              "api-mode": "API-modus (responses / auto / chat-completions)",
+              "base-url": "Basis-URL",
+              "name": "OpenAI compatibel",
+              "prompt-label": "Gebruik OpenAI-compatibele servers, inclusief Ollama (basis-URL http://127.0.0.1:11434/v1, API-modus auto of chat-completions).",
+              "prompt-title": "OpenAI-compatibele instellingen"
             },
             "shared": {
-              "api-key": "API key",
+              "api-key": "API-sleutel",
               "model": "Model"
             }
           },
           "target-language": {
-            "label": "Target language",
+            "label": "Doeltaal",
             "options": {
               "ar": "العربية",
-              "auto": "Follow app language",
+              "auto": "Volg app-taal",
               "bg": "Български",
               "bn": "বাংলা",
               "cs": "Čeština",
@@ -1035,9 +1037,9 @@
               "zh-CN": "简体中文",
               "zh-TW": "繁體中文"
             },
-            "tooltip": "The language to translate lyrics into."
+            "tooltip": "De taal waarin songteksten vertaald moeten worden."
           },
-          "tooltip": "Translate lyrics and show the translated result line-by-line for display."
+          "tooltip": "Vertaal songteksten en toon het vertaalde resultaat regel voor regel."
         }
       },
       "name": "Gesynchroniseerde songteksten",
@@ -1121,6 +1123,17 @@
         "visualizer-type": "Visualisatietype"
       },
       "name": "Visualisator"
+    },
+    "audio-only": {
+      "description": "Forceert alleen-audio modus — blokkeert alle videostreams op netwerk- en playerniveau om RAM en bandbreedte te besparen",
+      "name": "Alleen Audio"
+    },
+    "playback-recovery": {
+      "description": "Herstelt automatisch van vastgelopen, stilstaande of dode afspeelstatussen",
+      "menu": {
+        "log-to-console": "Log herstelgebeurtenissen naar console"
+      },
+      "name": "Afspeelherstel"
     }
   }
 }

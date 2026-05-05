@@ -2,8 +2,8 @@
   "common": {
     "console": {
       "plugins": {
-        "execute-failed": "Failed to execute plugin {{pluginName}}::{{contextName}}",
-        "executed-at-ms": "Plugin {{pluginName}}::{{contextName}} executed at {{ms}}ms",
+        "execute-failed": "Неуспешно извршување на приклучокот {{pluginName}}::{{contextName}}",
+        "executed-at-ms": "Приклучокот {{pluginName}}::{{contextName}} се изврши за {{ms}}ms",
         "initialize-failed": "Грешка при иницијализирање на приклучокот \"{{pluginName}}\"",
         "load-all": "Се вчитуваат сите приклучоци",
         "load-failed": "Грешка при вчитување на приклучокот \"{{pluginName}}\"",
@@ -21,69 +21,69 @@
   "main": {
     "console": {
       "did-finish-load": {
-        "dev-tools": "Finished loading. DevTools opened"
+        "dev-tools": "Вчитувањето заврши. DevTools се отворени"
       },
       "i18n": {
         "loaded": "i18n е вчитано"
       },
       "second-instance": {
-        "receive-command": "Received command over protocol: \"{{command}}\""
+        "receive-command": "Примена е команда преку протокол: \"{{command}}\""
       },
       "theme": {
         "css-file-not-found": "CSS-датотеката \"{{cssFile}}\" не постои, се игнорира"
       },
       "unresponsive": {
-        "details": "Unresponsive Error!\n{{error}}"
+        "details": "Грешка при неодговарање!\n{{error}}"
       },
       "when-ready": {
         "clearing-cache-after-20s": "Се чисти кеш-меморијата на апликацијата"
       },
       "window": {
-        "tried-to-render-offscreen": "Window tried to render offscreen, windowSize={{windowSize}}, displaySize={{displaySize}}, position={{position}}"
+        "tried-to-render-offscreen": "Прозорецот се обиде да се прикаже надвор од екранот, windowSize={{windowSize}}, displaySize={{displaySize}}, position={{position}}"
       }
     },
     "dialog": {
       "hide-menu-enabled": {
-        "detail": "Menu is hidden, use 'Alt' to show it (or 'Escape' if using In-App Menu)",
-        "message": "Hide Menu is enabled",
-        "title": "Hide Menu Enabled"
+        "detail": "Менито е скриено, користете 'Alt' за да го прикажете (или 'Escape' ако користите Вградено Мени)",
+        "message": "Скриј Мени е овозможено",
+        "title": "Скриј Мени Овозможено"
       },
       "need-to-restart": {
         "buttons": {
           "later": "Подоцна",
           "restart-now": "Рестартирај Сега"
         },
-        "detail": "\"{{pluginName}}\" plugin requires a restart to take effect",
-        "message": "\"{{pluginName}}\" needs to restart",
-        "title": "Restart Required"
+        "detail": "Приклучокот \"{{pluginName}}\" бара рестартирање за да стапи на сила",
+        "message": "\"{{pluginName}}\" треба да се рестартира",
+        "title": "Потребно е Рестартирање"
       },
       "unresponsive": {
         "buttons": {
           "quit": "Откажи",
-          "relaunch": "Рестартиран",
+          "relaunch": "Рестартирај",
           "wait": "Почекај"
         },
-        "detail": "We are sorry for the inconvenience! please choose what to do:",
-        "message": "The Application is Unresponsive",
+        "detail": "Жал ни е за непријатноста! Ве молиме изберете што да правите:",
+        "message": "Апликацијата не одговара",
         "title": "Прозорецот не реагира"
       },
       "update-available": {
         "buttons": {
           "disable": "Оневозможи Ажурирања",
           "download": "Преземи",
-          "ok": "OK"
+          "ok": "ОК"
         },
-        "detail": "A new version is available and can be downloaded at {{downloadLink}}",
-        "message": "A new version is available",
-        "title": "Update Available"
+        "detail": "Достапна е нова верзија и може да се преземе на {{downloadLink}}",
+        "message": "Достапна е нова верзија",
+        "title": "Достапно Ажурирање"
       }
     },
     "menu": {
-      "about": "About",
+      "about": "За апликацијата",
       "navigation": {
         "label": "Навигација",
         "submenu": {
-          "copy-current-url": "Copy current URL",
+          "copy-current-url": "Копирај тековна URL",
           "go-back": "Врати се назад",
           "go-forward": "Оди напред",
           "quit": "Излез",
@@ -94,32 +94,32 @@
         "label": "Опции",
         "submenu": {
           "advanced-options": {
-            "label": "Advanced options",
+            "label": "Напредни опции",
             "submenu": {
-              "auto-reset-app-cache": "Reset app cache when app starts",
-              "disable-hardware-acceleration": "Disable hardware acceleration",
-              "edit-config-json": "Edit config.json",
-              "override-user-agent": "Override User-Agent",
-              "restart-on-config-changes": "Restart on config changes",
+              "auto-reset-app-cache": "Ресетирај кеш на апликацијата при стартување",
+              "disable-hardware-acceleration": "Оневозможи хардверско забрзување",
+              "edit-config-json": "Уреди config.json",
+              "override-user-agent": "Презапиши User-Agent",
+              "restart-on-config-changes": "Рестартирај при промени на конфигурацијата",
               "set-proxy": {
-                "label": "Set proxy",
+                "label": "Постави прокси",
                 "prompt": {
-                  "label": "Enter Proxy Address: (leave empty to disable)",
-                  "placeholder": "Example: SOCKS5://127.0.0.1:9999",
-                  "title": "Set proxy"
+                  "label": "Внесете Адреса на Прокси: (оставете празно за оневозможување)",
+                  "placeholder": "Пример: SOCKS5://127.0.0.1:9999",
+                  "title": "Постави прокси"
                 }
               },
-              "toggle-dev-tools": "Toggle DevTools"
+              "toggle-dev-tools": "Вклучи/Исклучи DevTools"
             }
           },
-          "always-on-top": "Always on top",
-          "auto-update": "Auto Update",
+          "always-on-top": "Секогаш на врв",
+          "auto-update": "Автоматско Ажурирање",
           "hide-menu": {
             "dialog": {
-              "message": "Menu will be hidden on next launch, use [Alt] to show it (or backtick [`] if using in-app-menu)",
-              "title": "Hide Menu Enabled"
+              "message": "Менито ќе биде скриено при следното стартување, користете [Alt] за да го прикажете (или обратно косичка [`] ако користите вградено мени)",
+              "title": "Скриј Мени Овозможено"
             },
-            "label": "Hide Menu"
+            "label": "Скриј Мени"
           },
           "language": {
             "dialog": {
@@ -128,56 +128,57 @@
             },
             "label": "Јазик",
             "submenu": {
-              "to-help-translate": "Want to help translate? Click here"
+              "to-help-translate": "Сакате да помогнете со превод? Кликнете овде"
             }
           },
-          "resume-on-start": "Resume last song when app starts",
-          "single-instance-lock": "Single Instance Lock",
-          "start-at-login": "Start at login",
+          "resume-on-start": "Продолжи последна песна при стартување на апликацијата",
+          "single-instance-lock": "Заклучување на Една Инстанца",
+          "start-at-login": "Стартувај при најавување",
           "starting-page": {
-            "label": "Starting page",
-            "unset": "Unset"
+            "label": "Почетна страница",
+            "unset": "Непоставено"
           },
           "tray": {
-            "label": "Tray",
+            "label": "Фиока",
             "submenu": {
-              "disabled": "Disabled",
-              "enabled-and-hide-app": "Enabled and hide app",
-              "enabled-and-show-app": "Enabled and show app",
+              "disabled": "Оневозможено",
+              "enabled-and-hide-app": "Овозможено и скриј апликација",
+              "enabled-and-show-app": "Овозможено и прикажи апликација",
+              "move-to-current-desktop": "Премести на тековната виртуелна работна површина при прикажување",
               "play-pause-on-click": "Пушти/Паузирај со клик"
             }
           },
           "visual-tweaks": {
-            "label": "Visual Tweaks",
+            "label": "Визуелни Подесувања",
             "submenu": {
               "custom-window-title": {
-                "label": "Custom window title",
+                "label": "Прилагоден наслов на прозорец",
                 "prompt": {
-                  "label": "Enter custom window title: (leave empty to disable)",
-                  "placeholder": "Пример:{{applicationName}}"
+                  "label": "Внесете прилагоден наслов на прозорец: (оставете празно за оневозможување)",
+                  "placeholder": "Пример: {{applicationName}}"
                 }
               },
               "like-buttons": {
-                "default": "Default",
-                "force-show": "Force show",
-                "hide": "Hide",
-                "label": "Like buttons",
-                "swap": "Swap like buttons order"
+                "default": "Стандардно",
+                "force-show": "Присилно прикажи",
+                "hide": "Скриј",
+                "label": "Копчиња за допаѓање",
+                "swap": "Замени редослед на копчиња за допаѓање"
               },
-              "remove-upgrade-button": "Remove upgrade button",
+              "remove-upgrade-button": "Отстрани копче за надградба",
               "theme": {
                 "dialog": {
                   "button": {
                     "cancel": "Откажи",
                     "remove": "Отстрани"
                   },
-                  "remove-theme": "Are you sure you want to remove the custom theme?",
-                  "remove-theme-message": "This will remove the custom theme"
+                  "remove-theme": "Дали сте сигурни дека сакате да ја отстраните прилагодената тема?",
+                  "remove-theme-message": "Ова ќе ја отстрани прилагодената тема"
                 },
-                "label": "Theme",
+                "label": "Тема",
                 "submenu": {
-                  "import-css-file": "Import custom CSS file",
-                  "no-theme": "No theme"
+                  "import-css-file": "Увези прилагодена CSS датотека",
+                  "no-theme": "Без тема"
                 }
               }
             }
@@ -185,29 +186,29 @@
         }
       },
       "plugins": {
-        "enabled": "Enabled",
+        "enabled": "Овозможено",
         "label": "Приклучоци",
         "new": "НОВО"
       },
       "view": {
-        "label": "View",
+        "label": "Приказ",
         "submenu": {
-          "force-reload": "Force Reload",
-          "reload": "Reload",
-          "reset-zoom": "Actual Size",
-          "toggle-fullscreen": "Toggle Full Screen",
-          "zoom-in": "Zoom In",
-          "zoom-out": "Zoom Out"
+          "force-reload": "Присилно Вчитај",
+          "reload": "Вчитај повторно",
+          "reset-zoom": "Вистинска Големина",
+          "toggle-fullscreen": "Вклучи/Исклучи Цел Екран",
+          "zoom-in": "Зумирај",
+          "zoom-out": "Одзумирај"
         }
       }
     },
     "tray": {
-      "next": "Next",
-      "play-pause": "Play/Pause",
-      "previous": "Previous",
-      "quit": "Exit",
-      "restart": "Restart App",
-      "show": "Show window",
+      "next": "Следно",
+      "play-pause": "Пушти/Паузирај",
+      "previous": "Претходно",
+      "quit": "Излез",
+      "restart": "Рестартирај Апликација",
+      "show": "Прикажи прозорец",
       "tooltip": {
         "default": "{{applicationName}}",
         "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
@@ -216,291 +217,295 @@
   },
   "plugins": {
     "ad-speedup": {
-      "description": "If an ad play it mutes the audio and sets playback speed to 16x",
-      "name": "Ad Speedup"
+      "description": "Ако се пушта реклама, го исклучува звукот и ја поставува брзината на репродукција на 16x",
+      "name": "Забрзување на Реклами"
     },
     "adblocker": {
-      "description": "Block all ads and tracking out of the box",
+      "description": "Блокирај ги сите реклами и следење веднаш",
       "menu": {
-        "blocker": "Blocker"
+        "blocker": "Блокирач"
       },
-      "name": "Ad Blocker"
+      "name": "Блокирач на Реклами"
     },
     "album-actions": {
-      "description": "Adds Undislike, Dislike, Like, and Unlike buttons to apply this to all songs in a playlist or album",
-      "name": "Album Actions"
+      "description": "Додава копчиња за Отстрани недопаѓање, Недопаѓање, Допаѓање и Отстрани допаѓање за примена на сите песни во плејлиста или албум",
+      "name": "Акции за Албум"
     },
     "album-color-theme": {
-      "description": "Applies a dynamic theme and visual effects based on the album color palette",
+      "description": "Применува динамична тема и визуелни ефекти врз основа на палетата на бои на албумот",
       "menu": {
         "color-mix-ratio": {
-          "label": "Color mix ratio",
+          "label": "Однос на мешање на бои",
           "submenu": {
             "percent": "{{ratio}}%"
           }
         },
-        "enable-seekbar": "Enable seekbar theming"
+        "enable-seekbar": "Овозможи тематизирање на лентата за пребарување"
       },
-      "name": "Album Color Theme"
+      "name": "Тема на Бои на Албум"
+    },
+    "audio-only": {
+      "description": "Присилува режим само за аудио — ги блокира сите видео стримови на мрежно и плејерско ниво за заштеда на RAM и пропусен опсег",
+      "name": "Само Аудио"
     },
     "ambient-mode": {
-      "description": "Applies a lighting effect by casting gentle colors from the video, into your screen’s background",
+      "description": "Применува ефект на осветлување со прикажување нежни бои од видеото на позадината на екранот",
       "menu": {
         "blur-amount": {
-          "label": "Blur amount",
+          "label": "Интензитет на заматување",
           "submenu": {
-            "pixels": "{{blurAmount}} pixels"
+            "pixels": "{{blurAmount}} пиксели"
           }
         },
         "buffer": {
-          "label": "Buffer",
+          "label": "Бафер",
           "submenu": {
             "buffer": "{{buffer}}"
           }
         },
         "opacity": {
-          "label": "Opacity",
+          "label": "Непроѕирност",
           "submenu": {
             "percent": "{{opacity}}%"
           }
         },
         "quality": {
-          "label": "Quality",
+          "label": "Квалитет",
           "submenu": {
-            "pixels": "{{quality}} pixels"
+            "pixels": "{{quality}} пиксели"
           }
         },
         "size": {
-          "label": "Size",
+          "label": "Големина",
           "submenu": {
             "percent": "{{size}}%"
           }
         },
         "smoothness-transition": {
-          "label": "Smoothness transition",
+          "label": "Непречена транзиција",
           "submenu": {
-            "during": "During {{interpolationTime}} s"
+            "during": "За време на {{interpolationTime}} s"
           }
         },
         "use-fullscreen": {
-          "label": "Using fullscreen"
+          "label": "Користење на цел екран"
         }
       },
-      "name": "Ambient Mode"
+      "name": "Амбиентален Режим"
     },
     "amuse": {
-      "description": "Adds {{applicationName}} support for the Amuse now playing widget by 6K Labs",
+      "description": "Додава {{applicationName}} поддршка за „сега свири“ виџет на Amuse од 6K Labs",
       "name": "Amuse",
       "response": {
-        "query": "Amuse API server is running. GET /query to get song info."
+        "query": "Amuse API серверот работи. GET /query за добивање информации за песната."
       }
     },
     "api-server": {
-      "description": "Adds an API server to control the player",
+      "description": "Додава API сервер за контрола на плејерот",
       "dialog": {
         "request": {
           "buttons": {
-            "allow": "Allow",
-            "deny": "Deny"
+            "allow": "Дозволи",
+            "deny": "Одбиј"
           },
-          "message": "Allow {{ID}} ({{origin}}) to access the API?",
-          "title": "API authorization request"
+          "message": "Дозволи {{ID}} ({{origin}}) да пристапи до API?",
+          "title": "Барање за API авторизација"
         }
       },
       "menu": {
         "auth-strategy": {
-          "label": "Authorization strategy",
+          "label": "Стратегија за авторизација",
           "submenu": {
             "auth-at-first": {
-              "label": "Authorize at first request"
+              "label": "Авторизирај при прво барање"
             },
             "none": {
-              "label": "No authorization"
+              "label": "Без авторизација"
             }
           }
         },
         "hostname": {
-          "label": "Hostname"
+          "label": "Име на хост"
         },
         "https": {
-          "label": "HTTPS & Certificates",
+          "label": "HTTPS и Сертификати",
           "submenu": {
             "cert": {
-              "dialogTitle": "Select HTTPS certificate file",
-              "label": "Certificate file (.crt/.pem)"
+              "dialogTitle": "Изберете HTTPS сертификат датотека",
+              "label": "Сертификат датотека (.crt/.pem)"
             },
             "enable-https": {
-              "label": "Enable HTTPS"
+              "label": "Овозможи HTTPS"
             },
             "key": {
-              "dialogTitle": "Select HTTPS private key file",
-              "label": "Private key file (.key/.pem)"
+              "dialogTitle": "Изберете HTTPS датотека со приватен клуч",
+              "label": "Датотека со приватен клуч (.key/.pem)"
             }
           }
         },
         "port": {
-          "label": "Port"
+          "label": "Порта"
         }
       },
-      "name": "API Server [Beta]",
+      "name": "API Сервер [Бета]",
       "prompt": {
         "hostname": {
-          "label": "Enter the hostname (like 0.0.0.0) for the API server:",
-          "title": "Hostname"
+          "label": "Внесете го името на хостот (како 0.0.0.0) за API серверот:",
+          "title": "Име на хост"
         },
         "port": {
-          "label": "Enter the port for the API server:",
-          "title": "Port"
+          "label": "Внесете ја портата за API серверот:",
+          "title": "Порта"
         }
       }
     },
     "audio-compressor": {
-      "description": "Apply compression to audio (lowers the volume of the loudest parts of the signal and raises the volume of the softest parts)",
-      "name": "Audio Compressor"
+      "description": "Примени компресија на аудио (го намалува јачината на најгласните делови од сигналот и ја зголемува јачината на најтивките делови)",
+      "name": "Аудио Компресор"
     },
     "auth-proxy-adapter": {
-      "description": "Support for the use of authentication proxy services",
+      "description": "Поддршка за користење на прокси услуги за автентикација",
       "menu": {
-        "disable": "Disable Proxy Adapter",
-        "enable": "Enable Proxy Adapter",
+        "disable": "Оневозможи Прокси Адаптер",
+        "enable": "Овозможи Прокси Адаптер",
         "hostname": {
-          "label": "Hostname"
+          "label": "Име на хост"
         },
         "port": {
-          "label": "Port"
+          "label": "Порта"
         }
       },
-      "name": "Auth Proxy Adapter",
+      "name": "Прокси Адаптер за Автентикација",
       "prompt": {
         "hostname": {
-          "label": "Enter hostname for local proxy server (requires restart):",
-          "title": "Proxy Hostname"
+          "label": "Внесете име на хост за локален прокси сервер (потребно е рестартирање):",
+          "title": "Прокси Име на Хост"
         },
         "port": {
-          "label": "Enter port for local proxy server (requires restart):",
-          "title": "Proxy Port"
+          "label": "Внесете порта за локален прокси сервер (потребно е рестартирање):",
+          "title": "Прокси Порта"
         }
       }
     },
     "blur-nav-bar": {
-      "description": "Makes navigation bar transparent and blurry",
-      "name": "Blur Navigation Bar"
+      "description": "Ја прави лентата за навигација транспарентна и заматена",
+      "name": "Заматување на Лента за Навигација"
     },
     "bypass-age-restrictions": {
-      "description": "Bypass Music Player's age verification",
-      "name": "Bypass Age Restrictions"
+      "description": "Заобиколи ја проверката на возраст на Музичкиот Плејер",
+      "name": "Заобиколи Ограничувања на Возраст"
     },
     "captions-selector": {
-      "description": "Caption selector for {{applicationName}} audio tracks",
+      "description": "Избирач на титли за {{applicationName}} аудио записи",
       "menu": {
-        "autoload": "Automatically select last used caption",
-        "disable-captions": "No captions by default"
+        "autoload": "Автоматски изберете последно користен превод",
+        "disable-captions": "Без титли по стандардно"
       },
-      "name": "Captions Selector",
+      "name": "Избирач на Титли",
       "prompt": {
         "selector": {
-          "label": "Current caption language: {{language}}",
-          "none": "None",
-          "title": "Select caption language"
+          "label": "Тековен јазик на титлите: {{language}}",
+          "none": "Ништо",
+          "title": "Изберете јазик на титли"
         }
       },
       "templates": {
-        "title": "Open captions selector"
+        "title": "Отвори избирач на титли"
       },
       "toast": {
-        "caption-changed": "Caption changed to {{language}}",
-        "caption-disabled": "Captions disabled",
-        "no-captions": "No captions available for this song"
+        "caption-changed": "Титлите се променети на {{language}}",
+        "caption-disabled": "Титлите се оневозможени",
+        "no-captions": "Нема достапни титли за оваа песна"
       }
     },
     "clock": {
-      "description": "Add a clock to the navigation bar",
+      "description": "Додај часовник во лентата за навигација",
       "menu": {
         "format": {
-          "24-hour-format": "24-Hour Format",
-          "display-seconds": "Display Seconds",
-          "label": "Format"
+          "24-hour-format": "24-Часовен Формат",
+          "display-seconds": "Прикажи Секунди",
+          "label": "Формат"
         }
       },
-      "name": "Clock"
+      "name": "Часовник"
     },
     "compact-sidebar": {
-      "description": "Always set the sidebar in compact mode",
-      "name": "Compact Sidebar"
+      "description": "Секогаш поставувај ја страничната лента во компактен режим",
+      "name": "Компактна Странична Лента"
     },
     "crossfade": {
-      "description": "Crossfade between songs",
+      "description": "Вкрстено прелевање помеѓу песни",
       "menu": {
-        "advanced": "Advanced"
+        "advanced": "Напредно"
       },
-      "name": "Crossfade [Beta]",
+      "name": "Вкрстено Прелевање [Бета]",
       "prompt": {
         "options": {
           "multi-input": {
-            "fade-in-duration": "Fade in duration (ms)",
-            "fade-out-duration": "Fade out duration (ms)",
+            "fade-in-duration": "Времетраење на појавување (ms)",
+            "fade-out-duration": "Времетраење на исчезнување (ms)",
             "fade-scaling": {
-              "label": "Fade scaling",
-              "linear": "Linear",
-              "logarithmic": "Logarithmic"
+              "label": "Скалирање на прелевање",
+              "linear": "Линеарно",
+              "logarithmic": "Логаритамско"
             },
-            "seconds-before-end": "Crossfade N seconds before end"
+            "seconds-before-end": "Вкрстено прелевање N секунди пред крај"
           },
-          "title": "Crossfade options"
+          "title": "Опции за вкрстено прелевање"
         }
       }
     },
     "custom-output-device": {
-      "description": "Configure a custom output media device for songs",
+      "description": "Конфигурирај прилагоден излезен медиумски уред за песни",
       "menu": {
-        "device-selector": "Select Device"
+        "device-selector": "Изберете Уред"
       },
-      "name": "Custom Output Device",
+      "name": "Прилагоден Излезен Уред",
       "prompt": {
         "device-selector": {
-          "label": "Choose the output media device to be used",
-          "title": "Select Output Device"
+          "label": "Изберете го излезниот медиумски уред што ќе се користи",
+          "title": "Изберете Излезен Уред"
         }
       }
     },
     "disable-autoplay": {
-      "description": "Makes song start in \"paused\" mode",
+      "description": "Прави песната да започне во режим „паузирано“",
       "menu": {
-        "apply-once": "Applies only on startup"
+        "apply-once": "Се применува само при стартување"
       },
-      "name": "Disable Autoplay"
+      "name": "Оневозможи Автоматска Репродукција"
     },
     "discord": {
       "backend": {
-        "already-connected": "Attempted to connect with active connection",
-        "connected": "Connected to Discord",
-        "disconnected": "Disconnected from Discord"
+        "already-connected": "Обид за поврзување со активна конекција",
+        "connected": "Поврзан со Discord",
+        "disconnected": "Исклучен од Discord"
       },
-      "description": "Show your friends what you listen to with Rich Presence",
+      "description": "Покажете им на пријателите што слушате со Rich Presence",
       "menu": {
-        "auto-reconnect": "Auto reconnect",
-        "clear-activity": "Clear activity",
-        "clear-activity-after-timeout": "Clear activity after timeout",
-        "connected": "Connected",
-        "disconnected": "Disconnected",
-        "hide-duration-left": "Hide duration left",
-        "hide-github-button": "Hide GitHub link Button",
-        "play-on-application": "Play on {{applicationName}}",
-        "set-inactivity-timeout": "Set inactivity timeout",
+        "auto-reconnect": "Автоматско повторно поврзување",
+        "clear-activity": "Исчисти активност",
+        "clear-activity-after-timeout": "Исчисти активност по истек на време",
+        "connected": "Поврзан",
+        "disconnected": "Исклучен",
+        "hide-duration-left": "Скриј преостанато времетраење",
+        "hide-github-button": "Скриј GitHub линк копче",
+        "play-on-application": "Пушти на {{applicationName}}",
+        "set-inactivity-timeout": "Постави истек на неактивност",
         "set-status-display-type": {
-          "label": "Status text",
+          "label": "Текст на статус",
           "submenu": {
-            "application": "Listening to {{applicationName}}",
-            "artist": "Listening to {artist}",
-            "title": "Listening to {song title}"
+            "application": "Слушање на {{applicationName}}",
+            "artist": "Слушање на {artist}",
+            "title": "Слушање на {song title}"
           }
         }
       },
       "name": "Discord Rich Presence",
       "prompt": {
         "set-inactivity-timeout": {
-          "label": "Enter inactivity timeout in seconds:",
-          "title": "Set inactivity timeout"
+          "label": "Внесете истек на неактивност во секунди:",
+          "title": "Постави истек на неактивност"
         }
       }
     },
@@ -509,245 +514,253 @@
         "dialog": {
           "error": {
             "buttons": {
-              "ok": "OK"
+              "ok": "ОК"
             },
-            "message": "Argh! Apologies, download failed…",
-            "title": "Error in download!"
+            "message": "Ах! Извинете, преземањето не успеа…",
+            "title": "Грешка при преземање!"
           },
           "start-download-playlist": {
             "buttons": {
-              "ok": "OK"
+              "ok": "ОК"
             },
-            "detail": "({{playlistSize}} songs)",
-            "message": "Downloading Playlist {{playlistTitle}}",
-            "title": "Download started"
+            "detail": "({{playlistSize}} песни)",
+            "message": "Преземање на Плејлиста {{playlistTitle}}",
+            "title": "Преземањето започна"
           }
         },
         "feedback": {
-          "conversion-progress": "Conversion: {{percent}}%",
-          "converting": "Converting…",
-          "done": "Done: {{filePath}}",
-          "download-info": "Downloading {{artist}} - {{title}} [{{videoId}}",
-          "download-progress": "Download: {{percent}}%",
-          "downloading": "Downloading…",
-          "downloading-counter": "Downloading {{current}}/{{total}}…",
-          "downloading-playlist": "Downloading playlist \"{{playlistTitle}}\" - {{playlistSize}} songs ({{playlistId}})",
-          "error-while-downloading": "Error downloading \"{{author}} - {{title}}\": {{error}}",
-          "folder-already-exists": "The folder {{playlistFolder}} already exists",
-          "getting-playlist-info": "Getting playlist info…",
-          "loading": "Loading…",
-          "playlist-has-only-one-song": "Playlist has only one item, downloading it directly",
-          "playlist-id-not-found": "No playlist ID found",
-          "playlist-is-empty": "Playlist is empty",
-          "playlist-is-mix-or-private": "Error getting playlist info: make sure it isn't a private or \"Mixed for you\" playlist\n\n{{error}}",
-          "preparing-file": "Preparing file…",
-          "saving": "Saving…",
-          "trying-to-get-playlist-id": "Trying to get playlist ID: {{playlistId}}",
-          "video-id-not-found": "Video not found",
-          "writing-id3": "Writing ID3 tags…"
+          "conversion-progress": "Конверзија: {{percent}}%",
+          "converting": "Конвертирање…",
+          "done": "Готово: {{filePath}}",
+          "download-info": "Преземање {{artist}} - {{title}} [{{videoId}}",
+          "download-progress": "Преземање: {{percent}}%",
+          "downloading": "Преземање…",
+          "downloading-counter": "Преземање {{current}}/{{total}}…",
+          "downloading-playlist": "Преземање плејлиста \"{{playlistTitle}}\" - {{playlistSize}} песни ({{playlistId}})",
+          "error-while-downloading": "Грешка при преземање на \"{{author}} - {{title}}\": {{error}}",
+          "folder-already-exists": "Папката {{playlistFolder}} веќе постои",
+          "getting-playlist-info": "Добивање информации за плејлистата…",
+          "loading": "Вчитување…",
+          "playlist-has-only-one-song": "Плејлистата има само една ставка, се презема директно",
+          "playlist-id-not-found": "Не е пронајден ID на плејлиста",
+          "playlist-is-empty": "Плејлистата е празна",
+          "playlist-is-mix-or-private": "Грешка при добивање информации за плејлистата: проверете дали не е приватна или \"Мешано за вас\" плејлиста\n\n{{error}}",
+          "preparing-file": "Подготовка на датотека…",
+          "saving": "Зачувување…",
+          "trying-to-get-playlist-id": "Обид за добивање ID на плејлиста: {{playlistId}}",
+          "video-id-not-found": "Видеото не е пронајдено",
+          "writing-id3": "Запишување ID3 ознаки…"
         }
       },
-      "description": "Downloads MP3 / source audio directly from the interface",
+      "description": "Презема MP3 / изворно аудио директно од интерфејсот",
       "menu": {
-        "choose-download-folder": "Choose download folder",
+        "choose-download-folder": "Изберете папка за преземање",
         "download-finish-settings": {
-          "label": "Download on finish",
+          "label": "Преземи при завршување",
           "prompt": {
-            "last-percent": "After x percent",
-            "last-seconds": "Last x seconds",
-            "title": "Configure when to download"
+            "last-percent": "По x проценти",
+            "last-seconds": "Последни x секунди",
+            "title": "Конфигурирајте кога да се презема"
           },
           "submenu": {
-            "advanced": "Advanced",
-            "enabled": "Enabled",
-            "mode": "Time mode",
-            "percent": "Percent",
-            "seconds": "Seconds"
+            "advanced": "Напредно",
+            "enabled": "Овозможено",
+            "mode": "Временски режим",
+            "percent": "Проценти",
+            "seconds": "Секунди"
           }
         },
-        "download-playlist": "Download playlist",
-        "presets": "Presets",
-        "skip-existing": "Skip existing files"
+        "download-playlist": "Преземи плејлиста",
+        "presets": "Претходно поставени",
+        "skip-existing": "Прескокни постоечки датотеки"
       },
-      "name": "Downloader",
+      "name": "Преземач",
       "renderer": {
-        "can-not-update-progress": "Cannot update progress"
+        "can-not-update-progress": "Не може да се ажурира напредокот"
       },
       "templates": {
-        "button": "Download"
+        "button": "Преземи"
       }
     },
     "equalizer": {
-      "description": "Adds an equalizer to the player",
+      "description": "Додава еквилајзер на плејерот",
       "menu": {
         "presets": {
-          "label": "Presets",
+          "label": "Претходно поставени",
           "list": {
-            "bass-booster": "Bass booster"
+            "bass-booster": "Бас засилувач"
           }
         }
       },
-      "name": "Equalizer"
+      "name": "Еквилајзер"
     },
     "exponential-volume": {
-      "description": "Makes the volume slider exponential so it's easier to select lower volumes.",
-      "name": "Exponential Volume"
+      "description": "Го прави лизгачот за јачина експоненцијален за полесно избирање на пониски јачини.",
+      "name": "Експоненцијална Јачина"
     },
     "in-app-menu": {
-      "description": "Gives menu-bars a fancy, dark or album-color look",
+      "description": "Им дава на лентите со мени фенси, темен изглед или изглед во боја на албум",
       "menu": {
-        "hide-dom-window-controls": "Hide DOM window controls"
+        "hide-dom-window-controls": "Скриј DOM контроли на прозорец"
       },
-      "name": "In-App Menu"
+      "name": "Вградено Мени"
     },
     "lumiastream": {
-      "description": "Adds Lumia Stream support",
-      "name": "Lumia Stream [Beta]"
+      "description": "Додава поддршка за Lumia Stream",
+      "name": "Lumia Stream [Бета]"
     },
     "lyrics-genius": {
-      "description": "Adds lyrics support for most songs",
+      "description": "Додава поддршка за текстови за повеќето песни",
       "menu": {
-        "romanized-lyrics": "Romanized Lyrics"
+        "romanized-lyrics": "Романизирани Текстови"
       },
       "name": "Lyrics Genius",
       "renderer": {
-        "fetched-lyrics": "Fetched lyrics for Genius"
+        "fetched-lyrics": "Преземени текстови за Genius"
       }
     },
     "music-together": {
-      "description": "Share a playlist with others. When the host plays a song, everyone else will hear the same song",
+      "description": "Споделете плејлиста со други. Кога домаќинот пушта песна, сите други ќе ја слушаат истата песна",
       "dialog": {
-        "enter-host": "Enter Host ID"
+        "enter-host": "Внесете ID на Домаќин"
       },
       "internal": {
-        "save": "Save",
-        "track-source": "Track Source",
-        "unknown-user": "Unknown User"
+        "save": "Зачувај",
+        "track-source": "Извор на Песна",
+        "unknown-user": "Непознат Корисник"
       },
       "menu": {
-        "click-to-copy-id": "Copy Host ID",
-        "close": "Close Music Together",
-        "connected-users": "Connected Users",
-        "disconnect": "Disconnect Music Together",
-        "empty-user": "No connected users",
-        "host": "Music Together Host",
-        "join": "Join Music Together",
+        "click-to-copy-id": "Копирај ID на Домаќин",
+        "close": "Затвори Музика Заедно",
+        "connected-users": "Поврзани Корисници",
+        "disconnect": "Исклучи Музика Заедно",
+        "empty-user": "Нема поврзани корисници",
+        "host": "Домаќин на Музика Заедно",
+        "join": "Приклучи се на Музика Заедно",
         "permission": {
-          "all": "Allow guests to control playlist and player",
-          "host-only": "Only the host can control playlist and player",
-          "playlist": "Allow guests to control playlist"
+          "all": "Дозволи им на гостите да ја контролираат плејлистата и плејерот",
+          "host-only": "Само домаќинот може да ја контролира плејлистата и плејерот",
+          "playlist": "Дозволи им на гостите да ја контролираат плејлистата"
         },
-        "set-permission": "Change Control Permission",
+        "set-permission": "Промени Дозвола за Контрола",
         "status": {
-          "disconnected": "Disconnected",
-          "guest": "Connected as Guest",
-          "host": "Connected as Host"
+          "disconnected": "Исклучен",
+          "guest": "Поврзан како Гостин",
+          "host": "Поврзан како Домаќин"
         }
       },
-      "name": "Music Together [Beta]",
+      "name": "Музика Заедно [Бета]",
       "toast": {
-        "add-song-failed": "Failed to add song",
-        "closed": "Music Together closed",
-        "disconnected": "Music Together disconnected",
-        "host-failed": "Failed to host Music Together",
-        "id-copied": "Host ID copied to clipboard",
-        "id-copy-failed": "Failed to copy Host ID to clipboard",
-        "join-failed": "Failed to join Music Together",
-        "joined": "Joined Music Together",
-        "permission-changed": "Music Together permission changed to \"{{permission}}\"",
-        "remove-song-failed": "Failed to remove song",
-        "user-connected": "{{name}} joined Music Together",
-        "user-disconnected": "{{name}} left Music Together"
+        "add-song-failed": "Неуспешно додавање песна",
+        "closed": "Музика Заедно е затворена",
+        "disconnected": "Музика Заедно е исклучена",
+        "host-failed": "Неуспешно хостирање на Музика Заедно",
+        "id-copied": "ID на Домаќин е копиран во клипборд",
+        "id-copy-failed": "Неуспешно копирање на ID на Домаќин во клипборд",
+        "join-failed": "Неуспешно приклучување на Музика Заедно",
+        "joined": "Приклучени на Музика Заедно",
+        "permission-changed": "Дозволата за Музика Заедно е сменета на \"{{permission}}\"",
+        "remove-song-failed": "Неуспешно отстранување песна",
+        "user-connected": "{{name}} се приклучи на Музика Заедно",
+        "user-disconnected": "{{name}} ја напушти Музика Заедно"
       }
     },
     "navigation": {
-      "description": "Next/Back navigation arrows directly integrated in the interface, like in your favorite browser",
-      "name": "Navigation",
+      "description": "Стрелки за Следно/Назад директно интегрирани во интерфејсот, како во вашиот омилен прелистувач",
+      "name": "Навигација",
       "templates": {
         "back": {
-          "title": "Go to previous page"
+          "title": "Оди на претходна страница"
         },
         "forward": {
-          "title": "Go to next page"
+          "title": "Оди на следна страница"
         }
       }
     },
     "no-google-login": {
-      "description": "Remove Google login buttons and links from the interface",
-      "name": "No Google Login"
+      "description": "Отстрани ги копчињата и линковите за најава на Google од интерфејсот",
+      "name": "Без Google Најава"
     },
     "notifications": {
-      "description": "Display a notification when a song starts playing (interactive notifications are available on Windows)",
+      "description": "Прикажи известување кога песната започнува да свири (интерактивни известувања се достапни на Windows)",
       "menu": {
-        "interactive": "Interactive Notifications",
+        "interactive": "Интерактивни Известувања",
         "interactive-settings": {
-          "label": "Interactive Settings",
+          "label": "Интерактивни Поставки",
           "submenu": {
-            "hide-button-text": "Hide button text",
-            "refresh-on-play-pause": "Refresh on Play/Pause",
-            "tray-controls": "Open/Close on tray click"
+            "hide-button-text": "Скриј текст на копче",
+            "hover-controls": "Прикажи мини-плејер при лебдење над фиоката",
+            "refresh-on-play-pause": "Освежи при Пушти/Паузирај",
+            "tray-controls": "Отвори/Затвори при клик на фиоката"
           }
         },
-        "priority": "Notification Priority",
-        "toast-style": "Toast style",
-        "unpause-notification": "Show notification on unpause"
+        "priority": "Приоритет на Известувања",
+        "toast-style": "Стил на известување",
+        "unpause-notification": "Прикажи известување при продолжување"
       },
-      "name": "Notifications"
+      "name": "Известувања"
     },
     "performance-improvement": {
-      "description": "Improve performance by enabling experimental scripts",
-      "name": "Performance improvement [Beta]"
+      "description": "Подобрете ги перформансите со овозможување на експериментални скрипти",
+      "name": "Подобрување на перформанси [Бета]"
+    },
+    "playback-recovery": {
+      "description": "Автоматски се опоравува од заглавени, запрени или мртви состојби на репродукција",
+      "menu": {
+        "log-to-console": "Запиши настани за опоравување во конзола"
+      },
+      "name": "Опоравување на Репродукција"
     },
     "picture-in-picture": {
-      "description": "Allows to switch the app to picture-in-picture mode",
+      "description": "Овозможува префрлање на апликацијата во режим слика-во-слика",
       "menu": {
-        "always-on-top": "Always on top",
+        "always-on-top": "Секогаш на врв",
         "hotkey": {
-          "label": "Hotkey",
+          "label": "Топло копче",
           "prompt": {
             "keybind-options": {
-              "hotkey": "Hotkey"
+              "hotkey": "Топло копче"
             },
-            "label": "Choose a hotkey to toggle picture-in-picture",
-            "title": "Picture-in-picture Hotkey"
+            "label": "Изберете топло копче за вклучување/исклучување на слика-во-слика",
+            "title": "Топло Копче за Слика-во-Слика"
           }
         },
-        "save-window-position": "Save window position",
-        "save-window-size": "Save window size",
-        "use-native-pip": "Use browser native PiP"
+        "save-window-position": "Зачувај позиција на прозорец",
+        "save-window-size": "Зачувај големина на прозорец",
+        "use-native-pip": "Користи вграден PiP на прелистувачот"
       },
-      "name": "Picture-in-picture",
+      "name": "Слика-во-Слика",
       "templates": {
-        "button": "Picture-in-picture"
+        "button": "Слика-во-Слика"
       }
     },
     "playback-speed": {
-      "description": "Listen fast, listen slow! Adds a slider that controls song speed",
-      "name": "Playback Speed",
+      "description": "Слушајте брзо, слушајте бавно! Додава лизгач кој ја контролира брзината на песната",
+      "name": "Брзина на Репродукција",
       "templates": {
-        "button": "Speed"
+        "button": "Брзина"
       }
     },
     "precise-volume": {
-      "description": "Control the volume precisely using mousewheel/hotkeys, with a custom HUD and customizable volume steps",
+      "description": "Контролирајте ја јачината прецизно користејќи тркалце на глувче/топли копчиња, со прилагоден HUD и прилагодливи чекори на јачина",
       "menu": {
-        "arrows-shortcuts": "Local Arrow-keys Controls",
-        "custom-volume-steps": "Set Custom Volume Steps",
-        "global-shortcuts": "Global Hotkeys"
+        "arrows-shortcuts": "Локални Контроли со Стрелки",
+        "custom-volume-steps": "Постави Прилагодени Чекори на Јачина",
+        "global-shortcuts": "Глобални Топли Копчиња"
       },
-      "name": "Precise Volume",
+      "name": "Прецизна Јачина",
       "prompt": {
         "global-shortcuts": {
           "keybind-options": {
-            "decrease": "Decrease Volume",
-            "increase": "Increase Volume"
+            "decrease": "Намали Јачина",
+            "increase": "Зголеми Јачина"
           },
-          "label": "Choose Global Volume Keybinds:",
-          "title": "Global Volume Keybinds"
+          "label": "Изберете Глобални Копчиња за Јачина:",
+          "title": "Глобални Копчиња за Јачина"
         },
         "volume-steps": {
-          "label": "Choose Volume Increase/Decrease Steps",
-          "title": "Volume Steps"
+          "label": "Изберете Чекори за Зголемување/Намалување на Јачина",
+          "title": "Чекори на Јачина"
         }
       }
     },
@@ -755,242 +768,242 @@
       "backend": {
         "dialog": {
           "quality-changer": {
-            "detail": "Current Quality: {{quality}}",
-            "message": "Choose Video Quality:",
-            "title": "Choose Video Quality"
+            "detail": "Тековен Квалитет: {{quality}}",
+            "message": "Изберете Квалитет на Видео:",
+            "title": "Изберете Квалитет на Видео"
           }
         }
       },
-      "description": "Allows changing the video quality with a button on the video overlay",
-      "name": "Video Quality Changer",
+      "description": "Овозможува промена на квалитетот на видеото со копче на видео-преклопот",
+      "name": "Менувач на Квалитет на Видео",
       "renderer": {
         "quality-settings-button": {
-          "label": "Open player quality changer"
+          "label": "Отвори менувач на квалитет на плејер"
         }
       }
     },
     "scrobbler": {
-      "description": "Add scrobbling support (etc. last.fm, Listenbrainz)",
+      "description": "Додај поддршка за scrobbling (пр. last.fm, Listenbrainz)",
       "dialog": {
         "lastfm": {
           "auth-failed": {
-            "message": "Failed to authenticate with Last.fm\nHide the popup until the next restart.",
-            "title": "Authentication Failed"
+            "message": "Неуспешна автентикација со Last.fm\nСкриј го скокачкиот прозорец до следното рестартирање.",
+            "title": "Автентикацијата Не Успеа"
           }
         }
       },
       "menu": {
         "lastfm": {
-          "api-settings": "Last.fm API Settings"
+          "api-settings": "Last.fm API Поставки"
         },
         "listenbrainz": {
-          "token": "Enter ListenBrainz user token"
+          "token": "Внесете ListenBrainz кориснички токен"
         },
-        "scrobble-alternative-artist": "Use alternative artists",
-        "scrobble-alternative-title": "Use alternative titles",
-        "scrobble-other-media": "Scrobble other media"
+        "scrobble-alternative-artist": "Користи алтернативни изведувачи",
+        "scrobble-alternative-title": "Користи алтернативни наслови",
+        "scrobble-other-media": "Scrobble други медиуми"
       },
       "name": "Scrobbler",
       "prompt": {
         "lastfm": {
-          "api-key": "Last.fm API key",
-          "api-secret": "Last.fm API secret"
+          "api-key": "Last.fm API клуч",
+          "api-secret": "Last.fm API тајна"
         },
         "listenbrainz": {
           "token": {
-            "label": "Enter your ListenBrainz user token:",
-            "title": "ListenBrainz token"
+            "label": "Внесете го вашиот ListenBrainz кориснички токен:",
+            "title": "ListenBrainz токен"
           }
         }
       }
     },
     "shortcuts": {
-      "description": "Allows setting global hotkeys for playback (play/pause/next/previous) and turning off media OSD by overriding media keys, turning on Ctrl/CMD + F to search, turning on Linux MPRIS support for media keys, and custom hotkeys for advanced users",
+      "description": "Овозможува поставување глобални топли копчиња за репродукција (пушти/паузирај/следно/претходно) и исклучување на медиумски OSD со презапишување на медиумските копчиња, вклучување на Ctrl/CMD + F за пребарување, вклучување на Linux MPRIS поддршка за медиумски копчиња и прилагодени топли копчиња за напредни корисници",
       "menu": {
-        "override-media-keys": "Override Media Keys",
-        "set-keybinds": "Set Global Song Controls"
+        "override-media-keys": "Презапиши Медиумски Копчиња",
+        "set-keybinds": "Постави Глобални Контроли за Песни"
       },
-      "name": "Shortcuts (& MPRIS)",
+      "name": "Кратенки (& MPRIS)",
       "prompt": {
         "keybind": {
           "keybind-options": {
-            "next": "Next",
-            "play-pause": "Play / Pause",
-            "previous": "Previous"
+            "next": "Следно",
+            "play-pause": "Пушти / Паузирај",
+            "previous": "Претходно"
           },
-          "label": "Choose Global Keybinds for Songs Control:",
-          "title": "Global Keybinds"
+          "label": "Изберете Глобални Копчиња за Контрола на Песни:",
+          "title": "Глобални Копчиња"
         }
       }
     },
     "skip-disliked-songs": {
-      "description": "Skips disliked songs",
-      "name": "Skip Disliked Songs"
+      "description": "Ги прескокнува песните што не ви се допаѓаат",
+      "name": "Прескокни Недопаднати Песни"
     },
     "skip-silences": {
-      "description": "Automatically skip silences sections in songs",
-      "name": "Skip Silences"
+      "description": "Автоматски прескокнувај ги деловите со тишина во песните",
+      "name": "Прескокни Тишини"
     },
     "sponsorblock": {
-      "description": "Automatically Skips non-music parts like intro/outro or parts of music videos where the song isn't playing",
+      "description": "Автоматски ги прескокнува немузичките делови како интро/аутро или делови од музички видеа каде што песната не свири",
       "name": "SponsorBlock"
     },
     "synced-lyrics": {
-      "description": "Provides synced lyrics to songs, using providers like LRClib.",
+      "description": "Обезбедува синхронизирани текстови за песни, користејќи провајдери како LRClib.",
       "errors": {
-        "fetch": "⚠️\tAn error occurred while fetching the lyrics.\n\tPlease try again later.",
-        "not-found": "⚠️ No lyrics found for this song."
+        "fetch": "⚠️\tНастана грешка при преземањето на текстот.\n\tВе молиме обидете се повторно подоцна.",
+        "not-found": "⚠️ Не се пронајдени текстови за оваа песна."
       },
       "menu": {
         "convert-chinese-character": {
-          "label": "Convert Chinese character",
+          "label": "Конвертирај Кинески Знаци",
           "submenu": {
             "disabled": {
-              "label": "Disabled",
-              "tooltip": "Disable Chinese character conversion"
+              "label": "Оневозможено",
+              "tooltip": "Оневозможи конверзија на кинески знаци"
             },
             "simplified-to-traditional": {
-              "label": "Simplified to Traditional",
-              "tooltip": "Convert Simplified Chinese to Traditional Chinese"
+              "label": "Поедноставен во Традиционален",
+              "tooltip": "Конвертирај поедноставен кинески во традиционален кинески"
             },
             "traditional-to-simplified": {
-              "label": "Traditional to Simplified",
-              "tooltip": "Convert Traditional Chinese to Simplified Chinese"
+              "label": "Традиционален во Поедноставен",
+              "tooltip": "Конвертирај традиционален кинески во поедноставен кинески"
             }
           },
-          "tooltip": "Convert Chinese character to Traditional or Simplified"
+          "tooltip": "Конвертирај кинески знаци во традиционален или поедноставен"
         },
         "default-text-string": {
-          "label": "Default character between lyrics",
-          "tooltip": "Choose the default character to use for the gap between lyrics"
+          "label": "Стандарден знак помеѓу текстови",
+          "tooltip": "Изберете го стандардниот знак за празнина помеѓу текстовите"
         },
         "line-effect": {
-          "label": "Line effect",
+          "label": "Ефект на линија",
           "submenu": {
             "fancy": {
-              "label": "Fancy",
-              "tooltip": "Use large, app-like effects on the current line"
+              "label": "Фенси",
+              "tooltip": "Користи големи ефекти слични на апликација на тековната линија"
             },
             "focus": {
-              "label": "Focus",
-              "tooltip": "Make only the current line white"
+              "label": "Фокус",
+              "tooltip": "Направи само тековната линија бела"
             },
             "offset": {
-              "label": "Offset",
-              "tooltip": "Offset on the right the current line"
+              "label": "Поместување",
+              "tooltip": "Помести ја тековната линија на десно"
             },
             "scale": {
-              "label": "Scale",
-              "tooltip": "Scale the current line"
+              "label": "Скала",
+              "tooltip": "Скалирај ја тековната линија"
             }
           },
-          "tooltip": "Choose the effect to apply to the current line"
+          "tooltip": "Изберете го ефектот што ќе се примени на тековната линија"
         },
         "lyrics-font-size": {
-          "label": "Lyrics font size",
+          "label": "Големина на Фонт на Текстови",
           "submenu": {
             "large": {
-              "label": "Large",
-              "tooltip": "Use the original larger lyrics size"
+              "label": "Голем",
+              "tooltip": "Користи ја оригиналната поголема големина на текстови"
             },
             "medium": {
-              "label": "Medium",
-              "tooltip": "Use a balanced lyrics size"
+              "label": "Среден",
+              "tooltip": "Користи балансирана големина на текстови"
             },
             "small": {
-              "label": "Small",
-              "tooltip": "Use a more compact lyrics size"
+              "label": "Мал",
+              "tooltip": "Користи покомпактна големина на текстови"
             }
           },
-          "tooltip": "Choose how large the lyrics text should be"
+          "tooltip": "Изберете колку голем треба да биде текстот"
         },
         "precise-timing": {
-          "label": "Make the lyrics perfectly synced",
-          "tooltip": "Calculate to the milisecond the display of the next line (can have a small impact on performance)"
+          "label": "Направи ги текстовите совршено синхронизирани",
+          "tooltip": "Пресметај до милисекунда прикажувањето на следната линија (може да има мало влијание врз перформансите)"
         },
         "preferred-provider": {
-          "label": "Preferred Provider",
+          "label": "Префериран Провајдер",
           "none": {
-            "label": "None",
-            "tooltip": "No preferred provider"
+            "label": "Ништо",
+            "tooltip": "Нема префериран провајдер"
           },
-          "tooltip": "Choose the default provider to use"
+          "tooltip": "Изберете го стандардниот провајдер за користење"
         },
         "romanization": {
-          "label": "Romanize lyrics",
-          "tooltip": "If the lyrics are in a different language, try to display a latin version."
+          "label": "Романизирај текстови",
+          "tooltip": "Ако текстовите се на различен јазик, обидете се да прикажете латинична верзија."
         },
         "show-lyrics-even-if-inexact": {
-          "label": "Show lyrics even if inexact",
-          "tooltip": "If the song is not found, the plugin tries again with a different search query.\nThe result from the second attempt may not be exact."
+          "label": "Прикажи текстови дури и ако се неточни",
+          "tooltip": "Ако песната не е пронајдена, приклучокот се обидува повторно со различен пребарувачки упит.\nРезултатот од вториот обид може да не биде точен."
         },
         "show-time-codes": {
-          "label": "Show time codes",
-          "tooltip": "Show the time codes next to the lyrics"
+          "label": "Прикажи временски кодови",
+          "tooltip": "Прикажи ги временските кодови покрај текстовите"
         },
         "translation": {
           "clear-cache": {
-            "label": "Clear translation cache",
-            "tooltip": "Delete all cached translations stored on disk."
+            "label": "Исчисти кеш на преводи",
+            "tooltip": "Избриши ги сите кеширани преводи зачувани на диск."
           },
           "configure": {
-            "label": "Configure API key & model…",
-            "tooltip": "Set provider-specific translation options."
+            "label": "Конфигурирај API клуч и модел…",
+            "tooltip": "Постави опции за превод специфични за провајдерот."
           },
           "enabled": {
-            "label": "Enable translation",
-            "tooltip": "Show a translated line beneath each original lyric line."
+            "label": "Овозможи превод",
+            "tooltip": "Прикажи преведена линија под секоја оригинална линија од текстот."
           },
-          "label": "Lyrics translation",
+          "label": "Превод на Текстови",
           "provider": {
-            "label": "Provider",
-            "tooltip": "Which service to use for translation."
+            "label": "Провајдер",
+            "tooltip": "Која услуга да се користи за превод."
           },
           "providers": {
             "anthropic": {
               "name": "Anthropic Claude",
-              "prompt-label": "Uses the native Anthropic Messages API.",
-              "prompt-title": "Anthropic settings"
+              "prompt-label": "Го користи вградениот Anthropic Messages API.",
+              "prompt-title": "Anthropic поставки"
             },
             "gemini": {
               "name": "Google Gemini",
-              "prompt-label": "Uses Google's Generative Language API (generateContent).",
-              "prompt-title": "Gemini settings"
+              "prompt-label": "Го користи Google Generative Language API (generateContent).",
+              "prompt-title": "Gemini поставки"
             },
             "google-translate": {
-              "host": "Host",
+              "host": "Хост",
               "name": "Google Translate",
-              "prompt-label": "Uses the unofficial free Google Translate endpoint. No API key is required, but Google may rate-limit it.",
-              "prompt-title": "Google Translate settings"
+              "prompt-label": "Го користи неофицијалниот бесплатен Google Translate крајна точка. Не е потребен API клуч, но Google може да ограничи брзина.",
+              "prompt-title": "Google Translate поставки"
             },
             "local-cli": {
-              "command": "Command",
-              "engine": "Local CLI",
+              "command": "Команда",
+              "engine": "Локален CLI",
               "engine-claude": "Claude Code",
               "engine-codex": "Codex",
               "engine-gemini": "Gemini CLI",
-              "name": "Local CLI",
-              "prompt-label": "Use a locally logged-in Claude Code, Codex, or Gemini CLI. The command and model are automatic; the CLI uses its own logged-in default.",
-              "prompt-title": "Local CLI settings",
-              "timeout": "Timeout seconds (15-600)"
+              "name": "Локален CLI",
+              "prompt-label": "Користи локално најавени Claude Code, Codex или Gemini CLI. Командата и моделот се автоматски; CLI го користи сопствениот најавен стандард.",
+              "prompt-title": "Локални CLI поставки",
+              "timeout": "Тајмаут во секунди (15-600)"
             },
             "openai-compatible": {
-              "api-mode": "API mode (responses / auto / chat-completions)",
-              "base-url": "Base URL",
-              "name": "OpenAI compatible",
-              "prompt-label": "Use OpenAI-compatible servers, including Ollama (base URL http://127.0.0.1:11434/v1, API mode auto or chat-completions).",
-              "prompt-title": "OpenAI-compatible settings"
+              "api-mode": "API режим (responses / auto / chat-completions)",
+              "base-url": "Основна URL",
+              "name": "OpenAI компатибилен",
+              "prompt-label": "Користи OpenAI компатибилни сервери, вклучувајќи Ollama (основна URL http://127.0.0.1:11434/v1, API режим auto или chat-completions).",
+              "prompt-title": "OpenAI компатибилни поставки"
             },
             "shared": {
-              "api-key": "API key",
-              "model": "Model"
+              "api-key": "API клуч",
+              "model": "Модел"
             }
           },
           "target-language": {
-            "label": "Target language",
+            "label": "Целен јазик",
             "options": {
               "ar": "العربية",
-              "auto": "Follow app language",
+              "auto": "Следи го јазикот на апликацијата",
               "bg": "Български",
               "bn": "বাংলা",
               "cs": "Čeština",
@@ -1035,61 +1048,61 @@
               "zh-CN": "简体中文",
               "zh-TW": "繁體中文"
             },
-            "tooltip": "The language to translate lyrics into."
+            "tooltip": "Јазикот на кој да се преведат текстовите."
           },
-          "tooltip": "Translate lyrics and show the translated result line-by-line for display."
+          "tooltip": "Преведи ги текстовите и прикажи го преведениот резултат линија по линија."
         }
       },
-      "name": "Synced Lyrics",
+      "name": "Синхронизирани Текстови",
       "refetch-btn": {
-        "fetching": "Fetching...",
-        "normal": "Refetch lyrics"
+        "fetching": "Преземање...",
+        "normal": "Повторно превземи текстови"
       },
       "warnings": {
-        "duration-mismatch": "⚠️ - The lyrics may be out of sync due to a duration mismatch.",
-        "inexact": "⚠️ - The lyrics for this song may not be exact",
-        "instrumental": "⚠️ - This is an instrumental song"
+        "duration-mismatch": "⚠️ - Текстовите може да се надвор од синхронизација поради несовпаѓање во времетраењето.",
+        "inexact": "⚠️ - Текстовите за оваа песна може да не се точни",
+        "instrumental": "⚠️ - Ова е инструментална песна"
       }
     },
     "taskbar-mediacontrol": {
-      "description": "Control playback from your Windows taskbar",
-      "name": "Taskbar Media Control"
+      "description": "Контролирајте ја репродукцијата од вашата Windows лента со задачи",
+      "name": "Медиумска Контрола на Лента со Задачи"
     },
     "touchbar": {
-      "description": "Adds a TouchBar widget for macOS users",
+      "description": "Додава TouchBar виџет за macOS корисници",
       "name": "TouchBar"
     },
     "transparent-player": {
-      "description": "Makes the app window transparent",
+      "description": "Го прави прозорецот на апликацијата транспарентен",
       "menu": {
         "opacity": {
-          "label": "Opacity",
+          "label": "Непроѕирност",
           "submenu": {
             "percent": "{{opacity}}%"
           }
         },
         "type": {
-          "label": "Type",
+          "label": "Тип",
           "submenu": {
-            "acrylic": "Acrylic",
-            "mica": "Mica",
-            "none": "None",
-            "tabbed": "Tabbed"
+            "acrylic": "Акрил",
+            "mica": "Мика",
+            "none": "Ништо",
+            "tabbed": "Табови"
           }
         }
       },
-      "name": "Transparent Player"
+      "name": "Транспарентен Плејер"
     },
     "tuna-obs": {
-      "description": "Integration with OBS's plugin Tuna",
+      "description": "Интеграција со OBS приклучокот Tuna",
       "name": "Tuna OBS"
     },
     "unobtrusive-player": {
-      "description": "Prevents the player from popping up when playing a song",
-      "name": "Unobtrusive Player"
+      "description": "Спречува плејерот да се појавува кога се пушта песна",
+      "name": "Ненаметлив Плејер"
     },
     "video-toggle": {
-      "description": "Adds a button to switch between Video/Song mode. can also optionally remove the whole video tab",
+      "description": "Додава копче за префрлање помеѓу Видео/Песна режим. Може опционално да го отстрани целото видео јазиче",
       "menu": {
         "align": {
           "label": "Порамнување",
@@ -1099,28 +1112,28 @@
             "right": "Десно"
           }
         },
-        "force-hide": "Force remove video tab",
+        "force-hide": "Присилно отстрани видео јазиче",
         "mode": {
-          "label": "Mode",
+          "label": "Режим",
           "submenu": {
-            "custom": "Custom toggle",
-            "disabled": "Disabled",
-            "native": "Native toggle"
+            "custom": "Прилагодено префрлање",
+            "disabled": "Оневозможено",
+            "native": "Вградено префрлање"
           }
         }
       },
-      "name": "Video Toggle",
+      "name": "Видео Префрлач",
       "templates": {
         "button-song": "Песна",
         "button-video": "Видео"
       }
     },
     "visualizer": {
-      "description": "Adds a visualizer to the player",
+      "description": "Додава визуелизатор на плејерот",
       "menu": {
-        "visualizer-type": "Visualizer Type"
+        "visualizer-type": "Тип на Визуелизатор"
       },
-      "name": "Visualizer"
+      "name": "Визуелизатор"
     }
   }
 }

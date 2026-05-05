@@ -144,7 +144,8 @@
               "disabled": "Inaktiverad",
               "enabled-and-hide-app": "Aktiverad och dölj app",
               "enabled-and-show-app": "Aktiverad och visa app",
-              "play-pause-on-click": "Spela/Pausa vid klick"
+              "play-pause-on-click": "Spela/Pausa vid klick",
+              "move-to-current-desktop": "Flytta till aktuellt virtuellt skrivbord vid visning"
             }
           },
           "visual-tweaks": {
@@ -685,7 +686,8 @@
           "submenu": {
             "hide-button-text": "Dölj knapptext",
             "refresh-on-play-pause": "Uppdatera vid Play/Pause",
-            "tray-controls": "Öppna/stäng vid klick i systemfältet"
+            "tray-controls": "Öppna/stäng vid klick i systemfältet",
+            "hover-controls": "Visa minispelare när muspekaren hålls över systemfältsikonen"
           }
         },
         "priority": "Notisprioritet",
@@ -887,22 +889,22 @@
           "tooltip": "Välj effekt att applicera på den aktuella raden"
         },
         "lyrics-font-size": {
-          "label": "Lyrics font size",
+          "label": "Textstorlek för sångtexter",
           "submenu": {
             "large": {
-              "label": "Large",
-              "tooltip": "Use the original larger lyrics size"
+              "label": "Stor",
+              "tooltip": "Använd den ursprungliga större textstorleken"
             },
             "medium": {
-              "label": "Medium",
-              "tooltip": "Use a balanced lyrics size"
+              "label": "Mellan",
+              "tooltip": "Använd en balanserad textstorlek"
             },
             "small": {
-              "label": "Small",
-              "tooltip": "Use a more compact lyrics size"
+              "label": "Liten",
+              "tooltip": "Använd en mer kompakt textstorlek"
             }
           },
-          "tooltip": "Choose how large the lyrics text should be"
+          "tooltip": "Välj hur stor sångtexten ska vara"
         },
         "precise-timing": {
           "label": "Gör låttexterna perfekt synkroniserade",
@@ -930,67 +932,67 @@
         },
         "translation": {
           "clear-cache": {
-            "label": "Clear translation cache",
-            "tooltip": "Delete all cached translations stored on disk."
+            "label": "Rensa översättningscache",
+            "tooltip": "Ta bort alla cachade översättningar som sparats på disken."
           },
           "configure": {
-            "label": "Configure API key & model…",
-            "tooltip": "Set provider-specific translation options."
+            "label": "Konfigurera API-nyckel och modell…",
+            "tooltip": "Ställ in leverantörsspecifika översättningsalternativ."
           },
           "enabled": {
-            "label": "Enable translation",
-            "tooltip": "Show a translated line beneath each original lyric line."
+            "label": "Aktivera översättning",
+            "tooltip": "Visa en översatt rad under varje originell textrad."
           },
-          "label": "Lyrics translation",
+          "label": "Översättning av sångtexter",
           "provider": {
-            "label": "Provider",
-            "tooltip": "Which service to use for translation."
+            "label": "Leverantör",
+            "tooltip": "Vilken tjänst som ska användas för översättning."
           },
           "providers": {
             "anthropic": {
               "name": "Anthropic Claude",
-              "prompt-label": "Uses the native Anthropic Messages API.",
-              "prompt-title": "Anthropic settings"
+              "prompt-label": "Använder det inbyggda Anthropic Messages API:et.",
+              "prompt-title": "Anthropic-inställningar"
             },
             "gemini": {
               "name": "Google Gemini",
-              "prompt-label": "Uses Google's Generative Language API (generateContent).",
-              "prompt-title": "Gemini settings"
+              "prompt-label": "Använder Googles Generative Language API (generateContent).",
+              "prompt-title": "Gemini-inställningar"
             },
             "google-translate": {
-              "host": "Host",
-              "name": "Google Translate",
-              "prompt-label": "Uses the unofficial free Google Translate endpoint. No API key is required, but Google may rate-limit it.",
-              "prompt-title": "Google Translate settings"
+              "host": "Värd",
+              "name": "Google Översätt",
+              "prompt-label": "Använder den inofficiella kostnadsfria Google Translate-ändpunkten. Ingen API-nyckel krävs, men Google kan hastighetsbegränsa den.",
+              "prompt-title": "Google Översätt-inställningar"
             },
             "local-cli": {
-              "command": "Command",
-              "engine": "Local CLI",
+              "command": "Kommando",
+              "engine": "Lokal CLI",
               "engine-claude": "Claude Code",
               "engine-codex": "Codex",
               "engine-gemini": "Gemini CLI",
-              "name": "Local CLI",
-              "prompt-label": "Use a locally logged-in Claude Code, Codex, or Gemini CLI. The command and model are automatic; the CLI uses its own logged-in default.",
-              "prompt-title": "Local CLI settings",
-              "timeout": "Timeout seconds (15-600)"
+              "name": "Lokal CLI",
+              "prompt-label": "Använd en lokalt inloggad Claude Code, Codex eller Gemini CLI. Kommandot och modellen är automatiska; CLI:n använder sin egen inloggade standard.",
+              "prompt-title": "Lokala CLI-inställningar",
+              "timeout": "Tidsgräns i sekunder (15-600)"
             },
             "openai-compatible": {
-              "api-mode": "API mode (responses / auto / chat-completions)",
-              "base-url": "Base URL",
-              "name": "OpenAI compatible",
-              "prompt-label": "Use OpenAI-compatible servers, including Ollama (base URL http://127.0.0.1:11434/v1, API mode auto or chat-completions).",
-              "prompt-title": "OpenAI-compatible settings"
+              "api-mode": "API-läge (responses / auto / chat-completions)",
+              "base-url": "Bas-URL",
+              "name": "OpenAI-kompatibel",
+              "prompt-label": "Använd OpenAI-kompatibla servrar, inklusive Ollama (bas-URL http://127.0.0.1:11434/v1, API-läge auto eller chat-completions).",
+              "prompt-title": "OpenAI-kompatibla inställningar"
             },
             "shared": {
-              "api-key": "API key",
-              "model": "Model"
+              "api-key": "API-nyckel",
+              "model": "Modell"
             }
           },
           "target-language": {
-            "label": "Target language",
+            "label": "Målspråk",
             "options": {
               "ar": "العربية",
-              "auto": "Follow app language",
+              "auto": "Följ appens språk",
               "bg": "Български",
               "bn": "বাংলা",
               "cs": "Čeština",
@@ -1035,9 +1037,9 @@
               "zh-CN": "简体中文",
               "zh-TW": "繁體中文"
             },
-            "tooltip": "The language to translate lyrics into."
+            "tooltip": "Språket att översätta sångtexter till."
           },
-          "tooltip": "Translate lyrics and show the translated result line-by-line for display."
+          "tooltip": "Översätt sångtexter och visa det översatta resultatet rad för rad."
         }
       },
       "name": "Synkroniserade Låttexter",
@@ -1121,6 +1123,17 @@
         "visualizer-type": "Visualiseringstyp"
       },
       "name": "Visualiserare"
+    },
+    "audio-only": {
+      "description": "Tvingar ljudläge — blockerar alla videoströmmar på nätverks- och spelarnivå för att spara RAM och bandbredd",
+      "name": "Endast Ljud"
+    },
+    "playback-recovery": {
+      "description": "Återställer automatiskt från fastnade, avstannade eller döda uppspelningstillstånd",
+      "menu": {
+        "log-to-console": "Logga återställningshändelser till konsolen"
+      },
+      "name": "Uppspelningsåterställning"
     }
   }
 }

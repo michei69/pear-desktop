@@ -144,17 +144,18 @@
               "disabled": "Izklopljeno",
               "enabled-and-hide-app": "Vklopljeno in skrij",
               "enabled-and-show-app": "Vklopljeno in pokaži",
-              "play-pause-on-click": "Predvajaj/Pavza z klikom"
+              "play-pause-on-click": "Predvajaj/Pavza z klikom",
+              "move-to-current-desktop": "Premakni na trenutno navidezno namizje ob prikazu"
             }
           },
           "visual-tweaks": {
             "label": "Vizualni popravki",
             "submenu": {
               "custom-window-title": {
-                "label": "Custom window title",
+                "label": "Naslov okna po meri",
                 "prompt": {
-                  "label": "Enter custom window title: (leave empty to disable)",
-                  "placeholder": "Example: {{applicationName}}"
+                  "label": "Vnesite naslov okna po meri: (pustite prazno za izklop)",
+                  "placeholder": "Primer: {{applicationName}}"
                 }
               },
               "like-buttons": {
@@ -162,7 +163,7 @@
                 "force-show": "Prisilno pokaži",
                 "hide": "Skrij",
                 "label": "Gumbi za všečkanje",
-                "swap": "Swap like buttons order"
+                "swap": "Zamenjaj vrstni red gumbov všečkanja"
               },
               "remove-upgrade-button": "Odstrani gumb za nadgradnjo",
               "theme": {
@@ -239,7 +240,7 @@
             "percent": "{{ratio}}%"
           }
         },
-        "enable-seekbar": "Enable seekbar theming"
+        "enable-seekbar": "Omogoči temo iskalne vrstice"
       },
       "name": "Barvna tema Albuma"
     },
@@ -289,10 +290,10 @@
       "name": "Ambienten način"
     },
     "amuse": {
-      "description": "Adds {{applicationName}} support for the Amuse now playing widget by 6K Labs",
+      "description": "Doda podporo za {{applicationName}} v pripomočku Amuse za zdaj predvajano podjetja 6K Labs",
       "name": "Amuse",
       "response": {
-        "query": "Amuse API server is running. GET /query to get song info."
+        "query": "Strežnik API Amuse deluje. GET /query za informacije o skladbi."
       }
     },
     "api-server": {
@@ -320,37 +321,37 @@
           }
         },
         "hostname": {
-          "label": "Hostname"
+          "label": "Ime gostitelja"
         },
         "https": {
-          "label": "HTTPS & Certificates",
+          "label": "HTTPS in potrdila",
           "submenu": {
             "cert": {
-              "dialogTitle": "Select HTTPS certificate file",
-              "label": "Certificate file (.crt/.pem)"
+              "dialogTitle": "Izberi datoteko potrdila HTTPS",
+              "label": "Datoteka potrdila (.crt/.pem)"
             },
             "enable-https": {
-              "label": "Enable HTTPS"
+              "label": "Omogoči HTTPS"
             },
             "key": {
-              "dialogTitle": "Select HTTPS private key file",
-              "label": "Private key file (.key/.pem)"
+              "dialogTitle": "Izberi datoteko zasebnega ključa HTTPS",
+              "label": "Datoteka zasebnega ključa (.key/.pem)"
             }
           }
         },
         "port": {
-          "label": "Port"
+          "label": "Vrata"
         }
       },
       "name": "API strežnik [Beta]",
       "prompt": {
         "hostname": {
           "label": "Vnesite hostname (npr. 0.0.0.0) za API strežnik:",
-          "title": "Hostname"
+          "title": "Ime gostitelja"
         },
         "port": {
           "label": "Vnesite port za API strežnik:",
-          "title": "Port"
+          "title": "Vrata"
         }
       }
     },
@@ -359,26 +360,26 @@
       "name": "Kompresija zvoka"
     },
     "auth-proxy-adapter": {
-      "description": "Support for the use of authentication proxy services",
+      "description": "Podpora za uporabo avtentikacijskih proxy storitev",
       "menu": {
-        "disable": "Disable Proxy Adapter",
-        "enable": "Enable Proxy Adapter",
+        "disable": "Onemogoči proxy adapter",
+        "enable": "Omogoči proxy adapter",
         "hostname": {
-          "label": "Hostname"
+          "label": "Ime gostitelja"
         },
         "port": {
-          "label": "Port"
+          "label": "Vrata"
         }
       },
-      "name": "Auth Proxy Adapter",
+      "name": "Adapter proxy za avtentikacijo",
       "prompt": {
         "hostname": {
-          "label": "Enter hostname for local proxy server (requires restart):",
-          "title": "Proxy Hostname"
+          "label": "Vnesite ime gostitelja za lokalni proxy strežnik (potreben je ponovni zagon):",
+          "title": "Ime gostitelja proxyja"
         },
         "port": {
-          "label": "Enter port for local proxy server (requires restart):",
-          "title": "Proxy Port"
+          "label": "Vnesite vrata za lokalni proxy strežnik (potreben je ponovni zagon):",
+          "title": "Vrata proxyja"
         }
       }
     },
@@ -408,21 +409,21 @@
         "title": "Odpri izbiro podnapisov"
       },
       "toast": {
-        "caption-changed": "Caption changed to {{language}}",
-        "caption-disabled": "Captions disabled",
-        "no-captions": "No captions available for this song"
+        "caption-changed": "Podnapis spremenjen v {{language}}",
+        "caption-disabled": "Podnapisi onemogočeni",
+        "no-captions": "Za to skladbo ni na voljo podnapisov"
       }
     },
     "clock": {
-      "description": "Add a clock to the navigation bar",
+      "description": "Doda uro v navigacijsko vrstico",
       "menu": {
         "format": {
-          "24-hour-format": "24-Hour Format",
-          "display-seconds": "Display Seconds",
+          "24-hour-format": "24-urni format",
+          "display-seconds": "Prikaži sekunde",
           "label": "Format"
         }
       },
-      "name": "Clock"
+      "name": "Ura"
     },
     "compact-sidebar": {
       "description": "Vedno izberi kompakten način stranske vrstice",
@@ -451,15 +452,15 @@
       }
     },
     "custom-output-device": {
-      "description": "Configure a custom output media device for songs",
+      "description": "Konfigurirajte izhodno medijsko napravo po meri za skladbe",
       "menu": {
-        "device-selector": "Select Device"
+        "device-selector": "Izberi napravo"
       },
-      "name": "Custom Output Device",
+      "name": "Izhodna naprava po meri",
       "prompt": {
         "device-selector": {
-          "label": "Choose the output media device to be used",
-          "title": "Select Output Device"
+          "label": "Izberite izhodno medijsko napravo za uporabo",
+          "title": "Izberi izhodno napravo"
         }
       }
     },
@@ -488,11 +489,11 @@
         "play-on-application": "Predvajaj v {{applicationName}}",
         "set-inactivity-timeout": "Nastavite časovno omejitev neaktivnosti",
         "set-status-display-type": {
-          "label": "Status text",
+          "label": "Besedilo stanja",
           "submenu": {
-            "application": "Listening to {{applicationName}}",
-            "artist": "Listening to {artist}",
-            "title": "Listening to {song title}"
+            "application": "Poslušanje {{applicationName}}",
+            "artist": "Poslušanje {artist}",
+            "title": "Poslušanje {song title}"
           }
         }
       },
@@ -509,14 +510,14 @@
         "dialog": {
           "error": {
             "buttons": {
-              "ok": "OK"
+              "ok": "V redu"
             },
             "message": "Uff! Se opravičujemo, prenos neuspešen…",
             "title": "Napaka v prenosu!"
           },
           "start-download-playlist": {
             "buttons": {
-              "ok": "OK"
+              "ok": "V redu"
             },
             "detail": "({{playlistSize}} pesmi)",
             "message": "Prenašanje seznama {{playlistTitle}}",
@@ -578,16 +579,16 @@
       }
     },
     "equalizer": {
-      "description": "Adds an equalizer to the player",
+      "description": "Doda izenačevalnik v predvajalnik",
       "menu": {
         "presets": {
-          "label": "Presets",
+          "label": "Prednastavitve",
           "list": {
-            "bass-booster": "Bass booster"
+            "bass-booster": "Ojačevalnik basov"
           }
         }
       },
-      "name": "Equalizer"
+      "name": "Izenačevalnik"
     },
     "exponential-volume": {
       "description": "Drsnik za glasnost naredi eksponenten, da bo lažje izbrati nižje glasnosti.",
@@ -652,102 +653,103 @@
         "host-failed": "Gkasba Skupaj nisem mogel gostiti",
         "id-copied": "Host ID je kopiran v odložišče",
         "id-copy-failed": "Host ID ni bilo mogoče kopirati",
-        "join-failed": "Failed to join Music Together",
-        "joined": "Joined Music Together",
-        "permission-changed": "Music Together permission changed to \"{{permission}}\"",
-        "remove-song-failed": "Failed to remove song",
-        "user-connected": "{{name}} joined Music Together",
-        "user-disconnected": "{{name}} left Music Together"
+        "join-failed": "Pridružitev Glasbi Skupaj ni uspela",
+        "joined": "Pridružen Glasbi Skupaj",
+        "permission-changed": "Dovoljenje Glasbe Skupaj spremenjeno v \"{{permission}}\"",
+        "remove-song-failed": "Odstranitev skladbe ni uspela",
+        "user-connected": "{{name}} se je pridružil Glasbi Skupaj",
+        "user-disconnected": "{{name}} je zapustil Glasbo Skupaj"
       }
     },
     "navigation": {
-      "description": "Next/Back navigation arrows directly integrated in the interface, like in your favorite browser",
-      "name": "Navigation",
+      "description": "Puščice za navigacijo naprej/nazaj so neposredno vgrajene v vmesnik, kot v vašem najljubšem brskalniku",
+      "name": "Navigacija",
       "templates": {
         "back": {
-          "title": "Go to previous page"
+          "title": "Pojdi na prejšnjo stran"
         },
         "forward": {
-          "title": "Go to next page"
+          "title": "Pojdi na naslednjo stran"
         }
       }
     },
     "no-google-login": {
-      "description": "Remove Google login buttons and links from the interface",
-      "name": "No Google Login"
+      "description": "Odstrani gumbe za prijavo Google in povezave iz vmesnika",
+      "name": "Brez prijave Google"
     },
     "notifications": {
-      "description": "Display a notification when a song starts playing (interactive notifications are available on Windows)",
+      "description": "Prikaži obvestilo, ko se začne predvajati skladba (interaktivna obvestila so na voljo v sistemu Windows)",
       "menu": {
-        "interactive": "Interactive Notifications",
+        "interactive": "Interaktivna obvestila",
         "interactive-settings": {
-          "label": "Interactive Settings",
+          "label": "Interaktivne nastavitve",
           "submenu": {
-            "hide-button-text": "Hide button text",
-            "refresh-on-play-pause": "Refresh on Play/Pause",
-            "tray-controls": "Open/Close on tray click"
+            "hide-button-text": "Skrij besedilo gumba",
+            "refresh-on-play-pause": "Osveži ob predvajanju/pavzi",
+            "tray-controls": "Odpri/Zapri ob kliku na pladenj",
+            "hover-controls": "Prikaži mini predvajalnik ob lebdenju nad ikono v pladnju"
           }
         },
-        "priority": "Notification Priority",
-        "toast-style": "Toast style",
-        "unpause-notification": "Show notification on unpause"
+        "priority": "Prioriteta obvestil",
+        "toast-style": "Slog obvestila",
+        "unpause-notification": "Pokaži obvestilo ob nadaljevanju predvajanja"
       },
-      "name": "Notifications"
+      "name": "Obvestila"
     },
     "performance-improvement": {
-      "description": "Improve performance by enabling experimental scripts",
-      "name": "Performance improvement [Beta]"
+      "description": "Izboljšajte zmogljivost z omogočanjem eksperimentalnih skript",
+      "name": "Izboljšanje zmogljivosti [Beta]"
     },
     "picture-in-picture": {
-      "description": "Allows to switch the app to picture-in-picture mode",
+      "description": "Omogoča preklop aplikacije v način slika-v-sliki",
       "menu": {
-        "always-on-top": "Always on top",
+        "always-on-top": "Vedno na vrhu",
         "hotkey": {
-          "label": "Hotkey",
+          "label": "Bližnjica",
           "prompt": {
             "keybind-options": {
-              "hotkey": "Hotkey"
+              "hotkey": "Bližnjica"
             },
-            "label": "Choose a hotkey to toggle picture-in-picture",
-            "title": "Picture-in-picture Hotkey"
+            "label": "Izberite bližnjico za preklop slike-v-sliki",
+            "title": "Bližnjica za sliko-v-sliki"
           }
         },
-        "save-window-position": "Save window position",
-        "save-window-size": "Save window size",
-        "use-native-pip": "Use browser native PiP"
+        "save-window-position": "Shrani položaj okna",
+        "save-window-size": "Shrani velikost okna",
+        "use-native-pip": "Uporabi izvorni PiP brskalnika"
       },
-      "name": "Picture-in-picture",
+      "name": "Slika-v-sliki",
       "templates": {
-        "button": "Picture-in-picture"
+        "button": "Slika-v-sliki"
       }
     },
     "playback-speed": {
-      "description": "Listen fast, listen slow! Adds a slider that controls song speed",
-      "name": "Playback Speed",
+      "description": "Poslušajte hitro, poslušajte počasi! Doda drsnik, ki nadzoruje hitrost skladbe",
+      "name": "Hitrost predvajanja",
       "templates": {
-        "button": "Speed"
+        "button": "Hitrost"
       }
     },
     "precise-volume": {
-      "description": "Control the volume precisely using mousewheel/hotkeys, with a custom HUD and customizable volume steps",
+      "description": "Natančno nadzorujte glasnost s koleščkom miške/bližnjicami, s HUD po meri in prilagodljivimi koraki glasnosti",
       "menu": {
-        "arrows-shortcuts": "Local Arrow-keys Controls",
-        "custom-volume-steps": "Set Custom Volume Steps",
-        "global-shortcuts": "Global Hotkeys"
+        "arrows-shortcuts": "Lokalni nadzor s smernimi tipkami",
+        "custom-volume-steps": "Nastavi korake glasnosti po meri",
+        "global-shortcuts": "Globalne bližnjice"
       },
-      "name": "Precise Volume",
+      "name": "Natančna glasnost",
       "prompt": {
         "global-shortcuts": {
           "keybind-options": {
-            "decrease": "Decrease Volume",
-            "increase": "Increase Volume"
+            "decrease": "Zmanjšaj glasnost",
+            "increase": "Povečaj glasnost"
           },
-          "label": "Choose Global Volume Keybinds:",
-          "title": "Global Volume Keybinds"
+          "label": "Izberite globalne bližnjice za glasnost:",
+          "title": "Globalne bližnjice za glasnost"
         },
         "volume-steps": {
-          "label": "Choose Volume Increase/Decrease Steps",
-          "title": "Volume Steps"
+          "label": "Izberite korake povečanja/zmanjšanja glasnosti",
+          "title": "Koraki glasnosti"
         }
       }
     },
@@ -755,242 +757,242 @@
       "backend": {
         "dialog": {
           "quality-changer": {
-            "detail": "Current Quality: {{quality}}",
-            "message": "Choose Video Quality:",
-            "title": "Choose Video Quality"
+            "detail": "Trenutna kakovost: {{quality}}",
+            "message": "Izberite kakovost videa:",
+            "title": "Izberi kakovost videa"
           }
         }
       },
-      "description": "Allows changing the video quality with a button on the video overlay",
-      "name": "Video Quality Changer",
+      "description": "Omogoča spreminjanje kakovosti videa z gumbom na prekrivanju videa",
+      "name": "Menjalnik kakovosti videa",
       "renderer": {
         "quality-settings-button": {
-          "label": "Open player quality changer"
+          "label": "Odpri menjalnik kakovosti predvajalnika"
         }
       }
     },
     "scrobbler": {
-      "description": "Add scrobbling support (etc. last.fm, Listenbrainz)",
+      "description": "Doda podporo za scrobbling (npr. last.fm, Listenbrainz)",
       "dialog": {
         "lastfm": {
           "auth-failed": {
-            "message": "Failed to authenticate with Last.fm\nHide the popup until the next restart.",
-            "title": "Authentication Failed"
+            "message": "Avtentikacija z Last.fm ni uspela\nSkrij pojavno okno do naslednjega ponovnega zagona.",
+            "title": "Avtentikacija ni uspela"
           }
         }
       },
       "menu": {
         "lastfm": {
-          "api-settings": "Last.fm API Settings"
+          "api-settings": "Nastavitve API-ja Last.fm"
         },
         "listenbrainz": {
-          "token": "Enter ListenBrainz user token"
+          "token": "Vnesite uporabniški žeton ListenBrainz"
         },
-        "scrobble-alternative-artist": "Use alternative artists",
-        "scrobble-alternative-title": "Use alternative titles",
-        "scrobble-other-media": "Scrobble other media"
+        "scrobble-alternative-artist": "Uporabi alternativne izvajalce",
+        "scrobble-alternative-title": "Uporabi alternativne naslove",
+        "scrobble-other-media": "Scrobblaj druge medije"
       },
       "name": "Scrobbler",
       "prompt": {
         "lastfm": {
-          "api-key": "Last.fm API key",
-          "api-secret": "Last.fm API secret"
+          "api-key": "API ključ Last.fm",
+          "api-secret": "API skrivnost Last.fm"
         },
         "listenbrainz": {
           "token": {
-            "label": "Enter your ListenBrainz user token:",
-            "title": "ListenBrainz token"
+            "label": "Vnesite svoj uporabniški žeton ListenBrainz:",
+            "title": "Žeton ListenBrainz"
           }
         }
       }
     },
     "shortcuts": {
-      "description": "Allows setting global hotkeys for playback (play/pause/next/previous) and turning off media OSD by overriding media keys, turning on Ctrl/CMD + F to search, turning on Linux MPRIS support for media keys, and custom hotkeys for advanced users",
+      "description": "Omogoča nastavitev globalnih bližnjic za predvajanje (predvajaj/pavza/naprej/nazaj) in izklop medijskega OSD s prepisovanjem medijskih tipk, vklop Ctrl/CMD + F za iskanje, vklop podpore Linux MPRIS za medijske tipke in bližnjice po meri za napredne uporabnike",
       "menu": {
-        "override-media-keys": "Override Media Keys",
-        "set-keybinds": "Set Global Song Controls"
+        "override-media-keys": "Prepiši medijske tipke",
+        "set-keybinds": "Nastavi globalni nadzor skladb"
       },
-      "name": "Shortcuts (& MPRIS)",
+      "name": "Bližnjice (& MPRIS)",
       "prompt": {
         "keybind": {
           "keybind-options": {
-            "next": "Next",
-            "play-pause": "Play / Pause",
-            "previous": "Previous"
+            "next": "Naprej",
+            "play-pause": "Predvajaj / Pavza",
+            "previous": "Nazaj"
           },
-          "label": "Choose Global Keybinds for Songs Control:",
-          "title": "Global Keybinds"
+          "label": "Izberite globalne bližnjice za nadzor skladb:",
+          "title": "Globalne bližnjice"
         }
       }
     },
     "skip-disliked-songs": {
-      "description": "Skips disliked songs",
-      "name": "Skip Disliked Songs"
+      "description": "Preskakuje skladbe z oznako Ni mi všeč",
+      "name": "Preskoči skladbe z oznako Ni mi všeč"
     },
     "skip-silences": {
-      "description": "Automatically skip silences sections in songs",
-      "name": "Skip Silences"
+      "description": "Samodejno preskakuj tihe dele v skladbah",
+      "name": "Preskoči tišine"
     },
     "sponsorblock": {
-      "description": "Automatically Skips non-music parts like intro/outro or parts of music videos where the song isn't playing",
+      "description": "Samodejno preskakuje neglasbene dele, kot so uvod/zaključek ali deli videospotov, kjer skladba ne igra",
       "name": "SponsorBlock"
     },
     "synced-lyrics": {
-      "description": "Provides synced lyrics to songs, using providers like LRClib.",
+      "description": "Zagotavlja sinhronizirana besedila skladb z uporabo ponudnikov, kot je LRClib.",
       "errors": {
-        "fetch": "⚠️\tAn error occurred while fetching the lyrics.\n\tPlease try again later.",
-        "not-found": "⚠️ No lyrics found for this song."
+        "fetch": "⚠️\tPrišlo je do napake pri pridobivanju besedil.\n\tProsimo, poskusite znova kasneje.",
+        "not-found": "⚠️ Za to skladbo ni bilo najdenih besedil."
       },
       "menu": {
         "convert-chinese-character": {
-          "label": "Convert Chinese character",
+          "label": "Pretvori kitajske znake",
           "submenu": {
             "disabled": {
-              "label": "Disabled",
-              "tooltip": "Disable Chinese character conversion"
+              "label": "Onemogočeno",
+              "tooltip": "Onemogoči pretvorbo kitajskih znakov"
             },
             "simplified-to-traditional": {
-              "label": "Simplified to Traditional",
-              "tooltip": "Convert Simplified Chinese to Traditional Chinese"
+              "label": "Poenostavljeni v tradicionalne",
+              "tooltip": "Pretvori poenostavljeno kitajščino v tradicionalno kitajščino"
             },
             "traditional-to-simplified": {
-              "label": "Traditional to Simplified",
-              "tooltip": "Convert Traditional Chinese to Simplified Chinese"
+              "label": "Tradicionalni v poenostavljene",
+              "tooltip": "Pretvori tradicionalno kitajščino v poenostavljeno kitajščino"
             }
           },
-          "tooltip": "Convert Chinese character to Traditional or Simplified"
+          "tooltip": "Pretvori kitajske znake v tradicionalne ali poenostavljene"
         },
         "default-text-string": {
-          "label": "Default character between lyrics",
-          "tooltip": "Choose the default character to use for the gap between lyrics"
+          "label": "Privzeti znak med besedili",
+          "tooltip": "Izberite privzeti znak, ki se uporablja za vrzel med besedili"
         },
         "line-effect": {
-          "label": "Line effect",
+          "label": "Učinek vrstice",
           "submenu": {
             "fancy": {
-              "label": "Fancy",
-              "tooltip": "Use large, app-like effects on the current line"
+              "label": "Eleganten",
+              "tooltip": "Uporabi velike, aplikacijam podobne učinke na trenutni vrstici"
             },
             "focus": {
-              "label": "Focus",
-              "tooltip": "Make only the current line white"
+              "label": "Fokus",
+              "tooltip": "Naredi samo trenutno vrstico belo"
             },
             "offset": {
-              "label": "Offset",
-              "tooltip": "Offset on the right the current line"
+              "label": "Odmik",
+              "tooltip": "Odmakni trenutno vrstico na desno"
             },
             "scale": {
-              "label": "Scale",
-              "tooltip": "Scale the current line"
+              "label": "Merilo",
+              "tooltip": "Povečaj trenutno vrstico"
             }
           },
-          "tooltip": "Choose the effect to apply to the current line"
+          "tooltip": "Izberite učinek, ki ga želite uporabiti na trenutni vrstici"
         },
         "lyrics-font-size": {
-          "label": "Lyrics font size",
+          "label": "Velikost pisave besedil",
           "submenu": {
             "large": {
-              "label": "Large",
-              "tooltip": "Use the original larger lyrics size"
+              "label": "Veliko",
+              "tooltip": "Uporabi izvirno večjo velikost besedil"
             },
             "medium": {
-              "label": "Medium",
-              "tooltip": "Use a balanced lyrics size"
+              "label": "Srednje",
+              "tooltip": "Uporabi uravnoteženo velikost besedil"
             },
             "small": {
-              "label": "Small",
-              "tooltip": "Use a more compact lyrics size"
+              "label": "Majhno",
+              "tooltip": "Uporabi bolj kompaktno velikost besedil"
             }
           },
-          "tooltip": "Choose how large the lyrics text should be"
+          "tooltip": "Izberite, kako veliko naj bo besedilo"
         },
         "precise-timing": {
-          "label": "Make the lyrics perfectly synced",
-          "tooltip": "Calculate to the milisecond the display of the next line (can have a small impact on performance)"
+          "label": "Popolnoma sinhroniziraj besedila",
+          "tooltip": "Izračunaj prikaz naslednje vrstice na milisekundo natančno (lahko ima majhen vpliv na zmogljivost)"
         },
         "preferred-provider": {
-          "label": "Preferred Provider",
+          "label": "Prednostni ponudnik",
           "none": {
-            "label": "None",
-            "tooltip": "No preferred provider"
+            "label": "Brez",
+            "tooltip": "Ni prednostnega ponudnika"
           },
-          "tooltip": "Choose the default provider to use"
+          "tooltip": "Izberite privzetega ponudnika za uporabo"
         },
         "romanization": {
-          "label": "Romanize lyrics",
-          "tooltip": "If the lyrics are in a different language, try to display a latin version."
+          "label": "Romaniziraj besedila",
+          "tooltip": "Če so besedila v drugem jeziku, poskusi prikazati latinično različico."
         },
         "show-lyrics-even-if-inexact": {
-          "label": "Show lyrics even if inexact",
-          "tooltip": "If the song is not found, the plugin tries again with a different search query.\nThe result from the second attempt may not be exact."
+          "label": "Prikaži besedila, tudi če niso natančna",
+          "tooltip": "Če skladba ni najdena, vtičnik poskusi znova z drugačno iskalno poizvedbo.\nRezultat drugega poskusa morda ni natančen."
         },
         "show-time-codes": {
-          "label": "Show time codes",
-          "tooltip": "Show the time codes next to the lyrics"
+          "label": "Prikaži časovne kode",
+          "tooltip": "Prikaži časovne kode poleg besedil"
         },
         "translation": {
           "clear-cache": {
-            "label": "Clear translation cache",
-            "tooltip": "Delete all cached translations stored on disk."
+            "label": "Počisti predpomnilnik prevodov",
+            "tooltip": "Izbriši vse predpomnjene prevode, shranjene na disku."
           },
           "configure": {
-            "label": "Configure API key & model…",
-            "tooltip": "Set provider-specific translation options."
+            "label": "Konfiguriraj API ključ in model...",
+            "tooltip": "Nastavi možnosti prevoda, specifične za ponudnika."
           },
           "enabled": {
-            "label": "Enable translation",
-            "tooltip": "Show a translated line beneath each original lyric line."
+            "label": "Omogoči prevod",
+            "tooltip": "Prikaži prevedeno vrstico pod vsako izvirno vrstico besedila."
           },
-          "label": "Lyrics translation",
+          "label": "Prevod besedil",
           "provider": {
-            "label": "Provider",
-            "tooltip": "Which service to use for translation."
+            "label": "Ponudnik",
+            "tooltip": "Katero storitev uporabiti za prevod."
           },
           "providers": {
             "anthropic": {
               "name": "Anthropic Claude",
-              "prompt-label": "Uses the native Anthropic Messages API.",
-              "prompt-title": "Anthropic settings"
+              "prompt-label": "Uporablja izvorni API Anthropic Messages.",
+              "prompt-title": "Anthropic nastavitve"
             },
             "gemini": {
               "name": "Google Gemini",
-              "prompt-label": "Uses Google's Generative Language API (generateContent).",
-              "prompt-title": "Gemini settings"
+              "prompt-label": "Uporablja Googlov API za generativni jezik (generateContent).",
+              "prompt-title": "Gemini nastavitve"
             },
             "google-translate": {
-              "host": "Host",
-              "name": "Google Translate",
-              "prompt-label": "Uses the unofficial free Google Translate endpoint. No API key is required, but Google may rate-limit it.",
-              "prompt-title": "Google Translate settings"
+              "host": "Gostitelj",
+              "name": "Google Prevajalnik",
+              "prompt-label": "Uporablja neuradno brezplačno končno točko Google Prevajalnika. API ključ ni potreben, vendar ga Google lahko omeji.",
+              "prompt-title": "Nastavitve Google Prevajalnika"
             },
             "local-cli": {
-              "command": "Command",
-              "engine": "Local CLI",
+              "command": "Ukaz",
+              "engine": "Lokalni CLI",
               "engine-claude": "Claude Code",
               "engine-codex": "Codex",
               "engine-gemini": "Gemini CLI",
-              "name": "Local CLI",
-              "prompt-label": "Use a locally logged-in Claude Code, Codex, or Gemini CLI. The command and model are automatic; the CLI uses its own logged-in default.",
-              "prompt-title": "Local CLI settings",
-              "timeout": "Timeout seconds (15-600)"
+              "name": "Lokalni CLI",
+              "prompt-label": "Uporabite lokalno prijavljen Claude Code, Codex ali Gemini CLI. Ukaz in model sta samodejna; CLI uporablja svoje prijavljene privzete vrednosti.",
+              "prompt-title": "Nastavitve lokalnega CLI",
+              "timeout": "Časovna omejitev v sekundah (15-600)"
             },
             "openai-compatible": {
-              "api-mode": "API mode (responses / auto / chat-completions)",
-              "base-url": "Base URL",
-              "name": "OpenAI compatible",
-              "prompt-label": "Use OpenAI-compatible servers, including Ollama (base URL http://127.0.0.1:11434/v1, API mode auto or chat-completions).",
-              "prompt-title": "OpenAI-compatible settings"
+              "api-mode": "Način API (responses / auto / chat-completions)",
+              "base-url": "Osnovni URL",
+              "name": "OpenAI združljiv",
+              "prompt-label": "Uporabite OpenAI-združljive strežnike, vključno z Ollama (osnovni URL http://127.0.0.1:11434/v1, način API auto ali chat-completions).",
+              "prompt-title": "OpenAI-združljive nastavitve"
             },
             "shared": {
-              "api-key": "API key",
+              "api-key": "API ključ",
               "model": "Model"
             }
           },
           "target-language": {
-            "label": "Target language",
+            "label": "Ciljni jezik",
             "options": {
               "ar": "العربية",
-              "auto": "Follow app language",
+              "auto": "Sledi jeziku aplikacije",
               "bg": "Български",
               "bn": "বাংলা",
               "cs": "Čeština",
@@ -1035,92 +1037,103 @@
               "zh-CN": "简体中文",
               "zh-TW": "繁體中文"
             },
-            "tooltip": "The language to translate lyrics into."
+            "tooltip": "Jezik, v katerega naj se prevedejo besedila."
           },
-          "tooltip": "Translate lyrics and show the translated result line-by-line for display."
+          "tooltip": "Prevedi besedila in prikaži preveden rezultat vrstico za vrstico."
         }
       },
-      "name": "Synced Lyrics",
+      "name": "Sinhronizirana besedila",
       "refetch-btn": {
-        "fetching": "Fetching...",
-        "normal": "Refetch lyrics"
+        "fetching": "Pridobivanje...",
+        "normal": "Ponovno pridobi besedila"
       },
       "warnings": {
-        "duration-mismatch": "⚠️ - The lyrics may be out of sync due to a duration mismatch.",
-        "inexact": "⚠️ - The lyrics for this song may not be exact",
-        "instrumental": "⚠️ - This is an instrumental song"
+        "duration-mismatch": "⚠️ - Besedila so lahko nesinhronizirana zaradi neujemanja trajanja.",
+        "inexact": "⚠️ - Besedila za to skladbo morda niso natančna",
+        "instrumental": "⚠️ - To je instrumentalna skladba"
       }
     },
     "taskbar-mediacontrol": {
-      "description": "Control playback from your Windows taskbar",
-      "name": "Taskbar Media Control"
+      "description": "Nadzorujte predvajanje iz opravilne vrstice sistema Windows",
+      "name": "Nadzor predstavnosti v opravilni vrstici"
     },
     "touchbar": {
-      "description": "Adds a TouchBar widget for macOS users",
+      "description": "Doda pripomoček TouchBar za uporabnike macOS",
       "name": "TouchBar"
     },
     "transparent-player": {
-      "description": "Makes the app window transparent",
+      "description": "Naredi okno aplikacije prozorno",
       "menu": {
         "opacity": {
-          "label": "Opacity",
+          "label": "Prosojnost",
           "submenu": {
             "percent": "{{opacity}}%"
           }
         },
         "type": {
-          "label": "Type",
+          "label": "Tip",
           "submenu": {
-            "acrylic": "Acrylic",
+            "acrylic": "Akril",
             "mica": "Mica",
-            "none": "None",
-            "tabbed": "Tabbed"
+            "none": "Brez",
+            "tabbed": "Z zavihki"
           }
         }
       },
-      "name": "Transparent Player"
+      "name": "Prozoren predvajalnik"
     },
     "tuna-obs": {
-      "description": "Integration with OBS's plugin Tuna",
+      "description": "Integracija z vtičnikom OBS Tuna",
       "name": "Tuna OBS"
     },
     "unobtrusive-player": {
-      "description": "Prevents the player from popping up when playing a song",
-      "name": "Unobtrusive Player"
+      "description": "Preprečuje, da bi predvajalnik skočil ven ob predvajanju skladbe",
+      "name": "Nevsiljiv predvajalnik"
     },
     "video-toggle": {
-      "description": "Adds a button to switch between Video/Song mode. can also optionally remove the whole video tab",
+      "description": "Doda gumb za preklapljanje med načinom Video/Skladba. Lahko tudi po želji odstrani celoten video zavihek",
       "menu": {
         "align": {
-          "label": "Alignment",
+          "label": "Poravnava",
           "submenu": {
-            "left": "Left",
-            "middle": "Middle",
-            "right": "Right"
+            "left": "Levo",
+            "middle": "Sredina",
+            "right": "Desno"
           }
         },
-        "force-hide": "Force remove video tab",
+        "force-hide": "Prisilno odstrani video zavihek",
         "mode": {
-          "label": "Mode",
+          "label": "Način",
           "submenu": {
-            "custom": "Custom toggle",
-            "disabled": "Disabled",
-            "native": "Native toggle"
+            "custom": "Preklop po meri",
+            "disabled": "Onemogočeno",
+            "native": "Izvorni preklop"
           }
         }
       },
-      "name": "Video Toggle",
+      "name": "Preklop videa",
       "templates": {
-        "button-song": "Song",
+        "button-song": "Skladba",
         "button-video": "Video"
       }
     },
     "visualizer": {
-      "description": "Adds a visualizer to the player",
+      "description": "Doda vizualizator v predvajalnik",
       "menu": {
-        "visualizer-type": "Visualizer Type"
+        "visualizer-type": "Tip vizualizatorja"
       },
-      "name": "Visualizer"
+      "name": "Vizualizator"
+    },
+    "audio-only": {
+      "description": "Vsili način samo zvok — blokira vse video tokove na omrežni ravni in ravni predvajalnika za prihranek RAM-a in pasovne širine",
+      "name": "Samo zvok"
+    },
+    "playback-recovery": {
+      "description": "Samodejno obnovi predvajanje iz zataknjenih, zaustavljenih ali mrtvih stanj",
+      "menu": {
+        "log-to-console": "Beleži dogodke obnovitve v konzolo"
+      },
+      "name": "Obnova predvajanja"
     }
   }
 }

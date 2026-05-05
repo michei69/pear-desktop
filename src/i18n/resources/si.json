@@ -144,17 +144,18 @@
               "disabled": "Disable කරන ලදී",
               "enabled-and-hide-app": "ට්‍රේ එක enable කරලා, app window එක hide කරන්න",
               "enabled-and-show-app": "Enable කරලා app එක පෙන්වන්න",
-              "play-pause-on-click": "Click කළ විට play/ pause වෙනවා"
+              "play-pause-on-click": "Click කළ විට play/ pause වෙනවා",
+              "move-to-current-desktop": "පෙන්වීමේදී වත්මන් අතථ්‍ය ඩෙස්ක්ටොප් එකට ගෙන යන්න"
             }
           },
           "visual-tweaks": {
             "label": "Visual tweaks කරන්න",
             "submenu": {
               "custom-window-title": {
-                "label": "Custom window title",
+                "label": "අභිරුචි කවුළු මාතෘකාව",
                 "prompt": {
-                  "label": "Enter custom window title: (leave empty to disable)",
-                  "placeholder": "Example: {{applicationName}}"
+                  "label": "අභිරුචි කවුළු මාතෘකාව ඇතුළත් කරන්න: (අක්‍රිය කිරීමට හිස්ව තබන්න)",
+                  "placeholder": "උදාහරණය: {{applicationName}}"
                 }
               },
               "like-buttons": {
@@ -162,7 +163,7 @@
                 "force-show": "Force show කරන්න",
                 "hide": "සඟවන්න",
                 "label": "Like බොත්තම්",
-                "swap": "Swap like buttons order"
+                "swap": "Like බොත්තම් අනුපිළිවෙල මාරු කරන්න"
               },
               "remove-upgrade-button": "Upgrade බොත්තම ඉවත් කරන්න",
               "theme": {
@@ -174,7 +175,7 @@
                   "remove-theme": "ඔබට විශ්වාසද ඔබගේ custom theme එක ඉවත් කිරීමට අවශ්‍ය බව?",
                   "remove-theme-message": "මෙය custom theme එක ඉවත් කරයි"
                 },
-                "label": "Theme",
+                "label": "තේමාව",
                 "submenu": {
                   "import-css-file": "Custom CSS ගොනුව import කරන්න",
                   "no-theme": "Theme එකක් නැහැ"
@@ -216,291 +217,291 @@
   },
   "plugins": {
     "ad-speedup": {
-      "description": "If an ad play it mutes the audio and sets playback speed to 16x",
-      "name": "Ad Speedup"
+      "description": "දැන්වීමක් වාදනය වන්නේ නම් ශ්‍රව්‍යය නිහඬ කර වාදන වේගය 16x ලෙස සකසයි",
+      "name": "දැන්වීම් වේගවත් කිරීම"
     },
     "adblocker": {
       "description": "සියලුම දැන්වීම් අවහිර කර කොටුවෙන් පිටත ලුහුබැඳීම",
       "menu": {
-        "blocker": "Blocker"
+        "blocker": "අවහිර කරන්නා"
       },
-      "name": "Ad Blocker"
+      "name": "දැන්වීම් අවහිර කරන්නා"
     },
     "album-actions": {
-      "description": "Adds Undislike, Dislike, Like, and Unlike buttons to apply this to all songs in a playlist or album",
-      "name": "Album Actions"
+      "description": "වාදන ලැයිස්තුවක හෝ ඇල්බමයක සියලුම ගීත සඳහා අකමැති නොකළ, අකමැති, කැමති, සහ කැමති නොවන බොත්තම් එකතු කරයි",
+      "name": "ඇල්බම ක්‍රියා"
     },
     "album-color-theme": {
-      "description": "Applies a dynamic theme and visual effects based on the album color palette",
+      "description": "ඇල්බම වර්ණ මාලාව මත පදනම්ව ගතික තේමාවක් සහ දෘශ්‍ය ප්‍රයෝග යොදයි",
       "menu": {
         "color-mix-ratio": {
-          "label": "Color mix ratio",
+          "label": "වර්ණ මිශ්‍ර අනුපාතය",
           "submenu": {
             "percent": "{{ratio}}%"
           }
         },
-        "enable-seekbar": "Enable seekbar theming"
+        "enable-seekbar": "සීක්බාර් තේමාකරණය සක්‍රීය කරන්න"
       },
-      "name": "Album Color Theme"
+      "name": "ඇල්බම වර්ණ තේමාව"
     },
     "ambient-mode": {
-      "description": "Applies a lighting effect by casting gentle colors from the video, into your screen’s background",
+      "description": "වීඩියෝවෙන් ඔබේ තිරයේ පසුබිමට මෘදු වර්ණ විහිදුවා ආලෝක ප්‍රයෝගයක් යොදයි",
       "menu": {
         "blur-amount": {
-          "label": "Blur amount",
+          "label": "බොඳ ප්‍රමාණය",
           "submenu": {
-            "pixels": "{{blurAmount}} pixels"
+            "pixels": "{{blurAmount}} පික්සල"
           }
         },
         "buffer": {
-          "label": "Buffer",
+          "label": "බෆරය",
           "submenu": {
             "buffer": "{{buffer}}"
           }
         },
         "opacity": {
-          "label": "Opacity",
+          "label": "පාරාන්ධතාව",
           "submenu": {
             "percent": "{{opacity}}%"
           }
         },
         "quality": {
-          "label": "Quality",
+          "label": "ගුණාත්මකභාවය",
           "submenu": {
-            "pixels": "{{quality}} pixels"
+            "pixels": "{{quality}} පික්සල"
           }
         },
         "size": {
-          "label": "Size",
+          "label": "ප්‍රමාණය",
           "submenu": {
             "percent": "{{size}}%"
           }
         },
         "smoothness-transition": {
-          "label": "Smoothness transition",
+          "label": "සුමට සංක්‍රාන්තිය",
           "submenu": {
-            "during": "During {{interpolationTime}} s"
+            "during": "{{interpolationTime}} තත්පර අතරතුර"
           }
         },
         "use-fullscreen": {
-          "label": "Using fullscreen"
+          "label": "සම්පූර්ණ තිරය භාවිතා කරමින්"
         }
       },
-      "name": "Ambient Mode"
+      "name": "පරිසර ආකාරය"
     },
     "amuse": {
-      "description": "Adds {{applicationName}} support for the Amuse now playing widget by 6K Labs",
+      "description": "6K Labs විසින් Amuse දැන් වාදනය වන විජට් සඳහා {{applicationName}} සහාය එකතු කරයි",
       "name": "Amuse",
       "response": {
-        "query": "Amuse API server is running. GET /query to get song info."
+        "query": "Amuse API සේවාදායකය ක්‍රියාත්මක වේ. ගීත තොරතුරු ලබා ගැනීමට GET /query."
       }
     },
     "api-server": {
-      "description": "Adds an API server to control the player",
+      "description": "වාදකය පාලනය කිරීමට API සේවාදායකයක් එකතු කරයි",
       "dialog": {
         "request": {
           "buttons": {
-            "allow": "Allow",
-            "deny": "Deny"
+            "allow": "ඉඩ දෙන්න",
+            "deny": "ප්‍රතික්ෂේප කරන්න"
           },
-          "message": "Allow {{ID}} ({{origin}}) to access the API?",
-          "title": "API authorization request"
+          "message": "{{ID}} ({{origin}}) හට API වෙත ප්‍රවේශ වීමට ඉඩ දෙන්නද?",
+          "title": "API බලය පැවරීමේ ඉල්ලීම"
         }
       },
       "menu": {
         "auth-strategy": {
-          "label": "Authorization strategy",
+          "label": "බලය පැවරීමේ උපාය මාර්ගය",
           "submenu": {
             "auth-at-first": {
-              "label": "Authorize at first request"
+              "label": "පළමු ඉල්ලීමේදී බලය පවරන්න"
             },
             "none": {
-              "label": "No authorization"
+              "label": "බලය පැවරීමක් නැත"
             }
           }
         },
         "hostname": {
-          "label": "Hostname"
+          "label": "ධාරක නාමය"
         },
         "https": {
-          "label": "HTTPS & Certificates",
+          "label": "HTTPS සහ සහතිකපත්",
           "submenu": {
             "cert": {
-              "dialogTitle": "Select HTTPS certificate file",
-              "label": "Certificate file (.crt/.pem)"
+              "dialogTitle": "HTTPS සහතික ගොනුව තෝරන්න",
+              "label": "සහතික ගොනුව (.crt/.pem)"
             },
             "enable-https": {
-              "label": "Enable HTTPS"
+              "label": "HTTPS සක්‍රීය කරන්න"
             },
             "key": {
-              "dialogTitle": "Select HTTPS private key file",
-              "label": "Private key file (.key/.pem)"
+              "dialogTitle": "HTTPS පුද්ගලික යතුරු ගොනුව තෝරන්න",
+              "label": "පුද්ගලික යතුරු ගොනුව (.key/.pem)"
             }
           }
         },
         "port": {
-          "label": "Port"
+          "label": "වරාය"
         }
       },
-      "name": "API Server [Beta]",
+      "name": "API සේවාදායකය [Beta]",
       "prompt": {
         "hostname": {
-          "label": "Enter the hostname (like 0.0.0.0) for the API server:",
-          "title": "Hostname"
+          "label": "API සේවාදායකය සඳහා ධාරක නාමය ඇතුළත් කරන්න (උදා. 0.0.0.0):",
+          "title": "ධාරක නාමය"
         },
         "port": {
-          "label": "Enter the port for the API server:",
-          "title": "Port"
+          "label": "API සේවාදායකය සඳහා වරාය ඇතුළත් කරන්න:",
+          "title": "වරාය"
         }
       }
     },
     "audio-compressor": {
-      "description": "Apply compression to audio (lowers the volume of the loudest parts of the signal and raises the volume of the softest parts)",
-      "name": "Audio Compressor"
+      "description": "ශ්‍රව්‍යයට සම්පීඩනය යොදන්න (සංඥාවේ ඝෝෂාකාරීම කොටස්වල හඬ අඩු කර මෘදුම කොටස්වල හඬ වැඩි කරයි)",
+      "name": "ශ්‍රව්‍ය සම්පීඩකය"
     },
     "auth-proxy-adapter": {
-      "description": "Support for the use of authentication proxy services",
+      "description": "සත්‍යාපන ප්‍රොක්සි සේවා භාවිතය සඳහා සහාය",
       "menu": {
-        "disable": "Disable Proxy Adapter",
-        "enable": "Enable Proxy Adapter",
+        "disable": "ප්‍රොක්සි ඇඩැප්ටරය අක්‍රිය කරන්න",
+        "enable": "ප්‍රොක්සි ඇඩැප්ටරය සක්‍රීය කරන්න",
         "hostname": {
-          "label": "Hostname"
+          "label": "ධාරක නාමය"
         },
         "port": {
-          "label": "Port"
+          "label": "වරාය"
         }
       },
-      "name": "Auth Proxy Adapter",
+      "name": "සත්‍යාපන ප්‍රොක්සි ඇඩැප්ටරය",
       "prompt": {
         "hostname": {
-          "label": "Enter hostname for local proxy server (requires restart):",
-          "title": "Proxy Hostname"
+          "label": "දේශීය ප්‍රොක්සි සේවාදායකය සඳහා ධාරක නාමය ඇතුළත් කරන්න (නැවත ආරම්භ කිරීම අවශ්‍යයි):",
+          "title": "ප්‍රොක්සි ධාරක නාමය"
         },
         "port": {
-          "label": "Enter port for local proxy server (requires restart):",
-          "title": "Proxy Port"
+          "label": "දේශීය ප්‍රොක්සි සේවාදායකය සඳහා වරාය ඇතුළත් කරන්න (නැවත ආරම්භ කිරීම අවශ්‍යයි):",
+          "title": "ප්‍රොක්සි වරාය"
         }
       }
     },
     "blur-nav-bar": {
-      "description": "Makes navigation bar transparent and blurry",
-      "name": "Blur Navigation Bar"
+      "description": "යාත්‍රණ තීරුව විනිවිද පෙනෙන සහ බොඳ කරයි",
+      "name": "යාත්‍රණ තීරුව බොඳ කරන්න"
     },
     "bypass-age-restrictions": {
-      "description": "Bypass Music Player's age verification",
-      "name": "Bypass Age Restrictions"
+      "description": "සංගීත වාදකයේ වයස් සත්‍යාපනය මග හරින්න",
+      "name": "වයස් සීමා මග හරින්න"
     },
     "captions-selector": {
-      "description": "Caption selector for {{applicationName}} audio tracks",
+      "description": "{{applicationName}} ශ්‍රව්‍ය ධාවන සඳහා සිරස්තල තේරීම් කරු",
       "menu": {
-        "autoload": "Automatically select last used caption",
-        "disable-captions": "No captions by default"
+        "autoload": "අවසන් භාවිතා කළ සිරස්තලය ස්වයංක්‍රීයව තෝරන්න",
+        "disable-captions": "පෙරනිමියෙන් සිරස්තල නැත"
       },
-      "name": "Captions Selector",
+      "name": "සිරස්තල තේරීම් කරු",
       "prompt": {
         "selector": {
-          "label": "Current caption language: {{language}}",
-          "none": "None",
-          "title": "Select caption language"
+          "label": "වත්මන් සිරස්තල භාෂාව: {{language}}",
+          "none": "කිසිවක් නැත",
+          "title": "සිරස්තල භාෂාව තෝරන්න"
         }
       },
       "templates": {
-        "title": "Open captions selector"
+        "title": "සිරස්තල තේරීම් කරු විවෘත කරන්න"
       },
       "toast": {
-        "caption-changed": "Caption changed to {{language}}",
-        "caption-disabled": "Captions disabled",
-        "no-captions": "No captions available for this song"
+        "caption-changed": "සිරස්තලය {{language}} ලෙස වෙනස් කරන ලදී",
+        "caption-disabled": "සිරස්තල අක්‍රිය කරන ලදී",
+        "no-captions": "මෙම ගීතය සඳහා සිරස්තල නොමැත"
       }
     },
     "clock": {
-      "description": "Add a clock to the navigation bar",
+      "description": "යාත්‍රණ තීරුවට ඔරලෝසුවක් එකතු කරන්න",
       "menu": {
         "format": {
-          "24-hour-format": "24-Hour Format",
-          "display-seconds": "Display Seconds",
-          "label": "Format"
+          "24-hour-format": "පැය 24 ආකෘතිය",
+          "display-seconds": "තත්පර පෙන්වන්න",
+          "label": "ආකෘතිය"
         }
       },
-      "name": "Clock"
+      "name": "ඔරලෝසුව"
     },
     "compact-sidebar": {
-      "description": "Always set the sidebar in compact mode",
-      "name": "Compact Sidebar"
+      "description": "සෑම විටම පැති තීරුව සංයුක්ත ආකාරයෙන් සකසන්න",
+      "name": "සංයුක්ත පැති තීරුව"
     },
     "crossfade": {
-      "description": "Crossfade between songs",
+      "description": "ගීත අතර හරස් මැකීම",
       "menu": {
-        "advanced": "Advanced"
+        "advanced": "උසස්"
       },
-      "name": "Crossfade [Beta]",
+      "name": "හරස් මැකීම [Beta]",
       "prompt": {
         "options": {
           "multi-input": {
-            "fade-in-duration": "Fade in duration (ms)",
-            "fade-out-duration": "Fade out duration (ms)",
+            "fade-in-duration": "ඇතුල් වීමේ කාලය (ms)",
+            "fade-out-duration": "පිටවීමේ කාලය (ms)",
             "fade-scaling": {
-              "label": "Fade scaling",
-              "linear": "Linear",
-              "logarithmic": "Logarithmic"
+              "label": "මැකීමේ පරිමාණය",
+              "linear": "රේඛීය",
+              "logarithmic": "ලඝුගණක"
             },
-            "seconds-before-end": "Crossfade N seconds before end"
+            "seconds-before-end": "අවසානයට තත්පර N කට පෙර හරස් මැකීම"
           },
-          "title": "Crossfade options"
+          "title": "හරස් මැකීමේ විකල්ප"
         }
       }
     },
     "custom-output-device": {
-      "description": "Configure a custom output media device for songs",
+      "description": "ගීත සඳහා අභිරුචි ප්‍රතිදාන මාධ්‍ය උපාංගයක් වින්‍යාස කරන්න",
       "menu": {
-        "device-selector": "Select Device"
+        "device-selector": "උපාංගය තෝරන්න"
       },
-      "name": "Custom Output Device",
+      "name": "අභිරුචි ප්‍රතිදාන උපාංගය",
       "prompt": {
         "device-selector": {
-          "label": "Choose the output media device to be used",
-          "title": "Select Output Device"
+          "label": "භාවිතා කළ යුතු ප්‍රතිදාන මාධ්‍ය උපාංගය තෝරන්න",
+          "title": "ප්‍රතිදාන උපාංගය තෝරන්න"
         }
       }
     },
     "disable-autoplay": {
-      "description": "Makes song start in \"paused\" mode",
+      "description": "ගීතය \"විරාම\" ආකාරයෙන් ආරම්භ කරයි",
       "menu": {
-        "apply-once": "Applies only on startup"
+        "apply-once": "ආරම්භයේදී පමණක් අදාළ වේ"
       },
-      "name": "Disable Autoplay"
+      "name": "ස්වයං වාදනය අක්‍රිය කරන්න"
     },
     "discord": {
       "backend": {
-        "already-connected": "Attempted to connect with active connection",
-        "connected": "Connected to Discord",
-        "disconnected": "Disconnected from Discord"
+        "already-connected": "සක්‍රීය සම්බන්ධතාවයක් සමඟ සම්බන්ධ වීමට උත්සාහ කරන ලදී",
+        "connected": "Discord වෙත සම්බන්ධ විය",
+        "disconnected": "Discord වෙතින් විසන්ධි විය"
       },
-      "description": "Show your friends what you listen to with Rich Presence",
+      "description": "Rich Presence සමඟ ඔබ සවන් දෙන දේ ඔබේ මිතුරන්ට පෙන්වන්න",
       "menu": {
-        "auto-reconnect": "Auto reconnect",
-        "clear-activity": "Clear activity",
-        "clear-activity-after-timeout": "Clear activity after timeout",
-        "connected": "Connected",
-        "disconnected": "Disconnected",
-        "hide-duration-left": "Hide duration left",
-        "hide-github-button": "Hide GitHub link Button",
-        "play-on-application": "Play on {{applicationName}}",
-        "set-inactivity-timeout": "Set inactivity timeout",
+        "auto-reconnect": "ස්වයං නැවත සම්බන්ධ වීම",
+        "clear-activity": "ක්‍රියාකාරකම් හිස් කරන්න",
+        "clear-activity-after-timeout": "කාල සීමාවෙන් පසු ක්‍රියාකාරකම් හිස් කරන්න",
+        "connected": "සම්බන්ධිතයි",
+        "disconnected": "විසන්ධි විය",
+        "hide-duration-left": "ඉතිරි කාලය සඟවන්න",
+        "hide-github-button": "GitHub සබැඳි බොත්තම සඟවන්න",
+        "play-on-application": "{{applicationName}} හි වාදනය කරන්න",
+        "set-inactivity-timeout": "අක්‍රිය කාල සීමාව සකසන්න",
         "set-status-display-type": {
-          "label": "Status text",
+          "label": "තත්ව පෙළ",
           "submenu": {
-            "application": "Listening to {{applicationName}}",
-            "artist": "Listening to {artist}",
-            "title": "Listening to {song title}"
+            "application": "{{applicationName}} වෙත සවන් දෙමින්",
+            "artist": "{artist} ට සවන් දෙමින්",
+            "title": "{song title} ට සවන් දෙමින්"
           }
         }
       },
       "name": "Discord Rich Presence",
       "prompt": {
         "set-inactivity-timeout": {
-          "label": "Enter inactivity timeout in seconds:",
-          "title": "Set inactivity timeout"
+          "label": "අක්‍රිය කාල සීමාව තත්පර වලින් ඇතුළත් කරන්න:",
+          "title": "අක්‍රිය කාල සීමාව සකසන්න"
         }
       }
     },
@@ -509,245 +510,246 @@
         "dialog": {
           "error": {
             "buttons": {
-              "ok": "OK"
+              "ok": "හරි"
             },
-            "message": "Argh! Apologies, download failed…",
-            "title": "Error in download!"
+            "message": "අපොයි! සමාවන්න, බාගත කිරීම අසාර්ථක විය...",
+            "title": "බාගත කිරීමේ දෝෂයක්!"
           },
           "start-download-playlist": {
             "buttons": {
-              "ok": "OK"
+              "ok": "හරි"
             },
-            "detail": "({{playlistSize}} songs)",
-            "message": "Downloading Playlist {{playlistTitle}}",
-            "title": "Download started"
+            "detail": "(ගීත {{playlistSize}}ක්)",
+            "message": "{{playlistTitle}} වාදන ලැයිස්තුව බාගත කරමින්",
+            "title": "බාගත කිරීම ආරම්භ විය"
           }
         },
         "feedback": {
-          "conversion-progress": "Conversion: {{percent}}%",
-          "converting": "Converting…",
-          "done": "Done: {{filePath}}",
-          "download-info": "Downloading {{artist}} - {{title}} [{{videoId}}",
-          "download-progress": "Download: {{percent}}%",
-          "downloading": "Downloading…",
-          "downloading-counter": "Downloading {{current}}/{{total}}…",
-          "downloading-playlist": "Downloading playlist \"{{playlistTitle}}\" - {{playlistSize}} songs ({{playlistId}})",
-          "error-while-downloading": "Error downloading \"{{author}} - {{title}}\": {{error}}",
-          "folder-already-exists": "The folder {{playlistFolder}} already exists",
-          "getting-playlist-info": "Getting playlist info…",
-          "loading": "Loading…",
-          "playlist-has-only-one-song": "Playlist has only one item, downloading it directly",
-          "playlist-id-not-found": "No playlist ID found",
-          "playlist-is-empty": "Playlist is empty",
-          "playlist-is-mix-or-private": "Error getting playlist info: make sure it isn't a private or \"Mixed for you\" playlist\n\n{{error}}",
-          "preparing-file": "Preparing file…",
-          "saving": "Saving…",
-          "trying-to-get-playlist-id": "Trying to get playlist ID: {{playlistId}}",
-          "video-id-not-found": "Video not found",
-          "writing-id3": "Writing ID3 tags…"
+          "conversion-progress": "පරිවර්තනය: {{percent}}%",
+          "converting": "පරිවර්තනය කරමින්...",
+          "done": "අවසන්: {{filePath}}",
+          "download-info": "{{artist}} - {{title}} [{{videoId}} බාගත කරමින්",
+          "download-progress": "බාගත කිරීම: {{percent}}%",
+          "downloading": "බාගත කරමින්...",
+          "downloading-counter": "{{current}}/{{total}} බාගත කරමින්...",
+          "downloading-playlist": "\"{{playlistTitle}}\" වාදන ලැයිස්තුව බාගත කරමින් - ගීත {{playlistSize}}ක් ({{playlistId}})",
+          "error-while-downloading": "\"{{author}} - {{title}}\" බාගත කිරීමේ දෝෂයක්: {{error}}",
+          "folder-already-exists": "{{playlistFolder}} ෆෝල්ඩරය දැනටමත් පවතී",
+          "getting-playlist-info": "වාදන ලැයිස්තු තොරතුරු ලබා ගනිමින්...",
+          "loading": "පූරණය කරමින්...",
+          "playlist-has-only-one-song": "වාදන ලැයිස්තුවේ ඇත්තේ එක් අයිතමයක් පමණි, එය සෘජුවම බාගත කරමින්",
+          "playlist-id-not-found": "වාදන ලැයිස්තු හැඳුනුම්පත හමු නොවීය",
+          "playlist-is-empty": "වාදන ලැයිස්තුව හිස්ය",
+          "playlist-is-mix-or-private": "වාදන ලැයිස්තු තොරතුරු ලබා ගැනීමේ දෝෂයක්: එය පුද්ගලික හෝ \"ඔබ වෙනුවෙන් මිශ්‍ර කළ\" වාදන ලැයිස්තුවක් නොවන බවට වග බලා ගන්න\n\n{{error}}",
+          "preparing-file": "ගොනුව සූදානම් කරමින්...",
+          "saving": "සුරකිමින්...",
+          "trying-to-get-playlist-id": "වාදන ලැයිස්තු හැඳුනුම්පත ලබා ගැනීමට උත්සාහ කරමින්: {{playlistId}}",
+          "video-id-not-found": "වීඩියෝව හමු නොවීය",
+          "writing-id3": "ID3 ටැග් ලියමින්..."
         }
       },
-      "description": "Downloads MP3 / source audio directly from the interface",
+      "description": "MP3 / මූලාශ්‍ර ශ්‍රව්‍යය සෘජුවම අතුරු මුහුණතෙන් බාගත කරයි",
       "menu": {
-        "choose-download-folder": "Choose download folder",
+        "choose-download-folder": "බාගත කිරීමේ ෆෝල්ඩරය තෝරන්න",
         "download-finish-settings": {
-          "label": "Download on finish",
+          "label": "අවසානයේ බාගත කරන්න",
           "prompt": {
-            "last-percent": "After x percent",
-            "last-seconds": "Last x seconds",
-            "title": "Configure when to download"
+            "last-percent": "x ප්‍රතිශතයකට පසු",
+            "last-seconds": "අවසන් x තත්පර",
+            "title": "බාගත කළ යුතු අවස්ථාව වින්‍යාස කරන්න"
           },
           "submenu": {
-            "advanced": "Advanced",
-            "enabled": "Enabled",
-            "mode": "Time mode",
-            "percent": "Percent",
-            "seconds": "Seconds"
+            "advanced": "උසස්",
+            "enabled": "සක්‍රීයයි",
+            "mode": "කාල ආකාරය",
+            "percent": "ප්‍රතිශතය",
+            "seconds": "තත්පර"
           }
         },
-        "download-playlist": "Download playlist",
-        "presets": "Presets",
-        "skip-existing": "Skip existing files"
+        "download-playlist": "වාදන ලැයිස්තුව බාගත කරන්න",
+        "presets": "පෙර සැකසුම්",
+        "skip-existing": "පවතින ගොනු මඟ හරින්න"
       },
-      "name": "Downloader",
+      "name": "බාගත කරන්නා",
       "renderer": {
-        "can-not-update-progress": "Cannot update progress"
+        "can-not-update-progress": "ප්‍රගතිය යාවත්කාලීන කළ නොහැක"
       },
       "templates": {
-        "button": "Download"
+        "button": "බාගත කරන්න"
       }
     },
     "equalizer": {
-      "description": "Adds an equalizer to the player",
+      "description": "වාදකයට සමකාරකයක් එකතු කරයි",
       "menu": {
         "presets": {
-          "label": "Presets",
+          "label": "පෙර සැකසුම්",
           "list": {
-            "bass-booster": "Bass booster"
+            "bass-booster": "බේස් වර්ධකය"
           }
         }
       },
-      "name": "Equalizer"
+      "name": "සමකාරකය"
     },
     "exponential-volume": {
-      "description": "Makes the volume slider exponential so it's easier to select lower volumes.",
-      "name": "Exponential Volume"
+      "description": "හඬ ස්ලයිඩරය ඝාතීය බවට පත් කරයි, එවිට අඩු හඬ ප්‍රමාණ තෝරා ගැනීම පහසු වේ.",
+      "name": "ඝාතීය හඬ"
     },
     "in-app-menu": {
-      "description": "Gives menu-bars a fancy, dark or album-color look",
+      "description": "මෙනු තීරු සඳහා විචිත්‍ර, අඳුරු හෝ ඇල්බම-වර්ණ පෙනුමක් ලබා දෙයි",
       "menu": {
-        "hide-dom-window-controls": "Hide DOM window controls"
+        "hide-dom-window-controls": "DOM කවුළු පාලන සඟවන්න"
       },
-      "name": "In-App Menu"
+      "name": "යෙදුම්-අභ්‍යන්තර මෙනුව"
     },
     "lumiastream": {
-      "description": "Adds Lumia Stream support",
+      "description": "Lumia Stream සහාය එකතු කරයි",
       "name": "Lumia Stream [Beta]"
     },
     "lyrics-genius": {
-      "description": "Adds lyrics support for most songs",
+      "description": "බොහෝ ගීත සඳහා පද රචනා සහාය එකතු කරයි",
       "menu": {
-        "romanized-lyrics": "Romanized Lyrics"
+        "romanized-lyrics": "රෝමානුකෘත පද රචනා"
       },
       "name": "Lyrics Genius",
       "renderer": {
-        "fetched-lyrics": "Fetched lyrics for Genius"
+        "fetched-lyrics": "Genius සඳහා පද රචනා ලබා ගන්නා ලදී"
       }
     },
     "music-together": {
-      "description": "Share a playlist with others. When the host plays a song, everyone else will hear the same song",
+      "description": "අන් අය සමඟ වාදන ලැයිස්තුවක් බෙදා ගන්න. සත්කාරකයා ගීතයක් වාදනය කරන විට, අන් සියල්ලන්ටම එම ගීතයම ඇසෙනු ඇත",
       "dialog": {
-        "enter-host": "Enter Host ID"
+        "enter-host": "සත්කාරක හැඳුනුම්පත ඇතුළත් කරන්න"
       },
       "internal": {
-        "save": "Save",
-        "track-source": "Track Source",
-        "unknown-user": "Unknown User"
+        "save": "සුරකින්න",
+        "track-source": "ධාවන මූලාශ්‍රය",
+        "unknown-user": "නොදන්නා පරිශීලක"
       },
       "menu": {
-        "click-to-copy-id": "Copy Host ID",
-        "close": "Close Music Together",
-        "connected-users": "Connected Users",
-        "disconnect": "Disconnect Music Together",
-        "empty-user": "No connected users",
-        "host": "Music Together Host",
-        "join": "Join Music Together",
+        "click-to-copy-id": "සත්කාරක හැඳුනුම්පත පිටපත් කරන්න",
+        "close": "Music Together වසන්න",
+        "connected-users": "සම්බන්ධිත පරිශීලකයින්",
+        "disconnect": "Music Together විසන්ධි කරන්න",
+        "empty-user": "සම්බන්ධිත පරිශීලකයින් නොමැත",
+        "host": "Music Together සත්කාරක",
+        "join": "Music Together වෙත සම්බන්ධ වන්න",
         "permission": {
-          "all": "Allow guests to control playlist and player",
-          "host-only": "Only the host can control playlist and player",
-          "playlist": "Allow guests to control playlist"
+          "all": "අමුත්තන්ට වාදන ලැයිස්තුව සහ වාදකය පාලනය කිරීමට ඉඩ දෙන්න",
+          "host-only": "සත්කාරකයාට පමණක් වාදන ලැයිස්තුව සහ වාදකය පාලනය කළ හැක",
+          "playlist": "අමුත්තන්ට වාදන ලැයිස්තුව පාලනය කිරීමට ඉඩ දෙන්න"
         },
-        "set-permission": "Change Control Permission",
+        "set-permission": "පාලන අවසරය වෙනස් කරන්න",
         "status": {
-          "disconnected": "Disconnected",
-          "guest": "Connected as Guest",
-          "host": "Connected as Host"
+          "disconnected": "විසන්ධි විය",
+          "guest": "අමුත්තෙකු ලෙස සම්බන්ධ විය",
+          "host": "සත්කාරකයෙකු ලෙස සම්බන්ධ විය"
         }
       },
       "name": "Music Together [Beta]",
       "toast": {
-        "add-song-failed": "Failed to add song",
-        "closed": "Music Together closed",
-        "disconnected": "Music Together disconnected",
-        "host-failed": "Failed to host Music Together",
-        "id-copied": "Host ID copied to clipboard",
-        "id-copy-failed": "Failed to copy Host ID to clipboard",
-        "join-failed": "Failed to join Music Together",
-        "joined": "Joined Music Together",
-        "permission-changed": "Music Together permission changed to \"{{permission}}\"",
-        "remove-song-failed": "Failed to remove song",
-        "user-connected": "{{name}} joined Music Together",
-        "user-disconnected": "{{name}} left Music Together"
+        "add-song-failed": "ගීතය එකතු කිරීමට අසමත් විය",
+        "closed": "Music Together වසා දමන ලදී",
+        "disconnected": "Music Together විසන්ධි විය",
+        "host-failed": "Music Together සත්කාරකත්වය දැරීමට අසමත් විය",
+        "id-copied": "සත්කාරක හැඳුනුම්පත පසුරු පුවරුවට පිටපත් කරන ලදී",
+        "id-copy-failed": "සත්කාරක හැඳුනුම්පත පසුරු පුවරුවට පිටපත් කිරීමට අසමත් විය",
+        "join-failed": "Music Together වෙත සම්බන්ධ වීමට අසමත් විය",
+        "joined": "Music Together වෙත සම්බන්ධ විය",
+        "permission-changed": "Music Together අවසරය \"{{permission}}\" ලෙස වෙනස් කරන ලදී",
+        "remove-song-failed": "ගීතය ඉවත් කිරීමට අසමත් විය",
+        "user-connected": "{{name}} Music Together වෙත සම්බන්ධ විය",
+        "user-disconnected": "{{name}} Music Together වෙතින් ඉවත් විය"
       }
     },
     "navigation": {
-      "description": "Next/Back navigation arrows directly integrated in the interface, like in your favorite browser",
-      "name": "Navigation",
+      "description": "ඔබේ ප්‍රියතම බ්‍රව්සරයේ මෙන් ඊළඟ/ආපසු යාත්‍රණ ඊතල සෘජුවම අතුරු මුහුණතට ඒකාබද්ධ කර ඇත",
+      "name": "යාත්‍රණය",
       "templates": {
         "back": {
-          "title": "Go to previous page"
+          "title": "පෙර පිටුවට යන්න"
         },
         "forward": {
-          "title": "Go to next page"
+          "title": "ඊළඟ පිටුවට යන්න"
         }
       }
     },
     "no-google-login": {
-      "description": "Remove Google login buttons and links from the interface",
-      "name": "No Google Login"
+      "description": "අතුරු මුහුණතෙන් Google පිවිසුම් බොත්තම් සහ සබැඳි ඉවත් කරන්න",
+      "name": "Google පිවිසුමක් නැත"
     },
     "notifications": {
-      "description": "Display a notification when a song starts playing (interactive notifications are available on Windows)",
+      "description": "ගීතයක් වාදනය වීමට පටන් ගත් විට දැනුම්දීමක් පෙන්වන්න (අන්තර්ක්‍රියාකාරී දැනුම්දීම් Windows මත ඇත)",
       "menu": {
-        "interactive": "Interactive Notifications",
+        "interactive": "අන්තර්ක්‍රියාකාරී දැනුම්දීම්",
         "interactive-settings": {
-          "label": "Interactive Settings",
+          "label": "අන්තර්ක්‍රියාකාරී සැකසුම්",
           "submenu": {
-            "hide-button-text": "Hide button text",
-            "refresh-on-play-pause": "Refresh on Play/Pause",
-            "tray-controls": "Open/Close on tray click"
+            "hide-button-text": "බොත්තම් පෙළ සඟවන්න",
+            "refresh-on-play-pause": "වාදනය/විරාමය මත නැවුම් කරන්න",
+            "tray-controls": "ට්‍රේ ක්ලික් මත විවෘත/වසන්න",
+            "hover-controls": "ට්‍රේ එක මත සැරිසරන විට කුඩා වාදකය පෙන්වන්න"
           }
         },
-        "priority": "Notification Priority",
-        "toast-style": "Toast style",
-        "unpause-notification": "Show notification on unpause"
+        "priority": "දැනුම්දීමේ ප්‍රමුඛතාව",
+        "toast-style": "ටෝස්ට් විලාසය",
+        "unpause-notification": "නැවත වාදනයේදී දැනුම්දීම පෙන්වන්න"
       },
-      "name": "Notifications"
+      "name": "දැනුම්දීම්"
     },
     "performance-improvement": {
-      "description": "Improve performance by enabling experimental scripts",
-      "name": "Performance improvement [Beta]"
+      "description": "පර්යේෂණාත්මක ස්ක්‍රිප්ට් සක්‍රීය කිරීමෙන් කාර්ය සාධනය වැඩි දියුණු කරන්න",
+      "name": "කාර්ය සාධන වැඩිදියුණුව [Beta]"
     },
     "picture-in-picture": {
-      "description": "Allows to switch the app to picture-in-picture mode",
+      "description": "යෙදුම පින්තූරය-තුළ-පින්තූරය ආකාරයට මාරු කිරීමට ඉඩ සලසයි",
       "menu": {
-        "always-on-top": "Always on top",
+        "always-on-top": "සැමවිටම ඉහළින්",
         "hotkey": {
-          "label": "Hotkey",
+          "label": "හොට්කී",
           "prompt": {
             "keybind-options": {
-              "hotkey": "Hotkey"
+              "hotkey": "හොට්කී"
             },
-            "label": "Choose a hotkey to toggle picture-in-picture",
-            "title": "Picture-in-picture Hotkey"
+            "label": "පින්තූරය-තුළ-පින්තූරය ටොගල් කිරීමට හොට්කීයක් තෝරන්න",
+            "title": "පින්තූරය-තුළ-පින්තූරය හොට්කී"
           }
         },
-        "save-window-position": "Save window position",
-        "save-window-size": "Save window size",
-        "use-native-pip": "Use browser native PiP"
+        "save-window-position": "කවුළු පිහිටීම සුරකින්න",
+        "save-window-size": "කවුළු ප්‍රමාණය සුරකින්න",
+        "use-native-pip": "බ්‍රව්සර් ස්වදේශීය PiP භාවිතා කරන්න"
       },
-      "name": "Picture-in-picture",
+      "name": "පින්තූරය-තුළ-පින්තූරය",
       "templates": {
-        "button": "Picture-in-picture"
+        "button": "පින්තූරය-තුළ-පින්තූරය"
       }
     },
     "playback-speed": {
-      "description": "Listen fast, listen slow! Adds a slider that controls song speed",
-      "name": "Playback Speed",
+      "description": "වේගයෙන් අහන්න, සෙමින් අහන්න! ගීත වේගය පාලනය කරන ස්ලයිඩරයක් එකතු කරයි",
+      "name": "වාදන වේගය",
       "templates": {
-        "button": "Speed"
+        "button": "වේගය"
       }
     },
     "precise-volume": {
-      "description": "Control the volume precisely using mousewheel/hotkeys, with a custom HUD and customizable volume steps",
+      "description": "මවුස්වීල්/හොට්කී භාවිතයෙන් හඬ නිවැරදිව පාලනය කරන්න, අභිරුචි HUD සහ අභිරුචිකරණය කළ හැකි හඬ පියවර සමඟ",
       "menu": {
-        "arrows-shortcuts": "Local Arrow-keys Controls",
-        "custom-volume-steps": "Set Custom Volume Steps",
-        "global-shortcuts": "Global Hotkeys"
+        "arrows-shortcuts": "දේශීය ඊතල යතුරු පාලන",
+        "custom-volume-steps": "අභිරුචි හඬ පියවර සකසන්න",
+        "global-shortcuts": "ගෝලීය හොට්කී"
       },
-      "name": "Precise Volume",
+      "name": "නිරවද්‍ය හඬ",
       "prompt": {
         "global-shortcuts": {
           "keybind-options": {
-            "decrease": "Decrease Volume",
-            "increase": "Increase Volume"
+            "decrease": "හඬ අඩු කරන්න",
+            "increase": "හඬ වැඩි කරන්න"
           },
-          "label": "Choose Global Volume Keybinds:",
-          "title": "Global Volume Keybinds"
+          "label": "ගෝලීය හඬ යතුරු බැඳීම් තෝරන්න:",
+          "title": "ගෝලීය හඬ යතුරු බැඳීම්"
         },
         "volume-steps": {
-          "label": "Choose Volume Increase/Decrease Steps",
-          "title": "Volume Steps"
+          "label": "හඬ වැඩි කිරීමේ/අඩු කිරීමේ පියවර තෝරන්න",
+          "title": "හඬ පියවර"
         }
       }
     },
@@ -755,242 +757,242 @@
       "backend": {
         "dialog": {
           "quality-changer": {
-            "detail": "Current Quality: {{quality}}",
-            "message": "Choose Video Quality:",
-            "title": "Choose Video Quality"
+            "detail": "වත්මන් ගුණාත්මකභාවය: {{quality}}",
+            "message": "වීඩියෝ ගුණාත්මකභාවය තෝරන්න:",
+            "title": "වීඩියෝ ගුණාත්මකභාවය තෝරන්න"
           }
         }
       },
-      "description": "Allows changing the video quality with a button on the video overlay",
-      "name": "Video Quality Changer",
+      "description": "වීඩියෝ උඩැතිරියේ බොත්තමක් සමඟ වීඩියෝ ගුණාත්මකභාවය වෙනස් කිරීමට ඉඩ සලසයි",
+      "name": "වීඩියෝ ගුණාත්මකභාවය වෙනස් කරන්නා",
       "renderer": {
         "quality-settings-button": {
-          "label": "Open player quality changer"
+          "label": "වාදක ගුණාත්මකභාවය වෙනස් කරන්නා විවෘත කරන්න"
         }
       }
     },
     "scrobbler": {
-      "description": "Add scrobbling support (etc. last.fm, Listenbrainz)",
+      "description": "scrobbling සහාය එකතු කරන්න (උදා. last.fm, Listenbrainz)",
       "dialog": {
         "lastfm": {
           "auth-failed": {
-            "message": "Failed to authenticate with Last.fm\nHide the popup until the next restart.",
-            "title": "Authentication Failed"
+            "message": "Last.fm සමඟ සත්‍යාපනය කිරීමට අසමත් විය\nඊළඟ නැවත ආරම්භය දක්වා උත්පතනය සඟවන්න.",
+            "title": "සත්‍යාපනය අසාර්ථක විය"
           }
         }
       },
       "menu": {
         "lastfm": {
-          "api-settings": "Last.fm API Settings"
+          "api-settings": "Last.fm API සැකසුම්"
         },
         "listenbrainz": {
-          "token": "Enter ListenBrainz user token"
+          "token": "ListenBrainz පරිශීලක ටෝකනය ඇතුළත් කරන්න"
         },
-        "scrobble-alternative-artist": "Use alternative artists",
-        "scrobble-alternative-title": "Use alternative titles",
-        "scrobble-other-media": "Scrobble other media"
+        "scrobble-alternative-artist": "විකල්ප කලාකරුවන් භාවිතා කරන්න",
+        "scrobble-alternative-title": "විකල්ප මාතෘකා භාවිතා කරන්න",
+        "scrobble-other-media": "වෙනත් මාධ්‍ය scrobble කරන්න"
       },
       "name": "Scrobbler",
       "prompt": {
         "lastfm": {
-          "api-key": "Last.fm API key",
-          "api-secret": "Last.fm API secret"
+          "api-key": "Last.fm API යතුර",
+          "api-secret": "Last.fm API රහස"
         },
         "listenbrainz": {
           "token": {
-            "label": "Enter your ListenBrainz user token:",
-            "title": "ListenBrainz token"
+            "label": "ඔබේ ListenBrainz පරිශීලක ටෝකනය ඇතුළත් කරන්න:",
+            "title": "ListenBrainz ටෝකනය"
           }
         }
       }
     },
     "shortcuts": {
-      "description": "Allows setting global hotkeys for playback (play/pause/next/previous) and turning off media OSD by overriding media keys, turning on Ctrl/CMD + F to search, turning on Linux MPRIS support for media keys, and custom hotkeys for advanced users",
+      "description": "වාදනය සඳහා ගෝලීය හොට්කී සැකසීමට ඉඩ සලසයි (වාදනය/විරාමය/ඊළඟ/පෙර) සහ මාධ්‍ය යතුරු අභිබවා යාමෙන් මාධ්‍ය OSD අක්‍රිය කිරීම, සෙවීමට Ctrl/CMD + F සක්‍රීය කිරීම, මාධ්‍ය යතුරු සඳහා Linux MPRIS සහාය සක්‍රීය කිරීම, සහ උසස් පරිශීලකයින් සඳහා අභිරුචි හොට්කී",
       "menu": {
-        "override-media-keys": "Override Media Keys",
-        "set-keybinds": "Set Global Song Controls"
+        "override-media-keys": "මාධ්‍ය යතුරු අභිබවා යන්න",
+        "set-keybinds": "ගෝලීය ගීත පාලන සකසන්න"
       },
-      "name": "Shortcuts (& MPRIS)",
+      "name": "කෙටිමං (& MPRIS)",
       "prompt": {
         "keybind": {
           "keybind-options": {
-            "next": "Next",
-            "play-pause": "Play / Pause",
-            "previous": "Previous"
+            "next": "ඊළඟ",
+            "play-pause": "වාදනය / විරාමය",
+            "previous": "පෙර"
           },
-          "label": "Choose Global Keybinds for Songs Control:",
-          "title": "Global Keybinds"
+          "label": "ගීත පාලනය සඳහා ගෝලීය යතුරු බැඳීම් තෝරන්න:",
+          "title": "ගෝලීය යතුරු බැඳීම්"
         }
       }
     },
     "skip-disliked-songs": {
-      "description": "Skips disliked songs",
-      "name": "Skip Disliked Songs"
+      "description": "අකමැති ගීත මඟ හරියි",
+      "name": "අකමැති ගීත මඟ හරින්න"
     },
     "skip-silences": {
-      "description": "Automatically skip silences sections in songs",
-      "name": "Skip Silences"
+      "description": "ගීතවල නිහඬ කොටස් ස්වයංක්‍රීයව මඟ හරින්න",
+      "name": "නිහඬතා මඟ හරින්න"
     },
     "sponsorblock": {
-      "description": "Automatically Skips non-music parts like intro/outro or parts of music videos where the song isn't playing",
+      "description": "හැඳින්වීම/අවසානය හෝ ගීතය වාදනය නොවන සංගීත වීඩියෝ කොටස් වැනි සංගීත නොවන කොටස් ස්වයංක්‍රීයව මඟ හරියි",
       "name": "SponsorBlock"
     },
     "synced-lyrics": {
-      "description": "Provides synced lyrics to songs, using providers like LRClib.",
+      "description": "LRClib වැනි සපයන්නන් භාවිතා කරමින් ගීත සඳහා සමමුහුර්ත පද රචනා සපයයි.",
       "errors": {
-        "fetch": "⚠️\tAn error occurred while fetching the lyrics.\n\tPlease try again later.",
-        "not-found": "⚠️ No lyrics found for this song."
+        "fetch": "⚠️\tපද රචනා ලබා ගැනීමේදී දෝෂයක් සිදු විය.\n\tකරුණාකර පසුව නැවත උත්සාහ කරන්න.",
+        "not-found": "⚠️ මෙම ගීතය සඳහා පද රචනා හමු නොවීය."
       },
       "menu": {
         "convert-chinese-character": {
-          "label": "Convert Chinese character",
+          "label": "චීන අක්ෂර පරිවර්තනය කරන්න",
           "submenu": {
             "disabled": {
-              "label": "Disabled",
-              "tooltip": "Disable Chinese character conversion"
+              "label": "අක්‍රියයි",
+              "tooltip": "චීන අක්ෂර පරිවර්තනය අක්‍රිය කරන්න"
             },
             "simplified-to-traditional": {
-              "label": "Simplified to Traditional",
-              "tooltip": "Convert Simplified Chinese to Traditional Chinese"
+              "label": "සරල සිට සම්ප්‍රදායික",
+              "tooltip": "සරල චීන සම්ප්‍රදායික චීන බවට පරිවර්තනය කරන්න"
             },
             "traditional-to-simplified": {
-              "label": "Traditional to Simplified",
-              "tooltip": "Convert Traditional Chinese to Simplified Chinese"
+              "label": "සම්ප්‍රදායික සිට සරල",
+              "tooltip": "සම්ප්‍රදායික චීන සරල චීන බවට පරිවර්තනය කරන්න"
             }
           },
-          "tooltip": "Convert Chinese character to Traditional or Simplified"
+          "tooltip": "චීන අක්ෂර සම්ප්‍රදායික හෝ සරල බවට පරිවර්තනය කරන්න"
         },
         "default-text-string": {
-          "label": "Default character between lyrics",
-          "tooltip": "Choose the default character to use for the gap between lyrics"
+          "label": "පද රචනා අතර පෙරනිමි අක්ෂරය",
+          "tooltip": "පද රචනා අතර හිඩැස සඳහා භාවිතා කිරීමට පෙරනිමි අක්ෂරය තෝරන්න"
         },
         "line-effect": {
-          "label": "Line effect",
+          "label": "රේඛා ප්‍රයෝගය",
           "submenu": {
             "fancy": {
-              "label": "Fancy",
-              "tooltip": "Use large, app-like effects on the current line"
+              "label": "විචිත්‍ර",
+              "tooltip": "වත්මන් රේඛාව මත විශාල, යෙදුම්-ආකාර ප්‍රයෝග භාවිතා කරන්න"
             },
             "focus": {
-              "label": "Focus",
-              "tooltip": "Make only the current line white"
+              "label": "නාභිගත",
+              "tooltip": "වත්මන් රේඛාව පමණක් සුදු කරන්න"
             },
             "offset": {
-              "label": "Offset",
-              "tooltip": "Offset on the right the current line"
+              "label": "ඕෆ්සෙට්",
+              "tooltip": "වත්මන් රේඛාව දකුණට ඕෆ්සෙට් කරන්න"
             },
             "scale": {
-              "label": "Scale",
-              "tooltip": "Scale the current line"
+              "label": "පරිමාණය",
+              "tooltip": "වත්මන් රේඛාව පරිමාණය කරන්න"
             }
           },
-          "tooltip": "Choose the effect to apply to the current line"
+          "tooltip": "වත්මන් රේඛාවට යෙදිය යුතු ප්‍රයෝගය තෝරන්න"
         },
         "lyrics-font-size": {
-          "label": "Lyrics font size",
+          "label": "පද රචනා අකුරු ප්‍රමාණය",
           "submenu": {
             "large": {
-              "label": "Large",
-              "tooltip": "Use the original larger lyrics size"
+              "label": "විශාල",
+              "tooltip": "මුල් විශාල පද රචනා ප්‍රමාණය භාවිතා කරන්න"
             },
             "medium": {
-              "label": "Medium",
-              "tooltip": "Use a balanced lyrics size"
+              "label": "මධ්‍යම",
+              "tooltip": "සමතුලිත පද රචනා ප්‍රමාණයක් භාවිතා කරන්න"
             },
             "small": {
-              "label": "Small",
-              "tooltip": "Use a more compact lyrics size"
+              "label": "කුඩා",
+              "tooltip": "වඩාත් සංයුක්ත පද රචනා ප්‍රමාණයක් භාවිතා කරන්න"
             }
           },
-          "tooltip": "Choose how large the lyrics text should be"
+          "tooltip": "පද රචනා පෙළ කොතරම් විශාල විය යුතුද යන්න තෝරන්න"
         },
         "precise-timing": {
-          "label": "Make the lyrics perfectly synced",
-          "tooltip": "Calculate to the milisecond the display of the next line (can have a small impact on performance)"
+          "label": "පද රචනා පරිපූර්ණ ලෙස සමමුහුර්ත කරන්න",
+          "tooltip": "ඊළඟ රේඛාවේ සංදර්ශනය මිලි තත්පරයට ගණනය කරන්න (කාර්ය සාධනයට කුඩා බලපෑමක් ඇති විය හැක)"
         },
         "preferred-provider": {
-          "label": "Preferred Provider",
+          "label": "කැමති සපයන්නා",
           "none": {
-            "label": "None",
-            "tooltip": "No preferred provider"
+            "label": "කිසිවක් නැත",
+            "tooltip": "කැමති සපයන්නෙකු නොමැත"
           },
-          "tooltip": "Choose the default provider to use"
+          "tooltip": "භාවිතා කිරීමට පෙරනිමි සපයන්නා තෝරන්න"
         },
         "romanization": {
-          "label": "Romanize lyrics",
-          "tooltip": "If the lyrics are in a different language, try to display a latin version."
+          "label": "පද රචනා රෝමානුකරණය කරන්න",
+          "tooltip": "පද රචනා වෙනත් භාෂාවකින් නම්, ලතින් අනුවාදයක් පෙන්වීමට උත්සාහ කරන්න."
         },
         "show-lyrics-even-if-inexact": {
-          "label": "Show lyrics even if inexact",
-          "tooltip": "If the song is not found, the plugin tries again with a different search query.\nThe result from the second attempt may not be exact."
+          "label": "නිවැරදි නොවුනත් පද රචනා පෙන්වන්න",
+          "tooltip": "ගීතය සොයා ගත නොහැකි නම්, ප්ලගිනය වෙනත් සෙවුම් විමසුමක් සමඟ නැවත උත්සාහ කරයි.\nදෙවන උත්සාහයේ ප්‍රතිඵලය නිවැරදි නොවිය හැක."
         },
         "show-time-codes": {
-          "label": "Show time codes",
-          "tooltip": "Show the time codes next to the lyrics"
+          "label": "කාල කේත පෙන්වන්න",
+          "tooltip": "පද රචනා අසල කාල කේත පෙන්වන්න"
         },
         "translation": {
           "clear-cache": {
-            "label": "Clear translation cache",
-            "tooltip": "Delete all cached translations stored on disk."
+            "label": "පරිවර්තන හැඹිලිය හිස් කරන්න",
+            "tooltip": "තැටියේ ගබඩා කර ඇති සියලුම හැඹිලිගත පරිවර්තන මකන්න."
           },
           "configure": {
-            "label": "Configure API key & model…",
-            "tooltip": "Set provider-specific translation options."
+            "label": "API යතුර සහ ආකෘතිය වින්‍යාස කරන්න...",
+            "tooltip": "සපයන්නා-විශේෂිත පරිවර්තන විකල්ප සකසන්න."
           },
           "enabled": {
-            "label": "Enable translation",
-            "tooltip": "Show a translated line beneath each original lyric line."
+            "label": "පරිවර්තනය සක්‍රීය කරන්න",
+            "tooltip": "එක් එක් මුල් පද රචනා පේළියට යටින් පරිවර්තිත පේළියක් පෙන්වන්න."
           },
-          "label": "Lyrics translation",
+          "label": "පද රචනා පරිවර්තනය",
           "provider": {
-            "label": "Provider",
-            "tooltip": "Which service to use for translation."
+            "label": "සපයන්නා",
+            "tooltip": "පරිවර්තනය සඳහා භාවිතා කළ යුතු සේවාව."
           },
           "providers": {
             "anthropic": {
               "name": "Anthropic Claude",
-              "prompt-label": "Uses the native Anthropic Messages API.",
-              "prompt-title": "Anthropic settings"
+              "prompt-label": "ස්වදේශීය Anthropic Messages API භාවිතා කරයි.",
+              "prompt-title": "Anthropic සැකසුම්"
             },
             "gemini": {
               "name": "Google Gemini",
-              "prompt-label": "Uses Google's Generative Language API (generateContent).",
-              "prompt-title": "Gemini settings"
+              "prompt-label": "Google හි Generative Language API (generateContent) භාවිතා කරයි.",
+              "prompt-title": "Gemini සැකසුම්"
             },
             "google-translate": {
-              "host": "Host",
-              "name": "Google Translate",
-              "prompt-label": "Uses the unofficial free Google Translate endpoint. No API key is required, but Google may rate-limit it.",
-              "prompt-title": "Google Translate settings"
+              "host": "ධාරකය",
+              "name": "Google පරිවර්තනය",
+              "prompt-label": "නිල නොවන නොමිලේ Google පරිවර්තන අන්ත ලක්ෂ්‍යය භාවිතා කරයි. API යතුරක් අවශ්‍ය නොවේ, නමුත් Google එය අනුපාත සීමා කළ හැක.",
+              "prompt-title": "Google පරිවර්තන සැකසුම්"
             },
             "local-cli": {
-              "command": "Command",
-              "engine": "Local CLI",
+              "command": "විධානය",
+              "engine": "දේශීය CLI",
               "engine-claude": "Claude Code",
               "engine-codex": "Codex",
               "engine-gemini": "Gemini CLI",
-              "name": "Local CLI",
-              "prompt-label": "Use a locally logged-in Claude Code, Codex, or Gemini CLI. The command and model are automatic; the CLI uses its own logged-in default.",
-              "prompt-title": "Local CLI settings",
-              "timeout": "Timeout seconds (15-600)"
+              "name": "දේශීය CLI",
+              "prompt-label": "දේශීයව පුරනය වූ Claude Code, Codex, හෝ Gemini CLI භාවිතා කරන්න. විධානය සහ ආකෘතිය ස්වයංක්‍රීයයි; CLI එහි පුරනය වූ පෙරනිමිය භාවිතා කරයි.",
+              "prompt-title": "දේශීය CLI සැකසුම්",
+              "timeout": "කාල සීමා තත්පර (15-600)"
             },
             "openai-compatible": {
-              "api-mode": "API mode (responses / auto / chat-completions)",
-              "base-url": "Base URL",
-              "name": "OpenAI compatible",
-              "prompt-label": "Use OpenAI-compatible servers, including Ollama (base URL http://127.0.0.1:11434/v1, API mode auto or chat-completions).",
-              "prompt-title": "OpenAI-compatible settings"
+              "api-mode": "API ආකාරය (responses / auto / chat-completions)",
+              "base-url": "මූලික URL",
+              "name": "OpenAI අනුකූල",
+              "prompt-label": "Ollama ඇතුළු OpenAI-අනුකූල සේවාදායක භාවිතා කරන්න (මූලික URL http://127.0.0.1:11434/v1, API ආකාරය auto හෝ chat-completions).",
+              "prompt-title": "OpenAI-අනුකූල සැකසුම්"
             },
             "shared": {
-              "api-key": "API key",
-              "model": "Model"
+              "api-key": "API යතුර",
+              "model": "ආකෘතිය"
             }
           },
           "target-language": {
-            "label": "Target language",
+            "label": "ඉලක්ක භාෂාව",
             "options": {
               "ar": "العربية",
-              "auto": "Follow app language",
+              "auto": "යෙදුම් භාෂාව අනුගමනය කරන්න",
               "bg": "Български",
               "bn": "বাংলা",
               "cs": "Čeština",
@@ -1035,92 +1037,103 @@
               "zh-CN": "简体中文",
               "zh-TW": "繁體中文"
             },
-            "tooltip": "The language to translate lyrics into."
+            "tooltip": "පද රචනා පරිවර්තනය කළ යුතු භාෂාව."
           },
-          "tooltip": "Translate lyrics and show the translated result line-by-line for display."
+          "tooltip": "පද රචනා පරිවර්තනය කර පරිවර්තිත ප්‍රතිඵලය පේළියෙන් පේළියට පෙන්වන්න."
         }
       },
-      "name": "Synced Lyrics",
+      "name": "සමමුහුර්ත පද රචනා",
       "refetch-btn": {
-        "fetching": "Fetching...",
-        "normal": "Refetch lyrics"
+        "fetching": "ලබා ගනිමින්...",
+        "normal": "පද රචනා නැවත ලබා ගන්න"
       },
       "warnings": {
-        "duration-mismatch": "⚠️ - The lyrics may be out of sync due to a duration mismatch.",
-        "inexact": "⚠️ - The lyrics for this song may not be exact",
-        "instrumental": "⚠️ - This is an instrumental song"
+        "duration-mismatch": "⚠️ - කාල සීමා නොගැලපීම හේතුවෙන් පද රචනා සමමුහුර්ත නොවිය හැක.",
+        "inexact": "⚠️ - මෙම ගීතය සඳහා පද රචනා නිවැරදි නොවිය හැක",
+        "instrumental": "⚠️ - මෙය වාද්‍ය ගීතයකි"
       }
     },
     "taskbar-mediacontrol": {
-      "description": "Control playback from your Windows taskbar",
-      "name": "Taskbar Media Control"
+      "description": "ඔබේ Windows කාර්ය තීරුවෙන් වාදනය පාලනය කරන්න",
+      "name": "කාර්ය තීරු මාධ්‍ය පාලනය"
     },
     "touchbar": {
-      "description": "Adds a TouchBar widget for macOS users",
+      "description": "macOS පරිශීලකයින් සඳහා TouchBar විජට් එකතු කරයි",
       "name": "TouchBar"
     },
     "transparent-player": {
-      "description": "Makes the app window transparent",
+      "description": "යෙදුම් කවුළුව විනිවිද පෙනෙන කරයි",
       "menu": {
         "opacity": {
-          "label": "Opacity",
+          "label": "පාරාන්ධතාව",
           "submenu": {
             "percent": "{{opacity}}%"
           }
         },
         "type": {
-          "label": "Type",
+          "label": "වර්ගය",
           "submenu": {
-            "acrylic": "Acrylic",
-            "mica": "Mica",
-            "none": "None",
-            "tabbed": "Tabbed"
+            "acrylic": "ඇක්‍රිලික්",
+            "mica": "මයිකා",
+            "none": "කිසිවක් නැත",
+            "tabbed": "ටැබ් කළ"
           }
         }
       },
-      "name": "Transparent Player"
+      "name": "විනිවිද පෙනෙන වාදකය"
     },
     "tuna-obs": {
-      "description": "Integration with OBS's plugin Tuna",
+      "description": "OBS හි Tuna ප්ලගිනය සමඟ ඒකාබද්ධ කිරීම",
       "name": "Tuna OBS"
     },
     "unobtrusive-player": {
-      "description": "Prevents the player from popping up when playing a song",
-      "name": "Unobtrusive Player"
+      "description": "ගීතයක් වාදනය කිරීමේදී වාදකය උත්පතන වීම වළක්වයි",
+      "name": "බාධා රහිත වාදකය"
     },
     "video-toggle": {
-      "description": "Adds a button to switch between Video/Song mode. can also optionally remove the whole video tab",
+      "description": "වීඩියෝ/ගීත ආකාරය අතර මාරු වීමට බොත්තමක් එකතු කරයි. විකල්පයක් ලෙස සම්පූර්ණ වීඩියෝ ටැබය ඉවත් කළ හැක",
       "menu": {
         "align": {
-          "label": "Alignment",
+          "label": "පෙළගැස්ම",
           "submenu": {
-            "left": "Left",
-            "middle": "Middle",
-            "right": "Right"
+            "left": "වම",
+            "middle": "මැද",
+            "right": "දකුණ"
           }
         },
-        "force-hide": "Force remove video tab",
+        "force-hide": "වීඩියෝ ටැබය බලෙන් ඉවත් කරන්න",
         "mode": {
-          "label": "Mode",
+          "label": "ආකාරය",
           "submenu": {
-            "custom": "Custom toggle",
-            "disabled": "Disabled",
-            "native": "Native toggle"
+            "custom": "අභිරුචි ටොගලය",
+            "disabled": "අක්‍රියයි",
+            "native": "ස්වදේශීය ටොගලය"
           }
         }
       },
-      "name": "Video Toggle",
+      "name": "වීඩියෝ ටොගලය",
       "templates": {
-        "button-song": "Song",
-        "button-video": "Video"
+        "button-song": "ගීතය",
+        "button-video": "වීඩියෝ"
       }
     },
     "visualizer": {
-      "description": "Adds a visualizer to the player",
+      "description": "වාදකයට දෘශ්‍යකාරකයක් එකතු කරයි",
       "menu": {
-        "visualizer-type": "Visualizer Type"
+        "visualizer-type": "දෘශ්‍යකාරක වර්ගය"
       },
-      "name": "Visualizer"
+      "name": "දෘශ්‍යකාරකය"
+    },
+    "audio-only": {
+      "description": "ශ්‍රව්‍ය-පමණක් ආකාරය බල කරයි — RAM සහ කලාප පළල ඉතිරි කිරීමට ජාල සහ වාදක මට්ටමින් සියලුම වීඩියෝ ප්‍රවාහ අවහිර කරයි",
+      "name": "ශ්‍රව්‍ය පමණයි"
+    },
+    "playback-recovery": {
+      "description": "සිරවී ඇති, ඇනහිට ඇති, හෝ මියගිය වාදන තත්ව වලින් ස්වයංක්‍රීයව ප්‍රකෘතිමත් කරයි",
+      "menu": {
+        "log-to-console": "ප්‍රකෘතිමත් වීමේ සිදුවීම් කොන්සෝලයට සටහන් කරන්න"
+      },
+      "name": "වාදන ප්‍රකෘතිය"
     }
   }
 }

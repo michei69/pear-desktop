@@ -144,7 +144,8 @@
               "disabled": "Отключено",
               "enabled-and-hide-app": "Включено и скрывать приложение",
               "enabled-and-show-app": "Включено и показывать приложение",
-              "play-pause-on-click": "Пауза/продолжить при нажатии"
+              "play-pause-on-click": "Пауза/продолжить при нажатии",
+              "move-to-current-desktop": "Перемещать на текущий виртуальный рабочий стол при показе"
             }
           },
           "visual-tweaks": {
@@ -512,7 +513,7 @@
               "ok": "OK"
             },
             "message": "Ой-ой! Прошу простить, загрузка дала сбой…",
-            "title": "Error in download!"
+            "title": "Ошибка при загрузке!"
           },
           "start-download-playlist": {
             "buttons": {
@@ -528,7 +529,7 @@
           "converting": "Конвертация…",
           "done": "Выполнено: {{filePath}}",
           "download-info": "Скачиваем {{artist}}-{{title}} {{videoId}}",
-          "download-progress": "Download: {{percent}}%",
+          "download-progress": "Загрузка: {{percent}}%",
           "downloading": "Скачиваем…",
           "downloading-counter": "Скачиваем {{current}}/{{total}}…",
           "downloading-playlist": "Скачиваем плейлист \"{{playlistTitle}}\" - {{playlistSize}} песен {{playlistId}}",
@@ -685,7 +686,8 @@
           "submenu": {
             "hide-button-text": "Скрыть текст кнопки",
             "refresh-on-play-pause": "Перезагрузка при воспроизведении/паузе",
-            "tray-controls": "Открывать/закрывать по нажатию в трее"
+            "tray-controls": "Открывать/закрывать по нажатию в трее",
+            "hover-controls": "Показывать мини-плеер при наведении на трей"
           }
         },
         "priority": "Приоритет уведомлений",
@@ -887,22 +889,22 @@
           "tooltip": "Выберите эффект применяемый к текущей строке"
         },
         "lyrics-font-size": {
-          "label": "Lyrics font size",
+          "label": "Размер шрифта текста",
           "submenu": {
             "large": {
-              "label": "Large",
-              "tooltip": "Use the original larger lyrics size"
+              "label": "Большой",
+              "tooltip": "Использовать оригинальный большой размер текста"
             },
             "medium": {
-              "label": "Medium",
-              "tooltip": "Use a balanced lyrics size"
+              "label": "Средний",
+              "tooltip": "Использовать сбалансированный размер текста"
             },
             "small": {
-              "label": "Small",
-              "tooltip": "Use a more compact lyrics size"
+              "label": "Маленький",
+              "tooltip": "Использовать более компактный размер текста"
             }
           },
-          "tooltip": "Choose how large the lyrics text should be"
+          "tooltip": "Выберите размер текста слов"
         },
         "precise-timing": {
           "label": "Идеально синхронизировать слова",
@@ -930,67 +932,67 @@
         },
         "translation": {
           "clear-cache": {
-            "label": "Clear translation cache",
-            "tooltip": "Delete all cached translations stored on disk."
+            "label": "Очистить кеш переводов",
+            "tooltip": "Удалить все кешированные переводы, сохранённые на диске."
           },
           "configure": {
-            "label": "Configure API key & model…",
-            "tooltip": "Set provider-specific translation options."
+            "label": "Настроить ключ API и модель…",
+            "tooltip": "Установить параметры перевода для конкретного провайдера."
           },
           "enabled": {
-            "label": "Enable translation",
-            "tooltip": "Show a translated line beneath each original lyric line."
+            "label": "Включить перевод",
+            "tooltip": "Показывать переведённую строку под каждой оригинальной строкой текста."
           },
-          "label": "Lyrics translation",
+          "label": "Перевод текста",
           "provider": {
-            "label": "Provider",
-            "tooltip": "Which service to use for translation."
+            "label": "Провайдер",
+            "tooltip": "Какой сервис использовать для перевода."
           },
           "providers": {
             "anthropic": {
               "name": "Anthropic Claude",
-              "prompt-label": "Uses the native Anthropic Messages API.",
-              "prompt-title": "Anthropic settings"
+              "prompt-label": "Использует нативный API Anthropic Messages.",
+              "prompt-title": "Настройки Anthropic"
             },
             "gemini": {
               "name": "Google Gemini",
-              "prompt-label": "Uses Google's Generative Language API (generateContent).",
-              "prompt-title": "Gemini settings"
+              "prompt-label": "Использует Google Generative Language API (generateContent).",
+              "prompt-title": "Настройки Gemini"
             },
             "google-translate": {
-              "host": "Host",
-              "name": "Google Translate",
-              "prompt-label": "Uses the unofficial free Google Translate endpoint. No API key is required, but Google may rate-limit it.",
-              "prompt-title": "Google Translate settings"
+              "host": "Хост",
+              "name": "Google Перевод",
+              "prompt-label": "Использует неофициальную бесплатную конечную точку Google Перевод. Ключ API не требуется, но Google может ограничивать частоту запросов.",
+              "prompt-title": "Настройки Google Перевод"
             },
             "local-cli": {
-              "command": "Command",
-              "engine": "Local CLI",
+              "command": "Команда",
+              "engine": "Локальный CLI",
               "engine-claude": "Claude Code",
               "engine-codex": "Codex",
               "engine-gemini": "Gemini CLI",
-              "name": "Local CLI",
-              "prompt-label": "Use a locally logged-in Claude Code, Codex, or Gemini CLI. The command and model are automatic; the CLI uses its own logged-in default.",
-              "prompt-title": "Local CLI settings",
-              "timeout": "Timeout seconds (15-600)"
+              "name": "Локальный CLI",
+              "prompt-label": "Использовать локально авторизованный Claude Code, Codex или Gemini CLI. Команда и модель автоматические; CLI использует свой авторизованный по умолчанию.",
+              "prompt-title": "Настройки локального CLI",
+              "timeout": "Таймаут в секундах (15-600)"
             },
             "openai-compatible": {
-              "api-mode": "API mode (responses / auto / chat-completions)",
-              "base-url": "Base URL",
-              "name": "OpenAI compatible",
-              "prompt-label": "Use OpenAI-compatible servers, including Ollama (base URL http://127.0.0.1:11434/v1, API mode auto or chat-completions).",
-              "prompt-title": "OpenAI-compatible settings"
+              "api-mode": "Режим API (responses / auto / chat-completions)",
+              "base-url": "Базовый URL",
+              "name": "Совместимый с OpenAI",
+              "prompt-label": "Использовать серверы, совместимые с OpenAI, включая Ollama (базовый URL http://127.0.0.1:11434/v1, режим API auto или chat-completions).",
+              "prompt-title": "Настройки совместимости с OpenAI"
             },
             "shared": {
-              "api-key": "API key",
-              "model": "Model"
+              "api-key": "Ключ API",
+              "model": "Модель"
             }
           },
           "target-language": {
-            "label": "Target language",
+            "label": "Целевой язык",
             "options": {
               "ar": "العربية",
-              "auto": "Follow app language",
+              "auto": "Следовать языку приложения",
               "bg": "Български",
               "bn": "বাংলা",
               "cs": "Čeština",
@@ -1035,9 +1037,9 @@
               "zh-CN": "简体中文",
               "zh-TW": "繁體中文"
             },
-            "tooltip": "The language to translate lyrics into."
+            "tooltip": "Язык, на который переводить текст песен."
           },
-          "tooltip": "Translate lyrics and show the translated result line-by-line for display."
+          "tooltip": "Переводить текст песен и показывать переведённый результат построчно."
         }
       },
       "name": "Синхронизированные тексты песен",
@@ -1121,6 +1123,17 @@
         "visualizer-type": "Вид визуализации"
       },
       "name": "Визуализатор"
+    },
+    "audio-only": {
+      "description": "Принудительный режим только аудио — блокирует все видеопотоки на уровне сети и плеера для экономии ОЗУ и трафика",
+      "name": "Только Аудио"
+    },
+    "playback-recovery": {
+      "description": "Автоматически восстанавливает зависшее, остановленное или неработающее воспроизведение",
+      "menu": {
+        "log-to-console": "Записывать события восстановления в консоль"
+      },
+      "name": "Восстановление Воспроизведения"
     }
   }
 }

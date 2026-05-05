@@ -144,7 +144,8 @@
               "disabled": "ปิดการใช้งาน",
               "enabled-and-hide-app": "เปิดใช้งานและซ่อนแอป",
               "enabled-and-show-app": "เปิดใช้งานและแสดงแอป",
-              "play-pause-on-click": "เล่น/หยุดเล่น เมื่อคลิก"
+              "play-pause-on-click": "เล่น/หยุดเล่น เมื่อคลิก",
+              "move-to-current-desktop": "ย้ายไปยังเดสก์ท็อปเสมือนปัจจุบันเมื่อแสดง"
             }
           },
           "visual-tweaks": {
@@ -162,7 +163,7 @@
                 "force-show": "บังคับให้แสดง",
                 "hide": "ซ่อน",
                 "label": "ปุ่มถูกใจ",
-                "swap": "Swap like buttons order"
+                "swap": "สลับลำดับปุ่มถูกใจ"
               },
               "remove-upgrade-button": "ลบปุ่มอัปเกรด",
               "theme": {
@@ -239,7 +240,7 @@
             "percent": "{{ratio}}%"
           }
         },
-        "enable-seekbar": "Enable seekbar theming"
+        "enable-seekbar": "เปิดใช้งานธีมแถบเลื่อน"
       },
       "name": "ธีมสีของอัลบั้ม"
     },
@@ -323,18 +324,18 @@
           "label": "ชื่อโฮสต์ (Hostname)"
         },
         "https": {
-          "label": "HTTPS & Certificates",
+          "label": "HTTPS และใบรับรอง",
           "submenu": {
             "cert": {
-              "dialogTitle": "Select HTTPS certificate file",
-              "label": "Certificate file (.crt/.pem)"
+              "dialogTitle": "เลือกไฟล์ใบรับรอง HTTPS",
+              "label": "ไฟล์ใบรับรอง (.crt/.pem)"
             },
             "enable-https": {
-              "label": "Enable HTTPS"
+              "label": "เปิดใช้งาน HTTPS"
             },
             "key": {
-              "dialogTitle": "Select HTTPS private key file",
-              "label": "Private key file (.key/.pem)"
+              "dialogTitle": "เลือกไฟล์คีย์ส่วนตัว HTTPS",
+              "label": "ไฟล์คีย์ส่วนตัว (.key/.pem)"
             }
           }
         },
@@ -414,15 +415,15 @@
       }
     },
     "clock": {
-      "description": "Add a clock to the navigation bar",
+      "description": "เพิ่มนาฬิกาในแถบนำทาง",
       "menu": {
         "format": {
-          "24-hour-format": "24-Hour Format",
-          "display-seconds": "Display Seconds",
-          "label": "Format"
+          "24-hour-format": "รูปแบบ 24 ชั่วโมง",
+          "display-seconds": "แสดงวินาที",
+          "label": "รูปแบบ"
         }
       },
-      "name": "Clock"
+      "name": "นาฬิกา"
     },
     "compact-sidebar": {
       "description": "ตั้งค่าแถบข้างให้อยู่ในโหมดกระชับเสมอ",
@@ -685,7 +686,8 @@
           "submenu": {
             "hide-button-text": "ซ่อนข้อความปุ่ม",
             "refresh-on-play-pause": "รีเฟรชเมื่อเล่น/หยุดชั่วคราว",
-            "tray-controls": "เปิด/ปิดเมื่อคลิกถาด"
+            "tray-controls": "เปิด/ปิดเมื่อคลิกถาด",
+            "hover-controls": "แสดงมินิเพลเยอร์เมื่อวางเมาส์บนถาด"
           }
         },
         "priority": "ลำดับความสำคัญของการแจ้งเตือน",
@@ -843,22 +845,22 @@
       },
       "menu": {
         "convert-chinese-character": {
-          "label": "Convert Chinese character",
+          "label": "แปลงอักษรจีน",
           "submenu": {
             "disabled": {
-              "label": "Disabled",
-              "tooltip": "Disable Chinese character conversion"
+              "label": "ปิดใช้งาน",
+              "tooltip": "ปิดการแปลงอักษรจีน"
             },
             "simplified-to-traditional": {
-              "label": "Simplified to Traditional",
-              "tooltip": "Convert Simplified Chinese to Traditional Chinese"
+              "label": "ตัวย่อเป็นตัวเต็ม",
+              "tooltip": "แปลงอักษรจีนตัวย่อเป็นตัวเต็ม"
             },
             "traditional-to-simplified": {
-              "label": "Traditional to Simplified",
-              "tooltip": "Convert Traditional Chinese to Simplified Chinese"
+              "label": "ตัวเต็มเป็นตัวย่อ",
+              "tooltip": "แปลงอักษรจีนตัวเต็มเป็นตัวย่อ"
             }
           },
-          "tooltip": "Convert Chinese character to Traditional or Simplified"
+          "tooltip": "แปลงอักษรจีนเป็นตัวเต็มหรือตัวย่อ"
         },
         "default-text-string": {
           "label": "อักขระคั่นระหว่างเนื้อเพลง",
@@ -887,22 +889,22 @@
           "tooltip": "เลือกเอฟเฟกต์ที่จะใช้กับบรรทัดปัจจุบัน"
         },
         "lyrics-font-size": {
-          "label": "Lyrics font size",
+          "label": "ขนาดตัวอักษรเนื้อเพลง",
           "submenu": {
             "large": {
-              "label": "Large",
-              "tooltip": "Use the original larger lyrics size"
+              "label": "ใหญ่",
+              "tooltip": "ใช้ขนาดเนื้อเพลงดั้งเดิมที่ใหญ่ขึ้น"
             },
             "medium": {
-              "label": "Medium",
-              "tooltip": "Use a balanced lyrics size"
+              "label": "กลาง",
+              "tooltip": "ใช้ขนาดเนื้อเพลงที่สมดุล"
             },
             "small": {
-              "label": "Small",
-              "tooltip": "Use a more compact lyrics size"
+              "label": "เล็ก",
+              "tooltip": "ใช้ขนาดเนื้อเพลงที่กะทัดรัดขึ้น"
             }
           },
-          "tooltip": "Choose how large the lyrics text should be"
+          "tooltip": "เลือกขนาดตัวอักษรของเนื้อเพลง"
         },
         "precise-timing": {
           "label": "ให้เนื้อเพลงตรงกับเพลงเป๊ะๆ",
@@ -930,67 +932,67 @@
         },
         "translation": {
           "clear-cache": {
-            "label": "Clear translation cache",
-            "tooltip": "Delete all cached translations stored on disk."
+            "label": "ล้างแคชการแปล",
+            "tooltip": "ลบการแปลที่แคชไว้ทั้งหมดในดิสก์"
           },
           "configure": {
-            "label": "Configure API key & model…",
-            "tooltip": "Set provider-specific translation options."
+            "label": "กำหนดค่า API key และโมเดล…",
+            "tooltip": "ตั้งค่าตัวเลือกการแปลเฉพาะผู้ให้บริการ"
           },
           "enabled": {
-            "label": "Enable translation",
-            "tooltip": "Show a translated line beneath each original lyric line."
+            "label": "เปิดใช้งานการแปล",
+            "tooltip": "แสดงบรรทัดที่แปลใต้บรรทัดเนื้อเพลงต้นฉบับแต่ละบรรทัด"
           },
-          "label": "Lyrics translation",
+          "label": "แปลเนื้อเพลง",
           "provider": {
-            "label": "Provider",
-            "tooltip": "Which service to use for translation."
+            "label": "ผู้ให้บริการ",
+            "tooltip": "เลือกบริการที่ใช้ในการแปล"
           },
           "providers": {
             "anthropic": {
               "name": "Anthropic Claude",
-              "prompt-label": "Uses the native Anthropic Messages API.",
-              "prompt-title": "Anthropic settings"
+              "prompt-label": "ใช้ Anthropic Messages API ดั้งเดิม",
+              "prompt-title": "การตั้งค่า Anthropic"
             },
             "gemini": {
               "name": "Google Gemini",
-              "prompt-label": "Uses Google's Generative Language API (generateContent).",
-              "prompt-title": "Gemini settings"
+              "prompt-label": "ใช้ Google Generative Language API (generateContent)",
+              "prompt-title": "การตั้งค่า Gemini"
             },
             "google-translate": {
-              "host": "Host",
+              "host": "โฮสต์",
               "name": "Google Translate",
-              "prompt-label": "Uses the unofficial free Google Translate endpoint. No API key is required, but Google may rate-limit it.",
-              "prompt-title": "Google Translate settings"
+              "prompt-label": "ใช้ปลายทาง Google Translate ฟรีที่ไม่เป็นทางการ ไม่ต้องใช้ API key แต่อาจถูก Google จำกัดอัตรา",
+              "prompt-title": "การตั้งค่า Google Translate"
             },
             "local-cli": {
-              "command": "Command",
+              "command": "คำสั่ง",
               "engine": "Local CLI",
               "engine-claude": "Claude Code",
               "engine-codex": "Codex",
               "engine-gemini": "Gemini CLI",
               "name": "Local CLI",
-              "prompt-label": "Use a locally logged-in Claude Code, Codex, or Gemini CLI. The command and model are automatic; the CLI uses its own logged-in default.",
-              "prompt-title": "Local CLI settings",
-              "timeout": "Timeout seconds (15-600)"
+              "prompt-label": "ใช้ Claude Code, Codex หรือ Gemini CLI ที่ล็อกอินในเครื่อง คำสั่งและโมเดลเป็นแบบอัตโนมัติ CLI จะใช้ค่าเริ่มต้นที่ล็อกอินไว้",
+              "prompt-title": "การตั้งค่า Local CLI",
+              "timeout": "หมดเวลาเป็นวินาที (15-600)"
             },
             "openai-compatible": {
-              "api-mode": "API mode (responses / auto / chat-completions)",
-              "base-url": "Base URL",
+              "api-mode": "โหมด API (responses / auto / chat-completions)",
+              "base-url": "URL ฐาน",
               "name": "OpenAI compatible",
-              "prompt-label": "Use OpenAI-compatible servers, including Ollama (base URL http://127.0.0.1:11434/v1, API mode auto or chat-completions).",
-              "prompt-title": "OpenAI-compatible settings"
+              "prompt-label": "ใช้เซิร์ฟเวอร์ที่เข้ากันได้กับ OpenAI รวมถึง Ollama (base URL http://127.0.0.1:11434/v1, โหมด API auto หรือ chat-completions)",
+              "prompt-title": "การตั้งค่า OpenAI-compatible"
             },
             "shared": {
-              "api-key": "API key",
-              "model": "Model"
+              "api-key": "คีย์ API",
+              "model": "โมเดล"
             }
           },
           "target-language": {
-            "label": "Target language",
+            "label": "ภาษาเป้าหมาย",
             "options": {
               "ar": "العربية",
-              "auto": "Follow app language",
+              "auto": "ตามภาษาแอป",
               "bg": "Български",
               "bn": "বাংলা",
               "cs": "Čeština",
@@ -1035,9 +1037,9 @@
               "zh-CN": "简体中文",
               "zh-TW": "繁體中文"
             },
-            "tooltip": "The language to translate lyrics into."
+            "tooltip": "ภาษาที่จะใช้แปลเนื้อเพลง"
           },
-          "tooltip": "Translate lyrics and show the translated result line-by-line for display."
+          "tooltip": "แปลเนื้อเพลงและแสดงผลลัพธ์ทีละบรรทัด"
         }
       },
       "name": "เนื้อเพลงตรงกับเพลง",
@@ -1074,7 +1076,7 @@
             "acrylic": "อะคริลิก",
             "mica": "ไมกา",
             "none": "ไม่มี",
-            "tabbed": "Tabbed"
+            "tabbed": "แบบแท็บ"
           }
         }
       },
@@ -1121,6 +1123,17 @@
         "visualizer-type": "ประเภทวิชวลไลเซอร์"
       },
       "name": "วิชวลไลเซอร์"
+    },
+    "audio-only": {
+      "description": "บังคับโหมดเสียงเท่านั้น — บล็อกสตรีมวิดีโอทั้งหมดในระดับเครือข่ายและเครื่องเล่นเพื่อประหยัด RAM และแบนด์วิธ",
+      "name": "เสียงเท่านั้น"
+    },
+    "playback-recovery": {
+      "description": "กู้คืนอัตโนมัติจากสถานะการเล่นที่ติดขัด หยุดทำงาน หรือค้าง",
+      "menu": {
+        "log-to-console": "บันทึกเหตุการณ์การกู้คืนไปยังคอนโซล"
+      },
+      "name": "การกู้คืนการเล่น"
     }
   }
 }

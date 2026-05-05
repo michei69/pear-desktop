@@ -144,7 +144,8 @@
               "disabled": "غير مفعل",
               "enabled-and-hide-app": "مفعل وإخفاء التطبيق",
               "enabled-and-show-app": "مفعل وأظهر التطبيق",
-              "play-pause-on-click": "تشغيل/إيقاف عند النقر"
+              "play-pause-on-click": "تشغيل/إيقاف عند النقر",
+          "move-to-current-desktop": "الانتقال إلى سطح المكتب الافتراضي الحالي عند الإظهار"
             }
           },
           "visual-tweaks": {
@@ -242,6 +243,10 @@
         "enable-seekbar": "تفعيل تخصيص لون شريط التمرير"
       },
       "name": "سمة ألوان الألبوم"
+    },
+    "audio-only": {
+      "description": "يفرض وضع الصوت فقط — يحظر جميع تدفقات الفيديو على مستوى الشبكة والمشغل لتوفير الذاكرة وعرض النطاق الترددي",
+      "name": "الصوت فقط"
     },
     "ambient-mode": {
       "description": "يطبق تأثير إضاءة عن طريق إسقاط ألوان ناعمة من الفيديو على خلفية شاشتك",
@@ -683,8 +688,9 @@
         "interactive-settings": {
           "label": "إعدادات تفاعلية",
           "submenu": {
-            "hide-button-text": "إخفاء نص الزر",
-            "refresh-on-play-pause": "اعادة تحميل عند التشغيل/الإيقاف",
+              "hide-button-text": "إخفاء نص الزر",
+                "hover-controls": "إظهار مشغل مصغر عند التمرير على الأيقونة",
+                "refresh-on-play-pause": "اعادة تحميل عند التشغيل/الإيقاف",
             "tray-controls": "فتح/إغلاق عند النقر على علامة الشريط"
           }
         },
@@ -697,6 +703,13 @@
     "performance-improvement": {
       "description": "تحسين الأداء عبر تفعيل السكريبتات التجريبية",
       "name": "تحسين الأداء [نسخة تجريبية]"
+    },
+    "playback-recovery": {
+      "description": "يستعيد تلقائيًا من حالات التشغيل العالقة أو المتوقفة أو الميتة",
+      "menu": {
+        "log-to-console": "تسجيل أحداث الاستعادة في وحدة التحكم"
+      },
+      "name": "استعادة التشغيل"
     },
     "picture-in-picture": {
       "description": "يسمح بتحويل التطبيق إلى وضع الصورة داخل الصورة",
@@ -887,22 +900,22 @@
           "tooltip": "اختر التأثير لتطبيقه على السطر الحالي"
         },
         "lyrics-font-size": {
-          "label": "Lyrics font size",
+          "label": "حجم خط الكلمات",
           "submenu": {
             "large": {
-              "label": "Large",
-              "tooltip": "Use the original larger lyrics size"
+              "label": "كبير",
+              "tooltip": "استخدم الحجم الأكبر الأصلي للكلمات"
             },
             "medium": {
-              "label": "Medium",
-              "tooltip": "Use a balanced lyrics size"
+              "label": "متوسط",
+              "tooltip": "استخدم حجم كلمات متوازن"
             },
             "small": {
-              "label": "Small",
-              "tooltip": "Use a more compact lyrics size"
+              "label": "صغير",
+              "tooltip": "استخدم حجم كلمات أكثر ضغطًا"
             }
           },
-          "tooltip": "Choose how large the lyrics text should be"
+          "tooltip": "اختر مدى كبر حجم نص الكلمات"
         },
         "precise-timing": {
           "label": "اجعل كلمات الأغنية متزامنة بشكل مثالي",
@@ -930,67 +943,67 @@
         },
         "translation": {
           "clear-cache": {
-            "label": "Clear translation cache",
-            "tooltip": "Delete all cached translations stored on disk."
+            "label": "مسح ذاكرة التخزين المؤقت للترجمة",
+            "tooltip": "حذف جميع الترجمات المخزنة مؤقتًا على القرص."
           },
           "configure": {
-            "label": "Configure API key & model…",
-            "tooltip": "Set provider-specific translation options."
+            "label": "تكوين مفتاح API والنموذج…",
+            "tooltip": "تعيين خيارات الترجمة الخاصة بالمزود."
           },
           "enabled": {
-            "label": "Enable translation",
-            "tooltip": "Show a translated line beneath each original lyric line."
+            "label": "تفعيل الترجمة",
+            "tooltip": "عرض سطر مترجم تحت كل سطر كلمات أصلي."
           },
-          "label": "Lyrics translation",
+          "label": "ترجمة الكلمات",
           "provider": {
-            "label": "Provider",
-            "tooltip": "Which service to use for translation."
+            "label": "المزود",
+            "tooltip": "الخدمة المستخدمة للترجمة."
           },
           "providers": {
             "anthropic": {
               "name": "Anthropic Claude",
-              "prompt-label": "Uses the native Anthropic Messages API.",
-              "prompt-title": "Anthropic settings"
+              "prompt-label": "يستخدم واجهة برمجة تطبيقات Anthropic الأصلية.",
+              "prompt-title": "إعدادات Anthropic"
             },
             "gemini": {
               "name": "Google Gemini",
-              "prompt-label": "Uses Google's Generative Language API (generateContent).",
-              "prompt-title": "Gemini settings"
+              "prompt-label": "يستخدم واجهة برمجة تطبيقات اللغة التوليدية من Google (generateContent).",
+              "prompt-title": "إعدادات Gemini"
             },
             "google-translate": {
-              "host": "Host",
-              "name": "Google Translate",
-              "prompt-label": "Uses the unofficial free Google Translate endpoint. No API key is required, but Google may rate-limit it.",
-              "prompt-title": "Google Translate settings"
+              "host": "المضيف",
+              "name": "ترجمة Google",
+              "prompt-label": "يستخدم نقطة النهاية المجانية غير الرسمية لترجمة Google. لا يتطلب مفتاح API، ولكن قد تفرض Google قيودًا على المعدل.",
+              "prompt-title": "إعدادات ترجمة Google"
             },
             "local-cli": {
-              "command": "Command",
-              "engine": "Local CLI",
+              "command": "أمر",
+              "engine": "CLI المحلي",
               "engine-claude": "Claude Code",
               "engine-codex": "Codex",
               "engine-gemini": "Gemini CLI",
-              "name": "Local CLI",
-              "prompt-label": "Use a locally logged-in Claude Code, Codex, or Gemini CLI. The command and model are automatic; the CLI uses its own logged-in default.",
-              "prompt-title": "Local CLI settings",
-              "timeout": "Timeout seconds (15-600)"
+              "name": "CLI المحلي",
+              "prompt-label": "استخدم Claude Code أو Codex أو Gemini CLI المسجل دخولها محليًا. الأمر والنموذج تلقائيان؛ يستخدم CLI الإعدادات الافتراضية المسجلة.",
+              "prompt-title": "إعدادات CLI المحلي",
+              "timeout": "ثواني المهلة (15-600)"
             },
             "openai-compatible": {
-              "api-mode": "API mode (responses / auto / chat-completions)",
-              "base-url": "Base URL",
-              "name": "OpenAI compatible",
-              "prompt-label": "Use OpenAI-compatible servers, including Ollama (base URL http://127.0.0.1:11434/v1, API mode auto or chat-completions).",
-              "prompt-title": "OpenAI-compatible settings"
+              "api-mode": "وضع API (استجابات / تلقائي / chat-completions)",
+              "base-url": "عنوان URL الأساسي",
+              "name": "متوافق مع OpenAI",
+              "prompt-label": "استخدم خوادم متوافقة مع OpenAI، بما في ذلك Ollama (عنوان URL الأساسي http://127.0.0.1:11434/v1، وضع API تلقائي أو chat-completions).",
+              "prompt-title": "إعدادات متوافقة مع OpenAI"
             },
             "shared": {
-              "api-key": "API key",
-              "model": "Model"
+              "api-key": "مفتاح API",
+              "model": "النموذج"
             }
           },
           "target-language": {
-            "label": "Target language",
+            "label": "اللغة الهدف",
             "options": {
               "ar": "العربية",
-              "auto": "Follow app language",
+              "auto": "اتبع لغة التطبيق",
               "bg": "Български",
               "bn": "বাংলা",
               "cs": "Čeština",
@@ -1035,9 +1048,9 @@
               "zh-CN": "简体中文",
               "zh-TW": "繁體中文"
             },
-            "tooltip": "The language to translate lyrics into."
+            "tooltip": "اللغة التي سيتم ترجمة الكلمات إليها."
           },
-          "tooltip": "Translate lyrics and show the translated result line-by-line for display."
+          "tooltip": "ترجمة الكلمات وعرض النتيجة المترجمة سطراً بسطر."
         }
       },
       "name": "كلمات متزامنة",

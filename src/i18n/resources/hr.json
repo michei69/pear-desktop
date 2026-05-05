@@ -144,7 +144,8 @@
               "disabled": "Isključeno",
               "enabled-and-hide-app": "Uključena i skrivena aplikacija",
               "enabled-and-show-app": "Uključena i prikaži aplikaciju",
-              "play-pause-on-click": "Reproduciraj/Pauziraj na klik"
+              "play-pause-on-click": "Reproduciraj/Pauziraj na klik",
+              "move-to-current-desktop": "Premjesti na trenutnu virtualnu radnu površinu pri prikazu"
             }
           },
           "visual-tweaks": {
@@ -162,7 +163,7 @@
                 "force-show": "Prisilno prikaži",
                 "hide": "Sakrij",
                 "label": "\"Sviđa mi se\" gumbi",
-                "swap": "Swap like buttons order"
+                "swap": "Zamijeni redoslijed gumba za sviđanje"
               },
               "remove-upgrade-button": "Ukloni gumb za nadogradnju",
               "theme": {
@@ -414,15 +415,15 @@
       }
     },
     "clock": {
-      "description": "Add a clock to the navigation bar",
+      "description": "Dodaj sat u navigacijsku traku",
       "menu": {
         "format": {
-          "24-hour-format": "24-Hour Format",
-          "display-seconds": "Display Seconds",
+          "24-hour-format": "24-satni format",
+          "display-seconds": "Prikaži sekunde",
           "label": "Format"
         }
       },
-      "name": "Clock"
+      "name": "Sat"
     },
     "compact-sidebar": {
       "description": "Uvijek postavi bočnu traku na kompaktni način rada",
@@ -685,7 +686,8 @@
           "submenu": {
             "hide-button-text": "Sakrij tekst gumba",
             "refresh-on-play-pause": "Osvježi pri Reprodukciji/Pauzi",
-            "tray-controls": "Otvori/Zatvori klikom na traku"
+            "tray-controls": "Otvori/Zatvori klikom na traku",
+            "hover-controls": "Prikaži mini-player pri lebdjenju iznad trake"
           }
         },
         "priority": "Prioritet Obavijesti",
@@ -843,22 +845,22 @@
       },
       "menu": {
         "convert-chinese-character": {
-          "label": "Convert Chinese character",
+          "label": "Pretvori kineske znakove",
           "submenu": {
             "disabled": {
-              "label": "Disabled",
-              "tooltip": "Disable Chinese character conversion"
+              "label": "Onemogućeno",
+              "tooltip": "Onemogući pretvorbu kineskih znakova"
             },
             "simplified-to-traditional": {
-              "label": "Simplified to Traditional",
-              "tooltip": "Convert Simplified Chinese to Traditional Chinese"
+              "label": "Pojednostavljeno u Tradicionalno",
+              "tooltip": "Pretvori pojednostavljene kineske u tradicionalne kineske"
             },
             "traditional-to-simplified": {
-              "label": "Traditional to Simplified",
-              "tooltip": "Convert Traditional Chinese to Simplified Chinese"
+              "label": "Tradicionalno u Pojednostavljeno",
+              "tooltip": "Pretvori tradicionalne kineske u pojednostavljene kineske"
             }
           },
-          "tooltip": "Convert Chinese character to Traditional or Simplified"
+          "tooltip": "Pretvori kineske znakove u tradicionalne ili pojednostavljene"
         },
         "default-text-string": {
           "label": "Zadani karakteri između stihova pjesama",
@@ -887,22 +889,22 @@
           "tooltip": "Odaberi efekt koji će biti primijenjen na trenutnoj crti"
         },
         "lyrics-font-size": {
-          "label": "Lyrics font size",
+          "label": "Veličina fonta teksta",
           "submenu": {
             "large": {
-              "label": "Large",
-              "tooltip": "Use the original larger lyrics size"
+              "label": "Veliko",
+              "tooltip": "Koristi izvornu veću veličinu teksta"
             },
             "medium": {
-              "label": "Medium",
-              "tooltip": "Use a balanced lyrics size"
+              "label": "Srednje",
+              "tooltip": "Koristi uravnoteženu veličinu teksta"
             },
             "small": {
-              "label": "Small",
-              "tooltip": "Use a more compact lyrics size"
+              "label": "Malo",
+              "tooltip": "Koristi kompaktniju veličinu teksta"
             }
           },
-          "tooltip": "Choose how large the lyrics text should be"
+          "tooltip": "Odaberi koliko velik tekst stihova treba biti"
         },
         "precise-timing": {
           "label": "Napravi da tekst pjesme bude izvrsno usklađen",
@@ -930,21 +932,21 @@
         },
         "translation": {
           "clear-cache": {
-            "label": "Clear translation cache",
-            "tooltip": "Delete all cached translations stored on disk."
+            "label": "Očisti predmemoriju prijevoda",
+            "tooltip": "Izbriši sve predmemorirane prijevode pohranjene na disku."
           },
           "configure": {
-            "label": "Configure API key & model…",
-            "tooltip": "Set provider-specific translation options."
+            "label": "Konfiguriraj API ključ i model…",
+            "tooltip": "Postavi opcije prijevoda specifične za pružatelja."
           },
           "enabled": {
-            "label": "Enable translation",
-            "tooltip": "Show a translated line beneath each original lyric line."
+            "label": "Omogući prijevod",
+            "tooltip": "Prikaži prevedenu liniju ispod svake izvorne linije stihova."
           },
-          "label": "Lyrics translation",
+          "label": "Prijevod stihova",
           "provider": {
-            "label": "Provider",
-            "tooltip": "Which service to use for translation."
+            "label": "Pružatelj",
+            "tooltip": "Koju uslugu koristiti za prijevod."
           },
           "providers": {
             "anthropic": {
@@ -987,7 +989,7 @@
             }
           },
           "target-language": {
-            "label": "Target language",
+            "label": "Ciljni jezik",
             "options": {
               "ar": "العربية",
               "auto": "Follow app language",
@@ -1035,9 +1037,9 @@
               "zh-CN": "简体中文",
               "zh-TW": "繁體中文"
             },
-            "tooltip": "The language to translate lyrics into."
+            "tooltip": "Jezik na koji će se prevesti stihovi."
           },
-          "tooltip": "Translate lyrics and show the translated result line-by-line for display."
+          "tooltip": "Prevedi stihove i prikaži prevedeni rezultat redak po redak za prikaz."
         }
       },
       "name": "Sinkronizirani stihovi pjesama",
@@ -1089,7 +1091,7 @@
       "name": "Nenametljivi pokretač"
     },
     "video-toggle": {
-      "description": "Dodaje gumb za šaltanje između režima za video/numeru. Dodatno, može da ukloni cijelu karticu sa videom",
+      "description": "Dodaje gumb za prebacivanje između Video/Pjesma načina. Može i opcionalno ukloniti cijelu video karticu",
       "menu": {
         "align": {
           "label": "Izravnanje",
@@ -1109,7 +1111,7 @@
           }
         }
       },
-      "name": "Video šaltanje",
+      "name": "Prebacivanje Videa",
       "templates": {
         "button-song": "Pjesma",
         "button-video": "Video"
@@ -1121,6 +1123,17 @@
         "visualizer-type": "Tip vizualizacije"
       },
       "name": "Vizualizacija"
+    },
+    "audio-only": {
+      "description": "Prisiljava samo audio način — blokira sve video streamove na razini mreže i playera radi uštede RAM-a i propusnosti",
+      "name": "Samo Audio"
+    },
+    "playback-recovery": {
+      "description": "Automatski se oporavlja od zaglavljenih, zaustavljenih ili mrtvih stanja reprodukcije",
+      "menu": {
+        "log-to-console": "Zabilježi događaje oporavka u konzolu"
+      },
+      "name": "Oporavak Reprodukcije"
     }
   }
 }

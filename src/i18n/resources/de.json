@@ -144,7 +144,8 @@
               "disabled": "Deaktiviert",
               "enabled-and-hide-app": "Aktiviert und verstecke Anwendung",
               "enabled-and-show-app": "Aktiviert und zeige Anwendung",
-              "play-pause-on-click": "Abspielen/Pausieren durch Klick"
+              "play-pause-on-click": "Abspielen/Pausieren durch Klick",
+              "move-to-current-desktop": "Zum aktuellen virtuellen Desktop beim Anzeigen verschieben"
             }
           },
           "visual-tweaks": {
@@ -685,7 +686,8 @@
           "submenu": {
             "hide-button-text": "Text der Knöpfe verstecken",
             "refresh-on-play-pause": "Aktualisieren bei Wiedergabe/Pause",
-            "tray-controls": "Öffnen/Schließen beim Klicken des Tray-Icons"
+            "tray-controls": "Öffnen/Schließen beim Klicken des Tray-Icons",
+            "hover-controls": "Mini-Player beim Überfahren des Tray anzeigen"
           }
         },
         "priority": "Benachrichtigungspriorität",
@@ -887,22 +889,22 @@
           "tooltip": "Effekt für aktive Zeile auswählen"
         },
         "lyrics-font-size": {
-          "label": "Lyrics font size",
+          "label": "Schriftgröße der Texte",
           "submenu": {
             "large": {
-              "label": "Large",
-              "tooltip": "Use the original larger lyrics size"
+              "label": "Groß",
+              "tooltip": "Ursprüngliche, größere Textgröße verwenden"
             },
             "medium": {
-              "label": "Medium",
-              "tooltip": "Use a balanced lyrics size"
+              "label": "Mittel",
+              "tooltip": "Ausgewogene Textgröße verwenden"
             },
             "small": {
-              "label": "Small",
-              "tooltip": "Use a more compact lyrics size"
+              "label": "Klein",
+              "tooltip": "Kompaktere Textgröße verwenden"
             }
           },
-          "tooltip": "Choose how large the lyrics text should be"
+          "tooltip": "Wählen Sie, wie groß der Liedtext sein soll"
         },
         "precise-timing": {
           "label": "Den Songtext perfekt synchronisieren",
@@ -930,67 +932,67 @@
         },
         "translation": {
           "clear-cache": {
-            "label": "Clear translation cache",
-            "tooltip": "Delete all cached translations stored on disk."
+            "label": "Übersetzungscache löschen",
+            "tooltip": "Alle auf der Festplatte gespeicherten Übersetzungen löschen."
           },
           "configure": {
-            "label": "Configure API key & model…",
-            "tooltip": "Set provider-specific translation options."
+            "label": "API-Schlüssel & Modell konfigurieren...",
+            "tooltip": "Anbieterspezifische Übersetzungsoptionen festlegen."
           },
           "enabled": {
-            "label": "Enable translation",
-            "tooltip": "Show a translated line beneath each original lyric line."
+            "label": "Übersetzung aktivieren",
+            "tooltip": "Eine übersetzte Zeile unter jeder Originalzeile anzeigen."
           },
-          "label": "Lyrics translation",
+          "label": "Übersetzung der Texte",
           "provider": {
-            "label": "Provider",
-            "tooltip": "Which service to use for translation."
+            "label": "Anbieter",
+            "tooltip": "Welcher Dienst für die Übersetzung verwendet werden soll."
           },
           "providers": {
             "anthropic": {
               "name": "Anthropic Claude",
-              "prompt-label": "Uses the native Anthropic Messages API.",
-              "prompt-title": "Anthropic settings"
+              "prompt-label": "Verwendet die native Anthropic Messages API.",
+              "prompt-title": "Anthropic-Einstellungen"
             },
             "gemini": {
               "name": "Google Gemini",
-              "prompt-label": "Uses Google's Generative Language API (generateContent).",
-              "prompt-title": "Gemini settings"
+              "prompt-label": "Verwendet Googles Generative Language API (generateContent).",
+              "prompt-title": "Gemini-Einstellungen"
             },
             "google-translate": {
               "host": "Host",
-              "name": "Google Translate",
-              "prompt-label": "Uses the unofficial free Google Translate endpoint. No API key is required, but Google may rate-limit it.",
-              "prompt-title": "Google Translate settings"
+              "name": "Google Übersetzer",
+              "prompt-label": "Verwendet den inoffiziellen kostenlosen Google Übersetzer-Endpunkt. Kein API-Schlüssel erforderlich, aber Google kann die Rate begrenzen.",
+              "prompt-title": "Google Übersetzer-Einstellungen"
             },
             "local-cli": {
-              "command": "Command",
-              "engine": "Local CLI",
+              "command": "Befehl",
+              "engine": "Lokales CLI",
               "engine-claude": "Claude Code",
               "engine-codex": "Codex",
               "engine-gemini": "Gemini CLI",
-              "name": "Local CLI",
-              "prompt-label": "Use a locally logged-in Claude Code, Codex, or Gemini CLI. The command and model are automatic; the CLI uses its own logged-in default.",
-              "prompt-title": "Local CLI settings",
-              "timeout": "Timeout seconds (15-600)"
+              "name": "Lokales CLI",
+              "prompt-label": "Ein lokal eingeloggtes Claude Code, Codex oder Gemini CLI verwenden. Der Befehl und das Modell sind automatisch; das CLI verwendet seinen eigenen eingeloggten Standard.",
+              "prompt-title": "Lokale CLI-Einstellungen",
+              "timeout": "Timeout Sekunden (15-600)"
             },
             "openai-compatible": {
-              "api-mode": "API mode (responses / auto / chat-completions)",
-              "base-url": "Base URL",
-              "name": "OpenAI compatible",
-              "prompt-label": "Use OpenAI-compatible servers, including Ollama (base URL http://127.0.0.1:11434/v1, API mode auto or chat-completions).",
-              "prompt-title": "OpenAI-compatible settings"
+              "api-mode": "API-Modus (responses / auto / chat-completions)",
+              "base-url": "Basis-URL",
+              "name": "OpenAI-kompatibel",
+              "prompt-label": "OpenAI-kompatible Server verwenden, einschließlich Ollama (Basis-URL http://127.0.0.1:11434/v1, API-Modus auto oder chat-completions).",
+              "prompt-title": "OpenAI-kompatible Einstellungen"
             },
             "shared": {
-              "api-key": "API key",
-              "model": "Model"
+              "api-key": "API-Schlüssel",
+              "model": "Modell"
             }
           },
           "target-language": {
-            "label": "Target language",
+            "label": "Zielsprache",
             "options": {
               "ar": "العربية",
-              "auto": "Follow app language",
+              "auto": "App-Sprache folgen",
               "bg": "Български",
               "bn": "বাংলা",
               "cs": "Čeština",
@@ -1035,9 +1037,9 @@
               "zh-CN": "简体中文",
               "zh-TW": "繁體中文"
             },
-            "tooltip": "The language to translate lyrics into."
+            "tooltip": "Die Sprache, in die die Texte übersetzt werden sollen."
           },
-          "tooltip": "Translate lyrics and show the translated result line-by-line for display."
+          "tooltip": "Übersetzen Sie die Texte und zeigen Sie das übersetzte Ergebnis zeilenweise zur Anzeige an."
         }
       },
       "name": "Synchronisierte Texte",
@@ -1121,6 +1123,17 @@
         "visualizer-type": "Visualisierertyp"
       },
       "name": "Visualisierer"
+    },
+    "audio-only": {
+      "description": "Erzwingt Nur-Audio-Modus — blockiert alle Videostreams auf Netzwerk- und Playerebene, um RAM und Bandbreite zu sparen",
+      "name": "Nur Audio"
+    },
+    "playback-recovery": {
+      "description": "Stellt automatisch aus hängenden, gestoppten oder toten Wiedergabezuständen wieder her",
+      "name": "Wiedergabewiederherstellung",
+      "menu": {
+        "log-to-console": "Wiederherstellungsereignisse in der Konsole protokollieren"
+      }
     }
   }
 }

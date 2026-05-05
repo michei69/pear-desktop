@@ -144,25 +144,26 @@
               "disabled": "無効",
               "enabled-and-hide-app": "有効 + アプリを非表示",
               "enabled-and-show-app": "有効 + アプリを表示",
+              "move-to-current-desktop": "表示時に現在の仮想デスクトップに移動",
               "play-pause-on-click": "クリックで再生/一時停止"
             }
           },
           "visual-tweaks": {
             "label": "見た目の微調整",
             "submenu": {
+              "like-buttons": {
+                "default": "デフォルト",
+                "force-show": "強制的に表示",
+                "hide": "非表示",
+                "swap": "いいねボタンの順序を入れ替え",
+                "label": "いいねボタン"
+              },
               "custom-window-title": {
                 "label": "カスタムウィンドウタイトル",
                 "prompt": {
                   "label": "カスタムウィンドウタイトルを入力: (未入力の場合無効になります)",
                   "placeholder": "例: {{applicationName}}"
                 }
-              },
-              "like-buttons": {
-                "default": "デフォルト",
-                "force-show": "強制的に表示",
-                "hide": "非表示",
-                "label": "いいねボタン",
-                "swap": "Swap like buttons order"
               },
               "remove-upgrade-button": "アップグレードボタンを削除",
               "theme": {
@@ -239,7 +240,7 @@
             "percent": "{{ratio}}%"
           }
         },
-        "enable-seekbar": "Enable seekbar theming"
+        "enable-seekbar": "シークバーのテーマ設定を有効にする"
       },
       "name": "アルバムカラーベースのテーマ"
     },
@@ -322,24 +323,24 @@
         "hostname": {
           "label": "ホスト名"
         },
-        "https": {
-          "label": "HTTPS & Certificates",
-          "submenu": {
-            "cert": {
-              "dialogTitle": "Select HTTPS certificate file",
-              "label": "Certificate file (.crt/.pem)"
-            },
-            "enable-https": {
-              "label": "Enable HTTPS"
-            },
-            "key": {
-              "dialogTitle": "Select HTTPS private key file",
-              "label": "Private key file (.key/.pem)"
-            }
-          }
-        },
         "port": {
           "label": "ポート"
+        },
+        "https": {
+          "label": "HTTPSと証明書",
+          "submenu": {
+            "enable-https": {
+              "label": "HTTPSを有効にする"
+            },
+            "cert": {
+              "label": "証明書ファイル (.crt/.pem)",
+              "dialogTitle": "HTTPS証明書ファイルを選択"
+            },
+            "key": {
+              "label": "秘密鍵ファイル (.key/.pem)",
+              "dialogTitle": "HTTPS秘密鍵ファイルを選択"
+            }
+          }
         }
       },
       "name": "APIサーバー(Beta)",
@@ -373,12 +374,12 @@
       "name": "認証プロキシアダプタ",
       "prompt": {
         "hostname": {
-          "label": "ローカルプロキシサーバのホスト名を入力します（再起動が必要です）：",
-          "title": "プロキシホスト名"
+          "title": "プロキシホスト名",
+          "label": "ローカルプロキシサーバのホスト名を入力します（再起動が必要です）："
         },
         "port": {
-          "label": "ローカルプロキシサーバのポートを入力します（再起動が必要です）：",
-          "title": "プロキシポート"
+          "title": "プロキシポート",
+          "label": "ローカルプロキシサーバのポートを入力します（再起動が必要です）："
         }
       }
     },
@@ -414,15 +415,15 @@
       }
     },
     "clock": {
-      "description": "Add a clock to the navigation bar",
+      "description": "ナビゲーションバーに時計を追加",
+      "name": "時計",
       "menu": {
         "format": {
-          "24-hour-format": "24-Hour Format",
-          "display-seconds": "Display Seconds",
-          "label": "Format"
+          "label": "形式",
+          "display-seconds": "秒を表示",
+          "24-hour-format": "24時間形式"
         }
-      },
-      "name": "Clock"
+      }
     },
     "compact-sidebar": {
       "description": "サイドバーを常にコンパクトモードに設定します",
@@ -674,7 +675,7 @@
     },
     "no-google-login": {
       "description": "インターフェースからGoogleのログインボタンとリンクを削除",
-      "name": "No Google Login"
+      "name": "Googleログインなし"
     },
     "notifications": {
       "description": "曲の再生開始時に通知を表示する(Windowsではインタラクティブ通知が利用可能)",
@@ -684,6 +685,7 @@
           "label": "インタラクティブ通知 設定",
           "submenu": {
             "hide-button-text": "ボタンのテキストを非表示",
+            "hover-controls": "トレイにカーソルを合わせるとミニプレーヤーを表示",
             "refresh-on-play-pause": "再生/一時停止時に更新",
             "tray-controls": "トレイアイコンのクリック時に開閉"
           }
@@ -786,8 +788,8 @@
         "listenbrainz": {
           "token": "ListenBrainzユーザートークンを入力してください"
         },
-        "scrobble-alternative-artist": "代替アーティストを使用する",
         "scrobble-alternative-title": "代替タイトルを使用する",
+        "scrobble-alternative-artist": "代替アーティストを使用する",
         "scrobble-other-media": "他のメディアをScrobbleする"
       },
       "name": "スクロブラー",
@@ -842,23 +844,13 @@
         "not-found": "⚠️ この曲の歌詞は見つかりませんでした。"
       },
       "menu": {
-        "convert-chinese-character": {
-          "label": "Convert Chinese character",
-          "submenu": {
-            "disabled": {
-              "label": "Disabled",
-              "tooltip": "Disable Chinese character conversion"
-            },
-            "simplified-to-traditional": {
-              "label": "Simplified to Traditional",
-              "tooltip": "Convert Simplified Chinese to Traditional Chinese"
-            },
-            "traditional-to-simplified": {
-              "label": "Traditional to Simplified",
-              "tooltip": "Convert Traditional Chinese to Simplified Chinese"
-            }
-          },
-          "tooltip": "Convert Chinese character to Traditional or Simplified"
+        "preferred-provider": {
+          "label": "優先プロバイダー",
+          "tooltip": "使用するデフォルトプロバイダを選択してください",
+          "none": {
+            "label": "なし",
+            "tooltip": "指定医療機関なし"
+          }
         },
         "default-text-string": {
           "label": "デフォルトの歌詞間の文字",
@@ -887,34 +879,26 @@
           "tooltip": "現在の行に適用するエフェクトを選択"
         },
         "lyrics-font-size": {
-          "label": "Lyrics font size",
+          "label": "歌詞のフォントサイズ",
           "submenu": {
-            "large": {
-              "label": "Large",
-              "tooltip": "Use the original larger lyrics size"
+            "small": {
+              "label": "小",
+              "tooltip": "よりコンパクトな歌詞サイズを使用"
             },
             "medium": {
-              "label": "Medium",
-              "tooltip": "Use a balanced lyrics size"
+              "label": "中",
+              "tooltip": "バランスの取れた歌詞サイズを使用"
             },
-            "small": {
-              "label": "Small",
-              "tooltip": "Use a more compact lyrics size"
+            "large": {
+              "label": "大",
+              "tooltip": "元の大きい歌詞サイズを使用"
             }
           },
-          "tooltip": "Choose how large the lyrics text should be"
+          "tooltip": "歌詞テキストの大きさを選択"
         },
         "precise-timing": {
           "label": "歌詞を完璧に同期させる",
           "tooltip": "次の行の表示をミリ秒単位で計算する（パフォーマンスに若干の影響を与える可能性があります）"
-        },
-        "preferred-provider": {
-          "label": "優先プロバイダー",
-          "none": {
-            "label": "なし",
-            "tooltip": "指定医療機関なし"
-          },
-          "tooltip": "使用するデフォルトプロバイダを選択してください"
         },
         "romanization": {
           "label": "ローマ字歌詞",
@@ -928,116 +912,134 @@
           "label": "タイムコードを表示",
           "tooltip": "歌詞の横にタイムコードを表示"
         },
+        "convert-chinese-character": {
+          "label": "中国語文字の変換",
+          "submenu": {
+            "disabled": {
+              "label": "無効",
+              "tooltip": "中国語文字の変換を無効にする"
+            },
+            "simplified-to-traditional": {
+              "label": "簡体字から繁体字へ",
+              "tooltip": "簡体字中国語を繁体字中国語に変換"
+            },
+            "traditional-to-simplified": {
+              "label": "繁体字から簡体字へ",
+              "tooltip": "繁体字中国語を簡体字中国語に変換"
+            }
+          },
+          "tooltip": "中国語文字を繁体字または簡体字に変換"
+        },
         "translation": {
-          "clear-cache": {
-            "label": "Clear translation cache",
-            "tooltip": "Delete all cached translations stored on disk."
+          "label": "歌詞の翻訳",
+          "tooltip": "歌詞を翻訳し、翻訳結果を行ごとに表示します。",
+          "enabled": {
+            "label": "翻訳を有効にする",
+            "tooltip": "各原文の歌詞の下に翻訳行を表示します。"
+          },
+          "provider": {
+            "label": "プロバイダー",
+            "tooltip": "翻訳に使用するサービス。"
+          },
+          "target-language": {
+            "label": "目標言語",
+            "tooltip": "歌詞を翻訳する言語。",
+            "options": {
+              "auto": "Follow app language",
+              "zh-CN": "简体中文",
+              "zh-TW": "繁體中文",
+              "en": "English",
+              "ja": "日本語",
+              "ko": "한국어",
+              "fr": "Français",
+              "de": "Deutsch",
+              "es": "Español",
+              "pt-BR": "Português (Brasil)",
+              "pt-PT": "Português (Portugal)",
+              "it": "Italiano",
+              "nl": "Nederlands",
+              "ru": "Русский",
+              "uk": "Українська",
+              "pl": "Polski",
+              "tr": "Türkçe",
+              "ar": "العربية",
+              "he": "עברית",
+              "fa": "فارسی",
+              "hi": "हिन्दी",
+              "bn": "বাংলা",
+              "ur": "اردو",
+              "ta": "தமிழ்",
+              "te": "తెలుగు",
+              "mr": "मराठी",
+              "id": "Bahasa Indonesia",
+              "ms": "Bahasa Melayu",
+              "vi": "Tiếng Việt",
+              "th": "ไทย",
+              "fil": "Filipino",
+              "sw": "Kiswahili",
+              "sv": "Svenska",
+              "no": "Norsk",
+              "da": "Dansk",
+              "fi": "Suomi",
+              "cs": "Čeština",
+              "ro": "Română",
+              "hu": "Magyar",
+              "el": "Ελληνικά",
+              "bg": "Български",
+              "sr": "Српски",
+              "hr": "Hrvatski",
+              "sk": "Slovenčina",
+              "lt": "Lietuvių"
+            }
           },
           "configure": {
-            "label": "Configure API key & model…",
-            "tooltip": "Set provider-specific translation options."
+            "label": "APIキーとモデルを設定...",
+            "tooltip": "プロバイダー固有の翻訳オプションを設定します。"
           },
-          "enabled": {
-            "label": "Enable translation",
-            "tooltip": "Show a translated line beneath each original lyric line."
-          },
-          "label": "Lyrics translation",
-          "provider": {
-            "label": "Provider",
-            "tooltip": "Which service to use for translation."
+          "clear-cache": {
+            "label": "翻訳キャッシュをクリア",
+            "tooltip": "ディスクに保存されているすべてのキャッシュされた翻訳を削除します。"
           },
           "providers": {
+            "shared": {
+              "api-key": "APIキー",
+              "model": "モデル"
+            },
+            "openai-compatible": {
+              "name": "OpenAI互換",
+              "prompt-title": "OpenAI互換設定",
+              "prompt-label": "Ollamaを含むOpenAI互換サーバーを使用します（ベースURL http://127.0.0.1:11434/v1、APIモード auto または chat-completions）。",
+              "base-url": "ベースURL",
+              "api-mode": "APIモード (responses / auto / chat-completions)"
+            },
             "anthropic": {
               "name": "Anthropic Claude",
-              "prompt-label": "Uses the native Anthropic Messages API.",
-              "prompt-title": "Anthropic settings"
+              "prompt-title": "Anthropic設定",
+              "prompt-label": "ネイティブのAnthropic Messages APIを使用します。"
             },
             "gemini": {
               "name": "Google Gemini",
-              "prompt-label": "Uses Google's Generative Language API (generateContent).",
-              "prompt-title": "Gemini settings"
-            },
-            "google-translate": {
-              "host": "Host",
-              "name": "Google Translate",
-              "prompt-label": "Uses the unofficial free Google Translate endpoint. No API key is required, but Google may rate-limit it.",
-              "prompt-title": "Google Translate settings"
+              "prompt-title": "Gemini設定",
+              "prompt-label": "GoogleのGenerative Language API（generateContent）を使用します。"
             },
             "local-cli": {
-              "command": "Command",
-              "engine": "Local CLI",
+              "name": "ローカルCLI",
+              "prompt-title": "ローカルCLI設定",
+              "prompt-label": "ローカルでログインしたClaude Code、Codex、またはGemini CLIを使用します。コマンドとモデルは自動です。CLIは自身のログイン済みデフォルトを使用します。",
+              "engine": "ローカルCLI",
               "engine-claude": "Claude Code",
               "engine-codex": "Codex",
               "engine-gemini": "Gemini CLI",
-              "name": "Local CLI",
-              "prompt-label": "Use a locally logged-in Claude Code, Codex, or Gemini CLI. The command and model are automatic; the CLI uses its own logged-in default.",
-              "prompt-title": "Local CLI settings",
-              "timeout": "Timeout seconds (15-600)"
+              "command": "コマンド",
+              "timeout": "タイムアウト秒 (15-600)"
             },
-            "openai-compatible": {
-              "api-mode": "API mode (responses / auto / chat-completions)",
-              "base-url": "Base URL",
-              "name": "OpenAI compatible",
-              "prompt-label": "Use OpenAI-compatible servers, including Ollama (base URL http://127.0.0.1:11434/v1, API mode auto or chat-completions).",
-              "prompt-title": "OpenAI-compatible settings"
-            },
-            "shared": {
-              "api-key": "API key",
-              "model": "Model"
+            "google-translate": {
+              "name": "Google翻訳",
+              "prompt-title": "Google翻訳設定",
+              "prompt-label": "非公式の無料Google翻訳エンドポイントを使用します。APIキーは不要ですが、Googleがレート制限する場合があります。",
+              "host": "ホスト"
             }
-          },
-          "target-language": {
-            "label": "Target language",
-            "options": {
-              "ar": "العربية",
-              "auto": "Follow app language",
-              "bg": "Български",
-              "bn": "বাংলা",
-              "cs": "Čeština",
-              "da": "Dansk",
-              "de": "Deutsch",
-              "el": "Ελληνικά",
-              "en": "English",
-              "es": "Español",
-              "fa": "فارسی",
-              "fi": "Suomi",
-              "fil": "Filipino",
-              "fr": "Français",
-              "he": "עברית",
-              "hi": "हिन्दी",
-              "hr": "Hrvatski",
-              "hu": "Magyar",
-              "id": "Bahasa Indonesia",
-              "it": "Italiano",
-              "ja": "日本語",
-              "ko": "한국어",
-              "lt": "Lietuvių",
-              "mr": "मराठी",
-              "ms": "Bahasa Melayu",
-              "nl": "Nederlands",
-              "no": "Norsk",
-              "pl": "Polski",
-              "pt-BR": "Português (Brasil)",
-              "pt-PT": "Português (Portugal)",
-              "ro": "Română",
-              "ru": "Русский",
-              "sk": "Slovenčina",
-              "sr": "Српски",
-              "sv": "Svenska",
-              "sw": "Kiswahili",
-              "ta": "தமிழ்",
-              "te": "తెలుగు",
-              "th": "ไทย",
-              "tr": "Türkçe",
-              "uk": "Українська",
-              "ur": "اردو",
-              "vi": "Tiếng Việt",
-              "zh-CN": "简体中文",
-              "zh-TW": "繁體中文"
-            },
-            "tooltip": "The language to translate lyrics into."
-          },
-          "tooltip": "Translate lyrics and show the translated result line-by-line for display."
+          }
         }
       },
       "name": "歌詞を同期",
@@ -1061,6 +1063,7 @@
     },
     "transparent-player": {
       "description": "アプリウィンドウを透明にする",
+      "name": "透明プレイヤー",
       "menu": {
         "opacity": {
           "label": "不透明度",
@@ -1073,12 +1076,11 @@
           "submenu": {
             "acrylic": "アクリル",
             "mica": "マイカ(Mica)",
-            "none": "なし",
-            "tabbed": "タブ付き"
+            "tabbed": "タブ付き",
+            "none": "なし"
           }
         }
-      },
-      "name": "透明プレイヤー"
+      }
     },
     "tuna-obs": {
       "description": "OBSのプラグインTunaの統合",
@@ -1121,6 +1123,17 @@
         "visualizer-type": "ビジュアライザーの種類"
       },
       "name": "視覚効果"
+    },
+    "audio-only": {
+      "description": "オーディオのみモードを強制 — ネットワークとプレーヤーレベルで全てのビデオストリームをブロックし、RAMと帯域幅を節約します",
+      "name": "オーディオのみ"
+    },
+    "playback-recovery": {
+      "description": "スタック、停止、または再生不能な状態から自動的に回復します",
+      "menu": {
+        "log-to-console": "回復イベントをコンソールに記録"
+      },
+      "name": "再生回復"
     }
   }
 }

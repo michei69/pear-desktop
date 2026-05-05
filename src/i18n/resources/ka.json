@@ -144,25 +144,26 @@
               "disabled": "გამორთულია",
               "enabled-and-hide-app": "ჩართე და დამალე პროგრამა",
               "enabled-and-show-app": "ჩართე და დატოვე პროგრამა",
+              "move-to-current-desktop": "გადატანა მიმდინარე ვირტუალურ სამუშაო მაგიდაზე ჩვენებისას",
               "play-pause-on-click": "დაჭერით ჩართე/დააპაუზე"
             }
           },
           "visual-tweaks": {
             "label": "ვიზუალური ცვლილებები",
             "submenu": {
-              "custom-window-title": {
-                "label": "პერსონალიზებული ფანჯრის სათაური",
-                "prompt": {
-                  "label": "შეიყვანე პერსონალიზებული ფანჯრის სათაური: (დატოვე ცარიელი გასათიშად)",
-                  "placeholder": "Example: {{applicationName}}"
-                }
-              },
               "like-buttons": {
                 "default": "ნაგულისხმევი",
                 "force-show": "დააძალე ჩვენება",
                 "hide": "დამალე",
-                "label": "დალაიქების ღილაკები",
-                "swap": "დალაიქების ღილაკები ჩაანაცვლე ერთმანეთში"
+                "swap": "დალაიქების ღილაკები ჩაანაცვლე ერთმანეთში",
+                "label": "დალაიქების ღილაკები"
+              },
+              "custom-window-title": {
+                "label": "პერსონალიზებული ფანჯრის სათაური",
+                "prompt": {
+                  "label": "შეიყვანე პერსონალიზებული ფანჯრის სათაური: (დატოვე ცარიელი გასათიშად)",
+                  "placeholder": "მაგალითი: {{applicationName}}"
+                }
               },
               "remove-upgrade-button": "გააქრე \"upgrade\" ღილაკი",
               "theme": {
@@ -243,6 +244,10 @@
       },
       "name": "ალბომის ფერის თემა"
     },
+    "audio-only": {
+      "description": "აიძულებს მხოლოდ-აუდიო რეჟიმს — ბლოკავს ყველა ვიდეო ნაკადს ქსელისა და პლეიერის დონეზე RAM-ისა და გამტარუნარიანობის დასაზოგად",
+      "name": "მხოლოდ აუდიო"
+    },
     "ambient-mode": {
       "description": "ვიდეოს ფერებით უკანა ფონზე განათების ეფექტს ამატებს",
       "menu": {
@@ -277,9 +282,9 @@
           }
         },
         "smoothness-transition": {
-          "label": "Smoothness transition",
+          "label": "გადასვლის სიგლუვე",
           "submenu": {
-            "during": "During {{interpolationTime}} s"
+            "during": "{{interpolationTime}} წმ-ის განმავლობაში"
           }
         },
         "use-fullscreen": {
@@ -289,218 +294,218 @@
       "name": "გარემოს რეჟიმი"
     },
     "amuse": {
-      "description": "Adds {{applicationName}} support for the Amuse now playing widget by 6K Labs",
+      "description": "ამატებს {{applicationName}}-ის მხარდაჭერას Amuse-ის ახლავე დაკვრის ვიჯეტისთვის, 6K Labs-ის მიერ",
       "name": "გაკვირვება",
       "response": {
-        "query": "Amuse API server is running. GET /query to get song info."
+        "query": "Amuse API სერვერი მუშაობს. GET /query სიმღერის ინფორმაციის მისაღებად."
       }
     },
     "api-server": {
-      "description": "Adds an API server to control the player",
+      "description": "ამატებს API სერვერს პლეიერის გასაკონტროლებლად",
       "dialog": {
         "request": {
           "buttons": {
             "allow": "დაშვება",
             "deny": "აკრძალვა"
           },
-          "message": "Allow {{ID}} ({{origin}}) to access the API?",
-          "title": "API authorization request"
+          "message": "დაუშვას {{ID}} ({{origin}}) API-ზე წვდომა?",
+          "title": "API ავტორიზაციის მოთხოვნა"
         }
       },
       "menu": {
         "auth-strategy": {
-          "label": "Authorization strategy",
+          "label": "ავტორიზაციის სტრატეგია",
           "submenu": {
             "auth-at-first": {
-              "label": "Authorize at first request"
+              "label": "ავტორიზაცია პირველივე მოთხოვნაზე"
             },
             "none": {
-              "label": "No authorization"
+              "label": "ავტორიზაციის გარეშე"
             }
           }
         },
         "hostname": {
           "label": "ჰოსტის სახელი"
         },
-        "https": {
-          "label": "HTTPS & Certificates",
-          "submenu": {
-            "cert": {
-              "dialogTitle": "Select HTTPS certificate file",
-              "label": "Certificate file (.crt/.pem)"
-            },
-            "enable-https": {
-              "label": "Enable HTTPS"
-            },
-            "key": {
-              "dialogTitle": "Select HTTPS private key file",
-              "label": "Private key file (.key/.pem)"
-            }
-          }
-        },
         "port": {
           "label": "პორტი"
+        },
+        "https": {
+          "label": "HTTPS და სერთიფიკატები",
+          "submenu": {
+            "enable-https": {
+              "label": "HTTPS-ის ჩართვა"
+            },
+            "cert": {
+              "label": "სერთიფიკატის ფაილი (.crt/.pem)",
+              "dialogTitle": "აირჩიეთ HTTPS სერთიფიკატის ფაილი"
+            },
+            "key": {
+              "label": "პირადი გასაღების ფაილი (.key/.pem)",
+              "dialogTitle": "აირჩიეთ HTTPS პირადი გასაღების ფაილი"
+            }
+          }
         }
       },
-      "name": "API Server [Beta]",
+      "name": "API სერვერი [Beta]",
       "prompt": {
         "hostname": {
-          "label": "Enter the hostname (like 0.0.0.0) for the API server:",
+          "label": "შეიყვანეთ ჰოსტის სახელი (მაგ. 0.0.0.0) API სერვერისთვის:",
           "title": "ჰოსტის სახელი"
         },
         "port": {
-          "label": "Enter the port for the API server:",
+          "label": "შეიყვანეთ პორტი API სერვერისთვის:",
           "title": "პორტი"
         }
       }
     },
     "audio-compressor": {
-      "description": "Apply compression to audio (lowers the volume of the loudest parts of the signal and raises the volume of the softest parts)",
-      "name": "Audio Compressor"
+      "description": "აუდიოს კომპრესიის გამოყენება (აქვეითებს ყველაზე ხმამაღალი ნაწილების ხმას და ზრდის ყველაზე ჩუმი ნაწილების ხმას)",
+      "name": "აუდიო კომპრესორი"
     },
     "auth-proxy-adapter": {
-      "description": "Support for the use of authentication proxy services",
+      "description": "ავთენტიფიკაციის პროქსი სერვისების მხარდაჭერა",
       "menu": {
-        "disable": "Disable Proxy Adapter",
-        "enable": "Enable Proxy Adapter",
+        "disable": "პროქსი ადაპტერის გამორთვა",
+        "enable": "პროქსი ადაპტერის ჩართვა",
         "hostname": {
-          "label": "Hostname"
+          "label": "ჰოსტის სახელი"
         },
         "port": {
-          "label": "Port"
+          "label": "პორტი"
         }
       },
-      "name": "Auth Proxy Adapter",
+      "name": "ავტორიზაციის პროქსი ადაპტერი",
       "prompt": {
         "hostname": {
-          "label": "Enter hostname for local proxy server (requires restart):",
-          "title": "Proxy Hostname"
+          "title": "პროქსის ჰოსტის სახელი",
+          "label": "შეიყვანეთ ჰოსტის სახელი ლოკალური პროქსი სერვერისთვის (საჭიროებს გადატვირთვას):"
         },
         "port": {
-          "label": "Enter port for local proxy server (requires restart):",
-          "title": "Proxy Port"
+          "title": "პროქსის პორტი",
+          "label": "შეიყვანეთ პორტი ლოკალური პროქსი სერვერისთვის (საჭიროებს გადატვირთვას):"
         }
       }
     },
     "blur-nav-bar": {
-      "description": "Makes navigation bar transparent and blurry",
-      "name": "Blur Navigation Bar"
+      "description": "ნავიგაციის ზოლს ხდის გამჭვირვალეს და ბუნდოვანს",
+      "name": "ნავიგაციის ზოლის დაბუნდოვნება"
     },
     "bypass-age-restrictions": {
-      "description": "Bypass Music Player's age verification",
-      "name": "Bypass Age Restrictions"
+      "description": "მუსიკალური პლეიერის ასაკობრივი შეზღუდვის გვერდის ავლა",
+      "name": "ასაკობრივი შეზღუდვის გვერდის ავლა"
     },
     "captions-selector": {
-      "description": "Caption selector for {{applicationName}} audio tracks",
+      "description": "სუბტიტრების ამომრჩევი {{applicationName}} აუდიო ტრეკებისთვის",
       "menu": {
-        "autoload": "Automatically select last used caption",
-        "disable-captions": "No captions by default"
+        "autoload": "ბოლოს გამოყენებული სუბტიტრის ავტომატურად არჩევა",
+        "disable-captions": "სუბტიტრების გარეშე ნაგულისხმევად"
       },
-      "name": "Captions Selector",
+      "name": "სუბტიტრების ამომრჩევი",
       "prompt": {
         "selector": {
-          "label": "Current caption language: {{language}}",
+          "label": "მიმდინარე სუბტიტრების ენა: {{language}}",
           "none": "არცერთი",
-          "title": "Select caption language"
+          "title": "აირჩიეთ სუბტიტრების ენა"
         }
       },
       "templates": {
-        "title": "Open captions selector"
+        "title": "სუბტიტრების ამომრჩევის გახსნა"
       },
       "toast": {
-        "caption-changed": "Caption changed to {{language}}",
-        "caption-disabled": "Captions disabled",
-        "no-captions": "No captions available for this song"
+        "caption-changed": "სუბტიტრი შეიცვალა {{language}}-ზე",
+        "caption-disabled": "სუბტიტრები გამორთულია",
+        "no-captions": "ამ სიმღერისთვის სუბტიტრები არ არის ხელმისაწვდომი"
       }
     },
     "clock": {
-      "description": "Add a clock to the navigation bar",
+      "description": "ნავიგაციის ზოლს ამატებს საათს",
+      "name": "საათი",
       "menu": {
         "format": {
-          "24-hour-format": "24-Hour Format",
-          "display-seconds": "Display Seconds",
-          "label": "Format"
+          "label": "ფორმატი",
+          "display-seconds": "წამების ჩვენება",
+          "24-hour-format": "24-საათიანი ფორმატი"
         }
-      },
-      "name": "Clock"
+      }
     },
     "compact-sidebar": {
-      "description": "Always set the sidebar in compact mode",
-      "name": "Compact Sidebar"
+      "description": "გვერდითა პანელის მუდამ კომპაქტურ რეჟიმში დაყენება",
+      "name": "კომპაქტური გვერდითა პანელი"
     },
     "crossfade": {
-      "description": "Crossfade between songs",
+      "description": "სიმღერებს შორის გადასვლის ეფექტი",
       "menu": {
         "advanced": "დამატებით"
       },
-      "name": "Crossfade [Beta]",
+      "name": "გადასვლა [Beta]",
       "prompt": {
         "options": {
           "multi-input": {
-            "fade-in-duration": "Fade in duration (ms)",
-            "fade-out-duration": "Fade out duration (ms)",
+            "fade-in-duration": "შესვლის ხანგრძლივობა (ms)",
+            "fade-out-duration": "გასვლის ხანგრძლივობა (ms)",
             "fade-scaling": {
-              "label": "Fade scaling",
+              "label": "გადასვლის მასშტაბირება",
               "linear": "წრფივი",
               "logarithmic": "ლოგარითმული"
             },
-            "seconds-before-end": "Crossfade N seconds before end"
+            "seconds-before-end": "გადასვლა N წამით ადრე დასრულებამდე"
           },
-          "title": "Crossfade options"
+          "title": "გადასვლის პარამეტრები"
         }
       }
     },
     "custom-output-device": {
-      "description": "Configure a custom output media device for songs",
+      "description": "სიმღერებისთვის მორგებული გამომავალი მედია მოწყობილობის კონფიგურაცია",
       "menu": {
-        "device-selector": "Select Device"
+        "device-selector": "მოწყობილობის არჩევა"
       },
-      "name": "Custom Output Device",
+      "name": "მორგებული გამომავალი მოწყობილობა",
       "prompt": {
         "device-selector": {
-          "label": "Choose the output media device to be used",
-          "title": "Select Output Device"
+          "label": "აირჩიეთ გამოსაყენებელი გამომავალი მედია მოწყობილობა",
+          "title": "გამომავალი მოწყობილობის არჩევა"
         }
       }
     },
     "disable-autoplay": {
-      "description": "Makes song start in \"paused\" mode",
+      "description": "სიმღერას იწყებს „პაუზის“ რეჟიმში",
       "menu": {
-        "apply-once": "Applies only on startup"
+        "apply-once": "მხოლოდ გაშვებისას მოქმედებს"
       },
-      "name": "Disable Autoplay"
+      "name": "ავტომატური დაკვრის გამორთვა"
     },
     "discord": {
       "backend": {
-        "already-connected": "Attempted to connect with active connection",
-        "connected": "Connected to Discord",
-        "disconnected": "Disconnected from Discord"
+        "already-connected": "დაკავშირების მცდელობა აქტიური კავშირით",
+        "connected": "დაკავშირებულია Discord-თან",
+        "disconnected": "გათიშულია Discord-დან"
       },
-      "description": "Show your friends what you listen to with Rich Presence",
+      "description": "აჩვენე მეგობრებს რას უსმენ Rich Presence-ით",
       "menu": {
-        "auto-reconnect": "Auto reconnect",
-        "clear-activity": "Clear activity",
-        "clear-activity-after-timeout": "Clear activity after timeout",
+        "auto-reconnect": "ავტომატური ხელახალი დაკავშირება",
+        "clear-activity": "აქტივობის გასუფთავება",
+        "clear-activity-after-timeout": "აქტივობის გასუფთავება დროის ამოწურვის შემდეგ",
         "connected": "დაკავშირებული",
         "disconnected": "გათიშული",
-        "hide-duration-left": "Hide duration left",
-        "hide-github-button": "Hide GitHub link Button",
-        "play-on-application": "Play on {{applicationName}}",
-        "set-inactivity-timeout": "Set inactivity timeout",
+        "hide-duration-left": "დარჩენილი ხანგრძლივობის დამალვა",
+        "hide-github-button": "GitHub-ის ბმულის ღილაკის დამალვა",
+        "play-on-application": "დაკვრა {{applicationName}}-ზე",
+        "set-inactivity-timeout": "უმოქმედობის დროის ამოწურვის დაყენება",
         "set-status-display-type": {
-          "label": "Status text",
+          "label": "სტატუსის ტექსტი",
           "submenu": {
-            "application": "Listening to {{applicationName}}",
-            "artist": "Listening to {artist}",
-            "title": "Listening to {song title}"
+            "application": "{{applicationName}}-ის მოსმენა",
+            "artist": "{{artist}}-ის მოსმენა",
+            "title": "{{song title}}-ის მოსმენა"
           }
         }
       },
       "name": "Discord Rich Presence",
       "prompt": {
         "set-inactivity-timeout": {
-          "label": "Enter inactivity timeout in seconds:",
-          "title": "Set inactivity timeout"
+          "label": "შეიყვანეთ უმოქმედობის დროის ამოწურვა წამებში:",
+          "title": "უმოქმედობის დროის ამოწურვის დაყენება"
         }
       }
     },
@@ -511,210 +516,218 @@
             "buttons": {
               "ok": "დიახ"
             },
-            "message": "Argh! Apologies, download failed…",
-            "title": "Error in download!"
+            "message": "უკაცრავად, ჩამოტვირთვა ვერ მოხერხდა…",
+            "title": "შეცდომა ჩამოტვირთვისას!"
           },
           "start-download-playlist": {
             "buttons": {
               "ok": "დიახ"
             },
-            "detail": "({{playlistSize}} songs)",
-            "message": "Downloading Playlist {{playlistTitle}}",
-            "title": "Download started"
+            "detail": "({{playlistSize}} სიმღერა)",
+            "message": "იწერება პლეილისტი {{playlistTitle}}",
+            "title": "ჩამოტვირთვა დაიწყო"
           }
         },
         "feedback": {
-          "conversion-progress": "Conversion: {{percent}}%",
+          "conversion-progress": "კონვერტაცია: {{percent}}%",
           "converting": "გადაყვანა…",
-          "done": "Done: {{filePath}}",
-          "download-info": "Downloading {{artist}} - {{title}} [{{videoId}}",
-          "download-progress": "Download: {{percent}}%",
+          "done": "დასრულებულია: {{filePath}}",
+          "download-info": "იწერება {{artist}} - {{title}} [{{videoId}}",
+          "download-progress": "ჩამოტვირთვა: {{percent}}%",
           "downloading": "გადმოწერა…",
-          "downloading-counter": "Downloading {{current}}/{{total}}…",
-          "downloading-playlist": "Downloading playlist \"{{playlistTitle}}\" - {{playlistSize}} songs ({{playlistId}})",
-          "error-while-downloading": "Error downloading \"{{author}} - {{title}}\": {{error}}",
-          "folder-already-exists": "The folder {{playlistFolder}} already exists",
-          "getting-playlist-info": "Getting playlist info…",
+          "downloading-counter": "იწერება {{current}}/{{total}}…",
+          "downloading-playlist": "იწერება პლეილისტი \"{{playlistTitle}}\" - {{playlistSize}} სიმღერა ({{playlistId}})",
+          "error-while-downloading": "შეცდომა \"{{author}} - {{title}}\"-ის ჩამოტვირთვისას: {{error}}",
+          "folder-already-exists": "საქაღალდე {{playlistFolder}} უკვე არსებობს",
+          "getting-playlist-info": "პლეილისტის ინფორმაციის მიღება…",
           "loading": "ჩატვირთვა…",
-          "playlist-has-only-one-song": "Playlist has only one item, downloading it directly",
-          "playlist-id-not-found": "No playlist ID found",
-          "playlist-is-empty": "Playlist is empty",
-          "playlist-is-mix-or-private": "Error getting playlist info: make sure it isn't a private or \"Mixed for you\" playlist\n\n{{error}}",
-          "preparing-file": "Preparing file…",
+          "playlist-has-only-one-song": "პლეილისტს აქვს მხოლოდ ერთი ელემენტი, იწერება პირდაპირ",
+          "playlist-id-not-found": "პლეილისტის ID ვერ მოიძებნა",
+          "playlist-is-empty": "პლეილისტი ცარიელია",
+          "playlist-is-mix-or-private": "შეცდომა პლეილისტის ინფორმაციის მიღებისას: დარწმუნდით, რომ ის არ არის პირადი ან „შერეული თქვენთვის“ პლეილისტი\n\n{{error}}",
+          "preparing-file": "ფაილის მომზადება…",
           "saving": "შენახვა…",
-          "trying-to-get-playlist-id": "Trying to get playlist ID: {{playlistId}}",
-          "video-id-not-found": "Video not found",
-          "writing-id3": "Writing ID3 tags…"
+          "trying-to-get-playlist-id": "პლეილისტის ID-ის მიღების მცდელობა: {{playlistId}}",
+          "video-id-not-found": "ვიდეო ვერ მოიძებნა",
+          "writing-id3": "ID3 ტეგების ჩაწერა…"
         }
       },
-      "description": "Downloads MP3 / source audio directly from the interface",
+      "description": "MP3 / წყაროს აუდიოს ჩამოტვირთვა პირდაპირ ინტერფეისიდან",
       "menu": {
-        "choose-download-folder": "Choose download folder",
+        "choose-download-folder": "ჩამოტვირთვის საქაღალდის არჩევა",
         "download-finish-settings": {
-          "label": "Download on finish",
+          "label": "ჩამოტვირთვა დასრულებისას",
           "prompt": {
-            "last-percent": "After x percent",
-            "last-seconds": "Last x seconds",
-            "title": "Configure when to download"
+            "last-percent": "x პროცენტის შემდეგ",
+            "last-seconds": "ბოლო x წამი",
+            "title": "ჩამოტვირთვის დროის კონფიგურაცია"
           },
           "submenu": {
             "advanced": "დამატებით",
             "enabled": "ჩართულია",
-            "mode": "Time mode",
+            "mode": "დროის რეჟიმი",
             "percent": "პროცენტი",
             "seconds": "წამი"
           }
         },
-        "download-playlist": "Download playlist",
+        "download-playlist": "პლეილისტის ჩამოტვირთვა",
         "presets": "პრესეტი",
-        "skip-existing": "Skip existing files"
+        "skip-existing": "არსებული ფაილების გამოტოვება"
       },
       "name": "გადმომწერი",
       "renderer": {
-        "can-not-update-progress": "Cannot update progress"
+        "can-not-update-progress": "პროგრესის განახლება ვერ მოხერხდა"
       },
       "templates": {
         "button": "გადმოწერა"
       }
     },
     "equalizer": {
-      "description": "Adds an equalizer to the player",
+      "description": "პლეიერს ამატებს ექვალაიზერს",
       "menu": {
         "presets": {
-          "label": "Presets",
+          "label": "წინასწარი პარამეტრები",
           "list": {
-            "bass-booster": "Bass booster"
+            "bass-booster": "ბასის გამაძლიერებელი"
           }
         }
       },
-      "name": "Equalizer"
+      "name": "ექვალაიზერი"
     },
     "exponential-volume": {
-      "description": "Makes the volume slider exponential so it's easier to select lower volumes.",
-      "name": "Exponential Volume"
+      "description": "ხმის სლაიდერს ხდის ექსპონენციალურს, რათა უფრო ადვილი იყოს დაბალი ხმის არჩევა.",
+      "name": "ექსპონენციალური ხმა"
     },
     "in-app-menu": {
-      "description": "Gives menu-bars a fancy, dark or album-color look",
+      "description": "მენიუს ზოლებს აძლევს მოდურ, მუქ ან ალბომის ფერის იერს",
       "menu": {
-        "hide-dom-window-controls": "Hide DOM window controls"
+        "hide-dom-window-controls": "DOM ფანჯრის კონტროლის დამალვა"
       },
-      "name": "In-App Menu"
+      "name": "აპლიკაციის შიდა მენიუ"
     },
     "lumiastream": {
-      "description": "Adds Lumia Stream support",
+      "description": "ამატებს Lumia Stream-ის მხარდაჭერას",
       "name": "Lumia Stream [Beta]"
     },
     "lyrics-genius": {
-      "description": "Adds lyrics support for most songs",
+      "description": "სიმღერების უმეტესობისთვის ტექსტის მხარდაჭერას ამატებს",
       "menu": {
-        "romanized-lyrics": "Romanized Lyrics"
+        "romanized-lyrics": "რომანიზებული ტექსტი"
       },
       "name": "Lyrics Genius",
       "renderer": {
-        "fetched-lyrics": "Fetched lyrics for Genius"
+        "fetched-lyrics": "Genius-ის ტექსტი მიღებულია"
       }
     },
     "music-together": {
-      "description": "Share a playlist with others. When the host plays a song, everyone else will hear the same song",
+      "description": "გაუზიარეთ პლეილისტი სხვებს. როცა წამყვანი უშვებს სიმღერას, ყველა დანარჩენი იგივე სიმღერას მოისმენს",
       "dialog": {
-        "enter-host": "Enter Host ID"
+        "enter-host": "შეიყვანეთ წამყვანის ID"
       },
       "internal": {
         "save": "შენახვა",
-        "track-source": "Track Source",
-        "unknown-user": "Unknown User"
+        "track-source": "ტრეკის წყარო",
+        "unknown-user": "უცნობი მომხმარებელი"
       },
       "menu": {
-        "click-to-copy-id": "Copy Host ID",
-        "close": "Close Music Together",
-        "connected-users": "Connected Users",
-        "disconnect": "Disconnect Music Together",
-        "empty-user": "No connected users",
-        "host": "Music Together Host",
-        "join": "Join Music Together",
+        "click-to-copy-id": "წამყვანის ID-ის კოპირება",
+        "close": "Music Together-ის დახურვა",
+        "connected-users": "დაკავშირებული მომხმარებლები",
+        "disconnect": "Music Together-ის გათიშვა",
+        "empty-user": "დაკავშირებული მომხმარებლები არ არის",
+        "host": "Music Together წამყვანი",
+        "join": "Music Together-ში შესვლა",
         "permission": {
-          "all": "Allow guests to control playlist and player",
-          "host-only": "Only the host can control playlist and player",
-          "playlist": "Allow guests to control playlist"
+          "all": "სტუმრებს პლეილისტისა და პლეიერის მართვის უფლება",
+          "host-only": "მხოლოდ წამყვანს შეუძლია პლეილისტისა და პლეიერის მართვა",
+          "playlist": "სტუმრებს პლეილისტის მართვის უფლება"
         },
-        "set-permission": "Change Control Permission",
+        "set-permission": "მართვის უფლების შეცვლა",
         "status": {
           "disconnected": "გათიშული",
-          "guest": "Connected as Guest",
-          "host": "Connected as Host"
+          "guest": "დაკავშირებულია როგორც სტუმარი",
+          "host": "დაკავშირებულია როგორც წამყვანი"
         }
       },
       "name": "Music Together [Beta]",
       "toast": {
-        "add-song-failed": "Failed to add song",
+        "add-song-failed": "სიმღერის დამატება ვერ მოხერხდა",
         "closed": "Music Together-ის ორგანიზატორი დაიხურა",
         "disconnected": "Music Together-ის კავშირი გათიშულია",
         "host-failed": "Music Together-ის გამოცხადება ვერ მოხერხდა",
         "id-copied": "გამოსაცხადებელი ID დაკოპირებულია ბუფერში",
         "id-copy-failed": "გამოსაცხადებელი ID-ის ვერ დაკოპირდა ბუფერში",
-        "join-failed": "Failed to join Music Together",
-        "joined": "Joined Music Together",
-        "permission-changed": "Music Together permission changed to \"{{permission}}\"",
-        "remove-song-failed": "Failed to remove song",
-        "user-connected": "{{name}} joined Music Together",
-        "user-disconnected": "{{name}} left Music Together"
+        "join-failed": "Music Together-ში შესვლა ვერ მოხერხდა",
+        "joined": "შეუერთდით Music Together-ს",
+        "permission-changed": "Music Together-ის უფლება შეიცვალა \"{{permission}}\"-ზე",
+        "remove-song-failed": "სიმღერის წაშლა ვერ მოხერხდა",
+        "user-connected": "{{name}} შეუერთდა Music Together-ს",
+        "user-disconnected": "{{name}} დატოვა Music Together"
       }
     },
     "navigation": {
-      "description": "Next/Back navigation arrows directly integrated in the interface, like in your favorite browser",
+      "description": "შემდეგი/უკან ნავიგაციის ისრები პირდაპირ ინტერფეისში, როგორც თქვენს საყვარელ ბრაუზერში",
       "name": "ნავიგაცია",
       "templates": {
         "back": {
-          "title": "Go to previous page"
+          "title": "წინა გვერდზე გადასვლა"
         },
         "forward": {
-          "title": "Go to next page"
+          "title": "შემდეგ გვერდზე გადასვლა"
         }
       }
     },
     "no-google-login": {
-      "description": "Remove Google login buttons and links from the interface",
-      "name": "No Google Login"
+      "description": "Google-ის შესვლის ღილაკებისა და ბმულების წაშლა ინტერფეისიდან",
+      "name": "Google შესვლის გარეშე"
     },
     "notifications": {
-      "description": "Display a notification when a song starts playing (interactive notifications are available on Windows)",
+      "description": "შეტყობინების ჩვენება, როცა სიმღერა იწყებს დაკვრას (ინტერაქტიული შეტყობინებები ხელმისაწვდომია Windows-ზე)",
       "menu": {
-        "interactive": "Interactive Notifications",
+        "interactive": "ინტერაქტიული შეტყობინებები",
         "interactive-settings": {
-          "label": "Interactive Settings",
+          "label": "ინტერაქტიული პარამეტრები",
           "submenu": {
-            "hide-button-text": "Hide button text",
-            "refresh-on-play-pause": "Refresh on Play/Pause",
-            "tray-controls": "Open/Close on tray click"
+            "hide-button-text": "ღილაკის ტექსტის დამალვა",
+            "hover-controls": "მინი-პლეიერის ჩვენება უჯრაზე მიტანისას",
+            "refresh-on-play-pause": "განახლება დაკვრა/პაუზაზე",
+            "tray-controls": "გახსნა/დახურვა უჯრაზე დაწკაპუნებით"
           }
         },
-        "priority": "Notification Priority",
-        "toast-style": "Toast style",
-        "unpause-notification": "Show notification on unpause"
+        "priority": "შეტყობინების პრიორიტეტი",
+        "toast-style": "ტოსტის სტილი",
+        "unpause-notification": "შეტყობინების ჩვენება პაუზის მოხსნისას"
       },
       "name": "გაფრთხილებები"
     },
     "performance-improvement": {
-      "description": "Improve performance by enabling experimental scripts",
-      "name": "Performance improvement [Beta]"
+      "description": "შესრულების გაუმჯობესება ექსპერიმენტული სკრიპტების ჩართვით",
+      "name": "შესრულების გაუმჯობესება [Beta]"
+    },
+    "playback-recovery": {
+      "description": "ავტომატურად აღადგენს გაჭედილ, შეჩერებულ ან მკვდარ დაკვრის მდგომარეობებს",
+      "menu": {
+        "log-to-console": "აღდგენის მოვლენების კონსოლში ჩაწერა"
+      },
+      "name": "დაკვრის აღდგენა"
     },
     "picture-in-picture": {
-      "description": "Allows to switch the app to picture-in-picture mode",
+      "description": "აპლიკაციის სურათი-სურათში რეჟიმზე გადართვის საშუალებას იძლევა",
       "menu": {
-        "always-on-top": "Always on top",
+        "always-on-top": "მუდამ ზემოთ",
         "hotkey": {
-          "label": "Hotkey",
+          "label": "ცხელი კლავიში",
           "prompt": {
             "keybind-options": {
-              "hotkey": "Hotkey"
+              "hotkey": "ცხელი კლავიში"
             },
-            "label": "Choose a hotkey to toggle picture-in-picture",
-            "title": "Picture-in-picture Hotkey"
+            "label": "აირჩიეთ ცხელი კლავიში სურათი-სურათში გადასართველად",
+            "title": "სურათი-სურათში ცხელი კლავიში"
           }
         },
-        "save-window-position": "Save window position",
-        "save-window-size": "Save window size",
-        "use-native-pip": "Use browser native PiP"
+        "save-window-position": "ფანჯრის პოზიციის შენახვა",
+        "save-window-size": "ფანჯრის ზომის შენახვა",
+        "use-native-pip": "ბრაუზერის ჩაშენებული PiP-ის გამოყენება"
       },
       "name": "სურათი სურათში",
       "templates": {
@@ -722,32 +735,32 @@
       }
     },
     "playback-speed": {
-      "description": "Listen fast, listen slow! Adds a slider that controls song speed",
-      "name": "Playback Speed",
+      "description": "მოუსმინეთ სწრაფად, მოუსმინეთ ნელა! ამატებს სლაიდერს, რომელიც სიმღერის სიჩქარეს აკონტროლებს",
+      "name": "დაკვრის სიჩქარე",
       "templates": {
         "button": "სიჩქარე"
       }
     },
     "precise-volume": {
-      "description": "Control the volume precisely using mousewheel/hotkeys, with a custom HUD and customizable volume steps",
+      "description": "ხმის ზუსტი კონტროლი მაუსის ბორბლით/ცხელი კლავიშებით, მორგებული HUD-ითა და კონფიგურირებადი ხმის ნაბიჯებით",
       "menu": {
-        "arrows-shortcuts": "Local Arrow-keys Controls",
-        "custom-volume-steps": "Set Custom Volume Steps",
-        "global-shortcuts": "Global Hotkeys"
+        "arrows-shortcuts": "ლოკალური ისრის კლავიშების კონტროლი",
+        "custom-volume-steps": "მორგებული ხმის ნაბიჯების დაყენება",
+        "global-shortcuts": "გლობალური ცხელი კლავიშები"
       },
-      "name": "Precise Volume",
+      "name": "ზუსტი ხმა",
       "prompt": {
         "global-shortcuts": {
           "keybind-options": {
-            "decrease": "Decrease Volume",
-            "increase": "Increase Volume"
+            "decrease": "ხმის დაწევა",
+            "increase": "ხმის აწევა"
           },
-          "label": "Choose Global Volume Keybinds:",
-          "title": "Global Volume Keybinds"
+          "label": "აირჩიეთ გლობალური ხმის კლავიშები:",
+          "title": "გლობალური ხმის კლავიშები"
         },
         "volume-steps": {
-          "label": "Choose Volume Increase/Decrease Steps",
-          "title": "Volume Steps"
+          "label": "აირჩიეთ ხმის გაზრდის/შემცირების ნაბიჯები",
+          "title": "ხმის ნაბიჯები"
         }
       }
     },
@@ -755,351 +768,351 @@
       "backend": {
         "dialog": {
           "quality-changer": {
-            "detail": "Current Quality: {{quality}}",
-            "message": "Choose Video Quality:",
-            "title": "Choose Video Quality"
+            "detail": "მიმდინარე ხარისხი: {{quality}}",
+            "message": "აირჩიეთ ვიდეოს ხარისხი:",
+            "title": "აირჩიეთ ვიდეოს ხარისხი"
           }
         }
       },
-      "description": "Allows changing the video quality with a button on the video overlay",
-      "name": "Video Quality Changer",
+      "description": "ვიდეოს ხარისხის შეცვლის საშუალებას იძლევა ვიდეოს გადაფარვის ღილაკით",
+      "name": "ვიდეოს ხარისხის შემცვლელი",
       "renderer": {
         "quality-settings-button": {
-          "label": "Open player quality changer"
+          "label": "პლეიერის ხარისხის შემცვლელის გახსნა"
         }
       }
     },
     "scrobbler": {
-      "description": "Add scrobbling support (etc. last.fm, Listenbrainz)",
+      "description": "სქრობლინგის მხარდაჭერის დამატება (მაგ. last.fm, Listenbrainz)",
       "dialog": {
         "lastfm": {
           "auth-failed": {
-            "message": "Failed to authenticate with Last.fm\nHide the popup until the next restart.",
-            "title": "Authentication Failed"
+            "message": "Last.fm-თან ავთენტიფიკაცია ვერ მოხერხდა\nდამალეთ popup მომდევნო გადატვირთვამდე.",
+            "title": "ავთენტიფიკაცია ვერ მოხერხდა"
           }
         }
       },
       "menu": {
         "lastfm": {
-          "api-settings": "Last.fm API Settings"
+          "api-settings": "Last.fm API პარამეტრები"
         },
         "listenbrainz": {
-          "token": "Enter ListenBrainz user token"
+          "token": "შეიყვანეთ ListenBrainz მომხმარებლის ტოკენი"
         },
-        "scrobble-alternative-artist": "Use alternative artists",
-        "scrobble-alternative-title": "Use alternative titles",
-        "scrobble-other-media": "Scrobble other media"
+        "scrobble-alternative-title": "ალტერნატიული სათაურების გამოყენება",
+        "scrobble-alternative-artist": "ალტერნატიული შემსრულებლების გამოყენება",
+        "scrobble-other-media": "სხვა მედიის სქრობლინგი"
       },
-      "name": "Scrobbler",
+      "name": "სქრობლერი",
       "prompt": {
         "lastfm": {
-          "api-key": "Last.fm API key",
-          "api-secret": "Last.fm API secret"
+          "api-key": "Last.fm API გასაღები",
+          "api-secret": "Last.fm API საიდუმლო"
         },
         "listenbrainz": {
           "token": {
-            "label": "Enter your ListenBrainz user token:",
-            "title": "ListenBrainz token"
+            "label": "შეიყვანეთ თქვენი ListenBrainz მომხმარებლის ტოკენი:",
+            "title": "ListenBrainz ტოკენი"
           }
         }
       }
     },
     "shortcuts": {
-      "description": "Allows setting global hotkeys for playback (play/pause/next/previous) and turning off media OSD by overriding media keys, turning on Ctrl/CMD + F to search, turning on Linux MPRIS support for media keys, and custom hotkeys for advanced users",
+      "description": "გლობალური ცხელი კლავიშების დაყენების საშუალებას იძლევა (დაკვრა/პაუზა/შემდეგი/წინა) და მედია OSD-ის გამორთვა მედია კლავიშების გადაფარვით, Ctrl/CMD + F ძიებისთვის, Linux MPRIS მხარდაჭერა მედია კლავიშებისთვის და მორგებული ცხელი კლავიშები მოწინავე მომხმარებლებისთვის",
       "menu": {
-        "override-media-keys": "Override Media Keys",
-        "set-keybinds": "Set Global Song Controls"
+        "override-media-keys": "მედია კლავიშების გადაფარვა",
+        "set-keybinds": "გლობალური სიმღერის კონტროლის დაყენება"
       },
-      "name": "Shortcuts (& MPRIS)",
+      "name": "მალსახმობები (& MPRIS)",
       "prompt": {
         "keybind": {
           "keybind-options": {
             "next": "შემდეგი",
-            "play-pause": "Play / Pause",
+            "play-pause": "დაკვრა / პაუზა",
             "previous": "წინა"
           },
-          "label": "Choose Global Keybinds for Songs Control:",
-          "title": "Global Keybinds"
+          "label": "აირჩიეთ გლობალური კლავიშები სიმღერის კონტროლისთვის:",
+          "title": "გლობალური კლავიშები"
         }
       }
     },
     "skip-disliked-songs": {
-      "description": "Skips disliked songs",
-      "name": "Skip Disliked Songs"
+      "description": "გამოტოვებს არ მოწონებულ სიმღერებს",
+      "name": "არ მოწონებული სიმღერების გამოტოვება"
     },
     "skip-silences": {
-      "description": "Automatically skip silences sections in songs",
-      "name": "Skip Silences"
+      "description": "ავტომატურად გამოტოვებს სიჩუმის მონაკვეთებს სიმღერებში",
+      "name": "სიჩუმის გამოტოვება"
     },
     "sponsorblock": {
-      "description": "Automatically Skips non-music parts like intro/outro or parts of music videos where the song isn't playing",
+      "description": "ავტომატურად გამოტოვებს არამუსიკალურ ნაწილებს, როგორიცაა შესავალი/დასასრული ან მუსიკალური ვიდეოს ნაწილები, სადაც სიმღერა არ უკრავს",
       "name": "სარეკლამო ბლოკი"
     },
     "synced-lyrics": {
-      "description": "Provides synced lyrics to songs, using providers like LRClib.",
+      "description": "უზრუნველყოფს სიმღერების სინქრონიზებულ ტექსტს, LRClib-ის მსგავსი პროვაიდერების გამოყენებით.",
       "errors": {
-        "fetch": "⚠️\tAn error occurred while fetching the lyrics.\n\tPlease try again later.",
-        "not-found": "⚠️ No lyrics found for this song."
+        "fetch": "⚠️\tშეცდომა მოხდა ტექსტის მიღებისას.\n\tგთხოვთ, სცადოთ მოგვიანებით.",
+        "not-found": "⚠️ ამ სიმღერისთვის ტექსტი ვერ მოიძებნა."
       },
       "menu": {
-        "convert-chinese-character": {
-          "label": "Convert Chinese character",
-          "submenu": {
-            "disabled": {
-              "label": "Disabled",
-              "tooltip": "Disable Chinese character conversion"
-            },
-            "simplified-to-traditional": {
-              "label": "Simplified to Traditional",
-              "tooltip": "Convert Simplified Chinese to Traditional Chinese"
-            },
-            "traditional-to-simplified": {
-              "label": "Traditional to Simplified",
-              "tooltip": "Convert Traditional Chinese to Simplified Chinese"
-            }
-          },
-          "tooltip": "Convert Chinese character to Traditional or Simplified"
+        "preferred-provider": {
+          "label": "სასურველი პროვაიდერი",
+          "tooltip": "აირჩიეთ ნაგულისხმევი პროვაიდერი",
+          "none": {
+            "label": "არცერთი",
+            "tooltip": "სასურველი პროვაიდერის გარეშე"
+          }
         },
         "default-text-string": {
-          "label": "Default character between lyrics",
-          "tooltip": "Choose the default character to use for the gap between lyrics"
+          "label": "ნაგულისხმევი სიმბოლო ტექსტის ხაზებს შორის",
+          "tooltip": "აირჩიეთ ნაგულისხმევი სიმბოლო ტექსტის ხაზებს შორის არსებული ინტერვალისთვის"
         },
         "line-effect": {
-          "label": "Line effect",
+          "label": "ხაზის ეფექტი",
           "submenu": {
             "fancy": {
-              "label": "Fancy",
-              "tooltip": "Use large, app-like effects on the current line"
+              "label": "მოდური",
+              "tooltip": "დიდი, აპლიკაციის მსგავსი ეფექტების გამოყენება მიმდინარე ხაზზე"
             },
             "focus": {
               "label": "ფოკუსი",
-              "tooltip": "Make only the current line white"
+              "tooltip": "მხოლოდ მიმდინარე ხაზი გახადოს თეთრი"
             },
             "offset": {
-              "label": "Offset",
-              "tooltip": "Offset on the right the current line"
+              "label": "წანაცვლება",
+              "tooltip": "მიმდინარე ხაზის მარჯვნივ წანაცვლება"
             },
             "scale": {
-              "label": "Scale",
-              "tooltip": "Scale the current line"
+              "label": "მასშტაბი",
+              "tooltip": "მიმდინარე ხაზის მასშტაბირება"
             }
           },
-          "tooltip": "Choose the effect to apply to the current line"
+          "tooltip": "აირჩიეთ მიმდინარე ხაზზე გამოსაყენებელი ეფექტი"
         },
         "lyrics-font-size": {
-          "label": "Lyrics font size",
+          "label": "ტექსტის შრიფტის ზომა",
           "submenu": {
-            "large": {
-              "label": "Large",
-              "tooltip": "Use the original larger lyrics size"
+            "small": {
+              "label": "პატარა",
+              "tooltip": "უფრო კომპაქტური ტექსტის ზომის გამოყენება"
             },
             "medium": {
-              "label": "Medium",
-              "tooltip": "Use a balanced lyrics size"
+              "label": "საშუალო",
+              "tooltip": "დაბალანსებული ტექსტის ზომის გამოყენება"
             },
-            "small": {
-              "label": "Small",
-              "tooltip": "Use a more compact lyrics size"
+            "large": {
+              "label": "დიდი",
+              "tooltip": "ორიგინალი უფრო დიდი ტექსტის ზომის გამოყენება"
             }
           },
-          "tooltip": "Choose how large the lyrics text should be"
+          "tooltip": "აირჩიეთ რამდენად დიდი უნდა იყოს ტექსტი"
         },
         "precise-timing": {
-          "label": "Make the lyrics perfectly synced",
-          "tooltip": "Calculate to the milisecond the display of the next line (can have a small impact on performance)"
-        },
-        "preferred-provider": {
-          "label": "Preferred Provider",
-          "none": {
-            "label": "None",
-            "tooltip": "No preferred provider"
-          },
-          "tooltip": "Choose the default provider to use"
+          "label": "ტექსტის სრულყოფილად სინქრონიზაცია",
+          "tooltip": "გამოთვალეთ მომდევნო ხაზის ჩვენება მილიწამის სიზუსტით (შეიძლება მცირე გავლენა იქონიოს შესრულებაზე)"
         },
         "romanization": {
-          "label": "Romanize lyrics",
-          "tooltip": "If the lyrics are in a different language, try to display a latin version."
+          "label": "ტექსტის რომანიზაცია",
+          "tooltip": "თუ ტექსტი სხვა ენაზეა, სცადეთ ლათინური ვერსიის ჩვენება."
         },
         "show-lyrics-even-if-inexact": {
-          "label": "Show lyrics even if inexact",
-          "tooltip": "If the song is not found, the plugin tries again with a different search query.\nThe result from the second attempt may not be exact."
+          "label": "ტექსტის ჩვენება მაშინაც კი, თუ არაზუსტია",
+          "tooltip": "თუ სიმღერა ვერ მოიძებნა, პლაგინი კვლავ ცდის სხვა საძიებო მოთხოვნით.\nმეორე მცდელობის შედეგი შეიძლება არ იყოს ზუსტი."
         },
         "show-time-codes": {
-          "label": "Show time codes",
-          "tooltip": "Show the time codes next to the lyrics"
+          "label": "დროის კოდების ჩვენება",
+          "tooltip": "დროის კოდების ჩვენება ტექსტის გვერდით"
+        },
+        "convert-chinese-character": {
+          "label": "ჩინური სიმბოლოების კონვერტაცია",
+          "submenu": {
+            "disabled": {
+              "label": "გამორთულია",
+              "tooltip": "ჩინური სიმბოლოების კონვერტაციის გამორთვა"
+            },
+            "simplified-to-traditional": {
+              "label": "გამარტივებულიდან ტრადიციულზე",
+              "tooltip": "გამარტივებული ჩინურის ტრადიციულ ჩინურად გადაყვანა"
+            },
+            "traditional-to-simplified": {
+              "label": "ტრადიციულიდან გამარტივებულზე",
+              "tooltip": "ტრადიციული ჩინურის გამარტივებულ ჩინურად გადაყვანა"
+            }
+          },
+          "tooltip": "ჩინური სიმბოლოების კონვერტაცია ტრადიციულ ან გამარტივებულზე"
         },
         "translation": {
-          "clear-cache": {
-            "label": "Clear translation cache",
-            "tooltip": "Delete all cached translations stored on disk."
+          "label": "ტექსტის თარგმანი",
+          "tooltip": "თარგმნეთ ტექსტი და აჩვენეთ ნათარგმნი შედეგი ხაზ-ხაზ.",
+          "enabled": {
+            "label": "თარგმანის ჩართვა",
+            "tooltip": "ნათარგმნი ხაზის ჩვენება თითოეული ორიგინალი ტექსტის ხაზის ქვეშ."
+          },
+          "provider": {
+            "label": "პროვაიდერი",
+            "tooltip": "რომელი სერვისი გამოვიყენოთ თარგმანისთვის."
+          },
+          "target-language": {
+            "label": "სამიზნე ენა",
+            "tooltip": "ენა, რომელზეც ტექსტი ითარგმნება.",
+            "options": {
+              "auto": "Follow app language",
+              "zh-CN": "简体中文",
+              "zh-TW": "繁體中文",
+              "en": "English",
+              "ja": "日本語",
+              "ko": "한국어",
+              "fr": "Français",
+              "de": "Deutsch",
+              "es": "Español",
+              "pt-BR": "Português (Brasil)",
+              "pt-PT": "Português (Portugal)",
+              "it": "Italiano",
+              "nl": "Nederlands",
+              "ru": "Русский",
+              "uk": "Українська",
+              "pl": "Polski",
+              "tr": "Türkçe",
+              "ar": "العربية",
+              "he": "עברית",
+              "fa": "فارسی",
+              "hi": "हिन्दी",
+              "bn": "বাংলা",
+              "ur": "اردو",
+              "ta": "தமிழ்",
+              "te": "తెలుగు",
+              "mr": "मराठी",
+              "id": "Bahasa Indonesia",
+              "ms": "Bahasa Melayu",
+              "vi": "Tiếng Việt",
+              "th": "ไทย",
+              "fil": "Filipino",
+              "sw": "Kiswahili",
+              "sv": "Svenska",
+              "no": "Norsk",
+              "da": "Dansk",
+              "fi": "Suomi",
+              "cs": "Čeština",
+              "ro": "Română",
+              "hu": "Magyar",
+              "el": "Ελληνικά",
+              "bg": "Български",
+              "sr": "Српски",
+              "hr": "Hrvatski",
+              "sk": "Slovenčina",
+              "lt": "Lietuvių"
+            }
           },
           "configure": {
-            "label": "Configure API key & model…",
-            "tooltip": "Set provider-specific translation options."
+            "label": "API გასაღების და მოდელის კონფიგურაცია…",
+            "tooltip": "პროვაიდერის სპეციფიკური თარგმანის პარამეტრების დაყენება."
           },
-          "enabled": {
-            "label": "Enable translation",
-            "tooltip": "Show a translated line beneath each original lyric line."
-          },
-          "label": "Lyrics translation",
-          "provider": {
-            "label": "Provider",
-            "tooltip": "Which service to use for translation."
+          "clear-cache": {
+            "label": "თარგმანის ქეშის გასუფთავება",
+            "tooltip": "დისკზე შენახული ყველა ქეშირებული თარგმანის წაშლა."
           },
           "providers": {
+            "shared": {
+              "api-key": "API გასაღები",
+              "model": "მოდელი"
+            },
+            "openai-compatible": {
+              "name": "OpenAI თავსებადი",
+              "prompt-title": "OpenAI-თან თავსებადი პარამეტრები",
+              "prompt-label": "OpenAI-თან თავსებადი სერვერების გამოყენება, მათ შორის Ollama (ბაზის URL http://127.0.0.1:11434/v1, API რეჟიმი auto ან chat-completions).",
+              "base-url": "ბაზის URL",
+              "api-mode": "API რეჟიმი (responses / auto / chat-completions)"
+            },
             "anthropic": {
               "name": "Anthropic Claude",
-              "prompt-label": "Uses the native Anthropic Messages API.",
-              "prompt-title": "Anthropic settings"
+              "prompt-title": "Anthropic-ის პარამეტრები",
+              "prompt-label": "იყენებს Anthropic Messages API-ს."
             },
             "gemini": {
               "name": "Google Gemini",
-              "prompt-label": "Uses Google's Generative Language API (generateContent).",
-              "prompt-title": "Gemini settings"
-            },
-            "google-translate": {
-              "host": "Host",
-              "name": "Google Translate",
-              "prompt-label": "Uses the unofficial free Google Translate endpoint. No API key is required, but Google may rate-limit it.",
-              "prompt-title": "Google Translate settings"
+              "prompt-title": "Gemini-ის პარამეტრები",
+              "prompt-label": "იყენებს Google-ის Generative Language API-ს (generateContent)."
             },
             "local-cli": {
-              "command": "Command",
-              "engine": "Local CLI",
+              "name": "ლოკალური CLI",
+              "prompt-title": "ლოკალური CLI-ის პარამეტრები",
+              "prompt-label": "ლოკალურად ავტორიზებული Claude Code, Codex, ან Gemini CLI-ის გამოყენება. ბრძანება და მოდელი ავტომატურია; CLI იყენებს საკუთარ ნაგულისხმევს.",
+              "engine": "ლოკალური CLI",
               "engine-claude": "Claude Code",
               "engine-codex": "Codex",
               "engine-gemini": "Gemini CLI",
-              "name": "Local CLI",
-              "prompt-label": "Use a locally logged-in Claude Code, Codex, or Gemini CLI. The command and model are automatic; the CLI uses its own logged-in default.",
-              "prompt-title": "Local CLI settings",
-              "timeout": "Timeout seconds (15-600)"
+              "command": "ბრძანება",
+              "timeout": "დროის ამოწურვა წამებში (15-600)"
             },
-            "openai-compatible": {
-              "api-mode": "API mode (responses / auto / chat-completions)",
-              "base-url": "Base URL",
-              "name": "OpenAI compatible",
-              "prompt-label": "Use OpenAI-compatible servers, including Ollama (base URL http://127.0.0.1:11434/v1, API mode auto or chat-completions).",
-              "prompt-title": "OpenAI-compatible settings"
-            },
-            "shared": {
-              "api-key": "API key",
-              "model": "Model"
+            "google-translate": {
+              "name": "Google Translate",
+              "prompt-title": "Google Translate-ის პარამეტრები",
+              "prompt-label": "იყენებს არაოფიციალურ უფასო Google Translate-ის ბოლო წერტილს. API გასაღები არ არის საჭირო, მაგრამ Google-მა შეიძლება შეზღუდოს.",
+              "host": "ჰოსტი"
             }
-          },
-          "target-language": {
-            "label": "Target language",
-            "options": {
-              "ar": "العربية",
-              "auto": "Follow app language",
-              "bg": "Български",
-              "bn": "বাংলা",
-              "cs": "Čeština",
-              "da": "Dansk",
-              "de": "Deutsch",
-              "el": "Ελληνικά",
-              "en": "English",
-              "es": "Español",
-              "fa": "فارسی",
-              "fi": "Suomi",
-              "fil": "Filipino",
-              "fr": "Français",
-              "he": "עברית",
-              "hi": "हिन्दी",
-              "hr": "Hrvatski",
-              "hu": "Magyar",
-              "id": "Bahasa Indonesia",
-              "it": "Italiano",
-              "ja": "日本語",
-              "ko": "한국어",
-              "lt": "Lietuvių",
-              "mr": "मराठी",
-              "ms": "Bahasa Melayu",
-              "nl": "Nederlands",
-              "no": "Norsk",
-              "pl": "Polski",
-              "pt-BR": "Português (Brasil)",
-              "pt-PT": "Português (Portugal)",
-              "ro": "Română",
-              "ru": "Русский",
-              "sk": "Slovenčina",
-              "sr": "Српски",
-              "sv": "Svenska",
-              "sw": "Kiswahili",
-              "ta": "தமிழ்",
-              "te": "తెలుగు",
-              "th": "ไทย",
-              "tr": "Türkçe",
-              "uk": "Українська",
-              "ur": "اردو",
-              "vi": "Tiếng Việt",
-              "zh-CN": "简体中文",
-              "zh-TW": "繁體中文"
-            },
-            "tooltip": "The language to translate lyrics into."
-          },
-          "tooltip": "Translate lyrics and show the translated result line-by-line for display."
+          }
         }
       },
-      "name": "Synced Lyrics",
+      "name": "სინქრონიზებული ტექსტი",
       "refetch-btn": {
-        "fetching": "Fetching...",
-        "normal": "Refetch lyrics"
+        "fetching": "მიღება…",
+        "normal": "ტექსტის ხელახლა მიღება"
       },
       "warnings": {
-        "duration-mismatch": "⚠️ - The lyrics may be out of sync due to a duration mismatch.",
-        "inexact": "⚠️ - The lyrics for this song may not be exact",
-        "instrumental": "⚠️ - This is an instrumental song"
+        "duration-mismatch": "⚠️ - ტექსტი შეიძლება არასინქრონული იყოს ხანგრძლივობის შეუსაბამობის გამო.",
+        "inexact": "⚠️ - ამ სიმღერის ტექსტი შეიძლება არ იყოს ზუსტი",
+        "instrumental": "⚠️ - ეს არის ინსტრუმენტული სიმღერა"
       }
     },
     "taskbar-mediacontrol": {
-      "description": "Control playback from your Windows taskbar",
-      "name": "Taskbar Media Control"
+      "description": "დაკვრის კონტროლი Windows-ის დავალებების ზოლიდან",
+      "name": "დავალებების ზოლის მედია კონტროლი"
     },
     "touchbar": {
-      "description": "Adds a TouchBar widget for macOS users",
+      "description": "TouchBar ვიჯეტის დამატება macOS-ის მომხმარებლებისთვის",
       "name": "TouchBar"
     },
     "transparent-player": {
-      "description": "Makes the app window transparent",
+      "description": "აპლიკაციის ფანჯარას ხდის გამჭვირვალეს",
+      "name": "გამჭვირვალე პლეიერი",
       "menu": {
         "opacity": {
-          "label": "Opacity",
+          "label": "გამჭვირვალობა",
           "submenu": {
             "percent": "{{opacity}}%"
           }
         },
         "type": {
-          "label": "Type",
+          "label": "ტიპი",
           "submenu": {
-            "acrylic": "Acrylic",
+            "acrylic": "აკრილი",
             "mica": "Mica",
-            "none": "None",
-            "tabbed": "Tabbed"
+            "tabbed": "ჩანართებიანი",
+            "none": "არცერთი"
           }
         }
-      },
-      "name": "Transparent Player"
+      }
     },
     "tuna-obs": {
-      "description": "Integration with OBS's plugin Tuna",
+      "description": "OBS-ის პლაგინ Tuna-სთან ინტეგრაცია",
       "name": "Tuna OBS"
     },
     "unobtrusive-player": {
-      "description": "Prevents the player from popping up when playing a song",
-      "name": "Unobtrusive Player"
+      "description": "პლეიერის ამოხტომის თავიდან აცილება სიმღერის დაკვრისას",
+      "name": "შეუმჩნეველი პლეიერი"
     },
     "video-toggle": {
-      "description": "Adds a button to switch between Video/Song mode. can also optionally remove the whole video tab",
+      "description": "ამატებს ღილაკს ვიდეო/სიმღერის რეჟიმს შორის გადასართველად. ასევე შეუძლია მთლიანი ვიდეოს ჩანართის წაშლა",
       "menu": {
         "align": {
-          "label": "Alignment",
+          "label": "განლაგება",
           "submenu": {
-            "left": "Left",
-            "middle": "Middle",
-            "right": "Right"
+            "left": "მარცხნივ",
+            "middle": "ცენტრში",
+            "right": "მარჯვნივ"
           }
         },
-        "force-hide": "Force remove video tab",
+        "force-hide": "ვიდეოს ჩანართის ძალით წაშლა",
         "mode": {
           "label": "რეჟიმი",
           "submenu": {

@@ -144,7 +144,8 @@
               "disabled": "Gedeaktiveer",
               "enabled-and-hide-app": "Geaktiveer en versteek app",
               "enabled-and-show-app": "Geaktiveer en wys app",
-              "play-pause-on-click": "Speel/Onderbreek by klik"
+              "play-pause-on-click": "Speel/Onderbreek by klik",
+          "move-to-current-desktop": "Skuif na huidige virtuele lessenaar wanneer gewys"
             }
           },
           "visual-tweaks": {
@@ -242,6 +243,10 @@
         "enable-seekbar": "Aktiveer soekbalk tematisering"
       },
       "name": "Album Kleurtema"
+    },
+    "audio-only": {
+      "description": "Dwing klank-alleen-modus af — blokkeer alle videostrome op netwerk- en spelervlak om RAM en bandwydte te bespaar",
+      "name": "Slegs Klank"
     },
     "ambient-mode": {
       "description": "Pas 'n beligtingseffek toe deur sagte kleure van die video op jou skerm se agtergrond te gooi",
@@ -683,8 +688,9 @@
         "interactive-settings": {
           "label": "Interaktiewe Instellings",
           "submenu": {
-            "hide-button-text": "Versteek knoppieteks",
-            "refresh-on-play-pause": "Verfris by Speel/Onderbreek",
+              "hide-button-text": "Versteek knoppieteks",
+                "hover-controls": "Wys mini-speler wanneer oor strokie beweeg",
+                "refresh-on-play-pause": "Verfris by Speel/Onderbreek",
             "tray-controls": "Maak oop/toe by strokieklik"
           }
         },
@@ -697,6 +703,13 @@
     "performance-improvement": {
       "description": "Verbeter werkverrigting deur eksperimentele skrifte te aktiveer",
       "name": "Werkverrigtingverbetering [Beta]"
+    },
+    "playback-recovery": {
+      "description": "Herstel outomaties van vasgevalle, gestolde of dooie speeltoestande",
+      "menu": {
+        "log-to-console": "Teken herstelgebeure in die konsole aan"
+      },
+      "name": "Speelherstel"
     },
     "picture-in-picture": {
       "description": "Laat jou toe om die toep na beeld-in-beeld-modus te skakel",

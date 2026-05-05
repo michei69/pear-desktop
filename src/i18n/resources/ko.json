@@ -144,6 +144,7 @@
               "disabled": "비활성화",
               "enabled-and-hide-app": "활성화 및 앱 숨기기",
               "enabled-and-show-app": "활성화 및 앱 표시",
+              "move-to-current-desktop": "표시할 때 현재 가상 데스크톱으로 이동",
               "play-pause-on-click": "클릭 시 재생/일시 정지"
             }
           },
@@ -242,6 +243,10 @@
         "enable-seekbar": "재생바 색조 변경 활성화"
       },
       "name": "앨범 컬러 기반 테마"
+    },
+    "audio-only": {
+      "description": "오디오 전용 모드 강제 — 모든 비디오 스트림을 네트워크 및 플레이어 수준에서 차단하여 RAM과 대역폭을 절약합니다",
+      "name": "오디오 전용"
     },
     "ambient-mode": {
       "description": "영상의 간접 조명을 화면 배경에 투사하여 조명 효과를 적용합니다",
@@ -491,8 +496,8 @@
           "label": "상태 텍스트",
           "submenu": {
             "application": "{{applicationName}} 듣는 중",
-            "artist": "{아티스트} 듣는 중",
-            "title": "{곡 제목} 듣는 중"
+            "artist": "{artist} 듣는 중",
+            "title": "{song title} 듣는 중"
           }
         }
       },
@@ -684,6 +689,7 @@
           "label": "대화형 알림 설정",
           "submenu": {
             "hide-button-text": "버튼 텍스트 숨기기",
+            "hover-controls": "트레이에 마우스 올릴 시 미니 플레이어 표시",
             "refresh-on-play-pause": "재생/일시정지 시 새로고침",
             "tray-controls": "트레이 클릭 시 열기/닫기"
           }
@@ -697,6 +703,13 @@
     "performance-improvement": {
       "description": "실험적인 스크립트를 활성화하여 성능을 개선합니다",
       "name": "성능 개선 [베타]"
+    },
+    "playback-recovery": {
+      "description": "멈추거나 중단된 재생 상태에서 자동으로 복구합니다",
+      "menu": {
+        "log-to-console": "콘솔에 복구 이벤트 기록"
+      },
+      "name": "재생 복구"
     },
     "picture-in-picture": {
       "description": "앱을 PiP 모드로 전환할 수 있게 허용합니다",
@@ -843,22 +856,22 @@
       },
       "menu": {
         "convert-chinese-character": {
-          "label": "Convert Chinese character",
+          "label": "한자 변환",
           "submenu": {
             "disabled": {
               "label": "비활성화됨",
-              "tooltip": "Disable Chinese character conversion"
+              "tooltip": "한자 변환 비활성화"
             },
             "simplified-to-traditional": {
-              "label": "Simplified to Traditional",
-              "tooltip": "Convert Simplified Chinese to Traditional Chinese"
+              "label": "간체에서 번체로",
+              "tooltip": "간체 중국어를 번체 중국어로 변환"
             },
             "traditional-to-simplified": {
-              "label": "Traditional to Simplified",
-              "tooltip": "Convert Traditional Chinese to Simplified Chinese"
+              "label": "번체에서 간체로",
+              "tooltip": "번체 중국어를 간체 중국어로 변환"
             }
           },
-          "tooltip": "Convert Chinese character to Traditional or Simplified"
+          "tooltip": "한자를 번체 또는 간체로 변환합니다"
         },
         "default-text-string": {
           "label": "가사 사이에 표시할 문자",
@@ -887,22 +900,22 @@
           "tooltip": "현재 줄에 적용할 효과를 선택합니다"
         },
         "lyrics-font-size": {
-          "label": "Lyrics font size",
+          "label": "가사 글꼴 크기",
           "submenu": {
             "large": {
-              "label": "Large",
-              "tooltip": "Use the original larger lyrics size"
+              "label": "크게",
+              "tooltip": "원래의 큰 가사 크기 사용"
             },
             "medium": {
-              "label": "Medium",
-              "tooltip": "Use a balanced lyrics size"
+              "label": "보통",
+              "tooltip": "균형 잡힌 가사 크기 사용"
             },
             "small": {
-              "label": "Small",
-              "tooltip": "Use a more compact lyrics size"
+              "label": "작게",
+              "tooltip": "더 작은 가사 크기 사용"
             }
           },
-          "tooltip": "Choose how large the lyrics text should be"
+          "tooltip": "가사 텍스트의 크기를 선택합니다"
         },
         "precise-timing": {
           "label": "가사를 최대한 정교하게 동기화",
@@ -930,67 +943,67 @@
         },
         "translation": {
           "clear-cache": {
-            "label": "Clear translation cache",
-            "tooltip": "Delete all cached translations stored on disk."
+            "label": "번역 캐시 삭제",
+            "tooltip": "디스크에 저장된 모든 캐시된 번역을 삭제합니다."
           },
           "configure": {
-            "label": "Configure API key & model…",
-            "tooltip": "Set provider-specific translation options."
+            "label": "API 키 및 모델 구성…",
+            "tooltip": "제공자별 번역 옵션을 설정합니다."
           },
           "enabled": {
-            "label": "Enable translation",
-            "tooltip": "Show a translated line beneath each original lyric line."
+            "label": "번역 활성화",
+            "tooltip": "원본 가사 줄 아래에 번역된 줄을 표시합니다."
           },
-          "label": "Lyrics translation",
+          "label": "가사 번역",
           "provider": {
-            "label": "Provider",
-            "tooltip": "Which service to use for translation."
+            "label": "제공자",
+            "tooltip": "번역에 사용할 서비스입니다."
           },
           "providers": {
             "anthropic": {
               "name": "Anthropic Claude",
-              "prompt-label": "Uses the native Anthropic Messages API.",
-              "prompt-title": "Anthropic settings"
+              "prompt-label": "기본 Anthropic Messages API를 사용합니다.",
+              "prompt-title": "Anthropic 설정"
             },
             "gemini": {
               "name": "Google Gemini",
-              "prompt-label": "Uses Google's Generative Language API (generateContent).",
-              "prompt-title": "Gemini settings"
+              "prompt-label": "Google 생성형 언어 API(generateContent)를 사용합니다.",
+              "prompt-title": "Gemini 설정"
             },
             "google-translate": {
-              "host": "Host",
+              "host": "호스트",
               "name": "Google Translate",
-              "prompt-label": "Uses the unofficial free Google Translate endpoint. No API key is required, but Google may rate-limit it.",
-              "prompt-title": "Google Translate settings"
+              "prompt-label": "비공식 무료 Google Translate 엔드포인트를 사용합니다. API 키가 필요하지 않지만 Google에서 속도 제한을 둘 수 있습니다.",
+              "prompt-title": "Google Translate 설정"
             },
             "local-cli": {
-              "command": "Command",
-              "engine": "Local CLI",
+              "command": "명령어",
+              "engine": "로컬 CLI",
               "engine-claude": "Claude Code",
               "engine-codex": "Codex",
               "engine-gemini": "Gemini CLI",
-              "name": "Local CLI",
-              "prompt-label": "Use a locally logged-in Claude Code, Codex, or Gemini CLI. The command and model are automatic; the CLI uses its own logged-in default.",
-              "prompt-title": "Local CLI settings",
-              "timeout": "Timeout seconds (15-600)"
+              "name": "로컬 CLI",
+              "prompt-label": "로컬에 로그인된 Claude Code, Codex 또는 Gemini CLI를 사용합니다. 명령어와 모델은 자동으로 설정되며 CLI는 자체 로그인된 기본값을 사용합니다.",
+              "prompt-title": "로컬 CLI 설정",
+              "timeout": "시간 초과(초) (15-600)"
             },
             "openai-compatible": {
-              "api-mode": "API mode (responses / auto / chat-completions)",
-              "base-url": "Base URL",
-              "name": "OpenAI compatible",
-              "prompt-label": "Use OpenAI-compatible servers, including Ollama (base URL http://127.0.0.1:11434/v1, API mode auto or chat-completions).",
-              "prompt-title": "OpenAI-compatible settings"
+              "api-mode": "API 모드 (responses / auto / chat-completions)",
+              "base-url": "기본 URL",
+              "name": "OpenAI 호환",
+              "prompt-label": "Ollama(기본 URL http://127.0.0.1:11434/v1, API 모드 auto 또는 chat-completions)를 포함한 OpenAI 호환 서버를 사용합니다.",
+              "prompt-title": "OpenAI 호환 설정"
             },
             "shared": {
-              "api-key": "API key",
-              "model": "Model"
+              "api-key": "API 키",
+              "model": "모델"
             }
           },
           "target-language": {
-            "label": "Target language",
+            "label": "번역 대상 언어",
             "options": {
               "ar": "العربية",
-              "auto": "Follow app language",
+              "auto": "앱 언어에 따름",
               "bg": "Български",
               "bn": "বাংলা",
               "cs": "Čeština",
@@ -1035,9 +1048,9 @@
               "zh-CN": "简体中文",
               "zh-TW": "繁體中文"
             },
-            "tooltip": "The language to translate lyrics into."
+            "tooltip": "가사를 번역할 언어입니다."
           },
-          "tooltip": "Translate lyrics and show the translated result line-by-line for display."
+          "tooltip": "가사를 번역하고 번역 결과를 한 줄씩 표시합니다."
         }
       },
       "name": "싱크 가사",

@@ -144,6 +144,7 @@
               "disabled": "Di-napagana",
               "enabled-and-hide-app": "Napagana at natago ang app",
               "enabled-and-show-app": "Napagana at napakita ang app",
+              "move-to-current-desktop": "Ilipat sa kasalukuyang virtual desktop kapag ipinakita",
               "play-pause-on-click": "Mag play/pause kada click"
             }
           },
@@ -162,7 +163,7 @@
                 "force-show": "Pilitang ipakita",
                 "hide": "Itago",
                 "label": "Mga Like na button",
-                "swap": "Swap like buttons order"
+                "swap": "Pagpalitin ang ayos ng mga like button"
               },
               "remove-upgrade-button": "Tanggalin ang upgrade na button",
               "theme": {
@@ -239,9 +240,13 @@
             "percent": "{{ratio}}%"
           }
         },
-        "enable-seekbar": "Enable seekbar theming"
+        "enable-seekbar": "Paganahin ang pagte-tema ng seekbar"
       },
       "name": "Tema ng Kulay ng Album"
+    },
+    "audio-only": {
+      "description": "Pinipilit ang audio-only mode — binoblock ang lahat ng video stream sa network at player level para makatipid ng RAM at bandwidth",
+      "name": "Audio Lamang"
     },
     "ambient-mode": {
       "description": "Naglalapat ng lighting effect sa pamamagitan ng pag-cast ng mga magiliw na kulay mula sa video, sa background ng iyong screen",
@@ -286,7 +291,7 @@
           "label": "Gumamit ng fullscreen"
         }
       },
-      "name": "Ambient Mode"
+      "name": "Kapaligirang Mode"
     },
     "amuse": {
       "description": "Nagdaragdag ng suporta sa {{applicationName}} para sa Amuse now playing widget ng 6K Labs",
@@ -322,24 +327,24 @@
         "hostname": {
           "label": "Hostname"
         },
-        "https": {
-          "label": "HTTPS & Certificates",
-          "submenu": {
-            "cert": {
-              "dialogTitle": "Select HTTPS certificate file",
-              "label": "Certificate file (.crt/.pem)"
-            },
-            "enable-https": {
-              "label": "Enable HTTPS"
-            },
-            "key": {
-              "dialogTitle": "Select HTTPS private key file",
-              "label": "Private key file (.key/.pem)"
-            }
-          }
-        },
         "port": {
           "label": "Port"
+        },
+        "https": {
+          "label": "HTTPS at Mga Sertipiko",
+          "submenu": {
+            "enable-https": {
+              "label": "Paganahin ang HTTPS"
+            },
+            "cert": {
+              "label": "Sertipikong file (.crt/.pem)",
+              "dialogTitle": "Pumili ng HTTPS na sertipikong file"
+            },
+            "key": {
+              "label": "Pribadong key file (.key/.pem)",
+              "dialogTitle": "Pumili ng HTTPS na pribadong key file"
+            }
+          }
         }
       },
       "name": "API Server [Beta]",
@@ -399,7 +404,7 @@
       "name": "Tagapili ng Caption",
       "prompt": {
         "selector": {
-          "label": "Kasalukuyang wika ng caption:{{language}}",
+          "label": "Kasalukuyang wika ng caption: {{language}}",
           "none": "Wala",
           "title": "Pumili ng wika ng caption"
         }
@@ -414,15 +419,15 @@
       }
     },
     "clock": {
-      "description": "Add a clock to the navigation bar",
+      "description": "Magdagdag ng orasan sa bar ng nabigasyon",
+      "name": "Orasan",
       "menu": {
         "format": {
-          "24-hour-format": "24-Hour Format",
-          "display-seconds": "Display Seconds",
-          "label": "Format"
+          "label": "Format",
+          "display-seconds": "Ipakita ang mga Segundo",
+          "24-hour-format": "Format na 24-Oras"
         }
-      },
-      "name": "Clock"
+      }
     },
     "compact-sidebar": {
       "description": "Laging i-set ang sidebar sa compact mode",
@@ -488,10 +493,10 @@
         "play-on-application": "Patugtugin sa {{applicationName}}",
         "set-inactivity-timeout": "I-set ang inactivity timeout",
         "set-status-display-type": {
-          "label": "Status text",
+          "label": "Teksto ng estado",
           "submenu": {
-            "application": "Kumikinig sa {{applicationName}}",
-            "artist": "Nakikinig sa {artist}",
+            "application": "Nakikinig sa {{applicationName}}",
+            "artist": "Nakikinig kay {artist}",
             "title": "Nakikinig sa {song title}"
           }
         }
@@ -607,7 +612,7 @@
     "lyrics-genius": {
       "description": "Nagdaragdag ng suporta sa lyrics para sa karamihan ng kanta",
       "menu": {
-        "romanized-lyrics": "Romanized Lyrics"
+        "romanized-lyrics": "Romanisadong Lyrics"
       },
       "name": "Lyrics Genius",
       "renderer": {
@@ -684,6 +689,7 @@
           "label": "Mga Interactive na Setting",
           "submenu": {
             "hide-button-text": "Itago ang button na texto",
+            "hover-controls": "Ipakita ang mini-player kapag naka-hover sa tray",
             "refresh-on-play-pause": "I-refresh sa Pag-play/Pag-pause",
             "tray-controls": "Buksan/Isara sa pag-click sa tray"
           }
@@ -697,6 +703,13 @@
     "performance-improvement": {
       "description": "Pagbutihin ang performance sa pamamagitan ng pagpapagana ng mga mapanganib na script",
       "name": "Pagpapabuti ng performance [Beta]"
+    },
+    "playback-recovery": {
+      "description": "Awtomatikong bumabawi mula sa stuck, stalled, o dead na playback states",
+      "menu": {
+        "log-to-console": "I-log ang mga recovery event sa console"
+      },
+      "name": "Pagbawi ng Playback"
     },
     "picture-in-picture": {
       "description": "Payagan ang pag-palit ng app sa picture-in-picture mode",
@@ -842,37 +855,27 @@
         "not-found": "⚠️ Walang nakitang lyrics para sa kantang ito."
       },
       "menu": {
-        "convert-chinese-character": {
-          "label": "Convert Chinese character",
-          "submenu": {
-            "disabled": {
-              "label": "Disabled",
-              "tooltip": "Disable Chinese character conversion"
-            },
-            "simplified-to-traditional": {
-              "label": "Simplified to Traditional",
-              "tooltip": "Convert Simplified Chinese to Traditional Chinese"
-            },
-            "traditional-to-simplified": {
-              "label": "Traditional to Simplified",
-              "tooltip": "Convert Traditional Chinese to Simplified Chinese"
-            }
-          },
-          "tooltip": "Convert Chinese character to Traditional or Simplified"
+        "preferred-provider": {
+          "label": "Ginustong Provider",
+          "tooltip": "Pumili ng default na provider para gagamitin",
+          "none": {
+            "label": "Wala",
+            "tooltip": "Walang ginustong provider"
+          }
         },
         "default-text-string": {
           "label": "Default na character sa pagitan ng lyrics",
           "tooltip": "Pumili ng default na character na gagamitin sa pagitan ng lyrics"
         },
         "line-effect": {
-          "label": "Effect ng Linya",
+          "label": "Epekto ng Linya",
           "submenu": {
             "fancy": {
               "label": "Magarbo",
-              "tooltip": "Gumamit ng malaki, mala-app na effect sa kasalukuyang linya"
+              "tooltip": "Gumamit ng malaki, mala-app na epekto sa kasalukuyang linya"
             },
             "focus": {
-              "label": "Focus",
+              "label": "Pokus",
               "tooltip": "Gawing puti lamang ang kasalukuyang linya"
             },
             "offset": {
@@ -884,37 +887,29 @@
               "tooltip": "I-scale ang kasalukuyang linya"
             }
           },
-          "tooltip": "Pumili ng effect na ilalapat sa kasalukuyang linya"
+          "tooltip": "Pumili ng epekto na ilalapat sa kasalukuyang linya"
         },
         "lyrics-font-size": {
-          "label": "Lyrics font size",
+          "label": "Laki ng font ng lyrics",
           "submenu": {
-            "large": {
-              "label": "Large",
-              "tooltip": "Use the original larger lyrics size"
+            "small": {
+              "label": "Maliit",
+              "tooltip": "Gumamit ng mas siksik na laki ng lyrics"
             },
             "medium": {
-              "label": "Medium",
-              "tooltip": "Use a balanced lyrics size"
+              "label": "Katamtaman",
+              "tooltip": "Gumamit ng balanseng laki ng lyrics"
             },
-            "small": {
-              "label": "Small",
-              "tooltip": "Use a more compact lyrics size"
+            "large": {
+              "label": "Malaki",
+              "tooltip": "Gumamit ng orihinal na mas malaking laki ng lyrics"
             }
           },
-          "tooltip": "Choose how large the lyrics text should be"
+          "tooltip": "Pumili kung gaano kalaki ang teksto ng lyrics"
         },
         "precise-timing": {
           "label": "Gawing perpektong naka-sync ang lyrics",
           "tooltip": "Kalkulahin sa millisecond ang pagpapakita ng susunod na linya (maaaring magkaroon ng maliit na epekto sa performance)"
-        },
-        "preferred-provider": {
-          "label": "Napiling Provider",
-          "none": {
-            "label": "Wala",
-            "tooltip": "Walang napiling provider"
-          },
-          "tooltip": "Pumili ng default na provider para gagamitin"
         },
         "romanization": {
           "label": "I-romanize ang lyrics",
@@ -928,122 +923,140 @@
           "label": "Ipakita ang mga time code",
           "tooltip": "Ipakita ang mga time code kasunod sa lyrics"
         },
+        "convert-chinese-character": {
+          "label": "I-convert ang character na Tsino",
+          "submenu": {
+            "disabled": {
+              "label": "Di-pinagana",
+              "tooltip": "Huwag paganahin ang conversion ng character na Tsino"
+            },
+            "simplified-to-traditional": {
+              "label": "Pinasimple patungong Tradisyonal",
+              "tooltip": "I-convert ang Pinasimpleng Tsino sa Tradisyonal na Tsino"
+            },
+            "traditional-to-simplified": {
+              "label": "Tradisyonal patungong Pinasimple",
+              "tooltip": "I-convert ang Tradisyonal na Tsino sa Pinasimpleng Tsino"
+            }
+          },
+          "tooltip": "I-convert ang character na Tsino sa Tradisyonal o Pinasimple"
+        },
         "translation": {
-          "clear-cache": {
-            "label": "Clear translation cache",
-            "tooltip": "Delete all cached translations stored on disk."
-          },
-          "configure": {
-            "label": "Configure API key & model…",
-            "tooltip": "Set provider-specific translation options."
-          },
+          "label": "Pagsasalin ng lyrics",
+          "tooltip": "Isalin ang lyrics at ipakita ang isinalin na resulta bawat linya para sa display.",
           "enabled": {
-            "label": "Enable translation",
-            "tooltip": "Show a translated line beneath each original lyric line."
+            "label": "Paganahin ang pagsasalin",
+            "tooltip": "Magpakita ng isinalin na linya sa ilalim ng bawat orihinal na linya ng liriko."
           },
-          "label": "Lyrics translation",
           "provider": {
             "label": "Provider",
-            "tooltip": "Which service to use for translation."
+            "tooltip": "Aling serbisyo ang gagamitin para sa pagsasalin."
+          },
+          "target-language": {
+            "label": "Target na wika",
+            "tooltip": "Ang wika kung saan isasalin ang lyrics.",
+            "options": {
+              "auto": "Sundin ang wika ng app",
+              "zh-CN": "简体中文",
+              "zh-TW": "繁體中文",
+              "en": "English",
+              "ja": "日本語",
+              "ko": "한국어",
+              "fr": "Français",
+              "de": "Deutsch",
+              "es": "Español",
+              "pt-BR": "Português (Brasil)",
+              "pt-PT": "Português (Portugal)",
+              "it": "Italiano",
+              "nl": "Nederlands",
+              "ru": "Русский",
+              "uk": "Українська",
+              "pl": "Polski",
+              "tr": "Türkçe",
+              "ar": "العربية",
+              "he": "עברית",
+              "fa": "فارسی",
+              "hi": "हिन्दी",
+              "bn": "বাংলা",
+              "ur": "اردو",
+              "ta": "தமிழ்",
+              "te": "తెలుగు",
+              "mr": "मराठी",
+              "id": "Bahasa Indonesia",
+              "ms": "Bahasa Melayu",
+              "vi": "Tiếng Việt",
+              "th": "ไทย",
+              "fil": "Filipino",
+              "sw": "Kiswahili",
+              "sv": "Svenska",
+              "no": "Norsk",
+              "da": "Dansk",
+              "fi": "Suomi",
+              "cs": "Čeština",
+              "ro": "Română",
+              "hu": "Magyar",
+              "el": "Ελληνικά",
+              "bg": "Български",
+              "sr": "Српски",
+              "hr": "Hrvatski",
+              "sk": "Slovenčina",
+              "lt": "Lietuvių"
+            }
+          },
+          "configure": {
+            "label": "I-configure ang API key at modelo…",
+            "tooltip": "Itakda ang mga opsyon sa pagsasalin na tukoy sa provider."
+          },
+          "clear-cache": {
+            "label": "Burahin ang cache ng pagsasalin",
+            "tooltip": "Tanggalin ang lahat ng naka-cache na pagsasalin na nakaimbak sa disk."
           },
           "providers": {
+            "shared": {
+              "api-key": "API key",
+              "model": "Modelo"
+            },
+            "openai-compatible": {
+              "name": "OpenAI compatible",
+              "prompt-title": "Mga setting na compatible sa OpenAI",
+              "prompt-label": "Gumamit ng mga server na compatible sa OpenAI, kasama ang Ollama (base URL http://127.0.0.1:11434/v1, API mode auto o chat-completions).",
+              "base-url": "Base URL",
+              "api-mode": "API mode (responses / auto / chat-completions)"
+            },
             "anthropic": {
               "name": "Anthropic Claude",
-              "prompt-label": "Uses the native Anthropic Messages API.",
-              "prompt-title": "Anthropic settings"
+              "prompt-title": "Mga setting ng Anthropic",
+              "prompt-label": "Gumagamit ng native na Anthropic Messages API."
             },
             "gemini": {
               "name": "Google Gemini",
-              "prompt-label": "Uses Google's Generative Language API (generateContent).",
-              "prompt-title": "Gemini settings"
-            },
-            "google-translate": {
-              "host": "Host",
-              "name": "Google Translate",
-              "prompt-label": "Uses the unofficial free Google Translate endpoint. No API key is required, but Google may rate-limit it.",
-              "prompt-title": "Google Translate settings"
+              "prompt-title": "Mga setting ng Gemini",
+              "prompt-label": "Gumagamit ng Generative Language API ng Google (generateContent)."
             },
             "local-cli": {
-              "command": "Command",
-              "engine": "Local CLI",
+              "name": "Lokal na CLI",
+              "prompt-title": "Mga setting ng lokal na CLI",
+              "prompt-label": "Gumamit ng lokal na naka-log in na Claude Code, Codex, o Gemini CLI. Ang command at modelo ay awtomatiko; ginagamit ng CLI ang sarili nitong default na naka-log in.",
+              "engine": "Lokal na CLI",
               "engine-claude": "Claude Code",
               "engine-codex": "Codex",
               "engine-gemini": "Gemini CLI",
-              "name": "Local CLI",
-              "prompt-label": "Use a locally logged-in Claude Code, Codex, or Gemini CLI. The command and model are automatic; the CLI uses its own logged-in default.",
-              "prompt-title": "Local CLI settings",
-              "timeout": "Timeout seconds (15-600)"
+              "command": "Command",
+              "timeout": "Timeout na segundo (15-600)"
             },
-            "openai-compatible": {
-              "api-mode": "API mode (responses / auto / chat-completions)",
-              "base-url": "Base URL",
-              "name": "OpenAI compatible",
-              "prompt-label": "Use OpenAI-compatible servers, including Ollama (base URL http://127.0.0.1:11434/v1, API mode auto or chat-completions).",
-              "prompt-title": "OpenAI-compatible settings"
-            },
-            "shared": {
-              "api-key": "API key",
-              "model": "Model"
+            "google-translate": {
+              "name": "Google Translate",
+              "prompt-title": "Mga setting ng Google Translate",
+              "prompt-label": "Gumagamit ng hindi opisyal na libreng Google Translate endpoint. Hindi kailangan ng API key, ngunit maaaring i-rate-limit ito ng Google.",
+              "host": "Host"
             }
-          },
-          "target-language": {
-            "label": "Target language",
-            "options": {
-              "ar": "العربية",
-              "auto": "Follow app language",
-              "bg": "Български",
-              "bn": "বাংলা",
-              "cs": "Čeština",
-              "da": "Dansk",
-              "de": "Deutsch",
-              "el": "Ελληνικά",
-              "en": "English",
-              "es": "Español",
-              "fa": "فارسی",
-              "fi": "Suomi",
-              "fil": "Filipino",
-              "fr": "Français",
-              "he": "עברית",
-              "hi": "हिन्दी",
-              "hr": "Hrvatski",
-              "hu": "Magyar",
-              "id": "Bahasa Indonesia",
-              "it": "Italiano",
-              "ja": "日本語",
-              "ko": "한국어",
-              "lt": "Lietuvių",
-              "mr": "मराठी",
-              "ms": "Bahasa Melayu",
-              "nl": "Nederlands",
-              "no": "Norsk",
-              "pl": "Polski",
-              "pt-BR": "Português (Brasil)",
-              "pt-PT": "Português (Portugal)",
-              "ro": "Română",
-              "ru": "Русский",
-              "sk": "Slovenčina",
-              "sr": "Српски",
-              "sv": "Svenska",
-              "sw": "Kiswahili",
-              "ta": "தமிழ்",
-              "te": "తెలుగు",
-              "th": "ไทย",
-              "tr": "Türkçe",
-              "uk": "Українська",
-              "ur": "اردو",
-              "vi": "Tiếng Việt",
-              "zh-CN": "简体中文",
-              "zh-TW": "繁體中文"
-            },
-            "tooltip": "The language to translate lyrics into."
-          },
-          "tooltip": "Translate lyrics and show the translated result line-by-line for display."
+          }
         }
       },
-      "name": "Pag-sync ng Lyrics",
+      "name": "Naka-sync na Lyrics",
       "refetch-btn": {
-        "fetching": "Nag-fe-fetch...",
-        "normal": "I-fetch muli ang lyrics"
+        "fetching": "Kinukuha...",
+        "normal": "Kunin muli ang lyrics"
       },
       "warnings": {
         "duration-mismatch": "⚠️ - Maaaring hindi naka-sync ang lyrics dahil sa hindi pagkakatugma ng duration.",
@@ -1061,9 +1074,10 @@
     },
     "transparent-player": {
       "description": "Gawing transparent ang app window",
+      "name": "Transparent na Player",
       "menu": {
         "opacity": {
-          "label": "Opacity",
+          "label": "Kalabuan (Opacity)",
           "submenu": {
             "percent": "{{opacity}}%"
           }
@@ -1073,12 +1087,11 @@
           "submenu": {
             "acrylic": "Acrylic",
             "mica": "Mica",
-            "none": "Wala",
-            "tabbed": "Naka-tab"
+            "tabbed": "Naka-tab",
+            "none": "Wala"
           }
         }
-      },
-      "name": "Transparent na Player"
+      }
     },
     "tuna-obs": {
       "description": "Integrasyon kasama ang Tuna na OBS plugin",
@@ -1103,9 +1116,9 @@
         "mode": {
           "label": "Mode",
           "submenu": {
-            "custom": "Custom toggle",
+            "custom": "Custom na toggle",
             "disabled": "Di-napagana",
-            "native": "Native toggle"
+            "native": "Native na toggle"
           }
         }
       },

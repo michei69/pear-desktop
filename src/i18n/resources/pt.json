@@ -144,7 +144,8 @@
               "disabled": "Desativada",
               "enabled-and-hide-app": "Ativada e ocultar aplicação",
               "enabled-and-show-app": "Ativada e a mostrar aplicação",
-              "play-pause-on-click": "Reprodução/Pausa ao clicar"
+              "play-pause-on-click": "Reprodução/Pausa ao clicar",
+              "move-to-current-desktop": "Mover para o ambiente de trabalho virtual atual ao mostrar"
             }
           },
           "visual-tweaks": {
@@ -685,7 +686,8 @@
           "submenu": {
             "hide-button-text": "Ocultar texto do botão",
             "refresh-on-play-pause": "Recarregar ao reproduzir/pausa",
-            "tray-controls": "Abrir/fechar com um clique na bandeja"
+            "tray-controls": "Abrir/fechar com um clique na bandeja",
+            "hover-controls": "Mostrar mini-reprodutor ao passar o rato sobre a bandeja"
           }
         },
         "priority": "Prioridade da notificação",
@@ -887,22 +889,22 @@
           "tooltip": "Escolha o efeito para aplicar à linha atual"
         },
         "lyrics-font-size": {
-          "label": "Lyrics font size",
+          "label": "Tamanho da fonte das letras",
           "submenu": {
             "large": {
-              "label": "Large",
-              "tooltip": "Use the original larger lyrics size"
+              "label": "Grande",
+              "tooltip": "Utilizar o tamanho de letra maior original"
             },
             "medium": {
-              "label": "Medium",
-              "tooltip": "Use a balanced lyrics size"
+              "label": "Médio",
+              "tooltip": "Utilizar um tamanho de letra equilibrado"
             },
             "small": {
-              "label": "Small",
-              "tooltip": "Use a more compact lyrics size"
+              "label": "Pequeno",
+              "tooltip": "Utilizar um tamanho de letra mais compacto"
             }
           },
-          "tooltip": "Choose how large the lyrics text should be"
+          "tooltip": "Escolha o tamanho do texto das letras"
         },
         "precise-timing": {
           "label": "Sincronização perfeita da entre letra e música",
@@ -930,67 +932,67 @@
         },
         "translation": {
           "clear-cache": {
-            "label": "Clear translation cache",
-            "tooltip": "Delete all cached translations stored on disk."
+            "label": "Limpar cache de tradução",
+            "tooltip": "Eliminar todas as traduções em cache armazenadas no disco."
           },
           "configure": {
-            "label": "Configure API key & model…",
-            "tooltip": "Set provider-specific translation options."
+            "label": "Configurar chave API e modelo…",
+            "tooltip": "Definir opções de tradução específicas do fornecedor."
           },
           "enabled": {
-            "label": "Enable translation",
-            "tooltip": "Show a translated line beneath each original lyric line."
+            "label": "Ativar tradução",
+            "tooltip": "Mostrar uma linha traduzida abaixo de cada linha original da letra."
           },
-          "label": "Lyrics translation",
+          "label": "Tradução de letras",
           "provider": {
-            "label": "Provider",
-            "tooltip": "Which service to use for translation."
+            "label": "Fornecedor",
+            "tooltip": "Qual serviço utilizar para tradução."
           },
           "providers": {
             "anthropic": {
               "name": "Anthropic Claude",
-              "prompt-label": "Uses the native Anthropic Messages API.",
-              "prompt-title": "Anthropic settings"
+              "prompt-label": "Utiliza a API nativa Anthropic Messages.",
+              "prompt-title": "Configurações do Anthropic"
             },
             "gemini": {
               "name": "Google Gemini",
-              "prompt-label": "Uses Google's Generative Language API (generateContent).",
-              "prompt-title": "Gemini settings"
+              "prompt-label": "Utiliza a API Google Generative Language (generateContent).",
+              "prompt-title": "Configurações do Gemini"
             },
             "google-translate": {
               "host": "Host",
               "name": "Google Translate",
-              "prompt-label": "Uses the unofficial free Google Translate endpoint. No API key is required, but Google may rate-limit it.",
-              "prompt-title": "Google Translate settings"
+              "prompt-label": "Utiliza o endpoint gratuito não oficial do Google Translate. Não requer chave API, mas o Google pode aplicar limites de taxa.",
+              "prompt-title": "Configurações do Google Translate"
             },
             "local-cli": {
-              "command": "Command",
-              "engine": "Local CLI",
+              "command": "Comando",
+              "engine": "CLI Local",
               "engine-claude": "Claude Code",
               "engine-codex": "Codex",
               "engine-gemini": "Gemini CLI",
-              "name": "Local CLI",
-              "prompt-label": "Use a locally logged-in Claude Code, Codex, or Gemini CLI. The command and model are automatic; the CLI uses its own logged-in default.",
-              "prompt-title": "Local CLI settings",
-              "timeout": "Timeout seconds (15-600)"
+              "name": "CLI Local",
+              "prompt-label": "Utilizar um Claude Code, Codex ou Gemini CLI com sessão iniciada localmente. O comando e o modelo são automáticos; o CLI utiliza o seu próprio padrão com sessão iniciada.",
+              "prompt-title": "Configurações do CLI Local",
+              "timeout": "Segundos de timeout (15-600)"
             },
             "openai-compatible": {
-              "api-mode": "API mode (responses / auto / chat-completions)",
-              "base-url": "Base URL",
-              "name": "OpenAI compatible",
-              "prompt-label": "Use OpenAI-compatible servers, including Ollama (base URL http://127.0.0.1:11434/v1, API mode auto or chat-completions).",
-              "prompt-title": "OpenAI-compatible settings"
+              "api-mode": "Modo API (responses / auto / chat-completions)",
+              "base-url": "URL base",
+              "name": "Compatível com OpenAI",
+              "prompt-label": "Utilizar servidores compatíveis com OpenAI, incluindo Ollama (URL base http://127.0.0.1:11434/v1, modo API auto ou chat-completions).",
+              "prompt-title": "Configurações compatíveis com OpenAI"
             },
             "shared": {
-              "api-key": "API key",
-              "model": "Model"
+              "api-key": "Chave API",
+              "model": "Modelo"
             }
           },
           "target-language": {
-            "label": "Target language",
+            "label": "Idioma de destino",
             "options": {
               "ar": "العربية",
-              "auto": "Follow app language",
+              "auto": "Seguir idioma da aplicação",
               "bg": "Български",
               "bn": "বাংলা",
               "cs": "Čeština",
@@ -1035,9 +1037,9 @@
               "zh-CN": "简体中文",
               "zh-TW": "繁體中文"
             },
-            "tooltip": "The language to translate lyrics into."
+            "tooltip": "O idioma para o qual as letras serão traduzidas."
           },
-          "tooltip": "Translate lyrics and show the translated result line-by-line for display."
+          "tooltip": "Traduzir letras e mostrar o resultado traduzido linha por linha."
         }
       },
       "name": "Letras sincronizadas",
@@ -1121,6 +1123,17 @@
         "visualizer-type": "Tipo de visualizador"
       },
       "name": "Visualizador"
+    },
+    "audio-only": {
+      "description": "Força o modo apenas áudio — bloqueia todos os fluxos de vídeo ao nível da rede e do reprodutor para poupar RAM e largura de banda",
+      "name": "Apenas Áudio"
+    },
+    "playback-recovery": {
+      "description": "Recupera automaticamente de estados de reprodução bloqueados, parados ou inativos",
+      "menu": {
+        "log-to-console": "Registar eventos de recuperação na consola"
+      },
+      "name": "Recuperação de Reprodução"
     }
   }
 }

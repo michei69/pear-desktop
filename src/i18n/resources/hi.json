@@ -15,7 +15,7 @@
   },
   "language": {
     "code": "hi",
-    "local-name": "हिंदी",
+    "local-name": "हिन्दी",
     "name": "Hindi"
   },
   "main": {
@@ -144,7 +144,8 @@
               "disabled": "बंद किया गया है",
               "enabled-and-hide-app": "सक्रिय है और एप छुपाएं",
               "enabled-and-show-app": "सक्रिय है और एप दिखाएं",
-              "play-pause-on-click": "क्लिक पर प्ले/पोज"
+              "play-pause-on-click": "क्लिक पर प्ले/पोज",
+              "move-to-current-desktop": "दिखाने पर वर्तमान वर्चुअल डेस्कटॉप पर ले जाएँ"
             }
           },
           "visual-tweaks": {
@@ -464,7 +465,7 @@
       }
     },
     "disable-autoplay": {
-      "description": "गीत को \"रुके हुए \" मोड में शुरू करता है",
+      "description": "गीत को \"रुके हुए\" मोड में शुरू करता है",
       "menu": {
         "apply-once": "केवल प्रारम्भ पर लागू होता है"
       },
@@ -685,7 +686,8 @@
           "submenu": {
             "hide-button-text": "बटन टेक्स्ट को छिपाएँ",
             "refresh-on-play-pause": "प्ले/पॉज़ पर रिफ्रेश करें",
-            "tray-controls": "ट्रे क्लिक पर खोलें/बंद करें"
+            "tray-controls": "ट्रे क्लिक पर खोलें/बंद करें",
+            "hover-controls": "ट्रे पर होवर करने पर मिनी-प्लेयर दिखाएं"
           }
         },
         "priority": "नोटिफ़िकेशन प्राथमिकता",
@@ -696,7 +698,7 @@
     },
     "performance-improvement": {
       "description": "प्रयोगात्मक स्क्रिप्ट सक्षम करके प्रदर्शन में सुधार करें",
-      "name": "प्रदर्शन सुधार [Beta]"
+      "name": "प्रदर्शन सुधार [बीटा]"
     },
     "picture-in-picture": {
       "description": "ऐप को पिक्चर-इन-पिक्चर मोड में बदलने की अनुमति दें",
@@ -770,7 +772,7 @@
       }
     },
     "scrobbler": {
-      "description": "स्क्रोब्लिंग सपोर्ट जोड़ें (etc. last.fm, listenbrainz)",
+      "description": "स्क्रोब्लिंग सपोर्ट जोड़ें (etc. last.fm, ListenBrainz)",
       "dialog": {
         "lastfm": {
           "auth-failed": {
@@ -838,113 +840,113 @@
     "synced-lyrics": {
       "description": "LRClib जैसे सोर्सेज के उपयोग से, गानों के लिए सिंक किए गए लिरिक्स देता है।",
       "errors": {
-        "fetch": "⚠️\tAn error occurred while fetching the lyrics.\n\tPlease try again later.",
-        "not-found": "⚠️ No lyrics found for this song."
+        "fetch": "⚠️\tलिरिक्स प्राप्त करने में त्रुटि हुई।\n\tकृपया बाद में पुनः प्रयास करें।",
+        "not-found": "⚠️ इस गाने के लिए कोई लिरिक्स नहीं मिला।"
       },
       "menu": {
         "convert-chinese-character": {
-          "label": "Convert Chinese character",
+          "label": "चीनी अक्षर परिवर्तित करें",
           "submenu": {
             "disabled": {
-              "label": "Disabled",
-              "tooltip": "Disable Chinese character conversion"
+              "label": "अक्षम",
+              "tooltip": "चीनी अक्षर रूपांतरण अक्षम करें"
             },
             "simplified-to-traditional": {
-              "label": "Simplified to Traditional",
-              "tooltip": "Convert Simplified Chinese to Traditional Chinese"
+              "label": "सरलीकृत से पारंपरिक",
+              "tooltip": "सरलीकृत चीनी को पारंपरिक चीनी में बदलें"
             },
             "traditional-to-simplified": {
-              "label": "Traditional to Simplified",
-              "tooltip": "Convert Traditional Chinese to Simplified Chinese"
+              "label": "पारंपरिक से सरलीकृत",
+              "tooltip": "पारंपरिक चीनी को सरलीकृत चीनी में बदलें"
             }
           },
-          "tooltip": "Convert Chinese character to Traditional or Simplified"
+          "tooltip": "चीनी अक्षरों को पारंपरिक या सरलीकृत में बदलें"
         },
         "default-text-string": {
-          "label": "Default character between lyrics",
-          "tooltip": "Choose the default character to use for the gap between lyrics"
+          "label": "लिरिक्स के बीच डिफ़ॉल्ट अक्षर",
+          "tooltip": "लिरिक्स के बीच के अंतराल के लिए उपयोग किया जाने वाला डिफ़ॉल्ट अक्षर चुनें"
         },
         "line-effect": {
-          "label": "Line effect",
+          "label": "पंक्ति प्रभाव",
           "submenu": {
             "fancy": {
-              "label": "Fancy",
-              "tooltip": "Use large, app-like effects on the current line"
+              "label": "आकर्षक",
+              "tooltip": "वर्तमान पंक्ति पर बड़े, ऐप-जैसे प्रभावों का उपयोग करें"
             },
             "focus": {
-              "label": "Focus",
-              "tooltip": "Make only the current line white"
+              "label": "फोकस",
+              "tooltip": "केवल वर्तमान पंक्ति को सफेद बनाएं"
             },
             "offset": {
-              "label": "Offset",
-              "tooltip": "Offset on the right the current line"
+              "label": "ऑफसेट",
+              "tooltip": "वर्तमान पंक्ति को दाईं ओर खिसकाएं"
             },
             "scale": {
-              "label": "Scale",
-              "tooltip": "Scale the current line"
+              "label": "स्केल",
+              "tooltip": "वर्तमान पंक्ति का आकार बदलें"
             }
           },
-          "tooltip": "Choose the effect to apply to the current line"
+          "tooltip": "वर्तमान पंक्ति पर लागू करने के लिए प्रभाव चुनें"
         },
         "lyrics-font-size": {
-          "label": "Lyrics font size",
+          "label": "लिरिक्स फ़ॉन्ट आकार",
           "submenu": {
             "large": {
-              "label": "Large",
-              "tooltip": "Use the original larger lyrics size"
+              "label": "बड़ा",
+              "tooltip": "मूल बड़े लिरिक्स आकार का उपयोग करें"
             },
             "medium": {
-              "label": "Medium",
-              "tooltip": "Use a balanced lyrics size"
+              "label": "मध्यम",
+              "tooltip": "संतुलित लिरिक्स आकार का उपयोग करें"
             },
             "small": {
-              "label": "Small",
-              "tooltip": "Use a more compact lyrics size"
+              "label": "छोटा",
+              "tooltip": "अधिक कॉम्पैक्ट लिरिक्स आकार का उपयोग करें"
             }
           },
-          "tooltip": "Choose how large the lyrics text should be"
+          "tooltip": "चुनें कि लिरिक्स टेक्स्ट कितना बड़ा होना चाहिए"
         },
         "precise-timing": {
-          "label": "Make the lyrics perfectly synced",
-          "tooltip": "Calculate to the milisecond the display of the next line (can have a small impact on performance)"
+          "label": "लिरिक्स को पूरी तरह सिंक करें",
+          "tooltip": "अगली पंक्ति के प्रदर्शन की मिलीसेकंड तक गणना करें (प्रदर्शन पर थोड़ा प्रभाव पड़ सकता है)"
         },
         "preferred-provider": {
-          "label": "Preferred Provider",
+          "label": "पसंदीदा प्रदाता",
           "none": {
-            "label": "None",
-            "tooltip": "No preferred provider"
+            "label": "कोई नहीं",
+            "tooltip": "कोई पसंदीदा प्रदाता नहीं"
           },
-          "tooltip": "Choose the default provider to use"
+          "tooltip": "उपयोग करने के लिए डिफ़ॉल्ट प्रदाता चुनें"
         },
         "romanization": {
-          "label": "Romanize lyrics",
-          "tooltip": "If the lyrics are in a different language, try to display a latin version."
+          "label": "लिरिक्स को रोमन में बदलें",
+          "tooltip": "यदि लिरिक्स किसी अन्य भाषा में हैं, तो लैटिन संस्करण प्रदर्शित करने का प्रयास करें।"
         },
         "show-lyrics-even-if-inexact": {
-          "label": "Show lyrics even if inexact",
-          "tooltip": "If the song is not found, the plugin tries again with a different search query.\nThe result from the second attempt may not be exact."
+          "label": "अशुद्ध होने पर भी लिरिक्स दिखाएं",
+          "tooltip": "यदि गाना नहीं मिलता है, तो प्लगइन एक अलग खोज क्वेरी के साथ पुनः प्रयास करता है।\nदूसरे प्रयास का परिणाम सटीक नहीं हो सकता है।"
         },
         "show-time-codes": {
-          "label": "Show time codes",
-          "tooltip": "Show the time codes next to the lyrics"
+          "label": "समय कोड दिखाएं",
+          "tooltip": "लिरिक्स के बगल में समय कोड दिखाएं"
         },
         "translation": {
           "clear-cache": {
-            "label": "Clear translation cache",
-            "tooltip": "Delete all cached translations stored on disk."
+            "label": "अनुवाद कैश साफ़ करें",
+            "tooltip": "डिस्क पर संग्रहीत सभी कैश्ड अनुवाद हटाएं।"
           },
           "configure": {
-            "label": "Configure API key & model…",
-            "tooltip": "Set provider-specific translation options."
+            "label": "API कुंजी और मॉडल कॉन्फ़िगर करें…",
+            "tooltip": "प्रदाता-विशिष्ट अनुवाद विकल्प सेट करें।"
           },
           "enabled": {
-            "label": "Enable translation",
-            "tooltip": "Show a translated line beneath each original lyric line."
+            "label": "अनुवाद सक्षम करें",
+            "tooltip": "प्रत्येक मूल लिरिक्स पंक्ति के नीचे एक अनुवादित पंक्ति दिखाएं।"
           },
-          "label": "Lyrics translation",
+          "label": "लिरिक्स अनुवाद",
           "provider": {
-            "label": "Provider",
-            "tooltip": "Which service to use for translation."
+            "label": "प्रदाता",
+            "tooltip": "अनुवाद के लिए कौन सी सेवा का उपयोग करें।"
           },
           "providers": {
             "anthropic": {
@@ -987,7 +989,7 @@
             }
           },
           "target-language": {
-            "label": "Target language",
+            "label": "लक्ष्य भाषा",
             "options": {
               "ar": "العربية",
               "auto": "Follow app language",
@@ -1035,64 +1037,64 @@
               "zh-CN": "简体中文",
               "zh-TW": "繁體中文"
             },
-            "tooltip": "The language to translate lyrics into."
+            "tooltip": "लिरिक्स का अनुवाद किस भाषा में करें।"
           },
-          "tooltip": "Translate lyrics and show the translated result line-by-line for display."
+          "tooltip": "लिरिक्स का अनुवाद करें और अनुवादित परिणाम को पंक्ति-दर-पंक्ति प्रदर्शित करें।"
         }
       },
-      "name": "Synced Lyrics",
+      "name": "सिंक्ड लिरिक्स",
       "refetch-btn": {
-        "fetching": "Fetching...",
-        "normal": "Refetch lyrics"
+        "fetching": "प्राप्त कर रहा है...",
+        "normal": "लिरिक्स पुनः प्राप्त करें"
       },
       "warnings": {
-        "duration-mismatch": "⚠️ - The lyrics may be out of sync due to a duration mismatch.",
-        "inexact": "⚠️ - The lyrics for this song may not be exact",
-        "instrumental": "⚠️ - This is an instrumental song"
+        "duration-mismatch": "⚠️ - अवधि बेमेल होने के कारण लिरिक्स सिंक से बाहर हो सकते हैं।",
+        "inexact": "⚠️ - इस गाने के लिरिक्स सटीक नहीं हो सकते हैं",
+        "instrumental": "⚠️ - यह एक वाद्य गीत है"
       }
     },
     "taskbar-mediacontrol": {
-      "description": "Control playback from your Windows taskbar",
-      "name": "Taskbar Media Control"
+      "description": "अपने Windows टास्कबार से प्लेबैक नियंत्रित करें",
+      "name": "टास्कबार मीडिया नियंत्रण"
     },
     "touchbar": {
-      "description": "Adds a TouchBar widget for macOS users",
-      "name": "TouchBar"
+      "description": "macOS उपयोगकर्ताओं के लिए टचबार विजेट जोड़ता है",
+      "name": "टचबार"
     },
     "transparent-player": {
-      "description": "Makes the app window transparent",
+      "description": "एप विंडो को पारदर्शी बनाता है",
       "menu": {
         "opacity": {
-          "label": "Opacity",
+          "label": "अस्पष्टता",
           "submenu": {
             "percent": "{{opacity}}%"
           }
         },
         "type": {
-          "label": "Type",
+          "label": "प्रकार",
           "submenu": {
-            "acrylic": "Acrylic",
-            "mica": "Mica",
-            "none": "None",
-            "tabbed": "Tabbed"
+            "acrylic": "एक्रिलिक",
+            "mica": "माइका",
+            "none": "कोई नहीं",
+            "tabbed": "टैबयुक्त"
           }
         }
       },
-      "name": "Transparent Player"
+      "name": "पारदर्शी प्लेयर"
     },
     "tuna-obs": {
-      "description": "Integration with OBS's plugin Tuna",
+      "description": "OBS के Tuna प्लगइन के साथ एकीकरण",
       "name": "Tuna OBS"
     },
     "unobtrusive-player": {
-      "description": "Prevents the player from popping up when playing a song",
-      "name": "Unobtrusive Player"
+      "description": "गाना बजते समय प्लेयर को पॉप अप होने से रोकता है",
+      "name": "अबाध प्लेयर"
     },
     "video-toggle": {
-      "description": "Adds a button to switch between Video/Song mode. can also optionally remove the whole video tab",
+      "description": "वीडियो/गाना मोड के बीच स्विच करने के लिए एक बटन जोड़ता है। वैकल्पिक रूप से पूरे वीडियो टैब को भी हटा सकता है",
       "menu": {
         "align": {
-          "label": "Alignment",
+          "label": "संरेखण",
           "submenu": {
             "left": "बाएं",
             "middle": "मध्य",
@@ -1103,24 +1105,35 @@
         "mode": {
           "label": "तरीका",
           "submenu": {
-            "custom": "Custom toggle",
-            "disabled": "Disabled",
-            "native": "Native toggle"
+            "custom": "कस्टम टॉगल",
+            "disabled": "अक्षम",
+            "native": "नेटिव टॉगल"
           }
         }
       },
-      "name": "Video Toggle",
+      "name": "वीडियो टॉगल",
       "templates": {
-        "button-song": "Song",
-        "button-video": "Video"
+        "button-song": "गाना",
+        "button-video": "वीडियो"
       }
     },
     "visualizer": {
-      "description": "Adds a visualizer to the player",
+      "description": "प्लेयर में एक विज़ुअलाइज़र जोड़ता है",
       "menu": {
-        "visualizer-type": "Visualizer Type"
+        "visualizer-type": "विज़ुअलाइज़र प्रकार"
       },
-      "name": "Visualizer"
+      "name": "विज़ुअलाइज़र"
+    },
+    "audio-only": {
+      "description": "केवल ऑडियो मोड लागू करता है — RAM और बैंडविड्थ बचाने के लिए नेटवर्क और प्लेयर स्तर पर सभी वीडियो स्ट्रीम को ब्लॉक करता है",
+      "name": "केवल ऑडियो"
+    },
+    "playback-recovery": {
+      "description": "अटकी, रुकी या मृत प्लेबैक स्थितियों से स्वचालित रूप से पुनर्प्राप्त करता है",
+      "menu": {
+        "log-to-console": "कंसोल में रिकवरी घटनाएँ लॉग करें"
+      },
+      "name": "प्लेबैक रिकवरी"
     }
   }
 }

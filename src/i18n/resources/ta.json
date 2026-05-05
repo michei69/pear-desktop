@@ -144,7 +144,8 @@
               "disabled": "முடக்கப்பட்டது",
               "enabled-and-hide-app": "இயக்கப்பட்ட மற்றும் பயன்பாட்டை மறைக்கவும்",
               "enabled-and-show-app": "இயக்கப்பட்டது மற்றும் பயன்பாட்டைக் காட்டு",
-              "play-pause-on-click": "சொடுக்கு செய்யவும்/இடைநிறுத்தவும்"
+              "play-pause-on-click": "சொடுக்கு செய்யவும்/இடைநிறுத்தவும்",
+              "move-to-current-desktop": "காட்டும்போது தற்போதைய மெய்நிகர் டெஸ்க்டாப்பிற்கு நகர்த்தவும்"
             }
           },
           "visual-tweaks": {
@@ -162,7 +163,7 @@
                 "force-show": "படை நிகழ்ச்சி",
                 "hide": "மறை",
                 "label": "பொத்தான்கள் போன்றவை",
-                "swap": "Swap like buttons order"
+                "swap": "லைக் பட்டன் வரிசையை மாற்றவும்"
               },
               "remove-upgrade-button": "மேம்படுத்தல் பொத்தானை அகற்று",
               "theme": {
@@ -239,7 +240,7 @@
             "percent": "{{ratio}}%"
           }
         },
-        "enable-seekbar": "Enable seekbar theming"
+        "enable-seekbar": "சீக்பார் தீமிங்கை இயக்கு"
       },
       "name": "ஆல்பம் வண்ண கருப்பொருள்"
     },
@@ -323,18 +324,18 @@
           "label": "புரவலன்பெயர்"
         },
         "https": {
-          "label": "HTTPS & Certificates",
+          "label": "HTTPS மற்றும் சான்றிதழ்கள்",
           "submenu": {
             "cert": {
-              "dialogTitle": "Select HTTPS certificate file",
-              "label": "Certificate file (.crt/.pem)"
+              "dialogTitle": "HTTPS சான்றிதழ் கோப்பைத் தேர்ந்தெடுக்கவும்",
+              "label": "சான்றிதழ் கோப்பு (.crt/.pem)"
             },
             "enable-https": {
-              "label": "Enable HTTPS"
+              "label": "HTTPS ஐ இயக்கு"
             },
             "key": {
-              "dialogTitle": "Select HTTPS private key file",
-              "label": "Private key file (.key/.pem)"
+              "dialogTitle": "HTTPS தனிப்பட்ட விசை கோப்பைத் தேர்ந்தெடுக்கவும்",
+              "label": "தனிப்பட்ட விசை கோப்பு (.key/.pem)"
             }
           }
         },
@@ -414,15 +415,15 @@
       }
     },
     "clock": {
-      "description": "Add a clock to the navigation bar",
+      "description": "வழிசெலுத்தல் பட்டியில் கடிகாரத்தைச் சேர்க்கவும்",
       "menu": {
         "format": {
-          "24-hour-format": "24-Hour Format",
-          "display-seconds": "Display Seconds",
-          "label": "Format"
+          "24-hour-format": "24-மணி நேர வடிவம்",
+          "display-seconds": "விநாடிகளைக் காட்டு",
+          "label": "வடிவம்"
         }
       },
-      "name": "Clock"
+      "name": "கடிகாரம்"
     },
     "compact-sidebar": {
       "description": "எப்போதும் பக்கப்பட்டியை சிறிய பயன்முறையில் அமைக்கவும்",
@@ -685,7 +686,8 @@
           "submenu": {
             "hide-button-text": "பொத்தான் உரையை மறைக்கவும்",
             "refresh-on-play-pause": "விளையாட்டு/இடைநிறுத்தத்தில் புதுப்பிக்கவும்",
-            "tray-controls": "தட்டு சொடுக்கு செய்யவும்/மூடு"
+            "tray-controls": "தட்டு சொடுக்கு செய்யவும்/மூடு",
+            "hover-controls": "ட்ரே மேல் வட்டமிடும்போது மினி-பிளேயரைக் காட்டு"
           }
         },
         "priority": "அறிவிப்பு முன்னுரிமை",
@@ -843,22 +845,22 @@
       },
       "menu": {
         "convert-chinese-character": {
-          "label": "Convert Chinese character",
+          "label": "சீன எழுத்தை மாற்றவும்",
           "submenu": {
             "disabled": {
-              "label": "Disabled",
-              "tooltip": "Disable Chinese character conversion"
+              "label": "முடக்கப்பட்டது",
+              "tooltip": "சீன எழுத்து மாற்றத்தை முடக்கு"
             },
             "simplified-to-traditional": {
-              "label": "Simplified to Traditional",
-              "tooltip": "Convert Simplified Chinese to Traditional Chinese"
+              "label": "எளிமைப்படுத்தப்பட்டதிலிருந்து பாரம்பரியத்திற்கு",
+              "tooltip": "எளிமைப்படுத்தப்பட்ட சீனத்தை பாரம்பரிய சீனமாக மாற்றவும்"
             },
             "traditional-to-simplified": {
-              "label": "Traditional to Simplified",
-              "tooltip": "Convert Traditional Chinese to Simplified Chinese"
+              "label": "பாரம்பரியத்திலிருந்து எளிமைப்படுத்தப்பட்டதற்கு",
+              "tooltip": "பாரம்பரிய சீனத்தை எளிமைப்படுத்தப்பட்ட சீனமாக மாற்றவும்"
             }
           },
-          "tooltip": "Convert Chinese character to Traditional or Simplified"
+          "tooltip": "சீன எழுத்தை பாரம்பரிய அல்லது எளிமைப்படுத்தப்பட்டதாக மாற்றவும்"
         },
         "default-text-string": {
           "label": "பாடல் வரிகளுக்கு இடையில் இயல்புநிலை எழுத்து",
@@ -887,22 +889,22 @@
           "tooltip": "தற்போதைய வரிக்கு பொருந்தக்கூடிய விளைவைத் தேர்வுசெய்க"
         },
         "lyrics-font-size": {
-          "label": "Lyrics font size",
+          "label": "பாடல் எழுத்துரு அளவு",
           "submenu": {
             "large": {
-              "label": "Large",
-              "tooltip": "Use the original larger lyrics size"
+              "label": "பெரியது",
+              "tooltip": "அசல் பெரிய பாடல் அளவைப் பயன்படுத்தவும்"
             },
             "medium": {
-              "label": "Medium",
-              "tooltip": "Use a balanced lyrics size"
+              "label": "நடுத்தரம்",
+              "tooltip": "சமநிலையான பாடல் அளவைப் பயன்படுத்தவும்"
             },
             "small": {
-              "label": "Small",
-              "tooltip": "Use a more compact lyrics size"
+              "label": "சிறியது",
+              "tooltip": "மிகவும் சிறிய பாடல் அளவைப் பயன்படுத்தவும்"
             }
           },
-          "tooltip": "Choose how large the lyrics text should be"
+          "tooltip": "பாடல் உரை எவ்வளவு பெரியதாக இருக்க வேண்டும் என்பதைத் தேர்வுசெய்க"
         },
         "precise-timing": {
           "label": "பாடல் வரிகளை சரியாக ஒத்திசைக்கவும்",
@@ -930,67 +932,67 @@
         },
         "translation": {
           "clear-cache": {
-            "label": "Clear translation cache",
-            "tooltip": "Delete all cached translations stored on disk."
+            "label": "மொழிபெயர்ப்பு தற்காலிக சேமிப்பை அழிக்கவும்",
+            "tooltip": "வட்டில் சேமிக்கப்பட்ட அனைத்து தற்காலிக மொழிபெயர்ப்புகளையும் நீக்கவும்."
           },
           "configure": {
-            "label": "Configure API key & model…",
-            "tooltip": "Set provider-specific translation options."
+            "label": "API விசை மற்றும் மாதிரியை உள்ளமைக்கவும்…",
+            "tooltip": "வழங்குநர்-குறிப்பிட்ட மொழிபெயர்ப்பு விருப்பங்களை அமைக்கவும்."
           },
           "enabled": {
-            "label": "Enable translation",
-            "tooltip": "Show a translated line beneath each original lyric line."
+            "label": "மொழிபெயர்ப்பை இயக்கு",
+            "tooltip": "ஒவ்வொரு அசல் பாடல் வரியின் கீழும் மொழிபெயர்க்கப்பட்ட வரியைக் காட்டவும்."
           },
-          "label": "Lyrics translation",
+          "label": "பாடல் மொழிபெயர்ப்பு",
           "provider": {
-            "label": "Provider",
-            "tooltip": "Which service to use for translation."
+            "label": "வழங்குநர்",
+            "tooltip": "மொழிபெயர்ப்பிற்கு எந்த சேவையைப் பயன்படுத்துவது."
           },
           "providers": {
             "anthropic": {
               "name": "Anthropic Claude",
-              "prompt-label": "Uses the native Anthropic Messages API.",
-              "prompt-title": "Anthropic settings"
+              "prompt-label": "இயல்பான Anthropic Messages API ஐப் பயன்படுத்துகிறது.",
+              "prompt-title": "Anthropic அமைப்புகள்"
             },
             "gemini": {
               "name": "Google Gemini",
-              "prompt-label": "Uses Google's Generative Language API (generateContent).",
-              "prompt-title": "Gemini settings"
+              "prompt-label": "Google இன் Generative Language API (generateContent) ஐப் பயன்படுத்துகிறது.",
+              "prompt-title": "Gemini அமைப்புகள்"
             },
             "google-translate": {
-              "host": "Host",
-              "name": "Google Translate",
-              "prompt-label": "Uses the unofficial free Google Translate endpoint. No API key is required, but Google may rate-limit it.",
-              "prompt-title": "Google Translate settings"
+              "host": "ஹோஸ்ட்",
+              "name": "Google மொழிபெயர்ப்பு",
+              "prompt-label": "அதிகாரப்பூர்வமற்ற இலவச Google Translate முடிப்புள்ளியைப் பயன்படுத்துகிறது. API விசை தேவையில்லை, ஆனால் Google விகித-வரம்பிடலாம்.",
+              "prompt-title": "Google மொழிபெயர்ப்பு அமைப்புகள்"
             },
             "local-cli": {
-              "command": "Command",
-              "engine": "Local CLI",
+              "command": "கட்டளை",
+              "engine": "உள்ளூர் CLI",
               "engine-claude": "Claude Code",
               "engine-codex": "Codex",
               "engine-gemini": "Gemini CLI",
-              "name": "Local CLI",
-              "prompt-label": "Use a locally logged-in Claude Code, Codex, or Gemini CLI. The command and model are automatic; the CLI uses its own logged-in default.",
-              "prompt-title": "Local CLI settings",
-              "timeout": "Timeout seconds (15-600)"
+              "name": "உள்ளூர் CLI",
+              "prompt-label": "உள்நுழைந்த Claude Code, Codex அல்லது Gemini CLI ஐப் பயன்படுத்தவும். கட்டளை மற்றும் மாதிரி தானியங்கி; CLI தனது சொந்த உள்நுழைந்த இயல்புநிலையைப் பயன்படுத்துகிறது.",
+              "prompt-title": "உள்ளூர் CLI அமைப்புகள்",
+              "timeout": "காலக்கெடு விநாடிகள் (15-600)"
             },
             "openai-compatible": {
-              "api-mode": "API mode (responses / auto / chat-completions)",
-              "base-url": "Base URL",
-              "name": "OpenAI compatible",
-              "prompt-label": "Use OpenAI-compatible servers, including Ollama (base URL http://127.0.0.1:11434/v1, API mode auto or chat-completions).",
-              "prompt-title": "OpenAI-compatible settings"
+              "api-mode": "API பயன்முறை (responses / auto / chat-completions)",
+              "base-url": "அடிப்படை URL",
+              "name": "OpenAI இணக்கமானது",
+              "prompt-label": "Ollama உட்பட OpenAI-இணக்கமான சேவையகங்களைப் பயன்படுத்தவும் (அடிப்படை URL http://127.0.0.1:11434/v1, API பயன்முறை auto அல்லது chat-completions).",
+              "prompt-title": "OpenAI-இணக்கமான அமைப்புகள்"
             },
             "shared": {
-              "api-key": "API key",
-              "model": "Model"
+              "api-key": "API விசை",
+              "model": "மாதிரி"
             }
           },
           "target-language": {
-            "label": "Target language",
+            "label": "இலக்கு மொழி",
             "options": {
               "ar": "العربية",
-              "auto": "Follow app language",
+              "auto": "பயன்பாட்டு மொழியைப் பின்பற்றவும்",
               "bg": "Български",
               "bn": "বাংলা",
               "cs": "Čeština",
@@ -1035,9 +1037,9 @@
               "zh-CN": "简体中文",
               "zh-TW": "繁體中文"
             },
-            "tooltip": "The language to translate lyrics into."
+            "tooltip": "பாடல் வரிகளை மொழிபெயர்க்க வேண்டிய மொழி."
           },
-          "tooltip": "Translate lyrics and show the translated result line-by-line for display."
+          "tooltip": "பாடல் வரிகளை மொழிபெயர்த்து, மொழிபெயர்க்கப்பட்ட முடிவை வரிக்கு வரி காட்டவும்."
         }
       },
       "name": "ஒத்திசைக்கப்பட்ட பாடல்",
@@ -1121,6 +1123,17 @@
         "visualizer-type": "விசுவலைசர் வகை"
       },
       "name": "காட்சிப்படுத்தல்"
+    },
+    "audio-only": {
+      "description": "ஒலி-மட்டும் பயன்முறையை கட்டாயப்படுத்துகிறது — RAM மற்றும் அலைவரிசையைச் சேமிக்க பிணைய மற்றும் பிளேயர் மட்டத்தில் அனைத்து வீடியோ ஸ்ட்ரீம்களையும் தடுக்கிறது",
+      "name": "ஒலி மட்டும்"
+    },
+    "playback-recovery": {
+      "description": "சிக்கிய, நிறுத்தப்பட்ட அல்லது செயலிழந்த பிளேபேக் நிலைகளிலிருந்து தானாக மீள்கிறது",
+      "menu": {
+        "log-to-console": "மீட்பு நிகழ்வுகளை கன்சோலில் பதிவு செய்யவும்"
+      },
+      "name": "பிளேபேக் மீட்பு"
     }
   }
 }

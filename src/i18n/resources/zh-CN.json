@@ -144,25 +144,26 @@
               "disabled": "已禁用",
               "enabled-and-hide-app": "启用并隐藏应用",
               "enabled-and-show-app": "启用并显示应用",
+              "move-to-current-desktop": "显示时移动到当前虚拟桌面",
               "play-pause-on-click": "点击时播放/暂停"
             }
           },
           "visual-tweaks": {
             "label": "视觉调整",
             "submenu": {
+              "like-buttons": {
+                "default": "默认",
+                "force-show": "强制显示",
+                "hide": "隐藏",
+                "swap": "交换“点赞”按钮顺序",
+                "label": "点赞按钮"
+              },
               "custom-window-title": {
                 "label": "自定义窗口标题",
                 "prompt": {
                   "label": "输入自定义窗口标题：（留空表示停用）",
                   "placeholder": "示例：{{applicationName}}"
                 }
-              },
-              "like-buttons": {
-                "default": "默认",
-                "force-show": "强制显示",
-                "hide": "隐藏",
-                "label": "点赞按钮",
-                "swap": "交换“点赞”按钮顺序"
               },
               "remove-upgrade-button": "移除升级按钮",
               "theme": {
@@ -243,6 +244,10 @@
       },
       "name": "专辑配色主题"
     },
+    "audio-only": {
+      "description": "强制仅音频模式——在网络和播放器层面阻止所有视频流以节省内存和带宽",
+      "name": "仅音频"
+    },
     "ambient-mode": {
       "description": "将视频中的浅配色作为光效投射到背景中，以增加沉浸感",
       "menu": {
@@ -322,24 +327,24 @@
         "hostname": {
           "label": "主机名"
         },
+        "port": {
+          "label": "端口号"
+        },
         "https": {
           "label": "HTTPS & 数字证书",
           "submenu": {
-            "cert": {
-              "dialogTitle": "选择 HTTPS 证书文件",
-              "label": "证书文件（.crt/.pem）"
-            },
             "enable-https": {
               "label": "启用 HTTPS"
             },
+            "cert": {
+              "label": "证书文件（.crt/.pem）",
+              "dialogTitle": "选择 HTTPS 证书文件"
+            },
             "key": {
-              "dialogTitle": "选择 HTTPS 私钥文件",
-              "label": "私钥文件（.key/.pem）"
+              "label": "私钥文件（.key/.pem）",
+              "dialogTitle": "选择 HTTPS 私钥文件"
             }
           }
-        },
-        "port": {
-          "label": "端口号"
         }
       },
       "name": "API 服务器 [测试]",
@@ -373,12 +378,12 @@
       "name": "认证代理适配",
       "prompt": {
         "hostname": {
-          "label": "请输入本地代理服务器的主机名（需要重启）：",
-          "title": "代理主机名"
+          "title": "代理主机名",
+          "label": "请输入本地代理服务器的主机名（需要重启）："
         },
         "port": {
-          "label": "请输入本地代理服务器的端口号（需要重启）：",
-          "title": "代理端口"
+          "title": "代理端口",
+          "label": "请输入本地代理服务器的端口号（需要重启）："
         }
       }
     },
@@ -415,14 +420,14 @@
     },
     "clock": {
       "description": "添加时钟到导航栏",
+      "name": "时钟",
       "menu": {
         "format": {
-          "24-hour-format": "24 小时格式",
+          "label": "格式",
           "display-seconds": "显示秒数",
-          "label": "格式"
+          "24-hour-format": "24 小时格式"
         }
-      },
-      "name": "时钟"
+      }
     },
     "compact-sidebar": {
       "description": "始终将侧边栏设为紧凑模式",
@@ -684,6 +689,7 @@
           "label": "通知交互设定",
           "submenu": {
             "hide-button-text": "隐藏按钮文字",
+            "hover-controls": "悬停托盘时显示迷你播放器",
             "refresh-on-play-pause": "播放/暂停时刷新",
             "tray-controls": "点击托盘时打开/关闭"
           }
@@ -697,6 +703,13 @@
     "performance-improvement": {
       "description": "通过开启实验性脚本改进性能",
       "name": "性能改进 [公测]"
+    },
+    "playback-recovery": {
+      "description": "自动从卡顿、停滞或死锁的播放状态中恢复",
+      "menu": {
+        "log-to-console": "将恢复事件记录到控制台"
+      },
+      "name": "播放恢复"
     },
     "picture-in-picture": {
       "description": "允许应用切换到画中画模式",
@@ -786,8 +799,8 @@
         "listenbrainz": {
           "token": "输入 ListenBrainz 用户令牌"
         },
-        "scrobble-alternative-artist": "使用替代艺术家",
         "scrobble-alternative-title": "使用替代标题",
+        "scrobble-alternative-artist": "使用替代艺术家",
         "scrobble-other-media": "记录其他媒体文件"
       },
       "name": "歌曲记录器",
@@ -842,23 +855,13 @@
         "not-found": "⚠️ 未找到此歌曲的歌词。"
       },
       "menu": {
-        "convert-chinese-character": {
-          "label": "转换中文字符",
-          "submenu": {
-            "disabled": {
-              "label": "已停用",
-              "tooltip": "禁用中文字符转换"
-            },
-            "simplified-to-traditional": {
-              "label": "简体到繁体",
-              "tooltip": "转换简体中文到繁体中文"
-            },
-            "traditional-to-simplified": {
-              "label": "繁体到简体",
-              "tooltip": "转换繁体中文到简体中文"
-            }
-          },
-          "tooltip": "转换简繁体中文字符"
+        "preferred-provider": {
+          "label": "首选歌词源",
+          "tooltip": "选择默认要用的源",
+          "none": {
+            "label": "无",
+            "tooltip": "没有首选的歌词源"
+          }
         },
         "default-text-string": {
           "label": "默认的歌词行间字符",
@@ -868,7 +871,7 @@
           "label": "歌词行特效",
           "submenu": {
             "fancy": {
-              "label": "Fancy",
+              "label": "华丽",
               "tooltip": "在当前行上使用大的、类似应用的效果"
             },
             "focus": {
@@ -887,34 +890,26 @@
           "tooltip": "选择当前歌词行应用的特效"
         },
         "lyrics-font-size": {
-          "label": "Lyrics font size",
+          "label": "歌词字体大小",
           "submenu": {
-            "large": {
-              "label": "Large",
-              "tooltip": "Use the original larger lyrics size"
+            "small": {
+              "label": "小",
+              "tooltip": "使用更紧凑的歌词大小"
             },
             "medium": {
-              "label": "Medium",
-              "tooltip": "Use a balanced lyrics size"
+              "label": "中",
+              "tooltip": "使用均衡的歌词大小"
             },
-            "small": {
-              "label": "Small",
-              "tooltip": "Use a more compact lyrics size"
+            "large": {
+              "label": "大",
+              "tooltip": "使用较大的原始歌词大小"
             }
           },
-          "tooltip": "Choose how large the lyrics text should be"
+          "tooltip": "选择歌词文字的大小"
         },
         "precise-timing": {
           "label": "让滚动歌词完全同步",
           "tooltip": "以毫秒精度估算下句歌词的显示时间（可能对性能有小幅影响）"
-        },
-        "preferred-provider": {
-          "label": "首选歌词源",
-          "none": {
-            "label": "无",
-            "tooltip": "没有首选的歌词源"
-          },
-          "tooltip": "选择默认要用的源"
         },
         "romanization": {
           "label": "将歌词罗马化",
@@ -928,116 +923,134 @@
           "label": "显示时值",
           "tooltip": "在歌词旁显示时值"
         },
+        "convert-chinese-character": {
+          "label": "转换中文字符",
+          "submenu": {
+            "disabled": {
+              "label": "已停用",
+              "tooltip": "禁用中文字符转换"
+            },
+            "simplified-to-traditional": {
+              "label": "简体到繁体",
+              "tooltip": "转换简体中文到繁体中文"
+            },
+            "traditional-to-simplified": {
+              "label": "繁体到简体",
+              "tooltip": "转换繁体中文到简体中文"
+            }
+          },
+          "tooltip": "转换简繁体中文字符"
+        },
         "translation": {
-          "clear-cache": {
-            "label": "Clear translation cache",
-            "tooltip": "Delete all cached translations stored on disk."
+          "label": "歌词翻译",
+          "tooltip": "翻译歌词并逐行显示翻译结果。",
+          "enabled": {
+            "label": "启用翻译",
+            "tooltip": "在每行原始歌词下方显示翻译行。"
+          },
+          "provider": {
+            "label": "提供者",
+            "tooltip": "使用哪个服务进行翻译。"
+          },
+          "target-language": {
+            "label": "目标语言",
+            "tooltip": "将歌词翻译为的目标语言。",
+            "options": {
+              "auto": "跟随应用语言",
+              "zh-CN": "简体中文",
+              "zh-TW": "繁體中文",
+              "en": "English",
+              "ja": "日本語",
+              "ko": "한국어",
+              "fr": "Français",
+              "de": "Deutsch",
+              "es": "Español",
+              "pt-BR": "Português (Brasil)",
+              "pt-PT": "Português (Portugal)",
+              "it": "Italiano",
+              "nl": "Nederlands",
+              "ru": "Русский",
+              "uk": "Українська",
+              "pl": "Polski",
+              "tr": "Türkçe",
+              "ar": "العربية",
+              "he": "עברית",
+              "fa": "فارسی",
+              "hi": "हिन्दी",
+              "bn": "বাংলা",
+              "ur": "اردو",
+              "ta": "தமிழ்",
+              "te": "తెలుగు",
+              "mr": "मराठी",
+              "id": "Bahasa Indonesia",
+              "ms": "Bahasa Melayu",
+              "vi": "Tiếng Việt",
+              "th": "ไทย",
+              "fil": "Filipino",
+              "sw": "Kiswahili",
+              "sv": "Svenska",
+              "no": "Norsk",
+              "da": "Dansk",
+              "fi": "Suomi",
+              "cs": "Čeština",
+              "ro": "Română",
+              "hu": "Magyar",
+              "el": "Ελληνικά",
+              "bg": "Български",
+              "sr": "Српски",
+              "hr": "Hrvatski",
+              "sk": "Slovenčina",
+              "lt": "Lietuvių"
+            }
           },
           "configure": {
-            "label": "Configure API key & model…",
-            "tooltip": "Set provider-specific translation options."
+            "label": "配置 API 密钥和模型…",
+            "tooltip": "设置特定提供者的翻译选项。"
           },
-          "enabled": {
-            "label": "Enable translation",
-            "tooltip": "Show a translated line beneath each original lyric line."
-          },
-          "label": "Lyrics translation",
-          "provider": {
-            "label": "Provider",
-            "tooltip": "Which service to use for translation."
+          "clear-cache": {
+            "label": "清除翻译缓存",
+            "tooltip": "删除磁盘上存储的所有已缓存翻译。"
           },
           "providers": {
+            "shared": {
+              "api-key": "API 密钥",
+              "model": "模型"
+            },
+            "openai-compatible": {
+              "name": "OpenAI compatible",
+              "prompt-title": "OpenAI 兼容设置",
+              "prompt-label": "使用兼容 OpenAI 的服务器，包括 Ollama（基础 URL http://127.0.0.1:11434/v1，API 模式为 auto 或 chat-completions）。",
+              "base-url": "基础 URL",
+              "api-mode": "API 模式 (responses / auto / chat-completions)"
+            },
             "anthropic": {
               "name": "Anthropic Claude",
-              "prompt-label": "Uses the native Anthropic Messages API.",
-              "prompt-title": "Anthropic settings"
+              "prompt-title": "Anthropic 设置",
+              "prompt-label": "使用 Anthropic 原生 Messages API。"
             },
             "gemini": {
               "name": "Google Gemini",
-              "prompt-label": "Uses Google's Generative Language API (generateContent).",
-              "prompt-title": "Gemini settings"
-            },
-            "google-translate": {
-              "host": "Host",
-              "name": "Google Translate",
-              "prompt-label": "Uses the unofficial free Google Translate endpoint. No API key is required, but Google may rate-limit it.",
-              "prompt-title": "Google Translate settings"
+              "prompt-title": "Gemini 设置",
+              "prompt-label": "使用 Google 的 Generative Language API (generateContent)。"
             },
             "local-cli": {
-              "command": "Command",
-              "engine": "Local CLI",
+              "name": "Local CLI",
+              "prompt-title": "本地 CLI 设置",
+              "prompt-label": "使用已本地登录的 Claude Code、Codex 或 Gemini CLI。命令和模型为自动；CLI 使用其自己的登录默认值。",
+              "engine": "本地 CLI",
               "engine-claude": "Claude Code",
               "engine-codex": "Codex",
               "engine-gemini": "Gemini CLI",
-              "name": "Local CLI",
-              "prompt-label": "Use a locally logged-in Claude Code, Codex, or Gemini CLI. The command and model are automatic; the CLI uses its own logged-in default.",
-              "prompt-title": "Local CLI settings",
-              "timeout": "Timeout seconds (15-600)"
+              "command": "命令",
+              "timeout": "超时秒数 (15-600)"
             },
-            "openai-compatible": {
-              "api-mode": "API mode (responses / auto / chat-completions)",
-              "base-url": "Base URL",
-              "name": "OpenAI compatible",
-              "prompt-label": "Use OpenAI-compatible servers, including Ollama (base URL http://127.0.0.1:11434/v1, API mode auto or chat-completions).",
-              "prompt-title": "OpenAI-compatible settings"
-            },
-            "shared": {
-              "api-key": "API key",
-              "model": "Model"
+            "google-translate": {
+              "name": "Google Translate",
+              "prompt-title": "Google 翻译设置",
+              "prompt-label": "使用非官方的免费 Google 翻译端点。无需 API 密钥，但 Google 可能会限制速率。",
+              "host": "主机"
             }
-          },
-          "target-language": {
-            "label": "Target language",
-            "options": {
-              "ar": "العربية",
-              "auto": "Follow app language",
-              "bg": "Български",
-              "bn": "বাংলা",
-              "cs": "Čeština",
-              "da": "Dansk",
-              "de": "Deutsch",
-              "el": "Ελληνικά",
-              "en": "English",
-              "es": "Español",
-              "fa": "فارسی",
-              "fi": "Suomi",
-              "fil": "Filipino",
-              "fr": "Français",
-              "he": "עברית",
-              "hi": "हिन्दी",
-              "hr": "Hrvatski",
-              "hu": "Magyar",
-              "id": "Bahasa Indonesia",
-              "it": "Italiano",
-              "ja": "日本語",
-              "ko": "한국어",
-              "lt": "Lietuvių",
-              "mr": "मराठी",
-              "ms": "Bahasa Melayu",
-              "nl": "Nederlands",
-              "no": "Norsk",
-              "pl": "Polski",
-              "pt-BR": "Português (Brasil)",
-              "pt-PT": "Português (Portugal)",
-              "ro": "Română",
-              "ru": "Русский",
-              "sk": "Slovenčina",
-              "sr": "Српски",
-              "sv": "Svenska",
-              "sw": "Kiswahili",
-              "ta": "தமிழ்",
-              "te": "తెలుగు",
-              "th": "ไทย",
-              "tr": "Türkçe",
-              "uk": "Українська",
-              "ur": "اردو",
-              "vi": "Tiếng Việt",
-              "zh-CN": "简体中文",
-              "zh-TW": "繁體中文"
-            },
-            "tooltip": "The language to translate lyrics into."
-          },
-          "tooltip": "Translate lyrics and show the translated result line-by-line for display."
+          }
         }
       },
       "name": "滚动歌词",
@@ -1061,6 +1074,7 @@
     },
     "transparent-player": {
       "description": "把应用窗口变透明",
+      "name": "透明播放器",
       "menu": {
         "opacity": {
           "label": "不透明",
@@ -1073,12 +1087,11 @@
           "submenu": {
             "acrylic": "亚克力",
             "mica": "云母",
-            "none": "无",
-            "tabbed": "标签"
+            "tabbed": "标签",
+            "none": "无"
           }
         }
-      },
-      "name": "透明播放器"
+      }
     },
     "tuna-obs": {
       "description": "与 OBS 的 Tuna 插件集成",

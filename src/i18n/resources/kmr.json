@@ -2,14 +2,14 @@
   "common": {
     "console": {
       "plugins": {
-        "execute-failed": "Failed to execute plugin {{pluginName}}::{{contextName}}",
-        "executed-at-ms": "Plugin {{pluginName}}::{{contextName}} executed at {{ms}}ms",
-        "initialize-failed": "Failed to initialize plugin \"{{pluginName}}\"",
-        "load-all": "Loading all plugins",
-        "load-failed": "Failed to load plugin \"{{pluginName}}\"",
-        "loaded": "Plugin \"{{pluginName}}\" loaded",
-        "unload-failed": "Failed to unload plugin \"{{pluginName}}\"",
-        "unloaded": "Plugin \"{{pluginName}}\" unloaded"
+        "execute-failed": "Pelgira {{pluginName}}::{{contextName}} pêk nehat",
+        "executed-at-ms": "Pelgira {{pluginName}}::{{contextName}} di {{ms}}ms de xebitî",
+        "initialize-failed": "Destpêkirina pelgira \"{{pluginName}}\" pêk nehat",
+        "load-all": "Hemû pelgir tên barkirin",
+        "load-failed": "Barkirina pelgira \"{{pluginName}}\" pêk nehat",
+        "loaded": "Pelgira \"{{pluginName}}\" hat barkirin",
+        "unload-failed": "Rakirina pelgira \"{{pluginName}}\" pêk nehat",
+        "unloaded": "Pelgira \"{{pluginName}}\" hat rakirin"
       }
     }
   },
@@ -21,163 +21,164 @@
   "main": {
     "console": {
       "did-finish-load": {
-        "dev-tools": "Finished loading. DevTools opened"
+        "dev-tools": "Barkirin qediya. DevTools vebû"
       },
       "i18n": {
-        "loaded": "i18n loaded"
+        "loaded": "i18n hat barkirin"
       },
       "second-instance": {
-        "receive-command": "Received command over protocol: \"{{command}}\""
+        "receive-command": "Fermana bi protokolê hat wergirtin: \"{{command}}\""
       },
       "theme": {
-        "css-file-not-found": "CSS file \"{{cssFile}}\" does not exist, ignoring"
+        "css-file-not-found": "Pelê CSS \"{{cssFile}}\" tune ye, tê paşguhkirin"
       },
       "unresponsive": {
-        "details": "Unresponsive Error!\n{{error}}"
+        "details": "Çewtiya Bêbersiv!\n{{error}}"
       },
       "when-ready": {
-        "clearing-cache-after-20s": "Clearing app cache"
+        "clearing-cache-after-20s": "Cacheya sepana tê paqijkirin"
       },
       "window": {
-        "tried-to-render-offscreen": "Window tried to render offscreen, windowSize={{windowSize}}, displaySize={{displaySize}}, position={{position}}"
+        "tried-to-render-offscreen": "Pencere hewl da li derveyî ekranê were nîşandan, windowSize={{windowSize}}, displaySize={{displaySize}}, position={{position}}"
       }
     },
     "dialog": {
       "hide-menu-enabled": {
-        "detail": "Menu is hidden, use 'Alt' to show it (or 'Escape' if using In-App Menu)",
-        "message": "Hide Menu is enabled",
-        "title": "Hide Menu Enabled"
+        "detail": "Menu veşartî ye, 'Alt'ê bikar bîne ji bo nîşandana wê (an 'Escape' heke In-App Menu tê bikaranîn)",
+        "message": "Veşartina Menuyê vekirî ye",
+        "title": "Veşartina Menuyê Hat Vekirin"
       },
       "need-to-restart": {
         "buttons": {
-          "later": "Later",
-          "restart-now": "Restart Now"
+          "later": "Paşê",
+          "restart-now": "Niha Ji Nû Ve Bide Destpêkirin"
         },
-        "detail": "\"{{pluginName}}\" plugin requires a restart to take effect",
-        "message": "\"{{pluginName}}\" needs to restart",
-        "title": "Restart Required"
+        "detail": "Pelgira \"{{pluginName}}\" ji bo bandorê pêwîstî bi destpêkirina ji nû ve heye",
+        "message": "\"{{pluginName}}\" pêwîstî bi destpêkirina ji nû ve heye",
+        "title": "Destpêkirina Ji Nû Ve Pêwîst e"
       },
       "unresponsive": {
         "buttons": {
-          "quit": "Quit",
-          "relaunch": "Relaunch",
-          "wait": "Wait"
+          "quit": "Derkeve",
+          "relaunch": "Ji Nû Ve Bide Destpêkirin",
+          "wait": "Bipaye"
         },
-        "detail": "We are sorry for the inconvenience! please choose what to do:",
-        "message": "The Application is Unresponsive",
-        "title": "Window Unresponsive"
+        "detail": "Em ji bo nebaşiyê lêborînê dixwazin! ji kerema xwe hilbijêre ka çi bike:",
+        "message": "Sepan Bêbersiv e",
+        "title": "Pencere Bêbersiv e"
       },
       "update-available": {
         "buttons": {
-          "disable": "Disable Updates",
-          "download": "Download",
-          "ok": "OK"
+          "disable": "Rojanekirinê Bide Rawestandin",
+          "download": "Daxe",
+          "ok": "Baş e"
         },
-        "detail": "A new version is available and can be downloaded at {{downloadLink}}",
-        "message": "A new version is available",
-        "title": "Update Available"
+        "detail": "Guhertoyeke nû heye û dikare li {{downloadLink}} were daxistin",
+        "message": "Guhertoyeke nû heye",
+        "title": "Rojanekirin Heye"
       }
     },
     "menu": {
-      "about": "About",
+      "about": "Derbarê",
       "navigation": {
-        "label": "Navigation",
+        "label": "Navîgasyon",
         "submenu": {
-          "copy-current-url": "Copy current URL",
-          "go-back": "Go back",
-          "go-forward": "Go forward",
-          "quit": "Exit",
-          "restart": "Restart App"
+          "copy-current-url": "URL-a niha kopî bike",
+          "go-back": "Paş ve",
+          "go-forward": "Pêş ve",
+          "quit": "Derkeve",
+          "restart": "Sepanê Ji Nû Ve Bide Destpêkirin"
         }
       },
       "options": {
-        "label": "Options",
+        "label": "Vebijêrk",
         "submenu": {
           "advanced-options": {
-            "label": "Advanced options",
+            "label": "Vebijêrkên pêşketî",
             "submenu": {
-              "auto-reset-app-cache": "Reset app cache when app starts",
-              "disable-hardware-acceleration": "Disable hardware acceleration",
-              "edit-config-json": "Edit config.json",
-              "override-user-agent": "Override User-Agent",
-              "restart-on-config-changes": "Restart on config changes",
+              "auto-reset-app-cache": "Cacheya sepanê dema sepan dest pê dike sifir bike",
+              "disable-hardware-acceleration": "Lezkirina hardware bide rawestandin",
+              "edit-config-json": "config.json biguherîne",
+              "override-user-agent": "User-Agent biguherîne",
+              "restart-on-config-changes": "Dema mîhengan diguherin ji nû ve bide destpêkirin",
               "set-proxy": {
-                "label": "Set proxy",
+                "label": "Proxy saz bike",
                 "prompt": {
-                  "label": "Enter Proxy Address: (leave empty to disable)",
-                  "placeholder": "Example: SOCKS5://127.0.0.1:9999",
-                  "title": "Set proxy"
+                  "label": "Navnîşana Proxyê binivîse: (ji bo rawestandinê vala bihêle)",
+                  "placeholder": "Nimûne: SOCKS5://127.0.0.1:9999",
+                  "title": "Proxy saz bike"
                 }
               },
-              "toggle-dev-tools": "Toggle DevTools"
+              "toggle-dev-tools": "DevTools veke/bigire"
             }
           },
-          "always-on-top": "Always on top",
-          "auto-update": "Auto Update",
+          "always-on-top": "Her tim li ser",
+          "auto-update": "Rojanekirina Xweber",
           "hide-menu": {
             "dialog": {
-              "message": "Menu will be hidden on next launch, use [Alt] to show it (or backtick [`] if using in-app-menu)",
-              "title": "Hide Menu Enabled"
+              "message": "Menu dê di destpêkirina bê de were veşartin, [Alt]ê bikar bîne ji bo nîşandanê (an [`] heke in-app-menu tê bikaranîn)",
+              "title": "Veşartina Menuyê Hat Vekirin"
             },
-            "label": "Hide Menu"
+            "label": "Menuyê veşêre"
           },
           "language": {
             "dialog": {
-              "message": "Language will be changed after restart",
-              "title": "Language Changed"
+              "message": "Ziman dê piştî destpêkirina ji nû ve were guhertin",
+              "title": "Ziman Hat Guhertin"
             },
-            "label": "Language",
+            "label": "Ziman",
             "submenu": {
-              "to-help-translate": "Want to help translate? Click here"
+              "to-help-translate": "Dixwazî alîkariya wergerandinê bikî? Li vir bitikîne"
             }
           },
-          "resume-on-start": "Resume last song when app starts",
-          "single-instance-lock": "Single Instance Lock",
-          "start-at-login": "Start at login",
+          "resume-on-start": "Dema sepan dest pê dike strana dawî bidomîne",
+          "single-instance-lock": "Qefila Yek-Instansê",
+          "start-at-login": "Dema têketinê dest pê bike",
           "starting-page": {
-            "label": "Starting page",
-            "unset": "Unset"
+            "label": "Rûpela destpêkê",
+            "unset": "Nehatiye danîn"
           },
           "tray": {
-            "label": "Tray",
+            "label": "Tepsî",
             "submenu": {
-              "disabled": "Disabled",
-              "enabled-and-hide-app": "Enabled and hide app",
-              "enabled-and-show-app": "Enabled and show app",
-              "play-pause-on-click": "Play/Pause on click"
+              "disabled": "Hate rawestandin",
+              "enabled-and-hide-app": "Veke û sepanê veşêre",
+              "enabled-and-show-app": "Veke û sepanê nîşan bide",
+              "move-to-current-desktop": "Dema nîşandanê here ser sermaseya virtual a niha",
+              "play-pause-on-click": "Lêxe/Bisekinîne bi tikandinê"
             }
           },
           "visual-tweaks": {
-            "label": "Visual Tweaks",
+            "label": "Guhertinên Dîtbarî",
             "submenu": {
+              "like-buttons": {
+                "default": "Standard",
+                "force-show": "Bi zorê nîşan bide",
+                "hide": "Veşêre",
+                "swap": "Rêza bişkokên hezkirinê biguherîne",
+                "label": "Bişkokên hezkirinê"
+              },
               "custom-window-title": {
-                "label": "Custom window title",
+                "label": "Sernavê pencereya xwerû",
                 "prompt": {
-                  "label": "Enter custom window title: (leave empty to disable)",
-                  "placeholder": "Example: {{applicationName}}"
+                  "label": "Sernavê pencereya xwerû binivîse: (ji bo rawestandinê vala bihêle)",
+                  "placeholder": "Nimûne: {{applicationName}}"
                 }
               },
-              "like-buttons": {
-                "default": "Default",
-                "force-show": "Force show",
-                "hide": "Hide",
-                "label": "Like buttons",
-                "swap": "Swap like buttons order"
-              },
-              "remove-upgrade-button": "Remove upgrade button",
+              "remove-upgrade-button": "Bişkoka nûkirinê rake",
               "theme": {
                 "dialog": {
                   "button": {
-                    "cancel": "Cancel",
-                    "remove": "Remove"
+                    "cancel": "Betal bike",
+                    "remove": "Rake"
                   },
-                  "remove-theme": "Are you sure you want to remove the custom theme?",
-                  "remove-theme-message": "This will remove the custom theme"
+                  "remove-theme": "Tu piştrast î ku dixwazî rengê xwerû rakî?",
+                  "remove-theme-message": "Ev dê rengê xwerû rake"
                 },
-                "label": "Theme",
+                "label": "Reng",
                 "submenu": {
-                  "import-css-file": "Import custom CSS file",
-                  "no-theme": "No theme"
+                  "import-css-file": "Pelê CSS a xwerû îtxal bike",
+                  "no-theme": "Bê reng"
                 }
               }
             }
@@ -185,29 +186,29 @@
         }
       },
       "plugins": {
-        "enabled": "Enabled",
-        "label": "Plugins",
-        "new": "NEW"
+        "enabled": "Vekirî ye",
+        "label": "Pelgir",
+        "new": "NÛ"
       },
       "view": {
-        "label": "View",
+        "label": "Dîtin",
         "submenu": {
-          "force-reload": "Force Reload",
-          "reload": "Reload",
-          "reset-zoom": "Actual Size",
-          "toggle-fullscreen": "Toggle Full Screen",
-          "zoom-in": "Zoom In",
-          "zoom-out": "Zoom Out"
+          "force-reload": "Bi Zorê Ji Nû Ve Bar Bike",
+          "reload": "Ji Nû Ve Bar Bike",
+          "reset-zoom": "Mezinahiya Rastîn",
+          "toggle-fullscreen": "Dîmendera Tevahî Veke/Bigire",
+          "zoom-in": "Mezin Bike",
+          "zoom-out": "Biçûk Bike"
         }
       }
     },
     "tray": {
-      "next": "Next",
-      "play-pause": "Play/Pause",
-      "previous": "Previous",
-      "quit": "Exit",
-      "restart": "Restart App",
-      "show": "Show window",
+      "next": "Paşê",
+      "play-pause": "Lêxe/Bisekinîne",
+      "previous": "Berê",
+      "quit": "Derkeve",
+      "restart": "Sepanê Ji Nû Ve Bide Destpêkirin",
+      "show": "Pencereyê nîşan bide",
       "tooltip": {
         "default": "{{applicationName}}",
         "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
@@ -216,291 +217,295 @@
   },
   "plugins": {
     "ad-speedup": {
-      "description": "If an ad play it mutes the audio and sets playback speed to 16x",
-      "name": "Ad Speedup"
+      "description": "Heke reklamek lê bide, dengan qut dike û leza lêdanê dike 16x",
+      "name": "Lezkirina Reklamê"
     },
     "adblocker": {
-      "description": "Block all ads and tracking out of the box",
+      "description": "Hemû reklam û şopandinê rasterast asteng dike",
       "menu": {
-        "blocker": "Blocker"
+        "blocker": "Astengker"
       },
-      "name": "Ad Blocker"
+      "name": "Astengkirina Reklaman"
     },
     "album-actions": {
-      "description": "Adds Undislike, Dislike, Like, and Unlike buttons to apply this to all songs in a playlist or album",
-      "name": "Album Actions"
+      "description": "Bişkokên Nelêkerinê Rakîne, Nelêkerin, Lêkerin û Lêkerinê Rake lê zêde dike ji bo sepandina li hemû stranên di lîsteyek an albûmekê de",
+      "name": "Çalakiyên Albûmê"
     },
     "album-color-theme": {
-      "description": "Applies a dynamic theme and visual effects based on the album color palette",
+      "description": "Rengek dînamîk û bandorên dîtbarî li ser bingeha paleta rengê albûmê bicîh tîne",
       "menu": {
         "color-mix-ratio": {
-          "label": "Color mix ratio",
+          "label": "Rêjeya tevlihevkirina rengan",
           "submenu": {
             "percent": "{{ratio}}%"
           }
         },
-        "enable-seekbar": "Enable seekbar theming"
+        "enable-seekbar": "Rengkirina şopa lêgerînê çalak bike"
       },
-      "name": "Album Color Theme"
+      "name": "Rengê Albûmê"
+    },
+    "audio-only": {
+      "description": "Moda tenê-dengî bi zorê dike - hemû pêlên vîdyoyê di asta torê û lêderê de asteng dike da ku RAM û bandfirehiyê teserûf bike",
+      "name": "Tenê Deng"
     },
     "ambient-mode": {
-      "description": "Applies a lighting effect by casting gentle colors from the video, into your screen’s background",
+      "description": "Bandoreke ronahiyê bi belavkirina rengên nerm ji vîdyoyê li ser paşperdeya ekrana we bicîh tîne",
       "menu": {
         "blur-amount": {
-          "label": "Blur amount",
+          "label": "Mîqdara nezelaliyê",
           "submenu": {
-            "pixels": "{{blurAmount}} pixels"
+            "pixels": "{{blurAmount}} pîksel"
           }
         },
         "buffer": {
-          "label": "Buffer",
+          "label": "Bafir",
           "submenu": {
             "buffer": "{{buffer}}"
           }
         },
         "opacity": {
-          "label": "Opacity",
+          "label": "Zelalbûn",
           "submenu": {
             "percent": "{{opacity}}%"
           }
         },
         "quality": {
-          "label": "Quality",
+          "label": "Kalîte",
           "submenu": {
-            "pixels": "{{quality}} pixels"
+            "pixels": "{{quality}} pîksel"
           }
         },
         "size": {
-          "label": "Size",
+          "label": "Mezinahî",
           "submenu": {
             "percent": "{{size}}%"
           }
         },
         "smoothness-transition": {
-          "label": "Smoothness transition",
+          "label": "Nermbûna derbasbûnê",
           "submenu": {
-            "during": "During {{interpolationTime}} s"
+            "during": "Di dema {{interpolationTime}} s de"
           }
         },
         "use-fullscreen": {
-          "label": "Using fullscreen"
+          "label": "Bikaranîna dîmendera tevahî"
         }
       },
-      "name": "Ambient Mode"
+      "name": "Moda hawîrdorê"
     },
     "amuse": {
-      "description": "Adds {{applicationName}} support for the Amuse now playing widget by 6K Labs",
+      "description": "Piştgiriya {{applicationName}} ji bo widgeta Amuse ya niha dilîze ya 6K Labs zêde dike",
       "name": "Amuse",
       "response": {
-        "query": "Amuse API server is running. GET /query to get song info."
+        "query": "Pêşkêşkara API ya Amuse dixebite. GET /query ji bo wergirtina agahiyên stranê."
       }
     },
     "api-server": {
-      "description": "Adds an API server to control the player",
+      "description": "Pêşkêşkareke API zêde dike da ku lêder kontrol bike",
       "dialog": {
         "request": {
           "buttons": {
-            "allow": "Allow",
-            "deny": "Deny"
+            "allow": "Bihêle",
+            "deny": "Red bike"
           },
-          "message": "Allow {{ID}} ({{origin}}) to access the API?",
-          "title": "API authorization request"
+          "message": "Bihêle {{ID}} ({{origin}}) bigihîje APIyê?",
+          "title": "Daxwaza destûrdana APIyê"
         }
       },
       "menu": {
         "auth-strategy": {
-          "label": "Authorization strategy",
+          "label": "Stratejiya destûrdanê",
           "submenu": {
             "auth-at-first": {
-              "label": "Authorize at first request"
+              "label": "Di daxwaza yekem de destûr bide"
             },
             "none": {
-              "label": "No authorization"
+              "label": "Bê destûr"
             }
           }
         },
         "hostname": {
-          "label": "Hostname"
-        },
-        "https": {
-          "label": "HTTPS & Certificates",
-          "submenu": {
-            "cert": {
-              "dialogTitle": "Select HTTPS certificate file",
-              "label": "Certificate file (.crt/.pem)"
-            },
-            "enable-https": {
-              "label": "Enable HTTPS"
-            },
-            "key": {
-              "dialogTitle": "Select HTTPS private key file",
-              "label": "Private key file (.key/.pem)"
-            }
-          }
+          "label": "Navê makîneyê"
         },
         "port": {
           "label": "Port"
+        },
+        "https": {
+          "label": "HTTPS û Sertîfîka",
+          "submenu": {
+            "enable-https": {
+              "label": "HTTPS çalak bike"
+            },
+            "cert": {
+              "label": "Pelê sertîfîkayê (.crt/.pem)",
+              "dialogTitle": "Pelê sertîfîkaya HTTPS hilbijêre"
+            },
+            "key": {
+              "label": "Pelê mifteya taybet (.key/.pem)",
+              "dialogTitle": "Pelê mifteya taybet a HTTPS hilbijêre"
+            }
+          }
         }
       },
-      "name": "API Server [Beta]",
+      "name": "Pêşkêşkara API [Beta]",
       "prompt": {
         "hostname": {
-          "label": "Enter the hostname (like 0.0.0.0) for the API server:",
-          "title": "Hostname"
+          "label": "Navê makîneyê (wekî 0.0.0.0) ji bo pêşkêşkara APIyê binivîse:",
+          "title": "Navê makîneyê"
         },
         "port": {
-          "label": "Enter the port for the API server:",
+          "label": "Porta ji bo pêşkêşkara APIyê binivîse:",
           "title": "Port"
         }
       }
     },
     "audio-compressor": {
-      "description": "Apply compression to audio (lowers the volume of the loudest parts of the signal and raises the volume of the softest parts)",
-      "name": "Audio Compressor"
+      "description": "Kompresyonê li dengan bicîh tîne (bilindiya beşên herî bilind ên sînyalê kêm dike û bilindiya beşên herî nerm zêde dike)",
+      "name": "Kompresora Dengî"
     },
     "auth-proxy-adapter": {
-      "description": "Support for the use of authentication proxy services",
+      "description": "Piştgiriya ji bo bikaranîna xizmetên proksiya rastandina nasnameyê",
       "menu": {
-        "disable": "Disable Proxy Adapter",
-        "enable": "Enable Proxy Adapter",
+        "disable": "Adaptersaziya Proksiyê Bide Rawestandin",
+        "enable": "Adaptersaziya Proksiyê Çalak Bike",
         "hostname": {
-          "label": "Hostname"
+          "label": "Navê makîneyê"
         },
         "port": {
           "label": "Port"
         }
       },
-      "name": "Auth Proxy Adapter",
+      "name": "Adaptersaziya Proksiya Rastandinê",
       "prompt": {
         "hostname": {
-          "label": "Enter hostname for local proxy server (requires restart):",
-          "title": "Proxy Hostname"
+          "title": "Navê Makîneya Proksiyê",
+          "label": "Navê makîneyê ji bo pêşkêşkara proksiya herêmî binivîse (pêdivî bi destpêkirina ji nû ve heye):"
         },
         "port": {
-          "label": "Enter port for local proxy server (requires restart):",
-          "title": "Proxy Port"
+          "title": "Porta Proksiyê",
+          "label": "Porta ji bo pêşkêşkara proksiya herêmî binivîse (pêdivî bi destpêkirina ji nû ve heye):"
         }
       }
     },
     "blur-nav-bar": {
-      "description": "Makes navigation bar transparent and blurry",
-      "name": "Blur Navigation Bar"
+      "description": "Şopa navîgasyonê zelal û nezelal dike",
+      "name": "Nezelalkirina Şopa Navîgasyonê"
     },
     "bypass-age-restrictions": {
-      "description": "Bypass Music Player's age verification",
-      "name": "Bypass Age Restrictions"
+      "description": "Verastkirina temenê ya Lêdera Muzîkê derbas dike",
+      "name": "Derbaskirina Sînorkirinên Temenê"
     },
     "captions-selector": {
-      "description": "Caption selector for {{applicationName}} audio tracks",
+      "description": "Hilbijêrka jêrnivîsan ji bo şopên dengî yên {{applicationName}}",
       "menu": {
-        "autoload": "Automatically select last used caption",
-        "disable-captions": "No captions by default"
+        "autoload": "Jêrnivîsa dawî ya hatî bikaranîn bixweber hilbijêre",
+        "disable-captions": "Bê jêrnivîs wekî standard"
       },
-      "name": "Captions Selector",
+      "name": "Hilbijêrka Jêrnivîsan",
       "prompt": {
         "selector": {
-          "label": "Current caption language: {{language}}",
-          "none": "None",
-          "title": "Select caption language"
+          "label": "Zimanê jêrnivîsa niha: {{language}}",
+          "none": "Tune",
+          "title": "Zimanê jêrnivîsê hilbijêre"
         }
       },
       "templates": {
-        "title": "Open captions selector"
+        "title": "Hilbijêrka jêrnivîsan veke"
       },
       "toast": {
-        "caption-changed": "Caption changed to {{language}}",
-        "caption-disabled": "Captions disabled",
-        "no-captions": "No captions available for this song"
+        "caption-changed": "Jêrnivîs wekî {{language}} hat guhertin",
+        "caption-disabled": "Jêrnivîs hatin rawestandin",
+        "no-captions": "Ji bo vê stranê jêrnivîs tune ye"
       }
     },
     "clock": {
-      "description": "Add a clock to the navigation bar",
+      "description": "Demjimêrekê li şopa navîgasyonê zêde bike",
+      "name": "Demjimêr",
       "menu": {
         "format": {
-          "24-hour-format": "24-Hour Format",
-          "display-seconds": "Display Seconds",
-          "label": "Format"
+          "label": "Format",
+          "display-seconds": "Çirkeyan Nîşan Bide",
+          "24-hour-format": "Formata 24-Saetî"
         }
-      },
-      "name": "Clock"
+      }
     },
     "compact-sidebar": {
-      "description": "Always set the sidebar in compact mode",
-      "name": "Compact Sidebar"
+      "description": "Her tim şopa kêlekê di moda kompakt de saz bike",
+      "name": "Şopa Kêlekê ya Kompakt"
     },
     "crossfade": {
-      "description": "Crossfade between songs",
+      "description": "Di navbera stranan de derbasbûn",
       "menu": {
-        "advanced": "Advanced"
+        "advanced": "Pêşketî"
       },
-      "name": "Crossfade [Beta]",
+      "name": "Derbasbûn [Beta]",
       "prompt": {
         "options": {
           "multi-input": {
-            "fade-in-duration": "Fade in duration (ms)",
-            "fade-out-duration": "Fade out duration (ms)",
+            "fade-in-duration": "Demjimara têketinê (ms)",
+            "fade-out-duration": "Demjimara derketinê (ms)",
             "fade-scaling": {
-              "label": "Fade scaling",
-              "linear": "Linear",
-              "logarithmic": "Logarithmic"
+              "label": "Pîvandina derbasbûnê",
+              "linear": "Xêzikî",
+              "logarithmic": "Logarîtmîk"
             },
-            "seconds-before-end": "Crossfade N seconds before end"
+            "seconds-before-end": "N çirke berî dawiyê derbas bibe"
           },
-          "title": "Crossfade options"
+          "title": "Vebijêrkên derbasbûnê"
         }
       }
     },
     "custom-output-device": {
-      "description": "Configure a custom output media device for songs",
+      "description": "Amûrek derana medyaya xwerû ji bo stranan saz bike",
       "menu": {
-        "device-selector": "Select Device"
+        "device-selector": "Amûrê Hilbijêre"
       },
-      "name": "Custom Output Device",
+      "name": "Amûra Derana Xwerû",
       "prompt": {
         "device-selector": {
-          "label": "Choose the output media device to be used",
-          "title": "Select Output Device"
+          "label": "Amûra derana medyayê ya ku were bikaranîn hilbijêre",
+          "title": "Amûra Deranê Hilbijêre"
         }
       }
     },
     "disable-autoplay": {
-      "description": "Makes song start in \"paused\" mode",
+      "description": "Stranê di moda \"rawestandî\" de dest pê dike",
       "menu": {
-        "apply-once": "Applies only on startup"
+        "apply-once": "Tenê di dema destpêkirinê de tê sepandin"
       },
-      "name": "Disable Autoplay"
+      "name": "Lêdana Xweber Bide Rawestandin"
     },
     "discord": {
       "backend": {
-        "already-connected": "Attempted to connect with active connection",
-        "connected": "Connected to Discord",
-        "disconnected": "Disconnected from Discord"
+        "already-connected": "Hate hewldan ku bi girêdana çalak ve were girêdan",
+        "connected": "Bi Discordê ve hat girêdan",
+        "disconnected": "Ji Discordê hat qutkirin"
       },
-      "description": "Show your friends what you listen to with Rich Presence",
+      "description": "Bi Rich Presence re nîşanî hevalên xwe bide ka tu çi guhdarî dikî",
       "menu": {
-        "auto-reconnect": "Auto reconnect",
-        "clear-activity": "Clear activity",
-        "clear-activity-after-timeout": "Clear activity after timeout",
-        "connected": "Connected",
-        "disconnected": "Disconnected",
-        "hide-duration-left": "Hide duration left",
-        "hide-github-button": "Hide GitHub link Button",
-        "play-on-application": "Play on {{applicationName}}",
-        "set-inactivity-timeout": "Set inactivity timeout",
+        "auto-reconnect": "Bixweber ji nû ve girêde",
+        "clear-activity": "Çalakiyê paqij bike",
+        "clear-activity-after-timeout": "Piştî demborînê çalakiyê paqij bike",
+        "connected": "Hat girêdan",
+        "disconnected": "Hat qutkirin",
+        "hide-duration-left": "Demjimara mayî veşêre",
+        "hide-github-button": "Bişkoka Girêdana GitHub veşêre",
+        "play-on-application": "Li ser {{applicationName}} lêxe",
+        "set-inactivity-timeout": "Demboriya bêçalakiyê saz bike",
         "set-status-display-type": {
-          "label": "Status text",
+          "label": "Nivîsa rewşê",
           "submenu": {
-            "application": "Listening to {{applicationName}}",
-            "artist": "Listening to {artist}",
-            "title": "Listening to {song title}"
+            "application": "Guhdariya {{applicationName}}",
+            "artist": "Guhdariya {{artist}}",
+            "title": "Guhdariya {{song title}}"
           }
         }
       },
       "name": "Discord Rich Presence",
       "prompt": {
         "set-inactivity-timeout": {
-          "label": "Enter inactivity timeout in seconds:",
-          "title": "Set inactivity timeout"
+          "label": "Demboriya bêçalakiyê bi çirkeyan binivîse:",
+          "title": "Demboriya bêçalakiyê saz bike"
         }
       }
     },
@@ -509,245 +514,253 @@
         "dialog": {
           "error": {
             "buttons": {
-              "ok": "OK"
+              "ok": "Baş e"
             },
-            "message": "Argh! Apologies, download failed…",
-            "title": "Error in download!"
+            "message": "Bibore, daxistin pêk nehat...",
+            "title": "Çewtiyek di daxistinê de!"
           },
           "start-download-playlist": {
             "buttons": {
-              "ok": "OK"
+              "ok": "Baş e"
             },
-            "detail": "({{playlistSize}} songs)",
-            "message": "Downloading Playlist {{playlistTitle}}",
-            "title": "Download started"
+            "detail": "({{playlistSize}} stran)",
+            "message": "Lîsteya Lêdanê {{playlistTitle}} Tê Daxistin",
+            "title": "Daxistin dest pê kir"
           }
         },
         "feedback": {
-          "conversion-progress": "Conversion: {{percent}}%",
-          "converting": "Converting…",
-          "done": "Done: {{filePath}}",
-          "download-info": "Downloading {{artist}} - {{title}} [{{videoId}}",
-          "download-progress": "Download: {{percent}}%",
-          "downloading": "Downloading…",
-          "downloading-counter": "Downloading {{current}}/{{total}}…",
-          "downloading-playlist": "Downloading playlist \"{{playlistTitle}}\" - {{playlistSize}} songs ({{playlistId}})",
-          "error-while-downloading": "Error downloading \"{{author}} - {{title}}\": {{error}}",
-          "folder-already-exists": "The folder {{playlistFolder}} already exists",
-          "getting-playlist-info": "Getting playlist info…",
-          "loading": "Loading…",
-          "playlist-has-only-one-song": "Playlist has only one item, downloading it directly",
-          "playlist-id-not-found": "No playlist ID found",
-          "playlist-is-empty": "Playlist is empty",
-          "playlist-is-mix-or-private": "Error getting playlist info: make sure it isn't a private or \"Mixed for you\" playlist\n\n{{error}}",
-          "preparing-file": "Preparing file…",
-          "saving": "Saving…",
-          "trying-to-get-playlist-id": "Trying to get playlist ID: {{playlistId}}",
-          "video-id-not-found": "Video not found",
-          "writing-id3": "Writing ID3 tags…"
+          "conversion-progress": "Veguherîn: {{percent}}%",
+          "converting": "Tê veguherandin...",
+          "done": "Qediya: {{filePath}}",
+          "download-info": "Tê daxistin {{artist}} - {{title}} [{{videoId}}",
+          "download-progress": "Daxistin: {{percent}}%",
+          "downloading": "Tê daxistin...",
+          "downloading-counter": "Tê daxistin {{current}}/{{total}}...",
+          "downloading-playlist": "Lîsteya lêdanê \"{{playlistTitle}}\" tê daxistin - {{playlistSize}} stran ({{playlistId}})",
+          "error-while-downloading": "Çewtiya daxistina \"{{author}} - {{title}}\": {{error}}",
+          "folder-already-exists": "Peldanka {{playlistFolder}} berê heye",
+          "getting-playlist-info": "Agahiyên lîsteya lêdanê tên wergirtin...",
+          "loading": "Tê barkirin...",
+          "playlist-has-only-one-song": "Lîsteya lêdanê tenê yek hêman heye, rasterast tê daxistin",
+          "playlist-id-not-found": "Nasnameya lîsteya lêdanê nehat dîtin",
+          "playlist-is-empty": "Lîsteya lêdanê vala ye",
+          "playlist-is-mix-or-private": "Çewtiya wergirtina agahiyên lîsteya lêdanê: piştrast bike ku ew ne lîsteyeke taybet an \"Ji bo te tevlihevkirî\" ye\n\n{{error}}",
+          "preparing-file": "Pel tê amadekirin...",
+          "saving": "Tê hilanîn...",
+          "trying-to-get-playlist-id": "Hewldana wergirtina nasnameya lîsteya lêdanê: {{playlistId}}",
+          "video-id-not-found": "Vîdyo nehat dîtin",
+          "writing-id3": "Teqên ID3 tên nivîsandin..."
         }
       },
-      "description": "Downloads MP3 / source audio directly from the interface",
+      "description": "MP3 / dengê jêderê rasterast ji navbeynê daxîne",
       "menu": {
-        "choose-download-folder": "Choose download folder",
+        "choose-download-folder": "Peldanka daxistinê hilbijêre",
         "download-finish-settings": {
-          "label": "Download on finish",
+          "label": "Di dawiyê de daxe",
           "prompt": {
-            "last-percent": "After x percent",
-            "last-seconds": "Last x seconds",
-            "title": "Configure when to download"
+            "last-percent": "Piştî x ji sedî",
+            "last-seconds": "X çirkeyên dawî",
+            "title": "Veavakirina dema daxistinê"
           },
           "submenu": {
-            "advanced": "Advanced",
-            "enabled": "Enabled",
-            "mode": "Time mode",
-            "percent": "Percent",
-            "seconds": "Seconds"
+            "advanced": "Pêşketî",
+            "enabled": "Çalak e",
+            "mode": "Moda demê",
+            "percent": "Ji sedî",
+            "seconds": "Çirke"
           }
         },
-        "download-playlist": "Download playlist",
-        "presets": "Presets",
-        "skip-existing": "Skip existing files"
+        "download-playlist": "Lîsteya lêdanê daxe",
+        "presets": "Pêşsazî",
+        "skip-existing": "Pelên heyî derbas bike"
       },
-      "name": "Downloader",
+      "name": "Daxîner",
       "renderer": {
-        "can-not-update-progress": "Cannot update progress"
+        "can-not-update-progress": "Pêşveçûn nayê rojanekirin"
       },
       "templates": {
-        "button": "Download"
+        "button": "Daxe"
       }
     },
     "equalizer": {
-      "description": "Adds an equalizer to the player",
+      "description": "Ekwalayzerekê li lêderê zêde dike",
       "menu": {
         "presets": {
-          "label": "Presets",
+          "label": "Pêşsazî",
           "list": {
-            "bass-booster": "Bass booster"
+            "bass-booster": "Xurtkera basê"
           }
         }
       },
-      "name": "Equalizer"
+      "name": "Ekwalayzer"
     },
     "exponential-volume": {
-      "description": "Makes the volume slider exponential so it's easier to select lower volumes.",
-      "name": "Exponential Volume"
+      "description": "Slikera dengan dike eksponansiyel da ku hilbijartina denganên nizm hêsantir be.",
+      "name": "Dengê Eksponansiyel"
     },
     "in-app-menu": {
-      "description": "Gives menu-bars a fancy, dark or album-color look",
+      "description": "Şopên menuyê dide xuyangeke xweş, tarî an rengê albûmê",
       "menu": {
-        "hide-dom-window-controls": "Hide DOM window controls"
+        "hide-dom-window-controls": "Kontrolên pencereya DOM veşêre"
       },
-      "name": "In-App Menu"
+      "name": "Menûya Nav-Sepanê"
     },
     "lumiastream": {
-      "description": "Adds Lumia Stream support",
+      "description": "Piştgiriya Lumia Stream zêde dike",
       "name": "Lumia Stream [Beta]"
     },
     "lyrics-genius": {
-      "description": "Adds lyrics support for most songs",
+      "description": "Piştgiriya gotinan ji bo piraniya stranan zêde dike",
       "menu": {
-        "romanized-lyrics": "Romanized Lyrics"
+        "romanized-lyrics": "Gotina Romanîzekirî"
       },
       "name": "Lyrics Genius",
       "renderer": {
-        "fetched-lyrics": "Fetched lyrics for Genius"
+        "fetched-lyrics": "Gotinên ji Genius hatin wergirtin"
       }
     },
     "music-together": {
-      "description": "Share a playlist with others. When the host plays a song, everyone else will hear the same song",
+      "description": "Lîsteyeke lêdanê bi kesên din re parve bike. Dema mazûvan stranekê lêxe, hemû kesên din dê heman stranê bibihîzin",
       "dialog": {
-        "enter-host": "Enter Host ID"
+        "enter-host": "Nasnameya Mazûvan Binivîse"
       },
       "internal": {
-        "save": "Save",
-        "track-source": "Track Source",
-        "unknown-user": "Unknown User"
+        "save": "Hilîne",
+        "track-source": "Çavkaniya Şopê",
+        "unknown-user": "Bikarhênerê Nenas"
       },
       "menu": {
-        "click-to-copy-id": "Copy Host ID",
-        "close": "Close Music Together",
-        "connected-users": "Connected Users",
-        "disconnect": "Disconnect Music Together",
-        "empty-user": "No connected users",
-        "host": "Music Together Host",
-        "join": "Join Music Together",
+        "click-to-copy-id": "Nasnameya Mazûvan Kopî Bike",
+        "close": "Music Together Bigire",
+        "connected-users": "Bikarhênerên Girêdayî",
+        "disconnect": "Music Together Qut Bike",
+        "empty-user": "Bikarhênerên girêdayî tune",
+        "host": "Mazûvanê Music Together",
+        "join": "Tevlî Music Together Bibe",
         "permission": {
-          "all": "Allow guests to control playlist and player",
-          "host-only": "Only the host can control playlist and player",
-          "playlist": "Allow guests to control playlist"
+          "all": "Bihêle mêvan lîsteya lêdanê û lêderê kontrol bikin",
+          "host-only": "Tenê mazûvan dikare lîsteya lêdanê û lêderê kontrol bike",
+          "playlist": "Bihêle mêvan lîsteya lêdanê kontrol bikin"
         },
-        "set-permission": "Change Control Permission",
+        "set-permission": "Destûra Kontrolê Biguherîne",
         "status": {
-          "disconnected": "Disconnected",
-          "guest": "Connected as Guest",
-          "host": "Connected as Host"
+          "disconnected": "Hat qutkirin",
+          "guest": "Wekî Mêvan Hat Girêdan",
+          "host": "Wekî Mazûvan Hat Girêdan"
         }
       },
       "name": "Music Together [Beta]",
       "toast": {
-        "add-song-failed": "Failed to add song",
-        "closed": "Music Together closed",
-        "disconnected": "Music Together disconnected",
-        "host-failed": "Failed to host Music Together",
-        "id-copied": "Host ID copied to clipboard",
-        "id-copy-failed": "Failed to copy Host ID to clipboard",
-        "join-failed": "Failed to join Music Together",
-        "joined": "Joined Music Together",
-        "permission-changed": "Music Together permission changed to \"{{permission}}\"",
-        "remove-song-failed": "Failed to remove song",
-        "user-connected": "{{name}} joined Music Together",
-        "user-disconnected": "{{name}} left Music Together"
+        "add-song-failed": "Stran nehat zêdekirin",
+        "closed": "Music Together hat girtin",
+        "disconnected": "Music Together hat qutkirin",
+        "host-failed": "Mazûvaniya Music Together pêk nehat",
+        "id-copied": "Nasnameya Mazûvan li clipboardê hat kopîkirin",
+        "id-copy-failed": "Kopîkirina Nasnameya Mazûvan li clipboardê pêk nehat",
+        "join-failed": "Tevlîbûna Music Together pêk nehat",
+        "joined": "Tevlî Music Together bû",
+        "permission-changed": "Destûra Music Together wekî \"{{permission}}\" hat guhertin",
+        "remove-song-failed": "Stran nehat rakirin",
+        "user-connected": "{{name}} tevlî Music Together bû",
+        "user-disconnected": "{{name}} ji Music Together derket"
       }
     },
     "navigation": {
-      "description": "Next/Back navigation arrows directly integrated in the interface, like in your favorite browser",
+      "description": "Tîrên navîgasyonê yên Pêş/Paş rasterast di navbeynê de, mîna di geroka xwe ya bijare de",
       "name": "Navigation",
       "templates": {
         "back": {
-          "title": "Go to previous page"
+          "title": "Here rûpela berê"
         },
         "forward": {
-          "title": "Go to next page"
+          "title": "Here rûpela pêş"
         }
       }
     },
     "no-google-login": {
-      "description": "Remove Google login buttons and links from the interface",
-      "name": "No Google Login"
+      "description": "Bişkok û girêdanên têketina Google ji navbeynê rake",
+      "name": "Bê Têketina Google"
     },
     "notifications": {
-      "description": "Display a notification when a song starts playing (interactive notifications are available on Windows)",
+      "description": "Dema stranek dest bi lêdanê dike agahdariyekê nîşan bide (agahdariyên înteraktîf li Windowsê hene)",
       "menu": {
-        "interactive": "Interactive Notifications",
+        "interactive": "Agahdariyên Înteraktîf",
         "interactive-settings": {
-          "label": "Interactive Settings",
+          "label": "Mîhengên Înteraktîf",
           "submenu": {
-            "hide-button-text": "Hide button text",
-            "refresh-on-play-pause": "Refresh on Play/Pause",
-            "tray-controls": "Open/Close on tray click"
+            "hide-button-text": "Nivîsa bişkokê veşêre",
+            "hover-controls": "Lêdera biçûk nîşan bide dema mişk li ser tepsiyê dimîne",
+            "refresh-on-play-pause": "Dema Lêxe/Rawestîne Nûve Bike",
+            "tray-controls": "Veke/Bigire bi tikandina tepsiyê"
           }
         },
-        "priority": "Notification Priority",
-        "toast-style": "Toast style",
-        "unpause-notification": "Show notification on unpause"
+        "priority": "Pêşîniya Agahdariyê",
+        "toast-style": "Şêwaza agahdariyê",
+        "unpause-notification": "Dema rawestandinê tê rakirin agahdariyê nîşan bide"
       },
-      "name": "Notifications"
+      "name": "Agahdarî"
     },
     "performance-improvement": {
-      "description": "Improve performance by enabling experimental scripts",
+      "description": "Performansê bi çalakkirina skrîptên ezmûnî baştir bike",
       "name": "Performance improvement [Beta]"
     },
-    "picture-in-picture": {
-      "description": "Allows to switch the app to picture-in-picture mode",
+    "playback-recovery": {
+      "description": "Bixweber ji rewşên lêdanê yên asêbûyî, rawestandî an mirî xelas dike",
       "menu": {
-        "always-on-top": "Always on top",
+        "log-to-console": "Bûyerên vejandinê li konsolê tomar bike"
+      },
+      "name": "Vejandina Lêdanê"
+    },
+    "picture-in-picture": {
+      "description": "Dihêle sepanê bibe moda wêne-di-wêneyî",
+      "menu": {
+        "always-on-top": "Her tim li ser",
         "hotkey": {
-          "label": "Hotkey",
+          "label": "Bişkoka Kurt",
           "prompt": {
             "keybind-options": {
-              "hotkey": "Hotkey"
+              "hotkey": "Bişkoka Kurt"
             },
-            "label": "Choose a hotkey to toggle picture-in-picture",
-            "title": "Picture-in-picture Hotkey"
+            "label": "Bişkokeke kurt hilbijêre ji bo vekirina/girtina wêne-di-wêneyî",
+            "title": "Bişkoka Kurt a Wêne-di-Wêneyî"
           }
         },
-        "save-window-position": "Save window position",
-        "save-window-size": "Save window size",
-        "use-native-pip": "Use browser native PiP"
+        "save-window-position": "Cihê pencereyê hilîne",
+        "save-window-size": "Mezinahiya pencereyê hilîne",
+        "use-native-pip": "PiP-a xwemalî ya gerokê bikar bîne"
       },
-      "name": "Picture-in-picture",
+      "name": "Wêne-di-Wêneyî",
       "templates": {
-        "button": "Picture-in-picture"
+        "button": "Wêne-di-Wêneyî"
       }
     },
     "playback-speed": {
-      "description": "Listen fast, listen slow! Adds a slider that controls song speed",
-      "name": "Playback Speed",
+      "description": "Zû guhdarî bike, hêdî guhdarî bike! Slikerekê zêde dike ku leza stranê kontrol dike",
+      "name": "Leza Lêdanê",
       "templates": {
-        "button": "Speed"
+        "button": "Lez"
       }
     },
     "precise-volume": {
-      "description": "Control the volume precisely using mousewheel/hotkeys, with a custom HUD and customizable volume steps",
+      "description": "Dengê bi duristî bi çerxa mişkê/bişkokên kurt kontrol bike, bi HUDeke xwerû û pêlikên dengê yên veavakirî",
       "menu": {
-        "arrows-shortcuts": "Local Arrow-keys Controls",
-        "custom-volume-steps": "Set Custom Volume Steps",
-        "global-shortcuts": "Global Hotkeys"
+        "arrows-shortcuts": "Kontrolên Bişkokên Tîran ên Herêmî",
+        "custom-volume-steps": "Pêlikên Dengê yên Xwerû Saz Bike",
+        "global-shortcuts": "Bişkokên Kurt ên Gerdûnî"
       },
-      "name": "Precise Volume",
+      "name": "Dengê Durist",
       "prompt": {
         "global-shortcuts": {
           "keybind-options": {
-            "decrease": "Decrease Volume",
-            "increase": "Increase Volume"
+            "decrease": "Dengî Kêm Bike",
+            "increase": "Dengî Zêde Bike"
           },
-          "label": "Choose Global Volume Keybinds:",
-          "title": "Global Volume Keybinds"
+          "label": "Bişkokên Dengê yên Gerdûnî Hilbijêre:",
+          "title": "Bişkokên Dengê yên Gerdûnî"
         },
         "volume-steps": {
-          "label": "Choose Volume Increase/Decrease Steps",
-          "title": "Volume Steps"
+          "label": "Pêlikên Zêdekirin/Kêmkirina Dengê Hilbijêre",
+          "title": "Pêlikên Dengê"
         }
       }
     },
@@ -755,372 +768,372 @@
       "backend": {
         "dialog": {
           "quality-changer": {
-            "detail": "Current Quality: {{quality}}",
-            "message": "Choose Video Quality:",
-            "title": "Choose Video Quality"
+            "detail": "Kalîteya Niha: {{quality}}",
+            "message": "Kalîteya Vîdyoyê Hilbijêre:",
+            "title": "Kalîteya Vîdyoyê Hilbijêre"
           }
         }
       },
-      "description": "Allows changing the video quality with a button on the video overlay",
-      "name": "Video Quality Changer",
+      "description": "Dihêle kalîteya vîdyoyê bi bişkokek li ser pêldana vîdyoyê were guhertin",
+      "name": "Guherkera Kalîteya Vîdyoyê",
       "renderer": {
         "quality-settings-button": {
-          "label": "Open player quality changer"
+          "label": "Guherkera kalîteya lêderê veke"
         }
       }
     },
     "scrobbler": {
-      "description": "Add scrobbling support (etc. last.fm, Listenbrainz)",
+      "description": "Piştgiriya skroblînê zêde dike (mînak last.fm, Listenbrainz)",
       "dialog": {
         "lastfm": {
           "auth-failed": {
-            "message": "Failed to authenticate with Last.fm\nHide the popup until the next restart.",
-            "title": "Authentication Failed"
+            "message": "Rastandina bi Last.fm re pêk nehat\nPopupê heta destpêkirina ji nû ve ya bê veşêre.",
+            "title": "Rastandin Pêk Nehat"
           }
         }
       },
       "menu": {
         "lastfm": {
-          "api-settings": "Last.fm API Settings"
+          "api-settings": "Mîhengên API ya Last.fm"
         },
         "listenbrainz": {
-          "token": "Enter ListenBrainz user token"
+          "token": "Nîşana bikarhênerê ListenBrainz binivîse"
         },
-        "scrobble-alternative-artist": "Use alternative artists",
-        "scrobble-alternative-title": "Use alternative titles",
-        "scrobble-other-media": "Scrobble other media"
+        "scrobble-alternative-title": "Sernavên alternatîf bikar bîne",
+        "scrobble-alternative-artist": "Hunermendên alternatîf bikar bîne",
+        "scrobble-other-media": "Medyayên din skrobil bike"
       },
-      "name": "Scrobbler",
+      "name": "Skrobiler",
       "prompt": {
         "lastfm": {
-          "api-key": "Last.fm API key",
-          "api-secret": "Last.fm API secret"
+          "api-key": "Mifteya API ya Last.fm",
+          "api-secret": "Raza API ya Last.fm"
         },
         "listenbrainz": {
           "token": {
-            "label": "Enter your ListenBrainz user token:",
-            "title": "ListenBrainz token"
+            "label": "Nîşana bikarhênerê xwe ya ListenBrainz binivîse:",
+            "title": "Nîşana ListenBrainz"
           }
         }
       }
     },
     "shortcuts": {
-      "description": "Allows setting global hotkeys for playback (play/pause/next/previous) and turning off media OSD by overriding media keys, turning on Ctrl/CMD + F to search, turning on Linux MPRIS support for media keys, and custom hotkeys for advanced users",
+      "description": "Dihêle bişkokên kurt ên gerdûnî ji bo lêdanê (lêxe/rawestîne/pêş/berê) werin danîn û OSDya medyayê bi girtina bişkokên medyayê were rawestandin, Ctrl/CMD + F ji bo lêgerînê were vekirin, piştgiriya Linux MPRIS ji bo bişkokên medyayê were vekirin, û bişkokên kurt ên xwerû ji bo bikarhênerên pêşketî",
       "menu": {
-        "override-media-keys": "Override Media Keys",
-        "set-keybinds": "Set Global Song Controls"
+        "override-media-keys": "Bişkokên Medyayê Bigire",
+        "set-keybinds": "Kontrolên Stranê yên Gerdûnî Saz Bike"
       },
       "name": "Shortcuts (& MPRIS)",
       "prompt": {
         "keybind": {
           "keybind-options": {
-            "next": "Next",
-            "play-pause": "Play / Pause",
-            "previous": "Previous"
+            "next": "Pêş",
+            "play-pause": "Lêxe / Rawestîne",
+            "previous": "Berê"
           },
-          "label": "Choose Global Keybinds for Songs Control:",
-          "title": "Global Keybinds"
+          "label": "Bişkokên Kurt ên Gerdûnî ji bo Kontrola Stranan Hilbijêre:",
+          "title": "Bişkokên Kurt ên Gerdûnî"
         }
       }
     },
     "skip-disliked-songs": {
-      "description": "Skips disliked songs",
-      "name": "Skip Disliked Songs"
+      "description": "Stranên ne ecibandî derbas dike",
+      "name": "Stranên Ne Ecibandî Derbas Bike"
     },
     "skip-silences": {
-      "description": "Automatically skip silences sections in songs",
-      "name": "Skip Silences"
+      "description": "Bixweber beşên bêdengiyê di stranan de derbas dike",
+      "name": "Bêdengiyan Derbas Bike"
     },
     "sponsorblock": {
-      "description": "Automatically Skips non-music parts like intro/outro or parts of music videos where the song isn't playing",
+      "description": "Bixweber beşên ne-muzîkal mîna destpêk/dawî an beşên vîdyoyên muzîkê yên ku stran lê nayê lêdan, derbas dike",
       "name": "SponsorBlock"
     },
     "synced-lyrics": {
-      "description": "Provides synced lyrics to songs, using providers like LRClib.",
+      "description": "Gotina hevdemkirî ji bo stranan peyda dike, bi karanîna dabînkerên mîna LRClib.",
       "errors": {
-        "fetch": "⚠️\tAn error occurred while fetching the lyrics.\n\tPlease try again later.",
-        "not-found": "⚠️ No lyrics found for this song."
+        "fetch": "⚠️\tDi dema wergirtina gotinan de çewtiyek çêbû.\n\tJi kerema xwe paşê dîsa biceribîne.",
+        "not-found": "⚠️ Ji bo vê stranê gotin nehat dîtin."
       },
       "menu": {
-        "convert-chinese-character": {
-          "label": "Convert Chinese character",
-          "submenu": {
-            "disabled": {
-              "label": "Disabled",
-              "tooltip": "Disable Chinese character conversion"
-            },
-            "simplified-to-traditional": {
-              "label": "Simplified to Traditional",
-              "tooltip": "Convert Simplified Chinese to Traditional Chinese"
-            },
-            "traditional-to-simplified": {
-              "label": "Traditional to Simplified",
-              "tooltip": "Convert Traditional Chinese to Simplified Chinese"
-            }
-          },
-          "tooltip": "Convert Chinese character to Traditional or Simplified"
+        "preferred-provider": {
+          "label": "Dabînkerê Bijare",
+          "tooltip": "Dabînkerê standard ê were bikaranîn hilbijêre",
+          "none": {
+            "label": "Tune",
+            "tooltip": "Dabînkerek bijare tune"
+          }
         },
         "default-text-string": {
-          "label": "Default character between lyrics",
-          "tooltip": "Choose the default character to use for the gap between lyrics"
+          "label": "Karaktera standard di navbera gotinan de",
+          "tooltip": "Karaktera standard a ku ji bo valahiya di navbera rêzikên gotinan de were bikaranîn hilbijêre"
         },
         "line-effect": {
-          "label": "Line effect",
+          "label": "Bandora xetê",
           "submenu": {
             "fancy": {
-              "label": "Fancy",
-              "tooltip": "Use large, app-like effects on the current line"
+              "label": "Xweşik",
+              "tooltip": "Bandorên mezin, mîna sepanê li ser xeta niha bikar bîne"
             },
             "focus": {
-              "label": "Focus",
-              "tooltip": "Make only the current line white"
+              "label": "Fokus",
+              "tooltip": "Tenê xeta niha spî bike"
             },
             "offset": {
-              "label": "Offset",
-              "tooltip": "Offset on the right the current line"
+              "label": "Ofset",
+              "tooltip": "Xeta niha li rastê ofset bike"
             },
             "scale": {
-              "label": "Scale",
-              "tooltip": "Scale the current line"
+              "label": "Pîvan",
+              "tooltip": "Xeta niha bipîve"
             }
           },
-          "tooltip": "Choose the effect to apply to the current line"
+          "tooltip": "Bandora ku li ser xeta niha were sepandin hilbijêre"
         },
         "lyrics-font-size": {
-          "label": "Lyrics font size",
+          "label": "Mezinahiya fonta gotinan",
           "submenu": {
-            "large": {
-              "label": "Large",
-              "tooltip": "Use the original larger lyrics size"
+            "small": {
+              "label": "Biçûk",
+              "tooltip": "Mezinahiyeke kompakttir a gotinan bikar bîne"
             },
             "medium": {
-              "label": "Medium",
-              "tooltip": "Use a balanced lyrics size"
+              "label": "Navîn",
+              "tooltip": "Mezinahiyeke hevseng a gotinan bikar bîne"
             },
-            "small": {
-              "label": "Small",
-              "tooltip": "Use a more compact lyrics size"
+            "large": {
+              "label": "Mezin",
+              "tooltip": "Mezinahiya gotinan a orîjînal a meztir bikar bîne"
             }
           },
-          "tooltip": "Choose how large the lyrics text should be"
+          "tooltip": "Hilbijêre ka divê nivîsa gotinan çiqas mezin be"
         },
         "precise-timing": {
-          "label": "Make the lyrics perfectly synced",
-          "tooltip": "Calculate to the milisecond the display of the next line (can have a small impact on performance)"
-        },
-        "preferred-provider": {
-          "label": "Preferred Provider",
-          "none": {
-            "label": "None",
-            "tooltip": "No preferred provider"
-          },
-          "tooltip": "Choose the default provider to use"
+          "label": "Gotinan bi temamî hevdem bike",
+          "tooltip": "Nîşandana xeta pêş di mîlîçirkeyan de bihesibîne (dibe ku bandoreke biçûk li performansê bike)"
         },
         "romanization": {
-          "label": "Romanize lyrics",
-          "tooltip": "If the lyrics are in a different language, try to display a latin version."
+          "label": "Gotinan romanîze bike",
+          "tooltip": "Heke gotin bi zimanekî din bin, hewl bide versiyoneke latînî nîşan bide."
         },
         "show-lyrics-even-if-inexact": {
-          "label": "Show lyrics even if inexact",
-          "tooltip": "If the song is not found, the plugin tries again with a different search query.\nThe result from the second attempt may not be exact."
+          "label": "Gotinan nîşan bide heta ne rast be jî",
+          "tooltip": "Heke stran neyê dîtin, pelgir dîsa bi pirseke lêgerînê ya cuda diceribîne.\nEncama ji hewldana duyem dibe ku ne rast be."
         },
         "show-time-codes": {
-          "label": "Show time codes",
-          "tooltip": "Show the time codes next to the lyrics"
+          "label": "Kodên demê nîşan bide",
+          "tooltip": "Kodên demê li kêleka gotinan nîşan bide"
+        },
+        "convert-chinese-character": {
+          "label": "Karakterên Çînî biguherîne",
+          "submenu": {
+            "disabled": {
+              "label": "Neçalak",
+              "tooltip": "Guhertina karakterên Çînî bide rawestandin"
+            },
+            "simplified-to-traditional": {
+              "label": "Sadekirî bo Kevneşopî",
+              "tooltip": "Çîniya sadekirî biguherîne Çîniya kevneşopî"
+            },
+            "traditional-to-simplified": {
+              "label": "Kevneşopî bo Sadekirî",
+              "tooltip": "Çîniya kevneşopî biguherîne Çîniya sadekirî"
+            }
+          },
+          "tooltip": "Karakterên Çînî biguherîne Kevneşopî an Sadekirî"
         },
         "translation": {
-          "clear-cache": {
-            "label": "Clear translation cache",
-            "tooltip": "Delete all cached translations stored on disk."
+          "label": "Wergera gotinan",
+          "tooltip": "Gotinan wergerîne û encama wergerandî rêz-bi-rêz ji bo nîşandanê nîşan bide.",
+          "enabled": {
+            "label": "Wergerê çalak bike",
+            "tooltip": "Rêzeke wergerandî li binê her rêza orîjînal a gotinan nîşan bide."
+          },
+          "provider": {
+            "label": "Dabînker",
+            "tooltip": "Kîjan xizmet ji bo wergerê were bikaranîn."
+          },
+          "target-language": {
+            "label": "Zimanê armanc",
+            "tooltip": "Zimanê ku gotin tê de werin wergerandin.",
+            "options": {
+              "auto": "Follow app language",
+              "zh-CN": "简体中文",
+              "zh-TW": "繁體中文",
+              "en": "English",
+              "ja": "日本語",
+              "ko": "한국어",
+              "fr": "Français",
+              "de": "Deutsch",
+              "es": "Español",
+              "pt-BR": "Português (Brasil)",
+              "pt-PT": "Português (Portugal)",
+              "it": "Italiano",
+              "nl": "Nederlands",
+              "ru": "Русский",
+              "uk": "Українська",
+              "pl": "Polski",
+              "tr": "Türkçe",
+              "ar": "العربية",
+              "he": "עברית",
+              "fa": "فارسی",
+              "hi": "हिन्दी",
+              "bn": "বাংলা",
+              "ur": "اردو",
+              "ta": "தமிழ்",
+              "te": "తెలుగు",
+              "mr": "मराठी",
+              "id": "Bahasa Indonesia",
+              "ms": "Bahasa Melayu",
+              "vi": "Tiếng Việt",
+              "th": "ไทย",
+              "fil": "Filipino",
+              "sw": "Kiswahili",
+              "sv": "Svenska",
+              "no": "Norsk",
+              "da": "Dansk",
+              "fi": "Suomi",
+              "cs": "Čeština",
+              "ro": "Română",
+              "hu": "Magyar",
+              "el": "Ελληνικά",
+              "bg": "Български",
+              "sr": "Српски",
+              "hr": "Hrvatski",
+              "sk": "Slovenčina",
+              "lt": "Lietuvių"
+            }
           },
           "configure": {
-            "label": "Configure API key & model…",
-            "tooltip": "Set provider-specific translation options."
+            "label": "Mifteya API û modelê veav bike...",
+            "tooltip": "Vebijêrkên wergerê yên taybetî yên dabînkeran saz bike."
           },
-          "enabled": {
-            "label": "Enable translation",
-            "tooltip": "Show a translated line beneath each original lyric line."
-          },
-          "label": "Lyrics translation",
-          "provider": {
-            "label": "Provider",
-            "tooltip": "Which service to use for translation."
+          "clear-cache": {
+            "label": "Cacheya wergerê paqij bike",
+            "tooltip": "Hemû wergerên cachekirî yên li ser dîskê hatine hilanîn jê bibe."
           },
           "providers": {
+            "shared": {
+              "api-key": "Mifteya API",
+              "model": "Model"
+            },
+            "openai-compatible": {
+              "name": "OpenAI lihevhatî",
+              "prompt-title": "Mîhengên OpenAI-lihevhatî",
+              "prompt-label": "Pêşkêşkarên OpenAI-lihevhatî, Ollama jî di nav de (URL a bingehîn http://127.0.0.1:11434/v1, moda API auto an chat-completions) bikar bîne.",
+              "base-url": "URL a Bingehîn",
+              "api-mode": "Moda API (responses / auto / chat-completions)"
+            },
             "anthropic": {
               "name": "Anthropic Claude",
-              "prompt-label": "Uses the native Anthropic Messages API.",
-              "prompt-title": "Anthropic settings"
+              "prompt-title": "Anthropic settings",
+              "prompt-label": "Uses the native Anthropic Messages API."
             },
             "gemini": {
               "name": "Google Gemini",
-              "prompt-label": "Uses Google's Generative Language API (generateContent).",
-              "prompt-title": "Gemini settings"
-            },
-            "google-translate": {
-              "host": "Host",
-              "name": "Google Translate",
-              "prompt-label": "Uses the unofficial free Google Translate endpoint. No API key is required, but Google may rate-limit it.",
-              "prompt-title": "Google Translate settings"
+              "prompt-title": "Gemini settings",
+              "prompt-label": "Uses Google's Generative Language API (generateContent)."
             },
             "local-cli": {
-              "command": "Command",
+              "name": "Local CLI",
+              "prompt-title": "Local CLI settings",
+              "prompt-label": "Use a locally logged-in Claude Code, Codex, or Gemini CLI. The command and model are automatic; the CLI uses its own logged-in default.",
               "engine": "Local CLI",
               "engine-claude": "Claude Code",
               "engine-codex": "Codex",
               "engine-gemini": "Gemini CLI",
-              "name": "Local CLI",
-              "prompt-label": "Use a locally logged-in Claude Code, Codex, or Gemini CLI. The command and model are automatic; the CLI uses its own logged-in default.",
-              "prompt-title": "Local CLI settings",
+              "command": "Command",
               "timeout": "Timeout seconds (15-600)"
             },
-            "openai-compatible": {
-              "api-mode": "API mode (responses / auto / chat-completions)",
-              "base-url": "Base URL",
-              "name": "OpenAI compatible",
-              "prompt-label": "Use OpenAI-compatible servers, including Ollama (base URL http://127.0.0.1:11434/v1, API mode auto or chat-completions).",
-              "prompt-title": "OpenAI-compatible settings"
-            },
-            "shared": {
-              "api-key": "API key",
-              "model": "Model"
+            "google-translate": {
+              "name": "Google Translate",
+              "prompt-title": "Google Translate settings",
+              "prompt-label": "Uses the unofficial free Google Translate endpoint. No API key is required, but Google may rate-limit it.",
+              "host": "Host"
             }
-          },
-          "target-language": {
-            "label": "Target language",
-            "options": {
-              "ar": "العربية",
-              "auto": "Follow app language",
-              "bg": "Български",
-              "bn": "বাংলা",
-              "cs": "Čeština",
-              "da": "Dansk",
-              "de": "Deutsch",
-              "el": "Ελληνικά",
-              "en": "English",
-              "es": "Español",
-              "fa": "فارسی",
-              "fi": "Suomi",
-              "fil": "Filipino",
-              "fr": "Français",
-              "he": "עברית",
-              "hi": "हिन्दी",
-              "hr": "Hrvatski",
-              "hu": "Magyar",
-              "id": "Bahasa Indonesia",
-              "it": "Italiano",
-              "ja": "日本語",
-              "ko": "한국어",
-              "lt": "Lietuvių",
-              "mr": "मराठी",
-              "ms": "Bahasa Melayu",
-              "nl": "Nederlands",
-              "no": "Norsk",
-              "pl": "Polski",
-              "pt-BR": "Português (Brasil)",
-              "pt-PT": "Português (Portugal)",
-              "ro": "Română",
-              "ru": "Русский",
-              "sk": "Slovenčina",
-              "sr": "Српски",
-              "sv": "Svenska",
-              "sw": "Kiswahili",
-              "ta": "தமிழ்",
-              "te": "తెలుగు",
-              "th": "ไทย",
-              "tr": "Türkçe",
-              "uk": "Українська",
-              "ur": "اردو",
-              "vi": "Tiếng Việt",
-              "zh-CN": "简体中文",
-              "zh-TW": "繁體中文"
-            },
-            "tooltip": "The language to translate lyrics into."
-          },
-          "tooltip": "Translate lyrics and show the translated result line-by-line for display."
+          }
         }
       },
-      "name": "Synced Lyrics",
+      "name": "Gotina Hevdemkirî",
       "refetch-btn": {
-        "fetching": "Fetching...",
-        "normal": "Refetch lyrics"
+        "fetching": "Tê wergirtin...",
+        "normal": "Gotinan ji nû ve werbigire"
       },
       "warnings": {
-        "duration-mismatch": "⚠️ - The lyrics may be out of sync due to a duration mismatch.",
-        "inexact": "⚠️ - The lyrics for this song may not be exact",
-        "instrumental": "⚠️ - This is an instrumental song"
+        "duration-mismatch": "⚠️ - Gotin dibe ku ji ber lihevnehatina demjimarê ne hevdem bin.",
+        "inexact": "⚠️ - Gotinên vê stranê dibe ku ne rast bin",
+        "instrumental": "⚠️ - Ev straneke enstrûmental e"
       }
     },
     "taskbar-mediacontrol": {
-      "description": "Control playback from your Windows taskbar",
-      "name": "Taskbar Media Control"
+      "description": "Lêdanê ji şopa peywira Windows a xwe kontrol bike",
+      "name": "Kontrola Medyaya Şopa Peywirê"
     },
     "touchbar": {
-      "description": "Adds a TouchBar widget for macOS users",
+      "description": "Widgetek TouchBar ji bo bikarhênerên macOS zêde dike",
       "name": "TouchBar"
     },
     "transparent-player": {
-      "description": "Makes the app window transparent",
+      "description": "Pencereya sepanê zelal dike",
+      "name": "Lêdera Zelal",
       "menu": {
         "opacity": {
-          "label": "Opacity",
+          "label": "Zelalbûn",
           "submenu": {
             "percent": "{{opacity}}%"
           }
         },
         "type": {
-          "label": "Type",
+          "label": "Cure",
           "submenu": {
-            "acrylic": "Acrylic",
+            "acrylic": "Akrîlîk",
             "mica": "Mica",
-            "none": "None",
-            "tabbed": "Tabbed"
+            "tabbed": "Tabkirî",
+            "none": "Tune"
           }
         }
-      },
-      "name": "Transparent Player"
+      }
     },
     "tuna-obs": {
-      "description": "Integration with OBS's plugin Tuna",
+      "description": "Yekbûna bi pelgira OBS Tuna re",
       "name": "Tuna OBS"
     },
     "unobtrusive-player": {
-      "description": "Prevents the player from popping up when playing a song",
-      "name": "Unobtrusive Player"
+      "description": "Pêşî li derketina lêderê digire dema stranek tê lêdan",
+      "name": "Lêdera Nepenî"
     },
     "video-toggle": {
-      "description": "Adds a button to switch between Video/Song mode. can also optionally remove the whole video tab",
+      "description": "Bişkokekê zêde dike ji bo guhertina di navbera moda Vîdyo/Stran de. dikare herwiha tevahiya tabloya vîdyoyê jî rake",
       "menu": {
         "align": {
-          "label": "Alignment",
+          "label": "Hevrêzkirin",
           "submenu": {
-            "left": "Left",
-            "middle": "Middle",
-            "right": "Right"
+            "left": "Çep",
+            "middle": "Navîn",
+            "right": "Rast"
           }
         },
-        "force-hide": "Force remove video tab",
+        "force-hide": "Tabloya vîdyoyê bi zorê rake",
         "mode": {
-          "label": "Mode",
+          "label": "Mod",
           "submenu": {
-            "custom": "Custom toggle",
-            "disabled": "Disabled",
-            "native": "Native toggle"
+            "custom": "Guhertina xwerû",
+            "disabled": "Neçalak",
+            "native": "Guhertina xwemalî"
           }
         }
       },
-      "name": "Video Toggle",
+      "name": "Guhertina Vîdyoyê",
       "templates": {
-        "button-song": "Song",
-        "button-video": "Video"
+        "button-song": "Stran",
+        "button-video": "Vîdyo"
       }
     },
     "visualizer": {
-      "description": "Adds a visualizer to the player",
+      "description": "Vîzûalîzerekê li lêderê zêde dike",
       "menu": {
-        "visualizer-type": "Visualizer Type"
+        "visualizer-type": "Cureyê Vîzûalîzerê"
       },
-      "name": "Visualizer"
+      "name": "Vîzûalîzer"
     }
   }
 }

@@ -53,54 +53,54 @@
           "later": "తర్వాత",
           "restart-now": "ఇప్పుడే రీస్టార్ట్ చేయండి"
         },
-        "detail": "\"{{pluginName}}\" plugin requires a restart to take effect",
+        "detail": "\"{{pluginName}}\" ప్లగిన్ అమలులోకి రావడానికి రీస్టార్ట్ అవసరం",
         "message": "\"{{pluginName}}\" మరల రీస్టార్ట్ అవసరం",
         "title": "రీస్టార్ట్ అవసరం"
       },
       "unresponsive": {
         "buttons": {
-          "quit": "Quit",
-          "relaunch": "Relaunch",
+          "quit": "నిష్క్రమించు",
+          "relaunch": "మళ్లీ ప్రారంభించు",
           "wait": "వేచి ఉండండి"
         },
-        "detail": "We are sorry for the inconvenience! please choose what to do:",
-        "message": "The Application is Unresponsive",
-        "title": "Window Unresponsive"
+        "detail": "అసౌకర్యానికి చింతిస్తున్నాము! దయచేసి ఏమి చేయాలో ఎంచుకోండి:",
+        "message": "అప్లికేషన్ స్పందించడం లేదు",
+        "title": "విండో స్పందించడం లేదు"
       },
       "update-available": {
         "buttons": {
-          "disable": "Disable Updates",
+          "disable": "అప్‌డేట్‌లను నిలిపివేయి",
           "download": "డౌన్లోడ్",
           "ok": "ఓకే"
         },
-        "detail": "A new version is available and can be downloaded at {{downloadLink}}",
-        "message": "A new version is available",
-        "title": "Update Available"
+        "detail": "కొత్త వెర్షన్ అందుబాటులో ఉంది మరియు {{downloadLink}} వద్ద డౌన్‌లోడ్ చేసుకోవచ్చు",
+        "message": "కొత్త వెర్షన్ అందుబాటులో ఉంది",
+        "title": "అప్‌డేట్ అందుబాటులో ఉంది"
       }
     },
     "menu": {
       "about": "గురించి",
       "navigation": {
-        "label": "Navigation",
+        "label": "నావిగేషన్",
         "submenu": {
           "copy-current-url": "ప్రస్తుత యూ‌ఆర్‌ఎల్ కాపీ చెయ్యండి",
           "go-back": "వెనక్కి వెళ్లండి",
           "go-forward": "ముందుకు వెళ్లండి",
           "quit": "నిష్క్రమించండి",
-          "restart": "Restart App"
+          "restart": "యాప్‌ని రీస్టార్ట్ చేయండి"
         }
       },
       "options": {
-        "label": "Options",
+        "label": "ఎంపికలు",
         "submenu": {
           "advanced-options": {
-            "label": "Advanced options",
+            "label": "అధునాతన ఎంపికలు",
             "submenu": {
-              "auto-reset-app-cache": "Reset app cache when app starts",
-              "disable-hardware-acceleration": "Disable hardware acceleration",
-              "edit-config-json": "Edit config.json",
-              "override-user-agent": "Override User-Agent",
-              "restart-on-config-changes": "Restart on config changes",
+              "auto-reset-app-cache": "యాప్ ప్రారంభమైనప్పుడు యాప్ కాష్‌ని రీసెట్ చేయండి",
+              "disable-hardware-acceleration": "హార్డ్‌వేర్ యాక్సిలరేషన్‌ని నిలిపివేయి",
+              "edit-config-json": "config.json సవరించండి",
+              "override-user-agent": "User-Agent ఓవర్‌రైడ్ చేయండి",
+              "restart-on-config-changes": "కాన్ఫిగ్ మార్పులపై రీస్టార్ట్ చేయండి",
               "set-proxy": {
                 "label": "ప్రాక్సీ సెట్ చేయండి",
                 "prompt": {
@@ -109,75 +109,76 @@
                   "title": "ప్రాక్సీ సెట్ చేయండి"
                 }
               },
-              "toggle-dev-tools": "Toggle DevTools"
+              "toggle-dev-tools": "DevTools టోగుల్ చేయండి"
             }
           },
           "always-on-top": "ఎప్పుడూ పైభాగంలో ఉంచండి",
           "auto-update": "ఆటో అప్డేట్",
           "hide-menu": {
             "dialog": {
-              "message": "Menu will be hidden on next launch, use [Alt] to show it (or backtick [`] if using in-app-menu)",
-              "title": "Hide Menu Enabled"
+              "message": "తదుపరి ప్రారంభంలో మెనూ దాచబడుతుంది, చూపించడానికి [Alt] ఉపయోగించండి (లేదా ఇన్-యాప్-మెనూ ఉపయోగిస్తుంటే బ్యాక్‌టిక్ [`])",
+              "title": "మెనూ దాచు ఎనేబుల్ చేయబడింది"
             },
-            "label": "Hide Menu"
+            "label": "మెనూని దాచు"
           },
           "language": {
             "dialog": {
-              "message": "Language will be changed after restart",
-              "title": "Language Changed"
+              "message": "రీస్టార్ట్ తర్వాత భాష మార్చబడుతుంది",
+              "title": "భాష మార్చబడింది"
             },
-            "label": "Language",
+            "label": "భాష",
             "submenu": {
-              "to-help-translate": "Want to help translate? Click here"
+              "to-help-translate": "అనువదించడానికి సహాయం చేయాలనుకుంటున్నారా? ఇక్కడ క్లిక్ చేయండి"
             }
           },
-          "resume-on-start": "Resume last song when app starts",
-          "single-instance-lock": "Single Instance Lock",
+          "resume-on-start": "యాప్ ప్రారంభమైనప్పుడు చివరి పాటను తిరిగి ప్రారంభించండి",
+          "single-instance-lock": "ఒకే ఇన్‌స్టాన్స్ లాక్",
           "start-at-login": "లాగిన్ అప్పుడు ప్రారంభించండి",
           "starting-page": {
-            "label": "Starting page",
+            "label": "ప్రారంభ పేజీ",
             "unset": "అన్‌సెట్ చేయండి"
           },
           "tray": {
             "label": "ట్రే",
             "submenu": {
               "disabled": "ఆపివేయబడింది",
-              "enabled-and-hide-app": "Enabled and hide app",
-              "enabled-and-show-app": "Enabled and show app",
-              "play-pause-on-click": "Play/Pause on click"
+              "enabled-and-hide-app": "ఎనేబుల్ చేసి యాప్‌ని దాచు",
+              "enabled-and-show-app": "ఎనేబుల్ చేసి యాప్‌ని చూపించు",
+              "play-pause-on-click": "క్లిక్‌పై ప్లే/పాజ్",
+              "move-to-current-desktop": "చూపించేటప్పుడు ప్రస్తుత వర్చ్యువల్ డెస్క్‌టాప్‌కి తరలించండి"
             }
           },
           "visual-tweaks": {
-            "label": "Visual Tweaks",
+            "label": "దృశ్య మార్పులు",
             "submenu": {
               "custom-window-title": {
-                "label": "Custom window title",
+                "label": "కస్టమ్ విండో టైటిల్",
                 "prompt": {
-                  "label": "Enter custom window title: (leave empty to disable)",
-                  "placeholder": "Example: {{applicationName}}"
+                  "label": "కస్టమ్ విండో టైటిల్ నమోదు చేయండి: (నిలిపివేయడానికి ఖాళీగా ఉంచండి)",
+                  "placeholder": "ఉదాహరణ: {{applicationName}}"
                 }
               },
               "like-buttons": {
-                "default": "Default",
-                "force-show": "Force show",
-                "hide": "Hide",
+                "default": "డిఫాల్ట్",
+                "force-show": "బలవంతంగా చూపించు",
+                "hide": "దాచు",
                 "label": "లైక్ బటన్",
                 "swap": "లైక్ బటన్‌ల క్రమాన్ని మార్చండి"
               },
-              "remove-upgrade-button": "Remove upgrade button",
+              "remove-upgrade-button": "అప్‌గ్రేడ్ బటన్‌ని తొలగించండి",
               "theme": {
                 "dialog": {
                   "button": {
-                    "cancel": "Cancel",
-                    "remove": "Remove"
+                    "cancel": "రద్దు చేయండి",
+                    "remove": "తొలగించు"
                   },
-                  "remove-theme": "Are you sure you want to remove the custom theme?",
-                  "remove-theme-message": "This will remove the custom theme"
+                  "remove-theme": "మీరు ఖచ్చితంగా కస్టమ్ థీమ్‌ని తొలగించాలనుకుంటున్నారా?",
+                  "remove-theme-message": "ఇది కస్టమ్ థీమ్‌ని తొలగిస్తుంది"
                 },
-                "label": "Theme",
+                "label": "థీమ్",
                 "submenu": {
-                  "import-css-file": "Import custom CSS file",
-                  "no-theme": "No theme"
+                  "import-css-file": "కస్టమ్ CSS ఫైల్‌ని దిగుమతి చేయండి",
+                  "no-theme": "థీమ్ లేదు"
                 }
               }
             }
@@ -185,29 +186,29 @@
         }
       },
       "plugins": {
-        "enabled": "Enabled",
-        "label": "Plugins",
-        "new": "NEW"
+        "enabled": "ఎనేబుల్ చేయబడింది",
+        "label": "ప్లగిన్‌లు",
+        "new": "కొత్త"
       },
       "view": {
-        "label": "View",
+        "label": "వీక్షణ",
         "submenu": {
-          "force-reload": "Force Reload",
-          "reload": "Reload",
-          "reset-zoom": "Actual Size",
-          "toggle-fullscreen": "Toggle Full Screen",
-          "zoom-in": "Zoom In",
-          "zoom-out": "Zoom Out"
+          "force-reload": "బలవంతంగా రీలోడ్ చేయండి",
+          "reload": "రీలోడ్ చేయండి",
+          "reset-zoom": "అసలు పరిమాణం",
+          "toggle-fullscreen": "పూర్తి స్క్రీన్ టోగుల్ చేయండి",
+          "zoom-in": "జూమ్ ఇన్",
+          "zoom-out": "జూమ్ అవుట్"
         }
       }
     },
     "tray": {
-      "next": "Next",
-      "play-pause": "Play/Pause",
-      "previous": "Previous",
-      "quit": "Exit",
-      "restart": "Restart App",
-      "show": "Show window",
+      "next": "తదుపరి",
+      "play-pause": "ప్లే/పాజ్",
+      "previous": "మునుపటి",
+      "quit": "నిష్క్రమించు",
+      "restart": "యాప్‌ని రీస్టార్ట్ చేయండి",
+      "show": "విండో చూపించు",
       "tooltip": {
         "default": "{{applicationName}}",
         "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
@@ -216,291 +217,291 @@
   },
   "plugins": {
     "ad-speedup": {
-      "description": "If an ad play it mutes the audio and sets playback speed to 16x",
-      "name": "Ad Speedup"
+      "description": "ప్రకటన ప్లే అయితే ఆడియోను మ్యూట్ చేసి ప్లేబ్యాక్ వేగాన్ని 16xకి సెట్ చేస్తుంది",
+      "name": "ప్రకటన వేగవంతం"
     },
     "adblocker": {
-      "description": "Block all ads and tracking out of the box",
+      "description": "అన్ని ప్రకటనలు మరియు ట్రాకింగ్‌లను బాక్స్ నుండే బ్లాక్ చేయండి",
       "menu": {
-        "blocker": "Blocker"
+        "blocker": "బ్లాకర్"
       },
-      "name": "Ad Blocker"
+      "name": "ప్రకటన బ్లాకర్"
     },
     "album-actions": {
-      "description": "Adds Undislike, Dislike, Like, and Unlike buttons to apply this to all songs in a playlist or album",
-      "name": "Album Actions"
+      "description": "ప్లేలిస్ట్ లేదా ఆల్బమ్‌లోని అన్ని పాటలకు వర్తింపజేయడానికి అన్‌డిస్‌లైక్, డిస్‌లైక్, లైక్ మరియు అన్‌లైక్ బటన్‌లను జోడిస్తుంది",
+      "name": "ఆల్బమ్ చర్యలు"
     },
     "album-color-theme": {
-      "description": "Applies a dynamic theme and visual effects based on the album color palette",
+      "description": "ఆల్బమ్ రంగుల ప్యాలెట్ ఆధారంగా డైనమిక్ థీమ్ మరియు దృశ్య ప్రభావాలను వర్తింపజేస్తుంది",
       "menu": {
         "color-mix-ratio": {
-          "label": "Color mix ratio",
+          "label": "రంగుల మిశ్రమ నిష్పత్తి",
           "submenu": {
             "percent": "{{ratio}}%"
           }
         },
-        "enable-seekbar": "Enable seekbar theming"
+        "enable-seekbar": "సీక్‌బార్ థీమింగ్‌ని ఎనేబుల్ చేయండి"
       },
-      "name": "Album Color Theme"
+      "name": "ఆల్బమ్ రంగు థీమ్"
     },
     "ambient-mode": {
-      "description": "Applies a lighting effect by casting gentle colors from the video, into your screen’s background",
+      "description": "వీడియో నుండి సున్నితమైన రంగులను మీ స్క్రీన్ నేపథ్యంలోకి ప్రసరింపజేయడం ద్వారా లైటింగ్ ప్రభావాన్ని వర్తింపజేస్తుంది",
       "menu": {
         "blur-amount": {
-          "label": "Blur amount",
+          "label": "బ్లర్ మొత్తం",
           "submenu": {
-            "pixels": "{{blurAmount}} pixels"
+            "pixels": "{{blurAmount}} పిక్సెల్స్"
           }
         },
         "buffer": {
-          "label": "Buffer",
+          "label": "బఫర్",
           "submenu": {
             "buffer": "{{buffer}}"
           }
         },
         "opacity": {
-          "label": "Opacity",
+          "label": "అపారదర్శకత",
           "submenu": {
             "percent": "{{opacity}}%"
           }
         },
         "quality": {
-          "label": "Quality",
+          "label": "నాణ్యత",
           "submenu": {
-            "pixels": "{{quality}} pixels"
+            "pixels": "{{quality}} పిక్సెల్స్"
           }
         },
         "size": {
-          "label": "Size",
+          "label": "పరిమాణం",
           "submenu": {
             "percent": "{{size}}%"
           }
         },
         "smoothness-transition": {
-          "label": "Smoothness transition",
+          "label": "సున్నితమైన పరివర్తన",
           "submenu": {
-            "during": "During {{interpolationTime}} s"
+            "during": "{{interpolationTime}} సెకన్ల సమయంలో"
           }
         },
         "use-fullscreen": {
-          "label": "Using fullscreen"
+          "label": "పూర్తి స్క్రీన్ ఉపయోగిస్తోంది"
         }
       },
-      "name": "Ambient Mode"
+      "name": "అంబియంట్ మోడ్"
     },
     "amuse": {
-      "description": "Adds {{applicationName}} support for the Amuse now playing widget by 6K Labs",
+      "description": "6K ల్యాబ్స్ ద్వారా Amuse ఇప్పుడు ప్లే అవుతున్న విడ్జెట్‌కు {{applicationName}} మద్దతును జోడిస్తుంది",
       "name": "Amuse",
       "response": {
-        "query": "Amuse API server is running. GET /query to get song info."
+        "query": "Amuse API సర్వర్ రన్ అవుతోంది. పాట సమాచారం పొందడానికి GET /query."
       }
     },
     "api-server": {
-      "description": "Adds an API server to control the player",
+      "description": "ప్లేయర్‌ని నియంత్రించడానికి API సర్వర్‌ని జోడిస్తుంది",
       "dialog": {
         "request": {
           "buttons": {
-            "allow": "Allow",
-            "deny": "Deny"
+            "allow": "అనుమతించు",
+            "deny": "నిరాకరించు"
           },
-          "message": "Allow {{ID}} ({{origin}}) to access the API?",
-          "title": "API authorization request"
+          "message": "{{ID}} ({{origin}}) APIని యాక్సెస్ చేయడానికి అనుమతించాలా?",
+          "title": "API అధికార అభ్యర్థన"
         }
       },
       "menu": {
         "auth-strategy": {
-          "label": "Authorization strategy",
+          "label": "అధికార వ్యూహం",
           "submenu": {
             "auth-at-first": {
-              "label": "Authorize at first request"
+              "label": "మొదటి అభ్యర్థనపై అధికరించు"
             },
             "none": {
-              "label": "No authorization"
+              "label": "అధికారం లేదు"
             }
           }
         },
         "hostname": {
-          "label": "Hostname"
+          "label": "హోస్ట్‌పేరు"
         },
         "https": {
-          "label": "HTTPS & Certificates",
+          "label": "HTTPS & సర్టిఫికెట్లు",
           "submenu": {
             "cert": {
-              "dialogTitle": "Select HTTPS certificate file",
-              "label": "Certificate file (.crt/.pem)"
+              "dialogTitle": "HTTPS సర్టిఫికెట్ ఫైల్‌ని ఎంచుకోండి",
+              "label": "సర్టిఫికెట్ ఫైల్ (.crt/.pem)"
             },
             "enable-https": {
-              "label": "Enable HTTPS"
+              "label": "HTTPSని ఎనేబుల్ చేయండి"
             },
             "key": {
-              "dialogTitle": "Select HTTPS private key file",
-              "label": "Private key file (.key/.pem)"
+              "dialogTitle": "HTTPS ప్రైవేట్ కీ ఫైల్‌ని ఎంచుకోండి",
+              "label": "ప్రైవేట్ కీ ఫైల్ (.key/.pem)"
             }
           }
         },
         "port": {
-          "label": "Port"
+          "label": "పోర్ట్"
         }
       },
       "name": "API Server [Beta]",
       "prompt": {
         "hostname": {
-          "label": "Enter the hostname (like 0.0.0.0) for the API server:",
-          "title": "Hostname"
+          "label": "API సర్వర్ కోసం హోస్ట్‌పేరు (0.0.0.0 వంటిది) నమోదు చేయండి:",
+          "title": "హోస్ట్‌పేరు"
         },
         "port": {
-          "label": "Enter the port for the API server:",
-          "title": "Port"
+          "label": "API సర్వర్ కోసం పోర్ట్ నమోదు చేయండి:",
+          "title": "పోర్ట్"
         }
       }
     },
     "audio-compressor": {
-      "description": "Apply compression to audio (lowers the volume of the loudest parts of the signal and raises the volume of the softest parts)",
-      "name": "Audio Compressor"
+      "description": "ఆడియోకు కంప్రెషన్‌ని వర్తింపజేయండి (సిగ్నల్ యొక్క అత్యంత బిగ్గరగా ఉండే భాగాల వాల్యూమ్‌ని తగ్గిస్తుంది మరియు అత్యంత మృదువైన భాగాల వాల్యూమ్‌ని పెంచుతుంది)",
+      "name": "ఆడియో కంప్రెసర్"
     },
     "auth-proxy-adapter": {
-      "description": "Support for the use of authentication proxy services",
+      "description": "ప్రామాణీకరణ ప్రాక్సీ సేవల వినియోగానికి మద్దతు",
       "menu": {
-        "disable": "Disable Proxy Adapter",
-        "enable": "Enable Proxy Adapter",
+        "disable": "ప్రాక్సీ అడాప్టర్‌ని నిలిపివేయి",
+        "enable": "ప్రాక్సీ అడాప్టర్‌ని ఎనేబుల్ చేయండి",
         "hostname": {
-          "label": "Hostname"
+          "label": "హోస్ట్‌పేరు"
         },
         "port": {
-          "label": "Port"
+          "label": "పోర్ట్"
         }
       },
-      "name": "Auth Proxy Adapter",
+      "name": "ప్రామాణీకరణ ప్రాక్సీ అడాప్టర్",
       "prompt": {
         "hostname": {
-          "label": "Enter hostname for local proxy server (requires restart):",
-          "title": "Proxy Hostname"
+          "label": "లోకల్ ప్రాక్సీ సర్వర్ కోసం హోస్ట్‌పేరు నమోదు చేయండి (రీస్టార్ట్ అవసరం):",
+          "title": "ప్రాక్సీ హోస్ట్‌పేరు"
         },
         "port": {
-          "label": "Enter port for local proxy server (requires restart):",
-          "title": "Proxy Port"
+          "label": "లోకల్ ప్రాక్సీ సర్వర్ కోసం పోర్ట్ నమోదు చేయండి (రీస్టార్ట్ అవసరం):",
+          "title": "ప్రాక్సీ పోర్ట్"
         }
       }
     },
     "blur-nav-bar": {
-      "description": "Makes navigation bar transparent and blurry",
-      "name": "Blur Navigation Bar"
+      "description": "నావిగేషన్ బార్‌ని పారదర్శకంగా మరియు బ్లరీగా చేస్తుంది",
+      "name": "బ్లర్ నావిగేషన్ బార్"
     },
     "bypass-age-restrictions": {
-      "description": "Bypass Music Player's age verification",
-      "name": "Bypass Age Restrictions"
+      "description": "Music Player వయస్సు ధృవీకరణను దాటవేయండి",
+      "name": "వయస్సు పరిమితులను దాటవేయి"
     },
     "captions-selector": {
-      "description": "Caption selector for {{applicationName}} audio tracks",
+      "description": "{{applicationName}} ఆడియో ట్రాక్‌ల కోసం క్యాప్షన్ సెలక్టర్",
       "menu": {
-        "autoload": "Automatically select last used caption",
-        "disable-captions": "No captions by default"
+        "autoload": "చివరిగా ఉపయోగించిన క్యాప్షన్‌ని స్వయంచాలకంగా ఎంచుకోండి",
+        "disable-captions": "డిఫాల్ట్‌గా క్యాప్షన్‌లు లేవు"
       },
-      "name": "Captions Selector",
+      "name": "క్యాప్షన్స్ సెలక్టర్",
       "prompt": {
         "selector": {
-          "label": "Current caption language: {{language}}",
-          "none": "None",
-          "title": "Select caption language"
+          "label": "ప్రస్తుత క్యాప్షన్ భాష: {{language}}",
+          "none": "ఏదీ లేదు",
+          "title": "క్యాప్షన్ భాషను ఎంచుకోండి"
         }
       },
       "templates": {
-        "title": "Open captions selector"
+        "title": "క్యాప్షన్స్ సెలక్టర్‌ని తెరవండి"
       },
       "toast": {
-        "caption-changed": "Caption changed to {{language}}",
-        "caption-disabled": "Captions disabled",
-        "no-captions": "No captions available for this song"
+        "caption-changed": "క్యాప్షన్ {{language}}కి మార్చబడింది",
+        "caption-disabled": "క్యాప్షన్‌లు నిలిపివేయబడ్డాయి",
+        "no-captions": "ఈ పాటకు క్యాప్షన్‌లు అందుబాటులో లేవు"
       }
     },
     "clock": {
-      "description": "Add a clock to the navigation bar",
+      "description": "నావిగేషన్ బార్‌కు గడియారాన్ని జోడించండి",
       "menu": {
         "format": {
-          "24-hour-format": "24-Hour Format",
-          "display-seconds": "Display Seconds",
-          "label": "Format"
+          "24-hour-format": "24-గంటల ఫార్మాట్",
+          "display-seconds": "సెకన్లను చూపించు",
+          "label": "ఫార్మాట్"
         }
       },
-      "name": "Clock"
+      "name": "గడియారం"
     },
     "compact-sidebar": {
-      "description": "Always set the sidebar in compact mode",
-      "name": "Compact Sidebar"
+      "description": "సైడ్‌బార్‌ని ఎల్లప్పుడూ కాంపాక్ట్ మోడ్‌లో సెట్ చేయండి",
+      "name": "కాంపాక్ట్ సైడ్‌బార్"
     },
     "crossfade": {
-      "description": "Crossfade between songs",
+      "description": "పాటల మధ్య క్రాస్‌ఫేడ్",
       "menu": {
-        "advanced": "Advanced"
+        "advanced": "అధునాతనం"
       },
-      "name": "Crossfade [Beta]",
+      "name": "క్రాస్‌ఫేడ్ [బీటా]",
       "prompt": {
         "options": {
           "multi-input": {
-            "fade-in-duration": "Fade in duration (ms)",
-            "fade-out-duration": "Fade out duration (ms)",
+            "fade-in-duration": "ఫేడ్ ఇన్ వ్యవధి (ms)",
+            "fade-out-duration": "ఫేడ్ అవుట్ వ్యవధి (ms)",
             "fade-scaling": {
-              "label": "Fade scaling",
-              "linear": "Linear",
-              "logarithmic": "Logarithmic"
+              "label": "ఫేడ్ స్కేలింగ్",
+              "linear": "లీనియర్",
+              "logarithmic": "లాగరిథమిక్"
             },
-            "seconds-before-end": "Crossfade N seconds before end"
+            "seconds-before-end": "ముగింపుకు N సెకన్ల ముందు క్రాస్‌ఫేడ్"
           },
-          "title": "Crossfade options"
+          "title": "క్రాస్‌ఫేడ్ ఎంపికలు"
         }
       }
     },
     "custom-output-device": {
-      "description": "Configure a custom output media device for songs",
+      "description": "పాటల కోసం కస్టమ్ అవుట్‌పుట్ మీడియా పరికరాన్ని కాన్ఫిగర్ చేయండి",
       "menu": {
-        "device-selector": "Select Device"
+        "device-selector": "పరికరాన్ని ఎంచుకోండి"
       },
-      "name": "Custom Output Device",
+      "name": "కస్టమ్ అవుట్‌పుట్ పరికరం",
       "prompt": {
         "device-selector": {
-          "label": "Choose the output media device to be used",
-          "title": "Select Output Device"
+          "label": "ఉపయోగించాల్సిన అవుట్‌పుట్ మీడియా పరికరాన్ని ఎంచుకోండి",
+          "title": "అవుట్‌పుట్ పరికరాన్ని ఎంచుకోండి"
         }
       }
     },
     "disable-autoplay": {
-      "description": "Makes song start in \"paused\" mode",
+      "description": "పాట \"పాజ్ చేయబడిన\" మోడ్‌లో ప్రారంభమయ్యేలా చేస్తుంది",
       "menu": {
-        "apply-once": "Applies only on startup"
+        "apply-once": "ప్రారంభంలో మాత్రమే వర్తిస్తుంది"
       },
-      "name": "Disable Autoplay"
+      "name": "ఆటోప్లే నిలిపివేయి"
     },
     "discord": {
       "backend": {
-        "already-connected": "Attempted to connect with active connection",
-        "connected": "Connected to Discord",
-        "disconnected": "Disconnected from Discord"
+        "already-connected": "యాక్టివ్ కనెక్షన్‌తో కనెక్ట్ చేయడానికి ప్రయత్నించారు",
+        "connected": "Discordకి కనెక్ట్ చేయబడింది",
+        "disconnected": "Discord నుండి డిస్‌కనెక్ట్ చేయబడింది"
       },
-      "description": "Show your friends what you listen to with Rich Presence",
+      "description": "రిచ్ ప్రెజెన్స్‌తో మీరు ఏమి వింటున్నారో మీ స్నేహితులకు చూపించండి",
       "menu": {
-        "auto-reconnect": "Auto reconnect",
-        "clear-activity": "Clear activity",
-        "clear-activity-after-timeout": "Clear activity after timeout",
-        "connected": "Connected",
-        "disconnected": "Disconnected",
-        "hide-duration-left": "Hide duration left",
-        "hide-github-button": "Hide GitHub link Button",
-        "play-on-application": "Play on {{applicationName}}",
-        "set-inactivity-timeout": "Set inactivity timeout",
+        "auto-reconnect": "ఆటో రీకనెక్ట్",
+        "clear-activity": "యాక్టివిటీ క్లియర్ చేయండి",
+        "clear-activity-after-timeout": "టైమ్‌అవుట్ తర్వాత యాక్టివిటీ క్లియర్ చేయండి",
+        "connected": "కనెక్ట్ చేయబడింది",
+        "disconnected": "డిస్‌కనెక్ట్ చేయబడింది",
+        "hide-duration-left": "మిగిలిన వ్యవధిని దాచు",
+        "hide-github-button": "GitHub లింక్ బటన్‌ని దాచు",
+        "play-on-application": "{{applicationName}}లో ప్లే చేయండి",
+        "set-inactivity-timeout": "నిష్క్రియాత్మక టైమ్‌అవుట్‌ని సెట్ చేయండి",
         "set-status-display-type": {
-          "label": "Status text",
+          "label": "స్థితి టెక్స్ట్",
           "submenu": {
-            "application": "Listening to {{applicationName}}",
-            "artist": "Listening to {artist}",
-            "title": "Listening to {song title}"
+            "application": "{{applicationName}} వింటున్నారు",
+            "artist": "{artist} వింటున్నారు",
+            "title": "{song title} వింటున్నారు"
           }
         }
       },
-      "name": "Discord Rich Presence",
+      "name": "Discord రిచ్ ప్రెజెన్స్",
       "prompt": {
         "set-inactivity-timeout": {
-          "label": "Enter inactivity timeout in seconds:",
-          "title": "Set inactivity timeout"
+          "label": "సెకన్లలో నిష్క్రియాత్మక టైమ్‌అవుట్‌ని నమోదు చేయండి:",
+          "title": "నిష్క్రియాత్మక టైమ్‌అవుట్‌ని సెట్ చేయండి"
         }
       }
     },
@@ -511,243 +512,244 @@
             "buttons": {
               "ok": "OK"
             },
-            "message": "Argh! Apologies, download failed…",
-            "title": "Error in download!"
+            "message": "అరెరే! క్షమించండి, డౌన్‌లోడ్ విఫలమైంది…",
+            "title": "డౌన్‌లోడ్‌లో లోపం!"
           },
           "start-download-playlist": {
             "buttons": {
               "ok": "OK"
             },
-            "detail": "({{playlistSize}} songs)",
-            "message": "Downloading Playlist {{playlistTitle}}",
-            "title": "Download started"
+            "detail": "({{playlistSize}} పాటలు)",
+            "message": "{{playlistTitle}} ప్లేలిస్ట్‌ని డౌన్‌లోడ్ చేస్తోంది",
+            "title": "డౌన్‌లోడ్ ప్రారంభించబడింది"
           }
         },
         "feedback": {
-          "conversion-progress": "Conversion: {{percent}}%",
-          "converting": "Converting…",
-          "done": "Done: {{filePath}}",
-          "download-info": "Downloading {{artist}} - {{title}} [{{videoId}}",
-          "download-progress": "Download: {{percent}}%",
-          "downloading": "Downloading…",
-          "downloading-counter": "Downloading {{current}}/{{total}}…",
-          "downloading-playlist": "Downloading playlist \"{{playlistTitle}}\" - {{playlistSize}} songs ({{playlistId}})",
-          "error-while-downloading": "Error downloading \"{{author}} - {{title}}\": {{error}}",
-          "folder-already-exists": "The folder {{playlistFolder}} already exists",
-          "getting-playlist-info": "Getting playlist info…",
-          "loading": "Loading…",
-          "playlist-has-only-one-song": "Playlist has only one item, downloading it directly",
-          "playlist-id-not-found": "No playlist ID found",
-          "playlist-is-empty": "Playlist is empty",
-          "playlist-is-mix-or-private": "Error getting playlist info: make sure it isn't a private or \"Mixed for you\" playlist\n\n{{error}}",
-          "preparing-file": "Preparing file…",
-          "saving": "Saving…",
-          "trying-to-get-playlist-id": "Trying to get playlist ID: {{playlistId}}",
-          "video-id-not-found": "Video not found",
-          "writing-id3": "Writing ID3 tags…"
+          "conversion-progress": "మార్పిడి: {{percent}}%",
+          "converting": "మారుస్తోంది…",
+          "done": "పూర్తయింది: {{filePath}}",
+          "download-info": "డౌన్‌లోడ్ చేస్తోంది {{artist}} - {{title}} [{{videoId}}",
+          "download-progress": "డౌన్‌లోడ్: {{percent}}%",
+          "downloading": "డౌన్‌లోడ్ చేస్తోంది…",
+          "downloading-counter": "డౌన్‌లోడ్ చేస్తోంది {{current}}/{{total}}…",
+          "downloading-playlist": "\"{{playlistTitle}}\" ప్లేలిస్ట్‌ని డౌన్‌లోడ్ చేస్తోంది - {{playlistSize}} పాటలు ({{playlistId}})",
+          "error-while-downloading": "\"{{author}} - {{title}}\" డౌన్‌లోడ్ చేయడంలో లోపం: {{error}}",
+          "folder-already-exists": "{{playlistFolder}} ఫోల్డర్ ఇప్పటికే ఉంది",
+          "getting-playlist-info": "ప్లేలిస్ట్ సమాచారాన్ని పొందుతోంది…",
+          "loading": "లోడ్ అవుతోంది…",
+          "playlist-has-only-one-song": "ప్లేలిస్ట్‌లో ఒకే ఒక అంశం ఉంది, దాన్ని నేరుగా డౌన్‌లోడ్ చేస్తోంది",
+          "playlist-id-not-found": "ప్లేలిస్ట్ ID కనుగొనబడలేదు",
+          "playlist-is-empty": "ప్లేలిస్ట్ ఖాళీగా ఉంది",
+          "playlist-is-mix-or-private": "ప్లేలిస్ట్ సమాచారాన్ని పొందడంలో లోపం: ఇది ప్రైవేట్ లేదా \"మీ కోసం మిక్స్ చేయబడిన\" ప్లేలిస్ట్ కాదని నిర్ధారించుకోండి\n\n{{error}}",
+          "preparing-file": "ఫైల్‌ని సిద్ధం చేస్తోంది…",
+          "saving": "సేవ్ చేస్తోంది…",
+          "trying-to-get-playlist-id": "ప్లేలిస్ట్ IDని పొందడానికి ప్రయత్నిస్తోంది: {{playlistId}}",
+          "video-id-not-found": "వీడియో కనుగొనబడలేదు",
+          "writing-id3": "ID3 ట్యాగ్‌లను రాస్తోంది…"
         }
       },
-      "description": "Downloads MP3 / source audio directly from the interface",
+      "description": "ఇంటర్‌ఫేస్ నుండి నేరుగా MP3 / సోర్స్ ఆడియోను డౌన్‌లోడ్ చేస్తుంది",
       "menu": {
-        "choose-download-folder": "Choose download folder",
+        "choose-download-folder": "డౌన్‌లోడ్ ఫోల్డర్‌ని ఎంచుకోండి",
         "download-finish-settings": {
-          "label": "Download on finish",
+          "label": "పూర్తయినప్పుడు డౌన్‌లోడ్ చేయండి",
           "prompt": {
-            "last-percent": "After x percent",
-            "last-seconds": "Last x seconds",
-            "title": "Configure when to download"
+            "last-percent": "x శాతం తర్వాత",
+            "last-seconds": "చివరి x సెకన్లు",
+            "title": "ఎప్పుడు డౌన్‌లోడ్ చేయాలో కాన్ఫిగర్ చేయండి"
           },
           "submenu": {
-            "advanced": "Advanced",
-            "enabled": "Enabled",
-            "mode": "Time mode",
-            "percent": "Percent",
-            "seconds": "Seconds"
+            "advanced": "అధునాతనం",
+            "enabled": "ఎనేబుల్ చేయబడింది",
+            "mode": "సమయ మోడ్",
+            "percent": "శాతం",
+            "seconds": "సెకన్లు"
           }
         },
-        "download-playlist": "Download playlist",
-        "presets": "Presets",
-        "skip-existing": "Skip existing files"
+        "download-playlist": "ప్లేలిస్ట్‌ని డౌన్‌లోడ్ చేయండి",
+        "presets": "ప్రీసెట్లు",
+        "skip-existing": "ఇప్పటికే ఉన్న ఫైల్‌లను దాటవేయండి"
       },
-      "name": "Downloader",
+      "name": "డౌన్‌లోడర్",
       "renderer": {
-        "can-not-update-progress": "Cannot update progress"
+        "can-not-update-progress": "పురోగతిని నవీకరించలేము"
       },
       "templates": {
-        "button": "Download"
+        "button": "డౌన్‌లోడ్"
       }
     },
     "equalizer": {
-      "description": "Adds an equalizer to the player",
+      "description": "ప్లేయర్‌కు ఈక్వలైజర్‌ని జోడిస్తుంది",
       "menu": {
         "presets": {
-          "label": "Presets",
+          "label": "ప్రీసెట్లు",
           "list": {
-            "bass-booster": "Bass booster"
+            "bass-booster": "బాస్ బూస్టర్"
           }
         }
       },
-      "name": "Equalizer"
+      "name": "ఈక్వలైజర్"
     },
     "exponential-volume": {
-      "description": "Makes the volume slider exponential so it's easier to select lower volumes.",
-      "name": "Exponential Volume"
+      "description": "వాల్యూమ్ స్లైడర్‌ని ఎక్స్‌పోనెన్షియల్‌గా చేస్తుంది, తద్వారా తక్కువ వాల్యూమ్‌లను ఎంచుకోవడం సులభం అవుతుంది.",
+      "name": "ఎక్స్‌పోనెన్షియల్ వాల్యూమ్"
     },
     "in-app-menu": {
-      "description": "Gives menu-bars a fancy, dark or album-color look",
+      "description": "మెనూ-బార్‌లకు ఫ్యాన్సీ, డార్క్ లేదా ఆల్బమ్-రంగు రూపాన్ని ఇస్తుంది",
       "menu": {
-        "hide-dom-window-controls": "Hide DOM window controls"
+        "hide-dom-window-controls": "DOM విండో కంట్రోల్‌లను దాచు"
       },
-      "name": "In-App Menu"
+      "name": "ఇన్-యాప్ మెనూ"
     },
     "lumiastream": {
-      "description": "Adds Lumia Stream support",
-      "name": "Lumia Stream [Beta]"
+      "description": "Lumia Stream మద్దతును జోడిస్తుంది",
+      "name": "Lumia Stream [బీటా]"
     },
     "lyrics-genius": {
-      "description": "Adds lyrics support for most songs",
+      "description": "చాలా పాటలకు లిరిక్స్ మద్దతును జోడిస్తుంది",
       "menu": {
-        "romanized-lyrics": "Romanized Lyrics"
+        "romanized-lyrics": "రోమనైజ్డ్ లిరిక్స్"
       },
-      "name": "Lyrics Genius",
+      "name": "లిరిక్స్ జీనియస్",
       "renderer": {
-        "fetched-lyrics": "Fetched lyrics for Genius"
+        "fetched-lyrics": "జీనియస్ కోసం లిరిక్స్ పొందబడ్డాయి"
       }
     },
     "music-together": {
-      "description": "Share a playlist with others. When the host plays a song, everyone else will hear the same song",
+      "description": "ఇతరులతో ప్లేలిస్ట్‌ని షేర్ చేయండి. హోస్ట్ ఒక పాటను ప్లే చేసినప్పుడు, మిగతా అందరూ అదే పాటను వింటారు",
       "dialog": {
-        "enter-host": "Enter Host ID"
+        "enter-host": "హోస్ట్ IDని నమోదు చేయండి"
       },
       "internal": {
-        "save": "Save",
-        "track-source": "Track Source",
-        "unknown-user": "Unknown User"
+        "save": "సేవ్ చేయండి",
+        "track-source": "ట్రాక్ సోర్స్",
+        "unknown-user": "తెలియని వినియోగదారు"
       },
       "menu": {
-        "click-to-copy-id": "Copy Host ID",
-        "close": "Close Music Together",
-        "connected-users": "Connected Users",
-        "disconnect": "Disconnect Music Together",
-        "empty-user": "No connected users",
-        "host": "Music Together Host",
-        "join": "Join Music Together",
+        "click-to-copy-id": "హోస్ట్ IDని కాపీ చేయండి",
+        "close": "Music Togetherని మూసివేయండి",
+        "connected-users": "కనెక్ట్ చేయబడిన వినియోగదారులు",
+        "disconnect": "Music Togetherని డిస్‌కనెక్ట్ చేయండి",
+        "empty-user": "కనెక్ట్ చేయబడిన వినియోగదారులు లేరు",
+        "host": "Music Together హోస్ట్",
+        "join": "Music Togetherలో చేరండి",
         "permission": {
-          "all": "Allow guests to control playlist and player",
-          "host-only": "Only the host can control playlist and player",
-          "playlist": "Allow guests to control playlist"
+          "all": "అతిథులు ప్లేలిస్ట్ మరియు ప్లేయర్‌ని నియంత్రించడానికి అనుమతించు",
+          "host-only": "హోస్ట్ మాత్రమే ప్లేలిస్ట్ మరియు ప్లేయర్‌ని నియంత్రించగలరు",
+          "playlist": "అతిథులు ప్లేలిస్ట్‌ని నియంత్రించడానికి అనుమతించు"
         },
-        "set-permission": "Change Control Permission",
+        "set-permission": "నియంత్రణ అనుమతిని మార్చండి",
         "status": {
-          "disconnected": "Disconnected",
-          "guest": "Connected as Guest",
-          "host": "Connected as Host"
+          "disconnected": "డిస్‌కనెక్ట్ చేయబడింది",
+          "guest": "అతిథిగా కనెక్ట్ చేయబడింది",
+          "host": "హోస్ట్‌గా కనెక్ట్ చేయబడింది"
         }
       },
-      "name": "Music Together [Beta]",
+      "name": "Music Together [బీటా]",
       "toast": {
-        "add-song-failed": "Failed to add song",
-        "closed": "Music Together closed",
-        "disconnected": "Music Together disconnected",
-        "host-failed": "Failed to host Music Together",
-        "id-copied": "Host ID copied to clipboard",
-        "id-copy-failed": "Failed to copy Host ID to clipboard",
-        "join-failed": "Failed to join Music Together",
-        "joined": "Joined Music Together",
-        "permission-changed": "Music Together permission changed to \"{{permission}}\"",
-        "remove-song-failed": "Failed to remove song",
-        "user-connected": "{{name}} joined Music Together",
-        "user-disconnected": "{{name}} left Music Together"
+        "add-song-failed": "పాటను జోడించడంలో విఫలమైంది",
+        "closed": "Music Together మూసివేయబడింది",
+        "disconnected": "Music Together డిస్‌కనెక్ట్ చేయబడింది",
+        "host-failed": "Music Togetherని హోస్ట్ చేయడంలో విఫలమైంది",
+        "id-copied": "హోస్ట్ ID క్లిప్‌బోర్డ్‌కి కాపీ చేయబడింది",
+        "id-copy-failed": "హోస్ట్ IDని క్లిప్‌బోర్డ్‌కి కాపీ చేయడంలో విఫలమైంది",
+        "join-failed": "Music Togetherలో చేరడంలో విఫలమైంది",
+        "joined": "Music Togetherలో చేరారు",
+        "permission-changed": "Music Together అనుమతి \"{{permission}}\"కి మార్చబడింది",
+        "remove-song-failed": "పాటను తొలగించడంలో విఫలమైంది",
+        "user-connected": "{{name}} Music Togetherలో చేరారు",
+        "user-disconnected": "{{name}} Music Togetherని విడిచిపెట్టారు"
       }
     },
     "navigation": {
-      "description": "Next/Back navigation arrows directly integrated in the interface, like in your favorite browser",
-      "name": "Navigation",
+      "description": "మీకు ఇష్టమైన బ్రౌజర్‌లో వలె ఇంటర్‌ఫేస్‌లో నేరుగా ఇంటిగ్రేట్ చేయబడిన తదుపరి/వెనుక నావిగేషన్ బాణాలు",
+      "name": "నావిగేషన్",
       "templates": {
         "back": {
-          "title": "Go to previous page"
+          "title": "మునుపటి పేజీకి వెళ్లండి"
         },
         "forward": {
-          "title": "Go to next page"
+          "title": "తదుపరి పేజీకి వెళ్లండి"
         }
       }
     },
     "no-google-login": {
-      "description": "Remove Google login buttons and links from the interface",
-      "name": "No Google Login"
+      "description": "ఇంటర్‌ఫేస్ నుండి Google లాగిన్ బటన్‌లు మరియు లింక్‌లను తొలగించండి",
+      "name": "Google లాగిన్ లేదు"
     },
     "notifications": {
-      "description": "Display a notification when a song starts playing (interactive notifications are available on Windows)",
+      "description": "పాట ప్లే కావడం ప్రారంభించినప్పుడు నోటిఫికేషన్‌ని ప్రదర్శించండి (ఇంటరాక్టివ్ నోటిఫికేషన్‌లు Windowsలో అందుబాటులో ఉన్నాయి)",
       "menu": {
-        "interactive": "Interactive Notifications",
+        "interactive": "ఇంటరాక్టివ్ నోటిఫికేషన్‌లు",
         "interactive-settings": {
-          "label": "Interactive Settings",
+          "label": "ఇంటరాక్టివ్ సెట్టింగ్‌లు",
           "submenu": {
-            "hide-button-text": "Hide button text",
-            "refresh-on-play-pause": "Refresh on Play/Pause",
-            "tray-controls": "Open/Close on tray click"
+            "hide-button-text": "బటన్ టెక్స్ట్‌ని దాచు",
+            "refresh-on-play-pause": "ప్లే/పాజ్‌పై రిఫ్రెష్ చేయండి",
+            "tray-controls": "ట్రే క్లిక్‌పై తెరవండి/మూసివేయండి",
+            "hover-controls": "ట్రే హోవర్‌పై మినీ-ప్లేయర్‌ని చూపించు"
           }
         },
-        "priority": "Notification Priority",
-        "toast-style": "Toast style",
-        "unpause-notification": "Show notification on unpause"
+        "priority": "నోటిఫికేషన్ ప్రాధాన్యత",
+        "toast-style": "టోస్ట్ శైలి",
+        "unpause-notification": "అన్‌పాజ్‌పై నోటిఫికేషన్ చూపించు"
       },
-      "name": "Notifications"
+      "name": "నోటిఫికేషన్‌లు"
     },
     "performance-improvement": {
-      "description": "Improve performance by enabling experimental scripts",
-      "name": "Performance improvement [Beta]"
+      "description": "ప్రయోగాత్మక స్క్రిప్ట్‌లను ఎనేబుల్ చేయడం ద్వారా పనితీరును మెరుగుపరచండి",
+      "name": "పనితీరు మెరుగుదల [బీటా]"
     },
     "picture-in-picture": {
-      "description": "Allows to switch the app to picture-in-picture mode",
+      "description": "పిక్చర్-ఇన్-పిక్చర్ మోడ్‌కు యాప్‌ని మార్చడానికి అనుమతిస్తుంది",
       "menu": {
-        "always-on-top": "Always on top",
+        "always-on-top": "ఎప్పుడూ పైన",
         "hotkey": {
-          "label": "Hotkey",
+          "label": "హాట్‌కీ",
           "prompt": {
             "keybind-options": {
-              "hotkey": "Hotkey"
+              "hotkey": "హాట్‌కీ"
             },
-            "label": "Choose a hotkey to toggle picture-in-picture",
-            "title": "Picture-in-picture Hotkey"
+            "label": "పిక్చర్-ఇన్-పిక్చర్ టోగుల్ చేయడానికి హాట్‌కీని ఎంచుకోండి",
+            "title": "పిక్చర్-ఇన్-పిక్చర్ హాట్‌కీ"
           }
         },
-        "save-window-position": "Save window position",
-        "save-window-size": "Save window size",
-        "use-native-pip": "Use browser native PiP"
+        "save-window-position": "విండో స్థానాన్ని సేవ్ చేయండి",
+        "save-window-size": "విండో పరిమాణాన్ని సేవ్ చేయండి",
+        "use-native-pip": "బ్రౌజర్ స్థానిక PiPని ఉపయోగించండి"
       },
-      "name": "Picture-in-picture",
+      "name": "పిక్చర్-ఇన్-పిక్చర్",
       "templates": {
-        "button": "Picture-in-picture"
+        "button": "పిక్చర్-ఇన్-పిక్చర్"
       }
     },
     "playback-speed": {
-      "description": "Listen fast, listen slow! Adds a slider that controls song speed",
-      "name": "Playback Speed",
+      "description": "వేగంగా వినండి, నెమ్మదిగా వినండి! పాట వేగాన్ని నియంత్రించే స్లైడర్‌ని జోడిస్తుంది",
+      "name": "ప్లేబ్యాక్ వేగం",
       "templates": {
-        "button": "Speed"
+        "button": "వేగం"
       }
     },
     "precise-volume": {
-      "description": "Control the volume precisely using mousewheel/hotkeys, with a custom HUD and customizable volume steps",
+      "description": "కస్టమ్ HUD మరియు అనుకూలీకరించదగిన వాల్యూమ్ స్టెప్‌లతో మౌస్‌వీల్/హాట్‌కీలను ఉపయోగించి వాల్యూమ్‌ని ఖచ్చితంగా నియంత్రించండి",
       "menu": {
-        "arrows-shortcuts": "Local Arrow-keys Controls",
-        "custom-volume-steps": "Set Custom Volume Steps",
-        "global-shortcuts": "Global Hotkeys"
+        "arrows-shortcuts": "లోకల్ యారో-కీస్ కంట్రోల్స్",
+        "custom-volume-steps": "కస్టమ్ వాల్యూమ్ స్టెప్‌లను సెట్ చేయండి",
+        "global-shortcuts": "గ్లోబల్ హాట్‌కీలు"
       },
-      "name": "Precise Volume",
+      "name": "ఖచ్చితమైన వాల్యూమ్",
       "prompt": {
         "global-shortcuts": {
           "keybind-options": {
-            "decrease": "Decrease Volume",
-            "increase": "Increase Volume"
+            "decrease": "వాల్యూమ్ తగ్గించు",
+            "increase": "వాల్యూమ్ పెంచు"
           },
-          "label": "Choose Global Volume Keybinds:",
-          "title": "Global Volume Keybinds"
+          "label": "గ్లోబల్ వాల్యూమ్ కీబైండ్‌లను ఎంచుకోండి:",
+          "title": "గ్లోబల్ వాల్యూమ్ కీబైండ్‌లు"
         },
         "volume-steps": {
-          "label": "Choose Volume Increase/Decrease Steps",
-          "title": "Volume Steps"
+          "label": "వాల్యూమ్ పెంపు/తగ్గింపు స్టెప్‌లను ఎంచుకోండి",
+          "title": "వాల్యూమ్ స్టెప్‌లు"
         }
       }
     },
@@ -755,242 +757,242 @@
       "backend": {
         "dialog": {
           "quality-changer": {
-            "detail": "Current Quality: {{quality}}",
-            "message": "Choose Video Quality:",
-            "title": "Choose Video Quality"
+            "detail": "ప్రస్తుత నాణ్యత: {{quality}}",
+            "message": "వీడియో నాణ్యతను ఎంచుకోండి:",
+            "title": "వీడియో నాణ్యతను ఎంచుకోండి"
           }
         }
       },
-      "description": "Allows changing the video quality with a button on the video overlay",
-      "name": "Video Quality Changer",
+      "description": "వీడియో ఓవర్‌లేపై బటన్‌తో వీడియో నాణ్యతను మార్చడానికి అనుమతిస్తుంది",
+      "name": "వీడియో నాణ్యత మార్పిడి",
       "renderer": {
         "quality-settings-button": {
-          "label": "Open player quality changer"
+          "label": "ప్లేయర్ నాణ్యత మార్పిడిని తెరవండి"
         }
       }
     },
     "scrobbler": {
-      "description": "Add scrobbling support (etc. last.fm, Listenbrainz)",
+      "description": "స్క్రోబ్లింగ్ మద్దతును జోడించండి (ఉదా. last.fm, Listenbrainz)",
       "dialog": {
         "lastfm": {
           "auth-failed": {
-            "message": "Failed to authenticate with Last.fm\nHide the popup until the next restart.",
-            "title": "Authentication Failed"
+            "message": "Last.fmతో ప్రామాణీకరించడంలో విఫలమైంది\nతదుపరి రీస్టార్ట్ వరకు పాప్‌అప్‌ని దాచండి.",
+            "title": "ప్రామాణీకరణ విఫలమైంది"
           }
         }
       },
       "menu": {
         "lastfm": {
-          "api-settings": "Last.fm API Settings"
+          "api-settings": "Last.fm API సెట్టింగ్‌లు"
         },
         "listenbrainz": {
-          "token": "Enter ListenBrainz user token"
+          "token": "ListenBrainz వినియోగదారు టోకెన్‌ని నమోదు చేయండి"
         },
-        "scrobble-alternative-artist": "Use alternative artists",
-        "scrobble-alternative-title": "Use alternative titles",
-        "scrobble-other-media": "Scrobble other media"
+        "scrobble-alternative-artist": "ప్రత్యామ్నాయ కళాకారులను ఉపయోగించండి",
+        "scrobble-alternative-title": "ప్రత్యామ్నాయ శీర్షికలను ఉపయోగించండి",
+        "scrobble-other-media": "ఇతర మీడియాను స్క్రోబుల్ చేయండి"
       },
-      "name": "Scrobbler",
+      "name": "స్క్రోబ్లర్",
       "prompt": {
         "lastfm": {
-          "api-key": "Last.fm API key",
-          "api-secret": "Last.fm API secret"
+          "api-key": "Last.fm API కీ",
+          "api-secret": "Last.fm API సీక్రెట్"
         },
         "listenbrainz": {
           "token": {
-            "label": "Enter your ListenBrainz user token:",
-            "title": "ListenBrainz token"
+            "label": "మీ ListenBrainz వినియోగదారు టోకెన్‌ని నమోదు చేయండి:",
+            "title": "ListenBrainz టోకెన్"
           }
         }
       }
     },
     "shortcuts": {
-      "description": "Allows setting global hotkeys for playback (play/pause/next/previous) and turning off media OSD by overriding media keys, turning on Ctrl/CMD + F to search, turning on Linux MPRIS support for media keys, and custom hotkeys for advanced users",
+      "description": "ప్లేబ్యాక్ కోసం గ్లోబల్ హాట్‌కీలను సెట్ చేయడానికి (ప్లే/పాజ్/తదుపరి/మునుపటి) మరియు మీడియా కీలను ఓవర్‌రైడ్ చేయడం ద్వారా మీడియా OSDని ఆఫ్ చేయడానికి, శోధించడానికి Ctrl/CMD + Fని ఆన్ చేయడానికి, మీడియా కీల కోసం Linux MPRIS మద్దతును ఆన్ చేయడానికి మరియు అధునాతన వినియోగదారుల కోసం కస్టమ్ హాట్‌కీలను అనుమతిస్తుంది",
       "menu": {
-        "override-media-keys": "Override Media Keys",
-        "set-keybinds": "Set Global Song Controls"
+        "override-media-keys": "మీడియా కీలను ఓవర్‌రైడ్ చేయండి",
+        "set-keybinds": "గ్లోబల్ పాట నియంత్రణలను సెట్ చేయండి"
       },
-      "name": "Shortcuts (& MPRIS)",
+      "name": "షార్ట్‌కట్‌లు (& MPRIS)",
       "prompt": {
         "keybind": {
           "keybind-options": {
-            "next": "Next",
-            "play-pause": "Play / Pause",
-            "previous": "Previous"
+            "next": "తదుపరి",
+            "play-pause": "ప్లే / పాజ్",
+            "previous": "మునుపటి"
           },
-          "label": "Choose Global Keybinds for Songs Control:",
-          "title": "Global Keybinds"
+          "label": "పాటల నియంత్రణ కోసం గ్లోబల్ కీబైండ్‌లను ఎంచుకోండి:",
+          "title": "గ్లోబల్ కీబైండ్‌లు"
         }
       }
     },
     "skip-disliked-songs": {
-      "description": "Skips disliked songs",
-      "name": "Skip Disliked Songs"
+      "description": "నచ్చని పాటలను దాటవేస్తుంది",
+      "name": "నచ్చని పాటలను దాటవేయి"
     },
     "skip-silences": {
-      "description": "Automatically skip silences sections in songs",
-      "name": "Skip Silences"
+      "description": "పాటల్లో నిశ్శబ్ద విభాగాలను స్వయంచాలకంగా దాటవేయండి",
+      "name": "నిశ్శబ్దాలను దాటవేయి"
     },
     "sponsorblock": {
-      "description": "Automatically Skips non-music parts like intro/outro or parts of music videos where the song isn't playing",
+      "description": "పరిచయం/ముగింపు వంటి సంగీతం కాని భాగాలను లేదా పాట ప్లే కాని మ్యూజిక్ వీడియోల భాగాలను స్వయంచాలకంగా దాటవేస్తుంది",
       "name": "SponsorBlock"
     },
     "synced-lyrics": {
-      "description": "Provides synced lyrics to songs, using providers like LRClib.",
+      "description": "LRClib వంటి ప్రొవైడర్‌లను ఉపయోగించి పాటలకు సింక్ చేయబడిన లిరిక్స్‌ని అందిస్తుంది.",
       "errors": {
-        "fetch": "⚠️\tAn error occurred while fetching the lyrics.\n\tPlease try again later.",
-        "not-found": "⚠️ No lyrics found for this song."
+        "fetch": "⚠️\tలిరిక్స్ పొందడంలో లోపం సంభవించింది.\n\tదయచేసి తర్వాత మళ్లీ ప్రయత్నించండి.",
+        "not-found": "⚠️ ఈ పాటకు లిరిక్స్ కనుగొనబడలేదు."
       },
       "menu": {
         "convert-chinese-character": {
-          "label": "Convert Chinese character",
+          "label": "చైనీస్ అక్షరాన్ని మార్చండి",
           "submenu": {
             "disabled": {
-              "label": "Disabled",
-              "tooltip": "Disable Chinese character conversion"
+              "label": "నిలిపివేయబడింది",
+              "tooltip": "చైనీస్ అక్షర మార్పిడిని నిలిపివేయండి"
             },
             "simplified-to-traditional": {
-              "label": "Simplified to Traditional",
-              "tooltip": "Convert Simplified Chinese to Traditional Chinese"
+              "label": "సరళీకృతం నుండి సంప్రదాయానికి",
+              "tooltip": "సరళీకృత చైనీస్‌ని సంప్రదాయ చైనీస్‌గా మార్చండి"
             },
             "traditional-to-simplified": {
-              "label": "Traditional to Simplified",
-              "tooltip": "Convert Traditional Chinese to Simplified Chinese"
+              "label": "సంప్రదాయం నుండి సరళీకృతానికి",
+              "tooltip": "సంప్రదాయ చైనీస్‌ని సరళీకృత చైనీస్‌గా మార్చండి"
             }
           },
-          "tooltip": "Convert Chinese character to Traditional or Simplified"
+          "tooltip": "చైనీస్ అక్షరాన్ని సంప్రదాయ లేదా సరళీకృతానికి మార్చండి"
         },
         "default-text-string": {
-          "label": "Default character between lyrics",
-          "tooltip": "Choose the default character to use for the gap between lyrics"
+          "label": "లిరిక్స్ మధ్య డిఫాల్ట్ అక్షరం",
+          "tooltip": "లిరిక్స్ మధ్య ఖాళీ కోసం ఉపయోగించడానికి డిఫాల్ట్ అక్షరాన్ని ఎంచుకోండి"
         },
         "line-effect": {
-          "label": "Line effect",
+          "label": "లైన్ ప్రభావం",
           "submenu": {
             "fancy": {
-              "label": "Fancy",
-              "tooltip": "Use large, app-like effects on the current line"
+              "label": "ఫ్యాన్సీ",
+              "tooltip": "ప్రస్తుత లైన్‌పై పెద్ద, యాప్-లాంటి ప్రభావాలను ఉపయోగించండి"
             },
             "focus": {
-              "label": "Focus",
-              "tooltip": "Make only the current line white"
+              "label": "ఫోకస్",
+              "tooltip": "ప్రస్తుత లైన్‌ని మాత్రమే తెలుపుగా చేయండి"
             },
             "offset": {
-              "label": "Offset",
-              "tooltip": "Offset on the right the current line"
+              "label": "ఆఫ్‌సెట్",
+              "tooltip": "ప్రస్తుత లైన్‌ని కుడివైపుకు ఆఫ్‌సెట్ చేయండి"
             },
             "scale": {
-              "label": "Scale",
-              "tooltip": "Scale the current line"
+              "label": "స్కేల్",
+              "tooltip": "ప్రస్తుత లైన్‌ని స్కేల్ చేయండి"
             }
           },
-          "tooltip": "Choose the effect to apply to the current line"
+          "tooltip": "ప్రస్తుత లైన్‌కు వర్తింపజేయడానికి ప్రభావాన్ని ఎంచుకోండి"
         },
         "lyrics-font-size": {
-          "label": "Lyrics font size",
+          "label": "లిరిక్స్ ఫాంట్ పరిమాణం",
           "submenu": {
             "large": {
-              "label": "Large",
-              "tooltip": "Use the original larger lyrics size"
+              "label": "పెద్దది",
+              "tooltip": "అసలు పెద్ద లిరిక్స్ పరిమాణాన్ని ఉపయోగించండి"
             },
             "medium": {
-              "label": "Medium",
-              "tooltip": "Use a balanced lyrics size"
+              "label": "మధ్యస్థం",
+              "tooltip": "సమతుల్య లిరిక్స్ పరిమాణాన్ని ఉపయోగించండి"
             },
             "small": {
-              "label": "Small",
-              "tooltip": "Use a more compact lyrics size"
+              "label": "చిన్నది",
+              "tooltip": "మరింత కాంపాక్ట్ లిరిక్స్ పరిమాణాన్ని ఉపయోగించండి"
             }
           },
-          "tooltip": "Choose how large the lyrics text should be"
+          "tooltip": "లిరిక్స్ టెక్స్ట్ ఎంత పెద్దదిగా ఉండాలో ఎంచుకోండి"
         },
         "precise-timing": {
-          "label": "Make the lyrics perfectly synced",
-          "tooltip": "Calculate to the milisecond the display of the next line (can have a small impact on performance)"
+          "label": "లిరిక్స్‌ని ఖచ్చితంగా సింక్ చేయండి",
+          "tooltip": "తదుపరి లైన్ ప్రదర్శనను మిల్లీసెకనుకు లెక్కించండి (పనితీరుపై చిన్న ప్రభావం ఉండవచ్చు)"
         },
         "preferred-provider": {
-          "label": "Preferred Provider",
+          "label": "ఇష్టపడే ప్రొవైడర్",
           "none": {
-            "label": "None",
-            "tooltip": "No preferred provider"
+            "label": "ఏదీ లేదు",
+            "tooltip": "ఇష్టపడే ప్రొవైడర్ లేదు"
           },
-          "tooltip": "Choose the default provider to use"
+          "tooltip": "ఉపయోగించడానికి డిఫాల్ట్ ప్రొవైడర్‌ని ఎంచుకోండి"
         },
         "romanization": {
-          "label": "Romanize lyrics",
-          "tooltip": "If the lyrics are in a different language, try to display a latin version."
+          "label": "లిరిక్స్‌ని రోమనైజ్ చేయండి",
+          "tooltip": "లిరిక్స్ వేరే భాషలో ఉంటే, లాటిన్ వెర్షన్‌ని ప్రదర్శించడానికి ప్రయత్నించండి."
         },
         "show-lyrics-even-if-inexact": {
-          "label": "Show lyrics even if inexact",
-          "tooltip": "If the song is not found, the plugin tries again with a different search query.\nThe result from the second attempt may not be exact."
+          "label": "ఖచ్చితమైనవి కాకపోయినా లిరిక్స్ చూపించు",
+          "tooltip": "పాట కనుగొనబడకపోతే, ప్లగిన్ వేరే శోధన ప్రశ్నతో మళ్లీ ప్రయత్నిస్తుంది.\nరెండవ ప్రయత్నం నుండి ఫలితం ఖచ్చితమైనది కాకపోవచ్చు."
         },
         "show-time-codes": {
-          "label": "Show time codes",
-          "tooltip": "Show the time codes next to the lyrics"
+          "label": "సమయ కోడ్‌లను చూపించు",
+          "tooltip": "లిరిక్స్ పక్కన సమయ కోడ్‌లను చూపించు"
         },
         "translation": {
           "clear-cache": {
-            "label": "Clear translation cache",
-            "tooltip": "Delete all cached translations stored on disk."
+            "label": "అనువాద కాష్‌ని క్లియర్ చేయండి",
+            "tooltip": "డిస్క్‌లో నిల్వ చేయబడిన అన్ని కాష్ చేయబడిన అనువాదాలను తొలగించండి."
           },
           "configure": {
-            "label": "Configure API key & model…",
-            "tooltip": "Set provider-specific translation options."
+            "label": "API కీ మరియు మోడల్‌ని కాన్ఫిగర్ చేయండి…",
+            "tooltip": "ప్రొవైడర్-నిర్దిష్ట అనువాద ఎంపికలను సెట్ చేయండి."
           },
           "enabled": {
-            "label": "Enable translation",
-            "tooltip": "Show a translated line beneath each original lyric line."
+            "label": "అనువాదాన్ని ఎనేబుల్ చేయండి",
+            "tooltip": "ప్రతి అసలు లిరిక్ లైన్ కింద అనువదించిన లైన్‌ని చూపించు."
           },
-          "label": "Lyrics translation",
+          "label": "లిరిక్స్ అనువాదం",
           "provider": {
-            "label": "Provider",
-            "tooltip": "Which service to use for translation."
+            "label": "ప్రొవైడర్",
+            "tooltip": "అనువాదం కోసం ఏ సేవను ఉపయోగించాలి."
           },
           "providers": {
             "anthropic": {
               "name": "Anthropic Claude",
-              "prompt-label": "Uses the native Anthropic Messages API.",
-              "prompt-title": "Anthropic settings"
+              "prompt-label": "స్థానిక Anthropic Messages APIని ఉపయోగిస్తుంది.",
+              "prompt-title": "Anthropic సెట్టింగ్‌లు"
             },
             "gemini": {
               "name": "Google Gemini",
-              "prompt-label": "Uses Google's Generative Language API (generateContent).",
-              "prompt-title": "Gemini settings"
+              "prompt-label": "Google యొక్క Generative Language API (generateContent)ని ఉపయోగిస్తుంది.",
+              "prompt-title": "Gemini సెట్టింగ్‌లు"
             },
             "google-translate": {
-              "host": "Host",
-              "name": "Google Translate",
-              "prompt-label": "Uses the unofficial free Google Translate endpoint. No API key is required, but Google may rate-limit it.",
-              "prompt-title": "Google Translate settings"
+              "host": "హోస్ట్",
+              "name": "Google అనువాదం",
+              "prompt-label": "అనధికారిక ఉచిత Google Translate ఎండ్‌పాయింట్‌ని ఉపయోగిస్తుంది. API కీ అవసరం లేదు, కానీ Google రేట్-లిమిట్ చేయవచ్చు.",
+              "prompt-title": "Google అనువాద సెట్టింగ్‌లు"
             },
             "local-cli": {
-              "command": "Command",
-              "engine": "Local CLI",
+              "command": "కమాండ్",
+              "engine": "లోకల్ CLI",
               "engine-claude": "Claude Code",
               "engine-codex": "Codex",
               "engine-gemini": "Gemini CLI",
-              "name": "Local CLI",
-              "prompt-label": "Use a locally logged-in Claude Code, Codex, or Gemini CLI. The command and model are automatic; the CLI uses its own logged-in default.",
-              "prompt-title": "Local CLI settings",
-              "timeout": "Timeout seconds (15-600)"
+              "name": "లోకల్ CLI",
+              "prompt-label": "లోకల్‌గా లాగిన్ అయిన Claude Code, Codex లేదా Gemini CLIని ఉపయోగించండి. కమాండ్ మరియు మోడల్ ఆటోమేటిక్; CLI దాని స్వంత లాగిన్ డిఫాల్ట్‌ని ఉపయోగిస్తుంది.",
+              "prompt-title": "లోకల్ CLI సెట్టింగ్‌లు",
+              "timeout": "టైమ్‌అవుట్ సెకన్లు (15-600)"
             },
             "openai-compatible": {
-              "api-mode": "API mode (responses / auto / chat-completions)",
-              "base-url": "Base URL",
-              "name": "OpenAI compatible",
-              "prompt-label": "Use OpenAI-compatible servers, including Ollama (base URL http://127.0.0.1:11434/v1, API mode auto or chat-completions).",
-              "prompt-title": "OpenAI-compatible settings"
+              "api-mode": "API మోడ్ (responses / auto / chat-completions)",
+              "base-url": "బేస్ URL",
+              "name": "OpenAI అనుకూలం",
+              "prompt-label": "Ollamaతో సహా OpenAI-అనుకూల సర్వర్‌లను ఉపయోగించండి (బేస్ URL http://127.0.0.1:11434/v1, API మోడ్ auto లేదా chat-completions).",
+              "prompt-title": "OpenAI-అనుకూల సెట్టింగ్‌లు"
             },
             "shared": {
-              "api-key": "API key",
-              "model": "Model"
+              "api-key": "API కీ",
+              "model": "మోడల్"
             }
           },
           "target-language": {
-            "label": "Target language",
+            "label": "లక్ష్య భాష",
             "options": {
               "ar": "العربية",
-              "auto": "Follow app language",
+              "auto": "యాప్ భాషను అనుసరించండి",
               "bg": "Български",
               "bn": "বাংলা",
               "cs": "Čeština",
@@ -1035,92 +1037,103 @@
               "zh-CN": "简体中文",
               "zh-TW": "繁體中文"
             },
-            "tooltip": "The language to translate lyrics into."
+            "tooltip": "లిరిక్స్‌ని ఏ భాషలోకి అనువదించాలి."
           },
-          "tooltip": "Translate lyrics and show the translated result line-by-line for display."
+          "tooltip": "లిరిక్స్‌ని అనువదించి, అనువదించిన ఫలితాన్ని లైన్-బై-లైన్ ప్రదర్శించండి."
         }
       },
-      "name": "Synced Lyrics",
+      "name": "సింక్ చేయబడిన లిరిక్స్",
       "refetch-btn": {
-        "fetching": "Fetching...",
-        "normal": "Refetch lyrics"
+        "fetching": "పొందుతోంది...",
+        "normal": "లిరిక్స్‌ని మళ్లీ పొందండి"
       },
       "warnings": {
-        "duration-mismatch": "⚠️ - The lyrics may be out of sync due to a duration mismatch.",
-        "inexact": "⚠️ - The lyrics for this song may not be exact",
-        "instrumental": "⚠️ - This is an instrumental song"
+        "duration-mismatch": "⚠️ - వ్యవధి అసమతుల్యత కారణంగా లిరిక్స్ సింక్‌లో లేకపోవచ్చు.",
+        "inexact": "⚠️ - ఈ పాటకు లిరిక్స్ ఖచ్చితమైనవి కాకపోవచ్చు",
+        "instrumental": "⚠️ - ఇది ఇన్‌స్ట్రుమెంటల్ పాట"
       }
     },
     "taskbar-mediacontrol": {
-      "description": "Control playback from your Windows taskbar",
-      "name": "Taskbar Media Control"
+      "description": "మీ Windows టాస్క్‌బార్ నుండి ప్లేబ్యాక్‌ని నియంత్రించండి",
+      "name": "టాస్క్‌బార్ మీడియా నియంత్రణ"
     },
     "touchbar": {
-      "description": "Adds a TouchBar widget for macOS users",
+      "description": "macOS వినియోగదారుల కోసం TouchBar విడ్జెట్‌ని జోడిస్తుంది",
       "name": "TouchBar"
     },
     "transparent-player": {
-      "description": "Makes the app window transparent",
+      "description": "యాప్ విండోను పారదర్శకంగా చేస్తుంది",
       "menu": {
         "opacity": {
-          "label": "Opacity",
+          "label": "అపారదర్శకత",
           "submenu": {
             "percent": "{{opacity}}%"
           }
         },
         "type": {
-          "label": "Type",
+          "label": "రకం",
           "submenu": {
-            "acrylic": "Acrylic",
-            "mica": "Mica",
-            "none": "None",
-            "tabbed": "Tabbed"
+            "acrylic": "యాక్రిలిక్",
+            "mica": "మైకా",
+            "none": "ఏదీ లేదు",
+            "tabbed": "ట్యాబ్డ్"
           }
         }
       },
-      "name": "Transparent Player"
+      "name": "పారదర్శక ప్లేయర్"
     },
     "tuna-obs": {
-      "description": "Integration with OBS's plugin Tuna",
+      "description": "OBS యొక్క Tuna ప్లగిన్‌తో ఇంటిగ్రేషన్",
       "name": "Tuna OBS"
     },
     "unobtrusive-player": {
-      "description": "Prevents the player from popping up when playing a song",
-      "name": "Unobtrusive Player"
+      "description": "పాట ప్లే చేస్తున్నప్పుడు ప్లేయర్ పాప్ అప్ కాకుండా నిరోధిస్తుంది",
+      "name": "అప్రమేయ ప్లేయర్"
     },
     "video-toggle": {
-      "description": "Adds a button to switch between Video/Song mode. can also optionally remove the whole video tab",
+      "description": "వీడియో/పాట మోడ్ మధ్య మారడానికి బటన్‌ని జోడిస్తుంది. ఐచ్ఛికంగా మొత్తం వీడియో ట్యాబ్‌ని కూడా తొలగించవచ్చు",
       "menu": {
         "align": {
-          "label": "Alignment",
+          "label": "అమరిక",
           "submenu": {
-            "left": "Left",
-            "middle": "Middle",
-            "right": "Right"
+            "left": "ఎడమ",
+            "middle": "మధ్య",
+            "right": "కుడి"
           }
         },
-        "force-hide": "Force remove video tab",
+        "force-hide": "వీడియో ట్యాబ్‌ని బలవంతంగా తొలగించు",
         "mode": {
-          "label": "Mode",
+          "label": "మోడ్",
           "submenu": {
-            "custom": "Custom toggle",
-            "disabled": "Disabled",
-            "native": "Native toggle"
+            "custom": "కస్టమ్ టోగుల్",
+            "disabled": "నిలిపివేయబడింది",
+            "native": "స్థానిక టోగుల్"
           }
         }
       },
-      "name": "Video Toggle",
+      "name": "వీడియో టోగుల్",
       "templates": {
-        "button-song": "Song",
-        "button-video": "Video"
+        "button-song": "పాట",
+        "button-video": "వీడియో"
       }
     },
     "visualizer": {
-      "description": "Adds a visualizer to the player",
+      "description": "ప్లేయర్‌కు విజువలైజర్‌ని జోడిస్తుంది",
       "menu": {
-        "visualizer-type": "Visualizer Type"
+        "visualizer-type": "విజువలైజర్ రకం"
       },
-      "name": "Visualizer"
+      "name": "విజువలైజర్"
+    },
+    "audio-only": {
+      "description": "ఆడియో-మాత్రమే మోడ్‌ని బలవంతం చేస్తుంది — RAM మరియు బ్యాండ్‌విడ్త్‌ను ఆదా చేయడానికి నెట్‌వర్క్ మరియు ప్లేయర్ స్థాయిలో అన్ని వీడియో స్ట్రీమ్‌లను బ్లాక్ చేస్తుంది",
+      "name": "ఆడియో మాత్రమే"
+    },
+    "playback-recovery": {
+      "description": "చిక్కుకున్న, నిలిచిపోయిన లేదా చనిపోయిన ప్లేబ్యాక్ స్థితుల నుండి స్వయంచాలకంగా కోలుకుంటుంది",
+      "menu": {
+        "log-to-console": "రికవరీ ఈవెంట్‌లను కన్సోల్‌కు లాగ్ చేయండి"
+      },
+      "name": "ప్లేబ్యాక్ రికవరీ"
     }
   }
 }

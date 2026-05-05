@@ -79,7 +79,7 @@
       }
     },
     "menu": {
-      "about": "About",
+      "about": "വിവരം",
       "navigation": {
         "label": "നാവിഗേഷൻ",
         "submenu": {
@@ -96,88 +96,89 @@
           "advanced-options": {
             "label": "വിപുലമായ ഓപ്ഷനുകൾ",
             "submenu": {
-              "auto-reset-app-cache": "Reset app cache when app starts",
-              "disable-hardware-acceleration": "Disable hardware acceleration",
-              "edit-config-json": "Edit config.json",
-              "override-user-agent": "Override User-Agent",
+              "auto-reset-app-cache": "ആപ്പ് സ്റ്റാർട്ട് ചെയ്യുമ്പോൾ ആപ്പ് കാഷെ റീസെറ്റ് ചെയ്യുക",
+              "disable-hardware-acceleration": "ഹാർഡ്വെയർ ആക്സിലറേഷൻ പ്രവർത്തനരഹിതമാക്കുക",
+              "edit-config-json": "config.json എഡിറ്റ് ചെയ്യുക",
+              "override-user-agent": "User-Agent ഓവർറൈഡ് ചെയ്യുക",
               "restart-on-config-changes": "കോൺഫിഗറേഷൻ മാറ്റങ്ങൾ വരുത്തുമ്പോൾ പുനരാരംഭിക്കുക",
               "set-proxy": {
-                "label": "Set proxy",
+                "label": "പ്രോക്സി സജ്ജമാക്കുക",
                 "prompt": {
-                  "label": "Enter Proxy Address: (leave empty to disable)",
-                  "placeholder": "Example: SOCKS5://127.0.0.1:9999",
-                  "title": "Set proxy"
+                  "label": "പ്രോക്സി വിലാസം നൽകുക: (പ്രവർത്തനരഹിതമാക്കാൻ ശൂന്യമായി ഇടുക)",
+                  "placeholder": "ഉദാഹരണം: SOCKS5://127.0.0.1:9999",
+                  "title": "പ്രോക്സി സജ്ജമാക്കുക"
                 }
               },
-              "toggle-dev-tools": "Toggle DevTools"
+              "toggle-dev-tools": "DevTools ടോഗിൾ ചെയ്യുക"
             }
           },
-          "always-on-top": "Always on top",
-          "auto-update": "Auto Update",
+          "always-on-top": "എപ്പോഴും മുകളിൽ",
+          "auto-update": "ഓട്ടോ അപ്ഡേറ്റ്",
           "hide-menu": {
             "dialog": {
               "message": "അടുത്ത ലോഞ്ചിൽ മെനു മറയ്ക്കപ്പെടും, അത് കാണിക്കാൻ [Alt] ഉപയോഗിക്കുക (അല്ലെങ്കിൽ ഇൻ-ആപ്പ്-മെനു ഉപയോഗിക്കുകയാണെങ്കിൽ ബാക്ക്ടിക്ക് [`])",
               "title": "മെനു മറയ്ക്കൽ സജീവമാക്കി"
             },
-            "label": "Hide Menu"
+            "label": "മെനു മറയ്ക്കുക"
           },
           "language": {
             "dialog": {
-              "message": "Language will be changed after restart",
-              "title": "Language Changed"
+              "message": "പുനരാരംഭിച്ചതിന് ശേഷം ഭാഷ മാറും",
+              "title": "ഭാഷ മാറ്റി"
             },
-            "label": "Language",
+            "label": "ഭാഷ",
             "submenu": {
-              "to-help-translate": "Want to help translate? Click here"
+              "to-help-translate": "വിവർത്തനം ചെയ്യാൻ സഹായിക്കണോ? ഇവിടെ ക്ലിക്ക് ചെയ്യുക"
             }
           },
-          "resume-on-start": "Resume last song when app starts",
-          "single-instance-lock": "Single Instance Lock",
-          "start-at-login": "Start at login",
+          "resume-on-start": "ആപ്പ് സ്റ്റാർട്ട് ചെയ്യുമ്പോൾ അവസാന ഗാനം പുനരാരംഭിക്കുക",
+          "single-instance-lock": "ഒറ്റ ഇൻസ്റ്റൻസ് ലോക്ക്",
+          "start-at-login": "ലോഗിൻ ചെയ്യുമ്പോൾ ആരംഭിക്കുക",
           "starting-page": {
-            "label": "Starting page",
-            "unset": "Unset"
+            "label": "ആരംഭ പേജ്",
+            "unset": "അൺസെറ്റ്"
           },
           "tray": {
-            "label": "Tray",
+            "label": "ട്രേ",
             "submenu": {
-              "disabled": "Disabled",
-              "enabled-and-hide-app": "Enabled and hide app",
-              "enabled-and-show-app": "Enabled and show app",
-              "play-pause-on-click": "Play/Pause on click"
+              "disabled": "പ്രവർത്തനരഹിതം",
+              "enabled-and-hide-app": "പ്രവർത്തനക്ഷമമാക്കി ആപ്പ് മറയ്ക്കുക",
+              "enabled-and-show-app": "പ്രവർത്തനക്ഷമമാക്കി ആപ്പ് കാണിക്കുക",
+              "play-pause-on-click": "ക്ലിക്കിൽ പ്ലേ/പോസ്",
+              "move-to-current-desktop": "കാണിക്കുമ്പോൾ നിലവിലെ വെർച്വൽ ഡെസ്ക്ടോപ്പിലേക്ക് നീക്കുക"
             }
           },
           "visual-tweaks": {
-            "label": "Visual Tweaks",
+            "label": "വിഷ്വൽ ട്വീക്കുകൾ",
             "submenu": {
               "custom-window-title": {
-                "label": "Custom window title",
+                "label": "ഇഷ്ടാനുസൃത വിൻഡോ ശീർഷകം",
                 "prompt": {
-                  "label": "Enter custom window title: (leave empty to disable)",
-                  "placeholder": "Example: {{applicationName}}"
+                  "label": "ഇഷ്ടാനുസൃത വിൻഡോ ശീർഷകം നൽകുക: (പ്രവർത്തനരഹിതമാക്കാൻ ശൂന്യമായി ഇടുക)",
+                  "placeholder": "ഉദാഹരണം: {{applicationName}}"
                 }
               },
               "like-buttons": {
-                "default": "Default",
-                "force-show": "Force show",
-                "hide": "Hide",
-                "label": "Like buttons",
-                "swap": "Swap like buttons order"
+                "default": "ഡിഫോൾട്ട്",
+                "force-show": "നിർബന്ധിതമായി കാണിക്കുക",
+                "hide": "മറയ്ക്കുക",
+                "label": "ലൈക്ക് ബട്ടണുകൾ",
+                "swap": "ലൈക്ക് ബട്ടണുകളുടെ ക്രമം മാറ്റുക"
               },
-              "remove-upgrade-button": "Remove upgrade button",
+              "remove-upgrade-button": "അപ്ഗ്രേഡ് ബട്ടൺ നീക്കം ചെയ്യുക",
               "theme": {
                 "dialog": {
                   "button": {
-                    "cancel": "Cancel",
-                    "remove": "Remove"
+                    "cancel": "റദ്ദാക്കുക",
+                    "remove": "നീക്കം ചെയ്യുക"
                   },
-                  "remove-theme": "Are you sure you want to remove the custom theme?",
-                  "remove-theme-message": "This will remove the custom theme"
+                  "remove-theme": "ഇഷ്ടാനുസൃത തീം നീക്കം ചെയ്യണമെന്ന് ഉറപ്പാണോ?",
+                  "remove-theme-message": "ഇത് ഇഷ്ടാനുസൃത തീം നീക്കം ചെയ്യും"
                 },
-                "label": "Theme",
+                "label": "തീം",
                 "submenu": {
-                  "import-css-file": "Import custom CSS file",
-                  "no-theme": "No theme"
+                  "import-css-file": "ഇഷ്ടാനുസൃത CSS ഫയൽ ഇറക്കുമതി ചെയ്യുക",
+                  "no-theme": "തീം ഇല്ല"
                 }
               }
             }
@@ -186,28 +187,28 @@
       },
       "plugins": {
         "enabled": "പ്രവർത്തനക്ഷമമാക്കി",
-        "label": "Plugins",
-        "new": "NEW"
+        "label": "പ്ലഗിനുകൾ",
+        "new": "പുതിയത്"
       },
       "view": {
-        "label": "View",
+        "label": "കാഴ്ച",
         "submenu": {
-          "force-reload": "Force Reload",
-          "reload": "Reload",
-          "reset-zoom": "Actual Size",
-          "toggle-fullscreen": "Toggle Full Screen",
-          "zoom-in": "Zoom In",
-          "zoom-out": "Zoom Out"
+          "force-reload": "ഫോഴ്സ് റീലോഡ്",
+          "reload": "റീലോഡ്",
+          "reset-zoom": "യഥാർത്ഥ വലുപ്പം",
+          "toggle-fullscreen": "ഫുൾ സ്ക്രീൻ ടോഗിൾ ചെയ്യുക",
+          "zoom-in": "സൂം ഇൻ",
+          "zoom-out": "സൂം ഔട്ട്"
         }
       }
     },
     "tray": {
-      "next": "Next",
-      "play-pause": "Play/Pause",
-      "previous": "Previous",
-      "quit": "Exit",
-      "restart": "Restart App",
-      "show": "Show window",
+      "next": "അടുത്തത്",
+      "play-pause": "പ്ലേ/പോസ്",
+      "previous": "മുമ്പത്തേത്",
+      "quit": "പുറത്തുകടക്കുക",
+      "restart": "ആപ്പ് പുനരാരംഭിക്കുക",
+      "show": "വിൻഡോ കാണിക്കുക",
       "tooltip": {
         "default": "{{applicationName}}",
         "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
@@ -216,291 +217,291 @@
   },
   "plugins": {
     "ad-speedup": {
-      "description": "If an ad play it mutes the audio and sets playback speed to 16x",
-      "name": "Ad Speedup"
+      "description": "ഒരു പരസ്യം പ്ലേ ചെയ്യുമ്പോൾ ഓഡിയോ മ്യൂട്ട് ചെയ്ത് പ്ലേബാക്ക് വേഗത 16x ആക്കുന്നു",
+      "name": "പരസ്യ വേഗത"
     },
     "adblocker": {
-      "description": "Block all ads and tracking out of the box",
+      "description": "എല്ലാ പരസ്യങ്ങളും ട്രാക്കിംഗും സ്വയമേവ തടയുക",
       "menu": {
-        "blocker": "Blocker"
+        "blocker": "ബ്ലോക്കർ"
       },
-      "name": "Ad Blocker"
+      "name": "പരസ്യ ബ്ലോക്കർ"
     },
     "album-actions": {
-      "description": "Adds Undislike, Dislike, Like, and Unlike buttons to apply this to all songs in a playlist or album",
-      "name": "Album Actions"
+      "description": "ഒരു പ്ലേലിസ്റ്റിലോ ആൽബത്തിലോ ഉള്ള എല്ലാ ഗാനങ്ങളിലും പ്രയോഗിക്കാൻ അൺഡിസ്ലൈക്ക്, ഡിസ്ലൈക്ക്, ലൈക്ക്, അൺലൈക്ക് ബട്ടണുകൾ ചേർക്കുന്നു",
+      "name": "ആൽബം പ്രവർത്തനങ്ങൾ"
     },
     "album-color-theme": {
-      "description": "Applies a dynamic theme and visual effects based on the album color palette",
+      "description": "ആൽബം കളർ പാലറ്റിനെ അടിസ്ഥാനമാക്കി ഒരു ഡൈനാമിക് തീമും വിഷ്വൽ ഇഫക്റ്റുകളും പ്രയോഗിക്കുന്നു",
       "menu": {
         "color-mix-ratio": {
-          "label": "Color mix ratio",
+          "label": "കളർ മിക്സ് അനുപാതം",
           "submenu": {
             "percent": "{{ratio}}%"
           }
         },
-        "enable-seekbar": "Enable seekbar theming"
+        "enable-seekbar": "സീക്ക്ബാർ തീമിംഗ് പ്രവർത്തനക്ഷമമാക്കുക"
       },
-      "name": "Album Color Theme"
+      "name": "ആൽബം കളർ തീം"
     },
     "ambient-mode": {
-      "description": "Applies a lighting effect by casting gentle colors from the video, into your screen’s background",
+      "description": "വീഡിയോയിൽ നിന്ന് സ്ക്രീനിന്റെ പശ്ചാത്തലത്തിലേക്ക് മൃദുവായ നിറങ്ങൾ പ്രക്ഷേപിച്ച് ഒരു ലൈറ്റിംഗ് ഇഫക്റ്റ് പ്രയോഗിക്കുന്നു",
       "menu": {
         "blur-amount": {
-          "label": "Blur amount",
+          "label": "ബ്ലർ അളവ്",
           "submenu": {
-            "pixels": "{{blurAmount}} pixels"
+            "pixels": "{{blurAmount}} പിക്സലുകൾ"
           }
         },
         "buffer": {
-          "label": "Buffer",
+          "label": "ബഫർ",
           "submenu": {
             "buffer": "{{buffer}}"
           }
         },
         "opacity": {
-          "label": "Opacity",
+          "label": "അതാര്യത",
           "submenu": {
             "percent": "{{opacity}}%"
           }
         },
         "quality": {
-          "label": "Quality",
+          "label": "ഗുണനിലവാരം",
           "submenu": {
-            "pixels": "{{quality}} pixels"
+            "pixels": "{{quality}} പിക്സലുകൾ"
           }
         },
         "size": {
-          "label": "Size",
+          "label": "വലുപ്പം",
           "submenu": {
             "percent": "{{size}}%"
           }
         },
         "smoothness-transition": {
-          "label": "Smoothness transition",
+          "label": "സ്മൂത്ത്നെസ് ട്രാൻസിഷൻ",
           "submenu": {
-            "during": "During {{interpolationTime}} s"
+            "during": "{{interpolationTime}} സെക്കൻഡിനുള്ളിൽ"
           }
         },
         "use-fullscreen": {
-          "label": "Using fullscreen"
+          "label": "ഫുൾസ്ക്രീൻ ഉപയോഗിക്കുന്നു"
         }
       },
-      "name": "Ambient Mode"
+      "name": "ആംബിയന്റ് മോഡ്"
     },
     "amuse": {
-      "description": "Adds {{applicationName}} support for the Amuse now playing widget by 6K Labs",
+      "description": "6K ലാബ്സിന്റെ Amuse നൗ പ്ലേയിംഗ് വിഡ്ജറ്റിനായി {{applicationName}} പിന്തുണ ചേർക്കുന്നു",
       "name": "Amuse",
       "response": {
-        "query": "Amuse API server is running. GET /query to get song info."
+        "query": "Amuse API സെർവർ പ്രവർത്തിക്കുന്നു. ഗാന വിവരം ലഭിക്കാൻ GET /query."
       }
     },
     "api-server": {
-      "description": "Adds an API server to control the player",
+      "description": "പ്ലേയർ നിയന്ത്രിക്കാൻ ഒരു API സെർവർ ചേർക്കുന്നു",
       "dialog": {
         "request": {
           "buttons": {
-            "allow": "Allow",
-            "deny": "Deny"
+            "allow": "അനുവദിക്കുക",
+            "deny": "നിരസിക്കുക"
           },
-          "message": "Allow {{ID}} ({{origin}}) to access the API?",
-          "title": "API authorization request"
+          "message": "{{ID}} ({{origin}}) ന് API ആക്സസ് ചെയ്യാൻ അനുവദിക്കണോ?",
+          "title": "API ഓതറൈസേഷൻ അഭ്യർത്ഥന"
         }
       },
       "menu": {
         "auth-strategy": {
-          "label": "Authorization strategy",
+          "label": "ഓതറൈസേഷൻ തന്ത്രം",
           "submenu": {
             "auth-at-first": {
-              "label": "Authorize at first request"
+              "label": "ആദ്യ അഭ്യർത്ഥനയിൽ അംഗീകരിക്കുക"
             },
             "none": {
-              "label": "No authorization"
+              "label": "ഓതറൈസേഷൻ ഇല്ല"
             }
           }
         },
         "hostname": {
-          "label": "Hostname"
+          "label": "ഹോസ്റ്റ്നെയിം"
         },
         "https": {
-          "label": "HTTPS & Certificates",
+          "label": "HTTPS & സർട്ടിഫിക്കറ്റുകൾ",
           "submenu": {
             "cert": {
-              "dialogTitle": "Select HTTPS certificate file",
-              "label": "Certificate file (.crt/.pem)"
+              "dialogTitle": "HTTPS സർട്ടിഫിക്കറ്റ് ഫയൽ തിരഞ്ഞെടുക്കുക",
+              "label": "സർട്ടിഫിക്കറ്റ് ഫയൽ (.crt/.pem)"
             },
             "enable-https": {
-              "label": "Enable HTTPS"
+              "label": "HTTPS പ്രവർത്തനക്ഷമമാക്കുക"
             },
             "key": {
-              "dialogTitle": "Select HTTPS private key file",
-              "label": "Private key file (.key/.pem)"
+              "dialogTitle": "HTTPS പ്രൈവറ്റ് കീ ഫയൽ തിരഞ്ഞെടുക്കുക",
+              "label": "പ്രൈവറ്റ് കീ ഫയൽ (.key/.pem)"
             }
           }
         },
         "port": {
-          "label": "Port"
+          "label": "പോർട്ട്"
         }
       },
-      "name": "API Server [Beta]",
+      "name": "API സെർവർ [ബീറ്റ]",
       "prompt": {
         "hostname": {
-          "label": "Enter the hostname (like 0.0.0.0) for the API server:",
-          "title": "Hostname"
+          "label": "API സെർവറിനായി ഹോസ്റ്റ്നെയിം നൽകുക (ഉദാ: 0.0.0.0):",
+          "title": "ഹോസ്റ്റ്നെയിം"
         },
         "port": {
-          "label": "Enter the port for the API server:",
-          "title": "Port"
+          "label": "API സെർവറിനായി പോർട്ട് നൽകുക:",
+          "title": "പോർട്ട്"
         }
       }
     },
     "audio-compressor": {
-      "description": "Apply compression to audio (lowers the volume of the loudest parts of the signal and raises the volume of the softest parts)",
-      "name": "Audio Compressor"
+      "description": "ഓഡിയോയിൽ കംപ്രഷൻ പ്രയോഗിക്കുക (സിഗ്നലിന്റെ ഏറ്റവും ഉച്ചത്തിലുള്ള ഭാഗങ്ങളുടെ വോളിയം കുറയ്ക്കുകയും മൃദുവായ ഭാഗങ്ങളുടെ വോളിയം വർദ്ധിപ്പിക്കുകയും ചെയ്യുന്നു)",
+      "name": "ഓഡിയോ കംപ്രസർ"
     },
     "auth-proxy-adapter": {
-      "description": "Support for the use of authentication proxy services",
+      "description": "ഓതന്റിക്കേഷൻ പ്രോക്സി സേവനങ്ങളുടെ ഉപയോഗത്തിനുള്ള പിന്തുണ",
       "menu": {
-        "disable": "Disable Proxy Adapter",
-        "enable": "Enable Proxy Adapter",
+        "disable": "പ്രോക്സി അഡാപ്റ്റർ പ്രവർത്തനരഹിതമാക്കുക",
+        "enable": "പ്രോക്സി അഡാപ്റ്റർ പ്രവർത്തനക്ഷമമാക്കുക",
         "hostname": {
-          "label": "Hostname"
+          "label": "ഹോസ്റ്റ്നെയിം"
         },
         "port": {
-          "label": "Port"
+          "label": "പോർട്ട്"
         }
       },
-      "name": "Auth Proxy Adapter",
+      "name": "ഓത്ത് പ്രോക്സി അഡാപ്റ്റർ",
       "prompt": {
         "hostname": {
-          "label": "Enter hostname for local proxy server (requires restart):",
-          "title": "Proxy Hostname"
+          "label": "ലോക്കൽ പ്രോക്സി സെർവറിനായി ഹോസ്റ്റ്നെയിം നൽകുക (പുനരാരംഭം ആവശ്യമാണ്):",
+          "title": "പ്രോക്സി ഹോസ്റ്റ്നെയിം"
         },
         "port": {
-          "label": "Enter port for local proxy server (requires restart):",
-          "title": "Proxy Port"
+          "label": "ലോക്കൽ പ്രോക്സി സെർവറിനായി പോർട്ട് നൽകുക (പുനരാരംഭം ആവശ്യമാണ്):",
+          "title": "പ്രോക്സി പോർട്ട്"
         }
       }
     },
     "blur-nav-bar": {
-      "description": "Makes navigation bar transparent and blurry",
-      "name": "Blur Navigation Bar"
+      "description": "നാവിഗേഷൻ ബാർ സുതാര്യവും മങ്ങിയതുമാക്കുന്നു",
+      "name": "ബ്ലർ നാവിഗേഷൻ ബാർ"
     },
     "bypass-age-restrictions": {
-      "description": "Bypass Music Player's age verification",
-      "name": "Bypass Age Restrictions"
+      "description": "മ്യൂസിക് പ്ലേയറിന്റെ പ്രായ പരിശോധന മറികടക്കുക",
+      "name": "പ്രായ നിയന്ത്രണങ്ങൾ മറികടക്കുക"
     },
     "captions-selector": {
-      "description": "Caption selector for {{applicationName}} audio tracks",
+      "description": "{{applicationName}} ഓഡിയോ ട്രാക്കുകൾക്കുള്ള ക്യാപ്ഷൻ സെലക്ടർ",
       "menu": {
-        "autoload": "Automatically select last used caption",
-        "disable-captions": "No captions by default"
+        "autoload": "അവസാനം ഉപയോഗിച്ച ക്യാപ്ഷൻ സ്വയമേവ തിരഞ്ഞെടുക്കുക",
+        "disable-captions": "ഡിഫോൾട്ടായി ക്യാപ്ഷനുകൾ ഇല്ല"
       },
-      "name": "Captions Selector",
+      "name": "ക്യാപ്ഷൻസ് സെലക്ടർ",
       "prompt": {
         "selector": {
-          "label": "Current caption language: {{language}}",
-          "none": "None",
-          "title": "Select caption language"
+          "label": "നിലവിലെ ക്യാപ്ഷൻ ഭാഷ: {{language}}",
+          "none": "ഒന്നുമില്ല",
+          "title": "ക്യാപ്ഷൻ ഭാഷ തിരഞ്ഞെടുക്കുക"
         }
       },
       "templates": {
-        "title": "Open captions selector"
+        "title": "ക്യാപ്ഷൻസ് സെലക്ടർ തുറക്കുക"
       },
       "toast": {
-        "caption-changed": "Caption changed to {{language}}",
-        "caption-disabled": "Captions disabled",
-        "no-captions": "No captions available for this song"
+        "caption-changed": "ക്യാപ്ഷൻ {{language}} ലേക്ക് മാറ്റി",
+        "caption-disabled": "ക്യാപ്ഷനുകൾ പ്രവർത്തനരഹിതമാക്കി",
+        "no-captions": "ഈ ഗാനത്തിന് ക്യാപ്ഷനുകൾ ലഭ്യമല്ല"
       }
     },
     "clock": {
-      "description": "Add a clock to the navigation bar",
+      "description": "നാവിഗേഷൻ ബാറിൽ ഒരു ക്ലോക്ക് ചേർക്കുക",
       "menu": {
         "format": {
-          "24-hour-format": "24-Hour Format",
-          "display-seconds": "Display Seconds",
-          "label": "Format"
+          "24-hour-format": "24-മണിക്കൂർ ഫോർമാറ്റ്",
+          "display-seconds": "സെക്കൻഡുകൾ പ്രദർശിപ്പിക്കുക",
+          "label": "ഫോർമാറ്റ്"
         }
       },
-      "name": "Clock"
+      "name": "ക്ലോക്ക്"
     },
     "compact-sidebar": {
-      "description": "Always set the sidebar in compact mode",
-      "name": "Compact Sidebar"
+      "description": "സൈഡ്ബാർ എപ്പോഴും കോംപാക്റ്റ് മോഡിൽ സജ്ജമാക്കുക",
+      "name": "കോംപാക്റ്റ് സൈഡ്ബാർ"
     },
     "crossfade": {
-      "description": "Crossfade between songs",
+      "description": "ഗാനങ്ങൾക്കിടയിൽ ക്രോസ്ഫേഡ്",
       "menu": {
-        "advanced": "Advanced"
+        "advanced": "അഡ്വാൻസ്ഡ്"
       },
-      "name": "Crossfade [Beta]",
+      "name": "ക്രോസ്ഫേഡ് [ബീറ്റ]",
       "prompt": {
         "options": {
           "multi-input": {
-            "fade-in-duration": "Fade in duration (ms)",
-            "fade-out-duration": "Fade out duration (ms)",
+            "fade-in-duration": "ഫേഡ് ഇൻ ദൈർഘ്യം (ms)",
+            "fade-out-duration": "ഫേഡ് ഔട്ട് ദൈർഘ്യം (ms)",
             "fade-scaling": {
-              "label": "Fade scaling",
-              "linear": "Linear",
-              "logarithmic": "Logarithmic"
+              "label": "ഫേഡ് സ്കെയിലിംഗ്",
+              "linear": "ലീനിയർ",
+              "logarithmic": "ലോഗരിതമിക്"
             },
-            "seconds-before-end": "Crossfade N seconds before end"
+            "seconds-before-end": "അവസാനത്തിന് മുമ്പ് N സെക്കൻഡ് ക്രോസ്ഫേഡ്"
           },
-          "title": "Crossfade options"
+          "title": "ക്രോസ്ഫേഡ് ഓപ്ഷനുകൾ"
         }
       }
     },
     "custom-output-device": {
-      "description": "Configure a custom output media device for songs",
+      "description": "ഗാനങ്ങൾക്കായി ഒരു ഇഷ്ടാനുസൃത ഔട്ട്പുട്ട് മീഡിയ ഉപകരണം ക്രമീകരിക്കുക",
       "menu": {
-        "device-selector": "Select Device"
+        "device-selector": "ഉപകരണം തിരഞ്ഞെടുക്കുക"
       },
-      "name": "Custom Output Device",
+      "name": "ഇഷ്ടാനുസൃത ഔട്ട്പുട്ട് ഉപകരണം",
       "prompt": {
         "device-selector": {
-          "label": "Choose the output media device to be used",
-          "title": "Select Output Device"
+          "label": "ഉപയോഗിക്കേണ്ട ഔട്ട്പുട്ട് മീഡിയ ഉപകരണം തിരഞ്ഞെടുക്കുക",
+          "title": "ഔട്ട്പുട്ട് ഉപകരണം തിരഞ്ഞെടുക്കുക"
         }
       }
     },
     "disable-autoplay": {
-      "description": "Makes song start in \"paused\" mode",
+      "description": "\"പോസ് ചെയ്ത\" മോഡിൽ ഗാനം ആരംഭിക്കുന്നു",
       "menu": {
-        "apply-once": "Applies only on startup"
+        "apply-once": "സ്റ്റാർട്ടപ്പിൽ മാത്രം ബാധകമാണ്"
       },
-      "name": "Disable Autoplay"
+      "name": "ഓട്ടോപ്ലേ പ്രവർത്തനരഹിതമാക്കുക"
     },
     "discord": {
       "backend": {
-        "already-connected": "Attempted to connect with active connection",
-        "connected": "Connected to Discord",
-        "disconnected": "Disconnected from Discord"
+        "already-connected": "സജീവ കണക്ഷനുമായി കണക്റ്റ് ചെയ്യാൻ ശ്രമിച്ചു",
+        "connected": "ഡിസ്കോർഡുമായി കണക്റ്റ് ചെയ്തു",
+        "disconnected": "ഡിസ്കോർഡിൽ നിന്ന് വിച്ഛേദിച്ചു"
       },
-      "description": "Show your friends what you listen to with Rich Presence",
+      "description": "റിച്ച് പ്രസൻസ് ഉപയോഗിച്ച് നിങ്ങൾ കേൾക്കുന്നത് സുഹൃത്തുക്കളെ കാണിക്കുക",
       "menu": {
-        "auto-reconnect": "Auto reconnect",
-        "clear-activity": "Clear activity",
-        "clear-activity-after-timeout": "Clear activity after timeout",
-        "connected": "Connected",
-        "disconnected": "Disconnected",
-        "hide-duration-left": "Hide duration left",
-        "hide-github-button": "Hide GitHub link Button",
-        "play-on-application": "Play on {{applicationName}}",
-        "set-inactivity-timeout": "Set inactivity timeout",
+        "auto-reconnect": "ഓട്ടോ റീകണക്റ്റ്",
+        "clear-activity": "ആക്ടിവിറ്റി ക്ലിയർ ചെയ്യുക",
+        "clear-activity-after-timeout": "ടൈംഔട്ടിന് ശേഷം ആക്ടിവിറ്റി ക്ലിയർ ചെയ്യുക",
+        "connected": "കണക്റ്റ് ചെയ്തു",
+        "disconnected": "വിച്ഛേദിച്ചു",
+        "hide-duration-left": "ശേഷിക്കുന്ന ദൈർഘ്യം മറയ്ക്കുക",
+        "hide-github-button": "GitHub ലിങ്ക് ബട്ടൺ മറയ്ക്കുക",
+        "play-on-application": "{{applicationName}} ൽ പ്ലേ ചെയ്യുക",
+        "set-inactivity-timeout": "നിഷ്ക്രിയത്വ ടൈംഔട്ട് സജ്ജമാക്കുക",
         "set-status-display-type": {
-          "label": "Status text",
+          "label": "സ്റ്റാറ്റസ് ടെക്സ്റ്റ്",
           "submenu": {
-            "application": "Listening to {{applicationName}}",
-            "artist": "Listening to {artist}",
-            "title": "Listening to {song title}"
+            "application": "{{applicationName}} കേൾക്കുന്നു",
+            "artist": "{artist} കേൾക്കുന്നു",
+            "title": "{song title} കേൾക്കുന്നു"
           }
         }
       },
-      "name": "Discord Rich Presence",
+      "name": "ഡിസ്കോർഡ് റിച്ച് പ്രസൻസ്",
       "prompt": {
         "set-inactivity-timeout": {
-          "label": "Enter inactivity timeout in seconds:",
-          "title": "Set inactivity timeout"
+          "label": "നിഷ്ക്രിയത്വ ടൈംഔട്ട് സെക്കൻഡിൽ നൽകുക:",
+          "title": "നിഷ്ക്രിയത്വ ടൈംഔട്ട് സജ്ജമാക്കുക"
         }
       }
     },
@@ -509,245 +510,246 @@
         "dialog": {
           "error": {
             "buttons": {
-              "ok": "OK"
+              "ok": "ശരി"
             },
-            "message": "Argh! Apologies, download failed…",
-            "title": "Error in download!"
+            "message": "അയ്യോ! ക്ഷമിക്കണം, ഡൗൺലോഡ് പരാജയപ്പെട്ടു…",
+            "title": "ഡൗൺലോഡിൽ പിശക്!"
           },
           "start-download-playlist": {
             "buttons": {
-              "ok": "OK"
+              "ok": "ശരി"
             },
-            "detail": "({{playlistSize}} songs)",
-            "message": "Downloading Playlist {{playlistTitle}}",
-            "title": "Download started"
+            "detail": "({{playlistSize}} ഗാനങ്ങൾ)",
+            "message": "പ്ലേലിസ്റ്റ് {{playlistTitle}} ഡൗൺലോഡ് ചെയ്യുന്നു",
+            "title": "ഡൗൺലോഡ് ആരംഭിച്ചു"
           }
         },
         "feedback": {
-          "conversion-progress": "Conversion: {{percent}}%",
-          "converting": "Converting…",
-          "done": "Done: {{filePath}}",
-          "download-info": "Downloading {{artist}} - {{title}} [{{videoId}}",
-          "download-progress": "Download: {{percent}}%",
-          "downloading": "Downloading…",
-          "downloading-counter": "Downloading {{current}}/{{total}}…",
-          "downloading-playlist": "Downloading playlist \"{{playlistTitle}}\" - {{playlistSize}} songs ({{playlistId}})",
-          "error-while-downloading": "Error downloading \"{{author}} - {{title}}\": {{error}}",
-          "folder-already-exists": "The folder {{playlistFolder}} already exists",
-          "getting-playlist-info": "Getting playlist info…",
-          "loading": "Loading…",
-          "playlist-has-only-one-song": "Playlist has only one item, downloading it directly",
-          "playlist-id-not-found": "No playlist ID found",
-          "playlist-is-empty": "Playlist is empty",
-          "playlist-is-mix-or-private": "Error getting playlist info: make sure it isn't a private or \"Mixed for you\" playlist\n\n{{error}}",
-          "preparing-file": "Preparing file…",
-          "saving": "Saving…",
-          "trying-to-get-playlist-id": "Trying to get playlist ID: {{playlistId}}",
-          "video-id-not-found": "Video not found",
-          "writing-id3": "Writing ID3 tags…"
+          "conversion-progress": "പരിവർത്തനം: {{percent}}%",
+          "converting": "പരിവർത്തനം ചെയ്യുന്നു…",
+          "done": "പൂർത്തിയായി: {{filePath}}",
+          "download-info": "{{artist}} - {{title}} [{{videoId}} ഡൗൺലോഡ് ചെയ്യുന്നു",
+          "download-progress": "ഡൗൺലോഡ്: {{percent}}%",
+          "downloading": "ഡൗൺലോഡ് ചെയ്യുന്നു…",
+          "downloading-counter": "{{current}}/{{total}} ഡൗൺലോഡ് ചെയ്യുന്നു…",
+          "downloading-playlist": "\"പ്ലേലിസ്റ്റ് {{playlistTitle}}\" ഡൗൺലോഡ് ചെയ്യുന്നു - {{playlistSize}} ഗാനങ്ങൾ ({{playlistId}})",
+          "error-while-downloading": "\"{{author}} - {{title}}\" ഡൗൺലോഡ് ചെയ്യുന്നതിൽ പിശക്: {{error}}",
+          "folder-already-exists": "{{playlistFolder}} ഫോൾഡർ ഇതിനകം നിലവിലുണ്ട്",
+          "getting-playlist-info": "പ്ലേലിസ്റ്റ് വിവരം ലഭ്യമാക്കുന്നു…",
+          "loading": "ലോഡ് ചെയ്യുന്നു…",
+          "playlist-has-only-one-song": "പ്ലേലിസ്റ്റിൽ ഒരു ഇനം മാത്രമേയുള്ളൂ, നേരിട്ട് ഡൗൺലോഡ് ചെയ്യുന്നു",
+          "playlist-id-not-found": "പ്ലേലിസ്റ്റ് ID കണ്ടെത്തിയില്ല",
+          "playlist-is-empty": "പ്ലേലിസ്റ്റ് ശൂന്യമാണ്",
+          "playlist-is-mix-or-private": "പ്ലേലിസ്റ്റ് വിവരം ലഭിക്കുന്നതിൽ പിശക്: ഇത് സ്വകാര്യമോ \"Mixed for you\" പ്ലേലിസ്റ്റോ അല്ലെന്ന് ഉറപ്പാക്കുക\n\n{{error}}",
+          "preparing-file": "ഫയൽ തയ്യാറാക്കുന്നു…",
+          "saving": "സേവ് ചെയ്യുന്നു…",
+          "trying-to-get-playlist-id": "പ്ലേലിസ്റ്റ് ID നേടാൻ ശ്രമിക്കുന്നു: {{playlistId}}",
+          "video-id-not-found": "വീഡിയോ കണ്ടെത്തിയില്ല",
+          "writing-id3": "ID3 ടാഗുകൾ എഴുതുന്നു…"
         }
       },
-      "description": "Downloads MP3 / source audio directly from the interface",
+      "description": "ഇന്റർഫേസിൽ നിന്ന് നേരിട്ട് MP3 / സോഴ്സ് ഓഡിയോ ഡൗൺലോഡ് ചെയ്യുന്നു",
       "menu": {
-        "choose-download-folder": "Choose download folder",
+        "choose-download-folder": "ഡൗൺലോഡ് ഫോൾഡർ തിരഞ്ഞെടുക്കുക",
         "download-finish-settings": {
-          "label": "Download on finish",
+          "label": "പൂർത്തിയാകുമ്പോൾ ഡൗൺലോഡ് ചെയ്യുക",
           "prompt": {
-            "last-percent": "After x percent",
-            "last-seconds": "Last x seconds",
-            "title": "Configure when to download"
+            "last-percent": "x ശതമാനത്തിന് ശേഷം",
+            "last-seconds": "അവസാന x സെക്കൻഡുകൾ",
+            "title": "എപ്പോൾ ഡൗൺലോഡ് ചെയ്യണമെന്ന് ക്രമീകരിക്കുക"
           },
           "submenu": {
-            "advanced": "Advanced",
-            "enabled": "Enabled",
-            "mode": "Time mode",
-            "percent": "Percent",
-            "seconds": "Seconds"
+            "advanced": "അഡ്വാൻസ്ഡ്",
+            "enabled": "പ്രവർത്തനക്ഷമമാക്കി",
+            "mode": "സമയ മോഡ്",
+            "percent": "ശതമാനം",
+            "seconds": "സെക്കൻഡുകൾ"
           }
         },
-        "download-playlist": "Download playlist",
-        "presets": "Presets",
-        "skip-existing": "Skip existing files"
+        "download-playlist": "പ്ലേലിസ്റ്റ് ഡൗൺലോഡ് ചെയ്യുക",
+        "presets": "പ്രീസെറ്റുകൾ",
+        "skip-existing": "നിലവിലുള്ള ഫയലുകൾ ഒഴിവാക്കുക"
       },
-      "name": "Downloader",
+      "name": "ഡൗൺലോഡർ",
       "renderer": {
-        "can-not-update-progress": "Cannot update progress"
+        "can-not-update-progress": "പുരോഗതി അപ്ഡേറ്റ് ചെയ്യാൻ കഴിയില്ല"
       },
       "templates": {
-        "button": "Download"
+        "button": "ഡൗൺലോड्"
       }
     },
     "equalizer": {
-      "description": "Adds an equalizer to the player",
+      "description": "പ്ലേയറിൽ ഒരു ഇക്വലൈസർ ചേർക്കുന്നു",
       "menu": {
         "presets": {
-          "label": "Presets",
+          "label": "പ്രീസെറ്റുകൾ",
           "list": {
-            "bass-booster": "Bass booster"
+            "bass-booster": "ബാസ് ബൂസ്റ്റർ"
           }
         }
       },
-      "name": "Equalizer"
+      "name": "ഇക്വലൈസർ"
     },
     "exponential-volume": {
-      "description": "Makes the volume slider exponential so it's easier to select lower volumes.",
-      "name": "Exponential Volume"
+      "description": "വോളിയം സ്ലൈഡർ എക്സ്‌പോണൻഷ്യൽ ആക്കുന്നതിനാൽ കുറഞ്ഞ വോളിയങ്ങൾ തിരഞ്ഞെടുക്കാൻ എളുപ്പമാക്കുന്നു.",
+      "name": "എക്സ്‌പോണൻഷ്യൽ വോളിയം"
     },
     "in-app-menu": {
-      "description": "Gives menu-bars a fancy, dark or album-color look",
+      "description": "മെനു-ബാറുകൾക്ക് ഫാൻസി, ഡാർക്ക് അല്ലെങ്കിൽ ആൽബം-കളർ ലുക്ക് നൽകുന്നു",
       "menu": {
-        "hide-dom-window-controls": "Hide DOM window controls"
+        "hide-dom-window-controls": "DOM വിൻഡോ നിയന്ത്രണങ്ങൾ മറയ്ക്കുക"
       },
-      "name": "In-App Menu"
+      "name": "ഇൻ-ആപ്പ് മെനു"
     },
     "lumiastream": {
-      "description": "Adds Lumia Stream support",
-      "name": "Lumia Stream [Beta]"
+      "description": "Lumia Stream പിന്തുണ ചേർക്കുന്നു",
+      "name": "Lumia Stream [ബീറ്റ]"
     },
     "lyrics-genius": {
-      "description": "Adds lyrics support for most songs",
+      "description": "മിക്ക ഗാനങ്ങൾക്കും വരികൾ പിന്തുണ ചേർക്കുന്നു",
       "menu": {
-        "romanized-lyrics": "Romanized Lyrics"
+        "romanized-lyrics": "റോമനൈസ്ഡ് ലിറിക്സ്"
       },
-      "name": "Lyrics Genius",
+      "name": "ലിറിക്സ് ജീനിയസ്",
       "renderer": {
-        "fetched-lyrics": "Fetched lyrics for Genius"
+        "fetched-lyrics": "Genius-നായി വരികൾ ലഭ്യമാക്കി"
       }
     },
     "music-together": {
-      "description": "Share a playlist with others. When the host plays a song, everyone else will hear the same song",
+      "description": "മറ്റുള്ളവരുമായി ഒരു പ്ലേലിസ്റ്റ് പങ്കിടുക. ഹോസ്റ്റ് ഒരു ഗാനം പ്ലേ ചെയ്യുമ്പോൾ, എല്ലാവരും അതേ ഗാനം കേൾക്കും",
       "dialog": {
-        "enter-host": "Enter Host ID"
+        "enter-host": "ഹോസ്റ്റ് ID നൽകുക"
       },
       "internal": {
-        "save": "Save",
-        "track-source": "Track Source",
-        "unknown-user": "Unknown User"
+        "save": "സേവ് ചെയ്യുക",
+        "track-source": "ട്രാക്ക് സോഴ്സ്",
+        "unknown-user": "അജ്ഞാത ഉപയോക്താവ്"
       },
       "menu": {
-        "click-to-copy-id": "Copy Host ID",
-        "close": "Close Music Together",
-        "connected-users": "Connected Users",
-        "disconnect": "Disconnect Music Together",
-        "empty-user": "No connected users",
-        "host": "Music Together Host",
-        "join": "Join Music Together",
+        "click-to-copy-id": "ഹോസ്റ്റ് ID പകർത്തുക",
+        "close": "മ്യൂസിക് ടുഗദർ അടയ്ക്കുക",
+        "connected-users": "കണക്റ്റ് ചെയ്ത ഉപയോക്താക്കൾ",
+        "disconnect": "മ്യൂസിക് ടുഗദർ വിച്ഛേദിക്കുക",
+        "empty-user": "കണക്റ്റ് ചെയ്ത ഉപയോക്താക്കളില്ല",
+        "host": "മ്യൂസിക് ടുഗദർ ഹോസ്റ്റ്",
+        "join": "മ്യൂസിക് ടുഗദറിൽ ചേരുക",
         "permission": {
-          "all": "Allow guests to control playlist and player",
-          "host-only": "Only the host can control playlist and player",
-          "playlist": "Allow guests to control playlist"
+          "all": "അതിഥികൾക്ക് പ്ലേലിസ്റ്റും പ്ലേയറും നിയന്ത്രിക്കാൻ അനുവദിക്കുക",
+          "host-only": "ഹോസ്റ്റിന് മാത്രമേ പ്ലേലിസ്റ്റും പ്ലേയറും നിയന്ത്രിക്കാൻ കഴിയൂ",
+          "playlist": "അതിഥികൾക്ക് പ്ലേലിസ്റ്റ് നിയന്ത്രിക്കാൻ അനുവദിക്കുക"
         },
-        "set-permission": "Change Control Permission",
+        "set-permission": "നിയന്ത്രണ അനുമതി മാറ്റുക",
         "status": {
-          "disconnected": "Disconnected",
-          "guest": "Connected as Guest",
-          "host": "Connected as Host"
+          "disconnected": "വിച്ഛേദിച്ചു",
+          "guest": "അതിഥിയായി കണക്റ്റ് ചെയ്തു",
+          "host": "ഹോസ്റ്റായി കണക്റ്റ് ചെയ്തു"
         }
       },
-      "name": "Music Together [Beta]",
+      "name": "മ്യൂസിക് ടുഗദർ [ബീറ്റ]",
       "toast": {
-        "add-song-failed": "Failed to add song",
-        "closed": "Music Together closed",
-        "disconnected": "Music Together disconnected",
-        "host-failed": "Failed to host Music Together",
-        "id-copied": "Host ID copied to clipboard",
-        "id-copy-failed": "Failed to copy Host ID to clipboard",
-        "join-failed": "Failed to join Music Together",
-        "joined": "Joined Music Together",
-        "permission-changed": "Music Together permission changed to \"{{permission}}\"",
-        "remove-song-failed": "Failed to remove song",
-        "user-connected": "{{name}} joined Music Together",
-        "user-disconnected": "{{name}} left Music Together"
+        "add-song-failed": "ഗാനം ചേർക്കുന്നതിൽ പരാജയപ്പെട്ടു",
+        "closed": "മ്യൂസിക് ടുഗദർ അടച്ചു",
+        "disconnected": "മ്യൂസിക് ടുഗദർ വിച്ഛേദിച്ചു",
+        "host-failed": "മ്യൂസിക് ടുഗദർ ഹോസ്റ്റ് ചെയ്യുന്നതിൽ പരാജയപ്പെട്ടു",
+        "id-copied": "ഹോസ്റ്റ് ID ക്ലിപ്പ്ബോർഡിലേക്ക് പകർത്തി",
+        "id-copy-failed": "ഹോസ്റ്റ് ID ക്ലിപ്പ്ബോർഡിലേക്ക് പകർത്തുന്നതിൽ പരാജയപ്പെട്ടു",
+        "join-failed": "മ്യൂസിക് ടുഗദറിൽ ചേരുന്നതിൽ പരാജയപ്പെട്ടു",
+        "joined": "മ്യൂസിക് ടുഗദറിൽ ചേർന്നു",
+        "permission-changed": "മ്യൂസിക് ടുഗദർ അനുമതി \"{{permission}}\" ലേക്ക് മാറ്റി",
+        "remove-song-failed": "ഗാനം നീക്കം ചെയ്യുന്നതിൽ പരാജയപ്പെട്ടു",
+        "user-connected": "{{name}} മ്യൂസിക് ടുഗദറിൽ ചേർന്നു",
+        "user-disconnected": "{{name}} മ്യൂസിക് ടുഗദർ വിട്ടു"
       }
     },
     "navigation": {
-      "description": "Next/Back navigation arrows directly integrated in the interface, like in your favorite browser",
-      "name": "Navigation",
+      "description": "പ്രിയപ്പെട്ട ബ്രൗസറിലെപോലെ ഇന്റർഫേസിൽ സംയോജിപ്പിച്ച അടുത്ത/തിരികെ നാവിഗേഷൻ ആരോകൾ",
+      "name": "നാവിഗേഷൻ",
       "templates": {
         "back": {
-          "title": "Go to previous page"
+          "title": "മുമ്പത്തെ പേജിലേക്ക് പോകുക"
         },
         "forward": {
-          "title": "Go to next page"
+          "title": "അടുത്ത പേജിലേക്ക് പോകുക"
         }
       }
     },
     "no-google-login": {
-      "description": "Remove Google login buttons and links from the interface",
-      "name": "No Google Login"
+      "description": "ഇന്റർഫേസിൽ നിന്ന് Google ലോഗിൻ ബട്ടണുകളും ലിങ്കുകളും നീക്കം ചെയ്യുക",
+      "name": "Google ലോഗിൻ ഇല്ല"
     },
     "notifications": {
-      "description": "Display a notification when a song starts playing (interactive notifications are available on Windows)",
+      "description": "ഗാനം പ്ലേ ചെയ്യാൻ തുടങ്ങുമ്പോൾ അറിയിപ്പ് പ്രദർശിപ്പിക്കുക (Windows-ൽ ഇന്ററാക്ടീവ് അറിയിപ്പുകൾ ലഭ്യമാണ്)",
       "menu": {
-        "interactive": "Interactive Notifications",
+        "interactive": "ഇന്ററാക്ടീവ് അറിയിപ്പുകൾ",
         "interactive-settings": {
-          "label": "Interactive Settings",
+          "label": "ഇന്ററാക്ടീവ് ക്രമീകരണങ്ങൾ",
           "submenu": {
-            "hide-button-text": "Hide button text",
-            "refresh-on-play-pause": "Refresh on Play/Pause",
-            "tray-controls": "Open/Close on tray click"
+            "hide-button-text": "ബട്ടൺ ടെക്സ്റ്റ് മറയ്ക്കുക",
+            "refresh-on-play-pause": "പ്ലേ/പോസിൽ റിഫ്രഷ് ചെയ്യുക",
+            "tray-controls": "ട്രേ ക്ലിക്കിൽ തുറക്കുക/അടയ്ക്കുക",
+            "hover-controls": "ട്രേ ഹോവറിൽ മിനി-പ്ലേയർ കാണിക്കുക"
           }
         },
-        "priority": "Notification Priority",
-        "toast-style": "Toast style",
-        "unpause-notification": "Show notification on unpause"
+        "priority": "അറിയിപ്പ് മുൻഗണന",
+        "toast-style": "ടോസ്റ്റ് സ്റ്റൈൽ",
+        "unpause-notification": "അൺപോസിൽ അറിയിപ്പ് കാണിക്കുക"
       },
-      "name": "Notifications"
+      "name": "അറിയിപ്പുകൾ"
     },
     "performance-improvement": {
-      "description": "Improve performance by enabling experimental scripts",
-      "name": "Performance improvement [Beta]"
+      "description": "പരീക്ഷണാത്മക സ്ക്രിപ്റ്റുകൾ പ്രവർത്തനക്ഷമമാക്കി പ്രകടനം മെച്ചപ്പെടുത്തുക",
+      "name": "പ്രകടന മെച്ചപ്പെടുത്തൽ [ബീറ്റ]"
     },
     "picture-in-picture": {
-      "description": "Allows to switch the app to picture-in-picture mode",
+      "description": "ആപ്പ് പിക്ചർ-ഇൻ-പിക്ചർ മോഡിലേക്ക് മാറ്റാൻ അനുവദിക്കുന്നു",
       "menu": {
-        "always-on-top": "Always on top",
+        "always-on-top": "എപ്പോഴും മുകളിൽ",
         "hotkey": {
-          "label": "Hotkey",
+          "label": "ഹോട്ട്കീ",
           "prompt": {
             "keybind-options": {
-              "hotkey": "Hotkey"
+              "hotkey": "ഹോട്ട്കീ"
             },
-            "label": "Choose a hotkey to toggle picture-in-picture",
-            "title": "Picture-in-picture Hotkey"
+            "label": "പിക്ചർ-ഇൻ-പിക്ചർ ടോഗിൾ ചെയ്യാൻ ഹോട്ട്കീ തിരഞ്ഞെടുക്കുക",
+            "title": "പിക്ചർ-ഇൻ-പിക്ചർ ഹോട്ട്കീ"
           }
         },
-        "save-window-position": "Save window position",
-        "save-window-size": "Save window size",
-        "use-native-pip": "Use browser native PiP"
+        "save-window-position": "വിൻഡോ സ്ഥാനം സേവ് ചെയ്യുക",
+        "save-window-size": "വിൻഡോ വലുപ്പം സേവ് ചെയ്യുക",
+        "use-native-pip": "ബ്രൗസർ നേറ്റീവ് PiP ഉപയോഗിക്കുക"
       },
-      "name": "Picture-in-picture",
+      "name": "പിക്ചർ-ഇൻ-പിക്ചർ",
       "templates": {
-        "button": "Picture-in-picture"
+        "button": "പിക്ചർ-ഇൻ-പിക്ചർ"
       }
     },
     "playback-speed": {
-      "description": "Listen fast, listen slow! Adds a slider that controls song speed",
-      "name": "Playback Speed",
+      "description": "വേഗത്തിൽ കേൾക്കൂ, പതുക്കെ കേൾക്കൂ! ഗാന വേഗത നിയന്ത്രിക്കുന്ന സ്ലൈഡർ ചേർക്കുന്നു",
+      "name": "പ്ലേബാക്ക് വേഗത",
       "templates": {
-        "button": "Speed"
+        "button": "വേഗത"
       }
     },
     "precise-volume": {
-      "description": "Control the volume precisely using mousewheel/hotkeys, with a custom HUD and customizable volume steps",
+      "description": "ഇഷ്ടാനുസൃത HUD-ഉം ക്രമീകരിക്കാവുന്ന വോളിയം സ്റ്റെപ്പുകളും ഉപയോഗിച്ച് മൗസ്വീൽ/ഹോട്ട്കീകൾ വഴി വോളിയം കൃത്യമായി നിയന്ത്രിക്കുക",
       "menu": {
-        "arrows-shortcuts": "Local Arrow-keys Controls",
-        "custom-volume-steps": "Set Custom Volume Steps",
-        "global-shortcuts": "Global Hotkeys"
+        "arrows-shortcuts": "ലോക്കൽ ആരോ-കീ നിയന്ത്രണങ്ങൾ",
+        "custom-volume-steps": "ഇഷ്ടാനുസൃത വോളിയം സ്റ്റെപ്പുകൾ സജ്ജമാക്കുക",
+        "global-shortcuts": "ഗ്ലോബൽ ഹോട്ട്കീകൾ"
       },
-      "name": "Precise Volume",
+      "name": "കൃത്യമായ വോളിയം",
       "prompt": {
         "global-shortcuts": {
           "keybind-options": {
-            "decrease": "Decrease Volume",
-            "increase": "Increase Volume"
+            "decrease": "വോളിയം കുറയ്ക്കുക",
+            "increase": "വോളിയം വർദ്ധിപ്പിക്കുക"
           },
-          "label": "Choose Global Volume Keybinds:",
-          "title": "Global Volume Keybinds"
+          "label": "ഗ്ലോബൽ വോളിയം കീബൈൻഡുകൾ തിരഞ്ഞെടുക്കുക:",
+          "title": "ഗ്ലോബൽ വോളിയം കീബൈൻഡുകൾ"
         },
         "volume-steps": {
-          "label": "Choose Volume Increase/Decrease Steps",
-          "title": "Volume Steps"
+          "label": "വോളിയം വർദ്ധിപ്പിക്കൽ/കുറയ്ക്കൽ സ്റ്റെപ്പുകൾ തിരഞ്ഞെടുക്കുക",
+          "title": "വോളിയം സ്റ്റെപ്പുകൾ"
         }
       }
     },
@@ -755,213 +757,213 @@
       "backend": {
         "dialog": {
           "quality-changer": {
-            "detail": "Current Quality: {{quality}}",
-            "message": "Choose Video Quality:",
-            "title": "Choose Video Quality"
+            "detail": "നിലവിലെ നിലവാരം: {{quality}}",
+            "message": "വീഡിയോ നിലവാരം തിരഞ്ഞെടുക്കുക:",
+            "title": "വീഡിയോ നിലവാരം തിരഞ്ഞെടുക്കുക"
           }
         }
       },
-      "description": "Allows changing the video quality with a button on the video overlay",
-      "name": "Video Quality Changer",
+      "description": "വീഡിയോ ഓവർലേയിൽ ബട്ടൺ ഉപയോഗിച്ച് വീഡിയോ നിലവാരം മാറ്റാൻ അനുവദിക്കുന്നു",
+      "name": "വീഡിയോ ക്വാളിറ്റി ചെയ്ഞ്ചർ",
       "renderer": {
         "quality-settings-button": {
-          "label": "Open player quality changer"
+          "label": "പ്ലേയർ ക്വാളിറ്റി ചെയ്ഞ്ചർ തുറക്കുക"
         }
       }
     },
     "scrobbler": {
-      "description": "Add scrobbling support (etc. last.fm, Listenbrainz)",
+      "description": "സ്ക്രോബ്ലിംഗ് പിന്തുണ ചേർക്കുക (ഉദാ. last.fm, Listenbrainz)",
       "dialog": {
         "lastfm": {
           "auth-failed": {
-            "message": "Failed to authenticate with Last.fm\nHide the popup until the next restart.",
-            "title": "Authentication Failed"
+            "message": "Last.fm-മായി ഓതന്റിക്കേറ്റ് ചെയ്യുന്നതിൽ പരാജയപ്പെട്ടു\nഅടുത്ത പുനരാരംഭം വരെ പോപ്പപ്പ് മറയ്ക്കുക.",
+            "title": "ഓതന്റിക്കേഷൻ പരാജയപ്പെട്ടു"
           }
         }
       },
       "menu": {
         "lastfm": {
-          "api-settings": "Last.fm API Settings"
+          "api-settings": "Last.fm API ക്രമീകരണങ്ങൾ"
         },
         "listenbrainz": {
-          "token": "Enter ListenBrainz user token"
+          "token": "ListenBrainz ഉപയോക്തൃ ടോക്കൺ നൽകുക"
         },
-        "scrobble-alternative-artist": "Use alternative artists",
-        "scrobble-alternative-title": "Use alternative titles",
-        "scrobble-other-media": "Scrobble other media"
+        "scrobble-alternative-artist": "ഇതര കലാകാരന്മാരെ ഉപയോഗിക്കുക",
+        "scrobble-alternative-title": "ഇതര ശീർഷകങ്ങൾ ഉപയോഗിക്കുക",
+        "scrobble-other-media": "മറ്റ് മീഡിയ സ്ക്രോബിൾ ചെയ്യുക"
       },
-      "name": "Scrobbler",
+      "name": "സ്ക്രോബ്ലർ",
       "prompt": {
         "lastfm": {
-          "api-key": "Last.fm API key",
-          "api-secret": "Last.fm API secret"
+          "api-key": "Last.fm API കീ",
+          "api-secret": "Last.fm API സീക്രട്ട്"
         },
         "listenbrainz": {
           "token": {
-            "label": "Enter your ListenBrainz user token:",
-            "title": "ListenBrainz token"
+            "label": "നിങ്ങളുടെ ListenBrainz ഉപയോക്തൃ ടോക്കൺ നൽകുക:",
+            "title": "ListenBrainz ടോക്കൺ"
           }
         }
       }
     },
     "shortcuts": {
-      "description": "Allows setting global hotkeys for playback (play/pause/next/previous) and turning off media OSD by overriding media keys, turning on Ctrl/CMD + F to search, turning on Linux MPRIS support for media keys, and custom hotkeys for advanced users",
+      "description": "പ്ലേബാക്കിനായി (പ്ലേ/പോസ്/അടുത്തത്/മുമ്പത്തേത്) ഗ്ലോബൽ ഹോട്ട്കീകൾ സജ്ജമാക്കാനും മീഡിയ കീകൾ ഓവർറൈഡ് ചെയ്ത് മീഡിയ OSD ഓഫാക്കാനും, തിരയാൻ Ctrl/CMD + F ഓണാക്കാനും, Linux MPRIS പിന്തുണ ഓണാക്കാനും, വിപുലമായ ഉപയോക്താക്കൾക്ക് ഇഷ്ടാനുസൃത ഹോട്ട്കീകളും അനുവദിക്കുന്നു",
       "menu": {
-        "override-media-keys": "Override Media Keys",
-        "set-keybinds": "Set Global Song Controls"
+        "override-media-keys": "മീഡിയ കീകൾ ഓവർറൈഡ് ചെയ്യുക",
+        "set-keybinds": "ഗ്ലോബൽ ഗാന നിയന്ത്രണങ്ങൾ സജ്ജമാക്കുക"
       },
-      "name": "Shortcuts (& MPRIS)",
+      "name": "കുറുക്കുവഴികൾ (& MPRIS)",
       "prompt": {
         "keybind": {
           "keybind-options": {
-            "next": "Next",
-            "play-pause": "Play / Pause",
-            "previous": "Previous"
+            "next": "അടുത്തത്",
+            "play-pause": "പ്ലേ / പോസ്",
+            "previous": "മുമ്പത്തേത്"
           },
-          "label": "Choose Global Keybinds for Songs Control:",
-          "title": "Global Keybinds"
+          "label": "ഗാന നിയന്ത്രണത്തിനായി ഗ്ലോബൽ കീബൈൻഡുകൾ തിരഞ്ഞെടുക്കുക:",
+          "title": "ഗ്ലോബൽ കീബൈൻഡുകൾ"
         }
       }
     },
     "skip-disliked-songs": {
-      "description": "Skips disliked songs",
-      "name": "Skip Disliked Songs"
+      "description": "ഇഷ്ടപ്പെടാത്ത ഗാനങ്ങൾ ഒഴിവാക്കുന്നു",
+      "name": "ഇഷ്ടപ്പെടാത്ത ഗാനങ്ങൾ ഒഴിവാക്കുക"
     },
     "skip-silences": {
-      "description": "Automatically skip silences sections in songs",
-      "name": "Skip Silences"
+      "description": "ഗാനങ്ങളിലെ നിശബ്ദ ഭാഗങ്ങൾ സ്വയമേവ ഒഴിവാക്കുക",
+      "name": "നിശബ്ദത ഒഴിവാക്കുക"
     },
     "sponsorblock": {
-      "description": "Automatically Skips non-music parts like intro/outro or parts of music videos where the song isn't playing",
+      "description": "ഇൻട്രോ/ഔട്ട്റോ പോലുള്ള സംഗീതമല്ലാത്ത ഭാഗങ്ങളോ ഗാനം പ്ലേ ചെയ്യാത്ത മ്യൂസിക് വീഡിയോ ഭാഗങ്ങളോ സ്വയമേവ ഒഴിവാക്കുന്നു",
       "name": "SponsorBlock"
     },
     "synced-lyrics": {
-      "description": "Provides synced lyrics to songs, using providers like LRClib.",
+      "description": "LRClib പോലുള്ള ദാതാക്കൾ ഉപയോഗിച്ച് ഗാനങ്ങൾക്ക് സമന്വയിപ്പിച്ച വരികൾ നൽകുന്നു.",
       "errors": {
-        "fetch": "⚠️\tAn error occurred while fetching the lyrics.\n\tPlease try again later.",
-        "not-found": "⚠️ No lyrics found for this song."
+        "fetch": "⚠️\tവരികൾ ലഭ്യമാക്കുന്നതിൽ പിശക് സംഭവിച്ചു.\n\tദയവായി പിന്നീട് വീണ്ടും ശ്രമിക്കുക.",
+        "not-found": "⚠️ ഈ ഗാനത്തിന് വരികൾ കണ്ടെത്തിയില്ല."
       },
       "menu": {
         "convert-chinese-character": {
-          "label": "Convert Chinese character",
+          "label": "ചൈനീസ് പ്രതീകം പരിവർത്തനം ചെയ്യുക",
           "submenu": {
             "disabled": {
-              "label": "Disabled",
-              "tooltip": "Disable Chinese character conversion"
+              "label": "പ്രവർത്തനരഹിതം",
+              "tooltip": "ചൈനീസ് പ്രതീക പരിവർത്തനം പ്രവർത്തനരഹിതമാക്കുക"
             },
             "simplified-to-traditional": {
-              "label": "Simplified to Traditional",
-              "tooltip": "Convert Simplified Chinese to Traditional Chinese"
+              "label": "ലഘൂകരിച്ചതിൽ നിന്ന് പരമ്പരാഗതത്തിലേക്ക്",
+              "tooltip": "ലഘൂകരിച്ച ചൈനീസ് പരമ്പരാഗത ചൈനീസിലേക്ക് പരിവർത്തനം ചെയ്യുക"
             },
             "traditional-to-simplified": {
-              "label": "Traditional to Simplified",
-              "tooltip": "Convert Traditional Chinese to Simplified Chinese"
+              "label": "പരമ്പരാഗതത്തിൽ നിന്ന് ലഘൂകരിച്ചതിലേക്ക്",
+              "tooltip": "പരമ്പരാഗത ചൈനീസ് ലഘൂകരിച്ച ചൈനീസിലേക്ക് പരിവർത്തനം ചെയ്യുക"
             }
           },
-          "tooltip": "Convert Chinese character to Traditional or Simplified"
+          "tooltip": "ചൈനീസ് പ്രതീകം പരമ്പരാഗതമോ ലഘൂകരിച്ചതോ ആയി പരിവർത്തനം ചെയ്യുക"
         },
         "default-text-string": {
-          "label": "Default character between lyrics",
-          "tooltip": "Choose the default character to use for the gap between lyrics"
+          "label": "വരികൾക്കിടയിലെ ഡിഫോൾട്ട് പ്രതീകം",
+          "tooltip": "വരികൾക്കിടയിലെ വിടവിനായി ഉപയോഗിക്കാനുള്ള ഡിഫോൾട്ട് പ്രതീകം തിരഞ്ഞെടുക്കുക"
         },
         "line-effect": {
-          "label": "Line effect",
+          "label": "ലൈൻ ഇഫക്റ്റ്",
           "submenu": {
             "fancy": {
-              "label": "Fancy",
-              "tooltip": "Use large, app-like effects on the current line"
+              "label": "ഫാൻസി",
+              "tooltip": "നിലവിലെ വരിയിൽ വലിയ, ആപ്പ് പോലുള്ള ഇഫക്റ്റുകൾ ഉപയോഗിക്കുക"
             },
             "focus": {
-              "label": "Focus",
-              "tooltip": "Make only the current line white"
+              "label": "ഫോക്കസ്",
+              "tooltip": "നിലവിലെ വരി മാത്രം വെളുത്തതാക്കുക"
             },
             "offset": {
-              "label": "Offset",
-              "tooltip": "Offset on the right the current line"
+              "label": "ഓഫ്സെറ്റ്",
+              "tooltip": "നിലവിലെ വരി വലത്തേക്ക് ഓഫ്സെറ്റ് ചെയ്യുക"
             },
             "scale": {
-              "label": "Scale",
-              "tooltip": "Scale the current line"
+              "label": "സ്കെയിൽ",
+              "tooltip": "നിലവിലെ വരി സ്കെയിൽ ചെയ്യുക"
             }
           },
-          "tooltip": "Choose the effect to apply to the current line"
+          "tooltip": "നിലവിലെ വരിയിൽ പ്രയോഗിക്കാനുള്ള ഇഫക്റ്റ് തിരഞ്ഞെടുക്കുക"
         },
         "lyrics-font-size": {
-          "label": "Lyrics font size",
+          "label": "വരികളുടെ ഫോണ്ട് വലുപ്പം",
           "submenu": {
             "large": {
-              "label": "Large",
-              "tooltip": "Use the original larger lyrics size"
+              "label": "വലുത്",
+              "tooltip": "യഥാർത്ഥ വലിയ വരികളുടെ വലുപ്പം ഉപയോഗിക്കുക"
             },
             "medium": {
-              "label": "Medium",
-              "tooltip": "Use a balanced lyrics size"
+              "label": "ഇടത്തരം",
+              "tooltip": "സന്തുലിത വരികളുടെ വലുപ്പം ഉപയോഗിക്കുക"
             },
             "small": {
-              "label": "Small",
-              "tooltip": "Use a more compact lyrics size"
+              "label": "ചെറുത്",
+              "tooltip": "കൂടുതൽ കോംപാക്റ്റ് വരികളുടെ വലുപ്പം ഉപയോഗിക്കുക"
             }
           },
-          "tooltip": "Choose how large the lyrics text should be"
+          "tooltip": "വരികളുടെ ടെക്സ്റ്റ് എത്ര വലുതായിരിക്കണമെന്ന് തിരഞ്ഞെടുക്കുക"
         },
         "precise-timing": {
-          "label": "Make the lyrics perfectly synced",
-          "tooltip": "Calculate to the milisecond the display of the next line (can have a small impact on performance)"
+          "label": "വരികൾ പൂർണ്ണമായും സമന്വയിപ്പിക്കുക",
+          "tooltip": "അടുത്ത വരിയുടെ പ്രദർശനം മില്ലിസെക്കൻഡ് വരെ കണക്കാക്കുക (പ്രകടനത്തിൽ ചെറിയ സ്വാധീനം ഉണ്ടായേക്കാം)"
         },
         "preferred-provider": {
-          "label": "Preferred Provider",
+          "label": "തിരഞ്ഞെടുത്ത ദാതാവ്",
           "none": {
-            "label": "None",
-            "tooltip": "No preferred provider"
+            "label": "ഒന്നുമില്ല",
+            "tooltip": "തിരഞ്ഞെടുത്ത ദാതാവ് ഇല്ല"
           },
-          "tooltip": "Choose the default provider to use"
+          "tooltip": "ഉപയോഗിക്കാനുള്ള ഡിഫോൾട്ട് ദാതാവിനെ തിരഞ്ഞെടുക്കുക"
         },
         "romanization": {
-          "label": "Romanize lyrics",
-          "tooltip": "If the lyrics are in a different language, try to display a latin version."
+          "label": "വരികൾ റോമനൈസ് ചെയ്യുക",
+          "tooltip": "വരികൾ മറ്റൊരു ഭാഷയിലാണെങ്കിൽ, ലാറ്റിൻ പതിപ്പ് പ്രദർശിപ്പിക്കാൻ ശ്രമിക്കുക."
         },
         "show-lyrics-even-if-inexact": {
-          "label": "Show lyrics even if inexact",
-          "tooltip": "If the song is not found, the plugin tries again with a different search query.\nThe result from the second attempt may not be exact."
+          "label": "കൃത്യമല്ലെങ്കിലും വരികൾ കാണിക്കുക",
+          "tooltip": "ഗാനം കണ്ടെത്തിയില്ലെങ്കിൽ, പ്ലഗിൻ മറ്റൊരു തിരയൽ ക്വറി ഉപയോഗിച്ച് വീണ്ടും ശ്രമിക്കുന്നു.\nരണ്ടാമത്തെ ശ്രമത്തിന്റെ ഫലം കൃത്യമായിരിക്കണമെന്നില്ല."
         },
         "show-time-codes": {
-          "label": "Show time codes",
-          "tooltip": "Show the time codes next to the lyrics"
+          "label": "സമയ കോഡുകൾ കാണിക്കുക",
+          "tooltip": "വരികൾക്ക് അടുത്തായി സമയ കോഡുകൾ കാണിക്കുക"
         },
         "translation": {
           "clear-cache": {
-            "label": "Clear translation cache",
-            "tooltip": "Delete all cached translations stored on disk."
+            "label": "വിവർത്തന കാഷെ ക്ലിയർ ചെയ്യുക",
+            "tooltip": "ഡിസ്കിൽ സംഭരിച്ചിരിക്കുന്ന എല്ലാ കാഷെ ചെയ്ത വിവർത്തനങ്ങളും ഇല്ലാതാക്കുക."
           },
           "configure": {
-            "label": "Configure API key & model…",
-            "tooltip": "Set provider-specific translation options."
+            "label": "API കീ & മോഡൽ ക്രമീകരിക്കുക…",
+            "tooltip": "ദാതാവ്-നിർദ്ദിഷ്ട വിവർത്തന ഓപ്ഷനുകൾ സജ്ജമാക്കുക."
           },
           "enabled": {
-            "label": "Enable translation",
-            "tooltip": "Show a translated line beneath each original lyric line."
+            "label": "വിവർത്തനം പ്രവർത്തനക്ഷമമാക്കുക",
+            "tooltip": "ഓരോ യഥാർത്ഥ വരിയുടെയും താഴെ ഒരു വിവർത്തന വരി കാണിക്കുക."
           },
-          "label": "Lyrics translation",
+          "label": "വരികളുടെ വിവർത്തനം",
           "provider": {
-            "label": "Provider",
-            "tooltip": "Which service to use for translation."
+            "label": "ദാതാവ്",
+            "tooltip": "വിവർത്തനത്തിനായി ഏത് സേവനം ഉപയോഗിക്കണം."
           },
           "providers": {
             "anthropic": {
-              "name": "Anthropic Claude",
-              "prompt-label": "Uses the native Anthropic Messages API.",
-              "prompt-title": "Anthropic settings"
+"name": "Anthropic Claude",
+            "prompt-label": "നേറ്റീവ് Anthropic Messages API ഉപയോഗിക്കുന്നു.",
+            "prompt-title": "Anthropic ക്രമീകരണങ്ങൾ"
             },
             "gemini": {
-              "name": "Google Gemini",
-              "prompt-label": "Uses Google's Generative Language API (generateContent).",
-              "prompt-title": "Gemini settings"
+"name": "Google Gemini",
+            "prompt-label": "Google-ന്റെ Generative Language API (generateContent) ഉപയോഗിക്കുന്നു.",
+            "prompt-title": "Gemini ക്രമീകരണങ്ങൾ"
             },
             "google-translate": {
               "host": "Host",
-              "name": "Google Translate",
-              "prompt-label": "Uses the unofficial free Google Translate endpoint. No API key is required, but Google may rate-limit it.",
-              "prompt-title": "Google Translate settings"
+"name": "Google Translate",
+            "prompt-label": "അനൗദ്യോഗിക സൗജന്യ Google Translate എൻഡ്പോയിന്റ് ഉപയോഗിക്കുന്നു. API കീ ആവശ്യമില്ല, പക്ഷേ Google നിരക്ക് പരിധി നിശ്ചയിച്ചേക്കാം.",
+            "prompt-title": "Google Translate ക്രമീകരണങ്ങൾ"
             },
             "local-cli": {
               "command": "Command",
@@ -970,27 +972,27 @@
               "engine-codex": "Codex",
               "engine-gemini": "Gemini CLI",
               "name": "Local CLI",
-              "prompt-label": "Use a locally logged-in Claude Code, Codex, or Gemini CLI. The command and model are automatic; the CLI uses its own logged-in default.",
-              "prompt-title": "Local CLI settings",
+              "prompt-label": "ലോക്കലായി ലോഗിൻ ചെയ്ത Claude Code, Codex, അല്ലെങ്കിൽ Gemini CLI ഉപയോഗിക്കുക. കമാൻഡും മോഡലും ഓട്ടോമാറ്റിക് ആണ്; CLI അതിന്റെ സ്വന്തം ലോഗിൻ ചെയ്ത ഡിഫോൾട്ട് ഉപയോഗിക്കുന്നു.",
+              "prompt-title": "ലോക്കൽ CLI ക്രമീകരണങ്ങൾ",
               "timeout": "Timeout seconds (15-600)"
             },
             "openai-compatible": {
               "api-mode": "API mode (responses / auto / chat-completions)",
               "base-url": "Base URL",
               "name": "OpenAI compatible",
-              "prompt-label": "Use OpenAI-compatible servers, including Ollama (base URL http://127.0.0.1:11434/v1, API mode auto or chat-completions).",
-              "prompt-title": "OpenAI-compatible settings"
+              "prompt-label": "Ollama (base URL http://127.0.0.1:11434/v1, API mode auto or chat-completions) ഉൾപ്പെടെ OpenAI-അനുയോജ്യമായ സെർവറുകൾ ഉപയോഗിക്കുക.",
+              "prompt-title": "OpenAI-അനുയോജ്യമായ ക്രമീകരണങ്ങൾ"
             },
             "shared": {
-              "api-key": "API key",
-              "model": "Model"
+              "api-key": "API കീ",
+              "model": "മോഡൽ"
             }
           },
           "target-language": {
-            "label": "Target language",
+            "label": "ലക്ഷ്യ ഭാഷ",
             "options": {
               "ar": "العربية",
-              "auto": "Follow app language",
+              "auto": "ആപ്പ് ഭാഷ പിന്തുടരുക",
               "bg": "Български",
               "bn": "বাংলা",
               "cs": "Čeština",
@@ -1035,12 +1037,12 @@
               "zh-CN": "简体中文",
               "zh-TW": "繁體中文"
             },
-            "tooltip": "The language to translate lyrics into."
+            "tooltip": "വരികൾ വിവർത്തനം ചെയ്യേണ്ട ഭാഷ."
           },
-          "tooltip": "Translate lyrics and show the translated result line-by-line for display."
+          "tooltip": "വരികൾ വിവർത്തനം ചെയ്ത് വിവർത്തന ഫലം വരിവരിയായി പ്രദർശിപ്പിക്കുക."
         }
       },
-      "name": "Synced Lyrics",
+      "name": "സമന്വയിപ്പിച്ച വരികൾ",
       "refetch-btn": {
         "fetching": "Fetching...",
         "normal": "Refetch lyrics"
@@ -1052,44 +1054,44 @@
       }
     },
     "taskbar-mediacontrol": {
-      "description": "Control playback from your Windows taskbar",
-      "name": "Taskbar Media Control"
+      "description": "Windows ടാസ്ക്ബാറിൽ നിന്ന് പ്ലേബാക്ക് നിയന്ത്രിക്കുക",
+      "name": "ടാസ്ക്ബാർ മീഡിയ കൺട്രോൾ"
     },
     "touchbar": {
-      "description": "Adds a TouchBar widget for macOS users",
+      "description": "macOS ഉപയോക്താക്കൾക്കായി TouchBar വിഡ്ജറ്റ് ചേർക്കുന്നു",
       "name": "TouchBar"
     },
     "transparent-player": {
-      "description": "Makes the app window transparent",
+      "description": "ആപ്പ് വിൻഡോ സുതാര്യമാക്കുന്നു",
       "menu": {
         "opacity": {
-          "label": "Opacity",
+          "label": "അതാര്യത",
           "submenu": {
             "percent": "{{opacity}}%"
           }
         },
         "type": {
-          "label": "Type",
+          "label": "തരം",
           "submenu": {
-            "acrylic": "Acrylic",
-            "mica": "Mica",
-            "none": "None",
-            "tabbed": "Tabbed"
+            "acrylic": "അക്രിലിക്",
+            "mica": "മൈക്ക",
+            "none": "ഒന്നുമില്ല",
+            "tabbed": "ടാബ്ഡ്"
           }
         }
       },
-      "name": "Transparent Player"
+      "name": "സുതാര്യ പ്ലേയർ"
     },
     "tuna-obs": {
-      "description": "Integration with OBS's plugin Tuna",
+      "description": "OBS-ന്റെ Tuna പ്ലഗിനുമായി സംയോജനം",
       "name": "Tuna OBS"
     },
     "unobtrusive-player": {
-      "description": "Prevents the player from popping up when playing a song",
-      "name": "Unobtrusive Player"
+      "description": "ഗാനം പ്ലേ ചെയ്യുമ്പോൾ പ്ലേയർ പോപ്പ് അപ്പ് ചെയ്യുന്നത് തടയുന്നു",
+      "name": "അപ്രകടമായ പ്ലേയർ"
     },
     "video-toggle": {
-      "description": "Adds a button to switch between Video/Song mode. can also optionally remove the whole video tab",
+      "description": "വീഡിയോ/ഗാന മോഡ് മാറ്റാൻ ബട്ടൺ ചേർക്കുന്നു. വീഡിയോ ടാബ് മുഴുവനായും നീക്കം ചെയ്യാനുള്ള ഓപ്ഷനും",
       "menu": {
         "align": {
           "label": "ക്രമപ്പെടുത്തൽ",
@@ -1099,28 +1101,39 @@
             "right": "വലത്"
           }
         },
-        "force-hide": "Force remove video tab",
+        "force-hide": "വീഡിയോ ടാബ് നിർബന്ധിതമായി നീക്കം ചെയ്യുക",
         "mode": {
-          "label": "Mode",
+          "label": "മോഡ്",
           "submenu": {
-            "custom": "Custom toggle",
-            "disabled": "Disabled",
-            "native": "Native toggle"
+            "custom": "ഇഷ്ടാനുസൃത ടോഗിൾ",
+            "disabled": "പ്രവർത്തനരഹിതം",
+            "native": "നേറ്റീവ് ടോഗിൾ"
           }
         }
       },
-      "name": "Video Toggle",
+      "name": "വീഡിയോ ടോഗിൾ",
       "templates": {
-        "button-song": "Song",
+        "button-song": "ഗാനം",
         "button-video": "വീഡിയോ"
       }
     },
     "visualizer": {
-      "description": "Adds a visualizer to the player",
+      "description": "പ്ലേയറിൽ വിഷ്വലൈസർ ചേർക്കുന്നു",
       "menu": {
-        "visualizer-type": "Visualizer Type"
+        "visualizer-type": "വിഷ്വലൈസർ തരം"
       },
-      "name": "Visualizer"
+      "name": "വിഷ്വലൈസർ"
+    },
+    "audio-only": {
+      "description": "RAM, ബാൻഡ്വിഡ്ത്ത് ലാഭിക്കാൻ നെറ്റ്വർക്കിലും പ്ലേയർ തലത്തിലും എല്ലാ വീഡിയോ സ്ട്രീമുകളും ബ്ലോക്ക് ചെയ്യുന്ന ഓഡിയോ-മാത്രം മോഡ് നിർബന്ധമാക്കുന്നു",
+      "name": "ഓഡിയോ മാത്രം"
+    },
+    "playback-recovery": {
+      "description": "കുടുങ്ങിയതോ, നിലച്ചതോ, മരിച്ചതോ ആയ പ്ലേബാക്ക് അവസ്ഥകളിൽ നിന്ന് യാന്ത്രികമായി വീണ്ടെടുക്കുന്നു",
+      "menu": {
+        "log-to-console": "കൺസോളിൽ വീണ്ടെടുക്കൽ ഇവന്റുകൾ ലോഗ് ചെയ്യുക"
+      },
+      "name": "പ്ലേബാക്ക് വീണ്ടെടുക്കൽ"
     }
   }
 }

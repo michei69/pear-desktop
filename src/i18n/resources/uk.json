@@ -144,7 +144,8 @@
               "disabled": "Вимкнено",
               "enabled-and-hide-app": "Запустити та приховати програму",
               "enabled-and-show-app": "Запустити та відобразити додаток",
-              "play-pause-on-click": "Відтворення/Пауза за натисканням"
+              "play-pause-on-click": "Відтворення/Пауза за натисканням",
+              "move-to-current-desktop": "Перемістити на поточний віртуальний робочий стіл при показі"
             }
           },
           "visual-tweaks": {
@@ -162,7 +163,7 @@
                 "force-show": "Завжди показувати",
                 "hide": "Приховати",
                 "label": "Як кнопки",
-                "swap": "Swap like buttons order"
+                "swap": "Поміняти порядок кнопок вподобань"
               },
               "remove-upgrade-button": "Прибрати кнопку оновлення",
               "theme": {
@@ -239,7 +240,7 @@
             "percent": "{{ratio}}%"
           }
         },
-        "enable-seekbar": "Enable seekbar theming"
+        "enable-seekbar": "Увімкнути темування смуги пошуку"
       },
       "name": "Кольорова тема альбому"
     },
@@ -323,18 +324,18 @@
           "label": "Назва серверу"
         },
         "https": {
-          "label": "HTTPS & Certificates",
+          "label": "HTTPS та сертифікати",
           "submenu": {
             "cert": {
-              "dialogTitle": "Select HTTPS certificate file",
-              "label": "Certificate file (.crt/.pem)"
+              "dialogTitle": "Виберіть файл сертифіката HTTPS",
+              "label": "Файл сертифіката (.crt/.pem)"
             },
             "enable-https": {
-              "label": "Enable HTTPS"
+              "label": "Увімкнути HTTPS"
             },
             "key": {
-              "dialogTitle": "Select HTTPS private key file",
-              "label": "Private key file (.key/.pem)"
+              "dialogTitle": "Виберіть файл приватного ключа HTTPS",
+              "label": "Файл приватного ключа (.key/.pem)"
             }
           }
         },
@@ -414,15 +415,15 @@
       }
     },
     "clock": {
-      "description": "Add a clock to the navigation bar",
+      "description": "Додати годинник на панель навігації",
       "menu": {
         "format": {
-          "24-hour-format": "24-Hour Format",
-          "display-seconds": "Display Seconds",
-          "label": "Format"
+          "24-hour-format": "24-годинний формат",
+          "display-seconds": "Показувати секунди",
+          "label": "Формат"
         }
       },
-      "name": "Clock"
+      "name": "Годинник"
     },
     "compact-sidebar": {
       "description": "Бічна панель завжди в компактному режимі",
@@ -516,7 +517,7 @@
           },
           "start-download-playlist": {
             "buttons": {
-              "ok": "OK"
+              "ok": "ОК"
             },
             "detail": "({{playlistSize}} пісень)",
             "message": "Завантаження списку відтворення {{playlistTitle}}",
@@ -685,7 +686,8 @@
           "submenu": {
             "hide-button-text": "Сховати текст кнопки",
             "refresh-on-play-pause": "Оновлення при відтворенні/паузі",
-            "tray-controls": "Відкриття/закриття при натисканні на значок в області повідомлень (tray)"
+            "tray-controls": "Відкриття/закриття при натисканні на значок в області повідомлень (tray)",
+            "hover-controls": "Показувати міні-плеєр при наведенні на трей"
           }
         },
         "priority": "Пріоритет повідомлень",
@@ -843,22 +845,22 @@
       },
       "menu": {
         "convert-chinese-character": {
-          "label": "Convert Chinese character",
+          "label": "Конвертувати китайські ієрогліфи",
           "submenu": {
             "disabled": {
-              "label": "Disabled",
-              "tooltip": "Disable Chinese character conversion"
+              "label": "Вимкнено",
+              "tooltip": "Вимкнути конвертацію китайських ієрогліфів"
             },
             "simplified-to-traditional": {
-              "label": "Simplified to Traditional",
-              "tooltip": "Convert Simplified Chinese to Traditional Chinese"
+              "label": "Спрощені в традиційні",
+              "tooltip": "Конвертувати спрощені китайські ієрогліфи в традиційні"
             },
             "traditional-to-simplified": {
-              "label": "Traditional to Simplified",
-              "tooltip": "Convert Traditional Chinese to Simplified Chinese"
+              "label": "Традиційні в спрощені",
+              "tooltip": "Конвертувати традиційні китайські ієрогліфи в спрощені"
             }
           },
-          "tooltip": "Convert Chinese character to Traditional or Simplified"
+          "tooltip": "Конвертувати китайські ієрогліфи в традиційні або спрощені"
         },
         "default-text-string": {
           "label": "Символ за замовчуванням між текстами пісень",
@@ -868,7 +870,7 @@
           "label": "Лінійний ефект",
           "submenu": {
             "fancy": {
-              "label": "Fancy",
+              "label": "Вишуканий",
               "tooltip": "Використовуйте великі, додаткоподібні ефекти на поточному рядку"
             },
             "focus": {
@@ -887,22 +889,22 @@
           "tooltip": "Виберіть ефект, який потрібно застосувати до поточної лінії"
         },
         "lyrics-font-size": {
-          "label": "Lyrics font size",
+          "label": "Розмір шрифту тексту пісні",
           "submenu": {
             "large": {
-              "label": "Large",
-              "tooltip": "Use the original larger lyrics size"
+              "label": "Великий",
+              "tooltip": "Використовувати оригінальний більший розмір тексту"
             },
             "medium": {
-              "label": "Medium",
-              "tooltip": "Use a balanced lyrics size"
+              "label": "Середній",
+              "tooltip": "Використовувати збалансований розмір тексту"
             },
             "small": {
-              "label": "Small",
-              "tooltip": "Use a more compact lyrics size"
+              "label": "Малий",
+              "tooltip": "Використовувати більш компактний розмір тексту"
             }
           },
-          "tooltip": "Choose how large the lyrics text should be"
+          "tooltip": "Виберіть, наскільки великим має бути текст пісні"
         },
         "precise-timing": {
           "label": "Зробити текст пісні ідеально синхронізованим",
@@ -930,67 +932,67 @@
         },
         "translation": {
           "clear-cache": {
-            "label": "Clear translation cache",
-            "tooltip": "Delete all cached translations stored on disk."
+            "label": "Очистити кеш перекладів",
+            "tooltip": "Видалити всі кешовані переклади, збережені на диску"
           },
           "configure": {
-            "label": "Configure API key & model…",
-            "tooltip": "Set provider-specific translation options."
+            "label": "Налаштувати API ключ і модель…",
+            "tooltip": "Встановити параметри перекладу для конкретного провайдера"
           },
           "enabled": {
-            "label": "Enable translation",
-            "tooltip": "Show a translated line beneath each original lyric line."
+            "label": "Увімкнути переклад",
+            "tooltip": "Показувати перекладений рядок під кожним оригінальним рядком тексту"
           },
-          "label": "Lyrics translation",
+          "label": "Переклад тексту пісні",
           "provider": {
-            "label": "Provider",
-            "tooltip": "Which service to use for translation."
+            "label": "Провайдер",
+            "tooltip": "Який сервіс використовувати для перекладу"
           },
           "providers": {
             "anthropic": {
               "name": "Anthropic Claude",
-              "prompt-label": "Uses the native Anthropic Messages API.",
-              "prompt-title": "Anthropic settings"
+              "prompt-label": "Використовує нативний Anthropic Messages API.",
+              "prompt-title": "Налаштування Anthropic"
             },
             "gemini": {
               "name": "Google Gemini",
-              "prompt-label": "Uses Google's Generative Language API (generateContent).",
-              "prompt-title": "Gemini settings"
+              "prompt-label": "Використовує Google Generative Language API (generateContent).",
+              "prompt-title": "Налаштування Gemini"
             },
             "google-translate": {
-              "host": "Host",
+              "host": "Хост",
               "name": "Google Translate",
-              "prompt-label": "Uses the unofficial free Google Translate endpoint. No API key is required, but Google may rate-limit it.",
-              "prompt-title": "Google Translate settings"
+              "prompt-label": "Використовує неофіційний безкоштовний Google Translate. API ключ не потрібен, але Google може обмежувати частоту запитів.",
+              "prompt-title": "Налаштування Google Translate"
             },
             "local-cli": {
-              "command": "Command",
-              "engine": "Local CLI",
+              "command": "Команда",
+              "engine": "Локальний CLI",
               "engine-claude": "Claude Code",
               "engine-codex": "Codex",
               "engine-gemini": "Gemini CLI",
-              "name": "Local CLI",
-              "prompt-label": "Use a locally logged-in Claude Code, Codex, or Gemini CLI. The command and model are automatic; the CLI uses its own logged-in default.",
-              "prompt-title": "Local CLI settings",
-              "timeout": "Timeout seconds (15-600)"
+              "name": "Локальний CLI",
+              "prompt-label": "Використовувати локально авторизований Claude Code, Codex або Gemini CLI. Команда та модель автоматичні; CLI використовує власні налаштування за замовчуванням.",
+              "prompt-title": "Налаштування локального CLI",
+              "timeout": "Час очікування в секундах (15-600)"
             },
             "openai-compatible": {
-              "api-mode": "API mode (responses / auto / chat-completions)",
-              "base-url": "Base URL",
-              "name": "OpenAI compatible",
-              "prompt-label": "Use OpenAI-compatible servers, including Ollama (base URL http://127.0.0.1:11434/v1, API mode auto or chat-completions).",
-              "prompt-title": "OpenAI-compatible settings"
+              "api-mode": "Режим API (responses / auto / chat-completions)",
+              "base-url": "Базова URL",
+              "name": "Сумісний з OpenAI",
+              "prompt-label": "Використовувати сервери, сумісні з OpenAI, включаючи Ollama (базова URL http://127.0.0.1:11434/v1, режим API auto або chat-completions).",
+              "prompt-title": "Налаштування OpenAI-сумісного"
             },
             "shared": {
-              "api-key": "API key",
-              "model": "Model"
+              "api-key": "API ключ",
+              "model": "Модель"
             }
           },
           "target-language": {
-            "label": "Target language",
+            "label": "Цільова мова",
             "options": {
               "ar": "العربية",
-              "auto": "Follow app language",
+              "auto": "Відповідно до мови додатку",
               "bg": "Български",
               "bn": "বাংলা",
               "cs": "Čeština",
@@ -1035,9 +1037,9 @@
               "zh-CN": "简体中文",
               "zh-TW": "繁體中文"
             },
-            "tooltip": "The language to translate lyrics into."
+            "tooltip": "Мова, на яку перекладати текст пісні"
           },
-          "tooltip": "Translate lyrics and show the translated result line-by-line for display."
+          "tooltip": "Перекладати текст пісні та показувати результат перекладу порядково"
         }
       },
       "name": "Синхронізовані тексти",
@@ -1121,6 +1123,17 @@
         "visualizer-type": "Тип візуалізації"
       },
       "name": "Візуалізація"
+    },
+    "audio-only": {
+      "description": "Примусовий режим лише аудіо — блокує всі відеопотоки на рівні мережі та плеєра для економії ОЗП і пропускної здатності",
+      "name": "Лише аудіо"
+    },
+    "playback-recovery": {
+      "description": "Автоматично відновлює роботу після зависання, зупинки або збою відтворення",
+      "menu": {
+        "log-to-console": "Записувати події відновлення в консоль"
+      },
+      "name": "Відновлення відтворення"
     }
   }
 }

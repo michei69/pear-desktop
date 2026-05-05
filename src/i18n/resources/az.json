@@ -144,7 +144,8 @@
               "disabled": "Deaktiv edilib",
               "enabled-and-hide-app": "Aktivdir və tətbiqi gizlət",
               "enabled-and-show-app": "Aktivdir və tətbiqi göstər",
-              "play-pause-on-click": "Kliklədikdə Başlat/Dayan"
+              "play-pause-on-click": "Kliklədikdə Başlat/Dayan",
+              "move-to-current-desktop": "Göstərildikdə cari virtual iş masasına keç"
             }
           },
           "visual-tweaks": {
@@ -242,6 +243,10 @@
         "enable-seekbar": "Axtarış çubuğu temini aktiv et"
       },
       "name": "Albom Rəng Teması"
+    },
+    "audio-only": {
+      "description": "Yalnız audio rejimini məcbur edir — RAM və bant genişliyinə qənaət etmək üçün şəbəkə və pleyer səviyyəsində bütün video axınlarını bloklayır",
+      "name": "Yalnız Audio"
     },
     "ambient-mode": {
       "description": "Videodan yumşaq rəngləri ekranınızın fonuna yayaraq işıq effekti tətbiq edir",
@@ -683,8 +688,10 @@
         "interactive-settings": {
           "label": "Interaktiv Ayarlar",
           "submenu": {
-            "hide-button-text": "Düymə mətnini gizlət",
-            "refresh-on-play-pause": "Oynat/Dayandır-da yenilə",
+                "hide-button-text": "Düymə mətnini gizlət",
+                "hover-controls": "Tray üzərində dayandıqda mini-plyer göstər",
+                "hover-controls": "Tray üzərində dayandıqda mini-plyer göstər",
+                "refresh-on-play-pause": "Oynat/Dayandır-da yenilə",
             "tray-controls": "Tray klikində Aç/Bağla"
           }
         },
@@ -697,6 +704,13 @@
     "performance-improvement": {
       "description": "Eksperimental skriptləri aktiv edərək performansı yaxşılaşdır",
       "name": "Performans yaxşılaşdırması [Beta]"
+    },
+    "playback-recovery": {
+      "description": "Donmuş, dayanmış və ya ölü oxutma vəziyyətlərindən avtomatik bərpa edir",
+      "menu": {
+        "log-to-console": "Bərpa hadisələrini konsola yaz"
+      },
+      "name": "Oxutma Bərpası"
     },
     "picture-in-picture": {
       "description": "Tətbiqi şəkil-şəkildə rejiminə keçirməyə imkan verir",

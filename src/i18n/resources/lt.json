@@ -144,6 +144,7 @@
               "disabled": "Išjungta",
               "enabled-and-hide-app": "Įjungta ir slėpti programos langą",
               "enabled-and-show-app": "Įjungta ir rodyti programos langą",
+              "move-to-current-desktop": "Rodant perkelti į dabartinį virtualų darbalaukį",
               "play-pause-on-click": "Paleisti/Pristabdyti ant paspaudimo"
             }
           },
@@ -242,6 +243,10 @@
         "enable-seekbar": "Įjungti paieškos juostos temavimą"
       },
       "name": "Albumo Spalvų Tema"
+    },
+    "audio-only": {
+      "description": "Priverstinis tik garso režimas — blokuoja visus vaizdo srautus tinklo ir grotuvo lygiu, taupant RAM ir pralaidumą",
+      "name": "Tik Garsas"
     },
     "ambient-mode": {
       "description": "Pritaiko apšvietimo efektą, perteikdamas švelnias vaizdo įrašo spalvas į ekrano foną",
@@ -491,7 +496,7 @@
           "label": "Būsenos tekstas",
           "submenu": {
             "application": "Klausosi {{applicationName}}",
-            "artist": "Klausosi {artist]",
+            "artist": "Klausosi {artist}",
             "title": "Klausosi {song title}"
           }
         }
@@ -684,6 +689,7 @@
           "label": "Interaktyvūs nustatymai",
           "submenu": {
             "hide-button-text": "Paslėpti mygtuko tekstą",
+            "hover-controls": "Rodyti mini grotuvą užvedus ant padėklo",
             "refresh-on-play-pause": "Perkrauti po Paleidimo/Pristabdymo",
             "tray-controls": "Atidaryti/Uždaryti po paspaudimo ant padėklo"
           }
@@ -697,6 +703,13 @@
     "performance-improvement": {
       "description": "Pagerinkite našumą įjungdami eksperimentinius scenarijus",
       "name": "Našumo patobulinimas [Beta]"
+    },
+    "playback-recovery": {
+      "description": "Automatiškai atsistato iš užstrigusių, sustojusių ar negyvų atkūrimo būsenų",
+      "menu": {
+        "log-to-console": "Registruoti atkūrimo įvykius konsolėje"
+      },
+      "name": "Atkūrimo Atkūrimas"
     },
     "picture-in-picture": {
       "description": "Leidžia pakeisti programą į „nuotrauka-nuotraukoje“ rėžimą",
@@ -887,22 +900,22 @@
           "tooltip": "Pasirinkti efektą, kurį pritaikyti dabartinei linijai"
         },
         "lyrics-font-size": {
-          "label": "Lyrics font size",
+          "label": "Dainų žodžių šrifto dydis",
           "submenu": {
             "large": {
-              "label": "Large",
-              "tooltip": "Use the original larger lyrics size"
+              "label": "Didelis",
+              "tooltip": "Naudoti originalų didesnį dainų žodžių dydį"
             },
             "medium": {
-              "label": "Medium",
-              "tooltip": "Use a balanced lyrics size"
+              "label": "Vidutinis",
+              "tooltip": "Naudoti subalansuotą dainų žodžių dydį"
             },
             "small": {
-              "label": "Small",
-              "tooltip": "Use a more compact lyrics size"
+              "label": "Mažas",
+              "tooltip": "Naudoti kompaktiškesnį dainų žodžių dydį"
             }
           },
-          "tooltip": "Choose how large the lyrics text should be"
+          "tooltip": "Pasirinkite kokio dydžio turėtų būti dainų žodžių tekstas"
         },
         "precise-timing": {
           "label": "Tobulai sinchronizuoti dainos žodžius",
@@ -930,67 +943,67 @@
         },
         "translation": {
           "clear-cache": {
-            "label": "Clear translation cache",
-            "tooltip": "Delete all cached translations stored on disk."
+            "label": "Išvalyti vertimo talpyklą",
+            "tooltip": "Ištrinti visus talpykloje saugomus vertimus iš disko."
           },
           "configure": {
-            "label": "Configure API key & model…",
-            "tooltip": "Set provider-specific translation options."
+            "label": "Konfigūruoti API raktą ir modelį…",
+            "tooltip": "Nustatyti tiekėjui būdingus vertimo parinktis."
           },
           "enabled": {
-            "label": "Enable translation",
-            "tooltip": "Show a translated line beneath each original lyric line."
+            "label": "Įjungti vertimą",
+            "tooltip": "Rodyti išverstą eilutę po kiekviena originalia dainų žodžių eilute."
           },
-          "label": "Lyrics translation",
+          "label": "Dainų žodžių vertimas",
           "provider": {
-            "label": "Provider",
-            "tooltip": "Which service to use for translation."
+            "label": "Tiekėjas",
+            "tooltip": "Kurią paslaugą naudoti vertimui."
           },
           "providers": {
             "anthropic": {
               "name": "Anthropic Claude",
-              "prompt-label": "Uses the native Anthropic Messages API.",
-              "prompt-title": "Anthropic settings"
+              "prompt-label": "Naudoja vietinę Anthropic Messages API.",
+              "prompt-title": "Anthropic nustatymai"
             },
             "gemini": {
               "name": "Google Gemini",
-              "prompt-label": "Uses Google's Generative Language API (generateContent).",
-              "prompt-title": "Gemini settings"
+              "prompt-label": "Naudoja Google Generatyvinės Kalbos API (generateContent).",
+              "prompt-title": "Gemini nustatymai"
             },
             "google-translate": {
-              "host": "Host",
+              "host": "Serveris",
               "name": "Google Translate",
-              "prompt-label": "Uses the unofficial free Google Translate endpoint. No API key is required, but Google may rate-limit it.",
-              "prompt-title": "Google Translate settings"
+              "prompt-label": "Naudoja neoficialų nemokamą Google Translate galinį tašką. API rakto nereikia, bet Google gali taikyti greičio apribojimus.",
+              "prompt-title": "Google Translate nustatymai"
             },
             "local-cli": {
-              "command": "Command",
-              "engine": "Local CLI",
+              "command": "Komanda",
+              "engine": "Vietinė CLI",
               "engine-claude": "Claude Code",
               "engine-codex": "Codex",
               "engine-gemini": "Gemini CLI",
-              "name": "Local CLI",
-              "prompt-label": "Use a locally logged-in Claude Code, Codex, or Gemini CLI. The command and model are automatic; the CLI uses its own logged-in default.",
-              "prompt-title": "Local CLI settings",
-              "timeout": "Timeout seconds (15-600)"
+              "name": "Vietinė CLI",
+              "prompt-label": "Naudoja vietoje prisijungusį Claude Code, Codex arba Gemini CLI. Komanda ir modelis yra automatiniai; CLI naudoja savo prisijungtą numatytąjį.",
+              "prompt-title": "Vietinės CLI nustatymai",
+              "timeout": "Skirtojo laiko sekundės (15-600)"
             },
             "openai-compatible": {
-              "api-mode": "API mode (responses / auto / chat-completions)",
-              "base-url": "Base URL",
-              "name": "OpenAI compatible",
-              "prompt-label": "Use OpenAI-compatible servers, including Ollama (base URL http://127.0.0.1:11434/v1, API mode auto or chat-completions).",
-              "prompt-title": "OpenAI-compatible settings"
+              "api-mode": "API režimas (responses / auto / chat-completions)",
+              "base-url": "Bazinis URL",
+              "name": "OpenAI suderinamas",
+              "prompt-label": "Naudoja OpenAI suderinamus serverius, įskaitant Ollama (bazinis URL http://127.0.0.1:11434/v1, API režimas auto arba chat-completions).",
+              "prompt-title": "OpenAI suderinami nustatymai"
             },
             "shared": {
-              "api-key": "API key",
-              "model": "Model"
+              "api-key": "API raktas",
+              "model": "Modelis"
             }
           },
           "target-language": {
-            "label": "Target language",
+            "label": "Tikslinė kalba",
             "options": {
               "ar": "العربية",
-              "auto": "Follow app language",
+              "auto": "Sekti programos kalbą",
               "bg": "Български",
               "bn": "বাংলা",
               "cs": "Čeština",
@@ -1035,9 +1048,9 @@
               "zh-CN": "简体中文",
               "zh-TW": "繁體中文"
             },
-            "tooltip": "The language to translate lyrics into."
+            "tooltip": "Kalba, į kurią versti dainų žodžius."
           },
-          "tooltip": "Translate lyrics and show the translated result line-by-line for display."
+          "tooltip": "Išversti dainų žodžius ir rodyti išverstą rezultatą eilutė po eilutės."
         }
       },
       "name": "„Synced Lyrics“",

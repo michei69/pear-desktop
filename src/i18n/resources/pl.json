@@ -144,7 +144,8 @@
               "disabled": "Wyłączone",
               "enabled-and-hide-app": "Włącz i ukryj aplikację",
               "enabled-and-show-app": "Włącz i pokaż aplikację",
-              "play-pause-on-click": "Odtwórz/Wstrzymaj po kliknięciu"
+              "play-pause-on-click": "Odtwórz/Wstrzymaj po kliknięciu",
+              "move-to-current-desktop": "Przenieś na bieżący pulpit wirtualny przy pokazywaniu"
             }
           },
           "visual-tweaks": {
@@ -685,7 +686,8 @@
           "submenu": {
             "hide-button-text": "Ukryj tekst przycisku",
             "refresh-on-play-pause": "Odśwież podczas odtwarzania/pauzy",
-            "tray-controls": "Otwórz/zamknij po kliknięciu ikony na pasku zadań"
+            "tray-controls": "Otwórz/zamknij po kliknięciu ikony na pasku zadań",
+            "hover-controls": "Pokaż mini-odtwarzacz po najechaniu na ikonę w zasobniku"
           }
         },
         "priority": "Priorytet powiadomień",
@@ -847,14 +849,14 @@
           "submenu": {
             "disabled": {
               "label": "Wyłączony",
-              "tooltip": "Disable Chinese character conversion"
+              "tooltip": "Wyłącz konwersję chińskich znaków"
             },
             "simplified-to-traditional": {
-              "label": "Simplified to Traditional",
-              "tooltip": "Convert Simplified Chinese to Traditional Chinese"
+              "label": "Uproszczony na Tradycyjny",
+              "tooltip": "Konwertuj chiński uproszczony na chiński tradycyjny"
             },
             "traditional-to-simplified": {
-              "label": "Traditional to Simplified",
+              "label": "Tradycyjny na Uproszczony",
               "tooltip": "Konwertuj język chiński tradycyjny na chiński uproszczony"
             }
           },
@@ -887,22 +889,22 @@
           "tooltip": "Wybierz efekt, by zastosować go do aktualnej linijki"
         },
         "lyrics-font-size": {
-          "label": "Lyrics font size",
+          "label": "Rozmiar czcionki tekstu",
           "submenu": {
             "large": {
-              "label": "Large",
-              "tooltip": "Use the original larger lyrics size"
+              "label": "Duży",
+              "tooltip": "Użyj oryginalnego większego rozmiaru tekstu"
             },
             "medium": {
-              "label": "Medium",
-              "tooltip": "Use a balanced lyrics size"
+              "label": "Średni",
+              "tooltip": "Użyj zrównoważonego rozmiaru tekstu"
             },
             "small": {
-              "label": "Small",
-              "tooltip": "Use a more compact lyrics size"
+              "label": "Mały",
+              "tooltip": "Użyj bardziej kompaktowego rozmiaru tekstu"
             }
           },
-          "tooltip": "Choose how large the lyrics text should be"
+          "tooltip": "Wybierz, jak duży ma być tekst utworu"
         },
         "precise-timing": {
           "label": "Zsynchronizuj tekst utworu do perfekcji",
@@ -930,67 +932,67 @@
         },
         "translation": {
           "clear-cache": {
-            "label": "Clear translation cache",
-            "tooltip": "Delete all cached translations stored on disk."
+            "label": "Wyczyść pamięć podręczną tłumaczeń",
+            "tooltip": "Usuń wszystkie zapisane tłumaczenia z dysku."
           },
           "configure": {
-            "label": "Configure API key & model…",
-            "tooltip": "Set provider-specific translation options."
+            "label": "Skonfiguruj klucz API i model…",
+            "tooltip": "Ustaw opcje tłumaczenia specyficzne dla dostawcy."
           },
           "enabled": {
-            "label": "Enable translation",
-            "tooltip": "Show a translated line beneath each original lyric line."
+            "label": "Włącz tłumaczenie",
+            "tooltip": "Pokaż przetłumaczoną linię pod każdą oryginalną linią tekstu."
           },
-          "label": "Lyrics translation",
+          "label": "Tłumaczenie tekstu",
           "provider": {
-            "label": "Provider",
-            "tooltip": "Which service to use for translation."
+            "label": "Dostawca",
+            "tooltip": "Która usługa ma być używana do tłumaczenia."
           },
           "providers": {
             "anthropic": {
               "name": "Anthropic Claude",
-              "prompt-label": "Uses the native Anthropic Messages API.",
-              "prompt-title": "Anthropic settings"
+              "prompt-label": "Używa natywnego API Anthropic Messages.",
+              "prompt-title": "Ustawienia Anthropic"
             },
             "gemini": {
               "name": "Google Gemini",
-              "prompt-label": "Uses Google's Generative Language API (generateContent).",
-              "prompt-title": "Gemini settings"
+              "prompt-label": "Używa Google Generative Language API (generateContent).",
+              "prompt-title": "Ustawienia Gemini"
             },
             "google-translate": {
               "host": "Host",
               "name": "Google Translate",
-              "prompt-label": "Uses the unofficial free Google Translate endpoint. No API key is required, but Google may rate-limit it.",
-              "prompt-title": "Google Translate settings"
+              "prompt-label": "Używa nieoficjalnego darmowego punktu końcowego Google Translate. Nie wymaga klucza API, ale Google może ograniczać częstotliwość.",
+              "prompt-title": "Ustawienia Google Translate"
             },
             "local-cli": {
-              "command": "Command",
-              "engine": "Local CLI",
+              "command": "Polecenie",
+              "engine": "Lokalne CLI",
               "engine-claude": "Claude Code",
               "engine-codex": "Codex",
               "engine-gemini": "Gemini CLI",
-              "name": "Local CLI",
-              "prompt-label": "Use a locally logged-in Claude Code, Codex, or Gemini CLI. The command and model are automatic; the CLI uses its own logged-in default.",
-              "prompt-title": "Local CLI settings",
-              "timeout": "Timeout seconds (15-600)"
+              "name": "Lokalne CLI",
+              "prompt-label": "Użyj lokalnie zalogowanego Claude Code, Codex lub Gemini CLI. Polecenie i model są automatyczne; CLI używa własnego domyślnego zalogowania.",
+              "prompt-title": "Ustawienia lokalnego CLI",
+              "timeout": "Limit czasu w sekundach (15-600)"
             },
             "openai-compatible": {
-              "api-mode": "API mode (responses / auto / chat-completions)",
-              "base-url": "Base URL",
-              "name": "OpenAI compatible",
-              "prompt-label": "Use OpenAI-compatible servers, including Ollama (base URL http://127.0.0.1:11434/v1, API mode auto or chat-completions).",
-              "prompt-title": "OpenAI-compatible settings"
+              "api-mode": "Tryb API (responses / auto / chat-completions)",
+              "base-url": "Bazowy URL",
+              "name": "Kompatybilny z OpenAI",
+              "prompt-label": "Używaj serwerów kompatybilnych z OpenAI, w tym Ollama (bazowy URL http://127.0.0.1:11434/v1, tryb API auto lub chat-completions).",
+              "prompt-title": "Ustawienia kompatybilne z OpenAI"
             },
             "shared": {
-              "api-key": "API key",
+              "api-key": "Klucz API",
               "model": "Model"
             }
           },
           "target-language": {
-            "label": "Target language",
+            "label": "Język docelowy",
             "options": {
               "ar": "العربية",
-              "auto": "Follow app language",
+              "auto": "Zgodnie z językiem aplikacji",
               "bg": "Български",
               "bn": "বাংলা",
               "cs": "Čeština",
@@ -1035,9 +1037,9 @@
               "zh-CN": "简体中文",
               "zh-TW": "繁體中文"
             },
-            "tooltip": "The language to translate lyrics into."
+            "tooltip": "Język, na który mają być tłumaczone teksty."
           },
-          "tooltip": "Translate lyrics and show the translated result line-by-line for display."
+          "tooltip": "Tłumacz teksty i pokazuj przetłumaczony wynik linia po linii."
         }
       },
       "name": "Napisy zsynchronizowane",
@@ -1121,6 +1123,17 @@
         "visualizer-type": "Typ wizualizatora"
       },
       "name": "Wizualizator"
+    },
+    "audio-only": {
+      "description": "Wymusza tryb tylko audio — blokuje wszystkie strumienie wideo na poziomie sieci i odtwarzacza, aby oszczędzić RAM i przepustowość",
+      "name": "Tylko Audio"
+    },
+    "playback-recovery": {
+      "description": "Automatycznie przywraca odtwarzanie z zawieszonych, zatrzymanych lub martwych stanów",
+      "menu": {
+        "log-to-console": "Rejestruj zdarzenia odzyskiwania w konsoli"
+      },
+      "name": "Odzyskiwanie odtwarzania"
     }
   }
 }

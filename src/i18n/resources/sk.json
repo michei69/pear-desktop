@@ -144,7 +144,8 @@
               "disabled": "Vypnutý",
               "enabled-and-hide-app": "Povolené a skry aplikáciu",
               "enabled-and-show-app": "Povolené a ukáž aplikáciu",
-              "play-pause-on-click": "Prehrať/Pozastaviť na stlačenie"
+              "play-pause-on-click": "Prehrať/Pozastaviť na stlačenie",
+              "move-to-current-desktop": "Presunúť na aktuálnu virtuálnu plochu pri zobrazení"
             }
           },
           "visual-tweaks": {
@@ -320,7 +321,7 @@
           }
         },
         "hostname": {
-          "label": "Hostname"
+          "label": "Názov hostiteľa"
         },
         "https": {
           "label": "HTTPS a Certifikáty",
@@ -346,7 +347,7 @@
       "prompt": {
         "hostname": {
           "label": "Zadajte názov hostname(napr. 0.0.0.0) pre server API:",
-          "title": "Hostname"
+          "title": "Názov hostiteľa"
         },
         "port": {
           "label": "Zadajte port pre server API:",
@@ -364,7 +365,7 @@
         "disable": "Vypnúť Proxy Adaptér",
         "enable": "Zapnúť Proxy Adaptér",
         "hostname": {
-          "label": "Hostname"
+          "label": "Názov hostiteľa"
         },
         "port": {
           "label": "Port"
@@ -374,11 +375,11 @@
       "prompt": {
         "hostname": {
           "label": "Zadajte hostname pre lokálny proxy server (vyžaduje reštart):",
-          "title": "Proxy Hostname"
+          "title": "Názov hostiteľa proxy"
         },
         "port": {
           "label": "Zadajte port pre lokálny proxy server (vyžaduje reštart):",
-          "title": "Proxy Port"
+          "title": "Port proxy"
         }
       }
     },
@@ -561,7 +562,7 @@
             "advanced": "Rozšírené",
             "enabled": "Povolené",
             "mode": "Časový režim",
-            "percent": "Percent",
+            "percent": "Percentá",
             "seconds": "Sekundy"
           }
         },
@@ -685,7 +686,8 @@
           "submenu": {
             "hide-button-text": "Skryť text tlačidla",
             "refresh-on-play-pause": "Obnoviť pri prehrávaní/pozastavení",
-            "tray-controls": "Otvoriť/Zatvoriť kliknutím na lištu"
+            "tray-controls": "Otvoriť/Zatvoriť kliknutím na lištu",
+            "hover-controls": "Zobraziť mini prehrávač pri umiestnení kurzora na ikonu na paneli"
           }
         },
         "priority": "Priorita oznámenia",
@@ -876,7 +878,7 @@
               "tooltip": "Urob len aktuálny riadok biely"
             },
             "offset": {
-              "label": "Offset",
+              "label": "Posun",
               "tooltip": "Offset na pravej strane aktuálneho riadku"
             },
             "scale": {
@@ -887,22 +889,22 @@
           "tooltip": "Vyber efekt pre aktuálny riadok"
         },
         "lyrics-font-size": {
-          "label": "Lyrics font size",
+          "label": "Veľkosť písma textov",
           "submenu": {
             "large": {
-              "label": "Large",
-              "tooltip": "Use the original larger lyrics size"
+              "label": "Veľké",
+              "tooltip": "Použiť pôvodnú väčšiu veľkosť textov"
             },
             "medium": {
-              "label": "Medium",
-              "tooltip": "Use a balanced lyrics size"
+              "label": "Stredné",
+              "tooltip": "Použiť vyváženú veľkosť textov"
             },
             "small": {
-              "label": "Small",
-              "tooltip": "Use a more compact lyrics size"
+              "label": "Malé",
+              "tooltip": "Použiť kompaktnejšiu veľkosť textov"
             }
           },
-          "tooltip": "Choose how large the lyrics text should be"
+          "tooltip": "Vyberte, aké veľké majú byť texty piesní"
         },
         "precise-timing": {
           "label": "Dokonale synchronizovať text piesne",
@@ -930,67 +932,67 @@
         },
         "translation": {
           "clear-cache": {
-            "label": "Clear translation cache",
-            "tooltip": "Delete all cached translations stored on disk."
+            "label": "Vymazať vyrovnávaciu pamäť prekladov",
+            "tooltip": "Odstrániť všetky uložené preklady z disku."
           },
           "configure": {
-            "label": "Configure API key & model…",
-            "tooltip": "Set provider-specific translation options."
+            "label": "Konfigurovať API kľúč a model...",
+            "tooltip": "Nastaviť možnosti prekladu špecifické pre poskytovateľa."
           },
           "enabled": {
-            "label": "Enable translation",
-            "tooltip": "Show a translated line beneath each original lyric line."
+            "label": "Povoliť preklad",
+            "tooltip": "Zobraziť preložený riadok pod každým pôvodným riadkom textu."
           },
-          "label": "Lyrics translation",
+          "label": "Preklad textov",
           "provider": {
-            "label": "Provider",
-            "tooltip": "Which service to use for translation."
+            "label": "Poskytovateľ",
+            "tooltip": "Ktorú službu použiť na preklad."
           },
           "providers": {
             "anthropic": {
               "name": "Anthropic Claude",
-              "prompt-label": "Uses the native Anthropic Messages API.",
-              "prompt-title": "Anthropic settings"
+              "prompt-label": "Používa natívne Anthropic Messages API.",
+              "prompt-title": "Anthropic nastavenia"
             },
             "gemini": {
               "name": "Google Gemini",
-              "prompt-label": "Uses Google's Generative Language API (generateContent).",
-              "prompt-title": "Gemini settings"
+              "prompt-label": "Používa Google Generative Language API (generateContent).",
+              "prompt-title": "Gemini nastavenia"
             },
             "google-translate": {
-              "host": "Host",
-              "name": "Google Translate",
-              "prompt-label": "Uses the unofficial free Google Translate endpoint. No API key is required, but Google may rate-limit it.",
-              "prompt-title": "Google Translate settings"
+              "host": "Hostiteľ",
+              "name": "Google Prekladač",
+              "prompt-label": "Používa neoficiálny bezplatný koncový bod Google Prekladača. API kľúč nie je potrebný, ale Google ho môže obmedziť.",
+              "prompt-title": "Nastavenia Google Prekladača"
             },
             "local-cli": {
-              "command": "Command",
-              "engine": "Local CLI",
+              "command": "Príkaz",
+              "engine": "Lokálne CLI",
               "engine-claude": "Claude Code",
               "engine-codex": "Codex",
               "engine-gemini": "Gemini CLI",
-              "name": "Local CLI",
-              "prompt-label": "Use a locally logged-in Claude Code, Codex, or Gemini CLI. The command and model are automatic; the CLI uses its own logged-in default.",
-              "prompt-title": "Local CLI settings",
-              "timeout": "Timeout seconds (15-600)"
+              "name": "Lokálne CLI",
+              "prompt-label": "Použiť lokálne prihlásené Claude Code, Codex alebo Gemini CLI. Príkaz a model sú automatické; CLI používa svoje vlastné prihlásené predvolené hodnoty.",
+              "prompt-title": "Nastavenia lokálneho CLI",
+              "timeout": "Časový limit v sekundách (15-600)"
             },
             "openai-compatible": {
-              "api-mode": "API mode (responses / auto / chat-completions)",
-              "base-url": "Base URL",
-              "name": "OpenAI compatible",
-              "prompt-label": "Use OpenAI-compatible servers, including Ollama (base URL http://127.0.0.1:11434/v1, API mode auto or chat-completions).",
-              "prompt-title": "OpenAI-compatible settings"
+              "api-mode": "API režim (responses / auto / chat-completions)",
+              "base-url": "Základná URL",
+              "name": "OpenAI kompatibilný",
+              "prompt-label": "Použiť OpenAI-kompatibilné servery, vrátane Ollama (základná URL http://127.0.0.1:11434/v1, API režim auto alebo chat-completions).",
+              "prompt-title": "OpenAI-kompatibilné nastavenia"
             },
             "shared": {
-              "api-key": "API key",
+              "api-key": "API kľúč",
               "model": "Model"
             }
           },
           "target-language": {
-            "label": "Target language",
+            "label": "Cieľový jazyk",
             "options": {
               "ar": "العربية",
-              "auto": "Follow app language",
+              "auto": "Nasledovať jazyk aplikácie",
               "bg": "Български",
               "bn": "বাংলা",
               "cs": "Čeština",
@@ -1035,9 +1037,9 @@
               "zh-CN": "简体中文",
               "zh-TW": "繁體中文"
             },
-            "tooltip": "The language to translate lyrics into."
+            "tooltip": "Jazyk, do ktorého sa majú texty preložiť."
           },
-          "tooltip": "Translate lyrics and show the translated result line-by-line for display."
+          "tooltip": "Preložiť texty a zobraziť preložený výsledok riadok po riadku."
         }
       },
       "name": "Synchronizované texty",
@@ -1121,6 +1123,17 @@
         "visualizer-type": "Typ Vizualizéra"
       },
       "name": "Vizualizér"
+    },
+    "audio-only": {
+      "description": "Vynúti režim iba so zvukom — blokuje všetky video streamy na sieťovej úrovni a úrovni prehrávača, aby ušetril RAM a šírku pásma",
+      "name": "Iba zvuk"
+    },
+    "playback-recovery": {
+      "description": "Automaticky obnovuje prehrávanie zo zaseknutých, zastavených alebo mŕtvych stavov",
+      "menu": {
+        "log-to-console": "Zaznamenávať udalosti obnovenia do konzoly"
+      },
+      "name": "Obnova prehrávania"
     }
   }
 }

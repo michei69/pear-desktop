@@ -144,7 +144,8 @@
               "disabled": "Deshabilitat",
               "enabled-and-hide-app": "Mostra la icona i amaga l'aplicació",
               "enabled-and-show-app": "Mostra la icona i mostra l'aplicació",
-              "play-pause-on-click": "Reprodueix / pausa en clicar"
+              "play-pause-on-click": "Reprodueix / pausa en clicar",
+              "move-to-current-desktop": "Mou a l'escriptori virtual actual en mostrar"
             }
           },
           "visual-tweaks": {
@@ -364,7 +365,7 @@
         "disable": "Desactivar adaptador Proxy",
         "enable": "Activar adaptador Proxy",
         "hostname": {
-          "label": "Hostname"
+          "label": "Nom d'amfitrió"
         },
         "port": {
           "label": "Port"
@@ -441,7 +442,7 @@
             "fade-out-duration": "Durada de la transició de sortida (ms)",
             "fade-scaling": {
               "label": "Escala de la transició",
-              "linear": "Linear",
+              "linear": "Lineal",
               "logarithmic": "Logarítmica"
             },
             "seconds-before-end": "Transiciona N segons abans del final"
@@ -685,7 +686,8 @@
           "submenu": {
             "hide-button-text": "Amaga text del botó",
             "refresh-on-play-pause": "Recarrega al Reproduir/Pausar",
-            "tray-controls": "Obra/Tanca en clicar a la safata"
+            "tray-controls": "Obra/Tanca en clicar a la safata",
+            "hover-controls": "Mostra el mini-reproductor en passar el cursor per la safata"
           }
         },
         "priority": "Prioritat de les notificacions",
@@ -1121,6 +1123,17 @@
         "visualizer-type": "Tipus de visualitzador"
       },
       "name": "Visualitzador"
+    },
+    "audio-only": {
+      "description": "Força el mode només àudio — bloqueja tots els fluxos de vídeo a nivell de xarxa i reproductor per estalviar RAM i ample de banda",
+      "name": "Només àudio"
+    },
+    "playback-recovery": {
+      "description": "Recupera automàticament els estats de reproducció encallats, estancats o aturats",
+      "menu": {
+        "log-to-console": "Registra els esdeveniments de recuperació a la consola"
+      },
+      "name": "Recuperació de la reproducció"
     }
   }
 }
