@@ -127,10 +127,8 @@ if (config.get('options.disableHardwareAcceleration')) {
 }
 
 if (is.linux()) {
-  // Overrides WM_CLASS for X11 to correspond to icon filename
-  app.setName(
-    'com.github.th_ch.\u0079\u006f\u0075\u0074\u0075\u0062\u0065\u005f\u006d\u0075\u0073\u0069\u0063',
-  );
+  // Overrides WM_CLASS for X11 and Wayland to correspond to icon filename
+  app.setName('com.github.th_ch.pear_music');
 
   // Stops chromium from launching its own MPRIS service
   if (await config.plugins.isEnabled('shortcuts')) {
