@@ -135,7 +135,7 @@
           "single-instance-lock": "単一インスタンスロック",
           "start-at-login": "windowsのログイン時に起動",
           "starting-page": {
-            "label": "スターティングページ",
+            "label": "スタートページ",
             "unset": "未設定"
           },
           "tray": {
@@ -164,6 +164,13 @@
                   "label": "カスタムウィンドウタイトルを入力: (未入力の場合無効になります)",
                   "placeholder": "例: {{applicationName}}"
                 }
+              },
+              "like-buttons": {
+                "default": "デフォルト",
+                "force-show": "強制的に表示",
+                "hide": "非表示",
+                "label": "いいねボタン",
+                "swap": "ボタンの順序などを入れ替える"
               },
               "remove-upgrade-button": "アップグレードボタンを削除",
               "theme": {
@@ -322,6 +329,14 @@
         },
         "hostname": {
           "label": "ホスト名"
+        },
+        "https": {
+          "label": "HTTPSと証明書",
+          "submenu": {
+            "enable-https": {
+              "label": "HTTPSを有効化"
+            }
+          }
         },
         "port": {
           "label": "ポート"

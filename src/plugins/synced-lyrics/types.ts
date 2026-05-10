@@ -95,6 +95,7 @@ export type SyncedLyricsPluginConfig = {
   lineEffect: LineEffect;
   lyricsFontSize?: LyricsFontSize;
   romanization: boolean;
+  useYTMLyricsWithoutProxy: boolean;
   convertChineseCharacter?:
     | 'simplifiedToTraditional'
     | 'traditionalToSimplified'

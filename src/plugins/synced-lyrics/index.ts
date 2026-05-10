@@ -53,6 +53,7 @@ export default createPlugin({
         },
       },
     },
+    useYTMLyricsWithoutProxy: false,
   } satisfies SyncedLyricsPluginConfig as SyncedLyricsPluginConfig,
 
   menu,
