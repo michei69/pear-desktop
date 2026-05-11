@@ -38,6 +38,8 @@ win:
   compression: maximum
 nsisWeb:
   runAfterFinish: false
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
 linux:
   icon: assets/generated/icons/png
   category: AudioVideo
