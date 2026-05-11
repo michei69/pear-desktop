@@ -2,7 +2,16 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v3.11.9](https://github.com/michei69/pear-desktop/compare/v3.11.8...v3.11.9)
+
+- fix: explicitly enable desktop and start menu shortcuts for nsis-web [`#2`](https://github.com/michei69/pear-desktop/pull/2)
+- chore(i18n): update translation files [`a6d17b3`](https://github.com/michei69/pear-desktop/commit/a6d17b37cedd52a0d0c9c9d9b412d0aed89e9c7b)
+- Make YTM proxy optional in synced-lyrics-plugin [`f9d9205`](https://github.com/michei69/pear-desktop/commit/f9d9205d788cc64506bf5ecd0b2ca1791aa6e624)
+- chore(i18n): Translated using Weblate (Ukrainian) [`aa5d5b4`](https://github.com/michei69/pear-desktop/commit/aa5d5b492753485a71e8d0cb42148a4311338c6c)
+
 #### [v3.11.8](https://github.com/michei69/pear-desktop/compare/v3.11.5...v3.11.8)
+
+> 5 May 2026
 
 - chore(deps): update dependency ts-morph to v28 [`#4423`](https://github.com/michei69/pear-desktop/pull/4423)
 - fix(deps): update dependency virtua to v0.49.1 [`#4340`](https://github.com/michei69/pear-desktop/pull/4340)
