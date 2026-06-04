@@ -244,6 +244,126 @@
   }
 }
 
+.lyrics-picker-right {
+  margin-right: 4px;
+  opacity: 0.7;
+
+  &:hover {
+    opacity: 1;
+  }
+}
+
+/* ── Custom search modal ── */
+
+.synced-lyrics-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(4px);
+}
+
+.synced-lyrics-modal {
+  background: #1e1e1e;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  padding: 24px;
+  width: min(360px, 90vw);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+.synced-lyrics-modal-title {
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: var(--lyrics-font-family);
+}
+
+.synced-lyrics-modal-label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: #aaa;
+  font-size: 12px;
+  font-family: var(--lyrics-font-family);
+}
+
+.synced-lyrics-modal-input {
+  background: #2a2a2a;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 10px 12px;
+  color: #fff;
+  font-size: 14px;
+  font-family: var(--lyrics-font-family);
+  outline: none;
+  transition: border-color 0.2s;
+
+  &:focus {
+    border-color: rgba(255, 255, 255, 0.35);
+  }
+
+  &::placeholder {
+    color: #666;
+  }
+}
+
+.synced-lyrics-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.synced-lyrics-modal-btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-family: var(--lyrics-font-family);
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
+}
+
+.synced-lyrics-modal-btn--primary {
+  background: #3ea6ff;
+  color: #0f0f0f;
+
+  &:hover:not(:disabled) {
+    background: #5fb8ff;
+  }
+}
+
+.synced-lyrics-modal-btn--secondary {
+  background: rgba(255, 255, 255, 0.08);
+  color: #ccc;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.14);
+  }
+}
+
+.synced-lyrics-modal-btn--danger {
+  background: rgba(255, 80, 80, 0.15);
+  color: #ff6b6b;
+  margin-right: auto;
+
+  &:hover {
+    background: rgba(255, 80, 80, 0.25);
+  }
+}
+
 div:has(> .lyrics-picker) {
   z-index: 100;
   position: sticky !important;

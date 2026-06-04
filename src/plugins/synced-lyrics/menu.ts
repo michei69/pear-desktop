@@ -669,5 +669,20 @@ export const menu = async (
         });
       },
     },
+    {
+      label: t(
+        'plugins.synced-lyrics.menu.show-custom-search-button.label',
+      ),
+      toolTip: t(
+        'plugins.synced-lyrics.menu.show-custom-search-button.tooltip',
+      ),
+      type: 'checkbox',
+      checked: config.showCustomSearchButton !== false,
+      click(item) {
+        ctx.setConfig({
+          showCustomSearchButton: item.checked,
+        });
+      },
+    },
   ];
 };

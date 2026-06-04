@@ -5,6 +5,7 @@ import { getSongInfo } from '@/providers/song-info-front';
 
 import { translationDebug } from './debug';
 import { config } from './renderer';
+import { getCustomQuery } from './custom-query-store';
 import {
   clearCurrentTranslation,
   fetchTranslation,
@@ -73,6 +74,10 @@ interface SearchCache {
 // TODO: Maybe use localStorage for the cache.
 const MAX_SEARCH_CACHE_SIZE = 50;
 const searchCache = new Map<VideoId, SearchCache>();
+
+export const clearSearchCacheForVideo = (videoId: string) => {
+  searchCache.delete(videoId);
+};
 
 const pruneSearchCache = () => {
   const excess = searchCache.size - MAX_SEARCH_CACHE_SIZE;
@@ -279,6 +284,12 @@ export const fetchLyrics = (info: SongInfo) => {
   pruneSearchCache();
   activateLyricsData(info.videoId, cache.data);
 
+  // Allow the user to override the search query for this specific video.
+  const customQ = getCustomQuery(info.videoId);
+  const searchInfo = customQ
+    ? { ...info, title: customQ.query, artist: customQ.artist ?? '' }
+    : info;
+
   const tasks: Promise<void>[] = [];
 
   // prettier-ignore
@@ -292,7 +303,7 @@ export const fetchLyrics = (info: SongInfo) => {
 
     tasks.push(
       provider
-        .search(info)
+        .search(searchInfo)
         .then((res) => {
           pCache.state = 'done';
           pCache.data = res;

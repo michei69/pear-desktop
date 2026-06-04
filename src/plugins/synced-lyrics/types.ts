@@ -100,6 +100,7 @@ export type SyncedLyricsPluginConfig = {
     | 'simplifiedToTraditional'
     | 'traditionalToSimplified'
     | 'disabled';
+  showCustomSearchButton?: boolean;
   translation: TranslationConfig;
 };
 

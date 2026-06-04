@@ -54,6 +54,7 @@ export default createPlugin({
       },
     },
     useYTMLyricsWithoutProxy: false,
+    showCustomSearchButton: true,
   } satisfies SyncedLyricsPluginConfig as SyncedLyricsPluginConfig,
 
   menu,

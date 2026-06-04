@@ -1,7 +1,7 @@
 import * as z from 'zod';
 
 import { LRC } from '../parsers/lrc';
-import { netFetch } from '../renderer';
+import { netFetch } from '../renderer/ipc-bridge';
 
 import type { LyricProvider, LyricResult, SearchSongInfo } from '../types';
 

@@ -4,34 +4,23 @@ import { waitForElement } from '@/utils/wait-for-element';
 import { selectors, tabStates } from './utils';
 import { setConfig, setCurrentTime } from './renderer';
 import { refreshCurrentLyrics } from './store';
+import { getSongInfo } from '@/providers/song-info-front';
 import { setTranslationDebugSender, translationDebug } from './debug';
+import {
+  netFetch,
+  setNetFetch,
+  setTranslateInvoke,
+  translateInvoke,
+} from './ipc-bridge';
 
 import type { RendererContext } from '@/types/contexts';
 import type { MusicPlayer } from '@/types/music-player';
 import type { SongInfo } from '@/providers/song-info';
-import type {
-  SyncedLyricsPluginConfig,
-  TranslationProviderName,
-  TranslationProviderSettings,
-} from '../types';
-import type { TranslationRequest } from '../translation/types';
+import type { SyncedLyricsPluginConfig } from '../types';
+
+export { netFetch, translateInvoke };
 
 export let _ytAPI: MusicPlayer | null = null;
-export let netFetch: (
-  url: string,
-  init?: RequestInit,
-) => Promise<[number, string, Record<string, string>]>;
-
-export interface TranslateInvokeArgs {
-  videoId: string;
-  request: TranslationRequest;
-  provider: TranslationProviderName;
-  settings: TranslationProviderSettings[TranslationProviderName];
-}
-
-export let translateInvoke: (
-  args: TranslateInvokeArgs,
-) => Promise<{ lines: string[]; fromCache: boolean; error?: string }>;
 
 export const renderer = createRenderer<
   {
@@ -69,7 +58,24 @@ export const renderer = createRenderer<
     api.addEventListener('videodatachange', this.videoDataChange);
 
     await this.videoDataChange();
-    refreshCurrentLyrics('player-api-ready');
+
+    const info = getSongInfo();
+    if (info?.videoId) {
+      refreshCurrentLyrics('player-api-ready');
+    } else {
+      // getSongInfo() may not have videoId yet if the peard:update-song-info
+      // IPC roundtrip from the main process hasn't completed. Fall back to
+      // reading directly from the player API so lyricsStore.videoId is set
+      // immediately and the lyrics UI exits the loading state.
+      const vd = api.getVideoData();
+      refreshCurrentLyrics('player-api-ready', {
+        ...info,
+        videoId: vd.video_id,
+        title: vd.title || info.title || '',
+        artist: vd.author || info.artist || '',
+        songDuration: api.getDuration() || info.songDuration || 0,
+      } as SongInfo);
+    }
   },
   async videoDataChange() {
     if (!this.updateTimestampInterval) {
@@ -95,11 +101,13 @@ export const renderer = createRenderer<
   },
 
   async start(ctx: RendererContext<SyncedLyricsPluginConfig>) {
-    netFetch = ctx.ipc.invoke.bind(ctx.ipc, 'synced-lyrics:fetch');
-    translateInvoke = ctx.ipc.invoke.bind(
-      ctx.ipc,
-      'synced-lyrics:translate',
-    ) as typeof translateInvoke;
+    setNetFetch(ctx.ipc.invoke.bind(ctx.ipc, 'synced-lyrics:fetch'));
+    setTranslateInvoke(
+      ctx.ipc.invoke.bind(
+        ctx.ipc,
+        'synced-lyrics:translate',
+      ) as typeof translateInvoke,
+    );
     setTranslationDebugSender((message, data) => {
       ctx.ipc.send('synced-lyrics:translation-debug', message, data);
     });

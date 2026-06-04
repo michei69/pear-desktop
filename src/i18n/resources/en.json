@@ -1055,6 +1055,10 @@
               "host": "Host"
             }
           }
+        },
+        "show-custom-search-button": {
+          "label": "Show custom search button",
+          "tooltip": "Show a search button in the lyrics picker that lets you override the search query and artist for the current song."
         }
       },
       "name": "Synced Lyrics",
