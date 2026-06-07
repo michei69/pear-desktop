@@ -106,8 +106,16 @@ export const onPlayerApiReady = () => {
     buttonContainer,
   );
 
-  menuObserver.observe(document.querySelector('ytmusic-popup-container')!, {
-    childList: true,
-    subtree: true,
-  });
+  (async () => {
+    let popupContainer = document.querySelector('ytmusic-popup-container')
+    while (!popupContainer) {
+      await new Promise(resolve => setTimeout(resolve, 100))
+      popupContainer = document.querySelector('ytmusic-popup-container')
+    }
+    
+    menuObserver.observe(popupContainer, {
+      childList: true,
+      subtree: true,
+    });
+  })()
 };
