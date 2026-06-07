@@ -451,7 +451,7 @@ async function createMainWindow() {
     }
   });
 
-  let winWasMaximized: boolean;
+  let winWasMaximized = win.isMaximized();
 
   win.on('resize', () => {
     const [width, height] = win.getSize();

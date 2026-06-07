@@ -98,16 +98,28 @@ export default createPlugin({
     timeUpdateListener: (e: Event) => {
       if (e.target instanceof HTMLVideoElement) {
         const target = e.target;
+        const t = target.currentTime;
 
-        for (const segment of currentSegments) {
-          if (
-            target.currentTime >= segment[0] &&
-            target.currentTime < segment[1]
-          ) {
-            target.currentTime = segment[1];
-            if (window.electronIs.dev()) {
-              console.log('SponsorBlock: skipping segment', segment);
-            }
+        // Binary search over sorted segments to find matching segment
+        let lo = 0;
+        let hi = currentSegments.length - 1;
+        let found = -1;
+        while (lo <= hi) {
+          const mid = (lo + hi) >>> 1;
+          if (t < currentSegments[mid][0]) {
+            hi = mid - 1;
+          } else if (t >= currentSegments[mid][1]) {
+            lo = mid + 1;
+          } else {
+            found = mid;
+            break;
+          }
+        }
+
+        if (found !== -1) {
+          target.currentTime = currentSegments[found][1];
+          if (window.electronIs.dev()) {
+            console.log('SponsorBlock: skipping segment', currentSegments[found]);
           }
         }
       }

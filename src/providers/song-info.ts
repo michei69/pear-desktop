@@ -271,15 +271,9 @@ const suffixesToRemove = [
   /\s*(- topic)$/gi,
   /\s*vevo$/gi,
 
-  // Video titles
-  /\s*[(|[]official(.*?)[)|\]]/gi,
-  /\s*[(|[]((lyrics?|visualizer|audio)\s*(video)?)[)|\]]/gi,
-  /\s*[(|[](performance video)[)|\]]/gi,
-  /\s*[(|[](clip official)[)|\]]/gi,
-  /\s*[(|[](video version)[)|\]]/gi,
-  /\s*[(|[](HD|HQ)\s*?(?:audio)?[)|\]]$/gim,
-  /\s*[(|[](live)[)|\]]$/gim,
-  /\s*[(|[]4K\s*?(?:upgrade)?[)|\]]$/gim,
+  // Video titles — bracket-enclosed tags (combined)
+  /\s*[(|[](official(.*?)|(lyrics?|visualizer|audio)\s*(video)?|performance video|clip official|video version)[)|\]]/gi,
+  /\s*[(|[]((HD|HQ)\s*?(?:audio)?|live|4K\s*?(?:upgrade)?)[)|\]]$/gim,
 ];
 
 export function cleanupName(name: string): string {

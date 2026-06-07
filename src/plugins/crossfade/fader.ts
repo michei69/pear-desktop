@@ -72,6 +72,7 @@ export class VolumeFader {
   private fadeDuration: number = 1000;
   private active: boolean = false;
   private fade: VolumeFade | undefined;
+  private boundUpdateVolume: () => void;
 
   /**
    * VolumeFader Constructor
@@ -183,6 +184,9 @@ export class VolumeFader {
 
     // Indicate that fader is not active yet
     this.active = false;
+
+    // Pre-bind to avoid per-frame allocation in rAF
+    this.boundUpdateVolume = this.updateVolume.bind(this);
 
     // Initialization done
     this.logger?.('Initialized for', this.media);
@@ -317,7 +321,7 @@ export class VolumeFader {
         this.media.volume = this.scale.internalToVolume(level);
 
         // Schedule next update
-        window.requestAnimationFrame(this.updateVolume.bind(this));
+        window.requestAnimationFrame(this.boundUpdateVolume);
       } else {
         // Log end of fade
         this.logger?.('Fade to ' + String(this.fade.volume.end) + ' complete.');

@@ -60,6 +60,9 @@ export const Popup = (props: PopupProps) => {
 
   document.body.append(popup);
 
+  let closeTimeout: ReturnType<typeof setTimeout> | undefined;
+  let closeHandler: ((event: MouseEvent) => void) | undefined;
+
   return {
     element: popup,
     container,
@@ -86,17 +89,29 @@ export const Popup = (props: PopupProps) => {
       popup.style.setProperty('opacity', '1');
       popup.style.setProperty('pointer-events', 'unset');
 
-      setTimeout(() => {
-        const onClose = (event: MouseEvent) => {
+      // Clear any pending close timeout / existing handler before re-showing
+      if (closeTimeout !== undefined) {
+        clearTimeout(closeTimeout);
+        closeTimeout = undefined;
+      }
+      if (closeHandler) {
+        document.removeEventListener('click', closeHandler);
+        closeHandler = undefined;
+      }
+
+      closeTimeout = setTimeout(() => {
+        closeTimeout = undefined;
+        closeHandler = (event: MouseEvent) => {
           const isPopupClick = event
             .composedPath()
             .some((element) => element === popup);
           if (!isPopupClick) {
             this.dismiss();
-            document.removeEventListener('click', onClose);
+            document.removeEventListener('click', closeHandler!);
+            closeHandler = undefined;
           }
         };
-        document.addEventListener('click', onClose);
+        document.addEventListener('click', closeHandler);
       }, 16);
     },
     showAtAnchor(anchor: HTMLElement) {
@@ -109,6 +124,14 @@ export const Popup = (props: PopupProps) => {
     },
 
     dismiss() {
+      if (closeTimeout !== undefined) {
+        clearTimeout(closeTimeout);
+        closeTimeout = undefined;
+      }
+      if (closeHandler) {
+        document.removeEventListener('click', closeHandler);
+        closeHandler = undefined;
+      }
       popup.style.setProperty('opacity', '0');
       popup.style.setProperty('pointer-events', 'none');
     },

@@ -1,6 +1,6 @@
 // Used for caching
 import path from 'node:path';
-import fs, { promises } from 'node:fs';
+import { promises } from 'node:fs';
 
 import { ElectronBlocker } from '@ghostery/adblocker-electron';
 import { app, net } from 'electron';
@@ -31,9 +31,7 @@ export const loadAdBlockerEngine = async (
 ) => {
   // Only use cache if no additional blocklists are passed
   const cacheDirectory = path.join(app.getPath('userData'), 'adblock_cache');
-  if (!fs.existsSync(cacheDirectory)) {
-    fs.mkdirSync(cacheDirectory);
-  }
+  await promises.mkdir(cacheDirectory, { recursive: true });
   const cachingOptions =
     cache && additionalBlockLists.length === 0
       ? {

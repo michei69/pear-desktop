@@ -314,10 +314,13 @@ const authenticate = async (
       });
     } else {
       // wait for the previous window to close
-      while (authWindowOpened) {
-        // wait
-      }
-      resolve(latestAuthResult);
+      const waitForClose = async () => {
+        while (authWindowOpened) {
+          await new Promise((r) => setTimeout(r, 100));
+        }
+        resolve(latestAuthResult);
+      };
+      waitForClose();
     }
   });
 };
