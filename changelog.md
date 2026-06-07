@@ -2,7 +2,15 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v3.11.10](https://github.com/michei69/pear-desktop/compare/v3.11.9...v3.11.10)
+
+- feat: modify lyrics search per song [`f7aa48b`](https://github.com/michei69/pear-desktop/commit/f7aa48b7432f510abaaf0e01461235df2c34aafd)
+- fix: a few nitpicks and perf stuff [`a5ca725`](https://github.com/michei69/pear-desktop/commit/a5ca725679f3c47f9c091ab7695c38d3ab0cfd71)
+- feat: like & dislike buttons in taskbar control [`873dc81`](https://github.com/michei69/pear-desktop/commit/873dc81006656c6032a3905b5fc3fc5c235c7742)
+
 #### [v3.11.9](https://github.com/michei69/pear-desktop/compare/v3.11.8...v3.11.9)
+
+> 11 May 2026
 
 - fix: explicitly enable desktop and start menu shortcuts for nsis-web [`#2`](https://github.com/michei69/pear-desktop/pull/2)
 - chore(i18n): update translation files [`a6d17b3`](https://github.com/michei69/pear-desktop/commit/a6d17b37cedd52a0d0c9c9d9b412d0aed89e9c7b)
