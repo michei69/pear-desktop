@@ -2,7 +2,16 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v3.11.11](https://github.com/michei69/pear-desktop/compare/v3.11.10...v3.11.11)
+
+- fix: synced lyrics style affecting other text too [`#4`](https://github.com/michei69/pear-desktop/issues/4)
+- feat: playlist searcher [`0129746`](https://github.com/michei69/pear-desktop/commit/012974644c134d8b2b720019c617081521a1b235)
+- chore: add biomejs as alternative to eslint + prettier [`7dd7f00`](https://github.com/michei69/pear-desktop/commit/7dd7f00a4863ea5f94fc60e9cd52862c2306c530)
+- feat: like/dislike functionality in tray [`e4beae0`](https://github.com/michei69/pear-desktop/commit/e4beae0f14381d34f577b47ac297288e9c57fe50)
+
 #### [v3.11.10](https://github.com/michei69/pear-desktop/compare/v3.11.9...v3.11.10)
+
+> 7 June 2026
 
 - feat: modify lyrics search per song [`f7aa48b`](https://github.com/michei69/pear-desktop/commit/f7aa48b7432f510abaaf0e01461235df2c34aafd)
 - fix: a few nitpicks and perf stuff [`a5ca725`](https://github.com/michei69/pear-desktop/commit/a5ca725679f3c47f9c091ab7695c38d3ab0cfd71)
