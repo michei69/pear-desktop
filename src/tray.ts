@@ -1,4 +1,4 @@
-import { Menu, nativeImage, screen, Tray } from 'electron';
+import { ipcMain, Menu, nativeImage, screen, Tray } from 'electron';
 import is from 'electron-is';
 
 import TrayIcon from '@assets/tray.png?asset&asarUnpack';
@@ -14,12 +14,14 @@ import { getSongControls } from './providers/song-controls';
 import { showOnCurrentDesktop } from './window-utils';
 
 import { APPLICATION_NAME, t } from '@/i18n';
+import { LikeType } from '@/types/datahost-get-state';
 
 import type { MenuTemplate } from './menu';
 
 // Prevent tray being garbage collected
 let tray: Electron.Tray | undefined;
 let traySongInfoCallback: SongInfoCallback | null = null;
+let currentLikeStatus: LikeType = LikeType.Indifferent;
 
 type TrayEvent = (
   event: Electron.KeyboardEvent,
@@ -79,6 +81,7 @@ export const setUpTray = (app: Electron.App, win: Electron.BrowserWindow) => {
       unregisterCallback(traySongInfoCallback);
       traySongInfoCallback = null;
     }
+    ipcMain.removeAllListeners('peard:like-changed');
     return;
   }
 
@@ -87,7 +90,10 @@ export const setUpTray = (app: Electron.App, win: Electron.BrowserWindow) => {
     unregisterCallback(traySongInfoCallback);
   }
 
-  const { playPause, next, previous } = getSongControls(win);
+  // Remove old like-changed listener before re-registering
+  ipcMain.removeAllListeners('peard:like-changed');
+
+  const { playPause, next, previous, like, dislike } = getSongControls(win);
 
   const pixelRatio = is.windows()
     ? screen.getPrimaryDisplay().scaleFactor || 1
@@ -133,50 +139,80 @@ export const setUpTray = (app: Electron.App, win: Electron.BrowserWindow) => {
     }
   });
 
-  const template: MenuTemplate = [
-    {
-      label: t('main.tray.play-pause'),
-      click() {
-        playPause();
+  const buildTrayMenu = (): Menu => {
+    const template: MenuTemplate = [
+      {
+        label: t('main.tray.play-pause'),
+        click() {
+          playPause();
+        },
       },
-    },
-    {
-      label: t('main.tray.next'),
-      click() {
-        next();
+      {
+        label: t('main.tray.next'),
+        click() {
+          next();
+        },
       },
-    },
-    {
-      label: t('main.tray.previous'),
-      click() {
-        previous();
+      {
+        label: t('main.tray.previous'),
+        click() {
+          previous();
+        },
       },
-    },
-    {
-      label: t('main.tray.show'),
-      click() {
-        if (config.get('options.trayMoveToCurrentDesktop')) {
-          showOnCurrentDesktop(win);
-        } else {
-          win.show();
-        }
-        app.dock?.show();
+      {
+        label:
+          currentLikeStatus === LikeType.Like
+            ? t('main.tray.unlike')
+            : t('main.tray.like'),
+        click() {
+          like();
+        },
       },
-    },
-    { type: 'separator' },
-    {
-      label: t('main.tray.restart'),
-      click: restart,
-    },
-    { type: 'separator' },
-    {
-      label: t('main.tray.quit'),
-      role: 'quit',
-    },
-  ];
+      {
+        label:
+          currentLikeStatus === LikeType.Dislike
+            ? t('main.tray.undislike')
+            : t('main.tray.dislike'),
+        click() {
+          dislike();
+        },
+      },
+      {
+        label: t('main.tray.show'),
+        click() {
+          if (config.get('options.trayMoveToCurrentDesktop')) {
+            showOnCurrentDesktop(win);
+          } else {
+            win.show();
+          }
+          app.dock?.show();
+        },
+      },
+      { type: 'separator' },
+      {
+        label: t('main.tray.restart'),
+        click: restart,
+      },
+      { type: 'separator' },
+      {
+        label: t('main.tray.quit'),
+        role: 'quit',
+      },
+    ];
 
-  const trayMenu = Menu.buildFromTemplate(template);
-  tray.setContextMenu(trayMenu);
+    return Menu.buildFromTemplate(template);
+  };
+
+  tray.setContextMenu(buildTrayMenu());
+
+  // Listen for like status changes from the renderer
+  win.webContents.send('peard:setup-like-changed-listener');
+  ipcMain.on('peard:like-changed', (_, status: LikeType) => {
+    currentLikeStatus = status;
+    if (tray) {
+      tray.setContextMenu(buildTrayMenu());
+    }
+  });
 
   traySongInfoCallback = (songInfo, event) => {
     if (event === SongInfoEvent.TimeChanged) return;

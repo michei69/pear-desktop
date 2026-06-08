@@ -205,6 +205,10 @@
     "tray": {
       "next": "Next",
       "play-pause": "Play/Pause",
+      "like": "Like",
+      "dislike": "Dislike",
+      "unlike": "Unlike",
+      "undislike": "Undislike",
       "previous": "Previous",
       "quit": "Exit",
       "restart": "Restart App",
