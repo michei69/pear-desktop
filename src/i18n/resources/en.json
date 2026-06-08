@@ -745,6 +745,14 @@
         "button": "Speed"
       }
     },
+    "playlist-search": {
+      "description": "Adds a search input to filter playlists in the sidebar and the Add to playlist dialog",
+      "name": "Playlist Search",
+      "templates": {
+        "search-placeholder": "Search playlists",
+        "no-results": "No playlists found"
+      }
+    },
     "precise-volume": {
       "description": "Control the volume precisely using mousewheel/hotkeys, with a custom HUD and customizable volume steps",
       "menu": {

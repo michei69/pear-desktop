@@ -1,0 +1,59 @@
+.pear-pls-wrapper {
+  position: relative;
+  padding: 8px 16px;
+}
+
+#pear-pls-dialog-wrapper {
+  margin-top: 10px;
+}
+
+.pear-pls-input {
+  border: none;
+  height: 40px;
+  width: 192px;
+  padding: 8px 0 8px 10px;
+  box-sizing: border-box;
+
+  font-family: inherit;
+  font-size: 14px;
+  text-indent: 35px;
+  background-color: transparent;
+  color: rgba(255, 255, 255, 0.87);
+
+  border-bottom: 1px solid color-mix(in srgb, currentColor 20%, transparent);
+  transition: border-bottom-color 0.6s ease;
+}
+
+.pear-pls-input::placeholder {
+  color: rgba(154, 152, 152, 0.93);
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.pear-pls-input:focus {
+  border-bottom-color: rgba(255, 255, 255, 0.87);
+  outline: none;
+}
+
+.pear-pls-no-results-message {
+  display: none;
+  padding: 24px;
+  text-align: center;
+  color: rgba(154, 152, 152, 0.93);
+  font-size: 14px;
+}
+
+#pear-pls-sidebar-no-results-message {
+  padding: 16px;
+  font-size: 12px;
+}
+
+.pear-pls-search-icon {
+  position: absolute;
+  top: 50%;
+  left: 28px;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  color: rgba(154, 152, 152, 0.93);
+}
