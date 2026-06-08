@@ -146,7 +146,7 @@
 }
 
 .text-lyrics yt-formatted-string,
-.description yt-formatted-string {
+.synced-line > .description yt-formatted-string {
   font-size: inherit !important;
   line-height: inherit !important;
 }
