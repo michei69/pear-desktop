@@ -489,6 +489,12 @@ const main = async () => {
 
   // Blocks the "Are You Still There?" popup by setting the last active time to Date.now every 15min
   setInterval(() => (window._lact = Date.now()), 900_000);
+  Object.defineProperties(document, {
+    hidden: { value: false },
+    visibilityState: { value: "visible" },
+  });
+  addEventListener("visibilitychange", (e) => e.stopImmediatePropagation(), true);
+
 
   // Setup back to front logger
   if (window.electronIs.dev()) {
