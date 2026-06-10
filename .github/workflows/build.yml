@@ -87,8 +87,8 @@ jobs:
         with:
           name: pear-desktop-macos
           path: |
-            dist/*.dmg
-            dist/*.dmg.blockmap
+            pack/*.dmg
+            pack/*.dmg.blockmap
 
       - name: Upload Linux artifacts
         if: startsWith(matrix.os, 'ubuntu') && (github.repository == 'michei69/pear-desktop' && github.event_name != 'pull_request')
@@ -96,13 +96,13 @@ jobs:
         with:
           name: pear-desktop-linux
           path: |
-            dist/*.AppImage
-            dist/*.deb
-            dist/*.rpm
-            dist/*.flatpak
-            dist/*.snap
-            dist/*.freebsd
-            dist/*.tar.gz
+            pack/*.AppImage
+            pack/*.deb
+            pack/*.rpm
+            pack/*.flatpak
+            pack/*.snap
+            pack/*.freebsd
+            pack/*.tar.gz
 
       - name: Upload Windows artifacts
         if: startsWith(matrix.os, 'windows') && (github.repository == 'michei69/pear-desktop' && github.event_name != 'pull_request')
@@ -110,9 +110,9 @@ jobs:
         with:
           name: pear-desktop-windows
           path: |
-            dist/*.exe
-            dist/*.msi
-            dist/*.nsis.7z
+            pack/*.exe
+            pack/*.msi
+            pack/*.nsis.7z
 
       # disabled temporarily
       - name: Test
