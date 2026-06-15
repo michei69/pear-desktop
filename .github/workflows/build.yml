@@ -111,8 +111,8 @@ jobs:
           name: pear-desktop-windows
           path: |
             pack/*.exe
-            pack/*.msi
-            pack/*.nsis.7z
+            pack/nsis-web/*.nsis.7z
+            pack/nsis-web/*.exe
 
       # disabled temporarily
       - name: Test
