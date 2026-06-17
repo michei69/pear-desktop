@@ -1,5 +1,5 @@
 export const isMusicOrVideoTrack = () => {
-  const elements = document.querySelectorAll<
+  for (const menuSelector of document.querySelectorAll<
     HTMLAnchorElement & {
       data: {
         watchEndpoint: {
@@ -11,13 +11,11 @@ export const isMusicOrVideoTrack = () => {
         clickTrackingParams: string;
       };
     }
-  >('tp-yt-paper-listbox #navigation-endpoint');
-  console.log('[check] isMusicOrVideoTrack: found', elements.length, '#navigation-endpoint elements in tp-yt-paper-listbox');
-  for (const menuSelector of elements) {
-    const hasAddVid = !!menuSelector?.data?.addToPlaylistEndpoint?.videoId;
-    const hasWatchVid = !!menuSelector?.data?.watchEndpoint?.videoId;
-    console.log('[check] isMusicOrVideoTrack item:', { hasData: !!menuSelector?.data, hasAddVid, hasWatchVid });
-    if (hasAddVid || hasWatchVid) {
+  >('tp-yt-paper-listbox #navigation-endpoint')) {
+    if (
+      menuSelector?.data?.addToPlaylistEndpoint?.videoId ||
+      menuSelector?.data?.watchEndpoint?.videoId
+    ) {
       return true;
     }
   }
@@ -25,7 +23,7 @@ export const isMusicOrVideoTrack = () => {
 };
 
 export const isAlbumOrPlaylist = () => {
-  const elements = document.querySelectorAll<
+  for (const menuSelector of document.querySelectorAll<
     HTMLAnchorElement & {
       data: {
         addToPlaylistEndpoint: {
@@ -34,12 +32,8 @@ export const isAlbumOrPlaylist = () => {
         clickTrackingParams: string;
       };
     }
-  >('tp-yt-paper-listbox #navigation-endpoint');
-  console.log('[check] isAlbumOrPlaylist: found', elements.length, '#navigation-endpoint elements in tp-yt-paper-listbox');
-  for (const menuSelector of elements) {
-    const hasPlaylistId = !!menuSelector?.data?.addToPlaylistEndpoint?.playlistId;
-    console.log('[check] isAlbumOrPlaylist item:', { hasData: !!menuSelector?.data, hasPlaylistId });
-    if (hasPlaylistId) {
+  >('tp-yt-paper-listbox #navigation-endpoint')) {
+    if (menuSelector?.data?.addToPlaylistEndpoint?.playlistId) {
       return true;
     }
   }

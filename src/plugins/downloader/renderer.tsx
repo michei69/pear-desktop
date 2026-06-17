@@ -25,14 +25,6 @@ let buttonContainer: HTMLDivElement | null = null;
 const menuObserver = new MutationObserver(() => {
   const menu = getSongMenu();
 
-  console.log('[downloader] observer fired', {
-    menuFound: !!menu,
-    buttonInMenu: menu ? menu.contains(buttonContainer) : false,
-    isMusicOrVideo: isMusicOrVideoTrack(),
-    isAlbumOrPlaylist: isAlbumOrPlaylist(),
-    buttonExists: !!buttonContainer,
-  });
-
   if (
     !menu ||
     menu.contains(buttonContainer) ||
@@ -42,14 +34,12 @@ const menuObserver = new MutationObserver(() => {
     return;
   }
 
-  console.log('[downloader] prepending button to menu');
   menu.prepend(buttonContainer);
 });
 
 export const onRendererLoad = ({
   ipc,
 }: RendererContext<DownloaderPluginConfig>) => {
-  console.log('[downloader] onRendererLoad called');
   download = () => {
     const songMenu = getSongMenu();
 
@@ -114,16 +104,13 @@ export const onRendererLoad = ({
     buttonContainer,
   );
 
-  console.log('[downloader] buttonContainer created, starting observer poll');
-
   (async () => {
     let popupContainer = document.querySelector('ytmusic-popup-container')
     while (!popupContainer) {
       await new Promise(resolve => setTimeout(resolve, 100))
       popupContainer = document.querySelector('ytmusic-popup-container')
     }
-
-    console.log('[downloader] popupContainer found, arming observer');
+    
     menuObserver.observe(popupContainer, {
       childList: true,
       subtree: true,
