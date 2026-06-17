@@ -95,10 +95,7 @@ export const onRendererLoad = ({
     const targetHtml = feedback || t('plugins.downloader.templates.button');
     setDownloadButtonText(targetHtml);
   });
-};
 
-export const onPlayerApiReady = () => {
-  console.log('[downloader] onPlayerApiReady called');
   setDownloadButtonText(t('plugins.downloader.templates.button'));
 
   buttonContainer = document.createElement('div');
