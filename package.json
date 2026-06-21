@@ -150,7 +150,6 @@
     "mdui": "2.1.4",
     "node-html-parser": "7.1.0",
     "node-id3": "0.2.9",
-    "node-smtc": "git+https://github.com/michei69/node-smtc.git",
     "peerjs": "1.5.5",
     "pinyin-pro": "^3.27.0",
     "semver": "7.7.4",
@@ -211,6 +210,9 @@
     "vite-plugin-resolve": "2.5.2",
     "vite-plugin-solid": "2.11.12",
     "ws": "8.20.0"
+  },
+  "optionalDependencies": {
+    "node-smtc": "git+https://github.com/michei69/node-smtc.git"
   },
   "auto-changelog": {
     "hideCredit": true,
