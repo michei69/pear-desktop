@@ -109,7 +109,8 @@
                   "title": "Set proxy"
                 }
               },
-              "toggle-dev-tools": "Toggle DevTools"
+              "toggle-dev-tools": "Toggle DevTools",
+              "force-smtc": "Force the use of external SMTC"
             }
           },
           "always-on-top": "Always on top",

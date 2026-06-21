@@ -28,6 +28,7 @@ export interface DefaultConfig {
     trayClickPlayPause: boolean;
     trayMoveToCurrentDesktop: boolean;
     autoResetAppCache: boolean;
+    forceSmtc: boolean;
     resumeOnStart: boolean;
     likeButtons: string;
     swapLikeButtonsOrder: boolean;
@@ -67,6 +68,7 @@ export const defaultConfig: DefaultConfig = {
     trayClickPlayPause: false,
     trayMoveToCurrentDesktop: false,
     autoResetAppCache: false,
+    forceSmtc: false,
     resumeOnStart: true,
     likeButtons: '',
     swapLikeButtonsOrder: false,

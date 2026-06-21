@@ -130,7 +130,7 @@ export const mainMenuTemplate = async (
 
         return aPluginLabel.localeCompare(bPluginLabel);
       })
-      .map(async (id) => {
+      .map((id) => {
         const predefinedTemplate = menuResultMap.get(id);
         if (predefinedTemplate) return predefinedTemplate;
 
@@ -623,6 +623,17 @@ export const mainMenuTemplate = async (
                 config.edit();
               },
             },
+            is.windows() ? {
+              label: t(
+                'main.menu.options.submenu.advanced-options.submenu.force-smtc',
+              ),
+              type: 'checkbox',
+              checked: config.get('options.forceSmtc'),
+              click(item: MenuItem) {
+                // TODO: prompt restart
+                config.setMenuOption('options.forceSmtc', item.checked);
+              },
+            } : {},
           ],
         },
       ],

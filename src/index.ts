@@ -36,7 +36,7 @@ import { refreshMenu, setApplicationMenu } from '@/menu';
 import { fileExists, injectCSS, injectCSSAsFile } from '@/plugins/utils/main';
 import { isTesting } from '@/utils/testing';
 import { setUpTray } from '@/tray';
-import { setupSongInfo } from '@/providers/song-info';
+import { registerCallback, setupSongInfo, SongInfoEvent } from '@/providers/song-info';
 import { restart, setupAppControls } from '@/providers/app-controls';
 import {
   APP_PROTOCOL,
@@ -62,6 +62,9 @@ import ErrorHtmlAsset from '@assets/error.html?asset';
 import { defaultAuthProxyConfig } from '@/plugins/auth-proxy-adapter/config';
 
 import type { PluginConfig } from '@/types/plugins';
+
+import { tmpdir } from 'node:os';
+import { RepeatMode } from './types/datahost-get-state';
 
 // Catch errors and log them
 unhandled({
@@ -134,6 +137,80 @@ if (is.linux()) {
   // Stops chromium from launching its own MPRIS service
   if (await config.plugins.isEnabled('shortcuts')) {
     app.commandLine.appendSwitch('disable-features', 'MediaSessionService');
+  }
+}
+if (is.windows()) {
+  // prevent electron's smtc
+  if (config.get("options.forceSmtc")) {
+    import("node-smtc").then((mod) => {
+      const SMTCPlayer = mod.default
+      console.log("disabled mediasess")
+      app.commandLine.appendSwitch('disable-features', 'HardwareMediaKeyHandling');
+      app.commandLine.appendSwitch('disable-features', 'MediaSessionService');
+  
+      const smtc = new SMTCPlayer()
+      smtc.addListener("play", () => {
+        mainWindow?.webContents.send("peard:play")
+      })
+      smtc.addListener("pause", () => {
+        mainWindow?.webContents.send("peard:pause")
+      })
+      smtc.addListener("next", () => {
+        mainWindow?.webContents.send("peard:next-video")
+      })
+      smtc.addListener("previous", () => {
+        mainWindow?.webContents.send("peard:previous-video")
+      })
+      smtc.addListener("shuffle", () => {
+        mainWindow?.webContents.send("peard:shuffle")
+        mainWindow?.webContents.send("peard:get-shuffle")
+      })
+      smtc.addListener("repeat", () => {
+        mainWindow?.webContents.send("peard:switch-repeat")
+      })
+      smtc.addListener("positionchange", (ms: number) => {
+        mainWindow?.webContents.send("peard:seek-to", ms / 1000)
+      })
+      ipcMain.on("peard:get-shuffle-response", (_, val: boolean) => {
+        smtc.setShuffle(val)
+      })
+      ipcMain.on("peard:shuffle-changed", (_, val: boolean) => {
+        smtc.setShuffle(val)
+      })
+      ipcMain.on("peard:repeat-changed", (_, repeatMode: RepeatMode) => {
+        smtc.setAutoRepeat(repeatMode == "NONE" ? "none" : repeatMode == "ONE" ? "track" : "list")
+      })
+      registerCallback((songInfo, event) => {
+        if (event === SongInfoEvent.VideoSrcChanged) {
+          smtc.setAlbumArtist(songInfo.artist)
+          smtc.setAlbumTitle(songInfo.album ?? "")
+          smtc.setArtist(songInfo.artist)
+          smtc.setTitle(songInfo.title)
+          if (songInfo.image) {
+            const p = path.join(tmpdir(), "thumb.png")
+            fs.writeFileSync(p, songInfo.image.toPNG())
+            smtc.setThumbnail(p)
+          }
+          // smtc.setThumbnail(songInfo.imageSrc ?? "")
+          smtc.setStartTime(0)
+          smtc.setMinSeekTime(0)
+          smtc.setPosition(0)
+          smtc.setEndTime(songInfo.songDuration * 1000)
+          smtc.setMaxSeekTime(songInfo.songDuration * 1000)
+        }
+    
+        if (event === SongInfoEvent.PlayOrPaused) {
+          smtc.setPosition((songInfo.elapsedSeconds ?? 0) * 1000)
+          smtc.setPlaybackStatus(songInfo.isPaused ? "paused" : "playing")
+        }
+    
+        if (event === SongInfoEvent.TimeChanged) {
+          smtc.setPosition((songInfo.elapsedSeconds ?? 0) * 1000)
+        }
+      })
+      smtc.setAppMediaId("com.github.th-ch.\u0079\u006f\u0075\u0074\u0075\u0062\u0065\u002d\u006d\u0075\u0073\u0069\u0063")
+      smtc.start()
+    })
   }
 }
 
@@ -981,7 +1058,7 @@ function removeContentSecurityPolicy(
   // When multiple listeners are defined, apply them all
   betterSession.webRequest.setResolver(
     'onHeadersReceived',
-    async (listeners) => {
+    (listeners) => {
       return listeners.reduce(
         async (accumulator, listener) => {
           const acc = await accumulator;

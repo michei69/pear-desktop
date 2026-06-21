@@ -235,6 +235,9 @@ importers:
       node-id3:
         specifier: 0.2.9
         version: 0.2.9
+      node-smtc:
+        specifier: git+https://github.com/michei69/node-smtc.git
+        version: https://codeload.github.com/michei69/node-smtc/tar.gz/6894d2a2b7cc31f953e4dd0d605282e81993d16b
       peerjs:
         specifier: 1.5.5
         version: 1.5.5
@@ -284,6 +287,9 @@ importers:
         specifier: 4.3.6
         version: 4.3.6
     devDependencies:
+      '@electron/rebuild':
+        specifier: ^4.0.4
+        version: 4.0.4
       '@eslint/js':
         specifier: 9.39.4
         version: 9.39.4
@@ -3381,6 +3387,10 @@ packages:
   node-addon-api@1.7.2:
     resolution: {integrity: sha512-ibPK3iA+vaY1eEjESkQkM0BbCqFOaZMiXRTtdB0u7b4djtY6JnsjvPdUHVMg6xQt3B8fpTTWHI9A+ADjM9frzg==}
 
+  node-addon-api@8.8.0:
+    resolution: {integrity: sha512-c5Ko1fZJIJmzhFIkhRN76WTq+fC6tWnGy9CXA0fA+XygsWZmEwG8vmbkNqxMyoaa0Tin4djul49NzdVcJJcjeA==}
+    engines: {node: ^18 || ^20 || >= 21}
+
   node-api-version@0.2.1:
     resolution: {integrity: sha512-2xP/IGGMmmSQpI1+O/k72jF/ykvZ89JeuKX3TLJAYPDVLUalrshrLHkeVcCCZqG/eEa635cr8IBYzgnDvM2O8Q==}
 
@@ -3414,6 +3424,10 @@ packages:
 
   node-releases@2.0.38:
     resolution: {integrity: sha512-3qT/88Y3FbH/Kx4szpQQ4HzUbVrHPKTLVpVocKiLfoYvw9XSGOX2FmD2d6DrXbVYyAQTF2HeF6My8jmzx7/CRw==}
+
+  node-smtc@https://codeload.github.com/michei69/node-smtc/tar.gz/6894d2a2b7cc31f953e4dd0d605282e81993d16b:
+    resolution: {tarball: https://codeload.github.com/michei69/node-smtc/tar.gz/6894d2a2b7cc31f953e4dd0d605282e81993d16b}
+    version: 1.0.0
 
   nopt@9.0.0:
     resolution: {integrity: sha512-Zhq3a+yFKrYwSBluL4H9XP3m3y5uvQkB/09CwDruCiRmR/UJYnn9W4R48ry0uGC70aeTPKLynBtscP9efFFcPw==}
@@ -7754,6 +7768,8 @@ snapshots:
   node-addon-api@1.7.2:
     optional: true
 
+  node-addon-api@8.8.0: {}
+
   node-api-version@0.2.1:
     dependencies:
       semver: 7.7.4
@@ -7800,6 +7816,11 @@ snapshots:
       iconv-lite: 0.6.2
 
   node-releases@2.0.38: {}
+
+  node-smtc@https://codeload.github.com/michei69/node-smtc/tar.gz/6894d2a2b7cc31f953e4dd0d605282e81993d16b:
+    dependencies:
+      node-addon-api: 8.8.0
+      node-gyp-build: 4.8.4
 
   nopt@9.0.0:
     dependencies:
