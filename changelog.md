@@ -2,7 +2,16 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v3.11.12](https://github.com/michei69/pear-desktop/compare/v3.11.11...v3.11.12)
+
+- chore: bump to v3.11.12 [`#5`](https://github.com/michei69/pear-desktop/issues/5)
+- feat: add full smtc support [`e399565`](https://github.com/michei69/pear-desktop/commit/e399565fd601d6d2e5b89770a834e27cd65b3388)
+- hack: add a shitload of logs [`10bece6`](https://github.com/michei69/pear-desktop/commit/10bece6872410149daa7073c5656b1a457669370)
+- revert: "hack: add a shitload of logs" [`fb167eb`](https://github.com/michei69/pear-desktop/commit/fb167ebb03fbcaece1810ce32e20c69e4c4abe05)
+
 #### [v3.11.11](https://github.com/michei69/pear-desktop/compare/v3.11.10...v3.11.11)
+
+> 8 June 2026
 
 - fix: synced lyrics style affecting other text too [`#4`](https://github.com/michei69/pear-desktop/issues/4)
 - feat: playlist searcher [`0129746`](https://github.com/michei69/pear-desktop/commit/012974644c134d8b2b720019c617081521a1b235)
