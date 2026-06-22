@@ -109,7 +109,8 @@
                   "title": "Nastavtiť proxy"
                 }
               },
-              "toggle-dev-tools": "Prepnúť DevTools"
+              "toggle-dev-tools": "Prepnúť DevTools",
+              "force-smtc": "Vynútiť použitie externého SMTC"
             }
           },
           "always-on-top": "Vždy na vrchu",
@@ -145,7 +146,8 @@
               "enabled-and-hide-app": "Povolené a skry aplikáciu",
               "enabled-and-show-app": "Povolené a ukáž aplikáciu",
               "play-pause-on-click": "Prehrať/Pozastaviť na stlačenie",
-              "move-to-current-desktop": "Presunúť na aktuálnu virtuálnu plochu pri zobrazení"
+              "move-to-current-desktop": "Presunúť na aktuálnu virtuálnu plochu pri zobrazení",
+              "force-white-icons": "Vynútiť používanie bielych ikon"
             }
           },
           "visual-tweaks": {
@@ -212,7 +214,11 @@
       "tooltip": {
         "default": "{{applicationName}}",
         "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
-      }
+      },
+      "like": "Páči sa mi",
+      "dislike": "Nepáči sa",
+      "unlike": "Na rozdiel od",
+      "undislike": "Zrušiť dislike"
     }
   },
   "plugins": {
@@ -256,7 +262,7 @@
         "buffer": {
           "label": "Vyrovnávacia pamäť",
           "submenu": {
-            "buffer": "{{buffer}}"
+            "buffer": "vyrovnávacia pamäť"
           }
         },
         "opacity": {
@@ -645,7 +651,7 @@
           "host": "Pripojený ako hostiteľ"
         }
       },
-      "name": "Music Together [Beta]",
+      "name": "Hudba Spolu [Beta]",
       "toast": {
         "add-song-failed": "Nepodarilo sa pridať skladbu",
         "closed": "Music Together ukončené",
@@ -1040,6 +1046,14 @@
             "tooltip": "Jazyk, do ktorého sa majú texty preložiť."
           },
           "tooltip": "Preložiť texty a zobraziť preložený výsledok riadok po riadku."
+        },
+        "use-ytm-lyrics-without-proxy": {
+          "label": "Použiť texty YTM bez proxy",
+          "tooltip": "Preskočiť YTM proxy prehliadania a volať YouTube Music priamo pomocou overenej relácie aplikácie. Užitočné, ak dôverujete svojej sieti/regiónu, že umožní priame volania prehliadania."
+        },
+        "show-custom-search-button": {
+          "label": "Zobraziť vlastné tlačidlo vyhľadávania",
+          "tooltip": "Zobraziť tlačidlo vyhľadávania vo výbere textov piesní, ktoré umožňuje prepísať vyhľadávací dopyt a interpreta pre aktuálnu skladbu."
         }
       },
       "name": "Synchronizované texty",
@@ -1134,6 +1148,14 @@
         "log-to-console": "Zaznamenávať udalosti obnovenia do konzoly"
       },
       "name": "Obnova prehrávania"
+    },
+    "playlist-search": {
+      "description": "Pridá vyhľadávacie pole na filtrovanie playlistov v bočnom paneli a v dialógu Pridať do playlistu",
+      "name": "Vyhľadávanie v zozname skladieb",
+      "templates": {
+        "search-placeholder": "Hľadať playlisty",
+        "no-results": "Nenašli sa žiadne playlisty"
+      }
     }
   }
 }

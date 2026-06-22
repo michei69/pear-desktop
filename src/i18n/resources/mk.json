@@ -109,7 +109,8 @@
                   "title": "Постави прокси"
                 }
               },
-              "toggle-dev-tools": "Вклучи/Исклучи DevTools"
+              "toggle-dev-tools": "Вклучи/Исклучи DevTools",
+              "force-smtc": "Присили употреба на надворешен SMTC"
             }
           },
           "always-on-top": "Секогаш на врв",
@@ -145,7 +146,8 @@
               "enabled-and-hide-app": "Овозможено и скриј апликација",
               "enabled-and-show-app": "Овозможено и прикажи апликација",
               "move-to-current-desktop": "Премести на тековната виртуелна работна површина при прикажување",
-              "play-pause-on-click": "Пушти/Паузирај со клик"
+              "play-pause-on-click": "Пушти/Паузирај со клик",
+              "force-white-icons": "Присилете употреба на бели икони"
             }
           },
           "visual-tweaks": {
@@ -212,7 +214,11 @@
       "tooltip": {
         "default": "{{applicationName}}",
         "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
-      }
+      },
+      "like": "Допаѓа",
+      "dislike": "Не ми се допаѓа",
+      "unlike": "За разлика од",
+      "undislike": "Не се допаѓа"
     }
   },
   "plugins": {
@@ -260,7 +266,7 @@
         "buffer": {
           "label": "Бафер",
           "submenu": {
-            "buffer": "{{buffer}}"
+            "buffer": "буфер"
           }
         },
         "opacity": {
@@ -295,7 +301,7 @@
     },
     "amuse": {
       "description": "Додава {{applicationName}} поддршка за „сега свири“ виџет на Amuse од 6K Labs",
-      "name": "Amuse",
+      "name": "Забавувај се",
       "response": {
         "query": "Amuse API серверот работи. GET /query за добивање информации за песната."
       }
@@ -803,7 +809,7 @@
         "scrobble-alternative-title": "Користи алтернативни наслови",
         "scrobble-other-media": "Scrobble други медиуми"
       },
-      "name": "Scrobbler",
+      "name": "Скроблер",
       "prompt": {
         "lastfm": {
           "api-key": "Last.fm API клуч",
@@ -979,8 +985,8 @@
             "local-cli": {
               "command": "Команда",
               "engine": "Локален CLI",
-              "engine-claude": "Claude Code",
-              "engine-codex": "Codex",
+              "engine-claude": "Клод Код",
+              "engine-codex": "Кодекс",
               "engine-gemini": "Gemini CLI",
               "name": "Локален CLI",
               "prompt-label": "Користи локално најавени Claude Code, Codex или Gemini CLI. Командата и моделот се автоматски; CLI го користи сопствениот најавен стандард.",
@@ -1051,6 +1057,14 @@
             "tooltip": "Јазикот на кој да се преведат текстовите."
           },
           "tooltip": "Преведи ги текстовите и прикажи го преведениот резултат линија по линија."
+        },
+        "use-ytm-lyrics-without-proxy": {
+          "label": "Користи YTM текстови без прокси",
+          "tooltip": "Прескокни го YTM прелистувачкиот прокси и директно повикај YouTube Music користејќи ја автентицираната сесија на апликацијата. Корисно ако му веруваш на твојата мрежа/регион да дозволи директни прелистувачки повици."
+        },
+        "show-custom-search-button": {
+          "label": "Прикажи прилагодено копче за пребарување",
+          "tooltip": "Прикажи копче за пребарување во избирачот на текст што овозможува да го замените барањето за пребарување и изведувачот за тековната песна."
         }
       },
       "name": "Синхронизирани Текстови",
@@ -1095,7 +1109,7 @@
     },
     "tuna-obs": {
       "description": "Интеграција со OBS приклучокот Tuna",
-      "name": "Tuna OBS"
+      "name": "Туна OBS"
     },
     "unobtrusive-player": {
       "description": "Спречува плејерот да се појавува кога се пушта песна",
@@ -1134,6 +1148,14 @@
         "visualizer-type": "Тип на Визуелизатор"
       },
       "name": "Визуелизатор"
+    },
+    "playlist-search": {
+      "description": "Додава поле за пребарување за филтрирање на плејлисти во страничната лента и дијалогот за додавање во плејлиста",
+      "name": "Пребарување плејлисти",
+      "templates": {
+        "search-placeholder": "Пребарувај плејлисти",
+        "no-results": "Нема пронајдено плејлисти"
+      }
     }
   }
 }

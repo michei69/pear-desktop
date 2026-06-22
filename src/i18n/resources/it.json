@@ -109,7 +109,8 @@
                   "title": "Imposta il proxy"
                 }
               },
-              "toggle-dev-tools": "Attiva/disattiva DevTools"
+              "toggle-dev-tools": "Attiva/disattiva DevTools",
+              "force-smtc": "Forza l'uso di SMTC esterno"
             }
           },
           "always-on-top": "Sempre in cima",
@@ -145,7 +146,8 @@
               "enabled-and-hide-app": "Abilita e nascondi l'app",
               "enabled-and-show-app": "Abilita e mostra l'app",
               "move-to-current-desktop": "Sposta sul desktop virtuale corrente alla visualizzazione",
-              "play-pause-on-click": "Riproduci/Pausa al click sull'icona"
+              "play-pause-on-click": "Riproduci/Pausa al click sull'icona",
+              "force-white-icons": "Forza l'uso di icone bianche"
             }
           },
           "visual-tweaks": {
@@ -211,8 +213,12 @@
       "show": "Mostra finestra",
       "tooltip": {
         "default": "{{applicationName}}",
-        "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
-      }
+        "with-song-info": "{{applicationName}}: {{artista}} - {{titolo}}"
+      },
+      "like": "Mi piace",
+      "dislike": "Non mi piace",
+      "unlike": "diversamente da",
+      "undislike": "Non mi piace più"
     }
   },
   "plugins": {
@@ -262,7 +268,7 @@
         "opacity": {
           "label": "Trasparenza",
           "submenu": {
-            "percent": "{{opacity}}%"
+            "percent": "{{opacità}}%"
           }
         },
         "quality": {
@@ -291,7 +297,7 @@
     },
     "amuse": {
       "description": "Aggiunge il supporto a {{applicationName}} per il widget Amuse Now Playing di 6K Labs",
-      "name": "Amuse",
+      "name": "Divertire",
       "response": {
         "query": "Il server API di Amuse è in funzione. GET /query per ottenere informazioni sui brani."
       }
@@ -343,7 +349,7 @@
           }
         }
       },
-      "name": "API Server [Beta]",
+      "name": "Server API [Beta]",
       "prompt": {
         "hostname": {
           "label": "Inserisci il nome host (ad esempio 0.0.0.0) per il server API:",
@@ -497,7 +503,7 @@
           }
         }
       },
-      "name": "Discord Rich Presence",
+      "name": "Presenza Ricca di Discord",
       "prompt": {
         "set-inactivity-timeout": {
           "label": "Inserisci il timeout di inattività in secondi:",
@@ -610,7 +616,7 @@
       "menu": {
         "romanized-lyrics": "Alfabeto latino per i brani con testo in caratteri orientali"
       },
-      "name": "Lyrics Genius",
+      "name": "Testi Genius",
       "renderer": {
         "fetched-lyrics": "Testi recuperati per Genius"
       }
@@ -645,7 +651,7 @@
           "host": "Connesso come Host"
         }
       },
-      "name": "Music Together [Beta]",
+      "name": "Musica Insieme [Beta]",
       "toast": {
         "add-song-failed": "Impossibile aggiungere il brano",
         "closed": "Music Together chiuso",
@@ -1013,7 +1019,7 @@
               "api-mode": "Modalità API (responses / auto / chat-completions)"
             },
             "anthropic": {
-              "name": "Anthropic Claude",
+              "name": "Antropico Claude",
               "prompt-title": "Impostazioni Anthropic",
               "prompt-label": "Usa l'API nativa Anthropic Messages."
             },
@@ -1028,18 +1034,26 @@
               "prompt-label": "Usa Claude Code, Codex o Gemini CLI con accesso locale. Il comando e il modello sono automatici; la CLI usa il proprio accesso predefinito.",
               "engine": "CLI Locale",
               "engine-claude": "Claude Code",
-              "engine-codex": "Codex",
+              "engine-codex": "Codice",
               "engine-gemini": "Gemini CLI",
               "command": "Comando",
               "timeout": "Timeout secondi (15-600)"
             },
             "google-translate": {
-              "name": "Google Translate",
+              "name": "Google Traduttore",
               "prompt-title": "Impostazioni Google Translate",
               "prompt-label": "Usa l'endpoint gratuito non ufficiale di Google Translate. Nessuna chiave API richiesta, ma Google potrebbe limitare la frequenza.",
-              "host": "Host"
+              "host": "Ospite"
             }
           }
+        },
+        "use-ytm-lyrics-without-proxy": {
+          "label": "Usa i testi di YTM senza proxy",
+          "tooltip": "Salta il proxy di navigazione YTM e chiama YouTube Music direttamente usando la sessione autenticata dell'app. Utile se ti fidi della tua rete/regione per consentire chiamate di navigazione dirette."
+        },
+        "show-custom-search-button": {
+          "label": "Mostra il pulsante di ricerca personalizzato",
+          "tooltip": "Mostra un pulsante di ricerca nel selettore dei testi che ti permette di sovrascrivere la query di ricerca e l'artista per la canzone corrente."
         }
       },
       "name": "Testi sincronizzati",
@@ -1068,7 +1082,7 @@
         "opacity": {
           "label": "Opacità",
           "submenu": {
-            "percent": "{{opacity}}%"
+            "percent": "{{opacità}}%"
           }
         },
         "type": {
@@ -1084,7 +1098,7 @@
     },
     "tuna-obs": {
       "description": "Integrazione con il plugin OBS Tuna",
-      "name": "Tuna OBS"
+      "name": "Tonno OBS"
     },
     "unobtrusive-player": {
       "description": "Evita che il player si apra automaticamente durante la riproduzione di un brano",
@@ -1134,6 +1148,14 @@
         "log-to-console": "Registra gli eventi di ripristino nella console"
       },
       "name": "Ripristino Riproduzione"
+    },
+    "playlist-search": {
+      "description": "Aggiunge un campo di ricerca per filtrare le playlist nella barra laterale e nella finestra di dialogo Aggiungi a playlist",
+      "name": "Ricerca playlist",
+      "templates": {
+        "search-placeholder": "Cerca playlist",
+        "no-results": "Nessuna playlist trovata"
+      }
     }
   }
 }

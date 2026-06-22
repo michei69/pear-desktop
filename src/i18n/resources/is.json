@@ -109,7 +109,8 @@
                   "title": "Stilla umboð"
                 }
               },
-              "toggle-dev-tools": "Breyta DevTools"
+              "toggle-dev-tools": "Breyta DevTools",
+              "force-smtc": "Þvinga notkun ytri SMTC"
             }
           },
           "always-on-top": "Alltaf á toppnum",
@@ -145,7 +146,8 @@
               "enabled-and-hide-app": "Bakki virkt, og fela forritsgluggi",
               "enabled-and-show-app": "Virkjað og sýna forrit",
               "move-to-current-desktop": "Færa á núverandi sýndarskjáborð við birtingu",
-              "play-pause-on-click": "Spila/hlé við smell"
+              "play-pause-on-click": "Spila/hlé við smell",
+              "force-white-icons": "Þvinga notkun hvítra tákna"
             }
           },
           "visual-tweaks": {
@@ -212,7 +214,11 @@
       "tooltip": {
         "default": "{{applicationName}}",
         "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
-      }
+      },
+      "like": "eins",
+      "dislike": "Ósætti",
+      "unlike": "ólíkt",
+      "undislike": "Ólíkt"
     }
   },
   "plugins": {
@@ -256,7 +262,7 @@
         "buffer": {
           "label": "Stuðpúði",
           "submenu": {
-            "buffer": "{{buffer}}"
+            "buffer": "er"
           }
         },
         "opacity": {
@@ -1040,6 +1046,14 @@
               "host": "Hýsitölva"
             }
           }
+        },
+        "use-ytm-lyrics-without-proxy": {
+          "label": "Notaðu YTM texta án proxy",
+          "tooltip": "Sleppa YTM-leitarforritið og kallaðu beint á YouTube Music með auðkenndri lotu appsins. Gagnlegt ef þú treystir netinu/svæðinu þínu til að leyfa beinar leitarbeiðnir."
+        },
+        "show-custom-search-button": {
+          "label": "Sýna sérsniðinn leitarhnapp",
+          "tooltip": "Sýna leitarhnapp í textavalara sem gerir þér kleift að breyta leitarfyrirspurn og flytjanda fyrir núverandi lag."
         }
       },
       "name": "Samstilltur texti",
@@ -1134,6 +1148,14 @@
         "log-to-console": "Skrá endurheimtaratburði í stjórnborð"
       },
       "name": "Spilunar endurheimt"
+    },
+    "playlist-search": {
+      "description": "Bætir við leitarreit til að sía spilunarlista í hliðarspjaldinu og í glugganum Bæta við spilunarlista",
+      "name": "Leitarsöngur",
+      "templates": {
+        "search-placeholder": "Leita að spilunarlistum",
+        "no-results": "Engar spilunarlistar fundust"
+      }
     }
   }
 }

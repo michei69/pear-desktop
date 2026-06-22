@@ -109,7 +109,8 @@
                   "title": "Задати проксі"
                 }
               },
-              "toggle-dev-tools": "Перемкнути DevTools"
+              "toggle-dev-tools": "Перемкнути DevTools",
+              "force-smtc": "Примусово використовувати зовнішній SMTC"
             }
           },
           "always-on-top": "Завжди зверху",
@@ -145,7 +146,8 @@
               "enabled-and-hide-app": "Запустити та приховати програму",
               "enabled-and-show-app": "Запустити та відобразити додаток",
               "play-pause-on-click": "Відтворення/Пауза за натисканням",
-              "move-to-current-desktop": "Перемістити на поточний віртуальний робочий стіл при показі"
+              "move-to-current-desktop": "Перемістити на поточний віртуальний робочий стіл при показі",
+              "force-white-icons": "Примусове використання білих іконок"
             }
           },
           "visual-tweaks": {
@@ -212,7 +214,11 @@
       "tooltip": {
         "default": "{{applicationName}}",
         "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
-      }
+      },
+      "like": "Вподобати",
+      "dislike": "Не подобається",
+      "unlike": "На відміну від",
+      "undislike": "Нелайк"
     }
   },
   "plugins": {
@@ -256,7 +262,7 @@
         "buffer": {
           "label": "Буфер",
           "submenu": {
-            "buffer": "{{buffer}}"
+            "buffer": "буфер"
           }
         },
         "opacity": {
@@ -291,7 +297,7 @@
     },
     "amuse": {
       "description": "Додає підтримку {{applicationName}} для віджета Amuse now playing від 6K Labs",
-      "name": "Amuse",
+      "name": "Амюз",
       "response": {
         "query": "Сервер Amuse API запущено. Запит GET /query для отримання інформації про пісню."
       }
@@ -968,8 +974,8 @@
             "local-cli": {
               "command": "Команда",
               "engine": "Локальний CLI",
-              "engine-claude": "Claude Code",
-              "engine-codex": "Codex",
+              "engine-claude": "Код Клода",
+              "engine-codex": "Кодекс",
               "engine-gemini": "Gemini CLI",
               "name": "Локальний CLI",
               "prompt-label": "Використовувати локально авторизований Claude Code, Codex або Gemini CLI. Команда та модель автоматичні; CLI використовує власні налаштування за замовчуванням.",
@@ -1040,6 +1046,14 @@
             "tooltip": "Мова, на яку перекладати текст пісні"
           },
           "tooltip": "Перекладати текст пісні та показувати результат перекладу порядково"
+        },
+        "use-ytm-lyrics-without-proxy": {
+          "label": "Використовувати тексти YTM без проксі",
+          "tooltip": "Пропустити проксі YTM і звертатися до YouTube Music безпосередньо через автентифікований сеанс програми. Корисно, якщо ви довіряєте своїй мережі/регіону дозволяти прямі виклики."
+        },
+        "show-custom-search-button": {
+          "label": "Показати кнопку власного пошуку",
+          "tooltip": "Показати кнопку пошуку в виборі текстів пісень, яка дозволяє змінити пошуковий запит та виконавця для поточної пісні."
         }
       },
       "name": "Синхронізовані тексти",
@@ -1084,7 +1098,7 @@
     },
     "tuna-obs": {
       "description": "Інтеграція з плагіном Tuna для OBS",
-      "name": "Tuna OBS"
+      "name": "Туна OBS"
     },
     "unobtrusive-player": {
       "description": "Запобігання спливання плеєру під час відтворення пісні",
@@ -1134,6 +1148,14 @@
         "log-to-console": "Записувати події відновлення в консоль"
       },
       "name": "Відновлення відтворення"
+    },
+    "playlist-search": {
+      "description": "Додає поле пошуку для фільтрації плейлистів у бічній панелі та діалозі додавання до плейлиста",
+      "name": "Пошук плейлистів",
+      "templates": {
+        "search-placeholder": "Шукати плейлисти",
+        "no-results": "Плейлистів не знайдено"
+      }
     }
   }
 }

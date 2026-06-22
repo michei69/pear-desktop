@@ -109,7 +109,8 @@
                   "title": "Stel instaanbediener"
                 }
               },
-              "toggle-dev-tools": "Skakel DevTools"
+              "toggle-dev-tools": "Skakel DevTools",
+              "force-smtc": "Dwing die gebruik van eksterne SMTC af"
             }
           },
           "always-on-top": "Altyd bo-op",
@@ -145,7 +146,8 @@
               "enabled-and-hide-app": "Geaktiveer en versteek app",
               "enabled-and-show-app": "Geaktiveer en wys app",
               "play-pause-on-click": "Speel/Onderbreek by klik",
-          "move-to-current-desktop": "Skuif na huidige virtuele lessenaar wanneer gewys"
+              "move-to-current-desktop": "Skuif na huidige virtuele lessenaar wanneer gewys",
+              "force-white-icons": "Dwing die gebruik van wit ikone af"
             }
           },
           "visual-tweaks": {
@@ -211,8 +213,12 @@
       "show": "Wys venster",
       "tooltip": {
         "default": "{{applicationName}}",
-        "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
-      }
+        "with-song-info": "{{toepassingsnaam}}: {{kunstenaar}} - {{titel}}"
+      },
+      "like": "Soos",
+      "dislike": "Afkeer",
+      "unlike": "anders",
+      "undislike": "Ontstaan"
     }
   },
   "plugins": {
@@ -260,7 +266,7 @@
         "buffer": {
           "label": "Buffer",
           "submenu": {
-            "buffer": "{{buffer}}"
+            "buffer": "buffer"
           }
         },
         "opacity": {
@@ -272,7 +278,7 @@
         "quality": {
           "label": "Gehalte",
           "submenu": {
-            "pixels": "{{quality}} pixels"
+            "pixels": "{{quality}} piksels"
           }
         },
         "size": {
@@ -688,9 +694,9 @@
         "interactive-settings": {
           "label": "Interaktiewe Instellings",
           "submenu": {
-              "hide-button-text": "Versteek knoppieteks",
-                "hover-controls": "Wys mini-speler wanneer oor strokie beweeg",
-                "refresh-on-play-pause": "Verfris by Speel/Onderbreek",
+            "hide-button-text": "Versteek knoppieteks",
+            "hover-controls": "Wys mini-speler wanneer oor strokie beweeg",
+            "refresh-on-play-pause": "Verfris by Speel/Onderbreek",
             "tray-controls": "Maak oop/toe by strokieklik"
           }
         },
@@ -1039,7 +1045,7 @@
               "prompt-label": "Gebruik 'n plaaslik aangemelde Claude Code, Codex, of Gemini CLI. Die opdrag en model is outomaties; die CLI gebruik sy eie standaard aangemelde instelling.",
               "engine": "Plaaslike CLI",
               "engine-claude": "Claude Code",
-              "engine-codex": "Codex",
+              "engine-codex": "Kodeks",
               "engine-gemini": "Gemini CLI",
               "command": "Opdrag",
               "timeout": "Tydverloop sekondes (15-600)"
@@ -1051,6 +1057,14 @@
               "host": "Gasheer"
             }
           }
+        },
+        "use-ytm-lyrics-without-proxy": {
+          "label": "Gebruik YTM-lirieke sonder 'n instaanbediener",
+          "tooltip": "Slaan die YTM-blaaiproxie oor en roep YouTube Music direk aan deur die toepassing se geverifieerde sessie te gebruik. Nuttig as jy jou netwerk/streek vertrou om direkte blaai-oproepe toe te laat."
+        },
+        "show-custom-search-button": {
+          "label": "Wys pasgemaakte soekknoppie",
+          "tooltip": "Wys 'n soekknoppie in die liriekkieser wat jou toelaat om die soeknavraag en kunstenaar vir die huidige liedjie te oorskryf."
         }
       },
       "name": "Gesinkroniseerde Lirieke",
@@ -1095,7 +1109,7 @@
     },
     "tuna-obs": {
       "description": "Integrasie met OBS se inprop Tuna",
-      "name": "Tuna OBS"
+      "name": "Tonyn OBS"
     },
     "unobtrusive-player": {
       "description": "Verhoed dat die speler opduik wanneer 'n liedjie speel",
@@ -1134,6 +1148,14 @@
         "visualizer-type": "Visualiseerder Tipe"
       },
       "name": "Visualiseerder"
+    },
+    "playlist-search": {
+      "description": "Voeg 'n soekveld by om snitlyste in die systaaf en die Voeg by snitlys-dialoog te filter",
+      "name": "Soektog vir Snitlys",
+      "templates": {
+        "search-placeholder": "Soek snitlyste",
+        "no-results": "Geen snitlyste gevind nie"
+      }
     }
   }
 }

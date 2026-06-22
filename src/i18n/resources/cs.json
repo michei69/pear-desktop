@@ -109,7 +109,8 @@
                   "title": "Nastavit proxy"
                 }
               },
-              "toggle-dev-tools": "Přepínat vývojářské nástroje"
+              "toggle-dev-tools": "Přepínat vývojářské nástroje",
+              "force-smtc": "Vynutit použití externího SMTC"
             }
           },
           "always-on-top": "Vždy na vrchu",
@@ -145,7 +146,8 @@
               "enabled-and-hide-app": "Povolit a skrýt aplikaci",
               "enabled-and-show-app": "Povolit a zobrazit aplikaci",
               "play-pause-on-click": "Přehrát/Pozastavit na kliknutí",
-              "move-to-current-desktop": "Přesunout na aktuální virtuální plochu při zobrazení"
+              "move-to-current-desktop": "Přesunout na aktuální virtuální plochu při zobrazení",
+              "force-white-icons": "Vynutit použití bílých ikon"
             }
           },
           "visual-tweaks": {
@@ -212,7 +214,11 @@
       "tooltip": {
         "default": "{{applicationName}}",
         "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
-      }
+      },
+      "like": "To se mi líbí",
+      "dislike": "Nelíbí se",
+      "unlike": "Na rozdíl od",
+      "undislike": "Zrušit nelíbí"
     }
   },
   "plugins": {
@@ -321,7 +327,7 @@
           }
         },
         "hostname": {
-          "label": "Hostname"
+          "label": "Název hostitele"
         },
         "https": {
           "label": "HTTPS a certifikáty",
@@ -347,7 +353,7 @@
       "prompt": {
         "hostname": {
           "label": "Zadej hostname API serveru (ve tvaru 0.0.0.0):",
-          "title": "Hostname"
+          "title": "Název hostitele"
         },
         "port": {
           "label": "Zadej port API serveru:",
@@ -365,7 +371,7 @@
         "disable": "Vypnout Proxy Adaptér",
         "enable": "Zapnout Proxy Adaptér",
         "hostname": {
-          "label": "Hostname"
+          "label": "Název hostitele"
         },
         "port": {
           "label": "Port"
@@ -375,7 +381,7 @@
       "prompt": {
         "hostname": {
           "label": "Zadejte hostname lokálního proxy serveru (vyžaduje restart):",
-          "title": "Proxy Hostname"
+          "title": "Hostname proxy"
         },
         "port": {
           "label": "Zadejte port lokálního proxy serveru (vyžaduje restart):",
@@ -961,7 +967,7 @@
             },
             "google-translate": {
               "host": "Hostitel",
-              "name": "Google Translate",
+              "name": "Překladač Google",
               "prompt-label": "Používá neoficiální bezplatný endpoint Google Translate. Není vyžadován API klíč, ale Google může omezit rychlost.",
               "prompt-title": "Nastavení Google Translate"
             },
@@ -1040,6 +1046,14 @@
             "tooltip": "Jazyk, do kterého se mají texty přeložit."
           },
           "tooltip": "Přeložit texty a zobrazit výsledek překladu řádek po řádku pro zobrazení."
+        },
+        "use-ytm-lyrics-without-proxy": {
+          "label": "Používat texty YTM bez proxy",
+          "tooltip": "Přeskočit YTM browse proxy a volat YouTube Music přímo pomocí autentizované relace aplikace. Užitečné, pokud důvěřujete své síti/oblasti, že umožňuje přímá volání procházení."
+        },
+        "show-custom-search-button": {
+          "label": "Zobrazit vlastní tlačítko vyhledávání",
+          "tooltip": "Zobrazit tlačítko vyhledávání ve výběru textů, které umožňuje přepsat vyhledávací dotaz a interpreta pro aktuální skladbu."
         }
       },
       "name": "Synchronizované texty",
@@ -1133,6 +1147,14 @@
       "name": "Obnova přehrávání",
       "menu": {
         "log-to-console": "Zaznamenávat události obnovení do konzole"
+      }
+    },
+    "playlist-search": {
+      "description": "Přidá vyhledávací pole pro filtrování playlistů v postranním panelu a v dialogu Přidat do playlistu",
+      "name": "Hledání v seznamu skladeb",
+      "templates": {
+        "search-placeholder": "Hledat seznamy skladeb",
+        "no-results": "Nebyly nalezeny žádné playlisty"
       }
     }
   }

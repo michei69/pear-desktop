@@ -109,7 +109,8 @@
                   "title": "ప్రాక్సీ సెట్ చేయండి"
                 }
               },
-              "toggle-dev-tools": "DevTools టోగుల్ చేయండి"
+              "toggle-dev-tools": "DevTools టోగుల్ చేయండి",
+              "force-smtc": "బాహ్య SMTC వాడకాన్ని బలవంతం చేయండి"
             }
           },
           "always-on-top": "ఎప్పుడూ పైభాగంలో ఉంచండి",
@@ -145,7 +146,8 @@
               "enabled-and-hide-app": "ఎనేబుల్ చేసి యాప్‌ని దాచు",
               "enabled-and-show-app": "ఎనేబుల్ చేసి యాప్‌ని చూపించు",
               "play-pause-on-click": "క్లిక్‌పై ప్లే/పాజ్",
-              "move-to-current-desktop": "చూపించేటప్పుడు ప్రస్తుత వర్చ్యువల్ డెస్క్‌టాప్‌కి తరలించండి"
+              "move-to-current-desktop": "చూపించేటప్పుడు ప్రస్తుత వర్చ్యువల్ డెస్క్‌టాప్‌కి తరలించండి",
+              "force-white-icons": "తెల్లని ఐకాన్లను బలవంతంగా ఉపయోగించండి"
             }
           },
           "visual-tweaks": {
@@ -211,8 +213,12 @@
       "show": "విండో చూపించు",
       "tooltip": {
         "default": "{{applicationName}}",
-        "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
-      }
+        "with-song-info": "{{అప్లికేషన్ పేరు}}: {{కళాకారుడు}} - {{శీర్షిక}}"
+      },
+      "like": "ఇష్టం",
+      "dislike": "ఇష్టపడకు",
+      "unlike": "కాకుండా",
+      "undislike": "అనిష్టం తొలగించు"
     }
   },
   "plugins": {
@@ -256,13 +262,13 @@
         "buffer": {
           "label": "బఫర్",
           "submenu": {
-            "buffer": "{{buffer}}"
+            "buffer": "బఫర్"
           }
         },
         "opacity": {
           "label": "అపారదర్శకత",
           "submenu": {
-            "percent": "{{opacity}}%"
+            "percent": "{{అపారదర్శకత}}%"
           }
         },
         "quality": {
@@ -291,7 +297,7 @@
     },
     "amuse": {
       "description": "6K ల్యాబ్స్ ద్వారా Amuse ఇప్పుడు ప్లే అవుతున్న విడ్జెట్‌కు {{applicationName}} మద్దతును జోడిస్తుంది",
-      "name": "Amuse",
+      "name": "అమ్యూజ్",
       "response": {
         "query": "Amuse API సర్వర్ రన్ అవుతోంది. పాట సమాచారం పొందడానికి GET /query."
       }
@@ -343,7 +349,7 @@
           "label": "పోర్ట్"
         }
       },
-      "name": "API Server [Beta]",
+      "name": "API సర్వర్ [బీటా]",
       "prompt": {
         "hostname": {
           "label": "API సర్వర్ కోసం హోస్ట్‌పేరు (0.0.0.0 వంటిది) నమోదు చేయండి:",
@@ -510,14 +516,14 @@
         "dialog": {
           "error": {
             "buttons": {
-              "ok": "OK"
+              "ok": "సరే"
             },
             "message": "అరెరే! క్షమించండి, డౌన్‌లోడ్ విఫలమైంది…",
             "title": "డౌన్‌లోడ్‌లో లోపం!"
           },
           "start-download-playlist": {
             "buttons": {
-              "ok": "OK"
+              "ok": "సరే"
             },
             "detail": "({{playlistSize}} పాటలు)",
             "message": "{{playlistTitle}} ప్లేలిస్ట్‌ని డౌన్‌లోడ్ చేస్తోంది",
@@ -835,7 +841,7 @@
     },
     "sponsorblock": {
       "description": "పరిచయం/ముగింపు వంటి సంగీతం కాని భాగాలను లేదా పాట ప్లే కాని మ్యూజిక్ వీడియోల భాగాలను స్వయంచాలకంగా దాటవేస్తుంది",
-      "name": "SponsorBlock"
+      "name": "స్పాన్సర్బ్లాక్"
     },
     "synced-lyrics": {
       "description": "LRClib వంటి ప్రొవైడర్‌లను ఉపయోగించి పాటలకు సింక్ చేయబడిన లిరిక్స్‌ని అందిస్తుంది.",
@@ -950,12 +956,12 @@
           },
           "providers": {
             "anthropic": {
-              "name": "Anthropic Claude",
+              "name": "ఆంత్రోపిక్ క్లాడ్",
               "prompt-label": "స్థానిక Anthropic Messages APIని ఉపయోగిస్తుంది.",
               "prompt-title": "Anthropic సెట్టింగ్‌లు"
             },
             "gemini": {
-              "name": "Google Gemini",
+              "name": "గూగుల్ జెమిని",
               "prompt-label": "Google యొక్క Generative Language API (generateContent)ని ఉపయోగిస్తుంది.",
               "prompt-title": "Gemini సెట్టింగ్‌లు"
             },
@@ -968,9 +974,9 @@
             "local-cli": {
               "command": "కమాండ్",
               "engine": "లోకల్ CLI",
-              "engine-claude": "Claude Code",
-              "engine-codex": "Codex",
-              "engine-gemini": "Gemini CLI",
+              "engine-claude": "క్లాడ్ కోడ్",
+              "engine-codex": "కోడెక్స్",
+              "engine-gemini": "గెమిని CLI",
               "name": "లోకల్ CLI",
               "prompt-label": "లోకల్‌గా లాగిన్ అయిన Claude Code, Codex లేదా Gemini CLIని ఉపయోగించండి. కమాండ్ మరియు మోడల్ ఆటోమేటిక్; CLI దాని స్వంత లాగిన్ డిఫాల్ట్‌ని ఉపయోగిస్తుంది.",
               "prompt-title": "లోకల్ CLI సెట్టింగ్‌లు",
@@ -1040,6 +1046,14 @@
             "tooltip": "లిరిక్స్‌ని ఏ భాషలోకి అనువదించాలి."
           },
           "tooltip": "లిరిక్స్‌ని అనువదించి, అనువదించిన ఫలితాన్ని లైన్-బై-లైన్ ప్రదర్శించండి."
+        },
+        "use-ytm-lyrics-without-proxy": {
+          "label": "ప్రాక్సీ లేకుండా YTM సాహిత్యాన్ని ఉపయోగించండి",
+          "tooltip": "YTM బ్రౌజ్ ప్రాక్సీని దాటవేసి, యాప్ యొక్క ప్రామాణీకరించబడిన సెషన్ ఉపయోగించి నేరుగా YouTube Musicకు కాల్ చేయండి. మీ నెట్వర్క్/ప్రాంతం ప్రత్యక్ష బ్రౌజ్ కాల్లను అనుమతిస్తుందని మీరు విశ్వసిస్తే ఇది ఉపయోగకరంగా ఉంటుంది."
+        },
+        "show-custom-search-button": {
+          "label": "కస్టమ్ శోధన బటన్‌ను చూపించు",
+          "tooltip": "లిరిక్స్ పికర్లో శోధన బటన్ను చూపించు, ఇది ప్రస్తుత పాట కోసం శోధన ప్రశ్న మరియు కళాకారుడిని మార్చడానికి మిమ్మల్ని అనుమతిస్తుంది."
         }
       },
       "name": "సింక్ చేయబడిన లిరిక్స్",
@@ -1059,7 +1073,7 @@
     },
     "touchbar": {
       "description": "macOS వినియోగదారుల కోసం TouchBar విడ్జెట్‌ని జోడిస్తుంది",
-      "name": "TouchBar"
+      "name": "టచ్బార్"
     },
     "transparent-player": {
       "description": "యాప్ విండోను పారదర్శకంగా చేస్తుంది",
@@ -1067,7 +1081,7 @@
         "opacity": {
           "label": "అపారదర్శకత",
           "submenu": {
-            "percent": "{{opacity}}%"
+            "percent": "{{అపారదర్శకత}}%"
           }
         },
         "type": {
@@ -1084,7 +1098,7 @@
     },
     "tuna-obs": {
       "description": "OBS యొక్క Tuna ప్లగిన్‌తో ఇంటిగ్రేషన్",
-      "name": "Tuna OBS"
+      "name": "ట్యూనా OBS"
     },
     "unobtrusive-player": {
       "description": "పాట ప్లే చేస్తున్నప్పుడు ప్లేయర్ పాప్ అప్ కాకుండా నిరోధిస్తుంది",
@@ -1134,6 +1148,14 @@
         "log-to-console": "రికవరీ ఈవెంట్‌లను కన్సోల్‌కు లాగ్ చేయండి"
       },
       "name": "ప్లేబ్యాక్ రికవరీ"
+    },
+    "playlist-search": {
+      "description": "సైడ్‌బార్‌లో మరియు ప్లేలిస్ట్‌కు జోడించు డైలాగ్‌లో ప్లేలిస్ట్‌లను ఫిల్టర్ చేయడానికి శోధన ఇన్‌పుట్‌ను జోడిస్తుంది",
+      "name": "ప్లేలిస్ట్ శోధన",
+      "templates": {
+        "search-placeholder": "శోధన ప్లేజాబితాలు",
+        "no-results": "ప్లేలిస్ట్లు ఏవీ కనుగొనబడలేదు"
+      }
     }
   }
 }

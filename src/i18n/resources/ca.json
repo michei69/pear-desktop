@@ -109,7 +109,8 @@
                   "title": "Definir servidor intermediari (proxy)"
                 }
               },
-              "toggle-dev-tools": "Commuta les DevTools"
+              "toggle-dev-tools": "Commuta les DevTools",
+              "force-smtc": "Forçar l'ús de SMTC extern"
             }
           },
           "always-on-top": "Mostra sempre per sobre",
@@ -145,7 +146,8 @@
               "enabled-and-hide-app": "Mostra la icona i amaga l'aplicació",
               "enabled-and-show-app": "Mostra la icona i mostra l'aplicació",
               "play-pause-on-click": "Reprodueix / pausa en clicar",
-              "move-to-current-desktop": "Mou a l'escriptori virtual actual en mostrar"
+              "move-to-current-desktop": "Mou a l'escriptori virtual actual en mostrar",
+              "force-white-icons": "Força l'ús d'icones blanques"
             }
           },
           "visual-tweaks": {
@@ -212,7 +214,11 @@
       "tooltip": {
         "default": "{{applicationName}}",
         "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
-      }
+      },
+      "like": "M'agrada",
+      "dislike": "No m'agrada",
+      "unlike": "A diferència de",
+      "undislike": "No m'agrada"
     }
   },
   "plugins": {
@@ -256,7 +262,7 @@
         "buffer": {
           "label": "Buffer",
           "submenu": {
-            "buffer": "{{buffer}}"
+            "buffer": "buffer"
           }
         },
         "opacity": {
@@ -645,7 +651,7 @@
           "host": "Connectat com amfitrió"
         }
       },
-      "name": "Music Together [Beta]",
+      "name": "Música Junts [Beta]",
       "toast": {
         "add-song-failed": "Error al afegir la cançó",
         "closed": "Music Together tancat",
@@ -961,7 +967,7 @@
             },
             "google-translate": {
               "host": "Servidor",
-              "name": "Google Translate",
+              "name": "Google Traductor",
               "prompt-label": "Utilitza l'extrem no oficial gratuït de Google Translate. No es requereix clau API, però Google pot limitar-ne la velocitat.",
               "prompt-title": "Configuració de Google Translate"
             },
@@ -1040,6 +1046,14 @@
             "tooltip": "L'idioma al qual traduir les lletres."
           },
           "tooltip": "Tradueix les lletres i mostra el resultat traduït línia per línia per a la visualització."
+        },
+        "use-ytm-lyrics-without-proxy": {
+          "label": "Utilitza lletres de YTM sense proxy",
+          "tooltip": "Omet el proxy de navegació YTM i crida directament a YouTube Music utilitzant la sessió autenticada de l'aplicació. Útil si confies en la teva xarxa/regió per permetre crides de navegació directes."
+        },
+        "show-custom-search-button": {
+          "label": "Mostra el botó de cerca personalitzada",
+          "tooltip": "Mostra un botó de cerca al selector de lletres que et permeta sobreescriure la consulta de cerca i l'artista de la cançó actual."
         }
       },
       "name": "Lletres sincronitzades",
@@ -1134,6 +1148,14 @@
         "log-to-console": "Registra els esdeveniments de recuperació a la consola"
       },
       "name": "Recuperació de la reproducció"
+    },
+    "playlist-search": {
+      "description": "Afegeix un camp de cerca per filtrar llistes de reproducció a la barra lateral i al diàleg \"Afegeix a la llista de reproducció\"",
+      "name": "Cerca de llista de reproducció",
+      "templates": {
+        "search-placeholder": "Cerca llistes de reproducció",
+        "no-results": "No s'han trobat llistes de reproducció"
+      }
     }
   }
 }

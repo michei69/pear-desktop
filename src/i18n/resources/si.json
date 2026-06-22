@@ -109,7 +109,8 @@
                   "title": "Proxy එක set කරන්න"
                 }
               },
-              "toggle-dev-tools": "DevTools On/Off කරන්න"
+              "toggle-dev-tools": "DevTools On/Off කරන්න",
+              "force-smtc": "බාහිර SMTC භාවිතයට බල කරන්න"
             }
           },
           "always-on-top": "Always on top කරන්න",
@@ -145,7 +146,8 @@
               "enabled-and-hide-app": "ට්‍රේ එක enable කරලා, app window එක hide කරන්න",
               "enabled-and-show-app": "Enable කරලා app එක පෙන්වන්න",
               "play-pause-on-click": "Click කළ විට play/ pause වෙනවා",
-              "move-to-current-desktop": "පෙන්වීමේදී වත්මන් අතථ්‍ය ඩෙස්ක්ටොප් එකට ගෙන යන්න"
+              "move-to-current-desktop": "පෙන්වීමේදී වත්මන් අතථ්‍ය ඩෙස්ක්ටොප් එකට ගෙන යන්න",
+              "force-white-icons": "සුදු නිරූපක භාවිතයට බල කරන්න"
             }
           },
           "visual-tweaks": {
@@ -212,7 +214,11 @@
       "tooltip": {
         "default": "{{applicationName}}",
         "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
-      }
+      },
+      "like": "කැමති",
+      "dislike": "අකමැතියි",
+      "unlike": "වෙනස්ව",
+      "undislike": "අකමැති කිරීම ඉවත් කරන්න"
     }
   },
   "plugins": {
@@ -256,7 +262,7 @@
         "buffer": {
           "label": "බෆරය",
           "submenu": {
-            "buffer": "{{buffer}}"
+            "buffer": "බෆරය"
           }
         },
         "opacity": {
@@ -291,7 +297,7 @@
     },
     "amuse": {
       "description": "6K Labs විසින් Amuse දැන් වාදනය වන විජට් සඳහා {{applicationName}} සහාය එකතු කරයි",
-      "name": "Amuse",
+      "name": "විනෝද වන්න",
       "response": {
         "query": "Amuse API සේවාදායකය ක්‍රියාත්මක වේ. ගීත තොරතුරු ලබා ගැනීමට GET /query."
       }
@@ -497,7 +503,7 @@
           }
         }
       },
-      "name": "Discord Rich Presence",
+      "name": "Discord ධන පැවැත්ම",
       "prompt": {
         "set-inactivity-timeout": {
           "label": "අක්‍රිය කාල සීමාව තත්පර වලින් ඇතුළත් කරන්න:",
@@ -603,14 +609,14 @@
     },
     "lumiastream": {
       "description": "Lumia Stream සහාය එකතු කරයි",
-      "name": "Lumia Stream [Beta]"
+      "name": "Lumia Stream [බීටා]"
     },
     "lyrics-genius": {
       "description": "බොහෝ ගීත සඳහා පද රචනා සහාය එකතු කරයි",
       "menu": {
         "romanized-lyrics": "රෝමානුකෘත පද රචනා"
       },
-      "name": "Lyrics Genius",
+      "name": "ගීත පද ප්‍රතිභාව",
       "renderer": {
         "fetched-lyrics": "Genius සඳහා පද රචනා ලබා ගන්නා ලදී"
       }
@@ -645,7 +651,7 @@
           "host": "සත්කාරකයෙකු ලෙස සම්බන්ධ විය"
         }
       },
-      "name": "Music Together [Beta]",
+      "name": "සංගීත එකතුව [බීටා]",
       "toast": {
         "add-song-failed": "ගීතය එකතු කිරීමට අසමත් විය",
         "closed": "Music Together වසා දමන ලදී",
@@ -955,7 +961,7 @@
               "prompt-title": "Anthropic සැකසුම්"
             },
             "gemini": {
-              "name": "Google Gemini",
+              "name": "ගූගල් ජෙමිනි",
               "prompt-label": "Google හි Generative Language API (generateContent) භාවිතා කරයි.",
               "prompt-title": "Gemini සැකසුම්"
             },
@@ -968,7 +974,7 @@
             "local-cli": {
               "command": "විධානය",
               "engine": "දේශීය CLI",
-              "engine-claude": "Claude Code",
+              "engine-claude": "ක්ලෝඩ් කෝඩ්",
               "engine-codex": "Codex",
               "engine-gemini": "Gemini CLI",
               "name": "දේශීය CLI",
@@ -1040,6 +1046,14 @@
             "tooltip": "පද රචනා පරිවර්තනය කළ යුතු භාෂාව."
           },
           "tooltip": "පද රචනා පරිවර්තනය කර පරිවර්තිත ප්‍රතිඵලය පේළියෙන් පේළියට පෙන්වන්න."
+        },
+        "use-ytm-lyrics-without-proxy": {
+          "label": "YTM පද භාවිතා කරන්න, ප්‍රොක්සියක් නැතිව",
+          "tooltip": "YTM බ්‍රවුස් ප්‍රොක්සිය මඟ හරින්න සහ යෙදුමේ සත්‍යාපිත සැසිය භාවිතා කරමින් YouTube Music වෙත කෙලින්ම ඇමතුමක් ලබා ගන්න. ඔබගේ ජාලය/කලාපය සෘජු බ්‍රවුස් ඇමතුම් සඳහා ඉඩ දෙන බවට විශ්වාස නම් ප්‍රයෝජනවත් වේ."
+        },
+        "show-custom-search-button": {
+          "label": "පුද්ගලික සෙවුම් බොත්තම පෙන්වන්න",
+          "tooltip": "ගීත තෝරන අතරතුර සෙවුම් බොත්තමක් පෙන්වන්න, එමඟින් වත්මන් ගීතය සඳහා සෙවුම් විමසුම සහ කලාකරුවා අභිබවා යාමට ඉඩ සලසයි."
         }
       },
       "name": "සමමුහුර්ත පද රචනා",
@@ -1084,7 +1098,7 @@
     },
     "tuna-obs": {
       "description": "OBS හි Tuna ප්ලගිනය සමඟ ඒකාබද්ධ කිරීම",
-      "name": "Tuna OBS"
+      "name": "ටූනා OBS"
     },
     "unobtrusive-player": {
       "description": "ගීතයක් වාදනය කිරීමේදී වාදකය උත්පතන වීම වළක්වයි",
@@ -1134,6 +1148,14 @@
         "log-to-console": "ප්‍රකෘතිමත් වීමේ සිදුවීම් කොන්සෝලයට සටහන් කරන්න"
       },
       "name": "වාදන ප්‍රකෘතිය"
+    },
+    "playlist-search": {
+      "description": "පැති තීරුවේ සහ ප්ලේලිස්ට් එකට එකතු කරන්න සංවාද කොටුවේ ඇති ප්ලේලිස්ට් පෙරීමට සෙවුම් ආදානයක් එක් කරයි",
+      "name": "ප්ලේලිස්ට් සෙවීම",
+      "templates": {
+        "search-placeholder": "සෙවුම් ධාවන ලැයිස්තු",
+        "no-results": "ප්ලේලිස්ට් හමු නොවීය"
+      }
     }
   }
 }

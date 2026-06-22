@@ -109,7 +109,8 @@
                   "title": "Aseta välityspalvelin (proxy)"
                 }
               },
-              "toggle-dev-tools": "Ota DevTools käyttöön"
+              "toggle-dev-tools": "Ota DevTools käyttöön",
+              "force-smtc": "Pakota ulkoisen SMTC:n käyttö"
             }
           },
           "always-on-top": "Aina päällä",
@@ -145,7 +146,8 @@
               "enabled-and-hide-app": "Suositukset ovat käytössä ja piilota valikko",
               "enabled-and-show-app": "Päällä ja sovellus näkyvissä",
               "move-to-current-desktop": "Siirrä nykyiselle virtuaalityöpöydälle näytettäessä",
-              "play-pause-on-click": "Soita/pysäytä klikkaamalla"
+              "play-pause-on-click": "Soita/pysäytä klikkaamalla",
+              "force-white-icons": "Pakota valkoisten kuvakkeiden käyttö"
             }
           },
           "visual-tweaks": {
@@ -212,7 +214,11 @@
       "tooltip": {
         "default": "{{applicationName}}",
         "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
-      }
+      },
+      "like": "Tykkää",
+      "dislike": "En pidä",
+      "unlike": "Toisin kuin",
+      "undislike": "Poista tykkäys"
     }
   },
   "plugins": {
@@ -260,7 +266,7 @@
         "buffer": {
           "label": "Puskurointi",
           "submenu": {
-            "buffer": "{{buffer}}"
+            "buffer": "puskuri"
           }
         },
         "opacity": {
@@ -649,7 +655,7 @@
           "host": "Yhdistetty isäntänä"
         }
       },
-      "name": "Music Together [Beta]",
+      "name": "Musiikki yhdessä [Beta]",
       "toast": {
         "add-song-failed": "Kappaleen lisääminen epäonnistui",
         "closed": "Music Together suljettu",
@@ -1051,6 +1057,14 @@
               "host": "Isäntä"
             }
           }
+        },
+        "use-ytm-lyrics-without-proxy": {
+          "label": "Käytä YTM-lyriikoita ilman välityspalvelinta",
+          "tooltip": "Ohita YTM-selausproxy ja kutsu YouTube Musicia suoraan sovelluksen todennetun istunnon kautta. Hyödyllinen, jos luotat verkkoosi/alueeseesi sallimaan suorat selauskutsut."
+        },
+        "show-custom-search-button": {
+          "label": "Näytä mukautettu hakupainike",
+          "tooltip": "Näytä hakupainike sanoitusvalitsimessa, jonka avulla voit ohittaa nykyisen kappaleen hakukyselyn ja artistin."
         }
       },
       "name": "Synkronoidut Sanoitukset",
@@ -1095,7 +1109,7 @@
     },
     "tuna-obs": {
       "description": "Integraatio OBS:n Tuna-lisäosan kanssa",
-      "name": "Tuna OBS"
+      "name": "Tonnikala OBS"
     },
     "unobtrusive-player": {
       "description": "Estää soitinta ilmestymästä näkyviin, kun kappale alkaa soida",
@@ -1134,6 +1148,14 @@
         "visualizer-type": "Visualisoijan tyyppi"
       },
       "name": "Visualisoija"
+    },
+    "playlist-search": {
+      "description": "Lisää hakukentän suodattaaksesi soittolistoja sivupalkissa ja Lisää soittolistaan -valintaikkunassa",
+      "name": "Soitaulun haku",
+      "templates": {
+        "search-placeholder": "Hae soittolistoja",
+        "no-results": "Soittolistoja ei löytynyt"
+      }
     }
   }
 }

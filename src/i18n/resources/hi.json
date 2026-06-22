@@ -109,7 +109,8 @@
                   "title": "प्रॉक्सी तय करें"
                 }
               },
-              "toggle-dev-tools": "डेवटूल्स को टॉगल करें"
+              "toggle-dev-tools": "डेवटूल्स को टॉगल करें",
+              "force-smtc": "बाहरी SMTC का उपयोग बाध्य करें"
             }
           },
           "always-on-top": "हमेशा ऊपर",
@@ -145,7 +146,8 @@
               "enabled-and-hide-app": "सक्रिय है और एप छुपाएं",
               "enabled-and-show-app": "सक्रिय है और एप दिखाएं",
               "play-pause-on-click": "क्लिक पर प्ले/पोज",
-              "move-to-current-desktop": "दिखाने पर वर्तमान वर्चुअल डेस्कटॉप पर ले जाएँ"
+              "move-to-current-desktop": "दिखाने पर वर्तमान वर्चुअल डेस्कटॉप पर ले जाएँ",
+              "force-white-icons": "सफेद आइकनों का उपयोग अनिवार्य करें"
             }
           },
           "visual-tweaks": {
@@ -211,8 +213,12 @@
       "show": "ऐप दिखाए",
       "tooltip": {
         "default": "{{applicationName}}",
-        "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
-      }
+        "with-song-info": "एप्लिकेशन का नाम: कलाकार - शीर्षक"
+      },
+      "like": "पसंद",
+      "dislike": "नापसंद",
+      "unlike": "के विपरीत",
+      "undislike": "अनपसंद हटाएं"
     }
   },
   "plugins": {
@@ -256,7 +262,7 @@
         "buffer": {
           "label": "बफर",
           "submenu": {
-            "buffer": "{{buffer}}"
+            "buffer": "बफर"
           }
         },
         "opacity": {
@@ -950,42 +956,42 @@
           },
           "providers": {
             "anthropic": {
-              "name": "Anthropic Claude",
-              "prompt-label": "Uses the native Anthropic Messages API.",
-              "prompt-title": "Anthropic settings"
+              "name": "एंथ्रोपिक क्लॉड",
+              "prompt-label": "मूल Anthropic Messages API का उपयोग करता है।",
+              "prompt-title": "एंथ्रोपिक सेटिंग्स"
             },
             "gemini": {
-              "name": "Google Gemini",
-              "prompt-label": "Uses Google's Generative Language API (generateContent).",
-              "prompt-title": "Gemini settings"
+              "name": "गूगल जेमिनी",
+              "prompt-label": "Google के जनरेटिव लैंग्वेज API (generateContent) का उपयोग करता है।",
+              "prompt-title": "जेमिनी सेटिंग्स"
             },
             "google-translate": {
-              "host": "Host",
-              "name": "Google Translate",
-              "prompt-label": "Uses the unofficial free Google Translate endpoint. No API key is required, but Google may rate-limit it.",
-              "prompt-title": "Google Translate settings"
+              "host": "मेज़बान",
+              "name": "Google अनुवाद",
+              "prompt-label": "अनाधिकृत मुफ्त Google Translate एंडपॉइंट का उपयोग करता है। कोई API कुंजी आवश्यक नहीं है, लेकिन Google इसे रेट-लिमिट कर सकता है।",
+              "prompt-title": "गूगल अनुवाद सेटिंग्स"
             },
             "local-cli": {
-              "command": "Command",
-              "engine": "Local CLI",
-              "engine-claude": "Claude Code",
-              "engine-codex": "Codex",
-              "engine-gemini": "Gemini CLI",
-              "name": "Local CLI",
-              "prompt-label": "Use a locally logged-in Claude Code, Codex, or Gemini CLI. The command and model are automatic; the CLI uses its own logged-in default.",
-              "prompt-title": "Local CLI settings",
-              "timeout": "Timeout seconds (15-600)"
+              "command": "आदेश",
+              "engine": "स्थानीय CLI",
+              "engine-claude": "क्लॉड कोड",
+              "engine-codex": "कोडेक्स",
+              "engine-gemini": "जेमिनी सीएलआई",
+              "name": "स्थानीय CLI",
+              "prompt-label": "स्थानीय रूप से लॉग-इन किए गए Claude Code, Codex या Gemini CLI का उपयोग करें। कमांड और मॉडल स्वचालित हैं; CLI अपने स्वयं के लॉग-इन किए गए डिफ़ॉल्ट का उपयोग करता है।",
+              "prompt-title": "स्थानीय CLI सेटिंग्स",
+              "timeout": "टाइमआउट सेकंड (15-600)"
             },
             "openai-compatible": {
-              "api-mode": "API mode (responses / auto / chat-completions)",
-              "base-url": "Base URL",
-              "name": "OpenAI compatible",
-              "prompt-label": "Use OpenAI-compatible servers, including Ollama (base URL http://127.0.0.1:11434/v1, API mode auto or chat-completions).",
-              "prompt-title": "OpenAI-compatible settings"
+              "api-mode": "एपीआई मोड (प्रतिक्रियाएं / ऑटो / चैट-पूर्णताएं)",
+              "base-url": "बेस URL",
+              "name": "OpenAI संगत",
+              "prompt-label": "OpenAI-संगत सर्वरों का उपयोग करें, जिसमें Ollama (बेस URL http://127.0.0.1:11434/v1, API मोड ऑटो या चैट-कम्प्लीशन) शामिल है।",
+              "prompt-title": "OpenAI-संगत सेटिंग्स"
             },
             "shared": {
-              "api-key": "API key",
-              "model": "Model"
+              "api-key": "API कुंजी",
+              "model": "मॉडल"
             }
           },
           "target-language": {
@@ -1040,6 +1046,14 @@
             "tooltip": "लिरिक्स का अनुवाद किस भाषा में करें।"
           },
           "tooltip": "लिरिक्स का अनुवाद करें और अनुवादित परिणाम को पंक्ति-दर-पंक्ति प्रदर्शित करें।"
+        },
+        "use-ytm-lyrics-without-proxy": {
+          "label": "बिना प्रॉक्सी के YTM लिरिक्स का उपयोग करें",
+          "tooltip": "YTM ब्राउज़ प्रॉक्सी को छोड़ें और ऐप के प्रमाणित सत्र का उपयोग करके सीधे YouTube Music पर कॉल करें। यह उपयोगी है यदि आप अपने नेटवर्क/क्षेत्र पर भरोसा करते हैं कि वह सीधे ब्राउज़ कॉल की अनुमति देता है।"
+        },
+        "show-custom-search-button": {
+          "label": "कस्टम खोज बटन दिखाएं",
+          "tooltip": "गीत चयनकर्ता में एक खोज बटन दिखाएं जो आपको वर्तमान गीत के लिए खोज क्वेरी और कलाकार को ओवरराइड करने देता है।"
         }
       },
       "name": "सिंक्ड लिरिक्स",
@@ -1084,7 +1098,7 @@
     },
     "tuna-obs": {
       "description": "OBS के Tuna प्लगइन के साथ एकीकरण",
-      "name": "Tuna OBS"
+      "name": "टूना OBS"
     },
     "unobtrusive-player": {
       "description": "गाना बजते समय प्लेयर को पॉप अप होने से रोकता है",
@@ -1134,6 +1148,14 @@
         "log-to-console": "कंसोल में रिकवरी घटनाएँ लॉग करें"
       },
       "name": "प्लेबैक रिकवरी"
+    },
+    "playlist-search": {
+      "description": "साइडबार और प्लेलिस्ट में जोड़ें डायलॉग में प्लेलिस्ट को फ़िल्टर करने के लिए एक खोज इनपुट जोड़ता है",
+      "name": "प्लेलिस्ट खोज",
+      "templates": {
+        "search-placeholder": "प्लेलिस्ट खोजें",
+        "no-results": "कोई प्लेलिस्ट नहीं मिली"
+      }
     }
   }
 }

@@ -109,7 +109,8 @@
                   "title": "Proxyta churay"
                 }
               },
-              "toggle-dev-tools": "DevToolsta Kichay/Waqaychay"
+              "toggle-dev-tools": "DevToolsta Kichay/Waqaychay",
+              "force-smtc": "Puwsaqta chay SMTC hawapi apaykachanata"
             }
           },
           "always-on-top": "Siempre Hananpi",
@@ -145,7 +146,8 @@
               "enabled-and-hide-app": "Kichasqa, appta pakaspa",
               "enabled-and-show-app": "Kichasqa, appta rikuchispa",
               "play-pause-on-click": "Ñitiywan Pukllay/Samay",
-              "move-to-current-desktop": "Rikuchiyta kichaptin kunan virtual escritorioman kuyuchiy"
+              "move-to-current-desktop": "Rikuchiyta kichaptin kunan virtual escritorioman kuyuchiy",
+              "force-white-icons": "Pwose itilize ikon blan yo"
             }
           },
           "visual-tweaks": {
@@ -212,7 +214,11 @@
       "tooltip": {
         "default": "{{applicationName}}",
         "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
-      }
+      },
+      "like": "Gustar",
+      "dislike": "Dislike",
+      "unlike": "Qu",
+      "undislike": "Undislike"
     }
   },
   "plugins": {
@@ -235,7 +241,7 @@
       "description": "Álbum llimpi paletaman sayasqa dinámico temata, rikchay efectokunatawan churay",
       "menu": {
         "color-mix-ratio": {
-          "label": "Color mix ratio",
+          "label": "色混比例",
           "submenu": {
             "percent": "{{ratio}}%"
           }
@@ -256,17 +262,17 @@
         "buffer": {
           "label": "Buffer",
           "submenu": {
-            "buffer": "{{buffer}}"
+            "buffer": "buffer"
           }
         },
         "opacity": {
-          "label": "Opacity",
+          "label": "Opasidad",
           "submenu": {
             "percent": "{{opacity}}%"
           }
         },
         "quality": {
-          "label": "Quality",
+          "label": "Qu",
           "submenu": {
             "pixels": "{{quality}} píxeles"
           }
@@ -512,7 +518,7 @@
             "buttons": {
               "ok": "OK"
             },
-            "message": "Argh! Apologies, download failed…",
+            "message": "Argh! Disculpas, descarga falló…",
             "title": "Uraykachiy pantay!"
           },
           "start-download-playlist": {
@@ -612,7 +618,7 @@
       },
       "name": "Letrakuna Genius",
       "renderer": {
-        "fetched-lyrics": "Fetched lyrics for Genius"
+        "fetched-lyrics": "Genius nira lyrics"
       }
     },
     "music-together": {
@@ -621,44 +627,44 @@
         "enter-host": "Enter Host ID"
       },
       "internal": {
-        "save": "Save",
+        "save": "Savi",
         "track-source": "Track Source",
-        "unknown-user": "Unknown User"
+        "unknown-user": "qu: Usuariu Disconusciu"
       },
       "menu": {
-        "click-to-copy-id": "Copy Host ID",
-        "close": "Close Music Together",
-        "connected-users": "Connected Users",
-        "disconnect": "Disconnect Music Together",
+        "click-to-copy-id": "Kopi Host ID",
+        "close": "关闭音乐一起",
+        "connected-users": "Konektadong mga Gumagamit",
+        "disconnect": "断连音乐一起",
         "empty-user": "No connected users",
         "host": "Music Together Host",
         "join": "Join Music Together",
         "permission": {
-          "all": "Allow guests to control playlist and player",
-          "host-only": "Only the host can control playlist and player",
+          "all": "Permitir que huéspedes controlen la lista de reproducción y el reproductor",
+          "host-only": "Solo el anfitrión puede controlar la lista de reproducción y el reproductor",
           "playlist": "Allow guests to control playlist"
         },
-        "set-permission": "Change Control Permission",
+        "set-permission": "Chanj Kontrol Pèmisyon",
         "status": {
-          "disconnected": "Disconnected",
-          "guest": "Connected as Guest",
-          "host": "Connected as Host"
+          "disconnected": "Nadiskonekta",
+          "guest": "Konektado bilang Bisita",
+          "host": "Konektado bilang Host"
         }
       },
-      "name": "Music Together [Beta]",
+      "name": "Musika Magkasama [Beta]",
       "toast": {
-        "add-song-failed": "Failed to add song",
+        "add-song-failed": "Maná mana añapishka taki yapay",
         "closed": "Music Together closed",
-        "disconnected": "Music Together disconnected",
-        "host-failed": "Failed to host Music Together",
-        "id-copied": "Host ID copied to clipboard",
-        "id-copy-failed": "Failed to copy Host ID to clipboard",
+        "disconnected": "Musica Insieme disconnesso",
+        "host-failed": "Musiqa Waqtida Birge Qilish Muvaffaqiyatsiz",
+        "id-copied": "Host ID quyllurqa clipboardman qillqasqa",
+        "id-copy-failed": "Manammanay a kopya Host ID ha clipboard",
         "join-failed": "Failed to join Music Together",
-        "joined": "Joined Music Together",
+        "joined": "Música Unida",
         "permission-changed": "Music Together permission changed to \"{{permission}}\"",
-        "remove-song-failed": "Failed to remove song",
-        "user-connected": "{{name}} joined Music Together",
-        "user-disconnected": "{{name}} left Music Together"
+        "remove-song-failed": "Manáq p'isqa",
+        "user-connected": "{{name}} Music Together-ga qoshildi",
+        "user-disconnected": "{{name}} Music Together-ga tʼáá kʼad"
       }
     },
     "navigation": {
@@ -666,7 +672,7 @@
       "name": "Puririchiy",
       "templates": {
         "back": {
-          "title": "Go to previous page"
+          "title": "Tlaix tlaih"
         },
         "forward": {
           "title": "Go to next page"
@@ -680,19 +686,19 @@
     "notifications": {
       "description": "Takiy pukllayta qallariptin willayta rikuchiy (yanapanakuq willaykunaqa Windowsllapi atikun)",
       "menu": {
-        "interactive": "Interactive Notifications",
+        "interactive": "Interaktif Bildirişimler",
         "interactive-settings": {
-          "label": "Interactive Settings",
+          "label": "交互式设置",
           "submenu": {
-            "hide-button-text": "Hide button text",
+            "hide-button-text": "qu",
             "refresh-on-play-pause": "Refresh on Play/Pause",
-            "tray-controls": "Open/Close on tray click",
+            "tray-controls": "Tray similis clicku aperi/claude",
             "hover-controls": "Bandejata pasaptin huch'uy-pukllaqta rikuchiy"
           }
         },
-        "priority": "Notification Priority",
+        "priority": "Prioridad de Notificación",
         "toast-style": "Toast style",
-        "unpause-notification": "Show notification on unpause"
+        "unpause-notification": "Mostra notifica su unpause"
       },
       "name": "Willaykuna"
     },
@@ -701,26 +707,26 @@
       "name": "Allinllamanta llamkayta allichay [Beta]"
     },
     "picture-in-picture": {
-      "description": "Allows to switch the app to picture-in-picture mode",
+      "description": "Permite cambiar la aplicación al modo de imagen en imagen",
       "menu": {
-        "always-on-top": "Always on top",
+        "always-on-top": "Pal pal",
         "hotkey": {
           "label": "Hotkey",
           "prompt": {
             "keybind-options": {
               "hotkey": "Hotkey"
             },
-            "label": "Choose a hotkey to toggle picture-in-picture",
-            "title": "Picture-in-picture Hotkey"
+            "label": "Runa hotkey nispa picture-in-pictureta t'ikray",
+            "title": "Pikchur-insaid-pikchur Hatki"
           }
         },
-        "save-window-position": "Save window position",
-        "save-window-size": "Save window size",
-        "use-native-pip": "Use browser native PiP"
+        "save-window-position": "Salvar posición de la ventana",
+        "save-window-size": "Salvar tamaño de ventana",
+        "use-native-pip": "使用浏览器原生PiP"
       },
-      "name": "Picture-in-picture",
+      "name": "Picha-ndani-picha",
       "templates": {
-        "button": "Picture-in-picture"
+        "button": "Picha-ndani-picha"
       }
     },
     "playback-speed": {
@@ -801,7 +807,7 @@
         "listenbrainz": {
           "token": {
             "label": "Enter your ListenBrainz user token:",
-            "title": "ListenBrainz token"
+            "title": "quListenBrainz token"
           }
         }
       }
@@ -812,7 +818,7 @@
         "override-media-keys": "Media Teclasta Hukchay",
         "set-keybinds": "Global Takiy Kamachiykunata Churay"
       },
-      "name": "Shortcuts (& MPRIS)",
+      "name": "Quyaw (MPRIS)",
       "prompt": {
         "keybind": {
           "keybind-options": {
@@ -1040,6 +1046,14 @@
             "tooltip": "Letrakunata ima simimanchus t'ikranapaq."
           },
           "tooltip": "Letrakunata t'ikray, resultado t'ikrasqata siq'i siq'imanta rikuchiy."
+        },
+        "use-ytm-lyrics-without-proxy": {
+          "label": "YTM lyrics proxywan mana",
+          "tooltip": "YTM browse proxy-ga skip-nga app's authenticated session-ga YouTube Music-ga direct-ga call-nga. Network/region-ga direct browse calls-ga allow-nga trust-nga if useful-ga."
+        },
+        "show-custom-search-button": {
+          "label": "Mostrar botón de búsqueda personalizada",
+          "tooltip": "Mostra un botón de búsqueda nel selector de lletres que te permita sobrescribir la consulta de búsqueda y l'artista pa la canción actual."
         }
       },
       "name": "Sincronizasqa Letrakuna",
@@ -1111,10 +1125,10 @@
           }
         }
       },
-      "name": "Video Toggle",
+      "name": "Vidiyo Toggle",
       "templates": {
         "button-song": "Takiy",
-        "button-video": "Video"
+        "button-video": "Vidéo"
       }
     },
     "visualizer": {
@@ -1134,6 +1148,14 @@
         "log-to-console": "Allichay ruwasqakunata consolaman qillqay"
       },
       "name": "Takiy Allichaq"
+    },
+    "playlist-search": {
+      "description": "Añade un campo de búsqueda para filtrar listas de reproducción en la barra lateral y en el diálogo Añadir a lista de reproducción",
+      "name": "Playlist Search",
+      "templates": {
+        "search-placeholder": "Search playlists",
+        "no-results": "Nisus playlistas"
+      }
     }
   }
 }

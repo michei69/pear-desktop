@@ -109,7 +109,8 @@
                   "title": "הגדר שרת proxy"
                 }
               },
-              "toggle-dev-tools": "שנה את מצב כלי המפתחים"
+              "toggle-dev-tools": "שנה את מצב כלי המפתחים",
+              "force-smtc": "אלץ שימוש ב-SMTC חיצוני"
             }
           },
           "always-on-top": "השאר מקדימה",
@@ -145,7 +146,8 @@
               "enabled-and-hide-app": "מופעל והסתר אפליקציה",
               "enabled-and-show-app": "מופעל והמציג את האפליקציה",
               "play-pause-on-click": "הפעל/השהה בלחיצה",
-              "move-to-current-desktop": "העבר לשולחן עבודה וירטואלי נוכחי בעת הצגה"
+              "move-to-current-desktop": "העבר לשולחן עבודה וירטואלי נוכחי בעת הצגה",
+              "force-white-icons": "השתמש בכוח באייקונים לבנים"
             }
           },
           "visual-tweaks": {
@@ -212,7 +214,11 @@
       "tooltip": {
         "default": "{{applicationName}}",
         "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
-      }
+      },
+      "like": "אהבתי",
+      "dislike": "לא אוהב",
+      "unlike": "שלא",
+      "undislike": "בטל דיסלייק"
     }
   },
   "plugins": {
@@ -256,7 +262,7 @@
         "buffer": {
           "label": "חוצץ",
           "submenu": {
-            "buffer": "{{buffer}}"
+            "buffer": "מאגר"
           }
         },
         "opacity": {
@@ -497,7 +503,7 @@
           }
         }
       },
-      "name": "Discord Rich Presence",
+      "name": "נוכחות עשירה בדיסקורד",
       "prompt": {
         "set-inactivity-timeout": {
           "label": "הזן זמן קצוב לחוסר פעילות בשניות:",
@@ -610,7 +616,7 @@
       "menu": {
         "romanized-lyrics": "מילים בתעתיק לטיני"
       },
-      "name": "Lyrics Genius",
+      "name": "גאוניוס מילים",
       "renderer": {
         "fetched-lyrics": "מילים נשלפו עבור Genius"
       }
@@ -663,7 +669,7 @@
     },
     "navigation": {
       "description": "חצאי ניווט קדימה/אחורה משולבים ישירות בממשק, כמו בדפדפן המועדף עליך",
-      "name": "Navigation",
+      "name": "ניווט",
       "templates": {
         "back": {
           "title": "עבור לדף הקודם"
@@ -718,14 +724,14 @@
         "save-window-size": "שמור גודל חלון",
         "use-native-pip": "השתמש ב-PiP המקורי של הדפדפן"
       },
-      "name": "Picture-in-picture",
+      "name": "תמונה בתוך תמונה",
       "templates": {
         "button": "תמונה-בתוך-תמונה"
       }
     },
     "playback-speed": {
       "description": "האזן מהר, האזן לאט! מוסיף מחוון השולט במהירות השיר",
-      "name": "Playback Speed",
+      "name": "מהירות השמעה",
       "templates": {
         "button": "מהירות"
       }
@@ -737,7 +743,7 @@
         "custom-volume-steps": "הגדר שלבי ווליום מותאמים",
         "global-shortcuts": "מקשים חמים גלובליים"
       },
-      "name": "Precise Volume",
+      "name": "עוצמה מדויקת",
       "prompt": {
         "global-shortcuts": {
           "keybind-options": {
@@ -764,7 +770,7 @@
         }
       },
       "description": "מאפשר לשנות את איכות הווידאו באמצעות כפתור על שכבת הווידאו",
-      "name": "Video Quality Changer",
+      "name": "משנה איכות וידאו",
       "renderer": {
         "quality-settings-button": {
           "label": "פתח משנה איכות נגן"
@@ -792,7 +798,7 @@
         "scrobble-alternative-title": "השתמש בכותרות חלופיות",
         "scrobble-other-media": "Scrobble מדיה אחרת"
       },
-      "name": "Scrobbler",
+      "name": "סקרובלר",
       "prompt": {
         "lastfm": {
           "api-key": "מפתח API של Last.fm",
@@ -950,27 +956,27 @@
           },
           "providers": {
             "anthropic": {
-              "name": "Anthropic Claude",
+              "name": "אנתרופיק קלוד",
               "prompt-label": "משתמש ב-API ההודעות המקורי של Anthropic.",
               "prompt-title": "הגדרות Anthropic"
             },
             "gemini": {
-              "name": "Google Gemini",
+              "name": "גוגל ג'מיני",
               "prompt-label": "משתמש ב-API השפה הגנרטיבית של Google (generateContent).",
               "prompt-title": "הגדרות Gemini"
             },
             "google-translate": {
               "host": "מארח",
-              "name": "Google Translate",
+              "name": "גוגל תרגום",
               "prompt-label": "משתמש בנקודת הקצה החינמית הלא רשמית של Google Translate. אין צורך במפתח API, אך Google עשויה להגביל את הקצב.",
               "prompt-title": "הגדרות Google Translate"
             },
             "local-cli": {
               "command": "פקודה",
               "engine": "CLI מקומי",
-              "engine-claude": "Claude Code",
-              "engine-codex": "Codex",
-              "engine-gemini": "Gemini CLI",
+              "engine-claude": "קלוד קוד",
+              "engine-codex": "קודקס",
+              "engine-gemini": "ג'מיני CLI",
               "name": "CLI מקומי",
               "prompt-label": "השתמש ב-Claude Code, Codex או Gemini CLI המחוברים מקומית. הפקודה והמודל אוטומטיים; ה-CLI משתמש בברירת המחדל המחוברת שלו.",
               "prompt-title": "הגדרות CLI מקומי",
@@ -1040,6 +1046,14 @@
             "tooltip": "לאיזו שפה לתרגם את המילים."
           },
           "tooltip": "תרגם מילים והצג את התוצאה המתורגמת שורה אחר שורה."
+        },
+        "use-ytm-lyrics-without-proxy": {
+          "label": "השתמש במילות YTM ללא פרוקסי",
+          "tooltip": "דלג על פרוקסי ה-YTM והתקשר ישירות ל-YouTube Music באמצעות הסשן המאומת של האפליקציה. שימושי אם אתה סומך על הרשת/אזור שלך לאפשר קריאות ישירות."
+        },
+        "show-custom-search-button": {
+          "label": "הצג כפתור חיפוש מותאם אישית",
+          "tooltip": "הצג כפתור חיפוש בבוחר המילים המאפשר לעקוף את שאילתת החיפוש והאמן לשיר הנוכחי."
         }
       },
       "name": "מילים מסונכרנות",
@@ -1084,7 +1098,7 @@
     },
     "tuna-obs": {
       "description": "אינטגרציה עם תוסף Tuna של OBS",
-      "name": "Tuna OBS"
+      "name": "טונה OBS"
     },
     "unobtrusive-player": {
       "description": "מונע מהנגן לקפוץ בעת ניגון שיר",
@@ -1134,6 +1148,14 @@
         "log-to-console": "תעד אירועי שחזור למסוף"
       },
       "name": "שחזור השמעה"
+    },
+    "playlist-search": {
+      "description": "מוסיף שדה חיפוש לסינון רשימות השמעה בסרגל הצד ובתיבת הדו-שיח \"הוסף לרשימת השמעה\"",
+      "name": "חיפוש פלייליסט",
+      "templates": {
+        "search-placeholder": "חיפוש פלייליסטים",
+        "no-results": "לא נמצאו פלייליסטים"
+      }
     }
   }
 }

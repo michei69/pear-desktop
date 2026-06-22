@@ -109,7 +109,8 @@
                   "title": "设置代理服务器"
                 }
               },
-              "toggle-dev-tools": "切换开发人员工具"
+              "toggle-dev-tools": "切换开发人员工具",
+              "force-smtc": "强制使用外部SMTC"
             }
           },
           "always-on-top": "保持置顶",
@@ -145,7 +146,8 @@
               "enabled-and-hide-app": "启用并隐藏应用",
               "enabled-and-show-app": "启用并显示应用",
               "move-to-current-desktop": "显示时移动到当前虚拟桌面",
-              "play-pause-on-click": "点击时播放/暂停"
+              "play-pause-on-click": "点击时播放/暂停",
+              "force-white-icons": "强制使用白色图标"
             }
           },
           "visual-tweaks": {
@@ -211,8 +213,12 @@
       "show": "显示窗口",
       "tooltip": {
         "default": "{{applicationName}}",
-        "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
-      }
+        "with-song-info": "{{applicationName}}：{{artist}} - {{title}}"
+      },
+      "like": "喜欢",
+      "dislike": "不喜欢",
+      "unlike": "不同于",
+      "undislike": "取消不喜欢"
     }
   },
   "plugins": {
@@ -1017,7 +1023,7 @@
               "model": "模型"
             },
             "openai-compatible": {
-              "name": "OpenAI compatible",
+              "name": "兼容 OpenAI",
               "prompt-title": "OpenAI 兼容设置",
               "prompt-label": "使用兼容 OpenAI 的服务器，包括 Ollama（基础 URL http://127.0.0.1:11434/v1，API 模式为 auto 或 chat-completions）。",
               "base-url": "基础 URL",
@@ -1034,7 +1040,7 @@
               "prompt-label": "使用 Google 的 Generative Language API (generateContent)。"
             },
             "local-cli": {
-              "name": "Local CLI",
+              "name": "本地命令行界面",
               "prompt-title": "本地 CLI 设置",
               "prompt-label": "使用已本地登录的 Claude Code、Codex 或 Gemini CLI。命令和模型为自动；CLI 使用其自己的登录默认值。",
               "engine": "本地 CLI",
@@ -1045,12 +1051,20 @@
               "timeout": "超时秒数 (15-600)"
             },
             "google-translate": {
-              "name": "Google Translate",
+              "name": "谷歌翻译",
               "prompt-title": "Google 翻译设置",
               "prompt-label": "使用非官方的免费 Google 翻译端点。无需 API 密钥，但 Google 可能会限制速率。",
               "host": "主机"
             }
           }
+        },
+        "use-ytm-lyrics-without-proxy": {
+          "label": "使用YTM歌词，无需代理",
+          "tooltip": "跳过YTM浏览代理，直接使用应用认证会话调用YouTube Music。若您信任网络/地区允许直接浏览调用时适用。"
+        },
+        "show-custom-search-button": {
+          "label": "显示自定义搜索按钮",
+          "tooltip": "在歌词选择器中显示一个搜索按钮，允许您覆盖当前歌曲的搜索查询和艺术家。"
         }
       },
       "name": "滚动歌词",
@@ -1095,7 +1109,7 @@
     },
     "tuna-obs": {
       "description": "与 OBS 的 Tuna 插件集成",
-      "name": "Tuna OBS"
+      "name": "金枪鱼OBS"
     },
     "unobtrusive-player": {
       "description": "防止播放器在播放歌曲时弹出",
@@ -1134,6 +1148,14 @@
         "visualizer-type": "可视化类型"
       },
       "name": "可视化效果"
+    },
+    "playlist-search": {
+      "description": "在侧边栏和“添加到播放列表”对话框中添加搜索输入框以筛选播放列表。",
+      "name": "播放列表搜索",
+      "templates": {
+        "search-placeholder": "搜索播放列表",
+        "no-results": "未找到播放列表"
+      }
     }
   }
 }

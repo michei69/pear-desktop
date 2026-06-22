@@ -109,7 +109,8 @@
                   "title": "Definir proxy"
                 }
               },
-              "toggle-dev-tools": "Alternar DevTools"
+              "toggle-dev-tools": "Alternar DevTools",
+              "force-smtc": "Forçar o uso de SMTC externo"
             }
           },
           "always-on-top": "Sempre no topo",
@@ -145,7 +146,8 @@
               "enabled-and-hide-app": "Ativado e aplicativo oculto",
               "enabled-and-show-app": "Ativado e mostrar aplicativo",
               "play-pause-on-click": "Reproduzir/Pausar ao clicar",
-              "move-to-current-desktop": "Mover para a área de trabalho virtual atual ao mostrar"
+              "move-to-current-desktop": "Mover para a área de trabalho virtual atual ao mostrar",
+              "force-white-icons": "Forçar o uso de ícones brancos"
             }
           },
           "visual-tweaks": {
@@ -212,7 +214,11 @@
       "tooltip": {
         "default": "{{applicationName}}",
         "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
-      }
+      },
+      "like": "Curtir",
+      "dislike": "Não gostei",
+      "unlike": "Diferente de",
+      "undislike": "Remover deslike"
     }
   },
   "plugins": {
@@ -262,7 +268,7 @@
         "opacity": {
           "label": "Opacidade",
           "submenu": {
-            "percent": "{{opacity}}%"
+            "percent": "{{opacidade}}%"
           }
         },
         "quality": {
@@ -529,7 +535,7 @@
           "converting": "Convertendo…",
           "done": "Concluído: {{filePath}}",
           "download-info": "Baixando {{artist}} - {{title}} [{{videoId}}",
-          "download-progress": "Download: {{percent}}%",
+          "download-progress": "Baixar: {{percent}}%",
           "downloading": "Baixando…",
           "downloading-counter": "Baixando {{current}}/{{total}}…",
           "downloading-playlist": "Baixando lista de reprodução \"{{playlistTitle}}\" - {{playlistSize}} músicas ({{playlistId}})",
@@ -645,7 +651,7 @@
           "host": "Conectado como Anfitrião"
         }
       },
-      "name": "Music Together [Beta]",
+      "name": "Música Juntos [Beta]",
       "toast": {
         "add-song-failed": "Falha ao adicionar música",
         "closed": "Music Together fechado",
@@ -801,7 +807,7 @@
         "listenbrainz": {
           "token": {
             "label": "Insira seu token de usuário do ListenBrainz:",
-            "title": "ListenBrainz token"
+            "title": "Token do ListenBrainz"
           }
         }
       }
@@ -870,7 +876,7 @@
           "label": "Efeito de linha",
           "submenu": {
             "fancy": {
-              "label": "Fancy",
+              "label": "Chique",
               "tooltip": "Use efeitos grandes, semelhantes a aplicativos, na linha atual"
             },
             "focus": {
@@ -960,8 +966,8 @@
               "prompt-title": "Configurações do Gemini"
             },
             "google-translate": {
-              "host": "Host",
-              "name": "Google Translate",
+              "host": "Anfitrião",
+              "name": "Tradutor Google",
               "prompt-label": "Usa o endpoint gratuito não oficial do Google Translate. Não requer chave API, mas o Google pode limitar a taxa.",
               "prompt-title": "Configurações do Google Translate"
             },
@@ -1040,6 +1046,14 @@
             "tooltip": "O idioma para o qual as letras serão traduzidas."
           },
           "tooltip": "Traduzir letras e mostrar o resultado traduzido linha por linha."
+        },
+        "use-ytm-lyrics-without-proxy": {
+          "label": "Usar letras do YTM sem proxy",
+          "tooltip": "Pule o proxy de navegação do YTM e chame o YouTube Music diretamente usando a sessão autenticada do aplicativo. Útil se você confiar em sua rede/região para permitir chamadas de navegação diretas."
+        },
+        "show-custom-search-button": {
+          "label": "Mostrar botão de pesquisa personalizado",
+          "tooltip": "Mostrar um botão de busca no seletor de letras que permite substituir a consulta de busca e o artista da música atual."
         }
       },
       "name": "Letras sincronizadas",
@@ -1067,7 +1081,7 @@
         "opacity": {
           "label": "Opacidade",
           "submenu": {
-            "percent": "{{opacity}}%"
+            "percent": "{{opacidade}}%"
           }
         },
         "type": {
@@ -1134,6 +1148,14 @@
         "log-to-console": "Registrar eventos de recuperação no console"
       },
       "name": "Recuperação de Reprodução"
+    },
+    "playlist-search": {
+      "description": "Adiciona um campo de busca para filtrar playlists na barra lateral e no diálogo Adicionar à playlist",
+      "name": "Pesquisa de Playlist",
+      "templates": {
+        "search-placeholder": "Pesquisar playlists",
+        "no-results": "Nenhuma playlist encontrada"
+      }
     }
   }
 }

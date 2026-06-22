@@ -109,7 +109,8 @@
                   "title": "Proxy təyin et"
                 }
               },
-              "toggle-dev-tools": "DevTools-u açıb bağla"
+              "toggle-dev-tools": "DevTools-u açıb bağla",
+              "force-smtc": "Xarici SMTC istifadəsini məcbur et"
             }
           },
           "always-on-top": "Həmişə üst tərəfdə",
@@ -139,13 +140,14 @@
             "unset": "Təyin edilməyib"
           },
           "tray": {
-            "label": "Tray",
+            "label": "Tepsilik",
             "submenu": {
               "disabled": "Deaktiv edilib",
               "enabled-and-hide-app": "Aktivdir və tətbiqi gizlət",
               "enabled-and-show-app": "Aktivdir və tətbiqi göstər",
               "play-pause-on-click": "Kliklədikdə Başlat/Dayan",
-              "move-to-current-desktop": "Göstərildikdə cari virtual iş masasına keç"
+              "move-to-current-desktop": "Göstərildikdə cari virtual iş masasına keç",
+              "force-white-icons": "Ağ ikonaların istifadəsini məcbur et"
             }
           },
           "visual-tweaks": {
@@ -212,7 +214,11 @@
       "tooltip": {
         "default": "{{applicationName}}",
         "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
-      }
+      },
+      "like": "Bəyən",
+      "dislike": "Bəyənmə",
+      "unlike": "Fərqli olaraq",
+      "undislike": "Bəyənməmə"
     }
   },
   "plugins": {
@@ -260,7 +266,7 @@
         "buffer": {
           "label": "Bufer",
           "submenu": {
-            "buffer": "{{buffer}}"
+            "buffer": "bufer"
           }
         },
         "opacity": {
@@ -295,7 +301,7 @@
     },
     "amuse": {
       "description": "6K Labs tərəfindən Amuse indi oxuyan vidjeti üçün {{applicationName}} dəstəyi əlavə edir",
-      "name": "Amuse",
+      "name": "Əylən",
       "response": {
         "query": "Amuse API serveri işləyir. Mahnı məlumatı üçün GET /query."
       }
@@ -383,7 +389,7 @@
         },
         "port": {
           "label": "Yerli proxy server üçün port daxil edin (yenidən başlatma tələb olunur):",
-          "title": "Proxy Port"
+          "title": "Proksi Portu"
         }
       }
     },
@@ -438,7 +444,7 @@
       "menu": {
         "advanced": "Qabaqcıl"
       },
-      "name": "Crossfade [Beta]",
+      "name": "Çarpaz keçid [Beta]",
       "prompt": {
         "options": {
           "multi-input": {
@@ -614,7 +620,7 @@
       "menu": {
         "romanized-lyrics": "Romanlaşdırılmış Sözlər"
       },
-      "name": "Lyrics Genius",
+      "name": "Sözlər Genius",
       "renderer": {
         "fetched-lyrics": "Genius üçün sözlər alındı"
       }
@@ -635,7 +641,7 @@
         "connected-users": "Qoşulmuş İstifadəçilər",
         "disconnect": "Music Together-dən ayrıl",
         "empty-user": "Qoşulmuş istifadəçi yoxdur",
-        "host": "Music Together Host",
+        "host": "MusiQ Birlikdə Ev Sahibi",
         "join": "Music Together-ə qoşul",
         "permission": {
           "all": "Qonaqlara playlist və pleyeri idarə etməyə icazə ver",
@@ -649,7 +655,7 @@
           "host": "Host olaraq qoşuldu"
         }
       },
-      "name": "Music Together [Beta]",
+      "name": "Musiqi Birgə [Beta]",
       "toast": {
         "add-song-failed": "Mahnı əlavə etmək mümkün olmadı",
         "closed": "Music Together bağlandı",
@@ -688,10 +694,9 @@
         "interactive-settings": {
           "label": "Interaktiv Ayarlar",
           "submenu": {
-                "hide-button-text": "Düymə mətnini gizlət",
-                "hover-controls": "Tray üzərində dayandıqda mini-plyer göstər",
-                "hover-controls": "Tray üzərində dayandıqda mini-plyer göstər",
-                "refresh-on-play-pause": "Oynat/Dayandır-da yenilə",
+            "hide-button-text": "Düymə mətnini gizlət",
+            "hover-controls": "Tray üzərində dayandıqda mini-plyer göstər",
+            "refresh-on-play-pause": "Oynat/Dayandır-da yenilə",
             "tray-controls": "Tray klikində Aç/Bağla"
           }
         },
@@ -972,16 +977,16 @@
               "prompt-title": "Gemini parametrləri"
             },
             "google-translate": {
-              "host": "Host",
-              "name": "Google Translate",
+              "host": "Ev sahibi",
+              "name": "Google Tərcümə",
               "prompt-label": "Qeyri-rəsmi pulsuz Google Translate endpointindən istifadə edir. API açarı tələb olunmur, lakin Google sürət məhdudiyyəti tətbiq edə bilər.",
               "prompt-title": "Google Translate parametrləri"
             },
             "local-cli": {
               "command": "Əmr",
               "engine": "Yerli CLI",
-              "engine-claude": "Claude Code",
-              "engine-codex": "Codex",
+              "engine-claude": "Klod Kodu",
+              "engine-codex": "Kodeks",
               "engine-gemini": "Gemini CLI",
               "name": "Yerli CLI",
               "prompt-label": "Yerli olaraq daxil olmuş Claude Code, Codex və ya Gemini CLI istifadə edin. Əmr və model avtomatikdir; CLI öz daxil olmuş standartlarından istifadə edir.",
@@ -1052,6 +1057,14 @@
             "tooltip": "Sözlərin tərcümə ediləcəyi dil."
           },
           "tooltip": "Sözləri tərcümə et və tərcümə olunmuş nəticəni sətir-sətir göstər."
+        },
+        "use-ytm-lyrics-without-proxy": {
+          "label": "YTM sözlərini proxy olmadan istifadə edin",
+          "tooltip": "YTM brauzer proksisini keçin və birbaşa YouTube Music-ə tətbiqin autentifikasiya edilmiş sessiyası ilə zəng edin. Şəbəkənizə/regionunuza etibar edirsinizsə, birbaşa brauzer zənglərinə icazə vermək üçün faydalıdır."
+        },
+        "show-custom-search-button": {
+          "label": "Xüsusi axtarış düyməsini göstər",
+          "tooltip": "Mahnı seçicisində axtarış düyməsini göstər ki, bu, cari mahnı üçün axtarış sorğusunu və ifaçını dəyişməyə imkan versin."
         }
       },
       "name": "Sinxronizə Olunmuş Sözlər",
@@ -1088,7 +1101,7 @@
             "acrylic": "Akril",
             "mica": "Mika",
             "none": "Heç biri",
-            "tabbed": "Tabbed"
+            "tabbed": "Sekmeli"
           }
         }
       },
@@ -1135,6 +1148,14 @@
         "visualizer-type": "Vizuallaşdırıcı Növü"
       },
       "name": "Vizuallaşdırıcı"
+    },
+    "playlist-search": {
+      "description": "Yan paneldə pleylistləri filtrləmək üçün axtarış sahəsi və \"Pleylistə əlavə et\" dialoqu əlavə edir",
+      "name": "Pleylişt Axtarışı",
+      "templates": {
+        "search-placeholder": "Axtar pleylistlər",
+        "no-results": "Heç bir pleylist tapılmadı"
+      }
     }
   }
 }

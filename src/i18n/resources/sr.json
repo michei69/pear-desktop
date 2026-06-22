@@ -109,7 +109,8 @@
                   "title": "Podesi proxy"
                 }
               },
-              "toggle-dev-tools": "Pokreni/napusti DevTools"
+              "toggle-dev-tools": "Pokreni/napusti DevTools",
+              "force-smtc": "Присили коришћење спољног SMTC-а"
             }
           },
           "always-on-top": "Uvek na vrhu",
@@ -145,7 +146,8 @@
               "enabled-and-hide-app": "Omogući sklanjanje aplikacije u sistemsku listu",
               "enabled-and-show-app": "Omogući i prikaži aplikaciju",
               "play-pause-on-click": "Pokreni/Pauziraj na klik",
-              "move-to-current-desktop": "Premesti na trenutnu virtuelnu radnu površinu pri prikazivanju"
+              "move-to-current-desktop": "Premesti na trenutnu virtuelnu radnu površinu pri prikazivanju",
+              "force-white-icons": "Принуди коришћење белих икона"
             }
           },
           "visual-tweaks": {
@@ -212,7 +214,11 @@
       "tooltip": {
         "default": "{{applicationName}}",
         "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
-      }
+      },
+      "like": "Свиђа ми се",
+      "dislike": "Не свиђа ми се",
+      "unlike": "Za razliku od",
+      "undislike": "Уклони се од несвиђања"
     }
   },
   "plugins": {
@@ -256,7 +262,7 @@
         "buffer": {
           "label": "Bafer",
           "submenu": {
-            "buffer": "{{buffer}}"
+            "buffer": "бафер"
           }
         },
         "opacity": {
@@ -340,10 +346,10 @@
           }
         },
         "port": {
-          "label": "Port"
+          "label": "Порт"
         }
       },
-      "name": "API Server [Beta]",
+      "name": "API сервер [Бета]",
       "prompt": {
         "hostname": {
           "label": "Unesite ime host-a (npr. 0.0.0.0) za API server:",
@@ -379,7 +385,7 @@
         },
         "port": {
           "label": "Unesi port za lokalni proxy server (zahteva ponovno pokretanje):",
-          "title": "Proxy Port"
+          "title": "Прокси порт"
         }
       }
     },
@@ -420,7 +426,7 @@
         "format": {
           "24-hour-format": "24-časovni format",
           "display-seconds": "Prikaži sekunde",
-          "label": "Format"
+          "label": "Формат"
         }
       },
       "name": "Sat"
@@ -645,7 +651,7 @@
           "host": "Povezan kao domaćin (host)"
         }
       },
-      "name": "Music Together [Beta]",
+      "name": "Музика заједно [Бета]",
       "toast": {
         "add-song-failed": "Dodavanje pesme nije uspelo",
         "closed": "'Music Together' je zatvorena",
@@ -960,7 +966,7 @@
               "prompt-title": "Gemini podešavanja"
             },
             "google-translate": {
-              "host": "Host",
+              "host": "Домаћин",
               "name": "Google Prevodioc",
               "prompt-label": "Koristi nezvanični besplatni Google Translate endpoint. API ključ nije potreban, ali Google može ograničiti broj zahteva.",
               "prompt-title": "Podešavanja Google Prevodioca"
@@ -985,7 +991,7 @@
             },
             "shared": {
               "api-key": "API ključ",
-              "model": "Model"
+              "model": "Модел"
             }
           },
           "target-language": {
@@ -1040,6 +1046,14 @@
             "tooltip": "Jezik na koji se prevode tekstovi pesama."
           },
           "tooltip": "Prevedi tekst pesme i prikaži prevedeni rezultat red po red."
+        },
+        "use-ytm-lyrics-without-proxy": {
+          "label": "Koristi YTM tekstove bez proxy-ja",
+          "tooltip": "Прескочи YTM browse proxy и позови YouTube Music директно користећи аутентификовану сесију апликације. Корисно ако верујеш својој мрежи/региону да дозвољава директне browse позиве."
+        },
+        "show-custom-search-button": {
+          "label": "Прикажи прилагођено дугме за претрагу",
+          "tooltip": "Прикажи дугме за претрагу у бирачу текстова које ти омогућава да замениш упит за претрагу и извођача за тренутну песму."
         }
       },
       "name": "Sinhronizovani tekstovi pesama",
@@ -1114,7 +1128,7 @@
       "name": "Video prebacivanje",
       "templates": {
         "button-song": "Pesma",
-        "button-video": "Video"
+        "button-video": "Видео"
       }
     },
     "visualizer": {
@@ -1134,6 +1148,14 @@
         "log-to-console": "Beleži događaje oporavka u konzolu"
       },
       "name": "Oporavak Reprodukcije"
+    },
+    "playlist-search": {
+      "description": "Додаје поље за претрагу за филтрирање плејлиста у бочном менију и дијалогу за додавање у плејлисту",
+      "name": "Претрага плејлиста",
+      "templates": {
+        "search-placeholder": "Претражи плејлисте",
+        "no-results": "Нема пронађених плејлиста"
+      }
     }
   }
 }

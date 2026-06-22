@@ -109,7 +109,8 @@
                   "title": "Proxy ayarla"
                 }
               },
-              "toggle-dev-tools": "DevTools'u Aç / Kapat"
+              "toggle-dev-tools": "DevTools'u Aç / Kapat",
+              "force-smtc": "Harici SMTC kullanımını zorla"
             }
           },
           "always-on-top": "Her zaman üstte",
@@ -145,7 +146,8 @@
               "enabled-and-hide-app": "Uygulamayı etkinleştirin gizleyin",
               "enabled-and-show-app": "Etkinleştir ve uygulamayı göster",
               "play-pause-on-click": "Tıklandığında Oynat/Duraklat",
-              "move-to-current-desktop": "Gösterildiğinde mevcut sanal masaüstüne taşı"
+              "move-to-current-desktop": "Gösterildiğinde mevcut sanal masaüstüne taşı",
+              "force-white-icons": "Beyaz simgelerin kullanımını zorla"
             }
           },
           "visual-tweaks": {
@@ -212,7 +214,11 @@
       "tooltip": {
         "default": "{{applicationName}}",
         "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
-      }
+      },
+      "like": "Beğen",
+      "dislike": "Beğenme",
+      "unlike": "Unlike",
+      "undislike": "Beğenmeme"
     }
   },
   "plugins": {
@@ -256,7 +262,7 @@
         "buffer": {
           "label": "Önbellek",
           "submenu": {
-            "buffer": "{{buffer}}"
+            "buffer": "arabelle"
           }
         },
         "opacity": {
@@ -291,7 +297,7 @@
     },
     "amuse": {
       "description": "6K Labs'ın Amuse oynatma widget'ı için {{applicationName}} desteği ekler",
-      "name": "Amuse",
+      "name": "Eğlendir",
       "response": {
         "query": "Amuse API sunucusu çalışıyor. Şarkı bilgilerini almak için GET /query kullanabilirsiniz."
       }
@@ -961,7 +967,7 @@
             },
             "google-translate": {
               "host": "Ana makine",
-              "name": "Google Translate",
+              "name": "Google Çeviri",
               "prompt-label": "Resmi olmayan ücretsiz Google Translate uç noktasını kullanır. API anahtarı gerekmez, ancak Google hız sınırlaması uygulayabilir.",
               "prompt-title": "Google Translate ayarları"
             },
@@ -1040,6 +1046,14 @@
             "tooltip": "Şarkı sözlerinin çevrileceği dil"
           },
           "tooltip": "Şarkı sözlerini çevir ve çevrilen sonucu satır satır göster"
+        },
+        "use-ytm-lyrics-without-proxy": {
+          "label": "YTM şarkı sözlerini proxy olmadan kullan",
+          "tooltip": "YTM tarama proxy'sini atla ve uygulamanın kimliği doğrulanmış oturumunu kullanarak doğrudan YouTube Music'i çağır. Ağınıza/bölgenize güveniyorsanız ve doğrudan tarama çağrılarına izin veriyorsanız kullanışlıdır."
+        },
+        "show-custom-search-button": {
+          "label": "Özel arama düğmesini göster",
+          "tooltip": "Şarkı sözü seçicide, mevcut şarkı için arama sorgusunu ve sanatçıyı değiştirmenizi sağlayan bir arama düğmesi göster."
         }
       },
       "name": "Senkronize Şarkı Sözleri",
@@ -1134,6 +1148,14 @@
         "log-to-console": "Kurtarma olaylarını konsola kaydet"
       },
       "name": "Oynatma Kurtarma"
+    },
+    "playlist-search": {
+      "description": "Kenar çubuğundaki ve Listeye ekle iletişim kutusundaki çalma listelerini filtrelemek için bir arama girişi ekler",
+      "name": "Çalma Listesi Ara",
+      "templates": {
+        "search-placeholder": "Çalma listelerini ara",
+        "no-results": "Çalma listesi bulunamadı"
+      }
     }
   }
 }

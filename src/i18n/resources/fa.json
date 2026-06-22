@@ -109,7 +109,8 @@
                   "title": "تنظیم پروکسی"
                 }
               },
-              "toggle-dev-tools": "تغییر وضعیت ابزارهای توسعه‌دهنده"
+              "toggle-dev-tools": "تغییر وضعیت ابزارهای توسعه‌دهنده",
+              "force-smtc": "اجبار به استفاده از SMTC خارجی"
             }
           },
           "always-on-top": "همیشه بالای پنجره‌ها",
@@ -145,7 +146,8 @@
               "enabled-and-hide-app": "فعال و مخفی‌سازی برنامه",
               "enabled-and-show-app": "فعال و نمایش برنامه",
               "move-to-current-desktop": "انتقال به میزکار مجازی فعلی هنگام نمایش",
-              "play-pause-on-click": "پخش/توقف با کلیک"
+              "play-pause-on-click": "پخش/توقف با کلیک",
+              "force-white-icons": "اجبار به استفاده از آیکون‌های سفید"
             }
           },
           "visual-tweaks": {
@@ -212,7 +214,11 @@
       "tooltip": {
         "default": "{{applicationName}}",
         "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
-      }
+      },
+      "like": "لایک",
+      "dislike": "عدم علاقه",
+      "unlike": "برخلاف",
+      "undislike": "عدم پسندیدن"
     }
   },
   "plugins": {
@@ -260,13 +266,13 @@
         "buffer": {
           "label": "بافر",
           "submenu": {
-            "buffer": "{{buffer}}"
+            "buffer": "بافر"
           }
         },
         "opacity": {
           "label": "شفافیت",
           "submenu": {
-            "percent": "{{opacity}}%"
+            "percent": "{{opacity}}٪"
           }
         },
         "quality": {
@@ -295,7 +301,7 @@
     },
     "amuse": {
       "description": "افزودن پشتیبانی {{applicationName}} برای ویجت در حال پخش Amuse توسط 6K Labs",
-      "name": "Amuse",
+      "name": "سرگرم",
       "response": {
         "query": "سرور API برنامه Amuse در حال اجراست. برای دریافت اطلاعات آهنگ از GET /query استفاده کنید."
       }
@@ -501,7 +507,7 @@
           }
         }
       },
-      "name": "Discord Rich Presence",
+      "name": "حضور غنی دیسکورد",
       "prompt": {
         "set-inactivity-timeout": {
           "label": "زمان عدم فعالیت را به ثانیه وارد کنید:",
@@ -979,9 +985,9 @@
             "local-cli": {
               "command": "دستور",
               "engine": "CLI محلی",
-              "engine-claude": "Claude Code",
-              "engine-codex": "Codex",
-              "engine-gemini": "Gemini CLI",
+              "engine-claude": "کلود کد",
+              "engine-codex": "کدکس",
+              "engine-gemini": "جمینی CLI",
               "name": "CLI محلی",
               "prompt-label": "از یک CLI محلی Claude Code، Codex یا Gemini با ورود به سیستم استفاده کنید. دستور و مدل خودکار هستند؛ CLI از پیش‌فرض ورود خود استفاده می‌کند.",
               "prompt-title": "تنظیمات CLI محلی",
@@ -1051,6 +1057,14 @@
             "tooltip": "زبانی که متن ترانه به آن ترجمه شود."
           },
           "tooltip": "ترجمه متن ترانه و نمایش نتیجه ترجمه شده خط به خط."
+        },
+        "use-ytm-lyrics-without-proxy": {
+          "label": "استفاده از متن آهنگ‌های YTM بدون پروکسی",
+          "tooltip": "پرش از پروکسی مرور YTM و تماس مستقیم با YouTube Music با استفاده از نشست احراز هویت شده برنامه. مفید اگر به شبکه/منطقه خود اعتماد دارید که تماس‌های مرور مستقیم را مجاز کند."
+        },
+        "show-custom-search-button": {
+          "label": "نمایش دکمه جستجوی سفارشی",
+          "tooltip": "نمایش دکمه جستجو در انتخاب‌گر متن آهنگ که به شما امکان می‌دهد جستجوی جستجو و هنرمند آهنگ فعلی را بازنویسی کنید."
         }
       },
       "name": "متن ترانه همگام‌سازی شده",
@@ -1078,7 +1092,7 @@
         "opacity": {
           "label": "شفافیت",
           "submenu": {
-            "percent": "{{opacity}}%"
+            "percent": "{{opacity}}٪"
           }
         },
         "type": {
@@ -1095,7 +1109,7 @@
     },
     "tuna-obs": {
       "description": "یکپارچه‌سازی با افزونه Tuna در OBS",
-      "name": "Tuna OBS"
+      "name": "تون او بی اس"
     },
     "unobtrusive-player": {
       "description": "جلوگیری از ظاهر شدن پخش‌کننده هنگام پخش آهنگ",
@@ -1134,6 +1148,14 @@
         "visualizer-type": "نوع نمایش‌دهنده بصری"
       },
       "name": "نمایش‌دهنده بصری"
+    },
+    "playlist-search": {
+      "description": "افزودن فیلد جستجو برای فیلتر کردن لیست‌های پخش در نوار کناری و دیالوگ افزودن به لیست پخش",
+      "name": "جستجوی لیست پخش",
+      "templates": {
+        "search-placeholder": "جستجوی لیست‌های پخش",
+        "no-results": "هیچ لیست پخشی یافت نشد"
+      }
     }
   }
 }

@@ -109,7 +109,8 @@
                   "title": "പ്രോക്സി സജ്ജമാക്കുക"
                 }
               },
-              "toggle-dev-tools": "DevTools ടോഗിൾ ചെയ്യുക"
+              "toggle-dev-tools": "DevTools ടോഗിൾ ചെയ്യുക",
+              "force-smtc": "ബാഹ്യ SMTC ഉപയോഗിക്കാൻ നിർബന്ധിക്കുക"
             }
           },
           "always-on-top": "എപ്പോഴും മുകളിൽ",
@@ -145,7 +146,8 @@
               "enabled-and-hide-app": "പ്രവർത്തനക്ഷമമാക്കി ആപ്പ് മറയ്ക്കുക",
               "enabled-and-show-app": "പ്രവർത്തനക്ഷമമാക്കി ആപ്പ് കാണിക്കുക",
               "play-pause-on-click": "ക്ലിക്കിൽ പ്ലേ/പോസ്",
-              "move-to-current-desktop": "കാണിക്കുമ്പോൾ നിലവിലെ വെർച്വൽ ഡെസ്ക്ടോപ്പിലേക്ക് നീക്കുക"
+              "move-to-current-desktop": "കാണിക്കുമ്പോൾ നിലവിലെ വെർച്വൽ ഡെസ്ക്ടോപ്പിലേക്ക് നീക്കുക",
+              "force-white-icons": "വെളുത്ത ഐക്കണുകൾ ഉപയോഗിക്കാൻ നിർബന്ധിക്കുക"
             }
           },
           "visual-tweaks": {
@@ -211,8 +213,12 @@
       "show": "വിൻഡോ കാണിക്കുക",
       "tooltip": {
         "default": "{{applicationName}}",
-        "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
-      }
+        "with-song-info": "{{ആപ്ലിക്കേഷൻ പേര്}}: {{കലാകാരൻ}} - {{ശീർഷകം}}"
+      },
+      "like": "ഇഷ്ടപ്പെടുക",
+      "dislike": "ഇഷ്ടപ്പെട്ടില്ല",
+      "unlike": "അതിൽ നിന്ന് വ്യത്യസ്തമായി",
+      "undislike": "അണ്ടിസ്ലൈക്ക്"
     }
   },
   "plugins": {
@@ -256,7 +262,7 @@
         "buffer": {
           "label": "ബഫർ",
           "submenu": {
-            "buffer": "{{buffer}}"
+            "buffer": "ബഫർ"
           }
         },
         "opacity": {
@@ -291,7 +297,7 @@
     },
     "amuse": {
       "description": "6K ലാബ്സിന്റെ Amuse നൗ പ്ലേയിംഗ് വിഡ്ജറ്റിനായി {{applicationName}} പിന്തുണ ചേർക്കുന്നു",
-      "name": "Amuse",
+      "name": "അമ്യൂസ്",
       "response": {
         "query": "Amuse API സെർവർ പ്രവർത്തിക്കുന്നു. ഗാന വിവരം ലഭിക്കാൻ GET /query."
       }
@@ -835,7 +841,7 @@
     },
     "sponsorblock": {
       "description": "ഇൻട്രോ/ഔട്ട്റോ പോലുള്ള സംഗീതമല്ലാത്ത ഭാഗങ്ങളോ ഗാനം പ്ലേ ചെയ്യാത്ത മ്യൂസിക് വീഡിയോ ഭാഗങ്ങളോ സ്വയമേവ ഒഴിവാക്കുന്നു",
-      "name": "SponsorBlock"
+      "name": "സ്പോൺസർബ്ലോക്ക്"
     },
     "synced-lyrics": {
       "description": "LRClib പോലുള്ള ദാതാക്കൾ ഉപയോഗിച്ച് ഗാനങ്ങൾക്ക് സമന്വയിപ്പിച്ച വരികൾ നൽകുന്നു.",
@@ -950,36 +956,36 @@
           },
           "providers": {
             "anthropic": {
-"name": "Anthropic Claude",
-            "prompt-label": "നേറ്റീവ് Anthropic Messages API ഉപയോഗിക്കുന്നു.",
-            "prompt-title": "Anthropic ക്രമീകരണങ്ങൾ"
+              "name": "ആന്ത്രോപിക് ക്ലോഡ്",
+              "prompt-label": "നേറ്റീവ് Anthropic Messages API ഉപയോഗിക്കുന്നു.",
+              "prompt-title": "Anthropic ക്രമീകരണങ്ങൾ"
             },
             "gemini": {
-"name": "Google Gemini",
-            "prompt-label": "Google-ന്റെ Generative Language API (generateContent) ഉപയോഗിക്കുന്നു.",
-            "prompt-title": "Gemini ക്രമീകരണങ്ങൾ"
+              "name": "ഗൂഗിൾ ജെമിനി",
+              "prompt-label": "Google-ന്റെ Generative Language API (generateContent) ഉപയോഗിക്കുന്നു.",
+              "prompt-title": "Gemini ക്രമീകരണങ്ങൾ"
             },
             "google-translate": {
-              "host": "Host",
-"name": "Google Translate",
-            "prompt-label": "അനൗദ്യോഗിക സൗജന്യ Google Translate എൻഡ്പോയിന്റ് ഉപയോഗിക്കുന്നു. API കീ ആവശ്യമില്ല, പക്ഷേ Google നിരക്ക് പരിധി നിശ്ചയിച്ചേക്കാം.",
-            "prompt-title": "Google Translate ക്രമീകരണങ്ങൾ"
+              "host": "ഹോസ്റ്റ്",
+              "name": "ഗൂഗിൾ ട്രാൻസ്ലേറ്റ്",
+              "prompt-label": "അനൗദ്യോഗിക സൗജന്യ Google Translate എൻഡ്പോയിന്റ് ഉപയോഗിക്കുന്നു. API കീ ആവശ്യമില്ല, പക്ഷേ Google നിരക്ക് പരിധി നിശ്ചയിച്ചേക്കാം.",
+              "prompt-title": "Google Translate ക്രമീകരണങ്ങൾ"
             },
             "local-cli": {
-              "command": "Command",
-              "engine": "Local CLI",
-              "engine-claude": "Claude Code",
-              "engine-codex": "Codex",
-              "engine-gemini": "Gemini CLI",
-              "name": "Local CLI",
+              "command": "കമാൻഡ്",
+              "engine": "ലോക്കൽ CLI",
+              "engine-claude": "ക്ലോഡ് കോഡ്",
+              "engine-codex": "കോഡെക്സ്",
+              "engine-gemini": "ജെമിനി CLI",
+              "name": "ലോക്കൽ CLI",
               "prompt-label": "ലോക്കലായി ലോഗിൻ ചെയ്ത Claude Code, Codex, അല്ലെങ്കിൽ Gemini CLI ഉപയോഗിക്കുക. കമാൻഡും മോഡലും ഓട്ടോമാറ്റിക് ആണ്; CLI അതിന്റെ സ്വന്തം ലോഗിൻ ചെയ്ത ഡിഫോൾട്ട് ഉപയോഗിക്കുന്നു.",
               "prompt-title": "ലോക്കൽ CLI ക്രമീകരണങ്ങൾ",
-              "timeout": "Timeout seconds (15-600)"
+              "timeout": "ടൈംഔട്ട് സെക്കൻഡുകൾ (15-600)"
             },
             "openai-compatible": {
-              "api-mode": "API mode (responses / auto / chat-completions)",
-              "base-url": "Base URL",
-              "name": "OpenAI compatible",
+              "api-mode": "API മോഡ് (പ്രതികരണങ്ങൾ / ഓട്ടോ / ചാറ്റ്-കംപ്ലീഷൻസ്)",
+              "base-url": "അടിസ്ഥാന URL",
+              "name": "OpenAI അനുയോജ്യമായ",
               "prompt-label": "Ollama (base URL http://127.0.0.1:11434/v1, API mode auto or chat-completions) ഉൾപ്പെടെ OpenAI-അനുയോജ്യമായ സെർവറുകൾ ഉപയോഗിക്കുക.",
               "prompt-title": "OpenAI-അനുയോജ്യമായ ക്രമീകരണങ്ങൾ"
             },
@@ -1040,17 +1046,25 @@
             "tooltip": "വരികൾ വിവർത്തനം ചെയ്യേണ്ട ഭാഷ."
           },
           "tooltip": "വരികൾ വിവർത്തനം ചെയ്ത് വിവർത്തന ഫലം വരിവരിയായി പ്രദർശിപ്പിക്കുക."
+        },
+        "use-ytm-lyrics-without-proxy": {
+          "label": "YTM ലിറിക്കുകൾ പ്രോക്സി ഇല്ലാതെ ഉപയോഗിക്കുക",
+          "tooltip": "YTM ബ്രൗസ് പ്രോക്സി ഒഴിവാക്കി ആപ്പിന്റെ പ്രാമാണീകരിച്ച സെഷൻ ഉപയോഗിച്ച് YouTube Music-ലേക്ക് നേരിട്ട് വിളിക്കുക. നിങ്ങളുടെ നെറ്റ്‌വർക്ക്/പ്രദേശം നേരിട്ടുള്ള ബ്രൗസ് കോളുകൾ അനുവദിക്കുമെന്ന് വിശ്വസിക്കുന്നുവെങ്കിൽ ഉപയോഗപ്രദമാണ്."
+        },
+        "show-custom-search-button": {
+          "label": "ഇഷ്ടാനുസൃത തിരയൽ ബട്ടൺ കാണിക്കുക",
+          "tooltip": "ഗാനത്തിന്റെ വരികൾ തിരഞ്ഞെടുക്കുന്നതിനുള്ള ഉപകരണത്തിൽ ഒരു തിരയൽ ബട്ടൺ കാണിക്കുക, അത് നിലവിലെ ഗാനത്തിനായുള്ള തിരയൽ അന്വേഷണവും കലാകാരനും മാറ്റാൻ നിങ്ങളെ അനുവദിക്കുന്നു."
         }
       },
       "name": "സമന്വയിപ്പിച്ച വരികൾ",
       "refetch-btn": {
-        "fetching": "Fetching...",
-        "normal": "Refetch lyrics"
+        "fetching": "ലഭ്യമാക്കുന്നു...",
+        "normal": "വീണ്ടും വരികൾ ലഭ്യമാക്കുക"
       },
       "warnings": {
-        "duration-mismatch": "⚠️ - The lyrics may be out of sync due to a duration mismatch.",
-        "inexact": "⚠️ - The lyrics for this song may not be exact",
-        "instrumental": "⚠️ - This is an instrumental song"
+        "duration-mismatch": "⚠️ - വരികൾ ദൈർഘ്യ വ്യത്യാസം കാരണം സമന്വയത്തിൽ നിന്ന് പുറത്തായിരിക്കാം.",
+        "inexact": "⚠️ - ഈ ഗാനത്തിന്റെ വരികൾ കൃത്യമായിരിക്കില്ല",
+        "instrumental": "⚠️ - ഇതൊരു വാദ്യസംഗീത ഗാനമാണ്"
       }
     },
     "taskbar-mediacontrol": {
@@ -1084,7 +1098,7 @@
     },
     "tuna-obs": {
       "description": "OBS-ന്റെ Tuna പ്ലഗിനുമായി സംയോജനം",
-      "name": "Tuna OBS"
+      "name": "ട്യൂണ OBS"
     },
     "unobtrusive-player": {
       "description": "ഗാനം പ്ലേ ചെയ്യുമ്പോൾ പ്ലേയർ പോപ്പ് അപ്പ് ചെയ്യുന്നത് തടയുന്നു",
@@ -1134,6 +1148,14 @@
         "log-to-console": "കൺസോളിൽ വീണ്ടെടുക്കൽ ഇവന്റുകൾ ലോഗ് ചെയ്യുക"
       },
       "name": "പ്ലേബാക്ക് വീണ്ടെടുക്കൽ"
+    },
+    "playlist-search": {
+      "description": "സൈഡ്ബാറിലും പ്ലേലിസ്റ്റിലേക്ക് ചേർക്കുക ഡയലോഗിലും പ്ലേലിസ്റ്റുകൾ ഫിൽട്ടർ ചെയ്യുന്നതിനായി ഒരു തിരയൽ ഇൻപുട്ട് ചേർക്കുന്നു",
+      "name": "പ്ലേലിസ്റ്റ് തിരയൽ",
+      "templates": {
+        "search-placeholder": "പ്ലേലിസ്റ്റുകൾ തിരയുക",
+        "no-results": "പ്ലേലിസ്റ്റുകളൊന്നും കണ്ടെത്തിയില്ല"
+      }
     }
   }
 }

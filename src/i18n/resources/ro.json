@@ -109,7 +109,8 @@
                   "title": "Seteaza proxy"
                 }
               },
-              "toggle-dev-tools": "Deschide uneltele de dezvoltator"
+              "toggle-dev-tools": "Deschide uneltele de dezvoltator",
+              "force-smtc": "Forțează utilizarea SMTC extern"
             }
           },
           "always-on-top": "Mereu deasupra",
@@ -145,7 +146,8 @@
               "enabled-and-hide-app": "Activează și ascunde fereastra aplicației",
               "enabled-and-show-app": "Activează și arata fereastra aplicației",
               "play-pause-on-click": "Start/Pauza la click",
-              "move-to-current-desktop": "Mutare pe desktopul virtual curent la afișare"
+              "move-to-current-desktop": "Mutare pe desktopul virtual curent la afișare",
+              "force-white-icons": "Forțează utilizarea pictogramelor albe"
             }
           },
           "visual-tweaks": {
@@ -212,7 +214,11 @@
       "tooltip": {
         "default": "{{applicationName}}",
         "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
-      }
+      },
+      "like": "Apreciază",
+      "dislike": "Nu-mi place",
+      "unlike": "Spre deosebire de",
+      "undislike": "Nu mai displac"
     }
   },
   "plugins": {
@@ -291,7 +297,7 @@
     },
     "amuse": {
       "description": "Adauga suport {{applicationName}} pentru Amuse se redă acum widget de 6K Labs",
-      "name": "Amuse",
+      "name": "Amuză",
       "response": {
         "query": "Server-ul API-ului Amuse rulează. GET /query pentru a obține informații despre melodie."
       }
@@ -497,7 +503,7 @@
           }
         }
       },
-      "name": "Discord Rich Presence",
+      "name": "Prezență Discord Rich",
       "prompt": {
         "set-inactivity-timeout": {
           "label": "Introduceți perioada de inactivitate dorită în secunde:",
@@ -610,7 +616,7 @@
       "menu": {
         "romanized-lyrics": "Versuri romantizate"
       },
-      "name": "Lyrics Genius",
+      "name": "Versuri Genius",
       "renderer": {
         "fetched-lyrics": "Versuri preluate de pe Genius"
       }
@@ -645,7 +651,7 @@
           "host": "Conectat ca gazda"
         }
       },
-      "name": "Music Together [Beta]",
+      "name": "Muzică Împreună [Beta]",
       "toast": {
         "add-song-failed": "Adăugarea piesei a eșuat",
         "closed": "Music Together închis",
@@ -718,9 +724,9 @@
         "save-window-size": "Salvează mărimea ferestrei",
         "use-native-pip": "Folosește PiP-ul nativ pentru broswer"
       },
-      "name": "Picture-in-picture",
+      "name": "Imagine în imagine",
       "templates": {
-        "button": "Picture-in-picture"
+        "button": "Imagine în imagine"
       }
     },
     "playback-speed": {
@@ -961,7 +967,7 @@
             },
             "google-translate": {
               "host": "Gazdă",
-              "name": "Google Translate",
+              "name": "Google Traducere",
               "prompt-label": "Folosește punctul final neoficial gratuit Google Translate. Nu este necesară o cheie API, dar Google poate limita rata.",
               "prompt-title": "Setări Google Translate"
             },
@@ -1040,6 +1046,14 @@
             "tooltip": "Limba în care să fie traduse versurile."
           },
           "tooltip": "Tradu versurile și arată rezultatul tradus linie cu linie."
+        },
+        "use-ytm-lyrics-without-proxy": {
+          "label": "Folosește versurile YTM fără proxy",
+          "tooltip": "Omite proxy-ul de navigare YTM și apelează direct YouTube Music folosind sesiunea autentificată a aplicației. Util dacă ai încredere în rețeaua/regiunea ta pentru a permite apeluri directe de navigare."
+        },
+        "show-custom-search-button": {
+          "label": "Afișează butonul personalizat de căutare",
+          "tooltip": "Afișează un buton de căutare în selectorul de versuri care îți permite să suprascrii interogarea de căutare și artistul pentru melodia curentă."
         }
       },
       "name": "Versuri Sincronizate",
@@ -1084,7 +1098,7 @@
     },
     "tuna-obs": {
       "description": "Integrare cu plugin-ul OBS Tuna",
-      "name": "Tuna OBS"
+      "name": "Ton OBS"
     },
     "unobtrusive-player": {
       "description": "Împiedică playerul să apară atunci când redați o melodie",
@@ -1134,6 +1148,14 @@
         "log-to-console": "Înregistrează evenimentele de recuperare în consolă"
       },
       "name": "Recuperare Redare"
+    },
+    "playlist-search": {
+      "description": "Adaugă un câmp de căutare pentru a filtra listele de redare din bara laterală și din dialogul Adăugare în lista de redare",
+      "name": "Căutare în playlist",
+      "templates": {
+        "search-placeholder": "Caută liste de redare",
+        "no-results": "Nicio listă de redare găsită."
+      }
     }
   }
 }

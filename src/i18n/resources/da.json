@@ -109,7 +109,8 @@
                   "title": "Sæt proxy"
                 }
               },
-              "toggle-dev-tools": "Skift DevTools"
+              "toggle-dev-tools": "Skift DevTools",
+              "force-smtc": "Tving brugen af ekstern SMTC"
             }
           },
           "always-on-top": "Altid øverst",
@@ -145,7 +146,8 @@
               "enabled-and-hide-app": "Bakke aktiveret, og skjul programvindue",
               "enabled-and-show-app": "Aktiver og vis app",
               "play-pause-on-click": "Start/Stop ved klik",
-              "move-to-current-desktop": "Flyt til nuværende virtuelle skrivebord ved visning"
+              "move-to-current-desktop": "Flyt til nuværende virtuelle skrivebord ved visning",
+              "force-white-icons": "Tving brugen af hvide ikoner"
             }
           },
           "visual-tweaks": {
@@ -212,7 +214,11 @@
       "tooltip": {
         "default": "{{applicationName}}",
         "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
-      }
+      },
+      "like": "Synes godt om",
+      "dislike": "Synes ikke om",
+      "unlike": "Ulig",
+      "undislike": "Fjern like"
     }
   },
   "plugins": {
@@ -256,7 +262,7 @@
         "buffer": {
           "label": "Buffer",
           "submenu": {
-            "buffer": "{{buffer}}"
+            "buffer": "buffer"
           }
         },
         "opacity": {
@@ -291,7 +297,7 @@
     },
     "amuse": {
       "description": "Tilføjer {{applicationName}} understøttelse af Amuse nu-spiller widget fra 6K Labs",
-      "name": "Amuse",
+      "name": "Underhold",
       "response": {
         "query": "Amuse API-server kører. GET /query for at få sanginfo."
       }
@@ -343,7 +349,7 @@
           "label": "Port"
         }
       },
-      "name": "API Server [Beta]",
+      "name": "API-server [Beta]",
       "prompt": {
         "hostname": {
           "label": "Skriv API serverens hostname (f. eks. 0.0.0.0):",
@@ -599,7 +605,7 @@
       "menu": {
         "hide-dom-window-controls": "Skjul DOM-vindueskontroller"
       },
-      "name": "In-App Menu"
+      "name": "App-menu"
     },
     "lumiastream": {
       "description": "Tilføjer Lumia Stream understøttelse",
@@ -645,7 +651,7 @@
           "host": "Forbundet som vært"
         }
       },
-      "name": "Music Together [Beta]",
+      "name": "Musik Sammen [Beta]",
       "toast": {
         "add-song-failed": "Kunne ikke tilføje sang",
         "closed": "Music Together lukket",
@@ -801,7 +807,7 @@
         "listenbrainz": {
           "token": {
             "label": "Indtast din ListenBrainz brugertoken:",
-            "title": "ListenBrainz token"
+            "title": "ListenBrainz-token"
           }
         }
       }
@@ -961,7 +967,7 @@
             },
             "google-translate": {
               "host": "Vært",
-              "name": "Google Translate",
+              "name": "Google Oversæt",
               "prompt-label": "Bruger det uofficielle gratis Google Translate-endepunkt. Ingen API-nøgle er påkrævet, men Google kan begrænse hastigheden.",
               "prompt-title": "Google Translate indstillinger"
             },
@@ -1040,6 +1046,14 @@
             "tooltip": "Sproget teksterne skal oversættes til."
           },
           "tooltip": "Oversæt tekster og vis det oversatte resultat linje for linje."
+        },
+        "use-ytm-lyrics-without-proxy": {
+          "label": "Brug YTM-tekster uden proxy",
+          "tooltip": "Spring YTM-browser-proxyen og kald YouTube Music direkte ved hjælp af appens autentificerede session. Nyttigt, hvis du stoler på dit netværk/område til at tillade direkte browserkald."
+        },
+        "show-custom-search-button": {
+          "label": "Vis tilpasset søgeknap",
+          "tooltip": "Vis en søgeknap i tekstvælgeren, der lader dig tilsidesætte søgeforespørgslen og kunstneren for den aktuelle sang."
         }
       },
       "name": "Synkroniserede tekster",
@@ -1071,7 +1085,7 @@
           }
         },
         "type": {
-          "label": "Type",
+          "label": "Skriv",
           "submenu": {
             "acrylic": "Akryl",
             "mica": "Mica",
@@ -1133,6 +1147,14 @@
       "name": "Afspilningsgendannelse",
       "menu": {
         "log-to-console": "Log gendannelseshændelser til konsollen"
+      }
+    },
+    "playlist-search": {
+      "description": "Tilføjer et søgefelt til at filtrere spillelister i sidepanelet og dialogen Tilføj til spilleliste",
+      "name": "Søg i spilleliste",
+      "templates": {
+        "search-placeholder": "Søg efter spillelister",
+        "no-results": "Ingen playlister fundet"
       }
     }
   }

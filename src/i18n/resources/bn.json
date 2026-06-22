@@ -109,7 +109,8 @@
                   "title": "প্রক্সি সেট করুন"
                 }
               },
-              "toggle-dev-tools": "ডেভ টুল চালু/বন্ধ"
+              "toggle-dev-tools": "ডেভ টুল চালু/বন্ধ",
+              "force-smtc": "বাহ্যিক SMTC ব্যবহার বাধ্যতামূলক করুন"
             }
           },
           "always-on-top": "সবসময় উপরে রাখুন",
@@ -145,7 +146,8 @@
               "enabled-and-hide-app": "ট্রে চালু ও অ্যাপ লুকান",
               "enabled-and-show-app": "ট্রে চালু ও অ্যাপ দেখান",
               "play-pause-on-click": "ট্রে ক্লিক করলে প্লে/পজ",
-              "move-to-current-desktop": "প্রদর্শনের সময় বর্তমান ভার্চুয়াল ডেস্কটপে স্থানান্তর করুন"
+              "move-to-current-desktop": "প্রদর্শনের সময় বর্তমান ভার্চুয়াল ডেস্কটপে স্থানান্তর করুন",
+              "force-white-icons": "সাদা আইকন ব্যবহার বাধ্যতামূলক করুন"
             }
           },
           "visual-tweaks": {
@@ -212,7 +214,11 @@
       "tooltip": {
         "default": "{{applicationName}}",
         "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
-      }
+      },
+      "like": "পছন্দ",
+      "dislike": "অপছন্দ",
+      "unlike": "ভিন্ন",
+      "undislike": "অপছন্দ বাতিল"
     }
   },
   "plugins": {
@@ -256,7 +262,7 @@
         "buffer": {
           "label": "বাফার",
           "submenu": {
-            "buffer": "{{buffer}}"
+            "buffer": "বাফার"
           }
         },
         "opacity": {
@@ -955,22 +961,22 @@
               "prompt-title": "Anthropic সেটিংস"
             },
             "gemini": {
-              "name": "Google Gemini",
+              "name": "গুগল জেমিনি",
               "prompt-label": "Google's Generative Language API (generateContent) ব্যবহার করে।",
               "prompt-title": "Gemini সেটিংস"
             },
             "google-translate": {
               "host": "হোস্ট",
-              "name": "Google Translate",
+              "name": "গুগল অনুবাদ",
               "prompt-label": "অনানুষ্ঠানিক বিনামূল্যের Google Translate এন্ডপয়েন্ট ব্যবহার করে। কোন API কী প্রয়োজন নেই, তবে Google এটিকে রেট-লিমিট করতে পারে।",
               "prompt-title": "Google Translate সেটিংস"
             },
             "local-cli": {
               "command": "কমান্ড",
               "engine": "লোকাল CLI",
-              "engine-claude": "Claude Code",
-              "engine-codex": "Codex",
-              "engine-gemini": "Gemini CLI",
+              "engine-claude": "ক্লদ কোড",
+              "engine-codex": "কোডেক্স",
+              "engine-gemini": "জেমিনি সিএলআই",
               "name": "লোকাল CLI",
               "prompt-label": "লোকালি লগইন করা Claude Code, Codex, বা Gemini CLI ব্যবহার করুন। কমান্ড এবং মডেল স্বয়ংক্রিয়; CLI তার নিজস্ব লগইন করা ডিফল্ট ব্যবহার করে।",
               "prompt-title": "লোকাল CLI সেটিংস",
@@ -1040,6 +1046,14 @@
             "tooltip": "লিরিক্স অনুবাদ করার ভাষা।"
           },
           "tooltip": "লিরিক্স অনুবাদ করুন এবং প্রদর্শনের জন্য লাইন বাই লাইন অনুবাদিত ফলাফল দেখান।"
+        },
+        "use-ytm-lyrics-without-proxy": {
+          "label": "YTM লিরিক্স ব্যবহার করুন কোনো প্রক্সি ছাড়াই",
+          "tooltip": "YTM ব্রাউজ প্রক্সি এড়িয়ে যান এবং অ্যাপের প্রমাণীকৃত সেশন ব্যবহার করে সরাসরি YouTube Music-এ কল করুন। আপনার নেটওয়ার্ক/অঞ্চল সরাসরি ব্রাউজ কলের অনুমতি দেয় বলে বিশ্বাস করলে এটি কার্যকর।"
+        },
+        "show-custom-search-button": {
+          "label": "কাস্টম সার্চ বাটন দেখান",
+          "tooltip": "গানের লিরিক্স পিকার-এ একটি সার্চ বাটন দেখান যা বর্তমান গানের জন্য সার্চ কোয়েরি এবং শিল্পী ওভাররাইড করতে দেয়।"
         }
       },
       "name": "সিঙ্ক করা লিরিক্স",
@@ -1134,6 +1148,14 @@
         "log-to-console": "পুনরুদ্ধার ইভেন্ট কনসোলে লগ করুন"
       },
       "name": "প্লেব্যাক পুনরুদ্ধার"
+    },
+    "playlist-search": {
+      "description": "সাইডবার এবং প্লেলিস্টে যোগ করুন ডায়ালগে প্লেলিস্ট ফিল্টার করার জন্য একটি সার্চ ইনপুট যোগ করে",
+      "name": "প্লেলিস্ট অনুসন্ধান",
+      "templates": {
+        "search-placeholder": "প্লেলিস্ট খুঁজুন",
+        "no-results": "কোনো প্লেলিস্ট পাওয়া যায়নি"
+      }
     }
   }
 }

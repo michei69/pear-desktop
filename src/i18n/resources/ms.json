@@ -109,7 +109,8 @@
                   "title": "Set proksi"
                 }
               },
-              "toggle-dev-tools": "Togol DevTools"
+              "toggle-dev-tools": "Togol DevTools",
+              "force-smtc": "Paksa penggunaan SMTC luaran"
             }
           },
           "always-on-top": "Sentiasa di atas",
@@ -145,7 +146,8 @@
               "enabled-and-hide-app": "Didayakan dan sembunyikan aplikasi",
               "enabled-and-show-app": "Didayakan dan paparkan aplikasi",
               "play-pause-on-click": "Main / Hentikan pada klik",
-              "move-to-current-desktop": "Alih ke desktop maya semasa apabila dipaparkan"
+              "move-to-current-desktop": "Alih ke desktop maya semasa apabila dipaparkan",
+              "force-white-icons": "Paksa penggunaan ikon putih"
             }
           },
           "visual-tweaks": {
@@ -212,7 +214,11 @@
       "tooltip": {
         "default": "{{applicationName}}",
         "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
-      }
+      },
+      "like": "Suka",
+      "dislike": "Tidak suka",
+      "unlike": "tidak seperti",
+      "undislike": "Nyah suka"
     }
   },
   "plugins": {
@@ -256,7 +262,7 @@
         "buffer": {
           "label": "Penimbal",
           "submenu": {
-            "buffer": "{{buffer}}"
+            "buffer": "penimbal"
           }
         },
         "opacity": {
@@ -497,7 +503,7 @@
           }
         }
       },
-      "name": "Discord Rich Presence",
+      "name": "Kehadiran Kaya Discord",
       "prompt": {
         "set-inactivity-timeout": {
           "label": "Masukkan tamat masa tidak aktif dalam beberapa saat:",
@@ -951,37 +957,37 @@
           "providers": {
             "anthropic": {
               "name": "Anthropic Claude",
-              "prompt-label": "Uses the native Anthropic Messages API.",
-              "prompt-title": "Anthropic settings"
+              "prompt-label": "Menggunakan API Mesej Anthropic asli.",
+              "prompt-title": "Tetapan Anthropic"
             },
             "gemini": {
               "name": "Google Gemini",
-              "prompt-label": "Uses Google's Generative Language API (generateContent).",
-              "prompt-title": "Gemini settings"
+              "prompt-label": "Menggunakan API Bahasa Generatif Google (generateContent).",
+              "prompt-title": "Tetapan Gemini"
             },
             "google-translate": {
-              "host": "Host",
-              "name": "Google Translate",
-              "prompt-label": "Uses the unofficial free Google Translate endpoint. No API key is required, but Google may rate-limit it.",
-              "prompt-title": "Google Translate settings"
+              "host": "Tuan rumah",
+              "name": "Terjemahan Google",
+              "prompt-label": "Menggunakan titik akhir terjemahan Google percuma tidak rasmi. Tiada kunci API diperlukan, tetapi Google mungkin mengehadkan kadarnya.",
+              "prompt-title": "Tetapan Terjemahan Google"
             },
             "local-cli": {
-              "command": "Command",
-              "engine": "Local CLI",
+              "command": "Perintah",
+              "engine": "CLI setempat",
               "engine-claude": "Claude Code",
-              "engine-codex": "Codex",
+              "engine-codex": "Kodis",
               "engine-gemini": "Gemini CLI",
-              "name": "Local CLI",
-              "prompt-label": "Use a locally logged-in Claude Code, Codex, or Gemini CLI. The command and model are automatic; the CLI uses its own logged-in default.",
-              "prompt-title": "Local CLI settings",
-              "timeout": "Timeout seconds (15-600)"
+              "name": "CLI setempat",
+              "prompt-label": "Gunakan Claude Code, Codex, atau Gemini CLI yang telah log masuk secara setempat. Perintah dan model adalah automatik; CLI menggunakan lalai log masuknya sendiri.",
+              "prompt-title": "Tetapan CLI setempat",
+              "timeout": "Masa tamat (15-600)"
             },
             "openai-compatible": {
-              "api-mode": "API mode (responses / auto / chat-completions)",
-              "base-url": "Base URL",
-              "name": "OpenAI compatible",
-              "prompt-label": "Use OpenAI-compatible servers, including Ollama (base URL http://127.0.0.1:11434/v1, API mode auto or chat-completions).",
-              "prompt-title": "OpenAI-compatible settings"
+              "api-mode": "Mod API (responses / auto / chat-completions)",
+              "base-url": "URL Asas",
+              "name": "Serasi OpenAI",
+              "prompt-label": "Gunakan pelayan yang serasi dengan OpenAI, termasuk Ollama (URL asas http://127.0.0.1:11434/v1, mod API auto atau chat-completions).",
+              "prompt-title": "Tetapan serasi OpenAI"
             },
             "shared": {
               "api-key": "Kunci API",
@@ -1040,17 +1046,25 @@
             "tooltip": "Bahasa untuk menterjemahkan lirik."
           },
           "tooltip": "Terjemah lirik dan paparkan hasil terjemahan baris demi baris."
+        },
+        "use-ytm-lyrics-without-proxy": {
+          "label": "Gunakan lirik YTM tanpa proksi",
+          "tooltip": "Langkau proksi semakan YTM dan panggil YouTube Music secara terus menggunakan sesi terautentikasi aplikasi. Berguna jika anda percaya rangkaian/wilayah anda membenarkan panggilan semakan terus."
+        },
+        "show-custom-search-button": {
+          "label": "Tunjukkan butang carian tersuai",
+          "tooltip": "Tunjukkan butang carian dalam pemilih lirik yang membolehkan anda mengatasi pertanyaan carian dan artis untuk lagu semasa."
         }
       },
       "name": "Lirik Diselaraskan",
       "refetch-btn": {
-        "fetching": "Fetching...",
-        "normal": "Refetch lyrics"
+        "fetching": "Mendapatkan...",
+        "normal": "Dapatkan semula lirik"
       },
       "warnings": {
-        "duration-mismatch": "⚠️ - The lyrics may be out of sync due to a duration mismatch.",
-        "inexact": "⚠️ - The lyrics for this song may not be exact",
-        "instrumental": "⚠️ - This is an instrumental song"
+        "duration-mismatch": "⚠️ - Lirik mungkin tidak selari kerana ketidakpadanan tempoh.",
+        "inexact": "⚠️ - Lirik untuk lagu ini mungkin tidak tepat",
+        "instrumental": "⚠️ - Ini adalah lagu instrumental"
       }
     },
     "taskbar-mediacontrol": {
@@ -1134,6 +1148,14 @@
         "log-to-console": "Log peristiwa pemulihan ke konsol"
       },
       "name": "Pemulihan Main Balik"
+    },
+    "playlist-search": {
+      "description": "Menambahkan input carian untuk menapis senarai main di bar sisi dan dialog Tambah ke senarai main",
+      "name": "Carian Senarai Main",
+      "templates": {
+        "search-placeholder": "Cari senarai main",
+        "no-results": "Tiada senarai main ditemui"
+      }
     }
   }
 }

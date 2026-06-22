@@ -109,7 +109,8 @@
                   "title": "ตั้งค่าพร็อกซี่"
                 }
               },
-              "toggle-dev-tools": "เปิด/ปิดเครื่องมือสำหรับนักพัฒนา"
+              "toggle-dev-tools": "เปิด/ปิดเครื่องมือสำหรับนักพัฒนา",
+              "force-smtc": "บังคับใช้ SMTC ภายนอก"
             }
           },
           "always-on-top": "อยู่ด้านบนหน้าต่างอื่นตลอดเวลา",
@@ -145,7 +146,8 @@
               "enabled-and-hide-app": "เปิดใช้งานและซ่อนแอป",
               "enabled-and-show-app": "เปิดใช้งานและแสดงแอป",
               "play-pause-on-click": "เล่น/หยุดเล่น เมื่อคลิก",
-              "move-to-current-desktop": "ย้ายไปยังเดสก์ท็อปเสมือนปัจจุบันเมื่อแสดง"
+              "move-to-current-desktop": "ย้ายไปยังเดสก์ท็อปเสมือนปัจจุบันเมื่อแสดง",
+              "force-white-icons": "บังคับใช้ไอคอนสีขาว"
             }
           },
           "visual-tweaks": {
@@ -212,7 +214,11 @@
       "tooltip": {
         "default": "{{applicationName}}",
         "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
-      }
+      },
+      "like": "ถูกใจ",
+      "dislike": "ไม่ชอบ",
+      "unlike": "ไม่เหมือน",
+      "undislike": "เลิกไม่ชอบ"
     }
   },
   "plugins": {
@@ -256,7 +262,7 @@
         "buffer": {
           "label": "บัฟเฟอร์",
           "submenu": {
-            "buffer": "{{buffer}}"
+            "buffer": "บัฟเฟอร์"
           }
         },
         "opacity": {
@@ -961,17 +967,17 @@
             },
             "google-translate": {
               "host": "โฮสต์",
-              "name": "Google Translate",
+              "name": "Google แปลภาษา",
               "prompt-label": "ใช้ปลายทาง Google Translate ฟรีที่ไม่เป็นทางการ ไม่ต้องใช้ API key แต่อาจถูก Google จำกัดอัตรา",
               "prompt-title": "การตั้งค่า Google Translate"
             },
             "local-cli": {
               "command": "คำสั่ง",
-              "engine": "Local CLI",
+              "engine": "CLI ท้องถิ่น",
               "engine-claude": "Claude Code",
-              "engine-codex": "Codex",
+              "engine-codex": "โคเด็กซ์",
               "engine-gemini": "Gemini CLI",
-              "name": "Local CLI",
+              "name": "CLI ท้องถิ่น",
               "prompt-label": "ใช้ Claude Code, Codex หรือ Gemini CLI ที่ล็อกอินในเครื่อง คำสั่งและโมเดลเป็นแบบอัตโนมัติ CLI จะใช้ค่าเริ่มต้นที่ล็อกอินไว้",
               "prompt-title": "การตั้งค่า Local CLI",
               "timeout": "หมดเวลาเป็นวินาที (15-600)"
@@ -979,7 +985,7 @@
             "openai-compatible": {
               "api-mode": "โหมด API (responses / auto / chat-completions)",
               "base-url": "URL ฐาน",
-              "name": "OpenAI compatible",
+              "name": "เข้ากันได้กับ OpenAI",
               "prompt-label": "ใช้เซิร์ฟเวอร์ที่เข้ากันได้กับ OpenAI รวมถึง Ollama (base URL http://127.0.0.1:11434/v1, โหมด API auto หรือ chat-completions)",
               "prompt-title": "การตั้งค่า OpenAI-compatible"
             },
@@ -1040,6 +1046,14 @@
             "tooltip": "ภาษาที่จะใช้แปลเนื้อเพลง"
           },
           "tooltip": "แปลเนื้อเพลงและแสดงผลลัพธ์ทีละบรรทัด"
+        },
+        "use-ytm-lyrics-without-proxy": {
+          "label": "ใช้เนื้อเพลง YTM โดยไม่ต้องใช้พร็อกซี",
+          "tooltip": "ข้ามพร็อกซีการเรียกดู YTM และเรียก YouTube Music โดยตรงโดยใช้เซสชันที่รับรองความถูกต้องของแอป มีประโยชน์หากคุณเชื่อถือเครือข่าย/ภูมิภาคของคุณให้อนุญาตการเรียกดูโดยตรง"
+        },
+        "show-custom-search-button": {
+          "label": "แสดงปุ่มค้นหาแบบกำหนดเอง",
+          "tooltip": "แสดงปุ่มค้นหาในตัวเลือกเนื้อเพลงที่ให้คุณแทนที่คำค้นหาและศิลปินสำหรับเพลงปัจจุบัน"
         }
       },
       "name": "เนื้อเพลงตรงกับเพลง",
@@ -1134,6 +1148,14 @@
         "log-to-console": "บันทึกเหตุการณ์การกู้คืนไปยังคอนโซล"
       },
       "name": "การกู้คืนการเล่น"
+    },
+    "playlist-search": {
+      "description": "เพิ่มช่องค้นหาเพื่อกรองเพลย์ลิสต์ในแถบด้านข้างและในกล่องโต้ตอบเพิ่มลงในเพลย์ลิสต์",
+      "name": "ค้นหาเพลย์ลิสต์",
+      "templates": {
+        "search-placeholder": "ค้นหาเพลย์ลิสต์",
+        "no-results": "ไม่พบเพลย์ลิสต์"
+      }
     }
   }
 }

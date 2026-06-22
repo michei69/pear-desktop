@@ -109,7 +109,8 @@
                   "title": "프록시 설정하기"
                 }
               },
-              "toggle-dev-tools": "DevTools 열기"
+              "toggle-dev-tools": "DevTools 열기",
+              "force-smtc": "외부 SMTC 사용 강제"
             }
           },
           "always-on-top": "항상 최상단에 표시하기",
@@ -145,7 +146,8 @@
               "enabled-and-hide-app": "활성화 및 앱 숨기기",
               "enabled-and-show-app": "활성화 및 앱 표시",
               "move-to-current-desktop": "표시할 때 현재 가상 데스크톱으로 이동",
-              "play-pause-on-click": "클릭 시 재생/일시 정지"
+              "play-pause-on-click": "클릭 시 재생/일시 정지",
+              "force-white-icons": "강제로 흰색 아이콘 사용"
             }
           },
           "visual-tweaks": {
@@ -212,7 +214,11 @@
       "tooltip": {
         "default": "{{applicationName}}",
         "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
-      }
+      },
+      "like": "좋아요",
+      "dislike": "싫어요",
+      "unlike": "Unlike",
+      "undislike": "싫어요 취소"
     }
   },
   "plugins": {
@@ -260,7 +266,7 @@
         "buffer": {
           "label": "버퍼",
           "submenu": {
-            "buffer": "{{buffer}}"
+            "buffer": "버퍼"
           }
         },
         "opacity": {
@@ -966,21 +972,21 @@
               "prompt-title": "Anthropic 설정"
             },
             "gemini": {
-              "name": "Google Gemini",
+              "name": "Google 제미나이",
               "prompt-label": "Google 생성형 언어 API(generateContent)를 사용합니다.",
               "prompt-title": "Gemini 설정"
             },
             "google-translate": {
               "host": "호스트",
-              "name": "Google Translate",
+              "name": "Google 번역",
               "prompt-label": "비공식 무료 Google Translate 엔드포인트를 사용합니다. API 키가 필요하지 않지만 Google에서 속도 제한을 둘 수 있습니다.",
               "prompt-title": "Google Translate 설정"
             },
             "local-cli": {
               "command": "명령어",
               "engine": "로컬 CLI",
-              "engine-claude": "Claude Code",
-              "engine-codex": "Codex",
+              "engine-claude": "클로드 코드",
+              "engine-codex": "코덱스",
               "engine-gemini": "Gemini CLI",
               "name": "로컬 CLI",
               "prompt-label": "로컬에 로그인된 Claude Code, Codex 또는 Gemini CLI를 사용합니다. 명령어와 모델은 자동으로 설정되며 CLI는 자체 로그인된 기본값을 사용합니다.",
@@ -1051,6 +1057,14 @@
             "tooltip": "가사를 번역할 언어입니다."
           },
           "tooltip": "가사를 번역하고 번역 결과를 한 줄씩 표시합니다."
+        },
+        "use-ytm-lyrics-without-proxy": {
+          "label": "YTM 가사 사용 (프록시 없음)",
+          "tooltip": "YTM 브라우즈 프록시를 건너뛰고 앱의 인증된 세션을 사용하여 YouTube Music에 직접 호출합니다. 네트워크/지역이 직접 브라우즈 호출을 허용한다고 신뢰하는 경우 유용합니다."
+        },
+        "show-custom-search-button": {
+          "label": "사용자 정의 검색 버튼 표시",
+          "tooltip": "가사 선택기에 검색 버튼을 표시하여 현재 노래의 검색어와 아티스트를 재정의할 수 있도록 합니다."
         }
       },
       "name": "싱크 가사",
@@ -1095,7 +1109,7 @@
     },
     "tuna-obs": {
       "description": "OBS의 확장인 Tuna와의 통합을 활성화합니다",
-      "name": "Tuna OBS"
+      "name": "참치 OBS"
     },
     "unobtrusive-player": {
       "description": "노래 재생 중 플레이어가 팝업되는 것을 방지합니다",
@@ -1134,6 +1148,14 @@
         "visualizer-type": "비주얼라이저 타입"
       },
       "name": "비주얼라이저"
+    },
+    "playlist-search": {
+      "description": "사이드바와 재생목록 추가 대화상자에서 재생목록을 필터링할 수 있는 검색 입력을 추가합니다",
+      "name": "플레이리스트 검색",
+      "templates": {
+        "search-placeholder": "플레이리스트 검색",
+        "no-results": "재생 목록을 찾을 수 없습니다"
+      }
     }
   }
 }

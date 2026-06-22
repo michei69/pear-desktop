@@ -109,7 +109,8 @@
                   "title": "ضع proxy"
                 }
               },
-              "toggle-dev-tools": "تثبيت أدوات التطوير"
+              "toggle-dev-tools": "تثبيت أدوات التطوير",
+              "force-smtc": "فرض استخدام SMTC الخارجي"
             }
           },
           "always-on-top": "دائما في المقدمة",
@@ -145,7 +146,8 @@
               "enabled-and-hide-app": "مفعل وإخفاء التطبيق",
               "enabled-and-show-app": "مفعل وأظهر التطبيق",
               "play-pause-on-click": "تشغيل/إيقاف عند النقر",
-          "move-to-current-desktop": "الانتقال إلى سطح المكتب الافتراضي الحالي عند الإظهار"
+              "move-to-current-desktop": "الانتقال إلى سطح المكتب الافتراضي الحالي عند الإظهار",
+              "force-white-icons": "فرض استخدام الأيقونات البيضاء"
             }
           },
           "visual-tweaks": {
@@ -212,7 +214,11 @@
       "tooltip": {
         "default": "{{applicationName}}",
         "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
-      }
+      },
+      "like": "أعجبني",
+      "dislike": "كره",
+      "unlike": "على عكس",
+      "undislike": "إلغاء الإعجاب"
     }
   },
   "plugins": {
@@ -260,7 +266,7 @@
         "buffer": {
           "label": "تخزين الصوت المؤقت",
           "submenu": {
-            "buffer": "{{buffer}}"
+            "buffer": "مخزن مؤقت"
           }
         },
         "opacity": {
@@ -688,9 +694,9 @@
         "interactive-settings": {
           "label": "إعدادات تفاعلية",
           "submenu": {
-              "hide-button-text": "إخفاء نص الزر",
-                "hover-controls": "إظهار مشغل مصغر عند التمرير على الأيقونة",
-                "refresh-on-play-pause": "اعادة تحميل عند التشغيل/الإيقاف",
+            "hide-button-text": "إخفاء نص الزر",
+            "hover-controls": "إظهار مشغل مصغر عند التمرير على الأيقونة",
+            "refresh-on-play-pause": "اعادة تحميل عند التشغيل/الإيقاف",
             "tray-controls": "فتح/إغلاق عند النقر على علامة الشريط"
           }
         },
@@ -846,7 +852,7 @@
     },
     "sponsorblock": {
       "description": "تخطي تلقائيًا الأجزاء غير الموسيقية مثل المقدمة/الختام أو أجزاء مقاطع الفيديو الموسيقية حيث لا يتم تشغيل الأغنية",
-      "name": "SponsorBlock"
+      "name": "سبونسر بلوك"
     },
     "synced-lyrics": {
       "description": "يوفر كلمات الأغاني المتزامنة باستخدام مزودين مثل LRClib.",
@@ -961,12 +967,12 @@
           },
           "providers": {
             "anthropic": {
-              "name": "Anthropic Claude",
+              "name": "أنثروبيك كلود",
               "prompt-label": "يستخدم واجهة برمجة تطبيقات Anthropic الأصلية.",
               "prompt-title": "إعدادات Anthropic"
             },
             "gemini": {
-              "name": "Google Gemini",
+              "name": "جوجل جيميني",
               "prompt-label": "يستخدم واجهة برمجة تطبيقات اللغة التوليدية من Google (generateContent).",
               "prompt-title": "إعدادات Gemini"
             },
@@ -979,9 +985,9 @@
             "local-cli": {
               "command": "أمر",
               "engine": "CLI المحلي",
-              "engine-claude": "Claude Code",
-              "engine-codex": "Codex",
-              "engine-gemini": "Gemini CLI",
+              "engine-claude": "كود كلود",
+              "engine-codex": "كودكس",
+              "engine-gemini": "جميني كوال",
               "name": "CLI المحلي",
               "prompt-label": "استخدم Claude Code أو Codex أو Gemini CLI المسجل دخولها محليًا. الأمر والنموذج تلقائيان؛ يستخدم CLI الإعدادات الافتراضية المسجلة.",
               "prompt-title": "إعدادات CLI المحلي",
@@ -1051,6 +1057,14 @@
             "tooltip": "اللغة التي سيتم ترجمة الكلمات إليها."
           },
           "tooltip": "ترجمة الكلمات وعرض النتيجة المترجمة سطراً بسطر."
+        },
+        "use-ytm-lyrics-without-proxy": {
+          "label": "استخدم كلمات أغاني YTM بدون بروكسي",
+          "tooltip": "تجاوز وكيل تصفح YTM واتصل بـ YouTube Music مباشرة باستخدام جلسة التطبيق الموثقة. مفيد إذا كنت تثق في شبكتك/منطقتك للسماح بمكالمات التصفح المباشرة."
+        },
+        "show-custom-search-button": {
+          "label": "إظهار زر البحث المخصص",
+          "tooltip": "عرض زر بحث في منتقي الكلمات الذي يتيح لك تجاوز استعلام البحث والفنان للأغنية الحالية."
         }
       },
       "name": "كلمات متزامنة",
@@ -1134,6 +1148,14 @@
         "visualizer-type": "نوع المعاين البصري"
       },
       "name": "معاين بصري"
+    },
+    "playlist-search": {
+      "description": "يضيف حقل بحث لتصفية قوائم التشغيل في الشريط الجانبي ومربع حوار الإضافة إلى قائمة التشغيل",
+      "name": "بحث قائمة التشغيل",
+      "templates": {
+        "search-placeholder": "البحث في قوائم التشغيل",
+        "no-results": "لم يتم العثور على قوائم تشغيل"
+      }
     }
   }
 }

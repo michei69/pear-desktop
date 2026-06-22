@@ -71,7 +71,7 @@
         "buttons": {
           "disable": "Isključi Ažuriranja",
           "download": "Preuzmi",
-          "ok": "OK"
+          "ok": "U redu"
         },
         "detail": "Nova verzija je dostupna i može se preuzeti preko {{downloadLink}}",
         "message": "Nova verzija je dostupna",
@@ -109,7 +109,8 @@
                   "title": "Postavi proxy"
                 }
               },
-              "toggle-dev-tools": "Uključi/isključi DevTools"
+              "toggle-dev-tools": "Uključi/isključi DevTools",
+              "force-smtc": "Prisilno koristi vanjski SMTC"
             }
           },
           "always-on-top": "Uvijek na vrhu",
@@ -145,7 +146,8 @@
               "enabled-and-hide-app": "Uključena i skrivena aplikacija",
               "enabled-and-show-app": "Uključena i prikaži aplikaciju",
               "play-pause-on-click": "Reproduciraj/Pauziraj na klik",
-              "move-to-current-desktop": "Premjesti na trenutnu virtualnu radnu površinu pri prikazu"
+              "move-to-current-desktop": "Premjesti na trenutnu virtualnu radnu površinu pri prikazu",
+              "force-white-icons": "Prisilno korištenje bijelih ikona"
             }
           },
           "visual-tweaks": {
@@ -212,7 +214,11 @@
       "tooltip": {
         "default": "{{applicationName}}",
         "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
-      }
+      },
+      "like": "Sviđa mi se",
+      "dislike": "Ne sviđa mi se",
+      "unlike": "Za razliku od",
+      "undislike": "Ukloni nesviđanje"
     }
   },
   "plugins": {
@@ -256,7 +262,7 @@
         "buffer": {
           "label": "Predmemorija (Bufer)",
           "submenu": {
-            "buffer": "{{buffer}}"
+            "buffer": "međuspremnik"
           }
         },
         "opacity": {
@@ -340,7 +346,7 @@
           }
         },
         "port": {
-          "label": "Port"
+          "label": "Luka"
         }
       },
       "name": "API Poslužitelj [Beta]",
@@ -351,7 +357,7 @@
         },
         "port": {
           "label": "Unesite port od API poslužitelja:",
-          "title": "Port"
+          "title": "Luka"
         }
       }
     },
@@ -368,7 +374,7 @@
           "label": "Naziv hosta"
         },
         "port": {
-          "label": "Port"
+          "label": "Luka"
         }
       },
       "name": "Proxy adapter za autentifikaciju",
@@ -510,14 +516,14 @@
         "dialog": {
           "error": {
             "buttons": {
-              "ok": "OK"
+              "ok": "U redu"
             },
             "message": "Jao! Oprostite, preuzimanje je bilo neuspješno…",
             "title": "Pogreška pri preuzimanju!"
           },
           "start-download-playlist": {
             "buttons": {
-              "ok": "OK"
+              "ok": "U redu"
             },
             "detail": "({{playlistSize}} pjesma)",
             "message": "Preuzimanje Playliste {{playlistTitle}}",
@@ -951,40 +957,40 @@
           "providers": {
             "anthropic": {
               "name": "Anthropic Claude",
-              "prompt-label": "Uses the native Anthropic Messages API.",
-              "prompt-title": "Anthropic settings"
+              "prompt-label": "Koristi izvorni Anthropic Messages API.",
+              "prompt-title": "Anthropic postavke"
             },
             "gemini": {
               "name": "Google Gemini",
-              "prompt-label": "Uses Google's Generative Language API (generateContent).",
-              "prompt-title": "Gemini settings"
+              "prompt-label": "Koristi Googleov Generative Language API (generateContent).",
+              "prompt-title": "Postavke Gemini"
             },
             "google-translate": {
-              "host": "Host",
-              "name": "Google Translate",
-              "prompt-label": "Uses the unofficial free Google Translate endpoint. No API key is required, but Google may rate-limit it.",
-              "prompt-title": "Google Translate settings"
+              "host": "Domaćin",
+              "name": "Google Prevoditelj",
+              "prompt-label": "Koristi neslužbeni besplatni Google Translate krajnji uređaj. Nije potreban API ključ, ali Google može ograničiti brzinu.",
+              "prompt-title": "Postavke Google Prevoditelja"
             },
             "local-cli": {
-              "command": "Command",
-              "engine": "Local CLI",
+              "command": "Naredba",
+              "engine": "Lokalni CLI",
               "engine-claude": "Claude Code",
               "engine-codex": "Codex",
               "engine-gemini": "Gemini CLI",
-              "name": "Local CLI",
-              "prompt-label": "Use a locally logged-in Claude Code, Codex, or Gemini CLI. The command and model are automatic; the CLI uses its own logged-in default.",
-              "prompt-title": "Local CLI settings",
-              "timeout": "Timeout seconds (15-600)"
+              "name": "Lokalni CLI",
+              "prompt-label": "Koristite lokalno prijavljeni Claude Code, Codex ili Gemini CLI. Naredba i model su automatski; CLI koristi vlastitu prijavljenu zadanu vrijednost.",
+              "prompt-title": "Lokalne CLI postavke",
+              "timeout": "Vrijeme isteka u sekundama (15-600)"
             },
             "openai-compatible": {
-              "api-mode": "API mode (responses / auto / chat-completions)",
-              "base-url": "Base URL",
-              "name": "OpenAI compatible",
-              "prompt-label": "Use OpenAI-compatible servers, including Ollama (base URL http://127.0.0.1:11434/v1, API mode auto or chat-completions).",
-              "prompt-title": "OpenAI-compatible settings"
+              "api-mode": "API način (odgovori / automatski / chat-dovršetci)",
+              "base-url": "Osnovni URL",
+              "name": "Kompatibilno s OpenAI",
+              "prompt-label": "Koristite poslužitelje kompatibilne s OpenAI-jem, uključujući Ollamu (osnovni URL http://127.0.0.1:11434/v1, API način rada auto ili chat-completions).",
+              "prompt-title": "Postavke kompatibilne s OpenAI-jem"
             },
             "shared": {
-              "api-key": "API key",
+              "api-key": "API ključ",
               "model": "Model"
             }
           },
@@ -1040,6 +1046,14 @@
             "tooltip": "Jezik na koji će se prevesti stihovi."
           },
           "tooltip": "Prevedi stihove i prikaži prevedeni rezultat redak po redak za prikaz."
+        },
+        "use-ytm-lyrics-without-proxy": {
+          "label": "Koristi YTM tekstove bez proxyja",
+          "tooltip": "Preskoči YTM proxy pregledavanja i izravno pozovi YouTube Music koristeći autentificiranu sesiju aplikacije. Korisno ako vjeruješ svojoj mreži/regiji da dopušta izravne pozive pregledavanja."
+        },
+        "show-custom-search-button": {
+          "label": "Prikaži prilagođeni gumb za pretraživanje",
+          "tooltip": "Prikaži gumb za pretraživanje u biraču stihova koji omogućuje promjenu upita za pretraživanje i izvođača za trenutnu pjesmu."
         }
       },
       "name": "Sinkronizirani stihovi pjesama",
@@ -1134,6 +1148,14 @@
         "log-to-console": "Zabilježi događaje oporavka u konzolu"
       },
       "name": "Oporavak Reprodukcije"
+    },
+    "playlist-search": {
+      "description": "Dodaje polje za pretraživanje za filtriranje popisa pjesama u bočnoj traci i dijalogu Dodaj na popis pjesama",
+      "name": "Pretraživanje popisa pjesama",
+      "templates": {
+        "search-placeholder": "Pretraži popise pjesama",
+        "no-results": "Nema pronađenih popisa pjesama"
+      }
     }
   }
 }

@@ -109,7 +109,8 @@
                   "title": "Ustaw proxy"
                 }
               },
-              "toggle-dev-tools": "Przełącz narzędzia deweloperskie"
+              "toggle-dev-tools": "Przełącz narzędzia deweloperskie",
+              "force-smtc": "Wymuś użycie zewnętrznego SMTC"
             }
           },
           "always-on-top": "Zawsze na wierzchu",
@@ -145,7 +146,8 @@
               "enabled-and-hide-app": "Włącz i ukryj aplikację",
               "enabled-and-show-app": "Włącz i pokaż aplikację",
               "play-pause-on-click": "Odtwórz/Wstrzymaj po kliknięciu",
-              "move-to-current-desktop": "Przenieś na bieżący pulpit wirtualny przy pokazywaniu"
+              "move-to-current-desktop": "Przenieś na bieżący pulpit wirtualny przy pokazywaniu",
+              "force-white-icons": "Wymuszaj użycie białych ikon"
             }
           },
           "visual-tweaks": {
@@ -212,7 +214,11 @@
       "tooltip": {
         "default": "{{applicationName}}",
         "with-song-info": "{{title}} (autorstwa {{artist}}) - {{applicationName}}"
-      }
+      },
+      "like": "Lubię",
+      "dislike": "Nie lubię",
+      "unlike": "W przeciwieństwie do",
+      "undislike": "Usuń polubienie"
     }
   },
   "plugins": {
@@ -256,7 +262,7 @@
         "buffer": {
           "label": "Bufor",
           "submenu": {
-            "buffer": "{{buffer}}"
+            "buffer": "bufor"
           }
         },
         "opacity": {
@@ -960,8 +966,8 @@
               "prompt-title": "Ustawienia Gemini"
             },
             "google-translate": {
-              "host": "Host",
-              "name": "Google Translate",
+              "host": "Gospodarz",
+              "name": "Tłumacz Google",
               "prompt-label": "Używa nieoficjalnego darmowego punktu końcowego Google Translate. Nie wymaga klucza API, ale Google może ograniczać częstotliwość.",
               "prompt-title": "Ustawienia Google Translate"
             },
@@ -1040,6 +1046,14 @@
             "tooltip": "Język, na który mają być tłumaczone teksty."
           },
           "tooltip": "Tłumacz teksty i pokazuj przetłumaczony wynik linia po linii."
+        },
+        "use-ytm-lyrics-without-proxy": {
+          "label": "Użyj tekstów YTM bez proxy",
+          "tooltip": "Pomiń proxy przeglądania YTM i wywołaj YouTube Music bezpośrednio, używając uwierzytelnionej sesji aplikacji. Przydatne, jeśli ufasz swojej sieci/regionowi, że zezwala na bezpośrednie wywołania przeglądania."
+        },
+        "show-custom-search-button": {
+          "label": "Pokaż niestandardowy przycisk wyszukiwania",
+          "tooltip": "Pokaż przycisk wyszukiwania w selektorze tekstów, który pozwala zastąpić zapytanie i wykonawcę dla bieżącego utworu."
         }
       },
       "name": "Napisy zsynchronizowane",
@@ -1084,7 +1098,7 @@
     },
     "tuna-obs": {
       "description": "Integracja z wtyczką OBS Tuna",
-      "name": "Tuna OBS"
+      "name": "Tuńczyk OBS"
     },
     "unobtrusive-player": {
       "description": "Zapobiega wyświetlaniu się ekranu z utworem po wybraniu innego tytułu",
@@ -1134,6 +1148,14 @@
         "log-to-console": "Rejestruj zdarzenia odzyskiwania w konsoli"
       },
       "name": "Odzyskiwanie odtwarzania"
+    },
+    "playlist-search": {
+      "description": "Dodaje pole wyszukiwania do filtrowania playlist na pasku bocznym i w oknie dialogowym Dodaj do playlisty",
+      "name": "Wyszukiwanie playlist",
+      "templates": {
+        "search-placeholder": "Szukaj playlist",
+        "no-results": "Nie znaleziono playlist"
+      }
     }
   }
 }

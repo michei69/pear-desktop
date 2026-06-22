@@ -109,7 +109,8 @@
                   "title": "Iestatīt proxy"
                 }
               },
-              "toggle-dev-tools": "Ieslēgt DevTools"
+              "toggle-dev-tools": "Ieslēgt DevTools",
+              "force-smtc": "Piespieduši izmantot ārējo SMTC"
             }
           },
           "always-on-top": "Vienmēr priekšā",
@@ -145,7 +146,8 @@
               "enabled-and-hide-app": "Teknīte ieslēgta, paslēpt lietotnes logu",
               "enabled-and-show-app": "Ielsēgts un rādīt lietotni",
               "move-to-current-desktop": "Rādot pārvietot uz pašreizējo virtuālo darbvirsmu",
-              "play-pause-on-click": "Atskaņot/Pauzēt piespiežot"
+              "play-pause-on-click": "Atskaņot/Pauzēt piespiežot",
+              "force-white-icons": "Piespiediet baltu ikonu lietošanu"
             }
           },
           "visual-tweaks": {
@@ -212,7 +214,11 @@
       "tooltip": {
         "default": "{{applicationName}}",
         "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
-      }
+      },
+      "like": "Patīk",
+      "dislike": "Nepatīk",
+      "unlike": "Atšķirībā no",
+      "undislike": "Nepatīk"
     }
   },
   "plugins": {
@@ -295,7 +301,7 @@
     },
     "amuse": {
       "description": "Pievieno {{applicationName}} atblastu priekš Amuse \"tagad spēlē\" no 6K Labs",
-      "name": "Amuse",
+      "name": "Izklaidē",
       "response": {
         "query": "Amuse API serveris ir palaists. GET /query lai dabūtu dziesmas info."
       }
@@ -501,7 +507,7 @@
           }
         }
       },
-      "name": "Discord Rich Presence",
+      "name": "Discord bagātā klātbūtne",
       "prompt": {
         "set-inactivity-timeout": {
           "label": "Ievadiet neaktivitātes taimeru sekundēs:",
@@ -803,7 +809,7 @@
         "scrobble-alternative-title": "Izmantot alternatīvos nosaukumus",
         "scrobble-other-media": "Scrobble citus medijus"
       },
-      "name": "Scrobbler",
+      "name": "Skrobolētājs",
       "prompt": {
         "lastfm": {
           "api-key": "Last.fm API atslēga",
@@ -980,7 +986,7 @@
               "command": "Komanda",
               "engine": "Lokālā CLI",
               "engine-claude": "Claude Code",
-              "engine-codex": "Codex",
+              "engine-codex": "Kodekss",
               "engine-gemini": "Gemini CLI",
               "name": "Lokālā CLI",
               "prompt-label": "Izmanto lokāli pieslēgtu Claude Code, Codex vai Gemini CLI. Komanda un modelis ir automātiski; CLI izmanto savu pieslēgto noklusējumu.",
@@ -1051,6 +1057,14 @@
             "tooltip": "Valoda, kurā tulkot dziesmu tekstus."
           },
           "tooltip": "Tulkot dziesmu tekstus un rādīt tulkoto rezultātu rindu pa rindai."
+        },
+        "use-ytm-lyrics-without-proxy": {
+          "label": "Izmantot YTM dziesmu vārdus bez starpniekservera",
+          "tooltip": "Izlaist YTM pārlūkošanas starpniekserveri un izsaukt YouTube Music tieši, izmantojot lietotnes autentificēto sesiju. Noderīgi, ja uzticaties savam tīklam/reģionam, lai atļautu tiešus pārlūkošanas zvanus."
+        },
+        "show-custom-search-button": {
+          "label": "Rādīt pielāgoto meklēšanas pogu",
+          "tooltip": "Rādīt meklēšanas pogu dziesmu tekstu izvēlē, kas ļauj pārrakstīt meklēšanas vaicājumu un izpildītāju pašreizējai dziesmai."
         }
       },
       "name": "Sinhronizētie Dziesmu Teksti",
@@ -1134,6 +1148,14 @@
         "visualizer-type": "Vizualizētāja Veids"
       },
       "name": "Vizualizētājs"
+    },
+    "playlist-search": {
+      "description": "Pievieno meklēšanas ievades lauku, lai filtrētu atskaņošanas sarakstus sānjoslā un dialoglodziņā \"Pievienot atskaņošanas sarakstam\"",
+      "name": "Atskaņot sarakstu Meklēšana",
+      "templates": {
+        "search-placeholder": "Meklēt atskaņošanas sarakstus",
+        "no-results": "Nav atrasts neviens atskaņošanas saraksts"
+      }
     }
   }
 }

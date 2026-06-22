@@ -109,7 +109,8 @@
                   "title": "პროქსის დაყენება"
                 }
               },
-              "toggle-dev-tools": "DevTools-ის გადართვა"
+              "toggle-dev-tools": "DevTools-ის გადართვა",
+              "force-smtc": "აიძულეთ გარე SMTC-ის გამოყენება"
             }
           },
           "always-on-top": "მუდამ ზემოთ",
@@ -145,7 +146,8 @@
               "enabled-and-hide-app": "ჩართე და დამალე პროგრამა",
               "enabled-and-show-app": "ჩართე და დატოვე პროგრამა",
               "move-to-current-desktop": "გადატანა მიმდინარე ვირტუალურ სამუშაო მაგიდაზე ჩვენებისას",
-              "play-pause-on-click": "დაჭერით ჩართე/დააპაუზე"
+              "play-pause-on-click": "დაჭერით ჩართე/დააპაუზე",
+              "force-white-icons": "იძულებითი თეთრი ხატების გამოყენება"
             }
           },
           "visual-tweaks": {
@@ -212,7 +214,11 @@
       "tooltip": {
         "default": "{{applicationName}}",
         "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
-      }
+      },
+      "like": "Like",
+      "dislike": "არ მომწონს",
+      "unlike": "განსხვავებით",
+      "undislike": "მოწონების გაუქმება"
     }
   },
   "plugins": {
@@ -260,7 +266,7 @@
         "buffer": {
           "label": "ბაფერი",
           "submenu": {
-            "buffer": "{{buffer}}"
+            "buffer": "ბუფერი"
           }
         },
         "opacity": {
@@ -501,7 +507,7 @@
           }
         }
       },
-      "name": "Discord Rich Presence",
+      "name": "Discord-ის Rich Presence",
       "prompt": {
         "set-inactivity-timeout": {
           "label": "შეიყვანეთ უმოქმედობის დროის ამოწურვა წამებში:",
@@ -614,7 +620,7 @@
       "menu": {
         "romanized-lyrics": "რომანიზებული ტექსტი"
       },
-      "name": "Lyrics Genius",
+      "name": "ლირიკს ჯენიუსი",
       "renderer": {
         "fetched-lyrics": "Genius-ის ტექსტი მიღებულია"
       }
@@ -649,7 +655,7 @@
           "host": "დაკავშირებულია როგორც წამყვანი"
         }
       },
-      "name": "Music Together [Beta]",
+      "name": "მუსიკა ერთად [ბეტა]",
       "toast": {
         "add-song-failed": "სიმღერის დამატება ვერ მოხერხდა",
         "closed": "Music Together-ის ორგანიზატორი დაიხურა",
@@ -1038,8 +1044,8 @@
               "prompt-title": "ლოკალური CLI-ის პარამეტრები",
               "prompt-label": "ლოკალურად ავტორიზებული Claude Code, Codex, ან Gemini CLI-ის გამოყენება. ბრძანება და მოდელი ავტომატურია; CLI იყენებს საკუთარ ნაგულისხმევს.",
               "engine": "ლოკალური CLI",
-              "engine-claude": "Claude Code",
-              "engine-codex": "Codex",
+              "engine-claude": "კლოდ კოდი",
+              "engine-codex": "კოდექსი",
               "engine-gemini": "Gemini CLI",
               "command": "ბრძანება",
               "timeout": "დროის ამოწურვა წამებში (15-600)"
@@ -1051,6 +1057,14 @@
               "host": "ჰოსტი"
             }
           }
+        },
+        "use-ytm-lyrics-without-proxy": {
+          "label": "გამოიყენე YTM ტექსტები პროქსის გარეშე",
+          "tooltip": "YTM-ის დათვალიერების პროქსის გამოტოვება და YouTube Music-ზე პირდაპირი წვდომა აპლიკაციის ავთენტიფიცირებული სესიის გამოყენებით. სასარგებლოა, თუ ენდობით თქვენს ქსელს/რეგიონს, რომ დაუშვას პირდაპირი დათვალიერების მოთხოვნები."
+        },
+        "show-custom-search-button": {
+          "label": "მორგებული ძიების ღილაკის ჩვენება",
+          "tooltip": "აჩვენე საძიებო ღილაკი ტექსტის ამომრჩევში, რომელიც საშუალებას მოგცემს შეცვალო საძიებო მოთხოვნა და შემსრულებელი მიმდინარე სიმღერისთვის."
         }
       },
       "name": "სინქრონიზებული ტექსტი",
@@ -1086,7 +1100,7 @@
           "label": "ტიპი",
           "submenu": {
             "acrylic": "აკრილი",
-            "mica": "Mica",
+            "mica": "მიკა",
             "tabbed": "ჩანართებიანი",
             "none": "არცერთი"
           }
@@ -1095,7 +1109,7 @@
     },
     "tuna-obs": {
       "description": "OBS-ის პლაგინ Tuna-სთან ინტეგრაცია",
-      "name": "Tuna OBS"
+      "name": "თინა OBS"
     },
     "unobtrusive-player": {
       "description": "პლეიერის ამოხტომის თავიდან აცილება სიმღერის დაკვრისას",
@@ -1134,6 +1148,14 @@
         "visualizer-type": "ვიზუალიზატორის ტიპი"
       },
       "name": "ვიზუალიზატორი"
+    },
+    "playlist-search": {
+      "description": "ამატებს საძიებო ველს, რათა გაფილტროთ დასაკრავი სიები გვერდითა ზოლში და „დასაკრავ სიაში დამატების“ დიალოგში",
+      "name": "პლეილისტის ძებნა",
+      "templates": {
+        "search-placeholder": "ძიება დასაკრავი სიები",
+        "no-results": "პლეილისტები ვერ მოიძებნა"
+      }
     }
   }
 }

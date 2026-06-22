@@ -109,7 +109,8 @@
                   "title": "Ställ in proxy"
                 }
               },
-              "toggle-dev-tools": "Utvecklarverktyg"
+              "toggle-dev-tools": "Utvecklarverktyg",
+              "force-smtc": "Tvinga användning av extern SMTC"
             }
           },
           "always-on-top": "Alltid överst",
@@ -145,7 +146,8 @@
               "enabled-and-hide-app": "Aktiverad och dölj app",
               "enabled-and-show-app": "Aktiverad och visa app",
               "play-pause-on-click": "Spela/Pausa vid klick",
-              "move-to-current-desktop": "Flytta till aktuellt virtuellt skrivbord vid visning"
+              "move-to-current-desktop": "Flytta till aktuellt virtuellt skrivbord vid visning",
+              "force-white-icons": "Tvinga användning av vita ikoner"
             }
           },
           "visual-tweaks": {
@@ -212,7 +214,11 @@
       "tooltip": {
         "default": "{{applicationName}}",
         "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
-      }
+      },
+      "like": "Gilla",
+      "dislike": "Ogilla",
+      "unlike": "Till skillnad från",
+      "undislike": "Ta bort ogillande"
     }
   },
   "plugins": {
@@ -256,7 +262,7 @@
         "buffer": {
           "label": "Buffert",
           "submenu": {
-            "buffer": "{{buffer}}"
+            "buffer": "buffert"
           }
         },
         "opacity": {
@@ -351,7 +357,7 @@
         },
         "port": {
           "label": "Ange porten för API-servern:",
-          "title": "Port"
+          "title": "Hamn"
         }
       }
     },
@@ -645,7 +651,7 @@
           "host": "Ansluten som värd"
         }
       },
-      "name": "Music Together [Beta]",
+      "name": "Musik Tillsammans [Beta]",
       "toast": {
         "add-song-failed": "Misslyckades med att lägga till låt",
         "closed": "\"Music Together\" stängdes",
@@ -801,7 +807,7 @@
         "listenbrainz": {
           "token": {
             "label": "Ange din ListenBrainz användartoken:",
-            "title": "ListenBrainz token"
+            "title": "ListenBrainz-token"
           }
         }
       }
@@ -1040,6 +1046,14 @@
             "tooltip": "Språket att översätta sångtexter till."
           },
           "tooltip": "Översätt sångtexter och visa det översatta resultatet rad för rad."
+        },
+        "use-ytm-lyrics-without-proxy": {
+          "label": "Använd YTM-text utan proxy",
+          "tooltip": "Hoppa över YTM-webbläsarproxy och anropa YouTube Music direkt med appens autentiserade session. Användbart om du litar på att ditt nätverk/region tillåter direkta anrop."
+        },
+        "show-custom-search-button": {
+          "label": "Visa anpassad sökknapp",
+          "tooltip": "Visa en sökknapp i textväljaren som låter dig åsidosätta sökfrågan och artisten för den aktuella låten."
         }
       },
       "name": "Synkroniserade Låttexter",
@@ -1134,6 +1148,14 @@
         "log-to-console": "Logga återställningshändelser till konsolen"
       },
       "name": "Uppspelningsåterställning"
+    },
+    "playlist-search": {
+      "description": "Lägger till en sökruta för att filtrera spellistor i sidofältet och dialogrutan Lägg till i spellista",
+      "name": "Spellista Sök",
+      "templates": {
+        "search-placeholder": "Sök spellistor",
+        "no-results": "Inga spellistor hittades"
+      }
     }
   }
 }

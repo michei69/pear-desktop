@@ -109,7 +109,8 @@
                   "title": "ಪ್ರಾಕ್ಸಿ ಹೊಂದಿಸಿ"
                 }
               },
-              "toggle-dev-tools": "DevTools ಟಾಗಲ್ ಮಾಡಿ"
+              "toggle-dev-tools": "DevTools ಟಾಗಲ್ ಮಾಡಿ",
+              "force-smtc": "ಬಾಹ್ಯ SMTC ಬಳಕೆಯನ್ನು ಬಲವಂತಪಡಿಸಿ"
             }
           },
           "always-on-top": "ಯಾವಾಗಲೂ ಮೇಲಿರಲಿ",
@@ -145,7 +146,8 @@
               "enabled-and-hide-app": "ಸಕ್ರಿಯಗೊಳಿಸಿ ಮತ್ತು ಅಪ್ಲಿಕೇಶನ್ ಮರೆಮಾಡಿ",
               "enabled-and-show-app": "ಸಕ್ರಿಯಗೊಳಿಸಿ ಮತ್ತು ಅಪ್ಲಿಕೇಶನ್ ತೋರಿಸಿ",
               "move-to-current-desktop": "ತೋರಿಸುವಾಗ ಪ್ರಸ್ತುತ ವರ್ಚುವಲ್ ಡೆಸ್ಕ್‌ಟಾಪ್‌ಗೆ ಸರಿಸಿ",
-              "play-pause-on-click": "ಕ್ಲಿಕ್ ಮಾಡಿದಾಗ ಪ್ಲೇ/ವಿರಾಮ"
+              "play-pause-on-click": "ಕ್ಲಿಕ್ ಮಾಡಿದಾಗ ಪ್ಲೇ/ವಿರಾಮ",
+              "force-white-icons": "ಬಿಳಿ ಐಕಾನ್ಗಳ ಬಳಕೆಯನ್ನು ಒತ್ತಾಯಿಸಿ"
             }
           },
           "visual-tweaks": {
@@ -212,7 +214,11 @@
       "tooltip": {
         "default": "{{applicationName}}",
         "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
-      }
+      },
+      "like": "ಲೈಕ್",
+      "dislike": "ಇಷ್ಟವಿಲ್ಲ",
+      "unlike": "ಭಿನ್ನವಾಗಿ",
+      "undislike": "ಅನಿಷ್ಟ"
     }
   },
   "plugins": {
@@ -260,7 +266,7 @@
         "buffer": {
           "label": "ಬಫರ್",
           "submenu": {
-            "buffer": "{{buffer}}"
+            "buffer": "ಬಫರ್"
           }
         },
         "opacity": {
@@ -295,7 +301,7 @@
     },
     "amuse": {
       "description": "6K Labs ನ Amuse ಈಗ ಪ್ಲೇ ಆಗುತ್ತಿರುವ ವಿಜೆಟ್‌ಗೆ {{applicationName}} ಬೆಂಬಲವನ್ನು ಸೇರಿಸುತ್ತದೆ",
-      "name": "Amuse",
+      "name": "ಅಮ್ಯೂಸ್",
       "response": {
         "query": "Amuse API ಸರ್ವರ್ ಚಾಲನೆಯಲ್ಲಿದೆ. ಹಾಡಿನ ಮಾಹಿತಿ ಪಡೆಯಲು GET /query."
       }
@@ -501,7 +507,7 @@
           }
         }
       },
-      "name": "Discord Rich Presence",
+      "name": "ಡಿಸ್ಕಾರ್ಡ್ ರಿಚ್ ಪ್ರೆಸೆನ್ಸ್",
       "prompt": {
         "set-inactivity-timeout": {
           "label": "ನಿಷ್ಕ್ರಿಯತೆಯ ಟೈಮ್‌ಔಟ್ ಸೆಕೆಂಡುಗಳಲ್ಲಿ ನಮೂದಿಸಿ:",
@@ -607,14 +613,14 @@
     },
     "lumiastream": {
       "description": "Lumia Stream ಬೆಂಬಲವನ್ನು ಸೇರಿಸುತ್ತದೆ",
-      "name": "Lumia Stream [Beta]"
+      "name": "ಲುಮಿಯಾ ಸ್ಟ್ರೀಮ್ [ಬೀಟಾ]"
     },
     "lyrics-genius": {
       "description": "ಹೆಚ್ಚಿನ ಹಾಡುಗಳಿಗೆ ಸಾಹಿತ್ಯ ಬೆಂಬಲವನ್ನು ಸೇರಿಸುತ್ತದೆ",
       "menu": {
         "romanized-lyrics": "ರೋಮನೈಸ್ಡ್ ಸಾಹಿತ್ಯ"
       },
-      "name": "Lyrics Genius",
+      "name": "ಲಿರಿಕ್ಸ್ ಜೀನಿಯಸ್",
       "renderer": {
         "fetched-lyrics": "Genius ಗಾಗಿ ಸಾಹಿತ್ಯ ಪಡೆಯಲಾಗಿದೆ"
       }
@@ -649,7 +655,7 @@
           "host": "ಹೋಸ್ಟ್ ಆಗಿ ಸಂಪರ್ಕಿತವಾಗಿದೆ"
         }
       },
-      "name": "Music Together [Beta]",
+      "name": "ಸಂಗೀತ ಒಟ್ಟಿಗೆ [ಬೀಟಾ]",
       "toast": {
         "add-song-failed": "ಹಾಡು ಸೇರಿಸಲು ವಿಫಲವಾಗಿದೆ",
         "closed": "Music Together ಮುಚ್ಚಲಾಗಿದೆ",
@@ -667,7 +673,7 @@
     },
     "navigation": {
       "description": "ನಿಮ್ಮ ಮೆಚ್ಚಿನ ಬ್ರೌಸರ್‌ನಲ್ಲಿರುವಂತೆ, ಇಂಟರ್‌ಫೇಸ್‌ನಲ್ಲಿ ನೇರವಾಗಿ ಸಂಯೋಜಿತವಾದ ಮುಂದಿನ/ಹಿಂದಿನ ನ್ಯಾವಿಗೇಷನ್ ಬಾಣಗಳು",
-      "name": "Navigation",
+      "name": "ನ್ಯಾವಿಗೇಷನ್",
       "templates": {
         "back": {
           "title": "ಹಿಂದಿನ ಪುಟಕ್ಕೆ ಹೋಗಿ"
@@ -702,7 +708,7 @@
     },
     "performance-improvement": {
       "description": "ಪ್ರಾಯೋಗಿಕ ಸ್ಕ್ರಿಪ್ಟ್‌ಗಳನ್ನು ಸಕ್ರಿಯಗೊಳಿಸುವ ಮೂಲಕ ಕಾರ್ಯಕ್ಷಮತೆ ಸುಧಾರಿಸಿ",
-      "name": "Performance improvement [Beta]"
+      "name": "ಕಾರ್ಯಕ್ಷಮತೆ ಸುಧಾರಣೆ [ಬೀಟಾ]"
     },
     "playback-recovery": {
       "description": "ಸಿಕ್ಕಿಹಾಕಿಕೊಂಡ, ಸ್ಥಗಿತಗೊಂಡ ಅಥವಾ ಡೆಡ್ ಪ್ಲೇಬ್ಯಾಕ್ ಸ್ಥಿತಿಗಳಿಂದ ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಚೇತರಿಸಿಕೊಳ್ಳುತ್ತದೆ",
@@ -823,7 +829,7 @@
         "override-media-keys": "ಮೀಡಿಯಾ ಕೀಗಳನ್ನು ಅತಿಕ್ರಮಿಸಿ",
         "set-keybinds": "ಜಾಗತಿಕ ಹಾಡು ನಿಯಂತ್ರಣಗಳನ್ನು ಹೊಂದಿಸಿ"
       },
-      "name": "Shortcuts (& MPRIS)",
+      "name": "ಶಾರ್ಟ್ಕಟ್ಗಳು (& MPRIS)",
       "prompt": {
         "keybind": {
           "keybind-options": {
@@ -846,7 +852,7 @@
     },
     "sponsorblock": {
       "description": "ಪರಿಚಯ/ಸಮಾಪ್ತಿ ಅಥವಾ ಹಾಡು ಪ್ಲೇ ಆಗದ ಮ್ಯೂಸಿಕ್ ವೀಡಿಯೊಗಳ ಭಾಗಗಳಂತಹ ಸಂಗೀತವಲ್ಲದ ಭಾಗಗಳನ್ನು ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಬಿಟ್ಟುಬಿಡುತ್ತದೆ",
-      "name": "SponsorBlock"
+      "name": "ಸ್ಪಾನ್ಸರ್‌ಬ್ಲಾಕ್"
     },
     "synced-lyrics": {
       "description": "LRClib ನಂತಹ ಪೂರೈಕೆದಾರರನ್ನು ಬಳಸಿಕೊಂಡು ಹಾಡುಗಳಿಗೆ ಸಿಂಕ್ ಮಾಡಿದ ಸಾಹಿತ್ಯವನ್ನು ಒದಗಿಸುತ್ತದೆ.",
@@ -1024,33 +1030,41 @@
               "api-mode": "API ಮೋಡ್ (responses / auto / chat-completions)"
             },
             "anthropic": {
-              "name": "Anthropic Claude",
-              "prompt-title": "Anthropic settings",
-              "prompt-label": "Uses the native Anthropic Messages API."
+              "name": "ಆಂಥ್ರೊಪಿಕ್ ಕ್ಲಾಡ್",
+              "prompt-title": "ಆಂಥ್ರೊಪಿಕ್ ಸೆಟ್ಟಿಂಗ್ಗಳು",
+              "prompt-label": "ಮೂಲ ಆಂಥ್ರೋಪಿಕ್ ಮೆಸೇಜಸ್ API ಅನ್ನು ಬಳಸುತ್ತದೆ."
             },
             "gemini": {
-              "name": "Google Gemini",
-              "prompt-title": "Gemini settings",
-              "prompt-label": "Uses Google's Generative Language API (generateContent)."
+              "name": "ಗೂಗಲ್ ಜೆಮಿನಿ",
+              "prompt-title": "ಗೆಮಿನಿ ಸೆಟ್ಟಿಂಗ್ಗಳು",
+              "prompt-label": "ಗೂಗಲ್ನ ಜನರೇಟಿವ್ ಲ್ಯಾಂಗ್ವೇಜ್ API (generateContent) ಅನ್ನು ಬಳಸುತ್ತದೆ."
             },
             "local-cli": {
-              "name": "Local CLI",
-              "prompt-title": "Local CLI settings",
-              "prompt-label": "Use a locally logged-in Claude Code, Codex, or Gemini CLI. The command and model are automatic; the CLI uses its own logged-in default.",
-              "engine": "Local CLI",
-              "engine-claude": "Claude Code",
-              "engine-codex": "Codex",
-              "engine-gemini": "Gemini CLI",
-              "command": "Command",
-              "timeout": "Timeout seconds (15-600)"
+              "name": "ಸ್ಥಳೀಯ CLI",
+              "prompt-title": "ಸ್ಥಳೀಯ CLI ಸೆಟ್ಟಿಂಗ್ಗಳು",
+              "prompt-label": "ಸ್ಥಳೀಯವಾಗಿ ಲಾಗಿನ್ ಆಗಿರುವ Claude Code, Codex, ಅಥವಾ Gemini CLI ಅನ್ನು ಬಳಸಿ. ಆಜ್ಞೆ ಮತ್ತು ಮಾದರಿ ಸ್ವಯಂಚಾಲಿತವಾಗಿರುತ್ತವೆ; CLI ತನ್ನದೇ ಆದ ಲಾಗಿನ್ ಆದ ಡೀಫಾಲ್ಟ್ ಅನ್ನು ಬಳಸುತ್ತದೆ.",
+              "engine": "ಸ್ಥಳೀಯ CLI",
+              "engine-claude": "ಕ್ಲಾಡ್ ಕೋಡ್",
+              "engine-codex": "ಕೋಡೆಕ್ಸ್",
+              "engine-gemini": "ಗೆಮಿನಿ CLI",
+              "command": "ಆಜ್ಞೆ",
+              "timeout": "ಟೈಮೌಟ್ ಸೆಕೆಂಡುಗಳು (15-600)"
             },
             "google-translate": {
-              "name": "Google Translate",
-              "prompt-title": "Google Translate settings",
-              "prompt-label": "Uses the unofficial free Google Translate endpoint. No API key is required, but Google may rate-limit it.",
-              "host": "Host"
+              "name": "ಗೂಗಲ್ ಅನುವಾದ",
+              "prompt-title": "ಗೂಗಲ್ ಅನುವಾದ ಸೆಟ್ಟಿಂಗ್ಗಳು",
+              "prompt-label": "ಅನಧಿಕೃತ ಉಚಿತ Google Translate ಎಂಡ್ಪಾಯಿಂಟ್ ಅನ್ನು ಬಳಸುತ್ತದೆ. API ಕೀ ಅಗತ್ಯವಿಲ್ಲ, ಆದರೆ Google ದರ ಮಿತಿಯನ್ನು ವಿಧಿಸಬಹುದು.",
+              "host": "ಆತಿಥೇಯ"
             }
           }
+        },
+        "use-ytm-lyrics-without-proxy": {
+          "label": "ಪ್ರಾಕ್ಸಿ ಇಲ್ಲದೆ YTM ಸಾಹಿತ್ಯವನ್ನು ಬಳಸಿ",
+          "tooltip": "YTM ಬ್ರೌಸ್ ಪ್ರಾಕ್ಸಿಯನ್ನು ಬಿಟ್ಟುಬಿಡಿ ಮತ್ತು ಅಪ್ಲಿಕೇಶನ್ನ ದೃಢೀಕೃತ ಸೆಷನ್ ಬಳಸಿ ನೇರವಾಗಿ YouTube Music ಗೆ ಕರೆ ಮಾಡಿ. ನಿಮ್ಮ ನೆಟ್ವರ್ಕ್/ಪ್ರದೇಶವು ನೇರ ಬ್ರೌಸ್ ಕರೆಗಳನ್ನು ಅನುಮತಿಸುತ್ತದೆ ಎಂದು ನೀವು ನಂಬಿದರೆ ಉಪಯುಕ್ತವಾಗಿದೆ."
+        },
+        "show-custom-search-button": {
+          "label": "ಕಸ್ಟಮ್ ಹುಡುಕಾಟ ಬಟನ್ ತೋರಿಸು",
+          "tooltip": "ಗೀತೆ ಪಿಕ್ಕರ್ನಲ್ಲಿ ಹುಡುಕಾಟ ಬಟನ್ ತೋರಿಸಿ, ಅದು ಪ್ರಸ್ತುತ ಹಾಡಿಗಾಗಿ ಹುಡುಕಾಟ ಪ್ರಶ್ನೆ ಮತ್ತು ಕಲಾವಿದರನ್ನು ಬದಲಾಯಿಸಲು ಅನುಮತಿಸುತ್ತದೆ."
         }
       },
       "name": "ಸಿಂಕ್ ಮಾಡಿದ ಸಾಹಿತ್ಯ",
@@ -1070,7 +1084,7 @@
     },
     "touchbar": {
       "description": "macOS ಬಳಕೆದಾರರಿಗಾಗಿ TouchBar ವಿಜೆಟ್ ಸೇರಿಸುತ್ತದೆ",
-      "name": "TouchBar"
+      "name": "ಟಚ್‌ಬಾರ್"
     },
     "transparent-player": {
       "description": "ಅಪ್ಲಿಕೇಶನ್ ವಿಂಡೋವನ್ನು ಪಾರದರ್ಶಕವಾಗಿಸುತ್ತದೆ",
@@ -1086,7 +1100,7 @@
           "label": "ಪ್ರಕಾರ",
           "submenu": {
             "acrylic": "ಅಕ್ರಿಲಿಕ್",
-            "mica": "Mica",
+            "mica": "ಮೈಕಾ",
             "tabbed": "ಟ್ಯಾಬ್ಡ್",
             "none": "ಯಾವುದೂ ಇಲ್ಲ"
           }
@@ -1095,7 +1109,7 @@
     },
     "tuna-obs": {
       "description": "OBS ನ ಪ್ಲಗಿನ್ Tuna ಜೊತೆ ಏಕೀಕರಣ",
-      "name": "Tuna OBS"
+      "name": "ಟ್ಯೂನಾ OBS"
     },
     "unobtrusive-player": {
       "description": "ಹಾಡು ಪ್ಲೇ ಆಗುವಾಗ ಪ್ಲೇಯರ್ ಪಾಪ್ ಅಪ್ ಆಗುವುದನ್ನು ತಡೆಯುತ್ತದೆ",
@@ -1134,6 +1148,14 @@
         "visualizer-type": "ವಿಷುವಲೈಜರ್ ಪ್ರಕಾರ"
       },
       "name": "ವಿಷುವಲೈಜರ್"
+    },
+    "playlist-search": {
+      "description": "ಸೈಡ್ಬಾರ್ ಮತ್ತು ಪ್ಲೇಲಿಸ್ಟ್‌ಗೆ ಸೇರಿಸು ಸಂವಾದದಲ್ಲಿ ಪ್ಲೇಲಿಸ್ಟ್‌ಗಳನ್ನು ಫಿಲ್ಟರ್ ಮಾಡಲು ಹುಡುಕಾಟ ಇನ್‌ಪುಟ್ ಅನ್ನು ಸೇರಿಸುತ್ತದೆ",
+      "name": "ಪ್ಲೇಲಿಸ್ಟ್ ಹುಡುಕು",
+      "templates": {
+        "search-placeholder": "ಪ್ಲೇಲಿಸ್ಟ್ಗಳನ್ನು ಹುಡುಕಿ",
+        "no-results": "ಪ್ಲೇಲಿಸ್ಟ್ಗಳು ಕಂಡುಬಂದಿಲ್ಲ"
+      }
     }
   }
 }

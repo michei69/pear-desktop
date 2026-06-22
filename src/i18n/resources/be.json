@@ -109,7 +109,8 @@
                   "title": "Наладзіць проксі"
                 }
               },
-              "toggle-dev-tools": "Пераключыць DevTools"
+              "toggle-dev-tools": "Пераключыць DevTools",
+              "force-smtc": "强制使用外部SMTC"
             }
           },
           "always-on-top": "Заўсёды зверху",
@@ -145,7 +146,8 @@
               "enabled-and-hide-app": "Уключана і хаваць праграму",
               "enabled-and-show-app": "Уключана і паказваць праграму",
               "move-to-current-desktop": "Перамяшчаць на бягучы віртуальны працоўны стол пры паказе",
-              "play-pause-on-click": "Прайграванне/Паўза па кліку"
+              "play-pause-on-click": "Прайграванне/Паўза па кліку",
+              "force-white-icons": "Force the use of white icons"
             }
           },
           "visual-tweaks": {
@@ -212,7 +214,11 @@
       "tooltip": {
         "default": "{{applicationName}}",
         "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
-      }
+      },
+      "like": "Like",
+      "dislike": "Dislike",
+      "unlike": "Unlike",
+      "undislike": "Undislike"
     }
   },
   "plugins": {
@@ -260,7 +266,7 @@
         "buffer": {
           "label": "Буфер",
           "submenu": {
-            "buffer": "{{buffer}}"
+            "buffer": "buffer"
           }
         },
         "opacity": {
@@ -688,9 +694,9 @@
         "interactive-settings": {
           "label": "Налады інтэрактыўнасці",
           "submenu": {
-              "hide-button-text": "Схаваць тэкст кнопак",
-                "hover-controls": "Паказваць міні-прайгравальнік пры навядзенні на трэй",
-                "refresh-on-play-pause": "Абнаўляць пры прайграванні/паўзе",
+            "hide-button-text": "Схаваць тэкст кнопак",
+            "hover-controls": "Паказваць міні-прайгравальнік пры навядзенні на трэй",
+            "refresh-on-play-pause": "Абнаўляць пры прайграванні/паўзе",
             "tray-controls": "Адкрываць/Зачыняць па кліку на трэй"
           }
         },
@@ -1051,6 +1057,14 @@
             "tooltip": "Мова, на якую трэба перакладаць тэксты."
           },
           "tooltip": "Перакладаць тэксты і паказваць вынік перакладу радок за радком."
+        },
+        "use-ytm-lyrics-without-proxy": {
+          "label": "Use YTM lyrics with no proxy",
+          "tooltip": "Skip the YTM browse proxy and call YouTube Music directly using the app's authenticated session. Useful if you trust your network/region to allow direct browse calls."
+        },
+        "show-custom-search-button": {
+          "label": "Show custom search button",
+          "tooltip": "Show a search button in the lyrics picker that lets you override the search query and artist for the current song."
         }
       },
       "name": "Сінхранізаваныя тэксты",
@@ -1134,6 +1148,14 @@
         "visualizer-type": "Тып візуалізатара"
       },
       "name": "Візуалізатар"
+    },
+    "playlist-search": {
+      "description": "Adds a search input to filter playlists in the sidebar and the Add to playlist dialog",
+      "name": "Playlist Search",
+      "templates": {
+        "search-placeholder": "Search playlists",
+        "no-results": "No playlists found"
+      }
     }
   }
 }

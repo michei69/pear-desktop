@@ -109,7 +109,8 @@
                   "title": "பதிலாள் அமைக்கவும்"
                 }
               },
-              "toggle-dev-tools": "டெவ்டூல்சை மாற்றவும்"
+              "toggle-dev-tools": "டெவ்டூல்சை மாற்றவும்",
+              "force-smtc": "வெளிப்புற SMTC பயன்பாட்டை கட்டாயப்படுத்து"
             }
           },
           "always-on-top": "எப்போதும் மேலே",
@@ -145,7 +146,8 @@
               "enabled-and-hide-app": "இயக்கப்பட்ட மற்றும் பயன்பாட்டை மறைக்கவும்",
               "enabled-and-show-app": "இயக்கப்பட்டது மற்றும் பயன்பாட்டைக் காட்டு",
               "play-pause-on-click": "சொடுக்கு செய்யவும்/இடைநிறுத்தவும்",
-              "move-to-current-desktop": "காட்டும்போது தற்போதைய மெய்நிகர் டெஸ்க்டாப்பிற்கு நகர்த்தவும்"
+              "move-to-current-desktop": "காட்டும்போது தற்போதைய மெய்நிகர் டெஸ்க்டாப்பிற்கு நகர்த்தவும்",
+              "force-white-icons": "வெள்ளை ஐகான்களை கட்டாயமாக பயன்படுத்து"
             }
           },
           "visual-tweaks": {
@@ -212,7 +214,11 @@
       "tooltip": {
         "default": "{{applicationName}}",
         "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
-      }
+      },
+      "like": "விருப்பம்",
+      "dislike": "விருப்பமில்லை",
+      "unlike": "விட",
+      "undislike": "விருப்பத்தை நீக்கு"
     }
   },
   "plugins": {
@@ -256,13 +262,13 @@
         "buffer": {
           "label": "இடையக",
           "submenu": {
-            "buffer": "{{buffer}}"
+            "buffer": "இடைநிலை"
           }
         },
         "opacity": {
           "label": "ஒளிபுகாநிலை",
           "submenu": {
-            "percent": "{{opacity}}%"
+            "percent": "{{ஒளிபுகுதிறன்}}%"
           }
         },
         "quality": {
@@ -950,12 +956,12 @@
           },
           "providers": {
             "anthropic": {
-              "name": "Anthropic Claude",
+              "name": "ஆன்த்ரோபிக் கிளாட்",
               "prompt-label": "இயல்பான Anthropic Messages API ஐப் பயன்படுத்துகிறது.",
               "prompt-title": "Anthropic அமைப்புகள்"
             },
             "gemini": {
-              "name": "Google Gemini",
+              "name": "கூகுள் ஜெமினி",
               "prompt-label": "Google இன் Generative Language API (generateContent) ஐப் பயன்படுத்துகிறது.",
               "prompt-title": "Gemini அமைப்புகள்"
             },
@@ -968,9 +974,9 @@
             "local-cli": {
               "command": "கட்டளை",
               "engine": "உள்ளூர் CLI",
-              "engine-claude": "Claude Code",
-              "engine-codex": "Codex",
-              "engine-gemini": "Gemini CLI",
+              "engine-claude": "கிளாட் கோட்",
+              "engine-codex": "கோடெக்ஸ்",
+              "engine-gemini": "ஜெமினி CLI",
               "name": "உள்ளூர் CLI",
               "prompt-label": "உள்நுழைந்த Claude Code, Codex அல்லது Gemini CLI ஐப் பயன்படுத்தவும். கட்டளை மற்றும் மாதிரி தானியங்கி; CLI தனது சொந்த உள்நுழைந்த இயல்புநிலையைப் பயன்படுத்துகிறது.",
               "prompt-title": "உள்ளூர் CLI அமைப்புகள்",
@@ -1040,6 +1046,14 @@
             "tooltip": "பாடல் வரிகளை மொழிபெயர்க்க வேண்டிய மொழி."
           },
           "tooltip": "பாடல் வரிகளை மொழிபெயர்த்து, மொழிபெயர்க்கப்பட்ட முடிவை வரிக்கு வரி காட்டவும்."
+        },
+        "use-ytm-lyrics-without-proxy": {
+          "label": "YTM பாடல் வரிகளை ப்ராக்ஸி இல்லாமல் பயன்படுத்தவும்",
+          "tooltip": "YTM உலாவல் ப்ராக்ஸியைத் தவிர்த்து, பயன்பாட்டின் அங்கீகரிக்கப்பட்ட அமர்வைப் பயன்படுத்தி நேரடியாக YouTube Music ஐ அழைக்கவும். உங்கள் நெட்வொர்க்/பகுதி நேரடி உலாவல் அழைப்புகளை அனுமதிக்கும் என நம்பினால் பயனுள்ளதாக இருக்கும்."
+        },
+        "show-custom-search-button": {
+          "label": "தனிப்பயன் தேடல் பொத்தானைக் காட்டு",
+          "tooltip": "தற்போதைய பாடலுக்கான தேடல் வினவல் மற்றும் கலைஞரை மாற்ற அனுமதிக்கும் ஒரு தேடல் பொத்தானை பாடல் வரிகள் தேர்வியில் காட்டவும்."
         }
       },
       "name": "ஒத்திசைக்கப்பட்ட பாடல்",
@@ -1067,7 +1081,7 @@
         "opacity": {
           "label": "ஒளிபுகாநிலை",
           "submenu": {
-            "percent": "{{opacity}}%"
+            "percent": "{{ஒளிபுகாநிலை}}%"
           }
         },
         "type": {
@@ -1134,6 +1148,14 @@
         "log-to-console": "மீட்பு நிகழ்வுகளை கன்சோலில் பதிவு செய்யவும்"
       },
       "name": "பிளேபேக் மீட்பு"
+    },
+    "playlist-search": {
+      "description": "பக்கப்பட்டியில் மற்றும் பிளேலிஸ்ட்டில் சேர் உரையாடலில் பிளேலிஸ்ட்களை வடிகட்ட தேடல் உள்ளீட்டைச் சேர்க்கிறது",
+      "name": "பிளேலிஸ்ட் தேடல்",
+      "templates": {
+        "search-placeholder": "தேடல் பிளேலிஸ்ட்கள்",
+        "no-results": "பிளேலிஸ்ட்கள் எதுவும் கிடைக்கவில்லை"
+      }
     }
   }
 }

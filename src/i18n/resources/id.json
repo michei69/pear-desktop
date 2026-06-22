@@ -109,7 +109,8 @@
                   "title": "Atur proxy"
                 }
               },
-              "toggle-dev-tools": "Beralih ke DevTools"
+              "toggle-dev-tools": "Beralih ke DevTools",
+              "force-smtc": "Paksa penggunaan SMTC eksternal"
             }
           },
           "always-on-top": "Selalu di atas",
@@ -145,7 +146,8 @@
               "enabled-and-hide-app": "Mengaktifkan dan menyembunyikan aplikasi",
               "enabled-and-show-app": "Mengaktifkan dan menampilkan aplikasi",
               "move-to-current-desktop": "Pindah ke desktop virtual saat ini saat ditampilkan",
-              "play-pause-on-click": "Putar/Jeda dengan klik"
+              "play-pause-on-click": "Putar/Jeda dengan klik",
+              "force-white-icons": "Paksa penggunaan ikon putih"
             }
           },
           "visual-tweaks": {
@@ -212,7 +214,11 @@
       "tooltip": {
         "default": "{{applicationName}}",
         "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
-      }
+      },
+      "like": "Suka",
+      "dislike": "Tidak suka",
+      "unlike": "Tidak seperti",
+      "undislike": "Batal tidak suka"
     }
   },
   "plugins": {
@@ -343,7 +349,7 @@
           }
         }
       },
-      "name": "API Server [Beta]",
+      "name": "Server API [Beta]",
       "prompt": {
         "hostname": {
           "label": "Masukkan nama host (seperti 0.0.0.0) untuk server API:",
@@ -1028,18 +1034,26 @@
               "prompt-label": "Gunakan Claude Code, Codex, atau Gemini CLI yang sudah login secara lokal. Perintah dan model otomatis; CLI menggunakan default login sendiri.",
               "engine": "CLI Lokal",
               "engine-claude": "Claude Code",
-              "engine-codex": "Codex",
+              "engine-codex": "Kodeks",
               "engine-gemini": "Gemini CLI",
               "command": "Perintah",
               "timeout": "Batas waktu detik (15-600)"
             },
             "google-translate": {
-              "name": "Google Translate",
+              "name": "Google Terjemahan",
               "prompt-title": "Pengaturan Google Translate",
               "prompt-label": "Menggunakan endpoint gratis tidak resmi Google Translate. Tidak diperlukan kunci API, tetapi Google mungkin membatasi laju.",
-              "host": "Host"
+              "host": "Tuan rumah"
             }
           }
+        },
+        "use-ytm-lyrics-without-proxy": {
+          "label": "Gunakan lirik YTM tanpa proxy",
+          "tooltip": "Lewati proxy YTM dan panggil YouTube Music langsung menggunakan sesi terautentikasi aplikasi. Berguna jika Anda percaya jaringan/wilayah Anda mengizinkan panggilan langsung."
+        },
+        "show-custom-search-button": {
+          "label": "Tampilkan tombol pencarian kustom",
+          "tooltip": "Tampilkan tombol pencarian di pemilih lirik yang memungkinkan Anda mengganti kueri pencarian dan artis untuk lagu saat ini."
         }
       },
       "name": "Lirik yang Disinkronkan",
@@ -1134,6 +1148,14 @@
         "log-to-console": "Catat peristiwa pemulihan ke konsol"
       },
       "name": "Pemulihan Pemutaran"
+    },
+    "playlist-search": {
+      "description": "Menambahkan input pencarian untuk memfilter daftar putar di sidebar dan dialog Tambah ke daftar putar",
+      "name": "Cari Playlist",
+      "templates": {
+        "search-placeholder": "Cari daftar putar",
+        "no-results": "Tidak ada daftar putar yang ditemukan"
+      }
     }
   }
 }

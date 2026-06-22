@@ -109,7 +109,8 @@
                   "title": "Vendos proxy"
                 }
               },
-              "toggle-dev-tools": "Aktivizo/Çaktivizo DevTools"
+              "toggle-dev-tools": "Aktivizo/Çaktivizo DevTools",
+              "force-smtc": "Detyro përdorimin e SMTC-së së jashtme"
             }
           },
           "always-on-top": "Gjithmonë mbi të tjerat",
@@ -145,7 +146,8 @@
               "enabled-and-hide-app": "Aktivizuar dhe fshih aplikacionin",
               "enabled-and-show-app": "Aktivizuar dhe shfaq aplikacionin",
               "play-pause-on-click": "Luaj/Pauzo me klikim",
-              "move-to-current-desktop": "Kalo në desktopin virtual aktual gjatë shfaqjes"
+              "move-to-current-desktop": "Kalo në desktopin virtual aktual gjatë shfaqjes",
+              "force-white-icons": "Detyro përdorimin e ikonave të bardha"
             }
           },
           "visual-tweaks": {
@@ -212,7 +214,11 @@
       "tooltip": {
         "default": "{{applicationName}}",
         "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
-      }
+      },
+      "like": "Pëlqim",
+      "dislike": "Nuk pëlqej",
+      "unlike": "Ndryshe nga",
+      "undislike": "Zhvillo"
     }
   },
   "plugins": {
@@ -256,7 +262,7 @@
         "buffer": {
           "label": "Bufferi",
           "submenu": {
-            "buffer": "{{buffer}}"
+            "buffer": "buffer"
           }
         },
         "opacity": {
@@ -291,7 +297,7 @@
     },
     "amuse": {
       "description": "Shton mbështetjen e {{applicationName}} për widget-in Amuse tani duke luajtur nga 6K Labs",
-      "name": "Amuse",
+      "name": "Argëto",
       "response": {
         "query": "Serveri API Amuse po funksionon. GET /query për të marrë informacionin e këngës."
       }
@@ -497,7 +503,7 @@
           }
         }
       },
-      "name": "Discord Rich Presence",
+      "name": "Prania e Pasurisë së Discord",
       "prompt": {
         "set-inactivity-timeout": {
           "label": "Shkruaj kohën e pasivitetit në sekonda:",
@@ -610,7 +616,7 @@
       "menu": {
         "romanized-lyrics": "Tekste të Romanizuara"
       },
-      "name": "Lyrics Genius",
+      "name": "Teksti Genius",
       "renderer": {
         "fetched-lyrics": "U morën tekstet për Genius"
       }
@@ -645,7 +651,7 @@
           "host": "I lidhur si host"
         }
       },
-      "name": "Music Together [Beta]",
+      "name": "Muzikë Së Bashku [Beta]",
       "toast": {
         "add-song-failed": "Dështoi shtimi i këngës",
         "closed": "Music Together u mbyll",
@@ -961,14 +967,14 @@
             },
             "google-translate": {
               "host": "Hosti",
-              "name": "Google Translate",
+              "name": "Përkthimi Google",
               "prompt-label": "Përdor pikën fundore jozyrtare falas të Google Translate. Nuk kërkohet çelës API, por Google mund ta kufizojë atë.",
               "prompt-title": "Cilësimet e Google Translate"
             },
             "local-cli": {
               "command": "Komanda",
               "engine": "CLI Lokale",
-              "engine-claude": "Claude Code",
+              "engine-claude": "Kodi i Claude",
               "engine-codex": "Codex",
               "engine-gemini": "Gemini CLI",
               "name": "CLI Lokale",
@@ -1040,6 +1046,14 @@
             "tooltip": "Gjuha në të cilën do të përkthehen tekstet."
           },
           "tooltip": "Përkthe tekstet dhe shfaq rezultatin e përkthyer rresht pas rreshti."
+        },
+        "use-ytm-lyrics-without-proxy": {
+          "label": "Përdor tekstet e YTM pa proxy",
+          "tooltip": "Anasho përfaqësuesin e shfletimit YTM dhe thirr YouTube Music direkt duke përdorur sesionin e autentikuar të aplikacionit. E dobishme nëse i besoni rrjetit/rajonit tuaj për të lejuar thirrje të drejtpërdrejta shfletimi."
+        },
+        "show-custom-search-button": {
+          "label": "Trego butonin e personalizuar të kërkimit",
+          "tooltip": "Shfaq një buton kërkimi në zgjedhësin e teksteve që ju lejon të anashkaloni pyetjen e kërkimit dhe artistin për këngën aktuale."
         }
       },
       "name": "Tekste të Sinkronizuara",
@@ -1074,7 +1088,7 @@
           "label": "Lloji",
           "submenu": {
             "acrylic": "Akrilik",
-            "mica": "Mica",
+            "mica": "Mika",
             "none": "Asnjë",
             "tabbed": "Me skeda"
           }
@@ -1134,6 +1148,14 @@
         "log-to-console": "Regjistro ngjarjet e rikuperimit në tastierë"
       },
       "name": "Rikuperimi i Luajtjes"
+    },
+    "playlist-search": {
+      "description": "Shton një fushë kërkimi për të filtruar listat e luajtjes në shiritin anësor dhe dialogun \"Shto në listën e luajtjes\"",
+      "name": "Kërkimi i listës së këngëve",
+      "templates": {
+        "search-placeholder": "Kërko listat e luajtjes",
+        "no-results": "Nuk u gjetën lista"
+      }
     }
   }
 }

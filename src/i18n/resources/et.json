@@ -109,7 +109,8 @@
                   "title": "Määra proxy"
                 }
               },
-              "toggle-dev-tools": "Lülita sisse arendaja tööriistad"
+              "toggle-dev-tools": "Lülita sisse arendaja tööriistad",
+              "force-smtc": "Sundige välise SMTC kasutamist"
             }
           },
           "always-on-top": "Alati esiplaanil",
@@ -145,7 +146,8 @@
               "enabled-and-hide-app": "Sisse lülitatud ja rakendus peidetud",
               "enabled-and-show-app": "Sisse lülitatud ja rakendus nähtav",
               "move-to-current-desktop": "Liiguta kuvamisel praegusele virtuaalsele töölauale",
-              "play-pause-on-click": "Mängi/Peata klõpsates"
+              "play-pause-on-click": "Mängi/Peata klõpsates",
+              "force-white-icons": "Sundvalge valgete ikoonide kasutamine"
             }
           },
           "visual-tweaks": {
@@ -211,8 +213,12 @@
       "show": "Näita akent",
       "tooltip": {
         "default": "{{applicationName}}",
-        "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
-      }
+        "with-song-info": "{{rakenduseNimi}}: {{artist}} - {{pealkiri}}"
+      },
+      "like": "Meeldib",
+      "dislike": "Ei meeldi",
+      "unlike": "Erinevalt",
+      "undislike": "Eemalda mittemeeldimine"
     }
   },
   "plugins": {
@@ -260,7 +266,7 @@
         "buffer": {
           "label": "Puhver",
           "submenu": {
-            "buffer": "{{buffer}}"
+            "buffer": "puhver"
           }
         },
         "opacity": {
@@ -295,7 +301,7 @@
     },
     "amuse": {
       "description": "Lisab {{applicationName}} toe Amuse'i praegu mängiva vidinale (6K Labs)",
-      "name": "Amuse",
+      "name": "Lõbusta",
       "response": {
         "query": "Amuse API server töötab. GET /query loo info saamiseks."
       }
@@ -375,7 +381,7 @@
           "label": "Port"
         }
       },
-      "name": "Auth Proxy Adapter",
+      "name": "Auth puhverserveri adapter",
       "prompt": {
         "hostname": {
           "label": "Sisesta kohaliku proxy serveri hostinimi (nõuab taaskäivitust):",
@@ -383,7 +389,7 @@
         },
         "port": {
           "label": "Sisesta kohaliku proxy serveri port (nõuab taaskäivitust):",
-          "title": "Proxy Port"
+          "title": "Proksi port"
         }
       }
     },
@@ -501,7 +507,7 @@
           }
         }
       },
-      "name": "Discord Rich Presence",
+      "name": "Discordi rikas kohalolek",
       "prompt": {
         "set-inactivity-timeout": {
           "label": "Sisesta tegevusetuse ajalõpp sekundites:",
@@ -614,7 +620,7 @@
       "menu": {
         "romanized-lyrics": "Latiniseeritud laulusõnad"
       },
-      "name": "Lyrics Genius",
+      "name": "Laulusõnad Genius",
       "renderer": {
         "fetched-lyrics": "Leidsime Geeniuse jaoks ühed laulusõnad"
       }
@@ -635,7 +641,7 @@
         "connected-users": "Ühendatud Kasutajad",
         "disconnect": "Katkesta Music Together",
         "empty-user": "Ühendatud kasutajaid pole",
-        "host": "Music Together Host",
+        "host": "Muusika Koos Peremees",
         "join": "Liitu Music Together'iga",
         "permission": {
           "all": "Luba külalistel juhtida esitusloendit ja mängijat",
@@ -971,8 +977,8 @@
               "prompt-title": "Gemini seaded"
             },
             "google-translate": {
-              "host": "Host",
-              "name": "Google Translate",
+              "host": "Võõrustaja",
+              "name": "Google'i tõlge",
               "prompt-label": "Kasutab mitteametlikku tasuta Google Translate'i lõpp-punkti. API võtit pole vaja, kuid Google võib määra piirata.",
               "prompt-title": "Google Translate'i seaded"
             },
@@ -1051,6 +1057,14 @@
             "tooltip": "Keel, millesse laulusõnu tõlkida."
           },
           "tooltip": "Tõlgi laulusõnad ja kuva tõlgitud tulemus rea kaupa."
+        },
+        "use-ytm-lyrics-without-proxy": {
+          "label": "Kasuta YTM laulusõnu ilma puhverserverita",
+          "tooltip": "Jäta YTM sirvimisproksi vahele ja helista YouTube Musicule otse, kasutades rakenduse autenditud seanssi. Kasulik, kui usaldad oma võrku/piirkonda, et lubada otseseid sirvimiskõnesid."
+        },
+        "show-custom-search-button": {
+          "label": "Näita kohandatud otsingunuppu",
+          "tooltip": "Kuva otsingunupp laulutekstide valijas, mis võimaldab praeguse laulu otsingupäringut ja artisti üle kirjutada."
         }
       },
       "name": "Sünkroniseeritud Laulusõnad",
@@ -1095,7 +1109,7 @@
     },
     "tuna-obs": {
       "description": "Lõimimine OBSi Tuna lisamooduliga",
-      "name": "Tuna OBS"
+      "name": "Tuuni OBS"
     },
     "unobtrusive-player": {
       "description": "Takistab mängijal hüpikuna avanemist loo esitamisel",
@@ -1134,6 +1148,14 @@
         "visualizer-type": "Visualiseerija Tüüp"
       },
       "name": "Visualiseerija"
+    },
+    "playlist-search": {
+      "description": "Lisab otsinguvälja, et filtreerida esitusloendeid külgribal ja dialoogis \"Lisa esitusloendisse\"",
+      "name": "Esita otsing",
+      "templates": {
+        "search-placeholder": "Otsi esitusloendeid",
+        "no-results": "Plaanimeid ei leitud"
+      }
     }
   }
 }

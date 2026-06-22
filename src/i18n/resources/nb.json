@@ -109,7 +109,8 @@
                   "title": "Sett mellomtjener"
                 }
               },
-              "toggle-dev-tools": "Skru av/på utviklerverktøy"
+              "toggle-dev-tools": "Skru av/på utviklerverktøy",
+              "force-smtc": "Tving bruk av ekstern SMTC"
             }
           },
           "always-on-top": "Alltid på toppen",
@@ -145,7 +146,8 @@
               "enabled-and-hide-app": "Aktivert og skjul program",
               "enabled-and-show-app": "Aktivert og vis program",
               "play-pause-on-click": "Spill av/pause ved klikk",
-              "move-to-current-desktop": "Flytt til gjeldende virtuelle skrivebord ved visning"
+              "move-to-current-desktop": "Flytt til gjeldende virtuelle skrivebord ved visning",
+              "force-white-icons": "Tving bruk av hvite ikoner"
             }
           },
           "visual-tweaks": {
@@ -212,7 +214,11 @@
       "tooltip": {
         "default": "{{applicationName}}",
         "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
-      }
+      },
+      "like": "Lik",
+      "dislike": "Misliker",
+      "unlike": "ulikt",
+      "undislike": "Fjern mislik"
     }
   },
   "plugins": {
@@ -256,7 +262,7 @@
         "buffer": {
           "label": "Mellomlager",
           "submenu": {
-            "buffer": "{{buffer}}"
+            "buffer": "buffer"
           }
         },
         "opacity": {
@@ -291,7 +297,7 @@
     },
     "amuse": {
       "description": "Legger til {{applicationName}}-støtte for Amuse spilles nå-widget fra 6K Labs",
-      "name": "Amuse",
+      "name": "Underhold",
       "response": {
         "query": "Amuse API-server kjører. GET /query for å få sanginfo."
       }
@@ -645,7 +651,7 @@
           "host": "Tilkoblet som vert"
         }
       },
-      "name": "Music Together [Beta]",
+      "name": "Musikk sammen [Beta]",
       "toast": {
         "add-song-failed": "Kunne ikke legge til spor",
         "closed": "Music Together lukket",
@@ -951,37 +957,37 @@
           "providers": {
             "anthropic": {
               "name": "Anthropic Claude",
-              "prompt-label": "Uses the native Anthropic Messages API.",
-              "prompt-title": "Anthropic settings"
+              "prompt-label": "Bruker det opprinnelige Anthropic Messages API-et.",
+              "prompt-title": "Anthropic-innstillinger"
             },
             "gemini": {
               "name": "Google Gemini",
-              "prompt-label": "Uses Google's Generative Language API (generateContent).",
-              "prompt-title": "Gemini settings"
+              "prompt-label": "Bruker Googles Generative Language API (generateContent).",
+              "prompt-title": "Gemini-innstillinger"
             },
             "google-translate": {
-              "host": "Host",
-              "name": "Google Translate",
-              "prompt-label": "Uses the unofficial free Google Translate endpoint. No API key is required, but Google may rate-limit it.",
-              "prompt-title": "Google Translate settings"
+              "host": "Vert",
+              "name": "Google Oversett",
+              "prompt-label": "Bruker det uoffisielle gratis Google Oversett-endepunktet. Ingen API-nøkkel kreves, men Google kan begrense hastigheten.",
+              "prompt-title": "Google Translate-innstillinger"
             },
             "local-cli": {
-              "command": "Command",
-              "engine": "Local CLI",
+              "command": "Kommando",
+              "engine": "Lokal CLI",
               "engine-claude": "Claude Code",
               "engine-codex": "Codex",
               "engine-gemini": "Gemini CLI",
-              "name": "Local CLI",
-              "prompt-label": "Use a locally logged-in Claude Code, Codex, or Gemini CLI. The command and model are automatic; the CLI uses its own logged-in default.",
-              "prompt-title": "Local CLI settings",
-              "timeout": "Timeout seconds (15-600)"
+              "name": "Lokal CLI",
+              "prompt-label": "Bruk en lokalt pålogget Claude Code, Codex eller Gemini CLI. Kommandoen og modellen er automatiske; CLI-en bruker sin egen påloggede standard.",
+              "prompt-title": "Lokale CLI-innstillinger",
+              "timeout": "Tidsavbrudd i sekunder (15-600)"
             },
             "openai-compatible": {
-              "api-mode": "API mode (responses / auto / chat-completions)",
-              "base-url": "Base URL",
-              "name": "OpenAI compatible",
-              "prompt-label": "Use OpenAI-compatible servers, including Ollama (base URL http://127.0.0.1:11434/v1, API mode auto or chat-completions).",
-              "prompt-title": "OpenAI-compatible settings"
+              "api-mode": "API-modus (responses / auto / chat-completions)",
+              "base-url": "Grunn-URL",
+              "name": "OpenAI-kompatibel",
+              "prompt-label": "Bruk OpenAI-kompatible servere, inkludert Ollama (base-URL http://127.0.0.1:11434/v1, API-modus auto eller chat-completions).",
+              "prompt-title": "OpenAI-kompatible innstillinger"
             },
             "shared": {
               "api-key": "API-nøkkel",
@@ -1040,17 +1046,25 @@
             "tooltip": "Språket sangtekstene skal oversettes til."
           },
           "tooltip": "Oversett sangtekster og vis det oversatte resultatet linje for linje."
+        },
+        "use-ytm-lyrics-without-proxy": {
+          "label": "Bruk YTM-tekster uten proxy",
+          "tooltip": "Hopp over YTM-nettleserproksyen og kall YouTube Music direkte ved å bruke appens autentiserte økt. Nyttig hvis du stoler på at nettverket/regionen din tillater direkte nettleserkall."
+        },
+        "show-custom-search-button": {
+          "label": "Vis tilpasset søkeknapp",
+          "tooltip": "Vis en søkeknapp i tekstvelgeren som lar deg overstyre søket og artisten for den aktuelle sangen."
         }
       },
       "name": "Synkroniserte sangtekster",
       "refetch-btn": {
-        "fetching": "Fetching...",
-        "normal": "Refetch lyrics"
+        "fetching": "Henter...",
+        "normal": "Oppdater tekst"
       },
       "warnings": {
-        "duration-mismatch": "⚠️ - The lyrics may be out of sync due to a duration mismatch.",
-        "inexact": "⚠️ - The lyrics for this song may not be exact",
-        "instrumental": "⚠️ - This is an instrumental song"
+        "duration-mismatch": "⚠️ - Teksten kan være ute av synk på grunn av varighetsavvik.",
+        "inexact": "⚠️ - Teksten til denne sangen er kanskje ikke helt nøyaktig",
+        "instrumental": "⚠️ - Dette er en instrumentallåt"
       }
     },
     "taskbar-mediacontrol": {
@@ -1134,6 +1148,14 @@
         "log-to-console": "Logg gjenopprettingshendelser til konsoll"
       },
       "name": "Avspillingsgjenoppretting"
+    },
+    "playlist-search": {
+      "description": "Legger til et søkefelt for å filtrere spillelister i sidepanelet og Legg til i spilleliste-dialogen",
+      "name": "Søk i spilleliste",
+      "templates": {
+        "search-placeholder": "Søk spillelister",
+        "no-results": "Ingen spillelister funnet"
+      }
     }
   }
 }

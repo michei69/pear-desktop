@@ -109,7 +109,8 @@
                   "title": "I-set ang proxy"
                 }
               },
-              "toggle-dev-tools": "I-toggle ang DevTools"
+              "toggle-dev-tools": "I-toggle ang DevTools",
+              "force-smtc": "Pilitin ang paggamit ng panlabas na SMTC"
             }
           },
           "always-on-top": "Laging nasa ibabaw",
@@ -145,7 +146,8 @@
               "enabled-and-hide-app": "Napagana at natago ang app",
               "enabled-and-show-app": "Napagana at napakita ang app",
               "move-to-current-desktop": "Ilipat sa kasalukuyang virtual desktop kapag ipinakita",
-              "play-pause-on-click": "Mag play/pause kada click"
+              "play-pause-on-click": "Mag play/pause kada click",
+              "force-white-icons": "Pilitin ang paggamit ng mga puting icon"
             }
           },
           "visual-tweaks": {
@@ -191,7 +193,7 @@
         "new": "BAGO"
       },
       "view": {
-        "label": "View",
+        "label": "Tingnan",
         "submenu": {
           "force-reload": "Pilitang I-reload",
           "reload": "I-reload",
@@ -212,7 +214,11 @@
       "tooltip": {
         "default": "{{applicationName}}",
         "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
-      }
+      },
+      "like": "Gusto",
+      "dislike": "Hindi",
+      "unlike": "Hindi",
+      "undislike": "I-undislike"
     }
   },
   "plugins": {
@@ -260,7 +266,7 @@
         "buffer": {
           "label": "Buffer",
           "submenu": {
-            "buffer": "{{buffer}}"
+            "buffer": "buffer"
           }
         },
         "opacity": {
@@ -295,7 +301,7 @@
     },
     "amuse": {
       "description": "Nagdaragdag ng suporta sa {{applicationName}} para sa Amuse now playing widget ng 6K Labs",
-      "name": "Amuse",
+      "name": "Aliwan",
       "response": {
         "query": "Tumatakbo ang Amuse API server. Gamitin ang GET /query para makuha ang impo ng kanta."
       }
@@ -649,7 +655,7 @@
           "host": "Nakakonekta bilang Host"
         }
       },
-      "name": "Music Together [Beta]",
+      "name": "Musika Sama [Beta]",
       "toast": {
         "add-song-failed": "Nabigong magdagdag ng kanta",
         "closed": "Nakasara ang Music Together",
@@ -756,11 +762,11 @@
             "increase": "Dagdagan ang Volume"
           },
           "label": "Pumili ng Keybind para sa Global Volume:",
-          "title": "Global Volume Keybinds"
+          "title": "Pandaigdigang Volume Keybinds"
         },
         "volume-steps": {
           "label": "Pumili ng Dagdagan/Bawasan ang volume step",
-          "title": "Volume Steps"
+          "title": "Hakbang ng Volume"
         }
       }
     },
@@ -1021,7 +1027,7 @@
               "prompt-title": "Mga setting na compatible sa OpenAI",
               "prompt-label": "Gumamit ng mga server na compatible sa OpenAI, kasama ang Ollama (base URL http://127.0.0.1:11434/v1, API mode auto o chat-completions).",
               "base-url": "Base URL",
-              "api-mode": "API mode (responses / auto / chat-completions)"
+              "api-mode": "API mode (mga tugon / awtomatiko / chat-completions)"
             },
             "anthropic": {
               "name": "Anthropic Claude",
@@ -1039,9 +1045,9 @@
               "prompt-label": "Gumamit ng lokal na naka-log in na Claude Code, Codex, o Gemini CLI. Ang command at modelo ay awtomatiko; ginagamit ng CLI ang sarili nitong default na naka-log in.",
               "engine": "Lokal na CLI",
               "engine-claude": "Claude Code",
-              "engine-codex": "Codex",
+              "engine-codex": "Kodeks",
               "engine-gemini": "Gemini CLI",
-              "command": "Command",
+              "command": "Utos",
               "timeout": "Timeout na segundo (15-600)"
             },
             "google-translate": {
@@ -1051,6 +1057,14 @@
               "host": "Host"
             }
           }
+        },
+        "use-ytm-lyrics-without-proxy": {
+          "label": "Gamitin ang YTM lyrics nang walang proxy",
+          "tooltip": "Laktawan ang YTM browse proxy at direktang tumawag sa YouTube Music gamit ang naka-authenticate na session ng app. Kapaki-pakinabang kung pinagkakatiwalaan mo ang iyong network/region na payagan ang direktang browse calls."
+        },
+        "show-custom-search-button": {
+          "label": "Ipakita ang custom na search button",
+          "tooltip": "Magpakita ng search button sa lyrics picker na nagbibigay-daan sa iyo na baguhin ang search query at artist para sa kasalukuyang kanta."
         }
       },
       "name": "Naka-sync na Lyrics",
@@ -1085,8 +1099,8 @@
         "type": {
           "label": "Uri",
           "submenu": {
-            "acrylic": "Acrylic",
-            "mica": "Mica",
+            "acrylic": "Akriliko",
+            "mica": "Mika",
             "tabbed": "Naka-tab",
             "none": "Wala"
           }
@@ -1134,6 +1148,14 @@
         "visualizer-type": "Uri ng Visualizer"
       },
       "name": "Taga-visualize"
+    },
+    "playlist-search": {
+      "description": "Nagdagdag ng search input para i-filter ang mga playlist sa sidebar at sa Add to playlist dialog",
+      "name": "Paghahanap ng Playlist",
+      "templates": {
+        "search-placeholder": "Maghanap ng mga playlist",
+        "no-results": "Walang nakitang playlist"
+      }
     }
   }
 }

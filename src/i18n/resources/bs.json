@@ -109,7 +109,8 @@
                   "title": "Postavi proxy"
                 }
               },
-              "toggle-dev-tools": "Uključi/isključi DevTools"
+              "toggle-dev-tools": "Uključi/isključi DevTools",
+              "force-smtc": "Prisilite korištenje vanjskog SMTC-a"
             }
           },
           "always-on-top": "Uvijek na vrhu",
@@ -145,7 +146,8 @@
               "enabled-and-hide-app": "Tacna je uključena, i prozor aplikacije skrijte",
               "enabled-and-show-app": "Tacna je uključena, i prozor aplikacije prikažite",
               "play-pause-on-click": "Pokreni/Zaustavi na klik",
-              "move-to-current-desktop": "Premjesti na trenutni virtuelni desktop pri prikazivanju"
+              "move-to-current-desktop": "Premjesti na trenutni virtuelni desktop pri prikazivanju",
+              "force-white-icons": "Prisilite korištenje bijelih ikona"
             }
           },
           "visual-tweaks": {
@@ -212,7 +214,11 @@
       "tooltip": {
         "default": "{{applicationName}}",
         "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
-      }
+      },
+      "like": "Sviđa mi se",
+      "dislike": "Ne sviđa mi se",
+      "unlike": "Za razliku od",
+      "undislike": "Nesviđanje"
     }
   },
   "plugins": {
@@ -256,7 +262,7 @@
         "buffer": {
           "label": "Bafer",
           "submenu": {
-            "buffer": "{{buffer}}"
+            "buffer": "međuspremnik"
           }
         },
         "opacity": {
@@ -340,7 +346,7 @@
           }
         },
         "port": {
-          "label": "Port"
+          "label": "Luka"
         }
       },
       "name": "API Server [Beta]",
@@ -351,7 +357,7 @@
         },
         "port": {
           "label": "Unesite port za API server:",
-          "title": "Port"
+          "title": "Luka"
         }
       }
     },
@@ -368,7 +374,7 @@
           "label": "Ime domaćina"
         },
         "port": {
-          "label": "Port"
+          "label": "Luka"
         }
       },
       "name": "Auth proxy adapter",
@@ -645,7 +651,7 @@
           "host": "Povezan kao domaćin"
         }
       },
-      "name": "Music Together [Beta]",
+      "name": "Muzika Zajedno [Beta]",
       "toast": {
         "add-song-failed": "Dodavanje pjesme nije uspjelo",
         "closed": "Music Together zatvoren",
@@ -961,7 +967,7 @@
             },
             "google-translate": {
               "host": "Domaćin",
-              "name": "Google Translate",
+              "name": "Google Prevodilac",
               "prompt-label": "Koristi neslužbeni besplatni Google Translate endpoint. API ključ nije potreban, ali Google može ograničiti brzinu.",
               "prompt-title": "Google Translate postavke"
             },
@@ -1040,6 +1046,14 @@
             "tooltip": "Jezik na koji će se prevesti tekst."
           },
           "tooltip": "Prevedite tekst i prikažite prevedeni rezultat red po red za prikaz."
+        },
+        "use-ytm-lyrics-without-proxy": {
+          "label": "Koristi YTM tekstove bez proxyja",
+          "tooltip": "Preskoči YTM proxy za pregledavanje i direktno pozovi YouTube Music koristeći autentifikovanu sesiju aplikacije. Korisno ako vjerujete svojoj mreži/regiji da dozvoljava direktne pozive za pregledavanje."
+        },
+        "show-custom-search-button": {
+          "label": "Prikaži prilagođeno dugme za pretragu",
+          "tooltip": "Prikaži dugme za pretragu u biraču stihova koje ti omogućava da promijeniš upit za pretragu i izvođača za trenutnu pjesmu."
         }
       },
       "name": "Sinhronizovani tekstovi",
@@ -1134,6 +1148,14 @@
         "log-to-console": "Zabiljezi dogadjaje oporavka u konzolu"
       },
       "name": "Oporavak reprodukcije"
+    },
+    "playlist-search": {
+      "description": "Dodaje polje za pretragu za filtriranje plejlista u bočnoj traci i dijalogu Dodaj u plejlistu",
+      "name": "Pretraga plejliste",
+      "templates": {
+        "search-placeholder": "Pretraži plejliste",
+        "no-results": "Nema pronađenih plejlista"
+      }
     }
   }
 }

@@ -71,7 +71,7 @@
         "buttons": {
           "disable": "Izklopi posodobitve",
           "download": "Prenesi",
-          "ok": "OK"
+          "ok": "v redu"
         },
         "detail": "Nova verzija je na voljo, lahko jo naložiš na {{downloadLink}}",
         "message": "Nova verzija je na voljo",
@@ -109,7 +109,8 @@
                   "title": "Nastavi Proxy"
                 }
               },
-              "toggle-dev-tools": "Vklopi DevTools"
+              "toggle-dev-tools": "Vklopi DevTools",
+              "force-smtc": "Vsili uporabo zunanjega SMTC"
             }
           },
           "always-on-top": "Vedno na vrhu",
@@ -145,7 +146,8 @@
               "enabled-and-hide-app": "Vklopljeno in skrij",
               "enabled-and-show-app": "Vklopljeno in pokaži",
               "play-pause-on-click": "Predvajaj/Pavza z klikom",
-              "move-to-current-desktop": "Premakni na trenutno navidezno namizje ob prikazu"
+              "move-to-current-desktop": "Premakni na trenutno navidezno namizje ob prikazu",
+              "force-white-icons": "Vsili uporabo belih ikon"
             }
           },
           "visual-tweaks": {
@@ -212,7 +214,11 @@
       "tooltip": {
         "default": "{{applicationName}}",
         "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
-      }
+      },
+      "like": "Všeč mi je",
+      "dislike": "Ne maram",
+      "unlike": "drugače kot",
+      "undislike": "Odstrani nevšečnost"
     }
   },
   "plugins": {
@@ -256,7 +262,7 @@
         "buffer": {
           "label": "Medpomnilnik",
           "submenu": {
-            "buffer": "{{buffer}}"
+            "buffer": "medmornik"
           }
         },
         "opacity": {
@@ -291,7 +297,7 @@
     },
     "amuse": {
       "description": "Doda podporo za {{applicationName}} v pripomočku Amuse za zdaj predvajano podjetja 6K Labs",
-      "name": "Amuse",
+      "name": "Zabavaj",
       "response": {
         "query": "Strežnik API Amuse deluje. GET /query za informacije o skladbi."
       }
@@ -420,7 +426,7 @@
         "format": {
           "24-hour-format": "24-urni format",
           "display-seconds": "Prikaži sekunde",
-          "label": "Format"
+          "label": "Oblika"
         }
       },
       "name": "Ura"
@@ -969,7 +975,7 @@
               "command": "Ukaz",
               "engine": "Lokalni CLI",
               "engine-claude": "Claude Code",
-              "engine-codex": "Codex",
+              "engine-codex": "Kodeks",
               "engine-gemini": "Gemini CLI",
               "name": "Lokalni CLI",
               "prompt-label": "Uporabite lokalno prijavljen Claude Code, Codex ali Gemini CLI. Ukaz in model sta samodejna; CLI uporablja svoje prijavljene privzete vrednosti.",
@@ -1040,6 +1046,14 @@
             "tooltip": "Jezik, v katerega naj se prevedejo besedila."
           },
           "tooltip": "Prevedi besedila in prikaži preveden rezultat vrstico za vrstico."
+        },
+        "use-ytm-lyrics-without-proxy": {
+          "label": "Uporabi YTM besedila brez proxyja",
+          "tooltip": "Preskoči YTM brskalni proxy in pokliči YouTube Music neposredno z uporabo overjene seje aplikacije. Uporabno, če zaupaš svojemu omrežju/regiji, da dovoljuje neposredne brskalne klice."
+        },
+        "show-custom-search-button": {
+          "label": "Prikaži gumb za iskanje po meri",
+          "tooltip": "V prikazovalniku besedil prikaži gumb za iskanje, ki omogoča preglasitev iskalne poizvedbe in izvajalca za trenutno skladbo."
         }
       },
       "name": "Sinhronizirana besedila",
@@ -1134,6 +1148,14 @@
         "log-to-console": "Beleži dogodke obnovitve v konzolo"
       },
       "name": "Obnova predvajanja"
+    },
+    "playlist-search": {
+      "description": "Doda iskalno polje za filtriranje seznamov predvajanja v stranski vrstici in pogovornem oknu Dodaj na seznam predvajanja",
+      "name": "Iskanje seznama predvajanja",
+      "templates": {
+        "search-placeholder": "Išči sezname predvajanja",
+        "no-results": "Ni najdenih seznamov predvajanja"
+      }
     }
   }
 }

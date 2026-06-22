@@ -109,7 +109,8 @@
                   "title": "Proxy-ны туруор"
                 }
               },
-              "toggle-dev-tools": "DevTools-у Арый/Сап"
+              "toggle-dev-tools": "DevTools-у Арый/Сап",
+              "force-smtc": "Сирэттээх SMTC туһаныыны күүстээх"
             }
           },
           "always-on-top": "Куруук Үрдүгэр",
@@ -145,7 +146,8 @@
               "enabled-and-hide-app": "Холбонно уонна app-ы кистээ",
               "enabled-and-show-app": "Холбонно уонна app-ы көрдөр",
               "play-pause-on-click": "Баттаатахха Оонньоо/Тохтоо",
-              "move-to-current-desktop": "Көстүүгэ билиҥҥи виртуальнай рабочай остуолга көһөр"
+              "move-to-current-desktop": "Көстүүгэ билиҥҥи виртуальнай рабочай остуолга көһөр",
+              "force-white-icons": "Бел иконаларын күч менен колдонуу"
             }
           },
           "visual-tweaks": {
@@ -212,7 +214,11 @@
       "tooltip": {
         "default": "{{applicationName}}",
         "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
-      }
+      },
+      "like": "Sah",
+      "dislike": "Хоб",
+      "unlike": "Atas",
+      "undislike": "Undislike"
     }
   },
   "plugins": {
@@ -256,7 +262,7 @@
         "buffer": {
           "label": "Buffer",
           "submenu": {
-            "buffer": "{{buffer}}"
+            "buffer": "буфер"
           }
         },
         "opacity": {
@@ -512,7 +518,7 @@
             "buttons": {
               "ok": "OK"
             },
-            "message": "Argh! Apologies, download failed…",
+            "message": "Argh! Maaf, unduhan gagal…",
             "title": "Хачайдыырга алҕас!"
           },
           "start-download-playlist": {
@@ -591,8 +597,8 @@
       "name": "Эквалайзер"
     },
     "exponential-volume": {
-      "description": "Makes the volume slider exponential so it's easier to select lower volumes.",
-      "name": "Exponential Volume"
+      "description": "Слайдер громкости экспоненциальнай буолан, намыһах громкостьтары талыы чэпчэки буолар.",
+      "name": "Экспоненциальный объем"
     },
     "in-app-menu": {
       "description": "Меню панеллэригэр киэргэтиилээх, хараҥа эбэтэр альбом өҥүн көстүүтүн биэрэр",
@@ -645,7 +651,7 @@
           "host": "Хост курдук холбоммут"
         }
       },
-      "name": "Music Together [Beta]",
+      "name": "Musik Bersama [Beta]",
       "toast": {
         "add-song-failed": "Ырыаны эбии кыаллыбата",
         "closed": "Music Together сабылынна",
@@ -795,13 +801,13 @@
       "name": "Scrobbler",
       "prompt": {
         "lastfm": {
-          "api-key": "Last.fm API key",
-          "api-secret": "Last.fm API secret"
+          "api-key": "Last.fm API ключ",
+          "api-secret": "Last.fm API секрет"
         },
         "listenbrainz": {
           "token": {
-            "label": "Enter your ListenBrainz user token:",
-            "title": "ListenBrainz token"
+            "label": "ListenBrainz туттуоччу куруҥҥун киллэр:",
+            "title": "ListenBrainz токена"
           }
         }
       }
@@ -812,7 +818,7 @@
         "override-media-keys": "Медиа Кнопкаларын Уларыт",
         "set-keybinds": "Глобальнай Ырыа Салайыыларын Туруор"
       },
-      "name": "Shortcuts (& MPRIS)",
+      "name": "Түргэн товч (MPRIS)",
       "prompt": {
         "keybind": {
           "keybind-options": {
@@ -1040,6 +1046,14 @@
             "tooltip": "Тыллары ханнык тылга тылбаастыыр."
           },
           "tooltip": "Тыллары тылбааста уонна тылбаастаммыт түмүгү устуруоканан көрдөр."
+        },
+        "use-ytm-lyrics-without-proxy": {
+          "label": "YTM ырыа тылын проксита суох туһан",
+          "tooltip": "YTM browse proxy-ны аһаран, YouTube Music-ка аппын аутентификацияламмыт сессиятын туһанан түргэнник ыҥырар. Сетиҥ эбэтэр регионуҥ төлөппүөнүнэн көрүүнү көҥүллүүрүгэр эрэллээх буоллаҕына туһалаах."
+        },
+        "show-custom-search-button": {
+          "label": "Kukuna search custom button",
+          "tooltip": "Көрдөрүүчү ырыа талгыта көрдөрүүчү ырыанын издөө сураарын уонна ырыаһытын өзгөртүүгө мүмкүн болорун көрдөрүүчү издөө баскычын көрдөр."
         }
       },
       "name": "Синхроннаан Тыллар",
@@ -1138,6 +1152,14 @@
     "exponential-voltage": {
       "description": "Саҥаны хонтуруоллааччы экспоненциальнай буолар, намтатыллыбыт саҥалары чэпчэкитик таларыгар.",
       "name": "Экспоненциальнай Саҥа"
+    },
+    "playlist-search": {
+      "description": "Сирдыкка уонна плэйлистка эбэр диалогка плэйлисттары көрдөрөргө көрдөбүл эбэр",
+      "name": "Плейлист көрдөөһүн",
+      "templates": {
+        "search-placeholder": "Сиркээлэри көрдөө",
+        "no-results": "Хайанан да оонньуу испииһэгэ көстүбэтэ"
+      }
     }
   }
 }

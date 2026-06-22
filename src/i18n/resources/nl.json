@@ -109,7 +109,8 @@
                   "title": "Proxy instellen"
                 }
               },
-              "toggle-dev-tools": "DevTools schakelen"
+              "toggle-dev-tools": "DevTools schakelen",
+              "force-smtc": "Forceer het gebruik van externe SMTC"
             }
           },
           "always-on-top": "Altijd bovenop",
@@ -145,7 +146,8 @@
               "enabled-and-hide-app": "Ingeschakeld en applicatie verbergen",
               "enabled-and-show-app": "Ingeschakeld en applicatie weergeven",
               "play-pause-on-click": "Afspelen/Pauzeren bij klikken",
-              "move-to-current-desktop": "Verplaats naar huidig virtueel bureaublad bij weergave"
+              "move-to-current-desktop": "Verplaats naar huidig virtueel bureaublad bij weergave",
+              "force-white-icons": "Forceer het gebruik van witte pictogrammen"
             }
           },
           "visual-tweaks": {
@@ -212,7 +214,11 @@
       "tooltip": {
         "default": "{{applicationName}}",
         "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
-      }
+      },
+      "like": "Vind ik leuk",
+      "dislike": "Niet leuk vinden",
+      "unlike": "Anders dan",
+      "undislike": "Niet meer niet leuk vinden"
     }
   },
   "plugins": {
@@ -256,7 +262,7 @@
         "buffer": {
           "label": "Buffer",
           "submenu": {
-            "buffer": "{{buffer}}"
+            "buffer": "buffer"
           }
         },
         "opacity": {
@@ -343,7 +349,7 @@
           "label": "Poort"
         }
       },
-      "name": "API Server [Beta]",
+      "name": "API-server [Bèta]",
       "prompt": {
         "hostname": {
           "label": "Voeg de hostnaam (bv. 0.0.0.0) voor de API server in:",
@@ -434,7 +440,7 @@
       "menu": {
         "advanced": "Geavanceerd"
       },
-      "name": "Crossfade [Beta]",
+      "name": "Crossfade [Bèta]",
       "prompt": {
         "options": {
           "multi-input": {
@@ -575,7 +581,7 @@
         "can-not-update-progress": "Kan de voortgang niet bijwerken"
       },
       "templates": {
-        "button": "Download"
+        "button": "Downloaden"
       }
     },
     "equalizer": {
@@ -599,11 +605,11 @@
       "menu": {
         "hide-dom-window-controls": "Verberg DOM-vensterbedieningselementen"
       },
-      "name": "In-App Menu"
+      "name": "In-App-menu"
     },
     "lumiastream": {
       "description": "Voegt ondersteuning voor Lumia Stream toe",
-      "name": "Lumia Stream [Beta]"
+      "name": "Lumia Stream [Bèta]"
     },
     "lyrics-genius": {
       "description": "Voegt songtekstondersteuning toe voor de meeste nummers",
@@ -718,9 +724,9 @@
         "save-window-size": "Sla schermgrootte op",
         "use-native-pip": "Gebruik browser ingebouwde PiP"
       },
-      "name": "Picture-in-picture",
+      "name": "Beeld-in-beeld",
       "templates": {
-        "button": "Picture-in-picture"
+        "button": "Beeld-in-beeld"
       }
     },
     "playback-speed": {
@@ -801,7 +807,7 @@
         "listenbrainz": {
           "token": {
             "label": "Voer uw ListenBrainz-gebruikerstoken in:",
-            "title": "ListenBrainz token"
+            "title": "ListenBrainz-token"
           }
         }
       }
@@ -945,7 +951,7 @@
           },
           "label": "Songtekstvertaling",
           "provider": {
-            "label": "Provider",
+            "label": "Aanbieder",
             "tooltip": "Welke service te gebruiken voor vertaling."
           },
           "providers": {
@@ -960,7 +966,7 @@
               "prompt-title": "Gemini instellingen"
             },
             "google-translate": {
-              "host": "Host",
+              "host": "Gastheer",
               "name": "Google Translate",
               "prompt-label": "Gebruikt het onofficiële gratis Google Translate eindpunt. Geen API-sleutel nodig, maar Google kan snelheidsbeperkingen toepassen.",
               "prompt-title": "Google Translate instellingen"
@@ -1040,6 +1046,14 @@
             "tooltip": "De taal waarin songteksten vertaald moeten worden."
           },
           "tooltip": "Vertaal songteksten en toon het vertaalde resultaat regel voor regel."
+        },
+        "use-ytm-lyrics-without-proxy": {
+          "label": "Gebruik YTM-teksten zonder proxy",
+          "tooltip": "Sla de YTM-browseproxy over en bel YouTube Music rechtstreeks via de geverifieerde sessie van de app. Nuttig als u uw netwerk/regio vertrouwt om directe browse-oproepen toe te staan."
+        },
+        "show-custom-search-button": {
+          "label": "Toon aangepaste zoekknop",
+          "tooltip": "Toon een zoekknop in de tekstkiezer waarmee je de zoekopdracht en artiest voor het huidige nummer kunt overschrijven."
         }
       },
       "name": "Gesynchroniseerde songteksten",
@@ -1073,10 +1087,10 @@
         "type": {
           "label": "Soort",
           "submenu": {
-            "acrylic": "Acrylic",
+            "acrylic": "Acryl",
             "mica": "Mica",
             "none": "Geen",
-            "tabbed": "Tabbed"
+            "tabbed": "Tabbladen"
           }
         }
       },
@@ -1084,7 +1098,7 @@
     },
     "tuna-obs": {
       "description": "Integratie met OBS's plug-in Tuna",
-      "name": "Tuna OBS"
+      "name": "Tonijn OBS"
     },
     "unobtrusive-player": {
       "description": "Voorkomt dat de speler omhoog springt tijdens het afspelen van een nummer",
@@ -1134,6 +1148,14 @@
         "log-to-console": "Log herstelgebeurtenissen naar console"
       },
       "name": "Afspeelherstel"
+    },
+    "playlist-search": {
+      "description": "Voegt een zoekveld toe om afspeellijsten te filteren in de zijbalk en het dialoogvenster 'Toevoegen aan afspeellijst'",
+      "name": "Playlist zoeken",
+      "templates": {
+        "search-placeholder": "Zoek afspeellijsten",
+        "no-results": "Geen afspeellijsten gevonden"
+      }
     }
   }
 }

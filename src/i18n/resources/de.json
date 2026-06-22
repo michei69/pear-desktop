@@ -109,7 +109,8 @@
                   "title": "Proxy setzen"
                 }
               },
-              "toggle-dev-tools": "Entwicklerwerkzeuge umschalten"
+              "toggle-dev-tools": "Entwicklerwerkzeuge umschalten",
+              "force-smtc": "Externe SMTC erzwingen"
             }
           },
           "always-on-top": "Immer im Vordergrund",
@@ -145,7 +146,8 @@
               "enabled-and-hide-app": "Aktiviert und verstecke Anwendung",
               "enabled-and-show-app": "Aktiviert und zeige Anwendung",
               "play-pause-on-click": "Abspielen/Pausieren durch Klick",
-              "move-to-current-desktop": "Zum aktuellen virtuellen Desktop beim Anzeigen verschieben"
+              "move-to-current-desktop": "Zum aktuellen virtuellen Desktop beim Anzeigen verschieben",
+              "force-white-icons": "Weiße Symbole erzwingen"
             }
           },
           "visual-tweaks": {
@@ -212,7 +214,11 @@
       "tooltip": {
         "default": "{{applicationName}}",
         "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
-      }
+      },
+      "like": "Gefällt mir",
+      "dislike": "Gefällt mir nicht",
+      "unlike": "Anders als",
+      "undislike": "Nicht mehr gefällt mir"
     }
   },
   "plugins": {
@@ -256,7 +262,7 @@
         "buffer": {
           "label": "Puffer",
           "submenu": {
-            "buffer": "{{buffer}}"
+            "buffer": "Puffer"
           }
         },
         "opacity": {
@@ -375,11 +381,11 @@
       "prompt": {
         "hostname": {
           "label": "Hostnamen eingeben für lokalen Proxy-Server (Neustart erforderlich):",
-          "title": "Proxy Hostname"
+          "title": "Proxy-Hostname"
         },
         "port": {
           "label": "Geben Sie den Port für den lokalen Proxyserver ein (Neustart erforderlich):",
-          "title": "Proxy Port"
+          "title": "Proxy-Port"
         }
       }
     },
@@ -645,7 +651,7 @@
           "host": "Als Host verbunden"
         }
       },
-      "name": "Music Together [Beta]",
+      "name": "Musik Zusammen [Beta]",
       "toast": {
         "add-song-failed": "Song hinzufügen gescheitert",
         "closed": "Music Together geschlossen",
@@ -960,7 +966,7 @@
               "prompt-title": "Gemini-Einstellungen"
             },
             "google-translate": {
-              "host": "Host",
+              "host": "Gastgeber",
               "name": "Google Übersetzer",
               "prompt-label": "Verwendet den inoffiziellen kostenlosen Google Übersetzer-Endpunkt. Kein API-Schlüssel erforderlich, aber Google kann die Rate begrenzen.",
               "prompt-title": "Google Übersetzer-Einstellungen"
@@ -1040,6 +1046,14 @@
             "tooltip": "Die Sprache, in die die Texte übersetzt werden sollen."
           },
           "tooltip": "Übersetzen Sie die Texte und zeigen Sie das übersetzte Ergebnis zeilenweise zur Anzeige an."
+        },
+        "use-ytm-lyrics-without-proxy": {
+          "label": "YTM-Lyrics ohne Proxy verwenden",
+          "tooltip": "YTM-Browse-Proxy überspringen und YouTube Music direkt über die authentifizierte Sitzung der App aufrufen. Nützlich, wenn Sie Ihrem Netzwerk/Ihrer Region vertrauen, direkte Browse-Aufrufe zuzulassen."
+        },
+        "show-custom-search-button": {
+          "label": "Benutzerdefinierte Suchschaltfläche anzeigen",
+          "tooltip": "Zeige einen Suchbutton im Lyrik-Auswähler, mit dem du die Suchanfrage und den Künstler für den aktuellen Song überschreiben kannst."
         }
       },
       "name": "Synchronisierte Texte",
@@ -1133,6 +1147,14 @@
       "name": "Wiedergabewiederherstellung",
       "menu": {
         "log-to-console": "Wiederherstellungsereignisse in der Konsole protokollieren"
+      }
+    },
+    "playlist-search": {
+      "description": "Fügt ein Suchfeld hinzu, um Playlists in der Seitenleiste und im Dialog „Zur Playlist hinzufügen“ zu filtern.",
+      "name": "Playlist-Suche",
+      "templates": {
+        "search-placeholder": "Playlists durchsuchen",
+        "no-results": "Keine Playlists gefunden"
       }
     }
   }

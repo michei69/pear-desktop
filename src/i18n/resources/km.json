@@ -109,7 +109,8 @@
                   "title": "កំណត់ប្រូកស៊ី"
                 }
               },
-              "toggle-dev-tools": "បិទ/បើក DevTools"
+              "toggle-dev-tools": "បិទ/បើក DevTools",
+              "force-smtc": "បង្ខំឱ្យប្រើ SMTC ខាងក្រៅ"
             }
           },
           "always-on-top": "នៅពីលើជានិច្ច",
@@ -145,7 +146,8 @@
               "enabled-and-hide-app": "បើក និងលាក់កម្មវិធី",
               "enabled-and-show-app": "បើក និងបង្ហាញកម្មវិធី",
               "move-to-current-desktop": "ផ្លាស់ទីទៅផ្ទៃតុនិម្មិតបច្ចុប្បន្នពេលបង្ហាញ",
-              "play-pause-on-click": "ចាក់/ផ្អាក ពេលចុច"
+              "play-pause-on-click": "ចាក់/ផ្អាក ពេលចុច",
+              "force-white-icons": "បង្ខំឱ្យប្រើរូបតំណាងពណ៌ស"
             }
           },
           "visual-tweaks": {
@@ -211,8 +213,12 @@
       "show": "បង្ហាញវីនដូ",
       "tooltip": {
         "default": "{{applicationName}}",
-        "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
-      }
+        "with-song-info": "កម្មវិធី៖ {{artist}} - {{title}}"
+      },
+      "like": "ចូលចិត្ត",
+      "dislike": "មិនចូលចិត្ត",
+      "unlike": "មិនដូច",
+      "undislike": "មិនចូលចិត្ត"
     }
   },
   "plugins": {
@@ -260,7 +266,7 @@
         "buffer": {
           "label": "សតិបណ្ដោះអាសន្ន",
           "submenu": {
-            "buffer": "{{buffer}}"
+            "buffer": "សតិបណ្ដោះអាសន្ន"
           }
         },
         "opacity": {
@@ -295,7 +301,7 @@
     },
     "amuse": {
       "description": "បន្ថែមការគាំទ្រ {{applicationName}} សម្រាប់ធាតុក្រាហ្វិក Amuse កំពុងចាក់ ដោយ 6K Labs",
-      "name": "Amuse",
+      "name": "កម្សាន្ត",
       "response": {
         "query": "ម៉ាស៊ីនបម្រើ Amuse API កំពុងដំណើរការ។ GET /query ដើម្បីទទួលបានព័ត៌មានចម្រៀង។"
       }
@@ -607,14 +613,14 @@
     },
     "lumiastream": {
       "description": "បន្ថែមការគាំទ្រ Lumia Stream",
-      "name": "Lumia Stream [Beta]"
+      "name": "Lumia Stream [បេតា]"
     },
     "lyrics-genius": {
       "description": "បន្ថែមការគាំទ្រទំនុកច្រៀងសម្រាប់ចម្រៀងភាគច្រើន",
       "menu": {
         "romanized-lyrics": "ទំនុកច្រៀងរ៉ូម៉ាំង"
       },
-      "name": "Lyrics Genius",
+      "name": "ទំនុកច្រៀង Genius",
       "renderer": {
         "fetched-lyrics": "បានទាញយកទំនុកច្រៀងសម្រាប់ Genius"
       }
@@ -649,7 +655,7 @@
           "host": "បានតភ្ជាប់ជាម្ចាស់ផ្ទះ"
         }
       },
-      "name": "Music Together [Beta]",
+      "name": "តន្ត្រីជាមួយគ្នា [បេតា]",
       "toast": {
         "add-song-failed": "បរាជ័យក្នុងការបន្ថែមចម្រៀង",
         "closed": "Music Together បានបិទ",
@@ -667,7 +673,7 @@
     },
     "navigation": {
       "description": "ព្រួញរុករកបន្ទាប់/ថយក្រោយ ដែលបញ្ចូលដោយផ្ទាល់ក្នុងចំណុចប្រទាក់ ដូចនៅក្នុងកម្មវិធីរុករកដែលអ្នកចូលចិត្ត",
-      "name": "Navigation",
+      "name": "ការរុករក",
       "templates": {
         "back": {
           "title": "ទៅកាន់ទំព័រមុន"
@@ -702,7 +708,7 @@
     },
     "performance-improvement": {
       "description": "កែលម្អដំណើរការដោយបើកស្គ្រីបពិសោធន៍",
-      "name": "Performance improvement [Beta]"
+      "name": "ការកែលម្អដំណើរការ [កំណែសាកល្បង]"
     },
     "playback-recovery": {
       "description": "ស្តារឡើងវិញដោយស្វ័យប្រវត្តិពីស្ថានភាពចាក់សារថ្មីដែលជាប់គាំង ឈប់ ឬស្លាប់",
@@ -823,7 +829,7 @@
         "override-media-keys": "ជាន់លើគ្រាប់ចុចមេឌៀ",
         "set-keybinds": "កំណត់ការគ្រប់គ្រងចម្រៀងសកល"
       },
-      "name": "Shortcuts (& MPRIS)",
+      "name": "ផ្លូវកាត់ (& MPRIS)",
       "prompt": {
         "keybind": {
           "keybind-options": {
@@ -1025,32 +1031,40 @@
             },
             "anthropic": {
               "name": "Anthropic Claude",
-              "prompt-title": "Anthropic settings",
-              "prompt-label": "Uses the native Anthropic Messages API."
+              "prompt-title": "ការកំណត់ Anthropic",
+              "prompt-label": "ប្រើប្រាស់ API Anthropic Messages ដើម"
             },
             "gemini": {
               "name": "Google Gemini",
-              "prompt-title": "Gemini settings",
-              "prompt-label": "Uses Google's Generative Language API (generateContent)."
+              "prompt-title": "ការកំណត់ Gemini",
+              "prompt-label": "ប្រើប្រាស់ Google's Generative Language API (generateContent)។"
             },
             "local-cli": {
-              "name": "Local CLI",
-              "prompt-title": "Local CLI settings",
-              "prompt-label": "Use a locally logged-in Claude Code, Codex, or Gemini CLI. The command and model are automatic; the CLI uses its own logged-in default.",
-              "engine": "Local CLI",
-              "engine-claude": "Claude Code",
-              "engine-codex": "Codex",
+              "name": "CLI ក្នុងស្រុក",
+              "prompt-title": "ការកំណត់ CLI ក្នុងមូលដ្ឋាន",
+              "prompt-label": "ប្រើ Claude Code, Codex ឬ Gemini CLI ដែលបានចូលក្នុងមូលដ្ឋាន។ ពាក្យបញ្ជា និងគំរូគឺស្វ័យប្រវត្តិ។ CLI ប្រើលំនាំដើមដែលបានចូលរបស់វា។",
+              "engine": "CLI ក្នុងស្រុក",
+              "engine-claude": "កូដរបស់ Claude",
+              "engine-codex": "កូដេក",
               "engine-gemini": "Gemini CLI",
-              "command": "Command",
-              "timeout": "Timeout seconds (15-600)"
+              "command": "បញ្ជា",
+              "timeout": "វិនាទីផុតកំណត់ (15-600)"
             },
             "google-translate": {
-              "name": "Google Translate",
-              "prompt-title": "Google Translate settings",
-              "prompt-label": "Uses the unofficial free Google Translate endpoint. No API key is required, but Google may rate-limit it.",
-              "host": "Host"
+              "name": "កម្មវិធីបកប្រែ Google",
+              "prompt-title": "ការកំណត់ Google Translate",
+              "prompt-label": "ប្រើប្រាស់ចំណុចបញ្ចប់ Google Translate ឥតគិតថ្លៃដែលមិនផ្លូវការ។ មិនត្រូវការ API key ទេ ប៉ុន្តែ Google អាចកំណត់អត្រាប្រើប្រាស់។",
+              "host": "ម្ចាស់ផ្ទះ"
             }
           }
+        },
+        "use-ytm-lyrics-without-proxy": {
+          "label": "ប្រើអត្ថបទចម្រៀង YTM ដោយគ្មានប្រូកស៊ី",
+          "tooltip": "រំលង YTM browse proxy ហើយហៅ YouTube Music ដោយផ្ទាល់តាមរយៈសម័យផ្ទៀងផ្ទាត់ភាពត្រឹមត្រូវរបស់កម្មវិធី។ មានប្រយោជន៍ប្រសិនបើអ្នកទុកចិត្តបណ្តាញ/តំបន់របស់អ្នកដើម្បីអនុញ្ញាតឱ្យហៅទូរសព្ទដោយផ្ទាល់។"
+        },
+        "show-custom-search-button": {
+          "label": "បង្ហាញប៊ូតុងស្វែងរកផ្ទាល់ខ្លួន",
+          "tooltip": "បង្ហាញប៊ូតុងស្វែងរកក្នុងអ្នកជ្រើសរើសទំនុកច្រៀង ដែលអនុញ្ញាតឱ្យអ្នកកំណត់ឡើងវិញនូវសំណួរស្វែងរក និងអ្នកសំដែងសម្រាប់បទចម្រៀងបច្ចុប្បន្ន។"
         }
       },
       "name": "ទំនុកច្រៀងដែលធ្វើសមកាលកម្ម",
@@ -1086,7 +1100,7 @@
           "label": "ប្រភេទ",
           "submenu": {
             "acrylic": "អាគ្រីលីក",
-            "mica": "Mica",
+            "mica": "មីកា",
             "tabbed": "មានផ្ទាំង",
             "none": "គ្មាន"
           }
@@ -1095,7 +1109,7 @@
     },
     "tuna-obs": {
       "description": "ការរួមបញ្ចូលជាមួយកម្មវិធីជំនួយ Tuna របស់ OBS",
-      "name": "Tuna OBS"
+      "name": "តូណា OBS"
     },
     "unobtrusive-player": {
       "description": "ការពារកម្មវិធីចាក់មិនឱ្យលេចឡើងនៅពេលចាក់ចម្រៀង",
@@ -1134,6 +1148,14 @@
         "visualizer-type": "ប្រភេទឧបករណ៍មើលឃើញ"
       },
       "name": "ឧបករណ៍មើលឃើញ"
+    },
+    "playlist-search": {
+      "description": "បន្ថែមប្រអប់បញ្ចូលស្វែងរកដើម្បីច្រោះបញ្ជីចាក់នៅក្នុងរបារចំហៀង និងប្រអប់បន្ថែមទៅបញ្ជីចាក់",
+      "name": "ស្វែងរកបញ្ជីចាក់",
+      "templates": {
+        "search-placeholder": "ស្វែងរកបញ្ជីចាក់",
+        "no-results": "រកមិនឃើញបញ្ជីចាក់ទេ"
+      }
     }
   }
 }

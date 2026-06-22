@@ -109,7 +109,8 @@
                   "title": "Ezarri proxya"
                 }
               },
-              "toggle-dev-tools": "Txandakatu DevTools"
+              "toggle-dev-tools": "Txandakatu DevTools",
+              "force-smtc": "Behartu SMTC kanpokoaren erabilera"
             }
           },
           "always-on-top": "Beti gainean",
@@ -145,7 +146,8 @@
               "enabled-and-hide-app": "Gaituta eta aplikazioa ezkutatu",
               "enabled-and-show-app": "Gaituta eta aplikazioa erakutsi",
               "move-to-current-desktop": "Erakustean uneko mahaigain birtualera eraman",
-              "play-pause-on-click": "Erreproduzitu/Pausatu klik egitean"
+              "play-pause-on-click": "Erreproduzitu/Pausatu klik egitean",
+              "force-white-icons": "Behartu ikono zuriak erabiltzera"
             }
           },
           "visual-tweaks": {
@@ -212,7 +214,11 @@
       "tooltip": {
         "default": "{{applicationName}}",
         "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
-      }
+      },
+      "like": "Atsegin",
+      "dislike": "Ez gustatu",
+      "unlike": "Ez bezala",
+      "undislike": "Ez gustatu"
     }
   },
   "plugins": {
@@ -260,7 +266,7 @@
         "buffer": {
           "label": "Bufferra",
           "submenu": {
-            "buffer": "{{buffer}}"
+            "buffer": "buffer"
           }
         },
         "opacity": {
@@ -438,7 +444,7 @@
       "menu": {
         "advanced": "Aurreratua"
       },
-      "name": "Crossfade [Beta]",
+      "name": "Gurutzatze [Beta]",
       "prompt": {
         "options": {
           "multi-input": {
@@ -614,7 +620,7 @@
       "menu": {
         "romanized-lyrics": "Letra erromanizatuak"
       },
-      "name": "Lyrics Genius",
+      "name": "Letra Genius",
       "renderer": {
         "fetched-lyrics": "Genius-erako letrak eskuratu dira"
       }
@@ -649,7 +655,7 @@
           "host": "Ostalari gisa konektatuta"
         }
       },
-      "name": "Music Together [Beta]",
+      "name": "Musika Elkartea [Beta]",
       "toast": {
         "add-song-failed": "Ezin izan da abestia gehitu",
         "closed": "Music Together itxita",
@@ -972,7 +978,7 @@
             },
             "google-translate": {
               "host": "Ostalaria",
-              "name": "Google Translate",
+              "name": "Google Itzulpena",
               "prompt-label": "Google Translate-ren doako amaiera-puntu ez-ofiziala erabiltzen du. Ez da API gakorik behar, baina Google-k tasa-muga ezar dezake.",
               "prompt-title": "Google Translate ezarpenak"
             },
@@ -980,7 +986,7 @@
               "command": "Komandoa",
               "engine": "CLI lokala",
               "engine-claude": "Claude Code",
-              "engine-codex": "Codex",
+              "engine-codex": "Kodexa",
               "engine-gemini": "Gemini CLI",
               "name": "CLI lokala",
               "prompt-label": "Erabili lokalki saioa hasitako Claude Code, Codex edo Gemini CLI. Komandoa eta modeloa automatikoak dira; CLI-ak bere saio hasierako lehenetsia erabiltzen du.",
@@ -1051,6 +1057,14 @@
             "tooltip": "Letrak zein hizkuntzatara itzuli."
           },
           "tooltip": "Itzuli letrak eta erakutsi itzulitako emaitza lerroz lerro."
+        },
+        "use-ytm-lyrics-without-proxy": {
+          "label": "Erabili YTM letrak proxyrik gabe",
+          "tooltip": "Saltatu YTM arakatze proxy-a eta deitu YouTube Music zuzenean aplikazioaren saio autentifikatua erabiliz. Erabilgarria da zure sareak/eskualdeak arakatze-dei zuzenak baimentzen baditu."
+        },
+        "show-custom-search-button": {
+          "label": "Erakutsi bilaketa botoi pertsonalizatua",
+          "tooltip": "Erakutsi bilaketa-botoi bat letra-hautatzailean, uneko abestiaren bilaketa-kontsulta eta artista gainidazteko aukera ematen duena."
         }
       },
       "name": "Letra sinkronizatuak",
@@ -1085,7 +1099,7 @@
           "label": "Mota",
           "submenu": {
             "acrylic": "Akrilikoa",
-            "mica": "Mica",
+            "mica": "Mika",
             "none": "Bat ere ez",
             "tabbed": "Fitxaduna"
           }
@@ -1095,7 +1109,7 @@
     },
     "tuna-obs": {
       "description": "OBS-ren Tuna pluginarekin integrazioa",
-      "name": "Tuna OBS"
+      "name": "Atun OBS"
     },
     "unobtrusive-player": {
       "description": "Erreproduzitzailea agertzea eragozten du abesti bat erreproduzitzerakoan",
@@ -1134,6 +1148,14 @@
         "visualizer-type": "Bisualizatzaile mota"
       },
       "name": "Bisualizatzailea"
+    },
+    "playlist-search": {
+      "description": "Gehitu bilaketa-sarrera bat alboko barran eta Zerrendara gehitu elkarrizketa-koadroan erreprodukzio-zerrendak iragazteko.",
+      "name": "Bilaketa-zerrenda",
+      "templates": {
+        "search-placeholder": "Bilatu erreprodukzio-zerrendak",
+        "no-results": "Ez da aurkitu erreprodukzio-zerrendarik"
+      }
     }
   }
 }

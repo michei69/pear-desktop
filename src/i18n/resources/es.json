@@ -109,7 +109,8 @@
                   "title": "Establecer proxy"
                 }
               },
-              "toggle-dev-tools": "Activar DevTools"
+              "toggle-dev-tools": "Activar DevTools",
+              "force-smtc": "Forzar el uso de SMTC externo"
             }
           },
           "always-on-top": "Siempre al frente",
@@ -145,7 +146,8 @@
               "enabled-and-hide-app": "Habilitado y ocultar la aplicación",
               "enabled-and-show-app": "Habilitado y mostrar aplicación",
               "move-to-current-desktop": "Mover al escritorio virtual actual al mostrar",
-              "play-pause-on-click": "Reproducir/Pausar al hacer clic"
+              "play-pause-on-click": "Reproducir/Pausar al hacer clic",
+              "force-white-icons": "Forzar el uso de iconos blancos"
             }
           },
           "visual-tweaks": {
@@ -212,7 +214,11 @@
       "tooltip": {
         "default": "{{applicationName}}",
         "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
-      }
+      },
+      "like": "Me gusta",
+      "dislike": "No me gusta",
+      "unlike": "A diferencia de",
+      "undislike": "No me gusta"
     }
   },
   "plugins": {
@@ -258,7 +264,7 @@
           }
         },
         "buffer": {
-          "label": "Buffer",
+          "label": "Búfer",
           "submenu": {
             "buffer": "{{buffer}}"
           }
@@ -295,7 +301,7 @@
     },
     "amuse": {
       "description": "Agrega soporte a {{applicationName}} para el widget \"reproduciendo\" de Amuse por 6K Labs",
-      "name": "Amuse",
+      "name": "Divertir",
       "response": {
         "query": "El servidor API de Amuse se está ejecutando. Usa GET /query para obtener información de la canción."
       }
@@ -501,7 +507,7 @@
           }
         }
       },
-      "name": "Discord Rich Presence",
+      "name": "Presencia de Discord",
       "prompt": {
         "set-inactivity-timeout": {
           "label": "Introduzca el tiempo de inactividad en segundos:",
@@ -649,7 +655,7 @@
           "host": "Conectado como anfitrión"
         }
       },
-      "name": "Music Together [Beta]",
+      "name": "Música Juntos [Beta]",
       "toast": {
         "add-song-failed": "No se puede añadir la canción",
         "closed": "Music Together cerrado",
@@ -729,9 +735,9 @@
         "save-window-size": "Guardar tamaño de la ventana",
         "use-native-pip": "Utilizar PiP nativo del navegador"
       },
-      "name": "Picture-in-picture",
+      "name": "Imagen en imagen",
       "templates": {
-        "button": "Picture-in-picture"
+        "button": "Imagen en imagen"
       }
     },
     "playback-speed": {
@@ -971,8 +977,8 @@
               "prompt-title": "Configuración de Gemini"
             },
             "google-translate": {
-              "host": "Host",
-              "name": "Google Translate",
+              "host": "Anfitrión",
+              "name": "Google Traductor",
               "prompt-label": "Usa el endpoint gratuito no oficial de Google Translate. No se requiere clave API, pero Google puede limitar la frecuencia.",
               "prompt-title": "Configuración de Google Translate"
             },
@@ -990,7 +996,7 @@
             "openai-compatible": {
               "api-mode": "Modo API (responses / auto / chat-completions)",
               "base-url": "URL base",
-              "name": "OpenAI compatible",
+              "name": "Compatible con OpenAI",
               "prompt-label": "Usar servidores compatibles con OpenAI, incluyendo Ollama (URL base http://127.0.0.1:11434/v1, modo API auto o chat-completions).",
               "prompt-title": "Configuración compatible con OpenAI"
             },
@@ -1051,6 +1057,14 @@
             "tooltip": "El idioma al que traducir las letras."
           },
           "tooltip": "Traducir letras y mostrar el resultado traducido línea por línea."
+        },
+        "use-ytm-lyrics-without-proxy": {
+          "label": "Usar letras de YTM sin proxy",
+          "tooltip": "Omitir el proxy de navegación de YTM y llamar a YouTube Music directamente usando la sesión autenticada de la app. Útil si confías en tu red/región para permitir llamadas de navegación directas."
+        },
+        "show-custom-search-button": {
+          "label": "Mostrar botón de búsqueda personalizado",
+          "tooltip": "Mostrar un botón de búsqueda en el selector de letras que permita anular la consulta de búsqueda y el artista de la canción actual."
         }
       },
       "name": "Letras sincronizadas",
@@ -1095,7 +1109,7 @@
     },
     "tuna-obs": {
       "description": "Integración con el complemento Tuna de OBS",
-      "name": "Tuna OBS"
+      "name": "Atún OBS"
     },
     "unobtrusive-player": {
       "description": "Evita que el reproductor aparezca al reproducir una canción",
@@ -1134,6 +1148,14 @@
         "visualizer-type": "Tipo de visualizador"
       },
       "name": "Visualizador"
+    },
+    "playlist-search": {
+      "description": "Agrega un campo de búsqueda para filtrar listas de reproducción en la barra lateral y en el diálogo Agregar a lista de reproducción",
+      "name": "Búsqueda de listas de reproducción",
+      "templates": {
+        "search-placeholder": "Buscar listas de reproducción",
+        "no-results": "No se encontraron listas de reproducción"
+      }
     }
   }
 }

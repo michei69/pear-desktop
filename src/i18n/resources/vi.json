@@ -109,7 +109,8 @@
                   "title": "Cài đặt proxy"
                 }
               },
-              "toggle-dev-tools": "Bật/tắt DevTools"
+              "toggle-dev-tools": "Bật/tắt DevTools",
+              "force-smtc": "Buộc sử dụng SMTC bên ngoài"
             }
           },
           "always-on-top": "Luôn ở trên cùng",
@@ -145,7 +146,8 @@
               "enabled-and-hide-app": "Đã bật và ẩn ứng dụng",
               "enabled-and-show-app": "Đã bật và hiển thị ứng dụng",
               "move-to-current-desktop": "Di chuyển đến màn hình ảo hiện tại khi hiển thị",
-              "play-pause-on-click": "Phát/Tạm dừng khi nhấp chuột"
+              "play-pause-on-click": "Phát/Tạm dừng khi nhấp chuột",
+              "force-white-icons": "Buộc sử dụng biểu tượng màu trắng"
             }
           },
           "visual-tweaks": {
@@ -212,7 +214,11 @@
       "tooltip": {
         "default": "{{applicationName}}",
         "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
-      }
+      },
+      "like": "Thích",
+      "dislike": "Không thích",
+      "unlike": "Không giống như",
+      "undislike": "Bỏ dislike"
     }
   },
   "plugins": {
@@ -260,7 +266,7 @@
         "buffer": {
           "label": "Bộ đệm",
           "submenu": {
-            "buffer": "{{buffer}}"
+            "buffer": "bộ đệm"
           }
         },
         "opacity": {
@@ -295,7 +301,7 @@
     },
     "amuse": {
       "description": "Thêm hỗ trợ {{applicationName}} cho tiện ích hiển thị bài hát đang phát Amuse của 6K Labs",
-      "name": "Amuse",
+      "name": "Giải trí",
       "response": {
         "query": "Máy chủ API của Amuse đang chạy. GET /query để lấy thông tin về bài hát."
       }
@@ -1017,7 +1023,7 @@
               "model": "Mô hình"
             },
             "openai-compatible": {
-              "name": "OpenAI compatible",
+              "name": "Tương thích với OpenAI",
               "prompt-title": "Cài đặt tương thích OpenAI",
               "prompt-label": "Sử dụng máy chủ tương thích OpenAI, bao gồm Ollama (URL cơ sở http://127.0.0.1:11434/v1, chế độ API auto hoặc chat-completions).",
               "base-url": "URL cơ sở",
@@ -1034,7 +1040,7 @@
               "prompt-label": "Sử dụng API Generative Language của Google (generateContent)."
             },
             "local-cli": {
-              "name": "Local CLI",
+              "name": "CLI cục bộ",
               "prompt-title": "Cài đặt CLI cục bộ",
               "prompt-label": "Sử dụng Claude Code, Codex hoặc Gemini CLI đã đăng nhập cục bộ. Lệnh và mô hình là tự động; CLI sử dụng mặc định đã đăng nhập.",
               "engine": "CLI cục bộ",
@@ -1045,12 +1051,20 @@
               "timeout": "Thời gian chờ (giây, 15-600)"
             },
             "google-translate": {
-              "name": "Google Translate",
+              "name": "Google Dịch",
               "prompt-title": "Cài đặt Google Dịch",
               "prompt-label": "Sử dụng điểm cuối Google Dịch miễn phí không chính thức. Không cần khóa API, nhưng Google có thể giới hạn tốc độ.",
               "host": "Máy chủ"
             }
           }
+        },
+        "use-ytm-lyrics-without-proxy": {
+          "label": "Sử dụng lời bài hát YTM mà không cần proxy",
+          "tooltip": "Bỏ qua proxy duyệt YTM và gọi trực tiếp YouTube Music bằng phiên đã xác thực của ứng dụng. Hữu ích nếu bạn tin tưởng mạng/khu vực của mình cho phép các cuộc gọi duyệt trực tiếp."
+        },
+        "show-custom-search-button": {
+          "label": "Hiển thị nút tìm kiếm tùy chỉnh",
+          "tooltip": "Hiển thị nút tìm kiếm trong bộ chọn lời bài hát cho phép bạn ghi đè truy vấn tìm kiếm và nghệ sĩ cho bài hát hiện tại."
         }
       },
       "name": "Lời bài hát được đồng bộ hoá",
@@ -1087,7 +1101,7 @@
           "submenu": {
             "acrylic": "Acrylic",
             "mica": "Mica",
-            "tabbed": "Tabbed",
+            "tabbed": "Có thẻ",
             "none": "Không có"
           }
         }
@@ -1134,6 +1148,14 @@
         "visualizer-type": "Loại Sóng nhạc"
       },
       "name": "Sóng nhạc"
+    },
+    "playlist-search": {
+      "description": "Thêm ô tìm kiếm để lọc danh sách phát trong thanh bên và hộp thoại Thêm vào danh sách phát",
+      "name": "Tìm kiếm danh sách phát",
+      "templates": {
+        "search-placeholder": "Tìm kiếm danh sách phát",
+        "no-results": "Không tìm thấy danh sách phát"
+      }
     }
   }
 }

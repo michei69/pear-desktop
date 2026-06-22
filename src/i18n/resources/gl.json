@@ -109,7 +109,8 @@
                   "title": "Configurar proxy"
                 }
               },
-              "toggle-dev-tools": "Alternar DevTools"
+              "toggle-dev-tools": "Alternar DevTools",
+              "force-smtc": "Forzar o uso de SMTC externo"
             }
           },
           "always-on-top": "Sempre visíbel",
@@ -145,7 +146,8 @@
               "enabled-and-hide-app": "Activado e agochar a aplicación",
               "enabled-and-show-app": "Activado e mostrar a aplicación",
               "move-to-current-desktop": "Mover ao escritorio virtual actual ao mostrar",
-              "play-pause-on-click": "Reproducir/Pausar ao premer"
+              "play-pause-on-click": "Reproducir/Pausar ao premer",
+              "force-white-icons": "Forzar o uso de iconos brancos"
             }
           },
           "visual-tweaks": {
@@ -212,7 +214,11 @@
       "tooltip": {
         "default": "{{applicationName}}",
         "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
-      }
+      },
+      "like": "Gústame",
+      "dislike": "Desagradar",
+      "unlike": "Diferente de",
+      "undislike": "Desagradar"
     }
   },
   "plugins": {
@@ -260,7 +266,7 @@
         "buffer": {
           "label": "Búfer",
           "submenu": {
-            "buffer": "{{buffer}}"
+            "buffer": "buffer"
           }
         },
         "opacity": {
@@ -501,7 +507,7 @@
           }
         }
       },
-      "name": "Discord Rich Presence",
+      "name": "Presenza rica de Discord",
       "prompt": {
         "set-inactivity-timeout": {
           "label": "Introduza o tempo de inactividade en segundos:",
@@ -649,7 +655,7 @@
           "host": "Conectado como anfitrión"
         }
       },
-      "name": "Music Together [Beta]",
+      "name": "Música Xuntos [Beta]",
       "toast": {
         "add-song-failed": "Erro ao engadir canción",
         "closed": "Music Together pechado",
@@ -1038,8 +1044,8 @@
               "prompt-title": "Configuración de CLI local",
               "prompt-label": "Usar un Claude Code, Codex ou Gemini CLI con sesión iniciada localmente. O comando e o modelo son automáticos; a CLI usa o seu propio predeterminado.",
               "engine": "CLI local",
-              "engine-claude": "Claude Code",
-              "engine-codex": "Codex",
+              "engine-claude": "Código Claude",
+              "engine-codex": "Códice",
               "engine-gemini": "Gemini CLI",
               "command": "Comando",
               "timeout": "Tempo de espera en segundos (15-600)"
@@ -1051,6 +1057,14 @@
               "host": "Servidor"
             }
           }
+        },
+        "use-ytm-lyrics-without-proxy": {
+          "label": "Usa letras de YTM sen proxy",
+          "tooltip": "Omitir o proxy de navegación de YTM e chamar a YouTube Music directamente usando a sesión autenticada da aplicación. Útil se confías na túa rede/rexión para permitir chamadas de navegación directas."
+        },
+        "show-custom-search-button": {
+          "label": "Amosar botón de busca personalizado",
+          "tooltip": "Mostrar un botón de busca no selector de letras que che permita sobrescribir a consulta de busca e o artista da canción actual."
         }
       },
       "name": "Letras Sincronizadas",
@@ -1095,7 +1109,7 @@
     },
     "tuna-obs": {
       "description": "Integración co complemento Tuna de OBS",
-      "name": "Tuna OBS"
+      "name": "Atún OBS"
     },
     "unobtrusive-player": {
       "description": "Evita que o reprodutor apareza ao reproducir unha canción",
@@ -1134,6 +1148,14 @@
         "visualizer-type": "Tipo de visualizador"
       },
       "name": "Visualizador"
+    },
+    "playlist-search": {
+      "description": "Engade unha entrada de busca para filtrar listas de reprodución na barra lateral e no diálogo Engadir á lista de reprodución",
+      "name": "Buscar lista de reprodución",
+      "templates": {
+        "search-placeholder": "Buscar listas de reprodución",
+        "no-results": "Non se atoparon listas de reprodución"
+      }
     }
   }
 }

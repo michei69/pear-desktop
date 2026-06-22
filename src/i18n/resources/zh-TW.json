@@ -109,7 +109,8 @@
                   "title": "設定代理伺服器"
                 }
               },
-              "toggle-dev-tools": "開發人員工具"
+              "toggle-dev-tools": "開發人員工具",
+              "force-smtc": "強制使用外部 SMTC"
             }
           },
           "always-on-top": "最上層顯示",
@@ -145,7 +146,8 @@
               "enabled-and-hide-app": "啟用並最小化應用程式",
               "enabled-and-show-app": "啟用並顯示應用程式",
               "move-to-current-desktop": "顯示時移動到目前虛擬桌面",
-              "play-pause-on-click": "點選時播放／暫停"
+              "play-pause-on-click": "點選時播放／暫停",
+              "force-white-icons": "強制使用白色圖示"
             }
           },
           "visual-tweaks": {
@@ -211,8 +213,12 @@
       "show": "顯示視窗",
       "tooltip": {
         "default": "{{applicationName}}",
-        "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
-      }
+        "with-song-info": "{{applicationName}}：{{artist}} - {{title}}"
+      },
+      "like": "喜歡",
+      "dislike": "不喜歡",
+      "unlike": "不像",
+      "undislike": "取消不喜歡"
     }
   },
   "plugins": {
@@ -846,7 +852,7 @@
     },
     "sponsorblock": {
       "description": "自動跳過贊助片段",
-      "name": "SponsorBlock"
+      "name": "贊助商封鎖"
     },
     "synced-lyrics": {
       "description": "使用 LRClib 等管道提供歌詞同步顯示。",
@@ -1017,7 +1023,7 @@
               "model": "模型"
             },
             "openai-compatible": {
-              "name": "OpenAI compatible",
+              "name": "兼容 OpenAI",
               "prompt-title": "OpenAI 相容設定",
               "prompt-label": "使用相容 OpenAI 的伺服器，包括 Ollama（基礎 URL http://127.0.0.1:11434/v1，API 模式為 auto 或 chat-completions）。",
               "base-url": "基礎 URL",
@@ -1034,7 +1040,7 @@
               "prompt-label": "使用 Google 的 Generative Language API (generateContent)。"
             },
             "local-cli": {
-              "name": "Local CLI",
+              "name": "本地 CLI",
               "prompt-title": "本地 CLI 設定",
               "prompt-label": "使用已本地登入的 Claude Code、Codex 或 Gemini CLI。命令和模型為自動；CLI 使用其自己的登入默認值。",
               "engine": "本地 CLI",
@@ -1045,12 +1051,20 @@
               "timeout": "超時秒數 (15-600)"
             },
             "google-translate": {
-              "name": "Google Translate",
+              "name": "Google 翻譯",
               "prompt-title": "Google 翻譯設定",
               "prompt-label": "使用非官方的免費 Google 翻譯端點。無需 API 金鑰，但 Google 可能會限制速率。",
               "host": "主機"
             }
           }
+        },
+        "use-ytm-lyrics-without-proxy": {
+          "label": "使用YTM歌詞，無需代理",
+          "tooltip": "跳過YTM瀏覽代理，直接使用應用程式的已驗證會話呼叫YouTube Music。若您信任您的網路/地區允許直接瀏覽呼叫，此功能將很有用。"
+        },
+        "show-custom-search-button": {
+          "label": "顯示自訂搜尋按鈕",
+          "tooltip": "在歌詞選擇器中顯示搜尋按鈕，讓您可以覆蓋目前歌曲的搜尋查詢與演出者。"
         }
       },
       "name": "歌詞同步",
@@ -1095,7 +1109,7 @@
     },
     "tuna-obs": {
       "description": "與 OBS 的 Tuna 外掛連線",
-      "name": "Tuna OBS"
+      "name": "鮪魚 OBS"
     },
     "unobtrusive-player": {
       "description": "防止播放器介面在點選歌曲後彈出",
@@ -1134,6 +1148,14 @@
         "visualizer-type": "視覺化效果樣式"
       },
       "name": "視覺化效果"
+    },
+    "playlist-search": {
+      "description": "在側邊欄和「新增至播放清單」對話框中加入搜尋輸入框以篩選播放清單",
+      "name": "播放清單搜尋",
+      "templates": {
+        "search-placeholder": "搜尋播放清單",
+        "no-results": "找不到播放清單"
+      }
     }
   }
 }

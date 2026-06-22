@@ -109,7 +109,8 @@
                   "title": "プロキシ"
                 }
               },
-              "toggle-dev-tools": "DevToolsの切り替え"
+              "toggle-dev-tools": "DevToolsの切り替え",
+              "force-smtc": "外部SMTCの使用を強制する"
             }
           },
           "always-on-top": "常に最前面に表示",
@@ -145,7 +146,8 @@
               "enabled-and-hide-app": "有効 + アプリを非表示",
               "enabled-and-show-app": "有効 + アプリを表示",
               "move-to-current-desktop": "表示時に現在の仮想デスクトップに移動",
-              "play-pause-on-click": "クリックで再生/一時停止"
+              "play-pause-on-click": "クリックで再生/一時停止",
+              "force-white-icons": "白いアイコンの使用を強制する"
             }
           },
           "visual-tweaks": {
@@ -155,8 +157,8 @@
                 "default": "デフォルト",
                 "force-show": "強制的に表示",
                 "hide": "非表示",
-                "swap": "いいねボタンの順序を入れ替え",
-                "label": "いいねボタン"
+                "label": "いいねボタン",
+                "swap": "ボタンの順序などを入れ替える"
               },
               "custom-window-title": {
                 "label": "カスタムウィンドウタイトル",
@@ -164,13 +166,6 @@
                   "label": "カスタムウィンドウタイトルを入力: (未入力の場合無効になります)",
                   "placeholder": "例: {{applicationName}}"
                 }
-              },
-              "like-buttons": {
-                "default": "デフォルト",
-                "force-show": "強制的に表示",
-                "hide": "非表示",
-                "label": "いいねボタン",
-                "swap": "ボタンの順序などを入れ替える"
               },
               "remove-upgrade-button": "アップグレードボタンを削除",
               "theme": {
@@ -219,7 +214,11 @@
       "tooltip": {
         "default": "{{applicationName}}",
         "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
-      }
+      },
+      "like": "いいね",
+      "dislike": "嫌い",
+      "unlike": "Unlike",
+      "undislike": "嫌いを解除"
     }
   },
   "plugins": {
@@ -263,13 +262,13 @@
         "buffer": {
           "label": "バッファリング",
           "submenu": {
-            "buffer": "{{buffer}}"
+            "buffer": "バッファ"
           }
         },
         "opacity": {
           "label": "不透明度",
           "submenu": {
-            "percent": "{{opacity}}%"
+            "percent": "{{透明度}}%"
           }
         },
         "quality": {
@@ -298,7 +297,7 @@
     },
     "amuse": {
       "description": "6K LabsのAmuse再生中ウィジェットが{{applicationName}}に対応しました",
-      "name": "Amuse",
+      "name": "アミューズ",
       "response": {
         "query": "AmuseのAPIサーバーが稼働中です。GET /query で楽曲情報を取得できます。"
       }
@@ -334,17 +333,6 @@
           "label": "HTTPSと証明書",
           "submenu": {
             "enable-https": {
-              "label": "HTTPSを有効化"
-            }
-          }
-        },
-        "port": {
-          "label": "ポート"
-        },
-        "https": {
-          "label": "HTTPSと証明書",
-          "submenu": {
-            "enable-https": {
               "label": "HTTPSを有効にする"
             },
             "cert": {
@@ -356,6 +344,9 @@
               "dialogTitle": "HTTPS秘密鍵ファイルを選択"
             }
           }
+        },
+        "port": {
+          "label": "ポート"
         }
       },
       "name": "APIサーバー(Beta)",
@@ -1043,7 +1034,7 @@
               "prompt-label": "ローカルでログインしたClaude Code、Codex、またはGemini CLIを使用します。コマンドとモデルは自動です。CLIは自身のログイン済みデフォルトを使用します。",
               "engine": "ローカルCLI",
               "engine-claude": "Claude Code",
-              "engine-codex": "Codex",
+              "engine-codex": "コーデックス",
               "engine-gemini": "Gemini CLI",
               "command": "コマンド",
               "timeout": "タイムアウト秒 (15-600)"
@@ -1055,6 +1046,14 @@
               "host": "ホスト"
             }
           }
+        },
+        "use-ytm-lyrics-without-proxy": {
+          "label": "YTMの歌詞をプロキシなしで使用",
+          "tooltip": "YTMブラウズプロキシをスキップし、アプリの認証済みセッションを使用してYouTube Musicを直接呼び出します。ネットワークや地域が直接ブラウズ呼び出しを許可していると信頼できる場合に便利です。"
+        },
+        "show-custom-search-button": {
+          "label": "カスタム検索ボタンを表示",
+          "tooltip": "歌詞ピッカーに検索ボタンを表示し、現在の曲の検索クエリとアーティストを上書きできるようにする。"
         }
       },
       "name": "歌詞を同期",
@@ -1083,7 +1082,7 @@
         "opacity": {
           "label": "不透明度",
           "submenu": {
-            "percent": "{{opacity}}%"
+            "percent": "{{透明度}}%"
           }
         },
         "type": {
@@ -1099,7 +1098,7 @@
     },
     "tuna-obs": {
       "description": "OBSのプラグインTunaの統合",
-      "name": "Tuna OBS"
+      "name": "マグロ OBS"
     },
     "unobtrusive-player": {
       "description": "曲の再生時にプレーヤーがポップアップしないようにする",
@@ -1149,6 +1148,14 @@
         "log-to-console": "回復イベントをコンソールに記録"
       },
       "name": "再生回復"
+    },
+    "playlist-search": {
+      "description": "サイドバーと「プレイリストに追加」ダイアログでプレイリストをフィルタリングするための検索入力を追加します",
+      "name": "プレイリスト検索",
+      "templates": {
+        "search-placeholder": "プレイリストを検索",
+        "no-results": "プレイリストが見つかりません"
+      }
     }
   }
 }

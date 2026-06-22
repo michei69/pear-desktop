@@ -71,7 +71,7 @@
         "buttons": {
           "disable": "Frissítések kikapcsolása",
           "download": "Letöltés",
-          "ok": "OK"
+          "ok": "Rendben"
         },
         "detail": "Új verzió elérhető, amely letölthető az alábbi linken {{downloadLink}}",
         "message": "Új verzió áll rendelkezésre",
@@ -109,7 +109,8 @@
                   "title": "Proxy beállítása"
                 }
               },
-              "toggle-dev-tools": "Fejlesztőeszközök BE/KI"
+              "toggle-dev-tools": "Fejlesztőeszközök BE/KI",
+              "force-smtc": "Külső SMTC használatának kényszerítése"
             }
           },
           "always-on-top": "Mindig látható",
@@ -145,7 +146,8 @@
               "enabled-and-hide-app": "Engedélyezve és alkalmazás elrejtése",
               "enabled-and-show-app": "Engedélyezve és alkalmazás megjelenítése",
               "play-pause-on-click": "Lejátszás/Szünet az ikonra kattintással",
-              "move-to-current-desktop": "Áthelyezés az aktuális virtuális asztalra megjelenítéskor"
+              "move-to-current-desktop": "Áthelyezés az aktuális virtuális asztalra megjelenítéskor",
+              "force-white-icons": "Fehér ikonok kényszerítése"
             }
           },
           "visual-tweaks": {
@@ -212,7 +214,11 @@
       "tooltip": {
         "default": "{{applicationName}}",
         "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
-      }
+      },
+      "like": "Tetszik",
+      "dislike": "Nem tetszik",
+      "unlike": "Ellentétben",
+      "undislike": "Tetszés eltávolítása"
     }
   },
   "plugins": {
@@ -610,7 +616,7 @@
       "menu": {
         "romanized-lyrics": "Latin betűs dalszövegek"
       },
-      "name": "Lyrics Genius",
+      "name": "Dalszöveg Genius",
       "renderer": {
         "fetched-lyrics": "Dalszövegek lekérése a Genius-ról"
       }
@@ -951,41 +957,41 @@
           "providers": {
             "anthropic": {
               "name": "Anthropic Claude",
-              "prompt-label": "Uses the native Anthropic Messages API.",
-              "prompt-title": "Anthropic settings"
+              "prompt-label": "Natív Anthropic Messages API-t használ.",
+              "prompt-title": "Anthropic beállítások"
             },
             "gemini": {
               "name": "Google Gemini",
-              "prompt-label": "Uses Google's Generative Language API (generateContent).",
-              "prompt-title": "Gemini settings"
+              "prompt-label": "A Google Generative Language API-t (generateContent) használja.",
+              "prompt-title": "Gemini beállítások"
             },
             "google-translate": {
-              "host": "Host",
-              "name": "Google Translate",
-              "prompt-label": "Uses the unofficial free Google Translate endpoint. No API key is required, but Google may rate-limit it.",
-              "prompt-title": "Google Translate settings"
+              "host": "Házigazda",
+              "name": "Google Fordítás",
+              "prompt-label": "A nem hivatalos ingyenes Google Fordító végpontot használja. Nincs szükség API-kulcsra, de a Google korlátozhatja a sebességet.",
+              "prompt-title": "Google Fordítás beállításai"
             },
             "local-cli": {
-              "command": "Command",
-              "engine": "Local CLI",
+              "command": "Parancs",
+              "engine": "Helyi CLI",
               "engine-claude": "Claude Code",
               "engine-codex": "Codex",
               "engine-gemini": "Gemini CLI",
-              "name": "Local CLI",
-              "prompt-label": "Use a locally logged-in Claude Code, Codex, or Gemini CLI. The command and model are automatic; the CLI uses its own logged-in default.",
-              "prompt-title": "Local CLI settings",
-              "timeout": "Timeout seconds (15-600)"
+              "name": "Helyi CLI",
+              "prompt-label": "Használj helyben bejelentkezett Claude Code-ot, Codex-et vagy Gemini CLI-t. A parancs és a modell automatikus; a CLI a saját bejelentkezett alapértelmezettjét használja.",
+              "prompt-title": "Helyi CLI beállítások",
+              "timeout": "Időtúllépés másodpercben (15-600)"
             },
             "openai-compatible": {
-              "api-mode": "API mode (responses / auto / chat-completions)",
-              "base-url": "Base URL",
-              "name": "OpenAI compatible",
-              "prompt-label": "Use OpenAI-compatible servers, including Ollama (base URL http://127.0.0.1:11434/v1, API mode auto or chat-completions).",
-              "prompt-title": "OpenAI-compatible settings"
+              "api-mode": "API mód (válaszok / automatikus / chat-befejezések)",
+              "base-url": "Alap URL",
+              "name": "OpenAI kompatibilis",
+              "prompt-label": "Használjon OpenAI-kompatibilis szervereket, beleértve az Ollamát (alap URL: http://127.0.0.1:11434/v1, API mód: auto vagy chat-completions).",
+              "prompt-title": "OpenAI-kompatibilis beállítások"
             },
             "shared": {
-              "api-key": "API key",
-              "model": "Model"
+              "api-key": "API-kulcs",
+              "model": "Modell"
             }
           },
           "target-language": {
@@ -1040,6 +1046,14 @@
             "tooltip": "A nyelv, amelyre a dalszöveget fordítani kell."
           },
           "tooltip": "Dalszöveg fordítása és a lefordított eredmény soronkénti megjelenítése."
+        },
+        "use-ytm-lyrics-without-proxy": {
+          "label": "Használj YTM dalszövegeket proxy nélkül",
+          "tooltip": "Hagyja ki az YTM böngésző proxyt, és hívja közvetlenül a YouTube Musicot az alkalmazás hitelesített munkamenetével. Hasznos, ha megbízik a hálózatában/régiójában, hogy engedélyezi a közvetlen böngészési hívásokat."
+        },
+        "show-custom-search-button": {
+          "label": "Egyedi keresés gomb megjelenítése",
+          "tooltip": "Megjelenít egy keresőgombot a dalszövegválasztóban, amely lehetővé teszi a keresési lekérdezés és az előadó felülírását az aktuális dalhoz."
         }
       },
       "name": "Szinkronizált dalszövegek",
@@ -1134,6 +1148,14 @@
         "log-to-console": "Helyreállítási események naplózása a konzolba"
       },
       "name": "Lejátszás Helyreállítása"
+    },
+    "playlist-search": {
+      "description": "Keresőmező hozzáadása a lejátszási listák szűréséhez az oldalsávban és a Hozzáadás lejátszási listához párbeszédablakban",
+      "name": "Lemezlista keresése",
+      "templates": {
+        "search-placeholder": "Keresés lejátszási listákban",
+        "no-results": "Nem található lejátszási lista"
+      }
     }
   }
 }

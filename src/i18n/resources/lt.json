@@ -109,7 +109,8 @@
                   "title": "Nustatyti ‚proxy‘ serverį"
                 }
               },
-              "toggle-dev-tools": "Įjungti/Išjungti „DevTools“"
+              "toggle-dev-tools": "Įjungti/Išjungti „DevTools“",
+              "force-smtc": "Priversti naudoti išorinį SMTC"
             }
           },
           "always-on-top": "Visada viršuje",
@@ -145,7 +146,8 @@
               "enabled-and-hide-app": "Įjungta ir slėpti programos langą",
               "enabled-and-show-app": "Įjungta ir rodyti programos langą",
               "move-to-current-desktop": "Rodant perkelti į dabartinį virtualų darbalaukį",
-              "play-pause-on-click": "Paleisti/Pristabdyti ant paspaudimo"
+              "play-pause-on-click": "Paleisti/Pristabdyti ant paspaudimo",
+              "force-white-icons": "Priversti naudoti baltas piktogramas"
             }
           },
           "visual-tweaks": {
@@ -212,7 +214,11 @@
       "tooltip": {
         "default": "{{applicationName}}",
         "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
-      }
+      },
+      "like": "Patinka",
+      "dislike": "Nepatinka",
+      "unlike": "Skirtingai nei",
+      "undislike": "Nepatinka"
     }
   },
   "plugins": {
@@ -260,7 +266,7 @@
         "buffer": {
           "label": "Buferis",
           "submenu": {
-            "buffer": "{{buffer}}"
+            "buffer": "buferis"
           }
         },
         "opacity": {
@@ -1051,6 +1057,14 @@
             "tooltip": "Kalba, į kurią versti dainų žodžius."
           },
           "tooltip": "Išversti dainų žodžius ir rodyti išverstą rezultatą eilutė po eilutės."
+        },
+        "use-ytm-lyrics-without-proxy": {
+          "label": "Naudokite YTM dainų tekstus be proxy",
+          "tooltip": "Praleisti YTM naršymo proxy ir iškviesti YouTube Music tiesiogiai naudojant programos autentifikuotą sesiją. Naudinga, jei pasitikite savo tinklu/regionu, kad leistų tiesioginius naršymo skambučius."
+        },
+        "show-custom-search-button": {
+          "label": "Rodyti pasirinktinį paieškos mygtuką",
+          "tooltip": "Rodyti paieškos mygtuką dainų tekstų parinkiklyje, leidžiantį pakeisti paieškos užklausą ir atlikėją dabartinei dainai."
         }
       },
       "name": "„Synced Lyrics“",
@@ -1134,6 +1148,14 @@
         "visualizer-type": "Vizualizatoriaus tipas"
       },
       "name": "Vizualizatorius"
+    },
+    "playlist-search": {
+      "description": "Prideda paieškos įvestį, skirtą filtruoti grojaraščius šoninėje juostoje ir dialogo lange „Pridėti prie grojaraščio“",
+      "name": "Paieškos grojaraštyje",
+      "templates": {
+        "search-placeholder": "Ieškoti grojaraščių",
+        "no-results": "Nerasta grojaraščių"
+      }
     }
   }
 }

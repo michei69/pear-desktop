@@ -109,7 +109,8 @@
                   "title": "Proxy saz bike"
                 }
               },
-              "toggle-dev-tools": "DevTools veke/bigire"
+              "toggle-dev-tools": "DevTools veke/bigire",
+              "force-smtc": "SMTC ya derve bi kar bîne"
             }
           },
           "always-on-top": "Her tim li ser",
@@ -145,7 +146,8 @@
               "enabled-and-hide-app": "Veke û sepanê veşêre",
               "enabled-and-show-app": "Veke û sepanê nîşan bide",
               "move-to-current-desktop": "Dema nîşandanê here ser sermaseya virtual a niha",
-              "play-pause-on-click": "Lêxe/Bisekinîne bi tikandinê"
+              "play-pause-on-click": "Lêxe/Bisekinîne bi tikandinê",
+              "force-white-icons": "بەکارهێنانی ئایکۆنە سپییەکان بە زۆر بکە"
             }
           },
           "visual-tweaks": {
@@ -212,7 +214,11 @@
       "tooltip": {
         "default": "{{applicationName}}",
         "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
-      }
+      },
+      "like": "Haz",
+      "dislike": "نەخۆش",
+      "unlike": "جی",
+      "undislike": "نەخوازراو"
     }
   },
   "plugins": {
@@ -423,7 +429,7 @@
       "name": "Demjimêr",
       "menu": {
         "format": {
-          "label": "Format",
+          "label": "فورمات",
           "display-seconds": "Çirkeyan Nîşan Bide",
           "24-hour-format": "Formata 24-Saetî"
         }
@@ -649,7 +655,7 @@
           "host": "Wekî Mazûvan Hat Girêdan"
         }
       },
-      "name": "Music Together [Beta]",
+      "name": "Muzîk Bi Hev re [Beta]",
       "toast": {
         "add-song-failed": "Stran nehat zêdekirin",
         "closed": "Music Together hat girtin",
@@ -667,7 +673,7 @@
     },
     "navigation": {
       "description": "Tîrên navîgasyonê yên Pêş/Paş rasterast di navbeynê de, mîna di geroka xwe ya bijare de",
-      "name": "Navigation",
+      "name": "Rêveberî",
       "templates": {
         "back": {
           "title": "Here rûpela berê"
@@ -702,7 +708,7 @@
     },
     "performance-improvement": {
       "description": "Performansê bi çalakkirina skrîptên ezmûnî baştir bike",
-      "name": "Performance improvement [Beta]"
+      "name": "باشترکردنی باشتر [بێتا]"
     },
     "playback-recovery": {
       "description": "Bixweber ji rewşên lêdanê yên asêbûyî, rawestandî an mirî xelas dike",
@@ -823,7 +829,7 @@
         "override-media-keys": "Bişkokên Medyayê Bigire",
         "set-keybinds": "Kontrolên Stranê yên Gerdûnî Saz Bike"
       },
-      "name": "Shortcuts (& MPRIS)",
+      "name": "کورتکرن (و MPRIS)",
       "prompt": {
         "keybind": {
           "keybind-options": {
@@ -1025,32 +1031,40 @@
             },
             "anthropic": {
               "name": "Anthropic Claude",
-              "prompt-title": "Anthropic settings",
-              "prompt-label": "Uses the native Anthropic Messages API."
+              "prompt-title": "Mîhengên Anthropic",
+              "prompt-label": "API-ya Anthropic Messages ya xwe bi kar tîne."
             },
             "gemini": {
-              "name": "Google Gemini",
-              "prompt-title": "Gemini settings",
-              "prompt-label": "Uses Google's Generative Language API (generateContent)."
+              "name": "گوگل گەمینی",
+              "prompt-title": "ئایارەکانی جێمینی",
+              "prompt-label": "API-ya Zimanê Generatîv ê Google-ê bi kar tîne (generateContent)."
             },
             "local-cli": {
-              "name": "Local CLI",
+              "name": "Herêmî CLI",
               "prompt-title": "Local CLI settings",
-              "prompt-label": "Use a locally logged-in Claude Code, Codex, or Gemini CLI. The command and model are automatic; the CLI uses its own logged-in default.",
-              "engine": "Local CLI",
+              "prompt-label": "Claude Code, Codex, an Gemini CLI yê bi şexsî têketî bi kar bîne. Ferman û model otomatîk in; CLI defaulta xwe ya têketî bi kar tîne.",
+              "engine": "Herêmî CLI",
               "engine-claude": "Claude Code",
-              "engine-codex": "Codex",
+              "engine-codex": "کودێکس",
               "engine-gemini": "Gemini CLI",
-              "command": "Command",
-              "timeout": "Timeout seconds (15-600)"
+              "command": "فرمان",
+              "timeout": "ماوەى کات بە چرکە (١٥-٦٠٠)"
             },
             "google-translate": {
-              "name": "Google Translate",
-              "prompt-title": "Google Translate settings",
-              "prompt-label": "Uses the unofficial free Google Translate endpoint. No API key is required, but Google may rate-limit it.",
-              "host": "Host"
+              "name": "Google Wergerr",
+              "prompt-title": "Eyarên Google Translate",
+              "prompt-label": "Bikarhênera/ê dawiya Google Translate ya fermî ya belaş bi kar tîne. Tu API key pêwîst nîne, lê Google dikare sînorê rêjeyê li ser bike.",
+              "host": "Mazûvan"
             }
           }
+        },
+        "use-ytm-lyrics-without-proxy": {
+          "label": "Bê YTM bê proxy bikar bîne",
+          "tooltip": "پەرەستگەی YTM بەجێبهێڵە و بە بەکارهێنانی دانیشتنی ڕاستەوخۆی ئەپەکە بانگەوازی بکە بۆ یوتیوب میوزیک. ئەگەر پێت وابێت تۆڕ/ناوچەکەت ڕێگە بە بانگەوازی ڕاستەوخۆ دەدات، ئەمە بەسوودە."
+        },
+        "show-custom-search-button": {
+          "label": "پێشاندانی دوگمەی گەڕانی تایبەت",
+          "tooltip": "Di şêwekarê helbestan de bişkojeke lêgerînê nîşan bide ku dihêle hûn lêgerîna lêgerînê û hunermendê strana heyî biguherînin."
         }
       },
       "name": "Gotina Hevdemkirî",
@@ -1134,6 +1148,14 @@
         "visualizer-type": "Cureyê Vîzûalîzerê"
       },
       "name": "Vîzûalîzer"
+    },
+    "playlist-search": {
+      "description": "Di nav sîdebar û diyaloga Zêdekirina lîsteya lîstikê de qutiyeke lêgerînê zêde dike da ku lîsteyên lîstikê fîltre bike",
+      "name": "لێگەڕانی لیستی گۆرانی",
+      "templates": {
+        "search-placeholder": "لێگەڕان بۆ لیستی گۆرانی",
+        "no-results": "هیچ لیست پێشکەوتنێک نەدۆزرایەوە"
+      }
     }
   }
 }

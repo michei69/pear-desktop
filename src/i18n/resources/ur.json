@@ -109,7 +109,8 @@
                   "title": "پراکسی سیٹ کریں"
                 }
               },
-              "toggle-dev-tools": "DevTools ٹوگل کریں"
+              "toggle-dev-tools": "DevTools ٹوگل کریں",
+              "force-smtc": "بیرونی SMTC کے استعمال پر مجبور کریں"
             }
           },
           "always-on-top": "ہمیشہ اوپر",
@@ -145,7 +146,8 @@
               "enabled-and-hide-app": "فعال اور ایپ کو چھپائیں",
               "enabled-and-show-app": "فعال اور ایپ دکھائیں",
               "play-pause-on-click": "دبانے پر چلائیں/روکیں",
-              "move-to-current-desktop": "دکھانے پر موجودہ ورچوئل ڈیسک ٹاپ پر منتقل کریں"
+              "move-to-current-desktop": "دکھانے پر موجودہ ورچوئل ڈیسک ٹاپ پر منتقل کریں",
+              "force-white-icons": "سفید آئیکنز کے استعمال پر مجبور کریں"
             }
           },
           "visual-tweaks": {
@@ -212,7 +214,11 @@
       "tooltip": {
         "default": "پیئر ڈیسک ٹاپ",
         "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
-      }
+      },
+      "like": "پسندیدہ",
+      "dislike": "نفرت",
+      "unlike": "برعکس",
+      "undislike": "ناپسند نہ کریں"
     }
   },
   "plugins": {
@@ -256,7 +262,7 @@
         "buffer": {
           "label": "بفر",
           "submenu": {
-            "buffer": "{{buffer}}"
+            "buffer": "بفر"
           }
         },
         "opacity": {
@@ -274,7 +280,7 @@
         "size": {
           "label": "سائز",
           "submenu": {
-            "percent": "{{size}}%"
+            "percent": "{{سائز}}%"
           }
         },
         "smoothness-transition": {
@@ -291,7 +297,7 @@
     },
     "amuse": {
       "description": "6K Labs کے Amuse ناؤ پلےئنگ وجیٹ کے لیے {{applicationName}} سپورٹ شامل کرتا ہے",
-      "name": "Amuse",
+      "name": "تفریح",
       "response": {
         "query": "Amuse API سرور چل رہا ہے۔ گانے کی معلومات کے لیے GET /query کریں۔"
       }
@@ -955,7 +961,7 @@
               "prompt-title": "Anthropic ترتیبات"
             },
             "gemini": {
-              "name": "Google Gemini",
+              "name": "گوگل جیمنی",
               "prompt-label": "Google Generative Language API (generateContent) استعمال کرتا ہے۔",
               "prompt-title": "Gemini ترتیبات"
             },
@@ -968,9 +974,9 @@
             "local-cli": {
               "command": "کمانڈ",
               "engine": "مقامی CLI",
-              "engine-claude": "Claude Code",
-              "engine-codex": "Codex",
-              "engine-gemini": "Gemini CLI",
+              "engine-claude": "كلود كود",
+              "engine-codex": "کوڈیکس",
+              "engine-gemini": "جمینی سی‌ال‌آئی",
               "name": "مقامی CLI",
               "prompt-label": "مقامی طور پر لاگ ان کردہ Claude Code، Codex یا Gemini CLI استعمال کریں۔ کمانڈ اور ماڈل خودکار ہیں؛ CLI اپنا لاگ ان کردہ ڈیفالٹ استعمال کرتا ہے۔",
               "prompt-title": "مقامی CLI ترتیبات",
@@ -1040,6 +1046,14 @@
             "tooltip": "وہ زبان جس میں بول کا ترجمہ کیا جائے۔"
           },
           "tooltip": "بول کا ترجمہ کریں اور ترجمہ شدہ نتیجہ لائن بہ لائن دکھائیں۔"
+        },
+        "use-ytm-lyrics-without-proxy": {
+          "label": "بغیر پراکسی کے YTM کے بول استعمال کریں",
+          "tooltip": "YTM براؤز پراکسی کو چھوڑیں اور ایپ کے تصدیق شدہ سیشن کا استعمال کرتے ہوئے براہ راست YouTube Music کو کال کریں۔ اگر آپ اپنے نیٹ ورک/علاقے پر بھروسہ کرتے ہیں کہ وہ براہ راست براؤز کالز کی اجازت دیتا ہے تو مفید ہے۔"
+        },
+        "show-custom-search-button": {
+          "label": "کسٹم سرچ بٹن دکھائیں",
+          "tooltip": "گیتوں کے چناؤ میں ایک تلاش کا بٹن دکھائیں جو موجودہ گانے کے لیے تلاش کی استفسار اور فنکار کو تبدیل کرنے کی اجازت دیتا ہے۔"
         }
       },
       "name": "ہم وقت بول",
@@ -1084,7 +1098,7 @@
     },
     "tuna-obs": {
       "description": "OBS کے پلگ ان Tuna کے ساتھ انضمام",
-      "name": "Tuna OBS"
+      "name": "ٹونا او بی ایس"
     },
     "unobtrusive-player": {
       "description": "گانا چلاتے وقت پلیئر کو پاپ اپ ہونے سے روکتا ہے",
@@ -1134,6 +1148,14 @@
         "log-to-console": "بازیابی کے واقعات کو کنسول میں لاگ کریں"
       },
       "name": "پلے بیک بازیابی"
+    },
+    "playlist-search": {
+      "description": "سائیڈ بار اور پلے لسٹ میں شامل کرنے والے ڈائیلاگ میں پلے لسٹس کو فلٹر کرنے کے لیے سرچ ان پٹ شامل کرتا ہے",
+      "name": "پلے لسٹ تلاش",
+      "templates": {
+        "search-placeholder": "پلے لسٹس تلاش کریں",
+        "no-results": "کوئی پلے لسٹ نہیں ملی"
+      }
     }
   }
 }
