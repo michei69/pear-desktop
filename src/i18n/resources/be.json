@@ -2,9 +2,9 @@
   "common": {
     "console": {
       "plugins": {
-        "execute-failed": "Не ўдалося выканаць плагін {{pluginName}}::{{contextName}}",
-        "executed-at-ms": "Плагін {{pluginName}}::{{contextName}} выкананы за {{ms}} мс",
-        "initialize-failed": "Не ўдалося ініцыялізаваць плагін \"{{pluginName}}\"",
+        "execute-failed": "Памылка падчас выканання дадатку {{pluginName}}::{{contextName}}",
+        "executed-at-ms": "Дадатак {{pluginName}}::{{contextName}} быў выкананы за {{ms}}мс",
+        "initialize-failed": "Памылка падчас ініцыялізацыі дадатку \"{{pluginName}}\"",
         "load-all": "Загрузка ўсіх плагінаў",
         "load-failed": "Не ўдалося загрузіць плагін \"{{pluginName}}\"",
         "loaded": "Плагін \"{{pluginName}}\" загружаны",
@@ -14,7 +14,7 @@
     }
   },
   "language": {
-    "code": "be",
+    "code": "by",
     "local-name": "Беларуская",
     "name": "Belarusian"
   },
@@ -36,7 +36,7 @@
         "details": "Памылка завісання!\n{{error}}"
       },
       "when-ready": {
-        "clearing-cache-after-20s": "Ачыстка кэша прыкладання"
+        "clearing-cache-after-20s": "Ачысціць кэш праграмы"
       },
       "window": {
         "tried-to-render-offscreen": "Акно спрабавала адлюстравацца па-за экранам, windowSize={{windowSize}}, displaySize={{displaySize}}, position={{position}}"
@@ -53,8 +53,8 @@
           "later": "Пазней",
           "restart-now": "Перазапусціць зараз"
         },
-        "detail": "Плагін \"{{pluginName}}\" патрабуе перазапуску, каб змены ўступілі ў сілу",
-        "message": "\"{{pluginName}}\" неабходна перазапусціць",
+        "detail": "\"{{pluginName}}\" патрабуе перазапуску, каб змены ўступілі ў сілу",
+        "message": "\"{{pluginName}}\" патрабуе перазапуску",
         "title": "Патрабуецца перазапуск"
       },
       "unresponsive": {

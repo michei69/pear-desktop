@@ -862,22 +862,22 @@
       },
       "menu": {
         "convert-chinese-character": {
-          "label": "한자 변환",
+          "label": "중국어 변환",
           "submenu": {
             "disabled": {
               "label": "비활성화됨",
-              "tooltip": "한자 변환 비활성화"
+              "tooltip": "중국어 변환 비활성화"
             },
             "simplified-to-traditional": {
               "label": "간체에서 번체로",
-              "tooltip": "간체 중국어를 번체 중국어로 변환"
+              "tooltip": "중국어 간체에서 번체로 번역"
             },
             "traditional-to-simplified": {
-              "label": "번체에서 간체로",
-              "tooltip": "번체 중국어를 간체 중국어로 변환"
+              "label": "번체에서 간체",
+              "tooltip": "번체에서 간체로 변환"
             }
           },
-          "tooltip": "한자를 번체 또는 간체로 변환합니다"
+          "tooltip": "중국어 간체 또는 번체로 변환하기"
         },
         "default-text-string": {
           "label": "가사 사이에 표시할 문자",
