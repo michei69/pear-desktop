@@ -146,7 +146,8 @@
               "enabled-and-hide-app": "Enabled and hide app",
               "enabled-and-show-app": "Enabled and show app",
               "move-to-current-desktop": "Move to current virtual desktop on show",
-              "play-pause-on-click": "Play/Pause on click"
+              "play-pause-on-click": "Play/Pause on click",
+              "force-white-icons": "Force the use of white icons"
             }
           },
           "visual-tweaks": {

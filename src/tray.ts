@@ -100,13 +100,13 @@ export const setUpTray = (app: Electron.App, win: Electron.BrowserWindow) => {
     : 1;
 
   const defaultTrayIcon = nativeImage
-    .createFromPath(is.macOS() ? TrayIconWhite : TrayIcon)
+    .createFromPath(is.macOS() || config.get('options.trayForceWhiteIcons') ? TrayIconWhite : TrayIcon)
     .resize({
       width: 16 * pixelRatio,
       height: 16 * pixelRatio,
     });
   const pausedTrayIcon = nativeImage
-    .createFromPath(is.macOS() ? PausedTrayIconWhite : PausedTrayIcon)
+    .createFromPath(is.macOS() || config.get('options.trayForceWhiteIcons') ? PausedTrayIconWhite : PausedTrayIcon)
     .resize({
       width: 16 * pixelRatio,
       height: 16 * pixelRatio,

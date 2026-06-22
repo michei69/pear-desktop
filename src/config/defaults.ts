@@ -27,6 +27,7 @@ export interface DefaultConfig {
     restartOnConfigChanges: boolean;
     trayClickPlayPause: boolean;
     trayMoveToCurrentDesktop: boolean;
+    trayForceWhiteIcons: boolean;
     autoResetAppCache: boolean;
     forceSmtc: boolean;
     resumeOnStart: boolean;
@@ -67,6 +68,7 @@ export const defaultConfig: DefaultConfig = {
     restartOnConfigChanges: false,
     trayClickPlayPause: false,
     trayMoveToCurrentDesktop: false,
+    trayForceWhiteIcons: false,
     autoResetAppCache: false,
     forceSmtc: false,
     resumeOnStart: true,

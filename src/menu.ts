@@ -494,6 +494,19 @@ export const mainMenuTemplate = async (
                 );
               },
             },
+            {
+              label: t(
+                'main.menu.options.submenu.tray.submenu.force-white-icons'
+              ),
+              type: "checkbox",
+              checked: config.get('options.trayForceWhiteIcons'),
+              click(item: MenuItem) {
+                config.setMenuOption(
+                  'options.trayForceWhiteIcons',
+                  item.checked
+                )
+              }
+            }
           ],
         },
         {
