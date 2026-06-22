@@ -2,7 +2,15 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v3.11.13](https://github.com/michei69/pear-desktop/compare/v3.11.12...v3.11.13)
+
+- chore(i18n): continue translations via deepseek [`ca2bb4a`](https://github.com/michei69/pear-desktop/commit/ca2bb4a040082ee9e33fa1374fb3f4ed15413ada)
+- style: finish migration to new icons [`d7f86a5`](https://github.com/michei69/pear-desktop/commit/d7f86a5780e423f13c31a36dc08b0f5d158f5c73)
+- chore(i18n): Translated using Weblate (Belarusian) [`776df1a`](https://github.com/michei69/pear-desktop/commit/776df1ad08eb1fa5b5e1031136b4976c1639a34a)
+
 #### [v3.11.12](https://github.com/michei69/pear-desktop/compare/v3.11.11...v3.11.12)
+
+> 21 June 2026
 
 - chore: bump to v3.11.12 [`#5`](https://github.com/michei69/pear-desktop/issues/5)
 - feat: add full smtc support [`e399565`](https://github.com/michei69/pear-desktop/commit/e399565fd601d6d2e5b89770a834e27cd65b3388)
