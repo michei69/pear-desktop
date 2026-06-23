@@ -2,7 +2,15 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v3.11.14](https://github.com/michei69/pear-desktop/compare/v3.11.13...v3.11.14)
+
+- fix: linux build [`a2d0fae`](https://github.com/michei69/pear-desktop/commit/a2d0faeec510c7c375872b46f0f22e6213b3a201)
+- Update changelog for v3.11.13 [`185a66a`](https://github.com/michei69/pear-desktop/commit/185a66af3bab3e68fc005c7401b6a43366271bb5)
+- chore: bump to v3.11.14 [`45f3517`](https://github.com/michei69/pear-desktop/commit/45f35172f786153c5e3e0f0deedc1ebbfaebc231)
+
 #### [v3.11.13](https://github.com/michei69/pear-desktop/compare/v3.11.12...v3.11.13)
+
+> 22 June 2026
 
 - chore(i18n): continue translations via deepseek [`ca2bb4a`](https://github.com/michei69/pear-desktop/commit/ca2bb4a040082ee9e33fa1374fb3f4ed15413ada)
 - style: finish migration to new icons [`d7f86a5`](https://github.com/michei69/pear-desktop/commit/d7f86a5780e423f13c31a36dc08b0f5d158f5c73)
