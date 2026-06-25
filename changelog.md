@@ -2,7 +2,15 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v3.11.15](https://github.com/michei69/pear-desktop/compare/v3.11.14...v3.11.15)
+
+- fix: menu erroring on non-windows [`bf7006d`](https://github.com/michei69/pear-desktop/commit/bf7006d4bf524a637e2afb5edad2a20d1e22810d)
+- Update changelog for v3.11.14 [`328e2a2`](https://github.com/michei69/pear-desktop/commit/328e2a2ffb8d494dea285854fcd66c879a8c54a6)
+- chore: bump to v3.11.15 [`4b469b5`](https://github.com/michei69/pear-desktop/commit/4b469b566cbe03be4c721b24d697baf3449d933e)
+
 #### [v3.11.14](https://github.com/michei69/pear-desktop/compare/v3.11.13...v3.11.14)
+
+> 23 June 2026
 
 - fix: linux build [`a2d0fae`](https://github.com/michei69/pear-desktop/commit/a2d0faeec510c7c375872b46f0f22e6213b3a201)
 - Update changelog for v3.11.13 [`185a66a`](https://github.com/michei69/pear-desktop/commit/185a66af3bab3e68fc005c7401b6a43366271bb5)
