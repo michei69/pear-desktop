@@ -636,17 +636,22 @@ export const mainMenuTemplate = async (
                 config.edit();
               },
             },
-            is.windows() ? {
-              label: t(
-                'main.menu.options.submenu.advanced-options.submenu.force-smtc',
-              ),
-              type: 'checkbox',
-              checked: config.get('options.forceSmtc'),
-              click(item: MenuItem) {
-                // TODO: prompt restart
-                config.setMenuOption('options.forceSmtc', item.checked);
-              },
-            } : {},
+            ...((is.windows()
+            ? 
+              [
+                {
+                  label: t(
+                    'main.menu.options.submenu.advanced-options.submenu.force-smtc',
+                  ),
+                  type: 'checkbox',
+                  checked: config.get('options.forceSmtc'),
+                  click(item: MenuItem) {
+                    // TODO: prompt restart
+                    config.setMenuOption('options.forceSmtc', item.checked);
+                  },
+                },
+              ]
+            : []) satisfies Electron.MenuItemConstructorOptions[]),
           ],
         },
       ],
