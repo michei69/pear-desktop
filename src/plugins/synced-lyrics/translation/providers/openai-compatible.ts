@@ -6,8 +6,8 @@ import {
   parseLinesFromJson,
 } from '../prompt';
 
-import type { TranslationProvider } from '../types';
 import type { OpenAICompatibleApiMode } from '../../types';
+import type { TranslationProvider } from '../types';
 
 const normalizeChatCompletionsUrl = (baseUrl: string): string => {
   const trimmed = baseUrl.replace(/\/+$/, '');

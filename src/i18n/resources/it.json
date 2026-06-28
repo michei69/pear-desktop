@@ -70,7 +70,7 @@
       "update-available": {
         "buttons": {
           "disable": "Disattiva gli aggiornamenti",
-          "download": "Scarica",
+          "download": "Download",
           "ok": "OK"
         },
         "detail": "È disponibile una nuova versione scaricabile all'indirizzo {{downloadLink}}",
@@ -109,8 +109,7 @@
                   "title": "Imposta il proxy"
                 }
               },
-              "toggle-dev-tools": "Attiva/disattiva DevTools",
-              "force-smtc": "Forza l'uso di SMTC esterno"
+              "toggle-dev-tools": "Attiva/disattiva DevTools"
             }
           },
           "always-on-top": "Sempre in cima",
@@ -145,27 +144,25 @@
               "disabled": "Disabilita",
               "enabled-and-hide-app": "Abilita e nascondi l'app",
               "enabled-and-show-app": "Abilita e mostra l'app",
-              "move-to-current-desktop": "Sposta sul desktop virtuale corrente alla visualizzazione",
-              "play-pause-on-click": "Riproduci/Pausa al click sull'icona",
-              "force-white-icons": "Forza l'uso di icone bianche"
+              "play-pause-on-click": "Riproduci/Pausa al click sull'icona"
             }
           },
           "visual-tweaks": {
             "label": "Miglioramenti visivi",
             "submenu": {
-              "like-buttons": {
-                "default": "Predefinito",
-                "force-show": "Forza la visualizzazione",
-                "hide": "Nascondi",
-                "swap": "Scambia l'ordine dei pulsanti like",
-                "label": "Pulsanti Like"
-              },
               "custom-window-title": {
                 "label": "Personalizza titolo finestra",
                 "prompt": {
                   "label": "Inserisci un titolo della finestra personalizzato: (lascia vuoto per disattivare)",
                   "placeholder": "Esempio: {{applicationName}}"
                 }
+              },
+              "like-buttons": {
+                "default": "Predefinito",
+                "force-show": "Forza la visualizzazione",
+                "hide": "Nascondi",
+                "label": "Pulsanti Like",
+                "swap": "Scambia l'ordine dei pulsanti like"
               },
               "remove-upgrade-button": "Rimuovi il pulsante aggiorna",
               "theme": {
@@ -199,8 +196,8 @@
           "reload": "Aggiorna",
           "reset-zoom": "Ripristina dimensione",
           "toggle-fullscreen": "Attiva/disattiva Schermo Intero",
-          "zoom-in": "Ingrandisci",
-          "zoom-out": "Rimpicciolisci"
+          "zoom-in": "Zoom in",
+          "zoom-out": "Zoom out"
         }
       }
     },
@@ -213,25 +210,14 @@
       "show": "Mostra finestra",
       "tooltip": {
         "default": "{{applicationName}}",
-        "with-song-info": "{{applicationName}}: {{artista}} - {{titolo}}"
-      },
-      "like": "Mi piace",
-      "dislike": "Non mi piace",
-      "unlike": "diversamente da",
-      "undislike": "Non mi piace più"
+        "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
+      }
     }
   },
   "plugins": {
     "ad-speedup": {
       "description": "Se viene riprodotto un annuncio, l'audio viene disattivato e viene impostata la velocità di riproduzione su 16x",
       "name": "Accelerazione ad"
-    },
-    "adblocker": {
-      "description": "Blocca tutti gli annunci e i tracker",
-      "menu": {
-        "blocker": "Blocco"
-      },
-      "name": "Blocco pubblicità"
     },
     "album-actions": {
       "description": "Aggiunge i pulsanti Undislike, Dislike, Like e Unlike a tutti i brani di una playlist o di un album",
@@ -268,7 +254,7 @@
         "opacity": {
           "label": "Trasparenza",
           "submenu": {
-            "percent": "{{opacità}}%"
+            "percent": "{{opacity}}%"
           }
         },
         "quality": {
@@ -297,7 +283,7 @@
     },
     "amuse": {
       "description": "Aggiunge il supporto a {{applicationName}} per il widget Amuse Now Playing di 6K Labs",
-      "name": "Divertire",
+      "name": "Amuse",
       "response": {
         "query": "Il server API di Amuse è in funzione. GET /query per ottenere informazioni sui brani."
       }
@@ -327,33 +313,33 @@
           }
         },
         "hostname": {
-          "label": "Nome host"
-        },
-        "port": {
-          "label": "Porta"
+          "label": "Hostname"
         },
         "https": {
           "label": "HTTPS & Certificati",
           "submenu": {
+            "cert": {
+              "dialogTitle": "Seleziona file di certificato HTTPS",
+              "label": "File di certificato (.crt/.pem)"
+            },
             "enable-https": {
               "label": "Abilita HTTPS"
             },
-            "cert": {
-              "label": "File di certificato (.crt/.pem)",
-              "dialogTitle": "Seleziona file di certificato HTTPS"
-            },
             "key": {
-              "label": "File della chiave privata (.key/.pem)",
-              "dialogTitle": "Seleziona il file della chiave privata HTTPS"
+              "dialogTitle": "Seleziona il file della chiave privata HTTPS",
+              "label": "File della chiave privata (.key/.pem)"
             }
           }
+        },
+        "port": {
+          "label": "Porta"
         }
       },
-      "name": "Server API [Beta]",
+      "name": "API Server [Beta]",
       "prompt": {
         "hostname": {
           "label": "Inserisci il nome host (ad esempio 0.0.0.0) per il server API:",
-          "title": "Nome host"
+          "title": "Hostname"
         },
         "port": {
           "label": "Inserisci la porta per il server API:",
@@ -380,12 +366,12 @@
       "name": "Adattatore proxy di autenticazione",
       "prompt": {
         "hostname": {
-          "title": "Nome host del proxy",
-          "label": "Inserire hostname del server proxy locale (richiede riavvio):"
+          "label": "Inserire hostname del server proxy locale (richiede riavvio):",
+          "title": "Nome host del proxy"
         },
         "port": {
-          "title": "Porta Proxy",
-          "label": "Inserire porta del server proxy locale (richiede riavvio):"
+          "label": "Inserire porta del server proxy locale (richiede riavvio):",
+          "title": "Porta Proxy"
         }
       }
     },
@@ -422,14 +408,14 @@
     },
     "clock": {
       "description": "Aggiungi un orologio alla barra di navigazione",
-      "name": "Orologio",
       "menu": {
         "format": {
-          "label": "Formato",
+          "24-hour-format": "Formato in 24 ore",
           "display-seconds": "Mostra Secondi",
-          "24-hour-format": "Formato in 24 ore"
+          "label": "Formato"
         }
-      }
+      },
+      "name": "Orologio"
     },
     "compact-sidebar": {
       "description": "Imposta sempre la barra laterale in modalità compatta",
@@ -503,7 +489,7 @@
           }
         }
       },
-      "name": "Presenza Ricca di Discord",
+      "name": "Discord Rich Presence",
       "prompt": {
         "set-inactivity-timeout": {
           "label": "Inserisci il timeout di inattività in secondi:",
@@ -535,7 +521,7 @@
           "converting": "Sto convertendo…",
           "done": "Fatto: {{filePath}}",
           "download-info": "Sto scaricando {{artist}} - {{title}} [{{videoId}}",
-          "download-progress": "Scaricamento: {{percent}}%",
+          "download-progress": "Download: {{percent}}%",
           "downloading": "Sto scaricando…",
           "downloading-counter": "Sto scaricando {{current}}/{{total}}…",
           "downloading-playlist": "Sto scaricando la playlist \"{{playlistTitle}}\" - {{playlistSize}} brani({{playlistId}})",
@@ -616,7 +602,7 @@
       "menu": {
         "romanized-lyrics": "Alfabeto latino per i brani con testo in caratteri orientali"
       },
-      "name": "Testi Genius",
+      "name": "Lyrics Genius",
       "renderer": {
         "fetched-lyrics": "Testi recuperati per Genius"
       }
@@ -651,7 +637,7 @@
           "host": "Connesso come Host"
         }
       },
-      "name": "Musica Insieme [Beta]",
+      "name": "Music Together [Beta]",
       "toast": {
         "add-song-failed": "Impossibile aggiungere il brano",
         "closed": "Music Together chiuso",
@@ -691,7 +677,6 @@
           "label": "Impostazioni dell'interazione",
           "submenu": {
             "hide-button-text": "Nascondi il testo del pulsante",
-            "hover-controls": "Mostra mini-player al passaggio del mouse sul tray",
             "refresh-on-play-pause": "Refresh quando si preme Riproduci/Pausa",
             "tray-controls": "Apri/chiudi cliccando l'icona nel tray"
           }
@@ -794,8 +779,8 @@
         "listenbrainz": {
           "token": "Inserire il token utente per ListenBrainz"
         },
-        "scrobble-alternative-title": "Usa titoli alternativi",
         "scrobble-alternative-artist": "Usa artisti alternativi",
+        "scrobble-alternative-title": "Usa titoli alternativi",
         "scrobble-other-media": "Scrobble altri media"
       },
       "name": "Scrobbler",
@@ -850,75 +835,6 @@
         "not-found": "⚠️ Nessun testo trovato per questa canzone."
       },
       "menu": {
-        "preferred-provider": {
-          "label": "Provider preferito",
-          "tooltip": "Scegli quale provider predefinito utilizzare",
-          "none": {
-            "label": "Nessuno",
-            "tooltip": "Nessun provider preferito"
-          }
-        },
-        "default-text-string": {
-          "label": "Carattere predefinito tra i testi",
-          "tooltip": "Scegliere il carattere predefinito da utilizzare per l'intervallo tra i testi"
-        },
-        "line-effect": {
-          "label": "Effetto linea",
-          "submenu": {
-            "fancy": {
-              "label": "Fantasia",
-              "tooltip": "Usa effetti grandi, simili a quelli di un'app sulla riga attuale"
-            },
-            "focus": {
-              "label": "Fuoco",
-              "tooltip": "Rendi bianca solo la riga corrente"
-            },
-            "offset": {
-              "label": "Offset",
-              "tooltip": "Offset a destra della riga corrente"
-            },
-            "scale": {
-              "label": "Ingrandimento",
-              "tooltip": "Ingrandisci la linea corrente"
-            }
-          },
-          "tooltip": "Scegli l'effetto da applicare alla linea corrente"
-        },
-        "lyrics-font-size": {
-          "label": "Dimensione font dei testi",
-          "submenu": {
-            "small": {
-              "label": "Piccolo",
-              "tooltip": "Usa una dimensione dei testi più compatta"
-            },
-            "medium": {
-              "label": "Medio",
-              "tooltip": "Usa una dimensione dei testi bilanciata"
-            },
-            "large": {
-              "label": "Grande",
-              "tooltip": "Usa la dimensione originale più grande dei testi"
-            }
-          },
-          "tooltip": "Scegli la dimensione del testo dei testi"
-        },
-        "precise-timing": {
-          "label": "Rendi i testi perfettamente sincronizzati",
-          "tooltip": "Calcola al millisecondo la visualizzazione della riga successiva (può avere un piccolo impatto sulle prestazioni)"
-        },
-        "romanization": {
-          "label": "Testi in caratteri occidentali",
-          "tooltip": "Qualora il testo fosse scritto in una lingua non occidentale, prova a visualizzarlo in caratteri latini."
-        },
-        "show-lyrics-even-if-inexact": {
-          "label": "Mostra le lyric anche se incorrette",
-          "tooltip": "Se il brano non viene trovato, il plugin riprova con un'altra query di ricerca.\nIl risultato del secondo tentativo potrebbe non essere esatto."
-        },
-        "show-time-codes": {
-          "label": "Mostra time code",
-          "tooltip": "Mostra i codici temporali accanto ai testi"
-        },
-        
         "convert-chinese-character": {
           "label": "Convertire i caratteri Cinesi",
           "submenu": {
@@ -937,124 +853,55 @@
           },
           "tooltip": "Converti carettere Cinese da Tradizionale a Semplificato"
         },
-        "translation": {
-          "label": "Traduzione testi",
-          "tooltip": "Traduci i testi e mostra il risultato tradotto riga per riga.",
-          "enabled": {
-            "label": "Abilita traduzione",
-            "tooltip": "Mostra una riga tradotta sotto ogni riga originale del testo."
-          },
-          "provider": {
-            "label": "Fornitore",
-            "tooltip": "Quale servizio usare per la traduzione."
-          },
-          "target-language": {
-            "label": "Lingua di destinazione",
-            "tooltip": "La lingua in cui tradurre i testi.",
-            "options": {
-              "auto": "Follow app language",
-              "zh-CN": "简体中文",
-              "zh-TW": "繁體中文",
-              "en": "English",
-              "ja": "日本語",
-              "ko": "한국어",
-              "fr": "Français",
-              "de": "Deutsch",
-              "es": "Español",
-              "pt-BR": "Português (Brasil)",
-              "pt-PT": "Português (Portugal)",
-              "it": "Italiano",
-              "nl": "Nederlands",
-              "ru": "Русский",
-              "uk": "Українська",
-              "pl": "Polski",
-              "tr": "Türkçe",
-              "ar": "العربية",
-              "he": "עברית",
-              "fa": "فارسی",
-              "hi": "हिन्दी",
-              "bn": "বাংলা",
-              "ur": "اردو",
-              "ta": "தமிழ்",
-              "te": "తెలుగు",
-              "mr": "मराठी",
-              "id": "Bahasa Indonesia",
-              "ms": "Bahasa Melayu",
-              "vi": "Tiếng Việt",
-              "th": "ไทย",
-              "fil": "Filipino",
-              "sw": "Kiswahili",
-              "sv": "Svenska",
-              "no": "Norsk",
-              "da": "Dansk",
-              "fi": "Suomi",
-              "cs": "Čeština",
-              "ro": "Română",
-              "hu": "Magyar",
-              "el": "Ελληνικά",
-              "bg": "Български",
-              "sr": "Српски",
-              "hr": "Hrvatski",
-              "sk": "Slovenčina",
-              "lt": "Lietuvių"
+        "default-text-string": {
+          "label": "Carattere predefinito tra i testi",
+          "tooltip": "Scegliere il carattere predefinito da utilizzare per l'intervallo tra i testi"
+        },
+        "line-effect": {
+          "label": "Effetto linea",
+          "submenu": {
+            "fancy": {
+              "label": "Fantasia",
+              "tooltip": "Usa effetti grandi, simili a quelli di un'app sulla riga attuale"
+            },
+            "focus": {
+              "label": "Focus",
+              "tooltip": "Rendi bianca solo la riga corrente"
+            },
+            "offset": {
+              "label": "Offset",
+              "tooltip": "Offset a destra della riga corrente"
+            },
+            "scale": {
+              "label": "Ingrandimento",
+              "tooltip": "Ingrandisci la linea corrente"
             }
           },
-          "configure": {
-            "label": "Configura chiave API e modello...",
-            "tooltip": "Imposta le opzioni di traduzione specifiche del fornitore."
-          },
-          "clear-cache": {
-            "label": "Cancella cache traduzioni",
-            "tooltip": "Elimina tutte le traduzioni memorizzate nella cache su disco."
-          },
-          "providers": {
-            "shared": {
-              "api-key": "Chiave API",
-              "model": "Modello"
-            },
-            "openai-compatible": {
-              "name": "OpenAI compatibile",
-              "prompt-title": "Impostazioni OpenAI compatibile",
-              "prompt-label": "Usa server compatibili con OpenAI, incluso Ollama (URL base http://127.0.0.1:11434/v1, modalità API auto o chat-completions).",
-              "base-url": "URL base",
-              "api-mode": "Modalità API (responses / auto / chat-completions)"
-            },
-            "anthropic": {
-              "name": "Antropico Claude",
-              "prompt-title": "Impostazioni Anthropic",
-              "prompt-label": "Usa l'API nativa Anthropic Messages."
-            },
-            "gemini": {
-              "name": "Google Gemini",
-              "prompt-title": "Impostazioni Gemini",
-              "prompt-label": "Usa l'API Generative Language di Google (generateContent)."
-            },
-            "local-cli": {
-              "name": "CLI Locale",
-              "prompt-title": "Impostazioni CLI Locale",
-              "prompt-label": "Usa Claude Code, Codex o Gemini CLI con accesso locale. Il comando e il modello sono automatici; la CLI usa il proprio accesso predefinito.",
-              "engine": "CLI Locale",
-              "engine-claude": "Claude Code",
-              "engine-codex": "Codice",
-              "engine-gemini": "Gemini CLI",
-              "command": "Comando",
-              "timeout": "Timeout secondi (15-600)"
-            },
-            "google-translate": {
-              "name": "Google Traduttore",
-              "prompt-title": "Impostazioni Google Translate",
-              "prompt-label": "Usa l'endpoint gratuito non ufficiale di Google Translate. Nessuna chiave API richiesta, ma Google potrebbe limitare la frequenza.",
-              "host": "Ospite"
-            }
-          }
+          "tooltip": "Scegli l'effetto da applicare alla linea corrente"
         },
-        "use-ytm-lyrics-without-proxy": {
-          "label": "Usa i testi di YTM senza proxy",
-          "tooltip": "Salta il proxy di navigazione YTM e chiama YouTube Music direttamente usando la sessione autenticata dell'app. Utile se ti fidi della tua rete/regione per consentire chiamate di navigazione dirette."
+        "precise-timing": {
+          "label": "Rendi i testi perfettamente sincronizzati",
+          "tooltip": "Calcola al millisecondo la visualizzazione della riga successiva (può avere un piccolo impatto sulle prestazioni)"
         },
-        "show-custom-search-button": {
-          "label": "Mostra il pulsante di ricerca personalizzato",
-          "tooltip": "Mostra un pulsante di ricerca nel selettore dei testi che ti permette di sovrascrivere la query di ricerca e l'artista per la canzone corrente."
+        "preferred-provider": {
+          "label": "Provider preferito",
+          "none": {
+            "label": "Nessuno",
+            "tooltip": "Nessun provider preferito"
+          },
+          "tooltip": "Scegli quale provider predefinito utilizzare"
+        },
+        "romanization": {
+          "label": "Testi in caratteri occidentali",
+          "tooltip": "Qualora il testo fosse scritto in una lingua non occidentale, prova a visualizzarlo in caratteri latini."
+        },
+        "show-lyrics-even-if-inexact": {
+          "label": "Mostra le lyric anche se incorrette",
+          "tooltip": "Se il brano non viene trovato, il plugin riprova con un'altra query di ricerca.\nIl risultato del secondo tentativo potrebbe non essere esatto."
+        },
+        "show-time-codes": {
+          "label": "Mostra time code",
+          "tooltip": "Mostra i codici temporali accanto ai testi"
         }
       },
       "name": "Testi sincronizzati",
@@ -1078,12 +925,11 @@
     },
     "transparent-player": {
       "description": "Rende trasparente la finestra del programma",
-      "name": "Player Trasparente",
       "menu": {
         "opacity": {
           "label": "Opacità",
           "submenu": {
-            "percent": "{{opacità}}%"
+            "percent": "{{opacity}}%"
           }
         },
         "type": {
@@ -1091,15 +937,16 @@
           "submenu": {
             "acrylic": "Acrilico",
             "mica": "Mica",
-            "tabbed": "In scheda",
-            "none": "Nessuno"
+            "none": "Nessuno",
+            "tabbed": "In scheda"
           }
         }
-      }
+      },
+      "name": "Player Trasparente"
     },
     "tuna-obs": {
       "description": "Integrazione con il plugin OBS Tuna",
-      "name": "Tonno OBS"
+      "name": "Tuna OBS"
     },
     "unobtrusive-player": {
       "description": "Evita che il player si apra automaticamente durante la riproduzione di un brano",
@@ -1138,25 +985,6 @@
         "visualizer-type": "Tipo di visualizzazione"
       },
       "name": "Visualizzatore grafico"
-    },
-    "audio-only": {
-      "description": "Forza la modalità solo audio — blocca tutti i flussi video a livello di rete e player per risparmiare RAM e larghezza di banda",
-      "name": "Solo Audio"
-    },
-    "playback-recovery": {
-      "description": "Ripristina automaticamente da stati di riproduzione bloccati, in stallo o morti",
-      "menu": {
-        "log-to-console": "Registra gli eventi di ripristino nella console"
-      },
-      "name": "Ripristino Riproduzione"
-    },
-    "playlist-search": {
-      "description": "Aggiunge un campo di ricerca per filtrare le playlist nella barra laterale e nella finestra di dialogo Aggiungi a playlist",
-      "name": "Ricerca playlist",
-      "templates": {
-        "search-placeholder": "Cerca playlist",
-        "no-results": "Nessuna playlist trovata"
-      }
     }
   }
 }

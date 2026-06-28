@@ -1,7 +1,14 @@
+import fs from 'node:fs';
+import { tmpdir } from 'node:os';
 import path from 'node:path';
 import url from 'node:url';
-import fs from 'node:fs';
 
+import ErrorHtmlAsset from '@assets/error.html?asset';
+import {
+  enhanceWebRequest,
+  type BetterSession,
+} from '@jellybrick/electron-better-web-request';
+import { deepmerge } from 'deepmerge-ts';
 import {
   BrowserWindow,
   app,
@@ -14,57 +21,45 @@ import {
   protocol,
   type BrowserWindowConstructorOptions,
 } from 'electron';
-import {
-  enhanceWebRequest,
-  type BetterSession,
-} from '@jellybrick/electron-better-web-request';
+import electronDebug from 'electron-debug';
 import is from 'electron-is';
 import unhandled from 'electron-unhandled';
 import { autoUpdater } from 'electron-updater';
-import electronDebug from 'electron-debug';
-import { parse } from 'node-html-parser';
-import { deepmerge } from 'deepmerge-ts';
 import { deepEqual } from 'fast-equals';
-
+import { parse } from 'node-html-parser';
+import { languageResources } from 'virtual:i18n';
 import { allPlugins, mainPlugins } from 'virtual:plugins';
 
-import { languageResources } from 'virtual:i18n';
-
 import * as config from '@/config';
-
-import { refreshMenu, setApplicationMenu } from '@/menu';
-import { fileExists, injectCSS, injectCSSAsFile } from '@/plugins/utils/main';
-import { isTesting } from '@/utils/testing';
-import { setUpTray } from '@/tray';
-import { registerCallback, setupSongInfo, SongInfoEvent } from '@/providers/song-info';
-import { restart, setupAppControls } from '@/providers/app-controls';
-import {
-  APP_PROTOCOL,
-  handleProtocol,
-  setupProtocolHandler,
-} from '@/providers/protocol-handler';
-
-import musicPlayerCss from '@/music-player.css?inline';
-
+import { APPLICATION_NAME, loadI18n, setLanguage, t } from '@/i18n';
 import {
   forceLoadMainPlugin,
   forceUnloadMainPlugin,
   getAllLoadedMainPlugins,
   loadAllMainPlugins,
 } from '@/loader/main';
-
-import { LoggerPrefix } from '@/utils';
-import { showOnCurrentDesktop } from '@/window-utils';
-import { APPLICATION_NAME, loadI18n, setLanguage, t } from '@/i18n';
-
-import ErrorHtmlAsset from '@assets/error.html?asset';
-
+import { refreshMenu, setApplicationMenu } from '@/menu';
+import musicPlayerCss from '@/music-player.css?inline';
 import { defaultAuthProxyConfig } from '@/plugins/auth-proxy-adapter/config';
+import { fileExists, injectCSS, injectCSSAsFile } from '@/plugins/utils/main';
+import { restart, setupAppControls } from '@/providers/app-controls';
+import {
+  APP_PROTOCOL,
+  handleProtocol,
+  setupProtocolHandler,
+} from '@/providers/protocol-handler';
+import {
+  registerCallback,
+  setupSongInfo,
+  SongInfoEvent,
+} from '@/providers/song-info';
+import { setUpTray } from '@/tray';
+import { LoggerPrefix } from '@/utils';
+import { isTesting } from '@/utils/testing';
+import { showOnCurrentDesktop } from '@/window-utils';
 
+import type { RepeatMode } from '@/types/datahost-get-state';
 import type { PluginConfig } from '@/types/plugins';
-
-import { tmpdir } from 'node:os';
-import { RepeatMode } from './types/datahost-get-state';
 
 // Catch errors and log them
 unhandled({
@@ -112,6 +107,7 @@ protocol.registerSchemesAsPrivileged([
 
 // Ozone platform hint: Required for Wayland support
 app.commandLine.appendSwitch('ozone-platform-hint', 'auto');
+
 // SharedArrayBuffer: Required for downloader (@ffmpeg/core-mt)
 // OverlayScrollbar: Required for overlay scrollbars
 // UseOzonePlatform: Required for Wayland support
@@ -120,97 +116,128 @@ app.commandLine.appendSwitch(
   'enable-features',
   'OverlayScrollbar,SharedArrayBuffer,UseOzonePlatform,WaylandWindowDecorations',
 );
+
 // Disable Fluent Scrollbar (for OverlayScrollbar)
-app.commandLine.appendSwitch('disable-features', 'FluentScrollbar');
-if (config.get('options.disableHardwareAcceleration')) {
-  if (is.dev()) {
-    console.log('Disabling hardware acceleration');
+const disabledFeatures = ['FluentScrollbar'];
+let disableHardwareAcceleration = config.get(
+  'options.disableHardwareAcceleration',
+);
+
+// Linux specific fixes
+if (is.linux()) {
+  // Stops chromium from launching its own MPRIS service
+  if (await config.plugins.isEnabled('shortcuts')) {
+    disabledFeatures.push('MediaSessionService');
   }
 
+  // https://github.com/electron/electron/issues/15947
+  if (await config.plugins.isEnabled('transparent-player')) {
+    disableHardwareAcceleration = true;
+    app.commandLine.appendSwitch('enable-transparent-visuals');
+    app.commandLine.appendSwitch('enable-unsafe-swiftshader');
+  }
+
+  // Overrides WM_CLASS for X11 to correspond to icon filename
+  app.setName(
+    'com.github.th-ch.\u0079\u006f\u0075\u0074\u0075\u0062\u0065\u002d\u006d\u0075\u0073\u0069\u0063',
+  );
+  // for wayland
+  app.commandLine.appendSwitch(
+    'class',
+    'com.github.th-ch.\u0079\u006f\u0075\u0074\u0075\u0062\u0065\u002d\u006d\u0075\u0073\u0069\u0063',
+  );
+}
+
+if (disableHardwareAcceleration) {
+  if (is.dev()) console.log('Disabling hardware acceleration');
   app.disableHardwareAcceleration();
 }
 
-if (is.linux()) {
-  // Overrides WM_CLASS for X11 and Wayland to correspond to icon filename
-  app.setName('com.github.th_ch.pear_music');
+// Apply disabled features
+app.commandLine.appendSwitch('disable-features', disabledFeatures.join(','));
 
-  // Stops chromium from launching its own MPRIS service
-  if (await config.plugins.isEnabled('shortcuts')) {
-    app.commandLine.appendSwitch('disable-features', 'MediaSessionService');
-  }
-}
+// Windows SMTC support via node-smtc
 if (is.windows()) {
-  // prevent electron's smtc
-  if (config.get("options.forceSmtc")) {
-    import("node-smtc").then((mod) => {
-      const SMTCPlayer = mod.default
-      console.log("disabled mediasess")
-      app.commandLine.appendSwitch('disable-features', 'HardwareMediaKeyHandling');
+  if (config.get('options.forceSmtc')) {
+    import('node-smtc').then((mod) => {
+      const SMTCPlayer = mod.default;
+      console.log('disabled mediasess');
+      app.commandLine.appendSwitch(
+        'disable-features',
+        'HardwareMediaKeyHandling',
+      );
       app.commandLine.appendSwitch('disable-features', 'MediaSessionService');
-  
-      const smtc = new SMTCPlayer()
-      smtc.addListener("play", () => {
-        mainWindow?.webContents.send("peard:play")
-      })
-      smtc.addListener("pause", () => {
-        mainWindow?.webContents.send("peard:pause")
-      })
-      smtc.addListener("next", () => {
-        mainWindow?.webContents.send("peard:next-video")
-      })
-      smtc.addListener("previous", () => {
-        mainWindow?.webContents.send("peard:previous-video")
-      })
-      smtc.addListener("shuffle", () => {
-        mainWindow?.webContents.send("peard:shuffle")
-        mainWindow?.webContents.send("peard:get-shuffle")
-      })
-      smtc.addListener("repeat", () => {
-        mainWindow?.webContents.send("peard:switch-repeat")
-      })
-      smtc.addListener("positionchange", (ms: number) => {
-        mainWindow?.webContents.send("peard:seek-to", ms / 1000)
-      })
-      ipcMain.on("peard:get-shuffle-response", (_, val: boolean) => {
-        smtc.setShuffle(val)
-      })
-      ipcMain.on("peard:shuffle-changed", (_, val: boolean) => {
-        smtc.setShuffle(val)
-      })
-      ipcMain.on("peard:repeat-changed", (_, repeatMode: RepeatMode) => {
-        smtc.setAutoRepeat(repeatMode == "NONE" ? "none" : repeatMode == "ONE" ? "track" : "list")
-      })
+
+      const smtc = new SMTCPlayer();
+      smtc.addListener('play', () => {
+        mainWindow?.webContents.send('peard:play');
+      });
+      smtc.addListener('pause', () => {
+        mainWindow?.webContents.send('peard:pause');
+      });
+      smtc.addListener('next', () => {
+        mainWindow?.webContents.send('peard:next-video');
+      });
+      smtc.addListener('previous', () => {
+        mainWindow?.webContents.send('peard:previous-video');
+      });
+      smtc.addListener('shuffle', () => {
+        mainWindow?.webContents.send('peard:shuffle');
+        mainWindow?.webContents.send('peard:get-shuffle');
+      });
+      smtc.addListener('repeat', () => {
+        mainWindow?.webContents.send('peard:switch-repeat');
+      });
+      smtc.addListener('positionchange', (ms: number) => {
+        mainWindow?.webContents.send('peard:seek-to', ms / 1000);
+      });
+      ipcMain.on('peard:get-shuffle-response', (_, val: boolean) => {
+        smtc.setShuffle(val);
+      });
+      ipcMain.on('peard:shuffle-changed', (_, val: boolean) => {
+        smtc.setShuffle(val);
+      });
+      ipcMain.on('peard:repeat-changed', (_, repeatMode: RepeatMode) => {
+        return smtc.setAutoRepeat(
+          repeatMode == 'NONE'
+            ? 'none'
+            : repeatMode == 'ONE'
+              ? 'track'
+              : 'list',
+        );
+      });
       registerCallback((songInfo, event) => {
         if (event === SongInfoEvent.VideoSrcChanged) {
-          smtc.setAlbumArtist(songInfo.artist)
-          smtc.setAlbumTitle(songInfo.album ?? "")
-          smtc.setArtist(songInfo.artist)
-          smtc.setTitle(songInfo.title)
+          smtc.setAlbumArtist(songInfo.artist);
+          smtc.setAlbumTitle(songInfo.album ?? '');
+          smtc.setArtist(songInfo.artist);
+          smtc.setTitle(songInfo.title);
           if (songInfo.image) {
-            const p = path.join(tmpdir(), "thumb.png")
-            fs.writeFileSync(p, songInfo.image.toPNG())
-            smtc.setThumbnail(p)
+            const p = path.join(tmpdir(), 'thumb.png');
+            fs.writeFileSync(p, songInfo.image.toPNG());
+            smtc.setThumbnail(p);
           }
-          // smtc.setThumbnail(songInfo.imageSrc ?? "")
-          smtc.setStartTime(0)
-          smtc.setMinSeekTime(0)
-          smtc.setPosition(0)
-          smtc.setEndTime(songInfo.songDuration * 1000)
-          smtc.setMaxSeekTime(songInfo.songDuration * 1000)
+          smtc.setStartTime(0);
+          smtc.setMinSeekTime(0);
+          smtc.setPosition(0);
+          smtc.setEndTime(songInfo.songDuration * 1000);
+          smtc.setMaxSeekTime(songInfo.songDuration * 1000);
         }
-    
+
         if (event === SongInfoEvent.PlayOrPaused) {
-          smtc.setPosition((songInfo.elapsedSeconds ?? 0) * 1000)
-          smtc.setPlaybackStatus(songInfo.isPaused ? "paused" : "playing")
+          smtc.setPosition((songInfo.elapsedSeconds ?? 0) * 1000);
+          smtc.setPlaybackStatus(songInfo.isPaused ? 'paused' : 'playing');
         }
-    
+
         if (event === SongInfoEvent.TimeChanged) {
-          smtc.setPosition((songInfo.elapsedSeconds ?? 0) * 1000)
+          smtc.setPosition((songInfo.elapsedSeconds ?? 0) * 1000);
         }
-      })
-      smtc.setAppMediaId("com.github.th-ch.\u0079\u006f\u0075\u0074\u0075\u0062\u0065\u002d\u006d\u0075\u0073\u0069\u0063")
-      smtc.start()
-    })
+      });
+      smtc.setAppMediaId(
+        'com.github.th-ch.\u0079\u006f\u0075\u0074\u0075\u0062\u0065\u002d\u006d\u0075\u0073\u0069\u0063',
+      );
+      smtc.start();
+    });
   }
 }
 
@@ -479,10 +506,10 @@ async function createMainWindow() {
     const scaledY = windowY;
 
     if (
-      scaledX + scaledWidth / 2 < display.bounds.x - 8 || // Left
-      scaledX + scaledWidth / 2 > display.bounds.x + display.bounds.width || // Right
+      scaledX + (scaledWidth / 2) < display.bounds.x - 8 || // Left
+      scaledX + (scaledWidth / 2) > display.bounds.x + display.bounds.width || // Right
       scaledY < display.bounds.y - 8 || // Top
-      scaledY + scaledHeight / 2 > display.bounds.y + display.bounds.height // Bottom
+      scaledY + (scaledHeight / 2) > display.bounds.y + display.bounds.height // Bottom
     ) {
       // Window is offscreen
       if (is.dev()) {
@@ -598,10 +625,11 @@ async function createMainWindow() {
     }
   });
   win.webContents.on('will-redirect', (event) => {
-    const url = new URL(event.url);
+    const url = URL.parse(event.url);
 
     // Workarounds for regions where YTM is restricted
     if (
+      url &&
       url.hostname.endsWith('\u0079\u006f\u0075\u0074\u0075\u0062\u0065.com') &&
       url.pathname === '/premium'
     ) {
@@ -686,7 +714,7 @@ app.once('browser-window-created', (_event, win) => {
       if (
         errorCode !== -3 &&
         // Workaround for #2435
-        !validatedURL.includes('doubleclick.net')
+        !URL.parse(validatedURL)?.hostname?.includes('doubleclick.net')
       ) {
         // -3 is a false positive
         win.webContents.send('log', log);
@@ -786,7 +814,7 @@ app.whenReady().then(async () => {
           shortcutDetails.target !== appLocation ||
           shortcutDetails.appUserModelId !== appID
         ) {
-          // eslint-disable-next-line @typescript-eslint/only-throw-error
+          // oxlint-disable-next-line typescript/only-throw-error
           throw 'needUpdate';
         }
       } catch (error) {
@@ -863,18 +891,15 @@ app.whenReady().then(async () => {
   app.on('second-instance', (_, commandLine) => {
     const uri = `${APP_PROTOCOL}://`;
     const protocolArgv = commandLine.find((arg) => arg.startsWith(uri));
+
     if (protocolArgv) {
-      const lastIndex = protocolArgv.endsWith('/') ? -1 : undefined;
-      const command = protocolArgv.slice(uri.length, lastIndex);
-      if (is.dev()) {
-        console.debug(
-          LoggerPrefix,
-          t('main.console.second-instance.receive-command', { command }),
-        );
-      }
+      handleProtocol(protocolArgv.slice(uri.length));
+      return;
+    }
 
-      const splited = decodeURIComponent(command).split(' ');
+    const splited = commandLine.at(-1)?.split(':') ?? [];
 
+    if (splited.length > 1) {
       handleProtocol(splited.shift()!, ...splited);
       return;
     }
@@ -909,7 +934,7 @@ app.whenReady().then(async () => {
     }, 2000);
     autoUpdater.on('update-available', () => {
       const downloadLink =
-        'https://github.com/michei69/pear-desktop/releases/latest';
+        'https://github.com/pear-devs/pear-desktop/releases/latest';
       const dialogOptions: Electron.MessageBoxOptions = {
         type: 'info',
         buttons: [
@@ -972,56 +997,63 @@ app.whenReady().then(async () => {
     forceQuit = true;
   });
 
-  if (is.macOS() || config.get('options.tray')) {
-    mainWindow.on('close', (event) => {
-      // Hide the window instead of quitting (quit is available in tray options)
-      if (!forceQuit) {
-        event.preventDefault();
-        mainWindow!.hide();
-      }
-    });
-  }
+  mainWindow.on('close', (event) => {
+    if (is.macOS() && !forceQuit) {
+      event.preventDefault();
+      mainWindow?.hide();
+    }
+  });
 });
 
 function showUnresponsiveDialog(
-  win: BrowserWindow,
+  _win: Electron.BrowserWindow,
   details: Electron.RenderProcessGoneDetails,
 ) {
-  if (details) {
-    console.error(
-      LoggerPrefix,
-      t('main.console.unresponsive.details', {
-        error: JSON.stringify(details, null, '\t'),
-      }),
-    );
+  const buttons = [
+    t('main.dialog.unresponsive.buttons.wait'),
+    t('main.dialog.unresponsive.buttons.relaunch'),
+    t('main.dialog.unresponsive.buttons.quit'),
+  ];
+
+  const dialogOptions: Electron.MessageBoxOptions = {
+    type: 'info',
+    buttons,
+    title: t('main.dialog.unresponsive.title'),
+    message: t('main.dialog.unresponsive.message'),
+    detail: t('main.dialog.unresponsive.details', {
+      error: details.reason,
+    }),
+    defaultId: 0,
+    cancelId: 0,
+  };
+
+  let dialogPromise: Promise<Electron.MessageBoxReturnValue>;
+  if (mainWindow) {
+    dialogPromise = dialog.showMessageBox(mainWindow, dialogOptions);
+  } else {
+    dialogPromise = dialog.showMessageBox(dialogOptions);
   }
 
-  dialog
-    .showMessageBox(win, {
-      type: 'error',
-      title: t('main.dialog.unresponsive.title'),
-      message: t('main.dialog.unresponsive.message'),
-      detail: t('main.dialog.unresponsive.detail'),
-      buttons: [
-        t('main.dialog.unresponsive.buttons.wait'),
-        t('main.dialog.unresponsive.buttons.relaunch'),
-        t('main.dialog.unresponsive.buttons.quit'),
-      ],
-      cancelId: 0,
-    })
-    .then((result) => {
-      switch (result.response) {
-        case 1: {
-          restart();
-          break;
-        }
-
-        case 2: {
-          app.quit();
-          break;
-        }
+  dialogPromise.then((dialogOutput) => {
+    switch (dialogOutput.response) {
+      case 1: {
+        // Relaunch
+        restart();
+        break;
       }
-    });
+
+      case 2: {
+        // Quit
+        app.quit();
+        break;
+      }
+
+      // Wait
+      default: {
+        break;
+      }
+    }
+  });
 }
 
 function removeContentSecurityPolicy(
@@ -1037,7 +1069,7 @@ function removeContentSecurityPolicy(
     details.responseHeaders ??= {};
 
     // prettier-ignore
-    if (new URL(details.url).protocol === 'https:') {
+    if (URL.parse(details.url)?.protocol === 'https:') {
       // Remove the content security policy
       delete details.responseHeaders['content-security-policy-report-only'];
       delete details.responseHeaders['Content-Security-Policy-Report-Only'];
@@ -1056,21 +1088,18 @@ function removeContentSecurityPolicy(
   });
 
   // When multiple listeners are defined, apply them all
-  betterSession.webRequest.setResolver(
-    'onHeadersReceived',
-    (listeners) => {
-      return listeners.reduce(
-        async (accumulator, listener) => {
-          const acc = await accumulator;
-          if (acc.cancel) {
-            return acc;
-          }
+  betterSession.webRequest.setResolver('onHeadersReceived', (listeners) => {
+    return listeners.reduce(
+      async (accumulator, listener) => {
+        const acc = await accumulator;
+        if (acc.cancel) {
+          return acc;
+        }
 
-          const result = await listener.apply();
-          return { ...acc, ...result };
-        },
-        Promise.resolve({ cancel: false }),
-      );
-    },
-  );
+        const result = await listener.apply();
+        return { ...acc, ...result };
+      },
+      Promise.resolve({ cancel: false }),
+    );
+  });
 }

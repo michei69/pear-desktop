@@ -1,5 +1,5 @@
-import { createPlugin } from '@/utils';
 import { t } from '@/i18n';
+import { createPlugin } from '@/utils';
 
 import type { MusicPlayer } from '@/types/music-player';
 
@@ -108,8 +108,12 @@ export default createPlugin<
 
     hookMediaEvents() {
       const attachTo = (video: HTMLVideoElement) => {
-        if ((video as any).__pbRecovery) return;
-        (video as any).__pbRecovery = true;
+        if (
+          (video as HTMLVideoElement & { __pbRecovery?: boolean }).__pbRecovery
+        )
+          return;
+        (video as HTMLVideoElement & { __pbRecovery?: boolean }).__pbRecovery =
+          true;
 
         // Track healthy playback progress
         video.addEventListener('timeupdate', () => {
@@ -174,13 +178,16 @@ export default createPlugin<
           }
           for (const node of mutation.addedNodes) {
             if (node instanceof HTMLVideoElement) {
-              this.log('New video element detected — re-attaching recovery hooks');
+              this.log(
+                'New video element detected — re-attaching recovery hooks',
+              );
               this._attachMediaEvents?.(node);
             }
           }
         }
       });
-      const observerTarget = document.querySelector('ytmusic-app') || document.body;
+      const observerTarget =
+        document.querySelector('ytmusic-app') || document.body;
       this.videoObserver.observe(observerTarget, {
         childList: true,
         subtree: true,
@@ -234,7 +241,9 @@ export default createPlugin<
           const bufferEnd = video.buffered.end(video.buffered.length - 1);
           const ahead = bufferEnd - video.currentTime;
           if (ahead <= 0 && video.readyState < 3) {
-            this.log(`Buffer exhausted: ahead=${ahead.toFixed(1)}s, readyState=${video.readyState}`);
+            this.log(
+              `Buffer exhausted: ahead=${ahead.toFixed(1)}s, readyState=${video.readyState}`,
+            );
             this.attemptRecovery('buffer-exhausted');
           }
         }

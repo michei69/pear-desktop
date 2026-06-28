@@ -6,14 +6,14 @@ import {
 } from 'electron';
 import is from 'electron-is';
 
-import * as config from './config';
+import { loadI18n, setLanguage } from '@/i18n';
 
+import * as config from './config';
 import {
   forceLoadPreloadPlugin,
   forceUnloadPreloadPlugin,
   loadAllPreloadPlugins,
 } from './loader/preload';
-import { loadI18n, setLanguage } from '@/i18n';
 
 // @ts-expect-error dummy
 globalThis.customElements = { define() {} };
@@ -111,7 +111,7 @@ if (path) {
 
 // HACK: Wait for the script to be executed (with timeout safety)
 // Use a self-invoking async function to avoid top-level await (CJS output)
-void (async () => {
+(async () => {
   if (!path && !script) return;
 
   const startTime = Date.now();

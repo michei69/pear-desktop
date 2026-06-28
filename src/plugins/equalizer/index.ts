@@ -1,5 +1,5 @@
-import { createPlugin } from '@/utils';
 import { t } from '@/i18n';
+import { createPlugin } from '@/utils';
 
 import {
   defaultPresets,
@@ -8,8 +8,8 @@ import {
   type FilterConfig,
 } from './presets';
 
-import type { MenuContext } from '@/types/contexts';
 import type { MenuTemplate } from '@/menu';
+import type { MenuContext } from '@/types/contexts';
 
 export type EqualizerPluginConfig = {
   enabled: boolean;
@@ -58,7 +58,9 @@ export default createPlugin({
     async start({ getConfig }) {
       const config = await getConfig();
 
-      document.addEventListener('peard:audio-can-play', ({ detail: { audioSource, audioContext } }) => {
+      document.addEventListener(
+        'peard:audio-can-play',
+        ({ detail: { audioSource, audioContext } }) => {
           const filtersToApply = config.filters.concat(
             defaultPresets
               .filter((preset) => config.presets[preset])
@@ -91,7 +93,8 @@ export default createPlugin({
             appliedFilters.push(biquadFilter);
           });
           lastNode.connect(audioContext.destination);
-        });
+        },
+      );
     },
     stop() {
       appliedFilters.forEach((filter) => filter.disconnect());

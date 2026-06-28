@@ -1,20 +1,19 @@
 import { createSignal } from 'solid-js';
-
 import { render } from 'solid-js/web';
 
 import { defaultConfig } from '@/config/defaults';
-import { getSongMenu } from '@/providers/dom-elements';
-import { getSongInfo } from '@/providers/song-info-front';
 import { t } from '@/i18n';
 import {
   isAlbumOrPlaylist,
   isMusicOrVideoTrack,
 } from '@/plugins/utils/renderer/check';
+import { getSongMenu } from '@/providers/dom-elements';
+import { getSongInfo } from '@/providers/song-info-front';
 
 import { DownloadButton } from './templates/download';
 
-import type { RendererContext } from '@/types/contexts';
 import type { DownloaderPluginConfig } from './index';
+import type { RendererContext } from '@/types/contexts';
 
 let download: () => void;
 
@@ -105,15 +104,15 @@ export const onRendererLoad = ({
   );
 
   (async () => {
-    let popupContainer = document.querySelector('ytmusic-popup-container')
+    let popupContainer = document.querySelector('ytmusic-popup-container');
     while (!popupContainer) {
-      await new Promise(resolve => setTimeout(resolve, 100))
-      popupContainer = document.querySelector('ytmusic-popup-container')
+      await new Promise((resolve) => setTimeout(resolve, 100));
+      popupContainer = document.querySelector('ytmusic-popup-container');
     }
-    
+
     menuObserver.observe(popupContainer, {
       childList: true,
       subtree: true,
     });
-  })()
+  })();
 };

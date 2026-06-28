@@ -1,10 +1,7 @@
+import { getSongInfo } from '@/providers/song-info-front';
 import { createRenderer } from '@/utils';
 import { waitForElement } from '@/utils/wait-for-element';
 
-import { selectors, tabStates } from './utils';
-import { setConfig, setCurrentTime } from './renderer';
-import { refreshCurrentLyrics } from './store';
-import { getSongInfo } from '@/providers/song-info-front';
 import { setTranslationDebugSender, translationDebug } from './debug';
 import {
   netFetch,
@@ -12,11 +9,15 @@ import {
   setTranslateInvoke,
   translateInvoke,
 } from './ipc-bridge';
+import { disposeReactiveRoot } from './reactive-root';
+import { setConfig, setCurrentTime } from './renderer';
+import { refreshCurrentLyrics } from './store';
+import { selectors, tabStates } from './utils';
 
+import type { SyncedLyricsPluginConfig } from '../types';
+import type { SongInfo } from '@/providers/song-info';
 import type { RendererContext } from '@/types/contexts';
 import type { MusicPlayer } from '@/types/music-player';
-import type { SongInfo } from '@/providers/song-info';
-import type { SyncedLyricsPluginConfig } from '../types';
 
 export { netFetch, translateInvoke };
 
@@ -148,5 +149,6 @@ export const renderer = createRenderer<
       );
       this.videoDataDocumentListener = undefined;
     }
+    disposeReactiveRoot();
   },
 });

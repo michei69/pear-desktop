@@ -1,10 +1,5 @@
 import { Notification } from 'electron';
-
 import is from 'electron-is';
-
-import { notificationImage } from './utils';
-import interactive from './interactive';
-import { setupHoverPopup } from './hover-popup';
 
 import {
   registerCallback,
@@ -13,11 +8,17 @@ import {
   SongInfoEvent,
 } from '@/providers/song-info';
 
+import { setupHoverPopup } from './hover-popup';
+import interactive from './interactive';
+import { notificationImage } from './utils';
+
 import type { NotificationsPluginConfig } from './index';
 import type { BackendContext } from '@/types/contexts';
 
 let config: NotificationsPluginConfig;
-let songInfoCallback: ((songInfo: SongInfo, event: SongInfoEvent) => void) | null = null;
+let songInfoCallback:
+  | ((songInfo: SongInfo, event: SongInfoEvent) => void)
+  | null = null;
 let disposeHoverPopup: (() => void) | null = null;
 
 const notify = (info: SongInfo) => {

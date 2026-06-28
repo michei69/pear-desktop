@@ -1,13 +1,12 @@
 import is from 'electron-is';
 
+import { t } from '@/i18n';
 import { createPlugin } from '@/utils';
 
 import { sortSegments } from './segments';
 
-import { t } from '@/i18n';
-
-import type { GetPlayerResponse } from '@/types/get-player-response';
 import type { Segment, SkipSegment } from './types';
+import type { GetPlayerResponse } from '@/types/get-player-response';
 
 export type SponsorBlockPluginConfig = {
   enabled: boolean;
@@ -63,9 +62,7 @@ export default createPlugin({
           }
 
           const segments = (await resp.json()) as SkipSegment[];
-          return sortSegments(
-            segments.map((submission) => submission.segment),
-          );
+          return sortSegments(segments.map((submission) => submission.segment));
         } catch (error) {
           if (is.dev()) {
             console.log('error on sponsorblock request:', error);
@@ -119,7 +116,10 @@ export default createPlugin({
         if (found !== -1) {
           target.currentTime = currentSegments[found][1];
           if (window.electronIs.dev()) {
-            console.log('SponsorBlock: skipping segment', currentSegments[found]);
+            console.log(
+              'SponsorBlock: skipping segment',
+              currentSegments[found],
+            );
           }
         }
       }

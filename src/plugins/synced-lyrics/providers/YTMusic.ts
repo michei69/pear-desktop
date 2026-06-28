@@ -72,7 +72,7 @@ export class YTMusic implements LyricProvider {
         ? contents?.messageRenderer?.text?.runs?.map((it) => it.text).join('\n')
         : contents?.sectionListRenderer?.contents?.[0]
           ?.musicDescriptionShelfRenderer?.description?.runs?.map((it) =>
-            it.text
+            it.text,
           )?.join('\n')
       : undefined;
 
@@ -101,8 +101,8 @@ export class YTMusic implements LyricProvider {
 
   private millisToTime(millis: number) {
     const minutes = Math.floor(millis / 60000);
-    const seconds = Math.floor((millis - minutes * 60 * 1000) / 1000);
-    const remaining = (millis - minutes * 60 * 1000 - seconds * 1000) / 10;
+    const seconds = Math.floor((millis - (minutes * 60 * 1000)) / 1000);
+    const remaining = (millis - (minutes * 60 * 1000) - (seconds * 1000)) / 10;
     return `${minutes.toString().padStart(2, '0')}:${seconds
       .toString()
       .padStart(2, '0')}.${remaining.toString().padStart(2, '0')}`;
@@ -145,7 +145,9 @@ export class YTMusic implements LyricProvider {
   // network manager, which injects the visitor/auth tokens that the request
   // would otherwise be missing when called from regions where the unauthenticated
   // call is geo-restricted.
-  private async fetchBrowseDirect(browseId: string): Promise<BrowseData | null> {
+  private async fetchBrowseDirect(
+    browseId: string,
+  ): Promise<BrowseData | null> {
     const app = document.querySelector<MusicPlayerAppElement>('ytmusic-app');
     if (!app) {
       return null;

@@ -1,5 +1,5 @@
-import { createPlugin } from '@/utils';
 import { t } from '@/i18n';
+import { createPlugin } from '@/utils';
 
 import type { MusicPlayer } from '@/types/music-player';
 import type { VideoDataChanged } from '@/types/video-data-changed';
@@ -86,7 +86,12 @@ export default createPlugin<
 
       // 2. Use player API to set lowest quality (triggers audio-only path)
       try {
-        const moviePlayer = document.querySelector<any>('#movie_player');
+        const moviePlayer = document.querySelector<
+          HTMLVideoElement & {
+            setPlaybackQualityRange?: (quality: string) => void;
+            setPlaybackQuality?: (quality: string) => void;
+          }
+        >('#movie_player');
         if (moviePlayer) {
           if (moviePlayer.setPlaybackQualityRange) {
             moviePlayer.setPlaybackQualityRange('tiny');
@@ -95,7 +100,9 @@ export default createPlugin<
             moviePlayer.setPlaybackQuality('tiny');
           }
         }
-      } catch (_) { /* ignore */ }
+      } catch {
+        /* ignore */
+      }
 
       // 3. Hide the video element directly
       this.applyVisualMode();

@@ -1,10 +1,10 @@
 import { translationProviders } from './providers';
 
-import type { TranslationProvider, TranslationRequest } from './types';
 import type {
   TranslationProviderName,
   TranslationProviderSettings,
 } from '../types';
+import type { TranslationProvider, TranslationRequest } from './types';
 
 const callOnce = async (
   provider: TranslationProvider,

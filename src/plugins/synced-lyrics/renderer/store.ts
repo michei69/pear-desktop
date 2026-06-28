@@ -1,11 +1,12 @@
+import { createEffect, createMemo, runWithOwner, untrack } from 'solid-js';
 import { createStore } from 'solid-js/store';
-import { createEffect, createMemo, untrack } from 'solid-js';
 
 import { getSongInfo } from '@/providers/song-info-front';
 
-import { translationDebug } from './debug';
-import { config } from './renderer';
 import { getCustomQuery } from './custom-query-store';
+import { translationDebug } from './debug';
+import { reactiveOwner } from './reactive-root';
+import { config } from './renderer';
 import {
   clearCurrentTranslation,
   fetchTranslation,
@@ -15,13 +16,13 @@ import {
   setOfficialTranslation,
 } from './translation-store';
 
+import { LRC } from '../parsers/lrc';
 import {
   type ProviderName,
   providerNames,
   type ProviderState,
 } from '../providers';
 import { providers } from '../providers/renderer';
-import { LRC } from '../parsers/lrc';
 
 import type { LineLyrics, LyricProvider, LyricResult } from '../types';
 import type { SongInfo } from '@/providers/song-info';
@@ -57,11 +58,12 @@ export const [lyricsStore, setLyricsStore] = createStore<LyricsStore>({
   },
 });
 
-export const currentLyrics = createMemo(() => {
-  const provider = lyricsStore.provider;
-  if (!lyricsStore.videoId) return fetchingProviderState();
-  return lyricsStore.lyrics[provider];
-});
+export const currentLyrics = runWithOwner(reactiveOwner, () =>
+  createMemo(() => {
+    const provider = lyricsStore.provider;
+    return lyricsStore.lyrics[provider];
+  }),
+)!;
 
 type VideoId = string;
 

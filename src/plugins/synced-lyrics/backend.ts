@@ -13,11 +13,11 @@ import { getTranslationModelId } from './translation/model-id';
 import { runTranslation } from './translation/translate';
 import { TRANSLATION_STRATEGY_VERSION } from './translation/version';
 
+import type { TranslationRequest } from './translation/types';
 import type {
   TranslationProviderName,
   TranslationProviderSettings,
 } from './types';
-import type { TranslationRequest } from './translation/types';
 
 const debugListener = (message: string, data?: unknown) => {
   console.info(`[synced-lyrics] ${message}`, data ?? '');

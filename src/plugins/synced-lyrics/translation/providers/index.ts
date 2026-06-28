@@ -1,11 +1,11 @@
-import { openAICompatibleProvider } from './openai-compatible';
 import { anthropicProvider } from './anthropic';
 import { geminiProvider } from './gemini';
-import { localCliProvider } from './local-cli';
 import { googleTranslateProvider } from './google-translate';
+import { localCliProvider } from './local-cli';
+import { openAICompatibleProvider } from './openai-compatible';
 
-import type { TranslationProvider } from '../types';
 import type { TranslationProviderName } from '../../types';
+import type { TranslationProvider } from '../types';
 
 export const translationProviders: Record<
   TranslationProviderName,

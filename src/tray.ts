@@ -1,20 +1,23 @@
+import PausedTrayIconWhite from '@assets/tray-paused-white.png?asset&asarUnpack';
+import PausedTrayIcon from '@assets/tray-paused.png?asset&asarUnpack';
+import TrayIconWhite from '@assets/tray-white.png?asset&asarUnpack';
+import TrayIcon from '@assets/tray.png?asset&asarUnpack';
 import { ipcMain, Menu, nativeImage, screen, Tray } from 'electron';
 import is from 'electron-is';
 
-import TrayIcon from '@assets/tray.png?asset&asarUnpack';
-import PausedTrayIcon from '@assets/tray-paused.png?asset&asarUnpack';
-import TrayIconWhite from '@assets/tray-white.png?asset&asarUnpack';
-import PausedTrayIconWhite from '@assets/tray-paused-white.png?asset&asarUnpack';
-
-import * as config from './config';
-
-import { restart } from './providers/app-controls';
-import { registerCallback, unregisterCallback, SongInfoEvent, type SongInfoCallback } from './providers/song-info';
-import { getSongControls } from './providers/song-controls';
-import { showOnCurrentDesktop } from './window-utils';
-
 import { APPLICATION_NAME, t } from '@/i18n';
 import { LikeType } from '@/types/datahost-get-state';
+
+import * as config from './config';
+import { restart } from './providers/app-controls';
+import { getSongControls } from './providers/song-controls';
+import {
+  registerCallback,
+  unregisterCallback,
+  SongInfoEvent,
+  type SongInfoCallback,
+} from './providers/song-info';
+import { showOnCurrentDesktop } from './window-utils';
 
 import type { MenuTemplate } from './menu';
 
@@ -100,13 +103,21 @@ export const setUpTray = (app: Electron.App, win: Electron.BrowserWindow) => {
     : 1;
 
   const defaultTrayIcon = nativeImage
-    .createFromPath(is.macOS() || config.get('options.trayForceWhiteIcons') ? TrayIconWhite : TrayIcon)
+    .createFromPath(
+      is.macOS() || config.get('options.trayForceWhiteIcons')
+        ? TrayIconWhite
+        : TrayIcon,
+    )
     .resize({
       width: 16 * pixelRatio,
       height: 16 * pixelRatio,
     });
   const pausedTrayIcon = nativeImage
-    .createFromPath(is.macOS() || config.get('options.trayForceWhiteIcons') ? PausedTrayIconWhite : PausedTrayIcon)
+    .createFromPath(
+      is.macOS() || config.get('options.trayForceWhiteIcons')
+        ? PausedTrayIconWhite
+        : PausedTrayIcon,
+    )
     .resize({
       width: 16 * pixelRatio,
       height: 16 * pixelRatio,

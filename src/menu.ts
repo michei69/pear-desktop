@@ -1,4 +1,4 @@
-import is from 'electron-is';
+import prompt from 'custom-electron-prompt';
 import {
   app,
   type BrowserWindow,
@@ -8,21 +8,18 @@ import {
   type MenuItem,
   shell,
 } from 'electron';
-import prompt from 'custom-electron-prompt';
+import is from 'electron-is';
 import { satisfies } from 'semver';
-
+import { languageResources } from 'virtual:i18n';
 import { allPlugins } from 'virtual:plugins';
 
-import { languageResources } from 'virtual:i18n';
+import { APPLICATION_NAME, setLanguage, t } from '@/i18n';
 
 import * as config from './config';
-
+import { getAllMenuTemplate, loadAllMenuPlugins } from './loader/menu';
 import { restart } from './providers/app-controls';
 import { startingPages } from './providers/extracted-data';
 import promptOptions from './providers/prompt-options';
-
-import { getAllMenuTemplate, loadAllMenuPlugins } from './loader/menu';
-import { APPLICATION_NAME, setLanguage, t } from '@/i18n';
 
 import packageJson from '../package.json';
 
@@ -34,10 +31,10 @@ let inAppMenuActivePromise: Promise<boolean> | undefined;
 const pluginEnabledMenu = async (
   plugin: string,
   label = '',
-  description: string | undefined = undefined,
+  description?: string,
   isNew = false,
   hasSubmenu = false,
-  refreshMenu: (() => void) | undefined = undefined,
+  refreshMenu?: () => void,
 ): Promise<Electron.MenuItemConstructorOptions> => ({
   label: label || plugin,
   sublabel: isNew ? t('main.menu.plugins.new') : undefined,
@@ -130,7 +127,7 @@ export const mainMenuTemplate = async (
 
         return aPluginLabel.localeCompare(bPluginLabel);
       })
-      .map((id) => {
+      .map(async (id) => {
         const predefinedTemplate = menuResultMap.get(id);
         if (predefinedTemplate) return predefinedTemplate;
 
@@ -496,17 +493,17 @@ export const mainMenuTemplate = async (
             },
             {
               label: t(
-                'main.menu.options.submenu.tray.submenu.force-white-icons'
+                'main.menu.options.submenu.tray.submenu.force-white-icons',
               ),
-              type: "checkbox",
+              type: 'checkbox',
               checked: config.get('options.trayForceWhiteIcons'),
               click(item: MenuItem) {
                 config.setMenuOption(
                   'options.trayForceWhiteIcons',
-                  item.checked
-                )
-              }
-            }
+                  item.checked,
+                );
+              },
+            },
           ],
         },
         {
@@ -637,21 +634,20 @@ export const mainMenuTemplate = async (
               },
             },
             ...((is.windows()
-            ? 
-              [
-                {
-                  label: t(
-                    'main.menu.options.submenu.advanced-options.submenu.force-smtc',
-                  ),
-                  type: 'checkbox',
-                  checked: config.get('options.forceSmtc'),
-                  click(item: MenuItem) {
-                    // TODO: prompt restart
-                    config.setMenuOption('options.forceSmtc', item.checked);
+              ? [
+                  {
+                    label: t(
+                      'main.menu.options.submenu.advanced-options.submenu.force-smtc',
+                    ),
+                    type: 'checkbox',
+                    checked: config.get('options.forceSmtc'),
+                    click(item: MenuItem) {
+                      // TODO: prompt restart
+                      config.setMenuOption('options.forceSmtc', item.checked);
+                    },
                   },
-                },
-              ]
-            : []) satisfies Electron.MenuItemConstructorOptions[]),
+                ]
+              : []) satisfies Electron.MenuItemConstructorOptions[]),
           ],
         },
       ],

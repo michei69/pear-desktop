@@ -1,33 +1,30 @@
-import { contextBridge, webFrame } from 'electron';
-
-import { blockers } from './types';
-import { createPlugin } from '@/utils';
-import {
-  isBlockerEnabled,
-  loadAdBlockerEngine,
-  unloadAdBlockerEngine,
-} from './blocker';
-
-import { inject, isInjected } from './injectors/inject';
-import { loadAdSpeedup } from './adSpeedup';
+import { contextBridge, webFrame, type BrowserWindow } from 'electron';
 
 import { t } from '@/i18n';
+import { createPlugin } from '@/utils';
 
-import type { BrowserWindow } from 'electron';
+import {
+  isBlockerEnabled,
+  loadTrackerBlockerEngine,
+  unloadTrackerBlockerEngine,
+} from './blocker';
+import { inject, isInjected } from './injectors/inject';
+import injectCliqzPreload from './injectors/inject-cliqz-preload';
+import { blockers } from './types';
 
-interface AdblockerConfig {
+export interface TrackerBlockerConfig {
   /**
-   * Whether to enable the adblocker.
+   * Whether to enable the tracker blocker.
    * @default true
    */
   enabled: boolean;
   /**
-   * When enabled, the adblocker will cache the blocklists.
+   * When enabled, the tracker blocker will cache the blocklists.
    * @default true
    */
   cache: boolean;
   /**
-   * Which adblocker to use.
+   * Which tracker blocker to use.
    * @default blockers.InPlayer
    */
   blocker: (typeof blockers)[keyof typeof blockers];
@@ -45,22 +42,22 @@ interface AdblockerConfig {
 }
 
 export default createPlugin({
-  name: () => t('plugins.adblocker.name'),
-  description: () => t('plugins.adblocker.description'),
+  name: () => t('plugins.do-not-track.name'),
+  description: () => t('plugins.do-not-track.description'),
   restartNeeded: false,
   config: {
-    enabled: true,
+    enabled: false,
     cache: true,
     blocker: blockers.InPlayer,
     additionalBlockLists: [],
     disableDefaultLists: false,
-  } as AdblockerConfig,
+  } as TrackerBlockerConfig,
   menu: async ({ getConfig, setConfig }) => {
     const config = await getConfig();
 
     return [
       {
-        label: t('plugins.adblocker.menu.blocker'),
+        label: t('plugins.do-not-track.menu.blocker'),
         submenu: Object.values(blockers).map((blocker) => ({
           label: blocker,
           type: 'radio',
@@ -72,14 +69,6 @@ export default createPlugin({
       },
     ];
   },
-  renderer: {
-    async onPlayerApiReady(_, { getConfig }) {
-      const config = await getConfig();
-      if (config.blocker === blockers.AdSpeedup) {
-        loadAdSpeedup();
-      }
-    },
-  },
   backend: {
     mainWindow: null as BrowserWindow | null,
     async start({ getConfig, window }) {
@@ -87,7 +76,7 @@ export default createPlugin({
       this.mainWindow = window;
 
       if (config.blocker === blockers.WithBlocklists) {
-        await loadAdBlockerEngine(
+        await loadTrackerBlockerEngine(
           window.webContents.session,
           config.cache,
           config.additionalBlockLists,
@@ -97,7 +86,7 @@ export default createPlugin({
     },
     stop({ window }) {
       if (isBlockerEnabled(window.webContents.session)) {
-        unloadAdBlockerEngine(window.webContents.session);
+        unloadTrackerBlockerEngine(window.webContents.session);
       }
     },
     async onConfigChange(newConfig) {
@@ -106,7 +95,7 @@ export default createPlugin({
           newConfig.blocker === blockers.WithBlocklists &&
           !isBlockerEnabled(this.mainWindow.webContents.session)
         ) {
-          await loadAdBlockerEngine(
+          await loadTrackerBlockerEngine(
             this.mainWindow.webContents.session,
             newConfig.cache,
             newConfig.additionalBlockLists,
@@ -136,6 +125,8 @@ export default createPlugin({
       if (config.blocker === blockers.InPlayer && !isInjected()) {
         inject(contextBridge);
         await webFrame.executeJavaScript(this.script);
+      } else if (config.blocker === blockers.WithBlocklists) {
+        await injectCliqzPreload();
       }
     },
     async onConfigChange(newConfig) {

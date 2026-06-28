@@ -14,7 +14,7 @@
     }
   },
   "language": {
-    "code": "da",
+    "code": "dk",
     "local-name": "Dansk",
     "name": "Danish"
   },
@@ -109,8 +109,7 @@
                   "title": "Sæt proxy"
                 }
               },
-              "toggle-dev-tools": "Skift DevTools",
-              "force-smtc": "Tving brugen af ekstern SMTC"
+              "toggle-dev-tools": "Skift DevTools"
             }
           },
           "always-on-top": "Altid øverst",
@@ -145,9 +144,7 @@
               "disabled": "Deaktiveret",
               "enabled-and-hide-app": "Bakke aktiveret, og skjul programvindue",
               "enabled-and-show-app": "Aktiver og vis app",
-              "play-pause-on-click": "Start/Stop ved klik",
-              "move-to-current-desktop": "Flyt til nuværende virtuelle skrivebord ved visning",
-              "force-white-icons": "Tving brugen af hvide ikoner"
+              "play-pause-on-click": "Start/Stop ved klik"
             }
           },
           "visual-tweaks": {
@@ -164,8 +161,7 @@
                 "default": "Standard",
                 "force-show": "Tving visning",
                 "hide": "Skjul",
-                "label": "Like knapper",
-                "swap": "Byt om på like-knappernes rækkefølge"
+                "label": "Like knapper"
               },
               "remove-upgrade-button": "Fjern opgrader knappen",
               "theme": {
@@ -197,8 +193,6 @@
         "submenu": {
           "force-reload": "Tving Genindlæs",
           "reload": "Genindlæs",
-          "reset-zoom": "Faktisk størrelse",
-          "toggle-fullscreen": "Skift fuldskærm",
           "zoom-in": "Zoom ind",
           "zoom-out": "Zoom ud"
         }
@@ -214,11 +208,7 @@
       "tooltip": {
         "default": "{{applicationName}}",
         "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
-      },
-      "like": "Synes godt om",
-      "dislike": "Synes ikke om",
-      "unlike": "Ulig",
-      "undislike": "Fjern like"
+      }
     }
   },
   "plugins": {
@@ -226,32 +216,17 @@
       "description": "Hvis en reklame afspilles, slår den lyden fra og sætter hastigheden til 16x",
       "name": "Spol igennem reklamen"
     },
-    "adblocker": {
-      "description": "Bloker alle reklamer og sporing fra starten af",
-      "menu": {
-        "blocker": "Bloker"
-      },
-      "name": "Bloker reklamer"
-    },
-    "album-actions": {
-      "description": "Tilføjer Undislike, Dislike, Like og Unlike knapper, som anvendes på alle sange i en playliste eller et album",
-      "name": "Album Handlinger"
-    },
     "album-color-theme": {
-      "description": "Anvender et dynamisk tema og visuelle effekter baseret på albummets farvepalet",
       "menu": {
         "color-mix-ratio": {
-          "label": "Farveblandingsforhold",
           "submenu": {
             "percent": "{{ratio}}%"
           }
-        },
-        "enable-seekbar": "Aktivér seekbar-tema"
+        }
       },
       "name": "Albummets farve tema"
     },
     "ambient-mode": {
-      "description": "Anvender en lyseffekt ved at kaste blide farver fra videoen ind i din skærms baggrund",
       "menu": {
         "blur-amount": {
           "label": "Sløringsmængde",
@@ -262,7 +237,7 @@
         "buffer": {
           "label": "Buffer",
           "submenu": {
-            "buffer": "buffer"
+            "buffer": "{{buffer}}"
           }
         },
         "opacity": {
@@ -283,77 +258,37 @@
             "percent": "{{size}}%"
           }
         },
-        "smoothness-transition": {
-          "label": "Blødhedsovergang",
-          "submenu": {
-            "during": "Under {{interpolationTime}} s"
-          }
-        },
         "use-fullscreen": {
           "label": "Bruger fuldskærm"
         }
-      },
-      "name": "Ambient tilstand"
-    },
-    "amuse": {
-      "description": "Tilføjer {{applicationName}} understøttelse af Amuse nu-spiller widget fra 6K Labs",
-      "name": "Underhold",
-      "response": {
-        "query": "Amuse API-server kører. GET /query for at få sanginfo."
       }
     },
     "api-server": {
-      "description": "Tilføjer en API-server til at styre afspilleren",
       "dialog": {
         "request": {
           "buttons": {
             "allow": "Tillad",
             "deny": "Afvis"
           },
-          "message": "Tillad at {{ID}} ({{origin}}) får adgang til API'en?",
-          "title": "API-godkendelsesanmodning"
+          "message": "Tillad at {{ID}} ({{origin}}) får adgang til API'en?"
         }
       },
       "menu": {
         "auth-strategy": {
-          "label": "Godkendelsesstrategi",
-          "submenu": {
-            "auth-at-first": {
-              "label": "Godkend ved første forespørgsel"
-            },
-            "none": {
-              "label": "Ingen godkendelse"
-            }
-          }
+          "label": "Godkendelsesstrategi"
         },
         "hostname": {
-          "label": "Værtsnavn"
-        },
-        "https": {
-          "label": "HTTPS og certifikater",
-          "submenu": {
-            "cert": {
-              "dialogTitle": "Vælg HTTPS-certifikatfil",
-              "label": "Certifikatfil (.crt/.pem)"
-            },
-            "enable-https": {
-              "label": "Aktivér HTTPS"
-            },
-            "key": {
-              "dialogTitle": "Vælg HTTPS-privat nøglefil",
-              "label": "Privat nøglefil (.key/.pem)"
-            }
-          }
+          "label": "Hostname"
         },
         "port": {
           "label": "Port"
         }
       },
-      "name": "API-server [Beta]",
+      "name": "API Server [Beta]",
       "prompt": {
         "hostname": {
           "label": "Skriv API serverens hostname (f. eks. 0.0.0.0):",
-          "title": "Værtsnavn"
+          "title": "Hostname"
         },
         "port": {
           "label": "Skriv API serverens port:",
@@ -362,45 +297,14 @@
       }
     },
     "audio-compressor": {
-      "description": "Anvend komprimering på lyd (sænker lydstyrken af de højeste dele af signalet og hæver lydstyrken af de svageste dele)",
       "name": "Lyd kompressor"
-    },
-    "auth-proxy-adapter": {
-      "description": "Understøttelse af brug af godkendelsesproxy-tjenester",
-      "menu": {
-        "disable": "Deaktiver proxy-adapter",
-        "enable": "Aktivér proxy-adapter",
-        "hostname": {
-          "label": "Værtsnavn"
-        },
-        "port": {
-          "label": "Port"
-        }
-      },
-      "name": "Auth Proxy Adapter",
-      "prompt": {
-        "hostname": {
-          "label": "Indtast værtsnavn til lokal proxy-server (kræver genstart):",
-          "title": "Proxy Værtsnavn"
-        },
-        "port": {
-          "label": "Indtast port til lokal proxy-server (kræver genstart):",
-          "title": "Proxy Port"
-        }
-      }
     },
     "blur-nav-bar": {
       "description": "Gør navigationsbaren gennemsigtig og sløret",
       "name": "Slør navigationsbar"
     },
-    "bypass-age-restrictions": {
-      "description": "Omgå Music Players aldersbekræftelse",
-      "name": "Omgå aldersbegrænsninger"
-    },
     "captions-selector": {
-      "description": "Undertekstvælger til {{applicationName}} lydspor",
       "menu": {
-        "autoload": "Vælg automatisk sidst brugte undertekster",
         "disable-captions": "Ingen undertekster som standard"
       },
       "name": "Vælg undertekster",
@@ -410,752 +314,14 @@
           "none": "Ingen",
           "title": "Vælg underteksternes sprog"
         }
-      },
-      "templates": {
-        "title": "Åbn undertekstvælger"
-      },
-      "toast": {
-        "caption-changed": "Undertekst ændret til {{language}}",
-        "caption-disabled": "Undertekster deaktiveret",
-        "no-captions": "Ingen undertekster tilgængelige for denne sang"
       }
-    },
-    "clock": {
-      "description": "Tilføj et ur til navigationslinjen",
-      "menu": {
-        "format": {
-          "24-hour-format": "24-timers format",
-          "display-seconds": "Vis sekunder",
-          "label": "Format"
-        }
-      },
-      "name": "Ur"
-    },
-    "compact-sidebar": {
-      "description": "Sæt altid sidebjælken i kompakt tilstand",
-      "name": "Kompakt sidebjælke"
     },
     "crossfade": {
       "description": "Fade imellem sange",
       "menu": {
         "advanced": "Avanceret"
       },
-      "name": "Fade [Beta]",
-      "prompt": {
-        "options": {
-          "multi-input": {
-            "fade-in-duration": "Indtoningsvarighed (ms)",
-            "fade-out-duration": "Udtoningsvarighed (ms)",
-            "fade-scaling": {
-              "label": "Overgangsskalering",
-              "linear": "Lineær",
-              "logarithmic": "Logaritmisk"
-            },
-            "seconds-before-end": "Overtoning N sekunder før slutning"
-          },
-          "title": "Overtoningsindstillinger"
-        }
-      }
-    },
-    "custom-output-device": {
-      "description": "Konfigurer en brugerdefineret output-medieenhed til sange",
-      "menu": {
-        "device-selector": "Vælg enhed"
-      },
-      "name": "Brugerdefineret outputenhed",
-      "prompt": {
-        "device-selector": {
-          "label": "Vælg output-medieenheden der skal bruges",
-          "title": "Vælg outputenhed"
-        }
-      }
-    },
-    "disable-autoplay": {
-      "description": "Får sang til at starte i pause-tilstand",
-      "menu": {
-        "apply-once": "Gælder kun ved opstart"
-      },
-      "name": "Deaktiver autoafspilning"
-    },
-    "discord": {
-      "backend": {
-        "already-connected": "Forsøgte at oprette forbindelse med aktiv forbindelse",
-        "connected": "Forbundet til Discord",
-        "disconnected": "Afbrudt fra Discord"
-      },
-      "description": "Vis dine venner, hvad du lytter til med Rich Presence",
-      "menu": {
-        "auto-reconnect": "Automatisk genforbindelse",
-        "clear-activity": "Ryd aktivitet",
-        "clear-activity-after-timeout": "Ryd aktivitet efter timeout",
-        "connected": "Forbundet",
-        "disconnected": "Afbrudt",
-        "hide-duration-left": "Skjul resterende varighed",
-        "hide-github-button": "Skjul GitHub-link knap",
-        "play-on-application": "Afspil på {{applicationName}}",
-        "set-inactivity-timeout": "Indstil inaktivitetstimeout",
-        "set-status-display-type": {
-          "label": "Statustekst",
-          "submenu": {
-            "application": "Lytter til {{applicationName}}",
-            "artist": "Lytter til {artist}",
-            "title": "Lytter til {song title}"
-          }
-        }
-      },
-      "name": "Discord Rich Presence",
-      "prompt": {
-        "set-inactivity-timeout": {
-          "label": "Indtast inaktivitetstimeout i sekunder:",
-          "title": "Indstil inaktivitetstimeout"
-        }
-      }
-    },
-    "downloader": {
-      "backend": {
-        "dialog": {
-          "error": {
-            "buttons": {
-              "ok": "OK"
-            },
-            "message": "Argh! Beklager, download mislykkedes...",
-            "title": "Fejl under download!"
-          },
-          "start-download-playlist": {
-            "buttons": {
-              "ok": "OK"
-            },
-            "detail": "({{playlistSize}} sange)",
-            "message": "Downloader playliste {{playlistTitle}}",
-            "title": "Download startet"
-          }
-        },
-        "feedback": {
-          "conversion-progress": "Konvertering: {{percent}}%",
-          "converting": "Konverterer...",
-          "done": "Færdig: {{filePath}}",
-          "download-info": "Downloader {{artist}} - {{title}} [{{videoId}}",
-          "download-progress": "Download: {{percent}}%",
-          "downloading": "Downloader...",
-          "downloading-counter": "Downloader {{current}}/{{total}}...",
-          "downloading-playlist": "Downloader playliste \"{{playlistTitle}}\" - {{playlistSize}} sange ({{playlistId}})",
-          "error-while-downloading": "Fejl ved download af \"{{author}} - {{title}}\": {{error}}",
-          "folder-already-exists": "Mappen {{playlistFolder}} findes allerede",
-          "getting-playlist-info": "Henter playliste info...",
-          "loading": "Indlæser...",
-          "playlist-has-only-one-song": "Playlisten har kun et element, downloader det direkte",
-          "playlist-id-not-found": "Intet playliste-ID fundet",
-          "playlist-is-empty": "Playlisten er tom",
-          "playlist-is-mix-or-private": "Fejl ved hentning af playliste info: Sørg for, at det ikke er en privat eller \"Mixed for you\" playliste\n\n{{error}}",
-          "preparing-file": "Forbereder fil...",
-          "saving": "Gemmer...",
-          "trying-to-get-playlist-id": "Forsøger at hente playliste-ID: {{playlistId}}",
-          "video-id-not-found": "Video ikke fundet",
-          "writing-id3": "Skriver ID3 tags..."
-        }
-      },
-      "description": "Downloader MP3 / kilde lyd direkte fra grænsefladen",
-      "menu": {
-        "choose-download-folder": "Vælg download-mappe",
-        "download-finish-settings": {
-          "label": "Download ved afslutning",
-          "prompt": {
-            "last-percent": "Efter x procent",
-            "last-seconds": "Sidste x sekunder",
-            "title": "Konfigurer hvornår der skal downloades"
-          },
-          "submenu": {
-            "advanced": "Avanceret",
-            "enabled": "Aktiveret",
-            "mode": "Tidstilstand",
-            "percent": "Procent",
-            "seconds": "Sekunder"
-          }
-        },
-        "download-playlist": "Download playliste",
-        "presets": "Forudindstillinger",
-        "skip-existing": "Spring over eksisterende filer"
-      },
-      "name": "Downloader",
-      "renderer": {
-        "can-not-update-progress": "Kan ikke opdatere fremskridt"
-      },
-      "templates": {
-        "button": "Download"
-      }
-    },
-    "equalizer": {
-      "description": "Tilføjer en equalizer til afspilleren",
-      "menu": {
-        "presets": {
-          "label": "Forudindstillinger",
-          "list": {
-            "bass-booster": "Basforstærker"
-          }
-        }
-      },
-      "name": "Equalizer"
-    },
-    "exponential-volume": {
-      "description": "Gør lydstyrkeskyderen eksponentiel, så det er nemmere at vælge lavere lydstyrker.",
-      "name": "Eksponentiel lydstyrke"
-    },
-    "in-app-menu": {
-      "description": "Giver menulinjer et fancy, mørkt eller albumfarve-look",
-      "menu": {
-        "hide-dom-window-controls": "Skjul DOM-vindueskontroller"
-      },
-      "name": "App-menu"
-    },
-    "lumiastream": {
-      "description": "Tilføjer Lumia Stream understøttelse",
-      "name": "Lumia Stream [Beta]"
-    },
-    "lyrics-genius": {
-      "description": "Tilføjer tekstunderstøttelse til de fleste sange",
-      "menu": {
-        "romanized-lyrics": "Romaniserede tekster"
-      },
-      "name": "Lyrics Genius",
-      "renderer": {
-        "fetched-lyrics": "Hentet tekster til Genius"
-      }
-    },
-    "music-together": {
-      "description": "Del en playliste med andre. Når værten afspiller en sang, vil alle andre høre den samme sang",
-      "dialog": {
-        "enter-host": "Indtast vært-ID"
-      },
-      "internal": {
-        "save": "Gem",
-        "track-source": "Spor kilde",
-        "unknown-user": "Ukendt bruger"
-      },
-      "menu": {
-        "click-to-copy-id": "Kopier vært-ID",
-        "close": "Luk Music Together",
-        "connected-users": "Forbundne brugere",
-        "disconnect": "Afbryd Music Together",
-        "empty-user": "Ingen forbundne brugere",
-        "host": "Music Together vært",
-        "join": "Deltag i Music Together",
-        "permission": {
-          "all": "Tillad gæster at styre playliste og afspiller",
-          "host-only": "Kun værten kan styre playliste og afspiller",
-          "playlist": "Tillad gæster at styre playlisten"
-        },
-        "set-permission": "Skift kontroltilladelse",
-        "status": {
-          "disconnected": "Afbrudt",
-          "guest": "Forbundet som gæst",
-          "host": "Forbundet som vært"
-        }
-      },
-      "name": "Musik Sammen [Beta]",
-      "toast": {
-        "add-song-failed": "Kunne ikke tilføje sang",
-        "closed": "Music Together lukket",
-        "disconnected": "Music Together afbrudt",
-        "host-failed": "Kunne ikke være vært for Music Together",
-        "id-copied": "Vært-ID kopieret til udklipsholderen",
-        "id-copy-failed": "Kunne ikke kopiere vært-ID til udklipsholderen",
-        "join-failed": "Kunne ikke deltage i Music Together",
-        "joined": "Deltog i Music Together",
-        "permission-changed": "Music Together tilladelse ændret til \"{{permission}}\"",
-        "remove-song-failed": "Kunne ikke fjerne sang",
-        "user-connected": "{{name}} deltog i Music Together",
-        "user-disconnected": "{{name}} forlod Music Together"
-      }
-    },
-    "navigation": {
-      "description": "Næste/Tilbage navigationspile direkte integreret i grænsefladen, som i din foretrukne browser",
-      "name": "Navigation",
-      "templates": {
-        "back": {
-          "title": "Gå til forrige side"
-        },
-        "forward": {
-          "title": "Gå til næste side"
-        }
-      }
-    },
-    "no-google-login": {
-      "description": "Fjern Google login-knapper og links fra grænsefladen",
-      "name": "Ingen Google Login"
-    },
-    "notifications": {
-      "description": "Vis en notifikation, når en sang begynder at spille (interaktive notifikationer er tilgængelige på Windows)",
-      "menu": {
-        "interactive": "Interaktive notifikationer",
-        "interactive-settings": {
-          "label": "Interaktive indstillinger",
-          "submenu": {
-            "hide-button-text": "Skjul knaptekst",
-            "refresh-on-play-pause": "Opdater ved Afspil/Pause",
-            "tray-controls": "Åbn/Luk ved klik på proceslinjen",
-            "hover-controls": "Vis mini-afspiller ved mouse-over på proceslinjen"
-          }
-        },
-        "priority": "Notifikationsprioritet",
-        "toast-style": "Toast-stil",
-        "unpause-notification": "Vis notifikation ved genoptagelse"
-      },
-      "name": "Notifikationer"
-    },
-    "performance-improvement": {
-      "description": "Forbedr ydeevne ved at aktivere eksperimentelle scripts",
-      "name": "Ydeevneforbedring [Beta]"
-    },
-    "picture-in-picture": {
-      "description": "Tillader at skifte appen til billede-i-billede tilstand",
-      "menu": {
-        "always-on-top": "Altid øverst",
-        "hotkey": {
-          "label": "Genvejstast",
-          "prompt": {
-            "keybind-options": {
-              "hotkey": "Genvejstast"
-            },
-            "label": "Vælg en genvejstast til at skifte billede-i-billede",
-            "title": "Billede-i-billede genvejstast"
-          }
-        },
-        "save-window-position": "Gem vinduesposition",
-        "save-window-size": "Gem vinduesstørrelse",
-        "use-native-pip": "Brug browserens native PiP"
-      },
-      "name": "Billede-i-billede",
-      "templates": {
-        "button": "Billede-i-billede"
-      }
-    },
-    "playback-speed": {
-      "description": "Lyt hurtigt, lyt langsomt! Tilføjer en skyder der styrer sanghastighed",
-      "name": "Afspilningshastighed",
-      "templates": {
-        "button": "Hastighed"
-      }
-    },
-    "precise-volume": {
-      "description": "Styr lydstyrken præcist med musehjulet/genvejstaster, med en brugerdefineret HUD og tilpassede lydstyrketrin",
-      "menu": {
-        "arrows-shortcuts": "Lokale piletast-kontroller",
-        "custom-volume-steps": "Indstil brugerdefinerede lydstyrketrin",
-        "global-shortcuts": "Globale genvejstaster"
-      },
-      "name": "Præcis lydstyrke",
-      "prompt": {
-        "global-shortcuts": {
-          "keybind-options": {
-            "decrease": "Sænk lydstyrke",
-            "increase": "Øg lydstyrke"
-          },
-          "label": "Vælg globale lydstyrketastkombinationer:",
-          "title": "Globale lydstyrketastkombinationer"
-        },
-        "volume-steps": {
-          "label": "Vælg lydstyrke forøg/reducer trin",
-          "title": "Lydstyrketrin"
-        }
-      }
-    },
-    "quality-changer": {
-      "backend": {
-        "dialog": {
-          "quality-changer": {
-            "detail": "Nuværende kvalitet: {{quality}}",
-            "message": "Vælg videokvalitet:",
-            "title": "Vælg videokvalitet"
-          }
-        }
-      },
-      "description": "Tillader ændring af videokvaliteten med en knap på videooverlayet",
-      "name": "Videokvalitetskifter",
-      "renderer": {
-        "quality-settings-button": {
-          "label": "Åbn afspillers kvalitetsindstillinger"
-        }
-      }
-    },
-    "scrobbler": {
-      "description": "Tilføj scrobbling-understøttelse (f.eks. last.fm, Listenbrainz)",
-      "dialog": {
-        "lastfm": {
-          "auth-failed": {
-            "message": "Kunne ikke godkende med Last.fm\nSkjul popup indtil næste genstart.",
-            "title": "Godkendelse mislykkedes"
-          }
-        }
-      },
-      "menu": {
-        "lastfm": {
-          "api-settings": "Last.fm API-indstillinger"
-        },
-        "listenbrainz": {
-          "token": "Indtast ListenBrainz brugertoken"
-        },
-        "scrobble-alternative-artist": "Brug alternative kunstnere",
-        "scrobble-alternative-title": "Brug alternative titler",
-        "scrobble-other-media": "Scrobble andre medier"
-      },
-      "name": "Scrobbler",
-      "prompt": {
-        "lastfm": {
-          "api-key": "Last.fm API-nøgle",
-          "api-secret": "Last.fm API-hemmelighed"
-        },
-        "listenbrainz": {
-          "token": {
-            "label": "Indtast din ListenBrainz brugertoken:",
-            "title": "ListenBrainz-token"
-          }
-        }
-      }
-    },
-    "shortcuts": {
-      "description": "Tillader indstilling af globale genvejstaster til afspilning (afspil/pause/næste/forrige) og slukning af medie-OSD ved at tilsidesætte medietaster, aktivering af Ctrl/CMD + F til søgning, aktivering af Linux MPRIS-understøttelse til medietaster, og brugerdefinerede genvejstaster til avancerede brugere",
-      "menu": {
-        "override-media-keys": "Tilsidesæt medietaster",
-        "set-keybinds": "Indstil globale sangstyringer"
-      },
-      "name": "Genveje (& MPRIS)",
-      "prompt": {
-        "keybind": {
-          "keybind-options": {
-            "next": "Næste",
-            "play-pause": "Afspil / Pause",
-            "previous": "Forrige"
-          },
-          "label": "Vælg globale tastkombinationer til sangstyring:",
-          "title": "Globale tastkombinationer"
-        }
-      }
-    },
-    "skip-disliked-songs": {
-      "description": "Springer sange der er disliket over",
-      "name": "Spring dislikede sange over"
-    },
-    "skip-silences": {
-      "description": "Spring automatisk stilhedsafsnit over i sange",
-      "name": "Spring stilheder over"
-    },
-    "sponsorblock": {
-      "description": "Springer automatisk ikke-musikdele over som intro/outro eller dele af musikvideoer hvor sangen ikke spiller",
-      "name": "SponsorBlock"
-    },
-    "synced-lyrics": {
-      "description": "Giver synkroniserede tekster til sange ved hjælp af udbydere som LRClib.",
-      "errors": {
-        "fetch": "⚠️ Der opstod en fejl under hentning af teksterne.\nPrøv venligst igen senere.",
-        "not-found": "⚠️ Ingen tekster fundet til denne sang."
-      },
-      "menu": {
-        "convert-chinese-character": {
-          "label": "Konverter kinesiske tegn",
-          "submenu": {
-            "disabled": {
-              "label": "Deaktiveret",
-              "tooltip": "Deaktiver konvertering af kinesiske tegn"
-            },
-            "simplified-to-traditional": {
-              "label": "Forenklet til traditionelt",
-              "tooltip": "Konverter forenklet kinesisk til traditionelt kinesisk"
-            },
-            "traditional-to-simplified": {
-              "label": "Traditionelt til forenklet",
-              "tooltip": "Konverter traditionelt kinesisk til forenklet kinesisk"
-            }
-          },
-          "tooltip": "Konverter kinesiske tegn til traditionelt eller forenklet"
-        },
-        "default-text-string": {
-          "label": "Standardtegn mellem tekster",
-          "tooltip": "Vælg standardtegnet til mellemrummet mellem tekster"
-        },
-        "line-effect": {
-          "label": "Linjeeffekt",
-          "submenu": {
-            "fancy": {
-              "label": "Flot",
-              "tooltip": "Brug store, app-lignende effekter på den aktuelle linje"
-            },
-            "focus": {
-              "label": "Fokus",
-              "tooltip": "Gør kun den aktuelle linje hvid"
-            },
-            "offset": {
-              "label": "Forskydning",
-              "tooltip": "Forskyd den aktuelle linje til højre"
-            },
-            "scale": {
-              "label": "Skala",
-              "tooltip": "Skaler den aktuelle linje"
-            }
-          },
-          "tooltip": "Vælg effekten der skal anvendes på den aktuelle linje"
-        },
-        "lyrics-font-size": {
-          "label": "Tekststørrelse",
-          "submenu": {
-            "large": {
-              "label": "Stor",
-              "tooltip": "Brug den originale større tekststørrelse"
-            },
-            "medium": {
-              "label": "Mellem",
-              "tooltip": "Brug en afbalanceret tekststørrelse"
-            },
-            "small": {
-              "label": "Lille",
-              "tooltip": "Brug en mere kompakt tekststørrelse"
-            }
-          },
-          "tooltip": "Vælg hvor stor tekststørrelsen skal være"
-        },
-        "precise-timing": {
-          "label": "Gør teksterne perfekt synkroniseret",
-          "tooltip": "Beregn til millisekundet visningen af næste linje (kan have en lille indvirkning på ydeevnen)"
-        },
-        "preferred-provider": {
-          "label": "Foretrukken udbyder",
-          "none": {
-            "label": "Ingen",
-            "tooltip": "Ingen foretrukken udbyder"
-          },
-          "tooltip": "Vælg standardudbyderen"
-        },
-        "romanization": {
-          "label": "Romaniser tekster",
-          "tooltip": "Hvis teksterne er på et andet sprog, forsøg at vise en latinsk version."
-        },
-        "show-lyrics-even-if-inexact": {
-          "label": "Vis tekster selvom de er unøjagtige",
-          "tooltip": "Hvis sangen ikke findes, prøver pluginnet igen med en anden søgeforespørgsel.\nResultatet fra det andet forsøg er muligvis ikke nøjagtigt."
-        },
-        "show-time-codes": {
-          "label": "Vis tidskoder",
-          "tooltip": "Vis tidskoderne ved siden af teksterne"
-        },
-        "translation": {
-          "clear-cache": {
-            "label": "Ryd oversættelsescache",
-            "tooltip": "Slet alle cachelagrede oversættelser gemt på disken."
-          },
-          "configure": {
-            "label": "Konfigurer API-nøgle & model...",
-            "tooltip": "Indstil udbyder-specifikke oversættelsesmuligheder."
-          },
-          "enabled": {
-            "label": "Aktivér oversættelse",
-            "tooltip": "Vis en oversat linje under hver originale tekstlinje."
-          },
-          "label": "Oversættelse af tekster",
-          "provider": {
-            "label": "Udbyder",
-            "tooltip": "Hvilken tjeneste der skal bruges til oversættelse."
-          },
-          "providers": {
-            "anthropic": {
-              "name": "Anthropic Claude",
-              "prompt-label": "Bruger det native Anthropic Messages API.",
-              "prompt-title": "Anthropic indstillinger"
-            },
-            "gemini": {
-              "name": "Google Gemini",
-              "prompt-label": "Bruger Googles Generative Language API (generateContent).",
-              "prompt-title": "Gemini indstillinger"
-            },
-            "google-translate": {
-              "host": "Vært",
-              "name": "Google Oversæt",
-              "prompt-label": "Bruger det uofficielle gratis Google Translate-endepunkt. Ingen API-nøgle er påkrævet, men Google kan begrænse hastigheden.",
-              "prompt-title": "Google Translate indstillinger"
-            },
-            "local-cli": {
-              "command": "Kommando",
-              "engine": "Lokal CLI",
-              "engine-claude": "Claude Code",
-              "engine-codex": "Codex",
-              "engine-gemini": "Gemini CLI",
-              "name": "Lokal CLI",
-              "prompt-label": "Brug en lokalt logget ind Claude Code, Codex eller Gemini CLI. Kommandoen og modellen er automatiske; CLI'en bruger sin egen loggede standard.",
-              "prompt-title": "Lokal CLI indstillinger",
-              "timeout": "Timeout sekunder (15-600)"
-            },
-            "openai-compatible": {
-              "api-mode": "API-tilstand (responses / auto / chat-completions)",
-              "base-url": "Basis URL",
-              "name": "OpenAI kompatibel",
-              "prompt-label": "Brug OpenAI-kompatible servere, inklusive Ollama (basis URL http://127.0.0.1:11434/v1, API-tilstand auto eller chat-completions).",
-              "prompt-title": "OpenAI-kompatible indstillinger"
-            },
-            "shared": {
-              "api-key": "API-nøgle",
-              "model": "Model"
-            }
-          },
-          "target-language": {
-            "label": "Målsprog",
-            "options": {
-              "ar": "العربية",
-              "auto": "Følg appsprog",
-              "bg": "Български",
-              "bn": "বাংলা",
-              "cs": "Čeština",
-              "da": "Dansk",
-              "de": "Deutsch",
-              "el": "Ελληνικά",
-              "en": "English",
-              "es": "Español",
-              "fa": "فارسی",
-              "fi": "Suomi",
-              "fil": "Filipino",
-              "fr": "Français",
-              "he": "עברית",
-              "hi": "हिन्दी",
-              "hr": "Hrvatski",
-              "hu": "Magyar",
-              "id": "Bahasa Indonesia",
-              "it": "Italiano",
-              "ja": "日本語",
-              "ko": "한국어",
-              "lt": "Lietuvių",
-              "mr": "मराठी",
-              "ms": "Bahasa Melayu",
-              "nl": "Nederlands",
-              "no": "Norsk",
-              "pl": "Polski",
-              "pt-BR": "Português (Brasil)",
-              "pt-PT": "Português (Portugal)",
-              "ro": "Română",
-              "ru": "Русский",
-              "sk": "Slovenčina",
-              "sr": "Српски",
-              "sv": "Svenska",
-              "sw": "Kiswahili",
-              "ta": "தமிழ்",
-              "te": "తెలుగు",
-              "th": "ไทย",
-              "tr": "Türkçe",
-              "uk": "Українська",
-              "ur": "اردو",
-              "vi": "Tiếng Việt",
-              "zh-CN": "简体中文",
-              "zh-TW": "繁體中文"
-            },
-            "tooltip": "Sproget teksterne skal oversættes til."
-          },
-          "tooltip": "Oversæt tekster og vis det oversatte resultat linje for linje."
-        },
-        "use-ytm-lyrics-without-proxy": {
-          "label": "Brug YTM-tekster uden proxy",
-          "tooltip": "Spring YTM-browser-proxyen og kald YouTube Music direkte ved hjælp af appens autentificerede session. Nyttigt, hvis du stoler på dit netværk/område til at tillade direkte browserkald."
-        },
-        "show-custom-search-button": {
-          "label": "Vis tilpasset søgeknap",
-          "tooltip": "Vis en søgeknap i tekstvælgeren, der lader dig tilsidesætte søgeforespørgslen og kunstneren for den aktuelle sang."
-        }
-      },
-      "name": "Synkroniserede tekster",
-      "refetch-btn": {
-        "fetching": "Henter...",
-        "normal": "Genhent tekster"
-      },
-      "warnings": {
-        "duration-mismatch": "⚠️ - Teksterne kan være ude af sync på grund af varigheds-uoverensstemmelse.",
-        "inexact": "⚠️ - Teksterne til denne sang er muligvis ikke præcise",
-        "instrumental": "⚠️ - Dette er en instrumental sang"
-      }
-    },
-    "taskbar-mediacontrol": {
-      "description": "Styr afspilning fra din Windows proceslinje",
-      "name": "Proceslinje mediekontrol"
-    },
-    "touchbar": {
-      "description": "Tilføjer en TouchBar-widget til macOS-brugere",
-      "name": "TouchBar"
-    },
-    "transparent-player": {
-      "description": "Gør appvinduet gennemsigtigt",
-      "menu": {
-        "opacity": {
-          "label": "Gennemsigtighed",
-          "submenu": {
-            "percent": "{{opacity}}%"
-          }
-        },
-        "type": {
-          "label": "Skriv",
-          "submenu": {
-            "acrylic": "Akryl",
-            "mica": "Mica",
-            "none": "Ingen",
-            "tabbed": "Fanebaseret"
-          }
-        }
-      },
-      "name": "Gennemsigtig afspiller"
-    },
-    "tuna-obs": {
-      "description": "Integration med OBS's plugin Tuna",
-      "name": "Tuna OBS"
-    },
-    "unobtrusive-player": {
-      "description": "Forhindrer afspilleren i at dukke op når en sang spiller",
-      "name": "Diskret afspiller"
-    },
-    "video-toggle": {
-      "description": "Tilføjer en knap til at skifte mellem Video/Sang-tilstand. Kan også fjerne hele videofanen",
-      "menu": {
-        "align": {
-          "label": "Justering",
-          "submenu": {
-            "left": "Venstre",
-            "middle": "Midten",
-            "right": "Højre"
-          }
-        },
-        "force-hide": "Tving fjernelse af videofane",
-        "mode": {
-          "label": "Tilstand",
-          "submenu": {
-            "custom": "Brugerdefineret skift",
-            "disabled": "Deaktiveret",
-            "native": "Indbygget skift"
-          }
-        }
-      },
-      "name": "Videoskift",
-      "templates": {
-        "button-song": "Sang",
-        "button-video": "Video"
-      }
-    },
-    "visualizer": {
-      "description": "Tilføjer en visualisering til afspilleren",
-      "menu": {
-        "visualizer-type": "Visualiseringstype"
-      },
-      "name": "Visualisering"
-    },
-    "audio-only": {
-      "description": "Tvinger kun lyd-tilstand — blokerer alle videostreams på netværks- og afspillerniveau for at spare RAM og båndbredde",
-      "name": "Kun lyd"
-    },
-    "playback-recovery": {
-      "description": "Gendanner automatisk fra fastlåste, stoppede eller døde afspilningstilstande",
-      "name": "Afspilningsgendannelse",
-      "menu": {
-        "log-to-console": "Log gendannelseshændelser til konsollen"
-      }
-    },
-    "playlist-search": {
-      "description": "Tilføjer et søgefelt til at filtrere spillelister i sidepanelet og dialogen Tilføj til spilleliste",
-      "name": "Søg i spilleliste",
-      "templates": {
-        "search-placeholder": "Søg efter spillelister",
-        "no-results": "Ingen playlister fundet"
-      }
+      "name": "Fade [Beta]"
     }
   }
 }

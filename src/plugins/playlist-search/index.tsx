@@ -1,11 +1,11 @@
 import { render } from 'solid-js/web';
 
-import { createPlugin } from '@/utils';
 import { t } from '@/i18n';
+import { createPlugin } from '@/utils';
 
 import style from './style.css?inline';
-import { SearchWrapper } from './templates/search-wrapper';
 import { NoResultsMessage } from './templates/no-results-message';
+import { SearchWrapper } from './templates/search-wrapper';
 
 // ported from https://chromewebstore.google.com/detail/playlist-searcher-for-you/hjjeeipclnojcnapbmpkokmhejhklflk
 
@@ -30,7 +30,7 @@ export default createPlugin<
 >({
   name: () => t('plugins.playlist-search.name'),
   description: () => t('plugins.playlist-search.description'),
-  authors: ["Milano Slesarik", "michei69"],
+  authors: ['Milano Slesarik', 'michei69'],
   addedVersion: '3.11.x',
   restartNeeded: false,
   stylesheets: [style],
@@ -41,6 +41,7 @@ export default createPlugin<
     isDialogVisible: false,
 
     // biome-ignore lint/suspicious/useAwait: start has to be async
+    // oxlint-disable-next-line typescript/require-await
     async start() {
       this.setupSidebarSearch();
 
@@ -76,16 +77,34 @@ export default createPlugin<
       const noResultsContainer = document.createElement('div');
 
       render(
-        () => <SearchWrapper id={SIDEBAR} placeholder={t('plugins.playlist-search.templates.search-placeholder')} />,
+        () => (
+          <SearchWrapper
+            id={SIDEBAR}
+            placeholder={t(
+              'plugins.playlist-search.templates.search-placeholder',
+            )}
+          />
+        ),
         wrapper,
       );
       render(
-        () => <NoResultsMessage id={SIDEBAR} text={t('plugins.playlist-search.templates.no-results')} />,
+        () => (
+          <NoResultsMessage
+            id={SIDEBAR}
+            text={t('plugins.playlist-search.templates.no-results')}
+          />
+        ),
         noResultsContainer,
       );
 
-      newPlaylistButton.insertAdjacentElement('afterend', wrapper.firstElementChild!);
-      playlistsContainer.insertAdjacentElement('afterend', noResultsContainer.firstElementChild!);
+      newPlaylistButton.insertAdjacentElement(
+        'afterend',
+        wrapper.firstElementChild!,
+      );
+      playlistsContainer.insertAdjacentElement(
+        'afterend',
+        noResultsContainer.firstElementChild!,
+      );
 
       const searchInput = document.getElementById(
         'pear-pls-sidebar-search-input',
@@ -98,9 +117,7 @@ export default createPlugin<
       if (!noResultsMessage) return;
 
       searchInput.addEventListener('input', (event) => {
-        const searchTerm = (
-          event.target as HTMLInputElement
-        ).value
+        const searchTerm = (event.target as HTMLInputElement).value
           .toLowerCase()
           .trim();
         const playlistItems = playlistsContainer.querySelectorAll(
@@ -154,13 +171,8 @@ export default createPlugin<
     },
 
     setupDialogSearch() {
-      const dialog = document.querySelector(
-        'ytmusic-add-to-playlist-renderer',
-      );
-      if (
-        !dialog ||
-        dialog.querySelector('#pear-pls-dialog-search-input')
-      ) {
+      const dialog = document.querySelector('ytmusic-add-to-playlist-renderer');
+      if (!dialog || dialog.querySelector('#pear-pls-dialog-search-input')) {
         return;
       }
 
@@ -174,16 +186,31 @@ export default createPlugin<
       const noResultsContainer = document.createElement('div');
 
       render(
-        () => <SearchWrapper id={DIALOG} placeholder={t('plugins.playlist-search.templates.search-placeholder')} />,
+        () => (
+          <SearchWrapper
+            id={DIALOG}
+            placeholder={t(
+              'plugins.playlist-search.templates.search-placeholder',
+            )}
+          />
+        ),
         wrapper,
       );
       render(
-        () => <NoResultsMessage id={DIALOG} text={t('plugins.playlist-search.templates.no-results')} />,
+        () => (
+          <NoResultsMessage
+            id={DIALOG}
+            text={t('plugins.playlist-search.templates.no-results')}
+          />
+        ),
         noResultsContainer,
       );
 
       heading.insertAdjacentElement('afterend', wrapper.firstElementChild!);
-      playlistsContainer.insertAdjacentElement('afterend', noResultsContainer.firstElementChild!);
+      playlistsContainer.insertAdjacentElement(
+        'afterend',
+        noResultsContainer.firstElementChild!,
+      );
 
       const searchInput = document.getElementById(
         'pear-pls-dialog-search-input',
@@ -196,9 +223,7 @@ export default createPlugin<
       if (!noResultsMessage) return;
 
       const handleFilter = (event: Event) => {
-        const searchTerm = (
-          event.target as HTMLInputElement
-        ).value
+        const searchTerm = (event.target as HTMLInputElement).value
           .toLowerCase()
           .trim();
         const playlistItems = playlistsContainer.querySelectorAll(
@@ -209,12 +234,9 @@ export default createPlugin<
         playlistItems.forEach((item) => {
           const titleElem = item.querySelector('#title');
           if (titleElem) {
-            const title =
-              titleElem.getAttribute('title')?.toLowerCase() ?? '';
+            const title = titleElem.getAttribute('title')?.toLowerCase() ?? '';
             const isVisible = title.includes(searchTerm);
-            (item as HTMLElement).style.display = isVisible
-              ? ''
-              : 'none';
+            (item as HTMLElement).style.display = isVisible ? '' : 'none';
             if (isVisible) visibleCount++;
           }
         });
@@ -253,6 +275,7 @@ export default createPlugin<
     },
 
     // biome-ignore lint/suspicious/useAwait: start has to be async
+    // oxlint-disable-next-line typescript/require-await
     async stop() {
       this.sidebarObserver?.disconnect();
       this.dialogObserver?.disconnect();

@@ -1,4 +1,12 @@
-/* eslint-disable stylistic/no-mixed-operators */
+/* oxlint-disable @stylistic/no-mixed-operators */
+import { IconCheckCircle } from '@mdui/icons/check-circle.js';
+import { IconChevronLeft } from '@mdui/icons/chevron-left.js';
+import { IconChevronRight } from '@mdui/icons/chevron-right.js';
+import { IconError } from '@mdui/icons/error.js';
+import { IconSearch } from '@mdui/icons/search.js';
+import { IconStarBorder } from '@mdui/icons/star-border.js';
+import { IconStar } from '@mdui/icons/star.js';
+import { IconWarning } from '@mdui/icons/warning.js';
 import {
   createEffect,
   createMemo,
@@ -8,23 +16,15 @@ import {
   Match,
   onCleanup,
   onMount,
+  runWithOwner,
   type Setter,
   Show,
   Switch,
 } from 'solid-js';
 import { Portal } from 'solid-js/web';
-
 import * as z from 'zod';
 
-import { IconChevronLeft } from '@mdui/icons/chevron-left.js';
-import { IconChevronRight } from '@mdui/icons/chevron-right.js';
-import { IconCheckCircle } from '@mdui/icons/check-circle.js';
-import { IconWarning } from '@mdui/icons/warning.js';
-import { IconError } from '@mdui/icons/error.js';
-import { IconStar } from '@mdui/icons/star.js';
-import { IconStarBorder } from '@mdui/icons/star-border.js';
-import { IconSearch } from '@mdui/icons/search.js';
-
+import { getSongInfo } from '@/providers/song-info-front';
 import { LitElementWrapper } from '@/solit';
 
 import {
@@ -35,6 +35,15 @@ import {
   type ProviderState,
 } from '../../providers';
 import {
+  customQuery,
+  loadCustomQueryForVideo,
+  removeCustomQuery,
+  saveCustomQuery,
+} from '../custom-query-store';
+import { _ytAPI } from '../index';
+import { reactiveOwner } from '../reactive-root';
+import { config } from '../renderer';
+import {
   clearSearchCacheForVideo,
   currentLyrics,
   hasLyricText,
@@ -43,15 +52,6 @@ import {
   setLyricsStore,
 } from '../store';
 import { isChineseTranslationTarget } from '../translation-store';
-import { _ytAPI } from '../index';
-import { config } from '../renderer';
-import {
-  customQuery,
-  loadCustomQueryForVideo,
-  removeCustomQuery,
-  saveCustomQuery,
-} from '../custom-query-store';
-import { getSongInfo } from '@/providers/song-info-front';
 
 import type { PlayerAPIEvents } from '@/types/player-api-events';
 import type { VideoDataChanged } from '@/types/video-data-changed';
@@ -60,9 +60,9 @@ const LocalStorageSchema = z.object({
   provider: ProviderNameSchema,
 });
 
-export const providerIdx = createMemo(() =>
-  providerNames.indexOf(lyricsStore.provider),
-);
+export const providerIdx = runWithOwner(reactiveOwner, () =>
+  createMemo(() => providerNames.indexOf(lyricsStore.provider)),
+)!;
 
 const shouldSwitchProvider = (providerData: ProviderState) => {
   if (providerData.state === 'error') return true;
@@ -180,7 +180,10 @@ export const LyricsPicker = (props: {
     const info = getSongInfo();
     const existing = customQuery();
     setSearchQuery(existing?.query || info?.title || '');
-    setSearchArtist(existing?.artist ?? (info?.artist || currentLyrics()?.data?.artists?.[0] || ''));
+    setSearchArtist(
+      existing?.artist ??
+        (info?.artist || currentLyrics()?.data?.artists?.[0] || ''),
+    );
     setShowSearchModal(true);
   };
 
@@ -214,10 +217,7 @@ export const LyricsPicker = (props: {
     closeSearchModal();
   };
 
-  const handleVideoData = (
-    videoId: string,
-    name: string,
-  ) => {
+  const handleVideoData = (videoId: string, name: string) => {
     setVideoId(videoId);
 
     if (name !== 'dataloaded') return;
@@ -432,68 +432,63 @@ export const LyricsPicker = (props: {
 
       <Show when={showSearchModal()}>
         <Portal>
-          <div
-            class="synced-lyrics-modal-backdrop"
-            onClick={closeSearchModal}
-          >
+          <div class="synced-lyrics-modal-backdrop" onClick={closeSearchModal}>
             <form
               class="synced-lyrics-modal"
               onClick={(e) => e.stopPropagation()}
               onSubmit={submitCustomQuery}
             >
-              <span class="synced-lyrics-modal-title">
-                Custom search query
-              </span>
+              <span class="synced-lyrics-modal-title">Custom search query</span>
 
               <label class="synced-lyrics-modal-label">
                 Title / search query
                 <input
-                  type="text"
                   class="synced-lyrics-modal-input"
-                  value={searchQuery()}
                   onInput={(e) =>
                     setSearchQuery((e.target as HTMLInputElement).value)
                   }
                   placeholder="Song title to search for…"
+                  type="text"
+                  value={searchQuery()}
                 />
               </label>
 
               <label class="synced-lyrics-modal-label">
                 Artist
                 <input
-                  type="text"
                   class="synced-lyrics-modal-input"
-                  value={searchArtist()}
                   onInput={(e) =>
                     setSearchArtist((e.target as HTMLInputElement).value)
                   }
                   placeholder="(optional)"
+                  type="text"
+                  value={searchArtist()}
                 />
               </label>
 
               <div class="synced-lyrics-modal-actions">
                 <button
-                  type="button"
                   class="synced-lyrics-modal-btn synced-lyrics-modal-btn--secondary"
                   onClick={closeSearchModal}
+                  type="button"
                 >
                   Cancel
                 </button>
 
                 <Show when={customQuery()}>
                   <button
-                    type="button"
                     class="synced-lyrics-modal-btn synced-lyrics-modal-btn--danger"
                     onClick={clearCustomQueryAction}
+                    type="button"
                   >
                     Clear saved query
                   </button>
                 </Show>
 
                 <button
-                  type="submit"
                   class="synced-lyrics-modal-btn synced-lyrics-modal-btn--primary"
                   disabled={!searchQuery().trim()}
+                  type="submit"
                 >
                   Save
                 </button>

@@ -1,8 +1,14 @@
+import { randomBytes } from 'node:crypto';
 import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { randomBytes } from 'node:crypto';
 
+import { Mutex } from 'async-mutex';
+import { BG, type BgConfig } from 'bgutils-js';
 import { app, type BrowserWindow, dialog, ipcMain } from 'electron';
+import is from 'electron-is';
+import filenamify from 'filenamify';
+import { lazy } from 'lazy-var';
+import * as NodeID3 from 'node-id3';
 import {
   Innertube,
   UniversalCache,
@@ -13,19 +19,9 @@ import {
   type YTMusic,
   type Types,
 } from '\u0079\u006f\u0075\u0074\u0075\u0062\u0065i.js';
-import is from 'electron-is';
-import filenamify from 'filenamify';
-import { Mutex } from 'async-mutex';
-import * as NodeID3 from 'node-id3';
-import { BG, type BgConfig } from 'bgutils-js';
-import { lazy } from 'lazy-var';
 
-import {
-  cropMaxWidth,
-  getFolder,
-  sendFeedback as sendFeedback_,
-  setBadge,
-} from './utils';
+import { t } from '@/i18n';
+import { getNetFetchAsFetch } from '@/plugins/utils/main';
 import {
   registerCallback,
   unregisterCallback,
@@ -35,8 +31,13 @@ import {
   type SongInfo,
   SongInfoEvent,
 } from '@/providers/song-info';
-import { getNetFetchAsFetch } from '@/plugins/utils/main';
-import { t } from '@/i18n';
+
+import {
+  cropMaxWidth,
+  getFolder,
+  sendFeedback as sendFeedback_,
+  setBadge,
+} from './utils';
 
 import { DefaultPresetList, type Preset, VideoFormatList } from '../types';
 
@@ -71,7 +72,7 @@ Platform.shim.eval = (
 
   const code = `${data.output}\nreturn { ${properties.join(', ')} }`;
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return,@typescript-eslint/no-implied-eval,@typescript-eslint/no-unsafe-call
+  // oxlint-disable-next-line typescript/no-unsafe-return,typescript/no-implied-eval,typescript/no-unsafe-call
   return new Function(code)();
 };
 
@@ -110,7 +111,7 @@ const sendError = (error: Error, source?: string) => {
   const songNameMessage = source ? `\nin ${source}` : '';
   const cause = error.cause
     ? `\n\n${
-        // eslint-disable-next-line @typescript-eslint/no-base-to-string,@typescript-eslint/restrict-template-expressions
+        // oxlint-disable-next-line typescript/no-base-to-string,typescript/restrict-template-expressions
         error.cause instanceof Error ? error.cause.toString() : error.cause
       }`
     : '';
@@ -194,7 +195,7 @@ export const onMainLoad = async ({
       if (interpreterJavascript) {
         // This is a workaround to run the interpreterJavascript code
         // Maybe there is a better way to do this (e.g. https://github.com/Siubaak/sval ?)
-        // eslint-disable-next-line @typescript-eslint/no-implied-eval,@typescript-eslint/no-unsafe-call
+        // oxlint-disable-next-line typescript/no-implied-eval,typescript/no-unsafe-call
         new Function(interpreterJavascript)();
 
         const poTokenResult = await BG.PoToken.generate({
@@ -235,8 +236,8 @@ export const onStop = () => {
 
 export async function downloadSong(
   url: string,
-  playlistFolder: string | undefined = undefined,
-  trackId: string | undefined = undefined,
+  playlistFolder?: string,
+  trackId?: string,
   increasePlaylistProgress: (value: number) => void = () => {},
 ) {
   let resolvedName;
@@ -256,8 +257,8 @@ export async function downloadSong(
 
 export async function downloadSongFromId(
   id: string,
-  playlistFolder: string | undefined = undefined,
-  trackId: string | undefined = undefined,
+  playlistFolder?: string,
+  trackId?: string,
   increasePlaylistProgress: (value: number) => void = () => {},
 ) {
   let resolvedName;
@@ -343,8 +344,8 @@ async function downloadSongUnsafe(
   isId: boolean,
   idOrUrl: string,
   setName: (name: string) => void,
-  playlistFolder: string | undefined = undefined,
-  trackId: string | undefined = undefined,
+  playlistFolder?: string,
+  trackId?: string,
   increasePlaylistProgress: (value: number) => void = () => {},
 ) {
   const sendFeedback = (message: unknown, progress?: number) => {
@@ -392,7 +393,7 @@ async function downloadSongUnsafe(
   setName(name);
 
   let playabilityStatus = info.playability_status;
-  let bypassedResult = null;
+  let bypassedResult: YT.VideoInfo;
   if (playabilityStatus?.status === 'LOGIN_REQUIRED') {
     // Try to bypass the age restriction
     bypassedResult = await getAndroidTvInfo(id);
@@ -570,7 +571,7 @@ async function iterableStreamToProcessedUint8Array(
           }),
           ratio,
         );
-        increasePlaylistProgress(0.15 + ratio * 0.85);
+        increasePlaylistProgress(0.15 + (ratio * 0.85));
       });
 
       const safeVideoNameWithExtension = `${safeVideoName}.${extension}`;
@@ -794,7 +795,7 @@ export async function downloadPlaylist(givenUrl?: string | URL) {
 
   const increaseProgress = (itemPercentage: number) => {
     const currentProgress = (counter - 1) / (items.length ?? 1);
-    const newProgress = currentProgress + progressStep * itemPercentage;
+    const newProgress = currentProgress + (progressStep * itemPercentage);
     win.setProgressBar(newProgress);
   };
 
@@ -864,7 +865,9 @@ const getPlaylistID = (aURL?: URL): string | null | undefined => {
 };
 
 const getVideoId = (url: URL | string): string | null => {
-  return new URL(url).searchParams.get('v');
+  const parsedUrl = URL.parse(url);
+  if (!parsedUrl) return null;
+  return parsedUrl.searchParams.get('v');
 };
 
 const getMetadata = (info: YTMusic.TrackInfo): CustomSongInfo => ({

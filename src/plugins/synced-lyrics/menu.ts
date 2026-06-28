@@ -7,8 +7,6 @@ import { providerNames } from './providers';
 import { clearCache as clearTranslationCache } from './translation/cache';
 import { normalizeGoogleTranslateHost } from './translation/providers/google-translate-host';
 
-import type { MenuItemConstructorOptions } from 'electron';
-import type { MenuContext } from '@/types/contexts';
 import type {
   LocalCliProviderEngine,
   LyricsFontSize,
@@ -18,6 +16,8 @@ import type {
   TranslationProviderName,
   TranslationTargetLanguage,
 } from './types';
+import type { MenuContext } from '@/types/contexts';
+import type { MenuItemConstructorOptions } from 'electron';
 
 const targetLanguageOptions: TranslationTargetLanguage[] = [
   'auto',
@@ -655,9 +655,7 @@ export const menu = async (
       ],
     },
     {
-      label: t(
-        'plugins.synced-lyrics.menu.use-ytm-lyrics-without-proxy.label',
-      ),
+      label: t('plugins.synced-lyrics.menu.use-ytm-lyrics-without-proxy.label'),
       toolTip: t(
         'plugins.synced-lyrics.menu.use-ytm-lyrics-without-proxy.tooltip',
       ),
@@ -670,9 +668,7 @@ export const menu = async (
       },
     },
     {
-      label: t(
-        'plugins.synced-lyrics.menu.show-custom-search-button.label',
-      ),
+      label: t('plugins.synced-lyrics.menu.show-custom-search-button.label'),
       toolTip: t(
         'plugins.synced-lyrics.menu.show-custom-search-button.tooltip',
       ),

@@ -1,29 +1,42 @@
-/* eslint-disable */
-
-// Source: https://addons.mozilla.org/en-US/firefox/addon/adblock-for-youtube/
-// https://robwu.nl/crxviewer/?crx=https%3A%2F%2Faddons.mozilla.org%2Fen-US%2Ffirefox%2Faddon%2Fadblock-for-youtube%2F
-
 /*
-  Parts of this code is derived from set-constant.js:
-  https://github.com/gorhill/uBlock/blob/5de0ce975753b7565759ac40983d31978d1f84ca/assets/resources/scriptlets.js#L704
-  */
+ * Source: https://addons.mozilla.org/en-US/firefox/addon/adblock-for-youtube/
+ * https://robwu.nl/crxviewer/?crx=https%3A%2F%2Faddons.mozilla.org%2Fen-US%2Ffirefox%2Faddon%2Fadblock-for-youtube%2F
+ *
+ * Parts of this code is derived from set-constant.js:
+ * https://github.com/gorhill/uBlock/blob/5de0ce975753b7565759ac40983d31978d1f84ca/assets/resources/scriptlets.js#L704
+ */
+
+import type { ContextBridge } from 'electron';
+
+interface PrunableResponse {
+  playerAds?: unknown;
+  adPlacements?: unknown;
+  adSlots?: unknown;
+  playerResponse?: PrunableResponse;
+  ytInitialPlayerResponse?: PrunableResponse;
+  [key: string]: unknown;
+}
+
+type PropertyOwner = Record<string, unknown>;
+
+interface TrapHandler {
+  v: unknown;
+  init(value: unknown): boolean;
+  getter(): unknown;
+  setter(value: unknown): void;
+}
 
 let injected = false;
 
-export const isInjected = () => injected;
+export const isInjected = (): boolean => injected;
 
-/**
- * @param {Electron.ContextBridge} contextBridge
- * @returns {*}
- */
-export const inject = (contextBridge) => {
+export const inject = (contextBridge: ContextBridge): void => {
   injected = true;
   {
-    const pruner = function (o) {
+    const pruner = (o: PrunableResponse): PrunableResponse => {
       delete o.playerAds;
       delete o.adPlacements;
       delete o.adSlots;
-      //
       if (o.playerResponse) {
         delete o.playerResponse.playerAds;
         delete o.playerResponse.adPlacements;
@@ -35,9 +48,8 @@ export const inject = (contextBridge) => {
         delete o.ytInitialPlayerResponse.adSlots;
       }
 
-      //
       return o;
-    }
+    };
 
     contextBridge.exposeInMainWorld('_pruner', pruner);
   }
@@ -58,13 +70,13 @@ export const inject = (contextBridge) => {
     {
       chain: 'ytInitialPlayerResponse.adSlots',
       cValue: 'undefined',
-    }
+    },
   ];
 
-  chains.forEach(function ({ chain, cValue }) {
+  chains.forEach(({ chain, cValue: rawValue }) => {
     const thisScript = document.currentScript;
-    //
-    switch (cValue) {
+    let cValue: unknown;
+    switch (rawValue) {
       case 'null': {
         cValue = null;
         break;
@@ -91,47 +103,43 @@ export const inject = (contextBridge) => {
       }
 
       case 'noopFunc': {
-        cValue = function () {};
+        cValue = () => {};
 
         break;
       }
 
       case 'trueFunc': {
-        cValue = function () {
-          return true;
-        };
+        cValue = () => true;
 
         break;
       }
 
       case 'falseFunc': {
-        cValue = function () {
-          return false;
-        };
+        cValue = () => false;
 
         break;
       }
 
       default: {
-        if (/^\d+$/.test(cValue)) {
-          cValue = Number.parseFloat(cValue);
-          //
-          if (isNaN(cValue)) {
+        if (/^\d+$/.test(rawValue)) {
+          const numericValue = Number.parseFloat(rawValue);
+          if (Number.isNaN(numericValue)) {
             return;
           }
 
-          if (Math.abs(cValue) > 0x7f_ff) {
+          if (Math.abs(numericValue) > 0x7f_ff) {
             return;
           }
+
+          cValue = numericValue;
         } else {
           return;
         }
       }
     }
 
-    //
     let aborted = false;
-    const mustAbort = function (v) {
+    const mustAbort = (v: unknown): boolean => {
       if (aborted) {
         return true;
       }
@@ -145,35 +153,35 @@ export const inject = (contextBridge) => {
       return aborted;
     };
 
-    /*
-    Support multiple trappers for the same property:
-    https://github.com/uBlockOrigin/uBlock-issues/issues/156
-    */
-
-    const trapProp = function (owner, prop, configurable, handler) {
-      if (handler.init(owner[prop]) === false) {
+    const trapProp = (
+      owner: PropertyOwner,
+      prop: string,
+      configurable: boolean,
+      handler: TrapHandler,
+    ) => {
+      if (!handler.init(owner[prop])) {
         return;
       }
 
-      //
       const odesc = Object.getOwnPropertyDescriptor(owner, prop);
-      let previousGetter;
-      let previousSetter;
+      let previousGetter: (() => unknown) | undefined;
+      let previousSetter: ((value: unknown) => void) | undefined;
       if (odesc instanceof Object) {
         if (odesc.configurable === false) {
           return;
         }
 
         if (odesc.get instanceof Function) {
+          // oxlint-disable-next-line typescript/unbound-method
           previousGetter = odesc.get;
         }
 
         if (odesc.set instanceof Function) {
+          // oxlint-disable-next-line typescript/unbound-method
           previousSetter = odesc.set;
         }
       }
 
-      //
       Object.defineProperty(owner, prop, {
         configurable,
         get() {
@@ -181,21 +189,19 @@ export const inject = (contextBridge) => {
             previousGetter();
           }
 
-          //
           return handler.getter();
         },
-        set(a) {
+        set(a: unknown) {
           if (previousSetter !== undefined) {
             previousSetter(a);
           }
 
-          //
           handler.setter(a);
         },
       });
     };
 
-    const trapChain = function (owner, chain) {
+    const trapChain = (owner: PropertyOwner, chain: string) => {
       const pos = chain.indexOf('.');
       if (pos === -1) {
         trapProp(owner, chain, false, {
@@ -204,7 +210,7 @@ export const inject = (contextBridge) => {
             return document.currentScript === thisScript ? this.v : cValue;
           },
           setter(a) {
-            if (mustAbort(a) === false) {
+            if (!mustAbort(a)) {
               return;
             }
 
@@ -215,26 +221,22 @@ export const inject = (contextBridge) => {
               return false;
             }
 
-            //
             this.v = v;
             return true;
           },
         });
-        //
         return;
       }
 
-      //
       const prop = chain.slice(0, pos);
       const v = owner[prop];
-      //
-      chain = chain.slice(pos + 1);
+
+      const remainingChain = chain.slice(pos + 1);
       if (v instanceof Object || (typeof v === 'object' && v !== null)) {
-        trapChain(v, chain);
+        trapChain(v as PropertyOwner, remainingChain);
         return;
       }
 
-      //
       trapProp(owner, prop, true, {
         v: undefined,
         getter() {
@@ -243,7 +245,7 @@ export const inject = (contextBridge) => {
         setter(a) {
           this.v = a;
           if (a instanceof Object) {
-            trapChain(a, chain);
+            trapChain(a as PropertyOwner, remainingChain);
           }
         },
         init(v) {
@@ -253,7 +255,6 @@ export const inject = (contextBridge) => {
       });
     };
 
-    //
-    trapChain(window, chain);
+    trapChain(window as unknown as PropertyOwner, chain);
   });
 };

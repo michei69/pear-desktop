@@ -109,8 +109,7 @@
                   "title": "设置代理服务器"
                 }
               },
-              "toggle-dev-tools": "切换开发人员工具",
-              "force-smtc": "强制使用外部SMTC"
+              "toggle-dev-tools": "切换开发人员工具"
             }
           },
           "always-on-top": "保持置顶",
@@ -145,27 +144,25 @@
               "disabled": "已禁用",
               "enabled-and-hide-app": "启用并隐藏应用",
               "enabled-and-show-app": "启用并显示应用",
-              "move-to-current-desktop": "显示时移动到当前虚拟桌面",
-              "play-pause-on-click": "点击时播放/暂停",
-              "force-white-icons": "强制使用白色图标"
+              "play-pause-on-click": "点击时播放/暂停"
             }
           },
           "visual-tweaks": {
             "label": "视觉调整",
             "submenu": {
-              "like-buttons": {
-                "default": "默认",
-                "force-show": "强制显示",
-                "hide": "隐藏",
-                "swap": "交换“点赞”按钮顺序",
-                "label": "点赞按钮"
-              },
               "custom-window-title": {
                 "label": "自定义窗口标题",
                 "prompt": {
                   "label": "输入自定义窗口标题：（留空表示停用）",
                   "placeholder": "示例：{{applicationName}}"
                 }
+              },
+              "like-buttons": {
+                "default": "默认",
+                "force-show": "强制显示",
+                "hide": "隐藏",
+                "label": "点赞按钮",
+                "swap": "交换“点赞”按钮顺序"
               },
               "remove-upgrade-button": "移除升级按钮",
               "theme": {
@@ -213,25 +210,14 @@
       "show": "显示窗口",
       "tooltip": {
         "default": "{{applicationName}}",
-        "with-song-info": "{{applicationName}}：{{artist}} - {{title}}"
-      },
-      "like": "喜欢",
-      "dislike": "不喜欢",
-      "unlike": "不同于",
-      "undislike": "取消不喜欢"
+        "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
+      }
     }
   },
   "plugins": {
     "ad-speedup": {
       "description": "使用静音以及 16 倍速播放跳过广告片段",
       "name": "广告加速跳过"
-    },
-    "adblocker": {
-      "description": "屏蔽所有广告与跟踪器",
-      "menu": {
-        "blocker": "屏蔽器"
-      },
-      "name": "广告屏蔽器"
     },
     "album-actions": {
       "description": "添加作用于播放列表或专辑中所有歌曲的全局“点赞/取消点赞”与“喜欢/取消喜欢”按钮",
@@ -249,10 +235,6 @@
         "enable-seekbar": "启用进度条主题"
       },
       "name": "专辑配色主题"
-    },
-    "audio-only": {
-      "description": "强制仅音频模式——在网络和播放器层面阻止所有视频流以节省内存和带宽",
-      "name": "仅音频"
     },
     "ambient-mode": {
       "description": "将视频中的浅配色作为光效投射到背景中，以增加沉浸感",
@@ -333,24 +315,24 @@
         "hostname": {
           "label": "主机名"
         },
-        "port": {
-          "label": "端口号"
-        },
         "https": {
           "label": "HTTPS & 数字证书",
           "submenu": {
+            "cert": {
+              "dialogTitle": "选择 HTTPS 证书文件",
+              "label": "证书文件（.crt/.pem）"
+            },
             "enable-https": {
               "label": "启用 HTTPS"
             },
-            "cert": {
-              "label": "证书文件（.crt/.pem）",
-              "dialogTitle": "选择 HTTPS 证书文件"
-            },
             "key": {
-              "label": "私钥文件（.key/.pem）",
-              "dialogTitle": "选择 HTTPS 私钥文件"
+              "dialogTitle": "选择 HTTPS 私钥文件",
+              "label": "私钥文件（.key/.pem）"
             }
           }
+        },
+        "port": {
+          "label": "端口号"
         }
       },
       "name": "API 服务器 [测试]",
@@ -384,12 +366,12 @@
       "name": "认证代理适配",
       "prompt": {
         "hostname": {
-          "title": "代理主机名",
-          "label": "请输入本地代理服务器的主机名（需要重启）："
+          "label": "请输入本地代理服务器的主机名（需要重启）：",
+          "title": "代理主机名"
         },
         "port": {
-          "title": "代理端口",
-          "label": "请输入本地代理服务器的端口号（需要重启）："
+          "label": "请输入本地代理服务器的端口号（需要重启）：",
+          "title": "代理端口"
         }
       }
     },
@@ -426,14 +408,14 @@
     },
     "clock": {
       "description": "添加时钟到导航栏",
-      "name": "时钟",
       "menu": {
         "format": {
-          "label": "格式",
+          "24-hour-format": "24 小时格式",
           "display-seconds": "显示秒数",
-          "24-hour-format": "24 小时格式"
+          "label": "格式"
         }
-      }
+      },
+      "name": "时钟"
     },
     "compact-sidebar": {
       "description": "始终将侧边栏设为紧凑模式",
@@ -514,6 +496,13 @@
           "title": "设置非活跃超时"
         }
       }
+    },
+    "do-not-track": {
+      "description": "默认拦截所有跟踪",
+      "menu": {
+        "blocker": "拦截器"
+      },
+      "name": "Do Not Track"
     },
     "downloader": {
       "backend": {
@@ -695,7 +684,6 @@
           "label": "通知交互设定",
           "submenu": {
             "hide-button-text": "隐藏按钮文字",
-            "hover-controls": "悬停托盘时显示迷你播放器",
             "refresh-on-play-pause": "播放/暂停时刷新",
             "tray-controls": "点击托盘时打开/关闭"
           }
@@ -709,13 +697,6 @@
     "performance-improvement": {
       "description": "通过开启实验性脚本改进性能",
       "name": "性能改进 [公测]"
-    },
-    "playback-recovery": {
-      "description": "自动从卡顿、停滞或死锁的播放状态中恢复",
-      "menu": {
-        "log-to-console": "将恢复事件记录到控制台"
-      },
-      "name": "播放恢复"
     },
     "picture-in-picture": {
       "description": "允许应用切换到画中画模式",
@@ -805,8 +786,8 @@
         "listenbrainz": {
           "token": "输入 ListenBrainz 用户令牌"
         },
-        "scrobble-alternative-title": "使用替代标题",
         "scrobble-alternative-artist": "使用替代艺术家",
+        "scrobble-alternative-title": "使用替代标题",
         "scrobble-other-media": "记录其他媒体文件"
       },
       "name": "歌曲记录器",
@@ -861,74 +842,6 @@
         "not-found": "⚠️ 未找到此歌曲的歌词。"
       },
       "menu": {
-        "preferred-provider": {
-          "label": "首选歌词源",
-          "tooltip": "选择默认要用的源",
-          "none": {
-            "label": "无",
-            "tooltip": "没有首选的歌词源"
-          }
-        },
-        "default-text-string": {
-          "label": "默认的歌词行间字符",
-          "tooltip": "选择在歌词间隙期间默认显示的字符"
-        },
-        "line-effect": {
-          "label": "歌词行特效",
-          "submenu": {
-            "fancy": {
-              "label": "华丽",
-              "tooltip": "在当前行上使用大的、类似应用的效果"
-            },
-            "focus": {
-              "label": "高亮",
-              "tooltip": "仅将当前歌词行显示为白色"
-            },
-            "offset": {
-              "label": "偏移",
-              "tooltip": "将当前歌词行向右偏移"
-            },
-            "scale": {
-              "label": "放大",
-              "tooltip": "放大当前歌词行"
-            }
-          },
-          "tooltip": "选择当前歌词行应用的特效"
-        },
-        "lyrics-font-size": {
-          "label": "歌词字体大小",
-          "submenu": {
-            "small": {
-              "label": "小",
-              "tooltip": "使用更紧凑的歌词大小"
-            },
-            "medium": {
-              "label": "中",
-              "tooltip": "使用均衡的歌词大小"
-            },
-            "large": {
-              "label": "大",
-              "tooltip": "使用较大的原始歌词大小"
-            }
-          },
-          "tooltip": "选择歌词文字的大小"
-        },
-        "precise-timing": {
-          "label": "让滚动歌词完全同步",
-          "tooltip": "以毫秒精度估算下句歌词的显示时间（可能对性能有小幅影响）"
-        },
-        "romanization": {
-          "label": "将歌词罗马化",
-          "tooltip": "如果歌词以不同语言显示，试着展示拉丁字母版本。"
-        },
-        "show-lyrics-even-if-inexact": {
-          "label": "即使时值不精确依然显示歌词",
-          "tooltip": "若首次搜索未找到该歌曲的歌词，插件将尝试用不同的查询方式重新获取。\n重试查询的结果可能不精确。"
-        },
-        "show-time-codes": {
-          "label": "显示时值",
-          "tooltip": "在歌词旁显示时值"
-        },
         "convert-chinese-character": {
           "label": "转换中文字符",
           "submenu": {
@@ -947,124 +860,55 @@
           },
           "tooltip": "转换简繁体中文字符"
         },
-        "translation": {
-          "label": "歌词翻译",
-          "tooltip": "翻译歌词并逐行显示翻译结果。",
-          "enabled": {
-            "label": "启用翻译",
-            "tooltip": "在每行原始歌词下方显示翻译行。"
-          },
-          "provider": {
-            "label": "提供者",
-            "tooltip": "使用哪个服务进行翻译。"
-          },
-          "target-language": {
-            "label": "目标语言",
-            "tooltip": "将歌词翻译为的目标语言。",
-            "options": {
-              "auto": "跟随应用语言",
-              "zh-CN": "简体中文",
-              "zh-TW": "繁體中文",
-              "en": "English",
-              "ja": "日本語",
-              "ko": "한국어",
-              "fr": "Français",
-              "de": "Deutsch",
-              "es": "Español",
-              "pt-BR": "Português (Brasil)",
-              "pt-PT": "Português (Portugal)",
-              "it": "Italiano",
-              "nl": "Nederlands",
-              "ru": "Русский",
-              "uk": "Українська",
-              "pl": "Polski",
-              "tr": "Türkçe",
-              "ar": "العربية",
-              "he": "עברית",
-              "fa": "فارسی",
-              "hi": "हिन्दी",
-              "bn": "বাংলা",
-              "ur": "اردو",
-              "ta": "தமிழ்",
-              "te": "తెలుగు",
-              "mr": "मराठी",
-              "id": "Bahasa Indonesia",
-              "ms": "Bahasa Melayu",
-              "vi": "Tiếng Việt",
-              "th": "ไทย",
-              "fil": "Filipino",
-              "sw": "Kiswahili",
-              "sv": "Svenska",
-              "no": "Norsk",
-              "da": "Dansk",
-              "fi": "Suomi",
-              "cs": "Čeština",
-              "ro": "Română",
-              "hu": "Magyar",
-              "el": "Ελληνικά",
-              "bg": "Български",
-              "sr": "Српски",
-              "hr": "Hrvatski",
-              "sk": "Slovenčina",
-              "lt": "Lietuvių"
+        "default-text-string": {
+          "label": "默认的歌词行间字符",
+          "tooltip": "选择在歌词间隙期间默认显示的字符"
+        },
+        "line-effect": {
+          "label": "歌词行特效",
+          "submenu": {
+            "fancy": {
+              "label": "Fancy",
+              "tooltip": "在当前行上使用大的、类似应用的效果"
+            },
+            "focus": {
+              "label": "高亮",
+              "tooltip": "仅将当前歌词行显示为白色"
+            },
+            "offset": {
+              "label": "偏移",
+              "tooltip": "将当前歌词行向右偏移"
+            },
+            "scale": {
+              "label": "放大",
+              "tooltip": "放大当前歌词行"
             }
           },
-          "configure": {
-            "label": "配置 API 密钥和模型…",
-            "tooltip": "设置特定提供者的翻译选项。"
-          },
-          "clear-cache": {
-            "label": "清除翻译缓存",
-            "tooltip": "删除磁盘上存储的所有已缓存翻译。"
-          },
-          "providers": {
-            "shared": {
-              "api-key": "API 密钥",
-              "model": "模型"
-            },
-            "openai-compatible": {
-              "name": "兼容 OpenAI",
-              "prompt-title": "OpenAI 兼容设置",
-              "prompt-label": "使用兼容 OpenAI 的服务器，包括 Ollama（基础 URL http://127.0.0.1:11434/v1，API 模式为 auto 或 chat-completions）。",
-              "base-url": "基础 URL",
-              "api-mode": "API 模式 (responses / auto / chat-completions)"
-            },
-            "anthropic": {
-              "name": "Anthropic Claude",
-              "prompt-title": "Anthropic 设置",
-              "prompt-label": "使用 Anthropic 原生 Messages API。"
-            },
-            "gemini": {
-              "name": "Google Gemini",
-              "prompt-title": "Gemini 设置",
-              "prompt-label": "使用 Google 的 Generative Language API (generateContent)。"
-            },
-            "local-cli": {
-              "name": "本地命令行界面",
-              "prompt-title": "本地 CLI 设置",
-              "prompt-label": "使用已本地登录的 Claude Code、Codex 或 Gemini CLI。命令和模型为自动；CLI 使用其自己的登录默认值。",
-              "engine": "本地 CLI",
-              "engine-claude": "Claude Code",
-              "engine-codex": "Codex",
-              "engine-gemini": "Gemini CLI",
-              "command": "命令",
-              "timeout": "超时秒数 (15-600)"
-            },
-            "google-translate": {
-              "name": "谷歌翻译",
-              "prompt-title": "Google 翻译设置",
-              "prompt-label": "使用非官方的免费 Google 翻译端点。无需 API 密钥，但 Google 可能会限制速率。",
-              "host": "主机"
-            }
-          }
+          "tooltip": "选择当前歌词行应用的特效"
         },
-        "use-ytm-lyrics-without-proxy": {
-          "label": "使用YTM歌词，无需代理",
-          "tooltip": "跳过YTM浏览代理，直接使用应用认证会话调用YouTube Music。若您信任网络/地区允许直接浏览调用时适用。"
+        "precise-timing": {
+          "label": "让滚动歌词完全同步",
+          "tooltip": "以毫秒精度估算下句歌词的显示时间（可能对性能有小幅影响）"
         },
-        "show-custom-search-button": {
-          "label": "显示自定义搜索按钮",
-          "tooltip": "在歌词选择器中显示一个搜索按钮，允许您覆盖当前歌曲的搜索查询和艺术家。"
+        "preferred-provider": {
+          "label": "首选歌词源",
+          "none": {
+            "label": "无",
+            "tooltip": "没有首选的歌词源"
+          },
+          "tooltip": "选择默认要用的源"
+        },
+        "romanization": {
+          "label": "将歌词罗马化",
+          "tooltip": "如果歌词以不同语言显示，试着展示拉丁字母版本。"
+        },
+        "show-lyrics-even-if-inexact": {
+          "label": "即使时值不精确依然显示歌词",
+          "tooltip": "若首次搜索未找到该歌曲的歌词，插件将尝试用不同的查询方式重新获取。\n重试查询的结果可能不精确。"
+        },
+        "show-time-codes": {
+          "label": "显示时值",
+          "tooltip": "在歌词旁显示时值"
         }
       },
       "name": "滚动歌词",
@@ -1088,7 +932,6 @@
     },
     "transparent-player": {
       "description": "把应用窗口变透明",
-      "name": "透明播放器",
       "menu": {
         "opacity": {
           "label": "不透明",
@@ -1100,16 +943,22 @@
           "label": "类型",
           "submenu": {
             "acrylic": "亚克力",
+            "content": "内容",
+            "fullscreen-ui": "全屏用户界面",
             "mica": "云母",
+            "none": "无",
             "tabbed": "标签",
-            "none": "无"
+            "under-page": "页面下",
+            "under-window": "窗口下",
+            "window": "窗口"
           }
         }
-      }
+      },
+      "name": "透明播放器"
     },
     "tuna-obs": {
       "description": "与 OBS 的 Tuna 插件集成",
-      "name": "金枪鱼OBS"
+      "name": "Tuna OBS"
     },
     "unobtrusive-player": {
       "description": "防止播放器在播放歌曲时弹出",
@@ -1148,14 +997,6 @@
         "visualizer-type": "可视化类型"
       },
       "name": "可视化效果"
-    },
-    "playlist-search": {
-      "description": "在侧边栏和“添加到播放列表”对话框中添加搜索输入框以筛选播放列表。",
-      "name": "播放列表搜索",
-      "templates": {
-        "search-placeholder": "搜索播放列表",
-        "no-results": "未找到播放列表"
-      }
     }
   }
 }

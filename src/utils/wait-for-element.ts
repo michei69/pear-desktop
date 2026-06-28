@@ -19,7 +19,11 @@ export const waitForElement = <T extends Element>(
       if (maxRetry > 0 && retryCount >= maxRetry) {
         clearInterval(interval);
         clearTimeout(timeoutHandle);
-        reject(new Error(`waitForElement: max retries (${maxRetry}) reached for "${selector}"`));
+        reject(
+          new Error(
+            `waitForElement: max retries (${maxRetry}) reached for "${selector}"`,
+          ),
+        );
         return;
       }
       const elem = document.querySelector<T>(selector);

@@ -1,14 +1,14 @@
 import { createEffect, createMemo, createSignal, Show } from 'solid-js';
 
+import { config } from '../renderer';
+import { lyricsStore } from '../store';
+import { getLineTranslation } from '../translation-store';
 import {
   canonicalize,
   convertChineseCharacter,
   romanize,
   simplifyUnicode,
 } from '../utils';
-import { config } from '../renderer';
-import { getLineTranslation } from '../translation-store';
-import { lyricsStore } from '../store';
 
 interface PlainLyricsProps {
   line: string;

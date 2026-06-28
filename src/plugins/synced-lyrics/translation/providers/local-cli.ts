@@ -11,15 +11,21 @@ import {
   parseLinesFromJson,
 } from '../prompt';
 
-import type { TranslationProvider } from '../types';
 import type { LocalCliProviderEngine } from '../../types';
+import type { TranslationProvider } from '../types';
 
 const ansiPattern =
   // eslint-disable-next-line no-control-regex
   /[\u001b\u009b][[\]()#;?]*(?:[\dA-PR-TZcf-nq-uy=><~]*(?:;[\dA-PR-TZcf-nq-uy=><~]*)*)?[\dA-PR-TZcf-nq-uy=><~]/g;
 
 const augmentPath = () => {
-  const fnmVersionsDir = join(homedir(), '.local', 'share', 'fnm', 'node-versions');
+  const fnmVersionsDir = join(
+    homedir(),
+    '.local',
+    'share',
+    'fnm',
+    'node-versions',
+  );
   const fnmNodeBins = existsSync(fnmVersionsDir)
     ? readdirSync(fnmVersionsDir).map((version) =>
         join(fnmVersionsDir, version, 'installation', 'bin'),

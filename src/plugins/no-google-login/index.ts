@@ -1,6 +1,7 @@
-import style from './style.css?inline';
-import { createPlugin } from '@/utils';
 import { t } from '@/i18n';
+import { createPlugin } from '@/utils';
+
+import style from './style.css?inline';
 
 export default createPlugin({
   name: () => t('plugins.no-google-login.name'),

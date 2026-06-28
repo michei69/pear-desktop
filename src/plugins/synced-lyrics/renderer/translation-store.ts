@@ -1,19 +1,19 @@
 import { createStore } from 'solid-js/store';
 import { detectAll } from 'tinyld';
 
-import { config } from './renderer';
-import { translateInvoke } from './index';
 import { translationDebug } from './debug';
+import { translateInvoke } from './index';
+import { config } from './renderer';
 
 import { getTranslationModelId } from '../translation/model-id';
 import { TRANSLATION_STRATEGY_VERSION } from '../translation/version';
 
+import type { TranslationRequest } from '../translation/types';
 import type {
   TranslationTargetLanguage,
   TranslationProviderName,
   TranslationProviderSettings,
 } from '../types';
-import type { TranslationRequest } from '../translation/types';
 
 type LineState = 'idle' | 'fetching' | 'done' | 'error';
 
