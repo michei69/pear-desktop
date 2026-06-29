@@ -27,9 +27,9 @@ All notable changes to this project will be documented in this file. Dates are d
 - fix: update WM_CLASS for improved compatibility [`#2647`](https://github.com/michei69/pear-desktop/issues/2647) [`#3312`](https://github.com/michei69/pear-desktop/issues/3312) [`#3725`](https://github.com/michei69/pear-desktop/issues/3725) [`#4439`](https://github.com/michei69/pear-desktop/issues/4439)
 - fix(rolldown): fix bundling [`#4462`](https://github.com/michei69/pear-desktop/issues/4462)
 - feat(websocket): handle player state on app quit [`#4381`](https://github.com/michei69/pear-desktop/issues/4381)
+- Update changelog for v3.12.0 [`7d85bf1`](https://github.com/michei69/pear-desktop/commit/7d85bf1f69a2011035219ff68a0dc3ead0c2a9a4)
 - feat: migrate from eslint to oxlint [`de90bbc`](https://github.com/michei69/pear-desktop/commit/de90bbc79211ee6de8278e28830976c4884480bb)
 - chore: update dependencies and remove unused code [`220b105`](https://github.com/michei69/pear-desktop/commit/220b10520ed4c094db62242aa7136fb2ff804558)
-- feat(do-not-track): implement do-not-track [`2129832`](https://github.com/michei69/pear-desktop/commit/2129832b5e42cd2e6cac7eb0402aa6c378dd5bd1)
 
 #### [v3.11.15](https://github.com/michei69/pear-desktop/compare/v3.11.14...v3.11.15)
 
