@@ -997,12 +997,15 @@ app.whenReady().then(async () => {
     forceQuit = true;
   });
 
-  mainWindow.on('close', (event) => {
-    if (is.macOS() && !forceQuit) {
-      event.preventDefault();
-      mainWindow?.hide();
-    }
-  });
+  if (is.macOS() || config.get('options.tray')) {
+    mainWindow.on('close', (event) => {
+      // Hide the window instead of quitting (quit is available in tray options)
+      if (!forceQuit) {
+        event.preventDefault();
+        mainWindow!.hide();
+      }
+    });
+  }
 });
 
 function showUnresponsiveDialog(
