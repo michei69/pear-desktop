@@ -17,6 +17,7 @@ import {
   getLoadedRendererPlugin,
   loadAllRendererPlugins,
 } from './loader/renderer';
+import { type NextData } from './plugins/synced-lyrics/providers/YTMusic';
 import { startingPages } from './providers/extracted-data';
 import { setupSongInfo } from './providers/song-info-front';
 
@@ -308,6 +309,45 @@ function onApiLoaded() {
       window.ipcRenderer.send('peard:search-results', result);
     },
   );
+
+  window.ipcRenderer.on('peard:load-video', async (_, videoId: string) => {
+    const app = document.querySelector<MusicPlayerAppElement>('ytmusic-app');
+    const queue = document.querySelector<QueueElement>('#queue');
+    
+    if (!app || !api || !queue) return;
+
+    api.stopVideo();
+    const data = await app.networkManager.fetch<NextData, { videoId: string }>('/next?prettyPrint=false', {
+      videoId,
+    });
+    
+    queue.dispatch({ type: 'CLEAR' });
+    queue.dispatch({ type: 'SET_QUEUE_CONTEXT_PARAMS', payload: data.queueContextParams });
+    queue.dispatch({ type: 'SET_PLAYER_PAGE_WATCH_NEXT_RESPONSE', payload: data });
+    queue.dispatch({ type: 'SET_PLAYER_OVERLAY', payload: data.playerOverlays });
+    queue.dispatch({ type: 'SET_PLAYER_PAGE_TABS', payload: data.contents.singleColumnMusicWatchNextResultsRenderer.tabbedRenderer.watchNextTabbedResultsRenderer.tabs });
+    queue.dispatch({ type: 'SET_PLAYER_PAGE_TABS_CONTENT', payload: {} });
+    queue.dispatch({ type: 'ADD_ITEMS', payload: { index: 0, items: data.contents.singleColumnMusicWatchNextResultsRenderer.tabbedRenderer.watchNextTabbedResultsRenderer.tabs[0].tabRenderer.content.musicQueueRenderer.content.playlistPanelRenderer.contents.filter((a) => a.playlistPanelVideoRenderer), nextQueueItemId: 0, shouldAssignIds: true } });
+  });
+  window.ipcRenderer.on('peard:load-playlist', async (_, playlistId: string) => {
+    const app = document.querySelector<MusicPlayerAppElement>('ytmusic-app');
+    const queue = document.querySelector<QueueElement>('#queue');
+    
+    if (!app || !api || !queue) return;
+
+    api.stopVideo();
+    const data = await app.networkManager.fetch<NextData, { playlistId: string }>('/next?prettyPrint=false', {
+      playlistId,
+    });
+    
+    queue.dispatch({ type: 'CLEAR' });
+    queue.dispatch({ type: 'SET_QUEUE_CONTEXT_PARAMS', payload: data.queueContextParams });
+    queue.dispatch({ type: 'SET_PLAYER_PAGE_WATCH_NEXT_RESPONSE', payload: data });
+    queue.dispatch({ type: 'SET_PLAYER_OVERLAY', payload: data.playerOverlays });
+    queue.dispatch({ type: 'SET_PLAYER_PAGE_TABS', payload: data.contents.singleColumnMusicWatchNextResultsRenderer.tabbedRenderer.watchNextTabbedResultsRenderer.tabs });
+    queue.dispatch({ type: 'SET_PLAYER_PAGE_TABS_CONTENT', payload: {} });
+    queue.dispatch({ type: 'ADD_ITEMS', payload: { index: 0, items: data.contents.singleColumnMusicWatchNextResultsRenderer.tabbedRenderer.watchNextTabbedResultsRenderer.tabs[0].tabRenderer.content.musicQueueRenderer.content.playlistPanelRenderer.contents, nextQueueItemId: 0, shouldAssignIds: true } });
+  });
 
   const video = document.querySelector('video');
   if (!video) return;

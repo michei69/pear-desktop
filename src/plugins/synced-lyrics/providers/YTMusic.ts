@@ -160,7 +160,7 @@ export class YTMusic implements LyricProvider {
   }
 }
 
-interface NextData {
+export interface NextData {
   contents: {
     singleColumnMusicWatchNextResultsRenderer: {
       tabbedRenderer: {
@@ -177,12 +177,25 @@ interface NextData {
                   };
                 };
               };
+              content: {
+                musicQueueRenderer: {
+                  content: {
+                    playlistPanelRenderer: {
+                      contents: Array<{
+                        playlistPanelVideoRenderer: unknown
+                      }>
+                    }
+                  }
+                }
+              }
             };
           }[];
         };
       };
     };
   };
+  queueContextParams: string;
+  playerOverlays: unknown;
 }
 
 interface BrowseData {

@@ -565,6 +565,50 @@ const routes = {
       },
     },
   }),
+  loadVideo: createRoute({
+    method: 'post',
+    path: `/api/${API_VERSION}/loadVideo`,
+    summary: 'load video',
+    description: 'Loads a video given its ID',
+    request: {
+      body: {
+        content: {
+          'application/json': {
+            schema: z.object({
+              videoId: z.string().optional().describe('Video ID'),
+            }),
+          },
+        },
+      },
+    },
+    responses: {
+      204: {
+        description: 'Success',
+      },
+    },
+  }),
+  loadPlaylist: createRoute({
+    method: 'post',
+    path: `/api/${API_VERSION}/loadPlaylist`,
+    summary: 'play playlist',
+    description: 'Plays a playlist given its ID',
+    request: {
+      body: {
+        content: {
+          'application/json': {
+            schema: z.object({
+              playlistId: z.string().describe('Playlist ID'),
+            }),
+          },
+        },
+      },
+    },
+    responses: {
+      204: {
+        description: 'Success',
+      },
+    },
+  }),
 };
 
 type PromiseOrValue<T> = T | Promise<T>;
@@ -866,5 +910,17 @@ export const register = (
 
     ctx.status(200);
     return ctx.json(response as object);
+  });
+  app.openapi(routes.loadVideo, (ctx) => {
+    const { videoId } = ctx.req.valid('json');
+    controller.loadVideo(videoId);
+    ctx.status(204);
+    return ctx.body(null);
+  });
+  app.openapi(routes.loadPlaylist, (ctx) => {
+    const { playlistId } = ctx.req.valid('json');
+    controller.loadPlaylist(playlistId);
+    ctx.status(204);
+    return ctx.body(null);
   });
 };
