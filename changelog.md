@@ -2,7 +2,16 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v3.12.1](https://github.com/michei69/pear-desktop/compare/v3.12.0...v3.12.1)
+
+- feat(audio-compressor): add Auto Track Gain to boost quiet tracks [`#3032`](https://github.com/michei69/pear-desktop/issues/3032)
+- ci: split build and release [`7604aa5`](https://github.com/michei69/pear-desktop/commit/7604aa5a71c112b844dc9ba68d2fe95d663cd71b)
+- feat(api): load playlist and load video [`110e8f8`](https://github.com/michei69/pear-desktop/commit/110e8f8bb74b0357cea78218917f1f59b5c1b6f0)
+- fix: not closing to tray [`dbc3e28`](https://github.com/michei69/pear-desktop/commit/dbc3e286baef7fd8a05784da271b46eaf5fb5f4f)
+
 #### [v3.12.0](https://github.com/michei69/pear-desktop/compare/v3.11.15...v3.12.0)
+
+> 30 June 2026
 
 - fix(deps): update dependency pinyin-pro to v3.28.1 [`#4504`](https://github.com/michei69/pear-desktop/pull/4504)
 - Remove compact sidebar plugin [`#4123`](https://github.com/michei69/pear-desktop/pull/4123)
