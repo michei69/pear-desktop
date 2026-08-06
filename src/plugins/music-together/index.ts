@@ -598,7 +598,14 @@ export default createPlugin<
             _update: (...args: unknown[]) => void;
           }
         >('tp-yt-paper-progress'),
-      );
+      ).filter((el) => {
+        const slider = el.closest('tp-yt-paper-slider');
+        // Only intercept the seek bar, never volume sliders: YTM's
+        // volume slider contains an internal tp-yt-paper-progress track,
+        // so without this filter volume drags get broadcast as time
+        // progress and seek the host (see issue #23).
+        return !slider || slider.id === 'progress-bar';
+      });
       const rollbackList = progress.map((progress) => {
         const original = progress._update;
         progress._update = (...args) => {
