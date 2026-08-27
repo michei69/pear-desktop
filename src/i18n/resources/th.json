@@ -239,7 +239,7 @@
             "percent": "{{ratio}}%"
           }
         },
-        "enable-seekbar": "เปิดใช้งานธีมแถบเลื่อน"
+        "enable-seekbar": "ใช้ธีมบนแถบกรอ"
       },
       "name": "ธีมสีของอัลบั้ม"
     },
@@ -323,18 +323,18 @@
           "label": "ชื่อโฮสต์ (Hostname)"
         },
         "https": {
-          "label": "HTTPS และใบรับรอง",
+          "label": "HTTPS กับ Certificates",
           "submenu": {
             "cert": {
-              "dialogTitle": "เลือกไฟล์ใบรับรอง HTTPS",
-              "label": "ไฟล์ใบรับรอง (.crt/.pem)"
+              "dialogTitle": "เลือกไฟล์ certificate HTTPS",
+              "label": "ไฟล์ Certificate (.crt/.pem)"
             },
             "enable-https": {
               "label": "เปิดใช้งาน HTTPS"
             },
             "key": {
-              "dialogTitle": "เลือกไฟล์คีย์ส่วนตัว HTTPS",
-              "label": "ไฟล์คีย์ส่วนตัว (.key/.pem)"
+              "dialogTitle": "เลือกไฟล์ private key HTTPS",
+              "label": "ไฟล์ Private Key (.key/.pem)"
             }
           }
         },
@@ -414,7 +414,7 @@
       }
     },
     "clock": {
-      "description": "เพิ่มนาฬิกาในแถบนำทาง",
+      "description": "เพิ่มนาฬิกาที่แถบนำทาง",
       "menu": {
         "format": {
           "24-hour-format": "รูปแบบ 24 ชั่วโมง",
@@ -503,6 +503,13 @@
           "title": "ตั้งระยะเวลาไม่มีกิจกรรม"
         }
       }
+    },
+    "do-not-track": {
+      "description": "ป้องกันการติดตามข้อมูลทั้งหมดทันที",
+      "menu": {
+        "blocker": "รูปแบบการป้องกัน"
+      },
+      "name": "ป้องกันการติดตามข้อมูล"
     },
     "downloader": {
       "backend": {
@@ -844,19 +851,19 @@
       },
       "menu": {
         "convert-chinese-character": {
-          "label": "แปลงอักษรจีน",
+          "label": "แปลงตัวอักษรจีน",
           "submenu": {
             "disabled": {
-              "label": "ปิดใช้งาน",
-              "tooltip": "ปิดการแปลงอักษรจีน"
+              "label": "ปิด",
+              "tooltip": "ปิดการแปลงตัวอักษรจีน"
             },
             "simplified-to-traditional": {
               "label": "ตัวย่อเป็นตัวเต็ม",
-              "tooltip": "แปลงอักษรจีนตัวย่อเป็นตัวเต็ม"
+              "tooltip": "แปลงอักษรจีนตัวย่อเป็นอักษรจีนตัวเต็ม"
             },
             "traditional-to-simplified": {
               "label": "ตัวเต็มเป็นตัวย่อ",
-              "tooltip": "แปลงอักษรจีนตัวเต็มเป็นตัวย่อ"
+              "tooltip": "แปลงอักษรจีนตัวเต็มเป็นอักษรจีนตัวย่อ"
             }
           },
           "tooltip": "แปลงอักษรจีนเป็นตัวเต็มหรือตัวย่อ"
@@ -1081,9 +1088,14 @@
           "label": "ประเภท",
           "submenu": {
             "acrylic": "อะคริลิก",
-            "mica": "ไมกา",
+            "content": "เนื้อหา",
+            "fullscreen-ui": "หน้าต่างเต็มหน้าจอ",
+            "mica": "ไมกา (Mica)",
             "none": "ไม่มี",
-            "tabbed": "แบบแท็บ"
+            "tabbed": "แบบแท็บ (Tabbed)",
+            "under-page": "ใต้หน้า",
+            "under-window": "ใต้หน้าต่าง",
+            "window": "หน้าต่างปกติ"
           }
         }
       },

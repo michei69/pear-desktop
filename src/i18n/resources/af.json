@@ -44,49 +44,49 @@
     },
     "dialog": {
       "hide-menu-enabled": {
-        "detail": "Kieslys is weggesteek, gebruik 'Alt' om dit te wys (of 'Escape' as jy In-App Kieslys gebruik)",
-        "message": "Versteek Kieslys is geaktiveer",
-        "title": "Versteek Kieslys Geaktiveer"
+        "detail": "Kieslys is verborge, gebruik 'Alt' om dit te wys (of 'Escape' as die  In-Toep Kieslys gebruik word)",
+        "message": "Wegsteek Kieslys is aangesit",
+        "title": "Wegsteek Kieslys Aangesit"
       },
       "need-to-restart": {
         "buttons": {
           "later": "Later",
-          "restart-now": "Herbegin Nou"
+          "restart-now": "Herbegin nou"
         },
-        "detail": "\"{{pluginName}}\" inprop benodig 'n herbegin om in werking te tree",
-        "message": "\"{{pluginName}}\" moet herbegin",
-        "title": "Herbegin Nodig"
+        "detail": "{{pluginName}} Inprop benodig n herbegin om n uitwerking te he",
+        "message": "{{pluginName}} moet herbegin",
+        "title": "Herbegin is vereis"
       },
       "unresponsive": {
         "buttons": {
-          "quit": "Verlaat",
+          "quit": "Bedank",
           "relaunch": "Herbegin",
           "wait": "Wag"
         },
-        "detail": "Ons is jammer vir die ongerief! kies asb. wat om te doen:",
-        "message": "Die Toepassing is Onreagerend",
+        "detail": "Ons is jammer vir die ongerief! kies asseblief wat om te doen:",
+        "message": "Die applikasie is onreagerend",
         "title": "Venster Onreagerend"
       },
       "update-available": {
         "buttons": {
-          "disable": "Deaktiveer Opdaterings",
-          "download": "Aflaai",
-          "ok": "OK"
+          "disable": "Deaktiveer Bywerkings",
+          "download": "Laai af",
+          "ok": "Ok"
         },
-        "detail": "'n Nuwe weergawe is beskikbaar en kan afgelaai word by {{downloadLink}}",
-        "message": "'n Nuwe weergawe is beskikbaar",
-        "title": "Opdatering Beskikbaar"
+        "detail": "n Nuwe weergawe is beskikbaar en kan afgelaai word by {{downloadLink}}",
+        "message": "n Nuwe weergawe is beskikbaar",
+        "title": "Bywerking Beskikbaar"
       }
     },
     "menu": {
-      "about": "Oor",
+      "about": "Inligting",
       "navigation": {
         "label": "Navigasie",
         "submenu": {
-          "copy-current-url": "Kopieer huidige URL",
+          "copy-current-url": "Kopieer huidige skakel (URL)",
           "go-back": "Gaan terug",
-          "go-forward": "Gaan vorentoe",
-          "quit": "Verlaat",
+          "go-forward": "Gaan voort",
+          "quit": "Gaan uit",
           "restart": "Herbegin Toep"
         }
       },

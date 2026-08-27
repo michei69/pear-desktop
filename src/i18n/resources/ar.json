@@ -508,6 +508,12 @@
         }
       }
     },
+    "do-not-track": {
+      "menu": {
+        "blocker": "مانع"
+      },
+      "name": "لا تتبع"
+    },
     "downloader": {
       "backend": {
         "dialog": {
@@ -1092,9 +1098,11 @@
           "label": "النوع",
           "submenu": {
             "acrylic": "أكريليك",
+            "content": "محتوي",
             "mica": "ميكا",
             "none": "لاشيء",
-            "tabbed": "بديل ميكا"
+            "tabbed": "بديل ميكا",
+            "window": "نافذة"
           }
         }
       },

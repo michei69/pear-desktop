@@ -504,6 +504,13 @@
         }
       }
     },
+    "do-not-track": {
+      "description": "Blokir seluruh pelacak dari awal",
+      "menu": {
+        "blocker": "Bloker"
+      },
+      "name": "Jangan Lacak"
+    },
     "downloader": {
       "backend": {
         "dialog": {
@@ -1082,9 +1089,14 @@
           "label": "Tipe",
           "submenu": {
             "acrylic": "Akrilik",
+            "content": "Konten",
+            "fullscreen-ui": "Tampilan UI Layar Penuh",
             "mica": "Mika",
+            "none": "TIdak ada",
             "tabbed": "Tabulasi",
-            "none": "TIdak ada"
+            "under-page": "Dibawah Halaman",
+            "under-window": "Dibawah Jendela",
+            "window": "Layar"
           }
         }
       }

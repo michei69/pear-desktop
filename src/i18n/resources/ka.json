@@ -300,15 +300,15 @@
       }
     },
     "api-server": {
-      "description": "ამატებს API სერვერს პლეიერის გასაკონტროლებლად",
+      "description": "ამატებს API სერვერს პლეიერის სამართავად",
       "dialog": {
         "request": {
           "buttons": {
             "allow": "დაშვება",
             "deny": "აკრძალვა"
           },
-          "message": "დაუშვას {{ID}} ({{origin}}) API-ზე წვდომა?",
-          "title": "API ავტორიზაციის მოთხოვნა"
+          "message": "მივცეთ {{ID}}-ს ({{origin}}) API-ზე წვდომის უფლება?",
+          "title": "API-ის ავტორიზაციის მოთხოვნა"
         }
       },
       "menu": {
@@ -349,7 +349,7 @@
       "name": "API სერვერი [Beta]",
       "prompt": {
         "hostname": {
-          "label": "შეიყვანეთ ჰოსტის სახელი (მაგ. 0.0.0.0) API სერვერისთვის:",
+          "label": "შეიყვანეთ API სერვერის ჰოსტის სახელი (მაგალითად 0.0.0.0):",
           "title": "ჰოსტის სახელი"
         },
         "port": {
@@ -377,12 +377,11 @@
       "name": "ავტორიზაციის პროქსი ადაპტერი",
       "prompt": {
         "hostname": {
-          "title": "პროქსის ჰოსტის სახელი",
-          "label": "შეიყვანეთ ჰოსტის სახელი ლოკალური პროქსი სერვერისთვის (საჭიროებს გადატვირთვას):"
+          "label": "შეიყვანეთ ლოკალური პროქსი-სერვერის ჰოსტის სახელი (საჭიროებს გადატვირთვას):",
+          "title": "პროქსის ჰოსტის სახელი"
         },
         "port": {
-          "title": "პროქსის პორტი",
-          "label": "შეიყვანეთ პორტი ლოკალური პროქსი სერვერისთვის (საჭიროებს გადატვირთვას):"
+          "label": "შეიყვანეთ ლოკალური პროქსი-სერვერის პორტი (საჭიროებს გადატვირთვას):"
         }
       }
     },
@@ -426,6 +425,14 @@
           "display-seconds": "წამების ჩვენება",
           "24-hour-format": "24-საათიანი ფორმატი"
         }
+      },
+      "templates": {
+        "title": "სუბტიტრების ამრჩევის გახსნა"
+      },
+      "toast": {
+        "caption-changed": "სუბტიტრები შეიცვალა {{language}}-ზე",
+        "caption-disabled": "სუბტიტრები გათიშულია",
+        "no-captions": "ამ სიმღერისთვის სუბტიტრები მიუწვდომელია"
       }
     },
     "compact-sidebar": {
@@ -515,7 +522,7 @@
             "buttons": {
               "ok": "დიახ"
             },
-            "message": "უკაცრავად, ჩამოტვირთვა ვერ მოხერხდა…",
+            "message": "აჰ! ბოდიშს გიხდით, ჩამოტვირთვა ვერ მოხერხდა…",
             "title": "შეცდომა ჩამოტვირთვისას!"
           },
           "start-download-playlist": {
@@ -523,43 +530,43 @@
               "ok": "დიახ"
             },
             "detail": "({{playlistSize}} სიმღერა)",
-            "message": "იწერება პლეილისტი {{playlistTitle}}",
-            "title": "ჩამოტვირთვა დაიწყო"
+            "message": "მიმდინარეობს პლეილისტის {{playlistTitle}} ჩამოტვირთვა",
+            "title": "ჩამოტვირთვა დაწყებულია"
           }
         },
         "feedback": {
-          "conversion-progress": "კონვერტაცია: {{percent}}%",
+          "conversion-progress": "გარდაქმნა: {{percent}}%",
           "converting": "გადაყვანა…",
           "done": "დასრულებულია: {{filePath}}",
-          "download-info": "იწერება {{artist}} - {{title}} [{{videoId}}",
-          "download-progress": "ჩამოტვირთვა: {{percent}}%",
-          "downloading": "გადმოწერა…",
-          "downloading-counter": "იწერება {{current}}/{{total}}…",
-          "downloading-playlist": "იწერება პლეილისტი \"{{playlistTitle}}\" - {{playlistSize}} სიმღერა ({{playlistId}})",
-          "error-while-downloading": "შეცდომა \"{{author}} - {{title}}\"-ის ჩამოტვირთვისას: {{error}}",
+          "download-info": "მიმდინარეობს ჩამოტვირთვა {{artist}} - {{title}} [{{videoId}}",
+          "download-progress": "გადმოწერა: {{percent}}%",
+          "downloading": "მიმდინარეობს ჩამოტვირთვა…",
+          "downloading-counter": "მიმდინარეობს გადმოწერა {{current}}/{{total}}…",
+          "downloading-playlist": "მიმდინარეობს პლეილისტის ჩამოტვირთვა \"{{playlistTitle}}\" - {{playlistSize}} სიმღერა ({{playlistId}})",
+          "error-while-downloading": "მოხდა შეცდომა ჩამოტვირთვისას \"{{author}} - {{title}}\": {{error}}",
           "folder-already-exists": "საქაღალდე {{playlistFolder}} უკვე არსებობს",
-          "getting-playlist-info": "პლეილისტის ინფორმაციის მიღება…",
+          "getting-playlist-info": "მიმდინარეობს პლეილისტის შესახებ ინფორმაციის მიღება…",
           "loading": "ჩატვირთვა…",
-          "playlist-has-only-one-song": "პლეილისტს აქვს მხოლოდ ერთი ელემენტი, იწერება პირდაპირ",
+          "playlist-has-only-one-song": "პლეილისტში მხოლოდ ერთი ელემენტია, მიმდინარეობს მისი უშუალო ჩამოტვირთვა",
           "playlist-id-not-found": "პლეილისტის ID ვერ მოიძებნა",
           "playlist-is-empty": "პლეილისტი ცარიელია",
-          "playlist-is-mix-or-private": "შეცდომა პლეილისტის ინფორმაციის მიღებისას: დარწმუნდით, რომ ის არ არის პირადი ან „შერეული თქვენთვის“ პლეილისტი\n\n{{error}}",
-          "preparing-file": "ფაილის მომზადება…",
+          "playlist-is-mix-or-private": "დაფიქსირდა შეცდომა პლეილისტის ინფორმაციის მიღებისას: დარწმუნდით, რომ ეს არ არის პირადი ან \"Mixed for you\" პლეილისტი\n\n{{error}}",
+          "preparing-file": "ფაილი მზადდება…",
           "saving": "შენახვა…",
-          "trying-to-get-playlist-id": "პლეილისტის ID-ის მიღების მცდელობა: {{playlistId}}",
-          "video-id-not-found": "ვიდეო ვერ მოიძებნა",
-          "writing-id3": "ID3 ტეგების ჩაწერა…"
+          "trying-to-get-playlist-id": "მიმდინარეობს პლეილისტის ID - ით {{playlistId}} მიღება",
+          "video-id-not-found": "ვიდეო არ მოიძებნა",
+          "writing-id3": "მიმდინარეობს ID3-ტეგების ჩაწერა…"
         }
       },
-      "description": "MP3 / წყაროს აუდიოს ჩამოტვირთვა პირდაპირ ინტერფეისიდან",
+      "description": "ჩამოტვირთავს MP3-ს / აუდიოს წყაროს პირდაპირ ინტერფეისიდან",
       "menu": {
-        "choose-download-folder": "ჩამოტვირთვის საქაღალდის არჩევა",
+        "choose-download-folder": "აირჩიეთ ჩამოტვირთვის საქაღალდე",
         "download-finish-settings": {
-          "label": "ჩამოტვირთვა დასრულებისას",
+          "label": "დასრულებისას ჩამოტვირთვა",
           "prompt": {
             "last-percent": "x პროცენტის შემდეგ",
             "last-seconds": "ბოლო x წამი",
-            "title": "ჩამოტვირთვის დროის კონფიგურაცია"
+            "title": "კონფიგურაცია, თუ როდის მოხდეს ჩამოტვირთვა"
           },
           "submenu": {
             "advanced": "დამატებით",
@@ -591,64 +598,54 @@
           }
         }
       },
-      "name": "ექვალაიზერი"
-    },
-    "exponential-volume": {
-      "description": "ხმის სლაიდერს ხდის ექსპონენციალურს, რათა უფრო ადვილი იყოს დაბალი ხმის არჩევა.",
-      "name": "ექსპონენციალური ხმა"
+      "name": "მარეგულირებელი"
     },
     "in-app-menu": {
-      "description": "მენიუს ზოლებს აძლევს მოდურ, მუქ ან ალბომის ფერის იერს",
       "menu": {
-        "hide-dom-window-controls": "DOM ფანჯრის კონტროლის დამალვა"
+        "hide-dom-window-controls": "DOM-ის ფანჯრის მართვის ელემენტების დამალვა"
       },
-      "name": "აპლიკაციის შიდა მენიუ"
+      "name": "აპლიკაციის მენიუ"
     },
     "lumiastream": {
       "description": "ამატებს Lumia Stream-ის მხარდაჭერას",
-      "name": "Lumia Stream [Beta]"
+      "name": "Lumia Stream [ბეტა]"
     },
     "lyrics-genius": {
-      "description": "სიმღერების უმეტესობისთვის ტექსტის მხარდაჭერას ამატებს",
+      "description": "ამატებს ტექსტის მხარდაჭერას უმეტესი სიმღერებისთვის",
       "menu": {
-        "romanized-lyrics": "რომანიზებული ტექსტი"
-      },
-      "name": "ლირიკს ჯენიუსი",
-      "renderer": {
-        "fetched-lyrics": "Genius-ის ტექსტი მიღებულია"
+        "romanized-lyrics": "რომანიზებული სიმღერის ტექსტი"
       }
     },
     "music-together": {
-      "description": "გაუზიარეთ პლეილისტი სხვებს. როცა წამყვანი უშვებს სიმღერას, ყველა დანარჩენი იგივე სიმღერას მოისმენს",
+      "description": "გააზიარეთ პლეილისტი სხვებთან. როდესაც ჰოსტი ჩართავს სიმღერას, ყველა იმავე სიმღერას მოისმენს",
       "dialog": {
-        "enter-host": "შეიყვანეთ წამყვანის ID"
+        "enter-host": "შეიყვანეთ ჰოსტის ID"
       },
       "internal": {
         "save": "შენახვა",
-        "track-source": "ტრეკის წყარო",
         "unknown-user": "უცნობი მომხმარებელი"
       },
       "menu": {
-        "click-to-copy-id": "წამყვანის ID-ის კოპირება",
+        "click-to-copy-id": "ჰოსტის ID-ის კოპირება",
         "close": "Music Together-ის დახურვა",
         "connected-users": "დაკავშირებული მომხმარებლები",
-        "disconnect": "Music Together-ის გათიშვა",
-        "empty-user": "დაკავშირებული მომხმარებლები არ არის",
-        "host": "Music Together წამყვანი",
-        "join": "Music Together-ში შესვლა",
+        "disconnect": "Music Together-დან გამოსვლა",
+        "empty-user": "დაკავშირებული მომხმარებლები არ არიან",
+        "host": "Music Together-ის ჰოსტი",
+        "join": "შეუერთდით Music Together-ს",
         "permission": {
-          "all": "სტუმრებს პლეილისტისა და პლეიერის მართვის უფლება",
-          "host-only": "მხოლოდ წამყვანს შეუძლია პლეილისტისა და პლეიერის მართვა",
-          "playlist": "სტუმრებს პლეილისტის მართვის უფლება"
+          "all": "სტუმრისთვის პლეილისტისა და პლეიერის კონტროლის ნების დართვა",
+          "host-only": "პლეილისტისა და პლეიერის კონტროლი მხოლოდ ჰოსტს შეუძლია",
+          "playlist": "სტუმრისთვის პლეიერის კონტროლის ნების დართვა"
         },
-        "set-permission": "მართვის უფლების შეცვლა",
+        "set-permission": "კონტროლის ნებართვის შეცვლა",
         "status": {
           "disconnected": "გათიშული",
           "guest": "დაკავშირებულია როგორც სტუმარი",
-          "host": "დაკავშირებულია როგორც წამყვანი"
+          "host": "დაკავშირებულია როგორც ჰოსტი"
         }
       },
-      "name": "მუსიკა ერთად [ბეტა]",
+      "name": "Music Together [ბეტა]",
       "toast": {
         "add-song-failed": "სიმღერის დამატება ვერ მოხერხდა",
         "closed": "Music Together-ის ორგანიზატორი დაიხურა",
@@ -656,23 +653,23 @@
         "host-failed": "Music Together-ის გამოცხადება ვერ მოხერხდა",
         "id-copied": "გამოსაცხადებელი ID დაკოპირებულია ბუფერში",
         "id-copy-failed": "გამოსაცხადებელი ID-ის ვერ დაკოპირდა ბუფერში",
-        "join-failed": "Music Together-ში შესვლა ვერ მოხერხდა",
-        "joined": "შეუერთდით Music Together-ს",
-        "permission-changed": "Music Together-ის უფლება შეიცვალა \"{{permission}}\"-ზე",
+        "join-failed": "Music Together-ში გაწევრიანება ვერ მოხერხდა",
+        "joined": "შესული ხართ Music Together-ში",
+        "permission-changed": "Music Together-ის ნებართვა შეიცვალა და გახდა \"{{permission}}\"",
         "remove-song-failed": "სიმღერის წაშლა ვერ მოხერხდა",
         "user-connected": "{{name}} შეუერთდა Music Together-ს",
-        "user-disconnected": "{{name}} დატოვა Music Together"
+        "user-disconnected": "{{name}}-მ დატოვა Music Together"
       }
     },
     "navigation": {
-      "description": "შემდეგი/უკან ნავიგაციის ისრები პირდაპირ ინტერფეისში, როგორც თქვენს საყვარელ ბრაუზერში",
+      "description": "ინტერფეისში პირდაპირ ინტეგრირებული შემდეგი/უკან ნავიგაციის ისრები - ისევე, როგორც თქვენს საყვარელ ბრაუზერში",
       "name": "ნავიგაცია",
       "templates": {
         "back": {
           "title": "წინა გვერდზე გადასვლა"
         },
         "forward": {
-          "title": "შემდეგ გვერდზე გადასვლა"
+          "title": "მომდევნო გვერდზე გადასვლა"
         }
       }
     },
@@ -773,7 +770,7 @@
           }
         }
       },
-      "description": "ვიდეოს ხარისხის შეცვლის საშუალებას იძლევა ვიდეოს გადაფარვის ღილაკით",
+      "description": "ვიდეოზე განთავსებული ღილაკის მეშვეობით ვიდეოს ხარისხის შეცვლის საშუალების მიცემა",
       "name": "ვიდეოს ხარისხის შემცვლელი",
       "renderer": {
         "quality-settings-button": {
@@ -811,7 +808,7 @@
         "listenbrainz": {
           "token": {
             "label": "შეიყვანეთ თქვენი ListenBrainz მომხმარებლის ტოკენი:",
-            "title": "ListenBrainz ტოკენი"
+            "title": "ListenBrainz-ის ტოკენი"
           }
         }
       }
@@ -1081,7 +1078,6 @@
     },
     "transparent-player": {
       "description": "აპლიკაციის ფანჯარას ხდის გამჭვირვალეს",
-      "name": "გამჭვირვალე პლეიერი",
       "menu": {
         "opacity": {
           "label": "გამჭვირვალობა",
@@ -1097,7 +1093,35 @@
             "tabbed": "ჩანართებიანი",
             "none": "არცერთი"
           }
+        },
+        "precise-timing": {
+          "label": "სიმღერის ტექსტის ზუსტი სინქრონიზაცია"
+        },
+        "preferred-provider": {
+          "none": {
+            "label": "არცერთი"
+          }
+        },
+        "romanization": {
+          "tooltip": "თუ სიმღერის ტექსტი სხვა ენაზეა, ლათინური ვერსიის ჩვენება."
+        },
+        "show-lyrics-even-if-inexact": {
+          "label": "სიმღერის ტექსტის ჩვენება, თუნდაც არაზუსტი იყოს"
+        },
+        "show-time-codes": {
+          "label": "დროის კოდების ჩვენება",
+          "tooltip": "დროის კოდების ჩვენება სიმღერის ტექსტის გვერდით"
         }
+      },
+      "name": "სინქრონიზირებული ტექსტი",
+      "refetch-btn": {
+        "fetching": "მიმდინარეობს ჩატვირთვა...",
+        "normal": "სიმღერის ტექსტის ხელახალი ჩატვირთვა"
+      },
+      "warnings": {
+        "duration-mismatch": "⚠️ - ხანგრძლივობის შეუსაბამობის გამო, სიმღერის ტექსტი შესაძლოა არ ემთხვეოდეს ერთმანეთს.",
+        "inexact": "⚠️ - ამ სიმღერის ტექსტი შესაძლოა არ იყოს ზუსტი",
+        "instrumental": "⚠️ - ეს არის ინსტრუმენტული სიმღერა"
       }
     },
     "tuna-obs": {

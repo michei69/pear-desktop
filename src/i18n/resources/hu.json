@@ -165,7 +165,7 @@
                 "force-show": "Megjelenítés kényszerítése",
                 "hide": "Elrejtése",
                 "label": "Reakció gombok",
-                "swap": "Tetszik gombok sorrendjének cseréje"
+                "swap": "A reakció gombok sorrendjének megcserélése"
               },
               "remove-upgrade-button": "Előfizetés gombjának eltávolítása",
               "theme": {
