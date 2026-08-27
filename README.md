@@ -10,6 +10,8 @@
 
 [![Known Vulnerabilities](https://snyk.io/test/github/michei69/pear-desktop/badge.svg)](https://snyk.io/test/github/michei69/pear-desktop)
 
+![](https://raw.githubusercontent.com/michei69/disclaimers/refs/heads/main/ai/x4.png)
+
 </div>
 
 <!-- ![Screenshot](web/screenshot.png "Screenshot") -->
