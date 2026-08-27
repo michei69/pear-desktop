@@ -11,6 +11,7 @@ import { createBackend } from '@/utils';
 
 import { LastFmScrobbler } from './services/lastfm';
 import { ListenbrainzScrobbler } from './services/listenbrainz';
+import { fetchMusicBrainzCorrection } from './services/musicbrainz';
 
 import type { ScrobblerPluginConfig } from './index';
 import type { ScrobblerBase } from './services/base';
@@ -24,6 +25,7 @@ export const backend = createBackend<
     config?: ScrobblerPluginConfig;
     window?: BrowserWindow;
     enabledScrobblers: Map<string, ScrobblerBase>;
+    configRevision: number;
     toggleScrobblers(
       config: ScrobblerPluginConfig,
       window: BrowserWindow,
@@ -38,6 +40,7 @@ export const backend = createBackend<
   ScrobblerPluginConfig
 >({
   enabledScrobblers: new Map(),
+  configRevision: 0,
 
   toggleScrobblers(config: ScrobblerPluginConfig, window: BrowserWindow) {
     if (config.scrobblers.lastfm && config.scrobblers.lastfm.enabled) {
@@ -68,18 +71,22 @@ export const backend = createBackend<
     const config = (this.config = await getConfig());
     // This will store the timeout that will trigger addScrobble
     let scrobbleTimer: NodeJS.Timeout | undefined;
+    let generation = 0;
 
     this.window = window;
     this.toggleScrobblers(config, window);
     await this.createSessions(config, setConfig);
     this.setConfig = setConfig;
 
-    this.songInfoCallback = (songInfo: SongInfo, event) => {
+    this.songInfoCallback = async (songInfo: SongInfo, event) => {
       if (event === SongInfoEvent.TimeChanged) return;
+      const currentGeneration = ++generation;
+
       // Set remove the old scrobble timer
       clearTimeout(scrobbleTimer);
       if (!songInfo.isPaused) {
         const configNonnull = this.config!;
+        const currentConfigRevision = this.configRevision;
         // Scrobblers normally have no trouble working with official music videos
         if (
           !configNonnull.scrobbleOtherMedia &&
@@ -89,29 +96,78 @@ export const backend = createBackend<
           return;
         }
 
-        // Scrobble when the song is halfway through, or has passed the 4-minute mark
+        let title =
+          (configNonnull.alternativeTitles && songInfo.alternativeTitle) ||
+          songInfo.title;
+        let artist =
+          (configNonnull.alternativeArtist && songInfo.tags?.[0]) ||
+          songInfo.artist;
+
+        if (configNonnull.customRegexFilters?.length) {
+          for (const filter of configNonnull.customRegexFilters) {
+            try {
+              const regex = new RegExp(filter, 'gi');
+              if (title.length <= 256) {
+                title = title.replace(regex, '').trim();
+              }
+              if (artist.length <= 256) {
+                artist = artist.replace(regex, '').trim();
+              }
+            } catch {}
+          }
+        }
+
+        if (configNonnull.useMusicBrainz && configNonnull.musicBrainzEmail) {
+          const isCorrectionObsolete = () =>
+            currentGeneration !== generation ||
+            currentConfigRevision !== this.configRevision;
+          const corrected = await fetchMusicBrainzCorrection(
+            title,
+            artist,
+            configNonnull.musicBrainzEmail,
+            isCorrectionObsolete,
+          );
+
+          if (isCorrectionObsolete()) return;
+
+          if (corrected) {
+            title = corrected.title;
+            artist = corrected.artist;
+          }
+        }
+
+        const processedSongInfo = {
+          ...songInfo,
+          title,
+          artist,
+          alternativeTitle: undefined,
+          tags: undefined,
+        };
+
+        const elapsed = processedSongInfo.elapsedSeconds || 0;
         const scrobbleTime = Math.min(
-          Math.ceil(songInfo.songDuration / 2),
-          4 * 60,
+          Math.ceil(processedSongInfo.songDuration / 2),
+          240,
         );
-        if (scrobbleTime > (songInfo.elapsedSeconds ?? 0)) {
-          // Scrobble still needs to happen
-          const timeToWait =
-            (scrobbleTime - (songInfo.elapsedSeconds ?? 0)) * 1000;
+
+        if (scrobbleTime > elapsed) {
           scrobbleTimer = setTimeout(
-            (info, config) => {
-              this.enabledScrobblers.forEach((scrobbler) =>
-                scrobbler.addScrobble(info, config, setConfig),
+            (info, config, configRevision) => {
+              if (configRevision !== this.configRevision) return;
+
+              this.enabledScrobblers.forEach((s) =>
+                s.addScrobble(info, config, setConfig),
               );
             },
-            timeToWait,
-            songInfo,
+            (scrobbleTime - elapsed) * 1000,
+            processedSongInfo,
             configNonnull,
+            currentConfigRevision,
           );
         }
 
-        this.enabledScrobblers.forEach((scrobbler) =>
-          scrobbler.setNowPlaying(songInfo, configNonnull, setConfig),
+        this.enabledScrobblers.forEach((s) =>
+          s.setNowPlaying(processedSongInfo, configNonnull, setConfig),
         );
       }
     };
@@ -126,6 +182,7 @@ export const backend = createBackend<
   },
 
   async onConfigChange(newConfig: ScrobblerPluginConfig) {
+    this.configRevision++;
     this.enabledScrobblers.clear();
 
     this.toggleScrobblers(newConfig, this.window!);
