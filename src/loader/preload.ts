@@ -98,19 +98,3 @@ export const loadAllPreloadPlugins = async () => {
     }
   }
 };
-
-export const unloadAllPreloadPlugins = async () => {
-  for (const id of Object.keys(loadedPluginMap)) {
-    await forceUnloadPreloadPlugin(id);
-  }
-};
-
-export const getLoadedPreloadPlugin = (
-  id: string,
-): PluginDef<unknown, unknown, unknown> | undefined => {
-  return loadedPluginMap[id];
-};
-
-export const getAllLoadedPreloadPlugins = () => {
-  return loadedPluginMap;
-};

@@ -150,18 +150,6 @@ export const loadAllMainPlugins = async (win: BrowserWindow) => {
   await Promise.allSettled(queue);
 };
 
-export const unloadAllMainPlugins = async (win: BrowserWindow) => {
-  for (const id of Object.keys(loadedPluginMap)) {
-    await forceUnloadMainPlugin(id, win);
-  }
-};
-
-export const getLoadedMainPlugin = (
-  id: string,
-): PluginDef<unknown, unknown, unknown> | undefined => {
-  return loadedPluginMap[id];
-};
-
 export const getAllLoadedMainPlugins = () => {
   return loadedPluginMap;
 };

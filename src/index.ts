@@ -541,16 +541,21 @@ async function createMainWindow() {
     : config.defaultConfig.url;
   win.on('closed', onClosed);
 
+  let lastSavedPosition = config.get('window-position') as
+    | { x: number; y: number }
+    | undefined;
+  let lastSavedSize = config.get('window-size') as
+    | { width: number; height: number }
+    | undefined;
+
   win.on('move', () => {
     if (win.isMaximized()) {
       return;
     }
 
     const [x, y] = win.getPosition();
-    const savedPos = config.get('window-position') as
-      | { x: number; y: number }
-      | undefined;
-    if (savedPos?.x !== x || savedPos?.y !== y) {
+    if (lastSavedPosition?.x !== x || lastSavedPosition?.y !== y) {
+      lastSavedPosition = { x, y };
       lateSave('window-position', { x, y });
     }
   });
@@ -570,10 +575,8 @@ async function createMainWindow() {
       return;
     }
 
-    const savedSize = config.get('window-size') as
-      | { width: number; height: number }
-      | undefined;
-    if (savedSize?.width !== width || savedSize?.height !== height) {
+    if (lastSavedSize?.width !== width || lastSavedSize?.height !== height) {
+      lastSavedSize = { width, height };
       lateSave('window-size', {
         width,
         height,

@@ -41,6 +41,7 @@ function listenForApiLoad() {
   if (!isApiLoaded) {
     api = document.querySelector('#movie_player');
     if (api) {
+      isApiLoaded = true;
       onApiLoaded();
 
       return;

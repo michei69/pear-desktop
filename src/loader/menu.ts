@@ -82,12 +82,6 @@ export const loadAllMenuPlugins = async (win: BrowserWindow) => {
   }
 };
 
-export const getMenuTemplate = (
-  id: string,
-): MenuItemConstructorOptions[] | undefined => {
-  return menuTemplateMap[id];
-};
-
 export const getAllMenuTemplate = () => {
   return menuTemplateMap;
 };

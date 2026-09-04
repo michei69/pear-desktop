@@ -7,7 +7,6 @@ import { LoggerPrefix, startPlugin, stopPlugin } from '@/utils';
 import type { RendererContext } from '@/types/contexts';
 import type { PluginConfig, PluginDef } from '@/types/plugins';
 
-const unregisterStyleMap: Record<string, (() => void)[]> = {};
 const adoptedStyleSheetMap: Record<string, CSSStyleSheet[]> = {};
 const loadedPluginMap: Record<
   string,
@@ -41,16 +40,12 @@ export const createContext = <Config extends PluginConfig>(
 });
 
 export const forceUnloadRendererPlugin = async (id: string) => {
-  unregisterStyleMap[id]?.forEach((unregister) => unregister());
-
   if (adoptedStyleSheetMap[id]) {
     document.adoptedStyleSheets = document.adoptedStyleSheets.filter(
       (sheet) => !adoptedStyleSheetMap[id].includes(sheet),
     );
     delete adoptedStyleSheetMap[id];
   }
-
-  delete unregisterStyleMap[id];
 
   const plugin = (await rendererPlugins())[id];
   if (!plugin) return;
@@ -135,12 +130,6 @@ export const loadAllRendererPlugins = async () => {
         await forceUnloadRendererPlugin(pluginId);
       }
     }
-  }
-};
-
-export const unloadAllRendererPlugins = async () => {
-  for (const id of Object.keys(loadedPluginMap)) {
-    await forceUnloadRendererPlugin(id);
   }
 };
 
