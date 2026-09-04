@@ -184,6 +184,18 @@
                 }
               }
             }
+          },
+          "visual-tweaks": {
+            "submenu": {
+              "theme": {
+                "dialog": {
+                  "button": {
+                    "cancel": "Kanselleer",
+                    "remove": "Verwyder"
+                  }
+                }
+              }
+            }
           }
         }
       },
