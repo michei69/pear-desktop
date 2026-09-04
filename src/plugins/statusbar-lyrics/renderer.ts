@@ -20,11 +20,11 @@ const onPlayOrPaused = (
 ) => {
   isPlaying = !payload.isPaused;
   resetLineBaseline = true;
-  void sendLyrics?.();
+  sendLyrics?.();
 };
 
 const onTimeChanged = () => {
-  void sendLyrics?.();
+  sendLyrics?.();
 };
 
 const resetLineState = () => {
@@ -54,10 +54,17 @@ const isLikelyPronunciation = (element: HTMLElement | null) => {
   if (!element) return false;
 
   const className = element.className?.toString() ?? '';
-  if (/(translation|translated|subtitle|pronunciation|romaji|romanization)/i.test(className)) return true;
+  if (
+    /(translation|translated|subtitle|pronunciation|romaji|romanization)/i.test(
+      className,
+    )
+  )
+    return true;
 
   return Boolean(
-    element.closest('.translation, .translated, .lyrics-translation, .pronunciation, .romaji, [data-translation], [data-romanization], [aria-label*="translation" i], [aria-label*="pronunciation" i], [aria-label*="romaji" i]'),
+    element.closest(
+      '.translation, .translated, .lyrics-translation, .pronunciation, .romaji, [data-translation], [data-romanization], [aria-label*="translation" i], [aria-label*="pronunciation" i], [aria-label*="romaji" i]',
+    ),
   );
 };
 
@@ -69,14 +76,19 @@ const isLikelyRomaji = (element: HTMLElement | null) => {
   const className = element.className?.toString() ?? '';
   if (/(romaji|romanization|pronunciation)/i.test(className)) return true;
 
-  return Boolean(element.closest('.romaji, [data-romanization], [aria-label*="romaji" i]'));
+  return Boolean(
+    element.closest('.romaji, [data-romanization], [aria-label*="romaji" i]'),
+  );
 };
 
 const getPrimaryText = (element: HTMLElement | null) => {
   if (!element) return '';
 
   const primaryChildren = Array.from(element.children).filter(
-    (child): child is HTMLElement => child instanceof HTMLElement && !isLikelyPronunciation(child) && !isLikelyRomaji(child),
+    (child): child is HTMLElement =>
+      child instanceof HTMLElement &&
+      !isLikelyPronunciation(child) &&
+      !isLikelyRomaji(child),
   );
 
   const directText = primaryChildren
@@ -93,8 +105,12 @@ const getPrimaryText = (element: HTMLElement | null) => {
 const getPrimaryTextElement = (lineElement: HTMLElement | null) => {
   if (!lineElement) return null;
 
-  const candidates = Array.from(lineElement.querySelectorAll<HTMLElement>('.text-lyrics'));
-  const visibleCandidate = candidates.find((candidate) => !isLikelyPronunciation(candidate));
+  const candidates = Array.from(
+    lineElement.querySelectorAll<HTMLElement>('.text-lyrics'),
+  );
+  const visibleCandidate = candidates.find(
+    (candidate) => !isLikelyPronunciation(candidate),
+  );
 
   return visibleCandidate ?? candidates[0] ?? null;
 };
@@ -112,9 +128,8 @@ const getNextLyricRow = (lineElement: HTMLElement | null) => {
 // Read the CSS duration that synced lyrics expose so the plugin can predict
 // when the current line is about to switch.
 const parseDurationMs = (element: HTMLElement) => {
-  const rawDuration = getComputedStyle(element).getPropertyValue(
-    '--lyrics-duration',
-  );
+  const rawDuration =
+    getComputedStyle(element).getPropertyValue('--lyrics-duration');
   const parsedDuration = Number.parseFloat(rawDuration);
 
   if (!Number.isFinite(parsedDuration) || parsedDuration <= 0) return null;
@@ -124,7 +139,10 @@ const parseDurationMs = (element: HTMLElement) => {
 
 // Choose the best text for a line, optionally keeping pronunciation text when
 // the user has enabled it in the plugin settings.
-const getLineText = (element: HTMLElement | null, includePronunciation: boolean) => {
+const getLineText = (
+  element: HTMLElement | null,
+  includePronunciation: boolean,
+) => {
   if (!element) return '';
 
   const textElement = getPrimaryTextElement(element);
@@ -147,7 +165,9 @@ const getLineText = (element: HTMLElement | null, includePronunciation: boolean)
 // Poll the current synced lyrics row and switch to the next line slightly
 // before the animation ends so the tray title stays in sync with playback.
 const pollLyrics = (includePronunciation: boolean) => {
-  const currentLine = document.querySelector<HTMLElement>('.synced-line.current');
+  const currentLine = document.querySelector<HTMLElement>(
+    '.synced-line.current',
+  );
   if (!currentLine) return '';
 
   const currentTextElement = getPrimaryTextElement(currentLine);
@@ -178,7 +198,10 @@ const pollLyrics = (includePronunciation: boolean) => {
   const switchAtMs = Math.max(0, durationMs - leadMs);
 
   if (now - activeLineStartedAt >= switchAtMs) {
-    const nextLineText = getLineText(getNextLyricRow(currentLine), includePronunciation);
+    const nextLineText = getLineText(
+      getNextLyricRow(currentLine),
+      includePronunciation,
+    );
     if (nextLineText) return nextLineText;
   }
 
@@ -188,11 +211,12 @@ const pollLyrics = (includePronunciation: boolean) => {
 export const renderer = createRenderer({
   // Observe lyric DOM changes and push the current line to the backend whenever
   // playback state or lyric content changes.
-  async start(ctx) {
+  start(ctx) {
     const send = async () => {
       const config = (await ctx.getConfig()) as StatusbarLyricsPluginConfig;
       const text = pollLyrics(config.includePronunciation);
-      const payload = config.enabled && text ? `${config.maxLength}\u0000${text}` : '';
+      const payload =
+        config.enabled && text ? `${config.maxLength}\u0000${text}` : '';
 
       if (payload === lastPayload) {
         return;
@@ -228,7 +252,7 @@ export const renderer = createRenderer({
 
     sendLyrics = () => {
       sendRequested = true;
-      void flushSend();
+      flushSend();
     };
 
     if (timer) {
@@ -264,7 +288,6 @@ export const renderer = createRenderer({
 
     window.ipcRenderer.on('peard:play-or-paused', onPlayOrPaused);
     window.ipcRenderer.on('peard:time-changed', onTimeChanged);
-
   },
   stop() {
     if (timer) {
@@ -283,6 +306,6 @@ export const renderer = createRenderer({
     resetPlaybackState();
     resetSendState();
 
-    void window.ipcRenderer.invoke('statusbar-lyrics:clear');
+    window.ipcRenderer.invoke('statusbar-lyrics:clear');
   },
 });

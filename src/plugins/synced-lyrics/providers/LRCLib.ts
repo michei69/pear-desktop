@@ -22,9 +22,8 @@ export class LRCLib implements LyricProvider {
       track_name: title,
     });
 
-    query.set('album_name', album!);
-    if (query.get('album_name') === 'undefined') {
-      query.delete('album_name');
+    if (album) {
+      query.set('album_name', album);
     }
 
     let url = `${this.baseUrl}/api/search?${query.toString()}`;

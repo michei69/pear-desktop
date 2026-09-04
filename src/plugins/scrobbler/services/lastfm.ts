@@ -45,39 +45,43 @@ export class LastFmScrobbler extends ScrobblerBase {
     config: ScrobblerPluginConfig,
     setConfig: SetConfType,
   ): Promise<ScrobblerPluginConfig> {
-    // Get and store the session key
-    const data = {
-      api_key: config.scrobblers.lastfm.apiKey,
-      format: 'json',
-      method: 'auth.getsession',
-      token: config.scrobblers.lastfm.token,
-    };
-    const apiSignature = createApiSig(data, config.scrobblers.lastfm.secret);
-    const response = await net.fetch(
-      `${config.scrobblers.lastfm.apiRoot}${createQueryString(data, apiSignature)}`,
-    );
-    const json = (await response.json()) as {
-      error?: string;
-      session?: {
-        key: string;
+    try {
+      // Get and store the session key
+      const data = {
+        api_key: config.scrobblers.lastfm.apiKey,
+        format: 'json',
+        method: 'auth.getsession',
+        token: config.scrobblers.lastfm.token,
       };
-    };
-    if (json.error) {
-      config.scrobblers.lastfm.token = await createToken(config);
-      // If is successful, we need retry the request
-      authenticate(config, this.mainWindow).then((it) => {
-        if (it) {
-          this.createSession(config, setConfig);
-        } else {
-          // failed
-          setConfig(config);
-        }
-      });
+      const apiSignature = createApiSig(data, config.scrobblers.lastfm.secret);
+      const response = await net.fetch(
+        `${config.scrobblers.lastfm.apiRoot}${createQueryString(data, apiSignature)}`,
+      );
+      const json = (await response.json()) as {
+        error?: string;
+        session?: {
+          key: string;
+        };
+      };
+      if (json.error) {
+        config.scrobblers.lastfm.token = await createToken(config);
+        // If is successful, we need retry the request
+        authenticate(config, this.mainWindow).then((it) => {
+          if (it) {
+            this.createSession(config, setConfig);
+          } else {
+            // failed
+            setConfig(config);
+          }
+        });
+      }
+      if (json.session) {
+        config.scrobblers.lastfm.sessionKey = json.session.key;
+      }
+      setConfig(config);
+    } catch (error) {
+      console.error('Failed to create Last.fm session:', error);
     }
-    if (json.session) {
-      config.scrobblers.lastfm.sessionKey = json.session.key;
-    }
-    setConfig(config);
     return config;
   }
 
@@ -109,9 +113,8 @@ export class LastFmScrobbler extends ScrobblerBase {
     // This adds one scrobbled song to last.fm
     const data = {
       method: 'track.scrobble',
-      timestamp: Math.trunc(
-        (Date.now() - (songInfo.elapsedSeconds ?? 0)) / 1000,
-      ),
+      // Date.now() is in milliseconds, elapsedSeconds in seconds — convert to seconds before subtracting
+      timestamp: Math.trunc(Date.now() / 1000) - (songInfo.elapsedSeconds ?? 0),
     };
     this.postSongDataToAPI(songInfo, config, data, setConfig);
   }
@@ -143,46 +146,45 @@ export class LastFmScrobbler extends ScrobblerBase {
 
     postData.api_sig = createApiSig(postData, config.scrobblers.lastfm.secret);
     const formData = createFormData(postData);
-    net
-      .fetch('https://ws.audioscrobbler.com/2.0/', {
+    try {
+      // apiRoot already includes the /2.0/ path (see defaultConfig), so use it
+      // as-is. Appending `2.0/` would produce ws.audioscrobbler.com/2.0/2.0/.
+      const response = await net.fetch(config.scrobblers.lastfm.apiRoot, {
         method: 'POST',
         body: formData,
-      })
-      .catch(
-        async (error: {
-          response?: {
-            data?: {
-              error: number;
-            };
-          };
-        }) => {
-          if (error?.response?.data?.error === 9) {
-            // Session key is invalid, so remove it from the config and reauthenticate
-            config.scrobblers.lastfm.sessionKey = undefined;
-            config.scrobblers.lastfm.token = await createToken(config);
-            authenticate(config, this.mainWindow).then((it) => {
-              if (it) {
-                this.createSession(config, setConfig);
-              } else {
-                // failed
-                setConfig(config);
-              }
-            });
+      });
+      const json = (await response.json()) as { error?: number };
+      if (json.error === 9) {
+        // Session key is invalid, so remove it from the config and reauthenticate
+        config.scrobblers.lastfm.sessionKey = undefined;
+        config.scrobblers.lastfm.token = await createToken(config);
+        authenticate(config, this.mainWindow).then((it) => {
+          if (it) {
+            this.createSession(config, setConfig);
           } else {
-            console.error(error);
+            // failed
+            setConfig(config);
           }
-        },
-      );
+        });
+      } else if (json.error) {
+        console.error(`Last.fm API error: ${json.error}`);
+      }
+    } catch (error) {
+      console.error('Failed to submit data to Last.fm:', error);
+    }
   }
 }
 
 const createFormData = (parameters: LastFmSongData) => {
-  // Creates the body for in the post request
+  // Creates the body for the post request. Last.fm expects
+  // application/x-www-form-urlencoded, so use URLSearchParams (FormData would
+  // send multipart/form-data, which the API does not reliably accept).
   const formData = new URLSearchParams();
-  for (const key in parameters) {
-    formData.append(key, String(parameters[key as keyof LastFmSongData]));
-  }
-
+  Object.entries(parameters).forEach(([key, value]) => {
+    if (value !== undefined) {
+      formData.append(key, String(value));
+    }
+  });
   return formData;
 };
 

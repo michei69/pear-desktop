@@ -6,6 +6,8 @@ let config: SkipSilencesPluginConfig;
 let isSilent = false;
 let hasAudioStarted = false;
 
+let loopTimer: number | undefined;
+
 const smoothing = 0.1;
 const threshold = -100; // DB (-100 = absolute silence, 0 = loudest)
 const interval = 2; // Ms
@@ -30,13 +32,22 @@ const getMaxVolume = (
   return maxVolume;
 };
 
+const stopLoop = () => {
+  if (loopTimer !== undefined) {
+    clearTimeout(loopTimer);
+    loopTimer = undefined;
+  }
+};
+
 const audioCanPlayListener = (e: CustomEvent<Compressor>) => {
   const video = document.querySelector('video');
   const { audioContext } = e.detail;
   const sourceNode = e.detail.audioSource;
 
-  // Use an audio analyser similar to Hark
-  // https://github.com/otalk/hark/blob/master/hark.bundle.js
+  // A new track started — stop the previous detection loop so timers and
+  // analysers don't accumulate (each `peard:audio-can-play` fires per track).
+  stopLoop();
+
   const analyser = audioContext.createAnalyser();
   analyser.fftSize = 512;
   analyser.smoothingTimeConstant = smoothing;
@@ -44,8 +55,18 @@ const audioCanPlayListener = (e: CustomEvent<Compressor>) => {
 
   sourceNode.connect(analyser);
 
+  const skipSilence = () => {
+    if (config.onlySkipBeginning && hasAudioStarted) {
+      return;
+    }
+
+    if (isSilent && video && !video.paused) {
+      video.currentTime += 0.2; // In s
+    }
+  };
+
   const looper = () => {
-    setTimeout(() => {
+    loopTimer = window.setTimeout(() => {
       const currentVolume = getMaxVolume(analyser, fftBins);
 
       let history = 0;
@@ -94,16 +115,6 @@ const audioCanPlayListener = (e: CustomEvent<Compressor>) => {
 
   looper();
 
-  const skipSilence = () => {
-    if (config.onlySkipBeginning && hasAudioStarted) {
-      return;
-    }
-
-    if (isSilent && video && !video.paused) {
-      video.currentTime += 0.2; // In s
-    }
-  };
-
   playOrSeekHandler = () => {
     hasAudioStarted = false;
     skipSilence();
@@ -124,6 +135,8 @@ export const onRendererLoad = async ({
 };
 
 export const onRendererUnload = () => {
+  stopLoop();
+
   document.removeEventListener('peard:audio-can-play', audioCanPlayListener);
 
   if (playOrSeekHandler) {

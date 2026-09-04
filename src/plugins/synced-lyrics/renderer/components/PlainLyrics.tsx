@@ -30,9 +30,13 @@ export const PlainLyrics = (props: PlainLyricsProps) => {
     if (!config()?.romanization) return;
 
     const input = canonicalize(text());
-    romanize(input).then((result) => {
-      setRomanization(canonicalize(result));
-    });
+    romanize(input)
+      .then((result) => {
+        setRomanization(canonicalize(result));
+      })
+      .catch(() => {
+        // Romanization is best-effort — keep the previous value on failure
+      });
   });
 
   const translation = createMemo(() => {

@@ -48,6 +48,12 @@ export default createPlugin<
     onPlayerApiReady(api) {
       this.api = api;
 
+      // Remove a previous listener if the player API re-initialized, so
+      // listeners don't stack and re-run on every song change.
+      if (this.videoDataListener) {
+        document.removeEventListener('videodatachange', this.videoDataListener);
+      }
+
       // Force audio-only quality via the player API
       this.setAudioOnly();
 

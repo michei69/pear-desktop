@@ -108,19 +108,24 @@ const handleTranslate = async (
     };
   }
 
-  await writeCache({
-    key: cacheKey,
-    strategyVersion: TRANSLATION_STRATEGY_VERSION,
-    title: args.request.title,
-    artists: args.request.artists,
-    targetLanguage: args.request.resolvedTargetLanguage,
-    provider: args.provider,
-    model,
-    sourceHash,
-    sourceLines: args.request.lines,
-    createdAt: Date.now(),
-    lines,
-  });
+  try {
+    await writeCache({
+      key: cacheKey,
+      strategyVersion: TRANSLATION_STRATEGY_VERSION,
+      title: args.request.title,
+      artists: args.request.artists,
+      targetLanguage: args.request.resolvedTargetLanguage,
+      provider: args.provider,
+      model,
+      sourceHash,
+      sourceLines: args.request.lines,
+      createdAt: Date.now(),
+      lines,
+    });
+  } catch (error) {
+    // A cache write failure must not discard the translation we already have
+    console.warn('[synced-lyrics] failed to write translation cache', error);
+  }
 
   return { lines, fromCache: false };
 };

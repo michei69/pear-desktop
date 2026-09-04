@@ -171,13 +171,12 @@ class MusixMatchAPI {
   }
 
   public async reinit() {
-    const [{ status }] = await Promise.allSettled([this.initPromise]);
-    if (status === 'rejected') {
-      this.cookie = 'x-mxm-user-id=';
-      localStorage.removeItem(this.key);
-      this.initPromise = this.init();
-      await this.initPromise;
-    }
+    // The token expires 60s after init; a 401 means the cached token is stale,
+    // so always refresh regardless of whether the original init promise settled.
+    this.cookie = 'x-mxm-user-id=';
+    localStorage.removeItem(this.key);
+    this.initPromise = this.init();
+    await this.initPromise;
   }
 
   // god I love typescript generics, they're so useful
@@ -272,7 +271,10 @@ class MusixMatchAPI {
 
     localStorage.setItem(
       this.key,
-      JSON.stringify({ token: this.token, expires: Date.now() + (60 * 1000) }),
+      JSON.stringify({
+        token: this.token,
+        expires: Date.now() + 60 * 1000,
+      }),
     );
   }
 

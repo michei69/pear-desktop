@@ -142,3 +142,20 @@ test('karaoke', () => {
     tags: [],
   });
 });
+
+test('offset', () => {
+  const lrc = LRC.parse(`\
+[offset:500]
+[00:10.00]Line 1 lyrics
+[00:20.00]Line 2 lyrics\
+`);
+
+  expect(
+    lrc.lines
+      .filter((it) => it.text)
+      .map((it) => ({ timeInMs: it.timeInMs, duration: it.duration })),
+  ).toStrictEqual([
+    { timeInMs: 10500, duration: 10000 },
+    { timeInMs: 20500, duration: Infinity },
+  ]);
+});

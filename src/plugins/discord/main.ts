@@ -32,8 +32,6 @@ export const backend = createBackend<
 
     if (config.enabled) {
       ctx.window.once('ready-to-show', () => {
-        discordService?.connect(!config.autoReconnect);
-
         this.songInfoCallback = (songInfo, event) => {
           if (!discordService?.isConnected()) return;
 
@@ -50,6 +48,7 @@ export const backend = createBackend<
         };
 
         registerCallback(this.songInfoCallback);
+        discordService?.connect(!config.autoReconnect);
       });
     }
 
@@ -74,6 +73,26 @@ export const backend = createBackend<
 
     const currentlyConnected = discordService?.isConnected() ?? false;
     if (newConfig.enabled && !currentlyConnected) {
+      // The song-info callback may not be registered yet if the plugin was
+      // enabled after startup — register it before connecting so activity
+      // updates flow once the RPC client is ready.
+      if (!this.songInfoCallback) {
+        this.songInfoCallback = (songInfo, event) => {
+          if (!discordService?.isConnected()) return;
+
+          if (event !== SongInfoEvent.TimeChanged) {
+            discordService?.updateActivity(songInfo);
+            this.lastTimeUpdateSent = Date.now();
+          } else {
+            const now = Date.now();
+            if (now - this.lastTimeUpdateSent > TIME_UPDATE_DEBOUNCE_MS) {
+              discordService?.updateActivity(songInfo);
+              this.lastTimeUpdateSent = now;
+            }
+          }
+        };
+        registerCallback(this.songInfoCallback);
+      }
       discordService?.connect(!newConfig.autoReconnect);
     } else if (!newConfig.enabled && currentlyConnected) {
       discordService?.disconnect();

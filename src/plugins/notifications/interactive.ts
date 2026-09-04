@@ -36,7 +36,11 @@ export default (
   const sendNotification = (songInfo: SongInfo) => {
     const iconSrc = notificationImage(songInfo, config());
 
-    savedNotification?.close();
+    // Capture the closing notification in a local so the async 'close' event
+    // of the old toast can't null out a newer one's reference.
+    const previousNotification = savedNotification;
+    savedNotification = undefined;
+    previousNotification?.close();
 
     let icon: string;
     if (typeof iconSrc === 'object') {
@@ -45,7 +49,7 @@ export default (
       icon = iconSrc;
     }
 
-    savedNotification = new Notification({
+    const notification = new Notification({
       title: songInfo.title || 'Playing',
       body: songInfo.artist,
       icon: iconSrc,
@@ -56,15 +60,23 @@ export default (
       // https://learn.microsoft.com/en-us/uwp/api/windows.ui.notifications.toasttemplatetype
       toastXml: getXml(songInfo, icon),
     });
+    savedNotification = notification;
 
     // To fix the notification not closing
-    setTimeout(() => savedNotification?.close(), 5000);
+    setTimeout(() => {
+      if (savedNotification === notification) {
+        notification.close();
+        savedNotification = undefined;
+      }
+    }, 5000);
 
-    savedNotification.on('close', () => {
-      savedNotification = undefined;
+    notification.on('close', () => {
+      if (savedNotification === notification) {
+        savedNotification = undefined;
+      }
     });
 
-    savedNotification.show();
+    notification.show();
   };
 
   const getXml = (songInfo: SongInfo, iconSrc: string) => {
@@ -131,15 +143,15 @@ export default (
     `<action ${display(
       kind,
     )} activationType="protocol" arguments="${APP_PROTOCOL}://${kind}"/>`;
-
-  const getButtons = (isPaused: boolean) => `\
-    <actions>
-        ${getButton('previous')}
-        ${isPaused ? getButton('play') : getButton('pause')}
-        ${getButton('next')}
-    </actions>\
-`;
-
+  // Escape user-provided text before embedding it in toast XML, otherwise
+  // titles/artists containing &, < or > produce malformed XML.
+  const escapeXml = (value: string) =>
+    value
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;')
+      .replaceAll("'", '&apos;');
   const toast = (content: string, isPaused: boolean) => `\
 <toast>
     <audio silent="true" />
@@ -152,6 +164,13 @@ export default (
     ${getButtons(isPaused)}
 </toast>`;
 
+  const getButtons = (isPaused: boolean) => `\
+    <actions>
+        ${getButton('previous')}
+        ${isPaused ? getButton('play') : getButton('pause')}
+        ${getButton('next')}
+    </actions>\
+`;
   const xmlImage = (
     { title, artist, isPaused }: SongInfo,
     imgSrc: string,
@@ -160,12 +179,11 @@ export default (
     toast(
       `\
             <image id="1" src="${imgSrc}" name="Image" ${placement}/>
-            <text id="1">${title}</text>
-            <text id="2">${artist}</text>\
+            <text id="1">${escapeXml(title)}</text>
+            <text id="2">${escapeXml(artist)}</text>\
 `,
       isPaused ?? false,
     );
-
   const xmlLogo = (songInfo: SongInfo, imgSrc: string) =>
     xmlImage(songInfo, imgSrc, 'placement="appLogoOverride"');
 
@@ -182,8 +200,8 @@ export default (
             <text>ㅤ</text>
             <group>
                 <subgroup>
-                    <text hint-style="body">${songInfo.title}</text>
-                    <text hint-style="captionSubtle">${songInfo.artist}</text>
+                    <text hint-style="body">${escapeXml(songInfo.title)}</text>
+                    <text hint-style="captionSubtle">${escapeXml(songInfo.artist)}</text>
                 </subgroup>
                 ${xmlMoreData(songInfo)}
             </group>\
@@ -195,7 +213,7 @@ export default (
 <subgroup hint-textStacking="bottom">
     ${
       album
-        ? `<text hint-style="captionSubtle" hint-wrap="true" hint-align="right">${album}</text>`
+        ? `<text hint-style="captionSubtle" hint-wrap="true" hint-align="right">${escapeXml(album)}</text>`
         : ''
     }
     <text hint-style="captionSubtle" hint-wrap="true" hint-align="right">${secondsToMinutes(
@@ -215,8 +233,8 @@ export default (
                 <subgroup hint-weight="1" hint-textStacking="center">
                     <text hint-align="center" hint-style="${titleFontPicker(
                       title,
-                    )}">${title}</text>
-                    <text hint-align="center" hint-style="SubtitleSubtle">${artist}</text>
+                    )}">${escapeXml(title)}</text>
+                    <text hint-align="center" hint-style="SubtitleSubtle">${escapeXml(artist)}</text>
                 </subgroup>
             </group>
             <image id="1" src="${imgSrc}" name="Image"  hint-removeMargin="true" />\
@@ -236,8 +254,8 @@ export default (
                 <subgroup hint-weight="1" hint-textStacking="center">
                     <text hint-align="center" hint-style="${titleFontPicker(
                       title,
-                    )}">${title}</text>
-                    <text hint-align="center" hint-style="SubtitleSubtle">${artist}</text>
+                    )}">${escapeXml(title)}</text>
+                    <text hint-align="center" hint-style="SubtitleSubtle">${escapeXml(artist)}</text>
                 </subgroup>
             </group>\
 `,

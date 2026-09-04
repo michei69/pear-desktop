@@ -60,14 +60,27 @@ export const backend = createBackend<BackendType, AuthProxyConfig>({
     const upstreamProxyUrl = config.get('options.proxy');
     // Create SOCKS proxy server
     const socksServer = net.createServer((socket) => {
-      socket.once('data', (chunk) => {
-        if (Buffer.isBuffer(chunk) && chunk[0] === 0x05) {
-          // SOCKS5
-          this.handleSocks5(socket, chunk, upstreamProxyUrl);
-        } else {
-          socket.end();
-        }
-      });
+      // Buffer the greeting: it may arrive fragmented, and a pipelined
+      // client may send greeting + CONNECT request in one segment — the
+      // request bytes must not be dropped when the greeting is consumed.
+      let greetingChunks: Buffer[] = [];
+
+      const onGreeting = (chunk: Buffer) => {
+        if (!Buffer.isBuffer(chunk)) return;
+        greetingChunks.push(chunk);
+        const greeting = Buffer.concat(greetingChunks);
+        if (greeting.length < 2) return; // VER + NMETHODS not complete
+
+        const numMethods = greeting[1];
+        if (greeting.length < 2 + numMethods) return; // methods not complete
+
+        const remainder = greeting.subarray(2 + numMethods);
+        greetingChunks = [];
+        socket.off('data', onGreeting);
+        this.handleSocks5(socket, greeting, remainder, upstreamProxyUrl);
+      };
+
+      socket.on('data', onGreeting);
 
       socket.on('error', (err) => {
         console.error(LoggerPrefix, '[SOCKS] Socket error:', err.message);
@@ -96,26 +109,55 @@ export const backend = createBackend<BackendType, AuthProxyConfig>({
     this.server = socksServer;
   },
 
-  // Handle SOCKS5 request
+  // Handle SOCKS5 handshake + connection request
   handleSocks5(
     clientSocket: net.Socket,
-    chunk: Buffer,
+    greeting: Buffer,
+    remainder: Buffer,
     upstreamProxyUrl: string,
   ) {
     // Handshake phase
-    const numMethods = chunk[1];
-    const methods = chunk.subarray(2, 2 + numMethods);
+    const numMethods = greeting[1];
+    const methods = greeting.subarray(2, 2 + numMethods);
 
     // Check if client supports no authentication method (0x00)
     if (methods.includes(0x00)) {
       // Reply to client, choose no authentication method
       clientSocket.write(Buffer.from([0x05, 0x00]));
 
-      // Wait for client's connection request
-      clientSocket.once('data', (data) => {
+      // Wait for client's connection request. The request may arrive in a
+      // later TCP segment than the greeting (or the greeting may itself be
+      // fragmented) — accumulate until we have a full request.
+      const requestChunks: Buffer[] = [];
+      const onData = (data: Buffer) => {
         if (!Buffer.isBuffer(data)) return;
-        this.processSocks5Request(clientSocket, data, upstreamProxyUrl);
-      });
+        requestChunks.push(data);
+
+        // Minimum CONNECT request size: VER+CMD+RSV+ATYP (4) + addr + port (2).
+        // The addr length varies by ATYP; require enough bytes to parse it.
+        const buffer = Buffer.concat(requestChunks);
+        if (buffer.length < 4) return;
+
+        const atyp = buffer[3];
+        let headerLength: number;
+        if (atyp === 0x01) headerLength = 4 + 4 + 2;
+        else if (atyp === 0x04) headerLength = 4 + 16 + 2;
+        else if (atyp === 0x03) {
+          if (buffer.length < 5) return;
+          headerLength = 4 + 1 + buffer[4] + 2;
+        } else {
+          // Unknown ATYP — let processSocks5Request reject it
+          headerLength = buffer.length;
+        }
+
+        if (buffer.length < headerLength) return;
+
+        clientSocket.off('data', onData);
+        this.processSocks5Request(clientSocket, buffer, upstreamProxyUrl);
+      };
+      clientSocket.on('data', onData);
+      // Re-feed bytes that arrived pipelined right after the greeting
+      if (remainder.length > 0) onData(remainder);
     } else {
       // Authentication methods not supported by the client
       clientSocket.write(Buffer.from([0x05, 0xff]));
@@ -159,6 +201,14 @@ export const backend = createBackend<BackendType, AuthProxyConfig>({
         ipv6Buffer.readUInt16BE(i * 2).toString(16),
       ).join(':');
       targetPort = data.readUInt16BE(20);
+    } else {
+      // Unsupported address type — reply 0x08 instead of silently proxying
+      // to the fallback host/port below.
+      clientSocket.write(
+        Buffer.from([0x05, 0x08, 0x00, 0x01, 0, 0, 0, 0, 0, 0]),
+      );
+      clientSocket.end();
+      return;
     }
     if (is.dev()) {
       console.debug(

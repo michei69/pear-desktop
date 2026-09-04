@@ -187,29 +187,29 @@ export class Queue {
     );
 
     const state = this.queue.queue.store.store.getState();
+    const indexToUse = index ?? this._videoList.length;
 
     this.queue?.dispatch({
       type: 'ADD_ITEMS',
       payload: {
         nextQueueItemId: state.queue.nextQueueItemId,
-        index:
-          index ??
-          (state.queue.items.length ? state.queue.items.length - 1 : null) ??
-          0,
+        // The page's queue store inserts before `index`; indexToUse is the
+        // plain _videoList position, so both sides get the same value.
+        index: indexToUse,
         items,
         shuffleEnabled: false,
         shouldAssignIds: true,
       },
     });
 
-    const insertedItem = this._videoList[index ?? this._videoList.length];
+    const insertedItem = this._videoList[indexToUse];
     if (
       !insertedItem ||
       (insertedItem.videoId !== videos[0].videoId &&
         insertedItem.ownerId !== videos[0].ownerId)
     ) {
       this._videoList.splice(
-        index ?? this._videoList.length,
+        indexToUse,
         0,
         ...videos.map((it) => ({
           ...it,
@@ -379,20 +379,6 @@ export class Queue {
                 }
               ).items,
             );
-            this._videoList.splice(
-              event.payload && Object.hasOwn(event.payload, 'index')
-                ? (
-                    event.payload as {
-                      index: number;
-                    }
-                  ).index
-                : this._videoList.length,
-              0,
-              ...videoList.map((it) => ({
-                ...it,
-                ownerId: it.ownerId ?? this.owner?.id,
-              })),
-            );
             this.broadcast({
               // add playlist
               type: 'ADD_SONGS',
@@ -408,6 +394,20 @@ export class Queue {
                 videoList,
               },
             });
+            this._videoList.splice(
+              event.payload && Object.hasOwn(event.payload, 'index')
+                ? (
+                    event.payload as {
+                      index: number;
+                    }
+                  ).index
+                : this._videoList.length,
+              0,
+              ...videoList.map((it) => ({
+                ...it,
+                ownerId: it.ownerId ?? this.owner?.id,
+              })),
+            );
           }
 
           return;
@@ -467,6 +467,7 @@ export class Queue {
         if (event.type === 'ADD_AUTOMIX_ITEMS') return;
       }
 
+      /* oxlint-disable typescript/no-misused-spread */
       const fakeContext = {
         ...this.queue,
         queue: {
@@ -477,6 +478,7 @@ export class Queue {
           },
         },
       };
+      /* oxlint-enable typescript/no-misused-spread */
       this.originalDispatch?.call(
         fakeContext,
         event as {

@@ -336,7 +336,7 @@ function downloadSongOnFinishSetup({
 
   return () => {
     unregisterCallback(songInfoCallback);
-    ipcMain.removeAllListeners('peard:player-api-loaded');
+    ipcMain.removeListener('peard:player-api-loaded', onPlayerApiLoaded);
   };
 }
 
@@ -469,7 +469,7 @@ async function downloadSongUnsafe(
   const iterableStream = Utils.streamToIterable(stream);
 
   if (!existsSync(dir)) {
-    mkdirSync(dir);
+    mkdirSync(dir, { recursive: true });
   }
 
   let fileBuffer = await iterableStreamToProcessedUint8Array(
@@ -513,7 +513,8 @@ async function downloadChunks(
   for await (const chunk of stream) {
     downloaded += chunk.length;
     chunks.push(chunk);
-    const ratio = downloaded / contentLength;
+    // contentLength can be 0/omitted for some formats — avoid Infinity/NaN progress
+    const ratio = contentLength > 0 ? downloaded / contentLength : 0;
     const progress = Math.floor(ratio * 100);
     sendFeedback(
       t('plugins.downloader.backend.feedback.download-progress', {
@@ -571,7 +572,7 @@ async function iterableStreamToProcessedUint8Array(
           }),
           ratio,
         );
-        increasePlaylistProgress(0.15 + (ratio * 0.85));
+        increasePlaylistProgress(0.15 + ratio * 0.85);
       });
 
       const safeVideoNameWithExtension = `${safeVideoName}.${extension}`;
@@ -654,7 +655,8 @@ export async function downloadPlaylist(givenUrl?: string | URL) {
   }
 
   const playlistId =
-    getPlaylistID(givenUrl) || getPlaylistID(new URL(playingUrl));
+    getPlaylistID(givenUrl) ||
+    (playingUrl ? getPlaylistID(new URL(playingUrl)) : undefined);
 
   if (!playlistId) {
     sendError(
@@ -795,7 +797,7 @@ export async function downloadPlaylist(givenUrl?: string | URL) {
 
   const increaseProgress = (itemPercentage: number) => {
     const currentProgress = (counter - 1) / (items.length ?? 1);
-    const newProgress = currentProgress + (progressStep * itemPercentage);
+    const newProgress = currentProgress + progressStep * itemPercentage;
     win.setProgressBar(newProgress);
   };
 

@@ -50,7 +50,13 @@ export const renderer = createRenderer<
 
   async onPlayerApiReady(_: MusicPlayer, context) {
     this.options = await context.getConfig();
-    await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+    try {
+      await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+    } catch (error) {
+      // No capture device / permission denied — the plugin can still set the
+      // output sink id on the audio context, so continue setup.
+      console.warn('custom-output-device: no audio input available', error);
+    }
     navigator.mediaDevices.ondevicechange = async () =>
       await updateDeviceList(context);
 

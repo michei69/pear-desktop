@@ -2,8 +2,8 @@ import { t } from '@/i18n';
 import { type MusicPlayer } from '@/types/music-player';
 import { createPlugin } from '@/utils';
 
-import type { MenuContext } from '@/types/contexts';
 import type { MenuTemplate } from '@/menu';
+import type { MenuContext } from '@/types/contexts';
 
 export type AudioCompressorPluginConfig = {
   enabled: boolean;
@@ -38,11 +38,7 @@ class Chain {
   trackGain: GainNode | null = null;
 
   build(source: MediaElementAudioSourceNode, context: AudioContext) {
-    if (
-      this.source === source &&
-      this.context === context &&
-      this.compressor
-    ) {
+    if (this.source === source && this.context === context && this.compressor) {
       return; // already built
     }
 
@@ -165,9 +161,10 @@ const updateTrackGain = (retriesLeft = 4) => {
 const sourceMediaElement = (
   source: MediaElementAudioSourceNode | null,
 ): HTMLVideoElement | null =>
-  ((source as
-    | (MediaElementAudioSourceNode & { mediaElement?: HTMLMediaElement })
-    | null
+  ((
+    source as
+      | (MediaElementAudioSourceNode & { mediaElement?: HTMLMediaElement })
+      | null
   )?.mediaElement as HTMLVideoElement | undefined) ?? null;
 
 let videoSwapObserver: MutationObserver | null = null;
@@ -200,9 +197,7 @@ const watchForVideoSwap = () => {
   // near end then back to start). Our source is permanently bound to the old
   // element; the new one would play straight to the OS, bypassing the chain.
   // Detect the swap and rebind.
-  const target =
-    (document.querySelector('#movie_player') as HTMLElement | null) ??
-    document.body;
+  const target = document.querySelector('#movie_player') ?? document.body;
   videoSwapObserver = new MutationObserver(() => {
     const newEl = document.querySelector<HTMLVideoElement>('video');
     if (!newEl || newEl === currentEl) return;
@@ -304,10 +299,7 @@ export default createPlugin({
     },
 
     stop() {
-      document.removeEventListener(
-        'peard:audio-can-play',
-        audioCanPlayHandler,
-      );
+      document.removeEventListener('peard:audio-can-play', audioCanPlayHandler);
       stopWatchingForVideoSwap();
       cancelPendingRetry();
       chain.teardown();

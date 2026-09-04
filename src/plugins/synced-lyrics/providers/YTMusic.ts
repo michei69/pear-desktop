@@ -101,8 +101,10 @@ export class YTMusic implements LyricProvider {
 
   private millisToTime(millis: number) {
     const minutes = Math.floor(millis / 60000);
-    const seconds = Math.floor((millis - (minutes * 60 * 1000)) / 1000);
-    const remaining = (millis - (minutes * 60 * 1000) - (seconds * 1000)) / 10;
+    const seconds = Math.floor((millis - minutes * 60 * 1000) / 1000);
+    const remaining = Math.floor(
+      (millis - minutes * 60 * 1000 - seconds * 1000) / 10,
+    );
     return `${minutes.toString().padStart(2, '0')}:${seconds
       .toString()
       .padStart(2, '0')}.${remaining.toString().padStart(2, '0')}`;
@@ -182,12 +184,12 @@ export interface NextData {
                   content: {
                     playlistPanelRenderer: {
                       contents: Array<{
-                        playlistPanelVideoRenderer: unknown
-                      }>
-                    }
-                  }
-                }
-              }
+                        playlistPanelVideoRenderer: unknown;
+                      }>;
+                    };
+                  };
+                };
+              };
             };
           }[];
         };

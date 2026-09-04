@@ -16,6 +16,7 @@ import type { NotificationsPluginConfig } from './index';
 import type { BackendContext } from '@/types/contexts';
 
 let config: NotificationsPluginConfig;
+let mainWindow: Electron.BrowserWindow | null = null;
 let songInfoCallback:
   | ((songInfo: SongInfo, event: SongInfoEvent) => void)
   | null = null;
@@ -61,8 +62,8 @@ const setup = () => {
 export const onMainLoad = async (
   context: BackendContext<NotificationsPluginConfig>,
 ) => {
+  mainWindow = context.window;
   config = await context.getConfig();
-
   // Register the callback for new song information
   if (is.windows() && config.interactive)
     interactive(context.window, () => config, context);
@@ -74,7 +75,12 @@ export const onMainLoad = async (
 };
 
 export const onConfigChange = (newConfig: NotificationsPluginConfig) => {
-  if (!newConfig.hoverControls && disposeHoverPopup) {
+  if (newConfig.hoverControls && !disposeHoverPopup) {
+    // Re-create the popup when the setting is turned back on
+    if (mainWindow) {
+      disposeHoverPopup = setupHoverPopup(mainWindow);
+    }
+  } else if (!newConfig.hoverControls && disposeHoverPopup) {
     disposeHoverPopup();
     disposeHoverPopup = null;
   }

@@ -100,9 +100,13 @@ export const SyncedLine = (props: SyncedLineProps) => {
     const input = canonicalize(text());
     if (!config()?.romanization) return;
 
-    romanize(input).then((result) => {
-      setRomanization(canonicalize(result));
-    });
+    romanize(input)
+      .then((result) => {
+        setRomanization(canonicalize(result));
+      })
+      .catch(() => {
+        // Romanization is best-effort — keep the previous value on failure
+      });
   });
 
   // SyncedLine receives `props.index` from the VList iteration. The list is
@@ -133,14 +137,17 @@ export const SyncedLine = (props: SyncedLineProps) => {
               ],
             }}
           />
-
           <div
             class="text-lyrics"
             ref={(div: HTMLDivElement) => {
               // TODO: Investigate the animation, even though the duration is properly set, all lines have the same animation duration
+              // Guard against non-finite durations (the last line has duration: Infinity)
+              const duration = Number.isFinite(props.line.duration)
+                ? props.line.duration
+                : 0;
               div.style.setProperty(
                 '--lyrics-duration',
-                `${props.line.duration / 1000}s`,
+                `${duration / 1000}s`,
                 'important',
               );
             }}

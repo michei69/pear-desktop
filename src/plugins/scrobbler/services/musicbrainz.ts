@@ -1,5 +1,16 @@
 import { app, net } from 'electron';
 
+interface MusicBrainzRecording {
+  'id': string;
+  'title': string;
+  'score': number;
+  'artist-credit'?: { name?: string }[];
+}
+
+interface MusicBrainzResponse {
+  recordings?: MusicBrainzRecording[];
+}
+
 const cache = new Map<string, { title: string; artist: string } | null>();
 
 let mbLock = Promise.resolve();
@@ -26,15 +37,19 @@ async function fetchWithRetry(
     try {
       response = await net.fetch(url, {
         headers: {
-          'User-Agent': `PearDesktop/${app.getVersion()} ( ${email} )`,
+          // MusicBrainz requires a descriptive UA with contact info; use the
+          // live app version so it stays in sync rather than hard-coding it.
+          'User-Agent': `pear-desktop/${app.getVersion()} ( ${email} )`,
+          'Accept': 'application/json',
+          'From': email,
         },
+        // A hung fetch would never reach setTimeout(release) below, leaving
+        // mbLock resolved-never and deadlocking every later correction. This
+        // 5s guard frees the lock on a stalled connection.
         signal: AbortSignal.timeout(5000),
       });
     } catch {
-      if (i === 2) {
-        setTimeout(release, 1050);
-        return null;
-      }
+      response = null;
     }
 
     const isSuccess = response !== null && response.status < 500;
@@ -72,7 +87,10 @@ export async function fetchMusicBrainzCorrection(
   };
 
   try {
-    const queryMB = async (rec: string, art?: string): Promise<any> => {
+    const queryMB = async (
+      rec: string,
+      art?: string,
+    ): Promise<MusicBrainzResponse | null> => {
       if (isCancelled()) return null;
 
       const escape = (s: string) => s.replace(/[\\"]/g, '\\$&');
@@ -84,13 +102,14 @@ export async function fetchMusicBrainzCorrection(
         email,
         isCancelled,
       );
-      return !isCancelled() && res?.ok ? await res.json() : null;
+      if (isCancelled() || !res?.ok) return null;
+      return (await res.json()) as MusicBrainzResponse;
     };
 
-    let data: any = await queryMB(title, artist);
+    let data = await queryMB(title, artist);
     if (isCancelled()) return null;
 
-    const isBad = (d: any) =>
+    const isBad = (d: MusicBrainzResponse | null) =>
       !d?.recordings?.length || d.recordings[0].score < 85;
 
     // Fallback 1: Many YouTube videos have "Artist - Title" in the video title.
@@ -105,7 +124,7 @@ export async function fetchMusicBrainzCorrection(
       if (isCancelled()) return null;
 
       if (!isBad(fallback)) {
-        const top = fallback.recordings[0];
+        const top = fallback!.recordings![0];
         const retArtist = (top['artist-credit']?.[0]?.name || '').toLowerCase();
 
         if (retArtist && title.toLowerCase().includes(retArtist)) {
@@ -141,8 +160,8 @@ export async function fetchMusicBrainzCorrection(
 
     if (!isBad(data)) {
       return setAndReturn({
-        title: data.recordings[0].title,
-        artist: data.recordings[0]['artist-credit']?.[0]?.name || artist,
+        title: data!.recordings![0].title,
+        artist: data!.recordings![0]['artist-credit']?.[0]?.name || artist,
       });
     }
 

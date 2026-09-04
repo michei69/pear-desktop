@@ -32,6 +32,29 @@ import type { BackendContext } from '@/types/contexts';
 import type { QueueResponse } from '@/types/music-player-desktop-internal';
 import type { Context } from 'hono';
 
+// Waits for a single renderer IPC reply, rejecting after 5s if the renderer
+// never answers so routes don't hang forever. Each caller gets its own
+// listener; only that listener is removed on reply/timeout (never
+// removeAllListeners — that would kill other routes' pending listeners).
+const waitForIpcResponse = <T>(
+  channel: string,
+  request: () => void,
+): Promise<T> =>
+  new Promise<T>((resolve, reject) => {
+    const listener = (_event: unknown, payload: T) => {
+      clearTimeout(timeout);
+      ipcMain.removeListener(channel, listener);
+      resolve(payload);
+    };
+    const timeout = setTimeout(() => {
+      ipcMain.removeListener(channel, listener);
+      reject(new Error(`Timed out waiting for IPC response on ${channel}`));
+    }, 5_000);
+
+    ipcMain.on(channel, listener);
+    request();
+  });
+
 const routes = {
   previous: createRoute({
     method: 'post',
@@ -692,21 +715,13 @@ export const register = (
   });
 
   app.openapi(routes.getShuffleState, async (ctx) => {
-    const stateResponsePromise = new Promise<boolean>((resolve) => {
-      ipcMain.once(
-        'peard:get-shuffle-response',
-        (_, isShuffled: boolean | undefined) => {
-          return resolve(!!isShuffled);
-        },
-      );
-
-      controller.requestShuffleInformation();
-    });
-
-    const isShuffled = await stateResponsePromise;
+    const isShuffled = await waitForIpcResponse<boolean | undefined>(
+      'peard:get-shuffle-response',
+      () => controller.requestShuffleInformation(),
+    );
 
     ctx.status(200);
-    return ctx.json({ state: isShuffled });
+    return ctx.json({ state: !!isShuffled });
   });
 
   app.openapi(routes.shuffle, (ctx) => {
@@ -755,21 +770,13 @@ export const register = (
   });
 
   app.openapi(routes.getFullscreenState, async (ctx) => {
-    const stateResponsePromise = new Promise<boolean>((resolve) => {
-      ipcMain.once(
-        'peard:set-fullscreen',
-        (_, isFullscreen: boolean | undefined) => {
-          return resolve(!!isFullscreen);
-        },
-      );
-
-      controller.requestFullscreenInformation();
-    });
-
-    const fullscreen = await stateResponsePromise;
+    const fullscreen = await waitForIpcResponse<boolean | undefined>(
+      'peard:set-fullscreen',
+      () => controller.requestFullscreenInformation(),
+    );
 
     ctx.status(200);
-    return ctx.json({ state: fullscreen });
+    return ctx.json({ state: !!fullscreen });
   });
 
   const songInfo = async (ctx: Context) => {
@@ -791,15 +798,10 @@ export const register = (
 
   // Queue
   const queueInfo = async (ctx: Context) => {
-    const queueResponsePromise = new Promise<QueueResponse>((resolve) => {
-      ipcMain.once('peard:get-queue-response', (_, queue: QueueResponse) => {
-        return resolve(queue);
-      });
-
-      controller.requestQueueInformation();
-    });
-
-    const info = await queueResponsePromise;
+    const info = await waitForIpcResponse<QueueResponse>(
+      'peard:get-queue-response',
+      () => controller.requestQueueInformation(),
+    );
 
     if (!info) {
       ctx.status(204);
@@ -813,15 +815,10 @@ export const register = (
   app.openapi(routes.queueInfo, queueInfo);
 
   app.openapi(routes.nextSongInfo, async (ctx) => {
-    const queueResponsePromise = new Promise<QueueResponse>((resolve) => {
-      ipcMain.once('peard:get-queue-response', (_, queue: QueueResponse) => {
-        return resolve(queue);
-      });
-
-      controller.requestQueueInformation();
-    });
-
-    const queue = await queueResponsePromise;
+    const queue = await waitForIpcResponse<QueueResponse>(
+      'peard:get-queue-response',
+      () => controller.requestQueueInformation(),
+    );
 
     if (!queue?.items || queue.items.length === 0) {
       ctx.status(204);
@@ -909,7 +906,7 @@ export const register = (
     const response = await controller.search(query, params, continuation);
 
     ctx.status(200);
-    return ctx.json(response as object);
+    return ctx.json(response as unknown as object);
   });
   app.openapi(routes.loadVideo, (ctx) => {
     const { videoId } = ctx.req.valid('json');

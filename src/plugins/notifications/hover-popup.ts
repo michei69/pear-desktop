@@ -29,8 +29,8 @@ export const setupHoverPopup = (win: BrowserWindow): (() => void) => {
 
   const createPopup = () => {
     popup = new BrowserWindow({
-      width: POPUP_WIDTH + (SHADOW_PAD * 2),
-      height: POPUP_HEIGHT + (SHADOW_PAD * 2),
+      width: POPUP_WIDTH + SHADOW_PAD * 2,
+      height: POPUP_HEIGHT + SHADOW_PAD * 2,
       frame: false,
       transparent: true,
       resizable: false,
@@ -87,11 +87,11 @@ export const setupHoverPopup = (win: BrowserWindow): (() => void) => {
       y: bounds.y,
     });
     const workArea = display.workArea;
-    const winW = POPUP_WIDTH + (SHADOW_PAD * 2);
-    const winH = POPUP_HEIGHT + (SHADOW_PAD * 2);
+    const winW = POPUP_WIDTH + SHADOW_PAD * 2;
+    const winH = POPUP_HEIGHT + SHADOW_PAD * 2;
 
     // Center horizontally on tray icon
-    let x = Math.round(bounds.x + (bounds.width / 2) - (winW / 2));
+    let x = Math.round(bounds.x + bounds.width / 2 - winW / 2);
     // Position above tray icon
     let y = bounds.y - winH - GAP;
 
@@ -99,7 +99,7 @@ export const setupHoverPopup = (win: BrowserWindow): (() => void) => {
     x = Math.max(workArea.x, Math.min(x, workArea.x + workArea.width - winW));
 
     // If tray is at top of screen, position below instead
-    if (bounds.y < workArea.y + (workArea.height / 2)) {
+    if (bounds.y < workArea.y + workArea.height / 2) {
       y = bounds.y + bounds.height + GAP;
     }
 

@@ -27,13 +27,16 @@ const normalizeText = (text: string, maxLength: number) => {
 export const backend = createBackend({
   // Handle renderer requests that update or clear the macOS menu bar title.
   start(ctx) {
-    ctx.ipc.handle('statusbar-lyrics:set-text', (text: string, maxLength: number) => {
-      if (!is.macOS()) return;
+    ctx.ipc.handle(
+      'statusbar-lyrics:set-text',
+      (text: string, maxLength: number) => {
+        if (!is.macOS()) return;
 
-      const trayInstance = getTray();
-      trayInstance.setTitle(normalizeText(text, maxLength));
-      // trayInstance.setTitle(text);
-    });
+        const trayInstance = getTray();
+        trayInstance.setTitle(normalizeText(text, maxLength));
+        // trayInstance.setTitle(text);
+      },
+    );
 
     ctx.ipc.handle('statusbar-lyrics:clear', () => {
       if (!is.macOS()) return;

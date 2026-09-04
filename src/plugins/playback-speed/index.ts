@@ -23,7 +23,7 @@ export default createPlugin({
         label: t('plugins.playback-speed.menu.no-preserves-pitch'),
         type: 'checkbox',
         checked: config.noPreservesPitch,
-        click(item: any) {
+        click(item: Electron.MenuItem) {
           setConfig({ noPreservesPitch: item.checked });
         },
       },

@@ -1,7 +1,8 @@
-import prompt from 'custom-electron-prompt';
-import { app, dialog, type BrowserWindow } from 'electron';
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
+
+import prompt from 'custom-electron-prompt';
+import { app, dialog, type BrowserWindow } from 'electron';
 
 import { t } from '@/i18n';
 import promptOptions from '@/providers/prompt-options';

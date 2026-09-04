@@ -153,7 +153,7 @@ export const getSongControls = (win: BrowserWindow) => {
         });
         win.webContents.send('peard:search', query, params, continuation);
       }),
-    
+
     loadVideo: (videoId: ArgsType<string>) => {
       const vId = parseStringFromArgsType(videoId);
       win.webContents.send('peard:load-video', vId);

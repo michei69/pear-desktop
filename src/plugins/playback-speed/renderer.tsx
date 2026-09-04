@@ -1,17 +1,18 @@
 import { createSignal } from 'solid-js';
 import { render } from 'solid-js/web';
 
-import { type RendererContext } from '@/types/contexts';
 import { t } from '@/i18n';
 import {
   isMusicOrVideoTrack,
   isPlayerMenu,
 } from '@/plugins/utils/renderer/check';
 import { getSongMenu } from '@/providers/dom-elements';
+import { type RendererContext } from '@/types/contexts';
 
 import { PlaybackSpeedSlider } from './components/slider';
-import type { PlaybackSpeedConfig } from './index';
 import { StartupLifecycle } from './startup-lifecycle';
+
+import type { PlaybackSpeedConfig } from './index';
 
 const MIN_PLAYBACK_SPEED = 0.07;
 const MAX_PLAYBACK_SPEED = 16;
@@ -41,8 +42,14 @@ const forcePlaybackRate = (e: Event) => {
     if (videoElement.playbackRate !== speed()) {
       videoElement.playbackRate = speed();
     }
-    if (currentConfig && (videoElement as HTMLMediaElement & { preservesPitch?: boolean }).preservesPitch !== !currentConfig.noPreservesPitch) {
-      (videoElement as HTMLMediaElement & { preservesPitch?: boolean }).preservesPitch = !currentConfig.noPreservesPitch;
+    if (
+      currentConfig &&
+      (videoElement as HTMLMediaElement & { preservesPitch?: boolean })
+        .preservesPitch !== !currentConfig.noPreservesPitch
+    ) {
+      (
+        videoElement as HTMLMediaElement & { preservesPitch?: boolean }
+      ).preservesPitch = !currentConfig.noPreservesPitch;
     }
   }
 };
@@ -63,16 +70,17 @@ const updatePlayBackSpeed = (videoElement = activeVideo) => {
   if (videoElement) {
     videoElement.playbackRate = speed();
     if (currentConfig) {
-      (videoElement as HTMLMediaElement & { preservesPitch?: boolean }).preservesPitch = !currentConfig.noPreservesPitch;
+      (
+        videoElement as HTMLMediaElement & { preservesPitch?: boolean }
+      ).preservesPitch = !currentConfig.noPreservesPitch;
     }
   }
 
   setSpeed(speed());
 };
-
 export const onPlayerApiReady = async (
   _api: unknown,
-  { getConfig }: RendererContext<PlaybackSpeedConfig>
+  { getConfig }: RendererContext<PlaybackSpeedConfig>,
 ) => {
   const observePopupContainer = () => {
     render(

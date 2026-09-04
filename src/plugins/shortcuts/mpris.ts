@@ -213,7 +213,7 @@ export function registerMPRIS(win: BrowserWindow) {
         hasNext = true;
       } else {
         // Example: currentPosition = 0, queue.items.length = 29 -> hasNext = true
-        hasNext = !!(currentPosition - (queue?.items?.length ?? 0 - 1));
+        hasNext = !!(currentPosition - ((queue?.items?.length ?? 0) - 1));
       }
 
       player.canGoNext = hasNext;

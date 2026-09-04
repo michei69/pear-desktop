@@ -398,8 +398,15 @@ export default createPlugin<
       );
       if (typeof id !== 'string') return false;
 
-      const connection = await this.connection.connect(id).catch(() => false);
-      if (!connection) return false;
+      const connection = await this.connection.connect(id).catch(() => null);
+      if (!connection) {
+        // The join failed (peer unreachable or connection error) — tear the
+        // PeerJS peer down so its signaling socket isn't leaked, and reset
+        // the mode for the next attempt.
+        this.connection?.disconnect();
+        this.connection = undefined;
+        return false;
+      }
       this.connection.onConnections((connection) => {
         if (!connection?.open) {
           this.api?.toastService?.show(

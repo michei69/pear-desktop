@@ -9,7 +9,8 @@ export type BackendType = {
   stopServer: () => void;
   handleSocks5: (
     clientSocket: NodeSocket,
-    chunk: Buffer,
+    greeting: Buffer,
+    remainder: Buffer,
     upstreamProxyUrl: string,
   ) => void;
   processSocks5Request: (

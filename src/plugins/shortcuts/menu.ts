@@ -65,7 +65,7 @@ export const onMenu = async ({
           accelerator;
       }
 
-      setConfig(config);
+      setConfig(newConfig);
     }
     // Else -> pressed cancel
   }

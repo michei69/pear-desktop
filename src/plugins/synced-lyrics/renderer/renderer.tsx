@@ -295,7 +295,7 @@ export const LyricsRenderer = () => {
   createEffect(() => {
     const current = currentLyrics();
     const idx = currentIndex();
-    const maxIdx = untrack(statuses).length - 1;
+    const maxIdx = untrack(statuses).length; // data is [lyricsPicker, ...lines], so line j is at index j+1 and the last line at index N
 
     if (!scroller() || !current.data?.lines) return;
 

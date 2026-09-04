@@ -22,7 +22,7 @@ export class LyricsGenius implements LyricProvider {
     }
 
     const data = (await response.json()) as LyricsGeniusSearch;
-    const hits = data.response.sections[0].hits;
+    const hits = data.response.sections?.[0]?.hits ?? [];
 
     hits.sort(
       ({
@@ -102,7 +102,7 @@ interface LyricsGeniusSearch {
 }
 
 interface Response {
-  sections: Section[];
+  sections?: Section[];
 }
 
 interface Section {

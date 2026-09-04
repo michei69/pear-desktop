@@ -1,9 +1,10 @@
 import { createRoute, z } from '@hono/zod-openapi';
-import { app as electronApp } from 'electron';
+import { app as electronApp, ipcMain } from 'electron';
 import { verify } from 'hono/jwt';
 
 import {
   registerCallback,
+  unregisterCallback,
   type SongInfo,
   SongInfoEvent,
 } from '@/providers/song-info';
@@ -42,13 +43,20 @@ type PlayerState = {
 
 export const register = (
   app: HonoApp,
-  { getConfig, ipc }: BackendContext<APIServerConfig>,
+  { getConfig }: BackendContext<APIServerConfig>,
   uws: typeof upgradeWebSocket,
 ) => {
   let volumeState: VolumeState | undefined = undefined;
   let repeat: RepeatMode = 'NONE';
   let shuffle = false;
   let lastSongInfo: SongInfo | undefined = undefined;
+  let songInfoCallback:
+    | ((songInfo: SongInfo, event: SongInfoEvent) => void)
+    | undefined;
+  const ipcListeners: {
+    event: string;
+    listener: Parameters<typeof ipcMain.removeListener>[1];
+  }[] = [];
 
   const sockets = new Set<WSContext<WebSocketLike>>();
 
@@ -60,8 +68,6 @@ export const register = (
 
   // Notify all WebSocket clients that playback has stopped (e.g. app closing/hiding)
   // We intentionally do NOT close or clear sockets here so that clients like
-  // Boring Notch keep their connection alive and can receive updates when
-  // Pear Desktop comes back from hiding.
   wsNotifyClose = () => {
     console.log(
       `[API Server WebSocket] NotifyClose called. Sending isPlaying:false to ${sockets.size} clients.`,
@@ -70,6 +76,19 @@ export const register = (
       isPlaying: false,
       position: lastSongInfo?.elapsedSeconds ?? 0,
     });
+  };
+
+  const cleanup = () => {
+    if (songInfoCallback) {
+      unregisterCallback(songInfoCallback);
+      songInfoCallback = undefined;
+    }
+    for (const { event, listener } of ipcListeners) {
+      // Remove only our own listeners — removeAllListeners would drop
+      // other plugins' handlers on the same channels.
+      ipcMain.removeListener(event, listener);
+    }
+    ipcListeners.length = 0;
   };
 
   const createPlayerState = ({
@@ -99,7 +118,7 @@ export const register = (
     });
   });
 
-  registerCallback((songInfo, event) => {
+  songInfoCallback = (songInfo, event) => {
     if (event === SongInfoEvent.VideoSrcChanged) {
       send(DataTypes.VideoChanged, { song: songInfo, position: 0 });
     }
@@ -116,29 +135,47 @@ export const register = (
     }
 
     lastSongInfo = { ...songInfo };
-  });
+  };
+  registerCallback(songInfoCallback);
 
-  ipc.on('peard:volume-changed', (newVolumeState: VolumeState) => {
+  const volumeChangedListener = (_: unknown, newVolumeState: VolumeState) => {
     volumeState = newVolumeState;
     send(DataTypes.VolumeChanged, {
       volume: volumeState.state,
       muted: volumeState.isMuted,
     });
+  };
+  ipcListeners.push({
+    event: 'peard:volume-changed',
+    listener: volumeChangedListener,
   });
+  ipcMain.on('peard:volume-changed', volumeChangedListener);
 
-  ipc.on('peard:repeat-changed', (mode: RepeatMode) => {
+  const repeatChangedListener = (_: unknown, mode: RepeatMode) => {
     repeat = mode;
     send(DataTypes.RepeatChanged, { repeat });
+  };
+  ipcListeners.push({
+    event: 'peard:repeat-changed',
+    listener: repeatChangedListener,
   });
+  ipcMain.on('peard:repeat-changed', repeatChangedListener);
 
-  ipc.on('peard:seeked', (t: number) => {
+  const seekedListener = (_: unknown, t: number) => {
     send(DataTypes.PositionChanged, { position: t });
-  });
+  };
+  ipcListeners.push({ event: 'peard:seeked', listener: seekedListener });
+  ipcMain.on('peard:seeked', seekedListener);
 
-  ipc.on('peard:shuffle-changed', (newShuffle: boolean) => {
+  const shuffleChangedListener = (_: unknown, newShuffle: boolean) => {
     shuffle = newShuffle;
     send(DataTypes.ShuffleChanged, { shuffle });
+  };
+  ipcListeners.push({
+    event: 'peard:shuffle-changed',
+    listener: shuffleChangedListener,
   });
+  ipcMain.on('peard:shuffle-changed', shuffleChangedListener);
 
   app.openapi(
     createRoute({
@@ -218,6 +255,8 @@ export const register = (
       },
     })) as (ctx: Context, next: Next) => Promise<Response>,
   );
+
+  return cleanup;
 };
 
 // Exposed so the backend can call it on app close/hide

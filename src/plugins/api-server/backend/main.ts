@@ -34,45 +34,61 @@ import type { MiddlewareHandler } from 'hono';
 
 export const backend = createBackend<BackendType, APIServerConfig>({
   async start(ctx) {
-    const { app } = await import('electron');
+    const { app, ipcMain } = await import('electron');
     const config = await ctx.getConfig();
 
-    // Notify WebSocket clients that playback has stopped before quitting
-    app.on('before-quit', () => {
-      wsNotifyClose?.();
-    });
-
     this.init(ctx);
+
+    const beforeQuitHandler = () => {
+      // Notify WebSocket clients that playback has stopped before quitting
+      wsNotifyClose?.();
+    };
+    app.on('before-quit', beforeQuitHandler);
+
     this.songInfoCallback = (songInfo) => {
       this.songInfo = songInfo;
     };
     registerCallback(this.songInfoCallback);
 
-    ctx.ipc.on('peard:player-api-loaded', () => {
+    // Registered on ipcMain directly so stop() can remove exactly these
+    // listeners. ctx.ipc.on wraps handlers anonymously and only supports
+    // removeAllListeners, which would drop other plugins' listeners too.
+    const onPlayerApiLoaded = () => {
       ctx.ipc.send('peard:setup-seeked-listener');
       ctx.ipc.send('peard:setup-time-changed-listener');
       ctx.ipc.send('peard:setup-repeat-changed-listener');
       ctx.ipc.send('peard:setup-like-changed-listener');
       ctx.ipc.send('peard:setup-volume-changed-listener');
       ctx.ipc.send('peard:setup-shuffle-changed-listener');
-    });
+    };
+    ipcMain.on('peard:player-api-loaded', onPlayerApiLoaded);
 
-    ctx.ipc.on(
-      'peard:repeat-changed',
-      (mode: RepeatMode) => (this.currentRepeatMode = mode),
-    );
+    const onRepeatChanged = (_: unknown, mode: RepeatMode) => {
+      this.currentRepeatMode = mode;
+    };
+    ipcMain.on('peard:repeat-changed', onRepeatChanged);
 
-    ctx.ipc.on(
-      'peard:volume-changed',
-      (newVolumeState: VolumeState) => (this.volumeState = newVolumeState),
-    );
+    const onVolumeChanged = (_: unknown, newVolumeState: VolumeState) => {
+      this.volumeState = newVolumeState;
+    };
+    ipcMain.on('peard:volume-changed', onVolumeChanged);
 
     this.run(config);
+
+    const previousCleanup = this.cleanup;
+    this.cleanup = () => {
+      app.removeListener('before-quit', beforeQuitHandler);
+      ipcMain.removeListener('peard:player-api-loaded', onPlayerApiLoaded);
+      ipcMain.removeListener('peard:repeat-changed', onRepeatChanged);
+      ipcMain.removeListener('peard:volume-changed', onVolumeChanged);
+      previousCleanup?.();
+    };
   },
   stop() {
     if (this.songInfoCallback) {
       unregisterCallback(this.songInfoCallback);
     }
+    this.cleanup?.();
     this.end();
   },
   onConfigChange(config) {
@@ -154,8 +170,7 @@ export const backend = createBackend<BackendType, APIServerConfig>({
       () => this.volumeState,
     );
     registerAuth(this.app, backendCtx);
-    registerWebsocket(this.app, backendCtx, upgradeWebSocket);
-
+    this.cleanup = registerWebsocket(this.app, backendCtx, upgradeWebSocket);
     // swagger
     this.app.openAPIRegistry.registerComponent(
       'securitySchemes',

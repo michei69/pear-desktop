@@ -161,7 +161,8 @@ export default createPlugin({
       audioSource: null,
       observer: null,
       gainNode: null,
-    } as RenderProps,
+      audioCanPlayHandler: undefined,
+    } as RenderProps & { audioCanPlayHandler?: EventListener },
 
     createVisualizer(
       this: { props: RenderProps },
@@ -224,8 +225,14 @@ export default createPlugin({
         if (canvas && visualizerContainer) {
           const { width, height } =
             window.getComputedStyle(visualizerContainer);
-          canvas.width = Math.ceil(parseFloat(width));
-          canvas.height = Math.ceil(parseFloat(height));
+          const w = parseFloat(width);
+          const h = parseFloat(height);
+          // Guard against non-px / hidden containers (NaN) and zero-size
+          // containers so the canvas is never resized to 0×0.
+          if (Number.isFinite(w) && Number.isFinite(h) && w > 0 && h > 0) {
+            canvas.width = Math.ceil(w);
+            canvas.height = Math.ceil(h);
+          }
         }
         this.props.visualizerInstance?.resize(canvas.width, canvas.height);
       };
@@ -236,20 +243,52 @@ export default createPlugin({
       this.props.observer.observe(visualizerContainer);
     },
 
+    // Rebuild immediately when the user changes the visualizer type/enabled
+    // via the menu. createVisualizer destroys the previous instance and is
+    // safe to call before audio is ready (it returns early with no audio).
     onConfigChange(newConfig) {
       this.createVisualizer(newConfig);
     },
 
     onPlayerApiReady(_, { getConfig }) {
+      if (this.props.audioCanPlayHandler) return;
+      this.props.audioCanPlayHandler = async (e: Event) => {
+        const detail = (
+          e as CustomEvent<{
+            audioContext: AudioContext;
+            audioSource: MediaElementAudioSourceNode;
+          }>
+        ).detail;
+        this.props.audioContext = detail.audioContext;
+        this.props.audioSource = detail.audioSource;
+        this.createVisualizer(await getConfig());
+      };
       document.addEventListener(
         'peard:audio-can-play',
-        async (e) => {
-          this.props.audioContext = e.detail.audioContext;
-          this.props.audioSource = e.detail.audioSource;
-          this.createVisualizer(await getConfig());
-        },
+        this.props.audioCanPlayHandler,
         { passive: true },
       );
+    },
+
+    stop() {
+      if (this.props.audioCanPlayHandler) {
+        document.removeEventListener(
+          'peard:audio-can-play',
+          this.props.audioCanPlayHandler,
+        );
+        this.props.audioCanPlayHandler = undefined;
+      }
+      this.props.visualizerInstance?.destroy();
+      this.props.visualizerInstance = null;
+      this.props.observer?.disconnect();
+      this.props.observer = null;
+      if (this.props.gainNode) {
+        this.props.gainNode.disconnect();
+        this.props.gainNode = null;
+      }
+      this.props.audioContext = null;
+      this.props.audioSource = null;
+      document.querySelector('#visualizer')?.remove();
     },
   },
 });

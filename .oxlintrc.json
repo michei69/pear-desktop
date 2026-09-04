@@ -165,7 +165,10 @@
     ],
     "@stylistic/comma-dangle": ["error", "always-multiline"],
     "@stylistic/max-len": "off",
-    "@stylistic/no-mixed-operators": "error",
+    // oxfmt strips redundant parentheses in arithmetic expressions, so this
+    // rule conflicts with the formatter on every reflow. oxfmt's output is
+    // authoritative; disable the rule.
+    "@stylistic/no-mixed-operators": "off",
     "@stylistic/no-multi-spaces": [
       "error",
       {

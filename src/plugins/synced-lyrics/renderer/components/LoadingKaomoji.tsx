@@ -1,4 +1,4 @@
-import { createSignal, onMount } from 'solid-js';
+import { createSignal, onCleanup, onMount } from 'solid-js';
 
 const states = [
   '(>_<)',
@@ -13,7 +13,7 @@ export const LoadingKaomoji = () => {
 
   onMount(() => {
     const interval = setInterval(() => setCounter((old) => old + 1), 500);
-    return () => clearInterval(interval);
+    onCleanup(() => clearInterval(interval));
   });
 
   return (

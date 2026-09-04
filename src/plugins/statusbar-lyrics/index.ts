@@ -1,5 +1,5 @@
-import { createPlugin } from '@/utils';
 import { Platform } from '@/types/plugins';
+import { createPlugin } from '@/utils';
 
 import { backend } from './backend';
 import { menu } from './menu';
@@ -21,7 +21,8 @@ export const defaultConfig: StatusbarLyricsPluginConfig = {
 // exposes the configuration that controls how lyrics appear in the status bar.
 export default createPlugin({
   name: () => 'Status Bar Lyrics',
-  description: () => 'Show the current lyric line in the macOS menu bar title. Requires Synced Lyrics to be enabled.',
+  description: () =>
+    'Show the current lyric line in the macOS menu bar title. Requires Synced Lyrics to be enabled.',
   restartNeeded: false,
   platform: Platform.macOS,
   config: defaultConfig,
