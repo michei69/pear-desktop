@@ -3,8 +3,8 @@
 # :pear: Pear Desktop
 
 [![GitHub release](https://img.shields.io/github/release/michei69/pear-desktop.svg?style=for-the-badge)](https://github.com/michei69/pear-desktop/releases/)
-[![GitHub license](https://img.shields.io/github/license/pear-devs/pear-desktop.svg?style=for-the-badge)](https://github.com/pear-devs/pear-desktop/blob/master/license)
-[![eslint code style](https://img.shields.io/badge/code_style-eslint-5ed9c7.svg?style=for-the-badge)](https://github.com/pear-devs/pear-desktop/blob/master/eslint.config.mjs)
+[![GitHub license](https://img.shields.io/github/license/michei69/pear-desktop.svg?style=for-the-badge)](https://github.com/michei69/pear-desktop/blob/master/license)
+[![eslint code style](https://img.shields.io/badge/code_style-eslint-5ed9c7.svg?style=for-the-badge)](https://github.com/michei69/pear-desktop/blob/master/eslint.config.mjs)
 [![Build status](https://img.shields.io/github/actions/workflow/status/michei69/pear-desktop/build.yml?branch=master&style=for-the-badge)](https://GitHub.com/michei69/pear-desktop/releases/)
 [![GitHub All Releases](https://img.shields.io/github/downloads/michei69/pear-desktop/total?style=for-the-badge)](https://GitHub.com/michei69/pear-desktop/releases/)
 
@@ -78,15 +78,7 @@ Easiest way to install is via the provided **flatpak** (tested). You can also tr
 
 Please install manually via the provided DMG.
 
-<s>
-You can install the app using Homebrew (see the [cask definition](https://github.com/pear-devs/homebrew-pear)):
-
-```bash
-brew install pear-devs/pear/pear-desktop
-```
-</s>
-
-If you install the app manually and get an error "is damaged and can’t be opened." when launching the app, run the following in the Terminal:
+If you get an error "is damaged and can’t be opened." when launching the app, run the following in the Terminal:
 
 ```bash
 /usr/bin/xattr -cr /Applications/Pear\ Desktop.app
@@ -96,30 +88,10 @@ If you install the app manually and get an error "is damaged and can’t be open
 
 Please install manually via the provided Web Setup. Alternatively, you can use the provided portable executable instead.
 
-<s>
-You can use the [Scoop package manager](https://scoop.sh) to install the `pear-desktop` package from
-the [`extras` bucket](https://github.com/ScoopInstaller/Extras).
-
-```bash
-scoop bucket add extras
-scoop install extras/pear-desktop
-```
-
-Alternately you can use [Winget](https://learn.microsoft.com/en-us/windows/package-manager/winget/), Windows 11s
-official CLI package manager to install the `pear-devs.pear-desktop` package.
-
-*Note: Microsoft Defender SmartScreen might block the installation since it is from an "unknown publisher". This is also
-true for the manual installation when trying to run the executable(.exe) after a manual download here on github (same
-file).*
-
-```bash
-winget install pear-devs.pear-desktop
-```
-</s>
 
 #### How to install without a network connection? (in Windows)
 
-- Download the `*.nsis.7z` file for _your device architecture_ in [release page](https://github.com/pear-devs/pear-desktop/releases/latest).
+- Download the `*.nsis.7z` file for _your device architecture_ in [release page](https://github.com/michei69/pear-desktop/releases/latest).
   - `x64` for 64-bit Windows
   - `ia32` for 32-bit Windows
   - `arm64` for ARM64 Windows
@@ -307,7 +279,8 @@ Uses [Playwright](https://playwright.dev/) to test the app.
 
 ## License
 
-MIT © [pear-devs](https://github.com/pear-devs/pear-desktop)
+MIT © [pear-devs](https://github.com/pear-devs/pear-desktop)<br/>
+MIT © [michei69](https://github.com/michei69/pear-desktop)
 
 ## FAQ
 
