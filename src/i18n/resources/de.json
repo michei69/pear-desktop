@@ -255,7 +255,7 @@
         "buffer": {
           "label": "Puffer",
           "submenu": {
-            "buffer": "Puffer"
+            "buffer": "{{buffer}}"
           }
         },
         "opacity": {
@@ -374,11 +374,11 @@
       "prompt": {
         "hostname": {
           "label": "Hostnamen eingeben für lokalen Proxy-Server (Neustart erforderlich):",
-          "title": "Proxy-Hostname"
+          "title": "Proxy Hostname"
         },
         "port": {
           "label": "Geben Sie den Port für den lokalen Proxyserver ein (Neustart erforderlich):",
-          "title": "Proxy-Port"
+          "title": "Proxy Port"
         }
       }
     },
@@ -651,7 +651,7 @@
           "host": "Als Host verbunden"
         }
       },
-      "name": "Musik Zusammen [Beta]",
+      "name": "Music Together [Beta]",
       "toast": {
         "add-song-failed": "Song hinzufügen gescheitert",
         "closed": "Music Together geschlossen",

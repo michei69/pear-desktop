@@ -259,7 +259,7 @@
         "buffer": {
           "label": "Buferis",
           "submenu": {
-            "buffer": "buferis"
+            "buffer": "{{buffer}}"
           }
         },
         "opacity": {
@@ -495,7 +495,7 @@
           "label": "Būsenos tekstas",
           "submenu": {
             "application": "Klausosi {{applicationName}}",
-            "artist": "Klausosi {artist}",
+            "artist": "Klausosi {artist]",
             "title": "Klausosi {song title}"
           }
         }

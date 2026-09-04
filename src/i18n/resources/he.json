@@ -255,7 +255,7 @@
         "buffer": {
           "label": "חוצץ",
           "submenu": {
-            "buffer": "מאגר"
+            "buffer": "{{buffer}}"
           }
         },
         "opacity": {
@@ -646,12 +646,12 @@
       },
       "name": "Music Together [בטא]",
       "toast": {
-        "add-song-failed": "הוספת השיר נכשלה",
+        "add-song-failed": "נכשל בהוספת השיר",
         "closed": "Music Together נסגר",
         "disconnected": "Music Together נותק",
-        "host-failed": "אירוח Music Together נכשל",
-        "id-copied": "מזהה המארח הועתק ללוח",
-        "id-copy-failed": "העתקת מזהה המארח ללוח נכשלה",
+        "host-failed": "נכשל באירוח Music Together",
+        "id-copied": "מזהה מארח הועתק ללוח",
+        "id-copy-failed": "נכשל בהעתקת מזהה המארח ללוח",
         "join-failed": "הצטרפות ל-Music Together נכשלה",
         "joined": "הצטרפת ל-Music Together",
         "permission-changed": "הרשאת Music Together שונתה ל-\"{{permission}}\"",

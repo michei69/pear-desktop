@@ -253,7 +253,7 @@
           }
         },
         "buffer": {
-          "label": "Penyangga",
+          "label": "Buffer",
           "submenu": {
             "buffer": "{{buffer}}"
           }
@@ -342,7 +342,7 @@
           }
         }
       },
-      "name": "Server API [Beta]",
+      "name": "API Server [Beta]",
       "prompt": {
         "hostname": {
           "label": "Masukkan nama host (seperti 0.0.0.0) untuk server API:",
@@ -441,7 +441,7 @@
             "fade-out-duration": "Durasi fade out (ms)",
             "fade-scaling": {
               "label": "Skala fade",
-              "linear": "Linier",
+              "linear": "Linear",
               "logarithmic": "Logaritmik"
             },
             "seconds-before-end": "Crossfade N detik sebelum berakhir"
@@ -1133,7 +1133,7 @@
       "name": "Peralih Video",
       "templates": {
         "button-song": "Lagu",
-        "button-video": "Video"
+        "button-video": "video"
       }
     },
     "visualizer": {

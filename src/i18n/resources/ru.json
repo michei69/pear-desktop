@@ -651,7 +651,7 @@
           "host": "Подключен как хост"
         }
       },
-      "name": "Музыка Вместе [Бета]",
+      "name": "Music Together [Beta]",
       "toast": {
         "add-song-failed": "Не удалось добавить песню",
         "closed": "Music Together закрыт",
@@ -1120,7 +1120,7 @@
     },
     "tuna-obs": {
       "description": "Интеграция с плагином Tuna от OBS",
-      "name": "Туна OBS"
+      "name": "Tuna OBS"
     },
     "unobtrusive-player": {
       "description": "Предотвращает выскакивание плеера при воспроизведении",

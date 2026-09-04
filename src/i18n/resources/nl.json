@@ -255,7 +255,7 @@
         "buffer": {
           "label": "Buffer",
           "submenu": {
-            "buffer": "buffer"
+            "buffer": "{{buffer}}"
           }
         },
         "opacity": {
@@ -342,7 +342,7 @@
           "label": "Poort"
         }
       },
-      "name": "API-server [Bèta]",
+      "name": "API Server [Beta]",
       "prompt": {
         "hostname": {
           "label": "Voeg de hostnaam (bv. 0.0.0.0) voor de API server in:",
@@ -433,7 +433,7 @@
       "menu": {
         "advanced": "Geavanceerd"
       },
-      "name": "Crossfade [Bèta]",
+      "name": "Crossfade [Beta]",
       "prompt": {
         "options": {
           "multi-input": {
@@ -574,7 +574,7 @@
         "can-not-update-progress": "Kan de voortgang niet bijwerken"
       },
       "templates": {
-        "button": "Downloaden"
+        "button": "Download"
       }
     },
     "equalizer": {
@@ -598,11 +598,11 @@
       "menu": {
         "hide-dom-window-controls": "Verberg DOM-vensterbedieningselementen"
       },
-      "name": "In-App-menu"
+      "name": "In-App Menu"
     },
     "lumiastream": {
       "description": "Voegt ondersteuning voor Lumia Stream toe",
-      "name": "Lumia Stream [Bèta]"
+      "name": "Lumia Stream [Beta]"
     },
     "lyrics-genius": {
       "description": "Voegt songtekstondersteuning toe voor de meeste nummers",
@@ -717,9 +717,9 @@
         "save-window-size": "Sla schermgrootte op",
         "use-native-pip": "Gebruik browser ingebouwde PiP"
       },
-      "name": "Beeld-in-beeld",
+      "name": "Picture-in-picture",
       "templates": {
-        "button": "Beeld-in-beeld"
+        "button": "Picture-in-picture"
       }
     },
     "playback-speed": {
@@ -800,7 +800,7 @@
         "listenbrainz": {
           "token": {
             "label": "Voer uw ListenBrainz-gebruikerstoken in:",
-            "title": "ListenBrainz-token"
+            "title": "ListenBrainz token"
           }
         }
       }
@@ -1080,10 +1080,10 @@
         "type": {
           "label": "Soort",
           "submenu": {
-            "acrylic": "Acryl",
+            "acrylic": "Acrylic",
             "mica": "Mica",
             "none": "Geen",
-            "tabbed": "Tabbladen"
+            "tabbed": "Tabbed"
           }
         }
       },
@@ -1091,7 +1091,7 @@
     },
     "tuna-obs": {
       "description": "Integratie met OBS's plug-in Tuna",
-      "name": "Tonijn OBS"
+      "name": "Tuna OBS"
     },
     "unobtrusive-player": {
       "description": "Voorkomt dat de speler omhoog springt tijdens het afspelen van een nummer",

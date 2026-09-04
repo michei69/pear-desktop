@@ -261,7 +261,7 @@
         "opacity": {
           "label": "Opacidade",
           "submenu": {
-            "percent": "{{opacidade}}%"
+            "percent": "{{opacity}}%"
           }
         },
         "quality": {
@@ -651,7 +651,7 @@
           "host": "Conectado como Anfitrião"
         }
       },
-      "name": "Música Juntos [Beta]",
+      "name": "Music Together [Beta]",
       "toast": {
         "add-song-failed": "Falha ao adicionar música",
         "closed": "Music Together fechado",
@@ -807,7 +807,7 @@
         "listenbrainz": {
           "token": {
             "label": "Insira seu token de usuário do ListenBrainz:",
-            "title": "Token do ListenBrainz"
+            "title": "ListenBrainz token"
           }
         }
       }
@@ -876,7 +876,7 @@
           "label": "Efeito de linha",
           "submenu": {
             "fancy": {
-              "label": "Chique",
+              "label": "Fancy",
               "tooltip": "Use efeitos grandes, semelhantes a aplicativos, na linha atual"
             },
             "focus": {
@@ -1081,7 +1081,7 @@
         "opacity": {
           "label": "Opacidade",
           "submenu": {
-            "percent": "{{opacidade}}%"
+            "percent": "{{opacity}}%"
           }
         },
         "type": {

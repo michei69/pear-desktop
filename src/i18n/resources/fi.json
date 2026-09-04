@@ -124,12 +124,12 @@
           },
           "language": {
             "dialog": {
-              "message": "Kieli vaihtuu uudelleen käynnistyksen jälkeen",
-              "title": "Kieli vaihdettu"
+              "message": "Kieli vaihtuu uudelleen käynnistyksen jälkeen (Language will be changed after restart)",
+              "title": "Kieli vaihdettu (Language Changed)"
             },
-            "label": "Kieli",
+            "label": "Kieli (languages)",
             "submenu": {
-              "to-help-translate": "Haluatko kääntää puuttuvan kielen? Klikkaa tästä!"
+              "to-help-translate": "Haluatko kääntää puuttuvan kielen? Klkkaa tästä! (Want to help translate? Click here)"
             }
           },
           "resume-on-start": "Jatka kappaleesta, johon jäin aikaisemmin",
@@ -259,7 +259,7 @@
         "buffer": {
           "label": "Puskurointi",
           "submenu": {
-            "buffer": "puskuri"
+            "buffer": "{{buffer}}"
           }
         },
         "opacity": {
@@ -611,7 +611,7 @@
     "lyrics-genius": {
       "description": "Lisää tuen useimpien kappaleiden sanoituksille",
       "menu": {
-        "romanized-lyrics": "Latinankieliset sanoitukset"
+        "romanized-lyrics": "Latinaistetut sanoitukset"
       },
       "name": "Lyrics Genius",
       "renderer": {
@@ -648,7 +648,7 @@
           "host": "Yhdistetty isäntänä"
         }
       },
-      "name": "Musiikki yhdessä [Beta]",
+      "name": "Music Together [Beta]",
       "toast": {
         "add-song-failed": "Kappaleen lisääminen epäonnistui",
         "closed": "Music Together suljettu",
@@ -1102,7 +1102,7 @@
     },
     "tuna-obs": {
       "description": "Integraatio OBS:n Tuna-lisäosan kanssa",
-      "name": "Tonnikala OBS"
+      "name": "Tuna OBS"
     },
     "unobtrusive-player": {
       "description": "Estää soitinta ilmestymästä näkyviin, kun kappale alkaa soida",

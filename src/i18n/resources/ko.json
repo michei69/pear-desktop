@@ -259,7 +259,7 @@
         "buffer": {
           "label": "버퍼",
           "submenu": {
-            "buffer": "버퍼"
+            "buffer": "{{buffer}}"
           }
         },
         "opacity": {
@@ -495,8 +495,8 @@
           "label": "상태 텍스트",
           "submenu": {
             "application": "{{applicationName}} 듣는 중",
-            "artist": "{artist} 듣는 중",
-            "title": "{song title} 듣는 중"
+            "artist": "{아티스트} 듣는 중",
+            "title": "{곡 제목} 듣는 중"
           }
         }
       },
@@ -1114,7 +1114,7 @@
     },
     "tuna-obs": {
       "description": "OBS의 확장인 Tuna와의 통합을 활성화합니다",
-      "name": "참치 OBS"
+      "name": "Tuna OBS"
     },
     "unobtrusive-player": {
       "description": "노래 재생 중 플레이어가 팝업되는 것을 방지합니다",

@@ -157,7 +157,7 @@
                 "label": "अनुकूलन विन्डो शीर्षक",
                 "prompt": {
                   "label": "अनुकूलन विन्डो शीर्षक प्रविष्ट गर्नुहोस्: (असक्षम पार्न खाली छोड्नुहोस्)",
-                  "placeholder": "उदाहरण: {{applicationName}}"
+                  "placeholder": "उदाहरण: पियर डेस्कटप"
                 }
               },
               "like-buttons": {
@@ -213,7 +213,7 @@
       "show": "विन्डो देखाउनुहोस्",
       "tooltip": {
         "default": "{{applicationName}}",
-        "with-song-info": "एप्लिकेसनको नाम: {{artist}} - {{title}}"
+        "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
       },
       "like": "मनपराउनु",
       "dislike": "नापसंद",
@@ -255,7 +255,7 @@
         "buffer": {
           "label": "बफर",
           "submenu": {
-            "buffer": "बफर"
+            "buffer": "{{buffer}}"
           }
         },
         "opacity": {
@@ -289,7 +289,7 @@
       "name": "परिवेश मोड"
     },
     "amuse": {
-      "description": "6K ल्याब्सद्वारा Amuse अहिले बजिरहेको विजेटको लागि {{applicationName}} समर्थन थप्दछ",
+      "description": "६के ल्याब्सद्वारा अम्यूस नाउ प्लेइङ विजेटका लागि युट्युब म्युजिक समर्थन थप्दछ",
       "name": "अम्यूस",
       "response": {
         "query": "Amuse API सर्भर चलिरहेको छ। गीत जानकारी प्राप्त गर्न GET /query प्रयोग गर्नुहोस्।"
@@ -391,7 +391,7 @@
       "name": "उमेरका प्रतिबन्धहरू बाइपास गर्नुहोस्"
     },
     "captions-selector": {
-      "description": "{{applicationName}} अडियो ट्र्याकहरूका लागि क्याप्सन चयनकर्ता",
+      "description": "युट्युब सङ्गीत अडियो ट्र्याकहरूका लागि क्याप्सन चयनकर्ता",
       "menu": {
         "autoload": "स्वचालित रूपमा अन्तिम प्रयोग गरिएको क्याप्सन चयन गर्नुहोस्",
         "disable-captions": "पूर्वनिर्धारित रूपमा कुनै क्याप्सनहरू छैनन्"

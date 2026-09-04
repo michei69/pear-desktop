@@ -255,7 +255,7 @@
         "buffer": {
           "label": "Bufor",
           "submenu": {
-            "buffer": "bufor"
+            "buffer": "{{buffer}}"
           }
         },
         "opacity": {
@@ -848,7 +848,7 @@
           "submenu": {
             "disabled": {
               "label": "Wyłączony",
-              "tooltip": "Wyłącz konwersję chińskich znaków"
+              "tooltip": "Wyłącz konwersje chińskich znaków"
             },
             "simplified-to-traditional": {
               "label": "Uproszczony na Tradycyjny",
@@ -1091,7 +1091,7 @@
     },
     "tuna-obs": {
       "description": "Integracja z wtyczką OBS Tuna",
-      "name": "Tuńczyk OBS"
+      "name": "Tuna OBS"
     },
     "unobtrusive-player": {
       "description": "Zapobiega wyświetlaniu się ekranu z utworem po wybraniu innego tytułu",

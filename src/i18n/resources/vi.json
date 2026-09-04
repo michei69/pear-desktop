@@ -259,7 +259,7 @@
         "buffer": {
           "label": "Bộ đệm",
           "submenu": {
-            "buffer": "bộ đệm"
+            "buffer": "{{buffer}}"
           }
         },
         "opacity": {
@@ -294,7 +294,7 @@
     },
     "amuse": {
       "description": "Thêm hỗ trợ {{applicationName}} cho tiện ích hiển thị bài hát đang phát Amuse của 6K Labs",
-      "name": "Giải trí",
+      "name": "Amuse",
       "response": {
         "query": "Máy chủ API của Amuse đang chạy. GET /query để lấy thông tin về bài hát."
       }
@@ -1094,7 +1094,7 @@
           "submenu": {
             "acrylic": "Acrylic",
             "mica": "Mica",
-            "tabbed": "Có thẻ",
+            "tabbed": "Tabbed",
             "none": "Không có"
           }
         }

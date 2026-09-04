@@ -239,7 +239,7 @@
             "percent": "{{ratio}}%"
           }
         },
-        "enable-seekbar": "シークバーのテーマ設定を有効にする"
+        "enable-seekbar": "シークバーのテーマを有効にする"
       },
       "name": "アルバムカラーベースのテーマ"
     },
@@ -255,13 +255,13 @@
         "buffer": {
           "label": "バッファリング",
           "submenu": {
-            "buffer": "バッファ"
+            "buffer": "{{buffer}}"
           }
         },
         "opacity": {
           "label": "不透明度",
           "submenu": {
-            "percent": "{{透明度}}%"
+            "percent": "{{opacity}}%"
           }
         },
         "quality": {
@@ -290,7 +290,7 @@
     },
     "amuse": {
       "description": "6K LabsのAmuse再生中ウィジェットが{{applicationName}}に対応しました",
-      "name": "アミューズ",
+      "name": "Amuse",
       "response": {
         "query": "AmuseのAPIサーバーが稼働中です。GET /query で楽曲情報を取得できます。"
       }
@@ -681,7 +681,7 @@
     },
     "no-google-login": {
       "description": "インターフェースからGoogleのログインボタンとリンクを削除",
-      "name": "Googleログインなし"
+      "name": "No Google Login"
     },
     "notifications": {
       "description": "曲の再生開始時に通知を表示する(Windowsではインタラクティブ通知が利用可能)",
@@ -919,22 +919,22 @@
           "tooltip": "歌詞の横にタイムコードを表示"
         },
         "convert-chinese-character": {
-          "label": "中国語文字の変換",
+          "label": "中国語の文字を変換",
           "submenu": {
             "disabled": {
               "label": "無効",
-              "tooltip": "中国語文字の変換を無効にする"
+              "tooltip": "中国語の文字変換を無効化"
             },
             "simplified-to-traditional": {
-              "label": "簡体字から繁体字へ",
+              "label": "簡体字から繁体字",
               "tooltip": "簡体字中国語を繁体字中国語に変換"
             },
             "traditional-to-simplified": {
-              "label": "繁体字から簡体字へ",
+              "label": "繁体字から簡体字",
               "tooltip": "繁体字中国語を簡体字中国語に変換"
             }
           },
-          "tooltip": "中国語文字を繁体字または簡体字に変換"
+          "tooltip": "中国語の文字を繁体字または簡体字に変換"
         },
         "translation": {
           "label": "歌詞の翻訳",
@@ -1082,7 +1082,7 @@
         "opacity": {
           "label": "不透明度",
           "submenu": {
-            "percent": "{{透明度}}%"
+            "percent": "{{opacity}}%"
           }
         },
         "type": {
@@ -1103,7 +1103,7 @@
     },
     "tuna-obs": {
       "description": "OBSのプラグインTunaの統合",
-      "name": "マグロ OBS"
+      "name": "Tuna OBS"
     },
     "unobtrusive-player": {
       "description": "曲の再生時にプレーヤーがポップアップしないようにする",

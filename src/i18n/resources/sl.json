@@ -71,7 +71,7 @@
         "buttons": {
           "disable": "Izklopi posodobitve",
           "download": "Prenesi",
-          "ok": "v redu"
+          "ok": "OK"
         },
         "detail": "Nova verzija je na voljo, lahko jo naložiš na {{downloadLink}}",
         "message": "Nova verzija je na voljo",
@@ -255,7 +255,7 @@
         "buffer": {
           "label": "Medpomnilnik",
           "submenu": {
-            "buffer": "medmornik"
+            "buffer": "{{buffer}}"
           }
         },
         "opacity": {
@@ -320,7 +320,7 @@
           }
         },
         "hostname": {
-          "label": "Ime gostitelja"
+          "label": "Hostname"
         },
         "https": {
           "label": "HTTPS in potrdila",
@@ -339,18 +339,18 @@
           }
         },
         "port": {
-          "label": "Vrata"
+          "label": "Port"
         }
       },
       "name": "API strežnik [Beta]",
       "prompt": {
         "hostname": {
           "label": "Vnesite hostname (npr. 0.0.0.0) za API strežnik:",
-          "title": "Ime gostitelja"
+          "title": "Hostname"
         },
         "port": {
           "label": "Vnesite port za API strežnik:",
-          "title": "Vrata"
+          "title": "Port"
         }
       }
     },
@@ -509,14 +509,14 @@
         "dialog": {
           "error": {
             "buttons": {
-              "ok": "V redu"
+              "ok": "OK"
             },
             "message": "Uff! Se opravičujemo, prenos neuspešen…",
             "title": "Napaka v prenosu!"
           },
           "start-download-playlist": {
             "buttons": {
-              "ok": "V redu"
+              "ok": "OK"
             },
             "detail": "({{playlistSize}} pesmi)",
             "message": "Prenašanje seznama {{playlistTitle}}",

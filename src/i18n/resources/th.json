@@ -255,7 +255,7 @@
         "buffer": {
           "label": "บัฟเฟอร์",
           "submenu": {
-            "buffer": "บัฟเฟอร์"
+            "buffer": "{{buffer}}"
           }
         },
         "opacity": {

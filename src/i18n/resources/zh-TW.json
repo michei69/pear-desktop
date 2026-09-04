@@ -213,7 +213,7 @@
       "show": "顯示視窗",
       "tooltip": {
         "default": "{{applicationName}}",
-        "with-song-info": "{{applicationName}}：{{artist}} - {{title}}"
+        "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
       },
       "like": "喜歡",
       "dislike": "不喜歡",
@@ -613,7 +613,7 @@
     },
     "lumiastream": {
       "description": "新增對 Lumia Stream 的支援",
-      "name": "Lumia Stream [測試]"
+      "name": "Lumia Stream [Beta]"
     },
     "lyrics-genius": {
       "description": "為更多歌曲新增字幕支援",
@@ -852,7 +852,7 @@
     },
     "sponsorblock": {
       "description": "自動跳過贊助片段",
-      "name": "贊助商封鎖"
+      "name": "SponsorBlock"
     },
     "synced-lyrics": {
       "description": "使用 LRClib 等管道提供歌詞同步顯示。",
@@ -1114,7 +1114,7 @@
     },
     "tuna-obs": {
       "description": "與 OBS 的 Tuna 外掛連線",
-      "name": "鮪魚 OBS"
+      "name": "Tuna OBS"
     },
     "unobtrusive-player": {
       "description": "防止播放器介面在點選歌曲後彈出",

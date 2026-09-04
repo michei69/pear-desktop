@@ -71,7 +71,7 @@
         "buttons": {
           "disable": "Izslēgt atjauninājumus",
           "download": "Lejupielādēt",
-          "ok": "Labi"
+          "ok": "OK"
         },
         "detail": "Jauna versija ir pieejama, un var tikt lejupielādēta šeit {{downloadLink}}",
         "message": "Pieejama jauna versija",
@@ -294,7 +294,7 @@
     },
     "amuse": {
       "description": "Pievieno {{applicationName}} atblastu priekš Amuse \"tagad spēlē\" no 6K Labs",
-      "name": "Izklaidē",
+      "name": "Amuse",
       "response": {
         "query": "Amuse API serveris ir palaists. GET /query lai dabūtu dziesmas info."
       }
@@ -495,12 +495,12 @@
           "label": "Statusa teksts",
           "submenu": {
             "application": "Klausās {{applicationName}}",
-            "artist": "Klausās {artist}",
-            "title": "Klausās {song title}"
+            "artist": "Klausos {mākslinieku}",
+            "title": "Klausos {dziesmas nosaukums}"
           }
         }
       },
-      "name": "Discord bagātā klātbūtne",
+      "name": "Discord Rich Presence",
       "prompt": {
         "set-inactivity-timeout": {
           "label": "Ievadiet neaktivitātes taimeru sekundēs:",
@@ -513,14 +513,14 @@
         "dialog": {
           "error": {
             "buttons": {
-              "ok": "Labi"
+              "ok": "OK"
             },
             "message": "Atvainojamies, lejupielāde neizdevās…",
             "title": "Lejupielādes kļūda!"
           },
           "start-download-playlist": {
             "buttons": {
-              "ok": "Labi"
+              "ok": "OK"
             },
             "detail": "({{playlistSize}}Dziesmas)",
             "message": "Lejupielādē atskaņošanas sarakstu {{playlistTitle}}",
@@ -535,7 +535,7 @@
           "download-progress": "Lejupielāde: {{percent}}%",
           "downloading": "Lejupielādē…",
           "downloading-counter": "Notiek lejupielāde {{current}}/{{total}}…",
-          "downloading-playlist": "Atskaņošanas saraksta lejupielāde \"{{playlistTitle}}\" - {{playlistSize}} dziesmas ({{playlistId}})",
+          "downloading-playlist": "Atskaņošanas saraksta lejupielāde \"{{playlistTitle}}\" - {{playlistSize}} songs ({{playlistId}})",
           "error-while-downloading": "Kļūda lejuplādējot \"{{author}} - {{title}}\": {{error}}",
           "folder-already-exists": "Mape {{playlistFolder}} jau eksistē",
           "getting-playlist-info": "Tiek iegūta atskaņošanas saraksta informācija…",
@@ -595,7 +595,7 @@
     },
     "exponential-volume": {
       "description": "Padara skaļuma slīdni eksponenciālu, lai būtu vieglāk izvēlēties zemākus skaļumus.",
-      "name": "Eksponenciālais Skaļums"
+      "name": "Eksponenciālais apjoms"
     },
     "in-app-menu": {
       "description": "Piešķir izvēļņu joslām greznu, tumšu vai albuma krāsas izskatu",

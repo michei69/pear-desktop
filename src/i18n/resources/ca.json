@@ -255,7 +255,7 @@
         "buffer": {
           "label": "Buffer",
           "submenu": {
-            "buffer": "buffer"
+            "buffer": "{{buffer}}"
           }
         },
         "opacity": {
@@ -364,7 +364,7 @@
         "disable": "Desactivar adaptador Proxy",
         "enable": "Activar adaptador Proxy",
         "hostname": {
-          "label": "Nom d'amfitrió"
+          "label": "Hostname"
         },
         "port": {
           "label": "Port"
@@ -441,7 +441,7 @@
             "fade-out-duration": "Durada de la transició de sortida (ms)",
             "fade-scaling": {
               "label": "Escala de la transició",
-              "linear": "Lineal",
+              "linear": "Linear",
               "logarithmic": "Logarítmica"
             },
             "seconds-before-end": "Transiciona N segons abans del final"
@@ -644,7 +644,7 @@
           "host": "Connectat com amfitrió"
         }
       },
-      "name": "Música Junts [Beta]",
+      "name": "Music Together [Beta]",
       "toast": {
         "add-song-failed": "Error al afegir la cançó",
         "closed": "Music Together tancat",

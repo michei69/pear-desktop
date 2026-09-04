@@ -249,13 +249,13 @@
         "blur-amount": {
           "label": "Ποσότητα θολώματος",
           "submenu": {
-            "pixels": "{{blurAmount}} εικονοστοιχεία"
+            "pixels": "{{blurAmount}} pixels"
           }
         },
         "buffer": {
           "label": "Ενδιάμεση μνήμη",
           "submenu": {
-            "buffer": "ρυθμιστική μνήμη"
+            "buffer": "{{buffer}}"
           }
         },
         "opacity": {
@@ -267,7 +267,7 @@
         "quality": {
           "label": "Ποιότητα",
           "submenu": {
-            "pixels": "{{quality}} εικονοστοιχεία"
+            "pixels": "{{quality}} pixels"
           }
         },
         "size": {
@@ -290,7 +290,7 @@
     },
     "amuse": {
       "description": "Προσθέτει υποστήριξη {{applicationName}} στο widget Amuse now playing από την 6K Labs",
-      "name": "Διασκεδάστε",
+      "name": "Amuse",
       "response": {
         "query": "Ο διακομιστής Amuse API εκτελείται. GET /query για να λάβετε πληροφορίες για το τραγούδι."
       }
@@ -400,7 +400,7 @@
       "prompt": {
         "selector": {
           "label": "Τρέχουσα γλώσσα λεζάντας: {{language}}",
-          "none": "Κανένα",
+          "none": "None",
           "title": "Επιλογή γλώσσας λεζάντας"
         }
       },
@@ -509,14 +509,14 @@
         "dialog": {
           "error": {
             "buttons": {
-              "ok": "Εντάξει"
+              "ok": "OK"
             },
             "message": "Ωχ! Λυπούμαστε, η λήψη απέτυχε…",
             "title": "Σφάλμα στη λήψη!"
           },
           "start-download-playlist": {
             "buttons": {
-              "ok": "Εντάξει"
+              "ok": "OK"
             },
             "detail": "{{playlistSize}} τραγούδια)",
             "message": "Λήψη της λίστας αναπαραγωγής {{playlistTitle}}",
@@ -644,7 +644,7 @@
           "host": "Συνδεδεμένος ως οικοδεσπότης"
         }
       },
-      "name": "Μουσική Μαζί [Beta]",
+      "name": "Music Together [Beta]",
       "toast": {
         "add-song-failed": "Απέτυχε η προσθήκη τραγουδιού",
         "closed": "Το Music Together έκλεισε",
@@ -674,7 +674,7 @@
     },
     "no-google-login": {
       "description": "Αφαίρεση των κουμπιών και των συνδέσμων σύνδεσης Google από το περιβάλλον εργασίας",
-      "name": "Χωρίς σύνδεση Google"
+      "name": "No Google Login"
     },
     "notifications": {
       "description": "Εμφάνιση ειδοποίησης όταν ξεκινάει η αναπαραγωγή ενός τραγουδιού (οι διαδραστικές ειδοποιήσεις είναι διαθέσιμες στα Windows)",
@@ -1091,7 +1091,7 @@
     },
     "tuna-obs": {
       "description": "Ενσωμάτωση με το plugin Tuna του OBS",
-      "name": "Τούνα OBS"
+      "name": "Tuna OBS"
     },
     "unobtrusive-player": {
       "description": "Αποτρέπει την εμφάνιση του προγράμματος αναπαραγωγής κατά την αναπαραγωγή ενός τραγουδιού",
@@ -1104,13 +1104,13 @@
           "label": "Στοίχιση",
           "submenu": {
             "left": "Αριστερά",
-            "middle": "Μέση",
+            "middle": "Middle",
             "right": "Δεξιά"
           }
         },
         "force-hide": "Αναγκαστική αφαίρεση καρτέλας βίντεο",
         "mode": {
-          "label": "Λειτουργία",
+          "label": "Mode",
           "submenu": {
             "custom": "Προσαρμοσμένη εναλλαγή",
             "disabled": "Απενεργοποιημένο",

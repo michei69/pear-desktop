@@ -71,7 +71,7 @@
         "buttons": {
           "disable": "Ugasite Nadogradnje",
           "download": "Skinuti",
-          "ok": "U redu"
+          "ok": "OK"
         },
         "detail": "Nova verzija je dostupna i može biti skinuta na {{downloadLink}}",
         "message": "Nova verzija je dostupna",
@@ -497,17 +497,17 @@
         "set-status-display-type": {
           "label": "Statusni tekst",
           "submenu": {
-            "application": "Sluša {{applicationName}}",
-            "artist": "Sluša {artist}",
-            "title": "Sluša {title}"
+            "application": "Slušate {{applicationName}}",
+            "artist": "Slušate {muzičar}",
+            "title": "Slušate {naziv pesme}"
           }
         }
       },
-      "name": "Discord Rich Presence",
+      "name": "Diskord Rich Presence",
       "prompt": {
         "set-inactivity-timeout": {
-          "label": "Unesite vremensko ograničenje neaktivnosti u sekundama:",
-          "title": "Postavi vremensko ograničenje neaktivnosti"
+          "label": "Unesi ograničenje neaktivnosti u sekundama:",
+          "title": "Postavi ograničenje neaktivnosti"
         }
       }
     },
@@ -516,24 +516,24 @@
         "dialog": {
           "error": {
             "buttons": {
-              "ok": "U redu"
+              "ok": "OK"
             },
-            "message": "Ups! Izvinite, preuzimanje nije uspjelo…",
+            "message": "Ufff! Izvinite, preuzimanje nije uspelo…",
             "title": "Greška u preuzimanju!"
           },
           "start-download-playlist": {
             "buttons": {
-              "ok": "U redu"
+              "ok": "OK"
             },
-            "detail": "({{PlaylistSize}} pjesama)",
-            "message": "Preuzimanje plejliste {{playlistTitle}}",
-            "title": "Preuzimanje započelo"
+            "detail": "({{Playlist Size}} pjesme)",
+            "message": "Preuzimanje Plejliste {{playlist Title}}",
+            "title": "Preuzimanje počelo"
           }
         },
         "feedback": {
           "conversion-progress": "Pretvaranje: {{percent}}%",
           "converting": "Pretvaranje…",
-          "done": "Gotovo: {{filePath}}",
+          "done": "Gotovo: {{file Path}}",
           "download-info": "Preuzimanje {{artist}} - {{title}} [{{videoId}}",
           "download-progress": "Preuzimanje: {{percent}}%",
           "downloading": "Preuzimanje…",

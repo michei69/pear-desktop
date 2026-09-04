@@ -231,7 +231,7 @@
       "name": "অ্যালবাম অ্যাকশনসমূহ"
     },
     "album-color-theme": {
-      "description": "অ্যালবামের রঙের উপর ভিত্তি করে ডাইনamic থিম ও ভিজ্যুয়াল ইফেক্ট প্রয়োগ করুন",
+      "description": "অ্যালবামের রঙের উপর ভিত্তি করে ডাইনামিক থিম ও ভিজ্যুয়াল ইফেক্ট প্রয়োগ করুন",
       "menu": {
         "color-mix-ratio": {
           "label": "কালার মিক্স রেশিও",
@@ -255,7 +255,7 @@
         "buffer": {
           "label": "বাফার",
           "submenu": {
-            "buffer": "বাফার"
+            "buffer": "{{buffer}}"
           }
         },
         "opacity": {
@@ -529,13 +529,13 @@
           "done": "সম্পন্ন: {{filePath}}",
           "download-info": "ডাউনলোড হচ্ছে {{artist}} - {{title}} [{{videoId}}",
           "download-progress": "ডাউনলোড: {{percent}}%",
-          "downloading": "ডাউনলোড করা হচ্ছে…",
+          "downloading": "ডাউনলোড হচ্ছে…",
           "downloading-counter": "ডাউনলোড হচ্ছে {{current}}/{{total}}…",
           "downloading-playlist": "প্লেলিস্ট \"{{playlistTitle}}\" - {{playlistSize}}টি গান ({{playlistId}}) ডাউনলোড হচ্ছে",
           "error-while-downloading": "\"{{author}} - {{title}}\" ডাউনলোড করতে সমস্যা: {{error}}",
           "folder-already-exists": "{{playlistFolder}} ফোল্ডারটি ইতিমধ্যে বিদ্যমান",
           "getting-playlist-info": "প্লেলিস্ট তথ্য নেওয়া হচ্ছে…",
-          "loading": "লোড করা হচ্ছে…",
+          "loading": "লোড হচ্ছে…",
           "playlist-has-only-one-song": "প্লেলিস্টে শুধুমাত্র একটি আইটেম আছে, সরাসরি ডাউনলোড করা হচ্ছে",
           "playlist-id-not-found": "কোনো প্লেলিস্ট আইডি পাওয়া যায়নি",
           "playlist-is-empty": "প্লেলিস্ট খালি",

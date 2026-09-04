@@ -255,7 +255,7 @@
         "buffer": {
           "label": "Önbellek",
           "submenu": {
-            "buffer": "arabelle"
+            "buffer": "{{buffer}}"
           }
         },
         "opacity": {
@@ -290,7 +290,7 @@
     },
     "amuse": {
       "description": "6K Labs'ın Amuse oynatma widget'ı için {{applicationName}} desteği ekler",
-      "name": "Eğlendir",
+      "name": "Amuse",
       "response": {
         "query": "Amuse API sunucusu çalışıyor. Şarkı bilgilerini almak için GET /query kullanabilirsiniz."
       }
@@ -339,7 +339,7 @@
           }
         },
         "port": {
-          "label": "Bağlantı Noktası"
+          "label": "Port"
         }
       },
       "name": "API Sunucusu [Beta]",
@@ -367,7 +367,7 @@
           "label": "Ana makine adı"
         },
         "port": {
-          "label": "Bağlantı Noktası"
+          "label": "Port"
         }
       },
       "name": "Ara Sunucu Doğrulama Bağdaştırıcısı",
@@ -419,7 +419,7 @@
         "format": {
           "24-hour-format": "24-Saat Formatı",
           "display-seconds": "Saniyeleri Göster",
-          "label": "Biçim"
+          "label": "Format"
         }
       },
       "name": "Saat"

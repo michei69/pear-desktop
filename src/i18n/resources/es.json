@@ -257,7 +257,7 @@
           }
         },
         "buffer": {
-          "label": "Búfer",
+          "label": "Buffer",
           "submenu": {
             "buffer": "{{buffer}}"
           }
@@ -294,7 +294,7 @@
     },
     "amuse": {
       "description": "Agrega soporte a {{applicationName}} para el widget \"reproduciendo\" de Amuse por 6K Labs",
-      "name": "Divertir",
+      "name": "Amuse",
       "response": {
         "query": "El servidor API de Amuse se está ejecutando. Usa GET /query para obtener información de la canción."
       }
@@ -500,7 +500,7 @@
           }
         }
       },
-      "name": "Presencia de Discord",
+      "name": "Discord Rich Presence",
       "prompt": {
         "set-inactivity-timeout": {
           "label": "Introduzca el tiempo de inactividad en segundos:",
@@ -655,7 +655,7 @@
           "host": "Conectado como anfitrión"
         }
       },
-      "name": "Música Juntos [Beta]",
+      "name": "Music Together [Beta]",
       "toast": {
         "add-song-failed": "No se puede añadir la canción",
         "closed": "Music Together cerrado",
@@ -735,9 +735,9 @@
         "save-window-size": "Guardar tamaño de la ventana",
         "use-native-pip": "Utilizar PiP nativo del navegador"
       },
-      "name": "Imagen en imagen",
+      "name": "Picture-in-picture",
       "templates": {
-        "button": "Imagen en imagen"
+        "button": "Picture-in-picture"
       }
     },
     "playback-speed": {
@@ -869,8 +869,8 @@
               "tooltip": "Deshabilitar conversión de caracteres Chinos"
             },
             "simplified-to-traditional": {
-              "label": "Simplificado a Tradicional",
-              "tooltip": "Convertir Chino Simplificado en Chino Tradicional"
+              "label": "Simplificar a Tradicional",
+              "tooltip": "Convertir Chino Simplifcado en Chino Tradicional"
             },
             "traditional-to-simplified": {
               "label": "Tradicional a Simplificado",
@@ -1114,7 +1114,7 @@
     },
     "tuna-obs": {
       "description": "Integración con el complemento Tuna de OBS",
-      "name": "Atún OBS"
+      "name": "Tuna OBS"
     },
     "unobtrusive-player": {
       "description": "Evita que el reproductor aparezca al reproducir una canción",

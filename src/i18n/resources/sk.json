@@ -255,7 +255,7 @@
         "buffer": {
           "label": "Vyrovnávacia pamäť",
           "submenu": {
-            "buffer": "vyrovnávacia pamäť"
+            "buffer": "{{buffer}}"
           }
         },
         "opacity": {
@@ -320,7 +320,7 @@
           }
         },
         "hostname": {
-          "label": "Názov hostiteľa"
+          "label": "Hostname"
         },
         "https": {
           "label": "HTTPS a Certifikáty",
@@ -346,7 +346,7 @@
       "prompt": {
         "hostname": {
           "label": "Zadajte názov hostname(napr. 0.0.0.0) pre server API:",
-          "title": "Názov hostiteľa"
+          "title": "Hostname"
         },
         "port": {
           "label": "Zadajte port pre server API:",
@@ -364,7 +364,7 @@
         "disable": "Vypnúť Proxy Adaptér",
         "enable": "Zapnúť Proxy Adaptér",
         "hostname": {
-          "label": "Názov hostiteľa"
+          "label": "Hostname"
         },
         "port": {
           "label": "Port"
@@ -374,11 +374,11 @@
       "prompt": {
         "hostname": {
           "label": "Zadajte hostname pre lokálny proxy server (vyžaduje reštart):",
-          "title": "Názov hostiteľa proxy"
+          "title": "Proxy Hostname"
         },
         "port": {
           "label": "Zadajte port pre lokálny proxy server (vyžaduje reštart):",
-          "title": "Port proxy"
+          "title": "Proxy Port"
         }
       }
     },
@@ -568,7 +568,7 @@
             "advanced": "Rozšírené",
             "enabled": "Povolené",
             "mode": "Časový režim",
-            "percent": "Percentá",
+            "percent": "Percent",
             "seconds": "Sekundy"
           }
         },
@@ -651,7 +651,7 @@
           "host": "Pripojený ako hostiteľ"
         }
       },
-      "name": "Hudba Spolu [Beta]",
+      "name": "Music Together [Beta]",
       "toast": {
         "add-song-failed": "Nepodarilo sa pridať skladbu",
         "closed": "Music Together ukončené",
@@ -884,7 +884,7 @@
               "tooltip": "Urob len aktuálny riadok biely"
             },
             "offset": {
-              "label": "Posun",
+              "label": "Offset",
               "tooltip": "Offset na pravej strane aktuálneho riadku"
             },
             "scale": {

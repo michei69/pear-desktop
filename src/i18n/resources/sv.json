@@ -255,7 +255,7 @@
         "buffer": {
           "label": "Buffert",
           "submenu": {
-            "buffer": "buffert"
+            "buffer": "{{buffer}}"
           }
         },
         "opacity": {
@@ -350,7 +350,7 @@
         },
         "port": {
           "label": "Ange porten för API-servern:",
-          "title": "Hamn"
+          "title": "Port"
         }
       }
     },
@@ -651,7 +651,7 @@
           "host": "Ansluten som värd"
         }
       },
-      "name": "Musik Tillsammans [Beta]",
+      "name": "Music Together [Beta]",
       "toast": {
         "add-song-failed": "Det gick inte att lägga till låten",
         "closed": "Music Together stängdes",
@@ -691,7 +691,7 @@
           "label": "Interaktiva inställningar",
           "submenu": {
             "hide-button-text": "Dölj knapptext",
-            "refresh-on-play-pause": "Uppdatera vid Play/Pause",
+            "refresh-on-play-pause": "Uppdatera vid uppspelning/paus",
             "tray-controls": "Öppna/stäng vid klick i systemfältet",
             "hover-controls": "Visa minispelare när muspekaren hålls över systemfältsikonen"
           }

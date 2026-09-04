@@ -16,7 +16,7 @@
   "language": {
     "code": "sq",
     "local-name": "Shqip",
-    "name": "Albanian"
+    "name": "Emri i gjuhës në anglisht. p.sh. japonisht, koreanisht, anglisht, rusisht"
   },
   "main": {
     "console": {
@@ -216,8 +216,8 @@
   },
   "plugins": {
     "ad-speedup": {
-      "description": "Nëse një reklamë luan, hesht audion dhe vendos shpejtësinë e luajtjes në 16x",
-      "name": "Shpejtimi i Reklamave"
+      "description": "Nëse luan një reklamë, e hesht zërin dhe e vendos shpejtësinë e luajtjes në 16x",
+      "name": "Përshpejtimi i reklamave"
     },
     "adblocker": {
       "description": "Blloko të gjitha reklamat dhe gjurmimin menjëherë",
@@ -227,8 +227,8 @@
       "name": "Bllokuesi i Reklamave"
     },
     "album-actions": {
-      "description": "Shton butonat Hiq Mospëlqimin, Mospëlqe, Pëlqe dhe Hiq Pëlqimin për t'i aplikuar në të gjitha këngët në një listë dëgjimi ose album",
-      "name": "Veprimet e Albumit"
+      "description": "Shton butonat \"Nuk më pëlqen\", \"Nuk e pëlqej\", \"Pëlqej\" dhe \"E pëlqej\" për t'i zbatuar këto në të gjitha këngët në një playlist ose album",
+      "name": "Veprimet e albumit"
     },
     "album-color-theme": {
       "description": "Aplikon një temë dinamike dhe efekte vizuale bazuar në paletën e ngjyrave të albumit",

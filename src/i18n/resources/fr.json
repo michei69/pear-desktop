@@ -27,7 +27,7 @@
         "loaded": "i18n chargé"
       },
       "second-instance": {
-        "receive-command": "Commande reçue via le protocole : \"{{command}}\""
+        "receive-command": "Received command over protocol : \"{{command}}\""
       },
       "theme": {
         "css-file-not-found": "Le fichier de CSS \"{{cssFile}}\" n'existe pas, ignorer"
@@ -261,7 +261,7 @@
         "opacity": {
           "label": "Opacité",
           "submenu": {
-            "percent": "{{opacité}}%"
+            "percent": "{{opacity}}%"
           }
         },
         "quality": {
@@ -500,7 +500,7 @@
           }
         }
       },
-      "name": "Présence enrichie Discord",
+      "name": "Discord Rich Presence",
       "prompt": {
         "set-inactivity-timeout": {
           "label": "Entrez le délai d'inactivité en secondes :",
@@ -613,7 +613,7 @@
     },
     "lumiastream": {
       "description": "Ajoute la prise en charge de Lumia Stream",
-      "name": "Lumia Stream [Bêta]"
+      "name": "Lumia Stream [Beta]"
     },
     "lyrics-genius": {
       "description": "Ajoute la prise en charge des paroles pour la plupart des chansons",
@@ -735,9 +735,9 @@
         "save-window-size": "Enregistrer la taille de la fenêtre",
         "use-native-pip": "Utiliser le mode PiP natif du navigateur"
       },
-      "name": "Incrustation",
+      "name": "Picture-in-picture",
       "templates": {
-        "button": "Incrustation"
+        "button": "Picture-in-picture"
       }
     },
     "playback-speed": {
@@ -1092,11 +1092,11 @@
         "opacity": {
           "label": "Opacité",
           "submenu": {
-            "percent": "{{opacité}}%"
+            "percent": "{{opacity}}%"
           }
         },
         "type": {
-          "label": "Tapez",
+          "label": "Type",
           "submenu": {
             "acrylic": "Acrylique",
             "content": "Contenu",

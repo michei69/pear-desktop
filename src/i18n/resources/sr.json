@@ -255,7 +255,7 @@
         "buffer": {
           "label": "Bafer",
           "submenu": {
-            "buffer": "бафер"
+            "buffer": "{{buffer}}"
           }
         },
         "opacity": {
@@ -339,10 +339,10 @@
           }
         },
         "port": {
-          "label": "Порт"
+          "label": "Port"
         }
       },
-      "name": "API сервер [Бета]",
+      "name": "API Server [Beta]",
       "prompt": {
         "hostname": {
           "label": "Unesite ime host-a (npr. 0.0.0.0) za API server:",
@@ -378,7 +378,7 @@
         },
         "port": {
           "label": "Unesi port za lokalni proxy server (zahteva ponovno pokretanje):",
-          "title": "Прокси порт"
+          "title": "Proxy Port"
         }
       }
     },
@@ -644,7 +644,7 @@
           "host": "Povezan kao domaćin (host)"
         }
       },
-      "name": "Музика заједно [Бета]",
+      "name": "Music Together [Beta]",
       "toast": {
         "add-song-failed": "Dodavanje pesme nije uspelo",
         "closed": "'Music Together' je zatvorena",
@@ -1121,7 +1121,7 @@
       "name": "Video prebacivanje",
       "templates": {
         "button-song": "Pesma",
-        "button-video": "Видео"
+        "button-video": "Video"
       }
     },
     "visualizer": {

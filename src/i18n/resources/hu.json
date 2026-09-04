@@ -71,7 +71,7 @@
         "buttons": {
           "disable": "Frissítések kikapcsolása",
           "download": "Letöltés",
-          "ok": "Rendben"
+          "ok": "OK"
         },
         "detail": "Új verzió elérhető, amely letölthető az alábbi linken {{downloadLink}}",
         "message": "Új verzió áll rendelkezésre",
@@ -455,7 +455,7 @@
       "menu": {
         "device-selector": "Eszköz kiválasztása"
       },
-      "name": "Egyedi Kimeneti Eszköz",
+      "name": "Saját kimeneti eszköz",
       "prompt": {
         "device-selector": {
           "label": "Válaszd ki a kimeneti eszközt",
@@ -609,7 +609,7 @@
       "menu": {
         "romanized-lyrics": "Latin betűs dalszövegek"
       },
-      "name": "Dalszöveg Genius",
+      "name": "Lyrics Genius",
       "renderer": {
         "fetched-lyrics": "Dalszövegek lekérése a Genius-ról"
       }

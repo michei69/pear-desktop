@@ -261,7 +261,7 @@
         "opacity": {
           "label": "Opacidade",
           "submenu": {
-            "percent": "{{opacidade}}%"
+            "percent": "{{opacity}}%"
           }
         },
         "quality": {
@@ -290,7 +290,7 @@
     },
     "amuse": {
       "description": "Adiciona suporte ao {{applicationName}} para o widget Amuse now playing de 6K Labs",
-      "name": "Divertir",
+      "name": "Amuse",
       "response": {
         "query": "O servidor da API Amuse está a ser executado. GET/query para obter informações sobre a faixa."
       }
@@ -496,7 +496,7 @@
           }
         }
       },
-      "name": "Presença Rica do Discord",
+      "name": "Discord Rich Presence",
       "prompt": {
         "set-inactivity-timeout": {
           "label": "Introduza o tempo limite de inatividade em segundos:",
@@ -644,7 +644,7 @@
           "host": "Conectado como anfitrião"
         }
       },
-      "name": "Música Juntos [Beta]",
+      "name": "Music Together [Beta]",
       "toast": {
         "add-song-failed": "Falha ao adicionar música",
         "closed": "Music Together fechado",
@@ -1091,7 +1091,7 @@
     },
     "tuna-obs": {
       "description": "Integração com o plugin Tuna do OBS",
-      "name": "Atum OBS"
+      "name": "Tuna OBS"
     },
     "unobtrusive-player": {
       "description": "Impede o aparecimento do reprodutor durante a reprodução",

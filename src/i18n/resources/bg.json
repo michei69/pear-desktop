@@ -255,7 +255,7 @@
         "buffer": {
           "label": "Буферизация",
           "submenu": {
-            "buffer": "буфер"
+            "buffer": "{{buffer}}"
           }
         },
         "opacity": {
@@ -1091,7 +1091,7 @@
     },
     "tuna-obs": {
       "description": "Интеграция с плъгина Tuna за OBS",
-      "name": "Туна OBS"
+      "name": "Tuna OBS"
     },
     "unobtrusive-player": {
       "description": "Предотвратява изскачането на плеъра при възпроизвеждане на песен",

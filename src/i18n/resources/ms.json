@@ -15,7 +15,7 @@
   },
   "language": {
     "code": "ms",
-    "local-name": "Bahasa Melayu",
+    "local-name": "Bahasa Malaysia",
     "name": "Malay"
   },
   "main": {
@@ -253,9 +253,9 @@
           }
         },
         "buffer": {
-          "label": "Penimbal",
+          "label": "Buffer",
           "submenu": {
-            "buffer": "penimbal"
+            "buffer": "{{buffer}}"
           }
         },
         "opacity": {
@@ -279,7 +279,7 @@
         "smoothness-transition": {
           "label": "Kelancaran transisi",
           "submenu": {
-            "during": "Semasa {{interpolationTime}} s"
+            "during": "Semasa {{interpolationTime}}s"
           }
         },
         "use-fullscreen": {
@@ -399,7 +399,7 @@
       "name": "Pemilih kapsyen",
       "prompt": {
         "selector": {
-          "label": "Bahasa kapsyen semasa: {{language}}",
+          "label": "Bahasa kapsyen sekarang: {{language}}",
           "none": "Tiada",
           "title": "Pilih bahasa kapsyen"
         }
@@ -496,7 +496,7 @@
           }
         }
       },
-      "name": "Kehadiran Kaya Discord",
+      "name": "Discord Rich Presence",
       "prompt": {
         "set-inactivity-timeout": {
           "label": "Masukkan tamat masa tidak aktif dalam beberapa saat:",
@@ -644,7 +644,7 @@
           "host": "Disambungkan sebagai Hos"
         }
       },
-      "name": "Muzik Bersama [Beta]",
+      "name": "Music Together [Beta]",
       "toast": {
         "add-song-failed": "Gagal menambah lagu",
         "closed": "Music Together ditutup",

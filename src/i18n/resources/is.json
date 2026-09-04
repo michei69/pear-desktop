@@ -255,7 +255,7 @@
         "buffer": {
           "label": "Stuðpúði",
           "submenu": {
-            "buffer": "er"
+            "buffer": "{{buffer}}"
           }
         },
         "opacity": {

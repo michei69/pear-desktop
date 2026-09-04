@@ -193,7 +193,7 @@
         "new": "BAGO"
       },
       "view": {
-        "label": "Tingnan",
+        "label": "View",
         "submenu": {
           "force-reload": "Pilitang I-reload",
           "reload": "I-reload",
@@ -259,7 +259,7 @@
         "buffer": {
           "label": "Buffer",
           "submenu": {
-            "buffer": "buffer"
+            "buffer": "{{buffer}}"
           }
         },
         "opacity": {
@@ -290,7 +290,7 @@
           "label": "Gumamit ng fullscreen"
         }
       },
-      "name": "Kapaligirang Mode"
+      "name": "Ambient Mode"
     },
     "amuse": {
       "description": "Nagdaragdag ng suporta sa {{applicationName}} para sa Amuse now playing widget ng 6K Labs",
@@ -330,18 +330,18 @@
           "label": "Port"
         },
         "https": {
-          "label": "HTTPS at Mga Sertipiko",
+          "label": "HTTPS at Mga Certificate",
           "submenu": {
             "enable-https": {
               "label": "Paganahin ang HTTPS"
             },
             "cert": {
-              "label": "Sertipikong file (.crt/.pem)",
-              "dialogTitle": "Pumili ng HTTPS na sertipikong file"
+              "label": "Certificate file (.crt o .pem)",
+              "dialogTitle": "Pumili ng HTTPS certificate file"
             },
             "key": {
-              "label": "Pribadong key file (.key/.pem)",
-              "dialogTitle": "Pumili ng HTTPS na pribadong key file"
+              "label": "Private key file (.key o .pem)",
+              "dialogTitle": "Pumili ng HTTPS private key file"
             }
           }
         }
@@ -403,7 +403,7 @@
       "name": "Tagapili ng Caption",
       "prompt": {
         "selector": {
-          "label": "Kasalukuyang wika ng caption: {{language}}",
+          "label": "Kasalukuyang wika ng caption:{{language}}",
           "none": "Wala",
           "title": "Pumili ng wika ng caption"
         }
@@ -655,7 +655,7 @@
           "host": "Nakakonekta bilang Host"
         }
       },
-      "name": "Musika Sama [Beta]",
+      "name": "Music Together [Beta]",
       "toast": {
         "add-song-failed": "Nabigong magdagdag ng kanta",
         "closed": "Nakasara ang Music Together",
@@ -862,11 +862,11 @@
       },
       "menu": {
         "preferred-provider": {
-          "label": "Ginustong Provider",
+          "label": "Napiling Provider",
           "tooltip": "Pumili ng default na provider para gagamitin",
           "none": {
             "label": "Wala",
-            "tooltip": "Walang ginustong provider"
+            "tooltip": "Walang napiling provider"
           }
         },
         "default-text-string": {
@@ -874,14 +874,14 @@
           "tooltip": "Pumili ng default na character na gagamitin sa pagitan ng lyrics"
         },
         "line-effect": {
-          "label": "Epekto ng Linya",
+          "label": "Effect ng Linya",
           "submenu": {
             "fancy": {
               "label": "Magarbo",
-              "tooltip": "Gumamit ng malaki, mala-app na epekto sa kasalukuyang linya"
+              "tooltip": "Gumamit ng malaki, mala-app na effect sa kasalukuyang linya"
             },
             "focus": {
-              "label": "Pokus",
+              "label": "Focus",
               "tooltip": "Gawing puti lamang ang kasalukuyang linya"
             },
             "offset": {
@@ -893,7 +893,7 @@
               "tooltip": "I-scale ang kasalukuyang linya"
             }
           },
-          "tooltip": "Pumili ng epekto na ilalapat sa kasalukuyang linya"
+          "tooltip": "Pumili ng effect na ilalapat sa kasalukuyang linya"
         },
         "lyrics-font-size": {
           "label": "Laki ng font ng lyrics",
@@ -930,22 +930,22 @@
           "tooltip": "Ipakita ang mga time code kasunod sa lyrics"
         },
         "convert-chinese-character": {
-          "label": "I-convert ang character na Tsino",
+          "label": "I-convert ang karakter na Chinese",
           "submenu": {
             "disabled": {
-              "label": "Di-pinagana",
-              "tooltip": "Huwag paganahin ang conversion ng character na Tsino"
+              "label": "Di-napagana",
+              "tooltip": "Huwag paganahin ang conversion ng karakter na Chinese"
             },
             "simplified-to-traditional": {
-              "label": "Pinasimple patungong Tradisyonal",
-              "tooltip": "I-convert ang Pinasimpleng Tsino sa Tradisyonal na Tsino"
+              "label": "Pinasimple sa Tradisyonal",
+              "tooltip": "I-convert ang Pinasimpleng Chinese patungong Tradisyunal na Chinese"
             },
             "traditional-to-simplified": {
               "label": "Tradisyonal patungong Pinasimple",
-              "tooltip": "I-convert ang Tradisyonal na Tsino sa Pinasimpleng Tsino"
+              "tooltip": "I-convert ang Tradisyunal na Chinese sa Pinasimpleng Chinese"
             }
           },
-          "tooltip": "I-convert ang character na Tsino sa Tradisyonal o Pinasimple"
+          "tooltip": "I-convert ang karakter na Chinese sa Tradisyonal o Pinasimple"
         },
         "translation": {
           "label": "Pagsasalin ng lyrics",
@@ -1067,10 +1067,10 @@
           "tooltip": "Magpakita ng search button sa lyrics picker na nagbibigay-daan sa iyo na baguhin ang search query at artist para sa kasalukuyang kanta."
         }
       },
-      "name": "Naka-sync na Lyrics",
+      "name": "Pag-sync ng Lyrics",
       "refetch-btn": {
-        "fetching": "Kinukuha...",
-        "normal": "Kunin muli ang lyrics"
+        "fetching": "Nag-fe-fetch...",
+        "normal": "I-fetch muli ang lyrics"
       },
       "warnings": {
         "duration-mismatch": "⚠️ - Maaaring hindi naka-sync ang lyrics dahil sa hindi pagkakatugma ng duration.",
@@ -1102,7 +1102,8 @@
             "acrylic": "Akriliko",
             "mica": "Mika",
             "tabbed": "Naka-tab",
-            "none": "Wala"
+            "none": "Wala",
+            "fullscreen-ui": "Fullscreen na UI"
           }
         }
       }

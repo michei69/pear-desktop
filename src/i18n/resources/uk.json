@@ -255,7 +255,7 @@
         "buffer": {
           "label": "Буфер",
           "submenu": {
-            "buffer": "буфер"
+            "buffer": "{{buffer}}"
           }
         },
         "opacity": {
@@ -290,7 +290,7 @@
     },
     "amuse": {
       "description": "Додає підтримку {{applicationName}} для віджета Amuse now playing від 6K Labs",
-      "name": "Амюз",
+      "name": "Amuse",
       "response": {
         "query": "Сервер Amuse API запущено. Запит GET /query для отримання інформації про пісню."
       }
@@ -414,11 +414,11 @@
       }
     },
     "clock": {
-      "description": "Додати годинник на панель навігації",
+      "description": "Додати годинник до панелі навігації",
       "menu": {
         "format": {
           "24-hour-format": "24-годинний формат",
-          "display-seconds": "Показувати секунди",
+          "display-seconds": "Відображати секунди",
           "label": "Формат"
         }
       },
@@ -520,7 +520,7 @@
           },
           "start-download-playlist": {
             "buttons": {
-              "ok": "ОК"
+              "ok": "OK"
             },
             "detail": "({{playlistSize}} пісень)",
             "message": "Завантаження списку відтворення {{playlistTitle}}",
@@ -873,7 +873,7 @@
           "label": "Лінійний ефект",
           "submenu": {
             "fancy": {
-              "label": "Вишуканий",
+              "label": "Fancy",
               "tooltip": "Використовуйте великі, додаткоподібні ефекти на поточному рядку"
             },
             "focus": {
@@ -1100,7 +1100,7 @@
     },
     "tuna-obs": {
       "description": "Інтеграція з плагіном Tuna для OBS",
-      "name": "Туна OBS"
+      "name": "Tuna OBS"
     },
     "unobtrusive-player": {
       "description": "Запобігання спливання плеєру під час відтворення пісні",

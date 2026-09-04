@@ -175,7 +175,7 @@
                     "remove": "Eemalda"
                   },
                   "remove-theme": "Kas oled kindel, et soovid enda loodud kujunduse eemaldada?",
-                  "remove-theme-message": "Sellega saab sinu loodud kujundus eemaldatud"
+                  "remove-theme-message": "Sellega saab sinu loodud kujundus eemdladatud"
                 },
                 "label": "Kujundus",
                 "submenu": {
@@ -213,7 +213,7 @@
       "show": "Näita akent",
       "tooltip": {
         "default": "{{applicationName}}",
-        "with-song-info": "{{rakenduseNimi}}: {{artist}} - {{pealkiri}}"
+        "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
       },
       "like": "Meeldib",
       "dislike": "Ei meeldi",
@@ -259,7 +259,7 @@
         "buffer": {
           "label": "Puhver",
           "submenu": {
-            "buffer": "puhver"
+            "buffer": "{{buffer}}"
           }
         },
         "opacity": {
@@ -613,7 +613,7 @@
       "menu": {
         "romanized-lyrics": "Latiniseeritud laulusõnad"
       },
-      "name": "Laulusõnad Genius",
+      "name": "Lyrics Genius",
       "renderer": {
         "fetched-lyrics": "Leidsime Geeniuse jaoks ühed laulusõnad"
       }
@@ -934,7 +934,7 @@
         },
         "show-lyrics-even-if-inexact": {
           "label": "Kuva laulusõnad isegi kui need pole täpsed",
-          "tooltip": "Kui lugu ei leita, proovib lisamoodul uuesti teistsuguse otsingupäringuga.\nTeise katse tulemus ei pruugi olla täpne."
+          "tooltip": "Kui lugu ei leidu, siis lisamoodul üritab uut otsingut teistsuguse päringuga.\nTeise katse puhul tulemused ei pruugi olla väga täpsed."
         },
         "show-time-codes": {
           "label": "Kuva ajakoodid",

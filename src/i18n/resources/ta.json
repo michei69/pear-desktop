@@ -255,13 +255,13 @@
         "buffer": {
           "label": "இடையக",
           "submenu": {
-            "buffer": "இடைநிலை"
+            "buffer": "{{buffer}}"
           }
         },
         "opacity": {
           "label": "ஒளிபுகாநிலை",
           "submenu": {
-            "percent": "{{ஒளிபுகுதிறன்}}%"
+            "percent": "{{opacity}}%"
           }
         },
         "quality": {
@@ -1074,7 +1074,7 @@
         "opacity": {
           "label": "ஒளிபுகாநிலை",
           "submenu": {
-            "percent": "{{ஒளிபுகாநிலை}}%"
+            "percent": "{{opacity}}%"
           }
         },
         "type": {

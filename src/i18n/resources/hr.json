@@ -71,7 +71,7 @@
         "buttons": {
           "disable": "Isključi Ažuriranja",
           "download": "Preuzmi",
-          "ok": "U redu"
+          "ok": "OK"
         },
         "detail": "Nova verzija je dostupna i može se preuzeti preko {{downloadLink}}",
         "message": "Nova verzija je dostupna",
@@ -255,7 +255,7 @@
         "buffer": {
           "label": "Predmemorija (Bufer)",
           "submenu": {
-            "buffer": "međuspremnik"
+            "buffer": "{{buffer}}"
           }
         },
         "opacity": {
@@ -339,7 +339,7 @@
           }
         },
         "port": {
-          "label": "Luka"
+          "label": "Port"
         }
       },
       "name": "API Poslužitelj [Beta]",
@@ -350,7 +350,7 @@
         },
         "port": {
           "label": "Unesite port od API poslužitelja:",
-          "title": "Luka"
+          "title": "Port"
         }
       }
     },
@@ -367,7 +367,7 @@
           "label": "Naziv hosta"
         },
         "port": {
-          "label": "Luka"
+          "label": "Port"
         }
       },
       "name": "Proxy adapter za autentifikaciju",
@@ -509,14 +509,14 @@
         "dialog": {
           "error": {
             "buttons": {
-              "ok": "U redu"
+              "ok": "OK"
             },
             "message": "Jao! Oprostite, preuzimanje je bilo neuspješno…",
             "title": "Pogreška pri preuzimanju!"
           },
           "start-download-playlist": {
             "buttons": {
-              "ok": "U redu"
+              "ok": "OK"
             },
             "detail": "({{playlistSize}} pjesma)",
             "message": "Preuzimanje Playliste {{playlistTitle}}",
@@ -1098,7 +1098,7 @@
       "name": "Nenametljivi pokretač"
     },
     "video-toggle": {
-      "description": "Dodaje gumb za prebacivanje između Video/Pjesma načina. Može i opcionalno ukloniti cijelu video karticu",
+      "description": "Dodaje gumb za šaltanje između režima za video/numeru. Dodatno, može da ukloni cijelu karticu sa videom",
       "menu": {
         "align": {
           "label": "Izravnanje",
@@ -1118,7 +1118,7 @@
           }
         }
       },
-      "name": "Prebacivanje Videa",
+      "name": "Video šaltanje",
       "templates": {
         "button-song": "Pjesma",
         "button-video": "Video"

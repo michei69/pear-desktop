@@ -21,7 +21,7 @@
   "main": {
     "console": {
       "did-finish-load": {
-        "dev-tools": "Klaar gelaai. DevTools oopgemaak"
+        "dev-tools": "Klaar gelaai. Devtools oopgemaak"
       },
       "i18n": {
         "loaded": "i18n gelaai"
@@ -33,13 +33,13 @@
         "css-file-not-found": "CSS-lêer \"{{cssFile}}\" bestaan nie, ignoreer"
       },
       "unresponsive": {
-        "details": "Onreagerende Fout!\n{{error}}"
+        "details": "Onreagerende fout\n{{error}}"
       },
       "when-ready": {
-        "clearing-cache-after-20s": "Maak app-kas skoon"
+        "clearing-cache-after-20s": "Besig om cachegeheue skoon te maak"
       },
       "window": {
-        "tried-to-render-offscreen": "Venster het probeer om van skerm af te gee, windowSize={{windowSize}}, displaySize={{displaySize}}, position={{position}}"
+        "tried-to-render-offscreen": "Venster het probeer om die beeld van die skerm af te vertoon, vensterGrootte={{windowSize}}, skermGrootte={{displaySize}}, posisie={{position}}"
       }
     },
     "dialog": {
@@ -96,7 +96,7 @@
           "advanced-options": {
             "label": "Gevorderde opsies",
             "submenu": {
-              "auto-reset-app-cache": "Stel app-kas terug wanneer app begin",
+              "auto-reset-app-cache": "Stel Toep cachegeheue terug wanneer toep begin",
               "disable-hardware-acceleration": "Deaktiveer hardewareversnelling",
               "edit-config-json": "Wysig config.json",
               "override-user-agent": "Oorskryf User-Agent",
@@ -181,18 +181,6 @@
                 "submenu": {
                   "import-css-file": "Importeer aangepaste CSS-lêer",
                   "no-theme": "Geen tema"
-                }
-              }
-            }
-          },
-          "visual-tweaks": {
-            "submenu": {
-              "theme": {
-                "dialog": {
-                  "button": {
-                    "cancel": "Kanselleer",
-                    "remove": "Verwyder"
-                  }
                 }
               }
             }

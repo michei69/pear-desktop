@@ -2,14 +2,14 @@
   "common": {
     "console": {
       "plugins": {
-        "execute-failed": "Ezin izan da {{pluginName}}::{{contextName}} plugina exekutatu",
-        "executed-at-ms": "Plugina {{pluginName}}::{{contextName}} {{ms}}ms-tan exekutatu da",
-        "initialize-failed": "Ezin izan da \"{{pluginName}}\" plugina abiaraztea",
+        "execute-failed": "Ezin izan da {{pluginName}}{{contextName}} plugina exekutatu",
+        "executed-at-ms": "Plugina {{pluginName}}{{contextName}} {{ms}} m-tan exekutatu da",
+        "initialize-failed": "Ezin izan da {{pluginName}} plugina abiaraztea",
         "load-all": "Plugin guztiak kargatzen",
         "load-failed": "Ezin izan da \"{{pluginName}}\" plugina kargatu",
-        "loaded": "\"{{pluginName}}\" plugina kargatuta",
+        "loaded": "{{pluginName}} plugina kargatuta",
         "unload-failed": "Ezin izan da \"{{pluginName}}\" plugina deskargatu",
-        "unloaded": "\"{{pluginName}}\" plugina deskargatu"
+        "unloaded": "{{pluginName}} plugina deskargatuta"
       }
     }
   },
@@ -21,10 +21,10 @@
   "main": {
     "console": {
       "did-finish-load": {
-        "dev-tools": "Karga amaitu da. DevTools irekia"
+        "dev-tools": "Karga bukaeraztatua. DevTool'ak irekita"
       },
       "i18n": {
-        "loaded": "i18n kargatuta"
+        "loaded": "i18n'a kargatuta"
       },
       "second-instance": {
         "receive-command": "Komandoa protokoloaren bidez jasoa: \"{{command}}\""
