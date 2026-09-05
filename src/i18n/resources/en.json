@@ -139,8 +139,13 @@
             "label": "Starting page",
             "unset": "Unset"
           },
-          "strip-music-from-shared-links": "Strip 'music.' from shared links",
-          "strip-si-from-shared-links": "Strip '&si=' from shared links",
+          "shared-links": {
+            "label": "Shared links",
+            "submenu": {
+              "strip-music": "Strip 'music.'",
+              "strip-si": "Strip '&si='"
+            }
+          },
           "tray": {
             "label": "Tray",
             "submenu": {
