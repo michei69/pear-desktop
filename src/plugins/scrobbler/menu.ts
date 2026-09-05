@@ -81,6 +81,31 @@ async function promptListenbrainzOptions(
   }
 }
 
+async function promptListenbrainzApiRoot(
+  options: ScrobblerPluginConfig,
+  setConfig: SetConfType,
+  window: BrowserWindow,
+) {
+  const output = await prompt(
+    {
+      title: t('plugins.scrobbler.prompt.listenbrainz.api-root.title'),
+      label: t('plugins.scrobbler.prompt.listenbrainz.api-root.label'),
+      type: 'input',
+      value: options.scrobblers.listenbrainz?.apiRoot,
+      inputAttrs: {
+        type: 'text',
+      },
+      ...promptOptions(),
+    },
+    window,
+  );
+
+  if (output !== null) {
+    options.scrobblers.listenbrainz.apiRoot = output;
+    setConfig(options);
+  }
+}
+
 async function promptMusicBrainzEmail(
   options: ScrobblerPluginConfig,
   setConfig: SetConfType,
@@ -337,6 +362,12 @@ export const onMenu = async ({
           label: t('plugins.scrobbler.menu.listenbrainz.token'),
           click() {
             promptListenbrainzOptions(config, setConfig, window);
+          },
+        },
+        {
+          label: t('plugins.scrobbler.menu.listenbrainz.api-root'),
+          click() {
+            promptListenbrainzApiRoot(config, setConfig, window);
           },
         },
       ],

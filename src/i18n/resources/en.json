@@ -828,7 +828,8 @@
           "api-settings": "Last.fm API Settings"
         },
         "listenbrainz": {
-          "token": "Enter ListenBrainz user token"
+          "token": "Enter ListenBrainz user token",
+          "api-root": "ListenBrainz API URL"
         },
         "scrobble-alternative-title": "Use alternative titles",
         "scrobble-alternative-artist": "Use alternative artists",
@@ -847,6 +848,10 @@
           "token": {
             "label": "Enter your ListenBrainz user token:",
             "title": "ListenBrainz token"
+          },
+          "api-root": {
+            "label": "Enter the base API URL:",
+            "title": "ListenBrainz API URL"
           }
         },
         "regex-filter-multi": {
