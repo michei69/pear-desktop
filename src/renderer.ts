@@ -19,6 +19,7 @@ import {
 } from './loader/renderer';
 import { type NextData } from './plugins/synced-lyrics/providers/YTMusic';
 import { startingPages } from './providers/extracted-data';
+import { createShareUrlRewriter } from './providers/share-url';
 import { setupSongInfo } from './providers/song-info-front';
 
 import type { MusicPlayer } from '@/types/music-player';
@@ -550,6 +551,20 @@ const preload = async () => {
 };
 
 const main = async () => {
+  const shareUrlRewriter = createShareUrlRewriter();
+  const setShareUrlRewriterEnabled = (enabled: boolean) => {
+    if (enabled) shareUrlRewriter.start();
+    else shareUrlRewriter.stop();
+  };
+
+  setShareUrlRewriterEnabled(
+    window.mainConfig.get('options.stripMusicFromSharedLinks'),
+  );
+  window.ipcRenderer.on(
+    'peard:strip-music-from-shared-links',
+    (_event, enabled: boolean) => setShareUrlRewriterEnabled(enabled),
+  );
+
   await loadAllRendererPlugins();
   isPluginLoaded = true;
 
