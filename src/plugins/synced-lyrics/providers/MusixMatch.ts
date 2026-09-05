@@ -15,7 +15,7 @@ export class MusixMatch implements LyricProvider {
     // late-init the API, to avoid an electron IPC issue
     // an added benefit is that if it has an error during init, the user can hit the retry button
     this.api ??= await MusixMatchAPI.new();
-    await this.api.reinit();
+    // await this.api.reinit();
 
     const data = await this.api.query(Endpoint.getMacroSubtitles, {
       q_track: info.alternativeTitle || info.title,
@@ -277,7 +277,6 @@ class MusixMatchAPI {
   private readonly baseUrl = 'https://apic-appmobile.musixmatch.com/ws/1.1/';
   private readonly app_id = 'mac-ios-v2.0';
   private readonly headers = {
-    'Host': 'apic-appmobile.musixmatch.com',
     'authority': 'apic-appmobile.musixmatch.com',
     'X-Cookie': 'x-mxm-token-guid=',
     'x-mxm-app-version': '10.1.1',
