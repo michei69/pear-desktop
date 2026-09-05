@@ -38,6 +38,7 @@ export interface DefaultConfig {
     overrideUserAgent: boolean;
     usePodcastParticipantAsArtist: boolean;
     stripMusicFromSharedLinks: boolean;
+    stripSIFromSharedLinks: boolean;
     themes: string[];
     customWindowTitle?: string;
   };
@@ -79,6 +80,7 @@ export const defaultConfig: DefaultConfig = {
     overrideUserAgent: false,
     usePodcastParticipantAsArtist: false,
     stripMusicFromSharedLinks: false,
+    stripSIFromSharedLinks: true,
     themes: [],
   },
   'plugins': {},

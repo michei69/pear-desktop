@@ -558,11 +558,15 @@ const main = async () => {
   };
 
   setShareUrlRewriterEnabled(
-    window.mainConfig.get('options.stripMusicFromSharedLinks'),
+    window.mainConfig.get('options.stripMusicFromSharedLinks') || window.mainConfig.get('options.stripSIFromSharedLinks'),
   );
   window.ipcRenderer.on(
     'peard:strip-music-from-shared-links',
-    (_event, enabled: boolean) => setShareUrlRewriterEnabled(enabled),
+    (_event, enabled: boolean) => setShareUrlRewriterEnabled(enabled || window.mainConfig.get('options.stripSIFromSharedLinks')),
+  );
+  window.ipcRenderer.on(
+    'peard:strip-si-from-shared-links',
+    (_event, enabled: boolean) => setShareUrlRewriterEnabled(enabled || window.mainConfig.get('options.stripMusicFromSharedLinks')),
   );
 
   await loadAllRendererPlugins();

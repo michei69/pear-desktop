@@ -193,6 +193,21 @@ export const mainMenuTemplate = async (
           },
         },
         {
+          label: t('main.menu.options.submenu.strip-si-from-shared-links'),
+          type: 'checkbox',
+          checked: config.get('options.stripSIFromSharedLinks'),
+          click(item: MenuItem) {
+            config.setMenuOption(
+              'options.stripSIFromSharedLinks',
+              item.checked,
+            );
+            win.webContents.send(
+              'peard:strip-si-from-shared-links',
+              item.checked,
+            );
+          },
+        },
+        {
           label: t('main.menu.options.submenu.starting-page.label'),
           submenu: (() => {
             const subMenuArray: Electron.MenuItemConstructorOptions[] =

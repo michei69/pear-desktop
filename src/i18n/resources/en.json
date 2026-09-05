@@ -140,6 +140,7 @@
             "unset": "Unset"
           },
           "strip-music-from-shared-links": "Strip 'music.' from shared links",
+          "strip-si-from-shared-links": "Strip '&si=' from shared links",
           "tray": {
             "label": "Tray",
             "submenu": {
