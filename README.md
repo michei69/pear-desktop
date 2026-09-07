@@ -4,7 +4,6 @@
 
 [![GitHub release](https://img.shields.io/github/release/michei69/pear-desktop.svg?style=for-the-badge)](https://github.com/michei69/pear-desktop/releases/)
 [![GitHub license](https://img.shields.io/github/license/michei69/pear-desktop.svg?style=for-the-badge)](https://github.com/michei69/pear-desktop/blob/master/license)
-[![eslint code style](https://img.shields.io/badge/code_style-eslint-5ed9c7.svg?style=for-the-badge)](https://github.com/michei69/pear-desktop/blob/master/eslint.config.mjs)
 [![Build status](https://img.shields.io/github/actions/workflow/status/michei69/pear-desktop/build.yml?branch=master&style=for-the-badge)](https://GitHub.com/michei69/pear-desktop/releases/)
 [![GitHub All Releases](https://img.shields.io/github/downloads/michei69/pear-desktop/total?style=for-the-badge)](https://GitHub.com/michei69/pear-desktop/releases/)
 
