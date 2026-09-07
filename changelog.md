@@ -2,7 +2,16 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v3.12.2](https://github.com/michei69/pear-desktop/compare/v3.12.1...v3.12.2)
+
+- fix: show real app info in the about panel. closes #4547 [`#4547`](https://github.com/michei69/pear-desktop/issues/4547)
+- fix: harden plugin backends and correct lyric/scrobble/queue edge cases [`68771e6`](https://github.com/michei69/pear-desktop/commit/68771e627929a1dbb2968b5f2bdfeef0777bed82)
+- chore(i18n): sync translations with upstream [`8bce1a2`](https://github.com/michei69/pear-desktop/commit/8bce1a24462f98ccb2a853b67b50fc479f9314bf)
+- chore(i18n): Translated using Weblate (Lao) [`13c5a0b`](https://github.com/michei69/pear-desktop/commit/13c5a0b909f85900ae82f93a82782eff930569a5)
+
 #### [v3.12.1](https://github.com/michei69/pear-desktop/compare/v3.12.0...v3.12.1)
+
+> 30 June 2026
 
 - feat(audio-compressor): add Auto Track Gain to boost quiet tracks [`#3032`](https://github.com/michei69/pear-desktop/issues/3032)
 - ci: split build and release [`7604aa5`](https://github.com/michei69/pear-desktop/commit/7604aa5a71c112b844dc9ba68d2fe95d663cd71b)
@@ -1796,6 +1805,6 @@ All notable changes to this project will be documented in this file. Dates are d
 - Fix https://github.com/th-ch/youtube-music/pull/578#issuecomment-1035517531 [`#578`](https://github.com/th-ch/youtube-music/pull/578)
 - fix #490 [`#490`](https://github.com/michei69/pear-desktop/issues/490)
 - fix #472 [`#472`](https://github.com/michei69/pear-desktop/issues/472)
-- fix: kuromoji zlib and apply rolldown-vite [`f047dd2`](https://github.com/michei69/pear-desktop/commit/f047dd2d2df189b55b60188392c451aad65b7a1b)
-- remove landing-pages [`91b2c5a`](https://github.com/michei69/pear-desktop/commit/91b2c5a41a2fba4e7b940be27049fb6513e83612)
-- fix: apply fix from eslint [`cb1381b`](https://github.com/michei69/pear-desktop/commit/cb1381bbb394e2bbb404f44817ef96411dabc8a9)
+- fix: remove `xo`, migration to `eslint` [`c722896`](https://github.com/michei69/pear-desktop/commit/c722896a73cfbca3bbbab67bfcdfa639474e9030)
+- bump deps version, remove yarn [`c837f10`](https://github.com/michei69/pear-desktop/commit/c837f104f75270ef29e01c68bed3f6ca8962f866)
+- Migrate to yarn to install packages without package.json (but keep npm rebuild) [`9371a48`](https://github.com/michei69/pear-desktop/commit/9371a4827e2312258a4f692c18f964155d57ceb8)
