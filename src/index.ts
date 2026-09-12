@@ -909,7 +909,18 @@ app.whenReady().then(async () => {
     const protocolArgv = commandLine.find((arg) => arg.startsWith(uri));
 
     if (protocolArgv) {
-      handleProtocol(protocolArgv.slice(uri.length));
+      const lastIndex = protocolArgv.endsWith('/') ? -1 : undefined;
+      const command = protocolArgv.slice(uri.length, lastIndex);
+      if (is.dev()) {
+        console.debug(
+          LoggerPrefix,
+          t('main.console.second-instance.receive-command', { command }),
+        );
+      }
+
+      const splited = decodeURIComponent(command).split(' ');
+
+      handleProtocol(splited.shift()!, ...splited);
       return;
     }
 
