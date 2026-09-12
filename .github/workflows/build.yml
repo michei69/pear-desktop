@@ -125,3 +125,64 @@ jobs:
           PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
         with:
           run: pnpm test:debug
+
+  publish-beta:
+    name: Publish beta pre-release
+    needs: build
+    if: github.repository == 'michei69/pear-desktop' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    concurrency:
+      group: publish-beta
+      cancel-in-progress: false
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          fetch-depth: 0
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Publish beta pre-release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          LATEST_TAG=$(git describe --tags --match "v*" --abbrev=0 2>/dev/null || echo "")
+
+          {
+            echo "Rolling beta pre-release, rebuilt from master on every push."
+            echo
+            if [ -n "$LATEST_TAG" ]; then
+              echo "### Changes since ${LATEST_TAG}"
+              echo
+              git log --pretty=format:'* %s (%h)' "${LATEST_TAG}..HEAD"
+            else
+              echo "### Recent changes"
+              echo
+              git log --pretty=format:'* %s (%h)' -20
+            fi
+            echo
+            echo
+            echo "Built from commit ${GITHUB_SHA}. Not an official release."
+          } > notes.md
+
+          # Collect the installers, skipping updater metadata and the nsis uninstaller helper
+          mkdir -p release-assets
+          while IFS= read -r -d '' file; do
+            cp "$file" "release-assets/$(basename "$file" | tr ' ' '-')"
+          done < <(find artifacts -type f \( \
+            -name '*.exe' -o -name '*.nsis.7z' -o -name '*.dmg' -o -name '*.AppImage' \
+            -o -name '*.deb' -o -name '*.rpm' -o -name '*.snap' -o -name '*.flatpak' \
+            -o -name '*.tar.gz' -o -name '*.freebsd' \) ! -name '*uninstaller*' -print0)
+
+          mapfile -d '' assets < <(find release-assets -type f -print0)
+
+          gh release delete beta --cleanup-tag --yes || true
+          gh release create beta "${assets[@]}" \
+            --title "Latest beta build" \
+            --notes-file notes.md \
+            --prerelease \
+            --target "${{ github.sha }}"
