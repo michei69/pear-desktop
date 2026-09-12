@@ -32,7 +32,7 @@ const notify = (info: SongInfo) => {
     urgency: config.urgency,
   });
 
-  if (mainWindow) {
+  if (is.windows() && mainWindow) {
     focusWindowOnNotificationClick(currentNotification, mainWindow);
   }
 
