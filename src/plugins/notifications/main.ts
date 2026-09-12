@@ -10,7 +10,7 @@ import {
 
 import { setupHoverPopup } from './hover-popup';
 import interactive from './interactive';
-import { notificationImage } from './utils';
+import { focusWindowOnNotificationClick, notificationImage } from './utils';
 
 import type { NotificationsPluginConfig } from './index';
 import type { BackendContext } from '@/types/contexts';
@@ -31,6 +31,11 @@ const notify = (info: SongInfo) => {
     silent: true,
     urgency: config.urgency,
   });
+
+  if (mainWindow) {
+    focusWindowOnNotificationClick(currentNotification, mainWindow);
+  }
+
   currentNotification.show();
 
   return currentNotification;

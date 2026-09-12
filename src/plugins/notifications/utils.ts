@@ -2,7 +2,12 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 import musicPlayerIcon from '@assets/icon.png?asset&asarUnpack';
-import { app, type NativeImage } from 'electron';
+import {
+  app,
+  type BrowserWindow,
+  type NativeImage,
+  type Notification,
+} from 'electron';
 
 import { type SongInfo } from '@/providers/song-info';
 
@@ -85,4 +90,22 @@ export const secondsToMinutes = (seconds: number) => {
   const minutes = Math.floor(seconds / 60);
   const secondsLeft = seconds % 60;
   return `${minutes}:${secondsLeft < 10 ? '0' : ''}${secondsLeft}`;
+};
+
+/**
+ * Bring the app window forward when the user clicks the notification itself.
+ * macOS activates the app on its own, Windows does not, so without this a
+ * toast click just dismisses the toast.
+ */
+export const focusWindowOnNotificationClick = (
+  notification: Notification,
+  win: BrowserWindow,
+) => {
+  notification.on('click', () => {
+    if (win.isMinimized()) {
+      win.restore();
+    }
+    win.show();
+    win.focus();
+  });
 };

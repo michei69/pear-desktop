@@ -18,7 +18,12 @@ import { setTrayOnClick, setTrayOnDoubleClick } from '@/tray';
 import { mediaIcons } from '@/types/media-icons';
 
 import { isHoverPopupVisible } from './hover-popup';
-import { notificationImage, secondsToMinutes, ToastStyles } from './utils';
+import {
+  focusWindowOnNotificationClick,
+  notificationImage,
+  secondsToMinutes,
+  ToastStyles,
+} from './utils';
 
 import type { NotificationsPluginConfig } from './index';
 import type { BackendContext } from '@/types/contexts';
@@ -75,6 +80,8 @@ export default (
         savedNotification = undefined;
       }
     });
+
+    focusWindowOnNotificationClick(notification, win);
 
     notification.show();
   };
