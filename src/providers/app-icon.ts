@@ -1,3 +1,4 @@
+import musicPlayerIconYtmIco from '@assets/icon-ytm.ico?asset&asarUnpack';
 import musicPlayerIconYtm from '@assets/icon-ytm.png?asset&asarUnpack';
 import musicPlayerIcon from '@assets/icon.png?asset&asarUnpack';
 import pausedTrayIconWhite from '@assets/tray-paused-white.png?asset&asarUnpack';
@@ -16,10 +17,13 @@ export const useYtmIcons = () => config.get('options.useYtmIcons');
 export const appIconPath = () =>
   useYtmIcons() ? musicPlayerIconYtm : musicPlayerIcon;
 
-// Window/taskbar icon. The packaged .ico/.icns is crisper at small sizes, but
-// the original logo only ships as a PNG.
+// Window/taskbar icon. The multi-size .ico is crisper at the small sizes the
+// taskbar uses; the original logo's .ico is rendered from its 2200px master.
 export const windowIconPath = () => {
-  if (useYtmIcons()) return musicPlayerIconYtm;
+  if (useYtmIcons()) {
+    return is.windows() ? musicPlayerIconYtmIco : musicPlayerIconYtm;
+  }
+
   if (is.windows()) return 'assets/generated/icons/win/icon.ico';
   if (is.macOS()) return 'assets/generated/icons/mac/icon.icns';
   return musicPlayerIcon;
