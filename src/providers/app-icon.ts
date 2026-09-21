@@ -13,6 +13,11 @@ import * as config from '@/config';
 
 export const useYtmIcons = () => config.get('options.useYtmIcons');
 
+// Absolute path of the .ico shortcuts are pointed at: .lnk files reference an
+// icon file directly, and only the original-logo option has one outside the
+// exe (see providers/shortcut-icons.ts).
+export const shortcutIconPath = () => musicPlayerIconYtmIco;
+
 // Logo used for the About panel, notifications, TouchBar and dialogs.
 export const appIconPath = () =>
   useYtmIcons() ? musicPlayerIconYtm : musicPlayerIcon;

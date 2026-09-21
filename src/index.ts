@@ -49,6 +49,7 @@ import {
   handleProtocol,
   setupProtocolHandler,
 } from '@/providers/protocol-handler';
+import { syncShortcutIcons } from '@/providers/shortcut-icons';
 import {
   registerCallback,
   setupSongInfo,
@@ -903,6 +904,13 @@ app.whenReady().then(async () => {
   await setApplicationMenu(mainWindow);
   await refreshMenu(mainWindow);
   setUpTray(app, mainWindow);
+
+  // Shortcuts created or re-pinned after the option was toggled start out on
+  // the exe icon, so re-sync on launch (the sync writes only where a shortcut
+  // actually differs).
+  if (is.windows()) {
+    syncShortcutIcons();
+  }
 
   setupProtocolHandler(mainWindow);
 

@@ -23,6 +23,7 @@ import { appIconPath, windowIconPath } from './providers/app-icon';
 import { startingPages } from './providers/extracted-data';
 import promptOptions from './providers/prompt-options';
 import { stripMusicSubdomain } from './providers/share-url';
+import { syncShortcutIcons } from './providers/shortcut-icons';
 import {
   createThemeFromCssFiles,
   ensureJsConsent,
@@ -286,6 +287,9 @@ export const mainMenuTemplate = async (
                   win.setIcon(windowIconPath());
                 }
                 refreshTrayIcons();
+                // The exe icon is baked in at build time; shortcuts can carry
+                // their own, so keep those in step with the option.
+                syncShortcutIcons();
               },
             },
             {
