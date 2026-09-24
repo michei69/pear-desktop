@@ -1,4 +1,4 @@
-import musicPlayerIconYtmIco from '@assets/icon-ytm.ico?asset&asarUnpack';
+import musicPlayerIconYtmIco from '@assets/generated/icons/win/icon-ytm.ico?asset&asarUnpack';
 import musicPlayerIconYtm from '@assets/icon-ytm.png?asset&asarUnpack';
 import musicPlayerIcon from '@assets/icon.png?asset&asarUnpack';
 import pausedTrayIconWhite from '@assets/tray-paused-white.png?asset&asarUnpack';
