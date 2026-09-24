@@ -46,7 +46,7 @@ export default createPlugin({
   description: () => t('plugins.do-not-track.description'),
   restartNeeded: false,
   config: {
-    enabled: false,
+    enabled: true,
     cache: true,
     blocker: blockers.InPlayer,
     additionalBlockLists: [],
