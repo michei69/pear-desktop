@@ -2,10 +2,6 @@ interface TextRuns {
   runs: { text: string }[];
 }
 
-interface Thumbnails {
-  thumbnails: { url: string; width: number; height: number }[];
-}
-
 interface QueueItem {
   videoId?: string;
   playlistSetVideoId?: string;
@@ -13,7 +9,7 @@ interface QueueItem {
   longBylineText?: TextRuns;
   shortBylineText?: TextRuns;
   lengthText?: TextRuns;
-  thumbnail?: Thumbnails;
+  thumbnail?: { thumbnails: { url: string }[] };
 }
 
 interface ReleaseRow {
@@ -79,27 +75,10 @@ export function installPreferSong() {
     return found;
   };
 
-  const creditsVideoId = (row: unknown) => {
-    let credits: string | undefined;
-    const walk = (node: unknown) => {
-      if (credits || !node || typeof node !== 'object') return;
-      for (const [key, value] of Object.entries(
-        node as Record<string, unknown>,
-      )) {
-        if (
-          key === 'browseId' &&
-          typeof value === 'string' &&
-          value.startsWith('MPTC')
-        ) {
-          credits = value.slice(4);
-          return;
-        }
-        walk(value);
-      }
-    };
-    walk(row);
-    return credits;
-  };
+  const creditsVideoId = (row: unknown) =>
+    collect<string>(row, 'browseId')
+      .find((id) => typeof id === 'string' && id.startsWith('MPTC'))
+      ?.slice(4);
 
   const releasePlaylistId = (value: unknown) =>
     typeof value === 'string' && value.startsWith('OLAK5uy_') ? value : null;
@@ -109,11 +88,20 @@ export function installPreferSong() {
       ? (/[0-9A-F]{16}/.exec(atob(decodeURIComponent(params)))?.[0] ?? null)
       : null;
 
-  const loadRelease = (browseId: string) => {
-    const pending = releaseRequests.get(browseId);
-    if (pending) return pending;
+  /** Runs `load` once per key, and forgets a failed load so the next call retries. */
+  const memo = <T>(
+    cache: Map<string, Promise<T>>,
+    key: string,
+    load: () => Promise<T>,
+  ) => {
+    const pending = cache.get(key) ?? load();
+    cache.set(key, pending);
+    pending.catch(() => cache.delete(key));
+    return pending;
+  };
 
-    const request = (async () => {
+  const loadRelease = (browseId: string) =>
+    memo(releaseRequests, browseId, async () => {
       const rows = collect<ReleaseRow>(
         await innertube('browse', { browseId }),
         'musicResponsiveListItemRenderer',
@@ -123,43 +111,25 @@ export function installPreferSong() {
         const setId = row.playlistItemData?.playlistSetVideoId;
         if (studioId && setId) studioIdBySetId.set(setId, studioId);
       }
-    })();
-    releaseRequests.set(browseId, request);
-    request.catch(() => releaseRequests.delete(browseId));
-    return request;
-  };
+    });
 
-  const loadReleaseOfPlaylist = (playlistId: string) => {
-    const pending = playlistRequests.get(playlistId);
-    if (pending) return pending;
-
-    const request = (async () => {
+  const loadReleaseOfPlaylist = (playlistId: string) =>
+    memo(playlistRequests, playlistId, async () => {
       const playlist = JSON.stringify(
         await innertube('browse', { browseId: 'VL' + playlistId }),
       );
       const browseId = /MPREb_[A-Za-z0-9_-]+/.exec(playlist)?.[0];
       if (browseId) await loadRelease(browseId);
-    })();
-    playlistRequests.set(playlistId, request);
-    request.catch(() => playlistRequests.delete(playlistId));
-    return request;
-  };
+    });
 
-  const studioQueueItem = (videoId: string) => {
-    const pending = studioItemRequests.get(videoId);
-    if (pending) return pending;
-
-    const request = (async () => {
+  const studioQueueItem = (videoId: string) =>
+    memo(studioItemRequests, videoId, async () => {
       const items = collect<QueueItem>(
         await innertube('next', { videoId }),
         'playlistPanelVideoRenderer',
       );
       return items.find((item) => item.videoId === videoId);
-    })();
-    studioItemRequests.set(videoId, request);
-    request.catch(() => studioItemRequests.delete(videoId));
-    return request;
-  };
+    });
 
   const studioIdFor = (setId: string, videoId: string) => {
     const studioId = studioIdBySetId.get(setId);
@@ -175,6 +145,8 @@ export function installPreferSong() {
     const studio = await studioQueueItem(studioId);
     if (!studio) return;
 
+    // The rendered row carries the video id and type in several nested places,
+    // so swap them across the whole row, then take the song row's metadata.
     const swapped = JSON.parse(
       JSON.stringify(item)
         .split(rowId)
@@ -182,7 +154,6 @@ export function installPreferSong() {
         .split('MUSIC_VIDEO_TYPE_OMV')
         .join('MUSIC_VIDEO_TYPE_ATV'),
     ) as QueueItem;
-    for (const key of Object.keys(item)) delete item[key as keyof QueueItem];
     Object.assign(item, swapped);
 
     item.title = studio.title;
@@ -193,7 +164,7 @@ export function installPreferSong() {
   };
 
   const requestBodyOf = async (request: Request) =>
-    JSON.parse(await gunzip(await request.clone().arrayBuffer())) as Record<
+    JSON.parse(await gunzip(await request.arrayBuffer())) as Record<
       string,
       unknown
     >;
@@ -207,7 +178,7 @@ export function installPreferSong() {
   };
 
   const songPlayerRequest = async (request: Request) => {
-    const body = await requestBodyOf(request);
+    const body = await requestBodyOf(request.clone());
     const requestedId = body.videoId;
     if (typeof requestedId !== 'string') return null;
 

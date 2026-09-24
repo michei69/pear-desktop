@@ -130,12 +130,10 @@ const setupYouTubeMusic = (
 
   const scope = globalThis as unknown as {
     window: unknown;
-    location: { search: string };
     ytcfg: { get(key: string): unknown };
     fetch: typeof fetch;
   };
   scope.window = globalThis;
-  scope.location = { search: '' };
   scope.ytcfg = { get: () => 'stub' };
   scope.fetch = upstream as typeof fetch;
   installPreferSong();
@@ -288,9 +286,6 @@ test('ignores a music video played from a mix', async () => {
     [releaseRow('video-1', 'song-1')],
     [queueItem('video-1', { musicVideo: true })],
   );
-  (globalThis as unknown as { location: { search: string } }).location = {
-    search: `?list=${RELEASE_PLAYLIST}`,
-  };
 
   await playOutsideRelease('video-1', 'RDAMPLmix');
 
