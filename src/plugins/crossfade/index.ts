@@ -195,6 +195,40 @@ export default createPlugin<
       let firstVideo = true;
       let isAutoTransition = false;
       let cleanupListeners: (() => void) | null = null;
+      let navigationGeneration = 0;
+
+      // Crossfade currently in flight: the outgoing audio, the faders fading the
+      // two tracks and the fade-in listener waiting on the video's next play.
+      let fadingAudio: Howl | null = null;
+      let fadeOutFader: VolumeFader | null = null;
+      let fadeInFader: VolumeFader | null = null;
+      let fadeInVideo: HTMLVideoElement | null = null;
+      let fadeInOnPlay: (() => void) | null = null;
+      let fadeInTargetVolume = 1;
+
+      // Drop an in-flight crossfade: its faders keep writing to the <video>
+      // element, which the next track reuses.
+      const cancelTransition = () => {
+        fadeOutFader?.cancelFade();
+        fadeInFader?.cancelFade();
+        fadeOutFader = null;
+        fadeInFader = null;
+
+        if (fadeInVideo) {
+          if (fadeInOnPlay) {
+            fadeInVideo.removeEventListener('play', fadeInOnPlay);
+          }
+
+          // An interrupted fade in leaves the track at a partial volume, so put
+          // it back where it was fading to.
+          fadeInVideo.volume = fadeInTargetVolume;
+        }
+        fadeInVideo = null;
+        fadeInOnPlay = null;
+
+        fadingAudio?.unload();
+        fadingAudio = null;
+      };
 
       const getStreamURL = async (videoID: string): Promise<string> =>
         this.ipc?.invoke('audio-url', videoID) as Promise<string>;
@@ -235,50 +269,65 @@ export default createPlugin<
           isAutoTransition = false;
 
           const video = document.querySelector('video');
+          const generation = ++navigationGeneration;
 
           if (cleanupListeners) {
             cleanupListeners();
             cleanupListeners = null;
           }
 
+          // Nothing from the previous navigation may keep touching the video
+          // element or the audio it was playing.
+          cancelTransition();
+
           if (syncedAudio) {
             if (isAuto && syncedAudio.state() === 'loaded') {
-              const fadingAudio = syncedAudio;
+              const outgoing = syncedAudio;
               syncedAudio = null;
+              fadingAudio = outgoing;
 
               const targetVolume = video ? video.volume : 1;
               if (video) video.volume = 0;
 
               const volumeWrapper = {
                 get volume() {
-                  return fadingAudio.volume();
+                  return outgoing.volume();
                 },
                 set volume(v: number) {
-                  fadingAudio.volume(v);
+                  outgoing.volume(v);
                 },
               };
 
-              const fadeOutFader = new VolumeFader(volumeWrapper, {
+              fadeOutFader = new VolumeFader(volumeWrapper, {
                 initialVolume: targetVolume,
                 fadeScaling: this.config?.fadeScaling,
                 fadeDuration: this.config?.fadeOutDuration,
               });
 
               fadeOutFader.fadeOut(() => {
-                fadingAudio.unload();
+                outgoing.unload();
+                if (fadingAudio === outgoing) {
+                  fadingAudio = null;
+                }
               });
 
               if (video) {
-                const fadeInFader = new VolumeFader(video, {
+                fadeInTargetVolume = targetVolume;
+                fadeInFader = new VolumeFader(video, {
                   initialVolume: 0,
                   fadeScaling: this.config?.fadeScaling,
                   fadeDuration: this.config?.fadeInDuration,
                 });
 
                 const onPlay = () => {
-                  fadeInFader.fadeTo(targetVolume);
                   video.removeEventListener('play', onPlay);
+                  fadeInVideo = null;
+                  fadeInOnPlay = null;
+                  fadeInFader?.fadeTo(targetVolume);
                 };
+
+                fadeInVideo = video;
+                fadeInOnPlay = onPlay;
                 video.addEventListener('play', onPlay);
               }
             } else {
@@ -288,20 +337,24 @@ export default createPlugin<
           }
 
           getStreamURL(nextVideoID).then((url) => {
-            if (!url) return;
+            // A newer navigation started while this stream URL was resolving,
+            // so this audio no longer belongs to the track being played.
+            if (!url || generation !== navigationGeneration) return;
 
-            syncedAudio = new Howl({
+            const audio = new Howl({
               src: url,
               html5: true,
               volume: 0,
             });
 
+            syncedAudio = audio;
+
             if (video) {
-              const onSeeking = () => syncedAudio?.seek(video.currentTime);
-              const onPause = () => syncedAudio?.pause();
+              const onSeeking = () => audio.seek(video.currentTime);
+              const onPause = () => audio.pause();
               const onPlay = () => {
-                syncedAudio?.play();
-                syncedAudio?.seek(video.currentTime);
+                audio.play();
+                audio.seek(video.currentTime);
               };
 
               video.addEventListener('seeking', onSeeking);
@@ -314,11 +367,12 @@ export default createPlugin<
                 video.removeEventListener('pause', onPause);
                 video.removeEventListener('play', onPlay);
                 video.removeEventListener('timeupdate', transitionBeforeEnd);
+                cancelTransition();
               };
 
               if (!video.paused) {
-                syncedAudio.play();
-                syncedAudio.seek(video.currentTime);
+                audio.play();
+                audio.seek(video.currentTime);
               }
             }
           });

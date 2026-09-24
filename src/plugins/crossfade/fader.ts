@@ -36,7 +36,8 @@ interface VolumeFaderOptions {
    */
   logger?: VolumeLogger;
   /**
-   * either 'linear', 'logarithmic' or a positive number in dB (default: logarithmic)
+   * either 'linear', 'equalPower', 'logarithmic' or a positive number in dB
+   * (default: logarithmic)
    */
   fadeScaling?: string | number;
   /**
@@ -77,6 +78,7 @@ export class VolumeFader {
   private active: boolean = false;
   private fade: VolumeFade | undefined;
   private boundUpdateVolume: () => void;
+  private equalPower: boolean = false;
 
   /**
    * VolumeFader Constructor
@@ -126,6 +128,7 @@ export class VolumeFader {
         internalToVolume: (level: number) => Math.sin((level * Math.PI) / 2),
         volumeToInternal: (level: number) => Math.asin(level) / (Math.PI / 2),
       };
+      this.equalPower = true;
       this.logger?.('Using equal power fading.');
     }
     // No linear, but logarithmic fading…
@@ -321,6 +324,27 @@ export class VolumeFader {
   }
 
   /**
+   * Internal: Volume of a fade at the given progress.
+   * (start and end are the fade's endpoints on the internal scale in use)
+   *
+   * Equal power fades scale the endpoint volumes with a sin/cos curve instead of
+   * interpolating their internal angles, so a fade out and its paired fade in
+   * keep a constant combined power even below full volume.
+   */
+  private fadeVolume(progress: number, start: number, end: number) {
+    if (!this.equalPower) {
+      return this.scale.internalToVolume(progress * (end - start) + start);
+    }
+
+    const angle = (progress * Math.PI) / 2;
+
+    return (
+      this.scale.internalToVolume(start) * Math.cos(angle) +
+      this.scale.internalToVolume(end) * Math.sin(angle)
+    );
+  }
+
+  /**
    * Internal: Update media volume.
    * (calls itself through requestAnimationFrame)
    */
@@ -337,13 +361,12 @@ export class VolumeFader {
           (now - this.fade.time.start) /
           (this.fade.time.end - this.fade.time.start);
 
-        // Compute current level on internal scale
-        const level =
-          progress * (this.fade.volume.end - this.fade.volume.start) +
-          this.fade.volume.start;
-
-        // Map fade level to volume level and apply it to media element
-        this.media.volume = this.scale.internalToVolume(level);
+        // Map fade progress to volume level and apply it to media element
+        this.media.volume = this.fadeVolume(
+          progress,
+          this.fade.volume.start,
+          this.fade.volume.end,
+        );
 
         // Schedule next update
         window.requestAnimationFrame(this.boundUpdateVolume);
