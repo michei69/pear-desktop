@@ -461,6 +461,7 @@
             "fade-in-duration": "Fade in duration (ms)",
             "fade-out-duration": "Fade out duration (ms)",
             "fade-scaling": {
+              "equal-power": "Equal Power",
               "label": "Fade scaling",
               "linear": "Linear",
               "logarithmic": "Logarithmic"
