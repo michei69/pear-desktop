@@ -126,7 +126,20 @@
             },
             "label": "Language",
             "submenu": {
-              "to-help-translate": "Want to help translate? Click here"
+              "to-help-translate": "Want to help translate? Click here",
+              "sync": {
+                "label": "Sync language",
+                "submenu": {
+                  "from-youtube": "From YouTube",
+                  "to-youtube": "To YouTube"
+                },
+                "failure": {
+                  "dialog": {
+                    "title": "Language Not Changed",
+                    "message": "Language or locale does not exist in app yet."
+                  }
+                }
+              }
             }
           },
           "resume-on-start": "Resume last song when app starts",
