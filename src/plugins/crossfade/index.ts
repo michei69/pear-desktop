@@ -1,9 +1,12 @@
 import prompt from 'custom-electron-prompt';
 import { Howl } from 'howler';
-import { Innertube } from '\u0079\u006f\u0075\u0074\u0075\u0062\u0065i.js';
 
 import { t } from '@/i18n';
-import { getNetFetchAsFetch } from '@/plugins/utils/main';
+import {
+  getAudioBytes,
+  getInnertubeSession,
+  type AudioBytes,
+} from '@/plugins/utils/main';
 import promptOptions from '@/providers/prompt-options';
 import { createPlugin } from '@/utils';
 
@@ -171,15 +174,10 @@ export default createPlugin<
     ];
   },
 
-  async backend({ ipc }) {
-    const yt = await Innertube.create({
-      fetch: getNetFetchAsFetch(),
-    });
+  async backend({ window, ipc }) {
+    const yt = await getInnertubeSession(window);
 
-    ipc.handle('audio-url', async (videoID: string) => {
-      const info = await yt.getBasicInfo(videoID);
-      return info.streaming_data?.formats[0].decipher(yt.session.player);
-    });
+    ipc.handle('audio-bytes', (videoID: string) => getAudioBytes(yt, videoID));
   },
 
   renderer: {
@@ -226,12 +224,54 @@ export default createPlugin<
         fadeInVideo = null;
         fadeInOnPlay = null;
 
-        fadingAudio?.unload();
-        fadingAudio = null;
+        if (fadingAudio) {
+          releaseAudio(fadingAudio);
+          fadingAudio = null;
+        }
       };
 
-      const getStreamURL = async (videoID: string): Promise<string> =>
-        this.ipc?.invoke('audio-url', videoID) as Promise<string>;
+      // A track's audio, fetched by the backend as a Blob the media element can
+      // actually decode. YouTube's own stream URLs are UMP-wrapped and the CDN
+      // stops serving them to a page after the first one, so the bytes have to
+      // come from the backend (the same path the downloader uses).
+      /** Object URL backing each Howl, revoked when the Howl is unloaded. */
+      const audioURLs = new WeakMap<Howl, string>();
+
+      const createAudio = (
+        bytes: Uint8Array<ArrayBuffer>,
+        mimeType: string,
+      ) => {
+        const url = URL.createObjectURL(new Blob([bytes], { type: mimeType }));
+        const audio = new Howl({
+          src: url,
+          html5: true,
+          volume: 0,
+          format: /webm/i.test(mimeType) ? 'webm' : 'mp4',
+          onloaderror: (_id, error) =>
+            console.error('[crossfade] stream failed to load', error),
+        });
+
+        audioURLs.set(audio, url);
+        return audio;
+      };
+
+      /** Stops a track once nothing will play it again. */
+      const releaseAudio = (audio: Howl) => {
+        audio.unload();
+        const url = audioURLs.get(audio);
+        if (url) {
+          URL.revokeObjectURL(url);
+          audioURLs.delete(audio);
+        }
+      };
+
+      const getAudio = async (videoID: string) => {
+        const bytes = (await this.ipc?.invoke('audio-bytes', videoID)) as
+          | AudioBytes
+          | undefined;
+
+        return bytes?.bytes?.length ? bytes : undefined;
+      };
 
       const getVideoIDFromURL = (url: string) =>
         new URLSearchParams(url.split('?')?.at(-1)).get('v');
@@ -240,6 +280,7 @@ export default createPlugin<
         const video = document.querySelector('video');
         if (!video) return;
 
+        console.warn('bafjbia', syncedAudio?.state());
         if (
           video.currentTime >=
             video.duration - (this.config?.secondsBeforeEnd ?? 10) &&
@@ -305,7 +346,7 @@ export default createPlugin<
               });
 
               fadeOutFader.fadeOut(() => {
-                outgoing.unload();
+                releaseAudio(outgoing);
                 if (fadingAudio === outgoing) {
                   fadingAudio = null;
                 }
@@ -331,49 +372,46 @@ export default createPlugin<
                 video.addEventListener('play', onPlay);
               }
             } else {
-              syncedAudio.unload();
+              releaseAudio(syncedAudio);
               syncedAudio = null;
             }
           }
 
-          getStreamURL(nextVideoID).then((url) => {
-            // A newer navigation started while this stream URL was resolving,
-            // so this audio no longer belongs to the track being played.
-            if (!url || generation !== navigationGeneration) return;
+          getAudio(nextVideoID).then((bytes) => {
+            console.log('meow', bytes?.bytes.length);
+            // A newer navigation started while this audio was downloading, so it
+            // no longer belongs to the track being played.
+            if (!bytes || generation !== navigationGeneration) return;
 
-            const audio = new Howl({
-              src: url,
-              html5: true,
-              volume: 0,
-            });
+            // Without a video to sync against there is nothing to crossfade.
+            if (!video) return;
 
+            const audio = createAudio(bytes.bytes, bytes.mimeType);
             syncedAudio = audio;
 
-            if (video) {
-              const onSeeking = () => audio.seek(video.currentTime);
-              const onPause = () => audio.pause();
-              const onPlay = () => {
-                audio.play();
-                audio.seek(video.currentTime);
-              };
+            const onSeeking = () => audio.seek(video.currentTime);
+            const onPause = () => audio.pause();
+            const onPlay = () => {
+              audio.play();
+              audio.seek(video.currentTime);
+            };
 
-              video.addEventListener('seeking', onSeeking);
-              video.addEventListener('pause', onPause);
-              video.addEventListener('play', onPlay);
-              video.addEventListener('timeupdate', transitionBeforeEnd);
+            video.addEventListener('seeking', onSeeking);
+            video.addEventListener('pause', onPause);
+            video.addEventListener('play', onPlay);
+            video.addEventListener('timeupdate', transitionBeforeEnd);
 
-              cleanupListeners = () => {
-                video.removeEventListener('seeking', onSeeking);
-                video.removeEventListener('pause', onPause);
-                video.removeEventListener('play', onPlay);
-                video.removeEventListener('timeupdate', transitionBeforeEnd);
-                cancelTransition();
-              };
+            cleanupListeners = () => {
+              video.removeEventListener('seeking', onSeeking);
+              video.removeEventListener('pause', onPause);
+              video.removeEventListener('play', onPlay);
+              video.removeEventListener('timeupdate', transitionBeforeEnd);
+              cancelTransition();
+            };
 
-              if (!video.paused) {
-                audio.play();
-                audio.seek(video.currentTime);
-              }
+            if (!video.paused) {
+              audio.play();
+              audio.seek(video.currentTime);
             }
           });
         }
