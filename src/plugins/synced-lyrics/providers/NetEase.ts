@@ -1,8 +1,9 @@
 // Code adapted from https://greasyfork.org/en/scripts/548724-youtube-music-spotify-%E7%BD%91%E6%98%93%E4%BA%91%E6%AD%8C%E8%AF%8D%E6%98%BE%E7%A4%BA
 // which is licenced under the MIT licence
+// The search ranking follows the script's 0.281 release.
 
 import CryptoJS from 'crypto-js';
-import { jaroWinkler } from '@skyra/jaro-winkler';
+import Kuroshiro from 'kuroshiro';
 import { z } from 'zod';
 
 import { LRC } from '../parsers/lrc';
@@ -24,6 +25,31 @@ const EAPI_BASE_COOKIES = {
   osver: '15.6.1',
 };
 
+/** NetEase tracks further than this from the playing song are skipped. */
+const MAX_DURATION_DELTA_SECONDS = 15;
+
+/**
+ * Lowest score a search result may have to be considered the same song.
+ * Matching the whole title is worth 10 points and a perfect artist adds 1, so
+ * 4.5 admits re-recordings and translated titles while dropping unrelated
+ * results, which score below 3.
+ */
+const MIN_MATCH_SCORE = 4.5;
+
+/** How many candidates, best first, are probed for lyrics before giving up. */
+const MAX_CANDIDATE_PROBES = 5;
+
+/** Weight of the title relative to the artist in the candidate score. */
+const SCORE_TITLE_WEIGHT = 10;
+
+/**
+ * `kuroshiro` ships as CommonJS with an `__esModule` marker, so the default
+ * import is either the class itself (bundlers) or a wrapper around it (plain
+ * Node ESM, as used by the tests).
+ */
+const { Util } =
+  (Kuroshiro as unknown as { default?: typeof Kuroshiro }).default ?? Kuroshiro;
+
 const artistSchema = z.object({ id: z.number(), name: z.string() });
 const songSchema = z.object({
   resourceId: z.coerce.number(),
@@ -36,14 +62,16 @@ const songSchema = z.object({
   }),
 });
 const searchResponseDataSchema = z.object({
-  resources: z.array(songSchema).default([]),
+  // NetEase answers with `resources: null` when a keyword has no match.
+  resources: z.array(songSchema).nullish(),
 });
 const searchResponseSchema = z.object({
   code: z.number(),
   message: z.string(),
-  data: searchResponseDataSchema,
+  data: searchResponseDataSchema.nullish(),
 });
 type Song = z.infer<typeof songSchema>;
+type SongInfo = Song['baseInfo']['simpleSongData'];
 
 const lyricPartSchema = z.object({ lyric: z.string().nullable() });
 const lyricResponseSchema = z.object({
@@ -51,6 +79,194 @@ const lyricResponseSchema = z.object({
   tlyric: lyricPartSchema.optional(),
   romalrc: lyricPartSchema.optional(),
 });
+
+/** Characters that can be romanized; NFKC folds half-width kana into them. */
+const KANA_PATTERN = /[\u3040-\u30ff\u31f0-\u31ff]/;
+
+const normalizeText = (value: string) => value.normalize('NFKC');
+
+/**
+ * Folds a title or an artist into a form that can be compared across scripts:
+ * full-width characters are normalized, kana are romanized so that a Japanese
+ * title matches its romaji spelling, long vowels lose their macron (romaji is
+ * usually written without one) and the result is lowercased.
+ */
+export const comparableText = (value: string) => {
+  const normalized = normalizeText(value);
+  const romanized = KANA_PATTERN.test(normalized)
+    ? Util.kanaToRomaji(normalized, 'hepburn')
+    : normalized;
+
+  return romanized
+    .normalize('NFD')
+    .replace(/\p{M}+/gu, '')
+    .normalize('NFC')
+    .toLowerCase();
+};
+
+const levenshtein = (a: string, b: string) => {
+  const aLength = a.length;
+  const bLength = b.length;
+  if (aLength === 0) return bLength;
+  if (bLength === 0) return aLength;
+
+  const matrix = Array.from({ length: bLength + 1 }, () =>
+    Array.from({ length: aLength + 1 }, () => 0),
+  );
+
+  for (let i = 0; i <= aLength; i += 1) {
+    matrix[0][i] = i;
+  }
+  for (let j = 0; j <= bLength; j += 1) {
+    matrix[j][0] = j;
+  }
+
+  for (let j = 1; j <= bLength; j += 1) {
+    for (let i = 1; i <= aLength; i += 1) {
+      const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+      matrix[j][i] = Math.min(
+        matrix[j][i - 1] + 1,
+        matrix[j - 1][i] + 1,
+        matrix[j - 1][i - 1] + cost,
+      );
+    }
+  }
+
+  return matrix[bLength][aLength];
+};
+
+/** Levenshtein similarity in [0, 1], where 1 means the strings are equal. */
+export const normalizedLevenshtein = (a: string, b: string) => {
+  const longest = Math.max(a.length, b.length);
+  return longest === 0 ? 0 : 1 - levenshtein(a, b) / longest;
+};
+
+/**
+ * Similarity of two titles in [0, 1] where a title that starts with, or
+ * contains, the other one is weighted up: a song that only adds a version
+ * suffix should rank above an unrelated song sharing a few characters.
+ */
+export const bonusCompare = (fullTitle: string, searchTitle: string) => {
+  const [full, search] = [
+    comparableText(fullTitle),
+    comparableText(searchTitle),
+  ];
+
+  const weight = full.startsWith(search)
+    ? 1 // Bonus for prefix match
+    : full.includes(search)
+      ? 0.75 // Bonus for substring match
+      : 0.5;
+
+  return weight * normalizedLevenshtein(full, search);
+};
+
+/** Splits a title into its meaningful parts, dropping version/bracket noise. */
+export const splitTitle = (title: string): string[] => {
+  const masterPattern =
+    /(?:[「『](?<content>.+?)[」』])|(?:【.*?】|〖.*?〗|\(.*?\)|（.*?）)|(?<delimiter>\s+-\s+|\s*[/／|:|│]\s*)/i;
+  const noiseWords = /\b(MV|PV)\b|\b(?:covered by|feat?|ft?)\b.+/gi;
+
+  const parse = (str: string): string[] => {
+    if (!str?.trim()) return [];
+
+    const match = str.match(masterPattern);
+    if (!match || match.index === undefined) return [str];
+
+    const before = str.substring(0, match.index);
+    const after = str.substring(match.index + match[0].length);
+    const { delimiter, content } = match.groups || {};
+
+    if (delimiter && (before.trim().length < 2 || after.trim().length < 2)) {
+      const remaining = parse(after);
+      return [before + match[0] + (remaining[0] || ''), ...remaining.slice(1)];
+    }
+
+    return [...parse(before), ...(content ? [content] : []), ...parse(after)];
+  };
+
+  return [
+    ...new Set(
+      parse(title)
+        .map((part) => part.replace(noiseWords, '').trim())
+        .filter((part) => part.length > 0),
+    ),
+  ];
+};
+
+type MatchQuery = {
+  title: string;
+  artist: string;
+  parts: string[];
+};
+
+type MatchCandidate = {
+  title: string;
+  artists: string[];
+};
+
+/**
+ * Scores a search result the way the userscript does: the title similarity is
+ * worth ten times the artist similarity, so a cover by another artist still
+ * beats an unrelated song by the same artist.
+ */
+export const scoreCandidate = (
+  candidate: MatchCandidate,
+  query: MatchQuery,
+): number => {
+  // Version suffixes are dropped so a re-recording still matches its title.
+  const cleanedTitle = splitTitle(candidate.title).join('');
+
+  let partsScore = 0;
+  query.parts.forEach((part, index) => {
+    const weight = 1 / (index * 2 + 1); // Earlier parts have higher weight
+    partsScore +=
+      (bonusCompare(cleanedTitle, part) * weight) / query.parts.length;
+  });
+
+  const titleScore = Math.max(
+    bonusCompare(candidate.title, query.title) + 0.01,
+    partsScore,
+  );
+  const artistScore =
+    candidate.artists.length > 0
+      ? Math.max(
+          ...candidate.artists.map((artist) =>
+            bonusCompare(artist, query.artist),
+          ),
+        )
+      : 0;
+
+  return titleScore * SCORE_TITLE_WEIGHT + artistScore;
+};
+
+type RankedSong = {
+  song: Song;
+  info: SongInfo;
+  score: number;
+};
+
+/** Deduplicates search results and sorts them best match first. */
+const rankSongs = (songs: Song[], query: MatchQuery): RankedSong[] => {
+  const seenIds = new Set<number>();
+
+  return songs
+    .filter((song) => {
+      if (!song.resourceId || seenIds.has(song.resourceId)) return false;
+      seenIds.add(song.resourceId);
+      return true;
+    })
+    .map((song) => {
+      const info = song.baseInfo.simpleSongData;
+      const title = normalizeText(info.name);
+      const artists = (info.ar ?? []).map((artist) =>
+        normalizeText(artist.name),
+      );
+
+      return { song, info, score: scoreCandidate({ title, artists }, query) };
+    })
+    .sort((a, b) => b.score - a.score);
+};
 
 export class Netease implements LyricProvider {
   name = 'Netease';
@@ -87,7 +303,10 @@ export class Netease implements LyricProvider {
       await this.eapi('/register/anonimous', { username }, { _nmclfl: '1' });
       this.initialized = true;
     } catch (e) {
-      throw new Error(`Registration failed: ${e}`);
+      throw new Error(
+        `Registration failed: ${e instanceof Error ? e.message : String(e)}`,
+        { cause: e },
+      );
     }
   }
 
@@ -166,7 +385,7 @@ export class Netease implements LyricProvider {
       },
     );
     const parsed = searchResponseSchema.parse(response);
-    return parsed.data?.resources || [];
+    return parsed.data?.resources ?? [];
   }
 
   private async getLyric(id: number) {
@@ -187,40 +406,6 @@ export class Netease implements LyricProvider {
     return lyricResponseSchema.parse(response);
   }
 
-  private splitTitle(title: string): string[] {
-    const masterPattern =
-      /(?:[「『](?<content>.+?)[」』])|(?:【.*?】|〖.*?〗|\(.*?\)|（.*?）)|(?<delimiter>\s+-\s+|\s*[/／|:|│]\s*)/i;
-    const noiseWords = /\b(MV|PV)\b|\b(?:covered by|feat?|ft?)\b.+/gi;
-
-    const parse = (str: string): string[] => {
-      if (!str?.trim()) return [];
-
-      const match = str.match(masterPattern);
-      if (!match || match.index === undefined) return [str];
-
-      const before = str.substring(0, match.index);
-      const after = str.substring(match.index + match[0].length);
-      const { delimiter, content } = match.groups || {};
-
-      if (delimiter && (before.trim().length < 2 || after.trim().length < 2)) {
-        const remaining = parse(after);
-        return [
-          before + match[0] + (remaining[0] || ''),
-          ...remaining.slice(1),
-        ];
-      }
-
-      return [...parse(before), ...(content ? [content] : []), ...parse(after)];
-    };
-    return [
-      ...new Set(
-        parse(title)
-          .map((p) => p.replace(noiseWords, '').trim())
-          .filter((p) => p.length > 0),
-      ),
-    ];
-  }
-
   async search({
     title,
     artist,
@@ -230,98 +415,59 @@ export class Netease implements LyricProvider {
       await this.register();
     }
 
-    const parts = this.splitTitle(title);
-    if (parts.length === 0) {
-      parts.push(title);
+    const query: MatchQuery = {
+      title: normalizeText(title),
+      artist: normalizeText(artist),
+      parts: [],
+    };
+    query.parts = splitTitle(query.title);
+    if (query.parts.length === 0) {
+      query.parts.push(query.title);
     }
 
-    const keywords = [...parts];
-    if (parts[0] !== artist) keywords.push(`${parts[0]} ${artist}`);
+    const keywords = [...query.parts];
+    if (query.artist && query.parts[0] !== query.artist) {
+      keywords.push(`${query.parts[0]} ${query.artist}`);
+    }
 
     const results = await Promise.all(
-      keywords.map((kw) => this.searchSongs(kw, 10)),
+      keywords.map((keyword) => this.searchSongs(keyword)),
+    );
+    const ranked = rankSongs(results.flat(), query);
+
+    console.debug(
+      '[synced-lyrics] NetEase matches',
+      ranked
+        .slice(0, MAX_CANDIDATE_PROBES)
+        .map(({ info, score }) => `${score.toFixed(2)} ${info.name}`),
     );
 
-    const calcTitleScore = (searchTitle: string) => {
-      let avgScore = 0;
-      parts.forEach((part, idx) => {
-        let weight = 1 / (idx * 2 + 1); // Earlier parts have higher weight
-        if (searchTitle.startsWith(part)) weight *= 2;
-        // Bonus for prefix match
-        else if (searchTitle.includes(part)) weight *= 1.5; // Bonus for substring match
-        avgScore += (jaroWinkler(part, searchTitle) * weight) / parts.length;
-      });
-      const score = Math.max(jaroWinkler(title, searchTitle), avgScore);
-      return score;
-    };
+    for (const { song, info, score } of ranked.slice(0, MAX_CANDIDATE_PROBES)) {
+      // Candidates are sorted, so everything from here on is worse.
+      if (score < MIN_MATCH_SCORE) break;
 
-    const artists = artist.split(/[&,]/g).map((i) => i.trim());
-    const filteredResults = [];
-    for (const result of results.flat()) {
-      const {
-        baseInfo: {
-          simpleSongData: { name, ar: itemArtists },
-        },
-      } = result;
-
-      const permutations = [];
-      for (const artistA of artists) {
-        for (const artistB of itemArtists ?? []) {
-          permutations.push([
-            artistA.toLowerCase(),
-            artistB.name.toLowerCase(),
-          ]);
-        }
+      if (
+        Math.abs(info.dt / 1000 - songDuration) > MAX_DURATION_DELTA_SECONDS
+      ) {
+        continue;
       }
 
-      for (const artistA of itemArtists ?? []) {
-        for (const artistB of artists) {
-          permutations.push([
-            artistA.name.toLowerCase(),
-            artistB.toLowerCase(),
-          ]);
-        }
-      }
+      const lyric = await this.getLyric(song.resourceId);
+      const lyrics = lyric?.lrc?.lyric ? stripMetadata(lyric.lrc.lyric) : '';
+      if (!lyrics.trim()) continue;
 
-      const ratio =
-        calcTitleScore(name) +
-        Math.max(...permutations.map(([x, y]) => jaroWinkler(x, y)));
-
-      if (ratio < 1.8) continue;
-      filteredResults.push(result);
+      return {
+        title: normalizeText(info.name),
+        artists: (info.ar ?? []).map((item) => normalizeText(item.name)),
+        lines: LRC.parse(lyrics).lines.map((line) => ({
+          ...line,
+          status: 'upcoming' as const,
+        })),
+        lyrics,
+      };
     }
 
-    const closestResult = filteredResults[0];
-    if (!closestResult) {
-      return null;
-    }
-
-    if (
-      Math.abs(closestResult.baseInfo.simpleSongData.dt / 1000 - songDuration) >
-      15
-    ) {
-      return null;
-    }
-
-    const lyric = await this.getLyric(closestResult.resourceId);
-    if (!lyric || !lyric.lrc?.lyric) return null;
-
-    const lyrics = stripMetadata(lyric.lrc.lyric);
-
-    const lines = LRC.parse(lyrics).lines.map((l) => ({
-      ...l,
-      status: 'upcoming' as const,
-    }));
-
-    if (lines.length === 0 && !lyrics.trim()) return null;
-
-    return {
-      title: closestResult.baseInfo.simpleSongData.name,
-      artists:
-        closestResult.baseInfo.simpleSongData.ar?.map((a) => a.name) ?? [],
-      lines,
-      lyrics: lyrics,
-    };
+    return null;
   }
 }
 
