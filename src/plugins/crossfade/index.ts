@@ -251,7 +251,9 @@ export default createPlugin<
   async backend({ window, ipc }) {
     const yt = await getInnertubeSession(window);
 
-    ipc.handle('audio-bytes', (videoID: string) => getAudioBytes(yt, videoID, window));
+    ipc.handle('audio-bytes', (videoID: string) =>
+      getAudioBytes(yt, videoID, window),
+    );
   },
 
   renderer: {
@@ -566,14 +568,16 @@ export default createPlugin<
           const bytes = (await this.ipc?.invoke('audio-bytes', videoID)) as
             | AudioBytes
             | undefined;
-  
+
           return bytes?.bytes?.length ? bytes : undefined;
         } catch {
-          console.warn(`[crossfade] failed fetching ${videoID}, attempt ${attempt}/5`);
+          console.warn(
+            `[crossfade] failed fetching ${videoID}, attempt ${attempt}/5`,
+          );
           attempt++;
           if (attempt > 5) return undefined;
           await new Promise((resolve) => setTimeout(resolve, 500));
-          return await getAudio(videoID, attempt+1);
+          return await getAudio(videoID, attempt + 1);
         }
       };
 
