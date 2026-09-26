@@ -100,9 +100,11 @@ Please install manually via the provided Web Setup. Alternatively, you can use t
 
 ## Themes
 
-You can load CSS files to change the look of the application (Options > Visual Tweaks > Themes).
+Do you have a CSS theme file already? You can load it from **Options ▸ Visual Tweaks ▸ Theme ▸ Import custom CSS file**.
 
-Some predefined themes are available in https://github.com/kerichdev/themes-for-ytmdesktop-player.
+Are you looking for community-made themes for our app? Check out https://github.com/michei69/pear-desktop-themes
+
+Want to get started with building themes? [Click here for the documentation](./src/themes/README.md)
 
 ## Dev
 
