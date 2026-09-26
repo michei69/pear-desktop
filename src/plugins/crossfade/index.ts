@@ -52,6 +52,20 @@ const FOLLOW_EVENTS = [
   'timeupdate',
 ] as const;
 
+/**
+ * Source node each media element is bound to.
+ *
+ * An element can only ever be handed to one, and reconnecting it throws
+ * `InvalidStateError` — which is what happens to a recycled one: Howler keeps
+ * its elements in a pool, so a track released before the next is built hands
+ * its element over, already connected, to the new Howl. Feeding it through the
+ * node it already has is the only way to route it.
+ */
+const mediaSources = new WeakMap<
+  HTMLMediaElement,
+  MediaElementAudioSourceNode
+>();
+
 export type CrossfadePluginConfig = {
   enabled: boolean;
   fadeInDuration: number;
@@ -435,10 +449,19 @@ export default createPlugin<
       const routeAudio = (audio: Howl, context: AudioContext) => {
         if (audioGains.has(audio)) return;
 
+        const element = elementOf(audio);
+        let source = mediaSources.get(element);
+
+        // A recycled element is reused as it is bound, not reconnected.
+        if (!source) {
+          source = context.createMediaElementSource(element);
+          mediaSources.set(element, source);
+        }
+
         const gain = context.createGain();
         gain.gain.value = 0;
         gain.connect(context.destination);
-        context.createMediaElementSource(elementOf(audio)).connect(gain);
+        source.connect(gain);
 
         audioGains.set(audio, gain);
       };
