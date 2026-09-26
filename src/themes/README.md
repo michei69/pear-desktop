@@ -82,14 +82,14 @@ class on `body`. See [Scripts](#scripts).
 }
 ```
 
-| field         | notes                                    |
-| ------------- | ---------------------------------------- |
-| `name`        | defaults to the folder name              |
-| `description` | shown as the menu item tooltip           |
-| `author`      | metadata only                            |
-| `palette`     | see [Variables](#variables)              |
-| `css`         | one or more css files applied in order   |
-| `js`          | a single path, see [Scripts](#scripts)   |
+| field         | notes                                  |
+| ------------- | -------------------------------------- |
+| `name`        | defaults to the folder name            |
+| `description` | shown as the menu item tooltip         |
+| `author`      | metadata only                          |
+| `palette`     | see [Variables](#variables)            |
+| `css`         | one or more css files applied in order |
+| `js`          | a single path, see [Scripts](#scripts) |
 
 All paths are relative to the theme folder. A theme missing a `css`/`js` file
 it names still loads; that file is just skipped with a warning. A folder with an
@@ -118,12 +118,12 @@ body ytmusic-player-bar {
 
 The default variables are the following:
 
-| key          | role in the recolour                   |
-| ------------ | -------------------------------------- |
-| `accent`     | seekbar progress, slider knobs         |
-| `background` | page and app backgrounds               |
-| `surface`    | cards, menus, dialogs, raised surfaces |
-| `text`       | primary and secondary text             |
+| key          | role in the recolour                                        |
+| ------------ | ----------------------------------------------------------- |
+| `accent`     | progress bars, slider knobs, toggles, icons, call to action |
+| `background` | page and app backgrounds                                    |
+| `surface`    | cards, menus, dialogs, raised surfaces                      |
+| `text`       | primary and secondary text, player bar labels               |
 
 Those four are conventions the base stylesheet reads; **any other key** is just
 emitted as a variable for your own CSS, and gets its own entry under **Colors**.
@@ -154,6 +154,7 @@ in your CSS:
 --ytmusic-color-black2
 --yt-spec-raised-background
 --yt-spec-menu-background
+--yt-sys-color-baseline--menu-background
 --yt-spec-general-background-a
 --dark-theme-background-color
 --yt-spec-filled-button-text
@@ -165,16 +166,39 @@ in your CSS:
 --yt-spec-text-primary
 --yt-spec-text-secondary
 --ytmusic-text-primary
+--yt-sys-color-baseline--text-primary
+--ytmusic-overlay-text-secondary
+--ytmusic-icon-inactive
 
 /* accent */
+--paper-progress-active-color
 --paper-progress-active-color-1
 --paper-progress-active-color-2
 --paper-slider-knob-color
 --paper-slider-knob-start-color
+--paper-toggle-button-checked-bar-color
+--primary-color
+--icon-color
+--yt-sys-color-baseline--call-to-action
 ```
 
-The base stylesheet also sets `background` on `:root` and `color` on
-`ytmusic-app-layout`.
+It also sets `background` on `:root`, `background-color` on `ytmusic-dialog`,
+`color` on `ytmusic-app-layout`, `.title.ytmusic-player-bar` and
+`.time-info.ytmusic-player-bar`, and `color` on
+`.summary.ytmusic-setting-boolean-renderer`.
+
+Where YouTube Music wants a shade the palette does not have, the base
+stylesheet derives one for you — both are readable from your own CSS as well:
+
+| variable                    | value               |
+| --------------------------- | ------------------- |
+| `--pear-theme-accent-light` | `accent`, lightened |
+| `--pear-theme-text-dim`     | `text`, darkened    |
+
+`--ytmusic-overlay-text-secondary` is `text` at 70% opacity,
+`--paper-toggle-button-checked-bar-color` uses the lightened accent, and
+`--ytmusic-icon-inactive` the darkened text. Either derived name can be set in
+your `palette` to override the derived value.
 
 ### A palette opts you into the recolour
 

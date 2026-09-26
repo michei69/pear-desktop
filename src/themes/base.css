@@ -13,6 +13,13 @@
   --pear-theme-background: #030303;
   --pear-theme-surface: #1f1f1f;
   --pear-theme-text: #ffffff;
+  /* Derived from the palette, so a theme only has to define the four roles. */
+  --pear-theme-accent-light: color-mix(
+    in srgb,
+    var(--pear-theme-accent) 65%,
+    white
+  );
+  --pear-theme-text-dim: color-mix(in srgb, var(--pear-theme-text) 70%, black);
 }
 
 /* Base colors */
@@ -26,6 +33,9 @@
   --yt-spec-base-background: var(--pear-theme-background) !important;
   --yt-spec-raised-background: var(--pear-theme-surface) !important;
   --yt-spec-menu-background: var(--pear-theme-surface) !important;
+  --yt-sys-color-baseline--menu-background: var(
+    --pear-theme-surface
+  ) !important;
   --yt-spec-general-background-a: var(--pear-theme-surface) !important;
   --yt-spec-general-background-b: var(--pear-theme-background) !important;
   --yt-spec-general-background-c: var(--pear-theme-background) !important;
@@ -44,18 +54,48 @@
   --ytmusic-background: var(--pear-theme-background) !important;
 }
 
+ytmusic-dialog {
+  background-color: var(--pear-theme-surface) !important;
+}
+
 /* Text color */
 :root {
   --yt-spec-text-primary: var(--pear-theme-text) !important;
   --yt-spec-text-secondary: var(--pear-theme-text) !important;
   --ytmusic-text-primary: var(--pear-theme-text) !important;
+  --yt-sys-color-baseline--text-primary: var(--pear-theme-text) !important;
+  --ytmusic-icon-inactive: var(--pear-theme-text-dim) !important;
+  --ytmusic-overlay-text-secondary: color-mix(
+    in srgb,
+    var(--pear-theme-text) 70%,
+    transparent
+  ) !important;
 }
 
 ytmusic-app-layout {
   color: var(--pear-theme-text) !important;
 }
 
+.time-info.ytmusic-player-bar,
+.summary.ytmusic-setting-boolean-renderer {
+  color: var(--pear-theme-text-dim) !important;
+}
+
+.title.ytmusic-player-bar {
+  color: var(--pear-theme-text) !important;
+}
+
 /* Accent color */
+:root {
+  --paper-progress-active-color: var(--pear-theme-accent) !important;
+  --yt-sys-color-baseline--call-to-action: var(--pear-theme-accent) !important;
+  --icon-color: var(--pear-theme-accent) !important;
+  --paper-toggle-button-checked-bar-color: var(
+    --pear-theme-accent-light
+  ) !important;
+  --primary-color: var(--pear-theme-accent) !important;
+}
+
 .seekbar-theme #progress-bar.ytmusic-player-bar,
 #progress-bar.ytmusic-player-bar {
   --paper-progress-active-color-1: var(--pear-theme-accent) !important;
