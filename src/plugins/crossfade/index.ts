@@ -10,18 +10,16 @@ import {
 import promptOptions from '@/providers/prompt-options';
 import { createPlugin } from '@/utils';
 
-import { fadeVolumeAt } from './fader';
+import { fadeVolumeAt, VolumeFader } from './fader';
 
 import type { RendererContext } from '@/types/contexts';
 import type { BrowserWindow } from 'electron';
 
 /**
  * How close the synced audio has to sit on the video's clock before it is left
- * alone, in seconds. What it is off by is what the handover cross has to cover,
- * so it is kept well under what a cross can hide; nudging the rate to get there
- * costs nothing, the audio being silent until a crossfade hands it the track.
+ * alone, in seconds: below this a splice is not heard.
  */
-const ALIGNED_WITHIN = 0.0005;
+const ALIGNED_WITHIN = 0.002;
 
 /** Seconds a drift is closed over, once the audio runs at its own rate. */
 const ALIGN_WINDOW = 0.5;
@@ -34,13 +32,11 @@ const ALIGN_INTERVAL = 50;
 
 /**
  * Milliseconds the outgoing track takes to move from the video's audio to its
- * own. Both copies are at the same level and within a millisecond or so of each
- * other, so the cross only has to keep the switch from being a step in the
- * waveform: the time it takes is also the time both copies are heard at once,
- * and two copies of one track a millisecond apart are heard as a comb, so it is
- * kept as short as a step can be crossed over in.
+ * own. Long enough that the two levels cross without a step in the waveform,
+ * short enough that the two copies of the track are only both heard for a
+ * moment.
  */
-const HANDOVER_MS = 20;
+const HANDOVER_MS = 100;
 
 /**
  * Video events that can change whether the synced audio should be running.
@@ -178,7 +174,7 @@ export default createPlugin<
         return undefined;
       }
 
-      // A number in dB, and one the scaler accepts: a zero, negative or
+      // A number in dB, and one the fader's scaler accepts: a zero, negative or
       // non-finite dynamic range is not a fade, so the previous setting is kept.
       const decibels = Math.abs(Number(res[3]));
       let fadeScaling: 'linear' | 'logarithmic' | 'equalPower' | number;
@@ -282,12 +278,8 @@ export default createPlugin<
        * volume while a track starts, which would flatten a fade on it.
        */
       let fadeInGain: GainNode | null = null;
-      /**
-       * Releases the outgoing track of the last crossfade, dropping its fade.
-       * The fade itself runs on a gain node, so it is a curve with no
-       * completion event to hang the release off.
-       */
-      let finishFadeOut: (() => void) | null = null;
+      /** Fader fading the outgoing track out. */
+      let fadeOutFader: VolumeFader | null = null;
       /** Removes the listeners of the track currently synced. */
       let cleanupListeners: (() => void) | null = null;
       /** Takes the splice of `fadeInGain` back out, as the graph was found. */
@@ -316,32 +308,14 @@ export default createPlugin<
         element.seeking ||
         element.readyState < HTMLMediaElement.HAVE_FUTURE_DATA;
 
-      /**
-       * Samples a level curve for the audio thread: a curve keeps a fade
-       * sample-accurate, with no frame loop for the audio thread to follow and
-       * no element volume in between for the player — or another plugin — to
-       * reshape or delay.
-       */
-      const curveFor = (volumeAt: (progress: number) => number) => {
-        const points = 64;
-        const curve = new Float32Array(points + 1);
-
-        for (let point = 0; point <= points; point += 1) {
-          curve[point] = volumeAt(point / points);
-        }
-
-        return curve;
-      };
-
       /** Ramps the incoming track from silence with the graph's gain node. */
       const fadeInTrack = () => {
         if (!fadeInGain) return;
 
         const { context, gain } = fadeInGain;
         const duration = (this.config?.fadeInDuration ?? 5000) / 1000;
-        // Not while the handover is still running: the video's audio is on its
-        // way out there, and the track is the copy's until the fade out takes
-        // it down.
+        // Not before the outgoing track has finished moving over into its own
+        // audio: the ramp down of the video's audio is part of that handover.
         const start = Math.max(context.currentTime, handoverUntil);
 
         gain.cancelScheduledValues(start);
@@ -351,13 +325,15 @@ export default createPlugin<
           return;
         }
 
-        gain.setValueCurveAtTime(
-          curveFor((progress) =>
-            fadeVolumeAt(progress, this.config?.fadeScaling),
-          ),
-          start,
-          duration,
-        );
+        // A curve keeps the fade sample-accurate, with no animation frame loop
+        // for the audio thread to follow.
+        const points = 64;
+        const curve = new Float32Array(points + 1);
+        for (let point = 0; point <= points; point += 1) {
+          curve[point] = fadeVolumeAt(point / points, this.config?.fadeScaling);
+        }
+
+        gain.setValueCurveAtTime(curve, start, duration);
       };
 
       /**
@@ -403,7 +379,7 @@ export default createPlugin<
         };
       };
 
-      // Drop an in-flight crossfade: its fade out keeps running on the outgoing
+      // Drop an in-flight crossfade: its fader keeps writing to the outgoing
       // audio, and its fade-in listener waits on a video that may not play the
       // track it was armed for.
       const cancelTransition = () => {
@@ -412,9 +388,9 @@ export default createPlugin<
         // one it is left alone: it may be the track about to be faded out.
         const fadeInArmed = fadeIn !== null;
 
-        // Dropping the fade out releases the track it was fading.
-        finishFadeOut?.();
-        finishFadeOut = null;
+        // Cancelling the fade out runs its callback, which releases the audio.
+        fadeOutFader?.cancelFade();
+        fadeOutFader = null;
 
         if (fadeIn) {
           fadeIn.video.removeEventListener('play', fadeIn.onPlay);
@@ -439,9 +415,6 @@ export default createPlugin<
       /** Gain node carrying each Howl's audio in the player's graph. */
       const audioGains = new WeakMap<Howl, GainNode>();
 
-      /** Gain node each Howl's fade out runs on, in series behind that one. */
-      const audioFades = new WeakMap<Howl, GainNode>();
-
       /**
        * Media element behind a Howl. Howler queues the `play` and `seek` calls
        * made while a sound is still loading, applies the position sampled back
@@ -462,41 +435,12 @@ export default createPlugin<
       const routeAudio = (audio: Howl, context: AudioContext) => {
         if (audioGains.has(audio)) return;
 
-        // Two gains in series, the same two multipliers the track had before:
-        // one the crossfade opens the track with, one the fade out runs on.
-        // They are split so each carries a single scheduled change, and so the
-        // fade out is a curve of its own that nothing else writes to.
         const gain = context.createGain();
-        const fade = context.createGain();
         gain.gain.value = 0;
-        fade.gain.value = 1;
-        gain.connect(fade);
-        fade.connect(context.destination);
+        gain.connect(context.destination);
         context.createMediaElementSource(elementOf(audio)).connect(gain);
 
         audioGains.set(audio, gain);
-        audioFades.set(audio, fade);
-      };
-
-      /**
-       * Puts the player's own level on a track's copy, which its gain node holds
-       * at silence until a crossfade hands the track over.
-       *
-       * The level has to be there well before the handover. An element's volume
-       * is applied by the media pipeline a buffer or two behind the graph, so a
-       * level first written as the cross starts reaches the cross late — the
-       * track is still silent, or at its old level, through the first part of
-       * it, which is heard as the copy joining the cross late and breaks the
-       * seam. Written here, while nothing can hear the change, it is in place
-       * the moment the gain starts to open.
-       */
-      const levelTrack = (audio: Howl) => {
-        // Only while the gain node is what keeps the track silent: an unrouted
-        // element is heard the moment it is given a level.
-        if (!audioGains.has(audio)) return;
-
-        const { volume } = document.querySelector('video') ?? {};
-        if (volume !== undefined) elementOf(audio).volume = volume;
       };
 
       // A media element cannot play YouTube's own stream URLs, so the backend
@@ -523,10 +467,7 @@ export default createPlugin<
         // when it turns up. The audio is silent until a crossfade needs it, so
         // arriving in the graph late costs nothing.
         const context = this.audioGraph?.audioContext;
-        if (context) {
-          routeAudio(audio, context);
-          levelTrack(audio);
-        }
+        if (context) routeAudio(audio, context);
 
         return audio;
       };
@@ -538,8 +479,6 @@ export default createPlugin<
         elementOf(audio).pause();
         audioGains.get(audio)?.disconnect();
         audioGains.delete(audio);
-        audioFades.get(audio)?.disconnect();
-        audioFades.delete(audio);
         audio.unload();
         const url = audioURLs.get(audio);
         if (url) {
@@ -594,78 +533,61 @@ export default createPlugin<
             const outgoing = syncedAudio;
             syncedAudio = null;
 
+            // The outgoing track fades out on its own media element, to a
+            // volume of its own: nothing else writes to it.
+            //
+            // Wall clock time, not the video's: the fade out has to run to
+            // completion even if the incoming track stalls.
+            const fader = new VolumeFader(elementOf(outgoing), {
+              initialVolume: video.volume,
+              fadeScaling: this.config?.fadeScaling,
+              fadeDuration: this.config?.fadeOutDuration,
+            });
+
+            fadeOutFader = fader;
+
+            fader.fadeOut(() => {
+              releaseAudio(outgoing);
+              if (fadeOutFader === fader) {
+                fadeOutFader = null;
+              }
+            });
+
+            // The incoming track starts from silence, and only ramps once the
+            // video plays: the player parks the element while it loads.
+            const gain = fadeInGain;
             const outgoingGain = audioGains.get(outgoing);
-            const outgoingFade = audioFades.get(outgoing);
             const context = outgoingGain?.context;
 
-            // The track's own level is not written here: it went onto the
-            // element while its gain still held it silent (`levelTrack`), the
-            // same level as the video's own — so the cross has both copies at
-            // one level and only moves which of them is open.
-            if (outgoingGain && outgoingFade && context) {
+            if (gain && outgoingGain && context) {
+              // The track moves out of the video's audio and into its own over
+              // a moment, the two playing it either side of one another: the
+              // few ms they are apart are crossed while both are heard, instead
+              // of stepping the waveform at the switch.
               const now = context.currentTime;
-              const fadeOut = (this.config?.fadeOutDuration ?? 5000) / 1000;
               const handover = HANDOVER_MS / 1000;
               handoverUntil = now + handover;
 
-              const gain = fadeInGain;
-              if (gain) {
-                gain.gain.cancelScheduledValues(now);
-                gain.gain.setValueAtTime(gain.gain.value, now);
-                gain.gain.linearRampToValueAtTime(0, now + handover);
-              }
+              gain.gain.cancelScheduledValues(now);
+              gain.gain.setValueAtTime(gain.gain.value, now);
+              gain.gain.linearRampToValueAtTime(0, now + handover);
 
               outgoingGain.gain.cancelScheduledValues(now);
               outgoingGain.gain.setValueAtTime(0, now);
               outgoingGain.gain.linearRampToValueAtTime(1, now + handover);
-
-              // The fade out runs on the track's other gain node, from this
-              // instant and for `fadeOutDuration`, exactly where the element
-              // volume used to run it — and like it, on nothing but its own
-              // clock: it plays out to the end whether or not anything else is
-              // ready. The curve is the one the fade in runs, backwards: the two
-              // stay paired whatever the scaling.
-              if (fadeOut > 0) {
-                outgoingFade.gain.setValueCurveAtTime(
-                  curveFor((progress) =>
-                    fadeVolumeAt(1 - progress, this.config?.fadeScaling),
-                  ),
-                  now,
-                  fadeOut,
-                );
-              } else {
-                outgoingFade.gain.setValueAtTime(0, now);
-              }
-
-              // A gain curve has no completion event, so the track is released
-              // by a timer of the same length, started with the fade.
-              const timer = window.setTimeout(() => {
-                finishFadeOut = null;
-                releaseAudio(outgoing);
-              }, fadeOut * 1000);
-
-              finishFadeOut = () => {
-                window.clearTimeout(timer);
-                releaseAudio(outgoing);
-              };
-
-              // The incoming track starts from silence, and only ramps once the
-              // video plays: the player parks the element while it loads.
-              const onPlay = () => {
-                video.removeEventListener('play', onPlay);
-                fadeIn = null;
-                fadeInTrack();
-              };
-
-              fadeIn = { video, onPlay };
-              video.addEventListener('play', onPlay);
-            } else if (fadeInGain) {
-              // Nothing to cross a track over with, so the video's audio goes
-              // rather than playing on beside it.
-              fadeInGain.gain.cancelScheduledValues(0);
-              fadeInGain.gain.value = 0;
-              releaseAudio(outgoing);
+            } else if (gain) {
+              gain.gain.cancelScheduledValues(0);
+              gain.gain.value = 0;
             }
+
+            const onPlay = () => {
+              video.removeEventListener('play', onPlay);
+              fadeIn = null;
+              fadeInTrack();
+            };
+
+            fadeIn = { video, onPlay };
+            video.addEventListener('play', onPlay);
           } else {
             releaseAudio(syncedAudio);
             syncedAudio = null;
@@ -765,22 +687,10 @@ export default createPlugin<
               }
             };
 
-            /**
-             * Keeps the player's own level on the track's copy, which the gain
-             * node holds silent until a crossfade hands the track over: the
-             * volume the player is on when the track starts is rarely the one
-             * it is handed over at, and a level written at the handover arrives
-             * late enough to be heard.
-             */
-            const mirrorVolume = () => {
-              if (syncedAudio) levelTrack(syncedAudio);
-            };
-
             for (const type of FOLLOW_EVENTS) {
               video.addEventListener(type, followVideo);
             }
             video.addEventListener('timeupdate', transitionBeforeEnd);
-            video.addEventListener('volumechange', mirrorVolume);
             element.addEventListener('playing', onPlaying);
 
             stopAligning = alignAudio(element, video);
@@ -790,7 +700,6 @@ export default createPlugin<
                 video.removeEventListener(type, followVideo);
               }
               video.removeEventListener('timeupdate', transitionBeforeEnd);
-              video.removeEventListener('volumechange', mirrorVolume);
               element.removeEventListener('playing', onPlaying);
               stopAligning?.();
               stopAligning = null;
@@ -848,12 +757,8 @@ export default createPlugin<
         // A track whose audio was fetched before the graph was announced is
         // still playing straight out of its element: move it in, where its level
         // can be shaped without stepping on the waveform. It is silent until a
-        // crossfade hands it over, so arriving late costs nothing — and only now
-        // can its level go on, the gain being what keeps it silent.
-        if (syncedAudio) {
-          routeAudio(syncedAudio, context);
-          levelTrack(syncedAudio);
-        }
+        // crossfade hands it over, so arriving late costs nothing.
+        if (syncedAudio) routeAudio(syncedAudio, context);
       };
 
       // `start` hands every announcement to this, and covers a graph that was
