@@ -329,12 +329,23 @@ export class VolumeFader {
   /**
    * Cancel the current fade immediately without jumping to the target volume.
    *
+   * The callback still runs: callers hand the fading media to it, so a cancel
+   * that skipped it would leave that media playing where the fade stopped.
+   *
    * @return {Object} VolumeFader instance for chaining
    */
   cancelFade() {
     this.active = false;
+
+    // Cleared before the callback runs, so a callback that starts another fade
+    // is not wiped out by this one.
+    const callback = this.fade?.callback;
     this.fade = undefined;
+
     this.logger?.('Fade canceled.');
+
+    if (typeof callback === 'function') callback();
+
     return this;
   }
 

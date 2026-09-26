@@ -79,6 +79,23 @@ test('every scaling reaches both of the fade endpoints', () => {
   }
 });
 
+test('cancelling a fade runs its callback and leaves the volume alone', () => {
+  const media = { volume: 1 };
+  const fader = new VolumeFader(media, {
+    fadeScaling: 'linear',
+    fadeDuration: 1000,
+  });
+  let released = 0;
+
+  fader.fadeOut(() => {
+    released += 1;
+  });
+  fader.cancelFade();
+
+  expect(released).toBe(1);
+  expect(media.volume).toBe(1);
+});
+
 test('linear scaling still interpolates volumes directly', () => {
   expect(
     volumeAt(
