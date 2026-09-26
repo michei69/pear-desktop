@@ -338,9 +338,13 @@ export class VolumeFader {
 
     const angle = (progress * Math.PI) / 2;
 
-    return (
-      this.scale.internalToVolume(start) * Math.cos(angle) +
-      this.scale.internalToVolume(end) * Math.sin(angle)
+    return Math.min(
+      Math.max(
+        this.scale.internalToVolume(start) * Math.cos(angle) +
+          this.scale.internalToVolume(end) * Math.sin(angle),
+        0,
+      ),
+      1,
     );
   }
 
