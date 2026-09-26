@@ -816,10 +816,6 @@
         }
       }
     },
-    "skip-disliked-songs": {
-      "description": "Salta le canzoni non gradite",
-      "name": "Salta i brani che non ti piacciono"
-    },
     "skip-silences": {
       "description": "Salta automaticamente le parti silenziose nei brani",
       "name": "Salta silenzi"

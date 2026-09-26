@@ -824,10 +824,6 @@
         }
       }
     },
-    "skip-disliked-songs": {
-      "description": "Melangkau lagu yang tidak disukai",
-      "name": "Langkau Lagu Tidak Disukai"
-    },
     "skip-silences": {
       "description": "Langkau bahagian senyap dalam lagu secara automatik",
       "name": "Langkau Senyap"

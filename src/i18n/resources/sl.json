@@ -824,10 +824,6 @@
         }
       }
     },
-    "skip-disliked-songs": {
-      "description": "Preskakuje skladbe z oznako Ni mi všeč",
-      "name": "Preskoči skladbe z oznako Ni mi všeč"
-    },
     "skip-silences": {
       "description": "Samodejno preskakuj tihe dele v skladbah",
       "name": "Preskoči tišine"

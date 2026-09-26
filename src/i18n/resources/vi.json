@@ -842,10 +842,6 @@
         }
       }
     },
-    "skip-disliked-songs": {
-      "description": "Tự động bỏ qua những bài hát bạn nhấn không thích",
-      "name": "Bỏ qua bài hát không thích"
-    },
     "skip-silences": {
       "description": "Tự động bỏ qua các đoạn im lặng trong bài hát",
       "name": "Bỏ qua đoạn im lặng"

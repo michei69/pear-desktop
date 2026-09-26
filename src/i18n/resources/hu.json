@@ -824,10 +824,6 @@
         }
       }
     },
-    "skip-disliked-songs": {
-      "description": "Kihagyja a nem kedvelt dalokat",
-      "name": "Nem kedvelt dal kihagyása"
-    },
     "skip-silences": {
       "description": "Automatikusan kihagyja a csendes részeket a dalokban",
       "name": "Csend kihagyása"

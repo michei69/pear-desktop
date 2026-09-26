@@ -838,10 +838,6 @@
         }
       }
     },
-    "skip-disliked-songs": {
-      "description": "Jätab mitte meeldinud lood vahele",
-      "name": "Jäta mittemeeldinud lood vahele"
-    },
     "skip-silences": {
       "description": "Jätab lugudes automaatselt tühjad kohad vahele",
       "name": "Jäta vaikus vahele"

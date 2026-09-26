@@ -831,10 +831,6 @@
         }
       }
     },
-    "skip-disliked-songs": {
-      "description": "Mana munasqa takikunata saltay",
-      "name": "Mana Munasqa Takikunata Saltay"
-    },
     "skip-silences": {
       "description": "Takiykuna ukhunpi upallasqa rakikunata kikillanmanta saltay",
       "name": "Upallasqakunata Saltay"

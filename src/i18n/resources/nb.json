@@ -523,10 +523,6 @@
         }
       }
     },
-    "skip-disliked-songs": {
-      "description": "Hopper over mislikte spor",
-      "name": "Hopp over mislikte spor"
-    },
     "skip-silences": {
       "description": "Hopp over stille deler av spor",
       "name": "Hopp over pauser"

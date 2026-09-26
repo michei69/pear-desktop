@@ -831,10 +831,6 @@
         }
       }
     },
-    "skip-disliked-songs": {
-      "description": "Hoppar över låtar du inte gillar",
-      "name": "Hoppa över låtar du inte gillar"
-    },
     "skip-silences": {
       "description": "Hoppa automatiskt över tysta partier i låtar",
       "name": "Hoppa över tysta partier"

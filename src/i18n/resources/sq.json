@@ -824,10 +824,6 @@
         }
       }
     },
-    "skip-disliked-songs": {
-      "description": "Kalon këngët e papëlqyera",
-      "name": "Kalo Këngët e Papëlqyera"
-    },
     "skip-silences": {
       "description": "Kalo automatikisht pjesët e heshtura në këngë",
       "name": "Kalo Heshtjet"

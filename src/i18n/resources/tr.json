@@ -831,10 +831,6 @@
         }
       }
     },
-    "skip-disliked-songs": {
-      "description": "Beğenmediğin şarkıları atlar",
-      "name": "Beğenmediklerini Atla"
-    },
     "skip-silences": {
       "description": "Şarkılardaki sessiz bölümleri otomatik olarak atlar",
       "name": "Sessizlikleri Atla"

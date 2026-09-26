@@ -835,10 +835,6 @@
         }
       }
     },
-    "skip-disliked-songs": {
-      "description": "Izlaist nepatīkamās dziesmas",
-      "name": "Izlaist Nepatīkamās Dziesmas"
-    },
     "skip-silences": {
       "description": "Automātiski izlaist klusuma daļas dziesmās",
       "name": "Izlaist Klusumus"

@@ -831,10 +831,6 @@
         }
       }
     },
-    "skip-disliked-songs": {
-      "description": "Preskače pjesme kojima nije označeno sviđanje",
-      "name": "Preskoči pjesme bez sviđanja"
-    },
     "skip-silences": {
       "description": "Automatski preskače tišine u pjesmama",
       "name": "Preskoči tišine"

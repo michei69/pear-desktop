@@ -842,10 +842,6 @@
         }
       }
     },
-    "skip-disliked-songs": {
-      "description": "Gustuko ez diren abestiak saltatzen ditu",
-      "name": "Saltatu gustuko ez diren abestiak"
-    },
     "skip-silences": {
       "description": "Automatikoki saltatu isilune atalak abestietan",
       "name": "Saltatu isiluneak"

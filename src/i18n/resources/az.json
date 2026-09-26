@@ -835,10 +835,6 @@
         }
       }
     },
-    "skip-disliked-songs": {
-      "description": "Bəyənilməyən mahnıları keçir",
-      "name": "Bəyənilməyən Mahnıları Keç"
-    },
     "skip-silences": {
       "description": "Mahnılardakı səssiz hissələri avtomatik keçir",
       "name": "Səssizlikləri Keç"

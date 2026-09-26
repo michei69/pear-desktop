@@ -824,10 +824,6 @@
         }
       }
     },
-    "skip-disliked-songs": {
-      "description": "Přeskakovat disliked písničky",
-      "name": "Přeskočit Disliked písničky"
-    },
     "skip-silences": {
       "description": "Automaticky přeskakovat tichá místa v písničkách",
       "name": "Přeskakovat Tichá místa"

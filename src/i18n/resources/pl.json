@@ -824,10 +824,6 @@
         }
       }
     },
-    "skip-disliked-songs": {
-      "description": "Pomija nieulubione piosenki (zaznaczone łapką w dół)",
-      "name": "Pomijanie nieulubionych piosenek"
-    },
     "skip-silences": {
       "description": "Automatycznie pomijaj sekcje bez dźwięku w utworach",
       "name": "Pomiń ciszę"

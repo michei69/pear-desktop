@@ -831,10 +831,6 @@
         }
       }
     },
-    "skip-disliked-songs": {
-      "description": "Preskakuje skladby označené Nepáči sa",
-      "name": "Preskakovať skladby označené Nepáči sa"
-    },
     "skip-silences": {
       "description": "Automaticky preskakovať tiché časti v hudbe",
       "name": "Preskakuj tiché časti"

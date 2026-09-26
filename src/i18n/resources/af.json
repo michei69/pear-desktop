@@ -842,10 +842,6 @@
         }
       }
     },
-    "skip-disliked-songs": {
-      "description": "Slaan onaangename liedjies oor",
-      "name": "Slaan Onaangename Liedjies Oor"
-    },
     "skip-silences": {
       "description": "Slaan outomaties stilte-gedeeltes in liedjies oor",
       "name": "Slaan Stiltes Oor"

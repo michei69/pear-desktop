@@ -842,10 +842,6 @@
         }
       }
     },
-    "skip-disliked-songs": {
-      "description": "Omite las canciones que no le gustan",
-      "name": "Saltar canciones que no me gustan"
-    },
     "skip-silences": {
       "description": "Salta automáticamente las secciones silenciosas de las canciones",
       "name": "Saltar silencios"

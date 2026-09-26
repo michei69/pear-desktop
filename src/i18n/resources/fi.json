@@ -835,10 +835,6 @@
         }
       }
     },
-    "skip-disliked-songs": {
-      "description": "Ohittaa kappaleet joista et pidä",
-      "name": "Ohita Epätykätyt Kappaleet"
-    },
     "skip-silences": {
       "description": "Ohita automaattisesti kappaleiden hiljaiset kohdat",
       "name": "Ohita Hiljaisuudet"

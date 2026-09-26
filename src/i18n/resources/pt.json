@@ -824,10 +824,6 @@
         }
       }
     },
-    "skip-disliked-songs": {
-      "description": "Ignorar músicas de que não gostei",
-      "name": "Ignorar músicas não gostadas"
-    },
     "skip-silences": {
       "description": "Ignorar automaticamente as partes silenciosas das músicas",
       "name": "Ignorar silêncio"

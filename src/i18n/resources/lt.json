@@ -835,10 +835,6 @@
         }
       }
     },
-    "skip-disliked-songs": {
-      "description": "Praleidžia nepatinkančias dainas",
-      "name": "Praleisti Nepatinkančias Dainas"
-    },
     "skip-silences": {
       "description": "Automatiškai praleisti tylos dalis dainose",
       "name": "Praleisti Tylumas"

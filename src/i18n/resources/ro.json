@@ -824,10 +824,6 @@
         }
       }
     },
-    "skip-disliked-songs": {
-      "description": "Sari peste melodiile neplăcute",
-      "name": "Treci peste melodiile neplăcute"
-    },
     "skip-silences": {
       "description": "Treci automat peste secțiunile de liniște din melodii",
       "name": "Treci peste liniște"

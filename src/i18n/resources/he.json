@@ -824,10 +824,6 @@
         }
       }
     },
-    "skip-disliked-songs": {
-      "description": "מדלג על שירים שלא אהבת",
-      "name": "דלג על שירים שלא אהבת"
-    },
     "skip-silences": {
       "description": "דלג אוטומטית על קטעי שקט בשירים",
       "name": "דלג על שקט"

@@ -831,10 +831,6 @@
         }
       }
     },
-    "skip-disliked-songs": {
-      "description": "Ignora músicas marcadas com \"não gostei\"",
-      "name": "Pular músicas marcadas com \"não gostei\""
-    },
     "skip-silences": {
       "description": "Pular automaticamente seções de silêncio em músicas",
       "name": "Pular silêncios"

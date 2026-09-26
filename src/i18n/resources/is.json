@@ -824,10 +824,6 @@
         }
       }
     },
-    "skip-disliked-songs": {
-      "description": "Sleppir mislíkaði lög",
-      "name": "Slepptu Mislíkaði Lög"
-    },
     "skip-silences": {
       "description": "Slepptu sjálfkrafa þagnarköflum í lögum",
       "name": "Slepptu Þögnum"

@@ -842,10 +842,6 @@
         }
       }
     },
-    "skip-disliked-songs": {
-      "description": "自動跳過不喜歡的歌曲",
-      "name": "自動跳過不喜歡的歌曲"
-    },
     "skip-silences": {
       "description": "自動跳過音樂無聲片段",
       "name": "自動跳過無聲片段"

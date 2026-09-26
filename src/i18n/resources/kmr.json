@@ -842,10 +842,6 @@
         }
       }
     },
-    "skip-disliked-songs": {
-      "description": "Stranên ne ecibandî derbas dike",
-      "name": "Stranên Ne Ecibandî Derbas Bike"
-    },
     "skip-silences": {
       "description": "Bixweber beşên bêdengiyê di stranan de derbas dike",
       "name": "Bêdengiyan Derbas Bike"

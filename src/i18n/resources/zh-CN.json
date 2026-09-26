@@ -823,10 +823,6 @@
         }
       }
     },
-    "skip-disliked-songs": {
-      "description": "自动跳过不喜欢的歌曲",
-      "name": "跳过不喜欢的歌曲"
-    },
     "skip-silences": {
       "description": "自动跳过音乐中的无声片段",
       "name": "跳过无声片段"

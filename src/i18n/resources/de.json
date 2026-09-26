@@ -831,10 +831,6 @@
         }
       }
     },
-    "skip-disliked-songs": {
-      "description": "Überspringt Lieder, die ihnen nicht gefallen",
-      "name": "Überspring Lieder, die ihnen nicht gefallen"
-    },
     "skip-silences": {
       "description": "Automatisch stille Abschnitte in Liedern überspringen",
       "name": "Stille überspringen"

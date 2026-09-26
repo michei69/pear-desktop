@@ -842,10 +842,6 @@
         }
       }
     },
-    "skip-disliked-songs": {
-      "description": "Passe les titres \"Je n'aime pas\"",
-      "name": "Passer les titres \"Je n'aime pas\""
-    },
     "skip-silences": {
       "description": "Ignorer automatiquement les sections de silence dans les chansons",
       "name": "Passer les silences"

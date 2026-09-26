@@ -824,10 +824,6 @@
         }
       }
     },
-    "skip-disliked-songs": {
-      "description": "Slaat disliked nummers over",
-      "name": "Sla disliked nummers over"
-    },
     "skip-silences": {
       "description": "Sla automatisch stiltesecties in nummers over",
       "name": "Stiltes overslaan"

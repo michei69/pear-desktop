@@ -831,10 +831,6 @@
         }
       }
     },
-    "skip-disliked-songs": {
-      "description": "Lewati lagu yang tidak disukai",
-      "name": "Lewati Lagu yang Tidak Disukai"
-    },
     "skip-silences": {
       "description": "Otomatis lewati bagian hening dari lagu",
       "name": "Lewati Keheningan"

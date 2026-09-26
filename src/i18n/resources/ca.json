@@ -824,10 +824,6 @@
         }
       }
     },
-    "skip-disliked-songs": {
-      "description": "Salta les cançons amb «no m'agrada»",
-      "name": "Salta les cançons que no t'agraden"
-    },
     "skip-silences": {
       "description": "Omet automàticament les seccions amb silenci a les cançons",
       "name": "Omet els silencis"

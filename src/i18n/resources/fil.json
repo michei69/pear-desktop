@@ -842,10 +842,6 @@
         }
       }
     },
-    "skip-disliked-songs": {
-      "description": "Laktawan ang na-dislike na kanta",
-      "name": "I-skip ang mga Na-dislike na Kanta"
-    },
     "skip-silences": {
       "description": "Automatikong laktawan ang mga tahimik na mga seksyon sa kanta",
       "name": "I-skip ang mga Katahimikan"
