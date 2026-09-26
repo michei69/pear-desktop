@@ -240,6 +240,12 @@ export default createPlugin<
       let fadeInOnPlay: (() => void) | null = null;
       /** Source the gain node is wired to, so it is not rebuilt per announce. */
       let fadeInGainAttachedTo: MediaElementAudioSourceNode | null = null;
+      /**
+       * Seconds a media element takes to run after it is told to play, as last
+       * measured. The video's clock keeps going in the meantime, so the audio has
+       * to be started that much ahead of it to end up level with it.
+       */
+      let startLead = 0;
 
       /** Ramps the incoming track from silence with the graph's gain node. */
       const fadeInTrack = () => {
@@ -293,12 +299,20 @@ export default createPlugin<
         }
 
         if (this.syncedAudio && fadeInArmed) {
-          this.syncedAudio.pause();
+          elementOf(this.syncedAudio).pause();
         }
       };
 
       /** Object URL backing each Howl, so `releaseAudio` can revoke it. */
       const audioURLs = new WeakMap<Howl, string>();
+
+      /**
+       * Media element behind a Howl. Howler queues the `play` and `seek` calls
+       * made while a sound is still loading, applies the position sampled back
+       * then, and restarts a playing element on a seek — none of which the sync
+       * below can live with, so the element is driven directly.
+       */
+      const elementOf = (audio: Howl) => audio._sounds[0]._node;
 
       // A media element cannot play YouTube's own stream URLs, so the backend
       // hands the audio over as bytes (see `getAudioBytes`) and a Blob turns
@@ -323,6 +337,9 @@ export default createPlugin<
 
       /** Stops a track once nothing will play it again. */
       const releaseAudio = (audio: Howl) => {
+        // Howler only stops an element it started itself, and this one was
+        // started here, so it is stopped here as well.
+        elementOf(audio).pause();
         audio.unload();
         const url = audioURLs.get(audio);
         if (url) {
@@ -401,18 +418,10 @@ export default createPlugin<
 
             // The outgoing track fades out on its own media element, to a
             // volume of its own: nothing else writes to it.
-            const volumeWrapper = {
-              get volume() {
-                return outgoing.volume();
-              },
-              set volume(v: number) {
-                outgoing.volume(v);
-              },
-            };
-
+            //
             // Wall clock time, not the video's: the fade out has to run to
             // completion even if the incoming track stalls.
-            const fader = new VolumeFader(volumeWrapper, {
+            const fader = new VolumeFader(elementOf(outgoing), {
               initialVolume: video.volume,
               fadeScaling: this.config?.fadeScaling,
               fadeDuration: this.config?.fadeOutDuration,
@@ -460,29 +469,88 @@ export default createPlugin<
             const audio = createAudio(bytes.bytes, bytes.mimeType);
             this.syncedAudio = audio;
 
-            const onSeeking = () => audio.seek(video.currentTime);
-            const onPlay = () => {
-              audio.play();
-              audio.seek(video.currentTime);
+            const element = elementOf(audio);
+            /** Whether the audio is between being told to play and running. */
+            let starting = false;
 
-              // A fade in that was cancelled while the video stalled resumes here.
-              if (fadeInVideo === video) fadeInTrack();
+            /**
+             * Runs the audio with the video: stopped while the video's clock is
+             * parked (a pause, a seek, a stall) and started on that clock when
+             * it runs again.
+             *
+             * The position has to be handed over while the element is stopped.
+             * One that is playing stops for as long as a position change takes
+             * and comes back that much behind, and a position taken any earlier
+             * is one the video has already moved past — either way the audio
+             * ends up behind the clock it follows, and that offset is what is
+             * heard when the crossfade hands the track over to this audio.
+             */
+            const followVideo = () => {
+              if (
+                video.paused ||
+                video.seeking ||
+                video.readyState < HTMLMediaElement.HAVE_FUTURE_DATA
+              ) {
+                starting = false;
+                element.pause();
+                return;
+              }
+
+              if (!element.paused) return;
+
+              element.currentTime = video.currentTime + startLead;
+              starting = true;
+              element
+                .play()
+                .catch((error) =>
+                  console.error('[crossfade] audio failed to play', error),
+                );
+
+              // The audio starting is the other moment a fade in can begin: the
+              // video's own `play` may have gone by while it was being fetched,
+              // and the armed listener is what takes the fade in off the video.
+              fadeInOnPlay?.();
             };
 
-            video.addEventListener('seeking', onSeeking);
-            video.addEventListener('play', onPlay);
+            /**
+             * Measures what starting the audio cost the clock it follows, for
+             * the next start to carry. The element takes the position it was
+             * given, so how far the video has moved on since is the lead.
+             */
+            const onPlaying = () => {
+              if (!starting) return;
+
+              starting = false;
+
+              // Capped, so a measurement taken across a seek in between cannot
+              // push the audio most of a track out of the video.
+              startLead = Math.min(
+                video.currentTime - element.currentTime,
+                0.5,
+              );
+            };
+
+            video.addEventListener('seeking', followVideo);
+            video.addEventListener('seeked', followVideo);
+            video.addEventListener('playing', followVideo);
+            video.addEventListener('waiting', followVideo);
+            video.addEventListener('pause', followVideo);
+            video.addEventListener('timeupdate', followVideo);
             video.addEventListener('timeupdate', transitionBeforeEnd);
+            element.addEventListener('playing', onPlaying);
 
             this.cleanupListeners = () => {
-              video.removeEventListener('seeking', onSeeking);
-              video.removeEventListener('play', onPlay);
+              video.removeEventListener('seeking', followVideo);
+              video.removeEventListener('seeked', followVideo);
+              video.removeEventListener('playing', followVideo);
+              video.removeEventListener('waiting', followVideo);
+              video.removeEventListener('pause', followVideo);
+              video.removeEventListener('timeupdate', followVideo);
               video.removeEventListener('timeupdate', transitionBeforeEnd);
+              element.removeEventListener('playing', onPlaying);
             };
 
-            if (!video.paused) {
-              audio.play();
-              audio.seek(video.currentTime);
-            }
+            followVideo();
           })
           .catch((error) =>
             console.error('[crossfade] audio fetch failed', error),
