@@ -3,25 +3,22 @@ import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { Mutex } from 'async-mutex';
-import { BG, type BgConfig } from 'bgutils-js';
 import { app, type BrowserWindow, dialog, ipcMain } from 'electron';
 import is from 'electron-is';
 import filenamify from 'filenamify';
 import { lazy } from 'lazy-var';
 import * as NodeID3 from 'node-id3';
 import {
-  Innertube,
-  UniversalCache,
   Utils,
   YTNodes,
-  Platform,
+  type Innertube,
+  type Types,
   type YT,
   type YTMusic,
-  type Types,
 } from '\u0079\u006f\u0075\u0074\u0075\u0062\u0065i.js';
 
 import { t } from '@/i18n';
-import { getNetFetchAsFetch } from '@/plugins/utils/main';
+import { getInnertubeSession, isPremium } from '@/plugins/utils/main';
 import {
   registerCallback,
   unregisterCallback,
@@ -56,52 +53,9 @@ const ffmpeg = lazy(async () =>
 );
 const ffmpegMutex = new Mutex();
 
-Platform.shim.eval = (
-  data: Types.BuildScriptResult,
-  env: Record<string, Types.VMPrimative>,
-) => {
-  const properties = [];
-
-  if (env.n) {
-    properties.push(`n: exportedVars.nFunction("${env.n}")`);
-  }
-
-  if (env.sig) {
-    properties.push(`sig: exportedVars.sigFunction("${env.sig}")`);
-  }
-
-  const code = `${data.output}\nreturn { ${properties.join(', ')} }`;
-
-  // oxlint-disable-next-line typescript/no-unsafe-return,typescript/no-implied-eval,typescript/no-unsafe-call
-  return new Function(code)();
-};
-
 let yt: Innertube;
 let win: BrowserWindow;
 let playingUrl: string;
-
-const isPremium = async () => {
-  // If signed out, it is understood as non-premium
-  const isSignedIn = (await win.webContents.executeJavaScript(
-    '!!yt.config_.LOGGED_IN',
-  )) as boolean;
-
-  if (!isSignedIn) return false;
-
-  // If signed in, check if the upgrade button is present
-  const upgradeBtnIconPathData = (await win.webContents.executeJavaScript(
-    'document.querySelector(\'iron-iconset-svg[name="yt-sys-icons"] #\u0079\u006f\u0075\u0074\u0075\u0062\u0065_music_monochrome\')?.firstChild?.getAttribute("d")?.substring(0, 15)',
-  )) as string | null;
-
-  // Fallback to non-premium if the icon is not found
-  if (!upgradeBtnIconPathData) return false;
-
-  const upgradeButton = `ytmusic-guide-entry-renderer:has(> tp-yt-paper-item > yt-icon path[d^="${upgradeBtnIconPathData}"])`;
-
-  return (await win.webContents.executeJavaScript(
-    `!document.querySelector('${upgradeButton}')`,
-  )) as boolean;
-};
 
 const sendError = (error: Error, source?: string) => {
   win.setProgressBar(-1); // Close progress bar
@@ -128,16 +82,6 @@ const sendError = (error: Error, source?: string) => {
   });
 };
 
-export const getCookieFromWindow = async (win: BrowserWindow) => {
-  return (
-    await win.webContents.session.cookies.get({
-      url: 'https://music.\u0079\u006f\u0075\u0074\u0075\u0062\u0065.com',
-    })
-  )
-    .map((it) => it.name + '=' + it.value)
-    .join(';');
-};
-
 let config: DownloaderPluginConfig;
 let cleanupFinishSetup: (() => void) | undefined;
 
@@ -149,71 +93,7 @@ export const onMainLoad = async ({
   win = _win;
   config = await getConfig();
 
-  yt = await Innertube.create({
-    cache: new UniversalCache(false),
-    cookie: await getCookieFromWindow(win),
-    generate_session_locally: true,
-    fetch: getNetFetchAsFetch(),
-  });
-
-  const requestKey = 'O43z0dpjhgX20SCx4KAo';
-  const visitorData = yt.session.context.client.visitorData;
-
-  if (visitorData) {
-    const cleanUp = (context: Partial<typeof globalThis>) => {
-      delete context.window;
-      delete context.document;
-    };
-
-    try {
-      const [width, height] = win.getSize();
-      // emulate jsdom using linkedom
-      const window = new (await import('happy-dom')).Window({
-        width,
-        height,
-        console,
-      });
-      const document = window.document;
-
-      Object.assign(globalThis, {
-        window,
-        document,
-      });
-
-      const bgConfig: BgConfig = {
-        fetch: getNetFetchAsFetch(),
-        globalObj: globalThis,
-        identifier: visitorData,
-        requestKey,
-      };
-
-      const bgChallenge = await BG.Challenge.create(bgConfig);
-      const interpreterJavascript =
-        bgChallenge?.interpreterJavascript
-          .privateDoNotAccessOrElseSafeScriptWrappedValue;
-
-      if (interpreterJavascript) {
-        // This is a workaround to run the interpreterJavascript code
-        // Maybe there is a better way to do this (e.g. https://github.com/Siubaak/sval ?)
-        // oxlint-disable-next-line typescript/no-implied-eval,typescript/no-unsafe-call
-        new Function(interpreterJavascript)();
-
-        const poTokenResult = await BG.PoToken.generate({
-          program: bgChallenge.program,
-          globalName: bgChallenge.globalName,
-          bgConfig,
-        }).finally(() => {
-          cleanUp(globalThis);
-        });
-
-        yt.session.po_token = poTokenResult.poToken;
-      } else {
-        cleanUp(globalThis);
-      }
-    } catch {
-      cleanUp(globalThis);
-    }
-  }
+  yt = await getInnertubeSession(win);
 
   ipc.handle('download-song', (url: string) => downloadSong(url));
   ipc.on('peard:video-src-changed', (data: GetPlayerResponse) => {
@@ -427,7 +307,7 @@ async function downloadSongUnsafe(
   }
 
   const downloadOptions: Types.FormatOptions = {
-    type: (await isPremium()) ? 'audio' : 'video+audio', // Audio, video or video+audio
+    type: (await isPremium(win)) ? 'audio' : 'video+audio', // Audio, video or video+audio
     quality: 'best', // Best, bestefficiency, 144p, 240p, 480p, 720p and so on.
     format: 'any', // Media container format
   };
