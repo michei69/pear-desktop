@@ -457,16 +457,6 @@ export default createPlugin<
             // no longer belongs to the track being played.
             if (!bytes || generation !== navigationGeneration) return;
 
-            // A pause arriving while the player is stalled on an empty buffer
-            // comes from the stall, not from the user.
-            let buffering = false;
-            const onBuffering = () => {
-              buffering = true;
-            };
-            const onPlaying = () => {
-              buffering = false;
-            };
-
             const audio = createAudio(bytes.bytes, bytes.mimeType);
             this.syncedAudio = audio;
 
@@ -478,31 +468,14 @@ export default createPlugin<
               // A fade in that was cancelled while the video stalled resumes here.
               if (fadeInVideo === video) fadeInTrack();
             };
-            // A pause stops the track for real, so it drops the whole transition
-            // mid flight. A track running out is a transition of its own, and so
-            // is the player parking the element to load the next track (state 3,
-            // buffering): the fade in is still waiting to start there, and
-            // cancelling would kill the crossfade the load belongs to.
-            const onPause = () => {
-              if (fadeInVideo || api.getPlayerState() === 3) return;
 
-              if (video.paused && !video.ended && !buffering)
-                cancelTransition();
-            };
-
-            video.addEventListener('waiting', onBuffering);
-            video.addEventListener('playing', onPlaying);
             video.addEventListener('seeking', onSeeking);
             video.addEventListener('play', onPlay);
-            video.addEventListener('pause', onPause);
             video.addEventListener('timeupdate', transitionBeforeEnd);
 
             this.cleanupListeners = () => {
-              video.removeEventListener('waiting', onBuffering);
-              video.removeEventListener('playing', onPlaying);
               video.removeEventListener('seeking', onSeeking);
               video.removeEventListener('play', onPlay);
-              video.removeEventListener('pause', onPause);
               video.removeEventListener('timeupdate', transitionBeforeEnd);
             };
 
@@ -579,6 +552,20 @@ export default createPlugin<
         }
       };
 
+      // The auto-transition fires before the end of a track, and the outgoing
+      // audio is already fading out while the incoming one is still being
+      // fetched, so a pause has to be caught for the whole session rather than
+      // by the listeners of whichever track happens to be synced.
+      const onPause = (event: Event) => {
+        const video = event.target;
+        if (!(video instanceof HTMLVideoElement) || video.ended) return;
+
+        // The player parks the element on an empty buffer while it loads the
+        // next track and reports itself buffering (state 3) there; state 2 is
+        // the user stopping playback, which drops the transition mid flight.
+        if (api.getPlayerState() === 2) cancelTransition();
+      };
+
       const onNavigate = (event: NavigateEvent) => {
         const nextVideoID = getVideoIDFromURL(event.destination.url ?? '');
 
@@ -593,6 +580,8 @@ export default createPlugin<
 
       api.addEventListener('videodatachange', onVideoDataChange);
       window.navigation.addEventListener('navigate', onNavigate);
+      // `pause` does not bubble, so the catch needs the capture phase.
+      document.addEventListener('pause', onPause, { capture: true });
 
       // On unload the crossfade has to leave the graph and the video as it found
       // them, and stop the audio it plays alongside it.
@@ -603,6 +592,7 @@ export default createPlugin<
 
         api.removeEventListener('videodatachange', onVideoDataChange);
         window.navigation.removeEventListener('navigate', onNavigate);
+        document.removeEventListener('pause', onPause, { capture: true });
 
         this.cleanupListeners?.();
         this.cleanupListeners = null;
