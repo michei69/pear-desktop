@@ -10,7 +10,7 @@ import {
 import promptOptions from '@/providers/prompt-options';
 import { createPlugin } from '@/utils';
 
-import { VolumeFader } from './fader';
+import { fadeVolumeAt, VolumeFader } from './fader';
 
 import type { RendererContext } from '@/types/contexts';
 import type { BrowserWindow } from 'electron';
@@ -23,24 +23,17 @@ export type CrossfadePluginConfig = {
   fadeScaling: 'linear' | 'logarithmic' | 'equalPower' | number;
 };
 
-/**
- * The renderer builds the video's Web Audio graph (`peard:audio-can-play`). Its
- * source is tracked here so the crossfade can put a gain node in front of the
- * video's audio, which the player's own volume handling never touches.
- */
-type CrossfadeAudioGraph = {
-  context: AudioContext;
-  source: MediaElementAudioSourceNode;
-};
-
 export default createPlugin<
   unknown,
   unknown,
   {
     config?: CrossfadePluginConfig;
     ipc?: RendererContext<CrossfadePluginConfig>['ipc'];
-    /** Audio graph the renderer published for the video. */
-    audioGraph?: CrossfadeAudioGraph;
+    /**
+     * The renderer publishes the video's audio graph as `Compressor`
+     * (`peard:audio-can-play`); the crossfade splices a gain node into it.
+     */
+    audioGraph?: Compressor;
   },
   CrossfadePluginConfig
 >({
@@ -157,7 +150,9 @@ export default createPlugin<
       ) {
         fadeScaling = res[3];
       } else if (isFinite(Number(res[3]))) {
-        fadeScaling = Number(res[3]);
+        // A number in dB, and one the fader's scaler accepts: a zero or negative
+        // dynamic range is not a fade.
+        fadeScaling = Math.abs(Number(res[3]));
       } else {
         fadeScaling = options.fadeScaling;
       }
@@ -196,22 +191,8 @@ export default createPlugin<
     async start({ ipc, getConfig }) {
       this.config = await getConfig();
       this.ipc = ipc;
-      console.log('[crossfade] renderer start, listening for the audio graph');
-
-      // The renderer builds the video's audio graph once, while the player API
-      // loads, and announces it on every track. Plugins start before that, so
-      // listening here is early enough to catch the very first announcement.
-      document.addEventListener(
-        'peard:audio-can-play',
-        (event) => {
-          console.log('[crossfade] audio graph published by the renderer');
-          this.audioGraph = {
-            context: event.detail.audioContext,
-            source: event.detail.audioSource,
-          };
-        },
-        { passive: true },
-      );
+      // The graph itself is picked up in `attachFadeInGain`, which the plugin
+      // registers once the player API is ready.
     },
     onConfigChange(newConfig) {
       this.config = newConfig;
@@ -230,8 +211,6 @@ export default createPlugin<
       let fadeOutFader: VolumeFader | null = null;
       let fadeInVideo: HTMLVideoElement | null = null;
       let fadeInOnPlay: (() => void) | null = null;
-      /** Pauses the audio currently synced to the video, if any. */
-      let pauseSyncedAudio: (() => void) | null = null;
       /**
        * Gain node in front of the video's audio, so the crossfade owns the
        * incoming track's level. The player keeps rewriting the element's own
@@ -241,31 +220,6 @@ export default createPlugin<
       let fadeInGain: GainNode | null = null;
       /** Source the gain node is wired to, so it is not rebuilt per announce. */
       let fadeInGainAttachedTo: MediaElementAudioSourceNode | null = null;
-
-      /**
-       * Gain of a fade at the given progress, in the same shapes `VolumeFader`
-       * uses for the outgoing track: an equal power fade out is a cosine, so
-       * its paired fade in has to be a sine to keep the combined power level.
-       * Anything else would make the two halves of a crossfade mismatch.
-       */
-      const fadeInGainAt = (progress: number) => {
-        const scaling = this.config?.fadeScaling;
-
-        if (scaling === 'linear') return progress;
-
-        if (scaling === 'equalPower') {
-          return Math.sin((progress * Math.PI) / 2);
-        }
-
-        const dynamicRange =
-          typeof scaling === 'number' && scaling > 0 ? scaling / 2 / 10 : 3;
-
-        // Special case for zero, matching the fader's scaler: the limited
-        // dynamic range would otherwise leave audible silence at 0.001.
-        if (progress === 0) return 0;
-
-        return 10 ** ((progress - 1) * dynamicRange);
-      };
 
       /** Ramps the incoming track from silence with the graph's gain node. */
       const fadeInTrack = () => {
@@ -287,14 +241,15 @@ export default createPlugin<
         const points = 64;
         const curve = new Float32Array(points + 1);
         for (let point = 0; point <= points; point += 1) {
-          curve[point] = fadeInGainAt(point / points);
+          curve[point] = fadeVolumeAt(point / points, this.config?.fadeScaling);
         }
 
         gain.setValueCurveAtTime(curve, start, duration);
       };
 
       // Drop an in-flight crossfade: its fader keeps writing to the outgoing
-      // audio, which the next track would otherwise inherit.
+      // audio, and its fade-in listener waits on a video that may not play the
+      // track it was armed for.
       const cancelTransition = () => {
         // The incoming audio waits at zero gain for the video to play, so it
         // pauses along with it without ever being heard out of place. The
@@ -324,7 +279,7 @@ export default createPlugin<
         }
 
         if (syncedAudio && audioIsMuted) {
-          pauseSyncedAudio?.();
+          syncedAudio.pause();
         }
 
         if (fadingAudio) {
@@ -383,7 +338,6 @@ export default createPlugin<
         const video = document.querySelector('video');
         if (!video) return;
 
-        console.warn('bafjbia', syncedAudio?.state());
         if (
           video.currentTime >=
             video.duration - (this.config?.secondsBeforeEnd ?? 10) &&
@@ -406,21 +360,6 @@ export default createPlugin<
         // pass would cancel the crossfade that is already under way.
         currentID = nextID;
 
-        // The player is currently stalled on an empty buffer: a pause event
-        // arriving in that state comes from the stall, not from the user.
-        let buffering = false;
-        const onBuffering = () => {
-          buffering = true;
-        };
-        const onPlaying = () => {
-          buffering = false;
-        };
-
-        if (video) {
-          video.addEventListener('waiting', onBuffering);
-          video.addEventListener('playing', onPlaying);
-        }
-
         if (cleanupListeners) {
           cleanupListeners();
           cleanupListeners = null;
@@ -442,7 +381,9 @@ export default createPlugin<
 
             const targetVolume = video ? video.volume : 1;
 
-            const outgoingVolume = {
+            // The outgoing track fades out on its own media element, to a
+            // volume of its own: nothing else writes to it.
+            const volumeWrapper = {
               get volume() {
                 return outgoing.volume();
               },
@@ -451,41 +392,10 @@ export default createPlugin<
               },
             };
 
-            // TEMP DIAGNOSTIC (remove once the fade in works): prints both
-            // fades once a second, so a ramp that never runs or that something
-            // else overwrites shows up in the console timeline.
-            const diagnosticFader = (tag: string) => {
-              const started = Date.now();
-              let nextSample = 0;
-
-              return (volume: number) => {
-                const elapsed = Date.now() - started;
-
-                if (elapsed >= nextSample) {
-                  nextSample += 1000;
-                  console.warn(
-                    `[crossfade:diag] ${tag} fade +${elapsed}ms volume ${volume}`,
-                  );
-                }
-              };
-            };
-
-            const probeFadeOut = diagnosticFader('outgoing');
-
-            const volumeWrapper = {
-              get volume() {
-                return outgoingVolume.volume;
-              },
-              set volume(v: number) {
-                outgoingVolume.volume = v;
-                probeFadeOut(v);
-              },
-            };
-
             // The fade out is deliberately independent of the video: it plays
             // on its own media element and runs to completion on wall clock
             // time, so a buffer stall on the incoming track cannot stutter it.
-            fadeOutFader = new VolumeFader(volumeWrapper, {
+            const fadeOutFader = new VolumeFader(volumeWrapper, {
               initialVolume: targetVolume,
               fadeScaling: this.config?.fadeScaling,
               fadeDuration: this.config?.fadeOutDuration,
@@ -523,7 +433,6 @@ export default createPlugin<
         }
 
         getAudio(nextID).then((bytes) => {
-          console.log('meow', bytes?.bytes.length);
           // A newer navigation started while this audio was downloading, so it
           // no longer belongs to the track being played.
           if (!bytes || generation !== navigationGeneration) return;
@@ -531,12 +440,15 @@ export default createPlugin<
           // Without a video to sync against there is nothing to crossfade.
           if (!video) return;
 
-          // The player may have swapped the element while the audio was
-          // downloading, which would leave the sync bound to a stale one.
-          const current = document.querySelector('video');
-          if (current !== video) {
-            console.debug('[crossfade] video element swapped during sync');
-          }
+          // The player is currently stalled on an empty buffer: a pause event
+          // arriving in that state comes from the stall, not from the user.
+          let buffering = false;
+          const onBuffering = () => {
+            buffering = true;
+          };
+          const onPlaying = () => {
+            buffering = false;
+          };
 
           const audio = createAudio(bytes.bytes, bytes.mimeType);
           syncedAudio = audio;
@@ -558,12 +470,12 @@ export default createPlugin<
             if (video.paused && !video.ended && !buffering) cancelTransition();
           };
 
+          video.addEventListener('waiting', onBuffering);
+          video.addEventListener('playing', onPlaying);
           video.addEventListener('seeking', onSeeking);
           video.addEventListener('play', onPlay);
           video.addEventListener('pause', onPause);
           video.addEventListener('timeupdate', transitionBeforeEnd);
-
-          pauseSyncedAudio = () => audio.pause();
 
           cleanupListeners = () => {
             video.removeEventListener('waiting', onBuffering);
@@ -584,14 +496,10 @@ export default createPlugin<
       // The renderer routes the video's audio through a gain-capable graph.
       // Insert the crossfade's own gain node there: the player never writes to
       // it, so the fade in survives where an element volume fade does not.
-      const attachFadeInGain = () => {
-        if (!this.audioGraph) {
-          console.log('[crossfade] no audio graph published yet');
-          return;
-        }
-
-        const { context, source } = this.audioGraph;
-
+      const attachFadeInGain = ({
+        audioContext: context,
+        audioSource: source,
+      }: Compressor) => {
         // The renderer announces the graph on every track, but the source only
         // changes when the player builds a new one. Rebuilding the node on each
         // announcement would throw away a fade that is already scheduled on it.
@@ -611,23 +519,21 @@ export default createPlugin<
         fadeInGain?.disconnect();
         fadeInGain = gain;
         fadeInGainAttachedTo = source;
-
-        console.log(
-          '[crossfade] fade-in gain node ready, gain',
-          gain.gain.value,
-        );
       };
 
-      // `start` already caught the graph, or caught it for a later track.
-      attachFadeInGain();
+      const onAudioCanPlay = (event: CustomEvent<Compressor>) => {
+        // Kept so a plugin re-enable, which starts listening after the current
+        // track was announced, can still attach to its graph.
+        this.audioGraph = event.detail;
+        attachFadeInGain(event.detail);
+      };
 
-      document.addEventListener(
-        'peard:audio-can-play',
-        () => {
-          attachFadeInGain();
-        },
-        { passive: true },
-      );
+      // A graph caught before this plugin (re)loaded, for a track already playing.
+      if (this.audioGraph) attachFadeInGain(this.audioGraph);
+
+      document.addEventListener('peard:audio-can-play', onAudioCanPlay, {
+        passive: true,
+      });
 
       // A song loaded back on startup (restored queue, last played track)
       // never navigates, so the very first track has to be picked up from the
@@ -637,7 +543,6 @@ export default createPlugin<
 
         const nextID = videoData.videoId;
         if (!currentID && nextID) {
-          console.log('[crossfade] syncing restored track', nextID);
           playVideo(nextID);
         }
       });

@@ -30,6 +30,54 @@ type VolumeLogger = <Params extends unknown[]>(
   message: string,
   ...args: Params
 ) => void;
+
+/**
+ * Dynamic range of a scaling setting, in multiples of 10 dB.
+ *
+ * @throws {TypeError} if the scaling is neither a known name nor a positive dB number
+ */
+const dynamicRangeOf = (fadeScaling: string | number | undefined) => {
+  // Default dynamic range?
+  if (fadeScaling === undefined || fadeScaling === 'logarithmic') {
+    // 60 dB
+    return 3;
+  }
+
+  // Custom dynamic range?
+  if (
+    typeof fadeScaling === 'number' &&
+    !Number.isNaN(fadeScaling) &&
+    fadeScaling > 0
+  ) {
+    // Turn amplitude dB into a multiple of 10 power dB
+    return fadeScaling / 2 / 10;
+  }
+
+  // Unsupported value
+  throw new TypeError(
+    "Expected 'linear', 'logarithmic', 'equalPower' or a positive number as fade scaling preference!",
+  );
+};
+
+/**
+ * Volume of a fade at the given progress, from 0 to 1, for a scaling setting.
+ * The single owner of the scaling math, shared with callers that ramp a volume
+ * themselves (the crossfade's gain node) instead of through this fader.
+ *
+ * @throws {TypeError} if the scaling is neither a known name nor a positive dB number
+ */
+export const fadeVolumeAt = (
+  progress: number,
+  fadeScaling?: string | number,
+) => {
+  if (fadeScaling === 'linear') return progress;
+
+  if (fadeScaling === 'equalPower') {
+    return Math.sin((progress * Math.PI) / 2);
+  }
+
+  return exponentialScaler(progress, dynamicRangeOf(fadeScaling));
+};
 interface VolumeFaderOptions {
   /**
    * logging `function(stuff, …)` for execution information (default: no logging)
@@ -133,39 +181,15 @@ export class VolumeFader {
     }
     // No linear, but logarithmic fading…
     else {
-      let dynamicRange: number;
-
-      // Default dynamic range?
-      if (
-        options.fadeScaling === undefined ||
-        options.fadeScaling === 'logarithmic'
-      ) {
-        // Set default of 60 dB
-        dynamicRange = 3;
-      }
-      // Custom dynamic range?
-      else if (
-        typeof options.fadeScaling === 'number' &&
-        !Number.isNaN(options.fadeScaling) &&
-        options.fadeScaling > 0
-      ) {
-        // Turn amplitude dB into a multiple of 10 power dB
-        dynamicRange = options.fadeScaling / 2 / 10;
-      }
-      // Unsupported value
-      else {
-        // Abort and throw exception
-        throw new TypeError(
-          "Expected 'linear', 'logarithmic', 'equalPower' or a positive number as fade scaling preference!",
-        );
-      }
+      // Will throw on an unsupported value
+      const dynamicRange = dynamicRangeOf(options.fadeScaling);
 
       // Use exponential/logarithmic scaler for expansion/compression
       this.scale = {
         internalToVolume: (level: number) =>
-          this.exponentialScaler(level, dynamicRange),
+          exponentialScaler(level, dynamicRange),
         volumeToInternal: (level: number) =>
-          this.logarithmicScaler(level, dynamicRange),
+          logarithmicScaler(level, dynamicRange),
       };
 
       // Log setting if not default
@@ -392,51 +416,51 @@ export class VolumeFader {
       }
     }
   }
-
-  /**
-   * Internal: Exponential scaler with dynamic range limit.
-   *
-   * @param {Number} input - logarithmic input level to be expanded (float, 0…1)
-   * @param {Number} dynamicRange - expanded output range, in multiples of 10 dB (float, 0…∞)
-   * @return {Number} - expanded level (float, 0…1)
-   */
-  exponentialScaler(input: number, dynamicRange: number) {
-    // Special case: make zero (or any falsy input) return zero
-    if (input === 0) {
-      // Since the dynamic range is limited,
-      // allow a zero to produce a plain zero instead of a small faction
-      // (audio would not be recognized as silent otherwise)
-      return 0;
-    }
-
-    // Scale 0…1 to minus something × 10 dB
-    input = (input - 1) * dynamicRange;
-
-    // Compute power of 10
-    return 10 ** input;
-  }
-
-  /**
-   * Internal: Logarithmic scaler with dynamic range limit.
-   *
-   * @param {Number} input - exponential input level to be compressed (float, 0…1)
-   * @param {Number} dynamicRange - coerced input range, in multiples of 10 dB (float, 0…∞)
-   * @return {Number} - compressed level (float, 0…1)
-   */
-  logarithmicScaler(input: number, dynamicRange: number) {
-    // Special case: make zero (or any falsy input) return zero
-    if (input === 0) {
-      // Logarithm of zero would be -∞, which would map to zero anyway
-      return 0;
-    }
-
-    // Compute base-10 logarithm
-    input = Math.log10(input);
-
-    // Scale minus something × 10 dB to 0…1 (clipping at 0)
-    return Math.max(1 + input / dynamicRange, 0);
-  }
 }
+
+/**
+ * Internal: Exponential scaler with dynamic range limit.
+ *
+ * @param {Number} input - logarithmic input level to be expanded (float, 0…1)
+ * @param {Number} dynamicRange - expanded output range, in multiples of 10 dB (float, 0…∞)
+ * @return {Number} - expanded level (float, 0…1)
+ */
+const exponentialScaler = (input: number, dynamicRange: number) => {
+  // Special case: make zero (or any falsy input) return zero
+  if (input === 0) {
+    // Since the dynamic range is limited,
+    // allow a zero to produce a plain zero instead of a small faction
+    // (audio would not be recognized as silent otherwise)
+    return 0;
+  }
+
+  // Scale 0…1 to minus something × 10 dB
+  input = (input - 1) * dynamicRange;
+
+  // Compute power of 10
+  return 10 ** input;
+};
+
+/**
+ * Internal: Logarithmic scaler with dynamic range limit.
+ *
+ * @param {Number} input - exponential input level to be compressed (float, 0…1)
+ * @param {Number} dynamicRange - coerced input range, in multiples of 10 dB (float, 0…∞)
+ * @return {Number} - compressed level (float, 0…1)
+ */
+const logarithmicScaler = (input: number, dynamicRange: number) => {
+  // Special case: make zero (or any falsy input) return zero
+  if (input === 0) {
+    // Logarithm of zero would be -∞, which would map to zero anyway
+    return 0;
+  }
+
+  // Compute base-10 logarithm
+  input = Math.log10(input);
+
+  // Scale minus something × 10 dB to 0…1 (clipping at 0)
+  return Math.max(1 + input / dynamicRange, 0);
+};
 
 export default {
   VolumeFader,
