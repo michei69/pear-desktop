@@ -538,12 +538,20 @@ export default createPlugin<
         }
       };
 
-      const getAudio = async (videoID: string) => {
-        const bytes = (await this.ipc?.invoke('audio-bytes', videoID)) as
-          | AudioBytes
-          | undefined;
-
-        return bytes?.bytes?.length ? bytes : undefined;
+      const getAudio = async (videoID: string, attempt = 1) => {
+        try {
+          const bytes = (await this.ipc?.invoke('audio-bytes', videoID)) as
+            | AudioBytes
+            | undefined;
+  
+          return bytes?.bytes?.length ? bytes : undefined;
+        } catch {
+          console.warn(`[crossfade] failed fetching ${videoID}, attempt ${attempt}/5`);
+          attempt++;
+          if (attempt > 5) return undefined;
+          await new Promise((resolve) => setTimeout(resolve, 500));
+          return await getAudio(videoID, attempt+1);
+        }
       };
 
       const getVideoIDFromURL = (url: string) =>
