@@ -1,18 +1,16 @@
 /*
- * Bridge between a theme's palette and YouTube Music's own custom properties.
+ * Recolour for the Basic theme, and the recipe to copy into your own: it maps
+ * YouTube Music's custom properties onto the `--pear-theme-<key>` variables
+ * the app emits for a palette.
+ *
+ * Nothing here is injected for you. A palette only defines variables, so a
+ * theme that wants the recolour ships its own copy of this stylesheet.
  *
  * The `:root` block holds fallbacks so a theme only has to define the colours
- * it cares about; the renderer injects the active theme's palette (as
- * `--pear-theme-<key>`) after this stylesheet, so those values win.
- *
- * Only injected while a theme with a palette is selected, so a CSS-only theme
- * is not force-recoloured.
+ * it cares about; the palette is injected after the theme's CSS, so the keys
+ * it does define win over them.
  */
 :root {
-  --pear-theme-accent: #ff0000;
-  --pear-theme-background: #030303;
-  --pear-theme-surface: #1f1f1f;
-  --pear-theme-text: #ffffff;
   /* Derived from the palette, so a theme only has to define the four roles. */
   --pear-theme-accent-light: color-mix(
     in srgb,

@@ -4,11 +4,11 @@
  *   my-theme/
  *     theme.json    manifest (name, palette, css files)
  *     style.css     optional styles, named by the manifest
+ *     theme.js      optional script, named by the manifest
  *
  * The folder name is the theme id. Palette entries are emitted verbatim as
  * `--pear-theme-<key>` CSS custom properties, so a value can be any CSS value
- * (colour, font, length, ...). The `accent`, `background`, `surface` and
- * `text` keys are the ones the base stylesheet remaps onto YouTube Music.
+ * (colour, font, length, ...)
  */
 
 export type ThemePalette = Record<string, string>;

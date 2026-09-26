@@ -14,9 +14,9 @@ import {
 import { store } from '@/config/store';
 import { t } from '@/i18n';
 
+import basicCss from './basic.css?inline';
 import { isJsConsented, MANIFEST_FILE, readThemesFrom } from './load';
-
-import type { PearTheme, ThemeManifest } from './types';
+import { parseManifest, type PearTheme, type ThemeManifest } from './types';
 
 export { MANIFEST_FILE } from './load';
 
@@ -30,6 +30,9 @@ const DEFAULT_PALETTE = {
   surface: '#1f1f1f',
   text: '#ffffff',
 };
+
+const BASIC_THEME_ID = 'basic';
+const BASIC_CSS_FILE = 'style.css';
 
 export const getThemesDir = () => join(app.getPath('userData'), 'themes');
 
@@ -123,18 +126,51 @@ const uniqueThemeDir = (name: string): { id: string; folder: string } => {
   return { id, folder: join(dir, id) };
 };
 
+/** Writes the Basic theme's stylesheet and points its manifest at it. */
+const writeBasicTheme = (
+  folder: string,
+  manifest: Omit<ThemeManifest, 'css'> & { name: string },
+) => {
+  fs.mkdirSync(folder, { recursive: true });
+  fs.writeFileSync(join(folder, BASIC_CSS_FILE), basicCss);
+  writeManifest(folder, { ...manifest, css: BASIC_CSS_FILE });
+};
+
 const seedBasicTheme = () => {
-  const { folder } = uniqueThemeDir('basic');
+  const { folder } = uniqueThemeDir(BASIC_THEME_ID);
   if (fs.existsSync(join(folder, MANIFEST_FILE))) return;
 
-  writeManifest(folder, {
+  writeBasicTheme(folder, {
     name: 'Basic',
     description:
       'Recolours YouTube Music from a four-colour palette you can edit.',
     author: 'pear-desktop',
     palette: DEFAULT_PALETTE,
-    css: [],
   });
+};
+
+/**
+ * Installs seeded before the recolour moved into the theme itself have a
+ * palette but no CSS, so they would stop recolouring. Give them the
+ * stylesheet, keeping the rest of their manifest as it is.
+ *
+ * A Basic theme the user gave its own CSS is left alone, and a deleted one is
+ * not re-created.
+ */
+const upgradeBasicTheme = () => {
+  const folder = join(getThemesDir(), BASIC_THEME_ID);
+  const manifestPath = join(folder, MANIFEST_FILE);
+  if (!fs.existsSync(manifestPath)) return;
+
+  const manifest = parseManifest(fs.readFileSync(manifestPath, 'utf8'));
+  const declared = manifest?.css;
+  // The old seed wrote `"css": []`, so an empty list means "no CSS yet".
+  const hasOwnCss = Array.isArray(declared)
+    ? declared.length > 0
+    : Boolean(declared);
+  if (!manifest || hasOwnCss) return;
+
+  writeBasicTheme(folder, { ...manifest, name: manifest.name ?? 'Basic' });
 };
 
 /** Turns legacy `options.themes` CSS paths into a single theme folder. */
@@ -169,6 +205,9 @@ export const setupThemes = async () => {
     if (loadThemes().length === 0) seedBasicTheme();
     setConfig('options.themesSeeded', true);
   }
+  // An install from before the recolour lived in a theme has a Basic theme
+  // with a palette but no CSS.
+  upgradeBasicTheme();
 
   pruneMissingThemes();
 

@@ -1,4 +1,3 @@
-import baseCss from './base.css?inline';
 import {
   normalizeThemeState,
   paletteToCss,
@@ -91,14 +90,11 @@ const applyTheme = () => {
     state.overrides[theme.id] ?? {},
   );
 
-  // A theme with a palette opts into the YouTube Music remap; a CSS-only
-  // theme is left alone.
-  if (Object.keys(theme.palette).length > 0) {
-    inject(baseCss);
-    inject(paletteToCss(palette));
-  }
-
+  // The theme's own CSS comes first, so the palette emitted after it wins
+  // over any fallbacks the stylesheet declares and a user override always
+  // beats what the theme shipped.
   if (theme.css) inject(theme.css);
+  inject(paletteToCss(palette));
 
   if (theme?.js && isNewScript) {
     const hooks = evaluate(theme.js.source, theme.id) ?? {};

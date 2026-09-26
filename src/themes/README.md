@@ -21,24 +21,10 @@ in the menu and works without a restart.
 > Have a CSS file theme already? You can import it from **Options ▸ Visual Tweaks ▸ Theme ▸ Import custom CSS file**
 > This will automatically generate a theme folder for you, ready to be used again!
 
-The smallest useful theme is one file. A four-key `palette` on its own
-recolours the whole app, because the base stylesheet re-points YouTube Music's
-colours at it:
-
-```json
-// themes/solarized/theme.json
-{
-  "name": "Solarized",
-  "palette": {
-    "accent": "#b58900",
-    "background": "#002b36",
-    "surface": "#073642",
-    "text": "#93a1a1"
-  }
-}
-```
-
-Add a `css` file when you need more than colour:
+The palette is only a bag of variables; the recolouring itself is CSS. So the
+quickest recolouring theme is a copy of the **Basic** theme's two files with
+your own colours in the palette: its `theme.json`, and the `style.css` that
+does the recolouring per [Recolouring YouTube Music](#recolouring-youtube-music).
 
 ```json
 // themes/solarized/theme.json
@@ -54,8 +40,15 @@ Add a `css` file when you need more than colour:
 }
 ```
 
+A palette is optional: with no keys to expose, a theme is just CSS.
+
+```json
+// themes/rounded/theme.json
+{ "name": "Rounded", "css": "style.css" }
+```
+
 ```css
-/* themes/solarized/style.css */
+/* themes/rounded/style.css */
 body ytmusic-player-bar {
   border-radius: 12px;
 }
@@ -116,23 +109,18 @@ body ytmusic-player-bar {
 }
 ```
 
-The default variables are the following:
+Every variable will appear under **Colors** for the user to easily modify it.
 
-| key          | role in the recolour                                        |
-| ------------ | ----------------------------------------------------------- |
-| `accent`     | progress bars, slider knobs, toggles, icons, call to action |
-| `background` | page and app backgrounds                                    |
-| `surface`    | cards, menus, dialogs, raised surfaces                      |
-| `text`       | primary and secondary text, player bar labels               |
+The palette is emitted _after_ your stylesheet, so a key it defines beats the
+same variable set in your CSS - which is what makes user overrides and the
+fallbacks below work.
 
-Those four are conventions the base stylesheet reads; **any other key** is just
-emitted as a variable for your own CSS, and gets its own entry under **Colors**.
+### Recolouring YouTube Music
 
-### YouTube Music variables you can target
-
-When the theme has a non-empty `palette`, the base stylesheet re-points these
-YouTube Music variables at your four roles — so you can also use them directly
-in your CSS:
+YouTube Music is not recoloured for you - a palette only defines variables. The
+Basic theme ships the recolour as an ordinary stylesheet: copy its `style.css`
+into your theme folder (open it from **Theme ▸ Open themes folder**) and edit
+from there. It re-points these YouTube Music variables at your four roles:
 
 ```css
 /* background */
@@ -187,8 +175,8 @@ It also sets `background` on `:root`, `background-color` on `ytmusic-dialog`,
 `.time-info.ytmusic-player-bar`, and `color` on
 `.summary.ytmusic-setting-boolean-renderer`.
 
-Where YouTube Music wants a shade the palette does not have, the base
-stylesheet derives one for you — both are readable from your own CSS as well:
+Where YouTube Music wants a shade the palette does not have, the stylesheet
+derives one (these are readable from your own CSS too):
 
 | variable                    | value               |
 | --------------------------- | ------------------- |
@@ -199,12 +187,6 @@ stylesheet derives one for you — both are readable from your own CSS as well:
 `--paper-toggle-button-checked-bar-color` uses the lightened accent, and
 `--ytmusic-icon-inactive` the darkened text. Either derived name can be set in
 your `palette` to override the derived value.
-
-### A palette opts you into the recolour
-
-The base stylesheet is injected **only** when a theme has a non-empty `palette`.
-A theme with no palette is left as pure CSS, which is what you would want for a layout
-theme that should not touch the user's colours.
 
 ## Styles
 
@@ -217,8 +199,9 @@ while the theme is selected, and removed when the user switches away.
 
 Because it is injected as a plain `<style>`, `@import` and `url()` work as
 usual. Target YouTube Music elements directly (`ytmusic-app-layout`,
-`ytmusic-player-bar`, `ytmusic-guide-renderer`, ...). The standard YT Music
-palette is available per the table above.
+`ytmusic-player-bar`, `ytmusic-guide-renderer`, ...). The palette variables are
+available per the table above; recolouring YouTube Music is your stylesheet's
+job, see [Recolouring](#recolouring-youtube-music).
 
 ## Scripts
 
@@ -300,7 +283,8 @@ theme keeps working from its already-loaded copy.
 
 ## Built-in theme
 
-The first launch seeds a **Basic** theme: a four-colour palette with no CSS or
-JS, so it just recolours the app. It is an ordinary theme folder - edit it, copy
-it as a starting point for your own, or delete it. If you delete it, it stays
-deleted; the app will not re-create it.
+The first launch seeds a **Basic** theme: a four-colour palette plus the
+recolouring stylesheet described above, so it is both the default look and the
+reference for writing your own. It is an ordinary theme folder - edit it, copy
+it as a starting point, or delete it. If you delete it, it stays deleted; the
+app will not re-create it.
