@@ -496,10 +496,16 @@ export default createPlugin<
               fadeInTrack();
             }
           };
-          // A pause stops the track for real (a buffer stall never changes
-          // `paused`), so it drops the whole transition mid flight. A track
-          // running out is a transition of its own, not a cancel.
+          // A pause stops the track for real, so it drops the whole transition
+          // mid flight. A track running out is a transition of its own, not a
+          // cancel, and so is the player parking the element while it loads the
+          // next track: it sits paused on an empty buffer (the player reports
+          // state 3) long before anything could be played, which is why the
+          // fade in is still waiting to start. Cancelling there would kill the
+          // crossfade the load belongs to.
           const onPause = () => {
+            if (fadeInVideo || api.getPlayerState() === 3) return;
+
             if (video.paused && !video.ended && !buffering) cancelTransition();
           };
 
