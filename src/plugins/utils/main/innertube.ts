@@ -134,6 +134,28 @@ export const getInnertubeSession = (win: BrowserWindow): Promise<Innertube> => {
 
   return session;
 };
+export const isPremium = async (win: BrowserWindow): Promise<boolean> => {
+  // If signed out, it is understood as non-premium
+  const isSignedIn = (await win.webContents.executeJavaScript(
+    '!!yt.config_.LOGGED_IN',
+  )) as boolean;
+
+  if (!isSignedIn) return false;
+
+  // If signed in, check if the upgrade button is present
+  const upgradeBtnIconPathData = (await win.webContents.executeJavaScript(
+    'document.querySelector(\'iron-iconset-svg[name="yt-sys-icons"] #\u0079\u006f\u0075\u0074\u0075\u0062\u0065_music_monochrome\')?.firstChild?.getAttribute("d")?.substring(0, 15)',
+  )) as string | null;
+
+  // Fallback to non-premium if the icon is not found
+  if (!upgradeBtnIconPathData) return false;
+
+  const upgradeButton = `ytmusic-guide-entry-renderer:has(> tp-yt-paper-item > yt-icon path[d^="${upgradeBtnIconPathData}"])`;
+
+  return (await win.webContents.executeJavaScript(
+    `!document.querySelector('${upgradeButton}')`,
+  )) as boolean;
+};
 
 /**
  * What `info.download({ type: 'video+audio' })` returns: a muxed mp4. A music
@@ -157,6 +179,7 @@ export type AudioBytes = { bytes: Uint8Array<ArrayBuffer>; mimeType: string };
 export const getAudioBytes = async (
   yt: Innertube,
   videoId: string,
+  win: BrowserWindow,
 ): Promise<AudioBytes | undefined> => {
   let info: YTMusic.TrackInfo | YT.VideoInfo = await yt.music.getInfo(videoId);
 
@@ -178,7 +201,7 @@ export const getAudioBytes = async (
   // muxed format does. The video track is simply ignored on playback, so the
   // only cost of asking for it is bytes.
   const stream = await info.download({
-    type: 'video+audio',
+    type: (await isPremium(win)) ? 'audio' : 'video+audio',
     quality: 'best',
     format: 'any',
   });

@@ -18,7 +18,7 @@ import {
 } from '\u0079\u006f\u0075\u0074\u0075\u0062\u0065i.js';
 
 import { t } from '@/i18n';
-import { getInnertubeSession } from '@/plugins/utils/main';
+import { getInnertubeSession, isPremium } from '@/plugins/utils/main';
 import {
   registerCallback,
   unregisterCallback,
@@ -56,29 +56,6 @@ const ffmpegMutex = new Mutex();
 let yt: Innertube;
 let win: BrowserWindow;
 let playingUrl: string;
-
-const isPremium = async () => {
-  // If signed out, it is understood as non-premium
-  const isSignedIn = (await win.webContents.executeJavaScript(
-    '!!yt.config_.LOGGED_IN',
-  )) as boolean;
-
-  if (!isSignedIn) return false;
-
-  // If signed in, check if the upgrade button is present
-  const upgradeBtnIconPathData = (await win.webContents.executeJavaScript(
-    'document.querySelector(\'iron-iconset-svg[name="yt-sys-icons"] #\u0079\u006f\u0075\u0074\u0075\u0062\u0065_music_monochrome\')?.firstChild?.getAttribute("d")?.substring(0, 15)',
-  )) as string | null;
-
-  // Fallback to non-premium if the icon is not found
-  if (!upgradeBtnIconPathData) return false;
-
-  const upgradeButton = `ytmusic-guide-entry-renderer:has(> tp-yt-paper-item > yt-icon path[d^="${upgradeBtnIconPathData}"])`;
-
-  return (await win.webContents.executeJavaScript(
-    `!document.querySelector('${upgradeButton}')`,
-  )) as boolean;
-};
 
 const sendError = (error: Error, source?: string) => {
   win.setProgressBar(-1); // Close progress bar
@@ -330,7 +307,7 @@ async function downloadSongUnsafe(
   }
 
   const downloadOptions: Types.FormatOptions = {
-    type: (await isPremium()) ? 'audio' : 'video+audio', // Audio, video or video+audio
+    type: (await isPremium(win)) ? 'audio' : 'video+audio', // Audio, video or video+audio
     quality: 'best', // Best, bestefficiency, 144p, 240p, 480p, 720p and so on.
     format: 'any', // Media container format
   };

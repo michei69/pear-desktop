@@ -218,7 +218,7 @@ export default createPlugin<
   async backend({ window, ipc }) {
     const yt = await getInnertubeSession(window);
 
-    ipc.handle('audio-bytes', (videoID: string) => getAudioBytes(yt, videoID));
+    ipc.handle('audio-bytes', (videoID: string) => getAudioBytes(yt, videoID, window));
   },
 
   renderer: {
