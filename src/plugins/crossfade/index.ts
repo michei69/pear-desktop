@@ -22,10 +22,29 @@ import type { BrowserWindow } from 'electron';
 const ALIGNED_WITHIN = 0.002;
 
 /** Seconds a drift is closed over, once the audio runs at its own rate. */
-const ALIGN_WINDOW = 0.5;
+const ALIGN_WINDOW = 0.1;
 
-/** How far the alignment may take the rate: it only ever runs while silent. */
-const ALIGN_RATE_LIMIT = 0.05;
+/**
+ * How far the alignment may take the rate. It only ever runs while the audio is
+ * silent, so the rate it takes is not heard; the limit is what keeps a drift
+ * being closed rather than the two copies being played at different speeds.
+ */
+const ALIGN_RATE_LIMIT = 0.5;
+
+/**
+ * Drift past this is not a start that ran long — a start costs milliseconds —
+ * but the audio sitting at another position entirely, from a seek that got past
+ * the transport listeners. That is taken out by moving the audio, since running
+ * it back would take a hold long enough for a handover to land in the middle.
+ */
+const REANCHOR_ABOVE = 0.1;
+
+/**
+ * Longest the audio may be started ahead of the video, in seconds. A start
+ * costs a few milliseconds, so a measurement past this is one taken across a
+ * seek rather than a start and is not carried into the next one.
+ */
+const MAX_START_LEAD = 0.5;
 
 /** Milliseconds between alignment checks. */
 const ALIGN_INTERVAL = 50;
@@ -351,17 +370,19 @@ export default createPlugin<
       };
 
       /**
-       * Pulls the audio's clock onto the video's by playing it a hair faster or
-       * slower, and hands back the way to stop doing that.
+       * Holds the audio's clock on the video's: a drift is run out by playing
+       * the audio a hair faster or slower, one too far out to have come from a
+       * start is moved back onto the clock instead, and the way to stop is
+       * handed back.
        *
        * The audio is silent until a crossfade hands the track over to it, so
-       * whatever rate it takes to close a drift is not heard. A position cannot
-       * be written instead: an element that is playing stalls on one and comes
-       * back that much further behind.
+       * neither the rate nor the move is heard.
        */
       const alignAudio = (
         element: HTMLMediaElement,
         video: HTMLVideoElement,
+        /** Puts the audio back on the video's clock from a standstill. */
+        reanchor: () => void,
       ) => {
         const tick = () => {
           if (isStalled(video) || isStalled(element)) return;
@@ -370,6 +391,13 @@ export default createPlugin<
 
           if (Math.abs(drift) < ALIGNED_WITHIN) {
             if (element.playbackRate !== 1) element.playbackRate = 1;
+            return;
+          }
+
+          // Too far out for any start of this audio to have left it there, so
+          // it is started again rather than run back.
+          if (Math.abs(drift) > REANCHOR_ABOVE) {
+            reanchor();
             return;
           }
 
@@ -631,16 +659,35 @@ export default createPlugin<
             let starting = false;
 
             /**
+             * Starts the audio on the video's clock from where it stands.
+             *
+             * The position is only handed over while the element is stopped: one
+             * that is playing stops for as long as a position change takes and
+             * comes back that much behind, and a position taken any earlier is
+             * one the video has already moved past — either way the audio ends
+             * up behind the clock it follows, and that offset is what is heard
+             * when the crossfade hands the track over to this audio.
+             *
+             * What the start itself costs that clock is carried by the lead the
+             * last start measured.
+             */
+            const startAudio = () => {
+              element.pause();
+              // Measured from a start at the normal rate, and heard at one.
+              element.playbackRate = 1;
+              element.currentTime = video.currentTime + startLead;
+              starting = true;
+              element
+                .play()
+                .catch((error) =>
+                  console.error('[crossfade] audio failed to play', error),
+                );
+            };
+
+            /**
              * Runs the audio with the video: stopped while the video's clock is
              * parked (a pause, a seek, a stall) and started on that clock when
              * it runs again.
-             *
-             * The position has to be handed over while the element is stopped.
-             * One that is playing stops for as long as a position change takes
-             * and comes back that much behind, and a position taken any earlier
-             * is one the video has already moved past — either way the audio
-             * ends up behind the clock it follows, and that offset is what is
-             * heard when the crossfade hands the track over to this audio.
              */
             const followVideo = () => {
               if (isStalled(video)) {
@@ -651,15 +698,7 @@ export default createPlugin<
 
               if (!element.paused) return;
 
-              // Measured from a start at the normal rate, and heard at one.
-              element.playbackRate = 1;
-              element.currentTime = video.currentTime + startLead;
-              starting = true;
-              element
-                .play()
-                .catch((error) =>
-                  console.error('[crossfade] audio failed to play', error),
-                );
+              startAudio();
 
               // The audio starting is the other moment a fade in can begin: the
               // video's own `play` may have gone by while it was being fetched,
@@ -669,20 +708,22 @@ export default createPlugin<
 
             /**
              * Measures what starting the audio cost the clock it follows, for
-             * the next start to carry. The element takes the position it was
-             * given, so how far the video has moved on since is the lead.
+             * the next start to carry.
+             *
+             * The element was handed a position `startLead` ahead, so the offset
+             * it comes up with is the cost of the start less that lead: adding
+             * the lead back leaves the cost itself.
              */
             const onPlaying = () => {
               if (!starting) return;
 
               starting = false;
 
-              // Capped, so a measurement taken across a seek in between cannot
-              // push the audio most of a track out of the video.
-              startLead = Math.min(
-                video.currentTime - element.currentTime,
-                0.5,
-              );
+              const lead = video.currentTime - element.currentTime + startLead;
+
+              // Anything else was measured across a seek, not a start, and the
+              // position written from it would be one the audio is not at.
+              if (lead >= 0 && lead <= MAX_START_LEAD) startLead = lead;
             };
 
             /**
@@ -700,6 +741,20 @@ export default createPlugin<
                 isAutoTransition = true;
                 video.removeEventListener('timeupdate', transitionBeforeEnd);
 
+                // The crossfade is a moment away from handing this track over to
+                // the audio, and a drift this far out — a seek into the last
+                // seconds of the track — is one the alignment will not have run
+                // out by then, and one the two copies of the track would be
+                // heard apart by. It is started on the clock again here, where
+                // the audio is still silent, so what it is left off by is what a
+                // start costs and nothing on top.
+                if (
+                  Math.abs(video.currentTime - element.currentTime) >
+                  REANCHOR_ABOVE
+                ) {
+                  startAudio();
+                }
+
                 // The audio is about to be the one you hear: it goes back to its
                 // own rate before any of it can be heard.
                 stopAligning?.();
@@ -716,7 +771,7 @@ export default createPlugin<
             video.addEventListener('timeupdate', transitionBeforeEnd);
             element.addEventListener('playing', onPlaying);
 
-            stopAligning = alignAudio(element, video);
+            stopAligning = alignAudio(element, video, startAudio);
 
             cleanupListeners = () => {
               for (const type of FOLLOW_EVENTS) {
