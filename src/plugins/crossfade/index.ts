@@ -10,7 +10,7 @@ import {
 import promptOptions from '@/providers/prompt-options';
 import { createPlugin } from '@/utils';
 
-import { fadeVolumeAt, VolumeFader } from './fader';
+import { fadeVolumeAt } from './fader';
 
 import type { RendererContext } from '@/types/contexts';
 import type { BrowserWindow } from 'electron';
@@ -311,8 +311,8 @@ export default createPlugin<
        * volume while a track starts, which would flatten a fade on it.
        */
       let fadeInGain: GainNode | null = null;
-      /** Fader fading the outgoing track out. */
-      let fadeOutFader: VolumeFader | null = null;
+      /** Ends the fade out of the outgoing track, freeing the audio behind it. */
+      let stopFadeOut: (() => void) | null = null;
       /** Removes the listeners of the track currently synced. */
       let cleanupListeners: (() => void) | null = null;
       /** Takes the splice of `fadeInGain` back out, as the graph was found. */
@@ -341,6 +341,33 @@ export default createPlugin<
         element.seeking ||
         element.readyState < HTMLMediaElement.HAVE_FUTURE_DATA;
 
+      /**
+       * Points a fade is run through, for the audio thread to follow: a scheduled
+       * curve is sample-accurate, where a volume written a frame at a time is
+       * stepped, is smeared by the element's own ramp, and stops with a window
+       * that is not being drawn.
+       */
+      const fadeCurve = (
+        fadeScaling: CrossfadePluginConfig['fadeScaling'] | undefined,
+        direction: 'in' | 'out',
+      ) => {
+        const points = 64;
+        const curve = new Float32Array(points + 1);
+
+        for (let point = 0; point <= points; point += 1) {
+          const progress = point / points;
+
+          // A fade out is the fade in scaler run backwards, so the two keep a
+          // constant combined power where they overlap.
+          curve[point] = fadeVolumeAt(
+            direction === 'in' ? progress : 1 - progress,
+            fadeScaling,
+          );
+        }
+
+        return curve;
+      };
+
       /** Ramps the incoming track from silence with the graph's gain node. */
       const fadeInTrack = () => {
         if (!fadeInGain) return;
@@ -358,15 +385,11 @@ export default createPlugin<
           return;
         }
 
-        // A curve keeps the fade sample-accurate, with no animation frame loop
-        // for the audio thread to follow.
-        const points = 64;
-        const curve = new Float32Array(points + 1);
-        for (let point = 0; point <= points; point += 1) {
-          curve[point] = fadeVolumeAt(point / points, this.config?.fadeScaling);
-        }
-
-        gain.setValueCurveAtTime(curve, start, duration);
+        gain.setValueCurveAtTime(
+          fadeCurve(this.config?.fadeScaling, 'in'),
+          start,
+          duration,
+        );
       };
 
       /**
@@ -421,7 +444,7 @@ export default createPlugin<
         };
       };
 
-      // Drop an in-flight crossfade: its fader keeps writing to the outgoing
+      // Drop an in-flight crossfade: its fade out carries on over the outgoing
       // audio, and its fade-in listener waits on a video that may not play the
       // track it was armed for.
       const cancelTransition = () => {
@@ -430,9 +453,9 @@ export default createPlugin<
         // one it is left alone: it may be the track about to be faded out.
         const fadeInArmed = fadeIn !== null;
 
-        // Cancelling the fade out runs its callback, which releases the audio.
-        fadeOutFader?.cancelFade();
-        fadeOutFader = null;
+        // Cancelling the fade out frees the audio it was fading.
+        stopFadeOut?.();
+        stopFadeOut = null;
 
         if (fadeIn) {
           fadeIn.video.removeEventListener('play', fadeIn.onPlay);
@@ -592,31 +615,16 @@ export default createPlugin<
             const outgoing = syncedAudio;
             syncedAudio = null;
 
-            // The outgoing track fades out on its own media element, to a
-            // volume of its own: nothing else writes to it.
-            //
-            // Wall clock time, not the video's: the fade out has to run to
-            // completion even if the incoming track stalls.
-            const fader = new VolumeFader(elementOf(outgoing), {
-              initialVolume: video.volume,
-              fadeScaling: this.config?.fadeScaling,
-              fadeDuration: this.config?.fadeOutDuration,
-            });
-
-            fadeOutFader = fader;
-
-            fader.fadeOut(() => {
-              releaseAudio(outgoing);
-              if (fadeOutFader === fader) {
-                fadeOutFader = null;
-              }
-            });
-
-            // The incoming track starts from silence, and only ramps once the
-            // video plays: the player parks the element while it loads.
+            const element = elementOf(outgoing);
             const gain = fadeInGain;
             const outgoingGain = audioGains.get(outgoing);
             const context = outgoingGain?.context;
+            const fadeOut = (this.config?.fadeOutDuration ?? 5000) / 1000;
+            const handover = HANDOVER_MS / 1000;
+
+            // The audio of the outgoing track is the audio of the video it
+            // mirrors, so it plays at the volume the player has set there.
+            element.volume = video.volume;
 
             if (gain && outgoingGain && context) {
               // The track moves out of the video's audio and into its own over
@@ -624,7 +632,6 @@ export default createPlugin<
               // few ms they are apart are crossed while both are heard, instead
               // of stepping the waveform at the switch.
               const now = context.currentTime;
-              const handover = HANDOVER_MS / 1000;
               handoverUntil = now + handover;
 
               gain.gain.cancelScheduledValues(now);
@@ -633,12 +640,56 @@ export default createPlugin<
 
               outgoingGain.gain.cancelScheduledValues(now);
               outgoingGain.gain.setValueAtTime(0, now);
-              outgoingGain.gain.linearRampToValueAtTime(1, now + handover);
+
+              // From the moment the track has the audio to itself it fades out
+              // on the audio clock, which runs whether the incoming track stalls
+              // or the window is being drawn: an animation frame loop stops with
+              // a window that is not drawn, and would leave the track it was
+              // fading playing on over the new one. A fade out of no length is
+              // a cut, and the track is never brought in to be cut.
+              if (fadeOut > 0) {
+                outgoingGain.gain.linearRampToValueAtTime(1, now + handover);
+                outgoingGain.gain.setValueCurveAtTime(
+                  fadeCurve(this.config?.fadeScaling, 'out'),
+                  now + handover,
+                  fadeOut,
+                );
+              }
             } else if (gain) {
               gain.gain.cancelScheduledValues(0);
               gain.gain.value = 0;
             }
 
+            // Whatever level the fade ends at, the audio behind it is freed once
+            // it is over, or as soon as a cancel takes it out.
+            const timer = window.setTimeout(
+              () => {
+                if (stopFadeOut === cancelFadeOut) stopFadeOut = null;
+                releaseAudio(outgoing);
+              },
+              (handover + fadeOut) * 1000,
+            );
+
+            const cancelFadeOut = () => {
+              window.clearTimeout(timer);
+
+              // Cut, rather than left wherever the curve had reached: the audio
+              // behind it is freed in the same breath, and a curve cancelled
+              // mid-run may hold the level it had before it started.
+              if (outgoingGain) {
+                outgoingGain.gain.cancelScheduledValues(
+                  outgoingGain.context.currentTime,
+                );
+                outgoingGain.gain.value = 0;
+              }
+
+              releaseAudio(outgoing);
+            };
+
+            stopFadeOut = cancelFadeOut;
+
+            // The incoming track starts from silence, and only ramps once the
+            // video plays: the player parks the element while it loads.
             const onPlay = () => {
               video.removeEventListener('play', onPlay);
               fadeIn = null;
