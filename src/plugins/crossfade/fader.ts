@@ -43,6 +43,33 @@ export const fadeVolumeAt = (
   return exponentialScaler(progress, dynamicRangeOf(fadeScaling));
 };
 
+/** Points a scheduled fade curve is sampled at. */
+const CURVE_POINTS = 64;
+
+/**
+ * A fade as a curve for the audio thread to follow: a scheduled curve is
+ * sample-accurate, where a volume written a frame at a time is stepped and
+ * stops with a window that is not being drawn. A fade out is the same scaler
+ * run backwards, so the two keep a constant combined power where they overlap.
+ */
+export const fadeCurve = (
+  fadeScaling: string | number | undefined,
+  direction: 'in' | 'out',
+) => {
+  const curve = new Float32Array(CURVE_POINTS + 1);
+
+  for (let point = 0; point <= CURVE_POINTS; point += 1) {
+    const progress = point / CURVE_POINTS;
+
+    curve[point] = fadeVolumeAt(
+      direction === 'in' ? progress : 1 - progress,
+      fadeScaling,
+    );
+  }
+
+  return curve;
+};
+
 /**
  * Exponential scaler with dynamic range limit.
  *

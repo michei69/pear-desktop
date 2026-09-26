@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-import { fadeVolumeAt } from '../src/plugins/crossfade/fader';
+import { fadeCurve, fadeVolumeAt } from '../src/plugins/crossfade/fader';
 
 // Every fade the crossfade runs is this curve sampled: forwards for a fade in,
 // backwards for a fade out.
@@ -35,4 +35,16 @@ test('a dynamic range in dB is expanded over the fade', () => {
 test('an unusable scaling is refused rather than faded with', () => {
   expect(() => fadeVolumeAt(0.5, 0)).toThrow(TypeError);
   expect(() => fadeVolumeAt(0.5, -10)).toThrow(TypeError);
+});
+
+test('a scheduled curve is the scaler sampled forwards and backwards', () => {
+  const fadeIn = fadeCurve('equalPower', 'in');
+  const fadeOut = fadeCurve('equalPower', 'out');
+
+  expect(fadeIn[0]).toBeCloseTo(0, 6);
+  expect(fadeIn.at(-1)).toBeCloseTo(1, 6);
+
+  for (let point = 0; point < fadeIn.length; point += 1) {
+    expect(fadeIn[point] ** 2 + fadeOut[point] ** 2).toBeCloseTo(1, 6);
+  }
 });
