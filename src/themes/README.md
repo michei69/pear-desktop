@@ -19,6 +19,7 @@ in the menu and works without a restart.
 
 > [!TIP]
 > Have a CSS file theme already? You can import it from **Options ▸ Visual Tweaks ▸ Theme ▸ Import custom CSS file**
+>
 > This will automatically generate a theme folder for you, ready to be used again!
 
 The palette is only a bag of variables; the recolouring itself is CSS. So the
