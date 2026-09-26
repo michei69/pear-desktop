@@ -1,7 +1,7 @@
 name: Feature Request
 description: Suggest an idea for Pear Desktop
 title: "[Feature Request]: "
-labels: "enhancement :sparkles:"
+labels: "enhancement"
 body:
 - type: checkboxes
   attributes:
@@ -10,7 +10,7 @@ body:
     options:
       - label: I use the latest version of Pear Desktop (Application).
         required: true
-      - label: I have searched the [issue tracker](https://github.com/pear-devs/pear-desktop/issues) for a feature request that matches the one I want to file, without success.
+      - label: I have searched the [issue tracker](https://github.com/michei69/pear-desktop/issues) for a feature request that matches the one I want to file, without success.
         required: true
 - type: textarea
   attributes:

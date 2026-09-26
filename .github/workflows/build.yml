@@ -3,7 +3,6 @@ name: Build Pear Desktop
 on:
   push:
     branches: [ master ]
-  pull_request:
   workflow_dispatch:
 
 env:
@@ -13,7 +12,6 @@ jobs:
   build:
     permissions:
       contents: write
-    if: github.event.pull_request.draft == false
     name: Build Pear Desktop
     runs-on: ${{ matrix.os }}
     strategy:

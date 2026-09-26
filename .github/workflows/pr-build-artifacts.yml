@@ -61,13 +61,20 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build on macOS
+      # Only vite build without release if it is a fork, or it is a pull-request
+      - name: Vite Build
+        if: github.repository == 'michei69/pear-desktop'
+        run: |
+          pnpm build
+
+      # Build and release if it's the main repository and is not pull-request
+      - name: Build on Mac
         if: startsWith(matrix.os, 'macOS')
         run: |
           pnpm dist:mac
           pnpm dist:mac:arm64
 
-      - name: Install Linux dependencies
+      - name: Build on Linux
         if: startsWith(matrix.os, 'ubuntu')
         run: |
           sudo snap install snapcraft --classic
@@ -77,10 +84,9 @@ jobs:
           sudo flatpak install -y flathub org.freedesktop.Platform/x86_64/24.08
           sudo flatpak install -y flathub org.freedesktop.Sdk/x86_64/24.08
           sudo flatpak install -y flathub org.electronjs.Electron2.BaseApp/x86_64/24.08
-
-      - name: Build on Linux
-        if: startsWith(matrix.os, 'ubuntu')
-        run: |
+          sudo flatpak install -y flathub org.freedesktop.Platform/aarch64/24.08
+          sudo flatpak install -y flathub org.freedesktop.Sdk/aarch64/24.08
+          sudo flatpak install -y flathub org.electronjs.Electron2.BaseApp/aarch64/24.08
           pnpm dist:linux
           pnpm dist:linux:deb-arm64
           pnpm dist:linux:rpm-arm64
@@ -90,13 +96,41 @@ jobs:
         run: |
           pnpm dist:win
 
-      - name: Upload artifacts
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
+      - name: Upload macOS artifacts
+        if: startsWith(matrix.os, 'macOS')
+        uses: actions/upload-artifact@v4
         with:
-          name: build-artifacts-${{ matrix.os }}
-          path: pack/
+          name: pear-desktop-macos
           retention-days: 7
-          if-no-files-found: error
+          path: |
+            pack/*.dmg
+            pack/*.dmg.blockmap
+
+      - name: Upload Linux artifacts
+        if: startsWith(matrix.os, 'ubuntu')
+        uses: actions/upload-artifact@v4
+        with:
+          name: pear-desktop-linux
+          retention-days: 7
+          path: |
+            pack/*.AppImage
+            pack/*.deb
+            pack/*.rpm
+            pack/*.flatpak
+            pack/*.snap
+            pack/*.freebsd
+            pack/*.tar.gz
+
+      - name: Upload Windows artifacts
+        if: startsWith(matrix.os, 'windows')
+        uses: actions/upload-artifact@v4
+        with:
+          name: pear-desktop-windows
+          retention-days: 7
+          path: |
+            pack/*.exe
+            pack/nsis-web/*.nsis.7z
+            pack/nsis-web/*.exe
 
   comment:
     name: Comment on PR
@@ -124,9 +158,9 @@ jobs:
             **[📦 Download Artifacts](${runUrl})**
 
             ### Available builds:
-            - **Windows**: \`build-artifacts-windows-latest\`
-            - **macOS**: \`build-artifacts-macos-latest\`
-            - **Linux**: \`build-artifacts-ubuntu-latest\`
+            - **Windows**: \`pear-desktop-windows\`
+            - **macOS**: \`pear-desktop-macos\`
+            - **Linux**: \`pear-desktop-linux\`
 
             *Note: Artifacts are available for 7 days.*`;
             } else if (buildResult === 'failure') {

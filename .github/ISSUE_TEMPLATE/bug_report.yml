@@ -1,16 +1,16 @@
 name: Bug Report
 description: Report a Pear Desktop bug
 title: "[Bug]: "
-labels: "bug :beetle:"
+labels: "bug"
 body:
 - type: checkboxes
   attributes:
     label: Preflight Checklist
     description: Please ensure you've completed all of the following.
     options:
-      - label: I use the latest version of Pear Desktop (Application).
+      - label: I use the latest version of Pear Desktop (Application) from this fork.
         required: true
-      - label: I have searched the [issue tracker](https://github.com/pear-devs/pear-desktop/issues) for a bug report that matches the one I want to file, without success.
+      - label: I have searched the [issue tracker](https://github.com/michei69/pear-desktop/issues) for a bug report that matches the one I want to file, without success.
         required: true
       - label: I understand that **pear-devs/pear-desktop has NO affiliation with Google or YouTube**
         required: true
@@ -31,6 +31,7 @@ body:
     options:
       - label: I use the portable version of the Pear Desktop Application.
       - label: I can reproduce this issue in the [official version of (WEB) YTM](https://music.youtube.com).
+      - label: I cannot reproduce this issue in the [upstream version of Pear Desktop](https://github.com/pear-devs/pear-desktop).
 - type: dropdown
   id: os
   attributes:
