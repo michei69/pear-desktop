@@ -10,10 +10,34 @@ import {
 import promptOptions from '@/providers/prompt-options';
 import { createPlugin } from '@/utils';
 
+import { nudgeRate } from './align';
 import { fadeVolumeAt, VolumeFader } from './fader';
 
 import type { RendererContext } from '@/types/contexts';
 import type { BrowserWindow } from 'electron';
+
+/**
+ * How close the synced audio has to sit on the video's clock before it is left
+ * alone, in seconds: below this a splice is not heard.
+ */
+const ALIGNED_WITHIN = 0.002;
+
+/** Seconds a drift is closed over, once the audio runs at its own rate. */
+const ALIGN_WINDOW = 0.5;
+
+/** How far the alignment may take the rate: it only ever runs while silent. */
+const ALIGN_RATE_LIMIT = 0.05;
+
+/** Milliseconds between alignment checks. */
+const ALIGN_INTERVAL = 50;
+
+/**
+ * Milliseconds the outgoing track takes to move from the video's audio to its
+ * own. Long enough that the two levels cross without a step in the waveform,
+ * short enough that the two copies of the track are only both heard for a
+ * moment.
+ */
+const HANDOVER_MS = 100;
 
 export type CrossfadePluginConfig = {
   enabled: boolean;
@@ -246,6 +270,10 @@ export default createPlugin<
        * to be started that much ahead of it to end up level with it.
        */
       let startLead = 0;
+      /** Stops the alignment running for the track that is synced right now. */
+      let stopAligning: (() => void) | null = null;
+      /** Context time a handover of the outgoing track runs until. */
+      let handoverUntil = 0;
 
       /** Ramps the incoming track from silence with the graph's gain node. */
       const fadeInTrack = () => {
@@ -253,7 +281,9 @@ export default createPlugin<
 
         const { context, gain } = this.fadeInGain;
         const duration = (this.config?.fadeInDuration ?? 5000) / 1000;
-        const start = context.currentTime;
+        // Not before the outgoing track has finished moving over into its own
+        // audio: the ramp down of the video's audio is part of that handover.
+        const start = Math.max(context.currentTime, handoverUntil);
 
         gain.cancelScheduledValues(start);
 
@@ -271,6 +301,49 @@ export default createPlugin<
         }
 
         gain.setValueCurveAtTime(curve, start, duration);
+      };
+
+      /**
+       * Pulls the audio's clock onto the video's by playing it a hair faster or
+       * slower, and hands back the way to stop doing that.
+       *
+       * The audio is silent until a crossfade hands the track over to it, so
+       * whatever rate it takes to close a drift is not heard. A position cannot
+       * be written instead: an element that is playing stalls on one and comes
+       * back that much further behind.
+       */
+      const alignAudio = (
+        element: HTMLMediaElement,
+        video: HTMLVideoElement,
+      ) => {
+        const tick = () => {
+          if (
+            video.paused ||
+            video.seeking ||
+            element.paused ||
+            element.seeking ||
+            element.readyState < HTMLMediaElement.HAVE_FUTURE_DATA
+          ) {
+            return;
+          }
+
+          const drift = video.currentTime - element.currentTime;
+
+          if (Math.abs(drift) < ALIGNED_WITHIN) {
+            if (element.playbackRate !== 1) element.playbackRate = 1;
+            return;
+          }
+
+          const rate = nudgeRate(drift, ALIGN_WINDOW, ALIGN_RATE_LIMIT);
+          if (element.playbackRate !== rate) element.playbackRate = rate;
+        };
+
+        const timer = window.setInterval(tick, ALIGN_INTERVAL);
+
+        return () => {
+          window.clearInterval(timer);
+          element.playbackRate = 1;
+        };
       };
 
       // Drop an in-flight crossfade: its fader keeps writing to the outgoing
@@ -306,6 +379,9 @@ export default createPlugin<
       /** Object URL backing each Howl, so `releaseAudio` can revoke it. */
       const audioURLs = new WeakMap<Howl, string>();
 
+      /** Gain node carrying each Howl's audio in the player's graph. */
+      const audioGains = new WeakMap<Howl, GainNode>();
+
       /**
        * Media element behind a Howl. Howler queues the `play` and `seek` calls
        * made while a sound is still loading, applies the position sampled back
@@ -313,6 +389,26 @@ export default createPlugin<
        * below can live with, so the element is driven directly.
        */
       const elementOf = (audio: Howl) => audio._sounds[0]._node;
+
+      /**
+       * Hands a track's audio to the player's own audio graph, with a gain node
+       * of its own in front of it.
+       *
+       * Its level then sits on the clock the video's audio runs on, so the two
+       * can be handed over to each other by shaping the graph rather than by
+       * stepping the element's volume — a step in the waveform is exactly what a
+       * seam is heard as.
+       */
+      const routeAudio = (audio: Howl, context: AudioContext) => {
+        if (audioGains.has(audio)) return;
+
+        const gain = context.createGain();
+        gain.gain.value = 0;
+        gain.connect(context.destination);
+        context.createMediaElementSource(elementOf(audio)).connect(gain);
+
+        audioGains.set(audio, gain);
+      };
 
       // A media element cannot play YouTube's own stream URLs, so the backend
       // hands the audio over as bytes (see `getAudioBytes`) and a Blob turns
@@ -332,6 +428,14 @@ export default createPlugin<
         });
 
         audioURLs.set(audio, url);
+
+        // The graph is announced per track, so on the first one of a session it
+        // may not be known yet: `attachFadeInGain` routes whatever is synced
+        // when it turns up. The audio is silent until a crossfade needs it, so
+        // arriving in the graph late costs nothing.
+        const context = this.audioGraph?.audioContext;
+        if (context) routeAudio(audio, context);
+
         return audio;
       };
 
@@ -340,6 +444,8 @@ export default createPlugin<
         // Howler only stops an element it started itself, and this one was
         // started here, so it is stopped here as well.
         elementOf(audio).pause();
+        audioGains.get(audio)?.disconnect();
+        audioGains.delete(audio);
         audio.unload();
         const url = audioURLs.get(audio);
         if (url) {
@@ -377,6 +483,11 @@ export default createPlugin<
         ) {
           isAutoTransition = true;
           video.removeEventListener('timeupdate', transitionBeforeEnd);
+
+          // The audio is about to be the one you hear: it goes back to its own
+          // rate before any of it can be heard.
+          stopAligning?.();
+
           document.querySelector<HTMLButtonElement>('.next-button')?.click();
         }
       };
@@ -439,7 +550,26 @@ export default createPlugin<
             // The incoming track starts from silence, and only ramps once the
             // video plays: the player parks the element while it loads.
             const gain = this.fadeInGain;
-            if (gain) {
+            const outgoingGain = audioGains.get(outgoing);
+            const context = outgoingGain?.context;
+
+            if (gain && outgoingGain && context) {
+              // The track moves out of the video's audio and into its own over
+              // a moment, the two playing it either side of one another: the
+              // few ms they are apart are crossed while both are heard, instead
+              // of stepping the waveform at the switch.
+              const now = context.currentTime;
+              const handover = HANDOVER_MS / 1000;
+              handoverUntil = now + handover;
+
+              gain.gain.cancelScheduledValues(now);
+              gain.gain.setValueAtTime(gain.gain.value, now);
+              gain.gain.linearRampToValueAtTime(0, now + handover);
+
+              outgoingGain.gain.cancelScheduledValues(now);
+              outgoingGain.gain.setValueAtTime(0, now);
+              outgoingGain.gain.linearRampToValueAtTime(1, now + handover);
+            } else if (gain) {
               gain.gain.cancelScheduledValues(0);
               gain.gain.value = 0;
             }
@@ -498,6 +628,8 @@ export default createPlugin<
 
               if (!element.paused) return;
 
+              // Measured from a start at the normal rate, and heard at one.
+              element.playbackRate = 1;
               element.currentTime = video.currentTime + startLead;
               starting = true;
               element
@@ -539,6 +671,8 @@ export default createPlugin<
             video.addEventListener('timeupdate', transitionBeforeEnd);
             element.addEventListener('playing', onPlaying);
 
+            stopAligning = alignAudio(element, video);
+
             this.cleanupListeners = () => {
               video.removeEventListener('seeking', followVideo);
               video.removeEventListener('seeked', followVideo);
@@ -548,6 +682,8 @@ export default createPlugin<
               video.removeEventListener('timeupdate', followVideo);
               video.removeEventListener('timeupdate', transitionBeforeEnd);
               element.removeEventListener('playing', onPlaying);
+              stopAligning?.();
+              stopAligning = null;
             };
 
             followVideo();
@@ -598,6 +734,12 @@ export default createPlugin<
           gain.disconnect();
           source.connect(context.destination);
         };
+
+        // A track whose audio was fetched before the graph was announced is
+        // still playing straight out of its element: move it in, where its level
+        // can be shaped without stepping on the waveform. It is silent until a
+        // crossfade hands it over, so arriving late costs nothing.
+        if (this.syncedAudio) routeAudio(this.syncedAudio, context);
       };
 
       // `start` hands every announcement to this, and covers a graph that was
