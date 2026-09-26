@@ -17,9 +17,16 @@ import type { BrowserWindow } from 'electron';
 
 /**
  * How close the synced audio has to sit on the video's clock before it is left
- * alone, in seconds: below this a splice is not heard.
+ * alone, in seconds.
+ *
+ * What is left of it is the offset the two copies of the track are summed at
+ * while a handover crosses them, and two copies that far apart cancel every
+ * frequency the offset is half a period of: a millisecond puts the first of
+ * them at 500 Hz, in the body of the track, and holds it there for as long as
+ * both copies are at a level to be heard. It is held as tightly as the two
+ * clocks can be read, so what cancels lands above the track rather than in it.
  */
-const ALIGNED_WITHIN = 0.002;
+const ALIGNED_WITHIN = 0.0005;
 
 /** Seconds a drift is closed over, once the audio runs at its own rate. */
 const ALIGN_WINDOW = 0.1;
@@ -51,11 +58,19 @@ const ALIGN_INTERVAL = 50;
 
 /**
  * Milliseconds the outgoing track takes to move from the video's audio to its
- * own. Long enough that the two levels cross without a step in the waveform,
- * short enough that the two copies of the track are only both heard for a
- * moment.
+ * own, over which the two copies of the track are both heard.
+ *
+ * Splice length, not crossfade length. What crosses here is one track with
+ * itself, a fraction of a millisecond out of step: summed at equal levels the
+ * two cancel what the offset is a half period of, so the longer they are both
+ * heard the longer the track is hollow where it should not be. The player can
+ * also take its own copy away part way through the move — it swaps the media
+ * out from under the video as the next track loads — and what is left is the
+ * level the audio had reached, heard as a dip until it is the track's own.
+ * Long enough that neither copy steps the waveform, short enough that it is
+ * over before either is heard.
  */
-const HANDOVER_MS = 100;
+const HANDOVER_MS = 20;
 
 /**
  * Video events that can change whether the synced audio should be running.
