@@ -10,7 +10,6 @@ import {
 import promptOptions from '@/providers/prompt-options';
 import { createPlugin } from '@/utils';
 
-import { nudgeRate } from './align';
 import { fadeVolumeAt, VolumeFader } from './fader';
 
 import type { RendererContext } from '@/types/contexts';
@@ -39,6 +38,20 @@ const ALIGN_INTERVAL = 50;
  */
 const HANDOVER_MS = 100;
 
+/**
+ * Video events that can change whether the synced audio should be running.
+ * `timeupdate` carries the automatic transition as well, but that listener is
+ * armed and released on its own: a pause must not take the crossfade off.
+ */
+const FOLLOW_EVENTS = [
+  'seeking',
+  'seeked',
+  'playing',
+  'waiting',
+  'pause',
+  'timeupdate',
+] as const;
+
 export type CrossfadePluginConfig = {
   enabled: boolean;
   fadeInDuration: number;
@@ -53,29 +66,16 @@ export default createPlugin<
   {
     config?: CrossfadePluginConfig;
     ipc?: RendererContext<CrossfadePluginConfig>['ipc'];
-    /** Video audio graph, as last announced on `peard:audio-can-play`. */
+    /**
+     * Video audio graph, as last announced on `peard:audio-can-play`. The
+     * announcement can arrive before `onPlayerApiReady` has somewhere to splice
+     * it into, so the last one is kept here.
+     */
     audioGraph?: Compressor;
-    /**
-     * Audio of the current track, kept in sync with the video and silent until
-     * it takes over.
-     */
-    syncedAudio?: Howl | null;
-    /**
-     * Gain node in front of the video's audio, so the crossfade owns the
-     * incoming track's level: the player keeps rewriting the element's own
-     * volume while a track starts, which would flatten a fade on it.
-     */
-    fadeInGain?: GainNode | null;
-    /** Fader fading the outgoing track out. */
-    fadeOutFader?: VolumeFader | null;
-    /** Removes the listeners of the track currently synced. */
-    cleanupListeners?: (() => void) | null;
     /** `peard:audio-can-play` listener, so `stop` can detach it. */
     onAudioCanPlay?: (event: CustomEvent<Compressor>) => void;
     /** Splices the crossfade's gain node into the announced graph. */
     attachFadeInGain?: (graph: Compressor) => void;
-    /** Takes the splice back out, leaving the graph as it was found. */
-    detachFadeInGain?: () => void;
     /** Drops the gain node, the listeners and the audio the plugin holds. */
     teardown?: () => void;
   },
@@ -174,17 +174,19 @@ export default createPlugin<
         return undefined;
       }
 
+      // A number in dB, and one the fader's scaler accepts: a zero, negative or
+      // non-finite dynamic range is not a fade, so the previous setting is kept.
+      const decibels = Math.abs(Number(res[3]));
       let fadeScaling: 'linear' | 'logarithmic' | 'equalPower' | number;
+
       if (
         res[3] === 'linear' ||
         res[3] === 'logarithmic' ||
         res[3] === 'equalPower'
       ) {
         fadeScaling = res[3];
-      } else if (isFinite(Number(res[3]))) {
-        // A number in dB, and one the fader's scaler accepts: a zero or negative
-        // dynamic range is not a fade.
-        fadeScaling = Math.abs(Number(res[3]));
+      } else if (Number.isFinite(decibels) && decibels > 0) {
+        fadeScaling = decibels;
       } else {
         fadeScaling = options.fadeScaling;
       }
@@ -246,22 +248,47 @@ export default createPlugin<
 
       this.teardown?.();
       this.teardown = undefined;
+      // A session of its own is what splices the graph again, so the old one
+      // must not be left reachable through the listener registered above.
+      this.attachFadeInGain = undefined;
       this.audioGraph = undefined;
     },
     onConfigChange(newConfig) {
       this.config = newConfig;
     },
     onPlayerApiReady(api) {
+      // A second session would leave the listeners and the audio of the first
+      // one behind: everything below belongs to this closure, so the old one is
+      // torn down before a new one is built.
+      this.teardown?.();
+
       /** Video ID the current audio is playing, once its bytes arrived. */
       let currentID: string | null = null;
       let isAutoTransition = false;
       let navigationGeneration = 0;
 
-      // Crossfade in flight: the fader on the outgoing audio and the incoming
-      // video waiting for the `play` that starts its gain ramp. The state
-      // `stop` has to reach lives on the plugin, the rest in this closure.
-      let fadeInVideo: HTMLVideoElement | null = null;
-      let fadeInOnPlay: (() => void) | null = null;
+      /**
+       * Audio of the current track, kept in sync with the video and silent until
+       * it takes over.
+       */
+      let syncedAudio: Howl | null = null;
+      /**
+       * Gain node in front of the video's audio, so the crossfade owns the
+       * incoming track's level: the player keeps rewriting the element's own
+       * volume while a track starts, which would flatten a fade on it.
+       */
+      let fadeInGain: GainNode | null = null;
+      /** Fader fading the outgoing track out. */
+      let fadeOutFader: VolumeFader | null = null;
+      /** Removes the listeners of the track currently synced. */
+      let cleanupListeners: (() => void) | null = null;
+      /** Takes the splice of `fadeInGain` back out, as the graph was found. */
+      let detachFadeInGain: (() => void) | null = null;
+
+      // Crossfade in flight: the incoming video, waiting for the `play` that
+      // starts its gain ramp, and the listener that starts it. Held together, so
+      // a listener can never outlive the video it was armed on.
+      let fadeIn: { video: HTMLVideoElement; onPlay: () => void } | null = null;
       /** Source the gain node is wired to, so it is not rebuilt per announce. */
       let fadeInGainAttachedTo: MediaElementAudioSourceNode | null = null;
       /**
@@ -275,11 +302,17 @@ export default createPlugin<
       /** Context time a handover of the outgoing track runs until. */
       let handoverUntil = 0;
 
+      /** Whether an element's clock is parked, on a pause, a seek or a stall. */
+      const isStalled = (element: HTMLMediaElement) =>
+        element.paused ||
+        element.seeking ||
+        element.readyState < HTMLMediaElement.HAVE_FUTURE_DATA;
+
       /** Ramps the incoming track from silence with the graph's gain node. */
       const fadeInTrack = () => {
-        if (!this.fadeInGain) return;
+        if (!fadeInGain) return;
 
-        const { context, gain } = this.fadeInGain;
+        const { context, gain } = fadeInGain;
         const duration = (this.config?.fadeInDuration ?? 5000) / 1000;
         // Not before the outgoing track has finished moving over into its own
         // audio: the ramp down of the video's audio is part of that handover.
@@ -317,15 +350,7 @@ export default createPlugin<
         video: HTMLVideoElement,
       ) => {
         const tick = () => {
-          if (
-            video.paused ||
-            video.seeking ||
-            element.paused ||
-            element.seeking ||
-            element.readyState < HTMLMediaElement.HAVE_FUTURE_DATA
-          ) {
-            return;
-          }
+          if (isStalled(video) || isStalled(element)) return;
 
           const drift = video.currentTime - element.currentTime;
 
@@ -334,7 +359,15 @@ export default createPlugin<
             return;
           }
 
-          const rate = nudgeRate(drift, ALIGN_WINDOW, ALIGN_RATE_LIMIT);
+          // Playback rate that closes the drift over the next `ALIGN_WINDOW`
+          // seconds: a follower behind its clock (a positive drift, in seconds)
+          // plays faster to catch up, one ahead of it plays slower to let it
+          // pass, and neither takes the rate further than the limit.
+          const rate = Math.min(
+            Math.max(1 + drift / ALIGN_WINDOW, 1 - ALIGN_RATE_LIMIT),
+            1 + ALIGN_RATE_LIMIT,
+          );
+
           if (element.playbackRate !== rate) element.playbackRate = rate;
         };
 
@@ -353,26 +386,26 @@ export default createPlugin<
         // With a fade in armed, the synced audio is the incoming track, sitting
         // at zero gain until the video plays, so it follows the pause. Without
         // one it is left alone: it may be the track about to be faded out.
-        const fadeInArmed = fadeInVideo !== null;
+        const fadeInArmed = fadeIn !== null;
 
-        this.fadeOutFader?.cancelFade();
-        this.fadeOutFader = null;
+        // Cancelling the fade out runs its callback, which releases the audio.
+        fadeOutFader?.cancelFade();
+        fadeOutFader = null;
 
-        if (fadeInVideo && fadeInOnPlay) {
-          fadeInVideo.removeEventListener('play', fadeInOnPlay);
+        if (fadeIn) {
+          fadeIn.video.removeEventListener('play', fadeIn.onPlay);
+          fadeIn = null;
         }
-        fadeInVideo = null;
-        fadeInOnPlay = null;
 
         // An interrupted fade in would leave the track quiet, so hand its level
         // back to the player.
-        if (this.fadeInGain) {
-          this.fadeInGain.gain.cancelScheduledValues(0);
-          this.fadeInGain.gain.value = 1;
+        if (fadeInGain) {
+          fadeInGain.gain.cancelScheduledValues(0);
+          fadeInGain.gain.value = 1;
         }
 
-        if (this.syncedAudio && fadeInArmed) {
-          elementOf(this.syncedAudio).pause();
+        if (syncedAudio && fadeInArmed) {
+          elementOf(syncedAudio).pause();
         }
       };
 
@@ -465,33 +498,6 @@ export default createPlugin<
       const getVideoIDFromURL = (url: string) =>
         new URLSearchParams(url.split('?')?.at(-1)).get('v');
 
-      /**
-       * Clicks through to the next track `secondsBeforeEnd` before the end.
-       * Armed per track on the shared element and released with that track's
-       * other listeners, not by a cancel: pausing before the end must not cost
-       * the track its crossfade.
-       */
-      const transitionBeforeEnd = () => {
-        const video = document.querySelector('video');
-        if (!video) return;
-
-        if (
-          video.currentTime >=
-            video.duration - (this.config?.secondsBeforeEnd ?? 10) &&
-          this.syncedAudio &&
-          this.syncedAudio.state() === 'loaded'
-        ) {
-          isAutoTransition = true;
-          video.removeEventListener('timeupdate', transitionBeforeEnd);
-
-          // The audio is about to be the one you hear: it goes back to its own
-          // rate before any of it can be heard.
-          stopAligning?.();
-
-          document.querySelector<HTMLButtonElement>('.next-button')?.click();
-        }
-      };
-
       /** Hands the current video over to the audio of `nextID`. */
       const playVideo = (nextID: string) => {
         const generation = ++navigationGeneration;
@@ -501,9 +507,9 @@ export default createPlugin<
         // pass would cancel the crossfade that is already under way.
         currentID = nextID;
 
-        if (this.cleanupListeners) {
-          this.cleanupListeners();
-          this.cleanupListeners = null;
+        if (cleanupListeners) {
+          cleanupListeners();
+          cleanupListeners = null;
         }
 
         // Nothing from the previous navigation may keep touching the video
@@ -520,12 +526,12 @@ export default createPlugin<
         const video = document.querySelector('video');
         if (!video) return;
 
-        if (this.syncedAudio) {
+        if (syncedAudio) {
           // Only an automatic transition can be crossfaded: the outgoing track
           // has to still be playing while the incoming one fades in.
-          if (isAuto && this.syncedAudio.state() === 'loaded') {
-            const outgoing = this.syncedAudio;
-            this.syncedAudio = null;
+          if (isAuto && syncedAudio.state() === 'loaded') {
+            const outgoing = syncedAudio;
+            syncedAudio = null;
 
             // The outgoing track fades out on its own media element, to a
             // volume of its own: nothing else writes to it.
@@ -538,18 +544,18 @@ export default createPlugin<
               fadeDuration: this.config?.fadeOutDuration,
             });
 
-            this.fadeOutFader = fader;
+            fadeOutFader = fader;
 
             fader.fadeOut(() => {
               releaseAudio(outgoing);
-              if (this.fadeOutFader === fader) {
-                this.fadeOutFader = null;
+              if (fadeOutFader === fader) {
+                fadeOutFader = null;
               }
             });
 
             // The incoming track starts from silence, and only ramps once the
             // video plays: the player parks the element while it loads.
-            const gain = this.fadeInGain;
+            const gain = fadeInGain;
             const outgoingGain = audioGains.get(outgoing);
             const context = outgoingGain?.context;
 
@@ -576,17 +582,15 @@ export default createPlugin<
 
             const onPlay = () => {
               video.removeEventListener('play', onPlay);
-              fadeInVideo = null;
-              fadeInOnPlay = null;
+              fadeIn = null;
               fadeInTrack();
             };
 
-            fadeInVideo = video;
-            fadeInOnPlay = onPlay;
+            fadeIn = { video, onPlay };
             video.addEventListener('play', onPlay);
           } else {
-            releaseAudio(this.syncedAudio);
-            this.syncedAudio = null;
+            releaseAudio(syncedAudio);
+            syncedAudio = null;
           }
         }
 
@@ -597,7 +601,7 @@ export default createPlugin<
             if (!bytes || generation !== navigationGeneration) return;
 
             const audio = createAudio(bytes.bytes, bytes.mimeType);
-            this.syncedAudio = audio;
+            syncedAudio = audio;
 
             const element = elementOf(audio);
             /** Whether the audio is between being told to play and running. */
@@ -616,11 +620,7 @@ export default createPlugin<
              * heard when the crossfade hands the track over to this audio.
              */
             const followVideo = () => {
-              if (
-                video.paused ||
-                video.seeking ||
-                video.readyState < HTMLMediaElement.HAVE_FUTURE_DATA
-              ) {
+              if (isStalled(video)) {
                 starting = false;
                 element.pause();
                 return;
@@ -641,7 +641,7 @@ export default createPlugin<
               // The audio starting is the other moment a fade in can begin: the
               // video's own `play` may have gone by while it was being fetched,
               // and the armed listener is what takes the fade in off the video.
-              fadeInOnPlay?.();
+              fadeIn?.onPlay();
             };
 
             /**
@@ -662,24 +662,43 @@ export default createPlugin<
               );
             };
 
-            video.addEventListener('seeking', followVideo);
-            video.addEventListener('seeked', followVideo);
-            video.addEventListener('playing', followVideo);
-            video.addEventListener('waiting', followVideo);
-            video.addEventListener('pause', followVideo);
-            video.addEventListener('timeupdate', followVideo);
+            /**
+             * Clicks through to the next track `secondsBeforeEnd` before the
+             * end. Armed per track on the video and released with that track's
+             * other listeners, not by a cancel: pausing before the end must not
+             * cost the track its crossfade.
+             */
+            const transitionBeforeEnd = () => {
+              if (
+                video.currentTime >=
+                  video.duration - (this.config?.secondsBeforeEnd ?? 10) &&
+                syncedAudio?.state() === 'loaded'
+              ) {
+                isAutoTransition = true;
+                video.removeEventListener('timeupdate', transitionBeforeEnd);
+
+                // The audio is about to be the one you hear: it goes back to its
+                // own rate before any of it can be heard.
+                stopAligning?.();
+
+                document
+                  .querySelector<HTMLButtonElement>('.next-button')
+                  ?.click();
+              }
+            };
+
+            for (const type of FOLLOW_EVENTS) {
+              video.addEventListener(type, followVideo);
+            }
             video.addEventListener('timeupdate', transitionBeforeEnd);
             element.addEventListener('playing', onPlaying);
 
             stopAligning = alignAudio(element, video);
 
-            this.cleanupListeners = () => {
-              video.removeEventListener('seeking', followVideo);
-              video.removeEventListener('seeked', followVideo);
-              video.removeEventListener('playing', followVideo);
-              video.removeEventListener('waiting', followVideo);
-              video.removeEventListener('pause', followVideo);
-              video.removeEventListener('timeupdate', followVideo);
+            cleanupListeners = () => {
+              for (const type of FOLLOW_EVENTS) {
+                video.removeEventListener(type, followVideo);
+              }
               video.removeEventListener('timeupdate', transitionBeforeEnd);
               element.removeEventListener('playing', onPlaying);
               stopAligning?.();
@@ -707,14 +726,14 @@ export default createPlugin<
 
         // The previous splice has to come out before a new graph goes in, or its
         // edge would keep feeding a gain node nothing writes to.
-        this.detachFadeInGain?.();
+        detachFadeInGain?.();
 
         const gain = context.createGain();
 
         // A track that is about to be faded in has to start from silence. This
         // can run after the crossfade armed its ramp, and a fresh gain node
         // would otherwise open at full volume.
-        if (fadeInVideo) gain.gain.value = 0;
+        if (fadeIn) gain.gain.value = 0;
 
         // Only the renderer's own edge is removed, like the equalizer does it:
         // another plugin splices its chain in the same way, so taking the whole
@@ -723,13 +742,13 @@ export default createPlugin<
         source.connect(gain);
         gain.connect(context.destination);
 
-        this.fadeInGain = gain;
+        fadeInGain = gain;
         fadeInGainAttachedTo = source;
 
         // Undoes this splice in an order where every `disconnect` names an edge
         // that exists: dropping the gain first would leave the source -> gain
         // edge behind and play the track over two paths at once.
-        this.detachFadeInGain = () => {
+        detachFadeInGain = () => {
           source.disconnect(gain);
           gain.disconnect();
           source.connect(context.destination);
@@ -739,7 +758,7 @@ export default createPlugin<
         // still playing straight out of its element: move it in, where its level
         // can be shaped without stepping on the waveform. It is silent until a
         // crossfade hands it over, so arriving late costs nothing.
-        if (this.syncedAudio) routeAudio(this.syncedAudio, context);
+        if (syncedAudio) routeAudio(syncedAudio, context);
       };
 
       // `start` hands every announcement to this, and covers a graph that was
@@ -804,22 +823,22 @@ export default createPlugin<
         window.navigation.removeEventListener('navigate', onNavigate);
         document.removeEventListener('pause', onPause, { capture: true });
 
-        this.cleanupListeners?.();
-        this.cleanupListeners = null;
+        cleanupListeners?.();
+        cleanupListeners = null;
 
         // Cancels the fade out as well, which releases the outgoing audio.
         cancelTransition();
 
         // Whatever is synced is the crossfade's own audio, so it goes too.
-        if (this.syncedAudio) {
-          releaseAudio(this.syncedAudio);
-          this.syncedAudio = null;
+        if (syncedAudio) {
+          releaseAudio(syncedAudio);
+          syncedAudio = null;
         }
 
         // Put the renderer's own source back on the destination.
-        this.detachFadeInGain?.();
-        this.detachFadeInGain = undefined;
-        this.fadeInGain = null;
+        detachFadeInGain?.();
+        detachFadeInGain = null;
+        fadeInGain = null;
       };
     },
   },
