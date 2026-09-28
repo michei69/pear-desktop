@@ -8,5 +8,5 @@ export type SearchCommandsConfig = {
 export const defaultSearchCommandsConfig: SearchCommandsConfig = {
   enabled: true,
   openShortcut: true,
-  openKeybind: 'Ctrl+/',
+  openKeybind: 'CmdOrCtrl+/',
 };
