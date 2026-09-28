@@ -17,6 +17,7 @@
 
 ### Note: This is a fork of the original project. [Click here for the upstream version](https://github.com/pear-devs/pear-desktop)
 ### Note: Updates may break certain features. Report any issues in [this fork's page](https://github.com/michei69/pear-desktop/issues) NOT in the official one
+### Feel free to crosspost issues from the official one into this fork too, if they replicate! I cant keep track of them correctly otherwise
 
 - Native look & feel extension
 
