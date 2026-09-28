@@ -1409,6 +1409,10 @@
       "settings": {
         "include-pronunciation": "Include pronunciation"
       }
+    },
+    "dismiss-multidevice-popup": {
+      "name": "Dismiss Multidevice Popup",
+      "description": "Automatically closes the \"Listen on this device\" popup that appears when playback starts on another device."
     }
   },
   "settings-ui": {
