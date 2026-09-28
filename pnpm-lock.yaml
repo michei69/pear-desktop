@@ -112,8 +112,8 @@ importers:
         specifier: 1.6.1
         version: 1.6.1(electron@42.5.0(supports-color@7.2.0))
       deepmerge-ts:
-        specifier: 7.1.5
-        version: 7.1.5
+        specifier: 8.0.0
+        version: 8.0.0
       electron-debug:
         specifier: 4.1.0
         version: 4.1.0(supports-color@7.2.0)
@@ -2096,6 +2096,10 @@ packages:
     resolution: {integrity: sha512-HOJkrhaYsweh+W+e74Yn7YStZOilkoPb6fycpwNLKzSPtruFs48nYis0zy5yJz1+ktUhHxoRDJ27RQAWLIJVJw==}
     engines: {node: '>=16.0.0'}
 
+  deepmerge-ts@8.0.0:
+    resolution: {integrity: sha512-ICNjaP0ML+eSdEpJYQC46XiAn/UjAdwbEl0dE8p85ZTeNDinN4Kd4+9jS4OSAuH7st6eC7rQhsqTF5zIDaUm2g==}
+    engines: {node: '>=16.0.0'}
+
   default-browser-id@5.0.1:
     resolution: {integrity: sha512-x1VCxdX4t+8wVfd1so/9w+vQ4vx7lKd2Qp5tDRutErwmR85OgmfX7RlLRMWafRMY7hbEiXIbudNrjOAPa/hL8Q==}
     engines: {node: '>=18'}
@@ -3229,7 +3233,7 @@ packages:
     engines: {node: '>=18'}
 
   node-smtc@https://codeload.github.com/michei69/node-smtc/tar.gz/6894d2a2b7cc31f953e4dd0d605282e81993d16b:
-    resolution: {gitHosted: true, tarball: https://codeload.github.com/michei69/node-smtc/tar.gz/6894d2a2b7cc31f953e4dd0d605282e81993d16b}
+    resolution: {gitHosted: true, integrity: sha512-OMCvz7pygr1Ai4qNd3rsd1MXYMepHH9YE+/uMbC01bAXJebhVALrsIa0NpZQFXCDZJLRcpzQk3XiRXXUrU1IiQ==, tarball: https://codeload.github.com/michei69/node-smtc/tar.gz/6894d2a2b7cc31f953e4dd0d605282e81993d16b}
     version: 1.0.0
 
   nopt@10.0.1:
@@ -5752,6 +5756,8 @@ snapshots:
   deep-is@0.1.4: {}
 
   deepmerge-ts@7.1.5: {}
+
+  deepmerge-ts@8.0.0: {}
 
   default-browser-id@5.0.1: {}
 
