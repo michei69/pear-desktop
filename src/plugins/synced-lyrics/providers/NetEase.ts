@@ -247,7 +247,7 @@ type RankedSong = {
 };
 
 /** Deduplicates search results and sorts them best match first. */
-const rankSongs = (songs: Song[], query: MatchQuery): RankedSong[] => {
+const rankSongs = (songs: Song[], queries: MatchQuery[]): RankedSong[] => {
   const seenIds = new Set<number>();
 
   return songs
@@ -263,9 +263,37 @@ const rankSongs = (songs: Song[], query: MatchQuery): RankedSong[] => {
         normalizeText(artist.name),
       );
 
-      return { song, info, score: scoreCandidate({ title, artists }, query) };
+      const score = Math.max(
+        ...queries.map((query) => scoreCandidate({ title, artists }, query)),
+      );
+
+      return { song, info, score };
     })
     .sort((a, b) => b.score - a.score);
+};
+
+const CJK_PATTERN = /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}]/u;
+
+export const pickOriginalTitle = (
+  title: string,
+  alternativeTitle?: string,
+): string | null => {
+  const original = normalizeText(alternativeTitle ?? '').trim();
+  if (!original || original === normalizeText(title).trim()) return null;
+  if (CJK_PATTERN.test(normalizeText(title))) return null;
+
+  return CJK_PATTERN.test(original) ? original : null;
+};
+
+export const buildQuery = (title: string, artist: string): MatchQuery => {
+  const normalizedTitle = normalizeText(title);
+  const parts = splitTitle(normalizedTitle);
+
+  return {
+    title: normalizedTitle,
+    artist: normalizeText(artist),
+    parts: parts.length > 0 ? parts : [normalizedTitle],
+  };
 };
 
 export class Netease implements LyricProvider {
@@ -408,6 +436,7 @@ export class Netease implements LyricProvider {
 
   async search({
     title,
+    alternativeTitle,
     artist,
     songDuration,
   }: SearchSongInfo): Promise<LyricResult | null> {
@@ -415,25 +444,25 @@ export class Netease implements LyricProvider {
       await this.register();
     }
 
-    const query: MatchQuery = {
-      title: normalizeText(title),
-      artist: normalizeText(artist),
-      parts: [],
-    };
-    query.parts = splitTitle(query.title);
-    if (query.parts.length === 0) {
-      query.parts.push(query.title);
-    }
+    const originalTitle = pickOriginalTitle(title, alternativeTitle);
+    const query = buildQuery(originalTitle ?? title, artist);
+    const romanizedQuery = originalTitle ? buildQuery(title, artist) : null;
 
     const keywords = [...query.parts];
     if (query.artist && query.parts[0] !== query.artist) {
       keywords.push(`${query.parts[0]} ${query.artist}`);
     }
+    if (romanizedQuery) {
+      keywords.push(romanizedQuery.parts[0]);
+    }
 
     const results = await Promise.all(
-      keywords.map((keyword) => this.searchSongs(keyword)),
+      [...new Set(keywords)].map((keyword) => this.searchSongs(keyword)),
     );
-    const ranked = rankSongs(results.flat(), query);
+    const ranked = rankSongs(
+      results.flat(),
+      romanizedQuery ? [query, romanizedQuery] : [query],
+     );
 
     console.debug(
       '[synced-lyrics] NetEase matches',
