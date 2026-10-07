@@ -285,7 +285,7 @@ export const fetchLyrics = (info: SongInfo) => {
   // Allow the user to override the search query for this specific video.
   const customQ = getCustomQuery(info.videoId);
   const searchInfo = customQ
-    ? { ...info, title: customQ.query, artist: customQ.artist ?? '' }
+    ? { ...info, title: customQ.query, alternativeTitle: customQ.query, artist: customQ.artist ?? '' }
     : info;
 
   const tasks: Promise<void>[] = [];
