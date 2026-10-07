@@ -165,7 +165,7 @@
                 "force-show": "Forceren weergeven",
                 "hide": "Verbergen",
                 "label": "Vind ik leuk-knoppen",
-                "swap": "Volgorde van vind-ik-leuk-knoppen wisselen"
+                "swap": "Wissel de volgorde van de like knoppen om"
               },
               "remove-upgrade-button": "Upgrade-knop verwijderen",
               "theme": {
@@ -418,7 +418,7 @@
       "menu": {
         "format": {
           "24-hour-format": "24-uursformaat",
-          "display-seconds": "Seconden weergeven",
+          "display-seconds": "Toon Seconden",
           "label": "Formaat"
         }
       },
@@ -503,6 +503,13 @@
           "title": "Inactiviteitstime-out instellen"
         }
       }
+    },
+    "do-not-track": {
+      "description": "standaard alle tracking blokkeren",
+      "menu": {
+        "blocker": "Blokker"
+      },
+      "name": "Niet tracken"
     },
     "downloader": {
       "backend": {
@@ -844,7 +851,7 @@
           "submenu": {
             "disabled": {
               "label": "Uitgeschakeld",
-              "tooltip": "Chinese karakterconversie uitschakelen"
+              "tooltip": "Schakel chinese karakter conversie"
             },
             "simplified-to-traditional": {
               "label": "Vereenvoudigd naar Traditioneel",
@@ -855,7 +862,7 @@
               "tooltip": "Zet Traditioneel Chinees om naar Vereenvoudigd Chinees"
             }
           },
-          "tooltip": "Converteer Chinees karakter naar Traditioneel of Vereenvoudigd"
+          "tooltip": "Vertaal Chinese karakters naar Vereenvoudigd of Traditioneel Chinees"
         },
         "default-text-string": {
           "label": "Standaardteken tussen songteksten",
