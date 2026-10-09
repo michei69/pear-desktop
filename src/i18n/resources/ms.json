@@ -165,7 +165,7 @@
                 "force-show": "Paksa pamer",
                 "hide": "Sembunyi",
                 "label": "Butang suka",
-                "swap": "Tukar susunan butang suka"
+                "swap": "Tukar susunan butang Suka"
               },
               "remove-upgrade-button": "Buang butang naik taraf",
               "theme": {
@@ -239,7 +239,7 @@
             "percent": "{{ratio}}%"
           }
         },
-        "enable-seekbar": "Dayakan tema bar carian"
+        "enable-seekbar": "Benarkan penyesuaian tema bar carian"
       },
       "name": "Tema Warna Album"
     },
@@ -333,8 +333,8 @@
               "label": "Dayakan HTTPS"
             },
             "key": {
-              "dialogTitle": "Pilih fail kunci persendirian HTTPS",
-              "label": "Fail kunci persendirian (.key/.pem)"
+              "dialogTitle": "Pilih fail kunci peribadi HTTPS",
+              "label": "Fail kunci peribadi (.key/.pem)"
             }
           }
         },
@@ -417,8 +417,8 @@
       "description": "Tambah jam pada bar navigasi",
       "menu": {
         "format": {
-          "24-hour-format": "Format 24 Jam",
-          "display-seconds": "Papar Saat",
+          "24-hour-format": "Format 24 jam",
+          "display-seconds": "Paparkan saat",
           "label": "Format"
         }
       },
@@ -504,6 +504,13 @@
         }
       }
     },
+    "do-not-track": {
+      "description": "Sekat semua penjejakan secara lalai",
+      "menu": {
+        "blocker": "Penyekat"
+      },
+      "name": "Jangan Jejak"
+    },
     "downloader": {
       "backend": {
         "dialog": {
@@ -587,7 +594,7 @@
           }
         }
       },
-      "name": "Penyama"
+      "name": "Penyama Bunyi"
     },
     "exponential-volume": {
       "description": "Menjadikan gelangsar kelantangan eksponen supaya lebih mudah memilih kelantangan yang lebih rendah.",
