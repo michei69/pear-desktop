@@ -21,6 +21,14 @@ mac:
       arch:
         - x64
         - arm64
+    # macOS updates install from the zip, not the dmg: MacUpdater refuses an
+    # update whose metadata lists no zip (ERR_UPDATER_ZIP_FILE_NOT_FOUND), so
+    # without this target the mac build can check for updates but never apply
+    # one. The dmg stays the download users are given.
+    - target: zip
+      arch:
+        - x64
+        - arm64
   icon: assets/generated/icons/mac/icon.icon
   compression: maximum
 win:

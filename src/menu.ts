@@ -13,11 +13,13 @@ import { satisfies } from 'semver';
 import { languageResources } from 'virtual:i18n';
 import { allPlugins } from 'virtual:plugins';
 
+import { updatesSupported } from '@/app-info';
 import { APPLICATION_NAME, setLanguage, t } from '@/i18n';
 
 import * as config from './config';
 import { getAllMenuTemplate, loadAllMenuPlugins } from './loader/menu';
 import { restart } from './providers/app-controls';
+import { checkForAppUpdates, setUpdateChannel } from './providers/app-updates';
 import { startingPages } from './providers/extracted-data';
 import { setYouTubeLanguage, youtubeLanguage } from './providers/language-sync';
 import { applyOptionEffects } from './providers/option-effects';
@@ -172,14 +174,50 @@ export const mainMenuTemplate = async (
     {
       label: t('main.menu.options.label'),
       submenu: [
-        {
-          label: t('main.menu.options.submenu.auto-update'),
-          type: 'checkbox',
-          checked: config.get('options.autoUpdates'),
-          click(item: MenuItem) {
-            config.setMenuOption('options.autoUpdates', item.checked);
-          },
-        },
+        ...((updatesSupported()
+          ? [
+              {
+                label: t('main.menu.options.submenu.updates.label'),
+                submenu: [
+                  {
+                    label: t('main.menu.options.submenu.updates.check'),
+                    click: () => {
+                      checkForAppUpdates().catch(() => {});
+                    },
+                  },
+                  { type: 'separator' },
+                  {
+                    label: t('main.menu.options.submenu.updates.auto-update'),
+                    type: 'checkbox',
+                    checked: config.get('options.autoUpdates'),
+                    click(item: MenuItem) {
+                      config.setMenuOption('options.autoUpdates', item.checked);
+                    },
+                  },
+                  { type: 'separator' },
+                  {
+                    label: t('main.menu.options.submenu.updates.channel.label'),
+                    submenu: (['stable', 'beta'] as const).map((value) => ({
+                      label: t(
+                        `main.menu.options.submenu.updates.channel.${value}`,
+                      ),
+                      type: 'radio',
+                      checked: config.updateChannel() === value,
+                      click: () => {
+                        // Refused when the user backs out of the downgrade
+                        // warning; the menu re-reads the store either way.
+                        setUpdateChannel(value)
+                          .catch(() => {})
+                          .finally(() => {
+                            refreshMenu(win).catch(() => {});
+                          });
+                      },
+                    })),
+                  },
+                ],
+              },
+            ]
+          : []) satisfies Electron.MenuItemConstructorOptions[]),
         {
           label: t('main.menu.options.submenu.resume-on-start'),
           type: 'checkbox',

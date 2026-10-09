@@ -14,11 +14,22 @@ import {
 
 import { getByPath, nestPartial, setByPath } from './paths';
 
+import type { UpdateChannel } from '@/app-info';
 import type { defaultConfig } from '@/config/defaults';
 import type { RendererContext } from '@/types/contexts';
 import type { RestartRequirement } from '@/types/restart';
 
-export type StoreShape = typeof defaultConfig;
+/** The stored config, plus what the backend reports about updates. */
+export type StoreShape = typeof defaultConfig & {
+  updates: {
+    /** False on dev builds, which have no updater at all. */
+    supported: boolean;
+    /** The release line the app updates along. */
+    channel: UpdateChannel;
+    /** The line this build came from, which the user may switch away from. */
+    buildChannel: UpdateChannel;
+  };
+};
 export type PluginConfigMap = Record<
   string,
   Record<string, unknown> & { enabled?: boolean }
@@ -74,6 +85,9 @@ export const bridge = {
   /** Resolves false when the write was refused (e.g. theme consent denied). */
   optionSet: (key: string, value: unknown) =>
     ipc!.invoke('ytmd-sui:option-set', key, value) as Promise<boolean>,
+  /** Resolves false when the user declined the downgrade warning. */
+  setUpdateChannel: (channel: UpdateChannel) =>
+    ipc!.invoke('ytmd-sui:update-channel-set', channel) as Promise<boolean>,
   pluginToggle: (id: string, enabled: boolean) =>
     ipc!.invoke('ytmd-sui:plugin-toggle', id, enabled),
   // Plugin field writes ride the app's existing per-plugin config channel.
@@ -241,6 +255,7 @@ const deepmerge = deepmergeCustom({ mergeArrays: false });
 // ---- app option get/set (with the tray composite special case) ----
 
 const TRAY_KEY = 'options.__trayMode';
+const UPDATE_CHANNEL_KEY = 'options.updateChannel';
 
 export const getAppValue = (snapshot: StoreShape, key: string): unknown => {
   if (key === TRAY_KEY) {
@@ -264,6 +279,16 @@ export const setAppValue = async (key: string, value: unknown) => {
         ])
       ).includes(false)
     ) {
+      await refreshStore();
+    }
+    return;
+  }
+
+  // The channel switch can be refused (a declined downgrade warning), so it
+  // goes through its own channel instead of the generic option write.
+  if (key === UPDATE_CHANNEL_KEY) {
+    patchLocal(key, value);
+    if ((await bridge.setUpdateChannel(value as UpdateChannel)) === false) {
       await refreshStore();
     }
     return;

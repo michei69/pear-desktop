@@ -79,6 +79,22 @@
         "detail": "A new version is available and can be downloaded at {{downloadLink}}",
         "message": "A new version is available",
         "title": "Update Available"
+      },
+      "update-available-dev": {
+        "buttons": {
+          "ok": "OK",
+          "view": "View commits"
+        },
+        "title": "Update Available",
+        "message": "This dev build is behind the master branch",
+        "detail": "The commit this build runs on ({{commit}}) is older than the latest commit on master. Newer commits can be viewed at {{commitsLink}}"
+      },
+      "downgrade-warning": {
+        "title": "Switch back to stable?",
+        "message": "This beta build is newer than the latest stable release.",
+        "detail": "Switching back can reset some settings: going from a newer version to an older one runs no migrations and can leave newer settings unreadable.",
+        "confirm": "Switch to stable",
+        "cancel": "Cancel"
       }
     },
     "menu": {
@@ -118,7 +134,16 @@
             }
           },
           "always-on-top": "Always on top",
-          "auto-update": "Auto Update",
+          "updates": {
+            "label": "Updates",
+            "check": "Check for updates",
+            "auto-update": "Automatically check for updates",
+            "channel": {
+              "label": "Update channel",
+              "stable": "Stable",
+              "beta": "Beta"
+            }
+          },
           "hide-menu": {
             "dialog": {
               "message": "Menu will be hidden on next launch, use [Alt] to show it (or backtick [`] if using in-app-menu)",
@@ -1458,7 +1483,8 @@
       "system": "System",
       "network": "Network",
       "performance": "Performance",
-      "configuration": "Configuration"
+      "configuration": "Configuration",
+      "updates": "Updates"
     },
     "stepper-decrement": "Decrease",
     "stepper-increment": "Increase",

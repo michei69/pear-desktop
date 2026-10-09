@@ -1,5 +1,11 @@
 import { deepmergeCustom } from 'deepmerge-ts';
 
+import {
+  channel,
+  defaultUpdateChannel,
+  updatesSupported,
+  type UpdateChannel,
+} from '@/app-info';
 import { restart } from '@/providers/app-controls';
 
 import { store, type IStore } from './store';
@@ -113,7 +119,29 @@ export const setThemeConsent = (value: ThemeConsent) =>
 
 export const edit = () => store.openInEditor();
 
-export const getStore = () => store.store as unknown as typeof defaultConfig;
+/** Channel the user follows: a stored value wins, the build decides otherwise. */
+export const updateChannel = (): UpdateChannel => {
+  const stored = store.get('options.updateChannel') as
+    | UpdateChannel
+    | undefined;
+  return stored === 'stable' || stored === 'beta'
+    ? stored
+    : defaultUpdateChannel();
+};
+
+/**
+ * The store plus what the settings UI cannot read for itself: whether this
+ * build can update at all, and which channel it came from. Sent on load and on
+ * every change, so the About section needs no extra round trip.
+ */
+export const getStore = () => ({
+  ...(store.store as unknown as typeof defaultConfig),
+  updates: {
+    supported: updatesSupported(),
+    channel: updateChannel(),
+    buildChannel: channel,
+  },
+});
 
 export const watch = (cb: Parameters<IStore['onDidAnyChange']>[0]) => {
   return store.onDidAnyChange(cb);

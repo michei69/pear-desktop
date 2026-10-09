@@ -1,7 +1,16 @@
+import fs from 'node:fs';
+import { join } from 'node:path';
+
+import { app } from 'electron';
+
+import { defaultUpdateChannel } from '@/app-info';
 import { blockers } from '@/plugins/do-not-track/types';
 import { DefaultPresetList, type Preset } from '@/plugins/downloader/types';
+import { migrationBaseVersion } from '@/providers/app-versions';
 
 import { defaultConfig as defaults } from './defaults';
+
+import packageJson from '../../package.json' with { type: 'json' };
 
 import type { TrackerBlockerConfig } from '@/plugins/do-not-track';
 import type { SyncedLyricsPluginConfig } from '@/plugins/synced-lyrics/types';
@@ -20,6 +29,16 @@ export type IStore = InstanceType<
 >;
 
 const migrations = {
+  '>=3.12.4'(store: IStore) {
+    // A beta build should follow the beta channel from the start, without
+    // overriding a channel the user already picked. `store.get` cannot tell
+    // those apart: conf writes the defaults into the file before migrations
+    // run, so `options.updateChannel` already reads back as `stable`. The file
+    // as it was before that write is what says whether the user chose.
+    if (channelBeforeDefaults === undefined) {
+      store.set('options.updateChannel', defaultUpdateChannel());
+    }
+  },
   '>=3.12.3'(store: IStore) {
     // Synced lyrics' single "preferred provider" became an orderable priority
     // list, with the named provider leading it. "None" leaves the list off,
@@ -306,6 +325,41 @@ const migrations = {
   },
 };
 
+/**
+ * `conf` normalises this through `semver.clean`, so a prerelease drops its
+ * suffix on its own. Doing it here keeps the marker spelled the same for
+ * `3.12.4-beta.1` and `3.12.4`, which is the whole point of the split.
+ *
+ * `projectVersion` is a `conf` option electron-store hides from its types, so
+ * it ships as an extra property.
+ */
+const projectVersion = {
+  projectVersion: migrationBaseVersion(packageJson.version),
+};
+
+/**
+ * The channel the config file held before this store was created, if any.
+ * Read here rather than inside the migration: conf writes the defaults into
+ * the file first, so by migration time `options.updateChannel` always reads
+ * back as `stable` and a user's own choice is indistinguishable from it.
+ */
+const channelBeforeDefaults = readStoredChannel(
+  join(app.getPath('userData'), 'config.json'),
+);
+
+function readStoredChannel(path: string) {
+  try {
+    const stored = JSON.parse(fs.readFileSync(path, 'utf8')) as {
+      options?: { updateChannel?: unknown };
+    };
+    const channel = stored.options?.updateChannel;
+    return channel === 'stable' || channel === 'beta' ? channel : undefined;
+  } catch {
+    // No file yet, or unreadable: nothing was chosen.
+    return undefined;
+  }
+}
+
 // oxlint-disable-next-line typescript/no-unsafe-assignment
 export const store = new Store({
   defaults: {
@@ -314,4 +368,5 @@ export const store = new Store({
   },
   clearInvalidConfig: false,
   migrations,
-});
+  ...projectVersion,
+} as ConstructorParameters<typeof Store<Record<string, unknown>>>[0]);

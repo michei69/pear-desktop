@@ -1,3 +1,5 @@
+import type { UpdateChannel } from '@/app-info';
+
 export interface WindowSizeConfig {
   width: number;
   height: number;
@@ -18,6 +20,7 @@ export interface DefaultConfig {
     tray: boolean;
     appVisible: boolean;
     autoUpdates: boolean;
+    updateChannel: UpdateChannel;
     alwaysOnTop: boolean;
     hideMenu: boolean;
     hideMenuWarned: boolean;
@@ -73,6 +76,7 @@ export const defaultConfig: DefaultConfig = {
     tray: false,
     appVisible: true,
     autoUpdates: true,
+    updateChannel: 'stable',
     alwaysOnTop: false,
     hideMenu: false,
     hideMenuWarned: false,

@@ -4,7 +4,7 @@ import { t } from '@/i18n';
 import { startingPages } from '@/providers/extracted-data';
 import { Platform } from '@/types/plugins';
 
-import { bridge, themePalette, themePresets } from '../state';
+import { bridge, store, themePalette, themePresets } from '../state';
 
 import type {
   ActionField,
@@ -72,6 +72,11 @@ const action = (
 /** Options whose value is only read when the app (re)starts. */
 const AT_STARTUP = { restartNeeded: true } satisfies FieldExtras;
 
+/** Dev builds have no updater, so every update setting is hidden on them. */
+const UPDATES_ONLY = {
+  visible: () => store()?.updates?.supported === true,
+} satisfies FieldExtras;
+
 const buildLanguageOptions = async (): Promise<SettingOption[]> => {
   const langResources = await languageResources();
   return Object.keys(langResources)
@@ -114,7 +119,6 @@ export const buildAppSections = (): AppSection[] => {
         {
           title: () => t('settings-ui.groups.updates-session'),
           fields: [
-            toggle('options.autoUpdates', menuLabel('auto-update')),
             toggle('options.resumeOnStart', menuLabel('resume-on-start'), {
               restartNeeded: true,
             }),
@@ -436,7 +440,30 @@ export const buildAppSections = (): AppSection[] => {
       id: 'about',
       icon: 'info',
       label: () => t('settings-ui.sections.about.label'),
-      groups: [],
+      groups: [
+        {
+          title: () => t('settings-ui.groups.updates'),
+          fields: [
+            toggle(
+              'options.autoUpdates',
+              menuLabel('updates.auto-update'),
+              UPDATES_ONLY,
+            ),
+            select(
+              'options.updateChannel',
+              menuLabel('updates.channel.label'),
+              [
+                {
+                  value: 'stable',
+                  label: menuLabel('updates.channel.stable'),
+                },
+                { value: 'beta', label: menuLabel('updates.channel.beta') },
+              ],
+              UPDATES_ONLY,
+            ),
+          ],
+        },
+      ],
     },
   ];
 };

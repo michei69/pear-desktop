@@ -24,7 +24,6 @@ import {
 import electronDebug from 'electron-debug';
 import is from 'electron-is';
 import unhandled from 'electron-unhandled';
-import { autoUpdater } from 'electron-updater';
 import { deepEqual } from 'fast-equals';
 import { parse } from 'node-html-parser';
 import { languageResources } from 'virtual:i18n';
@@ -45,6 +44,7 @@ import { defaultAuthProxyConfig } from '@/plugins/auth-proxy-adapter/config';
 import { injectCSS } from '@/plugins/utils/main';
 import { restart, setupAppControls } from '@/providers/app-controls';
 import { appIconPath, windowIconPath } from '@/providers/app-icon';
+import { setupAutoUpdates } from '@/providers/app-updates';
 import { classifyLink } from '@/providers/external-links';
 import {
   APP_PROTOCOL,
@@ -93,7 +93,6 @@ const pendingSettingsRestartRequirements = new Map<
   string,
   RestartRequirement
 >();
-autoUpdater.autoDownload = false;
 
 const gotTheLock = app.requestSingleInstanceLock();
 if (!gotTheLock) {
@@ -1093,56 +1092,9 @@ app.whenReady().then(async () => {
     openAtLogin: config.get('options.startAtLogin'),
   });
 
-  if (!is.dev() && config.get('options.autoUpdates')) {
-    const updateTimeout = setTimeout(() => {
-      autoUpdater.checkForUpdatesAndNotify();
-      clearTimeout(updateTimeout);
-    }, 2000);
-    autoUpdater.on('update-available', () => {
-      const downloadLink =
-        'https://github.com/michei69/pear-desktop/releases/latest';
-      const dialogOptions: Electron.MessageBoxOptions = {
-        type: 'info',
-        buttons: [
-          t('main.dialog.update-available.buttons.ok'),
-          t('main.dialog.update-available.buttons.download'),
-          t('main.dialog.update-available.buttons.disable'),
-        ],
-        title: t('main.dialog.update-available.title'),
-        message: t('main.dialog.update-available.message'),
-        detail: t('main.dialog.update-available.detail', { downloadLink }),
-        defaultId: 1,
-        cancelId: 0,
-      };
-
-      let dialogPromise: Promise<Electron.MessageBoxReturnValue>;
-      if (mainWindow) {
-        dialogPromise = dialog.showMessageBox(mainWindow, dialogOptions);
-      } else {
-        dialogPromise = dialog.showMessageBox(dialogOptions);
-      }
-
-      dialogPromise.then((dialogOutput) => {
-        switch (dialogOutput.response) {
-          // Download
-          case 1: {
-            shell.openExternal(downloadLink);
-            break;
-          }
-
-          // Disable updates
-          case 2: {
-            config.set('options.autoUpdates', false);
-            break;
-          }
-
-          case 0: {
-            break;
-          }
-        }
-      });
-    });
-  }
+  // Channel, feed and dialogs all live in the provider; the stored channel is
+  // applied even with auto-updates off, so manual checks follow it too.
+  setupAutoUpdates(mainWindow);
 
   if (config.get('options.hideMenu') && !config.get('options.hideMenuWarned')) {
     dialog.showMessageBox(mainWindow, {

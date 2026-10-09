@@ -572,7 +572,7 @@ export const SettingsModal = (props: {
 
               {/* section mode */}
               <Show when={!isSearching()}>
-                <For each={currentSection()?.groups ?? []}>
+                <For each={matchingGroups(currentSection()?.groups ?? [])}>
                   {(group) => (
                     <AppGroupView group={group} title={group.title?.()} />
                   )}

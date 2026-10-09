@@ -46,12 +46,32 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
 
+      # Every job in the matrix must stamp the SAME version (github.run_number) before
+      # installing/building, otherwise the platform artifacts disagree on the version.
+      # The version in package.json is the release the betas lead up to, so 3.12.4
+      # (bumped by hand when a cycle starts) becomes 3.12.4-beta.42. A prerelease sorts
+      # below its release, so the eventual 3.12.4 is a real upgrade for every beta user.
+      # The lockfile has no root version, so `--frozen-lockfile` stays valid after this.
+      - name: Stamp beta version
+        shell: bash
+        env:
+          RUN_NUMBER: ${{ github.run_number }}
+        run: |
+          VERSION=$(node -p "const v = JSON.parse(require('fs').readFileSync('package.json', 'utf8')).version.split('-')[0]; v + '-beta.' + process.env.RUN_NUMBER")
+          echo "Beta version: $VERSION"
+          pnpm version "$VERSION" --no-git-tag-version --allow-same-version --no-git-checks
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
       # Beta builds never publish a versioned release: the installers built here
-      # are attached to the rolling `beta` release by the publish-beta job below.
+      # are attached to the v<version> pre-release by the publish-beta job below.
       # One electron-builder pass per platform, so every target lands in pack/.
+      # The beta:* scripts force -c.publish.channel=beta: GitHub publishing never
+      # auto-detects the channel from the version (electron-builder#8589), so without
+      # it the metadata would be latest*.yml instead of beta*.yml.
+      # `pnpm version` writes package.json on the runner only; master keeps the
+      # release version, which is what the release workflow ships unchanged.
       - name: Build on Mac
         if: startsWith(matrix.os, 'macOS')
         run: pnpm beta:mac
@@ -83,6 +103,10 @@ jobs:
           path: |
             pack/*.dmg
             pack/*.dmg.blockmap
+            pack/*.zip
+            pack/*.zip.blockmap
+            pack/**/*.yml
+            pack/**/*.blockmap
 
       - name: Upload Linux artifacts
         if: startsWith(matrix.os, 'ubuntu')
@@ -97,6 +121,8 @@ jobs:
             pack/*.snap
             pack/*.freebsd
             pack/*.tar.gz
+            pack/**/*.yml
+            pack/**/*.blockmap
 
       - name: Upload Windows artifacts
         if: startsWith(matrix.os, 'windows')
@@ -107,6 +133,8 @@ jobs:
             pack/*.exe
             pack/nsis-web/*.nsis.7z
             pack/nsis-web/*.exe
+            pack/**/*.yml
+            pack/**/*.blockmap
 
   publish-beta:
     name: Publish beta pre-release
@@ -131,11 +159,26 @@ jobs:
       - name: Publish beta pre-release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RUN_NUMBER: ${{ github.run_number }}
         run: |
-          LATEST_TAG=$(git describe --tags --match "v*" --abbrev=0 2>/dev/null || echo "")
+          # Same derivation as the build job: package.json is untouched on master,
+          # so this reproduces the exact version stamped into the artifacts.
+          VERSION=$(node -p "const v = JSON.parse(require('fs').readFileSync('package.json', 'utf8')).version.split('-')[0]; v + '-beta.' + process.env.RUN_NUMBER")
+          echo "Beta version: $VERSION"
+
+          # The beta release being replaced: the newest prerelease, or the legacy
+          # rolling `beta` tag from before the channel existed.
+          PREV_TAG=$(gh release list --limit 100 --json tagName,isPrerelease \
+            --jq '[.[] | select(.isPrerelease)][0].tagName // "beta"')
+          echo "Replacing prerelease: $PREV_TAG"
+
+          # Notes read like the dev build's: everything on master since the last
+          # stable release. Beta tags are excluded so a beta never becomes the
+          # baseline for the next one.
+          LATEST_TAG=$(git describe --tags --abbrev=0 --match 'v[0-9]*' --exclude '*-beta*' 2>/dev/null || echo "")
 
           {
-            echo "Rolling beta pre-release, rebuilt from master on every push."
+            echo "Beta ${VERSION}, built from master. Same commits as a dev build, packaged."
             echo
             if [ -n "$LATEST_TAG" ]; then
               echo "### Changes since ${LATEST_TAG}"
@@ -144,27 +187,37 @@ jobs:
             else
               echo "### Recent changes"
               echo
-              git log --pretty=format:'* %s (%h)' -20
+              git log --pretty=format:'* %s (%h)' -50
             fi
             echo
             echo
-            echo "Built from commit ${GITHUB_SHA}. Not an official release."
+            echo "[All commits since ${LATEST_TAG:-the last release}](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/commits/master)"
+            echo
+            echo "Built from commit ${GITHUB_SHA}."
           } > notes.md
 
-          # Collect the installers, skipping updater metadata and the nsis uninstaller helper
+          # Collect the installers plus the updater metadata (beta*.yml + blockmaps),
+          # skipping the nsis uninstaller helper.
           mkdir -p release-assets
           while IFS= read -r -d '' file; do
             cp "$file" "release-assets/$(basename "$file" | tr ' ' '-')"
           done < <(find artifacts -type f \( \
             -name '*.exe' -o -name '*.nsis.7z' -o -name '*.dmg' -o -name '*.AppImage' \
             -o -name '*.deb' -o -name '*.rpm' -o -name '*.snap' -o -name '*.flatpak' \
-            -o -name '*.tar.gz' -o -name '*.freebsd' \) ! -name '*uninstaller*' -print0)
+            -o -name '*.tar.gz' -o -name '*.freebsd' -o -name '*.zip' \
+            -o -name '*.yml' -o -name '*.blockmap' \) ! -name '*uninstaller*' -print0)
 
           mapfile -d '' assets < <(find release-assets -type f -print0)
 
-          gh release delete beta --cleanup-tag --yes || true
-          gh release create beta "${assets[@]}" \
-            --title "Latest beta build" \
+          # One rolling beta release, rebuilt in place: the previous one is removed
+          # so this stays the single prerelease entry, carrying the installers and
+          # the beta*.yml electron-updater reads. The tag has to be valid semver or
+          # the GitHub provider skips it - a tag named plain `beta` never could be
+          # picked up - which is why the entry is tagged v${VERSION}.
+          gh release delete "$PREV_TAG" --cleanup-tag --yes || true
+          gh release create "v$VERSION" "${assets[@]}" \
+            --title "Pear Desktop ${VERSION} (beta)" \
             --notes-file notes.md \
             --prerelease \
+            --latest=false \
             --target "${{ github.sha }}"

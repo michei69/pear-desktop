@@ -7,12 +7,12 @@ import {
   shell,
   type OpenDialogOptions,
 } from 'electron';
-import electronUpdater from 'electron-updater';
 
 import { buildLabel, copyright } from '@/app-info';
 import * as config from '@/config';
 import { t } from '@/i18n';
 import { restart } from '@/providers/app-controls';
+import { checkForAppUpdates, setUpdateChannel } from '@/providers/app-updates';
 import { setYouTubeLanguage, youtubeLanguage } from '@/providers/language-sync';
 import { applyOptionEffects } from '@/providers/option-effects';
 import { openSettingsWindow } from '@/settings-window';
@@ -104,6 +104,7 @@ const CHANNELS = [
   'ytmd-sui:app-meta',
   'ytmd-sui:open-external',
   'ytmd-sui:check-updates',
+  'ytmd-sui:update-channel-set',
   'ytmd-sui:themes',
   'ytmd-sui:theme-color-set',
   'ytmd-sui:theme-preset-set',
@@ -132,6 +133,7 @@ export const backend = createBackend<
       APP_META,
       OPEN_EXTERNAL,
       CHECK_UPDATES,
+      UPDATE_CHANNEL_SET,
       THEMES,
       THEME_COLOR_SET,
       THEME_PRESET_SET,
@@ -244,8 +246,15 @@ export const backend = createBackend<
       } catch {}
     });
 
-    ipc.handle(CHECK_UPDATES, () =>
-      electronUpdater.autoUpdater.checkForUpdatesAndNotify(),
+    // Routed through the provider so the check follows the selected channel
+    // and a dev build gets the commit comparison instead.
+    ipc.handle(CHECK_UPDATES, () => checkForAppUpdates());
+
+    // False when the user declined the downgrade warning, or the value was not
+    // a channel; the renderer then re-reads the store instead of keeping its
+    // optimistic pick.
+    ipc.handle(UPDATE_CHANNEL_SET, (channel: string) =>
+      setUpdateChannel(channel),
     );
 
     // Themes: the same state the renderer applies, plus the edits the modal's
