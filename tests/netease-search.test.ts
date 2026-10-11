@@ -3,9 +3,11 @@ import CryptoJS from 'crypto-js';
 
 import {
   bonusCompare,
+  buildQuery,
   comparableText,
   Netease,
   normalizedLevenshtein,
+  pickOriginalTitle,
   scoreCandidate,
   splitTitle,
 } from '../src/plugins/synced-lyrics/providers/NetEase';
@@ -83,6 +85,39 @@ test.describe('comparison helpers', () => {
     expect(bonusCompare('LemonS', 'Lemon')).toBeCloseTo(5 / 6, 5);
     // The same kind of similarity without the prefix bonus scores half as much.
     expect(bonusCompare('Melon', 'Lemon')).toBeCloseTo(0.3, 5);
+  });
+});
+
+test.describe('query building', () => {
+  test('a CJK alternative title replaces a latin one', () => {
+    expect(pickOriginalTitle('Lemon', 'レモン')).toBe('レモン');
+    expect(pickOriginalTitle('Lemon', '柠檬')).toBe('柠檬');
+  });
+
+  test('no usable alternative leaves the title alone', () => {
+    // Nothing offered, the same title, or an alternative that is not CJK.
+    expect(pickOriginalTitle('Lemon')).toBeNull();
+    expect(pickOriginalTitle('Lemon', 'Lemon')).toBeNull();
+    expect(pickOriginalTitle('Lemon', 'Lemon (Remastered)')).toBeNull();
+  });
+
+  test('a title that is already CJK is not replaced', () => {
+    expect(pickOriginalTitle('レモン', 'Lemon')).toBeNull();
+    expect(pickOriginalTitle('柠檬', 'Lemon')).toBeNull();
+  });
+
+  test('a query splits the title and keeps the artist apart', () => {
+    const query = buildQuery('Lemon - 米津玄師', '米津玄師');
+
+    expect(query.title).toBe('Lemon - 米津玄師');
+    expect(query.artist).toBe('米津玄師');
+    expect(query.parts).toEqual(['Lemon', '米津玄師']);
+  });
+
+  test('a title with nothing to split still yields one part to search', () => {
+    // `MV` is stripped as noise, so the fallback is what keeps the search going.
+    expect(buildQuery('MV', 'Artist').parts).toEqual(['MV']);
+    expect(buildQuery('Lemon', 'Artist').parts).toEqual(['Lemon']);
   });
 });
 

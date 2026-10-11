@@ -32,3 +32,11 @@ test('patching an existing path leaves its siblings alone', () => {
 
   expect(config.options).toEqual({ tray: true, appVisible: true });
 });
+
+test('writing through a non-object intermediate replaces it', () => {
+  const config = { options: { proxy: 'http://old' } };
+
+  setByPath(config, 'options.proxy.host', 'example.com');
+
+  expect(config).toEqual({ options: { proxy: { host: 'example.com' } } });
+});

@@ -4,7 +4,7 @@ import { join } from 'node:path';
 
 import { expect, test } from '@playwright/test';
 
-import { hashThemeJs, isJsConsented, readThemesFrom } from '../src/themes/load';
+import { isJsConsented, readThemesFrom } from '../src/themes/load';
 
 const makeDir = () => fs.mkdtempSync(join(os.tmpdir(), 'pear-themes-js-'));
 
@@ -35,7 +35,11 @@ test('a declared script is read and hashed', () => {
 
   const [theme] = readThemesFrom(root);
   expect(theme.js?.source).toBe('module.exports = {};');
-  expect(theme.js?.hash).toBe(hashThemeJs('module.exports = {};'));
+  // The digest consent is pinned to, checked against a value computed outside
+  // `hashThemeJs` so a broken hash function cannot agree with itself.
+  expect(theme.js?.hash).toBe(
+    '1cf3e1eeed2d717d4dba8a101c28b71f65e908beb02f90371b11f927125b8390',
+  );
 });
 
 test('a theme without js has no script', () => {

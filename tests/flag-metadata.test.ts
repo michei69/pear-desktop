@@ -28,6 +28,7 @@ test('drops entries that are not the published shape', () => {
       bad_number: 12,
       bad_null: null,
       bad_string: 'nope',
+      bad_array: [{ family: 'misc' }],
       good: { family: 'misc' },
     }),
   ).toEqual({

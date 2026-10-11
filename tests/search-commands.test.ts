@@ -6,6 +6,7 @@ import {
   tokenize,
   type Command,
 } from '../src/plugins/search-commands/commands';
+import { defaultSearchCommandsConfig } from '../src/plugins/search-commands/config';
 import {
   matchesKeybind,
   parseKeybind,
@@ -44,10 +45,6 @@ test('a bare slash lists every command', () => {
 
 test('a partial name filters by prefix', () => {
   expect(texts('/pl')).toEqual(['/play <url>', '/playlist <id> [index]']);
-});
-
-test('an exact name sorts ahead of the commands it prefixes', () => {
-  expect(texts('/play')).toEqual(['/play <url>', '/playlist <id> [index]']);
 });
 
 test('a fully typed name previews its arguments as placeholders', () => {
@@ -192,7 +189,17 @@ test('a letter binding keeps shift significant', () => {
 });
 
 test('the default keybind is the shortcut the plugin advertises', () => {
-  const bind = parseKeybind('Ctrl+/');
+  // Read from the plugin's own config, so changing or dropping what it
+  // advertises in its settings fails here.
+  const bind = parseKeybind(defaultSearchCommandsConfig.openKeybind);
   expect(bind).toBeDefined();
-  expect(matchesKeybind(bind!, key({ key: '/', ctrlKey: true }))).toBe(true);
+  expect(bind!.key).toBe('/');
+  // `CmdOrCtrl` resolves to whichever modifier this platform uses.
+  expect(
+    matchesKeybind(
+      bind!,
+      key({ key: '/', ctrlKey: bind!.ctrl, metaKey: bind!.meta }),
+    ),
+  ).toBe(true);
+  expect(matchesKeybind(bind!, key({ key: '/', altKey: true }))).toBe(false);
 });

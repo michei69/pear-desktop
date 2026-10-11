@@ -75,9 +75,27 @@ test("an empty palette is kept, so 'palette': {} keeps its Default", () => {
   writeTheme(root, 'empty-palette', { name: 'Empty', palette: {} });
   writeTheme(root, 'no-palette', { name: 'None' });
 
-  const [empty, none] = readThemesFrom(root);
-  expect(empty.palette).toEqual({});
-  expect(none.palette).toBeUndefined();
+  // Looked up by id: `readdirSync` order is not the order they were written.
+  const themes = readThemesFrom(root);
+  const empty = themes.find((theme) => theme.id === 'empty-palette');
+  const none = themes.find((theme) => theme.id === 'no-palette');
+  expect(empty?.palette).toEqual({});
+  expect(none?.palette).toBeUndefined();
+});
+
+test('themes are read in folder-name order, whatever the filesystem says', () => {
+  const root = makeDir();
+  // `é` comes after `z` in raw byte order but before it in a locale collation,
+  // so this only passes when the reader sorts instead of trusting readdir.
+  writeTheme(root, 'z', { name: 'Zeta' });
+  writeTheme(root, 'é', { name: 'Eacute' });
+  writeTheme(root, 'a', { name: 'Alpha' });
+
+  expect(readThemesFrom(root).map((theme) => theme.id)).toEqual([
+    'a',
+    'é',
+    'z',
+  ]);
 });
 
 test('a missing css file is dropped without losing the theme', () => {

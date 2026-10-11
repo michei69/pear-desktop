@@ -1,6 +1,8 @@
 import { expect, test } from '@playwright/test';
 
 import {
+  allowedNames,
+  compileKeywords,
   normalizeChannels,
   normalizeKeywords,
 } from '../src/plugins/skip-ai-slop/config';
@@ -39,4 +41,45 @@ test('channels drop entries with no usable id, and de-duplicate', () => {
     { id: 'UC1', name: 'UC1' },
   ]);
   expect(normalizeChannels(undefined)).toEqual([]);
+});
+
+test('a keyword matches a whole word, not a fragment of one', () => {
+  const [ai] = compileKeywords(['ai']);
+
+  expect(ai.test('AI Cover')).toBe(true);
+  expect(ai.test('Mai Tai')).toBe(false);
+  expect(ai.test('Tchaikovsky')).toBe(false);
+});
+
+test('a multi-word keyword matches across any whitespace', () => {
+  const [cover] = compileKeywords(['ai cover']);
+
+  expect(cover.test('AI Cover')).toBe(true);
+  expect(cover.test('ai   cover')).toBe(true);
+  expect(cover.test('AI Coverband')).toBe(false);
+});
+
+test('keyword text is matched literally, regex characters included', () => {
+  const [cpp] = compileKeywords(['c++']);
+  const [dotted] = compileKeywords(['lo.fi']);
+
+  expect(cpp.test('C++ tutorial')).toBe(true);
+  expect(cpp.test('CXX tutorial')).toBe(false);
+  expect(dotted.test('lo.fi beats')).toBe(true);
+  // The `.` is escaped, so it cannot stand in for any character.
+  expect(dotted.test('loXfi beats')).toBe(false);
+});
+
+test('only enabled keywords are compiled', () => {
+  expect(compileKeywords([{ text: 'slop', enabled: false }])).toEqual([]);
+  expect(compileKeywords(['   '])).toEqual([]);
+  expect(compileKeywords(undefined)).toEqual([]);
+});
+
+test('allowed channel names skip entries that are only an id', () => {
+  const names = allowedNames(['UC1', { id: 'UC2', name: 'Real Name' }]);
+
+  // The plain id carries no name to allow by, so only the named one counts.
+  expect(names).toEqual(new Set(['real name']));
+  expect(allowedNames(undefined)).toEqual(new Set());
 });

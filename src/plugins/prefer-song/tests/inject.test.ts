@@ -99,7 +99,7 @@ const post = async (path: string, body: Record<string, unknown>) =>
 const setupYouTubeMusic = (
   releaseRows: unknown[],
   queue: unknown[],
-  { failBrowse = false } = {},
+  state: { failBrowse?: boolean } = {},
 ) => {
   const playerRequests: Record<string, unknown>[] = [];
 
@@ -109,7 +109,7 @@ const setupYouTubeMusic = (
     const body = await receivedBody(input, init);
 
     if (url.includes('/browse')) {
-      if (failBrowse) throw new Error('offline');
+      if (state.failBrowse) throw new Error('offline');
       return json(
         typeof body.browseId === 'string' && body.browseId.startsWith('VL')
           ? { contents: [{ browseEndpoint: { browseId: RELEASE_BROWSE } }] }
@@ -140,6 +140,13 @@ const setupYouTubeMusic = (
   return { playerRequests };
 };
 
+const tracksOf = async (response: Response) => {
+  const { contents } = (await response.json()) as {
+    contents: { playlistPanelVideoRenderer: Renderer }[];
+  };
+  return contents.map((entry) => entry.playlistPanelVideoRenderer);
+};
+
 const playRelease = async (
   releaseRows: unknown[],
   queue: unknown[],
@@ -149,13 +156,7 @@ const playRelease = async (
   const response = await post('/youtubei/v1/next', {
     playlistId: RELEASE_PLAYLIST,
   });
-  const { contents } = (await response.json()) as {
-    contents: { playlistPanelVideoRenderer: Renderer }[];
-  };
-  return {
-    tracks: contents.map((entry) => entry.playlistPanelVideoRenderer),
-    playerRequests,
-  };
+  return { tracks: await tracksOf(response), playerRequests };
 };
 
 const playFromRelease = (videoId: string, setId = FIRST_SET) =>
@@ -292,4 +293,27 @@ test('ignores a music video played from a mix', async () => {
   expect(playerRequests).toEqual([
     { videoId: 'video-1', playlistId: 'RDAMPLmix' },
   ]);
+});
+
+test('a release lookup that failed is retried on the next play', async () => {
+  const state = { failBrowse: true };
+  setupYouTubeMusic(
+    [releaseRow('video-1', 'song-1')],
+    [queueItem('video-1', { musicVideo: true })],
+    state,
+  );
+
+  const first = await tracksOf(
+    await post('/youtubei/v1/next', { playlistId: RELEASE_PLAYLIST }),
+  );
+  // The lookup failed, so the queue is left as the page served it.
+  expect(first[0].videoId).toBe('video-1');
+
+  // A failed load must not be remembered as the answer: once the release can be
+  // read, the next play swaps the music video for its song.
+  state.failBrowse = false;
+  const second = await tracksOf(
+    await post('/youtubei/v1/next', { playlistId: RELEASE_PLAYLIST }),
+  );
+  expect(second[0].videoId).toBe('song-1');
 });
