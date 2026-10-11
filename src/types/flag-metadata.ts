@@ -15,25 +15,25 @@ export interface FlagMetadata {
 /** The published metadata, keyed by flag name. */
 export type FlagMetadataMap = Record<string, FlagMetadata>;
 
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-  typeof value === 'object' && value !== null && !Array.isArray(value);
-
 /**
  * The published file is remote input, so only entries with the shape the
  * settings UI reads are kept; a stray object would otherwise render as one.
  */
 export const sanitizeFlagMetadata = (raw: unknown): FlagMetadataMap => {
-  if (!isRecord(raw)) return {};
+  // Object.entries needs a non-null object, so the shape is checked here; the
+  // field reads below then narrow each value on its own.
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return {};
 
   const out: FlagMetadataMap = {};
-  for (const [name, entry] of Object.entries(raw)) {
-    if (!isRecord(entry)) continue;
+  for (const [name, entry] of Object.entries(raw as Record<string, unknown>)) {
+    if (!entry || typeof entry !== 'object' || Array.isArray(entry)) continue;
+    const fields = entry as Record<string, unknown>;
 
     out[name] = {
       description:
-        typeof entry.description === 'string' ? entry.description : undefined,
-      requires_restart: entry.requires_restart === true,
-      family: typeof entry.family === 'string' ? entry.family : '',
+        typeof fields.description === 'string' ? fields.description : undefined,
+      requires_restart: fields.requires_restart === true,
+      family: typeof fields.family === 'string' ? fields.family : '',
     } satisfies FlagMetadata;
   }
   return out;
