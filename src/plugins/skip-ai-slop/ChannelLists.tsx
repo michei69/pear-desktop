@@ -11,29 +11,29 @@ import {
 import type { CustomFieldContext } from '@/types/settings';
 
 const rowStyle = {
-  display: 'flex',
+  'display': 'flex',
   'align-items': 'center',
-  gap: '10px',
+  'gap': '10px',
   'margin-bottom': '8px',
 };
-const nameStyle = { flex: '1', 'word-break': 'break-word' } as const;
-const mutedStyle = { opacity: '0.6', 'font-size': '12px' } as const;
+const nameStyle = { 'flex': '1', 'word-break': 'break-word' } as const;
+const mutedStyle = { 'opacity': '0.6', 'font-size': '12px' } as const;
 const linkBtn = {
-  background: 'none',
-  border: '1px solid currentColor',
+  'background': 'none',
+  'border': '1px solid currentColor',
   'border-radius': '6px',
-  color: 'inherit',
-  cursor: 'pointer',
+  'color': 'inherit',
+  'cursor': 'pointer',
   'font-size': '12px',
-  padding: '2px 8px',
+  'padding': '2px 8px',
 } as const;
 const xBtn = {
-  background: 'none',
-  border: 'none',
-  color: 'inherit',
-  cursor: 'pointer',
+  'background': 'none',
+  'border': 'none',
+  'color': 'inherit',
+  'cursor': 'pointer',
   'font-size': '22px',
-  padding: '0 6px',
+  'padding': '0 6px',
 } as const;
 
 const Empty = (props: { text: string }) => (
@@ -44,7 +44,10 @@ const read = (ctx: CustomFieldContext, key: 'userBlock' | 'userAllow') =>
   normalizeChannels(ctx.getValue(key));
 
 const allow = (ctx: CustomFieldContext, entry: ChannelEntry) => {
-  ctx.setValue('userBlock', read(ctx, 'userBlock').filter((c) => c.id !== entry.id));
+  ctx.setValue(
+    'userBlock',
+    read(ctx, 'userBlock').filter((c) => c.id !== entry.id),
+  );
   if (!read(ctx, 'userAllow').some((c) => c.id === entry.id)) {
     ctx.setValue('userAllow', [...read(ctx, 'userAllow'), entry]);
   }
@@ -52,7 +55,10 @@ const allow = (ctx: CustomFieldContext, entry: ChannelEntry) => {
 };
 
 const block = (ctx: CustomFieldContext, entry: ChannelEntry) => {
-  ctx.setValue('userAllow', read(ctx, 'userAllow').filter((c) => c.id !== entry.id));
+  ctx.setValue(
+    'userAllow',
+    read(ctx, 'userAllow').filter((c) => c.id !== entry.id),
+  );
   if (!read(ctx, 'userBlock').some((c) => c.id === entry.id)) {
     ctx.setValue('userBlock', [...read(ctx, 'userBlock'), entry]);
   }
@@ -74,19 +80,19 @@ const Row = (props: {
       </div>
     </span>
     <Show when={props.onAllow}>
-      <button onClick={props.onAllow} style={linkBtn} type="button">
+      <button onClick={() => props.onAllow?.()} style={linkBtn} type="button">
         Allow
       </button>
     </Show>
     <Show when={props.onBlock}>
-      <button onClick={props.onBlock} style={linkBtn} type="button">
+      <button onClick={() => props.onBlock?.()} style={linkBtn} type="button">
         Block
       </button>
     </Show>
     <Show when={props.onRemove}>
       <button
         aria-label="Remove"
-        onClick={props.onRemove}
+        onClick={() => props.onRemove?.()}
         style={xBtn}
         type="button"
       >
@@ -102,8 +108,8 @@ export const BlockedList = (props: { ctx: CustomFieldContext }) => {
   return (
     <div>
       <Show
-        when={list().length}
         fallback={<Empty text="No blocked channels" />}
+        when={list().length}
       >
         <For each={list()}>
           {(entry) => (
@@ -130,8 +136,8 @@ export const AllowedList = (props: { ctx: CustomFieldContext }) => {
   return (
     <div>
       <Show
-        when={list().length}
         fallback={<Empty text="No allowed channels" />}
+        when={list().length}
       >
         <For each={list()}>
           {(entry) => (
@@ -170,15 +176,17 @@ export const RecentList = (props: { ctx: CustomFieldContext }) => {
   return (
     <div>
       <Show
-        when={list().length}
         fallback={<Empty text="No filtered channels yet" />}
+        when={list().length}
       >
         <For each={list()}>
           {(entry) => (
             <Row
               entry={{ id: entry.id, name: entry.name }}
               note={entry.reason}
-              onAllow={() => allow(props.ctx, { id: entry.id, name: entry.name })}
+              onAllow={() =>
+                allow(props.ctx, { id: entry.id, name: entry.name })
+              }
               onRemove={() => {
                 forgetFiltered(entry.id);
                 setTick((n) => n + 1);

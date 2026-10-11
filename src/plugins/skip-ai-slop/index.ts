@@ -44,6 +44,8 @@ import { KeywordList } from './KeywordList';
 import { ListTools } from './ListTools';
 import { SearchBlocked } from './SearchBlocked';
 
+import type { MusicPlayer } from '@/types/music-player';
+
 const BLACKLIST_URL =
   'https://raw.githubusercontent.com/bwedirhan/pear-desktop-ai-slop-filter/main/blacklist.json';
 const CACHE_KEY = 'skip-ai-slop:blacklist';
@@ -53,7 +55,12 @@ const SUPPORTED_SCHEMA = 2;
 const MAX_SKIPS = 5; // safety: stop skipping if this many skips happen...
 const SKIP_WINDOW_MS = 10_000; // ...within this window (e.g. whole queue is blacklisted)
 
-type Entry = { name?: string; title?: string; reason?: string; added_at?: string };
+type Entry = {
+  name?: string;
+  title?: string;
+  reason?: string;
+  added_at?: string;
+};
 type Blacklist = {
   version: number;
   updated_at: string;
@@ -61,6 +68,38 @@ type Blacklist = {
   tracks: Record<string, Entry>;
 };
 type Config = SkipAiSlopConfig;
+
+/** A renderer node from YouTube Music's page data, which has no published shape. */
+type Renderer = Record<string, unknown>;
+
+/** A renderer node at `key` of some page data, when it really is one. */
+const rendererAt = (node: unknown, key: string): Renderer | undefined => {
+  const found = (node as Renderer | undefined)?.[key];
+  return found as Renderer | undefined;
+};
+
+/** The `runs` of a text renderer (`{ runs: [{ text }] }`), when it has any. */
+const runsOf = (node: unknown): Renderer[] | undefined => {
+  const runs = (node as Renderer | undefined)?.runs;
+  return Array.isArray(runs) ? (runs as Renderer[]) : undefined;
+};
+
+/** Follows a chain of renderer keys, stopping as soon as one is not a node. */
+const rendererPath = (node: unknown, ...keys: string[]): Renderer | undefined =>
+  keys.reduce<Renderer | undefined>(
+    (current, key) => rendererAt(current, key),
+    node as Renderer | undefined,
+  );
+
+/** A string field of a renderer node, or '' when it is not a string. */
+const stringField = (node: Renderer | undefined, key: string): string => {
+  const value = node?.[key];
+  return typeof value === 'string' ? value : '';
+};
+
+/** The `browseId` a run's navigation endpoint points at, when it has one. */
+const browseIdOf = (run: unknown): unknown =>
+  rendererAt(rendererAt(run, 'navigationEndpoint'), 'browseEndpoint')?.browseId;
 
 let keywords: RegExp[] = []; // whole-word matchers (see compileKeyword in config.ts)
 let allowIds = new Set<string>();
@@ -89,10 +128,13 @@ const rebuildKeywords = () => {
 /** Channels YouTube was told "don't recommend" (by us or by hand) stay blocked locally. */
 const addBlocked = (id: string, name: string) => {
   if (allowIds.has(id) || blockIds.has(id)) return;
-  const next = [...normalizeChannels(config.userBlock), { id, name: name || id }];
+  const next = [
+    ...normalizeChannels(config.userBlock),
+    { id, name: name || id },
+  ];
   config = { ...config, userBlock: next };
   rebuildKeywords();
-  void savePluginConfig?.({ userBlock: next });
+  savePluginConfig?.({ userBlock: next });
 };
 const learnArtist = (id: string) => {
   if (allowIds.has(id) || blockIds.has(id) || sessionBlockIds.has(id)) return;
@@ -106,20 +148,24 @@ const matchesKeyword = (text?: string) => {
 
 let list: Blacklist | null = null;
 let config: Config = { ...defaultConfig };
-let api: any = null;
+let api: MusicPlayer | null = null;
 let active = false;
 let video: HTMLVideoElement | null = null;
 let lastCheckedId: string | null = null;
 let recentSkips: number[] = [];
 let refreshTimer: ReturnType<typeof setInterval> | null = null;
 
-const isValid = (d: any): d is Blacklist =>
-  !!d &&
-  d.version === SUPPORTED_SCHEMA &&
-  typeof d.channels === 'object' &&
-  d.channels !== null &&
-  typeof d.tracks === 'object' &&
-  d.tracks !== null;
+const isValid = (d: unknown): d is Blacklist => {
+  const data = d as Blacklist | undefined;
+  return (
+    !!data &&
+    data.version === SUPPORTED_SCHEMA &&
+    typeof data.channels === 'object' &&
+    data.channels !== null &&
+    typeof data.tracks === 'object' &&
+    data.tracks !== null
+  );
+};
 
 const has = (o: Record<string, Entry>, k: string) =>
   Object.prototype.hasOwnProperty.call(o, k);
@@ -170,7 +216,9 @@ const downloadList = async (): Promise<boolean> => {
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data: unknown = await res.json();
     if (!isValid(data)) {
-      console.warn('[skip-ai-slop] invalid or unsupported blacklist, keeping old list');
+      console.warn(
+        '[skip-ai-slop] invalid or unsupported blacklist, keeping old list',
+      );
       return false;
     }
     writeBlacklistNames(data); // names for the settings search, kept apart from the matching cache
@@ -185,7 +233,10 @@ const downloadList = async (): Promise<boolean> => {
     }
     return true;
   } catch (err) {
-    console.warn('[skip-ai-slop] refresh failed; using cached list if any', err);
+    console.warn(
+      '[skip-ai-slop] refresh failed; using cached list if any',
+      err,
+    );
     return false;
   }
 };
@@ -260,11 +311,16 @@ const baseReason = (
   title?: string,
   author?: string,
 ): string | null => {
-  const ids = [videoId, ...channelIds].filter(Boolean) as string[];
+  const ids = [videoId, ...channelIds].filter(Boolean);
   // allow always wins: by id, or by name when the card shows an allowed channel's
   // name under a different id than the one that was allowed
-  const nameAllowed = (t?: string) => !!t && allowNames.has(t.trim().toLowerCase());
-  if (ids.some((id) => allowIds.has(id)) || nameAllowed(title) || nameAllowed(author)) {
+  const nameAllowed = (t?: string) =>
+    !!t && allowNames.has(t.trim().toLowerCase());
+  if (
+    ids.some((id) => allowIds.has(id)) ||
+    nameAllowed(title) ||
+    nameAllowed(author)
+  ) {
     return null;
   }
   if (ids.some((id) => blockIds.has(id))) return 'user-block';
@@ -318,39 +374,53 @@ const canSkipNow = () => {
 // removed locally in one go, so playback never has to skip them one by one.
 type QueueEl = HTMLElement & {
   dispatch(obj: { type: string; payload?: unknown }): void;
-  queue?: { getItems(): any[] };
+  queue?: {
+    getItems(): unknown[];
+    store?: { store?: StoreLike };
+  };
 };
 let queueTimer: ReturnType<typeof setInterval> | null = null;
 const QUEUE_SCAN_MS = 2000;
 
 // Autoplay (automix) items may come wrapped differently from queue items, so
 // when the known shapes miss, look for the first object that has a videoId and a title.
-const findRenderer = (node: any, depth = 0): any => {
+const findRenderer = (node: unknown, depth = 0): Renderer | null => {
   if (!node || typeof node !== 'object' || depth > 6) return null;
-  if (typeof node.videoId === 'string' && node.title) return node;
-  for (const v of Object.values(node)) {
-    const found = findRenderer(v, depth + 1);
+  const candidate = node as Renderer;
+  if (typeof candidate.videoId === 'string' && candidate.title) {
+    return candidate;
+  }
+  for (const value of Object.values(node as Record<string, unknown>)) {
+    const found = findRenderer(value, depth + 1);
     if (found) return found;
   }
   return null;
 };
 
-const queueItemInfo = (item: any) => {
+const queueItemInfo = (item: unknown) => {
   const r =
-    item?.playlistPanelVideoRenderer ??
-    item?.playlistPanelVideoWrapperRenderer?.primaryRenderer
-      ?.playlistPanelVideoRenderer ??
+    rendererAt(item, 'playlistPanelVideoRenderer') ??
+    rendererAt(
+      rendererAt(
+        rendererAt(item, 'playlistPanelVideoWrapperRenderer'),
+        'primaryRenderer',
+      ),
+      'playlistPanelVideoRenderer',
+    ) ??
     findRenderer(item);
-  if (!r?.videoId) return null;
-  const runs: any[] = r.longBylineText?.runs ?? r.shortBylineText?.runs ?? [];
+  if (!r || typeof r.videoId !== 'string' || !r.videoId) return null;
+  const runs = runsOf(r.longBylineText) ?? runsOf(r.shortBylineText) ?? [];
+  const firstText = runs[0]?.text;
   return {
-    videoId: r.videoId as string,
+    videoId: r.videoId,
     selected: !!r.selected,
-    title: ((r.title?.runs ?? []) as any[]).map((x) => x.text).join(''),
-    author: (runs[0]?.text as string | undefined) ?? '',
+    title: (runsOf(r.title) ?? [])
+      .map((run) => (typeof run.text === 'string' ? run.text : ''))
+      .join(''),
+    author: typeof firstText === 'string' ? firstText : '',
     channelIds: runs
-      .map((x) => x?.navigationEndpoint?.browseEndpoint?.browseId)
-      .filter((x): x is string => typeof x === 'string'),
+      .map((run) => browseIdOf(run))
+      .filter((id): id is string => typeof id === 'string'),
   };
 };
 
@@ -374,8 +444,8 @@ const scanQueue = () => {
   const items = el?.queue?.getItems?.();
   if (!el || !items?.length) return;
 
-  const currentId: string | undefined = api.getPlayerResponse?.()?.videoDetails
-    ?.videoId;
+  const currentId: string | undefined =
+    api.getPlayerResponse?.()?.videoDetails?.videoId;
   const flagged: string[] = []; // videoIds, not indexes: indexes go stale after each removal
   let playingReason: { videoId: string; reason: string } | null = null;
   for (const item of items) {
@@ -399,8 +469,8 @@ const scanQueue = () => {
   // removals have been applied by the store.
   const skipPlaying = () => {
     if (!active || !api || !playingReason) return;
-    const nowId: string | undefined = api.getPlayerResponse?.()?.videoDetails
-      ?.videoId;
+    const nowId: string | undefined =
+      api.getPlayerResponse?.()?.videoDetails?.videoId;
     if (nowId === playingReason.videoId) {
       trySkip(playingReason.videoId, playingReason.reason);
     }
@@ -435,15 +505,17 @@ const scanQueue = () => {
     if (!id) {
       removingFromQueue = false;
       if (removed) {
-        console.info(`[skip-ai-slop] removed ${removed} flagged tracks from queue`);
+        console.info(
+          `[skip-ai-slop] removed ${removed} flagged tracks from queue`,
+        );
       }
       setTimeout(skipPlaying, 200); // give the store time to apply the removals
       return;
     }
-    const nowId: string | undefined = api.getPlayerResponse?.()?.videoDetails
-      ?.videoId;
+    const nowId: string | undefined =
+      api.getPlayerResponse?.()?.videoDetails?.videoId;
     const index = (queueEl.queue?.getItems?.() ?? []).findIndex(
-      (it: any) => queueItemInfo(it)?.videoId === id,
+      (it: unknown) => queueItemInfo(it)?.videoId === id,
     );
     if (index >= 0 && id !== nowId) {
       queueEl.dispatch({ type: 'REMOVE_ITEM', payload: index });
@@ -454,7 +526,6 @@ const scanQueue = () => {
   step();
 };
 
-
 // ---- autoplay pre-filter ----------------------------------------------------
 // Autoplay ("automix") tracks arrive through the queue store as an
 // ADD_AUTOMIX_ITEMS action. Wrapping the store's dispatch lets us drop flagged
@@ -462,13 +533,12 @@ const scanQueue = () => {
 // UNVERIFIED: the exact payload shape; both an array and { items: [...] } are handled.
 type StoreLike = {
   dispatch: (obj: { type: string; payload?: unknown }) => void;
-  getState?: () => any;
 };
 let hookedStore: StoreLike | null = null;
 let originalDispatch: StoreLike['dispatch'] | null = null;
 let loggedAutomixShape = false;
 
-const isFlaggedItem = (item: any) => {
+const isFlaggedItem = (item: unknown) => {
   const info = queueItemInfo(item);
   return (
     !!info &&
@@ -476,7 +546,7 @@ const isFlaggedItem = (item: any) => {
   );
 };
 
-const filterAutomixPayload = (payload: any) => {
+const filterAutomixPayload = (payload: unknown) => {
   if (!loggedAutomixShape) {
     loggedAutomixShape = true;
     console.info(
@@ -484,21 +554,26 @@ const filterAutomixPayload = (payload: any) => {
       Array.isArray(payload) ? 'array' : Object.keys(payload ?? {}),
     );
   }
-  const strip = (items: any[]) => items.filter((it) => !isFlaggedItem(it));
+  const strip = (items: unknown[]) => items.filter((it) => !isFlaggedItem(it));
   let removed = 0;
-  let out = payload;
+  let out: unknown = payload;
+
   if (Array.isArray(payload)) {
-    out = strip(payload);
-    removed = payload.length - out.length;
-  } else if (payload && Array.isArray(payload.automixItems)) {
-    // the shape YouTube Music actually uses (seen in the log)
-    const automixItems = strip(payload.automixItems);
-    removed = payload.automixItems.length - automixItems.length;
-    out = { ...payload, automixItems };
-  } else if (payload && Array.isArray(payload.items)) {
-    const items = strip(payload.items);
-    removed = payload.items.length - items.length;
-    out = { ...payload, items };
+    const kept = strip(payload);
+    removed = payload.length - kept.length;
+    out = kept;
+  } else if (payload && typeof payload === 'object') {
+    const { automixItems, items } = payload as Renderer;
+    if (Array.isArray(automixItems)) {
+      // the shape YouTube Music actually uses (seen in the log)
+      const kept = strip(automixItems);
+      removed = automixItems.length - kept.length;
+      out = { ...payload, automixItems: kept };
+    } else if (Array.isArray(items)) {
+      const kept = strip(items);
+      removed = items.length - kept.length;
+      out = { ...payload, items: kept };
+    }
   }
   if (removed) {
     console.info(`[skip-ai-slop] dropped ${removed} flagged autoplay tracks`);
@@ -508,13 +583,16 @@ const filterAutomixPayload = (payload: any) => {
 
 const hookStore = () => {
   if (hookedStore) return;
-  const store = document.querySelector<QueueEl>('#queue') as any;
-  const target: StoreLike | undefined = store?.queue?.store?.store;
+  const target = document.querySelector<QueueEl>('#queue')?.queue?.store?.store;
   if (!target || typeof target.dispatch !== 'function') return;
   originalDispatch = target.dispatch;
   hookedStore = target;
   target.dispatch = function (this: unknown, event) {
-    if (active && typeof event?.type === 'string' && event.type.includes('AUTOMIX')) {
+    if (
+      active &&
+      typeof event?.type === 'string' &&
+      event.type.includes('AUTOMIX')
+    ) {
       try {
         event = { ...event, payload: filterAutomixPayload(event.payload) };
       } catch (err) {
@@ -530,7 +608,6 @@ const unhookStore = () => {
   hookedStore = null;
   originalDispatch = null;
 };
-
 
 // ---- page results filter (search, home, playlists, ...) --------------------------------------------------
 // Hides flagged results/cards on every page. Everything is read from the data
@@ -559,15 +636,23 @@ type SearchInfo = {
 const searchCache = new WeakMap<object, SearchInfo>();
 let hiddenCount = 0;
 
-const textOf = (runs: any): string =>
-  Array.isArray(runs) ? runs.map((r) => r?.text ?? '').join('') : '';
-const channelRuns = (runs: any): any[] =>
-  (Array.isArray(runs) ? runs : []).filter((r) =>
-    String(r?.navigationEndpoint?.browseEndpoint?.browseId ?? '').startsWith('UC'),
-  );
+const textOf = (runs: unknown): string =>
+  Array.isArray(runs)
+    ? (runs as Renderer[])
+        .map((run) => {
+          const text = run?.text;
+          return typeof text === 'string' ? text : '';
+        })
+        .join('')
+    : '';
+const channelRuns = (runs: unknown): Renderer[] =>
+  (Array.isArray(runs) ? (runs as Renderer[]) : []).filter((run) => {
+    const browseId = browseIdOf(run);
+    return typeof browseId === 'string' && browseId.startsWith('UC');
+  });
 
 const walkIds = (
-  node: any,
+  node: unknown,
   videoIds: Set<string>,
   channelIds: Set<string>,
   depth = 0,
@@ -577,7 +662,7 @@ const walkIds = (
     for (const n of node) walkIds(n, videoIds, channelIds, depth + 1);
     return;
   }
-  for (const [k, v] of Object.entries(node)) {
+  for (const [k, v] of Object.entries(node as Record<string, unknown>)) {
     if (typeof v === 'string') {
       if (k === 'videoId') videoIds.add(v);
       else if (k === 'browseId' && v.startsWith('UC')) channelIds.add(v);
@@ -587,30 +672,39 @@ const walkIds = (
   }
 };
 
-const searchInfo = (data: any): SearchInfo => {
+const searchInfo = (data: Renderer): SearchInfo => {
   const cached = searchCache.get(data);
   if (cached) return cached;
   const videoIds = new Set<string>();
   const channelIds = new Set<string>();
   walkIds(data, videoIds, channelIds);
 
-  let title = '';
-  let author = '';
-  const cols = data?.flexColumns;
+  let title: string;
+  let author: string;
+  const cols = data.flexColumns;
+  const columnRuns = (index: number) =>
+    rendererPath(
+      Array.isArray(cols) ? cols[index] : undefined,
+      'musicResponsiveListItemFlexColumnRenderer',
+      'text',
+    )?.runs;
   if (Array.isArray(cols)) {
-    title = textOf(cols[0]?.musicResponsiveListItemFlexColumnRenderer?.text?.runs);
-    author = channelRuns(
-      cols[1]?.musicResponsiveListItemFlexColumnRenderer?.text?.runs,
-    )
-      .map((r) => r.text)
+    title = textOf(columnRuns(0));
+    author = channelRuns(columnRuns(1))
+      .map((run) => (typeof run.text === 'string' ? run.text : ''))
       .join(' ');
   } else {
     // top-result card, home/explore cards (two-row), multi-row items
     title =
-      textOf(data?.header?.musicCardShelfHeaderBasicRenderer?.title?.runs) ||
-      textOf(data?.title?.runs);
-    author = channelRuns(data?.subtitle?.runs)
-      .map((r) => r.text)
+      textOf(
+        rendererPath(
+          rendererPath(data, 'header'),
+          'musicCardShelfHeaderBasicRenderer',
+          'title',
+        )?.runs,
+      ) || textOf(rendererAt(data, 'title')?.runs);
+    author = channelRuns(rendererAt(data, 'subtitle')?.runs)
+      .map((run) => (typeof run.text === 'string' ? run.text : ''))
       .join(' ');
   }
   const info = {
@@ -652,8 +746,13 @@ const loadFeedbackDone = () => {
   if (feedbackDoneLoaded) return;
   feedbackDoneLoaded = true;
   try {
+    const stored: unknown = JSON.parse(
+      localStorage.getItem(FEEDBACK_STORE_KEY) ?? '[]',
+    );
     feedbackDone = new Set(
-      JSON.parse(localStorage.getItem(FEEDBACK_STORE_KEY) ?? '[]'),
+      Array.isArray(stored)
+        ? stored.filter((key): key is string => typeof key === 'string')
+        : [],
     );
   } catch {
     /* storage unavailable: just report from scratch */
@@ -670,29 +769,34 @@ const saveFeedbackDone = () => {
   }
 };
 
-const findNotInterestedToken = (data: any): string | null => {
-  const items = data?.menu?.menuRenderer?.items;
+const findNotInterestedToken = (data: Renderer): string | null => {
+  const items = rendererPath(data, 'menu', 'menuRenderer')?.items;
   if (!Array.isArray(items)) return null;
+  const itemRenderer = (it: unknown) =>
+    rendererAt(it, 'menuServiceItemRenderer');
+  const feedbackTokenOf = (it: unknown) =>
+    rendererPath(itemRenderer(it), 'serviceEndpoint', 'feedbackEndpoint')
+      ?.feedbackToken;
   if (!loggedFeedbackMenu) {
     loggedFeedbackMenu = true;
     console.info(
       '[skip-ai-slop] recommendation menu items:',
       items.map((it) => ({
-        text: textOf(it?.menuServiceItemRenderer?.text?.runs),
-        icon: it?.menuServiceItemRenderer?.icon?.iconType,
-        hasToken:
-          typeof it?.menuServiceItemRenderer?.serviceEndpoint?.feedbackEndpoint
-            ?.feedbackToken === 'string',
+        text: textOf(rendererAt(itemRenderer(it), 'text')?.runs),
+        icon: rendererAt(itemRenderer(it), 'icon')?.iconType,
+        hasToken: typeof feedbackTokenOf(it) === 'string',
       })),
     );
   }
   for (const it of items) {
-    const r = it?.menuServiceItemRenderer;
-    const token = r?.serviceEndpoint?.feedbackEndpoint?.feedbackToken;
+    const r = itemRenderer(it);
+    const token = feedbackTokenOf(it);
     if (typeof token !== 'string') continue;
     if (
-      NOT_INTERESTED_RE.test(textOf(r?.text?.runs)) ||
-      /NOT_INTERESTED|DISMISS/i.test(String(r?.icon?.iconType ?? ''))
+      NOT_INTERESTED_RE.test(textOf(rendererAt(r, 'text')?.runs)) ||
+      /NOT_INTERESTED|DISMISS/i.test(
+        stringField(rendererAt(r, 'icon'), 'iconType'),
+      )
     ) {
       return token;
     }
@@ -705,13 +809,17 @@ const findNotInterestedToken = (data: any): string | null => {
 // channel hidden everywhere, including "Listen again", which YouTube builds from
 // history and does not clean up after "don't recommend".
 const tokenChannel = new Map<string, { id: string; name: string }>();
-type FetchFn = (url: string, data: any) => Promise<any>;
-let hookedNetwork: { fetch: FetchFn } | null = null;
+/** The app element's network manager, as far as this plugin uses it. */
+type FetchFn = (url: string, data: unknown) => Promise<unknown>;
+type NetworkManager = { fetch: FetchFn };
+type AppEl = HTMLElement & { networkManager?: NetworkManager };
+
+let hookedNetwork: NetworkManager | null = null;
 let originalFetch: FetchFn | null = null;
 
-const onUserFeedback = (data: any) => {
+const onUserFeedback = (data: unknown) => {
   loadFeedbackDone();
-  const tokens: unknown = data?.feedbackTokens;
+  const tokens = (data as Renderer | undefined)?.feedbackTokens;
   if (!Array.isArray(tokens)) return;
   for (const t of tokens) {
     const channel = typeof t === 'string' ? tokenChannel.get(t) : undefined;
@@ -732,11 +840,11 @@ const onUserFeedback = (data: any) => {
 
 const hookFetch = () => {
   if (hookedNetwork) return;
-  const nm = document.querySelector<any>('ytmusic-app')?.networkManager;
+  const nm = document.querySelector<AppEl>('ytmusic-app')?.networkManager;
   if (!nm || typeof nm.fetch !== 'function') return;
   originalFetch = nm.fetch;
   hookedNetwork = nm;
-  nm.fetch = function (this: unknown, url: string, data: any) {
+  nm.fetch = function (this: unknown, url: string, data: unknown) {
     try {
       if (active && typeof url === 'string' && url.includes('/feedback')) {
         onUserFeedback(data);
@@ -766,8 +874,13 @@ const isListenAgain = (el: HTMLElement): boolean => {
   const shelf = el.closest<HTMLElement>(SHELF_SELECTOR);
   if (!shelf) return false;
   const dataTitle = textOf(
-    (shelf as any).data?.header?.musicCarouselShelfBasicHeaderRenderer?.title
-      ?.runs,
+    rendererPath(
+      shelf,
+      'data',
+      'header',
+      'musicCarouselShelfBasicHeaderRenderer',
+      'title',
+    )?.runs,
   );
   if (dataTitle && LISTEN_AGAIN_RE.test(dataTitle)) return true;
   const header = shelf.querySelector(
@@ -776,11 +889,7 @@ const isListenAgain = (el: HTMLElement): boolean => {
   return !!header && LISTEN_AGAIN_RE.test(header.textContent ?? '');
 };
 
-const enqueueFeedback = (
-  el: HTMLElement,
-  info: SearchInfo,
-  reason: string,
-) => {
+const enqueueFeedback = (el: HTMLElement, info: SearchInfo, reason: string) => {
   if (isListenAgain(el)) return; // history shelf: hide locally only
   loadFeedbackDone();
   const token = info.token;
@@ -798,13 +907,15 @@ const feedbackTick = async () => {
   try {
     while (active && config.reportFeedback && feedbackQueue.length) {
       const next = feedbackQueue.shift()!;
-      const app = document.querySelector<any>('ytmusic-app');
-      if (!app?.networkManager?.fetch) return;
+      const nm = document.querySelector<AppEl>('ytmusic-app')?.networkManager;
+      if (!nm?.fetch) return;
       try {
-        await (originalFetch ?? app.networkManager.fetch).call(
-          app.networkManager,
+        await (originalFetch ?? nm.fetch).call(
+          nm,
           '/feedback?prettyPrint=false',
-          { feedbackTokens: [next.token] },
+          {
+            feedbackTokens: [next.token],
+          },
         );
         feedbackSent++;
         feedbackDone.add(next.key);
@@ -853,9 +964,10 @@ const scanSearchResults = () => {
   // If cards were already on the page at the first scan, the plugin started
   // after the page drew them. That gap is what shows up as "slow".
   for (const el of cards) {
-    const data = (el as any).data;
+    const raw = (el as { data?: unknown }).data;
+    const data = raw && typeof raw === 'object' ? (raw as Renderer) : undefined;
     let flagged = false;
-    if (data && typeof data === 'object') {
+    if (data) {
       const info = searchInfo(data);
       if (info.token && info.channelIds[0] && !tokenChannel.has(info.token)) {
         tokenChannel.set(info.token, {
@@ -883,7 +995,7 @@ const scanSearchResults = () => {
     // card has real data the verdict above is authoritative: keep it hidden
     // (now counted as ours) or release it. Without data we cannot judge yet.
     const earlyHidden = el.hasAttribute(EARLY_ATTR);
-    if (earlyHidden && data && typeof data === 'object') {
+    if (earlyHidden && data) {
       el.removeAttribute(EARLY_ATTR);
       if (!flagged) el.style.removeProperty('display');
     }
@@ -910,7 +1022,7 @@ const trySkip = (videoId: string, reason: string) => {
   }
   recentSkips.push(Date.now());
   console.info(`[skip-ai-slop] skipping ${videoId} (${reason})`);
-  api.nextVideo();
+  api?.nextVideo();
 };
 
 const check = () => {
@@ -926,8 +1038,13 @@ const check = () => {
   const queued = findQueueInfo(videoId);
   const channelIds = [details.channelId, ...(queued?.channelIds ?? [])].filter(
     Boolean,
-  ) as string[];
-  const reason = reasonToSkip(videoId, channelIds, details.title, details.author);
+  );
+  const reason = reasonToSkip(
+    videoId,
+    channelIds,
+    details.title,
+    details.author,
+  );
   if (!reason) return;
 
   // Flagged only by the uploader's channel: the queue entry's own (artist) channel
@@ -1156,7 +1273,7 @@ export default createPlugin({
       startPageScan(); // keywords, block/allow lists and the cached list work at once
       // also download once when the names for the settings search are missing
       if (!cacheFresh || !hasBlacklistNames()) {
-        void downloadList().then((ok) => {
+        downloadList().then((ok) => {
           if (ok) onListChanged();
         });
       }
@@ -1165,7 +1282,7 @@ export default createPlugin({
       attach(); // no-op until onPlayerApiReady has provided the api
     },
 
-    onPlayerApiReady(playerApi: any) {
+    onPlayerApiReady(playerApi: MusicPlayer) {
       api = playerApi;
       if (active) attach();
     },

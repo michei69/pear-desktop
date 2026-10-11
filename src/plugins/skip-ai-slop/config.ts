@@ -2,6 +2,14 @@
 export type KeywordEntry = { text: string; enabled: boolean };
 export type ChannelEntry = { id: string; name: string };
 
+/**
+ * A stored entry, as a hand-edited config.json may hold it: any field, any
+ * type. Reading through `?.` is what makes a wrong field harmless — it yields
+ * undefined, which the type checks below then reject.
+ */
+type StoredKeyword = { text?: unknown; enabled?: unknown };
+type StoredChannel = { id?: unknown; name?: unknown };
+
 export type SkipAiSlopConfig = {
   enabled: boolean;
   userAllow: ChannelEntry[]; // channels that are never filtered (always wins)
@@ -25,11 +33,15 @@ export const normalizeKeywords = (raw: unknown): KeywordEntry[] => {
   if (!Array.isArray(raw)) return [];
   const out: KeywordEntry[] = [];
   for (const item of raw) {
-    if (typeof item === 'string' && item.trim()) {
-      out.push({ text: item.trim(), enabled: true });
-    } else if (item && typeof item.text === 'string' && item.text.trim()) {
-      out.push({ text: item.text.trim(), enabled: item.enabled !== false });
+    if (typeof item === 'string') {
+      const text = item.trim();
+      if (text) out.push({ text, enabled: true });
+      continue;
     }
+
+    const entry = item as StoredKeyword | null;
+    const text = typeof entry?.text === 'string' ? entry.text.trim() : '';
+    if (text) out.push({ text, enabled: entry?.enabled !== false });
   }
   return out;
 };
@@ -61,13 +73,15 @@ export const normalizeChannels = (raw: unknown): ChannelEntry[] => {
   const out: ChannelEntry[] = [];
   const seen = new Set<string>();
   for (const item of raw) {
-    const id = typeof item === 'string' ? item : item?.id;
+    const entry = (
+      typeof item === 'string' ? { id: item } : item
+    ) as StoredChannel | null;
+    const id = entry?.id;
     if (typeof id !== 'string' || !id || seen.has(id)) continue;
     seen.add(id);
-    out.push({
-      id,
-      name: typeof item?.name === 'string' && item.name ? item.name : id,
-    });
+
+    const name = entry?.name;
+    out.push({ id, name: typeof name === 'string' && name ? name : id });
   }
   return out;
 };
@@ -83,12 +97,14 @@ let recentCache: RecentEntry[] | null = null;
 export const readRecentFiltered = (): RecentEntry[] => {
   if (recentCache) return recentCache;
   try {
-    const raw = JSON.parse(localStorage.getItem(RECENT_KEY) ?? '[]');
+    const raw = JSON.parse(
+      localStorage.getItem(RECENT_KEY) ?? '[]',
+    ) as RecentEntry[];
     recentCache = Array.isArray(raw) ? raw : [];
   } catch {
     recentCache = [];
   }
-  return recentCache!;
+  return recentCache;
 };
 
 export const recordFiltered = (entry: RecentEntry) => {
@@ -164,7 +180,10 @@ export const readBlacklistNames = (): BlacklistName[] => {
   const out: BlacklistName[] = [];
   try {
     const raw = localStorage.getItem(NAMES_KEY);
-    const parsed = raw ? JSON.parse(raw) : null;
+    const parsed = (raw ? JSON.parse(raw) : null) as {
+      channels?: Record<string, unknown>;
+      tracks?: Record<string, unknown>;
+    } | null;
     for (const kind of ['channel', 'track'] as const) {
       const group = parsed?.[kind === 'channel' ? 'channels' : 'tracks'];
       if (!group || typeof group !== 'object') continue;

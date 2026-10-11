@@ -15,15 +15,15 @@ const MIN_QUERY = 2; // nothing is listed until at least this many characters ar
 const MAX_RESULTS = 20;
 
 const rowStyle = {
-  display: 'flex',
+  'display': 'flex',
   'align-items': 'center',
-  gap: '10px',
+  'gap': '10px',
   'margin-bottom': '6px',
 };
-const nameStyle = { flex: '1', 'word-break': 'break-word' } as const;
-const mutedStyle = { opacity: '0.6', 'font-size': '12px' } as const;
+const nameStyle = { 'flex': '1', 'word-break': 'break-word' } as const;
+const mutedStyle = { 'opacity': '0.6', 'font-size': '12px' } as const;
 const hintStyle = {
-  opacity: '0.6',
+  'opacity': '0.6',
   'font-size': '12px',
   'margin-top': '6px',
 } as const;
@@ -65,7 +65,8 @@ export const SearchBlocked = (props: { ctx: CustomFieldContext }) => {
     return readBlacklistNames().length > 0;
   };
 
-  const allowedIds = () => new Set(read(props.ctx, 'userAllow').map((c) => c.id));
+  const allowedIds = () =>
+    new Set(read(props.ctx, 'userAllow').map((c) => c.id));
 
   // Searches the already-parsed names kept in memory (a few thousand strings),
   // so typing never re-reads or re-parses storage. Name matches that start with
@@ -94,7 +95,10 @@ export const SearchBlocked = (props: { ctx: CustomFieldContext }) => {
   const toggle = (item: BlacklistName) => {
     const list = read(props.ctx, 'userAllow');
     if (list.some((c) => c.id === item.id)) {
-      props.ctx.setValue('userAllow', list.filter((c) => c.id !== item.id));
+      props.ctx.setValue(
+        'userAllow',
+        list.filter((c) => c.id !== item.id),
+      );
     } else {
       allow(props.ctx, { id: item.id, name: item.name });
     }
@@ -116,7 +120,11 @@ export const SearchBlocked = (props: { ctx: CustomFieldContext }) => {
         </div>
       </Show>
       <Show
-        when={hasNames() && query().trim().length >= MIN_QUERY && search().total === 0}
+        when={
+          hasNames() &&
+          query().trim().length >= MIN_QUERY &&
+          search().total === 0
+        }
       >
         <div style={hintStyle}>No matches.</div>
       </Show>

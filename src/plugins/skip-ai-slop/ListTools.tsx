@@ -9,22 +9,24 @@ import {
   type ListStatus,
 } from './config';
 
+// `as const` keeps the values literal, which is what Solid's CSSProperties
+// expects (`'flex-wrap'` has to be the literal 'wrap', not `string`).
 const rowStyle = {
-  display: 'flex',
-  gap: '10px',
+  'display': 'flex',
+  'gap': '10px',
   'flex-wrap': 'wrap',
   'margin-bottom': '8px',
-};
-const btnStyle = {
-  background: 'none',
-  border: '1px solid currentColor',
-  'border-radius': '6px',
-  color: 'inherit',
-  cursor: 'pointer',
-  'font-size': '13px',
-  padding: '4px 12px',
 } as const;
-const mutedStyle = { opacity: '0.7', 'font-size': '12px' } as const;
+const btnStyle = {
+  'background': 'none',
+  'border': '1px solid currentColor',
+  'border-radius': '6px',
+  'color': 'inherit',
+  'cursor': 'pointer',
+  'font-size': '13px',
+  'padding': '4px 12px',
+} as const;
+const mutedStyle = { 'opacity': '0.7', 'font-size': '12px' } as const;
 
 /** Buttons to re-download the community list or wipe its saved copy. */
 export const ListTools = () => {

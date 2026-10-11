@@ -6,9 +6,9 @@ import { normalizeKeywords, type KeywordEntry } from './config';
 import type { CustomFieldContext } from '@/types/settings';
 
 const rowStyle = {
-  display: 'flex',
+  'display': 'flex',
   'align-items': 'center',
-  gap: '10px',
+  'gap': '10px',
   'margin-bottom': '8px',
 };
 
@@ -20,7 +20,9 @@ export const KeywordList = (props: { ctx: CustomFieldContext }) => {
   const add = () => {
     const text = draft().trim();
     if (!text) return;
-    const exists = list().some((k) => k.text.toLowerCase() === text.toLowerCase());
+    const exists = list().some(
+      (k) => k.text.toLowerCase() === text.toLowerCase(),
+    );
     if (!exists) save([...list(), { text, enabled: true }]);
     setDraft('');
   };
@@ -30,7 +32,7 @@ export const KeywordList = (props: { ctx: CustomFieldContext }) => {
       <For each={list()}>
         {(entry, i) => (
           <div style={rowStyle}>
-            <span style={{ flex: '1', 'word-break': 'break-word' }}>
+            <span style={{ 'flex': '1', 'word-break': 'break-word' }}>
               {entry.text}
             </span>
             <button
@@ -54,12 +56,12 @@ export const KeywordList = (props: { ctx: CustomFieldContext }) => {
               aria-label="Delete"
               onClick={() => save(list().filter((_, idx) => idx !== i()))}
               style={{
-                background: 'none',
-                border: 'none',
-                color: 'inherit',
-                cursor: 'pointer',
+                'background': 'none',
+                'border': 'none',
+                'color': 'inherit',
+                'cursor': 'pointer',
                 'font-size': '22px',
-                padding: '0 6px',
+                'padding': '0 6px',
               }}
               type="button"
             >

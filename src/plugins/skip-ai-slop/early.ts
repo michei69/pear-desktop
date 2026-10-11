@@ -21,7 +21,12 @@
  * Nothing here touches `document` at import time (index.ts also imports this
  * file into the renderer bundle for the two constants below).
  */
-import { allowedNames, compileKeywords, normalizeChannels } from './config';
+import {
+  allowedNames,
+  compileKeywords,
+  normalizeChannels,
+  type SkipAiSlopConfig,
+} from './config';
 
 export const EARLY_ATTR = 'data-skip-ai-slop-early';
 export const READY_ATTR = 'data-skip-ai-slop-ready';
@@ -59,7 +64,7 @@ let rules: Rules | null = null;
 let observer: MutationObserver | null = null;
 let giveUpTimer: ReturnType<typeof setTimeout> | null = null;
 
-const buildRules = (cfg: any): Rules => {
+const buildRules = (cfg: Partial<SkipAiSlopConfig>): Rules => {
   const out: Rules = {
     allow: new Set(normalizeChannels(cfg.userAllow).map((c) => c.id)),
     allowNames: allowedNames(cfg.userAllow),
@@ -70,13 +75,16 @@ const buildRules = (cfg: any): Rules => {
   };
   try {
     const raw = localStorage.getItem(CACHE_KEY);
-    const data = raw ? JSON.parse(raw)?.data : null;
-    if (
-      data &&
-      data.version === SUPPORTED_SCHEMA &&
-      data.channels &&
-      data.tracks
-    ) {
+    // keep in sync with the shape index.ts writes (see loadCachedList)
+    const cached = (raw ? JSON.parse(raw) : null) as {
+      data?: {
+        version?: unknown;
+        channels?: Record<string, unknown>;
+        tracks?: Record<string, unknown>;
+      };
+    } | null;
+    const data = cached?.data;
+    if (data?.version === SUPPORTED_SCHEMA && data.channels && data.tracks) {
       out.channels = new Set(Object.keys(data.channels));
       out.tracks = new Set(Object.keys(data.tracks));
     }
@@ -103,7 +111,10 @@ const isFlagged = (card: Element, r: Rules): boolean => {
   if (ids.some((id) => r.allow.has(id))) return false; // allow always wins
   if (texts.some((t) => r.allowNames.has(t.trim().toLowerCase()))) return false; // ...also by name
   if (ids.some((id) => r.block.has(id))) return true;
-  if (r.keywords.length && texts.some((t) => r.keywords.some((k) => k.test(t)))) {
+  if (
+    r.keywords.length &&
+    texts.some((t) => r.keywords.some((k) => k.test(t)))
+  ) {
     return true;
   }
   if (channelIds.some((id) => r.channels.has(id))) return true;
@@ -149,9 +160,7 @@ export const stopEarlyScan = () => {
 };
 
 /** Call from the plugin's preload start(). Cards seen before the config arrives are judged once it does. */
-export const startEarlyScan = async (
-  getConfig: () => Promise<unknown> | unknown,
-) => {
+export const startEarlyScan = async (getConfig: () => unknown) => {
   if (observer) return;
   observer = new MutationObserver(onMutations);
   observer.observe(document, {
@@ -163,7 +172,7 @@ export const startEarlyScan = async (
   giveUpTimer = setTimeout(stopEarlyScan, GIVE_UP_MS);
 
   try {
-    const cfg = ((await getConfig()) ?? {}) as { hideInPages?: boolean };
+    const cfg = ((await getConfig()) ?? {}) as Partial<SkipAiSlopConfig>;
     if (cfg.hideInPages === false) {
       stopEarlyScan();
       return;
