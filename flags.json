@@ -1,0 +1,2392 @@
+{
+  "action_router_attached_only_killswitch": {
+    "requires_restart": false,
+    "family": "buttons/controls"
+  },
+  "add_auth_headers_to_remarketing_google_dot_com_ping": {
+    "requires_restart": false,
+    "family": "account/auth"
+  },
+  "all_web_network_machine_raw_request": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "allow_nested_render_ks": {
+    "requires_restart": true,
+    "family": "misc"
+  },
+  "always_render_thumbnail_overlay": {
+    "description": "Read in yt-thumbnail-hover-overlay-toggle-actions-view-model. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "cards/shelves/lockups"
+  },
+  "always_send_and_write": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "animate_icon_disabled_killswitch": {
+    "requires_restart": false,
+    "family": "buttons/controls"
+  },
+  "att_skip_metrics_for_cookieless_domains_ks": {
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "att_web_record_metrics": {
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "bmw_media_app_home_bug_temp_fix": {
+    "description": "Read in fn notifyChildrenChanged. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "cancel_pending_navs": {
+    "requires_restart": false,
+    "family": "navigation/routing"
+  },
+  "captions_hats_killswitch": {
+    "description": "Read in yt-player-sticky-caption. Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "player/playback"
+  },
+  "captions_prefs_killswitch": {
+    "description": "Read in yt-player-caption-language-preferences. Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "player/playback"
+  },
+  "combine_ve_grafts": {
+    "description": "Read in yt-load-next-continuation. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "compress_gel": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "compress_gel_lr": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "console_log_js_exceptions": {
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "cow_if_errors_in_popup": {
+    "requires_restart": false,
+    "family": "popup/dialog/menus"
+  },
+  "cow_logging_in_component_wrapper": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "csi_enable_chrome_devtools_performance_timeline_integration": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "csi_performance_timing_to_object": {
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "csi_use_performance_navigation_timing": {
+    "description": "Read in fn oClearResourceTimings. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "csi_use_time_origin": {
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "debug_forward_web_query_parameters": {
+    "requires_restart": false,
+    "family": "search"
+  },
+  "debug_handle_relative_url_for_query_forward_killswitch": {
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "debug_web_ve_data": {
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "default_to_innertube_icon": {
+    "requires_restart": false,
+    "family": "icons/typography/style"
+  },
+  "delay_sheet_open_killswitch": {
+    "requires_restart": false,
+    "family": "popup/dialog/menus"
+  },
+  "delete_gcf_config_db": {
+    "requires_restart": false,
+    "family": "experiments/config infra"
+  },
+  "delhi_modern_web_player_icons": {
+    "description": "Read in yt-animated-icon, yt-player-quick-action-buttons. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "player/playback"
+  },
+  "deprecate_pair_servlet_enabled": {
+    "description": "Read in yt-remote-online-screen-ids. Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "desktop_enable_cast_connect": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "player/playback"
+  },
+  "desktop_search_bigger_thumbs_style": {
+    "description": "String param. Read in property 'biggerThumbsStyle'. [inferred from call sites]",
+    "requires_restart": true,
+    "family": "search"
+  },
+  "dialog_behavior_no_tap_killswitch": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "disable_biscotti_fetch_entirely_for_all_web_clients": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "disable_child_node_auto_formatted_strings": {
+    "description": "Read in fn setNodeStyle_. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "disable_clicked_visual_element_in_command_handler": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "disable_hidden_dom_if_using_stamper": {
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "disable_music_web_sign_out_redirect": {
+    "requires_restart": false,
+    "family": "account/auth"
+  },
+  "embeds_enable_shorts_prefetch_from_resolve_url_ui": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "embeds_web_enable_csi_start_override_killswitch": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "enable_ai_companion": {
+    "requires_restart": false,
+    "family": "ai"
+  },
+  "enable_ai_search_web_m1_features": {
+    "description": "Read in fn ytLockupMetadataViewModelThumbnailOverlay. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "search"
+  },
+  "enable_aosp_media_metadata": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": true,
+    "family": "misc"
+  },
+  "enable_button_behavior_reuse": {
+    "description": "Read in yt-icon, yt-formatted-string. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "buttons/controls"
+  },
+  "enable_child_panels": {
+    "requires_restart": true,
+    "family": "misc"
+  },
+  "enable_client_sli_logging": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "enable_client_streamz_web": {
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "enable_client_ve_spec": {
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "enable_client_ve_spec_logging": {
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "enable_debug_console_logs": {
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "enable_debug_ves": {
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "enable_desktop_lida_side_panel": {
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "enable_desktop_search_bigger_thumbs": {
+    "description": "Read in fn computeUseBiggerThumbs. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "search"
+  },
+  "enable_entity_store_from_dependency_injection": {
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "enable_equal_shelf_spacing": {
+    "description": "Equal spacing between shelf items.",
+    "requires_restart": true,
+    "family": "cards/shelves/lockups"
+  },
+  "enable_flow_logging_command_resolver_parent_tools": {
+    "description": "Read in fn resolveCommand. Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "enable_form_data_in_search_request": {
+    "description": "Read in fn JSC$13062_buildRequest, fn getStoreKey. Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "search"
+  },
+  "enable_google_payments_buyflow_material2_style_web": {
+    "requires_restart": false,
+    "family": "payments/subscription"
+  },
+  "enable_handles_account_menu_switcher": {
+    "description": "Read in yt-badge-view-model. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "popup/dialog/menus"
+  },
+  "enable_handles_in_mention_suggest_posts": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "search"
+  },
+  "enable_in_app_backgrounding_mobile_web": {
+    "description": "Read in ytmusic-app. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "enable_interstitial_entity_check": {
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "enable_ios_webview_radio_button_responsiveness": {
+    "requires_restart": true,
+    "family": "buttons/controls"
+  },
+  "enable_lockup_redesign": {
+    "description": "Redesigned lockup (card/thumbnail item) rendering.",
+    "requires_restart": false,
+    "family": "cards/shelves/lockups"
+  },
+  "enable_mdx_web_channel_desktop": {
+    "requires_restart": false,
+    "family": "player/playback"
+  },
+  "enable_memberships_and_purchases": {
+    "requires_restart": false,
+    "family": "payments/subscription"
+  },
+  "enable_mini_player_announcement": {
+    "description": "Mini-player announcement/tooltip for new users.",
+    "requires_restart": false,
+    "family": "player/playback"
+  },
+  "enable_mixed_direction_formatted_strings": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "enable_multi_image_post_creation": {
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "enable_multi_modal_inputs_on_web": {
+    "description": "Read in fn JSC$13062_buildRequest. Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "enable_music_integrations_bridging_functionality": {
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "enable_music_mweb_app_bar_app_install_entry": {
+    "description": "Read in fn computeIsMwebPersistentAppInstallEnabled. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "enable_music_mweb_logged_out_cta_optimization": {
+    "description": "Read in property 'isLoggedOutCtaOptimizationEnabled'. [inferred from call sites]",
+    "requires_restart": true,
+    "family": "telemetry/logging"
+  },
+  "enable_music_mweb_player_page_modernization": {
+    "description": "Mobile-web player-page modernization (full-screen player page); desktop ignores unless viewportSize<=-2. computeIsMwebModernizationEnabled (polymer:12721).",
+    "requires_restart": false,
+    "family": "player/playback"
+  },
+  "enable_music_web_cairo_new_collaborators_list_and_actions": {
+    "description": "Read in ytmusic-update-playlist-shelf-action, ytmusicReduxBehavior. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "enable_music_web_cairo_private_playlist_sharing": {
+    "description": "Read in fn attached, ytmusic-update-set-video-id. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "queue/playlist/radio"
+  },
+  "enable_music_web_cairo_voting_animation": {
+    "description": "Cairo-design like/dislike voting animation; used across player controls, lockups, wiz controls (polymer:16047 etc.).",
+    "requires_restart": false,
+    "family": "animation/motion"
+  },
+  "enable_music_web_comment_threads": {
+    "description": "Comment threads UI rework (delhi family).",
+    "requires_restart": false,
+    "family": "comments"
+  },
+  "enable_music_web_comments": {
+    "description": "Read in property 'enableMusicWebComments'. [inferred from call sites]",
+    "requires_restart": true,
+    "family": "comments"
+  },
+  "enable_music_web_create_cairo_collab_playlist_toggle": {
+    "description": "Read in fn computeHasError. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "buttons/controls"
+  },
+  "enable_music_web_player_page_ui_fixes": {
+    "description": "Player-page (track related / now-playing) UI fixes bundle.",
+    "requires_restart": false,
+    "family": "player/playback"
+  },
+  "enable_native_input_selectable_item": {
+    "requires_restart": true,
+    "family": "telemetry/logging"
+  },
+  "enable_new_music_mweb_player_bar": {
+    "description": "New mobile-web player bar; effective when IS_MOBILE_WEB or viewport<=-3 (computeIsMwebPlayerBarModernizationEnabled, polymer:12742).",
+    "requires_restart": false,
+    "family": "player/playback"
+  },
+  "enable_observability_logging_web_remix": {
+    "description": "Read in fn resolveCommand. Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "enable_page_type_in_search_request": {
+    "description": "Read in fn JSC$13062_buildRequest. Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "search"
+  },
+  "enable_payments_purchase_manager": {
+    "requires_restart": false,
+    "family": "payments/subscription"
+  },
+  "enable_persistent_device_token": {
+    "requires_restart": false,
+    "family": "account/auth"
+  },
+  "enable_player_bar_slide_up_animation": {
+    "description": "Slide-up animation for the player bar; ytmusic-app-layout.isPlayerBarSlideUpAnimationEnabled (polymer:12748). Meant for the new wiz bar.",
+    "requires_restart": true,
+    "family": "player/playback"
+  },
+  "enable_player_request_builder_start_time_floor": {
+    "requires_restart": false,
+    "family": "player/playback"
+  },
+  "enable_polymer_icons_replace_underscores_dash": {
+    "description": "Read in fn tchToYtSysIconset, yt-icons. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "icons/typography/style"
+  },
+  "enable_polymer_resin": {
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "enable_premium_voluntary_pause": {
+    "description": "Read in fn onPopupOpened_, yt-button-renderer. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "payments/subscription"
+  },
+  "enable_profile_cards_on_comments": {
+    "description": "Read in fn onAuthorThumbnailClicked. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "comments"
+  },
+  "enable_queue_refresh_during_podcast_playback": {
+    "requires_restart": false,
+    "family": "player/playback"
+  },
+  "enable_shadydom_free_children": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": true,
+    "family": "misc"
+  },
+  "enable_shadydom_free_last_child": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": true,
+    "family": "misc"
+  },
+  "enable_shadydom_free_parent_node": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": true,
+    "family": "misc"
+  },
+  "enable_shadydom_free_scoped_node_methods": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": true,
+    "family": "misc"
+  },
+  "enable_shadydom_free_scoped_query_methods": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": true,
+    "family": "search"
+  },
+  "enable_shadydom_free_scoped_readonly_properties_batch_one": {
+    "requires_restart": true,
+    "family": "misc"
+  },
+  "enable_tertiary_account_linking": {
+    "description": "Read in yt-signal-action-show-account-link-dialog. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "navigation/routing"
+  },
+  "enable_web_animated_like_fix": {
+    "requires_restart": false,
+    "family": "animation/motion"
+  },
+  "enable_web_client_experiment_event_timeout_killswitch": {
+    "requires_restart": false,
+    "family": "buttons/controls"
+  },
+  "enable_web_delhi_icons": {
+    "description": "New 'delhi' icon set for web.",
+    "requires_restart": false,
+    "family": "icons/typography/style"
+  },
+  "enable_web_media_google_signed_client_validation": {
+    "requires_restart": false,
+    "family": "account/auth"
+  },
+  "enable_web_media_inbound_request_timeout": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "enable_web_media_interaction_logging": {
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "enable_web_media_session_metadata_fix": {
+    "requires_restart": false,
+    "family": "account/auth"
+  },
+  "enable_web_tiered_gel": {
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "enable_web_upload_support": {
+    "description": "Read in yt-notification-action-renderer. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "player/playback"
+  },
+  "enable_web_watch_fullscreen_overflow_menu_fixes": {
+    "description": "Read in yt-popup-canceled. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "popup/dialog/menus"
+  },
+  "enable_window_constrained_buy_flow_dialog": {
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "enable_wiz_context_per_component": {
+    "description": "Read in ytmusic-app. [inferred from call sites]",
+    "requires_restart": true,
+    "family": "misc"
+  },
+  "enable_ypc_spinners": {
+    "description": "Read in fn onContinueTapped_, yt-close-popup-action. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "payments/subscription"
+  },
+  "enable_yt_ata_iframe_authuser": {
+    "description": "Read in fn dataChanged. Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "account/auth"
+  },
+  "enable_zero_prefix_mention_suggestion_web": {
+    "requires_restart": false,
+    "family": "search"
+  },
+  "enable_zw_ping": {
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "endpoint_behavior_command_executor_fix_killswitch": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "buttons/controls"
+  },
+  "endpoint_handler_logging_cleanup_killswitch": {
+    "description": "Read in yt-open-popup-action. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "errors_flush_gel_always_killswitch": {
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "expectation_logging": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "export_player_version_to_ytconfig": {
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "family_center_disable_delhi_icons": {
+    "description": "Read in fn mapIconTypeToStandardName. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "icons/typography/style"
+  },
+  "fill_delegate_context_in_gel_killswitch": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "finalize_all_timelines": {
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "fix_uri_parsing_for_legacy_underescaping": {
+    "requires_restart": false,
+    "family": "navigation/routing"
+  },
+  "gel_compression_csi_killswitch": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "gel_min_batch_size": {
+    "description": "Numeric param. Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "h5_fetch_ad_pings_high_priority": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": true,
+    "family": "player/playback"
+  },
+  "h5_fetch_ad_pings_keepalive": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": true,
+    "family": "player/playback"
+  },
+  "h5_fetch_ad_pings_no_cors": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": true,
+    "family": "player/playback"
+  },
+  "handle_service_request_actions": {
+    "description": "Handles config-mutation commands piggybacked in API responses (server-driven flag updates mid-session).",
+    "requires_restart": false,
+    "family": "experiments/config infra"
+  },
+  "handles_in_mention_suggest_posts": {
+    "requires_restart": false,
+    "family": "search"
+  },
+  "html5_enable_playback_attestability": {
+    "requires_restart": false,
+    "family": "player/playback"
+  },
+  "html5_enable_profiler": {
+    "requires_restart": false,
+    "family": "player/playback"
+  },
+  "html5_onesie_enable_profiler": {
+    "requires_restart": false,
+    "family": "player/playback"
+  },
+  "html5_send_qoe_on_gel": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "html5_web_po_disable_remote_logging": {
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "html5_web_po_experiment_ids": {
+    "requires_restart": true,
+    "family": "player/playback"
+  },
+  "idb_data_corrupted_killswitch": {
+    "description": "Read in fn logEvent. Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "idb_immediate_commit": {
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "idb_is_supported_completed_killswitch": {
+    "description": "Read in yt-player-local-media. Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "idb_response_store_auth_killswitch": {
+    "description": "Read in yt-it-response-store. Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": true,
+    "family": "telemetry/logging"
+  },
+  "il_attach_cache_limit": {
+    "requires_restart": false,
+    "family": "service-worker/caching"
+  },
+  "il_payload_scraping": {
+    "description": "String param. Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": true,
+    "family": "player/playback"
+  },
+  "il_use_view_model_logging_context": {
+    "description": "Read in fn JSC$11404_getTrackingParams. Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "json_condensed_response": {
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "jspb_serialize_with_worker": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "jspb_sparse_encoded_pivot": {
+    "requires_restart": true,
+    "family": "misc"
+  },
+  "kevlar_cache_on_ttl_player": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "player/playback"
+  },
+  "kevlar_client_side_screens": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "kevlar_command_handler_command_banlist": {
+    "requires_restart": true,
+    "family": "misc"
+  },
+  "kevlar_command_handler_formatted_string": {
+    "description": "Read in yt-navigate. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "kevlar_disable_theme_param": {
+    "description": "Read in yt-navigate-start. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "icons/typography/style"
+  },
+  "kevlar_exclude_endpoint_killswitch": {
+    "requires_restart": false,
+    "family": "buttons/controls"
+  },
+  "kevlar_fill_comment_chip_icon_killswitch": {
+    "description": "Read in fn getIconSize. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "buttons/controls"
+  },
+  "kevlar_flex_menu_safe_area_killswitch": {
+    "description": "Read in yt-flexible-actions-view-model. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "popup/dialog/menus"
+  },
+  "kevlar_force_refresh_smart_downloads": {
+    "requires_restart": false,
+    "family": "offline/downloads"
+  },
+  "kevlar_gel_error_routing": {
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "kevlar_keyboard_button_focus": {
+    "description": "Read in fn updatePopup, yt-toggle-form-field-renderer. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "buttons/controls"
+  },
+  "kevlar_lazy_list_resume_for_autofill": {
+    "description": "Read in ytmusic-horizontal-action-card-view-model. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "kevlar_legacy_browsers": {
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "kevlar_log_offline_current_network_type_ks": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "kevlar_log_updated_time_for_smart_downloads": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "kevlar_mealbar_above_player": {
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "kevlar_prefetch_data_augments_network_data": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "kevlar_response_processor_allowlist_killswitch": {
+    "requires_restart": false,
+    "family": "buttons/controls"
+  },
+  "kevlar_searchbox_stats_killswitch": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "buttons/controls"
+  },
+  "kevlar_service_command_check": {
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "kevlar_set_sd_enabled_flag_killswitch": {
+    "requires_restart": false,
+    "family": "buttons/controls"
+  },
+  "kevlar_startup_split": {
+    "description": "Read in fn executePluginJob. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "kevlar_system_icons": {
+    "description": "Read in fn determineIconSet, yt-icons. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "icons/typography/style"
+  },
+  "kevlar_thumbnail_bg": {
+    "description": "Read in fn shouldShowPlaceholder_, yt-image. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "cards/shelves/lockups"
+  },
+  "kevlar_tuner_clamp_device_pixel_ratio": {
+    "description": "Numeric param. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "kevlar_tuner_max_thumbnail_quality": {
+    "requires_restart": false,
+    "family": "cards/shelves/lockups"
+  },
+  "kevlar_tuner_min_thumbnail_quality": {
+    "requires_restart": false,
+    "family": "cards/shelves/lockups"
+  },
+  "kevlar_tuner_should_always_use_device_pixel_ratio": {
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "kevlar_tuner_should_clamp_device_pixel_ratio": {
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "kevlar_tuner_should_use_thumbnail_factor": {
+    "requires_restart": false,
+    "family": "cards/shelves/lockups"
+  },
+  "kevlar_tuner_thumbnail_factor": {
+    "description": "Numeric param. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "cards/shelves/lockups"
+  },
+  "kevlar_unified_errors_init": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "kevlar_use_vimio_behavior": {
+    "description": "Read in fn initVisibilityObserver, yt-visibility-monitor-refreshed. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "kevlar_use_wil_icons": {
+    "description": "WIL icon system for kevlar components.",
+    "requires_restart": false,
+    "family": "icons/typography/style"
+  },
+  "kevlar_vimio_use_shared_monitor": {
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "kevlar_watch_comments_panel_button": {
+    "requires_restart": false,
+    "family": "buttons/controls"
+  },
+  "kevlar_watch_grid": {
+    "description": "Main-YouTube watch-page grid layout; in this music bundle only read from shared service plumbing — likely inert on YTM.",
+    "requires_restart": false,
+    "family": "cards/shelves/lockups"
+  },
+  "kevlar_wiz_tooltip_event_killswitch": {
+    "description": "Read in fn logTooltipEvent. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "buttons/controls"
+  },
+  "kevlar_woffle": {
+    "description": "Read in yt-downloaded-video-deleted. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "offline/downloads"
+  },
+  "kevlar_woffle_fallback_image": {
+    "description": "Read in fn onError_. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "offline/downloads"
+  },
+  "kevlar_woffle_refresh_dl_load_killswitch": {
+    "requires_restart": false,
+    "family": "offline/downloads"
+  },
+  "killswitch_copy_link_target_check": {
+    "description": "Read in fn handleSignalActionCopyShareUrl_. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "buttons/controls"
+  },
+  "killswitch_remove_icon_fill_color": {
+    "requires_restart": true,
+    "family": "telemetry/logging"
+  },
+  "killswitch_toggle_button_behavior_resolve_command": {
+    "description": "Read in yt-toggle-button, yt-execute-service-endpoint. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "layout_inert_on_popup_opened_killswitch": {
+    "description": "Read in fn handlePopupOpened, ytmusic-notification-. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "popup/dialog/menus"
+  },
+  "limit_ytcsi_debug_array_size": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "lockup_flex_none_killswitch": {
+    "description": "Read in fn ytLockupViewModelFlexNone. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "buttons/controls"
+  },
+  "lockup_focus_handlers_killswitch": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "buttons/controls"
+  },
+  "lockup_focus_visible_killswitch": {
+    "requires_restart": false,
+    "family": "buttons/controls"
+  },
+  "log_gel_compression_latency": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "log_gel_compression_latency_lr": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "log_heartbeat_on_blur": {
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "log_heartbeat_with_lifecycles": {
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "log_jspb_serialize_latency": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "log_sequence_info_on_gel_web": {
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "logging_avoid_blocking_during_navigation": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "logging_nested_component_ks": {
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "lr_logging_avoid_blocking_during_navigation": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "maw_error_screen_redesign": {
+    "description": "Read in yt-interstitial-view-model. [inferred from call sites]",
+    "requires_restart": true,
+    "family": "account/auth"
+  },
+  "maw_network_machine_raw_request": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "more_accurate_gel_parser": {
+    "description": "Read in fn storePayload. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "music_enable_radio_steering_in_queues": {
+    "description": "Radio steering (autoplay chain) inside queues.",
+    "requires_restart": false,
+    "family": "buttons/controls"
+  },
+  "music_enable_responsive_radio_client": {
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "music_enable_save_queue_to_playlist": {
+    "description": "'Save queue to playlist' action.",
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "music_enable_sticky_playlist_saving": {
+    "description": "Sticky playlist-save behavior.",
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "music_home_enable_new_content_pill": {
+    "description": "Read in fn computeActive. Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "music_populate_web_player_bar_using_queue_metadata": {
+    "description": "Player-bar track metadata (like-button menu etc.) populated from queue metadata instead of player response; computeHideLikeButtonRenderer (polymer:15638).",
+    "requires_restart": false,
+    "family": "player/playback"
+  },
+  "music_web_body_line_height": {
+    "description": "String param. Read in fn setDynamicCssProperties. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "music_web_canary": {
+    "description": "Rollout channel marker: iZ() returns CANARY when true (polymer:11887).",
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "music_web_canary_holdback": {
+    "description": "Rollout channel marker: iZ() returns HOLDBACK when true (polymer:11887).",
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "music_web_disable_player_page_open_on_fullscreen": {
+    "description": "Suppresses opening the player page when entering fullscreen.",
+    "requires_restart": false,
+    "family": "player/playback"
+  },
+  "music_web_enable_album_art_zoom": {
+    "description": "Album-art zoom effect (player page).",
+    "requires_restart": true,
+    "family": "misc"
+  },
+  "music_web_enable_card_shelf_header_basic_renderer_cow": {
+    "description": "Read in ytmusic-card-shelf-header-basic-renderer, ytmusicCardShelfHeaderBasicRendererText. [inferred from call sites]",
+    "requires_restart": true,
+    "family": "cards/shelves/lockups"
+  },
+  "music_web_enable_checkbox_fix": {
+    "description": "Read in fn onTransferStateChange. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "buttons/controls"
+  },
+  "music_web_enable_chip_cloud_scroll_preservation": {
+    "description": "Chip bar (filter chips) remembers scroll position.",
+    "requires_restart": false,
+    "family": "cards/shelves/lockups"
+  },
+  "music_web_enable_chip_restoration": {
+    "requires_restart": false,
+    "family": "cards/shelves/lockups"
+  },
+  "music_web_enable_clear_shuffle_state": {
+    "description": "Read in fn handleClearShuffleStateCommand. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "queue/playlist/radio"
+  },
+  "music_web_enable_closed_captions_miniplayer": {
+    "description": "Read in fn turnCaptionsBackOnIfApplicable, fn captionsVisibleChanged. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "player/playback"
+  },
+  "music_web_enable_contained_content_layout": {
+    "description": "Contained content layout (page container width/insets), ytmusic-app-layout.",
+    "requires_restart": true,
+    "family": "layout/responsive"
+  },
+  "music_web_enable_direct_navigate_on_empty_queue_add": {
+    "requires_restart": false,
+    "family": "queue/playlist/radio"
+  },
+  "music_web_enable_dislike_skip_av_fix": {
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "music_web_enable_diwali_india_promo_interactions": {
+    "description": "Read in property 'isDiwaliPromoInteractionsEnabled'. [inferred from call sites]",
+    "requires_restart": true,
+    "family": "misc"
+  },
+  "music_web_enable_drag_drop_upload": {
+    "description": "Drag-and-drop file upload for tracks.",
+    "requires_restart": false,
+    "family": "upload"
+  },
+  "music_web_enable_equalizer_now_playing_indicator": {
+    "description": "Equalizer-style now-playing indicator in the player bar.",
+    "requires_restart": false,
+    "family": "player/playback"
+  },
+  "music_web_enable_exponential_volume_control": {
+    "requires_restart": false,
+    "family": "player/playback"
+  },
+  "music_web_enable_item_metadata_refetch": {
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "music_web_enable_library_page_scroll_persistence": {
+    "description": "Library page remembers scroll position.",
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "music_web_enable_mobile_search_back_fix": {
+    "description": "Read in property 'enableMobileSearchBackFix', ytmusic-search-box. [inferred from call sites]",
+    "requires_restart": true,
+    "family": "search"
+  },
+  "music_web_enable_more_player_controls_a11y_fix": {
+    "description": "Read in property 'isMoreControlsA11yFixEnabled'. [inferred from call sites]",
+    "requires_restart": true,
+    "family": "player/playback"
+  },
+  "music_web_enable_new_autoplaylist_images": {
+    "requires_restart": false,
+    "family": "queue/playlist/radio"
+  },
+  "music_web_enable_npi_optimization": {
+    "description": "Read in ytmusic-equalizer-indicator, ytmusicEqualizerIndicatorHost. [inferred from call sites]",
+    "requires_restart": true,
+    "family": "misc"
+  },
+  "music_web_enable_offline_shuffle_fix": {
+    "description": "Offline shuffle ordering fix.",
+    "requires_restart": false,
+    "family": "offline/downloads"
+  },
+  "music_web_enable_paygated_upsell": {
+    "requires_restart": false,
+    "family": "payments/subscription"
+  },
+  "music_web_enable_persistent_content_warning_flow": {
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "music_web_enable_playlist_collaborator_actions": {
+    "requires_restart": false,
+    "family": "queue/playlist/radio"
+  },
+  "music_web_enable_playlist_polling_on_browse": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "queue/playlist/radio"
+  },
+  "music_web_enable_queue_reflection_polling": {
+    "description": "Read in fn handlePollPlaylistCommand. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "queue/playlist/radio"
+  },
+  "music_web_enable_refresh_account_menu_after_channel_creation": {
+    "description": "Read in ytmusicReduxBehavior. Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "popup/dialog/menus"
+  },
+  "music_web_enable_related_tab_carousel_fix": {
+    "description": "Read in property 'isRelatedTabCarouselFixEnabled'. [inferred from call sites]",
+    "requires_restart": true,
+    "family": "cards/shelves/lockups"
+  },
+  "music_web_enable_response_manifest_killswitch": {
+    "requires_restart": false,
+    "family": "buttons/controls"
+  },
+  "music_web_enable_select_autoplay_item": {
+    "description": "Read in property 'isSelectAutoplayItemEnabled'. [inferred from call sites]",
+    "requires_restart": true,
+    "family": "queue/playlist/radio"
+  },
+  "music_web_enable_server_queue_restoration": {
+    "requires_restart": false,
+    "family": "queue/playlist/radio"
+  },
+  "music_web_enable_server_queues": {
+    "description": "Server-backed queue (queue state from server, incl. restoration/polling).",
+    "requires_restart": false,
+    "family": "queue/playlist/radio"
+  },
+  "music_web_enable_service_worker": {
+    "requires_restart": false,
+    "family": "service-worker/caching"
+  },
+  "music_web_enable_stable_play_button_on_drag_n_drop": {
+    "description": "Read in fn attached. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "buttons/controls"
+  },
+  "music_web_enable_station_dynamic_metadata": {
+    "description": "Read in fn resolveCommand. Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "queue/playlist/radio"
+  },
+  "music_web_enable_station_playback_restrictions": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "player/playback"
+  },
+  "music_web_enable_watch_next_continuation_string_only": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "music_web_enable_white_toasts_for_text_notifications": {
+    "description": "Read in property 'isWhiteToastsEnabled', ytmusic-notification-text-renderer. [inferred from call sites]",
+    "requires_restart": true,
+    "family": "popup/dialog/menus"
+  },
+  "music_web_enable_wiz_miniplayer": {
+    "description": "Swaps the desktop bottom player bar: ON = new wiz stack (ytmusic-miniplayer + ytmusic-wiz-player-controls), OFF = legacy ytmusic-player-bar. Read once into ytmusic-app.isMiniplayerEnabled at bootstrap (polymer:19170, template :19178).",
+    "requires_restart": true,
+    "family": "player/playback"
+  },
+  "music_web_enable_wr_code": {
+    "description": "Read in fn navigateToQueryResults. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "music_web_execute_on_response_received_endpoints_on_watch_next_response": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "navigation/routing"
+  },
+  "music_web_fix_ai_summary_layout_shift": {
+    "description": "Read in property 'fixAiSummaryLayoutShift'. [inferred from call sites]",
+    "requires_restart": true,
+    "family": "layout/responsive"
+  },
+  "music_web_fix_queue_logging_race_condition": {
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "music_web_handle_sps_reject_failure": {
+    "description": "Read in fn onPresentingVideoDataChange, yt-open-popup-action. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "music_web_mark_root_visible": {
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "music_web_optimize_queue_rendering": {
+    "description": "Read in property 'isOptimizeQueueRenderingEnabled', yt-rendererstamper-finished. [inferred from call sites]",
+    "requires_restart": true,
+    "family": "queue/playlist/radio"
+  },
+  "music_web_recalculate_layout_on_fullscreen": {
+    "description": "Read in fn onPlayerFullscreenedChanged. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "layout/responsive"
+  },
+  "music_web_remove_premium_gapless": {
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "music_web_sidenav_ttl_ms": {
+    "description": "Numeric param. Read in yt-music-guide-ttl-expired, ytmusic-guide-section-renderer. [inferred from call sites]",
+    "requires_restart": true,
+    "family": "navigation/routing"
+  },
+  "music_web_station_badge_fix": {
+    "description": "Read in fn configureRendererStamper, ytmusic-inline-badge-renderer. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "cards/shelves/lockups"
+  },
+  "music_web_station_details_fix": {
+    "description": "Read in fn onTabsChanged, ytmusicReduxBehavior. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "queue/playlist/radio"
+  },
+  "music_web_title_line_height": {
+    "description": "String param. Read in fn setDynamicCssProperties. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "mweb_chip_redesign_color_update": {
+    "requires_restart": false,
+    "family": "cards/shelves/lockups"
+  },
+  "mweb_component_visibility_logging": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "mweb_enable_shorts_innertube_player_prefetch": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "player/playback"
+  },
+  "mweb_override_response_store_expiration_ms": {
+    "description": "Numeric param. [inferred from call sites]",
+    "requires_restart": true,
+    "family": "misc"
+  },
+  "networkless_immediately_drop_all_requests": {
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "networkless_immediately_drop_sw_health_store": {
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "networkless_logging": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "no_client_ve_attach_unless_shown": {
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "nwl_csi_killswitch": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "nwl_init_require_datasync_id_killswitch": {
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "offline_error_handling": {
+    "requires_restart": false,
+    "family": "offline/downloads"
+  },
+  "pageid_as_header_web": {
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "par_bir_key": {
+    "description": "String param. Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "pbcm_fi_listen_decorators": {
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "pbcm_fi_query_decorators": {
+    "requires_restart": true,
+    "family": "search"
+  },
+  "player_page_inert_on_page_close_killswitch": {
+    "description": "Read in fn playerPageOpenChanged. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "player/playback"
+  },
+  "polymer_enable_property_access_logging": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "polymer_forward_method_killswitch": {
+    "requires_restart": false,
+    "family": "buttons/controls"
+  },
+  "polymer_log_prop_change_observer_percent": {
+    "description": "Numeric param. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "polymer_property_access_logging_debug": {
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "polymer_property_access_logging_percent": {
+    "description": "Numeric param. Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "polymer_reflect_objects_as_boolean_killswitch": {
+    "requires_restart": false,
+    "family": "buttons/controls"
+  },
+  "polymer_report_client_url_requested_rate": {
+    "description": "Numeric param. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "navigation/routing"
+  },
+  "polymer_report_missing_web_navigation_endpoint_rate": {
+    "description": "Numeric param. Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": true,
+    "family": "navigation/routing"
+  },
+  "polymer_yticon_killswitch": {
+    "requires_restart": false,
+    "family": "buttons/controls"
+  },
+  "polysi_attribute_changed_serializing_killswitch": {
+    "description": "Read in fn uteChangedCallback. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "buttons/controls"
+  },
+  "popup_container_dialog_reopen_killswitch": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "popup_container_event_target_check_killswitch": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "popup/dialog/menus"
+  },
+  "ps_dom_if_check_disposed_in_connected_killswitch": {
+    "description": "Read in fn dCallback. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "buttons/controls"
+  },
+  "ps_dom_if_require_parent_signal_proxy_killswitch": {
+    "description": "Read in fn connectedCallback. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "buttons/controls"
+  },
+  "ps_dom_repeat_require_parent_signal_proxy_killswitch": {
+    "description": "Read in fn connectedCallback. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "buttons/controls"
+  },
+  "record_app_crashed_web": {
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "redux_disable_update_on_attached_killswitch": {
+    "description": "Read in fn attached. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "buttons/controls"
+  },
+  "refresh_upon_dismiss_channel_creation_from_playlists": {
+    "description": "Read in fn onSelect, yt-navigate. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "queue/playlist/radio"
+  },
+  "remove_cr_char": {
+    "requires_restart": true,
+    "family": "telemetry/logging"
+  },
+  "report_client_error_with_app_crash_ks": {
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "rich_grid_enable_dynamic_offset": {
+    "requires_restart": false,
+    "family": "cards/shelves/lockups"
+  },
+  "scroll_to_section_endpoint_scheduler_ks": {
+    "requires_restart": false,
+    "family": "navigation/routing"
+  },
+  "send_config_hash_timer": {
+    "description": "Numeric param. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "experiments/config infra"
+  },
+  "service_worker_scope": {
+    "description": "String param. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "service-worker/caching"
+  },
+  "shorten_initial_gel_batch_timeout": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "skip_ls_gel_retry": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "skip_marking_idb_as_processed_ks": {
+    "description": "Read in fn markAsProcessed. Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "skip_network_check_if_cfr": {
+    "description": "Read in fn sendNetworkCheckRequest. Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "small_avatars_for_comments": {
+    "description": "Read in yt-dark-mode-toggled-action. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "comments"
+  },
+  "small_avatars_for_comments_ep": {
+    "description": "Read in yt-create-comment-action. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "comments"
+  },
+  "smarter_ve_dedupping": {
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "start_client_gcf": {
+    "description": "Starts Google-Config-Fetch client: periodically pulls remote config/flag updates at runtime.",
+    "requires_restart": false,
+    "family": "experiments/config infra"
+  },
+  "state_tags_killswitch": {
+    "requires_restart": false,
+    "family": "buttons/controls"
+  },
+  "submit_button_forms_api_killswitch": {
+    "requires_restart": false,
+    "family": "buttons/controls"
+  },
+  "sunnydom_native_scoped_query_selectors": {
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "suppress_error_204_logging": {
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "throw_err_when_logevent_malformed_killswitch": {
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "transport_use_scheduler": {
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "tvhtml5_logging_max_batch": {
+    "description": "Numeric param. Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "tvhtml5_logging_max_batch_ads_fork": {
+    "description": "Numeric param. Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "tvhtml5_use_rta_manager_for_async": {
+    "description": "Read in fn handleRunAttestationCommand, ytmusic-open-account-menu. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "player/playback"
+  },
+  "universal_csi_network_ticks": {
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "unplugged_web_disable_actions_for_cec_endpoint": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "navigation/routing"
+  },
+  "unsplit_gel_payloads_in_logs": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "use_ajax_fetch_for_h5_logging_urls": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": true,
+    "family": "telemetry/logging"
+  },
+  "use_command_context_force_click_logging_killswitch": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "use_error_suppression": {
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "use_event_time_ms_header": {
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "use_fifo_for_networkless": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "use_readonly_for_get_most_recent_by_status_killswitch": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "buttons/controls"
+  },
+  "use_request_time_ms_header": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "use_rta_manager_for_async": {
+    "description": "Read in fn handleRunAttestationCommand, ytmusic-open-account-menu. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "visibility_lifecycles_dynamic_backgrounding": {
+    "description": "Read in fn runVisible, fn runHidden. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "voice_search_auth_header_removal": {
+    "requires_restart": false,
+    "family": "search"
+  },
+  "vss_through_gel_video_stats": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "warm_op_csn_cleanup": {
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "web_ajax_ignore_global_headers_if_set": {
+    "requires_restart": true,
+    "family": "misc"
+  },
+  "web_animated_actions": {
+    "description": "Read in yt-animated-action. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "animation/motion"
+  },
+  "web_animated_actions_v2": {
+    "description": "Read in yt-animated-action. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "animation/motion"
+  },
+  "web_atagconfig_pointerdown": {
+    "requires_restart": false,
+    "family": "experiments/config infra"
+  },
+  "web_attention_logging_enabled": {
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "web_attributed_string_deep_equal_bugfix": {
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "web_badge_shape_aria_hidden_killswitch": {
+    "requires_restart": false,
+    "family": "buttons/controls"
+  },
+  "web_button_icon_size_experiment": {
+    "description": "Read in fn ytSpecButtonShapeNextMainstageIconSize. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "buttons/controls"
+  },
+  "web_button_mainstage_padding": {
+    "description": "Read in fn ytSpecButtonShapeNextMainstagePadding. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "buttons/controls"
+  },
+  "web_button_mainstage_v2": {
+    "description": "Read in fn ytSpecButtonShapeNextMainstageIconSizeV2. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "buttons/controls"
+  },
+  "web_button_or_anchor_click_logging_killswitch": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "web_button_or_anchor_list_item": {
+    "description": "Read in yt-list-item-view-model. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "buttons/controls"
+  },
+  "web_button_rework": {
+    "description": "Reworked button component (new YT button VM); module-scope read gated additionally by ytcfg const BUTTON_REWORK (polymer:9775).",
+    "requires_restart": true,
+    "family": "buttons/controls"
+  },
+  "web_button_rework_with_live": {
+    "description": "Reworked button variant incl. live-stream buttons; OR-fallback of web_button_rework (polymer:9775).",
+    "requires_restart": false,
+    "family": "buttons/controls"
+  },
+  "web_button_vm_click_client_ve_killswitch": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "web_button_vm_refactor_disabled": {
+    "requires_restart": false,
+    "family": "buttons/controls"
+  },
+  "web_chip_redesign_color_update": {
+    "description": "Read in yt-refit. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "cards/shelves/lockups"
+  },
+  "web_cinematic_container_image_offset": {
+    "requires_restart": true,
+    "family": "misc"
+  },
+  "web_clear_panel_on_invalidate_killswitch": {
+    "requires_restart": false,
+    "family": "buttons/controls"
+  },
+  "web_client_ve_equality_fix": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "web_close_sheet_if_same_target_killswitch": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "popup/dialog/menus"
+  },
+  "web_collect_offline_state": {
+    "requires_restart": false,
+    "family": "offline/downloads"
+  },
+  "web_component_pruning": {
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "web_continuation_invalidation_killswitch": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "buttons/controls"
+  },
+  "web_csi_action_sampling_enabled": {
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "web_csi_debug_sample_enabled": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "web_csi_disable_alt_time_performance_mark": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "web_dd_iu": {
+    "description": "Read in yt-player-local-media. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "web_defer_background_continuation": {
+    "description": "Read in fn initializeIntersectionObserver, fn onShow. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "web_delhi_comment_threads": {
+    "description": "Read in yt-dark-mode-toggled-action. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "comments"
+  },
+  "web_dialog_aria_modal_killswitch": {
+    "description": "Read in yt-dialog-view-model. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "web_dialog_utils_killswitch": {
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "web_disable_backdrop_filter": {
+    "description": "Read in fn ytSpecButtonShapeNextEnableBackdropFilterExperiment, ytmusic-multi-page-menu-renderer. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "web_disable_gel_stp_ecatcher_killswitch": {
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "web_dropdown_menu_close_on_item_tap_killswitch": {
+    "description": "Read in fn onItemTap_, yt-reload-continuation. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "popup/dialog/menus"
+  },
+  "web_enable_additional_event_listener_for_tap_command": {
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "web_enable_ai_search_background_navigation_guard": {
+    "description": "Read in yt-navigate-start. [inferred from call sites]",
+    "requires_restart": true,
+    "family": "search"
+  },
+  "web_enable_ai_search_streaming": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "search"
+  },
+  "web_enable_arrow_key_navigation_in_dropdown": {
+    "requires_restart": false,
+    "family": "popup/dialog/menus"
+  },
+  "web_enable_card_view_model_hover_effect": {
+    "requires_restart": false,
+    "family": "buttons/controls"
+  },
+  "web_enable_channel_pivot_panel": {
+    "description": "Read in fn handleReloadContinuationItemsCommand. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "web_enable_command_run_tabindex_fix": {
+    "requires_restart": false,
+    "family": "a11y"
+  },
+  "web_enable_constrained_list_layout": {
+    "requires_restart": false,
+    "family": "layout/responsive"
+  },
+  "web_enable_course_icon_update": {
+    "requires_restart": false,
+    "family": "icons/typography/style"
+  },
+  "web_enable_entity_upsert_on_update": {
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "web_enable_full_height_carousel_next_button": {
+    "requires_restart": false,
+    "family": "buttons/controls"
+  },
+  "web_enable_killswitch_for_selectable_list_item_on_tap_fix": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": true,
+    "family": "buttons/controls"
+  },
+  "web_enable_killswitch_for_skip_child_tags": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": true,
+    "family": "buttons/controls"
+  },
+  "web_enable_killswitch_tabindex_fix": {
+    "requires_restart": false,
+    "family": "buttons/controls"
+  },
+  "web_enable_lifecycle_monitoring": {
+    "requires_restart": true,
+    "family": "telemetry/logging"
+  },
+  "web_enable_list_item_action_typography": {
+    "description": "Read in fn ytListItemViewModelHasSubtitle. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "icons/typography/style"
+  },
+  "web_enable_modern_progress_bar_overlay": {
+    "description": "Read in fn ytThumbnailBottomOverlayViewModelBadgeContainerSmallLegacy. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "web_enable_player_request_captions_last_language_only": {
+    "description": "Read in yt-player-caption-language-preferences. Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": true,
+    "family": "player/playback"
+  },
+  "web_enable_renderer_logger": {
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "web_enable_request_key_killswitch": {
+    "description": "Read in fn JSC$13062_getRequestKey. Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "buttons/controls"
+  },
+  "web_enable_retries": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "web_enable_rive_animated_like_icon": {
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "web_enable_safari_button_tabindex_fix": {
+    "requires_restart": false,
+    "family": "buttons/controls"
+  },
+  "web_enable_typography_bump": {
+    "description": "Typography scale bump v1.",
+    "requires_restart": false,
+    "family": "icons/typography/style"
+  },
+  "web_enable_typography_bump_v2": {
+    "description": "Typography scale bump v2.",
+    "requires_restart": false,
+    "family": "icons/typography/style"
+  },
+  "web_enable_voting_animation": {
+    "description": "Read in yt-append-continuation-items-action-finished, yt-next-continuation-data-updated. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "animation/motion"
+  },
+  "web_enable_wrapper_for_cow_component_in_popup": {
+    "description": "Read in fn createPopup. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "popup/dialog/menus"
+  },
+  "web_exclusive_hover_killswitch": {
+    "description": "Read in fn ytCardViewModelFallbackHoverEffect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "web_fi_listen_disable_bound_fn_helper": {
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "web_fix_rolling_numbers_zoom_safari": {
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "web_flexible_menu_improvement_killswitch": {
+    "description": "Read in fn maybeUpdateFlexibleMenuImpl. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "popup/dialog/menus"
+  },
+  "web_flexible_menu_logging_rate_limit": {
+    "description": "Numeric param. Read in fn setupFlexibleMenu, yt-rendererstamper-finished. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "web_forward_suggest_stats_killswitch": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "buttons/controls"
+  },
+  "web_fp_via_jspb": {
+    "description": "Read in fn logFinalPayload. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "web_fp_via_jspb_and_json": {
+    "description": "Read in fn logFinalPayload. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "web_gcf_hashes_innertube": {
+    "requires_restart": false,
+    "family": "experiments/config infra"
+  },
+  "web_gel_sequence_info_killswitch": {
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "web_gel_timeout_cap": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "web_global_dep_injector_killswitch": {
+    "requires_restart": false,
+    "family": "buttons/controls"
+  },
+  "web_horizontal_shelf_imp_thumbnail_border_rounding": {
+    "requires_restart": false,
+    "family": "cards/shelves/lockups"
+  },
+  "web_horizontal_shelf_resize_fix": {
+    "requires_restart": false,
+    "family": "cards/shelves/lockups"
+  },
+  "web_image_load_telemetry": {
+    "requires_restart": false,
+    "family": "player/playback"
+  },
+  "web_include_cow_tracing": {
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "web_inline_expander_child_tap_kill_switch": {
+    "description": "Read in yt-inline-expander-view-model. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "buttons/controls"
+  },
+  "web_it_context_set_original_url_ks": {
+    "requires_restart": false,
+    "family": "navigation/routing"
+  },
+  "web_layout_system_update": {
+    "description": "Updated layout system (page structure/spacing).",
+    "requires_restart": false,
+    "family": "layout/responsive"
+  },
+  "web_lifecycle_error_handling_killswitch": {
+    "requires_restart": false,
+    "family": "buttons/controls"
+  },
+  "web_linear_gradient_killswitch": {
+    "requires_restart": false,
+    "family": "buttons/controls"
+  },
+  "web_list_item_duplicate_command_killswitch": {
+    "requires_restart": false,
+    "family": "buttons/controls"
+  },
+  "web_list_item_flat_button_label_killswitch": {
+    "requires_restart": true,
+    "family": "buttons/controls"
+  },
+  "web_live_chat_available_bugfix": {
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "web_lockup_view_model_compact_padding_update": {
+    "description": "Read in fn ytLockupViewModelUpdatedCompactPadding. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "cards/shelves/lockups"
+  },
+  "web_log_browse_ticks_ks": {
+    "description": "Read in fn getRequestConfig. Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "web_log_cfg_cee_ks": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "web_log_effective_connection_type": {
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "web_log_memory_total_kbytes": {
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "web_log_player_watch_next_ticks": {
+    "description": "Read in fn getRequestConfig, yt-player-sticky-caption. Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "web_log_reels_ticks": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "web_log_search_ticks_ks": {
+    "description": "Read in fn getRequestConfig. Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "web_logging_max_batch": {
+    "description": "Numeric param. Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "web_lr_app_quality_killswitch": {
+    "requires_restart": false,
+    "family": "buttons/controls"
+  },
+  "web_modern_badge_shape": {
+    "description": "Modern badge shape styling.",
+    "requires_restart": false,
+    "family": "cards/shelves/lockups"
+  },
+  "web_modern_badge_view_model": {
+    "description": "Modern badge view model (explicit/4K badges etc. on lockups).",
+    "requires_restart": false,
+    "family": "cards/shelves/lockups"
+  },
+  "web_modern_buttons": {
+    "description": "Modern button styling across web surfaces.",
+    "requires_restart": false,
+    "family": "buttons/controls"
+  },
+  "web_monomer_web_component_wrapper_handle_errors": {
+    "description": "Read in fn createElement. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "web_move_popups_to_fullscreen": {
+    "description": "Read in yt-refit. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "web_nm_error_passthrough_ks": {
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "web_nm_fetch_chunk_callback_ks": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "web_no_lock_on_touchstart_killswitch": {
+    "requires_restart": false,
+    "family": "buttons/controls"
+  },
+  "web_no_tracking_params_in_shell_killswitch": {
+    "description": "Read in yt-client-location. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "buttons/controls"
+  },
+  "web_payload_policy_disabled_killswitch": {
+    "requires_restart": false,
+    "family": "player/playback"
+  },
+  "web_ping_disable_scrub_referrer": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "web_pip_minimize_breakages": {
+    "requires_restart": false,
+    "family": "player/playback"
+  },
+  "web_playback_associated_log_ctt": {
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "web_playback_associated_ve": {
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "web_player_error_message_reason_as_formatted_string_killswitch": {
+    "requires_restart": false,
+    "family": "player/playback"
+  },
+  "web_player_sentinel_yt_experiments_sync": {
+    "requires_restart": true,
+    "family": "player/playback"
+  },
+  "web_playlist_panel_default_collapsed": {
+    "requires_restart": false,
+    "family": "queue/playlist/radio"
+  },
+  "web_populate_client_screen_killswitch": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "buttons/controls"
+  },
+  "web_populate_internal_geo_killswitch": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "buttons/controls"
+  },
+  "web_populate_time_zone_itc_killswitch": {
+    "requires_restart": false,
+    "family": "buttons/controls"
+  },
+  "web_popup_cache_key_killswitch": {
+    "requires_restart": false,
+    "family": "popup/dialog/menus"
+  },
+  "web_prequest_context_killswitch": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "buttons/controls"
+  },
+  "web_process_response_store_responses": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "web_propagate_is_pressed_killswitch": {
+    "requires_restart": false,
+    "family": "buttons/controls"
+  },
+  "web_reload_continuation_items_command_resolver_killswitch": {
+    "description": "Read in fn resolveCommand. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "player/playback"
+  },
+  "web_remix_allow_up_to_3x_playback_rate": {
+    "requires_restart": false,
+    "family": "player/playback"
+  },
+  "web_remove_snackbar_actions": {
+    "description": "Read in fn shouldRenderButton, fn shouldRenderDefaultCloseButton. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "web_remove_web_navigation_endpoint_data": {
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "web_replace_formatted_with_attributed_string": {
+    "description": "Read in fn textChanged_, fn computeUseAttributedString. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "web_responsive_current": {
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "web_responsive_extra_compact_2x": {
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "web_sanitize_request_init_ks": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "web_selectable_item_child_tap_kill_switch": {
+    "requires_restart": false,
+    "family": "buttons/controls"
+  },
+  "web_send_vss3_isolated_payload": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "web_share_dialog_touch_scroll": {
+    "description": "Read in yt-share-panel-reset-action. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "web_sharing_embed_preview_killswitch": {
+    "requires_restart": false,
+    "family": "buttons/controls"
+  },
+  "web_shorts_prefetch_service_enabled": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "web_show_ep_endpoint_response_received": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "navigation/routing"
+  },
+  "web_side_rail_dismissible_panels": {
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "web_skip_impression_click_killswitch": {
+    "requires_restart": false,
+    "family": "buttons/controls"
+  },
+  "web_skip_missing_vimio_observer": {
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "web_stateless_chip_button_role_killswitch": {
+    "requires_restart": false,
+    "family": "buttons/controls"
+  },
+  "web_store_entry_preserve_framework_updates": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "web_supports_animations_api": {
+    "description": "Read in yt-update-toggle-button-text-action, yt-update-toggle-button-state-command. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "animation/motion"
+  },
+  "web_tag_automated_log_events": {
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "web_toast_to_snackbar_migration": {
+    "requires_restart": false,
+    "family": "popup/dialog/menus"
+  },
+  "web_toggle_button_force_update_killswitch": {
+    "requires_restart": false,
+    "family": "buttons/controls"
+  },
+  "web_use_cache_for_image_fallback": {
+    "description": "Read in fn onError_, yt-img-shadow-loaded. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "service-worker/caching"
+  },
+  "web_use_resolve_command_for_service_endpoint_in_dropdown_killswitch": {
+    "description": "Read in fn onIronActivate_, yt-playlist-reloading. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "web_vss_routing_check_all_tier_policies": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "web_watch_cinematics_disabled_by_default": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "web_watch_cinematics_preferred_reduced_motion_default_disabled": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "animation/motion"
+  },
+  "web_watch_compact_comments": {
+    "requires_restart": false,
+    "family": "comments"
+  },
+  "web_watch_compact_comments_header": {
+    "description": "Read in yt-signal-action-open-post-comment-dialog. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "comments"
+  },
+  "web_watch_flex_menu_one_raf_killswitch": {
+    "description": "Killswitch for flex-menu single-RAF behavior in watch flex menu.",
+    "requires_restart": false,
+    "family": "popup/dialog/menus"
+  },
+  "web_watch_hero_list_3_line_title_height_threshold": {
+    "description": "Numeric param. Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "cards/shelves/lockups"
+  },
+  "web_yt_icon_update_styles_killswitch": {
+    "description": "Read in fn updateIconSize, yt-dark-mode-toggled-action. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "buttons/controls"
+  },
+  "wil_icon_load_immediately": {
+    "description": "Read in yt-icons. Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "player/playback"
+  },
+  "wil_icon_network_first": {
+    "description": "Read in yt-icons. Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "icons/typography/style"
+  },
+  "wil_icon_render_when_idle": {
+    "description": "Read in yt-icons. Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "icons/typography/style"
+  },
+  "wil_icon_use_mask_rendering": {
+    "description": "Read in yt-icons. Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "icons/typography/style"
+  },
+  "wil_icons_cache_purge_killswitch": {
+    "description": "Read in yt-icons-last-purged. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "buttons/controls"
+  },
+  "wiz_enable_metadata_extraction_killswitch": {
+    "requires_restart": false,
+    "family": "buttons/controls"
+  },
+  "wiz_next_client_ve_parent_fix": {
+    "description": "Read in fn JSC$11404_getNearestParentVe. Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "woffle_render_failed_download_state_ks": {
+    "requires_restart": false,
+    "family": "offline/downloads"
+  },
+  "wrap_content_metadata_to_second_line": {
+    "description": "Read in fn ytContentMetadataViewModelMetadataRowMetadataRowWrap. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "wug_networking_gzip_request": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "yf_formatted_string_service_endpoint_killswitch": {
+    "description": "Read in fn setDataOnAnchor_. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "buttons/controls"
+  },
+  "youtube_web_csi_ticks_migration": {
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "yt_badge_supported_renderer_ks": {
+    "requires_restart": false,
+    "family": "cards/shelves/lockups"
+  },
+  "yt_img_shadow_trigger_show_on_visible": {
+    "description": "Read in fn onVisible. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "yt_iron_overlay_click_tap_killswitch_v2": {
+    "requires_restart": false,
+    "family": "buttons/controls"
+  },
+  "ytidb_async_stack_killswitch": {
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "ytidb_clear_music_killswitch": {
+    "description": "Logging/network plumbing only, no UI effect. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "ytidb_clear_optimizations_killswitch": {
+    "requires_restart": false,
+    "family": "telemetry/logging"
+  },
+  "ytmwi_force_media_client_app_upgrade_error": {
+    "description": "Read in fn getInitializeResponse. [inferred from call sites]",
+    "requires_restart": false,
+    "family": "misc"
+  },
+  "ytpopup_close_sibling_popups_killswitch": {
+    "requires_restart": false,
+    "family": "popup/dialog/menus"
+  },
+  "ytpopup_disable_cache_allowlist": {
+    "requires_restart": false,
+    "family": "popup/dialog/menus"
+  },
+  "ytpopup_disable_default_html_caching": {
+    "requires_restart": false,
+    "family": "popup/dialog/menus"
+  },
+  "ytwiz_enable_debug_component_props": {
+    "requires_restart": false,
+    "family": "misc"
+  }
+}
