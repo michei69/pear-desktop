@@ -2,8 +2,6 @@ import type { StatusbarLyricsPluginConfig } from './index';
 import type { MenuContext } from '@/types/contexts';
 import type { MenuItemConstructorOptions } from 'electron';
 
-// Expose the user-facing setting that controls whether pronunciation text is
-// included in the status bar output.
 export const menu = async (
   ctx: MenuContext<StatusbarLyricsPluginConfig>,
 ): Promise<MenuItemConstructorOptions[]> => {

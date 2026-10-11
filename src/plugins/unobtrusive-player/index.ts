@@ -6,7 +6,6 @@ import style from './style.css?inline';
 const handlePlay = (e: MouseEvent) => {
   if (!(e.target instanceof HTMLElement)) return;
 
-  // Player bar handler
   if (
     e.target.closest('ytmusic-player-bar') &&
     !document.body.classList.contains('unobtrusive-player--auto-closing')
@@ -15,7 +14,6 @@ const handlePlay = (e: MouseEvent) => {
     return;
   }
 
-  // Song play button handler
   if (
     e.target.closest('ytmusic-play-button-renderer') &&
     !e.target.closest('ytmusic-player-page')
@@ -24,7 +22,6 @@ const handlePlay = (e: MouseEvent) => {
     return;
   }
 
-  // Shuffle play menu item handler
   const shuffleIconPathData = (
     document.querySelector('iron-iconset-svg[name="yt-sys-icons"] #shuffle')
       ?.firstChild as SVGElement | null
@@ -81,8 +78,7 @@ export default createPlugin({
       document.addEventListener('click', handlePlay);
     },
     onPlayerApiReady: () => {
-      // Close player page when video changes while
-      // `unobtrusive-player--did-play` className is present.
+      // Close the player page when the video changes while `unobtrusive-player--did-play` is set
       document.addEventListener('videodatachange', handleVideoDataChange);
     },
     stop: () => {

@@ -44,12 +44,10 @@ const resetSendState = () => {
   lastPayload = undefined;
 };
 
-// Collapse whitespace so lyric fragments remain stable when DOM nodes split a
-// line into multiple pieces.
+// Collapse whitespace: DOM nodes can split one lyric line into pieces
 const normalizeText = (text: string) => text.replace(/\s+/g, ' ').trim();
 
-// Detect translation or pronunciation nodes so the plugin can prefer the main
-// lyric line when both primary and auxiliary text are present.
+// Detect translation/pronunciation nodes so the main lyric line wins
 const isLikelyPronunciation = (element: HTMLElement | null) => {
   if (!element) return false;
 
@@ -68,8 +66,7 @@ const isLikelyPronunciation = (element: HTMLElement | null) => {
   );
 };
 
-// Detect romanization-only nodes as auxiliary text so the plugin can prefer
-// the main lyric line when both are rendered.
+// Romanization-only nodes are auxiliary text too
 const isLikelyRomaji = (element: HTMLElement | null) => {
   if (!element) return false;
 
@@ -100,8 +97,6 @@ const getPrimaryText = (element: HTMLElement | null) => {
   return normalizeText(element.textContent ?? '');
 };
 
-// Find the text container inside a lyric row that actually holds the primary
-// line content.
 const getPrimaryTextElement = (lineElement: HTMLElement | null) => {
   if (!lineElement) return null;
 
@@ -125,8 +120,7 @@ const getNextLyricRow = (lineElement: HTMLElement | null) => {
   return nextElement;
 };
 
-// Read the CSS duration that synced lyrics expose so the plugin can predict
-// when the current line is about to switch.
+// CSS duration synced lyrics expose, used to predict the next line switch
 const parseDurationMs = (element: HTMLElement) => {
   const rawDuration =
     getComputedStyle(element).getPropertyValue('--lyrics-duration');
@@ -137,8 +131,7 @@ const parseDurationMs = (element: HTMLElement) => {
   return parsedDuration * 1000;
 };
 
-// Choose the best text for a line, optionally keeping pronunciation text when
-// the user has enabled it in the plugin settings.
+// Best text for a line; pronunciation only when the setting is on
 const getLineText = (
   element: HTMLElement | null,
   includePronunciation: boolean,
@@ -162,8 +155,8 @@ const getLineText = (
   return lines[0] ?? text;
 };
 
-// Poll the current synced lyrics row and switch to the next line slightly
-// before the animation ends so the tray title stays in sync with playback.
+// Switch to the next line slightly before the CSS animation ends so the tray
+// title stays in sync with playback.
 const pollLyrics = (includePronunciation: boolean) => {
   const currentLine = document.querySelector<HTMLElement>(
     '.synced-line.current',
@@ -209,8 +202,7 @@ const pollLyrics = (includePronunciation: boolean) => {
 };
 
 export const renderer = createRenderer({
-  // Observe lyric DOM changes and push the current line to the backend whenever
-  // playback state or lyric content changes.
+  // Push the current line to the backend on DOM, playback and timer changes
   start(ctx) {
     const send = async () => {
       const config = (await ctx.getConfig()) as StatusbarLyricsPluginConfig;

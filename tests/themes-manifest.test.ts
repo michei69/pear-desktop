@@ -86,8 +86,8 @@ test('defaults survive a payload with explicit undefined values', () => {
 
 test("a declared palette keeps Default, even with 'palette': {}", () => {
   const presets = { blue: { accent: '#0000ff' } };
-  // The empty record is the point: declared, so there is a Default to fall back
-  // on and the first preset must not stand in for it.
+  // The empty record is the point: declared, so there is a Default, and the
+  // first preset must not stand in for it.
   const empty = {};
 
   expect(defaultPreset(empty, presets, undefined)).toBeUndefined();
@@ -98,8 +98,8 @@ test("a declared palette keeps Default, even with 'palette': {}", () => {
   const palette = { accent: '#ff0000' };
   expect(presetPalette(palette, presets, '', {})).toEqual({});
   expect(defaultPreset(palette, presets, undefined)).toBeUndefined();
-  // An explicit pick is left alone and a name the theme no longer defines
-  // layers nothing, so the theme's own palette shows through.
+  // An explicit pick is left alone; a name the theme no longer defines layers
+  // nothing, so the theme's own palette shows through.
   expect(defaultPreset(palette, presets, 'gone')).toBe('gone');
   expect(presetPalette(palette, presets, 'gone', {})).toEqual({});
 });
@@ -116,8 +116,8 @@ test('a theme with no palette at all resolves to its first preset', () => {
     accent: '#111111',
   });
 
-  // An explicit pick still wins; a name the theme no longer defines layers
-  // nothing, since the first preset is only a stand-in for an untouched pick.
+  // An explicit pick still wins; an unknown name layers nothing, since the first
+  // preset only stands in for an untouched pick.
   expect(defaultPreset(none, presets, 'example2')).toBe('example2');
   expect(defaultPreset(none, presets, 'gone')).toBe('gone');
   expect(presetPalette(none, presets, 'gone', {})).toEqual({});

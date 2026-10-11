@@ -36,7 +36,6 @@ const setWindowTransparency = (
     }
   }
 
-  // Set the opacity
   window.setBackgroundColor(`rgba(0, 0, 0, ${opacity})`);
 };
 

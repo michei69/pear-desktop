@@ -48,7 +48,7 @@ export const onRendererLoad = async ({
 };
 
 export const onPlayerApiReady = () => {
-  // NOT WORKING AFTER YTM UPDATE (last checked 2024-02-04)
+  // HACK: broken since a YTM update (last checked 2024-02-04).
   //
   // const htmlHeadStyle = document.querySelector('head > div > style');
   // if (htmlHeadStyle) {

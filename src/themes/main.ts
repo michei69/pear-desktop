@@ -30,8 +30,8 @@ import {
 export { MANIFEST_FILE } from './load';
 
 /**
- * Palette for the theme seeded on first run. Kept identical to the old
- * built-in default so an install with no authored themes is unchanged.
+ * Palette for the theme seeded on first run, kept identical to the old built-in
+ * default so an install with no authored themes is unchanged.
  */
 const DEFAULT_PALETTE = {
   accent: '#ff0000',
@@ -54,9 +54,8 @@ const slugify = (value: string) =>
 export const loadThemes = (): PearTheme[] => readThemesFrom(getThemesDir());
 
 /**
- * Themes as the renderer should see them. A theme's script is withheld unless
- * the user consented to its current hash, so unvetted code never crosses to
- * the renderer in the first place.
+ * Themes as the renderer should see them: a theme's script is withheld unless
+ * the user consented to its current hash.
  */
 export const themesForRenderer = (): PearTheme[] => {
   const consent = getThemeConsent();
@@ -66,11 +65,9 @@ export const themesForRenderer = (): PearTheme[] => {
 };
 
 /**
- * Ensures the user has consented to `theme`'s script, prompting if the script
- * is new or its contents changed since they last agreed.
- *
- * Returns false if the user declined, in which case the caller must not switch
- * to the theme.
+ * Ensures the user has consented to `theme`'s script, prompting if it is new or
+ * changed since they last agreed. Returns false if the user declined, in which
+ * case the caller must not switch to the theme.
  */
 export const ensureJsConsent = async (
   theme: PearTheme,
@@ -93,8 +90,7 @@ export const ensureJsConsent = async (
     buttons: [t('main.themes.consent.allow'), t('main.themes.consent.cancel')],
   };
 
-  // A parent keeps the dialog attached to the window when we have one; at
-  // startup (before the window exists) it is shown on its own.
+  // Attach the dialog to the window when we have one; at startup it stands alone.
   const { response } = win
     ? await dialog.showMessageBox(win, options)
     : await dialog.showMessageBox(options);
@@ -159,12 +155,9 @@ const seedBasicTheme = () => {
 };
 
 /**
- * Installs seeded before the recolour moved into the theme itself have a
- * palette but no CSS, so they would stop recolouring. Give them the
- * stylesheet, keeping the rest of their manifest as it is.
- *
- * A Basic theme the user gave its own CSS is left alone, and a deleted one is
- * not re-created.
+ * Installs seeded before the recolour moved into the theme have a palette but no
+ * CSS, so give them the stylesheet, keeping the rest of the manifest. A Basic
+ * theme with its own CSS is left alone, and a deleted one is not re-created.
  */
 const upgradeBasicTheme = () => {
   const folder = join(getThemesDir(), BASIC_THEME_ID);
@@ -214,14 +207,11 @@ export const setupThemes = async () => {
     if (loadThemes().length === 0) seedBasicTheme();
     setConfig('options.themesSeeded', true);
   }
-  // An install from before the recolour lived in a theme has a Basic theme
-  // with a palette but no CSS.
   upgradeBasicTheme();
 
   pruneMissingThemes();
 
-  // The theme is already selected here, so this only prompts when its script
-  // is new or has changed since the user last agreed to run it.
+  // Already selected: this only prompts when the script is new or changed.
   const selected = loadThemes().find(
     (theme) => theme.id === getConfig('options.theme'),
   );
@@ -233,8 +223,8 @@ export const notifyThemesChanged = (win: BrowserWindow) =>
   win.webContents.send('peard:themes-changed');
 
 /**
- * Selects a theme, first asking for consent to its script if needed.
- * Returns false when the user declined, in which case nothing changed.
+ * Selects a theme, first asking for consent to its script. Returns false when
+ * the user declined, in which case nothing changed.
  */
 export const selectTheme = async (
   id: string,
@@ -247,16 +237,15 @@ export const selectTheme = async (
   return true;
 };
 
-/** Records the preset the user picked for a theme, `custom` for their own. */
+/** Records the preset picked for a theme (`custom` for their own). */
 export const setThemePreset = (themeId: string, preset: string) => {
   setThemePresets({ ...getThemePresets(), [themeId]: preset });
 };
 
 /**
- * What each theme layers on top of its own palette right now: the values of
- * its selected preset, or the user's custom palette. The renderer resolves
- * this with `resolvePalette`, so switching preset is just another layer and
- * needs no reload of anything.
+ * What each theme layers on top of its own palette right now: its selected
+ * preset's values, or the user's custom palette. The renderer resolves this with
+ * `resolvePalette`, so switching preset needs no reload.
  */
 export const themePaletteLayers = (): Record<string, ThemePalette> => {
   const selected = getThemePresets();
@@ -277,7 +266,7 @@ export const themePaletteLayers = (): Record<string, ThemePalette> => {
 
 /**
  * Stores one value in a theme's custom palette and selects it, so an edit made
- * while a preset is active continues from that preset instead of dropping it.
+ * while a preset is active continues from that preset.
  */
 export const setThemePaletteValue = (
   themeId: string,
@@ -331,10 +320,9 @@ export const openThemesFolder = () => {
 };
 
 /**
- * Drops config entries for themes that no longer exist. Themes are removed by
- * deleting their folder, so this is what keeps stale palette overrides, preset
- * picks and JS consent from accumulating — and from being inherited by a later
- * theme that happens to reuse the same folder name.
+ * Drops config entries for themes whose folder was deleted, so stale overrides,
+ * preset picks and JS consent do not accumulate or get inherited by a later
+ * theme reusing the same folder name.
  */
 const pruneMissingThemes = () => {
   const ids = loadThemes().map((theme) => theme.id);

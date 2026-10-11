@@ -29,10 +29,9 @@ const EAPI_BASE_COOKIES = {
 const MAX_DURATION_DELTA_SECONDS = 15;
 
 /**
- * Lowest score a search result may have to be considered the same song.
- * Matching the whole title is worth 10 points and a perfect artist adds 1, so
- * 4.5 admits re-recordings and translated titles while dropping unrelated
- * results, which score below 3.
+ * Lowest score a search result may have to be the same song. A whole-title match
+ * is worth 10 points and a perfect artist 1, so 4.5 admits re-recordings and
+ * translated titles while unrelated results (below 3) are dropped.
  */
 const MIN_MATCH_SCORE = 4.5;
 
@@ -43,9 +42,8 @@ const MAX_CANDIDATE_PROBES = 5;
 const SCORE_TITLE_WEIGHT = 10;
 
 /**
- * `kuroshiro` ships as CommonJS with an `__esModule` marker, so the default
- * import is either the class itself (bundlers) or a wrapper around it (plain
- * Node ESM, as used by the tests).
+ * `kuroshiro` is CommonJS with an `__esModule` marker, so the default import is
+ * either the class (bundlers) or a wrapper (plain Node ESM, as in the tests).
  */
 const { Util } =
   (Kuroshiro as unknown as { default?: typeof Kuroshiro }).default ?? Kuroshiro;
@@ -86,10 +84,9 @@ const KANA_PATTERN = /[\u3040-\u30ff\u31f0-\u31ff]/;
 const normalizeText = (value: string) => value.normalize('NFKC');
 
 /**
- * Folds a title or an artist into a form that can be compared across scripts:
- * full-width characters are normalized, kana are romanized so that a Japanese
- * title matches its romaji spelling, long vowels lose their macron (romaji is
- * usually written without one) and the result is lowercased.
+ * Folds a title or artist into a form comparable across scripts: full-width
+ * characters normalized, kana romanized (so a Japanese title matches its romaji),
+ * long vowels stripped of their macron, and lowercased.
  */
 export const comparableText = (value: string) => {
   const normalized = normalizeText(value);
@@ -142,9 +139,9 @@ export const normalizedLevenshtein = (a: string, b: string) => {
 };
 
 /**
- * Similarity of two titles in [0, 1] where a title that starts with, or
- * contains, the other one is weighted up: a song that only adds a version
- * suffix should rank above an unrelated song sharing a few characters.
+ * Similarity of two titles in [0, 1], weighting up a title that starts with or
+ * contains the other: a song that only adds a version suffix should outrank an
+ * unrelated song sharing a few characters.
  */
 export const bonusCompare = (fullTitle: string, searchTitle: string) => {
   const [full, search] = [
@@ -153,9 +150,9 @@ export const bonusCompare = (fullTitle: string, searchTitle: string) => {
   ];
 
   const weight = full.startsWith(search)
-    ? 1 // Bonus for prefix match
+    ? 1
     : full.includes(search)
-      ? 0.75 // Bonus for substring match
+      ? 0.75
       : 0.5;
 
   return weight * normalizedLevenshtein(full, search);
@@ -206,9 +203,9 @@ type MatchCandidate = {
 };
 
 /**
- * Scores a search result the way the userscript does: the title similarity is
- * worth ten times the artist similarity, so a cover by another artist still
- * beats an unrelated song by the same artist.
+ * Scores a search result the way the userscript does: title similarity is worth
+ * ten times artist similarity, so a cover by another artist still beats an
+ * unrelated song by the same artist.
  */
 export const scoreCandidate = (
   candidate: MatchCandidate,
@@ -304,7 +301,7 @@ export class Netease implements LyricProvider {
   initialized = false;
 
   private encode(id: string): string {
-    // XOR step (unchanged)
+    // XOR step, unchanged from the userscript
     let xoredString = '';
     for (let i = 0; i < id.length; i++) {
       const charCode =
@@ -313,15 +310,13 @@ export class Netease implements LyricProvider {
       xoredString += String.fromCharCode(charCode);
     }
 
-    // MD5 -> Base64 using crypto-js
     const hash = CryptoJS.MD5(CryptoJS.enc.Latin1.parse(xoredString)).toString(
       CryptoJS.enc.Base64,
     );
 
-    // Build a binary WordArray for "id hash"
     const combinedWordArray = CryptoJS.enc.Latin1.parse(id + ' ' + hash);
 
-    // Convert to Base64 (replaces Buffer.from(...).toString("base64"))
+    // replaces Buffer.from(...).toString("base64")
     return CryptoJS.enc.Base64.stringify(combinedWordArray);
   }
 

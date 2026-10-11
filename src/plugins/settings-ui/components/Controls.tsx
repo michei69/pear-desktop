@@ -59,9 +59,8 @@ export const Dropdown = (props: {
     <select class="sui-select" onChange={(e) => emit(e.currentTarget.value)}>
       <For each={props.options}>
         {(opt) => (
-          // `selected` per option rather than `value` on the <select>: option
-          // lists resolve asynchronously, so a value written while the select
-          // is still empty is dropped and the first option wins instead.
+          // `selected` per option rather than `value` on the <select>: options resolve
+          // asynchronously, so an early value is dropped and the first option wins.
           <option
             selected={String(opt.value) === String(props.value)}
             value={String(opt.value)}
@@ -144,8 +143,8 @@ export const NumberStepper = (props: {
     if (Number.isFinite(v)) props.onChange(clamp(v));
   };
 
-  // Step once on press, then keep stepping while held, like the spinners these
-  // buttons replace. Takes plain numbers: the repeat must not read props.
+  // Step once on press, then repeat while held, like the native spinners. Takes plain
+  // numbers: the repeat must not read props.
   let holdTimer: number | undefined;
   const stopHold = () => {
     clearTimeout(holdTimer);
@@ -177,8 +176,8 @@ export const NumberStepper = (props: {
       <button
         aria-label={t('settings-ui.stepper-decrement')}
         class="sui-stepper__btn"
-        // Held pointers step on pointerdown; that click is then detail 1 and is
-        // ignored, leaving click to keyboard activation only.
+        // Held pointers step on pointerdown; that click has detail 1 and is ignored,
+        // leaving click to keyboard activation only.
         onClick={(e) => {
           if (e.detail === 0) set(props.value - step());
         }}

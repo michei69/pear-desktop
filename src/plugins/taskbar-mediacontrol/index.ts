@@ -90,12 +90,12 @@ export default createPlugin({
     });
 
     const setThumbar = (songInfo: SongInfo) => {
-      // Wait for song to start before setting thumbar
+      // Wait for the song to start.
       if (!songInfo?.title) {
         return;
       }
 
-      // Win32 require full rewrite of components
+      // Win32 needs the whole component list rewritten.
       window.setThumbarButtons([
         {
           tooltip: 'Dislike',
@@ -104,7 +104,7 @@ export default createPlugin({
               ? images.dislike
               : images.dislikeHollow,
           click() {
-            dislike(); // Frontend handles toggle: if already disliked → un-dislikes
+            dislike(); // frontend toggles: re-disliking clears it
           },
         },
         {
@@ -116,7 +116,6 @@ export default createPlugin({
         },
         {
           tooltip: 'Play/Pause',
-          // Update icon based on play state
           icon: songInfo.isPaused ? images.play : images.pause,
           click() {
             playPause();
@@ -136,16 +135,14 @@ export default createPlugin({
               ? images.like
               : images.likeHollow,
           click() {
-            like(); // Frontend handles toggle: if already liked → unlikes
+            like(); // frontend toggles: re-liking clears it
           },
         },
       ]);
     };
 
-    // Request the renderer to start observing like button changes
     window.webContents.send('peard:setup-like-changed-listener');
 
-    // Listen for like status changes from the renderer
     ipcMain.on('peard:like-changed', (_, status: LikeType) => {
       currentLikeStatus = status;
       if (currentSongInfo) {
@@ -155,14 +152,12 @@ export default createPlugin({
 
     registerCallback((songInfo, event) => {
       if (event !== SongInfoEvent.TimeChanged) {
-        // Update currentsonginfo for win.on('show')
-        currentSongInfo = songInfo;
-        // Update thumbar
+        currentSongInfo = songInfo; // kept for win.on('show')
         setThumbar(songInfo);
       }
     });
 
-    // Need to set thumbar again after win.show
+    // win.show() drops the thumbar, so it has to be set again.
     window.on('show', () => setThumbar(currentSongInfo));
   },
 });

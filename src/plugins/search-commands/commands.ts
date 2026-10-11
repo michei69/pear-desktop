@@ -1,10 +1,6 @@
 /**
- * Registry for the `/`-prefixed commands the search box understands.
- *
- * Other plugins extend it from their renderer:
- *
- *   import { registerCommand } from '@/plugins/search-commands';
- *   registerCommand({ name: 'foo', description: () => '…', run: () => {} });
+ * Registry for the `/`-prefixed commands the search box understands; other
+ * plugins add to it with `registerCommand` from `@/plugins/search-commands`.
  */
 
 export interface CommandArg {
@@ -26,10 +22,7 @@ export interface CommandRow {
 }
 
 export interface CommandContext {
-  /**
-   * Writes `text` into the search box and leaves the palette open on it, so
-   * the user can keep editing instead of running it.
-   */
+  /** Writes `text` into the search box, leaving the palette open for editing. */
   insert: (text: string) => void;
 }
 
@@ -41,8 +34,8 @@ export interface Command {
   /** Runs on Enter when no autocomplete row is selected. */
   run: (args: string[], ctx: CommandContext) => void | Promise<void>;
   /**
-   * What picking an autocomplete row does — by click, or by Enter on a
-   * selected row. Defaults to writing the row's text into the search box.
+   * What picking an autocomplete row does: click, or Enter on a selected row.
+   * Defaults to writing the row's text into the search box.
    */
   onSelect?: (row: CommandRow, ctx: CommandContext) => void | Promise<void>;
 }
@@ -86,12 +79,9 @@ const toRow = (command: Command, typed: string[]): CommandRow => {
 };
 
 /**
- * Autocomplete rows for the current search-box value:
- *
- *   `/`            → every command
- *   `/pl`          → every command starting with `pl`
- *   `/play`        → `/play <url>`
- *   `/play sOmEiD` → `/play sOmEiD`
+ * Autocomplete rows for the current search-box value: `/` lists every command,
+ * `/pl` every command starting with `pl`, and typed arguments narrow to that
+ * command's own row.
  */
 export const matchCommands = (
   value: string,

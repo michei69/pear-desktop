@@ -47,8 +47,8 @@ const download = async () => {
     return;
   }
 
-  // Kept apart from the download: an unwritable cache is no reason to throw
-  // away the metadata that just arrived.
+  // Separate from the download: an unwritable cache must not discard the
+  // metadata that just arrived.
   try {
     fs.writeFileSync(cachePath(), JSON.stringify(metadata));
   } catch (error) {

@@ -44,8 +44,8 @@ const audioCanPlayListener = (e: CustomEvent<Compressor>) => {
   const { audioContext } = e.detail;
   const sourceNode = e.detail.audioSource;
 
-  // A new track started — stop the previous detection loop so timers and
-  // analysers don't accumulate (each `peard:audio-can-play` fires per track).
+  // One audio-can-play fires per track, so stop the previous loop first to
+  // avoid piling up timers and analysers.
   stopLoop();
 
   const analyser = audioContext.createAnalyser();
@@ -71,7 +71,7 @@ const audioCanPlayListener = (e: CustomEvent<Compressor>) => {
 
       let history = 0;
       if (currentVolume > threshold && isSilent) {
-        // Trigger quickly, short history
+        // Trigger quickly: only the last 3 samples decide.
         for (
           let i = speakingHistory.length - 3;
           i < speakingHistory.length;
@@ -81,7 +81,6 @@ const audioCanPlayListener = (e: CustomEvent<Compressor>) => {
         }
 
         if (history >= 2) {
-          // Not silent
           isSilent = false;
           hasAudioStarted = true;
         }

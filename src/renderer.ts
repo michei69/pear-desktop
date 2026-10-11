@@ -447,7 +447,7 @@ function onApiLoaded() {
   };
 
   const loadstartListener = () => {
-    // Emit "audioCanPlay" for each video
+    // Re-emit "audioCanPlay" per video.
     video.addEventListener('canplaythrough', audioCanPlayEventDispatcher, {
       once: true,
     });
@@ -478,7 +478,7 @@ function onApiLoaded() {
     upgradeBtn.style.display = 'none';
   }
 
-  // Hide / Force show like buttons
+  // Apply the likeButtons option.
   const likeButtonsOptions: string = window.mainConfig.get(
     'options.likeButtons',
   );
@@ -599,10 +599,9 @@ const main = async () => {
     },
   );
 
-  // Wait for complete load of the api
   listenForApiLoad();
 
-  // Blocks the "Are You Still There?" popup by setting the last active time to Date.now every 15min
+  // Blocks the "Are You Still There?" popup by refreshing `_lact` every 15min.
   setInterval(() => (window._lact = Date.now()), 900_000);
   Object.defineProperties(document, {
     hidden: { value: false },
@@ -614,7 +613,7 @@ const main = async () => {
     true,
   );
 
-  // Setup back to front logger
+  // Forward main-process logs into the renderer console (dev only).
   if (window.electronIs.dev()) {
     window.ipcRenderer.on('log', (_event, log: string) => {
       console.log(JSON.parse(log));
@@ -623,7 +622,6 @@ const main = async () => {
 };
 
 const initObserver = async () => {
-  // check document.documentElement is ready
   await new Promise<void>((resolve) => {
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', () => resolve(), {
@@ -644,7 +642,6 @@ const initObserver = async () => {
     if (playerApi) {
       observer?.disconnect();
 
-      // Inject song-info provider
       setupSongInfo(playerApi);
       const dataLoadedListener = (name: string) => {
         if (!firstDataLoaded && name === 'dataloaded') {
@@ -664,10 +661,10 @@ const initObserver = async () => {
     rafId = undefined;
   };
 
-  // Try immediately first (may already be in DOM)
+  // Try immediately; the API may already be in the DOM.
   checkForApi();
 
-  // If not found, observe with rAF throttling to avoid querying on every DOM mutation
+  // Otherwise observe, with rAF throttling to avoid querying on every mutation.
   if (!isApiLoaded) {
     observer = new MutationObserver(() => {
       if (rafId !== undefined) return; // Already queued

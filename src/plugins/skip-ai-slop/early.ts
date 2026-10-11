@@ -1,25 +1,13 @@
 // Copyright (c) 2026 bwedirhan. MIT License.
 /**
- * early.ts: preload-stage scanner for skip-ai-slop.
- *
- * Why: the renderer part of the plugin only starts once the page's modules have
- * loaded (about 2.5 s in `pnpm dev`, measured), by which time YouTube Music has
- * already drawn the home page cards. The preload part runs far earlier (about
- * 0.5 s), so this file hides flagged cards from there, before the user sees them.
- *
- * It reads ONLY the DOM (link hrefs and link texts), because page-side
- * properties such as `el.data` are not visible from the preload context. Its
- * rules are the same as the renderer's (allow wins, then block list, keywords,
- * downloaded list), applied to what the links say. It is deliberately a rough
- * first pass: once the renderer is up it takes over, re-judges every card from
- * the real card data, and un-hides anything this file hid by mistake.
- *
- * Hand-off: the renderer sets READY_ATTR on <html> when it starts scanning;
- * this file then stops observing. Cards it hid carry EARLY_ATTR so the
- * renderer knows they are its to confirm or release.
- *
- * Nothing here touches `document` at import time (index.ts also imports this
- * file into the renderer bundle for the two constants below).
+ * Preload scanner: the renderer starts ~2.5 s in (`pnpm dev`, measured), after
+ * YouTube Music has drawn the home cards, while preload runs ~0.5 s, so flagged
+ * cards are hidden here before they are seen. Reads ONLY the DOM (link hrefs and
+ * texts; page data like `el.data` is invisible from preload) with the renderer's
+ * rules (allow wins, then block list, keywords, downloaded list), as a rough
+ * first pass the renderer re-judges and un-hides. Hand-off: READY_ATTR on <html>
+ * stops this observer, and cards hidden here carry EARLY_ATTR. Touches
+ * `document` only at call time, never at import (index.ts imports the constants).
  */
 import {
   allowedNames,
@@ -35,11 +23,10 @@ export const READY_ATTR = 'data-skip-ai-slop-ready';
 const CACHE_KEY = 'skip-ai-slop:blacklist';
 const SUPPORTED_SCHEMA = 2;
 
-const GIVE_UP_MS = 60_000; // safety: stop watching if the renderer never takes over
+const GIVE_UP_MS = 60_000; // SAFETY: stop watching if the renderer never takes over
 
-// Shelf cards AND search/list rows. Search results come as one API response
-// (not infinite scroll), so hiding them before paint doesn't affect YouTube
-// Music's "load more" measurement the way shelf cards did.
+// Shelf cards and search/list rows. Search results are one API response, not
+// infinite scroll, so hiding before paint doesn't skew the "load more" measurement.
 const CARD_SELECTOR = [
   'ytmusic-two-row-item-renderer',
   'ytmusic-multi-row-list-item-renderer',
@@ -57,7 +44,7 @@ type Rules = {
   block: Set<string>;
   keywords: RegExp[]; // whole-word matchers, see compileKeyword in config.ts
   channels: Set<string>; // downloaded list
-  tracks: Set<string>; // downloaded list
+  tracks: Set<string>;
 };
 
 let rules: Rules | null = null;
@@ -75,7 +62,7 @@ const buildRules = (cfg: Partial<SkipAiSlopConfig>): Rules => {
   };
   try {
     const raw = localStorage.getItem(CACHE_KEY);
-    // keep in sync with the shape index.ts writes (see loadCachedList)
+    // keep in sync with the shape index.ts writes (loadCachedList)
     const cached = (raw ? JSON.parse(raw) : null) as {
       data?: {
         version?: unknown;

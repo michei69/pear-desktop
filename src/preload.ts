@@ -109,8 +109,8 @@ if (path) {
   webFrame.executeJavaScript(script, true, () => (blocked = false));
 }
 
-// HACK: Wait for the script to be executed (with timeout safety)
-// Use a self-invoking async function to avoid top-level await (CJS output)
+// HACK: wait for the script to run (with a timeout). The IIFE avoids top-level
+// await in CJS output.
 (async () => {
   if (!path && !script) return;
 

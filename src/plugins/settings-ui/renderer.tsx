@@ -25,9 +25,9 @@ const [open, setOpen] = createSignal(false);
 const [closing, setClosing] = createSignal(false);
 
 /**
- * Lets other plugins — the `/settings` search command — open the settings, and
- * the one place the separate-window option is honoured: the sidebar entry, the
- * Navigation menu and the command all funnel through here.
+ * Lets other plugins (the `/settings` search command) open the settings, and the
+ * one place the separate-window option is honoured: every entry point funnels
+ * through here.
  */
 export const openSettings = () => {
   if (config.separateWindow) {
@@ -35,8 +35,8 @@ export const openSettings = () => {
     return;
   }
 
-  // Also cancels a close that is still animating, so asking again reopens
-  // rather than landing on a modal already on its way out.
+  // Also cancels a close still animating, so asking again reopens instead of
+  // landing on a modal already on its way out.
   setClosing(false);
   setOpen(true);
 };
@@ -45,8 +45,8 @@ const GUIDE_SELECTORS = ['#guide-renderer', '#mini-guide-renderer'];
 const ITEMS_SELECTOR = 'ytmusic-guide-section-renderer[is-primary] > #items';
 
 /**
- * YTM's own sidebar entry, driven by the inner `guideEntryRenderer` payload.
- * Without a `navigationEndpoint` its built-in tap handler does nothing.
+ * YTM's own sidebar entry, driven by the inner `guideEntryRenderer` payload:
+ * without a `navigationEndpoint` its built-in tap handler does nothing.
  */
 type GuideEntryRendererElement = HTMLElement & {
   isCollapsed: boolean;
@@ -183,7 +183,7 @@ export const renderer = createRenderer({
 
     for (const selector of GUIDE_SELECTORS) {
       // Only one of the two guides is on the page, so the other one's wait
-      // always ends in a timeout; `injectButton` also drops a late resolve.
+      // always ends in a timeout; `injectButton` drops a late resolve.
       waitForElement<HTMLElement>(selector).then(injectButton, () => {});
     }
   },

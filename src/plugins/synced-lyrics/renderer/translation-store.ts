@@ -235,8 +235,8 @@ export const fetchTranslation = async (
     sourceSignature,
   );
 
-  // In-renderer memoisation: avoids re-invoking IPC for the same song/config
-  // within a single session (the main process also caches to disk).
+  // In-renderer memoisation: avoids re-invoking IPC for the same song/config in a
+  // session (the main process also caches to disk).
   const memo = cache.get(key);
   if (memo) {
     if (translationStore.videoId === videoId && translationStore.key === key) {

@@ -41,8 +41,8 @@ export const AboutSection = (props: {
 }) => {
   const { copied, copy } = useCopyFeedback();
 
-  // The same artwork the app registers with the OS: the original logo, or
-  // YouTube Music's when that option is on.
+  // The same artwork the app registers with the OS: the original logo, or YouTube
+  // Music's when that option is on.
   const logo = () => (store()?.options.useYtmIcons ? YTM_ICON_SRC : ICON_SRC);
 
   const reportIssueUrl = () => {
@@ -171,8 +171,8 @@ export const AboutSection = (props: {
           <button
             class="sui-outlinedbtn"
             onClick={() => {
-              // Dev builds and auto-updates-off both reject here; the menu's
-              // own entry is hidden in exactly those cases.
+              // Dev builds and auto-updates-off both reject here; the menu's entry is
+              // hidden in exactly those cases.
               bridge.checkUpdates().catch(() => {});
             }}
             type="button"

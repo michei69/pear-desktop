@@ -19,10 +19,7 @@ const readIfExists = (path: string): string | null => {
   }
 };
 
-/**
- * True when the theme's script may run: no script, or its current hash is the
- * one the user consented to.
- */
+/** True when the theme's script may run: no script, or its hash is the consented one. */
 export const isJsConsented = (
   theme: Pick<PearTheme, 'id' | 'js'>,
   consent: Record<string, string>,
@@ -63,9 +60,6 @@ export const readTheme = (id: string, folder: string): PearTheme | null => {
     name: manifest.name ?? id,
     description: manifest.description,
     author: manifest.author,
-    // Absent only when the manifest declares no `palette` at all: a theme with
-    // none offers its first preset in place of Default, while `"palette": {}`
-    // still has Default to fall back on.
     ...(manifest.palette !== undefined ? { palette: manifest.palette } : {}),
     presets: manifest.presets,
     css: cssFiles

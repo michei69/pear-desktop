@@ -26,12 +26,9 @@ const inject = (css: string) => {
 };
 
 /**
- * Runs a theme script with a CommonJS-style `module`/`exports` pair, so a
- * theme can `module.exports = { mount, unmount }`.
- *
- * Evaluating the script is the whole point of theme JS, and it only reaches
- * here after the user consented to this exact source (main withholds the
- * script otherwise), so the eval warnings are suppressed deliberately.
+ * Runs a theme script with a CommonJS-style `module`/`exports` pair, so it can
+ * `module.exports = { mount, unmount }`. It only reaches here after the user
+ * consented to this exact source, so the eval warnings are suppressed.
  */
 /* oxlint-disable typescript/no-implied-eval, typescript/no-unsafe-call */
 const evaluate = (source: string, id: string): ThemeHooks | null => {
@@ -69,7 +66,7 @@ const applyTheme = () => {
     ? state.themes.find((entry) => entry.id === state.selected)
     : undefined;
 
-  // Evaluate only the selected theme's script, and only when it changes.
+  // Only the selected theme's script, and only when it changes.
   const identity = theme?.js ? { id: theme.id, hash: theme.js.hash } : null;
   const unchanged =
     mounted !== null &&
@@ -78,8 +75,7 @@ const applyTheme = () => {
     mounted.hash === identity.hash;
   const isNewScript = identity !== null && (mounted === null || !unchanged);
 
-  // Palette edits must not remount: only a different theme or a different
-  // script tears the theme's DOM work down.
+  // Palette edits must not remount: only a different theme or script tears down.
   if (mounted && !unchanged) teardown();
 
   clearInjected();
@@ -90,9 +86,8 @@ const applyTheme = () => {
     state.overrides[theme.id] ?? {},
   );
 
-  // The theme's own CSS comes first, so the palette emitted after it wins
-  // over any fallbacks the stylesheet declares and a user override always
-  // beats what the theme shipped.
+  // Theme CSS first, palette after, so a user override always beats what the
+  // theme shipped.
   if (theme.css) inject(theme.css);
   inject(paletteToCss(palette));
 
@@ -116,8 +111,7 @@ const applyTheme = () => {
 };
 
 const refresh = async () => {
-  // Read everything from the main process rather than window.mainConfig, whose
-  // store instance is not guaranteed to see main's writes immediately.
+  // Read from main, not window.mainConfig: its store may not see main's writes yet.
   const payload = (await window.ipcRenderer.invoke(
     'peard:get-themes',
   )) as Partial<ThemeState>;

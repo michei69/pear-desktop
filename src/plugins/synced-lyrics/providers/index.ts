@@ -34,7 +34,7 @@ export const hasLyricText = (data?: LyricResult | null): boolean =>
   );
 
 /**
- * The order to try providers in. Providers added since the order was saved are
+ * Order to try providers in. Providers added since the order was saved are
  * appended, so they are still tried.
  */
 export const resolvePriority = (
@@ -42,10 +42,9 @@ export const resolvePriority = (
 ): ProviderName[] => normalizeOrder(configured, providerNames);
 
 /**
- * First provider in `priority` with usable lyrics, falling back to the first
- * entry while nothing has arrived. `preferSynced` wants time-synced lyrics, but
- * still takes a plain-text provider when none are synced: showing unsynced
- * lyrics beats showing none.
+ * First provider in `priority` with usable lyrics, falling back to `priority[0]`
+ * while nothing has arrived. `preferSynced` wants time-synced lyrics but still
+ * takes a plain-text provider when none are synced: unsynced beats none.
  */
 const pickByPriority = (
   priority: readonly ProviderName[],
@@ -96,9 +95,9 @@ export const starredProviderKey = (videoId: string) =>
 
 /**
  * The provider to show: the one starred for this song while it has lyrics,
- * otherwise the first hit walking the order. A starred provider that cannot
- * serve the song falls back to the order, so pinning never leaves a blank tab.
- * With `usePriorityList` off the order is ranked by result quality instead.
+ * otherwise the first hit walking the order. A starred provider that cannot serve
+ * the song falls back to the order, so pinning never leaves a blank tab. With
+ * `usePriorityList` off the order is ranked by result quality instead.
  */
 export const pickWithStar = (options: {
   priority: readonly ProviderName[];

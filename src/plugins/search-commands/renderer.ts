@@ -49,11 +49,8 @@ let openBind: Keybind | undefined = parseKeybind(
 /**
  * The search box an event came from.
  *
- * Everything here hangs off DOM events captured at the document rather than
- * YTM's own handlers: those are installed as own properties of the element by
- * YTM's lazy registration, and patching them did not stick. A capture-phase
- * listener is guaranteed by the DOM spec to run before anything the page
- * registered, whatever YTM does internally.
+ * HACK: YTM installs its handlers as own properties via lazy registration, and
+ * patching them did not stick; a capture-phase listener runs first by spec.
  */
 const boxFrom = (event: Event): SearchBox | undefined => {
   const target = event.target;
@@ -76,9 +73,8 @@ const release = () => {
 };
 
 /**
- * Wipes the box after a command was consumed, so the next open does not start
- * on the last thing that was run. `originalQuery` has to go too: YTM restores
- * it into the input when the box closes.
+ * Wipes the box after a command was consumed, so the next open starts clean.
+ * `originalQuery` too: YTM restores it into the input when the box closes.
  */
 const clearBox = (el: SearchBox) => {
   el.searchBoxInput.value = '';
@@ -90,9 +86,8 @@ const clearBox = (el: SearchBox) => {
 };
 
 /**
- * Hands our rows to YTM's own autocomplete. `searchSuggestionRenderer` is the
- * plainest suggestion renderer — the same component and stylesheet YTM uses
- * for its own query suggestions, so it follows the theme for free.
+ * Hands our rows to YTM's own autocomplete: `searchSuggestionRenderer` is the
+ * component YTM uses for query suggestions, so it follows the theme for free.
  */
 const render = () => {
   const el = box;
@@ -136,8 +131,7 @@ const render = () => {
 
 /**
  * `ytmusic-search-suggestion` has no slot for a description, so hang one off
- * the row itself. Idempotent: the observer that calls this also sees our own
- * insertion.
+ * the row itself. Idempotent: the observer also sees our own insertion.
  */
 const decorate = () => {
   const el = box;
@@ -188,10 +182,7 @@ const unwatch = () => {
   watched = undefined;
 };
 
-/**
- * Wires up the live element once we have seen it, and keeps descriptions on
- * the rows YTM renders from the data we hand it.
- */
+/** Wires up the element once seen, and keeps descriptions on the rows YTM renders from our data. */
 const watchElement = (el: SearchBox) => {
   if (watched?.el === el) return;
   unwatch();
@@ -199,9 +190,8 @@ const watchElement = (el: SearchBox) => {
   const input = el.searchBoxInput;
 
   const onBlur = () => {
-    // Clicking a suggestion row blurs the input, but the box stays open: that
-    // is a pick, not a dismissal, and releasing here would drop the rows the
-    // pick is about to look itself up in.
+    // Clicking a suggestion row blurs the input but leaves the box open: a
+    // pick, not a dismissal. Releasing here would drop the rows the pick uses.
     if (el.opened) return;
 
     release();
@@ -266,9 +256,8 @@ const accept = async (row: CommandRow) => {
 };
 
 /**
- * Row clicks arrive as `ytmusic-suggestion-activated` on the row, which YTM's
- * search box handles by searching. Stop it here and write the command line
- * into the box instead.
+ * Row clicks arrive as `ytmusic-suggestion-activated`, which YTM's search box
+ * handles by searching; stop it and write the command line into the box.
  */
 const onSuggestionActivated = (event: Event) => {
   const el = boxFrom(event);
@@ -290,14 +279,12 @@ const onDocumentInput = (event: Event) => {
   track(el);
 
   if (!isCommandLine(el.searchBoxInput.value)) {
-    // Not ours: YTM's own onInput runs untouched and its autocomplete behaves
-    // normally. `render` only drops our rows if we had taken the list over.
+    // Not ours: YTM's onInput runs untouched. `release` only drops rows we took.
     release();
     return;
   }
 
-  // Swallowing here is what keeps YTM's handler — and its suggestion request —
-  // from running at all.
+  // Swallowing here stops YTM's handler — and its suggestion request.
   event.stopImmediatePropagation();
   markCommandLine(el);
   render();
@@ -328,10 +315,9 @@ let containingBlock: HTMLElement | undefined;
 let lifted: Lifted[] = [];
 
 /**
- * The ancestor `position: fixed` actually resolves against. A transform, a
- * filter or `will-change` makes an element a containing block for fixed
- * descendants, and the box is nested inside one, so viewport coordinates would
- * land it in the wrong place.
+ * The ancestor `position: fixed` resolves against: a transform, filter or
+ * `will-change` makes one, and the box is nested inside one, so viewport
+ * coordinates would land it in the wrong place.
  */
 const fixedContainingBlock = (el: SearchBox): HTMLElement | undefined => {
   for (
@@ -370,9 +356,8 @@ const isStackingContext = (style: CSSStyleDeclaration): boolean =>
 
 /**
  * The scrim lives in the root stacking context, so any context the box is
- * nested inside would paint below it. Raise each one on the way out; the first
- * ancestor that is not a context is where the z-index lands in the root and
- * wins, so the walk stops there.
+ * nested inside would paint below it. Raise each on the way out; the walk stops
+ * at the first ancestor that is not a context, where the z-index lands in root.
  */
 const liftAboveScrim = (el: SearchBox): Lifted[] => {
   const raised: Lifted[] = [];
@@ -455,8 +440,7 @@ const enterSpotlight = (el: SearchBox) => {
   if (!scrim) {
     scrim = document.createElement('div');
     scrim.id = 'pear-spotlight-scrim';
-    // Clicking away is how Spotlight dismisses, and YTM only watches for taps
-    // on its own elements, so the scrim has to close it itself.
+    // YTM only watches taps on its own elements, so the scrim must close itself.
     scrim.addEventListener('mousedown', dismissSpotlight);
     document.body.append(scrim);
   }
@@ -477,8 +461,7 @@ const enterSpotlight = (el: SearchBox) => {
     lifted.map((entry) => `<${entry.el.localName}>`).join(' ') || 'nothing',
   );
 
-  // Z-order cannot be read off the source, so probe what actually ends up on
-  // top instead of trusting the cascade.
+  // Z-order cannot be read off the source, so probe what actually ends up on top.
   const rect = el.getBoundingClientRect();
   const probe = document.elementFromPoint(
     rect.left + rect.width / 2,
@@ -493,9 +476,8 @@ const enterSpotlight = (el: SearchBox) => {
 };
 
 /**
- * Spotlight-style summon: float the box into the middle of the screen over a
- * dimmed page, already in command mode, so the list is there to filter straight
- * away. Pressing the shortcut again closes it.
+ * Spotlight-style summon: float the box over a dimmed page, already in command
+ * mode, so the list is there to filter. Pressing the shortcut again closes it.
  */
 const openSearchBox = () => {
   const el = findSearchBox();
@@ -578,8 +560,8 @@ const onDocumentKey = (event: KeyboardEvent) => {
 
     log('enter: running', `/${name}`, 'with args', args);
 
-    // A command that writes back into the box — a corrected argument, a
-    // follow-up prompt — has not consumed the line, so leave it for editing.
+    // A command that wrote back into the box has not consumed the line; leave
+    // it for editing.
     let inserted = false;
     command?.run(
       args,
@@ -589,18 +571,17 @@ const onDocumentKey = (event: KeyboardEvent) => {
     );
 
     if (!inserted) {
-      // `clearBox` rather than leaving it to `dismissSpotlight`: a command run
-      // without the overlay should still leave the box empty.
+      // `clearBox` too: without the overlay, a command should still leave the
+      // box empty.
       clearBox(el);
       dismissSpotlight();
     }
     return;
   }
 
-  // Tab completes: the highlighted row, or the first one when nothing has been
-  // arrowed to. The event is swallowed either way, so focus cannot leave the
-  // box in the middle of a command line — YTM otherwise uses Tab to cycle
-  // between the search, clear and guide buttons.
+  // Tab completes the highlighted row, or the first one. Swallowed either way,
+  // so focus cannot leave the box mid-command — YTM otherwise cycles the
+  // search, clear and guide buttons on Tab.
   if (event.key === 'Tab' && !event.shiftKey) {
     event.preventDefault();
     event.stopImmediatePropagation();
@@ -652,8 +633,8 @@ export const renderer = createRenderer({
 
     log('listening for "/" in the search box');
 
-    // Registered above already, so a slow config round-trip cannot leave the
-    // box unhooked; this only settles which shortcut opens it.
+    // Listeners are already registered, so a slow config round-trip cannot
+    // leave the box unhooked; this only settles which shortcut opens it.
     applyConfig(await ctx.getConfig());
     log(
       'open shortcut:',

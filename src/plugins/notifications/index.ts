@@ -8,17 +8,11 @@ import { onMenu } from './menu';
 export interface NotificationsPluginConfig {
   enabled: boolean;
   unpauseNotification: boolean;
-  /**
-   * Has effect only on Linux
-   */
+  /** Linux only. */
   urgency: 'low' | 'normal' | 'critical';
-  /**
-   * the following has effect only on Windows
-   */
+  /** The following are Windows only. */
   interactive: boolean;
-  /**
-   * See plugins/notifications/utils for more info
-   */
+  /** See `plugins/notifications/utils`. */
   toastStyle: number;
   refreshOnPlayPause: boolean;
   hideButtonText: boolean;

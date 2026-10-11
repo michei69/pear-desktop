@@ -21,8 +21,8 @@ export const anthropicProvider: TranslationProvider = {
       system: buildSystemPrompt(req),
       messages: [
         { role: 'user', content: buildUserPrompt(req) },
-        // Prefill the assistant turn with the start of a JSON object so the
-        // model continues from "{" — gives more reliable JSON output.
+        // Prefill the assistant turn with "{" so the model continues from it:
+        // more reliable JSON output.
         { role: 'assistant', content: '{' },
       ],
       temperature: 0.3,

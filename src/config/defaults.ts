@@ -45,10 +45,8 @@ export interface DefaultConfig {
     stripSIFromSharedLinks: boolean;
     /** Id of the selected external theme, or '' for no theme. */
     theme: string;
-    /**
-     * Preset the user picked per theme id: a preset name, `custom` for the
-     * palette they edited themselves, or '' for the theme's own palette.
-     */
+    /** Preset the user picked per theme id: a preset name, `custom` for their
+     * own palette, or '' for the theme's own palette. */
     themePresets: Record<string, string>;
     /** Per-theme palette overrides, keyed by theme id then palette key. */
     themeOverrides: Record<string, Record<string, string>>;
@@ -58,8 +56,8 @@ export interface DefaultConfig {
     themesSeeded: boolean;
     /**
      * YouTube Music feature-flag overrides, keyed by flag name. Only overrides
-     * live here: a flag with no entry keeps whatever the server sent. They are
-     * applied to `window.ytcfg` before the page's own scripts run.
+     * live here: a flag with no entry keeps what the server sent. Applied to
+     * `window.ytcfg` before the page's own scripts run.
      */
     featureFlags: Record<string, unknown>;
     customWindowTitle?: string;

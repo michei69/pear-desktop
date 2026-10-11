@@ -10,12 +10,11 @@ type CustomElementPrototype = typeof Element.prototype & {
 };
 
 function overrideAddEventListener() {
-  // YO WHAT ARE YOU DOING NOW?!?!
   // Save native addEventListener
   // @ts-expect-error - We know what we're doing
   // oxlint-disable-next-line typescript/unbound-method
   Element.prototype._addEventListener = Element.prototype.addEventListener;
-  // Override addEventListener to Ignore specific events in volume-slider
+  // Override addEventListener to ignore specific events in volume-slider
   Element.prototype.addEventListener = function (
     type: string,
     listener: (event: Event) => void,
@@ -35,7 +34,7 @@ function overrideAddEventListener() {
 
 export const overrideListener = () => {
   overrideAddEventListener();
-  // Restore original function after finished loading to avoid keeping Element.prototype altered
+  // Restore the original after load, so Element.prototype is not left altered
   window.addEventListener(
     'load',
     () => {

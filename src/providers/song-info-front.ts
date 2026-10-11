@@ -115,7 +115,7 @@ export const setupLikeChangedListener = singleton(() => {
       attributeFilter: [LIKE_STATUS_ATTRIBUTE],
     });
 
-    // Emit the initial value as well; as it's persistent between launches.
+    // Push the initial value too: it persists across launches.
     window.ipcRenderer.send(
       'peard:like-changed',
       mapLikeStatus(likeButtonRenderer.getAttribute?.(LIKE_STATUS_ATTRIBUTE)),
@@ -131,7 +131,7 @@ export const setupVolumeChangedListener = singleton((api: MusicPlayer) => {
     });
   });
 
-  // Emit the initial value as well; as it's persistent between launches.
+  // Push the initial value too: it persists across launches.
   window.ipcRenderer.send('peard:volume-changed', {
     state: api.getVolume(),
     isMuted: api.isMuted(),
@@ -289,8 +289,8 @@ export const setupSongInfo = (api: MusicPlayer) => {
     }
   };
 
-  // Name = "dataloaded" and abit later "dataupdated"
-  // Sometimes "dataupdated" is not fired, so we need to fallback to "dataloaded"
+  // 'dataloaded' fires first, 'dataupdated' a bit later; sometimes
+  // 'dataupdated' never fires, so 'dataloaded' is the fallback.
   api.addEventListener('videodatachange', (name, videoData) => {
     videoEventDispatcher(name, videoData);
 

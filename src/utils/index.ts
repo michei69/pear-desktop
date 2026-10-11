@@ -87,7 +87,7 @@ export const startPlugin = async <Config extends PluginConfig>(
         )?.start;
 
   try {
-    // HACK: for bind 'this' to context
+    // HACK: bind `this` to the context object
     const defContext = def[options.ctx];
     if (defContext && typeof defContext !== 'function') {
       Object.entries(defContext).forEach(([key, value]) => {

@@ -266,8 +266,8 @@ test.describe('Netease search', () => {
       songDuration: 256,
     } as Parameters<Netease['search']>[0]);
 
-    // The exact release ranks first but has no lyrics, the live version is
-    // skipped for its duration, so the cover is the first usable candidate.
+    // The exact release ranks first but has no lyrics, the live version is skipped
+    // for its duration, so the cover is the first usable candidate.
     expect(probedSongIds(calls)).toEqual([102, 103]);
     expect(result?.title).toBe('Lemon');
     expect(result?.artists).toEqual(['某翻唱歌手']);

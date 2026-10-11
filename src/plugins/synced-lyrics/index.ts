@@ -85,10 +85,10 @@ export default createPlugin<
   addedVersion: '3.5.X',
   config: {
     enabled: false,
-    // `providerPriority` deliberately has no default: deepmerge concatenates
-    // arrays, so a default order would be prepended to the stored one on every
-    // read. Absent means "the order the providers are declared in"; the 3.12.3
-    // migration turns this on for a legacy `preferredProvider`.
+    // No default for `providerPriority`: deepmerge concatenates arrays, so a
+    // default order would be prepended to the stored one on every read. Absent
+    // means the declared order; the 3.12.3 migration turns this on for a legacy
+    // `preferredProvider`.
     usePriorityList: false,
     preferSynced: true,
     preciseTiming: true,

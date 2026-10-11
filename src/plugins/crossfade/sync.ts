@@ -12,14 +12,10 @@ export const isStalled = (element: HTMLMediaElement) =>
   element.seeking ||
   element.readyState < HTMLMediaElement.HAVE_FUTURE_DATA;
 
-/**
- * Holds the audio's clock on the video's: a drift is run out by playing the
- * audio a hair faster or slower, and one too far out to have come from a start
- * is moved back onto the clock by `reanchor`. The audio is silent until a
- * crossfade hands the track over to it, so neither is heard.
- *
- * @returns the way to stop the alignment
- */
+// Holds the audio's clock on the video's: a drift is run out by playing the audio a
+// hair faster or slower, and one too far out to have come from a start is moved back
+// onto the clock by `reanchor`. Silent until a crossfade hands the track over, so
+// neither is heard. Returns the way to stop the alignment.
 export const alignAudio = (
   element: HTMLMediaElement,
   video: HTMLVideoElement,
@@ -36,16 +32,16 @@ export const alignAudio = (
       return;
     }
 
-    // Too far out for any start of this audio to have left it there, so it is
-    // started again rather than run back.
+    // Too far out for any start of this audio to have left it there: start it
+    // again rather than run it back.
     if (Math.abs(drift) > REANCHOR_ABOVE) {
       reanchor();
       return;
     }
 
-    // Rate that closes the drift over the next `ALIGN_WINDOW` seconds: a
-    // follower behind its clock plays faster to catch up, one ahead of it plays
-    // slower to let it pass, and neither takes the rate further than the limit.
+    // Rate that closes the drift over the next `ALIGN_WINDOW` seconds: behind its
+    // clock it plays faster to catch up, ahead of it slower to let it pass, and
+    // neither takes the rate further than the limit.
     const rate = Math.min(
       Math.max(1 + drift / ALIGN_WINDOW, 1 - ALIGN_RATE_LIMIT),
       1 + ALIGN_RATE_LIMIT,

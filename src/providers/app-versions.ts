@@ -6,17 +6,17 @@ export const isBetaVersion = (version: string): boolean =>
 
 /**
  * A prerelease and its release share a schema, so migrations key off the part
- * before `-`: 3.12.4-beta.1 migrates the store as 3.12.4 would, and the marker
- * stays equal when the same store is later read by 3.12.4.
+ * before `-`: 3.12.4-beta.1 migrates as 3.12.4 would, and the marker stays equal
+ * when 3.12.4 later reads the same store.
  */
 export const migrationBaseVersion = (version: string): string =>
   version.split('-')[0];
 
 /**
  * Beta version for a build number, from the release it leads up to: `3.12.4`
- * and run 42 give `3.12.4-beta.42`. The release sorts above every one of its
- * betas, so shipping `3.12.4` upgrades the whole beta channel with no special
- * case. Keep in step with the "Stamp beta version" step in build.yml.
+ * and run 42 give `3.12.4-beta.42`. A release sorts above all its betas, so
+ * shipping `3.12.4` upgrades the whole beta channel with no special case.
+ * Keep in step with the "Stamp beta version" step in build.yml.
  */
 export const betaVersion = (release: string, runNumber: number): string =>
   `${migrationBaseVersion(release)}-beta.${runNumber}`;
@@ -40,10 +40,9 @@ export const CHECK_RETRY_MS = 5000;
 
 /**
  * Runs `attempt`, retrying a throw a couple of times and reporting whether it
- * ever succeeded. A beta release is replaced in place, so a check that lands
+ * ever succeeded. A beta release is replaced in place, so a check landing
  * between the old release being deleted and the new one appearing sees a feed
- * entry whose `beta.yml` is already gone - a failure worth waiting out rather
- * than reporting.
+ * entry whose `beta.yml` is already gone — a failure worth waiting out.
  */
 export const withRetry = async <T>(
   attempt: () => Promise<T>,

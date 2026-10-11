@@ -22,12 +22,7 @@ export async function isEnabled(plugin: string) {
   return pluginConfig !== undefined && pluginConfig.enabled;
 }
 
-/**
- * Set options for a plugin
- * @param plugin Plugin name
- * @param options Options to set
- * @param exclude Options to exclude from the options object
- */
+/** Set a plugin's options, minus the `exclude` keys. */
 export function setOptions<T>(
   plugin: string,
   options: T,

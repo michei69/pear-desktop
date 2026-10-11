@@ -553,9 +553,9 @@ export const refreshCurrentLyrics = (reason: string, info = getSongInfo()) => {
   translateCurrentLyrics(reason, info);
 };
 
-// Whenever the active provider's lyrics resolve, kick off a translation pass
-// for the current song. Switching provider/song re-fires this. The translation
-// store does its own dedupe + on-disk caching, so this is cheap to re-run.
+// Whenever the active provider's lyrics resolve, kick off a translation pass for
+// the current song. The translation store dedupes and caches on disk, so re-running
+// this (on every provider/song switch) is cheap.
 createEffect(() => {
   translateCurrentLyrics();
 });

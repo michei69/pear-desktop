@@ -26,7 +26,6 @@ export const backend = createBackend<
   lastTimeUpdateSent: 0,
 
   async start(ctx) {
-    // Get initial configuration from the context
     const config = await ctx.getConfig();
     discordService = new DiscordService(ctx.window, config);
 
@@ -73,9 +72,8 @@ export const backend = createBackend<
 
     const currentlyConnected = discordService?.isConnected() ?? false;
     if (newConfig.enabled && !currentlyConnected) {
-      // The song-info callback may not be registered yet if the plugin was
-      // enabled after startup — register it before connecting so activity
-      // updates flow once the RPC client is ready.
+      // Enabling after startup skips the ready-to-show registration, so register
+      // the callback before connecting
       if (!this.songInfoCallback) {
         this.songInfoCallback = (songInfo, event) => {
           if (!discordService?.isConnected()) return;

@@ -59,7 +59,6 @@ runWithOwner(reactiveOwner, () => {
     const root = document.documentElement;
     const fontStyle = currentFontStyle();
 
-    // Set the line effect
     switch (config()?.lineEffect) {
       case 'fancy':
         root.style.setProperty(
@@ -199,10 +198,8 @@ export const LyricsRenderer = () => {
     const showPicker = isInView || isMouseOver;
 
     if (showPicker) {
-      // picker visible
       stickyRef()!.style.setProperty('--lyrics-picker-top', '0');
     } else {
-      // picker hidden
       stickyRef()!.style.setProperty('--lyrics-picker-top', `-${height}px`);
     }
   };
@@ -297,11 +294,11 @@ export const LyricsRenderer = () => {
   createEffect(() => {
     const current = currentLyrics();
     const idx = currentIndex();
-    const maxIdx = untrack(statuses).length; // data is [lyricsPicker, ...lines], so line j is at index j+1 and the last line at index N
+    const maxIdx = untrack(statuses).length; // data is [lyricsPicker, ...lines]: line j is at index j+1, last line at N
 
     if (!scroller() || !current.data?.lines) return;
 
-    // hacky way to make the "current" line scroll to the center of the screen
+    // HACK: makes the "current" line scroll to the center of the screen
     const scrollIndex = Math.min(idx + 1, maxIdx);
 
     scroller()!.scrollToIndex(scrollIndex, {

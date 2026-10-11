@@ -80,7 +80,7 @@ import packageJson from '../package.json';
 import type { RepeatMode } from '@/types/datahost-get-state';
 import type { PluginConfig } from '@/types/plugins';
 
-// Catch errors and log them
+// Log unhandled errors
 unhandled({
   logger: console.error,
   showDialog: false,
@@ -285,18 +285,18 @@ if (config.get('options.proxy')) {
   app.commandLine.appendSwitch('proxy-server', proxyToUse);
 }
 
-// Adds debug features like hotkeys for triggering dev tools and reload
+// Adds debug features: hotkeys for dev tools and reload.
 electronDebug({
   showDevTools: false, // Disable automatic devTools on new window
 });
 
 const icon = windowIconPath();
 
-// Without this, Electron's default About panel shows the raw app id instead of a proper name, and no icon.
+// Without this the About panel shows the raw app id and no icon.
 app.setAboutPanelOptions({
   applicationName: APPLICATION_NAME,
-  // Channel and commit ride along here: `version` is macOS-only, and GTK prints
-  // nothing but this field (macOS prefixes it with "Version ").
+  // Channel and commit ride along here: `version` is macOS-only and GTK prints
+  // only this field.
   applicationVersion: `v${app.getVersion()} ${buildLabel()}`,
   iconPath: appIconPath(),
   copyright,
@@ -362,8 +362,8 @@ const initHook = async (win: BrowserWindow) => {
   ipcMain.handle('peard:get-themes', () => ({
     themes: themesForRenderer(),
     selected: config.get('options.theme'),
-    // The values each theme layers over its own palette: the preset the user
-    // picked, or the palette they edited themselves.
+    // Per theme: values layered over its own palette - the picked preset, or
+    // the palette the user edited.
     overrides: themePaletteLayers(),
   }));
   ipcMain.handle('peard:create-theme-from-css', (_, paths: string[]) =>
@@ -497,7 +497,6 @@ const showNeedToRestartDialog = async (
           break;
         }
 
-        // Ignore
         default: {
           break;
         }
@@ -525,13 +524,9 @@ const openExternally = (url: string) => {
 };
 
 /**
- * Keeps Google/YouTube links in the app and sends the rest to the browser.
- * Chromium opens `target="_blank"` links as windows and plain ones in place,
- * so both routes are covered, and the redirect one as well: YouTube's
- * outbound links bounce through its own host before leaving.
- *
- * Applied to popups too, so a link on a page that is itself in a popup
- * window behaves the same.
+ * Keeps Google/YouTube links in the app and sends the rest to the browser, via
+ * window-open, in-place navigation and redirect (YouTube's outbound links bounce
+ * through its own host). Applied to popups too.
  */
 function interceptExternalLinks(win: BrowserWindow) {
   const { webContents } = win;
@@ -582,7 +577,7 @@ async function createMainWindow() {
     autoHideMenuBar: config.get('options.hideMenu'),
   };
 
-  // Note: on linux, for some weird reason, having these extra properties with 'frame: false' does not work
+  // NOTE: on Linux these extra properties do not work with 'frame: false'.
   if (is.linux() && useInlineMenu) {
     delete decorations.titleBarOverlay;
     delete decorations.titleBarStyle;
@@ -640,7 +635,6 @@ async function createMainWindow() {
       scaledY < display.bounds.y - 8 || // Top
       scaledY + scaledHeight / 2 > display.bounds.y + display.bounds.height // Bottom
     ) {
-      // Window is offscreen
       if (is.dev()) {
         console.warn(
           LoggerPrefix,
@@ -874,7 +868,6 @@ app.on('window-all-closed', () => {
     app.quit();
   }
 
-  // Unregister all shortcuts.
   globalShortcut.unregisterAll();
 });
 
@@ -906,17 +899,15 @@ app.whenReady().then(async () => {
 
   await setupThemes();
 
-  // Not awaited: the settings UI waits on the same download when it opens the
-  // flags section, and a slow GitHub must not hold the window back.
+  // Not awaited: a slow GitHub must not hold the window back.
   loadFlagMetadata();
 
-  // Override the logo baked into the bundle when the original YTM icons are requested
+  // Override the baked-in logo when the original YTM icons are requested.
   if (is.macOS() && config.get('options.useYtmIcons')) {
     app.dock?.setIcon(appIconPath());
   }
 
   if (config.get('options.autoResetAppCache')) {
-    // Clear cache after 20s
     const clearCacheTimeout = setTimeout(() => {
       if (is.dev()) {
         console.log(
@@ -930,14 +921,14 @@ app.whenReady().then(async () => {
     }, 20_000);
   }
 
-  // Register appID on windows
+  // Windows: app id and Start Menu shortcut.
   if (is.windows()) {
     const appID =
       'com.github.th-ch.\u0079\u006f\u0075\u0074\u0075\u0062\u0065\u002d\u006d\u0075\u0073\u0069\u0063';
     app.setAppUserModelId(appID);
     const appLocation = process.execPath;
     const appData = app.getPath('appData');
-    // Check shortcut validity if not in dev mode / running portable app
+    // Check shortcut validity outside dev/portable runs.
     if (
       !is.dev() &&
       !appLocation.startsWith(path.join(appData, '..', 'Local', 'Temp'))
@@ -951,7 +942,6 @@ app.whenReady().then(async () => {
         `${APPLICATION_NAME}.lnk`,
       );
       try {
-        // Check if shortcut is registered and valid
         const shortcutDetails = shell.readShortcutLink(shortcutPath); // Throw error if it doesn't exist yet
         if (
           shortcutDetails.target !== appLocation ||
@@ -977,10 +967,9 @@ app.whenReady().then(async () => {
   }
 
   ipcMain.on('get-renderer-script', (event) => {
-    // Inject index.html file as string using insertAdjacentHTML
-    // In dev mode, get string from process.env.VITE_DEV_SERVER_URL, else use fs.readFileSync
+    // Hand the renderer its entry script: dev server URL in dev, built file otherwise.
     if (is.dev() && process.env.ELECTRON_RENDERER_URL) {
-      // HACK: to make vite work with electron renderer (supports hot reload)
+      // HACK: makes vite work with the electron renderer (hot reload).
       event.returnValue = [
         null,
         `
@@ -1029,9 +1018,8 @@ app.whenReady().then(async () => {
   await refreshMenu(mainWindow);
   setUpTray(app, mainWindow);
 
-  // Shortcuts created or re-pinned after the option was toggled start out on
-  // the exe icon, so re-sync on launch (the sync writes only where a shortcut
-  // actually differs).
+  // Shortcuts created or re-pinned after the option was toggled start on the exe
+  // icon, so re-sync on launch (only differing shortcuts are written).
   if (is.windows()) {
     syncShortcutIcons();
   }
@@ -1058,11 +1046,9 @@ app.whenReady().then(async () => {
       return;
     }
 
-    // Only treat the last argument as a protocol command when it actually
-    // carries the scheme. On Windows a plain relaunch (e.g. clicking the
-    // pinned taskbar icon) has only the executable path in argv, and its
-    // drive-letter colon would otherwise be mistaken for a command separator,
-    // swallowing the launch before the window is restored below.
+    // Only treat the last argument as a protocol command when it carries the
+    // scheme: on Windows a plain relaunch has just the executable path, whose
+    // drive-letter colon would be mistaken for a separator.
     const lastArg = commandLine.at(-1) ?? '';
 
     if (lastArg.startsWith(`${APP_PROTOCOL}:`)) {
@@ -1092,13 +1078,12 @@ app.whenReady().then(async () => {
     }
   });
 
-  // Autostart at login
   app.setLoginItemSettings({
     openAtLogin: config.get('options.startAtLogin'),
   });
 
-  // Channel, feed and dialogs all live in the provider; the stored channel is
-  // applied even with auto-updates off, so manual checks follow it too.
+  // Provider owns channel, feed and dialogs; the stored channel applies even
+  // with auto-updates off, so manual checks follow it too.
   setupAutoUpdates(mainWindow);
 
   if (config.get('options.hideMenu') && !config.get('options.hideMenuWarned')) {
@@ -1110,7 +1095,6 @@ app.whenReady().then(async () => {
     config.set('options.hideMenuWarned', true);
   }
 
-  // Optimized for Mac OS X
   if (is.macOS() && !config.get('options.appVisible')) {
     app.dock?.hide();
   }
@@ -1163,13 +1147,11 @@ function showUnresponsiveDialog(
   dialogPromise.then((dialogOutput) => {
     switch (dialogOutput.response) {
       case 1: {
-        // Relaunch
         restart();
         break;
       }
 
       case 2: {
-        // Quit
         app.quit();
         break;
       }
@@ -1185,18 +1167,16 @@ function showUnresponsiveDialog(
 function removeContentSecurityPolicy(
   betterSession: BetterSession = session.defaultSession as BetterSession,
 ) {
-  // Allows defining multiple "onHeadersReceived" listeners
-  // by enhancing the session.
-  // Some plugins (e.g. adblocker) also define a "onHeadersReceived" listener
+  // enhanceWebRequest allows multiple "onHeadersReceived" listeners; some plugins
+  // (e.g. adblocker) define their own.
   enhanceWebRequest(betterSession);
 
-  // Custom listener to tweak the content security policy
+  // Tweak the content security policy.
   betterSession.webRequest.onHeadersReceived((details, callback) => {
     details.responseHeaders ??= {};
 
     // prettier-ignore
     if (URL.parse(details.url)?.protocol === 'https:') {
-      // Remove the content security policy
       delete details.responseHeaders['content-security-policy-report-only'];
       delete details.responseHeaders['Content-Security-Policy-Report-Only'];
       delete details.responseHeaders['content-security-policy'];
@@ -1213,7 +1193,7 @@ function removeContentSecurityPolicy(
     callback({ cancel: false, responseHeaders: details.responseHeaders });
   });
 
-  // When multiple listeners are defined, apply them all
+  // With multiple listeners, apply them all.
   betterSession.webRequest.setResolver('onHeadersReceived', (listeners) => {
     return listeners.reduce(
       async (accumulator, listener) => {

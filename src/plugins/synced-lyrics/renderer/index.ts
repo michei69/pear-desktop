@@ -64,10 +64,9 @@ export const renderer = createRenderer<
     if (info?.videoId) {
       refreshCurrentLyrics('player-api-ready');
     } else {
-      // getSongInfo() may not have videoId yet if the peard:update-song-info
-      // IPC roundtrip from the main process hasn't completed. Fall back to
-      // reading directly from the player API so lyricsStore.videoId is set
-      // immediately and the lyrics UI exits the loading state.
+      // getSongInfo() may have no videoId yet if the peard:update-song-info IPC
+      // roundtrip from the main process has not completed. Read from the player API
+      // instead so lyricsStore.videoId is set at once and the UI leaves loading.
       const vd = api.getVideoData();
       refreshCurrentLyrics('player-api-ready', {
         ...info,

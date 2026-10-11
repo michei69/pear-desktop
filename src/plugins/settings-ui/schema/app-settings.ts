@@ -38,9 +38,9 @@ const menuLabel = (path: string) => () =>
 const DESKTOP = Platform.Windows | Platform.macOS;
 
 /**
- * What a helper's `extras` argument accepts: the shared field properties plus
- * the concrete type's own extras, so `refreshable`, `variant` and the rest are
- * named once instead of redeclared per helper.
+ * What a helper's `extras` argument accepts: the shared field properties plus the
+ * type's own extras, so `refreshable`, `variant` and the rest are named once
+ * instead of redeclared per helper.
  */
 type FieldExtras = Omit<SettingFieldBase, 'key' | 'label'>;
 type TextExtras = FieldExtras &
@@ -146,8 +146,8 @@ export const buildAppSections = (): AppSection[] => {
               buildLanguageOptions,
               {
                 variant: 'dropdown',
-                // The bundled language list cant change, and the field is
-                // YouTube's own language, so it syncs instead of refreshing.
+                // The bundled language list cant change, and the field is YouTube's
+                // own language, so it syncs instead of refreshing.
                 refreshable: false,
                 languageSync: true,
                 ...AT_STARTUP,
@@ -444,8 +444,8 @@ export const buildAppSections = (): AppSection[] => {
       groups: [],
     },
     {
-      // Rendered by FlagsSection, and deliberately left out of the settings
-      // search: no groups, so no field of it can match a query.
+      // Rendered by FlagsSection, and deliberately out of the settings search:
+      // no groups, so no field of it can match a query.
       id: 'flags',
       icon: 'flag',
       label: () => t('settings-ui.sections.flags.label'),

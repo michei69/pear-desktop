@@ -11,21 +11,15 @@ import hudStyle from './volume-hud.css?inline';
 
 export type PreciseVolumePluginConfig = {
   enabled: boolean;
-  /**
-   * Percentage of volume to change
-   */
+  /** Percentage of volume to change. */
   steps: number;
-  /**
-   * Enable ArrowUp + ArrowDown local shortcuts
-   */
+  /** Enable ArrowUp + ArrowDown local shortcuts. */
   arrowsShortcut: boolean;
   globalShortcuts: {
     volumeUp: string;
     volumeDown: string;
   };
-  /**
-   * Plugin save volume between session here
-   */
+  /** Plugin saves the volume between sessions here. */
   savedVolume: number | undefined;
 };
 
@@ -93,7 +87,7 @@ export default createPlugin({
       setConfig(options);
     }
 
-    // Helper function for globalShortcuts prompt
+    // Helper for the globalShortcuts prompt
     const kb = (
       label_: string,
       value_: string,

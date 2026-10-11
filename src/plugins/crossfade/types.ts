@@ -8,10 +8,7 @@ export type CrossfadePluginConfig = {
   fadeOutDuration: number;
   /** Seconds before the end of a track that triggers the next one. */
   secondsBeforeEnd: number;
-  /**
-   * Scaling algorithm for the fade: `'linear'`, `'equalPower'`,
-   * `'logarithmic'` or a positive number of dB.
-   */
+  /** Scaling algorithm for the fade: `'linear'`, `'equalPower'`, `'logarithmic'` or a positive number of dB. */
   fadeScaling: 'linear' | 'logarithmic' | 'equalPower' | number;
 };
 

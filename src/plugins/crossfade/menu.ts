@@ -80,8 +80,8 @@ const promptCrossfadeValues = async (
     return undefined;
   }
 
-  // A number in dB, and one the fader's scaler accepts: a zero, negative or
-  // non-finite dynamic range is not a fade, so the previous setting is kept.
+  // A number in dB the fader's scaler accepts: a zero, negative or non-finite
+  // dynamic range is not a fade, so the previous setting is kept.
   const decibels = Math.abs(Number(res[3]));
   let fadeScaling: CrossfadePluginConfig['fadeScaling'];
 

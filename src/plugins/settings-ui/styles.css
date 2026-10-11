@@ -294,10 +294,9 @@
   background: var(--sui-surface-highest);
 }
 
-/* Alert overlaying the scrolling body: it reserves its own space in the flow
-   (so nothing below it is hidden) without shrinking the body's box. Stays
-   mounted and collapses, so showing/hiding animates both the fade and the
-   space it takes. */
+/* Alert overlaying the scrolling body: it reserves its own space in the flow (so
+   nothing below it is hidden) without shrinking the body's box. Stays mounted and
+   collapses, so showing/hiding animates both the fade and the space it takes. */
 .sui-restart {
   position: sticky;
   top: 0;
@@ -642,8 +641,7 @@
 .sui-text {
   width: 100%;
   height: 48px;
-  /* Without this the padding and border add to width: 100% and the field
-     overflows its card. */
+  /* Without this the padding and border add to width: 100% and the field overflows its card. */
   box-sizing: border-box;
   padding: 0 12px;
   border-radius: 8px;
@@ -723,8 +721,8 @@
   flex: 1;
   min-width: 0;
 }
-/* A row under a control: a label followed by its buttons, e.g. sync language.
-   The muted typography is for the label; the buttons set their own. */
+/* A row under a control: a label followed by its buttons, e.g. sync language. The
+   muted typography is for the label; the buttons set their own. */
 .sui-control-actions {
   display: flex;
   align-items: center;

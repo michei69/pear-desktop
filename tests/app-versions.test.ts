@@ -11,8 +11,8 @@ import {
   withRetry,
 } from '../src/providers/app-versions';
 
-// A prerelease and its release share a schema, so every migration decision has
-// to be made on the part before `-`.
+// A prerelease and its release share a schema, so migration decisions use the
+// part before `-`.
 
 test('a beta and its release share a migration base version', () => {
   expect(migrationBaseVersion('3.12.4-beta.1')).toBe('3.12.4');
@@ -55,7 +55,7 @@ test('a failed or empty compare never claims an update', () => {
   expect(isCommitBehindMaster(undefined)).toBe(false);
 });
 
-// The beta scheme: package.json names the release the betas lead up to, and the
+// The beta scheme: package.json names the release the betas lead up to; the
 // workflow only appends the run number.
 test('a beta is named after the release it leads up to', () => {
   expect(betaVersion('3.12.4', 42)).toBe('3.12.4-beta.42');
@@ -70,8 +70,8 @@ test('releasing the version upgrades every beta of it', () => {
 
   // Later betas upgrade earlier ones...
   expect(semver.gt(beta, betaVersion(release, 7))).toBe(true);
-  // ...and the release upgrades all of them, which is what lets a beta user
-  // move to stable without reinstalling.
+  // ...and the release upgrades all of them, so a beta user reaches stable
+  // without reinstalling.
   expect(semver.gt(release, beta)).toBe(true);
   // The same release never re-offers its own betas.
   expect(semver.gt(beta, release)).toBe(false);
@@ -79,8 +79,8 @@ test('releasing the version upgrades every beta of it', () => {
   expect(isBetaVersion(beta)).toBe(true);
 });
 
-// A beta release is replaced in place, so a check can land in the window where
-// the feed still names the old tag but its beta.yml is already gone.
+// A beta release is replaced in place, so a check can land where the feed still
+// names the old tag but its beta.yml is already gone.
 test('a failing check is retried, then gives up quietly', async () => {
   const waits: number[] = [];
   const wait = async (ms: number) => {

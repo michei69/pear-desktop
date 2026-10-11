@@ -40,7 +40,7 @@ export const backend = createBackend<BackendType, APIServerConfig>({
     this.init(ctx);
 
     const beforeQuitHandler = () => {
-      // Notify WebSocket clients that playback has stopped before quitting
+      // Notify WebSocket clients playback stopped before quitting.
       wsNotifyClose?.();
     };
     app.on('before-quit', beforeQuitHandler);
@@ -51,7 +51,7 @@ export const backend = createBackend<BackendType, APIServerConfig>({
     registerCallback(this.songInfoCallback);
 
     // Registered on ipcMain directly so stop() can remove exactly these
-    // listeners. ctx.ipc.on wraps handlers anonymously and only supports
+    // listeners; ctx.ipc.on wraps handlers anonymously and only supports
     // removeAllListeners, which would drop other plugins' listeners too.
     const onPlayerApiLoaded = () => {
       ctx.ipc.send('peard:setup-seeked-listener');

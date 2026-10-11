@@ -1,7 +1,6 @@
 /**
- * node-smtc is an optional dependency restricted to win32 (see `.pnpmfile.cjs`),
- * so on macOS/Linux it is never installed and its own types are missing. This
- * mirrors the surface `src/index.ts` uses; on Windows the real module wins.
+ * Optional win32-only dependency (see `.pnpmfile.cjs`): mirrors the surface
+ * `src/index.ts` uses, since its own types are missing off Windows.
  */
 declare module 'node-smtc' {
   export type SMTCRepeatMode = 'none' | 'track' | 'list';

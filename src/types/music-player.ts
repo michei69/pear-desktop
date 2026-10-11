@@ -319,9 +319,7 @@ export interface MusicPlayer {
     suggestedQuality: string,
     playerType: string,
   ) => void;
-  /**
-   * Note: This doesn't resume playback, it plays from the start.
-   */
+  /** Does not resume playback; plays from the start. */
   playVideo: () => void;
   pauseVideo: () => void;
   stopVideo: () => void;
@@ -348,29 +346,20 @@ export interface MusicPlayer {
   mute: () => void;
   unMute: () => void;
   isMuted: () => boolean;
-  /**
-   * @param volume 0-100
-   */
+  /** @param volume 0-100 */
   setVolume: (volume: number) => void;
   getVolume: () => number;
   seekTo: (seconds: number) => void;
   getPlayerMode: <Return>() => Return;
-  /**
-   * 1: playing
-   * 2: paused
-   */
+  /** 1: playing, 2: paused */
   getPlayerState: () => number;
   getAvailablePlaybackRates: () => number[];
   getPlaybackQuality: () => string;
   setPlaybackQuality: (quality: string) => void;
   getAvailableQualityLevels: () => string[];
-  /**
-   * @return float between start and end in seconds
-   */
+  /** @return float between start and end, in seconds */
   getCurrentTime: () => number;
-  /**
-   * @return int song duration in seconds
-   */
+  /** @return int song duration in seconds */
   getDuration: () => number;
   addEventListener: <K extends keyof PlayerAPIEvents>(
     type: K,
@@ -402,13 +391,9 @@ export interface MusicPlayer {
   getSphericalProperties: <Return>() => Return;
   setSphericalProperties: <Parameter>(param: Parameter) => void;
   mutedAutoplay: () => void;
-  /**
-   * @return string HTMLIFrameElement
-   */
+  /** @return string HTMLIFrameElement */
   getVideoEmbedCode: () => string;
-  /**
-   * @return string full URL of the video (include playlist id)
-   */
+  /** @return full URL of the video, playlist id included */
   getVideoUrl: () => string;
   getMediaReferenceTime: () => number;
   getSize: () => { width: number; height: number };

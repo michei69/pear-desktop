@@ -75,8 +75,8 @@ const RefreshButton = (p: { onRefresh: () => unknown }) => {
     if (spinning()) return;
     setSpinning(true);
     try {
-      // The minimum dwell keeps the spin visible on an instant re-read. A
-      // failed re-read keeps the list the field already has.
+      // The minimum dwell keeps the spin visible on an instant re-read; a failed
+      // re-read keeps the list the field already has.
       await Promise.all([
         Promise.resolve(p.onRefresh()).catch(() => {}),
         new Promise((resolve) => setTimeout(resolve, SPIN_MIN_MS)),
@@ -107,8 +107,8 @@ const SelectControl = (p: {
   const { options, refetch } = useResolvedOptions(() => p.field);
   const value = () => (p.value as string | number | undefined) ?? '';
 
-  // A stored value missing from a dynamic list means the list is stale (a theme
-  // was imported, a device plugged in): re-read it once per value.
+  // A stored value missing from a dynamic list means the list is stale (a theme was
+  // imported, a device plugged in): re-read once per value.
   let refreshedFor: unknown;
   createEffect(() => {
     const current = value();
@@ -123,14 +123,14 @@ const SelectControl = (p: {
     }
 
     refreshedFor = current;
-    // A failed re-read keeps the last list; a rejection here would otherwise
-    // leave the resource errored, and every later options() read would throw.
+    // A failed re-read keeps the last list; a rejection would otherwise leave the
+    // resource errored, and every later options() read would throw.
     Promise.resolve(refetch()).catch(() => {});
   });
 
-  // Same as the menu's Language > Sync entries: the value comes back from the
-  // backend (which reports unsupported languages itself), then goes through the
-  // normal change path so the restart banner and the store stay in step.
+  // Same as the menu's Language > Sync entries: the backend reports unsupported
+  // languages itself, and the value goes through the normal change path so the
+  // restart banner and the store stay in step.
   const syncFromYouTube = async () => {
     const language = await bridge.languageFromYouTube();
     if (language) p.onChange(language);

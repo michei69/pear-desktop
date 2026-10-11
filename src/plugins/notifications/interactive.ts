@@ -40,8 +40,7 @@ export default (
   const sendNotification = (songInfo: SongInfo) => {
     const iconSrc = notificationImage(songInfo, config());
 
-    // Capture the closing notification in a local so the async 'close' event
-    // of the old toast can't null out a newer one's reference.
+    // Capture it locally so the old toast's async 'close' can't null a newer one.
     const previousNotification = savedNotification;
     savedNotification = undefined;
     previousNotification?.close();
@@ -58,6 +57,7 @@ export default (
       body: songInfo.artist,
       icon: iconSrc,
       silent: true,
+      // Toast XML references:
       // https://learn.microsoft.com/en-us/uwp/schemas/tiles/toastschema/schema-root
       // https://learn.microsoft.com/en-us/windows/apps/design/shell/tiles-and-notifications/toast-schema
       // https://learn.microsoft.com/en-us/windows/apps/design/shell/tiles-and-notifications/adaptive-interactive-toasts?tabs=xml
@@ -66,7 +66,7 @@ export default (
     });
     savedNotification = notification;
 
-    // To fix the notification not closing
+    // Without this the notification does not close.
     setTimeout(() => {
       if (savedNotification === notification) {
         notification.close();
@@ -149,8 +149,7 @@ export default (
     `<action ${display(
       kind,
     )} activationType="protocol" arguments="${APP_PROTOCOL}://${kind}"/>`;
-  // Escape user-provided text before embedding it in toast XML, otherwise
-  // titles/artists containing &, < or > produce malformed XML.
+  // Escape user text: &, < or > in titles/artists would malform the toast XML.
   const escapeXml = (value: string) =>
     value
       .replaceAll('&', '&amp;')
@@ -294,7 +293,6 @@ export default (
   let savedSongInfo: SongInfo;
   let lastUrl: string | undefined;
 
-  // Register songInfoCallback
   registerCallback((songInfo, event) => {
     if (event === SongInfoEvent.TimeChanged) {
       currentSeconds = songInfo.elapsedSeconds ?? 0;
@@ -309,7 +307,7 @@ export default (
       (songInfo.url !== lastUrl || config().unpauseNotification)
     ) {
       lastUrl = songInfo.url;
-      // Don't show toast when hover popup is already visible
+      // Skip the toast while the hover popup is visible.
       if (!isHoverPopupVisible()) {
         sendNotification(songInfo);
       }

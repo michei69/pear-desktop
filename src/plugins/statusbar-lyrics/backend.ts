@@ -5,8 +5,7 @@ import { createBackend } from '@/utils';
 
 let tray: Tray | undefined;
 
-// Lazily create a tray instance so the plugin can reuse a single macOS title
-// target without allocating a visible icon.
+// Lazily create one tray to reuse as the macOS title target
 const getTray = () => {
   if (!tray) {
     tray = new Tray(nativeImage.createEmpty());
@@ -14,8 +13,7 @@ const getTray = () => {
   return tray;
 };
 
-// Normalize lyric text before sending it to the tray title so the result stays
-// compact and readable even when the source line contains extra whitespace.
+// Collapse whitespace and truncate to the configured length
 const normalizeText = (text: string, maxLength: number) => {
   const cleaned = text.replace(/\s+/g, ' ').trim();
   const limit = Number.isFinite(maxLength) ? Math.floor(maxLength) : 0;
@@ -25,7 +23,6 @@ const normalizeText = (text: string, maxLength: number) => {
 };
 
 export const backend = createBackend({
-  // Handle renderer requests that update or clear the macOS menu bar title.
   start(ctx) {
     ctx.ipc.handle(
       'statusbar-lyrics:set-text',
@@ -43,7 +40,6 @@ export const backend = createBackend({
       getTray().setTitle('');
     });
   },
-  // Tear down handlers and clear any remaining tray text when the plugin stops.
   stop(ctx) {
     ctx.ipc.removeHandler('statusbar-lyrics:set-text');
     ctx.ipc.removeHandler('statusbar-lyrics:clear');

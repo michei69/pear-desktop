@@ -150,9 +150,9 @@ export const LyricsPicker = (props: {
 
   const closeSearchModal = () => setShowSearchModal(false);
 
-  // A press that starts inside the modal and is released on the backdrop still
-  // dispatches `click` on the backdrop. Track where the press began so a text
-  // selection dragged out of an input doesn't close the modal.
+  // A press starting inside the modal but released on the backdrop still fires
+  // `click` on the backdrop; track where it began so a dragged text selection
+  // does not close the modal.
   let pressedOnBackdrop = false;
 
   const submitCustomQuery = (e: Event) => {
@@ -204,16 +204,14 @@ export const LyricsPicker = (props: {
   // prettier-ignore
   {
     onMount(() => {
-      // Register on _ytAPI if already available, and get current videoId
       if (_ytAPI) {
         const vd = _ytAPI.getVideoData();
         if (vd?.video_id) setVideoId(vd.video_id);
         _ytAPI.addEventListener('videodatachange', videoDataChangeHandler);
       }
 
-      // Always listen for DOM videodatachange events — these dispatch
-      // regardless of _ytAPI availability, covering both the mount-too-early
-      // race and events that fired before this component existed.
+      // Also listen on the DOM: these events fire regardless of _ytAPI, covering
+      // the mount-too-early race and events fired before this component existed.
       document.addEventListener('videodatachange', domVideoDataChangeHandler);
     });
 
@@ -240,7 +238,6 @@ export const LyricsPicker = (props: {
     if (provider !== lyricsStore.provider) setLyricsStore('provider', provider);
   });
 
-  /** Any manual pick sticks for the rest of the song. */
   const chooseProvider = (provider: ProviderName) => {
     setHasManuallySwitchedProvider(true);
     setLyricsStore('provider', provider);
@@ -248,7 +245,7 @@ export const LyricsPicker = (props: {
 
   /**
    * Pin the provider showing now to this song, or unpin it. Starring is an
-   * explicit override, so it also cancels a manual pick and applies at once.
+   * explicit override, so it also cancels a manual pick.
    */
   const toggleStar = () => {
     const id = videoId();

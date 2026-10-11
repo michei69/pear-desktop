@@ -46,7 +46,6 @@ export class LastFmScrobbler extends ScrobblerBase {
     setConfig: SetConfType,
   ): Promise<ScrobblerPluginConfig> {
     try {
-      // Get and store the session key
       const data = {
         api_key: config.scrobblers.lastfm.apiKey,
         format: 'json',
@@ -65,12 +64,11 @@ export class LastFmScrobbler extends ScrobblerBase {
       };
       if (json.error) {
         config.scrobblers.lastfm.token = await createToken(config);
-        // If is successful, we need retry the request
+        // Retry the request once authenticated
         authenticate(config, this.mainWindow).then((it) => {
           if (it) {
             this.createSession(config, setConfig);
           } else {
-            // failed
             setConfig(config);
           }
         });
@@ -94,7 +92,6 @@ export class LastFmScrobbler extends ScrobblerBase {
       return;
     }
 
-    // This sets the now playing status in last.fm
     const data = {
       method: 'track.updateNowPlaying',
     };
@@ -110,10 +107,9 @@ export class LastFmScrobbler extends ScrobblerBase {
       return;
     }
 
-    // This adds one scrobbled song to last.fm
     const data = {
       method: 'track.scrobble',
-      // Date.now() is in milliseconds, elapsedSeconds in seconds — convert to seconds before subtracting
+      // Date.now() is ms and elapsedSeconds is seconds — convert before subtracting
       timestamp: Math.trunc(Date.now() / 1000) - (songInfo.elapsedSeconds ?? 0),
     };
     this.postSongDataToAPI(songInfo, config, data, setConfig);
@@ -125,7 +121,7 @@ export class LastFmScrobbler extends ScrobblerBase {
     data: LastFmData,
     setConfig: SetConfType,
   ): Promise<void> {
-    // This sends a post request to the api, and adds the common data
+    // Adds the common fields and posts to the API
     if (!config.scrobblers.lastfm.sessionKey) {
       await this.createSession(config, setConfig);
     }
@@ -137,7 +133,7 @@ export class LastFmScrobbler extends ScrobblerBase {
       track: title,
       duration: songInfo.songDuration,
       artist: artist,
-      ...(songInfo.album ? { album: songInfo.album } : undefined), // Will be undefined if current song is a video
+      ...(songInfo.album ? { album: songInfo.album } : undefined), // undefined for videos
       api_key: config.scrobblers.lastfm.apiKey,
       sk: config.scrobblers.lastfm.sessionKey,
       format: 'json',
@@ -147,22 +143,20 @@ export class LastFmScrobbler extends ScrobblerBase {
     postData.api_sig = createApiSig(postData, config.scrobblers.lastfm.secret);
     const formData = createFormData(postData);
     try {
-      // apiRoot already includes the /2.0/ path (see defaultConfig), so use it
-      // as-is. Appending `2.0/` would produce ws.audioscrobbler.com/2.0/2.0/.
+      // apiRoot already includes the /2.0/ path (see defaultConfig); appending it again would double it
       const response = await net.fetch(config.scrobblers.lastfm.apiRoot, {
         method: 'POST',
         body: formData,
       });
       const json = (await response.json()) as { error?: number };
       if (json.error === 9) {
-        // Session key is invalid, so remove it from the config and reauthenticate
+        // error 9: session key invalid — clear it and reauthenticate
         config.scrobblers.lastfm.sessionKey = undefined;
         config.scrobblers.lastfm.token = await createToken(config);
         authenticate(config, this.mainWindow).then((it) => {
           if (it) {
             this.createSession(config, setConfig);
           } else {
-            // failed
             setConfig(config);
           }
         });
@@ -176,9 +170,8 @@ export class LastFmScrobbler extends ScrobblerBase {
 }
 
 const createFormData = (parameters: LastFmSongData) => {
-  // Creates the body for the post request. Last.fm expects
-  // application/x-www-form-urlencoded, so use URLSearchParams (FormData would
-  // send multipart/form-data, which the API does not reliably accept).
+  // Last.fm expects application/x-www-form-urlencoded; FormData would send
+  // multipart/form-data, which the API does not reliably accept.
   const formData = new URLSearchParams();
   Object.entries(parameters).forEach(([key, value]) => {
     if (value !== undefined) {
@@ -192,7 +185,6 @@ const createQueryString = (
   parameters: Record<string, unknown>,
   apiSignature: string,
 ) => {
-  // Creates a querystring
   const queryData = [];
   parameters.api_sig = apiSignature;
   for (const key in parameters) {
@@ -207,7 +199,7 @@ const createQueryString = (
 };
 
 const createApiSig = (parameters: LastFmSongData, secret: string) => {
-  // This function creates the api signature, see: https://www.last.fm/api/authspec
+  // See https://www.last.fm/api/authspec
   let sig = '';
 
   Object.entries(parameters)
@@ -229,7 +221,6 @@ const createToken = async ({
     lastfm: { apiKey, apiRoot, secret },
   },
 }: ScrobblerPluginConfig) => {
-  // Creates and stores the auth token
   const data: {
     method: string;
     api_key: string;
@@ -283,7 +274,7 @@ const authenticate = async (
                 (await browserWindow.webContents.executeJavaScript(
                   "!!document.getElementsByName('confirm').length",
                 )) as boolean;
-              // successful authentication
+              // not the approve screen, so authentication succeeded
               if (!isApproveScreen) {
                 resolve(true);
                 latestAuthResult = true;
@@ -308,7 +299,7 @@ const authenticate = async (
         });
       });
     } else {
-      // wait for the previous window to close
+      // wait for the previous auth window to close
       const waitForClose = async () => {
         while (authWindowOpened) {
           await new Promise((r) => setTimeout(r, 100));

@@ -75,7 +75,6 @@ export default createPlugin({
   config: {
     enabled: false,
     type: 'butterchurn',
-    // Config per visualizer
     butterchurn: {
       preset: 'martin [shadow harlequins shape code] - fata morgana',
       blendTimeInSeconds: 2.7,
@@ -189,8 +188,7 @@ export default createPlugin({
           variant: 'dropdown',
           key: 'vudio.accuracy',
           label: () => t('plugins.visualizer.settings.accuracy'),
-          // Vudio sets `analyser.fftSize = accuracy * 2`, so only powers of
-          // two within the Web Audio fftSize range are valid.
+          // Vudio sets fftSize = accuracy * 2, so only powers of two are valid.
           options: [32, 64, 128, 256, 512, 1024].map((value) => ({
             value,
             label: () => String(value),
@@ -345,7 +343,6 @@ export default createPlugin({
         visualizerContainer?.prepend(canvas);
       }
 
-      // Disconnect previous gainNode if present
       if (this.props.gainNode) {
         this.props.gainNode.disconnect();
       }
@@ -378,8 +375,7 @@ export default createPlugin({
             window.getComputedStyle(visualizerContainer);
           const w = parseFloat(width);
           const h = parseFloat(height);
-          // Guard against non-px / hidden containers (NaN) and zero-size
-          // containers so the canvas is never resized to 0×0.
+          // Skip hidden/non-px containers (NaN) and zero sizes: never 0×0.
           if (Number.isFinite(w) && Number.isFinite(h) && w > 0 && h > 0) {
             canvas.width = Math.ceil(w);
             canvas.height = Math.ceil(h);
@@ -394,9 +390,8 @@ export default createPlugin({
       this.props.observer.observe(visualizerContainer);
     },
 
-    // Rebuild immediately when the user changes the visualizer type/enabled
-    // via the menu. createVisualizer destroys the previous instance and is
-    // safe to call before audio is ready (it returns early with no audio).
+    // createVisualizer destroys the previous instance and returns early when
+    // no audio is ready, so this is safe on a menu toggle.
     onConfigChange(newConfig) {
       this.createVisualizer(newConfig);
     },

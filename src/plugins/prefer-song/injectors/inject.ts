@@ -18,14 +18,10 @@ interface ReleaseRow {
 
 /**
  * Replaces music videos with their song version while a release is playing.
- *
- * YouTube Music serves some release tracks as music videos, which play the
- * video's audio including its intro and outro. Every release row links to its
- * song version through the `MPTC` credits id, and that mapping is used to
- * rewrite the queue and the player request before playback starts.
- *
- * Runs in the page via `webFrame.executeJavaScript`, so it must stay
- * self-contained: it is injected as its own source and closes over nothing.
+ * Music videos play the video's audio (intro/outro); release rows link to the
+ * song via the `MPTC` credits id, used to rewrite the queue and player request
+ * before playback starts. Injected as its own source, so it must stay
+ * self-contained.
  */
 export function installPreferSong() {
   const originalFetch = window.fetch.bind(window);
@@ -145,8 +141,8 @@ export function installPreferSong() {
     const studio = await studioQueueItem(studioId);
     if (!studio) return;
 
-    // The rendered row carries the video id and type in several nested places,
-    // so swap them across the whole row, then take the song row's metadata.
+    // The row carries the video id and type in several nested places, so swap
+    // the whole row, then take the song row's metadata.
     const swapped = JSON.parse(
       JSON.stringify(item)
         .split(rowId)

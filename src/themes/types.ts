@@ -1,14 +1,8 @@
 /**
- * An external theme is a folder under `<userData>/themes`:
- *
- *   my-theme/
- *     theme.json    manifest (name, palette, presets, css files)
- *     style.css     optional styles, named by the manifest
- *     theme.js      optional script, named by the manifest
- *
- * The folder name is the theme id. Palette entries are emitted verbatim as
- * `--pear-theme-<key>` CSS custom properties, so a value can be any CSS value
- * (colour, font, length, ...)
+ * An external theme is a folder under `<userData>/themes` (`theme.json` manifest,
+ * optional `style.css` and `theme.js` named by it). The folder name is the theme
+ * id; palette entries are emitted verbatim as `--pear-theme-<key>` custom
+ * properties, so any CSS value works.
  */
 
 export type ThemePalette = Record<string, string>;
@@ -26,9 +20,8 @@ export type ThemeManifest = {
   /** CSS file(s) relative to the theme folder, applied in order. */
   css?: string | string[];
   /**
-   * JS file relative to the theme folder, run when the theme is applied.
-   * Its hash is what the user consents to, so this must be declared rather
-   * than auto-discovered.
+   * JS file relative to the theme folder, run when the theme is applied. Must be
+   * declared rather than auto-discovered: its hash is what the user consents to.
    */
   js?: string;
 };
@@ -39,9 +32,8 @@ export type PearTheme = {
   description?: string;
   author?: string;
   /**
-   * Absent when the manifest declares no `palette` at all. Such a theme has no
-   * own values for Default to fall back on, so it offers its first preset in its
-   * place; an explicit, even empty, `"palette": {}` keeps Default.
+   * Absent when the manifest declares no `palette`, in which case the theme's
+   * first preset stands in for Default; an explicit `"palette": {}` keeps Default.
    */
   palette?: ThemePalette;
   presets?: ThemePresets;
@@ -64,9 +56,9 @@ export type ThemeContext = {
 };
 
 /**
- * A theme's script may `module.exports` (or `export default`, transpiled by
- * the reader) an object with these hooks. `mount` may return a cleanup
- * function, which runs before `unmount` when the theme is replaced.
+ * Hooks a theme's script may export (CommonJS, or `export default` transpiled by
+ * the reader). `mount` may return a cleanup function, which runs before
+ * `unmount` when the theme is replaced.
  */
 export type ThemeHooks = {
   mount?: (context: ThemeContext) => (() => void) | void;
@@ -121,19 +113,14 @@ export const parseManifest = (raw: string): ThemeManifest | null => {
   return manifest;
 };
 
-/** Selection meaning "the palette the user edited", not a preset of the theme. */
+/** Selection meaning the user's edited palette, not a preset of the theme. */
 export const CUSTOM_PRESET = 'custom';
 
 /**
- * The preset a stored pick resolves to. `picked` is the config entry as it is:
- * a preset name, `custom`, '' for Default, or undefined when the user never
- * chose for this theme.
- *
- * A theme whose manifest declares no `palette` has no values to fall back on,
- * so with nothing picked its first preset stands in for Default - the picker and
- * the menu offer that preset instead of Default. An explicit `"palette": {}`
- * still counts as a palette, so it keeps Default. A '' pick counts as nothing
- * picked: there is no Default to pick for such a theme in the first place.
+ * Resolves a stored pick (a preset name, `custom`, '' for Default, or undefined)
+ * to a preset. With nothing picked, a theme that declares no `palette` has no
+ * Default and falls back to its first preset; `"palette": {}` still counts as a
+ * palette, so it keeps Default.
  */
 export const defaultPreset = (
   palette: ThemePalette | undefined,
@@ -156,9 +143,7 @@ export const keyLabel = (key: string) =>
 /**
  * The values a selection layers on top of a theme's own palette: a preset's
  * entries, the user's custom palette for `custom`, or nothing for `''` and for a
- * name the theme does not define. `picked` is the stored pick as it is, which
- * `defaultPreset` resolves - a theme with no `palette` declared falls to its
- * first preset until the user picks something.
+ * name the theme does not define.
  */
 export const presetPalette = (
   palette: ThemePalette | undefined,
@@ -179,8 +164,8 @@ export const resolvePalette = (
 ): ThemePalette => ({ ...palette, ...overrides });
 
 /**
- * Normalizes the `peard:get-themes` response. A config stored before the
- * theme keys existed omits them, so nothing may be assumed present here.
+ * Normalizes the `peard:get-themes` response: a config stored before the theme
+ * keys existed omits them, so nothing may be assumed present.
  */
 export const normalizeThemeState = (
   payload: Partial<ThemeState>,
@@ -195,16 +180,13 @@ export type ThemeState = {
   /** Selected theme id, or '' for no theme. */
   selected: string;
   /**
-   * What each theme layers over its own palette right now, keyed by theme id:
-   * the values of its selected preset, or the user's custom palette.
+   * What each theme layers over its own palette right now, per theme id: its
+   * selected preset's values or the user's custom palette.
    */
   overrides: Record<string, Record<string, string>>;
 };
 
-/**
- * Emits the palette as `--pear-theme-<key>` custom properties. Values are
- * passed through verbatim, so any CSS value works.
- */
+/** Emits the palette as `--pear-theme-<key>` custom properties, values verbatim. */
 export const paletteToCss = (palette: ThemePalette) =>
   `:root {\n${Object.entries(palette)
     .map(([key, value]) => `  --pear-theme-${key}: ${value};`)

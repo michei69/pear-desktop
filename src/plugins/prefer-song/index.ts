@@ -6,10 +6,7 @@ import { createPlugin } from '@/utils';
 import { installPreferSong } from './injectors/inject';
 
 export type PreferSongPluginConfig = {
-  /**
-   * Whether to play the song instead of the music video.
-   * @default false
-   */
+  /** Play the song instead of the music video. @default false */
   enabled: boolean;
 };
 

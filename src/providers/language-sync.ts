@@ -25,8 +25,8 @@ const TO_APP: Record<string, string> = {
 };
 
 /**
- * The language YouTube is currently set to, or undefined when there is no
- * YouTube session yet, or we dont ship what it is set to.
+ * The language YouTube is currently set to, or undefined with no YouTube
+ * session yet or when we dont ship it.
  */
 export const youtubeLanguage = async (
   win: BrowserWindow,

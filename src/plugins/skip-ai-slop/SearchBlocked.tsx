@@ -68,9 +68,9 @@ export const SearchBlocked = (props: { ctx: CustomFieldContext }) => {
   const allowedIds = () =>
     new Set(read(props.ctx, 'userAllow').map((c) => c.id));
 
-  // Searches the already-parsed names kept in memory (a few thousand strings),
-  // so typing never re-reads or re-parses storage. Name matches that start with
-  // the text come first, then the other name matches, then matches on the id.
+  // Searches the already-parsed in-memory names, so typing never re-reads or
+  // re-parses storage. Name matches starting with the text come first, then other
+  // name matches, then id matches.
   const search = createMemo(() => {
     tick();
     const q = query().trim().toLowerCase();

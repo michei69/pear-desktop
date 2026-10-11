@@ -135,9 +135,9 @@ export const SettingsModal = (props: {
     onCleanup(() => {
       window.removeEventListener('keydown', onKey);
       previousFocus?.focus?.();
-      // The window can also go away without going through close() (the tray
-      // settings window's X, a renderer reload); the main process tracks open
-      // sessions and would otherwise never show its restart dialog again.
+      // The window can also go away without close() (the tray window's X, a
+      // renderer reload); the main process would otherwise never show its
+      // restart dialog again.
       bridge.restartSessionClose(restartRequirements());
     });
   });
@@ -154,8 +154,8 @@ export const SettingsModal = (props: {
   });
 
   /**
-   * Runs `onMove` for every pointer event of a drag, on the grip itself: the
-   * capture keeps it reporting once the cursor leaves the window.
+   * Runs `onMove` for every pointer event of the drag, on the grip itself:
+   * pointer capture keeps it reporting once the cursor leaves the window.
    */
   const trackDrag = (e: PointerEvent, onMove: (move: PointerEvent) => void) => {
     e.preventDefault();
@@ -174,8 +174,8 @@ export const SettingsModal = (props: {
 
   /**
    * Drag the (invisible) bottom-right grip. The modal is centred, so growing it
-   * by `w` moves that corner only `w / 2`: doubling the pointer delta is what
-   * keeps the corner under the cursor instead of leaving it behind.
+   * by `w` moves that corner only `w / 2`: doubling the pointer delta keeps the
+   * corner under the cursor.
    */
   const startCornerDrag = (e: PointerEvent) => {
     const startX = e.clientX;
@@ -240,10 +240,10 @@ export const SettingsModal = (props: {
   );
 
   /**
-   * Only the changed field decides this. A plugin's own `restartNeeded` is
-   * about enabling or disabling it (see onToggle), not about its settings:
-   * crossfade needs a restart to turn on, but not to change a fade duration.
-   * Custom components may write below the field's own key (`presets.classical`).
+   * Only the changed field decides this: a plugin's own `restartNeeded` is about
+   * enabling it (see onToggle), not its settings (crossfade needs a restart to
+   * turn on, not to change a fade duration). Custom components may write below the
+   * field's key (`presets.classical`).
    */
   const fieldNeedsRestart = (groups: SettingsGroup[], key: string): boolean =>
     groups.some((group) =>
@@ -272,8 +272,7 @@ export const SettingsModal = (props: {
     if (isClosing) return;
     isClosing = true;
 
-    // Flush debounced slider writes before the window closes so recent
-    // changes aren't lost.
+    // Flush debounced slider writes so recent changes are not lost.
     await flushPendingPluginSliderWrites();
     props.onClose();
     bridge.restartSessionClose(restartRequirements());
@@ -600,8 +599,8 @@ export const SettingsModal = (props: {
 
                 <Show when={isFlags()}>
                   <FlagsSection
-                    // A flag override is a setting as far as the restart banner
-                    // and its dialog are concerned: both name the flag.
+                    // A flag override is a setting to the restart banner and its
+                    // dialog: both name the flag.
                     onChanged={(name, needsRestart) =>
                       flagIfRestart(
                         { type: 'setting', label: name },

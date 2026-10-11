@@ -1,14 +1,8 @@
 /*
- * Recolour for the Basic theme, and the recipe to copy into your own: it maps
- * YouTube Music's custom properties onto the `--pear-theme-<key>` variables
- * the app emits for a palette.
- *
- * Nothing here is injected for you. A palette only defines variables, so a
- * theme that wants the recolour ships its own copy of this stylesheet.
- *
- * The `:root` block holds fallbacks so a theme only has to define the colours
- * it cares about; the palette is injected after the theme's CSS, so the keys
- * it does define win over them.
+ * Recolour for the Basic theme, and the recipe to copy into your own: maps YouTube
+ * Music's custom properties onto the emitted `--pear-theme-<key>` variables. Nothing
+ * is injected for you, so a theme that wants this ships its own copy. The `:root`
+ * fallbacks cover colours it leaves out; the palette is injected after theme CSS.
  */
 :root {
   /* Derived from the palette, so a theme only has to define the four roles. */

@@ -8,8 +8,8 @@ import { QualitySettingButton } from './templates/quality-setting-button';
 
 import type { MusicPlayer } from '@/types/music-player';
 
-// The player UI is torn down and rebuilt while the app runs, which takes the
-// button with it, so the newest api has to be reachable from the re-attach.
+// The player UI is rebuilt at runtime and takes the button with it, so the
+// newest api must stay reachable from the re-attach.
 let playerApi: MusicPlayer | null = null;
 
 type QualityChangerRenderer = {
@@ -124,8 +124,8 @@ export default createPlugin({
         this.qualitySettingsButtonContainer,
       );
 
-      // Observing the player rather than the whole body keeps this cheap, and
-      // the player only gets replaced on a full page reload.
+      // Observing the player rather than body keeps this cheap, and it is only
+      // replaced on a full page reload.
       this.observer = new MutationObserver(() => {
         cancelAnimationFrame(this.rafId);
         this.rafId = requestAnimationFrame(() => this.sync());

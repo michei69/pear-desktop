@@ -24,9 +24,7 @@ declare global {
     mainConfig: typeof config;
     electronIs: typeof is;
     ELECTRON_RENDERER_URL: string | undefined;
-    /**
-     * Internal variable (Last interaction time)
-     */
+    /** Internal variable (last interaction time). */
     _lact: number;
     navigation: Navigation;
     download: () => void;

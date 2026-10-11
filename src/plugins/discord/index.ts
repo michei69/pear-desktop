@@ -9,18 +9,16 @@ import { onMenu } from './menu';
 export type DiscordPluginConfig = {
   'enabled': boolean;
   /**
-   * If enabled, will try to reconnect to discord every 5 seconds after disconnecting or failing to connect
-   *
+   * Reconnect every 5 seconds after disconnecting or failing to connect
    * @default true
    */
   'autoReconnect': boolean;
   /**
-   * If enabled, the discord rich presence gets cleared when music paused after the time specified below
+   * Clear the rich presence when music is paused for the timeout below
    */
   'activityTimeoutEnabled': boolean;
   /**
-   * The time in milliseconds after which the discord rich presence gets cleared when music paused
-   *
+   * Milliseconds of pause before the rich presence is cleared
    * @default 10 * 60 * 1000 (10 minutes)
    */
   'activityTimeoutTime': number;

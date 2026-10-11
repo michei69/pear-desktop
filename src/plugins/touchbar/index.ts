@@ -24,22 +24,18 @@ export default createPlugin({
       TouchBarScrubber,
     } = TouchBar;
 
-    // Songtitle label
     const songTitle = new TouchBarLabel({
       label: '',
     });
-    // This will store the song controls once available
     let controls: (() => void)[] = [];
 
-    // This will store the song image once available
     const songImage: {
       icon?: NativeImage;
     } = {};
 
-    // Pause/play button
     const pausePlayButton = new TouchBarButton({});
 
-    // The song control buttons (control functions are in the same order)
+    // Order matches the control functions.
     const buttons = new TouchBarSegmentedControl({
       mode: 'buttons',
       segments: [
@@ -60,7 +56,6 @@ export default createPlugin({
       change: (i) => controls[i](),
     });
 
-    // This is the touchbar object, this combines everything with proper layout
     const touchBar = new TouchBar({
       items: [
         new TouchBarScrubber({
@@ -77,22 +72,17 @@ export default createPlugin({
     const { playPause, next, previous, dislike, like } =
       getSongControls(window);
 
-    // If the page is ready, register the callback
     window.once('ready-to-show', () => {
       controls = [previous, playPause, next, dislike, like];
 
-      // Register the callback
       registerCallback((songInfo, event) => {
         if (event === SongInfoEvent.TimeChanged) return;
-        // Song information changed, so lets update the touchBar
+        // Ignore time ticks; anything else is a song info change.
 
-        // Set the song title
         songTitle.label = songInfo.title;
 
-        // Changes the pause button if paused
         pausePlayButton.label = songInfo.isPaused ? '▶️' : '⏸';
 
-        // Get image source
         songImage.icon = (
           songInfo.image
             ? songInfo.image

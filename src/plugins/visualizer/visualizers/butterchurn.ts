@@ -34,7 +34,7 @@ class ButterchurnVisualizer extends Visualizer {
     this.visualizer.loadPreset(preset, config.butterchurn.blendTimeInSeconds);
     this.visualizer.connectAudio(audioNode);
 
-    // Start animation request loop. Do not use setInterval!
+    // rAF, not setInterval: the loop must stay in step with the display.
     this.animFrameHandle = requestAnimationFrame(renderVisualizer);
   }
 

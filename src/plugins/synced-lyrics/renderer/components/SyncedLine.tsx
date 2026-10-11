@@ -109,8 +109,7 @@ export const SyncedLine = (props: SyncedLineProps) => {
       });
   });
 
-  // SyncedLine receives `props.index` from the VList iteration. The list is
-  // [lyricsPicker, ...lines], so the lyric line index is `props.index - 1`.
+  // The list is [lyricsPicker, ...lines], so the lyric line index is `props.index - 1`.
   const translation = createMemo(() => {
     if (!config()?.translation?.enabled) return '';
     const videoId = lyricsStore.videoId;
@@ -141,7 +140,7 @@ export const SyncedLine = (props: SyncedLineProps) => {
             class="text-lyrics"
             ref={(div: HTMLDivElement) => {
               // TODO: Investigate the animation, even though the duration is properly set, all lines have the same animation duration
-              // Guard against non-finite durations (the last line has duration: Infinity)
+              // guard against non-finite durations (the last line has duration: Infinity)
               const duration = Number.isFinite(props.line.duration)
                 ? props.line.duration
                 : 0;

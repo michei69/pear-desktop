@@ -38,14 +38,13 @@ async function fetchWithRetry(
       response = await net.fetch(url, {
         headers: {
           // MusicBrainz requires a descriptive UA with contact info; use the
-          // live app version so it stays in sync rather than hard-coding it.
+          // live app version so it stays in sync.
           'User-Agent': `pear-desktop/${app.getVersion()} ( ${email} )`,
           'Accept': 'application/json',
           'From': email,
         },
-        // A hung fetch would never reach setTimeout(release) below, leaving
-        // mbLock resolved-never and deadlocking every later correction. This
-        // 5s guard frees the lock on a stalled connection.
+        // A hung fetch would never reach setTimeout(release) below, deadlocking
+        // every later correction; this 5s guard frees the lock.
         signal: AbortSignal.timeout(5000),
       });
     } catch {
@@ -165,7 +164,7 @@ export async function fetchMusicBrainzCorrection(
       });
     }
 
-    // Fallback 3: Return raw "Artist - Title" parse if MusicBrainz completely fails
+    // Fallback 3: raw "Artist - Title" parse if MusicBrainz fails
     return setAndReturn(
       parsedArtist && parsedTitle
         ? { title: parsedTitle, artist: parsedArtist }

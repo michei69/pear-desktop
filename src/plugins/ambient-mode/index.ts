@@ -146,10 +146,8 @@ export default createPlugin({
         };
         this.update();
 
-        /* injecting */
         songImage.prepend(blurImage);
 
-        /* cleanup */
         return () => {
           if (blurImage.isConnected) blurImage.remove();
         };
@@ -167,7 +165,6 @@ export default createPlugin({
           willReadFrequently: true,
         });
 
-        /* effect */
         let lastEffectWorkId: number | null = null;
         let lastImageData: ImageData | null = null;
 
@@ -225,7 +222,6 @@ export default createPlugin({
         };
         this.update();
 
-        /* hooking */
         let canvasInterval: NodeJS.Timeout | null = null;
         canvasInterval = setInterval(
           onSync,
@@ -246,10 +242,8 @@ export default createPlugin({
         songVideo.addEventListener('pause', onPause);
         songVideo.addEventListener('play', onPlay);
 
-        /* injecting */
         videoWrapper.prepend(blurCanvas);
 
-        /* cleanup */
         return () => {
           if (canvasInterval) clearInterval(canvasInterval);
 
@@ -300,7 +294,7 @@ export default createPlugin({
         }
       };
 
-      /* needed for switching between different views (e.g. miniplayer) */
+      // View switches (e.g. miniplayer) only change attributes.
       const observer = new MutationObserver((mutationsList) => {
         for (const mutation of mutationsList) {
           if (mutation.type === 'attributes') {
@@ -313,7 +307,7 @@ export default createPlugin({
       if (playerPage) {
         observer.observe(playerPage, { attributes: true });
 
-        /* fallback ticker for when the observer isn't triggered */
+        // Fallback ticker for when the observer does not fire.
         this.interval = setInterval(injectBlurElement, 1000);
       }
     },

@@ -20,7 +20,6 @@ class VudioVisualizer extends Visualizer {
     this.visualizer = new Vudio(stream, canvas, {
       width: canvas.width,
       height: canvas.height,
-      // Visualizer config
       ...config.vudio,
     });
 

@@ -255,9 +255,7 @@ export type VideoDataChangeValue = Record<string, unknown> & {
 
   lengthSeconds: number;
 
-  /**
-   * Internal variable (for album data)
-   **/
+  /** Internal variable (for album data) */
   ['\u0079\u0074\u006d\u0064WatchNextResponse']?: WatchNextResponse;
 };
 

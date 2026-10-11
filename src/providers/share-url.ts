@@ -7,9 +7,9 @@ export const stripMusicSubdomain = (url: string) =>
   url.replace(MUSIC_HOST_PATTERN, '$1youtube.com');
 
 /**
- * Drops the `si` tracking parameter. When `si` was the first query parameter the
- * `?` is kept if another parameter follows it, so the rest stays a query string
- * instead of collapsing into `watch&v=…`.
+ * Drops the `si` tracking parameter. When `si` led the query the `?` is kept if
+ * another parameter follows, so the rest stays a query string instead of
+ * collapsing into `watch&v=…`.
  */
 export const stripSIParam = (url: string) =>
   url.replace(SI_PARAM_PATTERN, (match) =>

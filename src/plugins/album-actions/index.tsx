@@ -37,7 +37,6 @@ export default createPlugin<
   renderer: {
     waiting: false,
     start() {
-      // Waits for pagechange
       this.onPageChange();
       this.observer = new MutationObserver(() => {
         this.onPageChange();
@@ -107,7 +106,6 @@ export default createPlugin<
         buttonContainer,
       );
 
-      //Finds the playlist
       const playlist =
         document.querySelector('ytmusic-playlist-shelf-renderer') ??
         document.querySelector(':nth-last-child(1 of ytmusic-shelf-renderer)');
@@ -116,7 +114,7 @@ export default createPlugin<
         return;
       }
 
-      // Adds an observer for every button, so it gets updated when one is clicked
+      // Re-run on any like-button change, so the counts stay accurate.
       this.changeObserver?.disconnect();
 
       this.changeObserver = new MutationObserver(() => {
@@ -133,7 +131,7 @@ export default createPlugin<
           subtree: false,
         });
       }
-      //Determine if button is needed and colors the percentage
+      // Only show the percentage bar when the playlist has like buttons.
       const listsLength = playlist.querySelectorAll(
         '#button-shape-dislike > button',
       ).length;

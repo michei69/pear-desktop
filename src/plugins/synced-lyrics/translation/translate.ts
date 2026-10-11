@@ -20,9 +20,9 @@ const shouldFallbackPerLine = (err: unknown, lineCount: number): boolean => {
 };
 
 /**
- * Translates the full set of lyrics with one whole-song call (preserving
- * context). Falls back to a per-line call only if the whole-song path fails
- * to produce the right number of lines after one retry.
+ * Translates the whole song in one call, preserving context. Falls back to
+ * per-line calls only if that fails to return the right number of lines after
+ * one retry.
  */
 export const runTranslation = async (
   providerName: TranslationProviderName,

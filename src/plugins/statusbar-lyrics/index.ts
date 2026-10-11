@@ -18,8 +18,6 @@ export const defaultConfig: StatusbarLyricsPluginConfig = {
   includePronunciation: false,
 };
 
-// Plugin entry point: wires the renderer, backend, and menu together and
-// exposes the configuration that controls how lyrics appear in the status bar.
 export default createPlugin({
   name: () => 'Status Bar Lyrics',
   description: () =>

@@ -275,7 +275,7 @@ async function downloadSongUnsafe(
   let playabilityStatus = info.playability_status;
   let bypassedResult: YT.VideoInfo;
   if (playabilityStatus?.status === 'LOGIN_REQUIRED') {
-    // Try to bypass the age restriction
+    // LOGIN_REQUIRED here means an age gate, which the TV client skips.
     bypassedResult = await getAndroidTvInfo(id);
     playabilityStatus = bypassedResult.playability_status;
 
@@ -393,7 +393,7 @@ async function downloadChunks(
   for await (const chunk of stream) {
     downloaded += chunk.length;
     chunks.push(chunk);
-    // contentLength can be 0/omitted for some formats — avoid Infinity/NaN progress
+    // contentLength can be 0 or missing for some formats: avoid Infinity/NaN.
     const ratio = contentLength > 0 ? downloaded / contentLength : 0;
     const progress = Math.floor(ratio * 100);
     sendFeedback(
@@ -402,8 +402,7 @@ async function downloadChunks(
       }),
       ratio,
     );
-    // 15% for download, 85% for conversion
-    // This is a very rough estimate, trying to make the progress bar look nice
+    // Rough split: 15% download, 85% conversion, to make the bar look nice.
     increasePlaylistProgress(ratio * 0.15);
   }
   return chunks;
@@ -496,7 +495,6 @@ async function writeID3(
     sendFeedback(t('plugins.downloader.backend.feedback.writing-id3'));
     const tags: NodeID3.Tags = {};
 
-    // Create the metadata tags
     tags.title = metadata.title;
     tags.artist = metadata.artist;
 
@@ -733,7 +731,7 @@ function getFFmpegMetadataArgs(metadata: CustomSongInfo) {
   ];
 }
 
-// Playlist radio modifier needs to be cut from playlist ID
+// Radio modifier that has to be stripped off a playlist ID.
 const INVALID_PLAYLIST_MODIFIER = 'RDAMPL';
 
 const getPlaylistID = (aURL?: URL): string | null | undefined => {
@@ -766,10 +764,9 @@ const getMetadata = (info: YTMusic.TrackInfo): CustomSongInfo => ({
   mediaType: MediaType.Audio,
 });
 
-// This is used to bypass age restrictions
+// TV_EMBEDDED bypasses age restrictions. getInfo 404s with it, so getBasicInfo
+// is used instead — only the streaming data is needed.
 const getAndroidTvInfo = async (id: string): Promise<YT.VideoInfo> => {
-  // GetInfo 404s with the bypass, so we use getBasicInfo instead
-  // that's fine as we only need the streaming data
   return await yt.getBasicInfo(id, {
     client: 'TV_EMBEDDED',
   });

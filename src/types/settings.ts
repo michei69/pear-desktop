@@ -33,16 +33,9 @@ export interface SelectField extends SettingFieldBase {
   /** `radio` renders inline chips (default), `dropdown` a native select. */
   variant?: 'radio' | 'dropdown';
   options: SettingOptions;
-  /**
-   * Offer the refresh button, and re-read the list when the stored value is
-   * missing from it. Only useful for lists that change at runtime (files,
-   * devices). @default true
-   */
+  /** Offer the refresh button and re-read the list when the stored value is missing from it; runtime lists only (files, devices). @default true */
   refreshable?: boolean;
-  /**
-   * This field is YouTube's own UI language, so offer the menu's
-   * "From YouTube" / "To YouTube" sync buttons next to it.
-   */
+  /** YouTube's own UI language, so offer the menu's "From YouTube" / "To YouTube" sync buttons. */
   languageSync?: boolean;
 }
 
@@ -107,9 +100,9 @@ export interface OrderableField extends SettingFieldBase {
 }
 
 /**
- * `stored` first, in its own order, then every declared entry it did not name,
- * in declared order. Unknown, stale and duplicate entries are dropped, so a
- * list saved before an entry existed still shows it, at the end.
+ * `stored` first in its own order, then the declared entries it did not name, in
+ * declared order. Unknown, stale and duplicate entries are dropped, so a list
+ * saved before an entry existed still shows it, at the end.
  */
 export const normalizeOrder = <T>(
   stored: readonly unknown[] | undefined,
@@ -150,10 +143,7 @@ export interface SettingsGroup {
   fields: SettingField[];
 }
 
-/**
- * A plugin's declared settings. Either a flat field list (rendered as one
- * untitled group) or an explicit list of titled groups.
- */
+/** A plugin's declared settings: a flat field list (one untitled group) or explicit titled groups. */
 export type SettingsSchema = SettingField[] | SettingsGroup[];
 
 export const isSettingsGroups = (

@@ -1,10 +1,8 @@
 /**
- * Where a link clicked inside the app should go.
- *
- * YouTube (Music) and Google are the app's own pages and stay in the window.
- * Whatever host the app was pointed at (`options.url`) counts as its own too,
- * so a custom front-end keeps navigating internally. Everything else belongs
- * to the user's browser.
+ * Where a link clicked inside the app should go: YouTube (Music) and Google are
+ * the app's own pages and stay in the window, as does whatever host `options.url`
+ * points at, so a custom front-end keeps navigating internally. Everything else
+ * belongs to the user's browser.
  */
 
 /** Hosts kept in the app, subdomains included. */

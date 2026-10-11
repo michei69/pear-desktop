@@ -1,12 +1,12 @@
 /**
- * What the published `flags.json` says about one feature flag. Every field but
- * the name is optional in practice: a flag the file does not describe still
- * gets a row, just without a description, a family or a restart requirement.
+ * What the published `flags.json` says about one feature flag. Only the name is
+ * required: a flag the file does not describe still gets a row, just without a
+ * description, a family or a restart requirement.
  */
 export interface FlagMetadata {
-  /** Shown under the flag's name, like any other setting's description. */
+  /** Shown under the flag's name. */
   description?: string;
-  /** Whether a change needs a restart to take effect. */
+  /** Whether a change needs a restart. */
   requires_restart: boolean;
   /** Group the flag belongs to, shown as a tag. */
   family: string;
@@ -16,12 +16,12 @@ export interface FlagMetadata {
 export type FlagMetadataMap = Record<string, FlagMetadata>;
 
 /**
- * The published file is remote input, so only entries with the shape the
- * settings UI reads are kept; a stray object would otherwise render as one.
+ * The published file is remote input, so only entries shaped the way the
+ * settings UI reads them are kept; a stray object would render as one.
  */
 export const sanitizeFlagMetadata = (raw: unknown): FlagMetadataMap => {
-  // Object.entries needs a non-null object, so the shape is checked here; the
-  // field reads below then narrow each value on its own.
+  // Object.entries needs a non-null object; the field reads below narrow each
+  // value on its own.
   if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return {};
 
   const out: FlagMetadataMap = {};

@@ -35,7 +35,7 @@ export default createPlugin({
       type: 'select',
       key: 'mode',
       label: () => t('plugins.video-toggle.menu.mode.label'),
-      // Applied when the renderer starts, not on config change.
+      // Applied on renderer start, not on config change.
       restartNeeded: true,
       options: [
         {
@@ -285,9 +285,8 @@ export default createPlugin({
           api.getPlayerResponse()?.videoDetails?.musicVideoType ===
           'MUSIC_VIDEO_TYPE_ATV'
         ) {
-          // Video doesn't exist -> switch to song mode
+          // No video: song mode, and nothing to toggle.
           setVideoState(false);
-          // Hide toggle button
           setShowButton(false);
         } else {
           const songImage = document.querySelector<HTMLImageElement>(
@@ -296,11 +295,9 @@ export default createPlugin({
           if (!songImage) {
             return;
           }
-          // Switch to high-res thumbnail
           forceThumbnail(songImage);
-          // Show toggle button
           setShowButton(true);
-          // Change display to video mode if video exist & video is hidden & option.hideVideo = false
+          // Start in video mode if a hidden video exists and it is not disabled.
           if (
             !this.config?.hideVideo &&
             document.querySelector<HTMLElement>('#song-video.ytmusic-player')
@@ -313,10 +310,8 @@ export default createPlugin({
         }
       };
 
-      /**
-       * On load, after a delay, the page overrides the playback-mode to 'OMV_PREFERRED' which causes weird aspect ratio in the image container
-       * this function fix the problem by overriding that override :)
-       */
+      // HACK: after load, the page forces playback-mode to 'OMV_PREFERRED',
+      // which wrecks the image container's aspect ratio. Override the override.
       const forcePlaybackMode = () => {
         if (player) {
           const playbackModeObserver = new MutationObserver((mutations) => {

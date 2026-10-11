@@ -1,24 +1,13 @@
 // Copyright (c) 2026 bwedirhan. MIT License.
 /**
- * skip-ai-slop — Pear Desktop plugin (v4 draft)
- *
- * Copy to: src/plugins/skip-ai-slop/index.ts in a pear-desktop checkout, then
- * register it the same way the other plugins are registered (see how
- * src/plugins/skip-silences or sponsorblock are listed).
- *
- * Plugin shape (createPlugin, config, renderer.start/stop/onPlayerApiReady)
- * follows the "Creating a plugin" section of the pear-desktop README.
- *
- * Tested in `pnpm dev` (see README): videoId / channelId skipping and the real
- * download from GitHub work. STILL UNVERIFIED:
- *  - the packaged (production) build
- *  - that getPlayerResponse() already returns the NEW track when 'loadedmetadata'
- *    fires (if not, 'durationchange' below acts as a second chance)
- *  - the "UNVERIFIED" notes further down (automix payload, feedback menu fields,
- *    YouTube Music element names)
- *
- * To avoid depending on app-internal event names, track changes are detected with
- * standard <video> element events instead of app-specific custom events.
+ * skip-ai-slop — Pear Desktop plugin (v4 draft). Copy to this path and register
+ * it like the other plugins (see skip-silences or sponsorblock); the shape follows
+ * the README's "Creating a plugin" section. Tested in `pnpm dev`: videoId /
+ * channelId skipping and the GitHub download work. STILL UNVERIFIED: the packaged
+ * build; getPlayerResponse() returning the NEW track at 'loadedmetadata' (else
+ * 'durationchange' is a second chance); the "UNVERIFIED" notes below (automix
+ * payload, feedback menu fields, YouTube Music element names). Track changes use
+ * standard <video> events, not app-internal event names.
  */
 import { createPlugin } from '@/utils';
 
@@ -50,9 +39,9 @@ const BLACKLIST_URL =
   'https://raw.githubusercontent.com/bwedirhan/pear-desktop-ai-slop-filter/main/blacklist.json';
 const CACHE_KEY = 'skip-ai-slop:blacklist';
 const CACHE_TTL_MS = 24 * 60 * 60 * 1000;
-const REFRESH_INTERVAL_MS = 60 * 60 * 1000; // re-check hourly; refreshList() exits early while cache is fresh
+const REFRESH_INTERVAL_MS = 60 * 60 * 1000; // hourly; refreshList() exits early while the cache is fresh
 const SUPPORTED_SCHEMA = 2;
-const MAX_SKIPS = 5; // safety: stop skipping if this many skips happen...
+const MAX_SKIPS = 5; // SAFETY: stop skipping after this many skips
 const SKIP_WINDOW_MS = 10_000; // ...within this window (e.g. whole queue is blacklisted)
 
 type Entry = {
@@ -105,14 +94,12 @@ let keywords: RegExp[] = []; // whole-word matchers (see compileKeyword in confi
 let allowIds = new Set<string>();
 let allowNames = new Set<string>(); // lower-cased names of allowed channels
 let blockIds = new Set<string>();
-// Artists learned from a flagged uploader during this session only. Never saved
-// to the config: an uploader/distributor on the list must not permanently block
-// a real artist who just happens to be queued next to it. "Allow" in the
-// settings still overrides it (allow always wins).
+// Artists learned from a flagged uploader this session only; never saved, so an
+// uploader/distributor cannot permanently block a real artist queued next to it.
+// "Allow" in the settings still overrides it (allow always wins).
 let sessionBlockIds = new Set<string>();
-// Bumped whenever anything that decides "flagged or not" changes (keywords,
-// allow/block lists, the downloaded list). Cached per-card verdicts are only
-// trusted while they carry the current number.
+// Bumped whenever anything deciding "flagged or not" changes; cached per-card
+// verdicts are trusted only under the current number.
 let filterVersion = 0;
 let savePluginConfig:
   | ((c: Partial<Omit<Config, 'enabled'>>) => Promise<void> | void)
@@ -171,10 +158,9 @@ const has = (o: Record<string, Entry>, k: string) =>
   Object.prototype.hasOwnProperty.call(o, k);
 
 /**
- * Matching only needs the IDs. Dropping names and reasons makes the cached copy
- * (and the in-memory one) roughly 85% smaller, so it parses fast at startup and
- * stays far from the localStorage quota, which early.ts also depends on. Names
- * for the settings search are saved separately (writeBlacklistNames).
+ * Matching needs only the IDs: dropping names and reasons makes the cache ~85%
+ * smaller, so it parses fast and stays clear of the localStorage quota early.ts
+ * also depends on. Names for the settings search are saved separately.
  */
 const slim = (d: Blacklist): Blacklist => {
   const keysOnly = (o: Record<string, Entry>) =>
@@ -188,10 +174,9 @@ const slim = (d: Blacklist): Blacklist => {
 };
 
 /**
- * Reads the downloaded list from localStorage. Synchronous, so the list is
- * usable the moment the plugin starts. Returns true when the cache is still
- * fresh; an expired cache is still loaded (better than nothing while the new
- * one downloads).
+ * Reads the downloaded list from localStorage, synchronously, so it is usable
+ * the moment the plugin starts. Returns true when the cache is still fresh; an
+ * expired cache is still loaded (better than nothing while the new one downloads).
  */
 const loadCachedList = (): boolean => {
   try {
@@ -252,7 +237,7 @@ const onListChanged = () => {
 
 /** Hourly: download again only when the cache has expired. */
 const refreshList = async () => {
-  if (loadCachedList()) return; // cache still fresh
+  if (loadCachedList()) return;
   if (await downloadList()) onListChanged();
 };
 
@@ -312,8 +297,8 @@ const baseReason = (
   author?: string,
 ): string | null => {
   const ids = [videoId, ...channelIds].filter(Boolean);
-  // allow always wins: by id, or by name when the card shows an allowed channel's
-  // name under a different id than the one that was allowed
+  // allow always wins, by id or by name (the card may show an allowed channel's
+  // name under a different id than the one that was allowed)
   const nameAllowed = (t?: string) =>
     !!t && allowNames.has(t.trim().toLowerCase());
   if (
@@ -346,8 +331,8 @@ const reasonToSkip = (
 ): string | null => {
   const reason = baseReason(videoId, channelIds, title, author);
   if (reason && reason !== 'user-block') {
-    // Record the channel that actually matched, not just the first one on the
-    // card: otherwise "Allow" in the settings could allow the wrong channel.
+    // Record the channel that actually matched, not the card's first one:
+    // otherwise "Allow" in the settings could allow the wrong channel.
     const matched =
       reason === 'channel' || reason === 'learned-artist'
         ? matchedChannel(channelIds)
@@ -369,9 +354,8 @@ const canSkipNow = () => {
 };
 
 // ---- queue pre-filter -------------------------------------------------------
-// The queue (what YouTube Music builds when a playlist is opened) is already in
-// the page, so scanning it costs no network requests. Flagged tracks are
-// removed locally in one go, so playback never has to skip them one by one.
+// The queue is already in the page, so scanning it costs no requests; flagged
+// tracks are removed locally in one go, so playback never skips them one by one.
 type QueueEl = HTMLElement & {
   dispatch(obj: { type: string; payload?: unknown }): void;
   queue?: {
@@ -382,8 +366,8 @@ type QueueEl = HTMLElement & {
 let queueTimer: ReturnType<typeof setInterval> | null = null;
 const QUEUE_SCAN_MS = 2000;
 
-// Autoplay (automix) items may come wrapped differently from queue items, so
-// when the known shapes miss, look for the first object that has a videoId and a title.
+// Automix items may be wrapped differently from queue items, so when the known
+// shapes miss, look for the first object with a videoId and a title.
 const findRenderer = (node: unknown, depth = 0): Renderer | null => {
   if (!node || typeof node !== 'object' || depth > 6) return null;
   const candidate = node as Renderer;
@@ -433,8 +417,8 @@ const findQueueInfo = (videoId: string) => {
   return null;
 };
 
-// While flagged tracks are being removed one by one, further scans are ignored so
-// two scans never remove or skip at the same time.
+// While flagged tracks are removed one by one, further scans are ignored so two
+// never remove or skip at the same time.
 let removingFromQueue = false;
 
 const scanQueue = () => {
@@ -465,8 +449,8 @@ const scanQueue = () => {
     }
   }
 
-  // Skip the playing track only if it is still the one playing after the
-  // removals have been applied by the store.
+  // Skip the playing track only if it is still the one playing after the store
+  // has applied the removals.
   const skipPlaying = () => {
     if (!active || !api || !playingReason) return;
     const nowId: string | undefined =
@@ -481,11 +465,11 @@ const scanQueue = () => {
     return;
   }
 
-  // Remove one track at a time. The index is read fresh each time, because the
+  // Remove one track at a time, reading the index fresh each time because the
   // queue changes after every removal. The playing track is never removed.
   removingFromQueue = true;
   let removed = 0;
-  // One failed dispatch must not leave removingFromQueue stuck on true, which
+  // A failed dispatch must not leave removingFromQueue stuck on true, which
   // would switch queue filtering off until the plugin is restarted.
   const step = () => {
     try {
@@ -527,10 +511,9 @@ const scanQueue = () => {
 };
 
 // ---- autoplay pre-filter ----------------------------------------------------
-// Autoplay ("automix") tracks arrive through the queue store as an
-// ADD_AUTOMIX_ITEMS action. Wrapping the store's dispatch lets us drop flagged
-// tracks before they ever enter the queue: no removal needed, no extra requests.
-// UNVERIFIED: the exact payload shape; both an array and { items: [...] } are handled.
+// Automix tracks arrive as an ADD_AUTOMIX_ITEMS action; wrapping the store's
+// dispatch drops flagged ones before they enter the queue: no removal, no extra
+// requests. UNVERIFIED: the exact payload shape; both an array and { items: [...] } are handled.
 type StoreLike = {
   dispatch: (obj: { type: string; payload?: unknown }) => void;
 };
@@ -610,12 +593,10 @@ const unhookStore = () => {
 };
 
 // ---- page results filter (search, home, playlists, ...) --------------------------------------------------
-// Hides flagged results/cards on every page. Everything is read from the data
-// the page already holds in its result elements, so this costs no requests.
+// Hides flagged cards from data the page already holds, so no requests. Covers
+// search, home, explore, library, artist, album, playlist and related tabs, but not
+// the player queue, which scanQueue() handles and must keep.
 // UNVERIFIED: element/field names below come from YouTube Music's page structure.
-// Every kind of result/card on any page (search, home, explore, library, artist,
-// album, playlist, player "related" tabs), except the player queue, which is
-// handled by scanQueue() and must keep its items.
 const SEARCH_ITEMS = [
   'ytmusic-responsive-list-item-renderer',
   'ytmusic-two-row-item-renderer',
@@ -720,9 +701,8 @@ const searchInfo = (data: Renderer): SearchInfo => {
 
 // ---- tell YouTube "not interested" (recommendation cards only) -------------
 // Only cards whose own menu offers a "not interested" action (home / explore
-// recommendations) are reported; nothing is sent for search or playlists.
-// No request cap; queued reports are sent one after another, and each channel
-// is reported at most once.
+// recommendations) are reported; nothing is sent for search or playlists. Reports
+// are queued and sent one after another, each channel at most once, no request cap.
 // UNVERIFIED: the menu field names and the /feedback request below.
 const FEEDBACK_POLL_MS = 1000; // how often the queue is checked
 const FEEDBACK_STORE_KEY = 'skip-ai-slop:feedback-done';
@@ -805,9 +785,8 @@ const findNotInterestedToken = (data: Renderer): string | null => {
 };
 
 // Cards' feedback tokens -> channel, so a manual "don't recommend artist" click
-// (which YouTube sends through the app's fetch) can be recognised and that
-// channel hidden everywhere, including "Listen again", which YouTube builds from
-// history and does not clean up after "don't recommend".
+// (via the app's fetch) hides that channel everywhere, including "Listen again",
+// which YouTube rebuilds from history and never cleans up.
 const tokenChannel = new Map<string, { id: string; name: string }>();
 /** The app element's network manager, as far as this plugin uses it. */
 type FetchFn = (url: string, data: unknown) => Promise<unknown>;
@@ -863,8 +842,8 @@ const unhookFetch = () => {
 };
 
 // "Listen again" is built from listening history, so sending "not interested" for
-// its cards would repeat on every start and does not remove them. Shelf titles
-// are language dependent, so this lists the common ones.
+// its cards would repeat on every start and does not remove them; shelf titles
+// are language dependent, hence this list of the common ones.
 const LISTEN_AGAIN_RE =
   /yeniden dinle|listen again|nochmal anh|écouter à nouveau|escuchar de nuevo|ascolta di nuovo|ouvir novamente|снова послушать/i;
 const SHELF_SELECTOR =
@@ -920,8 +899,8 @@ const feedbackTick = async () => {
         feedbackSent++;
         feedbackDone.add(next.key);
         saveFeedbackDone();
-        // the key falls back to a videoId/token when a card has no channel;
-        // only real channel IDs belong in the channel block list
+        // the key falls back to a videoId/token when a card has no channel; only
+        // real channel IDs belong in the channel block list
         if (next.key.startsWith('UC')) addBlocked(next.key, next.name);
         console.info(
           `[skip-ai-slop] sent "not interested" for ${next.key} (${next.reason})`,
@@ -946,9 +925,8 @@ const unhideSearchResults = () => {
   hiddenCount = 0;
 };
 
-// Verdict per card. A card is judged once; every later scan reuses the answer
-// until filterVersion changes, so scanning a page of hundreds of cards on each
-// DOM change stays cheap.
+// Verdict per card: judged once and reused until filterVersion changes, so
+// scanning hundreds of cards on every DOM change stays cheap.
 const verdicts = new WeakMap<object, { ver: number; flagged: boolean }>();
 let lastPageScan = 0;
 
@@ -961,8 +939,8 @@ const scanSearchResults = () => {
     return;
   }
   const cards = document.querySelectorAll<HTMLElement>(SEARCH_ITEMS);
-  // If cards were already on the page at the first scan, the plugin started
-  // after the page drew them. That gap is what shows up as "slow".
+  // Cards already on the page at the first scan mean the plugin started after
+  // the page drew them; that gap is what shows up as "slow".
   for (const el of cards) {
     const raw = (el as { data?: unknown }).data;
     const data = raw && typeof raw === 'object' ? (raw as Renderer) : undefined;
@@ -992,8 +970,8 @@ const scanSearchResults = () => {
     }
     const isHidden = el.hasAttribute(HIDDEN_ATTR);
     // Hidden by the preload scanner (early.ts) from link text alone. Once the
-    // card has real data the verdict above is authoritative: keep it hidden
-    // (now counted as ours) or release it. Without data we cannot judge yet.
+    // card has real data the verdict above is authoritative: keep it hidden (now
+    // counted as ours) or release it; without data we cannot judge yet.
     const earlyHidden = el.hasAttribute(EARLY_ATTR);
     if (earlyHidden && data) {
       el.removeAttribute(EARLY_ATTR);
@@ -1047,10 +1025,9 @@ const check = () => {
   );
   if (!reason) return;
 
-  // Flagged only by the uploader's channel: the queue entry's own (artist) channel
-  // id is not on any list, so scanQueue could not remove this track ahead of time.
-  // Block that artist id too, so their other queued tracks are removed instead of
-  // skipped. scanQueue then removes them first and skips this one last.
+  // Flagged only by the uploader's channel: the queue entry's artist id is on no
+  // list, so scanQueue could not remove this track ahead of time. Learn that artist
+  // too, so their other queued tracks get removed and this one is skipped last.
   const artistId = queued?.channelIds.find((c) => c.startsWith('UC'));
   if (
     reason === 'channel' &&
@@ -1088,10 +1065,9 @@ let pageObserver: MutationObserver | null = null;
 let pageTimer: ReturnType<typeof setInterval> | null = null;
 let pageScanPending = false;
 
-// The first change after a quiet moment is scanned right away, inside the
-// observer callback and so before the browser paints: a new card can be hidden
-// before it is ever drawn. Changes that follow within the throttle window are
-// scanned once, when the window ends.
+// The first change after a quiet moment is scanned right away, inside the observer
+// callback and so before the browser paints: a new card can be hidden before it is
+// drawn. Changes that follow within the throttle window are scanned once, at its end.
 const schedulePageScan = () => {
   if (pageScanPending) return;
   const wait = PAGE_SCAN_THROTTLE_MS - (performance.now() - lastPageScan);
@@ -1265,10 +1241,9 @@ export default createPlugin({
       active = true;
 
       // The app starts renderer plugins one after another and waits for each
-      // start() to finish, and it only hands out the player API once all of them
-      // are done. So nothing slow may be awaited here: the saved list is read
-      // synchronously from the cache, and a missing/expired one downloads in the
-      // background and is applied when it arrives.
+      // start() to finish before handing out the player API, so nothing slow may be
+      // awaited here: the saved list is read synchronously, and a missing/expired
+      // one downloads in the background and is applied when it arrives.
       const cacheFresh = loadCachedList();
       startPageScan(); // keywords, block/allow lists and the cached list work at once
       // also download once when the names for the settings search are missing

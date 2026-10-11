@@ -309,8 +309,8 @@ test('a release lookup that failed is retried on the next play', async () => {
   // The lookup failed, so the queue is left as the page served it.
   expect(first[0].videoId).toBe('video-1');
 
-  // A failed load must not be remembered as the answer: once the release can be
-  // read, the next play swaps the music video for its song.
+  // A failed load is not remembered: once the release is readable, the next
+  // play swaps the music video for its song.
   state.failBrowse = false;
   const second = await tracksOf(
     await post('/youtubei/v1/next', { playlistId: RELEASE_PLAYLIST }),

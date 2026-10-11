@@ -140,7 +140,7 @@ export default createPlugin({
         const target = e.target;
         const t = target.currentTime;
 
-        // Binary search over sorted segments to find matching segment
+        // Binary search the sorted segments.
         let lo = 0;
         let hi = currentSegments.length - 1;
         let found = -1;
@@ -178,7 +178,7 @@ export default createPlugin({
       if (!video) return;
 
       video.addEventListener('timeupdate', this.timeUpdateListener);
-      // Reset segments on song end
+      // 'emptied' fires when the track ends
       video.addEventListener('emptied', this.resetSegments);
     },
     stop({ ipc }) {

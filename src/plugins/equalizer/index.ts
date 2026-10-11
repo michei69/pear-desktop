@@ -38,8 +38,7 @@ export default createPlugin({
       key: 'presets',
       label: () => t('plugins.equalizer.menu.presets.label'),
       component: 'equalizer.presets',
-      // The renderer reads the presets once, on start; a toggled preset only
-      // reaches the audio graph after a restart.
+      // Presets are read once on renderer start, so a toggle needs a restart.
       restartNeeded: true,
     },
   ],
@@ -82,14 +81,13 @@ export default createPlugin({
 
           if (filtersToApply.length === 0) return;
 
-          // Clean up previous filters if they exist
           appliedFilters.forEach((filter) => filter.disconnect());
           appliedFilters = [];
 
           audioSourceNode = audioSource;
           audioCtx = audioContext;
 
-          // Disconnect default path to avoid parallel audio
+          // Drop the default path so audio is not played twice.
           audioSource.disconnect(audioContext.destination);
 
           let lastNode: AudioNode = audioSource;
@@ -113,7 +111,7 @@ export default createPlugin({
       appliedFilters.forEach((filter) => filter.disconnect());
       appliedFilters = [];
 
-      // Restore default audio path
+      // Restore the default audio path
       if (audioSourceNode && audioCtx) {
         audioSourceNode.connect(audioCtx.destination);
         audioSourceNode = null;

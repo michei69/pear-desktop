@@ -63,8 +63,8 @@ const GPU_VENDORS: Record<number, string> = {
 };
 
 /**
- * A readable GPU name. `complete` gives chromium's renderer string, which is
- * what chrome://gpu shows; the bus ids are the fallback when it does not.
+ * A readable GPU name: `complete` gives chromium's renderer string (what
+ * chrome://gpu shows), the bus ids are the fallback when it does not.
  */
 const describeGpu = (info: GpuInfo) => {
   const devices = info.gpuDevice ?? [];
@@ -150,8 +150,8 @@ export const backend = createBackend<
 
     ipc.handle(LOAD_STORE, () => config.getStore());
 
-    // Returns false when the write was refused (declining a theme's script),
-    // so the caller can re-read the store instead of keeping its optimistic value.
+    // False when the write was refused (declining a theme's script), so the
+    // caller re-reads the store instead of keeping its optimistic value.
     ipc.handle(
       OPTION_SET,
       async (key: string, value: unknown): Promise<boolean> => {
@@ -164,8 +164,7 @@ export const backend = createBackend<
           return true;
         }
 
-        // Feature-flag overrides are written straight through: they take effect
-        // live, so they must not go through setMenuOption, whose
+        // Flag overrides take effect live, so they bypass setMenuOption, whose
         // restartOnConfigChanges would restart the app under the user.
         if (key === 'options.featureFlags') {
           if (!value || typeof value !== 'object') return false;
@@ -173,8 +172,8 @@ export const backend = createBackend<
           return true;
         }
 
-        // setMenuOption, not set: the native menu offers these same options and
-        // honours `restartOnConfigChanges`, so the two paths must not diverge.
+        // setMenuOption, not set: the native menu honours `restartOnConfigChanges`
+        // for these same options, so the two paths must not diverge.
         config.setMenuOption(key, value);
         applyOptionEffects(key, value, window);
         return true;
@@ -205,9 +204,8 @@ export const backend = createBackend<
           .filter((metric) => metric.type === type)
           .reduce((total, metric) => total + metric.memory.workingSetSize, 0);
 
-      // Kilobytes, as Electron reports them. The Browser entry is the app's own
-      // node process, and whatever is left is the chromium renderers, whatever
-      // Electron happens to call them.
+      // Kilobytes, as Electron reports them. Browser is the app's own node process;
+      // whatever is left is the chromium renderers, whatever Electron calls them.
       const main =
         workingSet('Browser') || Math.round(process.memoryUsage().rss / 1024);
       const known = new Set(['Browser', 'GPU']);
@@ -219,8 +217,8 @@ export const backend = createBackend<
 
       let gpu: GpuInfo = {};
       try {
-        // Rejects when the GPU is entirely disabled, so keep whatever we have:
-        // the feature status still says whether that is the case.
+        // Rejects when the GPU is entirely disabled; the feature status still
+        // says whether that is the case.
         gpu = (await app.getGPUInfo('complete')) as GpuInfo;
       } catch {}
 
@@ -258,19 +256,17 @@ export const backend = createBackend<
       } catch {}
     });
 
-    // Routed through the provider so the check follows the selected channel
-    // and a dev build gets the commit comparison instead.
+    // Routed through the provider: the check follows the selected channel, and a
+    // dev build gets the commit comparison instead.
     ipc.handle(CHECK_UPDATES, () => checkForAppUpdates());
 
-    // False when the user declined the downgrade warning, or the value was not
-    // a channel; the renderer then re-reads the store instead of keeping its
-    // optimistic pick.
+    // False when the user declined the downgrade warning or the value was not a
+    // channel; the renderer then re-reads the store instead of keeping its pick.
     ipc.handle(UPDATE_CHANNEL_SET, (channel: string) =>
       setUpdateChannel(channel),
     );
 
-    // Themes: the same state the renderer applies, plus the edits the modal's
-    // palette editor makes.
+    // Themes: the state the renderer applies, plus the modal's palette edits.
     ipc.handle(THEMES, () => ({
       themes: themesForRenderer(),
       selected: config.get('options.theme'),
@@ -336,21 +332,20 @@ export const backend = createBackend<
     );
 
     // Descriptions, families and restart requirements for the flags section.
-    // Resolves only once the launch download has finished, so the first open
-    // shows them instead of an empty list.
+    // Resolves once the launch download has finished, so the first open shows
+    // them instead of an empty list.
     ipc.handle(FLAG_METADATA, () => flagMetadata());
 
-    // The renderer decides which presentation to use; the window itself can
-    // only be made here. Reopening focuses the existing one.
+    // The renderer picks the presentation; the window can only be made here.
+    // Reopening focuses the existing one.
     ipc.handle(OPEN_WINDOW, () => {
       openSettingsWindow();
     });
 
     this.unwatch = config.watch(() => {
       const store = config.getStore();
-      // Broadcast to every window: the injected modal lives in the main
-      // window, but the standalone tray settings window is a separate
-      // BrowserWindow that must also stay in sync.
+      // Broadcast to every window: the injected modal is in the main window, the
+      // standalone tray window is a separate BrowserWindow that must stay in sync.
       for (const win of BrowserWindow.getAllWindows()) {
         if (!win.isDestroyed()) {
           win.webContents.send('ytmd-sui:store-changed', store);

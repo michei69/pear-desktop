@@ -107,14 +107,12 @@ export class LRCLib implements LyricProvider {
         );
 
         const tagPermutations = [];
-        // Compare each tag with each item artist
         for (const tag of filteredTags) {
           for (const itemArtist of itemArtists) {
             tagPermutations.push([tag.toLowerCase(), itemArtist.toLowerCase()]);
           }
         }
 
-        // Compare each item artist with each tag
         for (const itemArtist of itemArtists) {
           for (const tag of filteredTags) {
             tagPermutations.push([itemArtist.toLowerCase(), tag.toLowerCase()]);
@@ -126,7 +124,6 @@ export class LRCLib implements LyricProvider {
             ...tagPermutations.map(([x, y]) => jaroWinkler(x, y)),
           );
 
-          // Use the best match ratio between direct artist match and tag match
           ratio = Math.max(ratio, tagRatio);
         }
       }

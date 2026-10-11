@@ -108,7 +108,7 @@ export const onPlayerApiReady = async (
               setSpeed(1);
             }
 
-            // E.deltaY < 0 means wheel-up
+            // A negative deltaY is a wheel-up
             setSpeed((prev) =>
               roundToTwo(
                 e.deltaY < 0

@@ -6,10 +6,7 @@ const COPIED_FEEDBACK_MS = 1500;
 
 const mb = (kilobytes: number) => `${Math.round(kilobytes / 1024)} MB`;
 
-/**
- * The text both copy actions produce: the About button and the version in the
- * sidebar foot, so a bug report carries the same environment either way.
- */
+/** The text both copy actions produce, so a bug report carries the same environment either way. */
 export const buildDebugInfo = (meta: AppMeta, plugins: string[]): string => {
   const { memory } = meta;
   const total = memory.main + memory.renderers + memory.gpu;

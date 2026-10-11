@@ -16,11 +16,8 @@ type ShareUrlOptions = {
 
 const MUSIC_URL = 'https://music.youtube.com/watch?v=abc123';
 
-/**
- * A happy-dom document whose window answers `mainConfig.get` from `options`, as
- * the preload exposes it. The object is kept by reference so a test can flip an
- * option and check that the next rewrite picks it up.
- */
+// A happy-dom document whose window answers `mainConfig.get` from `options`, as
+// the preload exposes it. Kept by reference so a test can flip an option live.
 const setup = (options: ShareUrlOptions, value = MUSIC_URL) => {
   const window = new Window();
   (window as unknown as { mainConfig: { get(key: string): unknown } }).mainConfig =

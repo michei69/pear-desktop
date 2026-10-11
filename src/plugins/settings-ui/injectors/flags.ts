@@ -38,21 +38,19 @@ export const liveFlags = (): Record<string, unknown> =>
 /**
  * Applies the user's overrides to YouTube Music's feature flags.
  *
- * Injected through `webFrame.executeJavaScript` before the page's own scripts
- * run, so it is stringified: it must stay self-contained and close over
- * nothing. The overrides stay mutable here rather than being copied once,
- * because the page re-sets EXPERIMENT_FLAGS as it goes and the override has to
- * win every time; the settings UI drives them through the API below.
+ * Injected via `webFrame.executeJavaScript` before the page's own scripts run, so it is
+ * stringified: it must stay self-contained and close over nothing. The overrides stay
+ * mutable because the page re-sets EXPERIMENT_FLAGS as it goes and ours must win every
+ * time; the settings UI drives them through the API below.
  */
 export function installFeatureFlags(initial: FeatureFlagOverrides) {
   const overrides: FeatureFlagOverrides = { ...initial };
 
   /**
-   * The page's own flags per config, as they came from the server: what Undo
-   * puts back, so a flag the page carries keeps its default instead of being
-   * dropped. Filled only from payloads the page itself handed over — the live
-   * map also holds our overrides, and reading values back out of it would
-   * record those as the page's own.
+   * The page's own flags per config, as they came from the server: what Undo puts
+   * back, so a flag the page carries keeps its default instead of being dropped.
+   * Filled only from payloads the page handed over — the live map also holds our
+   * overrides, so reading values back out of it would record those as its own.
    */
   const own = new WeakMap<Ytcfg, FeatureFlagOverrides>();
 
@@ -80,9 +78,8 @@ export function installFeatureFlags(initial: FeatureFlagOverrides) {
   };
 
   /**
-   * Keep the values the page just handed over. First value wins: whatever it
-   * sent before an override was written is the page's own, and anything after
-   * that is our override coming back around.
+   * Keep the values the page just handed over. First value wins: what it sent
+   * before an override was written is the page's own, anything after is ours.
    */
   const capture = (cfg: Ytcfg | undefined, source: unknown) => {
     if (!cfg || !source || typeof source !== 'object') return;

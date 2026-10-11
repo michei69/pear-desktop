@@ -6,21 +6,12 @@ import * as config from '@/config';
 import type { GetPlayerResponse } from '@/types/get-player-response';
 
 export enum MediaType {
-  /**
-   * Audio uploaded by the original artist
-   */
+  /** Audio uploaded by the original artist */
   Audio = 'AUDIO',
-  /**
-   * Official music video uploaded by the original artist
-   */
+  /** Official music video uploaded by the original artist */
   OriginalMusicVideo = 'ORIGINAL_MUSIC_VIDEO',
-  /**
-   * Normal video uploaded by a user
-   */
+  /** Normal video uploaded by a user */
   UserGeneratedContent = 'USER_GENERATED_CONTENT',
-  /**
-   * Podcast episode
-   */
   PodcastEpisode = 'PODCAST_EPISODE',
   OtherVideo = 'OTHER_VIDEO',
 }
@@ -45,7 +36,6 @@ export interface SongInfo {
   tags?: string[];
 }
 
-// Grab the native image using the src
 export const getImage = async (
   src: string,
   depth = 0,
@@ -77,7 +67,6 @@ const handleData = async (
     return null;
   }
 
-  // Fill songInfo with empty values
   const songInfo: SongInfo = {
     title: '',
     alternativeTitle: '',
@@ -127,7 +116,7 @@ const handleData = async (
     songInfo.elapsedSeconds = videoDetails.elapsedSeconds;
     songInfo.isPaused = videoDetails.isPaused;
     songInfo.videoId = videoDetails.videoId;
-    songInfo.album = videoDetails.album; // Will be undefined if video exist
+    songInfo.album = videoDetails.album; // undefined for videos
 
     switch (videoDetails?.musicVideoType) {
       case 'MUSIC_VIDEO_TYPE_ATV':
@@ -150,7 +139,7 @@ const handleData = async (
         break;
       default:
         songInfo.mediaType = MediaType.OtherVideo;
-        // HACK: This is a workaround for "podcast" types where "musicVideoType" doesn't exist. Google :facepalm:
+        // HACK: workaround for "podcast" types where "musicVideoType" doesn't exist
         if (
           !config.get('options.usePodcastParticipantAsArtist') &&
           (data.responseContext.serviceTrackingParams
@@ -183,14 +172,13 @@ export enum SongInfoEvent {
   TimeChanged = 'peard:time-changed',
 }
 
-// This variable will be filled with the callbacks once they register
 export type SongInfoCallback = (
   songInfo: SongInfo,
   event: SongInfoEvent,
 ) => void;
 const callbacks: Set<SongInfoCallback> = new Set();
 
-// This function will allow plugins to register callback that will be triggered when data changes
+// Lets plugins register a callback fired when song data changes
 export const registerCallback = (callback: SongInfoCallback) => {
   callbacks.add(callback);
 };
@@ -203,7 +191,7 @@ const registerProvider = (win: BrowserWindow) => {
   const dataMutex = new Mutex();
   let songInfo: SongInfo | null = null;
 
-  // This will be called when the song-info-front finds a new request with song data
+  // Fired when song-info-front finds a new request with song data
   ipcMain.on('peard:video-src-changed', async (_, data: GetPlayerResponse) => {
     const tempSongInfo = await dataMutex.runExclusive<SongInfo | null>(
       async () => {

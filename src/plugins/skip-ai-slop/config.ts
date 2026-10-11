@@ -3,9 +3,9 @@ export type KeywordEntry = { text: string; enabled: boolean };
 export type ChannelEntry = { id: string; name: string };
 
 /**
- * A stored entry, as a hand-edited config.json may hold it: any field, any
- * type. Reading through `?.` is what makes a wrong field harmless — it yields
- * undefined, which the type checks below then reject.
+ * A stored entry as a hand-edited config.json may hold it: any field, any type.
+ * Reading through `?.` makes a wrong field harmless — it yields undefined, which
+ * the type checks below then reject.
  */
 type StoredKeyword = { text?: unknown; enabled?: unknown };
 type StoredChannel = { id?: unknown; name?: unknown };
@@ -47,10 +47,9 @@ export const normalizeKeywords = (raw: unknown): KeywordEntry[] => {
 };
 
 /**
- * Turns a keyword into a matcher that finds it as a WHOLE word (or phrase),
- * case-insensitively: "ai" matches "AI Cover" but not "Mai" or "Tchaikovsky".
- * Shared by index.ts and early.ts so both judge keywords the same way.
- * The regex has no `g` flag, so `.test()` keeps no state between calls.
+ * Matches a keyword as a WHOLE word (or phrase), case-insensitively: "ai" hits
+ * "AI Cover" but not "Mai" or "Tchaikovsky". Shared by index.ts and early.ts so
+ * both judge keywords alike. No `g` flag, so `.test()` keeps no state between calls.
  */
 export const compileKeyword = (text: string): RegExp | null => {
   const t = text.trim();
@@ -87,7 +86,7 @@ export const normalizeChannels = (raw: unknown): ChannelEntry[] => {
 };
 
 // ---- recently filtered channels (shown in settings so false positives can be
-// allowed with one click). Kept in localStorage: it changes on every scan and
+// allowed with one click). Kept in localStorage: it changes on every scan, so it
 // does not belong in the plugin config.
 export type RecentEntry = { id: string; name: string; reason: string };
 const RECENT_KEY = 'skip-ai-slop:recent';
@@ -127,11 +126,10 @@ export const forgetFiltered = (id: string) => {
   }
 };
 
-// ---- names of the downloaded community list (for the "Search the community
-// list" setting). The matching cache (skip-ai-slop:blacklist) keeps IDs only, so
-// it stays small and quick to parse at startup (index.ts and early.ts both read
-// it). Names live in this separate store, which only the settings search reads,
-// lazily and once.
+// ---- names of the downloaded community list, for the settings search. The
+// matching cache (skip-ai-slop:blacklist) keeps IDs only, so it stays small and
+// quick to parse (index.ts and early.ts both read it); names live in this separate
+// store, which only the settings search reads, lazily.
 export const NAMES_KEY = 'skip-ai-slop:blacklist-names';
 
 export type BlacklistName = {
@@ -225,10 +223,10 @@ export const EVT_STATUS = 'skip-ai-slop:status'; // plugin -> settings
 export type ListStatus = { text: string; busy: boolean };
 
 /**
- * Names of allowed channels, lower-cased, for allowing by name. A channel can
+ * Names of allowed channels, lower-cased, for allowing by name: a channel can
  * have more than one id (the community list may hold one while YouTube Music
- * shows another), so an id alone is not enough to honour "Allow". Entries whose
- * name is just their id are left out.
+ * shows another), so an id alone cannot honour "Allow". Entries whose name is
+ * just their id are left out.
  */
 export const allowedNames = (raw: unknown): Set<string> =>
   new Set(

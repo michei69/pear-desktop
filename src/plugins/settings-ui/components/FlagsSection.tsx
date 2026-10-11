@@ -47,7 +47,6 @@ const parseValue = (text: string): unknown => {
 const FlagRow = (props: {
   name: string;
   meta?: FlagMetadata;
-  /** Reports a change so the modal can ask for a restart when one is needed. */
   onChanged: (name: string, requiresRestart: boolean) => void;
 }) => {
   const overridden = () => Object.hasOwn(overrides(), props.name);
@@ -145,12 +144,9 @@ const FlagRow = (props: {
 };
 
 /**
- * Every flag the page carries, whatever the server sent for this client, plus
- * the ones the user added themselves.
- *
- * The section is deliberately outside the settings search: while it is open the
- * sidebar's search box filters these flags instead of the settings, and no flag
- * is reachable from any other section.
+ * Every flag the page carries, whatever the server sent this client, plus the ones
+ * the user added. Deliberately outside the settings search: while it is open the
+ * search box filters these flags, and no flag is reachable from any other section.
  */
 export const FlagsSection = (props: {
   query: string;

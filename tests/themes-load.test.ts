@@ -64,8 +64,8 @@ test('an invalid manifest is skipped and css defaults to empty', () => {
   const themes = readThemesFrom(root);
   expect(themes.map((theme) => theme.id)).toEqual(['no-css']);
   expect(themes[0].css).toBe('');
-  // Absent, not empty: a theme that declares no palette offers its presets in
-  // place of Default, while an empty one still has Default to fall back on.
+  // Absent, not empty: a theme with no palette offers its presets in place of
+  // Default, while an empty one still has Default to fall back on.
   expect(themes[0].palette).toBeUndefined();
   expect(themes[0].presets).toBeUndefined();
 });
@@ -85,8 +85,8 @@ test("an empty palette is kept, so 'palette': {} keeps its Default", () => {
 
 test('themes are read in folder-name order, whatever the filesystem says', () => {
   const root = makeDir();
-  // `é` comes after `z` in raw byte order but before it in a locale collation,
-  // so this only passes when the reader sorts instead of trusting readdir.
+  // `é` comes after `z` in raw byte order but before it in a locale collation, so
+  // this passes only when the reader sorts rather than trusting readdir.
   writeTheme(root, 'z', { name: 'Zeta' });
   writeTheme(root, 'é', { name: 'Eacute' });
   writeTheme(root, 'a', { name: 'Alpha' });

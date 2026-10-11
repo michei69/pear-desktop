@@ -27,10 +27,9 @@ let dialogOpen = false;
 let repeatCheck: NodeJS.Timeout | undefined;
 
 /**
- * How often a running app looks again. Beta users need to hear about the next
- * beta without restarting, and a release only lands on the feed once the
- * publish job has finished; six hours is frequent enough to catch a working
- * day's builds without hammering the feed.
+ * How often a running app looks again: beta users must hear about the next beta
+ * without restarting, and a release only lands on the feed after the publish
+ * job. Six hours catches a working day's builds without hammering the feed.
  */
 const RECHECK_MS = 6 * 60 * 60 * 1000;
 
@@ -42,9 +41,9 @@ const ask = (options: Electron.MessageBoxOptions) =>
 /**
  * Pins the updater to one channel. Both flags are needed: `allowPrerelease`
  * decides which release the provider considers, `channel` which `.yml` it
- * fetches. The GitHub provider still falls back to `latest.yml` when a
- * channel's file is missing, which is why beta releases must ship `beta.yml`
- * (the beta workflow builds a `-beta.N` version for exactly that reason).
+ * fetches. The GitHub provider falls back to `latest.yml` when a channel's file
+ * is missing, so betas must ship `beta.yml` — hence the `-beta.N` version the
+ * beta workflow builds.
  */
 const applyChannel = (updateChannel: UpdateChannel) => {
   autoUpdater.allowPrerelease = updateChannel === 'beta';
@@ -90,8 +89,8 @@ const showUpdateAvailable = (version: string, updateChannel: UpdateChannel) => {
 };
 
 /**
- * A dev build has no feed to update along, so all it can report is whether the
- * commit it was baked from still is the tip of master.
+ * A dev build has no feed, so all it can report is whether its commit is still
+ * the tip of master.
  */
 const checkDevCommit = async () => {
   if (!commit) return;
@@ -135,9 +134,9 @@ const checkDevCommit = async () => {
 };
 
 /**
- * Warns before switching to stable when this run is a beta: the store has been
- * through this beta's migrations already, and a downgrade runs none of them
- * back, which is what can reset settings.
+ * Warns before switching to stable when this run is a beta: the store already
+ * ran this beta's migrations and a downgrade runs none of them back, which can
+ * reset settings.
  */
 const confirmDowngrade = async (): Promise<boolean> => {
   const answer = await ask({
@@ -158,8 +157,7 @@ const confirmDowngrade = async (): Promise<boolean> => {
 
 /**
  * Changes the channel the menu and the settings share. Returns false when the
- * user backs out, so callers can re-read the store instead of keeping an
- * optimistic value.
+ * user backs out, so callers can re-read the store.
  */
 export const setUpdateChannel = async (value: string): Promise<boolean> => {
   if (value !== 'stable' && value !== 'beta') return false;
@@ -170,7 +168,7 @@ export const setUpdateChannel = async (value: string): Promise<boolean> => {
   }
 
   config.set('options.updateChannel', value);
-  // A check right after the switch has to read the new channel, not the old one.
+  // A check right after the switch must read the new channel.
   applyChannel(value);
   return true;
 };
@@ -178,7 +176,7 @@ export const setUpdateChannel = async (value: string): Promise<boolean> => {
 /**
  * Runs one update check, retrying a failure a couple of times (see `withRetry`).
  * The updater resolves with `updateInfo` whether or not anything is newer, so
- * the flag is what decides whether there is an update to announce.
+ * `isUpdateAvailable` decides whether there is an update to announce.
  */
 export const runUpdateCheck = async (): Promise<void> => {
   const outcome = await withRetry(
@@ -201,8 +199,8 @@ export const runUpdateCheck = async (): Promise<void> => {
 };
 
 /**
- * Checks the channel the user follows and reports what it finds. The dialog is
- * raised from the returned update info, so one check pops exactly one dialog.
+ * Checks the channel the user follows. The dialog comes from the returned
+ * update info, so one check pops exactly one dialog.
  */
 export const checkForAppUpdates = async (): Promise<void> => {
   if (!updatesSupported()) {
@@ -220,7 +218,7 @@ export const checkForAppUpdates = async (): Promise<void> => {
  */
 export const setupAutoUpdates = (mainWindow: BrowserWindow) => {
   win = mainWindow;
-  // The dialog offers the download instead of letting the updater grab it.
+  // The dialog offers the download; the updater does not grab it.
   autoUpdater.autoDownload = false;
 
   if (!updatesSupported()) {
@@ -257,7 +255,7 @@ export const setupAutoUpdates = (mainWindow: BrowserWindow) => {
   }
 
   config.watch((newValue, oldValue) => {
-    // A channel switched while the window is open has to be honoured.
+    // A channel switched while the window is open must be honoured.
     const before = (oldValue?.options as { updateChannel?: UpdateChannel })
       ?.updateChannel;
     const after = (newValue?.options as { updateChannel?: UpdateChannel })
@@ -267,7 +265,7 @@ export const setupAutoUpdates = (mainWindow: BrowserWindow) => {
     }
 
     // Turning auto-updates off stops the repeating check, turning it back on
-    // starts one, both without a restart.
+    // starts one — no restart either way.
     if (config.get('options.autoUpdates')) startRepeating();
     else clearInterval(repeatCheck);
   });

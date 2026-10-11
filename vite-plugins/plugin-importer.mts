@@ -48,7 +48,6 @@ export const pluginVirtualModuleGenerator = (
       for (const { name, path } of plugins) {
         const absolutePath = resolve(srcPath, '..', path).replace(/\\/g, '/');
         if (mode === 'main') {
-          // dynamic import (for main)
           writer.writeLine(
             `const ${kebabToCamel(name)}PluginImport = () => import('${absolutePath}');`,
           );
@@ -59,7 +58,7 @@ export const pluginVirtualModuleGenerator = (
             `const ${kebabToCamel(name)}PluginStub = async () => (await ${kebabToCamel(name)}PluginImport()).pluginStub;`,
           );
         } else {
-          // static import (preload does not support dynamic import)
+          // preload does not support dynamic import
           writer.writeLine(
             `import ${kebabToCamel(name)}PluginImport, { pluginStub as ${kebabToCamel(name)}PluginStubImport } from "${absolutePath}";`,
           );
@@ -80,7 +79,6 @@ export const pluginVirtualModuleGenerator = (
       writer.write(supportsPlatform.toString());
       writer.blankLine();
 
-      // Context-specific exports
       writer.writeLine(`let ${mode}PluginsCache = null;`);
       writer.writeLine(`export const ${mode}Plugins = async () => {`);
       writer.writeLine(
@@ -93,7 +91,7 @@ export const pluginVirtualModuleGenerator = (
       writer.writeLine('  const pluginEntries = await Promise.all([');
       for (const { name } of plugins) {
         const checkMode = mode === 'main' ? 'backend' : mode;
-        // HACK: To avoid situation like importing renderer plugins in main
+        // HACK: avoids importing renderer plugins in main
         writer.writeLine(
           `    ${kebabToCamel(name)}Plugin().then((plg) => plg['${checkMode}'] ? ["${name}", plg] : null),`,
         );

@@ -193,8 +193,8 @@ export class Queue {
       type: 'ADD_ITEMS',
       payload: {
         nextQueueItemId: state.queue.nextQueueItemId,
-        // The page's queue store inserts before `index`; indexToUse is the
-        // plain _videoList position, so both sides get the same value.
+        // The queue store inserts before `index`; indexToUse is the plain
+        // _videoList position.
         index: indexToUse,
         items,
         shuffleEnabled: false,
@@ -606,7 +606,6 @@ export class Queue {
     });
   }
 
-  /* private */
   private broadcast(event: ConnectionEventUnion) {
     this.listeners.forEach((listener) => listener(event));
   }

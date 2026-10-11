@@ -5,9 +5,9 @@ import * as config from '@/config';
 import { installFeatureFlags } from './injectors/flags';
 
 /**
- * Hands the saved feature-flag overrides to the page before its own scripts
- * run: the config YouTube Music builds `window.ytcfg` from is what decides how
- * it starts up, so patching it any later is too late for some flags.
+ * Hands the saved feature-flag overrides to the page before its own scripts run:
+ * the config YouTube Music builds `window.ytcfg` from decides how it starts up, so
+ * patching any later is too late for some flags.
  */
 export const startFeatureFlags = () => {
   // The standalone settings window has no player page to patch.

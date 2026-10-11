@@ -9,26 +9,16 @@ import { shortcutIconPath, useYtmIcons } from './app-icon';
 
 const execFileAsync = promisify(execFile);
 
-// Windows shortcuts (.lnk) carry their own icon location, which is the one
-// place the in-app icon option can reach outside the app. The exe's own icon
-// is baked in at build time and no runtime toggle can touch it.
-//
-// The icons are read and written through the WScript.Shell COM object (driven
-// by PowerShell) so no native module is needed. Only shortcuts whose target is
-// this executable are touched, and only while their icon is still the default
-// (unset, ",0", or the installer's own exe path) or already ours, so a
-// manually chosen icon is never overwritten.
-//
-// The script is passed through -Command and deliberately contains no double
-// quotes, so Node's argv quoting cannot mangle it.
-//
-// Covers the current user's shortcuts: the desktop (via WScript's
-// SpecialFolders, so a redirected/OneDrive desktop still resolves), the public
-// desktop, the start menu programs folder and taskbar pins. The all-users
-// start menu lives in ProgramData and would need elevation. Start menu tiles,
-// search results and "Apps & features" keep the exe's baked icon, and explorer
-// caches shortcut icons, so an explorer restart may be needed before a change
-// is visible.
+// Windows .lnk files carry their own icon location — the only way the in-app icon
+// option reaches outside the app (the exe's icon is baked at build time). Read and
+// written via the WScript.Shell COM object through PowerShell, so no native module;
+// only shortcuts targeting this exe and still on the default or our icon are
+// touched. Passed through -Command with no double quotes, so Node's argv quoting
+// cannot mangle it. Covers the current user's desktop (SpecialFolders follows
+// redirection, e.g. OneDrive), public desktop, start menu programs and taskbar
+// pins; the all-users start menu is in ProgramData and needs elevation. Tiles,
+// search results and "Apps & features" keep the baked icon, and explorer caches
+// shortcut icons, so an explorer restart may be needed before a change shows.
 const SYNC_SCRIPT = `
 $ErrorActionPreference = 'SilentlyContinue'
 $exe = $env:PM_SHORTCUT_EXE
@@ -97,10 +87,9 @@ Write-Output $changed
 `;
 
 /**
- * Keeps the app's own shortcuts carrying the icon matching the current icon
- * option, or resets them to the exe icon when the option is off. No-op off
- * Windows; writes only when a shortcut actually differs, so it is safe to run
- * on every launch.
+ * Keeps the app's own shortcuts on the icon matching the current icon option,
+ * or resets them to the exe icon when the option is off. No-op off Windows, and
+ * writes only when a shortcut differs, so it is safe on every launch.
  */
 export const syncShortcutIcons = async () => {
   if (!is.windows()) {

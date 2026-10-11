@@ -15,8 +15,8 @@ const loadedPluginMap: Record<
 
 /** The renderer-side IPC bridge, shared with the standalone settings window. */
 export const createRendererIpc = (): RendererContext<PluginConfig>['ipc'] => {
-  // The preload listener receives Electron's event argument; `off` has to be
-  // given the very function `on` registered, so keep them here.
+  // The preload listener gets Electron's event argument; `off` must be given the
+  // very function `on` registered, so both are kept here.
   const listeners = new Map<CallableFunction, (...args: unknown[]) => void>();
 
   return {

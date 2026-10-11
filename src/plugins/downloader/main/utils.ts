@@ -10,7 +10,7 @@ export const sendFeedback = (win: BrowserWindow, message?: unknown) => {
 
 export const cropMaxWidth = (image: Electron.NativeImage) => {
   const imageSize = image.getSize();
-  // Standard artwork width with margins from both sides is 280 + 720 + 280
+  // YouTube artwork is 1280x720 with 280px margins either side.
   if (imageSize.width === 1280 && imageSize.height === 720) {
     return image.crop({
       x: 280,

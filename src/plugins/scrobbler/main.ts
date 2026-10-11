@@ -69,7 +69,7 @@ export const backend = createBackend<
 
   async start({ getConfig, setConfig, window }) {
     const config = (this.config = await getConfig());
-    // This will store the timeout that will trigger addScrobble
+    // Timeout that triggers addScrobble
     let scrobbleTimer: NodeJS.Timeout | undefined;
     let generation = 0;
 
@@ -82,12 +82,12 @@ export const backend = createBackend<
       if (event === SongInfoEvent.TimeChanged) return;
       const currentGeneration = ++generation;
 
-      // Set remove the old scrobble timer
+      // Clear the previous scrobble timer
       clearTimeout(scrobbleTimer);
       if (!songInfo.isPaused) {
         const configNonnull = this.config!;
         const currentConfigRevision = this.configRevision;
-        // Scrobblers normally have no trouble working with official music videos
+        // Official music videos scrobble fine
         if (
           !configNonnull.scrobbleOtherMedia &&
           songInfo.mediaType !== MediaType.Audio &&

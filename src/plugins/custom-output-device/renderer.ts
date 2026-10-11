@@ -53,8 +53,8 @@ export const renderer = createRenderer<
     try {
       await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
     } catch (error) {
-      // No capture device / permission denied — the plugin can still set the
-      // output sink id on the audio context, so continue setup.
+      // No capture device or permission denied: the output sink can still be
+      // set on the audio context, so carry on.
       console.warn('custom-output-device: no audio input available', error);
     }
     navigator.mediaDevices.ondevicechange = async () =>

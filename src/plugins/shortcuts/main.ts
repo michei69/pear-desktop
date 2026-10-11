@@ -64,7 +64,7 @@ export const onMainLoad = async ({
       const action = _action as keyof ShortcutMappingType;
 
       if (!container[action]) {
-        continue; // Action accelerator is empty
+        continue; // no accelerator set
       }
 
       console.debug(
@@ -86,7 +86,6 @@ export const onMainLoad = async ({
           actionCallback,
         );
       } else {
-        // Type === "local"
         _registerLocalShortcut(window, local[action], actionCallback);
       }
     }

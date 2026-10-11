@@ -9,8 +9,8 @@ import {
   type ListStatus,
 } from './config';
 
-// `as const` keeps the values literal, which is what Solid's CSSProperties
-// expects (`'flex-wrap'` has to be the literal 'wrap', not `string`).
+// `as const` keeps these literal, which Solid's CSSProperties expects
+// (`'flex-wrap'` must be 'wrap', not `string`).
 const rowStyle = {
   'display': 'flex',
   'gap': '10px',

@@ -1,4 +1,4 @@
-/* Hides the original lyrics, to only show our own.  */
+/* Hides the original lyrics, to only show our own. */
 #tab-renderer[page-type='MUSIC_PAGE_TYPE_TRACK_LYRICS'] > * {
   display: none !important;
 }
@@ -77,7 +77,7 @@
 
   & .text-lyrics {
     cursor: pointer;
-    /*fix cuted lyrics-glow and romanized j at line start */
+    /* fixes clipped lyrics-glow and romanized j at line start */
     padding-left: 1.5rem;
   }
 

@@ -2,8 +2,8 @@ import { expect, test } from '@playwright/test';
 
 import { fadeCurve, fadeVolumeAt } from '../src/plugins/crossfade/fader';
 
-// Every fade the crossfade runs is this curve sampled: forwards for a fade in,
-// backwards for a fade out.
+// Every crossfade fade is this curve sampled: forwards for a fade in, backwards
+// for a fade out.
 
 test('equal power holds a constant combined power across the pair', () => {
   for (const progress of [0, 0.25, 0.5, 0.75, 1]) {

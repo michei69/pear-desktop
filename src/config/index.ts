@@ -130,9 +130,9 @@ export const updateChannel = (): UpdateChannel => {
 };
 
 /**
- * The store plus what the settings UI cannot read for itself: whether this
- * build can update at all, and which channel it came from. Sent on load and on
- * every change, so the About section needs no extra round trip.
+ * The store plus what the settings UI cannot read for itself: whether this build
+ * can update at all, and which channel it came from. Sent on load and on every
+ * change, so the About section needs no extra round trip.
  */
 export const getStore = () => ({
   ...(store.store as unknown as typeof defaultConfig),

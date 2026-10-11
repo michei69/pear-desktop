@@ -24,8 +24,8 @@ const debugListener = (message: string, data?: unknown) => {
 };
 
 const handlers = {
-  // Note: This will only be used for Forbidden headers, e.g. User-Agent, Authority, Cookie, etc.
-  // See: https://developer.mozilla.org/en-US/docs/Glossary/Forbidden_request_header
+  // Only useful for forbidden headers (User-Agent, Cookie, ...):
+  // https://developer.mozilla.org/en-US/docs/Glossary/Forbidden_request_header
   async fetch(
     url: string,
     init: RequestInit,

@@ -15,9 +15,6 @@ export const onMenu = async ({
 }: MenuContext<ShortcutsPluginConfig>): Promise<MenuTemplate> => {
   const config = await getConfig();
 
-  /**
-   * Helper function for keybind prompt
-   */
   const kb = (
     label_: string,
     value_: string,
@@ -34,7 +31,7 @@ export const onMenu = async ({
         label: t('plugins.shortcuts.prompt.keybind.label'),
         type: 'keybind',
         keybindOptions: [
-          // If default=undefined then no default is used
+          // An undefined default means no default is used
           kb(
             t('plugins.shortcuts.prompt.keybind.keybind-options.previous'),
             'previous',
@@ -67,7 +64,7 @@ export const onMenu = async ({
 
       setConfig(newConfig);
     }
-    // Else -> pressed cancel
+    // Falsy output means the user cancelled
   }
 
   return [

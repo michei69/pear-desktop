@@ -201,10 +201,8 @@ export const onMenu = async ({
     {
       label: t('plugins.scrobbler.menu.regex-filters'),
       async click() {
-        // HACK: custom-electron-prompt does not support <textarea> natively.
-        // Instead of building a complex custom BrowserWindow from scratch with IPC, we use its
-        // customScript option to inject a script that hides the default single-line <input>
-        // and renders a <textarea> over it, syncing the value back to the hidden input.
+        // HACK: custom-electron-prompt has no <textarea> support, so customScript
+        // injects one over the hidden single-line <input> and syncs the value back.
         const scriptDirectory = join(app.getPath('userData'), 'scrobbler');
         let customScriptDirectory: string | undefined;
         let output: string | null;

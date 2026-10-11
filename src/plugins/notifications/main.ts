@@ -23,7 +23,6 @@ let songInfoCallback:
 let disposeHoverPopup: (() => void) | null = null;
 
 const notify = (info: SongInfo) => {
-  // Send the notification
   const currentNotification = new Notification({
     title: info.title || 'Playing',
     body: info.artist,
@@ -51,10 +50,9 @@ const setup = () => {
       !songInfo.isPaused &&
       (songInfo.url !== currentUrl || config.unpauseNotification)
     ) {
-      // Close the old notification
       oldNotification?.close();
       currentUrl = songInfo.url;
-      // This fixes a weird bug that would cause the notification to be updated instead of showing
+      // The 10ms delay stops the notification being updated instead of shown.
       setTimeout(() => {
         oldNotification = notify(songInfo);
       }, 10);
@@ -69,7 +67,6 @@ export const onMainLoad = async (
 ) => {
   mainWindow = context.window;
   config = await context.getConfig();
-  // Register the callback for new song information
   if (is.windows() && config.interactive)
     interactive(context.window, () => config, context);
   else setup();
@@ -81,7 +78,6 @@ export const onMainLoad = async (
 
 export const onConfigChange = (newConfig: NotificationsPluginConfig) => {
   if (newConfig.hoverControls && !disposeHoverPopup) {
-    // Re-create the popup when the setting is turned back on
     if (mainWindow) {
       disposeHoverPopup = setupHoverPopup(mainWindow);
     }

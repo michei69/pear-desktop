@@ -20,10 +20,10 @@ const themeLabel = (key: string) =>
   `main.menu.options.submenu.visual-tweaks.submenu.theme.submenu.${key}`;
 
 /**
- * Editor for the selected theme's palette: one text input per variable, which
- * is the theme's own value, the preset's, or the user's own. Editing a value,
- * or adding a variable, makes the palette the user's own, so the preset pick
- * (a field of its own, right under the theme) switches to Custom.
+ * Editor for the selected theme's palette: one text input per variable, which is
+ * the theme's, the preset's, or the user's own value. Editing a value or adding one
+ * makes the palette the user's own, so the preset pick (its own field under the theme)
+ * switches to Custom.
  */
 export const ThemePaletteField = (_props: { ctx: CustomFieldContext }) => {
   const selectedId = () => store()?.options.theme ?? '';
@@ -32,8 +32,8 @@ export const ThemePaletteField = (_props: { ctx: CustomFieldContext }) => {
   const keys = () => Object.keys(palette());
 
   /**
-   * Writes one custom value. Main seeds the custom palette the same way, so
-   * editing while a preset is picked keeps the rest of that preset.
+   * Writes one custom value. Main seeds the custom palette the same way, so editing
+   * while a preset is picked keeps the rest of that preset.
    */
   const setValue = async (key: string, value: string) => {
     const themeId = selectedId();

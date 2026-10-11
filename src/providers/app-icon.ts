@@ -13,17 +13,14 @@ import * as config from '@/config';
 
 export const useYtmIcons = () => config.get('options.useYtmIcons');
 
-// Absolute path of the .ico shortcuts are pointed at: .lnk files reference an
-// icon file directly, and only the original-logo option has one outside the
-// exe (see providers/shortcut-icons.ts).
+// Absolute path of the .ico shortcuts point at: .lnk files reference an icon file directly, and only the original-logo option has one outside the exe (see providers/shortcut-icons.ts).
 export const shortcutIconPath = () => musicPlayerIconYtmIco;
 
 // Logo used for the About panel, notifications, TouchBar and dialogs.
 export const appIconPath = () =>
   useYtmIcons() ? musicPlayerIconYtm : musicPlayerIcon;
 
-// Window/taskbar icon. The multi-size .ico is crisper at the small sizes the
-// taskbar uses; the original logo's .ico is rendered from its 2200px master.
+// Window/taskbar icon: the multi-size .ico is crisper at the small taskbar sizes; the original logo's .ico is rendered from its 2200px master.
 export const windowIconPath = () => {
   if (useYtmIcons()) {
     return is.windows() ? musicPlayerIconYtmIco : musicPlayerIconYtm;

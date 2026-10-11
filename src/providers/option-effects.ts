@@ -7,11 +7,10 @@ import { appIconPath, windowIconPath } from './app-icon';
 import { syncShortcutIcons } from './shortcut-icons';
 
 /**
- * Side effects an option's value implies beyond storing it.
- *
- * Both the native menu and the in-app settings write options, so they route
- * through here to stay in step. Options whose value is only read on launch
- * (window/tray/proxy/...) have no effect here and rely on `restartNeeded`.
+ * Side effects an option's value implies beyond storing it. Both the native menu
+ * and the in-app settings write options, so they route through here to stay in
+ * step; options read only on launch (window/tray/proxy/...) rely on
+ * `restartNeeded`.
  */
 export const applyOptionEffects = (
   key: string,

@@ -174,20 +174,17 @@ export const themeOverrides = (): Record<string, ThemePalette> =>
   (store()?.options.themeOverrides as Record<string, ThemePalette>) ?? {};
 
 /**
- * Preset picked per theme id: a preset name, `custom`, or '' for Default. A
- * theme the user never chose for has no entry at all, which is what lets a
- * palette-less theme fall to its first preset.
+ * Preset per theme id: a name, `custom`, or '' for Default. No entry means the
+ * user never chose for that theme, which is what lets a palette-less theme fall
+ * to its first preset.
  */
 export const themePresetNames = (): Record<string, string> =>
   (store()?.options.themePresets as Record<string, string>) ?? {};
 
-/** Presets the selected theme offers; empty when it has none. */
 export const themePresets = (): ThemePresets => selectedTheme()?.presets ?? {};
 
-/**
- * The selected theme's preset pick: a preset name, `custom`, or ''. A theme
- * with no palette declared resolves to its first preset.
- */
+/** The selected theme's preset pick: a name, `custom`, or ''. A theme with no
+ * palette declared resolves to its first preset. */
 export const themePreset = (): string => {
   const theme = selectedTheme();
   if (!theme) return '';
@@ -198,10 +195,8 @@ export const themePreset = (): string => {
   );
 };
 
-/**
- * The preset picker's options, in order: Default when the theme has a palette,
- * its presets, then the palette the user edited.
- */
+/** Preset picker options, in order: Default when the theme has a palette, its
+ * presets, then the palette the user edited. */
 export const themePresetOptions = (): string[] => {
   const theme = selectedTheme();
   if (!theme) return [];
@@ -288,8 +283,8 @@ export const setAppValue = async (key: string, value: unknown) => {
     return;
   }
 
-  // The channel switch can be refused (a declined downgrade warning), so it
-  // goes through its own channel instead of the generic option write.
+  // The channel switch can be refused (a declined downgrade warning), so it has
+  // its own channel instead of the generic option write.
   if (key === UPDATE_CHANNEL_KEY) {
     patchLocal(key, value);
     if ((await bridge.setUpdateChannel(value as UpdateChannel)) === false) {
@@ -320,9 +315,8 @@ export const setPluginValue = (id: string, key: string, value: unknown) => {
 };
 
 /**
- * Slider drags fire on every pixel, and each write goes through IPC to disk, so
- * one write per burst is enough. The last value of the burst wins; a flush
- * (closing the modal, restarting) writes whatever is still pending.
+ * Slider drags fire per pixel and each write goes to disk over IPC, so one write
+ * per burst is enough: the last value wins, and a flush writes what is pending.
  */
 const PLUGIN_SLIDER_DEBOUNCE_MS = 200;
 const pendingPluginWrites = new Map<

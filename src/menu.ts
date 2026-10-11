@@ -39,7 +39,7 @@ import packageJson from '../package.json';
 
 export type MenuTemplate = Electron.MenuItemConstructorOptions[];
 
-// True only if in-app-menu was loaded on launch
+// True only when in-app-menu was loaded on launch
 let inAppMenuActivePromise: Promise<boolean> | undefined;
 
 const pluginEnabledMenu = async (
@@ -204,8 +204,8 @@ export const mainMenuTemplate = async (
                       type: 'radio',
                       checked: config.updateChannel() === value,
                       click: () => {
-                        // Refused when the user backs out of the downgrade
-                        // warning; the menu re-reads the store either way.
+                        // Refused if the user backs out of the downgrade warning;
+                        // the menu re-reads the store either way.
                         setUpdateChannel(value)
                           .catch(() => {})
                           .finally(() => {
@@ -411,14 +411,10 @@ export const mainMenuTemplate = async (
                   (theme) => theme.id === config.get('options.theme'),
                 );
 
-                // Selecting a theme deliberately does NOT rebuild this menu.
-                // `refreshMenu` is asynchronous, so a rebuild can land while the
-                // user has the menu open again (very likely when switching
-                // quickly), and replacing the open native menu corrupts it: the
-                // labels stop rendering and only the submenu arrows survive.
-                // Native radio items update their own checked state, and the
-                // Colors submenu below is built per theme rather than from the
-                // selection, so nothing here needs repopulating.
+                // Selecting a theme deliberately does NOT rebuild this menu:
+                // `refreshMenu` is async, so a rebuild can land while the menu is
+                // open again and corrupt it. Radio items update their own state and
+                // Colors is built per theme, so nothing here needs repopulating.
                 const select = async (id: string) => {
                   if (await selectTheme(id, win)) notifyThemesChanged(win);
                 };
@@ -455,11 +451,10 @@ export const mainMenuTemplate = async (
                     enabled: themes.some(
                       (theme) => Object.keys(theme.presets ?? {}).length > 0,
                     ),
-                    // Built per theme, not from the selection: the selection
-                    // must not require a menu rebuild (see `select` above), so
-                    // the preset list cannot be filtered by it. Each theme also
-                    // gets its own Default and Custom entries. Variables are
-                    // edited in the settings UI, not here.
+                    // Built per theme, not filtered by the selection, which must
+                    // not trigger a menu rebuild (see `select`). Each theme gets
+                    // its own Default and Custom entries; variables are edited in
+                    // the settings UI, not here.
                     submenu: themes
                       .filter(
                         (theme) => Object.keys(theme.presets ?? {}).length > 0,
@@ -470,9 +465,8 @@ export const mainMenuTemplate = async (
                           theme.presets,
                           config.getThemePresets()[theme.id],
                         );
-                        // A `palette` key, even an empty one, is a Default to
-                        // fall back on; without it there is none to offer, so
-                        // the first preset stands in - see `defaultPreset`.
+                        // Even an empty `palette` gives a Default to offer; without
+                        // one the first preset stands in - see `defaultPreset`.
                         const offersDefault = theme.palette !== undefined;
                         const pick = (preset: string) => {
                           setThemePreset(theme.id, preset);
@@ -596,7 +590,7 @@ export const mainMenuTemplate = async (
             ]
           : []) satisfies Electron.MenuItemConstructorOptions[]),
         ...((is.windows() || is.macOS()
-          ? // Only works on Win/Mac
+          ? // Windows/macOS only
             // https://www.electronjs.org/docs/api/app#appsetloginitemsettingssettings-macos-windows
             [
               {
@@ -954,8 +948,8 @@ export const mainMenuTemplate = async (
           },
         },
         {
-          // The modal lives in the renderer, so it has to be asked for; the
-          // sidebar entry that used to be the way in can be switched off.
+          // The modal lives in the renderer, so ask for it; the sidebar entry
+          // that used to be the way in can be switched off.
           label: t('main.menu.navigation.submenu.open-settings'),
           click() {
             win.webContents.send('ytmd-sui:open');
@@ -1033,7 +1027,7 @@ async function setProxy(item: Electron.MenuItem, win: BrowserWindow) {
     config.setMenuOption('options.proxy', output);
     item.checked = output !== '';
   } else {
-    // User pressed cancel
-    item.checked = !item.checked; // Reset checkbox
+    // Cancelled: reset the checkbox.
+    item.checked = !item.checked;
   }
 }

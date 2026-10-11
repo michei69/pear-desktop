@@ -32,10 +32,9 @@ import type { BackendContext } from '@/types/contexts';
 import type { QueueResponse } from '@/types/music-player-desktop-internal';
 import type { Context } from 'hono';
 
-// Waits for a single renderer IPC reply, rejecting after 5s if the renderer
-// never answers so routes don't hang forever. Each caller gets its own
-// listener; only that listener is removed on reply/timeout (never
-// removeAllListeners — that would kill other routes' pending listeners).
+// Waits for a single renderer IPC reply, rejecting after 5s so routes don't
+// hang. Removes only its own listener — removeAllListeners would kill other
+// routes' pending listeners.
 const waitForIpcResponse = <T>(
   channel: string,
   request: () => void,
@@ -825,7 +824,6 @@ export const register = (
       return ctx.body(null);
     }
 
-    // Find the currently selected song
     const currentIndex = queue.items.findIndex((item) => {
       const renderer =
         item.playlistPanelVideoRenderer ||
@@ -834,10 +832,8 @@ export const register = (
       return renderer?.selected === true;
     });
 
-    // Get the next song (currentIndex + 1)
     const nextIndex = currentIndex + 1;
     if (nextIndex >= queue.items.length) {
-      // No next song available
       ctx.status(204);
       return ctx.body(null);
     }
@@ -853,7 +849,7 @@ export const register = (
       return ctx.body(null);
     }
 
-    // Extract relevant information similar to SongInfo format
+    // Shape it like SongInfo.
     const nextSongInfo = {
       title: nextRenderer.title?.runs?.[0]?.text,
       videoId: nextRenderer.videoId,

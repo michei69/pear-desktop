@@ -84,8 +84,7 @@ export const register = (
       songInfoCallback = undefined;
     }
     for (const { event, listener } of ipcListeners) {
-      // Remove only our own listeners — removeAllListeners would drop
-      // other plugins' handlers on the same channels.
+      // Only our own listeners — removeAllListeners would drop other plugins'.
       ipcMain.removeListener(event, listener);
     }
     ipcListeners.length = 0;

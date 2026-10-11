@@ -89,7 +89,7 @@ export const Popup = (props: PopupProps) => {
       popup.style.setProperty('opacity', '1');
       popup.style.setProperty('pointer-events', 'unset');
 
-      // Clear any pending close timeout / existing handler before re-showing
+      // Clear any pending close timeout/handler before re-showing.
       if (closeTimeout !== undefined) {
         clearTimeout(closeTimeout);
         closeTimeout = undefined;

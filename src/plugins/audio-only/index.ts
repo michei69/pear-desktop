@@ -48,16 +48,13 @@ export default createPlugin<
     onPlayerApiReady(api) {
       this.api = api;
 
-      // Remove a previous listener if the player API re-initialized, so
-      // listeners don't stack and re-run on every song change.
+      // The API can re-initialize, so drop the old listener instead of stacking.
       if (this.videoDataListener) {
         document.removeEventListener('videodatachange', this.videoDataListener);
       }
 
-      // Force audio-only quality via the player API
       this.setAudioOnly();
 
-      // Re-apply on every song change
       this.videoDataListener = ((event: CustomEvent<VideoDataChanged>) => {
         if (event.detail.name === 'dataloaded') {
           this.setAudioOnly();
@@ -83,14 +80,13 @@ export default createPlugin<
     // --- Internal methods ---
 
     setAudioOnly() {
-      // 1. Set playback-mode attribute
       const player = document.querySelector<HTMLElement>('ytmusic-player');
       if (player) {
         player.setAttribute('playback-mode', 'ATV_PREFERRED');
         player.style.margin = 'auto 0px';
       }
 
-      // 2. Use player API to set lowest quality (triggers audio-only path)
+      // Lowest quality triggers the audio-only path.
       try {
         const moviePlayer = document.querySelector<
           HTMLVideoElement & {
@@ -110,7 +106,6 @@ export default createPlugin<
         /* ignore */
       }
 
-      // 3. Hide the video element directly
       this.applyVisualMode();
     },
 
@@ -122,7 +117,6 @@ export default createPlugin<
       if (songVideo) songVideo.style.display = 'none';
       if (songImage) songImage.style.display = 'block';
 
-      // Also hide the actual video element to stop rendering
       const video = document.querySelector<HTMLVideoElement>('video');
       if (video) {
         video.style.display = 'none';

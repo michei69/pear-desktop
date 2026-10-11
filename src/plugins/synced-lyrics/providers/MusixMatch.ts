@@ -12,8 +12,8 @@ export class MusixMatch implements LyricProvider {
   private api: MusixMatchAPI | undefined;
 
   async search(info: SearchSongInfo): Promise<LyricResult | null> {
-    // late-init the API, to avoid an electron IPC issue
-    // an added benefit is that if it has an error during init, the user can hit the retry button
+    // Late-init the API to avoid an electron IPC issue; it also means an init
+    // error leaves the user a retry button.
     this.api ??= await MusixMatchAPI.new();
     // await this.api.reinit();
 
@@ -35,7 +35,7 @@ export class MusixMatch implements LyricProvider {
     const lyrics = getter('track.lyrics.get')?.lyrics?.lyrics_body;
     const subtitle = getter('track.subtitles.get')?.subtitle_list?.[0];
 
-    // either no track found, or musixmatch's algorithm returned "Coldplay - Paradise" for no reason whatsoever
+    // HACK: either no track found, or musixmatch returned "Coldplay - Paradise" (id 115264642)
     if (!track || track.track_id === 115264642) return null;
 
     return {
@@ -52,7 +52,7 @@ export class MusixMatch implements LyricProvider {
   }
 }
 
-// API Implementation, based on https://github.com/spicetify/cli/blob/master/CustomApps/lyrics-plus/ProviderMusixmatch.js
+// Based on https://github.com/spicetify/cli/blob/master/CustomApps/lyrics-plus/ProviderMusixmatch.js
 
 const Track = z.object({
   track_id: z.number(),
@@ -153,14 +153,12 @@ class MusixMatchAPI {
   }
 
   public async reinit() {
-    // The token expires 60s after init; a 401 means the cached token is stale,
-    // so always refresh regardless of whether the original init promise settled.
+    // The token expires 60s after init; a 401 means it is stale, so always refresh.
     localStorage.removeItem(this.key);
     this.initPromise = this.init();
     await this.initPromise;
   }
 
-  // god I love typescript generics, they're so useful
   public async query<
     T extends Endpoint,
     R = {

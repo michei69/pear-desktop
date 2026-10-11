@@ -143,7 +143,6 @@ export default createPlugin<
         (video as HTMLVideoElement & { __pbRecovery?: boolean }).__pbRecovery =
           true;
 
-        // Track healthy playback progress
         video.addEventListener('timeupdate', () => {
           if (video.currentTime > 0 && !video.paused) {
             this.lastGoodTime = video.currentTime;
@@ -153,7 +152,6 @@ export default createPlugin<
           }
         });
 
-        // On error, attempt immediate recovery
         video.addEventListener('error', () => {
           const code = video.error?.code ?? 0;
           const msg = video.error?.message ?? '';
@@ -161,7 +159,7 @@ export default createPlugin<
           this.attemptRecovery('media-error');
         });
 
-        // On stall, start a short timer — if it doesn't resolve, recover
+        // Recover if the stall does not clear.
         video.addEventListener('stalled', () => {
           this.log('Stream stalled, waiting for recovery...');
           setTimeout(() => {
@@ -173,7 +171,7 @@ export default createPlugin<
           }, this.config?.stallTimeoutMs ?? 8000);
         });
 
-        // On waiting (buffering), monitor if it persists too long
+        // Recover if buffering persists.
         video.addEventListener('waiting', () => {
           setTimeout(() => {
             const v = this.getVideo();
@@ -188,12 +186,11 @@ export default createPlugin<
       const video = this.getVideo();
       if (video) attachTo(video);
 
-      // Also re-attach on video element recreation (MutationObserver in watchVideoElement handles this)
+      // Kept for watchVideoElement's observer to re-attach on recreation.
       this._attachMediaEvents = attachTo;
     },
 
     watchVideoElement() {
-      // Watch for video element being destroyed and recreated
       this.videoObserver = new MutationObserver((mutations) => {
         for (const mutation of mutations) {
           for (const node of mutation.removedNodes) {
@@ -223,21 +220,18 @@ export default createPlugin<
     },
 
     startWatchdog() {
-      // Core watchdog: every 3 seconds, check if playback is healthy
       this.watchdog = setInterval(() => {
         if (this.recovering) return;
 
         const video = this.getVideo();
         if (!video) return;
 
-        // Only check if the player thinks it's playing
         const playerState = this.api?.getPlayerState?.();
         const isPlaying = playerState === 1; // 1 = playing
         if (!isPlaying) return;
 
         const now = Date.now();
 
-        // Case 1: readyState 0 while "playing" — completely stuck
         if (video.readyState === 0 && !video.paused) {
           const elapsed = now - this.lastGoodTimestamp;
           if (elapsed > (this.config?.stallTimeoutMs ?? 8000)) {
@@ -249,7 +243,6 @@ export default createPlugin<
           }
         }
 
-        // Case 2: currentTime not advancing while not paused
         if (!video.paused && video.currentTime > 0) {
           const timeSinceGood = now - this.lastGoodTimestamp;
           if (
@@ -264,7 +257,6 @@ export default createPlugin<
           }
         }
 
-        // Case 3: buffered data exhausted while playing
         if (!video.paused && video.buffered.length > 0) {
           const bufferEnd = video.buffered.end(video.buffered.length - 1);
           const ahead = bufferEnd - video.currentTime;
@@ -296,7 +288,7 @@ export default createPlugin<
         } catch (e) {
           this.log('Failed to skip: ' + String(e));
         }
-        // Give the next track time to load before watchdog kicks in
+        // Give the next track time to load before the watchdog resumes.
         setTimeout(() => {
           this.recovering = false;
           this.lastGoodTimestamp = Date.now();
@@ -312,7 +304,7 @@ export default createPlugin<
       const video = this.getVideo();
       const currentTime = video?.currentTime ?? 0;
 
-      // Strategy 1: Try seeking to current position (forces buffer reload)
+      // Seek to the current position to force a buffer reload.
       if (this.consecutiveFailures <= 2) {
         this.log('Strategy: seek-to-current');
         try {
@@ -326,7 +318,7 @@ export default createPlugin<
           this.log('Seek failed: ' + String(e));
         }
       }
-      // Strategy 2: Reload the video by seeking slightly forward
+      // Seek slightly forward to reload the video.
       else if (this.consecutiveFailures <= 4) {
         this.log('Strategy: seek-forward');
         try {
@@ -334,7 +326,6 @@ export default createPlugin<
             this.api.seekTo(currentTime + 1);
             this.api.playVideo();
           } else if (this.api) {
-            // If currentTime is 0, try loading the video data fresh
             this.api.playVideo();
           }
         } catch (e) {

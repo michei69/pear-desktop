@@ -18,7 +18,7 @@ declare const __PEAR_COMMIT__: string | undefined;
 export const channel: Channel =
   typeof __PEAR_CHANNEL__ === 'string' ? __PEAR_CHANNEL__ : 'dev';
 
-/** Short commit the build came from, or empty when it was not built from a git checkout. */
+/** Short commit the build came from, empty when not built from a git checkout. */
 export const commit: string =
   typeof __PEAR_COMMIT__ === 'string' ? __PEAR_COMMIT__ : '';
 
@@ -26,7 +26,7 @@ export const commit: string =
 export const buildLabel = (ch: Channel = channel, sha: string = commit) =>
   ch === 'stable' || !sha ? ch : `${ch} ${sha}`;
 
-/** Only packaged builds have a channel to update along; dev builds have none. */
+/** Only packaged builds have an update channel; dev builds have none. */
 export const updatesSupported = (ch: Channel = channel) => ch !== 'dev';
 
 /** Where an unbaked build should start out before the user picks a channel. */

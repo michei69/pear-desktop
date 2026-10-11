@@ -1,9 +1,7 @@
 /**
  * Update channels (stable/beta), auto-updates and beta-aware migrations.
- *
- * Everything here is offline and electron-free, and every assertion runs real
- * code: the app's own pure functions, `conf` for the store migrations, and the
- * real electron-updater provider against a stubbed network.
+ * Offline and electron-free, but runs real code: the app's own pure functions,
+ * `conf` for store migrations, and the real electron-updater provider on a stub network.
  */
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -23,8 +21,7 @@ import type { UpdateChannel } from '../src/app-info';
 
 // --------------------------------------------------------------- item 1 ---
 // Stable vs beta feed selection, driven through the real provider with the flag
-// combinations `applyChannel` sets: the flags have to mean what electron-updater
-// says they mean.
+// combinations `applyChannel` sets: the flags must mean what electron-updater says.
 
 /** A GitHub release feed with the beta tag first, as a rolling beta would be. */
 const ATOM_FEED = `<?xml version="1.0" encoding="utf-8"?>
@@ -44,10 +41,8 @@ const ATOM_FEED = `<?xml version="1.0" encoding="utf-8"?>
 const channelFile = (version: string) =>
   `version: ${version}\nfiles: []\npath: pear-${version}.AppImage\nsha512: zzz\n`;
 
-/**
- * Runs the real electron-updater GitHubProvider against a stub executor, with
- * the two flag combinations `applyChannel` produces.
- */
+// Runs the real GitHubProvider against a stub executor with the flag
+// combinations `applyChannel` produces.
 const runProvider = async (
   updateChannel: UpdateChannel,
   {
@@ -122,9 +117,8 @@ test('item 1: platform decides the channel file suffix', async () => {
 });
 
 test('item 1 caveat: upstream falls back to latest.yml when beta.yml is missing', async () => {
-  // app-updates.ts claims "a beta build never falls back to the stable feed",
-  // but GitHubProvider.getLatestVersion retries the default channel file - on
-  // the tag it resolved, so a beta release without beta*.yml is read as latest.
+  // app-updates.ts claims "a beta build never falls back to the stable feed", but
+  // GitHubProvider.getLatestVersion retries the default channel file on the resolved tag.
   const { requests, info } = await runProvider('beta', { missingBetaFile: true });
   expect(requests.at(-1)).toBe(
     '/michei69/pear-desktop/releases/download/v3.12.4-beta.1/latest-linux.yml',
@@ -134,14 +128,9 @@ test('item 1 caveat: upstream falls back to latest.yml when beta.yml is missing'
 
 // --------------------------------------------------------------- item 2 ---
 
-/**
- * electron-updater resolves `checkForUpdates()` with the latest version's
- * `updateInfo` whether or not it is newer: AppUpdater.doCheckForUpdates returns
- * `{ isUpdateAvailable: false, versionInfo, updateInfo }` for the not-available
- * case. `checkForAppUpdates` gates the dialog on `result?.updateInfo`, so the
- * dialog is raised for a version the app already runs (and, on a beta build
- * whose feed falls back to latest.yml, for the older stable release).
- */
+// electron-updater resolves `checkForUpdates()` with the latest version's
+// `updateInfo` even when it is not newer, and `checkForAppUpdates` gates the
+// dialog on `result?.updateInfo` - so it opens for a version already running.
 class StubUpdater extends AppUpdater {
   #latest: string;
 
@@ -149,8 +138,8 @@ class StubUpdater extends AppUpdater {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     super(null as any, app as any);
     this.#latest = latest;
-    // The app sets this in setupAutoUpdates, so an available update must not
-    // make the stub reach for a downloader it does not have.
+    // The app sets this in setupAutoUpdates; an available update must not make
+    // the stub reach for a downloader it lacks.
     this.autoDownload = false;
   }
 
@@ -176,8 +165,8 @@ test('item 2 BUG: a check with nothing to update still resolves updateInfo', asy
   const result = await upToDate.checkForUpdates();
 
   expect(result?.isUpdateAvailable).toBe(false);
-  // The app's gate is `if (result?.updateInfo && !dialogOpen)` - so this is
-  // truthy and the "update available" dialog is shown anyway.
+  // The app's gate is `if (result?.updateInfo && !dialogOpen)`, so this truthy
+  // value shows the "update available" dialog anyway.
   expect(result?.updateInfo).toBeTruthy();
   expect(result?.updateInfo?.version).toBe('3.12.3');
 
@@ -187,11 +176,8 @@ test('item 2 BUG: a check with nothing to update still resolves updateInfo', asy
   expect(downgrade?.updateInfo?.version).toBe('3.12.2');
 });
 
-/**
- * The rolling beta contract: a beta release is rebuilt in place, so the tag in
- * the feed changes with every run while only one prerelease entry ever exists.
- * A beta user must land on the newer beta.
- */
+// Rolling beta contract: the release is rebuilt in place, so its tag changes every
+// run while one prerelease entry exists; a beta user must land on the newer beta.
 test('item 2: a beta user picks up the next beta from the rolling release', async () => {
   const nextBeta = '3.12.4-beta.42';
   const feed = `<?xml version="1.0" encoding="UTF-8"?>
@@ -274,13 +260,9 @@ const channelBeforeDefaults = (cwd: string) => {
   }
 };
 
-/**
- * Mirror of the '>=3.12.4' migration in src/config/store.ts: it seeds the
- * channel the build follows, but only when the user had not already chosen one.
- * `conf` writes the defaults into the file before migrations run, so the
- * pre-defaults value has to be captured before the store is created - inside
- * the migration, `options.updateChannel` always reads back as `stable`.
- */
+// Mirror of the '>=3.12.4' migration in src/config/store.ts: seeds the channel
+// the build follows unless the user already chose one. `conf` writes defaults
+// before migrations run, so the pre-defaults value is captured beforehand.
 const seedUpdateChannel =
   (buildChannel: UpdateChannel, before: 'stable' | 'beta' | undefined) =>
   (store: Conf<Record<string, unknown>>) => {
@@ -350,8 +332,8 @@ test('item 4: the 3.12.4 release does not re-run the beta migration', () => {
     });
     expect(beta.get('options.updateChannel')).toBe('beta');
 
-    // The user moves back to stable; the same store reopened by 3.12.4 stable
-    // (or by a later beta) keeps the choice instead of re-seeding.
+    // The user moves back to stable; reopening the store keeps the choice
+    // instead of re-seeding.
     beta.set('options.updateChannel', 'stable');
     const stable = openStore(cwd, '3.12.4', {
       '>=3.12.4': seedUpdateChannel('stable', channelBeforeDefaults(cwd)),
@@ -392,8 +374,8 @@ test('item 4: a satisfied older marker does not run its migration twice', () => 
 });
 
 test('item 4: a fresh beta install starts on the beta channel', () => {
-  // The trap: the store defaults already write 'stable' into the file before
-  // migrations run, so the seed has to look at the file as it was beforehand.
+  // The store defaults write 'stable' before migrations run, so the seed has to
+  // read the file as it was beforehand.
   expect(defaultUpdateChannel('beta')).toBe('beta');
   withTempStore((cwd) => {
     const fresh = openStore(cwd, '3.12.4', {

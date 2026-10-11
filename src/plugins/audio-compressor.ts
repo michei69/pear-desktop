@@ -39,7 +39,7 @@ class Chain {
 
   build(source: MediaElementAudioSourceNode, context: AudioContext) {
     if (this.source === source && this.context === context && this.compressor) {
-      return; // already built
+      return;
     }
 
     this.teardown();
@@ -55,8 +55,7 @@ class Chain {
     this.compressor = compressor;
     this.trackGain = trackGain;
 
-    // Source was previously connected directly to destination by the
-    // renderer; detach that and route through our chain instead.
+    // Renderer wired the source straight to destination; re-route it here.
     lazySafeTry(() => source.disconnect(context.destination));
 
     source.connect(compressor);
@@ -86,8 +85,7 @@ class Chain {
     );
     this.compressor = null;
     this.trackGain = null;
-    // Keep source/context refs so a re-enable can rebuild without waiting
-    // for the next audio-can-play event.
+    // source/context are kept so a re-enable can rebuild without a new event.
   }
 }
 
@@ -143,7 +141,7 @@ const updateTrackGain = (retriesLeft = 4) => {
   const loudnessDb = getContentLoudnessDb();
   if (loudnessDb === null) {
     if (retriesLeft > 0) {
-      // YT may not have populated loudness yet — retry shortly.
+      // YT may not have populated loudness yet.
       pendingRetry = setTimeout(() => updateTrackGain(retriesLeft - 1), 400);
     } else {
       chain.applyTrackGain(0);
@@ -151,8 +149,7 @@ const updateTrackGain = (retriesLeft = 4) => {
     return;
   }
 
-  // YT's loudnessDb is signed: positive = louder than reference, negative =
-  // quieter. Compensate quiet tracks; leave loud tracks alone.
+  // loudnessDb is signed: only boost tracks quieter than the reference.
   const compensation = loudnessDb < 0 ? -loudnessDb : 0;
   const target = Math.min(compensation, currentConfig.maxTrackGainDb);
   chain.applyTrackGain(target);
@@ -193,10 +190,8 @@ const watchForVideoSwap = () => {
   stopWatchingForVideoSwap();
   const currentEl = sourceMediaElement(chain.source);
   if (!currentEl) return;
-  // YT swaps the <video> element on certain seek operations (notably seek
-  // near end then back to start). Our source is permanently bound to the old
-  // element; the new one would play straight to the OS, bypassing the chain.
-  // Detect the swap and rebind.
+  // YT swaps the <video> element on some seeks (seek near end, then back).
+  // The source stays bound to the old element, which would bypass the chain.
   const target = document.querySelector('#movie_player') ?? document.body;
   videoSwapObserver = new MutationObserver(() => {
     const newEl = document.querySelector<HTMLVideoElement>('video');
@@ -272,12 +267,10 @@ export default createPlugin({
         passive: true,
       });
       currentConfig = await getConfig();
-      // If the chain was previously built (plugin re-enable), rebuild now
-      // rather than waiting for the next track change.
+      // Re-enabled with a chain already built: rebuild now, not on next track.
       if (chain.source && chain.context) {
-        // YT may have swapped the <video> element while we were disabled
-        // (observer was off). Detect a stale cached source and rebind to
-        // the live element rather than rebuilding onto a dead one.
+        // The element may have been swapped while disabled (observer was off):
+        // rebind to the live one rather than rebuild onto a dead source.
         const currentVideo = document.querySelector<HTMLVideoElement>('video');
         if (currentVideo && sourceMediaElement(chain.source) !== currentVideo) {
           handleVideoSwap(currentVideo);

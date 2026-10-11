@@ -189,8 +189,8 @@ test('a letter binding keeps shift significant', () => {
 });
 
 test('the default keybind is the shortcut the plugin advertises', () => {
-  // Read from the plugin's own config, so changing or dropping what it
-  // advertises in its settings fails here.
+  // Read from the plugin's own config, so changing or dropping what it advertises
+  // in its settings fails here.
   const bind = parseKeybind(defaultSearchCommandsConfig.openKeybind);
   expect(bind).toBeDefined();
   expect(bind!.key).toBe('/');

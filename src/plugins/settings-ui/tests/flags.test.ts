@@ -67,10 +67,9 @@ test('undo puts the page value back when the flags arrive after the patch', () =
   const scope = page();
   inject({ flag_a: true });
 
-  // YTM builds its config first and fills the flags in afterwards, so the
-  // override lands on an empty map. The page's own value has to be picked up
-  // from the payload that arrives later, or Undo has nothing to put back and
-  // drops the flag instead.
+  // YTM builds its config first and fills the flags in afterwards, so the override
+  // lands on an empty map. The page's own value has to be picked up from the payload
+  // that arrives later, or Undo has nothing to put back and drops the flag instead.
   const cfg = pageConfig({});
   scope.ytcfg = cfg;
   cfg.set('EXPERIMENT_FLAGS', { flag_a: false, flag_b: 2 });

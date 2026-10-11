@@ -6,12 +6,6 @@ import type { DiscordPluginConfig } from './index';
 import type { SongInfo } from '@/providers/song-info';
 import type { GatewayActivityButton } from 'discord-api-types/v10';
 
-/**
- * Truncates a string to a specified length, adding ellipsis if truncated.
- * @param str - The string to truncate.
- * @param length - The maximum allowed length.
- * @returns The truncated string.
- */
 export const truncateString = (str: string, length: number): string => {
   if (str.length > length) {
     return `${str.substring(0, length - 3)}...`;
@@ -19,12 +13,6 @@ export const truncateString = (str: string, length: number): string => {
   return str;
 };
 
-/**
- * Sanitizes a string for Discord Rich Presence activity, ensuring it meets length requirements.
- * @param input - The string to sanitize.
- * @param fallback - A fallback string to use if the input is empty or whitespace. Defaults to 'undefined'.
- * @returns The sanitized string, compliant with Discord's requirements.
- */
 export function sanitizeActivityText(
   input: string | undefined,
   fallback: string = 'undefined',
@@ -37,18 +25,12 @@ export function sanitizeActivityText(
   }
 
   if (safeString.length < 2) {
-    safeString = safeString.padEnd(2, '⠀'); // change if necessary
+    safeString = safeString.padEnd(2, '⠀'); // U+2800 braille blank, not HANGUL_FILLER
   }
 
   return safeString;
 }
 
-/**
- * Builds the array of buttons for the Discord Rich Presence activity.
- * @param config - The plugin configuration.
- * @param songInfo - The current song information.
- * @returns An array of buttons or undefined if no buttons are configured.
- */
 export const buildDiscordButtons = (
   config: DiscordPluginConfig,
   songInfo: SongInfo,
@@ -74,11 +56,7 @@ export const buildDiscordButtons = (
   return buttons.length ? buttons : undefined;
 };
 
-/**
- * Pads Hangul fields (title, artist, album) in SongInfo if they are less than 2 characters long.
- * Discord requires fields to be at least 2 characters.
- * @param songInfo - The song information object (will be mutated).
- */
+/** Pads title/artist/album to Discord's 2-character minimum (mutates songInfo) */
 export const padHangulFields = (songInfo: SongInfo): void => {
   (['title', 'artist', 'album'] as const).forEach((key) => {
     const value = songInfo[key];
@@ -88,14 +66,7 @@ export const padHangulFields = (songInfo: SongInfo): void => {
   });
 };
 
-/**
- * Checks if the difference between two time values indicates a seek operation.
- * @param oldSeconds - The previous elapsed time in seconds.
- * @param newSeconds - The current elapsed time in seconds.
- * @returns True if the time difference suggests a seek, false otherwise.
- */
 export const isSeek = (oldSeconds: number, newSeconds: number): boolean => {
-  // Consider it a seek if the time difference is greater than 2 seconds
-  // (allowing for minor discrepancies in reporting)
+  // A >2s jump is a seek; smaller gaps are reporting jitter
   return Math.abs(newSeconds - oldSeconds) > 2;
 };

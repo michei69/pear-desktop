@@ -41,16 +41,15 @@ const computeTrayIcons = () => {
   return { default: create(defaultPath), paused: create(pausedPath) };
 };
 
-// Rebuilds the tray icons from the current config, e.g. after toggling the icon style.
+// Rebuilds the tray icons from the current config (e.g. after an icon-style toggle).
 export const refreshTrayIcons = () => {
   if (!tray) return;
   ({ default: defaultTrayIcon, paused: pausedTrayIcon } = computeTrayIcons());
   tray.setImage(trayIsPaused ? pausedTrayIcon : defaultTrayIcon);
 };
 
-// The hover popup is drawn in the band the tray tooltip pops up in, so the
-// tooltip can be silenced (empty string = Windows shows nothing) while the
-// popup is visible, and restored from the last known text afterwards.
+// The hover popup is drawn where the tray tooltip pops up, so silence the
+// tooltip (empty string = Windows shows nothing) while the popup is visible.
 let trayTooltipText = '';
 let trayTooltipSuppressed = false;
 
@@ -68,8 +67,7 @@ type MouseMoveEvent = (
   position: Electron.Point,
 ) => void;
 
-// Plugins load before the tray is created, so queue handlers
-// registered early and apply them once setUpTray runs.
+// Plugins load before the tray, so queue early handlers and apply them in setUpTray.
 let pendingMouseMove: MouseMoveEvent | null = null;
 
 // macOS and Windows only
@@ -97,12 +95,10 @@ export const setUpTray = (app: Electron.App, win: Electron.BrowserWindow) => {
     return;
   }
 
-  // Unregister previous callback before re-registering
   if (traySongInfoCallback) {
     unregisterCallback(traySongInfoCallback);
   }
 
-  // Remove old like-changed listener before re-registering
   ipcMain.removeAllListeners('peard:like-changed');
 
   const { playPause, next, previous, like, dislike } = getSongControls(win);
@@ -119,11 +115,10 @@ export const setUpTray = (app: Electron.App, win: Electron.BrowserWindow) => {
   // MacOS only
   tray.setIgnoreDoubleClickEvents(true);
 
-  // Windows turns a click that lands within the system double-click time of the
-  // previous one into WM_LBUTTONDBLCLK, and Electron reports that as
-  // 'double-click' *instead* of 'click' (setIgnoreDoubleClickEvents is a no-op
-  // off macOS). Listening to 'click' alone therefore dropped every click that
-  // came too soon after the last one - the "sometimes I have to click twice".
+  // Windows turns a click within the system double-click time into
+  // WM_LBUTTONDBLCLK, reported as 'double-click' instead of 'click'
+  // (setIgnoreDoubleClickEvents is a no-op off macOS), so listening to 'click'
+  // alone dropped rapid clicks.
   const onTrayClick = () => {
     if (config.get('options.trayClickPlayPause')) {
       playPause();
@@ -215,7 +210,7 @@ export const setUpTray = (app: Electron.App, win: Electron.BrowserWindow) => {
 
   tray.setContextMenu(buildTrayMenu());
 
-  // Listen for like status changes from the renderer
+  // Like status changes come from the renderer.
   win.webContents.send('peard:setup-like-changed-listener');
   ipcMain.on('peard:like-changed', (_, status: LikeType) => {
     currentLikeStatus = status;
@@ -246,7 +241,7 @@ export const setUpTray = (app: Electron.App, win: Electron.BrowserWindow) => {
   };
   registerCallback(traySongInfoCallback);
 
-  // Apply any handlers that plugins registered before the tray existed
+  // Apply handlers plugins registered before the tray existed.
   if (pendingMouseMove) {
     tray.on('mouse-move', pendingMouseMove);
     pendingMouseMove = null;

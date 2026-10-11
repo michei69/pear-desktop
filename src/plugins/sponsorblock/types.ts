@@ -1,13 +1,12 @@
 export type Segment = [number, number];
 
 export interface SkipSegment {
-  // Array of this object
-  segment: Segment; //[0, 15.23] start and end time in seconds
+  segment: Segment; // [start, end] in seconds, e.g. [0, 15.23]
   UUID: string;
   category: string; // [1]
-  videoDuration: number; // Duration of video when submission occurred (to be used to determine when a submission is out of date). 0 when unknown. +- 1 second
+  videoDuration: number; // video length at submission time, for staleness checks; 0 when unknown, ±1s
   actionType: string; // [3]
-  locked: number; // if submission is locked
-  votes: number; // Votes on segment
-  description: string; // title for chapters, empty string for other segments
+  locked: number; // 1 if the submission is locked
+  votes: number;
+  description: string; // chapter title, empty for other segments
 }

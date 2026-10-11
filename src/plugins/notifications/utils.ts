@@ -93,9 +93,8 @@ export const secondsToMinutes = (seconds: number) => {
 };
 
 /**
- * Bring the app window forward when the user clicks the notification itself.
- * macOS activates the app on its own, Windows does not, so without this a
- * toast click just dismisses the toast.
+ * Bring the app window forward on a notification click. macOS activates the
+ * app on its own, Windows does not, so without this a toast click just dismisses.
  */
 export const focusWindowOnNotificationClick = (
   notification: Notification,

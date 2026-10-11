@@ -400,9 +400,8 @@ export default createPlugin<
 
       const connection = await this.connection.connect(id).catch(() => null);
       if (!connection) {
-        // The join failed (peer unreachable or connection error) — tear the
-        // PeerJS peer down so its signaling socket isn't leaked, and reset
-        // the mode for the next attempt.
+        // Join failed: tear the peer down so its signaling socket isn't leaked,
+        // and drop the connection so the next attempt starts from a clean mode.
         this.connection?.disconnect();
         this.connection = undefined;
         return false;
@@ -464,7 +463,7 @@ export default createPlugin<
         if (typeof resolveIgnore === 'number') clearTimeout(resolveIgnore);
         resolveIgnore = window.setTimeout(() => {
           this.ignoreChange = false;
-        }, 16); // wait 1 frame
+        }, 16);
       };
       const listener = async (event: ConnectionEventUnion) => {
         this.ignoreChange = true;
@@ -586,7 +585,7 @@ export default createPlugin<
         if (typeof resolveIgnore === 'number') clearTimeout(resolveIgnore);
         resolveIgnore = window.setTimeout(() => {
           this.ignoreChange = false;
-        }, 16); // wait 1 frame
+        }, 16);
       };
 
       this.connection.on(listener);
@@ -607,10 +606,9 @@ export default createPlugin<
         >('tp-yt-paper-progress'),
       ).filter((el) => {
         const slider = el.closest('tp-yt-paper-slider');
-        // Only intercept the seek bar, never volume sliders: YTM's
-        // volume slider contains an internal tp-yt-paper-progress track,
-        // so without this filter volume drags get broadcast as time
-        // progress and seek the host (see issue #23).
+        // Only intercept the seek bar, never volume sliders: YTM's volume
+        // slider contains an internal tp-yt-paper-progress track, so volume
+        // drags would be broadcast as time progress and seek the host (#23).
         return !slider || slider.id === 'progress-bar';
       });
       const rollbackList = progress.map((progress) => {
@@ -786,7 +784,7 @@ export default createPlugin<
             index,
           });
         } catch {
-          // Silently ignore broadcast errors to keep the interval running
+          // Keep the interval running on broadcast errors.
         }
       }, 1000);
 

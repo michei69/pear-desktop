@@ -15,7 +15,7 @@ import packageJson from '../../package.json' with { type: 'json' };
 import type { TrackerBlockerConfig } from '@/plugins/do-not-track';
 import type { SyncedLyricsPluginConfig } from '@/plugins/synced-lyrics/types';
 
-// HACK: electron-store is ESM, but rolldown has a bug that prevents it from being imported properly in CommonJS context, so we have to use require here
+// HACK: electron-store is ESM, but rolldown has a bug that prevents importing it from CommonJS, so it has to be required here
 /* oxlint-disable typescript/no-require-imports */
 const Store = (
   require('electron-store') as {
@@ -31,18 +31,16 @@ export type IStore = InstanceType<
 const migrations = {
   '>=3.12.4'(store: IStore) {
     // A beta build should follow the beta channel from the start, without
-    // overriding a channel the user already picked. `store.get` cannot tell
-    // those apart: conf writes the defaults into the file before migrations
-    // run, so `options.updateChannel` already reads back as `stable`. The file
-    // as it was before that write is what says whether the user chose.
+    // overriding a channel the user already picked. conf writes the defaults
+    // into the file before migrations run, so `store.get` always reads back
+    // `stable`; `channelBeforeDefaults` is what says whether the user chose.
     if (channelBeforeDefaults === undefined) {
       store.set('options.updateChannel', defaultUpdateChannel());
     }
   },
   '>=3.12.3'(store: IStore) {
     // Synced lyrics' single "preferred provider" became an orderable priority
-    // list, with the named provider leading it. "None" leaves the list off,
-    // which is the old "let the lyrics decide" behaviour.
+    // list led by it; "None" leaves the list off, the old "let the lyrics decide".
     const syncedLyricsConfig = store.get('plugins.synced-lyrics') as
       | Record<string, unknown>
       | undefined;
@@ -326,26 +324,21 @@ const migrations = {
 };
 
 /**
- * `conf` normalises this through `semver.clean`, so a prerelease drops its
- * suffix on its own. Doing it here keeps the marker spelled the same for
- * `3.12.4-beta.1` and `3.12.4`, which is the whole point of the split.
- *
- * `projectVersion` is a `conf` option electron-store hides from its types, so
- * it ships as an extra property.
+ * `conf` normalises this through `semver.clean` anyway; doing it here keeps the
+ * marker spelled the same for `3.12.4-beta.1` and `3.12.4`, which is the point of
+ * the split. `projectVersion` is a `conf` option electron-store hides from its
+ * types, so it ships as an extra property.
  */
 const projectVersion = {
   projectVersion: migrationBaseVersion(packageJson.version),
 };
 
 /**
- * The channel the config file held before this store was created, if any.
- * Read here rather than inside the migration: conf writes the defaults into
- * the file first, so by migration time `options.updateChannel` always reads
- * back as `stable` and a user's own choice is indistinguishable from it.
- *
- * Only the main process has the file to read: this module is also bundled into
- * the preload, where `app` does not exist and reading it would take the whole
- * preload down with it.
+ * The channel the config file held before this store was created. Read here, not
+ * in the migration: conf writes the defaults into the file first, so
+ * `options.updateChannel` already reads back as `stable`. Main process only: the
+ * preload bundles this module too, where `app` does not exist and reading the
+ * file would kill it.
  */
 const channelBeforeDefaults =
   process.type === 'browser'
@@ -369,7 +362,7 @@ function readStoredChannel(path: string) {
 export const store = new Store({
   defaults: {
     ...defaults,
-    // README: 'plugin' uses deepmerge to populate the default values, so it is not necessary to include it here
+    // README: deepmerge fills in `plugin` defaults, so it need not be listed here
   },
   clearInvalidConfig: false,
   migrations,

@@ -19,9 +19,8 @@ const themeLabel = (key: string) =>
 
 /**
  * Preset picker for the selected theme: the theme's own palette (Default), the
- * presets it ships, then the palette the user edited themselves. A theme that
- * ships no palette has no Default to offer, so its first preset takes its place.
- * Changing a colour in **Colors** picks Custom, so this reflects that too.
+ * presets it ships, then the user's edited palette. A theme with no palette has no
+ * Default, so its first preset takes its place; editing a colour in **Colors** picks Custom.
  */
 export const ThemePresetField = (_props: { ctx: CustomFieldContext }) => {
   const choosePreset = async (preset: string) => {
@@ -37,7 +36,7 @@ export const ThemePresetField = (_props: { ctx: CustomFieldContext }) => {
 
   return (
     // The field hides its framework label: the pick reads better on the theme
-    // select's line, in the same column the palette's own labels use.
+    // select's line, in the same column as the palette's own labels.
     <div class="sui-palette__row">
       <span class="sui-palette__key">
         {t('settings-ui.fields.theme-preset')}

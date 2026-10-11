@@ -13,31 +13,15 @@ import injectCliqzPreload from './injectors/inject-cliqz-preload';
 import { blockers } from './types';
 
 export interface TrackerBlockerConfig {
-  /**
-   * Whether to enable the tracker blocker.
-   * @default true
-   */
+  /** Enable the tracker blocker. @default true */
   enabled: boolean;
-  /**
-   * When enabled, the tracker blocker will cache the blocklists.
-   * @default true
-   */
+  /** Cache the blocklists. @default true */
   cache: boolean;
-  /**
-   * Which tracker blocker to use.
-   * @default blockers.InPlayer
-   */
+  /** Which tracker blocker to use. @default blockers.InPlayer */
   blocker: (typeof blockers)[keyof typeof blockers];
-  /**
-   * Additional list of filters to use.
-   * @example ["https://raw.githubusercontent.com/uBlockOrigin/uAssets/master/filters/filters.txt"]
-   * @default []
-   */
+  /** Extra filter lists to load. @default [] */
   additionalBlockLists: string[];
-  /**
-   * Disable the default blocklists.
-   * @default false
-   */
+  /** Skip the built-in blocklists. @default false */
   disableDefaultLists: boolean;
 }
 

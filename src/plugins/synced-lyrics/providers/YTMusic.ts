@@ -46,10 +46,7 @@ export class YTMusic implements LyricProvider {
     const { contents } = browseData;
     if (!contents) return null;
 
-    /*
-      NOTE: Due to the nature of the library, the json responses are not consistent,
-            this means we have to check for multiple possible paths to get the lyrics.
-    */
+    // NOTE: the JSON responses are not consistent, so several paths may hold the lyrics.
 
     const syncedLines = contents?.elementRenderer?.newElement?.type
       ?.componentType?.model?.timedLyricsModel?.lyricsData?.timedLyricsData;
@@ -110,7 +107,7 @@ export class YTMusic implements LyricProvider {
       .padStart(2, '0')}.${remaining.toString().padStart(2, '0')}`;
   }
 
-  // RATE LIMITED (2 req per sec)
+  // RATE LIMITED: 2 req per sec
   private PROXIED_ENDPOINT = 'https://ytmbrowseproxy.zvz.be/';
 
   private fetchNext(videoId: string) {
@@ -143,10 +140,8 @@ export class YTMusic implements LyricProvider {
     }).then((res) => res.json()) as Promise<BrowseData>;
   }
 
-  // Calls YouTube Music's browse endpoint directly via the app's authenticated
-  // network manager, which injects the visitor/auth tokens that the request
-  // would otherwise be missing when called from regions where the unauthenticated
-  // call is geo-restricted.
+  // Calls browse through the app's authenticated network manager, which injects
+  // the visitor/auth tokens the direct call lacks in geo-restricted regions.
   private async fetchBrowseDirect(
     browseId: string,
   ): Promise<BrowseData | null> {

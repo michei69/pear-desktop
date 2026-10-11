@@ -23,13 +23,10 @@ const dynamicRangeOf = (fadeScaling: string | number | undefined) => {
   );
 };
 
-/**
- * Volume of a fade at the given progress, from 0 to 1, for a scaling setting.
- * The single owner of the scaling math: a fade in is this curve sampled
- * forwards, a fade out is the same curve sampled backwards.
- *
- * @throws {TypeError} if the scaling is neither a known name nor a positive dB number
- */
+// Volume of a fade at the given progress (0 to 1) for a scaling setting, and the
+// single owner of the scaling math: a fade in samples this forwards, a fade out
+// samples it backwards. Throws a TypeError if the scaling is neither a known name
+// nor a positive dB number.
 export const fadeVolumeAt = (
   progress: number,
   fadeScaling?: string | number,
@@ -46,12 +43,10 @@ export const fadeVolumeAt = (
 /** Points a scheduled fade curve is sampled at. */
 const CURVE_POINTS = 64;
 
-/**
- * A fade as a curve for the audio thread to follow: a scheduled curve is
- * sample-accurate, where a volume written a frame at a time is stepped and
- * stops with a window that is not being drawn. A fade out is the same scaler
- * run backwards, so the two keep a constant combined power where they overlap.
- */
+// A fade as a curve for the audio thread to follow: a scheduled curve is
+// sample-accurate, where a volume written a frame at a time is stepped and stops with
+// a window that is not drawn. A fade out runs the same scaler backwards, so the two
+// keep a constant combined power where they overlap.
 export const fadeCurve = (
   fadeScaling: string | number | undefined,
   direction: 'in' | 'out',
@@ -70,16 +65,11 @@ export const fadeCurve = (
   return curve;
 };
 
-/**
- * Exponential scaler with dynamic range limit.
- *
- * @param input logarithmic input level to be expanded (float, 0…1)
- * @param dynamicRange expanded output range, in multiples of 10 dB (float, 0…∞)
- * @returns expanded level (float, 0…1)
- */
+// Exponential scaler with dynamic range limit: input is the logarithmic level to
+// expand (0…1), dynamicRange is in multiples of 10 dB, and the expanded level (0…1)
+// is returned.
 const exponentialScaler = (input: number, dynamicRange: number) => {
-  // A limited dynamic range would turn zero into a small fraction of it, and
-  // audio would not be recognized as silent
+  // Otherwise zero becomes a small fraction of the range, not silence
   if (input === 0) return 0;
 
   // Scale 0…1 to minus something × 10 dB

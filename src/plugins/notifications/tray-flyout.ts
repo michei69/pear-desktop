@@ -2,19 +2,15 @@ import { spawn, type ChildProcess } from 'node:child_process';
 
 export type FlyoutRect = {
   left: number;
-  // Top edge of the flyout window. The square the user sees starts a little
-  // below it; see the comment on the probe.
+  // Top edge of the flyout window; the square starts a little below it (see probe).
   top: number;
 };
 
-// The shell keeps its tray overflow flyout (the "^" chevron) in a window it
-// sizes to however many icons are hidden in there, so that window's rectangle
-// is the only honest answer to "how far above the taskbar does the flyout
-// reach?" — hardcoding the height of the band breaks the moment the flyout
-// holds a different number of icon rows. The window is taller than the square
-// it draws, and that margin is invisible to every probe here (the window
-// answers hit-tests across its whole rectangle, DWM reports the same
-// rectangle as the frame), so the popup adds the margin back itself.
+// The shell sizes the flyout (the "^" chevron) window to however many icons are
+// hidden, so its rectangle is the only honest answer to how far above the
+// taskbar it reaches; a hardcoded band height breaks with a different icon
+// count. The window is taller than the square it draws, and no probe sees that
+// margin (DWM and hit-tests report the whole rectangle), so the popup adds it back.
 const PROBE_SCRIPT = `
 Add-Type -Namespace Pear -Name TrayFlyout -MemberDefinition @'
 [System.Runtime.InteropServices.DllImport("user32.dll")]
@@ -61,8 +57,7 @@ while ($true) {
 }
 `;
 
-// "left,top,right,bottom" in physical screen pixels ("top" being where the
-// square starts), or null for "hidden" / anything else the probe may print.
+// Parses "left,top,right,bottom" in physical pixels, or null for anything else.
 export const parseFlyoutLine = (line: string): FlyoutRect | null => {
   const parts = line.split(',');
   if (parts.length !== 4) return null;
@@ -74,12 +69,10 @@ export const parseFlyoutLine = (line: string): FlyoutRect | null => {
   return { left, top };
 };
 
-// Streams the flyout rectangle for as long as the returned stop function is
-// not called. Only the last known rectangle matters: it does not move while
-// the flyout is hidden, and the icons it holds stay where the flyout put them.
-// The helper is spawned once (it is a 150ms poll, not a process per hover) and
-// restarted if it ever dies, so the popup never quietly falls back to the
-// position this was written to fix.
+// Streams the flyout rectangle until the returned stop function is called.
+// Only the last rectangle matters: it does not move while the flyout is hidden.
+// The helper is spawned once (a 150ms poll, not a process per hover) and
+// restarted if it dies, so the popup never falls back to the position this fixes.
 export const watchTrayFlyout = (
   onRect: (rect: FlyoutRect) => void,
 ): (() => void) => {
@@ -102,8 +95,8 @@ export const watchTrayFlyout = (
     );
     child = spawned;
 
-    // A missing PowerShell is not fatal: without a rectangle the popup just
-    // anchors on the tray icon like it always did.
+    // A missing PowerShell is not fatal: without a rectangle the popup anchors
+    // on the tray icon.
     spawned.on('error', () => {});
     spawned.on('close', () => {
       child = null;

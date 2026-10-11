@@ -45,9 +45,8 @@ const getCookieFromWindow = async (win: BrowserWindow) =>
     .join(';');
 
 /**
- * Attaches a proof-of-origin token to the session, which YouTube requires for
- * some stream requests. Best effort: a session without one still works for most
- * videos.
+ * Attaches a proof-of-origin token, which YouTube requires for some stream
+ * requests. Best effort: most videos work without one.
  */
 const attachPoToken = async (yt: Innertube, win: BrowserWindow) => {
   const visitorData = yt.session.context.client.visitorData;
@@ -83,8 +82,8 @@ const attachPoToken = async (yt: Innertube, win: BrowserWindow) => {
         .privateDoNotAccessOrElseSafeScriptWrappedValue;
 
     if (interpreterJavascript) {
-      // This is a workaround to run the interpreterJavascript code
-      // Maybe there is a better way to do this (e.g. https://github.com/Siubaak/sval ?)
+      // Workaround to run interpreterJavascript; maybe sval would do instead
+      // (https://github.com/Siubaak/sval).
       // oxlint-disable-next-line typescript/no-implied-eval,typescript/no-unsafe-call
       new Function(interpreterJavascript)();
 
@@ -109,9 +108,8 @@ let session: Promise<Innertube> | undefined;
 
 /**
  * The Innertube session every plugin shares: signed with the app's YouTube
- * cookies and carrying a proof-of-origin token.
- *
- * A failed setup is forgotten so the next caller retries.
+ * cookies and carrying a proof-of-origin token. A failed setup is forgotten so
+ * the next caller retries.
  */
 export const getInnertubeSession = (win: BrowserWindow): Promise<Innertube> => {
   session ??= getCookieFromWindow(win)
@@ -135,19 +133,19 @@ export const getInnertubeSession = (win: BrowserWindow): Promise<Innertube> => {
   return session;
 };
 export const isPremium = async (win: BrowserWindow): Promise<boolean> => {
-  // If signed out, it is understood as non-premium
+  // Signed out counts as non-premium.
   const isSignedIn = (await win.webContents.executeJavaScript(
     '!!yt.config_.LOGGED_IN',
   )) as boolean;
 
   if (!isSignedIn) return false;
 
-  // If signed in, check if the upgrade button is present
+  // Signed in: look for the upgrade button.
   const upgradeBtnIconPathData = (await win.webContents.executeJavaScript(
     'document.querySelector(\'iron-iconset-svg[name="yt-sys-icons"] #\u0079\u006f\u0075\u0074\u0075\u0062\u0065_music_monochrome\')?.firstChild?.getAttribute("d")?.substring(0, 15)',
   )) as string | null;
 
-  // Fallback to non-premium if the icon is not found
+  // No icon means non-premium.
   if (!upgradeBtnIconPathData) return false;
 
   const upgradeButton = `ytmusic-guide-entry-renderer:has(> tp-yt-paper-item > yt-icon path[d^="${upgradeBtnIconPathData}"])`;
@@ -167,14 +165,11 @@ const MUXED_MIME = 'video/mp4; codecs="avc1.42001E, mp4a.40.2"';
 export type AudioBytes = { bytes: Uint8Array<ArrayBuffer>; mimeType: string };
 
 /**
- * The playable audio of a track, as bytes.
- *
- * A media element cannot play a track URL straight from YouTube: the page's own
- * streams are wrapped in YouTube's proprietary UMP container
- * (`Content-Type: application/vnd.yt-ump`, which no browser can demux), and the
- * raw URLs it can reach are refused by the CDN once a renderer has streamed one
- * (`403` + `net::ERR_BLOCKED_BY_ORB`). Asking for the bytes from here avoids
- * both: the backend gets plain mp4, and Chromium plays a Blob happily.
+ * The playable audio of a track, as bytes. A media element cannot play a track
+ * URL straight from YouTube: page streams use YouTube's proprietary UMP container
+ * (`application/vnd.yt-ump`, which no browser can demux) and raw URLs 403
+ * (`net::ERR_BLOCKED_BY_ORB`) once a renderer streams one. Fetching bytes here
+ * avoids both: plain mp4 in, Blob out.
  */
 export const getAudioBytes = async (
   yt: Innertube,
@@ -183,23 +178,19 @@ export const getAudioBytes = async (
 ): Promise<AudioBytes | undefined> => {
   let info: YTMusic.TrackInfo | YT.VideoInfo = await yt.music.getInfo(videoId);
 
-  // Age restricted videos 404 with the bypass, so we use getBasicInfo instead
-  // that's fine as we only need the streaming data
+  // Age-restricted videos 404 with the bypass, so use getBasicInfo instead;
+  // only the streaming data is needed.
   if (info.playability_status?.status === 'LOGIN_REQUIRED') {
     info = await yt.getBasicInfo(videoId, { client: 'TV_EMBEDDED' });
   }
 
   if (info.playability_status?.status !== 'OK') return undefined;
 
-  // `info.download()` is the downloader's own path. Stream URLs fetched by hand
-  // (decipher + a range request) are refused by the CDN far more often — the
-  // same track that 403s on a hand-built request serves fine through this, so
-  // the transport is left to the library rather than rebuilt here.
-  //
-  // `video+audio`, not `audio`: audio-only streams exist and resolve fine (itag
-  // 251, opus), but on licensed tracks the CDN refuses to serve them, while the
-  // muxed format does. The video track is simply ignored on playback, so the
-  // only cost of asking for it is bytes.
+  // `info.download()` is the downloader's own path; hand-built stream URLs
+  // (decipher + range request) 403 far more often, so the transport stays in the
+  // library. `video+audio`, not `audio`: audio-only streams resolve fine (itag
+  // 251, opus) but the CDN refuses to serve them on licensed tracks, whereas the
+  // muxed format works. The video track is ignored on playback, so it costs bytes.
   const stream = await info.download({
     type: (await isPremium(win)) ? 'audio' : 'video+audio',
     quality: 'best',

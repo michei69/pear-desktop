@@ -6,89 +6,39 @@ import { onMenu } from './menu';
 
 export interface ScrobblerPluginConfig {
   enabled: boolean;
-  /**
-   * Attempt to scrobble other video types (e.g. Podcasts, normal videos)
-   *
-   * @default true
-   */
+  /** Attempt to scrobble other video types (e.g. Podcasts, normal videos). @default true */
   scrobbleOtherMedia: boolean;
-  /**
-   * Use alternative titles for scrobbling (Useful for non-roman song titles, e.g. (Not) A Devil -> デビルじゃないもん)
-   *
-   * @default true
-   */
+  /** Use alternative titles for scrobbling non-roman titles (e.g. (Not) A Devil -> デビルじゃないもん). @default true */
   alternativeTitles: boolean;
-  /**
-   * Use alternative artist for scrobbling (e.g., DECO27 & (or) PinocchioP -> DECO27 / marasy -> まらしぃ)
-   *
-   * @default true
-   */
+  /** Use the alternative artist for scrobbling (e.g. DECO27 & (or) PinocchioP -> DECO27 / marasy -> まらしぃ). @default true */
   alternativeArtist: boolean;
-  /**
-   * List of regular expressions used to filter out garbage from track titles and artists
-   */
+  /** Regexes used to filter garbage from track titles and artists */
   customRegexFilters: string[];
-  /**
-   * Use MusicBrainz to automatically verify and correct song titles and artists
-   *
-   * @default false
-   */
+  /** Use MusicBrainz to verify and correct song titles and artists. @default false */
   useMusicBrainz: boolean;
-  /**
-   * Email address used as contact info for MusicBrainz API User-Agent
-   */
+  /** Contact email for the MusicBrainz API User-Agent */
   musicBrainzEmail: string;
   scrobblers: {
     lastfm: {
-      /**
-       * Enable Last.fm scrobbling
-       *
-       * @default false
-       */
+      /** Enable Last.fm scrobbling. @default false */
       enabled: boolean;
-      /**
-       * Token used for authentication
-       */
+      /** Auth token */
       token: string | undefined;
-      /**
-       * Session key used for scrobbling
-       */
+      /** Session key used for scrobbling */
       sessionKey: string | undefined;
-      /**
-       * Root of the Last.fm API
-       *
-       * @default 'http://ws.audioscrobbler.com/2.0/'
-       */
+      /** Root of the Last.fm API. @default 'http://ws.audioscrobbler.com/2.0/' */
       apiRoot: string;
-      /**
-       * Last.fm api key registered by @semvis123
-       *
-       * @default '04d76faaac8726e60988e14c105d421a'
-       */
+      /** Last.fm api key registered by @semvis123. @default '04d76faaac8726e60988e14c105d421a' */
       apiKey: string;
-      /**
-       * Last.fm api secret registered by @semvis123
-       *
-       * @default 'a5d2a36fdf64819290f6982481eaffa2'
-       */
+      /** Last.fm api secret registered by @semvis123. @default 'a5d2a36fdf64819290f6982481eaffa2' */
       secret: string;
     };
     listenbrainz: {
-      /**
-       * Enable ListenBrainz scrobbling
-       *
-       * @default false
-       */
+      /** Enable ListenBrainz scrobbling. @default false */
       enabled: boolean;
-      /**
-       * Listenbrainz user token
-       */
+      /** ListenBrainz user token */
       token: string | undefined;
-      /**
-       * Root of the ListenBrainz API
-       *
-       * @default 'https://api.listenbrainz.org/1/'
-       */
+      /** Root of the ListenBrainz API. @default 'https://api.listenbrainz.org/1/' */
       apiRoot: string;
     };
   };
