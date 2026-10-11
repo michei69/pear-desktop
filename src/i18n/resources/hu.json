@@ -239,7 +239,7 @@
             "percent": "{{ratio}}%"
           }
         },
-        "enable-seekbar": "Keresősáv témázásának engedélyezése"
+        "enable-seekbar": "Keresősáv színezésének engedélyezése"
       },
       "name": "Album színtéma"
     },
@@ -323,18 +323,18 @@
           "label": "Kiszolgáló név"
         },
         "https": {
-          "label": "HTTPS és Tanúsítványok",
+          "label": "HTTPS és tanúsítványok",
           "submenu": {
             "cert": {
-              "dialogTitle": "HTTPS tanúsítvány fájl kiválasztása",
-              "label": "Tanúsítvány fájl (.crt/.pem)"
+              "dialogTitle": "HTTPS tanúsítványfájl kiválasztása",
+              "label": "Tanúsítványfájl (.crt/.pem)"
             },
             "enable-https": {
               "label": "HTTPS engedélyezése"
             },
             "key": {
-              "dialogTitle": "HTTPS privát kulcs fájl kiválasztása",
-              "label": "Privát kulcs fájl (.key/.pem)"
+              "dialogTitle": "HTTPS privát kulcsfájl kiválasztása",
+              "label": "Privát kulcsfájl (.key/.pem)"
             }
           }
         },
@@ -370,7 +370,7 @@
           "label": "Port"
         }
       },
-      "name": "Hitelesítési Proxy Adapter",
+      "name": "Auth Proxy Adapter",
       "prompt": {
         "hostname": {
           "label": "Adjon meg egy hosztnevet a lokális proxy szerverhez (újraindítást igényel):",
@@ -417,7 +417,7 @@
       "description": "Óra hozzáadása a navigációs sávhoz",
       "menu": {
         "format": {
-          "24-hour-format": "24 órás formátum",
+          "24-hour-format": "24 órás időformátum",
           "display-seconds": "Másodpercek megjelenítése",
           "label": "Formátum"
         }
@@ -451,7 +451,7 @@
       }
     },
     "custom-output-device": {
-      "description": "Egyedi kimeneti médiaeszköz beállítása dalokhoz",
+      "description": "Egyéni kimeneti hangeszköz beállítása a zenékhez",
       "menu": {
         "device-selector": "Eszköz kiválasztása"
       },
@@ -503,6 +503,13 @@
           "title": "Inaktivitási időkorlát beállítása"
         }
       }
+    },
+    "do-not-track": {
+      "description": "Minden nyomkövetés letiltása alapértelmezetten",
+      "menu": {
+        "blocker": "Blokkoló"
+      },
+      "name": "Nyomkövetés tiltása"
     },
     "downloader": {
       "backend": {
@@ -766,7 +773,7 @@
       "name": "Videóminőség módosító",
       "renderer": {
         "quality-settings-button": {
-          "label": "Lejátszó minőség váltó megnyitása"
+          "label": "Minőségbeállítások megnyitása"
         }
       }
     },
@@ -840,22 +847,22 @@
       },
       "menu": {
         "convert-chinese-character": {
-          "label": "Kínai karakter átalakítása",
+          "label": "Kínai írásjelek átalakítása",
           "submenu": {
             "disabled": {
-              "label": "Letiltva",
-              "tooltip": "Kínai karakter átalakítás letiltása"
+              "label": "kikapcsolva",
+              "tooltip": "Kínai írásjelek átalakításának kikapcsolása"
             },
             "simplified-to-traditional": {
-              "label": "Egyszerűsítettről Hagyományosra",
-              "tooltip": "Egyszerűsített kínai átalakítása hagyományos kínaivá"
+              "label": "Egyszerűsített kínairól hagyományosra",
+              "tooltip": "Egyszerűsített kínai átalakítása hagyományos kínaira"
             },
             "traditional-to-simplified": {
-              "label": "Hagyományosról Egyszerűsítettre",
-              "tooltip": "Hagyományos kínai átalakítása egyszerűsített kínaivá"
+              "label": "Hagyományosról egyszerűsítettre",
+              "tooltip": "Hagyományos kínai írásjelek átalakítása egyszerűsített kínaira"
             }
           },
-          "tooltip": "Kínai karakter átalakítása hagyományos vagy egyszerűsített formába"
+          "tooltip": "Kínai írásjelek átalakítása hagyományosra vagy egyszerűsítettre"
         },
         "default-text-string": {
           "label": "Alapértelmezett karakter a dalszövegek között",
@@ -911,7 +918,7 @@
             "label": "Nincs",
             "tooltip": "Nincs előnyben részesített szolgáltató"
           },
-          "tooltip": "Válaszd ki az alapértelmezett szolgáltatót"
+          "tooltip": "Alapértelmezett szolgáltató kiválasztása"
         },
         "romanization": {
           "label": "Latin betűs szöveg",
@@ -1068,7 +1075,7 @@
       "description": "Átlátszóvá teszi az alkalmazás ablakát",
       "menu": {
         "opacity": {
-          "label": "Átlátszatlanság",
+          "label": "Átlátszóság",
           "submenu": {
             "percent": "{{opacity}}%"
           }
@@ -1077,13 +1084,18 @@
           "label": "Típus",
           "submenu": {
             "acrylic": "Akril",
-            "mica": "Csillám",
+            "content": "Tartalom",
+            "fullscreen-ui": "Teljes képernyős felület",
+            "mica": "Mica",
             "none": "Nincs",
-            "tabbed": "Füles"
+            "tabbed": "Tabbed",
+            "under-page": "Oldal alatt",
+            "under-window": "Ablak alatt",
+            "window": "Ablak"
           }
         }
       },
-      "name": "Átlátszó Lejátszó"
+      "name": "Áttetsző lejátszó"
     },
     "tuna-obs": {
       "description": "Integráció az OBS Tuna pluginjával",
