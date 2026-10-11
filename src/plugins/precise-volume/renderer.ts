@@ -242,6 +242,7 @@ export const onPlayerApiReady = async (
     );
   }
 
+  /** Move the volume sliders (old and new UI) to the saved volume */
   function updateVolumeSlider() {
     const savedVolume = options.savedVolume ?? 0;
     // The slider rounds to multiples of 5
