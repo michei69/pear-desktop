@@ -342,10 +342,15 @@ const projectVersion = {
  * Read here rather than inside the migration: conf writes the defaults into
  * the file first, so by migration time `options.updateChannel` always reads
  * back as `stable` and a user's own choice is indistinguishable from it.
+ *
+ * Only the main process has the file to read: this module is also bundled into
+ * the preload, where `app` does not exist and reading it would take the whole
+ * preload down with it.
  */
-const channelBeforeDefaults = readStoredChannel(
-  join(app.getPath('userData'), 'config.json'),
-);
+const channelBeforeDefaults =
+  process.type === 'browser'
+    ? readStoredChannel(join(app.getPath('userData'), 'config.json'))
+    : undefined;
 
 function readStoredChannel(path: string) {
   try {

@@ -461,9 +461,10 @@ test('item 4: store.ts still seeds the channel from a 3.12.4 migration', () => {
   expect(src.store).toMatch(/'>=3\.12\.4'\(store: IStore\) \{/);
   expect(src.store).toContain('if (channelBeforeDefaults === undefined) {');
   // The capture must happen before the store is constructed, or it reads the
-  // defaults back instead of what the user chose.
+  // defaults back instead of what the user chose. It is main-process only: this
+  // module is bundled into the preload too, where `app` does not exist.
   expect(src.store).toMatch(
-    /channelBeforeDefaults = readStoredChannel\(\s*join\(app\.getPath\('userData'\), 'config\.json'\),\s*\);/,
+    /channelBeforeDefaults =\s*process\.type === 'browser'\s*\?\s*readStoredChannel\(join\(app\.getPath\('userData'\), 'config\.json'\)\)\s*:\s*undefined;/,
   );
   expect(src.store).toContain(
     "store.set('options.updateChannel', defaultUpdateChannel());",
