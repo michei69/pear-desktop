@@ -5,7 +5,7 @@ export const DownloadButton = (props: {
   <a
     class="yt-simple-endpoint style-scope ytmusic-menu-navigation-item-renderer"
     id="navigation-endpoint"
-    onClick={props.onClick}
+    onClick={() => props.onClick()}
     tabindex={-1}
   >
     <div class="icon ytmd-menu-item style-scope ytmusic-menu-navigation-item-renderer">
