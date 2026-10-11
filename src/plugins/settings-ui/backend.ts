@@ -13,6 +13,7 @@ import * as config from '@/config';
 import { t } from '@/i18n';
 import { restart } from '@/providers/app-controls';
 import { checkForAppUpdates, setUpdateChannel } from '@/providers/app-updates';
+import { flagMetadata } from '@/providers/flag-metadata';
 import { setYouTubeLanguage, youtubeLanguage } from '@/providers/language-sync';
 import { applyOptionEffects } from '@/providers/option-effects';
 import { openSettingsWindow } from '@/settings-window';
@@ -113,6 +114,7 @@ const CHANNELS = [
   'ytmd-sui:open-themes-folder',
   'ytmd-sui:language-from-youtube',
   'ytmd-sui:language-to-youtube',
+  'ytmd-sui:flag-metadata',
   'ytmd-sui:open-window',
 ] as const;
 
@@ -142,6 +144,7 @@ export const backend = createBackend<
       OPEN_THEMES_FOLDER,
       LANGUAGE_FROM_YOUTUBE,
       LANGUAGE_TO_YOUTUBE,
+      FLAG_METADATA,
       OPEN_WINDOW,
     ] = CHANNELS;
 
@@ -158,6 +161,15 @@ export const backend = createBackend<
           if (typeof value !== 'string') return false;
           if (!(await selectTheme(value, window))) return false;
           notifyThemesChanged(window);
+          return true;
+        }
+
+        // Feature-flag overrides are written straight through: they take effect
+        // live, so they must not go through setMenuOption, whose
+        // restartOnConfigChanges would restart the app under the user.
+        if (key === 'options.featureFlags') {
+          if (!value || typeof value !== 'object') return false;
+          config.set(key, value);
           return true;
         }
 
@@ -322,6 +334,11 @@ export const backend = createBackend<
     ipc.handle(LANGUAGE_TO_YOUTUBE, () =>
       setYouTubeLanguage(window, config.get('options.language') ?? 'en'),
     );
+
+    // Descriptions, families and restart requirements for the flags section.
+    // Resolves only once the launch download has finished, so the first open
+    // shows them instead of an empty list.
+    ipc.handle(FLAG_METADATA, () => flagMetadata());
 
     // The renderer decides which presentation to use; the window itself can
     // only be made here. Reopening focuses the existing one.

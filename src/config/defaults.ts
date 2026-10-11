@@ -56,6 +56,12 @@ export interface DefaultConfig {
     themeConsent: Record<string, string>;
     /** Whether the first-run theme has been seeded. */
     themesSeeded: boolean;
+    /**
+     * YouTube Music feature-flag overrides, keyed by flag name. Only overrides
+     * live here: a flag with no entry keeps whatever the server sent. They are
+     * applied to `window.ytcfg` before the page's own scripts run.
+     */
+    featureFlags: Record<string, unknown>;
     customWindowTitle?: string;
   };
   'plugins': Record<string, unknown>;
@@ -104,6 +110,7 @@ export const defaultConfig: DefaultConfig = {
     themeOverrides: {},
     themeConsent: {},
     themesSeeded: false,
+    featureFlags: {},
   },
   'plugins': {},
 };

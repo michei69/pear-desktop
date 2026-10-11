@@ -963,3 +963,61 @@
   opacity: 0.38;
   background: transparent;
 }
+
+/* ---- feature flags ---- */
+/* Standing warning, shown every time the section is opened. */
+.sui-flags__warning {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  border-radius: 14px;
+  background: var(--sui-tertiary-container);
+  color: var(--sui-on-tertiary-container);
+  font-size: 13px;
+  line-height: 1.4;
+}
+.sui-flags__warning .sui-icon {
+  margin-top: 1px;
+}
+/* Flag names are identifiers, not prose. */
+.sui-flags__name {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 13px;
+  word-break: break-all;
+}
+/* Four tags can crowd a long name, so let them wrap instead of squeezing it. */
+.sui-flags .sui-field__label-line {
+  flex-wrap: wrap;
+}
+/* The family tag sits next to the overridden one, in the app's own accent. */
+.sui-flags__family {
+  background: transparent;
+  border: 1px solid var(--sui-outline);
+  color: var(--sui-primary);
+}
+.sui-flags__undo {
+  flex-shrink: 0;
+  padding: 6px 14px;
+  font-size: 12px;
+}
+/* Add and Undo share it: neither does anything while it is off. */
+.sui-flags .sui-fieldbtn:disabled {
+  cursor: default;
+  opacity: 0.38;
+  background: transparent;
+}
+.sui-flags__add {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.sui-flags__add-name {
+  flex: 1;
+  min-width: 0;
+}
+.sui-flags__add-value {
+  flex: 0 0 110px;
+}

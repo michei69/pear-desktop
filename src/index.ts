@@ -46,6 +46,7 @@ import { restart, setupAppControls } from '@/providers/app-controls';
 import { appIconPath, windowIconPath } from '@/providers/app-icon';
 import { setupAutoUpdates } from '@/providers/app-updates';
 import { classifyLink } from '@/providers/external-links';
+import { loadFlagMetadata } from '@/providers/flag-metadata';
 import {
   APP_PROTOCOL,
   handleProtocol,
@@ -904,6 +905,10 @@ app.whenReady().then(async () => {
   });
 
   await setupThemes();
+
+  // Not awaited: the settings UI waits on the same download when it opens the
+  // flags section, and a slow GitHub must not hold the window back.
+  loadFlagMetadata();
 
   // Override the logo baked into the bundle when the original YTM icons are requested
   if (is.macOS() && config.get('options.useYtmIcons')) {

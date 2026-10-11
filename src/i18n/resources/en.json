@@ -1470,6 +1470,9 @@
       "plugins": {
         "label": "Plugins"
       },
+      "flags": {
+        "label": "Flags"
+      },
       "about": {
         "label": "About"
       }
@@ -1488,6 +1491,19 @@
     },
     "stepper-decrement": "Decrease",
     "stepper-increment": "Increase",
+    "flags": {
+      "warning": "Feature flags are YouTube Music's own internal switches. Changing them can break playback, layout or account features, and they are not covered by support. Overrides are kept only for the flags you change, and can be removed with Undo.",
+      "search-placeholder": "Search flags",
+      "overridden": "overridden",
+      "undo": "Undo",
+      "undo-hint": "Delete this override",
+      "empty": "This page exposes no feature flags.",
+      "no-match": "No flags match “{{query}}”.",
+      "add-name": "New flag name",
+      "add-value": "Value",
+      "add-value-hint": "JSON when it parses (true, 42, \"text\"), the text itself otherwise",
+      "add": "Add"
+    },
     "fields": {
       "podcast-artist": "Use podcast participants as artists",
       "podcast-artist-desc": "Off: a podcast episode’s artist is the channel that published it.",

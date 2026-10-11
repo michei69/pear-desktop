@@ -18,6 +18,7 @@ import {
 import { toSettingsGroups, type SettingsGroup } from '@/types/settings';
 
 import { AboutSection } from './AboutSection';
+import { FlagsSection } from './FlagsSection';
 import { Icon } from './Icon';
 import { PluginCard } from './PluginCard';
 import { SettingsField } from './SettingsField';
@@ -290,6 +291,12 @@ export const SettingsModal = (props: {
 
   const search = () => query().trim().toLowerCase();
 
+  /** The flags section owns the search box while it is open. */
+  const isFlags = () => active() === 'flags';
+
+  /** Searching settings, as opposed to filtering the flags. */
+  const isSearchMode = () => isSearching() && !isFlags();
+
   /** Match a field by its own text, keeping only the groups that still have one. */
   const matchingGroups = (groups: SettingsGroup[]) =>
     groups
@@ -303,6 +310,7 @@ export const SettingsModal = (props: {
       }))
       .filter((group) => group.fields.length > 0);
 
+  // The flags section carries no groups, which is what keeps it out of here.
   const appMatches = createMemo(() =>
     sections().flatMap((section) =>
       matchingGroups(section.groups).map((group) => ({
@@ -426,7 +434,11 @@ export const SettingsModal = (props: {
             <Icon name="search" />
             <input
               onInput={(e) => setQuery(e.currentTarget.value)}
-              placeholder={t('settings-ui.search-placeholder')}
+              placeholder={
+                isFlags()
+                  ? t('settings-ui.flags.search-placeholder')
+                  : t('settings-ui.search-placeholder')
+              }
               ref={(el) => (searchInputRef = el)}
               type="text"
               value={query()}
@@ -440,7 +452,7 @@ export const SettingsModal = (props: {
                   class="sui-nav__item"
                   classList={{
                     'sui-nav__item--active':
-                      !isSearching() && active() === section.id,
+                      !isSearchMode() && active() === section.id,
                   }}
                   onClick={() => {
                     setActive(section.id);
@@ -500,11 +512,11 @@ export const SettingsModal = (props: {
           <header class="sui-header">
             <div class="sui-header__text">
               <div class="sui-header__title">
-                {isSearching()
+                {isSearchMode()
                   ? t('settings-ui.search-results')
                   : (currentSection()?.label() ?? '')}
               </div>
-              <Show when={isSearching()}>
+              <Show when={isSearchMode()}>
                 <div class="sui-header__sub">
                   {t('settings-ui.search-matching', {
                     query: query().trim(),
@@ -548,7 +560,7 @@ export const SettingsModal = (props: {
 
             <Show fallback={<div class="sui-empty">…</div>} when={store()}>
               {/* search mode */}
-              <Show when={isSearching()}>
+              <Show when={isSearchMode()}>
                 <Show
                   when={
                     appMatches().length === 0 && pluginMatches().length === 0
@@ -571,7 +583,7 @@ export const SettingsModal = (props: {
               </Show>
 
               {/* section mode */}
-              <Show when={!isSearching()}>
+              <Show when={!isSearchMode()}>
                 <For each={matchingGroups(currentSection()?.groups ?? [])}>
                   {(group) => (
                     <AppGroupView group={group} title={group.title?.()} />
@@ -584,6 +596,20 @@ export const SettingsModal = (props: {
                       <PluginCardView groups={meta.groups} meta={meta} />
                     )}
                   </For>
+                </Show>
+
+                <Show when={isFlags()}>
+                  <FlagsSection
+                    // A flag override is a setting as far as the restart banner
+                    // and its dialog are concerned: both name the flag.
+                    onChanged={(name, needsRestart) =>
+                      flagIfRestart(
+                        { type: 'setting', label: name },
+                        needsRestart,
+                      )
+                    }
+                    query={query()}
+                  />
                 </Show>
 
                 <Show when={active() === 'about'}>

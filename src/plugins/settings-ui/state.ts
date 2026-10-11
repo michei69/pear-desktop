@@ -17,6 +17,7 @@ import { getByPath, nestPartial, setByPath } from './paths';
 import type { UpdateChannel } from '@/app-info';
 import type { defaultConfig } from '@/config/defaults';
 import type { RendererContext } from '@/types/contexts';
+import type { FlagMetadataMap } from '@/types/flag-metadata';
 import type { RestartRequirement } from '@/types/restart';
 
 /** The stored config, plus what the backend reports about updates. */
@@ -120,6 +121,9 @@ export const bridge = {
       string | undefined
     >,
   languageToYouTube: () => ipc!.invoke('ytmd-sui:language-to-youtube'),
+  /** Descriptions, families and restart requirements for the flags section. */
+  flagMetadata: () =>
+    ipc!.invoke('ytmd-sui:flag-metadata') as Promise<FlagMetadataMap>,
 };
 
 export const refreshStore = async () => {

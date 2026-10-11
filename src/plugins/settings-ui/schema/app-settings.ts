@@ -17,7 +17,14 @@ import type {
 } from '@/types/settings';
 
 interface AppSection {
-  id: 'general' | 'appearance' | 'window' | 'advanced' | 'plugins' | 'about';
+  id:
+    | 'general'
+    | 'appearance'
+    | 'window'
+    | 'advanced'
+    | 'plugins'
+    | 'flags'
+    | 'about';
   /** Icon id resolved to an inline SVG in the renderer. */
   icon: string;
   label: () => string;
@@ -434,6 +441,14 @@ export const buildAppSections = (): AppSection[] => {
       id: 'plugins',
       icon: 'puzzle',
       label: () => t('settings-ui.sections.plugins.label'),
+      groups: [],
+    },
+    {
+      // Rendered by FlagsSection, and deliberately left out of the settings
+      // search: no groups, so no field of it can match a query.
+      id: 'flags',
+      icon: 'flag',
+      label: () => t('settings-ui.sections.flags.label'),
       groups: [],
     },
     {

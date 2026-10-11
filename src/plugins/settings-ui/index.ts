@@ -2,6 +2,7 @@ import { t } from '@/i18n';
 import { createPlugin } from '@/utils';
 
 import { backend } from './backend';
+import { startFeatureFlags } from './flags-preload';
 import { renderer } from './renderer';
 import style from './styles.css?inline';
 
@@ -38,6 +39,9 @@ export default createPlugin({
     },
   ],
   stylesheets: [style],
+  preload: {
+    start: startFeatureFlags,
+  },
   backend,
   renderer,
 });
