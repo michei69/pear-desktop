@@ -272,7 +272,8 @@ const rankSongs = (songs: Song[], queries: MatchQuery[]): RankedSong[] => {
     .sort((a, b) => b.score - a.score);
 };
 
-const CJK_PATTERN = /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}]/u;
+const CJK_PATTERN =
+  /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}]/u;
 
 export const pickOriginalTitle = (
   title: string,
@@ -462,7 +463,7 @@ export class Netease implements LyricProvider {
     const ranked = rankSongs(
       results.flat(),
       romanizedQuery ? [query, romanizedQuery] : [query],
-     );
+    );
 
     console.debug(
       '[synced-lyrics] NetEase matches',
