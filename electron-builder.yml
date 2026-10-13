@@ -96,8 +96,8 @@ appImage:
 flatpak:
   description: "\u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 Desktop App bundled with custom plugins"
   category: AudioVideo
-  runtimeVersion: '24.08'
-  baseVersion: '24.08'
+  runtimeVersion: '26.08'
+  baseVersion: '26.08'
   finishArgs:
     - '--socket=wayland'
     - '--socket=x11'
