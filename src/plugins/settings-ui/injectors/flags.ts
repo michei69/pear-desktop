@@ -1,6 +1,7 @@
 /** The part of the page config the feature flags live in. */
 interface YtcfgData {
   EXPERIMENT_FLAGS?: Record<string, unknown>;
+  INNERTUBE_CLIENT_VERSION?: string;
   [key: string]: unknown;
 }
 
@@ -34,6 +35,10 @@ declare global {
 /** The flags the page is running with, overrides included. */
 export const liveFlags = (): Record<string, unknown> =>
   window.ytcfg?.data_?.EXPERIMENT_FLAGS ?? {};
+
+/** The YouTube Music client version the page runs, absent in the settings window. */
+export const innertubeClientVersion = (): string | undefined =>
+  window.ytcfg?.data_?.INNERTUBE_CLIENT_VERSION;
 
 /**
  * Applies the user's overrides to YouTube Music's feature flags.

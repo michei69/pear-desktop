@@ -1452,6 +1452,7 @@
       "version-chromium": "Chromium",
       "version-node": "Node.js",
       "version-platform": "Platform",
+      "version-innertube": "Innertube",
       "links": "Links",
       "link-repo": "Repository",
       "link-issue": "Report an issue",

@@ -7,6 +7,7 @@ import { Icon } from './Icon';
 import iconYtm from '../../../../assets/icon-ytm.png?inline';
 import iconSvg from '../../../../assets/icon.svg?raw';
 import { buildDebugInfo, useCopyFeedback } from '../debug-info';
+import { innertubeClientVersion } from '../injectors/flags';
 import { bridge, store, type AppMeta } from '../state';
 
 // Both logos inline: the YouTube Music one only ships as a PNG, and the
@@ -90,6 +91,10 @@ export const AboutSection = (props: {
       {
         label: t('settings-ui.about.version-platform'),
         value: meta ? `${meta.platform} (${meta.arch})` : '…',
+      },
+      {
+        label: t('settings-ui.about.version-innertube'),
+        value: innertubeClientVersion() ?? 'unknown',
       },
     ];
   };
@@ -183,7 +188,13 @@ export const AboutSection = (props: {
             class="sui-outlinedbtn"
             onClick={() => {
               if (props.meta) {
-                copy(buildDebugInfo(props.meta, props.enabledPlugins ?? []));
+                copy(
+                  buildDebugInfo(
+                    props.meta,
+                    props.enabledPlugins ?? [],
+                    store()?.options.featureFlags ?? {},
+                  ),
+                );
               }
             }}
             type="button"

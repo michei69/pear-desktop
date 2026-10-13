@@ -483,6 +483,7 @@ export const SettingsModal = (props: {
                     buildDebugInfo(
                       meta,
                       enabledPlugins().map((plugin) => plugin.name),
+                      store()?.options.featureFlags ?? {},
                     ),
                   );
                 }
