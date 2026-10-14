@@ -5,7 +5,6 @@ import { sign, verify } from 'hono/jwt';
 
 import { t } from '@/i18n';
 
-import { WS_PATH } from './api-version';
 import {
   AccessTokenSchema,
   JWTPayloadSchema,
@@ -23,16 +22,18 @@ const bearerToken = (header: string | undefined) =>
   header?.startsWith('Bearer ') ? header.slice('Bearer '.length) : undefined;
 
 /**
- * Guards everything under the API prefix. `/ws` is exempt because browsers
- * can't set an Authorization header on a WebSocket handshake — it verifies its
- * `?token=` query param instead.
+ * Guards everything under an API version's prefix. `wsPath` — that version's
+ * WebSocket endpoint — is exempt, because browsers can't set an Authorization
+ * header on a WebSocket handshake; it verifies its `?token=` query param
+ * instead.
  */
 export const requireAuth =
   (
     getConfig: () => APIServerConfig | Promise<APIServerConfig>,
+    wsPath: string,
   ): MiddlewareHandler =>
   async (ctx, next) => {
-    if (ctx.req.path === WS_PATH) {
+    if (ctx.req.path === wsPath) {
       return next();
     }
 

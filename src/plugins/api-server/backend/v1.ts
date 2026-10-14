@@ -1,9 +1,9 @@
-import { createRoute, type OpenAPIHono, type z } from '@hono/zod-openapi';
+import { OpenAPIHono, createRoute, type z } from '@hono/zod-openapi';
 import { ipcMain } from 'electron';
 
 import { getSongControls } from '@/providers/song-controls';
 
-import { API_PREFIX } from './api-version';
+import { requireAuth } from './auth';
 import {
   AddSongToQueueSchema,
   FullscreenStateSchema,
@@ -29,6 +29,7 @@ import {
   VolumeStateSchema,
   type ResponseSongInfo,
 } from './schemas';
+import { registerWebsocket } from './websocket';
 
 import type { APIServerConfig } from '../config';
 import type { PlayerState } from './state';
@@ -56,7 +57,7 @@ const action = (
 ) =>
   createRoute({
     method,
-    path: `${API_PREFIX}${path}`,
+    path,
     summary,
     description,
     responses: SUCCESS,
@@ -72,7 +73,7 @@ const actionWithBody = <S extends z.ZodType>(
 ) =>
   createRoute({
     method,
-    path: `${API_PREFIX}${path}`,
+    path,
     summary,
     description,
     request: { body: body(schema) },
@@ -97,7 +98,7 @@ const readable = <S extends z.ZodType>({
 }) =>
   createRoute({
     method: 'get',
-    path: `${API_PREFIX}${path}`,
+    path,
     summary,
     description,
     deprecated,
@@ -285,7 +286,7 @@ export const routes = {
   ),
   moveInQueue: createRoute({
     method: 'patch',
-    path: `${API_PREFIX}/queue/{index}`,
+    path: '/queue/{index}',
     summary: 'move song in queue',
     description: 'Move a song in the queue',
     request: {
@@ -296,7 +297,7 @@ export const routes = {
   }),
   removeFromQueue: createRoute({
     method: 'delete',
-    path: `${API_PREFIX}/queue/{index}`,
+    path: '/queue/{index}',
     summary: 'remove song from queue',
     description: 'Remove a song from the queue',
     request: { params: QueueIndexParamSchema },
@@ -314,7 +315,7 @@ export const routes = {
   // Search / navigation
   search: createRoute({
     method: 'post',
-    path: `${API_PREFIX}/search`,
+    path: '/search',
     summary: 'search for a song',
     description: 'search for a song',
     request: { body: body(SearchSchema) },
@@ -327,7 +328,7 @@ export const routes = {
   }),
   loadVideo: createRoute({
     method: 'post',
-    path: `${API_PREFIX}/loadVideo`,
+    path: '/loadVideo',
     summary: 'load video',
     description: 'Loads a video given its ID',
     request: { body: body(LoadVideoSchema) },
@@ -335,7 +336,7 @@ export const routes = {
   }),
   loadPlaylist: createRoute({
     method: 'post',
-    path: `${API_PREFIX}/loadPlaylist`,
+    path: '/loadPlaylist',
     summary: 'play playlist',
     description: 'Plays a playlist given its ID',
     request: { body: body(LoadPlaylistSchema) },
@@ -343,11 +344,7 @@ export const routes = {
   }),
 } as const;
 
-/**
- * Waits for a single renderer IPC reply, rejecting after 5s so routes don't
- * hang. Removes only its own listener — removeAllListeners would kill other
- * plugins' pending listeners.
- */
+// Waits for a single renderer IPC reply, rejecting after 5s so routes don't hang.
 const waitForIpcResponse = <T>(channel: string, request: () => void) =>
   new Promise<T>((resolve, reject) => {
     const listener = (_: unknown, payload: T) => {
@@ -364,7 +361,7 @@ const waitForIpcResponse = <T>(channel: string, request: () => void) =>
     request();
   });
 
-export const registerRoutes = (
+const registerRoutes = (
   app: OpenAPIHono,
   { window }: BackendContext<APIServerConfig>,
   playerState: PlayerState,
@@ -582,4 +579,35 @@ export const registerRoutes = (
     controller.loadPlaylist(ctx.req.valid('json').playlistId);
     return noContent(ctx);
   });
+};
+
+/** Mount point for everything v1 serves. A v2 owns its own, in its own module. */
+const V1_PATH = '/api/v1';
+
+/**
+ * The WebSocket endpoint, relative to the version prefix. It authenticates with
+ * a `?token=` query param instead of the `Authorization` header, because
+ * browsers cannot set headers on a WebSocket handshake.
+ */
+const WS_PATH = '/ws';
+
+/**
+ * v1 as a self-contained router. `app.ts` mounts it at its prefix, so the
+ * prefix, the auth guard and the WebSocket endpoint all stay in one place
+ * instead of being threaded through every route definition.
+ */
+export const createV1 = (
+  ctx: BackendContext<APIServerConfig>,
+  playerState: PlayerState,
+) => {
+  const app = new OpenAPIHono().basePath(V1_PATH);
+
+  // `requireAuth` matches `ctx.req.path`, which is absolute even inside a
+  // sub-app, while `createRoute` paths are relative to `basePath`.
+  app.use('*', requireAuth(ctx.getConfig, `${V1_PATH}${WS_PATH}`));
+  registerRoutes(app, ctx, playerState);
+
+  const stopWebsocket = registerWebsocket(app, ctx, playerState, WS_PATH);
+
+  return { app, stopWebsocket };
 };

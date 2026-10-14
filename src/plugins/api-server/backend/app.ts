@@ -4,10 +4,8 @@ import { cors } from 'hono/cors';
 
 import { APPLICATION_NAME } from '@/i18n';
 
-import { API_PREFIX } from './api-version';
-import { registerAuthRoute, requireAuth } from './auth';
-import { registerRoutes } from './routes';
-import { registerWebsocket } from './websocket';
+import { registerAuthRoute } from './auth';
+import { createV1 } from './v1';
 
 import type { APIServerConfig } from '../config';
 import type { PlayerState } from './state';
@@ -28,11 +26,14 @@ export const buildApp = (
     await next();
   });
 
-  app.use(`${API_PREFIX}/*`, requireAuth(ctx.getConfig));
+  // One line per API version. Each module owns its prefix, its auth guard and
+  // its WebSocket endpoint, so adding v2 doesn't touch v1.
+  const v1 = createV1(ctx, playerState);
+  app.route('/', v1.app);
 
-  registerRoutes(app, ctx, playerState);
+  // Outside any version: this is the endpoint that hands out the token every
+  // version's routes require.
   registerAuthRoute(app, ctx);
-  const stopWebsocket = registerWebsocket(app, ctx, playerState);
 
   app.openAPIRegistry.registerComponent('securitySchemes', 'bearerAuth', {
     type: 'http',
@@ -51,5 +52,5 @@ export const buildApp = (
   });
   app.get('/swagger', swaggerUI({ url: '/doc' }));
 
-  return { app, stopWebsocket };
+  return { app, stopWebsocket: v1.stopWebsocket };
 };
