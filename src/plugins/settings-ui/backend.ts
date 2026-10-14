@@ -29,6 +29,7 @@ import {
   themesForRenderer,
 } from '@/themes/main';
 import { createBackend } from '@/utils';
+import { NEW_UI_PROBE } from '@/utils/new-ui';
 
 import type { SettingsUIConfig } from './index';
 
@@ -115,6 +116,7 @@ const CHANNELS = [
   'ytmd-sui:language-from-youtube',
   'ytmd-sui:language-to-youtube',
   'ytmd-sui:flag-metadata',
+  'ytmd-sui:new-ui',
   'ytmd-sui:open-window',
 ] as const;
 
@@ -145,6 +147,7 @@ export const backend = createBackend<
       LANGUAGE_FROM_YOUTUBE,
       LANGUAGE_TO_YOUTUBE,
       FLAG_METADATA,
+      NEW_UI,
       OPEN_WINDOW,
     ] = CHANNELS;
 
@@ -335,6 +338,21 @@ export const backend = createBackend<
     // Resolves once the launch download has finished, so the first open shows
     // them instead of an empty list.
     ipc.handle(FLAG_METADATA, () => flagMetadata());
+
+    // The new-UI state lives in the main window's page, which the standalone
+    // settings window does not have: probe it there so both show the same fields.
+    ipc.handle(NEW_UI, async (): Promise<boolean> => {
+      // The main window, by the URL it loads; the settings window is a file.
+      const urls = [config.get('url'), config.defaultConfig.url];
+      const main = BrowserWindow.getAllWindows().find(
+        (win) =>
+          !win.isDestroyed() &&
+          urls.some((url) => win.webContents.getURL().startsWith(url)),
+      );
+      if (!main) return false;
+
+      return Boolean(await main.webContents.executeJavaScript(NEW_UI_PROBE));
+    });
 
     // The renderer picks the presentation; the window can only be made here.
     // Reopening focuses the existing one.

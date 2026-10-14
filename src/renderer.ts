@@ -5,6 +5,7 @@ import 'mdui';
 
 import { loadI18n, setLanguage, t as i18t } from '@/i18n';
 import { bootStandaloneSettings } from '@/plugins/settings-ui/standalone';
+import { isNewUI } from '@/utils/new-ui';
 import {
   defaultTrustedTypePolicy,
   registerWindowDefaultTrustedTypePolicy,
@@ -39,6 +40,13 @@ let isApiLoaded = false;
 let firstDataLoaded = false;
 
 registerWindowDefaultTrustedTypePolicy();
+
+/** Adds a stylesheet to the page, for the options that only tweak CSS. */
+const addStyle = (css: string) => {
+  const style = document.createElement('style');
+  style.textContent = css;
+  document.head.appendChild(style);
+};
 
 function listenForApiLoad() {
   if (!isApiLoaded) {
@@ -483,8 +491,7 @@ function onApiLoaded() {
     'options.likeButtons',
   );
   if (likeButtonsOptions) {
-    const style = document.createElement('style');
-    style.textContent = `
+    addStyle(`
       ytmusic-player-bar[is-mweb-player-bar-modernization-enabled] .middle-controls-buttons.ytmusic-player-bar, #like-button-renderer {
         display: ${
           likeButtonsOptions === 'hide' ? 'none' : 'inherit'
@@ -494,21 +501,39 @@ function onApiLoaded() {
         justify-content: ${
           likeButtonsOptions === 'hide' ? 'flex-start' : 'space-between'
         } !important;
-      }`;
-
-    document.head.appendChild(style);
+      }`);
   }
 
   // Swap like button order
   if (window.mainConfig.get('options.swapLikeButtonsOrder')) {
-    const style = document.createElement('style');
-    style.textContent = `
+    addStyle(`
       #like-button-renderer {
         display: inline-flex;
         flex-direction: row-reverse;
-      }`;
+      }`);
+  }
 
-    document.head.appendChild(style);
+  const newUI = isNewUI();
+
+  // The newer UI has no `.dislike` element, so this one only applies to the old.
+  if (!newUI && window.mainConfig.get('options.hideDislikeButton')) {
+    addStyle(`
+      .dislike {
+        display: none !important;
+      }
+
+      .like {
+        margin-left: 15px;
+        margin-right: 10px;
+      }`);
+  }
+
+  if (window.mainConfig.get('options.hideVideoCaptions')) {
+    addStyle(
+      newUI
+        ? "button[aria-label='CLOSED_CAPTIONS'] { display: none !important; }"
+        : '.captions { display: none !important; }',
+    );
   }
 }
 

@@ -1514,6 +1514,8 @@
       "add": "Add"
     },
     "fields": {
+      "hide-dislike-button": "Hide Dislike Button",
+      "hide-video-captions": "Hide Video Captions",
       "podcast-artist": "Use podcast participants as artists",
       "podcast-artist-desc": "Off: a podcast episode’s artist is the channel that published it.",
       "theme-preset": "Preset",

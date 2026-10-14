@@ -11,6 +11,7 @@ import {
   type ThemePresets,
   type ThemeState,
 } from '@/themes/types';
+import { isNewUI } from '@/utils/new-ui';
 
 import { getByPath, nestPartial, setByPath } from './paths';
 
@@ -124,10 +125,28 @@ export const bridge = {
   /** Descriptions, families and restart requirements for the flags section. */
   flagMetadata: () =>
     ipc!.invoke('ytmd-sui:flag-metadata') as Promise<FlagMetadataMap>,
+  /** Whether the main window runs YouTube Music's newer UI. */
+  newUI: () => ipc!.invoke('ytmd-sui:new-ui') as Promise<boolean>,
 };
 
 export const refreshStore = async () => {
   setStore(await bridge.loadStore());
+};
+
+/**
+ * YouTube Music's newer UI, as the main window sees it. Unset in the main
+ * window, which has the page to probe itself; the standalone settings window is
+ * a separate document with neither the flags nor the player, so it asks.
+ */
+const [newUIState, setNewUIState] = createSignal<boolean>();
+export const newUI = () => newUIState() ?? isNewUI();
+
+export const refreshNewUI = async () => {
+  try {
+    setNewUIState((await bridge.newUI()) === true);
+  } catch {
+    // Keep the local answer; the main window may be gone.
+  }
 };
 
 const onStorePush = (next: StoreShape) => setStore(next);

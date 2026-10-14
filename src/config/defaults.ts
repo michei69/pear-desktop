@@ -37,6 +37,8 @@ export interface DefaultConfig {
     resumeOnStart: boolean;
     likeButtons: string;
     swapLikeButtonsOrder: boolean;
+    hideDislikeButton: boolean;
+    hideVideoCaptions: boolean;
     proxy: string;
     startingPage: string;
     overrideUserAgent: boolean;
@@ -97,6 +99,8 @@ export const defaultConfig: DefaultConfig = {
     resumeOnStart: true,
     likeButtons: '',
     swapLikeButtonsOrder: false,
+    hideDislikeButton: false,
+    hideVideoCaptions: false,
     proxy: '',
     startingPage: '',
     overrideUserAgent: false,

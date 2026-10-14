@@ -4,7 +4,7 @@ import { t } from '@/i18n';
 import { startingPages } from '@/providers/extracted-data';
 import { Platform } from '@/types/plugins';
 
-import { bridge, store, themePalette, themePresets } from '../state';
+import { bridge, newUI, store, themePalette, themePresets } from '../state';
 
 import type {
   ActionField,
@@ -213,6 +213,17 @@ export const buildAppSections = (): AppSection[] => {
             toggle(
               'options.swapLikeButtonsOrder',
               menuLabel('visual-tweaks.submenu.like-buttons.swap'),
+              AT_STARTUP,
+            ),
+            toggle(
+              'options.hideDislikeButton',
+              () => t('settings-ui.fields.hide-dislike-button'),
+              // The newer UI has no `.dislike` element to hide.
+              { ...AT_STARTUP, visible: () => !newUI() },
+            ),
+            toggle(
+              'options.hideVideoCaptions',
+              () => t('settings-ui.fields.hide-video-captions'),
               AT_STARTUP,
             ),
             toggle(

@@ -7,6 +7,7 @@ import { SettingsModal } from './components/SettingsModal';
 import {
   listenStorePush,
   listenThemesPush,
+  refreshNewUI,
   refreshStore,
   refreshThemes,
   setIpc,
@@ -27,6 +28,7 @@ export const bootStandaloneSettings = async () => {
 
   await refreshStore();
   await refreshThemes();
+  await refreshNewUI();
   listenStorePush();
   listenThemesPush();
 
