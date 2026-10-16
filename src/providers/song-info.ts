@@ -3,37 +3,30 @@ import { type BrowserWindow, ipcMain, nativeImage, net } from 'electron';
 
 import * as config from '@/config';
 
+import {
+  buildSongInfo,
+  resolveScrobbleOptions,
+  type ScrobbleOptions,
+  type SongInfoData,
+} from './song-info-data';
+
 import type { GetPlayerResponse } from '@/types/get-player-response';
 
-export enum MediaType {
-  /** Audio uploaded by the original artist */
-  Audio = 'AUDIO',
-  /** Official music video uploaded by the original artist */
-  OriginalMusicVideo = 'ORIGINAL_MUSIC_VIDEO',
-  /** Normal video uploaded by a user */
-  UserGeneratedContent = 'USER_GENERATED_CONTENT',
-  PodcastEpisode = 'PODCAST_EPISODE',
-  OtherVideo = 'OTHER_VIDEO',
-}
+export {
+  MediaType,
+  cleanupName,
+  getScrobbleMetadata,
+  defaultScrobbleFilters,
+} from './song-info-data';
+export { buildSongInfo };
+export type {
+  SongInfoData,
+  ScrobbleOptions,
+  BuildSongInfoOptions,
+} from './song-info-data';
 
-export interface SongInfo {
-  title: string;
-  alternativeTitle?: string;
-  artist: string;
-  artistUrl?: string;
-  views: number;
-  uploadDate?: string;
-  imageSrc?: string | null;
+export interface SongInfo extends SongInfoData {
   image?: Electron.NativeImage | null;
-  isPaused?: boolean;
-  songDuration: number;
-  elapsedSeconds?: number;
-  url?: string;
-  album?: string | null;
-  videoId: string;
-  playlistId?: string;
-  mediaType: MediaType;
-  tags?: string[];
 }
 
 export const getImage = async (
@@ -63,103 +56,34 @@ const handleData = async (
   data: GetPlayerResponse,
   win: Electron.BrowserWindow,
 ): Promise<SongInfo | null> => {
-  if (!data) {
+  // The raw store holds only what the user changed, so the defaults have to be
+  // merged back in — the plugin loader's deepmerge used to do it.
+  const scrobbleOptions = resolveScrobbleOptions(
+    config.get('plugins.scrobbler') as ScrobbleOptions | undefined,
+  );
+
+  const songInfo: SongInfo | null = buildSongInfo(data, {
+    ...scrobbleOptions,
+    usePodcastParticipantAsArtist: config.get(
+      'options.usePodcastParticipantAsArtist',
+    ),
+  });
+
+  if (!songInfo) {
     return null;
   }
 
-  const songInfo: SongInfo = {
-    title: '',
-    alternativeTitle: '',
-    artist: '',
-    artistUrl: '',
-    views: 0,
-    uploadDate: '',
-    imageSrc: '',
-    image: null,
-    isPaused: undefined,
-    songDuration: 0,
-    elapsedSeconds: 0,
-    url: '',
-    album: undefined,
-    videoId: '',
-    playlistId: '',
-    mediaType: MediaType.Audio,
-    tags: [],
-  } satisfies SongInfo;
-
-  const microformat = data.microformat?.microformatDataRenderer;
-  if (microformat) {
-    songInfo.uploadDate = microformat.uploadDate;
-    songInfo.url = microformat.urlCanonical?.split('&')[0];
-    songInfo.playlistId =
-      URL.parse(microformat.urlCanonical)?.searchParams?.get('list') ?? '';
-    if (microformat.pageOwnerDetails?.externalChannelId) {
-      songInfo.artistUrl = `https://music.\u0079\u006f\u0075\u0074\u0075\u0062\u0065.com/channel/${microformat.pageOwnerDetails.externalChannelId}`;
-    }
-    // Used for options.resumeOnStart
-    const prevUrl = config.get('url');
-    if (prevUrl !== microformat.urlCanonical) {
-      config.set('url', microformat.urlCanonical);
-    }
-    songInfo.alternativeTitle = microformat.linkAlternates.find(
-      (link) => link.title,
-    )?.title;
-    songInfo.tags = Array.isArray(microformat.tags) ? microformat.tags : [];
+  // Used for options.resumeOnStart
+  const canonical = data.microformat?.microformatDataRenderer?.urlCanonical;
+  if (canonical && config.get('url') !== canonical) {
+    config.set('url', canonical);
   }
 
-  const { videoDetails } = data;
-  if (videoDetails) {
-    songInfo.title = cleanupName(videoDetails.title);
-    songInfo.artist = cleanupName(videoDetails.author);
-    songInfo.views = Number(videoDetails.viewCount);
-    songInfo.songDuration = Number(videoDetails.lengthSeconds);
-    songInfo.elapsedSeconds = videoDetails.elapsedSeconds;
-    songInfo.isPaused = videoDetails.isPaused;
-    songInfo.videoId = videoDetails.videoId;
-    songInfo.album = videoDetails.album; // undefined for videos
+  if (songInfo.imageSrc) {
+    songInfo.image = await getImage(songInfo.imageSrc);
+  }
 
-    switch (videoDetails?.musicVideoType) {
-      case 'MUSIC_VIDEO_TYPE_ATV':
-        songInfo.mediaType = MediaType.Audio;
-        break;
-      case 'MUSIC_VIDEO_TYPE_OMV':
-        songInfo.mediaType = MediaType.OriginalMusicVideo;
-        break;
-      case 'MUSIC_VIDEO_TYPE_UGC':
-        songInfo.mediaType = MediaType.UserGeneratedContent;
-        break;
-      case 'MUSIC_VIDEO_TYPE_PODCAST_EPISODE':
-        songInfo.mediaType = MediaType.PodcastEpisode;
-        // HACK: Podcast's participant is not the artist
-        if (!config.get('options.usePodcastParticipantAsArtist')) {
-          songInfo.artist = cleanupName(
-            data.microformat.microformatDataRenderer.pageOwnerDetails.name,
-          );
-        }
-        break;
-      default:
-        songInfo.mediaType = MediaType.OtherVideo;
-        // HACK: workaround for "podcast" types where "musicVideoType" doesn't exist
-        if (
-          !config.get('options.usePodcastParticipantAsArtist') &&
-          (data.responseContext.serviceTrackingParams
-            ?.at(0)
-            ?.params?.find((it) => it.key === 'ipcc')?.value ?? '1') != '0'
-        ) {
-          songInfo.artist = cleanupName(
-            data.microformat.microformatDataRenderer.pageOwnerDetails.name,
-          );
-        }
-        break;
-    }
-
-    const thumbnails = videoDetails.thumbnail?.thumbnails;
-    songInfo.imageSrc = thumbnails?.at(-1)?.url?.split('?')?.at(0);
-
-    if (songInfo.imageSrc) {
-      songInfo.image = await getImage(songInfo.imageSrc);
-    }
-
+  if (data.videoDetails) {
     win.webContents.send('peard:update-song-info', songInfo);
   }
 
@@ -252,27 +176,5 @@ const registerProvider = (win: BrowserWindow) => {
     }
   });
 };
-
-const suffixesToRemove = [
-  // Artist names
-  /\s*(- topic)$/gi,
-  /\s*vevo$/gi,
-
-  // Video titles — bracket-enclosed tags (combined)
-  /\s*[(|[](official(.*?)|(lyrics?|visualizer|audio)\s*(video)?|performance video|clip official|video version)[)|\]]/gi,
-  /\s*[(|[]((HD|HQ)\s*?(?:audio)?|live|4K\s*?(?:upgrade)?)[)|\]]$/gim,
-];
-
-export function cleanupName(name: string): string {
-  if (!name) {
-    return name;
-  }
-
-  for (const suffix of suffixesToRemove) {
-    name = name.replace(suffix, '');
-  }
-
-  return name;
-}
 
 export const setupSongInfo = registerProvider;

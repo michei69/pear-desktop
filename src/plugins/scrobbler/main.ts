@@ -96,26 +96,9 @@ export const backend = createBackend<
           return;
         }
 
-        let title =
-          (configNonnull.alternativeTitles && songInfo.alternativeTitle) ||
-          songInfo.title;
-        let artist =
-          (configNonnull.alternativeArtist && songInfo.tags?.[0]) ||
-          songInfo.artist;
-
-        if (configNonnull.customRegexFilters?.length) {
-          for (const filter of configNonnull.customRegexFilters) {
-            try {
-              const regex = new RegExp(filter, 'gi');
-              if (title.length <= 256) {
-                title = title.replace(regex, '').trim();
-              }
-              if (artist.length <= 256) {
-                artist = artist.replace(regex, '').trim();
-              }
-            } catch {}
-          }
-        }
+        // The title and artist were already filtered by the song-info provider.
+        let title = songInfo.scrobbleTitle;
+        let artist = songInfo.scrobbleArtist;
 
         if (configNonnull.useMusicBrainz && configNonnull.musicBrainzEmail) {
           const isCorrectionObsolete = () =>

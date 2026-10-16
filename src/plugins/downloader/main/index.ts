@@ -42,7 +42,11 @@ import type { DownloaderPluginConfig } from '../index';
 import type { BackendContext } from '@/types/contexts';
 import type { GetPlayerResponse } from '@/types/get-player-response';
 
-type CustomSongInfo = SongInfo & { trackId?: string };
+// Built from ytmusic's TrackInfo rather than the player response, so it has no
+// scrobbler metadata; the downloader only reads title/artist/album/trackId.
+type CustomSongInfo = Omit<SongInfo, 'scrobbleTitle' | 'scrobbleArtist'> & {
+  trackId?: string;
+};
 
 const ffmpeg = lazy(async () =>
   (await import('@ffmpeg.wasm/main')).createFFmpeg({
