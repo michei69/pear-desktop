@@ -45,7 +45,10 @@ export const buildApp = (
     bearerFormat: 'JWT',
   });
   app.doc('/doc', {
-    openapi: '3.1.0',
+    // 3.2 is where the QUERY method exists as a path item; a document carrying
+    // one can't honestly claim 3.1. The bundled Swagger UI is unpinned and
+    // loads 5.3x, which understands it.
+    openapi: '3.2.0',
     info: {
       version: '1.0.0',
       title: `${APPLICATION_NAME} API Server`,

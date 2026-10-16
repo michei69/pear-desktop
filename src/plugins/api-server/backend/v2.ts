@@ -186,6 +186,23 @@ export const routes = {
       },
     },
   }),
+  // QUERY (draft-ietf-httpbis-safe-method-w-body): a safe method that still
+  // takes a body, which is what a search actually is. Same body and handler as
+  // the POST above, minus the implication that it changes anything.
+  searchByQueryMethod: createRoute({
+    method: 'query',
+    path: '/video/search',
+    summary: 'search for a song',
+    description:
+      "Search for a song and return the renderer's raw response. Safe: the same request as POST /video/search, without the side-effect semantics.",
+    request: { body: body(SearchSchema) },
+    responses: {
+      200: {
+        description: 'Success',
+        content: { [JSON_CONTENT]: { schema: SearchResultSchema } },
+      },
+    },
+  }),
 
   // Playback
   playing: readable({
@@ -450,8 +467,12 @@ const registerRoutes = (
     sendToRenderer(window, ApiActions.previousVideo);
     return noContent(ctx);
   });
-  app.openapi(routes.searchQuery, async (ctx) => {
-    const { query, params, continuation } = ctx.req.valid('query');
+  // GET, POST and QUERY all reach the same renderer action; only the way the
+  // arguments arrive differs.
+  const runSearch = async (
+    ctx: Context,
+    { query, params, continuation }: z.infer<typeof SearchSchema>,
+  ) => {
     const response = await callRenderer<Record<string, unknown>>(
       window,
       ApiActions.search,
@@ -461,19 +482,14 @@ const registerRoutes = (
     );
 
     return ctx.json(response, 200);
-  });
-  app.openapi(routes.search, async (ctx) => {
-    const { query, params, continuation } = ctx.req.valid('json');
-    const response = await callRenderer<Record<string, unknown>>(
-      window,
-      ApiActions.search,
-      query,
-      params,
-      continuation,
-    );
-
-    return ctx.json(response, 200);
-  });
+  };
+  app.openapi(routes.searchQuery, (ctx) =>
+    runSearch(ctx, ctx.req.valid('query')),
+  );
+  app.openapi(routes.search, (ctx) => runSearch(ctx, ctx.req.valid('json')));
+  app.openapi(routes.searchByQueryMethod, (ctx) =>
+    runSearch(ctx, ctx.req.valid('json')),
+  );
 
   // Playback
   app.openapi(routes.playing, async (ctx) => {
