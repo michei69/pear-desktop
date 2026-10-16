@@ -5,6 +5,7 @@ import { cors } from 'hono/cors';
 import { APPLICATION_NAME } from '@/i18n';
 
 import { registerAuthRoute } from './auth';
+import { apiTagOrder } from './tags';
 import { createV1 } from './v1';
 import { createV2 } from './v2';
 
@@ -55,6 +56,9 @@ export const buildApp = (
       description:
         'Note: You need to get an access token using the `/auth/{id}` endpoint first to call any API endpoints under `/api`.',
     },
+    // Declaring the tags — in this order — is what groups the Swagger UI into
+    // one section per version and category instead of a single "default" one.
+    tags: apiTagOrder.map((name) => ({ name })),
     security: [{ bearerAuth: [] }],
   });
   app.get('/swagger', swaggerUI({ url: '/doc' }));

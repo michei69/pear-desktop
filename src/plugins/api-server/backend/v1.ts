@@ -29,6 +29,7 @@ import {
   VolumeStateSchema,
   type ResponseSongInfo,
 } from './schemas';
+import { v1Tag } from './tags';
 import { registerWebsocket } from './websocket';
 
 import type { APIServerConfig } from '../config';
@@ -54,12 +55,14 @@ const action = (
   path: string,
   summary: string,
   description: string,
+  tags: string[],
 ) =>
   createRoute({
     method,
     path,
     summary,
     description,
+    tags,
     responses: SUCCESS,
   });
 
@@ -70,12 +73,14 @@ const actionWithBody = <S extends z.ZodType>(
   summary: string,
   description: string,
   schema: S,
+  tags: string[],
 ) =>
   createRoute({
     method,
     path,
     summary,
     description,
+    tags,
     request: { body: body(schema) },
     responses: SUCCESS,
   });
@@ -88,6 +93,7 @@ const readable = <S extends z.ZodType>({
   schema,
   emptyDescription,
   deprecated,
+  tags,
 }: {
   path: string;
   summary: string;
@@ -95,6 +101,7 @@ const readable = <S extends z.ZodType>({
   schema: S;
   emptyDescription?: string;
   deprecated?: boolean;
+  tags: string[];
 }) =>
   createRoute({
     method: 'get',
@@ -102,6 +109,7 @@ const readable = <S extends z.ZodType>({
     summary,
     description,
     deprecated,
+    tags,
     responses: {
       200: {
         description: 'Success',
@@ -118,30 +126,35 @@ export const routes = {
     '/previous',
     'play previous song',
     'Plays the previous song in the queue',
+    [v1Tag('Playback')],
   ),
   next: action(
     'post',
     '/next',
     'play next song',
     'Plays the next song in the queue',
+    [v1Tag('Playback')],
   ),
   play: action(
     'post',
     '/play',
     'Play',
     'Change the state of the player to play',
+    [v1Tag('Playback')],
   ),
   pause: action(
     'post',
     '/pause',
     'Pause',
     'Change the state of the player to pause',
+    [v1Tag('Playback')],
   ),
   togglePlay: action(
     'post',
     '/toggle-play',
     'Toggle play/pause',
     'Change the state of the player to play if paused, or pause if playing',
+    [v1Tag('Playback')],
   ),
   seekTo: actionWithBody(
     'post',
@@ -149,6 +162,7 @@ export const routes = {
     'seek',
     'Seek to a specific time in the current song',
     SeekSchema,
+    [v1Tag('Playback')],
   ),
   goBack: actionWithBody(
     'post',
@@ -156,6 +170,7 @@ export const routes = {
     'go back',
     'Move the current song back by a number of seconds',
     GoBackSchema,
+    [v1Tag('Playback')],
   ),
   goForward: actionWithBody(
     'post',
@@ -163,6 +178,7 @@ export const routes = {
     'go forward',
     'Move the current song forward by a number of seconds',
     GoForwardSchema,
+    [v1Tag('Playback')],
   ),
 
   // Rating
@@ -171,13 +187,17 @@ export const routes = {
     summary: 'get like state',
     description: 'Get the current like state',
     schema: LikeStateSchema,
+    tags: [v1Tag('Rating')],
   }),
-  like: action('post', '/like', 'like song', 'Set the current song as liked'),
+  like: action('post', '/like', 'like song', 'Set the current song as liked', [
+    v1Tag('Rating'),
+  ]),
   dislike: action(
     'post',
     '/dislike',
     'dislike song',
     'Set the current song as disliked',
+    [v1Tag('Rating')],
   ),
 
   // Shuffle / repeat
@@ -186,13 +206,17 @@ export const routes = {
     summary: 'get shuffle state',
     description: 'Get the current shuffle state',
     schema: ShuffleStateSchema,
+    tags: [v1Tag('Shuffle & repeat')],
   }),
-  shuffle: action('post', '/shuffle', 'shuffle', 'Shuffle the queue'),
+  shuffle: action('post', '/shuffle', 'shuffle', 'Shuffle the queue', [
+    v1Tag('Shuffle & repeat'),
+  ]),
   repeatMode: readable({
     path: '/repeat-mode',
     summary: 'get current repeat mode',
     description: 'Get the current repeat mode (NONE, ALL, ONE)',
     schema: RepeatModeSchema,
+    tags: [v1Tag('Shuffle & repeat')],
   }),
   switchRepeat: actionWithBody(
     'post',
@@ -200,6 +224,7 @@ export const routes = {
     'switch repeat',
     'Switch the repeat mode',
     SwitchRepeatSchema,
+    [v1Tag('Shuffle & repeat')],
   ),
 
   // Volume / fullscreen
@@ -209,12 +234,14 @@ export const routes = {
     'set volume',
     'Set the volume of the player',
     SetVolumeSchema,
+    [v1Tag('Volume & fullscreen')],
   ),
   volumeState: readable({
     path: '/volume',
     summary: 'get volume state',
     description: 'Get the current volume state of the player',
     schema: VolumeStateSchema,
+    tags: [v1Tag('Volume & fullscreen')],
   }),
   setFullscreen: actionWithBody(
     'post',
@@ -222,18 +249,21 @@ export const routes = {
     'set fullscreen',
     'Set the fullscreen state of the player',
     SetFullscreenSchema,
+    [v1Tag('Volume & fullscreen')],
   ),
   fullscreenState: readable({
     path: '/fullscreen',
     summary: 'get fullscreen state',
     description: 'Get the current fullscreen state',
     schema: FullscreenStateSchema,
+    tags: [v1Tag('Volume & fullscreen')],
   }),
   toggleMute: action(
     'post',
     '/toggle-mute',
     'toggle mute',
     'Toggle the mute state of the player',
+    [v1Tag('Volume & fullscreen')],
   ),
 
   // Song
@@ -243,6 +273,7 @@ export const routes = {
     description: 'Get the current song info',
     schema: SongInfoSchema,
     emptyDescription: 'No song info',
+    tags: [v1Tag('Song')],
   }),
   legacySong: readable({
     path: '/song-info',
@@ -251,6 +282,7 @@ export const routes = {
     schema: SongInfoSchema,
     emptyDescription: 'No song info',
     deprecated: true,
+    tags: [v1Tag('Song')],
   }),
 
   // Queue
@@ -260,6 +292,7 @@ export const routes = {
     description: 'Get the current queue info',
     schema: QueueSchema,
     emptyDescription: 'No queue info',
+    tags: [v1Tag('Queue')],
   }),
   legacyQueue: readable({
     path: '/queue-info',
@@ -268,6 +301,7 @@ export const routes = {
     schema: QueueSchema,
     emptyDescription: 'No queue info',
     deprecated: true,
+    tags: [v1Tag('Queue')],
   }),
   nextSong: readable({
     path: '/queue/next',
@@ -276,6 +310,7 @@ export const routes = {
       'Get information about the next song in the queue (relative index +1)',
     schema: NextSongSchema,
     emptyDescription: 'No next song in queue',
+    tags: [v1Tag('Queue')],
   }),
   addToQueue: actionWithBody(
     'post',
@@ -283,12 +318,14 @@ export const routes = {
     'add song to queue',
     'Add a song to the queue',
     AddSongToQueueSchema,
+    [v1Tag('Queue')],
   ),
   moveInQueue: createRoute({
     method: 'patch',
     path: '/queue/{index}',
     summary: 'move song in queue',
     description: 'Move a song in the queue',
+    tags: [v1Tag('Queue')],
     request: {
       params: QueueIndexParamSchema,
       body: body(MoveSongInQueueSchema),
@@ -300,6 +337,7 @@ export const routes = {
     path: '/queue/{index}',
     summary: 'remove song from queue',
     description: 'Remove a song from the queue',
+    tags: [v1Tag('Queue')],
     request: { params: QueueIndexParamSchema },
     responses: SUCCESS,
   }),
@@ -309,8 +347,11 @@ export const routes = {
     'set queue index',
     'Set the current index of the queue',
     SetQueueIndexSchema,
+    [v1Tag('Queue')],
   ),
-  clearQueue: action('delete', '/queue', 'clear queue', 'Clear the queue'),
+  clearQueue: action('delete', '/queue', 'clear queue', 'Clear the queue', [
+    v1Tag('Queue'),
+  ]),
 
   // Search / navigation
   search: createRoute({
@@ -318,6 +359,7 @@ export const routes = {
     path: '/search',
     summary: 'search for a song',
     description: 'search for a song',
+    tags: [v1Tag('Search & navigation')],
     request: { body: body(SearchSchema) },
     responses: {
       200: {
@@ -331,6 +373,7 @@ export const routes = {
     path: '/loadVideo',
     summary: 'load video',
     description: 'Loads a video given its ID',
+    tags: [v1Tag('Search & navigation')],
     request: { body: body(LoadVideoSchema) },
     responses: SUCCESS,
   }),
@@ -339,6 +382,7 @@ export const routes = {
     path: '/loadPlaylist',
     summary: 'play playlist',
     description: 'Plays a playlist given its ID',
+    tags: [v1Tag('Search & navigation')],
     request: { body: body(LoadPlaylistSchema) },
     responses: SUCCESS,
   }),
@@ -590,7 +634,9 @@ export const createV1 = (
   app.use('*', requireAuth(ctx.getConfig, `${V1_PATH}${WS_PATH}`));
   registerRoutes(app, ctx, playerState);
 
-  const stopWebsocket = registerWebsocket(app, ctx, playerState, WS_PATH);
+  const stopWebsocket = registerWebsocket(app, ctx, playerState, WS_PATH, [
+    v1Tag('WebSocket'),
+  ]);
 
   return { app, stopWebsocket };
 };

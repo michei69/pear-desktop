@@ -10,6 +10,7 @@ import {
   JWTPayloadSchema,
   type JWTPayload,
 } from './schemas';
+import { AUTH_TAG } from './tags';
 
 import { AuthStrategy, type APIServerConfig } from '../config';
 
@@ -61,6 +62,7 @@ const requestRoute = createRoute({
   summary: 'request an access token',
   description:
     'Authorizes a client id and returns a bearer token for the API endpoints.',
+  tags: [AUTH_TAG],
   security: [],
   request: {
     params: z.object({ id: z.string() }),

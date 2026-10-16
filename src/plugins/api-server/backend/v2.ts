@@ -31,6 +31,7 @@ import {
   type ResponseQueue,
   type ResponseSongInfo,
 } from './schemas-v2';
+import { v2Tag } from './tags';
 import { registerWebsocket } from './websocket';
 
 import { ApiActions } from '../channels';
@@ -57,12 +58,14 @@ const action = (
   path: string,
   summary: string,
   description: string,
+  tags: string[],
 ) =>
   createRoute({
     method,
     path,
     summary,
     description,
+    tags,
     responses: SUCCESS,
   });
 
@@ -73,12 +76,14 @@ const actionWithBody = <S extends z.ZodType>(
   summary: string,
   description: string,
   schema: S,
+  tags: string[],
 ) =>
   createRoute({
     method,
     path,
     summary,
     description,
+    tags,
     request: { body: body(schema) },
     responses: SUCCESS,
   });
@@ -90,18 +95,21 @@ const readable = <S extends z.ZodType>({
   description,
   schema,
   emptyDescription,
+  tags,
 }: {
   path: string;
   summary: string;
   description: string;
   schema: S;
   emptyDescription?: string;
+  tags: string[];
 }) =>
   createRoute({
     method: 'get',
     path,
     summary,
     description,
+    tags,
     responses: {
       200: {
         description: 'Success',
@@ -118,18 +126,21 @@ const readableWithQuery = <S extends z.ZodType, Q extends z.ZodObject>({
   description,
   schema,
   query,
+  tags,
 }: {
   path: string;
   summary: string;
   description: string;
   schema: S;
   query: Q;
+  tags: string[];
 }) =>
   createRoute({
     method: 'get',
     path,
     summary,
     description,
+    tags,
     request: { query },
     responses: {
       200: {
@@ -147,24 +158,28 @@ export const routes = {
     description: 'Get the current video as the unified song info object',
     schema: SongInfoSchema,
     emptyDescription: 'No video playing',
+    tags: [v2Tag('Video')],
   }),
   nextVideo: action(
     'post',
     '/video/next',
     'play next song',
     'Plays the next song in the queue',
+    [v2Tag('Video')],
   ),
   previousVideo: action(
     'post',
     '/video/prev',
     'play previous song',
     'Plays the previous song in the queue',
+    [v2Tag('Video')],
   ),
   previousVideoAlias: action(
     'post',
     '/video/previous',
     'play previous song',
     'Alias of `/video/prev`; plays the previous song in the queue',
+    [v2Tag('Video')],
   ),
   searchQuery: readableWithQuery({
     path: '/video/search',
@@ -172,6 +187,7 @@ export const routes = {
     description: "Search for a song and return the renderer's raw response",
     schema: SearchResultSchema,
     query: SearchQuerySchema,
+    tags: [v2Tag('Video')],
   }),
   search: createRoute({
     method: 'post',
@@ -185,6 +201,7 @@ export const routes = {
         content: { [JSON_CONTENT]: { schema: SearchResultSchema } },
       },
     },
+    tags: [v2Tag('Video')],
   }),
   // QUERY (draft-ietf-httpbis-safe-method-w-body): a safe method that still
   // takes a body, which is what a search actually is. Same body and handler as
@@ -202,6 +219,7 @@ export const routes = {
         content: { [JSON_CONTENT]: { schema: SearchResultSchema } },
       },
     },
+    tags: [v2Tag('Video')],
   }),
 
   // Playback
@@ -210,30 +228,35 @@ export const routes = {
     summary: 'get playing state',
     description: 'Get whether the player is currently playing',
     schema: PlayingStateSchema,
+    tags: [v2Tag('Playback')],
   }),
   play: action(
     'post',
     '/playback/play',
     'Play',
     'Change the state of the player to play',
+    [v2Tag('Playback')],
   ),
   pause: action(
     'post',
     '/playback/pause',
     'Pause',
     'Change the state of the player to pause',
+    [v2Tag('Playback')],
   ),
   togglePlay: action(
     'post',
     '/playback/toggle',
     'Toggle play/pause',
     'Change the state of the player to play if paused, or pause if playing',
+    [v2Tag('Playback')],
   ),
   playbackSpeed: readable({
     path: '/playback/speed',
     summary: 'get playback speed',
     description: 'Get the current playback speed',
     schema: PlaybackSpeedSchema,
+    tags: [v2Tag('Playback')],
   }),
   setPlaybackSpeed: actionWithBody(
     'post',
@@ -241,6 +264,7 @@ export const routes = {
     'set playback speed',
     'Set the playback speed',
     SetPlaybackSpeedSchema,
+    [v2Tag('Playback')],
   ),
   setPlaybackSpeedPatch: actionWithBody(
     'patch',
@@ -248,6 +272,7 @@ export const routes = {
     'set playback speed',
     'Set the playback speed',
     SetPlaybackSpeedSchema,
+    [v2Tag('Playback')],
   ),
   playbackPosition: readableWithQuery({
     path: '/playback/position',
@@ -256,6 +281,7 @@ export const routes = {
       'Get the current playback position: a 0..1 fraction of the song when `percentage=true`, seconds otherwise',
     schema: PlaybackPositionSchema,
     query: PlaybackPositionQuerySchema,
+    tags: [v2Tag('Playback')],
   }),
   seekTo: actionWithBody(
     'post',
@@ -263,6 +289,7 @@ export const routes = {
     'seek',
     'Seek to a specific time in the current song',
     SeekSchema,
+    [v2Tag('Playback')],
   ),
   seekToPatch: actionWithBody(
     'patch',
@@ -270,6 +297,7 @@ export const routes = {
     'seek',
     'Seek to a specific time in the current song',
     SeekSchema,
+    [v2Tag('Playback')],
   ),
   seekBy: actionWithBody(
     'post',
@@ -277,26 +305,32 @@ export const routes = {
     'seek by',
     'Move the current song forward or backward by a number of seconds',
     SeekSchema,
+    [v2Tag('Playback')],
   ),
   shuffleState: readable({
     path: '/playback/shuffle',
     summary: 'get shuffle state',
     description: 'Get the current shuffle state',
     schema: ShuffleStateSchema,
+    tags: [v2Tag('Playback')],
   }),
-  shuffle: action('post', '/playback/shuffle', 'shuffle', 'Shuffle the queue'),
+  shuffle: action('post', '/playback/shuffle', 'shuffle', 'Shuffle the queue', [
+    v2Tag('Playback'),
+  ]),
   setShuffle: actionWithBody(
     'patch',
     '/playback/shuffle',
     'set shuffle',
     'Enable or disable shuffle',
     SetShuffleSchema,
+    [v2Tag('Playback')],
   ),
   repeatMode: readable({
     path: '/playback/repeat',
     summary: 'get current repeat mode',
     description: 'Get the current repeat mode (NONE, ALL, ONE)',
     schema: RepeatModeSchema,
+    tags: [v2Tag('Playback')],
   }),
   setRepeat: actionWithBody(
     'patch',
@@ -304,12 +338,14 @@ export const routes = {
     'set repeat mode',
     'Set the repeat mode',
     SetRepeatSchema,
+    [v2Tag('Playback')],
   ),
   switchRepeat: action(
     'post',
     '/playback/repeat/next',
     'switch repeat',
     'Switch to the next repeat mode',
+    [v2Tag('Playback')],
   ),
 
   // Volume
@@ -318,6 +354,7 @@ export const routes = {
     summary: 'get volume',
     description: 'Get the current volume of the player',
     schema: VolumeSchema,
+    tags: [v2Tag('Volume')],
   }),
   setVolume: actionWithBody(
     'post',
@@ -325,6 +362,7 @@ export const routes = {
     'set volume',
     'Set the volume of the player',
     SetVolumeSchema,
+    [v2Tag('Volume')],
   ),
   setVolumePatch: actionWithBody(
     'patch',
@@ -332,12 +370,14 @@ export const routes = {
     'set volume',
     'Set the volume of the player',
     SetVolumeSchema,
+    [v2Tag('Volume')],
   ),
   muteState: readable({
     path: '/volume/mute',
     summary: 'get mute state',
     description: 'Get whether the player is muted',
     schema: MuteStateSchema,
+    tags: [v2Tag('Volume')],
   }),
   setMute: actionWithBody(
     'post',
@@ -345,6 +385,7 @@ export const routes = {
     'set mute',
     'Mute or unmute the player',
     SetMuteSchema,
+    [v2Tag('Volume')],
   ),
   setMutePatch: actionWithBody(
     'patch',
@@ -352,13 +393,17 @@ export const routes = {
     'set mute',
     'Mute or unmute the player',
     SetMuteSchema,
+    [v2Tag('Volume')],
   ),
-  unmute: action('post', '/volume/unmute', 'unmute', 'Unmute the player'),
+  unmute: action('post', '/volume/unmute', 'unmute', 'Unmute the player', [
+    v2Tag('Volume'),
+  ]),
   toggleMute: action(
     'post',
     '/volume/toggle-mute',
     'toggle mute',
     'Toggle the mute state of the player',
+    [v2Tag('Volume')],
   ),
 
   // Rating
@@ -367,6 +412,7 @@ export const routes = {
     summary: 'get like state',
     description: 'Get the current like state',
     schema: LikeStateSchema,
+    tags: [v2Tag('Rating')],
   }),
   setLikeState: actionWithBody(
     'post',
@@ -374,24 +420,28 @@ export const routes = {
     'set like state',
     'Set the like state of the current song',
     SetLikeStateSchema,
+    [v2Tag('Rating')],
   ),
   like: action(
     'post',
     '/rating/like',
     'like song',
     'Set the current song as liked',
+    [v2Tag('Rating')],
   ),
   dislike: action(
     'post',
     '/rating/dislike',
     'dislike song',
     'Set the current song as disliked',
+    [v2Tag('Rating')],
   ),
   unlike: action(
     'post',
     '/rating/unlike',
     'unlike song',
     'Clear the like state of the current song',
+    [v2Tag('Rating')],
   ),
 
   // Queue
@@ -401,6 +451,7 @@ export const routes = {
     description: 'Get the current queue info',
     schema: QueueSchema,
     emptyDescription: 'No queue info',
+    tags: [v2Tag('Queue')],
   }),
   addToQueue: actionWithBody(
     'post',
@@ -408,6 +459,7 @@ export const routes = {
     'add songs to queue',
     'Add songs to the queue',
     AddToQueueSchema,
+    [v2Tag('Queue')],
   ),
   moveInQueue: createRoute({
     method: 'patch',
@@ -419,6 +471,7 @@ export const routes = {
       body: body(MoveInQueueSchema),
     },
     responses: SUCCESS,
+    tags: [v2Tag('Queue')],
   }),
   removeFromQueue: createRoute({
     method: 'delete',
@@ -427,6 +480,7 @@ export const routes = {
     description: 'Remove the song at `index` from the queue',
     request: { params: QueueIndexParamSchema },
     responses: SUCCESS,
+    tags: [v2Tag('Queue')],
   }),
   setQueueIndex: actionWithBody(
     'post',
@@ -434,8 +488,11 @@ export const routes = {
     'set queue index',
     'Set the current index of the queue',
     SetQueueIndexSchema,
+    [v2Tag('Queue')],
   ),
-  clearQueue: action('delete', '/queue', 'clear queue', 'Clear the queue'),
+  clearQueue: action('delete', '/queue', 'clear queue', 'Clear the queue', [
+    v2Tag('Queue'),
+  ]),
 } as const;
 
 const registerRoutes = (
@@ -746,7 +803,9 @@ export const createV2 = (
 
   // TODO(ponytail): v2 will carry its own event set. For now it reuses v1's
   // shared player state events, so both versions broadcast the same messages.
-  const stopWebsocket = registerWebsocket(app, ctx, playerState, WS_PATH);
+  const stopWebsocket = registerWebsocket(app, ctx, playerState, WS_PATH, [
+    v2Tag('WebSocket'),
+  ]);
 
   return { app, stopWebsocket };
 };

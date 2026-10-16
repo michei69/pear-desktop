@@ -19,12 +19,13 @@ import type { WSContext } from 'hono/ws';
 
 const JWT_ALG = 'HS256';
 
-const createWsRoute = (path: string) =>
+const createWsRoute = (path: string, tags: string[] = []) =>
   createRoute({
     method: 'get',
     path,
     summary: 'websocket endpoint',
     description: 'WebSocket endpoint for real-time updates',
+    tags,
     request: {
       query: z.object({
         token: z
@@ -52,6 +53,7 @@ export const registerWebsocket = (
   { getConfig }: BackendContext<APIServerConfig>,
   playerState: PlayerState,
   path: string,
+  tags: string[] = [],
 ) => {
   const sockets = new Set<WSContext<WebSocketLike>>();
 
@@ -104,7 +106,7 @@ export const registerWebsocket = (
 
   // `upgradeWebSocket` may resolve to void, but zod-openapi's handler type only
   // accepts a Response.
-  const wsRoute = createWsRoute(path);
+  const wsRoute = createWsRoute(path, tags);
   app.openapi(wsRoute, handler as unknown as RouteHandler<typeof wsRoute>);
 
   return () => {
