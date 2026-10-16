@@ -4,8 +4,9 @@
  * routes used to land, v1 and v2 interleaved.
  *
  * Tags are flat, so the version is part of the tag name rather than a parent
- * group. `apiTagOrder` is what makes the sections read version-first, then
- * category: Swagger shows them in the order the document declares them.
+ * group. `apiTagOrder` is what makes the sections read auth first, then the
+ * newest API version down to the oldest, each split by category: Swagger shows
+ * them in the order the document declares them.
  */
 
 const V1_CATEGORIES = [
@@ -42,9 +43,13 @@ export const v2Tag = (category: (typeof V2_CATEGORIES)[number]) =>
 /** `POST /auth/{id}` sits outside any version, so it gets an unversioned tag. */
 export const AUTH_TAG = 'Auth';
 
-/** Every tag, version-first then category, in the order Swagger should show. */
+/**
+ * Every tag, in the order Swagger should show them: the unversioned endpoints
+ * first, then the newest API version down to the oldest, each split by
+ * category. Add a new version's block above the previous one.
+ */
 export const apiTagOrder = [
-  ...V1_CATEGORIES.map(v1Tag),
-  ...V2_CATEGORIES.map(v2Tag),
   AUTH_TAG,
+  ...V2_CATEGORIES.map(v2Tag),
+  ...V1_CATEGORIES.map(v1Tag),
 ];
