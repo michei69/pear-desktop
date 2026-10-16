@@ -6,6 +6,7 @@ import { APPLICATION_NAME } from '@/i18n';
 
 import { registerAuthRoute } from './auth';
 import { createV1 } from './v1';
+import { createV2 } from './v2';
 
 import type { APIServerConfig } from '../config';
 import type { PlayerState } from './state';
@@ -31,6 +32,9 @@ export const buildApp = (
   const v1 = createV1(ctx, playerState);
   app.route('/', v1.app);
 
+  const v2 = createV2(ctx, playerState);
+  app.route('/', v2.app);
+
   // Outside any version: this is the endpoint that hands out the token every
   // version's routes require.
   registerAuthRoute(app, ctx);
@@ -52,5 +56,11 @@ export const buildApp = (
   });
   app.get('/swagger', swaggerUI({ url: '/doc' }));
 
-  return { app, stopWebsocket: v1.stopWebsocket };
+  return {
+    app,
+    stopWebsocket: () => {
+      v1.stopWebsocket();
+      v2.stopWebsocket();
+    },
+  };
 };

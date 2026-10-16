@@ -10,11 +10,18 @@ import {
 import type { RepeatMode, VolumeState } from '@/types/datahost-get-state';
 
 /**
+ * The song shape the WebSocket publishes. The scrobbler's config-derived
+ * title/artist are not part of it, for either version — `/api/v2/video` carries
+ * those over HTTP instead.
+ */
+type WireSongInfo = Omit<SongInfo, 'scrobbleTitle' | 'scrobbleArtist'>;
+
+/**
  * Messages broadcast to WebSocket clients. Each variant is sent as-is, so the
  * `type` discriminant is part of the wire protocol — don't rename the values.
  */
 export type PlayerEvent =
-  | { type: 'VIDEO_CHANGED'; song: SongInfo; position: number }
+  | { type: 'VIDEO_CHANGED'; song: WireSongInfo; position: number }
   | { type: 'PLAYER_STATE_CHANGED'; isPlaying: boolean; position: number }
   | { type: 'POSITION_CHANGED'; position: number }
   | { type: 'VOLUME_CHANGED'; volume: number; muted: boolean }
@@ -23,7 +30,7 @@ export type PlayerEvent =
 
 /** Full player state, sent to a client as soon as it connects. */
 export interface PlayerSnapshot {
-  song?: SongInfo;
+  song?: WireSongInfo;
   isPlaying: boolean;
   muted: boolean;
   position: number;
@@ -39,7 +46,7 @@ export interface PlayerSnapshot {
  * instead of tracking their own copies.
  */
 export const createPlayerState = () => {
-  let song: SongInfo | undefined;
+  let song: WireSongInfo | undefined;
   let volume: VolumeState | undefined;
   // Left undefined until the renderer reports a mode, so `/repeat-mode` can tell
   // "not known yet" apart from an actual NONE.
@@ -64,7 +71,11 @@ export const createPlayerState = () => {
 
   const songInfoCallback = (info: SongInfo, event: SongInfoEvent) => {
     // The provider mutates and re-emits the same object, so keep our own copy.
-    const current = { ...info };
+    // `Partial` makes the scrobbler fields deletable; the WebSocket publishes
+    // the `WireSongInfo` shape, which doesn't carry them.
+    const current: WireSongInfo & Partial<SongInfo> = { ...info };
+    delete current.scrobbleTitle;
+    delete current.scrobbleArtist;
     song = current;
 
     switch (event) {

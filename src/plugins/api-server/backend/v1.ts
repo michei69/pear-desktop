@@ -1,9 +1,9 @@
 import { OpenAPIHono, createRoute, type z } from '@hono/zod-openapi';
-import { ipcMain } from 'electron';
 
 import { getSongControls } from '@/providers/song-controls';
 
 import { requireAuth } from './auth';
+import { waitForIpcResponse } from './ipc';
 import {
   AddSongToQueueSchema,
   FullscreenStateSchema,
@@ -343,23 +343,6 @@ export const routes = {
     responses: SUCCESS,
   }),
 } as const;
-
-// Waits for a single renderer IPC reply, rejecting after 5s so routes don't hang.
-const waitForIpcResponse = <T>(channel: string, request: () => void) =>
-  new Promise<T>((resolve, reject) => {
-    const listener = (_: unknown, payload: T) => {
-      clearTimeout(timeout);
-      ipcMain.removeListener(channel, listener);
-      resolve(payload);
-    };
-    const timeout = setTimeout(() => {
-      ipcMain.removeListener(channel, listener);
-      reject(new Error(`Timed out waiting for IPC response on ${channel}`));
-    }, 5_000);
-
-    ipcMain.on(channel, listener);
-    request();
-  });
 
 const registerRoutes = (
   app: OpenAPIHono,

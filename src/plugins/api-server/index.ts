@@ -4,6 +4,7 @@ import { createPlugin } from '@/utils';
 import { backend } from './backend';
 import { AuthStrategy, defaultAPIServerConfig } from './config';
 import { onMenu } from './menu';
+import { renderer } from './renderer';
 
 export default createPlugin({
   name: () => t('plugins.api-server.name'),
@@ -85,4 +86,5 @@ export default createPlugin({
   menu: onMenu,
 
   backend,
+  renderer,
 });
