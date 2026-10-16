@@ -61,7 +61,9 @@ export type AppAPI = {
   toastService: ToastService;
 
   ytmusicReduxBehavior: {
-    store: Store
+    store: {
+      store: Store
+    }
   }
   navigate(page: string): void;
   networkManager: {

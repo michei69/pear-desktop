@@ -1,10 +1,17 @@
 import { OpenAPIHono, createRoute, type z } from '@hono/zod-openapi';
 
+import { isEnabled } from '@/config/plugins';
+import { cacheEntriesForVideo } from '@/plugins/synced-lyrics/translation/cache';
+
 import { requireAuth } from './auth';
 import { callRenderer, sendToRenderer } from './ipc';
 import {
   AddToQueueSchema,
   LikeStateSchema,
+  LyricsSchema,
+  LyricsTranslationRequestSchema,
+  LyricsTranslationSchema,
+  LyricsTranslationsSchema,
   MoveInQueueSchema,
   MuteStateSchema,
   PlaybackPositionQuerySchema,
@@ -12,6 +19,7 @@ import {
   PlaybackSpeedSchema,
   PlayingStateSchema,
   QueueIndexParamSchema,
+  QueueQuerySchema,
   QueueSchema,
   RepeatModeSchema,
   SearchQuerySchema,
@@ -28,7 +36,9 @@ import {
   ShuffleStateSchema,
   SongInfoSchema,
   VolumeSchema,
+  type ResponseLyrics,
   type ResponseQueue,
+  type ResponseSearchResult,
   type ResponseSongInfo,
 } from './schemas-v2';
 import { v2Tag } from './tags';
@@ -38,6 +48,7 @@ import { ApiActions } from '../channels';
 
 import type { APIServerConfig } from '../config';
 import type { PlayerState } from './state';
+import type { LanguageTranslationResult } from '@/plugins/synced-lyrics/renderer/translation-store';
 import type { BackendContext } from '@/types/contexts';
 import type { LikeType, RepeatMode } from '@/types/datahost-get-state';
 import type { Context } from 'hono';
@@ -126,6 +137,7 @@ const readableWithQuery = <S extends z.ZodType, Q extends z.ZodObject>({
   description,
   schema,
   query,
+  emptyDescription,
   tags,
 }: {
   path: string;
@@ -133,6 +145,7 @@ const readableWithQuery = <S extends z.ZodType, Q extends z.ZodObject>({
   description: string;
   schema: S;
   query: Q;
+  emptyDescription?: string;
   tags: string[];
 }) =>
   createRoute({
@@ -147,6 +160,7 @@ const readableWithQuery = <S extends z.ZodType, Q extends z.ZodObject>({
         description: 'Success',
         content: { [JSON_CONTENT]: { schema } },
       },
+      ...(emptyDescription ? { 204: { description: emptyDescription } } : {}),
     },
   });
 
@@ -184,7 +198,7 @@ export const routes = {
   searchQuery: readableWithQuery({
     path: '/video/search',
     summary: 'search for a song',
-    description: "Search for a song and return the renderer's raw response",
+    description: 'Search for a song and return its parsed results',
     schema: SearchResultSchema,
     query: SearchQuerySchema,
     tags: [v2Tag('Video')],
@@ -193,7 +207,7 @@ export const routes = {
     method: 'post',
     path: '/video/search',
     summary: 'search for a song',
-    description: "Search for a song and return the renderer's raw response",
+    description: 'Search for a song and return its parsed results',
     request: { body: body(SearchSchema) },
     responses: {
       200: {
@@ -211,7 +225,7 @@ export const routes = {
     path: '/video/search',
     summary: 'search for a song',
     description:
-      "Search for a song and return the renderer's raw response. Safe: the same request as POST /video/search, without the side-effect semantics.",
+      'Search for a song and return its parsed results. Safe: the same request as POST /video/search, without the side-effect semantics.',
     request: { body: body(SearchSchema) },
     responses: {
       200: {
@@ -220,6 +234,58 @@ export const routes = {
       },
     },
     tags: [v2Tag('Video')],
+  }),
+  lyrics: createRoute({
+    method: 'get',
+    path: '/video/lyrics',
+    summary: 'get lyrics from every provider',
+    description:
+      'Get the lyrics of the current song from every synced-lyrics provider that found some, not just the one the app would show. The plugin has to be enabled.',
+    tags: [v2Tag('Video')],
+    responses: {
+      200: {
+        description: 'Success',
+        content: { [JSON_CONTENT]: { schema: LyricsSchema } },
+      },
+      204: { description: 'No lyrics available' },
+      404: { description: 'The synced-lyrics plugin is disabled' },
+    },
+  }),
+  lyricsTranslations: createRoute({
+    method: 'get',
+    path: '/video/lyrics/translations',
+    summary: 'get cached lyrics translations',
+    description:
+      "Get the cached translations of the current song's lyrics. Only entries written under the current translation strategy version are listed, so this can be empty while older translation files still exist on disk. The plugin has to be enabled.",
+    tags: [v2Tag('Video')],
+    responses: {
+      200: {
+        description: 'Success',
+        content: { [JSON_CONTENT]: { schema: LyricsTranslationsSchema } },
+      },
+      204: { description: 'No song playing, or nothing cached for it' },
+      404: { description: 'The synced-lyrics plugin is disabled' },
+    },
+  }),
+  translateLyrics: createRoute({
+    method: 'post',
+    path: '/video/lyrics/translations',
+    summary: 'translate the current lyrics',
+    description:
+      "Translate the current song's lyrics into `lang` and cache the result, without changing the translation the app is showing. 404 when the plugin is disabled, when the song has no lyrics, when translation is off in the plugin's config, or when the lyrics are already in `lang`; 502 when the translation provider itself fails.",
+    tags: [v2Tag('Video')],
+    request: { body: body(LyricsTranslationRequestSchema) },
+    responses: {
+      200: {
+        description: 'Success',
+        content: { [JSON_CONTENT]: { schema: LyricsTranslationSchema } },
+      },
+      404: {
+        description:
+          'Plugin disabled, no lyrics, translation disabled, or already in that language',
+      },
+      502: { description: 'The translation provider failed' },
+    },
   }),
 
   // Playback
@@ -445,11 +511,13 @@ export const routes = {
   ),
 
   // Queue
-  queue: readable({
+  queue: readableWithQuery({
     path: '/queue',
     summary: 'get current queue info',
-    description: 'Get the current queue info',
+    description:
+      "Get the current queue info. Add `raw=true` to include each item's raw YouTube Music renderer.",
     schema: QueueSchema,
+    query: QueueQuerySchema,
     emptyDescription: 'No queue info',
     tags: [v2Tag('Queue')],
   }),
@@ -498,6 +566,7 @@ export const routes = {
 const registerRoutes = (
   app: OpenAPIHono,
   { window }: BackendContext<APIServerConfig>,
+  playerState: PlayerState,
 ) => {
   // Video
   app.openapi(routes.video, async (ctx) => {
@@ -530,7 +599,7 @@ const registerRoutes = (
     ctx: Context,
     { query, params, continuation }: z.infer<typeof SearchSchema>,
   ) => {
-    const response = await callRenderer<Record<string, unknown>>(
+    const response = await callRenderer<ResponseSearchResult>(
       window,
       ApiActions.search,
       query,
@@ -547,6 +616,103 @@ const registerRoutes = (
   app.openapi(routes.searchByQueryMethod, (ctx) =>
     runSearch(ctx, ctx.req.valid('json')),
   );
+  app.openapi(routes.lyrics, async (ctx) => {
+    // The renderer checks this too, but a disabled plugin must 404 rather than
+    // wait out the 5s IPC timeout on a renderer that will not answer.
+    if (!(await isEnabled('synced-lyrics'))) {
+      return ctx.text('The synced-lyrics plugin is disabled', 404);
+    }
+
+    const lyrics = await callRenderer<ResponseLyrics | null>(
+      window,
+      ApiActions.getLyrics,
+    );
+
+    if (!lyrics) {
+      return noContent(ctx);
+    }
+
+    return ctx.json(lyrics, 200);
+  });
+  app.openapi(routes.lyricsTranslations, async (ctx) => {
+    if (!(await isEnabled('synced-lyrics'))) {
+      return ctx.text('The synced-lyrics plugin is disabled', 404);
+    }
+
+    const videoId = playerState.song?.videoId;
+    if (!videoId) {
+      return noContent(ctx);
+    }
+
+    // The cache lives on disk, so reading it can fail for reasons that are not
+    // this request's fault (userData not resolved yet). "Nothing cached" is the
+    // honest answer then — never a 500.
+    const entries = await cacheEntriesForVideo(videoId).catch(() => []);
+    if (!entries.length) {
+      return noContent(ctx);
+    }
+
+    return ctx.json(
+      {
+        videoId,
+        // `sourceLines` and the hashes are left out: they are large and the
+        // caller can re-request a translation instead.
+        translations: entries.map((entry) => ({
+          language: entry.targetLanguage,
+          provider: entry.provider,
+          model: entry.model,
+          title: entry.title,
+          artists: entry.artists,
+          createdAt: entry.createdAt,
+          lines: entry.lines,
+        })),
+      },
+      200,
+    );
+  });
+  app.openapi(routes.translateLyrics, async (ctx) => {
+    if (!(await isEnabled('synced-lyrics'))) {
+      return ctx.text('The synced-lyrics plugin is disabled', 404);
+    }
+
+    const result = await callRenderer<LanguageTranslationResult | null>(
+      window,
+      ApiActions.translateLyrics,
+      ctx.req.valid('json').lang,
+    );
+
+    // The renderer answers null only when the plugin is off (a race with the
+    // check above) — it reports every translation failure as data with a reason.
+    if (!result) {
+      return ctx.text('The synced-lyrics plugin is disabled', 404);
+    }
+
+    if (result.reason) {
+      // The reason picks the status; the plugin's own message is the body, so a
+      // caller sees which refusal it hit ("lyrics are already in en", ...).
+      const message =
+        result.error ?? `Cannot translate the current lyrics: ${result.reason}`;
+
+      // An upstream failure is not the caller's fault, so it is not a 404.
+      return result.reason === 'provider-error'
+        ? ctx.text(message, 502)
+        : ctx.text(message, 404);
+    }
+
+    // Built field by field rather than spread, so the body is exactly what
+    // `LyricsTranslationSchema` documents — a stray `error` on a success would
+    // otherwise reach a client that has no reason to expect one.
+    return ctx.json(
+      {
+        videoId: playerState.song?.videoId ?? null,
+        language: result.language,
+        provider: result.provider,
+        lines: result.lines,
+        ...(result.fromCache !== undefined && { fromCache: result.fromCache }),
+      },
+      200,
+    );
+  });
 
   // Playback
   app.openapi(routes.playing, async (ctx) => {
@@ -723,9 +889,11 @@ const registerRoutes = (
 
   // Queue
   app.openapi(routes.queue, async (ctx) => {
+    const raw = ctx.req.valid('query').raw === 'true';
     const info = await callRenderer<ResponseQueue | undefined>(
       window,
       ApiActions.getQueue,
+      raw,
     );
 
     if (!info) {
@@ -799,7 +967,7 @@ export const createV2 = (
   // `requireAuth` matches `ctx.req.path`, which is absolute even inside a
   // sub-app, while `createRoute` paths are relative to `basePath`.
   app.use('*', requireAuth(ctx.getConfig, `${V2_PATH}${WS_PATH}`));
-  registerRoutes(app, ctx);
+  registerRoutes(app, ctx, playerState);
 
   // TODO(ponytail): v2 will carry its own event set. For now it reuses v1's
   // shared player state events, so both versions broadcast the same messages.

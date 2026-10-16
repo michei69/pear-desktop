@@ -20,6 +20,8 @@ export const ApiActions = {
   getMute: 'get-mute',
   getLikeState: 'get-like-state',
   getQueue: 'get-queue',
+  getLyrics: 'get-lyrics',
+  translateLyrics: 'translate-lyrics',
   search: 'search',
 
   /** Commands: fire and forget. */

@@ -50,6 +50,66 @@ export const writeCache = async (entry: CacheEntry): Promise<void> => {
   await fs.writeFile(file, JSON.stringify(entry, null, 2), 'utf-8');
 };
 
+/**
+ * Every readable entry on disk, newest first is not guaranteed — callers filter.
+ * Corrupt, half-written or shape-shifted files are skipped: one bad file must
+ * not break a listing the API serves, nor make it serve something the response
+ * schema does not describe.
+ */
+export const listCache = async (): Promise<CacheEntry[]> => {
+  const dir = getCacheDir();
+  let names: string[];
+  try {
+    names = await fs.readdir(dir);
+  } catch {
+    // dir may not exist yet — nothing is cached
+    return [];
+  }
+
+  const entries: CacheEntry[] = [];
+  for (const name of names) {
+    if (!name.endsWith('.json')) continue;
+    try {
+      const content = await fs.readFile(path.join(dir, name), 'utf-8');
+      const entry = JSON.parse(content) as CacheEntry | null;
+      // Everything `CacheEntry` declares, checked against what is on disk, so
+      // the return type is a guarantee rather than a hope.
+      if (
+        typeof entry?.key === 'string' &&
+        typeof entry.strategyVersion === 'string' &&
+        typeof entry.targetLanguage === 'string' &&
+        typeof entry.provider === 'string' &&
+        typeof entry.model === 'string' &&
+        typeof entry.sourceHash === 'string' &&
+        typeof entry.title === 'string' &&
+        typeof entry.createdAt === 'number' &&
+        Array.isArray(entry.sourceLines) &&
+        entry.sourceLines.every((line) => typeof line === 'string') &&
+        Array.isArray(entry.artists) &&
+        entry.artists.every((artist) => typeof artist === 'string') &&
+        Array.isArray(entry.lines) &&
+        entry.lines.every((line) => typeof line === 'string')
+      ) {
+        entries.push(entry);
+      }
+    } catch {
+      // unreadable or corrupt — skip
+    }
+  }
+  return entries;
+};
+
+/**
+ * Cached translations for one video. `CacheEntry` carries no video id, but the
+ * key is `${version}::${videoId}::...`, so a prefix match is exact.
+ */
+export const cacheEntriesForVideo = async (
+  videoId: string,
+): Promise<CacheEntry[]> => {
+  const prefix = `${TRANSLATION_STRATEGY_VERSION}::${videoId}::`;
+  return (await listCache()).filter((entry) => entry.key.startsWith(prefix));
+};
+
 export const clearCache = async (): Promise<number> => {
   const dir = getCacheDir();
   let count = 0;

@@ -69,6 +69,13 @@ export const SearchQuerySchema = z.object({
   continuation: z.string().optional(),
 });
 
+export const QueueQuerySchema = z.object({
+  raw: z
+    .enum(['true', 'false'])
+    .optional()
+    .describe("Include each item's raw YouTube Music renderer"),
+});
+
 export const PlaybackPositionQuerySchema = z.object({
   percentage: z
     .enum(['true', 'false'])
@@ -138,14 +145,49 @@ export const LikeStateSchema = z.object({
   state: z.enum(LikeType).nullable(),
 });
 
-/**
- * Queue as produced by the renderer. The individual entries are the raw
- * YouTube Music renderers, which are far too large to mirror here.
- */
+/** One thumbnail size, as YouTube Music reports it. */
+const ThumbnailSchema = z.object({
+  url: z.string(),
+  width: z.number().optional(),
+  height: z.number().optional(),
+});
+
+/** One queue entry, mapped from the item's raw playlist panel renderer. */
+const QueueItemSchema = z.object({
+  videoId: z.string(),
+  title: z.string().optional(),
+  artist: z.string().optional(),
+  album: z.string().optional(),
+  year: z
+    .string()
+    .optional()
+    .describe('Set when the byline carries a release year'),
+  duration: z.string().optional().describe('As shown, for example "4:21"'),
+  thumbnails: z
+    .array(ThumbnailSchema)
+    .optional()
+    .describe('Every size YouTube Music offers'),
+  thumbnail: z.string().optional().describe('The largest thumbnail'),
+  url: z.string().describe('The watch URL for the item'),
+  selected: z.boolean().describe('Whether this is the item being played'),
+  index: z
+    .number()
+    .describe(
+      'Position in the queue, for the move, remove and set-index endpoints',
+    ),
+  playlistSetVideoId: z.string().optional(),
+  canReorder: z.boolean(),
+  renderer: z
+    .unknown()
+    .optional()
+    .describe('The raw renderer, only with `raw=true`'),
+});
+
+/** Queue as produced by the renderer, one entry per playable item. */
 export const QueueSchema = z.object({
   autoplay: z.boolean().optional(),
   isInfinite: z.boolean().optional(),
-  items: z.array(z.unknown()).optional(),
+  items: z.array(QueueItemSchema).optional(),
   nextQueueItemId: z.string().optional(),
   playbackContentMode: z.string().optional(),
   repeatMode: z.enum(RepeatModes).optional(),
@@ -155,5 +197,129 @@ export const QueueSchema = z.object({
 });
 export type ResponseQueue = z.infer<typeof QueueSchema>;
 
-/** `GET|POST /video/search` proxies the renderer's raw search response. */
-export const SearchResultSchema = z.record(z.string(), z.unknown());
+/** One search result; exactly one of `videoId`/`browseId` is set. */
+const SearchResultItemSchema = z.object({
+  title: z.string().optional(),
+  artist: z.string().optional(),
+  type: z.string().optional(),
+  thumbnail: z.string().optional().describe('The largest thumbnail'),
+  thumbnails: z
+    .array(ThumbnailSchema)
+    .optional()
+    .describe('Every size YouTube Music offers'),
+  videoId: z.string().optional().describe('Set for songs, videos and episodes'),
+  browseId: z
+    .string()
+    .optional()
+    .describe(
+      'Set for playlists, albums, artists, podcasts, profiles and singles',
+    ),
+  url: z.string().optional().describe('The YouTube Music page the id opens'),
+});
+
+/** `GET|POST|QUERY /video/search` returns the renderer's parsed results. */
+export const SearchResultSchema = z.object({
+  query: z.string().describe('The query the results answer'),
+  results: z.array(SearchResultItemSchema),
+});
+export type ResponseSearchResult = z.infer<typeof SearchResultSchema>;
+
+/** One line of synced lyrics; the UI-only `status` field is not reported. */
+const LyricsLineSchema = z.object({
+  time: z.string().describe('As shown, for example "00:12:00"'),
+  timeInMs: z.number().describe('When the line starts, in milliseconds'),
+  duration: z.number().describe('Milliseconds the line is shown for'),
+  text: z.string(),
+});
+
+/** One provider's lyrics for the current song. */
+export const LyricsProviderSchema = z.object({
+  provider: z.string().describe('The lyrics provider that found these'),
+  state: z
+    .enum(['fetching', 'done', 'error'])
+    .describe('Whether that provider has finished, and how'),
+  title: z.string(),
+  artists: z.array(z.string()),
+  lyrics: z.string().optional().describe('Plain, unsynced lyrics'),
+  lines: z.array(LyricsLineSchema).optional().describe('Time-synced lyrics'),
+  translation: z
+    .object({
+      lyrics: z.string().optional(),
+      lines: z.array(LyricsLineSchema).optional(),
+      language: z.string().optional(),
+      provider: z.string().optional(),
+    })
+    .optional()
+    .describe('An official translation the provider ships with the lyrics'),
+});
+
+/** `GET /video/lyrics` reports every provider that found lyrics. */
+export const LyricsSchema = z.object({
+  videoId: z.string().nullable().describe('The song the lyrics belong to'),
+  activeProvider: z
+    .string()
+    .nullable()
+    .describe('The provider the lyrics tab is showing, null with no song'),
+  providers: z
+    .array(LyricsProviderSchema)
+    .describe('Every provider with lyrics, in priority order'),
+});
+export type ResponseLyrics = z.infer<typeof LyricsSchema>;
+
+/** One cached translation of the current song. */
+const CachedTranslationSchema = z.object({
+  language: z.string().describe('The language it was translated into'),
+  provider: z.string().describe('The translation provider that produced it'),
+  model: z.string().describe('The model the provider used'),
+  title: z.string(),
+  artists: z.array(z.string()),
+  createdAt: z.number().describe('Unix milliseconds'),
+  lines: z
+    .array(z.string())
+    .describe('The translated lines, in the source lyrics order'),
+});
+
+/**
+ * `GET /video/lyrics/translations` lists the cached translations of the current
+ * song. Entries written under an older `TRANSLATION_STRATEGY_VERSION` are not
+ * listed, so this can be empty while translation files exist on disk.
+ */
+export const LyricsTranslationsSchema = z.object({
+  videoId: z.string().describe('The song the translations belong to'),
+  translations: z.array(CachedTranslationSchema),
+});
+export type ResponseLyricsTranslations = z.infer<
+  typeof LyricsTranslationsSchema
+>;
+
+/** Body of `POST /video/lyrics/translations`. */
+export const LyricsTranslationRequestSchema = z.object({
+  // Trimmed, so a whitespace-only `lang` is rejected here as a 400 instead of
+  // reaching the renderer, whose reply cannot tell "blank" apart from "the
+  // plugin is off" — the backend would then answer with the wrong message.
+  lang: z
+    .string()
+    .trim()
+    .min(1)
+    .describe('Language to translate the current lyrics into'),
+});
+
+/** `POST /video/lyrics/translations` runs a translation for one language. */
+export const LyricsTranslationSchema = z.object({
+  videoId: z.string().nullable().describe('The song that was translated'),
+  language: z.string().describe('The language it was translated into'),
+  provider: z
+    .string()
+    .nullable()
+    .describe(
+      'The translation provider, null when translation is unconfigured',
+    ),
+  lines: z
+    .array(z.string())
+    .describe('The translated lines, in the source lyrics order'),
+  fromCache: z
+    .boolean()
+    .optional()
+    .describe('Whether the on-disk translation cache answered'),
+});
+export type ResponseLyricsTranslation = z.infer<typeof LyricsTranslationSchema>;

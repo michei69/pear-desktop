@@ -1,10 +1,13 @@
 import { createStore } from 'solid-js/store';
 import { detectAll } from 'tinyld';
 
+import { getSongInfo } from '@/providers/song-info-front';
+
 import { translationDebug } from './debug';
 import { translateInvoke } from './index';
 import { config } from './renderer';
 
+import { hasLyricText } from '../providers';
 import { getTranslationModelId } from '../translation/model-id';
 import { TRANSLATION_STRATEGY_VERSION } from '../translation/version';
 
@@ -337,4 +340,180 @@ export const getLineTranslation = (
   if (!cur || translationStore.videoId !== videoId) return undefined;
   if (cur.state !== 'done') return undefined;
   return cur.lines[index];
+};
+
+/** Why a language translation produced no lines. */
+export type LanguageTranslationReason =
+  | 'disabled'
+  | 'no-lyrics'
+  | 'same-language'
+  | 'provider-error';
+
+export interface LanguageTranslationResult {
+  provider: TranslationProviderName | null;
+  language: string;
+  lines: string[];
+  fromCache?: boolean;
+  error?: string;
+  /** Present exactly when `lines` is empty, so a caller can switch on it. */
+  reason?: LanguageTranslationReason;
+}
+
+/**
+ * The song the UI is on, with the active provider's lines — synced lines when it
+ * has any, plain lyrics otherwise, exactly like `translateCurrentLyrics`.
+ *
+ * `store` is imported lazily because it imports this module back; a static
+ * import would make the app's translation setup depend on module order.
+ */
+const currentSongLines = async (): Promise<{
+  videoId: string;
+  title: string;
+  artists: string[];
+  lines: string[];
+} | null> => {
+  const { lyricsStore, splitPlainLyrics } = await import('./store');
+
+  const videoId = lyricsStore.videoId;
+  const state = lyricsStore.current;
+  const data = state.state === 'done' ? state.data : null;
+  if (!videoId || !data || !hasLyricText(data)) return null;
+
+  const lines = data.lines?.some((line) => line.text.trim())
+    ? data.lines.map((line) => line.text)
+    : data.lyrics
+      ? splitPlainLyrics(data.lyrics)
+      : [];
+  if (!lines.length) return null;
+
+  const info = getSongInfo();
+  return {
+    videoId,
+    title: data.title || info.title || '',
+    artists: data.artists?.length
+      ? data.artists
+      : info.artist
+        ? [info.artist]
+        : [],
+    lines,
+  };
+};
+
+/**
+ * Translate the current song into `language` on behalf of the API.
+ *
+ * Same setup as `fetchTranslation` — config, provider settings, model, request —
+ * but the target language comes from the caller and nothing here writes to
+ * `translationStore`, so the lyrics the app is showing stay exactly as they were.
+ * The main process caches the result on disk; a failure comes back as data so a
+ * route can answer with a status instead of a 500.
+ */
+export const translateForLanguage = async (
+  language: string,
+): Promise<LanguageTranslationResult> => {
+  const cfg = config();
+  const providerName = cfg?.translation?.provider ?? null;
+  if (!cfg?.translation?.enabled || !providerName) {
+    translationDebug('language translation skipped: disabled in config', {
+      language,
+    });
+    return {
+      provider: providerName,
+      language,
+      lines: [],
+      error: 'translation is disabled in the synced-lyrics config',
+      reason: 'disabled',
+    };
+  }
+
+  const song = await currentSongLines();
+  if (!song) {
+    translationDebug('language translation skipped: no current lyrics', {
+      language,
+    });
+    return {
+      provider: providerName,
+      language,
+      lines: [],
+      error: 'no lyrics for the current song',
+      reason: 'no-lyrics',
+    };
+  }
+
+  const target = resolveTargetLanguage(language as TranslationTargetLanguage);
+  const sameLanguage = sourceLanguageMatchesTarget(song.lines, target);
+  if (sameLanguage) {
+    translationDebug('language translation skipped: source matches target', {
+      videoId: song.videoId,
+      language: target,
+      sourceLanguage: sameLanguage.language,
+    });
+    return {
+      provider: providerName,
+      language: target,
+      lines: [],
+      error: `lyrics are already in ${sameLanguage.language}`,
+      reason: 'same-language',
+    };
+  }
+
+  const settings = plainProviderSettings(
+    providerName,
+    cfg.translation.providers[providerName],
+  );
+  const request: TranslationRequest = toPlainJson({
+    title: song.title,
+    artists: song.artists,
+    targetLanguage: target as TranslationTargetLanguage,
+    resolvedTargetLanguage: target,
+    lines: song.lines,
+  });
+
+  try {
+    translationDebug('translating lyrics for language', {
+      videoId: song.videoId,
+      provider: providerName,
+      language: target,
+      model: getTranslationModelId(providerName, settings),
+      lines: song.lines.length,
+    });
+    const result = await translateInvoke(
+      toPlainJson({
+        videoId: song.videoId,
+        request,
+        provider: providerName,
+        settings,
+      }),
+    );
+    if (result.error || result.lines.length === 0) {
+      return {
+        provider: providerName,
+        language: target,
+        lines: [],
+        error: result.error || 'Translation provider returned no lines',
+        reason: 'provider-error',
+      };
+    }
+    return {
+      provider: providerName,
+      language: target,
+      lines: result.lines,
+      fromCache: result.fromCache,
+    };
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    translationDebug('language translation failed', {
+      videoId: song.videoId,
+      provider: providerName,
+      language: target,
+      message,
+    });
+    return {
+      provider: providerName,
+      language: target,
+      lines: [],
+      error: message,
+      reason: 'provider-error',
+    };
+  }
 };

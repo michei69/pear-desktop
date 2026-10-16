@@ -72,6 +72,8 @@ type SearchCacheData = Record<ProviderName, ProviderState>;
 interface SearchCache {
   state: 'loading' | 'done';
   data: SearchCacheData;
+  /** Settles once every provider has answered, so callers can await a fetch. */
+  settled?: Promise<void>;
 }
 
 // TODO: Maybe use localStorage for the cache.
@@ -262,15 +264,19 @@ const getOfficialChineseTranslationLines = (
   return null;
 };
 
-export const fetchLyrics = (info: SongInfo) => {
-  if (activeSongInfo?.videoId !== info.videoId) return;
+/**
+ * Fetch every provider for `info`. Resolves once they have all settled, so a
+ * caller can await a fetch the UI already started; a cached or in-flight video
+ * hands back its existing promise instead of refetching.
+ */
+export const fetchLyrics = (info: SongInfo): Promise<void> => {
+  if (activeSongInfo?.videoId !== info.videoId) return Promise.resolve();
 
-  if (searchCache.has(info.videoId)) {
-    const cache = searchCache.get(info.videoId)!;
+  const cached = searchCache.get(info.videoId);
+  if (cached) {
+    activateLyricsData(info.videoId, cached.data);
 
-    activateLyricsData(info.videoId, cache.data);
-
-    return;
+    return cached.settled ?? Promise.resolve();
   }
 
   const cache: SearchCache = {
@@ -342,11 +348,37 @@ export const fetchLyrics = (info: SongInfo) => {
     );
   }
 
-  Promise.allSettled(tasks).then(() => {
+  const settled = Promise.allSettled(tasks).then(() => {
     cache.state = 'done';
     searchCache.set(info.videoId, cache);
     pruneSearchCache();
   });
+
+  cache.settled = settled;
+
+  return settled;
+};
+
+/** Video id the lyrics belong to, or null when no song is playing. */
+export const currentLyricsVideoId = (): string | null =>
+  (activeSongInfo ?? getSongInfo())?.videoId ?? null;
+
+/**
+ * Every provider's state for the current song, waiting for a fetch already in
+ * flight. Starts one when the song has none, so the API can answer without the
+ * lyrics tab having been opened.
+ */
+export const allProviderLyrics = async (): Promise<
+  Record<ProviderName, ProviderState>
+> => {
+  const info = activeSongInfo ?? getSongInfo();
+  if (!info?.videoId) return initialData();
+
+  await fetchLyrics(info);
+
+  const cache = searchCache.get(info.videoId);
+
+  return cache ? cloneSearchData(cache.data) : initialData();
 };
 
 export const retrySearch = (provider: ProviderName, info: SongInfo) => {
