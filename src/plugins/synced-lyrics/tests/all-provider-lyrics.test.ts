@@ -1,12 +1,18 @@
-import { registerHooks } from 'node:module';
-
 import { expect, test } from '@playwright/test';
-import { Window } from 'happy-dom';
+
+import {
+  installDom,
+  setUpModuleStubs,
+  song,
+  startStubbing,
+  stopStubbing,
+  watchNextPage,
+  withWatchNext,
+} from './harness';
 
 import { ProviderNames, providerNames, type ProviderName } from '../providers';
 
 import type { LyricProvider, LyricResult } from '../types';
-import type { SongInfo } from '@/providers/song-info';
 
 /**
  * `allProviderLyrics` is the API server's window into the lyrics store, so these
@@ -14,10 +20,8 @@ import type { SongInfo } from '@/providers/song-info';
  * waits for every provider to settle, never refetches, and answers for the song
  * the UI is on.
  *
- * The store's UI half cannot load outside the bundler — `renderer.tsx` and the
- * plugin entry pull in `virtual:` modules and DOM-only deps — and the store only
- * reads `config()` from it. So both are stubbed for the duration of the import,
- * which is all the setup below is for.
+ * The store's UI half cannot load outside the bundler, so its modules are
+ * stubbed for the duration of the import — see `./harness` for the plumbing.
  */
 const UI_STUBS: [suffix: string, source: string][] = [
   [
@@ -30,71 +34,14 @@ const UI_STUBS: [suffix: string, source: string][] = [
   ],
 ];
 
-const VIRTUAL_STUB =
-  'data:text/javascript,export const languageResources = {};';
-
-/** Off once the store is imported, so other test files load normally. */
-let stubbing = true;
-
-registerHooks({
-  resolve(specifier, context, nextResolve) {
-    if (stubbing && specifier.startsWith('virtual:')) {
-      return { url: VIRTUAL_STUB, shortCircuit: true };
-    }
-    return nextResolve(specifier, context);
-  },
+setUpModuleStubs({
   load(url, context, nextLoad) {
-    if (stubbing) {
-      const stub = UI_STUBS.find(([suffix]) => url.endsWith(suffix));
-      if (stub) {
-        return { format: 'module', source: stub[1], shortCircuit: true };
-      }
-    }
-    return nextLoad(url, context);
+    const stub = UI_STUBS.find(([suffix]) => url.endsWith(suffix));
+    return stub
+      ? { format: 'module', source: stub[1], shortCircuit: true }
+      : nextLoad(url, context);
   },
 });
-
-/** The DOM the store expects, without an Electron renderer around it. */
-const installDom = () => {
-  const window = new Window();
-  const globals = globalThis as unknown as Record<string, unknown>;
-  for (const key of [
-    'window',
-    'document',
-    'localStorage',
-    'sessionStorage',
-    'MutationObserver',
-    'customElements',
-    'HTMLElement',
-    'Element',
-    'Node',
-    'Event',
-    'CustomEvent',
-    'DOMParser',
-    'XMLHttpRequest',
-    'getComputedStyle',
-    'requestAnimationFrame',
-    'cancelAnimationFrame',
-    'location',
-    'history',
-    'screen',
-    'CSS',
-  ]) {
-    const value = (window as unknown as Record<string, unknown>)[key];
-    if (value === undefined) continue;
-    try {
-      globals[key] = value;
-    } catch {
-      Object.defineProperty(globals, key, { value, configurable: true });
-    }
-  }
-
-  (window as unknown as { ipcRenderer: unknown }).ipcRenderer = {
-    on() {},
-    send() {},
-    invoke: () => Promise.resolve(undefined),
-  };
-};
 
 type Store = typeof import('../renderer/store');
 
@@ -118,14 +65,6 @@ const stubProviders = (
   }
 };
 
-const song = (videoId: string): SongInfo =>
-  ({
-    videoId,
-    title: `Song ${videoId}`,
-    artist: 'Artist',
-    songDuration: 100,
-  }) as unknown as SongInfo;
-
 const lyric = (name: string): LyricResult => ({
   title: `Song ${name}`,
   artists: ['Artist'],
@@ -143,11 +82,12 @@ const deferred = <T>() => {
 
 test.beforeAll(async () => {
   installDom();
+  startStubbing();
   store = await import('../renderer/store');
   const registry = await import('../providers/renderer');
   providers = registry.providers as Record<ProviderName, LyricProvider>;
   stubProviders(() => Promise.resolve(null));
-  stubbing = false;
+  stopStubbing();
 });
 
 test('answers nothing while no song is playing, without searching', async () => {
@@ -230,65 +170,6 @@ test('serves a cached song without searching again', async () => {
   // The accessor is read-only for the UI: the chosen provider is untouched.
   expect(store.lyricsStore.provider).toBe(providerBefore);
 });
-
-/** A watch-next page whose first queue item is the requested song. */
-const watchNextPage = (
-  videoId: string,
-  title: string,
-  byline: string,
-  length: string,
-) => ({
-  contents: {
-    singleColumnMusicWatchNextResultsRenderer: {
-      tabbedRenderer: {
-        watchNextTabbedResultsRenderer: {
-          tabs: [
-            {
-              tabRenderer: {
-                content: {
-                  musicQueueRenderer: {
-                    content: {
-                      playlistPanelRenderer: {
-                        contents: [
-                          {
-                            playlistPanelVideoRenderer: {
-                              videoId,
-                              title: { runs: [{ text: title }] },
-                              longBylineText: { runs: [{ text: byline }] },
-                              lengthText: { runs: [{ text: length }] },
-                            },
-                          },
-                        ],
-                      },
-                    },
-                  },
-                },
-              },
-            },
-          ],
-        },
-      },
-    },
-  },
-});
-
-/** Answers `/next` with `page` for the duration of `run`. */
-const withWatchNext = async (
-  page: unknown,
-  run: () => Promise<void>,
-): Promise<void> => {
-  const app = document.createElement('ytmusic-app');
-  (app as unknown as { networkManager: unknown }).networkManager = {
-    fetch: () => Promise.resolve(page),
-  };
-  document.body.append(app);
-
-  try {
-    await run();
-  } finally {
-    app.remove();
-  }
-};
 
 test('fetches another video from its watch-next page, without touching the store', async () => {
   const requested: Parameters<LyricProvider['search']>[0][] = [];

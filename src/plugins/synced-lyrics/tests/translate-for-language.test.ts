@@ -1,7 +1,14 @@
-import { registerHooks } from 'node:module';
-
 import { expect, test } from '@playwright/test';
-import { Window } from 'happy-dom';
+
+import {
+  installDom,
+  setUpModuleStubs,
+  song,
+  startStubbing,
+  stopStubbing,
+  watchNextPage,
+  withWatchNext,
+} from './harness';
 
 import {
   ProviderNames,
@@ -15,7 +22,6 @@ import type {
   LyricResult,
   SyncedLyricsPluginConfig,
 } from '../types';
-import type { SongInfo } from '@/providers/song-info';
 
 /**
  * `translateForLanguage` is the API's way to translate a song into a language of
@@ -23,17 +29,13 @@ import type { SongInfo } from '@/providers/song-info';
  * config and IPC, and check the thing that matters: the app's own translation
  * comes out the other side untouched, and a failure is data rather than a throw.
  *
- * The store's UI half cannot load outside the bundler — `renderer.tsx` and the
- * plugin entry pull in `virtual:` modules and DOM-only deps — so both are stubbed
- * for the duration of the import. A Playwright worker also reuses its module
- * registry across test files, so the two modules under test are imported through
- * a query-suffixed URL: that gives this file its own copy of the graph wired to
- * these stubs, whichever test file ran first.
+ * A Playwright worker reuses its module registry across test files, so the two
+ * modules under test are imported through a query-suffixed URL: that gives this
+ * file its own copy of the graph wired to these stubs, whichever test file ran
+ * first. The shared stubbing plumbing lives in `./harness`.
  */
 const FRESH = '?translate-for-language';
 const RENDERER_DIR = '/synced-lyrics/renderer/';
-const VIRTUAL_STUB =
-  'data:text/javascript,export const languageResources = {};';
 const CONFIG_STUB =
   'data:text/javascript,export const config = () => globalThis.__tflConfig ?? null; export const setConfig = () => {};';
 const INVOKE_STUB =
@@ -44,9 +46,6 @@ const FILE_STUBS: [suffix: string, source: string][] = [
   ['/renderer/renderer.tsx', CONFIG_STUB],
   ['/renderer/index.ts', INVOKE_STUB],
 ];
-
-/** Off once this file is done, so other test files load normally. */
-let stubbing = true;
 
 /** True only while the two entry imports below are resolving their graph. */
 let importing = false;
@@ -61,28 +60,22 @@ const inPrivateGraph = (parentURL: string | undefined) => {
   return importing && Boolean(parentURL?.includes('/synced-lyrics/'));
 };
 
-registerHooks({
+setUpModuleStubs({
   resolve(specifier, context, nextResolve) {
-    if (!stubbing) return nextResolve(specifier, context);
-
-    if (specifier.startsWith('virtual:')) {
-      return { url: VIRTUAL_STUB, shortCircuit: true };
+    if (!inPrivateGraph(context.parentURL)) {
+      return nextResolve(specifier, context);
     }
 
-    if (inPrivateGraph(context.parentURL)) {
-      const resolved = nextResolve(specifier, context);
-      const stub = FILE_STUBS.find(([suffix]) => resolved.url.endsWith(suffix));
-      if (stub) return { url: stub[1], shortCircuit: true };
-      if (resolved.url.includes(RENDERER_DIR)) {
-        return { url: `${resolved.url}${FRESH}`, shortCircuit: true };
-      }
-      return resolved;
+    const resolved = nextResolve(specifier, context);
+    const stub = FILE_STUBS.find(([suffix]) => resolved.url.endsWith(suffix));
+    if (stub) return { url: stub[1], shortCircuit: true };
+    if (resolved.url.includes(RENDERER_DIR)) {
+      return { url: `${resolved.url}${FRESH}`, shortCircuit: true };
     }
-
-    return nextResolve(specifier, context);
+    return resolved;
   },
   load(url, context, nextLoad) {
-    if (stubbing && url.includes(FRESH)) {
+    if (url.includes(FRESH)) {
       return { ...nextLoad(url.split('?')[0], context), shortCircuit: true };
     }
     return nextLoad(url, context);
@@ -99,48 +92,6 @@ interface Harness {
 
 const harness = globalThis as unknown as Harness;
 
-/** The DOM the store expects, without an Electron renderer around it. */
-const installDom = () => {
-  const window = new Window();
-  const globals = globalThis as unknown as Record<string, unknown>;
-  for (const key of [
-    'window',
-    'document',
-    'localStorage',
-    'sessionStorage',
-    'MutationObserver',
-    'customElements',
-    'HTMLElement',
-    'Element',
-    'Node',
-    'Event',
-    'CustomEvent',
-    'DOMParser',
-    'XMLHttpRequest',
-    'getComputedStyle',
-    'requestAnimationFrame',
-    'cancelAnimationFrame',
-    'location',
-    'history',
-    'screen',
-    'CSS',
-  ]) {
-    const value = (window as unknown as Record<string, unknown>)[key];
-    if (value === undefined) continue;
-    try {
-      globals[key] = value;
-    } catch {
-      Object.defineProperty(globals, key, { value, configurable: true });
-    }
-  }
-
-  (window as unknown as { ipcRenderer: unknown }).ipcRenderer = {
-    on() {},
-    send() {},
-    invoke: () => Promise.resolve(undefined),
-  };
-};
-
 type Store = typeof import('../renderer/store');
 type Translation = typeof import('../renderer/translation-store');
 
@@ -155,14 +106,6 @@ const ENGLISH_LINES = [
   'I keep on dreaming of the days when we were young and free',
   'We ran through fields of gold and never once looked back at time',
 ];
-
-const song = (videoId: string): SongInfo =>
-  ({
-    videoId,
-    title: `Song ${videoId}`,
-    artist: 'Artist',
-    songDuration: 100,
-  }) as unknown as SongInfo;
 
 const lyric = (texts: string[]): LyricResult => ({
   title: 'Song',
@@ -231,6 +174,7 @@ const setSongFrom = async (
 
 test.beforeAll(async () => {
   installDom();
+  startStubbing();
   importing = true;
   try {
     store = await import('../renderer/store');
@@ -243,7 +187,7 @@ test.beforeAll(async () => {
 });
 
 test.afterAll(() => {
-  stubbing = false;
+  stopStubbing();
 });
 
 test.beforeEach(() => {
@@ -337,58 +281,17 @@ test('translates a requested video instead of the current song', async () => {
   harness.__tflConfig = config(true);
 
   // The other video's watch-next page, as the store reads its queue metadata.
-  const app = document.createElement('ytmusic-app');
-  (app as unknown as { networkManager: unknown }).networkManager = {
-    fetch: () =>
-      Promise.resolve({
-        contents: {
-          singleColumnMusicWatchNextResultsRenderer: {
-            tabbedRenderer: {
-              watchNextTabbedResultsRenderer: {
-                tabs: [
-                  {
-                    tabRenderer: {
-                      content: {
-                        musicQueueRenderer: {
-                          content: {
-                            playlistPanelRenderer: {
-                              contents: [
-                                {
-                                  playlistPanelVideoRenderer: {
-                                    videoId: 'tfl-other',
-                                    title: { runs: [{ text: 'Other Song' }] },
-                                    longBylineText: {
-                                      runs: [{ text: 'Other Artist' }],
-                                    },
-                                    lengthText: { runs: [{ text: '3:21' }] },
-                                  },
-                                },
-                              ],
-                            },
-                          },
-                        },
-                      },
-                    },
-                  },
-                ],
-              },
-            },
-          },
-        },
-      }),
-  };
-  document.body.append(app);
+  await withWatchNext(
+    watchNextPage('tfl-other', 'Other Song', 'Other Artist', '3:21'),
+    async () => {
+      const result = await translation.translateForLanguage('fr', 'tfl-other');
 
-  try {
-    const result = await translation.translateForLanguage('fr', 'tfl-other');
-
-    expect(result.lines).toEqual(TRANSLATED_LINES);
-    expect(harness.__tflCalls).toHaveLength(1);
-    expect(harness.__tflCalls[0].videoId).toBe('tfl-other');
-    expect(harness.__tflCalls[0].request.lines).toEqual(SOURCE_LINES);
-  } finally {
-    app.remove();
-  }
+      expect(result.lines).toEqual(TRANSLATED_LINES);
+      expect(harness.__tflCalls).toHaveLength(1);
+      expect(harness.__tflCalls[0].videoId).toBe('tfl-other');
+      expect(harness.__tflCalls[0].request.lines).toEqual(SOURCE_LINES);
+    },
+  );
 });
 
 test("leaves the app's own translation exactly as it was", async () => {

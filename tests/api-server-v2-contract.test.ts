@@ -5,6 +5,7 @@ import { expect, test } from '@playwright/test';
 import {
   ApiActions,
   apiRequest,
+  commandActions,
   type ApiAction,
 } from '../src/plugins/api-server/channels';
 import { registerV2 } from '../src/plugins/api-server/renderer/v2';
@@ -493,32 +494,6 @@ test('addToQueue falls back to the end when no entry is selected', async () => {
 });
 
 test('commands never reply, so no route can wait on one', async () => {
-  const commands: ApiAction[] = [
-    ApiActions.nextVideo,
-    ApiActions.previousVideo,
-    ApiActions.play,
-    ApiActions.pause,
-    ApiActions.togglePlay,
-    ApiActions.setPlaybackSpeed,
-    ApiActions.seekTo,
-    ApiActions.seekBy,
-    ApiActions.shuffle,
-    ApiActions.setShuffle,
-    ApiActions.setRepeat,
-    ApiActions.switchRepeat,
-    ApiActions.setVolume,
-    ApiActions.setMute,
-    ApiActions.toggleMute,
-    ApiActions.setLikeState,
-    ApiActions.like,
-    ApiActions.dislike,
-    ApiActions.unlike,
-    ApiActions.moveInQueue,
-    ApiActions.removeFromQueue,
-    ApiActions.setQueueIndex,
-    ApiActions.clearQueue,
-    ApiActions.downloadVideo,
-  ];
   const args: Partial<Record<ApiAction, unknown[]>> = {
     [ApiActions.setPlaybackSpeed]: [1.5],
     [ApiActions.seekTo]: [12],
@@ -534,7 +509,7 @@ test('commands never reply, so no route can wait on one', async () => {
     [ApiActions.downloadVideo]: ['a-video-id'],
   };
 
-  for (const action of commands) {
+  for (const action of Object.values(commandActions)) {
     const { recorded, fire } = setup();
     await fire(action, ...(args[action] ?? []));
     expect(recorded.replies, `${action} replied`).toHaveLength(0);
