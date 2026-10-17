@@ -1,4 +1,4 @@
-import { OpenAPIHono, createRoute, type z } from '@hono/zod-openapi';
+import { OpenAPIHono, createRoute } from '@hono/zod-openapi';
 
 import * as config from '@/config';
 import { isEnabled } from '@/config/plugins';
@@ -8,6 +8,15 @@ import { getSongControls } from '@/providers/song-controls';
 
 import { requireAuth } from './auth';
 import { callRenderer, callRendererWithTimeout, sendToRenderer } from './ipc';
+import {
+  action,
+  actionWithBody,
+  body,
+  JSON_CONTENT,
+  noContent,
+  readable,
+  SUCCESS,
+} from './route-helpers';
 import {
   AddToQueueSchema,
   AppMetaSchema,
@@ -73,11 +82,6 @@ import type { BackendContext } from '@/types/contexts';
 import type { LikeType, RepeatMode } from '@/types/datahost-get-state';
 import type { Context } from 'hono';
 
-const SUCCESS = { 204: { description: 'Success' } };
-const JSON_CONTENT = 'application/json';
-
-const noContent = (ctx: Context) => ctx.body(null, 204);
-
 /**
  * Translations run through a provider, and the local-cli one may take minutes,
  * so this action gets far more room than the renderer's default 5s.
@@ -89,112 +93,6 @@ const errorResponse = (description: string) => ({
   description,
   content: { [JSON_CONTENT]: { schema: ErrorSchema } },
 });
-
-const body = <S extends z.ZodType>(schema: S) => ({
-  required: true,
-  content: { [JSON_CONTENT]: { schema } },
-});
-
-/** A route that performs a player action and reports 204. */
-const action = (
-  method: 'post' | 'patch' | 'delete',
-  path: string,
-  summary: string,
-  description: string,
-  tags: string[],
-) =>
-  createRoute({
-    method,
-    path,
-    summary,
-    description,
-    tags,
-    responses: SUCCESS,
-  });
-
-/** A 204 route that also takes a JSON body. */
-const actionWithBody = <S extends z.ZodType>(
-  method: 'post' | 'patch' | 'delete',
-  path: string,
-  summary: string,
-  description: string,
-  schema: S,
-  tags: string[],
-) =>
-  createRoute({
-    method,
-    path,
-    summary,
-    description,
-    tags,
-    request: { body: body(schema) },
-    responses: SUCCESS,
-  });
-
-/** A GET route returning JSON, optionally 204 when there's nothing to report. */
-const readable = <S extends z.ZodType>({
-  path,
-  summary,
-  description,
-  schema,
-  emptyDescription,
-  tags,
-}: {
-  path: string;
-  summary: string;
-  description: string;
-  schema: S;
-  emptyDescription?: string;
-  tags: string[];
-}) =>
-  createRoute({
-    method: 'get',
-    path,
-    summary,
-    description,
-    tags,
-    responses: {
-      200: {
-        description: 'Success',
-        content: { [JSON_CONTENT]: { schema } },
-      },
-      ...(emptyDescription ? { 204: { description: emptyDescription } } : {}),
-    },
-  });
-
-/** A GET route returning JSON, with validated query parameters. */
-const readableWithQuery = <S extends z.ZodType, Q extends z.ZodObject>({
-  path,
-  summary,
-  description,
-  schema,
-  query,
-  emptyDescription,
-  tags,
-}: {
-  path: string;
-  summary: string;
-  description: string;
-  schema: S;
-  query: Q;
-  emptyDescription?: string;
-  tags: string[];
-}) =>
-  createRoute({
-    method: 'get',
-    path,
-    summary,
-    description,
-    tags,
-    request: { query },
-    responses: {
-      200: {
-        description: 'Success',
-        content: { [JSON_CONTENT]: { schema } },
-      },
-      ...(emptyDescription ? { 204: { description: emptyDescription } } : {}),
-    },
-  });
 
 export const routes = {
   // Video
@@ -251,7 +149,7 @@ export const routes = {
     },
     tags: [v2Tag('Video')],
   }),
-  searchQuery: readableWithQuery({
+  searchQuery: readable({
     path: '/video/search',
     summary: 'search for a song',
     description: 'Search for a song and return its parsed results',
@@ -443,7 +341,7 @@ export const routes = {
     SetPlaybackSpeedSchema,
     [v2Tag('Playback')],
   ),
-  playbackPosition: readableWithQuery({
+  playbackPosition: readable({
     path: '/playback/position',
     summary: 'get playback position',
     description:
@@ -614,7 +512,7 @@ export const routes = {
   ),
 
   // Queue
-  queue: readableWithQuery({
+  queue: readable({
     path: '/queue',
     summary: 'get current queue info',
     description:

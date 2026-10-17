@@ -1,9 +1,18 @@
-import { OpenAPIHono, createRoute, type z } from '@hono/zod-openapi';
+import { OpenAPIHono, createRoute } from '@hono/zod-openapi';
 
 import { getSongControls } from '@/providers/song-controls';
 
 import { requireAuth } from './auth';
 import { waitForIpcResponse } from './ipc';
+import {
+  action,
+  actionWithBody,
+  body,
+  JSON_CONTENT,
+  noContent,
+  readable,
+  SUCCESS,
+} from './route-helpers';
 import {
   AddSongToQueueSchema,
   FullscreenStateSchema,
@@ -38,86 +47,6 @@ import type { BackendContext } from '@/types/contexts';
 import type { LikeType } from '@/types/datahost-get-state';
 import type { QueueResponse } from '@/types/music-player-desktop-internal';
 import type { Context } from 'hono';
-
-const SUCCESS = { 204: { description: 'Success' } };
-const JSON_CONTENT = 'application/json';
-
-const noContent = (ctx: Context) => ctx.body(null, 204);
-
-const body = <S extends z.ZodType>(schema: S) => ({
-  required: true,
-  content: { [JSON_CONTENT]: { schema } },
-});
-
-/** A route that performs a player action and reports 204. */
-const action = (
-  method: 'post' | 'patch' | 'delete',
-  path: string,
-  summary: string,
-  description: string,
-  tags: string[],
-) =>
-  createRoute({
-    method,
-    path,
-    summary,
-    description,
-    tags,
-    responses: SUCCESS,
-  });
-
-/** A 204 route that also takes a JSON body. */
-const actionWithBody = <S extends z.ZodType>(
-  method: 'post' | 'patch' | 'delete',
-  path: string,
-  summary: string,
-  description: string,
-  schema: S,
-  tags: string[],
-) =>
-  createRoute({
-    method,
-    path,
-    summary,
-    description,
-    tags,
-    request: { body: body(schema) },
-    responses: SUCCESS,
-  });
-
-/** A GET route returning JSON, optionally 204 when there's nothing to report. */
-const readable = <S extends z.ZodType>({
-  path,
-  summary,
-  description,
-  schema,
-  emptyDescription,
-  deprecated,
-  tags,
-}: {
-  path: string;
-  summary: string;
-  description: string;
-  schema: S;
-  emptyDescription?: string;
-  deprecated?: boolean;
-  tags: string[];
-}) =>
-  createRoute({
-    method: 'get',
-    path,
-    summary,
-    description,
-    deprecated,
-    tags,
-    responses: {
-      200: {
-        description: 'Success',
-        content: { [JSON_CONTENT]: { schema } },
-      },
-      ...(emptyDescription ? { 204: { description: emptyDescription } } : {}),
-    },
-  });
 
 export const routes = {
   // Playback

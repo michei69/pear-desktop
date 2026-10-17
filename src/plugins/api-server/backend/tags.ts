@@ -30,11 +30,7 @@ const V2_CATEGORIES = [
   'WebSocket',
 ] as const;
 
-/**
- * `v1 · Playback` — the version is part of the tag because tags don't nest.
- * Taking the category as a union keeps a typo from silently creating a second
- * section next to the real one.
- */
+/** The category union keeps a typo from silently creating a second section. */
 export const v1Tag = (category: (typeof V1_CATEGORIES)[number]) =>
   `v1 · ${category}`;
 
@@ -44,11 +40,7 @@ export const v2Tag = (category: (typeof V2_CATEGORIES)[number]) =>
 /** `POST /auth/{id}` sits outside any version, so it gets an unversioned tag. */
 export const AUTH_TAG = 'Auth';
 
-/**
- * Every tag, in the order Swagger should show them: the unversioned endpoints
- * first, then the newest API version down to the oldest, each split by
- * category. Add a new version's block above the previous one.
- */
+/** Add a new version's block above the previous one. */
 export const apiTagOrder = [
   AUTH_TAG,
   ...V2_CATEGORIES.map(v2Tag),

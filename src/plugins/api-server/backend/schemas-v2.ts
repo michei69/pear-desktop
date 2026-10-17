@@ -3,6 +3,13 @@ import { z } from '@hono/zod-openapi';
 import { MediaType } from '@/providers/song-info-data';
 import { LikeType } from '@/types/datahost-get-state';
 
+export {
+  LikeStateSchema,
+  QueueIndexParamSchema,
+  SetQueueIndexSchema,
+  ShuffleStateSchema,
+} from './schemas-common';
+
 /** Repeat modes the renderer understands, in the order it cycles them. */
 const RepeatModes = ['NONE', 'ALL', 'ONE'] as const;
 
@@ -107,10 +114,6 @@ export const MoveInQueueSchema = z.object({
   toIndex: z.number().describe('Index to move the song to'),
 });
 
-export const SetQueueIndexSchema = z.object({
-  index: z.number().int().nonnegative(),
-});
-
 export const SearchSchema = z.object({
   query: z.string(),
   params: z.string().optional(),
@@ -121,11 +124,6 @@ export const SearchSchema = z.object({
     .describe(
       'Return the raw YouTube Music response instead of parsed results',
     ),
-});
-
-// Request params
-export const QueueIndexParamSchema = z.object({
-  index: z.coerce.number().int().nonnegative(),
 });
 
 // Query strings
@@ -255,13 +253,7 @@ export const SongInfoSchema = z.object({
   album: z.string().nullable().optional(),
   videoId: z.string(),
   playlistId: z.string().optional(),
-  mediaType: z.enum([
-    MediaType.Audio,
-    MediaType.OriginalMusicVideo,
-    MediaType.UserGeneratedContent,
-    MediaType.PodcastEpisode,
-    MediaType.OtherVideo,
-  ]),
+  mediaType: z.enum(MediaType),
   tags: z.array(z.string()).optional(),
   scrobbleTitle: z.string(),
   scrobbleArtist: z.string(),
@@ -280,10 +272,6 @@ export const PlaybackPositionSchema = z.object({
   position: z.number(),
 });
 
-export const ShuffleStateSchema = z.object({
-  state: z.boolean(),
-});
-
 export const RepeatModeSchema = z.object({
   mode: z.enum(RepeatModes).nullable(),
 });
@@ -294,10 +282,6 @@ export const VolumeSchema = z.object({
 
 export const MuteStateSchema = z.object({
   muted: z.boolean(),
-});
-
-export const LikeStateSchema = z.object({
-  state: z.enum(LikeType).nullable(),
 });
 
 /** One thumbnail size, as YouTube Music reports it. */

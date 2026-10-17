@@ -1,7 +1,13 @@
 import { z } from '@hono/zod-openapi';
 
 import { MediaType } from '@/providers/song-info';
-import { LikeType } from '@/types/datahost-get-state';
+
+export {
+  LikeStateSchema,
+  QueueIndexParamSchema,
+  SetQueueIndexSchema,
+  ShuffleStateSchema,
+} from './schemas-common';
 
 /** Payload of the tokens issued by `POST /auth/{id}`. */
 export const JWTPayloadSchema = z.object({
@@ -53,20 +59,12 @@ export const MoveSongInQueueSchema = z.object({
   toIndex: z.number(),
 });
 
-export const SetQueueIndexSchema = z.object({
-  index: z.number().int().nonnegative(),
-});
-
 export const LoadVideoSchema = z.object({
   videoId: z.string().optional().describe('Video ID'),
 });
 
 export const LoadPlaylistSchema = z.object({
   playlistId: z.string().describe('Playlist ID'),
-});
-
-export const QueueIndexParamSchema = z.object({
-  index: z.coerce.number().int().nonnegative(),
 });
 
 // Responses
@@ -83,23 +81,9 @@ export const SongInfoSchema = z.object({
   album: z.string().nullable().optional(),
   videoId: z.string(),
   playlistId: z.string().optional(),
-  mediaType: z.enum([
-    MediaType.Audio,
-    MediaType.OriginalMusicVideo,
-    MediaType.UserGeneratedContent,
-    MediaType.PodcastEpisode,
-    MediaType.OtherVideo,
-  ]),
+  mediaType: z.enum(MediaType),
 });
 export type ResponseSongInfo = z.infer<typeof SongInfoSchema>;
-
-export const LikeStateSchema = z.object({
-  state: z.enum(LikeType).nullable(),
-});
-
-export const ShuffleStateSchema = z.object({
-  state: z.boolean(),
-});
 
 export const RepeatModeSchema = z.object({
   mode: z.enum(['ONE', 'NONE', 'ALL']).nullable(),
