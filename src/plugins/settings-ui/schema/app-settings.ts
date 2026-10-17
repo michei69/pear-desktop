@@ -1,4 +1,4 @@
-import { languageResources } from 'virtual:i18n';
+import { languageCodes, languageMeta } from 'virtual:i18n';
 
 import { t } from '@/i18n';
 import { MENU_ENTRIES } from '@/providers/context-menu';
@@ -85,18 +85,16 @@ const UPDATES_ONLY = {
   visible: () => store()?.updates?.supported === true,
 } satisfies FieldExtras;
 
-const buildLanguageOptions = async (): Promise<SettingOption[]> => {
-  const langResources = await languageResources();
-  return Object.keys(langResources)
+const buildLanguageOptions = (): SettingOption[] =>
+  languageCodes
     .map((lang) => {
-      const meta = langResources[lang].translation.language;
+      const meta = languageMeta[lang];
       return {
         value: lang,
         label: () => `${meta?.name ?? lang} (${meta?.['local-name'] ?? lang})`,
       };
     })
     .sort((a, b) => a.label().localeCompare(b.label()));
-};
 
 const buildThemeOptions = async (): Promise<SettingOption[]> => {
   const { themes } = await bridge.themes();

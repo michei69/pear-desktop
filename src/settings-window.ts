@@ -33,6 +33,7 @@ export const openSettingsWindow = () => {
     show: false,
     webPreferences: {
       contextIsolation: true,
+      spellcheck: false,
       preload: path.join(__dirname, '..', 'preload', 'preload.cjs'),
       sandbox: false,
     },

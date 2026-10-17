@@ -6,7 +6,7 @@ import {
 } from 'electron';
 import is from 'electron-is';
 
-import { loadI18n, setLanguage } from '@/i18n';
+import { getLoadedResources, loadI18n } from '@/i18n';
 
 import * as config from './config';
 import {
@@ -129,14 +129,11 @@ new MutationObserver((mutations, observer) => {
   }
 }).observe(document, { subtree: true, childList: true });
 
-loadI18n()
-  .then(async () => {
-    await setLanguage(config.get('options.language') ?? 'en');
-    await loadAllPreloadPlugins();
-  })
-  .catch((err) => {
-    console.error('Failed to load preload plugins:', err);
-  });
+const i18nReady = loadI18n(config.get('options.language') ?? 'en');
+
+i18nReady.then(loadAllPreloadPlugins).catch((err) => {
+  console.error('Failed to load preload plugins:', err);
+});
 
 ipcRenderer.on('plugin:unload', async (_, id: string) => {
   await forceUnloadPreloadPlugin(id);
@@ -190,35 +187,52 @@ contextBridge.exposeInMainWorld(
   process.env.ELECTRON_RENDERER_URL,
 );
 
-const [path, script] = ipcRenderer.sendSync('get-renderer-script') as [
-  string | null,
-  string,
-];
-let blocked = true;
-if (path) {
-  webFrame.executeJavaScriptInIsolatedWorld(
-    0,
-    [
-      {
-        code: script,
-        url: path,
-      },
-    ],
-    true,
-    () => (blocked = false),
-  );
-} else {
-  webFrame.executeJavaScript(script, true, () => (blocked = false));
-}
+// The renderer has no Electron APIs of its own; these are the webFrame calls the
+// memory report reads and main asks for when the window has been hidden a while.
+contextBridge.exposeInMainWorld('peardPerf', {
+  getResourceUsage: () => webFrame.getResourceUsage(),
+});
+ipcRenderer.on('peard:clear-cache', () => webFrame.clearCache());
 
-// HACK: wait for the script to run (with a timeout). The IIFE avoids top-level
-// await in CJS output.
-(async () => {
+const bootRenderer = () => {
+  const [path, script] = ipcRenderer.sendSync('get-renderer-script') as [
+    string | null,
+    string,
+  ];
   if (!path && !script) return;
 
-  const startTime = Date.now();
-  const TIMEOUT = 10_000;
-  while (blocked && Date.now() - startTime < TIMEOUT) {
-    await new Promise((resolve) => setTimeout(resolve, 1));
+  // The renderer bundle carries no translations: hand it the ones loaded here.
+  const code = `globalThis.__PEAR_I18N_RESOURCES__ = ${JSON.stringify(
+    getLoadedResources(),
+  )};\n${script}`;
+
+  let blocked = true;
+  const unblock = () => {
+    blocked = false;
+  };
+
+  if (path) {
+    webFrame.executeJavaScriptInIsolatedWorld(
+      0,
+      [{ code, url: path }],
+      true,
+      unblock,
+    );
+  } else {
+    webFrame.executeJavaScript(code, true, unblock);
   }
-})();
+
+  // HACK: wait for the script to run (with a timeout). The IIFE avoids top-level
+  // await in CJS output.
+  (async () => {
+    const startTime = Date.now();
+    const TIMEOUT = 10_000;
+    while (blocked && Date.now() - startTime < TIMEOUT) {
+      await new Promise((resolve) => setTimeout(resolve, 1));
+    }
+  })();
+};
+
+i18nReady
+  .catch((err) => console.error('Failed to load i18n:', err))
+  .then(bootRenderer);

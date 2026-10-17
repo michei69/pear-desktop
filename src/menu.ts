@@ -10,11 +10,11 @@ import {
 } from 'electron';
 import is from 'electron-is';
 import { satisfies } from 'semver';
-import { languageResources } from 'virtual:i18n';
+import { languageCodes, languageMeta } from 'virtual:i18n';
 import { allPlugins } from 'virtual:plugins';
 
 import { updatesSupported } from '@/app-info';
-import { APPLICATION_NAME, setLanguage, t } from '@/i18n';
+import { APPLICATION_NAME, loadLanguage, setLanguage, t } from '@/i18n';
 
 import * as config from './config';
 import { getAllMenuTemplate, loadAllMenuPlugins } from './loader/menu';
@@ -163,8 +163,7 @@ export const mainMenuTemplate = async (
       }),
   );
 
-  const langResources = await languageResources();
-  const availableLanguages = Object.keys(langResources);
+  const availableLanguages = languageCodes;
 
   return [
     {
@@ -725,6 +724,7 @@ export const mainMenuTemplate = async (
 
                     config.setMenuOption('options.language', ytLang);
                     refreshMenu(win);
+                    await loadLanguage(ytLang);
                     setLanguage(ytLang);
                     dialog.showMessageBox(win, {
                       title: t(
@@ -755,13 +755,17 @@ export const mainMenuTemplate = async (
             availableLanguages
               .map(
                 (lang): Electron.MenuItemConstructorOptions => ({
-                  label: `${langResources[lang].translation.language?.name ?? 'Unknown'} (${langResources[lang].translation.language?.['local-name'] ?? 'Unknown'})`,
+                  label: `${languageMeta[lang]?.name ?? 'Unknown'} (${languageMeta[lang]?.['local-name'] ?? 'Unknown'})`,
                   type: 'checkbox',
                   checked: (config.get('options.language') ?? 'en') === lang,
                   click() {
                     config.setMenuOption('options.language', lang);
                     refreshMenu(win);
-                    setLanguage(lang);
+                    loadLanguage(lang)
+                      .then(() => setLanguage(lang))
+                      .catch((error) =>
+                        console.error('Failed to load language:', error),
+                      );
                     dialog.showMessageBox(win, {
                       title: t(
                         'main.menu.options.submenu.language.dialog.title',

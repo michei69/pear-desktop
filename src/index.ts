@@ -26,12 +26,12 @@ import is from 'electron-is';
 import unhandled from 'electron-unhandled';
 import { deepEqual } from 'fast-equals';
 import { parse } from 'node-html-parser';
-import { languageResources } from 'virtual:i18n';
+import { languageCodes } from 'virtual:i18n';
 import { allPlugins, mainPlugins } from 'virtual:plugins';
 
 import { buildLabel, copyright } from '@/app-info';
 import * as config from '@/config';
-import { APPLICATION_NAME, loadI18n, setLanguage, t } from '@/i18n';
+import { APPLICATION_NAME, loadI18n, t } from '@/i18n';
 import {
   forceLoadMainPlugin,
   forceUnloadMainPlugin,
@@ -41,12 +41,14 @@ import {
 import { refreshMenu, setApplicationMenu } from '@/menu';
 import musicPlayerCss from '@/music-player.css?inline';
 import { defaultAuthProxyConfig } from '@/plugins/auth-proxy-adapter/config';
-import { injectCSS } from '@/plugins/utils/main';
+import { injectCSS } from '@/plugins/utils/main/css';
 import { restart, setupAppControls } from '@/providers/app-controls';
 import { appIconPath, windowIconPath } from '@/providers/app-icon';
 import { setupAutoUpdates } from '@/providers/app-updates';
+import { clearStaleCodeCaches } from '@/providers/cache-maintenance';
 import { classifyLink } from '@/providers/external-links';
 import { loadFlagMetadata } from '@/providers/flag-metadata';
+import { setupMemoryReport } from '@/providers/memory-report';
 import {
   APP_PROTOCOL,
   handleProtocol,
@@ -131,17 +133,30 @@ protocol.registerSchemesAsPrivileged([
 // Ozone platform hint: Required for Wayland support
 app.commandLine.appendSwitch('ozone-platform-hint', 'auto');
 
-// SharedArrayBuffer: Required for downloader (@ffmpeg/core-mt)
-// OverlayScrollbar: Required for overlay scrollbars
-// UseOzonePlatform: Required for Wayland support
-// WaylandWindowDecorations: Required for Wayland decorations
-app.commandLine.appendSwitch(
-  'enable-features',
-  'OverlayScrollbar,SharedArrayBuffer,UseOzonePlatform,WaylandWindowDecorations',
-);
+// Feature lists are collected here and applied once at the bottom of this
+// block: Chromium's command line stores one value per switch, so a second
+// `appendSwitch('disable-features', ...)` silently drops everything before it.
+const enabledFeatures = [
+  // Required for downloader (@ffmpeg/core-mt)
+  'SharedArrayBuffer',
+  // Required for overlay scrollbars
+  'OverlayScrollbar',
+  // Required for Wayland
+  'UseOzonePlatform',
+  'WaylandWindowDecorations',
+  // Hand memory back while the renderer is frozen or the OS is under pressure.
+  'MemoryPurgeOnFreeze',
+  'ReleaseResourceStrongReferencesOnMemoryPressure',
+  'DeferSpeculativeRFHCreation',
+];
 
-// Disable Fluent Scrollbar (for OverlayScrollbar)
-const disabledFeatures = ['FluentScrollbar'];
+const disabledFeatures = [
+  // Required for overlay scrollbars
+  'FluentScrollbar',
+  // This app never does browser-style navigations, so these only cost memory.
+  'BackForwardCache',
+  'Prerender2',
+];
 let disableHardwareAcceleration = config.get(
   'options.disableHardwareAcceleration',
 );
@@ -171,12 +186,17 @@ if (is.linux()) {
   );
 }
 
+// node-smtc replaces Chromium's media session on Windows.
+if (is.windows() && config.get('options.forceSmtc')) {
+  disabledFeatures.push('HardwareMediaKeyHandling', 'MediaSessionService');
+}
+
 if (disableHardwareAcceleration) {
   if (is.dev()) console.log('Disabling hardware acceleration');
   app.disableHardwareAcceleration();
 }
 
-// Apply disabled features
+app.commandLine.appendSwitch('enable-features', enabledFeatures.join(','));
 app.commandLine.appendSwitch('disable-features', disabledFeatures.join(','));
 
 // Windows SMTC support via node-smtc
@@ -185,11 +205,6 @@ if (is.windows()) {
     import('node-smtc').then((mod) => {
       const SMTCPlayer = mod.default;
       console.log('disabled mediasess');
-      app.commandLine.appendSwitch(
-        'disable-features',
-        'HardwareMediaKeyHandling',
-      );
-      app.commandLine.appendSwitch('disable-features', 'MediaSessionService');
 
       const smtc = new SMTCPlayer();
       smtc.addListener('play', () => {
@@ -593,6 +608,9 @@ async function createMainWindow() {
     show: false,
     webPreferences: {
       contextIsolation: true,
+      // Nothing in the app spells words: skip the hunspell dictionaries and the
+      // input-path work they add. Re-enable per surface if a text editor lands.
+      spellcheck: false,
       preload: path.join(__dirname, '..', 'preload', 'preload.cjs'),
       ...(isTesting()
         ? undefined
@@ -736,6 +754,23 @@ async function createMainWindow() {
       win.show();
     }
   });
+
+  // Hidden to tray: Blink's resource caches (decoded images, fonts) are
+  // re-fetchable, so hand them back after a minute hidden instead of holding
+  // them for the whole session.
+  let hiddenCacheTimer: NodeJS.Timeout | undefined;
+  win.on('hide', () => {
+    hiddenCacheTimer = setTimeout(
+      () => win.webContents.send('peard:clear-cache'),
+      60_000,
+    );
+  });
+  win.on('show', () => {
+    if (!hiddenCacheTimer) return;
+    clearTimeout(hiddenCacheTimer);
+    hiddenCacheTimer = undefined;
+  });
+  win.on('closed', () => clearTimeout(hiddenCacheTimer));
 
   removeContentSecurityPolicy();
 
@@ -881,8 +916,8 @@ app.on('activate', async () => {
   }
 });
 
-const getDefaultLocale = async (locale: string) =>
-  Object.keys(await languageResources()).includes(locale) ? locale : null;
+const getDefaultLocale = (locale: string) =>
+  languageCodes.includes(locale) ? locale : null;
 
 // Deny web permissions by default, allowing only what the app itself relies on:
 // the output-device plugin needs `media` (microphone), the settings and
@@ -904,16 +939,21 @@ app.whenReady().then(async () => {
   session.defaultSession.setPermissionCheckHandler((_webContents, permission) =>
     allowedPermissions.has(permission),
   );
+  session.defaultSession.setSpellCheckerEnabled(false);
+
+  // Not awaited: a few file stats must not hold the window back.
+  clearStaleCodeCaches().catch((error) =>
+    console.error(LoggerPrefix, 'Failed to clear stale code caches:', error),
+  );
 
   if (!config.get('options.language')) {
-    const locale = await getDefaultLocale(app.getLocale());
+    const locale = getDefaultLocale(app.getLocale());
     if (locale) {
       config.set('options.language', locale);
     }
   }
 
-  await loadI18n().then(async () => {
-    await setLanguage(config.get('options.language') ?? 'en');
+  await loadI18n(config.get('options.language') ?? 'en').then(() => {
     console.log(LoggerPrefix, t('main.console.i18n.loaded'));
   });
 
@@ -936,7 +976,12 @@ app.whenReady().then(async () => {
         );
       }
 
-      session.defaultSession.clearCache();
+      Promise.all([
+        session.defaultSession.clearCache(),
+        session.defaultSession.clearCodeCaches({}),
+      ]).catch((error) =>
+        console.error(LoggerPrefix, 'Failed to reset the app cache:', error),
+      );
       clearTimeout(clearCacheTimeout);
     }, 20_000);
   }
@@ -1034,6 +1079,7 @@ app.whenReady().then(async () => {
   });
 
   mainWindow = await createMainWindow();
+  setupMemoryReport(mainWindow);
   await setApplicationMenu(mainWindow);
   await refreshMenu(mainWindow);
   setUpTray(app, mainWindow);

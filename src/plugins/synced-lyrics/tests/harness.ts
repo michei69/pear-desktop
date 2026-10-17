@@ -15,7 +15,7 @@ import type { SongInfo } from '@/providers/song-info';
 
 /** `virtual:` modules cannot resolve outside the bundler, so they are served raw. */
 const VIRTUAL_STUB =
-  'data:text/javascript,export const languageResources = {};';
+  'data:text/javascript,export const languageCodes = [];export const languageMeta = {};export const loadLanguageResources = async () => ({});';
 
 type ResolveHook = NonNullable<Parameters<typeof registerHooks>[0]['resolve']>;
 type LoadHook = NonNullable<Parameters<typeof registerHooks>[0]['load']>;

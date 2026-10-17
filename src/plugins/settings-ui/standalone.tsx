@@ -1,6 +1,6 @@
 import { render } from 'solid-js/web';
 
-import { loadI18n, setLanguage } from '@/i18n';
+import { loadI18n } from '@/i18n';
 import { createRendererIpc } from '@/loader/renderer';
 
 import { SettingsModal } from './components/SettingsModal';
@@ -15,8 +15,7 @@ import {
 import style from './styles.css?inline';
 
 export const bootStandaloneSettings = async () => {
-  await loadI18n();
-  await setLanguage(window.mainConfig.get('options.language') ?? 'en');
+  await loadI18n(window.mainConfig.get('options.language') ?? 'en');
 
   // The plugin's stylesheet is normally injected by the plugin loader, which
   // does not run in standalone mode — inject it here.

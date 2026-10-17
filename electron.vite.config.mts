@@ -60,7 +60,7 @@ export default defineConfig(({ mode }) => {
     plugins: [
       pluginLoader('backend'),
       viteResolve({
-        'virtual:i18n': i18nImporter(),
+        'virtual:i18n': i18nImporter('main'),
         'virtual:plugins': pluginVirtualModuleGenerator('main'),
       }),
     ],
@@ -105,7 +105,7 @@ export default defineConfig(({ mode }) => {
     plugins: [
       pluginLoader('preload'),
       viteResolve({
-        'virtual:i18n': i18nImporter(),
+        'virtual:i18n': i18nImporter('preload'),
         'virtual:plugins': pluginVirtualModuleGenerator('preload'),
       }),
     ],
@@ -137,7 +137,7 @@ export default defineConfig(({ mode }) => {
     plugins: [
       pluginLoader('renderer'),
       viteResolve({
-        'virtual:i18n': i18nImporter(),
+        'virtual:i18n': i18nImporter('renderer'),
         'virtual:plugins': pluginVirtualModuleGenerator('renderer'),
       }),
       withFilter(solidPlugin(), {
