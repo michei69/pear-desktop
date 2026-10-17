@@ -70,6 +70,10 @@ export default defineConfig(({ mode }) => {
       __filename: 'import.meta.filename',
       ...buildInfo,
     },
+    json: {
+      namedExports: false,
+      stringify: true,
+    },
     build: {
       lib: {
         entry: 'src/index.ts',
