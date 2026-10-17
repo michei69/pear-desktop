@@ -171,6 +171,23 @@ test('serves a cached song without searching again', async () => {
   expect(store.lyricsStore.provider).toBe(providerBefore);
 });
 
+test('does not write the store when it already shows the cached song', async () => {
+  stubProviders((name) => Promise.resolve(lyric(name)));
+
+  store.refreshCurrentLyrics('test', song('read-only-1'));
+  await store.allProviderLyrics();
+
+  const lyricsBefore = store.lyricsStore.lyrics;
+
+  await store.allProviderLyrics();
+  await store.allProviderLyrics();
+
+  // Reading must leave the store alone. Every write re-wakes the lyrics UI and
+  // the API server's own lyrics watch, which calls this accessor again, so a
+  // write here turns a read into an endless re-render of the lyrics list.
+  expect(store.lyricsStore.lyrics).toBe(lyricsBefore);
+});
+
 test('fetches another video from its watch-next page, without touching the store', async () => {
   const requested: Parameters<LyricProvider['search']>[0][] = [];
   stubProviders((name, info) => {

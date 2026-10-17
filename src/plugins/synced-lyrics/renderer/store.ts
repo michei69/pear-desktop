@@ -105,6 +105,8 @@ const pruneSearchCache = () => {
 let activeSongInfo: SongInfo | null = null;
 let lastRefreshKey = '';
 let lastRefreshAt = 0;
+/** The cache object last published to the store, so a re-read is not a re-write. */
+let activatedLyricsData: SearchCacheData | null = null;
 
 export const splitPlainLyrics = (lyrics: string): string[] =>
   lyrics
@@ -147,9 +149,17 @@ const cloneSearchData = (data: SearchCacheData): SearchCacheData =>
 const activateLyricsData = (videoId: string, data: SearchCacheData) => {
   if (activeSongInfo?.videoId !== videoId) return;
 
+  // Re-publishing the cache the store already shows swaps every provider for an
+  // identical clone and wakes every effect on the store, which rebuilds the
+  // whole lyrics list for nothing. The API server's lyrics watch calls
+  // `allProviderLyrics()` on each of those changes, so a read must not write:
+  // doing so made that watch re-trigger itself and re-render the list forever.
+  if (activatedLyricsData === data && lyricsStore.videoId === videoId) return;
+
   if (lyricsStore.videoId !== videoId) {
     clearCurrentTranslation();
   }
+  activatedLyricsData = data;
   setLyricsStore({
     videoId,
     lyrics: cloneSearchData(data),
