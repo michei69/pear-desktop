@@ -101,6 +101,12 @@ export const renderer = createRenderer<
   },
 
   async start(ctx: RendererContext<SyncedLyricsPluginConfig>) {
+    // The app's performance mode opts this plugin's glow into a composited filter.
+    document.documentElement.toggleAttribute(
+      'data-lyrics-performance',
+      Boolean(window.mainConfig.get('options.performanceMode')),
+    );
+
     setNetFetch(ctx.ipc.invoke.bind(ctx.ipc, 'synced-lyrics:fetch'));
     setTranslateInvoke(
       ctx.ipc.invoke.bind(
@@ -148,6 +154,7 @@ export const renderer = createRenderer<
       );
       this.videoDataDocumentListener = undefined;
     }
+    document.documentElement.removeAttribute('data-lyrics-performance');
     disposeReactiveRoot();
   },
 });

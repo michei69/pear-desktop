@@ -431,6 +431,15 @@ export const buildAppSections = (): AppSection[] => {
               menuLabel('advanced-options.submenu.auto-reset-app-cache'),
               AT_STARTUP,
             ),
+            toggle(
+              'options.performanceMode',
+              () => t('settings-ui.fields.performance-mode'),
+              {
+                ...AT_STARTUP,
+                description: () =>
+                  t('settings-ui.fields.performance-mode-desc'),
+              },
+            ),
           ],
         },
         {

@@ -50,10 +50,11 @@
 
   /* Animations */
   --lyrics-animations:
-    lyrics-glow var(--lyrics-glow-duration) forwards,
+    var(--lyrics-glow-name) var(--lyrics-glow-duration) forwards,
     lyrics-wobble var(--lyrics-wobble-duration) forwards;
   --lyrics-scale-duration: 0.166s;
   --lyrics-opacity-transition: 0.33s;
+  --lyrics-glow-name: lyrics-glow;
   --lyrics-glow-duration: var(--lyrics-duration);
   --lyrics-wobble-duration: calc(var(--lyrics-duration) / 2);
 
@@ -404,6 +405,25 @@ div:has(> .lyrics-picker) {
   to {
     text-shadow: 0 0 0 var(--glow-color);
   }
+}
+
+/* The same glow on a property Blink animates on the compositor. */
+@keyframes lyrics-glow-composited {
+  0% {
+    filter: drop-shadow(0 0 1.5rem var(--glow-color));
+  }
+  to {
+    filter: drop-shadow(0 0 0 var(--glow-color));
+  }
+}
+
+/*
+ * Performance mode: `text-shadow` cannot be composited, so the glow repaints the
+ * current line on the main thread for as long as it runs. `filter` can be, so the
+ * same glow animates on the compositor instead.
+ */
+:root[data-lyrics-performance] {
+  --lyrics-glow-name: lyrics-glow-composited;
 }
 
 .lyrics-picker mdui-button-icon {

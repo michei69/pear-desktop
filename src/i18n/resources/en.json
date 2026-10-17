@@ -1572,6 +1572,8 @@
       "add": "Add"
     },
     "fields": {
+      "performance-mode": "Performance mode",
+      "performance-mode-desc": "Trade some visual fidelity for cheaper rendering.",
       "hide-dislike-button": "Hide Dislike Button",
       "hide-video-captions": "Hide Video Captions",
       "context-menu": {
