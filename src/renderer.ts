@@ -428,6 +428,9 @@ function onApiLoaded() {
 
   const video = document.querySelector('video');
   if (!video) return;
+  video.crossOrigin = 'anonymous';
+  if (video.src && !video.src.startsWith('blob:')) video.load();
+  
   const audioContext = new AudioContext();
   const audioSource = audioContext.createMediaElementSource(video);
   audioSource.connect(audioContext.destination);
