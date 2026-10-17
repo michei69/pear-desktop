@@ -62,20 +62,18 @@ export class YTMusic implements LyricProvider {
       }))
       : undefined;
 
+    // Plain lyrics only come from the lyrics shelf: `messageRenderer` and
+    // `musicMessageModel` hold the provider's localized "no lyrics" message.
     const plain = !synced
       ? syncedLines?.length
         ? syncedLines.map((it) => it.lyricLine).join('\n')
-        : contents?.messageRenderer
-        ? contents?.messageRenderer?.text?.runs?.map((it) => it.text).join('\n')
         : contents?.sectionListRenderer?.contents?.[0]
           ?.musicDescriptionShelfRenderer?.description?.runs?.map((it) =>
             it.text,
           )?.join('\n')
       : undefined;
 
-    if (typeof plain === 'string' && plain === 'Lyrics not available') {
-      return null;
-    }
+    if (!synced?.length && !plain?.trim()) return null;
 
     if (synced?.length && synced[0].timeInMs > 300) {
       synced.unshift({
@@ -196,15 +194,15 @@ export interface NextData {
 }
 
 interface BrowseData {
-  contents: {
-    elementRenderer: {
-      newElement: {
-        type: {
-          componentType: {
-            model: {
-              timedLyricsModel: {
-                lyricsData: {
-                  timedLyricsData: SyncedLyricLine[];
+  contents?: {
+    elementRenderer?: {
+      newElement?: {
+        type?: {
+          componentType?: {
+            model?: {
+              timedLyricsModel?: {
+                lyricsData?: {
+                  timedLyricsData?: SyncedLyricLine[];
                 };
               };
             };
@@ -212,13 +210,10 @@ interface BrowseData {
         };
       };
     };
-    messageRenderer: {
-      text: PlainLyricsTextRenderer;
-    };
-    sectionListRenderer: {
-      contents: {
-        musicDescriptionShelfRenderer: {
-          description: PlainLyricsTextRenderer;
+    sectionListRenderer?: {
+      contents?: {
+        musicDescriptionShelfRenderer?: {
+          description?: PlainLyricsTextRenderer;
         };
       }[];
     };
