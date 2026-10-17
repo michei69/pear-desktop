@@ -2,6 +2,7 @@ import { deepmerge } from 'deepmerge-ts';
 import { rendererPlugins } from 'virtual:plugins';
 
 import { t } from '@/i18n';
+import { isSkippedInPerformanceMode } from '@/providers/performance-mode';
 import { LoggerPrefix, startPlugin, stopPlugin } from '@/utils';
 
 import type { RendererContext } from '@/types/contexts';
@@ -97,6 +98,16 @@ export const forceUnloadRendererPlugin = async (id: string) => {
 };
 
 export const forceLoadRendererPlugin = async (id: string) => {
+  if (
+    isSkippedInPerformanceMode(
+      id,
+      Boolean(window.mainConfig.get('options.performanceMode')),
+    )
+  ) {
+    console.log(LoggerPrefix, `Plugin "${id}" skipped: performance mode`);
+    return;
+  }
+
   const plugin = (await rendererPlugins())[id];
   if (!plugin) return;
 

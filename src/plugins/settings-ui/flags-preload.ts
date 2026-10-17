@@ -1,8 +1,12 @@
 import { webFrame } from 'electron';
 
 import * as config from '@/config';
+import { performanceModeOverrides } from '@/providers/performance-mode';
 
-import { installFeatureFlags } from './injectors/flags';
+import {
+  installFeatureFlags,
+  type FeatureFlagOverrides,
+} from './injectors/flags';
 
 /**
  * Hands the saved feature-flag overrides to the page before its own scripts run:
@@ -13,7 +17,13 @@ export const startFeatureFlags = () => {
   // The standalone settings window has no player page to patch.
   if (new URLSearchParams(window.location.search).has('settings')) return;
 
-  const overrides = config.get('options.featureFlags') ?? {};
+  const saved = (config.get('options.featureFlags') ??
+    {}) as FeatureFlagOverrides;
+  const overrides = performanceModeOverrides(
+    saved,
+    config.get('options.performanceMode'),
+  );
+
   return webFrame.executeJavaScript(
     `(${installFeatureFlags.toString()})(${JSON.stringify(overrides)}); 0`,
   );

@@ -29,6 +29,7 @@ const rendererConfigKeys = new Set([
   'options.stripMusicFromSharedLinks',
   'options.stripSIFromSharedLinks',
   'options.usePodcastParticipantAsArtist',
+  'options.performanceMode',
   'plugins.transparent-player.opacity',
 ]);
 
