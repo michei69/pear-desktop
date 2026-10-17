@@ -182,36 +182,112 @@ export const LyricsRenderer = () => {
 
   const tab = document.querySelector<HTMLElement>(selectors.body.tabRenderer)!;
 
+  // Reading layout inside scroll/mousemove forces a synchronous style+layout
+  // flush mid-event; in a trace that cost 18-32ms per scroll. Cache the two
+  // values and write the CSS variable from a rAF instead, so Chromium flushes
+  // once at frame start.
   let mouseCoord = 0;
-  const updatePickerPosition = (e?: Event) => {
-    if (e && 'clientY' in e) {
-      mouseCoord = (e as MouseEvent).clientY;
-    }
+  let tabTop = 0;
+  let pickerHeight = 0;
+  let pickerShown: boolean | undefined;
+  let frame = 0;
+  let measureFrame = 0;
+
+  const applyPickerPosition = () => {
+    frame = 0;
 
     const picker = stickyRef();
     if (!picker) return;
 
-    const { top } = tab.getBoundingClientRect();
-    const { clientHeight: height } = picker;
     const scrollOffset = scroller()?.scrollOffset ?? -1;
-
-    const isInView = scrollOffset <= height;
-    const isMouseOver = mouseCoord - top - 5 <= height;
-
+    const isInView = scrollOffset <= pickerHeight;
+    const isMouseOver = mouseCoord - tabTop - 5 <= pickerHeight;
     const showPicker = isInView || isMouseOver;
+
+    if (showPicker === pickerShown) return;
+    pickerShown = showPicker;
 
     picker.style.setProperty(
       '--lyrics-picker-top',
-      showPicker ? '0' : `-${height}px`,
+      showPicker ? '0' : `-${pickerHeight}px`,
     );
   };
 
+  const schedulePickerPosition = () => {
+    if (frame) return;
+    frame = requestAnimationFrame(applyPickerPosition);
+  };
+
+  const measurePicker = () => {
+    const picker = stickyRef();
+    if (!picker) return;
+
+    tabTop = tab.getBoundingClientRect().top;
+    pickerHeight = picker.clientHeight;
+    pickerShown = undefined;
+    schedulePickerPosition();
+  };
+
+  /** The tab moves with the page, so re-measure once per frame, not per event. */
+  const scheduleMeasure = () => {
+    if (measureFrame) return;
+    measureFrame = requestAnimationFrame(() => {
+      measureFrame = 0;
+      measurePicker();
+    });
+  };
+
   onMount(() => {
-    tab.addEventListener('mousemove', updatePickerPosition);
+    const onMouseMove = (event: MouseEvent) => {
+      mouseCoord = event.clientY;
+      schedulePickerPosition();
+    };
+
+    // Scrolling the list itself does not move the tab; only page scrolls do.
+    const onDocumentScroll = (event: Event) => {
+      if (
+        (event.target as Element | null)?.classList?.contains(
+          'synced-lyrics-vlist',
+        )
+      )
+        return;
+
+      scheduleMeasure();
+    };
+
+    const tabObserver = new ResizeObserver(measurePicker);
+    tabObserver.observe(tab);
+
+    tab.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('resize', measurePicker);
+    document.addEventListener('scroll', onDocumentScroll, {
+      capture: true,
+      passive: true,
+    });
 
     onCleanup(() => {
-      tab.removeEventListener('mousemove', updatePickerPosition);
+      tabObserver.disconnect();
+      tab.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('resize', measurePicker);
+      document.removeEventListener('scroll', onDocumentScroll, {
+        capture: true,
+      });
+      cancelAnimationFrame(frame);
+      cancelAnimationFrame(measureFrame);
     });
+  });
+
+  // The picker mounts with the list and its height changes with the provider
+  // content, so measure it whenever it appears or resizes.
+  createEffect(() => {
+    const picker = stickyRef();
+    if (!picker) return;
+
+    const observer = new ResizeObserver(measurePicker);
+    observer.observe(picker);
+    measurePicker();
+
+    onCleanup(() => observer.disconnect());
   });
 
   // The VList is recreated whenever the lyrics tab is re-entered, so follow the
@@ -222,12 +298,12 @@ export const LyricsRenderer = () => {
       handle && document.querySelector<HTMLElement>('.synced-lyrics-vlist');
     if (!vList) return;
 
-    vList.addEventListener('scroll', updatePickerPosition);
-    vList.addEventListener('scrollend', updatePickerPosition);
+    vList.addEventListener('scroll', schedulePickerPosition);
+    vList.addEventListener('scrollend', schedulePickerPosition);
 
     onCleanup(() => {
-      vList.removeEventListener('scroll', updatePickerPosition);
-      vList.removeEventListener('scrollend', updatePickerPosition);
+      vList.removeEventListener('scroll', schedulePickerPosition);
+      vList.removeEventListener('scrollend', schedulePickerPosition);
     });
   });
 

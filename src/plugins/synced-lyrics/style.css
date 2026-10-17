@@ -375,8 +375,10 @@ div:has(> .lyrics-picker) {
   & > .lyrics-picker {
     position: relative;
 
-    top: var(--lyrics-picker-top, 0) !important;
-    transition: top 325ms ease-in-out;
+    /* Transform, not `top`: it does not invalidate layout, so the slide can
+       run on the compositor instead of repainting the sticky container. */
+    transform: translateY(var(--lyrics-picker-top, 0));
+    transition: transform 325ms ease-in-out;
 
     backdrop-filter: blur(5px);
   }
