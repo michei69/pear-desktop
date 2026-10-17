@@ -15,7 +15,11 @@ import {
   restartRequirementKey,
   type RestartRequirement,
 } from '@/types/restart';
-import { toSettingsGroups, type SettingsGroup } from '@/types/settings';
+import {
+  toSettingsGroups,
+  type SettingField,
+  type SettingsGroup,
+} from '@/types/settings';
 import { clamp } from '@/utils/math';
 
 import { AboutSection } from './AboutSection';
@@ -294,18 +298,40 @@ export const SettingsModal = (props: {
   /** Searching settings, as opposed to filtering the flags. */
   const isSearchMode = () => isSearching() && !isFlags();
 
-  /** Match a field by its own text, keeping only the groups that still have one. */
+  /**
+   * Match a field by its own text, keeping only the groups that still have one.
+   * Some `visible` callbacks read the settings store, so this runs on every
+   * option write; returning a cached group while its visible fields are
+   * unchanged keeps `<For>` from remounting the section and resetting its scroll
+   * position.
+   */
+  const filteredGroups = new WeakMap<
+    SettingsGroup,
+    { fields: SettingField[]; group: SettingsGroup }
+  >();
   const matchingGroups = (groups: SettingsGroup[]) =>
-    groups
-      .map((group) => ({
-        ...group,
-        fields: group.fields.filter(
-          (field) =>
-            (field.visible?.() ?? true) &&
-            matches(search(), field.label(), field.description?.()),
-        ),
-      }))
-      .filter((group) => group.fields.length > 0);
+    groups.flatMap((group) => {
+      const fields = group.fields.filter(
+        (field) =>
+          (field.visible?.() ?? true) &&
+          matches(search(), field.label(), field.description?.()),
+      );
+      if (fields.length === 0) return [];
+
+      const cached = filteredGroups.get(group);
+      if (
+        cached &&
+        cached.fields.length === fields.length &&
+        cached.fields.every((field, index) => field === fields[index])
+      ) {
+        return [cached.group];
+      }
+
+      const next =
+        fields.length === group.fields.length ? group : { ...group, fields };
+      filteredGroups.set(group, { fields, group: next });
+      return [next];
+    });
 
   // The flags section carries no groups, which is what keeps it out of here.
   const appMatches = createMemo(() =>
