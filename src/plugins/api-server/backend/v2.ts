@@ -224,11 +224,15 @@ const registerRoutes = (app: OpenAPIHono, operations: Operations) => {
       tags: [v2Tag('Video')],
     }),
     async (ctx) => {
-      const query = ctx.req.valid('query');
+      // Parsed here rather than from `ctx.req.valid`, whose inferred type varies
+      // with the installed zod-openapi: the schema is the one source of truth.
+      const query = SearchQuerySchema.parse(ctx.req.query());
       return respond(
         ctx,
         await operations.search({
-          ...query,
+          query: query.query,
+          params: query.params,
+          continuation: query.continuation,
           raw: query.raw === 'true',
         }),
       );
@@ -250,10 +254,16 @@ const registerRoutes = (app: OpenAPIHono, operations: Operations) => {
         tags: [v2Tag('Video')],
       }),
       async (ctx) => {
-        const request = ctx.req.valid('json');
+        const body: unknown = await ctx.req.json();
+        const request = SearchSchema.parse(body);
         return respond(
           ctx,
-          await operations.search({ ...request, raw: request.raw === true }),
+          await operations.search({
+            query: request.query,
+            params: request.params,
+            continuation: request.continuation,
+            raw: request.raw === true,
+          }),
         );
       },
     );
@@ -269,10 +279,14 @@ const registerRoutes = (app: OpenAPIHono, operations: Operations) => {
       tags: [v2Tag('Video')],
     }),
     async (ctx) => {
-      const query = ctx.req.valid('query');
+      const query = BrowseQuerySchema.parse(ctx.req.query());
       return respond(
         ctx,
-        await operations.browse({ ...query, raw: query.raw === 'true' }),
+        await operations.browse({
+          browseId: query.browseId,
+          continuation: query.continuation,
+          raw: query.raw === 'true',
+        }),
       );
     },
   );
@@ -293,10 +307,15 @@ const registerRoutes = (app: OpenAPIHono, operations: Operations) => {
         tags: [v2Tag('Video')],
       }),
       async (ctx) => {
-        const request = ctx.req.valid('json');
+        const body: unknown = await ctx.req.json();
+        const request = BrowseRequestSchema.parse(body);
         return respond(
           ctx,
-          await operations.browse({ ...request, raw: request.raw === true }),
+          await operations.browse({
+            browseId: request.browseId,
+            continuation: request.continuation,
+            raw: request.raw === true,
+          }),
         );
       },
     );
