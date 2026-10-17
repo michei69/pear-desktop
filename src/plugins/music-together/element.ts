@@ -59,6 +59,9 @@ export const Popup = (props: PopupProps) => {
   popup.style.setProperty('pointer-events', 'none');
 
   document.body.append(popup);
+  // Hidden popups must not be reachable with Tab: their controls stay in the
+  // DOM (the public-IP reveal becomes focusable once a run fills it in).
+  popup.inert = true;
 
   let closeTimeout: ReturnType<typeof setTimeout> | undefined;
   let closeHandler: ((event: MouseEvent) => void) | undefined;
@@ -88,6 +91,7 @@ export const Popup = (props: PopupProps) => {
       popup.style.setProperty('top', `${top}px`);
       popup.style.setProperty('opacity', '1');
       popup.style.setProperty('pointer-events', 'unset');
+      popup.inert = false;
 
       // Clear any pending close timeout/handler before re-showing.
       if (closeTimeout !== undefined) {
@@ -134,6 +138,7 @@ export const Popup = (props: PopupProps) => {
       }
       popup.style.setProperty('opacity', '0');
       popup.style.setProperty('pointer-events', 'none');
+      popup.inert = true;
     },
   };
 };

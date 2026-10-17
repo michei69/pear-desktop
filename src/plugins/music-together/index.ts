@@ -6,6 +6,7 @@ import { createPlugin } from '@/utils';
 import { waitForElement } from '@/utils/wait-for-element';
 
 import { Connection, type ConnectionEventUnion } from './connection';
+import { runDiagnostics } from './diagnostics';
 import { Queue } from './queue';
 import style from './style.css?inline';
 import settingHTML from './templates/setting.html?raw';
@@ -15,6 +16,7 @@ import {
   type Profile,
   type VideoData,
 } from './types';
+import { createDiagnosticsPopup } from './ui/diagnostics';
 import { createGuestPopup } from './ui/guest';
 import { createHostPopup } from './ui/host';
 import { createSettingPopup } from './ui/setting';
@@ -24,6 +26,21 @@ import type { MusicPlayer } from '@/types/music-player';
 import type { AppElement } from '@/types/queue';
 import type { VideoDataChanged } from '@/types/video-data-changed';
 import type { DataConnection } from 'peerjs';
+
+/** Copies text and reports the outcome through the app toast service. */
+const copyToClipboard = (
+  api: AppElement | null,
+  text: string,
+  copiedKey: string,
+  failedKey: string,
+  done?: () => void,
+) => {
+  navigator.clipboard
+    .writeText(text)
+    .then(() => api?.toastService?.show(t(copiedKey)))
+    .catch(() => api?.toastService?.show(t(failedKey)))
+    .finally(done);
+};
 
 type RawAccountData = {
   accountName: {
@@ -54,6 +71,7 @@ export default createPlugin<
       host: ReturnType<typeof createHostPopup>;
       guest: ReturnType<typeof createGuestPopup>;
       setting: ReturnType<typeof createSettingPopup>;
+      diagnostics: ReturnType<typeof createDiagnosticsPopup>;
     };
     elements: {
       setting: HTMLElement;
@@ -63,6 +81,9 @@ export default createPlugin<
     stateInterval?: number;
     updateNext: boolean;
     ignoreChange: boolean;
+    diagnosticsRunning: boolean;
+    /** Invalidates callbacks from a run that was superseded by a plugin stop. */
+    diagnosticsRun: number;
     rollbackInjector?: () => void;
     me?: Omit<Profile, 'id'>;
     profiles: Record<string, Profile>;
@@ -74,6 +95,7 @@ export default createPlugin<
     onHost: () => Promise<boolean>;
     onJoin: () => Promise<boolean>;
     onStop: () => void;
+    runDiagnosticsFlow: () => Promise<void>;
     putProfile: (id: string, profile?: Profile) => void;
     showSpinner: () => void;
     hideSpinner: () => void;
@@ -101,11 +123,14 @@ export default createPlugin<
   renderer: {
     updateNext: false,
     ignoreChange: false,
+    diagnosticsRunning: false,
+    diagnosticsRun: 0,
     permission: 'playlist',
     popups: {} as {
       host: ReturnType<typeof createHostPopup>;
       guest: ReturnType<typeof createGuestPopup>;
       setting: ReturnType<typeof createSettingPopup>;
+      diagnostics: ReturnType<typeof createDiagnosticsPopup>;
     },
     elements: {} as {
       setting: HTMLElement;
@@ -675,6 +700,28 @@ export default createPlugin<
       this.popups.host?.dismiss();
       this.popups.guest?.dismiss();
       this.popups.setting?.dismiss();
+      this.popups.diagnostics?.dismiss();
+    },
+
+    async runDiagnosticsFlow() {
+      if (this.diagnosticsRunning) return;
+      this.diagnosticsRunning = true;
+      const run = ++this.diagnosticsRun;
+      this.popups.diagnostics.reset();
+
+      try {
+        const result = await runDiagnostics((check) => {
+          if (run === this.diagnosticsRun)
+            this.popups.diagnostics.setCheck(check);
+        });
+        if (run === this.diagnosticsRun)
+          this.popups.diagnostics.setResult(result);
+      } catch (error) {
+        console.error('Music Together: diagnostics failed', error);
+        if (run === this.diagnosticsRun) this.popups.diagnostics.setError();
+      } finally {
+        if (run === this.diagnosticsRun) this.diagnosticsRunning = false;
+      }
     },
 
     /* methods */
@@ -800,20 +847,13 @@ export default createPlugin<
           }
 
           if (id === 'music-together-copy-id') {
-            navigator.clipboard
-              .writeText(this.connection?.id ?? '')
-              .then(() => {
-                this.api?.toastService?.show(
-                  t('plugins.music-together.toast.id-copied'),
-                );
-                hostPopup.dismiss();
-              })
-              .catch(() => {
-                this.api?.toastService?.show(
-                  t('plugins.music-together.toast.id-copy-failed'),
-                );
-                hostPopup.dismiss();
-              });
+            copyToClipboard(
+              this.api,
+              this.connection?.id ?? '',
+              'plugins.music-together.toast.id-copied',
+              'plugins.music-together.toast.id-copy-failed',
+              () => hostPopup.dismiss(),
+            );
           }
 
           if (id === 'music-together-permission') {
@@ -853,6 +893,36 @@ export default createPlugin<
           }
         },
       });
+      const diagnosticsPopup = createDiagnosticsPopup({
+        onItemClick: (id) => {
+          if (id === 'music-together-diagnostics-run') {
+            if (this.diagnosticsRunning) {
+              this.api?.toastService?.show(
+                t('plugins.music-together.toast.diagnostics-running'),
+              );
+            } else {
+              this.runDiagnosticsFlow();
+            }
+          }
+
+          if (id === 'music-together-diagnostics-copy') {
+            const summary = diagnosticsPopup.getSummary();
+            if (!summary) {
+              this.api?.toastService?.show(
+                t('plugins.music-together.toast.diagnostics-running'),
+              );
+              return;
+            }
+
+            copyToClipboard(
+              this.api,
+              summary,
+              'plugins.music-together.toast.diagnostics-copied',
+              'plugins.music-together.toast.diagnostics-copy-failed',
+            );
+          }
+        },
+      });
       const settingPopup = createSettingPopup({
         onItemClick: async (id) => {
           if (id === 'music-together-host') {
@@ -862,20 +932,13 @@ export default createPlugin<
             this.hideSpinner();
 
             if (result) {
-              navigator.clipboard
-                .writeText(this.connection?.id ?? '')
-                .then(() => {
-                  this.api?.toastService?.show(
-                    t('plugins.music-together.toast.id-copied'),
-                  );
-                  hostPopup.showAtAnchor(setting);
-                })
-                .catch(() => {
-                  this.api?.toastService?.show(
-                    t('plugins.music-together.toast.id-copy-failed'),
-                  );
-                  hostPopup.showAtAnchor(setting);
-                });
+              copyToClipboard(
+                this.api,
+                this.connection?.id ?? '',
+                'plugins.music-together.toast.id-copied',
+                'plugins.music-together.toast.id-copy-failed',
+                () => hostPopup.showAtAnchor(setting),
+              );
             } else {
               this.api?.toastService?.show(
                 t('plugins.music-together.toast.host-failed'),
@@ -900,12 +963,19 @@ export default createPlugin<
               );
             }
           }
+
+          if (id === 'music-together-test') {
+            settingPopup.dismiss();
+            diagnosticsPopup.showAtAnchor(setting);
+            this.runDiagnosticsFlow();
+          }
         },
       });
       this.popups = {
         host: hostPopup,
         guest: guestPopup,
         setting: settingPopup,
+        diagnostics: diagnosticsPopup,
       };
       setting.addEventListener('click', () => {
         let popup = settingPopup;
@@ -936,6 +1006,11 @@ export default createPlugin<
       document.addEventListener('videodatachange', this.videoChangeListener);
     },
     stop() {
+      // Abandon an in-flight diagnostics run and drop the popups it writes to.
+      this.diagnosticsRun += 1;
+      this.diagnosticsRunning = false;
+      for (const popup of Object.values(this.popups)) popup?.element.remove();
+
       const dividers = Array.from(
         document.querySelectorAll('.music-together-divider'),
       );

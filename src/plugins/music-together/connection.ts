@@ -5,6 +5,7 @@ import {
   Peer,
   type PeerError,
   PeerErrorType,
+  type PeerOptions,
 } from 'peerjs';
 
 import type { Permission, Profile, VideoData } from './types';
@@ -44,6 +45,47 @@ export type ConnectionListener = (
 ) => void;
 export type ConnectionMode = 'host' | 'guest' | 'disconnected';
 
+/**
+ * ICE servers used to negotiate a WebRTC peer connection. Only hosts that
+ * actually resolve belong here: the old `*.turn.peerjs.com` relays were
+ * decommissioned and only spammed the console with `ERR_NAME_NOT_RESOLVED`.
+ */
+export const ICE_SERVERS: RTCIceServer[] = [
+  // STUN endpoints from Google, Cloudflare and freestun: the diagnostics NAT
+  // check needs reflexive candidates from two different servers to tell an
+  // open NAT from a symmetric one (see `classifyNat`).
+  { urls: 'stun:stun.l.google.com:19302' },
+  { urls: 'stun:stun1.l.google.com:19302' },
+  { urls: 'stun:stun.cloudflare.com:3478' },
+  { urls: 'stun:freestun.net:3478' },
+  {
+    urls: 'turn:freestun.net:3478',
+    username: 'free',
+    credential: 'free',
+  },
+  // Open Relay Project (Metered) — free public TURN. The `443?transport=tcp`
+  // entry tunnels the relay over TCP/443, so it gets through firewalls that
+  // block UDP relaying.
+  {
+    urls: [
+      'turn:openrelay.metered.ca:80',
+      'turn:openrelay.metered.ca:443',
+      'turn:openrelay.metered.ca:443?transport=tcp',
+    ],
+    username: 'openrelayproject',
+    credential: 'openrelayproject',
+  },
+];
+
+/** Peer options shared by a real session and the connection diagnostics. */
+export const peerOptions = (): PeerOptions => ({
+  debug: 0,
+  config: {
+    iceServers: ICE_SERVERS,
+    sdpSemantics: 'unified-plan',
+  },
+});
+
 const RECOVERABLE_PEER_ERRORS = new Set([
   PeerErrorType.Network,
   PeerErrorType.ServerError,
@@ -64,31 +106,7 @@ export class Connection {
   private connectionListeners: ((connection?: DataConnection) => void)[] = [];
 
   constructor() {
-    this.peer = new Peer({
-      debug: 0,
-      config: {
-        iceServers: [
-          { urls: 'stun:stun.l.google.com:19302' },
-          {
-            urls: [
-              'turn:eu-0.turn.peerjs.com:3478',
-              'turn:us-0.turn.peerjs.com:3478',
-            ],
-            username: 'peerjs',
-            credential: 'peerjsp',
-          },
-          {
-            urls: 'stun:freestun.net:3478',
-          },
-          {
-            urls: 'turn:freestun.net:3478',
-            username: 'free',
-            credential: 'free',
-          },
-        ],
-        sdpSemantics: 'unified-plan',
-      },
-    });
+    this.peer = new Peer(peerOptions());
 
     this.waitOpen.promise = new Promise<string>((resolve, reject) => {
       this.waitOpen.resolve = resolve;
