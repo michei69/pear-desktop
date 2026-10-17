@@ -71,12 +71,13 @@ export const [lyricsStore, setLyricsStore] = createStore<LyricsStore>({
   },
 });
 
-export const currentLyrics = runWithOwner(reactiveOwner, () =>
-  createMemo(() => {
+export const currentLyrics = runWithOwner(reactiveOwner, () => {
+  const memo = createMemo(() => {
     const provider = lyricsStore.provider;
     return lyricsStore.lyrics[provider];
-  }),
-)!;
+  });
+  return memo;
+})!;
 
 type VideoId = string;
 

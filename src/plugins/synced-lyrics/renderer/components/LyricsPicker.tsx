@@ -58,9 +58,10 @@ import type { PlayerAPIEvents } from '@/types/player-api-events';
 import type { VideoDataChanged } from '@/types/video-data-changed';
 
 /** Index of the active provider in `providerNames`, for the picker's ordering. */
-export const providerIdx = runWithOwner(reactiveOwner, () =>
-  createMemo(() => providerNames.indexOf(lyricsStore.provider)),
-)!;
+export const providerIdx = runWithOwner(reactiveOwner, () => {
+  const memo = createMemo(() => providerNames.indexOf(lyricsStore.provider));
+  return memo;
+})!;
 
 const pickBestProvider = (starred: ProviderName | null): ProviderName => {
   const cfg = config();
