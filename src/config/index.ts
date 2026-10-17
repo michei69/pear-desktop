@@ -39,6 +39,16 @@ export const setMenuOption = (key: string, value: unknown) => {
   }
 };
 
+/** The whole stored config, without the derived `updates` block `getStore` adds. */
+export const getAll = () => store.store;
+
+/** Applies a partial config, deep-merging objects and replacing arrays. */
+export const patch = (value: Record<string, unknown>) => {
+  for (const [key, patchValue] of Object.entries(value)) {
+    setPartial(key, patchValue as object);
+  }
+};
+
 // MAGIC OF TYPESCRIPT
 
 type Prev = [
@@ -135,7 +145,7 @@ export const updateChannel = (): UpdateChannel => {
  * change, so the About section needs no extra round trip.
  */
 export const getStore = () => ({
-  ...(store.store as unknown as typeof defaultConfig),
+  ...(getAll() as unknown as typeof defaultConfig),
   updates: {
     supported: updatesSupported(),
     channel: updateChannel(),

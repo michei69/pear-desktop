@@ -16,6 +16,7 @@ import {
   type RestartRequirement,
 } from '@/types/restart';
 import { toSettingsGroups, type SettingsGroup } from '@/types/settings';
+import { clamp } from '@/utils/math';
 
 import { AboutSection } from './AboutSection';
 import { FlagsSection } from './FlagsSection';
@@ -60,9 +61,6 @@ const MODAL_MIN_HEIGHT = 360;
 const MODAL_MARGIN = 40;
 const SIDEBAR_MIN_WIDTH = 180;
 const SIDEBAR_MAX_WIDTH = 420;
-
-const clamp = (value: number, min: number, max: number) =>
-  Math.min(Math.max(value, min), Math.max(min, max));
 
 export const SettingsModal = (props: {
   onClose: () => void;

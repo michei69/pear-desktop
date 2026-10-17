@@ -17,6 +17,7 @@ import { getByPath, nestPartial, setByPath } from './paths';
 
 import type { UpdateChannel } from '@/app-info';
 import type { defaultConfig } from '@/config/defaults';
+import type { AppMeta } from '@/providers/app-meta';
 import type { RendererContext } from '@/types/contexts';
 import type { FlagMetadataMap } from '@/types/flag-metadata';
 import type { RestartRequirement } from '@/types/restart';
@@ -37,39 +38,8 @@ export type PluginConfigMap = Record<
   Record<string, unknown> & { enabled?: boolean }
 >;
 
-export interface AppMeta {
-  name: string;
-  version: string;
-  /** Channel and commit, e.g. `stable` or `beta 1a2b3c4`. */
-  build: string;
-  /** One line per copyright holder. */
-  copyright: string;
-  platform: string;
-  arch: string;
-  osVersion: string;
-  versions: {
-    electron: string;
-    chrome: string;
-    node: string;
-  };
-  cpu: {
-    model: string;
-    threads: number;
-  };
-  gpu: {
-    renderer?: string;
-    vendor?: string;
-    driver?: string;
-    /** From app.getGPUFeatureStatus(), e.g. `{ gpu_compositing: 'enabled' }`. */
-    features: Record<string, string>;
-  };
-  /** Working set in kilobytes, per process group. */
-  memory: {
-    main: number;
-    renderers: number;
-    gpu: number;
-  };
-}
+/** The debug info the About section shows, as read by the backend's provider. */
+export type { AppMeta };
 
 // ---- reactive config snapshot (seeded + pushed from the backend) ----
 const [store, setStore] = createSignal<StoreShape | null>(null);

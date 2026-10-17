@@ -14,6 +14,9 @@ export interface APIServerConfig {
   useHttps: boolean;
   certPath: string;
   keyPath: string;
+
+  /** Serves the MCP endpoint at `/mcp`; off unless the user opts in. */
+  mcpEnabled: boolean;
 }
 
 export const defaultAPIServerConfig: APIServerConfig = {
@@ -21,10 +24,15 @@ export const defaultAPIServerConfig: APIServerConfig = {
   hostname: '0.0.0.0',
   port: 26538,
   authStrategy: AuthStrategy.AUTH_AT_FIRST,
-  secret: Date.now().toString(36),
+  // Signs the access tokens; must not be guessable. `crypto` is the Web Crypto
+  // API, which exists in both the renderer and the main process — this module
+  // is imported by the renderer too, where `node:crypto` isn't available.
+  secret: crypto.randomUUID(),
 
   authorizedClients: [],
   useHttps: false,
   certPath: '',
   keyPath: '',
+
+  mcpEnabled: false,
 };

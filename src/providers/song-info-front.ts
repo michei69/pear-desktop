@@ -34,26 +34,20 @@ export const setupSeekedListener = singleton(() => {
   });
 });
 
-export const setupTimeChangedListener = singleton(() => {
+export const setupTimeChangedListener = singleton((api: MusicPlayer) => {
   let lastSent = 0;
   const THROTTLE_MS = 250;
 
-  const progressObserver = new MutationObserver((mutations) => {
+  // The player reports its own media position, independent of the player bar's
+  // DOM: it survives UI changes and keeps sub-second precision.
+  api.addEventListener('onVideoProgress', (seconds) => {
     const now = Date.now();
-    if (now - lastSent < THROTTLE_MS) return;
+    if (now - lastSent < THROTTLE_MS || !Number.isFinite(seconds)) return;
 
-    for (const mutation of mutations) {
-      const target = mutation.target as Node & { value: string };
-      const numberValue = Number(target.value);
-      lastSent = now;
-      window.ipcRenderer.send('peard:time-changed', numberValue);
-      songInfo.elapsedSeconds = numberValue;
-    }
+    lastSent = now;
+    window.ipcRenderer.send('peard:time-changed', seconds);
+    songInfo.elapsedSeconds = seconds;
   });
-  const progressBar = document.querySelector('#progress-bar');
-  if (progressBar) {
-    progressObserver.observe(progressBar, { attributeFilter: ['value'] });
-  }
 });
 
 export const setupRepeatChangedListener = singleton(() => {
@@ -123,6 +117,18 @@ export const setupLikeChangedListener = singleton(() => {
   }
 });
 
+export const setupPlaybackSpeedChangedListener = singleton(() => {
+  const video = document.querySelector<HTMLVideoElement>('video');
+  if (!video) return;
+
+  const report = () =>
+    window.ipcRenderer.send('peard:playback-speed-changed', video.playbackRate);
+
+  video.addEventListener('ratechange', report);
+  // Push the initial value too; the speed persists across launches.
+  report();
+});
+
 export const setupVolumeChangedListener = singleton((api: MusicPlayer) => {
   document.querySelector('video')?.addEventListener('volumechange', () => {
     window.ipcRenderer.send('peard:volume-changed', {
@@ -159,6 +165,12 @@ export const setupShuffleChangedListener = singleton(() => {
     childList: false,
     subtree: false,
   });
+
+  // Push the initial value too: shuffle persists across launches.
+  window.ipcRenderer.send(
+    'peard:shuffle-changed',
+    (playerBar.attributes.getNamedItem('shuffle-on') ?? null) !== null,
+  );
 });
 
 export const setupFullScreenChangedListener = singleton(() => {
@@ -204,7 +216,7 @@ export const setupAutoPlayChangedListener = singleton(() => {
 
 export const setupSongInfo = (api: MusicPlayer) => {
   window.ipcRenderer.on('peard:setup-time-changed-listener', () => {
-    setupTimeChangedListener();
+    setupTimeChangedListener(api);
   });
 
   window.ipcRenderer.on('peard:setup-like-changed-listener', () => {
@@ -217,6 +229,10 @@ export const setupSongInfo = (api: MusicPlayer) => {
 
   window.ipcRenderer.on('peard:setup-volume-changed-listener', () => {
     setupVolumeChangedListener(api);
+  });
+
+  window.ipcRenderer.on('peard:setup-playback-speed-changed-listener', () => {
+    setupPlaybackSpeedChangedListener();
   });
 
   window.ipcRenderer.on('peard:setup-shuffle-changed-listener', () => {
@@ -242,7 +258,9 @@ export const setupSongInfo = (api: MusicPlayer) => {
     ) {
       window.ipcRenderer.send('peard:play-or-paused', {
         isPaused: status === 'pause',
-        elapsedSeconds: Math.floor(e.target.currentTime),
+        // Float, like onVideoProgress: v1 floors it in its socket adapter and
+        // v2 reports the player's real position.
+        elapsedSeconds: e.target.currentTime,
       });
     }
   };
@@ -255,10 +273,12 @@ export const setupSongInfo = (api: MusicPlayer) => {
   let currentVideo: HTMLVideoElement | null = null;
 
   const attachPlayPauseListeners = (video: HTMLVideoElement) => {
-    if (currentVideo && currentVideo !== video) {
-      for (const status of ['playing', 'pause'] as const) {
-        currentVideo.removeEventListener(status, playPausedHandlers[status]);
-      }
+    // YTM reuses the same <video> for every song, so `dataloaded` must not stack
+    // another pair of listeners on it: each pause would be reported again.
+    if (currentVideo === video) return;
+
+    for (const status of ['playing', 'pause'] as const) {
+      currentVideo?.removeEventListener(status, playPausedHandlers[status]);
     }
     currentVideo = video;
     for (const status of ['playing', 'pause'] as const) {
@@ -279,6 +299,11 @@ export const setupSongInfo = (api: MusicPlayer) => {
 
   const waitingEvent = new Set<string>();
   const waitingTimeouts = new Map<string, NodeJS.Timeout>();
+  // Longer than the fallback, so a fallback that races the real update is
+  // covered too.
+  const VIDEO_REPORT_DEDUPE_MS = DATAUPDATED_FALLBACK_TIMEOUT_MS + 500;
+  let lastReportedVideoId: string | undefined;
+  let lastReportedAt = 0;
 
   const clearVideoTimeout = (videoId: string) => {
     const timeoutId = waitingTimeouts.get(videoId);
@@ -372,6 +397,17 @@ export const setupSongInfo = (api: MusicPlayer) => {
       )?.text;
     data.videoDetails.elapsedSeconds = 0;
     data.videoDetails.isPaused = false;
+
+    const videoId = data.videoDetails.videoId;
+    const now = Date.now();
+    if (
+      videoId === lastReportedVideoId &&
+      now - lastReportedAt < VIDEO_REPORT_DEDUPE_MS
+    ) {
+      return;
+    }
+    lastReportedVideoId = videoId;
+    lastReportedAt = now;
 
     window.ipcRenderer.send('peard:video-src-changed', data);
   }

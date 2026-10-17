@@ -21,6 +21,7 @@ import type {
   CrossfadeRendererProperties,
 } from './types';
 import type { AudioBytes } from '@/plugins/utils/main';
+import type { PlayerAPIEvents } from '@/types/player-api-events';
 import type { Howl } from 'howler';
 
 /** Attempts a track's audio is fetched for before giving up. */
@@ -481,9 +482,9 @@ export const renderer = createRenderer<
 
     // A song restored on startup (restored queue, last played track) never
     // navigates, so the first track comes from the player's data event.
-    const onVideoDataChange: Parameters<typeof api.addEventListener>[1] = (
-      name,
-      videoData,
+    const onVideoDataChange = (
+      name: PlayerAPIEvents['videodatachange']['name'],
+      videoData: PlayerAPIEvents['videodatachange']['value'],
     ) => {
       if (name !== 'dataloaded') return;
 

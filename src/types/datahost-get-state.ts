@@ -146,6 +146,35 @@ export interface SectionListRenderer {
 export interface SectionListRendererContent {
   musicCardShelfRenderer?: MusicCardShelfRenderer;
   musicShelfRenderer?: MusicShelfRenderer;
+  itemSectionRenderer?: ItemSectionRenderer;
+}
+
+export interface ItemSectionRenderer {
+  contents: ItemSection[];
+  trackingParams: string;
+}
+
+export interface ItemSection {
+  messageRenderer?: MessageRenderer;
+  musicResponsiveListItemRenderer?: MusicResponsiveListItemRenderer;
+}
+
+/**
+ * One row of a search section. Item sections, shelves and the top-result card's
+ * contents all carry this shape: playable rows have `playlistItemData`, rows
+ * that open a page instead have `navigationEndpoint`. `overlay` and `menu` are
+ * the only fields the three shapes disagree on, so both stay optional.
+ */
+export interface MusicResponsiveListItemRenderer {
+  trackingParams: string;
+  thumbnail: MusicResponsiveListItemRendererThumbnail;
+  flexColumns: FlexColumn[];
+  playlistItemData?: Target;
+  navigationEndpoint?: RunEndpoint;
+  overlay?: ThumbnailOverlayClass | PurpleOverlay;
+  menu?: PurpleMenu | FluffyMenu;
+  flexColumnDisplayStyle?: string;
+  itemHeight?: string;
 }
 
 export interface MusicCardShelfRenderer {
@@ -250,7 +279,7 @@ export interface ShortBylineTextRun {
 
 export interface MusicCardShelfRendererContent {
   messageRenderer?: MessageRenderer;
-  musicResponsiveListItemRenderer?: PurpleMusicResponsiveListItemRenderer;
+  musicResponsiveListItemRenderer?: MusicResponsiveListItemRenderer;
 }
 
 export interface MessageRenderer {
@@ -261,17 +290,6 @@ export interface MessageRenderer {
 
 export interface MessageRendererStyle {
   value: string;
-}
-
-export interface PurpleMusicResponsiveListItemRenderer {
-  trackingParams: string;
-  thumbnail: MusicResponsiveListItemRendererThumbnail;
-  overlay: ThumbnailOverlayClass;
-  flexColumns: FlexColumn[];
-  menu: PurpleMenu;
-  playlistItemData: Target;
-  flexColumnDisplayStyle: string;
-  itemHeight: string;
 }
 
 export interface FlexColumn {
@@ -319,6 +337,7 @@ export enum PageType {
   MusicPageTypeAlbum = 'MUSIC_PAGE_TYPE_ALBUM',
   MusicPageTypeArtist = 'MUSIC_PAGE_TYPE_ARTIST',
   MusicPageTypePlaylist = 'MUSIC_PAGE_TYPE_PLAYLIST',
+  MusicPageTypePodcastShowDetailPage = 'MUSIC_PAGE_TYPE_PODCAST_SHOW_DETAIL_PAGE',
   MusicPageTypeTrackLyrics = 'MUSIC_PAGE_TYPE_TRACK_LYRICS',
   MusicPageTypeTrackRelated = 'MUSIC_PAGE_TYPE_TRACK_RELATED',
   MusicPageTypeUserChannel = 'MUSIC_PAGE_TYPE_USER_CHANNEL',
@@ -533,7 +552,8 @@ export interface PurpleMusicPlayButtonRenderer {
 
 export interface OnTap {
   clickTrackingParams: string;
-  watchEndpoint: OnTapWatchEndpoint;
+  watchEndpoint?: OnTapWatchEndpoint;
+  browseEndpoint?: PurpleBrowseEndpoint;
 }
 
 export interface MusicResponsiveListItemRendererThumbnail {
@@ -606,9 +626,15 @@ export interface LongBylineTextRun {
   navigationEndpoint?: RunEndpoint;
 }
 
+/**
+ * What a byline run or a row links to. Rows open a page (browse) far more often
+ * than they play something (watch), and the credited runs of a card subtitle
+ * only ever browse.
+ */
 export interface RunEndpoint {
-  clickTrackingParams: string;
-  browseEndpoint: PurpleBrowseEndpoint;
+  clickTrackingParams?: string;
+  browseEndpoint?: PurpleBrowseEndpoint;
+  watchEndpoint?: OnTapWatchEndpoint;
 }
 
 export interface Title {
@@ -640,19 +666,7 @@ export interface SearchEndpoint {
 }
 
 export interface MusicShelfRendererContent {
-  musicResponsiveListItemRenderer: FluffyMusicResponsiveListItemRenderer;
-}
-
-export interface FluffyMusicResponsiveListItemRenderer {
-  trackingParams: string;
-  thumbnail: MusicResponsiveListItemRendererThumbnail;
-  overlay: PurpleOverlay;
-  flexColumns: FlexColumn[];
-  menu: FluffyMenu;
-  playlistItemData?: Target;
-  flexColumnDisplayStyle: string;
-  itemHeight: string;
-  navigationEndpoint?: RunEndpoint;
+  musicResponsiveListItemRenderer: MusicResponsiveListItemRenderer;
 }
 
 export interface FluffyMenu {

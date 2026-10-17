@@ -2,6 +2,7 @@ import { createEffect, createMemo, runWithOwner, untrack } from 'solid-js';
 import { createStore } from 'solid-js/store';
 
 import { getSongInfo } from '@/providers/song-info-front';
+import { parseByline, queueRenderer } from '@/utils/queue';
 
 import { getCustomQuery } from './custom-query-store';
 import { translationDebug } from './debug';
@@ -19,14 +20,25 @@ import {
 import { LRC } from '../parsers/lrc';
 import {
   hasLyricText,
+  pickWithStar,
   type ProviderName,
   providerNames,
   type ProviderState,
+  readStarredProvider,
+  resolvePriority,
 } from '../providers';
 import { providers } from '../providers/renderer';
 
-import type { LineLyrics, LyricProvider, LyricResult } from '../types';
+import type { NextData } from '../providers/YTMusic';
+import type {
+  LineLyrics,
+  LyricProvider,
+  LyricResult,
+  SearchSongInfo,
+} from '../types';
 import type { SongInfo } from '@/providers/song-info';
+import type { QueueItem } from '@/types/datahost-get-state';
+import type { MusicPlayerAppElement } from '@/types/music-player-app-element';
 
 type LyricsStore = {
   videoId: string | null;
@@ -59,19 +71,21 @@ export const [lyricsStore, setLyricsStore] = createStore<LyricsStore>({
   },
 });
 
-export const currentLyrics = runWithOwner(reactiveOwner, () =>
-  createMemo(() => {
+export const currentLyrics = runWithOwner(reactiveOwner, () => {
+  const memo = createMemo(() => {
     const provider = lyricsStore.provider;
     return lyricsStore.lyrics[provider];
-  }),
-)!;
+  });
+  return memo;
+})!;
 
 type VideoId = string;
 
 type SearchCacheData = Record<ProviderName, ProviderState>;
 interface SearchCache {
-  state: 'loading' | 'done';
   data: SearchCacheData;
+  /** Settles once every provider has answered, so callers can await a fetch. */
+  settled?: Promise<void>;
 }
 
 // TODO: Maybe use localStorage for the cache.
@@ -262,91 +276,226 @@ const getOfficialChineseTranslationLines = (
   return null;
 };
 
-export const fetchLyrics = (info: SongInfo) => {
-  if (activeSongInfo?.videoId !== info.videoId) return;
+/** `info` with the user's custom search query for `videoId` applied, if any. */
+const applyCustomQuery = <T extends SearchSongInfo>(
+  info: T,
+  videoId: string,
+): T => {
+  const customQ = getCustomQuery(videoId);
+  if (!customQ) return info;
 
-  if (searchCache.has(info.videoId)) {
-    const cache = searchCache.get(info.videoId)!;
-
-    activateLyricsData(info.videoId, cache.data);
-
-    return;
-  }
-
-  const cache: SearchCache = {
-    state: 'loading',
-    data: initialData(),
+  return {
+    ...info,
+    title: customQ.query,
+    alternativeTitle: customQ.query,
+    artist: customQ.artist ?? '',
   };
+};
 
-  searchCache.set(info.videoId, cache);
+/** A fresh search cache for `videoId`, registered before any provider answers. */
+const createSearchCache = (videoId: string): SearchCache => {
+  const cache: SearchCache = { data: initialData() };
+  searchCache.set(videoId, cache);
   pruneSearchCache();
-  activateLyricsData(info.videoId, cache.data);
+  return cache;
+};
 
-  // Allow the user to override the search query for this specific video.
-  const customQ = getCustomQuery(info.videoId);
-  const searchInfo = customQ
-    ? {
-        ...info,
-        title: customQ.query,
-        alternativeTitle: customQ.query,
-        artist: customQ.artist ?? '',
-      }
-    : info;
-
-  const tasks: Promise<void>[] = [];
-
-  // prettier-ignore
-  for (
-    const [providerName, provider] of Object.entries(providers) as [
-    ProviderName,
-    LyricProvider,
-  ][]
-    ) {
-    const pCache = cache.data[providerName];
-
-    tasks.push(
+/**
+ * Start every provider's search for `info`, recording each answer on `data`.
+ * `onResult` sees the same state that was cached, so the lyrics store can follow
+ * along without this helper knowing about it.
+ */
+const searchProviders = (
+  info: SearchSongInfo,
+  data: SearchCacheData,
+  onResult?: (provider: ProviderName, state: ProviderState) => void,
+): Promise<void>[] =>
+  (Object.entries(providers) as [ProviderName, LyricProvider][]).map(
+    ([name, provider]) =>
       provider
-        .search(searchInfo)
+        .search(info)
         .then((res) => {
-          pCache.state = 'done';
-          pCache.data = res;
-
-          if (isStillActiveVideo(info.videoId)) {
-            setLyricsStore('lyrics', (old) => {
-              return {
-                ...old,
-                [providerName]: {
-                  state: 'done',
-                  data: res ? { ...res } : null,
-                  error: null,
-                },
-              };
-            });
-          }
+          const state: ProviderState = {
+            state: 'done',
+            data: res,
+            error: null,
+          };
+          data[name] = state;
+          onResult?.(name, state);
         })
         .catch((error: Error) => {
-          pCache.state = 'error';
-          pCache.error = error;
-
           console.error(error);
-
-          if (isStillActiveVideo(info.videoId)) {
-            setLyricsStore('lyrics', (old) => {
-              return {
-                ...old,
-                [providerName]: { state: 'error', error, data: null },
-              };
-            });
-          }
+          const state: ProviderState = { state: 'error', data: null, error };
+          data[name] = state;
+          onResult?.(name, state);
         }),
-    );
-  }
+  );
 
-  Promise.allSettled(tasks).then(() => {
-    cache.state = 'done';
-    searchCache.set(info.videoId, cache);
+/** Mark `cache` done once every search has settled, and keep it in the map. */
+const settleSearchCache = (
+  videoId: string,
+  cache: SearchCache,
+  tasks: Promise<void>[],
+): Promise<void> => {
+  const settled = Promise.allSettled(tasks).then(() => {
+    searchCache.set(videoId, cache);
     pruneSearchCache();
   });
+  cache.settled = settled;
+  return settled;
+};
+
+/**
+ * Fetch every provider for `info`. Resolves once they have all settled, so a
+ * caller can await a fetch the UI already started; a cached or in-flight video
+ * hands back its existing promise instead of refetching.
+ */
+export const fetchLyrics = (info: SongInfo): Promise<void> => {
+  if (activeSongInfo?.videoId !== info.videoId) return Promise.resolve();
+
+  const cached = searchCache.get(info.videoId);
+  if (cached) {
+    activateLyricsData(info.videoId, cached.data);
+
+    return cached.settled ?? Promise.resolve();
+  }
+
+  const cache = createSearchCache(info.videoId);
+  activateLyricsData(info.videoId, cache.data);
+
+  const tasks = searchProviders(
+    applyCustomQuery(info, info.videoId),
+    cache.data,
+    (name, state) => {
+      if (!isStillActiveVideo(info.videoId)) return;
+
+      setLyricsStore('lyrics', (old) => {
+        return {
+          ...old,
+          [name]: { ...state, data: state.data ? { ...state.data } : null },
+        };
+      });
+    },
+  );
+
+  return settleSearchCache(info.videoId, cache, tasks);
+};
+
+/** Video id the lyrics belong to, or null when no song is playing. */
+export const currentLyricsVideoId = (): string | null =>
+  (activeSongInfo ?? getSongInfo())?.videoId ?? null;
+
+/**
+ * Every provider's state for the current song, waiting for a fetch already in
+ * flight. Starts one when the song has none, so the API can answer without the
+ * lyrics tab having been opened.
+ */
+export const allProviderLyrics = async (): Promise<
+  Record<ProviderName, ProviderState>
+> => {
+  const info = activeSongInfo ?? getSongInfo();
+  if (!info?.videoId) return initialData();
+
+  await fetchLyrics(info);
+
+  const cache = searchCache.get(info.videoId);
+
+  return cache ? cloneSearchData(cache.data) : initialData();
+};
+
+/** "4:21" or "1:02:03" as seconds; 0 when there is no usable length. */
+const durationInSeconds = (text?: string) => {
+  const parts = (text ?? '').split(':').map((part) => Number(part));
+  if (parts.some(Number.isNaN)) return 0;
+  return parts.reduce((total, part) => total * 60 + part, 0);
+};
+
+/**
+ * What providers search with for a video the player is not on. The player's own
+ * song info answers for the current song; anything else is read from its
+ * watch-next page, where the queue items carry the title, byline and length.
+ */
+const searchInfoForVideo = async (
+  videoId: string,
+): Promise<SearchSongInfo | null> => {
+  const current = getSongInfo();
+  if (current?.videoId === videoId) return current;
+
+  const app = document.querySelector<MusicPlayerAppElement>('ytmusic-app');
+  if (!app) return null;
+
+  const data = await app.networkManager
+    .fetch<NextData, { videoId: string }>('/next?prettyPrint=false', {
+      videoId,
+    })
+    .catch(() => null);
+  if (!data) return null;
+
+  const items =
+    data.contents?.singleColumnMusicWatchNextResultsRenderer?.tabbedRenderer
+      ?.watchNextTabbedResultsRenderer?.tabs?.[0]?.tabRenderer?.content
+      ?.musicQueueRenderer?.content?.playlistPanelRenderer?.contents ?? [];
+  const renderer = items
+    .map((item) => queueRenderer(item as QueueItem))
+    .find((entry) => entry?.videoId === videoId);
+  if (!renderer) return null;
+
+  const { artist, album } = parseByline(renderer.longBylineText?.runs);
+
+  return {
+    videoId,
+    title: renderer.title?.runs?.map((run) => run.text).join('') ?? '',
+    artist: artist ?? '',
+    album,
+    songDuration: durationInSeconds(renderer.lengthText?.runs?.[0]?.text),
+  };
+};
+
+/**
+ * The provider the app would show for `videoId`, honouring a star and the
+ * priority/quality config — the same rules the lyrics picker uses.
+ */
+export const pickProvider = (
+  videoId: string | null,
+  lyrics: Record<ProviderName, ProviderState>,
+): ProviderName | undefined => {
+  const cfg = config();
+  return pickWithStar({
+    priority: resolvePriority(cfg?.providerPriority),
+    lyrics,
+    preferSynced: cfg?.preferSynced ?? true,
+    starred: videoId ? readStarredProvider(videoId) : null,
+    usePriorityList: cfg?.usePriorityList ?? false,
+    wantsOfficialTranslation: Boolean(
+      cfg?.translation?.enabled &&
+      isChineseTranslationTarget(cfg.translation.targetLanguage),
+    ),
+  });
+};
+
+/**
+ * Lyrics for `videoId`: from the in-memory cache when the app already has that
+ * song, otherwise fetched from every provider. Never touches the lyrics store,
+ * so asking about another video cannot disturb what the UI is showing.
+ */
+export const lyricsForVideo = async (
+  videoId: string,
+): Promise<Record<ProviderName, ProviderState>> => {
+  const cached = searchCache.get(videoId);
+  if (cached) {
+    await cached.settled;
+    return cloneSearchData(cached.data);
+  }
+
+  const info = await searchInfoForVideo(videoId);
+  if (!info) return initialData();
+
+  const cache = createSearchCache(videoId);
+  const tasks = searchProviders(applyCustomQuery(info, videoId), cache.data);
+
+  await settleSearchCache(videoId, cache, tasks);
+
+  return cloneSearchData(cache.data);
 };
 
 export const retrySearch = (provider: ProviderName, info: SongInfo) => {

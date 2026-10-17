@@ -265,4 +265,6 @@ export interface PlayerAPIEvents {
     name: 'dataloaded' | 'dataupdated';
   };
   onStateChange: number;
+  /** Current media position, in seconds. */
+  onVideoProgress: number;
 }

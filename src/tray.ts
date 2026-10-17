@@ -22,6 +22,9 @@ import type { MenuTemplate } from './menu';
 // Prevent tray being garbage collected
 let tray: Electron.Tray | undefined;
 let traySongInfoCallback: SongInfoCallback | null = null;
+let likeChangedListener:
+  | ((event: Electron.IpcMainEvent, status: LikeType) => void)
+  | null = null;
 let currentLikeStatus: LikeType = LikeType.Indifferent;
 let defaultTrayIcon: Electron.NativeImage = nativeImage.createEmpty();
 let pausedTrayIcon: Electron.NativeImage = nativeImage.createEmpty();
@@ -83,6 +86,17 @@ export const setTrayOnMouseMove = (fn: MouseMoveEvent) => {
 
 export const getTrayBounds = () => tray?.getBounds();
 
+/**
+ * Removes only the tray's listener: the API server and the taskbar controls
+ * subscribe to the same channel, and `removeAllListeners` would mute them too.
+ */
+const removeLikeChangedListener = () => {
+  if (!likeChangedListener) return;
+
+  ipcMain.removeListener('peard:like-changed', likeChangedListener);
+  likeChangedListener = null;
+};
+
 export const setUpTray = (app: Electron.App, win: Electron.BrowserWindow) => {
   if (!config.get('options.tray')) {
     tray?.destroy();
@@ -91,7 +105,7 @@ export const setUpTray = (app: Electron.App, win: Electron.BrowserWindow) => {
       unregisterCallback(traySongInfoCallback);
       traySongInfoCallback = null;
     }
-    ipcMain.removeAllListeners('peard:like-changed');
+    removeLikeChangedListener();
     return;
   }
 
@@ -99,7 +113,7 @@ export const setUpTray = (app: Electron.App, win: Electron.BrowserWindow) => {
     unregisterCallback(traySongInfoCallback);
   }
 
-  ipcMain.removeAllListeners('peard:like-changed');
+  removeLikeChangedListener();
 
   const { playPause, next, previous, like, dislike } = getSongControls(win);
 
@@ -212,12 +226,13 @@ export const setUpTray = (app: Electron.App, win: Electron.BrowserWindow) => {
 
   // Like status changes come from the renderer.
   win.webContents.send('peard:setup-like-changed-listener');
-  ipcMain.on('peard:like-changed', (_, status: LikeType) => {
+  likeChangedListener = (_, status: LikeType) => {
     currentLikeStatus = status;
     if (tray) {
       tray.setContextMenu(buildTrayMenu());
     }
-  });
+  };
+  ipcMain.on('peard:like-changed', likeChangedListener);
 
   traySongInfoCallback = (songInfo, event) => {
     if (event === SongInfoEvent.TimeChanged) return;

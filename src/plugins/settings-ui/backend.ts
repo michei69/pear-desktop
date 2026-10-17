@@ -1,17 +1,9 @@
-import os from 'node:os';
+import { BrowserWindow, dialog, shell, type OpenDialogOptions } from 'electron';
 
-import {
-  app,
-  BrowserWindow,
-  dialog,
-  shell,
-  type OpenDialogOptions,
-} from 'electron';
-
-import { buildLabel, copyright } from '@/app-info';
 import * as config from '@/config';
 import { t } from '@/i18n';
 import { restart } from '@/providers/app-controls';
+import { getAppMeta } from '@/providers/app-meta';
 import { checkForAppUpdates, setUpdateChannel } from '@/providers/app-updates';
 import { flagMetadata } from '@/providers/flag-metadata';
 import { setYouTubeLanguage, youtubeLanguage } from '@/providers/language-sync';
@@ -32,67 +24,6 @@ import { createBackend } from '@/utils';
 import { NEW_UI_PROBE } from '@/utils/new-ui';
 
 import type { SettingsUIConfig } from './index';
-
-/** Subset of chromium's GPUInfo that the debug info cares about. */
-interface GpuInfo {
-  auxAttributes?: {
-    driverVersion?: string;
-    glRenderer?: string;
-    glVendor?: string;
-    softwareRendering?: boolean;
-  };
-  gpuDevice?: {
-    active?: boolean;
-    deviceId?: number;
-    deviceString?: string;
-    driverVendor?: string;
-    driverVersion?: string;
-    vendorId?: number;
-    vendorString?: string;
-  }[];
-}
-
-/** Vendor ids, for when chromium has no name for the card. */
-const GPU_VENDORS: Record<number, string> = {
-  0x1002: 'AMD',
-  0x1022: 'AMD',
-  0x106b: 'Apple',
-  0x10de: 'NVIDIA',
-  0x13b5: 'ARM',
-  0x5143: 'Qualcomm',
-  0x8086: 'Intel',
-};
-
-/**
- * A readable GPU name: `complete` gives chromium's renderer string (what
- * chrome://gpu shows), the bus ids are the fallback when it does not.
- */
-const describeGpu = (info: GpuInfo) => {
-  const devices = info.gpuDevice ?? [];
-  const device = devices.find((entry) => entry.active) ?? devices[0];
-
-  const named = [device?.vendorString, device?.deviceString]
-    .filter(Boolean)
-    .join(' ');
-  const ids = [
-    GPU_VENDORS[device?.vendorId ?? 0] ?? 'GPU',
-    device?.deviceId ? `0x${device.deviceId.toString(16)}` : '',
-  ]
-    .filter(Boolean)
-    .join(' ');
-
-  return {
-    renderer:
-      info.auxAttributes?.glRenderer ||
-      named ||
-      (device ? ids : '') ||
-      (info.auxAttributes?.softwareRendering
-        ? 'software rendering'
-        : undefined),
-    vendor: info.auxAttributes?.glVendor ?? device?.driverVendor,
-    driver: device?.driverVersion || info.auxAttributes?.driverVersion,
-  };
-};
 
 /** Every channel the modal calls, so `stop` can unregister them all. */
 const CHANNELS = [
@@ -200,55 +131,7 @@ export const backend = createBackend<
     ipc.handle(CONFIG_EDIT, () => config.edit());
     ipc.handle(TOGGLE_DEVTOOLS, () => window.webContents.toggleDevTools());
     ipc.handle(RESTART, () => restart());
-    ipc.handle(APP_META, async () => {
-      const metrics = app.getAppMetrics();
-      const workingSet = (type: string) =>
-        metrics
-          .filter((metric) => metric.type === type)
-          .reduce((total, metric) => total + metric.memory.workingSetSize, 0);
-
-      // Kilobytes, as Electron reports them. Browser is the app's own node process;
-      // whatever is left is the chromium renderers, whatever Electron calls them.
-      const main =
-        workingSet('Browser') || Math.round(process.memoryUsage().rss / 1024);
-      const known = new Set(['Browser', 'GPU']);
-      const renderers = metrics
-        .filter((metric) => !known.has(metric.type))
-        .reduce((total, metric) => total + metric.memory.workingSetSize, 0);
-
-      const cpus = os.cpus();
-
-      let gpu: GpuInfo = {};
-      try {
-        // Rejects when the GPU is entirely disabled; the feature status still
-        // says whether that is the case.
-        gpu = (await app.getGPUInfo('complete')) as GpuInfo;
-      } catch {}
-
-      return {
-        name: app.getName(),
-        version: app.getVersion(),
-        build: buildLabel(),
-        copyright,
-        platform: process.platform,
-        arch: process.arch,
-        osVersion: `${os.type()} ${os.release()}`,
-        versions: {
-          electron: process.versions.electron,
-          chrome: process.versions.chrome,
-          node: process.versions.node,
-        },
-        cpu: {
-          model: cpus[0]?.model.trim() ?? 'unknown',
-          threads: cpus.length,
-        },
-        gpu: {
-          ...describeGpu(gpu),
-          features: { ...app.getGPUFeatureStatus() },
-        },
-        memory: { main, renderers, gpu: workingSet('GPU') },
-      };
-    });
+    ipc.handle(APP_META, () => getAppMeta());
 
     ipc.handle(OPEN_EXTERNAL, async (url: string) => {
       try {

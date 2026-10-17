@@ -394,6 +394,10 @@
         "port": {
           "label": "Port"
         },
+        "mcp": {
+          "label": "MCP server",
+          "description": "Serve the v2 API as MCP tools at /mcp. Uses the same authorization as the rest of the API."
+        },
         "https": {
           "label": "HTTPS & Certificates",
           "submenu": {

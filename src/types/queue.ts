@@ -21,6 +21,9 @@ export type QueueAPI = {
   };
   continuation?: string;
   autoPlaying?: boolean;
+  getCurrentItemIndex: number;
+  isEmpty: boolean;
+  shuffle(): Promise<void>;
 };
 
 export type ToastElement = HTMLElement & {
@@ -53,8 +56,18 @@ export type AppElement = HTMLElement & AppAPI;
 export type AppAPI = {
   queue: QueueAPI;
   playerApi: MusicPlayer;
+  dispatch(obj: { type: string; payload?: unknown }): void;
 
   toastService: ToastService;
 
+  ytmusicReduxBehavior: {
+    store: {
+      store: Store;
+    };
+  };
+  navigate(page: string): void;
+  networkManager: {
+    fetch: <ReturnType, Data>(url: string, data: Data) => Promise<ReturnType>;
+  };
   // TODO: Add more
 };

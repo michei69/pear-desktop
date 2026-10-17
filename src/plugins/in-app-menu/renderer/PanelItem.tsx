@@ -198,22 +198,26 @@ export const PanelItem = (props: PanelItemProps) => {
   // does the equivalent by only handing floating-ui a real element
   // while toolTipOpen() is true, so autoUpdate starts/stops with
   // actual visibility instead of running unconditionally.
-  const position = useFloating(anchor, () => (toolTipOpen() ? toolTip() : null), {
-    whileElementsMounted: autoUpdate,
-    placement: 'bottom-start',
-    strategy: 'fixed',
-    middleware: [
-      offset({ mainAxis: 8 }),
-      size({
-        apply({ rects, elements }) {
-          elements.floating.style.setProperty(
-            '--max-width',
-            `${rects.reference.width}px`,
-          );
-        },
-      }),
-    ],
-  });
+  const position = useFloating(
+    anchor,
+    () => (toolTipOpen() ? toolTip() : null),
+    {
+      whileElementsMounted: autoUpdate,
+      placement: 'bottom-start',
+      strategy: 'fixed',
+      middleware: [
+        offset({ mainAxis: 8 }),
+        size({
+          apply({ rects, elements }) {
+            elements.floating.style.setProperty(
+              '--max-width',
+              `${rects.reference.width}px`,
+            );
+          },
+        }),
+      ],
+    },
+  );
 
   const handleHover = (event: MouseEvent) => {
     setToolTipOpen(true);

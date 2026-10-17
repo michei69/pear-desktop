@@ -4,6 +4,7 @@ import { createPlugin } from '@/utils';
 import { backend } from './backend';
 import { AuthStrategy, defaultAPIServerConfig } from './config';
 import { onMenu } from './menu';
+import { renderer } from './renderer';
 
 export default createPlugin({
   name: () => t('plugins.api-server.name'),
@@ -23,6 +24,12 @@ export default createPlugin({
       label: () => t('plugins.api-server.menu.port.label'),
       min: 0,
       max: 65535,
+    },
+    {
+      type: 'switch',
+      key: 'mcpEnabled',
+      label: () => t('plugins.api-server.menu.mcp.label'),
+      description: () => t('plugins.api-server.menu.mcp.description'),
     },
     {
       type: 'select',
@@ -85,4 +92,5 @@ export default createPlugin({
   menu: onMenu,
 
   backend,
+  renderer,
 });

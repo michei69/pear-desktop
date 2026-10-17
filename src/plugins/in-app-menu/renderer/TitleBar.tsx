@@ -269,6 +269,9 @@ export const TitleBar = (props: TitleBarProps) => {
     setMouseY(e.clientY);
   };
 
+  /** Reads through the setter, so nothing reactive is tracked in the IPC handler. */
+  const toggleCollapsed = () => setCollapsed((value) => !value);
+
   onMount(() => {
     props.ipc.on('close-all-in-app-menu-panel', async () => {
       setIgnoreTransition(true);
@@ -283,9 +286,7 @@ export const TitleBar = (props: TitleBarProps) => {
       setMenu(data() ?? null);
       setIgnoreTransition(false);
     });
-    props.ipc.on('toggle-in-app-menu', () => {
-      setCollapsed(!collapsed());
-    });
+    props.ipc.on('toggle-in-app-menu', toggleCollapsed);
 
     props.ipc.on('window-maximize', refetchMaximize);
     props.ipc.on('window-unmaximize', refetchMaximize);
@@ -327,7 +328,9 @@ export const TitleBar = (props: TitleBarProps) => {
         ytmusicAppLayout.classList.toggle('content-scrolled', isScrolled);
       });
     };
-    ytmusicAppLayout?.addEventListener('scroll', scrollListener, { passive: true });
+    ytmusicAppLayout?.addEventListener('scroll', scrollListener, {
+      passive: true,
+    });
   });
 
   createEffect(() => {
@@ -353,7 +356,7 @@ export const TitleBar = (props: TitleBarProps) => {
       id={'ytmd-title-bar-main-panel'}
     >
       <IconButton
-        onClick={() => setCollapsed(!collapsed())}
+        onClick={toggleCollapsed}
         style={{
           'border-top-left-radius': '4px',
         }}

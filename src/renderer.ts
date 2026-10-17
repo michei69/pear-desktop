@@ -81,6 +81,7 @@ function onApiLoaded() {
       window.dispatchEvent(new Event('resize')),
     );
 
+  // TODO: change those
   window.ipcRenderer.on('peard:previous-video', () => {
     document
       .querySelector<HTMLElement>('.previous-button.ytmusic-player-bar')

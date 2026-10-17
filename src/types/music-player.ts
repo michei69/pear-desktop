@@ -5,6 +5,14 @@ import type { PlayerAPIEvents } from './player-api-events';
 import type { VideoDetails } from './video-details';
 import type { WatchNextResponse } from '@/types/music-player-desktop-internal';
 
+/** The arguments one player API event delivers to its listener. */
+export type PlayerAPIEventArgs<K extends keyof PlayerAPIEvents> =
+  K extends 'videodatachange'
+    ? [name: PlayerAPIEvents[K]['name'], data: PlayerAPIEvents[K]['value']]
+    : K extends 'onStateChange' | 'onVideoProgress'
+      ? [payload: PlayerAPIEvents[K]]
+      : never;
+
 export interface MusicPlayer {
   getInternalApiInterface: <Parameters extends unknown[], Return>(
     ...params: Parameters
@@ -363,20 +371,12 @@ export interface MusicPlayer {
   getDuration: () => number;
   addEventListener: <K extends keyof PlayerAPIEvents>(
     type: K,
-    listener: (
-      this: Document,
-      name: K extends 'videodatachange' ? PlayerAPIEvents[K]['name'] : never,
-      data: K extends 'videodatachange' ? PlayerAPIEvents[K]['value'] : never,
-    ) => void,
+    listener: (this: Document, ...args: PlayerAPIEventArgs<K>) => void,
     options?: boolean | AddEventListenerOptions,
   ) => void;
   removeEventListener: <K extends keyof PlayerAPIEvents>(
     type: K,
-    listener: (
-      this: Document,
-      name: K extends 'videodatachange' ? PlayerAPIEvents[K]['name'] : never,
-      data: K extends 'videodatachange' ? PlayerAPIEvents[K]['value'] : never,
-    ) => void,
+    listener: (this: Document, ...args: PlayerAPIEventArgs<K>) => void,
     options?: boolean | EventListenerOptions,
   ) => void;
   getDebugText: () => string;
