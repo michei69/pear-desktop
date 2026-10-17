@@ -186,7 +186,7 @@ export const onMenu = async ({
       click() {
         const result = dialog.showOpenDialogSync({
           properties: ['openDirectory', 'createDirectory'],
-          defaultPath: getFolder(config.downloadFolder ?? ''),
+          defaultPath: getFolder(config.downloadFolder),
         });
         if (result) {
           setConfig({ downloadFolder: result[0] });
