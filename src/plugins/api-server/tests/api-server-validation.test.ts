@@ -30,16 +30,25 @@ const post = (body: unknown) =>
     body: JSON.stringify(body),
   });
 
-test('readable documents a 502 for a renderer that does not answer', () => {
-  const route = readable({
-    path: '/thing',
-    summary: 'get a thing',
-    description: 'Get a thing',
+test('readable documents a 502 only for renderer-backed routes', () => {
+  const cached = readable({
+    path: '/cached',
+    summary: 'get cached state',
+    description: 'Get cached state',
     schema: z.object({ ok: z.boolean() }),
     tags: [],
   });
+  const rendererBacked = readable({
+    path: '/live',
+    summary: 'ask the player',
+    description: 'Ask the player',
+    schema: z.object({ ok: z.boolean() }),
+    rendererBacked: true,
+    tags: [],
+  });
 
-  expect(route.responses).toHaveProperty('502');
+  expect(cached.responses).not.toHaveProperty('502');
+  expect(rendererBacked.responses).toHaveProperty('502');
 });
 
 test('a valid request reaches the handler', async () => {

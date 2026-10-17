@@ -61,6 +61,10 @@ export const createPlayerState = () => {
   let speed: number | undefined;
   let rating: LikeType = LikeType.Indifferent;
 
+  /** The reported volume, 100 until the renderer reports it. */
+  const volumeLevel = () => volume?.state ?? 100;
+  const muted = () => volume?.isMuted ?? false;
+
   const listeners = new Set<(event: PlayerEvent) => void>();
   // A renderer can report the same change twice (listener stacks, a fallback
   // racing the real update). Identical back-to-back frames are noise to every
@@ -163,11 +167,11 @@ export const createPlayerState = () => {
       return shuffle;
     },
     get muted() {
-      return volume?.isMuted ?? false;
+      return muted();
     },
     /** The reported volume, or the 100 clients have always been told until then. */
     get volumeLevel() {
-      return volume?.state ?? 100;
+      return volumeLevel();
     },
     get volume() {
       return volume;
@@ -184,11 +188,11 @@ export const createPlayerState = () => {
       return {
         song,
         isPlaying: song ? !song.isPaused : false,
-        muted: this.muted,
+        muted: muted(),
         position: song?.elapsedSeconds ?? 0,
         // WebSocket clients have always been told 100 until the renderer
         // reports its volume.
-        volume: this.volumeLevel,
+        volume: volumeLevel(),
         // ...and NONE until it reports a repeat mode.
         repeat: repeat ?? 'NONE',
         shuffle,

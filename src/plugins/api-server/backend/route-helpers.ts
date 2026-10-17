@@ -26,6 +26,9 @@ export const validationHook: Hook<
   );
 };
 
+/** The 502 description for routes that ask the renderer and can time out. */
+export const PLAYER_UNAVAILABLE = 'The player did not answer';
+
 export const SUCCESS = { 204: { description: 'Success' } };
 export const JSON_CONTENT = 'application/json';
 
@@ -79,14 +82,16 @@ type ReadableOptions<S extends z.ZodType, Q extends z.ZodObject> = {
   schema: S;
   query?: Q;
   emptyDescription?: string;
+  /** The route asks the renderer, so it can answer 502 on a timeout. */
+  rendererBacked?: boolean;
   deprecated?: boolean;
   tags: string[];
 };
 
 /**
- * A GET route returning JSON, optionally 204 when there's nothing to report,
- * and 502 when the renderer doesn't answer. `query` adds validated query
- * parameters; `deprecated` marks the route so.
+ * A GET route returning JSON, optionally 204 when there's nothing to report.
+ * `rendererBacked` documents the 502 a renderer timeout answers; `query` adds
+ * validated query parameters; `deprecated` marks the route so.
  */
 export const readable = <
   S extends z.ZodType,
@@ -98,6 +103,7 @@ export const readable = <
   schema,
   query = z.object({}) as Q,
   emptyDescription,
+  rendererBacked,
   deprecated,
   tags,
 }: ReadableOptions<S, Q>) =>
@@ -115,9 +121,11 @@ export const readable = <
         content: { [JSON_CONTENT]: { schema } },
       },
       ...(emptyDescription ? { 204: { description: emptyDescription } } : {}),
-      502: {
-        description: 'The player did not answer',
-        content: { [JSON_CONTENT]: { schema: ErrorSchema } },
-      },
+      ...(rendererBacked && {
+        502: {
+          description: PLAYER_UNAVAILABLE,
+          content: { [JSON_CONTENT]: { schema: ErrorSchema } },
+        },
+      }),
     },
   });
