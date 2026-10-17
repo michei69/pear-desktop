@@ -20,9 +20,11 @@ export const ApiActions = {
   getMute: 'get-mute',
   getLikeState: 'get-like-state',
   getQueue: 'get-queue',
+  getAutoplay: 'get-autoplay',
   getLyrics: 'get-lyrics',
   translateLyrics: 'translate-lyrics',
   search: 'search',
+  browse: 'browse',
 
   /** Commands: fire and forget. */
   nextVideo: 'next-video',
@@ -49,6 +51,7 @@ export const ApiActions = {
   removeFromQueue: 'remove-from-queue',
   setQueueIndex: 'set-queue-index',
   clearQueue: 'clear-queue',
+  downloadVideo: 'download-video',
 } as const;
 
 export type ApiAction = (typeof ApiActions)[keyof typeof ApiActions];
@@ -59,3 +62,30 @@ export const apiRequest = (action: ApiAction) => `${API_IPC_PREFIX}${action}`;
 
 export const apiReply = (action: ApiAction) =>
   `${API_IPC_PREFIX}reply-${action}`;
+
+/**
+ * Events the v2 renderer pushes to the backend for the WebSocket. The backend
+ * rebroadcasts them as `LYRICS_CHANGED` / `TRANSLATION_UPDATED`.
+ */
+export const V2RendererEvents = {
+  lyricsChanged: `${API_IPC_PREFIX}lyrics-changed`,
+  translationUpdated: `${API_IPC_PREFIX}translation-updated`,
+} as const;
+
+export type V2RendererEvent =
+  (typeof V2RendererEvents)[keyof typeof V2RendererEvents];
+
+/** Same shape as `GET /video/lyrics`; broadcast as `LYRICS_CHANGED`. */
+export interface LyricsChangedPayload {
+  videoId: string | null;
+  activeProvider: string | null;
+  providers: unknown[];
+}
+
+/** Broadcast as `TRANSLATION_UPDATED` when the shown translation finishes. */
+export interface TranslationUpdatedPayload {
+  videoId: string;
+  language: string | null;
+  provider: string | null;
+  lines: string[];
+}

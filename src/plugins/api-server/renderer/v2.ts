@@ -1,14 +1,4 @@
 import {
-  hasLyricText,
-  providerNames,
-  type ProviderName,
-  type ProviderState,
-} from '@/plugins/synced-lyrics/providers';
-import {
-  type LineLyrics,
-  type LyricResult,
-} from '@/plugins/synced-lyrics/types';
-import {
   buildSongInfo,
   resolveScrobbleOptions,
   type ScrobbleOptions,
@@ -28,6 +18,8 @@ import {
 import { type AppAPI } from '@/types/queue';
 import { type SearchBoxElement } from '@/types/search-box-element';
 import { clamp } from '@/utils/math';
+
+import { getLyricsReply } from './lyrics-reply';
 
 import { ApiActions, apiReply, apiRequest, type ApiAction } from '../channels';
 
@@ -71,32 +63,6 @@ type QueueItemResult = {
   renderer?: ItemPlaylistPanelVideoRenderer;
 };
 
-/** One line of synced lyrics, minus the UI-only `status` field. */
-type LyricsLine = Pick<LineLyrics, 'time' | 'timeInMs' | 'duration' | 'text'>;
-
-/** One provider's lyrics for the current song. */
-type LyricsProviderResult = {
-  provider: ProviderName;
-  state: ProviderState['state'];
-  title: string;
-  artists: string[];
-  lyrics?: string;
-  lines?: LyricsLine[];
-  translation?: {
-    lyrics?: string;
-    lines?: LyricsLine[];
-    language?: string;
-    provider?: string;
-  };
-};
-
-/** Every provider that found lyrics, plus the one the UI is showing. */
-type LyricsReply = {
-  videoId: string | null;
-  activeProvider: ProviderName | null;
-  providers: LyricsProviderResult[];
-};
-
 /** A byline run, whichever renderer the byline came from. */
 type BylineRun = {
   text: string;
@@ -109,13 +75,62 @@ type BylineRun = {
   };
 };
 
+/** Autoplay entries, which the queue store keeps outside its `items`. */
+type AutoplayReply = {
+  items?: QueueItemResult[];
+  continuation?: string;
+};
+
+/** A text node in a browse renderer: `runs`, `simpleText`, or both. */
+type BrowseText = { runs?: { text?: string }[]; simpleText?: string };
+
+/** A browse header, whichever flavour the page uses. */
+type BrowseHeaderRenderer = {
+  title?: BrowseText;
+  subtitle?: BrowseText;
+  description?: BrowseText;
+  straplineTextOne?: BrowseText;
+  thumbnail?: {
+    musicThumbnailRenderer?: { thumbnail?: ThumbnailDetailsClass };
+    croppedSquareThumbnailRenderer?: { thumbnail?: ThumbnailDetailsClass };
+  };
+};
+
+/** A two-row item: an album, playlist or artist card in a shelf. */
+type MusicTwoRowItemRenderer = {
+  title?: BrowseText;
+  subtitle?: { runs?: BylineRun[] };
+  thumbnailRenderer?: {
+    musicThumbnailRenderer?: { thumbnail?: ThumbnailDetailsClass };
+  };
+  navigationEndpoint?: {
+    watchEndpoint?: { videoId?: string };
+    browseEndpoint?: { browseId?: string };
+  };
+};
+
+/** The curated page `browse` answers with. */
+type BrowseReply = {
+  browseId: string | null;
+  title?: string;
+  subtitle?: string;
+  description?: string;
+  thumbnail?: string;
+  thumbnails?: ThumbnailElement[];
+  results: SearchResult[];
+  continuation?: string;
+};
+
+/** A JSON object, as read when walking an untyped YouTube Music response. */
+type JsonObject = { [key: string]: unknown };
+
 /** A run made only of separators (` • `, `, `, ` & `) names nothing. */
 const bylineSeparator = /^[^\p{L}\p{N}]+$/u;
 
 /**
- * Byline runs that read as metadata rather than as a name: counts, dates,
- * durations, ages and profile handles. The patterns stay loose on purpose —
- * real channels are called "50 Cent" or "The Dev Show - Interviews".
+ * Byline runs that read as metadata rather than a name: counts, dates,
+ * durations, ages and profile handles. Loose on purpose — real channels are
+ * called "50 Cent" or "The Dev Show - Interviews".
  */
 const bylineMetadata = [
   /^@/,
@@ -137,13 +152,367 @@ const creditedPageTypes = new Set<PageType>([
 /** Episode rows carry a `MPED<videoId>` browse id instead of a video id. */
 const episodeBrowsePrefix = 'MPED';
 
+/** The like button, where the current song's like state lives. */
+const getLikeButtonRenderer = () =>
+  document.querySelector<
+    HTMLElement & {
+      updateLikeStatus: (status: LikeStatus) => void;
+      likeStatus: string;
+    }
+  >('#like-button-renderer');
+
+/** Every size a thumbnail block carries, absent when it carries none. */
+const thumbnailSizes = (details?: ThumbnailDetailsClass) =>
+  details?.thumbnails?.length ? details.thumbnails : undefined;
+
+/** The largest of a renderer's thumbnails. */
+const thumbnailUrl = (thumbnails?: ThumbnailElement[]) =>
+  thumbnails?.at(-1)?.url;
+
+/**
+ * A queue entry's renderer: the item itself, or a wrapper's primary half. The
+ * redux queue is runtime data, so a slot can hold `null`.
+ */
+const queueRenderer = (item: QueueItem | null | undefined) =>
+  item?.playlistPanelVideoRenderer ??
+  item?.playlistPanelVideoWrapperRenderer?.primaryRenderer
+    ?.playlistPanelVideoRenderer;
+
+/**
+ * The queue position of the entry playing `videoId`, or -1 when no entry does.
+ * Never `findIndex(...) || -1`: a match at index 0 would read as "not found".
+ */
+const queueIndexOfVideo = (items: QueueItem[] | undefined, videoId: string) =>
+  items?.findIndex((item) => queueRenderer(item)?.videoId === videoId) ?? -1;
+
+/** The run that divides a queue byline: `artist • album • year`. */
+const bylineDivider = ' • ';
+
+/** A byline's parts, with the empty ones a stray divider leaves behind gone. */
+const bylineParts = (runs?: LongBylineTextRun[]) =>
+  (runs ?? [])
+    .map((run) => run.text)
+    .join('')
+    .split(bylineDivider)
+    .map((part) => part.trim())
+    .filter(Boolean);
+
+/** A byline part that reads as a release year. */
+const yearPattern = /^\d{4}$/;
+
+/**
+ * A queue entry, read out of its raw playlist panel renderer. `index` is the
+ * item's position in the raw queue, which is what the move, remove and
+ * set-index endpoints take.
+ */
+const queueItem = (
+  renderer: ItemPlaylistPanelVideoRenderer,
+  index: number,
+  raw: boolean,
+): QueueItemResult | undefined => {
+  const { videoId } = renderer;
+  // An item with no video id cannot be played, so it is not an entry.
+  if (!videoId) return undefined;
+
+  const parts = bylineParts(renderer.longBylineText?.runs);
+  // `artist • album • year`: the year is the last part that reads as one, and
+  // the album the first part after the artist that is not the year.
+  const year = parts.filter((part) => yearPattern.test(part)).at(-1);
+  const album = parts.slice(1).find((part) => part !== year);
+  const thumbnails = thumbnailSizes(renderer.thumbnail);
+
+  return {
+    videoId,
+    title: renderer.title?.runs?.map((run) => run.text).join(''),
+    artist: parts[0],
+    album,
+    year,
+    duration: renderer.lengthText?.runs?.[0]?.text,
+    ...(thumbnails && { thumbnails }),
+    thumbnail: thumbnailUrl(thumbnails),
+    url: `https://music.youtube.com/watch?v=${videoId}`,
+    selected: renderer.selected,
+    index,
+    playlistSetVideoId: renderer.playlistSetVideoId,
+    canReorder: renderer.canReorder,
+    ...(raw && { renderer }),
+  };
+};
+
+/** Every browse result id opens either a playlist page or a browse page. */
+const searchResultUrl = (browseId: string) =>
+  browseId.startsWith('VL')
+    ? `https://music.youtube.com/playlist?list=${browseId.slice(2)}`
+    : `https://music.youtube.com/browse/${browseId}`;
+
+const searchResultIds = (videoId?: string, browseId?: string) => {
+  if (videoId) {
+    return { videoId, url: `https://music.youtube.com/watch?v=${videoId}` };
+  }
+  if (browseId) return { browseId, url: searchResultUrl(browseId) };
+  return {};
+};
+
+/**
+ * The credited entities in the runs a byline has left after its type label. A
+ * linked run credits whoever it opens — artist, channel or show — but a filtered
+ * search also links the album, so the page type decides. An unlinked run is a
+ * name unless it reads as metadata.
+ */
+const bylineArtists = (runs: BylineRun[]) =>
+  runs
+    .filter((run) => {
+      if (bylineSeparator.test(run.text)) return false;
+      const pageType =
+        run.navigationEndpoint?.browseEndpoint
+          ?.browseEndpointContextSupportedConfigs
+          ?.browseEndpointContextMusicConfig?.pageType;
+      if (pageType) return creditedPageTypes.has(pageType);
+      return !bylineMetadata.some((pattern) => pattern.test(run.text));
+    })
+    .map((run) => run.text)
+    .join(', ') || undefined;
+
+/**
+ * A row's id: playable rows carry `playlistItemData`, rows that open a page
+ * carry a row-level `navigationEndpoint`, and episode rows carry an
+ * `MPED<videoId>` browse id.
+ */
+const rowResult = (row: MusicResponsiveListItemRenderer): SearchResult => {
+  const columns = row.flexColumns?.map(
+    (column) =>
+      column.musicResponsiveListItemFlexColumnRenderer?.text?.runs ?? [],
+  );
+  // The byline leads with the type label, unless it opens with the channel.
+  const byline = columns?.[1] ?? [];
+  const labelled = !byline[0]?.navigationEndpoint;
+  const firstRun = columns?.[0]?.[0]?.navigationEndpoint;
+  const browseId =
+    firstRun?.browseEndpoint?.browseId ??
+    row.navigationEndpoint?.browseEndpoint?.browseId;
+  const videoId =
+    row.playlistItemData?.videoId ??
+    firstRun?.watchEndpoint?.videoId ??
+    row.navigationEndpoint?.watchEndpoint?.videoId ??
+    (browseId?.startsWith(episodeBrowsePrefix)
+      ? browseId.slice(episodeBrowsePrefix.length)
+      : undefined);
+
+  const thumbnails = thumbnailSizes(
+    row.thumbnail?.musicThumbnailRenderer?.thumbnail,
+  );
+
+  return {
+    title: columns?.[0]?.[0]?.text,
+    type: labelled ? byline[0]?.text : undefined,
+    artist: bylineArtists(byline.slice(labelled ? 1 : 0)),
+    thumbnail: thumbnailUrl(thumbnails),
+    ...(thumbnails && { thumbnails }),
+    ...searchResultIds(videoId, videoId ? undefined : browseId),
+  };
+};
+
+/**
+ * The top-result card: the same fields, with its id on `onTap`. A radio card's
+ * subtitle is a list of artists with no type label, and a lone run cannot carry
+ * one either.
+ */
+const cardResult = (card: MusicCardShelfRenderer): SearchResult => {
+  const subtitle = card.subtitle?.runs ?? [];
+  const labelled = subtitle.length > 1 && !subtitle[0]?.navigationEndpoint;
+  const thumbnails = thumbnailSizes(
+    card.thumbnail?.musicThumbnailRenderer?.thumbnail,
+  );
+
+  return {
+    title: card.title?.runs?.[0]?.text,
+    type: labelled ? subtitle[0]?.text : undefined,
+    artist: bylineArtists(subtitle.slice(labelled ? 1 : 0)),
+    thumbnail: thumbnailUrl(thumbnails),
+    ...(thumbnails && { thumbnails }),
+    ...searchResultIds(
+      card.onTap?.watchEndpoint?.videoId,
+      card.onTap?.browseEndpoint?.browseId,
+    ),
+  };
+};
+
+/** The rows a card's contents, a shelf or an item section carry. */
+const sectionRows = (
+  section: SectionListRendererContent,
+): { musicResponsiveListItemRenderer?: MusicResponsiveListItemRenderer }[] =>
+  section.musicCardShelfRenderer?.contents ??
+  section.musicShelfRenderer?.contents ??
+  section.itemSectionRenderer?.contents ??
+  [];
+
+/** A section's results: the top card itself, then the rows it holds. */
+const sectionResults = (
+  section: SectionListRendererContent,
+): SearchResult[] => {
+  const card = section.musicCardShelfRenderer;
+  const rows = sectionRows(section).flatMap((content) =>
+    content.musicResponsiveListItemRenderer
+      ? [rowResult(content.musicResponsiveListItemRenderer)]
+      : [],
+  );
+  return card ? [cardResult(card), ...rows] : rows;
+};
+
+/** A search response's results, from its catalog tab only. */
+const searchResults = (result: Response) => {
+  const tabs = result?.contents?.tabbedSearchResultsRenderer?.tabs ?? [];
+  const sections =
+    tabs.find(
+      (tab) => tab.tabRenderer?.tabIdentifier === 'music_search_catalog',
+    )?.tabRenderer.content?.sectionListRenderer?.contents ?? [];
+
+  // A result with no id would have no URL, so it is not a result.
+  return sections
+    .flatMap(sectionResults)
+    .filter((item) => item.videoId || item.browseId);
+};
+
+/** Maps raw queue-style items to the reply shape, skipping unplayable ones. */
+const queueItems = (items: QueueItem[] | undefined, raw: boolean) =>
+  items?.flatMap((item, index) => {
+    const renderer = queueRenderer(item);
+    const mapped = renderer && queueItem(renderer, index, raw);
+    return mapped ? [mapped] : [];
+  });
+
+/** The text of a browse text node. */
+const browseText = (node?: BrowseText) =>
+  node?.simpleText ??
+  node?.runs?.map((run) => run.text ?? '').join('') ??
+  undefined;
+
+/** A browse header, flattened to the fields a client needs. */
+const browseHeader = (
+  node: JsonObject,
+):
+  | Pick<
+      BrowseReply,
+      'title' | 'subtitle' | 'description' | 'thumbnail' | 'thumbnails'
+    >
+  | undefined => {
+  const header = (node.musicResponsiveHeaderRenderer ??
+    node.musicDetailHeaderRenderer ??
+    node.musicImmersiveHeaderRenderer ??
+    node.musicVisualHeaderRenderer) as BrowseHeaderRenderer | undefined;
+  if (!header?.title) return undefined;
+
+  const thumbnails = thumbnailSizes(
+    header.thumbnail?.musicThumbnailRenderer?.thumbnail ??
+      header.thumbnail?.croppedSquareThumbnailRenderer?.thumbnail,
+  );
+
+  return {
+    title: browseText(header.title),
+    subtitle:
+      browseText(header.subtitle) ?? browseText(header.straplineTextOne),
+    description: browseText(header.description),
+    thumbnail: thumbnailUrl(thumbnails),
+    ...(thumbnails && { thumbnails }),
+  };
+};
+
+/** A two-row item (album, playlist or artist card) as one search-shaped result. */
+const twoRowResult = (item: MusicTwoRowItemRenderer): SearchResult => {
+  const subtitle = item.subtitle?.runs ?? [];
+  const labelled = subtitle.length > 1 && !subtitle[0]?.navigationEndpoint;
+  const thumbnails = thumbnailSizes(
+    item.thumbnailRenderer?.musicThumbnailRenderer?.thumbnail,
+  );
+  const videoId = item.navigationEndpoint?.watchEndpoint?.videoId;
+  const browseId = item.navigationEndpoint?.browseEndpoint?.browseId;
+
+  return {
+    title: browseText(item.title),
+    type: labelled ? subtitle[0]?.text : undefined,
+    artist: bylineArtists(subtitle.slice(labelled ? 1 : 0)),
+    thumbnail: thumbnailUrl(thumbnails),
+    ...(thumbnails && { thumbnails }),
+    ...searchResultIds(videoId, videoId ? undefined : browseId),
+  };
+};
+
+/** The next page token a continuations array carries, if any. */
+const continuationToken = (continuations?: unknown) => {
+  const list = continuations as
+    | {
+        nextRadioContinuationData?: { continuation?: string };
+        nextContinuationData?: { continuation?: string };
+      }[]
+    | undefined;
+
+  for (const entry of list ?? []) {
+    const token =
+      entry.nextRadioContinuationData?.continuation ??
+      entry.nextContinuationData?.continuation;
+    if (token) return token;
+  }
+  return undefined;
+};
+
+/** Visits every object in a JSON tree, depth first, in response order. */
+const walkJson = (node: unknown, visit: (object: JsonObject) => void) => {
+  if (Array.isArray(node)) {
+    for (const entry of node) walkJson(entry, visit);
+    return;
+  }
+  if (!node || typeof node !== 'object') return;
+
+  const object = node as JsonObject;
+  visit(object);
+  for (const value of Object.values(object)) walkJson(value, visit);
+};
+
+/**
+ * Flattens an untyped browse response: its header, every item renderer it
+ * carries (rows, cards and two-row shelf items) and its continuation token.
+ */
+const browseContent = (
+  response: unknown,
+  browseId: string | null,
+): BrowseReply => {
+  const results: SearchResult[] = [];
+  let header: ReturnType<typeof browseHeader>;
+  let continuation: string | undefined;
+
+  walkJson(response, (node) => {
+    const row = node.musicResponsiveListItemRenderer as
+      | MusicResponsiveListItemRenderer
+      | undefined;
+    if (row) results.push(rowResult(row));
+
+    const card = node.musicCardShelfRenderer as
+      | MusicCardShelfRenderer
+      | undefined;
+    if (card) results.push(cardResult(card));
+
+    const twoRow = node.musicTwoRowItemRenderer as
+      | MusicTwoRowItemRenderer
+      | undefined;
+    if (twoRow) results.push(twoRowResult(twoRow));
+
+    header ??= browseHeader(node);
+    continuation ??= continuationToken([node]);
+  });
+
+  return {
+    browseId,
+    ...(header ?? {}),
+    results,
+    ...(continuation && { continuation }),
+  };
+};
+
 /**
  * v2's renderer half: the listeners that answer the API server's backend on the
  * `peard-api:` channels declared in `channels.ts`. `registerV2` wires every
- * action to the player API and returns the disposer that removes exactly the
- * listeners it registered, so the plugin can re-register against a new player
- * API and tear everything down on `stop`. A future v3 gets its own module next
- * to this one; v1 has no renderer half (see `../renderer.ts`).
+ * action to the player API and returns a disposer that removes exactly the
+ * listeners it registered.
  */
 export const registerV2 = (
   api: MusicPlayer,
@@ -152,13 +521,6 @@ export const registerV2 = (
   const app = document.querySelector<HTMLElement & AppAPI>('ytmusic-app');
   const getState = app?.ytmusicReduxBehavior.store.store.getState;
   const getQueue = () => getState?.().queue;
-  const getLikeButtonRenderer = () =>
-    document.querySelector<
-      HTMLElement & {
-        updateLikeStatus: (status: LikeStatus) => void;
-        likeStatus: string;
-      }
-    >('#like-button-renderer');
 
   /** Answers a getter on its matching reply channel. */
   const reply = (action: ApiAction, payload: unknown) => {
@@ -264,11 +626,7 @@ export const registerV2 = (
     reply(ApiActions.getQueue, {
       autoplay: data?.autoplay,
       isInfinite: data?.isInfinite,
-      items: data?.items?.flatMap((item, index) => {
-        const renderer = queueRenderer(item);
-        const mapped = renderer && queueItem(renderer, index, raw);
-        return mapped ? [mapped] : [];
-      }),
+      items: queueItems(data?.items, raw),
       nextQueueItemId: data?.nextQueueItemId,
       playbackContentMode: data?.playbackContentMode,
       repeatMode: data?.repeatMode,
@@ -278,86 +636,88 @@ export const registerV2 = (
     });
   };
 
-  /** Synced lines as the API reports them: no UI-only `status` field. */
-  const lyricLines = (lines?: LineLyrics[]) =>
-    lines?.map(({ time, timeInMs, duration, text }) => ({
-      time,
-      timeInMs,
-      duration,
-      text,
-    }));
-
-  /** A provider's result, or nothing when it found no lyrics at all. */
-  const lyricsProvider = (
-    provider: ProviderName,
-    state: ProviderState['state'],
-    data: LyricResult | null,
-  ): LyricsProviderResult | undefined => {
-    if (!hasLyricText(data)) return undefined;
-
-    const result = data as LyricResult;
-    const translation = result.translation;
-    // Only carry a translation that actually has something in it: the other
-    // optional fields follow the same rule, so a client never sees an empty
-    // object standing in for "no translation".
-    const translationLines = lyricLines(translation?.lines);
-
-    return {
-      provider,
-      state,
-      title: result.title,
-      artists: result.artists,
-      ...(result.lyrics && { lyrics: result.lyrics }),
-      ...(result.lines?.length && { lines: lyricLines(result.lines) }),
-      ...((translationLines?.length || translation?.lyrics) && {
-        translation: { ...translation, lines: translationLines },
-      }),
-    };
-  };
-
   /**
-   * Every provider's lyrics for the current song. The store is imported
-   * dynamically on purpose: it has top-level Solid side effects, so with the
-   * plugin off it must not be evaluated at all — and with it on, it is already
-   * loaded and this returns the live store. Nothing here may throw before the
-   * reply, because the backend gives up after 5s.
+   * The autoplay entries, which the queue store keeps in `automixItems` rather
+   * than `items`. A continuation asks `/next` for the next automix page.
    */
-  const apiGetLyrics = async () => {
-    let lyrics: LyricsReply | null = null;
+  const apiGetAutoplay = async (raw = false, continuation?: string) => {
+    if (!app) return reply(ApiActions.getAutoplay, null);
 
-    try {
-      if (await window.mainConfig.plugins.isEnabled('synced-lyrics')) {
-        const store = await import('@/plugins/synced-lyrics/renderer/store');
-        const videoId = store.currentLyricsVideoId();
-        const states = await store.allProviderLyrics();
+    if (continuation) {
+      try {
+        const data = await app.networkManager.fetch<
+          {
+            continuationContents?: {
+              playlistPanelContinuation?: {
+                contents?: QueueItem[];
+                continuations?: unknown;
+              };
+            };
+          },
+          { continuation: string }
+        >('/next?prettyPrint=false', { continuation });
+        const panel = data?.continuationContents?.playlistPanelContinuation;
 
-        lyrics = {
-          videoId,
-          activeProvider: videoId === null ? null : store.lyricsStore.provider,
-          providers: providerNames.flatMap((provider) => {
-            const state = states[provider];
-            const entry =
-              state && lyricsProvider(provider, state.state, state.data);
-
-            return entry ? [entry] : [];
-          }),
-        };
+        reply(ApiActions.getAutoplay, {
+          items: queueItems(panel?.contents, raw),
+          continuation: continuationToken(panel?.continuations),
+        } satisfies AutoplayReply);
+      } catch (error) {
+        console.error('[api-server] autoplay continuation failed:', error);
+        reply(ApiActions.getAutoplay, null);
       }
-    } catch (error) {
-      console.error('[api-server] getLyrics failed:', error);
+      return;
     }
 
-    reply(ApiActions.getLyrics, lyrics);
+    const data = getQueue();
+    reply(ApiActions.getAutoplay, {
+      items: queueItems(data?.automixItems as QueueItem[] | undefined, raw),
+      continuation: app.queue.continuation,
+    } satisfies AutoplayReply);
   };
 
   /**
-   * Translate the current song into a caller-supplied language, for the API.
-   * `translateForLanguage` writes nothing to the UI, so the lyrics the app shows
-   * are unaffected. It reports failures as data with a `reason`, which the
-   * backend turns into a status; this handler only has to pass it through
-   * without throwing before the reply.
+   * Curated info for a YouTube Music browse page (album, playlist, artist, ...),
+   * or its raw response with `raw`. A continuation asks for the next page.
    */
-  const apiTranslateLyrics = async (language?: string) => {
+  const apiBrowse = async (
+    browseId?: string,
+    continuation?: string,
+    raw = false,
+  ) => {
+    if (!app) return reply(ApiActions.browse, null);
+
+    try {
+      const data = await app.networkManager.fetch<
+        unknown,
+        { browseId?: string; continuation?: string }
+      >(
+        '/browse?prettyPrint=false',
+        continuation ? { continuation } : { browseId },
+      );
+
+      reply(
+        ApiActions.browse,
+        raw ? data : browseContent(data, browseId ?? null),
+      );
+    } catch (error) {
+      console.error('[api-server] browse failed:', error);
+      reply(ApiActions.browse, null);
+    }
+  };
+
+  /** The same reply `GET /video/lyrics` builds, from the shared helper. */
+  const apiGetLyrics = async (videoId?: string) => {
+    reply(ApiActions.getLyrics, await getLyricsReply(videoId));
+  };
+
+  /**
+   * Translate a song into a caller-supplied language, for the API. `videoId`
+   * asks about another video. `translateForLanguage` writes nothing to the UI,
+   * and reports failures as data with a `reason` for the backend to turn into a
+   * status.
+   */
+  const apiTranslateLyrics = async (language?: string, videoId?: string) => {
     let result: LanguageTranslationResult | null = null;
 
     try {
@@ -369,7 +729,7 @@ export const registerV2 = (
         const { translateForLanguage } =
           await import('@/plugins/synced-lyrics/renderer/translation-store');
 
-        result = await translateForLanguage(language);
+        result = await translateForLanguage(language, videoId);
       }
     } catch (error) {
       console.error('[api-server] translateLyrics failed:', error);
@@ -379,16 +739,20 @@ export const registerV2 = (
   };
 
   const apiAddVideosToQueue = (
-    videoIds: string[],
+    videoIds: string[] = [],
     queueInsertPosition: QueueInsertPosition = 'INSERT_AFTER_CURRENT_VIDEO',
+    playlistIds: string[] = [],
   ) => {
     const queue = getQueue();
-    if (!app || !queue || !videoIds) return;
+    if (!app || !queue) return;
+    if (!videoIds.length && !playlistIds.length) return;
+
     app.networkManager
       .fetch('/music/get_queue', {
         queueContextParams: queue.queueContextParams,
         queueInsertPosition,
-        videoIds: videoIds,
+        ...(videoIds.length && { videoIds }),
+        ...(playlistIds.length && { playlistIds }),
       })
       .then((result) => {
         if (
@@ -431,12 +795,12 @@ export const registerV2 = (
   const apiMoveVideoInQueue = (from: number | string, to: number | string) => {
     if (typeof from === 'string' && Number.isNaN(Number(from))) {
       // from is a video id
-      from = queueIndexOfVideo(from);
+      from = queueIndexOfVideo(getQueue()?.items, from);
       if (from == -1) return;
     }
     if (typeof to === 'string' && Number.isNaN(Number(to))) {
       // to is a video id
-      to = queueIndexOfVideo(to);
+      to = queueIndexOfVideo(getQueue()?.items, to);
       if (to == -1) return;
     }
     app?.dispatch({
@@ -449,8 +813,8 @@ export const registerV2 = (
   };
   const apiRemoveVideoFromQueue = (video: number | string) => {
     if (typeof video === 'string' && Number.isNaN(Number(video))) {
-      // from is a video id
-      video = queueIndexOfVideo(video);
+      // video is a video id
+      video = queueIndexOfVideo(getQueue()?.items, video);
       if (video == -1) return;
     }
     app?.dispatch({
@@ -460,8 +824,8 @@ export const registerV2 = (
   };
   const apiSetQueueIndex = (video: number | string) => {
     if (typeof video === 'string' && Number.isNaN(Number(video))) {
-      // from is a video id
-      video = queueIndexOfVideo(video);
+      // video is a video id
+      video = queueIndexOfVideo(getQueue()?.items, video);
       if (video == -1) return;
     }
     app?.dispatch({
@@ -478,216 +842,22 @@ export const registerV2 = (
       type: 'CLEAR',
     });
   };
-
-  /** Every size a thumbnail block carries, absent when it carries none. */
-  const thumbnailSizes = (details?: ThumbnailDetailsClass) =>
-    details?.thumbnails?.length ? details.thumbnails : undefined;
-
-  /** The largest of a renderer's thumbnails. */
-  const thumbnailUrl = (thumbnails?: ThumbnailElement[]) =>
-    thumbnails?.at(-1)?.url;
-
-  /**
-   * A queue entry's renderer: the item itself, or a wrapper's primary half. The
-   * redux queue is runtime data, so a slot can hold `null`; one such entry must
-   * not take every other item's reply down with it.
-   */
-  const queueRenderer = (item: QueueItem | null | undefined) =>
-    item?.playlistPanelVideoRenderer ??
-    item?.playlistPanelVideoWrapperRenderer?.primaryRenderer
-      ?.playlistPanelVideoRenderer;
-
-  /**
-   * The queue position of the entry playing `videoId`, or -1 when no entry does.
-   * The explicit `=== -1` test at the call sites matters: `findIndex(...) || -1`
-   * turns a match at index 0 into "not found", so the first queue item could
-   * never be addressed by id. Entries are read through `queueRenderer`, so a
-   * wrapped item — which `/queue` reports as one entry carrying an id — is
-   * addressable too.
-   */
-  const queueIndexOfVideo = (videoId: string) =>
-    getQueue()?.items.findIndex(
-      (item) => queueRenderer(item)?.videoId === videoId,
-    ) ?? -1;
-
-  /** The run that divides a queue byline: `artist • album • year`. */
-  const bylineDivider = ' • ';
-
-  /** A byline's parts, with the empty ones a stray divider leaves behind gone. */
-  const bylineParts = (runs?: LongBylineTextRun[]) =>
-    (runs ?? [])
-      .map((run) => run.text)
-      .join('')
-      .split(bylineDivider)
-      .map((part) => part.trim())
-      .filter(Boolean);
-
-  /** A byline part that reads as a release year. */
-  const yearPattern = /^\d{4}$/;
-
-  /**
-   * A queue entry, read out of its raw playlist panel renderer. `index` is the
-   * item's position in the raw queue — the index the move, remove and set-index
-   * endpoints take — so a skipped item leaves a gap rather than shifting the
-   * entries after it.
-   */
-  const queueItem = (
-    renderer: ItemPlaylistPanelVideoRenderer,
-    index: number,
-    raw: boolean,
-  ): QueueItemResult | undefined => {
-    const { videoId } = renderer;
-    // An item with no video id cannot be played, so it is not an entry.
-    if (!videoId) return undefined;
-
-    const parts = bylineParts(renderer.longBylineText?.runs);
-    // `artist • album • year`, but a run after the year ("… • 2011 • Bonus
-    // Track") must not hide it: the year is the last part that reads as one, and
-    // the album is the first part after the artist that is not that year — so a
-    // byline without an album ("Artist • 2011") does not credit the year as one.
-    const year = parts.filter((part) => yearPattern.test(part)).at(-1);
-    const album = parts.slice(1).find((part) => part !== year);
-    const thumbnails = thumbnailSizes(renderer.thumbnail);
-
-    return {
-      videoId,
-      title: renderer.title?.runs?.map((run) => run.text).join(''),
-      artist: parts[0],
-      album,
-      year,
-      duration: renderer.lengthText?.runs?.[0]?.text,
-      ...(thumbnails && { thumbnails }),
-      thumbnail: thumbnailUrl(thumbnails),
-      url: `https://music.youtube.com/watch?v=${videoId}`,
-      selected: renderer.selected,
-      index,
-      playlistSetVideoId: renderer.playlistSetVideoId,
-      canReorder: renderer.canReorder,
-      ...(raw && { renderer }),
-    };
+  /** Hands the video to the downloader plugin, which owns the download itself. */
+  const apiDownloadVideo = (videoId: string) => {
+    const url = `https://music.youtube.com/watch?v=${videoId}`;
+    context.ipc
+      .invoke('download-song', url)
+      .catch((error: unknown) =>
+        console.error('[api-server] download failed:', error),
+      );
   };
 
-  /** Every result id points at either a watch page or a browse page. */
-  const searchResultUrl = (browseId: string) =>
-    browseId.startsWith('VL')
-      ? `https://music.youtube.com/playlist?list=${browseId.slice(2)}`
-      : `https://music.youtube.com/browse/${browseId}`;
-  const searchResultIds = (videoId?: string, browseId?: string) => {
-    if (videoId) {
-      return { videoId, url: `https://music.youtube.com/watch?v=${videoId}` };
-    }
-    if (browseId) return { browseId, url: searchResultUrl(browseId) };
-    return {};
-  };
-
-  /**
-   * The credited entities in the runs a byline has left after its type label.
-   * A linked run credits whoever it opens — artist, channel or show — but a
-   * filtered search also links the album title, so the page type decides. An
-   * unlinked run is a name unless it reads as metadata (counts, dates,
-   * durations, handles), which is how the endpoint-less credits survive.
-   */
-  const bylineArtists = (runs: BylineRun[]) =>
-    runs
-      .filter((run) => {
-        if (bylineSeparator.test(run.text)) return false;
-        const pageType =
-          run.navigationEndpoint?.browseEndpoint
-            ?.browseEndpointContextSupportedConfigs
-            ?.browseEndpointContextMusicConfig?.pageType;
-        if (pageType) return creditedPageTypes.has(pageType);
-        return !bylineMetadata.some((pattern) => pattern.test(run.text));
-      })
-      .map((run) => run.text)
-      .join(', ') || undefined;
-
-  /**
-   * A row's id: playable rows carry `playlistItemData`, rows that open a page
-   * carry a row-level `navigationEndpoint`, and episode rows carry an
-   * `MPED<videoId>` browse id. Rows never carry two of them.
-   */
-  const rowResult = (row: MusicResponsiveListItemRenderer): SearchResult => {
-    const columns = row.flexColumns?.map(
-      (column) =>
-        column.musicResponsiveListItemFlexColumnRenderer?.text?.runs ?? [],
-    );
-    // The byline leads with the type label, unless it opens with the channel.
-    const byline = columns?.[1] ?? [];
-    const labelled = !byline[0]?.navigationEndpoint;
-    const firstRun = columns?.[0]?.[0]?.navigationEndpoint;
-    const browseId =
-      firstRun?.browseEndpoint?.browseId ??
-      row.navigationEndpoint?.browseEndpoint?.browseId;
-    const videoId =
-      row.playlistItemData?.videoId ??
-      firstRun?.watchEndpoint?.videoId ??
-      row.navigationEndpoint?.watchEndpoint?.videoId ??
-      (browseId?.startsWith(episodeBrowsePrefix)
-        ? browseId.slice(episodeBrowsePrefix.length)
-        : undefined);
-
-    const thumbnails = thumbnailSizes(
-      row.thumbnail?.musicThumbnailRenderer?.thumbnail,
-    );
-
-    return {
-      title: columns?.[0]?.[0]?.text,
-      type: labelled ? byline[0]?.text : undefined,
-      artist: bylineArtists(byline.slice(labelled ? 1 : 0)),
-      thumbnail: thumbnailUrl(thumbnails),
-      ...(thumbnails && { thumbnails }),
-      ...searchResultIds(videoId, videoId ? undefined : browseId),
-    };
-  };
-
-  /**
-   * The top-result card: the same fields, with its id on `onTap`. A radio card's
-   * subtitle is a list of artists with no type label, and a lone run cannot
-   * carry one either.
-   */
-  const cardResult = (card: MusicCardShelfRenderer): SearchResult => {
-    const subtitle = card.subtitle?.runs ?? [];
-    const labelled = subtitle.length > 1 && !subtitle[0]?.navigationEndpoint;
-    const thumbnails = thumbnailSizes(
-      card.thumbnail?.musicThumbnailRenderer?.thumbnail,
-    );
-
-    return {
-      title: card.title?.runs?.[0]?.text,
-      type: labelled ? subtitle[0]?.text : undefined,
-      artist: bylineArtists(subtitle.slice(labelled ? 1 : 0)),
-      thumbnail: thumbnailUrl(thumbnails),
-      ...(thumbnails && { thumbnails }),
-      ...searchResultIds(
-        card.onTap?.watchEndpoint?.videoId,
-        card.onTap?.browseEndpoint?.browseId,
-      ),
-    };
-  };
-
-  /** The rows a card's contents, a shelf or an item section carry. */
-  const sectionRows = (
-    section: SectionListRendererContent,
-  ): { musicResponsiveListItemRenderer?: MusicResponsiveListItemRenderer }[] =>
-    section.musicCardShelfRenderer?.contents ??
-    section.musicShelfRenderer?.contents ??
-    section.itemSectionRenderer?.contents ??
-    [];
-
-  /** A section's results: the top card itself, then the rows it holds. */
-  const sectionResults = (
-    section: SectionListRendererContent,
-  ): SearchResult[] => {
-    const card = section.musicCardShelfRenderer;
-    const rows = sectionRows(section).flatMap((content) =>
-      content.musicResponsiveListItemRenderer
-        ? [rowResult(content.musicResponsiveListItemRenderer)]
-        : [],
-    );
-    return card ? [cardResult(card), ...rows] : rows;
-  };
-
-  const apiSearch = (query: string, params?: string, continuation?: string) => {
+  const apiSearch = (
+    query: string,
+    params?: string,
+    continuation?: string,
+    raw = false,
+  ) => {
     const searchBox =
       document.querySelector<SearchBoxElement>('ytmusic-search-box');
     if (!app || !searchBox) return;
@@ -708,21 +878,10 @@ export const registerV2 = (
         suggestStats: searchBox.getSearchboxStats(),
       })
       .then((result) => {
-        // The catalog tab is the only one; its sections mix item sections, one
-        // shelf and the top-result card. Chip sections carry filters, not rows.
-        const tabs = result?.contents?.tabbedSearchResultsRenderer?.tabs ?? [];
-        const sections =
-          tabs.find(
-            (tab) => tab.tabRenderer?.tabIdentifier === 'music_search_catalog',
-          )?.tabRenderer.content?.sectionListRenderer?.contents ?? [];
-
-        reply(ApiActions.search, {
-          query,
-          // A result with no id would have no URL, so it is not a result.
-          results: sections
-            .flatMap(sectionResults)
-            .filter((item) => item.videoId || item.browseId),
-        });
+        reply(
+          ApiActions.search,
+          raw ? result : { query, results: searchResults(result) },
+        );
       });
   };
   const apiGetCurrentVideo = () => {
@@ -763,12 +922,17 @@ export const registerV2 = (
       handler: apiGetCurrentVideoLikedStatus,
     },
     { channel: apiRequest(ApiActions.getQueue), handler: apiGetQueue },
+    {
+      channel: apiRequest(ApiActions.getAutoplay),
+      handler: apiGetAutoplay,
+    },
     { channel: apiRequest(ApiActions.getLyrics), handler: apiGetLyrics },
     {
       channel: apiRequest(ApiActions.translateLyrics),
       handler: apiTranslateLyrics,
     },
     { channel: apiRequest(ApiActions.search), handler: apiSearch },
+    { channel: apiRequest(ApiActions.browse), handler: apiBrowse },
 
     { channel: apiRequest(ApiActions.nextVideo), handler: apiNextVideo },
     { channel: apiRequest(ApiActions.previousVideo), handler: apiPrevVideo },
@@ -815,6 +979,10 @@ export const registerV2 = (
       handler: apiSetQueueIndex,
     },
     { channel: apiRequest(ApiActions.clearQueue), handler: apiClearQueue },
+    {
+      channel: apiRequest(ApiActions.downloadVideo),
+      handler: apiDownloadVideo,
+    },
   ];
 
   for (const { channel, handler } of listeners) {

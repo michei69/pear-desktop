@@ -6,6 +6,11 @@ import { LikeType } from '@/types/datahost-get-state';
 /** Repeat modes the renderer understands, in the order it cycles them. */
 const RepeatModes = ['NONE', 'ALL', 'ONE'] as const;
 
+/** Body of every non-2xx JSON response, so clients can parse failures too. */
+export const ErrorSchema = z.object({
+  error: z.string().describe('What went wrong'),
+});
+
 // Request bodies
 export const SeekSchema = z.object({
   seconds: z.number().describe('Time in the song, in seconds'),
@@ -35,13 +40,68 @@ export const SetLikeStateSchema = z.object({
   state: z.enum(LikeType),
 });
 
-export const AddToQueueSchema = z.object({
-  videoIds: z.array(z.string()).describe('Video IDs to add to the queue'),
-  insertPosition: z
-    .enum(['INSERT_AFTER_CURRENT_VIDEO', 'INSERT_AT_END'])
-    .optional()
-    .describe('Defaults to INSERT_AFTER_CURRENT_VIDEO'),
+export const AddToQueueSchema = z
+  .object({
+    videoIds: z
+      .array(z.string())
+      .optional()
+      .describe('Video IDs to add to the queue'),
+    playlistIds: z
+      .array(z.string())
+      .optional()
+      .describe('Playlist IDs whose tracks are added to the queue'),
+    insertPosition: z
+      .enum(['INSERT_AFTER_CURRENT_VIDEO', 'INSERT_AT_END'])
+      .optional()
+      .describe('Defaults to INSERT_AFTER_CURRENT_VIDEO'),
+  })
+  .refine(
+    (body) => Boolean(body.videoIds?.length || body.playlistIds?.length),
+    {
+      message: 'Provide videoIds or playlistIds',
+    },
+  );
+
+export const PlayVideoSchema = z.object({
+  videoId: z.string().describe('Video ID to play'),
 });
+
+export const DownloadVideoSchema = z.object({
+  videoId: z
+    .string()
+    .optional()
+    .describe('Video to download; defaults to the current song'),
+});
+
+/** The app config as stored; `PATCH` takes the same shape and deep-merges it. */
+export const ConfigSchema = z.record(z.string(), z.unknown());
+
+/** Body of `PATCH /pear/feature-flags`: flag name to override, per entry. */
+export const FeatureFlagOverridesSchema = z.record(z.string(), z.unknown());
+
+/** Body of `DELETE /pear/feature-flags`. */
+export const FeatureFlagDeleteSchema = z.object({
+  flags: z.array(z.string()).describe('Flags whose override is removed'),
+});
+
+/** Body of `POST|QUERY /browse`. */
+export const BrowseRequestSchema = z
+  .object({
+    browseId: z.string().optional().describe('The page to browse'),
+    continuation: z
+      .string()
+      .optional()
+      .describe('Fetch the next page from this token'),
+    raw: z
+      .boolean()
+      .optional()
+      .describe(
+        'Return the raw YouTube Music response instead of curated info',
+      ),
+  })
+  .refine((body) => Boolean(body.browseId || body.continuation), {
+    message: 'Provide browseId or continuation',
+  });
 
 export const MoveInQueueSchema = z.object({
   toIndex: z.number().describe('Index to move the song to'),
@@ -55,6 +115,12 @@ export const SearchSchema = z.object({
   query: z.string(),
   params: z.string().optional(),
   continuation: z.string().optional(),
+  raw: z
+    .boolean()
+    .optional()
+    .describe(
+      'Return the raw YouTube Music response instead of parsed results',
+    ),
 });
 
 // Request params
@@ -67,6 +133,12 @@ export const SearchQuerySchema = z.object({
   query: z.string(),
   params: z.string().optional(),
   continuation: z.string().optional(),
+  raw: z
+    .enum(['true', 'false'])
+    .optional()
+    .describe(
+      'Return the raw YouTube Music response instead of parsed results',
+    ),
 });
 
 export const QueueQuerySchema = z.object({
@@ -83,7 +155,90 @@ export const PlaybackPositionQuerySchema = z.object({
     .describe('Report a 0..1 fraction of the song instead of seconds'),
 });
 
+export const LyricsTranslationsQuerySchema = z.object({
+  videoId: z
+    .string()
+    .optional()
+    .describe('Look up these translations instead of the current song'),
+});
+
+export const LyricsQuerySchema = z.object({
+  videoId: z
+    .string()
+    .optional()
+    .describe('Get the lyrics of this video instead of the current song'),
+});
+
+export const AutoplayQuerySchema = z.object({
+  raw: z
+    .enum(['true', 'false'])
+    .optional()
+    .describe("Include each item's raw YouTube Music renderer"),
+  continuation: z
+    .string()
+    .optional()
+    .describe('Fetch the next page from this token'),
+});
+
+export const BrowseQuerySchema = z
+  .object({
+    browseId: z.string().optional().describe('The page to browse'),
+    continuation: z
+      .string()
+      .optional()
+      .describe('Fetch the next page from this token'),
+    raw: z
+      .enum(['true', 'false'])
+      .optional()
+      .describe(
+        'Return the raw YouTube Music response instead of curated info',
+      ),
+  })
+  .refine((query) => Boolean(query.browseId || query.continuation), {
+    message: 'Provide browseId or continuation',
+  });
+
 // Responses
+/** `GET /pear`: the debug info the settings window's About section shows. */
+export const AppMetaSchema = z.object({
+  name: z.string(),
+  version: z.string(),
+  build: z.string(),
+  copyright: z.string(),
+  platform: z.string(),
+  arch: z.string(),
+  osVersion: z.string(),
+  versions: z.object({
+    electron: z.string(),
+    chrome: z.string(),
+    node: z.string(),
+  }),
+  cpu: z.object({ model: z.string(), threads: z.number() }),
+  gpu: z.object({
+    renderer: z.string().optional(),
+    vendor: z.string().optional(),
+    driver: z.string().optional(),
+    features: z.record(z.string(), z.string()),
+  }),
+  memory: z.object({
+    main: z.number(),
+    renderers: z.number(),
+    gpu: z.number(),
+  }),
+});
+
+/** One feature flag: its effective value and whether it is an override. */
+const FeatureFlagSchema = z.object({
+  name: z.string(),
+  value: z.unknown(),
+  overridden: z.boolean(),
+});
+
+/** `GET /pear/feature-flags`: every flag the page has or the user overrode. */
+export const FeatureFlagsSchema = z.object({
+  flags: z.array(FeatureFlagSchema),
+});
+
 /** The unified song info, as built by the renderer from the player response. */
 export const SongInfoSchema = z.object({
   title: z.string(),
@@ -197,6 +352,13 @@ export const QueueSchema = z.object({
 });
 export type ResponseQueue = z.infer<typeof QueueSchema>;
 
+/** Autoplay entries, which the queue store keeps outside `items`. */
+export const AutoplaySchema = z.object({
+  items: z.array(QueueItemSchema),
+  continuation: z.string().optional(),
+});
+export type ResponseAutoplay = z.infer<typeof AutoplaySchema>;
+
 /** One search result; exactly one of `videoId`/`browseId` is set. */
 const SearchResultItemSchema = z.object({
   title: z.string().optional(),
@@ -223,6 +385,38 @@ export const SearchResultSchema = z.object({
   results: z.array(SearchResultItemSchema),
 });
 export type ResponseSearchResult = z.infer<typeof SearchResultSchema>;
+
+/** Search answers with the parsed results, or the raw response with `raw`. */
+export const SearchResponseSchema = z.union([
+  SearchResultSchema,
+  z.record(z.string(), z.unknown()),
+]);
+export type ResponseSearch = z.infer<typeof SearchResponseSchema>;
+
+/** `GET|POST|QUERY /browse` returns curated page info. */
+export const BrowseResultSchema = z.object({
+  browseId: z.string().nullable().describe('The page that was browsed'),
+  title: z.string().optional(),
+  subtitle: z.string().optional(),
+  description: z.string().optional(),
+  thumbnail: z.string().optional().describe('The largest thumbnail'),
+  thumbnails: z
+    .array(ThumbnailSchema)
+    .optional()
+    .describe('Every size YouTube Music offers'),
+  results: z
+    .array(SearchResultItemSchema)
+    .describe('Parsed items, in page order'),
+  continuation: z.string().optional(),
+});
+export type ResponseBrowse = z.infer<typeof BrowseResultSchema>;
+
+/** Browse answers with the curated page, or the raw response with `raw`. */
+export const BrowseResponseSchema = z.union([
+  BrowseResultSchema,
+  z.record(z.string(), z.unknown()),
+]);
+export type ResponseBrowseRaw = z.infer<typeof BrowseResponseSchema>;
 
 /** One line of synced lyrics; the UI-only `status` field is not reported. */
 const LyricsLineSchema = z.object({
@@ -285,7 +479,10 @@ const CachedTranslationSchema = z.object({
  * listed, so this can be empty while translation files exist on disk.
  */
 export const LyricsTranslationsSchema = z.object({
-  videoId: z.string().describe('The song the translations belong to'),
+  videoId: z
+    .string()
+    .nullable()
+    .describe('The song the translations belong to, null with no song playing'),
   translations: z.array(CachedTranslationSchema),
 });
 export type ResponseLyricsTranslations = z.infer<
@@ -302,6 +499,10 @@ export const LyricsTranslationRequestSchema = z.object({
     .trim()
     .min(1)
     .describe('Language to translate the current lyrics into'),
+  videoId: z
+    .string()
+    .optional()
+    .describe('Translate this video instead of the current song'),
 });
 
 /** `POST /video/lyrics/translations` runs a translation for one language. */
@@ -316,10 +517,18 @@ export const LyricsTranslationSchema = z.object({
     ),
   lines: z
     .array(z.string())
-    .describe('The translated lines, in the source lyrics order'),
+    .describe(
+      'The translated lines, or the original ones when `sameLanguage`, in the source lyrics order',
+    ),
   fromCache: z
     .boolean()
     .optional()
     .describe('Whether the on-disk translation cache answered'),
+  sameLanguage: z
+    .boolean()
+    .optional()
+    .describe(
+      'Set when the lyrics were already in the requested language, so the original lines are returned',
+    ),
 });
 export type ResponseLyricsTranslation = z.infer<typeof LyricsTranslationSchema>;

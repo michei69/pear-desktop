@@ -1,6 +1,7 @@
 import { createRenderer } from '@/utils';
 
 import { registerV2 } from './renderer/v2';
+import { registerV2Events } from './renderer/v2-events';
 
 /**
  * The api-server plugin's renderer entry.
@@ -15,7 +16,12 @@ import { registerV2 } from './renderer/v2';
 export const renderer = createRenderer<{ teardown?: () => void }>({
   onPlayerApiReady(api, context) {
     this.teardown?.();
-    this.teardown = registerV2(api, context);
+    const stopV2 = registerV2(api, context);
+    const stopEvents = registerV2Events(context);
+    this.teardown = () => {
+      stopV2();
+      stopEvents();
+    };
   },
 
   stop() {

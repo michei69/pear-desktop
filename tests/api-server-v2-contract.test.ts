@@ -24,6 +24,7 @@ type Recorded = {
   dispatches: unknown[];
   player: string[];
   replies: { channel: string; payload: unknown }[];
+  invoke: { channel: string; payload: unknown }[];
 };
 
 /** One parsed `/video/search` result, as the renderer replies with it. */
@@ -74,6 +75,7 @@ const queueState = {
   autoplay: false,
   isInfinite: false,
   items: [] as unknown[],
+  automixItems: [] as unknown[],
   nextQueueItemId: 'next',
   playbackContentMode: 'MODE',
   repeatMode: 'NONE',
@@ -276,12 +278,17 @@ const searchResponse = (...sections: unknown[]) => ({
  * redux store really is nested twice — `ytmusicReduxBehavior.store.store` — as
  * `src/plugins/music-together/queue/queue.ts` also reads it.
  */
-const setup = (search: unknown = { queueDatas: [] }, items: unknown[] = []) => {
+const setup = (
+  search: unknown = { queueDatas: [] },
+  items: unknown[] = [],
+  extra: { automixItems?: unknown[]; browse?: unknown; next?: unknown } = {},
+) => {
   const recorded: Recorded = {
     fetch: [],
     dispatches: [],
     player: [],
     replies: [],
+    invoke: [],
   };
 
   const app = {
@@ -293,12 +300,23 @@ const setup = (search: unknown = { queueDatas: [] }, items: unknown[] = []) => {
     networkManager: {
       fetch: async (url: string, data: unknown) => {
         recorded.fetch.push({ url, data });
-        return url === '/search' ? search : { queueDatas: [] };
+        if (url === '/search') return search;
+        if (url.startsWith('/browse')) return extra.browse ?? {};
+        if (url.startsWith('/next')) return extra.next ?? {};
+        return { queueDatas: [] };
       },
     },
     ytmusicReduxBehavior: {
       store: {
-        store: { getState: () => ({ queue: { ...queueState, items } }) },
+        store: {
+          getState: () => ({
+            queue: {
+              ...queueState,
+              items,
+              automixItems: extra.automixItems ?? [],
+            },
+          }),
+        },
       },
     },
   };
@@ -348,6 +366,10 @@ const setup = (search: unknown = { queueDatas: [] }, items: unknown[] = []) => {
       off: (channel: string) => listeners.delete(channel),
       send: (channel: string, payload: unknown) =>
         recorded.replies.push({ channel, payload }),
+      invoke: (channel: string, ...args: unknown[]) => {
+        recorded.invoke.push({ channel, payload: args[0] });
+        return Promise.resolve(undefined);
+      },
     },
   };
 
@@ -401,6 +423,36 @@ test('addToQueue defaults to inserting after the current video', async () => {
     queueInsertPosition: 'INSERT_AFTER_CURRENT_VIDEO',
     videoIds: ['only'],
   });
+});
+
+test('addToQueue forwards playlistIds, alone and alongside videoIds', async () => {
+  const playlists = setup();
+  await playlists.fire(ApiActions.addToQueue, [], 'INSERT_AT_END', [
+    'PLone',
+    'PLtwo',
+  ]);
+
+  expect(playlists.recorded.fetch[0].data).toMatchObject({
+    queueInsertPosition: 'INSERT_AT_END',
+    playlistIds: ['PLone', 'PLtwo'],
+  });
+  expect(playlists.recorded.fetch[0].data).not.toHaveProperty('videoIds');
+
+  const both = setup();
+  await both.fire(ApiActions.addToQueue, ['v1'], 'INSERT_AT_END', ['PLone']);
+
+  expect(both.recorded.fetch[0].data).toMatchObject({
+    videoIds: ['v1'],
+    playlistIds: ['PLone'],
+  });
+});
+
+test('addToQueue fetches nothing when it has no ids', async () => {
+  const { recorded, fire } = setup();
+
+  await fire(ApiActions.addToQueue, [], 'INSERT_AT_END', []);
+
+  expect(recorded.fetch).toHaveLength(0);
 });
 
 test('addToQueue survives a malformed queue entry and still inserts after the current one', async () => {
@@ -465,6 +517,7 @@ test('commands never reply, so no route can wait on one', async () => {
     ApiActions.removeFromQueue,
     ApiActions.setQueueIndex,
     ApiActions.clearQueue,
+    ApiActions.downloadVideo,
   ];
   const args: Partial<Record<ApiAction, unknown[]>> = {
     [ApiActions.setPlaybackSpeed]: [1.5],
@@ -478,6 +531,7 @@ test('commands never reply, so no route can wait on one', async () => {
     [ApiActions.moveInQueue]: [0, 1],
     [ApiActions.removeFromQueue]: [0],
     [ApiActions.setQueueIndex]: [0],
+    [ApiActions.downloadVideo]: ['a-video-id'],
   };
 
   for (const action of commands) {
@@ -779,6 +833,125 @@ test('search keeps an unlinked artist, drops metadata, and joins several artists
     '50 Cent',
     'HipHop Livestream, HipHop Playlist',
   ]);
+});
+
+test('search replies with the raw response when asked', async () => {
+  const rawResponse = searchResponse(
+    itemSection(
+      row({
+        title: 'Anti-Hero',
+        byline: ['Song', 'Taylor Swift'],
+        videoId: 'b1kbLwvqugk',
+      }),
+    ),
+  );
+  const { recorded, fire } = setup(rawResponse);
+
+  await fire(ApiActions.search, 'taylor swift', undefined, undefined, true);
+
+  expect(recorded.replies.at(-1)?.payload).toEqual(rawResponse);
+});
+
+/** A browse page: a header, one track shelf and its continuation. */
+const browsePage = () => ({
+  header: {
+    musicResponsiveHeaderRenderer: {
+      title: { runs: [{ text: 'Abbey Road' }] },
+      subtitle: { runs: [{ text: 'The Beatles' }] },
+      description: { runs: [{ text: 'Remastered' }] },
+      thumbnail: {
+        musicThumbnailRenderer: { thumbnail: { thumbnails: SIZES } },
+      },
+    },
+  },
+  contents: {
+    singleColumnBrowseResultsRenderer: {
+      tabs: [
+        {
+          tabRenderer: {
+            content: {
+              sectionListRenderer: {
+                contents: [
+                  itemSection(
+                    row({
+                      title: 'Come Together',
+                      byline: ['Song', 'The Beatles'],
+                      videoId: 'come-together',
+                    }),
+                  ),
+                ],
+                continuations: [
+                  { nextContinuationData: { continuation: 'browse-next' } },
+                ],
+              },
+            },
+          },
+        },
+      ],
+    },
+  },
+});
+
+test('browse parses the page header, items and continuation', async () => {
+  const { recorded, fire } = setup(undefined, [], { browse: browsePage() });
+
+  await fire(ApiActions.browse, 'MPREb_x');
+
+  expect(recorded.fetch[0]).toMatchObject({
+    url: '/browse?prettyPrint=false',
+    data: { browseId: 'MPREb_x' },
+  });
+
+  const payload = recorded.replies.at(-1)?.payload as
+    | {
+        browseId: string | null;
+        title?: string;
+        subtitle?: string;
+        description?: string;
+        thumbnail?: string;
+        results: SearchResult[];
+        continuation?: string;
+      }
+    | undefined;
+  expect(payload).toMatchObject({
+    browseId: 'MPREb_x',
+    title: 'Abbey Road',
+    subtitle: 'The Beatles',
+    description: 'Remastered',
+    thumbnail: 'https://lh3.example/w544.jpg',
+    continuation: 'browse-next',
+  });
+  expect(payload?.results).toEqual([
+    {
+      title: 'Come Together',
+      type: 'Song',
+      artist: 'The Beatles',
+      thumbnail: THUMBNAIL,
+      thumbnails: THUMBNAILS,
+      videoId: 'come-together',
+      url: 'https://music.youtube.com/watch?v=come-together',
+    },
+  ]);
+});
+
+test('browse asks for the continuation page when given a token', async () => {
+  const { recorded, fire } = setup(undefined, [], { browse: browsePage() });
+
+  await fire(ApiActions.browse, undefined, 'next-token');
+
+  expect(recorded.fetch[0]).toMatchObject({
+    url: '/browse?prettyPrint=false',
+    data: { continuation: 'next-token' },
+  });
+});
+
+test('browse returns the raw response when asked', async () => {
+  const page = browsePage();
+  const { recorded, fire } = setup(undefined, [], { browse: page });
+
+  await fire(ApiActions.browse, 'MPREb_x', undefined, true);
+
+  expect(recorded.replies.at(-1)?.payload).toEqual(page);
 });
 
 test('search echoes the query, and replies empty rather than throwing', async () => {
@@ -1148,6 +1321,86 @@ test('queue leaves the other reply fields alone', async () => {
     shuffleEnabled: false,
     continuation: 'continuation',
   });
+});
+
+test('autoplay maps the automix entries, which are not part of the queue', async () => {
+  const { recorded, fire } = setup(
+    undefined,
+    [{ playlistPanelVideoRenderer: rawQueueItem() }],
+    {
+      automixItems: [
+        {
+          playlistPanelVideoRenderer: rawQueueItem({
+            videoId: 'radio-1',
+            title: { runs: [{ text: 'Radio Song' }] },
+          }),
+        },
+        // A runtime slot can hold null; it must not take the page down.
+        null,
+      ],
+    },
+  );
+
+  await fire(ApiActions.getAutoplay, false);
+
+  expect(recorded.replies.at(-1)?.payload).toMatchObject({
+    continuation: 'continuation',
+  });
+  const payload = recorded.replies.at(-1)?.payload as
+    | { items?: QueueEntry[] }
+    | undefined;
+  expect(payload?.items?.map((item) => [item.videoId, item.title])).toEqual([
+    ['radio-1', 'Radio Song'],
+  ]);
+});
+
+test('autoplay continuation fetches the next page and returns its token', async () => {
+  const { recorded, fire } = setup(undefined, [], {
+    next: {
+      continuationContents: {
+        playlistPanelContinuation: {
+          contents: [
+            {
+              playlistPanelVideoRenderer: rawQueueItem({
+                videoId: 'radio-2',
+                title: { runs: [{ text: 'Next Radio Song' }] },
+              }),
+            },
+          ],
+          continuations: [
+            { nextRadioContinuationData: { continuation: 'radio-next' } },
+          ],
+        },
+      },
+    },
+  });
+
+  await fire(ApiActions.getAutoplay, false, 'radio-token');
+
+  expect(recorded.fetch[0]).toMatchObject({
+    url: '/next?prettyPrint=false',
+    data: { continuation: 'radio-token' },
+  });
+  const payload = recorded.replies.at(-1)?.payload as
+    | { items?: QueueEntry[]; continuation?: string }
+    | undefined;
+  expect(payload?.items?.map((item) => item.videoId)).toEqual(['radio-2']);
+  expect(payload?.continuation).toBe('radio-next');
+});
+
+test('download hands the video URL to the downloader plugin', async () => {
+  const { recorded, fire } = setup();
+
+  await fire(ApiActions.downloadVideo, 'a-video-id');
+
+  expect(recorded.invoke).toEqual([
+    {
+      channel: 'download-song',
+      payload: 'https://music.youtube.com/watch?v=a-video-id',
+    },
+  ]);
+  // The download itself belongs to the downloader plugin; the API never replies.
+  expect(recorded.replies).toHaveLength(0);
 });
 
 test('queue reads a partial byline, and one that is not there at all', async () => {

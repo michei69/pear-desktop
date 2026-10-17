@@ -51,7 +51,7 @@ export const buildApp = (
     // loads 5.3x, which understands it.
     openapi: '3.2.0',
     info: {
-      version: '2.0.0',
+      version: '2.1.0',
       title: `${APPLICATION_NAME} API Server`,
       description:
         'Note: You need to get an access token using the `/auth/{id}` endpoint first to call any API endpoints under `/api`.',

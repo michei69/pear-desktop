@@ -26,6 +26,7 @@ const V2_CATEGORIES = [
   'Volume',
   'Rating',
   'Queue',
+  'Config',
   'WebSocket',
 ] as const;
 

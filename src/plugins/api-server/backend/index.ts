@@ -24,6 +24,8 @@ const RENDERER_SETUP_CHANNELS = [
   'peard:setup-repeat-changed-listener',
   'peard:setup-volume-changed-listener',
   'peard:setup-shuffle-changed-listener',
+  'peard:setup-like-changed-listener',
+  'peard:setup-playback-speed-changed-listener',
 ];
 
 /** Config changes that require rebuilding the HTTP server. */

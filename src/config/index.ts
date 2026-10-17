@@ -39,6 +39,16 @@ export const setMenuOption = (key: string, value: unknown) => {
   }
 };
 
+/** The whole stored config, without the derived `updates` block `getStore` adds. */
+export const getAll = () => store.store;
+
+/** Applies a partial config, deep-merging objects and replacing arrays. */
+export const patch = (value: Record<string, unknown>) => {
+  for (const [key, patchValue] of Object.entries(value)) {
+    store.set(key, deepmerge(store.get(key) ?? {}, patchValue));
+  }
+};
+
 // MAGIC OF TYPESCRIPT
 
 type Prev = [

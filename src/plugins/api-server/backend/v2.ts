@@ -1,16 +1,33 @@
 import { OpenAPIHono, createRoute, type z } from '@hono/zod-openapi';
 
+import * as config from '@/config';
 import { isEnabled } from '@/config/plugins';
 import { cacheEntriesForVideo } from '@/plugins/synced-lyrics/translation/cache';
+import { getAppMeta } from '@/providers/app-meta';
+import { getSongControls } from '@/providers/song-controls';
 
 import { requireAuth } from './auth';
-import { callRenderer, sendToRenderer } from './ipc';
+import { callRenderer, callRendererWithTimeout, sendToRenderer } from './ipc';
 import {
   AddToQueueSchema,
+  AppMetaSchema,
+  AutoplayQuerySchema,
+  AutoplaySchema,
+  BrowseQuerySchema,
+  BrowseRequestSchema,
+  BrowseResponseSchema,
+  ConfigSchema,
+  DownloadVideoSchema,
+  ErrorSchema,
+  FeatureFlagDeleteSchema,
+  FeatureFlagOverridesSchema,
+  FeatureFlagsSchema,
   LikeStateSchema,
+  LyricsQuerySchema,
   LyricsSchema,
   LyricsTranslationRequestSchema,
   LyricsTranslationSchema,
+  LyricsTranslationsQuerySchema,
   LyricsTranslationsSchema,
   MoveInQueueSchema,
   MuteStateSchema,
@@ -18,12 +35,13 @@ import {
   PlaybackPositionSchema,
   PlaybackSpeedSchema,
   PlayingStateSchema,
+  PlayVideoSchema,
   QueueIndexParamSchema,
   QueueQuerySchema,
   QueueSchema,
   RepeatModeSchema,
   SearchQuerySchema,
-  SearchResultSchema,
+  SearchResponseSchema,
   SearchSchema,
   SeekSchema,
   SetLikeStateSchema,
@@ -36,13 +54,15 @@ import {
   ShuffleStateSchema,
   SongInfoSchema,
   VolumeSchema,
+  type ResponseAutoplay,
+  type ResponseBrowseRaw,
   type ResponseLyrics,
   type ResponseQueue,
-  type ResponseSearchResult,
+  type ResponseSearch,
   type ResponseSongInfo,
 } from './schemas-v2';
 import { v2Tag } from './tags';
-import { registerWebsocket } from './websocket';
+import { registerV2Websocket } from './websocket-v2';
 
 import { ApiActions } from '../channels';
 
@@ -57,6 +77,18 @@ const SUCCESS = { 204: { description: 'Success' } };
 const JSON_CONTENT = 'application/json';
 
 const noContent = (ctx: Context) => ctx.body(null, 204);
+
+/**
+ * Translations run through a provider, and the local-cli one may take minutes,
+ * so this action gets far more room than the renderer's default 5s.
+ */
+const TRANSLATION_TIMEOUT_MS = 120_000;
+
+/** A non-2xx JSON response, so a client can parse failures like successes. */
+const errorResponse = (description: string) => ({
+  description,
+  content: { [JSON_CONTENT]: { schema: ErrorSchema } },
+});
 
 const body = <S extends z.ZodType>(schema: S) => ({
   required: true,
@@ -195,11 +227,35 @@ export const routes = {
     'Alias of `/video/prev`; plays the previous song in the queue',
     [v2Tag('Video')],
   ),
+  playVideo: createRoute({
+    method: 'post',
+    path: '/video/play',
+    summary: 'play a video',
+    description: 'Replace the queue with the given video and play it',
+    request: { body: body(PlayVideoSchema) },
+    responses: SUCCESS,
+    tags: [v2Tag('Video')],
+  }),
+  downloadVideo: createRoute({
+    method: 'post',
+    path: '/video/download',
+    summary: 'download a video',
+    description:
+      'Download the current song, or `videoId`, with the downloader plugin. The plugin has to be enabled.',
+    // Optional body: no `videoId` means the current song.
+    request: { body: { ...body(DownloadVideoSchema), required: false } },
+    responses: {
+      204: { description: 'Success' },
+      400: errorResponse('No video is playing and no `videoId` was given'),
+      404: errorResponse('The downloader plugin is disabled'),
+    },
+    tags: [v2Tag('Video')],
+  }),
   searchQuery: readableWithQuery({
     path: '/video/search',
     summary: 'search for a song',
     description: 'Search for a song and return its parsed results',
-    schema: SearchResultSchema,
+    schema: SearchResponseSchema,
     query: SearchQuerySchema,
     tags: [v2Tag('Video')],
   }),
@@ -212,14 +268,13 @@ export const routes = {
     responses: {
       200: {
         description: 'Success',
-        content: { [JSON_CONTENT]: { schema: SearchResultSchema } },
+        content: { [JSON_CONTENT]: { schema: SearchResponseSchema } },
       },
     },
     tags: [v2Tag('Video')],
   }),
-  // QUERY (draft-ietf-httpbis-safe-method-w-body): a safe method that still
-  // takes a body, which is what a search actually is. Same body and handler as
-  // the POST above, minus the implication that it changes anything.
+  // QUERY (draft-ietf-httpbis-safe-method-w-body): a safe search that still
+  // takes a body. Same body and handler as the POST above.
   searchByQueryMethod: createRoute({
     method: 'query',
     path: '/video/search',
@@ -230,8 +285,56 @@ export const routes = {
     responses: {
       200: {
         description: 'Success',
-        content: { [JSON_CONTENT]: { schema: SearchResultSchema } },
+        content: { [JSON_CONTENT]: { schema: SearchResponseSchema } },
       },
+    },
+    tags: [v2Tag('Video')],
+  }),
+  browse: createRoute({
+    method: 'get',
+    path: '/browse',
+    summary: 'browse a YouTube Music page',
+    description:
+      'Get curated info about a browse id page (album, playlist, artist, ...), or the raw response with `raw=true`. Pass `continuation` for the next page.',
+    request: { query: BrowseQuerySchema },
+    responses: {
+      200: {
+        description: 'Success',
+        content: { [JSON_CONTENT]: { schema: BrowseResponseSchema } },
+      },
+      502: errorResponse('The browse request failed'),
+    },
+    tags: [v2Tag('Video')],
+  }),
+  browsePost: createRoute({
+    method: 'post',
+    path: '/browse',
+    summary: 'browse a YouTube Music page',
+    description:
+      'Get curated info about a browse id page, or the raw response with `raw: true`. Pass `continuation` for the next page.',
+    request: { body: body(BrowseRequestSchema) },
+    responses: {
+      200: {
+        description: 'Success',
+        content: { [JSON_CONTENT]: { schema: BrowseResponseSchema } },
+      },
+      502: errorResponse('The browse request failed'),
+    },
+    tags: [v2Tag('Video')],
+  }),
+  browseByQueryMethod: createRoute({
+    method: 'query',
+    path: '/browse',
+    summary: 'browse a YouTube Music page',
+    description:
+      'Safe: the same request as POST /browse, without the side-effect semantics.',
+    request: { body: body(BrowseRequestSchema) },
+    responses: {
+      200: {
+        description: 'Success',
+        content: { [JSON_CONTENT]: { schema: BrowseResponseSchema } },
+      },
+      502: errorResponse('The browse request failed'),
     },
     tags: [v2Tag('Video')],
   }),
@@ -240,15 +343,16 @@ export const routes = {
     path: '/video/lyrics',
     summary: 'get lyrics from every provider',
     description:
-      'Get the lyrics of the current song from every synced-lyrics provider that found some, not just the one the app would show. The plugin has to be enabled.',
+      'Get the lyrics from every synced-lyrics provider that found some. Pass `?videoId=` to answer for another song (cached, or fetched for that video) instead of the current one. The plugin has to be enabled.',
     tags: [v2Tag('Video')],
+    request: { query: LyricsQuerySchema },
     responses: {
       200: {
         description: 'Success',
         content: { [JSON_CONTENT]: { schema: LyricsSchema } },
       },
       204: { description: 'No lyrics available' },
-      404: { description: 'The synced-lyrics plugin is disabled' },
+      404: errorResponse('The synced-lyrics plugin is disabled'),
     },
   }),
   lyricsTranslations: createRoute({
@@ -256,23 +360,23 @@ export const routes = {
     path: '/video/lyrics/translations',
     summary: 'get cached lyrics translations',
     description:
-      "Get the cached translations of the current song's lyrics. Only entries written under the current translation strategy version are listed, so this can be empty while older translation files still exist on disk. The plugin has to be enabled.",
+      "Get the cached translations of the current song's lyrics that match the current translation strategy. Pass `?videoId=` to look up another song; empty when nothing is cached. The plugin has to be enabled.",
     tags: [v2Tag('Video')],
+    request: { query: LyricsTranslationsQuerySchema },
     responses: {
       200: {
         description: 'Success',
         content: { [JSON_CONTENT]: { schema: LyricsTranslationsSchema } },
       },
-      204: { description: 'No song playing, or nothing cached for it' },
-      404: { description: 'The synced-lyrics plugin is disabled' },
+      404: errorResponse('The synced-lyrics plugin is disabled'),
     },
   }),
   translateLyrics: createRoute({
     method: 'post',
     path: '/video/lyrics/translations',
-    summary: 'translate the current lyrics',
+    summary: 'translate lyrics',
     description:
-      "Translate the current song's lyrics into `lang` and cache the result, without changing the translation the app is showing. 404 when the plugin is disabled, when the song has no lyrics, when translation is off in the plugin's config, or when the lyrics are already in `lang`; 502 when the translation provider itself fails.",
+      "Translate a song's lyrics into `lang` and cache the result, without changing the translation the app shows. Already in `lang` answers with the original lines. Pass `videoId` to translate another song instead of the current one.",
     tags: [v2Tag('Video')],
     request: { body: body(LyricsTranslationRequestSchema) },
     responses: {
@@ -280,11 +384,10 @@ export const routes = {
         description: 'Success',
         content: { [JSON_CONTENT]: { schema: LyricsTranslationSchema } },
       },
-      404: {
-        description:
-          'Plugin disabled, no lyrics, translation disabled, or already in that language',
-      },
-      502: { description: 'The translation provider failed' },
+      404: errorResponse(
+        'Plugin disabled, no lyrics, translation disabled, or already in that language',
+      ),
+      502: errorResponse('The translation provider failed'),
     },
   }),
 
@@ -558,9 +661,89 @@ export const routes = {
     SetQueueIndexSchema,
     [v2Tag('Queue')],
   ),
+  autoplay: createRoute({
+    method: 'get',
+    path: '/queue/autoplay',
+    summary: 'get autoplay entries',
+    description:
+      'Get the autoplay entries, which the queue keeps separate from its items. Pass `raw=true` for raw renderers and `continuation` for the next page.',
+    request: { query: AutoplayQuerySchema },
+    responses: {
+      200: {
+        description: 'Success',
+        content: { [JSON_CONTENT]: { schema: AutoplaySchema } },
+      },
+      502: errorResponse('The next autoplay page could not be fetched'),
+    },
+    tags: [v2Tag('Queue')],
+  }),
   clearQueue: action('delete', '/queue', 'clear queue', 'Clear the queue', [
     v2Tag('Queue'),
   ]),
+
+  // Config
+  config: readable({
+    path: '/pear/config',
+    summary: 'get the app config',
+    description: 'Get the app config as stored on disk',
+    schema: ConfigSchema,
+    tags: [v2Tag('Config')],
+  }),
+  settings: readable({
+    path: '/pear/settings',
+    summary: 'get the app config',
+    description: 'Alias of `GET /pear/config`',
+    schema: ConfigSchema,
+    tags: [v2Tag('Config')],
+  }),
+  patchConfig: actionWithBody(
+    'patch',
+    '/pear/config',
+    'change the app config',
+    'Deep-merge a partial config into the stored one',
+    ConfigSchema,
+    [v2Tag('Config')],
+  ),
+  patchSettings: actionWithBody(
+    'patch',
+    '/pear/settings',
+    'change the app config',
+    'Alias of `PATCH /pear/config`',
+    ConfigSchema,
+    [v2Tag('Config')],
+  ),
+  appMeta: readable({
+    path: '/pear',
+    summary: 'get app metadata',
+    description:
+      'The app version, build, platform, CPU, GPU and memory info, as the settings window shows it',
+    schema: AppMetaSchema,
+    tags: [v2Tag('Config')],
+  }),
+  featureFlags: readable({
+    path: '/pear/feature-flags',
+    summary: 'get feature flags',
+    description:
+      'Every feature flag the page carries or the user overrode, with its effective value',
+    schema: FeatureFlagsSchema,
+    tags: [v2Tag('Config')],
+  }),
+  patchFeatureFlags: actionWithBody(
+    'patch',
+    '/pear/feature-flags',
+    'set feature flag overrides',
+    'Apply the given flags as overrides, live where the page allows it',
+    FeatureFlagOverridesSchema,
+    [v2Tag('Config')],
+  ),
+  deleteFeatureFlags: actionWithBody(
+    'delete',
+    '/pear/feature-flags',
+    'remove feature flag overrides',
+    'Drop the overrides for the given flags',
+    FeatureFlagDeleteSchema,
+    [v2Tag('Config')],
+  ),
 } as const;
 
 const registerRoutes = (
@@ -568,6 +751,8 @@ const registerRoutes = (
   { window }: BackendContext<APIServerConfig>,
   playerState: PlayerState,
 ) => {
+  const controller = getSongControls(window);
+
   // Video
   app.openapi(routes.video, async (ctx) => {
     const info = await callRenderer<ResponseSongInfo | undefined>(
@@ -593,39 +778,98 @@ const registerRoutes = (
     sendToRenderer(window, ApiActions.previousVideo);
     return noContent(ctx);
   });
-  // GET, POST and QUERY all reach the same renderer action; only the way the
-  // arguments arrive differs.
+  // Same as v1's loadVideo: the renderer clears the queue, loads the video's
+  // watch-next page and plays it.
+  app.openapi(routes.playVideo, (ctx) => {
+    controller.loadVideo(ctx.req.valid('json').videoId);
+    return noContent(ctx);
+  });
+  app.openapi(routes.downloadVideo, async (ctx) => {
+    if (!(await isEnabled('downloader'))) {
+      return ctx.json({ error: 'The downloader plugin is disabled' }, 404);
+    }
+
+    const videoId = ctx.req.valid('json')?.videoId || playerState.song?.videoId;
+    if (!videoId) {
+      return ctx.json({ error: 'No video is playing' }, 400);
+    }
+
+    sendToRenderer(window, ApiActions.downloadVideo, videoId);
+    return noContent(ctx);
+  });
   const runSearch = async (
     ctx: Context,
-    { query, params, continuation }: z.infer<typeof SearchSchema>,
+    {
+      query,
+      params,
+      continuation,
+    }: { query: string; params?: string; continuation?: string },
+    raw = false,
   ) => {
-    const response = await callRenderer<ResponseSearchResult>(
+    const response = await callRenderer<ResponseSearch>(
       window,
       ApiActions.search,
       query,
       params,
       continuation,
+      raw,
     );
 
     return ctx.json(response, 200);
   };
-  app.openapi(routes.searchQuery, (ctx) =>
-    runSearch(ctx, ctx.req.valid('query')),
-  );
-  app.openapi(routes.search, (ctx) => runSearch(ctx, ctx.req.valid('json')));
-  app.openapi(routes.searchByQueryMethod, (ctx) =>
-    runSearch(ctx, ctx.req.valid('json')),
-  );
+  app.openapi(routes.searchQuery, (ctx) => {
+    const query = ctx.req.valid('query');
+    return runSearch(ctx, query, query.raw === 'true');
+  });
+  app.openapi(routes.search, (ctx) => {
+    const body = ctx.req.valid('json');
+    return runSearch(ctx, body, body.raw === true);
+  });
+  app.openapi(routes.searchByQueryMethod, (ctx) => {
+    const body = ctx.req.valid('json');
+    return runSearch(ctx, body, body.raw === true);
+  });
+  const runBrowse = async (
+    ctx: Context,
+    { browseId, continuation }: { browseId?: string; continuation?: string },
+    raw = false,
+  ) => {
+    const response = await callRenderer<ResponseBrowseRaw | null>(
+      window,
+      ApiActions.browse,
+      browseId,
+      continuation,
+      raw,
+    );
+
+    if (!response) {
+      return ctx.json({ error: 'The browse request failed' }, 502);
+    }
+
+    return ctx.json(response, 200);
+  };
+  app.openapi(routes.browse, (ctx) => {
+    const query = ctx.req.valid('query');
+    return runBrowse(ctx, query, query.raw === 'true');
+  });
+  app.openapi(routes.browsePost, (ctx) => {
+    const body = ctx.req.valid('json');
+    return runBrowse(ctx, body, body.raw === true);
+  });
+  app.openapi(routes.browseByQueryMethod, (ctx) => {
+    const body = ctx.req.valid('json');
+    return runBrowse(ctx, body, body.raw === true);
+  });
   app.openapi(routes.lyrics, async (ctx) => {
-    // The renderer checks this too, but a disabled plugin must 404 rather than
-    // wait out the 5s IPC timeout on a renderer that will not answer.
+    // A disabled plugin would time out waiting for a renderer that won't answer.
     if (!(await isEnabled('synced-lyrics'))) {
-      return ctx.text('The synced-lyrics plugin is disabled', 404);
+      return ctx.json({ error: 'The synced-lyrics plugin is disabled' }, 404);
     }
 
     const lyrics = await callRenderer<ResponseLyrics | null>(
       window,
       ApiActions.getLyrics,
+      ctx.req.valid('query').videoId,
     );
 
     if (!lyrics) {
@@ -636,27 +880,20 @@ const registerRoutes = (
   });
   app.openapi(routes.lyricsTranslations, async (ctx) => {
     if (!(await isEnabled('synced-lyrics'))) {
-      return ctx.text('The synced-lyrics plugin is disabled', 404);
+      return ctx.json({ error: 'The synced-lyrics plugin is disabled' }, 404);
     }
 
-    const videoId = playerState.song?.videoId;
-    if (!videoId) {
-      return noContent(ctx);
-    }
-
-    // The cache lives on disk, so reading it can fail for reasons that are not
-    // this request's fault (userData not resolved yet). "Nothing cached" is the
-    // honest answer then — never a 500.
-    const entries = await cacheEntriesForVideo(videoId).catch(() => []);
-    if (!entries.length) {
-      return noContent(ctx);
-    }
+    const requested = ctx.req.valid('query').videoId;
+    const videoId = requested || playerState.song?.videoId || null;
+    // Nothing cached is a valid answer, not a reason to withhold the body.
+    const entries = videoId
+      ? await cacheEntriesForVideo(videoId).catch(() => [])
+      : [];
 
     return ctx.json(
       {
         videoId,
-        // `sourceLines` and the hashes are left out: they are large and the
-        // caller can re-request a translation instead.
+        // The source lines and hashes are large and can be re-requested.
         translations: entries.map((entry) => ({
           language: entry.targetLanguage,
           provider: entry.provider,
@@ -672,43 +909,46 @@ const registerRoutes = (
   });
   app.openapi(routes.translateLyrics, async (ctx) => {
     if (!(await isEnabled('synced-lyrics'))) {
-      return ctx.text('The synced-lyrics plugin is disabled', 404);
+      return ctx.json({ error: 'The synced-lyrics plugin is disabled' }, 404);
     }
 
-    const result = await callRenderer<LanguageTranslationResult | null>(
-      window,
-      ApiActions.translateLyrics,
-      ctx.req.valid('json').lang,
-    );
+    const { lang, videoId: requestedVideoId } = ctx.req.valid('json');
+    const result =
+      await callRendererWithTimeout<LanguageTranslationResult | null>(
+        window,
+        ApiActions.translateLyrics,
+        TRANSLATION_TIMEOUT_MS,
+        lang,
+        requestedVideoId,
+      );
 
-    // The renderer answers null only when the plugin is off (a race with the
-    // check above) — it reports every translation failure as data with a reason.
+    // Null only when the plugin is off; failures come back as data.
     if (!result) {
-      return ctx.text('The synced-lyrics plugin is disabled', 404);
+      return ctx.json({ error: 'The synced-lyrics plugin is disabled' }, 404);
     }
 
     if (result.reason) {
-      // The reason picks the status; the plugin's own message is the body, so a
-      // caller sees which refusal it hit ("lyrics are already in en", ...).
-      const message =
+      // The reason picks the status; the plugin's own message is the body.
+      const error =
         result.error ?? `Cannot translate the current lyrics: ${result.reason}`;
 
-      // An upstream failure is not the caller's fault, so it is not a 404.
-      return result.reason === 'provider-error'
-        ? ctx.text(message, 502)
-        : ctx.text(message, 404);
+      return ctx.json(
+        { error },
+        result.reason === 'provider-error' ? 502 : 404,
+      );
     }
 
-    // Built field by field rather than spread, so the body is exactly what
-    // `LyricsTranslationSchema` documents — a stray `error` on a success would
-    // otherwise reach a client that has no reason to expect one.
+    // Built field by field, so the body is exactly what the schema documents.
     return ctx.json(
       {
-        videoId: playerState.song?.videoId ?? null,
+        videoId: requestedVideoId ?? playerState.song?.videoId ?? null,
         language: result.language,
         provider: result.provider,
         lines: result.lines,
         ...(result.fromCache !== undefined && { fromCache: result.fromCache }),
+        ...(result.sameLanguage !== undefined && {
+          sameLanguage: result.sameLanguage,
+        }),
       },
       200,
     );
@@ -888,6 +1128,24 @@ const registerRoutes = (
   });
 
   // Queue
+  app.openapi(routes.autoplay, async (ctx) => {
+    const { raw, continuation } = ctx.req.valid('query');
+    const response = await callRenderer<ResponseAutoplay | null>(
+      window,
+      ApiActions.getAutoplay,
+      raw === 'true',
+      continuation,
+    );
+
+    if (!response) {
+      return ctx.json(
+        { error: 'The next autoplay page could not be fetched' },
+        502,
+      );
+    }
+
+    return ctx.json(response, 200);
+  });
   app.openapi(routes.queue, async (ctx) => {
     const raw = ctx.req.valid('query').raw === 'true';
     const info = await callRenderer<ResponseQueue | undefined>(
@@ -903,12 +1161,13 @@ const registerRoutes = (
     return ctx.json(info, 200);
   });
   app.openapi(routes.addToQueue, (ctx) => {
-    const { videoIds, insertPosition } = ctx.req.valid('json');
+    const { videoIds, playlistIds, insertPosition } = ctx.req.valid('json');
     sendToRenderer(
       window,
       ApiActions.addToQueue,
-      videoIds,
+      videoIds ?? [],
       insertPosition ?? 'INSERT_AFTER_CURRENT_VIDEO',
+      playlistIds ?? [],
     );
     return noContent(ctx);
   });
@@ -941,6 +1200,80 @@ const registerRoutes = (
     sendToRenderer(window, ApiActions.clearQueue);
     return noContent(ctx);
   });
+
+  // Config
+  const getConfig = (ctx: Context) => ctx.json(config.getAll(), 200);
+  app.openapi(routes.config, getConfig);
+  app.openapi(routes.settings, getConfig);
+  app.openapi(routes.patchConfig, (ctx) => {
+    config.patch(ctx.req.valid('json'));
+    return noContent(ctx);
+  });
+  app.openapi(routes.patchSettings, (ctx) => {
+    config.patch(ctx.req.valid('json'));
+    return noContent(ctx);
+  });
+
+  // App
+  const overrides = () =>
+    (config.get('options.featureFlags') ?? {}) as Record<string, unknown>;
+
+  /** Hands one override to the page, so it applies without a restart. */
+  const applyFlag = (name: string, value: unknown) =>
+    window.webContents
+      .executeJavaScript(
+        `window.__peardFeatureFlags?.set(${JSON.stringify(name)}, ${JSON.stringify(value)})`,
+      )
+      .catch(() => undefined);
+
+  /** Drops a live override, putting the page's own value back. */
+  const removeFlag = (name: string) =>
+    window.webContents
+      .executeJavaScript(
+        `window.__peardFeatureFlags?.remove(${JSON.stringify(name)})`,
+      )
+      .catch(() => undefined);
+
+  /** Every flag the page carries, plus the ones the user overrode. */
+  const featureFlags = async () => {
+    const saved = overrides();
+    const live = (await window.webContents
+      .executeJavaScript('window.ytcfg?.data_?.EXPERIMENT_FLAGS ?? {}')
+      .catch(() => ({}))) as Record<string, unknown>;
+    const names = [
+      ...new Set([...Object.keys(live), ...Object.keys(saved)]),
+    ].sort();
+
+    return names.map((name) => ({
+      name,
+      value: Object.hasOwn(saved, name) ? saved[name] : live[name],
+      overridden: Object.hasOwn(saved, name),
+    }));
+  };
+
+  app.openapi(routes.appMeta, async (ctx) => ctx.json(await getAppMeta(), 200));
+  app.openapi(routes.featureFlags, async (ctx) =>
+    ctx.json({ flags: await featureFlags() }, 200),
+  );
+  app.openapi(routes.patchFeatureFlags, async (ctx) => {
+    const patch = ctx.req.valid('json');
+    config.set('options.featureFlags', { ...overrides(), ...patch });
+    await Promise.all(
+      Object.entries(patch).map(([name, value]) => applyFlag(name, value)),
+    );
+    return noContent(ctx);
+  });
+  app.openapi(routes.deleteFeatureFlags, async (ctx) => {
+    const { flags } = ctx.req.valid('json');
+    const saved = { ...overrides() };
+    // Only a flag that was overridden needs the page to put its own value back;
+    // removing one that never was would drop it from the page's map instead.
+    const hadOverride = flags.filter((name) => Object.hasOwn(saved, name));
+    for (const name of flags) delete saved[name];
+    config.set('options.featureFlags', saved);
+    await Promise.all(hadOverride.map(removeFlag));
+    return noContent(ctx);
+  });
 };
 
 /** Mount point for everything v2 serves. */
@@ -948,16 +1281,12 @@ const V2_PATH = '/api/v2';
 
 /**
  * The WebSocket endpoint, relative to the version prefix. It authenticates with
- * a `?token=` query param instead of the `Authorization` header, because
- * browsers cannot set headers on a WebSocket handshake.
+ * a `?token=` query param because browsers cannot set headers on a WebSocket
+ * handshake.
  */
 const WS_PATH = '/ws';
 
-/**
- * v2 as a self-contained router. `app.ts` mounts it at its prefix, so the
- * prefix, the auth guard and the WebSocket endpoint all stay in one place
- * instead of being threaded through every route definition.
- */
+/** v2 as a self-contained router; `app.ts` mounts it at its prefix. */
 export const createV2 = (
   ctx: BackendContext<APIServerConfig>,
   playerState: PlayerState,
@@ -969,9 +1298,9 @@ export const createV2 = (
   app.use('*', requireAuth(ctx.getConfig, `${V2_PATH}${WS_PATH}`));
   registerRoutes(app, ctx, playerState);
 
-  // TODO(ponytail): v2 will carry its own event set. For now it reuses v1's
-  // shared player state events, so both versions broadcast the same messages.
-  const stopWebsocket = registerWebsocket(app, ctx, playerState, WS_PATH, [
+  // v2 keeps v1's player events and adds rating/lyrics/translation pushes plus
+  // client commands, so it needs its own socket protocol.
+  const stopWebsocket = registerV2Websocket(app, ctx, playerState, WS_PATH, [
     v2Tag('WebSocket'),
   ]);
 

@@ -6,15 +6,18 @@ import {
   type SongInfo,
   SongInfoEvent,
 } from '@/providers/song-info';
-
-import type { RepeatMode, VolumeState } from '@/types/datahost-get-state';
+import {
+  LikeType,
+  type RepeatMode,
+  type VolumeState,
+} from '@/types/datahost-get-state';
 
 /**
  * The song shape the WebSocket publishes. The scrobbler's config-derived
  * title/artist are not part of it, for either version — `/api/v2/video` carries
  * those over HTTP instead.
  */
-type WireSongInfo = Omit<SongInfo, 'scrobbleTitle' | 'scrobbleArtist'>;
+export type WireSongInfo = Omit<SongInfo, 'scrobbleTitle' | 'scrobbleArtist'>;
 
 /**
  * Messages broadcast to WebSocket clients. Each variant is sent as-is, so the
@@ -52,9 +55,29 @@ export const createPlayerState = () => {
   // "not known yet" apart from an actual NONE.
   let repeat: RepeatMode | undefined;
   let shuffle = false;
+  // Only the v2 snapshot/events use these; v1's protocol is unchanged.
+  let speed: number | undefined;
+  let rating: LikeType = LikeType.Indifferent;
 
   const listeners = new Set<(event: PlayerEvent) => void>();
+  // A renderer can report the same change twice (listener stacks, a fallback
+  // racing the real update). Identical back-to-back frames are noise to every
+  // client, so a repeat within this window is dropped.
+  const DUPLICATE_EVENT_WINDOW_MS = 1_000;
+  let lastMessage: string | undefined;
+  let lastMessageAt = 0;
   const emit = (event: PlayerEvent) => {
+    const message = JSON.stringify(event);
+    const now = Date.now();
+    if (
+      message === lastMessage &&
+      now - lastMessageAt < DUPLICATE_EVENT_WINDOW_MS
+    ) {
+      return;
+    }
+
+    lastMessage = message;
+    lastMessageAt = now;
     for (const listener of listeners) {
       listener(event);
     }
@@ -115,6 +138,12 @@ export const createPlayerState = () => {
     shuffle = enabled;
     emit({ type: 'SHUFFLE_CHANGED', shuffle: enabled });
   });
+  subscribeIpc<number>('peard:playback-speed-changed', (value) => {
+    speed = value;
+  });
+  subscribeIpc<LikeType>('peard:like-changed', (value) => {
+    rating = value;
+  });
 
   return {
     get song() {
@@ -125,6 +154,14 @@ export const createPlayerState = () => {
     },
     get volume() {
       return volume;
+    },
+    /** Playback rate, as the last rate change reported by the renderer. */
+    get speed() {
+      return speed;
+    },
+    /** The current song's like state, as last reported by the renderer. */
+    get rating() {
+      return rating;
     },
     snapshot(): PlayerSnapshot {
       return {

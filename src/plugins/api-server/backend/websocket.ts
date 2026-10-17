@@ -10,6 +10,7 @@ import { verify } from 'hono/jwt';
 import { LoggerPrefix } from '@/utils';
 
 import { JWTPayloadSchema } from './schemas';
+import { createV1EventAdapter, v1PlayerInfo } from './websocket-v1-events';
 
 import { AuthStrategy, type APIServerConfig } from '../config';
 
@@ -19,12 +20,16 @@ import type { WSContext } from 'hono/ws';
 
 const JWT_ALG = 'HS256';
 
-const createWsRoute = (path: string, tags: string[] = []) =>
+export const createWsRoute = (
+  path: string,
+  tags: string[] = [],
+  description = 'WebSocket endpoint for real-time updates',
+) =>
   createRoute({
     method: 'get',
     path,
     summary: 'websocket endpoint',
-    description: 'WebSocket endpoint for real-time updates',
+    description,
     tags,
     request: {
       query: z.object({
@@ -45,26 +50,13 @@ const createWsRoute = (path: string, tags: string[] = []) =>
   });
 
 /**
- * Broadcasts every player event to the connected clients. Sockets are tracked
- * per server instance, so a restart can't leave clients wired to a dead app.
+ * Verifies a WebSocket handshake's `?token=` against the API server's clients.
+ * The route itself is exempt from the HTTP auth middleware because browsers
+ * cannot set an Authorization header on a WebSocket handshake.
  */
-export const registerWebsocket = (
-  app: OpenAPIHono,
-  { getConfig }: BackendContext<APIServerConfig>,
-  playerState: PlayerState,
-  path: string,
-  tags: string[] = [],
-) => {
-  const sockets = new Set<WSContext<WebSocketLike>>();
-
-  const unsubscribe = playerState.subscribe((event) => {
-    const message = JSON.stringify(event);
-    for (const socket of sockets) {
-      socket.send(message);
-    }
-  });
-
-  const authenticate = async (token: string | undefined) => {
+export const createWsAuthenticator =
+  (getConfig: BackendContext<APIServerConfig>['getConfig']) =>
+  async (token: string | undefined) => {
     const config = await getConfig();
 
     if (config.authStrategy === AuthStrategy.NONE) {
@@ -87,6 +79,32 @@ export const registerWebsocket = (
     return parsed.success && config.authorizedClients.includes(parsed.data.id);
   };
 
+/**
+ * Broadcasts every player event to the connected clients. Sockets are tracked
+ * per server instance, so a restart can't leave clients wired to a dead app.
+ */
+export const registerWebsocket = (
+  app: OpenAPIHono,
+  { getConfig }: BackendContext<APIServerConfig>,
+  playerState: PlayerState,
+  path: string,
+  tags: string[] = [],
+) => {
+  const sockets = new Set<WSContext<WebSocketLike>>();
+
+  const adaptEvent = createV1EventAdapter();
+  const unsubscribe = playerState.subscribe((event) => {
+    const v1Event = adaptEvent(event);
+    if (!v1Event) return;
+
+    const message = JSON.stringify(v1Event);
+    for (const socket of sockets) {
+      socket.send(message);
+    }
+  });
+
+  const authenticate = createWsAuthenticator(getConfig);
+
   const handler = upgradeWebSocket((ctx) => ({
     async onOpen(_, ws) {
       if (!(await authenticate(ctx.req.query('token')))) {
@@ -95,9 +113,7 @@ export const registerWebsocket = (
       }
 
       sockets.add(ws);
-      ws.send(
-        JSON.stringify({ type: 'PLAYER_INFO', ...playerState.snapshot() }),
-      );
+      ws.send(JSON.stringify(v1PlayerInfo(playerState.snapshot())));
     },
     onClose(_, ws) {
       sockets.delete(ws);
