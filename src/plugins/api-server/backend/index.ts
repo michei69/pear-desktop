@@ -109,7 +109,7 @@ export const backend = createBackend<BackendType, APIServerConfig>({
     const common = {
       fetch: this.app.fetch.bind(this.app),
       port: config.port,
-      hostname: config.hostname,
+      hostname: config.hostname?.trim() || '127.0.0.1',
       websocket: { server: new WebSocketServer({ noServer: true }) },
     };
 

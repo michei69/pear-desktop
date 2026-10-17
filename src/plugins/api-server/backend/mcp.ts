@@ -8,13 +8,6 @@
  * Deliberately knows nothing about the tools' implementations: they are built
  * in `mcp-tools.ts` and handed in, so this file only speaks MCP.
  */
-// TODO: remove once this PR has landed.
-// reviewdog installs the base branch's dependencies, which don't include
-// @modelcontextprotocol/sdk yet: the imports then resolve to `any`, and every
-// use in this file trips the unsafe-* rules. They resolve normally wherever the
-// package is installed, so the rules are off here only until the merge puts the
-// dependency on the base branch.
-/* oxlint-disable typescript/no-unsafe-assignment, typescript/no-unsafe-call, typescript/no-unsafe-member-access, typescript/no-unsafe-return */
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { WebStandardStreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js';
 

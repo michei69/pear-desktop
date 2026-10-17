@@ -104,17 +104,21 @@ export default createPlugin({
       restartNeeded: true,
     },
   ],
-  menu: async ({ getConfig, setConfig }) => {
+  menu: async ({ getConfig, setConfig, refresh }) => {
     const config = await getConfig();
     const localBlockLists = await getLocalBlockListNames();
 
+    // The menu is rebuilt from scratch by `refresh()` after every write, so the
+    // checked/enabled state follows the stored config instead of the snapshot
+    // this invocation was built from.
     return [
       ...Object.values(blockers).map((blocker) => ({
         label: blocker,
         type: 'radio' as const,
         checked: normalizeBlocker(config.blocker) === blocker,
-        click() {
-          setConfig({ blocker });
+        async click() {
+          await setConfig({ blocker });
+          await refresh();
         },
       })),
       { type: 'separator' },
@@ -125,8 +129,10 @@ export default createPlugin({
             label: 'Enabled',
             type: 'checkbox',
             checked: config.customEnabled === true,
-            click() {
-              setConfig({ customEnabled: config.customEnabled !== true });
+            async click() {
+              const latest = await getConfig();
+              await setConfig({ customEnabled: latest.customEnabled !== true });
+              await refresh();
             },
           },
           ...localBlockLists.map((file) => ({
@@ -134,14 +140,16 @@ export default createPlugin({
             type: 'checkbox' as const,
             enabled: config.customEnabled === true,
             checked: !config.disabledLocalBlockLists.includes(file),
-            click() {
-              const disabled = new Set(config.disabledLocalBlockLists);
+            async click() {
+              const latest = await getConfig();
+              const disabled = new Set(latest.disabledLocalBlockLists);
               if (disabled.has(file)) {
                 disabled.delete(file);
               } else {
                 disabled.add(file);
               }
-              setConfig({ disabledLocalBlockLists: [...disabled] });
+              await setConfig({ disabledLocalBlockLists: [...disabled] });
+              await refresh();
             },
           })),
         ],

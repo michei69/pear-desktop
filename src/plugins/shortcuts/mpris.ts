@@ -106,7 +106,10 @@ export function registerMPRIS(win: BrowserWindow) {
     // the remote artwork URL now so MPRIS clients can fetch it in parallel.
     ipcMain.on('peard:video-src-changed', (_, data: GetPlayerResponse) => {
       const video = data.videoDetails;
-      if (!video?.videoId) return;
+      if (!video?.videoId) {
+        pendingArtwork = null;
+        return;
+      }
 
       const artUrl = video.thumbnail?.thumbnails?.at(-1)?.url;
       pendingArtwork = { videoId: video.videoId, url: artUrl };
@@ -355,8 +358,11 @@ export function registerMPRIS(win: BrowserWindow) {
           pendingArtwork?.videoId === songInfo.videoId
             ? pendingArtwork.url
             : songInfo.imageSrc;
+        const songDuration = Number(songInfo.songDuration);
         const data: Track = {
-          'mpris:length': secToMicro(songInfo.songDuration),
+          ...(Number.isFinite(songDuration)
+            ? { 'mpris:length': secToMicro(songDuration) }
+            : undefined),
           ...(artUrl ? { 'mpris:artUrl': artUrl } : undefined),
           'xesam:title': songInfo.title,
           'xesam:url': songInfo.url,

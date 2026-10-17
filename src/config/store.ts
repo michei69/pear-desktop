@@ -365,7 +365,6 @@ function readStoredChannel(path: string) {
   }
 }
 
-// oxlint-disable-next-line typescript/no-unsafe-assignment
 export const store = new Store({
   defaults: {
     ...defaults,
