@@ -187,6 +187,11 @@ contextBridge.exposeInMainWorld(
   'ELECTRON_RENDERER_URL',
   process.env.ELECTRON_RENDERER_URL,
 );
+// Renderer-side perf bisect switch; the page has no `process` to read it from.
+contextBridge.exposeInMainWorld(
+  'pearPerfDisabledParts',
+  process.env.PEAR_PERF_DISABLE ?? '',
+);
 
 // The renderer has no Electron APIs of its own; these are the webFrame calls the
 // memory report reads and main asks for when the window has been hidden a while.

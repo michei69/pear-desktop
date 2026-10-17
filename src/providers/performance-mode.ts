@@ -4,10 +4,22 @@ type PerformancePart = 'flags' | 'css' | 'plugins';
 
 /**
  * Debug escape hatch: `PEAR_PERF_DISABLE=flags,css` keeps performance mode on
- * but turns individual parts off, to bisect which one costs what.
+ * but turns individual parts off, to bisect which one costs what. The renderer
+ * has no `process`, so preload forwards the value through the bridge.
  */
+const disabledParts = () => {
+  if (typeof process !== 'undefined' && process.env) {
+    return process.env.PEAR_PERF_DISABLE ?? '';
+  }
+
+  return (
+    (globalThis as { pearPerfDisabledParts?: string }).pearPerfDisabledParts ??
+    ''
+  );
+};
+
 export const isPerformancePartEnabled = (part: PerformancePart) =>
-  !(process.env.PEAR_PERF_DISABLE ?? '')
+  !disabledParts()
     .split(',')
     .map((value) => value.trim())
     .includes(part);
