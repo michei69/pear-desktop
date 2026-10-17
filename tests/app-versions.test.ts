@@ -34,20 +34,21 @@ test('only the beta tag counts as a beta version', () => {
   expect(isBetaVersion('3.12.4-alpha.1')).toBe(false);
 });
 
-test('a dev build is behind master when it trails or has fallen behind', () => {
+test('a dev build trails master only when it sits on master history', () => {
   expect(
-    isCommitBehindMaster({ status: 'behind', ahead_by: 0, behind_by: 4 }),
+    isCommitBehindMaster({ status: 'ahead', ahead_by: 3, behind_by: 0 }),
   ).toBe(true);
   expect(
     isCommitBehindMaster({ status: 'identical', ahead_by: 0, behind_by: 0 }),
   ).toBe(false);
+  // Off-branch work with commits master does not have: not stale (issue #68).
   expect(
-    isCommitBehindMaster({ status: 'ahead', ahead_by: 3, behind_by: 0 }),
+    isCommitBehindMaster({ status: 'behind', ahead_by: 0, behind_by: 4 }),
   ).toBe(false);
-  // A diverged build still carries commits master has, which counts as behind.
+  // A branch master has moved on from is still a branch, not a stale master.
   expect(
     isCommitBehindMaster({ status: 'diverged', ahead_by: 2, behind_by: 1 }),
-  ).toBe(true);
+  ).toBe(false);
 });
 
 test('a failed or empty compare never claims an update', () => {

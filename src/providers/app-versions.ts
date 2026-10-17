@@ -28,11 +28,16 @@ export interface CommitComparison {
   behind_by: number;
 }
 
-/** A dev build is stale when the checkout it was built from trails master. */
+/**
+ * A dev build is stale only when its commit sits on master's history behind the
+ * tip. The compare is `commit...master`, so `status: 'ahead'` means master is
+ * ahead of the build. A branch with its own commits compares as `behind` or
+ * `diverged` — it is purposely off master and must not nag, even when master has
+ * moved on since it forked (issue #68).
+ */
 export const isCommitBehindMaster = (
   comparison: CommitComparison | null | undefined,
-): boolean =>
-  comparison?.status === 'behind' || (comparison?.behind_by ?? 0) > 0;
+): boolean => comparison?.status === 'ahead';
 
 /** Attempts and spacing for a check that fails transiently. */
 export const CHECK_ATTEMPTS = 3;
