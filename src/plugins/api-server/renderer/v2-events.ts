@@ -32,6 +32,49 @@ const logFailure = (what: string) => (error: unknown) =>
   console.error(`[api-server] pushing ${what} failed:`, error);
 
 /**
+ * Pushes the latest message `build` returns whenever the values `trackInputs`
+ * reads change, skipping a repeat of the last one and coalescing a burst of
+ * changes into one tick.
+ */
+const watchLatest = <T>(
+  owner: Owner,
+  context: RendererContext<PluginConfig>,
+  channel: (typeof V2RendererEvents)[keyof typeof V2RendererEvents],
+  what: string,
+  build: () => T | null | Promise<T | null>,
+  trackInputs: () => void,
+): (() => void) => {
+  let last: string | undefined;
+  let timer: ReturnType<typeof setTimeout> | undefined;
+
+  const send = async () => {
+    const payload = await build();
+    if (payload === null) return;
+
+    const message = JSON.stringify(payload);
+    if (message === last) return;
+    last = message;
+    context.ipc.send(channel, payload);
+  };
+  const schedule = () => {
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      send().catch(logFailure(what));
+    }, 0);
+  };
+
+  const dispose = watch(owner, () => {
+    trackInputs();
+    schedule();
+  });
+
+  return () => {
+    clearTimeout(timer);
+    dispose();
+  };
+};
+
+/**
  * Pushes the lyrics snapshots the WebSocket cannot read for itself: every
  * provider's lyrics when they arrive or the active one is switched.
  */
@@ -39,88 +82,58 @@ const setupLyricsWatch = (
   context: RendererContext<PluginConfig>,
   store: LyricsStore,
   owner: Owner,
-): (() => void) => {
-  let last: string | undefined;
-  let timer: ReturnType<typeof setTimeout> | undefined;
-
-  const send = async () => {
-    const reply = await getLyricsReply();
-    if (!reply) return;
-
-    const message = JSON.stringify(reply);
-    if (message === last) return;
-    last = message;
-    context.ipc.send(V2RendererEvents.lyricsChanged, reply);
-  };
-  const schedule = () => {
-    clearTimeout(timer);
-    timer = setTimeout(() => {
-      send().catch(logFailure('lyrics'));
-    }, 0);
-  };
-
-  const dispose = watch(owner, () => {
-    // Song, selected provider, and every provider's result.
-    track(store.lyricsStore.videoId);
-    track(store.lyricsStore.provider);
-    for (const provider of providerNames) {
-      const state = store.lyricsStore.lyrics[provider];
-      track(state.state);
-      track(state.data);
-    }
-    schedule();
-  });
-
-  return () => {
-    clearTimeout(timer);
-    dispose();
-  };
-};
+): (() => void) =>
+  watchLatest(
+    owner,
+    context,
+    V2RendererEvents.lyricsChanged,
+    'lyrics',
+    getLyricsReply,
+    () => {
+      // Song, selected provider, and every provider's result.
+      track(store.lyricsStore.videoId);
+      track(store.lyricsStore.provider);
+      for (const provider of providerNames) {
+        const state = store.lyricsStore.lyrics[provider];
+        track(state.state);
+        track(state.data);
+      }
+    },
+  );
 
 /** Pushes the translation the app is showing, once it is done. */
 const setupTranslationWatch = (
   context: RendererContext<PluginConfig>,
   store: TranslationStore,
   owner: Owner,
-): (() => void) => {
-  let last: string | undefined;
-  let timer: ReturnType<typeof setTimeout> | undefined;
+): (() => void) =>
+  watchLatest(
+    owner,
+    context,
+    V2RendererEvents.translationUpdated,
+    'translation',
+    (): TranslationUpdatedPayload | null => {
+      const current = store.translationStore.current;
+      const videoId = store.translationStore.videoId;
+      if (!current || current.state !== 'done' || !current.lines.length) {
+        return null;
+      }
+      if (!videoId) return null;
 
-  const send = () => {
-    const current = store.translationStore.current;
-    const videoId = store.translationStore.videoId;
-    if (!current || current.state !== 'done' || !current.lines.length) return;
-    if (!videoId) return;
-
-    const payload: TranslationUpdatedPayload = {
-      videoId,
-      language: current.language ?? null,
-      provider: current.provider ?? null,
-      lines: current.lines,
-    };
-    const message = JSON.stringify(payload);
-    if (message === last) return;
-    last = message;
-    context.ipc.send(V2RendererEvents.translationUpdated, payload);
-  };
-  const schedule = () => {
-    clearTimeout(timer);
-    timer = setTimeout(send, 0);
-  };
-
-  const dispose = watch(owner, () => {
-    track(store.translationStore.videoId);
-    track(store.translationStore.key);
-    track(store.translationStore.current?.state);
-    track(store.translationStore.current?.lines);
-    schedule();
-  });
-
-  return () => {
-    clearTimeout(timer);
-    dispose();
-  };
-};
+      return {
+        videoId,
+        language: current.language ?? null,
+        provider: current.provider ?? null,
+        lines: current.lines,
+      };
+    },
+    () => {
+      track(store.translationStore.videoId);
+      track(store.translationStore.key);
+      track(store.translationStore.current?.state);
+      track(store.translationStore.current?.lines);
+    },
+  );
 
 /**
  * The renderer half of the v2 WebSocket's extra event set. The store modules are

@@ -3,12 +3,9 @@ import { expect, test } from '@playwright/test';
 import {
   createV1EventAdapter,
   v1PlayerInfo,
-} from '../src/plugins/api-server/backend/websocket-v1-events';
+} from '../backend/websocket-v1-events';
 
-import type {
-  PlayerSnapshot,
-  WireSongInfo,
-} from '../src/plugins/api-server/backend/state';
+import type { PlayerSnapshot, WireSongInfo } from '../backend/state';
 
 /**
  * v1 has always reported whole seconds. The player API's `onVideoProgress`

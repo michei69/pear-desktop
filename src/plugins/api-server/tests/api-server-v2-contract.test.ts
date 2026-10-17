@@ -2,15 +2,21 @@ import { registerHooks } from 'node:module';
 
 import { expect, test } from '@playwright/test';
 
+import { providerNames } from '@/plugins/synced-lyrics/providers';
+import { PageType, type ThumbnailElement } from '@/types/datahost-get-state';
+
 import {
   ApiActions,
   apiRequest,
   commandActions,
   type ApiAction,
-} from '../src/plugins/api-server/channels';
-import { registerV2 } from '../src/plugins/api-server/renderer/v2';
-import { providerNames } from '../src/plugins/synced-lyrics/providers';
-import { PageType } from '../src/types/datahost-get-state';
+} from '../channels';
+import {
+  registerV2,
+  type QueueItemResult,
+  type QueueReply,
+  type SearchResult,
+} from '../renderer/v2';
 
 /**
  * The seam between the API server's backend and its renderer half: the backend
@@ -28,50 +34,6 @@ type Recorded = {
   invoke: { channel: string; payload: unknown }[];
 };
 
-/** One parsed `/video/search` result, as the renderer replies with it. */
-type SearchResult = {
-  title?: string;
-  artist?: string;
-  type?: string;
-  thumbnail?: string;
-  thumbnails?: Size[];
-  videoId?: string;
-  browseId?: string;
-  url?: string;
-};
-
-type Size = { url: string; width?: number; height?: number };
-
-/** One mapped queue entry, as the renderer replies with it. */
-type QueueEntry = {
-  videoId: string;
-  title?: string;
-  artist?: string;
-  album?: string;
-  year?: string;
-  duration?: string;
-  thumbnails?: Size[];
-  thumbnail?: string;
-  url: string;
-  selected: boolean;
-  index: number;
-  playlistSetVideoId?: string;
-  canReorder: boolean;
-  renderer?: unknown;
-};
-
-type QueueReply = {
-  items?: QueueEntry[];
-  autoplay?: boolean;
-  isInfinite?: boolean;
-  nextQueueItemId?: string;
-  playbackContentMode?: string;
-  repeatMode?: string;
-  currentPlayingItemId?: number;
-  shuffleEnabled?: boolean;
-  continuation?: string;
-};
-
 const queueState = {
   autoplay: false,
   isInfinite: false,
@@ -87,7 +49,9 @@ const queueState = {
 
 const THUMBNAIL = 'https://lh3.example/thumb.jpg';
 /** The single size a plain row or card offers. */
-const THUMBNAILS: Size[] = [{ url: THUMBNAIL }];
+const THUMBNAILS: ThumbnailElement[] = [
+  { url: THUMBNAIL, width: 120, height: 120 },
+];
 
 /** A linked byline run, as YTM sends it: a browse endpoint and a page type. */
 const linkedRun = (text: string, pageType: PageType) => ({
@@ -136,7 +100,7 @@ type RowOptions = {
   /** `flexColumns[0].runs[0].navigationEndpoint`: songs and `MPED` episodes. */
   titleNav?: { videoId?: string; browseId?: string };
   /** Thumbnail sizes; omit for the usual single one, `false` for none at all. */
-  sizes?: Size[] | false;
+  sizes?: ThumbnailElement[] | false;
 };
 
 /** The byline runs of a row: an optional label, then the credited entities. */
@@ -241,7 +205,7 @@ const card = ({
   subtitle: BylineEntry[];
   videoId?: string;
   browseId?: string;
-  sizes?: Size[] | false;
+  sizes?: ThumbnailElement[] | false;
 }) => ({
   title: { runs: [{ text: title }] },
   subtitle: { runs: subtitle.map(bylineRun) },
@@ -294,17 +258,22 @@ const setup = (
 
   const app = {
     queue: {
-      shuffle: async () => recorded.player.push('queue.shuffle'),
+      shuffle: () => {
+        recorded.player.push('queue.shuffle');
+        return Promise.resolve();
+      },
       continuation: 'continuation',
     },
     dispatch: (action: unknown) => recorded.dispatches.push(action),
     networkManager: {
-      fetch: async (url: string, data: unknown) => {
+      fetch: (url: string, data: unknown) => {
         recorded.fetch.push({ url, data });
-        if (url === '/search') return search;
-        if (url.startsWith('/browse')) return extra.browse ?? {};
-        if (url.startsWith('/next')) return extra.next ?? {};
-        return { queueDatas: [] };
+        if (url === '/search') return Promise.resolve(search);
+        if (url.startsWith('/browse')) {
+          return Promise.resolve(extra.browse ?? {});
+        }
+        if (url.startsWith('/next')) return Promise.resolve(extra.next ?? {});
+        return Promise.resolve({ queueDatas: [] });
       },
     },
     ytmusicReduxBehavior: {
@@ -1084,7 +1053,7 @@ test('search gives every result exactly one id and a url', async () => {
 });
 
 /** Three sizes, as a live row and a live queue item both offer them. */
-const SIZES: Size[] = [
+const SIZES: ThumbnailElement[] = [
   { url: 'https://lh3.example/w60.jpg', width: 60, height: 60 },
   { url: 'https://lh3.example/w226.jpg', width: 226, height: 226 },
   { url: 'https://lh3.example/w544.jpg', width: 544, height: 544 },
@@ -1322,7 +1291,7 @@ test('autoplay maps the automix entries, which are not part of the queue', async
     continuation: 'continuation',
   });
   const payload = recorded.replies.at(-1)?.payload as
-    | { items?: QueueEntry[] }
+    | { items?: QueueItemResult[] }
     | undefined;
   expect(payload?.items?.map((item) => [item.videoId, item.title])).toEqual([
     ['radio-1', 'Radio Song'],
@@ -1357,7 +1326,7 @@ test('autoplay continuation fetches the next page and returns its token', async 
     data: { continuation: 'radio-token' },
   });
   const payload = recorded.replies.at(-1)?.payload as
-    | { items?: QueueEntry[]; continuation?: string }
+    | { items?: QueueItemResult[]; continuation?: string }
     | undefined;
   expect(payload?.items?.map((item) => item.videoId)).toEqual(['radio-2']);
   expect(payload?.continuation).toBe('radio-next');
@@ -1871,11 +1840,18 @@ test('translateLyrics replies null for a missing or blank language, without load
   }
 });
 
-test('translateLyrics replies null when the translation module throws', async () => {
+test('translateLyrics reports a thrown translation as a provider error', async () => {
   const { payload, replies } = await translate({ broken: true });
 
+  // A null reply reads as "plugin off" on the backend, which would answer 404
+  // for a real provider failure.
   expect(replies).toHaveLength(1);
-  expect(payload).toBeNull();
+  expect(payload).toMatchObject({
+    language: 'fr',
+    lines: [],
+    reason: 'provider-error',
+    error: 'translation store unavailable',
+  });
 });
 
 /**

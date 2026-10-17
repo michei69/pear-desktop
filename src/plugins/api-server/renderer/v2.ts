@@ -9,6 +9,7 @@ import {
   type MusicCardShelfRenderer,
   type MusicResponsiveListItemRenderer,
   type QueueItem,
+  type RepeatMode,
   type Response,
   type SectionListRendererContent,
   type ThumbnailDetailsClass,
@@ -17,7 +18,7 @@ import {
 import { type AppAPI } from '@/types/queue';
 import { type SearchBoxElement } from '@/types/search-box-element';
 import { clamp } from '@/utils/math';
-import { bylineParts, queueRenderer, yearPattern } from '@/utils/queue';
+import { parseByline, queueRenderer } from '@/utils/queue';
 
 import { getLyricsReply } from './lyrics-reply';
 
@@ -34,7 +35,7 @@ type LikeStatus = 'LIKE' | 'DISLIKE' | 'INDIFFERENT';
 type QueueInsertPosition = 'INSERT_AFTER_CURRENT_VIDEO' | 'INSERT_AT_END';
 
 /** One search result; exactly one of `videoId`/`browseId` is set. */
-type SearchResult = {
+export type SearchResult = {
   title?: string;
   artist?: string;
   type?: string;
@@ -46,7 +47,7 @@ type SearchResult = {
 };
 
 /** One queue item, mapped from its raw playlist panel renderer. */
-type QueueItemResult = {
+export type QueueItemResult = {
   videoId: string;
   title?: string;
   artist?: string;
@@ -107,6 +108,19 @@ type MusicTwoRowItemRenderer = {
     watchEndpoint?: { videoId?: string };
     browseEndpoint?: { browseId?: string };
   };
+};
+
+/** The queue reply `GET /queue` returns. */
+export type QueueReply = {
+  autoplay?: boolean;
+  isInfinite?: boolean;
+  items?: QueueItemResult[];
+  nextQueueItemId?: string;
+  playbackContentMode?: string;
+  repeatMode?: RepeatMode;
+  currentPlayingItemId?: number;
+  shuffleEnabled?: boolean;
+  continuation?: string;
 };
 
 /** The curated page `browse` answers with. */
@@ -190,17 +204,13 @@ const queueItem = (
   // An item with no video id cannot be played, so it is not an entry.
   if (!videoId) return undefined;
 
-  const parts = bylineParts(renderer.longBylineText?.runs);
-  // `artist • album • year`: the year is the last part that reads as one, and
-  // the album the first part after the artist that is not the year.
-  const year = parts.filter((part) => yearPattern.test(part)).at(-1);
-  const album = parts.slice(1).find((part) => part !== year);
+  const { artist, album, year } = parseByline(renderer.longBylineText?.runs);
   const thumbnails = thumbnailSizes(renderer.thumbnail);
 
   return {
     videoId,
     title: renderer.title?.runs?.map((run) => run.text).join(''),
-    artist: parts[0],
+    artist,
     album,
     year,
     duration: renderer.lengthText?.runs?.[0]?.text,
@@ -507,15 +517,9 @@ export const registerV2 = (
   const apiPrevVideo = () => api.previousVideo();
   const apiPlay = () => api.playVideo();
   const apiPause = () => api.pauseVideo();
-  const apiGetPlaying = () => {
-    reply(ApiActions.getPlaying, api.getPlayerState() !== 2);
-  };
   const apiTogglePlaying = () => {
     if (api.getPlayerState() === 2) api.playVideo();
     else api.pauseVideo();
-  };
-  const apiGetPlaybackSpeed = () => {
-    reply(ApiActions.getPlaybackSpeed, api.getPlaybackRate());
   };
   const apiSetPlaybackSpeed = (value = 1) => {
     api.setPlaybackRate(value);
@@ -532,14 +536,8 @@ export const registerV2 = (
   const apiSeekTo = (t: number) => api.seekTo(t);
   const apiSeekBy = (t: number) => api.seekBy(t);
   const apiShuffle = () => app?.queue.shuffle();
-  const apiGetShuffle = () => {
-    reply(ApiActions.getShuffle, getQueue()?.shuffleEnabled);
-  };
   const apiSetShuffle = (status = false) => {
     if (status != getQueue()?.shuffleEnabled) app?.queue.shuffle();
-  };
-  const apiGetVolume = () => {
-    reply(ApiActions.getVolume, api.getVolume());
   };
   const apiSetVolume = (v = 100) => {
     v = clamp(v, 0, 100);
@@ -550,9 +548,6 @@ export const registerV2 = (
       type: 'SET_VOLUME',
       payload: v,
     });
-  };
-  const apiGetMute = () => {
-    reply(ApiActions.getMute, api.isMuted());
   };
   const apiSetMute = (status = false) => {
     if (status) api.mute();
@@ -565,9 +560,6 @@ export const registerV2 = (
     });
   };
   const apiToggleMute = () => apiSetMute(!api.isMuted());
-  const apiGetRepeat = () => {
-    reply(ApiActions.getRepeat, getQueue()?.repeatMode);
-  };
   const apiSetRepeat = (status: 'NONE' | 'ALL' | 'ONE' = 'NONE') =>
     app?.dispatch({
       type: 'SET_REPEAT',
@@ -583,9 +575,6 @@ export const registerV2 = (
         return apiSetRepeat('NONE');
     }
   };
-  const apiGetCurrentVideoLikedStatus = () => {
-    reply(ApiActions.getLikeState, getLikeButtonRenderer()?.likeStatus);
-  };
   const apiSetCurrentVideoLikedStatus = (
     status: LikeStatus = 'INDIFFERENT',
   ) => {
@@ -599,17 +588,18 @@ export const registerV2 = (
     getLikeButtonRenderer()?.updateLikeStatus('INDIFFERENT');
   const apiGetQueue = (raw = false) => {
     const data = getQueue();
-    reply(ApiActions.getQueue, {
+    const payload: QueueReply = {
       autoplay: data?.autoplay,
       isInfinite: data?.isInfinite,
       items: queueItems(data?.items, raw),
-      nextQueueItemId: data?.nextQueueItemId,
+      nextQueueItemId: data?.nextQueueItemId?.toString(),
       playbackContentMode: data?.playbackContentMode,
       repeatMode: data?.repeatMode,
       currentPlayingItemId: data?.selectedItemIndex,
       shuffleEnabled: data?.shuffleEnabled,
       continuation: app?.queue.continuation,
-    });
+    };
+    reply(ApiActions.getQueue, payload);
   };
 
   /**
@@ -692,6 +682,10 @@ export const registerV2 = (
    * asks about another video. `translateForLanguage` writes nothing to the UI,
    * and reports failures as data with a `reason` for the backend to turn into a
    * status.
+   *
+   * A null reply only means "nothing was attempted" (the plugin is off); a
+   * thrown provider or cache failure is reported as data too, or the backend
+   * would answer "plugin disabled" for a real failure.
    */
   const apiTranslateLyrics = async (language?: string, videoId?: string) => {
     let result: LanguageTranslationResult | null = null;
@@ -709,6 +703,13 @@ export const registerV2 = (
       }
     } catch (error) {
       console.error('[api-server] translateLyrics failed:', error);
+      result = {
+        provider: null,
+        language: typeof language === 'string' ? language : '',
+        lines: [],
+        reason: 'provider-error',
+        error: error instanceof Error ? error.message : String(error),
+      };
     }
 
     reply(ApiActions.translateLyrics, result);
@@ -762,46 +763,33 @@ export const registerV2 = (
         }
       });
   };
+  /**
+   * A queue position from either an index or a video id. `-1` means the id is
+   * not in the queue, and the action has to be dropped.
+   */
+  const queuePosition = (value: number | string) =>
+    typeof value === 'string' && Number.isNaN(Number(value))
+      ? queueIndexOfVideo(getQueue()?.items, value)
+      : Number(value);
+
   const apiMoveVideoInQueue = (from: number | string, to: number | string) => {
-    if (typeof from === 'string' && Number.isNaN(Number(from))) {
-      // from is a video id
-      from = queueIndexOfVideo(getQueue()?.items, from);
-      if (from == -1) return;
-    }
-    if (typeof to === 'string' && Number.isNaN(Number(to))) {
-      // to is a video id
-      to = queueIndexOfVideo(getQueue()?.items, to);
-      if (to == -1) return;
-    }
-    app?.dispatch({
-      type: 'MOVE_ITEM',
-      payload: {
-        fromIndex: from,
-        toIndex: to,
-      },
-    });
+    const fromIndex = queuePosition(from);
+    const toIndex = queuePosition(to);
+    if (fromIndex === -1 || toIndex === -1) return;
+
+    app?.dispatch({ type: 'MOVE_ITEM', payload: { fromIndex, toIndex } });
   };
   const apiRemoveVideoFromQueue = (video: number | string) => {
-    if (typeof video === 'string' && Number.isNaN(Number(video))) {
-      // video is a video id
-      video = queueIndexOfVideo(getQueue()?.items, video);
-      if (video == -1) return;
-    }
-    app?.dispatch({
-      type: 'REMOVE_ITEM',
-      payload: video,
-    });
+    const index = queuePosition(video);
+    if (index === -1) return;
+
+    app?.dispatch({ type: 'REMOVE_ITEM', payload: index });
   };
   const apiSetQueueIndex = (video: number | string) => {
-    if (typeof video === 'string' && Number.isNaN(Number(video))) {
-      // video is a video id
-      video = queueIndexOfVideo(getQueue()?.items, video);
-      if (video == -1) return;
-    }
-    app?.dispatch({
-      type: 'SET_INDEX',
-      payload: video,
-    });
+    const index = queuePosition(video);
+    if (index === -1) return;
+
+    app?.dispatch({ type: 'SET_INDEX', payload: index });
   };
   const apiClearQueue = () => {
     app?.dispatch({
@@ -874,22 +862,9 @@ export const registerV2 = (
   // unregisters, so a listener can never outlive its registration.
   const listeners: { channel: string; handler: CallableFunction }[] = [
     { channel: apiRequest(ApiActions.getVideo), handler: apiGetCurrentVideo },
-    { channel: apiRequest(ApiActions.getPlaying), handler: apiGetPlaying },
-    {
-      channel: apiRequest(ApiActions.getPlaybackSpeed),
-      handler: apiGetPlaybackSpeed,
-    },
     {
       channel: apiRequest(ApiActions.getPlaybackPosition),
       handler: apiGetPlaybackPosition,
-    },
-    { channel: apiRequest(ApiActions.getShuffle), handler: apiGetShuffle },
-    { channel: apiRequest(ApiActions.getRepeat), handler: apiGetRepeat },
-    { channel: apiRequest(ApiActions.getVolume), handler: apiGetVolume },
-    { channel: apiRequest(ApiActions.getMute), handler: apiGetMute },
-    {
-      channel: apiRequest(ApiActions.getLikeState),
-      handler: apiGetCurrentVideoLikedStatus,
     },
     { channel: apiRequest(ApiActions.getQueue), handler: apiGetQueue },
     {

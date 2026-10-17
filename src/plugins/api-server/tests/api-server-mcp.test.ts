@@ -8,21 +8,20 @@
 import { OpenAPIHono, z } from '@hono/zod-openapi';
 import { expect, test } from '@playwright/test';
 
-import { MCP_PATH, registerMcp } from '../src/plugins/api-server/backend/mcp';
-import {
-  defaultAPIServerConfig,
-  type APIServerConfig,
-} from '../src/plugins/api-server/config';
+import { MCP_PATH, registerMcp } from '../backend/mcp';
+import { defaultAPIServerConfig, type APIServerConfig } from '../config';
 
-import type { BackendContext } from '../src/types/contexts';
-import type { McpTool } from '../src/plugins/api-server/backend/mcp-tools';
+import type { McpTool, McpToolResult } from '../backend/mcp-tools';
+import type { BackendContext } from '@/types/contexts';
 
 const MCP_HEADERS = {
   'content-type': 'application/json',
-  accept: 'application/json, text/event-stream',
+  'accept': 'application/json, text/event-stream',
 };
 
-const text = (value: string) => ({ content: [{ type: 'text', text: value }] });
+const text = (value: string): McpToolResult => ({
+  content: [{ type: 'text', text: value }],
+});
 
 /** Stand-ins for the real tools; the endpoint must not care what they do. */
 const testTools: McpTool[] = [
@@ -31,27 +30,25 @@ const testTools: McpTool[] = [
     description: 'Answer pong.',
     input: z.object({}),
     readOnly: true,
-    run: async () => text('pong'),
+    run: () => Promise.resolve(text('pong')),
   },
   {
     name: 'echo',
     description: 'Echo the text back.',
     input: z.object({ text: z.string() }),
-    run: async (args) => text(String(args.text)),
+    run: (args) => Promise.resolve(text(String(args.text))),
   },
   {
     name: 'fail',
     description: 'Fail on purpose.',
     input: z.object({}),
-    run: async () => ({ ...text('nope'), isError: true }),
+    run: () => Promise.resolve({ ...text('nope'), isError: true }),
   },
   {
     name: 'throw',
     description: 'Throw on purpose.',
     input: z.object({}),
-    run: async () => {
-      throw new Error('boom');
-    },
+    run: () => Promise.reject(new Error('boom')),
   },
 ];
 

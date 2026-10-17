@@ -1,9 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-import {
-  runCommand,
-  type WsCommandActions,
-} from '../src/plugins/api-server/backend/ws-commands';
+import { runCommand, type WsCommandActions } from '../backend/ws-commands';
 
 /**
  * The client→server side of the v2 WebSocket. Commands never answer: they only

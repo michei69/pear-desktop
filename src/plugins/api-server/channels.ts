@@ -11,14 +11,7 @@
 /** Getters: the renderer answers on the matching reply channel. */
 const queryActions = {
   getVideo: 'get-video',
-  getPlaying: 'get-playing',
-  getPlaybackSpeed: 'get-playback-speed',
   getPlaybackPosition: 'get-playback-position',
-  getShuffle: 'get-shuffle',
-  getRepeat: 'get-repeat',
-  getVolume: 'get-volume',
-  getMute: 'get-mute',
-  getLikeState: 'get-like-state',
   getQueue: 'get-queue',
   getAutoplay: 'get-autoplay',
   getLyrics: 'get-lyrics',
@@ -75,9 +68,6 @@ export const V2RendererEvents = {
   lyricsChanged: `${API_IPC_PREFIX}lyrics-changed`,
   translationUpdated: `${API_IPC_PREFIX}translation-updated`,
 } as const;
-
-export type V2RendererEvent =
-  (typeof V2RendererEvents)[keyof typeof V2RendererEvents];
 
 /** Same shape as `GET /video/lyrics`; broadcast as `LYRICS_CHANGED`. */
 export interface LyricsChangedPayload {

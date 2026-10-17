@@ -43,10 +43,11 @@ export interface PlayerSnapshot {
 }
 
 /**
- * Single source of truth for everything the API and the WebSocket report.
+ * Single source of truth for the player state both API surfaces report.
  *
- * Subscribes to each renderer event exactly once; both consumers read from here
- * instead of tracking their own copies.
+ * Subscribes to each renderer event exactly once; the WebSocket broadcasts it
+ * and the HTTP getters read it, instead of each consumer tracking its own copy
+ * or asking the renderer again.
  */
 export const createPlayerState = () => {
   let song: WireSongInfo | undefined;
@@ -149,8 +150,17 @@ export const createPlayerState = () => {
     get song() {
       return song;
     },
+    get playing() {
+      return song ? !song.isPaused : false;
+    },
     get repeat() {
       return repeat;
+    },
+    get shuffle() {
+      return shuffle;
+    },
+    get muted() {
+      return volume?.isMuted ?? false;
     },
     get volume() {
       return volume;

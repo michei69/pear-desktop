@@ -23,3 +23,18 @@ export const bylineParts = (runs?: LongBylineTextRun[]) =>
     .split(bylineDivider)
     .map((part) => part.trim())
     .filter(Boolean);
+
+/**
+ * `artist • album • year`: the year is the last part that reads as one, and the
+ * album the first part after the artist that is not the year.
+ */
+export const parseByline = (runs?: LongBylineTextRun[]) => {
+  const parts = bylineParts(runs);
+  const year = parts.filter((part) => yearPattern.test(part)).at(-1);
+
+  return {
+    artist: parts[0],
+    album: parts.slice(1).find((part) => part !== year),
+    year,
+  };
+};

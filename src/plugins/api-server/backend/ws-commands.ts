@@ -1,4 +1,8 @@
-import type { LikeType, RepeatMode } from '@/types/datahost-get-state';
+import { z } from '@hono/zod-openapi';
+
+import { LikeType, type RepeatMode } from '@/types/datahost-get-state';
+
+import { RepeatModes } from './schemas-common';
 
 /** What a client→server command can ask the player to do. */
 export interface WsCommandActions {
@@ -27,28 +31,41 @@ type CommandMessage = {
   mute?: unknown;
 };
 
-const isNumber = (value: unknown): value is number =>
-  typeof value === 'number' && Number.isFinite(value);
+const playbackStatus = z.enum(['PLAY', 'PAUSE']);
+const repeatMode = z.enum(RepeatModes);
+const rating = z.enum(LikeType);
+const number = z.number();
+const boolean = z.boolean();
 
-const isRepeatMode = (value: unknown): value is RepeatMode =>
-  value === 'NONE' || value === 'ALL' || value === 'ONE';
-
-const isRating = (value: unknown): value is LikeType =>
-  value === 'LIKE' || value === 'DISLIKE' || value === 'INDIFFERENT';
+/** Reads one optional field, ignoring a value of the wrong type. */
+const read = <T>(schema: z.ZodType<T>, value: unknown): T | undefined => {
+  const parsed = schema.safeParse(value);
+  return parsed.success ? parsed.data : undefined;
+};
 
 /** Applies every field a `PLAYBACK` command carries, in any combination. */
 const runPlayback = (command: CommandMessage, actions: WsCommandActions) => {
-  if (command.status === 'PLAY') actions.play();
-  else if (command.status === 'PAUSE') actions.pause();
+  const status = read(playbackStatus, command.status);
+  if (status === 'PLAY') actions.play();
+  else if (status === 'PAUSE') actions.pause();
 
-  if (isNumber(command.speed)) actions.setSpeed(command.speed);
-  if (isNumber(command.position)) actions.seek(command.position);
-  if (typeof command.shuffle === 'boolean') {
-    actions.setShuffle(command.shuffle);
-  }
-  if (isRepeatMode(command.repeat)) actions.setRepeat(command.repeat);
-  if (isNumber(command.volume)) actions.setVolume(command.volume);
-  if (typeof command.mute === 'boolean') actions.setMute(command.mute);
+  const speed = read(number, command.speed);
+  if (speed !== undefined) actions.setSpeed(speed);
+
+  const position = read(number, command.position);
+  if (position !== undefined) actions.seek(position);
+
+  const shuffle = read(boolean, command.shuffle);
+  if (shuffle !== undefined) actions.setShuffle(shuffle);
+
+  const repeat = read(repeatMode, command.repeat);
+  if (repeat !== undefined) actions.setRepeat(repeat);
+
+  const volume = read(number, command.volume);
+  if (volume !== undefined) actions.setVolume(volume);
+
+  const mute = read(boolean, command.mute);
+  if (mute !== undefined) actions.setMute(mute);
 };
 
 /**
@@ -65,8 +82,8 @@ export const runCommand = (data: unknown, actions: WsCommandActions) => {
     return;
   }
 
+  if (!message || typeof message !== 'object') return;
   const command = message as CommandMessage;
-  if (!command || typeof command !== 'object') return;
 
   switch (command.type) {
     case 'NEXT_VIDEO':
@@ -80,9 +97,11 @@ export const runCommand = (data: unknown, actions: WsCommandActions) => {
     case 'PLAYBACK':
       runPlayback(command, actions);
       break;
-    case 'RATE':
-      if (isRating(command.status)) actions.rate(command.status);
+    case 'RATE': {
+      const value = read(rating, command.status);
+      if (value !== undefined) actions.rate(value);
       break;
+    }
     default:
       break;
   }

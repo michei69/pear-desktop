@@ -1,8 +1,7 @@
-import { OpenAPIHono, createRoute } from '@hono/zod-openapi';
+import { type OpenAPIHono, createRoute } from '@hono/zod-openapi';
 
 import { getSongControls } from '@/providers/song-controls';
 
-import { requireAuth } from './auth';
 import { waitForIpcResponse } from './ipc';
 import {
   action,
@@ -16,8 +15,6 @@ import {
 import {
   AddSongToQueueSchema,
   FullscreenStateSchema,
-  GoBackSchema,
-  GoForwardSchema,
   LikeStateSchema,
   LoadPlaylistSchema,
   LoadVideoSchema,
@@ -39,6 +36,7 @@ import {
   type ResponseSongInfo,
 } from './schemas';
 import { v1Tag } from './tags';
+import { createVersion } from './version';
 import { registerWebsocket } from './websocket';
 
 import type { APIServerConfig } from '../config';
@@ -98,7 +96,7 @@ export const routes = {
     '/go-back',
     'go back',
     'Move the current song back by a number of seconds',
-    GoBackSchema,
+    SeekSchema,
     [v1Tag('Playback')],
   ),
   goForward: actionWithBody(
@@ -106,7 +104,7 @@ export const routes = {
     '/go-forward',
     'go forward',
     'Move the current song forward by a number of seconds',
-    GoForwardSchema,
+    SeekSchema,
     [v1Tag('Playback')],
   ),
 
@@ -537,35 +535,14 @@ const registerRoutes = (
   });
 };
 
-/** Mount point for everything v1 serves. A v2 owns its own, in its own module. */
-const V1_PATH = '/api/v1';
-
-/**
- * The WebSocket endpoint, relative to the version prefix. It authenticates with
- * a `?token=` query param instead of the `Authorization` header, because
- * browsers cannot set headers on a WebSocket handshake.
- */
-const WS_PATH = '/ws';
-
-/**
- * v1 as a self-contained router. `app.ts` mounts it at its prefix, so the
- * prefix, the auth guard and the WebSocket endpoint all stay in one place
- * instead of being threaded through every route definition.
- */
 export const createV1 = (
   ctx: BackendContext<APIServerConfig>,
   playerState: PlayerState,
-) => {
-  const app = new OpenAPIHono().basePath(V1_PATH);
+) =>
+  createVersion('/api/v1', ctx, (app, wsPath) => {
+    registerRoutes(app, ctx, playerState);
 
-  // `requireAuth` matches `ctx.req.path`, which is absolute even inside a
-  // sub-app, while `createRoute` paths are relative to `basePath`.
-  app.use('*', requireAuth(ctx.getConfig, `${V1_PATH}${WS_PATH}`));
-  registerRoutes(app, ctx, playerState);
-
-  const stopWebsocket = registerWebsocket(app, ctx, playerState, WS_PATH, [
-    v1Tag('WebSocket'),
-  ]);
-
-  return { app, stopWebsocket };
-};
+    return registerWebsocket(app, ctx, playerState, wsPath, [
+      v1Tag('WebSocket'),
+    ]);
+  });

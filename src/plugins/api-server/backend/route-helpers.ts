@@ -1,4 +1,4 @@
-import { createRoute, type z } from '@hono/zod-openapi';
+import { createRoute, z } from '@hono/zod-openapi';
 
 import type { Context } from 'hono';
 
@@ -48,37 +48,34 @@ export const actionWithBody = <S extends z.ZodType>(
     responses: SUCCESS,
   });
 
-type ReadableOptions<S extends z.ZodType> = {
+type ReadableOptions<S extends z.ZodType, Q extends z.ZodObject> = {
   path: string;
   summary: string;
   description: string;
   schema: S;
+  query?: Q;
   emptyDescription?: string;
   deprecated?: boolean;
   tags: string[];
 };
 
-const readableResponses = <S extends z.ZodType>(
-  schema: S,
-  emptyDescription?: string,
-) => ({
-  200: {
-    description: 'Success',
-    content: { [JSON_CONTENT]: { schema } },
-  },
-  ...(emptyDescription ? { 204: { description: emptyDescription } } : {}),
-});
-
-const readableWithQuery = <S extends z.ZodType, Q extends z.ZodObject>({
+/**
+ * A GET route returning JSON, optionally 204 when there's nothing to report.
+ * `query` adds validated query parameters; `deprecated` marks the route so.
+ */
+export const readable = <
+  S extends z.ZodType,
+  Q extends z.ZodObject = z.ZodObject<Record<string, never>>,
+>({
   path,
   summary,
   description,
   schema,
-  query,
+  query = z.object({}) as Q,
   emptyDescription,
   deprecated,
   tags,
-}: ReadableOptions<S> & { query: Q }) =>
+}: ReadableOptions<S, Q>) =>
   createRoute({
     method: 'get',
     path,
@@ -87,42 +84,11 @@ const readableWithQuery = <S extends z.ZodType, Q extends z.ZodObject>({
     deprecated,
     tags,
     request: { query },
-    responses: readableResponses(schema, emptyDescription),
+    responses: {
+      200: {
+        description: 'Success',
+        content: { [JSON_CONTENT]: { schema } },
+      },
+      ...(emptyDescription ? { 204: { description: emptyDescription } } : {}),
+    },
   });
-
-const readablePlain = <S extends z.ZodType>({
-  path,
-  summary,
-  description,
-  schema,
-  emptyDescription,
-  deprecated,
-  tags,
-}: ReadableOptions<S>) =>
-  createRoute({
-    method: 'get',
-    path,
-    summary,
-    description,
-    deprecated,
-    tags,
-    responses: readableResponses(schema, emptyDescription),
-  });
-
-/**
- * A GET route returning JSON, optionally 204 when there's nothing to report.
- * `query` adds validated query parameters; `deprecated` marks the route so.
- */
-export function readable<S extends z.ZodType, Q extends z.ZodObject>(
-  opts: ReadableOptions<S> & { query: Q },
-): ReturnType<typeof readableWithQuery<S, Q>>;
-export function readable<S extends z.ZodType>(
-  opts: ReadableOptions<S>,
-): ReturnType<typeof readablePlain<S>>;
-export function readable<S extends z.ZodType, Q extends z.ZodObject>(
-  opts: ReadableOptions<S> & { query?: Q },
-) {
-  return opts.query
-    ? readableWithQuery({ ...opts, query: opts.query })
-    : readablePlain(opts);
-}

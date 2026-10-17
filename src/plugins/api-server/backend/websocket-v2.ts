@@ -1,18 +1,17 @@
 import { type OpenAPIHono } from '@hono/zod-openapi';
-import { type BrowserWindow } from 'electron';
 
-import { sendToRenderer, subscribeIpc } from './ipc';
+import { subscribeIpc } from './ipc';
 import { createWsAuthenticator, upgradePlayerSocket } from './websocket';
 import { runCommand, type WsCommandActions } from './ws-commands';
 
 import {
-  ApiActions,
   V2RendererEvents,
   type LyricsChangedPayload,
   type TranslationUpdatedPayload,
 } from '../channels';
 
 import type { APIServerConfig } from '../config';
+import type { Operations } from './operations';
 import type { PlayerState } from './state';
 import type { BackendContext } from '@/types/contexts';
 import type { LikeType } from '@/types/datahost-get-state';
@@ -25,21 +24,19 @@ const playerInfo = (playerState: PlayerState) => ({
   rating: playerState.rating,
 });
 
-/** Wires the commands to the same renderer actions the HTTP routes use. */
-const createCommandActions = (window: BrowserWindow): WsCommandActions => ({
-  next: () => sendToRenderer(window, ApiActions.nextVideo),
-  previous: () => sendToRenderer(window, ApiActions.previousVideo),
-  play: () => sendToRenderer(window, ApiActions.play),
-  pause: () => sendToRenderer(window, ApiActions.pause),
-  setSpeed: (speed) =>
-    sendToRenderer(window, ApiActions.setPlaybackSpeed, speed),
-  seek: (position) => sendToRenderer(window, ApiActions.seekTo, position),
-  setShuffle: (enabled) =>
-    sendToRenderer(window, ApiActions.setShuffle, enabled),
-  setRepeat: (mode) => sendToRenderer(window, ApiActions.setRepeat, mode),
-  setVolume: (volume) => sendToRenderer(window, ApiActions.setVolume, volume),
-  setMute: (muted) => sendToRenderer(window, ApiActions.setMute, muted),
-  rate: (rating) => sendToRenderer(window, ApiActions.setLikeState, rating),
+/** The commands are the same operations the HTTP routes call. */
+const createCommandActions = (operations: Operations): WsCommandActions => ({
+  next: operations.nextVideo,
+  previous: operations.previousVideo,
+  play: operations.play,
+  pause: operations.pause,
+  setSpeed: operations.setPlaybackSpeed,
+  seek: operations.seekTo,
+  setShuffle: operations.setShuffle,
+  setRepeat: operations.setRepeat,
+  setVolume: operations.setVolume,
+  setMute: operations.setMute,
+  rate: operations.setLikeState,
 });
 
 /**
@@ -49,8 +46,9 @@ const createCommandActions = (window: BrowserWindow): WsCommandActions => ({
  */
 export const registerV2Websocket = (
   app: OpenAPIHono,
-  { window, getConfig }: BackendContext<APIServerConfig>,
+  { getConfig }: BackendContext<APIServerConfig>,
   playerState: PlayerState,
+  operations: Operations,
   path: string,
   tags: string[] = [],
 ) => {
@@ -60,7 +58,7 @@ export const registerV2Websocket = (
   let lastTranslation: TranslationUpdatedPayload | null = null;
 
   let lastRating: LikeType | undefined;
-  const actions = createCommandActions(window);
+  const actions = createCommandActions(operations);
 
   const { broadcast, close } = upgradePlayerSocket(app, {
     path,

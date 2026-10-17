@@ -1,13 +1,19 @@
 import { z } from '@hono/zod-openapi';
 
-import { MediaType } from '@/providers/song-info';
+import { SongInfoBaseSchema } from './schemas-common';
 
 export {
   LikeStateSchema,
   QueueIndexParamSchema,
+  RepeatModeSchema,
+  SeekSchema,
   SetQueueIndexSchema,
+  SetVolumeSchema,
   ShuffleStateSchema,
+  SongInfoBaseSchema,
 } from './schemas-common';
+
+export const SongInfoSchema = SongInfoBaseSchema;
 
 /** Payload of the tokens issued by `POST /auth/{id}`. */
 export const JWTPayloadSchema = z.object({
@@ -17,24 +23,8 @@ export const JWTPayloadSchema = z.object({
 export type JWTPayload = z.infer<typeof JWTPayloadSchema>;
 
 // Request bodies
-export const SeekSchema = z.object({
-  seconds: z.number(),
-});
-
-export const GoBackSchema = z.object({
-  seconds: z.number(),
-});
-
-export const GoForwardSchema = z.object({
-  seconds: z.number(),
-});
-
 export const SwitchRepeatSchema = z.object({
   iteration: z.number(),
-});
-
-export const SetVolumeSchema = z.object({
-  volume: z.number(),
 });
 
 export const SetFullscreenSchema = z.object({
@@ -68,26 +58,7 @@ export const LoadPlaylistSchema = z.object({
 });
 
 // Responses
-export const SongInfoSchema = z.object({
-  title: z.string(),
-  artist: z.string(),
-  views: z.number(),
-  uploadDate: z.string().optional(),
-  imageSrc: z.string().nullable().optional(),
-  isPaused: z.boolean().optional(),
-  songDuration: z.number(),
-  elapsedSeconds: z.number().optional(),
-  url: z.string().optional(),
-  album: z.string().nullable().optional(),
-  videoId: z.string(),
-  playlistId: z.string().optional(),
-  mediaType: z.enum(MediaType),
-});
 export type ResponseSongInfo = z.infer<typeof SongInfoSchema>;
-
-export const RepeatModeSchema = z.object({
-  mode: z.enum(['ONE', 'NONE', 'ALL']).nullable(),
-});
 
 export const VolumeStateSchema = z.object({
   state: z.number(),

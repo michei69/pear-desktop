@@ -2,7 +2,7 @@ import { createEffect, createMemo, runWithOwner, untrack } from 'solid-js';
 import { createStore } from 'solid-js/store';
 
 import { getSongInfo } from '@/providers/song-info-front';
-import { bylineParts, queueRenderer, yearPattern } from '@/utils/queue';
+import { parseByline, queueRenderer } from '@/utils/queue';
 
 import { getCustomQuery } from './custom-query-store';
 import { translationDebug } from './debug';
@@ -440,14 +440,13 @@ const searchInfoForVideo = async (
     .find((entry) => entry?.videoId === videoId);
   if (!renderer) return null;
 
-  const parts = bylineParts(renderer.longBylineText?.runs);
-  const year = parts.filter((part) => yearPattern.test(part)).at(-1);
+  const { artist, album } = parseByline(renderer.longBylineText?.runs);
 
   return {
     videoId,
     title: renderer.title?.runs?.map((run) => run.text).join('') ?? '',
-    artist: parts[0] ?? '',
-    album: parts.slice(1).find((part) => part !== year),
+    artist: artist ?? '',
+    album,
     songDuration: durationInSeconds(renderer.lengthText?.runs?.[0]?.text),
   };
 };
