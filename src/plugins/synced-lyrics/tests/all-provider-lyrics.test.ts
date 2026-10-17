@@ -104,13 +104,16 @@ const searches: Partial<Record<ProviderName, number>> = {};
 
 /** Answer every provider with `answer`, counting the calls it receives. */
 const stubProviders = (
-  answer: (name: ProviderName) => Promise<LyricResult | null>,
+  answer: (
+    name: ProviderName,
+    info: Parameters<LyricProvider['search']>[0],
+  ) => Promise<LyricResult | null>,
 ) => {
   for (const name of providerNames) {
     searches[name] = 0;
-    providers[name].search = () => {
+    providers[name].search = (info) => {
       searches[name] = (searches[name] ?? 0) + 1;
-      return answer(name);
+      return answer(name, info);
     };
   }
 };
@@ -226,4 +229,100 @@ test('serves a cached song without searching again', async () => {
   expect(again.YTMusic.data?.lyrics).toBe('words from YTMusic');
   // The accessor is read-only for the UI: the chosen provider is untouched.
   expect(store.lyricsStore.provider).toBe(providerBefore);
+});
+
+/** A watch-next page whose first queue item is the requested song. */
+const watchNextPage = (
+  videoId: string,
+  title: string,
+  byline: string,
+  length: string,
+) => ({
+  contents: {
+    singleColumnMusicWatchNextResultsRenderer: {
+      tabbedRenderer: {
+        watchNextTabbedResultsRenderer: {
+          tabs: [
+            {
+              tabRenderer: {
+                content: {
+                  musicQueueRenderer: {
+                    content: {
+                      playlistPanelRenderer: {
+                        contents: [
+                          {
+                            playlistPanelVideoRenderer: {
+                              videoId,
+                              title: { runs: [{ text: title }] },
+                              longBylineText: { runs: [{ text: byline }] },
+                              lengthText: { runs: [{ text: length }] },
+                            },
+                          },
+                        ],
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          ],
+        },
+      },
+    },
+  },
+});
+
+/** Answers `/next` with `page` for the duration of `run`. */
+const withWatchNext = async (
+  page: unknown,
+  run: () => Promise<void>,
+): Promise<void> => {
+  const app = document.createElement('ytmusic-app');
+  (app as unknown as { networkManager: unknown }).networkManager = {
+    fetch: () => Promise.resolve(page),
+  };
+  document.body.append(app);
+
+  try {
+    await run();
+  } finally {
+    app.remove();
+  }
+};
+
+test('fetches another video from its watch-next page, without touching the store', async () => {
+  const requested: Parameters<LyricProvider['search']>[0][] = [];
+  stubProviders((name, info) => {
+    requested.push(info);
+    return Promise.resolve(lyric(name));
+  });
+  const playing = store.lyricsStore.videoId;
+
+  await withWatchNext(
+    watchNextPage(
+      'elsewhere-1',
+      'Elsewhere',
+      'Other Artist • Other Album • 2011',
+      '3:21',
+    ),
+    async () => {
+      const states = await store.lyricsForVideo('elsewhere-1');
+
+      expect(states.YTMusic.data?.lyrics).toBe('words from YTMusic');
+      expect(requested[0]).toMatchObject({
+        videoId: 'elsewhere-1',
+        title: 'Elsewhere',
+        artist: 'Other Artist',
+        album: 'Other Album',
+        songDuration: 201,
+      });
+
+      // Second ask is answered from the per-video cache.
+      await store.lyricsForVideo('elsewhere-1');
+      expect(searches.YTMusic).toBe(1);
+    },
+  );
+
+  // Asking about another song must not move the UI's lyrics.
+  expect(store.lyricsStore.videoId).toBe(playing);
 });

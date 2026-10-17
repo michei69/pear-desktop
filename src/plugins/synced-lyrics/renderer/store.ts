@@ -19,14 +19,25 @@ import {
 import { LRC } from '../parsers/lrc';
 import {
   hasLyricText,
+  pickWithStar,
   type ProviderName,
   providerNames,
   type ProviderState,
+  readStarredProvider,
+  resolvePriority,
 } from '../providers';
 import { providers } from '../providers/renderer';
 
-import type { LineLyrics, LyricProvider, LyricResult } from '../types';
+import type { NextData } from '../providers/YTMusic';
+import type {
+  LineLyrics,
+  LyricProvider,
+  LyricResult,
+  SearchSongInfo,
+} from '../types';
 import type { SongInfo } from '@/providers/song-info';
+import type { LongBylineTextRun, QueueItem } from '@/types/datahost-get-state';
+import type { MusicPlayerAppElement } from '@/types/music-player-app-element';
 
 type LyricsStore = {
   videoId: string | null;
@@ -379,6 +390,155 @@ export const allProviderLyrics = async (): Promise<
   const cache = searchCache.get(info.videoId);
 
   return cache ? cloneSearchData(cache.data) : initialData();
+};
+
+/** The run that divides a queue byline: `artist • album • year`. */
+const bylineDivider = ' • ';
+
+/** A byline part that reads as a release year. */
+const yearPattern = /^\d{4}$/;
+
+/** A byline's parts, with the empty ones a stray divider leaves behind gone. */
+const bylineParts = (runs?: LongBylineTextRun[]) =>
+  (runs ?? [])
+    .map((run) => run.text)
+    .join('')
+    .split(bylineDivider)
+    .map((part) => part.trim())
+    .filter(Boolean);
+
+/** "4:21" or "1:02:03" as seconds; 0 when there is no usable length. */
+const durationInSeconds = (text?: string) => {
+  const parts = (text ?? '').split(':').map((part) => Number(part));
+  if (parts.some(Number.isNaN)) return 0;
+  return parts.reduce((total, part) => total * 60 + part, 0);
+};
+
+/** A queue entry's renderer: the item itself, or a wrapper's primary half. */
+const queueRenderer = (item: QueueItem | null | undefined) =>
+  item?.playlistPanelVideoRenderer ??
+  item?.playlistPanelVideoWrapperRenderer?.primaryRenderer
+    ?.playlistPanelVideoRenderer;
+
+/**
+ * What providers search with for a video the player is not on. The player's own
+ * song info answers for the current song; anything else is read from its
+ * watch-next page, where the queue items carry the title, byline and length.
+ */
+const searchInfoForVideo = async (
+  videoId: string,
+): Promise<SearchSongInfo | null> => {
+  const current = getSongInfo();
+  if (current?.videoId === videoId) return current;
+
+  const app = document.querySelector<MusicPlayerAppElement>('ytmusic-app');
+  if (!app) return null;
+
+  const data = await app.networkManager
+    .fetch<NextData, { videoId: string }>('/next?prettyPrint=false', {
+      videoId,
+    })
+    .catch(() => null);
+  if (!data) return null;
+
+  const items =
+    data.contents?.singleColumnMusicWatchNextResultsRenderer?.tabbedRenderer
+      ?.watchNextTabbedResultsRenderer?.tabs?.[0]?.tabRenderer?.content
+      ?.musicQueueRenderer?.content?.playlistPanelRenderer?.contents ?? [];
+  const renderer = items
+    .map((item) => queueRenderer(item as QueueItem))
+    .find((entry) => entry?.videoId === videoId);
+  if (!renderer) return null;
+
+  const parts = bylineParts(renderer.longBylineText?.runs);
+  const year = parts.filter((part) => yearPattern.test(part)).at(-1);
+
+  return {
+    videoId,
+    title: renderer.title?.runs?.map((run) => run.text).join('') ?? '',
+    artist: parts[0] ?? '',
+    album: parts.slice(1).find((part) => part !== year),
+    songDuration: durationInSeconds(renderer.lengthText?.runs?.[0]?.text),
+  };
+};
+
+/**
+ * The provider the app would show for `videoId`, honouring a star and the
+ * priority/quality config — the same rules the lyrics picker uses.
+ */
+export const pickProvider = (
+  videoId: string | null,
+  lyrics: Record<ProviderName, ProviderState>,
+): ProviderName | undefined => {
+  const cfg = config();
+  return pickWithStar({
+    priority: resolvePriority(cfg?.providerPriority),
+    lyrics,
+    preferSynced: cfg?.preferSynced ?? true,
+    starred: videoId ? readStarredProvider(videoId) : null,
+    usePriorityList: cfg?.usePriorityList ?? false,
+    wantsOfficialTranslation: Boolean(
+      cfg?.translation?.enabled &&
+      isChineseTranslationTarget(cfg.translation.targetLanguage),
+    ),
+  });
+};
+
+/**
+ * Lyrics for `videoId`: from the in-memory cache when the app already has that
+ * song, otherwise fetched from every provider. Never touches the lyrics store,
+ * so asking about another video cannot disturb what the UI is showing.
+ */
+export const lyricsForVideo = async (
+  videoId: string,
+): Promise<Record<ProviderName, ProviderState>> => {
+  const cached = searchCache.get(videoId);
+  if (cached) {
+    await cached.settled;
+    return cloneSearchData(cached.data);
+  }
+
+  let info = await searchInfoForVideo(videoId);
+  if (!info) return initialData();
+
+  const customQ = getCustomQuery(videoId);
+  if (customQ) {
+    info = {
+      ...info,
+      title: customQ.query,
+      alternativeTitle: customQ.query,
+      artist: customQ.artist ?? '',
+    };
+  }
+
+  const cache: SearchCache = { state: 'loading', data: initialData() };
+  searchCache.set(videoId, cache);
+  pruneSearchCache();
+
+  const tasks = (
+    Object.entries(providers) as [ProviderName, LyricProvider][]
+  ).map(([name, provider]) =>
+    provider
+      .search(info)
+      .then((res) => {
+        cache.data[name] = { state: 'done', data: res, error: null };
+      })
+      .catch((error: Error) => {
+        console.error(error);
+        cache.data[name] = { state: 'error', data: null, error };
+      }),
+  );
+
+  const settled = Promise.allSettled(tasks).then(() => {
+    cache.state = 'done';
+    searchCache.set(videoId, cache);
+    pruneSearchCache();
+  });
+  cache.settled = settled;
+
+  await settled;
+
+  return cloneSearchData(cache.data);
 };
 
 export const retrySearch = (provider: ProviderName, info: SongInfo) => {

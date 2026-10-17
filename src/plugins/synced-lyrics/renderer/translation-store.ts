@@ -25,6 +25,10 @@ interface VideoTranslation {
   // Indexed by line index in the lyrics' lines[] array.
   lines: string[];
   error?: string;
+  /** Language it was translated into, for the WebSocket payload. */
+  language?: string;
+  /** Provider that produced it (`official-lyrics` for bundled translations). */
+  provider?: string;
 }
 
 interface TranslationStore {
@@ -174,7 +178,12 @@ export const setOfficialTranslation = (
     sourceLines.length,
     JSON.stringify(sourceLines),
   );
-  const done: VideoTranslation = { state: 'done', lines: translatedLines };
+  const done: VideoTranslation = {
+    state: 'done',
+    lines: translatedLines,
+    language,
+    provider,
+  };
 
   cache.set(key, done);
   if (translationStore.videoId === videoId && translationStore.key === key) {
@@ -257,7 +266,12 @@ export const fetchTranslation = async (
     return;
   }
 
-  const pending: VideoTranslation = { state: 'fetching', lines: [] };
+  const pending: VideoTranslation = {
+    state: 'fetching',
+    lines: [],
+    language,
+    provider: providerName,
+  };
   cache.set(key, pending);
   setTranslationStore({ current: pending, videoId, key });
 
@@ -294,7 +308,13 @@ export const fetchTranslation = async (
         translationStore.key === key
       ) {
         setTranslationStore({
-          current: { state: 'error', lines: [], error: message },
+          current: {
+            state: 'error',
+            lines: [],
+            error: message,
+            language,
+            provider: providerName,
+          },
           videoId,
           key,
         });
@@ -311,7 +331,12 @@ export const fetchTranslation = async (
       strategyVersion: TRANSLATION_STRATEGY_VERSION,
       lines: result.lines.length,
     });
-    const done: VideoTranslation = { state: 'done', lines: result.lines };
+    const done: VideoTranslation = {
+      state: 'done',
+      lines: result.lines,
+      language,
+      provider: providerName,
+    };
     cache.set(key, done);
     if (translationStore.videoId === videoId && translationStore.key === key) {
       setTranslationStore({ current: done, videoId, key });
@@ -322,6 +347,8 @@ export const fetchTranslation = async (
       state: 'error',
       lines: [],
       error: message,
+      language,
+      provider: providerName,
     };
     cache.delete(key);
     if (translationStore.videoId === videoId && translationStore.key === key) {
@@ -354,30 +381,49 @@ export interface LanguageTranslationResult {
   language: string;
   lines: string[];
   fromCache?: boolean;
+  /** Set when the lyrics were already in the requested language. */
+  sameLanguage?: boolean;
   error?: string;
   /** Present exactly when `lines` is empty, so a caller can switch on it. */
   reason?: LanguageTranslationReason;
 }
 
 /**
- * The song the UI is on, with the active provider's lines — synced lines when it
- * has any, plain lyrics otherwise, exactly like `translateCurrentLyrics`.
+ * The song to translate, with the best provider's lines — synced lines when it
+ * has any, plain lyrics otherwise. `videoId` asks about another video; omitted,
+ * it is the song the UI is on, picked across every provider rather than
+ * `lyricsStore.current` because the lyrics panel may never have mounted.
  *
  * `store` is imported lazily because it imports this module back; a static
  * import would make the app's translation setup depend on module order.
  */
-const currentSongLines = async (): Promise<{
+const songLines = async (
+  videoId?: string,
+): Promise<{
   videoId: string;
   title: string;
   artists: string[];
   lines: string[];
 } | null> => {
-  const { lyricsStore, splitPlainLyrics } = await import('./store');
+  const {
+    lyricsStore,
+    splitPlainLyrics,
+    allProviderLyrics,
+    lyricsForVideo,
+    pickProvider,
+  } = await import('./store');
 
-  const videoId = lyricsStore.videoId;
-  const state = lyricsStore.current;
-  const data = state.state === 'done' ? state.data : null;
-  if (!videoId || !data || !hasLyricText(data)) return null;
+  // For the current song this waits for providers still fetching and starts a
+  // fetch when the lyrics tab never did; for another video it fills the same
+  // per-video cache from that video's own page.
+  const states = videoId
+    ? await lyricsForVideo(videoId)
+    : await allProviderLyrics();
+  const sourceVideoId = videoId ?? lyricsStore.videoId;
+  const provider = pickProvider(sourceVideoId, states);
+
+  const data = provider ? states[provider]?.data : null;
+  if (!sourceVideoId || !data || !hasLyricText(data)) return null;
 
   const lines = data.lines?.some((line) => line.text.trim())
     ? data.lines.map((line) => line.text)
@@ -386,13 +432,14 @@ const currentSongLines = async (): Promise<{
       : [];
   if (!lines.length) return null;
 
-  const info = getSongInfo();
+  // The player's own song info only describes the current song.
+  const info = videoId ? null : getSongInfo();
   return {
-    videoId,
-    title: data.title || info.title || '',
+    videoId: sourceVideoId,
+    title: data.title || info?.title || '',
     artists: data.artists?.length
       ? data.artists
-      : info.artist
+      : info?.artist
         ? [info.artist]
         : [],
     lines,
@@ -400,7 +447,8 @@ const currentSongLines = async (): Promise<{
 };
 
 /**
- * Translate the current song into `language` on behalf of the API.
+ * Translate a song into `language` on behalf of the API. `videoId` asks about
+ * another video; omitted, it is the current song.
  *
  * Same setup as `fetchTranslation` — config, provider settings, model, request —
  * but the target language comes from the caller and nothing here writes to
@@ -410,6 +458,7 @@ const currentSongLines = async (): Promise<{
  */
 export const translateForLanguage = async (
   language: string,
+  videoId?: string,
 ): Promise<LanguageTranslationResult> => {
   const cfg = config();
   const providerName = cfg?.translation?.provider ?? null;
@@ -426,10 +475,11 @@ export const translateForLanguage = async (
     };
   }
 
-  const song = await currentSongLines();
+  const song = await songLines(videoId);
   if (!song) {
-    translationDebug('language translation skipped: no current lyrics', {
+    translationDebug('language translation skipped: no lyrics', {
       language,
+      videoId,
     });
     return {
       provider: providerName,
@@ -448,12 +498,13 @@ export const translateForLanguage = async (
       language: target,
       sourceLanguage: sameLanguage.language,
     });
+    // Already in the requested language: the original lines are the answer, not
+    // an error.
     return {
-      provider: providerName,
+      provider: null,
       language: target,
-      lines: [],
-      error: `lyrics are already in ${sameLanguage.language}`,
-      reason: 'same-language',
+      lines: song.lines,
+      sameLanguage: true,
     };
   }
 

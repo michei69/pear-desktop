@@ -3,7 +3,11 @@ import { registerHooks } from 'node:module';
 import { expect, test } from '@playwright/test';
 import { Window } from 'happy-dom';
 
-import { providerNames } from '../providers';
+import {
+  ProviderNames,
+  providerNames,
+  writeStarredProvider,
+} from '../providers';
 
 import type { TranslateInvokeArgs } from '../renderer/ipc-bridge';
 import type {
@@ -210,6 +214,21 @@ const setSong = async (videoId: string, lines: string[] | null) => {
   await new Promise((resolve) => setTimeout(resolve, 0));
 };
 
+/** Give `withLyrics` the result and every other provider nothing. */
+const setSongFrom = async (
+  videoId: string,
+  withLyrics: (typeof providerNames)[number],
+  lines: string[],
+) => {
+  for (const name of providerNames) {
+    providers[name].search = () =>
+      Promise.resolve(name === withLyrics ? lyric(lines) : null);
+  }
+  store.refreshCurrentLyrics('test', song(videoId));
+  await store.allProviderLyrics();
+  await new Promise((resolve) => setTimeout(resolve, 0));
+};
+
 test.beforeAll(async () => {
   installDom();
   importing = true;
@@ -263,6 +282,113 @@ test('translates into the requested language', async () => {
     apiKey: 'test-key',
     model: 'gemini-test',
   });
+});
+
+test('translates when another provider has the lyrics the picker never chose', async () => {
+  // The lyrics panel has never been open, so no picker has switched the active
+  // provider away from the first one — which found nothing for this song.
+  await setSongFrom('tfl-other-provider', ProviderNames.LRCLib, SOURCE_LINES);
+  harness.__tflConfig = config(true);
+
+  expect(store.lyricsStore.provider).toBe(providerNames[0]);
+  expect(store.lyricsStore.current.data).toBeNull();
+
+  const result = await translation.translateForLanguage('fr');
+
+  expect(result.lines).toEqual(TRANSLATED_LINES);
+  expect(harness.__tflCalls).toHaveLength(1);
+  expect(harness.__tflCalls[0].videoId).toBe('tfl-other-provider');
+  expect(harness.__tflCalls[0].request.lines).toEqual(SOURCE_LINES);
+});
+
+test('translates the starred provider when one is pinned', async () => {
+  // Both providers found lyrics, with the default order picking LRCLib; the
+  // song is pinned to NetEase, so those are the lines to translate.
+  const LRCLIB_LINES = ['lo lo', 'la la', 'lu lu'];
+  for (const name of providerNames) {
+    providers[name].search = () =>
+      Promise.resolve(
+        name === ProviderNames.LRCLib
+          ? lyric(LRCLIB_LINES)
+          : name === ProviderNames.NetEase
+            ? lyric(SOURCE_LINES)
+            : null,
+      );
+  }
+  store.refreshCurrentLyrics('test', song('tfl-starred'));
+  await store.allProviderLyrics();
+  await new Promise((resolve) => setTimeout(resolve, 0));
+  writeStarredProvider('tfl-starred', ProviderNames.NetEase);
+  harness.__tflConfig = config(true);
+
+  try {
+    const result = await translation.translateForLanguage('fr');
+
+    expect(result.lines).toEqual(TRANSLATED_LINES);
+    expect(harness.__tflCalls).toHaveLength(1);
+    expect(harness.__tflCalls[0].request.lines).toEqual(SOURCE_LINES);
+  } finally {
+    writeStarredProvider('tfl-starred', null);
+  }
+});
+
+test('translates a requested video instead of the current song', async () => {
+  await setSong('tfl-current-song', SOURCE_LINES);
+  harness.__tflConfig = config(true);
+
+  // The other video's watch-next page, as the store reads its queue metadata.
+  const app = document.createElement('ytmusic-app');
+  (app as unknown as { networkManager: unknown }).networkManager = {
+    fetch: () =>
+      Promise.resolve({
+        contents: {
+          singleColumnMusicWatchNextResultsRenderer: {
+            tabbedRenderer: {
+              watchNextTabbedResultsRenderer: {
+                tabs: [
+                  {
+                    tabRenderer: {
+                      content: {
+                        musicQueueRenderer: {
+                          content: {
+                            playlistPanelRenderer: {
+                              contents: [
+                                {
+                                  playlistPanelVideoRenderer: {
+                                    videoId: 'tfl-other',
+                                    title: { runs: [{ text: 'Other Song' }] },
+                                    longBylineText: {
+                                      runs: [{ text: 'Other Artist' }],
+                                    },
+                                    lengthText: { runs: [{ text: '3:21' }] },
+                                  },
+                                },
+                              ],
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                ],
+              },
+            },
+          },
+        },
+      }),
+  };
+  document.body.append(app);
+
+  try {
+    const result = await translation.translateForLanguage('fr', 'tfl-other');
+
+    expect(result.lines).toEqual(TRANSLATED_LINES);
+    expect(harness.__tflCalls).toHaveLength(1);
+    expect(harness.__tflCalls[0].videoId).toBe('tfl-other');
+    expect(harness.__tflCalls[0].request.lines).toEqual(SOURCE_LINES);
+  } finally {
+    app.remove();
+  }
 });
 
 test("leaves the app's own translation exactly as it was", async () => {
@@ -368,14 +494,18 @@ test('refuses when the song has no lyrics', async () => {
   expect(harness.__tflCalls).toHaveLength(0);
 });
 
-test('refuses when the lyrics are already in the requested language', async () => {
+test('returns the original lyrics when they are already in the requested language', async () => {
   await setSong('tfl-same', ENGLISH_LINES);
   harness.__tflConfig = config(true);
 
   const result = await translation.translateForLanguage('en');
 
-  expect(result.lines).toEqual([]);
-  expect(result.error).toMatch(/already in en/);
-  expect(result.reason).toBe('same-language');
+  expect(result).toEqual({
+    provider: null,
+    language: 'en',
+    lines: ENGLISH_LINES,
+    sameLanguage: true,
+  });
+  // The provider is not asked to translate a song already in that language.
   expect(harness.__tflCalls).toHaveLength(0);
 });

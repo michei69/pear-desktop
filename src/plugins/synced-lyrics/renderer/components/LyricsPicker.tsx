@@ -21,7 +21,6 @@ import {
   Switch,
 } from 'solid-js';
 import { Portal } from 'solid-js/web';
-import * as z from 'zod';
 
 import { t } from '@/i18n';
 import { getSongInfo } from '@/providers/song-info-front';
@@ -31,11 +30,11 @@ import {
   hasLyricText,
   pickWithStar,
   type ProviderName,
-  ProviderNameSchema,
   providerNames,
   type ProviderState,
+  readStarredProvider,
   resolvePriority,
-  starredProviderKey,
+  writeStarredProvider,
 } from '../../providers';
 import {
   customQuery,
@@ -58,9 +57,7 @@ import { isChineseTranslationTarget } from '../translation-store';
 import type { PlayerAPIEvents } from '@/types/player-api-events';
 import type { VideoDataChanged } from '@/types/video-data-changed';
 
-/** Stored shape: `{ provider }`, so entries written before the picker rewrite still load. */
-const StarredProviderSchema = z.object({ provider: ProviderNameSchema });
-
+/** Index of the active provider in `providerNames`, for the picker's ordering. */
 export const providerIdx = runWithOwner(reactiveOwner, () =>
   createMemo(() => providerNames.indexOf(lyricsStore.provider)),
 )!;
@@ -80,31 +77,6 @@ const pickBestProvider = (starred: ProviderName | null): ProviderName => {
       ),
     }) ?? providerNames[0]
   );
-};
-
-/** A hand-edited or stale entry must not pin the picker to a provider that is gone. */
-const readStarredProvider = (videoId: string): ProviderName | null => {
-  const stored = localStorage.getItem(starredProviderKey(videoId));
-  if (!stored) return null;
-
-  try {
-    const parsed = StarredProviderSchema.safeParse(JSON.parse(stored));
-    return parsed.success ? parsed.data.provider : null;
-  } catch {
-    return null;
-  }
-};
-
-const writeStarredProvider = (
-  videoId: string,
-  provider: ProviderName | null,
-) => {
-  if (provider === null) localStorage.removeItem(starredProviderKey(videoId));
-  else
-    localStorage.setItem(
-      starredProviderKey(videoId),
-      JSON.stringify({ provider }),
-    );
 };
 
 const shouldSwitchProvider = (providerData: ProviderState) => {

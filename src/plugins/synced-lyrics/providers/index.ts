@@ -93,6 +93,34 @@ const orderByBias = (
 export const starredProviderKey = (videoId: string) =>
   `ytmd-sl-starred-${videoId}`;
 
+/** Stored shape: `{ provider }`, so entries written before the picker rewrite still load. */
+const StarredProviderSchema = z.object({ provider: ProviderNameSchema });
+
+/** The provider pinned to `videoId`, or null; a stale entry never pins. */
+export const readStarredProvider = (videoId: string): ProviderName | null => {
+  const stored = localStorage.getItem(starredProviderKey(videoId));
+  if (!stored) return null;
+
+  try {
+    const parsed = StarredProviderSchema.safeParse(JSON.parse(stored));
+    return parsed.success ? parsed.data.provider : null;
+  } catch {
+    return null;
+  }
+};
+
+export const writeStarredProvider = (
+  videoId: string,
+  provider: ProviderName | null,
+) => {
+  if (provider === null) localStorage.removeItem(starredProviderKey(videoId));
+  else
+    localStorage.setItem(
+      starredProviderKey(videoId),
+      JSON.stringify({ provider }),
+    );
+};
+
 /**
  * The provider to show: the one starred for this song while it has lyrics,
  * otherwise the first hit walking the order. A starred provider that cannot serve
