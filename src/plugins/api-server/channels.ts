@@ -8,8 +8,8 @@
  * five-second timeout.
  */
 
-export const ApiActions = {
-  /** Getters: the renderer answers on the matching reply channel. */
+/** Getters: the renderer answers on the matching reply channel. */
+const queryActions = {
   getVideo: 'get-video',
   getPlaying: 'get-playing',
   getPlaybackSpeed: 'get-playback-speed',
@@ -25,8 +25,10 @@ export const ApiActions = {
   translateLyrics: 'translate-lyrics',
   search: 'search',
   browse: 'browse',
+} as const;
 
-  /** Commands: fire and forget. */
+/** Commands: fire and forget, so nothing waits on a reply. */
+export const commandActions = {
   nextVideo: 'next-video',
   previousVideo: 'previous-video',
   play: 'play',
@@ -53,6 +55,8 @@ export const ApiActions = {
   clearQueue: 'clear-queue',
   downloadVideo: 'download-video',
 } as const;
+
+export const ApiActions = { ...queryActions, ...commandActions } as const;
 
 export type ApiAction = (typeof ApiActions)[keyof typeof ApiActions];
 
