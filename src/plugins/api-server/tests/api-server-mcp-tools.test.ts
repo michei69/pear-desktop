@@ -68,6 +68,20 @@ test('every tool has a unique snake-case name and a description', () => {
   }
 });
 
+test('query-like tools take real booleans, not query strings', () => {
+  const { operations } = createFakeOperations();
+  const tools = createMcpTools(operations);
+  const inputOf = (name: string) => tools.find((it) => it.name === name)?.input;
+
+  expect(inputOf('queue')?.safeParse({ raw: true }).success).toBe(true);
+  expect(
+    inputOf('playback_position')?.safeParse({ percentage: true }).success,
+  ).toBe(true);
+  expect(inputOf('autoplay')?.safeParse({ raw: true }).success).toBe(true);
+  // The query-string form is not part of the tool contract.
+  expect(inputOf('queue')?.safeParse({ raw: 'true' }).success).toBe(false);
+});
+
 test('getters are marked read-only, commands are not', () => {
   const { operations } = createFakeOperations();
   const tools = createMcpTools(operations);

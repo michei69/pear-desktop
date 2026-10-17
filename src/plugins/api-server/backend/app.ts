@@ -8,6 +8,7 @@ import { registerAuthRoute, requireAuth } from './auth';
 import { MCP_PATH, registerMcp } from './mcp';
 import { createMcpTools } from './mcp-tools';
 import { createOperations } from './operations';
+import { validationHook } from './route-helpers';
 import { apiTagOrder } from './tags';
 import { createV1 } from './v1';
 import { createV2 } from './v2';
@@ -21,7 +22,7 @@ export const buildApp = (
   ctx: BackendContext<APIServerConfig>,
   playerState: PlayerState,
 ) => {
-  const app = new OpenAPIHono();
+  const app = new OpenAPIHono({ defaultHook: validationHook });
 
   app.use('*', cors());
 

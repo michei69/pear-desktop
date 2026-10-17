@@ -13,10 +13,10 @@ export const queueRenderer = (item: QueueItem | null | undefined) =>
 const bylineDivider = ' • ';
 
 /** A byline part that reads as a release year. */
-export const yearPattern = /^\d{4}$/;
+const yearPattern = /^\d{4}$/;
 
 /** A byline's parts, with the empty ones a stray divider leaves behind gone. */
-export const bylineParts = (runs?: LongBylineTextRun[]) =>
+const bylineParts = (runs?: LongBylineTextRun[]) =>
   (runs ?? [])
     .map((run) => run.text)
     .join('')

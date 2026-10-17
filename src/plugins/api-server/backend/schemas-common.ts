@@ -33,6 +33,11 @@ export const VideoIdQuerySchema = z.object({
     .describe('Answer for this video instead of the current song'),
 });
 
+/** Body of every non-2xx JSON response, so clients can parse failures too. */
+export const ErrorSchema = z.object({
+  error: z.string().describe('What went wrong'),
+});
+
 /** The unified song info, as the renderer builds it, before v2 adds to it. */
 export const SongInfoBaseSchema = z.object({
   title: z.string(),

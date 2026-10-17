@@ -17,7 +17,13 @@ jobs:
       pull-requests: write
       checks: write
     steps:
+      # Lint the PR's own code against its own dependencies: installing the base
+      # branch's deps made every dependency-adding PR report error-typed imports.
+      # Only same-repository branches reach this job (see `if` above), so the
+      # install still runs code only collaborators can change.
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
 
       - name: Install pnpm
         uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320
@@ -33,19 +39,6 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile --ignore-scripts
-
-      - name: Checkout PR source files
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
-          sparse-checkout: src
-          path: __pr_src
-
-      - name: Overlay PR source
-        run: |
-          rm -rf src
-          cp -r __pr_src/src src
-          rm -rf __pr_src
 
       - name: Setup reviewdog
         uses: reviewdog/action-setup@d8a7baabd7f3e8544ee4dbde3ee41d0011c3a93f

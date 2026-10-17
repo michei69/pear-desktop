@@ -34,7 +34,7 @@ type CommandMessage = {
 const playbackStatus = z.enum(['PLAY', 'PAUSE']);
 const repeatMode = z.enum(RepeatModes);
 const rating = z.enum(LikeType);
-const number = z.number();
+const number = z.number().finite();
 const boolean = z.boolean();
 
 /** Reads one optional field, ignoring a value of the wrong type. */

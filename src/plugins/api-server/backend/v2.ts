@@ -67,10 +67,9 @@ import { createVersion } from './version';
 import { registerV2Websocket } from './websocket-v2';
 
 import type { APIServerConfig } from '../config';
-import type { Operations, Outcome } from './operations';
+import type { Operations } from './operations';
 import type { PlayerState } from './state';
 import type { BackendContext } from '@/types/contexts';
-import type { Context } from 'hono';
 
 /** A non-2xx JSON response, so a client can parse failures like successes. */
 const errorResponse = (description: string) => ({
@@ -115,24 +114,18 @@ export const createV2 = (
   });
 
 /**
- * Maps an operation outcome to the response its route documents. Cast because
- * a route's schema only describes the happy path, while an operation may also
- * report 400/404/502.
+ * The route input, typed from the schema it is validated with. Only the type
+ * comes from here: the zod-openapi version reviewdog installs infers the route
+ * input differently, while the framework has already validated the value.
  */
-const respond = <T>(ctx: Context, result: Outcome<T>) =>
-  (result.ok
-    ? result.value === undefined
-      ? noContent(ctx)
-      : ctx.json(result.value as unknown as Record<string, unknown>, 200)
-    : ctx.json({ error: result.error }, result.status)) as never;
+const input = <T>(value: unknown) => value as T;
 
 const registerRoutes = (app: OpenAPIHono, operations: Operations) => {
-  /** `app.openapi`, but a handler may answer with any status its operation reports. */
   const openapi = <R extends RouteConfig>(
     route: R,
     handler: RouteHandler<R>,
   ): void => {
-    app.openapi(route, handler as never);
+    app.openapi(route, handler);
   };
 
   // Video
@@ -145,7 +138,11 @@ const registerRoutes = (app: OpenAPIHono, operations: Operations) => {
       emptyDescription: 'No video playing',
       tags: [v2Tag('Video')],
     }),
-    async (ctx) => respond(ctx, await operations.video()),
+    async (ctx) => {
+      const result = await operations.video();
+      if (!result.ok) return ctx.json({ error: result.error }, result.status);
+      return result.value ? ctx.json(result.value, 200) : noContent(ctx);
+    },
   );
   openapi(
     action(
@@ -207,11 +204,13 @@ const registerRoutes = (app: OpenAPIHono, operations: Operations) => {
       },
       tags: [v2Tag('Video')],
     }),
-    async (ctx) =>
-      respond(
-        ctx,
-        await operations.downloadVideo(ctx.req.valid('json')?.videoId),
-      ),
+    async (ctx) => {
+      const result = await operations.downloadVideo(
+        ctx.req.valid('json')?.videoId,
+      );
+      if (!result.ok) return ctx.json({ error: result.error }, result.status);
+      return noContent(ctx);
+    },
   );
 
   // `/video/search`: GET reads the query string, POST and QUERY a JSON body.
@@ -224,18 +223,17 @@ const registerRoutes = (app: OpenAPIHono, operations: Operations) => {
       tags: [v2Tag('Video')],
     }),
     async (ctx) => {
-      // Parsed here rather than from `ctx.req.valid`, whose inferred type varies
-      // with the installed zod-openapi: the schema is the one source of truth.
-      const query = SearchQuerySchema.parse(ctx.req.query());
-      return respond(
-        ctx,
-        await operations.search({
-          query: query.query,
-          params: query.params,
-          continuation: query.continuation,
-          raw: query.raw === 'true',
-        }),
+      const query = input<z.infer<typeof SearchQuerySchema>>(
+        ctx.req.valid('query'),
       );
+      const result = await operations.search({
+        query: query.query,
+        params: query.params,
+        continuation: query.continuation,
+        raw: query.raw === 'true',
+      });
+      if (!result.ok) return ctx.json({ error: result.error }, result.status);
+      return ctx.json(result.value, 200);
     },
   );
   for (const method of ['post', 'query'] as const) {
@@ -250,21 +248,24 @@ const registerRoutes = (app: OpenAPIHono, operations: Operations) => {
             description: 'Success',
             content: { [JSON_CONTENT]: { schema: SearchResponseSchema } },
           },
+          502: errorResponse('The player did not answer'),
         },
         tags: [v2Tag('Video')],
       }),
       async (ctx) => {
-        const body: unknown = await ctx.req.json();
-        const request = SearchSchema.parse(body);
-        return respond(
-          ctx,
-          await operations.search({
-            query: request.query,
-            params: request.params,
-            continuation: request.continuation,
-            raw: request.raw === true,
-          }),
+        const request = input<z.infer<typeof SearchSchema>>(
+          ctx.req.valid('json'),
         );
+        const result = await operations.search({
+          query: request.query,
+          params: request.params,
+          continuation: request.continuation,
+          raw: request.raw === true,
+        });
+        if (!result.ok) {
+          return ctx.json({ error: result.error }, result.status);
+        }
+        return ctx.json(result.value, 200);
       },
     );
   }
@@ -279,15 +280,16 @@ const registerRoutes = (app: OpenAPIHono, operations: Operations) => {
       tags: [v2Tag('Video')],
     }),
     async (ctx) => {
-      const query = BrowseQuerySchema.parse(ctx.req.query());
-      return respond(
-        ctx,
-        await operations.browse({
-          browseId: query.browseId,
-          continuation: query.continuation,
-          raw: query.raw === 'true',
-        }),
+      const query = input<z.infer<typeof BrowseQuerySchema>>(
+        ctx.req.valid('query'),
       );
+      const result = await operations.browse({
+        browseId: query.browseId,
+        continuation: query.continuation,
+        raw: query.raw === 'true',
+      });
+      if (!result.ok) return ctx.json({ error: result.error }, result.status);
+      return ctx.json(result.value, 200);
     },
   );
   for (const method of ['post', 'query'] as const) {
@@ -307,16 +309,18 @@ const registerRoutes = (app: OpenAPIHono, operations: Operations) => {
         tags: [v2Tag('Video')],
       }),
       async (ctx) => {
-        const body: unknown = await ctx.req.json();
-        const request = BrowseRequestSchema.parse(body);
-        return respond(
-          ctx,
-          await operations.browse({
-            browseId: request.browseId,
-            continuation: request.continuation,
-            raw: request.raw === true,
-          }),
+        const request = input<z.infer<typeof BrowseRequestSchema>>(
+          ctx.req.valid('json'),
         );
+        const result = await operations.browse({
+          browseId: request.browseId,
+          continuation: request.continuation,
+          raw: request.raw === true,
+        });
+        if (!result.ok) {
+          return ctx.json({ error: result.error }, result.status);
+        }
+        return ctx.json(result.value, 200);
       },
     );
   }
@@ -337,10 +341,14 @@ const registerRoutes = (app: OpenAPIHono, operations: Operations) => {
         },
         204: { description: 'No lyrics available' },
         404: errorResponse('The synced-lyrics plugin is disabled'),
+        502: errorResponse('The player did not answer'),
       },
     }),
-    async (ctx) =>
-      respond(ctx, await operations.lyrics(ctx.req.valid('query').videoId)),
+    async (ctx) => {
+      const result = await operations.lyrics(ctx.req.valid('query').videoId);
+      if (!result.ok) return ctx.json({ error: result.error }, result.status);
+      return result.value ? ctx.json(result.value, 200) : noContent(ctx);
+    },
   );
   openapi(
     createRoute({
@@ -359,11 +367,13 @@ const registerRoutes = (app: OpenAPIHono, operations: Operations) => {
         404: errorResponse('The synced-lyrics plugin is disabled'),
       },
     }),
-    async (ctx) =>
-      respond(
-        ctx,
-        await operations.lyricsTranslations(ctx.req.valid('query').videoId),
-      ),
+    async (ctx) => {
+      const result = await operations.lyricsTranslations(
+        ctx.req.valid('query').videoId,
+      );
+      if (!result.ok) return ctx.json({ error: result.error }, result.status);
+      return ctx.json(result.value, 200);
+    },
   );
   openapi(
     createRoute({
@@ -387,7 +397,9 @@ const registerRoutes = (app: OpenAPIHono, operations: Operations) => {
     }),
     async (ctx) => {
       const { lang, videoId } = ctx.req.valid('json');
-      return respond(ctx, await operations.translateLyrics(lang, videoId));
+      const result = await operations.translateLyrics(lang, videoId);
+      if (!result.ok) return ctx.json({ error: result.error }, result.status);
+      return ctx.json(result.value, 200);
     },
   );
 
@@ -465,13 +477,13 @@ const registerRoutes = (app: OpenAPIHono, operations: Operations) => {
       query: PlaybackPositionQuerySchema,
       tags: [v2Tag('Playback')],
     }),
-    async (ctx) =>
-      respond(
-        ctx,
-        await operations.playbackPosition(
-          ctx.req.valid('query').percentage === 'true',
-        ),
-      ),
+    async (ctx) => {
+      const result = await operations.playbackPosition(
+        ctx.req.valid('query').percentage === 'true',
+      );
+      if (!result.ok) return ctx.json({ error: result.error }, result.status);
+      return ctx.json({ position: result.value }, 200);
+    },
   );
   for (const route of setters(
     '/playback/position',
@@ -704,11 +716,13 @@ const registerRoutes = (app: OpenAPIHono, operations: Operations) => {
       emptyDescription: 'No queue info',
       tags: [v2Tag('Queue')],
     }),
-    async (ctx) =>
-      respond(
-        ctx,
-        await operations.queue(ctx.req.valid('query').raw === 'true'),
-      ),
+    async (ctx) => {
+      const result = await operations.queue(
+        ctx.req.valid('query').raw === 'true',
+      );
+      if (!result.ok) return ctx.json({ error: result.error }, result.status);
+      return result.value ? ctx.json(result.value, 200) : noContent(ctx);
+    },
   );
   openapi(
     actionWithBody(
@@ -798,10 +812,12 @@ const registerRoutes = (app: OpenAPIHono, operations: Operations) => {
     }),
     async (ctx) => {
       const query = ctx.req.valid('query');
-      return respond(
-        ctx,
-        await operations.autoplay(query.raw === 'true', query.continuation),
+      const result = await operations.autoplay(
+        query.raw === 'true',
+        query.continuation,
       );
+      if (!result.ok) return ctx.json({ error: result.error }, result.status);
+      return ctx.json(result.value, 200);
     },
   );
   openapi(

@@ -14,7 +14,6 @@ import type { APIServerConfig } from '../config';
 import type { Operations } from './operations';
 import type { PlayerState } from './state';
 import type { BackendContext } from '@/types/contexts';
-import type { LikeType } from '@/types/datahost-get-state';
 
 /** v2's connect payload: v1's snapshot plus speed and the current rating. */
 const playerInfo = (playerState: PlayerState) => ({
@@ -57,7 +56,6 @@ export const registerV2Websocket = (
   let lastLyrics: LyricsChangedPayload | null = null;
   let lastTranslation: TranslationUpdatedPayload | null = null;
 
-  let lastRating: LikeType | undefined;
   const actions = createCommandActions(operations);
 
   const { broadcast, close } = upgradePlayerSocket(app, {
@@ -99,11 +97,6 @@ export const registerV2Websocket = (
       broadcast(event);
       // The app clears the displayed translation with the song.
       if (event.type === 'VIDEO_CHANGED') lastTranslation = null;
-    }),
-    subscribeIpc<LikeType>('peard:like-changed', (rating) => {
-      if (rating === lastRating) return;
-      lastRating = rating;
-      broadcast({ type: 'RATING_CHANGED', rating });
     }),
     subscribeIpc<LyricsChangedPayload | null>(
       V2RendererEvents.lyricsChanged,

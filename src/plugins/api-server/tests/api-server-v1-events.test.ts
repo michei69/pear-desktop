@@ -1,5 +1,7 @@
 import { expect, test } from '@playwright/test';
 
+import { LikeType } from '@/types/datahost-get-state';
+
 import {
   createV1EventAdapter,
   v1PlayerInfo,
@@ -76,6 +78,14 @@ test('VIDEO_CHANGED and PLAYER_STATE_CHANGED positions are floored too', () => {
   expect(
     adapt({ type: 'PLAYER_STATE_CHANGED', isPlaying: false, position: 27.9 }),
   ).toEqual({ type: 'PLAYER_STATE_CHANGED', isPlaying: false, position: 27 });
+});
+
+test('RATING_CHANGED is dropped: v1 never published the rating', () => {
+  const adapter = createV1EventAdapter();
+
+  expect(adapter({ type: 'RATING_CHANGED', rating: LikeType.Like })).toBe(
+    undefined,
+  );
 });
 
 test('events without a position are passed through untouched', () => {

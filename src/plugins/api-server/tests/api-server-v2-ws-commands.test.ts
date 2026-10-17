@@ -105,6 +105,18 @@ test('PLAYBACK ignores values of the wrong type, applying the rest', () => {
   expect(calls).toEqual([]);
 });
 
+test('PLAYBACK ignores non-finite numbers', () => {
+  const { calls, actions } = recorder();
+
+  // Built by hand: JSON.stringify(Infinity) would write null instead.
+  runCommand(
+    '{"type":"PLAYBACK","speed":1e999,"volume":-1e999,"position":1e999}',
+    actions,
+  );
+
+  expect(calls).toEqual([]);
+});
+
 test('RATE applies the three states and ignores anything else', () => {
   for (const status of ['LIKE', 'DISLIKE', 'INDIFFERENT']) {
     const { calls, actions } = recorder();

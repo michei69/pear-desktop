@@ -165,6 +165,12 @@ export const setupShuffleChangedListener = singleton(() => {
     childList: false,
     subtree: false,
   });
+
+  // Push the initial value too: shuffle persists across launches.
+  window.ipcRenderer.send(
+    'peard:shuffle-changed',
+    (playerBar.attributes.getNamedItem('shuffle-on') ?? null) !== null,
+  );
 });
 
 export const setupFullScreenChangedListener = singleton(() => {

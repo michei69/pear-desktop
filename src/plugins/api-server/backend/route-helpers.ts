@@ -1,6 +1,30 @@
-import { createRoute, z } from '@hono/zod-openapi';
+import { createRoute, z, type Hook } from '@hono/zod-openapi';
 
-import type { Context } from 'hono';
+import { ErrorSchema } from './schemas-common';
+
+import type { Context, Env } from 'hono';
+
+/**
+ * Validation failures answer the same `{ error }` body as the routes' own
+ * failures, instead of zValidator's `{ success, error: { issues } }` shape.
+ */
+export const validationHook: Hook<
+  unknown,
+  Env,
+  string,
+  Response | undefined
+> = (result, ctx) => {
+  if (result.success) return undefined;
+
+  return ctx.json(
+    {
+      error: result.error.issues
+        .map((issue) => `${issue.path.join('.')}: ${issue.message}`)
+        .join('; '),
+    },
+    400,
+  );
+};
 
 export const SUCCESS = { 204: { description: 'Success' } };
 export const JSON_CONTENT = 'application/json';
@@ -60,8 +84,9 @@ type ReadableOptions<S extends z.ZodType, Q extends z.ZodObject> = {
 };
 
 /**
- * A GET route returning JSON, optionally 204 when there's nothing to report.
- * `query` adds validated query parameters; `deprecated` marks the route so.
+ * A GET route returning JSON, optionally 204 when there's nothing to report,
+ * and 502 when the renderer doesn't answer. `query` adds validated query
+ * parameters; `deprecated` marks the route so.
  */
 export const readable = <
   S extends z.ZodType,
@@ -90,5 +115,9 @@ export const readable = <
         content: { [JSON_CONTENT]: { schema } },
       },
       ...(emptyDescription ? { 204: { description: emptyDescription } } : {}),
+      502: {
+        description: 'The player did not answer',
+        content: { [JSON_CONTENT]: { schema: ErrorSchema } },
+      },
     },
   });

@@ -1,6 +1,7 @@
 import { OpenAPIHono } from '@hono/zod-openapi';
 
 import { requireAuth } from './auth';
+import { validationHook } from './route-helpers';
 
 import type { APIServerConfig } from '../config';
 import type { BackendContext } from '@/types/contexts';
@@ -22,7 +23,7 @@ export const createVersion = (
   { getConfig }: BackendContext<APIServerConfig>,
   register: (app: OpenAPIHono, wsPath: string) => () => void,
 ) => {
-  const app = new OpenAPIHono().basePath(path);
+  const app = new OpenAPIHono({ defaultHook: validationHook }).basePath(path);
   const wsPath = `${path}${WS_PATH}`;
 
   // `requireAuth` matches `ctx.req.path`, which is absolute even inside a

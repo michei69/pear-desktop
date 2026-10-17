@@ -44,9 +44,9 @@ const DOWNLOADER_DISABLED = 'The downloader plugin is disabled.';
 export type FailureStatus = 400 | 404 | 502;
 
 /** An operation's answer: a value, or the failure a surface should report. */
-export type Outcome<T = undefined> =
+export type Outcome<T = undefined, S extends FailureStatus = FailureStatus> =
   | { ok: true; value: T }
-  | { ok: false; status: FailureStatus; error: string };
+  | { ok: false; status: S; error: string };
 
 export type SearchArgs = {
   query: string;
@@ -63,9 +63,12 @@ export type BrowseArgs = {
 
 export type Operations = ReturnType<typeof createOperations>;
 
-const ok = <T>(value: T): Outcome<T> => ({ ok: true, value });
-const done = (): Outcome => ({ ok: true, value: undefined });
-const fail = (status: FailureStatus, error: string): Outcome<never> => ({
+const ok = <T>(value: T): Outcome<T, never> => ({ ok: true, value });
+const done = (): Outcome<undefined, never> => ({ ok: true, value: undefined });
+const fail = <S extends FailureStatus>(
+  status: S,
+  error: string,
+): Outcome<never, S> => ({
   ok: false,
   status,
   error,
@@ -89,7 +92,7 @@ export const createOperations = (
   const call = async <T>(
     action: ApiAction,
     ...args: unknown[]
-  ): Promise<Outcome<T>> => {
+  ): Promise<Outcome<T, 502>> => {
     try {
       return ok(await callRenderer<T>(window, action, ...args));
     } catch (error) {
@@ -149,7 +152,9 @@ export const createOperations = (
     removeFromQueue: (index: number) => send(ApiActions.removeFromQueue, index),
     setQueueIndex: (index: number) => send(ApiActions.setQueueIndex, index),
     clearQueue: () => send(ApiActions.clearQueue),
-    downloadVideo: async (videoId?: string) => {
+    downloadVideo: async (
+      videoId?: string,
+    ): Promise<Outcome<undefined, 400 | 404>> => {
       if (!(await isEnabled('downloader'))) {
         return fail(404, DOWNLOADER_DISABLED);
       }
@@ -168,7 +173,7 @@ export const createOperations = (
     playbackSpeed: () => playerState.speed ?? 1,
     shuffleState: () => playerState.shuffle,
     repeatMode: () => playerState.repeat ?? null,
-    volume: () => playerState.volume?.state ?? 100,
+    volume: () => playerState.volumeLevel,
     muteState: () => playerState.muted,
     likeState: () => playerState.rating,
 
@@ -181,7 +186,7 @@ export const createOperations = (
     autoplay: async (
       raw: boolean,
       continuation?: string,
-    ): Promise<Outcome<ResponseAutoplay>> => {
+    ): Promise<Outcome<ResponseAutoplay, 502>> => {
       const result = await call<ResponseAutoplay | null>(
         ApiActions.getAutoplay,
         raw,
@@ -204,7 +209,9 @@ export const createOperations = (
         args.continuation,
         args.raw ?? false,
       ),
-    browse: async (args: BrowseArgs): Promise<Outcome<ResponseBrowseRaw>> => {
+    browse: async (
+      args: BrowseArgs,
+    ): Promise<Outcome<ResponseBrowseRaw, 502>> => {
       const result = await call<ResponseBrowseRaw | null>(
         ApiActions.browse,
         args.browseId,
@@ -222,7 +229,7 @@ export const createOperations = (
     // Plugins with their own gates
     lyrics: async (
       videoId?: string,
-    ): Promise<Outcome<ResponseLyrics | undefined>> => {
+    ): Promise<Outcome<ResponseLyrics | undefined, 404 | 502>> => {
       if (!(await isEnabled('synced-lyrics'))) {
         return fail(404, LYRICS_DISABLED);
       }
@@ -239,7 +246,7 @@ export const createOperations = (
     },
     lyricsTranslations: async (
       videoId?: string,
-    ): Promise<Outcome<ResponseLyricsTranslations>> => {
+    ): Promise<Outcome<ResponseLyricsTranslations, 404>> => {
       if (!(await isEnabled('synced-lyrics'))) {
         return fail(404, LYRICS_DISABLED);
       }
@@ -263,7 +270,7 @@ export const createOperations = (
     translateLyrics: async (
       lang: string,
       videoId?: string,
-    ): Promise<Outcome<ResponseLyricsTranslation>> => {
+    ): Promise<Outcome<ResponseLyricsTranslation, 404 | 502>> => {
       if (!(await isEnabled('synced-lyrics'))) {
         return fail(404, LYRICS_DISABLED);
       }

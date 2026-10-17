@@ -43,6 +43,9 @@ export const createV1EventAdapter = () => {
         };
       case 'PLAYER_STATE_CHANGED':
         return { ...event, position: wholeSeconds(event.position) };
+      // v2's addition; v1 has never published the rating.
+      case 'RATING_CHANGED':
+        return undefined;
       default:
         return event;
     }

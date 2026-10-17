@@ -29,7 +29,8 @@ export type PlayerEvent =
   | { type: 'POSITION_CHANGED'; position: number }
   | { type: 'VOLUME_CHANGED'; volume: number; muted: boolean }
   | { type: 'REPEAT_CHANGED'; repeat: RepeatMode }
-  | { type: 'SHUFFLE_CHANGED'; shuffle: boolean };
+  | { type: 'SHUFFLE_CHANGED'; shuffle: boolean }
+  | { type: 'RATING_CHANGED'; rating: LikeType };
 
 /** Full player state, sent to a client as soon as it connects. */
 export interface PlayerSnapshot {
@@ -56,7 +57,7 @@ export const createPlayerState = () => {
   // "not known yet" apart from an actual NONE.
   let repeat: RepeatMode | undefined;
   let shuffle = false;
-  // Only the v2 snapshot/events use these; v1's protocol is unchanged.
+  // Not part of v1's protocol, but the HTTP getters of both surfaces read them.
   let speed: number | undefined;
   let rating: LikeType = LikeType.Indifferent;
 
@@ -142,7 +143,9 @@ export const createPlayerState = () => {
       speed = value;
     }),
     subscribeIpc<LikeType>('peard:like-changed', (value) => {
+      if (value === rating) return;
       rating = value;
+      emit({ type: 'RATING_CHANGED', rating: value });
     }),
   );
 
@@ -162,6 +165,10 @@ export const createPlayerState = () => {
     get muted() {
       return volume?.isMuted ?? false;
     },
+    /** The reported volume, or the 100 clients have always been told until then. */
+    get volumeLevel() {
+      return volume?.state ?? 100;
+    },
     get volume() {
       return volume;
     },
@@ -177,11 +184,11 @@ export const createPlayerState = () => {
       return {
         song,
         isPlaying: song ? !song.isPaused : false,
-        muted: volume?.isMuted ?? false,
+        muted: this.muted,
         position: song?.elapsedSeconds ?? 0,
         // WebSocket clients have always been told 100 until the renderer
         // reports its volume.
-        volume: volume?.state ?? 100,
+        volume: this.volumeLevel,
         // ...and NONE until it reports a repeat mode.
         repeat: repeat ?? 'NONE',
         shuffle,

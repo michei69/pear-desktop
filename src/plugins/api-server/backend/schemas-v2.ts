@@ -9,6 +9,7 @@ import {
 } from './schemas-common';
 
 export {
+  ErrorSchema,
   LikeStateSchema,
   QueueIndexParamSchema,
   RepeatModeSchema,
@@ -18,11 +19,6 @@ export {
   SetVolumeSchema,
   ShuffleStateSchema,
 } from './schemas-common';
-
-/** Body of every non-2xx JSON response, so clients can parse failures too. */
-export const ErrorSchema = z.object({
-  error: z.string().describe('What went wrong'),
-});
 
 // Request bodies
 export const SetPlaybackSpeedSchema = z.object({

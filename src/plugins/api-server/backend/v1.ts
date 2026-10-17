@@ -400,7 +400,10 @@ const registerRoutes = (
     return noContent(ctx);
   });
   app.openapi(routes.volumeState, (ctx) =>
-    ctx.json(playerState.volume ?? { state: 0, isMuted: false }, 200),
+    ctx.json(
+      { state: playerState.volumeLevel, isMuted: playerState.muted },
+      200,
+    ),
   );
   app.openapi(routes.setFullscreen, (ctx) => {
     controller.setFullscreen(ctx.req.valid('json').state);

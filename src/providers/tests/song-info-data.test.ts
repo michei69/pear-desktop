@@ -5,9 +5,9 @@ import {
   cleanupName,
   getScrobbleMetadata,
   MediaType,
-} from '../src/providers/song-info-data';
+} from '../song-info-data';
 
-import type { GetPlayerResponse } from '../src/types/get-player-response';
+import type { GetPlayerResponse } from '@/types/get-player-response';
 
 // The frozen pure module the main-process song-info provider and the API
 // server's v2 renderer half both build from. These pin the behaviour the

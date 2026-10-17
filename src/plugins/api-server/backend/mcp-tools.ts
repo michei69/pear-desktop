@@ -10,7 +10,6 @@ import { z } from '@hono/zod-openapi';
 
 import {
   AddToQueueSchema,
-  AutoplayQuerySchema,
   BrowseRequestSchema,
   ConfigSchema,
   DownloadVideoSchema,
@@ -19,10 +18,8 @@ import {
   LyricsQuerySchema,
   LyricsTranslationRequestSchema,
   MoveInQueueSchema,
-  PlaybackPositionQuerySchema,
   PlayVideoSchema,
   QueueIndexParamSchema,
-  QueueQuerySchema,
   SearchSchema,
   SeekSchema,
   SetLikeStateSchema,
@@ -92,6 +89,21 @@ const tool = <S extends z.ZodType = typeof NO_ARGS>(
   readOnly,
   run: async (args) => run(args as z.infer<S>),
 });
+
+const raw = z
+  .boolean()
+  .optional()
+  .describe("Include each item's raw YouTube Music renderer");
+
+const percentage = z
+  .boolean()
+  .optional()
+  .describe('Report a 0..1 fraction of the song instead of seconds');
+
+const continuation = z
+  .string()
+  .optional()
+  .describe('Fetch the next page from this token');
 
 const queueIndex = z.object({ index: QueueIndexParamSchema.shape.index });
 const moveInQueue = z.object({
@@ -203,12 +215,12 @@ export const createMcpTools = (operations: Operations): McpTool[] => [
   tool(
     'playback_position',
     'Get the playback position in seconds, or a 0..1 fraction.',
-    async ({ percentage }) =>
+    async ({ percentage: fraction }) =>
       fromOutcome(
-        await operations.playbackPosition(percentage === 'true'),
+        await operations.playbackPosition(fraction ?? false),
         'No position',
       ),
-    { input: PlaybackPositionQuerySchema, readOnly: true },
+    { input: z.object({ percentage }), readOnly: true },
   ),
   tool(
     'seek_to',
@@ -337,9 +349,9 @@ export const createMcpTools = (operations: Operations): McpTool[] => [
   tool(
     'queue',
     'Get the queue.',
-    async ({ raw }) =>
-      fromOutcome(await operations.queue(raw === 'true'), 'No queue info'),
-    { input: QueueQuerySchema, readOnly: true },
+    async ({ raw: includeRaw }) =>
+      fromOutcome(await operations.queue(includeRaw ?? false), 'No queue info'),
+    { input: z.object({ raw }), readOnly: true },
   ),
   tool(
     'add_to_queue',
@@ -384,12 +396,12 @@ export const createMcpTools = (operations: Operations): McpTool[] => [
   tool(
     'autoplay',
     'Get the autoplay entries.',
-    async ({ raw, continuation }) =>
+    async ({ raw: includeRaw, continuation: token }) =>
       fromOutcome(
-        await operations.autoplay(raw === 'true', continuation),
+        await operations.autoplay(includeRaw ?? false, token),
         'No autoplay entries',
       ),
-    { input: AutoplayQuerySchema, readOnly: true },
+    { input: z.object({ raw, continuation }), readOnly: true },
   ),
   tool('clear_queue', 'Clear the queue.', () => {
     operations.clearQueue();
