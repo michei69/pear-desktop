@@ -62,9 +62,9 @@ export type AppAPI = {
 
   ytmusicReduxBehavior: {
     store: {
-      store: Store
-    }
-  }
+      store: Store;
+    };
+  };
   navigate(page: string): void;
   networkManager: {
     fetch: <ReturnType, Data>(url: string, data: Data) => Promise<ReturnType>;

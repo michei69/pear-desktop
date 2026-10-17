@@ -327,7 +327,9 @@ export const TitleBar = (props: TitleBarProps) => {
         ytmusicAppLayout.classList.toggle('content-scrolled', isScrolled);
       });
     };
-    ytmusicAppLayout?.addEventListener('scroll', scrollListener, { passive: true });
+    ytmusicAppLayout?.addEventListener('scroll', scrollListener, {
+      passive: true,
+    });
   });
 
   createEffect(() => {
