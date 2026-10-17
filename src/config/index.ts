@@ -45,7 +45,7 @@ export const getAll = () => store.store;
 /** Applies a partial config, deep-merging objects and replacing arrays. */
 export const patch = (value: Record<string, unknown>) => {
   for (const [key, patchValue] of Object.entries(value)) {
-    store.set(key, deepmerge(store.get(key) ?? {}, patchValue));
+    setPartial(key, patchValue as object);
   }
 };
 
@@ -145,7 +145,7 @@ export const updateChannel = (): UpdateChannel => {
  * change, so the About section needs no extra round trip.
  */
 export const getStore = () => ({
-  ...(store.store as unknown as typeof defaultConfig),
+  ...(getAll() as unknown as typeof defaultConfig),
   updates: {
     supported: updatesSupported(),
     channel: updateChannel(),

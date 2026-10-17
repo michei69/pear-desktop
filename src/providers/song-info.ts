@@ -12,18 +12,7 @@ import {
 
 import type { GetPlayerResponse } from '@/types/get-player-response';
 
-export {
-  MediaType,
-  cleanupName,
-  getScrobbleMetadata,
-  defaultScrobbleFilters,
-} from './song-info-data';
-export { buildSongInfo };
-export type {
-  SongInfoData,
-  ScrobbleOptions,
-  BuildSongInfoOptions,
-} from './song-info-data';
+export { MediaType, cleanupName } from './song-info-data';
 
 export interface SongInfo extends SongInfoData {
   image?: Electron.NativeImage | null;

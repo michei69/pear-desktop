@@ -69,7 +69,9 @@ const describeGpu = (info: GpuInfo) => {
 export interface AppMeta {
   name: string;
   version: string;
+  /** Channel and commit, e.g. `stable` or `beta 1a2b3c4`. */
   build: string;
+  /** One line per copyright holder. */
   copyright: string;
   platform: string;
   arch: string;
@@ -80,8 +82,10 @@ export interface AppMeta {
     renderer?: string;
     vendor?: string;
     driver?: string;
+    /** From app.getGPUFeatureStatus(), e.g. `{ gpu_compositing: 'enabled' }`. */
     features: Record<string, string>;
   };
+  /** Working set in kilobytes, per process group. */
   memory: { main: number; renderers: number; gpu: number };
 }
 
