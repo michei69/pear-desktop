@@ -34,14 +34,14 @@ jobs:
           run_install: false
 
       - name: Setup NodeJS
-        if: startsWith(matrix.os, 'macOS') != true
+        if: startsWith(matrix.os, 'macos') != true
         uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
 
       - name: Setup NodeJS for macOS
-        if: startsWith(matrix.os, 'macOS')
+        if: startsWith(matrix.os, 'macos')
         uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f
         with:
           node-version: ${{ env.NODE_VERSION }}
@@ -73,7 +73,7 @@ jobs:
       # `pnpm version` writes package.json on the runner only; master keeps the
       # release version, which is what the release workflow ships unchanged.
       - name: Build on Mac
-        if: startsWith(matrix.os, 'macOS')
+        if: startsWith(matrix.os, 'macos')
         run: pnpm beta:mac
 
       - name: Build on Linux
@@ -96,7 +96,7 @@ jobs:
         run: pnpm beta:win
 
       - name: Upload macOS artifacts
-        if: startsWith(matrix.os, 'macOS')
+        if: startsWith(matrix.os, 'macos')
         uses: actions/upload-artifact@v4
         with:
           name: pear-desktop-macos

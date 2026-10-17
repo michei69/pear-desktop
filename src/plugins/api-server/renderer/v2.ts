@@ -1,7 +1,6 @@
 import {
   buildSongInfo,
   resolveScrobbleOptions,
-  type ScrobbleOptions,
 } from '@/providers/song-info-data';
 import {
   PageType,
@@ -846,11 +845,7 @@ export const registerV2 = (
     reply(
       ApiActions.getVideo,
       buildSongInfo(api.getPlayerResponse(), {
-        ...resolveScrobbleOptions(
-          window.mainConfig.get('plugins.scrobbler') as
-            | ScrobbleOptions
-            | undefined,
-        ),
+        ...resolveScrobbleOptions(window.mainConfig.getScrobbleOptions()),
         usePodcastParticipantAsArtist: window.mainConfig.get(
           'options.usePodcastParticipantAsArtist',
         ),

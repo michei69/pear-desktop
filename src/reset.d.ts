@@ -1,6 +1,7 @@
 import '@total-typescript/ts-reset';
 
 import type * as config from './config';
+import type { ScrobbleOptions } from './providers/song-info-data';
 import type { t } from '@/i18n';
 import type { VideoDataChanged } from '@/types/video-data-changed';
 import type { ipcRenderer as electronIpcRenderer } from 'electron';
@@ -21,7 +22,9 @@ declare global {
   interface Window {
     trustedTypes?: typeof trustedTypes;
     ipcRenderer: typeof electronIpcRenderer;
-    mainConfig: typeof config;
+    mainConfig: typeof config & {
+      getScrobbleOptions: () => ScrobbleOptions;
+    };
     electronIs: typeof is;
     ELECTRON_RENDERER_URL: string | undefined;
     /** Internal variable (last interaction time). */

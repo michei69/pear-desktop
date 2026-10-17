@@ -88,7 +88,16 @@ const sendError = (error: Error, source?: string) => {
 
 let config: DownloaderPluginConfig;
 let cleanupFinishSetup: (() => void) | undefined;
+let initialization: Promise<Innertube> | undefined;
 
+/** Creates the shared Innertube session on first download, retrying a failure. */
+const ensureInitialized = async () => {
+  initialization ??= getInnertubeSession(win).catch((error: unknown) => {
+    initialization = undefined; // A transient failure must not stick.
+    throw error;
+  });
+  yt = await initialization;
+};
 export const onMainLoad = async ({
   window: _win,
   getConfig,
@@ -96,8 +105,6 @@ export const onMainLoad = async ({
 }: BackendContext<DownloaderPluginConfig>) => {
   win = _win;
   config = await getConfig();
-
-  yt = await getInnertubeSession(win);
 
   ipc.handle('download-song', (url: string) => downloadSong(url));
   ipc.on('peard:video-src-changed', (data: GetPlayerResponse) => {
@@ -126,6 +133,7 @@ export async function downloadSong(
 ) {
   let resolvedName;
   try {
+    await ensureInitialized();
     await downloadSongUnsafe(
       false,
       url,
@@ -147,6 +155,7 @@ export async function downloadSongFromId(
 ) {
   let resolvedName;
   try {
+    await ensureInitialized();
     await downloadSongUnsafe(
       true,
       id,
@@ -523,6 +532,13 @@ async function writeID3(
 }
 
 export async function downloadPlaylist(givenUrl?: string | URL) {
+  try {
+    await ensureInitialized();
+  } catch (error: unknown) {
+    sendError(error as Error);
+    return;
+  }
+
   try {
     givenUrl = new URL(givenUrl ?? '');
   } catch {

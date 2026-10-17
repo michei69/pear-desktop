@@ -884,7 +884,19 @@ app.on('activate', async () => {
 const getDefaultLocale = async (locale: string) =>
   Object.keys(await languageResources()).includes(locale) ? locale : null;
 
+// Deny web permissions by default. The output-device plugin needs microphone
+// access, and the settings/music-together UIs write to the clipboard.
+const allowedPermissions = new Set(['media', 'clipboard-sanitized-write']);
+
 app.whenReady().then(async () => {
+  session.defaultSession.setPermissionRequestHandler(
+    (_webContents, permission, callback) =>
+      callback(allowedPermissions.has(permission)),
+  );
+  session.defaultSession.setPermissionCheckHandler((_webContents, permission) =>
+    allowedPermissions.has(permission),
+  );
+
   if (!config.get('options.language')) {
     const locale = await getDefaultLocale(app.getLocale());
     if (locale) {

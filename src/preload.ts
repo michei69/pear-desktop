@@ -15,6 +15,97 @@ import {
   loadAllPreloadPlugins,
 } from './loader/preload';
 
+// Only the page-world keys the preload/renderer code actually reads. Anything
+// else (api-server secrets, plugin configs) stays main-process only.
+const rendererConfigKeys = new Set([
+  'options.startingPage',
+  'options.removeUpgradeButton',
+  'options.likeButtons',
+  'options.swapLikeButtonsOrder',
+  'options.hideMenu',
+  'options.hideDislikeButton',
+  'options.hideVideoCaptions',
+  'options.language',
+  'options.stripMusicFromSharedLinks',
+  'options.stripSIFromSharedLinks',
+  'options.usePodcastParticipantAsArtist',
+  'plugins.transparent-player.opacity',
+]);
+
+const isValidVideoToggleOptions = (
+  options: unknown,
+): options is Record<string, unknown> => {
+  if (
+    options === null ||
+    typeof options !== 'object' ||
+    Object.getPrototypeOf(options) !== Object.prototype
+  )
+    return false;
+
+  return Reflect.ownKeys(options).every((key) => {
+    if (typeof key !== 'string') return false;
+
+    const descriptor = Object.getOwnPropertyDescriptor(options, key);
+    if (!descriptor || !('value' in descriptor)) return false;
+
+    switch (key) {
+      case 'enabled':
+      case 'hideVideo':
+      case 'forceHide':
+        return typeof descriptor.value === 'boolean';
+      case 'mode':
+        return (
+          typeof descriptor.value === 'string' &&
+          ['custom', 'native', 'disabled'].includes(descriptor.value)
+        );
+      case 'align':
+        return (
+          typeof descriptor.value === 'string' &&
+          ['left', 'middle', 'right'].includes(descriptor.value)
+        );
+      default:
+        return false;
+    }
+  });
+};
+
+const rendererConfig = {
+  get: (key: string) =>
+    rendererConfigKeys.has(key) ? config.get(key as never) : undefined,
+  plugins: {
+    getPlugins: () =>
+      Object.fromEntries(
+        Object.entries(config.plugins.getPlugins()).map(([id, plugin]) => [
+          id,
+          { enabled: plugin.enabled },
+        ]),
+      ),
+    isEnabled: (plugin: string) => config.plugins.isEnabled(plugin),
+    setOptions: (plugin: string, options: object) => {
+      if (plugin === 'video-toggle' && isValidVideoToggleOptions(options)) {
+        config.plugins.setOptions(plugin, options);
+      }
+    },
+  },
+  // The context-menu customizer reads this through the page world.
+  getContextMenuHidden: () => config.getContextMenuHidden(),
+  // Only the scrobbler settings that shape song metadata; never its secrets.
+  getScrobbleOptions: () => {
+    const scrobbler = config.get('plugins.scrobbler') as
+      | {
+          alternativeTitles?: boolean;
+          alternativeArtist?: boolean;
+          customRegexFilters?: string[];
+        }
+      | undefined;
+    return {
+      alternativeTitles: scrobbler?.alternativeTitles,
+      alternativeArtist: scrobbler?.alternativeArtist,
+      customRegexFilters: scrobbler?.customRegexFilters,
+    };
+  },
+};
+
 // @ts-expect-error dummy
 globalThis.customElements = { define() {} };
 
@@ -54,7 +145,7 @@ ipcRenderer.on('plugin:enable', async (_, id: string) => {
   await forceLoadPreloadPlugin(id);
 });
 
-contextBridge.exposeInMainWorld('mainConfig', config);
+contextBridge.exposeInMainWorld('mainConfig', rendererConfig);
 contextBridge.exposeInMainWorld('electronIs', is);
 contextBridge.exposeInMainWorld('ipcRenderer', {
   on: (

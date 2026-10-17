@@ -21,7 +21,7 @@ export interface APIServerConfig {
 
 export const defaultAPIServerConfig: APIServerConfig = {
   enabled: false,
-  hostname: '0.0.0.0',
+  hostname: '127.0.0.1',
   port: 26538,
   authStrategy: AuthStrategy.AUTH_AT_FIRST,
   // Signs the access tokens; must not be guessable. `crypto` is the Web Crypto

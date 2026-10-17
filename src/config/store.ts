@@ -4,7 +4,11 @@ import { join } from 'node:path';
 import { app } from 'electron';
 
 import { defaultUpdateChannel } from '@/app-info';
-import { blockers } from '@/plugins/do-not-track/types';
+import {
+  blockers,
+  isLegacyCustomBlocker,
+  normalizeBlocker,
+} from '@/plugins/do-not-track/types';
 import { DefaultPresetList, type Preset } from '@/plugins/downloader/types';
 import { migrationBaseVersion } from '@/providers/app-versions';
 
@@ -68,7 +72,10 @@ const migrations = {
     ) as TrackerBlockerConfig;
     if (blockerConfig) {
       if (!Object.values(blockers).includes(blockerConfig.blocker)) {
-        blockerConfig.blocker = blockers.InPlayer;
+        blockerConfig.customEnabled = isLegacyCustomBlocker(
+          blockerConfig.blocker,
+        );
+        blockerConfig.blocker = normalizeBlocker(blockerConfig.blocker);
       }
       store.set('plugins.do-not-track', blockerConfig);
       store.delete('plugins.adblocker');
