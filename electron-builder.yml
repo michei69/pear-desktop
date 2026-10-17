@@ -15,7 +15,15 @@ files:
 asarUnpack:
   - assets
 mac:
-  identity: null
+  # Electron 42 moved macOS notifications to UNNotification, which macOS only
+  # delivers for code-signed bundles: an unsigned build logs "addRequest not
+  # allowed" from usernotificationsd and every Notification emits `failed`.
+  # "-" opts in to ad-hoc signing (not notarization - we have no Developer ID);
+  # it seals the bundle with its real CFBundleIdentifier, which is all macOS
+  # checks here. electron-builder's default entitlements template already grants
+  # com.apple.security.cs.disable-library-validation, so hardenedRuntime (on by
+  # default) keeps working with an ad-hoc identity.
+  identity: "-"
   target:
     - target: dmg
       arch:
