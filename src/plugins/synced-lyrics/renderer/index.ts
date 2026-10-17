@@ -28,7 +28,8 @@ export const renderer = createRenderer<
     observerCallback: MutationCallback;
     observer?: MutationObserver;
     videoDataChange: () => Promise<void>;
-    updateTimestampInterval?: NodeJS.Timeout | string | number;
+    progressListener?: (seconds: number) => void;
+    stateListener?: () => void;
     videoDataDocumentListener?: EventListener;
   },
   SyncedLyricsPluginConfig
@@ -58,6 +59,17 @@ export const renderer = createRenderer<
 
     api.addEventListener('videodatachange', this.videoDataChange);
 
+    // The player reports its position about four times a second, which is
+    // enough for line highlighting and replaces a 100ms polling timer. A state
+    // change refreshes the time once too, so pausing/seeking while paused is
+    // reflected without progress ticks.
+    this.progressListener = (seconds: number) => setCurrentTime(seconds * 1000);
+    this.stateListener = () =>
+      setCurrentTime((_ytAPI?.getCurrentTime() ?? 0) * 1000);
+    api.addEventListener('onVideoProgress', this.progressListener);
+    api.addEventListener('onStateChange', this.stateListener);
+    this.stateListener();
+
     await this.videoDataChange();
 
     const info = getSongInfo();
@@ -78,13 +90,6 @@ export const renderer = createRenderer<
     }
   },
   async videoDataChange() {
-    if (!this.updateTimestampInterval) {
-      this.updateTimestampInterval = setInterval(
-        () => setCurrentTime((_ytAPI?.getCurrentTime() ?? 0) * 1000),
-        100,
-      );
-    }
-
     // prettier-ignore
     this.observer ??= new MutationObserver(this.observerCallback);
     this.observer.disconnect();
@@ -140,9 +145,13 @@ export const renderer = createRenderer<
   },
 
   stop() {
-    if (this.updateTimestampInterval) {
-      clearInterval(this.updateTimestampInterval);
-      this.updateTimestampInterval = undefined;
+    if (this.progressListener) {
+      _ytAPI?.removeEventListener('onVideoProgress', this.progressListener);
+      this.progressListener = undefined;
+    }
+    if (this.stateListener) {
+      _ytAPI?.removeEventListener('onStateChange', this.stateListener);
+      this.stateListener = undefined;
     }
     this.observer?.disconnect();
     _ytAPI?.removeEventListener('videodatachange', this.videoDataChange);

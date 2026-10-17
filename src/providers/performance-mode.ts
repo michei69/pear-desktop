@@ -1,6 +1,6 @@
 import type { FeatureFlagOverrides } from '@/plugins/settings-ui/injectors/flags';
 
-type PerformancePart = 'flags' | 'css' | 'plugins';
+type PerformancePart = 'flags' | 'css' | 'animations' | 'plugins';
 
 /**
  * Debug escape hatch: `PEAR_PERF_DISABLE=flags,css` keeps performance mode on

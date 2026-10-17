@@ -433,7 +433,9 @@ export const LyricsRenderer = () => {
           style: { 'scrollbar-width': 'none' },
           class: 'synced-lyrics-vlist',
           keepMounted: [0],
-          overscan: 4,
+          // Two rows of headroom is enough to cover a frame of fast scrolling;
+          // four was mounting double the lyric DOM for no visible benefit.
+          overscan: 2,
         }}
         data={[lyricsPicker, ...children()]}
       >

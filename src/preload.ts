@@ -7,6 +7,8 @@ import {
 import is from 'electron-is';
 
 import { getLoadedResources, loadI18n } from '@/i18n';
+import { isPerformancePartEnabled } from '@/providers/performance-mode';
+import { installAnimationThrottle } from '@/providers/performance-mode-animations';
 
 import * as config from './config';
 import {
@@ -192,6 +194,20 @@ contextBridge.exposeInMainWorld(
   'pearPerfDisabledParts',
   process.env.PEAR_PERF_DISABLE ?? '',
 );
+
+// Collapse YTM's non-composited Web Animations before the page creates them.
+// The settings window is mdui/solid and does not need the patch.
+if (
+  config.get('options.performanceMode') &&
+  isPerformancePartEnabled('animations') &&
+  !new URLSearchParams(window.location.search).has('settings')
+) {
+  webFrame
+    .executeJavaScript(`(${installAnimationThrottle.toString()})(); 0`)
+    .catch((error) =>
+      console.error('Failed to install the animation throttle:', error),
+    );
+}
 
 // The renderer has no Electron APIs of its own; these are the webFrame calls the
 // memory report reads and main asks for when the window has been hidden a while.
