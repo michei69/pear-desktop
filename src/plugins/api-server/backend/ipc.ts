@@ -5,6 +5,21 @@ import { apiReply, apiRequest, type ApiAction } from '../channels';
 /** How long a renderer getter gets to answer before the call rejects. */
 const DEFAULT_TIMEOUT_MS = 5_000;
 
+/**
+ * Subscribes to a main-process IPC channel and returns the unsubscribe.
+ *
+ * Removes the exact listener: `ctx.ipc.on` wraps handlers and can only remove
+ * all listeners on the channel, which would drop other plugins' listeners too.
+ */
+export const subscribeIpc = <T>(
+  channel: string,
+  handler: (payload: T) => void,
+) => {
+  const listener = (_: unknown, payload: T) => handler(payload);
+  ipcMain.on(channel, listener);
+  return () => ipcMain.removeListener(channel, listener);
+};
+
 // Waits for a single renderer IPC reply, rejecting after `timeoutMs` so routes
 // don't hang.
 export const waitForIpcResponse = <T>(

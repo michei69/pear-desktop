@@ -8,6 +8,7 @@ import { WebSocketServer } from 'ws';
 import { LoggerPrefix, createBackend } from '@/utils';
 
 import { buildApp } from './app';
+import { subscribeIpc } from './ipc';
 import { createPlayerState, type PlayerState } from './state';
 
 import type { APIServerConfig } from '../config';
@@ -51,29 +52,28 @@ export type BackendType = {
 
 export const backend = createBackend<BackendType, APIServerConfig>({
   async start(ctx) {
-    const { app: electronApp, ipcMain } = await import('electron');
+    const { app: electronApp } = await import('electron');
 
     this.playerState = createPlayerState();
     const { app, stopWebsocket } = buildApp(ctx, this.playerState);
     this.app = app;
     this.stopWebsocket = stopWebsocket;
 
-    // Registered on ipcMain directly so stop() can remove exactly this
-    // listener; ctx.ipc.on wraps handlers anonymously and only supports
-    // removeAllListeners, which would drop other plugins' listeners too.
-    const onPlayerApiLoaded = () => {
-      for (const channel of RENDERER_SETUP_CHANNELS) {
-        ctx.ipc.send(channel);
-      }
-    };
-    ipcMain.on('peard:player-api-loaded', onPlayerApiLoaded);
+    const unsubscribePlayerApiLoaded = subscribeIpc(
+      'peard:player-api-loaded',
+      () => {
+        for (const channel of RENDERER_SETUP_CHANNELS) {
+          ctx.ipc.send(channel);
+        }
+      },
+    );
 
     // Notify WebSocket clients playback stopped before the app goes away.
     const onBeforeQuit = () => this.playerState?.notifyStopped();
     electronApp.on('before-quit', onBeforeQuit);
 
     this.detachRenderer = () => {
-      ipcMain.removeListener('peard:player-api-loaded', onPlayerApiLoaded);
+      unsubscribePlayerApiLoaded();
       electronApp.removeListener('before-quit', onBeforeQuit);
     };
 

@@ -4,6 +4,7 @@ import { dialog } from 'electron';
 import { sign, verify } from 'hono/jwt';
 
 import { t } from '@/i18n';
+import { LoggerPrefix } from '@/utils';
 
 import {
   AccessTokenSchema,
@@ -21,6 +22,35 @@ const JWT_ALG = 'HS256';
 
 const bearerToken = (header: string | undefined) =>
   header?.startsWith('Bearer ') ? header.slice('Bearer '.length) : undefined;
+
+/**
+ * Verifies an API token against the server's secret and authorized clients.
+ * Shared by the HTTP auth middleware and the WebSocket handshake; each caller
+ * handles its own `authStrategy === NONE` bypass. `logFailure` is for callers
+ * that cannot answer a normal 401, i.e. the WebSocket handshake.
+ */
+export const verifyApiToken = async (
+  config: APIServerConfig,
+  token: string | undefined,
+  { logFailure = false }: { logFailure?: boolean } = {},
+): Promise<boolean> => {
+  if (!token) {
+    return false;
+  }
+
+  let payload: unknown;
+  try {
+    payload = await verify(token, config.secret, JWT_ALG);
+  } catch (err) {
+    if (logFailure) {
+      console.error(LoggerPrefix, 'WebSocket authentication failed:', err);
+    }
+    return false;
+  }
+
+  const parsed = JWTPayloadSchema.safeParse(payload);
+  return parsed.success && config.authorizedClients.includes(parsed.data.id);
+};
 
 /**
  * Guards everything under an API version's prefix. `wsPath` — that version's
@@ -44,12 +74,7 @@ export const requireAuth =
     }
 
     const token = bearerToken(ctx.req.header('authorization'));
-    const payload = token
-      ? await verify(token, config.secret, JWT_ALG).catch(() => undefined)
-      : undefined;
-    const parsed = JWTPayloadSchema.safeParse(payload);
-
-    if (!parsed.success || !config.authorizedClients.includes(parsed.data.id)) {
+    if (!(await verifyApiToken(config, token))) {
       return ctx.text('Unauthorized', 401);
     }
 

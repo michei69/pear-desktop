@@ -5,11 +5,8 @@ import {
   type RouteHandler,
   z,
 } from '@hono/zod-openapi';
-import { verify } from 'hono/jwt';
 
-import { LoggerPrefix } from '@/utils';
-
-import { JWTPayloadSchema } from './schemas';
+import { verifyApiToken } from './auth';
 import { createV1EventAdapter, v1PlayerInfo } from './websocket-v1-events';
 
 import { AuthStrategy, type APIServerConfig } from '../config';
@@ -18,9 +15,7 @@ import type { PlayerState } from './state';
 import type { BackendContext } from '@/types/contexts';
 import type { WSContext } from 'hono/ws';
 
-const JWT_ALG = 'HS256';
-
-export const createWsRoute = (
+const createWsRoute = (
   path: string,
   tags: string[] = [],
   description = 'WebSocket endpoint for real-time updates',
@@ -63,21 +58,74 @@ export const createWsAuthenticator =
       return true;
     }
 
-    if (!token) {
-      return false;
-    }
-
-    let payload: unknown;
-    try {
-      payload = await verify(token, config.secret, JWT_ALG);
-    } catch (err) {
-      console.error(LoggerPrefix, 'WebSocket authentication failed:', err);
-      return false;
-    }
-
-    const parsed = JWTPayloadSchema.safeParse(payload);
-    return parsed.success && config.authorizedClients.includes(parsed.data.id);
+    return verifyApiToken(config, token, { logFailure: true });
   };
+
+type PlayerSocketOptions = {
+  path: string;
+  tags?: string[];
+  description?: string;
+  authenticate: (token: string | undefined) => Promise<boolean>;
+  /** Runs after the handshake was authenticated and the socket is tracked. */
+  onOpen?: (ws: WSContext<WebSocketLike>) => void;
+  /** Runs for every client frame. */
+  onMessage?: (data: unknown) => void;
+};
+
+/**
+ * The server skeleton shared by both versions: one socket set per endpoint,
+ * the `?token=` auth guard (closing 1008 on failure), socket bookkeeping and
+ * route registration. The connect payload, event pushes and message handling
+ * are the caller's.
+ */
+export const upgradePlayerSocket = (
+  app: OpenAPIHono,
+  {
+    path,
+    tags = [],
+    description,
+    authenticate,
+    onOpen,
+    onMessage,
+  }: PlayerSocketOptions,
+) => {
+  const sockets = new Set<WSContext<WebSocketLike>>();
+
+  const broadcast = (payload: unknown) => {
+    const message = JSON.stringify(payload);
+    for (const socket of sockets) {
+      socket.send(message);
+    }
+  };
+
+  const handler = upgradeWebSocket((ctx) => ({
+    async onOpen(_, ws) {
+      if (!(await authenticate(ctx.req.query('token')))) {
+        ws.close(1008, 'Unauthorized');
+        return;
+      }
+
+      sockets.add(ws);
+      onOpen?.(ws);
+    },
+    onClose(_, ws) {
+      sockets.delete(ws);
+    },
+    onMessage(event) {
+      onMessage?.(event.data);
+    },
+  }));
+
+  // `upgradeWebSocket` may resolve to void, but zod-openapi's handler type only
+  // accepts a Response.
+  const wsRoute = createWsRoute(path, tags, description);
+  app.openapi(wsRoute, handler as unknown as RouteHandler<typeof wsRoute>);
+
+  return {
+    broadcast,
+    close: () => sockets.clear(),
+  };
+};
 
 /**
  * Broadcasts every player event to the connected clients. Sockets are tracked
@@ -90,43 +138,25 @@ export const registerWebsocket = (
   path: string,
   tags: string[] = [],
 ) => {
-  const sockets = new Set<WSContext<WebSocketLike>>();
+  const { broadcast, close } = upgradePlayerSocket(app, {
+    path,
+    tags,
+    authenticate: createWsAuthenticator(getConfig),
+    onOpen(ws) {
+      ws.send(JSON.stringify(v1PlayerInfo(playerState.snapshot())));
+    },
+  });
 
   const adaptEvent = createV1EventAdapter();
   const unsubscribe = playerState.subscribe((event) => {
     const v1Event = adaptEvent(event);
     if (!v1Event) return;
 
-    const message = JSON.stringify(v1Event);
-    for (const socket of sockets) {
-      socket.send(message);
-    }
+    broadcast(v1Event);
   });
-
-  const authenticate = createWsAuthenticator(getConfig);
-
-  const handler = upgradeWebSocket((ctx) => ({
-    async onOpen(_, ws) {
-      if (!(await authenticate(ctx.req.query('token')))) {
-        ws.close(1008, 'Unauthorized');
-        return;
-      }
-
-      sockets.add(ws);
-      ws.send(JSON.stringify(v1PlayerInfo(playerState.snapshot())));
-    },
-    onClose(_, ws) {
-      sockets.delete(ws);
-    },
-  }));
-
-  // `upgradeWebSocket` may resolve to void, but zod-openapi's handler type only
-  // accepts a Response.
-  const wsRoute = createWsRoute(path, tags);
-  app.openapi(wsRoute, handler as unknown as RouteHandler<typeof wsRoute>);
 
   return () => {
     unsubscribe();
-    sockets.clear();
+    close();
   };
 };

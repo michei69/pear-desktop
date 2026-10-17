@@ -1,5 +1,3 @@
-import { ipcMain } from 'electron';
-
 import {
   registerCallback,
   unregisterCallback,
@@ -11,6 +9,8 @@ import {
   type RepeatMode,
   type VolumeState,
 } from '@/types/datahost-get-state';
+
+import { subscribeIpc } from './ipc';
 
 /**
  * The song shape the WebSocket publishes. The scrobbler's config-derived
@@ -83,14 +83,8 @@ export const createPlayerState = () => {
     }
   };
 
-  // Removed individually on stop(); removeAllListeners would drop the listeners
-  // other plugins registered on the same channels.
+  // Removed individually on stop(), so other plugins' listeners survive.
   const teardown: (() => void)[] = [];
-  const subscribeIpc = <T>(channel: string, handler: (payload: T) => void) => {
-    const listener = (_: unknown, payload: T) => handler(payload);
-    ipcMain.on(channel, listener);
-    teardown.push(() => ipcMain.removeListener(channel, listener));
-  };
 
   const songInfoCallback = (info: SongInfo, event: SongInfoEvent) => {
     // The provider mutates and re-emits the same object, so keep our own copy.
@@ -123,27 +117,33 @@ export const createPlayerState = () => {
   };
   registerCallback(songInfoCallback);
 
-  subscribeIpc<VolumeState>('peard:volume-changed', (state) => {
-    volume = state;
-    emit({ type: 'VOLUME_CHANGED', volume: state.state, muted: state.isMuted });
-  });
-  subscribeIpc<RepeatMode>('peard:repeat-changed', (mode) => {
-    repeat = mode;
-    emit({ type: 'REPEAT_CHANGED', repeat: mode });
-  });
-  subscribeIpc<number>('peard:seeked', (position) => {
-    emit({ type: 'POSITION_CHANGED', position });
-  });
-  subscribeIpc<boolean>('peard:shuffle-changed', (enabled) => {
-    shuffle = enabled;
-    emit({ type: 'SHUFFLE_CHANGED', shuffle: enabled });
-  });
-  subscribeIpc<number>('peard:playback-speed-changed', (value) => {
-    speed = value;
-  });
-  subscribeIpc<LikeType>('peard:like-changed', (value) => {
-    rating = value;
-  });
+  teardown.push(
+    subscribeIpc<VolumeState>('peard:volume-changed', (state) => {
+      volume = state;
+      emit({
+        type: 'VOLUME_CHANGED',
+        volume: state.state,
+        muted: state.isMuted,
+      });
+    }),
+    subscribeIpc<RepeatMode>('peard:repeat-changed', (mode) => {
+      repeat = mode;
+      emit({ type: 'REPEAT_CHANGED', repeat: mode });
+    }),
+    subscribeIpc<number>('peard:seeked', (position) => {
+      emit({ type: 'POSITION_CHANGED', position });
+    }),
+    subscribeIpc<boolean>('peard:shuffle-changed', (enabled) => {
+      shuffle = enabled;
+      emit({ type: 'SHUFFLE_CHANGED', shuffle: enabled });
+    }),
+    subscribeIpc<number>('peard:playback-speed-changed', (value) => {
+      speed = value;
+    }),
+    subscribeIpc<LikeType>('peard:like-changed', (value) => {
+      rating = value;
+    }),
+  );
 
   return {
     get song() {
