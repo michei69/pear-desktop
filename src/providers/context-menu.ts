@@ -36,6 +36,7 @@ type MenuEndpoint = {
   deletePlaylistEndpoint?: unknown;
   feedbackEndpoint?: unknown;
   flagEndpoint?: unknown;
+  getReportFormEndpoint?: unknown;
   likeEndpoint?: unknown;
   modalEndpoint?: unknown;
   nerdStatsEndpoint?: unknown;
@@ -235,6 +236,7 @@ export const MENU_ENTRIES = [
       const renderer = rendererOf(item);
       return (
         hasEndpoint(renderer, 'flagEndpoint') ||
+        hasEndpoint(renderer, 'getReportFormEndpoint') ||
         (hasEndpoint(renderer, 'modalEndpoint') && hasIcon(renderer, ['FLAG']))
       );
     },
@@ -242,6 +244,13 @@ export const MENU_ENTRIES = [
   {
     key: 'stats-for-nerds',
     matches: (item) => hasEndpoint(rendererOf(item), 'nerdStatsEndpoint'),
+  },
+  {
+    key: 'pin-to-listen-again',
+    matches: (item) =>
+      kindOf(item) === 'toggleMenuServiceItemRenderer' &&
+      hasEndpoint(rendererOf(item), 'feedbackEndpoint') &&
+      hasIcon(rendererOf(item), ['KEEP']),
   },
   {
     key: 'not-interested',
@@ -253,6 +262,14 @@ export const MENU_ENTRIES = [
     key: 'remove-from-playlist',
     matches: (item) =>
       playlistActionsOf(rendererOf(item)).includes('ACTION_REMOVE_VIDEO'),
+  },
+  {
+    // The queue's "Dismiss queue" shares `deletePlaylistEndpoint` with a real
+    // playlist delete; the icon is the only thing that tells them apart.
+    key: 'dismiss-queue',
+    matches: (item) =>
+      hasEndpoint(rendererOf(item), 'deletePlaylistEndpoint') &&
+      hasIcon(rendererOf(item), ['DISMISS_QUEUE']),
   },
   {
     key: 'delete-playlist',
@@ -287,84 +304,83 @@ export const hiddenEntryKeys = (hidden: Record<string, boolean> = {}) =>
     .filter(([, isHidden]) => isHidden)
     .map(([key]) => key);
 
-type PopupAction = {
-  openPopupAction?: {
-    popup?: {
-      menuPopupRenderer?: {
-        items?: MenuItemData[];
-      };
-    };
-  };
-};
-
-type OpenPopupBehavior = {
-  openPopup: (action: unknown) => unknown;
-};
-
-type MenuRendererElement = HTMLElement & {
-  openPopupBehavior?: OpenPopupBehavior;
+/**
+ * YouTube Music opens menus through several paths — the legacy
+ * `openPopupBehavior`, the newer popup service and right-click context menus —
+ * and they all end up stamping the same `ytmusic-menu-popup-renderer` from its
+ * `data.items`. Filtering there covers every path without depending on any of
+ * those internals; re-filtering on mutation handles the popup being reused for
+ * the next menu.
+ */
+type MenuPopupElement = HTMLElement & {
+  data?: { items?: MenuItemData[] };
 };
 
 let hiddenEntries: string[] = [];
 let observer: MutationObserver | undefined;
-let patched:
-  | {
-      prototype: OpenPopupBehavior;
-      openPopup: OpenPopupBehavior['openPopup'];
+const popupObservers = new Map<MenuPopupElement, MutationObserver>();
+
+/** Replace the popup's data through its own accessor, which re-stamps the items. */
+const replacePopupData = (
+  popup: MenuPopupElement,
+  data: { items: MenuItemData[] },
+) => {
+  let prototype = Object.getPrototypeOf(popup) as object | null;
+  while (prototype) {
+    const descriptor = Object.getOwnPropertyDescriptor(prototype, 'data');
+    if (descriptor?.set) {
+      descriptor.set.call(popup, data);
+      return true;
     }
-  | undefined;
+    prototype = Object.getPrototypeOf(prototype) as object | null;
+  }
+  return false;
+};
 
-const filterMenuAction = (action: unknown): unknown => {
-  if (!hiddenEntries.length) return action;
-
-  const openPopup = (action as PopupAction | null)?.openPopupAction;
-  const popup = openPopup?.popup;
-  const menu = popup?.menuPopupRenderer;
-  const items = menu?.items;
-  if (!menu || !Array.isArray(items) || items.length === 0) return action;
+const filterPopup = (popup: MenuPopupElement) => {
+  const data = popup.data;
+  const items = data?.items;
+  if (!hiddenEntries.length || !Array.isArray(items) || items.length === 0) {
+    return;
+  }
 
   const kept = hideMenuEntries(items, hiddenEntries);
-  if (kept.length === items.length) return action;
+  if (kept.length === items.length) return;
 
-  return {
-    ...(action as PopupAction),
-    openPopupAction: {
-      ...openPopup,
-      popup: { ...popup, menuPopupRenderer: { ...menu, items: kept } },
-    },
-  };
+  replacePopupData(popup, { ...data, items: kept });
 };
 
-const findBehavior = () =>
-  document.querySelector<MenuRendererElement>('ytmusic-menu-renderer')
-    ?.openPopupBehavior;
+const watchPopup = (popup: MenuPopupElement) => {
+  if (popupObservers.has(popup)) return;
 
-/** Wraps the shared popup behavior once a menu renderer exists. */
-const patchMenuBehavior = (behavior: OpenPopupBehavior) => {
-  const popupPrototype = Object.getPrototypeOf(behavior) as OpenPopupBehavior;
-  const openPopup = popupPrototype.openPopup;
-  if (typeof openPopup !== 'function' || patched) return false;
-
-  popupPrototype.openPopup = function (
-    this: OpenPopupBehavior,
-    action: unknown,
-  ) {
-    return openPopup.call(this, filterMenuAction(action));
-  };
-  patched = { prototype: popupPrototype, openPopup };
-  return true;
+  const popupObserver = new MutationObserver(() => filterPopup(popup));
+  popupObserver.observe(popup, { childList: true, subtree: true });
+  popupObservers.set(popup, popupObserver);
+  filterPopup(popup);
 };
 
-/** Menus appear with the first page render, so watch until one exists. */
-const watchForMenu = () => {
-  const behavior = findBehavior();
-  if (behavior && patchMenuBehavior(behavior)) return;
+/** Watches for popup elements (they are created once) and filters each one. */
+const watchForPopups = () => {
+  const popups = document.querySelectorAll<MenuPopupElement>(
+    'ytmusic-menu-popup-renderer',
+  );
+  for (const popup of popups) watchPopup(popup);
 
-  observer = new MutationObserver(() => {
-    const found = findBehavior();
-    if (!found || !patchMenuBehavior(found)) return;
-    observer?.disconnect();
-    observer = undefined;
+  observer = new MutationObserver((mutations) => {
+    for (const mutation of mutations) {
+      for (const node of mutation.addedNodes) {
+        if (node.nodeType !== 1) continue;
+
+        const element = node as Element;
+        if (element.matches('ytmusic-menu-popup-renderer')) {
+          watchPopup(element as MenuPopupElement);
+        }
+        const nested = element.querySelectorAll<MenuPopupElement>(
+          'ytmusic-menu-popup-renderer',
+        );
+        for (const popup of nested) watchPopup(popup);
+      }
+    }
   });
   observer.observe(document.documentElement, {
     childList: true,
@@ -376,7 +392,7 @@ export const startContextMenuCustomizer = (
   initialHidden: Record<string, boolean>,
 ) => {
   hiddenEntries = hiddenEntryKeys(initialHidden);
-  watchForMenu();
+  watchForPopups();
 };
 
 /** Called when an Appearance switch changes; menus pick it up on next open. */

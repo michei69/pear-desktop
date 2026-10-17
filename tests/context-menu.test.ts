@@ -121,6 +121,9 @@ test('recognises the reporting, sharing and stats entries', () => {
   expect(keyOf(nav('SHARE', { shareEndpoint: { id: 'x' } }))).toBe('share');
 
   expect(keyOf(serviceItem('FLAG', { flagEndpoint: {} }))).toBe('report');
+  expect(keyOf(serviceItem('FLAG', { getReportFormEndpoint: {} }))).toBe(
+    'report',
+  );
   expect(keyOf(serviceItem('FLAG', { modalEndpoint: {} }))).toBe('report');
 
   expect(
@@ -133,6 +136,20 @@ test('recognises the reporting, sharing and stats entries', () => {
       }),
     ),
   ).toBe('not-interested');
+});
+
+test('recognises the queue entries that share endpoints', () => {
+  expect(
+    keyOf({
+      toggleMenuServiceItemRenderer: {
+        icon: { iconType: 'KEEP' },
+        defaultServiceEndpoint: { feedbackEndpoint: {} },
+      },
+    }),
+  ).toBe('pin-to-listen-again');
+  expect(
+    keyOf(serviceItem('DISMISS_QUEUE', { deletePlaylistEndpoint: {} })),
+  ).toBe('dismiss-queue');
 });
 
 test('recognises playlist-only entries', () => {
