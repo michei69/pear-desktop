@@ -26,6 +26,12 @@ export default createPlugin({
       max: 65535,
     },
     {
+      type: 'switch',
+      key: 'mcpEnabled',
+      label: () => t('plugins.api-server.menu.mcp.label'),
+      description: () => t('plugins.api-server.menu.mcp.description'),
+    },
+    {
       type: 'select',
       key: 'authStrategy',
       label: () => t('plugins.api-server.menu.auth-strategy.label'),

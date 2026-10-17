@@ -56,15 +56,15 @@ export const verifyApiToken = async (
  * Guards everything under an API version's prefix. `wsPath` — that version's
  * WebSocket endpoint — is exempt, because browsers can't set an Authorization
  * header on a WebSocket handshake; it verifies its `?token=` query param
- * instead.
+ * instead. Endpoints outside a version (the MCP server) pass no `wsPath`.
  */
 export const requireAuth =
   (
     getConfig: () => APIServerConfig | Promise<APIServerConfig>,
-    wsPath: string,
+    wsPath?: string,
   ): MiddlewareHandler =>
   async (ctx, next) => {
-    if (ctx.req.path === wsPath) {
+    if (wsPath && ctx.req.path === wsPath) {
       return next();
     }
 

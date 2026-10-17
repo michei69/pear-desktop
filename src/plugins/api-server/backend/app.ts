@@ -4,7 +4,9 @@ import { cors } from 'hono/cors';
 
 import { APPLICATION_NAME } from '@/i18n';
 
-import { registerAuthRoute } from './auth';
+import { registerAuthRoute, requireAuth } from './auth';
+import { MCP_PATH, registerMcp } from './mcp';
+import { createMcpTools } from './mcp-tools';
 import { apiTagOrder } from './tags';
 import { createV1 } from './v1';
 import { createV2 } from './v2';
@@ -36,8 +38,13 @@ export const buildApp = (
   const v2 = createV2(ctx, playerState);
   app.route('/', v2.app);
 
-  // Outside any version: this is the endpoint that hands out the token every
-  // version's routes require.
+  // Also outside any version: MCP clients get each tool's description in the
+  // list, so the endpoint needs no version. It's served by the root app, hence
+  // the auth guard here rather than in v2.
+  app.use(MCP_PATH, requireAuth(ctx.getConfig));
+  registerMcp(app, ctx, createMcpTools(ctx.window, playerState));
+
+  // This is the endpoint that hands out the token every version's routes require.
   registerAuthRoute(app, ctx);
 
   app.openAPIRegistry.registerComponent('securitySchemes', 'bearerAuth', {

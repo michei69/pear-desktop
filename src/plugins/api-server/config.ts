@@ -14,6 +14,9 @@ export interface APIServerConfig {
   useHttps: boolean;
   certPath: string;
   keyPath: string;
+
+  /** Serves the MCP endpoint at `/mcp`; off unless the user opts in. */
+  mcpEnabled: boolean;
 }
 
 export const defaultAPIServerConfig: APIServerConfig = {
@@ -30,4 +33,6 @@ export const defaultAPIServerConfig: APIServerConfig = {
   useHttps: false,
   certPath: '',
   keyPath: '',
+
+  mcpEnabled: false,
 };
