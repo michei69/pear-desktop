@@ -200,6 +200,84 @@ export const setOfficialTranslation = (
   setTranslationStore({ current: done, videoId, key });
 };
 
+type TranslateOnceResult = {
+  provider: TranslationProviderName;
+  language: string;
+  lines: string[];
+  fromCache?: boolean;
+  error?: string;
+  /** True when the provider threw instead of answering with an error. */
+  thrown?: true;
+};
+
+/**
+ * One provider translation request, touching neither `translationStore` nor the
+ * renderer memo cache, so callers keep their own side effects and logs. The
+ * request carries `targetLanguage` as the caller set it (possibly `auto`) and
+ * `resolvedTargetLanguage` for the provider and for reporting.
+ */
+const translateOnce = async (options: {
+  videoId: string;
+  provider: TranslationProviderName;
+  settings: TranslationProviderSettings[TranslationProviderName];
+  title: string;
+  artists: string[];
+  lines: string[];
+  targetLanguage: TranslationTargetLanguage;
+  resolvedTargetLanguage: string;
+}): Promise<TranslateOnceResult> => {
+  const {
+    videoId,
+    provider,
+    settings,
+    title,
+    artists,
+    lines,
+    targetLanguage,
+    resolvedTargetLanguage,
+  } = options;
+  const request: TranslationRequest = toPlainJson({
+    title,
+    artists,
+    targetLanguage,
+    resolvedTargetLanguage,
+    lines,
+  });
+
+  try {
+    const result = await translateInvoke(
+      toPlainJson({
+        videoId,
+        request,
+        provider,
+        settings,
+      }),
+    );
+    if (result.error || result.lines.length === 0) {
+      return {
+        provider,
+        language: resolvedTargetLanguage,
+        lines: [],
+        error: result.error || 'Translation provider returned no lines',
+      };
+    }
+    return {
+      provider,
+      language: resolvedTargetLanguage,
+      lines: result.lines,
+      fromCache: result.fromCache,
+    };
+  } catch (err) {
+    return {
+      provider,
+      language: resolvedTargetLanguage,
+      lines: [],
+      error: err instanceof Error ? err.message : String(err),
+      thrown: true,
+    };
+  }
+};
+
 export const fetchTranslation = async (
   videoId: string,
   title: string,
@@ -275,87 +353,66 @@ export const fetchTranslation = async (
   cache.set(key, pending);
   setTranslationStore({ current: pending, videoId, key });
 
-  const request: TranslationRequest = toPlainJson({
+  translationDebug('translating lyrics', {
+    videoId,
+    provider: providerName,
+    model,
+    language,
+    strategyVersion: TRANSLATION_STRATEGY_VERSION,
+    lines: lines.length,
+  });
+  const result = await translateOnce({
+    videoId,
+    provider: providerName,
+    settings,
     title,
     artists,
+    lines,
     targetLanguage: cfg.translation.targetLanguage,
     resolvedTargetLanguage: language,
-    lines,
   });
 
-  try {
-    translationDebug('translating lyrics', {
-      videoId,
-      provider: providerName,
-      model,
-      language,
-      strategyVersion: TRANSLATION_STRATEGY_VERSION,
-      lines: lines.length,
-    });
-    const result = await translateInvoke(
-      toPlainJson({
-        videoId,
-        request,
-        provider: providerName,
-        settings,
-      }),
-    );
-    if (result.error || result.lines.length === 0) {
-      const message = result.error || 'Translation provider returned no lines';
-      cache.delete(key);
-      if (
-        translationStore.videoId === videoId &&
-        translationStore.key === key
-      ) {
-        setTranslationStore({
-          current: {
-            state: 'error',
-            lines: [],
-            error: message,
-            language,
-            provider: providerName,
-          },
-          videoId,
-          key,
-        });
-        translationDebug('translation failed', { videoId, message });
-      }
-      return;
-    }
-    translationDebug('translation ready', {
-      videoId,
-      provider: providerName,
-      model,
-      language,
-      fromCache: result.fromCache,
-      strategyVersion: TRANSLATION_STRATEGY_VERSION,
-      lines: result.lines.length,
-    });
-    const done: VideoTranslation = {
-      state: 'done',
-      lines: result.lines,
-      language,
-      provider: providerName,
-    };
-    cache.set(key, done);
-    if (translationStore.videoId === videoId && translationStore.key === key) {
-      setTranslationStore({ current: done, videoId, key });
-    }
-  } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
-    const failed: VideoTranslation = {
-      state: 'error',
-      lines: [],
-      error: message,
-      language,
-      provider: providerName,
-    };
+  if (result.error) {
+    const message = result.error;
     cache.delete(key);
     if (translationStore.videoId === videoId && translationStore.key === key) {
-      setTranslationStore({ current: failed, videoId, key });
+      setTranslationStore({
+        current: {
+          state: 'error',
+          lines: [],
+          error: message,
+          language,
+          provider: providerName,
+        },
+        videoId,
+        key,
+      });
       translationDebug('translation failed', { videoId, message });
-      console.error('[synced-lyrics] translation failed:', message);
+      if (result.thrown) {
+        console.error('[synced-lyrics] translation failed:', message);
+      }
     }
+    return;
+  }
+
+  translationDebug('translation ready', {
+    videoId,
+    provider: providerName,
+    model,
+    language,
+    fromCache: result.fromCache,
+    strategyVersion: TRANSLATION_STRATEGY_VERSION,
+    lines: result.lines.length,
+  });
+  const done: VideoTranslation = {
+    state: 'done',
+    lines: result.lines,
+    language,
+    provider: providerName,
+  };
+  cache.set(key, done);
+  if (translationStore.videoId === videoId && translationStore.key === key) {
+    setTranslationStore({ current: done, videoId, key });
   }
 };
 
@@ -512,59 +569,46 @@ export const translateForLanguage = async (
     providerName,
     cfg.translation.providers[providerName],
   );
-  const request: TranslationRequest = toPlainJson({
+  translationDebug('translating lyrics for language', {
+    videoId: song.videoId,
+    provider: providerName,
+    language: target,
+    model: getTranslationModelId(providerName, settings),
+    lines: song.lines.length,
+  });
+  const result = await translateOnce({
+    videoId: song.videoId,
+    provider: providerName,
+    settings,
     title: song.title,
     artists: song.artists,
+    lines: song.lines,
     targetLanguage: target as TranslationTargetLanguage,
     resolvedTargetLanguage: target,
-    lines: song.lines,
   });
 
-  try {
-    translationDebug('translating lyrics for language', {
-      videoId: song.videoId,
-      provider: providerName,
-      language: target,
-      model: getTranslationModelId(providerName, settings),
-      lines: song.lines.length,
-    });
-    const result = await translateInvoke(
-      toPlainJson({
+  if (result.error) {
+    if (result.thrown) {
+      translationDebug('language translation failed', {
         videoId: song.videoId,
-        request,
-        provider: providerName,
-        settings,
-      }),
-    );
-    if (result.error || result.lines.length === 0) {
-      return {
         provider: providerName,
         language: target,
-        lines: [],
-        error: result.error || 'Translation provider returned no lines',
-        reason: 'provider-error',
-      };
+        message: result.error,
+      });
     }
     return {
-      provider: providerName,
-      language: target,
-      lines: result.lines,
-      fromCache: result.fromCache,
-    };
-  } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
-    translationDebug('language translation failed', {
-      videoId: song.videoId,
-      provider: providerName,
-      language: target,
-      message,
-    });
-    return {
-      provider: providerName,
-      language: target,
+      provider: result.provider,
+      language: result.language,
       lines: [],
-      error: message,
+      error: result.error,
       reason: 'provider-error',
     };
   }
+
+  return {
+    provider: result.provider,
+    language: result.language,
+    lines: result.lines,
+    fromCache: result.fromCache,
+  };
 };

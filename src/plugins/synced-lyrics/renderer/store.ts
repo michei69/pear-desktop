@@ -2,6 +2,7 @@ import { createEffect, createMemo, runWithOwner, untrack } from 'solid-js';
 import { createStore } from 'solid-js/store';
 
 import { getSongInfo } from '@/providers/song-info-front';
+import { bylineParts, queueRenderer, yearPattern } from '@/utils/queue';
 
 import { getCustomQuery } from './custom-query-store';
 import { translationDebug } from './debug';
@@ -36,7 +37,7 @@ import type {
   SearchSongInfo,
 } from '../types';
 import type { SongInfo } from '@/providers/song-info';
-import type { LongBylineTextRun, QueueItem } from '@/types/datahost-get-state';
+import type { QueueItem } from '@/types/datahost-get-state';
 import type { MusicPlayerAppElement } from '@/types/music-player-app-element';
 
 type LyricsStore = {
@@ -81,7 +82,6 @@ type VideoId = string;
 
 type SearchCacheData = Record<ProviderName, ProviderState>;
 interface SearchCache {
-  state: 'loading' | 'done';
   data: SearchCacheData;
   /** Settles once every provider has answered, so callers can await a fetch. */
   settled?: Promise<void>;
@@ -275,6 +275,75 @@ const getOfficialChineseTranslationLines = (
   return null;
 };
 
+/** `info` with the user's custom search query for `videoId` applied, if any. */
+const applyCustomQuery = <T extends SearchSongInfo>(
+  info: T,
+  videoId: string,
+): T => {
+  const customQ = getCustomQuery(videoId);
+  if (!customQ) return info;
+
+  return {
+    ...info,
+    title: customQ.query,
+    alternativeTitle: customQ.query,
+    artist: customQ.artist ?? '',
+  };
+};
+
+/** A fresh search cache for `videoId`, registered before any provider answers. */
+const createSearchCache = (videoId: string): SearchCache => {
+  const cache: SearchCache = { data: initialData() };
+  searchCache.set(videoId, cache);
+  pruneSearchCache();
+  return cache;
+};
+
+/**
+ * Start every provider's search for `info`, recording each answer on `data`.
+ * `onResult` sees the same state that was cached, so the lyrics store can follow
+ * along without this helper knowing about it.
+ */
+const searchProviders = (
+  info: SearchSongInfo,
+  data: SearchCacheData,
+  onResult?: (provider: ProviderName, state: ProviderState) => void,
+): Promise<void>[] =>
+  (Object.entries(providers) as [ProviderName, LyricProvider][]).map(
+    ([name, provider]) =>
+      provider
+        .search(info)
+        .then((res) => {
+          const state: ProviderState = {
+            state: 'done',
+            data: res,
+            error: null,
+          };
+          data[name] = state;
+          onResult?.(name, state);
+        })
+        .catch((error: Error) => {
+          console.error(error);
+          const state: ProviderState = { state: 'error', data: null, error };
+          data[name] = state;
+          onResult?.(name, state);
+        }),
+  );
+
+/** Mark `cache` done once every search has settled, and keep it in the map. */
+const settleSearchCache = (
+  videoId: string,
+  cache: SearchCache,
+  tasks: Promise<void>[],
+): Promise<void> => {
+  const settled = Promise.allSettled(tasks).then(() => {
+    searchCache.set(videoId, cache);
+    pruneSearchCache();
+  });
+  cache.settled = settled;
+  return settled;
+};
+
 /**
  * Fetch every provider for `info`. Resolves once they have all settled, so a
  * caller can await a fetch the UI already started; a cached or in-flight video
@@ -290,84 +359,25 @@ export const fetchLyrics = (info: SongInfo): Promise<void> => {
     return cached.settled ?? Promise.resolve();
   }
 
-  const cache: SearchCache = {
-    state: 'loading',
-    data: initialData(),
-  };
-
-  searchCache.set(info.videoId, cache);
-  pruneSearchCache();
+  const cache = createSearchCache(info.videoId);
   activateLyricsData(info.videoId, cache.data);
 
-  // Allow the user to override the search query for this specific video.
-  const customQ = getCustomQuery(info.videoId);
-  const searchInfo = customQ
-    ? {
-        ...info,
-        title: customQ.query,
-        alternativeTitle: customQ.query,
-        artist: customQ.artist ?? '',
-      }
-    : info;
+  const tasks = searchProviders(
+    applyCustomQuery(info, info.videoId),
+    cache.data,
+    (name, state) => {
+      if (!isStillActiveVideo(info.videoId)) return;
 
-  const tasks: Promise<void>[] = [];
+      setLyricsStore('lyrics', (old) => {
+        return {
+          ...old,
+          [name]: { ...state, data: state.data ? { ...state.data } : null },
+        };
+      });
+    },
+  );
 
-  // prettier-ignore
-  for (
-    const [providerName, provider] of Object.entries(providers) as [
-    ProviderName,
-    LyricProvider,
-  ][]
-    ) {
-    const pCache = cache.data[providerName];
-
-    tasks.push(
-      provider
-        .search(searchInfo)
-        .then((res) => {
-          pCache.state = 'done';
-          pCache.data = res;
-
-          if (isStillActiveVideo(info.videoId)) {
-            setLyricsStore('lyrics', (old) => {
-              return {
-                ...old,
-                [providerName]: {
-                  state: 'done',
-                  data: res ? { ...res } : null,
-                  error: null,
-                },
-              };
-            });
-          }
-        })
-        .catch((error: Error) => {
-          pCache.state = 'error';
-          pCache.error = error;
-
-          console.error(error);
-
-          if (isStillActiveVideo(info.videoId)) {
-            setLyricsStore('lyrics', (old) => {
-              return {
-                ...old,
-                [providerName]: { state: 'error', error, data: null },
-              };
-            });
-          }
-        }),
-    );
-  }
-
-  const settled = Promise.allSettled(tasks).then(() => {
-    cache.state = 'done';
-    searchCache.set(info.videoId, cache);
-    pruneSearchCache();
-  });
-
-  cache.settled = settled;
-
-  return settled;
+  return settleSearchCache(info.videoId, cache, tasks);
 };
 
 /** Video id the lyrics belong to, or null when no song is playing. */
@@ -392,33 +402,12 @@ export const allProviderLyrics = async (): Promise<
   return cache ? cloneSearchData(cache.data) : initialData();
 };
 
-/** The run that divides a queue byline: `artist • album • year`. */
-const bylineDivider = ' • ';
-
-/** A byline part that reads as a release year. */
-const yearPattern = /^\d{4}$/;
-
-/** A byline's parts, with the empty ones a stray divider leaves behind gone. */
-const bylineParts = (runs?: LongBylineTextRun[]) =>
-  (runs ?? [])
-    .map((run) => run.text)
-    .join('')
-    .split(bylineDivider)
-    .map((part) => part.trim())
-    .filter(Boolean);
-
 /** "4:21" or "1:02:03" as seconds; 0 when there is no usable length. */
 const durationInSeconds = (text?: string) => {
   const parts = (text ?? '').split(':').map((part) => Number(part));
   if (parts.some(Number.isNaN)) return 0;
   return parts.reduce((total, part) => total * 60 + part, 0);
 };
-
-/** A queue entry's renderer: the item itself, or a wrapper's primary half. */
-const queueRenderer = (item: QueueItem | null | undefined) =>
-  item?.playlistPanelVideoRenderer ??
-  item?.playlistPanelVideoWrapperRenderer?.primaryRenderer
-    ?.playlistPanelVideoRenderer;
 
 /**
  * What providers search with for a video the player is not on. The player's own
@@ -498,45 +487,13 @@ export const lyricsForVideo = async (
     return cloneSearchData(cached.data);
   }
 
-  let info = await searchInfoForVideo(videoId);
+  const info = await searchInfoForVideo(videoId);
   if (!info) return initialData();
 
-  const customQ = getCustomQuery(videoId);
-  if (customQ) {
-    info = {
-      ...info,
-      title: customQ.query,
-      alternativeTitle: customQ.query,
-      artist: customQ.artist ?? '',
-    };
-  }
+  const cache = createSearchCache(videoId);
+  const tasks = searchProviders(applyCustomQuery(info, videoId), cache.data);
 
-  const cache: SearchCache = { state: 'loading', data: initialData() };
-  searchCache.set(videoId, cache);
-  pruneSearchCache();
-
-  const tasks = (
-    Object.entries(providers) as [ProviderName, LyricProvider][]
-  ).map(([name, provider]) =>
-    provider
-      .search(info)
-      .then((res) => {
-        cache.data[name] = { state: 'done', data: res, error: null };
-      })
-      .catch((error: Error) => {
-        console.error(error);
-        cache.data[name] = { state: 'error', data: null, error };
-      }),
-  );
-
-  const settled = Promise.allSettled(tasks).then(() => {
-    cache.state = 'done';
-    searchCache.set(videoId, cache);
-    pruneSearchCache();
-  });
-  cache.settled = settled;
-
-  await settled;
+  await settleSearchCache(videoId, cache, tasks);
 
   return cloneSearchData(cache.data);
 };
