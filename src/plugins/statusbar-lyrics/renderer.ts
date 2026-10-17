@@ -13,11 +13,26 @@ let sendRequested = false;
 let lastPayload: string | undefined;
 let isPlaying = false;
 let resetLineBaseline = true;
+let playbackSubscriptions: Array<() => void> = [];
 
-const onPlayOrPaused = (
-  _event: unknown,
-  payload: { isPaused: boolean; elapsedSeconds: number },
-) => {
+/** Subscribe once per start, replacing any previous page subscriptions. */
+const subscribeToPlayback = () => {
+  for (const unsubscribe of playbackSubscriptions) unsubscribe();
+  playbackSubscriptions = [
+    window.ipcRenderer.subscribe('peard:play-or-paused', onPlayOrPaused),
+    window.ipcRenderer.subscribe('peard:time-changed', onTimeChanged),
+  ];
+};
+
+const unsubscribeFromPlayback = () => {
+  for (const unsubscribe of playbackSubscriptions) unsubscribe();
+  playbackSubscriptions = [];
+};
+
+const onPlayOrPaused = (payload: {
+  isPaused: boolean;
+  elapsedSeconds: number;
+}) => {
   isPlaying = !payload.isPaused;
   resetLineBaseline = true;
   sendLyrics?.();
@@ -275,11 +290,7 @@ export const renderer = createRenderer({
       sendLyrics?.();
     }, 250);
 
-    window.ipcRenderer.removeListener('peard:play-or-paused', onPlayOrPaused);
-    window.ipcRenderer.removeListener('peard:time-changed', onTimeChanged);
-
-    window.ipcRenderer.on('peard:play-or-paused', onPlayOrPaused);
-    window.ipcRenderer.on('peard:time-changed', onTimeChanged);
+    subscribeToPlayback();
   },
   stop() {
     if (timer) {
@@ -290,8 +301,7 @@ export const renderer = createRenderer({
     observer?.disconnect();
     observer = undefined;
 
-    window.ipcRenderer.removeListener('peard:play-or-paused', onPlayOrPaused);
-    window.ipcRenderer.removeListener('peard:time-changed', onTimeChanged);
+    unsubscribeFromPlayback();
 
     sendLyrics = undefined;
     resetLineState();

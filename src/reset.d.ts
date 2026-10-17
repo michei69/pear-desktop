@@ -21,7 +21,12 @@ declare global {
 
   interface Window {
     trustedTypes?: typeof trustedTypes;
-    ipcRenderer: typeof electronIpcRenderer;
+    ipcRenderer: typeof electronIpcRenderer & {
+      subscribe: <Args extends unknown[]>(
+        channel: string,
+        listener: (...args: Args) => void,
+      ) => () => void;
+    };
     mainConfig: typeof config & {
       getScrobbleOptions: () => ScrobbleOptions;
     };

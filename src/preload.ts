@@ -148,6 +148,17 @@ ipcRenderer.on('plugin:enable', async (_, id: string) => {
 contextBridge.exposeInMainWorld('mainConfig', rendererConfig);
 contextBridge.exposeInMainWorld('electronIs', is);
 contextBridge.exposeInMainWorld('ipcRenderer', {
+  subscribe: (channel: string, listener: (...args: unknown[]) => void) => {
+    // contextBridge creates a new proxy each time a page function crosses, so
+    // page-side `off(listener)` cannot match. Keep the wrapper here and hand
+    // the page an unsubscribe closure that references that same wrapper.
+    const wrapped = (_event: IpcRendererEvent, ...args: unknown[]) =>
+      listener(...args);
+    ipcRenderer.on(channel, wrapped);
+    return () => {
+      ipcRenderer.removeListener(channel, wrapped);
+    };
+  },
   on: (
     channel: string,
     listener: (event: IpcRendererEvent, ...args: unknown[]) => void,
