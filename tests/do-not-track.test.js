@@ -1,6 +1,6 @@
 import { writeFileSync } from 'node:fs';
-import path from 'node:path';
 import { createRequire } from 'node:module';
+import path from 'node:path';
 
 import { test, expect, _electron as electron } from '@playwright/test';
 import { build } from 'vite';

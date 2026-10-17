@@ -884,9 +884,17 @@ app.on('activate', async () => {
 const getDefaultLocale = async (locale: string) =>
   Object.keys(await languageResources()).includes(locale) ? locale : null;
 
-// Deny web permissions by default. The output-device plugin needs microphone
-// access, and the settings/music-together UIs write to the clipboard.
-const allowedPermissions = new Set(['media', 'clipboard-sanitized-write']);
+// Deny web permissions by default, allowing only what the app itself relies on:
+// the output-device plugin needs `media` (microphone), the settings and
+// music-together UIs write to the clipboard, the YouTube player uses the
+// fullscreen API for video, and mediaKeySystem is required if a DRM-capable
+// build (e.g. castlabs Electron) is used later.
+const allowedPermissions = new Set([
+  'media',
+  'clipboard-sanitized-write',
+  'fullscreen',
+  'mediaKeySystem',
+]);
 
 app.whenReady().then(async () => {
   session.defaultSession.setPermissionRequestHandler(

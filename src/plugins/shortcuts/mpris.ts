@@ -110,8 +110,12 @@ export function registerMPRIS(win: BrowserWindow) {
 
       const artUrl = video.thumbnail?.thumbnails?.at(-1)?.url;
       pendingArtwork = { videoId: video.videoId, url: artUrl };
+      // Lives have no meaningful length; never publish NaN over D-Bus.
+      const lengthSeconds = Number(video.lengthSeconds);
       player.metadata = {
-        'mpris:length': secToMicro(Number(video.lengthSeconds)),
+        ...(Number.isFinite(lengthSeconds)
+          ? { 'mpris:length': secToMicro(lengthSeconds) }
+          : undefined),
         ...(artUrl ? { 'mpris:artUrl': artUrl } : undefined),
         'xesam:title': video.title,
         'xesam:artist': [video.author],
