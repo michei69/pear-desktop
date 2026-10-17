@@ -6,7 +6,6 @@ import {
 import {
   PageType,
   type ItemPlaylistPanelVideoRenderer,
-  type LongBylineTextRun,
   type MusicCardShelfRenderer,
   type MusicResponsiveListItemRenderer,
   type QueueItem,
@@ -18,6 +17,7 @@ import {
 import { type AppAPI } from '@/types/queue';
 import { type SearchBoxElement } from '@/types/search-box-element';
 import { clamp } from '@/utils/math';
+import { bylineParts, queueRenderer, yearPattern } from '@/utils/queue';
 
 import { getLyricsReply } from './lyrics-reply';
 
@@ -170,35 +170,11 @@ const thumbnailUrl = (thumbnails?: ThumbnailElement[]) =>
   thumbnails?.at(-1)?.url;
 
 /**
- * A queue entry's renderer: the item itself, or a wrapper's primary half. The
- * redux queue is runtime data, so a slot can hold `null`.
- */
-const queueRenderer = (item: QueueItem | null | undefined) =>
-  item?.playlistPanelVideoRenderer ??
-  item?.playlistPanelVideoWrapperRenderer?.primaryRenderer
-    ?.playlistPanelVideoRenderer;
-
-/**
  * The queue position of the entry playing `videoId`, or -1 when no entry does.
  * Never `findIndex(...) || -1`: a match at index 0 would read as "not found".
  */
 const queueIndexOfVideo = (items: QueueItem[] | undefined, videoId: string) =>
   items?.findIndex((item) => queueRenderer(item)?.videoId === videoId) ?? -1;
-
-/** The run that divides a queue byline: `artist • album • year`. */
-const bylineDivider = ' • ';
-
-/** A byline's parts, with the empty ones a stray divider leaves behind gone. */
-const bylineParts = (runs?: LongBylineTextRun[]) =>
-  (runs ?? [])
-    .map((run) => run.text)
-    .join('')
-    .split(bylineDivider)
-    .map((part) => part.trim())
-    .filter(Boolean);
-
-/** A byline part that reads as a release year. */
-const yearPattern = /^\d{4}$/;
 
 /**
  * A queue entry, read out of its raw playlist panel renderer. `index` is the
@@ -769,14 +745,8 @@ export const registerV2 = (
               nextQueueItemId: queue.nextQueueItemId,
               index:
                 queueInsertPosition === 'INSERT_AFTER_CURRENT_VIDEO'
-                  ? queueItems.findIndex(
-                      (it) =>
-                        (
-                          it?.playlistPanelVideoRenderer ??
-                          it?.playlistPanelVideoWrapperRenderer?.primaryRenderer
-                            ?.playlistPanelVideoRenderer
-                        )?.selected,
-                    ) + 1 || queueItemsLength
+                  ? queueItems.findIndex((it) => queueRenderer(it)?.selected) +
+                      1 || queueItemsLength
                   : queueItemsLength,
               items: result.queueDatas
                 .map((it) =>
