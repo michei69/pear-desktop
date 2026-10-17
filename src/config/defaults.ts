@@ -39,6 +39,11 @@ export interface DefaultConfig {
     swapLikeButtonsOrder: boolean;
     hideDislikeButton: boolean;
     hideVideoCaptions: boolean;
+    /**
+     * Three-dot menu entries turned off in Appearance → Context menu, keyed by
+     * entry key (`share`, `play-next`, …). A missing key means the entry shows.
+     */
+    contextMenuHidden: Record<string, boolean>;
     proxy: string;
     startingPage: string;
     overrideUserAgent: boolean;
@@ -101,6 +106,7 @@ export const defaultConfig: DefaultConfig = {
     swapLikeButtonsOrder: false,
     hideDislikeButton: false,
     hideVideoCaptions: false,
+    contextMenuHidden: {},
     proxy: '',
     startingPage: '',
     overrideUserAgent: false,

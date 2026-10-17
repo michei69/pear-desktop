@@ -1,6 +1,7 @@
 import { languageResources } from 'virtual:i18n';
 
 import { t } from '@/i18n';
+import { MENU_ENTRIES } from '@/providers/context-menu';
 import { startingPages } from '@/providers/extracted-data';
 import { Platform } from '@/types/plugins';
 
@@ -234,6 +235,21 @@ export const buildAppSections = (): AppSection[] => {
               },
             ),
           ],
+        },
+        {
+          title: () => t('settings-ui.groups.context-menu'),
+          fields: MENU_ENTRIES.map(
+            (entry): SwitchField => ({
+              type: 'switch',
+              key: `options.contextMenuHidden.${entry.key}`,
+              label: () =>
+                t('settings-ui.fields.context-menu.hide-entry', {
+                  entry: t(
+                    `settings-ui.fields.context-menu.entries.${entry.key}`,
+                  ),
+                }),
+            }),
+          ),
         },
         {
           title: () => t('settings-ui.groups.window-title'),

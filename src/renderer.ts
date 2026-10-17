@@ -20,6 +20,10 @@ import {
   loadAllRendererPlugins,
 } from './loader/renderer';
 import { type NextData } from './plugins/synced-lyrics/providers/YTMusic';
+import {
+  setContextMenuHiddenEntry,
+  startContextMenuCustomizer,
+} from './providers/context-menu';
 import { startingPages } from './providers/extracted-data';
 import { createShareUrlRewriter } from './providers/share-url';
 import { setupSongInfo } from './providers/song-info-front';
@@ -591,6 +595,16 @@ const main = async () => {
       setShareUrlRewriterEnabled(
         enabled || window.mainConfig.get('options.stripMusicFromSharedLinks'),
       ),
+  );
+
+  startContextMenuCustomizer(window.mainConfig.getContextMenuHidden());
+  window.ipcRenderer.on(
+    'peard:context-menu-hidden-entry',
+    (_event, entryKey: unknown, isHidden: unknown) => {
+      if (typeof entryKey === 'string') {
+        setContextMenuHiddenEntry(entryKey, Boolean(isHidden));
+      }
+    },
   );
 
   await loadAllRendererPlugins();

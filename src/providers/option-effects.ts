@@ -6,6 +6,9 @@ import { refreshTrayIcons } from '@/tray';
 import { appIconPath, windowIconPath } from './app-icon';
 import { syncShortcutIcons } from './shortcut-icons';
 
+/** Appearance → Context menu writes one boolean per entry under this prefix. */
+const CONTEXT_MENU_ENTRY_PREFIX = 'options.contextMenuHidden.';
+
 /**
  * Side effects an option's value implies beyond storing it. Both the native menu
  * and the in-app settings write options, so they route through here to stay in
@@ -17,6 +20,16 @@ export const applyOptionEffects = (
   value: unknown,
   win: BrowserWindow,
 ) => {
+  // The renderer filters the three-dot menus one entry switch at a time.
+  if (key.startsWith(CONTEXT_MENU_ENTRY_PREFIX)) {
+    win.webContents.send(
+      'peard:context-menu-hidden-entry',
+      key.slice(CONTEXT_MENU_ENTRY_PREFIX.length),
+      Boolean(value),
+    );
+    return;
+  }
+
   switch (key) {
     case 'options.alwaysOnTop':
       win.setAlwaysOnTop(Boolean(value));

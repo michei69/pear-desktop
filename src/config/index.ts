@@ -127,6 +127,13 @@ export const getThemeConsent = (): ThemeConsent =>
 export const setThemeConsent = (value: ThemeConsent) =>
   store.set('options.themeConsent', value);
 
+/**
+ * Switch per three-dot menu entry, keyed by entry key. `PathValue` collapses
+ * nested records to their value type, so this one is typed by hand.
+ */
+export const getContextMenuHidden = (): Record<string, boolean> =>
+  (store.get('options.contextMenuHidden') as Record<string, boolean>) ?? {};
+
 export const edit = () => store.openInEditor();
 
 /** Channel the user follows: a stored value wins, the build decides otherwise. */

@@ -1494,6 +1494,7 @@
       "updates-session": "Updates & session",
       "startup-language": "Startup & language",
       "interface": "Interface",
+      "context-menu": "Context menu",
       "window-title": "Window",
       "window": "Window",
       "system": "System",
@@ -1520,6 +1521,29 @@
     "fields": {
       "hide-dislike-button": "Hide Dislike Button",
       "hide-video-captions": "Hide Video Captions",
+      "context-menu": {
+        "hide-entry": "Hide {{entry}}",
+        "entries": {
+          "add-to-queue": "Add to queue",
+          "delete-playlist": "Delete playlist",
+          "download": "Download",
+          "go-to-album": "Go to album",
+          "go-to-artist": "Go to artist",
+          "go-to-playlist": "Go to playlist",
+          "like": "Like",
+          "not-interested": "Not interested",
+          "play-next": "Play next",
+          "remove-from-playlist": "Remove from playlist",
+          "remove-from-queue": "Remove from queue",
+          "report": "Report",
+          "save-to-library": "Save to library",
+          "save-to-playlist": "Save to playlist",
+          "share": "Share",
+          "shuffle-play": "Shuffle play",
+          "start-mix": "Start mix",
+          "stats-for-nerds": "Stats for nerds"
+        }
+      },
       "podcast-artist": "Use podcast participants as artists",
       "podcast-artist-desc": "Off: a podcast episode’s artist is the channel that published it.",
       "theme-preset": "Preset",
