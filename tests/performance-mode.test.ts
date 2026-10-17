@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 import {
+  isPerformancePartEnabled,
   isSkippedInPerformanceMode,
   performanceModeFeatureFlags,
   performanceModeOverrides,
@@ -31,4 +32,17 @@ test('performance mode skips only the expensive visual plugins', () => {
 
   expect(isSkippedInPerformanceMode('visualizer', false)).toBe(false);
   expect(isSkippedInPerformanceMode('synced-lyrics', true)).toBe(false);
+});
+
+test('individual parts can be disabled for bisecting', () => {
+  process.env.PEAR_PERF_DISABLE = 'flags,css';
+
+  try {
+    expect(isPerformancePartEnabled('flags')).toBe(false);
+    expect(isPerformancePartEnabled('css')).toBe(false);
+    expect(isPerformancePartEnabled('plugins')).toBe(true);
+    expect(isSkippedInPerformanceMode('visualizer', true)).toBe(true);
+  } finally {
+    delete process.env.PEAR_PERF_DISABLE;
+  }
 });

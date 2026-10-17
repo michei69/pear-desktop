@@ -425,6 +425,14 @@ export const buildAppSections = (): AppSection[] => {
               AT_STARTUP,
             ),
             toggle(
+              'options.inProcessGpu',
+              () => t('settings-ui.fields.in-process-gpu'),
+              {
+                ...AT_STARTUP,
+                description: () => t('settings-ui.fields.in-process-gpu-desc'),
+              },
+            ),
+            toggle(
               'options.autoResetAppCache',
               menuLabel('advanced-options.submenu.auto-reset-app-cache'),
               AT_STARTUP,

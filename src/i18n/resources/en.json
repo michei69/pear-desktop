@@ -1574,6 +1574,8 @@
     "fields": {
       "performance-mode": "Performance mode",
       "performance-mode-desc": "Trade some visual fidelity for cheaper rendering.",
+      "in-process-gpu": "Merge the GPU process into the app process",
+      "in-process-gpu-desc": "Experimental: saves one process, but moves GPU memory into the main process and can fall back to software rendering.",
       "hide-dislike-button": "Hide Dislike Button",
       "hide-video-captions": "Hide Video Captions",
       "context-menu": {

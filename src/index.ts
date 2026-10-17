@@ -49,7 +49,10 @@ import { clearStaleCodeCaches } from '@/providers/cache-maintenance';
 import { classifyLink } from '@/providers/external-links';
 import { loadFlagMetadata } from '@/providers/flag-metadata';
 import { setupMemoryReport } from '@/providers/memory-report';
-import { performanceModeCss } from '@/providers/performance-mode';
+import {
+  performanceModeCss,
+  isPerformancePartEnabled,
+} from '@/providers/performance-mode';
 import {
   APP_PROTOCOL,
   handleProtocol,
@@ -197,9 +200,10 @@ if (disableHardwareAcceleration) {
   app.disableHardwareAcceleration();
 }
 
-// Performance mode keeps hardware acceleration but folds the GPU process into
-// the browser process. A GPU crash then takes the app down, hence opt-in only.
-if (config.get('options.performanceMode') && !disableHardwareAcceleration) {
+// Opt-in experiment, not part of performance mode: folding the GPU service into
+// the browser process moves its memory there and can fall back to software
+// rendering (which costs far more RAM than the separate process saves).
+if (config.get('options.inProcessGpu') && !disableHardwareAcceleration) {
   app.commandLine.appendSwitch('in-process-gpu');
 }
 
@@ -532,7 +536,10 @@ const showNeedToRestartDialog = async (
 function initTheme(win: BrowserWindow) {
   injectCSS(win.webContents, musicPlayerCss);
 
-  if (config.get('options.performanceMode')) {
+  if (
+    config.get('options.performanceMode') &&
+    isPerformancePartEnabled('css')
+  ) {
     injectCSS(win.webContents, performanceModeCss);
   }
 

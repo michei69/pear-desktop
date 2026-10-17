@@ -1,5 +1,17 @@
 import type { FeatureFlagOverrides } from '@/plugins/settings-ui/injectors/flags';
 
+type PerformancePart = 'flags' | 'css' | 'plugins';
+
+/**
+ * Debug escape hatch: `PEAR_PERF_DISABLE=flags,css` keeps performance mode on
+ * but turns individual parts off, to bisect which one costs what.
+ */
+export const isPerformancePartEnabled = (part: PerformancePart) =>
+  !(process.env.PEAR_PERF_DISABLE ?? '')
+    .split(',')
+    .map((value) => value.trim())
+    .includes(part);
+
 /**
  * YouTube Music flags forced while performance mode is on. Values are read by
  * the page's own `EXPERIMENT_FLAGS`; a flag the user overrides wins (see
@@ -56,7 +68,9 @@ const PERFORMANCE_MODE_SKIPPED_PLUGINS = new Set([
 ]);
 
 export const isSkippedInPerformanceMode = (id: string, enabled: boolean) =>
-  enabled && PERFORMANCE_MODE_SKIPPED_PLUGINS.has(id);
+  enabled &&
+  isPerformancePartEnabled('plugins') &&
+  PERFORMANCE_MODE_SKIPPED_PLUGINS.has(id);
 
 /**
  * Stops per-frame compositing work: animations, transitions, backdrop blurs and
