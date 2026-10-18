@@ -18,7 +18,7 @@ interface LRC {
 
 const tagRegex = /^\[(?<tag>\w+):\s*(?<value>.+?)\s*\]$/;
 // prettier-ignore
-const timestampRegex = /^\[(?<minutes>\d+):(?<seconds>\d+)\.(?<centiseconds>\d+)\]/m;
+const timestampRegex = /^\[(?<minutes>\d+):(?<seconds>\d+)[.:](?<centiseconds>\d+)\]/m;
 
 // prettier-ignore
 const wordRegex = /<(?<minutes>\d+):(?<seconds>\d+)\.(?<centiseconds>\d+)> *(?<word>\w+)/g;
