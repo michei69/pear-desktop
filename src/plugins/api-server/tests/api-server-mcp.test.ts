@@ -8,7 +8,7 @@
 import { OpenAPIHono, z } from '@hono/zod-openapi';
 import { expect, test } from '@playwright/test';
 
-import { MCP_PATH, registerMcp } from '../backend/mcp';
+import { registerMcp } from '../backend/mcp';
 import { defaultAPIServerConfig, type APIServerConfig } from '../config';
 
 import type { McpTool, McpToolResult } from '../backend/mcp-tools';
@@ -85,7 +85,9 @@ const createTestApp = () => {
 
 /** One JSON-RPC POST to the MCP endpoint. */
 const rpc = async (app: OpenAPIHono, body: unknown) => {
-  const response = await app.request(MCP_PATH, {
+  // The published endpoint path: MCP clients configure /mcp by hand, so the
+  // tests request that literal rather than the code's own constant.
+  const response = await app.request('/mcp', {
     method: 'POST',
     headers: MCP_HEADERS,
     body: JSON.stringify(body),
@@ -131,16 +133,9 @@ test.beforeEach(() => {
 
 // ------------------------------------------------------------- the switch ---
 
-test('the MCP server is off by default', () => {
-  expect(defaultAPIServerConfig.mcpEnabled).toBe(false);
-});
-
-test('the endpoint is not versioned', () => {
-  expect(MCP_PATH).toBe('/mcp');
-});
-
-test('a disabled MCP server answers 404, even to a valid handshake', async () => {
-  config = { ...defaultAPIServerConfig, mcpEnabled: false };
+test('a server left at its defaults answers 404, even to a valid handshake', async () => {
+  // The shipped default is off: the endpoint must not exist unless enabled.
+  config = { ...defaultAPIServerConfig };
 
   const { status } = await rpc(createTestApp(), initialize);
 
@@ -223,7 +218,7 @@ test('get and delete are refused: there is no session stream to serve', async ()
   const app = createTestApp();
 
   for (const method of ['GET', 'DELETE']) {
-    const response = await app.request(MCP_PATH, {
+    const response = await app.request('/mcp', {
       method,
       headers: MCP_HEADERS,
     });

@@ -1,9 +1,8 @@
-import fs from 'node:fs';
 import { join } from 'node:path';
 
 import { app } from 'electron';
 
-import { defaultUpdateChannel } from '@/app-info';
+import { channel } from '@/app-info';
 import {
   blockers,
   isLegacyCustomBlocker,
@@ -13,6 +12,7 @@ import { DefaultPresetList, type Preset } from '@/plugins/downloader/types';
 import { migrationBaseVersion } from '@/providers/app-versions';
 
 import { defaultConfig as defaults } from './defaults';
+import { readStoredChannel, seedUpdateChannel } from './migrations';
 
 import packageJson from '../../package.json' with { type: 'json' };
 
@@ -32,16 +32,24 @@ export type IStore = InstanceType<
   typeof import('conf').default<Record<string, unknown>>
 >;
 
+/**
+ * The channel the config file held before this store was created. Read here, not
+ * in the migration: conf writes the defaults into the file first, so
+ * `options.updateChannel` already reads back as `stable`. Main process only: the
+ * preload bundles this module too, where `app` does not exist and reading the
+ * file would kill it.
+ */
+const channelBeforeDefaults =
+  process.type === 'browser'
+    ? readStoredChannel(join(app.getPath('userData'), 'config.json'))
+    : undefined;
+
 const migrations = {
-  '>=3.12.4'(store: IStore) {
-    // A beta build should follow the beta channel from the start, without
-    // overriding a channel the user already picked. conf writes the defaults
-    // into the file before migrations run, so `store.get` always reads back
-    // `stable`; `channelBeforeDefaults` is what says whether the user chose.
-    if (channelBeforeDefaults === undefined) {
-      store.set('options.updateChannel', defaultUpdateChannel());
-    }
-  },
+  // A beta build should follow the beta channel from the start, without
+  // overriding a channel the user already picked: `channelBeforeDefaults` is
+  // what says whether the user chose. The body lives in ./migrations so the
+  // tests drive the same code.
+  '>=3.12.4': seedUpdateChannel(channel, channelBeforeDefaults),
   '>=3.12.3'(store: IStore) {
     // Synced lyrics' single "preferred provider" became an orderable priority
     // list led by it; "None" leaves the list off, the old "let the lyrics decide".
@@ -339,31 +347,6 @@ const migrations = {
 const projectVersion = {
   projectVersion: migrationBaseVersion(packageJson.version),
 };
-
-/**
- * The channel the config file held before this store was created. Read here, not
- * in the migration: conf writes the defaults into the file first, so
- * `options.updateChannel` already reads back as `stable`. Main process only: the
- * preload bundles this module too, where `app` does not exist and reading the
- * file would kill it.
- */
-const channelBeforeDefaults =
-  process.type === 'browser'
-    ? readStoredChannel(join(app.getPath('userData'), 'config.json'))
-    : undefined;
-
-function readStoredChannel(path: string) {
-  try {
-    const stored = JSON.parse(fs.readFileSync(path, 'utf8')) as {
-      options?: { updateChannel?: unknown };
-    };
-    const channel = stored.options?.updateChannel;
-    return channel === 'stable' || channel === 'beta' ? channel : undefined;
-  } catch {
-    // No file yet, or unreadable: nothing was chosen.
-    return undefined;
-  }
-}
 
 export const store = new Store({
   defaults: {

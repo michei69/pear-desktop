@@ -387,7 +387,8 @@ test('addToQueue forwards a flat videoIds array, not a nested one', async () => 
 test('addToQueue defaults to inserting after the current video', async () => {
   const { recorded, fire } = setup();
 
-  await fire(ApiActions.addToQueue, ['only'], 'INSERT_AFTER_CURRENT_VIDEO');
+  // No position passed: the default must supply INSERT_AFTER_CURRENT_VIDEO.
+  await fire(ApiActions.addToQueue, ['only']);
 
   expect(recorded.fetch[0].data).toMatchObject({
     queueInsertPosition: 'INSERT_AFTER_CURRENT_VIDEO',

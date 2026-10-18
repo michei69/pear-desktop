@@ -3,7 +3,7 @@
  * Offline and electron-free, but runs real code: the app's own pure functions,
  * `conf` for store migrations, and the real electron-updater provider on a stub network.
  */
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
@@ -15,6 +15,7 @@ import semver from 'semver';
 
 import { defaultUpdateChannel, updatesSupported } from '../src/app-info';
 import { defaultConfig } from '../src/config/defaults';
+import { readStoredChannel, seedUpdateChannel } from '../src/config/migrations';
 import { migrationBaseVersion } from '../src/providers/app-versions';
 
 import type { UpdateChannel } from '../src/app-info';
@@ -247,30 +248,6 @@ test('item 4: semver needs the base version to satisfy a migration range', () =>
   expect(semver.satisfies('3.12.3', '>=3.12.4')).toBe(false);
 });
 
-/** The channel the file held before defaults were written, as store.ts reads it. */
-const channelBeforeDefaults = (cwd: string) => {
-  try {
-    const stored = JSON.parse(
-      readFileSync(join(cwd, 'config.json'), 'utf8'),
-    ) as { options?: { updateChannel?: unknown } };
-    const channel = stored.options?.updateChannel;
-    return channel === 'stable' || channel === 'beta' ? channel : undefined;
-  } catch {
-    return undefined;
-  }
-};
-
-// Mirror of the '>=3.12.4' migration in src/config/store.ts: seeds the channel
-// the build follows unless the user already chose one. `conf` writes defaults
-// before migrations run, so the pre-defaults value is captured beforehand.
-const seedUpdateChannel =
-  (buildChannel: UpdateChannel, before: 'stable' | 'beta' | undefined) =>
-  (store: Conf<Record<string, unknown>>) => {
-    if (before === undefined) {
-      store.set('options.updateChannel', defaultUpdateChannel(buildChannel));
-    }
-  };
-
 /** `conf` is the engine behind electron-store: same options, no electron. */
 const openStore = (
   cwd: string,
@@ -309,7 +286,7 @@ test('item 4: an existing store is seeded from the build channel', () => {
     );
 
     const beta = openStore(cwd, '3.12.4', {
-      '>=3.12.4': seedUpdateChannel('beta', channelBeforeDefaults(cwd)),
+      '>=3.12.4': seedUpdateChannel('beta', readStoredChannel(join(cwd, 'config.json'))),
     });
     expect(beta.get('options.updateChannel')).toBe('beta');
     // The marker becomes the base version, not the range key.
@@ -328,7 +305,7 @@ test('item 4: the 3.12.4 release does not re-run the beta migration', () => {
     );
 
     const beta = openStore(cwd, '3.12.4', {
-      '>=3.12.4': seedUpdateChannel('beta', channelBeforeDefaults(cwd)),
+      '>=3.12.4': seedUpdateChannel('beta', readStoredChannel(join(cwd, 'config.json'))),
     });
     expect(beta.get('options.updateChannel')).toBe('beta');
 
@@ -336,7 +313,7 @@ test('item 4: the 3.12.4 release does not re-run the beta migration', () => {
     // instead of re-seeding.
     beta.set('options.updateChannel', 'stable');
     const stable = openStore(cwd, '3.12.4', {
-      '>=3.12.4': seedUpdateChannel('stable', channelBeforeDefaults(cwd)),
+      '>=3.12.4': seedUpdateChannel('stable', readStoredChannel(join(cwd, 'config.json'))),
     });
     expect(stable.get('options.updateChannel')).toBe('stable');
     expect(markerOf(stable)).toBe('3.12.4');
@@ -358,7 +335,7 @@ test('item 4: a satisfied older marker does not run its migration twice', () => 
     // Marker 3.12.3 already satisfies '>=3.12.3', so only '>=3.12.4' runs.
     const first = openStore(cwd, '3.12.4', {
       '>=3.12.3': runs,
-      '>=3.12.4': seedUpdateChannel('stable', channelBeforeDefaults(cwd)),
+      '>=3.12.4': seedUpdateChannel('stable', readStoredChannel(join(cwd, 'config.json'))),
     });
     expect(first.get('ran3123')).toBeUndefined();
     expect(markerOf(first)).toBe('3.12.4');
@@ -366,7 +343,7 @@ test('item 4: a satisfied older marker does not run its migration twice', () => 
     // Reopened at the same version, nothing runs again either.
     const second = openStore(cwd, '3.12.4', {
       '>=3.12.3': runs,
-      '>=3.12.4': seedUpdateChannel('stable', channelBeforeDefaults(cwd)),
+      '>=3.12.4': seedUpdateChannel('stable', readStoredChannel(join(cwd, 'config.json'))),
     });
     expect(second.get('ran3123')).toBeUndefined();
     expect(markerOf(second)).toBe('3.12.4');
@@ -379,7 +356,7 @@ test('item 4: a fresh beta install starts on the beta channel', () => {
   expect(defaultUpdateChannel('beta')).toBe('beta');
   withTempStore((cwd) => {
     const fresh = openStore(cwd, '3.12.4', {
-      '>=3.12.4': seedUpdateChannel('beta', channelBeforeDefaults(cwd)),
+      '>=3.12.4': seedUpdateChannel('beta', readStoredChannel(join(cwd, 'config.json'))),
     });
     expect(fresh.get('options.updateChannel')).toBe('beta');
   });
@@ -388,7 +365,7 @@ test('item 4: a fresh beta install starts on the beta channel', () => {
 test('item 4: a fresh stable install starts on the stable channel', () => {
   withTempStore((cwd) => {
     const fresh = openStore(cwd, '3.12.4', {
-      '>=3.12.4': seedUpdateChannel('stable', channelBeforeDefaults(cwd)),
+      '>=3.12.4': seedUpdateChannel('stable', readStoredChannel(join(cwd, 'config.json'))),
     });
     expect(fresh.get('options.updateChannel')).toBe('stable');
   });
@@ -401,7 +378,7 @@ test('item 4: a channel the user already chose survives the seed', () => {
       JSON.stringify({ options: { updateChannel: 'stable' } }),
     );
     const kept = openStore(cwd, '3.12.4', {
-      '>=3.12.4': seedUpdateChannel('beta', channelBeforeDefaults(cwd)),
+      '>=3.12.4': seedUpdateChannel('beta', readStoredChannel(join(cwd, 'config.json'))),
     });
     expect(kept.get('options.updateChannel')).toBe('stable');
   });

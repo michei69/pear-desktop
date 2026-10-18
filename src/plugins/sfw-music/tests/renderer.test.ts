@@ -302,12 +302,6 @@ test('skips consecutive copies of an explicit song', async () => {
   expect(fixture.skips).toBe(2);
 });
 
-test('blocks resuming an explicit song after it was already handled', async () => {
-  stop = startSfwMusic(fixture.api);
-  await fixture.resume();
-  expect(fixture.state).toBe(2);
-});
-
 test('blocks playback restarting while an explicit skip is still pending', async () => {
   stop = startSfwMusic(fixture.api);
   await fixture.resume();

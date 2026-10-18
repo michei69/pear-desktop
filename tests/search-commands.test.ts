@@ -139,7 +139,13 @@ test('parseKeybind reads modifiers and the key', () => {
 });
 
 test('parseKeybind is case and spacing insensitive', () => {
-  expect(parseKeybind('  ctrl + K ')).toEqual(parseKeybind('Ctrl+k'));
+  expect(parseKeybind('  ctrl + K ')).toEqual({
+    ctrl: true,
+    meta: false,
+    alt: false,
+    shift: false,
+    key: 'k',
+  });
 });
 
 test('parseKeybind rejects what it cannot match', () => {
