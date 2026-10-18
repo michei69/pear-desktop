@@ -16,8 +16,11 @@ export default createPlugin<
   {
     config: PlaybackRecoveryConfig | null;
     api: MusicPlayer | null;
-    watchdog: ReturnType<typeof setInterval> | null;
+    watchdog: number | undefined;
     videoObserver: MutationObserver | null;
+    stallTimer: number | undefined;
+    recoveryTimer: number | undefined;
+    mediaVideo: HTMLVideoElement | null;
     consecutiveFailures: number;
     lastGoodTime: number;
     lastGoodTimestamp: number;
@@ -26,9 +29,15 @@ export default createPlugin<
     getVideo: () => HTMLVideoElement | null;
     hookMediaEvents: () => void;
     _attachMediaEvents: ((video: HTMLVideoElement) => void) | null;
+    _detachMediaEvents: (() => void) | null;
+    _onTimeUpdate: (() => void) | null;
+    _onError: (() => void) | null;
+    _onStalled: (() => void) | null;
+    _onWaiting: (() => void) | null;
     watchVideoElement: () => void;
     startWatchdog: () => void;
     attemptRecovery: (reason: string) => void;
+    teardown: () => void;
   },
   PlaybackRecoveryConfig
 >({
@@ -87,9 +96,17 @@ export default createPlugin<
   renderer: {
     config: null,
     api: null,
-    watchdog: null,
+    watchdog: undefined,
     videoObserver: null,
+    stallTimer: undefined,
+    recoveryTimer: undefined,
+    mediaVideo: null,
     _attachMediaEvents: null,
+    _detachMediaEvents: null,
+    _onTimeUpdate: null,
+    _onError: null,
+    _onStalled: null,
+    _onWaiting: null,
     consecutiveFailures: 0,
     lastGoodTime: 0,
     lastGoodTimestamp: 0,
@@ -100,6 +117,8 @@ export default createPlugin<
     },
 
     onPlayerApiReady(api) {
+      // Re-enabling the plugin calls this again without an unload between.
+      this.teardown();
       this.api = api;
       this.log('Playback recovery active');
       this.startWatchdog();
@@ -108,14 +127,30 @@ export default createPlugin<
     },
 
     stop() {
-      if (this.watchdog) {
-        clearInterval(this.watchdog);
-        this.watchdog = null;
-      }
-      if (this.videoObserver) {
-        this.videoObserver.disconnect();
-        this.videoObserver = null;
-      }
+      this.teardown();
+      this.api = null;
+    },
+
+    teardown() {
+      clearInterval(this.watchdog);
+      this.watchdog = undefined;
+
+      this.videoObserver?.disconnect();
+      this.videoObserver = null;
+
+      clearTimeout(this.stallTimer);
+      this.stallTimer = undefined;
+
+      clearTimeout(this.recoveryTimer);
+      this.recoveryTimer = undefined;
+
+      // A teardown can land mid-recovery; a stale flag would block the next
+      // watchdog/recovery cycle after the plugin is re-enabled.
+      this.recovering = false;
+
+      this._detachMediaEvents?.();
+      this._attachMediaEvents = null;
+      this._detachMediaEvents = null;
     },
 
     onConfigChange(newConfig) {
@@ -135,52 +170,77 @@ export default createPlugin<
     },
 
     hookMediaEvents() {
-      const attachTo = (video: HTMLVideoElement) => {
-        if (
-          (video as HTMLVideoElement & { __pbRecovery?: boolean }).__pbRecovery
-        )
-          return;
-        (video as HTMLVideoElement & { __pbRecovery?: boolean }).__pbRecovery =
-          true;
+      this._onTimeUpdate = () => {
+        const video = this.mediaVideo;
+        if (video && video.currentTime > 0 && !video.paused) {
+          this.lastGoodTime = video.currentTime;
+          this.lastGoodTimestamp = Date.now();
+          this.consecutiveFailures = 0;
+          this.recovering = false;
+        }
+      };
 
-        video.addEventListener('timeupdate', () => {
-          if (video.currentTime > 0 && !video.paused) {
-            this.lastGoodTime = video.currentTime;
-            this.lastGoodTimestamp = Date.now();
-            this.consecutiveFailures = 0;
-            this.recovering = false;
+      this._onError = () => {
+        const video = this.mediaVideo;
+        const code = video?.error?.code ?? 0;
+        const msg = video?.error?.message ?? '';
+        this.log(`Media error: code=${code} msg="${msg}"`);
+        this.attemptRecovery('media-error');
+      };
+
+      // Recover if the stall does not clear.
+      this._onStalled = () => {
+        this.log('Stream stalled, waiting for recovery...');
+        clearTimeout(this.stallTimer);
+        this.stallTimer = window.setTimeout(() => {
+          this.stallTimer = undefined;
+          const v = this.getVideo();
+          if (v && !v.paused && v.readyState < 3) {
+            this.log('Stall did not resolve');
+            this.attemptRecovery('stall-timeout');
           }
-        });
+        }, this.config?.stallTimeoutMs ?? 8000);
+      };
 
-        video.addEventListener('error', () => {
-          const code = video.error?.code ?? 0;
-          const msg = video.error?.message ?? '';
-          this.log(`Media error: code=${code} msg="${msg}"`);
-          this.attemptRecovery('media-error');
-        });
+      // Recover if buffering persists.
+      this._onWaiting = () => {
+        clearTimeout(this.stallTimer);
+        this.stallTimer = window.setTimeout(() => {
+          this.stallTimer = undefined;
+          const v = this.getVideo();
+          if (v && !v.paused && v.readyState < 2) {
+            this.log('Buffering did not resolve');
+            this.attemptRecovery('buffer-timeout');
+          }
+        }, this.config?.stallTimeoutMs ?? 8000);
+      };
 
-        // Recover if the stall does not clear.
-        video.addEventListener('stalled', () => {
-          this.log('Stream stalled, waiting for recovery...');
-          setTimeout(() => {
-            const v = this.getVideo();
-            if (v && !v.paused && v.readyState < 3) {
-              this.log('Stall did not resolve');
-              this.attemptRecovery('stall-timeout');
-            }
-          }, this.config?.stallTimeoutMs ?? 8000);
-        });
+      const attachTo = (video: HTMLVideoElement) => {
+        // Track the element we hooked so stop() can unhook it and so the
+        // observer does not attach twice to the same one.
+        if (this.mediaVideo === video) return;
+        this._detachMediaEvents?.();
 
-        // Recover if buffering persists.
-        video.addEventListener('waiting', () => {
-          setTimeout(() => {
-            const v = this.getVideo();
-            if (v && !v.paused && v.readyState < 2) {
-              this.log('Buffering did not resolve');
-              this.attemptRecovery('buffer-timeout');
-            }
-          }, this.config?.stallTimeoutMs ?? 8000);
-        });
+        this.mediaVideo = video;
+        video.addEventListener('timeupdate', this._onTimeUpdate!);
+        video.addEventListener('error', this._onError!);
+        video.addEventListener('stalled', this._onStalled!);
+        video.addEventListener('waiting', this._onWaiting!);
+      };
+
+      this._detachMediaEvents = () => {
+        const video = this.mediaVideo;
+        if (!video) return;
+
+        if (this._onTimeUpdate)
+          video.removeEventListener('timeupdate', this._onTimeUpdate);
+        if (this._onError) video.removeEventListener('error', this._onError);
+        if (this._onStalled)
+          video.removeEventListener('stalled', this._onStalled);
+        if (this._onWaiting)
+          video.removeEventListener('waiting', this._onWaiting);
+
+        this.mediaVideo = null;
       };
 
       const video = this.getVideo();
@@ -220,7 +280,7 @@ export default createPlugin<
     },
 
     startWatchdog() {
-      this.watchdog = setInterval(() => {
+      this.watchdog = window.setInterval(() => {
         if (this.recovering) return;
 
         const video = this.getVideo();
@@ -289,7 +349,9 @@ export default createPlugin<
           this.log('Failed to skip: ' + String(e));
         }
         // Give the next track time to load before the watchdog resumes.
-        setTimeout(() => {
+        clearTimeout(this.recoveryTimer);
+        this.recoveryTimer = window.setTimeout(() => {
+          this.recoveryTimer = undefined;
           this.recovering = false;
           this.lastGoodTimestamp = Date.now();
         }, 5000);
@@ -334,7 +396,9 @@ export default createPlugin<
       }
 
       // Allow recovery to settle before checking again
-      setTimeout(() => {
+      clearTimeout(this.recoveryTimer);
+      this.recoveryTimer = window.setTimeout(() => {
+        this.recoveryTimer = undefined;
         this.recovering = false;
         this.lastGoodTimestamp = Date.now();
       }, 4000);

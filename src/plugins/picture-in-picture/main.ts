@@ -1,7 +1,12 @@
 import { app } from 'electron';
 
+import { debounce } from '@/providers/decorators';
+
 import type { PictureInPicturePluginConfig } from './index';
 import type { BackendContext } from '@/types/contexts';
+
+/** Trailing debounce for the PiP window geometry written during a drag. */
+const PIP_GEOMETRY_SAVE_MS = 500;
 
 let config: PictureInPicturePluginConfig;
 
@@ -104,18 +109,31 @@ export const onMainLoad = async ({
     togglePiP();
   });
 
+  // A drag fires these tens of times per second and every write rewrites the
+  // whole config file, so only the last geometry of a gesture is persisted.
+  // The values are captured per event: by the time the timer fires the window
+  // may already be back at its restored place.
+  const savePosition = debounce(
+    (position: [number, number]) => setConfig({ 'pip-position': position }),
+    PIP_GEOMETRY_SAVE_MS,
+  );
+  const saveSize = debounce(
+    (size: [number, number]) => setConfig({ 'pip-size': size }),
+    PIP_GEOMETRY_SAVE_MS,
+  );
+
   window.on('move', () => {
-    if (config.isInPiP && !config.useNativePiP) {
-      const [x, y] = window.getPosition();
-      setConfig({ 'pip-position': [x, y] });
-    }
+    if (!isInPiP || config.useNativePiP) return;
+
+    const [x, y] = window.getPosition();
+    savePosition([x, y]);
   });
 
   window.on('resize', () => {
-    if (config.isInPiP && !config.useNativePiP) {
-      const [width, height] = window.getSize();
-      setConfig({ 'pip-size': [width, height] });
-    }
+    if (!isInPiP || config.useNativePiP) return;
+
+    const [width, height] = window.getSize();
+    saveSize([width, height]);
   });
 };
 

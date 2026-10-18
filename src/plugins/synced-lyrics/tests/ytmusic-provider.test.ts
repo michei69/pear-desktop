@@ -6,6 +6,7 @@ import {
   song,
   startStubbing,
   stopStubbing,
+  uninstallDom,
 } from './harness';
 
 /**
@@ -70,6 +71,10 @@ test.beforeAll(async () => {
     importing = false;
     stopStubbing();
   }
+});
+
+test.afterAll(() => {
+  uninstallDom();
 });
 
 /** A watch-next page whose only lyrics tab points at `browseId`. */

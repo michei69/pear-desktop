@@ -58,7 +58,7 @@ export const buildApp = (
     scheme: 'bearer',
     bearerFormat: 'JWT',
   });
-  app.doc('/doc', {
+  const documentConfig = {
     // 3.2 is where the QUERY method exists as a path item; a document carrying
     // one can't honestly claim 3.1. The bundled Swagger UI is unpinned and
     // loads 5.3x, which understands it.
@@ -71,6 +71,19 @@ export const buildApp = (
     },
     tags: apiTagOrder.map((name) => ({ name })),
     security: [{ bearerAuth: [] }],
+  };
+  // Every route is registered by now and nothing adds to the registry later, so
+  // one generated document serves every request instead of rebuilding it each
+  // time (which `app.doc()` does).
+  let document: object | undefined;
+  app.get('/doc', (c) => {
+    try {
+      document ??= app.getOpenAPIDocument(documentConfig);
+    } catch (error) {
+      return c.json(error, 500);
+    }
+
+    return c.json(document);
   });
   app.get('/swagger', swaggerUI({ url: '/doc' }));
 

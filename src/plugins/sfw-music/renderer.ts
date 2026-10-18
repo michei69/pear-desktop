@@ -1,5 +1,5 @@
 import type { MusicPlayer } from '@/types/music-player';
-import type { QueueElement } from '@/types/queue';
+import type { QueueElement, Store } from '@/types/queue';
 
 const EXPLICIT_BADGE = 'MUSIC_EXPLICIT_BADGE';
 const PLAYING = 1;
@@ -116,6 +116,9 @@ export function startSfwMusic(api: MusicPlayer): () => void {
 
   /** Pauses and skips the playing song if its queue entry is Explicit. */
   const check = () => {
+    // A re-created queue element replaces the store behind our back.
+    subscribeQueue();
+
     const videoId = api.getVideoData()?.video_id;
     if (!videoId) return;
     // The queue can advance before the player leaves the blocked song.
@@ -187,16 +190,38 @@ export function startSfwMusic(api: MusicPlayer): () => void {
     clearTimeout(pendingCheck);
     pendingCheck = setTimeout(check, 0);
   };
+
+  let unsubscribeQueue: (() => void) | undefined;
+  let subscribedStore: Store | undefined;
+
+  /**
+   * Queue metadata can arrive without another player event, so follow the
+   * queue's own store instead of polling it. The queue element is re-created
+   * on some navigations, so the store is re-resolved on every check.
+   */
+  const subscribeQueue = () => {
+    const store =
+      document.querySelector<QueueElement>('#queue')?.queue?.store?.store;
+    if (store === subscribedStore) return;
+
+    unsubscribeQueue?.();
+    subscribedStore = store;
+    unsubscribeQueue =
+      typeof store?.subscribe === 'function'
+        ? (store.subscribe(scheduleCheck) as () => void)
+        : undefined;
+  };
+
   api.addEventListener('videodatachange', scheduleCheck);
   api.addEventListener('onStateChange', scheduleCheck);
   // A direct selection can replace the queue before its metadata loads.
   document.addEventListener('click', blockExplicitSelection, true);
   document.addEventListener('tap', blockExplicitSelection, true);
-  // Queue metadata can arrive without another player event.
-  const timer = setInterval(check, 250);
   check();
   return () => {
-    clearInterval(timer);
+    unsubscribeQueue?.();
+    unsubscribeQueue = undefined;
+    subscribedStore = undefined;
     clearTimeout(pendingCheck);
     api.removeEventListener('videodatachange', scheduleCheck);
     api.removeEventListener('onStateChange', scheduleCheck);

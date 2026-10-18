@@ -10,11 +10,12 @@ let loopTimer: number | undefined;
 
 const smoothing = 0.1;
 const threshold = -100; // DB (-100 = absolute silence, 0 = loudest)
-const interval = 2; // Ms
+const interval = 25; // Ms
 const history = 10;
 const speakingHistory = Array.from({ length: history }).fill(0) as number[];
 
 let playOrSeekHandler: (() => void) | undefined;
+let pauseOrEndedHandler: (() => void) | undefined;
 
 const getMaxVolume = (
   analyser: AnalyserNode,
@@ -67,6 +68,11 @@ const audioCanPlayListener = (e: CustomEvent<Compressor>) => {
 
   const looper = () => {
     loopTimer = window.setTimeout(() => {
+      loopTimer = undefined;
+
+      // Paused or ended playback has nothing to analyse; `play` restarts it.
+      if (video && (video.paused || video.ended)) return;
+
       const currentVolume = getMaxVolume(analyser, fftBins);
 
       let history = 0;
@@ -112,15 +118,29 @@ const audioCanPlayListener = (e: CustomEvent<Compressor>) => {
     }, interval);
   };
 
-  looper();
+  // `seeked` fires again for every jump skipSilence() makes, so only arm one
+  // timer per silence run instead of one per event.
+  const startLoop = () => {
+    if (loopTimer === undefined) looper();
+  };
 
   playOrSeekHandler = () => {
     hasAudioStarted = false;
     skipSilence();
+    startLoop();
+  };
+
+  pauseOrEndedHandler = () => {
+    stopLoop();
   };
 
   video?.addEventListener('play', playOrSeekHandler);
   video?.addEventListener('seeked', playOrSeekHandler);
+  video?.addEventListener('pause', pauseOrEndedHandler);
+  video?.addEventListener('ended', pauseOrEndedHandler);
+
+  // Do not start analysing while the media is already paused.
+  if (!video || !video.paused) startLoop();
 };
 
 export const onRendererLoad = async ({
@@ -142,5 +162,13 @@ export const onRendererUnload = () => {
     const video = document.querySelector('video');
     video?.removeEventListener('play', playOrSeekHandler);
     video?.removeEventListener('seeked', playOrSeekHandler);
+    playOrSeekHandler = undefined;
+  }
+
+  if (pauseOrEndedHandler) {
+    const video = document.querySelector('video');
+    video?.removeEventListener('pause', pauseOrEndedHandler);
+    video?.removeEventListener('ended', pauseOrEndedHandler);
+    pauseOrEndedHandler = undefined;
   }
 };

@@ -23,6 +23,9 @@ export type SponsorBlockPluginConfig = {
 
 let currentSegments: Segment[] = [];
 
+/** Stored on the def context (already `this`-bound) so `stop` can `off` it. */
+type SrcChangedHandler = (data: GetPlayerResponse) => Promise<void>;
+
 export default createPlugin({
   name: () => t('plugins.sponsorblock.name'),
   description: () => t('plugins.sponsorblock.description'),
@@ -83,11 +86,14 @@ export default createPlugin({
     },
   ],
   backend: {
+    handleVideoSrcChanged: undefined as SrcChangedHandler | undefined,
+    abortController: undefined as AbortController | undefined,
     async start({ getConfig, ipc }) {
       const fetchSegments = async (
         apiURL: string,
         categories: string[],
         videoId: string,
+        signal: AbortSignal,
       ) => {
         const sponsorBlockURL = `${apiURL}/api/skipSegments?videoID=${videoId}&categories=${JSON.stringify(
           categories,
@@ -99,6 +105,7 @@ export default createPlugin({
               'Content-Type': 'application/json',
             },
             redirect: 'follow',
+            signal,
           });
           if (resp.status !== 200) {
             return [];
@@ -107,7 +114,7 @@ export default createPlugin({
           const segments = (await resp.json()) as SkipSegment[];
           return sortSegments(segments.map((submission) => submission.segment));
         } catch (error) {
-          if (is.dev()) {
+          if (!signal.aborted && is.dev()) {
             console.log('error on sponsorblock request:', error);
           }
 
@@ -119,22 +126,41 @@ export default createPlugin({
 
       const { apiURL, categories } = config;
 
-      const handleVideoSrcChanged = async (data: GetPlayerResponse) => {
+      this.handleVideoSrcChanged = async (data: GetPlayerResponse) => {
+        this.abortController?.abort();
+        const controller = new AbortController();
+        this.abortController = controller;
+
         const segments = await fetchSegments(
           apiURL,
           categories,
           data?.videoDetails?.videoId,
+          controller.signal,
         );
+        // A newer track started while this request was in flight.
+        if (controller.signal.aborted) {
+          return;
+        }
         ipc.send('sponsorblock-skip', segments);
       };
 
-      ipc.on('peard:video-src-changed', handleVideoSrcChanged);
+      ipc.on('peard:video-src-changed', this.handleVideoSrcChanged);
     },
     stop({ ipc }) {
-      ipc.removeAllListeners('peard:video-src-changed');
+      this.abortController?.abort();
+      this.abortController = undefined;
+      // Only this plugin's listener: the provider's own handler shares the
+      // channel, and `removeAllListeners` would mute now-playing for everyone.
+      if (this.handleVideoSrcChanged) {
+        ipc.off('peard:video-src-changed', this.handleVideoSrcChanged);
+        this.handleVideoSrcChanged = undefined;
+      }
     },
   },
   renderer: {
+    handleSkipSegments: undefined as
+      | ((segments: Segment[]) => void)
+      | undefined,
     timeUpdateListener: (e: Event) => {
       if (e.target instanceof HTMLVideoElement) {
         const target = e.target;
@@ -169,9 +195,10 @@ export default createPlugin({
     },
     resetSegments: () => (currentSegments = []),
     start({ ipc }) {
-      ipc.on('sponsorblock-skip', (segments: Segment[]) => {
+      this.handleSkipSegments = (segments: Segment[]) => {
         currentSegments = segments;
-      });
+      };
+      ipc.on('sponsorblock-skip', this.handleSkipSegments);
     },
     onPlayerApiReady() {
       const video = document.querySelector<HTMLVideoElement>('video');
@@ -182,7 +209,10 @@ export default createPlugin({
       video.addEventListener('emptied', this.resetSegments);
     },
     stop({ ipc }) {
-      ipc.removeAllListeners('sponsorblock-skip');
+      if (this.handleSkipSegments) {
+        ipc.off('sponsorblock-skip', this.handleSkipSegments);
+        this.handleSkipSegments = undefined;
+      }
       currentSegments = [];
 
       const video = document.querySelector<HTMLVideoElement>('video');

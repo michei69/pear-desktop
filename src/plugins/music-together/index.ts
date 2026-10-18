@@ -42,6 +42,9 @@ const copyToClipboard = (
     .finally(done);
 };
 
+/** Minimum gap between progress broadcasts driven by `onVideoProgress`. */
+const PROGRESS_BROADCAST_MS = 1000;
+
 type RawAccountData = {
   accountName: {
     runs: { text: string }[];
@@ -78,9 +81,10 @@ export default createPlugin<
       icon: SVGElement;
       spinner: HTMLElement;
     };
-    stateInterval?: number;
     updateNext: boolean;
     ignoreChange: boolean;
+    /** Timestamp of the last progress broadcast, throttling `onVideoProgress`. */
+    lastProgressAt: number;
     diagnosticsRunning: boolean;
     /** Invalidates callbacks from a run that was superseded by a plugin stop. */
     diagnosticsRun: number;
@@ -92,6 +96,7 @@ export default createPlugin<
       event: CustomEvent<VideoDataChanged>,
     ) => Promise<void>;
     videoStateChangeListener: () => Promise<void>;
+    progressListener: (seconds: number) => Promise<void>;
     onHost: () => Promise<boolean>;
     onJoin: () => Promise<boolean>;
     onStop: () => void;
@@ -123,6 +128,7 @@ export default createPlugin<
   renderer: {
     updateNext: false,
     ignoreChange: false,
+    lastProgressAt: 0,
     diagnosticsRunning: false,
     diagnosticsRun: 0,
     permission: 'playlist',
@@ -143,42 +149,76 @@ export default createPlugin<
 
     /* events */
     async videoChangeListener(event: CustomEvent<VideoDataChanged>) {
-      if (event.detail.name === 'dataloaded' || this.updateNext) {
-        if (this.connection?.mode === 'host') {
-          const videoList: VideoData[] =
-            this.queue?.flatItems.map(
-              (it, index) =>
-                ({
-                  videoId: it!.videoId,
-                  ownerId:
-                    this.queue?.videoList[index]?.ownerId ??
-                    this.connection!.id,
-                }) satisfies VideoData,
-            ) ?? [];
+      if (event.detail.name !== 'dataloaded' && !this.updateNext) return;
 
-          this.queue?.setVideoList(videoList, false);
-          this.queue?.syncQueueOwner();
-          await this.connection.broadcast('SYNC_QUEUE', {
-            videoList,
-          });
+      const connection = this.connection;
+      if (connection?.mode !== 'host') return;
 
-          this.updateNext = event.detail.name === 'dataloaded';
-        }
+      // Keep the local owner list aligned with the queue YTM rendered:
+      // autoplay/radio can append items that never arrive as ADD_SONGS.
+      if (this.queue) {
+        const videoList: VideoData[] = this.queue.flatItems.map(
+          (it, index) => ({
+            videoId: it!.videoId,
+            ownerId: this.queue?.videoList[index]?.ownerId ?? connection.id,
+          }),
+        );
+
+        this.queue.setVideoList(videoList, false);
+        this.queue.syncQueueOwner();
+        // Those appends never reach the guest as ADD_SONGS, so it needs the
+        // rendered list on every track change, not just the index.
+        await connection.broadcast('SYNC_QUEUE', { videoList });
       }
+
+      await connection.broadcast('SET_INDEX', {
+        index: this.queue?.selectedIndex ?? 0,
+      });
+
+      this.updateNext = event.detail.name === 'dataloaded';
     },
 
     async videoStateChangeListener() {
-      if (this.connection?.mode !== 'guest') return;
       if (this.ignoreChange) return;
-      if (this.permission !== 'all') return;
 
       const state = this.playerApi?.getPlayerState();
       if (state !== 1 && state !== 2) return;
 
+      if (this.connection?.mode === 'host') {
+        // Play/pause is a state change: report it at once, position included.
+        this.lastProgressAt = Date.now();
+        await this.connection.broadcast('SYNC_PROGRESS', {
+          progress: this.playerApi?.getCurrentTime(),
+          state,
+          index: this.queue?.selectedIndex ?? 0,
+        });
+        return;
+      }
+
+      if (this.connection?.mode !== 'guest') return;
+      if (this.permission !== 'all') return;
+
       await this.connection.broadcast('SYNC_PROGRESS', {
-        // progress: this.playerApi?.getCurrentTime(),
-        state: this.playerApi?.getPlayerState(),
-        // index: this.queue?.selectedIndex ?? 0,
+        state,
+      });
+    },
+
+    async progressListener(seconds: number) {
+      if (this.ignoreChange) return;
+      if (this.connection?.mode !== 'host') return;
+      // Paused playback reports progress too, but nothing needs syncing then.
+      if (this.playerApi?.getPlayerState() !== 1) return;
+
+      // The player reports progress several times per second; a 1 s cadence is
+      // plenty for guests to notice drift.
+      const now = Date.now();
+      if (now - this.lastProgressAt < PROGRESS_BROADCAST_MS) return;
+      this.lastProgressAt = now;
+
+      await this.connection.broadcast('SYNC_PROGRESS', {
+        progress: seconds,
+        state: 1,
+        index: this.queue?.selectedIndex ?? 0,
       });
     },
 
@@ -351,6 +391,13 @@ export default createPlugin<
             await this.connection?.broadcast('SYNC_QUEUE', {
               videoList: this.queue?.videoList ?? [],
             });
+            // A guest joining mid-track needs the current position too: the
+            // old 1 Hz progress timer is gone, so this is its one-shot sync.
+            await this.connection?.broadcast('SYNC_PROGRESS', {
+              progress: this.playerApi?.getCurrentTime(),
+              state: this.playerApi?.getPlayerState(),
+              index: this.queue?.selectedIndex ?? 0,
+            });
             break;
           }
           case 'SYNC_PROGRESS': {
@@ -421,7 +468,13 @@ export default createPlugin<
         t('plugins.music-together.name'),
         t('plugins.music-together.dialog.enter-host'),
       );
-      if (typeof id !== 'string') return false;
+      if (typeof id !== 'string') {
+        // Cancelled: the peer already opened its signaling socket, so close it
+        // instead of leaving it running behind a failed join.
+        this.connection?.disconnect();
+        this.connection = undefined;
+        return false;
+      }
 
       const connection = await this.connection.connect(id).catch(() => null);
       if (!connection) {
@@ -537,7 +590,7 @@ export default createPlugin<
           }
           case 'SYNC_QUEUE': {
             if (Array.isArray(event.payload?.videoList)) {
-              await this.queue?.setVideoList(event.payload.videoList);
+              this.queue?.setVideoList(event.payload.videoList);
             }
             break;
           }
@@ -693,6 +746,10 @@ export default createPlugin<
         this.rollbackInjector = undefined;
       }
 
+      this.updateNext = false;
+      this.ignoreChange = false;
+      this.lastProgressAt = 0;
+
       this.profiles = {};
       this.popups.host?.setUsers(Object.values(this.profiles));
       this.popups.guest?.setUsers(Object.values(this.profiles));
@@ -726,9 +783,21 @@ export default createPlugin<
 
     /* methods */
     putProfile(id: string, profile?: Profile) {
+      const existing = this.profiles[id];
+
       if (profile === undefined) {
+        if (!existing) return;
         delete this.profiles[id];
       } else {
+        // Profiles are re-sent wholesale on every sync; rebuilding the popups
+        // for an unchanged entry would re-decode every avatar image.
+        if (
+          existing &&
+          existing.name === profile.name &&
+          existing.handleId === profile.handleId &&
+          existing.thumbnail === profile.thumbnail
+        )
+          return;
         this.profiles[id] = profile;
       }
 
@@ -819,21 +888,6 @@ export default createPlugin<
         icon,
         spinner,
       };
-
-      this.stateInterval = window.setInterval(() => {
-        if (this.connection?.mode !== 'host') return;
-        try {
-          const index = this.queue?.selectedIndex ?? 0;
-
-          this.connection.broadcast('SYNC_PROGRESS', {
-            progress: this.playerApi?.getCurrentTime(),
-            state: this.playerApi?.getPlayerState(),
-            index,
-          });
-        } catch {
-          // Keep the interval running on broadcast errors.
-        }
-      }, 1000);
 
       /* UI */
       const hostPopup = createHostPopup({
@@ -1003,6 +1057,7 @@ export default createPlugin<
         'onStateChange',
         this.videoStateChangeListener,
       );
+      this.playerApi.addEventListener('onVideoProgress', this.progressListener);
       document.addEventListener('videodatachange', this.videoChangeListener);
     },
     stop() {
@@ -1018,12 +1073,15 @@ export default createPlugin<
 
       this.elements.setting?.remove();
       this.onStop();
-      if (typeof this.stateInterval === 'number')
-        clearInterval(this.stateInterval);
       if (this.playerApi)
         this.playerApi.removeEventListener(
           'onStateChange',
           this.videoStateChangeListener,
+        );
+      if (this.playerApi)
+        this.playerApi.removeEventListener(
+          'onVideoProgress',
+          this.progressListener,
         );
       if (this.videoChangeListener)
         document.removeEventListener(

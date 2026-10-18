@@ -6,6 +6,7 @@ import {
   song,
   startStubbing,
   stopStubbing,
+  uninstallDom,
   watchNextPage,
   withWatchNext,
 } from './harness';
@@ -90,6 +91,10 @@ test.beforeAll(async () => {
   stopStubbing();
 });
 
+test.afterAll(() => {
+  uninstallDom();
+});
+
 test('answers nothing while no song is playing, without searching', async () => {
   expect(store.currentLyricsVideoId()).toBeNull();
 
@@ -133,16 +138,21 @@ test('resolves only once every provider has settled', async () => {
 
 test('joins a fetch already in flight instead of searching twice', async () => {
   const slow = deferred<LyricResult | null>();
-  stubProviders((name) =>
-    name === ProviderNames.MusixMatch
-      ? slow.promise
-      : Promise.resolve(lyric(name)),
-  );
+  const fanOutStarted = deferred<void>();
+  stubProviders((name) => {
+    if (name !== ProviderNames.MusixMatch) return Promise.resolve(lyric(name));
+    fanOutStarted.settle();
+    return slow.promise;
+  });
 
   store.refreshCurrentLyrics('test', song('inflight-1'));
 
   const first = store.allProviderLyrics();
   const second = store.allProviderLyrics();
+
+  // The priority provider answers first and the rest fan out after it; wait for
+  // that fan-out instead of guessing at a delay.
+  await fanOutStarted.promise;
 
   expect(searches.MusixMatch).toBe(1);
 

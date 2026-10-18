@@ -103,16 +103,26 @@ export const onRendererLoad = ({
     buttonContainer,
   );
 
-  (async () => {
-    let popupContainer = document.querySelector('ytmusic-popup-container');
-    while (!popupContainer) {
-      await new Promise((resolve) => setTimeout(resolve, 100));
-      popupContainer = document.querySelector('ytmusic-popup-container');
-    }
+  // The popup container can be created after plugin load; observe the document
+  // until it exists instead of polling on a timer.
+  const observePopupContainer = () => {
+    const popupContainer = document.querySelector('ytmusic-popup-container');
+    if (!popupContainer) return false;
 
     menuObserver.observe(popupContainer, {
       childList: true,
       subtree: true,
     });
-  })();
+    return true;
+  };
+
+  if (!observePopupContainer()) {
+    const containerObserver = new MutationObserver(() => {
+      if (observePopupContainer()) containerObserver.disconnect();
+    });
+    containerObserver.observe(document.documentElement, {
+      childList: true,
+      subtree: true,
+    });
+  }
 };

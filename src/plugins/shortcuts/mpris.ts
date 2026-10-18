@@ -12,9 +12,14 @@ import { APPLICATION_NAME } from '@/i18n';
 import { getSongControls } from '@/providers/song-controls';
 import {
   registerCallback,
+  unregisterCallback,
   type SongInfo,
   SongInfoEvent,
 } from '@/providers/song-info';
+import {
+  SONG_INFO_SETUP_CHANNEL,
+  SongInfoEventFlag,
+} from '@/types/song-info-events';
 import { LoggerPrefix } from '@/utils';
 
 import type { RepeatMode, VolumeState } from '@/types/datahost-get-state';
@@ -76,7 +81,19 @@ function setupMPRIS() {
   return instance;
 }
 
+let teardownMPRIS: (() => void) | undefined;
+
+/** Detaches every handler the last `registerMPRIS` installed. */
+export const unregisterMPRIS = () => {
+  teardownMPRIS?.();
+};
+
 export function registerMPRIS(win: BrowserWindow) {
+  // Re-activation must replace the previous registration instead of stacking a
+  // second set of handlers on the same channels.
+  teardownMPRIS?.();
+  teardownMPRIS = undefined;
+
   const songControls = getSongControls(win);
   const {
     playPause,
@@ -104,7 +121,10 @@ export function registerMPRIS(win: BrowserWindow) {
 
     // SongInfo waits for artwork validation and native image decoding. Publish
     // the remote artwork URL now so MPRIS clients can fetch it in parallel.
-    ipcMain.on('peard:video-src-changed', (_, data: GetPlayerResponse) => {
+    const onVideoSrcChanged = (
+      _: Electron.IpcMainEvent,
+      data: GetPlayerResponse,
+    ) => {
       const video = data.videoDetails;
       if (!video?.videoId) {
         pendingArtwork = null;
@@ -124,7 +144,8 @@ export function registerMPRIS(win: BrowserWindow) {
         'xesam:artist': [video.author],
         'mpris:trackid': player.objectPath(`Track/${correctId(video.videoId)}`),
       };
-    });
+    };
+    ipcMain.on('peard:video-src-changed', onVideoSrcChanged);
 
     const seekTo = (event: Position) => {
       if (
@@ -140,25 +161,30 @@ export function registerMPRIS(win: BrowserWindow) {
       player.setPosition(player.getPosition() + offset);
     };
 
-    ipcMain.on('peard:player-api-loaded', () => {
-      win.webContents.send('peard:setup-seeked-listener', 'mpris');
-      win.webContents.send('peard:setup-time-changed-listener', 'mpris');
-      win.webContents.send('peard:setup-repeat-changed-listener', 'mpris');
-      win.webContents.send('peard:setup-volume-changed-listener', 'mpris');
-      win.webContents.send('peard:setup-shuffle-changed-listener', 'mpris');
-      win.webContents.send('peard:setup-fullscreen-changed-listener', 'mpris');
-      win.webContents.send('peard:setup-autoplay-changed-listener', 'mpris');
+    const onPlayerApiLoaded = (_: Electron.IpcMainEvent) => {
+      win.webContents.send(
+        SONG_INFO_SETUP_CHANNEL,
+        SongInfoEventFlag.Seeked |
+          SongInfoEventFlag.TimeChanged |
+          SongInfoEventFlag.RepeatChanged |
+          SongInfoEventFlag.VolumeChanged |
+          SongInfoEventFlag.ShuffleChanged |
+          SongInfoEventFlag.FullscreenChanged |
+          SongInfoEventFlag.AutoPlayChanged,
+      );
       requestShuffleInformation();
       requestFullscreenInformation();
       requestQueueInformation();
-    });
+    };
+    ipcMain.on('peard:player-api-loaded', onPlayerApiLoaded);
 
-    ipcMain.on('peard:seeked', (_, t: number) => {
+    const onSeeked = (_: Electron.IpcMainEvent, t: number) => {
       player.setPosition(secToMicro(t));
       player.seeked(secToMicro(t));
-    });
+    };
+    ipcMain.on('peard:seeked', onSeeked);
 
-    ipcMain.on('peard:repeat-changed', (_, mode: RepeatMode) => {
+    const onRepeatChanged = (_: Electron.IpcMainEvent, mode: RepeatMode) => {
       switch (mode) {
         case 'NONE': {
           player.setLoopStatus(MprisPlayer.LOOP_STATUS_NONE);
@@ -175,47 +201,66 @@ export function registerMPRIS(win: BrowserWindow) {
         }
       }
       requestQueueInformation();
-    });
+    };
+    ipcMain.on('peard:repeat-changed', onRepeatChanged);
 
-    ipcMain.on('peard:shuffle-changed', (_, shuffleEnabled: boolean) => {
+    const onShuffleChanged = (
+      _: Electron.IpcMainEvent,
+      shuffleEnabled: boolean,
+    ) => {
       if (player.shuffle === undefined || !player.canUsePlayerControls) {
         return;
       }
 
       player.shuffle = shuffleEnabled ?? !player.shuffle;
-    });
+    };
+    ipcMain.on('peard:shuffle-changed', onShuffleChanged);
 
-    ipcMain.on('peard:fullscreen-changed', (_, changedTo: boolean) => {
+    const onFullscreenChanged = (
+      _: Electron.IpcMainEvent,
+      changedTo: boolean,
+    ) => {
       if (player.fullscreen === undefined || !player.canUsePlayerControls) {
         return;
       }
 
       player.fullscreen =
         changedTo !== undefined ? changedTo : !player.fullscreen;
-    });
+    };
+    ipcMain.on('peard:fullscreen-changed', onFullscreenChanged);
 
-    ipcMain.on(
-      'peard:set-fullscreen',
-      (_, isFullscreen: boolean | undefined) => {
-        if (!player.canUsePlayerControls || isFullscreen === undefined) {
-          return;
-        }
+    const onSetFullscreen = (
+      _: Electron.IpcMainEvent,
+      isFullscreen: boolean | undefined,
+    ) => {
+      if (!player.canUsePlayerControls || isFullscreen === undefined) {
+        return;
+      }
 
-        player.fullscreen = isFullscreen;
-      },
-    );
+      player.fullscreen = isFullscreen;
+    };
+    ipcMain.on('peard:set-fullscreen', onSetFullscreen);
 
+    const onFullscreenChangedSupported = (
+      _: Electron.IpcMainEvent,
+      isFullscreenSupported: boolean,
+    ) => {
+      player.canUsePlayerControls = isFullscreenSupported;
+    };
     ipcMain.on(
       'peard:fullscreen-changed-supported',
-      (_, isFullscreenSupported: boolean) => {
-        player.canUsePlayerControls = isFullscreenSupported;
-      },
+      onFullscreenChangedSupported,
     );
-    ipcMain.on('peard:autoplay-changed', (_) => {
-      requestQueueInformation();
-    });
 
-    ipcMain.on('peard:get-queue-response', (_, queue: QueueResponse) => {
+    const onAutoplayChanged = (_: Electron.IpcMainEvent) => {
+      requestQueueInformation();
+    };
+    ipcMain.on('peard:autoplay-changed', onAutoplayChanged);
+
+    const onGetQueueResponse = (
+      _: Electron.IpcMainEvent,
+      queue: QueueResponse,
+    ) => {
       if (!queue) {
         return;
       }
@@ -240,7 +285,8 @@ export function registerMPRIS(win: BrowserWindow) {
       }
 
       player.canGoNext = hasNext;
-    });
+    };
+    ipcMain.on('peard:get-queue-response', onGetQueueResponse);
 
     player.on('loopStatus', (status: LoopStatus) => {
       // Order matters: switchRepeat steps through these in sequence.
@@ -325,11 +371,15 @@ export function registerMPRIS(win: BrowserWindow) {
       console.trace(error);
     });
 
-    ipcMain.on('peard:volume-changed', (_, newVolumeState: VolumeState) => {
+    const onVolumeChanged = (
+      _: Electron.IpcMainEvent,
+      newVolumeState: VolumeState,
+    ) => {
       player.volume = newVolumeState.isMuted
         ? 0
         : Number.parseFloat((newVolumeState.state / 100).toFixed(2));
-    });
+    };
+    ipcMain.on('peard:volume-changed', onVolumeChanged);
 
     player.on('volume', async (newVolume: number) => {
       if (await config.plugins.isEnabled('precise-volume')) {
@@ -340,7 +390,7 @@ export function registerMPRIS(win: BrowserWindow) {
       }
     });
 
-    registerCallback((songInfo: SongInfo, event) => {
+    const onSongInfo = (songInfo: SongInfo, event: SongInfoEvent) => {
       if (event === SongInfoEvent.TimeChanged) {
         player.setPosition(secToMicro(songInfo.elapsedSeconds ?? 0));
         return;
@@ -391,7 +441,54 @@ export function registerMPRIS(win: BrowserWindow) {
         );
       }
       requestQueueInformation();
-    });
+    };
+    registerCallback(onSongInfo);
+
+    // Every handler is registered with raw `ipcMain`, so removal has to target
+    // the same instance and the exact references registered above.
+    teardownMPRIS = () => {
+      ipcMain.removeListener('peard:video-src-changed', onVideoSrcChanged);
+      ipcMain.removeListener('peard:player-api-loaded', onPlayerApiLoaded);
+      ipcMain.removeListener('peard:seeked', onSeeked);
+      ipcMain.removeListener('peard:repeat-changed', onRepeatChanged);
+      ipcMain.removeListener('peard:shuffle-changed', onShuffleChanged);
+      ipcMain.removeListener('peard:fullscreen-changed', onFullscreenChanged);
+      ipcMain.removeListener('peard:set-fullscreen', onSetFullscreen);
+      ipcMain.removeListener(
+        'peard:fullscreen-changed-supported',
+        onFullscreenChangedSupported,
+      );
+      ipcMain.removeListener('peard:autoplay-changed', onAutoplayChanged);
+      ipcMain.removeListener('peard:get-queue-response', onGetQueueResponse);
+      ipcMain.removeListener('peard:volume-changed', onVolumeChanged);
+      unregisterCallback(onSongInfo);
+      // mpris-service keeps its bus private and offers no close method; drop
+      // the connection so a re-registration can own the service name again.
+      const bus: unknown = Reflect.get(player, '_bus');
+      if (bus && typeof bus === 'object' && 'disconnect' in bus) {
+        const disconnect = bus.disconnect;
+        if (typeof disconnect === 'function') disconnect.call(bus);
+      }
+      // Keep the 'error' listener: a bus error can still surface after
+      // disconnect, and an unhandled 'error' event would throw.
+      const playerEvents = [
+        'loopStatus',
+        'raise',
+        'fullscreen',
+        'play',
+        'pause',
+        'playpause',
+        'next',
+        'previous',
+        'seek',
+        'position',
+        'shuffle',
+        'open',
+        'volume',
+      ] as const;
+      for (const event of playerEvents) player.removeAllListeners(event);
+      teardownMPRIS = undefined;
+    };
   } catch (error) {
     console.error(LoggerPrefix, 'Error in MPRIS');
     console.trace(error);

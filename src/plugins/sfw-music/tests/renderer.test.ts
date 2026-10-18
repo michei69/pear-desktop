@@ -25,13 +25,24 @@ function setup() {
   let state = 1;
   const queueSelections: number[] = [];
   const listeners = new Map<string, Set<() => void>>();
+  const queueListeners = new Set<() => void>();
   const getState = () => ({
     queue: { items, selectedItemIndex, repeatMode },
   });
   const bar = document.querySelector('ytmusic-player-bar')!;
   Object.assign(bar, { getState });
   Object.assign(document.querySelector('#queue')!, {
-    queue: { store: { store: { getState } } },
+    queue: {
+      store: {
+        store: {
+          getState,
+          subscribe: (listener: () => void) => {
+            queueListeners.add(listener);
+            return () => queueListeners.delete(listener);
+          },
+        },
+      },
+    },
     dispatch: ({ payload }: { payload: number }) => {
       queueSelections.push(payload);
       skips++;
@@ -80,6 +91,7 @@ function setup() {
     },
     setItems: (value: unknown[]) => {
       items = value;
+      queueListeners.forEach((listener) => listener());
     },
     select: (index: number) => {
       selectedItemIndex = index;

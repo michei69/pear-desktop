@@ -9,7 +9,7 @@ import {
 } from 'electron';
 
 import { appIconPath } from '@/providers/app-icon';
-import { type SongInfo } from '@/providers/song-info';
+import { getImage, type SongInfo } from '@/providers/song-info';
 
 import type { NotificationsPluginConfig } from './index';
 
@@ -45,26 +45,33 @@ const nativeImageToLogo = (nativeImage: NativeImage) => {
   });
 };
 
-export const notificationImage = (
+export const notificationImage = async (
   songInfo: SongInfo,
   config: NotificationsPluginConfig,
-) => {
-  if (!songInfo.image) {
+): Promise<string | NativeImage> => {
+  if (!songInfo.imageSrc) {
+    return appIconPath();
+  }
+
+  // Decoded at most once per URL by the shared cache; the fallback keeps a
+  // notification working when the artwork cannot be fetched.
+  const image = await getImage(songInfo.imageSrc).catch(() => null);
+  if (!image || image.isEmpty()) {
     return appIconPath();
   }
 
   if (!config.interactive) {
-    return nativeImageToLogo(songInfo.image);
+    return nativeImageToLogo(image);
   }
 
   switch (config.toastStyle) {
     case ToastStyles.logo:
     case ToastStyles.legacy: {
-      return saveImage(nativeImageToLogo(songInfo.image), temporaryIcon);
+      return saveImage(nativeImageToLogo(image), temporaryIcon);
     }
 
     default: {
-      return saveImage(songInfo.image, temporaryBanner);
+      return saveImage(image, temporaryBanner);
     }
   }
 };

@@ -1,4 +1,5 @@
 import { t } from '@/i18n';
+import { observePlayerPage } from '@/providers/player-page-observer';
 import { createPlugin } from '@/utils';
 
 import type { MusicPlayer } from '@/types/music-player';
@@ -13,11 +14,11 @@ export default createPlugin<
   unknown,
   {
     api: MusicPlayer | null;
-    playbackModeObserver: MutationObserver | null;
+    unwatchPlaybackMode: (() => void) | null;
     videoDataListener: ((e: Event) => void) | null;
     setAudioOnly: () => void;
     applyVisualMode: () => void;
-    lockPlaybackMode: (player: HTMLElement) => void;
+    lockPlaybackMode: () => void;
   },
   AudioOnlyConfig
 >({
@@ -29,7 +30,7 @@ export default createPlugin<
   },
   renderer: {
     api: null,
-    playbackModeObserver: null,
+    unwatchPlaybackMode: null,
     videoDataListener: null,
 
     start() {
@@ -41,7 +42,7 @@ export default createPlugin<
       if (player) {
         player.setAttribute('playback-mode', 'ATV_PREFERRED');
         player.style.margin = 'auto 0px';
-        this.lockPlaybackMode(player);
+        this.lockPlaybackMode();
       }
     },
 
@@ -67,9 +68,9 @@ export default createPlugin<
     },
 
     stop() {
-      if (this.playbackModeObserver) {
-        this.playbackModeObserver.disconnect();
-        this.playbackModeObserver = null;
+      if (this.unwatchPlaybackMode) {
+        this.unwatchPlaybackMode();
+        this.unwatchPlaybackMode = null;
       }
       if (this.videoDataListener) {
         document.removeEventListener('videodatachange', this.videoDataListener);
@@ -84,6 +85,11 @@ export default createPlugin<
       if (player) {
         player.setAttribute('playback-mode', 'ATV_PREFERRED');
         player.style.margin = 'auto 0px';
+        // start() may have run before the player existed; the player API
+        // ready hook is the other chance to become the attribute's owner.
+        if (!this.unwatchPlaybackMode) {
+          this.lockPlaybackMode();
+        }
       }
 
       // Lowest quality triggers the audio-only path.
@@ -123,20 +129,21 @@ export default createPlugin<
       }
     },
 
-    lockPlaybackMode(player: HTMLElement) {
+    lockPlaybackMode() {
+      this.unwatchPlaybackMode?.();
       // Prevent YouTube from overriding playback-mode back to OMV_PREFERRED
-      this.playbackModeObserver = new MutationObserver((mutations) => {
-        for (const mutation of mutations) {
-          if (mutation.target instanceof HTMLElement) {
-            const current = mutation.target.getAttribute('playback-mode');
-            if (current !== 'ATV_PREFERRED') {
-              mutation.target.setAttribute('playback-mode', 'ATV_PREFERRED');
+      this.unwatchPlaybackMode = observePlayerPage('ytmusic-player', {
+        attributes: ['playback-mode'],
+        callback: (mutations) => {
+          for (const mutation of mutations) {
+            if (mutation.target instanceof HTMLElement) {
+              const current = mutation.target.getAttribute('playback-mode');
+              if (current !== 'ATV_PREFERRED') {
+                mutation.target.setAttribute('playback-mode', 'ATV_PREFERRED');
+              }
             }
           }
-        }
-      });
-      this.playbackModeObserver.observe(player, {
-        attributeFilter: ['playback-mode'],
+        },
       });
     },
   },

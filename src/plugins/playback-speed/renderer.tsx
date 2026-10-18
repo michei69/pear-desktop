@@ -7,6 +7,7 @@ import {
   isPlayerMenu,
 } from '@/plugins/utils/renderer/check';
 import { getSongMenu } from '@/providers/dom-elements';
+import { observePlayerPage } from '@/providers/player-page-observer';
 import { type RendererContext } from '@/types/contexts';
 
 import { PlaybackSpeedSlider } from './components/slider';
@@ -19,8 +20,8 @@ const MAX_PLAYBACK_SPEED = 16;
 
 let currentConfig: PlaybackSpeedConfig | null = null;
 let activeVideo: HTMLVideoElement | null = null;
-let videoObserver: MutationObserver | null = null;
-let popupObserver: MutationObserver | null = null;
+let unwatchVideo: (() => void) | null = null;
+let unwatchPopup: (() => void) | null = null;
 const startupLifecycle = new StartupLifecycle();
 const observedVideos = new Set<HTMLVideoElement>();
 
@@ -126,26 +127,23 @@ export const onPlayerApiReady = async (
       sliderContainer,
     );
 
-    popupObserver = new MutationObserver(() => {
-      const menu = getSongMenu();
+    unwatchPopup?.();
+    unwatchPopup = observePlayerPage('ytmusic-popup-container', {
+      childList: true,
+      subtree: true,
+      callback: () => {
+        const menu = getSongMenu();
 
-      if (
-        menu &&
-        !menu.contains(sliderContainer) &&
-        isMusicOrVideoTrack() &&
-        isPlayerMenu(menu)
-      ) {
-        menu.prepend(sliderContainer);
-      }
+        if (
+          menu &&
+          !menu.contains(sliderContainer) &&
+          isMusicOrVideoTrack() &&
+          isPlayerMenu(menu)
+        ) {
+          menu.prepend(sliderContainer);
+        }
+      },
     });
-
-    const popupContainer = document.querySelector('ytmusic-popup-container');
-    if (popupContainer) {
-      popupObserver.observe(popupContainer, {
-        childList: true,
-        subtree: true,
-      });
-    }
   };
 
   const observeVideo = () => {
@@ -166,18 +164,20 @@ export const onPlayerApiReady = async (
       video.dataset.playbackSpeedObserved = 'true';
     }
 
-    videoObserver = new MutationObserver(() => {
-      document.querySelectorAll<HTMLVideoElement>('video').forEach((v) => {
-        if (!v.dataset.playbackSpeedObserved) {
-          v.dataset.playbackSpeedObserved = 'true';
-          applyVideoEvents(v);
-        }
-      });
-    });
-
-    videoObserver.observe(document.body, {
+    // The video lives inside #movie_player; watching it instead of the whole
+    // body keeps a per-mutation callback off every page update.
+    unwatchVideo?.();
+    unwatchVideo = observePlayerPage('#movie_player', {
       childList: true,
       subtree: true,
+      callback: () => {
+        document.querySelectorAll<HTMLVideoElement>('video').forEach((v) => {
+          if (!v.dataset.playbackSpeedObserved) {
+            v.dataset.playbackSpeedObserved = 'true';
+            applyVideoEvents(v);
+          }
+        });
+      },
     });
   };
 
@@ -202,13 +202,9 @@ export const onUnload = () => {
   if (activeVideo) {
     activeVideo = null;
   }
-  if (videoObserver) {
-    videoObserver.disconnect();
-    videoObserver = null;
-  }
-  if (popupObserver) {
-    popupObserver.disconnect();
-    popupObserver = null;
-  }
+  unwatchVideo?.();
+  unwatchVideo = null;
+  unwatchPopup?.();
+  unwatchPopup = null;
   getSongMenu()?.removeChild(sliderContainer);
 };

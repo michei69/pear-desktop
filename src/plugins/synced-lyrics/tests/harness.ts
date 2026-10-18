@@ -64,7 +64,28 @@ registerHooks({
   },
 });
 
-/** The DOM the store expects, without an Electron renderer around it. */
+/**
+ * `installDom` overwrites shared globals (Event, Node, …) with the DOM
+ * implementation's versions. Playwright workers share `globalThis` across test
+ * files, so they are saved here and put back when the test finishes — `conf`
+ * and friends check `instanceof` against their own realms' constructors and
+ * throw on a foreign one.
+ */
+const replacedGlobals = new Map<string, { had: boolean; value: unknown }>();
+
+/**
+ * Puts the shared globals back. The DOM must outlive `stopStubbing` (tests run
+ * after the stubbed import), so each test file calls this from `afterAll`.
+ */
+export const uninstallDom = () => {
+  const globals = globalThis as unknown as Record<string, unknown>;
+  for (const [key, saved] of replacedGlobals) {
+    if (saved.had) globals[key] = saved.value;
+    else delete globals[key];
+  }
+  replacedGlobals.clear();
+};
+
 export const installDom = () => {
   const window = new Window();
   const globals = globalThis as unknown as Record<string, unknown>;
@@ -92,6 +113,12 @@ export const installDom = () => {
   ]) {
     const value = (window as unknown as Record<string, unknown>)[key];
     if (value === undefined) continue;
+    if (!replacedGlobals.has(key)) {
+      replacedGlobals.set(key, {
+        had: key in globals,
+        value: globals[key],
+      });
+    }
     try {
       globals[key] = value;
     } catch {

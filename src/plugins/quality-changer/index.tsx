@@ -2,6 +2,7 @@ import { dialog } from 'electron';
 import { render } from 'solid-js/web';
 
 import { t } from '@/i18n';
+import { observePlayerPage } from '@/providers/player-page-observer';
 import { createPlugin } from '@/utils';
 
 import { QualitySettingButton } from './templates/quality-setting-button';
@@ -14,7 +15,7 @@ let playerApi: MusicPlayer | null = null;
 
 type QualityChangerRenderer = {
   qualitySettingsButtonContainer: HTMLElement;
-  observer: MutationObserver | null;
+  unwatchPlayer: (() => void) | null;
   rafId: number;
   mounted: boolean;
   sync: () => void;
@@ -55,7 +56,7 @@ export default createPlugin({
 
   renderer: {
     qualitySettingsButtonContainer: document.createElement('div'),
-    observer: null as MutationObserver | null,
+    unwatchPlayer: null as (() => void) | null,
     rafId: 0,
     mounted: false,
     /** Puts the button back whenever the player UI is rebuilt without it. */
@@ -126,15 +127,15 @@ export default createPlugin({
 
       // Observing the player rather than body keeps this cheap, and it is only
       // replaced on a full page reload.
-      this.observer = new MutationObserver(() => {
-        cancelAnimationFrame(this.rafId);
-        this.rafId = requestAnimationFrame(() => this.sync());
-      });
-      this.observer.observe(
-        document.querySelector('ytmusic-player') ?? document.body,
+      this.unwatchPlayer = observePlayerPage(
+        document.querySelector('ytmusic-player') ? 'ytmusic-player' : 'body',
         {
           childList: true,
           subtree: true,
+          callback: () => {
+            cancelAnimationFrame(this.rafId);
+            this.rafId = requestAnimationFrame(() => this.sync());
+          },
         },
       );
 
@@ -142,8 +143,8 @@ export default createPlugin({
     },
     stop() {
       this.mounted = false;
-      this.observer?.disconnect();
-      this.observer = null;
+      this.unwatchPlayer?.();
+      this.unwatchPlayer = null;
       cancelAnimationFrame(this.rafId);
       playerApi = null;
       this.qualitySettingsButtonContainer.remove();

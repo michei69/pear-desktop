@@ -1,7 +1,11 @@
 import { net } from 'electron';
 
 import { t } from '@/i18n';
-import { registerCallback } from '@/providers/song-info';
+import { registerCallback, SongInfoEvent } from '@/providers/song-info';
+import {
+  SONG_INFO_SETUP_CHANNEL,
+  SongInfoEventFlag,
+} from '@/types/song-info-events';
 import { createPlugin } from '@/utils';
 
 type LumiaData = {
@@ -67,10 +71,14 @@ export default createPlugin({
     };
 
     ipc.on('peard:player-api-loaded', () =>
-      ipc.send('peard:setup-time-changed-listener'),
+      ipc.send(SONG_INFO_SETUP_CHANNEL, SongInfoEventFlag.TimeChanged),
     );
 
-    registerCallback((songInfo) => {
+    registerCallback((songInfo, event) => {
+      if (event === SongInfoEvent.TimeChanged) {
+        return;
+      }
+
       if (!songInfo.title && !songInfo.artist) {
         return;
       }

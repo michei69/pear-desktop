@@ -145,6 +145,6 @@ export const backend = createBackend({
     ctx.ipc.removeHandler('synced-lyrics:fetch');
     ctx.ipc.removeHandler('synced-lyrics:translate');
     ctx.ipc.removeHandler('synced-lyrics:translate-clear-cache');
-    ctx.ipc.removeAllListeners('synced-lyrics:translation-debug');
+    ctx.ipc.off('synced-lyrics:translation-debug', debugListener);
   },
 });

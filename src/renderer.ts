@@ -1,10 +1,14 @@
 import i18next from 'i18next';
 import { setTheme } from 'mdui/functions/setTheme.js';
 import 'mdui/mdui.css';
-import 'mdui';
+// Register only the elements the UI actually uses (`<mdui-button-icon>` and
+// `<mdui-tooltip>`); `import 'mdui'` pulled every component into the bundle.
+import 'mdui/components/button-icon.js';
+import 'mdui/components/tooltip.js';
 
 import { loadI18n, t as i18t } from '@/i18n';
 import { bootStandaloneSettings } from '@/plugins/settings-ui/standalone';
+import { getAudioGraph } from '@/providers/audio-graph';
 import { isNewUI } from '@/utils/new-ui';
 import {
   defaultTrustedTypePolicy,
@@ -42,6 +46,47 @@ let api: (Element & MusicPlayer) | null = null;
 let isPluginLoaded = false;
 let isApiLoaded = false;
 let firstDataLoaded = false;
+
+// The app shell elements live for the whole SPA session; re-querying them per
+// IPC message is pure waste. `isConnected` keeps the cache honest across UI
+// rebuilds.
+const memoizeSelector = <T extends Element>(selector: string) => {
+  let cached: T | null = null;
+  return () =>
+    cached?.isConnected
+      ? cached
+      : (cached = document.querySelector<T>(selector));
+};
+
+const getPlayerApp = memoizeSelector<MusicPlayerAppElement>('ytmusic-app');
+const getQueue = memoizeSelector<QueueElement>('#queue');
+const getVideo = memoizeSelector<HTMLVideoElement>('video');
+
+type PlayerBarElement = HTMLElement & {
+  queue: { shuffle: () => void };
+  onRepeatButtonClick: () => void;
+  updateVolume: (volume: number) => void;
+  onVolumeClick: () => void;
+};
+const getPlayerBar = memoizeSelector<PlayerBarElement>('ytmusic-player-bar');
+
+// `createMediaElementSource` and `captureStream` yield silence on CORS-less
+// media, and forcing CORS reloads the source — so only the default-off plugins
+// that need real samples pay for it.
+const corsMediaConsumers = new Set([
+  'crossfade',
+  'custom-output-device',
+  'skip-silences',
+  'visualizer',
+  'audio-compressor',
+  'equalizer',
+]);
+
+const ensureCORSMedia = (video: HTMLVideoElement) => {
+  if (video.crossOrigin === 'anonymous') return;
+  video.crossOrigin = 'anonymous';
+  if (video.src && !video.src.startsWith('blob:')) video.load();
+};
 
 registerWindowDefaultTrustedTypePolicy();
 
@@ -109,18 +154,12 @@ function onApiLoaded() {
   window.ipcRenderer.on('peard:seek-to', (_, t: number) => api!.seekTo(t));
   window.ipcRenderer.on('peard:seek-by', (_, t: number) => api!.seekBy(t));
   window.ipcRenderer.on('peard:shuffle', () => {
-    document
-      .querySelector<HTMLElement & { queue: { shuffle: () => void } }>(
-        'ytmusic-player-bar',
-      )
-      ?.queue.shuffle();
+    getPlayerBar()?.queue.shuffle();
   });
 
   const isShuffled = () => {
     const isShuffled =
-      document
-        .querySelector<HTMLElement>('ytmusic-player-bar')
-        ?.attributes.getNamedItem('shuffle-on') ?? null;
+      getPlayerBar()?.attributes.getNamedItem('shuffle-on') ?? null;
 
     return isShuffled !== null;
   };
@@ -141,26 +180,16 @@ function onApiLoaded() {
   );
   window.ipcRenderer.on('peard:switch-repeat', (_, repeat = 1) => {
     for (let i = 0; i < repeat; i++) {
-      document
-        .querySelector<HTMLElement & { onRepeatButtonClick: () => void }>(
-          'ytmusic-player-bar',
-        )
-        ?.onRepeatButtonClick();
+      getPlayerBar()?.onRepeatButtonClick();
     }
   });
   window.ipcRenderer.on('peard:update-volume', (_, volume: number) => {
-    document
-      .querySelector<HTMLElement & { updateVolume: (volume: number) => void }>(
-        'ytmusic-player-bar',
-      )
-      ?.updateVolume(volume);
+    getPlayerBar()?.updateVolume(volume);
   });
 
   const isFullscreen = () => {
     const isFullscreen =
-      document
-        .querySelector<HTMLElement>('ytmusic-player-bar')
-        ?.attributes.getNamedItem('player-fullscreened') ?? null;
+      getPlayerBar()?.attributes.getNamedItem('player-fullscreened') ?? null;
 
     return isFullscreen !== null;
   };
@@ -190,15 +219,11 @@ function onApiLoaded() {
   );
 
   window.ipcRenderer.on('peard:toggle-mute', (_) => {
-    document
-      .querySelector<HTMLElement & { onVolumeClick: () => void }>(
-        'ytmusic-player-bar',
-      )
-      ?.onVolumeClick();
+    getPlayerBar()?.onVolumeClick();
   });
 
   window.ipcRenderer.on('peard:get-queue', () => {
-    const queue = document.querySelector<QueueElement>('#queue');
+    const queue = getQueue();
     window.ipcRenderer.send('peard:get-queue-response', {
       items: queue?.queue.getItems(),
       autoPlaying: queue?.queue.autoPlaying,
@@ -209,8 +234,8 @@ function onApiLoaded() {
   window.ipcRenderer.on(
     'peard:add-to-queue',
     (_, videoId: string, queueInsertPosition: string) => {
-      const queue = document.querySelector<QueueElement>('#queue');
-      const app = document.querySelector<MusicPlayerAppElement>('ytmusic-app');
+      const queue = getQueue();
+      const app = getPlayerApp();
       if (!app) return;
 
       const store = queue?.queue.store.store;
@@ -264,7 +289,7 @@ function onApiLoaded() {
   window.ipcRenderer.on(
     'peard:move-in-queue',
     (_, fromIndex: number, toIndex: number) => {
-      const queue = document.querySelector<QueueElement>('#queue');
+      const queue = getQueue();
       queue?.dispatch({
         type: 'MOVE_ITEM',
         payload: {
@@ -275,21 +300,21 @@ function onApiLoaded() {
     },
   );
   window.ipcRenderer.on('peard:remove-from-queue', (_, index: number) => {
-    const queue = document.querySelector<QueueElement>('#queue');
+    const queue = getQueue();
     queue?.dispatch({
       type: 'REMOVE_ITEM',
       payload: index,
     });
   });
   window.ipcRenderer.on('peard:set-queue-index', (_, index: number) => {
-    const queue = document.querySelector<QueueElement>('#queue');
+    const queue = getQueue();
     queue?.dispatch({
       type: 'SET_INDEX',
       payload: index,
     });
   });
   window.ipcRenderer.on('peard:clear-queue', () => {
-    const queue = document.querySelector<QueueElement>('#queue');
+    const queue = getQueue();
     queue?.queue.store.store.dispatch({
       type: 'SET_PLAYER_PAGE_INFO',
       payload: { open: false },
@@ -302,7 +327,7 @@ function onApiLoaded() {
   window.ipcRenderer.on(
     'peard:search',
     async (_, query: string, params?: string, continuation?: string) => {
-      const app = document.querySelector<MusicPlayerAppElement>('ytmusic-app');
+      const app = getPlayerApp();
       const searchBox =
         document.querySelector<SearchBoxElement>('ytmusic-search-box');
 
@@ -327,20 +352,13 @@ function onApiLoaded() {
     },
   );
 
-  window.ipcRenderer.on('peard:load-video', async (_, videoId: string) => {
-    const app = document.querySelector<MusicPlayerAppElement>('ytmusic-app');
-    const queue = document.querySelector<QueueElement>('#queue');
-
-    if (!app || !api || !queue) return;
-
-    api.stopVideo();
-    const data = await app.networkManager.fetch<NextData, { videoId: string }>(
-      '/next?prettyPrint=false',
-      {
-        videoId,
-      },
-    );
-
+  // Both load paths hydrate the queue with the same dispatch sequence; only
+  // the item list differs.
+  const hydrateQueue = (
+    queue: QueueElement,
+    data: NextData,
+    items: Array<{ playlistPanelVideoRenderer: unknown }>,
+  ) => {
     queue.dispatch({ type: 'CLEAR' });
     queue.dispatch({
       type: 'SET_QUEUE_CONTEXT_PARAMS',
@@ -365,20 +383,42 @@ function onApiLoaded() {
       type: 'ADD_ITEMS',
       payload: {
         index: 0,
-        items:
-          data.contents.singleColumnMusicWatchNextResultsRenderer.tabbedRenderer.watchNextTabbedResultsRenderer.tabs[0].tabRenderer.content.musicQueueRenderer.content.playlistPanelRenderer.contents.filter(
-            (a) => a.playlistPanelVideoRenderer,
-          ),
+        items,
         nextQueueItemId: 0,
         shouldAssignIds: true,
       },
     });
+  };
+
+  window.ipcRenderer.on('peard:load-video', async (_, videoId: string) => {
+    const app = getPlayerApp();
+    const queue = getQueue();
+
+    if (!app || !api || !queue) return;
+
+    api.stopVideo();
+    const data = await app.networkManager.fetch<NextData, { videoId: string }>(
+      '/next?prettyPrint=false',
+      {
+        videoId,
+      },
+    );
+
+    const contents =
+      data.contents.singleColumnMusicWatchNextResultsRenderer.tabbedRenderer
+        .watchNextTabbedResultsRenderer.tabs[0].tabRenderer.content
+        .musicQueueRenderer.content.playlistPanelRenderer.contents;
+    hydrateQueue(
+      queue,
+      data,
+      contents.filter((a) => a.playlistPanelVideoRenderer),
+    );
   });
   window.ipcRenderer.on(
     'peard:load-playlist',
     async (_, playlistId: string) => {
-      const app = document.querySelector<MusicPlayerAppElement>('ytmusic-app');
-      const queue = document.querySelector<QueueElement>('#queue');
+      const app = getPlayerApp();
+      const queue = getQueue();
 
       if (!app || !api || !queue) return;
 
@@ -390,50 +430,31 @@ function onApiLoaded() {
         playlistId,
       });
 
-      queue.dispatch({ type: 'CLEAR' });
-      queue.dispatch({
-        type: 'SET_QUEUE_CONTEXT_PARAMS',
-        payload: data.queueContextParams,
-      });
-      queue.dispatch({
-        type: 'SET_PLAYER_PAGE_WATCH_NEXT_RESPONSE',
-        payload: data,
-      });
-      queue.dispatch({
-        type: 'SET_PLAYER_OVERLAY',
-        payload: data.playerOverlays,
-      });
-      queue.dispatch({
-        type: 'SET_PLAYER_PAGE_TABS',
-        payload:
-          data.contents.singleColumnMusicWatchNextResultsRenderer.tabbedRenderer
-            .watchNextTabbedResultsRenderer.tabs,
-      });
-      queue.dispatch({ type: 'SET_PLAYER_PAGE_TABS_CONTENT', payload: {} });
-      queue.dispatch({
-        type: 'ADD_ITEMS',
-        payload: {
-          index: 0,
-          items:
-            data.contents.singleColumnMusicWatchNextResultsRenderer
-              .tabbedRenderer.watchNextTabbedResultsRenderer.tabs[0].tabRenderer
-              .content.musicQueueRenderer.content.playlistPanelRenderer
-              .contents,
-          nextQueueItemId: 0,
-          shouldAssignIds: true,
-        },
-      });
+      hydrateQueue(
+        queue,
+        data,
+        data.contents.singleColumnMusicWatchNextResultsRenderer.tabbedRenderer
+          .watchNextTabbedResultsRenderer.tabs[0].tabRenderer.content
+          .musicQueueRenderer.content.playlistPanelRenderer.contents,
+      );
     },
   );
 
-  const video = document.querySelector('video');
+  const video = getVideo();
   if (!video) return;
-  video.crossOrigin = 'anonymous';
-  if (video.src && !video.src.startsWith('blob:')) video.load();
 
-  const audioContext = new AudioContext();
-  const audioSource = audioContext.createMediaElementSource(video);
-  audioSource.connect(audioContext.destination);
+  // The graph below routes every media element through Web Audio, and a
+  // MediaElementAudioSourceNode outputs silence for cross-origin media that
+  // was not fetched in CORS mode (podcast/RSS audio). So this is unconditional
+  // for every user, not only those with a sampling plugin enabled — and it must
+  // stay synchronous so it runs before the media loads.
+  ensureCORSMedia(video);
+
+  // The shared audio-graph owner (src/providers/audio-graph.ts) wires
+  // `source -> ... -> destination` alone. It must capture the element HERE,
+  // before the media loads: `createMediaElementSource` on an element whose
+  // MSE pipeline is already running freezes playback at the current time.
+  getAudioGraph(video);
 
   for (const [id, plugin] of Object.entries(getAllLoadedRendererPlugins())) {
     if (typeof plugin.renderer !== 'function') {
@@ -455,8 +476,12 @@ function onApiLoaded() {
     document.dispatchEvent(
       new CustomEvent('peard:audio-can-play', {
         detail: {
-          audioContext,
-          audioSource,
+          get audioContext() {
+            return getAudioGraph(video).context;
+          },
+          get audioSource() {
+            return getAudioGraph(video).source;
+          },
         },
       }),
     );
@@ -490,8 +515,11 @@ function onApiLoaded() {
     const sectionBtns = document.querySelectorAll(
       '#sections ytmusic-guide-section-renderer[is-primary] #items ytmusic-guide-entry-renderer:not(.pear-settings-btn)',
     );
-    const upgradeBtn = sectionBtns[sectionBtns.length - 1] as HTMLElement;
-    upgradeBtn.style.display = 'none';
+    const upgradeBtn = sectionBtns[sectionBtns.length - 1] as
+      | HTMLElement
+      | undefined;
+    // The guide may not have rendered its entries yet.
+    if (upgradeBtn) upgradeBtn.style.display = 'none';
   }
 
   // Apply the likeButtons option.
@@ -618,6 +646,12 @@ const main = async () => {
     await forceUnloadRendererPlugin(id);
   });
   window.ipcRenderer.on('plugin:enable', async (_event, id: string) => {
+    // Enabling a sample-reading plugin mid-session needs CORS-clean media just
+    // like at boot (already ensured for the ones enabled then).
+    if (corsMediaConsumers.has(id)) {
+      const video = getVideo();
+      if (video) ensureCORSMedia(video);
+    }
     await forceLoadRendererPlugin(id);
     if (api) {
       const plugin = getLoadedRendererPlugin(id);
@@ -645,6 +679,9 @@ const main = async () => {
 
   // Blocks the "Are You Still There?" popup by refreshing `_lact` every 15min.
   setInterval(() => (window._lact = Date.now()), 900_000);
+
+  // A minimized/hidden window makes Chromium report the page hidden, and YTM
+  // then pauses playback after a few tracks. Keep the page visible.
   Object.defineProperties(document, {
     hidden: { value: false },
     visibilityState: { value: 'visible' },

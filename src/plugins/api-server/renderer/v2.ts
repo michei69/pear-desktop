@@ -21,7 +21,13 @@ import { parseByline, queueRenderer } from '@/utils/queue';
 
 import { getLyricsReply } from './lyrics-reply';
 
-import { ApiActions, apiReply, apiRequest, type ApiAction } from '../channels';
+import {
+  ApiActions,
+  apiReply,
+  apiRequest,
+  type ApiAction,
+  type NextQueueItemReply,
+} from '../channels';
 
 // Type-only, so it is erased: the module itself stays behind the dynamic import
 // in `apiTranslateLyrics`, which must not evaluate it while the plugin is off.
@@ -585,12 +591,44 @@ export const registerV2 = (
     getLikeButtonRenderer()?.updateLikeStatus('DISLIKE');
   const apiUnlikeCurrentVideo = () =>
     getLikeButtonRenderer()?.updateLikeStatus('INDIFFERENT');
+  /**
+   * Mapping the whole queue is the expensive part of a queue read. The store
+   * hands back the same items array until the queue itself changes, so one
+   * mapping serves every read of that version.
+   */
+  let queueCache:
+    | {
+        items: QueueItem[] | undefined;
+        selected: number | undefined;
+        raw: boolean;
+        mapped: QueueItemResult[] | undefined;
+      }
+    | undefined;
+  const cachedQueueItems = (
+    items: QueueItem[] | undefined,
+    selected: number | undefined,
+    raw: boolean,
+  ) => {
+    if (
+      queueCache &&
+      queueCache.items === items &&
+      queueCache.selected === selected &&
+      queueCache.raw === raw
+    ) {
+      return queueCache.mapped;
+    }
+
+    const mapped = queueItems(items, raw);
+    queueCache = { items, selected, raw, mapped };
+    return mapped;
+  };
+
   const apiGetQueue = (raw = false) => {
     const data = getQueue();
     const payload: QueueReply = {
       autoplay: data?.autoplay,
       isInfinite: data?.isInfinite,
-      items: queueItems(data?.items, raw),
+      items: cachedQueueItems(data?.items, data?.selectedItemIndex, raw),
       nextQueueItemId: data?.nextQueueItemId?.toString(),
       playbackContentMode: data?.playbackContentMode,
       repeatMode: data?.repeatMode,
@@ -599,6 +637,30 @@ export const registerV2 = (
       continuation: app?.queue.continuation,
     };
     reply(ApiActions.getQueue, payload);
+  };
+
+  /**
+   * The entry after the selected one, projected to the five fields
+   * `/api/v1/queue/next` answers, so the backend never receives the whole queue.
+   */
+  const apiGetNextQueueItem = () => {
+    const items = getQueue()?.items;
+    const currentIndex =
+      items?.findIndex((item) => queueRenderer(item)?.selected === true) ?? -1;
+    const renderer = items && queueRenderer(items[currentIndex + 1]);
+
+    reply(
+      ApiActions.getNextQueueItem,
+      renderer
+        ? ({
+            title: renderer.title?.runs?.[0]?.text,
+            videoId: renderer.videoId,
+            thumbnail: renderer.thumbnail,
+            lengthText: renderer.lengthText,
+            shortBylineText: renderer.shortBylineText,
+          } satisfies NextQueueItemReply)
+        : null,
+    );
   };
 
   /**
@@ -862,6 +924,10 @@ export const registerV2 = (
       handler: apiGetPlaybackPosition,
     },
     { channel: apiRequest(ApiActions.getQueue), handler: apiGetQueue },
+    {
+      channel: apiRequest(ApiActions.getNextQueueItem),
+      handler: apiGetNextQueueItem,
+    },
     {
       channel: apiRequest(ApiActions.getAutoplay),
       handler: apiGetAutoplay,

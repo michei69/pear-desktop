@@ -429,7 +429,7 @@ export const createMcpTools = (operations: Operations): McpTool[] => [
   ),
   tool(
     'feature_flags',
-    "Get the page's feature flags and the user's overrides.",
+    'Get the feature flags this app sets.',
     async () => ok({ flags: await operations.featureFlags() }),
     { readOnly: true },
   ),

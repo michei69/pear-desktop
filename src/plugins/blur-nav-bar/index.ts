@@ -19,8 +19,13 @@ export default createPlugin({
         this.styleSheet,
       ];
     },
-    async stop() {
-      await this.styleSheet?.replace('');
+    stop() {
+      if (this.styleSheet) {
+        document.adoptedStyleSheets = document.adoptedStyleSheets.filter(
+          (sheet) => sheet !== this.styleSheet,
+        );
+        this.styleSheet = null;
+      }
     },
   },
 });

@@ -381,7 +381,25 @@ const findRenderer = (node: unknown, depth = 0): Renderer | null => {
   return null;
 };
 
-const queueItemInfo = (item: unknown) => {
+type QueueItemInfo = {
+  videoId: string;
+  selected: boolean;
+  title: string;
+  author: string;
+  channelIds: string[];
+};
+type ParsedQueueItem = Omit<QueueItemInfo, 'selected'> & {
+  item: object; // the item the parse came from: a rebuilt item is parsed again
+  renderer: Renderer; // `selected` is read from here, it changes as playback moves
+};
+// scanQueue() re-reads the whole queue every 2 s and again on every removal, so
+// each item's parse is kept by video id (bounded; a new item with a known id
+// replaces the entry). `queueItemIds` keeps the item -> id step off the parser.
+const QUEUE_PARSE_CACHE_MAX = 500;
+const queueParses = new Map<string, ParsedQueueItem>();
+const queueItemIds = new WeakMap<object, string>();
+
+const parseQueueItem = (item: unknown): ParsedQueueItem | null => {
   const r =
     rendererAt(item, 'playlistPanelVideoRenderer') ??
     rendererAt(
@@ -396,8 +414,9 @@ const queueItemInfo = (item: unknown) => {
   const runs = runsOf(r.longBylineText) ?? runsOf(r.shortBylineText) ?? [];
   const firstText = runs[0]?.text;
   return {
+    item: item as object,
+    renderer: r,
     videoId: r.videoId,
-    selected: !!r.selected,
     title: (runsOf(r.title) ?? [])
       .map((run) => (typeof run.text === 'string' ? run.text : ''))
       .join(''),
@@ -405,6 +424,31 @@ const queueItemInfo = (item: unknown) => {
     channelIds: runs
       .map((run) => browseIdOf(run))
       .filter((id): id is string => typeof id === 'string'),
+  };
+};
+
+const queueItemInfo = (item: unknown): QueueItemInfo | null => {
+  const key = item && typeof item === 'object' ? item : null;
+  const knownId = key ? queueItemIds.get(key) : undefined;
+  const cached = knownId ? queueParses.get(knownId) : undefined;
+  const parsed = cached?.item === key ? cached : parseQueueItem(item);
+  if (!parsed) return null;
+  if (key && parsed !== cached) {
+    queueItemIds.set(key, parsed.videoId);
+    // delete first so the re-insert lands at the end: eviction stays oldest-first
+    queueParses.delete(parsed.videoId);
+    queueParses.set(parsed.videoId, parsed);
+    if (queueParses.size > QUEUE_PARSE_CACHE_MAX) {
+      const oldest = queueParses.keys().next().value;
+      if (oldest !== undefined) queueParses.delete(oldest);
+    }
+  }
+  return {
+    videoId: parsed.videoId,
+    selected: !!parsed.renderer.selected,
+    title: parsed.title,
+    author: parsed.author,
+    channelIds: parsed.channelIds,
   };
 };
 
@@ -597,6 +641,10 @@ const unhookStore = () => {
 // search, home, explore, library, artist, album, playlist and related tabs, but not
 // the player queue, which scanQueue() handles and must keep.
 // UNVERIFIED: element/field names below come from YouTube Music's page structure.
+// The scan is scoped to the app's content panel (`ytmusic-app-layout > #content`,
+// where every page's cards are inserted) instead of the whole document; the
+// queue stays excluded in case the player page is rendered inside it.
+const PAGE_ROOT_SELECTOR = 'ytmusic-app-layout > #content';
 const SEARCH_ITEMS = [
   'ytmusic-responsive-list-item-renderer',
   'ytmusic-two-row-item-renderer',
@@ -632,24 +680,60 @@ const channelRuns = (runs: unknown): Renderer[] =>
     return typeof browseId === 'string' && browseId.startsWith('UC');
   });
 
-const walkIds = (
-  node: unknown,
+/** Adds the ids a run's navigation endpoint documents. */
+const addRunIds = (
+  runs: unknown,
   videoIds: Set<string>,
   channelIds: Set<string>,
-  depth = 0,
 ) => {
-  if (!node || typeof node !== 'object' || depth > 12) return;
-  if (Array.isArray(node)) {
-    for (const n of node) walkIds(n, videoIds, channelIds, depth + 1);
-    return;
-  }
-  for (const [k, v] of Object.entries(node as Record<string, unknown>)) {
-    if (typeof v === 'string') {
-      if (k === 'videoId') videoIds.add(v);
-      else if (k === 'browseId' && v.startsWith('UC')) channelIds.add(v);
-    } else {
-      walkIds(v, videoIds, channelIds, depth + 1);
+  for (const run of Array.isArray(runs) ? (runs as Renderer[]) : []) {
+    const videoId = rendererPath(
+      run,
+      'navigationEndpoint',
+      'watchEndpoint',
+    )?.videoId;
+    if (typeof videoId === 'string') videoIds.add(videoId);
+    const browseId = browseIdOf(run);
+    if (typeof browseId === 'string' && browseId.startsWith('UC')) {
+      channelIds.add(browseId);
     }
+  }
+};
+
+/** Adds the id a row or card itself opens (`navigationEndpoint` / `onTap`). */
+const addEndpointIds = (
+  node: Renderer,
+  videoIds: Set<string>,
+  channelIds: Set<string>,
+) => {
+  const endpoint =
+    rendererAt(node, 'navigationEndpoint') ?? rendererAt(node, 'onTap');
+  const videoId = rendererPath(endpoint, 'watchEndpoint')?.videoId;
+  if (typeof videoId === 'string') videoIds.add(videoId);
+  const browseId = rendererPath(endpoint, 'browseEndpoint')?.browseId;
+  if (typeof browseId === 'string' && browseId.startsWith('UC')) {
+    channelIds.add(browseId);
+  }
+};
+
+/** A responsive row: `playlistItemData`, its own endpoint and its columns. */
+const addRowIds = (
+  row: Renderer,
+  videoIds: Set<string>,
+  channelIds: Set<string>,
+) => {
+  const videoId = rendererAt(row, 'playlistItemData')?.videoId;
+  if (typeof videoId === 'string') videoIds.add(videoId);
+  addEndpointIds(row, videoIds, channelIds);
+  const columns = row.flexColumns;
+  if (!Array.isArray(columns)) return;
+  for (const column of columns) {
+    addRunIds(
+      rendererPath(column, 'musicResponsiveListItemFlexColumnRenderer', 'text')
+        ?.runs,
+      videoIds,
+      channelIds,
+    );
   }
 };
 
@@ -658,7 +742,21 @@ const searchInfo = (data: Renderer): SearchInfo => {
   if (cached) return cached;
   const videoIds = new Set<string>();
   const channelIds = new Set<string>();
-  walkIds(data, videoIds, channelIds);
+  // The four card shapes the selectors match document their ids on known
+  // fields: `playlistItemData` / `navigationEndpoint` on rows, `onTap` on
+  // cards, and the navigation endpoints of their title and byline runs.
+  addRowIds(data, videoIds, channelIds);
+  addEndpointIds(data, videoIds, channelIds);
+  addRunIds(rendererAt(data, 'title')?.runs, videoIds, channelIds);
+  addRunIds(rendererAt(data, 'subtitle')?.runs, videoIds, channelIds);
+  addRunIds(rendererAt(data, 'secondSubtitle')?.runs, videoIds, channelIds);
+  const contents = data.contents;
+  if (Array.isArray(contents)) {
+    for (const content of contents) {
+      const row = rendererAt(content, 'musicResponsiveListItemRenderer');
+      if (row) addRowIds(row, videoIds, channelIds);
+    }
+  }
 
   let title: string;
   let author: string;
@@ -938,7 +1036,12 @@ const scanSearchResults = () => {
     if (hiddenCount) unhideSearchResults();
     return;
   }
-  const cards = document.querySelectorAll<HTMLElement>(SEARCH_ITEMS);
+  // Scoped to the content panel for cheapness, but never at the cost of not
+  // scanning: if the layout differs (or is not built yet), fall back to the
+  // document, as before, so early-hidden cards still get re-judged/unhidden.
+  const root: ParentNode =
+    document.querySelector<HTMLElement>(PAGE_ROOT_SELECTOR) ?? document;
+  const cards = root.querySelectorAll<HTMLElement>(SEARCH_ITEMS);
   // Cards already on the page at the first scan mean the plugin started after
   // the page drew them; that gap is what shows up as "slow".
   for (const el of cards) {
@@ -1059,7 +1162,9 @@ const onVideoData = (e: Event) => {
 
 // Page scanning (search, home, lists) does not need the player API, so it starts
 // with the plugin and reacts to DOM changes instead of waiting for a timer tick.
-const PAGE_SCAN_MS = 1000;
+// The timer is only a fallback for cards whose `data` arrives after insertion
+// (no DOM mutation to observe), so it runs well below the 1 Hz of a scan loop.
+const PAGE_SCAN_MS = 3000;
 const PAGE_SCAN_THROTTLE_MS = 80;
 let pageObserver: MutationObserver | null = null;
 let pageTimer: ReturnType<typeof setInterval> | null = null;

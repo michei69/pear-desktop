@@ -10,7 +10,7 @@ export default createPlugin({
   restartNeeded: true,
   addedVersion: '3.9.X',
   config: {
-    enabled: true,
+    enabled: false,
   },
   renderer() {
     injectRm3();

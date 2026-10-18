@@ -56,14 +56,16 @@ export const buildDiscordButtons = (
   return buttons.length ? buttons : undefined;
 };
 
-/** Pads title/artist/album to Discord's 2-character minimum (mutates songInfo) */
-export const padHangulFields = (songInfo: SongInfo): void => {
+/** Returns a copy with title/artist/album padded to Discord's 2-character minimum */
+export const padHangulFields = (songInfo: SongInfo): SongInfo => {
+  const padded = { ...songInfo };
   (['title', 'artist', 'album'] as const).forEach((key) => {
-    const value = songInfo[key];
+    const value = padded[key];
     if (typeof value === 'string' && value.length > 0 && value.length < 2) {
-      songInfo[key] = value + HANGUL_FILLER.repeat(2 - value.length);
+      padded[key] = value + HANGUL_FILLER.repeat(2 - value.length);
     }
   });
+  return padded;
 };
 
 export const isSeek = (oldSeconds: number, newSeconds: number): boolean => {

@@ -13,7 +13,12 @@ import {
 } from '@/themes/types';
 import { isNewUI } from '@/utils/new-ui';
 
-import { getByPath, nestPartial, setByPath } from './paths';
+import {
+  getByPath,
+  nestPartial,
+  setByPathCopy,
+  type ConfigDelta,
+} from './paths';
 
 import type { UpdateChannel } from '@/app-info';
 import type { defaultConfig } from '@/config/defaults';
@@ -99,8 +104,19 @@ export const bridge = {
   newUI: () => ipc!.invoke('ytmd-sui:new-ui') as Promise<boolean>,
 };
 
+/** Changes pushed before the store arrived; applied over the load's snapshot. */
+let pendingDelta: ConfigDelta = [];
+
 export const refreshStore = async () => {
-  setStore(await bridge.loadStore());
+  const loaded = await bridge.loadStore();
+  const queued = pendingDelta;
+  pendingDelta = [];
+  setStore(
+    queued.reduce<StoreShape>(
+      (next, { path, value }) => setByPathCopy(next, path, value),
+      loaded,
+    ),
+  );
 };
 
 /**
@@ -119,7 +135,22 @@ export const refreshNewUI = async () => {
   }
 };
 
-const onStorePush = (next: StoreShape) => setStore(next);
+const onStorePush = (delta: ConfigDelta) => {
+  const current = store();
+  if (!current) {
+    // The load in flight may have read an older snapshot; the queued delta is
+    // applied over it once it lands.
+    pendingDelta.push(...delta);
+    return;
+  }
+
+  setStore(
+    delta.reduce<StoreShape>(
+      (next, { path, value }) => setByPathCopy(next, path, value),
+      current,
+    ),
+  );
+};
 
 export const listenStorePush = () => {
   ipc!.on('ytmd-sui:store-changed', onStorePush);
@@ -233,7 +264,7 @@ export const patchLayout = (patch: SettingsLayout) =>
 export const patchLocal = (path: string, value: unknown) => {
   const current = store();
   if (!current) return;
-  setStore(setByPath(structuredClone(current), path, value));
+  setStore(setByPathCopy(current, path, value));
 };
 
 // Arrays are replaced, matching how the backend merges a plugin's stored

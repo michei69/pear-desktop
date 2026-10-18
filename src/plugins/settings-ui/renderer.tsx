@@ -3,7 +3,6 @@ import { render } from 'solid-js/web';
 
 import { t } from '@/i18n';
 import { createRenderer } from '@/utils';
-import { waitForElement } from '@/utils/wait-for-element';
 
 import { SettingsModal } from './components/SettingsModal';
 import { ThemePaletteField } from './components/ThemePalette';
@@ -42,6 +41,7 @@ export const openSettings = () => {
 };
 
 const GUIDE_SELECTORS = ['#guide-renderer', '#mini-guide-renderer'];
+const GUIDE_SELECTOR = GUIDE_SELECTORS.join(', ');
 const ITEMS_SELECTOR = 'ytmusic-guide-section-renderer[is-primary] > #items';
 
 /**
@@ -111,6 +111,32 @@ const syncButton = () => {
   }
 };
 
+let stopGuideWatch: (() => void) | undefined;
+
+/**
+ * Calls `onFound` once the guide and its item list are on the page. The page
+ * builds them after the plugin starts, so this waits on mutations instead of
+ * polling; only one of the two guides ever exists, hence the combined selector.
+ */
+const watchForGuide = (onFound: (guide: HTMLElement) => void) => {
+  const existing = document.querySelector<HTMLElement>(GUIDE_SELECTOR);
+  if (existing?.querySelector(ITEMS_SELECTOR)) {
+    onFound(existing);
+    return;
+  }
+
+  const observer = new MutationObserver(() => {
+    const guide = document.querySelector<HTMLElement>(GUIDE_SELECTOR);
+    if (!guide?.querySelector(ITEMS_SELECTOR)) return;
+
+    observer.disconnect();
+    stopGuideWatch = undefined;
+    onFound(guide);
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
+  stopGuideWatch = () => observer.disconnect();
+};
+
 /** Play the exit animation, then unmount. */
 const closeModal = () => {
   setClosing(true);
@@ -140,6 +166,9 @@ const mountModal = () => {
 
 const teardownUi = () => {
   started = false;
+
+  stopGuideWatch?.();
+  stopGuideWatch = undefined;
 
   unlistenStorePush();
   unlistenThemesPush();
@@ -174,18 +203,17 @@ export const renderer = createRenderer({
     // through here.
     ctx.ipc.on(OPEN_FROM_MENU, openSettings);
 
-    await refreshStore();
-    await refreshThemes();
+    // Listen before the first load: a change landing mid-load is queued and
+    // applied over the snapshot, which a delta would otherwise never heal.
     listenStorePush();
     listenThemesPush();
 
+    await refreshStore();
+    await refreshThemes();
+
     mountModal();
 
-    for (const selector of GUIDE_SELECTORS) {
-      // Only one of the two guides is on the page, so the other one's wait
-      // always ends in a timeout; `injectButton` drops a late resolve.
-      waitForElement<HTMLElement>(selector).then(injectButton, () => {});
-    }
+    watchForGuide(injectButton);
   },
 
   onConfigChange(newConfig: SettingsUIConfig) {

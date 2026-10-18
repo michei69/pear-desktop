@@ -25,11 +25,12 @@ export const bootStandaloneSettings = async () => {
 
   setIpc(createRendererIpc());
 
+  listenStorePush();
+  listenThemesPush();
+
   await refreshStore();
   await refreshThemes();
   await refreshNewUI();
-  listenStorePush();
-  listenThemesPush();
 
   const host = document.createElement('div');
   host.id = 'ytmd-sui-standalone-root';

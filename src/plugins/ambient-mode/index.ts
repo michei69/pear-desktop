@@ -1,10 +1,13 @@
 import { t } from '@/i18n';
+import { observePlayerPage } from '@/providers/player-page-observer';
 import { createPlugin } from '@/utils';
 import { waitForElement } from '@/utils/wait-for-element';
 
 import { menu } from './menu';
 import style from './style.css?inline';
 import { type AmbientModePluginConfig } from './types';
+
+import type { VideoDataChanged } from '@/types/video-data-changed';
 
 const defaultConfig: AmbientModePluginConfig = {
   enabled: false,
@@ -98,7 +101,7 @@ export default createPlugin({
 
     unregister: null as (() => void) | null,
     update: null as (() => void) | null,
-    interval: null as NodeJS.Timeout | null,
+    teardowns: [] as (() => void)[],
     lastMediaType: null as 'video' | 'image' | null,
     lastVideoSource: null as string | null,
     lastImageSource: null as string | null,
@@ -224,33 +227,41 @@ export default createPlugin({
         };
         this.update();
 
-        let canvasInterval: NodeJS.Timeout | null = null;
-        canvasInterval = setInterval(
-          onSync,
-          Math.max(1, Math.ceil(1000 / this.buffer)),
-        );
+        let canvasInterval: number | undefined;
 
-        const onPause = () => {
-          if (canvasInterval) clearInterval(canvasInterval);
-          canvasInterval = null;
+        const stopDrawing = () => {
+          clearInterval(canvasInterval);
+          canvasInterval = undefined;
+          if (typeof lastEffectWorkId === 'number') {
+            cancelAnimationFrame(lastEffectWorkId);
+            lastEffectWorkId = null;
+          }
         };
-        const onPlay = () => {
-          if (canvasInterval) clearInterval(canvasInterval);
-          canvasInterval = setInterval(
+        const startDrawing = () => {
+          if (canvasInterval) return;
+          canvasInterval = window.setInterval(
             onSync,
             Math.max(1, Math.ceil(1000 / this.buffer)),
           );
         };
-        songVideo.addEventListener('pause', onPause);
-        songVideo.addEventListener('play', onPlay);
+
+        // Media events fire on the <video> element itself, not on the
+        // #song-video wrapper div.
+        video.addEventListener('pause', stopDrawing);
+        video.addEventListener('play', startDrawing);
+        video.addEventListener('ended', stopDrawing);
+
+        // Do not draw a frozen frame if injected while already paused.
+        if (!video.paused) startDrawing();
 
         videoWrapper.prepend(blurCanvas);
 
         return () => {
-          if (canvasInterval) clearInterval(canvasInterval);
+          stopDrawing();
 
-          songVideo.removeEventListener('pause', onPause);
-          songVideo.removeEventListener('play', onPlay);
+          video.removeEventListener('pause', stopDrawing);
+          video.removeEventListener('play', startDrawing);
+          video.removeEventListener('ended', stopDrawing);
 
           if (blurCanvas.isConnected) blurCanvas.remove();
         };
@@ -268,7 +279,6 @@ export default createPlugin({
         return isVideo;
       };
 
-      const playerPage = document.querySelector<HTMLElement>('#player-page');
       const ytmusicAppLayout = document.querySelector<HTMLElement>('#layout');
 
       const injectBlurElement = (force?: boolean): boolean | void => {
@@ -296,22 +306,51 @@ export default createPlugin({
         }
       };
 
-      // View switches (e.g. miniplayer) only change attributes.
-      const observer = new MutationObserver((mutationsList) => {
-        for (const mutation of mutationsList) {
-          if (mutation.type === 'attributes') {
-            injectBlurElement(true);
-            break;
-          }
+      // Replaces the old 1 s ticker: these are the only inputs that change
+      // what should be drawn. The layout attribute flips on view switches
+      // (e.g. miniplayer), the song containers' style flips between video and
+      // image, and a new song changes the artwork's src. Only the roots are
+      // watched - never a subtree containing the injected elements - so the
+      // styles this plugin writes cannot feed back into the observer.
+      this.teardowns = [
+        observePlayerPage('#layout', {
+          attributes: ['player-page-open'],
+          callback: () => injectBlurElement(true),
+        }),
+        observePlayerPage('#player-page', {
+          attributes: ['style'],
+          callback: () => injectBlurElement(true),
+        }),
+        observePlayerPage('#song-video', {
+          attributes: ['style'],
+          callback: () => injectBlurElement(),
+        }),
+        observePlayerPage('#song-image yt-img-shadow > img', {
+          attributes: ['src'],
+          callback: () => injectBlurElement(),
+        }),
+      ];
+
+      const onVideoDataChange = (event: Event) => {
+        if (
+          (event as CustomEvent<VideoDataChanged>).detail?.name === 'dataloaded'
+        ) {
+          injectBlurElement();
         }
-      });
+      };
+      document.addEventListener('videodatachange', onVideoDataChange);
+      this.teardowns.push(() =>
+        document.removeEventListener('videodatachange', onVideoDataChange),
+      );
 
-      if (playerPage) {
-        observer.observe(playerPage, { attributes: true });
+      const onVideoSrcChanged = () => injectBlurElement();
+      video.addEventListener('peard:src-changed', onVideoSrcChanged);
+      this.teardowns.push(() =>
+        video.removeEventListener('peard:src-changed', onVideoSrcChanged),
+      );
 
-        // Fallback ticker for when the observer does not fire.
-        this.interval = setInterval(injectBlurElement, 1000);
-      }
+      // The first ticker tick, now immediate.
+      injectBlurElement();
     },
     onConfigChange(newConfig) {
       this.interpolationTime = newConfig.interpolationTime;
@@ -327,7 +366,9 @@ export default createPlugin({
     stop() {
       this.update = null;
       this.unregister?.();
-      if (this.interval) clearInterval(this.interval);
+      this.unregister = null;
+      for (const teardown of this.teardowns) teardown();
+      this.teardowns = [];
     },
   },
 });

@@ -6,6 +6,10 @@ import {
   unregisterCallback,
   type SongInfo,
 } from '@/providers/song-info';
+import {
+  SONG_INFO_SETUP_CHANNEL,
+  SongInfoEventFlag,
+} from '@/types/song-info-events';
 import { createBackend } from '@/utils';
 
 import { TIME_UPDATE_DEBOUNCE_MS } from './constants';
@@ -52,7 +56,7 @@ export const backend = createBackend<
     }
 
     ctx.ipc.on('peard:player-api-loaded', () => {
-      ctx.ipc.send('peard:setup-time-changed-listener');
+      ctx.ipc.send(SONG_INFO_SETUP_CHANNEL, SongInfoEventFlag.TimeChanged);
     });
 
     app.on('before-quit', () => {

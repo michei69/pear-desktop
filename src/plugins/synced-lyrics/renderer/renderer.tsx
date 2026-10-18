@@ -353,23 +353,56 @@ export const LyricsRenderer = () => {
   const [statuses, setStatuses] = createSignal<
     ('previous' | 'current' | 'upcoming')[]
   >([]);
+  // The tick runs at ~4 Hz; the status list only changes when the current line
+  // does. Remember what the last list described and skip the rebuild otherwise.
+  let statusLines: LineLyrics[] | null = null;
+  let statusIndex = -1;
+  let statusIsCurrent = false;
   createEffect(() => {
     const time = currentTime();
-    const data = currentLyrics()?.data;
+    const lines = currentLyrics()?.data?.lines;
 
-    if (!data || !data.lines) return setStatuses([]);
+    if (!lines) {
+      if (statusLines) {
+        statusLines = null;
+        statusIndex = -1;
+        setStatuses([]);
+      }
+      return;
+    }
 
-    const previous = untrack(statuses);
-    const current = data.lines.map((line) => {
-      if (line.timeInMs >= time) return 'upcoming';
-      if (time - line.timeInMs >= line.duration) return 'previous';
-      return 'current';
-    });
+    // Lines are time-ordered, so the only line that can be current is the last
+    // one that started before `time`; an upper-bound search finds it in
+    // O(log N) instead of mapping every line on every tick.
+    let low = 0;
+    let high = lines.length;
+    while (low < high) {
+      const mid = (low + high) >> 1;
+      if (lines[mid].timeInMs < time) low = mid + 1;
+      else high = mid;
+    }
+    const index = low - 1;
+    const isCurrent =
+      index >= 0 && time - lines[index].timeInMs < lines[index].duration;
 
-    if (previous.length !== current.length) return setStatuses(current);
-    if (previous.every((status, idx) => status === current[idx])) return;
+    if (
+      statusLines === lines &&
+      statusIndex === index &&
+      statusIsCurrent === isCurrent
+    ) {
+      return;
+    }
 
-    setStatuses(current);
+    const next = new Array<'previous' | 'current' | 'upcoming'>(
+      lines.length,
+    ).fill('upcoming');
+    for (let i = 0; i < index; i++) next[i] = 'previous';
+    if (index >= 0) next[index] = isCurrent ? 'current' : 'previous';
+
+    statusLines = lines;
+    statusIndex = index;
+    statusIsCurrent = isCurrent;
+    setStatuses(next);
     return;
   });
 

@@ -65,6 +65,7 @@ export default createPlugin({
 
     interval: null as NodeJS.Timeout | null,
     clockContainer: document.createElement('div'),
+    dispose: undefined as (() => void) | undefined,
     updateTime: null as unknown as () => void,
 
     async start({ getConfig }) {
@@ -94,7 +95,7 @@ export default createPlugin({
         this.interval = setInterval(updateTime, 1000);
       });
 
-      render(
+      this.dispose = render(
         () => (
           <>
             <h1 class="clock"> {time()} </h1>
@@ -111,6 +112,8 @@ export default createPlugin({
       this.updateTime();
     },
     stop() {
+      this.dispose?.();
+      this.dispose = undefined;
       this.clockContainer.remove();
       this.clockContainer.replaceChildren();
       if (this.interval) {

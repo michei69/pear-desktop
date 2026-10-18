@@ -8,12 +8,15 @@ import {
   isPlayerMenu,
 } from '@/plugins/utils/renderer/check';
 import { getSongMenu } from '@/providers/dom-elements';
+import { observePlayerPage } from '@/providers/player-page-observer';
 
 import { PictureInPictureButton } from './templates/picture-in-picture-button';
 
 import type { PictureInPicturePluginConfig } from './index';
 import type { RendererContext } from '@/types/contexts';
 import type { MusicPlayer } from '@/types/music-player';
+
+let unwatchPopup: (() => void) | null = null;
 
 export const onPlayerApiReady = async (
   _: MusicPlayer,
@@ -151,22 +154,28 @@ export const onPlayerApiReady = async (
     pipButtonContainer,
   );
 
-  const observer = new MutationObserver(() => {
-    const menu = getSongMenu();
-
-    if (
-      menu?.contains(pipButtonContainer) ||
-      !isMusicOrVideoTrack() ||
-      !isPlayerMenu(menu)
-    ) {
-      return;
-    }
-
-    menu?.prepend(pipButtonContainer);
-  });
-
-  observer.observe(document.querySelector('ytmusic-popup-container')!, {
+  unwatchPopup?.();
+  unwatchPopup = observePlayerPage('ytmusic-popup-container', {
     childList: true,
     subtree: true,
+    callback: () => {
+      const menu = getSongMenu();
+
+      if (
+        menu?.contains(pipButtonContainer) ||
+        !isMusicOrVideoTrack() ||
+        !isPlayerMenu(menu)
+      ) {
+        return;
+      }
+
+      menu?.prepend(pipButtonContainer);
+    },
   });
+};
+
+/** Leaves the shared observer; the plugin can be stopped without a reload. */
+export const onUnload = () => {
+  unwatchPopup?.();
+  unwatchPopup = null;
 };

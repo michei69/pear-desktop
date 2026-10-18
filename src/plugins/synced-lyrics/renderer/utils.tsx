@@ -6,7 +6,6 @@ import hanja from 'hanja';
 import Kuroshiro from 'kuroshiro';
 import KuromojiAnalyzer from 'kuroshiro-analyzer-kuromoji';
 import { lazy } from 'lazy-var';
-import { pinyin } from 'pinyin-pro';
 import { render } from 'solid-js/web';
 import { detect } from 'tinyld';
 
@@ -156,6 +155,10 @@ const kuroshiro = lazy(async () => {
   return _kuroshiro;
 });
 
+// `pinyin-pro` carries a large dictionary that non-Chinese lyrics never need,
+// so it is kept out of the static import graph and loaded on first use.
+const pinyin = lazy(async () => (await import('pinyin-pro')).pinyin);
+
 const hasJapanese = (lines: string[]) =>
   lines.some(
     (line) => Kuroshiro.Util.hasKana(line) || shinjitaiRegex.test(line),
@@ -187,9 +190,11 @@ export const romanizeJapanese = async (line: string) =>
 export const romanizeHangul = (line: string) =>
   esHangulRomanize(hanja.translate(line, 'SUBSTITUTION'));
 
-export const romanizeChinese = (line: string) => {
+export const romanizeChinese = async (line: string) => {
+  const toPinyin = await pinyin.get();
+
   return line.replaceAll(/[\u4E00-\u9FFF]+/g, (match) => {
-    return pinyin(match, { separator: ' ' });
+    return toPinyin(match, { separator: ' ' });
   });
 };
 
@@ -244,7 +249,7 @@ const handlers: Record<string, (line: string) => Promise<string> | string> = {
   hi: romanizeHindi,
 };
 
-export const romanize = async (line: string) => {
+const romanizeLine = async (line: string) => {
   const lang = detect(line);
 
   const handler = handlers[lang];
@@ -255,10 +260,32 @@ export const romanize = async (line: string) => {
   // fallback
   if (hasJapanese([line])) line = await romanizeJapanese(line);
   if (hasKorean([line])) line = romanizeHangul(line);
-  if (hasChinese([line])) line = romanizeChinese(line);
+  if (hasChinese([line])) line = await romanizeChinese(line);
   if (hasThai([line])) line = romanizeThai(line);
   if (hasBengali([line])) line = romanizeBengali(line);
   if (hasHindi([line])) line = romanizeHindi(line);
 
   return line;
+};
+
+// Bounded cache: romanization is pure per line text, so repeated lines
+// (choruses, re-mounted virtual rows) skip detection and transliteration.
+const romanizeCache = new Map<string, Promise<string>>();
+const ROMANIZE_CACHE_LIMIT = 512;
+
+export const romanize = (line: string) => {
+  const cached = romanizeCache.get(line);
+  if (cached) return cached;
+
+  const pending = romanizeLine(line);
+  // A transient failure (e.g. dictionary download) should not be cached.
+  pending.catch(() => romanizeCache.delete(line));
+
+  if (romanizeCache.size >= ROMANIZE_CACHE_LIMIT) {
+    const oldest = romanizeCache.keys().next().value;
+    if (oldest !== undefined) romanizeCache.delete(oldest);
+  }
+  romanizeCache.set(line, pending);
+
+  return pending;
 };

@@ -1,3 +1,4 @@
+import { clearAudioChain, setAudioChain } from '@/providers/audio-graph';
 import { createRenderer } from '@/utils';
 
 import {
@@ -451,21 +452,18 @@ export const renderer = createRenderer<
 
       // Only the renderer's own edge is removed, as the equalizer does it: another
       // plugin splices its chain the same way, so taking the whole node down would
-      // silence it.
-      source.disconnect(context.destination);
-      source.connect(gain);
-      gain.connect(context.destination);
+      // silence it. The shared owner wires source → gain → destination and keeps
+      // the other consumers' edges intact.
+      setAudioChain('crossfade', gain, gain);
 
       fadeInGain = gain;
       fadeInGainAttachedTo = source;
 
-      // Undoes the splice in an order where every `disconnect` names an existing
-      // edge: dropping the gain first would leave the source -> gain edge behind
-      // and play the track over two paths at once.
+      // Takes the gain back out; the owner restores the default path when no
+      // consumer is left in it.
       detachFadeInGain = () => {
-        source.disconnect(gain);
+        clearAudioChain('crossfade');
         gain.disconnect();
-        source.connect(context.destination);
       };
 
       // Audio fetched before the graph was announced still plays straight out of

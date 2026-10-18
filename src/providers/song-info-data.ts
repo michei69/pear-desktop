@@ -6,6 +6,91 @@ import type { GetPlayerResponse } from '@/types/get-player-response';
  * API server's v2 actions) build the exact same object.
  */
 
+/**
+ * The fields of a player response the song-info pipeline and its main-process
+ * listeners read. The renderer sends only this over IPC instead of the whole
+ * response (streaming URLs, captions, storyboards, …); a full
+ * `GetPlayerResponse` is still assignable to it.
+ */
+export interface SongInfoSource {
+  videoDetails?: {
+    videoId: string;
+    title: string;
+    author: string;
+    viewCount: string;
+    lengthSeconds: string;
+    elapsedSeconds: number;
+    isPaused: boolean;
+    musicVideoType: string;
+    album?: string | null;
+    thumbnail?: { thumbnails?: { url: string }[] };
+  };
+  microformat?: {
+    microformatDataRenderer?: {
+      urlCanonical?: string;
+      uploadDate?: string;
+      tags?: string[];
+      pageOwnerDetails?: { externalChannelId?: string; name?: string };
+      linkAlternates?: { title?: string }[];
+    };
+  };
+  responseContext?: {
+    serviceTrackingParams?: { params?: { key: string; value: string }[] }[];
+  };
+}
+
+/**
+ * Cuts a player response down to `SongInfoSource`. `album` is the player
+ * overlay's album title, which the response itself does not carry.
+ */
+export const toSongInfoSource = (
+  data: GetPlayerResponse,
+  album?: string | null,
+): SongInfoSource => {
+  const { videoDetails, microformat, responseContext } = data;
+  const micro = microformat?.microformatDataRenderer;
+  const trackingParams = responseContext?.serviceTrackingParams?.at(0)?.params;
+
+  return {
+    videoDetails: videoDetails && {
+      videoId: videoDetails.videoId,
+      title: videoDetails.title,
+      author: videoDetails.author,
+      viewCount: videoDetails.viewCount,
+      lengthSeconds: videoDetails.lengthSeconds,
+      // The renderer has no playback position for a new track yet.
+      elapsedSeconds: 0,
+      isPaused: false,
+      musicVideoType: videoDetails.musicVideoType,
+      album,
+      thumbnail: {
+        thumbnails: videoDetails.thumbnail?.thumbnails?.map(({ url }) => ({
+          url,
+        })),
+      },
+    },
+    // Absent blocks stay absent, so the derived fields keep their empty
+    // defaults instead of turning into `undefined`.
+    microformat: micro && {
+      microformatDataRenderer: {
+        urlCanonical: micro.urlCanonical,
+        uploadDate: micro.uploadDate,
+        tags: micro.tags,
+        pageOwnerDetails: micro.pageOwnerDetails && {
+          externalChannelId: micro.pageOwnerDetails.externalChannelId,
+          name: micro.pageOwnerDetails.name,
+        },
+        linkAlternates: micro.linkAlternates?.map(({ title }) => ({ title })),
+      },
+    },
+    responseContext: trackingParams && {
+      serviceTrackingParams: [
+        { params: trackingParams.map(({ key, value }) => ({ key, value })) },
+      ],
+    },
+  };
+};
+
 export enum MediaType {
   /** Audio uploaded by the original artist */
   Audio = 'AUDIO',
@@ -203,7 +288,7 @@ export const resolveScrobbleOptions = (
 
 /** Builds the unified song info from a player response. Pure. */ export const buildSongInfo =
   (
-    data: GetPlayerResponse | undefined,
+    data: SongInfoSource | undefined,
     options: BuildSongInfoOptions = {},
   ): SongInfoData | null => {
     if (!data) {
@@ -238,7 +323,8 @@ export const resolveScrobbleOptions = (
       songInfo.uploadDate = microformat.uploadDate;
       songInfo.url = microformat.urlCanonical?.split('&')[0];
       songInfo.playlistId =
-        URL.parse(microformat.urlCanonical)?.searchParams?.get('list') ?? '';
+        URL.parse(microformat.urlCanonical ?? '')?.searchParams?.get('list') ??
+        '';
       if (microformat.pageOwnerDetails?.externalChannelId) {
         songInfo.artistUrl = `https://music.\u0079\u006f\u0075\u0074\u0075\u0062\u0065.com/channel/${microformat.pageOwnerDetails.externalChannelId}`;
       }

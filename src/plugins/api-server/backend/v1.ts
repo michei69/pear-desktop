@@ -2,7 +2,7 @@ import { type OpenAPIHono, createRoute } from '@hono/zod-openapi';
 
 import { getSongControls } from '@/providers/song-controls';
 
-import { waitForIpcResponse } from './ipc';
+import { callRenderer, waitForIpcResponse } from './ipc';
 import {
   action,
   actionWithBody,
@@ -39,10 +39,11 @@ import { v1Tag } from './tags';
 import { createVersion } from './version';
 import { registerWebsocket } from './websocket';
 
+import { ApiActions, type NextQueueItemReply } from '../channels';
+
 import type { APIServerConfig } from '../config';
 import type { PlayerState } from './state';
 import type { BackendContext } from '@/types/contexts';
-import type { LikeType } from '@/types/datahost-get-state';
 import type { QueueResponse } from '@/types/music-player-desktop-internal';
 import type { Context } from 'hono';
 
@@ -321,10 +322,6 @@ const registerRoutes = (
   playerState: PlayerState,
 ) => {
   const controller = getSongControls(window);
-  const getLikeType = () =>
-    window.webContents.executeJavaScript(
-      'document.querySelector("#like-button-renderer")?.likeStatus',
-    ) as Promise<LikeType | undefined>;
 
   // Playback
   app.openapi(routes.previous, (ctx) => {
@@ -361,8 +358,8 @@ const registerRoutes = (
   });
 
   // Rating
-  app.openapi(routes.likeState, async (ctx) =>
-    ctx.json({ state: (await getLikeType()) ?? null }, 200),
+  app.openapi(routes.likeState, (ctx) =>
+    ctx.json({ state: playerState.rating }, 200),
   );
   app.openapi(routes.like, (ctx) => {
     controller.like();
@@ -430,11 +427,7 @@ const registerRoutes = (
       return noContent(ctx);
     }
 
-    // `image` is an Electron.NativeImage, which doesn't survive JSON.
-    const body = { ...info };
-    delete body.image;
-
-    return ctx.json(body satisfies ResponseSongInfo, 200);
+    return ctx.json(info satisfies ResponseSongInfo, 200);
   };
   app.openapi(routes.song, songInfo);
   app.openapi(routes.legacySong, songInfo);
@@ -456,44 +449,18 @@ const registerRoutes = (
   app.openapi(routes.legacyQueue, queueInfo);
 
   app.openapi(routes.nextSong, async (ctx) => {
-    const queue = await waitForIpcResponse<QueueResponse>(
-      'peard:get-queue-response',
-      () => controller.requestQueueInformation(),
+    // The renderer projects the entry to the five fields the route answers, so
+    // the whole queue never crosses IPC.
+    const next = await callRenderer<NextQueueItemReply | null>(
+      window,
+      ApiActions.getNextQueueItem,
     );
 
-    const items = queue?.items;
-    if (!items || items.length === 0) {
+    if (!next) {
       return noContent(ctx);
     }
 
-    const rendererAt = (index: number) => {
-      const item = items[index];
-      return (
-        item.playlistPanelVideoRenderer ||
-        item.playlistPanelVideoWrapperRenderer?.primaryRenderer
-          ?.playlistPanelVideoRenderer
-      );
-    };
-
-    const currentIndex = items.findIndex(
-      (_, index) => rendererAt(index)?.selected === true,
-    );
-    const nextRenderer = rendererAt(currentIndex + 1);
-
-    if (!nextRenderer) {
-      return noContent(ctx);
-    }
-
-    return ctx.json(
-      {
-        title: nextRenderer.title?.runs?.[0]?.text,
-        videoId: nextRenderer.videoId,
-        thumbnail: nextRenderer.thumbnail,
-        lengthText: nextRenderer.lengthText,
-        shortBylineText: nextRenderer.shortBylineText,
-      },
-      200,
-    );
+    return ctx.json(next, 200);
   });
 
   app.openapi(routes.addToQueue, (ctx) => {

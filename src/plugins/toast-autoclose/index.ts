@@ -52,14 +52,27 @@ export default createPlugin({
           .forEach(arm);
       };
 
+      const isToastRelated = (node: Node) => {
+        if (!(node instanceof Element)) return false;
+        // Cheap reject: `matches()` would hand a selector to the engine for
+        // every added and removed node.
+        if (node.localName === 'tp-yt-paper-toast') return true;
+        return (
+          node.closest('tp-yt-paper-toast') !== null ||
+          node.querySelector('tp-yt-paper-toast') !== null
+        );
+      };
+
+      const scheduleScan = () => {
+        if (this.frame !== null) return;
+        this.frame = requestAnimationFrame(() => {
+          this.frame = null;
+          scan();
+        });
+      };
+
       scan();
       this.observer = new MutationObserver((mutations) => {
-        const isToastRelated = (node: Node) =>
-          node instanceof Element &&
-          (node.matches('tp-yt-paper-toast') ||
-            node.closest('tp-yt-paper-toast') !== null ||
-            node.querySelector('tp-yt-paper-toast') !== null);
-
         if (
           mutations.some(
             ({ target, addedNodes, removedNodes }) =>
@@ -67,7 +80,7 @@ export default createPlugin({
               [...addedNodes, ...removedNodes].some(isToastRelated),
           )
         ) {
-          scan();
+          scheduleScan();
         }
       });
       this.observer.observe(root, {
@@ -82,11 +95,14 @@ export default createPlugin({
     stop() {
       this.observer?.disconnect();
       this.observer = null;
+      if (this.frame !== null) cancelAnimationFrame(this.frame);
+      this.frame = null;
       this.timers?.forEach((timer) => clearTimeout(timer));
       this.timers?.clear();
       this.timers = null;
     },
     observer: null as MutationObserver | null,
+    frame: null as number | null,
     timers: null as Map<Toast, ReturnType<typeof setTimeout>> | null,
   },
 });

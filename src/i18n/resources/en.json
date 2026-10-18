@@ -656,6 +656,7 @@
           "downloading-counter": "Downloading {{current}}/{{total}}…",
           "downloading-playlist": "Downloading playlist \"{{playlistTitle}}\" - {{playlistSize}} songs ({{playlistId}})",
           "error-while-downloading": "Error downloading \"{{author}} - {{title}}\": {{error}}",
+          "ffmpeg-missing": "FFmpeg was not found. Install FFmpeg and make sure `ffmpeg` is on your PATH to download in this format.",
           "folder-already-exists": "The folder {{playlistFolder}} already exists",
           "getting-playlist-info": "Getting playlist info…",
           "loading": "Loading…",
@@ -743,6 +744,14 @@
       "name": "Lyrics Genius",
       "renderer": {
         "fetched-lyrics": "Fetched lyrics for Genius"
+      }
+    },
+    "memory-saver": {
+      "description": "Clears the renderer's resource caches while the window is hidden once they grow past a threshold",
+      "name": "Memory Saver",
+      "settings": {
+        "threshold": "Cache threshold",
+        "threshold-description": "Clear the caches once their live memory exceeds this while the window is hidden"
       }
     },
     "music-together": {

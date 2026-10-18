@@ -19,8 +19,10 @@ export default createPlugin<
     observer?: MutationObserver;
     loadObserver?: MutationObserver;
     changeObserver?: MutationObserver;
+    countsTimer?: NodeJS.Timeout;
     waiting: boolean;
     onPageChange(): void;
+    updateCounts?: () => void;
     loadFullList: (event: MouseEvent) => void;
     applyToList(id: string, loader: HTMLElement): void;
     start(): void;
@@ -50,11 +52,21 @@ export default createPlugin<
     async onPageChange() {
       if (this.waiting) {
         return;
-      } else {
-        this.waiting = true;
       }
-      const continuations = await waitForElement<HTMLElement>('#continuations');
-      this.waiting = false;
+      this.waiting = true;
+      let continuations: HTMLElement | undefined;
+      try {
+        continuations = await waitForElement<HTMLElement>('#continuations');
+      } catch {
+        // Timed out; a later mutation re-runs this instead of wedging forever.
+        return;
+      } finally {
+        this.waiting = false;
+      }
+      if (!continuations) return;
+
+      // Counts from the previous page must not be reachable after this run.
+      this.updateCounts = undefined;
 
       const [showUnDislike, setShowUnDislike] = createSignal(true);
       const [showDislike, setShowDislike] = createSignal(true);
@@ -118,8 +130,11 @@ export default createPlugin<
       this.changeObserver?.disconnect();
 
       this.changeObserver = new MutationObserver(() => {
-        this.stop();
-        this.start();
+        // A single click mutates several attributes; coalesce them.
+        clearTimeout(this.countsTimer);
+        this.countsTimer = setTimeout(() => {
+          this.updateCounts?.();
+        }, 100);
       });
       const allButtons = playlist.querySelectorAll(
         'yt-button-shape.ytmusic-like-button-renderer',
@@ -132,21 +147,24 @@ export default createPlugin<
         });
       }
       // Only show the percentage bar when the playlist has like buttons.
-      const listsLength = playlist.querySelectorAll(
-        '#button-shape-dislike > button',
-      ).length;
-      if (continuations.children.length == 0 && listsLength > 0) {
+      const updateCounts = () => {
+        const listsLength = playlist.querySelectorAll(
+          '#button-shape-dislike > button',
+        ).length;
+        if (continuations.children.length !== 0 || listsLength === 0) {
+          return;
+        }
         const counts = {
-          dislike: playlist?.querySelectorAll(
+          dislike: playlist.querySelectorAll(
             '#button-shape-dislike > button[aria-pressed=true]',
           ).length,
-          undislike: playlist?.querySelectorAll(
+          undislike: playlist.querySelectorAll(
             '#button-shape-dislike > button[aria-pressed=false]',
           ).length,
-          unlike: playlist?.querySelectorAll(
+          unlike: playlist.querySelectorAll(
             '#button-shape-like > button[aria-pressed=false]',
           ).length,
-          like: playlist?.querySelectorAll(
+          like: playlist.querySelectorAll(
             '#button-shape-like > button[aria-pressed=true]',
           ).length,
         };
@@ -188,7 +206,9 @@ export default createPlugin<
               break;
           }
         }
-      }
+      };
+      this.updateCounts = updateCounts;
+      updateCounts();
       const menuParent =
         document.querySelector('#action-buttons')?.parentElement;
       if (menuParent && !document.querySelector('.like-menu')) {
@@ -260,6 +280,8 @@ export default createPlugin<
     stop() {
       this.observer?.disconnect();
       this.changeObserver?.disconnect();
+      clearTimeout(this.countsTimer);
+      this.updateCounts = undefined;
       for (const button of document.querySelectorAll('.like-menu')) {
         button.remove();
       }

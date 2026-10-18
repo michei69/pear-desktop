@@ -13,17 +13,18 @@ const updateDeviceList = async (
   const release = await DEVICES_MUTEX.acquire();
 
   try {
-    const newDevices: Record<string, string> = {};
+    const newDevices: [string, string][] = [];
     const devices = await navigator.mediaDevices.enumerateDevices();
     for (const device of devices) {
       if (device.kind !== 'audiooutput') continue;
 
-      newDevices[device.deviceId] = device.label;
+      newDevices.push([device.deviceId, device.label]);
     }
 
-    // clear because setConfig now does a merge
-    context.setConfig({ devices: undefined });
-    context.setConfig({ devices: newDevices });
+    // setConfig deep-merges objects, so a record would keep the ids of devices
+    // that are gone. An array is replaced wholesale, which is what clearing a
+    // device means here.
+    await context.setConfig({ devices: newDevices });
   } finally {
     release();
   }
@@ -58,7 +59,15 @@ export const renderer = createRenderer<
   async start(context) {
     this.options = await context.getConfig();
     try {
-      await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: true,
+        video: false,
+      });
+      // Only the permission grant is needed to expose device labels; holding
+      // the capture stream open would keep the microphone busy for nothing.
+      for (const track of stream.getTracks()) {
+        track.stop();
+      }
     } catch (error) {
       // No capture device or permission denied: the output sink can still be
       // set on the audio context, so carry on.

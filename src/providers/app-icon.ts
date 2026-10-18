@@ -20,7 +20,7 @@ export const shortcutIconPath = () => musicPlayerIconYtmIco;
 export const appIconPath = () =>
   useYtmIcons() ? musicPlayerIconYtm : musicPlayerIcon;
 
-// Window/taskbar icon: the multi-size .ico is crisper at the small taskbar sizes; the original logo's .ico is rendered from its 2200px master.
+// Window/taskbar icon: the multi-size .ico is crisper at the small taskbar sizes; the original logo's .ico is rendered from its 1024px master.
 export const windowIconPath = () => {
   if (useYtmIcons()) {
     return is.windows() ? musicPlayerIconYtmIco : musicPlayerIconYtm;

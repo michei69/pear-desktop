@@ -1,7 +1,7 @@
 import { t } from '@/i18n';
 
 import { getMusicQueueRenderer } from './song';
-import { mapQueueItem } from './utils';
+import { hasSameVideoIds, mapQueueItem } from './utils';
 
 import { getDefaultProfile, type Profile, type VideoData } from '../types';
 
@@ -110,6 +110,9 @@ export type QueueOptions = {
 };
 export type QueueEventListener = (event: ConnectionEventUnion) => void;
 
+/** Coalesces the bursts of `SYNC_QUEUE` that follow a join or a resync. */
+const SYNC_DEBOUNCE_MS = 100;
+
 export class Queue {
   private readonly queue: QueueElement;
 
@@ -124,6 +127,15 @@ export class Queue {
 
   private owner: Profile | null;
   private readonly getProfile: (id: string) => Profile | undefined;
+
+  /** Set while a queued `syncVideo` fetch is waiting for the debounce. */
+  private syncTimeout?: number;
+  /** Set while an owner-marker patch is waiting for the next frame. */
+  private ownerFrame?: number;
+  /** Last owner data written per rendered row, to skip unchanged rows. */
+  private ownerSignatures = new WeakMap<HTMLElement, string>();
+  /** `selectedIndex` scans every queue item, so it is cached until a dispatch. */
+  private cachedSelectedIndex?: number;
 
   constructor(options: QueueOptions) {
     this.getProfile = options.getProfile;
@@ -141,12 +153,12 @@ export class Queue {
   }
 
   get selectedIndex() {
-    return (
-      mapQueueItem(
-        (it) => it?.selected,
-        this.queue.queue.store.store.getState().queue.items,
-      ).findIndex(Boolean) ?? 0
-    );
+    this.cachedSelectedIndex ??= mapQueueItem(
+      (it) => it?.selected,
+      this.queue.queue.store.store.getState().queue.items,
+    ).findIndex(Boolean);
+
+    return this.cachedSelectedIndex;
   }
 
   get rawItems() {
@@ -162,10 +174,25 @@ export class Queue {
   }
 
   /* public */
-  async setVideoList(videoList: VideoData[], sync = true) {
+  setVideoList(videoList: VideoData[], sync = true) {
+    const sameVideos = hasSameVideoIds(videoList, this._videoList);
+
     this._videoList = videoList;
 
-    if (sync) await this.syncVideo();
+    if (!sync) return;
+
+    // A repeated full sync (the host re-sends on joins and permission
+    // rejections) does not need another `/music/get_queue` fetch or re-render.
+    if (sameVideos) {
+      this.syncQueueOwner();
+      return;
+    }
+
+    clearTimeout(this.syncTimeout);
+    this.syncTimeout = window.setTimeout(async () => {
+      this.syncTimeout = undefined;
+      await this.syncVideo();
+    }, SYNC_DEBOUNCE_MS);
   }
 
   async addVideos(videos: VideoData[], index?: number) {
@@ -293,9 +320,15 @@ export class Queue {
       return;
     }
 
-    if (this.originalDispatch)
-      this.queue.queue.store.store.dispatch = this
-        .originalDispatch as Store['dispatch'];
+    clearTimeout(this.syncTimeout);
+    this.syncTimeout = undefined;
+    this.cachedSelectedIndex = undefined;
+
+    if (!this.originalDispatch) return;
+
+    this.queue.queue.store.store.dispatch = this
+      .originalDispatch as Store['dispatch'];
+    this.originalDispatch = undefined;
   }
 
   injection() {
@@ -304,8 +337,16 @@ export class Queue {
       return;
     }
 
+    // Re-enabling the plugin must not wrap the already-wrapped dispatch: the
+    // second wrap would capture the first as "original" and broadcast twice.
+    if (this.originalDispatch) return;
+
+    this.cachedSelectedIndex = undefined;
     this.originalDispatch = this.queue.queue.store.store.dispatch;
     this.queue.queue.store.store.dispatch = (event) => {
+      // Selection can change through any queue dispatch.
+      this.cachedSelectedIndex = undefined;
+
       if (!this.queue || !this.owner) {
         console.error('Queue is not initialized!');
         return;
@@ -537,6 +578,15 @@ export class Queue {
   }
 
   syncQueueOwner() {
+    if (this.ownerFrame !== undefined) return;
+
+    this.ownerFrame = requestAnimationFrame(() => {
+      this.ownerFrame = undefined;
+      this.patchQueueOwner();
+    });
+  }
+
+  private patchQueueOwner() {
     const allQueue = document.querySelectorAll('#queue');
 
     allQueue.forEach((queue) => {
@@ -552,6 +602,27 @@ export class Queue {
         const id = this._videoList[index]?.ownerId;
         let data = this.getProfile(id);
 
+        const nameText =
+          data?.name ?? t('plugins.music-together.internal.unknown-user');
+
+        if (!data?.name && !data?.handleId) {
+          data = getDefaultProfile(data?.id ?? '');
+        }
+
+        // Rows keep their identity across renders; only rewrite a row whose
+        // owner data (or position) actually changed.
+        const signature = [
+          index,
+          id,
+          nameText,
+          data?.id,
+          data?.name,
+          data?.thumbnail,
+          data?.handleId,
+        ].join('\u0000');
+        if (this.ownerSignatures.get(item) === signature) return;
+        this.ownerSignatures.set(item, signature);
+
         const profile =
           item.querySelector<HTMLImageElement>('.music-together-owner') ??
           document.createElement('img');
@@ -563,12 +634,7 @@ export class Queue {
           item.querySelector<HTMLElement>('.music-together-name') ??
           document.createElement('div');
         name.classList.add('music-together-name');
-        name.textContent =
-          data?.name ?? t('plugins.music-together.internal.unknown-user');
-
-        if (!data?.name && !data?.handleId) {
-          data = getDefaultProfile(data?.id ?? '');
-        }
+        name.textContent = nameText;
 
         if (data) {
           profile.dataset.thumbnail = data.thumbnail ?? '';
@@ -588,6 +654,13 @@ export class Queue {
   }
 
   removeQueueOwner() {
+    if (this.ownerFrame !== undefined) {
+      cancelAnimationFrame(this.ownerFrame);
+      this.ownerFrame = undefined;
+    }
+    // Markers are gone, so a later sync must write every row again.
+    this.ownerSignatures = new WeakMap();
+
     const allQueue = document.querySelectorAll('#queue');
 
     allQueue.forEach((queue) => {

@@ -21,12 +21,21 @@ let songInfoCallback:
   | ((songInfo: SongInfo, event: SongInfoEvent) => void)
   | null = null;
 let disposeHoverPopup: (() => void) | null = null;
+let disposeInteractive: (() => void) | null = null;
+// The track the last toast was for; artwork decoding is async, so a toast that
+// lands after a track change is dropped instead of shown stale.
+let currentUrl: string | undefined;
 
-const notify = (info: SongInfo) => {
+const notify = async (info: SongInfo) => {
+  const icon = await notificationImage(info, config);
+  if (info.url !== currentUrl) {
+    return undefined;
+  }
+
   const currentNotification = new Notification({
     title: info.title || 'Playing',
     body: info.artist,
-    icon: notificationImage(info, config),
+    icon,
     silent: true,
     urgency: config.urgency,
   });
@@ -42,7 +51,6 @@ const notify = (info: SongInfo) => {
 
 const setup = () => {
   let oldNotification: Notification;
-  let currentUrl: string | undefined;
 
   songInfoCallback = (songInfo: SongInfo, event) => {
     if (
@@ -54,7 +62,11 @@ const setup = () => {
       currentUrl = songInfo.url;
       // The 10ms delay stops the notification being updated instead of shown.
       setTimeout(() => {
-        oldNotification = notify(songInfo);
+        notify(songInfo).then((notification) => {
+          if (notification) {
+            oldNotification = notification;
+          }
+        });
       }, 10);
     }
   };
@@ -68,7 +80,7 @@ export const onMainLoad = async (
   mainWindow = context.window;
   config = await context.getConfig();
   if (is.windows() && config.interactive)
-    interactive(context.window, () => config, context);
+    disposeInteractive = interactive(context.window, () => config, context);
   else setup();
 
   if (config.hoverControls) {
@@ -89,6 +101,11 @@ export const onConfigChange = (newConfig: NotificationsPluginConfig) => {
 };
 
 export const onStop = () => {
+  // Interactive mode owns its own song-info callback; it is not the module-level
+  // one, so it must be disposed through the function it returned.
+  disposeInteractive?.();
+  disposeInteractive = null;
+  currentUrl = undefined;
   if (songInfoCallback) {
     unregisterCallback(songInfoCallback);
     songInfoCallback = null;

@@ -11,6 +11,11 @@ let sendLyrics: (() => void) | undefined;
 let sendInFlight = false;
 let sendRequested = false;
 let lastPayload: string | undefined;
+/**
+ * The plugin config, kept here so the 4 Hz send can compare its payload without
+ * an IPC round-trip first. Refreshed by `onConfigChange`.
+ */
+let pluginConfig: StatusbarLyricsPluginConfig | undefined;
 let isPlaying = false;
 let resetLineBaseline = true;
 let playbackSubscriptions: Array<() => void> = [];
@@ -220,7 +225,10 @@ export const renderer = createRenderer({
   // Push the current line to the backend on DOM, playback and timer changes
   start(ctx) {
     const send = async () => {
-      const config = (await ctx.getConfig()) as StatusbarLyricsPluginConfig;
+      const config =
+        pluginConfig ??
+        ((await ctx.getConfig()) as StatusbarLyricsPluginConfig);
+      pluginConfig = config;
       const text = pollLyrics(config.includePronunciation);
       const payload =
         config.enabled && text ? `${config.maxLength}\u0000${text}` : '';
@@ -292,6 +300,10 @@ export const renderer = createRenderer({
 
     subscribeToPlayback();
   },
+  onConfigChange(newConfig) {
+    pluginConfig = newConfig as StatusbarLyricsPluginConfig;
+    sendLyrics?.();
+  },
   stop() {
     if (timer) {
       window.clearInterval(timer);
@@ -304,6 +316,7 @@ export const renderer = createRenderer({
     unsubscribeFromPlayback();
 
     sendLyrics = undefined;
+    pluginConfig = undefined;
     resetLineState();
     resetPlaybackState();
     resetSendState();

@@ -1,5 +1,4 @@
-import { Mutex } from 'async-mutex';
-import { type BrowserWindow, ipcMain, nativeImage, net } from 'electron';
+import { app, type BrowserWindow, ipcMain, nativeImage, net } from 'electron';
 
 import * as config from '@/config';
 
@@ -8,17 +7,17 @@ import {
   resolveScrobbleOptions,
   type ScrobbleOptions,
   type SongInfoData,
+  type SongInfoSource,
 } from './song-info-data';
-
-import type { GetPlayerResponse } from '@/types/get-player-response';
 
 export { MediaType, cleanupName } from './song-info-data';
 
-export interface SongInfo extends SongInfoData {
-  image?: Electron.NativeImage | null;
-}
+export type SongInfo = SongInfoData;
 
-export const getImage = async (
+const IMAGE_CACHE_LIMIT = 10;
+const imageCache = new Map<string, Promise<Electron.NativeImage>>();
+
+const fetchImage = async (
   src: string,
   depth = 0,
 ): Promise<Electron.NativeImage> => {
@@ -35,16 +34,53 @@ export const getImage = async (
     if (nextSrc === src) {
       return output;
     }
-    return getImage(nextSrc, depth + 1);
+    return fetchImage(nextSrc, depth + 1);
   }
 
   return output;
 };
 
-const handleData = async (
-  data: GetPlayerResponse,
+/**
+ * Decodes an image URL once: callers that need pixels (notifications, the
+ * TouchBar, the Windows media control) share a small LRU cache instead of
+ * fetching and decoding the same album art again. Rejections are not cached, so
+ * a transient network failure can be retried.
+ */
+export const getImage = (src: string): Promise<Electron.NativeImage> => {
+  const cached = imageCache.get(src);
+  if (cached) {
+    // Re-insert so the map stays in least-recently-used order.
+    imageCache.delete(src);
+    imageCache.set(src, cached);
+    return cached;
+  }
+
+  const pending = fetchImage(src).catch((error: unknown) => {
+    imageCache.delete(src);
+    throw error;
+  });
+  imageCache.set(src, pending);
+  if (imageCache.size > IMAGE_CACHE_LIMIT) {
+    const oldest = imageCache.keys().next().value;
+    if (oldest !== undefined) {
+      imageCache.delete(oldest);
+    }
+  }
+
+  return pending;
+};
+
+// The URL of the playing track, kept in memory so every song change does not
+// rewrite the config file (and wake every store watcher). Persisted on quit.
+let currentUrl: string | undefined;
+
+/** The current track URL, falling back to the last one persisted on quit. */
+export const getCurrentUrl = () => currentUrl ?? config.get('url');
+
+const handleData = (
+  data: SongInfoSource,
   win: Electron.BrowserWindow,
-): Promise<SongInfo | null> => {
+): SongInfo | null => {
   // The raw store holds only what the user changed, so the defaults have to be
   // merged back in — the plugin loader's deepmerge used to do it.
   const scrobbleOptions = resolveScrobbleOptions(
@@ -62,15 +98,9 @@ const handleData = async (
     return null;
   }
 
-  // Used for options.resumeOnStart
-  const canonical = data.microformat?.microformatDataRenderer?.urlCanonical;
-  if (canonical && config.get('url') !== canonical) {
-    config.set('url', canonical);
-  }
-
-  if (songInfo.imageSrc) {
-    songInfo.image = await getImage(songInfo.imageSrc);
-  }
+  // Used for options.resumeOnStart; persisted on quit, not per track.
+  currentUrl =
+    data.microformat?.microformatDataRenderer?.urlCanonical || currentUrl;
 
   if (data.videoDetails) {
     win.webContents.send('peard:update-song-info', songInfo);
@@ -101,68 +131,55 @@ export const unregisterCallback = (callback: SongInfoCallback) => {
 };
 
 const registerProvider = (win: BrowserWindow) => {
-  const dataMutex = new Mutex();
   let songInfo: SongInfo | null = null;
 
-  // Fired when song-info-front finds a new request with song data
-  ipcMain.on('peard:video-src-changed', async (_, data: GetPlayerResponse) => {
-    const tempSongInfo = await dataMutex.runExclusive<SongInfo | null>(
-      async () => {
-        songInfo = await handleData(data, win);
-        return songInfo;
-      },
-    );
-
-    if (tempSongInfo) {
-      for (const c of callbacks) {
-        c(tempSongInfo, SongInfoEvent.VideoSrcChanged);
-      }
+  // The last played URL is the only config value the song-change path used to
+  // write; flush it once instead of rewriting the store per track.
+  app.on('before-quit', () => {
+    if (currentUrl !== undefined) {
+      config.set('url', currentUrl);
     }
+  });
+
+  const emit = (event: SongInfoEvent) => {
+    if (!songInfo) return;
+
+    for (const c of callbacks) {
+      c(songInfo, event);
+    }
+  };
+
+  // Fired when song-info-front finds a new request with song data
+  ipcMain.on('peard:video-src-changed', (_, data: SongInfoSource) => {
+    songInfo = handleData(data, win);
+    // Other main-process listeners on this channel (MPRIS's raw handler) run
+    // after this one, in registration order, and set the state the callbacks
+    // validate against — the old async handler deferred them past the whole
+    // dispatch. Keep that ordering rather than emitting inside the handler.
+    queueMicrotask(() => emit(SongInfoEvent.VideoSrcChanged));
   });
   ipcMain.on(
     'peard:play-or-paused',
-    async (
+    (
       _,
       {
         isPaused,
         elapsedSeconds,
       }: { isPaused: boolean; elapsedSeconds: number },
     ) => {
-      const tempSongInfo = await dataMutex.runExclusive<SongInfo | null>(() => {
-        if (!songInfo) {
-          return null;
-        }
+      if (!songInfo) return;
 
-        songInfo.isPaused = isPaused;
-        songInfo.elapsedSeconds = elapsedSeconds;
-
-        return songInfo;
-      });
-
-      if (tempSongInfo) {
-        for (const c of callbacks) {
-          c(tempSongInfo, SongInfoEvent.PlayOrPaused);
-        }
-      }
+      songInfo.isPaused = isPaused;
+      songInfo.elapsedSeconds = elapsedSeconds;
+      emit(SongInfoEvent.PlayOrPaused);
     },
   );
 
-  ipcMain.on('peard:time-changed', async (_, seconds: number) => {
-    const tempSongInfo = await dataMutex.runExclusive<SongInfo | null>(() => {
-      if (!songInfo) {
-        return null;
-      }
+  ipcMain.on('peard:time-changed', (_, seconds: number) => {
+    if (!songInfo) return;
 
-      songInfo.elapsedSeconds = seconds;
-
-      return songInfo;
-    });
-
-    if (tempSongInfo) {
-      for (const c of callbacks) {
-        c(tempSongInfo, SongInfoEvent.TimeChanged);
-      }
-    }
+    songInfo.elapsedSeconds = seconds;
+    emit(SongInfoEvent.TimeChanged);
   });
 };
 

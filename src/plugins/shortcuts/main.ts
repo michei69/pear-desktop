@@ -4,7 +4,7 @@ import { register as registerElectronLocalShortcut } from 'electron-localshortcu
 
 import { getSongControls } from '@/providers/song-controls';
 
-import { registerMPRIS } from './mpris';
+import { registerMPRIS, unregisterMPRIS } from './mpris';
 
 import type { ShortcutMappingType, ShortcutsPluginConfig } from './index';
 import type { BackendContext } from '@/types/contexts';
@@ -90,4 +90,8 @@ export const onMainLoad = async ({
       }
     }
   }
+};
+
+export const onMainStop = () => {
+  unregisterMPRIS();
 };

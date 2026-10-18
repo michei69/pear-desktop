@@ -6,8 +6,6 @@
  * https://github.com/gorhill/uBlock/blob/5de0ce975753b7565759ac40983d31978d1f84ca/assets/resources/scriptlets.js#L704
  */
 
-import type { ContextBridge } from 'electron';
-
 interface PrunableResponse {
   playerAds?: unknown;
   adPlacements?: unknown;
@@ -19,8 +17,26 @@ interface PrunableResponse {
 
 type PropertyOwner = Record<string, unknown>;
 
-const pruneReelWatchAds = (response: PrunableResponse) => {
-  const pruneEntries = (entries: unknown) => {
+interface TrapHandler {
+  v: unknown;
+  init(value: unknown): boolean;
+  getter(): unknown;
+  setter(value: unknown): void;
+}
+
+let injected = false;
+
+export const isInjected = (): boolean => injected;
+
+export const pruneResponse = (value: unknown): unknown => {
+  // JSON.parse and Response.json also return null, primitives and arrays.
+  // Those are not player responses and must retain normal JSON semantics.
+  if (typeof value !== 'object' || value === null || Array.isArray(value))
+    return value;
+
+  // This function is injected as source into the page world (see
+  // `prunerScript`), so it must stay self-contained and close over nothing.
+  const pruneReelWatchEntries = (entries: unknown) => {
     if (!Array.isArray(entries)) return;
 
     for (const entry of entries) {
@@ -42,33 +58,6 @@ const pruneReelWatchAds = (response: PrunableResponse) => {
     }
   };
 
-  pruneEntries(response.entries);
-  if (
-    typeof response.reelWatchSequenceResponse === 'object' &&
-    response.reelWatchSequenceResponse !== null
-  ) {
-    pruneEntries(
-      (response.reelWatchSequenceResponse as PrunableResponse).entries,
-    );
-  }
-};
-
-interface TrapHandler {
-  v: unknown;
-  init(value: unknown): boolean;
-  getter(): unknown;
-  setter(value: unknown): void;
-}
-
-let injected = false;
-
-export const isInjected = (): boolean => injected;
-
-export const pruneResponse = (value: unknown): unknown => {
-  // JSON.parse and Response.json also return null, primitives and arrays.
-  // Those are not player responses and must retain normal JSON semantics.
-  if (typeof value !== 'object' || value === null || Array.isArray(value))
-    return value;
   const response = value as PrunableResponse;
   for (const target of [
     response,
@@ -81,13 +70,37 @@ export const pruneResponse = (value: unknown): unknown => {
     delete target.adPlacements;
     delete target.adSlots;
   }
-  pruneReelWatchAds(response);
+  pruneReelWatchEntries(response.entries);
+  if (
+    typeof response.reelWatchSequenceResponse === 'object' &&
+    response.reelWatchSequenceResponse !== null
+  ) {
+    pruneReelWatchEntries(
+      (response.reelWatchSequenceResponse as PrunableResponse).entries,
+    );
+  }
   return response;
 };
 
-export const inject = (contextBridge: ContextBridge): void => {
+/**
+ * Page-world pruner installed by the plugin's preload script. The pruner is
+ * stringified so it runs in the same world as `JSON.parse`: no `contextBridge`
+ * crossing and no deep copy of every parsed response.
+ */
+export const prunerScript = `const _pruneResponse = ${pruneResponse.toString()};
+JSON.parse = new Proxy(JSON.parse, {
+  apply() {
+    return _pruneResponse(Reflect.apply(...arguments));
+  },
+});
+Response.prototype.json = new Proxy(Response.prototype.json, {
+  apply() {
+    return Reflect.apply(...arguments).then((value) => _pruneResponse(value));
+  },
+}); 0`;
+
+export const inject = (): void => {
   injected = true;
-  contextBridge.exposeInMainWorld('_pruner', pruneResponse);
 
   const chains = [
     {

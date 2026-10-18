@@ -13,8 +13,13 @@ import {
   registerCallback,
   type SongInfo,
   SongInfoEvent,
+  unregisterCallback,
 } from '@/providers/song-info';
 import { mediaIcons } from '@/types/media-icons';
+import {
+  SONG_INFO_SETUP_CHANNEL,
+  SongInfoEventFlag,
+} from '@/types/song-info-events';
 
 import { isHoverPopupVisible } from './hover-popup';
 import {
@@ -37,8 +42,10 @@ export default (
   config: Accessor<NotificationsPluginConfig>,
   { ipc: { on, send } }: BackendContext<NotificationsPluginConfig>,
 ) => {
-  const sendNotification = (songInfo: SongInfo) => {
-    const iconSrc = notificationImage(songInfo, config());
+  const sendNotification = async (songInfo: SongInfo) => {
+    const iconSrc = await notificationImage(songInfo, config());
+    // A track change while the artwork decoded makes this toast stale.
+    if (songInfo.url !== lastUrl) return;
 
     // Capture it locally so the old toast's async 'close' can't null a newer one.
     const previousNotification = savedNotification;
@@ -287,15 +294,16 @@ export default (
 
   let currentSeconds = 0;
   on('peard:player-api-loaded', () =>
-    send('peard:setup-time-changed-listener'),
+    send(SONG_INFO_SETUP_CHANNEL, SongInfoEventFlag.TimeChanged),
   );
 
   let savedSongInfo: SongInfo;
   let lastUrl: string | undefined;
 
-  registerCallback((songInfo, event) => {
+  const songInfoCallback = (songInfo: SongInfo, event: SongInfoEvent) => {
     if (event === SongInfoEvent.TimeChanged) {
       currentSeconds = songInfo.elapsedSeconds ?? 0;
+      return;
     }
     if (!songInfo.artist && !songInfo.title) {
       return;
@@ -312,7 +320,9 @@ export default (
         sendNotification(songInfo);
       }
     }
-  });
+  };
+
+  registerCallback(songInfoCallback);
 
   app.once('before-quit', () => {
     savedNotification?.close();
@@ -336,4 +346,6 @@ export default (
       }
     }
   });
+
+  return () => unregisterCallback(songInfoCallback);
 };

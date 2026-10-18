@@ -59,6 +59,7 @@ declare module 'butterchurn' {
   interface ButterchurnOptions {
     width?: number;
     height?: number;
+    pixelRatio?: number;
     onlyUseWASM?: boolean;
   }
 
@@ -69,6 +70,8 @@ declare module 'butterchurn' {
       options?: ButterchurnOptions,
     ): Visualizer;
   }
+
+  export { Visualizer };
 }
 
 declare module 'butterchurn-presets' {

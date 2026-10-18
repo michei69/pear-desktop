@@ -6,6 +6,7 @@ import {
   song,
   startStubbing,
   stopStubbing,
+  uninstallDom,
   watchNextPage,
   withWatchNext,
 } from './harness';
@@ -188,6 +189,7 @@ test.beforeAll(async () => {
 
 test.afterAll(() => {
   stopStubbing();
+  uninstallDom();
 });
 
 test.beforeEach(() => {

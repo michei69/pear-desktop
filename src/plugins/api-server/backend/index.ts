@@ -5,6 +5,10 @@ import { createServer as createHttpsServer } from 'node:https';
 import { serve, type ServerType } from '@hono/node-server';
 import { WebSocketServer } from 'ws';
 
+import {
+  SONG_INFO_SETUP_CHANNEL,
+  SongInfoEventFlag,
+} from '@/types/song-info-events';
 import { LoggerPrefix, createBackend } from '@/utils';
 
 import { buildApp } from './app';
@@ -19,15 +23,14 @@ import type { OpenAPIHono } from '@hono/zod-openapi';
  * current. Requested again on every `player-api-loaded`, since the renderer
  * reloads independently of this plugin.
  */
-const RENDERER_SETUP_CHANNELS = [
-  'peard:setup-seeked-listener',
-  'peard:setup-time-changed-listener',
-  'peard:setup-repeat-changed-listener',
-  'peard:setup-volume-changed-listener',
-  'peard:setup-shuffle-changed-listener',
-  'peard:setup-like-changed-listener',
-  'peard:setup-playback-speed-changed-listener',
-];
+const PLAYER_STATE_EVENTS =
+  SongInfoEventFlag.Seeked |
+  SongInfoEventFlag.TimeChanged |
+  SongInfoEventFlag.RepeatChanged |
+  SongInfoEventFlag.VolumeChanged |
+  SongInfoEventFlag.ShuffleChanged |
+  SongInfoEventFlag.LikeChanged |
+  SongInfoEventFlag.PlaybackSpeedChanged;
 
 /** Config changes that require rebuilding the HTTP server. */
 const SERVER_KEYS = [
@@ -62,9 +65,7 @@ export const backend = createBackend<BackendType, APIServerConfig>({
     const unsubscribePlayerApiLoaded = subscribeIpc(
       'peard:player-api-loaded',
       () => {
-        for (const channel of RENDERER_SETUP_CHANNELS) {
-          ctx.ipc.send(channel);
-        }
+        ctx.ipc.send(SONG_INFO_SETUP_CHANNEL, PLAYER_STATE_EVENTS);
       },
     );
 
@@ -82,6 +83,11 @@ export const backend = createBackend<BackendType, APIServerConfig>({
 
   async stop() {
     await this.end();
+    // The WebSocket subscriptions outlive the HTTP server, so they are released
+    // here, once, rather than in `end()` — which also runs when a config change
+    // restarts the server under the same app.
+    this.stopWebsocket?.();
+    this.stopWebsocket = undefined;
     this.detachRenderer?.();
     this.detachRenderer = undefined;
     this.playerState?.stop();
@@ -142,7 +148,6 @@ export const backend = createBackend<BackendType, APIServerConfig>({
     this.server = undefined;
 
     this.playerState?.notifyStopped();
-    this.stopWebsocket?.();
 
     if (!server) {
       return;

@@ -30,12 +30,7 @@ import {
 import { providers } from '../providers/renderer';
 
 import type { NextData } from '../providers/YTMusic';
-import type {
-  LineLyrics,
-  LyricProvider,
-  LyricResult,
-  SearchSongInfo,
-} from '../types';
+import type { LineLyrics, LyricResult, SearchSongInfo } from '../types';
 import type { SongInfo } from '@/providers/song-info';
 import type { QueueItem } from '@/types/datahost-get-state';
 import type { MusicPlayerAppElement } from '@/types/music-player-app-element';
@@ -178,38 +173,39 @@ const alignSyncedTranslations = (
   translationLines: LineLyrics[],
 ): string[] | null => {
   const output = sourceLines.map(() => '');
-  const used = new Set<number>();
+  const translations = translationLines.filter((line) => line.text.trim());
+  const sourceTextLines = sourceLines.filter((line) => line.text.trim()).length;
   let matches = 0;
+  let translationIndex = 0;
 
+  // Both lists are time-ordered, so one pass pairs each source line with the
+  // closest unused translation: the pointer only moves forward. The previous
+  // nested loop compared every pair and was quadratic in the line count.
   for (const [sourceIndex, sourceLine] of sourceLines.entries()) {
     if (!sourceLine.text.trim()) continue;
 
-    let bestIndex = -1;
-    let bestDelta = Number.POSITIVE_INFINITY;
-    for (const [
-      translationIndex,
-      translationLine,
-    ] of translationLines.entries()) {
-      if (used.has(translationIndex) || !translationLine.text.trim()) continue;
-      const delta = Math.abs(translationLine.timeInMs - sourceLine.timeInMs);
-      if (delta < bestDelta) {
-        bestDelta = delta;
-        bestIndex = translationIndex;
-      }
+    while (translationIndex < translations.length) {
+      const current = translations[translationIndex];
+      const next = translations[translationIndex + 1];
+      if (!next) break;
+
+      const currentDelta = Math.abs(current.timeInMs - sourceLine.timeInMs);
+      const nextDelta = Math.abs(next.timeInMs - sourceLine.timeInMs);
+      if (nextDelta >= currentDelta) break;
+      translationIndex++;
     }
 
-    if (bestIndex !== -1 && bestDelta <= 350) {
-      used.add(bestIndex);
-      output[sourceIndex] = translationLines[bestIndex].text.trim();
+    const translation = translations[translationIndex];
+    if (!translation) break;
+
+    if (Math.abs(translation.timeInMs - sourceLine.timeInMs) <= 350) {
+      output[sourceIndex] = translation.text.trim();
       matches += 1;
+      translationIndex++;
     }
   }
 
-  const sourceTextLines = sourceLines.filter((line) => line.text.trim()).length;
-  const translationTextLines = translationLines.filter((line) =>
-    line.text.trim(),
-  ).length;
-  const comparableLines = Math.min(sourceTextLines, translationTextLines);
+  const comparableLines = Math.min(sourceTextLines, translations.length);
   if (matches >= 3 && matches / Math.max(1, comparableLines) >= 0.6) {
     return output;
   }
@@ -310,44 +306,67 @@ const createSearchCache = (videoId: string): SearchCache => {
   return cache;
 };
 
+/** One provider's search, recording its answer on `data`. */
+const searchProvider = (
+  name: ProviderName,
+  info: SearchSongInfo,
+  data: SearchCacheData,
+  onResult?: (provider: ProviderName, state: ProviderState) => void,
+): Promise<void> =>
+  providers[name]
+    .search(info)
+    .then((res) => {
+      const state: ProviderState = {
+        state: 'done',
+        data: res,
+        error: null,
+      };
+      data[name] = state;
+      onResult?.(name, state);
+    })
+    .catch((error: Error) => {
+      console.error(error);
+      const state: ProviderState = { state: 'error', data: null, error };
+      data[name] = state;
+      onResult?.(name, state);
+    });
+
 /**
- * Start every provider's search for `info`, recording each answer on `data`.
- * `onResult` sees the same state that was cached, so the lyrics store can follow
- * along without this helper knowing about it.
+ * Start the starred or highest-priority provider first and fan out to the rest
+ * once it answers: the picker only needs a fallback when the first one has
+ * nothing, so four provider searches stay off the network until then. They are
+ * deferred, not dropped — the default quality ranking still needs them.
  */
 const searchProviders = (
   info: SearchSongInfo,
   data: SearchCacheData,
   onResult?: (provider: ProviderName, state: ProviderState) => void,
-): Promise<void>[] =>
-  (Object.entries(providers) as [ProviderName, LyricProvider][]).map(
-    ([name, provider]) =>
-      provider
-        .search(info)
-        .then((res) => {
-          const state: ProviderState = {
-            state: 'done',
-            data: res,
-            error: null,
-          };
-          data[name] = state;
-          onResult?.(name, state);
-        })
-        .catch((error: Error) => {
-          console.error(error);
-          const state: ProviderState = { state: 'error', data: null, error };
-          data[name] = state;
-          onResult?.(name, state);
-        }),
-  );
+): Promise<void> => {
+  const first =
+    readStarredProvider(info.videoId) ??
+    resolvePriority(config()?.providerPriority)[0] ??
+    providerNames[0];
+  const [lead, ...rest] = [
+    first,
+    ...providerNames.filter((name) => name !== first),
+  ];
+
+  return searchProvider(lead, info, data, onResult)
+    .then(() =>
+      Promise.allSettled(
+        rest.map((name) => searchProvider(name, info, data, onResult)),
+      ),
+    )
+    .then(() => undefined);
+};
 
 /** Mark `cache` done once every search has settled, and keep it in the map. */
 const settleSearchCache = (
   videoId: string,
   cache: SearchCache,
-  tasks: Promise<void>[],
+  searches: Promise<void>,
 ): Promise<void> => {
-  const settled = Promise.allSettled(tasks).then(() => {
+  const settled = searches.then(() => {
     searchCache.set(videoId, cache);
     pruneSearchCache();
   });
@@ -373,7 +392,7 @@ export const fetchLyrics = (info: SongInfo): Promise<void> => {
   const cache = createSearchCache(info.videoId);
   activateLyricsData(info.videoId, cache.data);
 
-  const tasks = searchProviders(
+  const searches = searchProviders(
     applyCustomQuery(info, info.videoId),
     cache.data,
     (name, state) => {
@@ -388,7 +407,7 @@ export const fetchLyrics = (info: SongInfo): Promise<void> => {
     },
   );
 
-  return settleSearchCache(info.videoId, cache, tasks);
+  return settleSearchCache(info.videoId, cache, searches);
 };
 
 /** Video id the lyrics belong to, or null when no song is playing. */
@@ -501,9 +520,9 @@ export const lyricsForVideo = async (
   if (!info) return initialData();
 
   const cache = createSearchCache(videoId);
-  const tasks = searchProviders(applyCustomQuery(info, videoId), cache.data);
+  const searches = searchProviders(applyCustomQuery(info, videoId), cache.data);
 
-  await settleSearchCache(videoId, cache, tasks);
+  await settleSearchCache(videoId, cache, searches);
 
   return cloneSearchData(cache.data);
 };

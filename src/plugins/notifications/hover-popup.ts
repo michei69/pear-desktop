@@ -41,9 +41,22 @@ export const setupHoverPopup = (win: BrowserWindow): (() => void) => {
   let disposed = false;
   // Measured tray overflow flyout rectangle in physical pixels, once seen.
   let flyoutRect: FlyoutRect | null = null;
-  const stopFlyoutWatch = watchTrayFlyout((rect) => {
-    flyoutRect = rect;
-  });
+  let stopFlyoutWatch: (() => void) | null = null;
+
+  // The probe is a 150ms PowerShell loop; only run it while the popup is up.
+  const startFlyoutWatch = () => {
+    if (stopFlyoutWatch) return;
+    stopFlyoutWatch = watchTrayFlyout((rect) => {
+      flyoutRect = rect;
+      // The first rectangle can land after the popup was placed: re-anchor.
+      if (_isVisible) positionPopup();
+    });
+  };
+
+  const stopFlyoutWatching = () => {
+    stopFlyoutWatch?.();
+    stopFlyoutWatch = null;
+  };
 
   const showMainWindow = () => {
     if (win.isDestroyed()) return;
@@ -109,6 +122,7 @@ export const setupHoverPopup = (win: BrowserWindow): (() => void) => {
       _isVisible = false;
       setTrayTooltipSuppressed(false);
       stopMouseTracking();
+      stopFlyoutWatching();
     });
   };
 
@@ -211,6 +225,8 @@ export const setupHoverPopup = (win: BrowserWindow): (() => void) => {
     if (!popup) createPopup();
     if (!popup || !currentSongInfo) return;
 
+    startFlyoutWatch();
+
     if (!_isVisible) {
       positionPopup();
       popup.showInactive();
@@ -253,6 +269,7 @@ export const setupHoverPopup = (win: BrowserWindow): (() => void) => {
         popup.hide();
         _isVisible = false;
         setTrayTooltipSuppressed(false);
+        stopFlyoutWatching();
       }
     }, 250);
   };
@@ -291,7 +308,7 @@ export const setupHoverPopup = (win: BrowserWindow): (() => void) => {
     disposed = true;
     app.removeListener('before-quit', dispose);
     stopMouseTracking();
-    stopFlyoutWatch();
+    stopFlyoutWatching();
     popup?.close();
   };
 

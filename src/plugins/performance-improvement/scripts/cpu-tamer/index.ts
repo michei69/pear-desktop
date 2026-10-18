@@ -1,5 +1,4 @@
 import { injectCpuTamerByAnimationFrame } from './cpu-tamer-by-animationframe';
-import { injectCpuTamerByDomMutation } from './cpu-tamer-by-dom-mutation';
 
 const isGPUAccelerationAvailable = () => {
   // https://gist.github.com/cvan/042b2448fcecefafbb6a91469484cdf8
@@ -14,9 +13,5 @@ const isGPUAccelerationAvailable = () => {
 };
 
 export const injectCpuTamer = () => {
-  if (isGPUAccelerationAvailable()) {
-    injectCpuTamerByAnimationFrame(null);
-  } else {
-    injectCpuTamerByDomMutation(null);
-  }
+  injectCpuTamerByAnimationFrame(null, isGPUAccelerationAvailable());
 };

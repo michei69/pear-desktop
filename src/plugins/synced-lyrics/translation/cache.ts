@@ -12,13 +12,29 @@ const cacheDirName = 'synced-lyrics-translations';
 
 const getCacheDir = () => path.join(app.getPath('userData'), cacheDirName);
 
+/**
+ * Keys are `${version}::${videoId}::...`, so the video id can lead the file
+ * name: a per-video lookup reads only that video's files instead of parsing
+ * every entry on disk. `@` cannot appear in a YouTube id.
+ */
 const fileNameFor = (key: string) =>
-  createHash('sha1').update(key).digest('hex') + '.json';
+  `${key.split('::')[1] ?? ''}@${createHash('sha1').update(key).digest('hex')}.json`;
 
-const ensureDir = async () => {
-  const dir = getCacheDir();
-  await fs.mkdir(dir, { recursive: true });
-  return dir;
+let dirPromise: Promise<string> | null = null;
+
+const ensureDir = () => {
+  if (!dirPromise) {
+    const dir = getCacheDir();
+    dirPromise = fs.mkdir(dir, { recursive: true }).then(
+      () => dir,
+      (error: unknown) => {
+        // A failed mkdir must not poison every later call.
+        dirPromise = null;
+        throw error;
+      },
+    );
+  }
+  return dirPromise;
 };
 
 export const buildCacheKey = (parts: {
@@ -47,14 +63,47 @@ export const readCache = async (key: string): Promise<CacheEntry | null> => {
 export const writeCache = async (entry: CacheEntry): Promise<void> => {
   const dir = await ensureDir();
   const file = path.join(dir, fileNameFor(entry.key));
-  await fs.writeFile(file, JSON.stringify(entry, null, 2), 'utf-8');
+  await fs.writeFile(file, JSON.stringify(entry), 'utf-8');
+};
+
+/**
+ * The entry a cache file holds, or null when it is unreadable or does not match
+ * what `CacheEntry` promises. Everything `CacheEntry` declares is checked
+ * against what is on disk, so the return type is a guarantee rather than a hope,
+ * and one corrupt or half-written file never breaks a listing the API serves.
+ */
+const readEntryFile = async (file: string): Promise<CacheEntry | null> => {
+  try {
+    const entry = JSON.parse(
+      await fs.readFile(file, 'utf-8'),
+    ) as CacheEntry | null;
+    if (
+      typeof entry?.key === 'string' &&
+      typeof entry.strategyVersion === 'string' &&
+      typeof entry.targetLanguage === 'string' &&
+      typeof entry.provider === 'string' &&
+      typeof entry.model === 'string' &&
+      typeof entry.sourceHash === 'string' &&
+      typeof entry.title === 'string' &&
+      typeof entry.createdAt === 'number' &&
+      Array.isArray(entry.sourceLines) &&
+      entry.sourceLines.every((line) => typeof line === 'string') &&
+      Array.isArray(entry.artists) &&
+      entry.artists.every((artist) => typeof artist === 'string') &&
+      Array.isArray(entry.lines) &&
+      entry.lines.every((line) => typeof line === 'string')
+    ) {
+      return entry;
+    }
+  } catch {
+    // unreadable or corrupt — skip
+  }
+  return null;
 };
 
 /**
  * Every readable entry on disk, newest first is not guaranteed — callers filter.
- * Corrupt, half-written or shape-shifted files are skipped: one bad file must
- * not break a listing the API serves, nor make it serve something the response
- * schema does not describe.
+ * Corrupt, half-written or shape-shifted files are skipped.
  */
 export const listCache = async (): Promise<CacheEntry[]> => {
   const dir = getCacheDir();
@@ -66,48 +115,41 @@ export const listCache = async (): Promise<CacheEntry[]> => {
     return [];
   }
 
-  const entries: CacheEntry[] = [];
-  for (const name of names) {
-    if (!name.endsWith('.json')) continue;
-    try {
-      const content = await fs.readFile(path.join(dir, name), 'utf-8');
-      const entry = JSON.parse(content) as CacheEntry | null;
-      // Everything `CacheEntry` declares, checked against what is on disk, so
-      // the return type is a guarantee rather than a hope.
-      if (
-        typeof entry?.key === 'string' &&
-        typeof entry.strategyVersion === 'string' &&
-        typeof entry.targetLanguage === 'string' &&
-        typeof entry.provider === 'string' &&
-        typeof entry.model === 'string' &&
-        typeof entry.sourceHash === 'string' &&
-        typeof entry.title === 'string' &&
-        typeof entry.createdAt === 'number' &&
-        Array.isArray(entry.sourceLines) &&
-        entry.sourceLines.every((line) => typeof line === 'string') &&
-        Array.isArray(entry.artists) &&
-        entry.artists.every((artist) => typeof artist === 'string') &&
-        Array.isArray(entry.lines) &&
-        entry.lines.every((line) => typeof line === 'string')
-      ) {
-        entries.push(entry);
-      }
-    } catch {
-      // unreadable or corrupt — skip
-    }
-  }
-  return entries;
+  const entries = await Promise.all(
+    names
+      .filter((name) => name.endsWith('.json'))
+      .map((name) => readEntryFile(path.join(dir, name))),
+  );
+  return entries.filter((entry): entry is CacheEntry => entry !== null);
 };
 
 /**
- * Cached translations for one video. `CacheEntry` carries no video id, but the
- * key is `${version}::${videoId}::...`, so a prefix match is exact.
+ * Cached translations for one video. The video id leads the file name, so only
+ * that video's files are read and parsed — a lookup does not touch the rest of
+ * the cache.
  */
 export const cacheEntriesForVideo = async (
   videoId: string,
 ): Promise<CacheEntry[]> => {
-  const prefix = `${TRANSLATION_STRATEGY_VERSION}::${videoId}::`;
-  return (await listCache()).filter((entry) => entry.key.startsWith(prefix));
+  const dir = getCacheDir();
+  let names: string[];
+  try {
+    names = await fs.readdir(dir);
+  } catch {
+    return [];
+  }
+
+  const prefix = `${videoId}@`;
+  const prefixKey = `${TRANSLATION_STRATEGY_VERSION}::${videoId}::`;
+  const entries = await Promise.all(
+    names
+      .filter((name) => name.startsWith(prefix) && name.endsWith('.json'))
+      .map((name) => readEntryFile(path.join(dir, name))),
+  );
+  return entries.filter(
+    (entry): entry is CacheEntry =>
+      entry !== null && entry.key.startsWith(prefixKey),
+  );
 };
 
 export const clearCache = async (): Promise<number> => {

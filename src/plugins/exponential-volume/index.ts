@@ -3,6 +3,22 @@ import { createPlugin } from '@/utils';
 
 import type { MusicPlayer } from '@/types/music-player';
 
+let playerApi: MusicPlayer | null = null;
+let syncVolume: (() => void) | null = null;
+let restoreVolumeDescriptor: (() => void) | null = null;
+
+const onStateChange = () => {
+  syncVolume?.();
+};
+
+const teardown = () => {
+  playerApi?.removeEventListener('onStateChange', onStateChange);
+  playerApi = null;
+  syncVolume = null;
+  restoreVolumeDescriptor?.();
+  restoreVolumeDescriptor = null;
+};
+
 export default createPlugin({
   name: () => t('plugins.exponential-volume.name'),
   description: () => t('plugins.exponential-volume.description'),
@@ -11,15 +27,12 @@ export default createPlugin({
     enabled: false,
   },
   renderer: {
-    onPlayerApiReady(playerApi) {
-      const syncVolume = (playerApi: MusicPlayer) => {
-        if (playerApi.getPlayerState() === 3) {
-          setTimeout(() => syncVolume(playerApi), 0);
-          return;
-        }
+    onPlayerApiReady(api) {
+      // Re-enabling can call this again; restore first so the descriptor
+      // captured below is always the native one.
+      teardown();
 
-        playerApi.setVolume(playerApi.getVolume());
-      };
+      playerApi = api;
 
       // "fix volume ratio 0.4" by Marco Pfeiffer
       // https://bit.ly/4nMu2WF
@@ -58,7 +71,31 @@ export default createPlugin({
           propertyDescriptor?.set?.call(this, lowVolume);
         },
       });
-      syncVolume(playerApi);
+
+      restoreVolumeDescriptor = () => {
+        if (propertyDescriptor) {
+          Object.defineProperty(
+            HTMLMediaElement.prototype,
+            'volume',
+            propertyDescriptor,
+          );
+        }
+      };
+
+      syncVolume = () => {
+        // The player rejects volume changes while buffering; retry on the
+        // next state change instead of polling.
+        if (api.getPlayerState() === 3) return;
+
+        api.setVolume(api.getVolume());
+      };
+
+      api.addEventListener('onStateChange', onStateChange);
+      syncVolume();
+    },
+
+    stop() {
+      teardown();
     },
   },
 });

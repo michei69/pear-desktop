@@ -6,9 +6,144 @@ import { createPlugin } from '@/utils';
 
 import style from './style.css?inline';
 
-const COLOR_KEY = '--ytmusic-album-color';
-const DARK_COLOR_KEY = '--ytmusic-album-color-dark';
-const RATIO_KEY = '--ytmusic-album-color-ratio';
+type AlbumColors = {
+  color: ColorInstance;
+  darkColor: ColorInstance;
+};
+
+const BLACK = '#000';
+
+// Thumbnails are fetched by URL and can be requested again for the same track
+// (seek, repeat, page re-entry), so keep the resolved colors keyed by URL.
+const albumColorCache = new Map<string, Promise<AlbumColors | null>>();
+
+function computeAlbumColors(hex: string): AlbumColors {
+  const target = Color(hex);
+
+  let color = target.darken(0.15).rgb();
+  let darkColor = target.darken(0.3).rgb();
+
+  while (color.luminosity() > 0.5) {
+    color = color.darken(0.05);
+    darkColor = darkColor.darken(0.05);
+  }
+
+  return { color, darkColor };
+}
+
+async function fetchAlbumColors(
+  fastAverageColor: FastAverageColor,
+  url: string,
+): Promise<AlbumColors | null> {
+  const cached = albumColorCache.get(url);
+  if (cached) return cached;
+
+  const pending = fastAverageColor
+    .getColorAsync(url)
+    .then((albumColor) => {
+      if (!albumColor) {
+        albumColorCache.delete(url);
+        return null;
+      }
+      return computeAlbumColors(albumColor.hex);
+    })
+    .catch((err) => {
+      console.error(err);
+      albumColorCache.delete(url);
+      return null;
+    });
+
+  albumColorCache.set(url, pending);
+  return pending;
+}
+
+/**
+ * Resolve `color-mix(in srgb, base <1 - ratio>, tint <ratio>)` in JS so the
+ * browser does not have to re-resolve a color-mix() expression for every
+ * property on every style recalc.
+ */
+function mixColor(
+  base: string,
+  tint: ColorInstance,
+  alpha: number,
+  ratio: number,
+): string {
+  const baseColor = Color(base);
+
+  const tintWeight = Math.min(Math.max(ratio, 0), 1);
+  const baseWeight = 1 - tintWeight;
+
+  const baseAlpha = baseColor.alpha();
+  const tintAlpha = Math.min(Math.max(alpha, 0), 1);
+  const outAlpha = baseAlpha * baseWeight + tintAlpha * tintWeight;
+
+  if (outAlpha <= 0) return 'rgba(0, 0, 0, 0)';
+
+  const channel = (baseChannel: number, tintChannel: number) =>
+    Math.round(
+      (baseChannel * baseAlpha * baseWeight +
+        tintChannel * tintAlpha * tintWeight) /
+        outAlpha,
+    );
+
+  return `rgba(${channel(baseColor.red(), tint.red())}, ${channel(baseColor.green(), tint.green())}, ${channel(baseColor.blue(), tint.blue())}, ${+outAlpha.toFixed(3)})`;
+}
+
+const VARIABLE_MAP: Record<string, string> = {
+  '--ytmusic-color-black1': '#212121',
+  '--ytmusic-color-black2': '#181818',
+  '--ytmusic-color-black3': '#030303',
+  '--ytmusic-color-black4': '#030303',
+  '--ytmusic-color-blackpure': '#000',
+  '--dark-theme-background-color': '#212121',
+  '--yt-spec-base-background': '#0f0f0f',
+  '--yt-spec-raised-background': '#212121',
+  '--yt-spec-menu-background': '#282828',
+  '--yt-spec-static-brand-black': '#212121',
+  '--yt-spec-static-overlay-background-solid': '#000',
+  '--yt-spec-static-overlay-background-heavy': 'rgba(0,0,0,0.8)',
+  '--yt-spec-static-overlay-background-medium': 'rgba(0,0,0,0.6)',
+  '--yt-spec-static-overlay-background-medium-light': 'rgba(0,0,0,0.3)',
+  '--yt-spec-static-overlay-background-light': 'rgba(0,0,0,0.1)',
+  '--yt-spec-general-background-a': '#181818',
+  '--yt-spec-general-background-b': '#0f0f0f',
+  '--yt-spec-general-background-c': '#030303',
+  '--yt-spec-snackbar-background': '#030303',
+  '--yt-spec-filled-button-text': '#030303',
+  '--yt-spec-black-1': '#282828',
+  '--yt-spec-black-2': '#1f1f1f',
+  '--yt-spec-black-3': '#161616',
+  '--yt-spec-black-4': '#0d0d0d',
+  '--yt-spec-black-pure': '#000',
+  '--yt-spec-black-pure-alpha-5': 'rgba(0,0,0,0.05)',
+  '--yt-spec-black-pure-alpha-10': 'rgba(0,0,0,0.1)',
+  '--yt-spec-black-pure-alpha-15': 'rgba(0,0,0,0.15)',
+  '--yt-spec-black-pure-alpha-30': 'rgba(0,0,0,0.3)',
+  '--yt-spec-black-pure-alpha-60': 'rgba(0,0,0,0.6)',
+  '--yt-spec-black-pure-alpha-80': 'rgba(0,0,0,0.8)',
+  '--yt-spec-black-1-alpha-98': 'rgba(40,40,40,0.98)',
+  '--yt-spec-black-1-alpha-95': 'rgba(40,40,40,0.95)',
+  '--paper-toast-background-color': '#323232',
+  '--ytmusic-search-background': '#030303',
+  '--paper-slider-knob-color': '#f03',
+  '--paper-dialog-background-color': '#212121',
+  '--paper-progress-active-color-1': '#f03',
+  '--paper-progress-active-color-2': '#ff2791',
+  '--yt-spec-inverted-background': '#f3f3f3',
+  'background': 'rgba(3, 3, 3)',
+  '--ytmusic-background': 'rgba(3, 3, 3)',
+};
+
+const DARK_KEYED: Record<string, true> = {
+  'background': true,
+  '--ytmusic-background': true,
+};
+
+const RATIO_MAP: Record<string, number> = {
+  '--paper-progress-active-color-1': 1.75,
+  '--paper-progress-active-color-2': 1.75,
+  '--yt-spec-inverted-background': 1.75,
+};
 
 type Config = {
   enabled: boolean;
@@ -17,12 +152,6 @@ type Config = {
 };
 
 type Renderer = {
-  getMixedColor(
-    color: string,
-    key: string,
-    alpha?: number,
-    ratioMultiply?: number,
-  ): string;
   updateColor(alpha: number): void;
   onConfigChange(newConfig: Config): void;
 };
@@ -96,6 +225,8 @@ export default createPlugin({
     ytmusicAppLayout: null as HTMLElement | null,
     color: null as ColorInstance | null,
     darkColor: null as ColorInstance | null,
+    ratio: 0.5,
+    alpha: 1,
 
     start() {
       this.playerPage = document.querySelector<HTMLElement>('#player-page');
@@ -127,38 +258,12 @@ export default createPlugin({
           playerResponse?.videoDetails?.thumbnail?.thumbnails?.at(0);
         if (!thumbnail) return;
 
-        const albumColor = await fastAverageColor
-          .getColorAsync(thumbnail.url)
-          .catch((err) => {
-            console.error(err);
-            return null;
-          });
+        const colors = await fetchAlbumColors(fastAverageColor, thumbnail.url);
 
-        if (albumColor) {
-          const target = Color(albumColor.hex);
+        this.color = colors?.color ?? Color(BLACK);
+        this.darkColor = colors?.darkColor ?? Color(BLACK);
 
-          this.darkColor = target.darken(0.3).rgb();
-          this.color = target.darken(0.15).rgb();
-
-          while (this.color.luminosity() > 0.5) {
-            this.color = this.color?.darken(0.05);
-            this.darkColor = this.darkColor?.darken(0.05);
-          }
-
-          document.documentElement.style.setProperty(
-            COLOR_KEY,
-            `${~~this.color.red()}, ${~~this.color.green()}, ${~~this.color.blue()}`,
-          );
-          document.documentElement.style.setProperty(
-            DARK_COLOR_KEY,
-            `${~~this.darkColor.red()}, ${~~this.darkColor.green()}, ${~~this.darkColor.blue()}`,
-          );
-        } else {
-          document.documentElement.style.setProperty(COLOR_KEY, '0, 0, 0');
-          document.documentElement.style.setProperty(DARK_COLOR_KEY, '0, 0, 0');
-        }
-
-        let alpha: number | null = null;
+        let alpha = 1;
         if (await window.mainConfig.plugins.isEnabled('transparent-player')) {
           const value: unknown = window.mainConfig.get(
             'plugins.transparent-player.opacity',
@@ -167,101 +272,28 @@ export default createPlugin({
             alpha = value;
           }
         }
-        (this as Renderer).updateColor(alpha ?? 1);
+        (this as Renderer).updateColor(alpha);
       });
     },
     onConfigChange(config) {
-      document.documentElement.style.setProperty(
-        RATIO_KEY,
-        `${~~(config.ratio * 100)}%`,
-      );
+      this.ratio = config.ratio;
       if (config.enableSeekbar) document.body.classList.add('seekbar-theme');
       else document.body.classList.remove('seekbar-theme');
-    },
-    getMixedColor(
-      color: string,
-      key: string,
-      alpha = 1,
-      ratioMultiply?: number,
-    ) {
-      const keyColor = `rgba(var(${key}), ${alpha})`;
-
-      let colorRatio = `var(${RATIO_KEY}, 50%)`;
-      let originalRatio = `calc(100% - var(${RATIO_KEY}, 50%))`;
-      if (ratioMultiply) {
-        colorRatio = `calc(var(${RATIO_KEY}, 50%) * ${ratioMultiply})`;
-        originalRatio = `calc(100% - calc(var(${RATIO_KEY}, 50%) * ${ratioMultiply}))`;
-      }
-      return `color-mix(in srgb, ${color} ${originalRatio}, ${keyColor} ${colorRatio})`;
+      if (this.color) (this as Renderer).updateColor(this.alpha);
     },
     updateColor(alpha: number) {
-      const variableMap = {
-        '--ytmusic-color-black1': '#212121',
-        '--ytmusic-color-black2': '#181818',
-        '--ytmusic-color-black3': '#030303',
-        '--ytmusic-color-black4': '#030303',
-        '--ytmusic-color-blackpure': '#000',
-        '--dark-theme-background-color': '#212121',
-        '--yt-spec-base-background': '#0f0f0f',
-        '--yt-spec-raised-background': '#212121',
-        '--yt-spec-menu-background': '#282828',
-        '--yt-spec-static-brand-black': '#212121',
-        '--yt-spec-static-overlay-background-solid': '#000',
-        '--yt-spec-static-overlay-background-heavy': 'rgba(0,0,0,0.8)',
-        '--yt-spec-static-overlay-background-medium': 'rgba(0,0,0,0.6)',
-        '--yt-spec-static-overlay-background-medium-light': 'rgba(0,0,0,0.3)',
-        '--yt-spec-static-overlay-background-light': 'rgba(0,0,0,0.1)',
-        '--yt-spec-general-background-a': '#181818',
-        '--yt-spec-general-background-b': '#0f0f0f',
-        '--yt-spec-general-background-c': '#030303',
-        '--yt-spec-snackbar-background': '#030303',
-        '--yt-spec-filled-button-text': '#030303',
-        '--yt-spec-black-1': '#282828',
-        '--yt-spec-black-2': '#1f1f1f',
-        '--yt-spec-black-3': '#161616',
-        '--yt-spec-black-4': '#0d0d0d',
-        '--yt-spec-black-pure': '#000',
-        '--yt-spec-black-pure-alpha-5': 'rgba(0,0,0,0.05)',
-        '--yt-spec-black-pure-alpha-10': 'rgba(0,0,0,0.1)',
-        '--yt-spec-black-pure-alpha-15': 'rgba(0,0,0,0.15)',
-        '--yt-spec-black-pure-alpha-30': 'rgba(0,0,0,0.3)',
-        '--yt-spec-black-pure-alpha-60': 'rgba(0,0,0,0.6)',
-        '--yt-spec-black-pure-alpha-80': 'rgba(0,0,0,0.8)',
-        '--yt-spec-black-1-alpha-98': 'rgba(40,40,40,0.98)',
-        '--yt-spec-black-1-alpha-95': 'rgba(40,40,40,0.95)',
-        '--paper-toast-background-color': '#323232',
-        '--ytmusic-search-background': '#030303',
-        '--paper-slider-knob-color': '#f03',
-        '--paper-dialog-background-color': '#212121',
-        '--paper-progress-active-color-1': '#f03',
-        '--paper-progress-active-color-2': '#ff2791',
-        '--yt-spec-inverted-background': '#f3f3f3',
-        'background': 'rgba(3, 3, 3)',
-        '--ytmusic-background': 'rgba(3, 3, 3)',
-      };
+      this.alpha = alpha;
+      if (!this.color || !this.darkColor) return;
 
-      const colorKeyMap: Record<string, string> = {
-        'background': DARK_COLOR_KEY,
-        '--ytmusic-background': DARK_COLOR_KEY,
-      };
-
-      const ratioMap: Record<string, number> = {
-        '--paper-progress-active-color-1': 1.75,
-        '--paper-progress-active-color-2': 1.75,
-        '--yt-spec-inverted-background': 1.75,
-      };
-
-      const getMixedColor = (this as Renderer).getMixedColor.bind(this);
-      Object.entries(variableMap).map(([variable, color]) => {
-        const key = colorKeyMap[variable] ?? COLOR_KEY;
-        const ratio = ratioMap[variable] ?? undefined;
-
-        document.documentElement.style.setProperty(
+      const rootStyle = document.documentElement.style;
+      for (const [variable, color] of Object.entries(VARIABLE_MAP)) {
+        const tint = DARK_KEYED[variable] ? this.darkColor : this.color;
+        rootStyle.setProperty(
           variable,
-          getMixedColor(color, key, alpha, ratio),
+          mixColor(color, tint, alpha, this.ratio * (RATIO_MAP[variable] ?? 1)),
           'important',
         );
-      });
+      }
     },
   },
 });

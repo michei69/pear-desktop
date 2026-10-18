@@ -2,7 +2,7 @@ import { createEffect, createRoot, runWithOwner, type Owner } from 'solid-js';
 
 import { providerNames } from '@/plugins/synced-lyrics/providers';
 
-import { getLyricsReply } from './lyrics-reply';
+import { getLyricsReply, type LyricsReply } from './lyrics-reply';
 
 import { V2RendererEvents, type TranslationUpdatedPayload } from '../channels';
 
@@ -34,7 +34,9 @@ const logFailure = (what: string) => (error: unknown) =>
 /**
  * Pushes the latest message `build` returns whenever the values `trackInputs`
  * reads change, skipping a repeat of the last one and coalescing a burst of
- * changes into one tick.
+ * changes into one tick. `signature` is the cheap comparison: the payload goes
+ * over IPC once, as structured data, and is never serialized to tell whether it
+ * changed.
  */
 const watchLatest = <T>(
   owner: Owner,
@@ -42,6 +44,7 @@ const watchLatest = <T>(
   channel: (typeof V2RendererEvents)[keyof typeof V2RendererEvents],
   what: string,
   build: () => T | null | Promise<T | null>,
+  signature: (payload: T) => string,
   trackInputs: () => void,
 ): (() => void) => {
   let last: string | undefined;
@@ -51,9 +54,9 @@ const watchLatest = <T>(
     const payload = await build();
     if (payload === null) return;
 
-    const message = JSON.stringify(payload);
-    if (message === last) return;
-    last = message;
+    const next = signature(payload);
+    if (next === last) return;
+    last = next;
     context.ipc.send(channel, payload);
   };
   const schedule = () => {
@@ -75,6 +78,29 @@ const watchLatest = <T>(
 };
 
 /**
+ * What makes a lyrics snapshot a different one: the song, the shown provider and
+ * each provider's state, sizes and boundary lines. Cheaper than serializing
+ * every line, and enough to tell a change from a repeat.
+ */
+const lyricsSignature = (reply: LyricsReply) =>
+  [
+    reply.videoId,
+    reply.activeProvider,
+    ...reply.providers.map((provider) =>
+      [
+        provider.provider,
+        provider.state,
+        provider.lyrics?.length,
+        provider.lines?.length,
+        provider.lines?.[0]?.text,
+        provider.lines?.at(-1)?.text,
+        provider.translation?.lyrics?.length,
+        provider.translation?.lines?.length,
+      ].join('~'),
+    ),
+  ].join('|');
+
+/**
  * Pushes the lyrics snapshots the WebSocket cannot read for itself: every
  * provider's lyrics when they arrive or the active one is switched.
  */
@@ -89,6 +115,7 @@ const setupLyricsWatch = (
     V2RendererEvents.lyricsChanged,
     'lyrics',
     getLyricsReply,
+    lyricsSignature,
     () => {
       // Song, selected provider, and every provider's result.
       track(store.lyricsStore.videoId);
@@ -127,6 +154,15 @@ const setupTranslationWatch = (
         lines: current.lines,
       };
     },
+    (payload) =>
+      [
+        payload.videoId,
+        payload.language,
+        payload.provider,
+        payload.lines.length,
+        payload.lines[0],
+        payload.lines.at(-1),
+      ].join('|'),
     () => {
       track(store.translationStore.videoId);
       track(store.translationStore.key);

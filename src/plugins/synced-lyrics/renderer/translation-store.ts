@@ -44,7 +44,24 @@ export const [translationStore, setTranslationStore] =
     key: null,
   });
 
+/**
+ * In-renderer memoisation: avoids re-invoking IPC for the same song/config in a
+ * session (the main process also caches to disk). Bounded like the search cache
+ * so a long-lived window cannot accumulate one entry per song forever.
+ */
+const MAX_CACHED_TRANSLATIONS = 60;
 const cache = new Map<string, VideoTranslation>();
+
+/** Insert as most-recently-used, evicting the oldest once over the bound. */
+const rememberTranslation = (key: string, value: VideoTranslation) => {
+  cache.delete(key);
+  cache.set(key, value);
+  while (cache.size > MAX_CACHED_TRANSLATIONS) {
+    const oldest = cache.keys().next();
+    if (oldest.done) break;
+    cache.delete(oldest.value);
+  }
+};
 
 export const resolveTargetLanguage = (
   target: TranslationTargetLanguage,
@@ -70,6 +87,18 @@ const normalizeLanguageFamily = (language: string): string => {
   return primary;
 };
 
+/**
+ * `detectAll` is the expensive part of a translation pass, and the lyrics store
+ * and this module ask about the same lines in the same tick. Keying the memo on
+ * the text means each line set is detected once; the bound keeps a long-lived
+ * window from holding every song's lyrics.
+ */
+const MAX_DETECTIONS = 4;
+const detections = new Map<
+  string,
+  { language: string; accuracy: number } | null
+>();
+
 const detectLyricsLanguage = (
   lines: string[],
 ): { language: string; accuracy: number } | null => {
@@ -77,12 +106,22 @@ const detectLyricsLanguage = (
     .map((line) => line.trim())
     .filter(Boolean)
     .join('\n');
-  if (text.length < 24) return null;
+  if (detections.has(text)) return detections.get(text) ?? null;
 
-  const [best] = detectAll(text);
-  if (!best || best.accuracy < 0.55) return null;
+  let result: { language: string; accuracy: number } | null = null;
+  if (text.length >= 24) {
+    const [best] = detectAll(text);
+    if (best && best.accuracy >= 0.55) {
+      result = { language: best.lang, accuracy: best.accuracy };
+    }
+  }
 
-  return { language: best.lang, accuracy: best.accuracy };
+  detections.set(text, result);
+  if (detections.size > MAX_DETECTIONS) {
+    const oldest = detections.keys().next();
+    if (!oldest.done) detections.delete(oldest.value);
+  }
+  return result;
 };
 
 export const sourceLanguageMatchesTarget = (
@@ -185,7 +224,7 @@ export const setOfficialTranslation = (
     provider,
   };
 
-  cache.set(key, done);
+  rememberTranslation(key, done);
   if (translationStore.videoId === videoId && translationStore.key === key) {
     return;
   }
@@ -329,6 +368,7 @@ export const fetchTranslation = async (
   // session (the main process also caches to disk).
   const memo = cache.get(key);
   if (memo) {
+    rememberTranslation(key, memo);
     if (translationStore.videoId === videoId && translationStore.key === key) {
       return;
     }
@@ -350,7 +390,7 @@ export const fetchTranslation = async (
     language,
     provider: providerName,
   };
-  cache.set(key, pending);
+  rememberTranslation(key, pending);
   setTranslationStore({ current: pending, videoId, key });
 
   translationDebug('translating lyrics', {
@@ -410,7 +450,7 @@ export const fetchTranslation = async (
     language,
     provider: providerName,
   };
-  cache.set(key, done);
+  rememberTranslation(key, done);
   if (translationStore.videoId === videoId && translationStore.key === key) {
     setTranslationStore({ current: done, videoId, key });
   }

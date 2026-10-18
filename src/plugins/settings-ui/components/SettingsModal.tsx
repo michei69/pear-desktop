@@ -43,6 +43,8 @@ import {
   setPluginSliderValue,
   setPluginValue,
   store,
+  type PluginConfigMap,
+  type StoreShape,
 } from '../state';
 
 interface PluginMeta {
@@ -219,6 +221,25 @@ export const SettingsModal = (props: {
   };
 
   // ---- value plumbing ----
+  /**
+   * The merged config per plugin, reused until that plugin's stored config
+   * changes. Every field of a card reads through `pluginVal`, so merging per
+   * call would re-deep-merge the plugin's whole config per field per render.
+   */
+  const pluginConfigs = new Map<
+    string,
+    { source: unknown; merged: Record<string, unknown> }
+  >();
+  const pluginConfig = (snap: StoreShape, meta: PluginMeta) => {
+    const source = (snap.plugins as PluginConfigMap)[meta.id];
+    const cached = pluginConfigs.get(meta.id);
+    if (cached && cached.source === source) return cached.merged;
+
+    const merged = getPluginConfig(snap, meta.id, meta.config);
+    pluginConfigs.set(meta.id, { source, merged });
+    return merged;
+  };
+
   const appVal = (key: string) => {
     const snap = store();
     return snap ? getAppValue(snap, key) : undefined;
@@ -227,7 +248,7 @@ export const SettingsModal = (props: {
     const snap = store();
     if (!snap) return undefined;
     // Plugin keys are dotted paths (`scrobblers.lastfm.apiKey`).
-    return getByPath(getPluginConfig(snap, meta.id, meta.config), key);
+    return getByPath(pluginConfig(snap, meta), key);
   };
   const isPluginEnabled = (meta: PluginMeta) => {
     const snap = store();

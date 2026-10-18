@@ -13,6 +13,10 @@ import * as config from '@/config';
 import { isEnabled } from '@/config/plugins';
 import { cacheEntriesForVideo } from '@/plugins/synced-lyrics/translation/cache';
 import { getAppMeta } from '@/providers/app-meta';
+import {
+  isPerformancePartEnabled,
+  performanceModeOverrides,
+} from '@/providers/performance-mode';
 import { getSongControls } from '@/providers/song-controls';
 
 import { callRenderer, callRendererWithTimeout, sendToRenderer } from './ipc';
@@ -322,16 +326,35 @@ export const createOperations = (
     appMeta: () => getAppMeta(),
     featureFlags: async () => {
       const saved = flagsOverride();
+      // What the app actually sets: performance mode's flags, then the user's,
+      // the same merge the preload applies to the page.
+      const applied = isPerformancePartEnabled('flags')
+        ? performanceModeOverrides(saved, config.get('options.performanceMode'))
+        : saved;
+      const names = Object.keys(applied).sort();
+      // With nothing set, the page is running its own defaults and there is
+      // nothing to report — or to ask it for.
+      if (names.length === 0) return [];
+
+      // The page already carries YouTube Music's own flags; only the ones this
+      // app sets can differ, so only those cross CDP.
       const live = (await window.webContents
-        .executeJavaScript('window.ytcfg?.data_?.EXPERIMENT_FLAGS ?? {}')
-        .catch(() => ({}))) as Record<string, unknown>;
-      const names = [
-        ...new Set([...Object.keys(live), ...Object.keys(saved)]),
-      ].sort();
+        .executeJavaScript(
+          `(() => {
+            const flags = window.ytcfg?.data_?.EXPERIMENT_FLAGS ?? {};
+            return ${JSON.stringify(names)}
+              .filter((name) => name in flags)
+              .map((name) => [name, flags[name]]);
+          })()`,
+        )
+        .catch(() => [])) as [string, unknown][];
+      const liveByName = Object.fromEntries(live);
 
       return names.map((name) => ({
         name,
-        value: Object.hasOwn(saved, name) ? saved[name] : live[name],
+        value: Object.hasOwn(liveByName, name)
+          ? liveByName[name]
+          : applied[name],
         overridden: Object.hasOwn(saved, name),
       }));
     },

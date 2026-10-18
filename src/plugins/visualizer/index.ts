@@ -405,8 +405,16 @@ export default createPlugin({
             audioSource: MediaElementAudioSourceNode;
           }>
         ).detail;
-        this.props.audioContext = detail.audioContext;
-        this.props.audioSource = detail.audioSource;
+        // Re-emitted per track, but the graph (and so the source node) only
+        // changes on a rebind. Rebuilding on the same source would drop the
+        // GL context and restart the loop for nothing.
+        const { audioContext, audioSource } = detail;
+        const sameGraph =
+          this.props.audioContext === audioContext &&
+          this.props.audioSource === audioSource;
+        this.props.audioContext = audioContext;
+        this.props.audioSource = audioSource;
+        if (sameGraph && this.props.visualizerInstance) return;
         this.createVisualizer(await getConfig());
       };
       document.addEventListener(

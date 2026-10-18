@@ -4,6 +4,7 @@ import { render } from 'solid-js/web';
 import { t } from '@/i18n';
 import { type MenuTemplate } from '@/menu';
 import { moveVolumeHud as preciseVolumeMoveVolumeHud } from '@/plugins/precise-volume/renderer';
+import { observePlayerPage } from '@/providers/player-page-observer';
 import { type ThumbnailElement } from '@/types/get-player-response';
 import { createPlugin } from '@/utils';
 
@@ -154,6 +155,15 @@ export default createPlugin({
 
   renderer: {
     config: null as VideoTogglePluginConfig | null,
+    /** audio-only owns ATV_PREFERRED while it runs; see setVideoState. */
+    audioOnlyEnabled: false,
+    disposeRoot: null as (() => void) | null,
+    switchButtonContainer: null as HTMLDivElement | null,
+    videoElement: null as HTMLVideoElement | null,
+    srcChangedHandler: null as (() => void) | null,
+    observers: [] as MutationObserver[],
+    unwatchPlaybackMode: null as (() => void) | null,
+    startTimeout: null as NodeJS.Timeout | null,
     applyStyleClass: (config: VideoTogglePluginConfig) => {
       if (config.forceHide) {
         document.body.classList.add('video-toggle-force-hide');
@@ -205,6 +215,9 @@ export default createPlugin({
       const config = await getConfig();
       this.config = config;
 
+      this.audioOnlyEnabled =
+        await window.mainConfig.plugins.isEnabled('audio-only');
+
       const moveVolumeHud = (await window.mainConfig.plugins.isEnabled(
         'precise-volume',
       ))
@@ -219,7 +232,8 @@ export default createPlugin({
       const switchButtonContainer = document.createElement('div');
       switchButtonContainer.id = 'ytmd-video-toggle-switch-button-container';
       switchButtonContainer.style.display = 'flex';
-      render(
+      this.switchButtonContainer = switchButtonContainer;
+      this.disposeRoot = render(
         () => (
           <Show when={showButton()}>
             <VideoSwitchButton
@@ -247,10 +261,12 @@ export default createPlugin({
       };
 
       const setVideoState = (showVideo: boolean) => {
-        if (this.config) {
-          this.config.hideVideo = !showVideo;
+        // Runs on every track change, so only persist an actual difference.
+        const hideVideo = !showVideo;
+        if (this.config && this.config.hideVideo !== hideVideo) {
+          this.config.hideVideo = hideVideo;
+          window.mainConfig.plugins.setOptions('video-toggle', this.config);
         }
-        window.mainConfig.plugins.setOptions('video-toggle', this.config);
 
         const checkbox = document.querySelector<HTMLInputElement>(
           '.video-switch-button-checkbox',
@@ -259,10 +275,15 @@ export default createPlugin({
 
         if (player) {
           player.style.margin = showVideo ? '' : 'auto 0px';
-          player.setAttribute(
-            'playback-mode',
-            showVideo ? 'OMV_PREFERRED' : 'ATV_PREFERRED',
-          );
+          // audio-only asserts ATV_PREFERRED from its own persistent observer,
+          // so writing that value here is duplicated work. Its non-ATV
+          // behavior (the OMV write when video is shown) is unchanged.
+          if (showVideo || !this.audioOnlyEnabled) {
+            player.setAttribute(
+              'playback-mode',
+              showVideo ? 'OMV_PREFERRED' : 'ATV_PREFERRED',
+            );
+          }
 
           document.querySelector<HTMLElement>(
             '#song-video.ytmusic-player',
@@ -313,22 +334,24 @@ export default createPlugin({
       // HACK: after load, the page forces playback-mode to 'OMV_PREFERRED',
       // which wrecks the image container's aspect ratio. Override the override.
       const forcePlaybackMode = () => {
-        if (player) {
-          const playbackModeObserver = new MutationObserver((mutations) => {
+        if (!player) return;
+        this.unwatchPlaybackMode = observePlayerPage('ytmusic-player', {
+          attributes: ['playback-mode'],
+          callback: (mutations) => {
             for (const mutation of mutations) {
-              if (mutation.target instanceof HTMLElement) {
-                const target = mutation.target;
-                if (target.getAttribute('playback-mode') !== 'ATV_PREFERRED') {
-                  playbackModeObserver.disconnect();
-                  target.setAttribute('playback-mode', 'ATV_PREFERRED');
-                }
+              if (!(mutation.target instanceof HTMLElement)) continue;
+              if (
+                mutation.target.getAttribute('playback-mode') !==
+                'ATV_PREFERRED'
+              ) {
+                this.unwatchPlaybackMode?.();
+                this.unwatchPlaybackMode = null;
+                mutation.target.setAttribute('playback-mode', 'ATV_PREFERRED');
+                return;
               }
             }
-          });
-          playbackModeObserver.observe(player, {
-            attributeFilter: ['playback-mode'],
-          });
-        }
+          },
+        });
       };
 
       const observeThumbnail = () => {
@@ -352,21 +375,27 @@ export default createPlugin({
           document.querySelector('#song-image #img.style-scope.yt-img-shadow')!,
           { attributeFilter: ['src'] },
         );
+        this.observers.push(playbackModeObserver);
       };
 
       if (config.mode !== 'native' && config.mode != 'disabled') {
-        setTimeout(() => {
+        this.startTimeout = setTimeout(() => {
+          this.startTimeout = null;
           const playerSelector =
             document.querySelector<HTMLVideoElement>('#player');
           if (!playerSelector) return;
 
           playerSelector.prepend(switchButtonContainer);
           setVideoState(!config.hideVideo);
-          forcePlaybackMode();
+          // audio-only's observer already holds ATV_PREFERRED; adding ours
+          // would be a second owner of the same attribute.
+          if (!this.audioOnlyEnabled) forcePlaybackMode();
           if (video) {
             video.style.height = 'auto';
+            this.videoElement = video;
+            this.srcChangedHandler = videoStarted;
+            video.addEventListener('peard:src-changed', videoStarted);
           }
-          video?.addEventListener('peard:src-changed', videoStarted);
           observeThumbnail();
           videoStarted();
           switch (config.align) {
@@ -387,6 +416,40 @@ export default createPlugin({
           }
         }, 0);
       }
+    },
+    stop() {
+      if (this.startTimeout) {
+        clearTimeout(this.startTimeout);
+        this.startTimeout = null;
+      }
+
+      for (const observer of this.observers) {
+        observer.disconnect();
+      }
+      this.observers = [];
+
+      this.unwatchPlaybackMode?.();
+      this.unwatchPlaybackMode = null;
+
+      if (this.videoElement && this.srcChangedHandler) {
+        this.videoElement.removeEventListener(
+          'peard:src-changed',
+          this.srcChangedHandler,
+        );
+      }
+      this.videoElement = null;
+      this.srcChangedHandler = null;
+
+      this.disposeRoot?.();
+      this.disposeRoot = null;
+
+      this.switchButtonContainer?.remove();
+      this.switchButtonContainer = null;
+
+      document.body.classList.remove(
+        'video-toggle-custom-mode',
+        'video-toggle-force-hide',
+      );
     },
     onConfigChange(newConfig) {
       this.config = newConfig;

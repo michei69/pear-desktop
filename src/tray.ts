@@ -4,6 +4,10 @@ import is from 'electron-is';
 import { APPLICATION_NAME, t } from '@/i18n';
 import { trayIconPaths } from '@/providers/app-icon';
 import { LikeType } from '@/types/datahost-get-state';
+import {
+  SONG_INFO_SETUP_CHANNEL,
+  SongInfoEventFlag,
+} from '@/types/song-info-events';
 
 import * as config from './config';
 import { restart } from './providers/app-controls';
@@ -225,7 +229,7 @@ export const setUpTray = (app: Electron.App, win: Electron.BrowserWindow) => {
   tray.setContextMenu(buildTrayMenu());
 
   // Like status changes come from the renderer.
-  win.webContents.send('peard:setup-like-changed-listener');
+  win.webContents.send(SONG_INFO_SETUP_CHANNEL, SongInfoEventFlag.LikeChanged);
   likeChangedListener = (_, status: LikeType) => {
     currentLikeStatus = status;
     if (tray) {

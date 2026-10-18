@@ -112,25 +112,31 @@ const rendererConfig = {
 // @ts-expect-error dummy
 globalThis.customElements = { define() {} };
 
-new MutationObserver((mutations, observer) => {
-  for (const mutation of mutations) {
-    for (const node of mutation.addedNodes) {
-      const elem = node as HTMLElement;
-      if (elem.tagName !== 'SCRIPT') continue;
+// YTM injects `custom-elements-es5-adapter.js`, whose ES5 shims break every
+// real ES-class custom element (mdui, Lit) the moment they run. The tag must
+// go before its module evaluates: it is appended dynamically, so a sweep in
+// each mutation batch (one native query — the loader can append anywhere)
+// always wins. Bounded to boot, where the injection happens.
+const ADAPTER_SRC = 'custom-elements-es5-adapter.js';
+const removeAdapterScript = () => {
+  const script = document.querySelector<HTMLScriptElement>(
+    `script[src$="${ADAPTER_SRC}"]`,
+  );
+  if (!script) return false;
+  script.remove();
+  return true;
+};
 
-      const script = elem as HTMLScriptElement;
-      if (
-        !script.getAttribute('src')?.endsWith('custom-elements-es5-adapter.js')
-      )
-        continue;
-
-      script.remove();
-
-      observer.disconnect();
-      return;
-    }
-  }
-}).observe(document, { subtree: true, childList: true });
+const adapterObserver = new MutationObserver((_mutations, observer) => {
+  // One native query per batch covers wherever the loader appended the tag;
+  // the sweep stops once it is gone.
+  if (removeAdapterScript()) observer.disconnect();
+});
+adapterObserver.observe(document, { childList: true, subtree: true });
+setTimeout(() => {
+  adapterObserver.disconnect();
+  removeAdapterScript();
+}, 30_000);
 
 const i18nReady = loadI18n(config.get('options.language') ?? 'en');
 
@@ -228,31 +234,11 @@ const bootRenderer = () => {
     getLoadedResources(),
   )};\n${script}`;
 
-  let blocked = true;
-  const unblock = () => {
-    blocked = false;
-  };
-
   if (path) {
-    webFrame.executeJavaScriptInIsolatedWorld(
-      0,
-      [{ code, url: path }],
-      true,
-      unblock,
-    );
+    webFrame.executeJavaScriptInIsolatedWorld(0, [{ code, url: path }], true);
   } else {
-    webFrame.executeJavaScript(code, true, unblock);
+    webFrame.executeJavaScript(code, true);
   }
-
-  // HACK: wait for the script to run (with a timeout). The IIFE avoids top-level
-  // await in CJS output.
-  (async () => {
-    const startTime = Date.now();
-    const TIMEOUT = 10_000;
-    while (blocked && Date.now() - startTime < TIMEOUT) {
-      await new Promise((resolve) => setTimeout(resolve, 1));
-    }
-  })();
 };
 
 i18nReady

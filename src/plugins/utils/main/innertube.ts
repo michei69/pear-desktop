@@ -132,7 +132,22 @@ export const getInnertubeSession = (win: BrowserWindow): Promise<Innertube> => {
 
   return session;
 };
+// Three CDP round-trips per song add up over a playlist; an account rarely
+// changes premium status mid-session, so a short cache is safe.
+const PREMIUM_CACHE_TTL_MS = 5 * 60 * 1000;
+let premiumCache: { value: boolean; expires: number } | undefined;
+
 export const isPremium = async (win: BrowserWindow): Promise<boolean> => {
+  if (premiumCache && premiumCache.expires > Date.now()) {
+    return premiumCache.value;
+  }
+
+  const value = await queryIsPremium(win);
+  premiumCache = { value, expires: Date.now() + PREMIUM_CACHE_TTL_MS };
+  return value;
+};
+
+const queryIsPremium = async (win: BrowserWindow): Promise<boolean> => {
   // Signed out counts as non-premium.
   const isSignedIn = (await win.webContents.executeJavaScript(
     '!!yt.config_.LOGGED_IN',

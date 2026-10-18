@@ -1,7 +1,7 @@
 import { t } from '@/i18n';
 import { createPlugin } from '@/utils';
 
-import { onMainLoad } from './main';
+import { onMainLoad, onMainStop } from './main';
 import { onMenu } from './menu';
 
 export type ShortcutMappingType = {
@@ -106,5 +106,8 @@ export default createPlugin({
   ],
   menu: onMenu,
 
-  backend: onMainLoad,
+  backend: {
+    start: onMainLoad,
+    stop: onMainStop,
+  },
 });

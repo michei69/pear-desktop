@@ -8,6 +8,7 @@ import { checkForAppUpdates, setUpdateChannel } from '@/providers/app-updates';
 import { flagMetadata } from '@/providers/flag-metadata';
 import { setYouTubeLanguage, youtubeLanguage } from '@/providers/language-sync';
 import { applyOptionEffects } from '@/providers/option-effects';
+import { getCurrentUrl } from '@/providers/song-info';
 import { openSettingsWindow } from '@/settings-window';
 import {
   createThemeFromCssFiles,
@@ -22,6 +23,8 @@ import {
 } from '@/themes/main';
 import { createBackend } from '@/utils';
 import { NEW_UI_PROBE } from '@/utils/new-ui';
+
+import { diffPaths } from './paths';
 
 import type { SettingsUIConfig } from './index';
 
@@ -226,7 +229,7 @@ export const backend = createBackend<
     // settings window does not have: probe it there so both show the same fields.
     ipc.handle(NEW_UI, async (): Promise<boolean> => {
       // The main window, by the URL it loads; the settings window is a file.
-      const urls = [config.get('url'), config.defaultConfig.url];
+      const urls = [getCurrentUrl(), config.defaultConfig.url];
       const main = BrowserWindow.getAllWindows().find(
         (win) =>
           !win.isDestroyed() &&
@@ -243,13 +246,21 @@ export const backend = createBackend<
       openSettingsWindow();
     });
 
+    // Only the paths that changed are sent: a slider write otherwise ships the
+    // whole config to every window. `getStore` is kept for the `updates` block,
+    // whose channel follows the stored option.
+    let previous = config.getStore();
     this.unwatch = config.watch(() => {
-      const store = config.getStore();
+      const next = config.getStore();
+      const delta = diffPaths(previous, next, '');
+      previous = next;
+      if (delta.length === 0) return;
+
       // Broadcast to every window: the injected modal is in the main window, the
       // standalone tray window is a separate BrowserWindow that must stay in sync.
       for (const win of BrowserWindow.getAllWindows()) {
         if (!win.isDestroyed()) {
-          win.webContents.send('ytmd-sui:store-changed', store);
+          win.webContents.send('ytmd-sui:store-changed', delta);
         }
       }
     });

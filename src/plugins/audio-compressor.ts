@@ -1,4 +1,9 @@
 import { t } from '@/i18n';
+import {
+  clearAudioChain,
+  rebindAudioGraphSource,
+  setAudioChain,
+} from '@/providers/audio-graph';
 import { type MusicPlayer } from '@/types/music-player';
 import { createPlugin } from '@/utils';
 
@@ -55,12 +60,12 @@ class Chain {
     this.compressor = compressor;
     this.trackGain = trackGain;
 
-    // Renderer wired the source straight to destination; re-route it here.
-    lazySafeTry(() => source.disconnect(context.destination));
-
-    source.connect(compressor);
+    // The sub-chain's own edge (input → … → output); the shared owner wires
+    // source → compressor and trackGain → destination around it. Dropping this
+    // edge leaves the graph with no path to the audio device, which stalls the
+    // media clock after a few quanta.
     compressor.connect(trackGain);
-    trackGain.connect(context.destination);
+    setAudioChain('audio-compressor', compressor, trackGain);
   }
 
   applyTrackGain(gainDb: number) {
@@ -72,13 +77,7 @@ class Chain {
   }
 
   teardown() {
-    const { source, context, compressor } = this;
-    if (source && context && compressor) {
-      lazySafeTry(
-        () => source.disconnect(compressor),
-        () => source.connect(context.destination),
-      );
-    }
+    clearAudioChain('audio-compressor');
     lazySafeTry(
       () => this.compressor?.disconnect(),
       () => this.trackGain?.disconnect(),
@@ -175,13 +174,11 @@ const stopWatchingForVideoSwap = () => {
 
 const handleVideoSwap = (newEl: HTMLVideoElement) => {
   if (!chain.context) return;
-  let newSource: MediaElementAudioSourceNode;
-  try {
-    newSource = chain.context.createMediaElementSource(newEl);
-  } catch {
-    return;
-  }
-  chain.build(newSource, chain.context);
+  // The owner re-creates the source node for the swapped element and re-cuts
+  // the path; the chain then rebuilds its own nodes on the new source.
+  const source = rebindAudioGraphSource(newEl);
+  if (!source) return;
+  chain.build(source, chain.context);
   updateTrackGain();
   watchForVideoSwap();
 };

@@ -1,6 +1,11 @@
 import { LikeType, type GetState } from '@/types/datahost-get-state';
+import {
+  SONG_INFO_SETUP_CHANNEL,
+  SongInfoEventFlag,
+} from '@/types/song-info-events';
 
 import { singleton } from './decorators';
+import { toSongInfoSource } from './song-info-data';
 
 import type { SongInfo } from './song-info';
 import type { MusicPlayer } from '@/types/music-player';
@@ -215,6 +220,38 @@ export const setupAutoPlayChangedListener = singleton(() => {
 });
 
 export const setupSongInfo = (api: MusicPlayer) => {
+  window.ipcRenderer.on(SONG_INFO_SETUP_CHANNEL, (_, flags: number) => {
+    if (flags & SongInfoEventFlag.TimeChanged) {
+      setupTimeChangedListener(api);
+    }
+    if (flags & SongInfoEventFlag.LikeChanged) {
+      setupLikeChangedListener();
+    }
+    if (flags & SongInfoEventFlag.RepeatChanged) {
+      setupRepeatChangedListener();
+    }
+    if (flags & SongInfoEventFlag.VolumeChanged) {
+      setupVolumeChangedListener(api);
+    }
+    if (flags & SongInfoEventFlag.PlaybackSpeedChanged) {
+      setupPlaybackSpeedChangedListener();
+    }
+    if (flags & SongInfoEventFlag.ShuffleChanged) {
+      setupShuffleChangedListener();
+    }
+    if (flags & SongInfoEventFlag.FullscreenChanged) {
+      setupFullScreenChangedListener();
+    }
+    if (flags & SongInfoEventFlag.AutoPlayChanged) {
+      setupAutoPlayChangedListener();
+    }
+    if (flags & SongInfoEventFlag.Seeked) {
+      setupSeekedListener();
+    }
+  });
+
+  // Per-event channels still used by senders outside this module's migration:
+  // the API server and the downloader plugin.
   window.ipcRenderer.on('peard:setup-time-changed-listener', () => {
     setupTimeChangedListener(api);
   });
@@ -237,14 +274,6 @@ export const setupSongInfo = (api: MusicPlayer) => {
 
   window.ipcRenderer.on('peard:setup-shuffle-changed-listener', () => {
     setupShuffleChangedListener();
-  });
-
-  window.ipcRenderer.on('peard:setup-fullscreen-changed-listener', () => {
-    setupFullScreenChangedListener();
-  });
-
-  window.ipcRenderer.on('peard:setup-autoplay-changed-listener', () => {
-    setupAutoPlayChangedListener();
   });
 
   window.ipcRenderer.on('peard:setup-seeked-listener', () => {
@@ -391,12 +420,6 @@ export const setupSongInfo = (api: MusicPlayer) => {
       playerOverlay =
         videoData['\u0079\u0074\u006d\u0064WatchNextResponse']?.playerOverlays;
     }
-    data.videoDetails.album =
-      playerOverlay?.playerOverlayRenderer?.browserMediaSession?.browserMediaSessionRenderer?.album?.runs?.at(
-        0,
-      )?.text;
-    data.videoDetails.elapsedSeconds = 0;
-    data.videoDetails.isPaused = false;
 
     const videoId = data.videoDetails.videoId;
     const now = Date.now();
@@ -409,6 +432,23 @@ export const setupSongInfo = (api: MusicPlayer) => {
     lastReportedVideoId = videoId;
     lastReportedAt = now;
 
-    window.ipcRenderer.send('peard:video-src-changed', data);
+    // Only the fields the main process reads: the whole player response also
+    // carries streaming URLs, captions and storyboards, which cost a structured
+    // clone per track and are never used there.
+    const album =
+      playerOverlay?.playerOverlayRenderer?.browserMediaSession?.browserMediaSessionRenderer?.album?.runs?.at(
+        0,
+      )?.text;
+
+    // The API server's v2 `/video` builds song info from this same response
+    // object, so keep its video details in sync with what this event reports.
+    data.videoDetails.album = album;
+    data.videoDetails.elapsedSeconds = 0;
+    data.videoDetails.isPaused = false;
+
+    window.ipcRenderer.send(
+      'peard:video-src-changed',
+      toSongInfoSource(data, album),
+    );
   }
 };

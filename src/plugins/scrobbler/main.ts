@@ -26,6 +26,7 @@ export const backend = createBackend<
     window?: BrowserWindow;
     enabledScrobblers: Map<string, ScrobblerBase>;
     configRevision: number;
+    scrobbleTimer?: NodeJS.Timeout;
     toggleScrobblers(
       config: ScrobblerPluginConfig,
       window: BrowserWindow,
@@ -69,8 +70,6 @@ export const backend = createBackend<
 
   async start({ getConfig, setConfig, window }) {
     const config = (this.config = await getConfig());
-    // Timeout that triggers addScrobble
-    let scrobbleTimer: NodeJS.Timeout | undefined;
     let generation = 0;
 
     this.window = window;
@@ -83,7 +82,7 @@ export const backend = createBackend<
       const currentGeneration = ++generation;
 
       // Clear the previous scrobble timer
-      clearTimeout(scrobbleTimer);
+      clearTimeout(this.scrobbleTimer);
       if (!songInfo.isPaused) {
         const configNonnull = this.config!;
         const currentConfigRevision = this.configRevision;
@@ -134,7 +133,7 @@ export const backend = createBackend<
         );
 
         if (scrobbleTime > elapsed) {
-          scrobbleTimer = setTimeout(
+          this.scrobbleTimer = setTimeout(
             (info, config, configRevision) => {
               if (configRevision !== this.configRevision) return;
 
@@ -159,12 +158,17 @@ export const backend = createBackend<
   },
 
   stop() {
+    clearTimeout(this.scrobbleTimer);
+    this.scrobbleTimer = undefined;
     if (this.songInfoCallback) {
       unregisterCallback(this.songInfoCallback);
     }
   },
 
   async onConfigChange(newConfig: ScrobblerPluginConfig) {
+    // A scrobble scheduled under the old config must not fire afterwards.
+    clearTimeout(this.scrobbleTimer);
+    this.scrobbleTimer = undefined;
     this.configRevision++;
     this.enabledScrobblers.clear();
 

@@ -75,10 +75,12 @@ export default defineConfig(({ mode }) => {
       stringify: true,
     },
     build: {
-      lib: {
-        entry: 'src/index.ts',
-        formats: ['es'],
-      },
+      // No `build.lib` here: electron-vite's `?modulePath` sub-build (the
+      // downloader's ffmpeg worker) inherits this config, and a lib entry with
+      // `formats` makes it emit an output array, which the plugin's
+      // `bundles.output` destructure cannot consume. `rolldownOptions.input`
+      // below drives the same entry, and the preset derives the `es` format
+      // from the package type.
       outDir: 'dist/main',
       rolldownOptions: {
         external: mainAndPreloadExcludes,
@@ -155,6 +157,13 @@ export default defineConfig(({ mode }) => {
       rolldownOptions: {
         external: rendererExcludes,
         input: './src/index.html',
+        // The preload injects this file as one script into the page world, so
+        // dynamic imports must stay in the file (`codeSplitting: false` is the
+        // non-deprecated `inlineDynamicImports`). They are still deferred: the
+        // imported module body runs only when `import()` is called.
+        output: {
+          codeSplitting: false,
+        },
       },
       minify: !isDev,
       cssMinify: !isDev,

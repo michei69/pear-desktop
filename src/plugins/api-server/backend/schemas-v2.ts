@@ -196,14 +196,14 @@ export const AppMetaSchema = z.object({
   }),
 });
 
-/** One feature flag: its effective value and whether it is an override. */
+/** One feature flag this app sets: its effective value and whether the user set it. */
 const FeatureFlagSchema = z.object({
   name: z.string(),
   value: z.unknown(),
   overridden: z.boolean(),
 });
 
-/** `GET /pear/feature-flags`: every flag the page has or the user overrode. */
+/** `GET /pear/feature-flags`: every flag this app sets. */
 export const FeatureFlagsSchema = z.object({
   flags: z.array(FeatureFlagSchema),
 });

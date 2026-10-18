@@ -18,6 +18,8 @@ export interface BackendContext<
     send: WebContents['send'];
     handle: (event: string, listener: CallableFunction) => void;
     on: (event: string, listener: CallableFunction) => void;
+    /** Removes one listener, leaving the channel's other listeners alone. */
+    off: (event: string, listener: CallableFunction) => void;
     removeHandler: IpcMain['removeHandler'];
     removeAllListeners: (event: string) => void;
   };

@@ -1267,6 +1267,40 @@ test('queue leaves the other reply fields alone', async () => {
   });
 });
 
+test('next queue item answers the entry after the selected one, projected', async () => {
+  const { recorded, fire } = setup(undefined, [
+    { playlistPanelVideoRenderer: rawQueueItem({ selected: true }) },
+    {
+      playlistPanelVideoRenderer: rawQueueItem({
+        videoId: 'second',
+        title: { runs: [{ text: 'Judas' }] },
+        selected: false,
+      }),
+    },
+  ]);
+
+  await fire(ApiActions.getNextQueueItem);
+
+  // Exactly the five fields `/api/v1/queue/next` answers: the whole raw queue
+  // never crosses IPC for them.
+  expect(recorded.replies.at(-1)?.payload).toEqual({
+    title: 'Judas',
+    videoId: 'second',
+    thumbnail: { thumbnails: SIZES },
+    lengthText: { runs: [{ text: '4:21' }] },
+  });
+});
+
+test('next queue item answers nothing at the end of the queue', async () => {
+  const { recorded, fire } = setup(undefined, [
+    { playlistPanelVideoRenderer: rawQueueItem({ selected: true }) },
+  ]);
+
+  await fire(ApiActions.getNextQueueItem);
+
+  expect(recorded.replies.at(-1)?.payload).toBeNull();
+});
+
 test('autoplay maps the automix entries, which are not part of the queue', async () => {
   const { recorded, fire } = setup(
     undefined,

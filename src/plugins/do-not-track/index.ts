@@ -1,4 +1,4 @@
-import { contextBridge, dialog, webFrame, type BrowserWindow } from 'electron';
+import { dialog, webFrame, type BrowserWindow } from 'electron';
 
 import { t } from '@/i18n';
 import { createPlugin } from '@/utils';
@@ -9,7 +9,7 @@ import {
   loadTrackerBlockerEngine,
   unloadTrackerBlockerEngine,
 } from './blocker';
-import { inject, isInjected } from './injectors/inject';
+import { inject, isInjected, prunerScript } from './injectors/inject';
 import injectCliqzPreload from './injectors/inject-cliqz-preload';
 import balancedRules from './lists/balanced.txt?raw';
 import strictRules from './lists/strict-addon.txt?raw';
@@ -233,6 +233,7 @@ export default createPlugin({
           const profileChanged =
             this.currentProfile !== null && this.currentProfile !== nextProfile;
           this.currentProfile = nextProfile;
+          if (!profileChanged) return;
           const wasBlockerEnabled = isBlockerEnabled(session);
           if (wasBlockerEnabled) {
             unloadTrackerBlockerEngine(session, true);
@@ -260,25 +261,14 @@ export default createPlugin({
   },
   preload: {
     // see #1478
-    script: `const _prunerFn = window._pruner;
-    window._pruner = undefined;
-    JSON.parse = new Proxy(JSON.parse, {
-      apply() {
-        return _prunerFn(Reflect.apply(...arguments));
-      },
-    });
-    Response.prototype.json = new Proxy(Response.prototype.json, {
-      apply() {
-        return Reflect.apply(...arguments).then((o) => _prunerFn(o));
-      },
-    }); 0`,
+    script: prunerScript,
     async start({ getConfig }) {
       const config = await getConfig();
 
       if (!isInjected()) {
         // Safe built-in equivalent for YouTube ad-response scriptlets.
         // Filter lists remain declarative: arbitrary ##+js rules never run.
-        inject(contextBridge);
+        inject();
         await webFrame.executeJavaScript(this.script);
       }
 
@@ -288,7 +278,7 @@ export default createPlugin({
     },
     async onConfigChange(newConfig) {
       if (!isInjected()) {
-        inject(contextBridge);
+        inject();
         await webFrame.executeJavaScript(this.script);
       }
       if (usesBlockLists(newConfig.blocker, newConfig.customEnabled)) {

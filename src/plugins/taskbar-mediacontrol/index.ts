@@ -25,6 +25,10 @@ import {
 } from '@/providers/song-info';
 import { LikeType } from '@/types/datahost-get-state';
 import { Platform } from '@/types/plugins';
+import {
+  SONG_INFO_SETUP_CHANNEL,
+  SongInfoEventFlag,
+} from '@/types/song-info-events';
 import { createPlugin } from '@/utils';
 
 export default createPlugin({
@@ -83,17 +87,35 @@ export default createPlugin({
       };
     };
     let images = getImages();
+    let lastThumbarImages: typeof images | undefined;
+    let lastThumbarPaused: boolean | undefined;
+    let lastThumbarLikeStatus: LikeType | undefined;
 
     nativeTheme.on('updated', () => {
       images = getImages();
       setThumbar(currentSongInfo);
     });
 
-    const setThumbar = (songInfo: SongInfo) => {
+    const setThumbar = (songInfo: SongInfo, force = false) => {
       // Wait for the song to start.
       if (!songInfo?.title) {
         return;
       }
+
+      const isPaused = songInfo.isPaused ?? false;
+
+      // Only rebuild when the rendered state actually changed.
+      if (
+        !force &&
+        lastThumbarImages === images &&
+        lastThumbarPaused === isPaused &&
+        lastThumbarLikeStatus === currentLikeStatus
+      ) {
+        return;
+      }
+      lastThumbarImages = images;
+      lastThumbarPaused = isPaused;
+      lastThumbarLikeStatus = currentLikeStatus;
 
       // Win32 needs the whole component list rewritten.
       window.setThumbarButtons([
@@ -141,7 +163,10 @@ export default createPlugin({
       ]);
     };
 
-    window.webContents.send('peard:setup-like-changed-listener');
+    window.webContents.send(
+      SONG_INFO_SETUP_CHANNEL,
+      SongInfoEventFlag.LikeChanged,
+    );
 
     ipcMain.on('peard:like-changed', (_, status: LikeType) => {
       currentLikeStatus = status;
@@ -158,6 +183,6 @@ export default createPlugin({
     });
 
     // win.show() drops the thumbar, so it has to be set again.
-    window.on('show', () => setThumbar(currentSongInfo));
+    window.on('show', () => setThumbar(currentSongInfo, true));
   },
 });

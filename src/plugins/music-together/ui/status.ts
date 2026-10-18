@@ -69,27 +69,51 @@ export const createStatus = () => {
     profile.src = src;
   };
 
+  const userElements = new Map<string, HTMLImageElement>();
+
   const setUsers = (users: Profile[]) => {
     const container = element.querySelector<HTMLDivElement>(
       '.music-together-user-container',
     )!;
     const empty = element.querySelector<HTMLElement>('.music-together-empty')!;
-    for (const child of Array.from(container.children)) {
-      if (child !== empty) child.remove();
-    }
 
-    if (users.length === 0) empty.style.display = 'block';
-    else empty.style.display = 'none';
-
+    const seen = new Set<string>();
     for (const user of users) {
-      const img = document.createElement('img');
-      img.classList.add('music-together-profile');
-      img.src = user.thumbnail ?? '';
-      img.title = user.name;
-      img.alt = `${user.name} (${user.id})`;
+      seen.add(user.id);
 
-      container.append(img);
+      let img = userElements.get(user.id);
+      if (!img) {
+        img = document.createElement('img');
+        img.classList.add('music-together-profile');
+        userElements.set(user.id, img);
+      }
+
+      // Image decoding is the expensive part, so only touch changed users.
+      if (img.getAttribute('src') !== (user.thumbnail ?? ''))
+        img.src = user.thumbnail ?? '';
+      if (img.title !== user.name) img.title = user.name;
+
+      const alt = `${user.name} (${user.id})`;
+      if (img.alt !== alt) img.alt = alt;
     }
+
+    for (const [id, img] of userElements) {
+      if (seen.has(id)) continue;
+
+      img.remove();
+      userElements.delete(id);
+    }
+
+    // Re-append only when the order changed; `append` moves existing nodes
+    // rather than cloning them, so no image is decoded twice.
+    const ordered = users.map((user) => userElements.get(user.id)!);
+    const current = Array.from(container.children).filter(
+      (child): child is HTMLImageElement => child !== empty,
+    );
+    if (ordered.some((img, index) => current[index] !== img))
+      container.append(...ordered);
+
+    empty.style.display = users.length === 0 ? 'block' : 'none';
   };
 
   return {

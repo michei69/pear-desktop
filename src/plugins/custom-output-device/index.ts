@@ -9,7 +9,8 @@ import { renderer } from './renderer';
 export interface CustomOutputPluginConfig {
   enabled: boolean;
   output: string;
-  devices: Record<string, string>;
+  /** `[deviceId, label]` pairs: an array so a config write replaces the list. */
+  devices: [string, string][];
 }
 
 export default createPlugin({
@@ -19,7 +20,7 @@ export default createPlugin({
   config: {
     enabled: false,
     output: 'default',
-    devices: {},
+    devices: [],
   } as CustomOutputPluginConfig,
   settings: [
     {
@@ -45,13 +46,20 @@ export default createPlugin({
     const promptDeviceSelector = async () => {
       const options = await getConfig();
 
+      // Older builds stored the list as a record; deepmerge cannot delete its
+      // keys, so it is written as pairs now.
+      const storedDevices: unknown = options.devices;
+      const selectOptions = Array.isArray(storedDevices)
+        ? Object.fromEntries(storedDevices as [string, string][])
+        : (storedDevices as Record<string, string>);
+
       const response = await prompt(
         {
           title: t('plugins.custom-output-device.prompt.device-selector.title'),
           label: t('plugins.custom-output-device.prompt.device-selector.label'),
           value: options.output || 'default',
           type: 'select',
-          selectOptions: options.devices,
+          selectOptions,
           width: 500,
           ...promptOptions(),
         },

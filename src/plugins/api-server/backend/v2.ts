@@ -907,7 +907,7 @@ const registerRoutes = (app: OpenAPIHono, operations: Operations) => {
       path: '/pear/feature-flags',
       summary: 'get feature flags',
       description:
-        'Every feature flag the page carries or the user overrode, with its effective value',
+        'Every flag this app sets, with the value the page is running it with',
       schema: FeatureFlagsSchema,
       tags: [v2Tag('Config')],
     }),

@@ -1,4 +1,5 @@
 import { t } from '@/i18n';
+import { clearAudioChain, setAudioChain } from '@/providers/audio-graph';
 import { createPlugin } from '@/utils';
 
 import { EqualizerPresets } from './EqualizerPresets';
@@ -19,8 +20,9 @@ export type EqualizerPluginConfig = {
 };
 
 let appliedFilters: BiquadFilterNode[] = [];
-let audioSourceNode: AudioNode | null = null;
-let audioCtx: AudioContext | null = null;
+let audioCanPlayListener:
+  | ((event: CustomEvent<Compressor>) => void)
+  | undefined;
 
 export default createPlugin({
   name: () => t('plugins.equalizer.name'),
@@ -70,53 +72,67 @@ export default createPlugin({
     async start({ getConfig }) {
       const config = await getConfig();
 
-      document.addEventListener(
-        'peard:audio-can-play',
-        ({ detail: { audioSource, audioContext } }) => {
-          const filtersToApply = config.filters.concat(
-            defaultPresets
-              .filter((preset) => config.presets[preset])
-              .map((preset) => presetConfigs[preset]),
-          );
+      // Keep a reference so `stop` can detach it.
+      const listener = ({
+        detail: { audioContext },
+      }: CustomEvent<Compressor>) => {
+        const filtersToApply = config.filters.concat(
+          defaultPresets
+            .filter((preset) => config.presets[preset])
+            .map((preset) => presetConfigs[preset]),
+        );
 
-          if (filtersToApply.length === 0) return;
+        appliedFilters.forEach((filter) => filter.disconnect());
+        appliedFilters = [];
 
-          appliedFilters.forEach((filter) => filter.disconnect());
-          appliedFilters = [];
+        if (filtersToApply.length === 0) {
+          clearAudioChain('equalizer');
+          return;
+        }
 
-          audioSourceNode = audioSource;
-          audioCtx = audioContext;
+        // The shared owner wires source → filters → destination, so another
+        // plugin splicing its own chain cannot lose its edges here.
+        let first: BiquadFilterNode | null = null;
+        let last: BiquadFilterNode | null = null;
+        for (const filter of filtersToApply) {
+          const biquadFilter = audioContext.createBiquadFilter();
+          biquadFilter.type = filter.type;
+          biquadFilter.frequency.value = filter.frequency;
+          biquadFilter.Q.value = filter.Q;
+          biquadFilter.gain.value = filter.gain;
 
-          // Drop the default path so audio is not played twice.
-          audioSource.disconnect(audioContext.destination);
+          if (last) last.connect(biquadFilter);
+          else first = biquadFilter;
+          last = biquadFilter;
 
-          let lastNode: AudioNode = audioSource;
-          filtersToApply.forEach((filter) => {
-            const biquadFilter = audioContext.createBiquadFilter();
-            biquadFilter.type = filter.type;
-            biquadFilter.frequency.value = filter.frequency;
-            biquadFilter.Q.value = filter.Q;
-            biquadFilter.gain.value = filter.gain;
+          appliedFilters.push(biquadFilter);
+        }
+        if (first && last) setAudioChain('equalizer', first, last);
+      };
 
-            lastNode.connect(biquadFilter);
-            lastNode = biquadFilter;
-
-            appliedFilters.push(biquadFilter);
-          });
-          lastNode.connect(audioContext.destination);
-        },
-      );
+      if (audioCanPlayListener) {
+        document.removeEventListener(
+          'peard:audio-can-play',
+          audioCanPlayListener,
+        );
+      }
+      audioCanPlayListener = listener;
+      document.addEventListener('peard:audio-can-play', listener);
     },
     stop() {
+      if (audioCanPlayListener) {
+        document.removeEventListener(
+          'peard:audio-can-play',
+          audioCanPlayListener,
+        );
+        audioCanPlayListener = undefined;
+      }
+
       appliedFilters.forEach((filter) => filter.disconnect());
       appliedFilters = [];
 
-      // Restore the default audio path
-      if (audioSourceNode && audioCtx) {
-        audioSourceNode.connect(audioCtx.destination);
-        audioSourceNode = null;
-        audioCtx = null;
-      }
+      // The owner restores the default source → destination path.
+      clearAudioChain('equalizer');
     },
   },
 });

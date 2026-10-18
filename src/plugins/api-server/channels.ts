@@ -13,6 +13,7 @@ const queryActions = {
   getVideo: 'get-video',
   getPlaybackPosition: 'get-playback-position',
   getQueue: 'get-queue',
+  getNextQueueItem: 'get-next-queue-item',
   getAutoplay: 'get-autoplay',
   getLyrics: 'get-lyrics',
   translateLyrics: 'translate-lyrics',
@@ -82,4 +83,13 @@ export interface TranslationUpdatedPayload {
   language: string | null;
   provider: string | null;
   lines: string[];
+}
+
+/** The next queue entry, projected to what `/api/v1/queue/next` answers. */
+export interface NextQueueItemReply {
+  title?: string;
+  videoId: string;
+  thumbnail: unknown;
+  lengthText: unknown;
+  shortBylineText: unknown;
 }

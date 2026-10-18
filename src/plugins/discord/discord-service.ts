@@ -18,6 +18,10 @@ import type { DiscordPluginConfig } from './index';
 import type { SongInfo } from '@/providers/song-info';
 import type { SetActivity } from '@xhayper/discord-rpc/dist/structures/ClientUser';
 
+/** Reconnect delay doubles from the base, capped so retries never stall. */
+const RECONNECT_BASE_DELAY_MS = 5_000;
+const RECONNECT_MAX_DELAY_MS = 5 * 60_000;
+
 export class DiscordService {
   rpc!: DiscordClient;
   ready = false;
@@ -27,6 +31,8 @@ export class DiscordService {
   config?: DiscordPluginConfig;
   refreshCallbacks: (() => void)[] = [];
   timerManager = new TimerManager();
+  reconnectAttempt = 0;
+  reconnectTimerPending = false;
 
   mainWindow: Electron.BrowserWindow;
 
@@ -79,7 +85,7 @@ export class DiscordService {
     songInfo: SongInfo,
     config: DiscordPluginConfig,
   ): SetActivity {
-    padHangulFields(songInfo);
+    songInfo = padHangulFields(songInfo);
 
     const activityInfo: SetActivity = {
       type: ActivityType.Listening,
@@ -138,45 +144,52 @@ export class DiscordService {
     this.lastSongInfo = undefined;
     this.lastProgressUpdate = 0;
     this.timerManager.clearAll();
+    this.reconnectTimerPending = false;
     if (is.dev()) {
       console.log(LoggerPrefix, t('plugins.discord.backend.disconnected'));
     }
   }
 
-  private connectWithRetry(): Promise<void> {
-    return new Promise((resolve, reject) => {
-      this.timerManager.set(
-        TimerKey.DiscordConnectRetry,
-        () => {
-          if (!this.autoReconnect || this.rpc.isConnected) {
-            this.timerManager.clear(TimerKey.DiscordConnectRetry);
-            if (this.rpc.isConnected) resolve();
-            else
-              reject(
-                new Error('Auto-reconnect disabled or already connected.'),
-              );
-            return;
-          }
+  private connectWithRetry(): void {
+    if (this.reconnectTimerPending) {
+      // A retry is already queued; don't stack timers or RPC listeners.
+      return;
+    }
+    this.reconnectTimerPending = true;
 
-          this.rpc
-            .login()
-            .then(() => {
-              this.timerManager.clear(TimerKey.DiscordConnectRetry);
-              resolve();
-            })
-            .catch(() => {
-              this.initializeRpc();
-              this.connectRecursive();
-            });
-        },
-        5000,
-      );
-    });
+    const delay = Math.min(
+      RECONNECT_BASE_DELAY_MS * 2 ** this.reconnectAttempt,
+      RECONNECT_MAX_DELAY_MS,
+    );
+    this.reconnectAttempt += 1;
+
+    this.timerManager.set(
+      TimerKey.DiscordConnectRetry,
+      () => {
+        this.reconnectTimerPending = false;
+
+        if (!this.autoReconnect || this.rpc.isConnected) {
+          return;
+        }
+
+        this.rpc
+          .login()
+          .then(() => {
+            this.reconnectAttempt = 0;
+          })
+          .catch(() => {
+            this.initializeRpc();
+            this.connectRecursive();
+          });
+      },
+      delay,
+    );
   }
 
   private connectRecursive = () => {
     if (!this.autoReconnect || this.rpc.isConnected) {
       this.timerManager.clear(TimerKey.DiscordConnectRetry);
+      this.reconnectTimerPending = false;
       return;
     }
     this.connectWithRetry();
@@ -198,6 +211,8 @@ export class DiscordService {
 
     this.ready = false;
     this.timerManager.clear(TimerKey.DiscordConnectRetry);
+    this.reconnectTimerPending = false;
+    this.reconnectAttempt = 0;
 
     this.rpc.login().catch(() => {
       this.resetInfo();
@@ -249,6 +264,8 @@ export class DiscordService {
 
     const now = Date.now();
     const elapsedSeconds = songInfo.elapsedSeconds ?? 0;
+    // One snapshot serves both the deferred update and lastSongInfo.
+    const songInfoSnapshot = { ...songInfo };
 
     const songChanged = songInfo.videoId !== this.lastSongInfo?.videoId;
     const pauseChanged = songInfo.isPaused !== this.lastSongInfo?.isPaused;
@@ -290,7 +307,6 @@ export class DiscordService {
     } else {
       const remainingThrottle =
         PROGRESS_THROTTLE_MS - (now - this.lastProgressUpdate);
-      const songInfoSnapshot = { ...songInfo };
 
       this.timerManager.set(
         TimerKey.UpdateTimeout,
@@ -314,7 +330,7 @@ export class DiscordService {
         remainingThrottle,
       );
     }
-    this.lastSongInfo = { ...songInfo };
+    this.lastSongInfo = songInfoSnapshot;
   }
 
   clearActivity(): void {

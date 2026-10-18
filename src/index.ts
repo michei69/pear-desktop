@@ -60,6 +60,8 @@ import {
 } from '@/providers/protocol-handler';
 import { syncShortcutIcons } from '@/providers/shortcut-icons';
 import {
+  getImage,
+  getCurrentUrl,
   registerCallback,
   setupSongInfo,
   SongInfoEvent,
@@ -91,6 +93,9 @@ unhandled({
   logger: console.error,
   showDialog: false,
 });
+
+// How long to wait for the page to paint before showing the window anyway.
+const EARLY_SHOW_DELAY = 500;
 
 // Prevent window being garbage collected
 let mainWindow: Electron.BrowserWindow | null;
@@ -261,10 +266,18 @@ if (is.windows()) {
           smtc.setAlbumTitle(songInfo.album ?? '');
           smtc.setArtist(songInfo.artist);
           smtc.setTitle(songInfo.title);
-          if (songInfo.image) {
-            const p = path.join(tmpdir(), 'thumb.png');
-            fs.writeFileSync(p, songInfo.image.toPNG());
-            smtc.setThumbnail(p);
+          if (songInfo.imageSrc) {
+            getImage(songInfo.imageSrc)
+              .then((image) => {
+                if (image.isEmpty()) return;
+                const p = path.join(tmpdir(), 'thumb.png');
+                fs.writeFileSync(p, image.toPNG());
+                smtc.setThumbnail(p);
+              })
+              .catch(() => {
+                // The thumbnail is cosmetic: a failed decode must not break
+                // the media-session update.
+              });
           }
           smtc.setStartTime(0);
           smtc.setMinSeekTime(0);
@@ -412,16 +425,25 @@ const initHook = async (win: BrowserWindow) => {
       const isEqual = deepEqual(oldPluginConfigList[id], newPluginConfig);
 
       if (!isEqual) {
-        const oldConfig = oldPluginConfigList[id] as PluginConfig;
+        const oldConfig = oldPluginConfigList[id] as PluginConfig | undefined;
         const config = deepmerge(
           allPluginStubs[id].config ?? { enabled: false },
           newPluginConfig ?? {},
         ) as PluginConfig;
 
         // Essential plugins can never be disabled.
-        if (allPluginStubs[id]?.essential) config.enabled = true;
+        const essential = !!allPluginStubs[id]?.essential;
+        if (essential) config.enabled = true;
 
-        if (config.enabled !== oldConfig?.enabled) {
+        // A stored config may not carry `enabled` at all (it was never
+        // toggled): the old effective value is then the plugin's default, not
+        // `undefined` — otherwise every other config change re-inits the
+        // default-enabled plugins.
+        const oldEnabled = essential
+          ? true
+          : (oldConfig?.enabled ?? allPluginStubs[id].config?.enabled ?? false);
+
+        if (config.enabled !== oldEnabled) {
           if (config.enabled) {
             win.webContents.send('plugin:enable', id);
             ipcMain.emit('plugin:enable', id);
@@ -565,7 +587,7 @@ function interceptExternalLinks(win: BrowserWindow) {
   const { webContents } = win;
 
   const route = (event: Electron.Event, url: string) => {
-    const target = classifyLink(url, config.get('url'));
+    const target = classifyLink(url, getCurrentUrl());
 
     if (target === 'in-app') return;
 
@@ -574,7 +596,7 @@ function interceptExternalLinks(win: BrowserWindow) {
   };
 
   webContents.setWindowOpenHandler(({ url }) => {
-    const target = classifyLink(url, config.get('url'));
+    const target = classifyLink(url, getCurrentUrl());
 
     if (target === 'in-app') return { action: 'allow' };
 
@@ -696,7 +718,7 @@ async function createMainWindow() {
   }
 
   const urlToLoad = config.get('options.resumeOnStart')
-    ? config.get('url')
+    ? getCurrentUrl()
     : config.defaultConfig.url;
   win.on('closed', onClosed);
 
@@ -767,11 +789,20 @@ async function createMainWindow() {
     });
   }
 
-  win.once('ready-to-show', () => {
+  // 'ready-to-show' only fires once the remote page has painted, which takes
+  // seconds on a cold start. The window paints its own background colour
+  // already, so show it as soon as either that or a short timer fires.
+  const showWindow = () => {
+    if (win.isDestroyed() || win.isVisible()) return;
     if (config.get('options.appVisible')) {
       win.show();
     }
-  });
+  };
+
+  win.once('ready-to-show', showWindow);
+  const earlyShowTimer = setTimeout(showWindow, EARLY_SHOW_DELAY);
+  win.once('show', () => clearTimeout(earlyShowTimer));
+  win.once('closed', () => clearTimeout(earlyShowTimer));
 
   // Hidden to tray: Blink's resource caches (decoded images, fonts) are
   // re-fetchable, so hand them back after a minute hidden instead of holding

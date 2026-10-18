@@ -3,6 +3,10 @@ import is from 'electron-is';
 
 import { t } from '@/i18n';
 import { registerCallback } from '@/providers/song-info';
+import {
+  SONG_INFO_SETUP_CHANNEL,
+  SongInfoEventFlag,
+} from '@/types/song-info-events';
 import { createPlugin } from '@/utils';
 
 interface Data {
@@ -72,9 +76,11 @@ export default createPlugin({
       };
 
       ipc.on('peard:player-api-loaded', () =>
-        ipc.send('peard:setup-time-changed-listener'),
+        ipc.send(SONG_INFO_SETUP_CHANNEL, SongInfoEventFlag.TimeChanged),
       );
 
+      // TimeChanged carries the elapsed time OBS renders as progress, so this
+      // callback must run for it too.
       registerCallback((songInfo) => {
         if (!songInfo.title && !songInfo.artist) {
           return;

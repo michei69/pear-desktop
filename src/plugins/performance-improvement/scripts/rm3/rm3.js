@@ -33,6 +33,11 @@ export const injectRm3 = () => {
   const CONFIRM_TIME = 4000;
   const CHECK_INTERVAL = 400;
   const DEBUG_dataChangeReflection = true;
+  // The component-reuse pool patches document.createElement globally and adds
+  // per-component bookkeeping (WeakRef + expando + WeakMap entry) to every
+  // component created by the app. That cost is paid app-wide, so the pool is
+  // opt-in: enable it only when the reuse behaviour is actually wanted.
+  const ENABLE_COMPONENT_REUSE = false;
 
   /** @type {globalThis.PromiseConstructor} */
   const Promise = (async () => {})().constructor; // hacks Promise in WaterFox Classic and "Promise.resolve(0)" nevers resolve.
@@ -339,7 +344,11 @@ export const injectRm3 = () => {
 
     // rm3.list = [];
 
-    const operations = rm3.operations = new Set(); // to find out the "oldest elements"
+    // Only detached elements awaiting pool insertion are tracked here. Attached
+    // elements are removed from the set, so its size is bounded by the number
+    // of components detached within CONFIRM_TIME rather than by every component
+    // the app has ever created.
+    const operations = rm3.operations = new Set();
 
     const availablePools = rm3.availablePools = new Map(); // those "old elements" can be used
     let lastTimeCheck = 0;
@@ -353,91 +362,66 @@ export const injectRm3 = () => {
     // const noValues = new Map();
 
     const timeCheck = () => {
-      // regularly check elements are old enough to put into the available pools
-      // note: the characterists of original components are non-volatile. So don't need to waste time to check weakRef.deref() is null or not for removing in operations.
+      // Regularly move detached elements that have stayed detached long enough
+      // into the available pools. Only detached elements are in `operations`,
+      // and each one is removed after it is handled, so the cost of a pass is
+      // proportional to the components detached since the previous pass.
 
       const ct = Date.now();
       if (ct - lastTimeCheck < CHECK_INTERVAL || noTimeCheck) return;
       lastTimeCheck = ct;
       noTimeCheck = true;
 
-      // 16,777,216
-      if (hookTos.size > 777216) hookTos.clear(); // just debug usage, dont concern
-      if (operations.size > 7777216) {
-        // extremely old elements in operations mean they have no attach/detach action. so no reuse as well. they are just trash in memory.
-        // as no checking of the weakRef.deref() being null or not, those trash could be already cleaned. However we don't concern this.
-        // (not to count whether they are actual memory trash or not)
-        const half = operations.size >>> 1;
-        let i = 0;
-        for (const value of operations) {
-          if (i++ > half) break;
-          operations.delete(value);
-        }
-      }
+      try {
+        // 16,777,216
+        if (hookTos.size > 777216) hookTos.clear(); // just debug usage, dont concern
 
-      // {
-      //   // smallest to largest
-      //   // past to recent
+        // Set iterator: entries are ordered by detach time (detachedDefine does
+        // delete + add), so the first entry that is too recent ends the pass.
+        const iterator = operations[Symbol.iterator]();
 
-      //   const iterator = operations[Symbol.iterator]();
-      //   console.log(1831, '------------------------')
-      //   while (true) {
-      //     const iteratorResult = iterator.next(); // 順番に値を取りだす
-      //     if (iteratorResult.done) break; // 取り出し終えたなら、break
-      //     console.log(1835, iteratorResult.value[3])
-      //   }
+        const targetTime = ct - CONFIRM_TIME;
 
-      //   console.log(1839, '------------------------')
-      // }
+        const pivotNodes = new WeakMap();
 
-      // Set iterator
-      // s.add(2) s.add(6) s.add(1) s.add(3)
-      // next: 2 -> 6 -> 1 -> 3
-      // op1 (oldest) -> op2 -> op3 -> op4 (latest)
-      const iterator = operations[Symbol.iterator]();
+        while (true) {
+          const iteratorResult = iterator.next();
+          if (iteratorResult.done) break;
+          const entryRecord = iteratorResult.value;
+          if (entryRecord[3] > targetTime) break;
 
-      const targetTime = ct - CONFIRM_TIME;
+          if (!entryRecord[4] && entryRecord[1] < 0 && entryRecord[2] > 0) {
+            const element = entryRecord[0].deref();
+            const eKey = (element || 0).__rm3Tag003__;
+            if (
+              eKey &&
+              element.isConnected === false &&
+              insp(element).isAttached === false
+            ) {
+              entryRecord[4] = true;
 
-      const pivotNodes = new WeakMap();
+              let availablePool = availablePools.get(eKey);
+              if (!availablePool)
+                availablePools.set(eKey, availablePool = new LinkedArray());
+              if (!(availablePool instanceof LinkedArray)) throw new Error();
+              DEBUG_OPT &&
+                console.log(3885, 'add key', eKey, availablePools.size);
 
-      while (true) {
-        const iteratorResult = iterator.next(); // 順番に値を取りだす
-        if (iteratorResult.done) break; // 取り出し終えたなら、break
-        const entryRecord = iteratorResult.value;
-        if (entryRecord[3] > targetTime) break;
+              let pivotNode = pivotNodes.get(availablePool);
+              if (!pivotNode)
+                pivotNodes.set(availablePool, pivotNode = availablePool.head); // cached the previous newest node (head) as pivotNode
 
-        if (!entryRecord[4] && entryRecord[1] < 0 && entryRecord[2] > 0) {
-          const element = entryRecord[0].deref();
-          const eKey = (element || 0).__rm3Tag003__;
-          if (!eKey) {
-            operations.delete(entryRecord);
-          } else if (
-            element.isConnected === false &&
-            insp(element).isAttached === false
-          ) {
-            entryRecord[4] = true;
-
-            let availablePool = availablePools.get(eKey);
-            if (!availablePool)
-              availablePools.set(eKey, availablePool = new LinkedArray());
-            if (!(availablePool instanceof LinkedArray)) throw new Error();
-            DEBUG_OPT &&
-              console.log(3885, 'add key', eKey, availablePools.size);
-            // rm3.showSize = ()=>availablePools.size
-            // setTimeout(()=>{
-            //   // window?.euu1 = availablePools
-            //   // window?.euu2 = availablePools.size
-            //   console.log(availablePools.size)
-            // }, 8000)
-            let pivotNode = pivotNodes.get(availablePool);
-            if (!pivotNode)
-              pivotNodes.set(availablePool, pivotNode = availablePool.head); // cached the previous newest node (head) as pivotNode
-
-            availablePool.insertBeforeNode(pivotNode, entryRecord); // head = newest, tail = oldest
+              availablePool.insertBeforeNode(pivotNode, entryRecord); // head = newest, tail = oldest
+            }
           }
+
+          // Handled (pooled, stale, or no longer detached): stop tracking it.
+          // A later detach re-adds the record via detachedDefine.
+          operations.delete(entryRecord);
         }
+      } finally {
+        noTimeCheck = false;
       }
-      noTimeCheck = false;
     };
 
     const attachedDefine = function () {
@@ -452,14 +436,13 @@ export const injectRm3 = () => {
             hostElement.isConnected === true &&
             this?.isAttached === true
           ) {
-            noTimeCheck = true;
             const ct = Date.now();
             entryRecord[1] = ct;
             entryRecord[2] = -1;
             entryRecord[3] = ct;
+            // Attached elements are not candidates for the reuse pool, so they
+            // are not kept in `operations`.
             operations.delete(entryRecord);
-            operations.add(entryRecord);
-            noTimeCheck = false;
             // note: because of performance prespective, deletion for availablePools[eKey]'s linked element would not be done here.
             // entryRecord[4] is not required to be updated here.
           }
@@ -479,14 +462,13 @@ export const injectRm3 = () => {
             hostElement.isConnected === false &&
             this?.isAttached === false
           ) {
-            noTimeCheck = true;
             const ct = Date.now();
             entryRecord[2] = ct;
             entryRecord[1] = -1;
             entryRecord[3] = ct;
+            // Re-add to keep the Set ordered by detach time (oldest first).
             operations.delete(entryRecord);
             operations.add(entryRecord);
-            noTimeCheck = false;
             // note: because of performance prespective, deletion for availablePools[eKey]'s linked element would not be done here.
             // entryRecord[4] is not required to be updated here.
           }
@@ -754,48 +736,46 @@ export const injectRm3 = () => {
       return newElement;
     };
 
-    document.createElement9512 = document.createElement;
-    document.createElement = function (a) {
-      const r = document.createElement9512(a);
-      try {
-        const cnt = insp(r);
-        if (cnt.createComponent_ && !cnt.createComponent9512_) {
-          const cProto = getProto(r);
-          if (cProto.createComponent_ === cnt.createComponent_) {
-            if (
-              !cProto.createComponent9512_ &&
-              typeof cProto.createComponent_ === 'function' &&
-              (
-                cProto.createComponent_.length === 4 ||
-                cProto.createComponent_.length === 3
-              )
-            ) {
-              cProto.createComponent9512_ = cProto.createComponent_;
+    if (ENABLE_COMPONENT_REUSE) {
+      document.createElement9512 = document.createElement;
+      document.createElement = function (a) {
+        const r = document.createElement9512(a);
+        try {
+          const cnt = insp(r);
+          if (cnt.createComponent_ && !cnt.createComponent9512_) {
+            const cProto = getProto(r);
+            if (cProto.createComponent_ === cnt.createComponent_) {
+              if (
+                !cProto.createComponent9512_ &&
+                typeof cProto.createComponent_ === 'function' &&
+                (cProto.createComponent_.length === 4 ||
+                  cProto.createComponent_.length === 3)
+              ) {
+                cProto.createComponent9512_ = cProto.createComponent_;
 
-              cProto.createComponent_ = createComponentDefine_;
-              DEBUG_OPT && hookTos.add(a);
-            }
-          } else {
-            if (
-              typeof cnt.createComponent_ === 'function' &&
-              (
-                cnt.createComponent_.length === 4 ||
-                cnt.createComponent_.length === 3
-              )
-            ) {
-              cnt.createComponent9512_ = cnt.createComponent_;
+                cProto.createComponent_ = createComponentDefine_;
+                DEBUG_OPT && hookTos.add(a);
+              }
+            } else {
+              if (
+                typeof cnt.createComponent_ === 'function' &&
+                (cnt.createComponent_.length === 4 ||
+                  cnt.createComponent_.length === 3)
+              ) {
+                cnt.createComponent9512_ = cnt.createComponent_;
 
-              cnt.createComponent_ = createComponentDefine_;
-              DEBUG_OPT && hookTos.add(a);
+                cnt.createComponent_ = createComponentDefine_;
+                DEBUG_OPT && hookTos.add(a);
+              }
             }
           }
+        } catch (e) {
+          console.warn(e);
         }
-      } catch (e) {
-        console.warn(e);
-      }
 
-      return r;
-    };
+        return r;
+      };
+    }
 
     rm3.checkWhetherUnderParent = () => {
       const r = [];
