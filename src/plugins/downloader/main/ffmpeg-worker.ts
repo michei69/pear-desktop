@@ -6,12 +6,14 @@ import { extname } from 'node:path';
 import NodeID3 from 'node-id3';
 
 /**
- * The downloader's ffmpeg invocation and ID3 tagging run here, in a forked
- * utility process: the ffmpeg child and the blocking ID3 writer must never hold
- * up the main process.
+ * The downloader's ffmpeg invocation and ID3 tagging run here, in one
+ * long-lived utility process: the ffmpeg child and the blocking ID3 writer must
+ * never hold up the main process. The process outlives a single job so the
+ * bundled `@ffmpeg.wasm` core is loaded once per session instead of once per
+ * download (loading it costs tens of megabytes of parsing/compilation).
  *
  * A system ffmpeg is an opportunistic speed-up only — most users have none, so
- * the bundled `@ffmpeg.wasm` core is the conversion path that always works.
+ * the wasm core is the conversion path that always works.
  */
 
 export type TagPayload = {
@@ -32,15 +34,22 @@ export type DownloadJob = {
   tags: TagPayload | null;
 };
 
+export type WorkerRequest = { id: number; job: DownloadJob };
+
 export type WorkerMessage =
-  | { type: 'progress'; ratio: number }
-  | { type: 'done'; ok: true; tagError?: string }
+  | { id: number; type: 'progress'; ratio: number }
+  | { id: number; type: 'done'; ok: true; tagError?: string }
   | {
+      id: number;
       type: 'done';
       ok: false;
       code: 'ffmpeg-not-found' | 'failed';
       message: string;
     };
+
+type JobResult =
+  | { ok: true; tagError?: string }
+  | { ok: false; code: 'ffmpeg-not-found' | 'failed'; message: string };
 
 const post = (message: WorkerMessage) => {
   process.parentPort.postMessage(message);
@@ -58,7 +67,10 @@ const parseProgressSeconds = (line: string) => {
   return Number.isFinite(microseconds) ? microseconds / 1e6 : undefined;
 };
 
-const runSystemFfmpeg = async (job: DownloadJob): Promise<WorkerMessage> => {
+const runSystemFfmpeg = async (
+  job: DownloadJob,
+  id: number,
+): Promise<JobResult> => {
   const convert = job.convert!;
   const args = [
     '-hide_banner',
@@ -74,7 +86,7 @@ const runSystemFfmpeg = async (job: DownloadJob): Promise<WorkerMessage> => {
     job.outputPath,
   ];
 
-  return await new Promise<WorkerMessage>((resolve) => {
+  return await new Promise<JobResult>((resolve) => {
     const child = spawn('ffmpeg', args, { stdio: ['ignore', 'pipe', 'pipe'] });
 
     let stderr = '';
@@ -98,7 +110,7 @@ const runSystemFfmpeg = async (job: DownloadJob): Promise<WorkerMessage> => {
         const percent = Math.floor(ratio * 100);
         if (percent === lastPercent) continue;
         lastPercent = percent;
-        post({ type: 'progress', ratio });
+        post({ id, type: 'progress', ratio });
       }
     });
 
@@ -111,26 +123,19 @@ const runSystemFfmpeg = async (job: DownloadJob): Promise<WorkerMessage> => {
       resolve(
         error.code === 'ENOENT'
           ? {
-              type: 'done',
               ok: false,
               code: 'ffmpeg-not-found',
               message: 'ffmpeg was not found on PATH',
             }
-          : {
-              type: 'done',
-              ok: false,
-              code: 'failed',
-              message: error.message,
-            },
+          : { ok: false, code: 'failed', message: error.message },
       );
     });
 
     child.on('close', (code) => {
       resolve(
         code === 0
-          ? { type: 'done', ok: true }
+          ? { ok: true }
           : {
-              type: 'done',
               ok: false,
               code: 'failed',
               message: stderr.trim() || `ffmpeg exited with code ${code}`,
@@ -140,26 +145,45 @@ const runSystemFfmpeg = async (job: DownloadJob): Promise<WorkerMessage> => {
   });
 };
 
-/**
- * The bundled fallback: `@ffmpeg.wasm` against the core shipped in
- * node_modules, so conversion works with no ffmpeg on PATH and no network.
- * The core loads per worker process (one per job), which is fine on the path
- * that is already the slow one.
- */
-const runWasmFfmpeg = async (job: DownloadJob): Promise<WorkerMessage> => {
-  const convert = job.convert!;
+const loadWasmFfmpeg = async () => {
+  const { createFFmpeg } = await import('@ffmpeg.wasm/main');
+  const require = createRequire(import.meta.url);
+  const ffmpeg = createFFmpeg({
+    log: false,
+    logger() {},
+    progress() {},
+    // The package default points at unpkg; use the core we ship instead.
+    corePath: require.resolve('@ffmpeg.wasm/core-mt/dist/ffmpeg-core.js'),
+  });
+  await ffmpeg.load();
+  return ffmpeg;
+};
+
+let wasmFfmpeg: ReturnType<typeof loadWasmFfmpeg> | undefined;
+
+/** Loads the wasm core on first use and reuses it for every later job. */
+const getWasmFfmpeg = async () => {
+  wasmFfmpeg ??= loadWasmFfmpeg();
   try {
-    // Loaded on the fallback path only, so systems with a real ffmpeg never
-    // pay for the wasm glue.
-    const { createFFmpeg } = await import('@ffmpeg.wasm/main');
-    const require = createRequire(import.meta.url);
-    const ffmpeg = createFFmpeg({
-      log: false,
-      logger() {},
-      progress() {},
-      // The package default points at unpkg; use the core we ship instead.
-      corePath: require.resolve('@ffmpeg.wasm/core-mt/dist/ffmpeg-core.js'),
-    });
+    return await wasmFfmpeg;
+  } catch (error) {
+    wasmFfmpeg = undefined; // A failed load must not stick for the session.
+    throw error;
+  }
+};
+
+const runWasmFfmpeg = async (
+  job: DownloadJob,
+  id: number,
+): Promise<JobResult> => {
+  const convert = job.convert!;
+  // ffmpeg infers the output container from its file name, so the MEMFS names
+  // carry the real extensions. The id keeps concurrent jobs' files apart.
+  const inputName = `input-${id}${extname(job.inputPath)}`;
+  const outputName = `output-${id}${extname(job.outputPath)}`;
+
+  try {
+    const ffmpeg = await getWasmFfmpeg();
 
     let lastPercent = -1;
     ffmpeg.setProgress(({ ratio }: { ratio: number }) => {
@@ -167,30 +191,36 @@ const runWasmFfmpeg = async (job: DownloadJob): Promise<WorkerMessage> => {
       const percent = Math.floor(clamped * 100);
       if (percent === lastPercent) return;
       lastPercent = percent;
-      post({ type: 'progress', ratio: clamped });
+      post({ id, type: 'progress', ratio: clamped });
     });
 
-    await ffmpeg.load();
-    // ffmpeg infers the output container from its file name, so the MEMFS
-    // names carry the real extensions.
-    const inputName = `input${extname(job.inputPath)}`;
-    const outputName = `output${extname(job.outputPath)}`;
     ffmpeg.FS('writeFile', inputName, await readFile(job.inputPath));
-    await ffmpeg.run(
-      '-hide_banner',
-      '-loglevel',
-      'error',
-      '-y',
-      '-i',
-      inputName,
-      ...convert.args,
-      outputName,
-    );
-    await writeFile(job.outputPath, ffmpeg.FS('readFile', outputName));
-    return { type: 'done', ok: true };
+    try {
+      await ffmpeg.run(
+        '-hide_banner',
+        '-loglevel',
+        'error',
+        '-y',
+        '-i',
+        inputName,
+        ...convert.args,
+        outputName,
+      );
+      await writeFile(job.outputPath, ffmpeg.FS('readFile', outputName));
+    } finally {
+      // MEMFS lives for the whole session now, so every file must be released.
+      for (const name of [inputName, outputName]) {
+        try {
+          ffmpeg.FS('unlink', name);
+        } catch {
+          // Already gone (run failed before creating the output).
+        }
+      }
+    }
+
+    return { ok: true };
   } catch (error) {
     return {
-      type: 'done',
       ok: false,
       code: 'failed',
       message: error instanceof Error ? error.message : String(error),
@@ -198,11 +228,10 @@ const runWasmFfmpeg = async (job: DownloadJob): Promise<WorkerMessage> => {
   }
 };
 
-const convert = async (job: DownloadJob): Promise<WorkerMessage> => {
-  const system = await runSystemFfmpeg(job);
-  const missingSystem =
-    system.type === 'done' && !system.ok && system.code === 'ffmpeg-not-found';
-  return missingSystem ? await runWasmFfmpeg(job) : system;
+const convert = async (job: DownloadJob, id: number): Promise<JobResult> => {
+  const system = await runSystemFfmpeg(job, id);
+  const missingSystem = !system.ok && system.code === 'ffmpeg-not-found';
+  return missingSystem ? await runWasmFfmpeg(job, id) : system;
 };
 
 const tag = (filePath: string, tags: TagPayload) => {
@@ -228,11 +257,17 @@ const tag = (filePath: string, tags: TagPayload) => {
   return NodeID3.write(id3Tags, filePath);
 };
 
-const handleJob = async (job: DownloadJob) => {
+const handleJob = async (job: DownloadJob, id: number) => {
   if (job.convert) {
-    const result = await convert(job);
-    if (result.type === 'done' && !result.ok) {
-      post(result);
+    const result = await convert(job, id);
+    if (!result.ok) {
+      post({
+        id,
+        type: 'done',
+        ok: false,
+        code: result.code,
+        message: result.message,
+      });
       return;
     }
   }
@@ -241,16 +276,29 @@ const handleJob = async (job: DownloadJob) => {
     const result = tag(job.outputPath, job.tags);
     if (result !== true) {
       // The audio is already written; losing tags must not lose the file.
-      post({ type: 'done', ok: true, tagError: String(result) });
+      post({ id, type: 'done', ok: true, tagError: String(result) });
       return;
     }
   }
 
-  post({ type: 'done', ok: true });
+  post({ id, type: 'done', ok: true });
 };
 
+// Jobs share one ffmpeg core, so they run one at a time and keep the caller's
+// order (conversions are already serialized in the main process).
+let queue: Promise<void> = Promise.resolve();
+
 process.parentPort.on('message', (event) => {
-  handleJob(event.data as DownloadJob).catch((error: unknown) => {
-    post({ type: 'done', ok: false, code: 'failed', message: String(error) });
-  });
+  const { id, job } = event.data as WorkerRequest;
+  queue = queue
+    .then(() => handleJob(job, id))
+    .catch((error: unknown) => {
+      post({
+        id,
+        type: 'done',
+        ok: false,
+        code: 'failed',
+        message: String(error),
+      });
+    });
 });

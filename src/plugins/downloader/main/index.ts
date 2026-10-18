@@ -6,7 +6,13 @@ import { Readable, Transform } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
 
 import { Mutex } from 'async-mutex';
-import { type BrowserWindow, dialog, ipcMain, utilityProcess } from 'electron';
+import {
+  type BrowserWindow,
+  dialog,
+  ipcMain,
+  type UtilityProcess,
+  utilityProcess,
+} from 'electron';
 import is from 'electron-is';
 import filenamify from 'filenamify';
 import {
@@ -46,7 +52,12 @@ import {
 import { DefaultPresetList, type Preset, VideoFormatList } from '../types';
 
 import type { DownloaderPluginConfig } from '../index';
-import type { DownloadJob, TagPayload, WorkerMessage } from './ffmpeg-worker';
+import type {
+  DownloadJob,
+  TagPayload,
+  WorkerMessage,
+  WorkerRequest,
+} from './ffmpeg-worker';
 import type { BackendContext } from '@/types/contexts';
 import type { GetPlayerResponse } from '@/types/get-player-response';
 
@@ -76,50 +87,113 @@ const noteMissingFfmpeg = () => {
 };
 
 /**
- * Runs one download job in a short-lived utility process, so neither the ffmpeg
- * child nor the blocking ID3 writer ever holds up the main process.
+ * One utility process for the whole session. Forking per job made the bundled
+ * ffmpeg.wasm core parse and compile again for every download — a large
+ * playlist paid that cost for every track. The worker keeps the core loaded and
+ * serializes the jobs it receives, so it is shut down after a long idle period
+ * to give the memory back.
  */
-const runDownloadJob = (
-  job: DownloadJob,
-  onProgress?: (ratio: number) => void,
-) =>
-  new Promise<JobOutcome>((resolve) => {
+const WORKER_IDLE_SHUTDOWN_MS = 10 * 60_000;
+
+class FfmpegWorker {
+  private child?: UtilityProcess;
+  private ready?: Promise<void>;
+  private nextId = 1;
+  private idleTimer?: ReturnType<typeof setTimeout>;
+  private pending = new Map<
+    number,
+    {
+      resolve: (outcome: JobOutcome) => void;
+      onProgress?: (ratio: number) => void;
+    }
+  >();
+
+  private start() {
+    if (this.ready) return this.ready;
+
     const child = utilityProcess.fork(ffmpegWorkerPath, [], {
       serviceName: 'pear-downloader-ffmpeg',
     });
-
-    let settled = false;
-    const settle = (outcome: JobOutcome) => {
-      if (settled) return;
-      settled = true;
-      resolve(outcome);
-      child.kill();
-    };
+    this.child = child;
+    this.ready = new Promise((resolve) => child.once('spawn', () => resolve()));
 
     child.on('message', (message: WorkerMessage) => {
+      if (this.child !== child) return;
+
+      const entry = this.pending.get(message.id);
+      if (!entry) return;
+
       if (message.type === 'progress') {
-        onProgress?.(message.ratio);
-      } else if (message.type === 'done') {
-        settle(message);
+        entry.onProgress?.(message.ratio);
+        return;
       }
-    });
-    child.on('error', (type) => {
-      settle({
-        ok: false,
-        code: 'failed',
-        message: `utility process failed: ${type}`,
-      });
-    });
-    child.on('exit', (code) => {
-      settle({
-        ok: false,
-        code: 'failed',
-        message: `utility process exited with code ${code}`,
-      });
+
+      this.pending.delete(message.id);
+      entry.resolve(message);
+      if (this.pending.size === 0) this.scheduleIdleShutdown();
     });
 
-    child.once('spawn', () => child.postMessage(job));
-  });
+    const reset = (reason: string) => {
+      if (this.child !== child) return;
+      this.reset(reason);
+    };
+    child.on('exit', (code) =>
+      reset(`utility process exited with code ${code}`),
+    );
+    child.on('error', (type) => reset(`utility process failed: ${type}`));
+
+    return this.ready;
+  }
+
+  private scheduleIdleShutdown() {
+    clearTimeout(this.idleTimer);
+    this.idleTimer = setTimeout(
+      () => this.reset('ffmpeg worker idle'),
+      WORKER_IDLE_SHUTDOWN_MS,
+    );
+  }
+
+  private reset(reason: string) {
+    const child = this.child;
+    this.child = undefined;
+    this.ready = undefined;
+    clearTimeout(this.idleTimer);
+    this.idleTimer = undefined;
+
+    for (const entry of this.pending.values()) {
+      entry.resolve({ ok: false, code: 'failed', message: reason });
+    }
+    this.pending.clear();
+    child?.kill();
+  }
+
+  async run(job: DownloadJob, onProgress?: (ratio: number) => void) {
+    await this.start();
+    clearTimeout(this.idleTimer);
+
+    const id = this.nextId++;
+    return await new Promise<JobOutcome>((resolve) => {
+      this.pending.set(id, { resolve, onProgress });
+      try {
+        this.child?.postMessage({ id, job } satisfies WorkerRequest);
+      } catch (error: unknown) {
+        // The process died between spawn and the post; fail this job only.
+        this.reset(`utility process failed: ${String(error)}`);
+      }
+    });
+  }
+
+  shutdown() {
+    this.reset('utility process shut down');
+  }
+}
+
+const ffmpegWorker = new FfmpegWorker();
+
+const runDownloadJob = (
+  job: DownloadJob,
+  onProgress?: (ratio: number) => void,
+) => ffmpegWorker.run(job, onProgress);
 
 let yt: Innertube;
 let win: BrowserWindow;
@@ -187,6 +261,7 @@ export const onConfigChange = (newConfig: DownloaderPluginConfig) => {
 
 export const onStop = () => {
   cleanupFinishSetup?.();
+  ffmpegWorker.shutdown();
 };
 
 export async function downloadSong(
