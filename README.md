@@ -7,8 +7,6 @@
 [![Build status](https://img.shields.io/github/actions/workflow/status/michei69/pear-desktop/build.yml?branch=master&style=for-the-badge)](https://GitHub.com/michei69/pear-desktop/releases/)
 [![GitHub All Releases](https://img.shields.io/github/downloads/michei69/pear-desktop/total?style=for-the-badge)](https://GitHub.com/michei69/pear-desktop/releases/)
 
-[![Known Vulnerabilities](https://snyk.io/test/github/michei69/pear-desktop/badge.svg)](https://snyk.io/test/github/michei69/pear-desktop)
-
 ![](https://raw.githubusercontent.com/michei69/disclaimers/refs/heads/main/ai/x4.png)
 
 </div>
@@ -58,7 +56,7 @@
 
 ## Translation
 
-You can help with translation on [Hosted Weblate](https://bit.ly/48n5YF7).
+You can help with official translation on [Hosted Weblate](https://bit.ly/48n5YF7) or by creating an issue or pull request.
 
 <a href="https://bit.ly/48n5YF7">
   <img src="https://bit.ly/4q83L6S" alt="translation status" />
@@ -72,7 +70,7 @@ latest version.
 
 ### Linux
 
-Easiest way to install is via the provided **flatpak** (tested). You can also try out the other formats (deb, rpm, snap, tarball, appimage) but be aware these may or may not have issues.
+Easiest way to install is via the provided **flatpak**. You can also try out the other formats (deb, rpm, snap, tarball, appimage) but be aware these may or may not have issues.
 
 ### macOS
 
@@ -107,6 +105,8 @@ Are you looking for community-made themes for our app? Check out https://github.
 
 Want to get started with building themes? [Click here for the documentation](./src/themes/README.md)
 
+<!-- TODO: move the theming docs into docs/ too -->
+
 ## Dev
 
 ```bash
@@ -126,6 +126,8 @@ Using plugins, you can:
 
 - manipulate the app - the `BrowserWindow` from electron is passed to the plugin handler
 - change the front by manipulating the HTML/CSS
+
+You can learn more about plugins by reading [the documentation](docs/plugins/index.md).
 
 ### Creating a plugin
 
