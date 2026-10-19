@@ -1329,13 +1329,13 @@
           "label": "Tipo",
           "submenu": {
             "acrylic": "Acrílico",
+            "content": "Conteúdo",
+            "fullscreen-ui": "Interface em tela cheia",
             "mica": "Mica",
             "none": "Nada",
             "tabbed": "Separadores",
-            "content": "Conteúdo",
-            "fullscreen-ui": "Interface em tela cheia",
-            "under-page": "Sob a página",
-            "under-window": "Sob a janela",
+            "under-page": "Sub Página",
+            "under-window": "Sub Janela",
             "window": "Janela"
           }
         }
