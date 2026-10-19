@@ -65,7 +65,8 @@
         },
         "detail": "Mes apgailestaujame dėl nepatogumų! Prašome pasirinkti ką daryti:",
         "message": "Programa Neatsako",
-        "title": "Langas Neatsako"
+        "title": "Langas Neatsako",
+        "details": "Priežastis: {{error}}"
       },
       "update-available": {
         "buttons": {
@@ -76,6 +77,27 @@
         "detail": "Nauja versija yra prieinama ir gali būti atsisiųsta {{downloadLink}}",
         "message": "Nauja versija yra prieinama",
         "title": "Prieinamas Atnaujinimas"
+      },
+      "restart-summary": {
+        "detail": "Iš naujo paleiskite programą, kad būtų pritaikyta: {{changes}}",
+        "message": "Kai kuriems pakeitimams reikia paleisti programą iš naujo",
+        "title": "Reikia paleisti iš naujo"
+      },
+      "update-available-dev": {
+        "buttons": {
+          "ok": "Gerai",
+          "view": "Peržiūrėti commit'us"
+        },
+        "title": "Galimas atnaujinimas",
+        "message": "Ši kūrėjo versija atsilieka nuo master šakos",
+        "detail": "Šios versijos naudojamas commit'as ({{commit}}) yra senesnis nei naujausias master šakos commit'as. Naujesnius commit'us galima peržiūrėti {{commitsLink}}"
+      },
+      "downgrade-warning": {
+        "title": "Grįžti prie stabilios versijos?",
+        "message": "Ši beta versija yra naujesnė už naujausią stabilią versiją.",
+        "detail": "Grįžus atgal kai kurie nustatymai gali būti nustatyti iš naujo: pereinant iš naujesnės versijos į senesnę, migracijos nevykdomos ir naujesni nustatymai gali likti neperskaitomi.",
+        "confirm": "Perjungti į stabilią",
+        "cancel": "Atšaukti"
       }
     },
     "menu": {
@@ -87,7 +109,8 @@
           "go-back": "Grįžti atgal",
           "go-forward": "Eiti į priekį",
           "quit": "Išeiti",
-          "restart": "Perkrauti programą"
+          "restart": "Perkrauti programą",
+          "open-settings": "Atidaryti nustatymus"
         }
       },
       "options": {
@@ -129,7 +152,20 @@
             },
             "label": "Kalba",
             "submenu": {
-              "to-help-translate": "Norite padėti išversti? Paspauskite čia"
+              "to-help-translate": "Norite padėti išversti? Paspauskite čia",
+              "sync": {
+                "label": "Sinchronizuoti kalbą",
+                "submenu": {
+                  "from-youtube": "Iš YouTube",
+                  "to-youtube": "Į YouTube"
+                },
+                "failure": {
+                  "dialog": {
+                    "title": "Kalba nepakeista",
+                    "message": "Kalba arba lokalė programoje dar neegzistuoja."
+                  }
+                }
+              }
             }
           },
           "resume-on-start": "Programai pasileidus, tęsti paskutinę dainą",
@@ -180,9 +216,37 @@
                 "label": "Tema",
                 "submenu": {
                   "import-css-file": "Įkelti pasirinktinį CSS failą",
-                  "no-theme": "Be temos"
+                  "no-theme": "Be temos",
+                  "colors": {
+                    "label": "Spalvos"
+                  },
+                  "presets": {
+                    "label": "Išankstiniai nustatymai",
+                    "default": "Numatytasis",
+                    "custom": "Pasirinktinis"
+                  },
+                  "reset-colors": "Atkurti spalvas",
+                  "open-themes-folder": "Atidaryti temų aplanką"
                 }
-              }
+              },
+              "use-ytm-icons": "Naudoti originalias YouTube Music piktogramas"
+            }
+          },
+          "updates": {
+            "label": "Atnaujinimai",
+            "check": "Tikrinti atnaujinimus",
+            "auto-update": "Automatiškai tikrinti atnaujinimus",
+            "channel": {
+              "label": "Atnaujinimų kanalas",
+              "stable": "Stabili",
+              "beta": "Beta"
+            }
+          },
+          "shared-links": {
+            "label": "Bendrinamos nuorodos",
+            "submenu": {
+              "strip-music": "Pašalinti 'music.'",
+              "strip-si": "Pašalinti '&si='"
             }
           }
         }
@@ -219,6 +283,15 @@
       "dislike": "Nepatinka",
       "unlike": "Skirtingai nei",
       "undislike": "Nepatinka"
+    },
+    "themes": {
+      "consent": {
+        "title": "Vykdyti temos kodą?",
+        "message": "„{{theme}}“ turi scenarijų, kuris bus vykdomas su visomis programos prieigos teisėmis.",
+        "detail": "Temų scenarijai nėra izoliuoti (sandbox). Šis kodas gali skaityti ir keisti jūsų nustatymus, bendrauti su programa ir daryti viską, ką gali pati programa. Leiskite tai tik tuo atveju, jei pasitikite temos šaltiniu. Galite tai atšaukti pašalindami temą.",
+        "allow": "Vykdyti šią temą",
+        "cancel": "Atšaukti"
+      }
     }
   },
   "plugins": {
@@ -344,6 +417,10 @@
         },
         "port": {
           "label": "Prievadas"
+        },
+        "mcp": {
+          "label": "MCP serveris",
+          "description": "Teikia v2 API kaip MCP įrankius adresu /mcp. Naudoja tą pačią autorizaciją kaip ir likusi API dalis."
         }
       },
       "name": "API Serverio {Beta}",
@@ -356,11 +433,20 @@
           "label": "Įveskite prievadą API serveriui:",
           "title": "Prievadas"
         }
+      },
+      "settings": {
+        "choose-file": "Pasirinkti failą…"
       }
     },
     "audio-compressor": {
       "description": "Pritaikyti garso kompresiją (sumažina garsiausių signalo dalių garsumą ir padidina švelniausių dalių garsumą)",
-      "name": "Garso Kompresorius"
+      "name": "Garso Kompresorius",
+      "menu": {
+        "auto-track-gain": "Automatinis kūrinio stiprinimas (stiprinti tylius kūrinius)",
+        "maximum-gain": {
+          "label": "Didžiausias stiprinimas"
+        }
+      }
     },
     "auth-proxy-adapter": {
       "description": "autentifikavimo „proxy“ paslaugų naudojimo palaikymas",
@@ -426,7 +512,10 @@
           "label": "Formatas"
         }
       },
-      "name": "Laikrodis"
+      "name": "Laikrodis",
+      "settings": {
+        "hour-12": "Naudoti 12 valandų formatą"
+      }
     },
     "compact-sidebar": {
       "description": "Visada nustatyti šoninę juostą kompaktiniame rėžime",
@@ -446,12 +535,24 @@
             "fade-scaling": {
               "label": "Išblukimo stiprumas",
               "linear": "Linijinis",
-              "logarithmic": "Logaritminis"
+              "logarithmic": "Logaritminis",
+              "equal-power": "Vienoda galia"
             },
             "seconds-before-end": "Pradėti lieti dainas N sekundžių prieš pabaigą"
           },
           "title": "Perliejimo nustatymai"
         }
+      },
+      "settings": {
+        "fade-in": "Garso didinimas",
+        "fade-out": "Garso mažinimas",
+        "seconds-before-end": "Pradėti prieš pabaigą",
+        "fade-scaling": "Garso perėjimo skalė",
+        "scaling": {
+          "linear": "Tiesinis",
+          "logarithmic": "Logaritminis"
+        },
+        "seconds-before-end-description": "Sekundės iki kūrinio pabaigos, kai pradedamas perėjimas į kitą kūrinį"
       }
     },
     "custom-output-device": {
@@ -506,6 +607,13 @@
           "label": "Įveskite neveiklumo skirtąjį laiką sekundėmis:",
           "title": "Nustatyti neveiklumo laiką"
         }
+      },
+      "settings": {
+        "auto-reconnect": "Automatiškai prisijungti iš naujo",
+        "activity-timeout-enabled": "Išvalyti būseną, kai pristabdyta",
+        "activity-timeout-time": "Išvalyti po",
+        "hide-github-button": "Slėpti mygtuką „Peržiūrėti GitHub“",
+        "hide-duration-left": "Slėpti likusį laiką"
       }
     },
     "downloader": {
@@ -548,7 +656,8 @@
           "saving": "Išsaugoma…",
           "trying-to-get-playlist-id": "Bandoma gauti grojaraščio ID: {{playlistId}}",
           "video-id-not-found": "Vaizdo įrašas nerastas",
-          "writing-id3": "Rašoma ID3 žymes…"
+          "writing-id3": "Rašoma ID3 žymes…",
+          "ffmpeg-missing": "FFmpeg nerastas. Įdiekite FFmpeg ir įsitikinkite, kad `ffmpeg` yra jūsų PATH, jei norite atsisiųsti šiuo formatu."
         }
       },
       "description": "Atsisiunčia MP3 / „šaltinio“ garsą tiesiogiai iš sąsajos",
@@ -579,6 +688,10 @@
       },
       "templates": {
         "button": "Atsisiųsti"
+      },
+      "settings": {
+        "finish-folder": "Baigtų atsisiuntimų aplankas",
+        "finish-folder-description": "Palikite nenustatytą, kad būtų naudojamas aukščiau nurodytas atsisiuntimų aplankas."
       }
     },
     "equalizer": {
@@ -646,6 +759,44 @@
           "disconnected": "Atsijungta",
           "guest": "Prisijungta kaip Svečias",
           "host": "Prisijungta kaip Vedėjas"
+        },
+        "diagnostics": {
+          "check": {
+            "nat": "Tinklo tipas (NAT)",
+            "signaling": "Signalizacijos serveris",
+            "stun": "Tiesioginis ryšys (STUN)",
+            "turn": "Atsarginis retransliavimas (TURN)"
+          },
+          "copy": "Kopijuoti santrauką",
+          "detail": {
+            "check-error": "Patikra nepavyko: {{reason}}",
+            "public-ip": "Viešasis adresas: {{ip}}",
+            "public-ip-hidden": "Viešasis adresas: spustelėkite, kad būtų rodomas",
+            "signaling-fail": "Nepasiekiamas ({{reason}})",
+            "signaling-ok": "Pasiekiamas",
+            "stun-fail": "Nėra viešojo adreso (UDP/STUN blokuojamas)",
+            "stun-ok": "Viešasis adresas rastas",
+            "turn-fail": "Retransliavimas nepasiekiamas",
+            "turn-ok": "Retransliavimas pasiekiamas"
+          },
+          "nat": {
+            "blocked": "UDP arba STUN blokuojamas",
+            "open": "Atviras / kūginis (tiesioginis veikia)",
+            "symmetric": "Simetrinis (reikia retransliavimo)",
+            "unknown": "Nenustatytas"
+          },
+          "run-again": "Paleisti dar kartą",
+          "running": "Vykdomos patikros…",
+          "test": "Tikrinti ryšį",
+          "title": "Ryšio diagnostika",
+          "verdict": {
+            "blocked": "Šis tinklas greičiausiai blokuos Music Together. Išbandykite kitą tinklą arba VPN.",
+            "error": "Nepavyko paleisti diagnostikos. Išsamesnės informacijos ieškokite konsolėje.",
+            "good": "Tiesioginiai ryšiai šiame tinkle turėtų veikti.",
+            "limited": "Nepavyko visiškai nustatyti šio tinklo. Tiesioginiai ryšiai vis tiek gali veikti; jei jie neveikia, išbandykite kitą tinklą.",
+            "no-signaling": "Nepavyksta pasiekti Music Together serverio. Patikrinkite ugniasienę arba interneto ryšį.",
+            "relay": "Tiesioginiai ryšiai čia gali nepavykti; bus naudojamas retransliavimas (veikia, bet padidina vėlavimą)."
+          }
         }
       },
       "name": "„Muzika Kartu“ [Beta]",
@@ -661,7 +812,10 @@
         "permission-changed": "„Muzika Kartu“ leidimas pakeistas į „{{permission}}“",
         "remove-song-failed": "Nepavyko pašalinti dainos",
         "user-connected": "{{name}} prisijungė prie „Muzika Kartu“",
-        "user-disconnected": "{{name}} išėjo iš „Muzika Kartu“"
+        "user-disconnected": "{{name}} išėjo iš „Muzika Kartu“",
+        "diagnostics-copied": "Diagnostikos santrauka nukopijuota į iškarpinę",
+        "diagnostics-copy-failed": "Nepavyko nukopijuoti diagnostikos suvestinės",
+        "diagnostics-running": "Palaukite, kol baigsis ryšio testas"
       }
     },
     "navigation": {
@@ -708,7 +862,13 @@
       "menu": {
         "log-to-console": "Registruoti atkūrimo įvykius konsolėje"
       },
-      "name": "Atkūrimo Atkūrimas"
+      "name": "Atkūrimo Atkūrimas",
+      "settings": {
+        "stall-timeout": "Užstrigimo laiko limitas",
+        "stall-timeout-description": "Kiek laiko atkūrimas gali nedaryti pažangos, kol bus bandoma atkurti",
+        "max-retries": "Maksimalus bandymų skaičius",
+        "max-retries-description": "Atkūrimo bandymų skaičius prieš peršokant prie kitos dainos"
+      }
     },
     "picture-in-picture": {
       "description": "Leidžia pakeisti programą į „nuotrauka-nuotraukoje“ rėžimą",
@@ -726,7 +886,14 @@
         },
         "save-window-position": "Išsaugoti lango poziciją",
         "save-window-size": "Išsaugoti lango dydį",
-        "use-native-pip": "Naudoti naršyklės savąjį „PiP“"
+        "use-native-pip": "Naudoti naršyklės savąjį „PiP“",
+        "prompt": {
+          "title": "Vaizdas paveikslėlyje",
+          "label": "Konfigūruokite vaizdo paveikslėlyje spartųjį klavišą",
+          "keybind-options": {
+            "hotkey": "Spartusis klavišas, perjungiantis vaizdą paveikslėlyje"
+          }
+        }
       },
       "name": "Nuotrauka-nuotraukoje",
       "templates": {
@@ -738,6 +905,9 @@
       "name": "Atkūrimo Greitis",
       "templates": {
         "button": "Greitis"
+      },
+      "menu": {
+        "no-preserves-pitch": "Išjungti garso aukščio išlaikymą"
       }
     },
     "precise-volume": {
@@ -761,6 +931,12 @@
           "label": "Pasirinkti Garso Didinimo/Mažinimo Laipsnius",
           "title": "Garso Laipsniai"
         }
+      },
+      "settings": {
+        "steps": "Garsumo žingsnis",
+        "arrows-shortcut": "Rodyklių klavišų spartieji klavišai",
+        "shortcut-up": "Visuotinis spartusis klavišas: garsiau",
+        "shortcut-down": "Visuotinis spartusis klavišas: tyliau"
       }
     },
     "quality-changer": {
@@ -789,6 +965,10 @@
             "message": "Nepavyko autentifikuotis su Last.fm\nPaslėpkite iššokantį langą iki kito paleidimo.",
             "title": "Autentifikacija nepavyko"
           }
+        },
+        "invalid-regex": {
+          "title": "Neteisinga reguliarioji išraiška",
+          "message": "Reguliarioji išraiška {{line}} eilutėje yra neteisinga: {{error}}"
         }
       },
       "menu": {
@@ -796,11 +976,15 @@
           "api-settings": "Last.fm API nustatymai"
         },
         "listenbrainz": {
-          "token": "Įvesti „ListenBrainz“ vartotojo žetoną"
+          "token": "Įvesti „ListenBrainz“ vartotojo žetoną",
+          "api-root": "ListenBrainz API URL"
         },
         "scrobble-alternative-artist": "Naudoti alternatyvius atlikėjus",
         "scrobble-alternative-title": "Naudoti alternatyvius pavadinimus",
-        "scrobble-other-media": "„Scrobble“ kitas medijas"
+        "scrobble-other-media": "„Scrobble“ kitas medijas",
+        "regex-filters": "Reguliariųjų išraiškų filtrai",
+        "use-musicbrainz": "Naudoti MusicBrainz metaduomenims taisyti",
+        "musicbrainz-email": "MusicBrainz kontaktinis el. paštas"
       },
       "name": "„Scrobbler“",
       "prompt": {
@@ -812,8 +996,23 @@
           "token": {
             "label": "Įveskite savo „ListenBrainz“ vartotojo žetoną:",
             "title": "„ListenBrainz“ žetonas"
+          },
+          "api-root": {
+            "label": "Įveskite bazinį API URL:",
+            "title": "ListenBrainz API URL"
           }
+        },
+        "regex-filter-multi": {
+          "label": "Įveskite po vieną reguliariąją išraišką kiekvienoje eilutėje:"
+        },
+        "musicbrainz-email": {
+          "title": "MusicBrainz kontaktinis el. paštas",
+          "label": "Įveskite el. paštą MusicBrainz API:"
         }
+      },
+      "settings": {
+        "lastfm-api-root": "Last.fm API URL",
+        "musicbrainz-email-description": "Naudojamas kaip kontaktinė informacija MusicBrainz API; būtinas MusicBrainz metaduomenims taisyti"
       }
     },
     "shortcuts": {
@@ -833,15 +1032,34 @@
           "label": "Pasirinkti Pasaulinius Klavišus Dainų Kontroliavimui:",
           "title": "Pasauliniai Klavišai"
         }
+      },
+      "settings": {
+        "global-keybinds": "Visuotiniai spartieji klavišai (veikia visoje programoje)",
+        "local-keybinds": "Vietiniai spartieji klavišai (tik kai langas aktyvus)"
       }
     },
     "skip-silences": {
       "description": "Automatiškai praleisti tylos dalis dainose",
-      "name": "Praleisti Tylumas"
+      "name": "Praleisti Tylumas",
+      "settings": {
+        "only-skip-beginning": "Praleisti tylą tik kūrinio pradžioje"
+      }
     },
     "sponsorblock": {
       "description": "Automatiškai praleidžia ne muzikines dalis, pvz., įžangą/užvedimą arba muzikinių vaizdo įrašų dalis, kuriose daina negrojama",
-      "name": "Rėmėjų blokuotojas"
+      "name": "Rėmėjų blokuotojas",
+      "settings": {
+        "categories": "Praleidžiami segmentai",
+        "category": {
+          "sponsor": "Rėmėjas",
+          "intro": "Įžanga",
+          "outro": "Pabaiga",
+          "interaction": "Sąveikos priminimas",
+          "selfpromo": "Savireklama",
+          "music_offtopic": "Ne muzikos dalis"
+        },
+        "api-url": "API URL"
+      }
     },
     "synced-lyrics": {
       "description": "Teikia sinchronizuotus dainų žodžius, naudojantis tiekėjais kaip „LRClib“.",
@@ -967,7 +1185,7 @@
             },
             "google-translate": {
               "host": "Serveris",
-              "name": "Google Translate",
+              "name": "Google Vertėjas",
               "prompt-label": "Naudoja neoficialų nemokamą Google Translate galinį tašką. API rakto nereikia, bet Google gali taikyti greičio apribojimus.",
               "prompt-title": "Google Translate nustatymai"
             },
@@ -1054,6 +1272,30 @@
         "show-custom-search-button": {
           "label": "Rodyti pasirinktinį paieškos mygtuką",
           "tooltip": "Rodyti paieškos mygtuką dainų tekstų parinkiklyje, leidžiantį pakeisti paieškos užklausą ir atlikėją dabartinei dainai."
+        },
+        "provider-priority": {
+          "tooltip": "Tiekėjai bandomi šia tvarka: laimi pirmasis, turintis dabartinės dainos tekstą. Norėdami pakeisti tvarką, naudokite rodykles."
+        },
+        "prefer-synced": {
+          "tooltip": "Pasirinkite pirmąjį sąraše esantį tiekėją su laiku sinchronizuotu tekstu, o ne pirmąjį su bet kokiu tekstu."
+        },
+        "previous-provider": {
+          "tooltip": "Ankstesnis tiekėjas"
+        },
+        "next-provider": {
+          "tooltip": "Kitas tiekėjas"
+        },
+        "custom-search-button": {
+          "tooltip": "Pasirinktinė paieškos užklausa"
+        },
+        "star-provider": {
+          "tooltip": "Visada naudokite šį tiekėją šiai dainai, nepaisant prioritetų tvarkos. Jei jis neturi šios dainos teksto, grįžtama prie įprastos tvarkos."
+        },
+        "unstar-provider": {
+          "tooltip": "Atšaukite šio tiekėjo priskyrimą šiai dainai."
+        },
+        "use-priority-list": {
+          "tooltip": "Išbandykite tiekėjus žemiau nurodyta tvarka. Išjunkite tai, kad nuspręstų tekstas: laimi tiekėjas, turintis geriausią šios dainos tekstą."
         }
       },
       "name": "„Synced Lyrics“",
@@ -1065,6 +1307,22 @@
         "duration-mismatch": "⚠️ - Dainos žodžiai gali būti nesinchronizuoti dėl trukmės nesutikimo.",
         "inexact": "⚠️ - Dainos žodžiai gali šiek tiek skirtis",
         "instrumental": "⚠️ – Tai instrumentinė daina"
+      },
+      "settings": {
+        "precise-timing": "Tikslus laiko sinchronizavimas",
+        "show-inexact": "Rodyti netikslius tekstus",
+        "show-time-codes": "Rodyti laiko kodus",
+        "romanization": "Romanizuoti tekstą",
+        "line-effect": "Eilutės efektas",
+        "effect": {
+          "fancy": "Įmantrus",
+          "scale": "Mastelis",
+          "offset": "Poslinkis",
+          "focus": "Fokusas"
+        },
+        "prefer-synced": "Teikti sinchronizuotą tekstą",
+        "provider-priority": "Tiekėjų prioritetas",
+        "use-priority-list": "Naudoti prioritetų sąrašą"
       }
     },
     "taskbar-mediacontrol": {
@@ -1090,11 +1348,19 @@
             "acrylic": "Akrilas",
             "mica": "Žėrutis",
             "none": "Joks",
-            "tabbed": "Atskirtas"
+            "tabbed": "Atskirtas",
+            "content": "Turinys",
+            "fullscreen-ui": "Viso ekrano sąsaja",
+            "under-page": "Po puslapiu",
+            "under-window": "Po langu",
+            "window": "Langas"
           }
         }
       },
-      "name": "Skaidrus Grotuvas"
+      "name": "Skaidrus Grotuvas",
+      "settings": {
+        "type-description": "Fono medžiaga, naudojama lango permatomumui"
+      }
     },
     "tuna-obs": {
       "description": "Integracija su OBS papildiniu „Tuna“",
@@ -1136,7 +1402,26 @@
       "menu": {
         "visualizer-type": "Vizualizatoriaus tipas"
       },
-      "name": "Vizualizatorius"
+      "name": "Vizualizatorius",
+      "settings": {
+        "preset": "Išankstinis nustatymas",
+        "blend-time": "Maišymo laikas",
+        "effect": "Efektas",
+        "accuracy": "Tikslumas",
+        "max-height": "Didžiausias aukštis",
+        "max-size": "Didžiausias dydis",
+        "line-width": "Linijos storis",
+        "color": "Spalva",
+        "shadow-blur": "Šešėlio suliejimas",
+        "shadow-color": "Šešėlio spalva",
+        "fade-side": "Šonų išblukimas",
+        "prettify": "Pagrąžinti",
+        "prettify-description": "Siaurinti stulpelius link kraštų",
+        "dottify": "Taškuoti",
+        "dottify-description": "Brėžti taškus, o ne ištisinę liniją",
+        "horizontal-align": "Horizontalus lygiavimas",
+        "vertical-align": "Vertikalus lygiavimas"
+      }
     },
     "playlist-search": {
       "description": "Prideda paieškos įvestį, skirtą filtruoti grojaraščius šoninėje juostoje ir dialogo lange „Pridėti prie grojaraščio“",
@@ -1145,6 +1430,215 @@
         "search-placeholder": "Ieškoti grojaraščių",
         "no-results": "Nerasta grojaraščių"
       }
+    },
+    "always-show-volume-slider": {
+      "name": "Visada rodyti garso slankiklį",
+      "description": "Išlaiko garso slankiklį matomą ir velkamą, užuot rodžius jį tik užvedus pelę."
+    },
+    "do-not-track": {
+      "description": "Iš karto blokuoti visą sekimą",
+      "menu": {
+        "blocker": "Blokuotojas"
+      },
+      "name": "Nesekti",
+      "settings": {
+        "cache": "Saugoti blokavimo sąrašus talpykloje",
+        "disable-default-lists": "Išjungti numatytuosius blokavimo sąrašus"
+      },
+      "dialog": {
+        "reload": {
+          "title": "Perkrauti puslapį",
+          "message": "„Do Not Track“ nustatymai pasikeitė.",
+          "detail": "Tinklo taisyklės atnaujinamos nepaleidžiant programos iš naujo. Perkraukite puslapį, kad puslapio filtrai būtų visiškai pritaikyti. Atkūrimas gali būti pertrauktas. Vėliau galite perkrauti.",
+          "reload-now": "Perkrauti puslapį dabar"
+        }
+      }
+    },
+    "fullscreen-auto-hide": {
+      "description": "Viso ekrano režimu po kelių sekundžių neaktyvumo automatiškai paslėpti grotuvo valdiklius ir pelės žymeklį",
+      "name": "Automatinis slėpimas visame ekrane"
+    },
+    "prefer-song": {
+      "description": "Leisti dainą, o ne muzikos klipą, kai albumo kūrinys yra vaizdo įrašas",
+      "name": "Pirmenybė dainai"
+    },
+    "search-commands": {
+      "commands": {
+        "play": "Leisti vaizdo įrašą pagal YouTube nuorodą arba ID",
+        "settings": "Atidaryti nustatymus"
+      },
+      "description": "Įveskite / paieškos lauke, kad vykdytumėte komandas, su argumentų automatinio užbaigimo funkcija",
+      "name": "Paieškos komandos",
+      "settings": {
+        "open-keybind": "Atidarymo spartusis klavišas",
+        "open-keybind-description": "Electron stiliaus sparčioji kombinacija, pvz., CmdOrCtrl+/ arba Alt+Space",
+        "open-shortcut": "Atidaryti paieškos lauką iš bet kur",
+        "open-shortcut-description": "Iškvieskite paieškos lauką jau komandų režime, kaip Spotlight. Paspaudus dar kartą, jis uždaromas."
+      }
+    },
+    "seek-shortcuts": {
+      "description": "Peršokti 5 sekundes atgal / į priekį kairės / dešinės rodyklės klavišais",
+      "name": "Peršokimo spartieji klavišai"
+    },
+    "sfw-music": {
+      "description": "Automatiškai praleidžia YouTube Music pažymėtas kaip „Explicit“ dainas. Pristabdo, jei pasikartoja explicit eilė arba nėra kitos dainos.",
+      "name": "SFW muzika"
+    },
+    "toast-autoclose": {
+      "description": "Automatiškai uždaryti YouTube Music pranešimus po trijų sekundžių",
+      "name": "Automatinis pranešimų uždarymas"
+    },
+    "statusbar-lyrics": {
+      "settings": {
+        "include-pronunciation": "Įtraukti tarimą"
+      }
+    },
+    "dismiss-multidevice-popup": {
+      "name": "Uždaryti kelių įrenginių iškylantįjį langą",
+      "description": "Automatiškai uždaro iškylantįjį langą „Klausytis šiame įrenginyje“, kuris pasirodo, kai atkūrimas pradedamas kitame įrenginyje."
+    },
+    "memory-saver": {
+      "description": "Išvalo atvaizdavimo proceso išteklių talpyklas, kai langas paslėptas ir jos viršija ribą",
+      "name": "Atminties taupytojas",
+      "settings": {
+        "threshold": "Talpyklos riba",
+        "threshold-description": "Išvalyti talpyklas, kai jų naudojama atmintis viršija šią ribą, o langas paslėptas"
+      }
+    }
+  },
+  "settings-ui": {
+    "name": "Nustatymų sąsaja",
+    "description": "Prideda programos vidinį nustatymų skydelį, atidaromą iš šoninės juostos",
+    "title": "Nustatymai",
+    "settings": {
+      "show-button": "Rodyti nustatymų įrašą šoninėje juostoje",
+      "show-button-description": "Išjunkite šią parinktį, kad šoninė juosta liktų tvarkinga; Nustatymai vis tiek pasiekiami per Navigation → Open Settings.",
+      "separate-window": "Visada atidaryti Nustatymus atskirame lange",
+      "separate-window-description": "Atidaro atskirą nustatymų langą, kaip tai daro dėklo įrašas, o ne programos vidinį skydelį."
+    },
+    "search-placeholder": "Ieškoti nustatymų",
+    "search-results": "Paieškos rezultatai",
+    "search-matching": "Atitinka „{{query}}“",
+    "no-match": "Nė vienas nustatymas neatitinka „{{query}}“.",
+    "close": "Uždaryti",
+    "edit-config": "Redaguoti config.json",
+    "restart-banner": "Kai kuriems pakeitimams įsigalioti reikia paleisti programą iš naujo.",
+    "restart-now": "Paleisti iš naujo dabar",
+    "later": "Vėliau",
+    "restart-pill": "paleisti iš naujo",
+    "restart-pill-hint": "Reikia paleisti iš naujo",
+    "refresh-options": "Atnaujinti parinktis",
+    "move-up": "Perkelti aukštyn",
+    "move-down": "Perkelti žemyn",
+    "about": {
+      "tagline": "Funkcijų turtinga „YouTube Music“ darbalaukio programa",
+      "versions": "Versijos",
+      "version-app": "Programa",
+      "version-build": "Surinkimas",
+      "version-electron": "Electron",
+      "version-chromium": "Chromium",
+      "version-node": "Node.js",
+      "version-platform": "Platforma",
+      "version-innertube": "Innertube",
+      "links": "Nuorodos",
+      "link-repo": "Saugykla",
+      "link-issue": "Pranešti apie problemą",
+      "link-releases": "Leidimai",
+      "link-license": "Licencija",
+      "actions": "Veiksmai",
+      "check-updates": "Tikrinti atnaujinimus",
+      "copy-debug": "Kopijuoti derinimo informaciją",
+      "copied": "Nukopijuota!"
+    },
+    "sections": {
+      "general": {
+        "label": "Bendra"
+      },
+      "appearance": {
+        "label": "Išvaizda"
+      },
+      "window": {
+        "label": "Langas ir dėklas"
+      },
+      "advanced": {
+        "label": "Išplėstinė"
+      },
+      "plugins": {
+        "label": "Papildiniai"
+      },
+      "flags": {
+        "label": "Vėliavėlės"
+      },
+      "about": {
+        "label": "Apie"
+      }
+    },
+    "groups": {
+      "updates-session": "Atnaujinimai ir sesija",
+      "startup-language": "Paleistis ir kalba",
+      "interface": "Sąsaja",
+      "context-menu": "Kontekstinis meniu",
+      "window-title": "Langas",
+      "window": "Langas",
+      "system": "Sistema",
+      "network": "Tinklas",
+      "performance": "Našumas",
+      "configuration": "Konfigūracija",
+      "updates": "Atnaujinimai"
+    },
+    "stepper-decrement": "Sumažinti",
+    "stepper-increment": "Padidinti",
+    "flags": {
+      "warning": "Funkcijų vėliavėlės yra pačios „YouTube Music“ vidinės jungtys. Jų keitimas gali sutrikdyti atkūrimą, išdėstymą ar paskyros funkcijas, ir jos nėra palaikomos. Perrašymai saugomi tik toms vėliavėlėms, kurias pakeisite, ir juos galima pašalinti naudojant Anuliuoti.",
+      "search-placeholder": "Ieškoti vėliavėlių",
+      "overridden": "pakeista",
+      "undo": "Anuliuoti",
+      "undo-hint": "Ištrinti šį perrašymą",
+      "empty": "Šiame puslapyje nėra funkcijų vėliavėlių.",
+      "no-match": "Nė viena vėliavėlė neatitinka „{{query}}“.",
+      "add-name": "Naujos vėliavėlės pavadinimas",
+      "add-value": "Reikšmė",
+      "add-value-hint": "JSON, jei jis išanalizuojamas (true, 42, \"text\"), kitu atveju – pats tekstas",
+      "add": "Pridėti"
+    },
+    "fields": {
+      "hide-dislike-button": "Slėpti mygtuką „Nepatinka“",
+      "hide-video-captions": "Slėpti vaizdo įrašo subtitrus",
+      "context-menu": {
+        "hide-entry": "Slėpti {{entry}}",
+        "entries": {
+          "add-to-queue": "Pridėti į eilę",
+          "delete-playlist": "Ištrinti grojaraštį",
+          "dismiss-queue": "Uždaryti eilę",
+          "download": "Atsisiųsti",
+          "go-to-album": "Eiti į albumą",
+          "go-to-artist": "Eiti į atlikėją",
+          "go-to-playlist": "Eiti į grojaraštį",
+          "like": "Mėgti",
+          "not-interested": "Nedomina",
+          "pin-to-listen-again": "Prisegti prie „Klausytis dar kartą“",
+          "play-next": "Grojti toliau",
+          "remove-from-playlist": "Pašalinti iš grojaraščio",
+          "remove-from-queue": "Pašalinti iš eilės",
+          "report": "Pranešti",
+          "save-to-library": "Išsaugoti bibliotekoje",
+          "save-to-playlist": "Išsaugoti į grojaraštį",
+          "share": "Bendrinti",
+          "shuffle-play": "Grojti atsitiktine tvarka",
+          "start-mix": "Pradėti maišymą",
+          "stats-for-nerds": "Statistika smalsiems"
+        }
+      },
+      "podcast-artist": "Naudoti tinklalaidės dalyvius kaip atlikėjus",
+      "podcast-artist-desc": "Išjungta: tinklalaidės epizodo atlikėjas yra jį paskelbęs kanalas.",
+      "theme-preset": "Išankstinis nustatymas",
+      "theme-variable-name": "Kintamasis",
+      "theme-variable-value": "Reikšmė",
+      "theme-variable-add": "Pridėti kintamąjį",
+      "performance-mode": "Našumo režimas",
+      "performance-mode-desc": "Iškeiskite šiek tiek vaizdo kokybės į efektyvesnį atvaizdavimą.",
+      "in-process-gpu": "Sujungti GPU procesą su programos procesu",
+      "in-process-gpu-desc": "Eksperimentinė funkcija: sutaupo vieną procesą, bet perkelia GPU atmintį į pagrindinį procesą ir gali pereiti prie programinio atvaizdavimo."
     }
   }
 }

@@ -65,17 +65,39 @@
         },
         "detail": "Sentimos las molestias. Por favor, elija qué hacer:",
         "message": "La aplicación no responde",
-        "title": "La ventana no responde"
+        "title": "La ventana no responde",
+        "details": "Motivo: {{error}}"
       },
       "update-available": {
         "buttons": {
           "disable": "Desactivar actualizaciones",
           "download": "Descargar",
-          "ok": "OK"
+          "ok": "Aceptar"
         },
         "detail": "Una nueva versión está disponible y puede descargarse en {{downloadLink}}",
         "message": "Hay una nueva versión disponible",
         "title": "Actualización disponible"
+      },
+      "restart-summary": {
+        "detail": "Reinicia la aplicación para aplicar: {{changes}}",
+        "message": "Algunos cambios requieren reiniciar",
+        "title": "Reinicio necesario"
+      },
+      "update-available-dev": {
+        "buttons": {
+          "ok": "Aceptar",
+          "view": "Ver commits"
+        },
+        "title": "Actualización disponible",
+        "message": "Esta compilación de desarrollo está por detrás de la rama master",
+        "detail": "El commit en el que se ejecuta esta compilación ({{commit}}) es más antiguo que el último commit de master. Los commits más recientes se pueden ver en {{commitsLink}}"
+      },
+      "downgrade-warning": {
+        "title": "¿Volver a la versión estable?",
+        "message": "Esta compilación beta es más reciente que la última versión estable.",
+        "detail": "Volver atrás puede restablecer algunos ajustes: pasar de una versión más reciente a una más antigua no ejecuta migraciones y puede dejar los ajustes más recientes ilegibles.",
+        "confirm": "Cambiar a estable",
+        "cancel": "Cancelar"
       }
     },
     "menu": {
@@ -87,7 +109,8 @@
           "go-back": "Atrás",
           "go-forward": "Adelante",
           "quit": "Salir",
-          "restart": "Reiniciar la aplicación"
+          "restart": "Reiniciar la aplicación",
+          "open-settings": "Abrir ajustes"
         }
       },
       "options": {
@@ -129,7 +152,20 @@
             },
             "label": "Idioma",
             "submenu": {
-              "to-help-translate": "¿Quieres ayudar a traducir? Haz clic aquí"
+              "to-help-translate": "¿Quieres ayudar a traducir? Haz clic aquí",
+              "sync": {
+                "label": "Sincronizar idioma",
+                "submenu": {
+                  "from-youtube": "Desde YouTube",
+                  "to-youtube": "A YouTube"
+                },
+                "failure": {
+                  "dialog": {
+                    "title": "Idioma no cambiado",
+                    "message": "El idioma o la configuración regional aún no existe en la aplicación."
+                  }
+                }
+              }
             }
           },
           "resume-on-start": "Reanudar la última canción reproducida al iniciar la aplicación",
@@ -180,9 +216,37 @@
                 "label": "Tema",
                 "submenu": {
                   "import-css-file": "Importar archivo CSS personalizado",
-                  "no-theme": "Sin temas"
+                  "no-theme": "Sin temas",
+                  "colors": {
+                    "label": "Colores"
+                  },
+                  "presets": {
+                    "label": "Preajustes",
+                    "default": "Predeterminado",
+                    "custom": "Personalizado"
+                  },
+                  "reset-colors": "Restablecer colores",
+                  "open-themes-folder": "Abrir carpeta de temas"
                 }
-              }
+              },
+              "use-ytm-icons": "Usar los iconos originales de YouTube Music"
+            }
+          },
+          "updates": {
+            "label": "Actualizaciones",
+            "check": "Buscar actualizaciones",
+            "auto-update": "Buscar actualizaciones automáticamente",
+            "channel": {
+              "label": "Canal de actualización",
+              "stable": "Estable",
+              "beta": "Beta"
+            }
+          },
+          "shared-links": {
+            "label": "Enlaces compartidos",
+            "submenu": {
+              "strip-music": "Quitar 'music.'",
+              "strip-si": "Quitar '&si='"
             }
           }
         }
@@ -219,6 +283,15 @@
       "dislike": "No me gusta",
       "unlike": "A diferencia de",
       "undislike": "No me gusta"
+    },
+    "themes": {
+      "consent": {
+        "title": "¿Ejecutar el código del tema?",
+        "message": "\"{{theme}}\" contiene un script que se ejecutará con acceso completo a la aplicación.",
+        "detail": "Los scripts de los temas no están aislados. Este código puede leer y cambiar tus ajustes, comunicarse con la aplicación y hacer cualquier otra cosa que la propia aplicación pueda hacer. Solo permite esto si confías en el origen del tema. Puedes revocar este permiso eliminando el tema.",
+        "allow": "Ejecutar este tema",
+        "cancel": "Cancelar"
+      }
     }
   },
   "plugins": {
@@ -257,7 +330,7 @@
           }
         },
         "buffer": {
-          "label": "Buffer",
+          "label": "Búfer",
           "submenu": {
             "buffer": "{{buffer}}"
           }
@@ -344,6 +417,10 @@
         },
         "port": {
           "label": "Puerto"
+        },
+        "mcp": {
+          "label": "Servidor MCP",
+          "description": "Sirve la API v2 como herramientas MCP en /mcp. Usa la misma autorización que el resto de la API."
         }
       },
       "name": "Servidor API [Beta]",
@@ -356,11 +433,20 @@
           "label": "Introduzca el puerto para el servidor API:",
           "title": "Puerto"
         }
+      },
+      "settings": {
+        "choose-file": "Elegir archivo…"
       }
     },
     "audio-compressor": {
       "description": "Aplicar compresión al audio (reduce la diferencia entre las partes más fuertes y más suaves de una pista para que tenga un nivel más consistente)",
-      "name": "Compresor de audio"
+      "name": "Compresor de audio",
+      "menu": {
+        "auto-track-gain": "Ganancia automática por pista (realza las pistas silenciosas)",
+        "maximum-gain": {
+          "label": "Ganancia máxima"
+        }
+      }
     },
     "auth-proxy-adapter": {
       "description": "Soporte para el uso de servicios de proxy de autenticación",
@@ -426,7 +512,10 @@
           "label": "Formato"
         }
       },
-      "name": "Reloj"
+      "name": "Reloj",
+      "settings": {
+        "hour-12": "Usar formato de 12 horas"
+      }
     },
     "compact-sidebar": {
       "description": "Establecer siempre la barra lateral en modo compacto",
@@ -437,7 +526,7 @@
       "menu": {
         "advanced": "Avanzado"
       },
-      "name": "Crossfade [Beta]",
+      "name": "Fundido cruzado [Beta]",
       "prompt": {
         "options": {
           "multi-input": {
@@ -446,12 +535,24 @@
             "fade-scaling": {
               "label": "Escala del fundido",
               "linear": "Lineal",
-              "logarithmic": "Logarítmico"
+              "logarithmic": "Logarítmico",
+              "equal-power": "Potencia equitativa"
             },
             "seconds-before-end": "Activar Crossfade N segundos antes del final"
           },
           "title": "Opciones de Crossfade"
         }
+      },
+      "settings": {
+        "fade-in": "Fundido de entrada",
+        "fade-out": "Fundido de salida",
+        "seconds-before-end": "Iniciar antes del final",
+        "fade-scaling": "Escalado del fundido",
+        "scaling": {
+          "linear": "Lineal",
+          "logarithmic": "Logarítmico"
+        },
+        "seconds-before-end-description": "Segundos antes del final de una pista en los que comienza el fundido cruzado hacia la siguiente"
       }
     },
     "custom-output-device": {
@@ -500,12 +601,19 @@
           }
         }
       },
-      "name": "Discord Rich Presence",
+      "name": "Presencia enriquecida de Discord",
       "prompt": {
         "set-inactivity-timeout": {
           "label": "Introduzca el tiempo de inactividad en segundos:",
           "title": "Establecer tiempo de inactividad"
         }
+      },
+      "settings": {
+        "auto-reconnect": "Reconexión automática",
+        "activity-timeout-enabled": "Borrar la presencia al pausar",
+        "activity-timeout-time": "Borrar después de",
+        "hide-github-button": "Ocultar el botón “Ver en GitHub”",
+        "hide-duration-left": "Ocultar el tiempo restante"
       }
     },
     "do-not-track": {
@@ -513,21 +621,33 @@
       "menu": {
         "blocker": "Bloqueador"
       },
-      "name": "No rastrear"
+      "name": "No rastrear",
+      "settings": {
+        "cache": "Guardar listas de bloqueo en caché",
+        "disable-default-lists": "Desactivar las listas de bloqueo predeterminadas"
+      },
+      "dialog": {
+        "reload": {
+          "title": "Recargar página",
+          "message": "Los ajustes de No rastrear han cambiado.",
+          "detail": "Las reglas de red se actualizan sin reiniciar la aplicación. Recarga la página para aplicar por completo los cambios en los filtros de página. La reproducción puede interrumpirse. Puedes recargar más tarde.",
+          "reload-now": "Recargar página ahora"
+        }
+      }
     },
     "downloader": {
       "backend": {
         "dialog": {
           "error": {
             "buttons": {
-              "ok": "OK"
+              "ok": "Aceptar"
             },
             "message": "¡Argh! Lo siento, la descarga falló…",
             "title": "¡Error en la descarga!"
           },
           "start-download-playlist": {
             "buttons": {
-              "ok": "OK"
+              "ok": "Aceptar"
             },
             "detail": "({{playlistSize}} canciones)",
             "message": "Descargando lista de reproducción {{playlistTitle}}",
@@ -555,7 +675,8 @@
           "saving": "Guardando…",
           "trying-to-get-playlist-id": "Intentando obtener la ID de la lista de reproducción: {{playlistId}}",
           "video-id-not-found": "Video no encontrado",
-          "writing-id3": "Escribiendo las etiquetas ID3…"
+          "writing-id3": "Escribiendo las etiquetas ID3…",
+          "ffmpeg-missing": "No se encontró FFmpeg. Instala FFmpeg y asegúrate de que `ffmpeg` esté en tu PATH para descargar en este formato."
         }
       },
       "description": "Descarga audio MP3 / fuente directamente desde la interfaz",
@@ -586,6 +707,10 @@
       },
       "templates": {
         "button": "Descargar"
+      },
+      "settings": {
+        "finish-folder": "Carpeta para las descargas finalizadas",
+        "finish-folder-description": "Déjalo sin definir para usar la carpeta de descargas de arriba."
       }
     },
     "equalizer": {
@@ -653,6 +778,44 @@
           "disconnected": "Desconectado",
           "guest": "Conectado como invitado",
           "host": "Conectado como anfitrión"
+        },
+        "diagnostics": {
+          "check": {
+            "nat": "Tipo de red (NAT)",
+            "signaling": "Servidor de señalización",
+            "stun": "Conexión directa (STUN)",
+            "turn": "Retransmisión de respaldo (TURN)"
+          },
+          "copy": "Copiar resumen",
+          "detail": {
+            "check-error": "La comprobación falló: {{reason}}",
+            "public-ip": "Dirección pública: {{ip}}",
+            "public-ip-hidden": "Dirección pública: haz clic para mostrar",
+            "signaling-fail": "Inaccesible ({{reason}})",
+            "signaling-ok": "Accesible",
+            "stun-fail": "Sin dirección pública (UDP/STUN bloqueados)",
+            "stun-ok": "Dirección pública encontrada",
+            "turn-fail": "Retransmisión inaccesible",
+            "turn-ok": "Retransmisión accesible"
+          },
+          "nat": {
+            "blocked": "UDP o STUN bloqueados",
+            "open": "Abierta / cono (la conexión directa funciona)",
+            "symmetric": "Simétrica (se requiere retransmisión)",
+            "unknown": "Indeterminado"
+          },
+          "run-again": "Ejecutar de nuevo",
+          "running": "Ejecutando comprobaciones…",
+          "test": "Probar conexión",
+          "title": "Diagnóstico de conexión",
+          "verdict": {
+            "blocked": "Es probable que esta red bloquee Music Together. Prueba con otra red o una VPN.",
+            "error": "No se pudo ejecutar el diagnóstico. Consulta la consola para obtener más detalles.",
+            "good": "Las conexiones directas deberían funcionar en esta red.",
+            "limited": "No se pudo determinar completamente esta red. Las conexiones directas aún podrían funcionar; si fallan, prueba con otra red.",
+            "no-signaling": "No se puede acceder al servidor de Music Together. Comprueba el cortafuegos o la conexión a Internet.",
+            "relay": "Las conexiones directas podrían fallar aquí; se usará una retransmisión (funciona, pero añade latencia)."
+          }
         }
       },
       "name": "Music Together [Beta]",
@@ -668,7 +831,10 @@
         "permission-changed": "Permiso de Music Together cambiado a \"{{permission}}\"",
         "remove-song-failed": "Error al eliminar la canción",
         "user-connected": "{{name}} se unió a Music Together",
-        "user-disconnected": "{{name}} dejó Music Together"
+        "user-disconnected": "{{name}} dejó Music Together",
+        "diagnostics-copied": "Resumen del diagnóstico copiado al portapapeles",
+        "diagnostics-copy-failed": "No se pudo copiar el resumen del diagnóstico",
+        "diagnostics-running": "Espera a que termine la prueba de conexión"
       }
     },
     "navigation": {
@@ -715,7 +881,13 @@
       "menu": {
         "log-to-console": "Registrar eventos de recuperación en la consola"
       },
-      "name": "Recuperación de reproducción"
+      "name": "Recuperación de reproducción",
+      "settings": {
+        "stall-timeout": "Tiempo de espera por estancamiento",
+        "stall-timeout-description": "Cuánto tiempo puede transcurrir sin que la reproducción avance antes de intentar una recuperación",
+        "max-retries": "Reintentos máximos",
+        "max-retries-description": "Número de intentos de recuperación antes de pasar a la siguiente pista"
+      }
     },
     "picture-in-picture": {
       "description": "Permite cambiar la aplicación al modo picture-in-picture",
@@ -733,11 +905,18 @@
         },
         "save-window-position": "Guardar la posición de la ventana",
         "save-window-size": "Guardar tamaño de la ventana",
-        "use-native-pip": "Utilizar PiP nativo del navegador"
+        "use-native-pip": "Utilizar PiP nativo del navegador",
+        "prompt": {
+          "title": "Imagen en imagen",
+          "label": "Configura el atajo de imagen en imagen",
+          "keybind-options": {
+            "hotkey": "Atajo para activar o desactivar imagen en imagen"
+          }
+        }
       },
-      "name": "Picture-in-picture",
+      "name": "Imagen en imagen",
       "templates": {
-        "button": "Picture-in-picture"
+        "button": "Imagen en imagen"
       }
     },
     "playback-speed": {
@@ -745,6 +924,9 @@
       "name": "Velocidad de reproducción",
       "templates": {
         "button": "Velocidad"
+      },
+      "menu": {
+        "no-preserves-pitch": "Desactivar la conservación del tono"
       }
     },
     "precise-volume": {
@@ -768,6 +950,12 @@
           "label": "Escoge los niveles de aumento o disminución del volumen",
           "title": "Niveles de volumen"
         }
+      },
+      "settings": {
+        "steps": "Paso de volumen",
+        "arrows-shortcut": "Atajos de teclas de flecha",
+        "shortcut-up": "Atajo global: subir volumen",
+        "shortcut-down": "Atajo global: bajar volumen"
       }
     },
     "quality-changer": {
@@ -796,6 +984,10 @@
             "message": "Error al autenticar con Last.fm\nOcultar la ventana emergente hasta el próximo reinicio.",
             "title": "Error de autenticación"
           }
+        },
+        "invalid-regex": {
+          "title": "Expresión regular no válida",
+          "message": "La expresión regular de la línea {{line}} no es válida: {{error}}"
         }
       },
       "menu": {
@@ -803,11 +995,15 @@
           "api-settings": "Ajustes de la API de Last.fm"
         },
         "listenbrainz": {
-          "token": "Introduzca el token de usuario de ListenBrainz"
+          "token": "Introduzca el token de usuario de ListenBrainz",
+          "api-root": "URL de la API de ListenBrainz"
         },
         "scrobble-alternative-artist": "Usar artistas alternativos",
         "scrobble-alternative-title": "Usar títulos alternativos",
-        "scrobble-other-media": "Hacer Scrobble sobre otros medios"
+        "scrobble-other-media": "Hacer Scrobble sobre otros medios",
+        "regex-filters": "Filtros de expresiones regulares",
+        "use-musicbrainz": "Usar MusicBrainz para corregir los metadatos",
+        "musicbrainz-email": "Correo de contacto de MusicBrainz"
       },
       "name": "Scrobbler",
       "prompt": {
@@ -819,8 +1015,23 @@
           "token": {
             "label": "Introduzca su token de usuario de ListenBrainz:",
             "title": "Token de ListenBrainz"
+          },
+          "api-root": {
+            "label": "Introduce la URL base de la API:",
+            "title": "URL de la API de ListenBrainz"
           }
+        },
+        "regex-filter-multi": {
+          "label": "Introduce una expresión regular por línea:"
+        },
+        "musicbrainz-email": {
+          "title": "Correo de contacto de MusicBrainz",
+          "label": "Introduce un correo para la API de MusicBrainz:"
         }
+      },
+      "settings": {
+        "lastfm-api-root": "URL de la API de Last.fm",
+        "musicbrainz-email-description": "Se usa como información de contacto para la API de MusicBrainz; es necesario para corregir los metadatos con MusicBrainz"
       }
     },
     "shortcuts": {
@@ -840,15 +1051,34 @@
           "label": "Elija combinaciones de teclas para el control de las canciones:",
           "title": "Atajos de teclado globales"
         }
+      },
+      "settings": {
+        "global-keybinds": "Atajos globales (funcionan en toda la aplicación)",
+        "local-keybinds": "Atajos locales (solo mientras la ventana tiene el foco)"
       }
     },
     "skip-silences": {
       "description": "Salta automáticamente las secciones silenciosas de las canciones",
-      "name": "Saltar silencios"
+      "name": "Saltar silencios",
+      "settings": {
+        "only-skip-beginning": "Omitir solo el silencio al principio de una pista"
+      }
     },
     "sponsorblock": {
       "description": "Salta automáticamente las partes no musicales como la introducción/final o secciones de videos musicales donde la canción no está sonando",
-      "name": "SponsorBlock"
+      "name": "SponsorBlock",
+      "settings": {
+        "categories": "Segmentos que omitir",
+        "category": {
+          "sponsor": "Patrocinio",
+          "intro": "Introducción",
+          "outro": "Cierre",
+          "interaction": "Recordatorio de interacción",
+          "selfpromo": "Autopromoción",
+          "music_offtopic": "Sección no musical"
+        },
+        "api-url": "URL de la API"
+      }
     },
     "synced-lyrics": {
       "description": "Proporciona letras de canciones sincronizadas, utilizando proveedores como LRClib.",
@@ -1061,6 +1291,30 @@
         "show-custom-search-button": {
           "label": "Mostrar botón de búsqueda personalizado",
           "tooltip": "Mostrar un botón de búsqueda en el selector de letras que permita anular la consulta de búsqueda y el artista de la canción actual."
+        },
+        "provider-priority": {
+          "tooltip": "Los proveedores se prueban en este orden: gana el primero que tenga la letra de la canción actual. Usa las flechas para reordenar."
+        },
+        "prefer-synced": {
+          "tooltip": "Elige el primer proveedor de la lista con letras sincronizadas, en lugar del primero que tenga cualquier letra."
+        },
+        "previous-provider": {
+          "tooltip": "Proveedor anterior"
+        },
+        "next-provider": {
+          "tooltip": "Proveedor siguiente"
+        },
+        "custom-search-button": {
+          "tooltip": "Consulta de búsqueda personalizada"
+        },
+        "star-provider": {
+          "tooltip": "Usa siempre este proveedor para esta canción, independientemente del orden de prioridad. Si no tiene la letra de la canción, se vuelve al orden normal."
+        },
+        "unstar-provider": {
+          "tooltip": "Deja de fijar este proveedor a esta canción."
+        },
+        "use-priority-list": {
+          "tooltip": "Prueba los proveedores en el orden indicado abajo. Desactívalo para dejar que decidan las letras: gana el proveedor que tenga la mejor letra para la canción."
         }
       },
       "name": "Letras sincronizadas",
@@ -1072,6 +1326,22 @@
         "duration-mismatch": "⚠️ - La letra puede estar desincronizada debido a un desajuste en la duración.",
         "inexact": "⚠️ - La letra de esta canción puede no ser exacta",
         "instrumental": "⚠️ - Esta es una canción instrumental"
+      },
+      "settings": {
+        "precise-timing": "Sincronización precisa",
+        "show-inexact": "Mostrar letras no exactas",
+        "show-time-codes": "Mostrar códigos de tiempo",
+        "romanization": "Romanizar las letras",
+        "line-effect": "Efecto de línea",
+        "effect": {
+          "fancy": "Elegante",
+          "scale": "Escala",
+          "offset": "Desplazamiento",
+          "focus": "Enfoque"
+        },
+        "prefer-synced": "Preferir letras sincronizadas",
+        "provider-priority": "Prioridad de proveedores",
+        "use-priority-list": "Usar lista de prioridad"
       }
     },
     "taskbar-mediacontrol": {
@@ -1106,7 +1376,10 @@
           }
         }
       },
-      "name": "Reproductor transparente"
+      "name": "Reproductor transparente",
+      "settings": {
+        "type-description": "Material de fondo usado para la transparencia de la ventana"
+      }
     },
     "tuna-obs": {
       "description": "Integración con el complemento Tuna de OBS",
@@ -1148,7 +1421,26 @@
       "menu": {
         "visualizer-type": "Tipo de visualizador"
       },
-      "name": "Visualizador"
+      "name": "Visualizador",
+      "settings": {
+        "preset": "Preajuste",
+        "blend-time": "Tiempo de mezcla",
+        "effect": "Efecto",
+        "accuracy": "Precisión",
+        "max-height": "Altura máxima",
+        "max-size": "Tamaño máximo",
+        "line-width": "Ancho de línea",
+        "color": "Color",
+        "shadow-blur": "Desenfoque de sombra",
+        "shadow-color": "Color de sombra",
+        "fade-side": "Desvanecer los lados",
+        "prettify": "Embellecer",
+        "prettify-description": "Estrecha las barras hacia los bordes",
+        "dottify": "Convertir en puntos",
+        "dottify-description": "Dibuja puntos en lugar de una línea continua",
+        "horizontal-align": "Alineación horizontal",
+        "vertical-align": "Alineación vertical"
+      }
     },
     "playlist-search": {
       "description": "Agrega un campo de búsqueda para filtrar listas de reproducción en la barra lateral y en el diálogo Agregar a lista de reproducción",
@@ -1157,6 +1449,196 @@
         "search-placeholder": "Buscar listas de reproducción",
         "no-results": "No se encontraron listas de reproducción"
       }
+    },
+    "always-show-volume-slider": {
+      "name": "Mostrar siempre el control de volumen",
+      "description": "Mantiene el control de volumen visible y arrastrable en lugar de mostrarlo solo al pasar el cursor."
+    },
+    "fullscreen-auto-hide": {
+      "description": "Oculta automáticamente los controles del reproductor y el cursor del ratón tras unos segundos de inactividad en pantalla completa",
+      "name": "Ocultación automática en pantalla completa"
+    },
+    "prefer-song": {
+      "description": "Reproduce la canción en lugar del videoclip cuando una pista del álbum sea un vídeo",
+      "name": "Preferir canción"
+    },
+    "search-commands": {
+      "commands": {
+        "play": "Reproduce un vídeo desde un enlace o ID de YouTube",
+        "settings": "Abre los ajustes"
+      },
+      "description": "Escribe / en el cuadro de búsqueda para ejecutar comandos, con autocompletado para sus argumentos",
+      "name": "Comandos de búsqueda",
+      "settings": {
+        "open-keybind": "Atajo para abrir",
+        "open-keybind-description": "Acelerador al estilo de Electron, p. ej. CmdOrCtrl+/ o Alt+Space",
+        "open-shortcut": "Abrir el cuadro de búsqueda desde cualquier lugar",
+        "open-shortcut-description": "Abre el cuadro de búsqueda ya en modo comando, como Spotlight. Si lo pulsas de nuevo, se cierra."
+      }
+    },
+    "seek-shortcuts": {
+      "description": "Retrocede o avanza 5 segundos con las teclas de flecha izquierda/derecha",
+      "name": "Atajos de desplazamiento"
+    },
+    "sfw-music": {
+      "description": "Omite automáticamente las canciones marcadas como explícitas por YouTube Music. Se pausa si una cola explícita se repite o no hay una siguiente canción disponible.",
+      "name": "Música SFW"
+    },
+    "toast-autoclose": {
+      "description": "Cierra automáticamente los avisos de YouTube Music después de tres segundos",
+      "name": "Cierre automático de avisos"
+    },
+    "statusbar-lyrics": {
+      "settings": {
+        "include-pronunciation": "Incluir pronunciación"
+      }
+    },
+    "dismiss-multidevice-popup": {
+      "name": "Descartar ventana emergente multidispositivo",
+      "description": "Cierra automáticamente la ventana emergente \"Escuchar en este dispositivo\" que aparece cuando la reproducción se inicia en otro dispositivo."
+    },
+    "memory-saver": {
+      "description": "Limpia las cachés de recursos del renderizador mientras la ventana está oculta una vez que superan un umbral",
+      "name": "Ahorro de memoria",
+      "settings": {
+        "threshold": "Umbral de caché",
+        "threshold-description": "Limpia las cachés cuando su memoria activa supere este valor mientras la ventana está oculta"
+      }
+    }
+  },
+  "settings-ui": {
+    "name": "Interfaz de ajustes",
+    "description": "Añade un panel de ajustes dentro de la aplicación, que se abre desde la barra lateral",
+    "title": "Ajustes",
+    "settings": {
+      "show-button": "Mostrar la entrada de ajustes en la barra lateral",
+      "show-button-description": "Desactívalo para mantener limpia la barra lateral; Ajustes sigue estando en Navegación → Abrir ajustes.",
+      "separate-window": "Abrir siempre Ajustes en una ventana separada",
+      "separate-window-description": "Abre la ventana de ajustes independiente, como hace la entrada de la bandeja, en lugar del panel dentro de la aplicación."
+    },
+    "search-placeholder": "Buscar ajustes",
+    "search-results": "Resultados de búsqueda",
+    "search-matching": "Coincidencias con «{{query}}»",
+    "no-match": "Ninguna configuración coincide con «{{query}}».",
+    "close": "Cerrar",
+    "edit-config": "Editar config.json",
+    "restart-banner": "Algunos cambios requieren reiniciar para aplicarse.",
+    "restart-now": "Reiniciar ahora",
+    "later": "Más tarde",
+    "restart-pill": "reiniciar",
+    "restart-pill-hint": "Requiere reinicio",
+    "refresh-options": "Actualizar opciones",
+    "move-up": "Subir",
+    "move-down": "Bajar",
+    "about": {
+      "tagline": "Una aplicación de escritorio con muchas funciones para YouTube Music",
+      "versions": "Versiones",
+      "version-app": "Aplicación",
+      "version-build": "Compilación",
+      "version-electron": "Electron",
+      "version-chromium": "Chromium",
+      "version-node": "Node.js",
+      "version-platform": "Plataforma",
+      "version-innertube": "Innertube",
+      "links": "Enlaces",
+      "link-repo": "Repositorio",
+      "link-issue": "Informar de un problema",
+      "link-releases": "Lanzamientos",
+      "link-license": "Licencia",
+      "actions": "Acciones",
+      "check-updates": "Buscar actualizaciones",
+      "copy-debug": "Copiar información de depuración",
+      "copied": "¡Copiado!"
+    },
+    "sections": {
+      "general": {
+        "label": "General"
+      },
+      "appearance": {
+        "label": "Apariencia"
+      },
+      "window": {
+        "label": "Ventana y bandeja"
+      },
+      "advanced": {
+        "label": "Avanzado"
+      },
+      "plugins": {
+        "label": "Complementos"
+      },
+      "flags": {
+        "label": "Indicadores"
+      },
+      "about": {
+        "label": "Acerca de"
+      }
+    },
+    "groups": {
+      "updates-session": "Actualizaciones y sesión",
+      "startup-language": "Inicio e idioma",
+      "interface": "Interfaz",
+      "context-menu": "Menú contextual",
+      "window-title": "Ventana",
+      "window": "Ventana",
+      "system": "Sistema",
+      "network": "Red",
+      "performance": "Rendimiento",
+      "configuration": "Configuración",
+      "updates": "Actualizaciones"
+    },
+    "stepper-decrement": "Disminuir",
+    "stepper-increment": "Aumentar",
+    "flags": {
+      "warning": "Los flags de funciones son interruptores internos de YouTube Music. Cambiarlos puede romper la reproducción, el diseño o funciones de la cuenta, y no están cubiertos por el soporte. Los reemplazos solo se guardan para los flags que cambies y se pueden eliminar con Deshacer.",
+      "search-placeholder": "Buscar flags",
+      "overridden": "sobrescrito",
+      "undo": "Deshacer",
+      "undo-hint": "Eliminar esta sobrescritura",
+      "empty": "Esta página no expone ningún flag de funciones.",
+      "no-match": "Ningún flag coincide con «{{query}}».",
+      "add-name": "Nombre del nuevo flag",
+      "add-value": "Valor",
+      "add-value-hint": "JSON cuando se puede analizar (true, 42, \"text\"), el texto tal cual en caso contrario",
+      "add": "Añadir"
+    },
+    "fields": {
+      "hide-dislike-button": "Ocultar botón de no me gusta",
+      "hide-video-captions": "Ocultar subtítulos de vídeo",
+      "context-menu": {
+        "hide-entry": "Ocultar {{entry}}",
+        "entries": {
+          "add-to-queue": "Añadir a la cola",
+          "delete-playlist": "Eliminar lista de reproducción",
+          "dismiss-queue": "Descartar cola",
+          "download": "Descargar",
+          "go-to-album": "Ir al álbum",
+          "go-to-artist": "Ir al artista",
+          "go-to-playlist": "Ir a la lista de reproducción",
+          "like": "Me gusta",
+          "not-interested": "No me interesa",
+          "pin-to-listen-again": "Fijar en Escuchar de nuevo",
+          "play-next": "Reproducir a continuación",
+          "remove-from-playlist": "Quitar de la lista de reproducción",
+          "remove-from-queue": "Quitar de la cola",
+          "report": "Denunciar",
+          "save-to-library": "Guardar en la biblioteca",
+          "save-to-playlist": "Guardar en lista de reproducción",
+          "share": "Compartir",
+          "shuffle-play": "Reproducir aleatoriamente",
+          "start-mix": "Iniciar mix",
+          "stats-for-nerds": "Estadísticas para nerds"
+        }
+      },
+      "podcast-artist": "Usar los participantes del pódcast como artistas",
+      "podcast-artist-desc": "Desactivado: el artista de un episodio de pódcast es el canal que lo publicó.",
+      "theme-preset": "Preajuste",
+      "theme-variable-name": "Variable",
+      "theme-variable-value": "Valor",
+      "theme-variable-add": "Añadir variable",
+      "performance-mode": "Modo de rendimiento",
+      "performance-mode-desc": "Intercambia algo de fidelidad visual por un renderizado más económico.",
+      "in-process-gpu": "Fusionar el proceso de la GPU con el proceso de la aplicación",
+      "in-process-gpu-desc": "Experimental: ahorra un proceso, pero traslada la memoria de la GPU al proceso principal y puede recurrir al renderizado por software."
     }
   }
 }

@@ -65,7 +65,8 @@
         },
         "detail": "Við biðjumst velvirðingar á óþægindunum! vinsamlegast veldu hvað á að gera:",
         "message": "Umsóknin svarar ekki",
-        "title": "Gluggi er svarar ekki"
+        "title": "Gluggi er svarar ekki",
+        "details": "Ástæða: {{error}}"
       },
       "update-available": {
         "buttons": {
@@ -76,6 +77,27 @@
         "detail": "Ný útgáfa er fáanleg og hægt er að hlaða henni niður á {{downloadLink}}",
         "message": "Ný útgáfa er fáanleg",
         "title": "Uppfærsla Fáanleg"
+      },
+      "restart-summary": {
+        "detail": "Endurræstu forritið til að virkja: {{changes}}",
+        "message": "Sumar breytingar krefjast endurræsingar",
+        "title": "Endurræsing nauðsynleg"
+      },
+      "update-available-dev": {
+        "buttons": {
+          "ok": "Í lagi",
+          "view": "Skoða commit"
+        },
+        "title": "Uppfærsla í boði",
+        "message": "Þessi þróunarútgáfa er á eftir master-greininni",
+        "detail": "Commitið sem þessi útgáfa keyrir á ({{commit}}) er eldra en nýjasta commitið á master. Nýrri commit má sjá á {{commitsLink}}"
+      },
+      "downgrade-warning": {
+        "title": "Fara aftur á stöðuga útgáfu?",
+        "message": "Þessi beta-útgáfa er nýrri en nýjasta stöðuga útgáfan.",
+        "detail": "Að fara aftur getur endurstillt sumar stillingar: að fara úr nýrri útgáfu í eldri keyrir engar yfirfærslur og getur skilið nýrri stillingar ólæsilegar.",
+        "confirm": "Fara á stöðuga útgáfu",
+        "cancel": "Hætta við"
       }
     },
     "menu": {
@@ -87,7 +109,8 @@
           "go-back": "Farðu til baka",
           "go-forward": "Farðu áfram",
           "quit": "Útganga",
-          "restart": "Endurræstu Forritið"
+          "restart": "Endurræstu Forritið",
+          "open-settings": "Opna stillingar"
         }
       },
       "options": {
@@ -129,7 +152,20 @@
             },
             "label": "Tungumál",
             "submenu": {
-              "to-help-translate": "Viltu hjálpa til við að þýða? Smellið hér"
+              "to-help-translate": "Viltu hjálpa til við að þýða? Smellið hér",
+              "sync": {
+                "label": "Samstilla tungumál",
+                "submenu": {
+                  "from-youtube": "Frá YouTube",
+                  "to-youtube": "Til YouTube"
+                },
+                "failure": {
+                  "dialog": {
+                    "title": "Tungumáli ekki breytt",
+                    "message": "Tungumálið eða svæðisstillingin er ekki til í forritinu ennþá."
+                  }
+                }
+              }
             }
           },
           "resume-on-start": "Haltu áfram síðasta lagi þegar forritið byrjar",
@@ -180,9 +216,37 @@
                 "label": "Þema",
                 "submenu": {
                   "import-css-file": "Flytja inn sérsniðna CSS skrá",
-                  "no-theme": "Engin þema"
+                  "no-theme": "Engin þema",
+                  "colors": {
+                    "label": "Litir"
+                  },
+                  "presets": {
+                    "label": "Forstillingar",
+                    "default": "Sjálfgefið",
+                    "custom": "Sérsniðið"
+                  },
+                  "reset-colors": "Endurstilla liti",
+                  "open-themes-folder": "Opna þemamöppu"
                 }
-              }
+              },
+              "use-ytm-icons": "Nota upprunalegu YouTube Music-táknin"
+            }
+          },
+          "updates": {
+            "label": "Uppfærslur",
+            "check": "Athuga með uppfærslur",
+            "auto-update": "Athuga sjálfkrafa með uppfærslur",
+            "channel": {
+              "label": "Uppfærslurás",
+              "stable": "Stöðug",
+              "beta": "Beta"
+            }
+          },
+          "shared-links": {
+            "label": "Deildir hlekkir",
+            "submenu": {
+              "strip-music": "Fjarlægja 'music.'",
+              "strip-si": "Fjarlægja '&si='"
             }
           }
         }
@@ -219,6 +283,15 @@
       "dislike": "Ósætti",
       "unlike": "ólíkt",
       "undislike": "Ólíkt"
+    },
+    "themes": {
+      "consent": {
+        "title": "Keyra þemakóða?",
+        "message": "„{{theme}}“ inniheldur skriftu sem keyrir með fullum aðgangi að forritinu.",
+        "detail": "Þemaskriftur eru ekki einangraðar. Þessi kóði getur lesið og breytt stillingunum þínum, átt samskipti við forritið og gert hvað sem forritið sjálft getur gert. Leyfðu þetta aðeins ef þú treystir uppruna þemans. Þú getur afturkallað þetta með því að fjarlægja þemað.",
+        "allow": "Keyra þetta þema",
+        "cancel": "Hætta við"
+      }
     }
   },
   "plugins": {
@@ -340,6 +413,10 @@
               "dialogTitle": "Veldu HTTPS einkalykilskrá"
             }
           }
+        },
+        "mcp": {
+          "label": "MCP-þjónn",
+          "description": "Þjónar v2 API sem MCP-verkfærum á /mcp. Notar sömu auðkenningu og restin af API."
         }
       },
       "name": "API-Netþjónn [Beta]",
@@ -352,11 +429,20 @@
           "label": "Sláðu inn tengið fyrir API-netþjónninn:",
           "title": "Tengi"
         }
+      },
+      "settings": {
+        "choose-file": "Velja skrá…"
       }
     },
     "audio-compressor": {
       "description": "Notaðu þjöppun á hljóð (lækkar hljóðstyrk háværustu hluta merkis og hækkar hljóðstyrk í mýkstu hlutunum)",
-      "name": "Hljóðþjöppu"
+      "name": "Hljóðþjöppu",
+      "menu": {
+        "auto-track-gain": "Sjálfvirkur lagstyrkur (magnar hljóðlát lög)",
+        "maximum-gain": {
+          "label": "Hámarksstyrking"
+        }
+      }
     },
     "auth-proxy-adapter": {
       "description": "Stuðningur við notkun auðkenningar umboðsþjónustu",
@@ -422,6 +508,9 @@
           "display-seconds": "Sýna sekúndur",
           "24-hour-format": "24 klst snið"
         }
+      },
+      "settings": {
+        "hour-12": "Nota 12 klukkustunda snið"
       }
     },
     "compact-sidebar": {
@@ -442,12 +531,24 @@
             "fade-scaling": {
               "label": "Fölunarskala",
               "linear": "Línulegt",
-              "logarithmic": "Logaritmískt"
+              "logarithmic": "Logaritmískt",
+              "equal-power": "Jafnt afl"
             },
             "seconds-before-end": "Krossfæra N sekúndum fyrir enda"
           },
           "title": "Krossfæravalkosti"
         }
+      },
+      "settings": {
+        "fade-in": "Innfelling",
+        "fade-out": "Útfelling",
+        "seconds-before-end": "Byrja fyrir enda",
+        "fade-scaling": "Skölun innfellingar",
+        "scaling": {
+          "linear": "Línuleg",
+          "logarithmic": "Lógaritmísk"
+        },
+        "seconds-before-end-description": "Sekúndur fyrir enda lags þegar krossfelling yfir í næsta lag hefst"
       }
     },
     "custom-output-device": {
@@ -502,6 +603,13 @@
           "label": "Sláðu inn óvirknitíma eftir sekúndur:",
           "title": "Stilltu tímamörk fyrir óvirkni"
         }
+      },
+      "settings": {
+        "auto-reconnect": "Sjálfvirk endurtenging",
+        "activity-timeout-enabled": "Hreinsa viðveru þegar pásað er",
+        "activity-timeout-time": "Hreinsa eftir",
+        "hide-github-button": "Fela hnappinn „Skoða á GitHub“",
+        "hide-duration-left": "Fela tímann sem eftir er"
       }
     },
     "downloader": {
@@ -544,7 +652,8 @@
           "saving": "Er að vista…",
           "trying-to-get-playlist-id": "Er að reyna að fá auðkenni spilunarlista: {{playlistId}}",
           "video-id-not-found": "Myndband fannst ekki",
-          "writing-id3": "Að skrifa ID3 tög…"
+          "writing-id3": "Að skrifa ID3 tög…",
+          "ffmpeg-missing": "FFmpeg fannst ekki. Settu FFmpeg upp og vertu viss um að `ffmpeg` sé á PATH til að sækja í þessu sniði."
         }
       },
       "description": "Niðurhalar MP3 / upprunahljóði beint úr viðmótinu",
@@ -575,6 +684,10 @@
       },
       "templates": {
         "button": "Sækja"
+      },
+      "settings": {
+        "finish-folder": "Mappa fyrir niðurhal sem er lokið",
+        "finish-folder-description": "Láttu autt til að nota niðurhalsmöppuna hér fyrir ofan."
       }
     },
     "equalizer": {
@@ -642,6 +755,44 @@
           "disconnected": "Aftengt",
           "guest": "Tengdur sem Gestur",
           "host": "Tengdur sem Gestgjafi"
+        },
+        "diagnostics": {
+          "check": {
+            "nat": "Tegund netkerfis (NAT)",
+            "signaling": "Signaling-þjónn",
+            "stun": "Bein tenging (STUN)",
+            "turn": "Varasamband um miðlara (TURN)"
+          },
+          "copy": "Afrita samantekt",
+          "detail": {
+            "check-error": "Athugun mistókst: {{reason}}",
+            "public-ip": "Opinbert netfang: {{ip}}",
+            "public-ip-hidden": "Opinbert netfang: smelltu til að sýna",
+            "signaling-fail": "Óaðgengilegt ({{reason}})",
+            "signaling-ok": "Aðgengilegt",
+            "stun-fail": "Ekkert opinbert netfang (UDP/STUN blokkað)",
+            "stun-ok": "Opinbert netfang fannst",
+            "turn-fail": "Miðlari óaðgengilegur",
+            "turn-ok": "Miðlari aðgengilegur"
+          },
+          "nat": {
+            "blocked": "UDP eða STUN blokkað",
+            "open": "Opið / keilulaga (bein tenging virkar)",
+            "symmetric": "Samhverft (miðlari nauðsynlegur)",
+            "unknown": "Óákvarðað"
+          },
+          "run-again": "Keyra aftur",
+          "running": "Keyri athuganir…",
+          "test": "Prófa tengingu",
+          "title": "Greining tengingar",
+          "verdict": {
+            "blocked": "Þetta net mun líklega blokka Music Together. Prófaðu annað net eða VPN.",
+            "error": "Greiningin mistókst. Athugaðu stjórnborðið fyrir upplýsingar.",
+            "good": "Beinar tengingar ættu að virka á þessu neti.",
+            "limited": "Ekki tókst að ákvarða þetta net að fullu. Beinar tengingar gætu samt virkað; ef þær mistakast skaltu prófa annað net.",
+            "no-signaling": "Næ ekki í Music Together-þjóninn. Athugaðu eldvegginn eða internettenginguna.",
+            "relay": "Beinar tengingar gætu mistekist hér; miðlari verður notaður (virkar, en eykur seinkun)."
+          }
         }
       },
       "name": "Tónlist Saman [Prófunarútgáfa]",
@@ -657,7 +808,10 @@
         "permission-changed": "Tónlist Saman leyfi breytt í \"{{permission}}\"",
         "remove-song-failed": "Tókst ekki að fjarlægja lag",
         "user-connected": "{{name}} tengd Tónlist Saman",
-        "user-disconnected": "{{name}} fór frá Tónlist Saman"
+        "user-disconnected": "{{name}} fór frá Tónlist Saman",
+        "diagnostics-copied": "Samantekt greiningar afrituð á klippiborð",
+        "diagnostics-copy-failed": "Mistókst að afrita greiningarsamantekt",
+        "diagnostics-running": "Bíddu eftir að tengiprófið klárist"
       }
     },
     "navigation": {
@@ -715,7 +869,14 @@
         },
         "save-window-position": "Vista gluggastöðu",
         "save-window-size": "Vista gluggastærð",
-        "use-native-pip": "Notaðu innbyggða PiP í vafra"
+        "use-native-pip": "Notaðu innbyggða PiP í vafra",
+        "prompt": {
+          "title": "Mynd í mynd",
+          "label": "Stilltu flýtilykil fyrir mynd í mynd",
+          "keybind-options": {
+            "hotkey": "Flýtilykill til að kveikja/slökkva á mynd í mynd"
+          }
+        }
       },
       "name": "Mynd-í-mynd",
       "templates": {
@@ -727,6 +888,9 @@
       "name": "Spilunarhraði",
       "templates": {
         "button": "Hraði"
+      },
+      "menu": {
+        "no-preserves-pitch": "Slökkva á varðveislu tónhæðar"
       }
     },
     "precise-volume": {
@@ -750,6 +914,12 @@
           "label": "Veldu Hljóðstyrksauka/Minnka Skref",
           "title": "Hljóðstyrksskref"
         }
+      },
+      "settings": {
+        "steps": "Skref hljóðstyrks",
+        "arrows-shortcut": "Flýtileiðir á örvatökkum",
+        "shortcut-up": "Altæk flýtileið: hækka hljóð",
+        "shortcut-down": "Altæk flýtileið: lækka hljóð"
       }
     },
     "quality-changer": {
@@ -778,6 +948,10 @@
             "message": "Mistókst að auðkenna með Last.fm\nFela sprettigluggann þar til næstu endurræsingu.",
             "title": "Auðkenning Mistókst"
           }
+        },
+        "invalid-regex": {
+          "title": "Ógild regluleg segð",
+          "message": "Regluleg segð á línu {{line}} er ógild: {{error}}"
         }
       },
       "menu": {
@@ -785,11 +959,15 @@
           "api-settings": "Last.fm API Stillingar"
         },
         "listenbrainz": {
-          "token": "Sláðu inn ListenBrainz notandalykilinn"
+          "token": "Sláðu inn ListenBrainz notandalykilinn",
+          "api-root": "ListenBrainz API-slóð"
         },
         "scrobble-alternative-title": "Nota aðra titla",
         "scrobble-alternative-artist": "Nota aðra listamenn",
-        "scrobble-other-media": "Scrobble aðra fjölmiðla"
+        "scrobble-other-media": "Scrobble aðra fjölmiðla",
+        "regex-filters": "Síur með reglulegum segðum",
+        "use-musicbrainz": "Nota MusicBrainz til að leiðrétta lýsigögn",
+        "musicbrainz-email": "Netfang tengiliðar hjá MusicBrainz"
       },
       "name": "Scrobbler",
       "prompt": {
@@ -801,8 +979,23 @@
           "token": {
             "label": "Sláðu inn ListenBrainz notandatáknið þitt:",
             "title": "ListenBrainz tákn"
+          },
+          "api-root": {
+            "label": "Sláðu inn grunnslóð API:",
+            "title": "ListenBrainz API-slóð"
           }
+        },
+        "regex-filter-multi": {
+          "label": "Sláðu inn eina reglulega segð á hverri línu:"
+        },
+        "musicbrainz-email": {
+          "title": "Netfang tengiliðar hjá MusicBrainz",
+          "label": "Sláðu inn netfang fyrir MusicBrainz API:"
         }
+      },
+      "settings": {
+        "lastfm-api-root": "Last.fm API-slóð",
+        "musicbrainz-email-description": "Notað sem tengiliðaupplýsingar fyrir MusicBrainz API; nauðsynlegt til að leiðrétta lýsigögn með MusicBrainz"
       }
     },
     "shortcuts": {
@@ -822,15 +1015,34 @@
           "label": "Veldu Alþjóðlegslyklabind fyrir Lagastýringu:",
           "title": "Alþjóðlegslyklabindingar"
         }
+      },
+      "settings": {
+        "global-keybinds": "Altækir flýtilyklar (virkja í öllu forritinu)",
+        "local-keybinds": "Staðbundnir flýtilyklar (aðeins þegar glugginn hefur fókus)"
       }
     },
     "skip-silences": {
       "description": "Slepptu sjálfkrafa þagnarköflum í lögum",
-      "name": "Slepptu Þögnum"
+      "name": "Slepptu Þögnum",
+      "settings": {
+        "only-skip-beginning": "Sleppa aðeins þögn í byrjun lags"
+      }
     },
     "sponsorblock": {
       "description": "Sleppur sjálfkrafa hlutum sem ekki eru tónlist, eins og inngangur/lok eða hlutar af tónlistarmyndböndum þar sem lag er ekki að spila",
-      "name": "Styrktarblokk"
+      "name": "Styrktarblokk",
+      "settings": {
+        "categories": "Hlutar til að sleppa",
+        "category": {
+          "sponsor": "Styrktaraðili",
+          "intro": "Inngangur",
+          "outro": "Útgangur",
+          "interaction": "Áminning um þátttöku",
+          "selfpromo": "Sjálfsauglýsing",
+          "music_offtopic": "Hluti án tónlistar"
+        },
+        "api-url": "API-slóð"
+      }
     },
     "synced-lyrics": {
       "description": "Veitir samstillta texta við lög, með því að nota veitur eins og LRClib.",
@@ -1043,6 +1255,30 @@
         "show-custom-search-button": {
           "label": "Sýna sérsniðinn leitarhnapp",
           "tooltip": "Sýna leitarhnapp í textavalara sem gerir þér kleift að breyta leitarfyrirspurn og flytjanda fyrir núverandi lag."
+        },
+        "provider-priority": {
+          "tooltip": "Veitendur eru prófaðir í þessari röð: sá fyrsti sem hefur texta fyrir núverandi lag vinnur. Notaðu örvarnar til að endurraða."
+        },
+        "prefer-synced": {
+          "tooltip": "Veldu fyrsta veitandann á listanum sem er með tímasettan texta í stað þess fyrsta sem hefur hvaða texta sem er."
+        },
+        "previous-provider": {
+          "tooltip": "Fyrri veitandi"
+        },
+        "next-provider": {
+          "tooltip": "Næsti veitandi"
+        },
+        "custom-search-button": {
+          "tooltip": "Sérsniðin leitarfyrirspurn"
+        },
+        "star-provider": {
+          "tooltip": "Notaðu alltaf þennan veitanda fyrir þetta lag, óháð forgangsröðun. Fellur aftur í venjulega röð ef hann hefur engan texta fyrir lagið."
+        },
+        "unstar-provider": {
+          "tooltip": "Hætta að festa þennan veitanda við þetta lag."
+        },
+        "use-priority-list": {
+          "tooltip": "Prófaðu veitendurna í röðinni hér fyrir neðan. Slökktu á þessu til að láta textann ráða: sá veitandi sem hefur besta textann fyrir lagið vinnur."
         }
       },
       "name": "Samstilltur texti",
@@ -1054,6 +1290,22 @@
         "duration-mismatch": "⚠️ - Textarnir gætu verið ekki samstilltir vegna tímalengdar.",
         "inexact": "⚠️ - Textinn við þetta lag er kannski ekki nákvæmur",
         "instrumental": "⚠️ - Þetta er hljóðfærilegt lag"
+      },
+      "settings": {
+        "precise-timing": "Nákvæm tímasetning",
+        "show-inexact": "Sýna ónákvæman texta",
+        "show-time-codes": "Sýna tímakóða",
+        "romanization": "Umrita texta",
+        "line-effect": "Línuáhrif",
+        "effect": {
+          "fancy": "Skrautleg",
+          "scale": "Skölun",
+          "offset": "Hliðrun",
+          "focus": "Fókus"
+        },
+        "prefer-synced": "Hafa tímasettan texta í forgang",
+        "provider-priority": "Forgangsröð veitenda",
+        "use-priority-list": "Nota forgangslista"
       }
     },
     "taskbar-mediacontrol": {
@@ -1080,9 +1332,17 @@
             "acrylic": "Akryl",
             "mica": "Míka",
             "tabbed": "Flipar",
-            "none": "Enginn"
+            "none": "Enginn",
+            "content": "Efni",
+            "fullscreen-ui": "Skjáfyllt viðmót",
+            "under-page": "Undir síðu",
+            "under-window": "Undir glugga",
+            "window": "Gluggi"
           }
         }
+      },
+      "settings": {
+        "type-description": "Bakgrunnsefni sem notað er fyrir gegnsæi glugga"
       }
     },
     "tuna-obs": {
@@ -1125,7 +1385,26 @@
       "menu": {
         "visualizer-type": "Sýndarstýringartegund"
       },
-      "name": "Sýndarstýringar"
+      "name": "Sýndarstýringar",
+      "settings": {
+        "preset": "Forstilling",
+        "blend-time": "Blendingartími",
+        "effect": "Áhrif",
+        "accuracy": "Nákvæmni",
+        "max-height": "Hámarkshæð",
+        "max-size": "Hámarksstærð",
+        "line-width": "Línubreidd",
+        "color": "Litur",
+        "shadow-blur": "Skuggadreifing",
+        "shadow-color": "Skuggalitur",
+        "fade-side": "Daufar hliðar",
+        "prettify": "Fegra",
+        "prettify-description": "Gera súlurnar mjóari út að jaðrinum",
+        "dottify": "Punktgera",
+        "dottify-description": "Teikna punkta í stað samfelldrar línu",
+        "horizontal-align": "Lárétt jöfnun",
+        "vertical-align": "Lóðrétt jöfnun"
+      }
     },
     "audio-only": {
       "description": "Þvingar aðeins hljóðham — lokar á alla myndbandsstrauma á net- og spilarastigi til að spara vinnsluminni og bandbreidd",
@@ -1136,7 +1415,13 @@
       "menu": {
         "log-to-console": "Skrá endurheimtaratburði í stjórnborð"
       },
-      "name": "Spilunar endurheimt"
+      "name": "Spilunar endurheimt",
+      "settings": {
+        "stall-timeout": "Tímamörk stöðnunar",
+        "stall-timeout-description": "Hversu lengi afspilun má vera án framfara áður en reynt er að endurheimta hana",
+        "max-retries": "Hámarksfjöldi endurtilrauna",
+        "max-retries-description": "Fjöldi endurheimtutilrauna áður en hoppað er yfir á næsta lag"
+      }
     },
     "playlist-search": {
       "description": "Bætir við leitarreit til að sía spilunarlista í hliðarspjaldinu og í glugganum Bæta við spilunarlista",
@@ -1145,6 +1430,215 @@
         "search-placeholder": "Leita að spilunarlistum",
         "no-results": "Engar spilunarlistar fundust"
       }
+    },
+    "always-show-volume-slider": {
+      "name": "Sýna hljóðstyrksstiku alltaf",
+      "description": "Heldur hljóðstyrksstikunni sýnilegri og hægt að draga hana í stað þess að sýna hana aðeins við músarhverfingu."
+    },
+    "do-not-track": {
+      "description": "Blokkar alla rakningu sjálfgefið",
+      "menu": {
+        "blocker": "Blokker"
+      },
+      "name": "Ekki fylgjast með",
+      "settings": {
+        "cache": "Skyndiminni blokkunarlista",
+        "disable-default-lists": "Gera sjálfgefnar blokkunarlista óvirka"
+      },
+      "dialog": {
+        "reload": {
+          "title": "Endurhlaða síðu",
+          "message": "Stillingar fyrir „Ekki fylgjast með“ hafa breyst.",
+          "detail": "Netreglur uppfærast án þess að endurræsa forritið. Endurhlaðaðu síðuna til að breytingar á síum síðunnar taki gildi að fullu. Spilun gæti rofnað. Þú getur endurhlaðið síðar.",
+          "reload-now": "Endurhlaða síðu núna"
+        }
+      }
+    },
+    "fullscreen-auto-hide": {
+      "description": "Fela spilarastýringar og músarbendil sjálfkrafa eftir nokkrar sekúndur af aðgerðaleysi í fullskjá",
+      "name": "Sjálfvirk feling í fullskjá"
+    },
+    "prefer-song": {
+      "description": "Spila lagið í stað tónlistarmyndbands þegar lag á albúmi er myndband",
+      "name": "Hafa lag í forgang"
+    },
+    "search-commands": {
+      "commands": {
+        "play": "Spila myndband út frá YouTube-hlekk eða auðkenni",
+        "settings": "Opna stillingarnar"
+      },
+      "description": "Skrifaðu / í leitarreitinn til að keyra skipanir, með sjálfvirkri klárun fyrir viðföng þeirra",
+      "name": "Leitarskipanir",
+      "settings": {
+        "open-keybind": "Flýtileið til að opna",
+        "open-keybind-description": "Hröðunarlykill í Electron-stíl, t.d. CmdOrCtrl+/ eða Alt+Space",
+        "open-shortcut": "Opna leitarreitinn hvaðan sem er",
+        "open-shortcut-description": "Kallar fram leitarreitinn í skipanamhami, eins og Spotlight. Ýting á hann aftur lokar honum."
+      }
+    },
+    "seek-shortcuts": {
+      "description": "Spóla 5 sekúndur aftur/áfram með vinstri/hægri örvatökkunum",
+      "name": "Spólunarflýtileiðir"
+    },
+    "sfw-music": {
+      "description": "Sleppir sjálfkrafa lögum sem YouTube Music merkir sem Explicit. Gerir hlé ef biðröð með Explicit-lögum endurtekur sig eða ekkert næsta lag er tiltækt.",
+      "name": "SFW-tónlist"
+    },
+    "toast-autoclose": {
+      "description": "Loka sjálfkrafa tilkynningum YouTube Music eftir þrjár sekúndur",
+      "name": "Sjálfvirk lokun tilkynninga"
+    },
+    "statusbar-lyrics": {
+      "settings": {
+        "include-pronunciation": "Hafa framburð með"
+      }
+    },
+    "dismiss-multidevice-popup": {
+      "name": "Loka fjöltækjaspjaldinu",
+      "description": "Lokar sjálfkrafa \"Hlusta á þessu tæki\" spjaldinu sem birtist þegar afspilun hefst á öðru tæki."
+    },
+    "memory-saver": {
+      "description": "Hreinsar skyndiminni auðlinda renderersins þegar glugginn er falinn og þau hafa vaxið yfir viðmiðunarmörk",
+      "name": "Minnisvari",
+      "settings": {
+        "threshold": "Viðmiðunarmörk skyndiminnis",
+        "threshold-description": "Hreinsa skyndiminnin þegar raunminni þeirra fer yfir þessi mörk meðan glugginn er falinn"
+      }
+    }
+  },
+  "settings-ui": {
+    "name": "Stillingarviðmót",
+    "description": "Bætir við stillingarspjaldi í forritinu sem opnað er úr hliðarstikunni.",
+    "title": "Stillingar",
+    "settings": {
+      "show-button": "Sýna færslu stillinga í hliðarstikunni",
+      "show-button-description": "Slökktu á þessu til að halda hliðarstikunni hreinni; Stillingar eru samt undir Leiðsögn → Opna stillingar.",
+      "separate-window": "Opna alltaf stillingar í sérstökum glugga",
+      "separate-window-description": "Opnar sjálfstæðan stillingaglugga, eins og færslan í kerfisbakkanum gerir, í stað spjaldsins í forritinu."
+    },
+    "search-placeholder": "Leita í stillingum",
+    "search-results": "Leitarniðurstöður",
+    "search-matching": "Sem passar við “{{query}}”",
+    "no-match": "Engar stillingar passa við “{{query}}”.",
+    "close": "Loka",
+    "edit-config": "Breyta config.json",
+    "restart-banner": "Sumar breytingar krefjast endurræsingar til að taka gildi.",
+    "restart-now": "Endurræsa núna",
+    "later": "Seinna",
+    "restart-pill": "endurræsa",
+    "restart-pill-hint": "Krefst endurræsingar",
+    "refresh-options": "Endurnýja valkosti",
+    "move-up": "Færa upp",
+    "move-down": "Færa niður",
+    "about": {
+      "tagline": "Eiginleikaríkt skjáborðsforrit fyrir YouTube Music",
+      "versions": "Útgáfur",
+      "version-app": "Forrit",
+      "version-build": "Bygging",
+      "version-electron": "Electron",
+      "version-chromium": "Chromium",
+      "version-node": "Node.js",
+      "version-platform": "Vettvangur",
+      "version-innertube": "Innertube",
+      "links": "Tenglar",
+      "link-repo": "Geymsla",
+      "link-issue": "Tilkynna vandamál",
+      "link-releases": "Útgáfur",
+      "link-license": "Leyfi",
+      "actions": "Aðgerðir",
+      "check-updates": "Athuga með uppfærslur",
+      "copy-debug": "Afrita villuleitarupplýsingar",
+      "copied": "Afritað!"
+    },
+    "sections": {
+      "general": {
+        "label": "Almennt"
+      },
+      "appearance": {
+        "label": "Útlit"
+      },
+      "window": {
+        "label": "Gluggi og kerfisbakki"
+      },
+      "advanced": {
+        "label": "Ítarlegt"
+      },
+      "plugins": {
+        "label": "Viðbætur"
+      },
+      "flags": {
+        "label": "Flögg"
+      },
+      "about": {
+        "label": "Um"
+      }
+    },
+    "groups": {
+      "updates-session": "Uppfærslur og seta",
+      "startup-language": "Ræsing og tungumál",
+      "interface": "Viðmót",
+      "context-menu": "Samhengisvalmynd",
+      "window-title": "Gluggi",
+      "window": "Gluggi",
+      "system": "Kerfi",
+      "network": "Net",
+      "performance": "Afköst",
+      "configuration": "Uppsetning",
+      "updates": "Uppfærslur"
+    },
+    "stepper-decrement": "Minnka",
+    "stepper-increment": "Auka",
+    "flags": {
+      "warning": "Eiginleikaflögg eru innri rofar YouTube Music sjálfs. Breytingar á þeim geta brotið afspilun, útlit eða reikningseiginleika og þau eru ekki studd af þjónustuveri. Yfirskrifanir eru aðeins geymdar fyrir flöggin sem þú breytir og er hægt að fjarlægja með Afturkalla.",
+      "search-placeholder": "Leita í flöggum",
+      "overridden": "yfirskrifað",
+      "undo": "Afturkalla",
+      "undo-hint": "Eyða þessari yfirskrifun",
+      "empty": "Þessi síða sýnir engin eiginleikaflögg.",
+      "no-match": "Engin flögg passa við “{{query}}”.",
+      "add-name": "Nýtt flaggheiti",
+      "add-value": "Gildi",
+      "add-value-hint": "JSON þegar það túlkast (true, 42, \"text\"), annars textinn sjálfur",
+      "add": "Bæta við"
+    },
+    "fields": {
+      "hide-dislike-button": "Fela mislíka-hnapp",
+      "hide-video-captions": "Fela skjátexta myndskeiða",
+      "context-menu": {
+        "hide-entry": "Fela {{entry}}",
+        "entries": {
+          "add-to-queue": "Bæta í biðröð",
+          "delete-playlist": "Eyða spilunarlista",
+          "dismiss-queue": "Loka biðröð",
+          "download": "Sækja",
+          "go-to-album": "Fara í plötu",
+          "go-to-artist": "Fara í flytjanda",
+          "go-to-playlist": "Fara í spilunarlista",
+          "like": "Líka við",
+          "not-interested": "Ekki áhugavert",
+          "pin-to-listen-again": "Festa í Hlusta aftur",
+          "play-next": "Spila næst",
+          "remove-from-playlist": "Fjarlægja af spilunarlista",
+          "remove-from-queue": "Fjarlægja úr biðröð",
+          "report": "Tilkynna",
+          "save-to-library": "Vista í safn",
+          "save-to-playlist": "Vista á spilunarlista",
+          "share": "Deila",
+          "shuffle-play": "Stokka og spila",
+          "start-mix": "Byrja mix",
+          "stats-for-nerds": "Tölfræði fyrir nörda"
+        }
+      },
+      "podcast-artist": "Nota þátttakendur hlaðvarps sem flytjendur",
+      "podcast-artist-desc": "Slökkt: flytjandi hlaðvarpsþáttar er rásin sem birti hann.",
+      "theme-preset": "Forsnið",
+      "theme-variable-name": "Breyta",
+      "theme-variable-value": "Gildi",
+      "theme-variable-add": "Bæta við breytu",
+      "performance-mode": "Afkastahamur",
+      "performance-mode-desc": "Skipta á móti hluta sjónrænna gæða fyrir hagkvæmari teikningu.",
+      "in-process-gpu": "Sameina GPU-ferlið forritsferlinu",
+      "in-process-gpu-desc": "Tilraunakennt: sparar eitt ferli, en færir GPU-minni inn í aðalferlið og getur fallið aftur á hugbúnaðarteikningu."
     }
   }
 }

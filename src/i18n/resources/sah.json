@@ -65,7 +65,8 @@
         },
         "detail": "Табыллыбатахха бырастыы гыныҥ! Бука диэн, тугу гынаргын тал:",
         "message": "Приложение эппиэттэммэт",
-        "title": "Түннүк Эппиэттэммэт"
+        "title": "Түннүк Эппиэттэммэт",
+        "details": "Төрүөтэ: {{error}}"
       },
       "update-available": {
         "buttons": {
@@ -76,6 +77,27 @@
         "detail": "Саҥа версия тахсыбыт, мантан хачайдыахха сөп {{downloadLink}}",
         "message": "Саҥа версия тахсыбыт",
         "title": "Саҥардыы Баар"
+      },
+      "restart-summary": {
+        "detail": "Уларытыылары киллэрэргэ аппны саҥардан оҥор: {{changes}}",
+        "message": "Сорох уларытыылар саҥардан оҥорууну ирдииллэр",
+        "title": "Саҥардан оҥоруу наада"
+      },
+      "update-available-dev": {
+        "buttons": {
+          "ok": "OK",
+          "view": "Коммиттары көр"
+        },
+        "title": "Саҥардыы баар",
+        "message": "Бу dev-билд master branch-тан хаалбыт",
+        "detail": "Бу билд үлэлиир коммита ({{commit}}) master саамай саҥа коммитыттан эргэ. Саҥа коммиттары {{commitsLink}} көрүөххэ сөп"
+      },
+      "downgrade-warning": {
+        "title": "Тогтуун версияҕа төннүү?",
+        "message": "Бу бета-билд саамай саҥа тогтуун релизтээҕэр саҥа.",
+        "detail": "Төннүү сорох туруоруулары сброска түһэриэн сөп: саҥа версияттан эргэ версияҕа көһөргө миграциялар үлэлээбэттэр уонна саҥа туруоруулар ааҕыллыбат буолуохтарын сөп.",
+        "confirm": "Тогтуун версияҕа көс",
+        "cancel": "Көтүр"
       }
     },
     "menu": {
@@ -87,7 +109,8 @@
           "go-back": "Төнүн",
           "go-forward": "Иннигэр бар",
           "quit": "Тахсыы",
-          "restart": "App-ы Саҥаттан Саҕалаа"
+          "restart": "App-ы Саҥаттан Саҕалаа",
+          "open-settings": "Туруоруулары арый"
         }
       },
       "options": {
@@ -129,7 +152,20 @@
             },
             "label": "Тыл",
             "submenu": {
-              "to-help-translate": "Тылбааска көмөлөһүөххүн баҕараҕын? Манна баттаа"
+              "to-help-translate": "Тылбааска көмөлөһүөххүн баҕараҕын? Манна баттаа",
+              "sync": {
+                "label": "Тылы синхроннаа",
+                "submenu": {
+                  "from-youtube": "YouTube-тан",
+                  "to-youtube": "YouTube-ка"
+                },
+                "failure": {
+                  "dialog": {
+                    "title": "Тыл уларытыллыбата",
+                    "message": "Тыл эбэтэр локаль аппка өссө суох."
+                  }
+                }
+              }
             }
           },
           "resume-on-start": "App саҕаланнаҕына тиһэх ырыаны салҕаа",
@@ -180,9 +216,37 @@
                 "label": "Тиэмэ",
                 "submenu": {
                   "import-css-file": "Бэйэ CSS билэтин киллэр",
-                  "no-theme": "Тиэмэтэ суох"
+                  "no-theme": "Тиэмэтэ суох",
+                  "colors": {
+                    "label": "Өҥнөр"
+                  },
+                  "presets": {
+                    "label": "Бэлэмнэр",
+                    "default": "Стандарт",
+                    "custom": "Бэйэ"
+                  },
+                  "reset-colors": "Өҥнөрү уруккутугар төннөр",
+                  "open-themes-folder": "Темалар папкаларын арый"
                 }
-              }
+              },
+              "use-ytm-icons": "YouTube Music төлкө иконкаларын тут"
+            }
+          },
+          "updates": {
+            "label": "Саҥардыылар",
+            "check": "Саҥардыылары көр",
+            "auto-update": "Саҥардыылары аптамааттык көр",
+            "channel": {
+              "label": "Саҥардыы канала",
+              "stable": "Тогтуун",
+              "beta": "Бета"
+            }
+          },
+          "shared-links": {
+            "label": "Үллэстэр сигэлэр",
+            "submenu": {
+              "strip-music": "'music.' сот",
+              "strip-si": "'&si=' сот"
             }
           }
         }
@@ -218,7 +282,16 @@
       "like": "Sah",
       "dislike": "Хоб",
       "unlike": "Atas",
-      "undislike": "Undislike"
+      "undislike": "Сөбүлээбэти төнүн"
+    },
+    "themes": {
+      "consent": {
+        "title": "Тема кодун үлэлэт?",
+        "message": "“{{theme}}” диэн аппка толору кыахтаах үлэлиир скрипт баар.",
+        "detail": "Тема скрипттара sandbox-ка киллэриллибэттэр. Бу код туруоруулары ааҕыан, уларытыан, аппка кэпсэтиэн уонна апп бэйэтэ оҥорор кыахтаах барытын оҥоруон сөп. Тема хантан кэлбитин эрэнэр буоллаххына эрэ көҥүллээ. Теманы соттон бу көҥүлү тохтотуохха сөп.",
+        "allow": "Бу теманы үлэлэт",
+        "cancel": "Көтүр"
+      }
     }
   },
   "plugins": {
@@ -260,7 +333,7 @@
           }
         },
         "buffer": {
-          "label": "Buffer",
+          "label": "Буфер",
           "submenu": {
             "buffer": "буфер"
           }
@@ -347,6 +420,10 @@
         },
         "port": {
           "label": "Порт"
+        },
+        "mcp": {
+          "label": "MCP сервер",
+          "description": "v2 API-ны /mcp-ка MCP инструменнар быһыытынан биэрэр. API атын чааһын кытта биир аутентификацияны туһанар."
         }
       },
       "name": "API Сервер [Beta]",
@@ -359,11 +436,20 @@
           "label": "API сервер пордун киллэр:",
           "title": "Порт"
         }
+      },
+      "settings": {
+        "choose-file": "Файл тал…"
       }
     },
     "audio-compressor": {
       "description": "Дорҕооҥҥо компрессияны туруорар (сигнал саамай күүстээх чаастарын дорҕоонун намтатар, саамай кыратын үрдэтэр)",
-      "name": "Дорҕоон Компрессора"
+      "name": "Дорҕоон Компрессора",
+      "menu": {
+        "auto-track-gain": "Трек тыаһын аптамааттык көтөҕ (намыһах тыастаах тректары күүһүрт)",
+        "maximum-gain": {
+          "label": "Саамай улахан күүһүрдүү"
+        }
+      }
     },
     "auth-proxy-adapter": {
       "description": "Авторизациялаах proxy сервистэри туһанарга өйөбүл",
@@ -429,7 +515,10 @@
           "label": "Формат"
         }
       },
-      "name": "Чаһы"
+      "name": "Чаһы",
+      "settings": {
+        "hour-12": "12 чаастаах формааты туһан"
+      }
     },
     "compact-sidebar": {
       "description": "Хаптал панели куруук компактнай режимҥэ тут",
@@ -440,7 +529,7 @@
       "menu": {
         "advanced": "Кэҥэтиллибит"
       },
-      "name": "Crossfade [Beta]",
+      "name": "Кроссфейд [Бета]",
       "prompt": {
         "options": {
           "multi-input": {
@@ -449,12 +538,24 @@
             "fade-scaling": {
               "label": "Көһүү масштаба",
               "linear": "Линейнай",
-              "logarithmic": "Логарифмическай"
+              "logarithmic": "Логарифмическай",
+              "equal-power": "Тэҥ кыах"
             },
             "seconds-before-end": "Бүтүөн N сөкүүндэ иннинэ көһүү"
           },
           "title": "Crossfade туруоруулара"
         }
+      },
+      "settings": {
+        "fade-in": "Киирии fade",
+        "fade-out": "Таһаарыы fade",
+        "seconds-before-end": "Бүтүөн иннинэ саҕалаа",
+        "fade-scaling": "Fade масштаба",
+        "scaling": {
+          "linear": "Линейнэй",
+          "logarithmic": "Логарифмическай"
+        },
+        "seconds-before-end-description": "Трек бүтүөн инниттэн атын трекка crossfade саҕаланар секундалара"
       }
     },
     "custom-output-device": {
@@ -509,6 +610,13 @@
           "label": "Тохтооһун таймаутун сөкүүндэнэн киллэр:",
           "title": "Тохтооһун таймаутун туруор"
         }
+      },
+      "settings": {
+        "auto-reconnect": "Аптамааттык холбон",
+        "activity-timeout-enabled": "Паузаҕа статусу ыраастаа",
+        "activity-timeout-time": "Ыраастаа иннинэ",
+        "hide-github-button": "“View on GitHub” тимэҕи кистээ",
+        "hide-duration-left": "Хаалбыт кэми кистээ"
       }
     },
     "downloader": {
@@ -516,14 +624,14 @@
         "dialog": {
           "error": {
             "buttons": {
-              "ok": "OK"
+              "ok": "Сөп"
             },
             "message": "Argh! Maaf, unduhan gagal…",
             "title": "Хачайдыырга алҕас!"
           },
           "start-download-playlist": {
             "buttons": {
-              "ok": "OK"
+              "ok": "Сөп"
             },
             "detail": "({{playlistSize}} ырыалар)",
             "message": "{{playlistTitle}} плейлисты хачайдааһын",
@@ -551,7 +659,8 @@
           "saving": "Бигэргэтии…",
           "trying-to-get-playlist-id": "Плейлист ID-тын ыла сатааһын: {{playlistId}}",
           "video-id-not-found": "Видео көстүбэтэ",
-          "writing-id3": "ID3 тиэктэрин суруйуу…"
+          "writing-id3": "ID3 тиэктэрин суруйуу…",
+          "ffmpeg-missing": "FFmpeg булуллубата. Бу форматка хачайдыыр туһугар FFmpeg туруоран, `ffmpeg` PATH-ка баарын хааччый."
         }
       },
       "description": "MP3 / төрүт дорҕоону интерфейстэн быһа хачайдыыр",
@@ -582,6 +691,10 @@
       },
       "templates": {
         "button": "Хачайдаа"
+      },
+      "settings": {
+        "finish-folder": "Бүппүт хачайдыылар папкалара",
+        "finish-folder-description": "Үөһээ хачайдыыр папканы туһанарга босхо хааллар"
       }
     },
     "equalizer": {
@@ -609,7 +722,7 @@
     },
     "lumiastream": {
       "description": "Lumia Stream өйөбүлүн эбэр",
-      "name": "Lumia Stream [Beta]"
+      "name": "Lumia Stream [Бета]"
     },
     "lyrics-genius": {
       "description": "Үгүс ырыаларга тылларын эбэр",
@@ -649,6 +762,44 @@
           "disconnected": "Арахсыбыт",
           "guest": "Ыалдьыт курдук холбоммут",
           "host": "Хост курдук холбоммут"
+        },
+        "diagnostics": {
+          "check": {
+            "nat": "Ситим көрүҥэ (NAT)",
+            "signaling": "Сигнализация сервера",
+            "stun": "Кыһалҕата суох холбоһуу (STUN)",
+            "turn": "Резервтээх релей (TURN)"
+          },
+          "copy": "Кылгас отчуоту көһөр",
+          "detail": {
+            "check-error": "Көрүү сатаммата: {{reason}}",
+            "public-ip": "Аһаҕас аадрес: {{ip}}",
+            "public-ip-hidden": "Аһаҕас аадрес: көрдөрөргө баттаа",
+            "signaling-fail": "Ситиһиллибэт ({{reason}})",
+            "signaling-ok": "Ситиһиллэр",
+            "stun-fail": "Аһаҕас аадрес суох (UDP/STUN блоктаммыт)",
+            "stun-ok": "Аһаҕас аадрес булулунна",
+            "turn-fail": "Релей ситиһиллибэт",
+            "turn-ok": "Релей ситиһиллэр"
+          },
+          "nat": {
+            "blocked": "UDP эбэтэр STUN блоктаммыт",
+            "open": "Аһаҕас / cone (кыһалҕата суох үлэлиир)",
+            "symmetric": "Симметричнэй (релей наада)",
+            "unknown": "Биллэ илик"
+          },
+          "run-again": "Хатыттан ыыт",
+          "running": "Көрүүлэр ыытыллаллар…",
+          "test": "Холбоһууну тургун",
+          "title": "Холбоһуу диагностиката",
+          "verdict": {
+            "blocked": "Бу ситим Music Together-ы блоктуур кыахтаах. Атын ситими эбэтэр VPN туттун.",
+            "error": "Диагностика ыытыллыбата. Сиһилии консольга көр.",
+            "good": "Бу ситимҥэ кыһалҕата суох холбоһуулар үлэлиэхтэрэ.",
+            "limited": "Бу ситими толору быһаарыа этилэр. Кыһалҕата суох холбоһуулар өссө үлэлииллэрин сөп; сатаммат буоллахтарына, атын ситими тургун.",
+            "no-signaling": "Music Together серверын ситиһиэххэ сатаммат. Файрволы эбэтэр интернет холбоһууну тургун.",
+            "relay": "Кыһалҕата суох холбоһуулар манна сатаммыахтарын сөп; релей туттуллуо (үлэлиир, ол эрээри латенцияны эбэр)."
+          }
         }
       },
       "name": "Musik Bersama [Beta]",
@@ -664,7 +815,10 @@
         "permission-changed": "Music Together көҥүлэ \"{{permission}}\"-ка уларыйда",
         "remove-song-failed": "Ырыаны сотуу кыаллыбата",
         "user-connected": "{{name}} Music Together-га холбостун",
-        "user-disconnected": "{{name}} Music Together-тан таҕыста"
+        "user-disconnected": "{{name}} Music Together-тан таҕыста",
+        "diagnostics-copied": "Диагностика кылгас отчуота буферга көһөрүлүннэ",
+        "diagnostics-copy-failed": "Диагностика отчуота көһөрүллүбэтэ",
+        "diagnostics-running": "Ситимнээһин тургутуута бүтүөр диэри күүт"
       }
     },
     "navigation": {
@@ -722,11 +876,18 @@
         },
         "save-window-position": "Түннүк миэстэтин бигэргэт",
         "save-window-size": "Түннүк кээмэйин бигэргэт",
-        "use-native-pip": "Браузер төрүт PiP-ын тут"
+        "use-native-pip": "Браузер төрүт PiP-ын тут",
+        "prompt": {
+          "title": "Ойуу иһигэр ойуу",
+          "label": "Picture-in-Picture хоткитин көннөр",
+          "keybind-options": {
+            "hotkey": "Picture-in-Picture холбуур/аһарар хотки"
+          }
+        }
       },
-      "name": "Picture-in-picture",
+      "name": "Ойуу иһигэр ойуу",
       "templates": {
-        "button": "Picture-in-picture"
+        "button": "Ойуу иһигэр ойуу"
       }
     },
     "playback-speed": {
@@ -734,6 +895,9 @@
       "name": "Оонньоон Түргэнэ",
       "templates": {
         "button": "Түргэн"
+      },
+      "menu": {
+        "no-preserves-pitch": "Тыас үрдүгүн уларыппат режими араҥаччылаама"
       }
     },
     "precise-volume": {
@@ -757,6 +921,12 @@
           "label": "Саҥаны Үрдэтии/Намтатыы Хардыыларын Тал",
           "title": "Саҥа Хардыылара"
         }
+      },
+      "settings": {
+        "steps": "Тыас кээмэйин хардыыта",
+        "arrows-shortcut": "Стрелка кнопкалар кылгас суоллара",
+        "shortcut-up": "Глобальнай кылгас суол: тыаһы үрдэтии",
+        "shortcut-down": "Глобальнай кылгас суол: тыаһы намтатыы"
       }
     },
     "quality-changer": {
@@ -785,6 +955,10 @@
             "message": "Last.fm нөҥүө авторизация кыаллыбата\nАныгыскы саҕаланыыга диэри попабы кистээ.",
             "title": "Авторизация Кыаллыбата"
           }
+        },
+        "invalid-regex": {
+          "title": "Алҕас регулярнай этии",
+          "message": "{{line}} строкаҕа регулярнай этии алҕастаах: {{error}}"
         }
       },
       "menu": {
@@ -792,13 +966,17 @@
           "api-settings": "Last.fm API Туруоруулара"
         },
         "listenbrainz": {
-          "token": "ListenBrainz туттааччы токенын киллэр"
+          "token": "ListenBrainz туттааччы токенын киллэр",
+          "api-root": "ListenBrainz API URL"
         },
         "scrobble-alternative-artist": "Альтернативнай артыыстары тут",
         "scrobble-alternative-title": "Альтернативнай ааттары тут",
-        "scrobble-other-media": "Атын медиалары скроббллаа"
+        "scrobble-other-media": "Атын медиалары скроббллаа",
+        "regex-filters": "Регулярнай этии фильтрдэрэ",
+        "use-musicbrainz": "Метаданнайы көннөрөргө MusicBrainz туттун",
+        "musicbrainz-email": "MusicBrainz сибээс email"
       },
-      "name": "Scrobbler",
+      "name": "Скробблер",
       "prompt": {
         "lastfm": {
           "api-key": "Last.fm API ключ",
@@ -808,8 +986,23 @@
           "token": {
             "label": "ListenBrainz туттуоччу куруҥҥун киллэр:",
             "title": "ListenBrainz токена"
+          },
+          "api-root": {
+            "label": "API базальнай URL киллэр:",
+            "title": "ListenBrainz API URL"
           }
+        },
+        "regex-filter-multi": {
+          "label": "Строкаҕа биир регулярнай этии киллэр:"
+        },
+        "musicbrainz-email": {
+          "title": "MusicBrainz сибээс email",
+          "label": "MusicBrainz API-га email киллэр:"
         }
+      },
+      "settings": {
+        "lastfm-api-root": "Last.fm API URL",
+        "musicbrainz-email-description": "MusicBrainz API сибээс информациятын быһыытынан туттуллар; MusicBrainz метаданнайын көннөрөргө наадалаах"
       }
     },
     "shortcuts": {
@@ -829,15 +1022,34 @@
           "label": "Ырыалары салайарга глобальнай кнопка холбоһуктарын тал:",
           "title": "Глобальнай Кнопка Холбоһуктара"
         }
+      },
+      "settings": {
+        "global-keybinds": "Глобальнай клавишалар (бүтүн программаҕа үлэлииллэр)",
+        "local-keybinds": "Локальнай клавишалар (түннүк фокустаах эрэ кэмигэр)"
       }
     },
     "skip-silences": {
       "description": "Ырыаларга уу-чуумпу чаастарын бэйэтинэн көтүтэр",
-      "name": "Уу-чуумпуну Көтүт"
+      "name": "Уу-чуумпуну Көтүт",
+      "settings": {
+        "only-skip-beginning": "Ырыа саҕаланыытыгар эрэ саҥата суоҕу көтүт"
+      }
     },
     "sponsorblock": {
       "description": "Ырыа буолбатах чаастары бэйэтинэн көтүтэр, холобур интро/аутро эбэтэр ырыа оонньообот музыкальнай видео чаастарын",
-      "name": "SponsorBlock"
+      "name": "SponsorBlock",
+      "settings": {
+        "categories": "Көтүтүллүөхтээх сегментэр",
+        "category": {
+          "sponsor": "Спонсор",
+          "intro": "Киирии",
+          "outro": "Түмүк",
+          "interaction": "Хардалта өйдөтүүтэ",
+          "selfpromo": "Бэйэни рекламалааһын",
+          "music_offtopic": "Музыкаҕа сыһыана суох түһүмэх"
+        },
+        "api-url": "API URL"
+      }
     },
     "synced-lyrics": {
       "description": "LRClib курдук провайдердары туһанан, ырыаларга синхроннаммыт тыллары биэрэр.",
@@ -980,7 +1192,7 @@
             },
             "openai-compatible": {
               "api-mode": "API режимэ (responses / auto / chat-completions)",
-              "base-url": "Base URL",
+              "base-url": "Төрүт URL",
               "name": "OpenAI-ны кытта сөптөөх",
               "prompt-label": "OpenAI-ны кытта сөптөөх сервердары туһан, ол иһигэр Ollama (base URL http://127.0.0.1:11434/v1, API режимэ auto эбэтэр chat-completions).",
               "prompt-title": "OpenAI-ны кытта сөптөөх туруоруулар"
@@ -1050,6 +1262,30 @@
         "show-custom-search-button": {
           "label": "Kukuna search custom button",
           "tooltip": "Көрдөрүүчү ырыа талгыта көрдөрүүчү ырыанын издөө сураарын уонна ырыаһытын өзгөртүүгө мүмкүн болорун көрдөрүүчү издөө баскычын көрдөр."
+        },
+        "provider-priority": {
+          "tooltip": "Провайдердар бу бэрээдэккэ холонууллар: аныгыс ырыаҕа тыллаах бастакы провайдер кыайар. Бэрээдэги уларытарга стрелкалары туттун."
+        },
+        "prefer-synced": {
+          "tooltip": "Тыллаах бастакы провайдер оннугар, кэмҥэ сөптөөх тыллаах бастакы провайдеры тал."
+        },
+        "previous-provider": {
+          "tooltip": "Инники провайдер"
+        },
+        "next-provider": {
+          "tooltip": "Аныгыс провайдер"
+        },
+        "custom-search-button": {
+          "tooltip": "Бэйэ булууга ыйытык"
+        },
+        "star-provider": {
+          "tooltip": "Бу ырыаҕа бу провайдеры куруук туттун, приоритет бэрээдэгэ тугу этэрин да иһин. Бу ырыаҕа тыла суох буоллаҕына, көннөрү бэрээдэккэ төннөр."
+        },
+        "unstar-provider": {
+          "tooltip": "Бу провайдеры бу ырыаҕа тирээн туруорууну тохтот."
+        },
+        "use-priority-list": {
+          "tooltip": "Провайдердары аллараа бэрээдэккэ холонун. Бу режими араҥаччылаама, тыллар бэйэлэрэ быһаарыахтарын: ырыаҕа саамай үчүгэй тыллаах провайдер кыайар."
         }
       },
       "name": "Синхроннаан Тыллар",
@@ -1061,6 +1297,22 @@
         "duration-mismatch": "⚠️ - Уһуна сөп түбэспэт буолан тыллар синхронизацияттан атын буолуохтарын сөп.",
         "inexact": "⚠️ - Бу ырыа тыллара чопчута суох буолуохтарын сөп",
         "instrumental": "⚠️ - Бу инструментальнай ырыа"
+      },
+      "settings": {
+        "precise-timing": "Чопчу кэм",
+        "show-inexact": "Сөптөөҕө суох тыллары көрдөр",
+        "show-time-codes": "Кэм кодтарын көрдөр",
+        "romanization": "Тыллары латыынныы суруй",
+        "line-effect": "Строка эффекта",
+        "effect": {
+          "fancy": "Кэрэ",
+          "scale": "Кээмэй",
+          "offset": "Сыҕыы",
+          "focus": "Фокус"
+        },
+        "prefer-synced": "Синхроннай тыллары ордор",
+        "provider-priority": "Провайдердар приоритеттара",
+        "use-priority-list": "Приоритет испииһэгин туттун"
       }
     },
     "taskbar-mediacontrol": {
@@ -1086,11 +1338,19 @@
             "acrylic": "Акрил",
             "mica": "Mica",
             "none": "Суох",
-            "tabbed": "Вкладкалаах"
+            "tabbed": "Вкладкалаах",
+            "content": "Контент",
+            "fullscreen-ui": "Толору экран UI",
+            "under-page": "Сирэй аннына",
+            "under-window": "Түннүк аннына",
+            "window": "Түннүк"
           }
         }
       },
-      "name": "Көстүмтүө Оонньооччу"
+      "name": "Көстүмтүө Оонньооччу",
+      "settings": {
+        "type-description": "Түннүк көстүүтүгэр туттуллар фон материал"
+      }
     },
     "tuna-obs": {
       "description": "OBS Tuna плагинын кытта интеграция",
@@ -1132,7 +1392,26 @@
       "menu": {
         "visualizer-type": "Визуализатор Көрүҥэ"
       },
-      "name": "Визуализатор"
+      "name": "Визуализатор",
+      "settings": {
+        "preset": "Пресет",
+        "blend-time": "Булуһуу кэмэ",
+        "effect": "Эффект",
+        "accuracy": "Чопчулуу",
+        "max-height": "Үрдүк муҥа",
+        "max-size": "Кээмэй муҥа",
+        "line-width": "Строка кэҥээһинэ",
+        "color": "Өҥ",
+        "shadow-blur": "Күлүк сымнааһына",
+        "shadow-color": "Күлүк өҥө",
+        "fade-side": "Кырыйдарын сымнатыы",
+        "prettify": "Кэрэттэн",
+        "prettify-description": "Баардар кырыйдар диэки синньииллэр",
+        "dottify": "Чуоскалаа",
+        "dottify-description": "Салҕаһан турар строка оннугар чуоскалары оҥор",
+        "horizontal-align": "Көнөтүк тэҥнээһин",
+        "vertical-align": "Вертикальнай тэҥнээһин"
+      }
     },
     "audio-only": {
       "description": "Дорҕоон эрэ режимин күүстээн туруорар — RAM уонна трафигы үмүрүтэргэ бары видео потоктары ситим уонна оонньооччу таһымыгар бүөлүүр",
@@ -1143,7 +1422,13 @@
       "menu": {
         "log-to-console": "Чөлүгэр түһэрии кэнсиэлиигэ сурут"
       },
-      "name": "Оонньоону Чөлүгэр Түһэрии"
+      "name": "Оонньоону Чөлүгэр Түһэрии",
+      "settings": {
+        "stall-timeout": "Тохтоон хаалыы болдьоҕо",
+        "stall-timeout-description": "Сөпкө көннөрүү холонуон иннинэ оонньооһун хас устата инники барбатын болдьоҕо",
+        "max-retries": "Хатылааһын муҥа",
+        "max-retries-description": "Аныгыс ырыаҕа көһүөн иннинэ сөпкө көннөрүү холонуутун ахсаана"
+      }
     },
     "exponential-voltage": {
       "description": "Саҥаны хонтуруоллааччы экспоненциальнай буолар, намтатыллыбыт саҥалары чэпчэкитик таларыгар.",
@@ -1156,6 +1441,215 @@
         "search-placeholder": "Сиркээлэри көрдөө",
         "no-results": "Хайанан да оонньуу испииһэгэ көстүбэтэ"
       }
+    },
+    "always-show-volume-slider": {
+      "name": "Тыас слайдерын куруук көрдөр",
+      "description": "Тыас слайдерын куруук көрдөрөр уонна көһөрөр кыах биэрэр, холуурга эрэ көрдөрбөт."
+    },
+    "do-not-track": {
+      "description": "Бары трекингы уруттаан блоктаа",
+      "menu": {
+        "blocker": "Блоктааччы"
+      },
+      "name": "Кэтиини тохтот",
+      "settings": {
+        "cache": "Блок-испииһэктэри кэштиир",
+        "disable-default-lists": "Стандарт блок-испииһэктэри араарт"
+      },
+      "dialog": {
+        "reload": {
+          "title": "Сирэйи хаттаан арый",
+          "message": "Кэтиини тохтотор туруоруулар уларыйдылар.",
+          "detail": "Ситим быраабылалара программаны хаттаан олохтообокко саҥардыллар. Сирэй фильтрдэригэр уларыйыылары толору туһаныаххыт инниттэн сирэйи хаттаан арыйыҥ. Оонньооһун тохтуон сөп. Кэлин хаттаан арыйыаххыт сөп.",
+          "reload-now": "Сирэйи билигин хаттаан арый"
+        }
+      }
+    },
+    "fullscreen-auto-hide": {
+      "description": "Fullscreen-ҥа хас да секунд хамсаабакка олордоххо плеер управлениетын уонна курусорду аптамааттык кистээ",
+      "name": "Fullscreen аптамааттык кистээһин"
+    },
+    "prefer-song": {
+      "description": "Альбом трега видео буоллаҕына, музыкальнай видеонан оннугар ырыаны оонньот",
+      "name": "Ырыаны ордор"
+    },
+    "search-commands": {
+      "commands": {
+        "play": "YouTube сибээһиттэн эбэтэр ID-ттан видеону оонньот",
+        "settings": "Туруоруулары аһын"
+      },
+      "description": "Командалары ыытарга булуу түннүгэр / суруй; аргуменнар автоматтык толоруулаахтар",
+      "name": "Булуу командалара",
+      "settings": {
+        "open-keybind": "Аһар кылгас суол",
+        "open-keybind-description": "Electron стилин accelerator, холобур CmdOrCtrl+/ эбэтэр Alt+Space",
+        "open-shortcut": "Ханнык баҕарар сиртэн булуу түннүгүн аһын",
+        "open-shortcut-description": "Spotlight курдук, булуу түннүгүн команда режимигэр аһар. Хатылаан баттахха сабыллар."
+      }
+    },
+    "seek-shortcuts": {
+      "description": "Уҥа/хаҥас стрелка кнопкаларынан 5 сөкүүндэ инники/кэнники көһүү",
+      "name": "Көһүү кылгас суоллара"
+    },
+    "sfw-music": {
+      "description": "YouTube Music Explicit диэн бэлиэлээх ырыалары аптамаатынан көтүтэр. Explicit очередь хатыланар эбэтэр аныгыс ырыа суох буоллаҕына тохтуур.",
+      "name": "SFW музыка"
+    },
+    "toast-autoclose": {
+      "description": "YouTube Music toast-биллэриилэрин үс сөкүүндэ кэнниттэн аптамаатынан сап",
+      "name": "Toast аптамаатынан сабыллыыта"
+    },
+    "statusbar-lyrics": {
+      "settings": {
+        "include-pronunciation": "Саҥарыыны киллэр"
+      }
+    },
+    "dismiss-multidevice-popup": {
+      "name": "Элбэх тэрилтэ popup-ун сап",
+      "description": "Атын тэрилтэҕэ оонньооһун саҕаламмытын кэнниттэн тахсар \"Бу тэрилтэҕэ истиэҥ\" диэн popup-у аптамаатынан сап."
+    },
+    "memory-saver": {
+      "description": "Түннүк көстүбэт буоллаҕына, рендерер ресурс кээштэрин, кинилэр олохтуур өйдөрө бэриллибит таһымтан аһардаҕына, ыраастыыр",
+      "name": "Өйү харыстааччы",
+      "settings": {
+        "threshold": "Кэш таһыма",
+        "threshold-description": "Түннүк көстүбэт буоллаҕына, кээштэр олохтуур өйдөрө бу таһымтан аһардаҕына, кинилэри ыраастаа"
+      }
+    }
+  },
+  "settings-ui": {
+    "name": "Туруоруулар интерфейса",
+    "description": "Сайдбартан аһыллар апп иһигэр туруоруулар панелын эбэр",
+    "title": "Туруоруулар",
+    "settings": {
+      "show-button": "Сайдбарга Туруоруулар киириитин көрдөр",
+      "show-button-description": "Сайдбары ыраас тутарга буну араар; Туруоруулар «Навигация → Туруоруулары ас» анныгар барыллаан баар.",
+      "separate-window": "Туруоруулары куруук тус түннүккэ ас",
+      "separate-window-description": "Апп иһинээҕи панель оннугар, трей киириитин курдук, туспа туруоруулар түннүгүн аһар."
+    },
+    "search-placeholder": "Туруоруулары көрдөө",
+    "search-results": "Көрдөөһүн түмүктэрэ",
+    "search-matching": "“{{query}}” диэҥҥэ сөп түбэһэр",
+    "no-match": "“{{query}}” диэҥҥэ туруоруулар сөп түбэспэттэр.",
+    "close": "Саб",
+    "edit-config": "config.json көннөр",
+    "restart-banner": "Сорох уларытыылар үлэлииллэригэр саҥардыы наада.",
+    "restart-now": "Билигин саҥарт",
+    "later": "Кэлин",
+    "restart-pill": "саҥардыы",
+    "restart-pill-hint": "Саҥардыы наада",
+    "refresh-options": "Варианнары саҥарт",
+    "move-up": "Үөһэ таһаар",
+    "move-down": "Аллара түһэр",
+    "about": {
+      "tagline": "YouTube Music аналлаах элбэх кыахтаах десктоп апп",
+      "versions": "Версиялар",
+      "version-app": "Апп",
+      "version-build": "Билд",
+      "version-electron": "Electron",
+      "version-chromium": "Chromium",
+      "version-node": "Node.js",
+      "version-platform": "Платформа",
+      "version-innertube": "Innertube",
+      "links": "Ыйынньыктар",
+      "link-repo": "Репозиторий",
+      "link-issue": "Кыһалҕаны биллэр",
+      "link-releases": "Таһаарыылар",
+      "link-license": "Лицензия",
+      "actions": "Дьайыылар",
+      "check-updates": "Саҥардыылары бэрэбиэркэлээ",
+      "copy-debug": "Отладка сибидиэнньэтин куоптуй",
+      "copied": "Куоптулунна!"
+    },
+    "sections": {
+      "general": {
+        "label": "Уопсай"
+      },
+      "appearance": {
+        "label": "Көрүҥ"
+      },
+      "window": {
+        "label": "Түннүк уонна трей"
+      },
+      "advanced": {
+        "label": "Кэҥэтиллибит"
+      },
+      "plugins": {
+        "label": "Плагиннар"
+      },
+      "flags": {
+        "label": "Флагтар"
+      },
+      "about": {
+        "label": "Туһунан"
+      }
+    },
+    "groups": {
+      "updates-session": "Саҥардыылар уонна сессия",
+      "startup-language": "Саҕаланыы уонна тыл",
+      "interface": "Интерфейс",
+      "context-menu": "Контекст меню",
+      "window-title": "Түннүк",
+      "window": "Түннүк",
+      "system": "Система",
+      "network": "Ситим",
+      "performance": "Түргэнник үлэлээһин",
+      "configuration": "Конфигурация",
+      "updates": "Саҥардыылар"
+    },
+    "stepper-decrement": "Аҕыйат",
+    "stepper-increment": "Эбэн биэр",
+    "flags": {
+      "warning": "Флагтар — YouTube Music бэйэтин иһинээҕи переключателлэрэ. Кинилэри уларытыы оонньооһуну, оҥоһууну эбэтэр аккаунт кыахтарын алдьатыан сөп, уонна саппорт көрбөт. Уларытыылар эрэ уларыппыт флагтаргар хараллаллар, уонна «Төнүн» көмөтүнэн сотуллуохтарын сөп.",
+      "search-placeholder": "Флагтары көрдөө",
+      "overridden": "уларытыллыбыт",
+      "undo": "Төнүн",
+      "undo-hint": "Бу уларытыыны сот",
+      "empty": "Бу сирэй туох да флагы таһаарбат.",
+      "no-match": "“{{query}}” диэҥҥэ флагтар сөп түбэспэттэр.",
+      "add-name": "Саҥа флаг аата",
+      "add-value": "Суолта",
+      "add-value-hint": "JSON ырытыллар буоллаҕына (true, 42, \"text\"), оннук буолбатаҕына тиэкис бэйэтэ",
+      "add": "Эб"
+    },
+    "fields": {
+      "hide-dislike-button": "Сөбүлээбэт кнопканы кистээ",
+      "hide-video-captions": "Видео субтитрдарын кистээ",
+      "context-menu": {
+        "hide-entry": "{{entry}} кистээ",
+        "entries": {
+          "add-to-queue": "Кэккэҕэ эб",
+          "delete-playlist": "Плейлиһы сот",
+          "dismiss-queue": "Кэккэни сап",
+          "download": "Хачай",
+          "go-to-album": "Альбомҥа киир",
+          "go-to-artist": "Артыыска киир",
+          "go-to-playlist": "Плейлискэ киир",
+          "like": "Сөбүлээ",
+          "not-interested": "Интэриэһа суох",
+          "pin-to-listen-again": "«Хатын иһит» диэҥҥэ тиһэ",
+          "play-next": "Салгыы оонньот",
+          "remove-from-playlist": "Плейлистан ыл",
+          "remove-from-queue": "Кэккэттэн ыл",
+          "report": "Биллэр",
+          "save-to-library": "Библиотекаҕа уура",
+          "save-to-playlist": "Плейлискэ уура",
+          "share": "Түҥэт",
+          "shuffle-play": "Буһаҕас оонньот",
+          "start-mix": "Миксы саҕалаа",
+          "stats-for-nerds": "Нердтарга статистика"
+        }
+      },
+      "podcast-artist": "Подкаст кыттыылаахтарын артыыс курдук тут",
+      "podcast-artist-desc": "Араарыы: подкаст эпизодун артыыһа — ону таһаарбыт канал.",
+      "theme-preset": "Бэрисин",
+      "theme-variable-name": "Уларыйааччы",
+      "theme-variable-value": "Суолта",
+      "theme-variable-add": "Уларыйааччыны эб",
+      "performance-mode": "Үлэлээһин режима",
+      "performance-mode-desc": "Көстүү хаачыстыбатын аҕыйатан, рендериҥҥэ аҕыйах ресурс туттуу.",
+      "in-process-gpu": "GPU процессы программа процессыгар холбоо",
+      "in-process-gpu-desc": "Экспериментальнай: биир процессы харайар, ол гынан баран GPU өйүн сүрүн процесска көһөрөр уонна софтуернай рендериҥҥэ төнүнүөн сөп."
     }
   }
 }

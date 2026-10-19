@@ -65,7 +65,8 @@
         },
         "detail": "Ikinalulungkot namin ang abala! piliin kung ano ang gagawin:",
         "message": "Ang Application ay Hindi Tumutugon",
-        "title": "Di tumutugon ang Window"
+        "title": "Di tumutugon ang Window",
+        "details": "Dahilan: {{error}}"
       },
       "update-available": {
         "buttons": {
@@ -76,6 +77,27 @@
         "detail": "Ang isang bagong bersyon ay available at maaaring i-download sa {{downloadLink}}",
         "message": "Mayroong bagong version ay available",
         "title": "Available ang Update"
+      },
+      "restart-summary": {
+        "detail": "I-restart ang app para mailapat: {{changes}}",
+        "message": "Kailangan ng restart ang ilang pagbabago",
+        "title": "Kailangan ang Restart"
+      },
+      "update-available-dev": {
+        "buttons": {
+          "ok": "OK",
+          "view": "Tingnan ang mga commit"
+        },
+        "title": "May Update na Available",
+        "message": "Nasa likod ng master branch ang dev build na ito",
+        "detail": "Mas luma ang commit na pinapatakbo ng build na ito ({{commit}}) kaysa sa pinakabagong commit sa master. Maaaring tingnan ang mas bagong mga commit sa {{commitsLink}}"
+      },
+      "downgrade-warning": {
+        "title": "Bumalik sa stable?",
+        "message": "Mas bago ang beta build na ito kaysa sa pinakabagong stable release.",
+        "detail": "Maaaring i-reset ng pagbalik ang ilang setting: walang migration na tumatakbo kapag mula sa mas bagong bersyon papunta sa mas luma, at maaaring maging hindi mabasa ang mas bagong mga setting.",
+        "confirm": "Lumipat sa stable",
+        "cancel": "Kanselahin"
       }
     },
     "menu": {
@@ -87,7 +109,8 @@
           "go-back": "Bumalik",
           "go-forward": "Pasulong",
           "quit": "Lumabas",
-          "restart": "I-restart ang App"
+          "restart": "I-restart ang App",
+          "open-settings": "Buksan ang Mga Setting"
         }
       },
       "options": {
@@ -129,7 +152,20 @@
             },
             "label": "Wika",
             "submenu": {
-              "to-help-translate": "Gusto mong tumulong sa pagsasalin? Mag-click dito"
+              "to-help-translate": "Gusto mong tumulong sa pagsasalin? Mag-click dito",
+              "sync": {
+                "label": "I-sync ang wika",
+                "submenu": {
+                  "from-youtube": "Mula sa YouTube",
+                  "to-youtube": "Papunta sa YouTube"
+                },
+                "failure": {
+                  "dialog": {
+                    "title": "Hindi Nagbago ang Wika",
+                    "message": "Wala pa sa app ang wika o locale."
+                  }
+                }
+              }
             }
           },
           "resume-on-start": "Ipagpatuloy ang huling kanta kapag nagsisimula ang app",
@@ -180,9 +216,37 @@
                 "label": "Tema",
                 "submenu": {
                   "import-css-file": "Mag-import ng custom na CSS file",
-                  "no-theme": "Walang tema"
+                  "no-theme": "Walang tema",
+                  "colors": {
+                    "label": "Mga Kulay"
+                  },
+                  "presets": {
+                    "label": "Mga preset",
+                    "default": "Default",
+                    "custom": "Custom"
+                  },
+                  "reset-colors": "I-reset ang mga kulay",
+                  "open-themes-folder": "Buksan ang folder ng mga tema"
                 }
-              }
+              },
+              "use-ytm-icons": "Gamitin ang orihinal na mga icon ng YouTube Music"
+            }
+          },
+          "updates": {
+            "label": "Mga Update",
+            "check": "Tingnan kung may update",
+            "auto-update": "Awtomatikong tingnan kung may update",
+            "channel": {
+              "label": "Channel ng update",
+              "stable": "Stable",
+              "beta": "Beta"
+            }
+          },
+          "shared-links": {
+            "label": "Mga ibinahaging link",
+            "submenu": {
+              "strip-music": "Alisin ang 'music.'",
+              "strip-si": "Alisin ang '&si='"
             }
           }
         }
@@ -193,7 +257,7 @@
         "new": "BAGO"
       },
       "view": {
-        "label": "View",
+        "label": "Tingnan",
         "submenu": {
           "force-reload": "Pilitang I-reload",
           "reload": "I-reload",
@@ -219,6 +283,15 @@
       "dislike": "Hindi",
       "unlike": "Hindi",
       "undislike": "I-undislike"
+    },
+    "themes": {
+      "consent": {
+        "title": "Patakbuhin ang code ng tema?",
+        "message": "Ang \"{{theme}}\" ay may script na tatakbo nang may buong access sa app.",
+        "detail": "Hindi naka-sandbox ang mga script ng tema. Maaaring basahin at baguhin ng code na ito ang iyong mga setting, makipag-usap sa app, at gawin ang anumang kaya ng app mismo. Payagan lamang ito kung pinagkakatiwalaan mo ang pinagmulan ng tema. Maaari mong bawiin ito sa pamamagitan ng pag-alis ng tema.",
+        "allow": "Patakbuhin ang temang ito",
+        "cancel": "Kanselahin"
+      }
     }
   },
   "plugins": {
@@ -290,7 +363,7 @@
           "label": "Gumamit ng fullscreen"
         }
       },
-      "name": "Ambient Mode"
+      "name": "Ambient na Mode"
     },
     "amuse": {
       "description": "Nagdaragdag ng suporta sa {{applicationName}} para sa Amuse now playing widget ng 6K Labs",
@@ -344,6 +417,10 @@
               "dialogTitle": "Pumili ng HTTPS private key file"
             }
           }
+        },
+        "mcp": {
+          "label": "MCP server",
+          "description": "Ihain ang v2 API bilang mga MCP tool sa /mcp. Gumagamit ng parehong awtorisasyon gaya ng ibang bahagi ng API."
         }
       },
       "name": "API Server [Beta]",
@@ -356,11 +433,20 @@
           "label": "Itala ang port para sa API server:",
           "title": "Port"
         }
+      },
+      "settings": {
+        "choose-file": "Pumili ng file…"
       }
     },
     "audio-compressor": {
       "description": "Ilapat ang compression sa audio (pinababa ang volume ng pinakamalakas na bahagi ng signal at pinapataas ang volume ng pinakamalambot na bahagi)",
-      "name": "Compressor ng Audio"
+      "name": "Compressor ng Audio",
+      "menu": {
+        "auto-track-gain": "Auto track gain (palakasin ang mahihinang track)",
+        "maximum-gain": {
+          "label": "Pinakamataas na gain"
+        }
+      }
     },
     "auth-proxy-adapter": {
       "description": "Suporta para sa paggamit ng authentication proxy services",
@@ -426,7 +512,10 @@
           "label": "Pormat"
         }
       },
-      "name": "Orasan"
+      "name": "Orasan",
+      "settings": {
+        "hour-12": "Gumamit ng 12-oras na format"
+      }
     },
     "compact-sidebar": {
       "description": "Laging i-set ang sidebar sa compact mode",
@@ -446,12 +535,24 @@
             "fade-scaling": {
               "label": "Scaling ng pag-fade",
               "linear": "Linear",
-              "logarithmic": "Logarithmic"
+              "logarithmic": "Logarithmic",
+              "equal-power": "Equal Power"
             },
             "seconds-before-end": "I-crossfade sa loob ng N segundo bago ang katapusan"
           },
           "title": "Pagpipilian sa crossfade"
         }
+      },
+      "settings": {
+        "fade-in": "Fade in",
+        "fade-out": "Fade out",
+        "seconds-before-end": "Magsimula bago matapos",
+        "fade-scaling": "Fade scaling",
+        "scaling": {
+          "linear": "Linear",
+          "logarithmic": "Logarithmic"
+        },
+        "seconds-before-end-description": "Mga segundong bago matapos ang isang track kung kailan magsisimula ang crossfade papunta sa susunod"
       }
     },
     "custom-output-device": {
@@ -506,6 +607,13 @@
           "label": "Ilagay ang inactivity timeout sa ilang segundo:",
           "title": "I-set ang inactivity timeout"
         }
+      },
+      "settings": {
+        "auto-reconnect": "Auto-reconnect",
+        "activity-timeout-enabled": "I-clear ang presence kapag naka-pause",
+        "activity-timeout-time": "I-clear pagkatapos ng",
+        "hide-github-button": "Itago ang “View on GitHub” na button",
+        "hide-duration-left": "Itago ang natitirang oras"
       }
     },
     "do-not-track": {
@@ -513,7 +621,19 @@
       "menu": {
         "blocker": "Tagaharang"
       },
-      "name": "Huwag Subaybayan"
+      "name": "Huwag Subaybayan",
+      "settings": {
+        "cache": "I-cache ang mga blocklist",
+        "disable-default-lists": "I-disable ang mga default na blocklist"
+      },
+      "dialog": {
+        "reload": {
+          "title": "I-reload ang pahina",
+          "message": "Nagbago ang mga setting ng Do Not Track.",
+          "detail": "Nag-a-update ang mga network rule nang hindi nire-restart ang app. I-reload ang pahina para ganap na mailapat ang mga pagbabago sa mga filter ng pahina. Maaaring maantala ang playback. Maaari kang mag-reload mamaya.",
+          "reload-now": "I-reload ang pahina ngayon"
+        }
+      }
     },
     "downloader": {
       "backend": {
@@ -555,7 +675,8 @@
           "saving": "Sine-save…",
           "trying-to-get-playlist-id": "Sinusubukang makuha ang playlist ID: {{playlistId}}",
           "video-id-not-found": "Hindi nahanap ang video",
-          "writing-id3": "Sinusulat ang mga ID3 na tag…"
+          "writing-id3": "Sinusulat ang mga ID3 na tag…",
+          "ffmpeg-missing": "Hindi natagpuan ang FFmpeg. I-install ang FFmpeg at tiyaking nasa PATH mo ang `ffmpeg` para makapag-download sa format na ito."
         }
       },
       "description": "Dina-download ang mga MP3 / source audio direkta mula sa interface",
@@ -586,6 +707,10 @@
       },
       "templates": {
         "button": "I-download"
+      },
+      "settings": {
+        "finish-folder": "Folder para sa mga natapos na download",
+        "finish-folder-description": "Iwanang hindi naka-set para gamitin ang download folder sa itaas."
       }
     },
     "equalizer": {
@@ -653,6 +778,44 @@
           "disconnected": "Nadiskonekta",
           "guest": "Nakakonekta bilang Guest",
           "host": "Nakakonekta bilang Host"
+        },
+        "diagnostics": {
+          "check": {
+            "nat": "Uri ng network (NAT)",
+            "signaling": "Signaling server",
+            "stun": "Direktang koneksyon (STUN)",
+            "turn": "Relay fallback (TURN)"
+          },
+          "copy": "Kopyahin ang buod",
+          "detail": {
+            "check-error": "Nabigo ang pagsusuri: {{reason}}",
+            "public-ip": "Pampublikong address: {{ip}}",
+            "public-ip-hidden": "Pampublikong address: i-click para ipakita",
+            "signaling-fail": "Hindi maabot ({{reason}})",
+            "signaling-ok": "Maabot",
+            "stun-fail": "Walang pampublikong address (naka-block ang UDP/STUN)",
+            "stun-ok": "May nahanap na pampublikong address",
+            "turn-fail": "Hindi maabot ang relay",
+            "turn-ok": "Maabot ang relay"
+          },
+          "nat": {
+            "blocked": "Naka-block ang UDP o STUN",
+            "open": "Bukas / cone (gumagana ang direct)",
+            "symmetric": "Symmetric (kailangan ang relay)",
+            "unknown": "Hindi matukoy"
+          },
+          "run-again": "Patakbuhin muli",
+          "running": "Nagpapatakbo ng mga pagsusuri…",
+          "test": "Subukan ang koneksyon",
+          "title": "Mga diagnostic sa koneksyon",
+          "verdict": {
+            "blocked": "Malamang na i-block ng network na ito ang Music Together. Subukan ang ibang network o VPN.",
+            "error": "Nabigo ang pagpapatakbo ng diagnostics. Tingnan ang console para sa detalye.",
+            "good": "Dapat gumana ang mga direktang koneksyon sa network na ito.",
+            "limited": "Hindi ganap na matukoy ang network na ito. Maaaring gumana pa rin ang mga direktang koneksyon; kung mabigo, subukan ang ibang network.",
+            "no-signaling": "Hindi maabot ang server ng Music Together. Tingnan ang iyong firewall o koneksyon sa internet.",
+            "relay": "Maaaring mabigo ang mga direktang koneksyon dito; gagamit ng relay (gumagana, pero nagdadagdag ng latency)."
+          }
         }
       },
       "name": "Music Together [Beta]",
@@ -668,7 +831,10 @@
         "permission-changed": "Ang permiso ng Music Together ay nabago sa \"{{permission}}\"",
         "remove-song-failed": "Nabigong natanggal ang kanta",
         "user-connected": "{{name}} ay sumali sa Music Together",
-        "user-disconnected": "{{name}} ay umalis sa Music Together"
+        "user-disconnected": "{{name}} ay umalis sa Music Together",
+        "diagnostics-copied": "Nakopya sa clipboard ang buod ng diagnostics",
+        "diagnostics-copy-failed": "Nabigong kopyahin ang buod ng diagnostics",
+        "diagnostics-running": "Hintayin na matapos ang pagsubok sa koneksyon"
       }
     },
     "navigation": {
@@ -715,7 +881,13 @@
       "menu": {
         "log-to-console": "I-log ang mga recovery event sa console"
       },
-      "name": "Pagbawi ng Playback"
+      "name": "Pagbawi ng Playback",
+      "settings": {
+        "stall-timeout": "Stall timeout",
+        "stall-timeout-description": "Gaano katagal maaaring walang pag-usad ang pag-playback bago subukan ang pag-recover",
+        "max-retries": "Pinakamataas na bilang ng muling pagsubok",
+        "max-retries-description": "Bilang ng mga pagtatangkang mag-recover bago lumipat sa susunod na track"
+      }
     },
     "picture-in-picture": {
       "description": "Payagan ang pag-palit ng app sa picture-in-picture mode",
@@ -733,7 +905,14 @@
         },
         "save-window-position": "I-save ang posisyon ng window",
         "save-window-size": "I-save ang laki ng window",
-        "use-native-pip": "Gamitin ang browser native na PiP"
+        "use-native-pip": "Gamitin ang browser native na PiP",
+        "prompt": {
+          "title": "Picture-in-Picture",
+          "label": "I-configure ang hotkey ng Picture-in-Picture",
+          "keybind-options": {
+            "hotkey": "Hotkey para i-toggle ang Picture-in-Picture"
+          }
+        }
       },
       "name": "Picture-na-picture",
       "templates": {
@@ -745,6 +924,9 @@
       "name": "Bilis ng Playback",
       "templates": {
         "button": "Bilis"
+      },
+      "menu": {
+        "no-preserves-pitch": "I-disable ang pagpapanatili ng pitch"
       }
     },
     "precise-volume": {
@@ -768,6 +950,12 @@
           "label": "Pumili ng Dagdagan/Bawasan ang volume step",
           "title": "Hakbang ng Volume"
         }
+      },
+      "settings": {
+        "steps": "Hakbang ng volume",
+        "arrows-shortcut": "Mga shortcut sa arrow key",
+        "shortcut-up": "Global shortcut: lakasan ang volume",
+        "shortcut-down": "Global shortcut: hinaan ang volume"
       }
     },
     "quality-changer": {
@@ -796,6 +984,10 @@
             "message": "Nabigong mag-authenticate sa Last.fm\nItago ang popup hanggang sa susunod na pag-restart.",
             "title": "Nabigo ang Authentication"
           }
+        },
+        "invalid-regex": {
+          "title": "Di-wastong regular expression",
+          "message": "Di-wasto ang regular expression sa linya {{line}}: {{error}}"
         }
       },
       "menu": {
@@ -803,11 +995,15 @@
           "api-settings": "Mga setting ng API para sa Last.fm"
         },
         "listenbrainz": {
-          "token": "Ilagay ang user token ng ListenBrainz"
+          "token": "Ilagay ang user token ng ListenBrainz",
+          "api-root": "URL ng ListenBrainz API"
         },
         "scrobble-alternative-artist": "Gumamit ng mga alternatibong artist",
         "scrobble-alternative-title": "Gumamit ng alternatibong mga title",
-        "scrobble-other-media": "Mag-Scrobble ng ibang media"
+        "scrobble-other-media": "Mag-Scrobble ng ibang media",
+        "regex-filters": "Mga filter na regular expression",
+        "use-musicbrainz": "Gamitin ang MusicBrainz para iwasto ang metadata",
+        "musicbrainz-email": "Email ng contact ng MusicBrainz"
       },
       "name": "Scrobbler",
       "prompt": {
@@ -819,8 +1015,23 @@
           "token": {
             "label": "Ilagay ang ListenBrainz user token:",
             "title": "Token ng ListenBrainz"
+          },
+          "api-root": {
+            "label": "Ilagay ang base API URL:",
+            "title": "URL ng ListenBrainz API"
           }
+        },
+        "regex-filter-multi": {
+          "label": "Maglagay ng isang regex bawat linya:"
+        },
+        "musicbrainz-email": {
+          "title": "Email ng Contact ng MusicBrainz",
+          "label": "Maglagay ng email para sa MusicBrainz API:"
         }
+      },
+      "settings": {
+        "lastfm-api-root": "URL ng Last.fm API",
+        "musicbrainz-email-description": "Ginagamit bilang impormasyon sa contact para sa MusicBrainz API; kailangan para sa pagwawasto ng metadata ng MusicBrainz"
       }
     },
     "shortcuts": {
@@ -840,15 +1051,34 @@
           "label": "Pumili ng Global na Keybind para sa Songs Control:",
           "title": "Global na mga Keybind"
         }
+      },
+      "settings": {
+        "global-keybinds": "Mga global keybind (gumagana sa buong app)",
+        "local-keybinds": "Mga lokal na keybind (habang naka-focus lang ang window)"
       }
     },
     "skip-silences": {
       "description": "Automatikong laktawan ang mga tahimik na mga seksyon sa kanta",
-      "name": "I-skip ang mga Katahimikan"
+      "name": "I-skip ang mga Katahimikan",
+      "settings": {
+        "only-skip-beginning": "Laktawan lamang ang katahimikan sa simula ng track"
+      }
     },
     "sponsorblock": {
       "description": "Automatikong Laktawan ang di part ng kanta tulad ng intro/outro o part ng mga music video na ang kanta ay di nagple-play",
-      "name": "SponsorBlock"
+      "name": "SponsorBlock",
+      "settings": {
+        "categories": "Mga segment na lalaktawan",
+        "category": {
+          "sponsor": "Sponsor",
+          "intro": "Intro",
+          "outro": "Outro",
+          "interaction": "Paalala sa interaksyon",
+          "selfpromo": "Sariling promosyon",
+          "music_offtopic": "Seksyong walang musika"
+        },
+        "api-url": "URL ng API"
+      }
     },
     "synced-lyrics": {
       "description": "Nagbibigay ng naka-sync na lyrics sa mga kanta, gamit ang mga provider tulad ng LRClib.",
@@ -877,7 +1107,7 @@
               "tooltip": "Gumamit ng malaki, mala-app na effect sa kasalukuyang linya"
             },
             "focus": {
-              "label": "Focus",
+              "label": "Pokus",
               "tooltip": "Gawing puti lamang ang kasalukuyang linya"
             },
             "offset": {
@@ -1061,6 +1291,30 @@
         "show-custom-search-button": {
           "label": "Ipakita ang custom na search button",
           "tooltip": "Magpakita ng search button sa lyrics picker na nagbibigay-daan sa iyo na baguhin ang search query at artist para sa kasalukuyang kanta."
+        },
+        "provider-priority": {
+          "tooltip": "Sinusubukan ang mga provider sa ganitong pagkakasunod-sunod: ang unang may lyrics para sa kasalukuyang kanta ang mananalo. Gamitin ang mga arrow para muling ayusin."
+        },
+        "prefer-synced": {
+          "tooltip": "Piliin ang unang provider sa listahan na may time-synced na lyrics, sa halip na ang unang may kahit anong lyrics."
+        },
+        "previous-provider": {
+          "tooltip": "Nakaraang provider"
+        },
+        "next-provider": {
+          "tooltip": "Susunod na provider"
+        },
+        "custom-search-button": {
+          "tooltip": "Custom na search query"
+        },
+        "star-provider": {
+          "tooltip": "Laging gamitin ang provider na ito para sa kantang ito, anuman ang sabihin ng priority order. Babalik sa normal na order kung wala itong lyrics para sa kanta."
+        },
+        "unstar-provider": {
+          "tooltip": "Itigil ang pag-pin sa provider na ito para sa kantang ito."
+        },
+        "use-priority-list": {
+          "tooltip": "Subukan ang mga provider sa order sa ibaba. I-off ito para hayaang ang lyrics ang magpasya: kung aling provider ang may pinakamagandang lyrics para sa kanta ang mananalo."
         }
       },
       "name": "Pag-sync ng Lyrics",
@@ -1072,6 +1326,22 @@
         "duration-mismatch": "⚠️ - Maaaring hindi naka-sync ang lyrics dahil sa hindi pagkakatugma ng duration.",
         "inexact": "⚠️ - Maaaring hindi eksakto ang lyrics para sa kantang ito",
         "instrumental": "⚠️ - Ito ay isang instrumental na kanta"
+      },
+      "settings": {
+        "precise-timing": "Tumpak na timing",
+        "show-inexact": "Ipakita ang hindi eksaktong lyrics",
+        "show-time-codes": "Ipakita ang time codes",
+        "romanization": "I-romanize ang lyrics",
+        "line-effect": "Epekto ng linya",
+        "effect": {
+          "fancy": "Magarbong",
+          "scale": "Iskala",
+          "offset": "Offset",
+          "focus": "Pokus"
+        },
+        "prefer-synced": "Mas gustuhin ang synced lyrics",
+        "provider-priority": "Priyoridad ng Provider",
+        "use-priority-list": "Gamitin ang listahan ng priyoridad"
       }
     },
     "taskbar-mediacontrol": {
@@ -1099,9 +1369,16 @@
             "mica": "Mika",
             "tabbed": "Naka-tab",
             "none": "Wala",
-            "fullscreen-ui": "Fullscreen na UI"
+            "fullscreen-ui": "Fullscreen na UI",
+            "content": "Nilalaman",
+            "under-page": "Sa Ilalim ng Pahina",
+            "under-window": "Sa Ilalim ng Window",
+            "window": "Window"
           }
         }
+      },
+      "settings": {
+        "type-description": "Materyal sa background na ginagamit para sa transparency ng window"
       }
     },
     "tuna-obs": {
@@ -1144,7 +1421,26 @@
       "menu": {
         "visualizer-type": "Uri ng Visualizer"
       },
-      "name": "Taga-visualize"
+      "name": "Taga-visualize",
+      "settings": {
+        "preset": "Preset",
+        "blend-time": "Oras ng pag-blend",
+        "effect": "Epekto",
+        "accuracy": "Katumpakan",
+        "max-height": "Pinakamataas na taas",
+        "max-size": "Pinakamalaking sukat",
+        "line-width": "Lapad ng linya",
+        "color": "Kulay",
+        "shadow-blur": "Blur ng anino",
+        "shadow-color": "Kulay ng anino",
+        "fade-side": "Mga gilid ng fade",
+        "prettify": "Pagandahin",
+        "prettify-description": "Papanipisin ang mga bar patungo sa mga gilid",
+        "dottify": "Gawing tuldok",
+        "dottify-description": "Gumuhit ng mga tuldok sa halip na tuloy-tuloy na linya",
+        "horizontal-align": "Pahalang na pagkakahanay",
+        "vertical-align": "Patayong pagkakahanay"
+      }
     },
     "playlist-search": {
       "description": "Nagdagdag ng search input para i-filter ang mga playlist sa sidebar at sa Add to playlist dialog",
@@ -1153,6 +1449,196 @@
         "search-placeholder": "Maghanap ng mga playlist",
         "no-results": "Walang nakitang playlist"
       }
+    },
+    "always-show-volume-slider": {
+      "name": "Laging Ipakita ang Volume Slider",
+      "description": "Pinapanatiling nakikita at madadala ang volume slider sa halip na ipakita lamang kapag naka-hover."
+    },
+    "fullscreen-auto-hide": {
+      "description": "Awtomatikong itago ang mga kontrol ng player at cursor ng mouse pagkatapos ng ilang segundong walang galaw habang nasa fullscreen",
+      "name": "Fullscreen Auto-hide"
+    },
+    "prefer-song": {
+      "description": "I-play ang kanta sa halip na ang music video kapag ang track sa album ay video",
+      "name": "Mas Gusto ang Kanta"
+    },
+    "search-commands": {
+      "commands": {
+        "play": "I-play ang video mula sa YouTube link o id",
+        "settings": "Buksan ang mga setting"
+      },
+      "description": "I-type ang / sa search box para magpatakbo ng mga command, may autocomplete para sa mga argumento nito",
+      "name": "Mga Search Command",
+      "settings": {
+        "open-keybind": "Shortcut sa pagbukas",
+        "open-keybind-description": "Accelerator na Electron-style, hal. CmdOrCtrl+/ o Alt+Space",
+        "open-shortcut": "Buksan ang search box mula saanman",
+        "open-shortcut-description": "Tinatawag ang search box na nasa command mode na, tulad ng Spotlight. Isara ito kapag pinindot muli."
+      }
+    },
+    "seek-shortcuts": {
+      "description": "Mag-seek ng 5 segundo pabalik/sulong gamit ang left/right arrow keys",
+      "name": "Mga Shortcut sa Pag-seek"
+    },
+    "sfw-music": {
+      "description": "Awtomatikong nilalaktawan ang mga kantang minarkahang Explicit ng YouTube Music. Nag-pause ito kung paulit-ulit ang explicit na queue o walang susunod na kanta.",
+      "name": "SFW Music"
+    },
+    "toast-autoclose": {
+      "description": "Awtomatikong isara ang mga toast ng YouTube Music pagkalipas ng tatlong segundo",
+      "name": "Auto-Close ng Toast"
+    },
+    "statusbar-lyrics": {
+      "settings": {
+        "include-pronunciation": "Isama ang pagbigkas"
+      }
+    },
+    "dismiss-multidevice-popup": {
+      "name": "I-dismiss ang Multidevice Popup",
+      "description": "Awtomatikong isinasara ang popup na \"Makinig sa device na ito\" na lumalabas kapag nagsimula ang playback sa ibang device."
+    },
+    "memory-saver": {
+      "description": "Nililinis ang mga resource cache ng renderer habang nakatago ang window kapag lumampas na ang mga ito sa isang threshold",
+      "name": "Memory Saver",
+      "settings": {
+        "threshold": "Hangganan ng cache",
+        "threshold-description": "Linisin ang mga cache kapag lumampas ang live memory ng mga ito sa halagang ito habang nakatago ang window"
+      }
+    }
+  },
+  "settings-ui": {
+    "name": "UI ng Mga Setting",
+    "description": "Nagdadagdag ng panel ng mga setting sa loob ng app, na binubuksan mula sa sidebar",
+    "title": "Mga Setting",
+    "settings": {
+      "show-button": "Ipakita ang entry ng mga setting sa sidebar",
+      "show-button-description": "I-off ito para manatiling malinis ang sidebar; makikita pa rin ang Settings sa Navigation → Open Settings.",
+      "separate-window": "Laging buksan ang Settings sa hiwalay na window",
+      "separate-window-description": "Binubuksan ang standalone na window ng settings, tulad ng ginagawa ng tray entry, sa halip na ang panel sa loob ng app."
+    },
+    "search-placeholder": "Maghanap ng mga setting",
+    "search-results": "Mga resulta ng paghahanap",
+    "search-matching": "Tumutugma sa “{{query}}”",
+    "no-match": "Walang setting na tumutugma sa “{{query}}”.",
+    "close": "Isara",
+    "edit-config": "I-edit ang config.json",
+    "restart-banner": "Kailangan ng restart ang ilang pagbabago para magkabisa.",
+    "restart-now": "I-restart ngayon",
+    "later": "Mamaya",
+    "restart-pill": "i-restart",
+    "restart-pill-hint": "Kailangan ng restart",
+    "refresh-options": "I-refresh ang mga opsyon",
+    "move-up": "Ilipat pataas",
+    "move-down": "Ilipat pababa",
+    "about": {
+      "tagline": "Isang desktop app na may maraming feature para sa YouTube Music",
+      "versions": "Mga bersyon",
+      "version-app": "App",
+      "version-build": "Build",
+      "version-electron": "Electron",
+      "version-chromium": "Chromium",
+      "version-node": "Node.js",
+      "version-platform": "Platform",
+      "version-innertube": "Innertube",
+      "links": "Mga link",
+      "link-repo": "Repository",
+      "link-issue": "Iulat ang isyu",
+      "link-releases": "Mga release",
+      "link-license": "Lisensya",
+      "actions": "Mga aksyon",
+      "check-updates": "Tingnan ang mga update",
+      "copy-debug": "Kopyahin ang debug info",
+      "copied": "Nakopya!"
+    },
+    "sections": {
+      "general": {
+        "label": "Pangkalahatan"
+      },
+      "appearance": {
+        "label": "Itsura"
+      },
+      "window": {
+        "label": "Window at Tray"
+      },
+      "advanced": {
+        "label": "Advanced"
+      },
+      "plugins": {
+        "label": "Mga plugin"
+      },
+      "flags": {
+        "label": "Mga flag"
+      },
+      "about": {
+        "label": "Tungkol"
+      }
+    },
+    "groups": {
+      "updates-session": "Mga update at session",
+      "startup-language": "Startup at wika",
+      "interface": "Interface",
+      "context-menu": "Menu ng konteksto",
+      "window-title": "Bintana",
+      "window": "Bintana",
+      "system": "Sistema",
+      "network": "Network",
+      "performance": "Pagganap",
+      "configuration": "Konfigurasyon",
+      "updates": "Mga update"
+    },
+    "stepper-decrement": "Bawasan",
+    "stepper-increment": "Dagdagan",
+    "flags": {
+      "warning": "Ang mga feature flag ay sariling panloob na switch ng YouTube Music. Ang pagbabago sa mga ito ay maaaring makasira ng playback, layout o mga feature ng account, at hindi ito saklaw ng suporta. Ang mga override ay pinapanatili lamang para sa mga flag na binago mo, at maaaring alisin gamit ang Undo.",
+      "search-placeholder": "Maghanap ng flag",
+      "overridden": "na-override",
+      "undo": "I-undo",
+      "undo-hint": "Tanggalin ang override na ito",
+      "empty": "Walang feature flag na ipinapakita ang pahinang ito.",
+      "no-match": "Walang flag na tumutugma sa “{{query}}”.",
+      "add-name": "Pangalan ng bagong flag",
+      "add-value": "Halaga",
+      "add-value-hint": "JSON kapag nag-parse ito (true, 42, \"text\"), kung hindi ay ang text mismo",
+      "add": "Idagdag"
+    },
+    "fields": {
+      "hide-dislike-button": "Itago ang Dislike Button",
+      "hide-video-captions": "Itago ang mga caption ng video",
+      "context-menu": {
+        "hide-entry": "Itago ang {{entry}}",
+        "entries": {
+          "add-to-queue": "Idagdag sa queue",
+          "delete-playlist": "Burahin ang playlist",
+          "dismiss-queue": "I-dismiss ang queue",
+          "download": "I-download",
+          "go-to-album": "Pumunta sa album",
+          "go-to-artist": "Pumunta sa artist",
+          "go-to-playlist": "Pumunta sa playlist",
+          "like": "I-like",
+          "not-interested": "Hindi interesado",
+          "pin-to-listen-again": "I-pin sa Listen again",
+          "play-next": "I-play sa susunod",
+          "remove-from-playlist": "Alisin sa playlist",
+          "remove-from-queue": "Alisin sa queue",
+          "report": "Iulat",
+          "save-to-library": "I-save sa library",
+          "save-to-playlist": "I-save sa playlist",
+          "share": "Ibahagi",
+          "shuffle-play": "I-shuffle ang play",
+          "start-mix": "Simulan ang mix",
+          "stats-for-nerds": "Mga stats para sa nerds"
+        }
+      },
+      "podcast-artist": "Gamitin ang mga kalahok sa podcast bilang artist",
+      "podcast-artist-desc": "Off: ang artist ng isang episode ng podcast ay ang channel na nag-publish nito.",
+      "theme-preset": "Preset",
+      "theme-variable-name": "Variable",
+      "theme-variable-value": "Halaga",
+      "theme-variable-add": "Magdagdag ng variable",
+      "performance-mode": "Performance mode",
+      "performance-mode-desc": "Ipagpalit ang bahagi ng visual fidelity para sa mas magaan na rendering.",
+      "in-process-gpu": "Pagsamahin ang GPU process sa app process",
+      "in-process-gpu-desc": "Eksperimental: nakakatipid ng isang process, pero inililipat ang GPU memory sa main process at maaaring bumalik sa software rendering."
     }
   }
 }

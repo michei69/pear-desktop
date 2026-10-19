@@ -65,7 +65,8 @@
         },
         "detail": "ہم زحمت کے لیے معذرت خواہ ہیں! براہ کرم منتخب کریں کہ کیا کرنا ہے:",
         "message": "پروگرام غیر ذمہ دار ہے",
-        "title": "ونڈو غیر جوابدہ"
+        "title": "ونڈو غیر جوابدہ",
+        "details": "وجہ: {{error}}"
       },
       "update-available": {
         "buttons": {
@@ -76,6 +77,27 @@
         "detail": "ایک نیا ورژن دستیاب ہے اور اسے {{downloadLink}} پر ڈاؤن لوڈ کیا جا سکتا ہے",
         "message": "ایک نیا ورژن دستیاب ہے",
         "title": "اپ ڈیٹ دستیاب ہے"
+      },
+      "restart-summary": {
+        "detail": "ایپ کو دوبارہ شروع کریں تاکہ یہ لاگو ہوں: {{changes}}",
+        "message": "کچھ تبدیلیوں کے لیے دوبارہ شروع کرنا ضروری ہے",
+        "title": "دوبارہ شروع کرنا ضروری ہے"
+      },
+      "update-available-dev": {
+        "buttons": {
+          "ok": "ٹھیک ہے",
+          "view": "کمٹس دیکھیں"
+        },
+        "title": "اپ ڈیٹ دستیاب ہے",
+        "message": "یہ ڈیو بلڈ ماسٹر برانچ سے پیچھے ہے",
+        "detail": "یہ بلڈ جس کمٹ ({{commit}}) پر چل رہی ہے، وہ ماسٹر کے تازہ ترین کمٹ سے پرانا ہے۔ نئے کمٹس یہاں دیکھے جا سکتے ہیں: {{commitsLink}}"
+      },
+      "downgrade-warning": {
+        "title": "مستحکم ورژن پر واپس جائیں؟",
+        "message": "یہ بیٹا بلڈ تازہ ترین مستحکم ریلیز سے نیا ہے۔",
+        "detail": "واپس جانے سے کچھ ترتیبات ری سیٹ ہو سکتی ہیں: نئے ورژن سے پرانے ورژن پر جانے پر کوئی مائیگریشن نہیں چلتی اور نئی ترتیبات ناقابلِ مطالعہ رہ سکتی ہیں۔",
+        "confirm": "مستحکم پر جائیں",
+        "cancel": "منسوخ کریں"
       }
     },
     "menu": {
@@ -87,7 +109,8 @@
           "go-back": "واپس جاؤ",
           "go-forward": "آگے بڑھو",
           "quit": "باہر نکلیں",
-          "restart": "ایپ کو دوبارہ شروع کریں"
+          "restart": "ایپ کو دوبارہ شروع کریں",
+          "open-settings": "ترتیبات کھولیں"
         }
       },
       "options": {
@@ -109,7 +132,8 @@
                   "title": "پراکسی سیٹ کریں"
                 }
               },
-              "toggle-dev-tools": "DevTools ٹوگل کریں"
+              "toggle-dev-tools": "DevTools ٹوگل کریں",
+              "force-smtc": "بیرونی SMTC کے استعمال پر مجبور کریں"
             }
           },
           "always-on-top": "ہمیشہ اوپر",
@@ -128,7 +152,20 @@
             },
             "label": "زبان",
             "submenu": {
-              "to-help-translate": "ترجمہ میں مدد کرنا چاہتے ہیں؟ یہاں دبائیں"
+              "to-help-translate": "ترجمہ میں مدد کرنا چاہتے ہیں؟ یہاں دبائیں",
+              "sync": {
+                "label": "زبان ہم آہنگ کریں",
+                "submenu": {
+                  "from-youtube": "YouTube سے",
+                  "to-youtube": "YouTube میں"
+                },
+                "failure": {
+                  "dialog": {
+                    "title": "زبان تبدیل نہیں ہوئی",
+                    "message": "زبان یا لوکیل ابھی ایپ میں موجود نہیں ہے۔"
+                  }
+                }
+              }
             }
           },
           "resume-on-start": "ایپ شروع ہونے پر آخری گانا دوبارہ شروع کریں",
@@ -144,7 +181,9 @@
               "disabled": "غیر فعال",
               "enabled-and-hide-app": "فعال اور ایپ کو چھپائیں",
               "enabled-and-show-app": "فعال اور ایپ دکھائیں",
-              "play-pause-on-click": "دبانے پر چلائیں/روکیں"
+              "play-pause-on-click": "دبانے پر چلائیں/روکیں",
+              "move-to-current-desktop": "دکھاتے وقت موجودہ ورچوئل ڈیسک ٹاپ پر منتقل کریں",
+              "force-white-icons": "سفید آئیکنز کے استعمال پر مجبور کریں"
             }
           },
           "visual-tweaks": {
@@ -161,7 +200,8 @@
                 "default": "پہلے سے طے شدہ",
                 "force-show": "زبردستی دکھائیں",
                 "hide": "چھپائیں",
-                "label": "لائیک بٹن"
+                "label": "لائیک بٹن",
+                "swap": "لائک بٹنوں کی ترتیب بدلیں"
               },
               "remove-upgrade-button": "اپ گریڈ بٹن ہٹائیں",
               "theme": {
@@ -176,9 +216,37 @@
                 "label": "تھیم",
                 "submenu": {
                   "import-css-file": "کسٹم CSS فائل درآمد کریں",
-                  "no-theme": "کوئی تھیم نہیں"
+                  "no-theme": "کوئی تھیم نہیں",
+                  "colors": {
+                    "label": "رنگ"
+                  },
+                  "presets": {
+                    "label": "پریسیٹس",
+                    "default": "ڈیفالٹ",
+                    "custom": "کسٹم"
+                  },
+                  "reset-colors": "رنگ ری سیٹ کریں",
+                  "open-themes-folder": "تھیمز فولڈر کھولیں"
                 }
-              }
+              },
+              "use-ytm-icons": "اصل YouTube Music آئیکنز استعمال کریں"
+            }
+          },
+          "updates": {
+            "label": "اپ ڈیٹس",
+            "check": "اپ ڈیٹس چیک کریں",
+            "auto-update": "خودکار طور پر اپ ڈیٹس چیک کریں",
+            "channel": {
+              "label": "اپ ڈیٹ چینل",
+              "stable": "مستحکم",
+              "beta": "بیٹا"
+            }
+          },
+          "shared-links": {
+            "label": "شیئر کردہ لنکس",
+            "submenu": {
+              "strip-music": "'music.' ہٹائیں",
+              "strip-si": "'&si=' ہٹائیں"
             }
           }
         }
@@ -208,7 +276,21 @@
       "restart": "ایپ دوبارہ شروع کریں",
       "show": "ونڈو دکھائیں",
       "tooltip": {
-        "default": "پیئر ڈیسک ٹاپ"
+        "default": "پیئر ڈیسک ٹاپ",
+        "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
+      },
+      "like": "پسند کریں",
+      "dislike": "ناپسند کریں",
+      "unlike": "پسند ہٹائیں",
+      "undislike": "ناپسند ہٹائیں"
+    },
+    "themes": {
+      "consent": {
+        "title": "تھیم کوڈ چلائیں؟",
+        "message": "\"{{theme}}\" میں ایک اسکرپٹ ہے جو ایپ تک مکمل رسائی کے ساتھ چلے گا۔",
+        "detail": "تھیم اسکرپٹس سینڈ باکسڈ نہیں ہیں۔ یہ کوڈ آپ کی ترتیبات پڑھ اور بدل سکتا ہے، ایپ سے رابطہ کر سکتا ہے، اور وہ سب کچھ کر سکتا ہے جو ایپ خود کر سکتی ہے۔ اس کی اجازت صرف اس صورت میں دیں جب آپ کو تھیم کے ماخذ پر بھروسا ہو۔ آپ تھیم ہٹا کر یہ اجازت واپس لے سکتے ہیں۔",
+        "allow": "یہ تھیم چلائیں",
+        "cancel": "منسوخ کریں"
       }
     }
   },
@@ -216,6 +298,1291 @@
     "ad-speedup": {
       "description": "اگر کوئی اشتہار چلے تو آواز بند کرکے پلے بیک کی رفتار 16 گناہ کردیں",
       "name": "اشتہار کی رفتار"
+    },
+    "album-actions": {
+      "description": "پلے لسٹ یا البم کے تمام گانوں پر یہ لاگو کرنے کے لیے ناپسند ہٹائیں، ناپسند کریں، پسند کریں اور پسند ہٹائیں بٹن شامل کرتا ہے",
+      "name": "البم ایکشنز"
+    },
+    "album-color-theme": {
+      "description": "البم کے رنگ پیلیٹ کی بنیاد پر متحرک تھیم اور بصری اثرات لاگو کرتا ہے",
+      "menu": {
+        "color-mix-ratio": {
+          "label": "رنگوں کے ملاپ کا تناسب",
+          "submenu": {
+            "percent": "{{ratio}}%"
+          }
+        },
+        "enable-seekbar": "سیک بار تھیمنگ فعال کریں"
+      },
+      "name": "البم کلر تھیم"
+    },
+    "audio-only": {
+      "description": "صرف آڈیو موڈ پر مجبور کرتا ہے — ریم اور بینڈوڈتھ بچانے کے لیے نیٹ ورک اور پلیئر سطح پر تمام ویڈیو اسٹریمز کو بلاک کرتا ہے",
+      "name": "صرف آڈیو"
+    },
+    "always-show-volume-slider": {
+      "name": "والیوم سلائیڈر ہمیشہ دکھائیں",
+      "description": "والیوم سلائیڈر کو صرف ہوور پر دکھانے کے بجائے ہمیشہ نظر آنے اور گھسیٹنے کے قابل رکھتا ہے۔"
+    },
+    "ambient-mode": {
+      "description": "ویڈیو سے نرم رنگوں کو آپ کی اسکرین کے پس منظر میں ڈال کر لائٹنگ ایفیکٹ لگاتا ہے",
+      "menu": {
+        "blur-amount": {
+          "label": "دھندلاہٹ کی مقدار",
+          "submenu": {
+            "pixels": "{{blurAmount}} پکسلز"
+          }
+        },
+        "buffer": {
+          "label": "بفر",
+          "submenu": {
+            "buffer": "{{buffer}}"
+          }
+        },
+        "opacity": {
+          "label": "دھندلاپن",
+          "submenu": {
+            "percent": "{{opacity}}%"
+          }
+        },
+        "quality": {
+          "label": "کوالٹی",
+          "submenu": {
+            "pixels": "{{quality}} پکسلز"
+          }
+        },
+        "size": {
+          "label": "سائز",
+          "submenu": {
+            "percent": "{{size}}%"
+          }
+        },
+        "smoothness-transition": {
+          "label": "ہموار ٹرانزیشن",
+          "submenu": {
+            "during": "{{interpolationTime}} سیکنڈ کے دوران"
+          }
+        },
+        "use-fullscreen": {
+          "label": "فل اسکرین استعمال کریں"
+        }
+      },
+      "name": "ایمبیئنٹ موڈ"
+    },
+    "amuse": {
+      "description": "6K Labs کے Amuse now playing ویجٹ کے لیے {{applicationName}} سپورٹ شامل کرتا ہے",
+      "name": "Amuse",
+      "response": {
+        "query": "Amuse API سرور چل رہا ہے۔ گانے کی معلومات کے لیے GET /query کریں۔"
+      }
+    },
+    "api-server": {
+      "description": "پلیئر کو کنٹرول کرنے کے لیے API سرور شامل کرتا ہے",
+      "dialog": {
+        "request": {
+          "buttons": {
+            "allow": "اجازت دیں",
+            "deny": "انکار کریں"
+          },
+          "message": "کیا {{ID}} ({{origin}}) کو API تک رسائی کی اجازت دی جائے؟",
+          "title": "API اجازت کی درخواست"
+        }
+      },
+      "menu": {
+        "auth-strategy": {
+          "label": "اجازت کی حکمتِ عملی",
+          "submenu": {
+            "auth-at-first": {
+              "label": "پہلی درخواست پر اجازت دیں"
+            },
+            "none": {
+              "label": "کوئی اجازت نہیں"
+            }
+          }
+        },
+        "hostname": {
+          "label": "ہوسٹ نیم"
+        },
+        "port": {
+          "label": "پورٹ"
+        },
+        "mcp": {
+          "label": "MCP سرور",
+          "description": "v2 API کو /mcp پر MCP ٹولز کے طور پر پیش کرتا ہے۔ API کے باقی حصے جیسی ہی اجازت استعمال کرتا ہے۔"
+        },
+        "https": {
+          "label": "HTTPS اور سرٹیفکیٹس",
+          "submenu": {
+            "enable-https": {
+              "label": "HTTPS فعال کریں"
+            },
+            "cert": {
+              "label": "سرٹیفکیٹ فائل (.crt/.pem)",
+              "dialogTitle": "HTTPS سرٹیفکیٹ فائل منتخب کریں"
+            },
+            "key": {
+              "label": "پرائیویٹ کی فائل (.key/.pem)",
+              "dialogTitle": "HTTPS پرائیویٹ کی فائل منتخب کریں"
+            }
+          }
+        }
+      },
+      "name": "API سرور [بیٹا]",
+      "prompt": {
+        "hostname": {
+          "label": "API سرور کے لیے ہوسٹ نیم درج کریں (جیسے 0.0.0.0):",
+          "title": "ہوسٹ نیم"
+        },
+        "port": {
+          "label": "API سرور کے لیے پورٹ درج کریں:",
+          "title": "پورٹ"
+        }
+      },
+      "settings": {
+        "choose-file": "فائل منتخب کریں…"
+      }
+    },
+    "audio-compressor": {
+      "description": "آڈیو پر کمپریشن لاگو کریں (سگنل کے بلند ترین حصوں کی آواز کم کرتا ہے اور نرم ترین حصوں کی آواز بڑھاتا ہے)",
+      "menu": {
+        "auto-track-gain": "خودکار ٹریک گین (دھیمی ٹریکس کو بڑھائیں)",
+        "maximum-gain": {
+          "label": "زیادہ سے زیادہ گین"
+        }
+      },
+      "name": "آڈیو کمپریسر"
+    },
+    "auth-proxy-adapter": {
+      "description": "تصدیقی پراکسی سروسز کے استعمال کی معاونت",
+      "menu": {
+        "disable": "پراکسی اڈاپٹر غیر فعال کریں",
+        "enable": "پراکسی اڈاپٹر فعال کریں",
+        "hostname": {
+          "label": "ہوسٹ نیم"
+        },
+        "port": {
+          "label": "پورٹ"
+        }
+      },
+      "name": "تصدیقی پراکسی اڈاپٹر",
+      "prompt": {
+        "hostname": {
+          "title": "پراکسی ہوسٹ نیم",
+          "label": "مقامی پراکسی سرور کے لیے ہوسٹ نیم درج کریں (دوبارہ آغاز درکار ہے):"
+        },
+        "port": {
+          "title": "پراکسی پورٹ",
+          "label": "مقامی پراکسی سرور کے لیے پورٹ درج کریں (دوبارہ آغاز درکار ہے):"
+        }
+      }
+    },
+    "blur-nav-bar": {
+      "description": "نیویگیشن بار کو شفاف اور دھندلا بناتا ہے",
+      "name": "دھندلا نیویگیشن بار"
+    },
+    "bypass-age-restrictions": {
+      "description": "میوزک پلیئر کی عمر کی تصدیق کو نظر انداز کریں",
+      "name": "عمر کی پابندیاں نظر انداز کریں"
+    },
+    "captions-selector": {
+      "description": "{{applicationName}} آڈیو ٹریکس کے لیے کیپشن منتخب کنندہ",
+      "menu": {
+        "autoload": "آخری استعمال شدہ کیپشن خودکار منتخب کریں",
+        "disable-captions": "بطور ڈیفالٹ کیپشن نہیں"
+      },
+      "name": "کیپشن منتخب کنندہ",
+      "prompt": {
+        "selector": {
+          "label": "موجودہ کیپشن زبان: {{language}}",
+          "none": "کوئی نہیں",
+          "title": "کیپشن زبان منتخب کریں"
+        }
+      },
+      "templates": {
+        "title": "کیپشن منتخب کنندہ کھولیں"
+      },
+      "toast": {
+        "caption-changed": "کیپشن {{language}} میں تبدیل ہو گیا",
+        "caption-disabled": "کیپشن غیر فعال",
+        "no-captions": "اس گانے کے لیے کوئی کیپشن دستیاب نہیں"
+      }
+    },
+    "clock": {
+      "description": "نیویگیشن بار میں گھڑی شامل کریں",
+      "name": "گھڑی",
+      "menu": {
+        "format": {
+          "label": "فارمیٹ",
+          "display-seconds": "سیکنڈ دکھائیں",
+          "24-hour-format": "24 گھنٹے فارمیٹ"
+        }
+      },
+      "settings": {
+        "hour-12": "12 گھنٹے فارمیٹ استعمال کریں"
+      }
+    },
+    "compact-sidebar": {
+      "description": "سائیڈبار کو ہمیشہ کمپیکٹ موڈ میں رکھیں",
+      "name": "کمپیکٹ سائیڈبار"
+    },
+    "crossfade": {
+      "description": "گانوں کے درمیان کراس فیڈ",
+      "menu": {
+        "advanced": "جدید"
+      },
+      "name": "کراس فیڈ [بیٹا]",
+      "prompt": {
+        "options": {
+          "multi-input": {
+            "fade-in-duration": "فیڈ اِن دورانیہ (ms)",
+            "fade-out-duration": "فیڈ آؤٹ دورانیہ (ms)",
+            "fade-scaling": {
+              "equal-power": "مساوی طاقت",
+              "label": "فیڈ اسکیلنگ",
+              "linear": "لکیری",
+              "logarithmic": "لوگارتھمک"
+            },
+            "seconds-before-end": "اختتام سے N سیکنڈ پہلے کراس فیڈ"
+          },
+          "title": "کراس فیڈ اختیارات"
+        }
+      },
+      "settings": {
+        "fade-in": "فیڈ اِن",
+        "fade-out": "فیڈ آؤٹ",
+        "seconds-before-end": "اختتام سے پہلے شروع کریں",
+        "fade-scaling": "فیڈ اسکیلنگ",
+        "scaling": {
+          "linear": "لکیری",
+          "logarithmic": "لوگارتھمک"
+        },
+        "seconds-before-end-description": "ٹریک کے اختتام سے کتنے سیکنڈ پہلے اگلے ٹریک کی طرف کراس فیڈ شروع ہوتی ہے"
+      }
+    },
+    "custom-output-device": {
+      "description": "گانوں کے لیے حسب ضرورت آؤٹ پٹ میڈیا ڈیوائس ترتیب دیں",
+      "menu": {
+        "device-selector": "ڈیوائس منتخب کریں"
+      },
+      "name": "حسب ضرورت آؤٹ پٹ ڈیوائس",
+      "prompt": {
+        "device-selector": {
+          "label": "استعمال ہونے والی آؤٹ پٹ میڈیا ڈیوائس منتخب کریں",
+          "title": "آؤٹ پٹ ڈیوائس منتخب کریں"
+        }
+      }
+    },
+    "disable-autoplay": {
+      "description": "گانے کو \"موقوف\" موڈ میں شروع کرتا ہے",
+      "menu": {
+        "apply-once": "صرف آغاز پر لاگو ہوتا ہے"
+      },
+      "name": "خودکار پلے غیر فعال کریں"
+    },
+    "discord": {
+      "backend": {
+        "already-connected": "فعال کنکشن کے ساتھ جڑنے کی کوشش کی گئی",
+        "connected": "ڈسکارڈ سے جڑ گیا",
+        "disconnected": "ڈسکارڈ سے منقطع"
+      },
+      "description": "رچ پریزننس کے ذریعے اپنے دوستوں کو دکھائیں کہ آپ کیا سنتے ہیں",
+      "menu": {
+        "auto-reconnect": "خودکار دوبارہ جڑیں",
+        "clear-activity": "سرگرمی صاف کریں",
+        "clear-activity-after-timeout": "ٹائم آؤٹ کے بعد سرگرمی صاف کریں",
+        "connected": "جڑ گیا",
+        "disconnected": "منقطع",
+        "hide-duration-left": "باقی دورانیہ چھپائیں",
+        "hide-github-button": "GitHub لنک بٹن چھپائیں",
+        "play-on-application": "{{applicationName}} پر چلائیں",
+        "set-inactivity-timeout": "غیر فعالیت ٹائم آؤٹ مقرر کریں",
+        "set-status-display-type": {
+          "label": "اسٹیٹس متن",
+          "submenu": {
+            "application": "{{applicationName}} سن رہے ہیں",
+            "artist": "{artist} سن رہے ہیں",
+            "title": "{song title} سن رہے ہیں"
+          }
+        }
+      },
+      "name": "ڈسکارڈ رچ پریزننس",
+      "prompt": {
+        "set-inactivity-timeout": {
+          "label": "غیر فعالیت ٹائم آؤٹ سیکنڈوں میں درج کریں:",
+          "title": "غیر فعالیت ٹائم آؤٹ مقرر کریں"
+        }
+      },
+      "settings": {
+        "auto-reconnect": "خودکار دوبارہ جڑیں",
+        "activity-timeout-enabled": "موقوف ہونے پر پریزننس صاف کریں",
+        "activity-timeout-time": "کے بعد صاف کریں",
+        "hide-github-button": "“GitHub پر دیکھیں” بٹن چھپائیں",
+        "hide-duration-left": "باقی وقت چھپائیں"
+      }
+    },
+    "do-not-track": {
+      "description": "شروع سے ہی تمام ٹریکنگ بلاک کریں",
+      "menu": {
+        "blocker": "بلاکر"
+      },
+      "name": "ٹریک نہ کریں",
+      "settings": {
+        "cache": "بلاک لسٹس کیش کریں",
+        "disable-default-lists": "ڈیفالٹ بلاک لسٹس غیر فعال کریں"
+      },
+      "dialog": {
+        "reload": {
+          "title": "صفحہ دوبارہ لوڈ کریں",
+          "message": "ڈو نوٹ ٹریک کی ترتیبات بدل گئی ہیں۔",
+          "detail": "نیٹ ورک قواعد ایپ کو دوبارہ شروع کیے بغیر اپ ڈیٹ ہوتے ہیں۔ صفحہ کے فلٹرز پر تبدیلیاں مکمل طور پر لاگو کرنے کے لیے صفحہ دوبارہ لوڈ کریں۔ پلے بیک متاثر ہو سکتا ہے۔ آپ بعد میں دوبارہ لوڈ کر سکتے ہیں۔",
+          "reload-now": "صفحہ ابھی دوبارہ لوڈ کریں"
+        }
+      }
+    },
+    "downloader": {
+      "backend": {
+        "dialog": {
+          "error": {
+            "buttons": {
+              "ok": "ٹھیک ہے"
+            },
+            "message": "ارگ! معذرت، ڈاؤن لوڈ ناکام ہو گیا…",
+            "title": "ڈاؤن لوڈ میں خرابی!"
+          },
+          "start-download-playlist": {
+            "buttons": {
+              "ok": "ٹھیک ہے"
+            },
+            "detail": "({{playlistSize}} گانے)",
+            "message": "پلے لسٹ {{playlistTitle}} ڈاؤن لوڈ ہو رہی ہے",
+            "title": "ڈاؤن لوڈ شروع ہو گیا"
+          }
+        },
+        "feedback": {
+          "conversion-progress": "تبدیلی: {{percent}}%",
+          "converting": "تبدیل ہو رہا ہے…",
+          "done": "مکمل: {{filePath}}",
+          "download-info": "ڈاؤن لوڈ ہو رہا ہے {{artist}} - {{title}} [{{videoId}}",
+          "download-progress": "ڈاؤن لوڈ: {{percent}}%",
+          "downloading": "ڈاؤن لوڈ ہو رہا ہے…",
+          "downloading-counter": "ڈاؤن لوڈ ہو رہا ہے {{current}}/{{total}}…",
+          "downloading-playlist": "پلے لسٹ \"{{playlistTitle}}\" ڈاؤن لوڈ ہو رہی ہے - {{playlistSize}} گانے ({{playlistId}})",
+          "error-while-downloading": "\"{{author}} - {{title}}\" ڈاؤن لوڈ کرنے میں خرابی: {{error}}",
+          "folder-already-exists": "فولڈر {{playlistFolder}} پہلے سے موجود ہے",
+          "getting-playlist-info": "پلے لسٹ کی معلومات حاصل کی جا رہی ہیں…",
+          "loading": "لوڈ ہو رہا ہے…",
+          "playlist-has-only-one-song": "پلے لسٹ میں صرف ایک آئٹم ہے، اسے براہ راست ڈاؤن لوڈ کیا جا رہا ہے",
+          "playlist-id-not-found": "کوئی پلے لسٹ ID نہیں ملا",
+          "playlist-is-empty": "پلے لسٹ خالی ہے",
+          "playlist-is-mix-or-private": "پلے لسٹ کی معلومات حاصل کرنے میں خرابی: یقینی بنائیں کہ یہ نجی یا \"Mixed for you\" پلے لسٹ نہیں ہے\n\n{{error}}",
+          "preparing-file": "فائل تیار کی جا رہی ہے…",
+          "saving": "محفوظ کیا جا رہا ہے…",
+          "trying-to-get-playlist-id": "پلے لسٹ ID حاصل کرنے کی کوشش کی جا رہی ہے: {{playlistId}}",
+          "video-id-not-found": "ویڈیو نہیں ملی",
+          "writing-id3": "ID3 ٹیگز لکھے جا رہے ہیں…",
+          "ffmpeg-missing": "FFmpeg نہیں ملا۔ اس فارمیٹ میں ڈاؤن لوڈ کرنے کے لیے FFmpeg انسٹال کریں اور یقینی بنائیں کہ `ffmpeg` آپ کے PATH میں موجود ہے۔"
+        }
+      },
+      "description": "انٹرفیس سے براہ راست MP3 / سورس آڈیو ڈاؤن لوڈ کرتا ہے",
+      "menu": {
+        "choose-download-folder": "ڈاؤن لوڈ فولڈر منتخب کریں",
+        "download-finish-settings": {
+          "label": "مکمل ہونے پر ڈاؤن لوڈ کریں",
+          "prompt": {
+            "last-percent": "x فیصد کے بعد",
+            "last-seconds": "آخری x سیکنڈ",
+            "title": "ڈاؤن لوڈ کا وقت ترتیب دیں"
+          },
+          "submenu": {
+            "advanced": "جدید",
+            "enabled": "فعال",
+            "mode": "وقت کا موڈ",
+            "percent": "فیصد",
+            "seconds": "سیکنڈ"
+          }
+        },
+        "download-playlist": "پلے لسٹ ڈاؤن لوڈ کریں",
+        "presets": "پری سیٹس",
+        "skip-existing": "موجودہ فائلیں چھوڑ دیں"
+      },
+      "name": "ڈاؤن لوڈر",
+      "renderer": {
+        "can-not-update-progress": "پیش رفت اپ ڈیٹ نہیں ہو سکتی"
+      },
+      "templates": {
+        "button": "ڈاؤن لوڈ"
+      },
+      "settings": {
+        "finish-folder": "مکمل شدہ ڈاؤن لوڈز کے لیے فولڈر",
+        "finish-folder-description": "اوپر والا ڈاؤن لوڈ فولڈر استعمال کرنے کے لیے خالی چھوڑ دیں۔"
+      }
+    },
+    "equalizer": {
+      "description": "پلیئر میں ایکولائزر شامل کرتا ہے",
+      "menu": {
+        "presets": {
+          "label": "پری سیٹس",
+          "list": {
+            "bass-booster": "باس بوسٹر"
+          }
+        }
+      },
+      "name": "ایکولائزر"
+    },
+    "exponential-volume": {
+      "description": "والیوم سلائیڈر کو ایکسپونینشل بناتا ہے تاکہ کم والیوم منتخب کرنا آسان ہو۔",
+      "name": "ایکسپونینشل والیوم"
+    },
+    "fullscreen-auto-hide": {
+      "description": "فل اسکرین میں چند سیکنڈ غیر فعال رہنے کے بعد پلیئر کنٹرولز اور ماؤس کرسر خودکار طور پر چھپا دیتا ہے",
+      "name": "فل اسکرین آٹو ہائیڈ"
+    },
+    "in-app-menu": {
+      "description": "مینو بارز کو دلکش، ڈارک یا البم رنگ کا روپ دیتا ہے",
+      "menu": {
+        "hide-dom-window-controls": "DOM ونڈو کنٹرولز چھپائیں"
+      },
+      "name": "ان-ایپ مینو"
+    },
+    "lumiastream": {
+      "description": "Lumia Stream سپورٹ شامل کرتا ہے",
+      "name": "Lumia Stream [بیٹا]"
+    },
+    "lyrics-genius": {
+      "description": "زیادہ تر گانوں کے لیے بول شامل کرتا ہے",
+      "menu": {
+        "romanized-lyrics": "رومنائزڈ بول"
+      },
+      "name": "Lyrics Genius",
+      "renderer": {
+        "fetched-lyrics": "Genius کے لیے بول حاصل کیے گئے"
+      }
+    },
+    "music-together": {
+      "description": "دوسروں کے ساتھ پلے لسٹ شیئر کریں۔ جب میزبان گانا چلاتا ہے تو باقی سب بھی وہی گانا سنیں گے",
+      "dialog": {
+        "enter-host": "میزبان ID درج کریں"
+      },
+      "internal": {
+        "save": "محفوظ کریں",
+        "track-source": "ٹریک کا ماخذ",
+        "unknown-user": "نامعلوم صارف"
+      },
+      "menu": {
+        "click-to-copy-id": "میزبان ID کاپی کریں",
+        "close": "Music Together بند کریں",
+        "connected-users": "منسلک صارفین",
+        "diagnostics": {
+          "check": {
+            "nat": "نیٹ ورک کی قسم (NAT)",
+            "signaling": "سگنلنگ سرور",
+            "stun": "براہ راست کنکشن (STUN)",
+            "turn": "ریلے فال بیک (TURN)"
+          },
+          "copy": "خلاصہ کاپی کریں",
+          "detail": {
+            "check-error": "جانچ ناکام: {{reason}}",
+            "public-ip": "عوامی پتہ: {{ip}}",
+            "public-ip-hidden": "عوامی پتہ: دکھانے کے لیے کلک کریں",
+            "signaling-fail": "ناقابل رسائی ({{reason}})",
+            "signaling-ok": "قابل رسائی",
+            "stun-fail": "کوئی عوامی پتہ نہیں (UDP/STUN مسدود)",
+            "stun-ok": "عوامی پتہ مل گیا",
+            "turn-fail": "ریلے ناقابل رسائی",
+            "turn-ok": "ریلے قابل رسائی"
+          },
+          "nat": {
+            "blocked": "UDP یا STUN مسدود",
+            "open": "کھلا / کون (براہ راست کام کرتا ہے)",
+            "symmetric": "سیمیٹرک (ریلے درکار)",
+            "unknown": "غیر متعین"
+          },
+          "run-again": "دوبارہ چلائیں",
+          "running": "جانچیں چل رہی ہیں…",
+          "test": "کنکشن جانچیں",
+          "title": "کنکشن تشخیص",
+          "verdict": {
+            "blocked": "یہ نیٹ ورک ممکنہ طور پر Music Together کو مسدود کرے گا۔ کوئی دوسرا نیٹ ورک یا VPN آزمائیں۔",
+            "error": "تشخیص چلانے میں ناکام۔ تفصیلات کے لیے کنسول دیکھیں۔",
+            "good": "اس نیٹ ورک پر براہ راست کنکشنز کام کریں گے۔",
+            "limited": "اس نیٹ ورک کا مکمل تعین نہیں ہو سکا۔ براہ راست کنکشنز پھر بھی کام کر سکتے ہیں؛ اگر ناکام ہوں تو دوسرا نیٹ ورک آزمائیں۔",
+            "no-signaling": "Music Together سرور تک رسائی نہیں ہو سکتی۔ اپنا فائر وال یا انٹرنیٹ کنکشن چیک کریں۔",
+            "relay": "یہاں براہ راست کنکشنز ناکام ہو سکتے ہیں؛ ایک ریلے استعمال ہوگا (کام کرتا ہے، لیکن تاخیر بڑھاتا ہے)۔"
+          }
+        },
+        "disconnect": "Music Together سے منقطع کریں",
+        "empty-user": "کوئی منسلک صارف نہیں",
+        "host": "Music Together میزبان",
+        "join": "Music Together میں شامل ہوں",
+        "permission": {
+          "all": "مہمانوں کو پلے لسٹ اور پلیئر کنٹرول کرنے کی اجازت دیں",
+          "host-only": "صرف میزبان ہی پلے لسٹ اور پلیئر کنٹرول کر سکتا ہے",
+          "playlist": "مہمانوں کو پلے لسٹ کنٹرول کرنے کی اجازت دیں"
+        },
+        "set-permission": "کنٹرول کی اجازت تبدیل کریں",
+        "status": {
+          "disconnected": "منقطع",
+          "guest": "بطور مہمان منسلک",
+          "host": "بطور میزبان منسلک"
+        }
+      },
+      "name": "میوزک ٹوگیدر [بیٹا]",
+      "toast": {
+        "add-song-failed": "گانا شامل کرنے میں ناکام",
+        "closed": "میوزک ٹوگیدر بند ہو گیا",
+        "diagnostics-copied": "تشخیصی خلاصہ کلپ بورڈ پر کاپی ہو گیا",
+        "diagnostics-copy-failed": "تشخیصی خلاصہ کاپی کرنے میں ناکام",
+        "diagnostics-running": "کنکشن ٹیسٹ مکمل ہونے کا انتظار کریں",
+        "disconnected": "میوزک ٹوگیدر منقطع ہو گیا",
+        "host-failed": "میوزک ٹوگیدر کی میزبانی کرنے میں ناکام",
+        "id-copied": "میزبان آئی ڈی کلپ بورڈ پر کاپی ہو گئی",
+        "id-copy-failed": "میزبان آئی ڈی کلپ بورڈ پر کاپی کرنے میں ناکام",
+        "join-failed": "میوزک ٹوگیدر میں شامل ہونے میں ناکام",
+        "joined": "میوزک ٹوگیدر میں شامل ہو گئے",
+        "permission-changed": "میوزک ٹوگیدر کی اجازت \"{{permission}}\" میں تبدیل ہو گئی",
+        "remove-song-failed": "گانا ہٹانے میں ناکام",
+        "user-connected": "{{name}} میوزک ٹوگیدر میں شامل ہو گیا",
+        "user-disconnected": "{{name}} نے میوزک ٹوگیدر چھوڑ دیا"
+      }
+    },
+    "navigation": {
+      "description": "اگلے/پچھلے نیویگیشن تیر براہ راست انٹرفیس میں شامل، جیسے آپ کے پسندیدہ براؤزر میں",
+      "name": "نیویگیشن",
+      "templates": {
+        "back": {
+          "title": "پچھلے صفحے پر جائیں"
+        },
+        "forward": {
+          "title": "اگلے صفحے پر جائیں"
+        }
+      }
+    },
+    "no-google-login": {
+      "description": "انٹرفیس سے Google لاگ ان بٹن اور لنکس ہٹائیں",
+      "name": "گوگل لاگ ان نہیں"
+    },
+    "notifications": {
+      "description": "جب گانا چلنا شروع ہو تو اطلاع دکھائیں (انٹرایکٹو اطلاعات Windows پر دستیاب ہیں)",
+      "menu": {
+        "interactive": "انٹرایکٹو اطلاعات",
+        "interactive-settings": {
+          "label": "انٹرایکٹو ترتیبات",
+          "submenu": {
+            "hide-button-text": "بٹن کا متن چھپائیں",
+            "hover-controls": "ٹرے پر ہوور کرنے پر منی پلیئر دکھائیں",
+            "refresh-on-play-pause": "پلے/پاز پر ریفریش کریں"
+          }
+        },
+        "priority": "اطلاع کی ترجیح",
+        "toast-style": "ٹوسٹ اسٹائل",
+        "unpause-notification": "ان پاز پر اطلاع دکھائیں"
+      },
+      "name": "اطلاعات"
+    },
+    "performance-improvement": {
+      "description": "تجرباتی اسکرپٹس فعال کر کے کارکردگی بہتر بنائیں",
+      "name": "کارکردگی میں بہتری [بیٹا]"
+    },
+    "playback-recovery": {
+      "description": "پھنسے، رکے ہوئے، یا مردہ پلے بیک حالتوں سے خودکار بحالی کرتا ہے",
+      "menu": {
+        "log-to-console": "بحالی کے واقعات کنسول میں لاگ کریں"
+      },
+      "name": "پلے بیک ریکوری",
+      "settings": {
+        "stall-timeout": "رکنے کا ٹائم آؤٹ",
+        "stall-timeout-description": "بحالی کی کوشش سے پہلے پلے بیک کتنی دیر بغیر پیش رفت رہ سکتا ہے",
+        "max-retries": "زیادہ سے زیادہ دوبارہ کوششیں",
+        "max-retries-description": "اگلے ٹریک پر جانے سے پہلے بحالی کی کوششوں کی تعداد"
+      }
+    },
+    "picture-in-picture": {
+      "description": "ایپ کو پکچر-ان-پکچر موڈ میں تبدیل کرنے کی اجازت دیتا ہے",
+      "menu": {
+        "always-on-top": "ہمیشہ اوپر",
+        "hotkey": {
+          "label": "ہاٹ کی",
+          "prompt": {
+            "keybind-options": {
+              "hotkey": "ہاٹ کی"
+            },
+            "label": "پکچر-ان-پکچر ٹوگل کرنے کے لیے ہاٹ کی منتخب کریں",
+            "title": "پکچر-ان-پکچر ہاٹ کی"
+          }
+        },
+        "save-window-position": "ونڈو کی پوزیشن محفوظ کریں",
+        "save-window-size": "ونڈو کا سائز محفوظ کریں",
+        "use-native-pip": "براؤزر کا مقامی PiP استعمال کریں",
+        "prompt": {
+          "title": "پکچر-ان-پکچر",
+          "label": "پکچر-ان-پکچر ہاٹ کی ترتیب دیں",
+          "keybind-options": {
+            "hotkey": "پکچر-ان-پکچر ٹوگل کرنے کی ہاٹ کی"
+          }
+        }
+      },
+      "name": "پکچر-ان-پکچر",
+      "templates": {
+        "button": "پکچر-ان-پکچر"
+      }
+    },
+    "playback-speed": {
+      "description": "تیز سنیں، آہستہ سنیں! گانے کی رفتار کنٹرول کرنے والا سلائیڈر شامل کرتا ہے",
+      "menu": {
+        "no-preserves-pitch": "پچ محفوظ رکھنا غیر فعال کریں"
+      },
+      "name": "پلے بیک رفتار",
+      "templates": {
+        "button": "رفتار"
+      }
+    },
+    "playlist-search": {
+      "description": "سائیڈبار اور پلے لسٹ میں شامل کریں ڈائیلاگ میں پلے لسٹس فلٹر کرنے کے لیے سرچ ان پٹ شامل کرتا ہے",
+      "name": "پلے لسٹ تلاش",
+      "templates": {
+        "search-placeholder": "پلے لسٹس تلاش کریں",
+        "no-results": "کوئی پلے لسٹ نہیں ملی"
+      }
+    },
+    "precise-volume": {
+      "description": "ماؤس وہیل/ہاٹ کیز کے ذریعے والیوم کو درست طریقے سے کنٹرول کریں، حسب ضرورت HUD اور قابل تخصیص والیوم اسٹیپس کے ساتھ",
+      "menu": {
+        "arrows-shortcuts": "مقامی ایرو کیز کنٹرولز",
+        "custom-volume-steps": "حسب ضرورت والیوم اسٹیپس مقرر کریں",
+        "global-shortcuts": "عالمی ہاٹ کیز"
+      },
+      "name": "درست والیوم",
+      "prompt": {
+        "global-shortcuts": {
+          "keybind-options": {
+            "decrease": "والیوم کم کریں",
+            "increase": "والیوم بڑھائیں"
+          },
+          "label": "عالمی والیوم کی بائنڈز منتخب کریں:",
+          "title": "عالمی والیوم کی بائنڈز"
+        },
+        "volume-steps": {
+          "label": "والیوم بڑھانے/کم کرنے کے اسٹیپس منتخب کریں",
+          "title": "والیوم اسٹیپس"
+        }
+      },
+      "settings": {
+        "steps": "والیوم اسٹیپ",
+        "arrows-shortcut": "ایرو کی شارٹ کٹس",
+        "shortcut-up": "عالمی شارٹ کٹ: والیوم اوپر",
+        "shortcut-down": "عالمی شارٹ کٹ: والیوم نیچے"
+      }
+    },
+    "prefer-song": {
+      "description": "جب البم ٹریک ویڈیو ہو تو میوزک ویڈیو کے بجائے گانا چلائیں",
+      "name": "گانے کو ترجیح دیں"
+    },
+    "quality-changer": {
+      "backend": {
+        "dialog": {
+          "quality-changer": {
+            "detail": "موجودہ معیار: {{quality}}",
+            "message": "ویڈیو معیار منتخب کریں:",
+            "title": "ویڈیو معیار منتخب کریں"
+          }
+        }
+      },
+      "description": "ویڈیو اوورلے پر بٹن کے ذریعے ویڈیو معیار تبدیل کرنے کی اجازت دیتا ہے",
+      "name": "ویڈیو معیار تبدیل کنندہ",
+      "renderer": {
+        "quality-settings-button": {
+          "label": "پلیئر معیار تبدیل کنندہ کھولیں"
+        }
+      }
+    },
+    "scrobbler": {
+      "description": "اسکروبلنگ سپورٹ شامل کریں (مثلاً last.fm، Listenbrainz)",
+      "dialog": {
+        "lastfm": {
+          "auth-failed": {
+            "message": "Last.fm کے ساتھ تصدیق ناکام ہو گئی\nاگلی ری اسٹارٹ تک پاپ اپ چھپائیں.",
+            "title": "تصدیق ناکام"
+          }
+        },
+        "invalid-regex": {
+          "title": "غلط ریگولر ایکسپریشن",
+          "message": "لائن {{line}} پر ریگولر ایکسپریشن غلط ہے: {{error}}"
+        }
+      },
+      "menu": {
+        "lastfm": {
+          "api-settings": "Last.fm API ترتیبات"
+        },
+        "listenbrainz": {
+          "token": "ListenBrainz صارف ٹوکن درج کریں",
+          "api-root": "ListenBrainz API یو آر ایل"
+        },
+        "scrobble-alternative-title": "متبادل عنوانات استعمال کریں",
+        "scrobble-alternative-artist": "متبادل فنکار استعمال کریں",
+        "scrobble-other-media": "دیگر میڈیا اسکروبل کریں",
+        "regex-filters": "ریگولر ایکسپریشن فلٹرز",
+        "use-musicbrainz": "میٹاڈیٹا درست کرنے کے لیے MusicBrainz استعمال کریں",
+        "musicbrainz-email": "MusicBrainz رابطہ ای میل"
+      },
+      "name": "اسکروبلر",
+      "prompt": {
+        "lastfm": {
+          "api-key": "Last.fm API کلید",
+          "api-secret": "Last.fm API خفیہ کلید"
+        },
+        "listenbrainz": {
+          "token": {
+            "label": "اپنا ListenBrainz صارف ٹوکن درج کریں:",
+            "title": "ListenBrainz ٹوکن"
+          },
+          "api-root": {
+            "label": "بنیادی API یو آر ایل درج کریں:",
+            "title": "ListenBrainz API یو آر ایل"
+          }
+        },
+        "regex-filter-multi": {
+          "label": "فی سطر ایک ریگولر ایکسپریشن درج کریں:"
+        },
+        "musicbrainz-email": {
+          "title": "MusicBrainz رابطہ ای میل",
+          "label": "MusicBrainz API کے لیے ای میل درج کریں:"
+        }
+      },
+      "settings": {
+        "lastfm-api-root": "Last.fm API یو آر ایل",
+        "musicbrainz-email-description": "MusicBrainz API کے لیے رابطہ معلومات کے طور پر استعمال ہوتا ہے؛ MusicBrainz میٹاڈیٹا درستی کے لیے ضروری ہے"
+      }
+    },
+    "search-commands": {
+      "commands": {
+        "play": "YouTube لنک یا آئی ڈی سے ویڈیو چلائیں",
+        "settings": "ترتیبات کھولیں"
+      },
+      "description": "کمانڈز چلانے کے لیے سرچ باکس میں / ٹائپ کریں، ان کے آرگیومنٹس کے لیے آٹو کمپلیٹ کے ساتھ",
+      "name": "سرچ کمانڈز",
+      "settings": {
+        "open-keybind": "کھولنے کا شارٹ کٹ",
+        "open-keybind-description": "Electron طرز کا ایکسلریٹر، مثلاً CmdOrCtrl+/ یا Alt+Space",
+        "open-shortcut": "کہیں سے بھی سرچ باکس کھولیں",
+        "open-shortcut-description": "سرچ باکس کو پہلے ہی کمانڈ موڈ میں کھولتا ہے، Spotlight کی طرح۔ دوبارہ دبانے سے بند ہو جاتا ہے۔"
+      }
+    },
+    "seek-shortcuts": {
+      "description": "بائیں/دائیں تیر کلیدوں سے 5 سیکنڈ پیچھے/آگے جائیں",
+      "name": "سیک شارٹ کٹس"
+    },
+    "sfw-music": {
+      "description": "YouTube Music کی طرف سے Explicit کے طور پر نشان زد گانے خودکار طور پر چھوڑ دیتا ہے۔ اگر explicit قطار دہرائی جائے یا اگلا گانا دستیاب نہ ہو تو روک دیتا ہے۔",
+      "name": "SFW میوزک"
+    },
+    "shortcuts": {
+      "description": "پلے بیک (چلائیں/روکیں/اگلا/پچھلا) کے لیے گلوبل ہاٹ کیز سیٹ کرنے، میڈیا کیز کو اوور رائیڈ کر کے میڈیا OSD بند کرنے، Ctrl/CMD + F سے تلاش کو آن کرنے، میڈیا کیز کے لیے Linux MPRIS سپورٹ آن کرنے، اور ماہر صارفین کے لیے حسب ضرورت ہاٹ کیز کی اجازت دیتا ہے",
+      "menu": {
+        "override-media-keys": "میڈیا کیز اوور رائیڈ کریں",
+        "set-keybinds": "گلوبل گانا کنٹرولز سیٹ کریں"
+      },
+      "name": "شارٹ کٹس (& MPRIS)",
+      "prompt": {
+        "keybind": {
+          "keybind-options": {
+            "next": "اگلا",
+            "play-pause": "چلائیں / روکیں",
+            "previous": "پچھلا"
+          },
+          "label": "گانا کنٹرول کے لیے گلوبل کی بائنڈز منتخب کریں:",
+          "title": "گلوبل کی بائنڈز"
+        }
+      },
+      "settings": {
+        "global-keybinds": "گلوبل کی بائنڈز (پوری ایپ میں کام کرتی ہیں)",
+        "local-keybinds": "لوکل کی بائنڈز (صرف جب ونڈو فوکس میں ہو)"
+      }
+    },
+    "skip-silences": {
+      "description": "گانوں میں خاموش حصوں کو خودکار طور پر چھوڑ دیں",
+      "name": "خاموشیاں چھوڑیں",
+      "settings": {
+        "only-skip-beginning": "ٹریک کے صرف شروع میں خاموشی چھوڑیں"
+      }
+    },
+    "sponsorblock": {
+      "description": "انٹرو/آؤٹرو جیسے غیر موسیقی حصوں یا میوزک ویڈیوز کے ان حصوں کو خودکار طور پر چھوڑتا ہے جہاں گانا نہیں چل رہا",
+      "name": "SponsorBlock",
+      "settings": {
+        "categories": "چھوڑنے کے لیے سیگمنٹس",
+        "category": {
+          "sponsor": "اسپانسر",
+          "intro": "انٹرو",
+          "outro": "آؤٹرو",
+          "interaction": "تعامل کی یاد دہانی",
+          "selfpromo": "خود کی تشہیر",
+          "music_offtopic": "غیر موسیقی حصہ"
+        },
+        "api-url": "API یو آر ایل"
+      }
+    },
+    "synced-lyrics": {
+      "description": "LRClib جیسے فراہم کنندگان کا استعمال کرتے ہوئے گانوں کے لیے ہم آہنگ بولیاں فراہم کرتا ہے۔",
+      "errors": {
+        "fetch": "⚠️\tبولیاں حاصل کرتے وقت ایک خرابی پیش آئی۔\n\tبراہ کرم بعد میں دوبارہ کوشش کریں۔",
+        "not-found": "⚠️ اس گانے کے لیے کوئی بولیاں نہیں ملیں۔"
+      },
+      "menu": {
+        "default-text-string": {
+          "label": "بولیوں کے درمیان ڈیفالٹ حرف",
+          "tooltip": "بولیوں کے درمیان وقفے کے لیے استعمال ہونے والا ڈیفالٹ حرف منتخب کریں"
+        },
+        "line-effect": {
+          "label": "لائن ایفیکٹ",
+          "submenu": {
+            "fancy": {
+              "label": "فینسی",
+              "tooltip": "موجودہ لائن پر بڑے، ایپ جیسے ایفیکٹس استعمال کریں"
+            },
+            "focus": {
+              "label": "فوکس",
+              "tooltip": "صرف موجودہ لائن کو سفید کریں"
+            },
+            "offset": {
+              "label": "آفسیٹ",
+              "tooltip": "موجودہ لائن کو دائیں طرف آفسیٹ کریں"
+            },
+            "scale": {
+              "label": "اسکیل",
+              "tooltip": "موجودہ لائن کو اسکیل کریں"
+            }
+          },
+          "tooltip": "موجودہ لائن پر لاگو کرنے کے لیے ایفیکٹ منتخب کریں"
+        },
+        "lyrics-font-size": {
+          "label": "بولیوں کا فونٹ سائز",
+          "submenu": {
+            "small": {
+              "label": "چھوٹا",
+              "tooltip": "زیادہ کمپیکٹ بولیوں کا سائز استعمال کریں"
+            },
+            "medium": {
+              "label": "درمیانہ",
+              "tooltip": "متوازن بولیوں کا سائز استعمال کریں"
+            },
+            "large": {
+              "label": "بڑا",
+              "tooltip": "اصل بڑا بولیوں کا سائز استعمال کریں"
+            }
+          },
+          "tooltip": "منتخب کریں کہ بولیوں کا متن کتنا بڑا ہونا چاہیے"
+        },
+        "precise-timing": {
+          "label": "بولیوں کو مکمل طور پر ہم آہنگ کریں",
+          "tooltip": "اگلی لائن کے ڈسپلے کا ملی سیکنڈ تک حساب لگائیں (کارکردگی پر معمولی اثر پڑ سکتا ہے)"
+        },
+        "romanization": {
+          "label": "بولیوں کو رومنائز کریں",
+          "tooltip": "اگر بولیاں کسی مختلف زبان میں ہیں تو لاطینی ورژن دکھانے کی کوشش کریں۔"
+        },
+        "show-lyrics-even-if-inexact": {
+          "label": "بولیاں غیر دقیق ہوں تب بھی دکھائیں",
+          "tooltip": "اگر گانا نہ ملے تو پلگ ان مختلف سرچ کوئری کے ساتھ دوبارہ کوشش کرتا ہے۔\nدوسری کوشش کا نتیجہ دقیق نہ ہو سکتا ہے۔"
+        },
+        "show-time-codes": {
+          "label": "ٹائم کوڈز دکھائیں",
+          "tooltip": "بولیوں کے ساتھ ٹائم کوڈز دکھائیں"
+        },
+        "use-ytm-lyrics-without-proxy": {
+          "label": "بغیر پراکسی YTM بولیاں استعمال کریں",
+          "tooltip": "YTM براؤز پراکسی کو چھوڑیں اور ایپ کے تصدیق شدہ سیشن کا استعمال کرتے ہوئے YouTube Music کو براہ راست کال کریں۔ مفید ہے اگر آپ کو اپنے نیٹ ورک/علاقے پر بھروسہ ہو کہ براہ راست براؤز کالز کی اجازت دے گا۔"
+        },
+        "convert-chinese-character": {
+          "label": "چینی حرف تبدیل کریں",
+          "submenu": {
+            "disabled": {
+              "label": "غیر فعال",
+              "tooltip": "چینی حرف کی تبدیلی غیر فعال کریں"
+            },
+            "simplified-to-traditional": {
+              "label": "سادہ سے روایتی",
+              "tooltip": "سادہ چینی کو روایتی چینی میں تبدیل کریں"
+            },
+            "traditional-to-simplified": {
+              "label": "روایتی سے سادہ",
+              "tooltip": "روایتی چینی کو سادہ چینی میں تبدیل کریں"
+            }
+          },
+          "tooltip": "چینی حرف کو روایتی یا سادہ میں تبدیل کریں"
+        },
+        "translation": {
+          "label": "بولیوں کا ترجمہ",
+          "tooltip": "بولیوں کا ترجمہ کریں اور ترجمہ شدہ نتیجہ سطر بہ سطر ڈسپلے کے لیے دکھائیں۔",
+          "enabled": {
+            "label": "ترجمہ فعال کریں",
+            "tooltip": "ہر اصل بولی کی سطر کے نیچے ترجمہ شدہ سطر دکھائیں۔"
+          },
+          "provider": {
+            "label": "فراہم کنندہ",
+            "tooltip": "ترجمے کے لیے کون سی سروس استعمال کی جائے۔"
+          },
+          "target-language": {
+            "label": "ہدف زبان",
+            "tooltip": "وہ زبان جس میں بول ترجمہ کیے جائیں۔"
+          },
+          "configure": {
+            "label": "API کلید اور ماڈل ترتیب دیں…",
+            "tooltip": "فراہم کنندہ کے مخصوص ترجمہ اختیارات مقرر کریں۔"
+          },
+          "clear-cache": {
+            "label": "ترجمہ کیش صاف کریں",
+            "tooltip": "ڈسک پر محفوظ تمام کیش شدہ تراجم حذف کریں۔"
+          },
+          "providers": {
+            "shared": {
+              "api-key": "API کلید",
+              "model": "ماڈل"
+            },
+            "openai-compatible": {
+              "name": "OpenAI مطابق",
+              "prompt-title": "OpenAI-مطابق ترتیبات",
+              "prompt-label": "Ollama سمیت OpenAI-مطابق سرورز استعمال کریں (بنیادی URL http://127.0.0.1:11434/v1، API موڈ auto یا chat-completions)۔",
+              "base-url": "بنیادی URL",
+              "api-mode": "API موڈ (responses / auto / chat-completions)"
+            },
+            "anthropic": {
+              "name": "Anthropic Claude",
+              "prompt-title": "Anthropic ترتیبات",
+              "prompt-label": "نیٹو Anthropic Messages API استعمال کرتا ہے۔"
+            },
+            "gemini": {
+              "name": "Google Gemini",
+              "prompt-title": "Gemini ترتیبات",
+              "prompt-label": "Google کی Generative Language API (generateContent) استعمال کرتا ہے۔"
+            },
+            "local-cli": {
+              "name": "مقامی CLI",
+              "prompt-title": "مقامی CLI ترتیبات",
+              "prompt-label": "مقامی طور پر لاگ اِن Claude Code، Codex یا Gemini CLI استعمال کریں۔ کمانڈ اور ماڈل خودکار ہیں؛ CLI اپنا لاگ اِن شدہ طے شدہ استعمال کرتا ہے۔",
+              "engine": "مقامی CLI",
+              "engine-claude": "Claude Code",
+              "engine-codex": "Codex",
+              "engine-gemini": "Gemini CLI",
+              "command": "کمانڈ",
+              "timeout": "ٹائم آؤٹ سیکنڈ (15-600)"
+            },
+            "google-translate": {
+              "name": "Google Translate",
+              "prompt-title": "Google Translate ترتیبات",
+              "prompt-label": "غیر سرکاری مفت Google Translate اینڈ پوائنٹ استعمال کرتا ہے۔ API کلید درکار نہیں، لیکن Google اسے ریٹ لمٹ کر سکتا ہے۔",
+              "host": "ہوسٹ"
+            }
+          }
+        },
+        "show-custom-search-button": {
+          "label": "حسب ضرورت تلاش کا بٹن دکھائیں",
+          "tooltip": "بول منتخب کرنے والے میں ایک تلاش کا بٹن دکھائیں جو آپ کو موجودہ گیت کے لیے تلاش کے استفسار اور فنکار کو تبدیل کرنے دیتا ہے۔"
+        },
+        "provider-priority": {
+          "tooltip": "فراہم کنندگان اسی ترتیب سے آزمائے جاتے ہیں: موجودہ گیت کے بول والا پہلا فراہم کنندہ جیت جاتا ہے۔ ترتیب بدلنے کے لیے تیر کے نشانات استعمال کریں۔"
+        },
+        "prefer-synced": {
+          "tooltip": "فہرست میں وقت کے ساتھ ہم آہنگ بول والا پہلا فراہم کنندہ چنیں، بجائے کسی بھی بول والے پہلے فراہم کنندہ کے۔"
+        },
+        "previous-provider": {
+          "tooltip": "پچھلا فراہم کنندہ"
+        },
+        "next-provider": {
+          "tooltip": "اگلا فراہم کنندہ"
+        },
+        "custom-search-button": {
+          "tooltip": "حسب ضرورت تلاش کا استفسار"
+        },
+        "star-provider": {
+          "tooltip": "اس گیت کے لیے ہمیشہ یہی فراہم کنندہ استعمال کریں، چاہے ترجیحی ترتیب کچھ بھی کہے۔ اگر اس کے پاس گیت کے بول نہ ہوں تو معمول کی ترتیب پر واپس چلا جاتا ہے۔"
+        },
+        "unstar-provider": {
+          "tooltip": "اس فراہم کنندہ کو اس گیت سے پن کرنا بند کریں۔"
+        },
+        "use-priority-list": {
+          "tooltip": "نیچے دی گئی ترتیب میں فراہم کنندگان آزمائیں۔ اسے بند کریں تو بول فیصلہ کریں: جس فراہم کنندہ کے پاس گیت کے بہترین بول ہوں وہ جیت جاتا ہے۔"
+        }
+      },
+      "name": "ہم آہنگ بول",
+      "refetch-btn": {
+        "fetching": "حاصل کیا جا رہا ہے...",
+        "normal": "بول دوبارہ حاصل کریں"
+      },
+      "warnings": {
+        "duration-mismatch": "⚠️ - دورانیے میں فرق کی وجہ سے بول ہم آہنگ نہیں ہو سکتے۔",
+        "inexact": "⚠️ - اس گیت کے بول شاید درست نہ ہوں",
+        "instrumental": "⚠️ - یہ ایک انسٹرومینٹل گیت ہے"
+      },
+      "settings": {
+        "precise-timing": "درست وقت بندی",
+        "show-inexact": "غیر دقیق بول دکھائیں",
+        "show-time-codes": "وقت کے کوڈ دکھائیں",
+        "romanization": "بول رومنائز کریں",
+        "line-effect": "سطر کا اثر",
+        "effect": {
+          "fancy": "فینسی",
+          "scale": "اسکیل",
+          "offset": "آفسیٹ",
+          "focus": "فوکس"
+        },
+        "prefer-synced": "ہم آہنگ بول کو ترجیح دیں",
+        "provider-priority": "فراہم کنندہ ترجیح",
+        "use-priority-list": "ترجیحی فہرست استعمال کریں"
+      }
+    },
+    "taskbar-mediacontrol": {
+      "description": "Windows ٹاسک بار سے پلے بیک کنٹرول کریں",
+      "name": "ٹاسک بار میڈیا کنٹرول"
+    },
+    "toast-autoclose": {
+      "description": "YouTube Music ٹوسٹس کو تین سیکنڈ بعد خودکار بند کریں",
+      "name": "ٹوسٹ آٹو کلوز"
+    },
+    "touchbar": {
+      "description": "macOS صارفین کے لیے TouchBar ویجٹ شامل کرتا ہے",
+      "name": "TouchBar"
+    },
+    "transparent-player": {
+      "description": "ایپ کی ونڈو کو شفاف بناتا ہے",
+      "name": "شفاف پلیئر",
+      "menu": {
+        "opacity": {
+          "label": "دھندلاپن",
+          "submenu": {
+            "percent": "{{opacity}}%"
+          }
+        },
+        "type": {
+          "label": "قسم",
+          "submenu": {
+            "acrylic": "ایکریلک",
+            "content": "مواد",
+            "fullscreen-ui": "فل اسکرین UI",
+            "mica": "مائیکا",
+            "tabbed": "ٹیب شدہ",
+            "under-page": "صفحے کے نیچے",
+            "under-window": "ونڈو کے نیچے",
+            "window": "ونڈو",
+            "none": "کوئی نہیں"
+          }
+        }
+      },
+      "settings": {
+        "type-description": "ونڈو کی شفافیت کے لیے استعمال ہونے والا پس منظر مواد"
+      }
+    },
+    "tuna-obs": {
+      "description": "OBS کے پلگ ان Tuna کے ساتھ انٹیگریشن",
+      "name": "Tuna OBS"
+    },
+    "unobtrusive-player": {
+      "description": "گیت چلانے پر پلیئر کو ابھرنے سے روکتا ہے",
+      "name": "غیر مزاحم پلیئر"
+    },
+    "video-toggle": {
+      "description": "ویڈیو/گیت موڈ کے درمیان تبدیل کرنے کے لیے بٹن شامل کرتا ہے۔ اختیاری طور پر پوری ویڈیو ٹیب بھی ہٹا سکتا ہے",
+      "menu": {
+        "align": {
+          "label": "سیدھ",
+          "submenu": {
+            "left": "بائیں",
+            "middle": "درمیان",
+            "right": "دائیں"
+          }
+        },
+        "force-hide": "ویڈیو ٹیب زبردستی ہٹائیں",
+        "mode": {
+          "label": "موڈ",
+          "submenu": {
+            "custom": "حسب ضرورت ٹوگل",
+            "disabled": "غیر فعال",
+            "native": "نیٹو ٹوگل"
+          }
+        }
+      },
+      "name": "ویڈیو ٹوگل",
+      "templates": {
+        "button-song": "گیت",
+        "button-video": "ویڈیو"
+      }
+    },
+    "visualizer": {
+      "description": "پلیئر میں ویژولائزر شامل کرتا ہے",
+      "menu": {
+        "visualizer-type": "ویژولائزر کی قسم"
+      },
+      "name": "ویژولائزر",
+      "settings": {
+        "preset": "پریسیٹ",
+        "blend-time": "بلینڈ وقت",
+        "effect": "اثر",
+        "accuracy": "درستگی",
+        "max-height": "زیادہ سے زیادہ اونچائی",
+        "max-size": "زیادہ سے زیادہ سائز",
+        "line-width": "لائن کی چوڑائی",
+        "color": "رنگ",
+        "shadow-blur": "سائے کی دھندلاہٹ",
+        "shadow-color": "سائے کا رنگ",
+        "fade-side": "کناروں کو دھندلا کریں",
+        "prettify": "خوبصورت بنائیں",
+        "prettify-description": "بارز کو کناروں کی طرف پتلا کریں",
+        "dottify": "نقطے بنائیں",
+        "dottify-description": "مسلسل لکیر کے بجائے نقطے بنائیں",
+        "horizontal-align": "افقی سیدھ",
+        "vertical-align": "عمودی سیدھ"
+      }
+    },
+    "statusbar-lyrics": {
+      "settings": {
+        "include-pronunciation": "تلفظ شامل کریں"
+      }
+    },
+    "dismiss-multidevice-popup": {
+      "name": "ملٹی ڈیوائس پاپ اپ بند کریں",
+      "description": "جب کسی دوسرے ڈیوائس پر پلے بیک شروع ہو تو ظاہر ہونے والا \"اس ڈیوائس پر سنیں\" پاپ اپ خودکار طور پر بند کر دیتا ہے۔"
+    },
+    "memory-saver": {
+      "description": "ونڈو چھپے ہونے پر رینڈرر کے ریسورس کیشے صاف کرتا ہے جب وہ حد سے بڑھ جائیں",
+      "name": "میموری سیور",
+      "settings": {
+        "threshold": "کیشے کی حد",
+        "threshold-description": "ونڈو چھپے ہونے پر جب ان کی لائیو میموری اس حد سے بڑھ جائے تو کیشے صاف کریں"
+      }
+    }
+  },
+  "settings-ui": {
+    "name": "سیٹنگز UI",
+    "description": "ایپ کے اندر سیٹنگز پینل شامل کرتا ہے، جو سائیڈبار سے کھلتا ہے",
+    "title": "سیٹنگز",
+    "settings": {
+      "show-button": "سائیڈبار میں سیٹنگز کا اندراج دکھائیں",
+      "show-button-description": "سائیڈبار صاف رکھنے کے لیے اسے بند کریں؛ سیٹنگز اب بھی نیویگیشن → اوپن سیٹنگز کے تحت ہیں۔",
+      "separate-window": "سیٹنگز ہمیشہ الگ ونڈو میں کھولیں",
+      "separate-window-description": "ایپ کے اندر والے پینل کے بجائے، ٹرے اندراج کی طرح الگ سیٹنگز ونڈو کھولتا ہے۔"
+    },
+    "search-placeholder": "سیٹنگز تلاش کریں",
+    "search-results": "تلاش کے نتائج",
+    "search-matching": "“{{query}}” سے مماثل",
+    "no-match": "کوئی سیٹنگ “{{query}}” سے مماثل نہیں ہے۔",
+    "close": "بند کریں",
+    "edit-config": "config.json میں ترمیم کریں",
+    "restart-banner": "کچھ تبدیلیوں کے مؤثر ہونے کے لیے دوبارہ شروع کرنا ضروری ہے۔",
+    "restart-now": "ابھی دوبارہ شروع کریں",
+    "later": "بعد میں",
+    "restart-pill": "دوبارہ شروع",
+    "restart-pill-hint": "دوبارہ شروع کرنا ضروری ہے",
+    "refresh-options": "اختیارات تازہ کریں",
+    "move-up": "اوپر لے جائیں",
+    "move-down": "نیچے لے جائیں",
+    "about": {
+      "tagline": "YouTube Music کے لیے خصوصیات سے بھرپور ڈیسک ٹاپ ایپ",
+      "versions": "ورژنز",
+      "version-app": "ایپ",
+      "version-build": "بلڈ",
+      "version-electron": "Electron",
+      "version-chromium": "Chromium",
+      "version-node": "Node.js",
+      "version-platform": "پلیٹ فارم",
+      "version-innertube": "Innertube",
+      "links": "لنکس",
+      "link-repo": "ریپوزٹری",
+      "link-issue": "مسئلہ رپورٹ کریں",
+      "link-releases": "ریلیزز",
+      "link-license": "لائسنس",
+      "actions": "اقدامات",
+      "check-updates": "اپ ڈیٹس چیک کریں",
+      "copy-debug": "ڈیبگ معلومات کاپی کریں",
+      "copied": "کاپی ہو گیا!"
+    },
+    "sections": {
+      "general": {
+        "label": "عمومی"
+      },
+      "appearance": {
+        "label": "ظاہری شکل"
+      },
+      "window": {
+        "label": "ونڈو اور ٹرے"
+      },
+      "advanced": {
+        "label": "ایڈوانسڈ"
+      },
+      "plugins": {
+        "label": "پلگ انز"
+      },
+      "flags": {
+        "label": "فلیگز"
+      },
+      "about": {
+        "label": "کے بارے میں"
+      }
+    },
+    "groups": {
+      "updates-session": "اپ ڈیٹس اور سیشن",
+      "startup-language": "اسٹارٹ اپ اور زبان",
+      "interface": "انٹرفیس",
+      "context-menu": "کانٹیکسٹ مینو",
+      "window-title": "ونڈو",
+      "window": "ونڈو",
+      "system": "سسٹم",
+      "network": "نیٹ ورک",
+      "performance": "کارکردگی",
+      "configuration": "کنفیگریشن",
+      "updates": "اپ ڈیٹس"
+    },
+    "stepper-decrement": "کم کریں",
+    "stepper-increment": "زیادہ کریں",
+    "flags": {
+      "warning": "فیچر فلیگز YouTube Music کے اپنے اندرونی سوئچز ہیں۔ انہیں تبدیل کرنے سے پلے بیک، لے آؤٹ یا اکاؤنٹ کی خصوصیات خراب ہو سکتی ہیں، اور ان کی سپورٹ شامل نہیں ہے۔ اوور رائیڈز صرف انہی فلیگز کے لیے محفوظ رکھی جاتی ہیں جنہیں آپ تبدیل کرتے ہیں، اور انہیں Undo سے ہٹایا جا سکتا ہے۔",
+      "search-placeholder": "فلیگز تلاش کریں",
+      "overridden": "اوور رائیڈ شدہ",
+      "undo": "انڈو",
+      "undo-hint": "یہ اوور رائیڈ حذف کریں",
+      "empty": "یہ صفحہ کوئی فیچر فلیگ ظاہر نہیں کرتا۔",
+      "no-match": "کوئی فلیگ “{{query}}” سے مماثل نہیں ہے۔",
+      "add-name": "نئے فلیگ کا نام",
+      "add-value": "ویلیو",
+      "add-value-hint": "جب JSON پارس ہو جائے تو JSON (true, 42, \"text\")، ورنہ متن بذات خود",
+      "add": "شامل کریں"
+    },
+    "fields": {
+      "hide-dislike-button": "ناپسند بٹن چھپائیں",
+      "hide-video-captions": "ویڈیو کیپشنز چھپائیں",
+      "context-menu": {
+        "hide-entry": "{{entry}} چھپائیں",
+        "entries": {
+          "add-to-queue": "قطار میں شامل کریں",
+          "delete-playlist": "پلے لسٹ حذف کریں",
+          "dismiss-queue": "قطار بند کریں",
+          "download": "ڈاؤن لوڈ",
+          "go-to-album": "البم پر جائیں",
+          "go-to-artist": "فنکار پر جائیں",
+          "go-to-playlist": "پلے لسٹ پر جائیں",
+          "like": "پسند کریں",
+          "not-interested": "دلچسپی نہیں",
+          "pin-to-listen-again": "دوبارہ سننے کے لیے پن کریں",
+          "play-next": "اگلا چلائیں",
+          "remove-from-playlist": "پلے لسٹ سے ہٹائیں",
+          "remove-from-queue": "قطار سے ہٹائیں",
+          "report": "رپورٹ کریں",
+          "save-to-library": "لائبریری میں محفوظ کریں",
+          "save-to-playlist": "پلے لسٹ میں محفوظ کریں",
+          "share": "شیئر کریں",
+          "shuffle-play": "شفل چلائیں",
+          "start-mix": "مکس شروع کریں",
+          "stats-for-nerds": "نرڈز کے لیے اعداد و شمار"
+        }
+      },
+      "podcast-artist": "پوڈ کاسٹ کے شرکاء کو بطور فنکار استعمال کریں",
+      "podcast-artist-desc": "بند: پوڈ کاسٹ ایپی سوڈ کا فنکار وہ چینل ہوتا ہے جس نے اسے شائع کیا.",
+      "theme-preset": "پری سیٹ",
+      "theme-variable-name": "متغیر",
+      "theme-variable-value": "قدر",
+      "theme-variable-add": "متغیر شامل کریں",
+      "performance-mode": "کارکردگی موڈ",
+      "performance-mode-desc": "کچھ بصری وفاداری کی قربانی دے کر کم خرچ رینڈرنگ حاصل کریں۔",
+      "in-process-gpu": "GPU پروسیس کو ایپ پروسیس میں ضم کریں",
+      "in-process-gpu-desc": "تجرباتی: ایک پروسیس بچاتا ہے، لیکن GPU میموری کو مرکزی پروسیس میں منتقل کرتا ہے اور سافٹ ویئر رینڈرنگ پر واپس جا سکتا ہے۔"
     }
   }
 }

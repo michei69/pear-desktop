@@ -65,7 +65,8 @@
         },
         "detail": "对产生的不便我们表示抱歉！请选择接下来要做什么：",
         "message": "应用程序无响应",
-        "title": "窗口无响应"
+        "title": "窗口无响应",
+        "details": "原因：{{error}}"
       },
       "update-available": {
         "buttons": {
@@ -76,6 +77,27 @@
         "detail": "新版本现已可用，可从 {{downloadLink}} 下载",
         "message": "新版本可用",
         "title": "更新可用"
+      },
+      "restart-summary": {
+        "detail": "重启应用以应用：{{changes}}",
+        "message": "部分更改需要重启",
+        "title": "需要重启"
+      },
+      "update-available-dev": {
+        "buttons": {
+          "ok": "确定",
+          "view": "查看提交"
+        },
+        "title": "有可用更新",
+        "message": "此开发版构建落后于 master 分支",
+        "detail": "此构建所运行的提交（{{commit}}）比 master 上的最新提交更旧。可在 {{commitsLink}} 查看更新的提交"
+      },
+      "downgrade-warning": {
+        "title": "切换回稳定版？",
+        "message": "此测试版构建比最新的稳定版更新。",
+        "detail": "切换回去可能会重置部分设置：从较新版本切换到较旧版本不会执行迁移，可能导致较新的设置无法读取。",
+        "confirm": "切换到稳定版",
+        "cancel": "取消"
       }
     },
     "menu": {
@@ -87,7 +109,8 @@
           "go-back": "后退",
           "go-forward": "前进",
           "quit": "退出",
-          "restart": "重启应用"
+          "restart": "重启应用",
+          "open-settings": "打开设置"
         }
       },
       "options": {
@@ -109,7 +132,8 @@
                   "title": "设置代理服务器"
                 }
               },
-              "toggle-dev-tools": "切换开发人员工具"
+              "toggle-dev-tools": "切换开发人员工具",
+              "force-smtc": "强制使用外部 SMTC"
             }
           },
           "always-on-top": "保持置顶",
@@ -128,7 +152,20 @@
             },
             "label": "语言",
             "submenu": {
-              "to-help-translate": "想要协助翻译？点击此处"
+              "to-help-translate": "想要协助翻译？点击此处",
+              "sync": {
+                "label": "同步语言",
+                "submenu": {
+                  "from-youtube": "从 YouTube",
+                  "to-youtube": "到 YouTube"
+                },
+                "failure": {
+                  "dialog": {
+                    "title": "语言未更改",
+                    "message": "应用中尚不存在该语言或区域设置。"
+                  }
+                }
+              }
             }
           },
           "resume-on-start": "应用启动时继续上次播放的歌曲",
@@ -144,7 +181,9 @@
               "disabled": "已禁用",
               "enabled-and-hide-app": "启用并隐藏应用",
               "enabled-and-show-app": "启用并显示应用",
-              "play-pause-on-click": "点击时播放/暂停"
+              "play-pause-on-click": "点击时播放/暂停",
+              "move-to-current-desktop": "显示时移动到当前虚拟桌面",
+              "force-white-icons": "强制使用白色图标"
             }
           },
           "visual-tweaks": {
@@ -177,9 +216,37 @@
                 "label": "主题",
                 "submenu": {
                   "import-css-file": "导入自定义 CSS 文件",
-                  "no-theme": "无主题"
+                  "no-theme": "无主题",
+                  "colors": {
+                    "label": "颜色"
+                  },
+                  "presets": {
+                    "label": "预设",
+                    "default": "默认",
+                    "custom": "自定义"
+                  },
+                  "reset-colors": "重置颜色",
+                  "open-themes-folder": "打开主题文件夹"
                 }
-              }
+              },
+              "use-ytm-icons": "使用原始 YouTube Music 图标"
+            }
+          },
+          "updates": {
+            "label": "更新",
+            "check": "检查更新",
+            "auto-update": "自动检查更新",
+            "channel": {
+              "label": "更新通道",
+              "stable": "稳定版",
+              "beta": "测试版"
+            }
+          },
+          "shared-links": {
+            "label": "共享链接",
+            "submenu": {
+              "strip-music": "移除“music.”",
+              "strip-si": "移除“&si=”"
             }
           }
         }
@@ -210,7 +277,20 @@
       "show": "显示窗口",
       "tooltip": {
         "default": "{{applicationName}}",
-        "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
+        "with-song-info": "{{applicationName}}：{{artist}} - {{title}}"
+      },
+      "like": "喜欢",
+      "dislike": "不喜欢",
+      "unlike": "取消喜欢",
+      "undislike": "取消不喜欢"
+    },
+    "themes": {
+      "consent": {
+        "title": "运行主题代码？",
+        "message": "“{{theme}}”包含一个脚本，该脚本将以对应用的完全访问权限运行。",
+        "detail": "主题脚本不在沙箱中运行。此代码可以读取和更改你的设置、与应用通信，以及执行应用本身可以执行的任何其他操作。仅当你信任该主题的来源时才允许。你可以通过移除该主题来撤销此权限。",
+        "allow": "运行此主题",
+        "cancel": "取消"
       }
     }
   },
@@ -333,6 +413,10 @@
         },
         "port": {
           "label": "端口号"
+        },
+        "mcp": {
+          "label": "MCP 服务器",
+          "description": "在 /mcp 上将 v2 API 作为 MCP 工具提供。使用与 API 其余部分相同的授权。"
         }
       },
       "name": "API 服务器 [测试]",
@@ -345,11 +429,20 @@
           "label": "请输入 API 服务器的端口号：",
           "title": "端口号"
         }
+      },
+      "settings": {
+        "choose-file": "选择文件…"
       }
     },
     "audio-compressor": {
       "description": "对音频应用压缩（压低响亮部分，提升柔和部分）",
-      "name": "音频压缩器"
+      "name": "音频压缩器",
+      "menu": {
+        "auto-track-gain": "自动音轨增益（增强安静的音轨）",
+        "maximum-gain": {
+          "label": "最大增益"
+        }
+      }
     },
     "auth-proxy-adapter": {
       "description": "支持使用需要身份验证的代理",
@@ -415,7 +508,10 @@
           "label": "格式"
         }
       },
-      "name": "时钟"
+      "name": "时钟",
+      "settings": {
+        "hour-12": "使用 12 小时制"
+      }
     },
     "compact-sidebar": {
       "description": "始终将侧边栏设为紧凑模式",
@@ -435,12 +531,24 @@
             "fade-scaling": {
               "label": "淡化尺度",
               "linear": "线性",
-              "logarithmic": "对数"
+              "logarithmic": "对数",
+              "equal-power": "等功率"
             },
             "seconds-before-end": "歌曲结束前持续交叉淡化时长"
           },
           "title": "交叉淡化选项"
         }
+      },
+      "settings": {
+        "fade-in": "淡入",
+        "fade-out": "淡出",
+        "seconds-before-end": "结束前开始",
+        "fade-scaling": "淡变曲线",
+        "scaling": {
+          "linear": "线性",
+          "logarithmic": "对数"
+        },
+        "seconds-before-end-description": "在曲目结束前多少秒开始向下一首交叉淡变"
       }
     },
     "custom-output-device": {
@@ -495,6 +603,13 @@
           "label": "设置非活跃状态超时时长，以秒为单位：",
           "title": "设置非活跃超时"
         }
+      },
+      "settings": {
+        "auto-reconnect": "自动重连",
+        "activity-timeout-enabled": "暂停时清除状态",
+        "activity-timeout-time": "清除延迟",
+        "hide-github-button": "隐藏“在 GitHub 上查看”按钮",
+        "hide-duration-left": "隐藏剩余时间"
       }
     },
     "do-not-track": {
@@ -502,7 +617,19 @@
       "menu": {
         "blocker": "拦截器"
       },
-      "name": "Do Not Track"
+      "name": "请勿跟踪",
+      "settings": {
+        "cache": "缓存屏蔽列表",
+        "disable-default-lists": "禁用默认屏蔽列表"
+      },
+      "dialog": {
+        "reload": {
+          "title": "重新加载页面",
+          "message": "“请勿追踪”设置已更改。",
+          "detail": "网络规则无需重启应用即可更新。重新加载页面可让页面过滤器的更改完全生效。播放可能会中断。你也可以稍后重新加载。",
+          "reload-now": "立即重新加载页面"
+        }
+      }
     },
     "downloader": {
       "backend": {
@@ -544,7 +671,8 @@
           "saving": "正在保存…",
           "trying-to-get-playlist-id": "正尝试获取播放列表 ID： {{playlistId}}",
           "video-id-not-found": "视频未找到",
-          "writing-id3": "正在写入 ID3 标签…"
+          "writing-id3": "正在写入 ID3 标签…",
+          "ffmpeg-missing": "未找到 FFmpeg。请安装 FFmpeg 并确保 `ffmpeg` 位于 PATH 中，才能以此格式下载。"
         }
       },
       "description": "在界面内直接下载 MP3 / 源音频",
@@ -575,6 +703,10 @@
       },
       "templates": {
         "button": "下载"
+      },
+      "settings": {
+        "finish-folder": "已完成下载的文件夹",
+        "finish-folder-description": "留空则使用上方的下载文件夹。"
       }
     },
     "equalizer": {
@@ -642,6 +774,44 @@
           "disconnected": "已断开连接",
           "guest": "已作为来宾连接",
           "host": "已作为发起人连接"
+        },
+        "diagnostics": {
+          "check": {
+            "nat": "网络类型（NAT）",
+            "signaling": "信令服务器",
+            "stun": "直连（STUN）",
+            "turn": "中继回退（TURN）"
+          },
+          "copy": "复制摘要",
+          "detail": {
+            "check-error": "检查失败：{{reason}}",
+            "public-ip": "公网地址：{{ip}}",
+            "public-ip-hidden": "公网地址：点击显示",
+            "signaling-fail": "无法访问（{{reason}}）",
+            "signaling-ok": "可访问",
+            "stun-fail": "无公网地址（UDP/STUN 被阻止）",
+            "stun-ok": "已找到公网地址",
+            "turn-fail": "中继无法访问",
+            "turn-ok": "中继可访问"
+          },
+          "nat": {
+            "blocked": "UDP 或 STUN 被阻止",
+            "open": "开放 / 锥形（可直连）",
+            "symmetric": "对称型（需要中继）",
+            "unknown": "无法确定"
+          },
+          "run-again": "重新运行",
+          "running": "正在检查…",
+          "test": "测试连接",
+          "title": "连接诊断",
+          "verdict": {
+            "blocked": "此网络可能会阻止 Music Together。请尝试其他网络或使用 VPN。",
+            "error": "诊断运行失败。请查看控制台了解详情。",
+            "good": "直接连接应可在此网络上正常工作。",
+            "limited": "无法完全确定此网络状况。直接连接可能仍可用；如果失败，请尝试其他网络。",
+            "no-signaling": "无法连接到 Music Together 服务器。请检查防火墙或互联网连接。",
+            "relay": "此处直接连接可能失败；将使用中继（可用，但会增加延迟）。"
+          }
         }
       },
       "name": "一起听 [测试]",
@@ -657,7 +827,10 @@
         "permission-changed": "一起听权限已改为 \"{{permission}}\"",
         "remove-song-failed": "移除歌曲失败",
         "user-connected": "{{name}} 加入了一起听",
-        "user-disconnected": "{{name}} 离开了一起听"
+        "user-disconnected": "{{name}} 离开了一起听",
+        "diagnostics-copied": "诊断摘要已复制到剪贴板",
+        "diagnostics-copy-failed": "复制诊断摘要失败",
+        "diagnostics-running": "请等待连接测试完成"
       }
     },
     "navigation": {
@@ -685,7 +858,8 @@
           "submenu": {
             "hide-button-text": "隐藏按钮文字",
             "refresh-on-play-pause": "播放/暂停时刷新",
-            "tray-controls": "点击托盘时打开/关闭"
+            "tray-controls": "点击托盘时打开/关闭",
+            "hover-controls": "托盘悬停时显示迷你播放器"
           }
         },
         "priority": "通知优先级",
@@ -714,7 +888,14 @@
         },
         "save-window-position": "记住窗口位置",
         "save-window-size": "记住窗口尺寸",
-        "use-native-pip": "使用浏览器原生画中画功能"
+        "use-native-pip": "使用浏览器原生画中画功能",
+        "prompt": {
+          "title": "画中画",
+          "label": "配置画中画热键",
+          "keybind-options": {
+            "hotkey": "切换画中画的热键"
+          }
+        }
       },
       "name": "画中画",
       "templates": {
@@ -726,6 +907,9 @@
       "name": "回放速度",
       "templates": {
         "button": "速度"
+      },
+      "menu": {
+        "no-preserves-pitch": "禁用音高保持"
       }
     },
     "precise-volume": {
@@ -749,6 +933,12 @@
           "label": "选择音量增加/减弱步长",
           "title": "音量步长"
         }
+      },
+      "settings": {
+        "steps": "音量步长",
+        "arrows-shortcut": "方向键快捷键",
+        "shortcut-up": "全局快捷键：增大音量",
+        "shortcut-down": "全局快捷键：减小音量"
       }
     },
     "quality-changer": {
@@ -777,6 +967,10 @@
             "message": "与 Last.fm 认证时失败\n弹出窗口将在下次重启前隐藏。",
             "title": "认证失败"
           }
+        },
+        "invalid-regex": {
+          "title": "无效的正则表达式",
+          "message": "第 {{line}} 行的正则表达式无效：{{error}}"
         }
       },
       "menu": {
@@ -784,11 +978,15 @@
           "api-settings": "Last.fm API 设置"
         },
         "listenbrainz": {
-          "token": "输入 ListenBrainz 用户令牌"
+          "token": "输入 ListenBrainz 用户令牌",
+          "api-root": "ListenBrainz API 地址"
         },
         "scrobble-alternative-artist": "使用替代艺术家",
         "scrobble-alternative-title": "使用替代标题",
-        "scrobble-other-media": "记录其他媒体文件"
+        "scrobble-other-media": "记录其他媒体文件",
+        "regex-filters": "正则表达式过滤器",
+        "use-musicbrainz": "使用 MusicBrainz 校正元数据",
+        "musicbrainz-email": "MusicBrainz 联系邮箱"
       },
       "name": "歌曲记录器",
       "prompt": {
@@ -800,8 +998,23 @@
           "token": {
             "label": "输入您的 ListenBrainz 用户令牌：",
             "title": "ListenBrainz 令牌"
+          },
+          "api-root": {
+            "label": "输入基础 API URL：",
+            "title": "ListenBrainz API 地址"
           }
+        },
+        "regex-filter-multi": {
+          "label": "每行输入一个正则表达式："
+        },
+        "musicbrainz-email": {
+          "title": "MusicBrainz 联系邮箱",
+          "label": "输入用于 MusicBrainz API 的邮箱："
         }
+      },
+      "settings": {
+        "lastfm-api-root": "Last.fm API 地址",
+        "musicbrainz-email-description": "用作 MusicBrainz API 的联系信息；使用 MusicBrainz 元数据校正时必填"
       }
     },
     "shortcuts": {
@@ -821,15 +1034,34 @@
           "label": "为歌曲控制选择全局按键绑定：",
           "title": "全局按键绑定"
         }
+      },
+      "settings": {
+        "global-keybinds": "全局快捷键（在整个应用中生效）",
+        "local-keybinds": "本地快捷键（仅在窗口聚焦时生效）"
       }
     },
     "skip-silences": {
       "description": "自动跳过音乐中的无声片段",
-      "name": "跳过无声片段"
+      "name": "跳过无声片段",
+      "settings": {
+        "only-skip-beginning": "仅跳过曲目开头的静音"
+      }
     },
     "sponsorblock": {
       "description": "自动跳过非音乐部分，如 MV 的介绍/结语以及歌曲未开始的部分",
-      "name": "SponsorBlock"
+      "name": "SponsorBlock",
+      "settings": {
+        "categories": "要跳过的片段",
+        "category": {
+          "sponsor": "赞助商",
+          "intro": "片头",
+          "outro": "片尾",
+          "interaction": "互动提醒",
+          "selfpromo": "自我推广",
+          "music_offtopic": "非音乐部分"
+        },
+        "api-url": "API 地址"
+      }
     },
     "synced-lyrics": {
       "description": "透过 LRClib 等服务提供滚动歌词显示。",
@@ -864,7 +1096,7 @@
           "label": "歌词行特效",
           "submenu": {
             "fancy": {
-              "label": "Fancy",
+              "label": "华丽",
               "tooltip": "在当前行上使用大的、类似应用的效果"
             },
             "focus": {
@@ -905,6 +1137,120 @@
         "show-time-codes": {
           "label": "显示时值",
           "tooltip": "在歌词旁显示时值"
+        },
+        "lyrics-font-size": {
+          "label": "歌词字体大小",
+          "submenu": {
+            "small": {
+              "label": "小",
+              "tooltip": "使用更紧凑的歌词大小"
+            },
+            "medium": {
+              "label": "中",
+              "tooltip": "使用均衡的歌词大小"
+            },
+            "large": {
+              "label": "大",
+              "tooltip": "使用原始较大的歌词大小"
+            }
+          },
+          "tooltip": "选择歌词文本的大小"
+        },
+        "use-ytm-lyrics-without-proxy": {
+          "label": "无需代理使用 YTM 歌词",
+          "tooltip": "跳过 YTM 浏览代理，使用应用已认证的会话直接调用 YouTube Music。如果你信任你的网络/地区允许直接浏览调用，这会很有用。"
+        },
+        "translation": {
+          "label": "歌词翻译",
+          "tooltip": "翻译歌词并逐行显示翻译结果。",
+          "enabled": {
+            "label": "启用翻译",
+            "tooltip": "在每行原始歌词下方显示翻译行。"
+          },
+          "provider": {
+            "label": "提供商",
+            "tooltip": "用于翻译的服务。"
+          },
+          "target-language": {
+            "label": "目标语言",
+            "tooltip": "将歌词翻译成的语言。"
+          },
+          "configure": {
+            "label": "配置 API 密钥和模型…",
+            "tooltip": "设置特定于提供商的翻译选项。"
+          },
+          "clear-cache": {
+            "label": "清除翻译缓存",
+            "tooltip": "删除磁盘上存储的所有已缓存翻译。"
+          },
+          "providers": {
+            "shared": {
+              "api-key": "API 密钥",
+              "model": "模型"
+            },
+            "openai-compatible": {
+              "name": "OpenAI 兼容",
+              "prompt-title": "OpenAI 兼容设置",
+              "prompt-label": "使用 OpenAI 兼容服务器，包括 Ollama（基础 URL http://127.0.0.1:11434/v1，API 模式 auto 或 chat-completions）。",
+              "base-url": "基础 URL",
+              "api-mode": "API 模式（responses / auto / chat-completions）"
+            },
+            "anthropic": {
+              "name": "Anthropic Claude",
+              "prompt-title": "Anthropic 设置",
+              "prompt-label": "使用原生 Anthropic Messages API。"
+            },
+            "gemini": {
+              "name": "Google Gemini",
+              "prompt-title": "Gemini 设置",
+              "prompt-label": "使用 Google 的 Generative Language API（generateContent）。"
+            },
+            "local-cli": {
+              "name": "本地 CLI",
+              "prompt-title": "本地 CLI 设置",
+              "prompt-label": "使用本地已登录的 Claude Code、Codex 或 Gemini CLI。命令和模型会自动确定；CLI 使用其自身已登录的默认值。",
+              "engine": "本地 CLI",
+              "engine-claude": "Claude Code",
+              "engine-codex": "Codex",
+              "engine-gemini": "Gemini CLI",
+              "command": "命令",
+              "timeout": "超时秒数（15-600）"
+            },
+            "google-translate": {
+              "name": "Google 翻译",
+              "prompt-title": "Google 翻译设置",
+              "prompt-label": "使用非官方的免费 Google 翻译端点。无需 API 密钥，但 Google 可能会限流。",
+              "host": "主机"
+            }
+          }
+        },
+        "show-custom-search-button": {
+          "label": "显示自定义搜索按钮",
+          "tooltip": "在歌词选择器中显示搜索按钮，可让你覆盖当前歌曲的搜索查询和艺术家。"
+        },
+        "provider-priority": {
+          "tooltip": "按此顺序尝试提供方：第一个拥有当前歌曲歌词的提供方胜出。使用箭头重新排序。"
+        },
+        "prefer-synced": {
+          "tooltip": "选择列表中第一个拥有时间同步歌词的提供方，而不是第一个拥有任何歌词的提供方。"
+        },
+        "previous-provider": {
+          "tooltip": "上一个提供方"
+        },
+        "next-provider": {
+          "tooltip": "下一个提供方"
+        },
+        "custom-search-button": {
+          "tooltip": "自定义搜索查询"
+        },
+        "star-provider": {
+          "tooltip": "无论优先级顺序如何，始终对此歌曲使用此提供方。如果它没有该歌曲的歌词，则回退到正常顺序。"
+        },
+        "unstar-provider": {
+          "tooltip": "停止将此提供方固定到此歌曲。"
+        },
+        "use-priority-list": {
+          "tooltip": "按下方顺序尝试提供方。关闭此项以让歌词决定：对歌曲拥有最佳歌词的提供方胜出。"
         }
       },
       "name": "滚动歌词",
@@ -916,6 +1262,22 @@
         "duration-mismatch": "⚠️ - 由于持续时间不对应，滚动歌词可能不同步。",
         "inexact": "⚠️ - 此曲目的歌词可能不准确",
         "instrumental": "⚠️ - 此曲目为纯音乐"
+      },
+      "settings": {
+        "precise-timing": "精确计时",
+        "show-inexact": "显示不精确歌词",
+        "show-time-codes": "显示时间码",
+        "romanization": "歌词罗马化",
+        "line-effect": "行效果",
+        "effect": {
+          "fancy": "华丽",
+          "scale": "缩放",
+          "offset": "偏移",
+          "focus": "聚焦"
+        },
+        "prefer-synced": "优先同步歌词",
+        "provider-priority": "提供方优先级",
+        "use-priority-list": "使用优先级列表"
       }
     },
     "taskbar-mediacontrol": {
@@ -950,7 +1312,10 @@
           }
         }
       },
-      "name": "透明播放器"
+      "name": "透明播放器",
+      "settings": {
+        "type-description": "用于窗口透明度的背景材质"
+      }
     },
     "tuna-obs": {
       "description": "与 OBS 的 Tuna 插件集成",
@@ -992,7 +1357,241 @@
       "menu": {
         "visualizer-type": "可视化类型"
       },
-      "name": "可视化效果"
+      "name": "可视化效果",
+      "settings": {
+        "preset": "预设",
+        "blend-time": "混合时间",
+        "effect": "效果",
+        "accuracy": "精度",
+        "max-height": "最大高度",
+        "max-size": "最大尺寸",
+        "line-width": "线宽",
+        "color": "颜色",
+        "shadow-blur": "阴影模糊",
+        "shadow-color": "阴影颜色",
+        "fade-side": "边缘淡出",
+        "prettify": "美化",
+        "prettify-description": "让条形向边缘逐渐变细",
+        "dottify": "点状化",
+        "dottify-description": "绘制点而不是连续线",
+        "horizontal-align": "水平对齐",
+        "vertical-align": "垂直对齐"
+      }
+    },
+    "audio-only": {
+      "description": "强制仅音频模式 — 在网络和播放器层面阻止所有视频流，以节省内存和带宽",
+      "name": "仅音频"
+    },
+    "always-show-volume-slider": {
+      "name": "始终显示音量滑块",
+      "description": "让音量滑块保持可见且可拖动，而不是仅在悬停时显示。"
+    },
+    "fullscreen-auto-hide": {
+      "description": "在全屏状态下无操作几秒后自动隐藏播放器控件和鼠标指针",
+      "name": "全屏自动隐藏"
+    },
+    "playback-recovery": {
+      "description": "自动从卡住、停滞或失效的播放状态中恢复",
+      "menu": {
+        "log-to-console": "将恢复事件记录到控制台"
+      },
+      "name": "播放恢复",
+      "settings": {
+        "stall-timeout": "停滞超时",
+        "stall-timeout-description": "播放多久没有进展后尝试恢复",
+        "max-retries": "最大重试次数",
+        "max-retries-description": "跳至下一首曲目前尝试恢复的次数"
+      }
+    },
+    "playlist-search": {
+      "description": "在侧边栏和“添加到播放列表”对话框中添加搜索输入框以筛选播放列表",
+      "name": "播放列表搜索",
+      "templates": {
+        "search-placeholder": "搜索播放列表",
+        "no-results": "未找到播放列表"
+      }
+    },
+    "prefer-song": {
+      "description": "当专辑曲目是视频时，播放歌曲而不是音乐视频",
+      "name": "优先歌曲"
+    },
+    "search-commands": {
+      "commands": {
+        "play": "通过 YouTube 链接或 ID 播放视频",
+        "settings": "打开设置"
+      },
+      "description": "在搜索框中输入 / 来运行命令，并支持参数自动补全",
+      "name": "搜索命令",
+      "settings": {
+        "open-keybind": "打开快捷键",
+        "open-keybind-description": "Electron 风格快捷键，例如 CmdOrCtrl+/ 或 Alt+Space",
+        "open-shortcut": "从任意位置打开搜索框",
+        "open-shortcut-description": "唤起已处于命令模式的搜索框，类似 Spotlight。再次按下会关闭。"
+      }
+    },
+    "seek-shortcuts": {
+      "description": "使用左/右方向键向后/向前跳转 5 秒",
+      "name": "跳转快捷键"
+    },
+    "sfw-music": {
+      "description": "自动跳过 YouTube Music 标记为 Explicit 的歌曲。如果显式队列重复或没有下一首歌曲可用，则暂停。",
+      "name": "SFW 音乐"
+    },
+    "toast-autoclose": {
+      "description": "在三秒后自动关闭 YouTube Music 的 Toast 通知",
+      "name": "Toast 自动关闭"
+    },
+    "statusbar-lyrics": {
+      "settings": {
+        "include-pronunciation": "包含发音"
+      }
+    },
+    "dismiss-multidevice-popup": {
+      "name": "关闭多设备弹窗",
+      "description": "自动关闭当另一台设备开始播放时出现的“在此设备上收听”弹窗。"
+    },
+    "memory-saver": {
+      "description": "当窗口隐藏且渲染进程的资源缓存增长超过阈值时将其清除",
+      "name": "内存节省",
+      "settings": {
+        "threshold": "缓存阈值",
+        "threshold-description": "当窗口隐藏时，一旦缓存的实时内存占用超过此值便清除缓存"
+      }
+    }
+  },
+  "settings-ui": {
+    "name": "设置界面",
+    "description": "添加一个可从侧边栏打开的应用内设置面板",
+    "title": "设置",
+    "settings": {
+      "show-button": "在侧边栏中显示设置入口",
+      "show-button-description": "关闭此项可保持侧边栏整洁；设置仍在 导航 → 打开设置 下。",
+      "separate-window": "始终在单独窗口中打开设置",
+      "separate-window-description": "打开独立设置窗口（与托盘入口相同），而不是应用内面板。"
+    },
+    "search-placeholder": "搜索设置",
+    "search-results": "搜索结果",
+    "search-matching": "匹配“{{query}}”",
+    "no-match": "没有设置匹配“{{query}}”。",
+    "close": "关闭",
+    "edit-config": "编辑 config.json",
+    "restart-banner": "某些更改需要重启才能生效。",
+    "restart-now": "立即重启",
+    "later": "稍后",
+    "restart-pill": "重启",
+    "restart-pill-hint": "需要重启",
+    "refresh-options": "刷新选项",
+    "move-up": "上移",
+    "move-down": "下移",
+    "about": {
+      "tagline": "功能丰富的 YouTube Music 桌面应用",
+      "versions": "版本",
+      "version-app": "应用",
+      "version-build": "构建",
+      "version-electron": "Electron",
+      "version-chromium": "Chromium",
+      "version-node": "Node.js",
+      "version-platform": "平台",
+      "version-innertube": "Innertube",
+      "links": "链接",
+      "link-repo": "仓库",
+      "link-issue": "报告问题",
+      "link-releases": "发布版本",
+      "link-license": "许可证",
+      "actions": "操作",
+      "check-updates": "检查更新",
+      "copy-debug": "复制调试信息",
+      "copied": "已复制！"
+    },
+    "sections": {
+      "general": {
+        "label": "常规"
+      },
+      "appearance": {
+        "label": "外观"
+      },
+      "window": {
+        "label": "窗口与托盘"
+      },
+      "advanced": {
+        "label": "高级"
+      },
+      "plugins": {
+        "label": "插件"
+      },
+      "flags": {
+        "label": "功能标志"
+      },
+      "about": {
+        "label": "关于"
+      }
+    },
+    "groups": {
+      "updates-session": "更新与会话",
+      "startup-language": "启动与语言",
+      "interface": "界面",
+      "context-menu": "上下文菜单",
+      "window-title": "窗口",
+      "window": "窗口",
+      "system": "系统",
+      "network": "网络",
+      "performance": "性能",
+      "configuration": "配置",
+      "updates": "更新"
+    },
+    "stepper-decrement": "减少",
+    "stepper-increment": "增加",
+    "flags": {
+      "warning": "功能标志是 YouTube Music 自带的内部开关。更改它们可能会破坏播放、布局或账户功能，并且不受支持。覆盖项只会为你更改过的标志保留，并可通过“撤销”移除。",
+      "search-placeholder": "搜索标志",
+      "overridden": "已覆盖",
+      "undo": "撤销",
+      "undo-hint": "删除此覆盖项",
+      "empty": "此页面未提供任何功能标志。",
+      "no-match": "没有与“{{query}}”匹配的标志。",
+      "add-name": "新标志名称",
+      "add-value": "值",
+      "add-value-hint": "如果能解析为 JSON（true、42、\"text\"），则按 JSON 处理；否则按文本本身处理",
+      "add": "添加"
+    },
+    "fields": {
+      "hide-dislike-button": "隐藏“不喜欢”按钮",
+      "hide-video-captions": "隐藏视频字幕",
+      "context-menu": {
+        "hide-entry": "隐藏 {{entry}}",
+        "entries": {
+          "add-to-queue": "添加到队列",
+          "delete-playlist": "删除播放列表",
+          "dismiss-queue": "关闭队列",
+          "download": "下载",
+          "go-to-album": "前往专辑",
+          "go-to-artist": "前往艺人",
+          "go-to-playlist": "前往播放列表",
+          "like": "喜欢",
+          "not-interested": "不感兴趣",
+          "pin-to-listen-again": "固定到“再次收听”",
+          "play-next": "下一首播放",
+          "remove-from-playlist": "从播放列表中移除",
+          "remove-from-queue": "从队列中移除",
+          "report": "举报",
+          "save-to-library": "保存到库",
+          "save-to-playlist": "保存到播放列表",
+          "share": "分享",
+          "shuffle-play": "随机播放",
+          "start-mix": "开始混音",
+          "stats-for-nerds": "详细统计信息"
+        }
+      },
+      "podcast-artist": "将播客参与者用作艺人",
+      "podcast-artist-desc": "关闭：播客单集的艺人是发布该单集的频道。",
+      "theme-preset": "预设",
+      "theme-variable-name": "变量",
+      "theme-variable-value": "值",
+      "theme-variable-add": "添加变量",
+      "performance-mode": "性能模式",
+      "performance-mode-desc": "牺牲部分视觉保真度以换取更低的渲染开销。",
+      "in-process-gpu": "将 GPU 进程合并到应用进程中",
+      "in-process-gpu-desc": "实验性：可减少一个进程，但会将 GPU 内存移入主进程，并且可能回退到软件渲染。"
     }
   }
 }

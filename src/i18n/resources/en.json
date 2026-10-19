@@ -327,6 +327,10 @@
             "buffer": "{{buffer}}"
           }
         },
+        "extend-sidebar": {
+          "description": "Makes the sidebar background transparent so ambient mode shows through it",
+          "label": "Extend into the sidebar"
+        },
         "opacity": {
           "label": "Opacity",
           "submenu": {

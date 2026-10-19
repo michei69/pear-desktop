@@ -65,7 +65,8 @@
         },
         "detail": "Ho sentim per les molèsties! si us plau, tria què fer:",
         "message": "L'aplicació ha deixat de respondre",
-        "title": "La finestra ha deixat de respondre"
+        "title": "La finestra ha deixat de respondre",
+        "details": "Motiu: {{error}}"
       },
       "update-available": {
         "buttons": {
@@ -76,6 +77,27 @@
         "detail": "Hi ha una nova versió disponible i pot ser descarregada a {{downloadLink}}",
         "message": "Hi ha una nova versió disponible",
         "title": "Actualització disponible"
+      },
+      "restart-summary": {
+        "detail": "Reinicia l'aplicació per aplicar: {{changes}}",
+        "message": "Alguns canvis requereixen un reinici",
+        "title": "Cal reiniciar"
+      },
+      "update-available-dev": {
+        "buttons": {
+          "ok": "D'acord",
+          "view": "Veure commits"
+        },
+        "title": "Actualització disponible",
+        "message": "Aquesta compilació de desenvolupament està per darrere de la branca master",
+        "detail": "El commit en què s'executa aquesta compilació ({{commit}}) és més antic que l'últim commit de master. Els commits més nous es poden veure a {{commitsLink}}"
+      },
+      "downgrade-warning": {
+        "title": "Tornar a la versió estable?",
+        "message": "Aquesta compilació beta és més nova que l'última versió estable.",
+        "detail": "Tornar enrere pot restablir alguns paràmetres: passar d'una versió més nova a una d més antiga no executa migracions i pot deixar paràmetres més nous il·legibles.",
+        "confirm": "Canvia a estable",
+        "cancel": "Cancel·la"
       }
     },
     "menu": {
@@ -87,7 +109,8 @@
           "go-back": "Ves enrere",
           "go-forward": "Ves endavant",
           "quit": "Surt",
-          "restart": "Reinicia l'aplicació"
+          "restart": "Reinicia l'aplicació",
+          "open-settings": "Obre la configuració"
         }
       },
       "options": {
@@ -129,7 +152,20 @@
             },
             "label": "Idioma",
             "submenu": {
-              "to-help-translate": "Vols ajudar a traduir? Clica aquí"
+              "to-help-translate": "Vols ajudar a traduir? Clica aquí",
+              "sync": {
+                "label": "Sincronitza l'idioma",
+                "submenu": {
+                  "from-youtube": "Des de YouTube",
+                  "to-youtube": "A YouTube"
+                },
+                "failure": {
+                  "dialog": {
+                    "title": "L'idioma no s'ha canviat",
+                    "message": "L'idioma o la configuració regional encara no existeix a l'aplicació."
+                  }
+                }
+              }
             }
           },
           "resume-on-start": "Reprèn l'última cançó quan s'inicia l'aplicació",
@@ -180,9 +216,37 @@
                 "label": "Tema",
                 "submenu": {
                   "import-css-file": "Importa un arxiu CSS personalitzat",
-                  "no-theme": "Cap tema"
+                  "no-theme": "Cap tema",
+                  "colors": {
+                    "label": "Colors"
+                  },
+                  "presets": {
+                    "label": "Predefinits",
+                    "default": "Per defecte",
+                    "custom": "Personalitzat"
+                  },
+                  "reset-colors": "Restableix els colors",
+                  "open-themes-folder": "Obre la carpeta de temes"
                 }
-              }
+              },
+              "use-ytm-icons": "Utilitza les icones originals de YouTube Music"
+            }
+          },
+          "updates": {
+            "label": "Actualitzacions",
+            "check": "Comprova si hi ha actualitzacions",
+            "auto-update": "Comprova automàticament si hi ha actualitzacions",
+            "channel": {
+              "label": "Canal d'actualització",
+              "stable": "Estable",
+              "beta": "Beta"
+            }
+          },
+          "shared-links": {
+            "label": "Enllaços compartits",
+            "submenu": {
+              "strip-music": "Elimina 'music.'",
+              "strip-si": "Elimina '&si='"
             }
           }
         }
@@ -219,6 +283,15 @@
       "dislike": "No m'agrada",
       "unlike": "A diferència de",
       "undislike": "No m'agrada"
+    },
+    "themes": {
+      "consent": {
+        "title": "Voleu executar el codi del tema?",
+        "message": "\"{{theme}}\" conté un script que s'executarà amb accés complet a l'aplicació.",
+        "detail": "Els scripts dels temes no estan aïllats. Aquest codi pot llegir i canviar la configuració, comunicar-se amb l'aplicació i fer qualsevol altra cosa que l'aplicació mateixa pugui fer. Permeteu-ho només si confieu en l'origen del tema. Podeu revocar-ho eliminant el tema.",
+        "allow": "Executa aquest tema",
+        "cancel": "Cancel·la"
+      }
     }
   },
   "plugins": {
@@ -253,7 +326,7 @@
           }
         },
         "buffer": {
-          "label": "Buffer",
+          "label": "Memòria intermèdia",
           "submenu": {
             "buffer": "{{buffer}}"
           }
@@ -340,6 +413,10 @@
         },
         "port": {
           "label": "Port"
+        },
+        "mcp": {
+          "label": "Servidor MCP",
+          "description": "Serveix l'API v2 com a eines MCP a /mcp. Utilitza la mateixa autorització que la resta de l'API."
         }
       },
       "name": "Servidor API [Beta]",
@@ -352,11 +429,20 @@
           "label": "Introdueix el port pel servidor API:",
           "title": "Port"
         }
+      },
+      "settings": {
+        "choose-file": "Tria un fitxer…"
       }
     },
     "audio-compressor": {
       "description": "Aplica compressió a l'àudio (baixa el volum de les parts més sorolloses de la senyal d'àudio i puja el volum de les parts més fluixes)",
-      "name": "Compressió d'àudio"
+      "name": "Compressió d'àudio",
+      "menu": {
+        "auto-track-gain": "Guany automàtic de pista (reforça les pistes silencioses)",
+        "maximum-gain": {
+          "label": "Guany màxim"
+        }
+      }
     },
     "auth-proxy-adapter": {
       "description": "Suport per l'ús de servidors d'autenticació proxy",
@@ -364,7 +450,7 @@
         "disable": "Desactivar adaptador Proxy",
         "enable": "Activar adaptador Proxy",
         "hostname": {
-          "label": "Hostname"
+          "label": "Nom d'amfitrió"
         },
         "port": {
           "label": "Port"
@@ -422,7 +508,10 @@
           "label": "Format"
         }
       },
-      "name": "Rellotge"
+      "name": "Rellotge",
+      "settings": {
+        "hour-12": "Utilitza el format de 12 hores"
+      }
     },
     "compact-sidebar": {
       "description": "Sempre mostrar la barra lateral en mode compacte",
@@ -441,13 +530,25 @@
             "fade-out-duration": "Durada de la transició de sortida (ms)",
             "fade-scaling": {
               "label": "Escala de la transició",
-              "linear": "Linear",
-              "logarithmic": "Logarítmica"
+              "linear": "Lineal",
+              "logarithmic": "Logarítmica",
+              "equal-power": "Potència igual"
             },
             "seconds-before-end": "Transiciona N segons abans del final"
           },
           "title": "Opcions de transició creuada"
         }
+      },
+      "settings": {
+        "fade-in": "Fosa d'entrada",
+        "fade-out": "Fosa de sortida",
+        "seconds-before-end": "Comença abans del final",
+        "fade-scaling": "Escalat de la fosa",
+        "scaling": {
+          "linear": "Lineal",
+          "logarithmic": "Logarítmic"
+        },
+        "seconds-before-end-description": "Segons abans del final d'una pista en què comença la fosa creuada cap a la següent"
       }
     },
     "custom-output-device": {
@@ -502,6 +603,13 @@
           "label": "Introdueix el temps d'espera d'inactivitat en segons:",
           "title": "Estableix el temps d'espera d'inactivitat"
         }
+      },
+      "settings": {
+        "auto-reconnect": "Reconnexió automàtica",
+        "activity-timeout-enabled": "Esborra la presència en pausar",
+        "activity-timeout-time": "Esborra després de",
+        "hide-github-button": "Amaga el botó «Mostra a GitHub»",
+        "hide-duration-left": "Amaga el temps restant"
       }
     },
     "do-not-track": {
@@ -509,7 +617,19 @@
       "menu": {
         "blocker": "Bloquejador"
       },
-      "name": "No fer seguiment"
+      "name": "No fer seguiment",
+      "settings": {
+        "cache": "Emmagatzema les llistes de bloqueig",
+        "disable-default-lists": "Desactiva les llistes de bloqueig per defecte"
+      },
+      "dialog": {
+        "reload": {
+          "title": "Recarrega la pàgina",
+          "message": "La configuració de Do Not Track ha canviat.",
+          "detail": "Les regles de xarxa s'actualitzen sense reiniciar l'aplicació. Recarrega la pàgina per aplicar completament els canvis als filtres de pàgina. La reproducció es pot interrompre. Pots recarregar més tard.",
+          "reload-now": "Recarrega la pàgina ara"
+        }
+      }
     },
     "downloader": {
       "backend": {
@@ -551,7 +671,8 @@
           "saving": "Desant…",
           "trying-to-get-playlist-id": "Intentant obtenir l'ID de la llista de reproducció: {{playlistId}}",
           "video-id-not-found": "Vídeo no trobat",
-          "writing-id3": "Escrivint les etiquetes ID3…"
+          "writing-id3": "Escrivint les etiquetes ID3…",
+          "ffmpeg-missing": "No s'ha trobat FFmpeg. Instal·la FFmpeg i assegura't que `ffmpeg` estigui al PATH per descarregar en aquest format."
         }
       },
       "description": "Descarrega el MP3 / àudio d'origen directament des de la interfície",
@@ -582,6 +703,10 @@
       },
       "templates": {
         "button": "Descarrega"
+      },
+      "settings": {
+        "finish-folder": "Carpeta per a les descàrregues acabades",
+        "finish-folder-description": "Deixa-ho sense definir per utilitzar la carpeta de descàrregues de dalt."
       }
     },
     "equalizer": {
@@ -649,6 +774,44 @@
           "disconnected": "Desconnectat",
           "guest": "Connectat com a convidat",
           "host": "Connectat com amfitrió"
+        },
+        "diagnostics": {
+          "check": {
+            "nat": "Tipus de xarxa (NAT)",
+            "signaling": "Servidor de senyalització",
+            "stun": "Connexió directa (STUN)",
+            "turn": "Retransmissió alternativa (TURN)"
+          },
+          "copy": "Copia el resum",
+          "detail": {
+            "check-error": "La comprovació ha fallat: {{reason}}",
+            "public-ip": "Adreça pública: {{ip}}",
+            "public-ip-hidden": "Adreça pública: feu clic per mostrar",
+            "signaling-fail": "Inabastable ({{reason}})",
+            "signaling-ok": "Abastable",
+            "stun-fail": "Sense adreça pública (UDP/STUN bloquejat)",
+            "stun-ok": "S'ha trobat una adreça pública",
+            "turn-fail": "Retransmissió inabastable",
+            "turn-ok": "Retransmissió abastable"
+          },
+          "nat": {
+            "blocked": "UDP o STUN bloquejat",
+            "open": "Obert / con (funciona directe)",
+            "symmetric": "Simètric (cal retransmissió)",
+            "unknown": "Indeterminat"
+          },
+          "run-again": "Torna a executar",
+          "running": "S'estan executant les comprovacions…",
+          "test": "Prova la connexió",
+          "title": "Diagnòstic de connexió",
+          "verdict": {
+            "blocked": "És probable que aquesta xarxa bloquegi Music Together. Proveu una altra xarxa o una VPN.",
+            "error": "El diagnòstic no s'ha pogut executar. Consulteu la consola per obtenir més detalls.",
+            "good": "Les connexions directes haurien de funcionar en aquesta xarxa.",
+            "limited": "No s'ha pogut determinar completament aquesta xarxa. Les connexions directes encara poden funcionar; si fallen, proveu una altra xarxa.",
+            "no-signaling": "No es pot contactar amb el servidor de Music Together. Comproveu el tallafoc o la connexió a Internet.",
+            "relay": "És possible que les connexions directes fallin aquí; s'utilitzarà una retransmissió (funciona, però afegeix latència)."
+          }
         }
       },
       "name": "Music Together [Beta]",
@@ -664,7 +827,10 @@
         "permission-changed": "Els permisos de Music Together han canviat a «{{permission}}»",
         "remove-song-failed": "Error al eliminar la cançó",
         "user-connected": "{{name}} s'ha unit al Music Together",
-        "user-disconnected": "{{name}} s'ha desconnectat del Music Together"
+        "user-disconnected": "{{name}} s'ha desconnectat del Music Together",
+        "diagnostics-copied": "Resum de diagnòstic copiat al porta-retalls",
+        "diagnostics-copy-failed": "No s'ha pogut copiar el resum de diagnòstic",
+        "diagnostics-running": "Espereu que acabi la prova de connexió"
       }
     },
     "navigation": {
@@ -722,7 +888,14 @@
         },
         "save-window-position": "Desa la posició de la finestra",
         "save-window-size": "Desa la mida de la finestra",
-        "use-native-pip": "Utilitza l'imatge en imatge (PiP) nativa del navegador"
+        "use-native-pip": "Utilitza l'imatge en imatge (PiP) nativa del navegador",
+        "prompt": {
+          "title": "Imatge dins d'imatge",
+          "label": "Configura la drecera de teclat d'imatge dins d'imatge",
+          "keybind-options": {
+            "hotkey": "Drecera de teclat per alternar imatge dins d'imatge"
+          }
+        }
       },
       "name": "Imatge en imatge (PiP)",
       "templates": {
@@ -734,6 +907,9 @@
       "name": "Velocitat de la reproducció",
       "templates": {
         "button": "Velocitat"
+      },
+      "menu": {
+        "no-preserves-pitch": "Desactiva la preservació del to"
       }
     },
     "precise-volume": {
@@ -757,6 +933,12 @@
           "label": "Tria els passos d'augment o disminució del volum",
           "title": "Passos de volum"
         }
+      },
+      "settings": {
+        "steps": "Pas de volum",
+        "arrows-shortcut": "Dreceres de les tecles de fletxa",
+        "shortcut-up": "Drecera global: puja el volum",
+        "shortcut-down": "Drecera global: baixa el volum"
       }
     },
     "quality-changer": {
@@ -785,6 +967,10 @@
             "message": "Error al autenticar amb Last.fm\nAmaga la finestra emergent fins el següent reinici.",
             "title": "Error d'autenticació"
           }
+        },
+        "invalid-regex": {
+          "title": "Expressió regular no vàlida",
+          "message": "L'expressió regular de la línia {{line}} no és vàlida: {{error}}"
         }
       },
       "menu": {
@@ -792,11 +978,15 @@
           "api-settings": "Configuració de l'API de Last.fm"
         },
         "listenbrainz": {
-          "token": "Introduir token d'usuari de ListenBrainz"
+          "token": "Introduir token d'usuari de ListenBrainz",
+          "api-root": "URL de l'API de ListenBrainz"
         },
         "scrobble-alternative-artist": "Utilitza artistes alternatius",
         "scrobble-alternative-title": "Useu títols alternatius",
-        "scrobble-other-media": "Scrobble amb altres mitjans"
+        "scrobble-other-media": "Scrobble amb altres mitjans",
+        "regex-filters": "Filtres d'expressions regulars",
+        "use-musicbrainz": "Utilitza MusicBrainz per corregir les metadades",
+        "musicbrainz-email": "Correu electrònic de contacte de MusicBrainz"
       },
       "name": "Scrobbler",
       "prompt": {
@@ -808,8 +998,23 @@
           "token": {
             "label": "Introdueix el teu token de ListenBrainz:",
             "title": "Token de ListenBrainz"
+          },
+          "api-root": {
+            "label": "Introdueix l'URL base de l'API:",
+            "title": "URL de l'API de ListenBrainz"
           }
+        },
+        "regex-filter-multi": {
+          "label": "Introdueix una expressió regular per línia:"
+        },
+        "musicbrainz-email": {
+          "title": "Correu electrònic de contacte de MusicBrainz",
+          "label": "Introdueix un correu electrònic per a l'API de MusicBrainz:"
         }
+      },
+      "settings": {
+        "lastfm-api-root": "URL de l'API de Last.fm",
+        "musicbrainz-email-description": "S'utilitza com a informació de contacte per a l'API de MusicBrainz; cal per corregir les metadades amb MusicBrainz"
       }
     },
     "shortcuts": {
@@ -829,15 +1034,34 @@
           "label": "Tria combinacions de tecles per controlar les cançons:",
           "title": "Dreceres globals"
         }
+      },
+      "settings": {
+        "global-keybinds": "Dreceres globals (funcionen a tota l'aplicació)",
+        "local-keybinds": "Dreceres locals (només mentre la finestra té el focus)"
       }
     },
     "skip-silences": {
       "description": "Omet automàticament les seccions amb silenci a les cançons",
-      "name": "Omet els silencis"
+      "name": "Omet els silencis",
+      "settings": {
+        "only-skip-beginning": "Omet només el silenci al començament d'una pista"
+      }
     },
     "sponsorblock": {
       "description": "Omet automàticament els segments dels vídeos que no son música, com la intro o el final",
-      "name": "SponsorBlock"
+      "name": "SponsorBlock",
+      "settings": {
+        "categories": "Segments a ometre",
+        "category": {
+          "sponsor": "Patrocinador",
+          "intro": "Introducció",
+          "outro": "Comiat",
+          "interaction": "Recordatori d'interacció",
+          "selfpromo": "Autopromoció",
+          "music_offtopic": "Secció no musical"
+        },
+        "api-url": "URL de l'API"
+      }
     },
     "synced-lyrics": {
       "description": "Proporciona lletres sincronitzades amb les cançons, a través de proveïdors com LRClib.",
@@ -1050,6 +1274,30 @@
         "show-custom-search-button": {
           "label": "Mostra el botó de cerca personalitzada",
           "tooltip": "Mostra un botó de cerca al selector de lletres que et permeta sobreescriure la consulta de cerca i l'artista de la cançó actual."
+        },
+        "provider-priority": {
+          "tooltip": "Els proveïdors es proven en aquest ordre: guanya el primer que tingui lletra per a la cançó actual. Utilitza les fletxes per reordenar."
+        },
+        "prefer-synced": {
+          "tooltip": "Tria el primer proveïdor de la llista amb lletra sincronitzada, en lloc del primer que tingui qualsevol lletra."
+        },
+        "previous-provider": {
+          "tooltip": "Proveïdor anterior"
+        },
+        "next-provider": {
+          "tooltip": "Proveïdor següent"
+        },
+        "custom-search-button": {
+          "tooltip": "Consulta de cerca personalitzada"
+        },
+        "star-provider": {
+          "tooltip": "Utilitza sempre aquest proveïdor per a aquesta cançó, independentment de l'ordre de prioritat. Si no té lletra per a la cançó, es recorre a l'ordre normal."
+        },
+        "unstar-provider": {
+          "tooltip": "Deixa de fixar aquest proveïdor per a aquesta cançó."
+        },
+        "use-priority-list": {
+          "tooltip": "Prova els proveïdors en l'ordre següent. Desactiva-ho perquè decideixi la lletra: guanya el proveïdor que tingui la millor lletra per a la cançó."
         }
       },
       "name": "Lletres sincronitzades",
@@ -1061,6 +1309,22 @@
         "duration-mismatch": "⚠️ - La lletra podria no estar ben sincronitzada, la durada no és coincident.",
         "inexact": "⚠️ - La lletra d'aquesta cançó podria no ser exacta",
         "instrumental": "⚠️ - Aquesta cançó és instrumental"
+      },
+      "settings": {
+        "precise-timing": "Sincronització precisa",
+        "show-inexact": "Mostra lletres inexactes",
+        "show-time-codes": "Mostra els codis de temps",
+        "romanization": "Romanitza la lletra",
+        "line-effect": "Efecte de línia",
+        "effect": {
+          "fancy": "Vistós",
+          "scale": "Escala",
+          "offset": "Desplaçament",
+          "focus": "Enfocament"
+        },
+        "prefer-synced": "Prefereix lletra sincronitzada",
+        "provider-priority": "Prioritat de proveïdors",
+        "use-priority-list": "Utilitza la llista de prioritat"
       }
     },
     "taskbar-mediacontrol": {
@@ -1095,7 +1359,10 @@
           }
         }
       },
-      "name": "Reproductor Transparent"
+      "name": "Reproductor Transparent",
+      "settings": {
+        "type-description": "Material de fons utilitzat per a la transparència de la finestra"
+      }
     },
     "tuna-obs": {
       "description": "Integració amb l'extensió «Tuna» del OBS",
@@ -1137,7 +1404,26 @@
       "menu": {
         "visualizer-type": "Tipus de visualitzador"
       },
-      "name": "Visualitzador"
+      "name": "Visualitzador",
+      "settings": {
+        "preset": "Predefinit",
+        "blend-time": "Temps de barreja",
+        "effect": "Efecte",
+        "accuracy": "Precisió",
+        "max-height": "Alçada màxima",
+        "max-size": "Mida màxima",
+        "line-width": "Amplada de línia",
+        "color": "Color",
+        "shadow-blur": "Desenfocament de l'ombra",
+        "shadow-color": "Color de l'ombra",
+        "fade-side": "Costats de difuminat",
+        "prettify": "Millora l'aspecte",
+        "prettify-description": "Fa que les barres s'estrenyin cap a les vores",
+        "dottify": "Mostra punts",
+        "dottify-description": "Dibuixa punts en lloc d'una línia contínua",
+        "horizontal-align": "Alineació horitzontal",
+        "vertical-align": "Alineació vertical"
+      }
     },
     "audio-only": {
       "description": "Força el mode només àudio — bloqueja tots els fluxos de vídeo a nivell de xarxa i reproductor per estalviar RAM i ample de banda",
@@ -1148,7 +1434,13 @@
       "menu": {
         "log-to-console": "Registra els esdeveniments de recuperació a la consola"
       },
-      "name": "Recuperació de la reproducció"
+      "name": "Recuperació de la reproducció",
+      "settings": {
+        "stall-timeout": "Temps d'espera d'aturada",
+        "stall-timeout-description": "Quant de temps pot estar la reproducció sense avançar abans d'intentar una recuperació",
+        "max-retries": "Reintents màxims",
+        "max-retries-description": "Nombre d'intents de recuperació abans de saltar a la pista següent"
+      }
     },
     "playlist-search": {
       "description": "Afegeix un camp de cerca per filtrar llistes de reproducció a la barra lateral i al diàleg \"Afegeix a la llista de reproducció\"",
@@ -1157,6 +1449,196 @@
         "search-placeholder": "Cerca llistes de reproducció",
         "no-results": "No s'han trobat llistes de reproducció"
       }
+    },
+    "always-show-volume-slider": {
+      "name": "Mostra sempre el control de volum",
+      "description": "Manté el control de volum visible i arrossegable en lloc de mostrar-lo només en passar-hi el cursor."
+    },
+    "fullscreen-auto-hide": {
+      "description": "Amaga automàticament els controls del reproductor i el cursor del ratolí després d'uns segons d'inactivitat en pantalla completa",
+      "name": "Ocultació automàtica en pantalla completa"
+    },
+    "prefer-song": {
+      "description": "Reprodueix la cançó en lloc del videoclip quan una pista de l'àlbum és un vídeo",
+      "name": "Prefereix la cançó"
+    },
+    "search-commands": {
+      "commands": {
+        "play": "Reprodueix un vídeo a partir d'un enllaç o identificador de YouTube",
+        "settings": "Obre la configuració"
+      },
+      "description": "Escriu / al quadre de cerca per executar ordres, amb autocompletat per als seus arguments",
+      "name": "Ordres de cerca",
+      "settings": {
+        "open-keybind": "Drecera d'obertura",
+        "open-keybind-description": "Accelerador a l'estil d'Electron, p. ex. CmdOrCtrl+/ o Alt+Espai",
+        "open-shortcut": "Obre el quadre de cerca des de qualsevol lloc",
+        "open-shortcut-description": "Invoca el quadre de cerca ja en mode d'ordres, com Spotlight. Si el tornes a prémer, es tanca."
+      }
+    },
+    "seek-shortcuts": {
+      "description": "Avança o retrocedeix 5 segons amb les tecles de fletxa esquerra/dreta",
+      "name": "Dreceres de salt"
+    },
+    "sfw-music": {
+      "description": "Omet automàticament les cançons marcades com a explícites per YouTube Music. Es posa en pausa si una cua explícita es repeteix o no hi ha cap cançó següent disponible.",
+      "name": "Música SFW"
+    },
+    "toast-autoclose": {
+      "description": "Tanca automàticament els avisos de YouTube Music al cap de tres segons",
+      "name": "Tancament automàtic dels avisos"
+    },
+    "statusbar-lyrics": {
+      "settings": {
+        "include-pronunciation": "Inclou la pronunciació"
+      }
+    },
+    "dismiss-multidevice-popup": {
+      "name": "Descarta la finestra emergent multidispositiu",
+      "description": "Tanca automàticament la finestra emergent \"Escolta en aquest dispositiu\" que apareix quan la reproducció comença en un altre dispositiu."
+    },
+    "memory-saver": {
+      "description": "Neteja les memòries cau de recursos del renderitzador mentre la finestra està oculta quan superen un llindar",
+      "name": "Estalvi de memòria",
+      "settings": {
+        "threshold": "Llindar de la memòria cau",
+        "threshold-description": "Neteja les memòries cau quan la seva memòria en ús superi aquest valor mentre la finestra està oculta"
+      }
+    }
+  },
+  "settings-ui": {
+    "name": "Interfície de configuració",
+    "description": "Afegeix un panell de configuració dins de l'aplicació, que s'obre des de la barra lateral",
+    "title": "Configuració",
+    "settings": {
+      "show-button": "Mostra l'entrada de configuració a la barra lateral",
+      "show-button-description": "Desactiva-ho per mantenir neta la barra lateral; la configuració encara és a Navegació → Obre la configuració.",
+      "separate-window": "Obre sempre la configuració en una finestra separada",
+      "separate-window-description": "Obre la finestra de configuració independent, igual que l'entrada de la safata, en lloc del panell dins de l'aplicació."
+    },
+    "search-placeholder": "Cerca a la configuració",
+    "search-results": "Resultats de la cerca",
+    "search-matching": "Coincidències amb «{{query}}»",
+    "no-match": "Cap ajust coincideix amb «{{query}}».",
+    "close": "Tanca",
+    "edit-config": "Edita config.json",
+    "restart-banner": "Alguns canvis requereixen reiniciar perquè es facin efectius.",
+    "restart-now": "Reinicia ara",
+    "later": "Més tard",
+    "restart-pill": "reinicia",
+    "restart-pill-hint": "Requereix reiniciar",
+    "refresh-options": "Actualitza les opcions",
+    "move-up": "Mou amunt",
+    "move-down": "Mou avall",
+    "about": {
+      "tagline": "Una aplicació d'escriptori amb moltes funcions per a YouTube Music",
+      "versions": "Versions",
+      "version-app": "Aplicació",
+      "version-build": "Compilació",
+      "version-electron": "Electron",
+      "version-chromium": "Chromium",
+      "version-node": "Node.js",
+      "version-platform": "Plataforma",
+      "version-innertube": "Innertube",
+      "links": "Enllaços",
+      "link-repo": "Repositori",
+      "link-issue": "Informa d'un problema",
+      "link-releases": "Publicacions",
+      "link-license": "Llicència",
+      "actions": "Accions",
+      "check-updates": "Comprova si hi ha actualitzacions",
+      "copy-debug": "Copia la informació de depuració",
+      "copied": "Copiat!"
+    },
+    "sections": {
+      "general": {
+        "label": "General"
+      },
+      "appearance": {
+        "label": "Aparença"
+      },
+      "window": {
+        "label": "Finestra i safata"
+      },
+      "advanced": {
+        "label": "Avançat"
+      },
+      "plugins": {
+        "label": "Connectors"
+      },
+      "flags": {
+        "label": "Indicadors"
+      },
+      "about": {
+        "label": "Quant a"
+      }
+    },
+    "groups": {
+      "updates-session": "Actualitzacions i sessió",
+      "startup-language": "Inici i idioma",
+      "interface": "Interfície",
+      "context-menu": "Menú contextual",
+      "window-title": "Finestra",
+      "window": "Finestra",
+      "system": "Sistema",
+      "network": "Xarxa",
+      "performance": "Rendiment",
+      "configuration": "Configuració",
+      "updates": "Actualitzacions"
+    },
+    "stepper-decrement": "Disminueix",
+    "stepper-increment": "Augmenta",
+    "flags": {
+      "warning": "Els flags de funcions són interruptors interns propis de YouTube Music. Canviar-los pot trencar la reproducció, el disseny o les funcions del compte, i no estan coberts pel suport. Els canvis només es conserven per als flags que modifiques i es poden eliminar amb Desfés.",
+      "search-placeholder": "Cerca flags",
+      "overridden": "substituït",
+      "undo": "Desfés",
+      "undo-hint": "Elimina aquesta substitució",
+      "empty": "Aquesta pàgina no exposa cap flag de funcions.",
+      "no-match": "Cap flag coincideix amb «{{query}}».",
+      "add-name": "Nom del flag nou",
+      "add-value": "Valor",
+      "add-value-hint": "JSON quan es pot interpretar (true, 42, \"text\"), el text tal qual en cas contrari",
+      "add": "Afegeix"
+    },
+    "fields": {
+      "hide-dislike-button": "Amaga el botó de no m'agrada",
+      "hide-video-captions": "Amaga els subtítols del vídeo",
+      "context-menu": {
+        "hide-entry": "Amaga {{entry}}",
+        "entries": {
+          "add-to-queue": "Afegeix a la cua",
+          "delete-playlist": "Elimina la llista de reproducció",
+          "dismiss-queue": "Descarta la cua",
+          "download": "Baixa",
+          "go-to-album": "Ves a l'àlbum",
+          "go-to-artist": "Ves a l'artista",
+          "go-to-playlist": "Ves a la llista de reproducció",
+          "like": "M'agrada",
+          "not-interested": "No m'interessa",
+          "pin-to-listen-again": "Fixa a Torna a escoltar",
+          "play-next": "Reprodueix a continuació",
+          "remove-from-playlist": "Elimina de la llista de reproducció",
+          "remove-from-queue": "Elimina de la cua",
+          "report": "Denuncia",
+          "save-to-library": "Desa a la biblioteca",
+          "save-to-playlist": "Desa a la llista de reproducció",
+          "share": "Comparteix",
+          "shuffle-play": "Reprodueix aleatòriament",
+          "start-mix": "Inicia la barreja",
+          "stats-for-nerds": "Estadístiques per a friquis"
+        }
+      },
+      "podcast-artist": "Utilitza els participants del podcast com a artistes",
+      "podcast-artist-desc": "Desactivat: l'artista d'un episodi de podcast és el canal que l'ha publicat.",
+      "theme-preset": "Predefinit",
+      "theme-variable-name": "Variable",
+      "theme-variable-value": "Valor",
+      "theme-variable-add": "Afegeix una variable",
+      "performance-mode": "Mode de rendiment",
+      "performance-mode-desc": "Sacrifica una mica de fidelitat visual a canvi d'un renderitzat més lleuger.",
+      "in-process-gpu": "Fusiona el procés de la GPU amb el procés de l'aplicació",
+      "in-process-gpu-desc": "Experimental: estalvia un procés, però mou la memòria de la GPU al procés principal i pot recórrer al renderitzat per programari."
     }
   }
 }

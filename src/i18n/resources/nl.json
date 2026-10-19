@@ -65,7 +65,8 @@
         },
         "detail": "Het programma reageert niet! Kies wat u wilt doen:",
         "message": "De applicatie reageert niet",
-        "title": "Venster reageert niet"
+        "title": "Venster reageert niet",
+        "details": "Reden: {{error}}"
       },
       "update-available": {
         "buttons": {
@@ -76,6 +77,27 @@
         "detail": "Er is een nieuwe versie beschikbaar en kan worden gedownload op {{downloadLink}}",
         "message": "Een nieuwe versie is beschikbaar",
         "title": "Update Beschikbaar"
+      },
+      "restart-summary": {
+        "detail": "Herstart de app om toe te passen: {{changes}}",
+        "message": "Sommige wijzigingen vereisen een herstart",
+        "title": "Herstart vereist"
+      },
+      "update-available-dev": {
+        "buttons": {
+          "ok": "OK",
+          "view": "Commits bekijken"
+        },
+        "title": "Update beschikbaar",
+        "message": "Deze dev-build loopt achter op de masterbranch",
+        "detail": "De commit waarop deze build draait ({{commit}}) is ouder dan de nieuwste commit op master. Nieuwere commits zijn te bekijken op {{commitsLink}}"
+      },
+      "downgrade-warning": {
+        "title": "Terug naar stabiel?",
+        "message": "Deze bètabuild is nieuwer dan de nieuwste stabiele release.",
+        "detail": "Terugschakelen kan sommige instellingen resetten: bij het overschakelen van een nieuwere naar een oudere versie worden geen migraties uitgevoerd, waardoor nieuwere instellingen onleesbaar kunnen worden.",
+        "confirm": "Overschakelen naar stabiel",
+        "cancel": "Annuleren"
       }
     },
     "menu": {
@@ -87,7 +109,8 @@
           "go-back": "Terug",
           "go-forward": "Vooruit",
           "quit": "Afsluiten",
-          "restart": "Applicatie Opnieuw Opstarten"
+          "restart": "Applicatie Opnieuw Opstarten",
+          "open-settings": "Instellingen openen"
         }
       },
       "options": {
@@ -129,7 +152,20 @@
             },
             "label": "Taal",
             "submenu": {
-              "to-help-translate": "Wil je helpen vertalen? Klik hier"
+              "to-help-translate": "Wil je helpen vertalen? Klik hier",
+              "sync": {
+                "label": "Taal synchroniseren",
+                "submenu": {
+                  "from-youtube": "Van YouTube",
+                  "to-youtube": "Naar YouTube"
+                },
+                "failure": {
+                  "dialog": {
+                    "title": "Taal niet gewijzigd",
+                    "message": "Taal of locale bestaat nog niet in de app."
+                  }
+                }
+              }
             }
           },
           "resume-on-start": "Hervat laatste liedje bij het opstarten van de app",
@@ -180,9 +216,37 @@
                 "label": "Thema",
                 "submenu": {
                   "import-css-file": "Importeer aangepast CSS-bestand",
-                  "no-theme": "Geen thema"
+                  "no-theme": "Geen thema",
+                  "colors": {
+                    "label": "Kleuren"
+                  },
+                  "presets": {
+                    "label": "Voorinstellingen",
+                    "default": "Standaard",
+                    "custom": "Aangepast"
+                  },
+                  "reset-colors": "Kleuren resetten",
+                  "open-themes-folder": "Themamap openen"
                 }
-              }
+              },
+              "use-ytm-icons": "Originele YouTube Music-pictogrammen gebruiken"
+            }
+          },
+          "updates": {
+            "label": "Updates",
+            "check": "Controleren op updates",
+            "auto-update": "Automatisch controleren op updates",
+            "channel": {
+              "label": "Updatekanaal",
+              "stable": "Stabiel",
+              "beta": "Bèta"
+            }
+          },
+          "shared-links": {
+            "label": "Gedeelde links",
+            "submenu": {
+              "strip-music": "'music.' verwijderen",
+              "strip-si": "'&si=' verwijderen"
             }
           }
         }
@@ -219,6 +283,15 @@
       "dislike": "Niet leuk vinden",
       "unlike": "Anders dan",
       "undislike": "Niet meer niet leuk vinden"
+    },
+    "themes": {
+      "consent": {
+        "title": "Themacode uitvoeren?",
+        "message": "‘{{theme}}’ bevat een script dat met volledige toegang tot de app wordt uitgevoerd.",
+        "detail": "Themascripts draaien niet in een sandbox. Deze code kan je instellingen lezen en wijzigen, met de app communiceren en al het andere doen wat de app zelf kan. Sta dit alleen toe als je vertrouwt waar het thema vandaan komt. Je kunt dit intrekken door het thema te verwijderen.",
+        "allow": "Dit thema uitvoeren",
+        "cancel": "Annuleren"
+      }
     }
   },
   "plugins": {
@@ -340,9 +413,13 @@
         },
         "port": {
           "label": "Poort"
+        },
+        "mcp": {
+          "label": "MCP-server",
+          "description": "Biedt de v2-API aan als MCP-tools op /mcp. Gebruikt dezelfde autorisatie als de rest van de API."
         }
       },
-      "name": "API Server [Beta]",
+      "name": "API-server [bèta]",
       "prompt": {
         "hostname": {
           "label": "Voeg de hostnaam (bv. 0.0.0.0) voor de API server in:",
@@ -352,11 +429,20 @@
           "label": "Voeg de poort voor de API server in:",
           "title": "Poort"
         }
+      },
+      "settings": {
+        "choose-file": "Bestand kiezen…"
       }
     },
     "audio-compressor": {
       "description": "Past compressie toe op audio (verlaagt het volume van de luidste delen van het signaal en verhoogt het volume van de zachtste delen)",
-      "name": "Audiocompressor"
+      "name": "Audiocompressor",
+      "menu": {
+        "auto-track-gain": "Automatische trackgain (stille nummers versterken)",
+        "maximum-gain": {
+          "label": "Maximale versterking"
+        }
+      }
     },
     "auth-proxy-adapter": {
       "description": "Ondersteuning voor het gebruik van authenticatie proxy diensten",
@@ -422,7 +508,10 @@
           "label": "Formaat"
         }
       },
-      "name": "Klok"
+      "name": "Klok",
+      "settings": {
+        "hour-12": "12-uursnotatie gebruiken"
+      }
     },
     "compact-sidebar": {
       "description": "Stel de zijbalk altijd in op compacte modus",
@@ -433,7 +522,7 @@
       "menu": {
         "advanced": "Geavanceerd"
       },
-      "name": "Crossfade [Beta]",
+      "name": "Crossfade [bèta]",
       "prompt": {
         "options": {
           "multi-input": {
@@ -442,12 +531,24 @@
             "fade-scaling": {
               "label": "Vervagingschaal",
               "linear": "Lineair",
-              "logarithmic": "Logaritmisch"
+              "logarithmic": "Logaritmisch",
+              "equal-power": "Gelijk vermogen"
             },
             "seconds-before-end": "Vervagen N seconden voor het einde"
           },
           "title": "Crossfade-opties"
         }
+      },
+      "settings": {
+        "fade-in": "Fade-in",
+        "fade-out": "Fade-out",
+        "seconds-before-end": "Starten voor het einde",
+        "fade-scaling": "Fadeschaling",
+        "scaling": {
+          "linear": "Lineair",
+          "logarithmic": "Logaritmisch"
+        },
+        "seconds-before-end-description": "Aantal seconden voor het einde van een nummer waarop de crossfade naar het volgende nummer begint"
       }
     },
     "custom-output-device": {
@@ -502,6 +603,13 @@
           "label": "Voer inactiviteitstime-out in seconden in:",
           "title": "Inactiviteitstime-out instellen"
         }
+      },
+      "settings": {
+        "auto-reconnect": "Automatisch opnieuw verbinden",
+        "activity-timeout-enabled": "Aanwezigheid wissen bij pauzeren",
+        "activity-timeout-time": "Wissen na",
+        "hide-github-button": "Knop “Bekijken op GitHub” verbergen",
+        "hide-duration-left": "Resterende tijd verbergen"
       }
     },
     "do-not-track": {
@@ -509,7 +617,19 @@
       "menu": {
         "blocker": "Blokker"
       },
-      "name": "Niet tracken"
+      "name": "Niet tracken",
+      "settings": {
+        "cache": "Blokkeerlijsten cachen",
+        "disable-default-lists": "Standaardblokkeerlijsten uitschakelen"
+      },
+      "dialog": {
+        "reload": {
+          "title": "Pagina herladen",
+          "message": "De instellingen voor Do Not Track zijn gewijzigd.",
+          "detail": "Netwerkregels worden bijgewerkt zonder de app opnieuw te starten. Herlaad de pagina om wijzigingen aan paginapfilters volledig toe te passen. Het afspelen kan worden onderbroken. Je kunt later herladen.",
+          "reload-now": "Pagina nu herladen"
+        }
+      }
     },
     "downloader": {
       "backend": {
@@ -551,7 +671,8 @@
           "saving": "Opslaan…",
           "trying-to-get-playlist-id": "Proberen om het afspeellijst ID op te halen: {{playlistId}}",
           "video-id-not-found": "Video niet gevonden",
-          "writing-id3": "ID3 tags aan het schrijven…"
+          "writing-id3": "ID3 tags aan het schrijven…",
+          "ffmpeg-missing": "FFmpeg is niet gevonden. Installeer FFmpeg en zorg ervoor dat `ffmpeg` in je PATH staat om in dit formaat te downloaden."
         }
       },
       "description": "Download MP3 / bron-audio rechtstreeks vanuit de interface",
@@ -581,7 +702,11 @@
         "can-not-update-progress": "Kan de voortgang niet bijwerken"
       },
       "templates": {
-        "button": "Download"
+        "button": "Downloaden"
+      },
+      "settings": {
+        "finish-folder": "Map voor voltooide downloads",
+        "finish-folder-description": "Laat leeg om de downloadmap hierboven te gebruiken."
       }
     },
     "equalizer": {
@@ -605,11 +730,11 @@
       "menu": {
         "hide-dom-window-controls": "Verberg DOM-vensterbedieningselementen"
       },
-      "name": "In-App Menu"
+      "name": "In-appmenu"
     },
     "lumiastream": {
       "description": "Voegt ondersteuning voor Lumia Stream toe",
-      "name": "Lumia Stream [Beta]"
+      "name": "Lumia Stream [bèta]"
     },
     "lyrics-genius": {
       "description": "Voegt songtekstondersteuning toe voor de meeste nummers",
@@ -649,6 +774,44 @@
           "disconnected": "Verbroken",
           "guest": "Verbonden als Gast",
           "host": "Verbonden als Host"
+        },
+        "diagnostics": {
+          "check": {
+            "nat": "Netwerktype (NAT)",
+            "signaling": "Signaleringsserver",
+            "stun": "Directe verbinding (STUN)",
+            "turn": "Relay-fallback (TURN)"
+          },
+          "copy": "Samenvatting kopiëren",
+          "detail": {
+            "check-error": "Controle mislukt: {{reason}}",
+            "public-ip": "Openbaar adres: {{ip}}",
+            "public-ip-hidden": "Openbaar adres: klik om te tonen",
+            "signaling-fail": "Niet bereikbaar ({{reason}})",
+            "signaling-ok": "Bereikbaar",
+            "stun-fail": "Geen openbaar adres (UDP/STUN geblokkeerd)",
+            "stun-ok": "Openbaar adres gevonden",
+            "turn-fail": "Relay niet bereikbaar",
+            "turn-ok": "Relay bereikbaar"
+          },
+          "nat": {
+            "blocked": "UDP of STUN geblokkeerd",
+            "open": "Open / cone (direct werkt)",
+            "symmetric": "Symmetrisch (relay vereist)",
+            "unknown": "Onbepaald"
+          },
+          "run-again": "Opnieuw uitvoeren",
+          "running": "Controles worden uitgevoerd…",
+          "test": "Verbinding testen",
+          "title": "Verbindingsdiagnose",
+          "verdict": {
+            "blocked": "Dit netwerk blokkeert waarschijnlijk Music Together. Probeer een ander netwerk of een VPN.",
+            "error": "Diagnose kon niet worden uitgevoerd. Controleer de console voor details.",
+            "good": "Directe verbindingen zouden op dit netwerk moeten werken.",
+            "limited": "Kon dit netwerk niet volledig vaststellen. Directe verbindingen werken mogelijk toch; probeer een ander netwerk als ze mislukken.",
+            "no-signaling": "Kan de Music Together-server niet bereiken. Controleer je firewall of internetverbinding.",
+            "relay": "Directe verbindingen mislukken hier mogelijk; er wordt een relay gebruikt (werkt, maar voegt latentie toe)."
+          }
         }
       },
       "name": "Music Samen [Beta]",
@@ -664,7 +827,10 @@
         "permission-changed": "Music Samen machtiging gewijzigd naar \"{{permission}}\"",
         "remove-song-failed": "Verwijderen van nummer mislukt",
         "user-connected": "{{name}} heeft Music Samen toegetreden",
-        "user-disconnected": "{{name}} heeft Music Samen verlaten"
+        "user-disconnected": "{{name}} heeft Music Samen verlaten",
+        "diagnostics-copied": "Samenvatting van diagnose gekopieerd naar klembord",
+        "diagnostics-copy-failed": "Kopiëren van diagnosesamenvatting mislukt",
+        "diagnostics-running": "Wacht tot de verbindingstest is voltooid"
       }
     },
     "navigation": {
@@ -722,11 +888,18 @@
         },
         "save-window-position": "Sla schermpositie op",
         "save-window-size": "Sla schermgrootte op",
-        "use-native-pip": "Gebruik browser ingebouwde PiP"
+        "use-native-pip": "Gebruik browser ingebouwde PiP",
+        "prompt": {
+          "title": "Beeld-in-beeld",
+          "label": "Configureer de Beeld-in-beeld-sneltoets",
+          "keybind-options": {
+            "hotkey": "Sneltoets om Beeld-in-beeld in/uit te schakelen"
+          }
+        }
       },
-      "name": "Picture-in-picture",
+      "name": "Beeld-in-beeld",
       "templates": {
-        "button": "Picture-in-picture"
+        "button": "Beeld-in-beeld"
       }
     },
     "playback-speed": {
@@ -734,6 +907,9 @@
       "name": "Afspeelsnelheid",
       "templates": {
         "button": "Snelheid"
+      },
+      "menu": {
+        "no-preserves-pitch": "Toonhoogtebehoud uitschakelen"
       }
     },
     "precise-volume": {
@@ -757,6 +933,12 @@
           "label": "Kies Stappen voor volumeverhoging/-verlaging",
           "title": "Volume Stappen"
         }
+      },
+      "settings": {
+        "steps": "Volumestap",
+        "arrows-shortcut": "Sneltoetsen met pijltjestoetsen",
+        "shortcut-up": "Globale sneltoets: volume omhoog",
+        "shortcut-down": "Globale sneltoets: volume omlaag"
       }
     },
     "quality-changer": {
@@ -785,6 +967,10 @@
             "message": "Kan niet verifiëren bij Last.fm\nVerberg de pop-up tot de volgende herstart.",
             "title": "Authenticatie mislukt"
           }
+        },
+        "invalid-regex": {
+          "title": "Ongeldige reguliere expressie",
+          "message": "Reguliere expressie op regel {{line}} is ongeldig: {{error}}"
         }
       },
       "menu": {
@@ -792,11 +978,15 @@
           "api-settings": "Last.fm API Instellingen"
         },
         "listenbrainz": {
-          "token": "Voer het ListenBrainz-gebruikerstoken in"
+          "token": "Voer het ListenBrainz-gebruikerstoken in",
+          "api-root": "ListenBrainz-API-URL"
         },
         "scrobble-alternative-artist": "Gebruik alternatieve artiesten",
         "scrobble-alternative-title": "Gebruik alternatieve titels",
-        "scrobble-other-media": "Scrobble andere media"
+        "scrobble-other-media": "Scrobble andere media",
+        "regex-filters": "Filters met reguliere expressies",
+        "use-musicbrainz": "MusicBrainz gebruiken om metadata te corrigeren",
+        "musicbrainz-email": "Contact-e-mailadres voor MusicBrainz"
       },
       "name": "Scrobbler",
       "prompt": {
@@ -807,9 +997,24 @@
         "listenbrainz": {
           "token": {
             "label": "Voer uw ListenBrainz-gebruikerstoken in:",
-            "title": "ListenBrainz token"
+            "title": "ListenBrainz-token"
+          },
+          "api-root": {
+            "label": "Voer de basis-API-URL in:",
+            "title": "ListenBrainz-API-URL"
           }
+        },
+        "regex-filter-multi": {
+          "label": "Voer één regex per regel in:"
+        },
+        "musicbrainz-email": {
+          "title": "Contact-e-mailadres voor MusicBrainz",
+          "label": "Voer een e-mailadres in voor de MusicBrainz-API:"
         }
+      },
+      "settings": {
+        "lastfm-api-root": "Last.fm-API-URL",
+        "musicbrainz-email-description": "Wordt gebruikt als contactgegevens voor de MusicBrainz-API; vereist voor het corrigeren van MusicBrainz-metadata"
       }
     },
     "shortcuts": {
@@ -829,15 +1034,34 @@
           "label": "Kies globale toetsen voor nummer bediening:",
           "title": "Globale toetsen"
         }
+      },
+      "settings": {
+        "global-keybinds": "Globale sneltoetsen (werken in de hele app)",
+        "local-keybinds": "Lokale sneltoetsen (alleen terwijl het venster focus heeft)"
       }
     },
     "skip-silences": {
       "description": "Sla automatisch stiltesecties in nummers over",
-      "name": "Stiltes overslaan"
+      "name": "Stiltes overslaan",
+      "settings": {
+        "only-skip-beginning": "Sla stilte alleen aan het begin van een nummer over"
+      }
     },
     "sponsorblock": {
       "description": "Slaat automatisch niet-muziekgedeelten over, zoals intro/outro of gedeelten van muziekvideo's waarin het nummer niet wordt afgespeeld",
-      "name": "SponsorBlock"
+      "name": "SponsorBlock",
+      "settings": {
+        "categories": "Over te slaan segmenten",
+        "category": {
+          "sponsor": "Sponsor",
+          "intro": "Intro",
+          "outro": "Outro",
+          "interaction": "Interactieherinnering",
+          "selfpromo": "Zelfpromotie",
+          "music_offtopic": "Niet-muzieksectie"
+        },
+        "api-url": "API-URL"
+      }
     },
     "synced-lyrics": {
       "description": "Biedt gesynchroniseerde songteksten voor nummers, met behulp van providers zoals LRClib.",
@@ -1050,6 +1274,30 @@
         "show-custom-search-button": {
           "label": "Toon aangepaste zoekknop",
           "tooltip": "Toon een zoekknop in de tekstkiezer waarmee je de zoekopdracht en artiest voor het huidige nummer kunt overschrijven."
+        },
+        "provider-priority": {
+          "tooltip": "Providers worden in deze volgorde geprobeerd: de eerste met songteksten voor het huidige nummer wint. Gebruik de pijlen om de volgorde te wijzigen."
+        },
+        "prefer-synced": {
+          "tooltip": "Kies de eerste provider in de lijst met tijdsynchrone songteksten, in plaats van de eerste met überhaupt songteksten."
+        },
+        "previous-provider": {
+          "tooltip": "Vorige provider"
+        },
+        "next-provider": {
+          "tooltip": "Volgende provider"
+        },
+        "custom-search-button": {
+          "tooltip": "Aangepaste zoekopdracht"
+        },
+        "star-provider": {
+          "tooltip": "Gebruik altijd deze provider voor dit nummer, ongeacht de prioriteitsvolgorde. Valt terug op de normale volgorde als deze geen songteksten voor het nummer heeft."
+        },
+        "unstar-provider": {
+          "tooltip": "Stop met het vastzetten van deze provider voor dit nummer."
+        },
+        "use-priority-list": {
+          "tooltip": "Probeer de providers in de onderstaande volgorde. Schakel dit uit om de songteksten te laten beslissen: de provider met de beste songteksten voor het nummer wint."
         }
       },
       "name": "Gesynchroniseerde songteksten",
@@ -1061,6 +1309,22 @@
         "duration-mismatch": "⚠️ - De songteksten zijn mogelijk niet synchroon vanwege een niet-overeenkomende duur.",
         "inexact": "⚠️ - De songtekst van dit nummer is mogelijk niet exact",
         "instrumental": "⚠️ - Dit is een instrumentaal nummer"
+      },
+      "settings": {
+        "precise-timing": "Nauwkeurige timing",
+        "show-inexact": "Onnauwkeurige songteksten tonen",
+        "show-time-codes": "Tijdcodes tonen",
+        "romanization": "Songteksten romaniseren",
+        "line-effect": "Regel-effect",
+        "effect": {
+          "fancy": "Fraai",
+          "scale": "Schalen",
+          "offset": "Verschuiving",
+          "focus": "Focus"
+        },
+        "prefer-synced": "Tijdsynchrone songteksten verkiezen",
+        "provider-priority": "Providerprioriteit",
+        "use-priority-list": "Prioriteitslijst gebruiken"
       }
     },
     "taskbar-mediacontrol": {
@@ -1083,14 +1347,22 @@
         "type": {
           "label": "Soort",
           "submenu": {
-            "acrylic": "Acrylic",
+            "acrylic": "Acryl",
             "mica": "Mica",
             "none": "Geen",
-            "tabbed": "Tabbed"
+            "tabbed": "Tabbladen",
+            "content": "Inhoud",
+            "fullscreen-ui": "Volledig scherm-UI",
+            "under-page": "Onder pagina",
+            "under-window": "Onder venster",
+            "window": "Venster"
           }
         }
       },
-      "name": "Doorzichtige muziek speler"
+      "name": "Doorzichtige muziek speler",
+      "settings": {
+        "type-description": "Achtergrondmateriaal dat wordt gebruikt voor venstertransparantie"
+      }
     },
     "tuna-obs": {
       "description": "Integratie met OBS's plug-in Tuna",
@@ -1132,7 +1404,26 @@
       "menu": {
         "visualizer-type": "Visualisatietype"
       },
-      "name": "Visualisator"
+      "name": "Visualisator",
+      "settings": {
+        "preset": "Voorinstelling",
+        "blend-time": "Mengtijd",
+        "effect": "Effect",
+        "accuracy": "Nauwkeurigheid",
+        "max-height": "Max. hoogte",
+        "max-size": "Max. grootte",
+        "line-width": "Lijndikte",
+        "color": "Kleur",
+        "shadow-blur": "Schaduwvervaging",
+        "shadow-color": "Schaduwkleur",
+        "fade-side": "Zijden vervagen",
+        "prettify": "Verfraaien",
+        "prettify-description": "Laat de balken naar de randen toe smaller worden",
+        "dottify": "Puntjes",
+        "dottify-description": "Teken stippen in plaats van een doorlopende lijn",
+        "horizontal-align": "Horizontale uitlijning",
+        "vertical-align": "Verticale uitlijning"
+      }
     },
     "audio-only": {
       "description": "Forceert alleen-audio modus — blokkeert alle videostreams op netwerk- en playerniveau om RAM en bandbreedte te besparen",
@@ -1143,7 +1434,13 @@
       "menu": {
         "log-to-console": "Log herstelgebeurtenissen naar console"
       },
-      "name": "Afspeelherstel"
+      "name": "Afspeelherstel",
+      "settings": {
+        "stall-timeout": "Time-out bij vastlopen",
+        "stall-timeout-description": "Hoe lang de weergave geen voortgang mag boeken voordat er een herstelpoging plaatsvindt",
+        "max-retries": "Max. nieuwe pogingen",
+        "max-retries-description": "Aantal herstelpogingen voordat naar het volgende nummer wordt overgeslagen"
+      }
     },
     "playlist-search": {
       "description": "Voegt een zoekveld toe om afspeellijsten te filteren in de zijbalk en het dialoogvenster 'Toevoegen aan afspeellijst'",
@@ -1152,6 +1449,196 @@
         "search-placeholder": "Zoek afspeellijsten",
         "no-results": "Geen afspeellijsten gevonden"
       }
+    },
+    "always-show-volume-slider": {
+      "name": "Volumeschuifregelaar altijd tonen",
+      "description": "Houdt de volumeschuifregelaar zichtbaar en versleepbaar in plaats van deze alleen bij hover te tonen."
+    },
+    "fullscreen-auto-hide": {
+      "description": "Verbergt automatisch de spelerbediening en de muisaanwijzer na een paar seconden inactiviteit in volledig scherm",
+      "name": "Automatisch verbergen in volledig scherm"
+    },
+    "prefer-song": {
+      "description": "Speel het nummer af in plaats van de muziekvideo wanneer een albumtrack een video is",
+      "name": "Voorkeur voor nummer"
+    },
+    "search-commands": {
+      "commands": {
+        "play": "Speel een video af via een YouTube-link of -id",
+        "settings": "Open de instellingen"
+      },
+      "description": "Typ / in het zoekvak om opdrachten uit te voeren, met automatische aanvulling voor hun argumenten",
+      "name": "Zoekopdrachten",
+      "settings": {
+        "open-keybind": "Sneltoets openen",
+        "open-keybind-description": "Opdrachttoetsaanduiding in Electron-stijl, bijv. CmdOrCtrl+/ of Alt+Space",
+        "open-shortcut": "Het zoekvak overal vandaan openen",
+        "open-shortcut-description": "Opent het zoekvak al in opdrachtmodus, zoals Spotlight. Nogmaals indrukken sluit het."
+      }
+    },
+    "seek-shortcuts": {
+      "description": "Spoel 5 seconden terug/vooruit met de linker-/rechterpijltjestoetsen",
+      "name": "Spoelsneltoetsen"
+    },
+    "sfw-music": {
+      "description": "Slaat automatisch nummers over die door YouTube Music als Expliciet zijn gemarkeerd. Pauzeert als een expliciete wachtrij zich herhaalt of er geen volgend nummer beschikbaar is.",
+      "name": "SFW-muziek"
+    },
+    "toast-autoclose": {
+      "description": "Sluit YouTube Music-meldingen automatisch na drie seconden",
+      "name": "Meldingen automatisch sluiten"
+    },
+    "statusbar-lyrics": {
+      "settings": {
+        "include-pronunciation": "Uitspraak opnemen"
+      }
+    },
+    "dismiss-multidevice-popup": {
+      "name": "Pop-up voor meerdere apparaten sluiten",
+      "description": "Sluit automatisch de pop-up \"Luisteren op dit apparaat\" die verschijnt wanneer het afspelen op een ander apparaat begint."
+    },
+    "memory-saver": {
+      "description": "Wist de resourcecaches van de renderer wanneer het venster verborgen is, zodra ze een drempelwaarde overschrijden",
+      "name": "Geheugenbespaarder",
+      "settings": {
+        "threshold": "Cache-drempelwaarde",
+        "threshold-description": "Leeg de caches zodra hun actuele geheugengebruik deze waarde overschrijdt terwijl het venster verborgen is"
+      }
+    }
+  },
+  "settings-ui": {
+    "name": "Instellingen-UI",
+    "description": "Voegt een instellingenpaneel in de app toe, te openen vanuit de zijbalk",
+    "title": "Instellingen",
+    "settings": {
+      "show-button": "Toon de vermelding Instellingen in de zijbalk",
+      "show-button-description": "Schakel dit uit om de zijbalk overzichtelijk te houden; Instellingen staat nog steeds onder Navigatie → Instellingen openen.",
+      "separate-window": "Instellingen altijd in een apart venster openen",
+      "separate-window-description": "Opent het zelfstandige instellingenvenster, zoals de vermelding in het systeemvak, in plaats van het paneel in de app."
+    },
+    "search-placeholder": "Instellingen zoeken",
+    "search-results": "Zoekresultaten",
+    "search-matching": "Overeenkomend met “{{query}}”",
+    "no-match": "Geen instellingen gevonden voor “{{query}}”.",
+    "close": "Sluiten",
+    "edit-config": "config.json bewerken",
+    "restart-banner": "Sommige wijzigingen worden pas van kracht na een herstart.",
+    "restart-now": "Nu herstarten",
+    "later": "Later",
+    "restart-pill": "herstart",
+    "restart-pill-hint": "Herstart vereist",
+    "refresh-options": "Opties vernieuwen",
+    "move-up": "Omhoog verplaatsen",
+    "move-down": "Omlaag verplaatsen",
+    "about": {
+      "tagline": "Een uitgebreide desktopapp voor YouTube Music",
+      "versions": "Versies",
+      "version-app": "App",
+      "version-build": "Build",
+      "version-electron": "Electron",
+      "version-chromium": "Chromium",
+      "version-node": "Node.js",
+      "version-platform": "Platform",
+      "version-innertube": "Innertube",
+      "links": "Links",
+      "link-repo": "Repository",
+      "link-issue": "Een probleem melden",
+      "link-releases": "Releases",
+      "link-license": "Licentie",
+      "actions": "Acties",
+      "check-updates": "Controleren op updates",
+      "copy-debug": "Foutopsporingsinfo kopiëren",
+      "copied": "Gekopieerd!"
+    },
+    "sections": {
+      "general": {
+        "label": "Algemeen"
+      },
+      "appearance": {
+        "label": "Weergave"
+      },
+      "window": {
+        "label": "Venster en systeemvak"
+      },
+      "advanced": {
+        "label": "Geavanceerd"
+      },
+      "plugins": {
+        "label": "Plug-ins"
+      },
+      "flags": {
+        "label": "Functievlaggen"
+      },
+      "about": {
+        "label": "Over"
+      }
+    },
+    "groups": {
+      "updates-session": "Updates en sessie",
+      "startup-language": "Opstarten en taal",
+      "interface": "Interface",
+      "context-menu": "Contextmenu",
+      "window-title": "Venster",
+      "window": "Venster",
+      "system": "Systeem",
+      "network": "Netwerk",
+      "performance": "Prestaties",
+      "configuration": "Configuratie",
+      "updates": "Updates"
+    },
+    "stepper-decrement": "Verlagen",
+    "stepper-increment": "Verhogen",
+    "flags": {
+      "warning": "Functievlaggen zijn interne schakelaars van YouTube Music zelf. Als je ze wijzigt, kunnen afspelen, lay-out of accountfuncties kapotgaan, en ze vallen niet onder ondersteuning. Overschrijvingen worden alleen bewaard voor de vlaggen die je wijzigt, en kunnen met Ongedaan maken worden verwijderd.",
+      "search-placeholder": "Functievlaggen zoeken",
+      "overridden": "overschreven",
+      "undo": "Ongedaan maken",
+      "undo-hint": "Deze overschrijving verwijderen",
+      "empty": "Op deze pagina zijn geen functievlaggen beschikbaar.",
+      "no-match": "Geen functievlaggen gevonden voor “{{query}}”.",
+      "add-name": "Naam van nieuwe functievlag",
+      "add-value": "Waarde",
+      "add-value-hint": "JSON als het kan worden geparseerd (true, 42, \"text\"), anders de tekst zelf",
+      "add": "Toevoegen"
+    },
+    "fields": {
+      "hide-dislike-button": "Dislike-knop verbergen",
+      "hide-video-captions": "Videobijschriften verbergen",
+      "context-menu": {
+        "hide-entry": "{{entry}} verbergen",
+        "entries": {
+          "add-to-queue": "Aan wachtrij toevoegen",
+          "delete-playlist": "Afspeellijst verwijderen",
+          "dismiss-queue": "Wachtrij sluiten",
+          "download": "Downloaden",
+          "go-to-album": "Naar album gaan",
+          "go-to-artist": "Naar artiest gaan",
+          "go-to-playlist": "Naar afspeellijst gaan",
+          "like": "Vind ik leuk",
+          "not-interested": "Niet geïnteresseerd",
+          "pin-to-listen-again": "Vastzetten in Opnieuw luisteren",
+          "play-next": "Hierna afspelen",
+          "remove-from-playlist": "Uit afspeellijst verwijderen",
+          "remove-from-queue": "Uit wachtrij verwijderen",
+          "report": "Rapporteren",
+          "save-to-library": "Opslaan in bibliotheek",
+          "save-to-playlist": "Opslaan in afspeellijst",
+          "share": "Delen",
+          "shuffle-play": "Willekeurig afspelen",
+          "start-mix": "Mix starten",
+          "stats-for-nerds": "Statistieken voor nerds"
+        }
+      },
+      "podcast-artist": "Podcastdeelnemers als artiesten gebruiken",
+      "podcast-artist-desc": "Uit: de artiest van een podcastaflevering is het kanaal dat deze heeft gepubliceerd.",
+      "theme-preset": "Voorinstelling",
+      "theme-variable-name": "Variabele",
+      "theme-variable-value": "Waarde",
+      "theme-variable-add": "Variabele toevoegen",
+      "performance-mode": "Prestatiemodus",
+      "performance-mode-desc": "Ruil wat visuele kwaliteit in voor zuinigere rendering.",
+      "in-process-gpu": "Voeg het GPU-proces samen met het app-proces",
+      "in-process-gpu-desc": "Experimenteel: bespaart één proces, maar verplaatst GPU-geheugen naar het hoofdproces en kan terugvallen op softwarerendering."
     }
   }
 }

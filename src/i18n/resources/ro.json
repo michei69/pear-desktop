@@ -65,7 +65,8 @@
         },
         "detail": "Ne cerem scuze pentru incovenient! va rugam alegeti ce doriti sa faceti:",
         "message": "Applicatia nu raspunde",
-        "title": "Fereastra nu raspunde"
+        "title": "Fereastra nu raspunde",
+        "details": "Motiv: {{error}}"
       },
       "update-available": {
         "buttons": {
@@ -76,6 +77,27 @@
         "detail": "O noua versiune este disponibila si poate fi descarcata pe {{downloadLink}}",
         "message": "O noua versiune este disponibila",
         "title": "Actualizare disponibila"
+      },
+      "restart-summary": {
+        "detail": "Repornește aplicația pentru a aplica: {{changes}}",
+        "message": "Unele modificări necesită o repornire",
+        "title": "Repornire necesară"
+      },
+      "update-available-dev": {
+        "buttons": {
+          "ok": "OK",
+          "view": "Vezi commit-urile"
+        },
+        "title": "Actualizare disponibilă",
+        "message": "Această versiune de dezvoltare este în urma ramurii master",
+        "detail": "Commit-ul pe care rulează această versiune ({{commit}}) este mai vechi decât ultimul commit din master. Commit-urile mai noi pot fi vizualizate la {{commitsLink}}"
+      },
+      "downgrade-warning": {
+        "title": "Revii la versiunea stabilă?",
+        "message": "Această versiune beta este mai nouă decât cea mai recentă versiune stabilă.",
+        "detail": "Revenirea poate reseta unele setări: trecerea de la o versiune mai nouă la una mai veche nu rulează migrări și poate lăsa setările mai noi necitibile.",
+        "confirm": "Treci la versiunea stabilă",
+        "cancel": "Anulează"
       }
     },
     "menu": {
@@ -87,7 +109,8 @@
           "go-back": "Mergi inapoi",
           "go-forward": "Mergi inainte",
           "quit": "Iesi",
-          "restart": "Reporneste aplicatia"
+          "restart": "Reporneste aplicatia",
+          "open-settings": "Deschide setările"
         }
       },
       "options": {
@@ -129,7 +152,20 @@
             },
             "label": "Limba",
             "submenu": {
-              "to-help-translate": "Vrei să ajuți la traducere? Apasă aici"
+              "to-help-translate": "Vrei să ajuți la traducere? Apasă aici",
+              "sync": {
+                "label": "Sincronizează limba",
+                "submenu": {
+                  "from-youtube": "Din YouTube",
+                  "to-youtube": "Către YouTube"
+                },
+                "failure": {
+                  "dialog": {
+                    "title": "Limba nu a fost schimbată",
+                    "message": "Limba sau localizarea nu există încă în aplicație."
+                  }
+                }
+              }
             }
           },
           "resume-on-start": "Continuă ultimul cântec ascultat când pornește aplicația",
@@ -140,7 +176,7 @@
             "unset": "Deselectat"
           },
           "tray": {
-            "label": "Tray",
+            "label": "Zonă de notificare",
             "submenu": {
               "disabled": "Dezactivat",
               "enabled-and-hide-app": "Activează și ascunde fereastra aplicației",
@@ -180,9 +216,37 @@
                 "label": "Tema",
                 "submenu": {
                   "import-css-file": "Importa fisiere CSS proprii",
-                  "no-theme": "Fara tema"
+                  "no-theme": "Fara tema",
+                  "colors": {
+                    "label": "Culori"
+                  },
+                  "presets": {
+                    "label": "Presetări",
+                    "default": "Implicit",
+                    "custom": "Personalizat"
+                  },
+                  "reset-colors": "Resetează culorile",
+                  "open-themes-folder": "Deschide folderul de teme"
                 }
-              }
+              },
+              "use-ytm-icons": "Folosește pictogramele originale YouTube Music"
+            }
+          },
+          "updates": {
+            "label": "Actualizări",
+            "check": "Verifică actualizările",
+            "auto-update": "Verifică automat actualizările",
+            "channel": {
+              "label": "Canal de actualizare",
+              "stable": "Stabil",
+              "beta": "Beta"
+            }
+          },
+          "shared-links": {
+            "label": "Linkuri partajate",
+            "submenu": {
+              "strip-music": "Elimină 'music.'",
+              "strip-si": "Elimină '&si='"
             }
           }
         }
@@ -219,6 +283,15 @@
       "dislike": "Nu-mi place",
       "unlike": "Spre deosebire de",
       "undislike": "Nu mai displac"
+    },
+    "themes": {
+      "consent": {
+        "title": "Rulezi codul temei?",
+        "message": "\"{{theme}}\" conține un script care va rula cu acces complet la aplicație.",
+        "detail": "Scripturile temelor nu sunt izolate. Acest cod poate citi și modifica setările, poate comunica cu aplicația și poate face orice altceva poate face aplicația. Permite asta doar dacă ai încredere în sursa temei. Poți revoca permisiunea eliminând tema.",
+        "allow": "Rulează această temă",
+        "cancel": "Anulează"
+      }
     }
   },
   "plugins": {
@@ -340,6 +413,10 @@
         },
         "port": {
           "label": "Port"
+        },
+        "mcp": {
+          "label": "Server MCP",
+          "description": "Expune API-ul v2 ca instrumente MCP la /mcp. Folosește aceeași autorizare ca restul API-ului."
         }
       },
       "name": "Server API [Beta]",
@@ -352,11 +429,20 @@
           "label": "Introduceți port-ul pentru server-ul API:",
           "title": "Port"
         }
+      },
+      "settings": {
+        "choose-file": "Alege fișierul…"
       }
     },
     "audio-compressor": {
       "description": "Aplică compresie pe audio (scade volumul părților cele mai zgomotoase și crește volumul părților mai puțin zgomotoase)",
-      "name": "Compresor audio"
+      "name": "Compresor audio",
+      "menu": {
+        "auto-track-gain": "Câștig automat pe piesă (amplifică piesele cu volum redus)",
+        "maximum-gain": {
+          "label": "Câștig maxim"
+        }
+      }
     },
     "auth-proxy-adapter": {
       "description": "Suport pentru utilizarea serviciilor proxy de autentificare",
@@ -422,7 +508,10 @@
           "label": "Format"
         }
       },
-      "name": "Ceas"
+      "name": "Ceas",
+      "settings": {
+        "hour-12": "Folosește formatul de 12 ore"
+      }
     },
     "compact-sidebar": {
       "description": "Păstrează bara laterală mereu în modul compact",
@@ -442,12 +531,24 @@
             "fade-scaling": {
               "label": "Scalare de estompare",
               "linear": "Liniar",
-              "logarithmic": "Logaritmic"
+              "logarithmic": "Logaritmic",
+              "equal-power": "Putere egală"
             },
             "seconds-before-end": "Tranziție N secunde înainte de final"
           },
           "title": "Opțiuni de tranziție"
         }
+      },
+      "settings": {
+        "fade-in": "Estompare la intrare",
+        "fade-out": "Estompare la ieșire",
+        "seconds-before-end": "Începe înainte de final",
+        "fade-scaling": "Scalarea estompării",
+        "scaling": {
+          "linear": "Liniară",
+          "logarithmic": "Logaritmică"
+        },
+        "seconds-before-end-description": "Secunde înainte de finalul unei piese la care începe crossfade-ul către următoarea"
       }
     },
     "custom-output-device": {
@@ -502,6 +603,13 @@
           "label": "Introduceți perioada de inactivitate dorită în secunde:",
           "title": "Setează timpul de inactivitate"
         }
+      },
+      "settings": {
+        "auto-reconnect": "Reconectare automată",
+        "activity-timeout-enabled": "Șterge prezența la pauză",
+        "activity-timeout-time": "Șterge după",
+        "hide-github-button": "Ascunde butonul „Vezi pe GitHub”",
+        "hide-duration-left": "Ascunde timpul rămas"
       }
     },
     "downloader": {
@@ -544,7 +652,8 @@
           "saving": "Se salvează…",
           "trying-to-get-playlist-id": "Se încearcă obținerea ID-ului listei de redare: {{playlistId}}",
           "video-id-not-found": "Videoclipul nu a fost găsit",
-          "writing-id3": "Se scriu tag-urile ID3…"
+          "writing-id3": "Se scriu tag-urile ID3…",
+          "ffmpeg-missing": "FFmpeg nu a fost găsit. Instalează FFmpeg și asigură-te că `ffmpeg` se află în PATH pentru a descărca în acest format."
         }
       },
       "description": "Descarcă MP3 / sursa audio direct din interfață",
@@ -575,6 +684,10 @@
       },
       "templates": {
         "button": "Descarcă"
+      },
+      "settings": {
+        "finish-folder": "Folder pentru descărcările finalizate",
+        "finish-folder-description": "Lasă nesetat pentru a folosi folderul de descărcare de mai sus."
       }
     },
     "equalizer": {
@@ -642,6 +755,44 @@
           "disconnected": "Deconectat",
           "guest": "Conectat ca invitat",
           "host": "Conectat ca gazda"
+        },
+        "diagnostics": {
+          "check": {
+            "nat": "Tip de rețea (NAT)",
+            "signaling": "Server de semnalizare",
+            "stun": "Conexiune directă (STUN)",
+            "turn": "Releu de rezervă (TURN)"
+          },
+          "copy": "Copiază rezumatul",
+          "detail": {
+            "check-error": "Verificarea a eșuat: {{reason}}",
+            "public-ip": "Adresă publică: {{ip}}",
+            "public-ip-hidden": "Adresă publică: clic pentru a afișa",
+            "signaling-fail": "Inaccesibil ({{reason}})",
+            "signaling-ok": "Accesibil",
+            "stun-fail": "Nicio adresă publică (UDP/STUN blocat)",
+            "stun-ok": "Adresă publică găsită",
+            "turn-fail": "Releu inaccesibil",
+            "turn-ok": "Releu accesibil"
+          },
+          "nat": {
+            "blocked": "UDP sau STUN blocat",
+            "open": "Deschis / con (direct funcționează)",
+            "symmetric": "Simetric (necesită releu)",
+            "unknown": "Nedeterminat"
+          },
+          "run-again": "Rulează din nou",
+          "running": "Se rulează verificările…",
+          "test": "Testează conexiunea",
+          "title": "Diagnosticare conexiune",
+          "verdict": {
+            "blocked": "Această rețea probabil va bloca Music Together. Încearcă altă rețea sau un VPN.",
+            "error": "Diagnosticarea nu a putut rula. Verifică consola pentru detalii.",
+            "good": "Conexiunile directe ar trebui să funcționeze în această rețea.",
+            "limited": "Nu s-a putut determina complet această rețea. Conexiunile directe pot funcționa în continuare; dacă eșuează, încearcă altă rețea.",
+            "no-signaling": "Nu se poate accesa serverul Music Together. Verifică firewallul sau conexiunea la internet.",
+            "relay": "Conexiunile directe pot eșua aici; se va folosi un releu (funcționează, dar adaugă latență)."
+          }
         }
       },
       "name": "Music Together [Beta]",
@@ -657,7 +808,10 @@
         "permission-changed": "Permisiunile Music Together s-au schimbat la \"{{permission}}\"",
         "remove-song-failed": "Eroare la îndepărtarea melodiei",
         "user-connected": "{{name}} s-a alăturat la Music Together",
-        "user-disconnected": "{{name}} a părăsit Music Together"
+        "user-disconnected": "{{name}} a părăsit Music Together",
+        "diagnostics-copied": "Rezumatul diagnosticării a fost copiat în clipboard",
+        "diagnostics-copy-failed": "Nu s-a putut copia rezumatul diagnosticelor",
+        "diagnostics-running": "Așteptați finalizarea testului de conexiune"
       }
     },
     "navigation": {
@@ -715,11 +869,18 @@
         },
         "save-window-position": "Salvează poziția ferestrei",
         "save-window-size": "Salvează mărimea ferestrei",
-        "use-native-pip": "Folosește PiP-ul nativ pentru broswer"
+        "use-native-pip": "Folosește PiP-ul nativ pentru broswer",
+        "prompt": {
+          "title": "Imagine în imagine",
+          "label": "Configurați combinația de taste pentru Imagine în imagine",
+          "keybind-options": {
+            "hotkey": "Combinație de taste pentru a comuta Imagine în imagine"
+          }
+        }
       },
-      "name": "Picture-in-picture",
+      "name": "Imagine în imagine",
       "templates": {
-        "button": "Picture-in-picture"
+        "button": "Imagine în imagine"
       }
     },
     "playback-speed": {
@@ -727,6 +888,9 @@
       "name": "Viteza de redare",
       "templates": {
         "button": "Viteză"
+      },
+      "menu": {
+        "no-preserves-pitch": "Dezactivează păstrarea tonalității"
       }
     },
     "precise-volume": {
@@ -750,6 +914,12 @@
           "label": "Alege pașii de increment pentru volum audio",
           "title": "Incremente de volum"
         }
+      },
+      "settings": {
+        "steps": "Pas de volum",
+        "arrows-shortcut": "Scurtături cu tastele săgeți",
+        "shortcut-up": "Scurtătură globală: volumul sus",
+        "shortcut-down": "Scurtătură globală: volumul jos"
       }
     },
     "quality-changer": {
@@ -778,6 +948,10 @@
             "message": "Autentificarea cu Last.fm a eșuat\nAscunde acest pop-up până la următoarea repornire.",
             "title": "Autentificare Eșuată"
           }
+        },
+        "invalid-regex": {
+          "title": "Expresie regulată invalidă",
+          "message": "Expresia regulată de la linia {{line}} este invalidă: {{error}}"
         }
       },
       "menu": {
@@ -785,11 +959,15 @@
           "api-settings": "Setări pentru API-ul Last.fm"
         },
         "listenbrainz": {
-          "token": "Introdu token-ul de utilizator ListenBrainz"
+          "token": "Introdu token-ul de utilizator ListenBrainz",
+          "api-root": "URL API ListenBrainz"
         },
         "scrobble-alternative-artist": "Utilizați artiști alternativi",
         "scrobble-alternative-title": "Folosește titluri alternative",
-        "scrobble-other-media": "Scrobble alte surse media"
+        "scrobble-other-media": "Scrobble alte surse media",
+        "regex-filters": "Filtre cu expresii regulate",
+        "use-musicbrainz": "Folosește MusicBrainz pentru a corecta metadatele",
+        "musicbrainz-email": "E-mail de contact MusicBrainz"
       },
       "name": "Scrobbler",
       "prompt": {
@@ -801,8 +979,23 @@
           "token": {
             "label": "Introdu token-ul tău de utilizator ListenBrainz:",
             "title": "Token-ul ListenBrainz"
+          },
+          "api-root": {
+            "label": "Introduceți URL-ul de bază al API-ului:",
+            "title": "URL API ListenBrainz"
           }
+        },
+        "regex-filter-multi": {
+          "label": "Introduceți câte o expresie regulată pe linie:"
+        },
+        "musicbrainz-email": {
+          "title": "E-mail de contact MusicBrainz",
+          "label": "Introduceți un e-mail pentru API-ul MusicBrainz:"
         }
+      },
+      "settings": {
+        "lastfm-api-root": "URL API Last.fm",
+        "musicbrainz-email-description": "Folosit ca informație de contact pentru API-ul MusicBrainz; necesar pentru corectarea metadatelor MusicBrainz"
       }
     },
     "shortcuts": {
@@ -822,15 +1015,34 @@
           "label": "Alege combinația de taste globală pentru controlul melodiilor:",
           "title": "Scurtături pe tastatură globale"
         }
+      },
+      "settings": {
+        "global-keybinds": "Scurtături globale (funcționează în toată aplicația)",
+        "local-keybinds": "Scurtături locale (doar când fereastra este activă)"
       }
     },
     "skip-silences": {
       "description": "Treci automat peste secțiunile de liniște din melodii",
-      "name": "Treci peste liniște"
+      "name": "Treci peste liniște",
+      "settings": {
+        "only-skip-beginning": "Omite tăcerile doar la începutul unei piese"
+      }
     },
     "sponsorblock": {
       "description": "Treci automat peste părțile non-muzicale precum intro/outro sau părți din video-ul melodiei, când nu se aude melodia",
-      "name": "SponsorBlock"
+      "name": "SponsorBlock",
+      "settings": {
+        "categories": "Segmente de omis",
+        "category": {
+          "sponsor": "Sponsor",
+          "intro": "Intro",
+          "outro": "Outro",
+          "interaction": "Memento de interacțiune",
+          "selfpromo": "Autopromovare",
+          "music_offtopic": "Secțiune non-muzicală"
+        },
+        "api-url": "URL API"
+      }
     },
     "synced-lyrics": {
       "description": "Furnizează versuri sincronizate melodiilor, folosind furnizori precum LRClib.",
@@ -1043,6 +1255,30 @@
         "show-custom-search-button": {
           "label": "Afișează butonul personalizat de căutare",
           "tooltip": "Afișează un buton de căutare în selectorul de versuri care îți permite să suprascrii interogarea de căutare și artistul pentru melodia curentă."
+        },
+        "provider-priority": {
+          "tooltip": "Furnizorii sunt încercați în această ordine: câștigă primul care are versuri pentru piesa curentă. Folosiți săgețile pentru a reordona."
+        },
+        "prefer-synced": {
+          "tooltip": "Alegeți primul furnizor din listă cu versuri sincronizate temporal, în locul primului cu orice versuri."
+        },
+        "previous-provider": {
+          "tooltip": "Furnizorul anterior"
+        },
+        "next-provider": {
+          "tooltip": "Furnizorul următor"
+        },
+        "custom-search-button": {
+          "tooltip": "Interogare de căutare personalizată"
+        },
+        "star-provider": {
+          "tooltip": "Folosiți întotdeauna acest furnizor pentru această piesă, indiferent de ordinea de prioritate. Se revine la ordinea normală dacă nu are versuri pentru piesă."
+        },
+        "unstar-provider": {
+          "tooltip": "Nu mai fixați acest furnizor pentru această piesă."
+        },
+        "use-priority-list": {
+          "tooltip": "Încercați furnizorii în ordinea de mai jos. Dezactivați pentru a lăsa versurile să decidă: câștigă furnizorul cu cele mai bune versuri pentru piesă."
         }
       },
       "name": "Versuri Sincronizate",
@@ -1054,6 +1290,22 @@
         "duration-mismatch": "⚠️ - Versurile pot fi desincronizate din cauza unei nepotriviri de durație.",
         "inexact": "⚠️ - Versurile pentru această melodie pot fi inexacte",
         "instrumental": "⚠️ - Această melodie este instrumentală"
+      },
+      "settings": {
+        "precise-timing": "Temporizare precisă",
+        "show-inexact": "Afișează versuri inexacte",
+        "show-time-codes": "Afișează codurile de timp",
+        "romanization": "Romanizează versurile",
+        "line-effect": "Efect de linie",
+        "effect": {
+          "fancy": "Elegant",
+          "scale": "Scalare",
+          "offset": "Decalaj",
+          "focus": "Concentrare"
+        },
+        "prefer-synced": "Preferă versurile sincronizate",
+        "provider-priority": "Prioritatea furnizorilor",
+        "use-priority-list": "Folosește lista de prioritate"
       }
     },
     "taskbar-mediacontrol": {
@@ -1079,11 +1331,19 @@
             "acrylic": "Acrilic",
             "mica": "Efect mica",
             "none": "Niciunul",
-            "tabbed": "Cu file"
+            "tabbed": "Cu file",
+            "content": "Conținut",
+            "fullscreen-ui": "Interfață ecran complet",
+            "under-page": "Sub pagină",
+            "under-window": "Sub fereastră",
+            "window": "Fereastră"
           }
         }
       },
-      "name": "Player transparent"
+      "name": "Player transparent",
+      "settings": {
+        "type-description": "Material de fundal folosit pentru transparența ferestrei"
+      }
     },
     "tuna-obs": {
       "description": "Integrare cu plugin-ul OBS Tuna",
@@ -1125,7 +1385,26 @@
       "menu": {
         "visualizer-type": "Tip de vizualizator"
       },
-      "name": "Vizualizator"
+      "name": "Vizualizator",
+      "settings": {
+        "preset": "Presetare",
+        "blend-time": "Timp de îmbinare",
+        "effect": "Efect",
+        "accuracy": "Precizie",
+        "max-height": "Înălțime maximă",
+        "max-size": "Dimensiune maximă",
+        "line-width": "Lățimea liniei",
+        "color": "Culoare",
+        "shadow-blur": "Estomparea umbrei",
+        "shadow-color": "Culoarea umbrei",
+        "fade-side": "Laturi estompate",
+        "prettify": "Înfrumusețează",
+        "prettify-description": "Îngustează barele spre margini",
+        "dottify": "Transformă în puncte",
+        "dottify-description": "Desenează puncte în loc de o linie continuă",
+        "horizontal-align": "Aliniere orizontală",
+        "vertical-align": "Aliniere verticală"
+      }
     },
     "audio-only": {
       "description": "Forțează modul doar audio — blochează toate fluxurile video la nivel de rețea și player pentru a economisi RAM și lățime de bandă",
@@ -1136,7 +1415,13 @@
       "menu": {
         "log-to-console": "Înregistrează evenimentele de recuperare în consolă"
       },
-      "name": "Recuperare Redare"
+      "name": "Recuperare Redare",
+      "settings": {
+        "stall-timeout": "Timp de expirare pentru blocare",
+        "stall-timeout-description": "Cât timp poate redarea să nu avanseze înainte de o încercare de recuperare",
+        "max-retries": "Încercări maxime",
+        "max-retries-description": "Numărul de încercări de recuperare înainte de a trece la piesa următoare"
+      }
     },
     "playlist-search": {
       "description": "Adaugă un câmp de căutare pentru a filtra listele de redare din bara laterală și din dialogul Adăugare în lista de redare",
@@ -1145,6 +1430,215 @@
         "search-placeholder": "Caută liste de redare",
         "no-results": "Nicio listă de redare găsită."
       }
+    },
+    "always-show-volume-slider": {
+      "name": "Arată întotdeauna glisorul de volum",
+      "description": "Menține glisorul de volum vizibil și glisabil, în loc să-l afișeze doar la trecerea cursorului."
+    },
+    "do-not-track": {
+      "description": "Blochează toate urmăririle din start",
+      "menu": {
+        "blocker": "Blocant"
+      },
+      "name": "Nu mă urmări",
+      "settings": {
+        "cache": "Păstrează în cache listele de blocare",
+        "disable-default-lists": "Dezactivează listele de blocare implicite"
+      },
+      "dialog": {
+        "reload": {
+          "title": "Reîncarcă pagina",
+          "message": "Setările „Do Not Track” au fost modificate.",
+          "detail": "Regulile de rețea se actualizează fără a reporni aplicația. Reîncarcă pagina pentru a aplica complet modificările la filtrele paginii. Redarea poate fi întreruptă. Poți reîncărca mai târziu.",
+          "reload-now": "Reîncarcă pagina acum"
+        }
+      }
+    },
+    "fullscreen-auto-hide": {
+      "description": "Ascunde automat controalele playerului și cursorul mouse-ului după câteva secunde de inactivitate în modul ecran complet",
+      "name": "Ascundere automată în ecran complet"
+    },
+    "prefer-song": {
+      "description": "Redă piesa în locul videoclipului muzical atunci când o piesă de pe album este un videoclip",
+      "name": "Preferă piesa"
+    },
+    "search-commands": {
+      "commands": {
+        "play": "Redă un videoclip dintr-un link sau ID YouTube",
+        "settings": "Deschide setările"
+      },
+      "description": "Tastați / în caseta de căutare pentru a rula comenzi, cu autocompletare pentru argumentele lor",
+      "name": "Comenzi de căutare",
+      "settings": {
+        "open-keybind": "Scurtătură de deschidere",
+        "open-keybind-description": "Accelerator în stil Electron, de ex. CmdOrCtrl+/ sau Alt+Space",
+        "open-shortcut": "Deschide caseta de căutare de oriunde",
+        "open-shortcut-description": "Afișează caseta de căutare deja în modul comenzi, ca Spotlight. Apăsarea din nou o închide."
+      }
+    },
+    "seek-shortcuts": {
+      "description": "Salt 5 secunde înapoi/înainte cu tastele săgeată stânga/dreapta",
+      "name": "Scurtături de salt"
+    },
+    "sfw-music": {
+      "description": "Omite automat piesele marcate ca Explicit de YouTube Music. Se pune pe pauză dacă o coadă explicită se repetă sau nu există o piesă următoare disponibilă.",
+      "name": "Muzică SFW"
+    },
+    "toast-autoclose": {
+      "description": "Închide automat notificările YouTube Music după trei secunde",
+      "name": "Închidere automată a notificărilor"
+    },
+    "statusbar-lyrics": {
+      "settings": {
+        "include-pronunciation": "Include pronunția"
+      }
+    },
+    "dismiss-multidevice-popup": {
+      "name": "Închide popup-ul pentru mai multe dispozitive",
+      "description": "Închide automat fereastra pop-up „Ascultă pe acest dispozitiv” care apare când redarea începe pe alt dispozitiv."
+    },
+    "memory-saver": {
+      "description": "Golește cache-urile de resurse ale procesului de randare cât timp fereastra este ascunsă, după ce acestea depășesc un prag",
+      "name": "Economizor de memorie",
+      "settings": {
+        "threshold": "Pragul cache-ului",
+        "threshold-description": "Golește cache-urile când memoria lor activă depășește această valoare cât timp fereastra este ascunsă"
+      }
+    }
+  },
+  "settings-ui": {
+    "name": "Interfață setări",
+    "description": "Adaugă un panou de setări în aplicație, deschis din bara laterală",
+    "title": "Setări",
+    "settings": {
+      "show-button": "Afișează intrarea Setări în bara laterală",
+      "show-button-description": "Dezactivează această opțiune pentru a menține bara laterală curată; Setările rămân disponibile în Navigare → Deschide setările.",
+      "separate-window": "Deschide întotdeauna Setările într-o fereastră separată",
+      "separate-window-description": "Deschide fereastra de setări independentă, ca intrarea din bara de sistem, în locul panoului din aplicație."
+    },
+    "search-placeholder": "Caută în setări",
+    "search-results": "Rezultatele căutării",
+    "search-matching": "Potrivire pentru „{{query}}”",
+    "no-match": "Nicio setare nu corespunde cu „{{query}}”.",
+    "close": "Închide",
+    "edit-config": "Editează config.json",
+    "restart-banner": "Unele modificări necesită repornire pentru a avea efect.",
+    "restart-now": "Repornește acum",
+    "later": "Mai târziu",
+    "restart-pill": "repornire",
+    "restart-pill-hint": "Necesită repornire",
+    "refresh-options": "Reîmprospătează opțiunile",
+    "move-up": "Mută în sus",
+    "move-down": "Mută în jos",
+    "about": {
+      "tagline": "O aplicație desktop bogată în funcții pentru YouTube Music",
+      "versions": "Versiuni",
+      "version-app": "Aplicație",
+      "version-build": "Build",
+      "version-electron": "Electron",
+      "version-chromium": "Chromium",
+      "version-node": "Node.js",
+      "version-platform": "Platformă",
+      "version-innertube": "Innertube",
+      "links": "Linkuri",
+      "link-repo": "Depozit",
+      "link-issue": "Raportează o problemă",
+      "link-releases": "Lansări",
+      "link-license": "Licență",
+      "actions": "Acțiuni",
+      "check-updates": "Verifică actualizările",
+      "copy-debug": "Copiază informațiile de depanare",
+      "copied": "Copiat!"
+    },
+    "sections": {
+      "general": {
+        "label": "General"
+      },
+      "appearance": {
+        "label": "Aspect"
+      },
+      "window": {
+        "label": "Fereastră și bară de sistem"
+      },
+      "advanced": {
+        "label": "Avansat"
+      },
+      "plugins": {
+        "label": "Module"
+      },
+      "flags": {
+        "label": "Flaguri"
+      },
+      "about": {
+        "label": "Despre"
+      }
+    },
+    "groups": {
+      "updates-session": "Actualizări și sesiune",
+      "startup-language": "Pornire și limbă",
+      "interface": "Interfață",
+      "context-menu": "Meniu contextual",
+      "window-title": "Fereastră",
+      "window": "Fereastră",
+      "system": "Sistem",
+      "network": "Rețea",
+      "performance": "Performanță",
+      "configuration": "Configurare",
+      "updates": "Actualizări"
+    },
+    "stepper-decrement": "Micșorează",
+    "stepper-increment": "Mărește",
+    "flags": {
+      "warning": "Flagurile de funcționalitate sunt comutatoarele interne proprii ale YouTube Music. Modificarea lor poate afecta redarea, aspectul sau funcțiile contului și nu sunt acoperite de asistență. Suprascrierile sunt păstrate doar pentru flagurile pe care le modificați și pot fi eliminate cu Anulează.",
+      "search-placeholder": "Caută flaguri",
+      "overridden": "suprascris",
+      "undo": "Anulează",
+      "undo-hint": "Șterge această suprascriere",
+      "empty": "Această pagină nu expune niciun flag de funcționalitate.",
+      "no-match": "Niciun flag nu corespunde cu „{{query}}”.",
+      "add-name": "Nume flag nou",
+      "add-value": "Valoare",
+      "add-value-hint": "JSON când poate fi interpretat (true, 42, \"text\"), altfel textul ca atare",
+      "add": "Adaugă"
+    },
+    "fields": {
+      "hide-dislike-button": "Ascunde butonul Nu-mi place",
+      "hide-video-captions": "Ascunde subtitrările videoclipurilor",
+      "context-menu": {
+        "hide-entry": "Ascunde {{entry}}",
+        "entries": {
+          "add-to-queue": "Adaugă la coadă",
+          "delete-playlist": "Șterge lista de redare",
+          "dismiss-queue": "Închide coada",
+          "download": "Descarcă",
+          "go-to-album": "Mergi la album",
+          "go-to-artist": "Mergi la artist",
+          "go-to-playlist": "Mergi la lista de redare",
+          "like": "Îmi place",
+          "not-interested": "Nu mă interesează",
+          "pin-to-listen-again": "Fixează în Ascultă din nou",
+          "play-next": "Redă următorul",
+          "remove-from-playlist": "Elimină din lista de redare",
+          "remove-from-queue": "Elimină din coadă",
+          "report": "Raportează",
+          "save-to-library": "Salvează în bibliotecă",
+          "save-to-playlist": "Salvează în lista de redare",
+          "share": "Partajează",
+          "shuffle-play": "Redă aleatoriu",
+          "start-mix": "Pornește mixul",
+          "stats-for-nerds": "Statistici pentru pasionați"
+        }
+      },
+      "podcast-artist": "Folosește participanții la podcast ca artiști",
+      "podcast-artist-desc": "Dezactivat: artistul unui episod de podcast este canalul care l-a publicat.",
+      "theme-preset": "Presetare",
+      "theme-variable-name": "Variabilă",
+      "theme-variable-value": "Valoare",
+      "theme-variable-add": "Adaugă variabilă",
+      "performance-mode": "Mod de performanță",
+      "performance-mode-desc": "Renunță la o parte din fidelitatea vizuală pentru o randare mai eficientă.",
+      "in-process-gpu": "Îmbină procesul GPU cu procesul aplicației",
+      "in-process-gpu-desc": "Experimental: economisește un proces, dar mută memoria GPU în procesul principal și poate reveni la randarea software."
     }
   }
 }

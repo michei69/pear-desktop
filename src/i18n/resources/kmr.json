@@ -65,7 +65,8 @@
         },
         "detail": "Em ji bo nebaşiyê lêborînê dixwazin! ji kerema xwe hilbijêre ka çi bike:",
         "message": "Sepan Bêbersiv e",
-        "title": "Pencere Bêbersiv e"
+        "title": "Pencere Bêbersiv e",
+        "details": "Sedem: {{error}}"
       },
       "update-available": {
         "buttons": {
@@ -76,6 +77,27 @@
         "detail": "Guhertoyeke nû heye û dikare li {{downloadLink}} were daxistin",
         "message": "Guhertoyeke nû heye",
         "title": "Rojanekirin Heye"
+      },
+      "restart-summary": {
+        "detail": "Ji bo bicîhkirinê: {{changes}}, sepanê ji nû ve dest pê bike",
+        "message": "Hin guhertin hewceyî ji nû ve dest pê kirinê ne",
+        "title": "Ji nû ve dest pê kirin pêwîst e"
+      },
+      "update-available-dev": {
+        "buttons": {
+          "ok": "OK",
+          "view": "Commitan bibîne"
+        },
+        "title": "Nûvekirin heye",
+        "message": "Ev builda dev li paş şaxa master e",
+        "detail": "Commita ku ev build li ser dixebite ({{commit}}) ji commita herî nû ya li ser master kevintir e. Commitên nûtir dikarin li {{commitsLink}} werin dîtin."
+      },
+      "downgrade-warning": {
+        "title": "Vegerin ser stabîl?",
+        "message": "Ev builda beta ji guhertoya stabîl a herî nû nûtir e.",
+        "detail": "Vegerandin dikare hin mîhengan sifir bike: çûn ji guhertoyeke nûtir bo ya kevintir tu koçberan nake û dikare mîhengên nûtir bêxwendin bihêle.",
+        "confirm": "Derbasî stabîl bibe",
+        "cancel": "Betal bike"
       }
     },
     "menu": {
@@ -87,7 +109,8 @@
           "go-back": "Paş ve",
           "go-forward": "Pêş ve",
           "quit": "Derkeve",
-          "restart": "Sepanê Ji Nû Ve Bide Destpêkirin"
+          "restart": "Sepanê Ji Nû Ve Bide Destpêkirin",
+          "open-settings": "Mîhengan veke"
         }
       },
       "options": {
@@ -129,7 +152,20 @@
             },
             "label": "Ziman",
             "submenu": {
-              "to-help-translate": "Dixwazî alîkariya wergerandinê bikî? Li vir bitikîne"
+              "to-help-translate": "Dixwazî alîkariya wergerandinê bikî? Li vir bitikîne",
+              "sync": {
+                "label": "Ziman hevdem bike",
+                "submenu": {
+                  "from-youtube": "Ji YouTube",
+                  "to-youtube": "Bo YouTube"
+                },
+                "failure": {
+                  "dialog": {
+                    "title": "Ziman nehat guhertin",
+                    "message": "Ziman an herêm hîn di sepanê de tune."
+                  }
+                }
+              }
             }
           },
           "resume-on-start": "Dema sepan dest pê dike strana dawî bidomîne",
@@ -180,9 +216,37 @@
                 "label": "Reng",
                 "submenu": {
                   "import-css-file": "Pelê CSS a xwerû îtxal bike",
-                  "no-theme": "Bê reng"
+                  "no-theme": "Bê reng",
+                  "colors": {
+                    "label": "Reng"
+                  },
+                  "presets": {
+                    "label": "Pêşdanîn",
+                    "default": "Jixweber",
+                    "custom": "Taybet"
+                  },
+                  "reset-colors": "Rengan vegerîne",
+                  "open-themes-folder": "Peldanka temayan veke"
                 }
-              }
+              },
+              "use-ytm-icons": "Îkonên orîjînal ên YouTube Music bikar bîne"
+            }
+          },
+          "updates": {
+            "label": "Nûvekirin",
+            "check": "Nûvekirinan kontrol bike",
+            "auto-update": "Bi otomatîk nûvekirinan kontrol bike",
+            "channel": {
+              "label": "Kanala nûvekirinê",
+              "stable": "Stabîl",
+              "beta": "Beta"
+            }
+          },
+          "shared-links": {
+            "label": "Girêdanên parvekirî",
+            "submenu": {
+              "strip-music": "Jê bibe 'music.'",
+              "strip-si": "Jê bibe '&si='"
             }
           }
         }
@@ -219,6 +283,15 @@
       "dislike": "نەخۆش",
       "unlike": "جی",
       "undislike": "نەخوازراو"
+    },
+    "themes": {
+      "consent": {
+        "title": "Koda temayê bixebitîne?",
+        "message": "\"{{theme}}\" skrîptekê dihewîne ku dê bi gihîştina tam a sepanê bixebite.",
+        "detail": "Skrîptên temayan ne di qutiyeke ewle de ne. Ev kod dikare mîhengên te bixwîne û biguherîne, bi sepanê re biaxiv e, û her tiştê din ê ku sepan bixwe dikare bike, bike. Tenê heke tu baweriya xwe bi çavkaniya temayê heye destûrê bide. Tu dikarî vê bi rakirina temayê betal bikî.",
+        "allow": "Vê temayê bixebitîne",
+        "cancel": "Betal bike"
+      }
     }
   },
   "plugins": {
@@ -351,6 +424,10 @@
               "dialogTitle": "Pelê mifteya taybet a HTTPS hilbijêre"
             }
           }
+        },
+        "mcp": {
+          "label": "Servera MCP",
+          "description": "APIya v2 wek amûrên MCP li /mcp pêşkêş dike. Heman destûrnameyê wekî beşa din a APIyê bikar tîne."
         }
       },
       "name": "Pêşkêşkara API [Beta]",
@@ -363,11 +440,20 @@
           "label": "Porta ji bo pêşkêşkara APIyê binivîse:",
           "title": "Port"
         }
+      },
+      "settings": {
+        "choose-file": "Pelê hilbijêre…"
       }
     },
     "audio-compressor": {
       "description": "Kompresyonê li dengan bicîh tîne (bilindiya beşên herî bilind ên sînyalê kêm dike û bilindiya beşên herî nerm zêde dike)",
-      "name": "Kompresora Dengî"
+      "name": "Kompresora Dengî",
+      "menu": {
+        "auto-track-gain": "Qezenca trackê ya otomatîk (trackên bêdeng zêde bike)",
+        "maximum-gain": {
+          "label": "Qezenca herî zêde"
+        }
+      }
     },
     "auth-proxy-adapter": {
       "description": "Piştgiriya ji bo bikaranîna xizmetên proksiya rastandina nasnameyê",
@@ -433,6 +519,9 @@
           "display-seconds": "Çirkeyan Nîşan Bide",
           "24-hour-format": "Formata 24-Saetî"
         }
+      },
+      "settings": {
+        "hour-12": "Formata 12 saetan bikar bîne"
       }
     },
     "compact-sidebar": {
@@ -453,12 +542,24 @@
             "fade-scaling": {
               "label": "Pîvandina derbasbûnê",
               "linear": "Xêzikî",
-              "logarithmic": "Logarîtmîk"
+              "logarithmic": "Logarîtmîk",
+              "equal-power": "Hêza wekhev"
             },
             "seconds-before-end": "N çirke berî dawiyê derbas bibe"
           },
           "title": "Vebijêrkên derbasbûnê"
         }
+      },
+      "settings": {
+        "fade-in": "Hêdî zêde bibe",
+        "fade-out": "Hêdî kêm bibe",
+        "seconds-before-end": "Berî dawiyê dest pê bike",
+        "fade-scaling": "Pîvandina fade",
+        "scaling": {
+          "linear": "Xetî",
+          "logarithmic": "Logarîtmîk"
+        },
+        "seconds-before-end-description": "Çend saniye berî dawiya trackê ku crossfade bo tracka din dest pê dike"
       }
     },
     "custom-output-device": {
@@ -513,6 +614,13 @@
           "label": "Demboriya bêçalakiyê bi çirkeyan binivîse:",
           "title": "Demboriya bêçalakiyê saz bike"
         }
+      },
+      "settings": {
+        "auto-reconnect": "Ji nû ve otomatîk girêbide",
+        "activity-timeout-enabled": "Dema rawestandî rewşê paqij bike",
+        "activity-timeout-time": "Paqij bike piştî",
+        "hide-github-button": "Bişêre bişkoka \"Li GitHub bibîne\"",
+        "hide-duration-left": "Dema mayî veşêre"
       }
     },
     "downloader": {
@@ -555,7 +663,8 @@
           "saving": "Tê hilanîn...",
           "trying-to-get-playlist-id": "Hewldana wergirtina nasnameya lîsteya lêdanê: {{playlistId}}",
           "video-id-not-found": "Vîdyo nehat dîtin",
-          "writing-id3": "Teqên ID3 tên nivîsandin..."
+          "writing-id3": "Teqên ID3 tên nivîsandin...",
+          "ffmpeg-missing": "FFmpeg nehat dîtin. FFmpeg saz bike û piştrast bike ku `ffmpeg` di PATH-a te de ye da ku bi vê formatê daxistinê bikî."
         }
       },
       "description": "MP3 / dengê jêderê rasterast ji navbeynê daxîne",
@@ -586,6 +695,10 @@
       },
       "templates": {
         "button": "Daxe"
+      },
+      "settings": {
+        "finish-folder": "Peldanka bo daxistinên qediyayî",
+        "finish-folder-description": "Bê destnîşankirin bihêle da ku peldanka daxistinê ya li jor were bikar anîn."
       }
     },
     "equalizer": {
@@ -653,6 +766,44 @@
           "disconnected": "Hat qutkirin",
           "guest": "Wekî Mêvan Hat Girêdan",
           "host": "Wekî Mazûvan Hat Girêdan"
+        },
+        "diagnostics": {
+          "check": {
+            "nat": "Cureya torê (NAT)",
+            "signaling": "Servera sînyalê",
+            "stun": "Girêdana rasterast (STUN)",
+            "turn": "Relaya alternatîf (TURN)"
+          },
+          "copy": "Kurteyê kopî bike",
+          "detail": {
+            "check-error": "Kontrol bi ser neket: {{reason}}",
+            "public-ip": "Navnîşana giştî: {{ip}}",
+            "public-ip-hidden": "Navnîşana giştî: ji bo nîşandanê bikirtîne",
+            "signaling-fail": "Negihîştî ({{reason}})",
+            "signaling-ok": "Gihîştî",
+            "stun-fail": "Navnîşana giştî tune (UDP/STUN asteng e)",
+            "stun-ok": "Navnîşana giştî hat dîtin",
+            "turn-fail": "Relay negihîştî",
+            "turn-ok": "Relay gihîştî"
+          },
+          "nat": {
+            "blocked": "UDP an STUN asteng e",
+            "open": "Vekirî / kon (rasterast dixebite)",
+            "symmetric": "Sîmetrîk (relay pêwîst e)",
+            "unknown": "Nediyar"
+          },
+          "run-again": "Dîsa bixebitîne",
+          "running": "Kontrol têne kirin…",
+          "test": "Girêdanê test bike",
+          "title": "Diagnostîka girêdanê",
+          "verdict": {
+            "blocked": "Dibe ku ev tor Music Together asteng bike. Toreke din an VPNekê biceribîne.",
+            "error": "Diagnostîk nekarî bixebite. Ji bo hûrguliyan konsolê kontrol bike.",
+            "good": "Divê girêdanên rasterast li ser vê torê bixebitin.",
+            "limited": "Nikarî vê torê bi tevahî diyar bike. Dibe ku girêdanên rasterast hîn bixebitin; heke ew têk çûn, toreke din biceribîne.",
+            "no-signaling": "Nikare bigihîje servera Music Together. Firewall an girêdana înternetê ya xwe kontrol bike.",
+            "relay": "Dibe ku girêdanên rasterast li vir têk biçin; relayek dê were bikar anîn (dixebite, lê derengiyê zêde dike)."
+          }
         }
       },
       "name": "Muzîk Bi Hev re [Beta]",
@@ -668,7 +819,10 @@
         "permission-changed": "Destûra Music Together wekî \"{{permission}}\" hat guhertin",
         "remove-song-failed": "Stran nehat rakirin",
         "user-connected": "{{name}} tevlî Music Together bû",
-        "user-disconnected": "{{name}} ji Music Together derket"
+        "user-disconnected": "{{name}} ji Music Together derket",
+        "diagnostics-copied": "Kurteya diagnostîkê li panoya kopîkirinê hate kopîkirin",
+        "diagnostics-copy-failed": "Kopîkirina kurteya teşhîsê serneket",
+        "diagnostics-running": "Li benda qedandina testa girêdanê bisekine"
       }
     },
     "navigation": {
@@ -715,7 +869,13 @@
       "menu": {
         "log-to-console": "Bûyerên vejandinê li konsolê tomar bike"
       },
-      "name": "Vejandina Lêdanê"
+      "name": "Vejandina Lêdanê",
+      "settings": {
+        "stall-timeout": "Demjimêra sekinînê",
+        "stall-timeout-description": "Çiqas dem lêdan dikare bê pêşketin bimîne berî hewldana vejandinê",
+        "max-retries": "Herî zêde hewldan",
+        "max-retries-description": "Hejmara hewldanên vejandinê berî bazdana bo strana paşîn"
+      }
     },
     "picture-in-picture": {
       "description": "Dihêle sepanê bibe moda wêne-di-wêneyî",
@@ -733,7 +893,14 @@
         },
         "save-window-position": "Cihê pencereyê hilîne",
         "save-window-size": "Mezinahiya pencereyê hilîne",
-        "use-native-pip": "PiP-a xwemalî ya gerokê bikar bîne"
+        "use-native-pip": "PiP-a xwemalî ya gerokê bikar bîne",
+        "prompt": {
+          "title": "Wêne-di-Wêne",
+          "label": "Bişkojka Wêne-di-Wêne mîheng bike",
+          "keybind-options": {
+            "hotkey": "Bişkoja bilez ji bo veguheztina Wêne-di-Wêne"
+          }
+        }
       },
       "name": "Wêne-di-Wêneyî",
       "templates": {
@@ -745,6 +912,9 @@
       "name": "Leza Lêdanê",
       "templates": {
         "button": "Lez"
+      },
+      "menu": {
+        "no-preserves-pitch": "Parastina bilindahiya deng neçalak bike"
       }
     },
     "precise-volume": {
@@ -768,6 +938,12 @@
           "label": "Pêlikên Zêdekirin/Kêmkirina Dengê Hilbijêre",
           "title": "Pêlikên Dengê"
         }
+      },
+      "settings": {
+        "steps": "Gava deng",
+        "arrows-shortcut": "Kurtebirên bişkojka tîran",
+        "shortcut-up": "Kurtebira gerdûnî: deng zêde bike",
+        "shortcut-down": "Kurtebira gerdûnî: deng kêm bike"
       }
     },
     "quality-changer": {
@@ -796,6 +972,10 @@
             "message": "Rastandina bi Last.fm re pêk nehat\nPopupê heta destpêkirina ji nû ve ya bê veşêre.",
             "title": "Rastandin Pêk Nehat"
           }
+        },
+        "invalid-regex": {
+          "title": "Îfadeya regûlar nederbasdar",
+          "message": "Îfadeya regûlar li rêza {{line}} nederbasdar e: {{error}}"
         }
       },
       "menu": {
@@ -803,11 +983,15 @@
           "api-settings": "Mîhengên API ya Last.fm"
         },
         "listenbrainz": {
-          "token": "Nîşana bikarhênerê ListenBrainz binivîse"
+          "token": "Nîşana bikarhênerê ListenBrainz binivîse",
+          "api-root": "URL ya API ya ListenBrainz"
         },
         "scrobble-alternative-title": "Sernavên alternatîf bikar bîne",
         "scrobble-alternative-artist": "Hunermendên alternatîf bikar bîne",
-        "scrobble-other-media": "Medyayên din skrobil bike"
+        "scrobble-other-media": "Medyayên din skrobil bike",
+        "regex-filters": "Fîlterên îfadeya regûlar",
+        "use-musicbrainz": "MusicBrainz ji bo rastkirina metadaneyê bikar bîne",
+        "musicbrainz-email": "E-nameya têkilî ya MusicBrainz"
       },
       "name": "Skrobiler",
       "prompt": {
@@ -819,8 +1003,23 @@
           "token": {
             "label": "Nîşana bikarhênerê xwe ya ListenBrainz binivîse:",
             "title": "Nîşana ListenBrainz"
+          },
+          "api-root": {
+            "label": "URL ya bingehîn a APIyê binivîse:",
+            "title": "URL ya API ya ListenBrainz"
           }
+        },
+        "regex-filter-multi": {
+          "label": "Her rêzê yek regex binivîse:"
+        },
+        "musicbrainz-email": {
+          "title": "E-nameya Têkilî ya MusicBrainz",
+          "label": "E-nameyek ji bo API ya MusicBrainz binivîse:"
         }
+      },
+      "settings": {
+        "lastfm-api-root": "URL ya API ya Last.fm",
+        "musicbrainz-email-description": "Wek agahiya têkilî ji bo API ya MusicBrainz tê bikar anîn; ji bo rastkirina metadaneya MusicBrainz pêwîst e"
       }
     },
     "shortcuts": {
@@ -840,15 +1039,34 @@
           "label": "Bişkokên Kurt ên Gerdûnî ji bo Kontrola Stranan Hilbijêre:",
           "title": "Bişkokên Kurt ên Gerdûnî"
         }
+      },
+      "settings": {
+        "global-keybinds": "Bişkokên gerdûnî (li tevahiya sepanê dixebitin)",
+        "local-keybinds": "Bişkokên herêmî (tenê dema pencere fokusê ye)"
       }
     },
     "skip-silences": {
       "description": "Bixweber beşên bêdengiyê di stranan de derbas dike",
-      "name": "Bêdengiyan Derbas Bike"
+      "name": "Bêdengiyan Derbas Bike",
+      "settings": {
+        "only-skip-beginning": "Tenê di destpêka stranê de bêdengiyê derbas bike"
+      }
     },
     "sponsorblock": {
       "description": "Bixweber beşên ne-muzîkal mîna destpêk/dawî an beşên vîdyoyên muzîkê yên ku stran lê nayê lêdan, derbas dike",
-      "name": "SponsorBlock"
+      "name": "SponsorBlock",
+      "settings": {
+        "categories": "Beşên ku werin derbaskirin",
+        "category": {
+          "sponsor": "Sponsor",
+          "intro": "Destpêk",
+          "outro": "Dawî",
+          "interaction": "Bîrxistina înteraksiyonê",
+          "selfpromo": "Xwe-pêşxistin",
+          "music_offtopic": "Beşa ne-muzîkê"
+        },
+        "api-url": "URL ya APIyê"
+      }
     },
     "synced-lyrics": {
       "description": "Gotina hevdemkirî ji bo stranan peyda dike, bi karanîna dabînkerên mîna LRClib.",
@@ -1037,7 +1255,7 @@
             },
             "local-cli": {
               "name": "Herêmî CLI",
-              "prompt-title": "Local CLI settings",
+              "prompt-title": "Mîhengên CLI yên xwecî",
               "prompt-label": "Claude Code, Codex, an Gemini CLI yê bi şexsî têketî bi kar bîne. Ferman û model otomatîk in; CLI defaulta xwe ya têketî bi kar tîne.",
               "engine": "Herêmî CLI",
               "engine-claude": "Claude Code",
@@ -1061,6 +1279,30 @@
         "show-custom-search-button": {
           "label": "پێشاندانی دوگمەی گەڕانی تایبەت",
           "tooltip": "Di şêwekarê helbestan de bişkojeke lêgerînê nîşan bide ku dihêle hûn lêgerîna lêgerînê û hunermendê strana heyî biguherînin."
+        },
+        "provider-priority": {
+          "tooltip": "Pêşkêşker bi vê rêzê têne ceribandin: yê yekem ku ji bo strana niha gotin hene serdikeve. Ji bo rêzkirinê tîran bikar bîne."
+        },
+        "prefer-synced": {
+          "tooltip": "Pêşkêşkera yekem a di lîsteyê de ku gotinên bi demê re hevrêz hene hilbijêre, ne ya yekem a ku gotin hene."
+        },
+        "previous-provider": {
+          "tooltip": "Pêşkêşkera berê"
+        },
+        "next-provider": {
+          "tooltip": "Pêşkêşkera paşê"
+        },
+        "custom-search-button": {
+          "tooltip": "Lêgerîna taybet"
+        },
+        "star-provider": {
+          "tooltip": "Her tim ji bo vê stranê vê pêşkêşkerê bikar bîne, çi dibe bila rêza pêşînîyê bêje. Heke gotinên wê ji bo stranê tune bin, vedigere rêza normal."
+        },
+        "unstar-provider": {
+          "tooltip": "Êdî vê pêşkêşkerê bi vê stranê ve girê nede."
+        },
+        "use-priority-list": {
+          "tooltip": "Pêşkêşkeran bi rêza jêrîn biceribîne. Vê bigire da ku gotin biryarê bidin: kîjan pêşkêşker gotinên herî baş ji bo stranê hene, ew serdikeve."
         }
       },
       "name": "Gotina Hevdemkirî",
@@ -1072,6 +1314,22 @@
         "duration-mismatch": "⚠️ - Gotin dibe ku ji ber lihevnehatina demjimarê ne hevdem bin.",
         "inexact": "⚠️ - Gotinên vê stranê dibe ku ne rast bin",
         "instrumental": "⚠️ - Ev straneke enstrûmental e"
+      },
+      "settings": {
+        "precise-timing": "Demjimêra rast",
+        "show-inexact": "Gotinên ne rast nîşan bide",
+        "show-time-codes": "Kodên demê nîşan bide",
+        "romanization": "Gotinan latînî bike",
+        "line-effect": "Bandora rêzê",
+        "effect": {
+          "fancy": "Xemlî",
+          "scale": "Pîvan",
+          "offset": "Cîhguher",
+          "focus": "Fokus"
+        },
+        "prefer-synced": "Gotinên hevrêzkirî tercîh bike",
+        "provider-priority": "Pêşînîya Pêşkêşkeran",
+        "use-priority-list": "Lîsteya pêşînîyê bikar bîne"
       }
     },
     "taskbar-mediacontrol": {
@@ -1098,9 +1356,17 @@
             "acrylic": "Akrîlîk",
             "mica": "Mica",
             "tabbed": "Tabkirî",
-            "none": "Tune"
+            "none": "Tune",
+            "content": "Naverok",
+            "fullscreen-ui": "Navrûya Ekrana Tevahî",
+            "under-page": "Bin Rûpelê",
+            "under-window": "Bin Pencereyê",
+            "window": "Pencere"
           }
         }
+      },
+      "settings": {
+        "type-description": "Materyalê paşnavê ku ji bo şefafiya pencereyê tê bikar anîn"
       }
     },
     "tuna-obs": {
@@ -1143,7 +1409,26 @@
       "menu": {
         "visualizer-type": "Cureyê Vîzûalîzerê"
       },
-      "name": "Vîzûalîzer"
+      "name": "Vîzûalîzer",
+      "settings": {
+        "preset": "Pêşmîheng",
+        "blend-time": "Dema tevlihevkirinê",
+        "effect": "Bandor",
+        "accuracy": "Rastbûn",
+        "max-height": "Herî zêde bilindahî",
+        "max-size": "Herî zêde mezinahî",
+        "line-width": "Firehiya rêzê",
+        "color": "Reng",
+        "shadow-blur": "Blura sîberê",
+        "shadow-color": "Rengê sîberê",
+        "fade-side": "Aliyên windabûnê",
+        "prettify": "Xemilandin",
+        "prettify-description": "Baran ber bi qeraxan ve teng bike",
+        "dottify": "Xalkirin",
+        "dottify-description": "Li şûna xêzek berdewam xalan xêz bike",
+        "horizontal-align": "Hevrêzkirina asoyî",
+        "vertical-align": "Hevrêzkirina stûnî"
+      }
     },
     "playlist-search": {
       "description": "Di nav sîdebar û diyaloga Zêdekirina lîsteya lîstikê de qutiyeke lêgerînê zêde dike da ku lîsteyên lîstikê fîltre bike",
@@ -1152,6 +1437,215 @@
         "search-placeholder": "لێگەڕان بۆ لیستی گۆرانی",
         "no-results": "هیچ لیست پێشکەوتنێک نەدۆزرایەوە"
       }
+    },
+    "always-show-volume-slider": {
+      "name": "Her tim slîdera deng nîşan bide",
+      "description": "Slîdera deng xuya û kişbar dihêle, li şûna ku tenê gava mişk li ser were nîşan bide."
+    },
+    "do-not-track": {
+      "description": "Ji destpêkê ve hemû şopandinê asteng bike",
+      "menu": {
+        "blocker": "Astengker"
+      },
+      "name": "Şopandinê neke",
+      "settings": {
+        "cache": "Lîsteyên astengkirinê di cacheyê de hilîne",
+        "disable-default-lists": "Lîsteyên astengkirinê yên jixweber neçalak bike"
+      },
+      "dialog": {
+        "reload": {
+          "title": "Rûpelê ji nû ve bar bike",
+          "message": "Mîhengên Do Not Track hatine guhertin.",
+          "detail": "Rêzikên torê bêyî ku sepan ji nû ve were destpêkirin têne nûkirin. Ji bo ku guhertin bi tevahî li fîlterên rûpelê werin sepandin, rûpelê ji nû ve bar bike. Dibe ku lêdan qut bibe. Tu dikarî paşê ji nû ve bar bikî.",
+          "reload-now": "Niha rûpelê ji nû ve bar bike"
+        }
+      }
+    },
+    "fullscreen-auto-hide": {
+      "description": "Di moda ekrana tev de piştî çend saniyeyan bê çalakiyê kontrola lêder û nîşana mişkê bi otomatîk veşêre",
+      "name": "Veşartina otomatîk a ekrana tev"
+    },
+    "prefer-song": {
+      "description": "Dema tracka albûmê vîdyo be, stranê li şûna vîdyoya muzîkê bilîze",
+      "name": "Stranê tercîh bike"
+    },
+    "search-commands": {
+      "commands": {
+        "play": "Vîdyoyek ji girêdan an IDya YouTube bilîze",
+        "settings": "Mîhengan veke"
+      },
+      "description": "Di qutiya lêgerînê de / binivîse da ku fermanan bimeşînî, bi temamkirina xweber a argûmanan",
+      "name": "Fermanên Lêgerînê",
+      "settings": {
+        "open-keybind": "Kurtebira vekirinê",
+        "open-keybind-description": "Lezkerê bi şêwaza Electron, bo nimûne CmdOrCtrl+/ an Alt+Space",
+        "open-shortcut": "Qutiya lêgerînê ji her derê veke",
+        "open-shortcut-description": "Qutiya lêgerînê di moda fermanê de vedike, mîna Spotlight. Dubare pê lêdanê wê digire."
+      }
+    },
+    "seek-shortcuts": {
+      "description": "Bi bişkokên tîrê çep/raster 5 çirkeyan paş/raster bixe",
+      "name": "Kurtebirên Bazdanê"
+    },
+    "sfw-music": {
+      "description": "Stranên ku YouTube Music wekî Eşkere nîşan kiriye bixweber derbas dike. Heke rêzika eşkere dubare bibe an strana paşîn tune be, disekine.",
+      "name": "Muzîka SFW"
+    },
+    "toast-autoclose": {
+      "description": "Toastên YouTube Music piştî sê çirkeyan bixweber bigire",
+      "name": "Girtina Xweber a Toastan"
+    },
+    "statusbar-lyrics": {
+      "settings": {
+        "include-pronunciation": "Bilêvkirinê jî têxe"
+      }
+    },
+    "dismiss-multidevice-popup": {
+      "name": "Girtina Popupa Çend-Cîhazan",
+      "description": "Popupa \"Li ser vê cîhazê guhdarî bike\" ku dema lêdan li amûrek din dest pê dike xuya dibe bixweber digire."
+    },
+    "memory-saver": {
+      "description": "Dema pencere veşartî be, cacheyên çavkaniyên renderer paqij dike, gava ku ew ji sînorê diyarkirî derbas bibin.",
+      "name": "Parêzgera Bîrê",
+      "settings": {
+        "threshold": "Sînorê cacheyê",
+        "threshold-description": "Dema pencere veşartî be, gava bîra zindî ya cacheyan ji vê derbas bibe, cacheyan paqij bike."
+      }
+    }
+  },
+  "settings-ui": {
+    "name": "UI ya Mîhengan",
+    "description": "Paneleke mîhengan a nav-appê zêde dike, ku ji kêleka alî ve tê vekirin",
+    "title": "Mîhengan",
+    "settings": {
+      "show-button": "Têketina mîhengan di kêleka alî de nîşan bide",
+      "show-button-description": "Vê neçalak bike da ku kêleka alî paqij bimîne; Mîhengan hîn jî di bin Navîgasyon → Vekirina Mîhengan de ye.",
+      "separate-window": "Mîhengan hertim di paceyeke cuda de veke",
+      "separate-window-description": "Paceyeke mîhengan a serbixwe vedike, mîna têketina trayê, li şûna panela nav-appê."
+    },
+    "search-placeholder": "Li mîhengan bigere",
+    "search-results": "Encamên lêgerînê",
+    "search-matching": "Li gorî “{{query}}”",
+    "no-match": "Ti mîheng li gorî “{{query}}” nayên.",
+    "close": "Bigire",
+    "edit-config": "config.json biguherîne",
+    "restart-banner": "Hin guhertin ji bo bi bandor bibin hewceyî ji nû ve destpêkirinê ne.",
+    "restart-now": "Niha ji nû ve destpê bike",
+    "later": "Paşê",
+    "restart-pill": "ji nû ve destpêkirin",
+    "restart-pill-hint": "Hewceyî ji nû ve destpêkirinê ye",
+    "refresh-options": "Vebijarkan nû bike",
+    "move-up": "Ber bi jor ve bibe",
+    "move-down": "Ber bi jêr ve bibe",
+    "about": {
+      "tagline": "Sepaneke sermaseyê ya dewlemend a taybetmendiyan ji bo YouTube Music",
+      "versions": "Guhertov",
+      "version-app": "Sepan",
+      "version-build": "Çêkirin",
+      "version-electron": "Electron",
+      "version-chromium": "Chromium",
+      "version-node": "Node.js",
+      "version-platform": "Platform",
+      "version-innertube": "Innertube",
+      "links": "Girêdan",
+      "link-repo": "Depo",
+      "link-issue": "Pirsgirêkekê rapor bike",
+      "link-releases": "Weşan",
+      "link-license": "Lîsans",
+      "actions": "Çalakî",
+      "check-updates": "Li nûvekirinan bigere",
+      "copy-debug": "Agahiyên debugê kopî bike",
+      "copied": "Kopî bû!"
+    },
+    "sections": {
+      "general": {
+        "label": "Giştî"
+      },
+      "appearance": {
+        "label": "Xuyang"
+      },
+      "window": {
+        "label": "Pace & Tray"
+      },
+      "advanced": {
+        "label": "Pêşketî"
+      },
+      "plugins": {
+        "label": "Pêvek"
+      },
+      "flags": {
+        "label": "Flags"
+      },
+      "about": {
+        "label": "Der barê"
+      }
+    },
+    "groups": {
+      "updates-session": "Nûvekirin & danişîn",
+      "startup-language": "Destpêk & ziman",
+      "interface": "Navrû",
+      "context-menu": "Menuya kontekstê",
+      "window-title": "Pace",
+      "window": "Pace",
+      "system": "Sîstem",
+      "network": "Tor",
+      "performance": "Performans",
+      "configuration": "Veavakirin",
+      "updates": "Nûvekirin"
+    },
+    "stepper-decrement": "Kêm bike",
+    "stepper-increment": "Zêde bike",
+    "flags": {
+      "warning": "Flagsên taybetmendiyê guhêrbarên navxweyî yên YouTube Music in. Guhertina wan dikare lêdan, raxistin an taybetmendiyên hesabê xera bike, û ew di bin piştgiriyê de ne. Guhertinên serdest tenê ji bo flagsên ku tu diguherînî têne parastin, û bi Vegerê têne rakirin.",
+      "search-placeholder": "Li flagsan bigere",
+      "overridden": "hatiye serdestkirin",
+      "undo": "Veger",
+      "undo-hint": "Vê serdestkirinê jê bibe",
+      "empty": "Ev rûpel ti flagsan eşkere nake.",
+      "no-match": "Ti flags li gorî “{{query}}” nayên.",
+      "add-name": "Navê flagê yê nû",
+      "add-value": "Nirx",
+      "add-value-hint": "JSON dema were parsekirin (true, 42, “text”), wekî din nivîs bi xwe",
+      "add": "Zêde bike"
+    },
+    "fields": {
+      "hide-dislike-button": "Bişkoka Jêheznekirinê veşêre",
+      "hide-video-captions": "Binavnivîsên vîdyoyê veşêre",
+      "context-menu": {
+        "hide-entry": "{{entry}} veşêre",
+        "entries": {
+          "add-to-queue": "Li rêzê zêde bike",
+          "delete-playlist": "Lîsteyê jê bibe",
+          "dismiss-queue": "Rêzê betal bike",
+          "download": "Daxe",
+          "go-to-album": "Here albûmê",
+          "go-to-artist": "Here hunermend",
+          "go-to-playlist": "Here lîsteyê",
+          "like": "Hez bike",
+          "not-interested": "Balkêş nîne",
+          "pin-to-listen-again": "Ji bo Dîsa Guhdarî Bike qefil bike",
+          "play-next": "Piştre bilîze",
+          "remove-from-playlist": "Ji lîsteyê rake",
+          "remove-from-queue": "Ji rêzê rake",
+          "report": "Rapor bike",
+          "save-to-library": "Di pirtûkxaneyê de tomar bike",
+          "save-to-playlist": "Di lîsteyê de tomar bike",
+          "share": "Parve bike",
+          "shuffle-play": "Bi tevlihev bilîze",
+          "start-mix": "Mixê dest pê bike",
+          "stats-for-nerds": "Statîstîk ji bo nerdan"
+        }
+      },
+      "podcast-artist": "Beşdarên podcastê wek hunermendan bikar bîne",
+      "podcast-artist-desc": "Girtî: hunermendê beşeke podcastê kanala ku wê weşandiye ye.",
+      "theme-preset": "Pêşhatî",
+      "theme-variable-name": "Guherbar",
+      "theme-variable-value": "Nirx",
+      "theme-variable-add": "Guherbarê zêde bike",
+      "performance-mode": "Moda performansê",
+      "performance-mode-desc": "Ji bo rendering a erzantir, hinek dilsoziya dîtbarî bike qurban.",
+      "in-process-gpu": "Pêvajoya GPU bi pêvajoya sepanê re yek bike",
+      "in-process-gpu-desc": "Ceribandinî: pêvajoyekê xilas dike, lê bîra GPU dike nav pêvajoya sereke û dibe ku vegere rendering a nermalavê."
     }
   }
 }

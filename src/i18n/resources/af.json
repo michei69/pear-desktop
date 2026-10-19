@@ -65,7 +65,8 @@
         },
         "detail": "Ons is jammer vir die ongerief! kies asseblief wat om te doen:",
         "message": "Die applikasie is onreagerend",
-        "title": "Venster Onreagerend"
+        "title": "Venster Onreagerend",
+        "details": "Rede: {{error}}"
       },
       "update-available": {
         "buttons": {
@@ -76,6 +77,27 @@
         "detail": "n Nuwe weergawe is beskikbaar en kan afgelaai word by {{downloadLink}}",
         "message": "n Nuwe weergawe is beskikbaar",
         "title": "Bywerking Beskikbaar"
+      },
+      "restart-summary": {
+        "detail": "Herbegin die app om toe te pas: {{changes}}",
+        "message": "Sommige veranderinge vereis 'n herbegin",
+        "title": "Herbegin vereis"
+      },
+      "update-available-dev": {
+        "buttons": {
+          "ok": "OK",
+          "view": "Bekyk commits"
+        },
+        "title": "Opdatering beskikbaar",
+        "message": "Hierdie dev-weergawe is agter die master-tak",
+        "detail": "Die commit waarop hierdie weergawe loop ({{commit}}) is ouer as die nuutste commit op master. Nuwer commits kan by {{commitsLink}} bekyk word"
+      },
+      "downgrade-warning": {
+        "title": "Terugskakel na stabiel?",
+        "message": "Hierdie beta-weergawe is nuwer as die nuutste stabiele uitgawe.",
+        "detail": "Terugskakel kan sommige instellings terugstel: van 'n nuwer weergawe na 'n ouer een loop geen migrasies nie en kan nuwer instellings onleesbaar laat.",
+        "confirm": "Skakel oor na stabiel",
+        "cancel": "Kanselleer"
       }
     },
     "menu": {
@@ -87,7 +109,8 @@
           "go-back": "Gaan terug",
           "go-forward": "Gaan voort",
           "quit": "Gaan uit",
-          "restart": "Herbegin Toep"
+          "restart": "Herbegin Toep",
+          "open-settings": "Open instellings"
         }
       },
       "options": {
@@ -129,7 +152,20 @@
             },
             "label": "Taal",
             "submenu": {
-              "to-help-translate": "Wil help vertaal? Kliek hier"
+              "to-help-translate": "Wil help vertaal? Kliek hier",
+              "sync": {
+                "label": "Sinkroniseer taal",
+                "submenu": {
+                  "from-youtube": "Vanaf YouTube",
+                  "to-youtube": "Na YouTube"
+                },
+                "failure": {
+                  "dialog": {
+                    "title": "Taal nie verander nie",
+                    "message": "Taal of lokaal bestaan nog nie in die app nie."
+                  }
+                }
+              }
             }
           },
           "resume-on-start": "Hervat laaste liedjie wanneer app begin",
@@ -180,9 +216,37 @@
                 "label": "Tema",
                 "submenu": {
                   "import-css-file": "Importeer aangepaste CSS-lêer",
-                  "no-theme": "Geen tema"
+                  "no-theme": "Geen tema",
+                  "colors": {
+                    "label": "Kleure"
+                  },
+                  "presets": {
+                    "label": "Voorafinstellings",
+                    "default": "Verstek",
+                    "custom": "Pasgemaak"
+                  },
+                  "reset-colors": "Herstel kleure",
+                  "open-themes-folder": "Open temas-lêergids"
                 }
-              }
+              },
+              "use-ytm-icons": "Gebruik oorspronklike YouTube Music-ikone"
+            }
+          },
+          "updates": {
+            "label": "Opdaterings",
+            "check": "Kyk vir opdaterings",
+            "auto-update": "Kyk outomaties vir opdaterings",
+            "channel": {
+              "label": "Opdateringskanaal",
+              "stable": "Stabiel",
+              "beta": "Beta"
+            }
+          },
+          "shared-links": {
+            "label": "Gedeelde skakels",
+            "submenu": {
+              "strip-music": "Verwyder 'music.'",
+              "strip-si": "Verwyder '&si='"
             }
           }
         }
@@ -219,6 +283,15 @@
       "dislike": "Afkeer",
       "unlike": "anders",
       "undislike": "Ontstaan"
+    },
+    "themes": {
+      "consent": {
+        "title": "Voer tema-kode uit?",
+        "message": "\"{{theme}}\" bevat 'n script wat met volle toegang tot die app sal loop.",
+        "detail": "Tema-scripts is nie sandboxed nie. Hierdie kode kan jou instellings lees en verander, met die app praat en enigiets anders doen wat die app self kan doen. Laat dit net toe as jy vertrou waar die tema vandaan kom. Jy kan dit herroep deur die tema te verwyder.",
+        "allow": "Voer hierdie tema uit",
+        "cancel": "Kanselleer"
+      }
     }
   },
   "plugins": {
@@ -260,7 +333,7 @@
         "blur-amount": {
           "label": "Vervagingshoeveelheid",
           "submenu": {
-            "pixels": "{{blurAmount}} pixels"
+            "pixels": "{{blurAmount}} piksels"
           }
         },
         "buffer": {
@@ -351,6 +424,10 @@
               "dialogTitle": "Kies HTTPS-privaatsleutellêer"
             }
           }
+        },
+        "mcp": {
+          "label": "MCP-bediener",
+          "description": "Dien die v2 API as MCP-gereedskap by /mcp. Gebruik dieselfde magtiging as die res van die API."
         }
       },
       "name": "API-bediener [Beta]",
@@ -363,11 +440,20 @@
           "label": "Voer die poort vir die API-bediener in:",
           "title": "Poort"
         }
+      },
+      "settings": {
+        "choose-file": "Kies lêer…"
       }
     },
     "audio-compressor": {
       "description": "Pas kompressie toe op klank (verlaag die volume van die hardste dele en verhoog die volume van die sagste dele)",
-      "name": "Klankkompressor"
+      "name": "Klankkompressor",
+      "menu": {
+        "auto-track-gain": "Outomatiese snitversterking (versterk stil snitte)",
+        "maximum-gain": {
+          "label": "Maksimum versterking"
+        }
+      }
     },
     "auth-proxy-adapter": {
       "description": "Ondersteuning vir die gebruik van magtigingsinstaanbedienerdienste",
@@ -433,6 +519,9 @@
           "display-seconds": "Wys Sekondes",
           "24-hour-format": "24-Uur Formaat"
         }
+      },
+      "settings": {
+        "hour-12": "Gebruik 12-uur formaat"
       }
     },
     "compact-sidebar": {
@@ -453,12 +542,24 @@
             "fade-scaling": {
               "label": "Vervagingskaal",
               "linear": "Lineêr",
-              "logarithmic": "Logaritmies"
+              "logarithmic": "Logaritmies",
+              "equal-power": "Gelyke krag"
             },
             "seconds-before-end": "Kruisvervaging N sekondes voor einde"
           },
           "title": "Kruisvervagingsopsies"
         }
+      },
+      "settings": {
+        "fade-in": "Vervaag in",
+        "fade-out": "Vervaag uit",
+        "seconds-before-end": "Begin voor einde",
+        "fade-scaling": "Vervaagskalering",
+        "scaling": {
+          "linear": "Lineêr",
+          "logarithmic": "Logaritmies"
+        },
+        "seconds-before-end-description": "Sekondes voor die einde van 'n snit waarop die oorgang na die volgende een begin"
       }
     },
     "custom-output-device": {
@@ -513,6 +614,13 @@
           "label": "Voer onaktiwiteitstydverloop in sekondes in:",
           "title": "Stel onaktiwiteitstydverloop"
         }
+      },
+      "settings": {
+        "auto-reconnect": "Outomaties herverbind",
+        "activity-timeout-enabled": "Vee teenwoordigheid uit wanneer onderbreek",
+        "activity-timeout-time": "Vee uit na",
+        "hide-github-button": "Versteek “Bekyk op GitHub”-knoppie",
+        "hide-duration-left": "Versteek tyd oor"
       }
     },
     "downloader": {
@@ -555,7 +663,8 @@
           "saving": "Stoor…",
           "trying-to-get-playlist-id": "Probeer om snitlys-ID te kry: {{playlistId}}",
           "video-id-not-found": "Video nie gevind nie",
-          "writing-id3": "Skryf ID3-etikette…"
+          "writing-id3": "Skryf ID3-etikette…",
+          "ffmpeg-missing": "FFmpeg is nie gevind nie. Installeer FFmpeg en maak seker `ffmpeg` is op jou PATH om in hierdie formaat af te laai."
         }
       },
       "description": "Laai MP3 / bronklank direk vanaf die koppelvlak af",
@@ -586,6 +695,10 @@
       },
       "templates": {
         "button": "Aflaai"
+      },
+      "settings": {
+        "finish-folder": "Gids vir voltooide aflaaie",
+        "finish-folder-description": "Laat ongestel om die aflaagids hierbo te gebruik."
       }
     },
     "equalizer": {
@@ -653,6 +766,44 @@
           "disconnected": "Ontkoppel",
           "guest": "Gekoppel as Gas",
           "host": "Gekoppel as Gasheer"
+        },
+        "diagnostics": {
+          "check": {
+            "nat": "Netwerktipe (NAT)",
+            "signaling": "Seinbediener",
+            "stun": "Direkte verbinding (STUN)",
+            "turn": "Herleibackup (TURN)"
+          },
+          "copy": "Kopieer opsomming",
+          "detail": {
+            "check-error": "Kontrole het misluk: {{reason}}",
+            "public-ip": "Publieke adres: {{ip}}",
+            "public-ip-hidden": "Publieke adres: klik om te wys",
+            "signaling-fail": "Onbereikbaar ({{reason}})",
+            "signaling-ok": "Bereikbaar",
+            "stun-fail": "Geen publieke adres (UDP/STUN geblokkeer)",
+            "stun-ok": "Publieke adres gevind",
+            "turn-fail": "Relais onbereikbaar",
+            "turn-ok": "Relais bereikbaar"
+          },
+          "nat": {
+            "blocked": "UDP of STUN geblokkeer",
+            "open": "Oop / keël (direk werk)",
+            "symmetric": "Simmetries (relais vereis)",
+            "unknown": "Onbepaal"
+          },
+          "run-again": "Voer weer uit",
+          "running": "Kontroles loop…",
+          "test": "Toets verbinding",
+          "title": "Verbindingsdiagnostiek",
+          "verdict": {
+            "blocked": "Hierdie netwerk sal waarskynlik Music Together blokkeer. Probeer 'n ander netwerk of 'n VPN.",
+            "error": "Diagnostiek kon nie loop nie. Kyk na die konsole vir besonderhede.",
+            "good": "Direkte verbindings behoort op hierdie netwerk te werk.",
+            "limited": "Kon nie hierdie netwerk volledig bepaal nie. Direkte verbindings kan steeds werk; as dit misluk, probeer 'n ander netwerk.",
+            "no-signaling": "Kan nie die Music Together-bediener bereik nie. Kyk na jou firewall of internetverbinding.",
+            "relay": "Direkte verbindings kan hier misluk; 'n relais sal gebruik word (werk, maar voeg vertraging by)."
+          }
         }
       },
       "name": "Musiek Saam [Beta]",
@@ -668,7 +819,10 @@
         "permission-changed": "Musiek Saam toestemming verander na \"{{permission}}\"",
         "remove-song-failed": "Kon nie liedjie verwyder nie",
         "user-connected": "{{name}} het by Musiek Saam aangesluit",
-        "user-disconnected": "{{name}} het Musiek Saam verlaat"
+        "user-disconnected": "{{name}} het Musiek Saam verlaat",
+        "diagnostics-copied": "Diagnostiekopsomming na knipbord gekopieer",
+        "diagnostics-copy-failed": "Kopiëring van diagnostiese opsomming het misluk",
+        "diagnostics-running": "Wag tot die verbindingstoets voltooi is"
       }
     },
     "navigation": {
@@ -715,7 +869,13 @@
       "menu": {
         "log-to-console": "Teken herstelgebeure in die konsole aan"
       },
-      "name": "Speelherstel"
+      "name": "Speelherstel",
+      "settings": {
+        "stall-timeout": "Vasloop-tydsper",
+        "stall-timeout-description": "Hoe lank terugspeling sonder vordering kan aanhou voordat 'n herstelpoging gemaak word",
+        "max-retries": "Maksimum herpogings",
+        "max-retries-description": "Aantal herstelpogings voordat na die volgende snit oorgeslaan word"
+      }
     },
     "picture-in-picture": {
       "description": "Laat jou toe om die toep na beeld-in-beeld-modus te skakel",
@@ -733,7 +893,14 @@
         },
         "save-window-position": "Stoor vensterposisie",
         "save-window-size": "Stoor venstergrootte",
-        "use-native-pip": "Gebruik blaaier se natuurlike BiB"
+        "use-native-pip": "Gebruik blaaier se natuurlike BiB",
+        "prompt": {
+          "title": "Beeld-in-beeld",
+          "label": "Stel die Beeld-in-beeld-snelloets in",
+          "keybind-options": {
+            "hotkey": "Snelloets om Beeld-in-beeld te wissel"
+          }
+        }
       },
       "name": "Beeld-in-beeld",
       "templates": {
@@ -745,6 +912,9 @@
       "name": "Speelspoed",
       "templates": {
         "button": "Spoed"
+      },
+      "menu": {
+        "no-preserves-pitch": "Deaktiveer toonhoogtebehoud"
       }
     },
     "precise-volume": {
@@ -768,6 +938,12 @@
           "label": "Kies Volume Verhoging/Vermindering Stappe",
           "title": "Volume Stappe"
         }
+      },
+      "settings": {
+        "steps": "Volumestap",
+        "arrows-shortcut": "Pyltjie-snelloetse",
+        "shortcut-up": "Globale snelloets: volume op",
+        "shortcut-down": "Globale snelloets: volume af"
       }
     },
     "quality-changer": {
@@ -796,6 +972,10 @@
             "message": "Kon nie met Last.fm verifieer nie\nVersteek die opwip tot die volgende herbegin.",
             "title": "Verifikasie Misluk"
           }
+        },
+        "invalid-regex": {
+          "title": "Ongeldige regulêre uitdrukking",
+          "message": "Regulêre uitdrukking op reël {{line}} is ongeldig: {{error}}"
         }
       },
       "menu": {
@@ -803,11 +983,15 @@
           "api-settings": "Last.fm API Instellings"
         },
         "listenbrainz": {
-          "token": "Voer ListenBrainz-gebruikerstoken in"
+          "token": "Voer ListenBrainz-gebruikerstoken in",
+          "api-root": "ListenBrainz API-URL"
         },
         "scrobble-alternative-title": "Gebruik alternatiewe titels",
         "scrobble-alternative-artist": "Gebruik alternatiewe kunstenaars",
-        "scrobble-other-media": "Skrop ander media"
+        "scrobble-other-media": "Skrop ander media",
+        "regex-filters": "Filters vir regulêre uitdrukkings",
+        "use-musicbrainz": "Gebruik MusicBrainz om metadata reg te stel",
+        "musicbrainz-email": "MusicBrainz-kontak-e-pos"
       },
       "name": "Skrapper",
       "prompt": {
@@ -819,8 +1003,23 @@
           "token": {
             "label": "Voer jou ListenBrainz-gebruikerstoken in:",
             "title": "ListenBrainz-token"
+          },
+          "api-root": {
+            "label": "Voer die basis-API-URL in:",
+            "title": "ListenBrainz API-URL"
           }
+        },
+        "regex-filter-multi": {
+          "label": "Voer een regex per reël in:"
+        },
+        "musicbrainz-email": {
+          "title": "MusicBrainz-kontak-e-pos",
+          "label": "Voer 'n e-posadres vir die MusicBrainz API in:"
         }
+      },
+      "settings": {
+        "lastfm-api-root": "Last.fm API-URL",
+        "musicbrainz-email-description": "Word as kontakinligting vir die MusicBrainz API gebruik; vereis vir MusicBrainz-metadataregstelling"
       }
     },
     "shortcuts": {
@@ -840,15 +1039,34 @@
           "label": "Kies Globale Sleutelbindings vir Liedjie Beheer:",
           "title": "Globale Sleutelbindings"
         }
+      },
+      "settings": {
+        "global-keybinds": "Globale sleutelbindings (werk regdeur die app)",
+        "local-keybinds": "Plaaslike sleutelbindings (net terwyl die venster gefokus is)"
       }
     },
     "skip-silences": {
       "description": "Slaan outomaties stilte-gedeeltes in liedjies oor",
-      "name": "Slaan Stiltes Oor"
+      "name": "Slaan Stiltes Oor",
+      "settings": {
+        "only-skip-beginning": "Slaan slegs stilte aan die begin van 'n snit oor"
+      }
     },
     "sponsorblock": {
       "description": "Slaan outomaties nie-musiekgedeeltes soos intro/outro of dele van musiekvideo's waar die liedjie nie speel nie, oor",
-      "name": "SponsorBlock"
+      "name": "SponsorBlock",
+      "settings": {
+        "categories": "Segmente om oor te slaan",
+        "category": {
+          "sponsor": "Borg",
+          "intro": "Inleiding",
+          "outro": "Uitleiding",
+          "interaction": "Interaksie-herinnering",
+          "selfpromo": "Selfpromosie",
+          "music_offtopic": "Nie-musiekafdeling"
+        },
+        "api-url": "API-URL"
+      }
     },
     "synced-lyrics": {
       "description": "Verskaf gesinkroniseerde lirieke vir liedjies, met gebruik van verskaffers soos LRClib.",
@@ -899,7 +1117,7 @@
               "tooltip": "Gebruik 'n meer kompakte liriekgrootte"
             },
             "medium": {
-              "label": "Medium",
+              "label": "Gemiddeld",
               "tooltip": "Gebruik 'n gebalanseerde liriekgrootte"
             },
             "large": {
@@ -1061,6 +1279,30 @@
         "show-custom-search-button": {
           "label": "Wys pasgemaakte soekknoppie",
           "tooltip": "Wys 'n soekknoppie in die liriekkieser wat jou toelaat om die soeknavraag en kunstenaar vir die huidige liedjie te oorskryf."
+        },
+        "provider-priority": {
+          "tooltip": "Verskaffers word in hierdie volgorde probeer: die eerste een met liriek vir die huidige liedjie wen. Gebruik die pyle om te herrangskik."
+        },
+        "prefer-synced": {
+          "tooltip": "Kies die eerste verskaffer in die lys met tydgesinkroniseerde liriek, in plaas van die eerste een met enige liriek."
+        },
+        "previous-provider": {
+          "tooltip": "Vorige verskaffer"
+        },
+        "next-provider": {
+          "tooltip": "Volgende verskaffer"
+        },
+        "custom-search-button": {
+          "tooltip": "Pasgemaakte soeknavraag"
+        },
+        "star-provider": {
+          "tooltip": "Gebruik altyd hierdie verskaffer vir hierdie liedjie, ongeag wat die prioriteitsorde sê. Val terug na die normale orde as dit geen liriek vir die liedjie het nie."
+        },
+        "unstar-provider": {
+          "tooltip": "Hou op om hierdie verskaffer aan hierdie liedjie vas te pen."
+        },
+        "use-priority-list": {
+          "tooltip": "Probeer die verskaffers in die volgorde hieronder. Skakel dit af om eerder die liriek te laat besluit: watter verskaffer ook al die beste liriek vir die liedjie het, wen."
         }
       },
       "name": "Gesinkroniseerde Lirieke",
@@ -1072,6 +1314,22 @@
         "duration-mismatch": "⚠️ - Die lirieke mag dalk uit synchronisasie wees weens 'n duurverskil.",
         "inexact": "⚠️ - Die lirieke vir hierdie liedjie mag dalk nie presies wees nie",
         "instrumental": "⚠️ - Dit is 'n instrumentale liedjie"
+      },
+      "settings": {
+        "precise-timing": "Presiese tydsberekening",
+        "show-inexact": "Wys onpresiese liriek",
+        "show-time-codes": "Wys tydkodes",
+        "romanization": "Romaniseer liriek",
+        "line-effect": "Reëleffek",
+        "effect": {
+          "fancy": "Luuks",
+          "scale": "Skaal",
+          "offset": "Verset",
+          "focus": "Fokus"
+        },
+        "prefer-synced": "Verkies gesinkroniseerde liriek",
+        "provider-priority": "Verskafferprioriteit",
+        "use-priority-list": "Gebruik prioriteitslys"
       }
     },
     "taskbar-mediacontrol": {
@@ -1098,9 +1356,17 @@
             "acrylic": "Akriel",
             "mica": "Mika",
             "tabbed": "Geluide",
-            "none": "Geen"
+            "none": "Geen",
+            "content": "Inhoud",
+            "fullscreen-ui": "Volskerm-UI",
+            "under-page": "Onder bladsy",
+            "under-window": "Onder venster",
+            "window": "Venster"
           }
         }
+      },
+      "settings": {
+        "type-description": "Agtergrondmateriaal wat vir venstertransparansie gebruik word"
       }
     },
     "tuna-obs": {
@@ -1143,7 +1409,26 @@
       "menu": {
         "visualizer-type": "Visualiseerder Tipe"
       },
-      "name": "Visualiseerder"
+      "name": "Visualiseerder",
+      "settings": {
+        "preset": "Voorafinstelling",
+        "blend-time": "Vermengtyd",
+        "effect": "Effek",
+        "accuracy": "Akkuraatheid",
+        "max-height": "Maksimum hoogte",
+        "max-size": "Maksimum grootte",
+        "line-width": "Lynwydte",
+        "color": "Kleur",
+        "shadow-blur": "Skadu-vervaging",
+        "shadow-color": "Skadukleur",
+        "fade-side": "Vervaag sykante",
+        "prettify": "Verfraai",
+        "prettify-description": "Laat die stawe na die rande toe taps",
+        "dottify": "Stippel",
+        "dottify-description": "Teken kolletjies in plaas van 'n deurlopende lyn",
+        "horizontal-align": "Horisontale belyning",
+        "vertical-align": "Vertikale belyning"
+      }
     },
     "playlist-search": {
       "description": "Voeg 'n soekveld by om snitlyste in die systaaf en die Voeg by snitlys-dialoog te filter",
@@ -1152,6 +1437,215 @@
         "search-placeholder": "Soek snitlyste",
         "no-results": "Geen snitlyste gevind nie"
       }
+    },
+    "always-show-volume-slider": {
+      "name": "Wys altyd volume-skuifbalk",
+      "description": "Hou die volume-skuifbalk sigbaar en sleepbaar eerder as om dit net te wys wanneer jy daaroor beweeg."
+    },
+    "do-not-track": {
+      "description": "Blokkeer alle nasporing uit die boks",
+      "menu": {
+        "blocker": "Blokkeerder"
+      },
+      "name": "Moenie naspoor nie",
+      "settings": {
+        "cache": "Kas bloklyste",
+        "disable-default-lists": "Deaktiveer verstek bloklyste"
+      },
+      "dialog": {
+        "reload": {
+          "title": "Herlaai bladsy",
+          "message": "Die instellings vir Moenie Volg nie het verander.",
+          "detail": "Netwerkreëls word opgedateer sonder om die app te herbegin. Herlaai die bladsy om veranderinge aan bladsyfilters volledig toe te pas. Afspeling kan onderbreek word. Jy kan later herlaai.",
+          "reload-now": "Herlaai bladsy nou"
+        }
+      }
+    },
+    "fullscreen-auto-hide": {
+      "description": "Versteek outomaties die spelerbeheerders en muiswyser na 'n paar sekondes van onaktiwiteit in volskerm",
+      "name": "Volskerm outomaties versteek"
+    },
+    "prefer-song": {
+      "description": "Speel die liedjie in plaas van die musiekvideo wanneer 'n albumsnit 'n video is",
+      "name": "Verkies Liedjie"
+    },
+    "search-commands": {
+      "commands": {
+        "play": "Speel 'n video vanaf 'n YouTube-skakel of -ID",
+        "settings": "Open die instellings"
+      },
+      "description": "Tik / in die soekveld om opdragte uit te voer, met outovoltooiing vir hul argumente",
+      "name": "Soekopdragte",
+      "settings": {
+        "open-keybind": "Oopmaak-snelloets",
+        "open-keybind-description": "Electron-styl versneller, bv. CmdOrCtrl+/ of Alt+Space",
+        "open-shortcut": "Maak die soekveld van enige plek oop",
+        "open-shortcut-description": "Roep die soekveld op wat reeds in opdragmodus is, soos Spotlight. As jy dit weer druk, sluit dit."
+      }
+    },
+    "seek-shortcuts": {
+      "description": "Spring 5 sekondes agteruit/vorentoe met die linker-/regterpyltjies",
+      "name": "Spring-snelloetse"
+    },
+    "sfw-music": {
+      "description": "Slaan liedjies wat deur YouTube Music as Eksplisiet gemerk is, outomaties oor. Wag as 'n eksplisiete waglys herhaal of geen volgende liedjie beskikbaar is nie.",
+      "name": "SFW-musiek"
+    },
+    "toast-autoclose": {
+      "description": "Sluit YouTube Music-kennisgewings outomaties ná drie sekondes",
+      "name": "Kennisgewing-outosluiting"
+    },
+    "statusbar-lyrics": {
+      "settings": {
+        "include-pronunciation": "Sluit uitspraak in"
+      }
+    },
+    "dismiss-multidevice-popup": {
+      "name": "Maak multi-toestel-opspringvenster toe",
+      "description": "Sluit die \"Luister op hierdie toestel\"-opspringvenster outomaties wat verskyn wanneer terugspeling op 'n ander toestel begin."
+    },
+    "memory-saver": {
+      "description": "Maak die renderer se hulpbronkasgeheues skoon terwyl die venster verborge is sodra dit 'n drempel oorskry",
+      "name": "Geheuebespaarder",
+      "settings": {
+        "threshold": "Kasgeheuedrempel",
+        "threshold-description": "Maak die kasgeheues skoon sodra hul lewende geheue dit oorskry terwyl die venster verborge is"
+      }
+    }
+  },
+  "settings-ui": {
+    "name": "Instellings-UI",
+    "description": "Voeg 'n instellingspaneel binne die program by, wat vanaf die sybalk oopgemaak word",
+    "title": "Instellings",
+    "settings": {
+      "show-button": "Wys die instellingsinskrywing in die sybalk",
+      "show-button-description": "Skakel dit af om die sybalk skoon te hou; Instellings is steeds onder Navigasie → Open Instellings.",
+      "separate-window": "Maak Instellings altyd in 'n aparte venster oop",
+      "separate-window-description": "Maak die selfstandige instellingsvenster oop, soos die stelselbalk-inskrywing dit doen, in plaas van die paneel binne die program."
+    },
+    "search-placeholder": "Soek instellings",
+    "search-results": "Soekresultate",
+    "search-matching": "Wat ooreenstem met “{{query}}”",
+    "no-match": "Geen instellings stem ooreen met “{{query}}” nie.",
+    "close": "Sluit",
+    "edit-config": "Wysig config.json",
+    "restart-banner": "Sommige veranderinge vereis 'n herbegin om in werking te tree.",
+    "restart-now": "Herbegin nou",
+    "later": "Later",
+    "restart-pill": "herbegin",
+    "restart-pill-hint": "Vereis herbegin",
+    "refresh-options": "Verfris opsies",
+    "move-up": "Skuif op",
+    "move-down": "Skuif af",
+    "about": {
+      "tagline": "'n Kenmerkryke lessenaartoepassing vir YouTube Music",
+      "versions": "Weergawes",
+      "version-app": "Toepassing",
+      "version-build": "Bou",
+      "version-electron": "Electron",
+      "version-chromium": "Chromium",
+      "version-node": "Node.js",
+      "version-platform": "Platform",
+      "version-innertube": "Innertube",
+      "links": "Skakels",
+      "link-repo": "Bewaarplek",
+      "link-issue": "Rapporteer 'n probleem",
+      "link-releases": "Vrystellings",
+      "link-license": "Lisensie",
+      "actions": "Aksies",
+      "check-updates": "Kyk vir opdaterings",
+      "copy-debug": "Kopieer ontfoutingsinligting",
+      "copied": "Gekopieer!"
+    },
+    "sections": {
+      "general": {
+        "label": "Algemeen"
+      },
+      "appearance": {
+        "label": "Voorkoms"
+      },
+      "window": {
+        "label": "Venster & stelselbalk"
+      },
+      "advanced": {
+        "label": "Gevorderd"
+      },
+      "plugins": {
+        "label": "Inpropmodules"
+      },
+      "flags": {
+        "label": "Vlae"
+      },
+      "about": {
+        "label": "Oor"
+      }
+    },
+    "groups": {
+      "updates-session": "Opdaterings & sessie",
+      "startup-language": "Opstart & taal",
+      "interface": "Koppelvlak",
+      "context-menu": "Kontekskieslys",
+      "window-title": "Venster",
+      "window": "Venster",
+      "system": "Stelsel",
+      "network": "Netwerk",
+      "performance": "Prestasie",
+      "configuration": "Konfigurasie",
+      "updates": "Opdaterings"
+    },
+    "stepper-decrement": "Verlaag",
+    "stepper-increment": "Verhoog",
+    "flags": {
+      "warning": "Kenmerkvlae is YouTube Music se eie interne skakelaars. Om dit te verander kan afspeling, uitleg of rekeningfunksies breek, en dit word nie deur ondersteuning gedek nie. Oorheersings word slegs vir die vlae wat jy verander, behou en kan met Ontdoen verwyder word.",
+      "search-placeholder": "Soek vlae",
+      "overridden": "oorheers",
+      "undo": "Ontdoen",
+      "undo-hint": "Verwyder hierdie oorheersing",
+      "empty": "Hierdie bladsy het geen kenmerkvlae nie.",
+      "no-match": "Geen vlae stem ooreen met “{{query}}” nie.",
+      "add-name": "Naam van nuwe vlag",
+      "add-value": "Waarde",
+      "add-value-hint": "JSON wanneer dit ontleed (true, 42, \"text\"), anders die teks self",
+      "add": "Voeg by"
+    },
+    "fields": {
+      "hide-dislike-button": "Versteek Onsmaak-knoppie",
+      "hide-video-captions": "Versteek video-onderskrifte",
+      "context-menu": {
+        "hide-entry": "Versteek {{entry}}",
+        "entries": {
+          "add-to-queue": "Voeg by waglys",
+          "delete-playlist": "Verwyder snitlys",
+          "dismiss-queue": "Maak waglys toe",
+          "download": "Laai af",
+          "go-to-album": "Gaan na album",
+          "go-to-artist": "Gaan na kunstenaar",
+          "go-to-playlist": "Gaan na snitlys",
+          "like": "Hou van",
+          "not-interested": "Nie geïnteresseerd nie",
+          "pin-to-listen-again": "Vaspen aan Luister weer",
+          "play-next": "Speel volgende",
+          "remove-from-playlist": "Verwyder uit snitlys",
+          "remove-from-queue": "Verwyder uit waglys",
+          "report": "Rapporteer",
+          "save-to-library": "Stoor in biblioteek",
+          "save-to-playlist": "Stoor in snitlys",
+          "share": "Deel",
+          "shuffle-play": "Ewekansig speel",
+          "start-mix": "Begin mengsel",
+          "stats-for-nerds": "Statistieke vir nerds"
+        }
+      },
+      "podcast-artist": "Gebruik podcast-deelnemers as kunstenaars",
+      "podcast-artist-desc": "Af: die kunstenaar van 'n podcast-episode is die kanaal wat dit gepubliseer het.",
+      "theme-preset": "Voorafinstelling",
+      "theme-variable-name": "Veranderlike",
+      "theme-variable-value": "Waarde",
+      "theme-variable-add": "Voeg veranderlike by",
+      "performance-mode": "Prestasiemodus",
+      "performance-mode-desc": "Ruil 'n bietjie visuele getrouheid in vir goedkoper weergee.",
+      "in-process-gpu": "Voeg die GPU-proses by die app-proses in",
+      "in-process-gpu-desc": "Eksperimenteel: bespaar een proses, maar skuif GPU-geheue na die hoofproses en kan terugval na sagteware-weergee."
     }
   }
 }

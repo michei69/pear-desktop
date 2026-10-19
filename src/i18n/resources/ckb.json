@@ -15,7 +15,8 @@
   },
   "language": {
     "local-name": "ئینگلیزی",
-    "name": "Central Kurdish (Sorani Kurdish)"
+    "name": "Central Kurdish (Sorani Kurdish)",
+    "code": "ckb"
   },
   "main": {
     "console": {
@@ -24,7 +25,1552 @@
       },
       "i18n": {
         "loaded": "i18n دەستیپێکرد"
+      },
+      "second-instance": {
+        "receive-command": "فەرمان وەرگیرا لە ڕێگەی پرۆتۆکۆل: \"{{command}}\""
+      },
+      "unresponsive": {
+        "details": "هەڵەی وەڵامنەدانەوە!\n{{error}}"
+      },
+      "when-ready": {
+        "clearing-cache-after-20s": "پاککردنەوەی کاشی ئەپ"
+      },
+      "window": {
+        "tried-to-render-offscreen": "پەنجەرە هەوڵی پیشاندان لە دەرەوەی شاشەدا، windowSize={{windowSize}}، displaySize={{displaySize}}، position={{position}}"
       }
+    },
+    "dialog": {
+      "hide-menu-enabled": {
+        "detail": "مینوو شاراوەتەوە، 'Alt' بەکاربهێنە بۆ پیشاندانی (یان 'Escape' ئەگەر مینیوی ناوەکی ئەپ بەکار دەهێنیت)",
+        "message": "شاردنەوەی مینوو چالاکە",
+        "title": "شاردنەوەی مینوو چالاکە"
+      },
+      "need-to-restart": {
+        "buttons": {
+          "later": "دواتر",
+          "restart-now": "ئێستا دووبارە دەستپێبکەرەوە"
+        },
+        "detail": "پێوەکراوی \"{{pluginName}}\" پێویستی بە دووبارە دەستپێکردنەوە هەیە بۆ ئەوەی کاریگەری هەبێت",
+        "message": "\"{{pluginName}}\" پێویستی بە دووبارە دەستپێکردنەوە هەیە",
+        "title": "دووبارە دەستپێکردنەوە پێویستە"
+      },
+      "restart-summary": {
+        "detail": "ئەپەکە دووبارە دەستپێبکەرەوە بۆ جێبەجێکردنی: {{changes}}",
+        "message": "هەندێک گۆڕانکاری پێویستیان بە دووبارە دەستپێکردنەوە هەیە",
+        "title": "دووبارە دەستپێکردنەوە پێویستە"
+      },
+      "unresponsive": {
+        "buttons": {
+          "quit": "دەرچوون",
+          "relaunch": "دووبارە دەستپێکردنەوە",
+          "wait": "چاوەڕوان بە"
+        },
+        "detail": "بەداخەوەین بۆ ناڕەحەتییەکە! تکایە هەڵبژێرە چی بکەیت:",
+        "message": "ئەپلیکەیشنەکە وەڵام ناداتەوە",
+        "title": "پەنجەرە وەڵام ناداتەوە",
+        "details": "هۆکار: {{error}}"
+      },
+      "update-available": {
+        "buttons": {
+          "disable": "ناچالاککردنی نوێکردنەوەکان",
+          "download": "داگرتن",
+          "ok": "باشە"
+        },
+        "detail": "وەشانێکی نوێ بەردەستە و دەتوانرێت لە {{downloadLink}} دابگیرێت",
+        "message": "وەشانێکی نوێ بەردەستە",
+        "title": "نوێکردنەوە بەردەستە"
+      },
+      "update-available-dev": {
+        "buttons": {
+          "ok": "باشە",
+          "view": "بینینی کامیتەکان"
+        },
+        "title": "نوێکردنەوە بەردەستە",
+        "message": "ئەم بیلدی گەشەپێدانە لە لقەکەی master دواکەوتووە",
+        "detail": "ئەو کامیتەی ئەم بیلدە لەسەری کاردەکات ({{commit}}) کۆنترە لە نوێترین کامیت لە master. کامیتە نوێترەکان دەتوانرێت لە {{commitsLink}} ببینرێن"
+      },
+      "downgrade-warning": {
+        "title": "بگەڕێینەوە بۆ وەشانی جێگیر؟",
+        "message": "ئەم بیلدی بێتایە نوێترە لە دوایین وەشانی جێگیری بڵاوکراوە.",
+        "detail": "گەڕانەوە دەتوانێت هەندێک ڕێکخستنەکان ڕیسێت بکات: چوون لە وەشانێکی نوێوە بۆ کۆنتر هیچ کۆچکردنێک ناکات و دەتوانێت ڕێکخستنە نوێیەکان نەخوێندرێنەوە.",
+        "confirm": "بگۆڕە بۆ جێگیر",
+        "cancel": "پاشگەزبوونەوە"
+      }
+    },
+    "menu": {
+      "about": "دەربارە",
+      "navigation": {
+        "label": "گەڕان",
+        "submenu": {
+          "copy-current-url": "کۆپیکردنی URLی ئێستا",
+          "go-back": "بگەڕێوە",
+          "go-forward": "بڕۆ پێشەوە",
+          "open-settings": "کردنەوەی ڕێکخستنەکان",
+          "quit": "دەرچوون",
+          "restart": "دووبارە دەستپێکردنەوەی ئەپ"
+        }
+      },
+      "options": {
+        "label": "هەڵبژاردنەکان",
+        "submenu": {
+          "advanced-options": {
+            "label": "هەڵبژاردنە پێشکەوتووەکان",
+            "submenu": {
+              "auto-reset-app-cache": "ڕیسێتکردنی کاشی ئەپ کاتێک ئەپ دەستپێدەکات",
+              "disable-hardware-acceleration": "ناچالاککردنی خێراکردنی هاردوێر",
+              "edit-config-json": "دەستکاریکردنی config.json",
+              "override-user-agent": "بەسەرپەوشتکردنی User-Agent",
+              "restart-on-config-changes": "دووبارە دەستپێکردنەوە لە کاتی گۆڕانکارییەکانی ڕێکخستن",
+              "set-proxy": {
+                "label": "دانانی پرۆکسی",
+                "prompt": {
+                  "label": "ناونیشانی پرۆکسی بنووسە: (بەتاڵی بهێڵە بۆ ناچالاککردن)",
+                  "placeholder": "نموونە: SOCKS5://127.0.0.1:9999",
+                  "title": "دانانی پرۆکسی"
+                }
+              },
+              "toggle-dev-tools": "کردنەوە/داخستنی DevTools",
+              "force-smtc": "ناچارکردن بە بەکارهێنانی SMTCی دەرەکی"
+            }
+          },
+          "always-on-top": "هەمیشە لە سەرەوە",
+          "updates": {
+            "label": "نوێکردنەوەکان",
+            "check": "پشکنین بۆ نوێکردنەوەکان",
+            "auto-update": "بە شێوەی خۆکار پشکنین بۆ نوێکردنەوەکان",
+            "channel": {
+              "label": "کەناڵی نوێکردنەوە",
+              "stable": "جێگیر",
+              "beta": "بێتا"
+            }
+          },
+          "hide-menu": {
+            "dialog": {
+              "message": "مینوو لە دەستپێکردنی داهاتوودا دەشاردرێتەوە، [Alt] بەکاربهێنە بۆ پیشاندانی (یان [`] ئەگەر مینیوی ناوەکی ئەپ بەکاردەهێنیت)",
+              "title": "شاردنەوەی مینوو چالاکە"
+            },
+            "label": "شاردنەوەی مینوو"
+          },
+          "language": {
+            "dialog": {
+              "message": "زمان دوای دووبارە دەستپێکردنەوە دەگۆڕدرێت",
+              "title": "زمان گۆڕدرا"
+            },
+            "label": "زمان",
+            "submenu": {
+              "to-help-translate": "دەتەوێت یارمەتی وەرگێڕان بدەیت؟ کلیک لێرە بکە",
+              "sync": {
+                "label": "هاوکاتکردنی زمان",
+                "submenu": {
+                  "from-youtube": "لە YouTubeەوە",
+                  "to-youtube": "بۆ YouTube"
+                },
+                "failure": {
+                  "dialog": {
+                    "title": "زمان نەگۆڕدرا",
+                    "message": "زمان یان ناوچە هێشتا لە ئەپدا بوونی نییە."
+                  }
+                }
+              }
+            }
+          },
+          "resume-on-start": "بەردەوامبوون لە دوایین گۆرانی کاتێک ئەپ دەستپێدەکات",
+          "single-instance-lock": "قوفڵی تاکە نموونە",
+          "start-at-login": "دەستپێکردن لە کاتی چوونەژوورەوە",
+          "starting-page": {
+            "label": "پەڕەی دەستپێکردن",
+            "unset": "دانەنراوە"
+          },
+          "shared-links": {
+            "label": "بەستەرە هاوبەشەکان",
+            "submenu": {
+              "strip-music": "لابردنی 'music.'",
+              "strip-si": "لابردنی '&si='"
+            }
+          },
+          "tray": {
+            "label": "سینی سیستەم",
+            "submenu": {
+              "disabled": "ناچالاک",
+              "enabled-and-hide-app": "چالاککراوە و ئەپ دەشارێتەوە",
+              "enabled-and-show-app": "چالاککراوە و ئەپ پیشان دەدات",
+              "move-to-current-desktop": "گواستنەوە بۆ دێسکتۆپی ئەمجارەیی لە کاتی پیشاندان",
+              "play-pause-on-click": "لێدان/وەستان لە کاتی کلیک",
+              "force-white-icons": "ناچارکردن بە بەکارهێنانی ئایکۆنە سپییەکان"
+            }
+          },
+          "visual-tweaks": {
+            "label": "ڕێکخستنە بینراوەکان",
+            "submenu": {
+              "like-buttons": {
+                "default": "بنەڕەت",
+                "force-show": "پیشاندانی زۆرەملێ",
+                "hide": "شاردنەوە",
+                "swap": "گۆڕینەوەی ڕیزبەندی دوگمەکانی لایک",
+                "label": "دوگمەکانی لایک"
+              },
+              "custom-window-title": {
+                "label": "ناونیشانی پەنجەرەی تایبەت",
+                "prompt": {
+                  "label": "ناونیشانی پەنجەرەی تایبەت بنووسە: (بەتاڵی بهێڵە بۆ ناچالاککردن)",
+                  "placeholder": "نموونە: {{applicationName}}"
+                }
+              },
+              "remove-upgrade-button": "دوگمەی بەرزکردنەوە لابەرە",
+              "use-ytm-icons": "ئایکۆنە ڕەسەنەکانی YouTube Music بەکاربهێنە",
+              "theme": {
+                "label": "ڕووکار",
+                "submenu": {
+                  "import-css-file": "فایلی CSSی تایبەت هاوردە بکە",
+                  "no-theme": "بێ ڕووکار",
+                  "colors": {
+                    "label": "ڕەنگەکان"
+                  },
+                  "presets": {
+                    "label": "پێشوەختەکان",
+                    "default": "بنەڕەت",
+                    "custom": "تایبەت"
+                  },
+                  "reset-colors": "ڕەنگەکان بگەڕێنەوە",
+                  "open-themes-folder": "فۆڵدەری ڕووکارەکان بکەرەوە"
+                }
+              }
+            }
+          }
+        }
+      },
+      "plugins": {
+        "enabled": "چالاککراوە",
+        "label": "پلاگینەکان",
+        "new": "نوێ"
+      },
+      "view": {
+        "label": "بینین",
+        "submenu": {
+          "force-reload": "بارکردنەوەی زۆرەملێ",
+          "reload": "بارکردنەوە",
+          "reset-zoom": "قەبارەی ڕاستەقینە",
+          "toggle-fullscreen": "شاشەی تەواو بگۆڕە",
+          "zoom-in": "نزیککردنەوە",
+          "zoom-out": "دوورخستنەوە"
+        }
+      }
+    },
+    "tray": {
+      "next": "دواتر",
+      "play-pause": "لێدان/وەستان",
+      "like": "بەدڵبوون",
+      "dislike": "بەدڵنەبوون",
+      "unlike": "لابردنی بەدڵبوون",
+      "undislike": "لابردنی بەدڵنەبوون",
+      "previous": "پێشتر",
+      "quit": "دەرچوون",
+      "restart": "دووبارە دەستپێکردنی ئەپ",
+      "show": "پەنجەرە پیشان بدە",
+      "tooltip": {
+        "default": "{{applicationName}}",
+        "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
+      }
+    },
+    "themes": {
+      "consent": {
+        "title": "کۆدی ڕووکار جێبەجێ بکرێت؟",
+        "message": "\"{{theme}}\" سکریپتێکی تێدایە کە بە دەستڕاگەیشتنی تەواو بە ئەپەکە جێبەجێ دەبێت.",
+        "detail": "سکریپتەکانی ڕووکار لە سندبۆکسدا نین. ئەم کۆدە دەتوانێت ڕێکخستنەکانت بخوێنێتەوە و بیگۆڕێت، لەگەڵ ئەپەکە قسە بکات، و هەر شتێکی تر بکات کە خودی ئەپەکە دەتوانێت بیکات. تەنها ئەگەر متمانەت بە سەرچاوەی ڕووکارەکە هەبێت ڕێگەی پێبدە. دەتوانیت بە لابردنی ڕووکارەکە ئەمە هەڵوەشێنێتەوە.",
+        "allow": "ئەم ڕووکارە جێبەجێ بکە",
+        "cancel": "هەڵوەشاندنەوە"
+      }
+    }
+  },
+  "plugins": {
+    "ad-speedup": {
+      "description": "ئەگەر ڕیکلامێک لێبدرێت، دەنگەکە بێدەنگ دەکات و خێرایی لێدان بۆ 16x دادەنێت",
+      "name": "خێراکردنی ڕیکلام"
+    },
+    "album-actions": {
+      "description": "دوگمەکانی لابردنی بەدڵنەبوون، بەدڵنەبوون، بەدڵبوون و لابردنی بەدڵبوون زیاد دەکات بۆ جێبەجێکردنی ئەمە لەسەر هەموو گۆرانییەکانی لیستی لێدان یان ئەلبومێک",
+      "name": "کردارەکانی ئەلبوم"
+    },
+    "album-color-theme": {
+      "description": "ڕووکارێکی دینامیکی و کاریگەرییە بینراوەکان بەپێی پالێتی ڕەنگی ئەلبوم جێبەجێ دەکات",
+      "menu": {
+        "color-mix-ratio": {
+          "label": "ڕێژەی تێکەڵکردنی ڕەنگ",
+          "submenu": {
+            "percent": "{{ratio}}%"
+          }
+        },
+        "enable-seekbar": "چالاککردنی ڕووکاری شریتی پێشکەوتن"
+      },
+      "name": "ڕووکاری ڕەنگی ئەلبوم"
+    },
+    "audio-only": {
+      "description": "دۆخی تەنها دەنگ زۆرەملێ دەکات — هەموو شێوەکانی ڤیدیۆ لە ئاستی تۆڕ و لێدەرەکەدا دەستگیر دەکات بۆ پاشەکەوتکردنی RAM و پانی باند",
+      "name": "تەنها دەنگ"
+    },
+    "always-show-volume-slider": {
+      "name": "هەمیشە شریتی دەنگ پیشان بدە",
+      "description": "شریتی دەنگ بەردەوام دیار و ڕاکێشراو دەهێڵێت لەجیاتی ئەوەی تەنها لە کاتی هەڵواسینی ماوس پیشان بدرێت."
+    },
+    "ambient-mode": {
+      "description": "کاریگەرییەکی ڕووناکی جێبەجێ دەکات بە فڕێدانی ڕەنگە نەرمەکان لە ڤیدیۆکەوە بۆ پاشبنەمای شاشەکەت",
+      "menu": {
+        "blur-amount": {
+          "label": "بڕی لێڵی",
+          "submenu": {
+            "pixels": "{{blurAmount}} پیکسڵ"
+          }
+        },
+        "buffer": {
+          "label": "کۆگای کاتی",
+          "submenu": {
+            "buffer": "{{buffer}}"
+          }
+        },
+        "opacity": {
+          "label": "نەپەنایی",
+          "submenu": {
+            "percent": "{{opacity}}%"
+          }
+        },
+        "quality": {
+          "label": "کوالیتی",
+          "submenu": {
+            "pixels": "{{quality}} پیکسڵ"
+          }
+        },
+        "size": {
+          "label": "قەبارە",
+          "submenu": {
+            "percent": "{{size}}%"
+          }
+        },
+        "smoothness-transition": {
+          "label": "گواستنەوەی نەرمی",
+          "submenu": {
+            "during": "لە ماوەی {{interpolationTime}} چرکە"
+          }
+        },
+        "use-fullscreen": {
+          "label": "بەکارهێنانی پڕشاشە"
+        }
+      },
+      "name": "دۆخی دەوروبەر"
+    },
+    "amuse": {
+      "description": "پشتگیری {{applicationName}} بۆ ویجێتی ئێستا لێدەدرێت لە Amuse لەلایەن 6K Labs زیاد دەکات",
+      "name": "Amuse",
+      "response": {
+        "query": "سێرڤەری Amuse API کار دەکات. GET /query بۆ وەرگرتنی زانیاری گۆرانی."
+      }
+    },
+    "api-server": {
+      "description": "سێرڤەرێکی API زیاد دەکات بۆ کۆنترۆڵکردنی لێدەرەکە",
+      "dialog": {
+        "request": {
+          "buttons": {
+            "allow": "ڕێگە بدە",
+            "deny": "ڕەت بکەوە"
+          },
+          "message": "ڕێگە بە {{ID}} ({{origin}}) بدەیت بۆ دەستڕاگەیشتن بە API؟",
+          "title": "داواکاری ڕێپێدانی API"
+        }
+      },
+      "menu": {
+        "auth-strategy": {
+          "label": "ستراتیژی ڕێپێدان",
+          "submenu": {
+            "auth-at-first": {
+              "label": "ڕێپێدان لە یەکەم داواکاری"
+            },
+            "none": {
+              "label": "بێ ڕێپێدان"
+            }
+          }
+        },
+        "hostname": {
+          "label": "ناوی خانەخوێ"
+        },
+        "port": {
+          "label": "پۆرت"
+        },
+        "mcp": {
+          "label": "سێرڤەری MCP",
+          "description": "APIی v2 وەک ئامرازەکانی MCP لە /mcp پێشکەش دەکات. هەمان ڕێپێدان بەکاردەهێنێت کە بەشەکانی تری API بەکاری دەهێنن."
+        },
+        "https": {
+          "label": "HTTPS و بڕوانامەکان",
+          "submenu": {
+            "enable-https": {
+              "label": "HTTPS چالاک بکە"
+            },
+            "cert": {
+              "label": "فایلی بڕوانامە (.crt/.pem)",
+              "dialogTitle": "فایلی بڕوانامەی HTTPS هەڵبژێرە"
+            },
+            "key": {
+              "label": "فایلی کلیلی تایبەت (.key/.pem)",
+              "dialogTitle": "فایلی کلیلی تایبەتی HTTPS هەڵبژێرە"
+            }
+          }
+        }
+      },
+      "name": "سێرڤەری API [بێتا]",
+      "prompt": {
+        "hostname": {
+          "label": "ناوی خانەخوێ (وەک 0.0.0.0) بۆ سێرڤەری API بنووسە:",
+          "title": "ناوی خانەخوێ"
+        },
+        "port": {
+          "label": "پۆرتی سێرڤەری API بنووسە:",
+          "title": "پۆرت"
+        }
+      },
+      "settings": {
+        "choose-file": "فایل هەڵبژێرە…"
+      }
+    },
+    "audio-compressor": {
+      "description": "پەستان بە دەنگ جێبەجێ دەکات (دەنگی بەشە بەرزەکان کەم دەکاتەوە و دەنگی بەشە نەرمەکان بەرز دەکاتەوە)",
+      "menu": {
+        "auto-track-gain": "زیادکردنی خۆکاری دەنگی گۆرانی (گۆرانییە بێدەنگەکان بەرز دەکاتەوە)",
+        "maximum-gain": {
+          "label": "زۆرترین زیادکردن"
+        }
+      },
+      "name": "کۆمپرێسەری دەنگ"
+    },
+    "auth-proxy-adapter": {
+      "description": "پاڵپشتی بۆ بەکارهێنانی خزمەتگوزارییەکانی پرۆکسی ڕەسەنایەتی",
+      "menu": {
+        "disable": "ناچالاککردنی ئەداپتەری پرۆکسی",
+        "enable": "چالاککردنی ئەداپتەری پرۆکسی",
+        "hostname": {
+          "label": "ناوی هۆست"
+        },
+        "port": {
+          "label": "پۆرت"
+        }
+      },
+      "name": "ئەداپتەری پرۆکسی ڕەسەنایەتی",
+      "prompt": {
+        "hostname": {
+          "title": "ناوی هۆستی پرۆکسی",
+          "label": "ناوی هۆست بۆ سێرڤەری پرۆکسی ناوخۆیی بنووسە (پێویستە دووبارە دەستپێبکرێتەوە):"
+        },
+        "port": {
+          "title": "پۆرتی پرۆکسی",
+          "label": "پۆرت بۆ سێرڤەری پرۆکسی ناوخۆیی بنووسە (پێویستە دووبارە دەستپێبکرێتەوە):"
+        }
+      }
+    },
+    "blur-nav-bar": {
+      "description": "شریتی ناوبرین شەفاف و تەمومژاوی دەکات",
+      "name": "شریتی ناوبرینی تەمومژاوی"
+    },
+    "bypass-age-restrictions": {
+      "description": "تێپەڕاندنی پشکنینی تەمەن لە پلەیەری مۆسیقا",
+      "name": "تێپەڕاندنی سنوورەکانی تەمەن"
+    },
+    "captions-selector": {
+      "description": "هەڵبژێری ژێرنووس بۆ تراکە دەنگییەکانی {{applicationName}}",
+      "menu": {
+        "autoload": "بە شێوەی خۆکار ئەو ژێرنووسە هەڵبژێرە کە دوایین جار بەکارهاتووە",
+        "disable-captions": "بە شێوەی بنەڕەتی هیچ ژێرنووسێک نییە"
+      },
+      "name": "هەڵبژێری ژێرنووس",
+      "prompt": {
+        "selector": {
+          "label": "زمانی ژێرنووسی ئێستا: {{language}}",
+          "none": "هیچ",
+          "title": "زمانی ژێرنووس هەڵبژێرە"
+        }
+      },
+      "templates": {
+        "title": "کردنەوەی هەڵبژێری ژێرنووس"
+      },
+      "toast": {
+        "caption-changed": "ژێرنووس گۆڕدرا بۆ {{language}}",
+        "caption-disabled": "ژێرنووس ناچالاک کرا",
+        "no-captions": "هیچ ژێرنووسێک بۆ ئەم گۆرانییە بەردەست نییە"
+      }
+    },
+    "clock": {
+      "description": "کاتژمێرێک بۆ شریتی ناوبرین زیاد بکە",
+      "name": "کاتژمێر",
+      "menu": {
+        "format": {
+          "label": "شێواز",
+          "display-seconds": "پیشاندانی چرکەکان",
+          "24-hour-format": "شێوازی ٢٤ کاتژمێری"
+        }
+      },
+      "settings": {
+        "hour-12": "شێوازی ١٢ کاتژمێری بەکاربهێنە"
+      }
+    },
+    "compact-sidebar": {
+      "description": "هەمیشە شریتی لاتەنیشت لە دۆخی کۆمپاکتدا دابنێ",
+      "name": "شریتی لاتەنیشتی کۆمپاکت"
+    },
+    "crossfade": {
+      "description": "تێکەڵکردنی دەنگ لە نێوان گۆرانییەکان",
+      "menu": {
+        "advanced": "پێشکەوتوو"
+      },
+      "name": "کرۆسفەید [بێتا]",
+      "prompt": {
+        "options": {
+          "multi-input": {
+            "fade-in-duration": "ماوەی دەرکەوتن (ms)",
+            "fade-out-duration": "ماوەی ونبوون (ms)",
+            "fade-scaling": {
+              "equal-power": "هێزی یەکسان",
+              "label": "پێوەری تێکەڵکردن",
+              "linear": "هێڵی",
+              "logarithmic": "لۆگاریتمی"
+            },
+            "seconds-before-end": "N چرکە پێش کۆتایی تێکەڵ بکە"
+          },
+          "title": "هەڵبژاردەکانی کرۆسفەید"
+        }
+      },
+      "settings": {
+        "fade-in": "دەرکەوتن",
+        "fade-out": "ونبوون",
+        "seconds-before-end": "دەستپێکردن پێش کۆتایی",
+        "fade-scaling": "پێوەری تێکەڵکردن",
+        "scaling": {
+          "linear": "هێڵی",
+          "logarithmic": "لۆگاریتمی"
+        },
+        "seconds-before-end-description": "چەند چرکە پێش کۆتایی تراکەکە کرۆسفەید بۆ تراکی دواتر دەست پێدەکات"
+      }
+    },
+    "custom-output-device": {
+      "description": "ئامێرێکی دەرچوونی میدیای تایبەت بۆ گۆرانییەکان ڕێکبخە",
+      "menu": {
+        "device-selector": "ئامێر هەڵبژێرە"
+      },
+      "name": "ئامێری دەرچوونی تایبەت",
+      "prompt": {
+        "device-selector": {
+          "label": "ئامێری دەرچوونی میدیای بەکارهێنراو هەڵبژێرە",
+          "title": "ئامێری دەرچوون هەڵبژێرە"
+        }
+      }
+    },
+    "disable-autoplay": {
+      "description": "وای دەکات گۆرانی لە دۆخی «وەستاو» دەست پێبکات",
+      "menu": {
+        "apply-once": "تەنها لە دەستپێکردندا جێبەجێ دەبێت"
+      },
+      "name": "ناچالاککردنی لێدانی خۆکار"
+    },
+    "discord": {
+      "backend": {
+        "already-connected": "هەوڵدرا بە پەیوەندییەکی چالاکەوە پەیوەندی بکرێت",
+        "connected": "پەیوەندی بە دیسکۆردەوە کرا",
+        "disconnected": "پەیوەندی لە دیسکۆرد پچڕا"
+      },
+      "description": "بە ریچ پرێزەنس نیشانی هاوڕێکانت بدە کە گوێی لە چی دەگریت",
+      "menu": {
+        "auto-reconnect": "پەیوەندیکردنی خۆکار",
+        "clear-activity": "سڕینەوەی چالاکی",
+        "clear-activity-after-timeout": "سڕینەوەی چالاکی دوای کاتێکی دیاریکراو",
+        "connected": "پەیوەندیکراو",
+        "disconnected": "پچڕاو",
+        "hide-duration-left": "شاردنەوەی ماوەی ماوە",
+        "hide-github-button": "شاردنەوەی دوگمەی لینکی GitHub",
+        "play-on-application": "لێدان لە {{applicationName}}",
+        "set-inactivity-timeout": "دانانی کاتی ناچالاکی",
+        "set-status-display-type": {
+          "label": "دەقی دۆخ",
+          "submenu": {
+            "application": "گوێگرتن لە {{applicationName}}",
+            "artist": "گوێگرتن لە {artist}",
+            "title": "گوێگرتن لە {song title}"
+          }
+        }
+      },
+      "name": "ریچ پرێزەنسی دیسکۆرد",
+      "prompt": {
+        "set-inactivity-timeout": {
+          "label": "کاتی ناچالاکی بە چرکە بنووسە:",
+          "title": "دانانی کاتی ناچالاکی"
+        }
+      },
+      "settings": {
+        "auto-reconnect": "پەیوەندیکردنی خۆکار",
+        "activity-timeout-enabled": "سڕینەوەی ئامادەبوون کاتێک وەستاوە",
+        "activity-timeout-time": "سڕینەوە دوای",
+        "hide-github-button": "شاردنەوەی دوگمەی «بینین لە GitHub»",
+        "hide-duration-left": "شاردنەوەی کاتی ماوە"
+      }
+    },
+    "do-not-track": {
+      "description": "بە شێوەی بنەڕەتی هەموو شوێنپێهەڵگرتنەکان بلۆک بکە",
+      "menu": {
+        "blocker": "بلۆکەر"
+      },
+      "name": "شوێنپێ مەهەڵگرە",
+      "settings": {
+        "cache": "کاشکردنی لیستەکانی بلۆک",
+        "disable-default-lists": "ناچالاککردنی لیستەکانی بلۆکی بنەڕەتی"
+      },
+      "dialog": {
+        "reload": {
+          "title": "پەڕەکە دووبارە باربکەرەوە",
+          "message": "ڕێکخستنەکانی Do Not Track گۆڕدراون.",
+          "detail": "یاساکانی تۆڕ بەبێ دووبارە دەستپێکردنەوەی ئەپەکە نوێ دەبنەوە. پەڕەکە دووبارە باربکەرەوە بۆ ئەوەی گۆڕانکارییەکان بە تەواوی لە فلتەرەکانی پەڕە جێبەجێ بکرێن. لەوانەیە لێدانەکە پچڕێت. دەتوانیت دواتر دووبارە باربکەیتەوە.",
+          "reload-now": "ئێستا پەڕەکە دووبارە باربکەرەوە"
+        }
+      }
+    },
+    "downloader": {
+      "backend": {
+        "dialog": {
+          "error": {
+            "buttons": {
+              "ok": "باشە"
+            },
+            "message": "ئاخ! ببوورە، داگرتن سەرکەوتوو نەبوو…",
+            "title": "هەڵە لە داگرتن!"
+          },
+          "start-download-playlist": {
+            "buttons": {
+              "ok": "باشە"
+            },
+            "detail": "({{playlistSize}} گۆرانی)",
+            "message": "داگرتنی لیستی لێدان {{playlistTitle}}",
+            "title": "داگرتن دەستی پێکرد"
+          }
+        },
+        "feedback": {
+          "conversion-progress": "گۆڕین: {{percent}}%",
+          "converting": "لە گۆڕیندایە…",
+          "done": "تەواو: {{filePath}}",
+          "download-info": "داگرتنی {{artist}} - {{title}} [{{videoId}}",
+          "download-progress": "داگرتن: {{percent}}%",
+          "downloading": "لە حاڵی داگرتندایە…",
+          "downloading-counter": "داگرتن {{current}}/{{total}}…",
+          "downloading-playlist": "داگرتنی لیستی گۆرانی \"{{playlistTitle}}\" - {{playlistSize}} گۆرانی ({{playlistId}})",
+          "error-while-downloading": "هەڵە لە داگرتنی \"{{author}} - {{title}}\": {{error}}",
+          "folder-already-exists": "فۆڵدەری {{playlistFolder}} هەر ئێستا هەیە",
+          "getting-playlist-info": "زانیاری لیستی گۆرانی وەردەگیرێت…",
+          "loading": "باردەکرێت…",
+          "playlist-has-only-one-song": "لیستی گۆرانی تەنها یەک بەندە، ڕاستەوخۆ دایدەگرێت",
+          "playlist-id-not-found": "هیچ ناسنامەیەکی لیستی گۆرانی نەدۆزرایەوە",
+          "playlist-is-empty": "لیستی گۆرانی بەتاڵە",
+          "playlist-is-mix-or-private": "هەڵە لە وەرگرتنی زانیاری لیستی گۆرانی: دڵنیابە کە لیستەکە تایبەت یان \"Mixed for you\" نییە\n\n{{error}}",
+          "preparing-file": "فایل ئامادە دەکرێت…",
+          "saving": "پاشەکەوت دەکرێت…",
+          "trying-to-get-playlist-id": "هەوڵدەدرێت ناسنامەی لیستی گۆرانی وەربگیرێت: {{playlistId}}",
+          "video-id-not-found": "ڤیدیۆ نەدۆزرایەوە",
+          "writing-id3": "تاگەکانی ID3 دەنووسرێن…",
+          "ffmpeg-missing": "FFmpeg نەدۆزرایەوە. FFmpeg دابمەزرێنە و دڵنیابە کە `ffmpeg` لە PATHەکەتدا ھەیە بۆ داگرتن بەم فۆرماتە."
+        }
+      },
+      "description": "MP3 / دەنگی سەرچاوە ڕاستەوخۆ لە ڕووکارەکەوە دادەگرێت",
+      "menu": {
+        "choose-download-folder": "فۆڵدەری داگرتن هەڵبژێرە",
+        "download-finish-settings": {
+          "label": "داگرتن لە کاتی تەواوبوون",
+          "prompt": {
+            "last-percent": "دوای x لە سەدا",
+            "last-seconds": "دوایین x چرکە",
+            "title": "ڕێکخستنی کاتی داگرتن"
+          },
+          "submenu": {
+            "advanced": "پێشکەوتوو",
+            "enabled": "چالاککراوە",
+            "mode": "دۆخی کات",
+            "percent": "لە سەدا",
+            "seconds": "چرکە"
+          }
+        },
+        "download-playlist": "لیستی گۆرانی دابەزێنە",
+        "presets": "پێشوەختەکان",
+        "skip-existing": "فایلە هەبووەکان بپەڕێنە"
+      },
+      "name": "داگرەر",
+      "renderer": {
+        "can-not-update-progress": "ناتوانرێت پێشکەوتن نوێ بکرێتەوە"
+      },
+      "templates": {
+        "button": "داگرتن"
+      },
+      "settings": {
+        "finish-folder": "فۆڵدەر بۆ داگرتنە تەواوبووەکان",
+        "finish-folder-description": "بەتاڵی بهێڵەوە بۆ بەکارهێنانی فۆڵدەری داگرتنی سەرەوە."
+      }
+    },
+    "equalizer": {
+      "description": "ئیکوالایزەرێک بۆ لێدەر زیاد دەکات",
+      "menu": {
+        "presets": {
+          "label": "پێشوەختەکان",
+          "list": {
+            "bass-booster": "بەهێزکەری باس"
+          }
+        }
+      },
+      "name": "ئیکوالایزەر"
+    },
+    "exponential-volume": {
+      "description": "سلایدەری دەنگ بە شێوەی ئێکسپۆنێنشیال دەکات بۆ ئەوەی هەڵبژاردنی دەنگە نزمەکان ئاسانتر بێت.",
+      "name": "دەنگی ئێکسپۆنێنشیال"
+    },
+    "fullscreen-auto-hide": {
+      "description": "دوای چەند چرکەیەک بێ چالاکی لە دۆخی شاشەی تەواو، کۆنترۆڵەکانی لێدەر و نیشانەری ماوس بە خۆکاری دەشارێتەوە",
+      "name": "شاردنەوەی خۆکاری شاشەی تەواو"
+    },
+    "in-app-menu": {
+      "description": "شێوازێکی جوان، تاریک یان بە ڕەنگی ئەلبوم بە شریتەکانی مێنیو دەدات",
+      "menu": {
+        "hide-dom-window-controls": "کۆنترۆڵەکانی پەنجەرەی DOM بشارەوە"
+      },
+      "name": "مێنیوی ناو بەرنامە"
+    },
+    "lumiastream": {
+      "description": "پاڵپشتی Lumia Stream زیاد دەکات",
+      "name": "Lumia Stream [بێتا]"
+    },
+    "lyrics-genius": {
+      "description": "پاڵپشتی دەقی گۆرانی بۆ زۆربەی گۆرانییەکان زیاد دەکات",
+      "menu": {
+        "romanized-lyrics": "دەقی گۆرانی ڕۆمانی"
+      },
+      "name": "Lyrics Genius",
+      "renderer": {
+        "fetched-lyrics": "دەقی گۆرانی لە Genius وەرگیرا"
+      }
+    },
+    "music-together": {
+      "description": "لیستی گۆرانی لەگەڵ ئەوانی تر هاوبەش بکە. کاتێک خانەخوێ گۆرانییەک لێدەدات، هەموو کەسانی تر هەمان گۆرانی دەبیستن",
+      "dialog": {
+        "enter-host": "ناسنامەی خانەخوێ بنووسە"
+      },
+      "internal": {
+        "save": "پاشەکەوت",
+        "track-source": "سەرچاوەی تراک",
+        "unknown-user": "بەکارهێنەری نەناسراو"
+      },
+      "menu": {
+        "click-to-copy-id": "ناسنامەی خانەخوێ کۆپی بکە",
+        "close": "Music Together دابخە",
+        "connected-users": "بەکارهێنەرە پەیوەندیدارەکان",
+        "diagnostics": {
+          "check": {
+            "nat": "جۆری تۆڕ (NAT)",
+            "signaling": "سێرڤەری سیگناڵ",
+            "stun": "پەیوەندی ڕاستەوخۆ (STUN)",
+            "turn": "جێگرەوەی ڕێلەی (TURN)"
+          },
+          "copy": "کورتەیەک کۆپی بکە",
+          "detail": {
+            "check-error": "پشکنین سەرکەوتوو نەبوو: {{reason}}",
+            "public-ip": "ناونیشانی گشتی: {{ip}}",
+            "public-ip-hidden": "ناونیشانی گشتی: بۆ دەرکەوتن کلیک بکە",
+            "signaling-fail": "دەستڕاگەیشتن نییە ({{reason}})",
+            "signaling-ok": "دەستڕاگەیشتن هەیە",
+            "stun-fail": "ناونیشانی گشتی نییە (UDP/STUN بلۆک کراوە)",
+            "stun-ok": "ناونیشانی گشتی دۆزرایەوە",
+            "turn-fail": "ڕێلەی دەستڕاگەیشتن نییە",
+            "turn-ok": "ڕێلەی دەستڕاگەیشتن هەیە"
+          },
+          "nat": {
+            "blocked": "UDP یان STUN بلۆک کراوە",
+            "open": "کراوە / کۆن (ڕاستەوخۆ کار دەکات)",
+            "symmetric": "سیمەتریک (ڕێلەی پێویستە)",
+            "unknown": "نەزانراو"
+          },
+          "run-again": "دووبارە بەڕێوە ببە",
+          "running": "پشکنینەکان بەڕێوە دەچن…",
+          "test": "پەیوەندی تاقی بکەرەوە",
+          "title": "دیاگنۆستیکی پەیوەندی",
+          "verdict": {
+            "blocked": "ئەم تۆڕە ئەگەرەکی زۆرە Music Together بلۆک بکات. تۆڕێکی تر یان ڤی پی ئێن تاقی بکەرەوە.",
+            "error": "دیاگنۆستیک نەیتوانی بەڕێوە بچێت. بۆ وردەکاری سەیری کۆنسۆڵ بکە.",
+            "good": "پەیوەندییە ڕاستەوخۆکان دەبێت لەم تۆڕەدا کار بکەن.",
+            "limited": "نەتوانرا ئەم تۆڕە بە تەواوی دیاری بکرێت. لەوانەیە پەیوەندییە ڕاستەوخۆکان هێشتا کار بکەن؛ ئەگەر شکستیان هێنا، تۆڕێکی تر تاقی بکەرەوە.",
+            "no-signaling": "ناتوانرێت بگەیت بە سێرڤەری Music Together. فایەروۆڵ یان پەیوەندی ئینتەرنێتەکەت بپشکنە.",
+            "relay": "لەوانەیە پەیوەندییە ڕاستەوخۆکان لێرە شکست بهێنن؛ ڕێلەیەک بەکار دەهێنرێت (کار دەکات، بەڵام دواکەوتن زیاد دەکات)."
+          }
+        },
+        "disconnect": "پەیوەندی Music Together بپچڕێنە",
+        "empty-user": "هیچ بەکارهێنەرێکی پەیوەندیدار نییە",
+        "host": "خانەخوێی Music Together",
+        "join": "بەشداری Music Together بکە",
+        "permission": {
+          "all": "ڕێگە بە میوانەکان بدە کۆنترۆڵی لیستی گۆرانی و لێدەر بکەن",
+          "host-only": "تەنها خانەخوێ دەتوانێت کۆنترۆڵی لیستی گۆرانی و لێدەر بکات",
+          "playlist": "ڕێگە بە میوانەکان بدە کۆنترۆڵی لیستی گۆرانی بکەن"
+        },
+        "set-permission": "مۆڵەتی کۆنترۆڵ بگۆڕە",
+        "status": {
+          "disconnected": "پەیوەندی پچڕاوە",
+          "guest": "وەک میوان پەیوەندیدارە",
+          "host": "وەک خانەخوێ پەیوەندیدارە"
+        }
+      },
+      "name": "مۆسیقا پێکەوە [بێتا]",
+      "toast": {
+        "add-song-failed": "زیادکردنی گۆرانی سەرکەوتوو نەبوو",
+        "closed": "مۆسیقا پێکەوە داخرا",
+        "diagnostics-copied": "کورتەی پشکنین کۆپی کرا بۆ کلیپبۆرد",
+        "diagnostics-copy-failed": "کۆپیکردنی کورتەی پشکنین سەرکەوتوو نەبوو",
+        "diagnostics-running": "چاوەڕێ بکە تا تاقیکردنەوەی پەیوەندی تەواو بێت",
+        "disconnected": "پەیوەندی مۆسیقا پێکەوە پچڕا",
+        "host-failed": "میزوانداریکردنی مۆسیقا پێکەوە سەرکەوتوو نەبوو",
+        "id-copied": "ناسنامەی میزوان کۆپی کرا بۆ کلیپبۆرد",
+        "id-copy-failed": "کۆپیکردنی ناسنامەی میزوان بۆ کلیپبۆرد سەرکەوتوو نەبوو",
+        "join-failed": "بەشداربوون لە مۆسیقا پێکەوە سەرکەوتوو نەبوو",
+        "joined": "بەشداری لە مۆسیقا پێکەوە کرا",
+        "permission-changed": "مۆڵەتی مۆسیقا پێکەوە گۆڕدرا بۆ \"{{permission}}\"",
+        "remove-song-failed": "لابردنی گۆرانی سەرکەوتوو نەبوو",
+        "user-connected": "{{name}} پەیوەندی بە مۆسیقا پێکەوە کرد",
+        "user-disconnected": "{{name}} لە مۆسیقا پێکەوە دەرچوو"
+      }
+    },
+    "navigation": {
+      "description": "تیرەکانی گەڕان بۆ دواتر/پێشوو ڕاستەوخۆ لە ڕووکارەکەدا جێگیرکراون، وەک لە وێبگەڕی دڵخوازتدا",
+      "name": "گەڕان",
+      "templates": {
+        "back": {
+          "title": "بڕۆ بۆ لاپەڕەی پێشوو"
+        },
+        "forward": {
+          "title": "بڕۆ بۆ لاپەڕەی دواتر"
+        }
+      }
+    },
+    "no-google-login": {
+      "description": "دوگمە و بەستەرەکانی چوونەژوورەوەی Google لە ڕووکارەکە لابەرە",
+      "name": "بێ چوونەژوورەوەی Google"
+    },
+    "notifications": {
+      "description": "ئاگادارکردنەوەیەک پیشان بدە کاتێک گۆرانییەک دەست بە لێدان دەکات (ئاگادارکردنەوە کارلێکەرەکان لە Windows بەردەستن)",
+      "menu": {
+        "interactive": "ئاگادارکردنەوە کارلێکەرەکان",
+        "interactive-settings": {
+          "label": "ڕێکخستنە کارلێکەرەکان",
+          "submenu": {
+            "hide-button-text": "نووسینی دوگمە بشارەوە",
+            "hover-controls": "کاتێک ماوس دەچێتە سەر سینی سیستەم، پلەیەری بچووک پیشان بدە",
+            "refresh-on-play-pause": "لە کاتی لێدان/وەستان نوێکردنەوە بکە"
+          }
+        },
+        "priority": "پێشینەی ئاگادارکردنەوە",
+        "toast-style": "شێوازی تۆست",
+        "unpause-notification": "لە کاتی بەردەوامبوونەوە ئاگادارکردنەوە پیشان بدە"
+      },
+      "name": "ئاگادارکردنەوەکان"
+    },
+    "performance-improvement": {
+      "description": "کارایی باشتر بکە بە چالاککردنی سکریپتە تاقیکارییەکان",
+      "name": "باشترکردنی کارایی [بێتا]"
+    },
+    "playback-recovery": {
+      "description": "بە شێوەی خۆکار لە دۆخەکانی لێدانی گیرۆدە، ڕاگیراو یان مردوو دەگەڕێتەوە",
+      "menu": {
+        "log-to-console": "ڕووداوەکانی گەڕاندنەوە لە کۆنسۆڵ تۆمار بکە"
+      },
+      "name": "گەڕاندنەوەی لێدان",
+      "settings": {
+        "stall-timeout": "ماوەی ڕاگیران",
+        "stall-timeout-description": "چەندێک لێدان بێ پێشکەوتن بێت پێش هەوڵی گەڕاندنەوە",
+        "max-retries": "زۆرترین هەوڵی دووبارە",
+        "max-retries-description": "ژمارەی هەوڵەکانی گەڕاندنەوە پێش بازدان بۆ تراکی دواتر"
+      }
+    },
+    "picture-in-picture": {
+      "description": "ڕێگە دەدات ئەپەکە بگۆڕدرێت بۆ دۆخی وێنە-لە-وێنە",
+      "menu": {
+        "always-on-top": "هەمیشە لە سەرەوە",
+        "hotkey": {
+          "label": "کلیلی خێرا",
+          "prompt": {
+            "keybind-options": {
+              "hotkey": "کلیلی خێرا"
+            },
+            "label": "کلیلێکی خێرا هەڵبژێرە بۆ گۆڕینی وێنە-لە-وێنە",
+            "title": "کلیلی خێرای وێنە-لە-وێنە"
+          }
+        },
+        "save-window-position": "شوێنی پەنجەرە پاشەکەوت بکە",
+        "save-window-size": "قەبارەی پەنجەرە پاشەکەوت بکە",
+        "use-native-pip": "وێنە-لە-وێنەی ڕەسەنی وێبگەڕ بەکاربەرە",
+        "prompt": {
+          "title": "وێنە-لە-وێنە",
+          "label": "کلیلی خێرای وێنە-لە-وێنە ڕێکبخە",
+          "keybind-options": {
+            "hotkey": "کلیلی خێرا بۆ گۆڕینی وێنە-لە-وێنە"
+          }
+        }
+      },
+      "name": "وێنە-لە-وێنە",
+      "templates": {
+        "button": "وێنە-لە-وێنە"
+      }
+    },
+    "playback-speed": {
+      "description": "خێرا گوێبگرە، هێواش گوێبگرە! سلایدەرێک زیاد دەکات کە خێرایی گۆرانی کۆنترۆڵ دەکات",
+      "menu": {
+        "no-preserves-pitch": "پاراستنی بەرزی دەنگ ناچالاک بکە"
+      },
+      "name": "خێرایی لێدان",
+      "templates": {
+        "button": "خێرایی"
+      }
+    },
+    "playlist-search": {
+      "description": "پێداچوونەوەی گەڕان زیاد دەکات بۆ فلتەکردنی لیستەکانی لێدان لە لایەنەکە و لە دیالۆگی زیادکردن بۆ لیستی لێدان",
+      "name": "گەڕان لە لیستی لێدان",
+      "templates": {
+        "search-placeholder": "گەڕان بۆ لیستەکانی لێدان",
+        "no-results": "هیچ لیستێکی لێدان نەدۆزرایەوە"
+      }
+    },
+    "precise-volume": {
+      "description": "دەنگ بە وردی کۆنترۆڵ بکە بە چەرخی ماوس/کلیلە خێراکان، لەگەڵ HUDی تایبەت و هەنگاوەکانی دەنگی ڕێکخستنی",
+      "menu": {
+        "arrows-shortcuts": "کۆنترۆڵە ناوخۆییەکانی کلیلی ئاراستە",
+        "custom-volume-steps": "هەنگاوەکانی دەنگی تایبەت دابنێ",
+        "global-shortcuts": "کلیلە خێراکانی گشتی"
+      },
+      "name": "دەنگی ورد",
+      "prompt": {
+        "global-shortcuts": {
+          "keybind-options": {
+            "decrease": "دەنگ کەم بکە",
+            "increase": "دەنگ زیاد بکە"
+          },
+          "label": "کلیلەکانی دەنگی گشتی هەڵبژێرە:",
+          "title": "کلیلەکانی دەنگی گشتی"
+        },
+        "volume-steps": {
+          "label": "هەنگاوەکانی زیادکردن/کەمکردنی دەنگ هەڵبژێرە",
+          "title": "هەنگاوەکانی دەنگ"
+        }
+      },
+      "settings": {
+        "steps": "هەنگاوی دەنگ",
+        "arrows-shortcut": "کورتەکلیلەکانی کلیلی ئاراستە",
+        "shortcut-up": "کورتەکلیلی گشتی: دەنگ بەرزکردنەوە",
+        "shortcut-down": "کورتەکلیلی گشتی: دەنگ نزمکردنەوە"
+      }
+    },
+    "prefer-song": {
+      "description": "گۆرانی لێبدە لە جیاتی ڤیدیۆی مۆسیقا کاتێک تراکێکی ئەلبوم ڤیدیۆیە",
+      "name": "گۆرانی پەسەند بکە"
+    },
+    "quality-changer": {
+      "backend": {
+        "dialog": {
+          "quality-changer": {
+            "detail": "کوالیتی ئێستا: {{quality}}",
+            "message": "کوالیتی ڤیدیۆ هەڵبژێرە:",
+            "title": "کوالیتی ڤیدیۆ هەڵبژێرە"
+          }
+        }
+      },
+      "description": "ڕێگە دەدات کوالیتی ڤیدیۆ بگۆڕدرێت بە دوگمەیەک لە سەرپۆشی ڤیدیۆ",
+      "name": "گۆڕەری کوالیتی ڤیدیۆ",
+      "renderer": {
+        "quality-settings-button": {
+          "label": "گۆڕەری کوالیتی پلەیەر بکەرەوە"
+        }
+      }
+    },
+    "scrobbler": {
+      "description": "پشتگیری سکرۆبلینگ زیاد بکە (last.fm، Listenbrainz، هتد.)",
+      "dialog": {
+        "lastfm": {
+          "auth-failed": {
+            "message": "ناسینەوە لەگەڵ Last.fm سەرکەوتوو نەبوو\nپۆپئەپەکە بشارەوە تا دووبارە دەستپێکردنەوەی داهاتوو.",
+            "title": "ناسینەوە سەرکەوتوو نەبوو"
+          }
+        },
+        "invalid-regex": {
+          "title": "دەربڕینی ئاسایی نادروست",
+          "message": "دەربڕینی ئاسایی لە هێڵی {{line}} نادروستە: {{error}}"
+        }
+      },
+      "menu": {
+        "lastfm": {
+          "api-settings": "ڕێکخستنەکانی APIی Last.fm"
+        },
+        "listenbrainz": {
+          "token": "تۆکنی بەکارهێنەری ListenBrainz بنووسە",
+          "api-root": "URLی APIی ListenBrainz"
+        },
+        "scrobble-alternative-title": "ناونیشانە جێگرەوەکان بەکاربەرە",
+        "scrobble-alternative-artist": "هونەرمەندە جێگرەوەکان بەکاربەرە",
+        "scrobble-other-media": "میدیای تر سکرۆبل بکە",
+        "regex-filters": "فلتەرەکانی دەربڕینی ئاسایی",
+        "use-musicbrainz": "MusicBrainz بەکاربەرە بۆ ڕاستکردنەوەی میتاداتا",
+        "musicbrainz-email": "ئیمەیڵی پەیوەندی MusicBrainz"
+      },
+      "name": "سکرۆبلەر",
+      "prompt": {
+        "lastfm": {
+          "api-key": "کلیلی API ی Last.fm",
+          "api-secret": "نهێنی API ی Last.fm"
+        },
+        "listenbrainz": {
+          "token": {
+            "label": "تۆکنی بەکارهێنەری ListenBrainz بنووسە:",
+            "title": "تۆکنی ListenBrainz"
+          },
+          "api-root": {
+            "label": "URL ی بنەڕەتی API بنووسە:",
+            "title": "URL ی API ی ListenBrainz"
+          }
+        },
+        "regex-filter-multi": {
+          "label": "هەر یەک regex لە هێڵێک بنووسە:"
+        },
+        "musicbrainz-email": {
+          "title": "ئیمەیڵی پەیوەندی MusicBrainz",
+          "label": "ئیمەیڵێک بۆ API ی MusicBrainz بنووسە:"
+        }
+      },
+      "settings": {
+        "lastfm-api-root": "URL ی API ی Last.fm",
+        "musicbrainz-email-description": "وەک زانیاری پەیوەندی بۆ API ی MusicBrainz بەکاردێت؛ بۆ ڕاستکردنەوەی میتاداتای MusicBrainz پێویستە"
+      }
+    },
+    "search-commands": {
+      "commands": {
+        "play": "ڤیدیۆیەک لە لینک یان ناسنامەی YouTube لێبدە",
+        "settings": "ڕێکخستنەکان بکەرەوە"
+      },
+      "description": "لە سندوقی گەڕان بنووسە / بۆ ئەنجامدانی فەرمانەکان، لەگەڵ تەواوکردنی خۆکار بۆ ئارگیومێنتەکانیان",
+      "name": "فەرمانەکانی گەڕان",
+      "settings": {
+        "open-keybind": "کورتەبڕی کردنەوە",
+        "open-keybind-description": "خێراکەر بە شێوازی Electron، وەک CmdOrCtrl+/ یان Alt+Space",
+        "open-shortcut": "سندوقی گەڕان لە هەر شوێنێک بکەرەوە",
+        "open-shortcut-description": "سندوقی گەڕان بە شێوەی سەرەتا لە دۆخی فەرمان بانگ دەکات، وەک Spotlight. دووبارە لێدانی دەیکاتەوە."
+      }
+    },
+    "seek-shortcuts": {
+      "description": "بە کلیلی تیرەکانی چەپ/ڕاست ٥ چرکە بۆ دواوە/پێشەوە بگەڕێ",
+      "name": "کورتەبڕەکانی گەڕان"
+    },
+    "sfw-music": {
+      "description": "خۆکارانە گۆرانییەکانی نیشانکراو بە Explicit لەلایەن YouTube Music تێدەپەڕێنێت. ئەگەر ڕیزێکی explicit دووبارە بێتەوە یان گۆرانی داهاتوو بەردەست نەبێت، وەستانی دەکات.",
+      "name": "مۆسیقای SFW"
+    },
+    "shortcuts": {
+      "description": "ڕێگە بە دانانی هۆتکلیلی گشتی بۆ لێدان (لێدان/وەستان/داهاتوو/پێشوو) دەدات و ناچالاککردنی OSD ی میدیا بە بەسەرگرتنی کلیلەکانی میدیا، چالاککردنی Ctrl/CMD + F بۆ گەڕان، چالاککردنی پشتگیری Linux MPRIS بۆ کلیلەکانی میدیا، و هۆتکلیلی تایبەت بۆ بەکارهێنەرانی پێشکەوتوو",
+      "menu": {
+        "override-media-keys": "بەسەرگرتنی کلیلەکانی میدیا",
+        "set-keybinds": "دانانی کۆنترۆلەکانی گۆرانی بە شێوەی گشتی"
+      },
+      "name": "کورتەبڕەکان (& MPRIS)",
+      "prompt": {
+        "keybind": {
+          "keybind-options": {
+            "next": "داهاتوو",
+            "play-pause": "لێدان / وەستان",
+            "previous": "پێشوو"
+          },
+          "label": "کورتەبڕەکانی گشتی بۆ کۆنترۆلی گۆرانییەکان هەڵبژێرە:",
+          "title": "کورتەبڕەکانی گشتی"
+        }
+      },
+      "settings": {
+        "global-keybinds": "کورتەبڕەکانی گشتی (لە هەموو ئەپەکە کاردەکەن)",
+        "local-keybinds": "کورتەبڕەکانی ناوخۆیی (تەنها کاتێک پەنجەرە فۆکەسە)"
+      }
+    },
+    "skip-silences": {
+      "description": "خۆکارانە بەشەکانی بێدەنگی لە گۆرانییەکان تێدەپەڕێنێت",
+      "name": "تێپەڕاندنی بێدەنگی",
+      "settings": {
+        "only-skip-beginning": "تەنها بێدەنگی لە سەرەتای تراکەکە تێپەڕێنە"
+      }
+    },
+    "sponsorblock": {
+      "description": "خۆکارانە بەشەکانی غەیرە مۆسیقا وەک سەرەتا/کۆتایی یان بەشەکانی ڤیدیۆی مۆسیقا کە گۆرانی تێیدا لێنادرێت تێدەپەڕێنێت",
+      "name": "SponsorBlock",
+      "settings": {
+        "categories": "بەشەکانی تێپەڕاندن",
+        "category": {
+          "sponsor": "سپۆنسەر",
+          "intro": "سەرەتا",
+          "outro": "کۆتایی",
+          "interaction": "بیرخستنەوەی کارلێک",
+          "selfpromo": "خۆبەرزکردنەوە",
+          "music_offtopic": "بەشی غەیرە مۆسیقا"
+        },
+        "api-url": "URL ی API"
+      }
+    },
+    "synced-lyrics": {
+      "description": "گۆرانییەکان بە دەقی هاوکاتکراو دابین دەکات، بە بەکارهێنانی دابینکەرانی وەک LRClib.",
+      "errors": {
+        "fetch": "⚠️\tهەڵەیەک ڕوویدا لە کاتی وەرگرتنی دەقی گۆرانی.\n\tتکایە دواتر هەوڵ بدەرەوە.",
+        "not-found": "⚠️ هیچ دەقێکی گۆرانی بۆ ئەم گۆرانییە نەدۆزرایەوە."
+      },
+      "menu": {
+        "default-text-string": {
+          "label": "نیشانەی بنەڕەتی لە نێوان دەقی گۆرانی",
+          "tooltip": "نیشانەی بنەڕەتی هەڵبژێرە بۆ بەکارهێنان لە بۆشایی نێوان دەقی گۆرانی"
+        },
+        "line-effect": {
+          "label": "کاریگەری هێڵ",
+          "submenu": {
+            "fancy": {
+              "label": "خۆش",
+              "tooltip": "کاریگەری گەورە و ئەپ-ئاسا لەسەر هێڵی ئێستا بەکاربهێنە"
+            },
+            "focus": {
+              "label": "فۆکەس",
+              "tooltip": "تەنها هێڵی ئێستا سپی بکە"
+            },
+            "offset": {
+              "label": "لادان",
+              "tooltip": "هێڵی ئێستا بۆ ڕاست لادە"
+            },
+            "scale": {
+              "label": "پێوەر",
+              "tooltip": "هێڵی ئێستا پێوەر بکە"
+            }
+          },
+          "tooltip": "کاریگەرییەک هەڵبژێرە بۆ جێبەجێکردن لەسەر هێڵی ئێستا"
+        },
+        "lyrics-font-size": {
+          "label": "قەبارەی فۆنتی دەقی گۆرانی",
+          "submenu": {
+            "small": {
+              "label": "بچووک",
+              "tooltip": "قەبارەیەکی زیاتر کۆمپاکتی دەقی گۆرانی بەکاربهێنە"
+            },
+            "medium": {
+              "label": "ناوەند",
+              "tooltip": "قەبارەیەکی هاوسەنگی دەقی گۆرانی بەکاربهێنە"
+            },
+            "large": {
+              "label": "گەورە",
+              "tooltip": "قەبارەی گەورەی بنەڕەتی دەقی گۆرانی بەکاربهێنە"
+            }
+          },
+          "tooltip": "هەڵبژێرە دەقی گۆرانی چەند گەورە بێت"
+        },
+        "precise-timing": {
+          "label": "دەقی گۆرانی بە تەواوی هاوکات بکە",
+          "tooltip": "پیشاندانی هێڵی داهاتوو بە میلیچرکە هەژمار بکە (لەوانەیە کاریگەرییەکی کەم لەسەر ئەدای بێت)"
+        },
+        "romanization": {
+          "label": "دەقی گۆرانی بە لاتینی بنووسە",
+          "tooltip": "ئەگەر دەقی گۆرانی بە زمانێکی جیاواز بێت، هەوڵ بدە وەشانێکی لاتینی پیشان بدە."
+        },
+        "show-lyrics-even-if-inexact": {
+          "label": "دەقی گۆرانی پیشان بدە تەنانەت ئەگەر ورد نەبێت",
+          "tooltip": "ئەگەر گۆرانی نەدۆزرایەوە، پێوەکراوەکە دووبارە بە پرسیارێکی گەڕانی جیاواز هەوڵ دەداتەوە.\nئەنجامی هەوڵی دووەم لەوانەیە ورد نەبێت."
+        },
+        "show-time-codes": {
+          "label": "کۆدەکانی کات پیشان بدە",
+          "tooltip": "کۆدەکانی کات لە تەنیشت دەقی گۆرانی پیشان بدە"
+        },
+        "use-ytm-lyrics-without-proxy": {
+          "label": "دەقی گۆرانی YTM بەبێ پرۆکسی بەکاربهێنە",
+          "tooltip": "پرۆکسی گەڕانی YTM تێپەڕێنە و ڕاستەوخۆ پەیوەندی بە YouTube Music بکە بە بەکارهێنانی دانیشتنی ڕەسەنکراوی ئەپەکە. بەسوودە ئەگەر متمانە بە تۆڕ/هەرێمەکەت هەبێت بۆ ڕێگەدان بە پەیوەندییە ڕاستەوخۆکانی گەڕان."
+        },
+        "convert-chinese-character": {
+          "label": "نیشانەی چینی بگۆڕە",
+          "submenu": {
+            "disabled": {
+              "label": "ناچالاک",
+              "tooltip": "گۆڕینی نیشانەی چینی ناچالاک بکە"
+            },
+            "simplified-to-traditional": {
+              "label": "سادە بۆ نەریتی",
+              "tooltip": "چینیی سادە بگۆڕە بۆ چینیی نەریتی"
+            },
+            "traditional-to-simplified": {
+              "label": "نەریتی بۆ سادە",
+              "tooltip": "چینیی نەریتی بگۆڕە بۆ چینیی سادە"
+            }
+          },
+          "tooltip": "نیشانەی چینی بگۆڕە بۆ نەریتی یان سادە"
+        },
+        "translation": {
+          "label": "وەرگێڕانی دەقی گۆرانی",
+          "tooltip": "دەقی گۆرانی وەربگێڕە و ئەنجامی وەرگێڕدراو بە هێڵ بە هێڵ پیشان بدە.",
+          "enabled": {
+            "label": "وەرگێڕان چالاک بکە",
+            "tooltip": "هێڵێکی وەرگێڕدراو لە ژێر هەر هێڵێکی دەقی گۆرانی ڕەسەن پیشان بدە."
+          },
+          "provider": {
+            "label": "دابینکەر",
+            "tooltip": "کام خزمەتگوزاری بۆ وەرگێڕان بەکاربهێنرێت."
+          },
+          "target-language": {
+            "label": "زمانی ئامانج",
+            "tooltip": "ئەو زمانەی دەقی گۆرانی بۆی وەردەگێڕدرێت."
+          },
+          "configure": {
+            "label": "کلیلی API و مۆدێل ڕێکبخە…",
+            "tooltip": "هەڵبژاردنەکانی وەرگێڕانی تایبەت بە دابینکەر دانە."
+          },
+          "clear-cache": {
+            "label": "کاشەی وەرگێڕان پاک بکە",
+            "tooltip": "هەموو وەرگێڕانە کاشکراوەکان کە لەسەر دیسک هەڵگیراون بسڕەوە."
+          },
+          "providers": {
+            "shared": {
+              "api-key": "کلیلی API",
+              "model": "مۆدێل"
+            },
+            "openai-compatible": {
+              "name": "OpenAI گونجاو",
+              "prompt-title": "ڕێکخستنەکانی OpenAI گونجاو",
+              "prompt-label": "سێرڤەرە گونجاوەکانی OpenAI بەکاربهێنە، لەوانە Ollama (URLی بنەڕەت http://127.0.0.1:11434/v1، دۆخی API auto یان chat-completions).",
+              "base-url": "URLی بنەڕەت",
+              "api-mode": "دۆخی API (responses / auto / chat-completions)"
+            },
+            "anthropic": {
+              "name": "Anthropic Claude",
+              "prompt-title": "ڕێکخستنەکانی Anthropic",
+              "prompt-label": "APIی Messagesی ڕەسەنی Anthropic بەکاردەهێنێت."
+            },
+            "gemini": {
+              "name": "Google Gemini",
+              "prompt-title": "ڕێکخستنەکانی Gemini",
+              "prompt-label": "APIی زمانی بەرهەمهێنەری Google (generateContent) بەکاردەهێنێت."
+            },
+            "local-cli": {
+              "name": "CLIی ناوخۆیی",
+              "prompt-title": "ڕێکخستنەکانی CLIی ناوخۆیی",
+              "prompt-label": "CLIی Claude Code، Codex، یان Geminiی کە لە ناوخۆدا چووەتە ژوورەوە بەکاربهێنە. فەرمان و مۆدێل خۆکارن؛ CLI بنەڕەتی خۆی کە چووەتە ژوورەوە بەکاردەهێنێت.",
+              "engine": "CLIی ناوخۆیی",
+              "engine-claude": "Claude Code",
+              "engine-codex": "Codex",
+              "engine-gemini": "Gemini CLI",
+              "command": "فەرمان",
+              "timeout": "چرکەکانی چاوەڕوانی (15-600)"
+            },
+            "google-translate": {
+              "name": "Google Translate",
+              "prompt-title": "ڕێکخستنەکانی Google Translate",
+              "prompt-label": "ئەندپۆینتی بەخۆڕایی و نافەرمیی Google Translate بەکاردەهێنێت. کلیلی API پێویست نییە، بەڵام Google لەوانەیە سنووری ڕێژەی بۆ دابنێت.",
+              "host": "هاست"
+            }
+          }
+        },
+        "show-custom-search-button": {
+          "label": "دوگمەی گەڕانی تایبەت پیشان بدە",
+          "tooltip": "دوگمەیەکی گەڕان لە هەڵبژێرەری دەقی گۆرانییەکان پیشان بدە کە ڕێگەت پێدەدات پرسیاری گەڕان و هونەرمەند بۆ گۆرانیی ئێستا بگۆڕیت."
+        },
+        "provider-priority": {
+          "tooltip": "دابینکەرەکان بەم ڕیزبەندییە تاقی دەکرێنەوە: یەکەمیان کە دەقی گۆرانی بۆ گۆرانیی ئێستا هەبێت براوەیە. بۆ ڕێکخستنەوە تیرەکان بەکاربهێنە."
+        },
+        "prefer-synced": {
+          "tooltip": "یەکەم دابینکەر لە لیستەکە کە دەقی گۆرانیی هاوکاتکراو بە کات هەبێت هەڵبژێرە، لە جیاتی یەکەم کە هەر دەقی گۆرانییەک هەبێت."
+        },
+        "previous-provider": {
+          "tooltip": "دابینکەری پێشوو"
+        },
+        "next-provider": {
+          "tooltip": "دابینکەری داهاتوو"
+        },
+        "custom-search-button": {
+          "tooltip": "پرسیاری گەڕانی تایبەت"
+        },
+        "star-provider": {
+          "tooltip": "هەمیشە ئەم دابینکەرە بۆ ئەم گۆرانییە بەکاربهێنە، چ ڕیزبەندیی پێشینە بڵێت. ئەگەر دەقی گۆرانی بۆ ئەم گۆرانییە نەبێت، دەگەڕێتەوە بۆ ڕیزبەندیی ئاسایی."
+        },
+        "unstar-provider": {
+          "tooltip": "وازبهێنە لە چەسپاندنی ئەم دابینکەرە بەم گۆرانییە."
+        },
+        "use-priority-list": {
+          "tooltip": "دابینکەرەکان بە ڕیزبەندیی خوارەوە تاقی بکەرەوە. ئەمە بکوژێنەرەوە بۆ ئەوەی دەقی گۆرانی بڕیار بدات: ئەو دابینکەرەی باشترین دەقی گۆرانی بۆ گۆرانییەکە هەبێت براوەیە."
+        }
+      },
+      "name": "دەقی گۆرانیی هاوکاتکراو",
+      "refetch-btn": {
+        "fetching": "دەهێنرێت...",
+        "normal": "دووبارە دەقی گۆرانی بهێنەرەوە"
+      },
+      "warnings": {
+        "duration-mismatch": "⚠️ - لەوانەیە دەقی گۆرانی لەبەر نەگونجانی ماوە لە هاوکاتیدا نەبێت.",
+        "inexact": "⚠️ - لەوانەیە دەقی گۆرانی بۆ ئەم گۆرانییە ورد نەبێت",
+        "instrumental": "⚠️ - ئەمە گۆرانییەکی ئامێرییە"
+      },
+      "settings": {
+        "precise-timing": "کاتی ورد",
+        "show-inexact": "دەقی گۆرانیی نەورد پیشان بدە",
+        "show-time-codes": "کۆدەکانی کات پیشان بدە",
+        "romanization": "دەقی گۆرانی بە لاتینی بنووسە",
+        "line-effect": "کاریگەریی هێڵ",
+        "effect": {
+          "fancy": "جوان",
+          "scale": "پێوانە",
+          "offset": "لادان",
+          "focus": "سەرنج"
+        },
+        "prefer-synced": "دەقی گۆرانیی هاوکاتکراو پەسەند بکە",
+        "provider-priority": "پێشینەی دابینکەرەکان",
+        "use-priority-list": "لیستی پێشینە بەکاربهێنە"
+      }
+    },
+    "taskbar-mediacontrol": {
+      "description": "لە شریتی ئەرکی Windowsەوە کۆنترۆڵی لێدان بکە",
+      "name": "کۆنترۆڵی میدیای شریتی ئەرک"
+    },
+    "toast-autoclose": {
+      "description": "ئاگادارکردنەوەکانی YouTube Music بە خۆکار دوای سێ چرکە دابخە",
+      "name": "داخستنی خۆکاری ئاگادارکردنەوە"
+    },
+    "touchbar": {
+      "description": "ویجێتی TouchBar بۆ بەکارهێنەرانی macOS زیاد دەکات",
+      "name": "TouchBar"
+    },
+    "transparent-player": {
+      "description": "پەنجەرەی ئەپەکە شەفاف دەکات",
+      "name": "پلەیەری شەفاف",
+      "menu": {
+        "opacity": {
+          "label": "ناشەفافی",
+          "submenu": {
+            "percent": "{{opacity}}%"
+          }
+        },
+        "type": {
+          "label": "جۆر",
+          "submenu": {
+            "acrylic": "ئاکریلیک",
+            "content": "ناوەڕۆک",
+            "fullscreen-ui": "ڕووکاری پڕشاشە",
+            "mica": "مایکا",
+            "tabbed": "تابدار",
+            "under-page": "ژێر پەڕە",
+            "under-window": "ژێر پەنجەرە",
+            "window": "پەنجەرە",
+            "none": "هیچ"
+          }
+        }
+      },
+      "settings": {
+        "type-description": "مادەی پاشبنەما کە بۆ شەفافیی پەنجەرە بەکاردەهێنرێت"
+      }
+    },
+    "tuna-obs": {
+      "description": "یەکخستن لەگەڵ پلاگینی Tunaی OBS",
+      "name": "Tuna OBS"
+    },
+    "unobtrusive-player": {
+      "description": "ڕێگری دەکات لە دەرکەوتنی پلەیەر کاتێک گۆرانییەک لێدەدرێت",
+      "name": "پلەیەری نەدەرکەوتوو"
+    },
+    "video-toggle": {
+      "description": "دوگمەیەک زیاد دەکات بۆ گۆڕین لە نێوان دۆخی ڤیدیۆ/گۆرانی. بە هەڵبژاردەش دەتوانێت تەواوی تابەکەی ڤیدیۆ لابەرێت",
+      "menu": {
+        "align": {
+          "label": "ڕێکخستن",
+          "submenu": {
+            "left": "چەپ",
+            "middle": "ناوەڕاست",
+            "right": "ڕاست"
+          }
+        },
+        "force-hide": "بە زۆر تابەکەی ڤیدیۆ لابەرە",
+        "mode": {
+          "label": "دۆخ",
+          "submenu": {
+            "custom": "گۆڕینەوەی تایبەت",
+            "disabled": "ناچالاک",
+            "native": "گۆڕینەوەی ڕەسەن"
+          }
+        }
+      },
+      "name": "گۆڕینەوەی ڤیدیۆ",
+      "templates": {
+        "button-song": "گۆرانی",
+        "button-video": "ڤیدیۆ"
+      }
+    },
+    "visualizer": {
+      "description": "ڤیژوالایزەرێک بۆ پلەیەر زیاد دەکات",
+      "menu": {
+        "visualizer-type": "جۆری ڤیژوالایزەر"
+      },
+      "name": "ڤیژوالایزەر",
+      "settings": {
+        "preset": "پرێسێت",
+        "blend-time": "کاتی تێکەڵکردن",
+        "effect": "کاریگەری",
+        "accuracy": "وردی",
+        "max-height": "زۆرترین بەرزی",
+        "max-size": "زۆرترین قەبارە",
+        "line-width": "پانی هێڵ",
+        "color": "ڕەنگ",
+        "shadow-blur": "لێڵی سێبەر",
+        "shadow-color": "ڕەنگی سێبەر",
+        "fade-side": "لایەنەکانی لێڵبوون",
+        "prettify": "جوانکردن",
+        "prettify-description": "بارەکان بەرەو لایەنەکان تەنک بکە",
+        "dottify": "خاڵخاڵکردن",
+        "dottify-description": "لە جیاتی هێڵێکی بەردەوام خاڵەکان بکێشە",
+        "horizontal-align": "ڕێکخستنی ئاسۆیی",
+        "vertical-align": "ڕێکخستنی ستوونی"
+      }
+    },
+    "statusbar-lyrics": {
+      "settings": {
+        "include-pronunciation": "لەخۆگرتنی دەربڕین"
+      }
+    },
+    "dismiss-multidevice-popup": {
+      "name": "لادانی پەنجەرەی فرەئامێر",
+      "description": "بە خۆکارانە پەنجەرەی \"لەم ئامێرە گوێبگرە\" دادەخات کە کاتێک لێدان لە ئامێرێکی تر دەست پێدەکات دەردەکەوێت."
+    },
+    "memory-saver": {
+      "description": "کاشەکانی سەرچاوەی ڕێندەرەر پاک دەکاتەوە لە کاتێکدا پەنجەرەکە شاراوەیە، ھەر کە لە سنوورێک زیاتر بوون.",
+      "name": "پارێزەری بیرگە",
+      "settings": {
+        "threshold": "سنووری کاش",
+        "threshold-description": "کاشەکان پاک بکەرەوە ھەر کە بیرگەی زیندوویان لەم سنوورە تێپەڕی لە کاتێکدا پەنجەرەکە شاراوەیە."
+      }
+    }
+  },
+  "settings-ui": {
+    "name": "ڕووکاری ڕێکخستن",
+    "description": "پەنەلێکی ڕێکخستن لەناو ئەپ زیاد دەکات، کە لە شریتی لاتەنیشتەوە دەکرێتەوە.",
+    "title": "ڕێکخستن",
+    "settings": {
+      "show-button": "بەشی ڕێکخستن لە شریتی لاتەنیشت پیشان بدە",
+      "show-button-description": "ئەمە بکوژێنەرەوە بۆ ئەوەی شریتی لاتەنیشت پاک بێت؛ ڕێکخستن هێشتا لە ژێر گەڕان → کردنەوەی ڕێکخستن دا هەیە.",
+      "separate-window": "هەمیشە ڕێکخستن لە پەنجەرەیەکی جیاواز بکەرەوە",
+      "separate-window-description": "پەنجەرەی سەربەخۆی ڕێکخستن دەکاتەوە، وەک چۆن بەشی سینی سیستەم دەیکات، لە جیاتی پەنەلی ناو ئەپ."
+    },
+    "search-placeholder": "گەڕان لە ڕێکخستنەکان",
+    "search-results": "ئەنجامەکانی گەڕان",
+    "search-matching": "گونجاو لەگەڵ “{{query}}”",
+    "no-match": "هیچ ڕێکخستنێک لەگەڵ “{{query}}” ناگونجێت.",
+    "close": "داخستن",
+    "edit-config": "دەستکاری config.json بکە",
+    "restart-banner": "هەندێک گۆڕانکاری پێویستیان بە دووبارە دەستپێکردنەوە هەیە بۆ ئەوەی کاربکەن.",
+    "restart-now": "ئێستا دووبارە دەست پێبکەرەوە",
+    "later": "دواتر",
+    "restart-pill": "دووبارە دەستپێکردنەوە",
+    "restart-pill-hint": "پێویستی بە دووبارە دەستپێکردنەوە هەیە",
+    "refresh-options": "نوێکردنەوەی هەڵبژاردنەکان",
+    "move-up": "بەرەو سەرەوە بجووڵێنە",
+    "move-down": "بەرەو خوارەوە بجووڵێنە",
+    "about": {
+      "tagline": "ئەپێکی سەر مێزێکی پڕ لە تایبەتمەندی بۆ YouTube Music",
+      "versions": "وەشانەکان",
+      "version-app": "ئەپ",
+      "version-build": "بنیاتن",
+      "version-electron": "Electron",
+      "version-chromium": "Chromium",
+      "version-node": "Node.js",
+      "version-platform": "پلاتفۆرم",
+      "version-innertube": "Innertube",
+      "links": "بەستەرەکان",
+      "link-repo": "کۆگا",
+      "link-issue": "ڕاپۆرتکردنی کێشە",
+      "link-releases": "بڵاوکردنەوەکان",
+      "link-license": "مۆڵەتنامە",
+      "actions": "کردارەکان",
+      "check-updates": "پشکنین بۆ نوێکردنەوەکان",
+      "copy-debug": "کۆپیکردنی زانیاری دیباگ",
+      "copied": "کۆپی کرا!"
+    },
+    "sections": {
+      "general": {
+        "label": "گشتی"
+      },
+      "appearance": {
+        "label": "ڕوخسار"
+      },
+      "window": {
+        "label": "پەنجەرە و سینی سیستەم"
+      },
+      "advanced": {
+        "label": "پێشکەوتوو"
+      },
+      "plugins": {
+        "label": "پێوەکراوەکان"
+      },
+      "flags": {
+        "label": "ئاڵاکان"
+      },
+      "about": {
+        "label": "دەربارە"
+      }
+    },
+    "groups": {
+      "updates-session": "نوێکردنەوەکان و دانیشتن",
+      "startup-language": "دەستپێکردن و زمان",
+      "interface": "ڕووکار",
+      "context-menu": "پێڕستی چوارچێوە",
+      "window-title": "پەنجەرە",
+      "window": "پەنجەرە",
+      "system": "سیستەم",
+      "network": "تۆڕ",
+      "performance": "کارایی",
+      "configuration": "ڕێکخستن",
+      "updates": "نوێکردنەوەکان"
+    },
+    "stepper-decrement": "کەمکردنەوە",
+    "stepper-increment": "زیادکردن",
+    "flags": {
+      "warning": "ئاڵاکانی تایبەتمەندی کلیدە ناوخۆییەکانی خودی YouTube Music. گۆڕینیان دەتوانێت لێدان، ڕووکار یان تایبەتمەندییەکانی هەژمار تێکبدات، و لەلایەن پشتگیرییەوە نین. تێپەڕاندنەکان تەنها بۆ ئەو ئاڵانە هەڵدەگیرێن کە دەیانگۆڕیت، و بە پاشگەزبوونەوە دەتوانرێت لاببرێن.",
+      "search-placeholder": "گەڕان لە ئاڵاکان",
+      "overridden": "تێپەڕێنراو",
+      "undo": "پاشگەزبوونەوە",
+      "undo-hint": "ئەم تێپەڕاندنە بسڕەوە",
+      "empty": "ئەم پەڕەیە هیچ ئاڵایەکی تایبەتمەندی ئاشکرا ناکات.",
+      "no-match": "هیچ ئاڵایەک لەگەڵ “{{query}}” ناگونجێت.",
+      "add-name": "ناوی ئاڵای نوێ",
+      "add-value": "بەها",
+      "add-value-hint": "JSON کاتێک شیکار دەبێت (true, 42, \"text\"), ئەگەر نا خودی نووسینەکە",
+      "add": "زیادکردن"
+    },
+    "fields": {
+      "hide-dislike-button": "دوگمەی پێنەدان بشارەوە",
+      "hide-video-captions": "ژێرنووسەکانی ڤیدیۆ بشارەوە",
+      "context-menu": {
+        "hide-entry": "{{entry}} بشارەوە",
+        "entries": {
+          "add-to-queue": "زیادکردن بۆ ڕیز",
+          "delete-playlist": "سڕینەوەی پێڕستی لێدان",
+          "dismiss-queue": "لادانی ڕیز",
+          "download": "داگرتن",
+          "go-to-album": "بڕۆ بۆ ئەلبوم",
+          "go-to-artist": "بڕۆ بۆ هونەرمەند",
+          "go-to-playlist": "بڕۆ بۆ پێڕستی لێدان",
+          "like": "بەدڵبوون",
+          "not-interested": "بەدڵم نییە",
+          "pin-to-listen-again": "بۆ گوێگرتنەوە پین بکە",
+          "play-next": "دواتر لێبدە",
+          "remove-from-playlist": "لابردن لە لیستی لێدان",
+          "remove-from-queue": "لابردن لە ڕیز",
+          "report": "ڕاپۆرتکردن",
+          "save-to-library": "پاشەکەوتکردن لە کتێبخانە",
+          "save-to-playlist": "پاشەکەوتکردن لە لیستی لێدان",
+          "share": "هاوبەشکردن",
+          "shuffle-play": "لێدانی تێکەڵ",
+          "start-mix": "دەستپێکردنی تێکەڵ",
+          "stats-for-nerds": "ئامار بۆ شارەزایان"
+        }
+      },
+      "podcast-artist": "بەکارهێنانی بەشداربووانی پۆدکاست وەک هونەرمەند",
+      "podcast-artist-desc": "ناچالاک: هونەرمەندی ئەپیزۆدێکی پۆدکاست ئەو کەناڵەیە کە بڵاوی کردووەتەوە.",
+      "theme-preset": "پێشوەخت",
+      "theme-variable-name": "گۆڕاو",
+      "theme-variable-value": "بەها",
+      "theme-variable-add": "زیادکردنی گۆڕاو",
+      "performance-mode": "دۆخی کارایی",
+      "performance-mode-desc": "ھەندێک لە کوالیتی بینراو فیدا بکە بەرامبەر ڕێندەرکردنی ھەرزانتر.",
+      "in-process-gpu": "پرۆسەی GPU تێکەڵ بکە بە پرۆسەی ئەپەکە",
+      "in-process-gpu-desc": "تاقیکاری: یەک پرۆسە پاشەکەوت دەکات، بەڵام بیرگەی GPU دەگوازێتەوە بۆ پرۆسەی سەرەکی و لەوانەیە بگەڕێتەوە بۆ ڕێندەرکردنی سۆفتوێر."
     }
   }
 }

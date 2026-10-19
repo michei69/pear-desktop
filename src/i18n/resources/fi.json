@@ -65,7 +65,8 @@
         },
         "detail": "Pahoittelemme häiriötä! ole hyvä ja valitse mitä teet:",
         "message": "Sovellus ei ole saataville eli tapahtui virhe",
-        "title": "Ikkuna ei vastaa"
+        "title": "Ikkuna ei vastaa",
+        "details": "Syy: {{error}}"
       },
       "update-available": {
         "buttons": {
@@ -76,6 +77,27 @@
         "detail": "Uusin versio sovelluksesta on nyt saatavilla, lataa se tästä {{downloadLink}}",
         "message": "Uusin versio on nyt saatavilla",
         "title": "Päivitys saatavilla"
+      },
+      "restart-summary": {
+        "detail": "Käynnistä sovellus uudelleen ottaaksesi käyttöön: {{changes}}",
+        "message": "Jotkin muutokset edellyttävät uudelleenkäynnistystä",
+        "title": "Uudelleenkäynnistys vaaditaan"
+      },
+      "update-available-dev": {
+        "buttons": {
+          "ok": "OK",
+          "view": "Näytä commitit"
+        },
+        "title": "Päivitys saatavilla",
+        "message": "Tämä kehitysversio on master-haaraa jäljessä",
+        "detail": "Tämän version commit ({{commit}}) on vanhempi kuin masterin uusin commit. Uudemmat commitit löytyvät osoitteesta {{commitsLink}}"
+      },
+      "downgrade-warning": {
+        "title": "Vaihdetaanko takaisin vakaaseen versioon?",
+        "message": "Tämä beta-versio on uudempi kuin uusin vakaa julkaisu.",
+        "detail": "Takaisin vaihtaminen voi nollata joitakin asetuksia: uudemmasta versiosta vanhempaan siirtyminen ei suorita migraatioita ja voi jättää uudemmat asetukset lukukelvottomiksi.",
+        "confirm": "Vaihda vakaaseen",
+        "cancel": "Peruuta"
       }
     },
     "menu": {
@@ -87,7 +109,8 @@
           "go-back": "Takaisin",
           "go-forward": "Eteenpäin",
           "quit": "Poistu alustalta",
-          "restart": "Uudelleen käynnistä aplikaatio"
+          "restart": "Uudelleen käynnistä aplikaatio",
+          "open-settings": "Avaa asetukset"
         }
       },
       "options": {
@@ -129,7 +152,20 @@
             },
             "label": "Kieli (languages)",
             "submenu": {
-              "to-help-translate": "Haluatko kääntää puuttuvan kielen? Klkkaa tästä! (Want to help translate? Click here)"
+              "to-help-translate": "Haluatko kääntää puuttuvan kielen? Klkkaa tästä! (Want to help translate? Click here)",
+              "sync": {
+                "label": "Synkronoi kieli",
+                "submenu": {
+                  "from-youtube": "YouTubesta",
+                  "to-youtube": "YouTubeen"
+                },
+                "failure": {
+                  "dialog": {
+                    "title": "Kieltä ei vaihdettu",
+                    "message": "Kieltä tai kielialuetta ei ole vielä sovelluksessa."
+                  }
+                }
+              }
             }
           },
           "resume-on-start": "Jatka kappaleesta, johon jäin aikaisemmin",
@@ -180,9 +216,37 @@
                 "label": "Teema",
                 "submenu": {
                   "import-css-file": "Liitä kustomoitu CSS tiedosto",
-                  "no-theme": "Ei teemaa"
+                  "no-theme": "Ei teemaa",
+                  "colors": {
+                    "label": "Värit"
+                  },
+                  "presets": {
+                    "label": "Esiasetukset",
+                    "default": "Oletus",
+                    "custom": "Mukautettu"
+                  },
+                  "reset-colors": "Palauta värit",
+                  "open-themes-folder": "Avaa teemakansio"
                 }
-              }
+              },
+              "use-ytm-icons": "Käytä alkuperäisiä YouTube Music -kuvakkeita"
+            }
+          },
+          "updates": {
+            "label": "Päivitykset",
+            "check": "Tarkista päivitykset",
+            "auto-update": "Tarkista päivitykset automaattisesti",
+            "channel": {
+              "label": "Päivityskanava",
+              "stable": "Vakaa",
+              "beta": "Beta"
+            }
+          },
+          "shared-links": {
+            "label": "Jaetut linkit",
+            "submenu": {
+              "strip-music": "Poista 'music.'",
+              "strip-si": "Poista '&si='"
             }
           }
         }
@@ -219,6 +283,15 @@
       "dislike": "En pidä",
       "unlike": "Toisin kuin",
       "undislike": "Poista tykkäys"
+    },
+    "themes": {
+      "consent": {
+        "title": "Suoritetaanko teeman koodi?",
+        "message": "\"{{theme}}\" sisältää komentosarjan, joka suoritetaan täydellä pääsyllä sovellukseen.",
+        "detail": "Teemojen komentosarjoja ei ole eristetty hiekkalaatikkoon. Tämä koodi voi lukea ja muuttaa asetuksiasi, kommunikoida sovelluksen kanssa ja tehdä kaiken muun, mihin sovellus itse pystyy. Salli tämä vain, jos luotat teeman alkuperään. Voit peruuttaa tämän poistamalla teeman.",
+        "allow": "Suorita tämä teema",
+        "cancel": "Peruuta"
+      }
     }
   },
   "plugins": {
@@ -344,6 +417,10 @@
               "dialogTitle": "Valitse HTTPS-yksityinen avaintiedosto"
             }
           }
+        },
+        "mcp": {
+          "label": "MCP-palvelin",
+          "description": "Tarjoilee v2-rajapinnan MCP-työkaluina osoitteessa /mcp. Käyttää samaa valtuutusta kuin muu rajapinta."
         }
       },
       "name": "API Serveri [Beta]",
@@ -356,11 +433,20 @@
           "label": "Syötä API-palvelimen portti:",
           "title": "Portti"
         }
+      },
+      "settings": {
+        "choose-file": "Valitse tiedosto…"
       }
     },
     "audio-compressor": {
       "description": "Lisää äänen kompressointia (hiljentää voimakkaimpien äänien voimakkuutta ja tehostaa pehmeämpien äänien voimakkuutta)",
-      "name": "Äänen Kompressoija"
+      "name": "Äänen Kompressoija",
+      "menu": {
+        "auto-track-gain": "Automaattinen kappaleen vahvistus (korosta hiljaisia kappaleita)",
+        "maximum-gain": {
+          "label": "Enimmäisvahvistus"
+        }
+      }
     },
     "auth-proxy-adapter": {
       "description": "Tukee todennusvälipalvelinten käyttöä",
@@ -426,6 +512,9 @@
           "display-seconds": "Näytä sekunnit",
           "24-hour-format": "24 tunnin muoto"
         }
+      },
+      "settings": {
+        "hour-12": "Käytä 12 tunnin muotoa"
       }
     },
     "compact-sidebar": {
@@ -446,12 +535,24 @@
             "fade-scaling": {
               "label": "Häivytyksen skaalaus",
               "linear": "Lineaarinen",
-              "logarithmic": "Logaritminen"
+              "logarithmic": "Logaritminen",
+              "equal-power": "Samateho"
             },
             "seconds-before-end": "Ristihäivytä N sekuntia ennen loppua"
           },
           "title": "Ristihäivytyksen asetukset"
         }
+      },
+      "settings": {
+        "fade-in": "Sisäänhäivytys",
+        "fade-out": "Uloshäivytys",
+        "seconds-before-end": "Aloita ennen loppua",
+        "fade-scaling": "Häivytyksen skaalaus",
+        "scaling": {
+          "linear": "Lineaarinen",
+          "logarithmic": "Logaritminen"
+        },
+        "seconds-before-end-description": "Sekunnit ennen kappaleen loppua, jolloin ristihäivytys seuraavaan kappaleeseen alkaa"
       }
     },
     "custom-output-device": {
@@ -506,6 +607,13 @@
           "label": "Anna toimettomuuden aikakatkaisun aika sekunteina:",
           "title": "Aseta toimettomuuden aikakatkaisu"
         }
+      },
+      "settings": {
+        "auto-reconnect": "Yhdistä automaattisesti uudelleen",
+        "activity-timeout-enabled": "Tyhjennä tilatieto, kun toisto on keskeytetty",
+        "activity-timeout-time": "Tyhjennä jälkeen",
+        "hide-github-button": "Piilota “View on GitHub” -painike",
+        "hide-duration-left": "Piilota jäljellä oleva aika"
       }
     },
     "downloader": {
@@ -548,7 +656,8 @@
           "saving": "Tallennetaan…",
           "trying-to-get-playlist-id": "Yritetään hakea soittolistan tunnistetta: {{playlistId}}",
           "video-id-not-found": "Videota ei löytynyt",
-          "writing-id3": "Kirjoitetaan ID3-tunnisteita…"
+          "writing-id3": "Kirjoitetaan ID3-tunnisteita…",
+          "ffmpeg-missing": "FFmpegiä ei löytynyt. Asenna FFmpeg ja varmista, että `ffmpeg` löytyy PATH-ympäristömuuttujasta, jotta voit ladata tässä muodossa."
         }
       },
       "description": "Lataa MP3- tai lähdetiedoston suoraan käyttöliittymästä",
@@ -579,6 +688,10 @@
       },
       "templates": {
         "button": "Lataa"
+      },
+      "settings": {
+        "finish-folder": "Valmiiden latausten kansio",
+        "finish-folder-description": "Jätä asettamatta, jos haluat käyttää yllä olevaa latauskansiota."
       }
     },
     "equalizer": {
@@ -646,6 +759,44 @@
           "disconnected": "Yhteys katkaistu",
           "guest": "Yhdistetty vieraana",
           "host": "Yhdistetty isäntänä"
+        },
+        "diagnostics": {
+          "check": {
+            "nat": "Verkon tyyppi (NAT)",
+            "signaling": "Signalointipalvelin",
+            "stun": "Suora yhteys (STUN)",
+            "turn": "Välityspalvelin varalla (TURN)"
+          },
+          "copy": "Kopioi yhteenveto",
+          "detail": {
+            "check-error": "Tarkistus epäonnistui: {{reason}}",
+            "public-ip": "Julkinen osoite: {{ip}}",
+            "public-ip-hidden": "Julkinen osoite: näytä napsauttamalla",
+            "signaling-fail": "Ei tavoitettavissa ({{reason}})",
+            "signaling-ok": "Tavoitettavissa",
+            "stun-fail": "Ei julkista osoitetta (UDP/STUN estetty)",
+            "stun-ok": "Julkinen osoite löytyi",
+            "turn-fail": "Välityspalvelin ei tavoitettavissa",
+            "turn-ok": "Välityspalvelin tavoitettavissa"
+          },
+          "nat": {
+            "blocked": "UDP tai STUN estetty",
+            "open": "Avoin / kartio (suora yhteys toimii)",
+            "symmetric": "Symmetrinen (välityspalvelin vaaditaan)",
+            "unknown": "Määrittämätön"
+          },
+          "run-again": "Suorita uudelleen",
+          "running": "Suoritetaan tarkistuksia…",
+          "test": "Testaa yhteys",
+          "title": "Yhteyden diagnostiikka",
+          "verdict": {
+            "blocked": "Tämä verkko todennäköisesti estää Music Togetherin. Kokeile toista verkkoa tai VPN:ää.",
+            "error": "Diagnostiikan suorittaminen epäonnistui. Tarkista yksityiskohdat konsolista.",
+            "good": "Suorien yhteyksien pitäisi toimia tässä verkossa.",
+            "limited": "Tätä verkkoa ei voitu täysin määrittää. Suorat yhteydet voivat silti toimia; jos ne epäonnistuvat, kokeile toista verkkoa.",
+            "no-signaling": "Music Together -palvelimeen ei saada yhteyttä. Tarkista palomuuri tai internetyhteys.",
+            "relay": "Suorat yhteydet voivat epäonnistua tässä; käytetään välityspalvelinta (toimii, mutta lisää viivettä)."
+          }
         }
       },
       "name": "Music Together [Beta]",
@@ -661,7 +812,10 @@
         "permission-changed": "Music Together -istunnon oikeuksia muutettiin \"{{permission}}\"",
         "remove-song-failed": "Kappaleen poistaminen epäonnistui",
         "user-connected": "{{name}} liittyi Music Together -istuntoon",
-        "user-disconnected": "{{name}} poistui Music Together -istunnosta"
+        "user-disconnected": "{{name}} poistui Music Together -istunnosta",
+        "diagnostics-copied": "Diagnostiikan yhteenveto kopioitu leikepöydälle",
+        "diagnostics-copy-failed": "Diagnostiikkayhteenvedon kopiointi epäonnistui",
+        "diagnostics-running": "Odota, että yhteystesti valmistuu"
       }
     },
     "navigation": {
@@ -708,7 +862,13 @@
       "menu": {
         "log-to-console": "Kirjaa palautustapahtumat konsoliin"
       },
-      "name": "Toiston Palautus"
+      "name": "Toiston Palautus",
+      "settings": {
+        "stall-timeout": "Toiston pysähtymisen aikakatkaisu",
+        "stall-timeout-description": "Kuinka kauan toisto saa olla edistymättä ennen palautusyritystä",
+        "max-retries": "Uudelleenyritysten enimmäismäärä",
+        "max-retries-description": "Palautusyritysten määrä ennen siirtymistä seuraavaan kappaleeseen"
+      }
     },
     "picture-in-picture": {
       "description": "Sallii sovelluksen vaihtamisen \"kuva kuvassa\" tilaan",
@@ -726,7 +886,14 @@
         },
         "save-window-position": "Tallenna ikkunan sijainti",
         "save-window-size": "Tallenna ikkunan koko",
-        "use-native-pip": "Käytä selaimen natiivia \"Kuva kuvassa\" -tilaa"
+        "use-native-pip": "Käytä selaimen natiivia \"Kuva kuvassa\" -tilaa",
+        "prompt": {
+          "title": "Kuva kuvassa",
+          "label": "Määritä Kuva kuvassa -pikanäppäin",
+          "keybind-options": {
+            "hotkey": "Pikanäppäin kuva kuvassa -tilan vaihtamiseen"
+          }
+        }
       },
       "name": "Kuva kuvassa",
       "templates": {
@@ -738,6 +905,9 @@
       "name": "Toistonopeus",
       "templates": {
         "button": "Nopeus"
+      },
+      "menu": {
+        "no-preserves-pitch": "Poista sävelkorkeuden säilytys käytöstä"
       }
     },
     "precise-volume": {
@@ -761,6 +931,12 @@
           "label": "Valitse äänenvoimakkuuden suurennus-/pienennysaskeleet",
           "title": "Äänenvoimakkuusaskeleet"
         }
+      },
+      "settings": {
+        "steps": "Äänenvoimakkuuden askel",
+        "arrows-shortcut": "Nuolinäppäinoikotiet",
+        "shortcut-up": "Yleispikanäppäin: äänenvoimakkuus ylös",
+        "shortcut-down": "Yleispikanäppäin: äänenvoimakkuus alas"
       }
     },
     "quality-changer": {
@@ -789,6 +965,10 @@
             "message": "Last.fm-varmennus epäonnistui\nPiilota ponnahdusikkuna kunnes käynnistät ohjelman uudelleen.",
             "title": "Todennus epäonnistui"
           }
+        },
+        "invalid-regex": {
+          "title": "Virheellinen säännöllinen lauseke",
+          "message": "Rivillä {{line}} oleva säännöllinen lauseke on virheellinen: {{error}}"
         }
       },
       "menu": {
@@ -796,11 +976,15 @@
           "api-settings": "Last.fm API:n asetukset"
         },
         "listenbrainz": {
-          "token": "Syötä ListenBrainz-käyttötunnus (token)"
+          "token": "Syötä ListenBrainz-käyttötunnus (token)",
+          "api-root": "ListenBrainz-API-osoite"
         },
         "scrobble-alternative-title": "Käytä vaihtoehtoisia otsikoita",
         "scrobble-alternative-artist": "Käytä vaihtoehtoisia artisteja",
-        "scrobble-other-media": "Jaa muuta mediaa"
+        "scrobble-other-media": "Jaa muuta mediaa",
+        "regex-filters": "Säännöllisten lausekkeiden suodattimet",
+        "use-musicbrainz": "Käytä MusicBrainzia metatietojen korjaamiseen",
+        "musicbrainz-email": "MusicBrainz-yhteyssähköposti"
       },
       "name": "Jakaja",
       "prompt": {
@@ -812,8 +996,23 @@
           "token": {
             "label": "Syötä ListenBrainz käyttötunnuksesi (token):",
             "title": "ListenBrainz-käyttötunnus"
+          },
+          "api-root": {
+            "label": "Anna API:n perusosoite:",
+            "title": "ListenBrainz-API-osoite"
           }
+        },
+        "regex-filter-multi": {
+          "label": "Anna yksi säännöllinen lauseke per rivi:"
+        },
+        "musicbrainz-email": {
+          "title": "MusicBrainz-yhteyssähköposti",
+          "label": "Anna sähköposti MusicBrainz-APIa varten:"
         }
+      },
+      "settings": {
+        "lastfm-api-root": "Last.fm-API-osoite",
+        "musicbrainz-email-description": "Käytetään yhteystietona MusicBrainz-APIssa; vaaditaan MusicBrainz-metatietojen korjaamiseen"
       }
     },
     "shortcuts": {
@@ -833,15 +1032,34 @@
           "label": "Valitse yleiset pikanäppäimet kappaleiden hallintaan:",
           "title": "Yleiset pikanäppäimet"
         }
+      },
+      "settings": {
+        "global-keybinds": "Globaalit pikanäppäimet (toimivat koko sovelluksessa)",
+        "local-keybinds": "Paikalliset pikanäppäimet (vain ikkunan ollessa kohdistettuna)"
       }
     },
     "skip-silences": {
       "description": "Ohita automaattisesti kappaleiden hiljaiset kohdat",
-      "name": "Ohita Hiljaisuudet"
+      "name": "Ohita Hiljaisuudet",
+      "settings": {
+        "only-skip-beginning": "Ohita hiljaisuus vain kappaleen alussa"
+      }
     },
     "sponsorblock": {
       "description": "Ohittaa automaattisesti epämusikaaliset osat, kuten intron/outron tai musiikkivideoiden osat, joissa kappale ei soi",
-      "name": "SponsorBlock"
+      "name": "SponsorBlock",
+      "settings": {
+        "categories": "Ohitettavat osiot",
+        "category": {
+          "sponsor": "Sponsori",
+          "intro": "Intro",
+          "outro": "Outro",
+          "interaction": "Vuorovaikutusmuistutus",
+          "selfpromo": "Oman sisällön mainostus",
+          "music_offtopic": "Ei-musiikkiosio"
+        },
+        "api-url": "API-osoite"
+      }
     },
     "synced-lyrics": {
       "description": "Tarjoaa synkronoituja sanoituksia kappaleille käyttäen palveluntarjoajia kuten LRClib.",
@@ -1054,6 +1272,30 @@
         "show-custom-search-button": {
           "label": "Näytä mukautettu hakupainike",
           "tooltip": "Näytä hakupainike sanoitusvalitsimessa, jonka avulla voit ohittaa nykyisen kappaleen hakukyselyn ja artistin."
+        },
+        "provider-priority": {
+          "tooltip": "Tarjoajia kokeillaan tässä järjestyksessä: ensimmäinen, jolla on sanoitukset nykyiseen kappaleeseen, voittaa. Järjestä uudelleen nuolilla."
+        },
+        "prefer-synced": {
+          "tooltip": "Valitse luettelon ensimmäinen tarjoaja, jolla on aikasynkronoidut sanoitukset, sen sijaan että valittaisiin ensimmäinen, jolla on mitä tahansa sanoituksia."
+        },
+        "previous-provider": {
+          "tooltip": "Edellinen tarjoaja"
+        },
+        "next-provider": {
+          "tooltip": "Seuraava tarjoaja"
+        },
+        "custom-search-button": {
+          "tooltip": "Mukautettu haku"
+        },
+        "star-provider": {
+          "tooltip": "Käytä aina tätä tarjoajaa tälle kappaleelle riippumatta prioriteettijärjestyksestä. Jos sillä ei ole sanoituksia kappaleeseen, palataan normaaliin järjestykseen."
+        },
+        "unstar-provider": {
+          "tooltip": "Lopeta tämän tarjoajan kiinnittäminen tähän kappaleeseen."
+        },
+        "use-priority-list": {
+          "tooltip": "Kokeile tarjoajia alla olevassa järjestyksessä. Poista tämä käytöstä, jolloin sanoitukset päättävät: se tarjoaja voittaa, jolla on kappaleeseen parhaat sanoitukset."
         }
       },
       "name": "Synkronoidut Sanoitukset",
@@ -1065,6 +1307,22 @@
         "duration-mismatch": "⚠️ - Sanoitukset voivat olla epäsynkronoituja keston eroavaisuuden vuoksi.",
         "inexact": "⚠️ - Tämän kappaleen sanoitukset eivät välttämättä ole tarkat",
         "instrumental": "⚠️ - Tämä on instrumentaalinen kappale"
+      },
+      "settings": {
+        "precise-timing": "Tarkka ajoitus",
+        "show-inexact": "Näytä epätarkat sanoitukset",
+        "show-time-codes": "Näytä aikakoodit",
+        "romanization": "Romanisoi sanoitukset",
+        "line-effect": "Riviefekti",
+        "effect": {
+          "fancy": "Hieno",
+          "scale": "Skaalaus",
+          "offset": "Siirtymä",
+          "focus": "Tarkennus"
+        },
+        "prefer-synced": "Suosi synkronoituja sanoituksia",
+        "provider-priority": "Tarjoajien prioriteetti",
+        "use-priority-list": "Käytä prioriteettilistaa"
       }
     },
     "taskbar-mediacontrol": {
@@ -1091,9 +1349,17 @@
             "acrylic": "Akryyli",
             "mica": "Mica",
             "tabbed": "Välilehdillä",
-            "none": "Ei mitään"
+            "none": "Ei mitään",
+            "content": "Sisältö",
+            "fullscreen-ui": "Koko näytön käyttöliittymä",
+            "under-page": "Sivun alla",
+            "under-window": "Ikkunan alla",
+            "window": "Ikkuna"
           }
         }
+      },
+      "settings": {
+        "type-description": "Ikkunan läpinäkyvyyteen käytettävä taustamateriaali"
       }
     },
     "tuna-obs": {
@@ -1136,7 +1402,26 @@
       "menu": {
         "visualizer-type": "Visualisoijan tyyppi"
       },
-      "name": "Visualisoija"
+      "name": "Visualisoija",
+      "settings": {
+        "preset": "Esiasetus",
+        "blend-time": "Sekoitusaika",
+        "effect": "Tehoste",
+        "accuracy": "Tarkkuus",
+        "max-height": "Enimmäiskorkeus",
+        "max-size": "Enimmäiskoko",
+        "line-width": "Viivan leveys",
+        "color": "Väri",
+        "shadow-blur": "Varjon sumennus",
+        "shadow-color": "Varjon väri",
+        "fade-side": "Häivytyssivut",
+        "prettify": "Kaunista",
+        "prettify-description": "Kapenevat palkit reunoja kohti",
+        "dottify": "Pisteytä",
+        "dottify-description": "Piirrä pisteitä jatkuvan viivan sijaan",
+        "horizontal-align": "Vaakasuuntainen tasaus",
+        "vertical-align": "Pystysuuntainen tasaus"
+      }
     },
     "playlist-search": {
       "description": "Lisää hakukentän suodattaaksesi soittolistoja sivupalkissa ja Lisää soittolistaan -valintaikkunassa",
@@ -1145,6 +1430,215 @@
         "search-placeholder": "Hae soittolistoja",
         "no-results": "Soittolistoja ei löytynyt"
       }
+    },
+    "always-show-volume-slider": {
+      "name": "Näytä äänenvoimakkuuden liukusäädin aina",
+      "description": "Pitää äänenvoimakkuuden liukusäätimen näkyvänä ja vedettävänä sen sijaan, että se näkyisi vain osoittaessa."
+    },
+    "do-not-track": {
+      "description": "Estä kaikki seuranta oletusarvoisesti",
+      "menu": {
+        "blocker": "Estäjä"
+      },
+      "name": "Älä seuraa",
+      "settings": {
+        "cache": "Tallenna estolistat välimuistiin",
+        "disable-default-lists": "Poista oletusestolistat käytöstä"
+      },
+      "dialog": {
+        "reload": {
+          "title": "Lataa sivu uudelleen",
+          "message": "Do Not Track -asetukset ovat muuttuneet.",
+          "detail": "Verkkosäännöt päivittyvät ilman sovelluksen uudelleenkäynnistystä. Lataa sivu uudelleen, jotta sivusuodattimien muutokset tulevat kokonaan voimaan. Toisto voi keskeytyä. Voit ladata uudelleen myöhemmin.",
+          "reload-now": "Lataa sivu uudelleen nyt"
+        }
+      }
+    },
+    "fullscreen-auto-hide": {
+      "description": "Piilota soittimen säätimet ja hiiren osoitin automaattisesti muutaman sekunnin toimettomuuden jälkeen koko näytön tilassa",
+      "name": "Koko näytön automaattipiilotus"
+    },
+    "prefer-song": {
+      "description": "Toista kappale musiikkivideon sijaan, kun albumin kappale on video",
+      "name": "Suosi kappaletta"
+    },
+    "search-commands": {
+      "commands": {
+        "play": "Toista video YouTube-linkistä tai -tunnuksesta",
+        "settings": "Avaa asetukset"
+      },
+      "description": "Kirjoita / hakukenttään suorittaaksesi komentoja, joiden argumentit täydentyvät automaattisesti",
+      "name": "Hakukomennot",
+      "settings": {
+        "open-keybind": "Avaamisen pikanäppäin",
+        "open-keybind-description": "Electron-tyylinen kiihdytin, esim. CmdOrCtrl+/ tai Alt+Space",
+        "open-shortcut": "Avaa hakukenttä mistä tahansa",
+        "open-shortcut-description": "Kutsuu hakukentän esiin valmiiksi komentotilassa, kuten Spotlight. Uudelleen painaminen sulkee sen."
+      }
+    },
+    "seek-shortcuts": {
+      "description": "Siirry 5 sekuntia taaksepäin/eteenpäin vasemmalla/oikealla nuolinäppäimellä",
+      "name": "Kelauspikanäppäimet"
+    },
+    "sfw-music": {
+      "description": "Ohittaa automaattisesti kappaleet, jotka YouTube Music on merkinnyt eksplisiittisiksi. Keskeyttää, jos eksplisiittinen jono toistuu tai seuraavaa kappaletta ei ole saatavilla.",
+      "name": "SFW-musiikki"
+    },
+    "toast-autoclose": {
+      "description": "Sulkee YouTube Musicin ilmoitukset automaattisesti kolmen sekunnin kuluttua",
+      "name": "Ilmoitusten automaattinen sulkeminen"
+    },
+    "statusbar-lyrics": {
+      "settings": {
+        "include-pronunciation": "Sisällytä ääntäminen"
+      }
+    },
+    "dismiss-multidevice-popup": {
+      "name": "Sulje monilaite-ponnahdusikkuna",
+      "description": "Sulkee automaattisesti \"Toista tällä laitteella\" -ponnahdusikkunan, joka ilmestyy, kun toisto alkaa toisella laitteella."
+    },
+    "memory-saver": {
+      "description": "Tyhjentää renderöijän resurssivälimuistit ikkunan ollessa piilotettuna, kun ne kasvavat yli raja-arvon",
+      "name": "Muistinsäästäjä",
+      "settings": {
+        "threshold": "Välimuistin raja-arvo",
+        "threshold-description": "Tyhjennä välimuistit, kun niiden käytössä oleva muisti ylittää tämän arvon ikkunan ollessa piilotettuna"
+      }
+    }
+  },
+  "settings-ui": {
+    "name": "Asetukset-käyttöliittymä",
+    "description": "Lisää sovelluksen sisäisen asetuspaneelin, joka avataan sivupalkista",
+    "title": "Asetukset",
+    "settings": {
+      "show-button": "Näytä Asetukset-merkintä sivupalkissa",
+      "show-button-description": "Poista tämä käytöstä pitääksesi sivupalkin siistinä; Asetukset ovat edelleen kohdassa Navigointi → Avaa asetukset.",
+      "separate-window": "Avaa Asetukset aina erillisessä ikkunassa",
+      "separate-window-description": "Avaa erillisen asetusikkunan, kuten ilmaisinalueen merkintä, sovelluksen sisäisen paneelin sijaan."
+    },
+    "search-placeholder": "Hae asetuksista",
+    "search-results": "Hakutulokset",
+    "search-matching": "Vastaa hakua “{{query}}”",
+    "no-match": "Mitkään asetukset eivät vastaa hakua “{{query}}”.",
+    "close": "Sulje",
+    "edit-config": "Muokkaa config.json",
+    "restart-banner": "Osa muutoksista tulee voimaan vasta uudelleenkäynnistyksen jälkeen.",
+    "restart-now": "Käynnistä uudelleen nyt",
+    "later": "Myöhemmin",
+    "restart-pill": "uudelleenkäynnistys",
+    "restart-pill-hint": "Vaatii uudelleenkäynnistyksen",
+    "refresh-options": "Päivitä vaihtoehdot",
+    "move-up": "Siirrä ylös",
+    "move-down": "Siirrä alas",
+    "about": {
+      "tagline": "Ominaisuuksiltaan monipuolinen työpöytäsovellus YouTube Musicille",
+      "versions": "Versiot",
+      "version-app": "Sovellus",
+      "version-build": "Koontiversio",
+      "version-electron": "Electron",
+      "version-chromium": "Chromium",
+      "version-node": "Node.js",
+      "version-platform": "Alusta",
+      "version-innertube": "Innertube",
+      "links": "Linkit",
+      "link-repo": "Tietovarasto",
+      "link-issue": "Ilmoita ongelmasta",
+      "link-releases": "Julkaisut",
+      "link-license": "Lisenssi",
+      "actions": "Toiminnot",
+      "check-updates": "Tarkista päivitykset",
+      "copy-debug": "Kopioi virheenkorjaustiedot",
+      "copied": "Kopioitu!"
+    },
+    "sections": {
+      "general": {
+        "label": "Yleiset"
+      },
+      "appearance": {
+        "label": "Ulkoasu"
+      },
+      "window": {
+        "label": "Ikkuna ja ilmaisinalue"
+      },
+      "advanced": {
+        "label": "Lisäasetukset"
+      },
+      "plugins": {
+        "label": "Liitännäiset"
+      },
+      "flags": {
+        "label": "Liput"
+      },
+      "about": {
+        "label": "Tietoja"
+      }
+    },
+    "groups": {
+      "updates-session": "Päivitykset ja istunto",
+      "startup-language": "Käynnistys ja kieli",
+      "interface": "Käyttöliittymä",
+      "context-menu": "Kontekstivalikko",
+      "window-title": "Ikkuna",
+      "window": "Ikkuna",
+      "system": "Järjestelmä",
+      "network": "Verkko",
+      "performance": "Suorituskyky",
+      "configuration": "Määritykset",
+      "updates": "Päivitykset"
+    },
+    "stepper-decrement": "Vähennä",
+    "stepper-increment": "Lisää",
+    "flags": {
+      "warning": "Ominaisuusliput ovat YouTube Musicin omia sisäisiä kytkimiä. Niiden muuttaminen voi rikkoa toiston, asettelun tai tilitoiminnot, eivätkä ne kuulu tuen piiriin. Ohitukset säilytetään vain muuttamiesi lippujen osalta, ja ne voi poistaa Kumoa-toiminnolla.",
+      "search-placeholder": "Hae lippuja",
+      "overridden": "ohitettu",
+      "undo": "Kumoa",
+      "undo-hint": "Poista tämä ohitus",
+      "empty": "Tällä sivulla ei ole ominaisuuslippuja.",
+      "no-match": "Mitkään liput eivät vastaa hakua “{{query}}”.",
+      "add-name": "Uuden lipun nimi",
+      "add-value": "Arvo",
+      "add-value-hint": "JSON, kun se jäsennetään (true, 42, \"text\"), muuten teksti sellaisenaan",
+      "add": "Lisää"
+    },
+    "fields": {
+      "hide-dislike-button": "Piilota En tykkää -painike",
+      "hide-video-captions": "Piilota videotekstitykset",
+      "context-menu": {
+        "hide-entry": "Piilota {{entry}}",
+        "entries": {
+          "add-to-queue": "Lisää jonoon",
+          "delete-playlist": "Poista soittolista",
+          "dismiss-queue": "Hylkää jono",
+          "download": "Lataa",
+          "go-to-album": "Siirry albumiin",
+          "go-to-artist": "Siirry artistiin",
+          "go-to-playlist": "Siirry soittolistaan",
+          "like": "Tykkää",
+          "not-interested": "Ei kiinnosta",
+          "pin-to-listen-again": "Kiinnitä Kuuntele uudelleen -osioon",
+          "play-next": "Toista seuraavaksi",
+          "remove-from-playlist": "Poista soittolistasta",
+          "remove-from-queue": "Poista jonosta",
+          "report": "Ilmoita",
+          "save-to-library": "Tallenna kirjastoon",
+          "save-to-playlist": "Tallenna soittolistaan",
+          "share": "Jaa",
+          "shuffle-play": "Toista satunnaisesti",
+          "start-mix": "Käynnistä mix",
+          "stats-for-nerds": "Tilastot nörteille"
+        }
+      },
+      "podcast-artist": "Käytä podcastin osallistujia artisteina",
+      "podcast-artist-desc": "Pois päältä: podcast-jakson artisti on kanava, joka julkaisi sen.",
+      "theme-preset": "Esiasetus",
+      "theme-variable-name": "Muuttuja",
+      "theme-variable-value": "Arvo",
+      "theme-variable-add": "Lisää muuttuja",
+      "performance-mode": "Suorituskykytila",
+      "performance-mode-desc": "Vaihda hieman visuaalista tarkkuutta kevyempään renderöintiin.",
+      "in-process-gpu": "Yhdistä GPU-prosessi sovellusprosessiin",
+      "in-process-gpu-desc": "Kokeellinen: säästää yhden prosessin, mutta siirtää GPU-muistin pääprosessiin ja voi palata ohjelmistorenderöintiin."
     }
   }
 }

@@ -65,7 +65,8 @@
         },
         "detail": "ご不便をおかけして申し訳ございません! 何をするか選んでください:",
         "message": "アプリケーションは応答していません",
-        "title": "ウィンドウが応答していません"
+        "title": "ウィンドウが応答していません",
+        "details": "理由: {{error}}"
       },
       "update-available": {
         "buttons": {
@@ -76,6 +77,27 @@
         "detail": "新しいバージョンが利用可能です。{{downloadLink}} からダウンロードできます",
         "message": "新しいバージョンが利用可能",
         "title": "アップデートが利用可能"
+      },
+      "restart-summary": {
+        "detail": "変更を適用するにはアプリを再起動してください: {{changes}}",
+        "message": "一部の変更を適用するには再起動が必要です",
+        "title": "再起動が必要です"
+      },
+      "update-available-dev": {
+        "buttons": {
+          "ok": "OK",
+          "view": "コミットを表示"
+        },
+        "title": "アップデートがあります",
+        "message": "この開発ビルドはmasterブランチより遅れています",
+        "detail": "このビルドが実行しているコミット ({{commit}}) は、masterの最新コミットより古いです。新しいコミットは {{commitsLink}} で確認できます"
+      },
+      "downgrade-warning": {
+        "title": "安定版に戻しますか？",
+        "message": "このベータビルドは最新の安定版リリースより新しいです。",
+        "detail": "安定版に戻すと一部の設定がリセットされる可能性があります。新しいバージョンから古いバージョンへ戻す際はマイグレーションが実行されないため、新しい設定が読めなくなる可能性があります。",
+        "confirm": "安定版に切り替える",
+        "cancel": "キャンセル"
       }
     },
     "menu": {
@@ -87,7 +109,8 @@
           "go-back": "戻る",
           "go-forward": "進む",
           "quit": "終了",
-          "restart": "アプリを再起動"
+          "restart": "アプリを再起動",
+          "open-settings": "設定を開く"
         }
       },
       "options": {
@@ -129,7 +152,20 @@
             },
             "label": "言語設定",
             "submenu": {
-              "to-help-translate": "翻訳をサポートしたいですか？こちらをクリック"
+              "to-help-translate": "翻訳をサポートしたいですか？こちらをクリック",
+              "sync": {
+                "label": "言語を同期",
+                "submenu": {
+                  "from-youtube": "YouTubeから",
+                  "to-youtube": "YouTubeへ"
+                },
+                "failure": {
+                  "dialog": {
+                    "title": "言語は変更されませんでした",
+                    "message": "言語またはロケールはまだアプリに存在しません。"
+                  }
+                }
+              }
             }
           },
           "resume-on-start": "起動時に最後の曲を再開する",
@@ -180,9 +216,37 @@
                 "label": "テーマ",
                 "submenu": {
                   "import-css-file": "CSSファイルをインポート",
-                  "no-theme": "テーマなし"
+                  "no-theme": "テーマなし",
+                  "colors": {
+                    "label": "色"
+                  },
+                  "presets": {
+                    "label": "プリセット",
+                    "default": "デフォルト",
+                    "custom": "カスタム"
+                  },
+                  "reset-colors": "色をリセット",
+                  "open-themes-folder": "テーマフォルダーを開く"
                 }
-              }
+              },
+              "use-ytm-icons": "オリジナルのYouTube Musicアイコンを使用"
+            }
+          },
+          "updates": {
+            "label": "アップデート",
+            "check": "アップデートを確認",
+            "auto-update": "自動的にアップデートを確認",
+            "channel": {
+              "label": "アップデートチャンネル",
+              "stable": "安定版",
+              "beta": "ベータ版"
+            }
+          },
+          "shared-links": {
+            "label": "共有リンク",
+            "submenu": {
+              "strip-music": "「music.」を削除",
+              "strip-si": "「&si=」を削除"
             }
           }
         }
@@ -217,8 +281,17 @@
       },
       "like": "いいね",
       "dislike": "嫌い",
-      "unlike": "Unlike",
+      "unlike": "高評価を取り消す",
       "undislike": "嫌いを解除"
+    },
+    "themes": {
+      "consent": {
+        "title": "テーマのコードを実行しますか？",
+        "message": "「{{theme}}」には、アプリへの完全なアクセス権限で実行されるスクリプトが含まれています。",
+        "detail": "テーマのスクリプトはサンドボックス化されていません。このコードは設定の読み取りや変更、アプリとの通信、その他アプリ自体ができることすべてを実行できます。テーマの入手元を信頼できる場合にのみ許可してください。テーマを削除することで、この許可を取り消せます。",
+        "allow": "このテーマを実行",
+        "cancel": "キャンセル"
+      }
     }
   },
   "plugins": {
@@ -340,6 +413,10 @@
         },
         "port": {
           "label": "ポート"
+        },
+        "mcp": {
+          "label": "MCPサーバー",
+          "description": "v2 APIを/mcpでMCPツールとして提供します。APIの他の部分と同じ認証を使用します。"
         }
       },
       "name": "APIサーバー(Beta)",
@@ -352,11 +429,20 @@
           "label": "APIサーバーのポートを入力:",
           "title": "ポート"
         }
+      },
+      "settings": {
+        "choose-file": "ファイルを選択…"
       }
     },
     "audio-compressor": {
       "description": "オーディオにコンプレッサーを適用します（信号での一番大きい部分の音量を下げ、小さい部分の音量を上げる）",
-      "name": "オーディオコンプレッサー"
+      "name": "オーディオコンプレッサー",
+      "menu": {
+        "auto-track-gain": "トラックゲインを自動調整（小さい音のトラックをブースト）",
+        "maximum-gain": {
+          "label": "最大ゲイン"
+        }
+      }
     },
     "auth-proxy-adapter": {
       "description": "認証プロキシサービスの利用サポート",
@@ -422,7 +508,10 @@
           "label": "形式"
         }
       },
-      "name": "時計"
+      "name": "時計",
+      "settings": {
+        "hour-12": "12時間形式を使用"
+      }
     },
     "compact-sidebar": {
       "description": "サイドバーを常にコンパクトモードに設定します",
@@ -442,12 +531,24 @@
             "fade-scaling": {
               "label": "フェードスケーリング",
               "linear": "線形",
-              "logarithmic": "対数スケール"
+              "logarithmic": "対数スケール",
+              "equal-power": "イコールパワー"
             },
             "seconds-before-end": "終了N秒前にクロスフェードを適用"
           },
           "title": "クロスフェード設定"
         }
+      },
+      "settings": {
+        "fade-in": "フェードイン",
+        "fade-out": "フェードアウト",
+        "seconds-before-end": "終了前に開始",
+        "fade-scaling": "フェードスケーリング",
+        "scaling": {
+          "linear": "リニア",
+          "logarithmic": "対数"
+        },
+        "seconds-before-end-description": "トラック終了の何秒前から次のトラックへのクロスフェードを開始するか"
       }
     },
     "custom-output-device": {
@@ -502,6 +603,13 @@
           "label": "非アクティブ時のタイムアウトを秒単位で入力：",
           "title": "非アクティブタイムアウト"
         }
+      },
+      "settings": {
+        "auto-reconnect": "自動再接続",
+        "activity-timeout-enabled": "一時停止時にプレゼンスをクリア",
+        "activity-timeout-time": "クリアするまでの時間",
+        "hide-github-button": "「GitHubで表示」ボタンを隠す",
+        "hide-duration-left": "残り時間を隠す"
       }
     },
     "do-not-track": {
@@ -509,7 +617,19 @@
       "menu": {
         "blocker": "ブロッカー"
       },
-      "name": "トラッキング拒否"
+      "name": "トラッキング拒否",
+      "settings": {
+        "cache": "ブロックリストをキャッシュ",
+        "disable-default-lists": "デフォルトのブロックリストを無効化"
+      },
+      "dialog": {
+        "reload": {
+          "title": "ページを再読み込み",
+          "message": "Do Not Track設定が変更されました。",
+          "detail": "ネットワークルールはアプリを再起動せずに更新されます。ページフィルターへの変更を完全に適用するには、ページを再読み込みしてください。再生が中断される場合があります。後で再読み込みすることもできます。",
+          "reload-now": "今すぐページを再読み込み"
+        }
+      }
     },
     "downloader": {
       "backend": {
@@ -551,7 +671,8 @@
           "saving": "保存中…",
           "trying-to-get-playlist-id": "プレイリストIDを取得中：{{playlistId}}",
           "video-id-not-found": "動画が見つかりません",
-          "writing-id3": "ID3タグ作成中…"
+          "writing-id3": "ID3タグ作成中…",
+          "ffmpeg-missing": "FFmpegが見つかりませんでした。この形式でダウンロードするには、FFmpegをインストールし、`ffmpeg`がPATHに含まれていることを確認してください。"
         }
       },
       "description": "UIから直にMP3・ソースオーディオをダウンロードします",
@@ -582,6 +703,10 @@
       },
       "templates": {
         "button": "ダウンロード"
+      },
+      "settings": {
+        "finish-folder": "完了したダウンロードのフォルダー",
+        "finish-folder-description": "未設定の場合は上のダウンロードフォルダーを使用します。"
       }
     },
     "equalizer": {
@@ -649,6 +774,44 @@
           "disconnected": "切断されました",
           "guest": "ゲストとして接続しました",
           "host": "ホストとして接続されています"
+        },
+        "diagnostics": {
+          "check": {
+            "nat": "ネットワークタイプ (NAT)",
+            "signaling": "シグナリングサーバー",
+            "stun": "直接接続 (STUN)",
+            "turn": "リレーフォールバック (TURN)"
+          },
+          "copy": "概要をコピー",
+          "detail": {
+            "check-error": "チェックに失敗しました: {{reason}}",
+            "public-ip": "パブリックアドレス: {{ip}}",
+            "public-ip-hidden": "パブリックアドレス: クリックして表示",
+            "signaling-fail": "到達不可 ({{reason}})",
+            "signaling-ok": "到達可能",
+            "stun-fail": "パブリックアドレスなし (UDP/STUNがブロックされています)",
+            "stun-ok": "パブリックアドレスが見つかりました",
+            "turn-fail": "リレーに到達できません",
+            "turn-ok": "リレーに到達可能"
+          },
+          "nat": {
+            "blocked": "UDPまたはSTUNがブロックされています",
+            "open": "オープン / コーン (直接接続可能)",
+            "symmetric": "対称型 (リレーが必要)",
+            "unknown": "判定不能"
+          },
+          "run-again": "再実行",
+          "running": "チェックを実行中…",
+          "test": "接続をテスト",
+          "title": "接続診断",
+          "verdict": {
+            "blocked": "このネットワークではMusic Togetherがブロックされる可能性が高いです。別のネットワークかVPNを試してください。",
+            "error": "診断を実行できませんでした。詳細はコンソールを確認してください。",
+            "good": "このネットワークでは直接接続が機能するはずです。",
+            "limited": "このネットワークを完全には判定できませんでした。直接接続が機能する可能性もあります。失敗する場合は別のネットワークを試してください。",
+            "no-signaling": "Music Togetherサーバーに到達できません。ファイアウォールまたはインターネット接続を確認してください。",
+            "relay": "ここでは直接接続が失敗する可能性があります。リレーが使用されます（動作しますが、遅延が増えます）。"
+          }
         }
       },
       "name": "Music Together [ベータ]",
@@ -664,7 +827,10 @@
         "permission-changed": "Music Togetherの権限が \"{{permission}}\" に変更されました",
         "remove-song-failed": "曲の削除に失敗しました",
         "user-connected": "{{name}} がMusic Togetherに参加しました",
-        "user-disconnected": "{{name}} がMusic Togetherを退出しました"
+        "user-disconnected": "{{name}} がMusic Togetherを退出しました",
+        "diagnostics-copied": "診断概要をクリップボードにコピーしました",
+        "diagnostics-copy-failed": "診断概要のコピーに失敗しました",
+        "diagnostics-running": "接続テストが完了するまでお待ちください"
       }
     },
     "navigation": {
@@ -681,7 +847,7 @@
     },
     "no-google-login": {
       "description": "インターフェースからGoogleのログインボタンとリンクを削除",
-      "name": "No Google Login"
+      "name": "Googleログインなし"
     },
     "notifications": {
       "description": "曲の再生開始時に通知を表示する(Windowsではインタラクティブ通知が利用可能)",
@@ -722,7 +888,14 @@
         },
         "save-window-position": "ウィンドウの位置を保存",
         "save-window-size": "ウィンドウのサイズを保存",
-        "use-native-pip": "ブラウザ標準のPiPを使用"
+        "use-native-pip": "ブラウザ標準のPiPを使用",
+        "prompt": {
+          "title": "ピクチャーインピクチャー",
+          "label": "ピクチャーインピクチャーのホットキーを設定",
+          "keybind-options": {
+            "hotkey": "ピクチャーインピクチャーを切り替えるホットキー"
+          }
+        }
       },
       "name": "ピクチャインピクチャ",
       "templates": {
@@ -734,6 +907,9 @@
       "name": "再生速度",
       "templates": {
         "button": "速度"
+      },
+      "menu": {
+        "no-preserves-pitch": "ピッチ保持を無効にする"
       }
     },
     "precise-volume": {
@@ -757,6 +933,12 @@
           "label": "音量の増減ステップを選択",
           "title": "音量ステップ"
         }
+      },
+      "settings": {
+        "steps": "音量ステップ",
+        "arrows-shortcut": "矢印キーのショートカット",
+        "shortcut-up": "グローバルショートカット: 音量を上げる",
+        "shortcut-down": "グローバルショートカット: 音量を下げる"
       }
     },
     "quality-changer": {
@@ -785,6 +967,10 @@
             "message": "Last.fm の認証に失敗しました\n次の再起動までポップアップは非表示になります。",
             "title": "認証に失敗"
           }
+        },
+        "invalid-regex": {
+          "title": "正規表現が無効です",
+          "message": "{{line}} 行目の正規表現が無効です: {{error}}"
         }
       },
       "menu": {
@@ -792,11 +978,15 @@
           "api-settings": "Last.fm API 設定"
         },
         "listenbrainz": {
-          "token": "ListenBrainzユーザートークンを入力してください"
+          "token": "ListenBrainzユーザートークンを入力してください",
+          "api-root": "ListenBrainz API URL"
         },
         "scrobble-alternative-title": "代替タイトルを使用する",
         "scrobble-alternative-artist": "代替アーティストを使用する",
-        "scrobble-other-media": "他のメディアをScrobbleする"
+        "scrobble-other-media": "他のメディアをScrobbleする",
+        "regex-filters": "正規表現フィルター",
+        "use-musicbrainz": "MusicBrainz を使用してメタデータを修正する",
+        "musicbrainz-email": "MusicBrainz 連絡先メールアドレス"
       },
       "name": "スクロブラー",
       "prompt": {
@@ -808,8 +998,23 @@
           "token": {
             "label": "ListenBrainzのユーザートークンを入力してください:",
             "title": "ListenBrainzトークン"
+          },
+          "api-root": {
+            "label": "ベース API URL を入力:",
+            "title": "ListenBrainz API URL"
           }
+        },
+        "regex-filter-multi": {
+          "label": "1 行に 1 つずつ正規表現を入力:"
+        },
+        "musicbrainz-email": {
+          "title": "MusicBrainz 連絡先メールアドレス",
+          "label": "MusicBrainz API 用のメールアドレスを入力:"
         }
+      },
+      "settings": {
+        "lastfm-api-root": "Last.fm API URL",
+        "musicbrainz-email-description": "MusicBrainz API の連絡先情報として使用されます。MusicBrainz のメタデータ修正に必要です"
       }
     },
     "shortcuts": {
@@ -829,15 +1034,34 @@
           "label": "曲コントロールのグローバルキーバインドを選択:",
           "title": "グローバル キーバインド"
         }
+      },
+      "settings": {
+        "global-keybinds": "グローバルキーバインド（アプリ全体で有効）",
+        "local-keybinds": "ローカルキーバインド（ウィンドウがフォーカスされている間のみ）"
       }
     },
     "skip-silences": {
       "description": "曲の無音区間を自動でスキップ",
-      "name": "無音区間をスキップ"
+      "name": "無音区間をスキップ",
+      "settings": {
+        "only-skip-beginning": "トラックの先頭の無音のみスキップする"
+      }
     },
     "sponsorblock": {
       "description": "イントロ/アウトロなどの音楽以外の部分や、曲が再生されていないミュージック ビデオの部分を自動的にスキップします",
-      "name": "SponsorBlock"
+      "name": "SponsorBlock",
+      "settings": {
+        "categories": "スキップするセグメント",
+        "category": {
+          "sponsor": "スポンサー",
+          "intro": "イントロ",
+          "outro": "アウトロ",
+          "interaction": "インタラクションのリマインダー",
+          "selfpromo": "自己宣伝",
+          "music_offtopic": "音楽以外のセクション"
+        },
+        "api-url": "API URL"
+      }
     },
     "synced-lyrics": {
       "description": "LRClibのようなプロバイダを使って、楽曲に同期した歌詞を使用する。",
@@ -1050,6 +1274,30 @@
         "show-custom-search-button": {
           "label": "カスタム検索ボタンを表示",
           "tooltip": "歌詞ピッカーに検索ボタンを表示し、現在の曲の検索クエリとアーティストを上書きできるようにする。"
+        },
+        "provider-priority": {
+          "tooltip": "プロバイダーはこの順序で試されます。現在の曲の歌詞がある最初のプロバイダーが採用されます。矢印で並べ替えられます。"
+        },
+        "prefer-synced": {
+          "tooltip": "歌詞がある最初のプロバイダーではなく、時間同期された歌詞があるリスト内の最初のプロバイダーを選びます。"
+        },
+        "previous-provider": {
+          "tooltip": "前のプロバイダー"
+        },
+        "next-provider": {
+          "tooltip": "次のプロバイダー"
+        },
+        "custom-search-button": {
+          "tooltip": "カスタム検索クエリ"
+        },
+        "star-provider": {
+          "tooltip": "この曲では優先順位に関係なく常にこのプロバイダーを使用します。この曲の歌詞がない場合は通常の順序に戻ります。"
+        },
+        "unstar-provider": {
+          "tooltip": "このプロバイダーをこの曲に固定するのをやめます。"
+        },
+        "use-priority-list": {
+          "tooltip": "以下の順序でプロバイダーを試します。オフにすると歌詞に基づいて決定され、その曲に最適な歌詞を持つプロバイダーが採用されます。"
         }
       },
       "name": "歌詞を同期",
@@ -1061,6 +1309,22 @@
         "duration-mismatch": "⚠️ - タイミングが合わないため、歌詞が同期されていない可能性があります。",
         "inexact": "⚠️ - この曲の歌詞は正確ではないかもしれません",
         "instrumental": "⚠️ - これは演奏のみの曲です"
+      },
+      "settings": {
+        "precise-timing": "正確なタイミング",
+        "show-inexact": "不正確な歌詞を表示",
+        "show-time-codes": "タイムコードを表示",
+        "romanization": "歌詞をローマ字化",
+        "line-effect": "行エフェクト",
+        "effect": {
+          "fancy": "ファンシー",
+          "scale": "スケール",
+          "offset": "オフセット",
+          "focus": "フォーカス"
+        },
+        "prefer-synced": "同期歌詞を優先",
+        "provider-priority": "プロバイダーの優先順位",
+        "use-priority-list": "優先リストを使用"
       }
     },
     "taskbar-mediacontrol": {
@@ -1095,6 +1359,9 @@
             "window": "ウィンドウ"
           }
         }
+      },
+      "settings": {
+        "type-description": "ウィンドウの透明度に使用する背景マテリアル"
       }
     },
     "tuna-obs": {
@@ -1137,7 +1404,26 @@
       "menu": {
         "visualizer-type": "ビジュアライザーの種類"
       },
-      "name": "視覚効果"
+      "name": "視覚効果",
+      "settings": {
+        "preset": "プリセット",
+        "blend-time": "ブレンド時間",
+        "effect": "エフェクト",
+        "accuracy": "精度",
+        "max-height": "最大高さ",
+        "max-size": "最大サイズ",
+        "line-width": "線の幅",
+        "color": "色",
+        "shadow-blur": "影のぼかし",
+        "shadow-color": "影の色",
+        "fade-side": "端のフェード",
+        "prettify": "整形",
+        "prettify-description": "バーを端に向かって細くする",
+        "dottify": "ドット化",
+        "dottify-description": "連続した線ではなくドットで描画する",
+        "horizontal-align": "水平方向の配置",
+        "vertical-align": "垂直方向の配置"
+      }
     },
     "audio-only": {
       "description": "オーディオのみモードを強制 — ネットワークとプレーヤーレベルで全てのビデオストリームをブロックし、RAMと帯域幅を節約します",
@@ -1148,7 +1434,13 @@
       "menu": {
         "log-to-console": "回復イベントをコンソールに記録"
       },
-      "name": "再生回復"
+      "name": "再生回復",
+      "settings": {
+        "stall-timeout": "ストールタイムアウト",
+        "stall-timeout-description": "再生が進行しなくなってから復旧を試みるまでの時間",
+        "max-retries": "最大再試行回数",
+        "max-retries-description": "次のトラックにスキップするまでの復旧試行回数"
+      }
     },
     "playlist-search": {
       "description": "サイドバーと「プレイリストに追加」ダイアログでプレイリストをフィルタリングするための検索入力を追加します",
@@ -1157,6 +1449,196 @@
         "search-placeholder": "プレイリストを検索",
         "no-results": "プレイリストが見つかりません"
       }
+    },
+    "always-show-volume-slider": {
+      "name": "音量スライダーを常に表示",
+      "description": "音量スライダーをホバー時だけではなく常に表示し、ドラッグできるようにします。"
+    },
+    "fullscreen-auto-hide": {
+      "description": "フルスクリーン中に数秒間操作がないと、プレーヤーのコントロールとマウスカーソルを自動的に非表示にします",
+      "name": "フルスクリーン自動非表示"
+    },
+    "prefer-song": {
+      "description": "アルバム曲が動画の場合は、ミュージックビデオではなく曲を再生する",
+      "name": "曲を優先"
+    },
+    "search-commands": {
+      "commands": {
+        "play": "YouTube のリンクまたは ID から動画を再生する",
+        "settings": "設定を開く"
+      },
+      "description": "検索ボックスで / を入力するとコマンドを実行できます。引数はオートコンプリートされます",
+      "name": "検索コマンド",
+      "settings": {
+        "open-keybind": "開くショートカット",
+        "open-keybind-description": "Electron 形式のアクセラレーター（例: CmdOrCtrl+/ または Alt+Space）",
+        "open-shortcut": "どこからでも検索ボックスを開く",
+        "open-shortcut-description": "Spotlight のように、検索ボックスをコマンドモードで呼び出します。もう一度押すと閉じます。"
+      }
+    },
+    "seek-shortcuts": {
+      "description": "左右の矢印キーで 5 秒戻る/進む",
+      "name": "シークショートカット"
+    },
+    "sfw-music": {
+      "description": "YouTube Music で Explicit とマークされた曲を自動的にスキップします。Explicit のキューが繰り返されるか、次の曲がない場合は一時停止します。",
+      "name": "SFW ミュージック"
+    },
+    "toast-autoclose": {
+      "description": "YouTube Music のトーストを 3 秒後に自動で閉じます",
+      "name": "トーストの自動閉じ"
+    },
+    "statusbar-lyrics": {
+      "settings": {
+        "include-pronunciation": "発音を表示"
+      }
+    },
+    "dismiss-multidevice-popup": {
+      "name": "マルチデバイスポップアップを閉じる",
+      "description": "別のデバイスで再生が始まったときに表示される「このデバイスで聴く」ポップアップを自動で閉じます。"
+    },
+    "memory-saver": {
+      "description": "ウィンドウが非表示の間、レンダラーのリソースキャッシュがしきい値を超えたらクリアします",
+      "name": "メモリセーバー",
+      "settings": {
+        "threshold": "キャッシュのしきい値",
+        "threshold-description": "ウィンドウが非表示の間、キャッシュの実際のメモリ使用量がこの値を超えたらキャッシュをクリアします"
+      }
+    }
+  },
+  "settings-ui": {
+    "name": "設定 UI",
+    "description": "サイドバーから開けるアプリ内設定パネルを追加します",
+    "title": "設定",
+    "settings": {
+      "show-button": "サイドバーに設定項目を表示",
+      "show-button-description": "オフにするとサイドバーをすっきり保てます。設定はナビゲーション → 設定を開く からも開けます。",
+      "separate-window": "設定を常に別ウィンドウで開く",
+      "separate-window-description": "アプリ内パネルではなく、トレイ項目と同じように独立した設定ウィンドウを開きます。"
+    },
+    "search-placeholder": "設定を検索",
+    "search-results": "検索結果",
+    "search-matching": "「{{query}}」に一致",
+    "no-match": "「{{query}}」に一致する設定はありません。",
+    "close": "閉じる",
+    "edit-config": "config.json を編集",
+    "restart-banner": "一部の変更は再起動しないと反映されません。",
+    "restart-now": "今すぐ再起動",
+    "later": "後で",
+    "restart-pill": "要再起動",
+    "restart-pill-hint": "再起動が必要です",
+    "refresh-options": "オプションを更新",
+    "move-up": "上へ移動",
+    "move-down": "下へ移動",
+    "about": {
+      "tagline": "YouTube Music 向けの多機能デスクトップアプリ",
+      "versions": "バージョン",
+      "version-app": "アプリ",
+      "version-build": "ビルド",
+      "version-electron": "Electron",
+      "version-chromium": "Chromium",
+      "version-node": "Node.js",
+      "version-platform": "プラットフォーム",
+      "version-innertube": "Innertube",
+      "links": "リンク",
+      "link-repo": "リポジトリ",
+      "link-issue": "問題を報告",
+      "link-releases": "リリース",
+      "link-license": "ライセンス",
+      "actions": "操作",
+      "check-updates": "アップデートを確認",
+      "copy-debug": "デバッグ情報をコピー",
+      "copied": "コピーしました!"
+    },
+    "sections": {
+      "general": {
+        "label": "一般"
+      },
+      "appearance": {
+        "label": "外観"
+      },
+      "window": {
+        "label": "ウィンドウとトレイ"
+      },
+      "advanced": {
+        "label": "詳細設定"
+      },
+      "plugins": {
+        "label": "プラグイン"
+      },
+      "flags": {
+        "label": "フラグ"
+      },
+      "about": {
+        "label": "このアプリについて"
+      }
+    },
+    "groups": {
+      "updates-session": "アップデートとセッション",
+      "startup-language": "起動と言語",
+      "interface": "インターフェース",
+      "context-menu": "コンテキストメニュー",
+      "window-title": "ウィンドウ",
+      "window": "ウィンドウ",
+      "system": "システム",
+      "network": "ネットワーク",
+      "performance": "パフォーマンス",
+      "configuration": "構成",
+      "updates": "アップデート"
+    },
+    "stepper-decrement": "減らす",
+    "stepper-increment": "増やす",
+    "flags": {
+      "warning": "機能フラグは YouTube Music 独自の内部スイッチです。変更すると再生、レイアウト、アカウント機能が壊れる可能性があり、サポートの対象外です。上書きは変更したフラグのみ保持され、「元に戻す」で削除できます。",
+      "search-placeholder": "フラグを検索",
+      "overridden": "上書き済み",
+      "undo": "元に戻す",
+      "undo-hint": "この上書きを削除",
+      "empty": "このページには機能フラグがありません。",
+      "no-match": "「{{query}}」に一致するフラグはありません。",
+      "add-name": "新しいフラグ名",
+      "add-value": "値",
+      "add-value-hint": "パースできる場合は JSON (true、42、\"text\")、それ以外はテキストそのまま",
+      "add": "追加"
+    },
+    "fields": {
+      "hide-dislike-button": "低評価ボタンを非表示",
+      "hide-video-captions": "動画の字幕を非表示",
+      "context-menu": {
+        "hide-entry": "{{entry}}を非表示",
+        "entries": {
+          "add-to-queue": "キューに追加",
+          "delete-playlist": "プレイリストを削除",
+          "dismiss-queue": "キューを閉じる",
+          "download": "ダウンロード",
+          "go-to-album": "アルバムへ移動",
+          "go-to-artist": "アーティストへ移動",
+          "go-to-playlist": "プレイリストへ移動",
+          "like": "高評価",
+          "not-interested": "興味なし",
+          "pin-to-listen-again": "「もう一度聴く」にピン留め",
+          "play-next": "次に再生",
+          "remove-from-playlist": "プレイリストから削除",
+          "remove-from-queue": "キューから削除",
+          "report": "報告",
+          "save-to-library": "ライブラリに保存",
+          "save-to-playlist": "プレイリストに保存",
+          "share": "共有",
+          "shuffle-play": "シャッフル再生",
+          "start-mix": "ミックスを開始",
+          "stats-for-nerds": "オタク向け統計情報"
+        }
+      },
+      "podcast-artist": "ポッドキャストの参加者をアーティストとして使用",
+      "podcast-artist-desc": "オフ: ポッドキャストエピソードのアーティストは、公開したチャンネルになります。",
+      "theme-preset": "プリセット",
+      "theme-variable-name": "変数",
+      "theme-variable-value": "値",
+      "theme-variable-add": "変数を追加",
+      "performance-mode": "パフォーマンスモード",
+      "performance-mode-desc": "一部の視覚的な忠実度を犠牲にして、レンダリングの負荷を軽減します。",
+      "in-process-gpu": "GPUプロセスをアプリプロセスに統合する",
+      "in-process-gpu-desc": "実験的: プロセスを1つ節約しますが、GPUメモリがメインプロセスに移動し、ソフトウェアレンダリングにフォールバックする可能性があります。"
     }
   }
 }

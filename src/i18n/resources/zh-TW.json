@@ -65,7 +65,8 @@
         },
         "detail": "造成不便我們深表歉意！請選擇動作：",
         "message": "應用程式沒有回應",
-        "title": "視窗沒有回應"
+        "title": "視窗沒有回應",
+        "details": "原因：{{error}}"
       },
       "update-available": {
         "buttons": {
@@ -76,6 +77,27 @@
         "detail": "新版本已經推出，前往下載 {{downloadLink}}",
         "message": "有新版本可用",
         "title": "有可用的更新"
+      },
+      "restart-summary": {
+        "detail": "重新啟動應用程式以套用：{{changes}}",
+        "message": "部分變更需要重新啟動",
+        "title": "需要重新啟動"
+      },
+      "update-available-dev": {
+        "buttons": {
+          "ok": "確定",
+          "view": "檢視提交"
+        },
+        "title": "有可用更新",
+        "message": "此開發版建置落後於 master 分支",
+        "detail": "此建置執行所在的提交（{{commit}}）比 master 上的最新提交還舊。可在 {{commitsLink}} 檢視較新的提交"
+      },
+      "downgrade-warning": {
+        "title": "要切回穩定版嗎？",
+        "message": "此 Beta 版建置比最新的穩定版還新。",
+        "detail": "切回穩定版可能會重設部分設定：從較新版本降回較舊版本時不會執行任何移轉，可能導致較新的設定無法讀取。",
+        "confirm": "切換至穩定版",
+        "cancel": "取消"
       }
     },
     "menu": {
@@ -87,7 +109,8 @@
           "go-back": "返回上一頁",
           "go-forward": "前往下一頁",
           "quit": "結束",
-          "restart": "重新啟動應用程式"
+          "restart": "重新啟動應用程式",
+          "open-settings": "開啟設定"
         }
       },
       "options": {
@@ -129,7 +152,20 @@
             },
             "label": "語言",
             "submenu": {
-              "to-help-translate": "想協助翻譯？按一下這裡"
+              "to-help-translate": "想協助翻譯？按一下這裡",
+              "sync": {
+                "label": "同步語言",
+                "submenu": {
+                  "from-youtube": "從 YouTube",
+                  "to-youtube": "至 YouTube"
+                },
+                "failure": {
+                  "dialog": {
+                    "title": "語言未變更",
+                    "message": "應用程式中尚無此語言或地區設定。"
+                  }
+                }
+              }
             }
           },
           "resume-on-start": "應用開啟時繼續播放上次的歌曲",
@@ -180,9 +216,37 @@
                 "label": "主題",
                 "submenu": {
                   "import-css-file": "匯入自訂 CSS 檔案",
-                  "no-theme": "無主題"
+                  "no-theme": "無主題",
+                  "colors": {
+                    "label": "顏色"
+                  },
+                  "presets": {
+                    "label": "預設集",
+                    "default": "預設",
+                    "custom": "自訂"
+                  },
+                  "reset-colors": "重設顏色",
+                  "open-themes-folder": "開啟主題資料夾"
                 }
-              }
+              },
+              "use-ytm-icons": "使用原始 YouTube Music 圖示"
+            }
+          },
+          "updates": {
+            "label": "更新",
+            "check": "檢查更新",
+            "auto-update": "自動檢查更新",
+            "channel": {
+              "label": "更新頻道",
+              "stable": "穩定版",
+              "beta": "Beta"
+            }
+          },
+          "shared-links": {
+            "label": "分享連結",
+            "submenu": {
+              "strip-music": "移除「music.」",
+              "strip-si": "移除「&si=」"
             }
           }
         }
@@ -213,12 +277,21 @@
       "show": "顯示視窗",
       "tooltip": {
         "default": "{{applicationName}}",
-        "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
+        "with-song-info": "{{applicationName}}：{{artist}} - {{title}}"
       },
       "like": "喜歡",
       "dislike": "不喜歡",
       "unlike": "不像",
       "undislike": "取消不喜歡"
+    },
+    "themes": {
+      "consent": {
+        "title": "要執行主題程式碼嗎？",
+        "message": "「{{theme}}」包含一段將以應用程式完整存取權限執行的指令碼。",
+        "detail": "主題指令碼未在沙箱中執行。此程式碼可讀取及變更你的設定、與應用程式通訊，並執行應用程式本身能做的任何其他操作。僅在你信任主題來源時才允許執行。你可以移除主題來撤銷此權限。",
+        "allow": "執行此主題",
+        "cancel": "取消"
+      }
     }
   },
   "plugins": {
@@ -344,6 +417,10 @@
               "dialogTitle": "選擇私人金鑰檔案"
             }
           }
+        },
+        "mcp": {
+          "label": "MCP 伺服器",
+          "description": "在 /mcp 以 MCP 工具形式提供 v2 API。使用與其他 API 相同的授權。"
         }
       },
       "name": "API 伺服器 [Beta]",
@@ -356,11 +433,20 @@
           "label": "輸入 API 伺服器連接埠：",
           "title": "連接埠"
         }
+      },
+      "settings": {
+        "choose-file": "選擇檔案…"
       }
     },
     "audio-compressor": {
       "description": "使用音效壓縮 (大聲部份的音量降低，柔和部份的音量提高)",
-      "name": "音效壓縮器"
+      "name": "音效壓縮器",
+      "menu": {
+        "auto-track-gain": "自動曲目增益（提高安靜曲目音量）",
+        "maximum-gain": {
+          "label": "最大增益"
+        }
+      }
     },
     "auth-proxy-adapter": {
       "description": "支援使用 Proxy 驗證服務",
@@ -426,6 +512,9 @@
           "display-seconds": "顯示秒數",
           "24-hour-format": "24 小時制"
         }
+      },
+      "settings": {
+        "hour-12": "使用 12 小時制"
       }
     },
     "compact-sidebar": {
@@ -446,12 +535,24 @@
             "fade-scaling": {
               "label": "淡化計算方式",
               "linear": "線性",
-              "logarithmic": "對數"
+              "logarithmic": "對數",
+              "equal-power": "等功率"
             },
             "seconds-before-end": "交叉淡化持續時間 (秒)"
           },
           "title": "交叉淡化選項"
         }
+      },
+      "settings": {
+        "fade-in": "淡入",
+        "fade-out": "淡出",
+        "seconds-before-end": "在結束前開始",
+        "fade-scaling": "淡入淡出縮放",
+        "scaling": {
+          "linear": "線性",
+          "logarithmic": "對數"
+        },
+        "seconds-before-end-description": "在曲目結束前幾秒開始交叉淡入至下一首"
       }
     },
     "custom-output-device": {
@@ -506,6 +607,13 @@
           "label": "設定多少秒後清除狀態：",
           "title": "設定閒置狀態時長"
         }
+      },
+      "settings": {
+        "auto-reconnect": "自動重新連線",
+        "activity-timeout-enabled": "暫停時清除線上狀態",
+        "activity-timeout-time": "之後清除",
+        "hide-github-button": "隱藏「在 GitHub 上檢視」按鈕",
+        "hide-duration-left": "隱藏剩餘時間"
       }
     },
     "do-not-track": {
@@ -513,7 +621,19 @@
       "menu": {
         "blocker": "內容阻擋器"
       },
-      "name": "請勿追蹤"
+      "name": "請勿追蹤",
+      "settings": {
+        "cache": "快取封鎖清單",
+        "disable-default-lists": "停用預設封鎖清單"
+      },
+      "dialog": {
+        "reload": {
+          "title": "重新載入頁面",
+          "message": "「請勿追蹤」設定已變更。",
+          "detail": "網路規則會在不重新啟動應用程式的情況下更新。重新載入頁面即可完整套用頁面篩選條件的變更。播放可能會中斷。你也可以稍後再重新載入。",
+          "reload-now": "立即重新載入頁面"
+        }
+      }
     },
     "downloader": {
       "backend": {
@@ -555,7 +675,8 @@
           "saving": "儲存中…",
           "trying-to-get-playlist-id": "正在嘗試取得播放清單 ID：{{playlistId}}",
           "video-id-not-found": "未能找到該影片",
-          "writing-id3": "正在寫入 ID3 標籤…"
+          "writing-id3": "正在寫入 ID3 標籤…",
+          "ffmpeg-missing": "找不到 FFmpeg。請安裝 FFmpeg 並確認 `ffmpeg` 位於你的 PATH 中，才能以此格式下載。"
         }
       },
       "description": "開啟應用程式內下載 MP3／原始音檔功能",
@@ -586,6 +707,10 @@
       },
       "templates": {
         "button": "下載"
+      },
+      "settings": {
+        "finish-folder": "完成下載的資料夾",
+        "finish-folder-description": "留空以使用上方的下載資料夾。"
       }
     },
     "equalizer": {
@@ -653,6 +778,44 @@
           "disconnected": "已斷開連線",
           "guest": "以訪客身份加入",
           "host": "以主持人身份加入"
+        },
+        "diagnostics": {
+          "check": {
+            "nat": "網路類型（NAT）",
+            "signaling": "訊號伺服器",
+            "stun": "直接連線（STUN）",
+            "turn": "中繼備援（TURN）"
+          },
+          "copy": "複製摘要",
+          "detail": {
+            "check-error": "檢查失敗：{{reason}}",
+            "public-ip": "公開位址：{{ip}}",
+            "public-ip-hidden": "公開位址：點擊以顯示",
+            "signaling-fail": "無法連線（{{reason}}）",
+            "signaling-ok": "可連線",
+            "stun-fail": "找不到公開位址（UDP/STUN 被封鎖）",
+            "stun-ok": "找到公開位址",
+            "turn-fail": "無法連線至中繼",
+            "turn-ok": "可連線至中繼"
+          },
+          "nat": {
+            "blocked": "UDP 或 STUN 被封鎖",
+            "open": "開放／圓錐型（可直接連線）",
+            "symmetric": "對稱型（需要中繼）",
+            "unknown": "無法判定"
+          },
+          "run-again": "再次執行",
+          "running": "正在執行檢查…",
+          "test": "測試連線",
+          "title": "連線診斷",
+          "verdict": {
+            "blocked": "此網路可能會封鎖 Music Together。請嘗試其他網路或 VPN。",
+            "error": "診斷執行失敗。請檢查主控台以了解詳情。",
+            "good": "此網路應可直接連線。",
+            "limited": "無法完全判定此網路。直接連線可能仍可運作；若失敗，請嘗試其他網路。",
+            "no-signaling": "無法連線至 Music Together 伺服器。請檢查防火牆或網際網路連線。",
+            "relay": "直接連線在此可能失敗；將會使用中繼（可運作，但會增加延遲）。"
+          }
         }
       },
       "name": "共享音樂 [Beta]",
@@ -668,7 +831,10 @@
         "permission-changed": "共享音樂播放權限已切換至 \"{{permission}}\"",
         "remove-song-failed": "歌曲移除失敗",
         "user-connected": "{{name}} 已加入共享音樂",
-        "user-disconnected": "{{name}} 離開了共享音樂"
+        "user-disconnected": "{{name}} 離開了共享音樂",
+        "diagnostics-copied": "診斷摘要已複製到剪貼簿",
+        "diagnostics-copy-failed": "無法複製診斷摘要",
+        "diagnostics-running": "請等待連線測試完成"
       }
     },
     "navigation": {
@@ -715,7 +881,13 @@
       "menu": {
         "log-to-console": "將復原事件記錄到主控台"
       },
-      "name": "播放復原"
+      "name": "播放復原",
+      "settings": {
+        "stall-timeout": "停滯逾時",
+        "stall-timeout-description": "播放停滯多久後才嘗試復原",
+        "max-retries": "最大重試次數",
+        "max-retries-description": "在跳到下一首前嘗試復原的次數"
+      }
     },
     "picture-in-picture": {
       "description": "允許應用程式切換至子母畫面模式",
@@ -733,7 +905,14 @@
         },
         "save-window-position": "記住視窗位置",
         "save-window-size": "記住視窗大小",
-        "use-native-pip": "使用瀏覽器原生子母畫面模式"
+        "use-native-pip": "使用瀏覽器原生子母畫面模式",
+        "prompt": {
+          "title": "子母畫面",
+          "label": "設定子母畫面快速鍵",
+          "keybind-options": {
+            "hotkey": "切換子母畫面的快速鍵"
+          }
+        }
       },
       "name": "子母畫面",
       "templates": {
@@ -745,6 +924,9 @@
       "name": "控制歌曲速度",
       "templates": {
         "button": "速度"
+      },
+      "menu": {
+        "no-preserves-pitch": "停用音高保持"
       }
     },
     "precise-volume": {
@@ -768,6 +950,12 @@
           "label": "設定音量每一次增加／降低的層級",
           "title": "自訂音量調整時層級"
         }
+      },
+      "settings": {
+        "steps": "音量調整幅度",
+        "arrows-shortcut": "方向鍵快速鍵",
+        "shortcut-up": "全域快速鍵：提高音量",
+        "shortcut-down": "全域快速鍵：降低音量"
       }
     },
     "quality-changer": {
@@ -796,6 +984,10 @@
             "message": "Last.fm 認證失敗\n將隱藏彈出視窗直到重啟。",
             "title": "認證失敗"
           }
+        },
+        "invalid-regex": {
+          "title": "無效的正規表示式",
+          "message": "第 {{line}} 行的正規表示式無效：{{error}}"
         }
       },
       "menu": {
@@ -803,11 +995,15 @@
           "api-settings": "Last.fm API 設定"
         },
         "listenbrainz": {
-          "token": "輸入 ListenBrainz 使用者憑證"
+          "token": "輸入 ListenBrainz 使用者憑證",
+          "api-root": "ListenBrainz API URL"
         },
         "scrobble-alternative-title": "使用替代歌曲標題",
         "scrobble-alternative-artist": "使用替代的藝人",
-        "scrobble-other-media": "紀錄其他媒體檔案"
+        "scrobble-other-media": "紀錄其他媒體檔案",
+        "regex-filters": "正規表示式篩選條件",
+        "use-musicbrainz": "使用 MusicBrainz 修正中繼資料",
+        "musicbrainz-email": "MusicBrainz 聯絡電子郵件"
       },
       "name": "Scrobbler",
       "prompt": {
@@ -819,8 +1015,23 @@
           "token": {
             "label": "輸入您的 ListenBrainz 使用者憑證：",
             "title": "ListenBrainz 使用者憑證"
+          },
+          "api-root": {
+            "label": "輸入基礎 API URL：",
+            "title": "ListenBrainz API URL"
           }
+        },
+        "regex-filter-multi": {
+          "label": "每行輸入一個正規表示式："
+        },
+        "musicbrainz-email": {
+          "title": "MusicBrainz 聯絡電子郵件",
+          "label": "輸入 MusicBrainz API 使用的電子郵件："
         }
+      },
+      "settings": {
+        "lastfm-api-root": "Last.fm API URL",
+        "musicbrainz-email-description": "用作 MusicBrainz API 的聯絡資訊；修正 MusicBrainz 中繼資料時必須提供"
       }
     },
     "shortcuts": {
@@ -840,15 +1051,34 @@
           "label": "選擇全域音樂控制快捷鍵：",
           "title": "全域快捷鍵"
         }
+      },
+      "settings": {
+        "global-keybinds": "全域按鍵綁定（整個應用程式皆有效）",
+        "local-keybinds": "本機按鍵綁定（僅在視窗取得焦點時有效）"
       }
     },
     "skip-silences": {
       "description": "自動跳過音樂無聲片段",
-      "name": "自動跳過無聲片段"
+      "name": "自動跳過無聲片段",
+      "settings": {
+        "only-skip-beginning": "僅略過曲目開頭的靜音"
+      }
     },
     "sponsorblock": {
       "description": "自動跳過贊助片段",
-      "name": "SponsorBlock"
+      "name": "SponsorBlock",
+      "settings": {
+        "categories": "要略過的片段",
+        "category": {
+          "sponsor": "贊助",
+          "intro": "片頭",
+          "outro": "片尾",
+          "interaction": "互動提醒",
+          "selfpromo": "自我宣傳",
+          "music_offtopic": "非音樂片段"
+        },
+        "api-url": "API URL"
+      }
     },
     "synced-lyrics": {
       "description": "使用 LRClib 等管道提供歌詞同步顯示。",
@@ -1061,6 +1291,30 @@
         "show-custom-search-button": {
           "label": "顯示自訂搜尋按鈕",
           "tooltip": "在歌詞選擇器中顯示搜尋按鈕，讓您可以覆蓋目前歌曲的搜尋查詢與演出者。"
+        },
+        "provider-priority": {
+          "tooltip": "會依此順序嘗試提供者：第一個有目前歌曲歌詞的提供者勝出。使用箭頭重新排序。"
+        },
+        "prefer-synced": {
+          "tooltip": "選擇清單中第一個有時間同步歌詞的提供者，而不是第一個有任何歌詞的提供者。"
+        },
+        "previous-provider": {
+          "tooltip": "上一個提供者"
+        },
+        "next-provider": {
+          "tooltip": "下一個提供者"
+        },
+        "custom-search-button": {
+          "tooltip": "自訂搜尋查詢"
+        },
+        "star-provider": {
+          "tooltip": "無論優先順序為何，這首歌一律使用此提供者。若此提供者沒有這首歌的歌詞，則回復為一般順序。"
+        },
+        "unstar-provider": {
+          "tooltip": "停止將此提供者固定到這首歌。"
+        },
+        "use-priority-list": {
+          "tooltip": "依下方順序嘗試提供者。關閉此選項後，改由歌詞決定：哪個提供者為這首歌提供最佳歌詞，就由它勝出。"
         }
       },
       "name": "歌詞同步",
@@ -1072,6 +1326,22 @@
         "duration-mismatch": "⚠️歌詞可能會出現不同步的情況。",
         "inexact": "⚠️該歌曲的歌詞可能並不精確",
         "instrumental": "⚠️該首歌曲為純音樂"
+      },
+      "settings": {
+        "precise-timing": "精確時間",
+        "show-inexact": "顯示不精確的歌詞",
+        "show-time-codes": "顯示時間碼",
+        "romanization": "歌詞羅馬拼音",
+        "line-effect": "行效果",
+        "effect": {
+          "fancy": "華麗",
+          "scale": "縮放",
+          "offset": "位移",
+          "focus": "聚焦"
+        },
+        "prefer-synced": "偏好同步歌詞",
+        "provider-priority": "提供者優先順序",
+        "use-priority-list": "使用優先順序清單"
       }
     },
     "taskbar-mediacontrol": {
@@ -1106,6 +1376,9 @@
             "window": "視窗"
           }
         }
+      },
+      "settings": {
+        "type-description": "用於視窗透明效果的背景材質"
       }
     },
     "tuna-obs": {
@@ -1148,7 +1421,26 @@
       "menu": {
         "visualizer-type": "視覺化效果樣式"
       },
-      "name": "視覺化效果"
+      "name": "視覺化效果",
+      "settings": {
+        "preset": "預設集",
+        "blend-time": "混合時間",
+        "effect": "效果",
+        "accuracy": "準確度",
+        "max-height": "最大高度",
+        "max-size": "最大尺寸",
+        "line-width": "線條寬度",
+        "color": "顏色",
+        "shadow-blur": "陰影模糊",
+        "shadow-color": "陰影顏色",
+        "fade-side": "淡化側邊",
+        "prettify": "美化",
+        "prettify-description": "讓長條朝邊緣逐漸變細",
+        "dottify": "點狀化",
+        "dottify-description": "繪製圓點而非連續線條",
+        "horizontal-align": "水平對齊",
+        "vertical-align": "垂直對齊"
+      }
     },
     "playlist-search": {
       "description": "在側邊欄和「新增至播放清單」對話框中加入搜尋輸入框以篩選播放清單",
@@ -1157,6 +1449,196 @@
         "search-placeholder": "搜尋播放清單",
         "no-results": "找不到播放清單"
       }
+    },
+    "always-show-volume-slider": {
+      "name": "永遠顯示音量滑桿",
+      "description": "讓音量滑桿保持可見且可拖曳，而不只在滑鼠游標移入時顯示。"
+    },
+    "fullscreen-auto-hide": {
+      "description": "在全螢幕模式下閒置幾秒後，自動隱藏播放器控制項與滑鼠游標",
+      "name": "全螢幕自動隱藏"
+    },
+    "prefer-song": {
+      "description": "當專輯曲目是影片時，播放歌曲而非音樂影片",
+      "name": "偏好歌曲"
+    },
+    "search-commands": {
+      "commands": {
+        "play": "從 YouTube 連結或 ID 播放影片",
+        "settings": "開啟設定"
+      },
+      "description": "在搜尋框中輸入 / 來執行命令，並可自動完成其引數",
+      "name": "搜尋命令",
+      "settings": {
+        "open-keybind": "開啟快速鍵",
+        "open-keybind-description": "Electron 樣式的快速鍵，例如 CmdOrCtrl+/ 或 Alt+Space",
+        "open-shortcut": "從任何地方開啟搜尋框",
+        "open-shortcut-description": "叫出已處於命令模式的搜尋框，類似 Spotlight。再按一次即可關閉。"
+      }
+    },
+    "seek-shortcuts": {
+      "description": "使用向左/向右方向鍵快退/快進 5 秒",
+      "name": "跳轉快速鍵"
+    },
+    "sfw-music": {
+      "description": "自動略過 YouTube Music 標示為 Explicit 的歌曲。若明確內容佇列重複或沒有下一首歌曲可用，則暫停播放。",
+      "name": "SFW 音樂"
+    },
+    "toast-autoclose": {
+      "description": "自動在三秒後關閉 YouTube Music 提示訊息",
+      "name": "提示訊息自動關閉"
+    },
+    "statusbar-lyrics": {
+      "settings": {
+        "include-pronunciation": "包含發音"
+      }
+    },
+    "dismiss-multidevice-popup": {
+      "name": "關閉多裝置彈出視窗",
+      "description": "自動關閉在其他裝置開始播放時出現的「在此裝置收聽」彈出視窗。"
+    },
+    "memory-saver": {
+      "description": "當視窗隱藏且渲染程序的資源快取超過閾值時，將其清除",
+      "name": "記憶體節省",
+      "settings": {
+        "threshold": "快取閾值",
+        "threshold-description": "當視窗隱藏時，若快取的即時記憶體用量超過此值，便清除快取"
+      }
+    }
+  },
+  "settings-ui": {
+    "name": "設定介面",
+    "description": "新增應用程式內設定面板，可從側邊欄開啟",
+    "title": "設定",
+    "settings": {
+      "show-button": "在側邊欄顯示設定項目",
+      "show-button-description": "關閉此選項可保持側邊欄簡潔；設定仍位於「導覽 → 開啟設定」。",
+      "separate-window": "一律在獨立視窗中開啟設定",
+      "separate-window-description": "開啟獨立設定視窗（與系統匣項目相同的方式），而非應用程式內面板。"
+    },
+    "search-placeholder": "搜尋設定",
+    "search-results": "搜尋結果",
+    "search-matching": "符合“{{query}}”",
+    "no-match": "沒有符合“{{query}}”的設定.",
+    "close": "關閉",
+    "edit-config": "編輯 config.json",
+    "restart-banner": "部分變更需要重新啟動才能生效.",
+    "restart-now": "立即重新啟動",
+    "later": "稍後",
+    "restart-pill": "重新啟動",
+    "restart-pill-hint": "需要重新啟動",
+    "refresh-options": "重新整理選項",
+    "move-up": "上移",
+    "move-down": "下移",
+    "about": {
+      "tagline": "功能豐富的 YouTube Music 桌面應用程式",
+      "versions": "版本",
+      "version-app": "應用程式",
+      "version-build": "建置",
+      "version-electron": "Electron",
+      "version-chromium": "Chromium",
+      "version-node": "Node.js",
+      "version-platform": "平台",
+      "version-innertube": "Innertube",
+      "links": "連結",
+      "link-repo": "儲存庫",
+      "link-issue": "回報問題",
+      "link-releases": "發行版本",
+      "link-license": "授權條款",
+      "actions": "操作",
+      "check-updates": "檢查更新",
+      "copy-debug": "複製偵錯資訊",
+      "copied": "已複製!"
+    },
+    "sections": {
+      "general": {
+        "label": "一般"
+      },
+      "appearance": {
+        "label": "外觀"
+      },
+      "window": {
+        "label": "視窗與系統匣"
+      },
+      "advanced": {
+        "label": "進階"
+      },
+      "plugins": {
+        "label": "外掛"
+      },
+      "flags": {
+        "label": "功能旗標"
+      },
+      "about": {
+        "label": "關於"
+      }
+    },
+    "groups": {
+      "updates-session": "更新與工作階段",
+      "startup-language": "啟動與語言",
+      "interface": "介面",
+      "context-menu": "右鍵選單",
+      "window-title": "視窗",
+      "window": "視窗",
+      "system": "系統",
+      "network": "網路",
+      "performance": "效能",
+      "configuration": "設定",
+      "updates": "更新"
+    },
+    "stepper-decrement": "減少",
+    "stepper-increment": "增加",
+    "flags": {
+      "warning": "功能旗標是 YouTube Music 內部的開關. 變更它們可能導致播放, 版面或帳戶功能故障, 且不受支援服務涵蓋. 覆寫設定只會保留您變更的旗標, 並可用復原移除.",
+      "search-placeholder": "搜尋旗標",
+      "overridden": "已覆寫",
+      "undo": "復原",
+      "undo-hint": "刪除此覆寫設定",
+      "empty": "此頁面未提供任何功能旗標.",
+      "no-match": "沒有符合“{{query}}”的旗標.",
+      "add-name": "新旗標名稱",
+      "add-value": "值",
+      "add-value-hint": "可解析時視為 JSON (true, 42, \"text\"), 否則視為文字本身",
+      "add": "新增"
+    },
+    "fields": {
+      "hide-dislike-button": "隱藏不喜歡按鈕",
+      "hide-video-captions": "隱藏影片字幕",
+      "context-menu": {
+        "hide-entry": "隱藏 {{entry}}",
+        "entries": {
+          "add-to-queue": "加入佇列",
+          "delete-playlist": "刪除播放清單",
+          "dismiss-queue": "關閉佇列",
+          "download": "下載",
+          "go-to-album": "前往專輯",
+          "go-to-artist": "前往藝人",
+          "go-to-playlist": "前往播放清單",
+          "like": "喜歡",
+          "not-interested": "不感興趣",
+          "pin-to-listen-again": "釘選至再次聆聽",
+          "play-next": "下一首播放",
+          "remove-from-playlist": "從播放清單移除",
+          "remove-from-queue": "從佇列移除",
+          "report": "檢舉",
+          "save-to-library": "儲存到媒體庫",
+          "save-to-playlist": "儲存到播放清單",
+          "share": "分享",
+          "shuffle-play": "隨機播放",
+          "start-mix": "開始混音",
+          "stats-for-nerds": "技術統計資料"
+        }
+      },
+      "podcast-artist": "將播客參與者顯示為藝人",
+      "podcast-artist-desc": "關閉: 播客單集的藝人會是發佈該節目的頻道.",
+      "theme-preset": "預設集",
+      "theme-variable-name": "變數",
+      "theme-variable-value": "值",
+      "theme-variable-add": "新增變數",
+      "performance-mode": "效能模式",
+      "performance-mode-desc": "犧牲部分視覺精緻度，換取更低的渲染成本。",
+      "in-process-gpu": "將 GPU 程序合併至應用程式程序",
+      "in-process-gpu-desc": "實驗性：可節省一個程序，但會把 GPU 記憶體移入主程序，且可能退回軟體渲染。"
     }
   }
 }

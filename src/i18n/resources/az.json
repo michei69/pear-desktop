@@ -65,7 +65,8 @@
         },
         "detail": "Narahatçılıq üçün üzr istəyirik! Nə etməli olduğumuzu seçin:",
         "message": "Proqram cavab vermir",
-        "title": "Pəncərə Cavab vermir"
+        "title": "Pəncərə Cavab vermir",
+        "details": "Səbəb: {{error}}"
       },
       "update-available": {
         "buttons": {
@@ -76,6 +77,27 @@
         "detail": "Yeni versiya mövcuddur və bu linkdən yüklənə bilər {{downloadLink}}",
         "message": "Yeni versiya mövcuddur",
         "title": "Yeniləmə mövcuddur"
+      },
+      "restart-summary": {
+        "detail": "Dəyişiklikləri tətbiq etmək üçün tətbiqi yenidən başladın: {{changes}}",
+        "message": "Bəzi dəyişikliklər yenidən başlatma tələb edir",
+        "title": "Yenidən başlatma tələb olunur"
+      },
+      "update-available-dev": {
+        "buttons": {
+          "ok": "OK",
+          "view": "Commit-lərə bax"
+        },
+        "title": "Yeniləmə mövcuddur",
+        "message": "Bu dev versiya master budağından geridədir",
+        "detail": "Bu versiyanın işlədiyi commit ({{commit}}) master-dəki ən son commit-dən köhnədir. Daha yeni commit-lərə {{commitsLink}} ünvanında baxmaq olar"
+      },
+      "downgrade-warning": {
+        "title": "Stabil versiyaya qayıdılsın?",
+        "message": "Bu beta versiya ən son stabil buraxılışdan daha yenidir.",
+        "detail": "Geri keçid bəzi ayarları sıfırlaya bilər: daha yeni versiyadan köhnə versiyaya keçərkən heç bir miqrasiya aparılmır və yeni ayarlar oxunmaz qala bilər.",
+        "confirm": "Stabil versiyaya keç",
+        "cancel": "Ləğv et"
       }
     },
     "menu": {
@@ -87,7 +109,8 @@
           "go-back": "Geri qayıt",
           "go-forward": "İrəli get",
           "quit": "Çıx",
-          "restart": "Proqramı Yenidən Başlat"
+          "restart": "Proqramı Yenidən Başlat",
+          "open-settings": "Parametrləri aç"
         }
       },
       "options": {
@@ -129,7 +152,20 @@
             },
             "label": "Dil",
             "submenu": {
-              "to-help-translate": "Tərcüməyə kömək etmək istəyirsiniz? Buraya basın"
+              "to-help-translate": "Tərcüməyə kömək etmək istəyirsiniz? Buraya basın",
+              "sync": {
+                "label": "Dili sinxronlaşdır",
+                "submenu": {
+                  "from-youtube": "YouTube-dan",
+                  "to-youtube": "YouTube-a"
+                },
+                "failure": {
+                  "dialog": {
+                    "title": "Dil dəyişdirilmədi",
+                    "message": "Dil və ya lokal hələ tətbiqdə mövcud deyil."
+                  }
+                }
+              }
             }
           },
           "resume-on-start": "Tətbiq başladıqda son mahnıdan davam et",
@@ -180,9 +216,37 @@
                 "label": "Tema",
                 "submenu": {
                   "import-css-file": "Fərdi CSS faylı idxal et",
-                  "no-theme": "Tema yoxdur"
+                  "no-theme": "Tema yoxdur",
+                  "colors": {
+                    "label": "Rənglər"
+                  },
+                  "presets": {
+                    "label": "Hazır ayarlar",
+                    "default": "Standart",
+                    "custom": "Fərdi"
+                  },
+                  "reset-colors": "Rəngləri sıfırla",
+                  "open-themes-folder": "Temalar qovluğunu aç"
                 }
-              }
+              },
+              "use-ytm-icons": "Orijinal YouTube Music ikonlarından istifadə et"
+            }
+          },
+          "updates": {
+            "label": "Yeniləmələr",
+            "check": "Yeniləmələri yoxla",
+            "auto-update": "Yeniləmələri avtomatik yoxla",
+            "channel": {
+              "label": "Yeniləmə kanalı",
+              "stable": "Stabil",
+              "beta": "Beta"
+            }
+          },
+          "shared-links": {
+            "label": "Paylaşılan linklər",
+            "submenu": {
+              "strip-music": "'music.' hissəsini sil",
+              "strip-si": "'&si=' hissəsini sil"
             }
           }
         }
@@ -219,6 +283,15 @@
       "dislike": "Bəyənmə",
       "unlike": "Fərqli olaraq",
       "undislike": "Bəyənməmə"
+    },
+    "themes": {
+      "consent": {
+        "title": "Tema kodu işə salınsın?",
+        "message": "\"{{theme}}\" tətbiqə tam girişlə işləyəcək skript ehtiva edir.",
+        "detail": "Tema skriptləri sandbox ilə məhdudlaşdırılmayıb. Bu kod parametrlərinizi oxuya və dəyişə, tətbiqlə əlaqə saxlaya və tətbiqin özünün edə biləcəyi hər şeyi edə bilər. Buna yalnız temanın mənbəyinə etibar edirsinizsə icazə verin. Temanı silməklə bu icazəni ləğv edə bilərsiniz.",
+        "allow": "Bu temanı işə sal",
+        "cancel": "Ləğv et"
+      }
     }
   },
   "plugins": {
@@ -344,9 +417,13 @@
         },
         "port": {
           "label": "Port"
+        },
+        "mcp": {
+          "label": "MCP serveri",
+          "description": "v2 API-ni /mcp ünvanında MCP alətləri kimi təqdim edir. API-nin qalan hissəsi ilə eyni avtorizasiyadan istifadə edir."
         }
       },
-      "name": "API Server [Beta]",
+      "name": "API Serveri [Beta]",
       "prompt": {
         "hostname": {
           "label": "API serveri üçün host adını daxil edin (0.0.0.0 kimi):",
@@ -356,11 +433,20 @@
           "label": "API serveri üçün port daxil edin:",
           "title": "Port"
         }
+      },
+      "settings": {
+        "choose-file": "Fayl seç…"
       }
     },
     "audio-compressor": {
       "description": "Səsə sıxılma tətbiq edir (siqnalın ən yüksək hissələrinin səsini azaldır və ən yumşaq hissələrinin səsini artırır)",
-      "name": "Audio Kompressor"
+      "name": "Audio Kompressor",
+      "menu": {
+        "auto-track-gain": "Avtomatik trek gücləndirməsi (sakit trekləri gücləndir)",
+        "maximum-gain": {
+          "label": "Maksimum gücləndirmə"
+        }
+      }
     },
     "auth-proxy-adapter": {
       "description": "Autentifikasiya proxy xidmətlərinin istifadəsi üçün dəstək",
@@ -426,7 +512,10 @@
           "label": "Format"
         }
       },
-      "name": "Saat"
+      "name": "Saat",
+      "settings": {
+        "hour-12": "12 saatlıq formatdan istifadə et"
+      }
     },
     "compact-sidebar": {
       "description": "Yan paneli həmişə yığcam rejimdə təyin et",
@@ -446,12 +535,24 @@
             "fade-scaling": {
               "label": "Fade miqyası",
               "linear": "Xətti",
-              "logarithmic": "Loqarifmik"
+              "logarithmic": "Loqarifmik",
+              "equal-power": "Bərabər güc"
             },
             "seconds-before-end": "Bitməyə N saniyə qalmış crossfade"
           },
           "title": "Crossfade seçimləri"
         }
+      },
+      "settings": {
+        "fade-in": "Yumşaq giriş",
+        "fade-out": "Yumşaq çıxış",
+        "seconds-before-end": "Bitməzdən əvvəl başlat",
+        "fade-scaling": "Yumşaq keçid miqyası",
+        "scaling": {
+          "linear": "Xətti",
+          "logarithmic": "Loqarifmik"
+        },
+        "seconds-before-end-description": "Trekin bitməsinə neçə saniyə qalmış növbəti trekə yumşaq keçidin başlayacağı"
       }
     },
     "custom-output-device": {
@@ -506,6 +607,13 @@
           "label": "Hərəkətsizlik vaxtını saniyələrlə daxil edin:",
           "title": "Hərəkətsizlik vaxtını təyin et"
         }
+      },
+      "settings": {
+        "auto-reconnect": "Avtomatik yenidən qoşul",
+        "activity-timeout-enabled": "Fasilə verildikdə statusu təmizlə",
+        "activity-timeout-time": "Bu müddətdən sonra təmizlə",
+        "hide-github-button": "“GitHub-da bax” düyməsini gizlət",
+        "hide-duration-left": "Qalan vaxtı gizlət"
       }
     },
     "downloader": {
@@ -548,7 +656,8 @@
           "saving": "Saxlanılır…",
           "trying-to-get-playlist-id": "Playlist ID əldə etməyə çalışılır: {{playlistId}}",
           "video-id-not-found": "Video tapılmadı",
-          "writing-id3": "ID3 teqləri yazılır…"
+          "writing-id3": "ID3 teqləri yazılır…",
+          "ffmpeg-missing": "FFmpeg tapılmadı. Bu formatda yükləmək üçün FFmpeg quraşdırın və `ffmpeg`-in PATH-də olduğuna əmin olun."
         }
       },
       "description": "MP3 / mənbə audionu birbaşa interfeysdən yükləyir",
@@ -579,6 +688,10 @@
       },
       "templates": {
         "button": "Yüklə"
+      },
+      "settings": {
+        "finish-folder": "Tamamlanmış yükləmələr üçün qovluq",
+        "finish-folder-description": "Yuxarıdakı yükləmə qovluğundan istifadə etmək üçün boş buraxın."
       }
     },
     "equalizer": {
@@ -646,6 +759,44 @@
           "disconnected": "Ayrıldı",
           "guest": "Qonaq olaraq qoşuldu",
           "host": "Host olaraq qoşuldu"
+        },
+        "diagnostics": {
+          "check": {
+            "nat": "Şəbəkə növü (NAT)",
+            "signaling": "Siqnal serveri",
+            "stun": "Birbaşa bağlantı (STUN)",
+            "turn": "Rele ehtiyatı (TURN)"
+          },
+          "copy": "Xülasəni kopyala",
+          "detail": {
+            "check-error": "Yoxlama alınmadı: {{reason}}",
+            "public-ip": "İctimai ünvan: {{ip}}",
+            "public-ip-hidden": "İctimai ünvan: göstərmək üçün klikləyin",
+            "signaling-fail": "Əlçatmaz ({{reason}})",
+            "signaling-ok": "Əlçatandır",
+            "stun-fail": "İctimai ünvan yoxdur (UDP/STUN bloklanıb)",
+            "stun-ok": "İctimai ünvan tapıldı",
+            "turn-fail": "Rele əlçatmazdır",
+            "turn-ok": "Rele əlçatandır"
+          },
+          "nat": {
+            "blocked": "UDP və ya STUN bloklanıb",
+            "open": "Açıq / konusvari (birbaşa işləyir)",
+            "symmetric": "Simmetrik (rele tələb olunur)",
+            "unknown": "Müəyyən edilməyib"
+          },
+          "run-again": "Yenidən işə sal",
+          "running": "Yoxlamalar aparılır…",
+          "test": "Bağlantını yoxla",
+          "title": "Bağlantı diaqnostikası",
+          "verdict": {
+            "blocked": "Bu şəbəkə çox güman ki, Music Together-i bloklayacaq. Başqa şəbəkə və ya VPN yoxlayın.",
+            "error": "Diaqnostika işə düşmədi. Təfərrüatlar üçün konsola baxın.",
+            "good": "Bu şəbəkədə birbaşa bağlantılar işləməlidir.",
+            "limited": "Bu şəbəkə tam müəyyən edilə bilmədi. Birbaşa bağlantılar yenə də işləyə bilər; alınmasa, başqa şəbəkə yoxlayın.",
+            "no-signaling": "Music Together serverinə çatmaq mümkün deyil. Firewall və ya internet bağlantınızı yoxlayın.",
+            "relay": "Burada birbaşa bağlantılar alınmaya bilər; rele istifadə olunacaq (işləyir, lakin gecikmə əlavə edir)."
+          }
         }
       },
       "name": "Musiqi Birgə [Beta]",
@@ -661,7 +812,10 @@
         "permission-changed": "Music Together icazəsi \"{{permission}}\" olaraq dəyişdirildi",
         "remove-song-failed": "Mahnını silmək mümkün olmadı",
         "user-connected": "{{name}} Music Together-ə qoşuldu",
-        "user-disconnected": "{{name}} Music Together-dən ayrıldı"
+        "user-disconnected": "{{name}} Music Together-dən ayrıldı",
+        "diagnostics-copied": "Diaqnostika xülasəsi mübadilə buferinə kopyalandı",
+        "diagnostics-copy-failed": "Diaqnostika xülasəsini kopyalamaq alınmadı",
+        "diagnostics-running": "Bağlantı testinin bitməsini gözləyin"
       }
     },
     "navigation": {
@@ -708,7 +862,13 @@
       "menu": {
         "log-to-console": "Bərpa hadisələrini konsola yaz"
       },
-      "name": "Oxutma Bərpası"
+      "name": "Oxutma Bərpası",
+      "settings": {
+        "stall-timeout": "Dayanma müddəti",
+        "stall-timeout-description": "Bərpa cəhdindən əvvəl oxutmanın nə qədər müddət irəliləyişsiz qala biləcəyi",
+        "max-retries": "Maksimum təkrar cəhdlər",
+        "max-retries-description": "Növbəti trekə keçməzdən əvvəl bərpa cəhdlərinin sayı"
+      }
     },
     "picture-in-picture": {
       "description": "Tətbiqi şəkil-şəkildə rejiminə keçirməyə imkan verir",
@@ -726,7 +886,14 @@
         },
         "save-window-position": "Pəncərə mövqeyini yadda saxla",
         "save-window-size": "Pəncərə ölçüsünü yadda saxla",
-        "use-native-pip": "Brauzerin yerli PiP funksiyasından istifadə et"
+        "use-native-pip": "Brauzerin yerli PiP funksiyasından istifadə et",
+        "prompt": {
+          "title": "Şəkil içində şəkil",
+          "label": "Şəkil içində şəkil qısayolunu konfiqurasiya edin",
+          "keybind-options": {
+            "hotkey": "Şəkil içində şəkil rejimini dəyişmək üçün qısayol"
+          }
+        }
       },
       "name": "Şəkil-şəkildə",
       "templates": {
@@ -738,6 +905,9 @@
       "name": "Oxutma Sürəti",
       "templates": {
         "button": "Sürət"
+      },
+      "menu": {
+        "no-preserves-pitch": "Tonun qorunmasını söndür"
       }
     },
     "precise-volume": {
@@ -761,6 +931,12 @@
           "label": "Səs Artırma/Azaltma Addımlarını Seçin",
           "title": "Səs Addımları"
         }
+      },
+      "settings": {
+        "steps": "Səs addımı",
+        "arrows-shortcut": "Ox düyməsi qısayolları",
+        "shortcut-up": "Qlobal qısayol: səsi artır",
+        "shortcut-down": "Qlobal qısayol: səsi azalt"
       }
     },
     "quality-changer": {
@@ -789,6 +965,10 @@
             "message": "Last.fm ilə autentifikasiya uğursuz oldu\nNövbəti yenidən başlatmaya qədər pəncərəni gizlədin.",
             "title": "Autentifikasiya Uğursuz Oldu"
           }
+        },
+        "invalid-regex": {
+          "title": "Yanlış müntəzəm ifadə",
+          "message": "{{line}} sətrindəki müntəzəm ifadə yanlışdır: {{error}}"
         }
       },
       "menu": {
@@ -796,11 +976,15 @@
           "api-settings": "Last.fm API Parametrləri"
         },
         "listenbrainz": {
-          "token": "ListenBrainz istifadəçi tokenini daxil edin"
+          "token": "ListenBrainz istifadəçi tokenini daxil edin",
+          "api-root": "ListenBrainz API URL-i"
         },
         "scrobble-alternative-artist": "Alternativ sənətçilərdən istifadə et",
         "scrobble-alternative-title": "Alternativ başlıqlardan istifadə et",
-        "scrobble-other-media": "Digər medianı skrobb et"
+        "scrobble-other-media": "Digər medianı skrobb et",
+        "regex-filters": "Müntəzəm ifadə filtrləri",
+        "use-musicbrainz": "Metadatanı düzəltmək üçün MusicBrainz-dən istifadə et",
+        "musicbrainz-email": "MusicBrainz əlaqə e-poçtu"
       },
       "name": "Skrobbler",
       "prompt": {
@@ -812,8 +996,23 @@
           "token": {
             "label": "ListenBrainz istifadəçi tokeninizi daxil edin:",
             "title": "ListenBrainz tokeni"
+          },
+          "api-root": {
+            "label": "Baza API URL-ni daxil edin:",
+            "title": "ListenBrainz API URL-i"
           }
+        },
+        "regex-filter-multi": {
+          "label": "Hər sətirə bir regex daxil edin:"
+        },
+        "musicbrainz-email": {
+          "title": "MusicBrainz Əlaqə E-poçtu",
+          "label": "MusicBrainz API üçün e-poçt daxil edin:"
         }
+      },
+      "settings": {
+        "lastfm-api-root": "Last.fm API URL-i",
+        "musicbrainz-email-description": "MusicBrainz API üçün əlaqə məlumatı kimi istifadə olunur; MusicBrainz metadata düzəlişi üçün tələb olunur"
       }
     },
     "shortcuts": {
@@ -833,15 +1032,34 @@
           "label": "Mahnı İdarəsi üçün Qlobal Qısayolları Seçin:",
           "title": "Qlobal Qısayollar"
         }
+      },
+      "settings": {
+        "global-keybinds": "Qlobal qısayollar (bütün tətbiqdə işləyir)",
+        "local-keybinds": "Lokal qısayollar (yalnız pəncərə fokusda olduqda)"
       }
     },
     "skip-silences": {
       "description": "Mahnılardakı səssiz hissələri avtomatik keçir",
-      "name": "Səssizlikləri Keç"
+      "name": "Səssizlikləri Keç",
+      "settings": {
+        "only-skip-beginning": "Yalnız trekin əvvəlindəki sükutu keç"
+      }
     },
     "sponsorblock": {
       "description": "Musiqi videosunun giriş/çıxış və ya mahnının çalmadığı hissələri kimi qeyri-musiqi hissələrini avtomatik keçir",
-      "name": "SponsorBlock"
+      "name": "SponsorBlock",
+      "settings": {
+        "categories": "Keçiləcək seqmentlər",
+        "category": {
+          "sponsor": "Sponsor",
+          "intro": "Giriş",
+          "outro": "Sonluq",
+          "interaction": "Qarşılıqlı əlaqə xatırlatması",
+          "selfpromo": "Özünü təbliğ",
+          "music_offtopic": "Musiqi olmayan bölmə"
+        },
+        "api-url": "API URL-i"
+      }
     },
     "synced-lyrics": {
       "description": "LRClib kimi provayderlərdən istifadə edərək mahnılar üçün sinxronizə olunmuş sözlər təqdim edir",
@@ -1054,6 +1272,30 @@
         "show-custom-search-button": {
           "label": "Xüsusi axtarış düyməsini göstər",
           "tooltip": "Mahnı seçicisində axtarış düyməsini göstər ki, bu, cari mahnı üçün axtarış sorğusunu və ifaçını dəyişməyə imkan versin."
+        },
+        "provider-priority": {
+          "tooltip": "Provayderlər bu sıra ilə yoxlanılır: cari mahnı üçün mətn tapan ilk provayder seçilir. Sıranı dəyişmək üçün oxlardan istifadə edin."
+        },
+        "prefer-synced": {
+          "tooltip": "Hər hansı mətni olan ilk provayder əvəzinə, siyahıda vaxta uyğunlaşdırılmış mətni olan ilk provayderi seç."
+        },
+        "previous-provider": {
+          "tooltip": "Əvvəlki provayder"
+        },
+        "next-provider": {
+          "tooltip": "Növbəti provayder"
+        },
+        "custom-search-button": {
+          "tooltip": "Fərdi axtarış sorğusu"
+        },
+        "star-provider": {
+          "tooltip": "Bu mahnı üçün prioritet sırasından asılı olmayaraq həmişə bu provayderdən istifadə et. Əgər onun bu mahnı üçün mətni yoxdursa, normal sıraya qayıdır."
+        },
+        "unstar-provider": {
+          "tooltip": "Bu provayderi bu mahnıya bağlamağı dayandır."
+        },
+        "use-priority-list": {
+          "tooltip": "Provayderləri aşağıdakı sıra ilə yoxla. Bunu söndürsəniz, qərarı mətnlər verəcək: mahnı üçün ən yaxşı mətni olan provayder seçiləcək."
         }
       },
       "name": "Sinxronizə Olunmuş Sözlər",
@@ -1065,6 +1307,22 @@
         "duration-mismatch": "⚠️ - Sözlər müddət uyğunsuzluğu səbəbindən sinxronizasiyadan kənar ola bilər.",
         "inexact": "⚠️ - Bu mahnının sözləri dəqiq olmaya bilər",
         "instrumental": "⚠️ - Bu instrumental mahnıdır"
+      },
+      "settings": {
+        "precise-timing": "Dəqiq vaxtlama",
+        "show-inexact": "Qeyri-dəqiq mətnləri göstər",
+        "show-time-codes": "Vaxt kodlarını göstər",
+        "romanization": "Mətnləri romanlaşdır",
+        "line-effect": "Sətir effekti",
+        "effect": {
+          "fancy": "Zərif",
+          "scale": "Miqyas",
+          "offset": "Yerdəyişmə",
+          "focus": "Fokus"
+        },
+        "prefer-synced": "Sinxronlaşdırılmış mətnlərə üstünlük ver",
+        "provider-priority": "Provayder Prioriteti",
+        "use-priority-list": "Prioritet siyahısından istifadə et"
       }
     },
     "taskbar-mediacontrol": {
@@ -1090,11 +1348,19 @@
             "acrylic": "Akril",
             "mica": "Mika",
             "none": "Heç biri",
-            "tabbed": "Sekmeli"
+            "tabbed": "Sekmeli",
+            "content": "Məzmun",
+            "fullscreen-ui": "Tam ekran interfeysi",
+            "under-page": "Səhifənin altında",
+            "under-window": "Pəncərənin altında",
+            "window": "Pəncərə"
           }
         }
       },
-      "name": "Şəffaf Pleyer"
+      "name": "Şəffaf Pleyer",
+      "settings": {
+        "type-description": "Pəncərə şəffaflığı üçün istifadə olunan fon materialı"
+      }
     },
     "tuna-obs": {
       "description": "OBS-nin Tuna plaginlə inteqrasiya",
@@ -1136,7 +1402,26 @@
       "menu": {
         "visualizer-type": "Vizuallaşdırıcı Növü"
       },
-      "name": "Vizuallaşdırıcı"
+      "name": "Vizuallaşdırıcı",
+      "settings": {
+        "preset": "Hazır ayar",
+        "blend-time": "Qarışma vaxtı",
+        "effect": "Effekt",
+        "accuracy": "Dəqiqlik",
+        "max-height": "Maksimum hündürlük",
+        "max-size": "Maksimum ölçü",
+        "line-width": "Xətt eni",
+        "color": "Rəng",
+        "shadow-blur": "Kölgə bulanıqlığı",
+        "shadow-color": "Kölgə rəngi",
+        "fade-side": "Kənarları solğunlaşdır",
+        "prettify": "Gözəlləşdir",
+        "prettify-description": "Zolaqları kənarlara doğru daralt",
+        "dottify": "Nöqtələşdir",
+        "dottify-description": "Davamlı xətt əvəzinə nöqtələr çək",
+        "horizontal-align": "Üfüqi düzləndirmə",
+        "vertical-align": "Şaquli düzləndirmə"
+      }
     },
     "playlist-search": {
       "description": "Yan paneldə pleylistləri filtrləmək üçün axtarış sahəsi və \"Pleylistə əlavə et\" dialoqu əlavə edir",
@@ -1145,6 +1430,215 @@
         "search-placeholder": "Axtar pleylistlər",
         "no-results": "Heç bir pleylist tapılmadı"
       }
+    },
+    "always-show-volume-slider": {
+      "name": "Həcm slayderini həmişə göstər",
+      "description": "Həcm slayderini yalnız üzərinə gələndə göstərmək əvəzinə həmişə görünən və sürüklənə bilən saxlayır."
+    },
+    "do-not-track": {
+      "description": "Bütün izləmələri ilkin olaraq blokla",
+      "menu": {
+        "blocker": "Bloklayıcı"
+      },
+      "name": "Məni izləmə",
+      "settings": {
+        "cache": "Blok siyahılarını keşlə",
+        "disable-default-lists": "Standart blok siyahılarını deaktiv et"
+      },
+      "dialog": {
+        "reload": {
+          "title": "Səhifəni yenidən yüklə",
+          "message": "Do Not Track ayarları dəyişdi.",
+          "detail": "Şəbəkə qaydaları tətbiqi yenidən başlatmadan yenilənir. Səhifə filtrlərindəki dəyişikliklərin tam tətbiqi üçün səhifəni yenidən yükləyin. Oxutma kəsilə bilər. Sonra da yenidən yükləyə bilərsiniz.",
+          "reload-now": "Səhifəni indi yenidən yüklə"
+        }
+      }
+    },
+    "fullscreen-auto-hide": {
+      "description": "Tam ekran rejimində bir neçə saniyə hərəkətsizlikdən sonra pleyer idarəetmələrini və siçan kursorunu avtomatik gizlət",
+      "name": "Tam ekranda avtomatik gizlətmə"
+    },
+    "prefer-song": {
+      "description": "Albom treki video olduqda musiqi videosu əvəzinə mahnını oxut",
+      "name": "Mahnıya üstünlük ver"
+    },
+    "search-commands": {
+      "commands": {
+        "play": "YouTube linki və ya ID-si ilə video oxut",
+        "settings": "Tənzimləmələri aç"
+      },
+      "description": "Əmrləri işə salmaq üçün axtarış qutusuna / yazın; arqumentlər üçün avtomatik tamamlama mövcuddur",
+      "name": "Axtarış Əmrləri",
+      "settings": {
+        "open-keybind": "Açma qısayolu",
+        "open-keybind-description": "Electron üslubunda qısayol, məsələn CmdOrCtrl+/ və ya Alt+Space",
+        "open-shortcut": "Axtarış qutusunu istənilən yerdən aç",
+        "open-shortcut-description": "Spotlight kimi axtarış qutusunu artıq əmr rejimində çağırır. Yenidən basdıqda bağlanır."
+      }
+    },
+    "seek-shortcuts": {
+      "description": "Sol/sağ ox düymələri ilə 5 saniyə geri/irəli çək",
+      "name": "Keçid Qısayolları"
+    },
+    "sfw-music": {
+      "description": "YouTube Music tərəfindən Explicit kimi işarələnmiş mahnıları avtomatik ötür. Explicit növbə təkrarlanarsa və ya növbəti mahnı mövcud deyilsə, dayandırır.",
+      "name": "SFW Musiqi"
+    },
+    "toast-autoclose": {
+      "description": "YouTube Music bildirişlərini üç saniyədən sonra avtomatik bağla",
+      "name": "Bildirişlərin Avtomatik Bağlanması"
+    },
+    "statusbar-lyrics": {
+      "settings": {
+        "include-pronunciation": "Tələffüzü daxil et"
+      }
+    },
+    "dismiss-multidevice-popup": {
+      "name": "Çoxcihazlı Pəncərəni Bağla",
+      "description": "Oxutma başqa cihazda başlayanda görünən \"Bu cihazda dinlə\" pəncərəsini avtomatik bağlayır."
+    },
+    "memory-saver": {
+      "description": "Pəncərə gizli olduqda resurs keşləri müəyyən həddi keçdikdə rendererin resurs keşlərini təmizləyir",
+      "name": "Yaddaş Qənaətçisi",
+      "settings": {
+        "threshold": "Keş həddi",
+        "threshold-description": "Pəncərə gizli ikən keşlərin canlı yaddaşı bu dəyəri aşdıqda onları təmizlə"
+      }
+    }
+  },
+  "settings-ui": {
+    "name": "Tənzimləmələr interfeysi",
+    "description": "Yan paneldən açılan tətbiqdaxili tənzimləmələr paneli əlavə edir",
+    "title": "Tənzimləmələr",
+    "settings": {
+      "show-button": "Yan paneldə tənzimləmələr bəndini göstər",
+      "show-button-description": "Yan paneli təmiz saxlamaq üçün bunu söndürün; Tənzimləmələr yenə də Naviqasiya → Tənzimləmələri aç altındadır.",
+      "separate-window": "Tənzimləmələri həmişə ayrı pəncərədə aç",
+      "separate-window-description": "Tətbiqdaxili panel əvəzinə, tray elementində olduğu kimi ayrıca tənzimləmələr pəncərəsini açır."
+    },
+    "search-placeholder": "Tənzimləmələrdə axtar",
+    "search-results": "Axtarış nəticələri",
+    "search-matching": "“{{query}}” ilə uyğun gələnlər",
+    "no-match": "“{{query}}” ilə uyğun tənzimləmə yoxdur.",
+    "close": "Bağla",
+    "edit-config": "config.json faylını redaktə et",
+    "restart-banner": "Bəzi dəyişikliklərin qüvvəyə minməsi üçün yenidən başlatma tələb olunur.",
+    "restart-now": "İndi yenidən başlat",
+    "later": "Sonra",
+    "restart-pill": "yenidən başlat",
+    "restart-pill-hint": "Yenidən başlatma tələb edir",
+    "refresh-options": "Seçimləri yenilə",
+    "move-up": "Yuxarı köçür",
+    "move-down": "Aşağı köçür",
+    "about": {
+      "tagline": "YouTube Music üçün funksiyalarla zəngin masaüstü tətbiqi",
+      "versions": "Versiyalar",
+      "version-app": "Tətbiq",
+      "version-build": "Build",
+      "version-electron": "Electron",
+      "version-chromium": "Chromium",
+      "version-node": "Node.js",
+      "version-platform": "Platforma",
+      "version-innertube": "Innertube",
+      "links": "Keçidlər",
+      "link-repo": "Repozitoriya",
+      "link-issue": "Problem bildir",
+      "link-releases": "Buraxılışlar",
+      "link-license": "Lisenziya",
+      "actions": "Əməliyyatlar",
+      "check-updates": "Yeniləmələri yoxla",
+      "copy-debug": "Sazlama məlumatını kopyala",
+      "copied": "Kopyalandı!"
+    },
+    "sections": {
+      "general": {
+        "label": "Ümumi"
+      },
+      "appearance": {
+        "label": "Görünüş"
+      },
+      "window": {
+        "label": "Pəncərə və tray"
+      },
+      "advanced": {
+        "label": "Ətraflı"
+      },
+      "plugins": {
+        "label": "Plaginlər"
+      },
+      "flags": {
+        "label": "Bayraqlar"
+      },
+      "about": {
+        "label": "Haqqında"
+      }
+    },
+    "groups": {
+      "updates-session": "Yeniləmələr və sessiya",
+      "startup-language": "Başlatma və dil",
+      "interface": "İnterfeys",
+      "context-menu": "Kontekst menyusu",
+      "window-title": "Pəncərə",
+      "window": "Pəncərə",
+      "system": "Sistem",
+      "network": "Şəbəkə",
+      "performance": "Performans",
+      "configuration": "Konfiqurasiya",
+      "updates": "Yeniləmələr"
+    },
+    "stepper-decrement": "Azalt",
+    "stepper-increment": "Artır",
+    "flags": {
+      "warning": "Funksiya bayraqları YouTube Music-in öz daxili açarlarıdır. Onları dəyişmək oxutmanı, düzülüşü və ya hesab funksiyalarını poza bilər və onlar texniki dəstəklə əhatə olunmur. Əvəzləmələr yalnız dəyişdiyiniz bayraqlar üçün saxlanılır və Geri qaytar ilə silinə bilər.",
+      "search-placeholder": "Bayraqlarda axtar",
+      "overridden": "əvəzlənib",
+      "undo": "Geri qaytar",
+      "undo-hint": "Bu əvəzləməni sil",
+      "empty": "Bu səhifə heç bir funksiya bayrağı göstərmir.",
+      "no-match": "“{{query}}” ilə uyğun bayraq yoxdur.",
+      "add-name": "Yeni bayraq adı",
+      "add-value": "Dəyər",
+      "add-value-hint": "JSON kimi təhlil olunursa (true, 42, \"text\"), əks halda mətnin özü",
+      "add": "Əlavə et"
+    },
+    "fields": {
+      "hide-dislike-button": "Bəyənməmə düyməsini gizlət",
+      "hide-video-captions": "Video alt yazılarını gizlət",
+      "context-menu": {
+        "hide-entry": "{{entry}} bəndini gizlət",
+        "entries": {
+          "add-to-queue": "Növbəyə əlavə et",
+          "delete-playlist": "Pleylisti sil",
+          "dismiss-queue": "Növbəni bağla",
+          "download": "Endir",
+          "go-to-album": "Alboma keç",
+          "go-to-artist": "İfaçıya keç",
+          "go-to-playlist": "Pleylistə keç",
+          "like": "Bəyən",
+          "not-interested": "Məni maraqlandırmır",
+          "pin-to-listen-again": "Yenidən dinlə bölməsinə bərkit",
+          "play-next": "Növbəti çal",
+          "remove-from-playlist": "Pleylistdən çıxar",
+          "remove-from-queue": "Növbədən çıxar",
+          "report": "Bildir",
+          "save-to-library": "Kitabxanaya yadda saxla",
+          "save-to-playlist": "Pleylistə yadda saxla",
+          "share": "Paylaş",
+          "shuffle-play": "Qarışıq çal",
+          "start-mix": "Miks başlat",
+          "stats-for-nerds": "Nerdlər üçün statistika"
+        }
+      },
+      "podcast-artist": "Podkast iştirakçılarını ifaçı kimi istifadə et",
+      "podcast-artist-desc": "Söndürüldükdə: podkast epizodunun ifaçısı onu dərc edən kanal olur.",
+      "theme-preset": "Hazır parametr",
+      "theme-variable-name": "Dəyişən",
+      "theme-variable-value": "Dəyər",
+      "theme-variable-add": "Dəyişən əlavə et",
+      "performance-mode": "Performans rejimi",
+      "performance-mode-desc": "Daha qənaətli render müqabilində bir qədər vizual keyfiyyətdən güzəştə gedin.",
+      "in-process-gpu": "GPU prosesini tətbiq prosesinə birləşdir",
+      "in-process-gpu-desc": "Eksperimental: bir prosesə qənaət edir, lakin GPU yaddaşını əsas prosesə keçirir və proqram vasitəsilə renderə keçə bilər."
     }
   }
 }

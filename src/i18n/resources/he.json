@@ -65,7 +65,8 @@
         },
         "detail": "אנו מצטערים על אי הנוחות! אנא בחר מה לעשות:",
         "message": "האפליקציה אינה מגיבה",
-        "title": "החלון אינו מגיב"
+        "title": "החלון אינו מגיב",
+        "details": "סיבה: {{error}}"
       },
       "update-available": {
         "buttons": {
@@ -76,6 +77,27 @@
         "detail": "גרסה חדשה זמינה, ניתן להוריד אותה ב-{{downloadLink}}",
         "message": "גירסה חדשה זמינה כעת",
         "title": "קיים עדכון חדש"
+      },
+      "restart-summary": {
+        "detail": "הפעל מחדש את האפליקציה כדי להחיל: {{changes}}",
+        "message": "חלק מהשינויים דורשים הפעלה מחדש",
+        "title": "נדרשת הפעלה מחדש"
+      },
+      "update-available-dev": {
+        "buttons": {
+          "ok": "אישור",
+          "view": "הצג קומיטים"
+        },
+        "title": "עדכון זמין",
+        "message": "בניית הפיתוח הזו מפגרת אחרי ענף master",
+        "detail": "הקומיט שהבנייה הזו רצה עליו ({{commit}}) ישן מהקומיט האחרון ב-master. ניתן לצפות בקומיטים חדשים יותר ב-{{commitsLink}}"
+      },
+      "downgrade-warning": {
+        "title": "לחזור ליציבה?",
+        "message": "גרסת הבטא הזו חדשה יותר מהגרסה היציבה האחרונה.",
+        "detail": "חזרה לאחור עלולה לאפס חלק מההגדרות: מעבר מגרסה חדשה לישנה לא מריץ מיגרציות ועלול להשאיר הגדרות חדשות בלתי קריאות.",
+        "confirm": "עבור ליציבה",
+        "cancel": "ביטול"
       }
     },
     "menu": {
@@ -87,7 +109,8 @@
           "go-back": "חזור אחורה",
           "go-forward": "לך קדימה",
           "quit": "יציאה",
-          "restart": "הפעל מחדש את היישום"
+          "restart": "הפעל מחדש את היישום",
+          "open-settings": "פתח הגדרות"
         }
       },
       "options": {
@@ -129,7 +152,20 @@
             },
             "label": "שפה",
             "submenu": {
-              "to-help-translate": "רוצים לעזור לתרגם? לחץ כאן"
+              "to-help-translate": "רוצים לעזור לתרגם? לחץ כאן",
+              "sync": {
+                "label": "סנכרן שפה",
+                "submenu": {
+                  "from-youtube": "מ-YouTube",
+                  "to-youtube": "אל YouTube"
+                },
+                "failure": {
+                  "dialog": {
+                    "title": "השפה לא שונתה",
+                    "message": "השפה או האזור אינם קיימים עדיין באפליקציה."
+                  }
+                }
+              }
             }
           },
           "resume-on-start": "המשך את השיר האחרון עם הפעלת האפליקציה",
@@ -180,9 +216,37 @@
                 "label": "ערכת נושא",
                 "submenu": {
                   "import-css-file": "ייבא קובץ CSS מותאם אישית",
-                  "no-theme": "ללא ערכת נושא"
+                  "no-theme": "ללא ערכת נושא",
+                  "colors": {
+                    "label": "צבעים"
+                  },
+                  "presets": {
+                    "label": "ערכות מוגדרות מראש",
+                    "default": "ברירת מחדל",
+                    "custom": "מותאם אישית"
+                  },
+                  "reset-colors": "אפס צבעים",
+                  "open-themes-folder": "פתח תיקיית ערכות נושא"
                 }
-              }
+              },
+              "use-ytm-icons": "השתמש באייקונים המקוריים של YouTube Music"
+            }
+          },
+          "updates": {
+            "label": "עדכונים",
+            "check": "בדוק עדכונים",
+            "auto-update": "בדוק עדכונים אוטומטית",
+            "channel": {
+              "label": "ערוץ עדכונים",
+              "stable": "יציב",
+              "beta": "בטא"
+            }
+          },
+          "shared-links": {
+            "label": "קישורים משותפים",
+            "submenu": {
+              "strip-music": "הסר 'music.'",
+              "strip-si": "הסר '&si='"
             }
           }
         }
@@ -219,6 +283,15 @@
       "dislike": "לא אוהב",
       "unlike": "שלא",
       "undislike": "בטל דיסלייק"
+    },
+    "themes": {
+      "consent": {
+        "title": "להפעיל קוד ערכת נושא?",
+        "message": "\"{{theme}}\" מכילה סקריפט שירוץ עם גישה מלאה לאפליקציה.",
+        "detail": "סקריפטים של ערכות נושא אינם פועלים בארגז חול. הקוד הזה יכול לקרוא ולשנות את ההגדרות שלך, לדבר עם האפליקציה ולעשות כל דבר שהאפליקציה עצמה יכולה לעשות. אפשר זאת רק אם אתה סומך על מקור ערכת הנושא. ניתן לבטל זאת על ידי הסרת ערכת הנושא.",
+        "allow": "הפעל ערכת נושא זו",
+        "cancel": "ביטול"
+      }
     }
   },
   "plugins": {
@@ -340,6 +413,10 @@
         },
         "port": {
           "label": "פורט"
+        },
+        "mcp": {
+          "label": "שרת MCP",
+          "description": "מגיש את ה-API v2 ככלי MCP בכתובת /mcp. משתמש באותו אימות כמו שאר ה-API."
         }
       },
       "name": "כתובת שירות (בטא)",
@@ -352,11 +429,20 @@
           "label": "הכנסת מספר פורט של השירות:",
           "title": "פורט"
         }
+      },
+      "settings": {
+        "choose-file": "בחר קובץ…"
       }
     },
     "audio-compressor": {
       "description": "החל דחיסה על אודיו (מורידה את עוצמת הקול של החלקים הרועשים ביותר של האות ומעלה את עוצמת הקול של החלקים החלשים ביותר)",
-      "name": "דוחס ומצפין קול"
+      "name": "דוחס ומצפין קול",
+      "menu": {
+        "auto-track-gain": "הגברת עוצמה אוטומטית לרצועה (הגברת רצועות שקטות)",
+        "maximum-gain": {
+          "label": "הגברה מרבית"
+        }
+      }
     },
     "auth-proxy-adapter": {
       "description": "תמיכה בשימוש בשירותי פרוקסי אימות",
@@ -422,7 +508,10 @@
           "label": "פורמט"
         }
       },
-      "name": "שעון"
+      "name": "שעון",
+      "settings": {
+        "hour-12": "השתמש בפורמט 12 שעות"
+      }
     },
     "compact-sidebar": {
       "description": "הגדר תמיד את סרגל הצד למצב קומפקטי",
@@ -442,12 +531,24 @@
             "fade-scaling": {
               "label": "קנה מידת הדהייה",
               "linear": "לינארי",
-              "logarithmic": "לוגריתמי"
+              "logarithmic": "לוגריתמי",
+              "equal-power": "עוצמה שווה"
             },
             "seconds-before-end": "שילוב בין X שירים לפני הסוף"
           },
           "title": "הגדרות שילוב שירים"
         }
+      },
+      "settings": {
+        "fade-in": "הגברה הדרגתית",
+        "fade-out": "הנמכה הדרגתית",
+        "seconds-before-end": "התחל לפני הסוף",
+        "fade-scaling": "קנה מידה של מעבר הדרגתי",
+        "scaling": {
+          "linear": "ליניארי",
+          "logarithmic": "לוגריתמי"
+        },
+        "seconds-before-end-description": "שניות לפני סוף הרצועה שבהן מתחיל המעבר ההדרגתי לרצועה הבאה"
       }
     },
     "custom-output-device": {
@@ -501,6 +602,14 @@
           "label": "הזן זמן תפוגה של חוסר פעילות בשניות:",
           "title": "הגדר זמן קצוב לחוסר פעילות"
         }
+      },
+      "name": "נוכחות עשירה ב-Discord",
+      "settings": {
+        "auto-reconnect": "התחברות מחדש אוטומטית",
+        "activity-timeout-enabled": "נקה נוכחות כשמושהה",
+        "activity-timeout-time": "נקה אחרי",
+        "hide-github-button": "הסתר כפתור \"הצג ב-GitHub\"",
+        "hide-duration-left": "הסתר זמן שנותר"
       }
     },
     "do-not-track": {
@@ -508,7 +617,19 @@
       "menu": {
         "blocker": "חוסם"
       },
-      "name": "אל תעקוב"
+      "name": "אל תעקוב",
+      "settings": {
+        "cache": "שמור רשימות חסימה במטמון",
+        "disable-default-lists": "השבת רשימות חסימה ברירת מחדל"
+      },
+      "dialog": {
+        "reload": {
+          "title": "טען מחדש את הדף",
+          "message": "הגדרות אל תעקוב השתנו.",
+          "detail": "כללי הרשת מתעדכנים ללא הפעלה מחדש של האפליקציה. טען מחדש את הדף כדי להחיל באופן מלא את השינויים במסנני הדף. ייתכן שההפעלה תיקטע. ניתן לטעון מחדש מאוחר יותר.",
+          "reload-now": "טען מחדש את הדף עכשיו"
+        }
+      }
     },
     "downloader": {
       "backend": {
@@ -525,7 +646,8 @@
               "ok": "אוקיי"
             },
             "message": "מוריד רשימת השמעה {{playlistTitle}}",
-            "title": "הורדה התחילה"
+            "title": "הורדה התחילה",
+            "detail": "({{playlistSize}} שירים)"
           }
         },
         "feedback": {
@@ -549,7 +671,8 @@
           "saving": "שומר…",
           "trying-to-get-playlist-id": "מנסה להשיג מזהה פלייליסט: {{playlistId}}",
           "video-id-not-found": "הסרטון לא נמצא",
-          "writing-id3": "כותב תגיות ID3…"
+          "writing-id3": "כותב תגיות ID3…",
+          "ffmpeg-missing": "FFmpeg לא נמצא. התקן את FFmpeg וודא ש־`ffmpeg` נמצא ב-PATH כדי להוריד בפורמט זה."
         }
       },
       "description": "מוריד MP3 / אודיו מקור ישירות מהממשק",
@@ -580,6 +703,10 @@
       },
       "templates": {
         "button": "הורד"
+      },
+      "settings": {
+        "finish-folder": "תיקייה להורדות שהסתיימו",
+        "finish-folder-description": "השאר ריק כדי להשתמש בתיקיית ההורדות שלמעלה."
       }
     },
     "equalizer": {
@@ -613,7 +740,11 @@
       "description": "מוסיף תמיכת כתוביות לרוב השירים",
       "renderer": {
         "fetched-lyrics": "נאספו כתוביות לGenius"
-      }
+      },
+      "menu": {
+        "romanized-lyrics": "מילים ברומניזציה"
+      },
+      "name": "Lyrics Genius"
     },
     "music-together": {
       "description": "שתף רשימת השמעה עם אחרים. כאשר המארח מנגן שיר, כל השאר ישמעו את אותו שיר",
@@ -622,7 +753,8 @@
       },
       "internal": {
         "save": "שמור",
-        "unknown-user": "משתמש לא מזוהה"
+        "unknown-user": "משתמש לא מזוהה",
+        "track-source": "מקור הרצועה"
       },
       "menu": {
         "click-to-copy-id": "העתק מזהה המארח",
@@ -642,6 +774,44 @@
           "disconnected": "מנותק",
           "guest": "מחובר בתור אורח",
           "host": "מחובר בתור מארח"
+        },
+        "diagnostics": {
+          "check": {
+            "nat": "סוג רשת (NAT)",
+            "signaling": "שרת איתות",
+            "stun": "חיבור ישיר (STUN)",
+            "turn": "גיבוי ממסר (TURN)"
+          },
+          "copy": "העתק סיכום",
+          "detail": {
+            "check-error": "הבדיקה נכשלה: {{reason}}",
+            "public-ip": "כתובת ציבורית: {{ip}}",
+            "public-ip-hidden": "כתובת ציבורית: לחץ לחשיפה",
+            "signaling-fail": "לא נגיש ({{reason}})",
+            "signaling-ok": "נגיש",
+            "stun-fail": "אין כתובת ציבורית (UDP/STUN חסום)",
+            "stun-ok": "נמצאה כתובת ציבורית",
+            "turn-fail": "הממסר לא נגיש",
+            "turn-ok": "הממסר נגיש"
+          },
+          "nat": {
+            "blocked": "UDP או STUN חסומים",
+            "open": "פתוח / חרוטי (חיבור ישיר עובד)",
+            "symmetric": "סימטרי (נדרש ממסר)",
+            "unknown": "לא ידוע"
+          },
+          "run-again": "הרץ שוב",
+          "running": "מריץ בדיקות…",
+          "test": "בדוק חיבור",
+          "title": "אבחון חיבור",
+          "verdict": {
+            "blocked": "הרשת הזו כנראה תחסום את Music Together. נסה רשת אחרת או VPN.",
+            "error": "האבחון נכשל בהרצה. בדוק את הקונסול לפרטים.",
+            "good": "חיבורים ישירים אמורים לעבוד ברשת הזו.",
+            "limited": "לא ניתן היה לקבוע לגמרי את הרשת הזו. חיבורים ישירים עדיין עשויים לעבוד; אם הם נכשלים, נסה רשת אחרת.",
+            "no-signaling": "לא ניתן להגיע לשרת Music Together. בדוק את חומת האש או חיבור האינטרנט שלך.",
+            "relay": "חיבורים ישירים עלולים להיכשל כאן; ייעשה שימוש בממסר (עובד, אך מוסיף השהיה)."
+          }
         }
       },
       "name": "Music Together [בטא]",
@@ -657,7 +827,10 @@
         "permission-changed": "הרשאת Music Together שונתה ל-\"{{permission}}\"",
         "remove-song-failed": "הסרת השיר נכשלה",
         "user-connected": "{{name}} הצטרף ל-Music Together",
-        "user-disconnected": "{{name}} עזב את Music Together"
+        "user-disconnected": "{{name}} עזב את Music Together",
+        "diagnostics-copied": "סיכום האבחון הועתק ללוח",
+        "diagnostics-copy-failed": "העתקת סיכום האבחון נכשלה",
+        "diagnostics-running": "יש להמתין שבדיקת החיבור תסתיים"
       }
     },
     "navigation": {
@@ -715,7 +888,14 @@
         },
         "save-window-position": "שמור מיקום חלון",
         "save-window-size": "שמור גודל חלון",
-        "use-native-pip": "השתמש ב-PiP המקורי של הדפדפן"
+        "use-native-pip": "השתמש ב-PiP המקורי של הדפדפן",
+        "prompt": {
+          "title": "תמונה בתוך תמונה",
+          "label": "הגדרת מקש הקיצור לתמונה בתוך תמונה",
+          "keybind-options": {
+            "hotkey": "מקש קיצור להחלפת מצב תמונה בתוך תמונה"
+          }
+        }
       },
       "name": "תמונה בתוך תמונה",
       "templates": {
@@ -727,6 +907,9 @@
       "name": "מהירות השמעה",
       "templates": {
         "button": "מהירות"
+      },
+      "menu": {
+        "no-preserves-pitch": "השבתת שימור גובה הצליל"
       }
     },
     "precise-volume": {
@@ -750,6 +933,12 @@
           "label": "בחר שלבי הגברה/הפחתת ווליום",
           "title": "שלבי ווליום"
         }
+      },
+      "settings": {
+        "steps": "צעד עוצמת קול",
+        "arrows-shortcut": "קיצורי מקשי החצים",
+        "shortcut-up": "קיצור גלובלי: הגברת עוצמת הקול",
+        "shortcut-down": "קיצור גלובלי: הנמכת עוצמת הקול"
       }
     },
     "quality-changer": {
@@ -778,6 +967,10 @@
             "message": "האימות מול Last.fm נכשל\nהסתר את החלון הקופץ עד להפעלה מחדש.",
             "title": "האימות נכשל"
           }
+        },
+        "invalid-regex": {
+          "title": "ביטוי רגולרי לא חוקי",
+          "message": "הביטוי הרגולרי בשורה {{line}} אינו חוקי: {{error}}"
         }
       },
       "menu": {
@@ -785,11 +978,15 @@
           "api-settings": "הגדרות API של Last.fm"
         },
         "listenbrainz": {
-          "token": "הזן אסימון משתמש ListenBrainz"
+          "token": "הזן אסימון משתמש ListenBrainz",
+          "api-root": "כתובת ה-API של ListenBrainz"
         },
         "scrobble-alternative-artist": "השתמש באמנים חלופיים",
         "scrobble-alternative-title": "השתמש בכותרות חלופיות",
-        "scrobble-other-media": "Scrobble מדיה אחרת"
+        "scrobble-other-media": "Scrobble מדיה אחרת",
+        "regex-filters": "מסנני ביטויים רגולריים",
+        "use-musicbrainz": "שימוש ב-MusicBrainz לתיקון מטא-נתונים",
+        "musicbrainz-email": "דוא״ל ליצירת קשר ב-MusicBrainz"
       },
       "name": "סקרובלר",
       "prompt": {
@@ -801,8 +998,23 @@
           "token": {
             "label": "הזן את אסימון המשתמש של ListenBrainz:",
             "title": "אסימון ListenBrainz"
+          },
+          "api-root": {
+            "label": "הזינו את כתובת ה-API הבסיסית:",
+            "title": "כתובת ה-API של ListenBrainz"
           }
+        },
+        "regex-filter-multi": {
+          "label": "הזינו ביטוי רגולרי אחד בכל שורה:"
+        },
+        "musicbrainz-email": {
+          "title": "דוא״ל ליצירת קשר ב-MusicBrainz",
+          "label": "הזינו דוא״ל עבור API של MusicBrainz:"
         }
+      },
+      "settings": {
+        "lastfm-api-root": "כתובת ה-API של Last.fm",
+        "musicbrainz-email-description": "משמש כמידע ליצירת קשר עבור API של MusicBrainz; נדרש לתיקון מטא-נתונים מ-MusicBrainz"
       }
     },
     "shortcuts": {
@@ -822,15 +1034,34 @@
           "label": "בחר קיצורי מקלדת גלובליים לשליטה בשירים:",
           "title": "קיצורי מקלדת גלובליים"
         }
+      },
+      "settings": {
+        "global-keybinds": "קיצורי מקשים גלובליים (פועלים בכל האפליקציה)",
+        "local-keybinds": "קיצורי מקשים מקומיים (רק כשהחלון במיקוד)"
       }
     },
     "skip-silences": {
       "description": "דלג אוטומטית על קטעי שקט בשירים",
-      "name": "דלג על שקט"
+      "name": "דלג על שקט",
+      "settings": {
+        "only-skip-beginning": "דלג על שקט רק בתחילת הרצועה"
+      }
     },
     "sponsorblock": {
       "description": "מדלג אוטומטית על חלקים שאינם מוזיקה כמו פתיח/סיום או חלקים בסרטוני מוזיקה שבהם השיר לא מתנגן",
-      "name": "חסימת ספונסרים"
+      "name": "חסימת ספונסרים",
+      "settings": {
+        "categories": "קטעים לדילוג",
+        "category": {
+          "sponsor": "ספונסר",
+          "intro": "פתיח",
+          "outro": "סיום",
+          "interaction": "תזכורת לאינטראקציה",
+          "selfpromo": "קידום עצמי",
+          "music_offtopic": "קטע לא מוזיקלי"
+        },
+        "api-url": "כתובת API"
+      }
     },
     "synced-lyrics": {
       "description": "מספק מילים מסונכרנות לשירים, באמצעות ספקים כמו LRClib.",
@@ -1043,6 +1274,30 @@
         "show-custom-search-button": {
           "label": "הצג כפתור חיפוש מותאם אישית",
           "tooltip": "הצג כפתור חיפוש בבוחר המילים המאפשר לעקוף את שאילתת החיפוש והאמן לשיר הנוכחי."
+        },
+        "provider-priority": {
+          "tooltip": "הספקים ייבדקו לפי הסדר הזה: הראשון שיש לו מילים לשיר הנוכחי יזכה. השתמשו בחצים כדי לשנות את הסדר."
+        },
+        "prefer-synced": {
+          "tooltip": "בחר את הספק הראשון ברשימה שיש לו מילים מסונכרנות בזמן, במקום את הראשון שיש לו מילים בכלל."
+        },
+        "previous-provider": {
+          "tooltip": "ספק קודם"
+        },
+        "next-provider": {
+          "tooltip": "ספק הבא"
+        },
+        "custom-search-button": {
+          "tooltip": "שאילתת חיפוש מותאמת אישית"
+        },
+        "star-provider": {
+          "tooltip": "השתמש תמיד בספק הזה עבור השיר הזה, יהיה אשר יהיה סדר העדיפויות. אם אין לו מילים לשיר, חזור לסדר הרגיל."
+        },
+        "unstar-provider": {
+          "tooltip": "הפסק להצמיד את הספק הזה לשיר הזה."
+        },
+        "use-priority-list": {
+          "tooltip": "נסה את הספקים לפי הסדר שלמטה. כבה זאת כדי לתת למילים להחליט במקום: הספק עם המילים הטובות ביותר לשיר יזכה."
         }
       },
       "name": "מילים מסונכרנות",
@@ -1054,6 +1309,22 @@
         "duration-mismatch": "⚠️ - ייתכן שהמילים אינן מסונכרנות עקב אי התאמה במשך.",
         "inexact": "⚠️ - ייתכן שהמילים לשיר זה אינן מדויקות",
         "instrumental": "⚠️ - זהו שיר אינסטרומנטלי"
+      },
+      "settings": {
+        "precise-timing": "תזמון מדויק",
+        "show-inexact": "הצג מילים לא מדויקות",
+        "show-time-codes": "הצג קודי זמן",
+        "romanization": "תעתיק מילים לאותיות לטיניות",
+        "line-effect": "אפקט שורה",
+        "effect": {
+          "fancy": "מפואר",
+          "scale": "קנה מידה",
+          "offset": "היסט",
+          "focus": "מיקוד"
+        },
+        "prefer-synced": "העדף מילים מסונכרנות",
+        "provider-priority": "עדיפות ספקים",
+        "use-priority-list": "השתמש ברשימת עדיפויות"
       }
     },
     "taskbar-mediacontrol": {
@@ -1079,11 +1350,19 @@
             "acrylic": "אקרילי",
             "mica": "מיקה",
             "none": "ללא",
-            "tabbed": "לשוניות"
+            "tabbed": "לשוניות",
+            "content": "תוכן",
+            "fullscreen-ui": "ממשק מסך מלא",
+            "under-page": "מתחת לדף",
+            "under-window": "מתחת לחלון",
+            "window": "חלון"
           }
         }
       },
-      "name": "נגן שקוף"
+      "name": "נגן שקוף",
+      "settings": {
+        "type-description": "חומר הרקע המשמש לשקיפות החלון"
+      }
     },
     "tuna-obs": {
       "description": "אינטגרציה עם תוסף Tuna של OBS",
@@ -1125,7 +1404,26 @@
       "menu": {
         "visualizer-type": "סוג ויזואלייזר"
       },
-      "name": "ויזואלייזר"
+      "name": "ויזואלייזר",
+      "settings": {
+        "preset": "פריסט",
+        "blend-time": "זמן מיזוג",
+        "effect": "אפקט",
+        "accuracy": "דיוק",
+        "max-height": "גובה מרבי",
+        "max-size": "גודל מרבי",
+        "line-width": "רוחב קו",
+        "color": "צבע",
+        "shadow-blur": "טשטוש צל",
+        "shadow-color": "צבע צל",
+        "fade-side": "דהייה בצדדים",
+        "prettify": "ייפוי",
+        "prettify-description": "הצר את הפסים לקראת הקצוות",
+        "dottify": "הפיכה לנקודות",
+        "dottify-description": "צייר נקודות במקום קו רציף",
+        "horizontal-align": "יישור אופקי",
+        "vertical-align": "יישור אנכי"
+      }
     },
     "audio-only": {
       "description": "מכריח מצב שמע בלבד — חוסם את כל זרמי הווידאו ברמת הרשת והנגן כדי לחסוך בזיכרון וברוחב פס",
@@ -1136,7 +1434,13 @@
       "menu": {
         "log-to-console": "תעד אירועי שחזור למסוף"
       },
-      "name": "שחזור השמעה"
+      "name": "שחזור השמעה",
+      "settings": {
+        "stall-timeout": "פסק זמן לתקיעה",
+        "stall-timeout-description": "כמה זמן הניגון יכול להימשך בלי התקדמות לפני ניסיון שחזור",
+        "max-retries": "מקסימום ניסיונות חוזרים",
+        "max-retries-description": "מספר ניסיונות השחזור לפני דילוג לרצועה הבאה"
+      }
     },
     "playlist-search": {
       "description": "מוסיף שדה חיפוש לסינון רשימות השמעה בסרגל הצד ובתיבת הדו-שיח \"הוסף לרשימת השמעה\"",
@@ -1145,6 +1449,196 @@
         "search-placeholder": "חיפוש פלייליסטים",
         "no-results": "לא נמצאו פלייליסטים"
       }
+    },
+    "always-show-volume-slider": {
+      "name": "הצג תמיד את סליידר העוצמה",
+      "description": "משאיר את סליידר העוצמה גלוי וניתן לגרירה במקום להציגו רק בריחוף."
+    },
+    "fullscreen-auto-hide": {
+      "description": "הסתר אוטומטית את בקרות הנגן ואת סמן העכבר לאחר כמה שניות של חוסר פעילות במסך מלא",
+      "name": "הסתרה אוטומטית במסך מלא"
+    },
+    "prefer-song": {
+      "description": "לנגן את השיר במקום את הווידאו קליפ כאשר רצועת אלבום היא וידאו",
+      "name": "העדפת שיר"
+    },
+    "search-commands": {
+      "commands": {
+        "play": "נגן וידאו מקישור או מזהה של YouTube",
+        "settings": "פתח את ההגדרות"
+      },
+      "description": "הקלידו / בתיבת החיפוש כדי להריץ פקודות, עם השלמה אוטומטית עבור הארגומנטים שלהן",
+      "name": "פקודות חיפוש",
+      "settings": {
+        "open-keybind": "קיצור לפתיחה",
+        "open-keybind-description": "מקש האצה בסגנון Electron, למשל CmdOrCtrl+/ או Alt+Space",
+        "open-shortcut": "פתיחת תיבת החיפוש מכל מקום",
+        "open-shortcut-description": "מזמן את תיבת החיפוש כשהיא כבר במצב פקודה, כמו Spotlight. לחיצה נוספת סוגרת אותה."
+      }
+    },
+    "seek-shortcuts": {
+      "description": "דילוג 5 שניות אחורה/קדימה עם מקשי החצים שמאלה/ימינה",
+      "name": "קיצורי דילוג"
+    },
+    "sfw-music": {
+      "description": "מדלג אוטומטית על שירים המסומנים כ־Explicit על ידי YouTube Music. מושהה אם תור מפורש חוזר על עצמו או שאין שיר הבא זמין.",
+      "name": "מוזיקת SFW"
+    },
+    "toast-autoclose": {
+      "description": "סגור אוטומטית הודעות טוסט של YouTube Music לאחר שלוש שניות",
+      "name": "סגירה אוטומטית של טוסטים"
+    },
+    "statusbar-lyrics": {
+      "settings": {
+        "include-pronunciation": "כלול הגייה"
+      }
+    },
+    "dismiss-multidevice-popup": {
+      "name": "סגירת חלון קופץ של ריבוי מכשירים",
+      "description": "סוגר אוטומטית את החלון הקופץ \"האזנה במכשיר זה\" שמופיע כשהניגון מתחיל במכשיר אחר."
+    },
+    "memory-saver": {
+      "description": "מנקה את מטמוני המשאבים של הרנדרר כשהחלון מוסתר לאחר שהם גדלים מעבר לסף",
+      "name": "חוסך זיכרון",
+      "settings": {
+        "threshold": "סף מטמון",
+        "threshold-description": "מנקה את המטמונים כאשר הזיכרון הפעיל שלהם עובר את הסף הזה בזמן שהחלון מוסתר"
+      }
+    }
+  },
+  "settings-ui": {
+    "name": "ממשק הגדרות",
+    "description": "מוסיף פאנל הגדרות בתוך האפליקציה, שנפתח מסרגל הצד",
+    "title": "הגדרות",
+    "settings": {
+      "show-button": "הצג את פריט ההגדרות בסרגל הצד",
+      "show-button-description": "כבה זאת כדי לשמור על סרגל צד נקי; ההגדרות עדיין נמצאות תחת ניווט → פתח הגדרות.",
+      "separate-window": "פתח תמיד את ההגדרות בחלון נפרד",
+      "separate-window-description": "פותח את חלון ההגדרות העצמאי, כפי שפריט המגש עושה, במקום הפאנל שבתוך האפליקציה."
+    },
+    "search-placeholder": "חיפוש הגדרות",
+    "search-results": "תוצאות חיפוש",
+    "search-matching": "תואם ל־“{{query}}”",
+    "no-match": "אין הגדרות שתואמות ל־“{{query}}”.",
+    "close": "סגור",
+    "edit-config": "ערוך config.json",
+    "restart-banner": "חלק מהשינויים דורשים הפעלה מחדש כדי לחול.",
+    "restart-now": "הפעל מחדש עכשיו",
+    "later": "מאוחר יותר",
+    "restart-pill": "הפעלה מחדש",
+    "restart-pill-hint": "דורש הפעלה מחדש",
+    "refresh-options": "רענן אפשרויות",
+    "move-up": "העבר למעלה",
+    "move-down": "העבר למטה",
+    "about": {
+      "tagline": "אפליקציית שולחן עבודה עשירה בתכונות עבור YouTube Music",
+      "versions": "גרסאות",
+      "version-app": "אפליקציה",
+      "version-build": "בנייה",
+      "version-electron": "Electron",
+      "version-chromium": "Chromium",
+      "version-node": "Node.js",
+      "version-platform": "פלטפורמה",
+      "version-innertube": "Innertube",
+      "links": "קישורים",
+      "link-repo": "מאגר",
+      "link-issue": "דווח על בעיה",
+      "link-releases": "מהדורות",
+      "link-license": "רישיון",
+      "actions": "פעולות",
+      "check-updates": "בדוק עדכונים",
+      "copy-debug": "העתק מידע לניפוי באגים",
+      "copied": "הועתק!"
+    },
+    "sections": {
+      "general": {
+        "label": "כללי"
+      },
+      "appearance": {
+        "label": "מראה"
+      },
+      "window": {
+        "label": "חלון ומגש"
+      },
+      "advanced": {
+        "label": "מתקדם"
+      },
+      "plugins": {
+        "label": "תוספים"
+      },
+      "flags": {
+        "label": "דגלים"
+      },
+      "about": {
+        "label": "אודות"
+      }
+    },
+    "groups": {
+      "updates-session": "עדכונים והפעלה",
+      "startup-language": "הפעלה ושפה",
+      "interface": "ממשק",
+      "context-menu": "תפריט הקשר",
+      "window-title": "חלון",
+      "window": "חלון",
+      "system": "מערכת",
+      "network": "רשת",
+      "performance": "ביצועים",
+      "configuration": "תצורה",
+      "updates": "עדכונים"
+    },
+    "stepper-decrement": "הקטן",
+    "stepper-increment": "הגדל",
+    "flags": {
+      "warning": "דגלי תכונות הם מתגים פנימיים של YouTube Music עצמה. שינוי שלהם עלול לשבור ניגון, פריסה או תכונות חשבון, והם אינם מכוסים בתמיכה. דריסות נשמרות רק עבור הדגלים ששינית, וניתן להסיר אותן באמצעות ביטול.",
+      "search-placeholder": "חיפוש דגלים",
+      "overridden": "נדרס",
+      "undo": "בטל",
+      "undo-hint": "מחק דריסה זו",
+      "empty": "הדף הזה אינו חושף דגלי תכונות.",
+      "no-match": "אין דגלים שתואמים ל־“{{query}}”.",
+      "add-name": "שם דגל חדש",
+      "add-value": "ערך",
+      "add-value-hint": "JSON כאשר ניתן לנתח אותו (true, 42, \"text\"), אחרת הטקסט עצמו",
+      "add": "הוסף"
+    },
+    "fields": {
+      "hide-dislike-button": "הסתר כפתור לא אהבתי",
+      "hide-video-captions": "הסתר כתוביות וידאו",
+      "context-menu": {
+        "hide-entry": "הסתר {{entry}}",
+        "entries": {
+          "add-to-queue": "הוסף לתור",
+          "delete-playlist": "מחק פלייליסט",
+          "dismiss-queue": "סגור תור",
+          "download": "הורד",
+          "go-to-album": "עבור לאלבום",
+          "go-to-artist": "עבור לאמן",
+          "go-to-playlist": "עבור לפלייליסט",
+          "like": "אהבתי",
+          "not-interested": "לא מעוניין",
+          "pin-to-listen-again": "נעץ להאזן שוב",
+          "play-next": "נגן הבא",
+          "remove-from-playlist": "הסר מפלייליסט",
+          "remove-from-queue": "הסר מהתור",
+          "report": "דווח",
+          "save-to-library": "שמור לספרייה",
+          "save-to-playlist": "שמור לפלייליסט",
+          "share": "שתף",
+          "shuffle-play": "נגן באקראי",
+          "start-mix": "התחל מיקס",
+          "stats-for-nerds": "סטטיסטיקות לחנונים"
+        }
+      },
+      "podcast-artist": "השתמש במשתתפי הפודקאסט כאמנים",
+      "podcast-artist-desc": "כבוי: האמן של פרק פודקאסט הוא הערוץ שפרסם אותו.",
+      "theme-preset": "פריסט",
+      "theme-variable-name": "משתנה",
+      "theme-variable-value": "ערך",
+      "theme-variable-add": "הוספת משתנה",
+      "performance-mode": "מצב ביצועים",
+      "performance-mode-desc": "הפחת מעט את הנאמנות החזותית כדי לקבל רינדור חסכוני יותר.",
+      "in-process-gpu": "מזג את תהליך ה-GPU לתהליך האפליקציה",
+      "in-process-gpu-desc": "ניסיוני: חוסך תהליך אחד, אך מעביר את זיכרון ה-GPU לתהליך הראשי ועלול לעבור לרינדור בתוכנה."
     }
   }
 }

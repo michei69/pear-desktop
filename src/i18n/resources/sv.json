@@ -65,7 +65,8 @@
         },
         "detail": "Vi beklagar besväret! Välj vad du vill göra:",
         "message": "Programmet svarar inte",
-        "title": "Fönstret svarar inte"
+        "title": "Fönstret svarar inte",
+        "details": "Orsak: {{error}}"
       },
       "update-available": {
         "buttons": {
@@ -76,6 +77,27 @@
         "detail": "En ny version är tillgänglig och kan laddas ned via {{downloadLink}}",
         "message": "En ny version är tillgänglig",
         "title": "Uppdatering tillgänglig"
+      },
+      "restart-summary": {
+        "detail": "Starta om appen för att tillämpa: {{changes}}",
+        "message": "Vissa ändringar kräver en omstart",
+        "title": "Omstart krävs"
+      },
+      "update-available-dev": {
+        "buttons": {
+          "ok": "OK",
+          "view": "Visa commits"
+        },
+        "title": "Uppdatering tillgänglig",
+        "message": "Den här utvecklingsversionen ligger efter master-grenen",
+        "detail": "Commiten som den här versionen körs på ({{commit}}) är äldre än den senaste commiten på master. Nyare commits kan visas på {{commitsLink}}"
+      },
+      "downgrade-warning": {
+        "title": "Byta tillbaka till stabil version?",
+        "message": "Den här betaversionen är nyare än den senaste stabila versionen.",
+        "detail": "Att byta tillbaka kan återställa vissa inställningar: att gå från en nyare version till en äldre kör inga migreringar och kan göra nyare inställningar oläsbara.",
+        "confirm": "Byt till stabil",
+        "cancel": "Avbryt"
       }
     },
     "menu": {
@@ -87,7 +109,8 @@
           "go-back": "Gå tillbaka",
           "go-forward": "Gå framåt",
           "quit": "Avsluta",
-          "restart": "Starta om appen"
+          "restart": "Starta om appen",
+          "open-settings": "Öppna inställningar"
         }
       },
       "options": {
@@ -129,7 +152,20 @@
             },
             "label": "Språk",
             "submenu": {
-              "to-help-translate": "Vill du hjälpa till att översätta? Klicka här"
+              "to-help-translate": "Vill du hjälpa till att översätta? Klicka här",
+              "sync": {
+                "label": "Synkronisera språk",
+                "submenu": {
+                  "from-youtube": "Från YouTube",
+                  "to-youtube": "Till YouTube"
+                },
+                "failure": {
+                  "dialog": {
+                    "title": "Språket ändrades inte",
+                    "message": "Språket eller språkinställningen finns inte i appen ännu."
+                  }
+                }
+              }
             }
           },
           "resume-on-start": "Återuppta den senaste låten när appen startar",
@@ -180,9 +216,37 @@
                 "label": "Tema",
                 "submenu": {
                   "import-css-file": "Importera en anpassad CSS-fil",
-                  "no-theme": "Inget tema"
+                  "no-theme": "Inget tema",
+                  "colors": {
+                    "label": "Färger"
+                  },
+                  "presets": {
+                    "label": "Förval",
+                    "default": "Standard",
+                    "custom": "Anpassad"
+                  },
+                  "reset-colors": "Återställ färger",
+                  "open-themes-folder": "Öppna temamappen"
                 }
-              }
+              },
+              "use-ytm-icons": "Använd YouTube Musics originalikoner"
+            }
+          },
+          "updates": {
+            "label": "Uppdateringar",
+            "check": "Sök efter uppdateringar",
+            "auto-update": "Sök automatiskt efter uppdateringar",
+            "channel": {
+              "label": "Uppdateringskanal",
+              "stable": "Stabil",
+              "beta": "Beta"
+            }
+          },
+          "shared-links": {
+            "label": "Delade länkar",
+            "submenu": {
+              "strip-music": "Ta bort 'music.'",
+              "strip-si": "Ta bort '&si='"
             }
           }
         }
@@ -219,6 +283,15 @@
       "dislike": "Ogilla",
       "unlike": "Till skillnad från",
       "undislike": "Ta bort ogillande"
+    },
+    "themes": {
+      "consent": {
+        "title": "Köra temakod?",
+        "message": "\"{{theme}}\" innehåller ett skript som kommer att köras med full åtkomst till appen.",
+        "detail": "Temaskript är inte sandlådade. Den här koden kan läsa och ändra dina inställningar, kommunicera med appen och göra allt annat som appen själv kan göra. Tillåt detta endast om du litar på var temat kommer ifrån. Du kan återkalla detta genom att ta bort temat.",
+        "allow": "Kör det här temat",
+        "cancel": "Avbryt"
+      }
     }
   },
   "plugins": {
@@ -261,7 +334,7 @@
         "opacity": {
           "label": "Opacitet",
           "submenu": {
-            "percent": "{{opacity}}%"
+            "percent": "{{opacity}} %"
           }
         },
         "quality": {
@@ -273,7 +346,7 @@
         "size": {
           "label": "Storlek",
           "submenu": {
-            "percent": "{{size}}%"
+            "percent": "{{size}} %"
           }
         },
         "smoothness-transition": {
@@ -340,6 +413,10 @@
         },
         "port": {
           "label": "Port"
+        },
+        "mcp": {
+          "label": "MCP-server",
+          "description": "Tillhandahåller v2-API:et som MCP-verktyg på /mcp. Använder samma auktorisering som resten av API:et."
         }
       },
       "name": "API-server [Beta]",
@@ -352,11 +429,20 @@
           "label": "Ange porten för API-servern:",
           "title": "Port"
         }
+      },
+      "settings": {
+        "choose-file": "Välj fil…"
       }
     },
     "audio-compressor": {
       "description": "Använd dynamikkomprimering på ljudet (sänker volymen på signalens starkaste delar och höjer volymen på de svagaste)",
-      "name": "Ljudkompressor"
+      "name": "Ljudkompressor",
+      "menu": {
+        "auto-track-gain": "Automatisk spårförstärkning (höj tysta spår)",
+        "maximum-gain": {
+          "label": "Maximal förstärkning"
+        }
+      }
     },
     "auth-proxy-adapter": {
       "description": "Stöd för autentiseringsproxytjänster",
@@ -422,7 +508,10 @@
           "label": "Format"
         }
       },
-      "name": "Klocka"
+      "name": "Klocka",
+      "settings": {
+        "hour-12": "Använd 12-timmarsformat"
+      }
     },
     "compact-sidebar": {
       "description": "Visa alltid sidofältet i kompakt läge",
@@ -442,12 +531,24 @@
             "fade-scaling": {
               "label": "Toningsskala",
               "linear": "Linjär",
-              "logarithmic": "Logaritmisk"
+              "logarithmic": "Logaritmisk",
+              "equal-power": "Lika effekt"
             },
             "seconds-before-end": "Starta övertoningen N sekunder före slutet"
           },
           "title": "Inställningar för övertoning"
         }
+      },
+      "settings": {
+        "fade-in": "Tona in",
+        "fade-out": "Tona ut",
+        "seconds-before-end": "Starta före slutet",
+        "fade-scaling": "Toningsskalning",
+        "scaling": {
+          "linear": "Linjär",
+          "logarithmic": "Logaritmisk"
+        },
+        "seconds-before-end-description": "Antal sekunder före slutet av ett spår som övergången till nästa spår börjar"
       }
     },
     "custom-output-device": {
@@ -502,6 +603,13 @@
           "label": "Ange tidsgränsen för inaktivitet i sekunder:",
           "title": "Ange tidsgräns för inaktivitet"
         }
+      },
+      "settings": {
+        "auto-reconnect": "Återanslut automatiskt",
+        "activity-timeout-enabled": "Rensa närvaron vid paus",
+        "activity-timeout-time": "Rensa efter",
+        "hide-github-button": "Dölj knappen ”Visa på GitHub”",
+        "hide-duration-left": "Dölj återstående tid"
       }
     },
     "do-not-track": {
@@ -509,7 +617,19 @@
       "menu": {
         "blocker": "Blockerare"
       },
-      "name": "Spåra inte"
+      "name": "Spåra inte",
+      "settings": {
+        "cache": "Cachelagra blockeringslistor",
+        "disable-default-lists": "Inaktivera standardblockeringslistor"
+      },
+      "dialog": {
+        "reload": {
+          "title": "Läs in sidan igen",
+          "message": "Inställningarna för Do Not Track har ändrats.",
+          "detail": "Nätverksreglerna uppdateras utan att appen startas om. Läs in sidan igen för att ändringarna av sidofiltren ska gälla fullt ut. Uppspelningen kan avbrytas. Du kan läsa in sidan igen senare.",
+          "reload-now": "Läs in sidan igen nu"
+        }
+      }
     },
     "downloader": {
       "backend": {
@@ -551,7 +671,8 @@
           "saving": "Sparar…",
           "trying-to-get-playlist-id": "Försöker hämta spelliste-ID:t: {{playlistId}}",
           "video-id-not-found": "Videon hittades inte",
-          "writing-id3": "Skriver ID3-taggar…"
+          "writing-id3": "Skriver ID3-taggar…",
+          "ffmpeg-missing": "FFmpeg hittades inte. Installera FFmpeg och se till att `ffmpeg` finns i din PATH för att kunna ladda ner i det här formatet."
         }
       },
       "description": "Hämtar MP3-filer eller originalljud direkt från gränssnittet",
@@ -582,6 +703,10 @@
       },
       "templates": {
         "button": "Ladda ned"
+      },
+      "settings": {
+        "finish-folder": "Mapp för slutförda nedladdningar",
+        "finish-folder-description": "Lämna tom för att använda nedladdningsmappen ovan."
       }
     },
     "equalizer": {
@@ -649,6 +774,44 @@
           "disconnected": "Frånkopplad",
           "guest": "Ansluten som gäst",
           "host": "Ansluten som värd"
+        },
+        "diagnostics": {
+          "check": {
+            "nat": "Nätverkstyp (NAT)",
+            "signaling": "Signaliseringsserver",
+            "stun": "Direktanslutning (STUN)",
+            "turn": "Reläreserv (TURN)"
+          },
+          "copy": "Kopiera sammanfattning",
+          "detail": {
+            "check-error": "Kontrollen misslyckades: {{reason}}",
+            "public-ip": "Offentlig adress: {{ip}}",
+            "public-ip-hidden": "Offentlig adress: klicka för att visa",
+            "signaling-fail": "Kan inte nås ({{reason}})",
+            "signaling-ok": "Kan nås",
+            "stun-fail": "Ingen offentlig adress (UDP/STUN blockerat)",
+            "stun-ok": "Offentlig adress hittades",
+            "turn-fail": "Reläet kan inte nås",
+            "turn-ok": "Reläet kan nås"
+          },
+          "nat": {
+            "blocked": "UDP eller STUN blockerat",
+            "open": "Öppen / kon (direkt fungerar)",
+            "symmetric": "Symmetrisk (relä krävs)",
+            "unknown": "Obestämd"
+          },
+          "run-again": "Kör igen",
+          "running": "Kör kontroller…",
+          "test": "Testa anslutning",
+          "title": "Anslutningsdiagnostik",
+          "verdict": {
+            "blocked": "Det här nätverket blockerar troligen Music Together. Prova ett annat nätverk eller en VPN.",
+            "error": "Det gick inte att köra diagnostiken. Se konsolen för detaljer.",
+            "good": "Direktanslutningar bör fungera på det här nätverket.",
+            "limited": "Det gick inte att helt fastställa det här nätverket. Direktanslutningar kan fortfarande fungera; om de misslyckas, prova ett annat nätverk.",
+            "no-signaling": "Kan inte nå Music Together-servern. Kontrollera brandväggen eller internetanslutningen.",
+            "relay": "Direktanslutningar kan misslyckas här; ett relä kommer att användas (fungerar, men ger högre latens)."
+          }
         }
       },
       "name": "Music Together [Beta]",
@@ -664,7 +827,10 @@
         "permission-changed": "Behörigheten för Music Together ändrades till \"{{permission}}\"",
         "remove-song-failed": "Det gick inte att ta bort låten",
         "user-connected": "{{name}} gick med i Music Together",
-        "user-disconnected": "{{name}} lämnade Music Together"
+        "user-disconnected": "{{name}} lämnade Music Together",
+        "diagnostics-copied": "Diagnostiksammanfattningen kopierades till urklipp",
+        "diagnostics-copy-failed": "Det gick inte att kopiera diagnostiksammanfattningen",
+        "diagnostics-running": "Vänta tills anslutningstestet är klart"
       }
     },
     "navigation": {
@@ -722,7 +888,14 @@
         },
         "save-window-position": "Spara fönsterposition",
         "save-window-size": "Spara fönsterstorlek",
-        "use-native-pip": "Använd webbläsarens inbyggda bild-i-bild"
+        "use-native-pip": "Använd webbläsarens inbyggda bild-i-bild",
+        "prompt": {
+          "title": "Bild-i-bild",
+          "label": "Konfigurera snabbtangenten för bild-i-bild",
+          "keybind-options": {
+            "hotkey": "Snabbtangent för att växla bild-i-bild"
+          }
+        }
       },
       "name": "Bild-i-bild",
       "templates": {
@@ -734,6 +907,9 @@
       "name": "Uppspelningshastighet",
       "templates": {
         "button": "Hastighet"
+      },
+      "menu": {
+        "no-preserves-pitch": "Inaktivera bevarande av tonhöjd"
       }
     },
     "precise-volume": {
@@ -757,6 +933,12 @@
           "label": "Välj steg för höjning och sänkning av volymen",
           "title": "Volymsteg"
         }
+      },
+      "settings": {
+        "steps": "Volymsteg",
+        "arrows-shortcut": "Genvägar med piltangenter",
+        "shortcut-up": "Global genväg: höj volymen",
+        "shortcut-down": "Global genväg: sänk volymen"
       }
     },
     "quality-changer": {
@@ -785,6 +967,10 @@
             "message": "Det gick inte att autentisera med Last.fm\nDölj popup-fönstret fram till nästa omstart.",
             "title": "Autentisering misslyckades"
           }
+        },
+        "invalid-regex": {
+          "title": "Ogiltigt reguljärt uttryck",
+          "message": "Reguljärt uttryck på rad {{line}} är ogiltigt: {{error}}"
         }
       },
       "menu": {
@@ -792,11 +978,15 @@
           "api-settings": "API-inställningar för Last.fm"
         },
         "listenbrainz": {
-          "token": "Ange användartoken för ListenBrainz"
+          "token": "Ange användartoken för ListenBrainz",
+          "api-root": "ListenBrainz API-URL"
         },
         "scrobble-alternative-artist": "Använd alternativa artister",
         "scrobble-alternative-title": "Använd alternativa titlar",
-        "scrobble-other-media": "Scrobbla annan media"
+        "scrobble-other-media": "Scrobbla annan media",
+        "regex-filters": "Filter för reguljära uttryck",
+        "use-musicbrainz": "Använd MusicBrainz för att korrigera metadata",
+        "musicbrainz-email": "Kontakt-e-post för MusicBrainz"
       },
       "name": "Scrobbler",
       "prompt": {
@@ -808,8 +998,23 @@
           "token": {
             "label": "Ange din användartoken för ListenBrainz:",
             "title": "ListenBrainz-token"
+          },
+          "api-root": {
+            "label": "Ange bas-URL för API:et:",
+            "title": "ListenBrainz API-URL"
           }
+        },
+        "regex-filter-multi": {
+          "label": "Ange ett reguljärt uttryck per rad:"
+        },
+        "musicbrainz-email": {
+          "title": "Kontakt-e-post för MusicBrainz",
+          "label": "Ange en e-postadress för MusicBrainz API:"
         }
+      },
+      "settings": {
+        "lastfm-api-root": "Last.fm API-URL",
+        "musicbrainz-email-description": "Används som kontaktinformation för MusicBrainz API; krävs för metadatakorrigering med MusicBrainz"
       }
     },
     "shortcuts": {
@@ -829,15 +1034,34 @@
           "label": "Välj globala kortkommandon för uppspelning:",
           "title": "Globala kortkommandon"
         }
+      },
+      "settings": {
+        "global-keybinds": "Globala tangentbordsgenvägar (fungerar i hela appen)",
+        "local-keybinds": "Lokala tangentbordsgenvägar (endast när fönstret är i fokus)"
       }
     },
     "skip-silences": {
       "description": "Hoppa automatiskt över tysta partier i låtar",
-      "name": "Hoppa över tysta partier"
+      "name": "Hoppa över tysta partier",
+      "settings": {
+        "only-skip-beginning": "Hoppa bara över tystnad i början av ett spår"
+      }
     },
     "sponsorblock": {
       "description": "Hoppar automatiskt över icke-musikdelar som intro/outro eller delar av musikvideor där ingen musik spelas",
-      "name": "SponsorBlock"
+      "name": "SponsorBlock",
+      "settings": {
+        "categories": "Segment att hoppa över",
+        "category": {
+          "sponsor": "Sponsor",
+          "intro": "Intro",
+          "outro": "Outro",
+          "interaction": "Interaktionspåminnelse",
+          "selfpromo": "Egenreklam",
+          "music_offtopic": "Icke-musikavsnitt"
+        },
+        "api-url": "API-URL"
+      }
     },
     "synced-lyrics": {
       "description": "Visar synkroniserade låttexter med hjälp av tjänster som LRClib.",
@@ -1050,6 +1274,30 @@
         "show-custom-search-button": {
           "label": "Visa anpassad sökknapp",
           "tooltip": "Visa en sökknapp i textväljaren som låter dig åsidosätta sökfrågan och artisten för den aktuella låten."
+        },
+        "provider-priority": {
+          "tooltip": "Leverantörerna provas i den här ordningen: den första med text till den aktuella låten vinner. Använd pilarna för att ändra ordning."
+        },
+        "prefer-synced": {
+          "tooltip": "Välj den första leverantören i listan med tidsynkroniserad text, i stället för den första med någon text."
+        },
+        "previous-provider": {
+          "tooltip": "Föregående leverantör"
+        },
+        "next-provider": {
+          "tooltip": "Nästa leverantör"
+        },
+        "custom-search-button": {
+          "tooltip": "Anpassad sökfråga"
+        },
+        "star-provider": {
+          "tooltip": "Använd alltid den här leverantören för den här låten, oavsett prioritetsordningen. Faller tillbaka till den vanliga ordningen om den inte har text för låten."
+        },
+        "unstar-provider": {
+          "tooltip": "Sluta fästa den här leverantören vid den här låten."
+        },
+        "use-priority-list": {
+          "tooltip": "Prova leverantörerna i ordningen nedan. Stäng av detta för att låta texten avgöra i stället: den leverantör som har bäst text för låten vinner."
         }
       },
       "name": "Synkroniserade låttexter",
@@ -1061,6 +1309,22 @@
         "duration-mismatch": "⚠️ – Låttexterna kan vara osynkroniserade på grund av en skillnad i spårlängd.",
         "inexact": "⚠️ – Låttexterna för den här låten kanske inte stämmer exakt",
         "instrumental": "⚠️ – Det här är en instrumentallåt"
+      },
+      "settings": {
+        "precise-timing": "Exakt timing",
+        "show-inexact": "Visa inexakt text",
+        "show-time-codes": "Visa tidskoder",
+        "romanization": "Romanisera text",
+        "line-effect": "Radeffekt",
+        "effect": {
+          "fancy": "Snygg",
+          "scale": "Skala",
+          "offset": "Förskjutning",
+          "focus": "Fokus"
+        },
+        "prefer-synced": "Föredra synkroniserad text",
+        "provider-priority": "Leverantörsprioritet",
+        "use-priority-list": "Använd prioritetslista"
       }
     },
     "taskbar-mediacontrol": {
@@ -1077,7 +1341,7 @@
         "opacity": {
           "label": "Opacitet",
           "submenu": {
-            "percent": "{{opacity}}%"
+            "percent": "{{opacity}} %"
           }
         },
         "type": {
@@ -1095,7 +1359,10 @@
           }
         }
       },
-      "name": "Genomskinlig spelare"
+      "name": "Genomskinlig spelare",
+      "settings": {
+        "type-description": "Bakgrundsmaterial som används för fönstrets transparens"
+      }
     },
     "tuna-obs": {
       "description": "Integrering med OBS-tillägget Tuna",
@@ -1137,7 +1404,26 @@
       "menu": {
         "visualizer-type": "Typ av visualiserare"
       },
-      "name": "Visualiserare"
+      "name": "Visualiserare",
+      "settings": {
+        "preset": "Förinställning",
+        "blend-time": "Blandningstid",
+        "effect": "Effekt",
+        "accuracy": "Noggrannhet",
+        "max-height": "Maxhöjd",
+        "max-size": "Maxstorlek",
+        "line-width": "Linjebredd",
+        "color": "Färg",
+        "shadow-blur": "Skuggans oskärpa",
+        "shadow-color": "Skuggfärg",
+        "fade-side": "Tona kanter",
+        "prettify": "Snygga till",
+        "prettify-description": "Avsmalna staplarna mot kanterna",
+        "dottify": "Pricka",
+        "dottify-description": "Rita punkter i stället för en sammanhängande linje",
+        "horizontal-align": "Horisontell justering",
+        "vertical-align": "Vertikal justering"
+      }
     },
     "audio-only": {
       "description": "Tvingar ljudläge — blockerar alla videoströmmar på nätverks- och spelarnivå för att spara RAM och bandbredd",
@@ -1148,7 +1434,13 @@
       "menu": {
         "log-to-console": "Logga återställningshändelser till konsolen"
       },
-      "name": "Uppspelningsåterställning"
+      "name": "Uppspelningsåterställning",
+      "settings": {
+        "stall-timeout": "Tidsgräns för stockning",
+        "stall-timeout-description": "Hur länge uppspelningen får vara utan framsteg innan ett återställningsförsök görs",
+        "max-retries": "Max antal återförsök",
+        "max-retries-description": "Antal återställningsförsök innan den hoppar till nästa låt"
+      }
     },
     "playlist-search": {
       "description": "Lägger till en sökruta för att filtrera spellistor i sidofältet och dialogrutan Lägg till i spellista",
@@ -1157,6 +1449,196 @@
         "search-placeholder": "Sök spellistor",
         "no-results": "Inga spellistor hittades"
       }
+    },
+    "always-show-volume-slider": {
+      "name": "Visa alltid volymreglaget",
+      "description": "Håller volymreglaget synligt och dragbart i stället för att bara visa det vid hovring."
+    },
+    "fullscreen-auto-hide": {
+      "description": "Dölj spelarkontrollerna och muspekaren automatiskt efter några sekunders inaktivitet i helskärm",
+      "name": "Automatisk döljning i helskärm"
+    },
+    "prefer-song": {
+      "description": "Spela låten i stället för musikvideon när ett albumspår är en video",
+      "name": "Föredra låt"
+    },
+    "search-commands": {
+      "commands": {
+        "play": "Spela en video från en YouTube-länk eller ett id",
+        "settings": "Öppna inställningarna"
+      },
+      "description": "Skriv / i sökrutan för att köra kommandon, med autokomplettering för deras argument",
+      "name": "Sökkommandon",
+      "settings": {
+        "open-keybind": "Genväg för att öppna",
+        "open-keybind-description": "Accelerator i Electron-stil, t.ex. CmdOrCtrl+/ eller Alt+Space",
+        "open-shortcut": "Öppna sökrutan varifrån som helst",
+        "open-shortcut-description": "Tar fram sökrutan redan i kommandoläge, som Spotlight. Trycker man igen stängs den."
+      }
+    },
+    "seek-shortcuts": {
+      "description": "Spola 5 sekunder bakåt/framåt med vänster/höger piltangent",
+      "name": "Spolgenvägar"
+    },
+    "sfw-music": {
+      "description": "Hoppar automatiskt över låtar som YouTube Music markerat som Explicit. Pausar om en explicit kö upprepas eller ingen nästa låt finns.",
+      "name": "SFW-musik"
+    },
+    "toast-autoclose": {
+      "description": "Stäng YouTube Music-toastmeddelanden automatiskt efter tre sekunder",
+      "name": "Autostäng toastmeddelanden"
+    },
+    "statusbar-lyrics": {
+      "settings": {
+        "include-pronunciation": "Inkludera uttal"
+      }
+    },
+    "dismiss-multidevice-popup": {
+      "name": "Stäng popup för flera enheter",
+      "description": "Stänger automatiskt popupen \"Lyssna på den här enheten\" som visas när uppspelning startar på en annan enhet."
+    },
+    "memory-saver": {
+      "description": "Rensar renderarens resurscachar när fönstret är dolt och de har vuxit över ett tröskelvärde",
+      "name": "Minnesbespararen",
+      "settings": {
+        "threshold": "Tröskelvärde för cache",
+        "threshold-description": "Rensa cacharna när deras aktiva minne överstiger detta medan fönstret är dolt"
+      }
+    }
+  },
+  "settings-ui": {
+    "name": "Inställningsgränssnitt",
+    "description": "Lägger till en inställningspanel i appen, som öppnas från sidofältet",
+    "title": "Inställningar",
+    "settings": {
+      "show-button": "Visa inställningsposten i sidofältet",
+      "show-button-description": "Stäng av detta för att hålla sidofältet rent; Inställningar finns fortfarande under Navigering → Öppna inställningar.",
+      "separate-window": "Öppna alltid Inställningar i ett separat fönster",
+      "separate-window-description": "Öppnar det fristående inställningsfönstret, som via posten i aktivitetsfältet, i stället för panelen i appen."
+    },
+    "search-placeholder": "Sök inställningar",
+    "search-results": "Sökresultat",
+    "search-matching": "Matchar “{{query}}”",
+    "no-match": "Inga inställningar matchar “{{query}}”.",
+    "close": "Stäng",
+    "edit-config": "Redigera config.json",
+    "restart-banner": "Vissa ändringar kräver en omstart för att träda i kraft.",
+    "restart-now": "Starta om nu",
+    "later": "Senare",
+    "restart-pill": "omstart",
+    "restart-pill-hint": "Kräver omstart",
+    "refresh-options": "Uppdatera alternativ",
+    "move-up": "Flytta upp",
+    "move-down": "Flytta ned",
+    "about": {
+      "tagline": "En funktionsrik skrivbordsapp för YouTube Music",
+      "versions": "Versioner",
+      "version-app": "App",
+      "version-build": "Bygge",
+      "version-electron": "Electron",
+      "version-chromium": "Chromium",
+      "version-node": "Node.js",
+      "version-platform": "Plattform",
+      "version-innertube": "Innertube",
+      "links": "Länkar",
+      "link-repo": "Kodförråd",
+      "link-issue": "Rapportera ett problem",
+      "link-releases": "Utgåvor",
+      "link-license": "Licens",
+      "actions": "Åtgärder",
+      "check-updates": "Sök efter uppdateringar",
+      "copy-debug": "Kopiera felsökningsinfo",
+      "copied": "Kopierat!"
+    },
+    "sections": {
+      "general": {
+        "label": "Allmänt"
+      },
+      "appearance": {
+        "label": "Utseende"
+      },
+      "window": {
+        "label": "Fönster och systemfält"
+      },
+      "advanced": {
+        "label": "Avancerat"
+      },
+      "plugins": {
+        "label": "Tillägg"
+      },
+      "flags": {
+        "label": "Flaggor"
+      },
+      "about": {
+        "label": "Om"
+      }
+    },
+    "groups": {
+      "updates-session": "Uppdateringar och session",
+      "startup-language": "Uppstart och språk",
+      "interface": "Gränssnitt",
+      "context-menu": "Kontextmeny",
+      "window-title": "Fönster",
+      "window": "Fönster",
+      "system": "System",
+      "network": "Nätverk",
+      "performance": "Prestanda",
+      "configuration": "Konfiguration",
+      "updates": "Uppdateringar"
+    },
+    "stepper-decrement": "Minska",
+    "stepper-increment": "Öka",
+    "flags": {
+      "warning": "Funktionsflaggor är YouTube Musics egna interna växlar. Att ändra dem kan förstöra uppspelning, layout eller kontofunktioner, och de omfattas inte av supporten. Åsidosättningar sparas endast för de flaggor du ändrar och kan tas bort med Ångra.",
+      "search-placeholder": "Sök flaggor",
+      "overridden": "åsidosatt",
+      "undo": "Ångra",
+      "undo-hint": "Ta bort denna åsidosättning",
+      "empty": "Den här sidan visar inga funktionsflaggor.",
+      "no-match": "Inga flaggor matchar “{{query}}”.",
+      "add-name": "Nytt flagnamn",
+      "add-value": "Värde",
+      "add-value-hint": "JSON när det kan tolkas (true, 42, \"text\"), annars själva texten",
+      "add": "Lägg till"
+    },
+    "fields": {
+      "hide-dislike-button": "Dölj ogillaknappen",
+      "hide-video-captions": "Dölj videoundertexter",
+      "context-menu": {
+        "hide-entry": "Dölj {{entry}}",
+        "entries": {
+          "add-to-queue": "Lägg till i kön",
+          "delete-playlist": "Ta bort spellista",
+          "dismiss-queue": "Stäng kön",
+          "download": "Ladda ned",
+          "go-to-album": "Gå till album",
+          "go-to-artist": "Gå till artist",
+          "go-to-playlist": "Gå till spellista",
+          "like": "Gilla",
+          "not-interested": "Inte intresserad",
+          "pin-to-listen-again": "Fäst i Lyssna igen",
+          "play-next": "Spela nästa",
+          "remove-from-playlist": "Ta bort från spellista",
+          "remove-from-queue": "Ta bort från kön",
+          "report": "Rapportera",
+          "save-to-library": "Spara i biblioteket",
+          "save-to-playlist": "Spara i spellista",
+          "share": "Dela",
+          "shuffle-play": "Blanda uppspelning",
+          "start-mix": "Starta mix",
+          "stats-for-nerds": "Statistik för nördar"
+        }
+      },
+      "podcast-artist": "Använd poddeltagare som artister",
+      "podcast-artist-desc": "Avstängt: artisten för ett poddavsnitt är kanalen som publicerade det.",
+      "theme-preset": "Förinställning",
+      "theme-variable-name": "Variabel",
+      "theme-variable-value": "Värde",
+      "theme-variable-add": "Lägg till variabel",
+      "performance-mode": "Prestandaläge",
+      "performance-mode-desc": "Byt bort en del visuell kvalitet mot billigare rendering.",
+      "in-process-gpu": "Slå samman GPU-processen med appens process",
+      "in-process-gpu-desc": "Experimentellt: sparar en process, men flyttar GPU-minnet till huvudprocessen och kan falla tillbaka på mjukvarurendering."
     }
   }
 }

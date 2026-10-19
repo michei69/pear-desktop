@@ -65,7 +65,8 @@
         },
         "detail": "Chúng tôi xin lỗi về sự bất tiện này! hãy chọn việc cần làm:",
         "message": "Ứng dụng không phản hồi",
-        "title": "Cửa sổ không phản hồi"
+        "title": "Cửa sổ không phản hồi",
+        "details": "Lý do: {{error}}"
       },
       "update-available": {
         "buttons": {
@@ -76,6 +77,27 @@
         "detail": "Đã có phiên bản mới hơn, bạn có thể tải xuống tại {{downloadLink}}",
         "message": "Đã có một phiên bản mới",
         "title": "Cập nhật có sẵn"
+      },
+      "restart-summary": {
+        "detail": "Khởi động lại ứng dụng để áp dụng: {{changes}}",
+        "message": "Một số thay đổi cần khởi động lại",
+        "title": "Cần khởi động lại"
+      },
+      "update-available-dev": {
+        "buttons": {
+          "ok": "OK",
+          "view": "Xem các commit"
+        },
+        "title": "Có bản cập nhật",
+        "message": "Bản dựng dev này chậm hơn nhánh master",
+        "detail": "Commit mà bản dựng này chạy ({{commit}}) cũ hơn commit mới nhất trên master. Có thể xem các commit mới hơn tại {{commitsLink}}"
+      },
+      "downgrade-warning": {
+        "title": "Chuyển về bản ổn định?",
+        "message": "Bản beta này mới hơn bản ổn định mới nhất.",
+        "detail": "Chuyển về có thể đặt lại một số cài đặt: đi từ phiên bản mới hơn xuống phiên bản cũ hơn không chạy quá trình di trú nào và có thể khiến các cài đặt mới hơn không thể đọc được.",
+        "confirm": "Chuyển sang bản ổn định",
+        "cancel": "Hủy"
       }
     },
     "menu": {
@@ -87,7 +109,8 @@
           "go-back": "Quay lại",
           "go-forward": "Tiến về trước",
           "quit": "Thoát",
-          "restart": "Khởi động lại ứng dụng"
+          "restart": "Khởi động lại ứng dụng",
+          "open-settings": "Mở Cài đặt"
         }
       },
       "options": {
@@ -129,7 +152,20 @@
             },
             "label": "Ngôn ngữ",
             "submenu": {
-              "to-help-translate": "— Bạn muốn hỗ trợ dịch? Bấm vào đây —"
+              "to-help-translate": "— Bạn muốn hỗ trợ dịch? Bấm vào đây —",
+              "sync": {
+                "label": "Đồng bộ ngôn ngữ",
+                "submenu": {
+                  "from-youtube": "Từ YouTube",
+                  "to-youtube": "Sang YouTube"
+                },
+                "failure": {
+                  "dialog": {
+                    "title": "Ngôn ngữ chưa được thay đổi",
+                    "message": "Ngôn ngữ hoặc vùng miền chưa tồn tại trong ứng dụng."
+                  }
+                }
+              }
             }
           },
           "resume-on-start": "Tiếp tục bài hát cuối cùng khi ứng dụng khởi động",
@@ -180,9 +216,37 @@
                 "label": "Chủ đề",
                 "submenu": {
                   "import-css-file": "Nhập tệp CSS tùy chỉnh",
-                  "no-theme": "Không có chủ đề"
+                  "no-theme": "Không có chủ đề",
+                  "colors": {
+                    "label": "Màu sắc"
+                  },
+                  "presets": {
+                    "label": "Mẫu có sẵn",
+                    "default": "Mặc định",
+                    "custom": "Tùy chỉnh"
+                  },
+                  "reset-colors": "Đặt lại màu",
+                  "open-themes-folder": "Mở thư mục chủ đề"
                 }
-              }
+              },
+              "use-ytm-icons": "Dùng biểu tượng gốc của YouTube Music"
+            }
+          },
+          "updates": {
+            "label": "Cập nhật",
+            "check": "Kiểm tra cập nhật",
+            "auto-update": "Tự động kiểm tra cập nhật",
+            "channel": {
+              "label": "Kênh cập nhật",
+              "stable": "Ổn định",
+              "beta": "Beta"
+            }
+          },
+          "shared-links": {
+            "label": "Liên kết được chia sẻ",
+            "submenu": {
+              "strip-music": "Bỏ 'music.'",
+              "strip-si": "Bỏ '&si='"
             }
           }
         }
@@ -219,6 +283,15 @@
       "dislike": "Không thích",
       "unlike": "Không giống như",
       "undislike": "Bỏ dislike"
+    },
+    "themes": {
+      "consent": {
+        "title": "Chạy mã chủ đề?",
+        "message": "\"{{theme}}\" chứa một tập lệnh sẽ chạy với toàn quyền truy cập vào ứng dụng.",
+        "detail": "Các tập lệnh chủ đề không được sandbox. Mã này có thể đọc và thay đổi cài đặt của bạn, giao tiếp với ứng dụng và làm bất kỳ điều gì khác mà chính ứng dụng có thể làm. Chỉ cho phép nếu bạn tin tưởng nguồn gốc của chủ đề. Bạn có thể thu hồi quyền này bằng cách xóa chủ đề.",
+        "allow": "Chạy chủ đề này",
+        "cancel": "Hủy"
+      }
     }
   },
   "plugins": {
@@ -344,6 +417,10 @@
               "dialogTitle": "Chọn tệp khóa riêng HTTPS"
             }
           }
+        },
+        "mcp": {
+          "label": "Máy chủ MCP",
+          "description": "Cung cấp API v2 dưới dạng công cụ MCP tại /mcp. Dùng cùng cơ chế phân quyền như phần còn lại của API."
         }
       },
       "name": "Máy chủ API [Thử nghiệm]",
@@ -356,11 +433,20 @@
           "label": "Nhập cổng cho máy chủ API:",
           "title": "Cổng"
         }
+      },
+      "settings": {
+        "choose-file": "Chọn tệp…"
       }
     },
     "audio-compressor": {
       "description": "Áp dụng tính năng nén cho âm thanh (giảm âm lượng của phần to nhất của tín hiệu và tăng âm lượng của phần nhỏ nhất)",
-      "name": "Bộ nén âm thanh"
+      "name": "Bộ nén âm thanh",
+      "menu": {
+        "auto-track-gain": "Tự động chỉnh độ lợi bài hát (tăng âm cho bài nhỏ)",
+        "maximum-gain": {
+          "label": "Độ lợi tối đa"
+        }
+      }
     },
     "auth-proxy-adapter": {
       "description": "Ủng hộ cho mục đích duy trì dịch vụ xác minh proxy",
@@ -426,6 +512,9 @@
           "display-seconds": "Hiển thị giây",
           "24-hour-format": "Định dạng 24h"
         }
+      },
+      "settings": {
+        "hour-12": "Dùng định dạng 12 giờ"
       }
     },
     "compact-sidebar": {
@@ -446,12 +535,24 @@
             "fade-scaling": {
               "label": "Làm mờ theo tỉ lệ",
               "linear": "Trực tuyến",
-              "logarithmic": "Logarit"
+              "logarithmic": "Logarit",
+              "equal-power": "Đồng công suất"
             },
             "seconds-before-end": "Xen kẽ N giây trước khi kết thúc"
           },
           "title": "Tùy chọn xen kẽ"
         }
+      },
+      "settings": {
+        "fade-in": "Tăng dần",
+        "fade-out": "Giảm dần",
+        "seconds-before-end": "Bắt đầu trước khi kết thúc",
+        "fade-scaling": "Tỷ lệ chuyển tiếp",
+        "scaling": {
+          "linear": "Tuyến tính",
+          "logarithmic": "Logarit"
+        },
+        "seconds-before-end-description": "Số giây trước khi kết thúc bài hát mà tại đó quá trình chuyển tiếp sang bài tiếp theo bắt đầu"
       }
     },
     "custom-output-device": {
@@ -506,6 +607,13 @@
           "label": "Nhập thời gian chờ không hoạt động tính bằng giây:",
           "title": "Đặt thời gian chờ không hoạt động"
         }
+      },
+      "settings": {
+        "auto-reconnect": "Tự động kết nối lại",
+        "activity-timeout-enabled": "Xóa trạng thái khi tạm dừng",
+        "activity-timeout-time": "Xóa sau",
+        "hide-github-button": "Ẩn nút “Xem trên GitHub”",
+        "hide-duration-left": "Ẩn thời gian còn lại"
       }
     },
     "do-not-track": {
@@ -513,7 +621,19 @@
       "menu": {
         "blocker": "Trình chặn"
       },
-      "name": "Không theo dõi/Chặn quảng cáo"
+      "name": "Không theo dõi/Chặn quảng cáo",
+      "settings": {
+        "cache": "Lưu bộ nhớ đệm danh sách chặn",
+        "disable-default-lists": "Tắt danh sách chặn mặc định"
+      },
+      "dialog": {
+        "reload": {
+          "title": "Tải lại trang",
+          "message": "Cài đặt Không theo dõi đã thay đổi.",
+          "detail": "Các quy tắc mạng được cập nhật mà không cần khởi động lại ứng dụng. Hãy tải lại trang để áp dụng đầy đủ các thay đổi cho bộ lọc trang. Việc phát lại có thể bị gián đoạn. Bạn có thể tải lại sau.",
+          "reload-now": "Tải lại trang ngay"
+        }
+      }
     },
     "downloader": {
       "backend": {
@@ -555,7 +675,8 @@
           "saving": "Đang lưu…",
           "trying-to-get-playlist-id": "Đang lấy ID danh sách phát: {{playlistId}}",
           "video-id-not-found": "Không tìm thấy video",
-          "writing-id3": "Đang ghi thẻ ID3…"
+          "writing-id3": "Đang ghi thẻ ID3…",
+          "ffmpeg-missing": "Không tìm thấy FFmpeg. Hãy cài đặt FFmpeg và đảm bảo `ffmpeg` nằm trong PATH của bạn để tải xuống ở định dạng này."
         }
       },
       "description": "Tải xuống MP3 / âm thanh nguồn trực tiếp từ giao diện",
@@ -586,6 +707,10 @@
       },
       "templates": {
         "button": "Tải xuống"
+      },
+      "settings": {
+        "finish-folder": "Thư mục cho các tệp tải xuống đã hoàn tất",
+        "finish-folder-description": "Để trống để dùng thư mục tải xuống ở trên."
       }
     },
     "equalizer": {
@@ -653,6 +778,44 @@
           "disconnected": "Đã ngắt kết nối",
           "guest": "Đã kết nối với tư cách Người tham gia",
           "host": "Đã kết nối với tư cách Máy chủ"
+        },
+        "diagnostics": {
+          "check": {
+            "nat": "Loại mạng (NAT)",
+            "signaling": "Máy chủ tín hiệu",
+            "stun": "Kết nối trực tiếp (STUN)",
+            "turn": "Dự phòng chuyển tiếp (TURN)"
+          },
+          "copy": "Sao chép tóm tắt",
+          "detail": {
+            "check-error": "Kiểm tra thất bại: {{reason}}",
+            "public-ip": "Địa chỉ công khai: {{ip}}",
+            "public-ip-hidden": "Địa chỉ công khai: nhấp để hiện",
+            "signaling-fail": "Không thể kết nối ({{reason}})",
+            "signaling-ok": "Có thể kết nối",
+            "stun-fail": "Không có địa chỉ công khai (UDP/STUN bị chặn)",
+            "stun-ok": "Đã tìm thấy địa chỉ công khai",
+            "turn-fail": "Không thể kết nối tới máy chủ chuyển tiếp",
+            "turn-ok": "Có thể kết nối tới máy chủ chuyển tiếp"
+          },
+          "nat": {
+            "blocked": "UDP hoặc STUN bị chặn",
+            "open": "Mở / nón (kết nối trực tiếp hoạt động)",
+            "symmetric": "Đối xứng (cần chuyển tiếp)",
+            "unknown": "Chưa xác định"
+          },
+          "run-again": "Chạy lại",
+          "running": "Đang chạy kiểm tra…",
+          "test": "Kiểm tra kết nối",
+          "title": "Chẩn đoán kết nối",
+          "verdict": {
+            "blocked": "Mạng này có thể sẽ chặn Music Together. Hãy thử mạng khác hoặc VPN.",
+            "error": "Chẩn đoán không chạy được. Kiểm tra console để biết chi tiết.",
+            "good": "Kết nối trực tiếp sẽ hoạt động trên mạng này.",
+            "limited": "Không thể xác định đầy đủ mạng này. Kết nối trực tiếp vẫn có thể hoạt động; nếu thất bại, hãy thử mạng khác.",
+            "no-signaling": "Không thể kết nối tới máy chủ Music Together. Kiểm tra tường lửa hoặc kết nối internet của bạn.",
+            "relay": "Kết nối trực tiếp có thể thất bại ở đây; máy chủ chuyển tiếp sẽ được dùng (hoạt động nhưng tăng độ trễ)."
+          }
         }
       },
       "name": "Music Together [Thử nghiệm]",
@@ -668,7 +831,10 @@
         "permission-changed": "Quyền của Music Together đã thay đổi thành \"{{permission}}\"",
         "remove-song-failed": "Không thể xoá bài hát",
         "user-connected": "{{name}} đã tham gia Music Together",
-        "user-disconnected": "{{name}} đã rời khỏi Music Together"
+        "user-disconnected": "{{name}} đã rời khỏi Music Together",
+        "diagnostics-copied": "Đã sao chép tóm tắt chẩn đoán vào bộ nhớ tạm",
+        "diagnostics-copy-failed": "Không thể sao chép tóm tắt chẩn đoán",
+        "diagnostics-running": "Hãy đợi quá trình kiểm tra kết nối hoàn tất"
       }
     },
     "navigation": {
@@ -715,7 +881,13 @@
       "menu": {
         "log-to-console": "Ghi nhật ký sự kiện khôi phục vào bảng điều khiển"
       },
-      "name": "Khôi phục phát lại"
+      "name": "Khôi phục phát lại",
+      "settings": {
+        "stall-timeout": "Thời gian chờ khi phát bị kẹt",
+        "stall-timeout-description": "Thời gian tối đa phát không có tiến triển trước khi thực hiện khôi phục",
+        "max-retries": "Số lần thử lại tối đa",
+        "max-retries-description": "Số lần thử khôi phục trước khi chuyển sang bài tiếp theo"
+      }
     },
     "picture-in-picture": {
       "description": "Cho phép chuyển ứng dụng sang chế độ ảnh trong ảnh",
@@ -733,7 +905,14 @@
         },
         "save-window-position": "Lưu vị trí cửa sổ",
         "save-window-size": "Lưu kích thước cửa sổ",
-        "use-native-pip": "Sử dụng PiP gốc của trình duyệt"
+        "use-native-pip": "Sử dụng PiP gốc của trình duyệt",
+        "prompt": {
+          "title": "Hình trong hình",
+          "label": "Cấu hình phím tắt Hình trong hình",
+          "keybind-options": {
+            "hotkey": "Phím tắt để bật/tắt Hình trong hình"
+          }
+        }
       },
       "name": "Ảnh trong ảnh",
       "templates": {
@@ -745,6 +924,9 @@
       "name": "Tốc độ phát lại",
       "templates": {
         "button": "Tốc độ"
+      },
+      "menu": {
+        "no-preserves-pitch": "Tắt giữ nguyên cao độ"
       }
     },
     "precise-volume": {
@@ -768,6 +950,12 @@
           "label": "Chọn các bước tăng/giảm âm lượng",
           "title": "Bước âm lượng"
         }
+      },
+      "settings": {
+        "steps": "Bước âm lượng",
+        "arrows-shortcut": "Phím tắt bằng phím mũi tên",
+        "shortcut-up": "Phím tắt toàn cục: tăng âm lượng",
+        "shortcut-down": "Phím tắt toàn cục: giảm âm lượng"
       }
     },
     "quality-changer": {
@@ -796,6 +984,10 @@
             "message": "Không thể xác minh với Last.fm \nẨn thông báo cho đến lần bật ứng dụng tiếp theo.",
             "title": "Xác minh thất bại"
           }
+        },
+        "invalid-regex": {
+          "title": "Biểu thức chính quy không hợp lệ",
+          "message": "Biểu thức chính quy ở dòng {{line}} không hợp lệ: {{error}}"
         }
       },
       "menu": {
@@ -803,11 +995,15 @@
           "api-settings": "Cài đặt API Last.fm"
         },
         "listenbrainz": {
-          "token": "Nhập mã người dùng ListenBrainz"
+          "token": "Nhập mã người dùng ListenBrainz",
+          "api-root": "URL API ListenBrainz"
         },
         "scrobble-alternative-title": "Dùng tiêu đề thay thế",
         "scrobble-alternative-artist": "Dùng nghệ sĩ thay thế",
-        "scrobble-other-media": "Scrobber nội dung khác"
+        "scrobble-other-media": "Scrobber nội dung khác",
+        "regex-filters": "Bộ lọc biểu thức chính quy",
+        "use-musicbrainz": "Dùng MusicBrainz để chỉnh sửa siêu dữ liệu",
+        "musicbrainz-email": "Email liên hệ MusicBrainz"
       },
       "name": "Scrobbler",
       "prompt": {
@@ -819,8 +1015,23 @@
           "token": {
             "label": "Nhập mã người dùng ListenBrainz của bạn:",
             "title": "Mã ListenBrainz"
+          },
+          "api-root": {
+            "label": "Nhập URL API cơ sở:",
+            "title": "URL API ListenBrainz"
           }
+        },
+        "regex-filter-multi": {
+          "label": "Nhập mỗi dòng một biểu thức chính quy:"
+        },
+        "musicbrainz-email": {
+          "title": "Email liên hệ MusicBrainz",
+          "label": "Nhập email cho API MusicBrainz:"
         }
+      },
+      "settings": {
+        "lastfm-api-root": "URL API Last.fm",
+        "musicbrainz-email-description": "Được dùng làm thông tin liên hệ cho API MusicBrainz; bắt buộc để chỉnh sửa siêu dữ liệu MusicBrainz"
       }
     },
     "shortcuts": {
@@ -840,15 +1051,34 @@
           "label": "Chọn tổ hợp phím chung để kiểm soát bài hát:",
           "title": "Tổ hợp phím chung"
         }
+      },
+      "settings": {
+        "global-keybinds": "Phím tắt toàn cục (hoạt động trong toàn ứng dụng)",
+        "local-keybinds": "Phím tắt cục bộ (chỉ khi cửa sổ đang hoạt động)"
       }
     },
     "skip-silences": {
       "description": "Tự động bỏ qua các đoạn im lặng trong bài hát",
-      "name": "Bỏ qua đoạn im lặng"
+      "name": "Bỏ qua đoạn im lặng",
+      "settings": {
+        "only-skip-beginning": "Chỉ bỏ qua khoảng lặng ở đầu bài hát"
+      }
     },
     "sponsorblock": {
       "description": "Tự động bỏ qua các phần không phải âm nhạc như phần intro/outro hoặc các phần không được phát của video nhạc",
-      "name": "SponsorBlock"
+      "name": "SponsorBlock",
+      "settings": {
+        "categories": "Các đoạn cần bỏ qua",
+        "category": {
+          "sponsor": "Tài trợ",
+          "intro": "Mở đầu",
+          "outro": "Kết thúc",
+          "interaction": "Nhắc tương tác",
+          "selfpromo": "Tự quảng bá",
+          "music_offtopic": "Phần không phải nhạc"
+        },
+        "api-url": "URL API"
+      }
     },
     "synced-lyrics": {
       "description": "Cung cấp lời được đồng bộ với bài hát, sử dụng các nhà cung cấp như LRClib.",
@@ -1061,6 +1291,30 @@
         "show-custom-search-button": {
           "label": "Hiển thị nút tìm kiếm tùy chỉnh",
           "tooltip": "Hiển thị nút tìm kiếm trong bộ chọn lời bài hát cho phép bạn ghi đè truy vấn tìm kiếm và nghệ sĩ cho bài hát hiện tại."
+        },
+        "provider-priority": {
+          "tooltip": "Các nhà cung cấp được thử theo thứ tự này: nhà cung cấp đầu tiên có lời cho bài hiện tại sẽ được chọn. Dùng các mũi tên để sắp xếp lại."
+        },
+        "prefer-synced": {
+          "tooltip": "Chọn nhà cung cấp đầu tiên trong danh sách có lời đồng bộ thời gian, thay vì nhà cung cấp đầu tiên có bất kỳ lời nào."
+        },
+        "previous-provider": {
+          "tooltip": "Nhà cung cấp trước"
+        },
+        "next-provider": {
+          "tooltip": "Nhà cung cấp tiếp theo"
+        },
+        "custom-search-button": {
+          "tooltip": "Truy vấn tìm kiếm tùy chỉnh"
+        },
+        "star-provider": {
+          "tooltip": "Luôn dùng nhà cung cấp này cho bài hát này, bất kể thứ tự ưu tiên. Quay về thứ tự thông thường nếu nhà cung cấp này không có lời cho bài hát."
+        },
+        "unstar-provider": {
+          "tooltip": "Ngừng ghim nhà cung cấp này cho bài hát này."
+        },
+        "use-priority-list": {
+          "tooltip": "Thử các nhà cung cấp theo thứ tự bên dưới. Tắt tùy chọn này để lời bài hát quyết định thay: nhà cung cấp nào có lời tốt nhất cho bài hát sẽ được chọn."
         }
       },
       "name": "Lời bài hát được đồng bộ hoá",
@@ -1072,6 +1326,22 @@
         "duration-mismatch": "⚠️ - Lời bài hát có thể không đồng bộ do thời lượng không khớp.",
         "inexact": "⚠️ - Lời bài hát này có thể không chính xác",
         "instrumental": "⚠️ - Đây là một bài hát không lời"
+      },
+      "settings": {
+        "precise-timing": "Thời gian chính xác",
+        "show-inexact": "Hiển thị lời không chính xác",
+        "show-time-codes": "Hiện mã thời gian",
+        "romanization": "Chuyển lời bài hát sang chữ Latinh",
+        "line-effect": "Hiệu ứng dòng",
+        "effect": {
+          "fancy": "Bắt mắt",
+          "scale": "Tỉ lệ",
+          "offset": "Độ lệch",
+          "focus": "Tập trung"
+        },
+        "prefer-synced": "Ưu tiên lời đồng bộ",
+        "provider-priority": "Ưu tiên nhà cung cấp",
+        "use-priority-list": "Dùng danh sách ưu tiên"
       }
     },
     "taskbar-mediacontrol": {
@@ -1100,12 +1370,15 @@
             "fullscreen-ui": "Giao diện toàn màn hình",
             "mica": "Mica",
             "none": "Không có",
-            "tabbed": "Tabbed",
+            "tabbed": "Dạng tab",
             "under-page": "Phía dưới trang",
             "under-window": "Ở dưới cửa sổ",
             "window": "Cửa sổ"
           }
         }
+      },
+      "settings": {
+        "type-description": "Chất liệu nền dùng cho độ trong suốt của cửa sổ"
       }
     },
     "tuna-obs": {
@@ -1148,7 +1421,26 @@
       "menu": {
         "visualizer-type": "Loại Sóng nhạc"
       },
-      "name": "Sóng nhạc"
+      "name": "Sóng nhạc",
+      "settings": {
+        "preset": "Cài đặt sẵn",
+        "blend-time": "Thời gian hòa trộn",
+        "effect": "Hiệu ứng",
+        "accuracy": "Độ chính xác",
+        "max-height": "Chiều cao tối đa",
+        "max-size": "Kích thước tối đa",
+        "line-width": "Độ rộng đường",
+        "color": "Màu sắc",
+        "shadow-blur": "Độ mờ bóng",
+        "shadow-color": "Màu bóng",
+        "fade-side": "Làm mờ các cạnh",
+        "prettify": "Làm đẹp",
+        "prettify-description": "Thu nhỏ dần các thanh về phía các cạnh",
+        "dottify": "Dạng chấm",
+        "dottify-description": "Vẽ các chấm thay vì một đường liên tục",
+        "horizontal-align": "Căn ngang",
+        "vertical-align": "Căn dọc"
+      }
     },
     "playlist-search": {
       "description": "Thêm ô tìm kiếm để lọc danh sách phát trong thanh bên và hộp thoại Thêm vào danh sách phát",
@@ -1157,6 +1449,196 @@
         "search-placeholder": "Tìm kiếm danh sách phát",
         "no-results": "Không tìm thấy danh sách phát"
       }
+    },
+    "always-show-volume-slider": {
+      "name": "Luôn hiển thị thanh trượt âm lượng",
+      "description": "Giữ thanh trượt âm lượng luôn hiển thị và có thể kéo thay vì chỉ hiện khi rê chuột."
+    },
+    "fullscreen-auto-hide": {
+      "description": "Tự động ẩn điều khiển trình phát và con trỏ chuột sau vài giây không hoạt động khi ở chế độ toàn màn hình",
+      "name": "Tự động ẩn toàn màn hình"
+    },
+    "prefer-song": {
+      "description": "Phát bài hát thay vì video ca nhạc khi một bản trong album là video",
+      "name": "Ưu tiên bài hát"
+    },
+    "search-commands": {
+      "commands": {
+        "play": "Phát video từ liên kết hoặc ID YouTube",
+        "settings": "Mở cài đặt"
+      },
+      "description": "Nhập / vào ô tìm kiếm để chạy lệnh, có tự động hoàn thành đối số",
+      "name": "Lệnh tìm kiếm",
+      "settings": {
+        "open-keybind": "Phím tắt mở",
+        "open-keybind-description": "Tổ hợp phím kiểu Electron, ví dụ CmdOrCtrl+/ hoặc Alt+Space",
+        "open-shortcut": "Mở ô tìm kiếm từ bất kỳ đâu",
+        "open-shortcut-description": "Gọi ô tìm kiếm đã ở chế độ lệnh, giống Spotlight. Nhấn lại để đóng."
+      }
+    },
+    "seek-shortcuts": {
+      "description": "Tua lùi/tới 5 giây bằng phím mũi tên trái/phải",
+      "name": "Phím tắt tua"
+    },
+    "sfw-music": {
+      "description": "Tự động bỏ qua các bài hát được YouTube Music đánh dấu là Explicit. Tạm dừng nếu hàng đợi toàn nội dung Explicit bị lặp lại hoặc không có bài tiếp theo.",
+      "name": "Nhạc SFW"
+    },
+    "toast-autoclose": {
+      "description": "Tự động đóng thông báo nổi của YouTube Music sau ba giây",
+      "name": "Tự đóng thông báo nổi"
+    },
+    "statusbar-lyrics": {
+      "settings": {
+        "include-pronunciation": "Bao gồm cách phát âm"
+      }
+    },
+    "dismiss-multidevice-popup": {
+      "name": "Đóng thông báo nhiều thiết bị",
+      "description": "Tự động đóng thông báo “Nghe trên thiết bị này” xuất hiện khi phát trên thiết bị khác."
+    },
+    "memory-saver": {
+      "description": "Xóa bộ nhớ đệm tài nguyên của renderer khi cửa sổ bị ẩn một khi chúng vượt quá ngưỡng",
+      "name": "Tiết kiệm bộ nhớ",
+      "settings": {
+        "threshold": "Ngưỡng bộ nhớ đệm",
+        "threshold-description": "Xóa bộ nhớ đệm khi bộ nhớ đang dùng vượt quá ngưỡng này trong lúc cửa sổ bị ẩn"
+      }
+    }
+  },
+  "settings-ui": {
+    "name": "Giao diện cài đặt",
+    "description": "Thêm bảng cài đặt trong ứng dụng, mở từ thanh bên",
+    "title": "Cài đặt",
+    "settings": {
+      "show-button": "Hiện mục cài đặt trong thanh bên",
+      "show-button-description": "Tắt tùy chọn này để giữ thanh bên gọn gàng; Cài đặt vẫn nằm trong Điều hướng → Mở Cài đặt.",
+      "separate-window": "Luôn mở Cài đặt trong cửa sổ riêng",
+      "separate-window-description": "Mở cửa sổ cài đặt độc lập, giống mục trong khay hệ thống, thay vì bảng trong ứng dụng."
+    },
+    "search-placeholder": "Tìm kiếm cài đặt",
+    "search-results": "Kết quả tìm kiếm",
+    "search-matching": "Khớp với “{{query}}”",
+    "no-match": "Không có cài đặt nào khớp với “{{query}}”.",
+    "close": "Đóng",
+    "edit-config": "Chỉnh sửa config.json",
+    "restart-banner": "Một số thay đổi cần khởi động lại để có hiệu lực.",
+    "restart-now": "Khởi động lại ngay",
+    "later": "Để sau",
+    "restart-pill": "khởi động lại",
+    "restart-pill-hint": "Cần khởi động lại",
+    "refresh-options": "Làm mới tùy chọn",
+    "move-up": "Di chuyển lên",
+    "move-down": "Di chuyển xuống",
+    "about": {
+      "tagline": "Ứng dụng máy tính giàu tính năng cho YouTube Music",
+      "versions": "Phiên bản",
+      "version-app": "Ứng dụng",
+      "version-build": "Bản dựng",
+      "version-electron": "Electron",
+      "version-chromium": "Chromium",
+      "version-node": "Node.js",
+      "version-platform": "Nền tảng",
+      "version-innertube": "Innertube",
+      "links": "Liên kết",
+      "link-repo": "Kho lưu trữ",
+      "link-issue": "Báo cáo sự cố",
+      "link-releases": "Bản phát hành",
+      "link-license": "Giấy phép",
+      "actions": "Hành động",
+      "check-updates": "Kiểm tra cập nhật",
+      "copy-debug": "Sao chép thông tin gỡ lỗi",
+      "copied": "Đã sao chép!"
+    },
+    "sections": {
+      "general": {
+        "label": "Chung"
+      },
+      "appearance": {
+        "label": "Giao diện"
+      },
+      "window": {
+        "label": "Cửa sổ & Khay hệ thống"
+      },
+      "advanced": {
+        "label": "Nâng cao"
+      },
+      "plugins": {
+        "label": "Tiện ích"
+      },
+      "flags": {
+        "label": "Cờ tính năng"
+      },
+      "about": {
+        "label": "Giới thiệu"
+      }
+    },
+    "groups": {
+      "updates-session": "Cập nhật & phiên",
+      "startup-language": "Khởi động & ngôn ngữ",
+      "interface": "Giao diện",
+      "context-menu": "Menu ngữ cảnh",
+      "window-title": "Cửa sổ",
+      "window": "Cửa sổ",
+      "system": "Hệ thống",
+      "network": "Mạng",
+      "performance": "Hiệu năng",
+      "configuration": "Cấu hình",
+      "updates": "Cập nhật"
+    },
+    "stepper-decrement": "Giảm",
+    "stepper-increment": "Tăng",
+    "flags": {
+      "warning": "Cờ tính năng là các công tắc nội bộ của chính YouTube Music. Thay đổi chúng có thể làm hỏng tính năng phát lại, bố cục hoặc tài khoản, và chúng không được hỗ trợ. Các ghi đè chỉ được giữ cho những cờ bạn thay đổi và có thể xóa bằng Hoàn tác.",
+      "search-placeholder": "Tìm kiếm cờ",
+      "overridden": "đã ghi đè",
+      "undo": "Hoàn tác",
+      "undo-hint": "Xóa ghi đè này",
+      "empty": "Trang này không hiển thị cờ tính năng nào.",
+      "no-match": "Không có cờ nào khớp với “{{query}}”.",
+      "add-name": "Tên cờ mới",
+      "add-value": "Giá trị",
+      "add-value-hint": "JSON khi phân tích được (true, 42, \"text\"), nếu không thì chính văn bản đó",
+      "add": "Thêm"
+    },
+    "fields": {
+      "hide-dislike-button": "Ẩn nút Không thích",
+      "hide-video-captions": "Ẩn phụ đề video",
+      "context-menu": {
+        "hide-entry": "Ẩn {{entry}}",
+        "entries": {
+          "add-to-queue": "Thêm vào hàng đợi",
+          "delete-playlist": "Xóa danh sách phát",
+          "dismiss-queue": "Đóng hàng đợi",
+          "download": "Tải xuống",
+          "go-to-album": "Đi tới album",
+          "go-to-artist": "Đi tới nghệ sĩ",
+          "go-to-playlist": "Đi tới danh sách phát",
+          "like": "Thích",
+          "not-interested": "Không quan tâm",
+          "pin-to-listen-again": "Ghim vào Nghe lại",
+          "play-next": "Phát tiếp theo",
+          "remove-from-playlist": "Xóa khỏi danh sách phát",
+          "remove-from-queue": "Xóa khỏi hàng đợi",
+          "report": "Báo cáo",
+          "save-to-library": "Lưu vào thư viện",
+          "save-to-playlist": "Lưu vào danh sách phát",
+          "share": "Chia sẻ",
+          "shuffle-play": "Phát ngẫu nhiên",
+          "start-mix": "Bắt đầu mix",
+          "stats-for-nerds": "Thống kê kỹ thuật"
+        }
+      },
+      "podcast-artist": "Dùng người tham gia podcast làm nghệ sĩ",
+      "podcast-artist-desc": "Tắt: nghệ sĩ của một tập podcast là kênh đã phát hành tập đó.",
+      "theme-preset": "Mẫu",
+      "theme-variable-name": "Biến",
+      "theme-variable-value": "Giá trị",
+      "theme-variable-add": "Thêm biến",
+      "performance-mode": "Chế độ hiệu năng",
+      "performance-mode-desc": "Đánh đổi một phần độ sắc nét hình ảnh để có hiệu suất kết xuất tốt hơn.",
+      "in-process-gpu": "Hợp nhất tiến trình GPU vào tiến trình ứng dụng",
+      "in-process-gpu-desc": "Thử nghiệm: tiết kiệm một tiến trình, nhưng chuyển bộ nhớ GPU vào tiến trình chính và có thể chuyển sang kết xuất bằng phần mềm."
     }
   }
 }

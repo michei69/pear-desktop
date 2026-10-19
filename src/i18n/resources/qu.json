@@ -65,7 +65,8 @@
         },
         "detail": "Disculpawayku sasachakuymanta! Ama hina kaspa, imatachus ruwayta munasqaykita akllay:",
         "message": "Aplicaciónqa Mana Kutichinchu",
-        "title": "Ventana Mana Kutichiptin"
+        "title": "Ventana Mana Kutichiptin",
+        "details": "Imarayku: {{error}}"
       },
       "update-available": {
         "buttons": {
@@ -76,6 +77,27 @@
         "detail": "Musuq versión kachkan, kaypi uraykachiyta atikun: {{downloadLink}}",
         "message": "Musuq versión kachkan",
         "title": "Musuqchay Kapun"
+      },
+      "restart-summary": {
+        "detail": "Kaykunata churaypaq app-ta musuqmanta qallariy: {{changes}}",
+        "message": "Wakin hukyaykuna musuqmanta qallariyta munanku",
+        "title": "Musuqmanta qallariy munakun"
+      },
+      "update-available-dev": {
+        "buttons": {
+          "ok": "Allin",
+          "view": "Commits nisqakunata qhaway"
+        },
+        "title": "Musuqyachiy kan",
+        "message": "Kay dev build master rama qhipapi kachkan",
+        "detail": "Kay build purichkan commit ({{commit}}) master-pa qhipa commit-ninmanta aswan mawk'a. Aswan musuq commitkunata {{commitsLink}}pi qhawayta atinki."
+      },
+      "downgrade-warning": {
+        "title": "Estable nisqaman kutichiy?",
+        "message": "Kay beta build qhipa estable lluqsishmanta aswan musuqmi.",
+        "detail": "Estableman kutichiy wakin churaykunata qallariyman kutichinman: musuq versionmanta mawk'a versionman rishpa mana migracionkunata ruwanchu, chaymi musuq churaykunata mana ñawinchanapaq saqinman.",
+        "confirm": "Estableman kutichiy",
+        "cancel": "Saqiy"
       }
     },
     "menu": {
@@ -87,7 +109,8 @@
           "go-back": "Qhipaman kutiy",
           "go-forward": "Ñawpaqman riy",
           "quit": "Lluqsiy",
-          "restart": "Appta Musuqta Qallarina"
+          "restart": "Appta Musuqta Qallarina",
+          "open-settings": "Ajustes nisqakunata kichay"
         }
       },
       "options": {
@@ -129,7 +152,20 @@
             },
             "label": "Simi",
             "submenu": {
-              "to-help-translate": "¿T'ikraypi yanapayta munanki? Kaypi ñitiy"
+              "to-help-translate": "¿T'ikraypi yanapayta munanki? Kaypi ñitiy",
+              "sync": {
+                "label": "Simita tinkichiy",
+                "submenu": {
+                  "from-youtube": "YouTube-manta",
+                  "to-youtube": "YouTube-man"
+                },
+                "failure": {
+                  "dialog": {
+                    "title": "Simi mana hukchasqachu",
+                    "message": "Simi utaq suyu simi app-pi manaraq kanchu."
+                  }
+                }
+              }
             }
           },
           "resume-on-start": "App qallariptin qhipa takiyta qatiy",
@@ -180,9 +216,37 @@
                 "label": "Tema",
                 "submenu": {
                   "import-css-file": "Personal CSS archivota yaykuchiy",
-                  "no-theme": "Mana tema kanchu"
+                  "no-theme": "Mana tema kanchu",
+                  "colors": {
+                    "label": "Llimphikuna"
+                  },
+                  "presets": {
+                    "label": "Presetkuna",
+                    "default": "Kikin",
+                    "custom": "Kikiykip"
+                  },
+                  "reset-colors": "Llimphikunata qallariyman kutichiy",
+                  "open-themes-folder": "Temakuna carpeta kichay"
                 }
-              }
+              },
+              "use-ytm-icons": "YouTube Music original iconokunata llamk'achiy"
+            }
+          },
+          "updates": {
+            "label": "Musuqyachiykuna",
+            "check": "Musuqyachiykunata qhaway",
+            "auto-update": "Kikillanmanta musuqyachiykunata qhaway",
+            "channel": {
+              "label": "Musuqyachiy kanal",
+              "stable": "Estable",
+              "beta": "Beta"
+            }
+          },
+          "shared-links": {
+            "label": "Rakisqa tinkikuna",
+            "submenu": {
+              "strip-music": "'music.'-ta hurquy",
+              "strip-si": "'&si='-ta hurquy"
             }
           }
         }
@@ -216,9 +280,18 @@
         "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
       },
       "like": "Gustar",
-      "dislike": "Dislike",
+      "dislike": "Mana munay",
       "unlike": "Qu",
-      "undislike": "Undislike"
+      "undislike": "Mana gustayta qichuy"
+    },
+    "themes": {
+      "consent": {
+        "title": "Tema codigota purichiy?",
+        "message": "\"{{theme}}\" nisqapi script kan, chayqa app-ta hunt'a haykuywan purichinqa.",
+        "detail": "Tema scriptkuna mana sandboxpi kachkanku. Kay codigoqa churaykunata ñawinchayta, hukchayta, appwan rimayta, hinaspa app kikin ruwanankunata ruwayta atin. Kayta saqilliy sichus tema maymanta hamusqanta iñinki chaylla. Temata hurquspa kayta qichuyta atinki.",
+        "allow": "Kay temata purichiy",
+        "cancel": "Saqiy"
+      }
     }
   },
   "plugins": {
@@ -254,13 +327,13 @@
       "description": "Videomanta llamp'u llimpikunata pantallayki qipaman kachaspa, achiqchay efectota churay",
       "menu": {
         "blur-amount": {
-          "label": "Blur amount",
+          "label": "Qhawchiy yupay",
           "submenu": {
             "pixels": "{{blurAmount}} píxeles"
           }
         },
         "buffer": {
-          "label": "Buffer",
+          "label": "Suyachina",
           "submenu": {
             "buffer": "buffer"
           }
@@ -278,13 +351,13 @@
           }
         },
         "size": {
-          "label": "Size",
+          "label": "Sayay",
           "submenu": {
             "percent": "{{size}}%"
           }
         },
         "smoothness-transition": {
-          "label": "Smoothness transition",
+          "label": "Llamp'u hukmanyay",
           "submenu": {
             "during": "{{interpolationTime}} s ukhu"
           }
@@ -347,6 +420,10 @@
         },
         "port": {
           "label": "Puerto"
+        },
+        "mcp": {
+          "label": "MCP servidor",
+          "description": "v2 API nisqata MCP herramientas hina /mcp-pi qun. API wakinwan kikillan autorizacionta llamk'achin."
         }
       },
       "name": "API Servidor [Beta]",
@@ -359,11 +436,20 @@
           "label": "API servidorpaq puertota qillqay:",
           "title": "Puerto"
         }
+      },
+      "settings": {
+        "choose-file": "Archivo akllay…"
       }
     },
     "audio-compressor": {
       "description": "Uyarinaman compresiónta churay (señalpa aswan waqyaq rakinkunapa uyarinta uraykachin, aswan upa kaqkunapañataq huqarin)",
-      "name": "Uyarina Compresor"
+      "name": "Uyarina Compresor",
+      "menu": {
+        "auto-track-gain": "Kikillanmanta track gananciata ruway (ch'in trackkunata kallpachay)",
+        "maximum-gain": {
+          "label": "Aswan hatun ganancia"
+        }
+      }
     },
     "auth-proxy-adapter": {
       "description": "Kamachiy proxy serviciokunata llamk'achiyta yanapay",
@@ -429,7 +515,10 @@
           "label": "Rikchay"
         }
       },
-      "name": "Intiwatana"
+      "name": "Intiwatana",
+      "settings": {
+        "hour-12": "12-hora formato nisqata llamk'achiy"
+      }
     },
     "compact-sidebar": {
       "description": "Siempre lateral barra nisqata compacto modopi churay",
@@ -449,12 +538,24 @@
             "fade-scaling": {
               "label": "Chinkapuq escala",
               "linear": "Ch'iqtulla",
-              "logarithmic": "Logarítmico"
+              "logarithmic": "Logarítmico",
+              "equal-power": "Kikillan kallpa"
             },
             "seconds-before-end": "Tukukuyninmanta N segundos ñawpaqta crossfade"
           },
           "title": "Crossfade nisqapaq kamachikuna"
         }
+      },
+      "settings": {
+        "fade-in": "Fade yaykuy",
+        "fade-out": "Fade lluqsiy",
+        "seconds-before-end": "Tukupay manaraq qallariy",
+        "fade-scaling": "Fade escala",
+        "scaling": {
+          "linear": "Lineal",
+          "logarithmic": "Logarítmico"
+        },
+        "seconds-before-end-description": "Hayk'a segundokuna track tukupay manaraq, chaypi huk trackman crossfade qallarin."
       }
     },
     "custom-output-device": {
@@ -509,6 +610,13 @@
           "label": "Mana kuyuriypa pachaninta segundospi qillqay:",
           "title": "Mana kuyuriypa pachaninta churay"
         }
+      },
+      "settings": {
+        "auto-reconnect": "Kikillanmanta tinkiy",
+        "activity-timeout-enabled": "Pausapi kachkaptin presencia chinkachiy",
+        "activity-timeout-time": "Qhipaman pichay",
+        "hide-github-button": "“GitHub-pi qhaway” botón nisqata pakay",
+        "hide-duration-left": "Puchuq pachata pakay"
       }
     },
     "downloader": {
@@ -516,14 +624,14 @@
         "dialog": {
           "error": {
             "buttons": {
-              "ok": "OK"
+              "ok": "Ari"
             },
             "message": "Argh! Disculpas, descarga falló…",
             "title": "Uraykachiy pantay!"
           },
           "start-download-playlist": {
             "buttons": {
-              "ok": "OK"
+              "ok": "Ari"
             },
             "detail": "({{playlistSize}} takikuna)",
             "message": "{{playlistTitle}} playlistta uraykachichkan",
@@ -551,7 +659,8 @@
           "saving": "Waqaychachkan…",
           "trying-to-get-playlist-id": "Playlist ID tarita munachkan: {{playlistId}}",
           "video-id-not-found": "Video mana tarisqachu",
-          "writing-id3": "ID3 etiquetakunata qillqachkan…"
+          "writing-id3": "ID3 etiquetakunata qillqachkan…",
+          "ffmpeg-missing": "FFmpeg mana tarisqachu. FFmpegta churachiy, `ffmpeg` PATH nisqapi kananta qawachiy, kay formatopi urqhunapaq."
         }
       },
       "description": "MP3 / pukyu uyarinata interfazmanta chiqan uraykachiy",
@@ -582,15 +691,19 @@
       },
       "templates": {
         "button": "Uraykachiy"
+      },
+      "settings": {
+        "finish-folder": "Tukusqa descargakunapaq carpeta",
+        "finish-folder-description": "Mana churaychu, hanaqpi descarga carpeta llamk'achinapaq."
       }
     },
     "equalizer": {
       "description": "Pukllaqman ecualizadorta yapay",
       "menu": {
         "presets": {
-          "label": "Presets",
+          "label": "Ñawpaq churaykuna",
           "list": {
-            "bass-booster": "Bass booster"
+            "bass-booster": "Baxu kallpachaq"
           }
         }
       },
@@ -614,7 +727,7 @@
     "lyrics-genius": {
       "description": "Askha takikunapaq letra yanapakuyta yapay",
       "menu": {
-        "romanized-lyrics": "Romanized Lyrics"
+        "romanized-lyrics": "Romanizasqa taki simikuna"
       },
       "name": "Letrakuna Genius",
       "renderer": {
@@ -624,11 +737,11 @@
     "music-together": {
       "description": "Playlistta hukkunawan qunakuy. Host pukllachiqti, tukuy hukkunapas kaqlla takita uyarinqa",
       "dialog": {
-        "enter-host": "Enter Host ID"
+        "enter-host": "Host ID churay"
       },
       "internal": {
         "save": "Savi",
-        "track-source": "Track Source",
+        "track-source": "Taki pukyu",
         "unknown-user": "qu: Usuariu Disconusciu"
       },
       "menu": {
@@ -636,35 +749,76 @@
         "close": "关闭音乐一起",
         "connected-users": "Konektadong mga Gumagamit",
         "disconnect": "断连音乐一起",
-        "empty-user": "No connected users",
+        "empty-user": "Mana t'inkisqa ruwaqkuna",
         "host": "Music Together Host",
-        "join": "Join Music Together",
+        "join": "Music Together-man yaykuy",
         "permission": {
           "all": "Permitir que huéspedes controlen la lista de reproducción y el reproductor",
           "host-only": "Solo el anfitrión puede controlar la lista de reproducción y el reproductor",
-          "playlist": "Allow guests to control playlist"
+          "playlist": "Sapaq runakunata playlist-ta kamachiyta saqiy"
         },
         "set-permission": "Chanj Kontrol Pèmisyon",
         "status": {
           "disconnected": "Nadiskonekta",
           "guest": "Konektado bilang Bisita",
           "host": "Konektado bilang Host"
+        },
+        "diagnostics": {
+          "check": {
+            "nat": "Llika tipo (NAT)",
+            "signaling": "Signaling servidor",
+            "stun": "Directo tinkiy (STUN)",
+            "turn": "Relay alternativa (TURN)"
+          },
+          "copy": "Resumen copiay",
+          "detail": {
+            "check-error": "Qhaway pantarqan: {{reason}}",
+            "public-ip": "Publico direccion: {{ip}}",
+            "public-ip-hidden": "Publico direccion: rikuchinapaq ñitiy",
+            "signaling-fail": "Mana tarikunchu ({{reason}})",
+            "signaling-ok": "Tarikun",
+            "stun-fail": "Mana publico direccion (UDP/STUN harkasqa)",
+            "stun-ok": "Publico direccion tarisqa",
+            "turn-fail": "Relay mana tarikunchu",
+            "turn-ok": "Relay tarikun"
+          },
+          "nat": {
+            "blocked": "UDP utaq STUN harkasqa",
+            "open": "Kichasqa / cono (directo llamk'an)",
+            "symmetric": "Simétrico (relay munakun)",
+            "unknown": "Mana riqsisqa"
+          },
+          "run-again": "Musuqmanta purichiy",
+          "running": "Qhawaykunata purichkan…",
+          "test": "Tinkiyta pruebay",
+          "title": "Tinkiy diagnostico",
+          "verdict": {
+            "blocked": "Kay llikaqa Music Together nisqata harkayta atin. Huk llika utaq VPN nisqata llamk'achiy.",
+            "error": "Diagnostico mana purirqanchu. Detalles consolapi qhaway.",
+            "good": "Directo tinkiykuna kay llikaqa llamk'ananku.",
+            "limited": "Kay llika mana hunt'a riqsichikunchu. Directo tinkiykuna llamk'ayta atinraq; mana llamk'aqtinkuqa, huk llika llamk'achiy.",
+            "no-signaling": "Music Together servidor nisqaman mana chayanchu. Firewall utaq internet tinkiyta qhaway.",
+            "relay": "Directo tinkiykuna kaypi mana llamk'ayta atinman; relay llamk'achikunqa (llamk'an, ichaqa latencia yapakun)."
+          }
         }
       },
       "name": "Musika Magkasama [Beta]",
       "toast": {
         "add-song-failed": "Maná mana añapishka taki yapay",
-        "closed": "Music Together closed",
+        "closed": "Music Together wisq'asqa",
         "disconnected": "Musica Insieme disconnesso",
         "host-failed": "Musiqa Waqtida Birge Qilish Muvaffaqiyatsiz",
         "id-copied": "Host ID quyllurqa clipboardman qillqasqa",
         "id-copy-failed": "Manammanay a kopya Host ID ha clipboard",
-        "join-failed": "Failed to join Music Together",
+        "join-failed": "Music Together-man yaykuy mana atikunchu",
         "joined": "Música Unida",
-        "permission-changed": "Music Together permission changed to \"{{permission}}\"",
+        "permission-changed": "Music Together saqillay \"{{permission}}\"-man hukchasqa",
         "remove-song-failed": "Manáq p'isqa",
         "user-connected": "{{name}} Music Together-ga qoshildi",
-        "user-disconnected": "{{name}} Music Together-ga tʼáá kʼad"
+        "user-disconnected": "{{name}} Music Together-ga tʼáá kʼad",
+        "diagnostics-copied": "Diagnostico resumen clipboardman copiasqa",
+        "diagnostics-copy-failed": "Diagnóstiko resumen kopiayta manan atikunchu",
+        "diagnostics-running": "Suyay tinkiy pruebata tukunankama"
       }
     },
     "navigation": {
@@ -675,7 +829,7 @@
           "title": "Tlaix tlaih"
         },
         "forward": {
-          "title": "Go to next page"
+          "title": "Qatiq p'anqaman riy"
         }
       }
     },
@@ -691,13 +845,13 @@
           "label": "交互式设置",
           "submenu": {
             "hide-button-text": "qu",
-            "refresh-on-play-pause": "Refresh on Play/Pause",
+            "refresh-on-play-pause": "Play/Pause pachapi musuqyachiy",
             "tray-controls": "Tray similis clicku aperi/claude",
             "hover-controls": "Bandejata pasaptin huch'uy-pukllaqta rikuchiy"
           }
         },
         "priority": "Prioridad de Notificación",
-        "toast-style": "Toast style",
+        "toast-style": "Toast rikch'ay",
         "unpause-notification": "Mostra notifica su unpause"
       },
       "name": "Willaykuna"
@@ -711,10 +865,10 @@
       "menu": {
         "always-on-top": "Pal pal",
         "hotkey": {
-          "label": "Hotkey",
+          "label": "Usqay llawichiy",
           "prompt": {
             "keybind-options": {
-              "hotkey": "Hotkey"
+              "hotkey": "Usqay llawichiy"
             },
             "label": "Runa hotkey nispa picture-in-pictureta t'ikray",
             "title": "Pikchur-insaid-pikchur Hatki"
@@ -722,7 +876,14 @@
         },
         "save-window-position": "Salvar posición de la ventana",
         "save-window-size": "Salvar tamaño de ventana",
-        "use-native-pip": "使用浏览器原生PiP"
+        "use-native-pip": "使用浏览器原生PiP",
+        "prompt": {
+          "title": "Rikch'a-pi-Rikch'a",
+          "label": "Allichay Rikch'a-pi-Rikch'a hotkeyta",
+          "keybind-options": {
+            "hotkey": "Hotkey Rikch'a-pi-Rikch'ata tikraypaq"
+          }
+        }
       },
       "name": "Picha-ndani-picha",
       "templates": {
@@ -734,6 +895,9 @@
       "name": "Pukllay Utqay",
       "templates": {
         "button": "Utqay"
+      },
+      "menu": {
+        "no-preserves-pitch": "Pitch hark'ayta ama llamk'achiy"
       }
     },
     "precise-volume": {
@@ -757,6 +921,12 @@
           "label": "Volumen Huqariy/Uraykay Escalonkunata Akllay",
           "title": "Volumen Escalonkuna"
         }
+      },
+      "settings": {
+        "steps": "Volumen paso",
+        "arrows-shortcut": "Flecha tecla ñankuna",
+        "shortcut-up": "Global ñan: volumen ata",
+        "shortcut-down": "Global ñan: volumen uray"
       }
     },
     "quality-changer": {
@@ -785,6 +955,10 @@
             "message": "Last.fm nisqawan kamachiy mana atikurqanchu\nPopup qatiqnin musuq qallariykama pakay.",
             "title": "Kamachiy Mana Atikusqachu"
           }
+        },
+        "invalid-regex": {
+          "title": "Mana allin regular expresión",
+          "message": "{{line}} líneapi regular expresión manan allinchu: {{error}}"
         }
       },
       "menu": {
@@ -792,24 +966,43 @@
           "api-settings": "Last.fm API Kamachikuna"
         },
         "listenbrainz": {
-          "token": "ListenBrainz usuario tokenta yaykuchiy"
+          "token": "ListenBrainz usuario tokenta yaykuchiy",
+          "api-root": "ListenBrainz API URL"
         },
         "scrobble-alternative-artist": "Huk artistakunata llamk'achiy",
         "scrobble-alternative-title": "Huk sutikunata llamk'achiy",
-        "scrobble-other-media": "Huk mediakunata scrobble ruway"
+        "scrobble-other-media": "Huk mediakunata scrobble ruway",
+        "regex-filters": "Regular expresión ch'illpukuna",
+        "use-musicbrainz": "MusicBrainzta llamk'achiy metadatos allichanapaq",
+        "musicbrainz-email": "MusicBrainz tinkiy correo"
       },
       "name": "Scrobbler",
       "prompt": {
         "lastfm": {
-          "api-key": "Last.fm API key",
-          "api-secret": "Last.fm API secret"
+          "api-key": "Last.fm API llave",
+          "api-secret": "Last.fm API pakasqa"
         },
         "listenbrainz": {
           "token": {
-            "label": "Enter your ListenBrainz user token:",
+            "label": "ListenBrainz ruwaq token-ta churay:",
             "title": "quListenBrainz token"
+          },
+          "api-root": {
+            "label": "Base API URLta qillqay:",
+            "title": "ListenBrainz API URL"
           }
+        },
+        "regex-filter-multi": {
+          "label": "Huk regex sapa línea qillqay:"
+        },
+        "musicbrainz-email": {
+          "title": "MusicBrainz Tinkiy Correo",
+          "label": "MusicBrainz APIpaq correota qillqay:"
         }
+      },
+      "settings": {
+        "lastfm-api-root": "Last.fm API URL",
+        "musicbrainz-email-description": "MusicBrainz APIpa tinkiy willakuypaq llamk'achin; MusicBrainz metadatos allichanapaq munan"
       }
     },
     "shortcuts": {
@@ -829,15 +1022,34 @@
           "label": "Takikunata Kamachinapaq Global Teclas Rapidkunata Akllay:",
           "title": "Global Teclas Rapidkuna"
         }
+      },
+      "settings": {
+        "global-keybinds": "Global tecla tinkiykuna (llapa apppi llamk'an)",
+        "local-keybinds": "Local tecla tinkiykuna (ventana enfocasqa kaptillan)"
       }
     },
     "skip-silences": {
       "description": "Takiykuna ukhunpi upallasqa rakikunata kikillanmanta saltay",
-      "name": "Upallasqakunata Saltay"
+      "name": "Upallasqakunata Saltay",
+      "settings": {
+        "only-skip-beginning": "Takipa qallariynillapi ch'inlla saltay"
+      }
     },
     "sponsorblock": {
       "description": "Mana takiy rakikunata kikillanmanta saltay, ahinataq intro/outro icha video clip nisqakunapi takiy mana pukllachkaq rakikuna",
-      "name": "SponsorBlock"
+      "name": "SponsorBlock",
+      "settings": {
+        "categories": "Saltana segmentokuna",
+        "category": {
+          "sponsor": "Sponsor",
+          "intro": "Qallariy",
+          "outro": "Tukuy",
+          "interaction": "Interacción yuyachiy",
+          "selfpromo": "Kikiy promoción",
+          "music_offtopic": "Mana taki sección"
+        },
+        "api-url": "API URL"
+      }
     },
     "synced-lyrics": {
       "description": "LRClib hina proveedorkunata llamk'achispa, takikunapaq sincronizasqa letrakunata qun.",
@@ -969,24 +1181,24 @@
             },
             "local-cli": {
               "command": "Kamachi",
-              "engine": "Local CLI",
+              "engine": "Kikin CLI",
               "engine-claude": "Claude Code",
               "engine-codex": "Codex",
               "engine-gemini": "Gemini CLI",
-              "name": "Local CLI",
+              "name": "Kikin CLI",
               "prompt-label": "Localmente autenticasqa Claude Code, Codex, icha Gemini CLI nisqata llamk'achiy. Kamachiwan, modelowanqa kikillanmanta; CLIqa propio autenticasqa ñawpaqninwan llamk'an.",
               "prompt-title": "Local CLI k'uskichaykuna",
               "timeout": "Tiempo espera segundospi (15-600)"
             },
             "openai-compatible": {
               "api-mode": "API modo (responses / auto / chat-completions)",
-              "base-url": "Base URL",
-              "name": "OpenAI compatible",
+              "base-url": "URL tiksi",
+              "name": "OpenAI kikinchasqa",
               "prompt-label": "OpenAI-compatible servidorkunata llamk'achiy, Ollama nisqayuq (base URL http://127.0.0.1:11434/v1, API modo auto icha chat-completions).",
               "prompt-title": "OpenAI-compatible k'uskichaykuna"
             },
             "shared": {
-              "api-key": "API key",
+              "api-key": "API llave",
               "model": "Modelo"
             }
           },
@@ -1050,6 +1262,30 @@
         "show-custom-search-button": {
           "label": "Mostrar botón de búsqueda personalizada",
           "tooltip": "Mostra un botón de búsqueda nel selector de lletres que te permita sobrescribir la consulta de búsqueda y l'artista pa la canción actual."
+        },
+        "provider-priority": {
+          "tooltip": "Proveedorkuna kay ñawpaqmanpi ruwakun: ñawpaq kaq current takipa letrasniyuq atipan. Flechakunawan hukmanyachiy."
+        },
+        "prefer-synced": {
+          "tooltip": "Ñawpaq kaq proveedorta akllay listapi tiempo-sincronizado letrasniyuq, mana ima letrasniyuq kaqta."
+        },
+        "previous-provider": {
+          "tooltip": "Ñawpaq proveedor"
+        },
+        "next-provider": {
+          "tooltip": "Qatiq proveedor"
+        },
+        "custom-search-button": {
+          "tooltip": "Kikiy maskana tapuy"
+        },
+        "star-provider": {
+          "tooltip": "Kay takipaq kay proveedorta siempre llamk'achiy, priority orden nisqanta mana qhawaspa. Takipaq letras mana kaptinqa normal ordenman kutin."
+        },
+        "unstar-provider": {
+          "tooltip": "Kay proveedorta kay takimanta ama pinaychu."
+        },
+        "use-priority-list": {
+          "tooltip": "Proveedorkunata qatiq ordenpi pruebay. Kayta off ruway letras akllanankupaq: mayqen proveedor takipaq aswan allin letrasniyuq atipan."
         }
       },
       "name": "Sincronizasqa Letrakuna",
@@ -1061,6 +1297,22 @@
         "duration-mismatch": "⚠️ - Duración mana tupayninrayku letrakuna mana sincronizasqachu kanman.",
         "inexact": "⚠️ - Kay takiypaq letrakuna mana cheqanchu kanman",
         "instrumental": "⚠️ - Kayqa instrumental takiymi"
+      },
+      "settings": {
+        "precise-timing": "Sut'i pacha",
+        "show-inexact": "Mana exacto letras rikuchiy",
+        "show-time-codes": "Pacha códigokunata rikuchiy",
+        "romanization": "Letras romanizay",
+        "line-effect": "Línea efecto",
+        "effect": {
+          "fancy": "Sumaq",
+          "scale": "Escala",
+          "offset": "Offset",
+          "focus": "Enfocar"
+        },
+        "prefer-synced": "Sincronizado letras munay",
+        "provider-priority": "Proveedor Prioridad",
+        "use-priority-list": "Prioridad listata llamk'achiy"
       }
     },
     "taskbar-mediacontrol": {
@@ -1086,11 +1338,19 @@
             "acrylic": "Acrílico",
             "mica": "Mica",
             "none": "Mana kanchu",
-            "tabbed": "Pestañayuq"
+            "tabbed": "Pestañayuq",
+            "content": "Contenido",
+            "fullscreen-ui": "Hunt'a pantalla UI",
+            "under-page": "Página urapi",
+            "under-window": "Ventana urapi",
+            "window": "Ventana"
           }
         }
       },
-      "name": "Qhawana Pukllaq"
+      "name": "Qhawana Pukllaq",
+      "settings": {
+        "type-description": "Ventana transparenciapaq llamk'achisqa fondo material"
+      }
     },
     "tuna-obs": {
       "description": "OBS nisqap Tuna pluginwan integración",
@@ -1132,7 +1392,26 @@
       "menu": {
         "visualizer-type": "Visualizador Tipo"
       },
-      "name": "Rikchaychana"
+      "name": "Rikchaychana",
+      "settings": {
+        "preset": "Preajuste",
+        "blend-time": "Mezcla pacha",
+        "effect": "Efecto",
+        "accuracy": "Exactitud",
+        "max-height": "Aswan altitud",
+        "max-size": "Aswan tamaño",
+        "line-width": "Línea ancho",
+        "color": "Llimpi",
+        "shadow-blur": "Sombra difuminado",
+        "shadow-color": "Sombra color",
+        "fade-side": "Ladokuna desvanecay",
+        "prettify": "Sumaqyachiy",
+        "prettify-description": "Barraskunata ladokunaman kuchuy",
+        "dottify": "Dotman tukuchiy",
+        "dottify-description": "Sut'u puntos dibujay, mana continúo líneata",
+        "horizontal-align": "Horizontal allichay",
+        "vertical-align": "Vertical allichay"
+      }
     },
     "audio-only": {
       "description": "Uyarinalla modota tanqan — llapa video mayukunata redpi, pukllaqpiñataq hark'an, RAM nisqata, megatañataq waqaychanapaq",
@@ -1143,15 +1422,230 @@
       "menu": {
         "log-to-console": "Allichay ruwasqakunata consolaman qillqay"
       },
-      "name": "Takiy Allichaq"
+      "name": "Takiy Allichaq",
+      "settings": {
+        "stall-timeout": "Sayay pacha",
+        "stall-timeout-description": "Hayk'a pacha purichiy mana ñawpaqman rinqachu, kutichiy yachay ñawpaq",
+        "max-retries": "Aswan kutiy yachaykuna",
+        "max-retries-description": "Kutichiy yachaykuna yupay, qatiq takiman ñawpaqman rinankama"
+      }
     },
     "playlist-search": {
       "description": "Añade un campo de búsqueda para filtrar listas de reproducción en la barra lateral y en el diálogo Añadir a lista de reproducción",
-      "name": "Playlist Search",
+      "name": "Playlist maskay",
       "templates": {
-        "search-placeholder": "Search playlists",
+        "search-placeholder": "Playlist-kunata maskay",
         "no-results": "Nisus playlistas"
       }
+    },
+    "always-show-volume-slider": {
+      "name": "Volumen deslizadorta wiñaypaq rikuchiy",
+      "description": "Volumen deslizadorta rikukuq hinaspa aysanapaq kaqlla, mana hoverpi rikuchillanapaqchu."
+    },
+    "do-not-track": {
+      "description": "Tukuy qhatiykachiyta qallariymanta harkay",
+      "menu": {
+        "blocker": "Harkaq"
+      },
+      "name": "Ama Qhatiychu",
+      "settings": {
+        "cache": "Harkay listakunata cachepi waqaychay",
+        "disable-default-lists": "Kikin harkay listakunata mana llamk'achiy"
+      },
+      "dialog": {
+        "reload": {
+          "title": "P'anqata musuqmanta kichay",
+          "message": "Ama Qatiy nisqapa allichayninkuna hukchasqañam.",
+          "detail": "Red kamachikuykuna appta mana musuqmanta kichaspa musuqyanku. P'anqa filtrokunaman tukuy hukchaykunata hunt'achinapaq, p'anqata musuqmanta kichay. Takiy p'itiyta atin. Qhipaman kichayta atinki.",
+          "reload-now": "P'anqata kunan musuqmanta kichay"
+        }
+      }
+    },
+    "fullscreen-auto-hide": {
+      "description": "Fullscreenpi kachkaptin, mana ima ruwaywan qhipaman jugador controles nisqakunata hinaspa mouse cursor nisqata kikillanmanta pakay",
+      "name": "Fullscreenpi kikillanmanta pakay"
+    },
+    "prefer-song": {
+      "description": "Takita pukllay, videota mana, album taki video kaptin",
+      "name": "Takita Aswan Munay"
+    },
+    "search-commands": {
+      "commands": {
+        "play": "YouTube enlazomanta utaq idmanta videota pukllay",
+        "settings": "Allichaykunata kichay"
+      },
+      "description": "Qillqay / maskana cajapi kamachikunata ruwanapaq, argumentos autocompletadoyuq",
+      "name": "Maskana Kamachikuna",
+      "settings": {
+        "open-keybind": "Kichay ñan",
+        "open-keybind-description": "Electron hina acelerador, ahinataq CmdOrCtrl+/ utaq Alt+Space",
+        "open-shortcut": "Maymanta maskana cajata kichay",
+        "open-shortcut-description": "Maskana cajata kamachi modo-pe kicharin, Spotlight hina. Kutimuy qillqayqa wichqan."
+      }
+    },
+    "seek-shortcuts": {
+      "description": "5 segundota qhipaman/ñawpaqman left/right flecha teclakunawan",
+      "name": "Seek Ñankuna"
+    },
+    "sfw-music": {
+      "description": "YouTube Music Explicit nisqata takikunata kikillanmanta saltan. Explicit cola kutiptin utaq qatiq taki mana kaptin sayan.",
+      "name": "SFW Takiy"
+    },
+    "toast-autoclose": {
+      "description": "YouTube Music toasts kinsa segundomanta qhipaman kikillanmanta wichqay",
+      "name": "Toast Auto-Wichqay"
+    },
+    "statusbar-lyrics": {
+      "settings": {
+        "include-pronunciation": "Pronunciaciónta churay"
+      }
+    },
+    "dismiss-multidevice-popup": {
+      "name": "Multidispositivo Popupta Wichqay",
+      "description": "Kikillanmanta wichqan \"Listen on this device\" popup, huk dispositivopi playback qallariptin rikhuriq."
+    },
+    "memory-saver": {
+      "description": "Ventana pakasqa kachkaptin, rendererpa recursos cacheykunata pichan, chaykuna huk umbralmanta aswan hatunpaptin",
+      "name": "Yuyay waqaychaq",
+      "settings": {
+        "threshold": "Cache umbral",
+        "threshold-description": "Ventana pakasqa kachkaptin, cacheykunapa kawsaq yuyayninqa kaymanta aswan hatunpaptin, cacheykunata pichay"
+      }
+    }
+  },
+  "settings-ui": {
+    "name": "Allichay UI",
+    "description": "App ukupi allichay panelta yapan, kuchumanta kichasqa",
+    "title": "Allichay",
+    "settings": {
+      "show-button": "Allichay yaykunata kuchupi rikuchiy",
+      "show-button-description": "Kayta apagay kuchu llimpunapaq; Allichayqa Puriynin → Allichayta kichay nisqapipas kanmi.",
+      "separate-window": "Allichayta wiñaypaq sapa ventanapi kichay",
+      "separate-window-description": "Sapa kuti allichay ventanata kichan, tray yaykuna hina, app ukupi panelmanta."
+    },
+    "search-placeholder": "Allichaykunata maskay",
+    "search-results": "Maskay tarisqakuna",
+    "search-matching": "“{{query}}” nisqawan tupaq",
+    "no-match": "Mana allichay “{{query}}” nisqawan tupaqchu.",
+    "close": "Wichqay",
+    "edit-config": "config.json allichay",
+    "restart-banner": "Wakin hukyaykuna ruwakunanpaq musuqmanta qallariyta munan.",
+    "restart-now": "Kunan musuqmanta qallariy",
+    "later": "Qhipamanta",
+    "restart-pill": "musuqmanta qallariy",
+    "restart-pill-hint": "Musuqmanta qallariyta munan",
+    "refresh-options": "Akllanakunata musuqyachiy",
+    "move-up": "Wichayman apay",
+    "move-down": "Urayman apay",
+    "about": {
+      "tagline": "YouTube Musicpaq achka ruwayniyuq desktop app",
+      "versions": "Versionkuna",
+      "version-app": "App",
+      "version-build": "Ruwasqa",
+      "version-electron": "Electron",
+      "version-chromium": "Chromium",
+      "version-node": "Node.js",
+      "version-platform": "Plataforma",
+      "version-innertube": "Innertube",
+      "links": "T'inkikuna",
+      "link-repo": "Repositorio",
+      "link-issue": "Sasachakuymanta willay",
+      "link-releases": "Lluqsiykuna",
+      "link-license": "Licencia",
+      "actions": "Ruwaykuna",
+      "check-updates": "Musuqyachiykunata qhaway",
+      "copy-debug": "Debug willakuyta kopiay",
+      "copied": "Kopiasqa!"
+    },
+    "sections": {
+      "general": {
+        "label": "Sapsi"
+      },
+      "appearance": {
+        "label": "Rikch'ay"
+      },
+      "window": {
+        "label": "Ventana & Tray"
+      },
+      "advanced": {
+        "label": "Aswan ñawpaq"
+      },
+      "plugins": {
+        "label": "Yapaykuna"
+      },
+      "flags": {
+        "label": "Unanchakuna"
+      },
+      "about": {
+        "label": "Manta"
+      }
+    },
+    "groups": {
+      "updates-session": "Musuqyachiykuna & sesión",
+      "startup-language": "Qallariy & simi",
+      "interface": "Interfaz",
+      "context-menu": "Ñit'iy menú",
+      "window-title": "Ventana",
+      "window": "Ventana",
+      "system": "Sistema",
+      "network": "Llika",
+      "performance": "Ruway atiy",
+      "configuration": "Allichay",
+      "updates": "Musuqyachiykuna"
+    },
+    "stepper-decrement": "Pisiyachiy",
+    "stepper-increment": "Yapay",
+    "flags": {
+      "warning": "Ruway unanchakunaqa YouTube Musicpa ukhu killpinkunam. Hukmanyachiyqa takiyninta, rikch'ayninta utaq cuenta ruwaykunata p'akiyta atin, manataq yanapaywan qhawasqachu. Hukmanyachisqakunaqa hukmanyachisqayki unanchakunallapaq waqaychasqa, Undo nisqawan qullusqa kanman.",
+      "search-placeholder": "Unanchakunata maskay",
+      "overridden": "hukmanyachisqa",
+      "undo": "Kutichiy",
+      "undo-hint": "Kay hukmanyachiyta qulluy",
+      "empty": "Kay p'anqaqa mana ruway unanchakunatachu rikuchin.",
+      "no-match": "Mana unancha “{{query}}” nisqawan tupaqchu.",
+      "add-name": "Musuq unancha suti",
+      "add-value": "Chanin",
+      "add-value-hint": "JSON tukuy ima kaqpi (true, 42, \"text\"), mana kaqpi qillqa kikin",
+      "add": "Yapay"
+    },
+    "fields": {
+      "hide-dislike-button": "Mana munanapaq ñit'iyta pakay",
+      "hide-video-captions": "Videopaq qillqakunata pakay",
+      "context-menu": {
+        "hide-entry": "{{entry}} pakay",
+        "entries": {
+          "add-to-queue": "Suyuta yapay",
+          "delete-playlist": "Listata qulluy",
+          "dismiss-queue": "Suyuta qarkuy",
+          "download": "Uraykachiy",
+          "go-to-album": "Álbumman riy",
+          "go-to-artist": "Artistaman riy",
+          "go-to-playlist": "Listaman riy",
+          "like": "Munay",
+          "not-interested": "Mana munani",
+          "pin-to-listen-again": "Musuqmanta uyariyman t'inkiy",
+          "play-next": "Qhipaqta waqachiy",
+          "remove-from-playlist": "Listamanta hurquy",
+          "remove-from-queue": "Suyumanta hurquy",
+          "report": "Willay",
+          "save-to-library": "Bibliotecaman waqaychay",
+          "save-to-playlist": "Listaman waqaychay",
+          "share": "Rakiy",
+          "shuffle-play": "Chaqrusqa waqachiy",
+          "start-mix": "Mix qallariy",
+          "stats-for-nerds": "Nerdkunapaq yupaykuna"
+        }
+      },
+      "podcast-artist": "Podcast runakunata artistakuna hina llamk'achiy",
+      "podcast-artist-desc": "Off: podcast episodiomanta artistaqa lluqsichisqa canalmi.",
+      "theme-preset": "Preset",
+      "theme-variable-name": "Hukchakuq",
+      "theme-variable-value": "Chanin",
+      "theme-variable-add": "Variable yapay",
+      "performance-mode": "Usqhay ruway ñan",
+      "performance-mode-desc": "Wakin rikch'ay allin kayta qun, aswan pisi chanin render ruwaypaq.",
+      "in-process-gpu": "GPU ruwayta app ruwayman hukllachay",
+      "in-process-gpu-desc": "Prueba: huk ruwayta waqaychan, ichaqa GPU yuyayta hatun ruwayman apachin, software render ruwayman kutiyta atin."
     }
   }
 }

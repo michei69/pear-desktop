@@ -65,7 +65,8 @@
         },
         "detail": "Vabandame ebamugavuste pärast! Palun vali kuidas jätkata:",
         "message": "Rakendus ei vasta ega reageeri",
-        "title": "Aken ei vasta ega reageeri"
+        "title": "Aken ei vasta ega reageeri",
+        "details": "Põhjus: {{error}}"
       },
       "update-available": {
         "buttons": {
@@ -76,6 +77,27 @@
         "detail": "Saadaval on uus versioon, ning seda saad alla laadida siit {{downloadLink}}",
         "message": "Uus versioon on saadaval",
         "title": "Rakenduse uuendus on saadaval"
+      },
+      "restart-summary": {
+        "detail": "Muudatuste rakendamiseks taaskäivitage rakendus: {{changes}}",
+        "message": "Mõned muudatused nõuavad taaskäivitamist",
+        "title": "Vajalik on taaskäivitamine"
+      },
+      "update-available-dev": {
+        "buttons": {
+          "ok": "OK",
+          "view": "Vaata commit'e"
+        },
+        "title": "Värskendus saadaval",
+        "message": "See arendusversioon on master-harust maas",
+        "detail": "Commit, millel see versioon töötab ({{commit}}), on vanem kui master-haru uusim commit. Uuemaid commite saab vaadata aadressil {{commitsLink}}"
+      },
+      "downgrade-warning": {
+        "title": "Kas lülituda tagasi stabiilse versiooni juurde?",
+        "message": "See beetaversioon on uuem kui uusim stabiilne väljaanne.",
+        "detail": "Tagasi lülitumine võib mõned seaded lähtestada: uuemalt versioonilt vanemale liikudes migratsioone ei käivitata ja uuemad seaded võivad jääda loetamatuks.",
+        "confirm": "Lülitu stabiilsele",
+        "cancel": "Tühista"
       }
     },
     "menu": {
@@ -87,7 +109,8 @@
           "go-back": "Mine tagasi",
           "go-forward": "Mine edasi",
           "quit": "Välju",
-          "restart": "Käivita rakendus uuesti"
+          "restart": "Käivita rakendus uuesti",
+          "open-settings": "Ava seaded"
         }
       },
       "options": {
@@ -129,7 +152,20 @@
             },
             "label": "Keel",
             "submenu": {
-              "to-help-translate": "Soovid aidata tõlkimisel? Kliki siia"
+              "to-help-translate": "Soovid aidata tõlkimisel? Kliki siia",
+              "sync": {
+                "label": "Sünkrooni keel",
+                "submenu": {
+                  "from-youtube": "YouTube'ist",
+                  "to-youtube": "YouTube'i"
+                },
+                "failure": {
+                  "dialog": {
+                    "title": "Keelt ei muudetud",
+                    "message": "Keel või lokaal ei ole rakenduses veel olemas."
+                  }
+                }
+              }
             }
           },
           "resume-on-start": "Rakenduse käivitamisel jätka viimatiesitatud loo esitamist",
@@ -180,9 +216,37 @@
                 "label": "Kujundus",
                 "submenu": {
                   "import-css-file": "Impordi kohandatud CSS fail",
-                  "no-theme": "Ilma kujunduseta"
+                  "no-theme": "Ilma kujunduseta",
+                  "colors": {
+                    "label": "Värvid"
+                  },
+                  "presets": {
+                    "label": "Eelseaded",
+                    "default": "Vaikimisi",
+                    "custom": "Kohandatud"
+                  },
+                  "reset-colors": "Lähtesta värvid",
+                  "open-themes-folder": "Ava teemade kaust"
                 }
-              }
+              },
+              "use-ytm-icons": "Kasuta YouTube Musicu originaalseid ikoone"
+            }
+          },
+          "updates": {
+            "label": "Värskendused",
+            "check": "Kontrolli värskendusi",
+            "auto-update": "Kontrolli värskendusi automaatselt",
+            "channel": {
+              "label": "Värskenduskanal",
+              "stable": "Stabiilne",
+              "beta": "Beeta"
+            }
+          },
+          "shared-links": {
+            "label": "Jagatud lingid",
+            "submenu": {
+              "strip-music": "Eemalda 'music.'",
+              "strip-si": "Eemalda '&si='"
             }
           }
         }
@@ -219,6 +283,15 @@
       "dislike": "Ei meeldi",
       "unlike": "Erinevalt",
       "undislike": "Eemalda mittemeeldimine"
+    },
+    "themes": {
+      "consent": {
+        "title": "Kas käivitada teema kood?",
+        "message": "„{{theme}}“ sisaldab skripti, mis käivitub rakendusele täieliku juurdepääsuga.",
+        "detail": "Teemaskriptid ei ole liivakastis. See kood saab lugeda ja muuta sinu seadeid, suhelda rakendusega ja teha kõike muud, mida rakendus ise suudab. Lubage seda ainult siis, kui usaldate teema allikat. Selle saate tühistada teema eemaldamisega.",
+        "allow": "Käivita see teema",
+        "cancel": "Tühista"
+      }
     }
   },
   "plugins": {
@@ -344,6 +417,10 @@
         },
         "port": {
           "label": "Port"
+        },
+        "mcp": {
+          "label": "MCP-server",
+          "description": "Pakub v2 API-t MCP-tööriistadena aadressil /mcp. Kasutab sama autoriseerimist nagu ülejäänud API."
         }
       },
       "name": "API server [beeta]",
@@ -356,11 +433,20 @@
           "label": "Sisesta API serveri port:",
           "title": "Port"
         }
+      },
+      "settings": {
+        "choose-file": "Vali fail…"
       }
     },
     "audio-compressor": {
       "description": "Rakenda helile tihendamine (alandab signaali kõige valjemate osade helitugevust ja tõstab vaiksemate osade helitugevust)",
-      "name": "Heli kompressor"
+      "name": "Heli kompressor",
+      "menu": {
+        "auto-track-gain": "Automaatne loo võimendus (võimendab vaikseid lugusid)",
+        "maximum-gain": {
+          "label": "Maksimaalne võimendus"
+        }
+      }
     },
     "auth-proxy-adapter": {
       "description": "Tugi autentimise proxy-teenuste kasutamiseks",
@@ -414,7 +500,8 @@
         "caption-changed": "Subtiitrite keel on nüüd {{language}}",
         "caption-disabled": "Subtiitrid on välja lülitatud",
         "no-captions": "Selle loo jaoks pole subtiitreid saadaval"
-      }
+      },
+      "description": "Pealdiste valija {{applicationName}} heliradade jaoks"
     },
     "clock": {
       "description": "Lisa navigeerimissibale kell",
@@ -425,7 +512,10 @@
           "label": "Vorming"
         }
       },
-      "name": "Kell"
+      "name": "Kell",
+      "settings": {
+        "hour-12": "Kasuta 12-tunnist vormingut"
+      }
     },
     "compact-sidebar": {
       "description": "Külgriba on alati kompaktne",
@@ -444,12 +534,25 @@
             "fade-out-duration": "Vaibumise kestus (ms)",
             "fade-scaling": {
               "linear": "Lineaarne",
-              "logarithmic": "Logaritmiline"
+              "logarithmic": "Logaritmiline",
+              "equal-power": "Võrdne võimsus",
+              "label": "Häibumise skaleerimine"
             },
             "seconds-before-end": "Crossfade N sekundit enne lõppu"
           },
           "title": "Crossfade'i valikud"
         }
+      },
+      "settings": {
+        "fade-in": "Sissehäibumine",
+        "fade-out": "Väljahäibumine",
+        "seconds-before-end": "Alusta enne lõppu",
+        "fade-scaling": "Häibumise skaleerimine",
+        "scaling": {
+          "linear": "Lineaarne",
+          "logarithmic": "Logaritmiline"
+        },
+        "seconds-before-end-description": "Sekundid enne loo lõppu, mil algab risthäibumine järgmisele loole"
       }
     },
     "custom-output-device": {
@@ -462,7 +565,8 @@
           "label": "Vali kasutatav heliväljundseade",
           "title": "Vali väljundseade"
         }
-      }
+      },
+      "description": "Seadista lugude jaoks kohandatud väljundmeediaseade"
     },
     "disable-autoplay": {
       "description": "Paneb loo algama \"pausil\" režiimis",
@@ -503,13 +607,33 @@
           "label": "Sisesta tegevusetuse ajalõpp sekundites:",
           "title": "Määra tegevusetuse ajalõpp"
         }
+      },
+      "settings": {
+        "auto-reconnect": "Automaatne taasühendamine",
+        "activity-timeout-enabled": "Tühjenda kohalolu pausil",
+        "activity-timeout-time": "Tühjenda pärast",
+        "hide-github-button": "Peida nupp „Vaata GitHubis“",
+        "hide-duration-left": "Peida järelejäänud aeg"
       }
     },
     "do-not-track": {
       "menu": {
         "blocker": "Blokeerija"
       },
-      "name": "Ära jälgi"
+      "name": "Ära jälgi",
+      "description": "Blokeerib kogu jälgimise kohe algusest",
+      "settings": {
+        "cache": "Blokeerimisnimekirjade vahemällu salvestamine",
+        "disable-default-lists": "Keela vaikimisi blokeerimisnimekirjad"
+      },
+      "dialog": {
+        "reload": {
+          "title": "Laadi leht uuesti",
+          "message": "Do Not Tracki seaded on muutunud.",
+          "detail": "Võrgureeglid uuenevad ilma rakendust uuesti käivitamata. Lehefiltrite muudatuste täielikuks rakendamiseks laadi leht uuesti. Taasesitus võib katkeda. Võid hiljem uuesti laadida.",
+          "reload-now": "Laadi leht kohe uuesti"
+        }
+      }
     },
     "downloader": {
       "backend": {
@@ -551,7 +675,8 @@
           "saving": "Salvestamine…",
           "trying-to-get-playlist-id": "Esitusloendi ID hankimise katse: {{playlistId}}",
           "video-id-not-found": "Videot ei leitud",
-          "writing-id3": "ID3 siltide kirjutamine…"
+          "writing-id3": "ID3 siltide kirjutamine…",
+          "ffmpeg-missing": "FFmpeg'i ei leitud. Selles vormingus allalaadimiseks paigalda FFmpeg ja veendu, et `ffmpeg` on sinu PATH-is."
         }
       },
       "description": "Laadi MP3 / lähteheli alla otse liidesest",
@@ -582,6 +707,10 @@
       },
       "templates": {
         "button": "Laadi alla"
+      },
+      "settings": {
+        "finish-folder": "Valmis allalaadimiste kaust",
+        "finish-folder-description": "Jätke määramata, et kasutada ülalpool olevat allalaadimiskausta."
       }
     },
     "equalizer": {
@@ -649,6 +778,44 @@
           "disconnected": "Lahti ühendatud",
           "guest": "Ühendatud külalisena",
           "host": "Ühendatud hostina"
+        },
+        "diagnostics": {
+          "check": {
+            "nat": "Võrgu tüüp (NAT)",
+            "signaling": "Signaaliserver",
+            "stun": "Otseühendus (STUN)",
+            "turn": "Varurelee (TURN)"
+          },
+          "copy": "Kopeeri kokkuvõte",
+          "detail": {
+            "check-error": "Kontroll ebaõnnestus: {{reason}}",
+            "public-ip": "Avalik aadress: {{ip}}",
+            "public-ip-hidden": "Avalik aadress: klõpsa näitamiseks",
+            "signaling-fail": "Kättesaamatu ({{reason}})",
+            "signaling-ok": "Kättesaadav",
+            "stun-fail": "Avalik aadress puudub (UDP/STUN blokeeritud)",
+            "stun-ok": "Avalik aadress leitud",
+            "turn-fail": "Relee kättesaamatu",
+            "turn-ok": "Relee kättesaadav"
+          },
+          "nat": {
+            "blocked": "UDP või STUN blokeeritud",
+            "open": "Avatud / koonus (otsene ühendus töötab)",
+            "symmetric": "Sümmeetriline (vajalik relee)",
+            "unknown": "Määramata"
+          },
+          "run-again": "Käivita uuesti",
+          "running": "Kontrollide käivitamine…",
+          "test": "Testi ühendust",
+          "title": "Ühenduse diagnostika",
+          "verdict": {
+            "blocked": "See võrk tõenäoliselt blokeerib Music Togetheri. Proovige teist võrku või VPN-i.",
+            "error": "Diagnostika käivitamine ebaõnnestus. Vaadake üksikasju konsoolist.",
+            "good": "Otsesed ühendused peaksid selles võrgus töötama.",
+            "limited": "Seda võrku ei õnnestunud täielikult kindlaks teha. Otsesed ühendused võivad siiski töötada; kui need ei tööta, proovige teist võrku.",
+            "no-signaling": "Music Togetheri server ei ole kättesaadav. Kontrollige tulemüüri või internetiühendust.",
+            "relay": "Otsesed ühendused võivad siin ebaõnnestuda; kasutatakse releed (töötab, kuid lisab latentsust)."
+          }
         }
       },
       "name": "Music Together [Beeta]",
@@ -664,7 +831,10 @@
         "permission-changed": "Music Together õigus muudetud väärtuseks \"{{permission}}\"",
         "remove-song-failed": "Loo eemaldamine ebaõnnestus",
         "user-connected": "{{name}} liitus Music Together'iga",
-        "user-disconnected": "{{name}} lahkus Music Together'ist"
+        "user-disconnected": "{{name}} lahkus Music Together'ist",
+        "diagnostics-copied": "Diagnostika kokkuvõte kopeeriti lõikelauale",
+        "diagnostics-copy-failed": "Diagnostika kokkuvõtte kopeerimine ebaõnnestus",
+        "diagnostics-running": "Oodake ühenduse testimise lõppemist"
       }
     },
     "navigation": {
@@ -711,7 +881,13 @@
       "menu": {
         "log-to-console": "Logi taaste sündmused konsooli"
       },
-      "name": "Esituse Taaste"
+      "name": "Esituse Taaste",
+      "settings": {
+        "stall-timeout": "Seiskumise ajalõpp",
+        "stall-timeout-description": "Kui kaua võib taasesitus edenemata jääda enne taastamiskatset",
+        "max-retries": "Maksimaalne korduskatsete arv",
+        "max-retries-description": "Taastamiskatsete arv enne järgmisele loole liikumist"
+      }
     },
     "picture-in-picture": {
       "description": "Võimaldab lülitada rakendust pilt-pildis režiimi",
@@ -729,7 +905,14 @@
         },
         "save-window-position": "Salvesta akna asukoht",
         "save-window-size": "Salvesta akna suurus",
-        "use-native-pip": "Kasuta veebisirvija pilt pildis"
+        "use-native-pip": "Kasuta veebisirvija pilt pildis",
+        "prompt": {
+          "title": "Pilt-pildis",
+          "label": "Pilt-pildis kiirklahvi seadistamine",
+          "keybind-options": {
+            "hotkey": "Kiirklahv pilt-pildis režiimi lülitamiseks"
+          }
+        }
       },
       "name": "Pilt pildis",
       "templates": {
@@ -741,6 +924,9 @@
       "name": "Esitamise kiirus",
       "templates": {
         "button": "Kiirus"
+      },
+      "menu": {
+        "no-preserves-pitch": "Keela helikõrguse säilitamine"
       }
     },
     "precise-volume": {
@@ -764,6 +950,12 @@
           "label": "Vali Helitugevuse Suurendamise/Vähendamise Sammud",
           "title": "Helitugevuse sammud"
         }
+      },
+      "settings": {
+        "steps": "Helitugevuse samm",
+        "arrows-shortcut": "Noolklahvide otseteed",
+        "shortcut-up": "Globaalne otsetee: helitugevus üles",
+        "shortcut-down": "Globaalne otsetee: helitugevus alla"
       }
     },
     "quality-changer": {
@@ -792,6 +984,10 @@
             "message": "Last.fm'i autentimine ei õnnestunud\nPeida hüpikaken järgmise taaskäivituseni.",
             "title": "Autentimine ei õnnestunud"
           }
+        },
+        "invalid-regex": {
+          "title": "Vigane regulaaravaldis",
+          "message": "Real {{line}} olev regulaaravaldis on vigane: {{error}}"
         }
       },
       "menu": {
@@ -799,11 +995,15 @@
           "api-settings": "Last.fm API seadistused"
         },
         "listenbrainz": {
-          "token": "Sisesta ListenBrainz'i kasutaja tunnusluba"
+          "token": "Sisesta ListenBrainz'i kasutaja tunnusluba",
+          "api-root": "ListenBrainz API URL"
         },
         "scrobble-alternative-artist": "Kasuta alternatiivseid esitajaid",
         "scrobble-alternative-title": "Kasuta alternatiivseid pealkirju",
-        "scrobble-other-media": "Kraasi muud meediat"
+        "scrobble-other-media": "Kraasi muud meediat",
+        "regex-filters": "Regulaaravaldiste filtrid",
+        "use-musicbrainz": "Kasuta metateabe parandamiseks MusicBrainzi",
+        "musicbrainz-email": "MusicBrainzi kontakt-e-post"
       },
       "name": "Kraasija",
       "prompt": {
@@ -815,8 +1015,23 @@
           "token": {
             "label": "Sisesta oma ListenBrainz'i tunnusluba:",
             "title": "ListenBrainz'i tunnusluba"
+          },
+          "api-root": {
+            "label": "Sisestage API baas-URL:",
+            "title": "ListenBrainz API URL"
           }
+        },
+        "regex-filter-multi": {
+          "label": "Sisestage üks regulaaravaldis rea kohta:"
+        },
+        "musicbrainz-email": {
+          "title": "MusicBrainzi kontakt-e-post",
+          "label": "Sisestage MusicBrainzi API jaoks e-posti aadress:"
         }
+      },
+      "settings": {
+        "lastfm-api-root": "Last.fm API URL",
+        "musicbrainz-email-description": "Kasutatakse MusicBrainzi API kontaktteabena; nõutav MusicBrainzi metateabe parandamiseks"
       }
     },
     "shortcuts": {
@@ -836,15 +1051,34 @@
           "label": "Vali üleüldised klahvikombinatsioonid lugude juhtimiseks:",
           "title": "Üldised kiirklahvid"
         }
+      },
+      "settings": {
+        "global-keybinds": "Globaalsed kiirklahvid (toimivad kogu rakenduses)",
+        "local-keybinds": "Kohalikud kiirklahvid (ainult akna fookuses olles)"
       }
     },
     "skip-silences": {
       "description": "Jätab lugudes automaatselt tühjad kohad vahele",
-      "name": "Jäta vaikus vahele"
+      "name": "Jäta vaikus vahele",
+      "settings": {
+        "only-skip-beginning": "Jäta vahele ainult loo alguses olev vaikus"
+      }
     },
     "sponsorblock": {
       "description": "Jätab automaatselt vahele mittemuusikalised osad nagu intro/outro või muusikavideote osad, kus lugu ei mängi",
-      "name": "SponsorBlock"
+      "name": "SponsorBlock",
+      "settings": {
+        "categories": "Vahelejätetavad segmendid",
+        "category": {
+          "sponsor": "Sponsor",
+          "intro": "Sissejuhatus",
+          "outro": "Lõpp",
+          "interaction": "Interaktsiooni meeldetuletus",
+          "selfpromo": "Enesereklaam",
+          "music_offtopic": "Mittemuusikaline osa"
+        },
+        "api-url": "API URL"
+      }
     },
     "synced-lyrics": {
       "description": "Pakub sünkroniseeritud laulusõnu, kasutades teenuseid nagu LRClib.",
@@ -1057,6 +1291,30 @@
         "show-custom-search-button": {
           "label": "Näita kohandatud otsingunuppu",
           "tooltip": "Kuva otsingunupp laulutekstide valijas, mis võimaldab praeguse laulu otsingupäringut ja artisti üle kirjutada."
+        },
+        "provider-priority": {
+          "tooltip": "Pakkujaid proovitakse selles järjekorras: võidab esimene, kellel on praegusele laulule sõnad. Ümberjärjestamiseks kasutage nooli."
+        },
+        "prefer-synced": {
+          "tooltip": "Vali loendist esimene pakkuja, kellel on ajastatud sõnad, mitte esimene, kellel on ükskõik millised sõnad."
+        },
+        "previous-provider": {
+          "tooltip": "Eelmine pakkuja"
+        },
+        "next-provider": {
+          "tooltip": "Järgmine pakkuja"
+        },
+        "custom-search-button": {
+          "tooltip": "Kohandatud otsingupäring"
+        },
+        "star-provider": {
+          "tooltip": "Kasuta selle laulu jaoks alati seda pakkujat, olenemata prioriteedijärjekorrast. Kui sellel pole laulule sõnu, kasutatakse tavalist järjekorda."
+        },
+        "unstar-provider": {
+          "tooltip": "Lõpeta selle pakkuja sidumine selle lauluga."
+        },
+        "use-priority-list": {
+          "tooltip": "Proovi pakkujaid allpool näidatud järjekorras. Lülitage see välja, et lasta sõnadel otsustada: võidab pakkuja, kellel on laulule parimad sõnad."
         }
       },
       "name": "Sünkroonitud laulusõnad",
@@ -1068,6 +1326,22 @@
         "duration-mismatch": "⚠️ - Laulusõnad võivad olla sünkroonist väljas kestuse mittevastavuse tõttu.",
         "inexact": "⚠️ - Selle loo laulusõnad ei pruugi olla täpsed",
         "instrumental": "⚠️ - See on instrumentaalne lugu"
+      },
+      "settings": {
+        "precise-timing": "Täpne ajastus",
+        "show-inexact": "Näita ebatäpseid sõnu",
+        "show-time-codes": "Näita ajakoode",
+        "romanization": "Romaniseeri sõnad",
+        "line-effect": "Rea efekt",
+        "effect": {
+          "fancy": "Efektne",
+          "scale": "Skaala",
+          "offset": "Nihe",
+          "focus": "Fookus"
+        },
+        "prefer-synced": "Eelista sünkroonitud sõnu",
+        "provider-priority": "Pakkujate prioriteet",
+        "use-priority-list": "Kasuta prioriteediloendit"
       }
     },
     "taskbar-mediacontrol": {
@@ -1102,7 +1376,10 @@
           }
         }
       },
-      "name": "Läbipaistev pleier"
+      "name": "Läbipaistev pleier",
+      "settings": {
+        "type-description": "Akna läbipaistvuse jaoks kasutatav taustamaterjal"
+      }
     },
     "tuna-obs": {
       "description": "Lõimimine OBSi Tuna lisamooduliga",
@@ -1144,7 +1421,26 @@
       "menu": {
         "visualizer-type": "Visualiseerija liik"
       },
-      "name": "Visualiseerija"
+      "name": "Visualiseerija",
+      "settings": {
+        "preset": "Eelseade",
+        "blend-time": "Sulandumisaeg",
+        "effect": "Efekt",
+        "accuracy": "Täpsus",
+        "max-height": "Maksimaalne kõrgus",
+        "max-size": "Maksimaalne suurus",
+        "line-width": "Joone laius",
+        "color": "Värv",
+        "shadow-blur": "Varju hägusus",
+        "shadow-color": "Varju värv",
+        "fade-side": "Külgede hajutamine",
+        "prettify": "Ilusta",
+        "prettify-description": "Ahenda tulbad servade suunas",
+        "dottify": "Täpista",
+        "dottify-description": "Joonista pideva joone asemel täpid",
+        "horizontal-align": "Horisontaalne joondus",
+        "vertical-align": "Vertikaalne joondus"
+      }
     },
     "playlist-search": {
       "description": "Lisab otsinguvälja, et filtreerida esitusloendeid külgribal ja dialoogis \"Lisa esitusloendisse\"",
@@ -1153,6 +1449,196 @@
         "search-placeholder": "Otsi esitusloendeid",
         "no-results": "Plaanimeid ei leitud"
       }
+    },
+    "always-show-volume-slider": {
+      "name": "Kuva helitugevuse liugur alati",
+      "description": "Hoiab helitugevuse liuguri nähtava ja lohistatavana, selle asemel et näidata seda ainult hõljutamisel."
+    },
+    "fullscreen-auto-hide": {
+      "description": "Peidab täisekraanil pärast mõneseksundilist tegevusetust automaatselt pleieri juhtnupud ja hiirekursori",
+      "name": "Täisekraanil automaatne peitmine"
+    },
+    "prefer-song": {
+      "description": "Esita laulu, mitte muusikavideot, kui albumi lugu on video",
+      "name": "Eelista laulu"
+    },
+    "search-commands": {
+      "commands": {
+        "play": "Esita video YouTube'i lingi või ID järgi",
+        "settings": "Ava seaded"
+      },
+      "description": "Käskude käivitamiseks tippige otsingukasti /; argumentidele pakutakse automaattäitmist",
+      "name": "Otsingukäsud",
+      "settings": {
+        "open-keybind": "Avamise otsetee",
+        "open-keybind-description": "Electroni stiilis kiirendi, nt CmdOrCtrl+/ või Alt+Space",
+        "open-shortcut": "Ava otsingukast kõikjalt",
+        "open-shortcut-description": "Avab otsingukasti juba käsurežiimis, nagu Spotlight. Uuesti vajutamine sulgeb selle."
+      }
+    },
+    "seek-shortcuts": {
+      "description": "Liigu vasaku/parema nooleklahviga 5 sekundit tagasi/edasi",
+      "name": "Hüppamise otseteed"
+    },
+    "sfw-music": {
+      "description": "Jätab automaatselt vahele YouTube Musicu poolt märgistusega Explicit lood. Teeb pausi, kui explicit-järjekord kordub või järgmist lugu pole saadaval.",
+      "name": "SFW muusika"
+    },
+    "toast-autoclose": {
+      "description": "Sulgeb YouTube Musicu teated automaatselt kolme sekundi järel",
+      "name": "Teadete automaatne sulgemine"
+    },
+    "statusbar-lyrics": {
+      "settings": {
+        "include-pronunciation": "Kaasa hääldus"
+      }
+    },
+    "dismiss-multidevice-popup": {
+      "name": "Mitme seadme hüpikakna sulgemine",
+      "description": "Sulgeb automaatselt hüpikakna \"Kuula selles seadmes\", mis ilmub, kui taasesitus algab teises seadmes."
+    },
+    "memory-saver": {
+      "description": "Tühjendab renderdaja ressursivahemälud, kui aken on peidetud ja need kasvavad üle lävendi",
+      "name": "Mälusäästja",
+      "settings": {
+        "threshold": "Vahemälu lävend",
+        "threshold-description": "Tühjenda vahemälud, kui nende aktiivne mälu ületab selle väärtuse, kui aken on peidetud"
+      }
+    }
+  },
+  "settings-ui": {
+    "name": "Seadete kasutajaliides",
+    "description": "Lisab rakendusesisese seadetepaneeli, mille saab avada külgribalt",
+    "title": "Seaded",
+    "settings": {
+      "show-button": "Näita külgribal seadete kirjet",
+      "show-button-description": "Lülita see välja, et hoida külgriba puhtana; Seaded on endiselt jaotises Navigatsioon → Ava seaded.",
+      "separate-window": "Ava seaded alati eraldi aknas",
+      "separate-window-description": "Avab eraldiseisva seadete akna, nagu seda teeb süsteemisalve kirje, mitte rakendusesisese paneeli."
+    },
+    "search-placeholder": "Otsi seadeid",
+    "search-results": "Otsingutulemused",
+    "search-matching": "Vastab „{{query}}“",
+    "no-match": "Ükski säte ei vasta päringule „{{query}}“.",
+    "close": "Sulge",
+    "edit-config": "Muuda config.json",
+    "restart-banner": "Mõned muudatused jõustuvad alles taaskäivitamisel.",
+    "restart-now": "Taaskäivita kohe",
+    "later": "Hiljem",
+    "restart-pill": "taaskäivitus",
+    "restart-pill-hint": "Nõuab taaskäivitamist",
+    "refresh-options": "Värskenda valikud",
+    "move-up": "Liiguta üles",
+    "move-down": "Liiguta alla",
+    "about": {
+      "tagline": "Funktsiooniderohke YouTube Musicu töölauarakendus",
+      "versions": "Versioonid",
+      "version-app": "Rakendus",
+      "version-build": "Build",
+      "version-electron": "Electron",
+      "version-chromium": "Chromium",
+      "version-node": "Node.js",
+      "version-platform": "Platvorm",
+      "version-innertube": "Innertube",
+      "links": "Lingid",
+      "link-repo": "Hoidla",
+      "link-issue": "Teata probleemist",
+      "link-releases": "Väljaanded",
+      "link-license": "Litsents",
+      "actions": "Toimingud",
+      "check-updates": "Kontrolli uuendusi",
+      "copy-debug": "Kopeeri silumisteave",
+      "copied": "Kopeeritud!"
+    },
+    "sections": {
+      "general": {
+        "label": "Üldine"
+      },
+      "appearance": {
+        "label": "Välimus"
+      },
+      "window": {
+        "label": "Aken ja süsteemisalv"
+      },
+      "advanced": {
+        "label": "Täpsemad"
+      },
+      "plugins": {
+        "label": "Pluginad"
+      },
+      "flags": {
+        "label": "Lipud"
+      },
+      "about": {
+        "label": "Teave"
+      }
+    },
+    "groups": {
+      "updates-session": "Uuendused ja seanss",
+      "startup-language": "Käivitamine ja keel",
+      "interface": "Kasutajaliides",
+      "context-menu": "Kontekstimenüü",
+      "window-title": "Aken",
+      "window": "Aken",
+      "system": "Süsteem",
+      "network": "Võrk",
+      "performance": "Jõudlus",
+      "configuration": "Konfiguratsioon",
+      "updates": "Uuendused"
+    },
+    "stepper-decrement": "Vähenda",
+    "stepper-increment": "Suurenda",
+    "flags": {
+      "warning": "Funktsioonilipud on YouTube Musicu enda sisemised lülitid. Nende muutmine võib rikkuda taasesitust, paigutust või konto funktsioone ning need ei ole toe poolt kaetud. Ülekirjutused säilitatakse ainult muudetud lippude jaoks ja need saab eemaldada valikuga Võta tagasi.",
+      "search-placeholder": "Otsi lippe",
+      "overridden": "ülekirjutatud",
+      "undo": "Võta tagasi",
+      "undo-hint": "Kustuta see ülekirjutus",
+      "empty": "See leht ei näita ühtegi funktsioonilippu.",
+      "no-match": "Ükski lipp ei vasta päringule „{{query}}“.",
+      "add-name": "Uue lipu nimi",
+      "add-value": "Väärtus",
+      "add-value-hint": "JSON, kui see parsitakse (true, 42, \"text\"), muidu tekst ise",
+      "add": "Lisa"
+    },
+    "fields": {
+      "hide-dislike-button": "Peida „Ei meeldi“ nupp",
+      "hide-video-captions": "Peida video subtiitrid",
+      "context-menu": {
+        "hide-entry": "Peida {{entry}}",
+        "entries": {
+          "add-to-queue": "Lisa järjekorda",
+          "delete-playlist": "Kustuta esitusloend",
+          "dismiss-queue": "Sulge järjekord",
+          "download": "Laadi alla",
+          "go-to-album": "Mine albumi juurde",
+          "go-to-artist": "Mine esitaja juurde",
+          "go-to-playlist": "Mine esitusloendi juurde",
+          "like": "Meeldib",
+          "not-interested": "Ei huvita",
+          "pin-to-listen-again": "Kinnita jaotisse Kuula uuesti",
+          "play-next": "Esita järgmisena",
+          "remove-from-playlist": "Eemalda esitusloendist",
+          "remove-from-queue": "Eemalda järjekorrast",
+          "report": "Teata",
+          "save-to-library": "Salvesta teeki",
+          "save-to-playlist": "Salvesta esitusloendisse",
+          "share": "Jaga",
+          "shuffle-play": "Esita juhuslikult",
+          "start-mix": "Alusta miksi",
+          "stats-for-nerds": "Statistika nöridele"
+        }
+      },
+      "podcast-artist": "Kasuta taskuhäälingusaate osalejaid esitajatena",
+      "podcast-artist-desc": "Väljas: taskuhäälingu episoodi esitajaks on kanal, mis selle avaldas.",
+      "theme-preset": "Eelseadistus",
+      "theme-variable-name": "Muutuja",
+      "theme-variable-value": "Väärtus",
+      "theme-variable-add": "Lisa muutuja",
+      "performance-mode": "Jõudlusrežiim",
+      "performance-mode-desc": "Vaheta veidi visuaalset täpsust odavama renderdamise vastu.",
+      "in-process-gpu": "Ühenda GPU protsess rakenduse protsessiga",
+      "in-process-gpu-desc": "Eksperimentaalne: säästab ühe protsessi, kuid viib GPU mälu põhiprotsessi ja võib langeda tagasi tarkvaralisele renderdamisele."
     }
   }
 }

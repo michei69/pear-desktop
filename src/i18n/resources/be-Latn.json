@@ -4,8 +4,1573 @@
       "plugins": {
         "execute-failed": "Pamyłka padčas vykanannia dadatku {{pluginName}}::{{contextName}}",
         "executed-at-ms": "Dadatak {{pluginName}}::{{contextName}} byŭ vykanany za {{ms}}ms",
-        "initialize-failed": "Pamyłka padčas inicyjalizacyi dadatku \"{{pluginName}}\""
+        "initialize-failed": "Pamyłka padčas inicyjalizacyi dadatku \"{{pluginName}}\"",
+        "load-all": "Zahružajucca ŭsie płahiny",
+        "load-failed": "Nie ŭdałosia zahruzić płahin \"{{pluginName}}\"",
+        "loaded": "Płahin \"{{pluginName}}\" zahružany",
+        "unload-failed": "Nie ŭdałosia vyhruzić płahin \"{{pluginName}}\"",
+        "unloaded": "Płahin \"{{pluginName}}\" vyhružany"
       }
+    }
+  },
+  "language": {
+    "code": "be-Latn",
+    "local-name": "Biełaruskaja (łacinka)",
+    "name": "Belarusian (Latin)"
+  },
+  "main": {
+    "console": {
+      "did-finish-load": {
+        "dev-tools": "Zahruzka zaversana. DevTools adkrytyja"
+      },
+      "i18n": {
+        "loaded": "i18n zahružana"
+      },
+      "second-instance": {
+        "receive-command": "Atrymana komanda pa protakole: \"{{command}}\""
+      },
+      "unresponsive": {
+        "details": "Pamyłka: prahrama nie adkazvaje!\n{{error}}"
+      },
+      "when-ready": {
+        "clearing-cache-after-20s": "Ačyščaju keš prahramy"
+      },
+      "window": {
+        "tried-to-render-offscreen": "Akno pasprabavała maliacca za ekranam, windowSize={{windowSize}}, displaySize={{displaySize}}, position={{position}}"
+      }
+    },
+    "dialog": {
+      "hide-menu-enabled": {
+        "detail": "Mieniu schavanaje, vykarystajcie 'Alt', kab jaho pakazać (abo 'Escape', kali vykarystojvajecca ŭbudavanaje mieniu)",
+        "message": "Schavannie mieniu ŭklučana",
+        "title": "Schavannie mieniu ŭklučana"
+      },
+      "need-to-restart": {
+        "buttons": {
+          "later": "Paźniej",
+          "restart-now": "Pierazapuscić zaraz"
+        },
+        "detail": "Płahin \"{{pluginName}}\" patrabuje pierazapusku, kab ustupić u siłu",
+        "message": "\"{{pluginName}}\" patrabuje pierazapusku",
+        "title": "Patrabujecca pierazapusk"
+      },
+      "restart-summary": {
+        "detail": "Pierazapuscie prahramu, kab prymianić: {{changes}}",
+        "message": "Niekatoryja zmiény patrabuju pierazapusku",
+        "title": "Patrabujecca pierazapusk"
+      },
+      "unresponsive": {
+        "buttons": {
+          "quit": "Vyjści",
+          "relaunch": "Pierazapuscić",
+          "wait": "Pačakać"
+        },
+        "detail": "Prabačajcie za niezručnasci! Kali laska, vybierycie, što zrabić:",
+        "message": "Prahrama nie adkazvaje",
+        "title": "Akno nie adkazvaje",
+        "details": "Pryčyna: {{error}}"
+      },
+      "update-available": {
+        "buttons": {
+          "disable": "Adklučyć abnaŭleńni",
+          "download": "Spampavać",
+          "ok": "OK"
+        },
+        "detail": "Dastupna novaja versija, jaje možna spampavać na {{downloadLink}}",
+        "message": "Dastupna novaja versija",
+        "title": "Dastupnaje abnaŭleńnie"
+      },
+      "update-available-dev": {
+        "buttons": {
+          "ok": "OK",
+          "view": "Prahliadzieć kamity"
+        },
+        "title": "Dastupnaje abnaŭleńnie",
+        "message": "Hety dev-zbor adstaie ad haliny master",
+        "detail": "Kamit, na jakim pracuje hety zbor ({{commit}}), staršy za apošni kamit u master. Naviejšyja kamity možna prahliadzieć na {{commitsLink}}"
+      },
+      "downgrade-warning": {
+        "title": "Viarnucca da stabilnaj versii?",
+        "message": "Hety beta-zbor naviejšy za apošni stabilny vypusk.",
+        "detail": "Viartannie nazad moža skinuli niekatoryja nastrojki: pierachod ad naviejšaj versii da staršaj nie vykonvaje mihracyj i moža pakinuć naviejšyja nastrojki nečytalnymi.",
+        "confirm": "Pierajści da stabilnaj",
+        "cancel": "Anulavać"
+      }
+    },
+    "menu": {
+      "about": "Pra prahramu",
+      "navigation": {
+        "label": "Navihaty",
+        "submenu": {
+          "copy-current-url": "Skapijavać biadučy URL",
+          "go-back": "Nazad",
+          "go-forward": "Napierad",
+          "open-settings": "Adkryć nastrojki",
+          "quit": "Vyjści",
+          "restart": "Pierazapuscić prahramu"
+        }
+      },
+      "options": {
+        "label": "Opcyi",
+        "submenu": {
+          "advanced-options": {
+            "label": "Pradvinytyja opcyi",
+            "submenu": {
+              "auto-reset-app-cache": "Skinuć keš prahramy pry zapusku",
+              "disable-hardware-acceleration": "Adklučyć aparatnaje paskarennie",
+              "edit-config-json": "Redagavać config.json",
+              "override-user-agent": "Pieravyznačyć User-Agent",
+              "restart-on-config-changes": "Pierazapuskać pry zmiénach kanfihuracyi",
+              "set-proxy": {
+                "label": "Nastavić proxy",
+                "prompt": {
+                  "label": "Uviadzicie adras proxy: (pakinćcie pustym, kab adklučyć)",
+                  "placeholder": "Prykład: SOCKS5://127.0.0.1:9999",
+                  "title": "Nastavić proxy"
+                }
+              },
+              "toggle-dev-tools": "Pieraklučyć DevTools",
+              "force-smtc": "Prymusić vykarystannie zniešniaha SMTC"
+            }
+          },
+          "always-on-top": "Zaŭždy zvierchu",
+          "updates": {
+            "label": "Abnaŭleńni",
+            "check": "Pravaryć abnaŭleńni",
+            "auto-update": "Aŭtamatyčna praviaryć abnaŭleńni",
+            "channel": {
+              "label": "Kanal abnaŭleńniaŭ",
+              "stable": "Stabilny",
+              "beta": "Beta"
+            }
+          },
+          "hide-menu": {
+            "dialog": {
+              "message": "Mieniu budzie schavanaje pry nastupnym zapusku, vykarystajcie [Alt], kab jaho pakazać (abo zvarotny apostrof [`], kali vykarystojvajecca ŭbudavanaje mieniu)",
+              "title": "Schavannie mieniu ŭklučana"
+            },
+            "label": "Schavać mieniu"
+          },
+          "language": {
+            "dialog": {
+              "message": "Mova budzie zmieniena paśla pierazapusku",
+              "title": "Mova zmieniena"
+            },
+            "label": "Mova",
+            "submenu": {
+              "to-help-translate": "Chocacie dapamahčy pierakłaści? Nacisnicie tut",
+              "sync": {
+                "label": "Sinhranizavać movu",
+                "submenu": {
+                  "from-youtube": "Z YouTube",
+                  "to-youtube": "U YouTube"
+                },
+                "failure": {
+                  "dialog": {
+                    "title": "Mova nie zmieniena",
+                    "message": "Mova abo lakal pakul nie isnuje ŭ prahramie."
+                  }
+                }
+              }
+            }
+          },
+          "resume-on-start": "Pradaužać apošniuju pieśniu pry zapusku prahramy",
+          "single-instance-lock": "Blakiroŭka adzinočnaha ekzemplara",
+          "start-at-login": "Zapuskać pry ŭvachodzie",
+          "starting-page": {
+            "label": "Pačatkovaja staronka",
+            "unset": "Nie vyznačana"
+          },
+          "shared-links": {
+            "label": "Ahulnyja spasyłki",
+            "submenu": {
+              "strip-music": "Prybrać 'music.'",
+              "strip-si": "Prybrać '&si='"
+            }
+          },
+          "tray": {
+            "label": "Łatak",
+            "submenu": {
+              "disabled": "Adklučana",
+              "enabled-and-hide-app": "Uklučana i schavać prahramu",
+              "enabled-and-show-app": "Uklučana i pakazać prahramu",
+              "move-to-current-desktop": "Pieramianie na biadzjučy virtualny stoł pry pakazie",
+              "play-pause-on-click": "Plaŭ/Paŭza pa kliku",
+              "force-white-icons": "Prymusova vykarystoŭvać bielyja ikony"
+            }
+          },
+          "visual-tweaks": {
+            "label": "Vizualnyja zmeny",
+            "submenu": {
+              "like-buttons": {
+                "default": "Pradefaĺtny",
+                "force-show": "Prymusova pakazvać",
+                "hide": "Schavaci",
+                "swap": "Pamianiac paradak knopak padabajecca",
+                "label": "Knopki padabajecca"
+              },
+              "custom-window-title": {
+                "label": "Ułasny zahaloŭak akna",
+                "prompt": {
+                  "label": "Uviadzicie ułasny zahaloŭak akna: (pakińcie pustym, kab vykliučyć)",
+                  "placeholder": "Prykład: {{applicationName}}"
+                }
+              },
+              "remove-upgrade-button": "Prybrać knopku abnaŭlennia",
+              "use-ytm-icons": "Vykarystoŭvać aryhinalnyja ikony YouTube Music",
+              "theme": {
+                "label": "Tema",
+                "submenu": {
+                  "import-css-file": "Impartavać ułasny CSS-fajł",
+                  "no-theme": "Biez temy",
+                  "colors": {
+                    "label": "Kolery"
+                  },
+                  "presets": {
+                    "label": "Pryšety",
+                    "default": "Pradefaĺtny",
+                    "custom": "Ułasny"
+                  },
+                  "reset-colors": "Skinuć kolery",
+                  "open-themes-folder": "Adkryć papku tem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "plugins": {
+        "enabled": "Uklučany",
+        "label": "Plahiny",
+        "new": "Novaje"
+      },
+      "view": {
+        "label": "Vyhlad",
+        "submenu": {
+          "force-reload": "Prymusova pierazahruzić",
+          "reload": "Pierazahruzić",
+          "reset-zoom": "Faktyčny pamier",
+          "toggle-fullscreen": "Pierenaključyć poŭny ekran",
+          "zoom-in": "Pavialičyć masštab",
+          "zoom-out": "Pamienšyć masštab"
+        }
+      }
+    },
+    "tray": {
+      "next": "Dalej",
+      "play-pause": "Plaŭ/Paŭza",
+      "like": "Padabajecca",
+      "dislike": "Nie padabajecca",
+      "unlike": "Anulavać padabajenńnie",
+      "undislike": "Anulavać niepadabajenńnie",
+      "previous": "Nazad",
+      "quit": "Vyjści",
+      "restart": "Pierazapuscić dadatak",
+      "show": "Pakazać akno",
+      "tooltip": {
+        "default": "{{applicationName}}",
+        "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
+      }
+    },
+    "themes": {
+      "consent": {
+        "title": "Zapuscić kod temy?",
+        "message": "«{{theme}}» zmiaščaje skrypt, jaki budzie zapuščany z poŭnym dostupam da dadatka.",
+        "detail": "Skrypty tem nie izalavanyja. Hety kod moža čytać i zmianiać vašyja nastrojki, zviazvacca z dadatkam i rabić usio inšaje, što moža rabić sam dadatak. Dazvolcie heta tolki, kali daviarajecie krynice temy. Vy možacie adklikać heta, vydalivšy temu.",
+        "allow": "Zapuscić hetu temu",
+        "cancel": "Skasavać"
+      }
+    }
+  },
+  "plugins": {
+    "ad-speedup": {
+      "description": "Kali hraje reklama, jon pryhlušaje audio i ustalioŭvaje chutkaść vialičyni 16x",
+      "name": "Paskarennie reklamy"
+    },
+    "album-actions": {
+      "description": "Dadae knopki «Anulavać niepadabajenńnie», «Nie padabajecca», «Padabajecca» i «Anulavać padabajenńnie», kab prymianić heta da ŭsich piesień u plejlistzie abo albomie.",
+      "name": "Dziejańni z albomam"
+    },
+    "album-color-theme": {
+      "description": "Užyvaje dynamičnuju temu i vizualnyja efekty na asnove palitry koleraŭ alboma.",
+      "menu": {
+        "color-mix-ratio": {
+          "label": "Praporcyja zmiašannia koleraŭ",
+          "submenu": {
+            "percent": "{{ratio}}%"
+          }
+        },
+        "enable-seekbar": "Uklučyć aformlennie pasku peramotki"
+      },
+      "name": "Tema koleraŭ alboma"
+    },
+    "audio-only": {
+      "description": "Prymusova ŭklučaje režym «tolki audio» — blakuje ŭsie videa-potoki na ŭzroŭni sietki i plejera, kab zberahčy RAM i šyryniu kanala.",
+      "name": "Tolki audio"
+    },
+    "always-show-volume-slider": {
+      "name": "Zaŭždy pakazvać paŭzunok huchnaści",
+      "description": "Trymaje paŭzunok huchnaści vidavym i pierasuvnym, a nie pakazvaje jaho tolki pry navedzanni."
+    },
+    "ambient-mode": {
+      "description": "Dadae efekt asviatlennia, praekcujučy miakija kolery z videa na fon ekrana.",
+      "menu": {
+        "blur-amount": {
+          "label": "Stupień razmyccia",
+          "submenu": {
+            "pixels": "{{blurAmount}} pikselaŭ"
+          }
+        },
+        "buffer": {
+          "label": "Bufer",
+          "submenu": {
+            "buffer": "{{buffer}}"
+          }
+        },
+        "opacity": {
+          "label": "Neprazrystaść",
+          "submenu": {
+            "percent": "{{opacity}}%"
+          }
+        },
+        "quality": {
+          "label": "Jakaść",
+          "submenu": {
+            "pixels": "{{quality}} pikselaŭ"
+          }
+        },
+        "size": {
+          "label": "Pamier",
+          "submenu": {
+            "percent": "{{size}}%"
+          }
+        },
+        "smoothness-transition": {
+          "label": "Plaŭnaść pierachodu",
+          "submenu": {
+            "during": "Praciahom {{interpolationTime}} s"
+          }
+        },
+        "use-fullscreen": {
+          "label": "Vykarystoŭvać poŭny ekran"
+        }
+      },
+      "name": "Ambientny režym"
+    },
+    "amuse": {
+      "description": "Dadae padtrymku {{applicationName}} dla vidžeta «Amuse now playing» ad 6K Labs.",
+      "name": "Amuse",
+      "response": {
+        "query": "Server Amuse API zapuščany. Vykarystajcie GET /query, kab atrymać infarmacyju pra piesniu."
+      }
+    },
+    "api-server": {
+      "description": "Dadae API-server dlia keravannia plejeram.",
+      "dialog": {
+        "request": {
+          "buttons": {
+            "allow": "Dazvolić",
+            "deny": "Admović"
+          },
+          "message": "Dazvolić {{ID}} ({{origin}}) dostup da API?",
+          "title": "Zapyt na aŭtaryzacyju API"
+        }
+      },
+      "menu": {
+        "auth-strategy": {
+          "label": "Stratehija aŭtaryzacyji",
+          "submenu": {
+            "auth-at-first": {
+              "label": "Aŭtaryzavać pry pieršym zapycie"
+            },
+            "none": {
+              "label": "Biez aŭtaryzacyji"
+            }
+          }
+        },
+        "hostname": {
+          "label": "Imia hosta"
+        },
+        "port": {
+          "label": "Port"
+        },
+        "mcp": {
+          "label": "MCP-server",
+          "description": "Pradastaŭlaje v2 API jak instrumenty MCP pa /mcp. Vykarystoŭvaje tuju ž aŭtaryzacyju, što i rešta API."
+        },
+        "https": {
+          "label": "HTTPS i sertyfikaty",
+          "submenu": {
+            "enable-https": {
+              "label": "Uklučyć HTTPS"
+            },
+            "cert": {
+              "label": "Fajł sertyfikata (.crt/.pem)",
+              "dialogTitle": "Vybrać fajł sertyfikata HTTPS"
+            },
+            "key": {
+              "label": "Fajł pryvatnaha kluča (.key/.pem)",
+              "dialogTitle": "Vybrać fajł pryvatnaha kluča HTTPS"
+            }
+          }
+        }
+      },
+      "name": "API-server [Beta]",
+      "prompt": {
+        "hostname": {
+          "label": "Uviadzicie imia hosta (naprykład 0.0.0.0) dla API-serwera:",
+          "title": "Imia hosta"
+        },
+        "port": {
+          "label": "Uviadzicie port dla API-serwera:",
+          "title": "Port"
+        }
+      },
+      "settings": {
+        "choose-file": "Vybierycie fajł…"
+      }
+    },
+    "audio-compressor": {
+      "description": "Prymiańać kampresiju da audio (znižaje hučnaść najhučniejšych častak syhnału i padvyšvaje hučnaść najcišejšych častak)",
+      "menu": {
+        "auto-track-gain": "Aŭtamatyčnaje uzmacniennie treka (uzmacniaje cišyja treki)",
+        "maximum-gain": {
+          "label": "Maksymalnaje uzmacniennie"
+        }
+      },
+      "name": "Aŭdyjakampresar"
+    },
+    "auth-proxy-adapter": {
+      "description": "Padtrymka vykarystannia pasłuhaŭ autentyfikacyjnaha proksi",
+      "menu": {
+        "disable": "Adklučyć adaptar proksi",
+        "enable": "Uklučyć adaptar proksi",
+        "hostname": {
+          "label": "Imia hosta"
+        },
+        "port": {
+          "label": "Port"
+        }
+      },
+      "name": "Adaptar proksi autentyfikacyi",
+      "prompt": {
+        "hostname": {
+          "title": "Imia hosta proksi",
+          "label": "Uviadzicie imia hosta dla lakalnaha proksi-serwera (patrabuje pierazapusku):"
+        },
+        "port": {
+          "title": "Port proksi",
+          "label": "Uviadzicie port dla lakalnaha proksi-serwera (patrabuje pierazapusku):"
+        }
+      }
+    },
+    "blur-nav-bar": {
+      "description": "Robić panel navihacyi prazrystym i razmytym",
+      "name": "Razmyty panel navihacyi"
+    },
+    "bypass-age-restrictions": {
+      "description": "Abchodzić prawierku ŭzrostu Music Player",
+      "name": "Abchod abmiežavanniaŭ pa ŭzroście"
+    },
+    "captions-selector": {
+      "description": "Vybar subtytraŭ dla aŭdyjadorožak {{applicationName}}",
+      "menu": {
+        "autoload": "Aŭtamatyčna vybirać apošni vykarystany subtytr",
+        "disable-captions": "Praz zmaučannie biez subtytraŭ"
+      },
+      "name": "Vybar subtytraŭ",
+      "prompt": {
+        "selector": {
+          "label": "Patočnaja mova subtytraŭ: {{language}}",
+          "none": "Niama",
+          "title": "Vybierycie movu subtytraŭ"
+        }
+      },
+      "templates": {
+        "title": "Adkryć vybar subtytraŭ"
+      },
+      "toast": {
+        "caption-changed": "Subtytr zmienieny na {{language}}",
+        "caption-disabled": "Subtytry adklučany",
+        "no-captions": "Dla hetaj pieśni niama subtytraŭ"
+      }
+    },
+    "clock": {
+      "description": "Dadać hadzinnik u panel navihacyi",
+      "name": "Hadzinnik",
+      "menu": {
+        "format": {
+          "label": "Farmat",
+          "display-seconds": "Pakazvać sekundy",
+          "24-hour-format": "24-hadzinny farmat"
+        }
+      },
+      "settings": {
+        "hour-12": "Vykarystavać 12-hadzinny farmat"
+      }
+    },
+    "compact-sidebar": {
+      "description": "Zaŭždy ŭstaliovać kampaktny režym bačnaha panelu",
+      "name": "Kampaktny bačny panel"
+    },
+    "crossfade": {
+      "description": "Krosfejd pamiž pieśniami",
+      "menu": {
+        "advanced": "Dadatkovyja"
+      },
+      "name": "Krosfejd [Beta]",
+      "prompt": {
+        "options": {
+          "multi-input": {
+            "fade-in-duration": "Tryvałaść płaŭnaha ŭzmocniennia (ms)",
+            "fade-out-duration": "Tryvałaść płaŭnaha zatušennia (ms)",
+            "fade-scaling": {
+              "equal-power": "Roŭnaja mahutnaść",
+              "label": "Mahštaby pierachodu",
+              "linear": "Linejna",
+              "logarithmic": "Łaharyfmičnaja"
+            },
+            "seconds-before-end": "Krosfejd za N sekund da kanca"
+          },
+          "title": "Parametry krosfejdu"
+        }
+      },
+      "settings": {
+        "fade-in": "Płaŭnaje ŭzmocniennie",
+        "fade-out": "Płaŭnaje zatušennie",
+        "seconds-before-end": "Pačynać da kanca",
+        "fade-scaling": "Mahštaby pierachodu",
+        "scaling": {
+          "linear": "Linejna",
+          "logarithmic": "Łaharyfmičnaja"
+        },
+        "seconds-before-end-description": "Sekundy da kanca treka, za jakija pačynajecca krosfejd da nastupnaha"
+      }
+    },
+    "custom-output-device": {
+      "description": "Nastavić asabisty pryład vyvadu huku dla pieśniaŭ",
+      "menu": {
+        "device-selector": "Vybrać pryład"
+      },
+      "name": "Asabisty pryład vyvadu",
+      "prompt": {
+        "device-selector": {
+          "label": "Vybierycie pryład vyvadu huku, jaki budzie vykarystany",
+          "title": "Vybierycie pryład vyvadu"
+        }
+      }
+    },
+    "disable-autoplay": {
+      "description": "Robić tak, kab pieśnia pačynałasia ŭ režymie \"pauza\"",
+      "menu": {
+        "apply-once": "Prymianajecca tolki pry zapusku"
+      },
+      "name": "Adklučyć aŭtapraihranne"
+    },
+    "discord": {
+      "backend": {
+        "already-connected": "Sproba padłučycca pry aktyŭnym padłučenni",
+        "connected": "Padłučana da Discord",
+        "disconnected": "Adłučana ad Discord"
+      },
+      "description": "Pakazvajcie siabram, što vy słuchajecie, z Rich Presence",
+      "menu": {
+        "auto-reconnect": "Aŭtapierapadłučenne",
+        "clear-activity": "Ačyścić aktyŭnaść",
+        "clear-activity-after-timeout": "Ačyścić aktyŭnaść paśla tajm-autu",
+        "connected": "Padłučana",
+        "disconnected": "Adłučana",
+        "hide-duration-left": "Chavać astatak tryvałaści",
+        "hide-github-button": "Chavać knopku spasyłki na GitHub",
+        "play-on-application": "Prahrać u {{applicationName}}",
+        "set-inactivity-timeout": "Nastavić tajm-aut biazdziejnaści",
+        "set-status-display-type": {
+          "label": "Tekst statusu",
+          "submenu": {
+            "application": "Słuchaju {{applicationName}}",
+            "artist": "Słuchaju {artist}",
+            "title": "Słuchaju {song title}"
+          }
+        }
+      },
+      "name": "Discord Rich Presence",
+      "prompt": {
+        "set-inactivity-timeout": {
+          "label": "Uviadzicie tajm-aut biazdziejnaści ŭ sekundach:",
+          "title": "Nastavić tajm-aut biazdziejnaści"
+        }
+      },
+      "settings": {
+        "auto-reconnect": "Aŭtapierapadłučenne",
+        "activity-timeout-enabled": "Ačyščać status pry pauzie",
+        "activity-timeout-time": "Ačyščać praz",
+        "hide-github-button": "Chavać knopku “Pahladzieć na GitHub”",
+        "hide-duration-left": "Chavać astatak času"
+      }
+    },
+    "do-not-track": {
+      "description": "Blakavać usio adsočvannie pa zmaučanniu",
+      "menu": {
+        "blocker": "Blakiroŭnik"
+      },
+      "name": "Nie adsočvaj",
+      "settings": {
+        "cache": "Kešavać spisy blakiroŭki",
+        "disable-default-lists": "Adklučyć standartnyja spisy blakiroŭki"
+      },
+      "dialog": {
+        "reload": {
+          "title": "Pierahruzić staronku",
+          "message": "Nalady Do Not Track zmiainilisia.",
+          "detail": "Sietkavyja pravily abnaŭliajucca bez pierazapusku dadatku. Pierahruzić staronku, kab poŭna prymianić zmeny da filtraŭ staronki. Prajhravanie moža być pierarvanaje. Vy možacie pierahruzić paźniej.",
+          "reload-now": "Pierahruzić staronku zaraz"
+        }
+      }
+    },
+    "downloader": {
+      "backend": {
+        "dialog": {
+          "error": {
+            "buttons": {
+              "ok": "OK"
+            },
+            "message": "Ach! Prabačcie, zahruzka nie ŭdałasia…",
+            "title": "Pamylka pry spampoŭvanni!"
+          },
+          "start-download-playlist": {
+            "buttons": {
+              "ok": "OK"
+            },
+            "detail": "({{playlistSize}} piesniaŭ)",
+            "message": "Spampoŭvajem plejlist {{playlistTitle}}",
+            "title": "Spampoŭvannie pačałosia"
+          }
+        },
+        "feedback": {
+          "conversion-progress": "Kanvertacyja: {{percent}}%",
+          "converting": "Kanvertujem…",
+          "done": "Hatova: {{filePath}}",
+          "download-info": "Spampoŭvajem {{artist}} - {{title}} [{{videoId}}",
+          "download-progress": "Spampoŭvannie: {{percent}}%",
+          "downloading": "Spampoŭvajem…",
+          "downloading-counter": "Spampoŭvajem {{current}}/{{total}}…",
+          "downloading-playlist": "Spampoŭvajem plejlist \"{{playlistTitle}}\" - {{playlistSize}} piesniaŭ ({{playlistId}})",
+          "error-while-downloading": "Pamylka pry spampoŭvanni \"{{author}} - {{title}}\": {{error}}",
+          "folder-already-exists": "Papka {{playlistFolder}} užo isnuje",
+          "getting-playlist-info": "Atrymlivajem infarmacyju pra plejlist…",
+          "loading": "Zahružajem…",
+          "playlist-has-only-one-song": "U plejlisce tolki adzin element, spampoŭvajem jaho naprosta",
+          "playlist-id-not-found": "ID plejlista nie znojdzieny",
+          "playlist-is-empty": "Plejlist pusty",
+          "playlist-is-mix-or-private": "Pamylka pry atrymanni infarmacyi pra plejlist: perakanajciesia, što jon nie pryvatny i nie \"Mixed for you\"\n\n{{error}}",
+          "preparing-file": "Prychtujem fajł…",
+          "saving": "Zapisvajem…",
+          "trying-to-get-playlist-id": "Prabujem atrymać ID plejlista: {{playlistId}}",
+          "video-id-not-found": "Videa nie znojdziena",
+          "writing-id3": "Zapisvajem metaznaki ID3…",
+          "ffmpeg-missing": "FFmpeg nie znojdzieny. Ustanavicie FFmpeg i pierakanajciesia, što `ffmpeg` znachodzicca ŭ vašym PATH, kab zahružać u hetym farmacie."
+        }
+      },
+      "description": "Spampoŭvaje MP3 / aŭdyja z krynicy naprosta z interfejsu",
+      "menu": {
+        "choose-download-folder": "Vybrać papku dla spampoŭvannia",
+        "download-finish-settings": {
+          "label": "Spampoŭvać pa zakančenni",
+          "prompt": {
+            "last-percent": "Paśla x pracentaŭ",
+            "last-seconds": "Apošnija x sekund",
+            "title": "Naladzić, kali spampoŭvać"
+          },
+          "submenu": {
+            "advanced": "Pradvinutyja",
+            "enabled": "Uklučana",
+            "mode": "Režym času",
+            "percent": "Pracenty",
+            "seconds": "Sekundy"
+          }
+        },
+        "download-playlist": "Spampoŭvać plejlist",
+        "presets": "Pradvyznačanyja",
+        "skip-existing": "Prapuskać isnujučyja fajły"
+      },
+      "name": "Spampoŭnik",
+      "renderer": {
+        "can-not-update-progress": "Nie možna abnavić prahres"
+      },
+      "templates": {
+        "button": "Spampoŭvać"
+      },
+      "settings": {
+        "finish-folder": "Papka dla skončanych spampoŭvanniaŭ",
+        "finish-folder-description": "Pakinuć nie zadzienaj, kab vykarystoŭvać papku dla spampoŭvannia vyšej."
+      }
+    },
+    "equalizer": {
+      "description": "Dadaje ekvalajzer da prajhralnika",
+      "menu": {
+        "presets": {
+          "label": "Pradvyznačanyja",
+          "list": {
+            "bass-booster": "Uzmacnialnik basoŭ"
+          }
+        }
+      },
+      "name": "Ekvalajzer"
+    },
+    "exponential-volume": {
+      "description": "Robić paŭzunok hramkasci ekspatencyjalnym, kab lahčej vybirać nižejšyja hramkasci.",
+      "name": "Ekspatencyjalnaja hramkasć"
+    },
+    "fullscreen-auto-hide": {
+      "description": "Aŭtamatyčna chavać elementy kiravannia prajhralnika i kursar myšy praz niekalki sekund biazdziejnasci ŭ poŭnaekrannym režymie",
+      "name": "Aŭtachavannie ŭ poŭnaekrannym režymie"
+    },
+    "in-app-menu": {
+      "description": "Daje paneliam menu stylovy, ciomny abo koloru albuma vyhlad",
+      "menu": {
+        "hide-dom-window-controls": "Chavać elementy kiravannia vakna DOM"
+      },
+      "name": "Menu ŭ pragramie"
+    },
+    "lumiastream": {
+      "description": "Dadaje padtrymku Lumia Stream",
+      "name": "Lumia Stream [Beta]"
+    },
+    "lyrics-genius": {
+      "description": "Dadaje padtrymku tekstaŭ pesniaŭ dla bolšasci pesniaŭ",
+      "menu": {
+        "romanized-lyrics": "Ramanizavanyja teksty"
+      },
+      "name": "Lyrics Genius",
+      "renderer": {
+        "fetched-lyrics": "Atrymanyja teksty z Genius"
+      }
+    },
+    "music-together": {
+      "description": "Padzialicca plejlistam z inšymi. Kali host prahryvaje pesniu, usie inšyja čujuć tuju ž pesniu",
+      "dialog": {
+        "enter-host": "Uviadzicie ID hosta"
+      },
+      "internal": {
+        "save": "Zachavać",
+        "track-source": "Krynica treka",
+        "unknown-user": "Nieviadomy karystalnik"
+      },
+      "menu": {
+        "click-to-copy-id": "Kapijavać ID hosta",
+        "close": "Zakryć Music Together",
+        "connected-users": "Padklučanyja karystalniki",
+        "diagnostics": {
+          "check": {
+            "nat": "Typ sietki (NAT)",
+            "signaling": "Sierver syhnalizacyi",
+            "stun": "Pramoje złučennie (STUN)",
+            "turn": "Rezervny relej (TURN)"
+          },
+          "copy": "Kapijavać zviazku",
+          "detail": {
+            "check-error": "Pravierka nie ŭdałasia: {{reason}}",
+            "public-ip": "Publičny adras: {{ip}}",
+            "public-ip-hidden": "Publičny adras: nacisnicie, kab pakazać",
+            "signaling-fail": "Niedastupny ({{reason}})",
+            "signaling-ok": "Dastupny",
+            "stun-fail": "Niama publičnaha adrasu (UDP/STUN zablakavany)",
+            "stun-ok": "Publičny adras znojdzieny",
+            "turn-fail": "Relej niedastupny",
+            "turn-ok": "Relej dastupny"
+          },
+          "nat": {
+            "blocked": "UDP abo STUN zablakavany",
+            "open": "Adkryty / kanusny (pramoje pracuje)",
+            "symmetric": "Simetryčny (patrabuje releja)",
+            "unknown": "Nie vyznačana"
+          },
+          "run-again": "Zapuscić znoŭ",
+          "running": "Vykonvajem pravierki…",
+          "test": "Pravierka złučennia",
+          "title": "Dyahnostyka złučennia",
+          "verdict": {
+            "blocked": "Hetaja sietka, imavierna, blakuje Music Together. Praprabujcie inšuju sietku abo VPN.",
+            "error": "Dyahnostyku nie ŭdałosia zapuscić. Praviercie konsol dla padrabiaznasciej.",
+            "good": "Pramyja złučenni pavinny pracavać u hetaj sietcy.",
+            "limited": "Nie ŭdałosia całkam vyznačyć hetuju sietku. Pramyja złučenni mohuć jašče pracavać; kali jany nie pracujuć, praprabujcie inšuju sietku.",
+            "no-signaling": "Nie možna dastacca da siervera Music Together. Praviercie fajervoł abo padklučennie da internetu.",
+            "relay": "Pramyja złučenni mohuć tut nie pracavać; budzie vykarystany relej (pracuje, ale dadaje zatrymku)."
+          }
+        },
+        "disconnect": "Adklučyć Music Together",
+        "empty-user": "Niama padklučanych karystalnikaŭ",
+        "host": "Chost Music Together",
+        "join": "Dalučycca da Music Together",
+        "permission": {
+          "all": "Dazvolić hosclam keravać plejlistam i plejeram",
+          "host-only": "Tolki chost moža keravać plejlistam i plejeram",
+          "playlist": "Dazvolić hosclam keravać plejlistam"
+        },
+        "set-permission": "Zminić pravy kantrolu",
+        "status": {
+          "disconnected": "Adklučana",
+          "guest": "Padklučana jak hosć",
+          "host": "Padklučana jak chost"
+        }
+      },
+      "name": "Music Together [Beta]",
+      "toast": {
+        "add-song-failed": "Nie ŭdałasia dadać pieśniu",
+        "closed": "Music Together zakryta",
+        "diagnostics-copied": "Zvodka dyjahnnostyki skapijavana ŭ bufer abmienu",
+        "diagnostics-copy-failed": "Nie ŭdałasia skapijavać zvodku dyjahnnostyki",
+        "diagnostics-running": "Pačakajcie zaviaršenńnia testu padklučennia",
+        "disconnected": "Music Together adklučana",
+        "host-failed": "Nie ŭdałasia stvaryć sesiju Music Together",
+        "id-copied": "ID chosta skapijavany ŭ bufer abmienu",
+        "id-copy-failed": "Nie ŭdałasia skapijavać ID chosta ŭ bufer abmienu",
+        "join-failed": "Nie ŭdałasia dalučycca da Music Together",
+        "joined": "Dalučana da Music Together",
+        "permission-changed": "Pravy Music Together zminieny na \"{{permission}}\"",
+        "remove-song-failed": "Nie ŭdałasia vydalici pieśniu",
+        "user-connected": "{{name}} dalučyŭsia da Music Together",
+        "user-disconnected": "{{name}} adklučyŭsia ad Music Together"
+      }
+    },
+    "navigation": {
+      "description": "Strelki navihacyi «Nastupnaja»/«Nazad», niepasredna ŭbudavanyja ŭ interfejs, jak u vašym lubimym braŭzery",
+      "name": "Navihacyja",
+      "templates": {
+        "back": {
+          "title": "Pierajści na papieradniuju staronku"
+        },
+        "forward": {
+          "title": "Pierajści na nastupnuju staronku"
+        }
+      }
+    },
+    "no-google-login": {
+      "description": "Vydalici knopki i spasyłki ŭvachodu praz Google z interfejsu",
+      "name": "Biez uvachodu praz Google"
+    },
+    "notifications": {
+      "description": "Pakažy apaviashčennie, kali pačynaje hrać pieśnia (interaktyŭnyja apaviashčenni dastupnyja ŭ Windows)",
+      "menu": {
+        "interactive": "Interaktyŭnyja apaviashčenni",
+        "interactive-settings": {
+          "label": "Interaktyŭnyja nalady",
+          "submenu": {
+            "hide-button-text": "Chavaci tekst knopki",
+            "hover-controls": "Pakažy mini-plejer pry naviadzenni na trej",
+            "refresh-on-play-pause": "Abnaŭlaj pry Play/Pause"
+          }
+        },
+        "priority": "Pryjarytet apaviashčenniaŭ",
+        "toast-style": "Styl uspylyvych paviedamleńniaŭ",
+        "unpause-notification": "Pakažy apaviashčennie pry zdymanni z pauzy"
+      },
+      "name": "Apaviashčenni"
+    },
+    "performance-improvement": {
+      "description": "Padvyšyć pradukcyjnaść, uklučyŭšy eksperymentalnyja skrypty",
+      "name": "Palehšennie pradukcyjnaści [Beta]"
+    },
+    "playback-recovery": {
+      "description": "Aŭtamatyčna aŭnaŭlajecca paśla zavisańniaŭ, prypynkaŭ abo poŭnaha spyniennia prahranńnia",
+      "menu": {
+        "log-to-console": "Zapisvaj padziei aŭnaŭleńnia ŭ konsol"
+      },
+      "name": "Aŭnaŭleńnie prahranńnia",
+      "settings": {
+        "stall-timeout": "Tajm-aut prypynki",
+        "stall-timeout-description": "Jak doŭha prahranńnie moža nie pradvihacca pierad sprobaj aŭnaŭleńnia",
+        "max-retries": "Maks. sprobaŭ",
+        "max-retries-description": "Kolkaść sprobaŭ aŭnaŭleńnia pierad pieraskokam na nastupny trek"
+      }
+    },
+    "picture-in-picture": {
+      "description": "Dazvalaje pieraklučyć dadatak u režym «kartinka ŭ kartincy»",
+      "menu": {
+        "always-on-top": "Zaŭsiody zverchu",
+        "hotkey": {
+          "label": "Haračaja klaviša",
+          "prompt": {
+            "keybind-options": {
+              "hotkey": "Haračaja klaviša"
+            },
+            "label": "Vybiarycie haračuju klavišu dlia pieraklučennia «kartinki ŭ kartincy»",
+            "title": "Haračaja klaviša dlia «kartinki ŭ kartincy»"
+          }
+        },
+        "save-window-position": "Zachavać pałożanńie akna",
+        "save-window-size": "Zachavać pamier akna",
+        "use-native-pip": "Vykarystoŭvać ułasny PiP braŭzera",
+        "prompt": {
+          "title": "Kartinka ŭ kartincy",
+          "label": "Naladzić haračuju klavišu dlia «kartinki ŭ kartincy»",
+          "keybind-options": {
+            "hotkey": "Haračaja klaviša dlia pieraklučennia «kartinki ŭ kartincy»"
+          }
+        }
+      },
+      "name": "Kartinka ŭ kartincy",
+      "templates": {
+        "button": "Kartinka ŭ kartincy"
+      }
+    },
+    "playback-speed": {
+      "description": "Słuchaj chutka, słuchaj pomału! Dadaje paŭzunok, jaki keruje chutkaściu pieśni",
+      "menu": {
+        "no-preserves-pitch": "Adklučyć zachavańnie vyshyni"
+      },
+      "name": "Chutkaść prahranńnia",
+      "templates": {
+        "button": "Chutkaść"
+      }
+    },
+    "playlist-search": {
+      "description": "Dadaje pole pošuku dlia filtracyi plejlistaŭ u bakavoj paneli i ŭ dyjalohu «Dadać u plejlist»",
+      "name": "Pošuk plejlistaŭ",
+      "templates": {
+        "search-placeholder": "Pošuk plejlistaŭ",
+        "no-results": "Plejlisty nie znojdzieny"
+      }
+    },
+    "precise-volume": {
+      "description": "Dakładna keruj huchnaściu z dapamohaj kolca myšy/haračych klavišaŭ, z ułasnym HUD i naladžvalnymi krokami huchnaści",
+      "menu": {
+        "arrows-shortcuts": "Lakalnaje kiravańnie strelkami",
+        "custom-volume-steps": "Nastrajić ułasnyja kroki huchnaści",
+        "global-shortcuts": "Hlabalnyja haračyja klavišy"
+      },
+      "name": "Dakładnaja huchnaść",
+      "prompt": {
+        "global-shortcuts": {
+          "keybind-options": {
+            "decrease": "Pamienšyć huchnaść",
+            "increase": "Pavialičyć huchnaść"
+          },
+          "label": "Vybiarycie hlabalnyja klavišy huchnaści:",
+          "title": "Hlabalnyja klavišy huchnaści"
+        },
+        "volume-steps": {
+          "label": "Vybiarycie kroki pavialičeńnia/pamienšeńnia huchnaści",
+          "title": "Kroki huchnaści"
+        }
+      },
+      "settings": {
+        "steps": "Krok huchnaści",
+        "arrows-shortcut": "Haračyja klavišy-strełki",
+        "shortcut-up": "Hlabalnaja haračaja klaviša: huchnaść uvierch",
+        "shortcut-down": "Hlabalnaja haračaja klaviša: huchnaść uniz"
+      }
+    },
+    "prefer-song": {
+      "description": "Hraj pieśniu zamiest muzyčnaha videa, kali trek albuma jość videam",
+      "name": "Pieravaha pieśni"
+    },
+    "quality-changer": {
+      "backend": {
+        "dialog": {
+          "quality-changer": {
+            "detail": "Patučnaja jakasć: {{quality}}",
+            "message": "Vybiarycie jakasć videa:",
+            "title": "Vybar jakasći videa"
+          }
+        }
+      },
+      "description": "Dazvalaje zminiać jakasć videa knopkaj na nakładcy videa",
+      "name": "Zminialnik jakasći videa",
+      "renderer": {
+        "quality-settings-button": {
+          "label": "Adkryć zminialnik jakasći plejera"
+        }
+      }
+    },
+    "scrobbler": {
+      "description": "Dadaje padtrymku skroblińnia (napr. last.fm, Listenbrainz)",
+      "dialog": {
+        "lastfm": {
+          "auth-failed": {
+            "message": "Nie ŭdałasia aŭtentyfikacyja ŭ Last.fm\nChavajcie akno da nastupnaha pierazapusku.",
+            "title": "Aŭtentyfikacyja nie ŭdałasia"
+          }
+        },
+        "invalid-regex": {
+          "title": "Niapravilny rehuliamy vyraz",
+          "message": "Rehuliamy vyraz u radku {{line}} niapravilny: {{error}}"
+        }
+      },
+      "menu": {
+        "lastfm": {
+          "api-settings": "Nalady API Last.fm"
+        },
+        "listenbrainz": {
+          "token": "Uviadzicie karystalnicki token ListenBrainz",
+          "api-root": "URL API ListenBrainz"
+        },
+        "scrobble-alternative-title": "Vykarystovac alternatyŭnyja nazvy",
+        "scrobble-alternative-artist": "Vykarystovac alternatyŭnych vykaŭnaŭcoŭ",
+        "scrobble-other-media": "Skroblać inshyja media",
+        "regex-filters": "Filtry rehuliarnych vyrazaŭ",
+        "use-musicbrainz": "Vykarystovac MusicBrainz dlia karekcyi metadanych",
+        "musicbrainz-email": "Email kantaktu MusicBrainz"
+      },
+      "name": "Skroblar",
+      "prompt": {
+        "lastfm": {
+          "api-key": "Kliuč API Last.fm",
+          "api-secret": "Sakret API Last.fm"
+        },
+        "listenbrainz": {
+          "token": {
+            "label": "Uviadzicie vaš karystalnicki token ListenBrainz:",
+            "title": "Token ListenBrainz"
+          },
+          "api-root": {
+            "label": "Uviadzicie bazavy URL API:",
+            "title": "URL API ListenBrainz"
+          }
+        },
+        "regex-filter-multi": {
+          "label": "Uviadzicie adzin rehuliarny vyraz na radok:"
+        },
+        "musicbrainz-email": {
+          "title": "Email kantaktu MusicBrainz",
+          "label": "Uviadzicie email dlia API MusicBrainz:"
+        }
+      },
+      "settings": {
+        "lastfm-api-root": "URL API Last.fm",
+        "musicbrainz-email-description": "Vykarystovajecca jak kantaktnaia infarmacyja dlia API MusicBrainz; patrabujecca dlia karekcyi metadanych MusicBrainz"
+      }
+    },
+    "search-commands": {
+      "commands": {
+        "play": "Prahrać videa pa spasyłce YouTube abo id",
+        "settings": "Adkryć nalady"
+      },
+      "description": "Napisycie / u poli poshuku, kab vykonavac kamandy, z aŭtapaŭnieniem ich arhumentaŭ",
+      "name": "Kamandy poshuku",
+      "settings": {
+        "open-keybind": "Klaviša adkryccia",
+        "open-keybind-description": "Aksełeratar u stylu Electron, napr. CmdOrCtrl+/ abo Alt+Space",
+        "open-shortcut": "Adkryć pole poshuku z luboha mesca",
+        "open-shortcut-description": "Vyklykae pole poshuku adrazu u režyme kamand, jak Spotlight. Paŭtornaje naciaskannie zakryvaje jaho."
+      }
+    },
+    "seek-shortcuts": {
+      "description": "Pieraskok na 5 sekund nazad/upierad klavišami strelak uleva/uprava",
+      "name": "Spasyłki pieraskoku"
+    },
+    "sfw-music": {
+      "description": "Aŭtamatyčna praskakae pieśni, paznačanyja jak Explicit u YouTube Music. Prypyniajecca, kali čarha z Explicit paŭtaraecca abo niama nastupnaj pieśni.",
+      "name": "SFW muzyka"
+    },
+    "shortcuts": {
+      "description": "Dazvalaje nastavlivać hlabalnyja haryčyja klavišy dlia prahrania (prahranie/pauza/dalej/nazad) i vykliučać media OSD pierachoplivajučy media klavišy, uklučać Ctrl/CMD + F dlia poshuku, uklučać padtrymku Linux MPRIS dlia media klavišaŭ, a taksama karystalnickija haryčyja klavišy dlia dosviedčanych karystalnikaŭ",
+      "menu": {
+        "override-media-keys": "Pierachoplivac media klavišy",
+        "set-keybinds": "Naladzić hlabalnyja klavišy kiravannia pieśniaj"
+      },
+      "name": "Spasyłki (& MPRIS)",
+      "prompt": {
+        "keybind": {
+          "keybind-options": {
+            "next": "Dalej",
+            "play-pause": "Prahranie / Pauza",
+            "previous": "Nazad"
+          },
+          "label": "Vybierycie hlabalnyja klavišy dlia kiravannia pieśniami:",
+          "title": "Hlabalnyja klavišy"
+        }
+      },
+      "settings": {
+        "global-keybinds": "Hlabalnyja klavišy (pracujuć uva ŭsim pryładdzi)",
+        "local-keybinds": "Lakalnyja klavišy (tolki kali akno ŭ fokusie)"
+      }
+    },
+    "skip-silences": {
+      "description": "Aŭtamatyčna praskakać častki cišyni ŭ pieśniach",
+      "name": "Praskakanne cišyni",
+      "settings": {
+        "only-skip-beginning": "Praskakać cišyniu tolki ŭ pačatku treka"
+      }
+    },
+    "sponsorblock": {
+      "description": "Aŭtamatyčna praskakae niemuzyčnyja častki, takija jak intro/outro abo častki muzyčnych videa, dzie pieśnia nie hraje.",
+      "name": "SponsorBlock",
+      "settings": {
+        "categories": "Sekcyi dlia praskaku",
+        "category": {
+          "sponsor": "Sponsar",
+          "intro": "Uvod",
+          "outro": "Kancoŭka",
+          "interaction": "Nahadka pra ŭzajemadziejannie",
+          "selfpromo": "Sama-promacyja",
+          "music_offtopic": "Niemuzyčnaia sekcyja"
+        },
+        "api-url": "URL API"
+      }
+    },
+    "synced-lyrics": {
+      "description": "Pradastaŭliaje synchronizavanyja teksty pieśniaŭ, vykarystovajučy pravajdery jak LRClib.",
+      "errors": {
+        "fetch": "⚠️\tUzniła pamyłka pry atrymanni tekstu pieśni.\n\tPaprabujcie janoj paźniej.",
+        "not-found": "⚠️ Tekst pieśni dlia hetaj pieśni nie znojdzieny."
+      },
+      "menu": {
+        "default-text-string": {
+          "label": "Pradvoleny znak pamiž tekstam pieśni",
+          "tooltip": "Vybierycie pradvoleny znak dlia prahału pamiž tekstam pieśni"
+        },
+        "line-effect": {
+          "label": "Efekt radka",
+          "submenu": {
+            "fancy": {
+              "label": "Efektny",
+              "tooltip": "Vykarystovacʹ vialikija efekty, padobnyja da dadatku, na potešnym radku"
+            },
+            "focus": {
+              "label": "Fokus",
+              "tooltip": "Rabić bielym tolki potešny radok"
+            },
+            "offset": {
+              "label": "Zsuŭ",
+              "tooltip": "Zsuvać potešny radok uprava"
+            },
+            "scale": {
+              "label": "Masštab",
+              "tooltip": "Masštabavacʹ potešny radok"
+            }
+          },
+          "tooltip": "Vybierycie efekt dlia potešnaha radka"
+        },
+        "lyrics-font-size": {
+          "label": "Pamier šryftu tekstu pieśni",
+          "submenu": {
+            "small": {
+              "label": "Maly",
+              "tooltip": "Vykarystovacʹ bolš kampaktny pamier tekstu"
+            },
+            "medium": {
+              "label": "Siaredni",
+              "tooltip": "Vykarystovacʹ zbalansavany pamier tekstu"
+            },
+            "large": {
+              "label": "Vialiki",
+              "tooltip": "Vykarystovacʹ pradpačatkovy bolšy pamier tekstu"
+            }
+          },
+          "tooltip": "Vybierycie, jakim vialikim pavinien być tekst pieśni"
+        },
+        "precise-timing": {
+          "label": "Zrabić tekst pieśni idealna synchronizavanym",
+          "tooltip": "Vyličvać da milisekundy pakaź nastupnaha radka (moža mieć niaznаčny ŭplyŭ na pradukcyjnaść)"
+        },
+        "romanization": {
+          "label": "Ramanizavacʹ tekst pieśni",
+          "tooltip": "Kali tekst pieśni na inšaj movie, pasprabujcie pakaźvać łacinski variant."
+        },
+        "show-lyrics-even-if-inexact": {
+          "label": "Pakaźvać tekst pieśni, navat kali jon nietočny",
+          "tooltip": "Kali pieśnia nie znojdziena, płahin prabuje znoŭ z inšym zapytam poshuku.\nVynik druhoj sproby moža być nietočnym."
+        },
+        "show-time-codes": {
+          "label": "Pakaźvać časavyja kody",
+          "tooltip": "Pakaźvać časavyja kody poruč z tekstam pieśni"
+        },
+        "use-ytm-lyrics-without-proxy": {
+          "label": "Vykarystovacʹ tekst YTM biez proxy",
+          "tooltip": "Praskakać proxy YTM browse i vyklykać YouTube Music napramu, vykarystovajučy autentyfikavanuju sesiju dadatku. Karysna, kali vy daviaraecie svajoj sietcy/regionu, što jany dazvalajucʹ napramyja vykliki browse."
+        },
+        "convert-chinese-character": {
+          "label": "Kanvertavacʹ kitajskija ierohłyfy",
+          "submenu": {
+            "disabled": {
+              "label": "Adklučana",
+              "tooltip": "Adklučyć kanvertacyju kitajskich ierohłifau"
+            },
+            "simplified-to-traditional": {
+              "label": "Sproščanyja da tradycyjnych",
+              "tooltip": "Kanvertavacʹ sproščanuju kitajskuju movu ŭ tradycyjnuju"
+            },
+            "traditional-to-simplified": {
+              "label": "Tradycyjnyja da sproščanych",
+              "tooltip": "Kanvertavacʹ tradycyjnuju kitajskuju movu ŭ sproščanuju"
+            }
+          },
+          "tooltip": "Kanvertavacʹ kitajskija ierohłyfy ŭ tradycyjnyja abo sproščanyja"
+        },
+        "translation": {
+          "label": "Pierakład tekstu pieśni",
+          "tooltip": "Pierakładacʹ tekst pieśni i pakaźvać pierakład pa radkach.",
+          "enabled": {
+            "label": "Uklučyć pierakład",
+            "tooltip": "Pokažyvać pierakładzieny radok pad kožnym radkom aryhinalnaha tekstu."
+          },
+          "provider": {
+            "label": "Prastaŭnik",
+            "tooltip": "Jaki servis vykarystoŭvać dla pierakładu."
+          },
+          "target-language": {
+            "label": "Mova pierakładu",
+            "tooltip": "Mova, na jakuju pierakładajecca tekst."
+          },
+          "configure": {
+            "label": "Naladzić API-kliuč i madel…",
+            "tooltip": "Nastavić parametry pierakładu dla prastaŭnika."
+          },
+          "clear-cache": {
+            "label": "Ačyścić keš pierakładu",
+            "tooltip": "Vydalić usie zakiešavanyja pierakłady, zachavanyja na dysku."
+          },
+          "providers": {
+            "shared": {
+              "api-key": "API-kliuč",
+              "model": "Madel"
+            },
+            "openai-compatible": {
+              "name": "OpenAI-sumiaščalny",
+              "prompt-title": "Nalady OpenAI-sumiaščalnaha",
+              "prompt-label": "Vykarystoŭvać OpenAI-sumiaščalnyja servery, u tym liku Ollama (bazavy URL http://127.0.0.1:11434/v1, režym API auto abo chat-completions).",
+              "base-url": "Bazavy URL",
+              "api-mode": "Režym API (responses / auto / chat-completions)"
+            },
+            "anthropic": {
+              "name": "Anthropic Claude",
+              "prompt-title": "Nalady Anthropic",
+              "prompt-label": "Vykarystoŭvaje natyŭny API Anthropic Messages."
+            },
+            "gemini": {
+              "name": "Google Gemini",
+              "prompt-title": "Nalady Gemini",
+              "prompt-label": "Vykarystoŭvaje API Generative Language ad Google (generateContent)."
+            },
+            "local-cli": {
+              "name": "Lakalny CLI",
+              "prompt-title": "Nalady lakalnaha CLI",
+              "prompt-label": "Vykarystoŭvać lakalna aŭtaryzavany Claude Code, Codex abo Gemini CLI. Kamanda i madel vyznačajucca aŭtamatyčna; CLI vykarystoŭvaje svajho aŭtaryzavanaha standartnaha vybaru.",
+              "engine": "Lakalny CLI",
+              "engine-claude": "Claude Code",
+              "engine-codex": "Codex",
+              "engine-gemini": "Gemini CLI",
+              "command": "Kamanda",
+              "timeout": "Čas čakannia ŭ sekundach (15-600)"
+            },
+            "google-translate": {
+              "name": "Google Translate",
+              "prompt-title": "Nalady Google Translate",
+              "prompt-label": "Vykarystoŭvaje nieaficyjny biašplatny endpoint Google Translate. API-kliuč nie patrabujecca, ale Google moža abmiažavać častatu zapytau.",
+              "host": "Chost"
+            }
+          }
+        },
+        "show-custom-search-button": {
+          "label": "Pokažyvać knopku ŭlasnaha pošuku",
+          "tooltip": "Pokažyvać knopku pošuku ŭ vybary tekstu, jakaja dazvalaje zminiać zapyt pošuku i vykaŭcu dla biahučaj pjesni."
+        },
+        "provider-priority": {
+          "tooltip": "Prastaŭniki probujucca ŭ hetakim paradku: pieršy, u jakoha jość tekst dla biahučaj pjesni, pieramahaje. Vykarystojcie strelki, kab zmianić paradak."
+        },
+        "prefer-synced": {
+          "tooltip": "Vybrać pieršaha prastaŭnika ŭ spisie z tekstam, sinhranizavanym pa času, zamiest pieršaha z lubym tekstam."
+        },
+        "previous-provider": {
+          "tooltip": "Papapiaredni prastaŭnik"
+        },
+        "next-provider": {
+          "tooltip": "Nastupny prastaŭnik"
+        },
+        "custom-search-button": {
+          "tooltip": "Ulasny zapyt pošuku"
+        },
+        "star-provider": {
+          "tooltip": "Zaŭsiody vykarystoŭvać hetaha prastaŭnika dla hetaj pjesni, niezaležna ad taho, što kaža pryjarytetny paradak. Kali jon nie maje tekstu dla pjesni, vykarystoŭvajecca zvyčajny paradak."
+        },
+        "unstar-provider": {
+          "tooltip": "Pierastać prymacoŭvać hetaha prastaŭnika da hetaj pjesni."
+        },
+        "use-priority-list": {
+          "tooltip": "Probavać prastaŭnikaŭ u paradku nižej. Vyklučycie heta, kab tekst vyrašaŭ sam: pieramahaje toj prastaŭnik, u jakoha najlepšy tekst dla pjesni."
+        }
+      },
+      "name": "Sinhranizavanyja teksty",
+      "refetch-btn": {
+        "fetching": "Zahruzka...",
+        "normal": "Pieranavieści tekst"
+      },
+      "warnings": {
+        "duration-mismatch": "⚠️ - Tekst moža być nie sinhranizavany z-za roznaj pracciahlasci.",
+        "inexact": "⚠️ - Tekst dla hetaj pjesni moža być niedakladnym",
+        "instrumental": "⚠️ - Heta instrumentalnaja pjesnia"
+      },
+      "settings": {
+        "precise-timing": "Dakladny čas",
+        "show-inexact": "Pokažyvać niedakladnyja teksty",
+        "show-time-codes": "Pokažyvać časavyja kody",
+        "romanization": "Ramanizavać tekst",
+        "line-effect": "Efekt radka",
+        "effect": {
+          "fancy": "Efektny",
+          "scale": "Masštab",
+          "offset": "Zruch",
+          "focus": "Fokus"
+        },
+        "prefer-synced": "Addać pieravažu sinhranizavanym tekstam",
+        "provider-priority": "Pryjarytet prastaŭnikaŭ",
+        "use-priority-list": "Vykarystoŭvać spis pryjarytetau"
+      }
+    },
+    "taskbar-mediacontrol": {
+      "description": "Kiravać prahryvanniem z paneli zadač Windows",
+      "name": "Kiravannie medyja na paneli zadač"
+    },
+    "toast-autoclose": {
+      "description": "Aŭtamatyčna zakryvać paviedamleni YouTube Music praz try sekundy",
+      "name": "Aŭtamatyčnae zakryvannie paviedamlenniaŭ"
+    },
+    "touchbar": {
+      "description": "Dadae vidžet TouchBar dla karystalnikaŭ macOS",
+      "name": "TouchBar"
+    },
+    "transparent-player": {
+      "description": "Robić akno prahramy prazrystym",
+      "name": "Prazrysty plejer",
+      "menu": {
+        "opacity": {
+          "label": "Neprazrystasć",
+          "submenu": {
+            "percent": "{{opacity}}%"
+          }
+        },
+        "type": {
+          "label": "Typ",
+          "submenu": {
+            "acrylic": "Akryl",
+            "content": "Zmiest",
+            "fullscreen-ui": "Interfejs na ŭsiu ekran",
+            "mica": "Mika",
+            "tabbed": "Z zakladkami",
+            "under-page": "Pad staronaj",
+            "under-window": "Pad aknom",
+            "window": "Akno",
+            "none": "Niama"
+          }
+        }
+      },
+      "settings": {
+        "type-description": "Fonavy mataryjal, vykarystany dlia prazrystasci akna"
+      }
+    },
+    "tuna-obs": {
+      "description": "Integracyja z plahinam Tuna dlia OBS",
+      "name": "Tuna OBS"
+    },
+    "unobtrusive-player": {
+      "description": "Pierashkadžae plejeru ŭzdyimaćca pry prahryvanni pjesni",
+      "name": "Nienaviadlivy plejer"
+    },
+    "video-toggle": {
+      "description": "Dadae knopku dlia pieraklučennia pamiž režymami Video/Piesnia. Moža taksa ma apcyjanalna vydalić usiu zakladku videa.",
+      "menu": {
+        "align": {
+          "label": "Vyraŭnannie",
+          "submenu": {
+            "left": "Zleba",
+            "middle": "Pa siaredzinie",
+            "right": "Sprava"
+          }
+        },
+        "force-hide": "Prymusova vydalić zakladku videa",
+        "mode": {
+          "label": "Režym",
+          "submenu": {
+            "custom": "Ulasny pieraklučalnik",
+            "disabled": "Vyklučana",
+            "native": "Natyŭny pieraklučalnik"
+          }
+        }
+      },
+      "name": "Pieraklučalnik videa",
+      "templates": {
+        "button-song": "Pieśnia",
+        "button-video": "Videa"
+      }
+    },
+    "visualizer": {
+      "description": "Dadaje vizualizatar da prajhralnika",
+      "menu": {
+        "visualizer-type": "Typ vizualizatara"
+      },
+      "name": "Vizualizatar",
+      "settings": {
+        "preset": "Pradvyznačany",
+        "blend-time": "Čas zmiašvannia",
+        "effect": "Efekt",
+        "accuracy": "Dakladnasć",
+        "max-height": "Maks. vysynia",
+        "max-size": "Maks. pamier",
+        "line-width": "Taŭščynia linii",
+        "color": "Koler",
+        "shadow-blur": "Razmyvannie cieni",
+        "shadow-color": "Koler cieni",
+        "fade-side": "Zatušavannie bakoŭ",
+        "prettify": "Pryhažańnie",
+        "prettify-description": "Zvužvaje słupki da krajoŭ",
+        "dottify": "Punktavać",
+        "dottify-description": "Maluje punktki zamiest niepierryŭnaj linii",
+        "horizontal-align": "Haryzantalnaje vyraŭnavannie",
+        "vertical-align": "Vertykalnaje vyraŭnavannie"
+      }
+    },
+    "statusbar-lyrics": {
+      "settings": {
+        "include-pronunciation": "Uklučyć vymovu"
+      }
+    },
+    "dismiss-multidevice-popup": {
+      "name": "Zakryvać šmatpryładavaje akno",
+      "description": "Aŭtamatyčna zakryvaje akno „Słuchać na hetaj pryładzie”, jakoje zjavaajecca, kali prajhranie pačynajecca na inšym pryładzie."
+    },
+    "memory-saver": {
+      "description": "Ačyščaje resursnyja kešy renderera, pakul vakno schavanaje, kali jany pieravyšajuć paroh",
+      "name": "Ekanomija pamaci",
+      "settings": {
+        "threshold": "Paroh keša",
+        "threshold-description": "Ačyščajcie kešy, kali ich žyva pamiać pieravysić hety paroh, pakul vakno schavanaje"
+      }
+    }
+  },
+  "settings-ui": {
+    "name": "Interfejs nastrojak",
+    "description": "Dadaje panel nastrojak u prahramie, jaki adčyniajecca z bakavoj paneli",
+    "title": "Nastrojki",
+    "settings": {
+      "show-button": "Pakažy punkt nastrojak u bakavoj paneli",
+      "show-button-description": "Vyklučy heta, kab bakavaja panel była čystaja; Nastrojki ŭsio jašče dastupnyja praz Navihacyja → Adčynić nastrojki.",
+      "separate-window": "Zausiody adčyniać Nastrojki ŭ asobnym aknie",
+      "separate-window-description": "Adčyniaje asobnaje akno nastrojak, jak i punkt u trei, zamiest paneli ŭ prahramie."
+    },
+    "search-placeholder": "Pošuk nastrojak",
+    "search-results": "Vyniki pošuku",
+    "search-matching": "Adpaviadaje „{{query}}”",
+    "no-match": "Niama nastrojak, jakija adpaviadajuć „{{query}}”.",
+    "close": "Zakryć",
+    "edit-config": "Redagavać config.json",
+    "restart-banner": "Niekataryja zminy patrabuju pierazapusku, kab ustupili ŭ siłu.",
+    "restart-now": "Pierazapuscić zaraz",
+    "later": "Pazniej",
+    "restart-pill": "pierazapuscić",
+    "restart-pill-hint": "Patrabuje pierazapusku",
+    "refresh-options": "Abnavić opcyi",
+    "move-up": "Pieramiascić uvierch",
+    "move-down": "Pieramiascić uniz",
+    "about": {
+      "tagline": "Bahatofunkcyjanaja desktop-prahrama dla YouTube Music",
+      "versions": "Versii",
+      "version-app": "Dadatak",
+      "version-build": "Zborka",
+      "version-electron": "Electron",
+      "version-chromium": "Chromium",
+      "version-node": "Node.js",
+      "version-platform": "Platforma",
+      "version-innertube": "Innertube",
+      "links": "Spasyłki",
+      "link-repo": "Repazitoryj",
+      "link-issue": "Paviedamić pra problemu",
+      "link-releases": "Vypuski",
+      "link-license": "Licenzija",
+      "actions": "Dziejańni",
+      "check-updates": "Pravierzyć abnaŭlenni",
+      "copy-debug": "Kapijavać infarmacyju dla adladki",
+      "copied": "Skapijavana!"
+    },
+    "sections": {
+      "general": {
+        "label": "Ahułnyja"
+      },
+      "appearance": {
+        "label": "Vyhlad"
+      },
+      "window": {
+        "label": "Akno i trej"
+      },
+      "advanced": {
+        "label": "Dadatkovyja"
+      },
+      "plugins": {
+        "label": "Plahiny"
+      },
+      "flags": {
+        "label": "Flahi"
+      },
+      "about": {
+        "label": "Ab prahramie"
+      }
+    },
+    "groups": {
+      "updates-session": "Abnaŭlenni i sesija",
+      "startup-language": "Zapusk i mova",
+      "interface": "Interfejs",
+      "context-menu": "Kantekstnaje meniu",
+      "window-title": "Akno",
+      "window": "Akno",
+      "system": "Systema",
+      "network": "Setka",
+      "performance": "Pradukcyjnasć",
+      "configuration": "Kanfihuracyja",
+      "updates": "Abnaŭlenni"
+    },
+    "stepper-decrement": "Pamienšyć",
+    "stepper-increment": "Pavialičyć",
+    "flags": {
+      "warning": "Flahi funkcyj — heta ŭłasnyja ŭnutranyja pieraklučalniki YouTube Music. Ich zmina moža złamać prajhranie, vyhlad albo funkcyi akounty, i jany nie padtrymlivajucca padtrymkaj. Pierakryvańni zachoŭvajucca tolki dla flahaŭ, jakija vy zmianiali, i ich možna vydalić praz „Admianić”.",
+      "search-placeholder": "Pošuk flahaŭ",
+      "overridden": "pierakryta",
+      "undo": "Admianić",
+      "undo-hint": "Vydalić hetaje pierakryvańnie",
+      "empty": "Heta staronka nie pakažvaje flahaŭ funkcyj.",
+      "no-match": "Niama flahaŭ, jakija adpaviadajuć „{{query}}”.",
+      "add-name": "Nazva novaha flaha",
+      "add-value": "Značennie",
+      "add-value-hint": "JSON, kali jon parsicca (true, 42, \"text\"), inakšy sam tekst",
+      "add": "Dadać"
+    },
+    "fields": {
+      "hide-dislike-button": "Schavać knopku „Nie padabajecca”",
+      "hide-video-captions": "Schavać subtry videa",
+      "context-menu": {
+        "hide-entry": "Schavać {{entry}}",
+        "entries": {
+          "add-to-queue": "Dadać u čarhu",
+          "delete-playlist": "Vydalić plejlist",
+          "dismiss-queue": "Zakryć čarhu",
+          "download": "Spampavać",
+          "go-to-album": "Pierajści da alboma",
+          "go-to-artist": "Pierajści da vykaŭcy",
+          "go-to-playlist": "Pierajści da plejlista",
+          "like": "Padabajecca",
+          "not-interested": "Nie cikava",
+          "pin-to-listen-again": "Zakrapić u «Listen again»",
+          "play-next": "Hrać nastupnym",
+          "remove-from-playlist": "Vydalić z plejlista",
+          "remove-from-queue": "Vydalić z čarhi",
+          "report": "Pavedamić",
+          "save-to-library": "Zachavać u biblijateku",
+          "save-to-playlist": "Zachavać u plejlist",
+          "share": "Padzialicca",
+          "shuffle-play": "Vypadkovaje hranie",
+          "start-mix": "Pačać mix",
+          "stats-for-nerds": "Statystyka dla nierdaŭ"
+        }
+      },
+      "podcast-artist": "Vykarystoŭvać udzielnikaŭ padkasta jak vykaŭcaŭ",
+      "podcast-artist-desc": "Vyklučana: vykaŭca epizoda padkasta — heta kanal, jaki jaho apublikavaŭ.",
+      "theme-preset": "Pradvyznačany",
+      "theme-variable-name": "Zmiennaja",
+      "theme-variable-value": "Značeńnie",
+      "theme-variable-add": "Dadać zmiennuju",
+      "performance-mode": "Režym pradukcyjnasci",
+      "performance-mode-desc": "Abmianiajcie niekatoruju vizualnuju dakładnasć na bolš ekanomny rendering.",
+      "in-process-gpu": "Abjadnajcie praces GPU z pracesam dadatku",
+      "in-process-gpu-desc": "Eksperymentalna: ekanomić adzin praces, ale pieranosic pamiać GPU u hałoŭny praces i moža viarnucca da prahramnaha renderingu."
     }
   }
 }

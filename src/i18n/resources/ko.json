@@ -65,7 +65,8 @@
         },
         "detail": "불편을 드려 죄송합니다! 다음 중 하나를 선택해 주세요.",
         "message": "애플리케이션이 응답하지 않습니다",
-        "title": "창이 응답하지 않음"
+        "title": "창이 응답하지 않음",
+        "details": "이유: {{error}}"
       },
       "update-available": {
         "buttons": {
@@ -76,6 +77,27 @@
         "detail": "새 버전을 {{downloadLink}}에서 설치할 수 있습니다",
         "message": "새 버전을 사용할 수 있습니다",
         "title": "업데이트 사용 가능"
+      },
+      "restart-summary": {
+        "detail": "적용하려면 앱을 다시 시작하세요: {{changes}}",
+        "message": "일부 변경 사항은 다시 시작해야 적용됩니다",
+        "title": "다시 시작 필요"
+      },
+      "update-available-dev": {
+        "buttons": {
+          "ok": "확인",
+          "view": "커밋 보기"
+        },
+        "title": "업데이트 사용 가능",
+        "message": "이 개발 빌드는 마스터 브랜치보다 뒤처져 있습니다",
+        "detail": "이 빌드가 실행되는 커밋({{commit}})이 마스터의 최신 커밋보다 오래되었습니다. 최신 커밋은 {{commitsLink}}에서 볼 수 있습니다"
+      },
+      "downgrade-warning": {
+        "title": "안정 버전으로 되돌릴까요?",
+        "message": "이 베타 빌드는 최신 안정 릴리스보다 최신입니다.",
+        "detail": "되돌리면 일부 설정이 초기화될 수 있습니다. 최신 버전에서 이전 버전으로 이동하면 마이그레이션이 실행되지 않아 최신 설정을 읽을 수 없게 될 수 있습니다.",
+        "confirm": "안정 버전으로 전환",
+        "cancel": "취소"
       }
     },
     "menu": {
@@ -87,7 +109,8 @@
           "go-back": "뒤로 가기",
           "go-forward": "앞으로 가기",
           "quit": "종료",
-          "restart": "앱 재시작"
+          "restart": "앱 재시작",
+          "open-settings": "설정 열기"
         }
       },
       "options": {
@@ -129,7 +152,20 @@
             },
             "label": "언어",
             "submenu": {
-              "to-help-translate": "번역을 돕고 싶으신가요? 여기를 누르세요"
+              "to-help-translate": "번역을 돕고 싶으신가요? 여기를 누르세요",
+              "sync": {
+                "label": "언어 동기화",
+                "submenu": {
+                  "from-youtube": "YouTube에서",
+                  "to-youtube": "YouTube로"
+                },
+                "failure": {
+                  "dialog": {
+                    "title": "언어가 변경되지 않음",
+                    "message": "언어 또는 로캘이 아직 앱에 없습니다."
+                  }
+                }
+              }
             }
           },
           "resume-on-start": "앱 시작 시 마지막 곡 다시 듣기",
@@ -180,9 +216,37 @@
                 "label": "테마",
                 "submenu": {
                   "import-css-file": "사용자 정의 CSS 파일 가져오기",
-                  "no-theme": "테마 없음"
+                  "no-theme": "테마 없음",
+                  "colors": {
+                    "label": "색상"
+                  },
+                  "presets": {
+                    "label": "프리셋",
+                    "default": "기본",
+                    "custom": "사용자 지정"
+                  },
+                  "reset-colors": "색상 초기화",
+                  "open-themes-folder": "테마 폴더 열기"
                 }
-              }
+              },
+              "use-ytm-icons": "원래 YouTube Music 아이콘 사용"
+            }
+          },
+          "updates": {
+            "label": "업데이트",
+            "check": "업데이트 확인",
+            "auto-update": "자동으로 업데이트 확인",
+            "channel": {
+              "label": "업데이트 채널",
+              "stable": "안정",
+              "beta": "베타"
+            }
+          },
+          "shared-links": {
+            "label": "공유 링크",
+            "submenu": {
+              "strip-music": "'music.' 제거",
+              "strip-si": "'&si=' 제거"
             }
           }
         }
@@ -217,8 +281,17 @@
       },
       "like": "좋아요",
       "dislike": "싫어요",
-      "unlike": "Unlike",
+      "unlike": "좋아요 취소",
       "undislike": "싫어요 취소"
+    },
+    "themes": {
+      "consent": {
+        "title": "테마 코드를 실행할까요?",
+        "message": "\"{{theme}}\"에 앱에 대한 전체 접근 권한으로 실행될 스크립트가 포함되어 있습니다.",
+        "detail": "테마 스크립트는 샌드박스에서 실행되지 않습니다. 이 코드는 설정을 읽고 변경하고, 앱과 통신하며, 앱 자체가 할 수 있는 다른 모든 작업을 수행할 수 있습니다. 테마의 출처를 신뢰하는 경우에만 허용하세요. 테마를 제거하여 이 권한을 취소할 수 있습니다.",
+        "allow": "이 테마 실행",
+        "cancel": "취소"
+      }
     }
   },
   "plugins": {
@@ -344,6 +417,10 @@
         },
         "port": {
           "label": "포트"
+        },
+        "mcp": {
+          "label": "MCP 서버",
+          "description": "v2 API를 /mcp에서 MCP 도구로 제공합니다. 나머지 API와 동일한 인증을 사용합니다."
         }
       },
       "name": "API 서버 [베타]",
@@ -356,11 +433,20 @@
           "label": "API 서버가 사용할 포트를 입력하세요:",
           "title": "포트"
         }
+      },
+      "settings": {
+        "choose-file": "파일 선택…"
       }
     },
     "audio-compressor": {
       "description": "오디오에 컴프레서를 적용합니다 (신호에서 가장 시끄러운 부분의 음량을 낮추고 가장 조용한 부분의 음량을 높임)",
-      "name": "오디오 컴프레서"
+      "name": "오디오 컴프레서",
+      "menu": {
+        "auto-track-gain": "자동 트랙 게인(조용한 트랙 증폭)",
+        "maximum-gain": {
+          "label": "최대 게인"
+        }
+      }
     },
     "auth-proxy-adapter": {
       "description": "인증이 필요한 프록시를 지원합니다",
@@ -426,7 +512,10 @@
           "label": "형식"
         }
       },
-      "name": "시계"
+      "name": "시계",
+      "settings": {
+        "hour-12": "12시간 형식 사용"
+      }
     },
     "compact-sidebar": {
       "description": "사이드바를 항상 컴팩트 모드로 설정합니다",
@@ -446,12 +535,24 @@
             "fade-scaling": {
               "label": "페이드 스케일링",
               "linear": "선형",
-              "logarithmic": "로그스케일"
+              "logarithmic": "로그스케일",
+              "equal-power": "이퀄 파워"
             },
             "seconds-before-end": "종료되기 N초 전에 크로스페이드 적용"
           },
           "title": "크로스페이드 설정"
         }
+      },
+      "settings": {
+        "fade-in": "페이드 인",
+        "fade-out": "페이드 아웃",
+        "seconds-before-end": "끝나기 전 시작",
+        "fade-scaling": "페이드 스케일링",
+        "scaling": {
+          "linear": "선형",
+          "logarithmic": "로그"
+        },
+        "seconds-before-end-description": "트랙이 끝나기 몇 초 전에 다음 트랙으로의 크로스페이드를 시작할지"
       }
     },
     "custom-output-device": {
@@ -506,6 +607,13 @@
           "label": "비활성 시간 제한을 초 단위로 입력하세요:",
           "title": "비활성 시간 제한 설정"
         }
+      },
+      "settings": {
+        "auto-reconnect": "자동 재연결",
+        "activity-timeout-enabled": "일시 정지 시 상태 지우기",
+        "activity-timeout-time": "지우기까지",
+        "hide-github-button": "“GitHub에서 보기” 버튼 숨기기",
+        "hide-duration-left": "남은 시간 숨기기"
       }
     },
     "do-not-track": {
@@ -513,7 +621,19 @@
       "menu": {
         "blocker": "차단기"
       },
-      "name": "추적 금지"
+      "name": "추적 금지",
+      "settings": {
+        "cache": "차단 목록 캐시",
+        "disable-default-lists": "기본 차단 목록 비활성화"
+      },
+      "dialog": {
+        "reload": {
+          "title": "페이지 새로고침",
+          "message": "Do Not Track 설정이 변경되었습니다.",
+          "detail": "네트워크 규칙은 앱을 다시 시작하지 않고도 업데이트됩니다. 페이지 필터에 변경 사항을 완전히 적용하려면 페이지를 새로고침하세요. 재생이 중단될 수 있습니다. 나중에 새로고침할 수도 있습니다.",
+          "reload-now": "지금 페이지 새로고침"
+        }
+      }
     },
     "downloader": {
       "backend": {
@@ -555,7 +675,8 @@
           "saving": "저장 중…",
           "trying-to-get-playlist-id": "재생목록 ID를 가져오는 중: {{playlistId}}",
           "video-id-not-found": "영상을 찾을 수 없습니다",
-          "writing-id3": "ID3 태그 작성 중…"
+          "writing-id3": "ID3 태그 작성 중…",
+          "ffmpeg-missing": "FFmpeg를 찾을 수 없습니다. 이 형식으로 다운로드하려면 FFmpeg를 설치하고 `ffmpeg`가 PATH에 있는지 확인하세요."
         }
       },
       "description": "UI에서 직접 MP3/소스 오디오를 다운로드하세요",
@@ -586,6 +707,10 @@
       },
       "templates": {
         "button": "다운로드"
+      },
+      "settings": {
+        "finish-folder": "완료된 다운로드 폴더",
+        "finish-folder-description": "설정하지 않으면 위의 다운로드 폴더를 사용합니다."
       }
     },
     "equalizer": {
@@ -653,6 +778,44 @@
           "disconnected": "연결 끊김",
           "guest": "게스트로 연결됨",
           "host": "호스트로 연결됨"
+        },
+        "diagnostics": {
+          "check": {
+            "nat": "네트워크 유형(NAT)",
+            "signaling": "시그널링 서버",
+            "stun": "직접 연결(STUN)",
+            "turn": "릴레이 대체(TURN)"
+          },
+          "copy": "요약 복사",
+          "detail": {
+            "check-error": "확인 실패: {{reason}}",
+            "public-ip": "공용 주소: {{ip}}",
+            "public-ip-hidden": "공용 주소: 클릭하여 표시",
+            "signaling-fail": "연결할 수 없음({{reason}})",
+            "signaling-ok": "연결 가능",
+            "stun-fail": "공용 주소 없음(UDP/STUN 차단됨)",
+            "stun-ok": "공용 주소 찾음",
+            "turn-fail": "릴레이에 연결할 수 없음",
+            "turn-ok": "릴레이 연결 가능"
+          },
+          "nat": {
+            "blocked": "UDP 또는 STUN 차단됨",
+            "open": "열림 / 콘(직접 연결 작동)",
+            "symmetric": "대칭형(릴레이 필요)",
+            "unknown": "확인되지 않음"
+          },
+          "run-again": "다시 실행",
+          "running": "확인 실행 중…",
+          "test": "연결 테스트",
+          "title": "연결 진단",
+          "verdict": {
+            "blocked": "이 네트워크는 Music Together를 차단할 가능성이 높습니다. 다른 네트워크나 VPN을 사용해 보세요.",
+            "error": "진단을 실행하지 못했습니다. 자세한 내용은 콘솔을 확인하세요.",
+            "good": "이 네트워크에서는 직접 연결이 작동해야 합니다.",
+            "limited": "이 네트워크를 완전히 확인하지 못했습니다. 직접 연결이 여전히 작동할 수 있습니다. 실패하면 다른 네트워크를 사용해 보세요.",
+            "no-signaling": "Music Together 서버에 연결할 수 없습니다. 방화벽이나 인터넷 연결을 확인하세요.",
+            "relay": "여기서는 직접 연결이 실패할 수 있습니다. 릴레이가 사용됩니다(작동하지만 지연이 추가됨)."
+          }
         }
       },
       "name": "Music Together [베타]",
@@ -668,7 +831,10 @@
         "permission-changed": "Music Together 제어 권한이 \"{{permission}}\"(으)로 변경되었습니다",
         "remove-song-failed": "노래 제거 실패",
         "user-connected": "{{name}}님이 Music Together에 참여했습니다",
-        "user-disconnected": "{{name}}님이 Music Together에서 나갔습니다"
+        "user-disconnected": "{{name}}님이 Music Together에서 나갔습니다",
+        "diagnostics-copied": "진단 요약이 클립보드에 복사되었습니다",
+        "diagnostics-copy-failed": "진단 요약을 복사하지 못했습니다",
+        "diagnostics-running": "연결 테스트가 끝날 때까지 기다리세요"
       }
     },
     "navigation": {
@@ -715,7 +881,13 @@
       "menu": {
         "log-to-console": "콘솔에 복구 이벤트 기록"
       },
-      "name": "재생 복구"
+      "name": "재생 복구",
+      "settings": {
+        "stall-timeout": "멈춤 시간 제한",
+        "stall-timeout-description": "복구를 시도하기 전에 재생이 진전 없이 유지될 수 있는 시간",
+        "max-retries": "최대 재시도 횟수",
+        "max-retries-description": "다음 트랙으로 건너뛰기 전까지의 복구 시도 횟수"
+      }
     },
     "picture-in-picture": {
       "description": "앱을 PiP 모드로 전환할 수 있게 허용합니다",
@@ -733,7 +905,14 @@
         },
         "save-window-position": "창 위치 저장",
         "save-window-size": "창 크기 저장",
-        "use-native-pip": "브라우저 내장 PiP 사용"
+        "use-native-pip": "브라우저 내장 PiP 사용",
+        "prompt": {
+          "title": "화면 속 화면",
+          "label": "화면 속 화면 단축키 구성",
+          "keybind-options": {
+            "hotkey": "화면 속 화면 전환 단축키"
+          }
+        }
       },
       "name": "PiP",
       "templates": {
@@ -745,6 +924,9 @@
       "name": "재생 속도",
       "templates": {
         "button": "배속"
+      },
+      "menu": {
+        "no-preserves-pitch": "피치 유지 비활성화"
       }
     },
     "precise-volume": {
@@ -768,6 +950,12 @@
           "label": "음량 증가/감소 단계를 선택하세요",
           "title": "음량 단계"
         }
+      },
+      "settings": {
+        "steps": "볼륨 단계",
+        "arrows-shortcut": "방향키 단축키",
+        "shortcut-up": "전역 단축키: 볼륨 높이기",
+        "shortcut-down": "전역 단축키: 볼륨 낮추기"
       }
     },
     "quality-changer": {
@@ -796,6 +984,10 @@
             "message": "Last.fm 인증에 실패했습니다\n다음에 다시 시작할 때까지 팝업을 숨깁니다.",
             "title": "인증 실패"
           }
+        },
+        "invalid-regex": {
+          "title": "잘못된 정규식",
+          "message": "{{line}}번째 줄의 정규식이 잘못되었습니다: {{error}}"
         }
       },
       "menu": {
@@ -803,11 +995,15 @@
           "api-settings": "Last.fm API 설정"
         },
         "listenbrainz": {
-          "token": "ListenBrainz 유저 토큰 입력"
+          "token": "ListenBrainz 유저 토큰 입력",
+          "api-root": "ListenBrainz API URL"
         },
         "scrobble-alternative-artist": "대체 아티스트 명 사용",
         "scrobble-alternative-title": "대체 제목 사용하기",
-        "scrobble-other-media": "다른 미디어 스크로블하기"
+        "scrobble-other-media": "다른 미디어 스크로블하기",
+        "regex-filters": "정규식 필터",
+        "use-musicbrainz": "MusicBrainz로 메타데이터 수정",
+        "musicbrainz-email": "MusicBrainz 연락 이메일"
       },
       "name": "스크로블러",
       "prompt": {
@@ -819,8 +1015,23 @@
           "token": {
             "label": "ListenBrainz 유저 토큰을 입력하세요:",
             "title": "ListenBrainz 토큰"
+          },
+          "api-root": {
+            "label": "기본 API URL을 입력하세요:",
+            "title": "ListenBrainz API URL"
           }
+        },
+        "regex-filter-multi": {
+          "label": "줄마다 정규식을 하나씩 입력하세요:"
+        },
+        "musicbrainz-email": {
+          "title": "MusicBrainz 연락 이메일",
+          "label": "MusicBrainz API에 사용할 이메일을 입력하세요:"
         }
+      },
+      "settings": {
+        "lastfm-api-root": "Last.fm API URL",
+        "musicbrainz-email-description": "MusicBrainz API 연락처 정보로 사용됩니다. MusicBrainz 메타데이터 수정에 필요합니다"
       }
     },
     "shortcuts": {
@@ -840,15 +1051,34 @@
           "label": "노래 조작을 위한 전역 키를 선택하세요:",
           "title": "전역 키 지정"
         }
+      },
+      "settings": {
+        "global-keybinds": "전역 키바인드(앱 전체에서 작동)",
+        "local-keybinds": "로컬 키바인드(창에 포커스가 있을 때만)"
       }
     },
     "skip-silences": {
       "description": "노래의 무음 부분을 자동으로 건너뜁니다",
-      "name": "무음 건너뛰기"
+      "name": "무음 건너뛰기",
+      "settings": {
+        "only-skip-beginning": "트랙 시작 부분의 무음만 건너뛰기"
+      }
     },
     "sponsorblock": {
       "description": "인트로/아웃트로와 같은 음악이 아닌 부분이나, 노래가 재생되지 않는 뮤직 비디오의 일부를 자동으로 건너뜁니다",
-      "name": "SponsorBlock"
+      "name": "SponsorBlock",
+      "settings": {
+        "categories": "건너뛸 구간",
+        "category": {
+          "sponsor": "스폰서",
+          "intro": "인트로",
+          "outro": "아웃트로",
+          "interaction": "상호작용 알림",
+          "selfpromo": "자기 홍보",
+          "music_offtopic": "음악 외 구간"
+        },
+        "api-url": "API URL"
+      }
     },
     "synced-lyrics": {
       "description": "LRClib등의 가사 제공자에서 싱크 가사를 불러옵니다.",
@@ -1061,6 +1291,30 @@
         "show-custom-search-button": {
           "label": "사용자 정의 검색 버튼 표시",
           "tooltip": "가사 선택기에 검색 버튼을 표시하여 현재 노래의 검색어와 아티스트를 재정의할 수 있도록 합니다."
+        },
+        "provider-priority": {
+          "tooltip": "공급자는 이 순서대로 시도되며, 현재 노래의 가사가 있는 첫 번째 공급자가 선택됩니다. 화살표로 순서를 바꾸세요."
+        },
+        "prefer-synced": {
+          "tooltip": "가사가 있는 첫 번째 공급자 대신, 시간 동기화된 가사가 있는 목록의 첫 번째 공급자를 선택합니다."
+        },
+        "previous-provider": {
+          "tooltip": "이전 공급자"
+        },
+        "next-provider": {
+          "tooltip": "다음 공급자"
+        },
+        "custom-search-button": {
+          "tooltip": "사용자 지정 검색어"
+        },
+        "star-provider": {
+          "tooltip": "우선순위 순서와 관계없이 이 노래에는 항상 이 공급자를 사용합니다. 이 노래에 가사가 없으면 일반 순서로 대체됩니다."
+        },
+        "unstar-provider": {
+          "tooltip": "이 공급자를 이 노래에 고정하지 않습니다."
+        },
+        "use-priority-list": {
+          "tooltip": "아래 순서대로 공급자를 시도합니다. 끄면 가사가 결정합니다. 노래에 가장 적합한 가사를 가진 공급자가 선택됩니다."
         }
       },
       "name": "싱크 가사",
@@ -1072,6 +1326,22 @@
         "duration-mismatch": "⚠️ - 곡 길이 불일치로 인해 가사가 일치하지 않을 수 있습니다.",
         "inexact": "⚠️ - 이 노래의 가사는 정확하지 않을 수 있습니다",
         "instrumental": "⚠️ - 연주곡입니다"
+      },
+      "settings": {
+        "precise-timing": "정확한 타이밍",
+        "show-inexact": "부정확한 가사 표시",
+        "show-time-codes": "시간 코드 표시",
+        "romanization": "가사 로마자 표기",
+        "line-effect": "줄 효과",
+        "effect": {
+          "fancy": "화려하게",
+          "scale": "크기 조절",
+          "offset": "오프셋",
+          "focus": "집중"
+        },
+        "prefer-synced": "동기화된 가사 우선",
+        "provider-priority": "공급자 우선순위",
+        "use-priority-list": "우선순위 목록 사용"
       }
     },
     "taskbar-mediacontrol": {
@@ -1106,7 +1376,10 @@
           }
         }
       },
-      "name": "투명 플레이어"
+      "name": "투명 플레이어",
+      "settings": {
+        "type-description": "창 투명도에 사용되는 배경 재질"
+      }
     },
     "tuna-obs": {
       "description": "OBS의 확장인 Tuna와의 통합을 활성화합니다",
@@ -1148,7 +1421,26 @@
       "menu": {
         "visualizer-type": "비주얼라이저 타입"
       },
-      "name": "비주얼라이저"
+      "name": "비주얼라이저",
+      "settings": {
+        "preset": "프리셋",
+        "blend-time": "블렌드 시간",
+        "effect": "효과",
+        "accuracy": "정확도",
+        "max-height": "최대 높이",
+        "max-size": "최대 크기",
+        "line-width": "선 너비",
+        "color": "색상",
+        "shadow-blur": "그림자 흐림",
+        "shadow-color": "그림자 색상",
+        "fade-side": "측면 페이드",
+        "prettify": "보기 좋게",
+        "prettify-description": "가장자리 쪽으로 막대를 점점 가늘게",
+        "dottify": "점으로 표시",
+        "dottify-description": "연속된 선 대신 점을 그립니다",
+        "horizontal-align": "가로 정렬",
+        "vertical-align": "세로 정렬"
+      }
     },
     "playlist-search": {
       "description": "사이드바와 재생목록 추가 대화상자에서 재생목록을 필터링할 수 있는 검색 입력을 추가합니다",
@@ -1157,6 +1449,196 @@
         "search-placeholder": "플레이리스트 검색",
         "no-results": "재생 목록을 찾을 수 없습니다"
       }
+    },
+    "always-show-volume-slider": {
+      "name": "항상 볼륨 슬라이더 표시",
+      "description": "볼륨 슬라이더를 마우스를 올릴 때만 표시하지 않고 항상 표시하고 드래그할 수 있게 유지합니다."
+    },
+    "fullscreen-auto-hide": {
+      "description": "전체 화면에서 몇 초 동안 활동이 없으면 플레이어 컨트롤과 마우스 커서를 자동으로 숨깁니다",
+      "name": "전체 화면 자동 숨기기"
+    },
+    "prefer-song": {
+      "description": "앨범 트랙이 영상일 때 뮤직 비디오 대신 노래를 재생합니다",
+      "name": "노래 우선"
+    },
+    "search-commands": {
+      "commands": {
+        "play": "YouTube 링크 또는 ID로 영상 재생",
+        "settings": "설정 열기"
+      },
+      "description": "검색 상자에 /를 입력해 명령을 실행하며, 인수는 자동 완성됩니다",
+      "name": "검색 명령",
+      "settings": {
+        "open-keybind": "열기 단축키",
+        "open-keybind-description": "Electron 스타일 액셀러레이터(예: CmdOrCtrl+/ 또는 Alt+Space)",
+        "open-shortcut": "어디서든 검색 상자 열기",
+        "open-shortcut-description": "Spotlight처럼 검색 상자를 명령 모드로 바로 소환합니다. 다시 누르면 닫힙니다."
+      }
+    },
+    "seek-shortcuts": {
+      "description": "왼쪽/오른쪽 방향키로 5초 뒤로/앞으로 이동",
+      "name": "탐색 단축키"
+    },
+    "sfw-music": {
+      "description": "YouTube Music에서 Explicit로 표시된 노래를 자동으로 건너뜁니다. Explicit 대기열이 반복되거나 다음 노래가 없으면 일시정지합니다.",
+      "name": "SFW 음악"
+    },
+    "toast-autoclose": {
+      "description": "YouTube Music 토스트를 3초 후 자동으로 닫습니다",
+      "name": "토스트 자동 닫기"
+    },
+    "statusbar-lyrics": {
+      "settings": {
+        "include-pronunciation": "발음 포함"
+      }
+    },
+    "dismiss-multidevice-popup": {
+      "name": "멀티디바이스 팝업 닫기",
+      "description": "다른 기기에서 재생이 시작될 때 나타나는 \"이 기기에서 듣기\" 팝업을 자동으로 닫습니다."
+    },
+    "memory-saver": {
+      "description": "창이 숨겨진 상태에서 렌더러의 리소스 캐시가 임계값을 초과하면 캐시를 지웁니다",
+      "name": "메모리 절약",
+      "settings": {
+        "threshold": "캐시 임계값",
+        "threshold-description": "창이 숨겨진 상태에서 캐시의 실제 메모리 사용량이 이 값을 초과하면 캐시를 지웁니다"
+      }
+    }
+  },
+  "settings-ui": {
+    "name": "설정 UI",
+    "description": "사이드바에서 열 수 있는 앱 내 설정 패널을 추가합니다",
+    "title": "설정",
+    "settings": {
+      "show-button": "사이드바에 설정 항목 표시",
+      "show-button-description": "사이드바를 깔끔하게 유지하려면 끄세요. 설정은 탐색 → 설정 열기에서도 사용할 수 있습니다.",
+      "separate-window": "설정을 항상 별도 창에서 열기",
+      "separate-window-description": "앱 내 패널 대신 트레이 항목처럼 독립된 설정 창을 엽니다."
+    },
+    "search-placeholder": "설정 검색",
+    "search-results": "검색 결과",
+    "search-matching": "“{{query}}”과 일치",
+    "no-match": "“{{query}}”와 일치하는 설정이 없습니다.",
+    "close": "닫기",
+    "edit-config": "config.json 편집",
+    "restart-banner": "일부 변경 사항은 적용하려면 재시작이 필요합니다.",
+    "restart-now": "지금 재시작",
+    "later": "나중에",
+    "restart-pill": "재시작",
+    "restart-pill-hint": "재시작 필요",
+    "refresh-options": "옵션 새로 고침",
+    "move-up": "위로 이동",
+    "move-down": "아래로 이동",
+    "about": {
+      "tagline": "기능이 풍부한 YouTube Music 데스크톱 앱",
+      "versions": "버전",
+      "version-app": "앱",
+      "version-build": "빌드",
+      "version-electron": "Electron",
+      "version-chromium": "Chromium",
+      "version-node": "Node.js",
+      "version-platform": "플랫폼",
+      "version-innertube": "Innertube",
+      "links": "링크",
+      "link-repo": "저장소",
+      "link-issue": "문제 신고",
+      "link-releases": "릴리스",
+      "link-license": "라이선스",
+      "actions": "작업",
+      "check-updates": "업데이트 확인",
+      "copy-debug": "디버그 정보 복사",
+      "copied": "복사됨!"
+    },
+    "sections": {
+      "general": {
+        "label": "일반"
+      },
+      "appearance": {
+        "label": "모양"
+      },
+      "window": {
+        "label": "창 및 트레이"
+      },
+      "advanced": {
+        "label": "고급"
+      },
+      "plugins": {
+        "label": "플러그인"
+      },
+      "flags": {
+        "label": "플래그"
+      },
+      "about": {
+        "label": "정보"
+      }
+    },
+    "groups": {
+      "updates-session": "업데이트 및 세션",
+      "startup-language": "시작 및 언어",
+      "interface": "인터페이스",
+      "context-menu": "컨텍스트 메뉴",
+      "window-title": "창",
+      "window": "창",
+      "system": "시스템",
+      "network": "네트워크",
+      "performance": "성능",
+      "configuration": "구성",
+      "updates": "업데이트"
+    },
+    "stepper-decrement": "감소",
+    "stepper-increment": "증가",
+    "flags": {
+      "warning": "기능 플래그는 YouTube Music 자체의 내부 스위치입니다. 변경하면 재생, 레이아웃 또는 계정 기능이 중단될 수 있으며 지원 대상이 아닙니다. 재정의는 변경한 플래그에 대해서만 유지되며 실행 취소로 제거할 수 있습니다.",
+      "search-placeholder": "플래그 검색",
+      "overridden": "재정의됨",
+      "undo": "실행 취소",
+      "undo-hint": "이 재정의 삭제",
+      "empty": "이 페이지에는 기능 플래그가 없습니다.",
+      "no-match": "“{{query}}”와 일치하는 플래그가 없습니다.",
+      "add-name": "새 플래그 이름",
+      "add-value": "값",
+      "add-value-hint": "JSON으로 파싱되면 JSON(true, 42, \"text\"), 그렇지 않으면 텍스트 자체",
+      "add": "추가"
+    },
+    "fields": {
+      "hide-dislike-button": "싫어요 버튼 숨기기",
+      "hide-video-captions": "동영상 자막 숨기기",
+      "context-menu": {
+        "hide-entry": "{{entry}} 숨기기",
+        "entries": {
+          "add-to-queue": "대기열에 추가",
+          "delete-playlist": "재생목록 삭제",
+          "dismiss-queue": "대기열 닫기",
+          "download": "다운로드",
+          "go-to-album": "앨범으로 이동",
+          "go-to-artist": "아티스트로 이동",
+          "go-to-playlist": "재생목록으로 이동",
+          "like": "좋아요",
+          "not-interested": "관심 없음",
+          "pin-to-listen-again": "다시 듣기에 고정",
+          "play-next": "다음에 재생",
+          "remove-from-playlist": "재생목록에서 삭제",
+          "remove-from-queue": "대기열에서 삭제",
+          "report": "신고",
+          "save-to-library": "라이브러리에 저장",
+          "save-to-playlist": "재생목록에 저장",
+          "share": "공유",
+          "shuffle-play": "셔플 재생",
+          "start-mix": "믹스 시작",
+          "stats-for-nerds": "너드를 위한 통계"
+        }
+      },
+      "podcast-artist": "팟캐스트 참여자를 아티스트로 사용",
+      "podcast-artist-desc": "끔: 팟캐스트 에피소드의 아티스트는 이를 게시한 채널입니다.",
+      "theme-preset": "프리셋",
+      "theme-variable-name": "변수",
+      "theme-variable-value": "값",
+      "theme-variable-add": "변수 추가",
+      "performance-mode": "성능 모드",
+      "performance-mode-desc": "일부 시각적 품질을 포기하는 대신 렌더링 비용을 줄입니다.",
+      "in-process-gpu": "GPU 프로세스를 앱 프로세스에 병합",
+      "in-process-gpu-desc": "실험적: 프로세스 하나를 절약하지만 GPU 메모리가 메인 프로세스로 이동하며 소프트웨어 렌더링으로 대체될 수 있습니다."
     }
   }
 }

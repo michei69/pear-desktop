@@ -65,7 +65,8 @@
         },
         "detail": "Kami memohon maaf atas kesulitan! sila pilih apa yang perlu dilakukan:",
         "message": "Aplikasi Tidak Responsif",
-        "title": "Window Tidak Responsif"
+        "title": "Window Tidak Responsif",
+        "details": "Sebab: {{error}}"
       },
       "update-available": {
         "buttons": {
@@ -76,6 +77,27 @@
         "detail": "Versi baharu kini tersedia dan boleh dimuat turun di {{downloadLink}}",
         "message": "Versi baharu kini tersedia",
         "title": "Kemas Kini Tersedia"
+      },
+      "restart-summary": {
+        "detail": "Mula semula aplikasi untuk menerapkan: {{changes}}",
+        "message": "Sesetengah perubahan memerlukan mula semula",
+        "title": "Mula Semula Diperlukan"
+      },
+      "update-available-dev": {
+        "buttons": {
+          "ok": "OK",
+          "view": "Lihat komit"
+        },
+        "title": "Kemas Kini Tersedia",
+        "message": "Binaan dev ini berada di belakang cawangan master",
+        "detail": "Komit yang digunakan oleh binaan ini ({{commit}}) lebih lama daripada komit terkini pada master. Komit yang lebih baharu boleh dilihat di {{commitsLink}}"
+      },
+      "downgrade-warning": {
+        "title": "Tukar kembali kepada stabil?",
+        "message": "Binaan beta ini lebih baharu daripada keluaran stabil terkini.",
+        "detail": "Menukar kembali boleh menetapkan semula sesetengah tetapan: beralih daripada versi yang lebih baharu kepada yang lebih lama tidak menjalankan migrasi dan boleh menyebabkan tetapan baharu tidak dapat dibaca.",
+        "confirm": "Tukar kepada stabil",
+        "cancel": "Batal"
       }
     },
     "menu": {
@@ -87,7 +109,8 @@
           "go-back": "Belakang",
           "go-forward": "Depan",
           "quit": "Keluar",
-          "restart": "Mula Semula Aplikasi"
+          "restart": "Mula Semula Aplikasi",
+          "open-settings": "Buka Tetapan"
         }
       },
       "options": {
@@ -129,7 +152,20 @@
             },
             "label": "Bahasa",
             "submenu": {
-              "to-help-translate": "Ingin membantu menterjemah? Klik di sini"
+              "to-help-translate": "Ingin membantu menterjemah? Klik di sini",
+              "sync": {
+                "label": "Segerakkan bahasa",
+                "submenu": {
+                  "from-youtube": "Daripada YouTube",
+                  "to-youtube": "Ke YouTube"
+                },
+                "failure": {
+                  "dialog": {
+                    "title": "Bahasa Tidak Ditukar",
+                    "message": "Bahasa atau lokasi belum wujud dalam aplikasi."
+                  }
+                }
+              }
             }
           },
           "resume-on-start": "Mulakan semula lagu terakhir apabila aplikasi dimulakan",
@@ -180,9 +216,37 @@
                 "label": "Tema",
                 "submenu": {
                   "import-css-file": "Import fail CSS tersuai",
-                  "no-theme": "Tiada tema"
+                  "no-theme": "Tiada tema",
+                  "colors": {
+                    "label": "Warna"
+                  },
+                  "presets": {
+                    "label": "Pratetap",
+                    "default": "Lalai",
+                    "custom": "Tersuai"
+                  },
+                  "reset-colors": "Tetapkan semula warna",
+                  "open-themes-folder": "Buka folder tema"
                 }
-              }
+              },
+              "use-ytm-icons": "Guna ikon YouTube Music asal"
+            }
+          },
+          "updates": {
+            "label": "Kemas Kini",
+            "check": "Semak kemas kini",
+            "auto-update": "Semak kemas kini secara automatik",
+            "channel": {
+              "label": "Saluran kemas kini",
+              "stable": "Stabil",
+              "beta": "Beta"
+            }
+          },
+          "shared-links": {
+            "label": "Pautan dikongsi",
+            "submenu": {
+              "strip-music": "Buang 'music.'",
+              "strip-si": "Buang '&si='"
             }
           }
         }
@@ -219,6 +283,15 @@
       "dislike": "Tidak suka",
       "unlike": "tidak seperti",
       "undislike": "Nyah suka"
+    },
+    "themes": {
+      "consent": {
+        "title": "Jalankan kod tema?",
+        "message": "\"{{theme}}\" mengandungi skrip yang akan berjalan dengan akses penuh kepada aplikasi.",
+        "detail": "Skrip tema tidak disandbox. Kod ini boleh membaca dan mengubah tetapan anda, berkomunikasi dengan aplikasi, dan melakukan apa-apa sahaja yang boleh dilakukan oleh aplikasi itu sendiri. Hanya benarkan ini jika anda mempercayai sumber tema tersebut. Anda boleh membatalkannya dengan mengalih keluar tema.",
+        "allow": "Jalankan tema ini",
+        "cancel": "Batal"
+      }
     }
   },
   "plugins": {
@@ -253,7 +326,7 @@
           }
         },
         "buffer": {
-          "label": "Buffer",
+          "label": "Penampan",
           "submenu": {
             "buffer": "{{buffer}}"
           }
@@ -340,6 +413,10 @@
         },
         "port": {
           "label": "Port"
+        },
+        "mcp": {
+          "label": "Pelayan MCP",
+          "description": "Hidangkan API v2 sebagai alat MCP di /mcp. Menggunakan kebenaran yang sama seperti API yang lain."
         }
       },
       "name": "Server API [Beta]",
@@ -352,11 +429,20 @@
           "label": "Masukkan port untuk API server:",
           "title": "Port"
         }
+      },
+      "settings": {
+        "choose-file": "Pilih fail…"
       }
     },
     "audio-compressor": {
       "description": "Laksanakan pemampatan untuk audio (mengurangkan kelantangan bagi bahagian signal yang kuat dan menaikkan kelantangan untuk bahagian yang lembut)",
-      "name": "Pemampat Audio"
+      "name": "Pemampat Audio",
+      "menu": {
+        "auto-track-gain": "Gain trek automatik (kuatkan trek senyap)",
+        "maximum-gain": {
+          "label": "Gain maksimum"
+        }
+      }
     },
     "auth-proxy-adapter": {
       "description": "Sokongan untuk penggunaan perkhidmatan proksi pengesahan",
@@ -422,7 +508,10 @@
           "label": "Format"
         }
       },
-      "name": "Jam"
+      "name": "Jam",
+      "settings": {
+        "hour-12": "Guna format 12 jam"
+      }
     },
     "compact-sidebar": {
       "description": "Sentiasa tetapkan bar sisi dalam mod padat",
@@ -442,12 +531,24 @@
             "fade-scaling": {
               "label": "Penskalaan pudar",
               "linear": "Linear",
-              "logarithmic": "Logaritma"
+              "logarithmic": "Logaritma",
+              "equal-power": "Kuasa Sama"
             },
             "seconds-before-end": "Pudar silang N saat sebelum tamat"
           },
           "title": "Opsi pudar silang"
         }
+      },
+      "settings": {
+        "fade-in": "Pudar masuk",
+        "fade-out": "Pudar keluar",
+        "seconds-before-end": "Mula sebelum tamat",
+        "fade-scaling": "Penskalaan pudar",
+        "scaling": {
+          "linear": "Linear",
+          "logarithmic": "Logaritma"
+        },
+        "seconds-before-end-description": "Saat sebelum tamat trek apabila pudar silang ke trek seterusnya bermula"
       }
     },
     "custom-output-device": {
@@ -502,6 +603,13 @@
           "label": "Masukkan tamat masa tidak aktif dalam beberapa saat:",
           "title": "Tetapkan tamat masa tidak aktif"
         }
+      },
+      "settings": {
+        "auto-reconnect": "Sambung semula automatik",
+        "activity-timeout-enabled": "Kosongkan kehadiran apabila dijeda",
+        "activity-timeout-time": "Kosongkan selepas",
+        "hide-github-button": "Sembunyikan butang “Lihat di GitHub”",
+        "hide-duration-left": "Sembunyikan masa berbaki"
       }
     },
     "do-not-track": {
@@ -509,7 +617,19 @@
       "menu": {
         "blocker": "Penyekat"
       },
-      "name": "Jangan Jejak"
+      "name": "Jangan Jejak",
+      "settings": {
+        "cache": "Simpan cache senarai sekatan",
+        "disable-default-lists": "Lumpuhkan senarai sekatan lalai"
+      },
+      "dialog": {
+        "reload": {
+          "title": "Muat semula halaman",
+          "message": "Tetapan Jangan Jejak telah berubah.",
+          "detail": "Peraturan rangkaian dikemas kini tanpa memulakan semula aplikasi. Muat semula halaman untuk menggunakan sepenuhnya perubahan pada penapis halaman. Main balik mungkin terganggu. Anda boleh memuat semula kemudian.",
+          "reload-now": "Muat semula halaman sekarang"
+        }
+      }
     },
     "downloader": {
       "backend": {
@@ -551,7 +671,8 @@
           "saving": "Menyimpan…",
           "trying-to-get-playlist-id": "Mencuba untuk mendapatkan ID senarai main: {{playlistId}}",
           "video-id-not-found": "Video tidak dijumpai",
-          "writing-id3": "Sedang menulis tag ID3…"
+          "writing-id3": "Sedang menulis tag ID3…",
+          "ffmpeg-missing": "FFmpeg tidak ditemui. Pasang FFmpeg dan pastikan `ffmpeg` berada pada PATH anda untuk memuat turun dalam format ini."
         }
       },
       "description": "Memuat turun audio MP3 / sumber terus dari antara muka",
@@ -582,6 +703,10 @@
       },
       "templates": {
         "button": "Memuat turun"
+      },
+      "settings": {
+        "finish-folder": "Folder untuk muat turun selesai",
+        "finish-folder-description": "Biarkan tidak ditetapkan untuk menggunakan folder muat turun di atas."
       }
     },
     "equalizer": {
@@ -649,6 +774,44 @@
           "disconnected": "Terputus",
           "guest": "Disambungkan sebagai Tetamu",
           "host": "Disambungkan sebagai Hos"
+        },
+        "diagnostics": {
+          "check": {
+            "nat": "Jenis rangkaian (NAT)",
+            "signaling": "Pelayan isyarat",
+            "stun": "Sambungan terus (STUN)",
+            "turn": "Sandaran geganti (TURN)"
+          },
+          "copy": "Salin ringkasan",
+          "detail": {
+            "check-error": "Semakan gagal: {{reason}}",
+            "public-ip": "Alamat awam: {{ip}}",
+            "public-ip-hidden": "Alamat awam: klik untuk dedahkan",
+            "signaling-fail": "Tidak dapat dicapai ({{reason}})",
+            "signaling-ok": "Boleh dicapai",
+            "stun-fail": "Tiada alamat awam (UDP/STUN disekat)",
+            "stun-ok": "Alamat awam ditemui",
+            "turn-fail": "Geganti tidak dapat dicapai",
+            "turn-ok": "Geganti boleh dicapai"
+          },
+          "nat": {
+            "blocked": "UDP atau STUN disekat",
+            "open": "Terbuka / kon (sambungan terus berfungsi)",
+            "symmetric": "Simetri (geganti diperlukan)",
+            "unknown": "Tidak dapat ditentukan"
+          },
+          "run-again": "Jalankan semula",
+          "running": "Menjalankan semakan…",
+          "test": "Uji sambungan",
+          "title": "Diagnostik sambungan",
+          "verdict": {
+            "blocked": "Rangkaian ini mungkin menyekat Music Together. Cuba rangkaian lain atau VPN.",
+            "error": "Diagnostik gagal dijalankan. Semak konsol untuk butiran.",
+            "good": "Sambungan terus sepatutnya berfungsi pada rangkaian ini.",
+            "limited": "Tidak dapat menentukan rangkaian ini sepenuhnya. Sambungan terus mungkin masih berfungsi; jika gagal, cuba rangkaian lain.",
+            "no-signaling": "Tidak dapat mencapai pelayan Music Together. Semak firewall atau sambungan internet anda.",
+            "relay": "Sambungan terus mungkin gagal di sini; geganti akan digunakan (berfungsi, tetapi menambah kependaman)."
+          }
         }
       },
       "name": "Music Together [Beta]",
@@ -664,7 +827,10 @@
         "permission-changed": "Kebenaran Muzik Bersama ditukar kepada \"{{permission}}\"",
         "remove-song-failed": "Gagal mengalih keluar lagu",
         "user-connected": "{{name}} menyertai Muzik Bersama",
-        "user-disconnected": "{{name}} meninggalkan Muzik Bersama"
+        "user-disconnected": "{{name}} meninggalkan Muzik Bersama",
+        "diagnostics-copied": "Ringkasan diagnostik disalin ke papan keratan",
+        "diagnostics-copy-failed": "Gagal menyalin ringkasan diagnostik",
+        "diagnostics-running": "Tunggu ujian sambungan selesai"
       }
     },
     "navigation": {
@@ -722,7 +888,14 @@
         },
         "save-window-position": "Simpan kedudukan tetingkap",
         "save-window-size": "Simpan saiz tetingkap",
-        "use-native-pip": "Guna PiP asli pelayar"
+        "use-native-pip": "Guna PiP asli pelayar",
+        "prompt": {
+          "title": "Gambar-dalam-Gambar",
+          "label": "Konfigurasikan kekunci panas Gambar-dalam-Gambar",
+          "keybind-options": {
+            "hotkey": "Kekunci panas untuk togol Gambar-dalam-Gambar"
+          }
+        }
       },
       "name": "Gambar-dalam-gambar",
       "templates": {
@@ -734,6 +907,9 @@
       "name": "Kelajuan Main Balik",
       "templates": {
         "button": "Kelajuan"
+      },
+      "menu": {
+        "no-preserves-pitch": "Lumpuhkan pengekalan pic"
       }
     },
     "precise-volume": {
@@ -757,6 +933,12 @@
           "label": "Pilih Langkah Peningkatan/Pengurangan Kelantangan",
           "title": "Langkah Kelantangan"
         }
+      },
+      "settings": {
+        "steps": "Langkah volum",
+        "arrows-shortcut": "Pintasan kekunci anak panah",
+        "shortcut-up": "Pintasan global: naikkan volum",
+        "shortcut-down": "Pintasan global: turunkan volum"
       }
     },
     "quality-changer": {
@@ -785,6 +967,10 @@
             "message": "Gagal mengesahkan dengan Last.fm\nSembunyikan pop timbul sehingga mula semula seterusnya.",
             "title": "Atuntikasi Gagal"
           }
+        },
+        "invalid-regex": {
+          "title": "Ungkapan nalar tidak sah",
+          "message": "Ungkapan nalar pada baris {{line}} tidak sah: {{error}}"
         }
       },
       "menu": {
@@ -792,11 +978,15 @@
           "api-settings": "Tetapan API Last.fm"
         },
         "listenbrainz": {
-          "token": "Masukkan token pengguna ListenBrainz"
+          "token": "Masukkan token pengguna ListenBrainz",
+          "api-root": "URL API ListenBrainz"
         },
         "scrobble-alternative-artist": "Guna artis alternatif",
         "scrobble-alternative-title": "Guna tajuk alternatif",
-        "scrobble-other-media": "Scrobble media lain"
+        "scrobble-other-media": "Scrobble media lain",
+        "regex-filters": "Penapis ungkapan nalar",
+        "use-musicbrainz": "Gunakan MusicBrainz untuk membetulkan metadata",
+        "musicbrainz-email": "E-mel hubungan MusicBrainz"
       },
       "name": "Scrobbler",
       "prompt": {
@@ -808,8 +998,23 @@
           "token": {
             "label": "Masukkan token pengguna ListenBrainz anda:",
             "title": "Token ListenBrainz"
+          },
+          "api-root": {
+            "label": "Masukkan URL asas API:",
+            "title": "URL API ListenBrainz"
           }
+        },
+        "regex-filter-multi": {
+          "label": "Masukkan satu ungkapan nalar setiap baris:"
+        },
+        "musicbrainz-email": {
+          "title": "E-mel Hubungan MusicBrainz",
+          "label": "Masukkan e-mel untuk API MusicBrainz:"
         }
+      },
+      "settings": {
+        "lastfm-api-root": "URL API Last.fm",
+        "musicbrainz-email-description": "Digunakan sebagai maklumat hubungan untuk API MusicBrainz; diperlukan untuk pembetulan metadata MusicBrainz"
       }
     },
     "shortcuts": {
@@ -829,15 +1034,34 @@
           "label": "Pilih Ikatan Kunci Global untuk Kawalan Lagu:",
           "title": "Ikatan Kunci Global"
         }
+      },
+      "settings": {
+        "global-keybinds": "Ikatan kekunci global (berfungsi seluruh aplikasi)",
+        "local-keybinds": "Ikatan kekunci setempat (hanya semasa tetingkap difokus)"
       }
     },
     "skip-silences": {
       "description": "Langkau bahagian senyap dalam lagu secara automatik",
-      "name": "Langkau Senyap"
+      "name": "Langkau Senyap",
+      "settings": {
+        "only-skip-beginning": "Hanya langkau senyap pada permulaan trek"
+      }
     },
     "sponsorblock": {
       "description": "Melangkau bahagian bukan muzik seperti intro/outro atau bahagian video muzik di mana lagu tidak dimainkan secara automatik",
-      "name": "SponsorBlock"
+      "name": "SponsorBlock",
+      "settings": {
+        "categories": "Segmen untuk dilangkau",
+        "category": {
+          "sponsor": "Penaja",
+          "intro": "Pengenalan",
+          "outro": "Penutup",
+          "interaction": "Peringatan interaksi",
+          "selfpromo": "Promosi kendiri",
+          "music_offtopic": "Bahagian bukan muzik"
+        },
+        "api-url": "URL API"
+      }
     },
     "synced-lyrics": {
       "description": "Menyediakan lirik yang diselaraskan untuk lagu, menggunakan pembekal seperti LRClib.",
@@ -1050,6 +1274,30 @@
         "show-custom-search-button": {
           "label": "Tunjukkan butang carian tersuai",
           "tooltip": "Tunjukkan butang carian dalam pemilih lirik yang membolehkan anda mengatasi pertanyaan carian dan artis untuk lagu semasa."
+        },
+        "provider-priority": {
+          "tooltip": "Penyedia dicuba mengikut susunan ini: yang pertama mempunyai lirik untuk lagu semasa menang. Gunakan anak panah untuk menyusun semula."
+        },
+        "prefer-synced": {
+          "tooltip": "Pilih penyedia pertama dalam senarai yang mempunyai lirik disegerakkan masa, bukan yang pertama mempunyai sebarang lirik."
+        },
+        "previous-provider": {
+          "tooltip": "Penyedia sebelumnya"
+        },
+        "next-provider": {
+          "tooltip": "Penyedia seterusnya"
+        },
+        "custom-search-button": {
+          "tooltip": "Pertanyaan carian tersuai"
+        },
+        "star-provider": {
+          "tooltip": "Sentiasa gunakan penyedia ini untuk lagu ini, walau apa pun susunan keutamaan. Kembali ke susunan biasa jika ia tiada lirik untuk lagu ini."
+        },
+        "unstar-provider": {
+          "tooltip": "Berhenti menyematkan penyedia ini pada lagu ini."
+        },
+        "use-priority-list": {
+          "tooltip": "Cuba penyedia mengikut susunan di bawah. Matikan ini untuk membiarkan lirik menentukan sebaliknya: penyedia yang mempunyai lirik terbaik untuk lagu itu menang."
         }
       },
       "name": "Lirik Diselaraskan",
@@ -1061,6 +1309,22 @@
         "duration-mismatch": "⚠️ - Lirik mungkin tidak selari kerana ketidakpadanan tempoh.",
         "inexact": "⚠️ - Lirik untuk lagu ini mungkin tidak tepat",
         "instrumental": "⚠️ - Ini adalah lagu instrumental"
+      },
+      "settings": {
+        "precise-timing": "Masa tepat",
+        "show-inexact": "Tunjukkan lirik tidak tepat",
+        "show-time-codes": "Tunjukkan kod masa",
+        "romanization": "Romanisasi lirik",
+        "line-effect": "Kesan baris",
+        "effect": {
+          "fancy": "Bergaya",
+          "scale": "Skala",
+          "offset": "Anjakan",
+          "focus": "Fokus"
+        },
+        "prefer-synced": "Utamakan lirik disegerakkan",
+        "provider-priority": "Keutamaan Penyedia",
+        "use-priority-list": "Gunakan senarai keutamaan"
       }
     },
     "taskbar-mediacontrol": {
@@ -1086,11 +1350,19 @@
             "acrylic": "Akrilik",
             "mica": "Mika",
             "none": "Tiada",
-            "tabbed": "Bertab"
+            "tabbed": "Bertab",
+            "content": "Kandungan",
+            "fullscreen-ui": "UI Skrin Penuh",
+            "under-page": "Di Bawah Halaman",
+            "under-window": "Di Bawah Tetingkap",
+            "window": "Tetingkap"
           }
         }
       },
-      "name": "Pemain Lutsinar"
+      "name": "Pemain Lutsinar",
+      "settings": {
+        "type-description": "Bahan latar belakang yang digunakan untuk ketelusan tetingkap"
+      }
     },
     "tuna-obs": {
       "description": "Integrasi dengan pemalam Tuna OBS",
@@ -1132,7 +1404,26 @@
       "menu": {
         "visualizer-type": "Jenis Visualizer"
       },
-      "name": "Visualizer"
+      "name": "Visualizer",
+      "settings": {
+        "preset": "Pratetap",
+        "blend-time": "Masa gabungan",
+        "effect": "Kesan",
+        "accuracy": "Ketepatan",
+        "max-height": "Tinggi maksimum",
+        "max-size": "Saiz maksimum",
+        "line-width": "Lebar garisan",
+        "color": "Warna",
+        "shadow-blur": "Kabur bayang",
+        "shadow-color": "Warna bayang",
+        "fade-side": "Sisi pudar",
+        "prettify": "Cantikkan",
+        "prettify-description": "Meniruskan bar ke arah tepi",
+        "dottify": "Titikkan",
+        "dottify-description": "Lukis titik dan bukan garisan berterusan",
+        "horizontal-align": "Penjajaran mendatar",
+        "vertical-align": "Penjajaran menegak"
+      }
     },
     "audio-only": {
       "description": "Memaksa mod audio sahaja — menyekat semua strim video di peringkat rangkaian dan pemain untuk menjimatkan RAM dan lebar jalur",
@@ -1143,7 +1434,13 @@
       "menu": {
         "log-to-console": "Log peristiwa pemulihan ke konsol"
       },
-      "name": "Pemulihan Main Balik"
+      "name": "Pemulihan Main Balik",
+      "settings": {
+        "stall-timeout": "Tamat masa tersekat",
+        "stall-timeout-description": "Berapa lama main balik dibenarkan tanpa kemajuan sebelum cubaan pemulihan",
+        "max-retries": "Cubaan semula maksimum",
+        "max-retries-description": "Bilangan percubaan pemulihan sebelum melangkau ke trek seterusnya"
+      }
     },
     "playlist-search": {
       "description": "Menambahkan input carian untuk menapis senarai main di bar sisi dan dialog Tambah ke senarai main",
@@ -1152,6 +1449,196 @@
         "search-placeholder": "Cari senarai main",
         "no-results": "Tiada senarai main ditemui"
       }
+    },
+    "always-show-volume-slider": {
+      "name": "Sentiasa Tunjukkan Gelangsar Kelantangan",
+      "description": "Mengekalkan gelangsar kelantangan kelihatan dan boleh dileret daripada hanya memaparkannya apabila dihalakan."
+    },
+    "fullscreen-auto-hide": {
+      "description": "Sembunyikan kawalan pemain dan kursor tetikus secara automatik selepas beberapa saat tanpa aktiviti semasa skrin penuh",
+      "name": "Sembunyi Automatik Skrin Penuh"
+    },
+    "prefer-song": {
+      "description": "Mainkan lagu dan bukan video muzik apabila trek album ialah video",
+      "name": "Utamakan Lagu"
+    },
+    "search-commands": {
+      "commands": {
+        "play": "Mainkan video daripada pautan atau ID YouTube",
+        "settings": "Buka tetapan"
+      },
+      "description": "Taip / dalam kotak carian untuk menjalankan arahan, dengan autolengkap untuk argumennya",
+      "name": "Arahan Carian",
+      "settings": {
+        "open-keybind": "Pintasan buka",
+        "open-keybind-description": "Pemecut gaya Electron, cth. CmdOrCtrl+/ atau Alt+Space",
+        "open-shortcut": "Buka kotak carian dari mana-mana",
+        "open-shortcut-description": "Memanggil kotak carian yang sudah dalam mod arahan, seperti Spotlight. Menekannya sekali lagi akan menutupnya."
+      }
+    },
+    "seek-shortcuts": {
+      "description": "Lompat 5 saat ke belakang/hadapan dengan kekunci anak panah kiri/kanan",
+      "name": "Pintasan Lompat"
+    },
+    "sfw-music": {
+      "description": "Melangkau lagu yang ditanda Eksplisit oleh YouTube Music secara automatik. Menjeda jika baris gilir eksplisit berulang atau tiada lagu seterusnya tersedia.",
+      "name": "Muzik SFW"
+    },
+    "toast-autoclose": {
+      "description": "Tutup toast YouTube Music secara automatik selepas tiga saat",
+      "name": "Tutup Auto Toast"
+    },
+    "statusbar-lyrics": {
+      "settings": {
+        "include-pronunciation": "Sertakan sebutan"
+      }
+    },
+    "dismiss-multidevice-popup": {
+      "name": "Tutup Popup Berbilang Peranti",
+      "description": "Menutup popup \"Dengar pada peranti ini\" secara automatik yang muncul apabila main balik bermula pada peranti lain."
+    },
+    "memory-saver": {
+      "description": "Mengosongkan cache sumber pemapar semasa tetingkap tersembunyi setelah ia melebihi ambang",
+      "name": "Penjimat Memori",
+      "settings": {
+        "threshold": "Ambang cache",
+        "threshold-description": "Kosongkan cache apabila memori langsungnya melebihi nilai ini semasa tetingkap tersembunyi"
+      }
+    }
+  },
+  "settings-ui": {
+    "name": "UI Tetapan",
+    "description": "Menambah panel tetapan dalam aplikasi, dibuka dari bar sisi",
+    "title": "Tetapan",
+    "settings": {
+      "show-button": "Paparkan entri tetapan dalam bar sisi",
+      "show-button-description": "Matikan ini untuk memastikan bar sisi bersih; Tetapan masih tersedia di Navigasi → Buka Tetapan.",
+      "separate-window": "Sentiasa buka Tetapan dalam tetingkap berasingan",
+      "separate-window-description": "Membuka tetingkap tetapan kendiri, seperti yang dilakukan oleh entri dulang, bukannya panel dalam aplikasi."
+    },
+    "search-placeholder": "Cari tetapan",
+    "search-results": "Hasil carian",
+    "search-matching": "Yang sepadan dengan “{{query}}”",
+    "no-match": "Tiada tetapan yang sepadan dengan “{{query}}”.",
+    "close": "Tutup",
+    "edit-config": "Sunting config.json",
+    "restart-banner": "Sesetengah perubahan memerlukan mula semula untuk berkuat kuasa.",
+    "restart-now": "Mula semula sekarang",
+    "later": "Kemudian",
+    "restart-pill": "mula semula",
+    "restart-pill-hint": "Perlu mula semula",
+    "refresh-options": "Muat semula pilihan",
+    "move-up": "Alih ke atas",
+    "move-down": "Alih ke bawah",
+    "about": {
+      "tagline": "Aplikasi desktop kaya ciri untuk YouTube Music",
+      "versions": "Versi",
+      "version-app": "Apl",
+      "version-build": "Binaan",
+      "version-electron": "Electron",
+      "version-chromium": "Chromium",
+      "version-node": "Node.js",
+      "version-platform": "Platform",
+      "version-innertube": "Innertube",
+      "links": "Pautan",
+      "link-repo": "Repositori",
+      "link-issue": "Laporkan isu",
+      "link-releases": "Keluaran",
+      "link-license": "Lesen",
+      "actions": "Tindakan",
+      "check-updates": "Semak kemas kini",
+      "copy-debug": "Salin maklumat nyahpepijat",
+      "copied": "Disalin!"
+    },
+    "sections": {
+      "general": {
+        "label": "Umum"
+      },
+      "appearance": {
+        "label": "Penampilan"
+      },
+      "window": {
+        "label": "Tetingkap & Dulang"
+      },
+      "advanced": {
+        "label": "Lanjutan"
+      },
+      "plugins": {
+        "label": "Pemalam"
+      },
+      "flags": {
+        "label": "Bendera"
+      },
+      "about": {
+        "label": "Perihal"
+      }
+    },
+    "groups": {
+      "updates-session": "Kemas kini & sesi",
+      "startup-language": "Permulaan & bahasa",
+      "interface": "Antara muka",
+      "context-menu": "Menu konteks",
+      "window-title": "Tetingkap",
+      "window": "Tetingkap",
+      "system": "Sistem",
+      "network": "Rangkaian",
+      "performance": "Prestasi",
+      "configuration": "Konfigurasi",
+      "updates": "Kemas kini"
+    },
+    "stepper-decrement": "Kurangkan",
+    "stepper-increment": "Tambah",
+    "flags": {
+      "warning": "Bendera ciri ialah suis dalaman YouTube Music sendiri. Menukarnya boleh merosakkan main balik, susun atur atau ciri akaun, dan ia tidak diliputi oleh sokongan. Penggantian disimpan hanya untuk bendera yang anda ubah, dan boleh dibuang dengan Buat asal.",
+      "search-placeholder": "Cari bendera",
+      "overridden": "diubah suai",
+      "undo": "Buat asal",
+      "undo-hint": "Padam penggantian ini",
+      "empty": "Halaman ini tidak mendedahkan sebarang bendera ciri.",
+      "no-match": "Tiada bendera yang sepadan dengan “{{query}}”.",
+      "add-name": "Nama bendera baharu",
+      "add-value": "Nilai",
+      "add-value-hint": "JSON apabila ia boleh dihurai (true, 42, \"text\"), teks itu sendiri jika sebaliknya",
+      "add": "Tambah"
+    },
+    "fields": {
+      "hide-dislike-button": "Sembunyikan Butang Tidak Suka",
+      "hide-video-captions": "Sembunyikan Kapsyen Video",
+      "context-menu": {
+        "hide-entry": "Sembunyikan {{entry}}",
+        "entries": {
+          "add-to-queue": "Tambah ke baris gilir",
+          "delete-playlist": "Padam senarai main",
+          "dismiss-queue": "Tutup baris gilir",
+          "download": "Muat turun",
+          "go-to-album": "Pergi ke album",
+          "go-to-artist": "Pergi ke artis",
+          "go-to-playlist": "Pergi ke senarai main",
+          "like": "Suka",
+          "not-interested": "Tidak berminat",
+          "pin-to-listen-again": "Sematkan ke Dengar semula",
+          "play-next": "Main seterusnya",
+          "remove-from-playlist": "Buang daripada senarai main",
+          "remove-from-queue": "Buang daripada baris gilir",
+          "report": "Laporkan",
+          "save-to-library": "Simpan ke pustaka",
+          "save-to-playlist": "Simpan ke senarai main",
+          "share": "Kongsi",
+          "shuffle-play": "Main secara rawak",
+          "start-mix": "Mulakan campuran",
+          "stats-for-nerds": "Statistik untuk orang teknikal"
+        }
+      },
+      "podcast-artist": "Gunakan peserta podcast sebagai artis",
+      "podcast-artist-desc": "Mati: artis episod podcast ialah saluran yang menerbitkannya.",
+      "theme-preset": "Pratetap",
+      "theme-variable-name": "Pemboleh ubah",
+      "theme-variable-value": "Nilai",
+      "theme-variable-add": "Tambah pemboleh ubah",
+      "performance-mode": "Mod prestasi",
+      "performance-mode-desc": "Mengorbankan sedikit kesetiaan visual demi pemaparan yang lebih ringan.",
+      "in-process-gpu": "Gabungkan proses GPU ke dalam proses aplikasi",
+      "in-process-gpu-desc": "Eksperimen: menjimatkan satu proses, tetapi memindahkan memori GPU ke proses utama dan boleh beralih kepada pemaparan perisian."
     }
   }
 }
