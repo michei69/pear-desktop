@@ -110,6 +110,14 @@ export const menu: (
       })),
     },
     {
+      label: t('plugins.ambient-mode.menu.extend-sidebar.label'),
+      type: 'checkbox',
+      checked: config.extendSidebar,
+      click(item: Electron.MenuItem) {
+        setConfig({ extendSidebar: item.checked });
+      },
+    },
+    {
       label: t('plugins.ambient-mode.menu.use-fullscreen.label'),
       type: 'checkbox',
       checked: config.fullscreen,

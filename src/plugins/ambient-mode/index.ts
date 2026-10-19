@@ -18,7 +18,11 @@ const defaultConfig: AmbientModePluginConfig = {
   size: 100,
   opacity: 1,
   fullscreen: false,
+  extendSidebar: false,
 };
+
+const setExtendSidebar = (enabled: boolean) =>
+  document.body.classList.toggle('ambient-mode-extend-sidebar', enabled);
 
 export default createPlugin({
   name: () => t('plugins.ambient-mode.name'),
@@ -84,6 +88,13 @@ export default createPlugin({
     },
     {
       type: 'switch',
+      key: 'extendSidebar',
+      label: () => t('plugins.ambient-mode.menu.extend-sidebar.label'),
+      description: () =>
+        t('plugins.ambient-mode.menu.extend-sidebar.description'),
+    },
+    {
+      type: 'switch',
       key: 'fullscreen',
       label: () => t('plugins.ambient-mode.menu.use-fullscreen.label'),
     },
@@ -115,6 +126,7 @@ export default createPlugin({
       this.blur = config.blur;
       this.opacity = config.opacity;
       this.isFullscreen = config.fullscreen;
+      setExtendSidebar(config.extendSidebar);
 
       const songImage = document.querySelector<HTMLImageElement>('#song-image');
       const songVideo = document.querySelector<HTMLDivElement>('#song-video');
@@ -360,10 +372,12 @@ export default createPlugin({
       this.blur = newConfig.blur;
       this.opacity = newConfig.opacity;
       this.isFullscreen = newConfig.fullscreen;
+      setExtendSidebar(newConfig.extendSidebar);
 
       this.update?.();
     },
     stop() {
+      setExtendSidebar(false);
       this.update = null;
       this.unregister?.();
       this.unregister = null;

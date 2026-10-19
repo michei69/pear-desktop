@@ -7,4 +7,5 @@ export type AmbientModePluginConfig = {
   size: number;
   opacity: number;
   fullscreen: boolean;
+  extendSidebar: boolean;
 };
