@@ -3,6 +3,11 @@ import { render } from 'solid-js/web';
 
 import { t } from '@/i18n';
 import { createRenderer } from '@/utils';
+import {
+  getGuideLists,
+  SETTINGS_ENTRY_CLASS,
+  watchGuides,
+} from '@/utils/guide';
 
 import { SettingsModal } from './components/SettingsModal';
 import { ThemePaletteField } from './components/ThemePalette';
@@ -40,10 +45,6 @@ export const openSettings = () => {
   setOpen(true);
 };
 
-const GUIDE_SELECTORS = ['#guide-renderer', '#mini-guide-renderer'];
-const GUIDE_SELECTOR = GUIDE_SELECTORS.join(', ');
-const ITEMS_SELECTOR = 'ytmusic-guide-section-renderer[is-primary] > #items';
-
 /**
  * YTM's own sidebar entry, driven by the inner `guideEntryRenderer` payload:
  * without a `navigationEndpoint` its built-in tap handler does nothing.
@@ -72,14 +73,14 @@ const OPEN_FROM_MENU = 'ytmd-sui:open';
 /** Asks the backend for the standalone settings window. */
 const OPEN_WINDOW = 'ytmd-sui:open-window';
 
-const injectButton = (guide: HTMLElement) => {
-  const items = guide.querySelector(ITEMS_SELECTOR);
-  if (!items || !started || !config.showButton) return;
+const injectButton = (guide: HTMLElement, items: HTMLElement) => {
+  if (!started || !config.showButton) return;
+  if (items.querySelector(`.${SETTINGS_ENTRY_CLASS}`)) return;
 
   const host = document.createElement(
     'ytmusic-guide-entry-renderer',
   ) as GuideEntryRendererElement;
-  host.classList.add('pear-settings-btn');
+  host.classList.add(SETTINGS_ENTRY_CLASS);
   host.isCollapsed = guide.id.startsWith('mini-');
   host.data = {
     isPrimary: true,
@@ -92,50 +93,26 @@ const injectButton = (guide: HTMLElement) => {
 
 const removeButton = () => {
   document
-    .querySelectorAll('.pear-settings-btn')
+    .querySelectorAll(`.${SETTINGS_ENTRY_CLASS}`)
     .forEach((host) => host.remove());
+};
+
+/**
+ * Adds the sidebar entry to every mounted guide that lacks it. Both guides stay
+ * in the DOM once the mini one has appeared, and YTM may rebuild either, so
+ * this is the mutation-driven half of the sync.
+ */
+const injectMissing = () => {
+  for (const { guide, items } of getGuideLists()) injectButton(guide, items);
 };
 
 /** Adds the sidebar entry, or takes it away when the option is switched off. */
 const syncButton = () => {
   removeButton();
-  if (!started || !config.showButton) return;
-
-  // Only one of the two guides is on the page.
-  for (const selector of GUIDE_SELECTORS) {
-    const guide = document.querySelector<HTMLElement>(selector);
-    if (guide) {
-      injectButton(guide);
-      return;
-    }
-  }
+  injectMissing();
 };
 
 let stopGuideWatch: (() => void) | undefined;
-
-/**
- * Calls `onFound` once the guide and its item list are on the page. The page
- * builds them after the plugin starts, so this waits on mutations instead of
- * polling; only one of the two guides ever exists, hence the combined selector.
- */
-const watchForGuide = (onFound: (guide: HTMLElement) => void) => {
-  const existing = document.querySelector<HTMLElement>(GUIDE_SELECTOR);
-  if (existing?.querySelector(ITEMS_SELECTOR)) {
-    onFound(existing);
-    return;
-  }
-
-  const observer = new MutationObserver(() => {
-    const guide = document.querySelector<HTMLElement>(GUIDE_SELECTOR);
-    if (!guide?.querySelector(ITEMS_SELECTOR)) return;
-
-    observer.disconnect();
-    stopGuideWatch = undefined;
-    onFound(guide);
-  });
-  observer.observe(document.body, { childList: true, subtree: true });
-  stopGuideWatch = () => observer.disconnect();
-};
 
 /** Play the exit animation, then unmount. */
 const closeModal = () => {
@@ -213,7 +190,7 @@ export const renderer = createRenderer({
 
     mountModal();
 
-    watchForGuide(injectButton);
+    stopGuideWatch = watchGuides(injectMissing);
   },
 
   onConfigChange(newConfig: SettingsUIConfig) {

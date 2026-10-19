@@ -9,6 +9,7 @@ import 'mdui/components/tooltip.js';
 import { loadI18n, t as i18t } from '@/i18n';
 import { bootStandaloneSettings } from '@/plugins/settings-ui/standalone';
 import { getAudioGraph } from '@/providers/audio-graph';
+import { GUIDE_UPSELL_SELECTOR } from '@/utils/guide';
 import { isNewUI } from '@/utils/new-ui';
 import {
   defaultTrustedTypePolicy,
@@ -512,14 +513,10 @@ function onApiLoaded() {
 
   // Remove upgrade button
   if (window.mainConfig.get('options.removeUpgradeButton')) {
-    const sectionBtns = document.querySelectorAll(
-      '#sections ytmusic-guide-section-renderer[is-primary] #items ytmusic-guide-entry-renderer:not(.pear-settings-btn)',
-    );
-    const upgradeBtn = sectionBtns[sectionBtns.length - 1] as
-      | HTMLElement
-      | undefined;
-    // The guide may not have rendered its entries yet.
-    if (upgradeBtn) upgradeBtn.style.display = 'none';
+    // A stylesheet rule, not one hidden node: YTM keeps the full and the mini
+    // guide mounted together and mounts the mini one only once the window
+    // narrows, so every present and future guide has to match the rule.
+    addStyle(`${GUIDE_UPSELL_SELECTOR} { display: none !important; }`);
   }
 
   // Apply the likeButtons option.
