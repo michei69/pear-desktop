@@ -216,7 +216,7 @@ jobs:
           # picked up - which is why the entry is tagged v${VERSION}.
           gh release delete "$PREV_TAG" --cleanup-tag --yes || true
           gh release create "v$VERSION" "${assets[@]}" \
-            --title "Pear Desktop ${VERSION} (beta)" \
+            --title "v${VERSION} (beta)" \
             --notes-file notes.md \
             --prerelease \
             --latest=false \
