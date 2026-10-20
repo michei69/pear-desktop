@@ -629,11 +629,13 @@ export const SettingsModal = (props: {
 
               {/* section mode */}
               <Show when={!isSearchMode()}>
-                <For each={matchingGroups(currentSection()?.groups ?? [])}>
-                  {(group) => (
-                    <AppGroupView group={group} title={group.title?.()} />
-                  )}
-                </For>
+                <Show when={active() !== 'about'}>
+                  <For each={matchingGroups(currentSection()?.groups ?? [])}>
+                    {(group) => (
+                      <AppGroupView group={group} title={group.title?.()} />
+                    )}
+                  </For>
+                </Show>
 
                 <Show when={active() === 'plugins'}>
                   <For each={plugins()}>
@@ -661,7 +663,15 @@ export const SettingsModal = (props: {
                   <AboutSection
                     enabledPlugins={enabledPlugins().map((p) => p.name)}
                     meta={appMeta()}
-                  />
+                  >
+                    {/* Update settings live under the "Check for updates"
+                        button rather than above the app logo. */}
+                    <For each={matchingGroups(currentSection()?.groups ?? [])}>
+                      {(group) => (
+                        <AppGroupView group={group} title={group.title?.()} />
+                      )}
+                    </For>
+                  </AboutSection>
                 </Show>
               </Show>
             </Show>

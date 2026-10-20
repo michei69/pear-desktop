@@ -1,4 +1,4 @@
-import { For, Show } from 'solid-js';
+import { For, Show, type JSX } from 'solid-js';
 
 import { APPLICATION_NAME, t } from '@/i18n';
 
@@ -39,6 +39,8 @@ const archOptionLabel = (arch: string) => {
 export const AboutSection = (props: {
   meta?: AppMeta;
   enabledPlugins?: string[];
+  /** Settings the About schema owns, rendered below the action buttons. */
+  children?: JSX.Element;
 }) => {
   const { copied, copy } = useCopyFeedback();
 
@@ -205,6 +207,8 @@ export const AboutSection = (props: {
           </button>
         </div>
       </div>
+
+      {props.children}
 
       <Show when={props.meta?.copyright}>
         <div class="sui-about__copyright">{props.meta!.copyright}</div>
