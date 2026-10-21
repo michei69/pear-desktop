@@ -710,7 +710,7 @@
       }
     },
     "equalizer": {
-      "description": "Adds an equalizer to the player",
+      "description": "Adds a full 11-band equalizer with editable frequencies, gain, Q and presets",
       "menu": {
         "presets": {
           "label": "Presets",
@@ -719,7 +719,58 @@
           }
         }
       },
-      "name": "Equalizer"
+      "name": "Equalizer",
+      "settings": {
+        "applied": "Applied",
+        "band-reset": "Band reset:",
+        "bypass": "Bypass equalizer",
+        "bypass-description": "Pass audio through without applying the EQ curve or output gain.",
+        "confirm-delete": "Delete this preset?",
+        "confirm-replace": "A preset with this name exists. Replace it?",
+        "curve": "Equalizer curve",
+        "curve-description": "11 bands: a low shelf at 20 Hz, peaking bands between, and a high shelf at 20.48 kHz. Drag a dot horizontally for frequency, vertically for gain, or Shift-drag for Q. Double-click resets a band.",
+        "curve-help": "Drag: frequency / gain · Shift-drag: Q · Double-click: reset band",
+        "curve-label": "Equalizer curve preview",
+        "custom": "Custom",
+        "delete": "Delete preset",
+        "deleted": "Deleted preset:",
+        "export": "Export",
+        "exported": "Presets exported.",
+        "flat": "Flat",
+        "frequency": "Frequency",
+        "gain": "Gain",
+        "gain-number": "Gain value",
+        "gains-reset": "All band gains reset.",
+        "high-shelf": "High shelf",
+        "import": "Import",
+        "import-empty": "The file did not contain any valid presets.",
+        "import-error": "Could not read that preset file.",
+        "imported": "Imported presets:",
+        "imported-suffix": "imported",
+        "low-shelf": "Low shelf",
+        "name-exists": "A preset with that name already exists.",
+        "name-required": "Enter a preset name.",
+        "output-gain": "Output gain",
+        "output-gain-description": "Trim applied after the equalizer. This does not change the player's volume.",
+        "peaking": "Peaking",
+        "preset": "Preset",
+        "preset-name": "Preset name",
+        "preset-name-placeholder": "e.g. My headphones",
+        "presets": "Presets",
+        "presets-description": "Flat and Bass Boost are built in. Save the current curve and output gain as your own preset, then rename, delete, export or import presets.",
+        "q": "Q / bandwidth",
+        "recent": "Recent",
+        "rename": "Rename",
+        "renamed": "Renamed preset:",
+        "reset-band": "Reset band",
+        "reset-done": "Equalizer reset to Flat.",
+        "reset-eq": "Reset EQ",
+        "reset-gains": "Reset gains",
+        "reserved-name": "That name is reserved for a built-in preset.",
+        "save-current": "Save current",
+        "saved": "Saved preset:",
+        "select-user-preset": "Select one of your saved presets first."
+      }
     },
     "exponential-volume": {
       "description": "Makes the volume slider exponential so it's easier to select lower volumes.",
