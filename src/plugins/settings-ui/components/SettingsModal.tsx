@@ -373,8 +373,13 @@ export const SettingsModal = (props: {
     }),
   );
 
-  const AppGroupView = (p: { title?: string; group: SettingsGroup }) => (
-    <div class="sui-group">
+  const AppGroupView = (p: {
+    title?: string;
+    group: SettingsGroup;
+    /** About groups use the About cards' title and row treatment. */
+    about?: boolean;
+  }) => (
+    <div class="sui-group" classList={{ 'sui-group--about': p.about }}>
       <Show when={p.title}>
         <div class="sui-group__title">{p.title}</div>
       </Show>
@@ -668,7 +673,11 @@ export const SettingsModal = (props: {
                         button rather than above the app logo. */}
                     <For each={matchingGroups(currentSection()?.groups ?? [])}>
                       {(group) => (
-                        <AppGroupView group={group} title={group.title?.()} />
+                        <AppGroupView
+                          about
+                          group={group}
+                          title={group.title?.()}
+                        />
                       )}
                     </For>
                   </AboutSection>
