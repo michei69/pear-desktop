@@ -102,9 +102,7 @@ Do you have a CSS theme file already? You can load it from **Options ▸ Visual 
 
 Are you looking for community-made themes for our app? Check out https://github.com/michei69/pear-desktop-themes
 
-Want to get started with building themes? [Click here for the documentation](./src/themes/README.md)
-
-<!-- TODO: move the theming docs into docs/ too -->
+Want to get started with building themes? [Click here for the documentation](./docs/themes/authoring.md).
 
 ## Dev
 

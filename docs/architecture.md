@@ -93,7 +93,7 @@ hashes the declared JS, and gates JS behind user consent. The renderer requests
 the state over `peard:get-themes`, injects the selected theme's CSS then the
 palette as `--pear-theme-*` custom properties, and runs the theme script's
 `mount`/`unmount` hooks. Changes from main are pushed as `peard:themes-changed`.
-Details: [Themes](./themes/index.md) and [Writing a theme](./themes/authoring.md).
+Details: [Themes overview](./themes/index.md), [Theme engine internals](./themes/internals.md) and [Writing a theme](./themes/authoring.md).
 
 ## Player and song-info pipeline
 

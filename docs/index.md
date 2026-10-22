@@ -13,7 +13,8 @@ The source code is the source of truth. Every claim here should be checkable aga
 | Change an existing plugin            | [Modifying plugins](./plugins/modifying.md)                       |
 | Port a plugin from upstream          | [Porting from upstream](./plugins/porting-from-upstream.md)       |
 | Use YouTube Music's player API       | [Player API](./plugins/player-api.md)                             |
-| Use or write a theme                 | [Themes](./themes/index.md), then [Writing a theme](./themes/authoring.md) |
+| Use a theme                          | [Themes overview](./themes/index.md), then [Using themes](./themes/using.md) |
+| Write a theme                        | [Writing a theme](./themes/authoring.md), then [Theme manifest](./themes/manifest.md) |
 | Send a patch                         | [Conventions](./conventions.md)                                   |
 | Install or run the app               | [Repo README file](../README.md)                                  |
 
