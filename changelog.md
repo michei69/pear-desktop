@@ -2,7 +2,26 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v3.12.4](https://github.com/michei69/pear-desktop/compare/v3.12.3...v3.12.4)
+
+- feat(equalizer): rewrite with Ears-style 11-band controls [`#4758`](https://github.com/michei69/pear-desktop/pull/4758)
+- feat: api server v2 [`#65`](https://github.com/michei69/pear-desktop/pull/65)
+- feat(updates): update channels with stable/beta auto-updates [`#51`](https://github.com/michei69/pear-desktop/pull/51)
+- chore(i18n): Added translation using Weblate (Kazakh) [`#1`](https://github.com/michei69/pear-desktop/pull/1)
+- feat(synced-lyrics): prioritize original title script for NetEase [`#64`](https://github.com/michei69/pear-desktop/pull/64)
+- chore(deps-dev): bump electron from 42.5.0 to 42.10.0 [`#54`](https://github.com/michei69/pear-desktop/pull/54)
+- feat: add skip-ai-slop plugin [`#58`](https://github.com/michei69/pear-desktop/pull/58)
+- chore: bump flatpak freedesktop [`#4745`](https://github.com/pear-devs/pear-desktop/issues/4745)
+- album-color-theme: fix Home page ignoring the theme, closes #4536 [`#4536`](https://github.com/michei69/pear-desktop/issues/4536)
+- feat(plugins): add always-show-volume-slider plugin [`#1703`](https://github.com/michei69/pear-desktop/issues/1703)
+- feat(plugins): add dismiss-multidevice-popup plugin [`#3429`](https://github.com/michei69/pear-desktop/issues/3429)
+- chore(i18n): machine translate everything again [`b8c2be1`](https://github.com/michei69/pear-desktop/commit/b8c2be1e8e6f15c91130d9d1bfc68e70c33ba361)
+- perf: cut startup, IPC and runtime overhead across the app [`b35f027`](https://github.com/michei69/pear-desktop/commit/b35f0273f3c1e26942258247e4a96c7324bfaca2)
+- refactor(lyrics): add candidate search sessions [`103998d`](https://github.com/michei69/pear-desktop/commit/103998d721b6cc1301b83297a97dfea45c3c5501)
+
 #### [v3.12.3](https://github.com/michei69/pear-desktop/compare/v3.12.2...v3.12.3)
+
+> 28 September 2026
 
 - chore(deps): bump fast-uri from 3.1.2 to 3.1.8 [`#42`](https://github.com/michei69/pear-desktop/pull/42)
 - reimplement crossfade [`#39`](https://github.com/michei69/pear-desktop/pull/39)
