@@ -942,13 +942,17 @@ export const mainMenuTemplate = async (
         },
         {
           label: t('main.menu.navigation.submenu.copy-current-url'),
-          click() {
+          async click() {
             const currentURL = win.webContents.getURL();
-            clipboard.writeText(
-              config.get('options.stripMusicFromSharedLinks')
-                ? stripMusicSubdomain(currentURL)
-                : currentURL,
-            );
+            try {
+              await clipboard.writeText(
+                config.get('options.stripMusicFromSharedLinks')
+                  ? stripMusicSubdomain(currentURL)
+                  : currentURL,
+              );
+            } catch (error) {
+              console.error('Failed to copy the current URL:', error);
+            }
           },
         },
         {

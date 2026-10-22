@@ -80,7 +80,6 @@ import {
   type RestartRequirement,
 } from '@/types/restart';
 import { LoggerPrefix } from '@/utils';
-import { isTesting } from '@/utils/testing';
 import { showOnCurrentDesktop } from '@/window-utils';
 
 import packageJson from '../package.json';
@@ -595,10 +594,20 @@ function interceptExternalLinks(win: BrowserWindow) {
     if (target === 'external') openExternally(url);
   };
 
+  // Electron 45 stopped sharing an unsandboxed opener's renderer process with
+  // window.open() children that default to sandboxing. Open in-app OAuth popups
+  // in the same process so they keep `window.opener`, as they did in Electron 42.
   webContents.setWindowOpenHandler(({ url }) => {
     const target = classifyLink(url, getCurrentUrl());
 
-    if (target === 'in-app') return { action: 'allow' };
+    if (target === 'in-app') {
+      return {
+        action: 'allow',
+        overrideBrowserWindowOptions: {
+          webPreferences: { sandbox: false },
+        },
+      };
+    }
 
     if (target === 'external') openExternally(url);
     return { action: 'deny' };
@@ -652,13 +661,10 @@ async function createMainWindow() {
       // input-path work they add. Re-enable per surface if a text editor lands.
       spellcheck: false,
       preload: path.join(__dirname, '..', 'preload', 'preload.cjs'),
-      ...(isTesting()
-        ? undefined
-        : {
-            // Sandbox is only enabled in tests for now
-            // See https://www.electronjs.org/docs/latest/tutorial/sandbox#preload-scripts
-            sandbox: false,
-          }),
+      // Electron 45 removed the Node.js module shims from sandboxed preloads.
+      // This preload needs config/electron-store (node:path, node:fs), so keep
+      // Node available while retaining context isolation.
+      sandbox: false,
     },
     ...decorations,
   };
