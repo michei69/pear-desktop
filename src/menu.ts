@@ -753,30 +753,26 @@ export const mainMenuTemplate = async (
             { type: 'separator' } as Electron.MenuItemConstructorOptions,
           ].concat(
             availableLanguages
-              .map(
-                (lang): Electron.MenuItemConstructorOptions => ({
-                  label: `${languageMeta[lang]?.name ?? 'Unknown'} (${languageMeta[lang]?.['local-name'] ?? 'Unknown'})`,
-                  type: 'checkbox',
-                  checked: (config.get('options.language') ?? 'en') === lang,
-                  click() {
-                    config.setMenuOption('options.language', lang);
-                    refreshMenu(win);
-                    loadLanguage(lang)
-                      .then(() => setLanguage(lang))
-                      .catch((error) =>
-                        console.error('Failed to load language:', error),
-                      );
-                    dialog.showMessageBox(win, {
-                      title: t(
-                        'main.menu.options.submenu.language.dialog.title',
-                      ),
-                      message: t(
-                        'main.menu.options.submenu.language.dialog.message',
-                      ),
-                    });
-                  },
-                }),
-              )
+              .map((lang): Electron.MenuItemConstructorOptions => ({
+                label: `${languageMeta[lang]?.name ?? 'Unknown'} (${languageMeta[lang]?.['local-name'] ?? 'Unknown'})`,
+                type: 'checkbox',
+                checked: (config.get('options.language') ?? 'en') === lang,
+                click() {
+                  config.setMenuOption('options.language', lang);
+                  refreshMenu(win);
+                  loadLanguage(lang)
+                    .then(() => setLanguage(lang))
+                    .catch((error) =>
+                      console.error('Failed to load language:', error),
+                    );
+                  dialog.showMessageBox(win, {
+                    title: t('main.menu.options.submenu.language.dialog.title'),
+                    message: t(
+                      'main.menu.options.submenu.language.dialog.message',
+                    ),
+                  });
+                },
+              }))
               .sort((a, b) => (a.label ?? '').localeCompare(b.label ?? '')),
           ),
         },

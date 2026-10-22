@@ -303,31 +303,25 @@ export class DiscoBallVisualizer extends ThemeSongVisualizer {
     const random = createRandom(
       0x9e3779b9 ^ Math.floor(Math.random() * 0xffffffff),
     );
-    this.sparkles = Array.from(
-      { length: 42 },
-      (_, index): Sparkle => ({
-        phase: random() * TAU,
-        speed: (0.24 + random() * 0.7) * (index % 3 === 0 ? -1 : 1),
-        elevation: (random() - 0.5) * 2.3,
-        orbit: 1.08 + random() * 0.66,
-        size: 0.012 + random() * 0.024,
-        band: [random() * 0.45, 0.45 + random() * 0.55],
-        color: LIGHT_COLORS[index % LIGHT_COLORS.length] ??
-          LIGHT_COLORS[0] ?? [255, 255, 255],
-      }),
-    );
-    this.dust = Array.from(
-      { length: 34 },
-      (_, index): DustParticle => ({
-        x: random(),
-        y: random(),
-        phase: random() * TAU,
-        rise: 0.006 + random() * 0.018,
-        size: 0.6 + random() * 1.6,
-        color: LIGHT_COLORS[index % LIGHT_COLORS.length] ??
-          LIGHT_COLORS[0] ?? [255, 255, 255],
-      }),
-    );
+    this.sparkles = Array.from({ length: 42 }, (_, index): Sparkle => ({
+      phase: random() * TAU,
+      speed: (0.24 + random() * 0.7) * (index % 3 === 0 ? -1 : 1),
+      elevation: (random() - 0.5) * 2.3,
+      orbit: 1.08 + random() * 0.66,
+      size: 0.012 + random() * 0.024,
+      band: [random() * 0.45, 0.45 + random() * 0.55],
+      color: LIGHT_COLORS[index % LIGHT_COLORS.length] ??
+        LIGHT_COLORS[0] ?? [255, 255, 255],
+    }));
+    this.dust = Array.from({ length: 34 }, (_, index): DustParticle => ({
+      x: random(),
+      y: random(),
+      phase: random() * TAU,
+      rise: 0.006 + random() * 0.018,
+      size: 0.6 + random() * 1.6,
+      color: LIGHT_COLORS[index % LIGHT_COLORS.length] ??
+        LIGHT_COLORS[0] ?? [255, 255, 255],
+    }));
   }
 
   private averageFrequency(start: number, end: number): number {

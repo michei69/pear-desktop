@@ -27,8 +27,10 @@ export const onMainLoad = ({
 
   handle('get-menu', () =>
     JSON.parse(
-      JSON.stringify(Menu.getApplicationMenu(), (key: string, value: unknown) =>
-        key !== 'commandsMap' && key !== 'menu' ? value : undefined,
+      JSON.stringify(
+        Menu.getApplicationMenu(),
+        (key: string, value: unknown) =>
+          key !== 'commandsMap' && key !== 'menu' ? value : undefined,
       ),
     ),
   );

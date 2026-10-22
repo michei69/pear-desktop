@@ -43,11 +43,15 @@ body.ambient-mode-extend-sidebar ytmusic-app #guide-wrapper.ytmusic-app,
 body.ambient-mode-extend-sidebar #mini-guide-background {
   background: transparent !important;
 }
-body.ambient-mode-extend-sidebar ytmusic-app-layout:not([is-contained-content-layout-enabled])>#content {
+body.ambient-mode-extend-sidebar
+  ytmusic-app-layout:not([is-contained-content-layout-enabled])
+  > #content {
   /* the top bar extends wrong */
   padding-bottom: 0;
 }
-body.ambient-mode-extend-sidebar ytmusic-app-layout:not([is-mweb-modernization-enabled])>[slot=player-page] {
+body.ambient-mode-extend-sidebar
+  ytmusic-app-layout:not([is-mweb-modernization-enabled])
+  > [slot='player-page'] {
   /* place the player BENEATH the guide, not next to*/
   left: 0 !important;
   padding-left: var(--ytmusic-guide-width);
