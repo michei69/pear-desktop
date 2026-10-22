@@ -10,6 +10,8 @@ allowBuilds:
 overrides:
   vite: 8.1.0
   node-gyp: 13.0.0
+  # electron 45's ABI (150) is unknown to node-abi 4.31, which @electron/rebuild resolves through.
+  node-abi: 4.39.0
   xml2js: 0.6.2
   node-fetch: 3.3.2
   '@electron/universal': 3.0.4

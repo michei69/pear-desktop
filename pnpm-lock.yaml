@@ -7,6 +7,7 @@ settings:
 overrides:
   vite: 8.1.0
   node-gyp: 13.0.0
+  node-abi: 4.39.0
   xml2js: 0.6.2
   node-fetch: 3.3.2
   '@electron/universal': 3.0.4
@@ -3309,8 +3310,8 @@ packages:
     resolution: {integrity: sha512-NMPBRMJgiQHjbd8phG3Vebdx4kZ1H121rbl5IkMqeOsahptB9BKo/d7oJ3zTXqTgagn2bWlNSXkh0QUGM31RYg==}
     engines: {node: '>=18'}
 
-  node-abi@4.31.0:
-    resolution: {integrity: sha512-Erq5w/t3syw3s4sDsUaX4QttIdBPsGKTT1DTRsCkTonGggczhlDKm/wDX3o+HPJpQ41EjXCbcmXf0tgr5YZJXw==}
+  node-abi@4.39.0:
+    resolution: {integrity: sha512-pULjI3qsVrn6K5DZz5tCpX2dL8IKM9/xBMRz29hBko8UFXZ/C3QxRMl/Z7wKaQwaxPmYU+7UPKbDf7EO+ASvfA==}
     engines: {node: '>=22.12.0'}
 
   node-addon-api@8.9.0:
@@ -4608,7 +4609,7 @@ snapshots:
     dependencies:
       '@malept/cross-spawn-promise': 2.0.0
       debug: 4.4.3(supports-color@7.2.0)
-      node-abi: 4.31.0
+      node-abi: 4.39.0
       node-api-version: 0.2.1
       node-gyp: 13.0.0
       read-binary-file-arch: 1.0.6(supports-color@7.2.0)
@@ -7268,7 +7269,7 @@ snapshots:
     dependencies:
       content-type: 2.1.0
 
-  node-abi@4.31.0:
+  node-abi@4.39.0:
     dependencies:
       semver: 7.8.5
 
