@@ -10,7 +10,7 @@ import {
 
 /** Descriptions, families and restart requirements for YouTube Music's flags. */
 const FLAG_METADATA_URL =
-  'https://raw.githubusercontent.com/michei69/pear-desktop/refs/heads/master/flags.json';
+  'https://raw.githubusercontent.com/michei69/ytm-datamining/refs/heads/main/flags.json';
 
 /** A slow GitHub must not hold the settings UI open any longer than this. */
 const DOWNLOAD_TIMEOUT_MS = 10_000;
