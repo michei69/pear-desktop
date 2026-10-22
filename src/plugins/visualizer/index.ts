@@ -3,14 +3,68 @@ import { createPlugin } from '@/utils';
 
 import emptyStyle from './empty-player.css?inline';
 import {
+  BarsVisualizer,
   ButterchurnVisualizer as butterchurn,
+  CirclesVisualizer,
+  DiscoBallVisualizer,
+  ExperimentalVisualizer,
+  RetroBarsVisualizer,
+  SnowfallVisualizer,
+  SpiderVerseVisualizer,
   VudioVisualizer as vudio,
   WaveVisualizer as wave,
+  WavyVisualizer,
 } from './visualizers';
 import { type Visualizer } from './visualizers/visualizer';
 
 /** Effects the bundled vudio build can draw. */
 export type VudioEffect = 'waveform' | 'circlewave' | 'circlebar' | 'lighting';
+
+export const VISUALIZER_TYPES = [
+  'butterchurn',
+  'vudio',
+  'wave',
+  'wavy',
+  'bars',
+  'circles',
+  'experimental',
+  'spider-verse',
+  'disco-ball',
+  'snowfall',
+  'retro-bars',
+] as const;
+
+export type VisualizerType = (typeof VISUALIZER_TYPES)[number];
+
+export const BARS_VARIANTS = [
+  'rgb',
+  'accent',
+  'palette',
+  'dancing-palette',
+] as const;
+export type BarsVariant = (typeof BARS_VARIANTS)[number];
+
+export const CIRCLES_VARIANTS = [
+  'rgb',
+  'accent',
+  'palette',
+  'party',
+  'bubbles',
+  'twice',
+  'stayc',
+] as const;
+export type CirclesVariant = (typeof CIRCLES_VARIANTS)[number];
+
+export const EXPERIMENTAL_VARIANTS = [
+  'e1',
+  'e2',
+  'e4',
+  'e5',
+  'e7',
+  'e8',
+  'e14',
+] as const;
+export type ExperimentalVariant = (typeof EXPERIMENTAL_VARIANTS)[number];
 
 type WaveColor = {
   gradient: string[];
@@ -19,7 +73,7 @@ type WaveColor = {
 
 export type VisualizerPluginConfig = {
   enabled: boolean;
-  type: 'butterchurn' | 'vudio' | 'wave';
+  type: VisualizerType;
   butterchurn: {
     preset: string;
     blendTimeInSeconds: number;
@@ -58,7 +112,33 @@ export type VisualizerPluginConfig = {
       };
     }[];
   };
+  wavy: {
+    lineWidth: number;
+  };
+  bars: {
+    variant: BarsVariant;
+    barWidth: number;
+    gap: number;
+  };
+  circles: {
+    variant: CirclesVariant;
+  };
+  experimental: {
+    variant: ExperimentalVariant;
+  };
+  discoBall: {
+    sensitivity: number;
+  };
 };
+
+type VisualizerConstructor = new (
+  audioContext: AudioContext,
+  audioSource: MediaElementAudioSourceNode,
+  canvas: HTMLCanvasElement,
+  audioNode: GainNode,
+  stream: MediaStream,
+  config: VisualizerPluginConfig,
+) => Visualizer;
 
 type RenderProps = {
   visualizerInstance: Visualizer | null;
@@ -95,6 +175,23 @@ export default createPlugin({
         verticalAlign: 'middle',
         dottify: true,
       },
+    },
+    wavy: {
+      lineWidth: 8,
+    },
+    bars: {
+      variant: 'dancing-palette',
+      barWidth: 30,
+      gap: 8,
+    },
+    circles: {
+      variant: 'palette',
+    },
+    experimental: {
+      variant: 'e8',
+    },
+    discoBall: {
+      sensitivity: 1,
     },
     wave: {
       animations: [
@@ -144,7 +241,7 @@ export default createPlugin({
           type: 'select',
           key: 'type',
           label: () => t('plugins.visualizer.menu.visualizer-type'),
-          options: (['butterchurn', 'vudio', 'wave'] as const).map((value) => ({
+          options: VISUALIZER_TYPES.map((value) => ({
             value,
             label: () => value,
           })),
@@ -283,10 +380,100 @@ export default createPlugin({
         },
       ],
     },
+    {
+      title: () => 'ThemeSong Wavy',
+      fields: [
+        {
+          type: 'slider',
+          key: 'wavy.lineWidth',
+          label: () => 'Line width',
+          min: 1,
+          max: 20,
+          step: 1,
+          unit: 'px',
+        },
+      ],
+    },
+    {
+      title: () => 'ThemeSong Bars',
+      fields: [
+        {
+          type: 'select',
+          variant: 'dropdown',
+          key: 'bars.variant',
+          label: () => 'Variant',
+          options: BARS_VARIANTS.map((value) => ({
+            value,
+            label: () => value,
+          })),
+        },
+        {
+          type: 'slider',
+          key: 'bars.barWidth',
+          label: () => 'Bar width',
+          min: 5,
+          max: 80,
+          step: 1,
+          unit: 'px',
+        },
+        {
+          type: 'slider',
+          key: 'bars.gap',
+          label: () => 'Bar gap',
+          min: 0,
+          max: 20,
+          step: 1,
+          unit: 'px',
+        },
+      ],
+    },
+    {
+      title: () => 'ThemeSong Circles',
+      fields: [
+        {
+          type: 'select',
+          variant: 'dropdown',
+          key: 'circles.variant',
+          label: () => 'Variant',
+          options: CIRCLES_VARIANTS.map((value) => ({
+            value,
+            label: () => value,
+          })),
+        },
+      ],
+    },
+    {
+      title: () => 'ThemeSong Experimental',
+      fields: [
+        {
+          type: 'select',
+          variant: 'dropdown',
+          key: 'experimental.variant',
+          label: () => 'Variant',
+          options: EXPERIMENTAL_VARIANTS.map((value) => ({
+            value,
+            label: () => value,
+          })),
+        },
+      ],
+    },
+    {
+      title: () => 'ThemeSong Disco Ball',
+      fields: [
+        {
+          type: 'slider',
+          key: 'discoBall.sensitivity',
+          label: () => 'Sensitivity',
+          min: 0.25,
+          max: 3,
+          step: 0.25,
+        },
+      ],
+    },
   ],
   menu: async ({ getConfig, setConfig }) => {
     const config = await getConfig();
-    const visualizerTypes = ['butterchurn', 'vudio', 'wave'] as const; // For bundling
+    const visualizerTypes = VISUALIZER_TYPES;
 
     return [
       {
@@ -336,12 +523,13 @@ export default createPlugin({
         return;
       }
 
-      let canvas = document.querySelector<HTMLCanvasElement>('#visualizer');
-      if (!canvas) {
-        canvas = document.createElement('canvas');
-        canvas.id = 'visualizer';
-        visualizerContainer?.prepend(canvas);
-      }
+      // A canvas keeps the first context type it is asked for. Reusing one
+      // across a 2D <-> WebGL visualizer switch would make getContext() return
+      // null forever, so every instance gets a fresh backing element.
+      document.querySelector('#visualizer')?.remove();
+      const canvas = document.createElement('canvas');
+      canvas.id = 'visualizer';
+      visualizerContainer.prepend(canvas);
 
       if (this.props.gainNode) {
         this.props.gainNode.disconnect();
@@ -352,14 +540,23 @@ export default createPlugin({
       this.props.gainNode = gainNode;
       this.props.audioSource.connect(gainNode);
 
-      let visualizerType: {
-        new (...args: ConstructorParameters<typeof vudio>): Visualizer;
-      } = vudio;
-      if (config.type === 'wave') {
-        visualizerType = wave;
-      } else if (config.type === 'butterchurn') {
-        visualizerType = butterchurn;
-      }
+      const visualizerConstructors: Record<
+        VisualizerType,
+        VisualizerConstructor
+      > = {
+        'vudio': vudio,
+        'wave': wave,
+        'butterchurn': butterchurn,
+        'wavy': WavyVisualizer,
+        'bars': BarsVisualizer,
+        'circles': CirclesVisualizer,
+        'experimental': ExperimentalVisualizer,
+        'spider-verse': SpiderVerseVisualizer,
+        'disco-ball': DiscoBallVisualizer,
+        'snowfall': SnowfallVisualizer,
+        'retro-bars': RetroBarsVisualizer,
+      };
+      const visualizerType = visualizerConstructors[config.type] ?? vudio;
       this.props.visualizerInstance = new visualizerType(
         this.props.audioContext,
         this.props.audioSource,
