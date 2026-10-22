@@ -13,8 +13,9 @@ jobs:
   build:
     name: Release build
     if: github.repository == 'michei69/pear-desktop' && github.ref == 'refs/heads/master'
+    # Builds only produce artifacts, the publish job below owns the release.
     permissions:
-      contents: write
+      contents: read
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: true
@@ -48,19 +49,17 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      # `-p always` uploads the installers and the updater metadata to the
-      # versioned release, which stays a draft until the publish job below.
-      - name: Build and release on Mac
+      # The release:* scripts pass `-p never`: electron-builder writes the
+      # installers and the latest*.yml updater metadata into pack/ but uploads
+      # nothing. The publish job below attaches those files to the release.
+      # The version in package.json is shipped unchanged, unlike the beta build,
+      # which stamps `-beta.<run_number>` onto it.
+      - name: Build on Mac
         if: startsWith(matrix.os, 'macos')
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          pnpm release:mac
+        run: pnpm release:mac
 
-      - name: Build and release on Linux
+      - name: Build on Linux
         if: startsWith(matrix.os, 'ubuntu')
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           sudo snap install snapcraft --classic
           sudo apt update
@@ -74,20 +73,58 @@ jobs:
           sudo flatpak install -y flathub org.electronjs.Electron2.BaseApp/aarch64/26.08
           pnpm release:linux
 
-      - name: Build and release on Windows
+      - name: Build on Windows
         if: startsWith(matrix.os, 'windows')
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          pnpm release:win
+        run: pnpm release:win
+
+      - name: Upload macOS artifacts
+        if: startsWith(matrix.os, 'macos')
+        uses: actions/upload-artifact@v4
+        with:
+          name: pear-desktop-macos
+          path: |
+            pack/*.dmg
+            pack/*.dmg.blockmap
+            pack/*.zip
+            pack/*.zip.blockmap
+            pack/**/*.yml
+            pack/**/*.blockmap
+
+      - name: Upload Linux artifacts
+        if: startsWith(matrix.os, 'ubuntu')
+        uses: actions/upload-artifact@v4
+        with:
+          name: pear-desktop-linux
+          path: |
+            pack/*.AppImage
+            pack/*.deb
+            pack/*.rpm
+            pack/*.flatpak
+            pack/*.snap
+            pack/*.freebsd
+            pack/*.tar.gz
+            pack/**/*.yml
+            pack/**/*.blockmap
+
+      - name: Upload Windows artifacts
+        if: startsWith(matrix.os, 'windows')
+        uses: actions/upload-artifact@v4
+        with:
+          name: pear-desktop-windows
+          path: |
+            pack/*.exe
+            pack/nsis-web/*.nsis.7z
+            pack/nsis-web/*.exe
+            pack/**/*.yml
+            pack/**/*.blockmap
 
   publish:
     name: Publish release
     needs: build
     if: github.repository == 'michei69/pear-desktop' && github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
     permissions:
       contents: write
-    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
@@ -107,45 +144,65 @@ jobs:
 
       - name: Get version
         run: |
-          echo "VERSION_TAG=v$(node -pe "require('./package.json').version")" >> $GITHUB_ENV
+          VERSION=$(node -p "require('./package.json').version")
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "VERSION_TAG=v$VERSION" >> $GITHUB_ENV
+          echo "CHANGELOG_ANCHOR=$(echo "v$VERSION" | sed -e 's/\.//g')" >> $GITHUB_ENV
 
       - name: Check if version already exists in tags
         run: |
           echo "VERSION_HASH=$(git rev-parse -q --verify 'refs/tags/${{ env.VERSION_TAG }}')" >> $GITHUB_ENV
-          echo "CHANGELOG_ANCHOR=$(echo $VERSION_TAG | sed -e 's/\.//g')" >> $GITHUB_ENV
 
-      - name: Fetch draft release
+      - name: Download build artifacts
         if: ${{ env.VERSION_HASH == '' }}
-        uses: cardinalby/git-get-release-action@cedef2faf69cb7c55b285bad07688d04430b7ada
-        id: get_draft_release
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Publish release
+        if: ${{ env.VERSION_HASH == '' }}
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          latest: true
-          draft: true
-          searchLimit: 1
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          {
+            echo "See [changelog](https://github.com/michei69/pear-desktop/blob/master/changelog.md#${CHANGELOG_ANCHOR}) for the list of updates and the full diff."
+            echo
+            echo "Thanks to all contributors! 🏅"
+            echo
+            echo "(Note for Windows: \`YouTube-Music-Web-Setup-${VERSION}.exe\` is an installer, and \`YouTube-Music-${VERSION}.exe\` is a portable version)"
+          } > notes.md
 
-      - name: Publish Release (if it does not exist)
-        if: ${{ env.VERSION_HASH == '' }}
-        uses: irongut/EditRelease@ccf529ad26dddf9996e7dd0f24ca5da4ea507cc2
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          id: ${{ steps.get_draft_release.outputs.id }}
-          draft: false
-          prerelease: false
-          replacename: true
-          name: ${{ env.VERSION_TAG }}
-          replacebody: true
-          body: |
-            See [changelog](https://github.com/michei69/pear-desktop/blob/master/changelog.md#${{ env.CHANGELOG_ANCHOR }}) for the list of updates and the full diff.
+          # Collect the installers plus the updater metadata (latest*.yml and
+          # their blockmaps), skipping the nsis uninstaller helper as well as
+          # the yml files electron-builder embeds/downloads rather than
+          # publishes (app-update.yml, builder-debug.yml).
+          mkdir -p release-assets
+          while IFS= read -r -d '' file; do
+            cp "$file" "release-assets/$(basename "$file" | tr ' ' '-')"
+          done < <(find artifacts -type f \( \
+            -name '*.exe' -o -name '*.nsis.7z' -o -name '*.dmg' -o -name '*.AppImage' \
+            -o -name '*.deb' -o -name '*.rpm' -o -name '*.snap' -o -name '*.flatpak' \
+            -o -name '*.tar.gz' -o -name '*.freebsd' -o -name '*.zip' \
+            -o -name 'latest*.yml' -o -name '*.blockmap' \) ! -name '*uninstaller*' -print0)
 
-            Thanks to all contributors! 🏅
+          mapfile -d '' assets < <(find release-assets -type f -print0)
 
-            (Note for Windows: `Pear-Desktop-Web-Setup-${{ env.VERSION_TAG }}.exe` is an installer, and `Pear-Desktop-${{ env.VERSION_TAG }}.exe` is a portable version)
+          # One versioned release, tagged v<version> at the commit that was
+          # built. Never re-created: an existing tag means the release already
+          # happened (the steps above skip in that case).
+          gh release create "v$VERSION" "${assets[@]}" \
+            --title "v$VERSION" \
+            --notes-file notes.md \
+            --latest \
+            --target "${{ github.sha }}"
 
       - name: Update changelog
         if: ${{ env.VERSION_HASH == '' }}
         run: |
+          # No fetch of the tag created above: auto-changelog builds the top
+          # section from package.json's version and compares it to the latest
+          # stable tag. Fetching v<version> would add a second, empty heading
+          # for the same version and move the release-notes anchor to it.
           pnpm changelog
 
       - name: Commit changelog

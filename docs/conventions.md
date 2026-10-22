@@ -115,8 +115,8 @@ pnpm test:debug    # same, with Playwright protocol debugging
 
 - `package.json` holds the release version. It is bumped by hand at the start of a cycle, not in every feature PR.
 - Every push to `master` builds a beta; CI stamps `<version>-beta.<run_number>` before building, so all platform artifacts agree on one version. Beta builds publish to the rolling `beta` pre-release.
-- The stable release is a manual `Release Pear Desktop` workflow run: it builds with `PEAR_CHANNEL=stable`, publishes a draft, generates `changelog.md` with `pnpm changelog`, and commits the changelog.
-- Builds are produced by `electron-vite` (`pnpm build`); packaging is `electron-builder` via the `dist:*`, `beta:*` and `release:*` scripts.
+- The stable release is a manual `Release Pear Desktop` workflow run: it builds with `PEAR_CHANNEL=stable`, attaches the installers and the `latest*.yml` updater metadata to a `v<version>` release with `gh`, then generates `changelog.md` with `pnpm changelog` and commits it.
+- Builds are produced by `electron-vite` (`pnpm build`); packaging is `electron-builder` via the `dist:*`, `beta:*` and `release:*` scripts. Every script passes `-p never`, so electron-builder only writes into `pack/`; the workflows own the GitHub release.
 - The baked channel (`__PEAR_CHANNEL__`) and commit (`__PEAR_COMMIT__`) feed the About window and update logic (`src/app-info.ts`). Dev builds do not update.
 - Commit subjects are user-visible through the generated changelog. Write them as release notes.
 

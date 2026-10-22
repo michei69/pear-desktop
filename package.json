@@ -47,9 +47,9 @@
     "beta:linux": "pnpm clean && pnpm build && pnpm electron-builder --linux -p never -c.publish.provider=github -c.publish.channel=beta",
     "beta:mac": "pnpm clean && pnpm build && pnpm electron-builder --mac -p never -c.publish.provider=github -c.publish.channel=beta",
     "beta:win": "pnpm clean && pnpm build && pnpm electron-builder --win -p never -c.publish.provider=github -c.publish.channel=beta",
-    "release:linux": "pnpm clean && pnpm build && pnpm electron-builder --linux -p always -c.snap.publish=github",
-    "release:mac": "pnpm clean && pnpm build && pnpm electron-builder --mac -p always",
-    "release:win": "pnpm clean && pnpm build && pnpm electron-builder --win -p always",
+    "release:linux": "pnpm clean && pnpm build && pnpm electron-builder --linux -p never -c.publish.provider=github",
+    "release:mac": "pnpm clean && pnpm build && pnpm electron-builder --mac -p never -c.publish.provider=github",
+    "release:win": "pnpm clean && pnpm build && pnpm electron-builder --win -p never -c.publish.provider=github",
     "typecheck": "pnpm tsc -p tsconfig.json --noEmit",
     "check": "pnpm lint && pnpm format:check && pnpm typecheck"
   },
@@ -177,6 +177,7 @@
     "hideCredit": true,
     "package": true,
     "unreleased": true,
-    "output": "changelog.md"
+    "output": "changelog.md",
+    "tagPattern": "^v\\d+\\.\\d+\\.\\d+$"
   }
 }
