@@ -262,7 +262,7 @@ export type VideoDataChangeValue = Record<string, unknown> & {
 export interface PlayerAPIEvents {
   videodatachange: {
     value: VideoDataChangeValue;
-    name: 'dataloaded' | 'dataupdated';
+    name: 'newdata' | 'dataloaded' | 'dataupdated';
   };
   onStateChange: number;
   /** Current media position, in seconds. */
