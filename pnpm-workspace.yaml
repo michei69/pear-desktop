@@ -8,7 +8,6 @@ allowBuilds:
   unrs-resolver: true
   utf-8-validate: true
 overrides:
-  vite: 8.1.0
   node-gyp: 13.0.0
   # electron 45's ABI (150) is unknown to node-abi 4.31, which @electron/rebuild resolves through.
   node-abi: 4.39.0
@@ -16,7 +15,6 @@ overrides:
   node-fetch: 3.3.2
   '@electron/universal': 3.0.4
   '@babel/runtime': 8.0.0
-  '@xmldom/xmldom@<0.8.12': 0.8.13
 patchedDependencies:
   vudio@2.1.1: patches/vudio@2.1.1.patch
   '@malept/flatpak-bundler@0.4.0': patches/@malept__flatpak-bundler@0.4.0.patch
@@ -24,5 +22,3 @@ patchedDependencies:
   electron-is@3.0.0: patches/electron-is@3.0.0.patch
   mdui@2.1.4: patches/mdui@2.1.4.patch
 engineStrict: true
-minimumReleaseAgeExclude:
-  - vite@8.1.0

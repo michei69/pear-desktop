@@ -156,7 +156,9 @@ export default defineConfig(({ mode }) => {
       outDir: 'dist/renderer',
       rolldownOptions: {
         external: rendererExcludes,
-        input: './src/index.html',
+        // Absolute: vite's dependency scanner resolves this against `root`
+        // (`./src/`), so a project-relative path turns into `src/src/index.html`.
+        input: resolve(__dirname, './src/index.html'),
         // The preload injects this file as one script into the page world, so
         // dynamic imports must stay in the file (`codeSplitting: false` is the
         // non-deprecated `inlineDynamicImports`). They are still deferred: the
