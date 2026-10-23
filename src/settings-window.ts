@@ -1,6 +1,6 @@
 import path from 'node:path';
 
-import { BrowserWindow } from 'electron';
+import { app, BrowserWindow } from 'electron';
 import is from 'electron-is';
 
 import { t } from '@/i18n';
@@ -11,6 +11,13 @@ if (process.platform === 'win32') {
 } else if (process.platform === 'darwin') {
   icon = 'assets/generated/icons/mac/icon.icns';
 }
+
+// This module can be code-split into a chunk under `dist/main/chunks`, where
+// `__dirname` points at the chunk instead of the main bundle and the `'..'`
+// in the paths below then lands in `dist/main`. Resolve from the app root (the
+// project root in dev, `app.asar` when packaged) against electron-vite's outDir
+// so the paths hold wherever this module ends up in the build.
+const buildDir = () => path.join(app.getAppPath(), 'dist');
 
 let settingsWindow: Electron.BrowserWindow | undefined;
 
@@ -34,7 +41,7 @@ export const openSettingsWindow = () => {
     webPreferences: {
       contextIsolation: true,
       spellcheck: false,
-      preload: path.join(__dirname, '..', 'preload', 'preload.cjs'),
+      preload: path.join(buildDir(), 'preload', 'preload.cjs'),
       sandbox: false,
     },
   });
@@ -47,10 +54,9 @@ export const openSettingsWindow = () => {
   if (is.dev() && process.env.ELECTRON_RENDERER_URL) {
     settingsWindow.loadURL(`${process.env.ELECTRON_RENDERER_URL}/?settings=1`);
   } else {
-    settingsWindow.loadFile(
-      path.join(__dirname, '..', 'renderer', 'index.html'),
-      { search: 'settings=1' },
-    );
+    settingsWindow.loadFile(path.join(buildDir(), 'renderer', 'index.html'), {
+      search: 'settings=1',
+    });
   }
 
   return settingsWindow;
