@@ -156,8 +156,8 @@
               "sync": {
                 "label": "Synchronizovať jazyk",
                 "submenu": {
-                  "from-youtube": "Z YouTube",
-                  "to-youtube": "Do YouTube"
+                  "from-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "Z \u0059\u006f\u0075\u0054\u0075\u0062\u0065",
+                  "to-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "Do \u0059\u006f\u0075\u0054\u0075\u0062\u0065"
                 },
                 "failure": {
                   "dialog": {
@@ -229,7 +229,7 @@
                   "open-themes-folder": "Otvoriť priečinok s témami"
                 }
               },
-              "use-ytm-icons": "Používať pôvodné ikony YouTube Music"
+              "use-ytm-icons": "Používať pôvodné ikony \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063"
             }
           },
           "updates": {
@@ -393,7 +393,7 @@
           }
         },
         "hostname": {
-          "label": "Názov hostiteľa"
+          "label": "Hostname"
         },
         "https": {
           "label": "HTTPS a Certifikáty",
@@ -419,11 +419,11 @@
           "description": "Poskytuje API v2 ako nástroje MCP na /mcp. Používa rovnakú autorizáciu ako zvyšok API."
         }
       },
-      "name": "API server [Beta]",
+      "name": "API Server [Beta]",
       "prompt": {
         "hostname": {
           "label": "Zadajte názov hostname(napr. 0.0.0.0) pre server API:",
-          "title": "Názov hostiteľa"
+          "title": "Hostname"
         },
         "port": {
           "label": "Zadajte port pre server API:",
@@ -450,7 +450,7 @@
         "disable": "Vypnúť Proxy Adaptér",
         "enable": "Zapnúť Proxy Adaptér",
         "hostname": {
-          "label": "Názov hostiteľa"
+          "label": "Hostname"
         },
         "port": {
           "label": "Port"
@@ -460,11 +460,11 @@
       "prompt": {
         "hostname": {
           "label": "Zadajte hostname pre lokálny proxy server (vyžaduje reštart):",
-          "title": "Názov hostiteľa proxy"
+          "title": "Proxy Hostname"
         },
         "port": {
           "label": "Zadajte port pre lokálny proxy server (vyžaduje reštart):",
-          "title": "Port proxy"
+          "title": "Proxy Port"
         }
       }
     },
@@ -689,7 +689,7 @@
             "advanced": "Rozšírené",
             "enabled": "Povolené",
             "mode": "Časový režim",
-            "percent": "Percento",
+            "percent": "Percent",
             "seconds": "Sekundy"
           }
         },
@@ -997,7 +997,7 @@
         "listenbrainz": {
           "token": {
             "label": "Vlož svoj ListenBrainz používateľský token:",
-            "title": "Token ListenBrainz"
+            "title": "ListenBrainz token"
           },
           "api-root": {
             "label": "Zadajte základnú URL API:",
@@ -1039,6 +1039,10 @@
         "global-keybinds": "Globálne klávesové skratky (fungujú v celej aplikácii)",
         "local-keybinds": "Lokálne klávesové skratky (len keď je okno aktívne)"
       }
+    },
+    "skip-disliked-songs": {
+      "description": "Preskakuje skladby označené Nepáči sa",
+      "name": "Preskakovať skladby označené Nepáči sa"
     },
     "skip-silences": {
       "description": "Automaticky preskakovať tiché časti v hudbe",
@@ -1104,7 +1108,7 @@
               "tooltip": "Urob len aktuálny riadok biely"
             },
             "offset": {
-              "label": "Posun",
+              "label": "Offset",
               "tooltip": "Offset na pravej strane aktuálneho riadku"
             },
             "scale": {
@@ -1113,24 +1117,6 @@
             }
           },
           "tooltip": "Vyber efekt pre aktuálny riadok"
-        },
-        "lyrics-font-size": {
-          "label": "Veľkosť písma textov",
-          "submenu": {
-            "large": {
-              "label": "Veľké",
-              "tooltip": "Použiť pôvodnú väčšiu veľkosť textov"
-            },
-            "medium": {
-              "label": "Stredné",
-              "tooltip": "Použiť vyváženú veľkosť textov"
-            },
-            "small": {
-              "label": "Malé",
-              "tooltip": "Použiť kompaktnejšiu veľkosť textov"
-            }
-          },
-          "tooltip": "Vyberte, aké veľké majú byť texty piesní"
         },
         "precise-timing": {
           "label": "Dokonale synchronizovať text piesne",
@@ -1155,6 +1141,24 @@
         "show-time-codes": {
           "label": "Zobraziť časové značky",
           "tooltip": "Zobraziť časové kódy vedľa textov"
+        },
+        "lyrics-font-size": {
+          "label": "Veľkosť písma textov",
+          "submenu": {
+            "large": {
+              "label": "Veľké",
+              "tooltip": "Použiť pôvodnú väčšiu veľkosť textov"
+            },
+            "medium": {
+              "label": "Stredné",
+              "tooltip": "Použiť vyváženú veľkosť textov"
+            },
+            "small": {
+              "label": "Malé",
+              "tooltip": "Použiť kompaktnejšiu veľkosť textov"
+            }
+          },
+          "tooltip": "Vyberte, aké veľké majú byť texty piesní"
         },
         "translation": {
           "clear-cache": {
@@ -1269,7 +1273,7 @@
         },
         "use-ytm-lyrics-without-proxy": {
           "label": "Použiť texty YTM bez proxy",
-          "tooltip": "Preskočiť YTM proxy prehliadania a volať YouTube Music priamo pomocou overenej relácie aplikácie. Užitočné, ak dôverujete svojej sieti/regiónu, že umožní priame volania prehliadania."
+          "tooltip": "Preskočiť YTM proxy prehliadania a volať \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 priamo pomocou overenej relácie aplikácie. Užitočné, ak dôverujete svojej sieti/regiónu, že umožní priame volania prehliadania."
         },
         "show-custom-search-button": {
           "label": "Zobraziť vlastné tlačidlo vyhľadávania",
@@ -1464,7 +1468,7 @@
     },
     "search-commands": {
       "commands": {
-        "play": "Prehrať video z odkazu alebo ID YouTube",
+        "play": "Prehrať video z odkazu alebo ID \u0059\u006f\u0075\u0054\u0075\u0062\u0065",
         "settings": "Otvoriť nastavenia"
       },
       "description": "Zadaním / do vyhľadávacieho poľa spustíte príkazy s automatickým dopĺňaním ich argumentov",
@@ -1481,11 +1485,11 @@
       "name": "Skratky posunu"
     },
     "sfw-music": {
-      "description": "Automaticky preskakuje skladby označené YouTube Music ako Explicit. Pozastaví prehrávanie, ak sa explicitný front opakuje alebo nie je k dispozícii žiadna ďalšia skladba.",
+      "description": "Automaticky preskakuje skladby označené \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 ako Explicit. Pozastaví prehrávanie, ak sa explicitný front opakuje alebo nie je k dispozícii žiadna ďalšia skladba.",
       "name": "SFW hudba"
     },
     "toast-autoclose": {
-      "description": "Automaticky zatvárať oznámenia YouTube Music po troch sekundách",
+      "description": "Automaticky zatvárať oznámenia \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 po troch sekundách",
       "name": "Automatické zatváranie oznámení"
     },
     "statusbar-lyrics": {
@@ -1531,7 +1535,7 @@
     "move-up": "Presunúť nahor",
     "move-down": "Presunúť nadol",
     "about": {
-      "tagline": "Desktopová aplikácia pre YouTube Music s množstvom funkcií",
+      "tagline": "Desktopová aplikácia pre \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 s množstvom funkcií",
       "versions": "Verzie",
       "version-app": "Aplikácia",
       "version-build": "Zostava",
@@ -1589,7 +1593,7 @@
     "stepper-decrement": "Znížiť",
     "stepper-increment": "Zvýšiť",
     "flags": {
-      "warning": "Funkčné príznaky sú interné prepínače YouTube Music. Ich zmena môže narušiť prehrávanie, rozloženie alebo funkcie účtu a nie sú pokryté podporou. Prepísania sa uchovávajú len pre príznaky, ktoré zmeníte, a možno ich odstrániť pomocou Vrátiť späť.",
+      "warning": "Funkčné príznaky sú interné prepínače \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063. Ich zmena môže narušiť prehrávanie, rozloženie alebo funkcie účtu a nie sú pokryté podporou. Prepísania sa uchovávajú len pre príznaky, ktoré zmeníte, a možno ich odstrániť pomocou Vrátiť späť.",
       "search-placeholder": "Hľadať príznaky",
       "overridden": "prepísané",
       "undo": "Vrátiť späť",

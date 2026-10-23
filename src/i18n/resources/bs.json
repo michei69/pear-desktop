@@ -14,7 +14,7 @@
     }
   },
   "language": {
-    "code": "bs",
+    "code": "ba",
     "local-name": "Bosanski",
     "name": "Bosnian"
   },
@@ -156,8 +156,8 @@
               "sync": {
                 "label": "Sinhronizuj jezik",
                 "submenu": {
-                  "from-youtube": "Sa YouTubea",
-                  "to-youtube": "Na YouTube"
+                  "from-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "Sa \u0059\u006f\u0075\u0054\u0075\u0062\u0065a",
+                  "to-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "Na \u0059\u006f\u0075\u0054\u0075\u0062\u0065"
                 },
                 "failure": {
                   "dialog": {
@@ -229,7 +229,7 @@
                   "open-themes-folder": "Otvori fasciklu tema"
                 }
               },
-              "use-ytm-icons": "Koristi originalne YouTube Music ikone"
+              "use-ytm-icons": "Koristi originalne \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 ikone"
             }
           },
           "updates": {
@@ -295,6 +295,170 @@
     }
   },
   "plugins": {
+    "ambient-mode": {
+      "menu": {
+        "quality": {
+          "label": "Kvalitet",
+          "submenu": {
+            "pixels": "{{quality}} piksela"
+          }
+        },
+        "blur-amount": {
+          "label": "Količina zamućenja",
+          "submenu": {
+            "pixels": "{{blurAmount}} piksela"
+          }
+        },
+        "buffer": {
+          "label": "Bafer",
+          "submenu": {
+            "buffer": "međuspremnik"
+          }
+        },
+        "opacity": {
+          "label": "Neprozirnost",
+          "submenu": {
+            "percent": "{{opacity}}%"
+          }
+        },
+        "size": {
+          "label": "Veličina",
+          "submenu": {
+            "percent": "{{size}}%"
+          }
+        },
+        "smoothness-transition": {
+          "label": "Prelaz glatkoće",
+          "submenu": {
+            "during": "Tokom {{interpolationTime}} s"
+          }
+        },
+        "use-fullscreen": {
+          "label": "Korištenje cijelog ekrana"
+        }
+      },
+      "description": "Primjenjuje svjetlosni efekat tako što baca nježne boje sa videa na pozadinu vašeg ekrana",
+      "name": "Ambijentalni mod"
+    },
+    "discord": {
+      "menu": {
+        "set-status-display-type": {
+          "submenu": {
+            "application": "Slušate {{applicationName}}",
+            "artist": "Slušate {muzičar}",
+            "title": "Slušate {naziv pesme}"
+          },
+          "label": "Statusni tekst"
+        },
+        "auto-reconnect": "Automatsko ponovno povezivanje",
+        "clear-activity": "Očisti aktivnost",
+        "clear-activity-after-timeout": "Očisti aktivnost nakon vremenskog ograničenja",
+        "connected": "Povezan",
+        "disconnected": "Prekinut",
+        "hide-duration-left": "Sakrij preostalo vrijeme",
+        "hide-github-button": "Sakrij GitHub link dugme",
+        "play-on-application": "Pusti na {{applicationName}}",
+        "set-inactivity-timeout": "Postavi vremensko ograničenje neaktivnosti"
+      },
+      "name": "Diskord Rich Presence",
+      "prompt": {
+        "set-inactivity-timeout": {
+          "label": "Unesi ograničenje neaktivnosti u sekundama:",
+          "title": "Postavi ograničenje neaktivnosti"
+        }
+      },
+      "backend": {
+        "already-connected": "Pokušaj povezivanja s aktivnom vezom",
+        "connected": "Povezan na Discord",
+        "disconnected": "Prekinuta veza s Discordom"
+      },
+      "description": "Pokažite svojim prijateljima šta slušate uz Rich Presence",
+      "settings": {
+        "auto-reconnect": "Automatsko ponovno povezivanje",
+        "activity-timeout-enabled": "Očisti prisustvo kada je pauzirano",
+        "activity-timeout-time": "Očisti nakon",
+        "hide-github-button": "Sakrij dugme „Prikaži na GitHubu“",
+        "hide-duration-left": "Sakrij preostalo vrijeme"
+      }
+    },
+    "downloader": {
+      "backend": {
+        "dialog": {
+          "error": {
+            "buttons": {
+              "ok": "OK"
+            },
+            "message": "Ufff! Izvinite, preuzimanje nije uspelo…",
+            "title": "Greška u preuzimanju!"
+          },
+          "start-download-playlist": {
+            "buttons": {
+              "ok": "OK"
+            },
+            "detail": "({{Playlist Size}} pjesme)",
+            "message": "Preuzimanje Plejliste {{playlist Title}}",
+            "title": "Preuzimanje počelo"
+          }
+        },
+        "feedback": {
+          "conversion-progress": "Pretvaranje: {{percent}}%",
+          "converting": "Pretvaranje…",
+          "done": "Gotovo: {{file Path}}",
+          "download-info": "Preuzimanje {{artist}} - {{title}} [{{videoId}}",
+          "download-progress": "Preuzimanje: {{percent}}%",
+          "downloading": "Preuzimanje…",
+          "downloading-counter": "Preuzimanje {{current}}/{{total}}…",
+          "downloading-playlist": "Preuzimanje plejliste \"{{playlistTitle}}\" - {{playlistSize}} pjesama ({{playlistId}})",
+          "error-while-downloading": "Greška pri preuzimanju \"{{author}} - {{title}}\": {{error}}",
+          "folder-already-exists": "Folder {{playlistFolder}} već postoji",
+          "getting-playlist-info": "Dobavljanje informacija o plejlisti…",
+          "loading": "Učitavanje…",
+          "playlist-has-only-one-song": "Plejlista ima samo jednu stavku, preuzimam je direktno",
+          "playlist-id-not-found": "Nije pronađen ID plejliste",
+          "playlist-is-empty": "Plejlista je prazna",
+          "playlist-is-mix-or-private": "Greška pri dobavljanju informacija o plejlisti: uvjerite se da nije privatna ili \"Miks za vas\" plejlista\n\n{{error}}",
+          "preparing-file": "Priprema datoteke…",
+          "saving": "Spremanje…",
+          "trying-to-get-playlist-id": "Pokušavam dobiti ID plejliste: {{playlistId}}",
+          "video-id-not-found": "Video nije pronađen",
+          "writing-id3": "Pisanje ID3 oznaka…",
+          "ffmpeg-missing": "FFmpeg nije pronađen. Instalirajte FFmpeg i provjerite da je `ffmpeg` u vašoj PATH varijabli da biste preuzimali u ovom formatu."
+        }
+      },
+      "description": "Preuzima MP3 / izvorni audio direktno iz interfejsa",
+      "menu": {
+        "choose-download-folder": "Odaberite folder za preuzimanje",
+        "download-finish-settings": {
+          "label": "Preuzmi po završetku",
+          "prompt": {
+            "last-percent": "Nakon x posto",
+            "last-seconds": "Posljednjih x sekundi",
+            "title": "Konfigurišite kada preuzeti"
+          },
+          "submenu": {
+            "advanced": "Napredno",
+            "enabled": "Omogućeno",
+            "mode": "Vremenski mod",
+            "percent": "Posto",
+            "seconds": "Sekunde"
+          }
+        },
+        "download-playlist": "Preuzmi plejlistu",
+        "presets": "Unaprijed postavke",
+        "skip-existing": "Preskoči postojeće datoteke"
+      },
+      "name": "Preuzimač",
+      "renderer": {
+        "can-not-update-progress": "Nije moguće ažurirati napredak"
+      },
+      "templates": {
+        "button": "Preuzmi"
+      },
+      "settings": {
+        "finish-folder": "Fascikla za završena preuzimanja",
+        "finish-folder-description": "Ostavite prazno da biste koristili fasciklu za preuzimanje iznad."
+      }
+    },
     "ad-speedup": {
       "description": "Ako se pusti reklama, utišava zvuk i postavlja brzinu reprodukcije na 16x",
       "name": "Ubrzavanje reklama"
@@ -322,51 +486,6 @@
         "enable-seekbar": "Omogući tematiku trake za premotavanje"
       },
       "name": "Tema boje albuma"
-    },
-    "ambient-mode": {
-      "description": "Primjenjuje svjetlosni efekat tako što baca nježne boje sa videa na pozadinu vašeg ekrana",
-      "menu": {
-        "blur-amount": {
-          "label": "Količina zamućenja",
-          "submenu": {
-            "pixels": "{{blurAmount}} piksela"
-          }
-        },
-        "buffer": {
-          "label": "Bafer",
-          "submenu": {
-            "buffer": "međuspremnik"
-          }
-        },
-        "opacity": {
-          "label": "Neprozirnost",
-          "submenu": {
-            "percent": "{{opacity}}%"
-          }
-        },
-        "quality": {
-          "label": "Kvalitet",
-          "submenu": {
-            "pixels": "{{quality}} piksela"
-          }
-        },
-        "size": {
-          "label": "Veličina",
-          "submenu": {
-            "percent": "{{size}}%"
-          }
-        },
-        "smoothness-transition": {
-          "label": "Prelaz glatkoće",
-          "submenu": {
-            "during": "Tokom {{interpolationTime}} s"
-          }
-        },
-        "use-fullscreen": {
-          "label": "Korištenje cijelog ekrana"
-        }
-      },
-      "name": "Ambijentalni mod"
     },
     "amuse": {
       "description": "Dodaje podršku za {{applicationName}} za Amuse widget koji sada svira od strane 6K Labs",
@@ -577,125 +696,6 @@
         "apply-once": "Primjenjuje se samo pri pokretanju"
       },
       "name": "Onemogući automatsku reprodukciju"
-    },
-    "discord": {
-      "backend": {
-        "already-connected": "Pokušaj povezivanja s aktivnom vezom",
-        "connected": "Povezan na Discord",
-        "disconnected": "Prekinuta veza s Discordom"
-      },
-      "description": "Pokažite svojim prijateljima šta slušate uz Rich Presence",
-      "menu": {
-        "auto-reconnect": "Automatsko ponovno povezivanje",
-        "clear-activity": "Očisti aktivnost",
-        "clear-activity-after-timeout": "Očisti aktivnost nakon vremenskog ograničenja",
-        "connected": "Povezan",
-        "disconnected": "Prekinut",
-        "hide-duration-left": "Sakrij preostalo vrijeme",
-        "hide-github-button": "Sakrij GitHub link dugme",
-        "play-on-application": "Pusti na {{applicationName}}",
-        "set-inactivity-timeout": "Postavi vremensko ograničenje neaktivnosti",
-        "set-status-display-type": {
-          "label": "Statusni tekst",
-          "submenu": {
-            "application": "Slušate {{applicationName}}",
-            "artist": "Slušate {muzičar}",
-            "title": "Slušate {naziv pesme}"
-          }
-        }
-      },
-      "name": "Diskord Rich Presence",
-      "prompt": {
-        "set-inactivity-timeout": {
-          "label": "Unesi ograničenje neaktivnosti u sekundama:",
-          "title": "Postavi ograničenje neaktivnosti"
-        }
-      },
-      "settings": {
-        "auto-reconnect": "Automatsko ponovno povezivanje",
-        "activity-timeout-enabled": "Očisti prisustvo kada je pauzirano",
-        "activity-timeout-time": "Očisti nakon",
-        "hide-github-button": "Sakrij dugme „Prikaži na GitHubu“",
-        "hide-duration-left": "Sakrij preostalo vrijeme"
-      }
-    },
-    "downloader": {
-      "backend": {
-        "dialog": {
-          "error": {
-            "buttons": {
-              "ok": "OK"
-            },
-            "message": "Ufff! Izvinite, preuzimanje nije uspelo…",
-            "title": "Greška u preuzimanju!"
-          },
-          "start-download-playlist": {
-            "buttons": {
-              "ok": "OK"
-            },
-            "detail": "({{Playlist Size}} pjesme)",
-            "message": "Preuzimanje Plejliste {{playlist Title}}",
-            "title": "Preuzimanje počelo"
-          }
-        },
-        "feedback": {
-          "conversion-progress": "Pretvaranje: {{percent}}%",
-          "converting": "Pretvaranje…",
-          "done": "Gotovo: {{file Path}}",
-          "download-info": "Preuzimanje {{artist}} - {{title}} [{{videoId}}",
-          "download-progress": "Preuzimanje: {{percent}}%",
-          "downloading": "Preuzimanje…",
-          "downloading-counter": "Preuzimanje {{current}}/{{total}}…",
-          "downloading-playlist": "Preuzimanje plejliste \"{{playlistTitle}}\" - {{playlistSize}} pjesama ({{playlistId}})",
-          "error-while-downloading": "Greška pri preuzimanju \"{{author}} - {{title}}\": {{error}}",
-          "folder-already-exists": "Folder {{playlistFolder}} već postoji",
-          "getting-playlist-info": "Dobavljanje informacija o plejlisti…",
-          "loading": "Učitavanje…",
-          "playlist-has-only-one-song": "Plejlista ima samo jednu stavku, preuzimam je direktno",
-          "playlist-id-not-found": "Nije pronađen ID plejliste",
-          "playlist-is-empty": "Plejlista je prazna",
-          "playlist-is-mix-or-private": "Greška pri dobavljanju informacija o plejlisti: uvjerite se da nije privatna ili \"Miks za vas\" plejlista\n\n{{error}}",
-          "preparing-file": "Priprema datoteke…",
-          "saving": "Spremanje…",
-          "trying-to-get-playlist-id": "Pokušavam dobiti ID plejliste: {{playlistId}}",
-          "video-id-not-found": "Video nije pronađen",
-          "writing-id3": "Pisanje ID3 oznaka…",
-          "ffmpeg-missing": "FFmpeg nije pronađen. Instalirajte FFmpeg i provjerite da je `ffmpeg` u vašoj PATH varijabli da biste preuzimali u ovom formatu."
-        }
-      },
-      "description": "Preuzima MP3 / izvorni audio direktno iz interfejsa",
-      "menu": {
-        "choose-download-folder": "Odaberite folder za preuzimanje",
-        "download-finish-settings": {
-          "label": "Preuzmi po završetku",
-          "prompt": {
-            "last-percent": "Nakon x posto",
-            "last-seconds": "Posljednjih x sekundi",
-            "title": "Konfigurišite kada preuzeti"
-          },
-          "submenu": {
-            "advanced": "Napredno",
-            "enabled": "Omogućeno",
-            "mode": "Vremenski mod",
-            "percent": "Posto",
-            "seconds": "Sekunde"
-          }
-        },
-        "download-playlist": "Preuzmi plejlistu",
-        "presets": "Unaprijed postavke",
-        "skip-existing": "Preskoči postojeće datoteke"
-      },
-      "name": "Preuzimač",
-      "renderer": {
-        "can-not-update-progress": "Nije moguće ažurirati napredak"
-      },
-      "templates": {
-        "button": "Preuzmi"
-      },
-      "settings": {
-        "finish-folder": "Fascikla za završena preuzimanja",
-        "finish-folder-description": "Ostavite prazno da biste koristili fasciklu za preuzimanje iznad."
-      }
     },
     "equalizer": {
       "description": "Dodaje ekvilajzer plejeru",
@@ -1257,7 +1257,7 @@
         },
         "use-ytm-lyrics-without-proxy": {
           "label": "Koristi YTM tekstove bez proxyja",
-          "tooltip": "Preskoči YTM proxy za pregledavanje i direktno pozovi YouTube Music koristeći autentifikovanu sesiju aplikacije. Korisno ako vjerujete svojoj mreži/regiji da dozvoljava direktne pozive za pregledavanje."
+          "tooltip": "Preskoči YTM proxy za pregledavanje i direktno pozovi \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 koristeći autentifikovanu sesiju aplikacije. Korisno ako vjerujete svojoj mreži/regiji da dozvoljava direktne pozive za pregledavanje."
         },
         "show-custom-search-button": {
           "label": "Prikaži prilagođeno dugme za pretragu",
@@ -1471,7 +1471,7 @@
     },
     "search-commands": {
       "commands": {
-        "play": "Pusti video sa YouTube linka ili ID-a",
+        "play": "Pusti video sa \u0059\u006f\u0075\u0054\u0075\u0062\u0065 linka ili ID-a",
         "settings": "Otvori postavke"
       },
       "description": "Ukucajte / u polje za pretragu da pokrenete komande, uz automatsko dovršavanje argumenata",
@@ -1488,11 +1488,11 @@
       "name": "Prečice za premotavanje"
     },
     "sfw-music": {
-      "description": "Automatski preskače pjesme koje YouTube Music označi kao Explicit. Pauzira ako se eksplicitni red ponovi ili nema dostupne sljedeće pjesme.",
+      "description": "Automatski preskače pjesme koje \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 označi kao Explicit. Pauzira ako se eksplicitni red ponovi ili nema dostupne sljedeće pjesme.",
       "name": "SFW muzika"
     },
     "toast-autoclose": {
-      "description": "Automatski zatvori YouTube Music obavještenja nakon tri sekunde",
+      "description": "Automatski zatvori \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 obavještenja nakon tri sekunde",
       "name": "Automatsko zatvaranje obavještenja"
     },
     "statusbar-lyrics": {
@@ -1538,7 +1538,7 @@
     "move-up": "Pomjeri gore",
     "move-down": "Pomjeri dolje",
     "about": {
-      "tagline": "Desktop aplikacija bogata funkcijama za YouTube Music",
+      "tagline": "Desktop aplikacija bogata funkcijama za \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063",
       "versions": "Verzije",
       "version-app": "Aplikacija",
       "version-build": "Build",
@@ -1596,7 +1596,7 @@
     "stepper-decrement": "Smanji",
     "stepper-increment": "Povećaj",
     "flags": {
-      "warning": "Zastavice funkcija su interni prekidači samog YouTube Musica. Njihova promjena može pokvariti reprodukciju, raspored ili funkcije naloga i nisu obuhvaćene podrškom. Nadjačavanja se čuvaju samo za zastavice koje promijenite i mogu se ukloniti pomoću Poništi.",
+      "warning": "Zastavice funkcija su interni prekidači samog \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063a. Njihova promjena može pokvariti reprodukciju, raspored ili funkcije naloga i nisu obuhvaćene podrškom. Nadjačavanja se čuvaju samo za zastavice koje promijenite i mogu se ukloniti pomoću Poništi.",
       "search-placeholder": "Pretraži zastavice",
       "overridden": "nadjačano",
       "undo": "Poništi",

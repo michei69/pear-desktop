@@ -156,8 +156,8 @@
               "sync": {
                 "label": "言語を同期",
                 "submenu": {
-                  "from-youtube": "YouTubeから",
-                  "to-youtube": "YouTubeへ"
+                  "from-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "\u0059\u006f\u0075\u0054\u0075\u0062\u0065から",
+                  "to-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "\u0059\u006f\u0075\u0054\u0075\u0062\u0065へ"
                 },
                 "failure": {
                   "dialog": {
@@ -181,27 +181,27 @@
               "disabled": "無効",
               "enabled-and-hide-app": "有効 + アプリを非表示",
               "enabled-and-show-app": "有効 + アプリを表示",
-              "move-to-current-desktop": "表示時に現在の仮想デスクトップに移動",
               "play-pause-on-click": "クリックで再生/一時停止",
+              "move-to-current-desktop": "表示時に現在の仮想デスクトップに移動",
               "force-white-icons": "白いアイコンの使用を強制する"
             }
           },
           "visual-tweaks": {
             "label": "見た目の微調整",
             "submenu": {
-              "like-buttons": {
-                "default": "デフォルト",
-                "force-show": "強制的に表示",
-                "hide": "非表示",
-                "label": "いいねボタン",
-                "swap": "ボタンの順序などを入れ替える"
-              },
               "custom-window-title": {
                 "label": "カスタムウィンドウタイトル",
                 "prompt": {
                   "label": "カスタムウィンドウタイトルを入力: (未入力の場合無効になります)",
                   "placeholder": "例: {{applicationName}}"
                 }
+              },
+              "like-buttons": {
+                "default": "デフォルト",
+                "force-show": "強制的に表示",
+                "hide": "非表示",
+                "label": "いいねボタン",
+                "swap": "ボタンの順序などを入れ替える"
               },
               "remove-upgrade-button": "アップグレードボタンを削除",
               "theme": {
@@ -229,7 +229,7 @@
                   "open-themes-folder": "テーマフォルダーを開く"
                 }
               },
-              "use-ytm-icons": "オリジナルのYouTube Musicアイコンを使用"
+              "use-ytm-icons": "オリジナルの\u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063アイコンを使用"
             }
           },
           "updates": {
@@ -459,12 +459,12 @@
       "name": "認証プロキシアダプタ",
       "prompt": {
         "hostname": {
-          "title": "プロキシホスト名",
-          "label": "ローカルプロキシサーバのホスト名を入力します（再起動が必要です）："
+          "label": "ローカルプロキシサーバのホスト名を入力します（再起動が必要です）：",
+          "title": "プロキシホスト名"
         },
         "port": {
-          "title": "プロキシポート",
-          "label": "ローカルプロキシサーバのポートを入力します（再起動が必要です）："
+          "label": "ローカルプロキシサーバのポートを入力します（再起動が必要です）：",
+          "title": "プロキシポート"
         }
       }
     },
@@ -847,7 +847,7 @@
     },
     "no-google-login": {
       "description": "インターフェースからGoogleのログインボタンとリンクを削除",
-      "name": "Googleログインなし"
+      "name": "No Google Login"
     },
     "notifications": {
       "description": "曲の再生開始時に通知を表示する(Windowsではインタラクティブ通知が利用可能)",
@@ -857,9 +857,9 @@
           "label": "インタラクティブ通知 設定",
           "submenu": {
             "hide-button-text": "ボタンのテキストを非表示",
-            "hover-controls": "トレイにカーソルを合わせるとミニプレーヤーを表示",
             "refresh-on-play-pause": "再生/一時停止時に更新",
-            "tray-controls": "トレイアイコンのクリック時に開閉"
+            "tray-controls": "トレイアイコンのクリック時に開閉",
+            "hover-controls": "トレイにカーソルを合わせるとミニプレーヤーを表示"
           }
         },
         "priority": "通知の優先度",
@@ -981,8 +981,8 @@
           "token": "ListenBrainzユーザートークンを入力してください",
           "api-root": "ListenBrainz API URL"
         },
-        "scrobble-alternative-title": "代替タイトルを使用する",
         "scrobble-alternative-artist": "代替アーティストを使用する",
+        "scrobble-alternative-title": "代替タイトルを使用する",
         "scrobble-other-media": "他のメディアをScrobbleする",
         "regex-filters": "正規表現フィルター",
         "use-musicbrainz": "MusicBrainz を使用してメタデータを修正する",
@@ -1040,6 +1040,10 @@
         "local-keybinds": "ローカルキーバインド（ウィンドウがフォーカスされている間のみ）"
       }
     },
+    "skip-disliked-songs": {
+      "description": "低評価と表示された曲をスキップします",
+      "name": "低評価曲をスキップ"
+    },
     "skip-silences": {
       "description": "曲の無音区間を自動でスキップ",
       "name": "無音区間をスキップ",
@@ -1070,13 +1074,23 @@
         "not-found": "⚠️ この曲の歌詞は見つかりませんでした。"
       },
       "menu": {
-        "preferred-provider": {
-          "label": "優先プロバイダー",
-          "tooltip": "使用するデフォルトプロバイダを選択してください",
-          "none": {
-            "label": "なし",
-            "tooltip": "指定医療機関なし"
-          }
+        "convert-chinese-character": {
+          "label": "中国語の文字を変換",
+          "submenu": {
+            "disabled": {
+              "label": "無効",
+              "tooltip": "中国語の文字変換を無効化"
+            },
+            "simplified-to-traditional": {
+              "label": "簡体字から繁体字",
+              "tooltip": "簡体字中国語を繁体字中国語に変換"
+            },
+            "traditional-to-simplified": {
+              "label": "繁体字から簡体字",
+              "tooltip": "繁体字中国語を簡体字中国語に変換"
+            }
+          },
+          "tooltip": "中国語の文字を繁体字または簡体字に変換"
         },
         "default-text-string": {
           "label": "デフォルトの歌詞間の文字",
@@ -1104,6 +1118,30 @@
           },
           "tooltip": "現在の行に適用するエフェクトを選択"
         },
+        "precise-timing": {
+          "label": "歌詞を完璧に同期させる",
+          "tooltip": "次の行の表示をミリ秒単位で計算する（パフォーマンスに若干の影響を与える可能性があります）"
+        },
+        "preferred-provider": {
+          "label": "優先プロバイダー",
+          "none": {
+            "label": "なし",
+            "tooltip": "指定医療機関なし"
+          },
+          "tooltip": "使用するデフォルトプロバイダを選択してください"
+        },
+        "romanization": {
+          "label": "ローマ字歌詞",
+          "tooltip": "歌詞が異なる言語で書かれている場合は、ラテン語バージョンを表示するようにしてください。"
+        },
+        "show-lyrics-even-if-inexact": {
+          "label": "歌詞が不正確でも表示する",
+          "tooltip": "曲が見つからなかった場合、プラグインは別の検索クエリで再試行します。\nただし、再試行の結果は正確でない可能性があります。"
+        },
+        "show-time-codes": {
+          "label": "タイムコードを表示",
+          "tooltip": "歌詞の横にタイムコードを表示"
+        },
         "lyrics-font-size": {
           "label": "歌詞のフォントサイズ",
           "submenu": {
@@ -1121,40 +1159,6 @@
             }
           },
           "tooltip": "歌詞テキストの大きさを選択"
-        },
-        "precise-timing": {
-          "label": "歌詞を完璧に同期させる",
-          "tooltip": "次の行の表示をミリ秒単位で計算する（パフォーマンスに若干の影響を与える可能性があります）"
-        },
-        "romanization": {
-          "label": "ローマ字歌詞",
-          "tooltip": "歌詞が異なる言語で書かれている場合は、ラテン語バージョンを表示するようにしてください。"
-        },
-        "show-lyrics-even-if-inexact": {
-          "label": "歌詞が不正確でも表示する",
-          "tooltip": "曲が見つからなかった場合、プラグインは別の検索クエリで再試行します。\nただし、再試行の結果は正確でない可能性があります。"
-        },
-        "show-time-codes": {
-          "label": "タイムコードを表示",
-          "tooltip": "歌詞の横にタイムコードを表示"
-        },
-        "convert-chinese-character": {
-          "label": "中国語の文字を変換",
-          "submenu": {
-            "disabled": {
-              "label": "無効",
-              "tooltip": "中国語の文字変換を無効化"
-            },
-            "simplified-to-traditional": {
-              "label": "簡体字から繁体字",
-              "tooltip": "簡体字中国語を繁体字中国語に変換"
-            },
-            "traditional-to-simplified": {
-              "label": "繁体字から簡体字",
-              "tooltip": "繁体字中国語を簡体字中国語に変換"
-            }
-          },
-          "tooltip": "中国語の文字を繁体字または簡体字に変換"
         },
         "translation": {
           "label": "歌詞の翻訳",
@@ -1269,7 +1273,7 @@
         },
         "use-ytm-lyrics-without-proxy": {
           "label": "YTMの歌詞をプロキシなしで使用",
-          "tooltip": "YTMブラウズプロキシをスキップし、アプリの認証済みセッションを使用してYouTube Musicを直接呼び出します。ネットワークや地域が直接ブラウズ呼び出しを許可していると信頼できる場合に便利です。"
+          "tooltip": "YTMブラウズプロキシをスキップし、アプリの認証済みセッションを使用して\u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063を直接呼び出します。ネットワークや地域が直接ブラウズ呼び出しを許可していると信頼できる場合に便利です。"
         },
         "show-custom-search-button": {
           "label": "カスタム検索ボタンを表示",
@@ -1337,7 +1341,6 @@
     },
     "transparent-player": {
       "description": "アプリウィンドウを透明にする",
-      "name": "透明プレイヤー",
       "menu": {
         "opacity": {
           "label": "不透明度",
@@ -1360,6 +1363,7 @@
           }
         }
       },
+      "name": "透明プレイヤー",
       "settings": {
         "type-description": "ウィンドウの透明度に使用する背景マテリアル"
       }
@@ -1464,7 +1468,7 @@
     },
     "search-commands": {
       "commands": {
-        "play": "YouTube のリンクまたは ID から動画を再生する",
+        "play": "\u0059\u006f\u0075\u0054\u0075\u0062\u0065 のリンクまたは ID から動画を再生する",
         "settings": "設定を開く"
       },
       "description": "検索ボックスで / を入力するとコマンドを実行できます。引数はオートコンプリートされます",
@@ -1481,11 +1485,11 @@
       "name": "シークショートカット"
     },
     "sfw-music": {
-      "description": "YouTube Music で Explicit とマークされた曲を自動的にスキップします。Explicit のキューが繰り返されるか、次の曲がない場合は一時停止します。",
+      "description": "\u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 で Explicit とマークされた曲を自動的にスキップします。Explicit のキューが繰り返されるか、次の曲がない場合は一時停止します。",
       "name": "SFW ミュージック"
     },
     "toast-autoclose": {
-      "description": "YouTube Music のトーストを 3 秒後に自動で閉じます",
+      "description": "\u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 のトーストを 3 秒後に自動で閉じます",
       "name": "トーストの自動閉じ"
     },
     "statusbar-lyrics": {
@@ -1531,7 +1535,7 @@
     "move-up": "上へ移動",
     "move-down": "下へ移動",
     "about": {
-      "tagline": "YouTube Music 向けの多機能デスクトップアプリ",
+      "tagline": "\u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 向けの多機能デスクトップアプリ",
       "versions": "バージョン",
       "version-app": "アプリ",
       "version-build": "ビルド",
@@ -1589,7 +1593,7 @@
     "stepper-decrement": "減らす",
     "stepper-increment": "増やす",
     "flags": {
-      "warning": "機能フラグは YouTube Music 独自の内部スイッチです。変更すると再生、レイアウト、アカウント機能が壊れる可能性があり、サポートの対象外です。上書きは変更したフラグのみ保持され、「元に戻す」で削除できます。",
+      "warning": "機能フラグは \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 独自の内部スイッチです。変更すると再生、レイアウト、アカウント機能が壊れる可能性があり、サポートの対象外です。上書きは変更したフラグのみ保持され、「元に戻す」で削除できます。",
       "search-placeholder": "フラグを検索",
       "overridden": "上書き済み",
       "undo": "元に戻す",

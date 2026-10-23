@@ -162,8 +162,8 @@
               "sync": {
                 "label": "Sinhranizavać movu",
                 "submenu": {
-                  "from-youtube": "Z YouTube",
-                  "to-youtube": "U YouTube"
+                  "from-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "Z \u0059\u006f\u0075\u0054\u0075\u0062\u0065",
+                  "to-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "U \u0059\u006f\u0075\u0054\u0075\u0062\u0065"
                 },
                 "failure": {
                   "dialog": {
@@ -217,7 +217,7 @@
                 }
               },
               "remove-upgrade-button": "Prybrać knopku abnaŭlennia",
-              "use-ytm-icons": "Vykarystoŭvać aryhinalnyja ikony YouTube Music",
+              "use-ytm-icons": "Vykarystoŭvać aryhinalnyja ikony \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063",
               "theme": {
                 "label": "Tema",
                 "submenu": {
@@ -1043,7 +1043,7 @@
     },
     "search-commands": {
       "commands": {
-        "play": "Prahrać videa pa spasyłce YouTube abo id",
+        "play": "Prahrać videa pa spasyłce \u0059\u006f\u0075\u0054\u0075\u0062\u0065 abo id",
         "settings": "Adkryć nalady"
       },
       "description": "Napisycie / u poli poshuku, kab vykonavac kamandy, z aŭtapaŭnieniem ich arhumentaŭ",
@@ -1060,7 +1060,7 @@
       "name": "Spasyłki pieraskoku"
     },
     "sfw-music": {
-      "description": "Aŭtamatyčna praskakae pieśni, paznačanyja jak Explicit u YouTube Music. Prypyniajecca, kali čarha z Explicit paŭtaraecca abo niama nastupnaj pieśni.",
+      "description": "Aŭtamatyčna praskakae pieśni, paznačanyja jak Explicit u \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063. Prypyniajecca, kali čarha z Explicit paŭtaraecca abo niama nastupnaj pieśni.",
       "name": "SFW muzyka"
     },
     "shortcuts": {
@@ -1178,7 +1178,7 @@
         },
         "use-ytm-lyrics-without-proxy": {
           "label": "Vykarystovacʹ tekst YTM biez proxy",
-          "tooltip": "Praskakać proxy YTM browse i vyklykać YouTube Music napramu, vykarystovajučy autentyfikavanuju sesiju dadatku. Karysna, kali vy daviaraecie svajoj sietcy/regionu, što jany dazvalajucʹ napramyja vykliki browse."
+          "tooltip": "Praskakać proxy YTM browse i vyklykać \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 napramu, vykarystovajučy autentyfikavanuju sesiju dadatku. Karysna, kali vy daviaraecie svajoj sietcy/regionu, što jany dazvalajucʹ napramyja vykliki browse."
         },
         "convert-chinese-character": {
           "label": "Kanvertavacʹ kitajskija ierohłyfy",
@@ -1323,7 +1323,7 @@
       "name": "Kiravannie medyja na paneli zadač"
     },
     "toast-autoclose": {
-      "description": "Aŭtamatyčna zakryvać paviedamleni YouTube Music praz try sekundy",
+      "description": "Aŭtamatyčna zakryvać paviedamleni \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 praz try sekundy",
       "name": "Aŭtamatyčnae zakryvannie paviedamlenniaŭ"
     },
     "touchbar": {
@@ -1463,7 +1463,7 @@
     "move-up": "Pieramiascić uvierch",
     "move-down": "Pieramiascić uniz",
     "about": {
-      "tagline": "Bahatofunkcyjanaja desktop-prahrama dla YouTube Music",
+      "tagline": "Bahatofunkcyjanaja desktop-prahrama dla \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063",
       "versions": "Versii",
       "version-app": "Dadatak",
       "version-build": "Zborka",
@@ -1521,7 +1521,7 @@
     "stepper-decrement": "Pamienšyć",
     "stepper-increment": "Pavialičyć",
     "flags": {
-      "warning": "Flahi funkcyj — heta ŭłasnyja ŭnutranyja pieraklučalniki YouTube Music. Ich zmina moža złamać prajhranie, vyhlad albo funkcyi akounty, i jany nie padtrymlivajucca padtrymkaj. Pierakryvańni zachoŭvajucca tolki dla flahaŭ, jakija vy zmianiali, i ich možna vydalić praz „Admianić”.",
+      "warning": "Flahi funkcyj — heta ŭłasnyja ŭnutranyja pieraklučalniki \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063. Ich zmina moža złamać prajhranie, vyhlad albo funkcyi akounty, i jany nie padtrymlivajucca padtrymkaj. Pierakryvańni zachoŭvajucca tolki dla flahaŭ, jakija vy zmianiali, i ich možna vydalić praz „Admianić”.",
       "search-placeholder": "Pošuk flahaŭ",
       "overridden": "pierakryta",
       "undo": "Admianić",

@@ -156,8 +156,8 @@
               "sync": {
                 "label": "Sincronizar idioma",
                 "submenu": {
-                  "from-youtube": "Do YouTube",
-                  "to-youtube": "Para o YouTube"
+                  "from-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "Do \u0059\u006f\u0075\u0054\u0075\u0062\u0065",
+                  "to-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "Para o \u0059\u006f\u0075\u0054\u0075\u0062\u0065"
                 },
                 "failure": {
                   "dialog": {
@@ -229,7 +229,7 @@
                   "open-themes-folder": "Abrir pasta de temas"
                 }
               },
-              "use-ytm-icons": "Usar ícones originais do YouTube Music"
+              "use-ytm-icons": "Usar ícones originais do \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063"
             }
           },
           "updates": {
@@ -655,7 +655,7 @@
           "converting": "Convertendo…",
           "done": "Concluído: {{filePath}}",
           "download-info": "Baixando {{artist}} - {{title}} [{{videoId}}",
-          "download-progress": "Baixar: {{percent}}%",
+          "download-progress": "Download: {{percent}}%",
           "downloading": "Baixando…",
           "downloading-counter": "Baixando {{current}}/{{total}}…",
           "downloading-playlist": "Baixando lista de reprodução \"{{playlistTitle}}\" - {{playlistSize}} músicas ({{playlistId}})",
@@ -897,9 +897,9 @@
           }
         }
       },
-      "name": "Imagem em imagem",
+      "name": "Picture-in-picture",
       "templates": {
-        "button": "Imagem em imagem"
+        "button": "Picture-in-picture"
       }
     },
     "playback-speed": {
@@ -997,7 +997,7 @@
         "listenbrainz": {
           "token": {
             "label": "Insira seu token de usuário do ListenBrainz:",
-            "title": "Token do ListenBrainz"
+            "title": "ListenBrainz token"
           },
           "api-root": {
             "label": "Insira a URL base da API:",
@@ -1039,6 +1039,10 @@
         "global-keybinds": "Atalhos globais (funcionam em todo o app)",
         "local-keybinds": "Atalhos locais (apenas enquanto a janela estiver em foco)"
       }
+    },
+    "skip-disliked-songs": {
+      "description": "Ignora músicas marcadas com \"não gostei\"",
+      "name": "Pular músicas marcadas com \"não gostei\""
     },
     "skip-silences": {
       "description": "Pular automaticamente seções de silêncio em músicas",
@@ -1096,7 +1100,7 @@
           "label": "Efeito de linha",
           "submenu": {
             "fancy": {
-              "label": "Elegante",
+              "label": "Fancy",
               "tooltip": "Use efeitos grandes, semelhantes a aplicativos, na linha atual"
             },
             "focus": {
@@ -1113,24 +1117,6 @@
             }
           },
           "tooltip": "Escolha o efeito a ser aplicado à linha atual"
-        },
-        "lyrics-font-size": {
-          "label": "Tamanho da fonte das letras",
-          "submenu": {
-            "large": {
-              "label": "Grande",
-              "tooltip": "Usar o tamanho de letra maior original"
-            },
-            "medium": {
-              "label": "Médio",
-              "tooltip": "Usar um tamanho de letra equilibrado"
-            },
-            "small": {
-              "label": "Pequeno",
-              "tooltip": "Usar um tamanho de letra mais compacto"
-            }
-          },
-          "tooltip": "Escolha o tamanho do texto das letras"
         },
         "precise-timing": {
           "label": "Deixa as letras perfeitamente sincronizadas",
@@ -1155,6 +1141,24 @@
         "show-time-codes": {
           "label": "Mostrar códigos de tempo",
           "tooltip": "Mostrar os códigos de tempo ao lado das letras"
+        },
+        "lyrics-font-size": {
+          "label": "Tamanho da fonte das letras",
+          "submenu": {
+            "large": {
+              "label": "Grande",
+              "tooltip": "Usar o tamanho de letra maior original"
+            },
+            "medium": {
+              "label": "Médio",
+              "tooltip": "Usar um tamanho de letra equilibrado"
+            },
+            "small": {
+              "label": "Pequeno",
+              "tooltip": "Usar um tamanho de letra mais compacto"
+            }
+          },
+          "tooltip": "Escolha o tamanho do texto das letras"
         },
         "translation": {
           "clear-cache": {
@@ -1269,7 +1273,7 @@
         },
         "use-ytm-lyrics-without-proxy": {
           "label": "Usar letras do YTM sem proxy",
-          "tooltip": "Pule o proxy de navegação do YTM e chame o YouTube Music diretamente usando a sessão autenticada do aplicativo. Útil se você confiar em sua rede/região para permitir chamadas de navegação diretas."
+          "tooltip": "Pule o proxy de navegação do YTM e chame o \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 diretamente usando a sessão autenticada do aplicativo. Útil se você confiar em sua rede/região para permitir chamadas de navegação diretas."
         },
         "show-custom-search-button": {
           "label": "Mostrar botão de pesquisa personalizado",
@@ -1464,7 +1468,7 @@
     },
     "search-commands": {
       "commands": {
-        "play": "Reproduzir um vídeo a partir de um link ou ID do YouTube",
+        "play": "Reproduzir um vídeo a partir de um link ou ID do \u0059\u006f\u0075\u0054\u0075\u0062\u0065",
         "settings": "Abrir as configurações"
       },
       "description": "Digite / na caixa de pesquisa para executar comandos, com preenchimento automático para os argumentos",
@@ -1481,11 +1485,11 @@
       "name": "Atalhos de busca"
     },
     "sfw-music": {
-      "description": "Pula automaticamente músicas marcadas como Explícitas pelo YouTube Music. Pausa se uma fila explícita se repetir ou não houver próxima música disponível.",
+      "description": "Pula automaticamente músicas marcadas como Explícitas pelo \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063. Pausa se uma fila explícita se repetir ou não houver próxima música disponível.",
       "name": "Música SFW"
     },
     "toast-autoclose": {
-      "description": "Fechar automaticamente os toasts do YouTube Music após três segundos",
+      "description": "Fechar automaticamente os toasts do \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 após três segundos",
       "name": "Fechamento automático de toasts"
     },
     "statusbar-lyrics": {
@@ -1531,7 +1535,7 @@
     "move-up": "Mover para cima",
     "move-down": "Mover para baixo",
     "about": {
-      "tagline": "Um aplicativo de desktop repleto de recursos para o YouTube Music",
+      "tagline": "Um aplicativo de desktop repleto de recursos para o \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063",
       "versions": "Versões",
       "version-app": "Aplicativo",
       "version-build": "Compilação",
@@ -1589,7 +1593,7 @@
     "stepper-decrement": "Diminuir",
     "stepper-increment": "Aumentar",
     "flags": {
-      "warning": "As feature flags são interruptores internos do próprio YouTube Music. Alterá-las pode quebrar a reprodução, o layout ou recursos da conta, e elas não são cobertas pelo suporte. As substituições são mantidas apenas para as flags que você alterar e podem ser removidas com Desfazer.",
+      "warning": "As feature flags são interruptores internos do próprio \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063. Alterá-las pode quebrar a reprodução, o layout ou recursos da conta, e elas não são cobertas pelo suporte. As substituições são mantidas apenas para as flags que você alterar e podem ser removidas com Desfazer.",
       "search-placeholder": "Pesquisar flags",
       "overridden": "substituída",
       "undo": "Desfazer",

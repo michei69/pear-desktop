@@ -72,7 +72,7 @@
         "buttons": {
           "disable": "Izslēgt atjauninājumus",
           "download": "Lejupielādēt",
-          "ok": "Labi"
+          "ok": "OK"
         },
         "detail": "Jauna versija ir pieejama, un var tikt lejupielādēta šeit {{downloadLink}}",
         "message": "Pieejama jauna versija",
@@ -156,8 +156,8 @@
               "sync": {
                 "label": "Sinhronizēt valodu",
                 "submenu": {
-                  "from-youtube": "No YouTube",
-                  "to-youtube": "Uz YouTube"
+                  "from-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "No \u0059\u006f\u0075\u0054\u0075\u0062\u0065",
+                  "to-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "Uz \u0059\u006f\u0075\u0054\u0075\u0062\u0065"
                 },
                 "failure": {
                   "dialog": {
@@ -181,8 +181,8 @@
               "disabled": "Izslēgts",
               "enabled-and-hide-app": "Teknīte ieslēgta, paslēpt lietotnes logu",
               "enabled-and-show-app": "Ielsēgts un rādīt lietotni",
-              "move-to-current-desktop": "Rādot pārvietot uz pašreizējo virtuālo darbvirsmu",
               "play-pause-on-click": "Atskaņot/Pauzēt piespiežot",
+              "move-to-current-desktop": "Rādot pārvietot uz pašreizējo virtuālo darbvirsmu",
               "force-white-icons": "Piespiediet baltu ikonu lietošanu"
             }
           },
@@ -193,7 +193,7 @@
                 "label": "Pielāgots loga nosaukums",
                 "prompt": {
                   "label": "Ievadiet pielāgotu loga nosaukumu: (atstājiet tukšu, lai atspējotu)",
-                  "placeholder": "Piemērs: {{applicationName}}"
+                  "placeholder": "Piemērs: Pear mūzika"
                 }
               },
               "like-buttons": {
@@ -229,7 +229,7 @@
                   "open-themes-folder": "Atvērt tēmu mapi"
                 }
               },
-              "use-ytm-icons": "Izmantot oriģinālās YouTube Music ikonas"
+              "use-ytm-icons": "Izmantot oriģinālās \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 ikonas"
             }
           },
           "updates": {
@@ -316,10 +316,6 @@
       },
       "name": "Albuma krāsu tēma"
     },
-    "audio-only": {
-      "description": "Piespiedu tikai audio režīms — bloķē visus video straumes tīkla un atskaņotāja līmenī, lai ietaupītu RAM un joslas platumu",
-      "name": "Tikai Audio"
-    },
     "ambient-mode": {
       "description": "Pielieto apgaismojuma efektu, kas maigā krāsā atstaro video attēlu uz ekrāna fona",
       "menu": {
@@ -399,6 +395,9 @@
         "hostname": {
           "label": "Hosta nosaukums"
         },
+        "port": {
+          "label": "Ports"
+        },
         "https": {
           "label": "HTTPS un Sertifikāti",
           "submenu": {
@@ -414,9 +413,6 @@
               "label": "Privātās atslēgas fails (.key/.pem)"
             }
           }
-        },
-        "port": {
-          "label": "Ports"
         },
         "mcp": {
           "label": "MCP serveris",
@@ -503,20 +499,6 @@
         "no-captions": "Subtitri nav pieejami priekš šīs dziesmas"
       }
     },
-    "clock": {
-      "description": "Pievieno pulksteni navigācijas joslai",
-      "menu": {
-        "format": {
-          "24-hour-format": "24 Stundu Formāts",
-          "display-seconds": "Rādīt Sekundes",
-          "label": "Formāts"
-        }
-      },
-      "name": "Pulkstenis",
-      "settings": {
-        "hour-12": "Izmantot 12 stundu formātu"
-      }
-    },
     "compact-sidebar": {
       "description": "Vienmēr iestatīt malējo paneli kompaktajā režīmā",
       "name": "Kompakts malējais panelis"
@@ -595,9 +577,9 @@
         "set-status-display-type": {
           "label": "Statusa teksts",
           "submenu": {
-            "application": "Klausās {{applicationName}}",
             "artist": "Klausos {mākslinieku}",
-            "title": "Klausos {dziesmas nosaukums}"
+            "title": "Klausos {dziesmas nosaukums}",
+            "application": "Klausās {{applicationName}}"
           }
         }
       },
@@ -621,14 +603,14 @@
         "dialog": {
           "error": {
             "buttons": {
-              "ok": "Labi"
+              "ok": "OK"
             },
             "message": "Atvainojamies, lejupielāde neizdevās…",
             "title": "Lejupielādes kļūda!"
           },
           "start-download-playlist": {
             "buttons": {
-              "ok": "Labi"
+              "ok": "OK"
             },
             "detail": "({{playlistSize}}Dziesmas)",
             "message": "Lejupielādē atskaņošanas sarakstu {{playlistTitle}}",
@@ -816,6 +798,24 @@
         "diagnostics-copied": "Diagnostikas kopsavilkums nokopēts starpliktuvē",
         "diagnostics-copy-failed": "Neizdevās nokopēt diagnostikas kopsavilkumu",
         "diagnostics-running": "Nogaidiet, līdz savienojuma tests būs pabeigts"
+      }
+    },
+    "audio-only": {
+      "description": "Piespiedu tikai audio režīms — bloķē visus video straumes tīkla un atskaņotāja līmenī, lai ietaupītu RAM un joslas platumu",
+      "name": "Tikai Audio"
+    },
+    "clock": {
+      "description": "Pievieno pulksteni navigācijas joslai",
+      "menu": {
+        "format": {
+          "24-hour-format": "24 Stundu Formāts",
+          "display-seconds": "Rādīt Sekundes",
+          "label": "Formāts"
+        }
+      },
+      "name": "Pulkstenis",
+      "settings": {
+        "hour-12": "Izmantot 12 stundu formātu"
       }
     },
     "navigation": {
@@ -1267,7 +1267,7 @@
         },
         "use-ytm-lyrics-without-proxy": {
           "label": "Izmantot YTM dziesmu vārdus bez starpniekservera",
-          "tooltip": "Izlaist YTM pārlūkošanas starpniekserveri un izsaukt YouTube Music tieši, izmantojot lietotnes autentificēto sesiju. Noderīgi, ja uzticaties savam tīklam/reģionam, lai atļautu tiešus pārlūkošanas zvanus."
+          "tooltip": "Izlaist YTM pārlūkošanas starpniekserveri un izsaukt \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 tieši, izmantojot lietotnes autentificēto sesiju. Noderīgi, ja uzticaties savam tīklam/reģionam, lai atļautu tiešus pārlūkošanas zvanus."
         },
         "show-custom-search-button": {
           "label": "Rādīt pielāgoto meklēšanas pogu",
@@ -1464,7 +1464,7 @@
     },
     "search-commands": {
       "commands": {
-        "play": "Atskaņot video no YouTube saites vai ID",
+        "play": "Atskaņot video no \u0059\u006f\u0075\u0054\u0075\u0062\u0065 saites vai ID",
         "settings": "Atvērt iestatījumus"
       },
       "description": "Ievadiet / meklēšanas lodziņā, lai izpildītu komandas, ar automātisko pabeigšanu to argumentiem",
@@ -1481,11 +1481,11 @@
       "name": "Pārbīdes saīsnes"
     },
     "sfw-music": {
-      "description": "Automātiski izlaiž dziesmas, kuras YouTube Music atzīmējis kā Explicit. Aptur, ja atkārtojas explicit rinda vai nav pieejama nākamā dziesma.",
+      "description": "Automātiski izlaiž dziesmas, kuras \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 atzīmējis kā Explicit. Aptur, ja atkārtojas explicit rinda vai nav pieejama nākamā dziesma.",
       "name": "SFW mūzika"
     },
     "toast-autoclose": {
-      "description": "Automātiski aizvērt YouTube Music paziņojumus pēc trim sekundēm",
+      "description": "Automātiski aizvērt \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 paziņojumus pēc trim sekundēm",
       "name": "Paziņojumu automātiska aizvēršana"
     },
     "statusbar-lyrics": {
@@ -1531,7 +1531,7 @@
     "move-up": "Pārvietot uz augšu",
     "move-down": "Pārvietot uz leju",
     "about": {
-      "tagline": "Ar funkcijām bagāta YouTube Music darbvirsmas lietotne",
+      "tagline": "Ar funkcijām bagāta \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 darbvirsmas lietotne",
       "versions": "Versijas",
       "version-app": "Lietotne",
       "version-build": "Būvējums",
@@ -1589,7 +1589,7 @@
     "stepper-decrement": "Samazināt",
     "stepper-increment": "Palielināt",
     "flags": {
-      "warning": "Funkciju karodziņi ir YouTube Music iekšējie slēdži. To maiņa var sabojāt atskaņošanu, izkārtojumu vai konta funkcijas, un atbalsts tos neaptver. Pārrakstījumi tiek glabāti tikai tiem karodziņiem, kurus maināt, un tos var noņemt ar Atsaukt.",
+      "warning": "Funkciju karodziņi ir \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 iekšējie slēdži. To maiņa var sabojāt atskaņošanu, izkārtojumu vai konta funkcijas, un atbalsts tos neaptver. Pārrakstījumi tiek glabāti tikai tiem karodziņiem, kurus maināt, un tos var noņemt ar Atsaukt.",
       "search-placeholder": "Meklēt karodziņus",
       "overridden": "pārrakstīts",
       "undo": "Atsaukt",

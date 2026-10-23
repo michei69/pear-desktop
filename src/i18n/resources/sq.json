@@ -16,7 +16,7 @@
   "language": {
     "code": "sq",
     "local-name": "Shqip",
-    "name": "Albanian"
+    "name": "Emri i gjuhës në anglisht. p.sh. japonisht, koreanisht, anglisht, rusisht"
   },
   "main": {
     "console": {
@@ -156,8 +156,8 @@
               "sync": {
                 "label": "Sinkronizo gjuhën",
                 "submenu": {
-                  "from-youtube": "Nga YouTube",
-                  "to-youtube": "Në YouTube"
+                  "from-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "Nga \u0059\u006f\u0075\u0054\u0075\u0062\u0065",
+                  "to-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "Në \u0059\u006f\u0075\u0054\u0075\u0062\u0065"
                 },
                 "failure": {
                   "dialog": {
@@ -229,7 +229,7 @@
                   "open-themes-folder": "Hap dosjen e temave"
                 }
               },
-              "use-ytm-icons": "Përdor ikonat origjinale të YouTube Music"
+              "use-ytm-icons": "Përdor ikonat origjinale të \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063"
             }
           },
           "updates": {
@@ -253,7 +253,7 @@
       },
       "plugins": {
         "enabled": "Aktivizuar",
-        "label": "Shtojcat",
+        "label": "Plugins",
         "new": "E RE"
       },
       "view": {
@@ -298,13 +298,6 @@
     "ad-speedup": {
       "description": "Nëse luan një reklamë, e hesht zërin dhe e vendos shpejtësinë e luajtjes në 16x",
       "name": "Përshpejtimi i reklamave"
-    },
-    "adblocker": {
-      "description": "Blloko të gjitha reklamat dhe gjurmimin menjëherë",
-      "menu": {
-        "blocker": "Bllokuesi"
-      },
-      "name": "Bllokuesi i Reklamave"
     },
     "album-actions": {
       "description": "Shton butonat \"Nuk më pëlqen\", \"Nuk e pëlqej\", \"Pëlqej\" dhe \"E pëlqej\" për t'i zbatuar këto në të gjitha këngët në një playlist ose album",
@@ -440,6 +433,13 @@
       "settings": {
         "choose-file": "Zgjidh skedar…"
       }
+    },
+    "adblocker": {
+      "description": "Blloko të gjitha reklamat dhe gjurmimin menjëherë",
+      "menu": {
+        "blocker": "Bllokuesi"
+      },
+      "name": "Bllokuesi i Reklamave"
     },
     "audio-compressor": {
       "description": "Apliko kompresim në audio (ul volumin e pjesëve më të larta të sinjalit dhe rrit volumin e pjesëve më të ulëta)",
@@ -1257,7 +1257,7 @@
         },
         "use-ytm-lyrics-without-proxy": {
           "label": "Përdor tekstet e YTM pa proxy",
-          "tooltip": "Anasho përfaqësuesin e shfletimit YTM dhe thirr YouTube Music direkt duke përdorur sesionin e autentikuar të aplikacionit. E dobishme nëse i besoni rrjetit/rajonit tuaj për të lejuar thirrje të drejtpërdrejta shfletimi."
+          "tooltip": "Anasho përfaqësuesin e shfletimit YTM dhe thirr \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 direkt duke përdorur sesionin e autentikuar të aplikacionit. E dobishme nëse i besoni rrjetit/rajonit tuaj për të lejuar thirrje të drejtpërdrejta shfletimi."
         },
         "show-custom-search-button": {
           "label": "Trego butonin e personalizuar të kërkimit",
@@ -1471,7 +1471,7 @@
     },
     "search-commands": {
       "commands": {
-        "play": "Luaj një video nga një lidhje ose ID YouTube",
+        "play": "Luaj një video nga një lidhje ose ID \u0059\u006f\u0075\u0054\u0075\u0062\u0065",
         "settings": "Hap cilësimet"
       },
       "description": "Shkruani / në kutinë e kërkimit për të ekzekutuar komanda, me autocomplete për argumentet e tyre",
@@ -1488,11 +1488,11 @@
       "name": "Shkurtoret e Lëvizjes"
     },
     "sfw-music": {
-      "description": "Kap automatikisht këngët e shënuara si Eksplicite nga YouTube Music. Bëhet pauzë nëse një radhë eksplicite përsëritet ose nuk ka këngë tjetër të disponueshme.",
+      "description": "Kap automatikisht këngët e shënuara si Eksplicite nga \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063. Bëhet pauzë nëse një radhë eksplicite përsëritet ose nuk ka këngë tjetër të disponueshme.",
       "name": "Muzikë SFW"
     },
     "toast-autoclose": {
-      "description": "Mbyll automatikisht njoftimet e YouTube Music pas tre sekondash",
+      "description": "Mbyll automatikisht njoftimet e \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 pas tre sekondash",
       "name": "Mbyllja automatike e njoftimeve"
     },
     "statusbar-lyrics": {
@@ -1538,7 +1538,7 @@
     "move-up": "Lëviz lart",
     "move-down": "Lëviz poshtë",
     "about": {
-      "tagline": "Një aplikacion desktop i pasur me funksione për YouTube Music",
+      "tagline": "Një aplikacion desktop i pasur me funksione për \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063",
       "versions": "Versionet",
       "version-app": "Aplikacioni",
       "version-build": "Ndërtimi",
@@ -1596,7 +1596,7 @@
     "stepper-decrement": "Zvogëlo",
     "stepper-increment": "Rrit",
     "flags": {
-      "warning": "Flamujt e veçorive janë çelësat e brendshëm të YouTube Music. Ndryshimi i tyre mund të prishë riprodhimin, paraqitjen ose veçoritë e llogarisë, dhe nuk mbulohen nga mbështetja. Anashkalimet mbahen vetëm për flamujt që ndryshoni dhe mund të hiqen me Zhbëj.",
+      "warning": "Flamujt e veçorive janë çelësat e brendshëm të \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063. Ndryshimi i tyre mund të prishë riprodhimin, paraqitjen ose veçoritë e llogarisë, dhe nuk mbulohen nga mbështetja. Anashkalimet mbahen vetëm për flamujt që ndryshoni dhe mund të hiqen me Zhbëj.",
       "search-placeholder": "Kërko flamuj",
       "overridden": "anashkaluar",
       "undo": "Zhbëj",

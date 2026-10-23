@@ -16,7 +16,7 @@
   "language": {
     "code": "nl",
     "local-name": "Nederlands",
-    "name": "Dutch"
+    "name": "Nederlands"
   },
   "main": {
     "console": {
@@ -156,8 +156,8 @@
               "sync": {
                 "label": "Taal synchroniseren",
                 "submenu": {
-                  "from-youtube": "Van YouTube",
-                  "to-youtube": "Naar YouTube"
+                  "from-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "Van \u0059\u006f\u0075\u0054\u0075\u0062\u0065",
+                  "to-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "Naar \u0059\u006f\u0075\u0054\u0075\u0062\u0065"
                 },
                 "failure": {
                   "dialog": {
@@ -229,7 +229,7 @@
                   "open-themes-folder": "Themamap openen"
                 }
               },
-              "use-ytm-icons": "Originele YouTube Music-pictogrammen gebruiken"
+              "use-ytm-icons": "Originele \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063-pictogrammen gebruiken"
             }
           },
           "updates": {
@@ -419,7 +419,7 @@
           "description": "Biedt de v2-API aan als MCP-tools op /mcp. Gebruikt dezelfde autorisatie als de rest van de API."
         }
       },
-      "name": "API-server [bèta]",
+      "name": "API Server [Beta]",
       "prompt": {
         "hostname": {
           "label": "Voeg de hostnaam (bv. 0.0.0.0) voor de API server in:",
@@ -522,7 +522,7 @@
       "menu": {
         "advanced": "Geavanceerd"
       },
-      "name": "Crossfade [bèta]",
+      "name": "Crossfade [Beta]",
       "prompt": {
         "options": {
           "multi-input": {
@@ -702,7 +702,7 @@
         "can-not-update-progress": "Kan de voortgang niet bijwerken"
       },
       "templates": {
-        "button": "Downloaden"
+        "button": "Download"
       },
       "settings": {
         "finish-folder": "Map voor voltooide downloads",
@@ -730,11 +730,11 @@
       "menu": {
         "hide-dom-window-controls": "Verberg DOM-vensterbedieningselementen"
       },
-      "name": "In-appmenu"
+      "name": "In-App Menu"
     },
     "lumiastream": {
       "description": "Voegt ondersteuning voor Lumia Stream toe",
-      "name": "Lumia Stream [bèta]"
+      "name": "Lumia Stream [Beta]"
     },
     "lyrics-genius": {
       "description": "Voegt songtekstondersteuning toe voor de meeste nummers",
@@ -897,9 +897,9 @@
           }
         }
       },
-      "name": "Beeld-in-beeld",
+      "name": "Picture-in-picture",
       "templates": {
-        "button": "Beeld-in-beeld"
+        "button": "Picture-in-picture"
       }
     },
     "playback-speed": {
@@ -997,7 +997,7 @@
         "listenbrainz": {
           "token": {
             "label": "Voer uw ListenBrainz-gebruikerstoken in:",
-            "title": "ListenBrainz-token"
+            "title": "ListenBrainz token"
           },
           "api-root": {
             "label": "Voer de basis-API-URL in:",
@@ -1039,6 +1039,10 @@
         "global-keybinds": "Globale sneltoetsen (werken in de hele app)",
         "local-keybinds": "Lokale sneltoetsen (alleen terwijl het venster focus heeft)"
       }
+    },
+    "skip-disliked-songs": {
+      "description": "Slaat disliked nummers over",
+      "name": "Sla disliked nummers over"
     },
     "skip-silences": {
       "description": "Sla automatisch stiltesecties in nummers over",
@@ -1114,24 +1118,6 @@
           },
           "tooltip": "Kies het effect dat u op de huidige regel wilt toepassen"
         },
-        "lyrics-font-size": {
-          "label": "Lettergrootte songtekst",
-          "submenu": {
-            "large": {
-              "label": "Groot",
-              "tooltip": "Gebruik de originele grotere songtekstgrootte"
-            },
-            "medium": {
-              "label": "Middel",
-              "tooltip": "Gebruik een gebalanceerde songtekstgrootte"
-            },
-            "small": {
-              "label": "Klein",
-              "tooltip": "Gebruik een compactere songtekstgrootte"
-            }
-          },
-          "tooltip": "Kies hoe groot de songtekst moet zijn"
-        },
         "precise-timing": {
           "label": "Zorg ervoor dat de songteksten perfect gesynchroniseerd zijn",
           "tooltip": "Bereken tot op de milliseconde de weergave van de volgende regel (kan een kleine impact hebben op de prestaties)"
@@ -1155,6 +1141,24 @@
         "show-time-codes": {
           "label": "Toon tijdcodes",
           "tooltip": "Toon de tijdcodes naast de songtekst"
+        },
+        "lyrics-font-size": {
+          "label": "Lettergrootte songtekst",
+          "submenu": {
+            "large": {
+              "label": "Groot",
+              "tooltip": "Gebruik de originele grotere songtekstgrootte"
+            },
+            "medium": {
+              "label": "Middel",
+              "tooltip": "Gebruik een gebalanceerde songtekstgrootte"
+            },
+            "small": {
+              "label": "Klein",
+              "tooltip": "Gebruik een compactere songtekstgrootte"
+            }
+          },
+          "tooltip": "Kies hoe groot de songtekst moet zijn"
         },
         "translation": {
           "clear-cache": {
@@ -1269,7 +1273,7 @@
         },
         "use-ytm-lyrics-without-proxy": {
           "label": "Gebruik YTM-teksten zonder proxy",
-          "tooltip": "Sla de YTM-browseproxy over en bel YouTube Music rechtstreeks via de geverifieerde sessie van de app. Nuttig als u uw netwerk/regio vertrouwt om directe browse-oproepen toe te staan."
+          "tooltip": "Sla de YTM-browseproxy over en bel \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 rechtstreeks via de geverifieerde sessie van de app. Nuttig als u uw netwerk/regio vertrouwt om directe browse-oproepen toe te staan."
         },
         "show-custom-search-button": {
           "label": "Toon aangepaste zoekknop",
@@ -1347,10 +1351,10 @@
         "type": {
           "label": "Soort",
           "submenu": {
-            "acrylic": "Acryl",
+            "acrylic": "Acrylic",
             "mica": "Mica",
             "none": "Geen",
-            "tabbed": "Tabbladen",
+            "tabbed": "Tabbed",
             "content": "Inhoud",
             "fullscreen-ui": "Volledig scherm-UI",
             "under-page": "Onder pagina",
@@ -1464,7 +1468,7 @@
     },
     "search-commands": {
       "commands": {
-        "play": "Speel een video af via een YouTube-link of -id",
+        "play": "Speel een video af via een \u0059\u006f\u0075\u0054\u0075\u0062\u0065-link of -id",
         "settings": "Open de instellingen"
       },
       "description": "Typ / in het zoekvak om opdrachten uit te voeren, met automatische aanvulling voor hun argumenten",
@@ -1481,11 +1485,11 @@
       "name": "Spoelsneltoetsen"
     },
     "sfw-music": {
-      "description": "Slaat automatisch nummers over die door YouTube Music als Expliciet zijn gemarkeerd. Pauzeert als een expliciete wachtrij zich herhaalt of er geen volgend nummer beschikbaar is.",
+      "description": "Slaat automatisch nummers over die door \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 als Expliciet zijn gemarkeerd. Pauzeert als een expliciete wachtrij zich herhaalt of er geen volgend nummer beschikbaar is.",
       "name": "SFW-muziek"
     },
     "toast-autoclose": {
-      "description": "Sluit YouTube Music-meldingen automatisch na drie seconden",
+      "description": "Sluit \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063-meldingen automatisch na drie seconden",
       "name": "Meldingen automatisch sluiten"
     },
     "statusbar-lyrics": {
@@ -1531,7 +1535,7 @@
     "move-up": "Omhoog verplaatsen",
     "move-down": "Omlaag verplaatsen",
     "about": {
-      "tagline": "Een uitgebreide desktopapp voor YouTube Music",
+      "tagline": "Een uitgebreide desktopapp voor \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063",
       "versions": "Versies",
       "version-app": "App",
       "version-build": "Build",
@@ -1589,7 +1593,7 @@
     "stepper-decrement": "Verlagen",
     "stepper-increment": "Verhogen",
     "flags": {
-      "warning": "Functievlaggen zijn interne schakelaars van YouTube Music zelf. Als je ze wijzigt, kunnen afspelen, lay-out of accountfuncties kapotgaan, en ze vallen niet onder ondersteuning. Overschrijvingen worden alleen bewaard voor de vlaggen die je wijzigt, en kunnen met Ongedaan maken worden verwijderd.",
+      "warning": "Functievlaggen zijn interne schakelaars van \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 zelf. Als je ze wijzigt, kunnen afspelen, lay-out of accountfuncties kapotgaan, en ze vallen niet onder ondersteuning. Overschrijvingen worden alleen bewaard voor de vlaggen die je wijzigt, en kunnen met Ongedaan maken worden verwijderd.",
       "search-placeholder": "Functievlaggen zoeken",
       "overridden": "overschreven",
       "undo": "Ongedaan maken",

@@ -156,8 +156,8 @@
               "sync": {
                 "label": "Synchronizovat jazyk",
                 "submenu": {
-                  "from-youtube": "Z YouTube",
-                  "to-youtube": "Do YouTube"
+                  "from-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "Z \u0059\u006f\u0075\u0054\u0075\u0062\u0065",
+                  "to-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "Do \u0059\u006f\u0075\u0054\u0075\u0062\u0065"
                 },
                 "failure": {
                   "dialog": {
@@ -176,7 +176,7 @@
             "unset": "Nenastaveno"
           },
           "tray": {
-            "label": "Systémová lišta",
+            "label": "Tray",
             "submenu": {
               "disabled": "Vypnuto",
               "enabled-and-hide-app": "Povolit a skrýt aplikaci",
@@ -229,7 +229,7 @@
                   "open-themes-folder": "Otevřít složku motivů"
                 }
               },
-              "use-ytm-icons": "Používat původní ikony YouTube Music"
+              "use-ytm-icons": "Používat původní ikony \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063"
             }
           },
           "updates": {
@@ -309,7 +309,7 @@
         "color-mix-ratio": {
           "label": "Poměr míchání barev",
           "submenu": {
-            "percent": "{{ratio}} %"
+            "percent": "{{ratio}}%"
           }
         },
         "enable-seekbar": "Povolit motivování posuvníku"
@@ -334,7 +334,7 @@
         "opacity": {
           "label": "Neprůhlednost",
           "submenu": {
-            "percent": "{{opacity}} %"
+            "percent": "{{opacity}}%"
           }
         },
         "quality": {
@@ -346,7 +346,7 @@
         "size": {
           "label": "Velikost",
           "submenu": {
-            "percent": "{{size}} %"
+            "percent": "{{size}}%"
           }
         },
         "smoothness-transition": {
@@ -393,7 +393,10 @@
           }
         },
         "hostname": {
-          "label": "Název hostitele"
+          "label": "Hostname"
+        },
+        "port": {
+          "label": "Port"
         },
         "https": {
           "label": "HTTPS a certifikáty",
@@ -411,9 +414,6 @@
             }
           }
         },
-        "port": {
-          "label": "Port"
-        },
         "mcp": {
           "label": "MCP server",
           "description": "Poskytuje API v2 jako nástroje MCP na /mcp. Používá stejnou autorizaci jako zbytek API."
@@ -423,7 +423,7 @@
       "prompt": {
         "hostname": {
           "label": "Zadej hostname API serveru (ve tvaru 0.0.0.0):",
-          "title": "Název hostitele"
+          "title": "Hostname"
         },
         "port": {
           "label": "Zadej port API serveru:",
@@ -450,7 +450,7 @@
         "disable": "Vypnout Proxy Adaptér",
         "enable": "Zapnout Proxy Adaptér",
         "hostname": {
-          "label": "Název hostitele"
+          "label": "Hostname"
         },
         "port": {
           "label": "Port"
@@ -460,11 +460,11 @@
       "prompt": {
         "hostname": {
           "label": "Zadejte hostname lokálního proxy serveru (vyžaduje restart):",
-          "title": "Název hostitele proxy"
+          "title": "Proxy Hostname"
         },
         "port": {
           "label": "Zadejte port lokálního proxy serveru (vyžaduje restart):",
-          "title": "Port proxy"
+          "title": "Proxy Port"
         }
       }
     },
@@ -497,20 +497,6 @@
         "caption-changed": "Titulky změněny na {{language}}",
         "caption-disabled": "Titulky vypnuty",
         "no-captions": "K této skladbě nejsou titulky dostupné"
-      }
-    },
-    "clock": {
-      "description": "Přidat hodiny do navigačního panelu",
-      "menu": {
-        "format": {
-          "24-hour-format": "24hodinový formát",
-          "display-seconds": "Zobrazovat sekundy",
-          "label": "Formát"
-        }
-      },
-      "name": "Hodiny",
-      "settings": {
-        "hour-12": "Používat 12hodinový formát"
       }
     },
     "compact-sidebar": {
@@ -591,8 +577,8 @@
         "set-status-display-type": {
           "label": "Text statusu",
           "submenu": {
-            "application": "Poslouchám {{applicationName}}",
             "artist": "Poslouchám: {artist}",
+            "application": "Poslouchám {{applicationName}}",
             "title": "Poslouchám {song title}"
           }
         }
@@ -978,7 +964,7 @@
         "listenbrainz": {
           "token": {
             "label": "Vložte svůj Listenbrainz user token:",
-            "title": "Token ListenBrainz"
+            "title": "ListenBrainz token"
           },
           "api-root": {
             "label": "Zadejte základní URL API:",
@@ -1021,6 +1007,10 @@
         "local-keybinds": "Místní klávesové zkratky (pouze když je okno aktivní)"
       }
     },
+    "skip-disliked-songs": {
+      "description": "Přeskakovat disliked písničky",
+      "name": "Přeskočit Disliked písničky"
+    },
     "skip-silences": {
       "description": "Automaticky přeskakovat tichá místa v písničkách",
       "name": "Přeskakovat Tichá místa",
@@ -1051,24 +1041,6 @@
         "not-found": "⚠️ Pro tuto skladbu nebyl nalezen žádný text."
       },
       "menu": {
-        "convert-chinese-character": {
-          "label": "Převést čínské znaky",
-          "submenu": {
-            "disabled": {
-              "label": "Vypnuto",
-              "tooltip": "Vypnout převod čínských znaků"
-            },
-            "simplified-to-traditional": {
-              "label": "Zjednodušené na Tradiční",
-              "tooltip": "Převést zjednodušenou čínštinu na tradiční"
-            },
-            "traditional-to-simplified": {
-              "label": "Tradiční na Zjednodušené",
-              "tooltip": "Převést tradiční čínštinu na zjednodušenou"
-            }
-          },
-          "tooltip": "Převést čínské znaky na tradiční nebo zjednodušené"
-        },
         "default-text-string": {
           "label": "Výchozí znak mezi texty",
           "tooltip": "Vyberte výchozí znak pro mezeru mezi texty"
@@ -1095,24 +1067,6 @@
           },
           "tooltip": "Vyberte efekt pro aktuální řádek"
         },
-        "lyrics-font-size": {
-          "label": "Velikost písma textů",
-          "submenu": {
-            "large": {
-              "label": "Velká",
-              "tooltip": "Použít původní větší velikost textu"
-            },
-            "medium": {
-              "label": "Střední",
-              "tooltip": "Použít vyváženou velikost textu"
-            },
-            "small": {
-              "label": "Malá",
-              "tooltip": "Použít kompaktnější velikost textu"
-            }
-          },
-          "tooltip": "Zvolte, jak velký má být text textů"
-        },
         "precise-timing": {
           "label": "Dokonale synchronizovat texty",
           "tooltip": "Vypočítat zobrazení dalšího řádku na milisekundu (může mít menší dopad na výkon)"
@@ -1136,6 +1090,42 @@
         "show-time-codes": {
           "label": "Zobrazit časové kódy",
           "tooltip": "Zobrazit časové kódy vedle textu"
+        },
+        "convert-chinese-character": {
+          "label": "Převést čínské znaky",
+          "submenu": {
+            "disabled": {
+              "label": "Vypnuto",
+              "tooltip": "Vypnout převod čínských znaků"
+            },
+            "simplified-to-traditional": {
+              "label": "Zjednodušené na Tradiční",
+              "tooltip": "Převést zjednodušenou čínštinu na tradiční"
+            },
+            "traditional-to-simplified": {
+              "label": "Tradiční na Zjednodušené",
+              "tooltip": "Převést tradiční čínštinu na zjednodušenou"
+            }
+          },
+          "tooltip": "Převést čínské znaky na tradiční nebo zjednodušené"
+        },
+        "lyrics-font-size": {
+          "label": "Velikost písma textů",
+          "submenu": {
+            "large": {
+              "label": "Velká",
+              "tooltip": "Použít původní větší velikost textu"
+            },
+            "medium": {
+              "label": "Střední",
+              "tooltip": "Použít vyváženou velikost textu"
+            },
+            "small": {
+              "label": "Malá",
+              "tooltip": "Použít kompaktnější velikost textu"
+            }
+          },
+          "tooltip": "Zvolte, jak velký má být text textů"
         },
         "translation": {
           "clear-cache": {
@@ -1250,7 +1240,7 @@
         },
         "use-ytm-lyrics-without-proxy": {
           "label": "Používat texty YTM bez proxy",
-          "tooltip": "Přeskočit YTM browse proxy a volat YouTube Music přímo pomocí autentizované relace aplikace. Užitečné, pokud důvěřujete své síti/oblasti, že umožňuje přímá volání procházení."
+          "tooltip": "Přeskočit YTM browse proxy a volat \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 přímo pomocí autentizované relace aplikace. Užitečné, pokud důvěřujete své síti/oblasti, že umožňuje přímá volání procházení."
         },
         "show-custom-search-button": {
           "label": "Zobrazit vlastní tlačítko vyhledávání",
@@ -1322,7 +1312,7 @@
         "opacity": {
           "label": "Průhlednost",
           "submenu": {
-            "percent": "{{opacity}} %"
+            "percent": "{{opacity}}%"
           }
         },
         "type": {
@@ -1406,6 +1396,20 @@
         "vertical-align": "Vertikální zarovnání"
       }
     },
+    "clock": {
+      "description": "Přidat hodiny do navigačního panelu",
+      "menu": {
+        "format": {
+          "24-hour-format": "24hodinový formát",
+          "display-seconds": "Zobrazovat sekundy",
+          "label": "Formát"
+        }
+      },
+      "name": "Hodiny",
+      "settings": {
+        "hour-12": "Používat 12hodinový formát"
+      }
+    },
     "audio-only": {
       "description": "Vynutí režim pouze zvuk — blokuje všechny videostreamy na úrovni sítě a přehrávače, aby se šetřila RAM a šířka pásma",
       "name": "Pouze zvuk"
@@ -1464,7 +1468,7 @@
     },
     "search-commands": {
       "commands": {
-        "play": "Přehrát video z odkazu nebo ID YouTube",
+        "play": "Přehrát video z odkazu nebo ID \u0059\u006f\u0075\u0054\u0075\u0062\u0065",
         "settings": "Otevřít nastavení"
       },
       "description": "Zadejte / do vyhledávacího pole pro spuštění příkazů s automatickým doplňováním argumentů",
@@ -1481,11 +1485,11 @@
       "name": "Zkratky pro posun"
     },
     "sfw-music": {
-      "description": "Automaticky přeskakuje skladby označené YouTube Music jako Explicit. Pozastaví se, pokud se explicitní fronta opakuje nebo není k dispozici další skladba.",
+      "description": "Automaticky přeskakuje skladby označené \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 jako Explicit. Pozastaví se, pokud se explicitní fronta opakuje nebo není k dispozici další skladba.",
       "name": "SFW hudba"
     },
     "toast-autoclose": {
-      "description": "Automaticky zavřít oznámení YouTube Music po třech sekundách",
+      "description": "Automaticky zavřít oznámení \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 po třech sekundách",
       "name": "Automatické zavírání oznámení"
     },
     "statusbar-lyrics": {
@@ -1531,7 +1535,7 @@
     "move-up": "Přesunout nahoru",
     "move-down": "Přesunout dolů",
     "about": {
-      "tagline": "Funkcemi nabitá desktopová aplikace pro YouTube Music",
+      "tagline": "Funkcemi nabitá desktopová aplikace pro \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063",
       "versions": "Verze",
       "version-app": "Aplikace",
       "version-build": "Sestavení",
@@ -1589,7 +1593,7 @@
     "stepper-decrement": "Snížit",
     "stepper-increment": "Zvýšit",
     "flags": {
-      "warning": "Příznaky funkcí jsou interní přepínače YouTube Music. Jejich změna může narušit přehrávání, rozvržení nebo funkce účtu a nejsou podporovány. Ukládají se pouze změny u příznaků, které upravíte, a lze je odstranit pomocí Vrátit.",
+      "warning": "Příznaky funkcí jsou interní přepínače \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063. Jejich změna může narušit přehrávání, rozvržení nebo funkce účtu a nejsou podporovány. Ukládají se pouze změny u příznaků, které upravíte, a lze je odstranit pomocí Vrátit.",
       "search-placeholder": "Hledat příznaky",
       "overridden": "přepsáno",
       "undo": "Vrátit",

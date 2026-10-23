@@ -156,8 +156,8 @@
               "sync": {
                 "label": "Synkroniser sprog",
                 "submenu": {
-                  "from-youtube": "Fra YouTube",
-                  "to-youtube": "Til YouTube"
+                  "from-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "Fra \u0059\u006f\u0075\u0054\u0075\u0062\u0065",
+                  "to-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "Til \u0059\u006f\u0075\u0054\u0075\u0062\u0065"
                 },
                 "failure": {
                   "dialog": {
@@ -229,7 +229,7 @@
                   "open-themes-folder": "Åbn temamappen"
                 }
               },
-              "use-ytm-icons": "Brug originale YouTube Music-ikoner"
+              "use-ytm-icons": "Brug originale \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063-ikoner"
             }
           },
           "updates": {
@@ -381,7 +381,7 @@
           }
         },
         "hostname": {
-          "label": "Værtsnavn"
+          "label": "Hostname"
         },
         "port": {
           "label": "Port"
@@ -407,11 +407,11 @@
           }
         }
       },
-      "name": "API-server [Beta]",
+      "name": "API Server [Beta]",
       "prompt": {
         "hostname": {
           "label": "Skriv API serverens hostname (f. eks. 0.0.0.0):",
-          "title": "Værtsnavn"
+          "title": "Hostname"
         },
         "port": {
           "label": "Skriv API serverens port:",
@@ -1055,7 +1055,7 @@
     },
     "search-commands": {
       "commands": {
-        "play": "Afspil en video fra et YouTube-link eller -id",
+        "play": "Afspil en video fra et \u0059\u006f\u0075\u0054\u0075\u0062\u0065-link eller -id",
         "settings": "Åbn indstillingerne"
       },
       "description": "Skriv / i søgefeltet for at køre kommandoer, med autofuldførelse af deres argumenter",
@@ -1072,7 +1072,7 @@
       "name": "Spolingsgenveje"
     },
     "sfw-music": {
-      "description": "Springer automatisk sange over, der er markeret som Eksplicit af YouTube Music. Sættes på pause, hvis en eksplicit kø gentages, eller der ikke er en næste sang.",
+      "description": "Springer automatisk sange over, der er markeret som Eksplicit af \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063. Sættes på pause, hvis en eksplicit kø gentages, eller der ikke er en næste sang.",
       "name": "SFW-musik"
     },
     "shortcuts": {
@@ -1190,7 +1190,7 @@
         },
         "use-ytm-lyrics-without-proxy": {
           "label": "Brug YTM-sangtekster uden proxy",
-          "tooltip": "Spring YTM-browse-proxyen over, og kald YouTube Music direkte ved hjælp af appens godkendte session. Nyttigt, hvis du stoler på, at dit netværk/din region tillader direkte browse-kald."
+          "tooltip": "Spring YTM-browse-proxyen over, og kald \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 direkte ved hjælp af appens godkendte session. Nyttigt, hvis du stoler på, at dit netværk/din region tillader direkte browse-kald."
         },
         "convert-chinese-character": {
           "label": "Konvertér kinesiske tegn",
@@ -1335,7 +1335,7 @@
       "name": "Mediekontrol i proceslinjen"
     },
     "toast-autoclose": {
-      "description": "Luk automatisk YouTube Music-toasts efter tre sekunder",
+      "description": "Luk automatisk \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063-toasts efter tre sekunder",
       "name": "Automatisk lukning af toasts"
     },
     "touchbar": {
@@ -1475,7 +1475,7 @@
     "move-up": "Flyt op",
     "move-down": "Flyt ned",
     "about": {
-      "tagline": "En funktionsrig skrivebordsapp til YouTube Music",
+      "tagline": "En funktionsrig skrivebordsapp til \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063",
       "versions": "Versioner",
       "version-app": "App",
       "version-build": "Build",
@@ -1533,7 +1533,7 @@
     "stepper-decrement": "Formindsk",
     "stepper-increment": "Forøg",
     "flags": {
-      "warning": "Funktionsflag er YouTube Musics egne interne omskiftere. Ændring af dem kan ødelægge afspilning, layout eller kontofunktioner, og de er ikke dækket af support. Overstyringer gemmes kun for de flag, du ændrer, og kan fjernes med Fortryd.",
+      "warning": "Funktionsflag er \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063s egne interne omskiftere. Ændring af dem kan ødelægge afspilning, layout eller kontofunktioner, og de er ikke dækket af support. Overstyringer gemmes kun for de flag, du ændrer, og kan fjernes med Fortryd.",
       "search-placeholder": "Søg i flag",
       "overridden": "tilsidesat",
       "undo": "Fortryd",

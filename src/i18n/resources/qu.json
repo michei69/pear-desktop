@@ -156,8 +156,8 @@
               "sync": {
                 "label": "Simita tinkichiy",
                 "submenu": {
-                  "from-youtube": "YouTube-manta",
-                  "to-youtube": "YouTube-man"
+                  "from-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "\u0059\u006f\u0075\u0054\u0075\u0062\u0065-manta",
+                  "to-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "\u0059\u006f\u0075\u0054\u0075\u0062\u0065-man"
                 },
                 "failure": {
                   "dialog": {
@@ -229,7 +229,7 @@
                   "open-themes-folder": "Temakuna carpeta kichay"
                 }
               },
-              "use-ytm-icons": "YouTube Music original iconokunata llamk'achiy"
+              "use-ytm-icons": "\u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 original iconokunata llamk'achiy"
             }
           },
           "updates": {
@@ -1257,7 +1257,7 @@
         },
         "use-ytm-lyrics-without-proxy": {
           "label": "YTM lyrics proxywan mana",
-          "tooltip": "YTM browse proxy-ga skip-nga app's authenticated session-ga YouTube Music-ga direct-ga call-nga. Network/region-ga direct browse calls-ga allow-nga trust-nga if useful-ga."
+          "tooltip": "YTM browse proxy-ga skip-nga app's authenticated session-ga \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063-ga direct-ga call-nga. Network/region-ga direct browse calls-ga allow-nga trust-nga if useful-ga."
         },
         "show-custom-search-button": {
           "label": "Mostrar botón de búsqueda personalizada",
@@ -1471,7 +1471,7 @@
     },
     "search-commands": {
       "commands": {
-        "play": "YouTube enlazomanta utaq idmanta videota pukllay",
+        "play": "\u0059\u006f\u0075\u0054\u0075\u0062\u0065 enlazomanta utaq idmanta videota pukllay",
         "settings": "Allichaykunata kichay"
       },
       "description": "Qillqay / maskana cajapi kamachikunata ruwanapaq, argumentos autocompletadoyuq",
@@ -1488,11 +1488,11 @@
       "name": "Seek Ñankuna"
     },
     "sfw-music": {
-      "description": "YouTube Music Explicit nisqata takikunata kikillanmanta saltan. Explicit cola kutiptin utaq qatiq taki mana kaptin sayan.",
+      "description": "\u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 Explicit nisqata takikunata kikillanmanta saltan. Explicit cola kutiptin utaq qatiq taki mana kaptin sayan.",
       "name": "SFW Takiy"
     },
     "toast-autoclose": {
-      "description": "YouTube Music toasts kinsa segundomanta qhipaman kikillanmanta wichqay",
+      "description": "\u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 toasts kinsa segundomanta qhipaman kikillanmanta wichqay",
       "name": "Toast Auto-Wichqay"
     },
     "statusbar-lyrics": {
@@ -1538,7 +1538,7 @@
     "move-up": "Wichayman apay",
     "move-down": "Urayman apay",
     "about": {
-      "tagline": "YouTube Musicpaq achka ruwayniyuq desktop app",
+      "tagline": "\u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063paq achka ruwayniyuq desktop app",
       "versions": "Versionkuna",
       "version-app": "App",
       "version-build": "Ruwasqa",
@@ -1596,7 +1596,7 @@
     "stepper-decrement": "Pisiyachiy",
     "stepper-increment": "Yapay",
     "flags": {
-      "warning": "Ruway unanchakunaqa YouTube Musicpa ukhu killpinkunam. Hukmanyachiyqa takiyninta, rikch'ayninta utaq cuenta ruwaykunata p'akiyta atin, manataq yanapaywan qhawasqachu. Hukmanyachisqakunaqa hukmanyachisqayki unanchakunallapaq waqaychasqa, Undo nisqawan qullusqa kanman.",
+      "warning": "Ruway unanchakunaqa \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063pa ukhu killpinkunam. Hukmanyachiyqa takiyninta, rikch'ayninta utaq cuenta ruwaykunata p'akiyta atin, manataq yanapaywan qhawasqachu. Hukmanyachisqakunaqa hukmanyachisqayki unanchakunallapaq waqaychasqa, Undo nisqawan qullusqa kanman.",
       "search-placeholder": "Unanchakunata maskay",
       "overridden": "hukmanyachisqa",
       "undo": "Kutichiy",

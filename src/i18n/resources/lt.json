@@ -156,8 +156,8 @@
               "sync": {
                 "label": "Sinchronizuoti kalbą",
                 "submenu": {
-                  "from-youtube": "Iš YouTube",
-                  "to-youtube": "Į YouTube"
+                  "from-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "Iš \u0059\u006f\u0075\u0054\u0075\u0062\u0065",
+                  "to-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "Į \u0059\u006f\u0075\u0054\u0075\u0062\u0065"
                 },
                 "failure": {
                   "dialog": {
@@ -181,8 +181,8 @@
               "disabled": "Išjungta",
               "enabled-and-hide-app": "Įjungta ir slėpti programos langą",
               "enabled-and-show-app": "Įjungta ir rodyti programos langą",
-              "move-to-current-desktop": "Rodant perkelti į dabartinį virtualų darbalaukį",
               "play-pause-on-click": "Paleisti/Pristabdyti ant paspaudimo",
+              "move-to-current-desktop": "Rodant perkelti į dabartinį virtualų darbalaukį",
               "force-white-icons": "Priversti naudoti baltas piktogramas"
             }
           },
@@ -229,7 +229,7 @@
                   "open-themes-folder": "Atidaryti temų aplanką"
                 }
               },
-              "use-ytm-icons": "Naudoti originalias YouTube Music piktogramas"
+              "use-ytm-icons": "Naudoti originalias \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 piktogramas"
             }
           },
           "updates": {
@@ -315,10 +315,6 @@
         "enable-seekbar": "Įjungti paieškos juostos temavimą"
       },
       "name": "Albumo Spalvų Tema"
-    },
-    "audio-only": {
-      "description": "Priverstinis tik garso režimas — blokuoja visus vaizdo srautus tinklo ir grotuvo lygiu, taupant RAM ir pralaidumą",
-      "name": "Tik Garsas"
     },
     "ambient-mode": {
       "description": "Pritaiko apšvietimo efektą, perteikdamas švelnias vaizdo įrašo spalvas į ekrano foną",
@@ -842,9 +838,9 @@
           "label": "Interaktyvūs nustatymai",
           "submenu": {
             "hide-button-text": "Paslėpti mygtuko tekstą",
-            "hover-controls": "Rodyti mini grotuvą užvedus ant padėklo",
             "refresh-on-play-pause": "Perkrauti po Paleidimo/Pristabdymo",
-            "tray-controls": "Atidaryti/Uždaryti po paspaudimo ant padėklo"
+            "tray-controls": "Atidaryti/Uždaryti po paspaudimo ant padėklo",
+            "hover-controls": "Rodyti mini grotuvą užvedus ant padėklo"
           }
         },
         "priority": "Pranešimų pirmenybė",
@@ -856,19 +852,6 @@
     "performance-improvement": {
       "description": "Pagerinkite našumą įjungdami eksperimentinius scenarijus",
       "name": "Našumo patobulinimas [Beta]"
-    },
-    "playback-recovery": {
-      "description": "Automatiškai atsistato iš užstrigusių, sustojusių ar negyvų atkūrimo būsenų",
-      "menu": {
-        "log-to-console": "Registruoti atkūrimo įvykius konsolėje"
-      },
-      "name": "Atkūrimo Atkūrimas",
-      "settings": {
-        "stall-timeout": "Užstrigimo laiko limitas",
-        "stall-timeout-description": "Kiek laiko atkūrimas gali nedaryti pažangos, kol bus bandoma atkurti",
-        "max-retries": "Maksimalus bandymų skaičius",
-        "max-retries-description": "Atkūrimo bandymų skaičius prieš peršokant prie kitos dainos"
-      }
     },
     "picture-in-picture": {
       "description": "Leidžia pakeisti programą į „nuotrauka-nuotraukoje“ rėžimą",
@@ -1038,6 +1021,10 @@
         "local-keybinds": "Vietiniai spartieji klavišai (tik kai langas aktyvus)"
       }
     },
+    "skip-disliked-songs": {
+      "description": "Praleidžia nepatinkančias dainas",
+      "name": "Praleisti Nepatinkančias Dainas"
+    },
     "skip-silences": {
       "description": "Automatiškai praleisti tylos dalis dainose",
       "name": "Praleisti Tylumas",
@@ -1112,24 +1099,6 @@
           },
           "tooltip": "Pasirinkti efektą, kurį pritaikyti dabartinei linijai"
         },
-        "lyrics-font-size": {
-          "label": "Dainų žodžių šrifto dydis",
-          "submenu": {
-            "large": {
-              "label": "Didelis",
-              "tooltip": "Naudoti originalų didesnį dainų žodžių dydį"
-            },
-            "medium": {
-              "label": "Vidutinis",
-              "tooltip": "Naudoti subalansuotą dainų žodžių dydį"
-            },
-            "small": {
-              "label": "Mažas",
-              "tooltip": "Naudoti kompaktiškesnį dainų žodžių dydį"
-            }
-          },
-          "tooltip": "Pasirinkite kokio dydžio turėtų būti dainų žodžių tekstas"
-        },
         "precise-timing": {
           "label": "Tobulai sinchronizuoti dainos žodžius",
           "tooltip": "Apskaičiuoti kitos eilutės rodymą milisekundės tikslumu (gali turėti nedidelę įtaką našumui)"
@@ -1153,6 +1122,24 @@
         "show-time-codes": {
           "label": "Rodyti laiko žymes",
           "tooltip": "Rodyti laiko žymes kartu su dainos žodžiais"
+        },
+        "lyrics-font-size": {
+          "label": "Dainų žodžių šrifto dydis",
+          "submenu": {
+            "large": {
+              "label": "Didelis",
+              "tooltip": "Naudoti originalų didesnį dainų žodžių dydį"
+            },
+            "medium": {
+              "label": "Vidutinis",
+              "tooltip": "Naudoti subalansuotą dainų žodžių dydį"
+            },
+            "small": {
+              "label": "Mažas",
+              "tooltip": "Naudoti kompaktiškesnį dainų žodžių dydį"
+            }
+          },
+          "tooltip": "Pasirinkite kokio dydžio turėtų būti dainų žodžių tekstas"
         },
         "translation": {
           "clear-cache": {
@@ -1267,7 +1254,7 @@
         },
         "use-ytm-lyrics-without-proxy": {
           "label": "Naudokite YTM dainų tekstus be proxy",
-          "tooltip": "Praleisti YTM naršymo proxy ir iškviesti YouTube Music tiesiogiai naudojant programos autentifikuotą sesiją. Naudinga, jei pasitikite savo tinklu/regionu, kad leistų tiesioginius naršymo skambučius."
+          "tooltip": "Praleisti YTM naršymo proxy ir iškviesti \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 tiesiogiai naudojant programos autentifikuotą sesiją. Naudinga, jei pasitikite savo tinklu/regionu, kad leistų tiesioginius naršymo skambučius."
         },
         "show-custom-search-button": {
           "label": "Rodyti pasirinktinį paieškos mygtuką",
@@ -1423,6 +1410,23 @@
         "vertical-align": "Vertikalus lygiavimas"
       }
     },
+    "audio-only": {
+      "description": "Priverstinis tik garso režimas — blokuoja visus vaizdo srautus tinklo ir grotuvo lygiu, taupant RAM ir pralaidumą",
+      "name": "Tik Garsas"
+    },
+    "playback-recovery": {
+      "description": "Automatiškai atsistato iš užstrigusių, sustojusių ar negyvų atkūrimo būsenų",
+      "menu": {
+        "log-to-console": "Registruoti atkūrimo įvykius konsolėje"
+      },
+      "name": "Atkūrimo Atkūrimas",
+      "settings": {
+        "stall-timeout": "Užstrigimo laiko limitas",
+        "stall-timeout-description": "Kiek laiko atkūrimas gali nedaryti pažangos, kol bus bandoma atkurti",
+        "max-retries": "Maksimalus bandymų skaičius",
+        "max-retries-description": "Atkūrimo bandymų skaičius prieš peršokant prie kitos dainos"
+      }
+    },
     "playlist-search": {
       "description": "Prideda paieškos įvestį, skirtą filtruoti grojaraščius šoninėje juostoje ir dialogo lange „Pridėti prie grojaraščio“",
       "name": "Paieškos grojaraštyje",
@@ -1464,7 +1468,7 @@
     },
     "search-commands": {
       "commands": {
-        "play": "Leisti vaizdo įrašą pagal YouTube nuorodą arba ID",
+        "play": "Leisti vaizdo įrašą pagal \u0059\u006f\u0075\u0054\u0075\u0062\u0065 nuorodą arba ID",
         "settings": "Atidaryti nustatymus"
       },
       "description": "Įveskite / paieškos lauke, kad vykdytumėte komandas, su argumentų automatinio užbaigimo funkcija",
@@ -1481,11 +1485,11 @@
       "name": "Peršokimo spartieji klavišai"
     },
     "sfw-music": {
-      "description": "Automatiškai praleidžia YouTube Music pažymėtas kaip „Explicit“ dainas. Pristabdo, jei pasikartoja explicit eilė arba nėra kitos dainos.",
+      "description": "Automatiškai praleidžia \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 pažymėtas kaip „Explicit“ dainas. Pristabdo, jei pasikartoja explicit eilė arba nėra kitos dainos.",
       "name": "SFW muzika"
     },
     "toast-autoclose": {
-      "description": "Automatiškai uždaryti YouTube Music pranešimus po trijų sekundžių",
+      "description": "Automatiškai uždaryti \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 pranešimus po trijų sekundžių",
       "name": "Automatinis pranešimų uždarymas"
     },
     "statusbar-lyrics": {
@@ -1531,7 +1535,7 @@
     "move-up": "Perkelti aukštyn",
     "move-down": "Perkelti žemyn",
     "about": {
-      "tagline": "Funkcijų turtinga „YouTube Music“ darbalaukio programa",
+      "tagline": "Funkcijų turtinga „\u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063“ darbalaukio programa",
       "versions": "Versijos",
       "version-app": "Programa",
       "version-build": "Surinkimas",
@@ -1589,7 +1593,7 @@
     "stepper-decrement": "Sumažinti",
     "stepper-increment": "Padidinti",
     "flags": {
-      "warning": "Funkcijų vėliavėlės yra pačios „YouTube Music“ vidinės jungtys. Jų keitimas gali sutrikdyti atkūrimą, išdėstymą ar paskyros funkcijas, ir jos nėra palaikomos. Perrašymai saugomi tik toms vėliavėlėms, kurias pakeisite, ir juos galima pašalinti naudojant Anuliuoti.",
+      "warning": "Funkcijų vėliavėlės yra pačios „\u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063“ vidinės jungtys. Jų keitimas gali sutrikdyti atkūrimą, išdėstymą ar paskyros funkcijas, ir jos nėra palaikomos. Perrašymai saugomi tik toms vėliavėlėms, kurias pakeisite, ir juos galima pašalinti naudojant Anuliuoti.",
       "search-placeholder": "Ieškoti vėliavėlių",
       "overridden": "pakeista",
       "undo": "Anuliuoti",

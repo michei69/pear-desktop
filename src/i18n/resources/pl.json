@@ -156,8 +156,8 @@
               "sync": {
                 "label": "Synchronizuj język",
                 "submenu": {
-                  "from-youtube": "Z YouTube",
-                  "to-youtube": "Do YouTube"
+                  "from-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "Z \u0059\u006f\u0075\u0054\u0075\u0062\u0065",
+                  "to-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "Do \u0059\u006f\u0075\u0054\u0075\u0062\u0065"
                 },
                 "failure": {
                   "dialog": {
@@ -229,7 +229,7 @@
                   "open-themes-folder": "Otwórz folder motywów"
                 }
               },
-              "use-ytm-icons": "Używaj oryginalnych ikon YouTube Music"
+              "use-ytm-icons": "Używaj oryginalnych ikon \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063"
             }
           },
           "updates": {
@@ -1040,6 +1040,10 @@
         "local-keybinds": "Skróty lokalne (tylko gdy okno jest aktywne)"
       }
     },
+    "skip-disliked-songs": {
+      "description": "Pomija nieulubione piosenki (zaznaczone łapką w dół)",
+      "name": "Pomijanie nieulubionych piosenek"
+    },
     "skip-silences": {
       "description": "Automatycznie pomijaj sekcje bez dźwięku w utworach",
       "name": "Pomiń ciszę",
@@ -1114,24 +1118,6 @@
           },
           "tooltip": "Wybierz efekt, by zastosować go do aktualnej linijki"
         },
-        "lyrics-font-size": {
-          "label": "Rozmiar czcionki tekstu",
-          "submenu": {
-            "large": {
-              "label": "Duży",
-              "tooltip": "Użyj oryginalnego większego rozmiaru tekstu"
-            },
-            "medium": {
-              "label": "Średni",
-              "tooltip": "Użyj zrównoważonego rozmiaru tekstu"
-            },
-            "small": {
-              "label": "Mały",
-              "tooltip": "Użyj bardziej kompaktowego rozmiaru tekstu"
-            }
-          },
-          "tooltip": "Wybierz, jak duży ma być tekst utworu"
-        },
         "precise-timing": {
           "label": "Zsynchronizuj tekst utworu do perfekcji",
           "tooltip": "Wylicz czas wyświetlania następnej linijki co do milisekundy (może mieć mały wpływ na wydajność systemu)"
@@ -1155,6 +1141,24 @@
         "show-time-codes": {
           "label": "Pokaż znaczniki czasu",
           "tooltip": "Pokaż znaczniki czasu obok linijek"
+        },
+        "lyrics-font-size": {
+          "label": "Rozmiar czcionki tekstu",
+          "submenu": {
+            "large": {
+              "label": "Duży",
+              "tooltip": "Użyj oryginalnego większego rozmiaru tekstu"
+            },
+            "medium": {
+              "label": "Średni",
+              "tooltip": "Użyj zrównoważonego rozmiaru tekstu"
+            },
+            "small": {
+              "label": "Mały",
+              "tooltip": "Użyj bardziej kompaktowego rozmiaru tekstu"
+            }
+          },
+          "tooltip": "Wybierz, jak duży ma być tekst utworu"
         },
         "translation": {
           "clear-cache": {
@@ -1269,7 +1273,7 @@
         },
         "use-ytm-lyrics-without-proxy": {
           "label": "Użyj tekstów YTM bez proxy",
-          "tooltip": "Pomiń proxy przeglądania YTM i wywołaj YouTube Music bezpośrednio, używając uwierzytelnionej sesji aplikacji. Przydatne, jeśli ufasz swojej sieci/regionowi, że zezwala na bezpośrednie wywołania przeglądania."
+          "tooltip": "Pomiń proxy przeglądania YTM i wywołaj \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 bezpośrednio, używając uwierzytelnionej sesji aplikacji. Przydatne, jeśli ufasz swojej sieci/regionowi, że zezwala na bezpośrednie wywołania przeglądania."
         },
         "show-custom-search-button": {
           "label": "Pokaż niestandardowy przycisk wyszukiwania",
@@ -1464,7 +1468,7 @@
     },
     "search-commands": {
       "commands": {
-        "play": "Odtwórz film z linku lub identyfikatora YouTube",
+        "play": "Odtwórz film z linku lub identyfikatora \u0059\u006f\u0075\u0054\u0075\u0062\u0065",
         "settings": "Otwórz ustawienia"
       },
       "description": "Wpisz / w polu wyszukiwania, aby uruchomić polecenia, z autouzupełnianiem ich argumentów",
@@ -1481,11 +1485,11 @@
       "name": "Skróty przewijania"
     },
     "sfw-music": {
-      "description": "Automatycznie pomija utwory oznaczone przez YouTube Music jako Explicit. Wstrzymuje odtwarzanie, jeśli kolejka zawiera same utwory Explicit lub nie ma następnego utworu.",
+      "description": "Automatycznie pomija utwory oznaczone przez \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 jako Explicit. Wstrzymuje odtwarzanie, jeśli kolejka zawiera same utwory Explicit lub nie ma następnego utworu.",
       "name": "Muzyka SFW"
     },
     "toast-autoclose": {
-      "description": "Automatycznie zamykaj powiadomienia YouTube Music po trzech sekundach",
+      "description": "Automatycznie zamykaj powiadomienia \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 po trzech sekundach",
       "name": "Automatyczne zamykanie powiadomień"
     },
     "statusbar-lyrics": {
@@ -1531,7 +1535,7 @@
     "move-up": "Przenieś w górę",
     "move-down": "Przenieś w dół",
     "about": {
-      "tagline": "Bogata w funkcje aplikacja desktopowa do YouTube Music",
+      "tagline": "Bogata w funkcje aplikacja desktopowa do \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063",
       "versions": "Wersje",
       "version-app": "Aplikacja",
       "version-build": "Kompilacja",
@@ -1589,7 +1593,7 @@
     "stepper-decrement": "Zmniejsz",
     "stepper-increment": "Zwiększ",
     "flags": {
-      "warning": "Flagi funkcji są wewnętrznymi przełącznikami samego YouTube Music. Ich zmiana może zepsuć odtwarzanie, układ lub funkcje konta, a nie są one objęte pomocą techniczną. Nadpisania są zachowywane tylko dla flag, które zmienisz, i można je usunąć przyciskiem Cofnij.",
+      "warning": "Flagi funkcji są wewnętrznymi przełącznikami samego \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063. Ich zmiana może zepsuć odtwarzanie, układ lub funkcje konta, a nie są one objęte pomocą techniczną. Nadpisania są zachowywane tylko dla flag, które zmienisz, i można je usunąć przyciskiem Cofnij.",
       "search-placeholder": "Szukaj flag",
       "overridden": "nadpisana",
       "undo": "Cofnij",

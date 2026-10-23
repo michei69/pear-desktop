@@ -156,8 +156,8 @@
               "sync": {
                 "label": "Sincronizează limba",
                 "submenu": {
-                  "from-youtube": "Din YouTube",
-                  "to-youtube": "Către YouTube"
+                  "from-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "Din \u0059\u006f\u0075\u0054\u0075\u0062\u0065",
+                  "to-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "Către \u0059\u006f\u0075\u0054\u0075\u0062\u0065"
                 },
                 "failure": {
                   "dialog": {
@@ -176,7 +176,7 @@
             "unset": "Deselectat"
           },
           "tray": {
-            "label": "Zonă de notificare",
+            "label": "Tray",
             "submenu": {
               "disabled": "Dezactivat",
               "enabled-and-hide-app": "Activează și ascunde fereastra aplicației",
@@ -197,7 +197,7 @@
                 }
               },
               "like-buttons": {
-                "default": "Implicit",
+                "default": "Default",
                 "force-show": "Forțează randarea",
                 "hide": "Ascunde",
                 "label": "Butoane de like",
@@ -229,7 +229,7 @@
                   "open-themes-folder": "Deschide folderul de teme"
                 }
               },
-              "use-ytm-icons": "Folosește pictogramele originale YouTube Music"
+              "use-ytm-icons": "Folosește pictogramele originale \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063"
             }
           },
           "updates": {
@@ -253,7 +253,7 @@
       },
       "plugins": {
         "enabled": "Activat",
-        "label": "Plugin-uri",
+        "label": "Plugins",
         "new": "NOU"
       },
       "view": {
@@ -500,15 +500,15 @@
       }
     },
     "clock": {
-      "description": "Adaugă un ceas în bara de navigare",
       "menu": {
         "format": {
+          "label": "Format",
           "24-hour-format": "Format 24 de ore",
-          "display-seconds": "Afișează secundele",
-          "label": "Format"
+          "display-seconds": "Afișează secundele"
         }
       },
       "name": "Ceas",
+      "description": "Adaugă un ceas în bara de navigare",
       "settings": {
         "hour-12": "Folosește formatul de 12 ore"
       }
@@ -878,9 +878,9 @@
           }
         }
       },
-      "name": "Imagine în imagine",
+      "name": "Picture-in-picture",
       "templates": {
-        "button": "Imagine în imagine"
+        "button": "Picture-in-picture"
       }
     },
     "playback-speed": {
@@ -1021,6 +1021,10 @@
         "local-keybinds": "Scurtături locale (doar când fereastra este activă)"
       }
     },
+    "skip-disliked-songs": {
+      "description": "Sari peste melodiile neplăcute",
+      "name": "Treci peste melodiile neplăcute"
+    },
     "skip-silences": {
       "description": "Treci automat peste secțiunile de liniște din melodii",
       "name": "Treci peste liniște",
@@ -1052,7 +1056,6 @@
       },
       "menu": {
         "convert-chinese-character": {
-          "label": "Convertește caracterele chinezești",
           "submenu": {
             "disabled": {
               "label": "Dezactivat",
@@ -1067,6 +1070,7 @@
               "tooltip": "Convertește chineza tradițională în chineză simplificată"
             }
           },
+          "label": "Convertește caracterele chinezești",
           "tooltip": "Convertește caracterele chinezești în tradițional sau simplificat"
         },
         "default-text-string": {
@@ -1095,24 +1099,6 @@
           },
           "tooltip": "Alege efectul aplicat liniei curente"
         },
-        "lyrics-font-size": {
-          "label": "Dimensiune font versuri",
-          "submenu": {
-            "large": {
-              "label": "Mare",
-              "tooltip": "Folosește dimensiunea originală mai mare a versurilor"
-            },
-            "medium": {
-              "label": "Mediu",
-              "tooltip": "Folosește o dimensiune echilibrată a versurilor"
-            },
-            "small": {
-              "label": "Mic",
-              "tooltip": "Folosește o dimensiune mai compactă a versurilor"
-            }
-          },
-          "tooltip": "Alege cât de mari să fie versurile"
-        },
         "precise-timing": {
           "label": "Sincronizează versurile perfect",
           "tooltip": "Calculează afisarea următoarei linii până la milisecundă (poate afecta performanța)"
@@ -1136,6 +1122,24 @@
         "show-time-codes": {
           "label": "Afișează codurile de timp",
           "tooltip": "Afișează codurile de timp lângă versuri"
+        },
+        "lyrics-font-size": {
+          "label": "Dimensiune font versuri",
+          "submenu": {
+            "large": {
+              "label": "Mare",
+              "tooltip": "Folosește dimensiunea originală mai mare a versurilor"
+            },
+            "medium": {
+              "label": "Mediu",
+              "tooltip": "Folosește o dimensiune echilibrată a versurilor"
+            },
+            "small": {
+              "label": "Mic",
+              "tooltip": "Folosește o dimensiune mai compactă a versurilor"
+            }
+          },
+          "tooltip": "Alege cât de mari să fie versurile"
         },
         "translation": {
           "clear-cache": {
@@ -1250,7 +1254,7 @@
         },
         "use-ytm-lyrics-without-proxy": {
           "label": "Folosește versurile YTM fără proxy",
-          "tooltip": "Omite proxy-ul de navigare YTM și apelează direct YouTube Music folosind sesiunea autentificată a aplicației. Util dacă ai încredere în rețeaua/regiunea ta pentru a permite apeluri directe de navigare."
+          "tooltip": "Omite proxy-ul de navigare YTM și apelează direct \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 folosind sesiunea autentificată a aplicației. Util dacă ai încredere în rețeaua/regiunea ta pentru a permite apeluri directe de navigare."
         },
         "show-custom-search-button": {
           "label": "Afișează butonul personalizat de căutare",
@@ -1464,7 +1468,7 @@
     },
     "search-commands": {
       "commands": {
-        "play": "Redă un videoclip dintr-un link sau ID YouTube",
+        "play": "Redă un videoclip dintr-un link sau ID \u0059\u006f\u0075\u0054\u0075\u0062\u0065",
         "settings": "Deschide setările"
       },
       "description": "Tastați / în caseta de căutare pentru a rula comenzi, cu autocompletare pentru argumentele lor",
@@ -1481,11 +1485,11 @@
       "name": "Scurtături de salt"
     },
     "sfw-music": {
-      "description": "Omite automat piesele marcate ca Explicit de YouTube Music. Se pune pe pauză dacă o coadă explicită se repetă sau nu există o piesă următoare disponibilă.",
+      "description": "Omite automat piesele marcate ca Explicit de \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063. Se pune pe pauză dacă o coadă explicită se repetă sau nu există o piesă următoare disponibilă.",
       "name": "Muzică SFW"
     },
     "toast-autoclose": {
-      "description": "Închide automat notificările YouTube Music după trei secunde",
+      "description": "Închide automat notificările \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 după trei secunde",
       "name": "Închidere automată a notificărilor"
     },
     "statusbar-lyrics": {
@@ -1531,7 +1535,7 @@
     "move-up": "Mută în sus",
     "move-down": "Mută în jos",
     "about": {
-      "tagline": "O aplicație desktop bogată în funcții pentru YouTube Music",
+      "tagline": "O aplicație desktop bogată în funcții pentru \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063",
       "versions": "Versiuni",
       "version-app": "Aplicație",
       "version-build": "Build",
@@ -1589,7 +1593,7 @@
     "stepper-decrement": "Micșorează",
     "stepper-increment": "Mărește",
     "flags": {
-      "warning": "Flagurile de funcționalitate sunt comutatoarele interne proprii ale YouTube Music. Modificarea lor poate afecta redarea, aspectul sau funcțiile contului și nu sunt acoperite de asistență. Suprascrierile sunt păstrate doar pentru flagurile pe care le modificați și pot fi eliminate cu Anulează.",
+      "warning": "Flagurile de funcționalitate sunt comutatoarele interne proprii ale \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063. Modificarea lor poate afecta redarea, aspectul sau funcțiile contului și nu sunt acoperite de asistență. Suprascrierile sunt păstrate doar pentru flagurile pe care le modificați și pot fi eliminate cu Anulează.",
       "search-placeholder": "Caută flaguri",
       "overridden": "suprascris",
       "undo": "Anulează",

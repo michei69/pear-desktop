@@ -156,8 +156,8 @@
               "sync": {
                 "label": "Synchroniser la langue",
                 "submenu": {
-                  "from-youtube": "Depuis YouTube",
-                  "to-youtube": "Vers YouTube"
+                  "from-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "Depuis \u0059\u006f\u0075\u0054\u0075\u0062\u0065",
+                  "to-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "Vers \u0059\u006f\u0075\u0054\u0075\u0062\u0065"
                 },
                 "failure": {
                   "dialog": {
@@ -181,8 +181,8 @@
               "disabled": "Désactivé",
               "enabled-and-hide-app": "Activé et cacher l'app",
               "enabled-and-show-app": "Activé et afficher l'application",
-              "move-to-current-desktop": "Déplacer vers le bureau virtuel actuel lors de l'affichage",
               "play-pause-on-click": "Lecture/Pause au clic",
+              "move-to-current-desktop": "Déplacer vers le bureau virtuel actuel lors de l'affichage",
               "force-white-icons": "Forcer l'utilisation d'icônes blanches"
             }
           },
@@ -229,7 +229,7 @@
                   "open-themes-folder": "Ouvrir le dossier des thèmes"
                 }
               },
-              "use-ytm-icons": "Utiliser les icônes originales de YouTube Music"
+              "use-ytm-icons": "Utiliser les icônes originales de \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063"
             }
           },
           "updates": {
@@ -309,7 +309,7 @@
         "color-mix-ratio": {
           "label": "Ratio de mélange des couleurs",
           "submenu": {
-            "percent": "{{ratio}} %"
+            "percent": "{{ratio}}%"
           }
         },
         "enable-seekbar": "Activer le thème sur la barre de progression"
@@ -334,7 +334,7 @@
         "opacity": {
           "label": "Opacité",
           "submenu": {
-            "percent": "{{opacity}} %"
+            "percent": "{{opacity}}%"
           }
         },
         "quality": {
@@ -346,7 +346,7 @@
         "size": {
           "label": "Taille",
           "submenu": {
-            "percent": "{{size}} %"
+            "percent": "{{size}}%"
           }
         },
         "smoothness-transition": {
@@ -360,10 +360,6 @@
         }
       },
       "name": "Mode ambiant"
-    },
-    "audio-only": {
-      "description": "Force le mode audio uniquement — bloque tous les flux vidéo au niveau du réseau et du lecteur pour économiser la RAM et la bande passante",
-      "name": "Audio Uniquement"
     },
     "amuse": {
       "description": "Ajout de la prise en charge de {{applicationName}} pour le widget Amuse now playing de 6K Labs",
@@ -738,7 +734,7 @@
     },
     "lumiastream": {
       "description": "Ajoute la prise en charge de Lumia Stream",
-      "name": "Lumia Stream [Bêta]"
+      "name": "Lumia Stream [Beta]"
     },
     "lyrics-genius": {
       "description": "Ajoute la prise en charge des paroles pour la plupart des chansons",
@@ -861,9 +857,9 @@
           "label": "Paramètres interactifs",
           "submenu": {
             "hide-button-text": "Masquer le texte du bouton",
-            "hover-controls": "Afficher le mini-lecteur au survol de la barre d'état",
             "refresh-on-play-pause": "Actualiser lors de la lecture/pause",
-            "tray-controls": "Ouvrir/Fermer au clic sur l’icône de la barre des tâches"
+            "tray-controls": "Ouvrir/Fermer au clic sur l’icône de la barre des tâches",
+            "hover-controls": "Afficher le mini-lecteur au survol de la barre d'état"
           }
         },
         "priority": "Priorité des notifications",
@@ -875,19 +871,6 @@
     "performance-improvement": {
       "description": "Améliorer les performances en activant les scripts expérimentaux",
       "name": "Amélioration des performances [Beta]"
-    },
-    "playback-recovery": {
-      "description": "Récupère automatiquement des états de lecture bloqués, arrêtés ou morts",
-      "menu": {
-        "log-to-console": "Enregistrer les événements de récupération dans la console"
-      },
-      "name": "Récupération de lecture",
-      "settings": {
-        "stall-timeout": "Délai avant blocage",
-        "stall-timeout-description": "Durée pendant laquelle la lecture peut ne pas progresser avant une tentative de récupération",
-        "max-retries": "Nombre maximal de tentatives",
-        "max-retries-description": "Nombre de tentatives de récupération avant de passer à la piste suivante"
-      }
     },
     "picture-in-picture": {
       "description": "Permet de basculer l’application en mode picture-in-picture",
@@ -914,9 +897,9 @@
           }
         }
       },
-      "name": "Image dans l'image",
+      "name": "Picture-in-picture",
       "templates": {
-        "button": "Image dans l'image"
+        "button": "Picture-in-picture"
       }
     },
     "playback-speed": {
@@ -1057,6 +1040,10 @@
         "local-keybinds": "Raccourcis locaux (uniquement lorsque la fenêtre est active)"
       }
     },
+    "skip-disliked-songs": {
+      "description": "Passe les titres \"Je n'aime pas\"",
+      "name": "Passer les titres \"Je n'aime pas\""
+    },
     "skip-silences": {
       "description": "Ignorer automatiquement les sections de silence dans les chansons",
       "name": "Passer les silences",
@@ -1131,24 +1118,6 @@
           },
           "tooltip": "Choisi l'effet à appliquer sur la ligne actuelle"
         },
-        "lyrics-font-size": {
-          "label": "Taille de la police des paroles",
-          "submenu": {
-            "large": {
-              "label": "Grand",
-              "tooltip": "Utiliser la taille originale plus large des paroles"
-            },
-            "medium": {
-              "label": "Moyen",
-              "tooltip": "Utiliser une taille de paroles équilibrée"
-            },
-            "small": {
-              "label": "Petit",
-              "tooltip": "Utiliser une taille de paroles plus compacte"
-            }
-          },
-          "tooltip": "Choisissez la taille du texte des paroles"
-        },
         "precise-timing": {
           "label": "Rend les paroles parfaitement synchronisées",
           "tooltip": "Calcul à la milliseconde près l'affichage de la ligne suivante (peut avoir un faible impact sur les performances)"
@@ -1172,6 +1141,24 @@
         "show-time-codes": {
           "label": "Afficher les timecodes",
           "tooltip": "Affiche le timecode à côté de chaque paroles"
+        },
+        "lyrics-font-size": {
+          "label": "Taille de la police des paroles",
+          "submenu": {
+            "large": {
+              "label": "Grand",
+              "tooltip": "Utiliser la taille originale plus large des paroles"
+            },
+            "medium": {
+              "label": "Moyen",
+              "tooltip": "Utiliser une taille de paroles équilibrée"
+            },
+            "small": {
+              "label": "Petit",
+              "tooltip": "Utiliser une taille de paroles plus compacte"
+            }
+          },
+          "tooltip": "Choisissez la taille du texte des paroles"
         },
         "translation": {
           "clear-cache": {
@@ -1286,7 +1273,7 @@
         },
         "use-ytm-lyrics-without-proxy": {
           "label": "Utiliser les paroles YTM sans proxy",
-          "tooltip": "Contourner le proxy de navigation YTM et appeler YouTube Music directement en utilisant la session authentifiée de l'application. Utile si vous faites confiance à votre réseau/région pour autoriser les appels de navigation directs."
+          "tooltip": "Contourner le proxy de navigation YTM et appeler \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 directement en utilisant la session authentifiée de l'application. Utile si vous faites confiance à votre réseau/région pour autoriser les appels de navigation directs."
         },
         "show-custom-search-button": {
           "label": "Afficher le bouton de recherche personnalisé",
@@ -1442,6 +1429,23 @@
         "vertical-align": "Alignement vertical"
       }
     },
+    "audio-only": {
+      "description": "Force le mode audio uniquement — bloque tous les flux vidéo au niveau du réseau et du lecteur pour économiser la RAM et la bande passante",
+      "name": "Audio Uniquement"
+    },
+    "playback-recovery": {
+      "description": "Récupère automatiquement des états de lecture bloqués, arrêtés ou morts",
+      "menu": {
+        "log-to-console": "Enregistrer les événements de récupération dans la console"
+      },
+      "name": "Récupération de lecture",
+      "settings": {
+        "stall-timeout": "Délai avant blocage",
+        "stall-timeout-description": "Durée pendant laquelle la lecture peut ne pas progresser avant une tentative de récupération",
+        "max-retries": "Nombre maximal de tentatives",
+        "max-retries-description": "Nombre de tentatives de récupération avant de passer à la piste suivante"
+      }
+    },
     "playlist-search": {
       "description": "Ajoute un champ de recherche pour filtrer les playlists dans la barre latérale et la boîte de dialogue Ajouter à la playlist",
       "name": "Recherche de playlist",
@@ -1464,7 +1468,7 @@
     },
     "search-commands": {
       "commands": {
-        "play": "Lire une vidéo à partir d'un lien ou d'un identifiant YouTube",
+        "play": "Lire une vidéo à partir d'un lien ou d'un identifiant \u0059\u006f\u0075\u0054\u0075\u0062\u0065",
         "settings": "Ouvrir les paramètres"
       },
       "description": "Tapez / dans la zone de recherche pour exécuter des commandes, avec autocomplétion de leurs arguments",
@@ -1481,11 +1485,11 @@
       "name": "Raccourcis de déplacement"
     },
     "sfw-music": {
-      "description": "Ignore automatiquement les chansons marquées Explicit par YouTube Music. Met en pause si une file explicite se répète ou si aucune chanson suivante n'est disponible.",
+      "description": "Ignore automatiquement les chansons marquées Explicit par \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063. Met en pause si une file explicite se répète ou si aucune chanson suivante n'est disponible.",
       "name": "Musique pour tous publics"
     },
     "toast-autoclose": {
-      "description": "Ferme automatiquement les notifications YouTube Music après trois secondes",
+      "description": "Ferme automatiquement les notifications \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 après trois secondes",
       "name": "Fermeture automatique des notifications"
     },
     "statusbar-lyrics": {
@@ -1531,7 +1535,7 @@
     "move-up": "Monter",
     "move-down": "Descendre",
     "about": {
-      "tagline": "Une application de bureau riche en fonctionnalités pour YouTube Music",
+      "tagline": "Une application de bureau riche en fonctionnalités pour \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063",
       "versions": "Versions",
       "version-app": "Application",
       "version-build": "Build",
@@ -1589,7 +1593,7 @@
     "stepper-decrement": "Diminuer",
     "stepper-increment": "Augmenter",
     "flags": {
-      "warning": "Les indicateurs de fonctionnalité sont des commutateurs internes propres à YouTube Music. Les modifier peut casser la lecture, la mise en page ou les fonctionnalités du compte, et ils ne sont pas couverts par le support. Les remplacements ne sont conservés que pour les indicateurs que vous modifiez, et peuvent être supprimés avec Annuler.",
+      "warning": "Les indicateurs de fonctionnalité sont des commutateurs internes propres à \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063. Les modifier peut casser la lecture, la mise en page ou les fonctionnalités du compte, et ils ne sont pas couverts par le support. Les remplacements ne sont conservés que pour les indicateurs que vous modifiez, et peuvent être supprimés avec Annuler.",
       "search-placeholder": "Rechercher des indicateurs",
       "overridden": "remplacé",
       "undo": "Annuler",

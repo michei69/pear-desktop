@@ -156,8 +156,8 @@
               "sync": {
                 "label": "Sincronitza l'idioma",
                 "submenu": {
-                  "from-youtube": "Des de YouTube",
-                  "to-youtube": "A YouTube"
+                  "from-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "Des de \u0059\u006f\u0075\u0054\u0075\u0062\u0065",
+                  "to-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "A \u0059\u006f\u0075\u0054\u0075\u0062\u0065"
                 },
                 "failure": {
                   "dialog": {
@@ -229,7 +229,7 @@
                   "open-themes-folder": "Obre la carpeta de temes"
                 }
               },
-              "use-ytm-icons": "Utilitza les icones originals de YouTube Music"
+              "use-ytm-icons": "Utilitza les icones originals de \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063"
             }
           },
           "updates": {
@@ -326,7 +326,7 @@
           }
         },
         "buffer": {
-          "label": "Memòria intermèdia",
+          "label": "Buffer",
           "submenu": {
             "buffer": "{{buffer}}"
           }
@@ -450,7 +450,7 @@
         "disable": "Desactivar adaptador Proxy",
         "enable": "Activar adaptador Proxy",
         "hostname": {
-          "label": "Nom d'amfitrió"
+          "label": "Hostname"
         },
         "port": {
           "label": "Port"
@@ -530,7 +530,7 @@
             "fade-out-duration": "Durada de la transició de sortida (ms)",
             "fade-scaling": {
               "label": "Escala de la transició",
-              "linear": "Lineal",
+              "linear": "Linear",
               "logarithmic": "Logarítmica",
               "equal-power": "Potència igual"
             },
@@ -1040,6 +1040,10 @@
         "local-keybinds": "Dreceres locals (només mentre la finestra té el focus)"
       }
     },
+    "skip-disliked-songs": {
+      "description": "Salta les cançons amb «no m'agrada»",
+      "name": "Salta les cançons que no t'agraden"
+    },
     "skip-silences": {
       "description": "Omet automàticament les seccions amb silenci a les cançons",
       "name": "Omet els silencis",
@@ -1114,24 +1118,6 @@
           },
           "tooltip": "Tria l'efecte a aplicar a la línia actual"
         },
-        "lyrics-font-size": {
-          "label": "Mida de la lletra",
-          "submenu": {
-            "large": {
-              "label": "Gran",
-              "tooltip": "Utilitza la mida de lletra original més gran"
-            },
-            "medium": {
-              "label": "Mitjana",
-              "tooltip": "Utilitza una mida de lletra equilibrada"
-            },
-            "small": {
-              "label": "Petita",
-              "tooltip": "Utilitza una mida de lletra més compacta"
-            }
-          },
-          "tooltip": "Tria com de gran ha de ser el text de la lletra"
-        },
         "precise-timing": {
           "label": "Fes que les lletres es sincronitzin a la perfecció",
           "tooltip": "Calcula al mil·lisegon l'aparició de la següent línia (pot tenir un petit impacte en el rendiment)"
@@ -1155,6 +1141,24 @@
         "show-time-codes": {
           "label": "Mostra els codis de temps",
           "tooltip": "Mostra els codis de temps al costat de la lletra"
+        },
+        "lyrics-font-size": {
+          "label": "Mida de la lletra",
+          "submenu": {
+            "large": {
+              "label": "Gran",
+              "tooltip": "Utilitza la mida de lletra original més gran"
+            },
+            "medium": {
+              "label": "Mitjana",
+              "tooltip": "Utilitza una mida de lletra equilibrada"
+            },
+            "small": {
+              "label": "Petita",
+              "tooltip": "Utilitza una mida de lletra més compacta"
+            }
+          },
+          "tooltip": "Tria com de gran ha de ser el text de la lletra"
         },
         "translation": {
           "clear-cache": {
@@ -1269,7 +1273,7 @@
         },
         "use-ytm-lyrics-without-proxy": {
           "label": "Utilitza lletres de YTM sense proxy",
-          "tooltip": "Omet el proxy de navegació YTM i crida directament a YouTube Music utilitzant la sessió autenticada de l'aplicació. Útil si confies en la teva xarxa/regió per permetre crides de navegació directes."
+          "tooltip": "Omet el proxy de navegació YTM i crida directament a \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 utilitzant la sessió autenticada de l'aplicació. Útil si confies en la teva xarxa/regió per permetre crides de navegació directes."
         },
         "show-custom-search-button": {
           "label": "Mostra el botó de cerca personalitzada",
@@ -1464,7 +1468,7 @@
     },
     "search-commands": {
       "commands": {
-        "play": "Reprodueix un vídeo a partir d'un enllaç o identificador de YouTube",
+        "play": "Reprodueix un vídeo a partir d'un enllaç o identificador de \u0059\u006f\u0075\u0054\u0075\u0062\u0065",
         "settings": "Obre la configuració"
       },
       "description": "Escriu / al quadre de cerca per executar ordres, amb autocompletat per als seus arguments",
@@ -1481,11 +1485,11 @@
       "name": "Dreceres de salt"
     },
     "sfw-music": {
-      "description": "Omet automàticament les cançons marcades com a explícites per YouTube Music. Es posa en pausa si una cua explícita es repeteix o no hi ha cap cançó següent disponible.",
+      "description": "Omet automàticament les cançons marcades com a explícites per \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063. Es posa en pausa si una cua explícita es repeteix o no hi ha cap cançó següent disponible.",
       "name": "Música SFW"
     },
     "toast-autoclose": {
-      "description": "Tanca automàticament els avisos de YouTube Music al cap de tres segons",
+      "description": "Tanca automàticament els avisos de \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 al cap de tres segons",
       "name": "Tancament automàtic dels avisos"
     },
     "statusbar-lyrics": {
@@ -1531,7 +1535,7 @@
     "move-up": "Mou amunt",
     "move-down": "Mou avall",
     "about": {
-      "tagline": "Una aplicació d'escriptori amb moltes funcions per a YouTube Music",
+      "tagline": "Una aplicació d'escriptori amb moltes funcions per a \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063",
       "versions": "Versions",
       "version-app": "Aplicació",
       "version-build": "Compilació",
@@ -1589,7 +1593,7 @@
     "stepper-decrement": "Disminueix",
     "stepper-increment": "Augmenta",
     "flags": {
-      "warning": "Els flags de funcions són interruptors interns propis de YouTube Music. Canviar-los pot trencar la reproducció, el disseny o les funcions del compte, i no estan coberts pel suport. Els canvis només es conserven per als flags que modifiques i es poden eliminar amb Desfés.",
+      "warning": "Els flags de funcions són interruptors interns propis de \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063. Canviar-los pot trencar la reproducció, el disseny o les funcions del compte, i no estan coberts pel suport. Els canvis només es conserven per als flags que modifiques i es poden eliminar amb Desfés.",
       "search-placeholder": "Cerca flags",
       "overridden": "substituït",
       "undo": "Desfés",

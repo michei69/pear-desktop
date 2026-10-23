@@ -1,52 +1,75 @@
 # Theme engine internals
 
-The theme engine is split between the main process, which owns the files and consent state, and the renderer, which injects the selected theme into the YouTube Music page.
+The theme engine is split between the main process, which owns the files, consent and configuration, and the page runtime, which applies the selected theme inside YTM.
 
 ## How a theme is applied
 
-1. **Reading.** `loadThemes()` in `src/themes/main.ts` scans the themes directory with `readThemesFrom()` in `src/themes/load.ts`. Each folder's `theme.json` is parsed and validated, the declared CSS files are concatenated in order and the declared script's source is hashed with SHA-256. A folder that fails validation is skipped with a warning; unreadable CSS files are dropped; a missing script file degrades to a theme with no script.
-2. **Filtering.** `themesForRenderer()` returns themes with the script removed unless `options.themeConsent[id]` matches the script's hash.
-3. **Serving.** The renderer asks for the state over the `peard:get-themes` channel, handled in `src/index.ts`. The response contains the filtered theme list, the selected id and `overrides`, the value layer each theme currently applies. `themePaletteLayers()` computes that layer per theme with `presetPalette()`, so a preset or colour edit needs no reload.
-4. **Applying.** `src/themes/renderer.ts` fetches the state at startup after renderer plugins load, normalizes it and applies the selected theme. It removes the previous style elements, then appends the theme's concatenated CSS as one `<style>` element when it has any, then appends the resolved palette as another `:root` block of `--pear-theme-*` custom properties. Because the palette is injected after the theme's own CSS, stored overrides win over values the theme shipped. If the theme's script is present and its identity, meaning its id and hash, changed, `mount` runs.
-5. **Refreshing.** Main pushes `peard:themes-changed` to the window, and the renderer re-reads and re-applies. This is what makes switching themes, presets and colours take effect without a restart. A palette or preset change does not remount the script; only a different theme or script does.
+1. **Reading.** `Themes.start()` scans `<userData>/themes` with `readThemesFrom()` (`apps/desktop/src/main/theme-load.ts`). Each folder's `theme.json` is parsed by `parseManifest()`, the declared CSS files are concatenated in order, and a declared script's source is hashed with SHA-256. A folder that fails validation is skipped with a warning; unreadable CSS files are dropped; a missing script file degrades to a theme without a script.
+2. **Seeding and migration.** The first start after install seeds a Basic theme when no valid theme folder exists, then records `options.themesSeeded`. `upgradeBasicTheme()` gives an older Basic folder the current stylesheet when it has none. Legacy `options.themes` CSS paths are copied into a folder and the key is removed.
+3. **Filtering.** `Themes.state()` returns every theme, but replaces the script of a theme whose hash is not in `options.themeConsent` with `jsBlocked: true`. It also returns the selected id, the stored preset picks and, per theme, the layer its preset or custom palette applies.
+4. **Watching.** The engine polls the folders every second (`POLL_MS`). A changed folder list or file content pushes a `themes` event to the YTM window, and `Themes.#pruneMissingThemes()` drops selection, preset, palette and consent entries for ids that no longer exist.
+5. **Serving.** The page runtime receives the state in its bootstrap and on every `themes` event. The settings window receives the same event types it subscribes to.
+6. **Applying.** `ThemesRuntime.apply()` in `packages/page/src/themes.ts` resolves the palette with `resolvePalette(theme.palette, state.overrides[id])`, builds constructed style sheets for the theme CSS and the palette, and replaces the theme sheets at the end of `document.adoptedStyleSheets`. This makes theme CSS win over plugin CSS while the palette wins over the theme's own values.
+7. **Scripts.** If the theme has a script and its `{ id, hash }` identity changed, the old script is torn down and the new one is evaluated. A palette or preset change keeps the mounted script and any sheets it added with `applyPalette`; it does not call `mount` again.
 
-The renderer's script identity check is `{ id, hash }`. Palette edits clear and re-inject styles but keep the mounted script. The full implementation is in `src/themes/renderer.ts`.
+The renderer's identity check means a script is remounted only for a different theme or a changed script source, not for colour edits.
 
-## Main process handlers
+## Host methods
 
-The main process exposes these IPC handlers in `src/index.ts`:
+`Themes` (`apps/desktop/src/main/themes.ts`) exposes:
 
-- `peard:get-themes`
-- `peard:create-theme-from-css`
-- `peard:open-themes-folder`
-- `peard:get-themes-dir`
+- `start()`, `stop()`: seeding, migration, polling and the startup consent prompt.
+- `all`, `selected`, `presets`: the loaded themes, the selected id and preset picks.
+- `state()`: the payload sent to the page.
+- `select(id, win?)`: selects a theme, asking for script consent first; false when declined.
+- `allowScript(id, win?)`: records consent to the current script.
+- `setPreset(themeId, preset)`, `setPaletteValue(themeId, key, value)`, `resetPalette(themeId)`.
+- `import(paths?, win?)`: creates a theme folder from CSS files.
+- `openFolder()`: opens the themes directory.
+- `onChange` and `onCatalogChange` callbacks from the constructor: one for any state change, one for a new folder (used to rebuild the menu).
 
-The menu and settings window call the same underlying functions directly. The main theme functions are in `src/themes/main.ts`; manifest parsing and palette resolution are in `src/themes/types.ts`.
+The settings model calls these through bridge commands: `theme:select`, `theme:allow-script`, `theme:set-preset`, `theme:set-palette-value`, `theme:reset-palette`, `theme:import` and `theme:open-folder`. The native menu calls the same methods directly.
+
+`ensureJsConsent()` shows the "Run theme code?" dialog. At startup, `#consentSelected()` asks for the selected theme without a window. Declining leaves the selection and withholds the script.
 
 ## Configuration keys
 
-All theme state lives in the app's config store, `config.json` under `<userData>`, managed by electron-store.
+All theme state lives in `config.json` under `<userData>`, inside `options`:
 
 | Key | Type | Meaning |
 | --- | --- | --- |
 | `options.theme` | `string` | Selected theme id; `''` means no theme. |
-| `options.themePresets` | `Record<string, string>` | Preset pick per theme id: a preset name, `custom` or `''` for Default. |
-| `options.themeOverrides` | `Record<string, Record<string, string>>` | Custom palette per theme id. It is used when the stored preset pick is `custom` and is seeded from the active preset while editing. |
+| `options.themePresets` | `Record<string, string>` | Preset pick per theme id: a preset name, `custom`, or `''` for Default. |
+| `options.themeOverrides` | `Record<string, Record<string, string>>` | Custom palette per theme id. Used when the stored pick is `custom`, seeded from the active preset while editing. |
 | `options.themeConsent` | `Record<string, string>` | SHA-256 of the script source the user allowed, per theme id. |
-| `options.themesSeeded` | `boolean` | Whether the one-time theme seeding step has run. |
+| `options.themesSeeded` | `boolean` | Whether the one-time seed step has run. |
+| `options.themes` | `string[]` | Retired. The pear-desktop 3.x CSS path list, migrated once and then removed. |
 
-`options.themes` is retired. The legacy list of CSS paths is migrated and the key removed at startup. See [The Basic theme and migrations](./using.md#the-basic-theme).
+`Settings.themeConfig()` in `apps/desktop/src/main/config.ts` reads these keys with fallbacks, so a config written before they existed works. `Settings.setThemeConfig()` writes a partial patch and schedules the config write.
 
-The default config in `src/config/defaults.ts` is `theme: ''`, empty records for `themePresets`, `themeOverrides` and `themeConsent`, and `themesSeeded: false`. A config written before these keys existed is tolerated by electron-store's defaults and by the `?? {}` fallbacks in the theme getters in `src/config/index.ts`. Separately, `normalizeThemeState()` fills in the renderer response fields `themes`, `selected` and `overrides` so a missing field cannot crash startup.
+## Palette resolution
 
-## Palette resolution layer
+`Themes.#paletteLayers()` loads the stored preset picks and custom palettes and calls `presetPalette()` for each theme. The result maps theme id to the values layered over its palette. `resolvePalette()` merges that layer over the theme's own palette, with the layer winning.
 
-`themePaletteLayers()` in `src/themes/main.ts` loads the themes, reads the stored preset picks and custom palettes, and calls `presetPalette()` for each theme. The result maps theme id to the layer that the renderer should merge over the theme's own palette.
-
-`resolvePalette()` in `src/themes/types.ts` merges that layer over the palette. The layer always wins. A preset or colour edit therefore only needs the new layer, not a new copy of the theme folder or script.
+The page receives the layers, so a preset or colour change only needs a new state, not a new folder read. `palettes.md` documents the resolution table.
 
 ## Selection state and pruning
 
-Theme state is keyed by folder name. Removing or renaming a folder leaves the old id's stored state behind until `pruneMissingThemes()` runs at startup. At that point the app removes the missing id's palette overrides, preset pick and script consent. If the missing id was selected, the selection is reset to **No theme**.
+Theme state is keyed by folder name. Deleting or renaming a folder removes the id from the loaded list; `#pruneMissingThemes()` then:
 
-The renderer can keep using its already-loaded copy until it refreshes. The folder itself is not watched; see [Adding, updating and removing themes](./using.md#adding-updating-and-removing-themes).
+- removes its palette overrides, preset pick and script consent;
+- resets `options.theme` to `''` when that theme was selected.
+
+The poll runs this whenever the folder list changes, so stale entries do not accumulate and a later theme reusing the same folder name does not inherit them. A renamed folder starts with fresh state.
+
+## Consent and withholding
+
+The script source is read and hashed on every folder read. `isJsConsented()` compares the hash with the stored consent value. The page never receives a source whose hash is not consented. A `jsBlocked` theme still has its CSS and palette, and the Theme card shows **Allow** so the user can consent without reselecting the theme.
+
+Consent applies per theme id, not per file name. Moving a script to another file changes the hash and asks again.
+
+## Tests
+
+The pure parts (manifest parsing, palette resolution, `paletteToCss`, `normalizeThemeState`) live in `packages/sdk/src/themes.ts`; the folder reading and hashing live in `apps/desktop/src/main/theme-load.ts`; the host orchestration is `apps/desktop/src/main/themes.ts`; the page application is `packages/page/src/themes.ts`.
+
+Vitest tests for the desktop app live in `apps/desktop/test/`. Run `pnpm test`. See [Testing and debugging](./debugging.md) for the practical checklist.

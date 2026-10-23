@@ -1,10 +1,15 @@
+packages:
+  - apps/*
+  - packages/*
+  - plugins/*
+
 minimumReleaseAge: 360
 allowBuilds:
   bufferutil: true
   electron: true
   electron-winstaller: true
   esbuild: true
-  node-smtc@https://codeload.github.com/michei69/node-smtc/tar.gz/6894d2a2b7cc31f953e4dd0d605282e81993d16b: true
+  '@michei69/node-smtc': true
   unrs-resolver: true
   utf-8-validate: true
 overrides:
@@ -15,10 +20,12 @@ overrides:
   node-fetch: 3.3.2
   '@electron/universal': 3.0.4
   '@babel/runtime': 8.0.0
+  electron: 45.0.0
+  youtubei.js: 18.1.0
+  hono: 4.13.13
+  vite: 8.3.5
 patchedDependencies:
   vudio@2.1.1: patches/vudio@2.1.1.patch
   '@malept/flatpak-bundler@0.4.0': patches/@malept__flatpak-bundler@0.4.0.patch
   kuromoji@0.1.2: patches/kuromoji@0.1.2.patch
-  electron-is@3.0.0: patches/electron-is@3.0.0.patch
-  mdui@2.1.4: patches/mdui@2.1.4.patch
 engineStrict: true

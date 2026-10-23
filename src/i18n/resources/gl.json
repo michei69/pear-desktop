@@ -72,7 +72,7 @@
         "buttons": {
           "disable": "Desactivar actualizacións",
           "download": "Descarregar",
-          "ok": "Aceptar"
+          "ok": "OK"
         },
         "detail": "Está dispoñíbel unha nova versión que se pode descarregar de {{downloadLink}}",
         "message": "Hai una nova versión dispoñíbel",
@@ -156,8 +156,8 @@
               "sync": {
                 "label": "Sincronizar idioma",
                 "submenu": {
-                  "from-youtube": "Desde YouTube",
-                  "to-youtube": "A YouTube"
+                  "from-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "Desde \u0059\u006f\u0075\u0054\u0075\u0062\u0065",
+                  "to-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "A \u0059\u006f\u0075\u0054\u0075\u0062\u0065"
                 },
                 "failure": {
                   "dialog": {
@@ -229,7 +229,7 @@
                   "open-themes-folder": "Abrir o cartafol de temas"
                 }
               },
-              "use-ytm-icons": "Usar as iconas orixinais de YouTube Music"
+              "use-ytm-icons": "Usar as iconas orixinais de \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063"
             }
           },
           "updates": {
@@ -1055,7 +1055,7 @@
     },
     "search-commands": {
       "commands": {
-        "play": "Reproducir un vídeo a partir dunha ligazón ou ID de YouTube",
+        "play": "Reproducir un vídeo a partir dunha ligazón ou ID de \u0059\u006f\u0075\u0054\u0075\u0062\u0065",
         "settings": "Abrir os axustes"
       },
       "description": "Escribe / no campo de busca para executar comandos, con autocompletado para os seus argumentos",
@@ -1072,7 +1072,7 @@
       "name": "Atallos de desprazamento"
     },
     "sfw-music": {
-      "description": "Salta automaticamente as cancións marcadas como Explícitas por YouTube Music. Pausa se se repite unha cola explícita ou non hai unha canción seguinte dispoñible.",
+      "description": "Salta automaticamente as cancións marcadas como Explícitas por \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063. Pausa se se repite unha cola explícita ou non hai unha canción seguinte dispoñible.",
       "name": "Música SFW"
     },
     "shortcuts": {
@@ -1190,7 +1190,7 @@
         },
         "use-ytm-lyrics-without-proxy": {
           "label": "Usar a letra de YTM sen proxy",
-          "tooltip": "Omite o proxy de navegación de YTM e chama directamente a YouTube Music usando a sesión autenticada da aplicación. Útil se confías en que a túa rede/rexión permite chamadas de navegación directas."
+          "tooltip": "Omite o proxy de navegación de YTM e chama directamente a \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 usando a sesión autenticada da aplicación. Útil se confías en que a túa rede/rexión permite chamadas de navegación directas."
         },
         "convert-chinese-character": {
           "label": "Converter caracteres chineses",
@@ -1335,7 +1335,7 @@
       "name": "Control multimedia da barra de tarefas"
     },
     "toast-autoclose": {
-      "description": "Pecha automaticamente os avisos de YouTube Music despois de tres segundos",
+      "description": "Pecha automaticamente os avisos de \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 despois de tres segundos",
       "name": "Pechado automático de avisos"
     },
     "touchbar": {
@@ -1475,7 +1475,7 @@
     "move-up": "Subir",
     "move-down": "Baixar",
     "about": {
-      "tagline": "Unha aplicación de escritorio con moitas funcións para YouTube Music",
+      "tagline": "Unha aplicación de escritorio con moitas funcións para \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063",
       "versions": "Versións",
       "version-app": "Aplicación",
       "version-build": "Compilación",
@@ -1533,7 +1533,7 @@
     "stepper-decrement": "Diminuír",
     "stepper-increment": "Aumentar",
     "flags": {
-      "warning": "Os indicadores de funcións son interruptores internos propios de YouTube Music. Cambialos pode romper a reprodución, a disposición ou funcións da conta, e non están cubertos polo soporte. As anulacións consérvanse só para os indicadores que cambies e pódense eliminar con Desfacer.",
+      "warning": "Os indicadores de funcións son interruptores internos propios de \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063. Cambialos pode romper a reprodución, a disposición ou funcións da conta, e non están cubertos polo soporte. As anulacións consérvanse só para os indicadores que cambies e pódense eliminar con Desfacer.",
       "search-placeholder": "Buscar indicadores",
       "overridden": "anulado",
       "undo": "Desfacer",
