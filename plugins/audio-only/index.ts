@@ -45,13 +45,24 @@ export default definePlugin({
       element.style.setProperty(property, value);
     };
 
+    /**
+     * The cover art this plugin forced onto the shared image element, and what
+     * was there before. Restored on stop only while the plugin's own URL is
+     * still showing: a later track sets its own artwork, which must survive.
+     */
+    const forcedThumbnails = new Map<HTMLImageElement, { forced: string; original: string | null }>();
+
     const forceThumbnail = () => {
       const image = ctx.$<HTMLImageElement>("player.song_image_img");
       const thumbnails = ctx.player.api?.getPlayerResponse()?.videoDetails?.thumbnail?.thumbnails ?? [];
       const best = thumbnails.toSorted((a, b) => b.width * b.height - a.width * a.height)[0];
       // YTM leaves a data: placeholder in the cover-art slot for video tracks.
       if (!image || !best || !image.src.startsWith("data:")) return;
-      image.src = best.url.split("?")[0]!;
+      const url = best.url.split("?")[0]!;
+      const saved = forcedThumbnails.get(image);
+      if (saved) saved.forced = url;
+      else forcedThumbnails.set(image, { forced: url, original: image.getAttribute("src") });
+      image.src = url;
     };
 
     // The lowest quality makes YTM take its audio-only path.
@@ -138,6 +149,13 @@ export default definePlugin({
       stopped = true;
       lock?.disconnect();
       content?.disconnect();
+      for (const [image, { forced, original }] of forcedThumbnails) {
+        // The last track's artwork is still ours: put back the placeholder (or the
+        // cover art a previous plugin left), so the player goes back to video art.
+        if (image.src !== forced) continue;
+        if (original === null) image.removeAttribute("src");
+        else image.setAttribute("src", original);
+      }
       for (const [element, saved] of attributes) {
         for (const [name, value] of saved) {
           if (value === null) element.removeAttribute(name);

@@ -54,14 +54,15 @@ export function startSearchCommands(ctx: Ctx) {
   const unregister = [
     registerCommand({
       name: "settings",
-      description: "Open the settings",
+      // pear-desktop's translation keys for the command list; they still describe it.
+      description: ctx.t("plugins.search-commands.commands.settings", "Open the settings"),
       run: () => {
         void ctx.host.invoke("openSettings").catch((error: unknown) => ctx.log.warn("could not open the settings", error));
       },
     }),
     registerCommand({
       name: "play",
-      description: "Play a video link or id",
+      description: ctx.t("plugins.search-commands.commands.play", "Play a video from a link or id"),
       args: [{ name: "url" }],
       run: (args) => {
         const videoId = parseVideoId(args[0] ?? "");

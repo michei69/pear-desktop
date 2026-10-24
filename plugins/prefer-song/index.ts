@@ -34,6 +34,9 @@ export default definePlugin({
   id: "prefer-song",
   name: "Prefer song",
   description: "Plays the album's song instead of the music video when listening to a release.",
+  // It patches window.fetch before YTM's scripts load, so enabling it mid-session
+  // would miss the queue YTM has already fetched (pear-desktop restarted too).
+  restartRequired: true,
   page: {
     // Before YTM's scripts, so no player or queue request slips through.
     runAt: "start",
