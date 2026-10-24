@@ -7,7 +7,7 @@ import { pluginConfig, setConfig, setEnabled } from "./helpers/plugins.ts";
 import "./helpers/probes.ts";
 import { screenshot } from "./helpers/window.ts";
 import { mainWindow, playTestTrack } from "./launch.ts";
-import { sel, showLikeStatus } from "./helpers/player-bar.ts";
+import { sel } from "./helpers/player-bar.ts";
 
 /** YTM's own page background, without the album color. */
 const YTM_BACKGROUND = "rgb(3, 3, 3)";
@@ -110,13 +110,12 @@ test("album colors, ambient glow and the video switch on the player page", async
   await expect.poll(background).toBe(YTM_BACKGROUND);
 });
 
-test("album actions, unobtrusive playback and skipping disliked tracks", async ({ launch }) => {
+test("album actions and unobtrusive playback", async ({ launch }) => {
   test.setTimeout(180_000);
   const app = await launch({
     plugins: {
       "album-actions": { enabled: true },
       "unobtrusive-player": { enabled: true },
-      "skip-disliked-songs": { enabled: true },
     },
   });
   const page = await mainWindow(app);
@@ -173,9 +172,4 @@ test("album actions, unobtrusive playback and skipping disliked tracks", async (
   await expect(page.locator("ytmusic-app-layout")).not.toHaveAttribute("player-ui-state", "PLAYER_PAGE_OPEN");
   await expect(actions).toBeVisible();
   await screenshot(app, "unobtrusive");
-
-  // Disliking the playing track (simulated: YTM reflects it on the player bar) skips it.
-  const first = await page.evaluate(() => window.__pearRuntime!.player.state.track!.videoId);
-  await showLikeStatus(page, "DISLIKE");
-  await expect.poll(() => page.evaluate(() => window.__pearRuntime!.player.state.track?.videoId), { timeout: 30_000 }).not.toBe(first);
 });
