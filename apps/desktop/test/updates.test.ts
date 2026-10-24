@@ -1,5 +1,13 @@
 import { describe, expect, test, vi } from "vitest";
-import { isNewerVersion, newerRelease, RELEASES_URL, shouldCheck, withRetry } from "../src/main/updates.ts";
+import {
+  devCommitBehind,
+  isCommitBehindMaster,
+  isNewerVersion,
+  newerRelease,
+  RELEASES_URL,
+  shouldCheck,
+  withRetry,
+} from "../src/main/updates.ts";
 
 vi.mock("electron", () => ({}));
 
@@ -26,10 +34,35 @@ describe("isNewerVersion", () => {
   });
 });
 
-test("only packaged builds with the option on check", () => {
+test("only packaged builds with the option on check for releases", () => {
   expect(shouldCheck({ packaged: true, enabled: true })).toBe(true);
   expect(shouldCheck({ packaged: false, enabled: true })).toBe(false);
   expect(shouldCheck({ packaged: true, enabled: false })).toBe(false);
+});
+
+describe("the dev-build commit check", () => {
+  const github = (body: unknown, status = 200) =>
+    vi.fn(async (_url: string, _init?: RequestInit) => new Response(JSON.stringify(body), { status }));
+
+  test("a build is stale only while it sits behind master's tip", () => {
+    // Compare is `commit...master`: "ahead" means master has commits this build lacks.
+    expect(isCommitBehindMaster({ status: "ahead" })).toBe(true);
+    // The build's own branch is deliberately off master: never nag about it.
+    expect(isCommitBehindMaster({ status: "behind" })).toBe(false);
+    expect(isCommitBehindMaster({ status: "diverged" })).toBe(false);
+    expect(isCommitBehindMaster({ status: "identical" })).toBe(false);
+    expect(isCommitBehindMaster(undefined)).toBe(false);
+  });
+
+  test("asks GitHub to compare the build's commit with master", async () => {
+    const fetch = github({ status: "ahead" });
+    expect(await devCommitBehind("abc1234", fetch)).toBe(true);
+    expect(fetch.mock.calls[0]![0]).toBe("https://api.github.com/repos/michei69/pear-desktop/compare/abc1234...master");
+  });
+
+  test("a failed request rejects, for the caller to log", async () => {
+    await expect(devCommitBehind("abc1234", github({ message: "rate limited" }, 403))).rejects.toThrow("403");
+  });
 });
 
 describe("newerRelease", () => {

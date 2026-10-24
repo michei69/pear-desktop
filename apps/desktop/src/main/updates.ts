@@ -23,10 +23,12 @@ export const RETRY_ATTEMPTS = 3;
 const OK_BUTTON = 0;
 const DOWNLOAD_BUTTON = 1;
 const DISABLE_BUTTON = 2;
+/** The dev-check dialog offers to open master's commits instead of a release. */
+const VIEW_BUTTON = 1;
 
 export type UpdateChannel = "stable" | "beta";
 
-/** Dev runs and tests (`electron .`) never check. */
+/** Release checks: packaged builds only, when the option is on. Dev builds check their commit instead. */
 export function shouldCheck({ packaged, enabled }: { packaged: boolean; enabled: boolean }) {
   return packaged && enabled;
 }
@@ -48,6 +50,29 @@ export function isNewerVersion(latest: string, current: string) {
 export interface Release {
   version: string;
   url: string;
+}
+
+export const COMMITS_URL = `https://github.com/${REPO}/commits/master`;
+const COMPARE_URL = `https://api.github.com/repos/${REPO}/compare`;
+
+/**
+ * A dev build is stale only when its commit sits on master's history behind the
+ * tip. The compare is `commit...master`, so `status: "ahead"` means master is
+ * ahead of the build; a branch with its own commits reads "behind" or
+ * "diverged" and is purposely off master, so it must not nag (pear-desktop #68).
+ */
+export function isCommitBehindMaster(comparison: { status?: unknown } | null | undefined) {
+  return comparison?.status === "ahead";
+}
+
+/** Whether GitHub reports master ahead of `commit`; throws on a failed request. */
+export async function devCommitBehind(commit: string, fetch: (url: string, init?: RequestInit) => Promise<Response>) {
+  const response = await fetch(`${COMPARE_URL}/${encodeURIComponent(commit)}...master`, {
+    headers: { Accept: "application/vnd.github+json" },
+    signal: AbortSignal.timeout(10_000),
+  });
+  if (!response.ok) throw new Error(`GitHub answered ${response.status}`);
+  return isCommitBehindMaster((await response.json()) as { status?: unknown } | null);
 }
 
 interface GitHubRelease {
@@ -152,6 +177,45 @@ export async function checkForUpdates({ currentVersion, channel, window, t, disa
   else if (response === DISABLE_BUTTON) disable();
 }
 
+export interface DevCheckOptions {
+  commit: string;
+  window: () => BrowserWindow | undefined;
+  t: Translate;
+}
+
+/**
+ * A dev build has no feed, so the only thing to report is whether its commit is
+ * still the tip of master. Runs once after startup, like pear-desktop's check.
+ */
+export async function checkForDevCommit({ commit, window, t }: DevCheckOptions) {
+  if (!commit) return;
+  let behind: boolean;
+  try {
+    behind = await devCommitBehind(commit, net.fetch);
+  } catch (error) {
+    console.warn("[pear] dev update check failed:", errorMessage(error));
+    return;
+  }
+  if (!behind) return;
+  console.info(`[pear] dev build is behind master at ${commit}`);
+  const options: Electron.MessageBoxOptions = {
+    type: "info",
+    buttons: [t("main.dialog.update-available-dev.buttons.ok", "OK"), t("main.dialog.update-available-dev.buttons.view", "View commits")],
+    title: t("main.dialog.update-available-dev.title", "Update Available"),
+    message: t("main.dialog.update-available-dev.message", "This dev build is behind the master branch"),
+    detail: t(
+      "main.dialog.update-available-dev.detail",
+      "The commit this build runs on ({{commit}}) is older than the latest commit on master. Newer commits can be viewed at {{commitsLink}}",
+      { commit, commitsLink: COMMITS_URL },
+    ),
+    defaultId: VIEW_BUTTON,
+    cancelId: OK_BUTTON,
+  };
+  const parent = alive(window());
+  const { response } = parent ? await dialog.showMessageBox(parent, options) : await dialog.showMessageBox(options);
+  if (response === VIEW_BUTTON) void shell.openExternal(COMMITS_URL);
+}
+
 export interface UpdateManagerOptions {
   currentVersion: string;
   /** The commit this build was made from; empty for release builds. */
@@ -179,7 +243,17 @@ export class UpdateManager {
 
   start() {
     this.stop();
-    if (!this.#options.packaged && !this.#options.commit) return;
+    // A dev build has no feed to poll: it only asks once whether its commit is
+    // still master's tip, even with the auto-update option off (as the fork did).
+    if (!this.#options.packaged) {
+      const commit = this.#options.commit;
+      if (!commit) return;
+      this.#startTimer = setTimeout(
+        () => void checkForDevCommit({ commit, window: this.#options.window, t: this.#options.t }),
+        CHECK_DELAY_MS,
+      );
+      return;
+    }
     this.#startTimer = setTimeout(() => this.#schedule(), CHECK_DELAY_MS);
     // `.unref()` so a pending check never keeps the app alive on quit.
     this.#timer = setInterval(() => this.#schedule(), CHECK_INTERVAL_MS);
