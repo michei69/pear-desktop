@@ -5,13 +5,13 @@ This walkthrough builds `plugins/hello-world` from the scaffold to a configurabl
 ## Step 1: scaffold the plugin
 
 ```sh
-pnpm exec node scripts/new-plugin.ts my-plugin
-pnpm install
+nub scripts/new-plugin.ts my-plugin
+nub install
 ```
 
-This creates `plugins/my-plugin/` with `package.json` (`@pear/plugin-my-plugin`), `tsconfig.json` and `index.ts`. Add npm dependencies after the id: `pnpm exec node scripts/new-plugin.ts my-plugin some-package@^1.0.0`.
+This creates `plugins/my-plugin/` with `package.json` (`@pear/plugin-my-plugin`), `tsconfig.json` and `index.ts`. Add npm dependencies after the id: `nub scripts/new-plugin.ts my-plugin some-package@^1.0.0`.
 
-Run `pnpm dev`, open Settings from YTM's sidebar or with `Ctrl/Cmd+,`, and the plugin is listed. It starts disabled because `enabledByDefault` is absent.
+Run `nub run dev`, open Settings from YTM's sidebar or with `Ctrl/Cmd+,`, and the plugin is listed. It starts disabled because `enabledByDefault` is absent.
 
 The smallest useful plugin needs only a page function:
 
@@ -63,7 +63,7 @@ Field metadata:
 - Selects take an options array and `variant` (`chips` or `dropdown`).
 - `config.multi` stores an array of option values. `config.list` stores free strings. `config.shortcut` stores an Electron accelerator.
 
-Every text is a plain string here; the settings catalog translates it through `plugins.<id>.settings.<field>.*` keys. Run `pnpm i18n` after adding or renaming fields.
+Every text is a plain string here; the settings catalog translates it through `plugins.<id>.settings.<field>.*` keys. Run `nub run i18n` after adding or renaming fields.
 
 Read the current value from `ctx.config`, which is always current. Write a partial value with `ctx.setConfig({ size: 16 })`.
 
@@ -299,10 +299,10 @@ ctx.toast(ctx.t("plugins.my-plugin.saved", "Saved “{{title}}”", { title }));
 Then run:
 
 ```sh
-pnpm i18n
+nub run i18n
 ```
 
-It appends missing keys to `src/i18n/resources/en.json`. `pnpm i18n -- --check` fails when a key is missing. Write keys out in full: the generator finds literal `t("key", "English")` calls, not computed keys.
+It appends missing keys to `src/i18n/resources/en.json`. `nub run i18n --check` fails when a key is missing. Write keys out in full: the generator finds literal `t("key", "English")` calls, not computed keys.
 
 ## Plugins that cannot be undone
 
@@ -333,7 +333,7 @@ The settings card gets a restart pill and the restart banner appears after enabl
 Unit tests go in `plugins/my-plugin/test/`. Add a `test` script to the package manifest (`vitest run`) so the workspace run finds it, then:
 
 ```sh
-pnpm test
+nub run test
 ```
 
 E2E tests go in `apps/desktop/e2e/` and drive the built app:
@@ -354,7 +354,7 @@ test("my-plugin shows the greeting", async ({ launch }) => {
 });
 ```
 
-Run them with `pnpm test:e2e my-plugin`. The suite needs a built app and network access. Never sign in to Google in a test.
+Run them with `nub run test:e2e my-plugin`. The suite needs a built app and network access. Never sign in to Google in a test.
 
 ## Gotchas
 

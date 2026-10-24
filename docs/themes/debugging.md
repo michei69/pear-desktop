@@ -7,7 +7,7 @@ Theme behavior is tested with Vitest. The desktop engine tests live in `apps/des
 Run them with:
 
 ```sh
-pnpm test
+nub run test
 ```
 
 The tests use temporary directories and never touch the real themes folder. See [Conventions](../conventions.md#tests) for the general test rules.

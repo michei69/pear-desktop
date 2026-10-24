@@ -19,7 +19,7 @@ This page maps a pear-desktop 3.x plugin (one folder per plugin in upstream's so
 | A plugin's `style.css?inline` | The `style` field with the `css` macro, or `ctx.addStyle` |
 | A plugin's test folder | `plugins/<id>/test/` with Vitest |
 
-Create the package with `pnpm exec node scripts/new-plugin.ts <id>`, then `pnpm install`. Package dependencies go into the plugin's own `package.json`; the app imports the plugin from `plugins/<id>/index.ts`.
+Create the package with `nub scripts/new-plugin.ts <id>`, then `nub install`. Package dependencies go into the plugin's own `package.json`; the app imports the plugin from `plugins/<id>/index.ts`.
 
 ## Definition fields
 
@@ -79,7 +79,7 @@ Upstream's `settings` array had types such as `switch`, `select`, `slider`, `tex
 | `languageSync` | No equivalent |
 | Dotted setting keys | Fields are a flat schema; nest with `group` headings |
 
-The settings card is generated from `config`, so there is no separate settings editor to port. Field texts are translated through `plugins.<id>.settings.<field>.*`; run `pnpm i18n`.
+The settings card is generated from `config`, so there is no separate settings editor to port. Field texts are translated through `plugins.<id>.settings.<field>.*`; run `nub run i18n`.
 
 Stored config is still `plugins.<id>` with the old option names where they still mean the same. Upstream stored only values that differed from defaults and deep-merged on read. This tree normalizes the stored object against the schema on read, keeps unknown keys, and never writes defaults into the file. A ported plugin can usually keep its stored options; the `4.0.0` migration in `apps/desktop/src/main/migrations/plugins.ts` already converts the plugins that ship here. A ported third-party plugin needs its own migration only if it renames or reshapes options.
 
@@ -116,7 +116,7 @@ Menus that need dynamic radio groups (quality, speed, captions) are now page pic
 
 ## Translations
 
-Upstream's plugin `name` and `description` were functions returning `t(...)`, and settings labels were functions. Here they are plain strings; the catalog translates them from `plugins.<id>.*`. Visible text created at runtime uses `ctx.t(key, english, vars)`. Run `pnpm i18n`; keys found by the generator are literal `t("key", "English")` calls in the source.
+Upstream's plugin `name` and `description` were functions returning `t(...)`, and settings labels were functions. Here they are plain strings; the catalog translates them from `plugins.<id>.*`. Visible text created at runtime uses `ctx.t(key, english, vars)`. Run `nub run i18n`; keys found by the generator are literal `t("key", "English")` calls in the source.
 
 ## Things that no longer exist
 
@@ -137,6 +137,6 @@ Upstream's plugin `name` and `description` were functions returning `t(...)`, an
 6. Replace class selectors with names from `packages/sdk/src/selectors.ts`, adding missing names there.
 7. Move timers, listeners, observers and styles to `ctx`; return cleanups or use `ctx.onCleanup`.
 8. Mark `restartRequired` for global patches; move early page patches to `runAt: "start"`.
-9. Convert visible strings to schema texts and `ctx.t`, then run `pnpm i18n`.
+9. Convert visible strings to schema texts and `ctx.t`, then run `nub run i18n`.
 10. Add Vitest tests and an e2e test when the behavior is observable in the app.
-11. Run `pnpm typecheck`, `pnpm lint`, `pnpm format` and `pnpm test`.
+11. Run `nub run typecheck`, `nub run lint`, `nub run format` and `nub run test`.

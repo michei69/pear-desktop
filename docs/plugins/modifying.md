@@ -11,7 +11,7 @@ The entry must keep the shape `export default definePlugin({ ... })`. The build 
 Package dependencies are added to the plugin's own manifest:
 
 ```sh
-pnpm --filter @pear/plugin-do-not-track add some-package
+nub add --filter @pear/plugin-do-not-track some-package
 ```
 
 ## Add or change an option
@@ -32,7 +32,7 @@ Then:
 
 1. Read `ctx.config.skipShorts` where it matters.
 2. Apply live changes from `onConfigChange` when possible, or let the part restart and read the new value in `start`.
-3. Run `pnpm i18n` to add `plugins.<id>.settings.skip-shorts.label` and `.description`.
+3. Run `nub run i18n` to add `plugins.<id>.settings.skip-shorts.label` and `.description`.
 4. Add a unit test for the behavior, not for the schema.
 5. If the default changes, decide whether existing users should keep their stored value; a default change does not rewrite stored config.
 
@@ -75,7 +75,7 @@ host: {
 },
 ```
 
-The button appears while the plugin is enabled. Its labels are translated through `plugins.<id>.actions.<name>.label` and `.description`, added by `pnpm i18n`.
+The button appears while the plugin is enabled. Its labels are translated through `plugins.<id>.actions.<name>.label` and `.description`, added by `nub run i18n`.
 
 ## Add an API server method
 
@@ -165,10 +165,10 @@ When a part could apply a config change but the hook is not implemented, the hos
 
 ## Tests and docs
 
-- Unit tests go in `plugins/<id>/test/*.test.ts`; the package needs `"test": "vitest run"` in `scripts`. Run `pnpm test`.
-- E2E tests go in `apps/desktop/e2e/` and use `launch({ plugins: { ... } })`, `setConfig`, `setEnabled` and `pluginError`/`pluginStatus` from `e2e/helpers/plugins.ts`. Run `pnpm test:e2e <name>`.
+- Unit tests go in `plugins/<id>/test/*.test.ts`; the package needs `"test": "vitest run"` in `scripts`. Run `nub run test`.
+- E2E tests go in `apps/desktop/e2e/` and use `launch({ plugins: { ... } })`, `setConfig`, `setEnabled` and `pluginError`/`pluginStatus` from `e2e/helpers/plugins.ts`. Run `nub run test:e2e <name>`.
 - Update [Using plugins](./using.md) if the user-facing behavior changes, and the relevant page in `docs/` if the architecture changes.
-- Run `pnpm format`, `pnpm lint`, `pnpm typecheck` and `pnpm i18n -- --check` before committing.
+- Run `nub run format`, `nub run lint`, `nub run typecheck` and `nub run i18n --check` before committing.
 
 ## Removing a plugin
 

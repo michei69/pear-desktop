@@ -39,40 +39,26 @@ jobs:
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320
-        with:
-          version: 11
-          run_install: false
-
-      - name: Setup NodeJS
-        if: startsWith(matrix.os, 'macos') != true
-        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'pnpm'
-
-      - name: Setup NodeJS for macOS
-        if: startsWith(matrix.os, 'macos')
-        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f
+      - name: Setup Nub
+        uses: nubjs/setup-nub@c7b970ec04655a2f0a111cd436cc182a3b660e7a
         with:
           node-version: ${{ env.NODE_VERSION }}
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: nub install --frozen-lockfile
 
       # Only vite build without release if it is a fork, or it is a pull-request
       - name: Vite Build
         if: github.repository == 'michei69/pear-desktop'
         run: |
-          pnpm build
+          nub run build
 
       # Build and release if it's the main repository and is not pull-request
       - name: Build on Mac
         if: startsWith(matrix.os, 'macos')
         run: |
-          pnpm dist:mac
-          pnpm dist:mac:arm64
+          nub run dist:mac
+          nub run dist:mac:arm64
 
       - name: Build on Linux
         if: startsWith(matrix.os, 'ubuntu')
@@ -87,14 +73,14 @@ jobs:
           sudo flatpak install -y flathub org.freedesktop.Platform/aarch64/26.08
           sudo flatpak install -y flathub org.freedesktop.Sdk/aarch64/26.08
           sudo flatpak install -y flathub org.electronjs.Electron2.BaseApp/aarch64/26.08
-          pnpm dist:linux
-          pnpm dist:linux:deb-arm64
-          pnpm dist:linux:rpm-arm64
+          nub run dist:linux
+          nub run dist:linux:deb-arm64
+          nub run dist:linux:rpm-arm64
 
       - name: Build on Windows
         if: startsWith(matrix.os, 'windows')
         run: |
-          pnpm dist:win
+          nub run dist:win
 
       - name: Upload macOS artifacts
         if: startsWith(matrix.os, 'macos')

@@ -28,8 +28,7 @@ const git = (...args: string[]) => execFileSync("git", args, { encoding: "utf8" 
 const isUpstream = (path: string) =>
   path === "changelog.md" ||
   path === "README.md" ||
-  path === "pnpm-lock.yaml" ||
-  path === "pnpm-workspace.yaml" ||
+  path === "nub.lock" ||
   path.startsWith("docs/") ||
   path.startsWith("plugins/do-not-track/lists/") ||
   path.startsWith(".github/");

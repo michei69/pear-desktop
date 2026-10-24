@@ -65,6 +65,6 @@ The code is the source of truth. Every claim here should be checkable against th
 - Describe what the code does today, including the quirks. Do not document a feature because it should exist or existed before the rewrite.
 - Link current paths under `apps/desktop`, `packages` and `plugins`; do not use the removed `src/` layout except for `src/i18n/resources`.
 - Keep examples close to real code. Plugin APIs come from `@pear/sdk`, never from upstream's `@/utils`.
-- Use pnpm and the scripts in the root `package.json`; `pnpm dev`, `pnpm build`, `pnpm typecheck`, `pnpm test`, `pnpm test:e2e`, `pnpm dist`.
+- Use Nub and the scripts in the root `package.json`; `nub run dev`, `nub run build`, `nub run typecheck`, `nub run test`, `nub run test:e2e`, `nub run dist`.
 - The root `README.md` is user-facing and maintained separately. It may lag behind this documentation.
 - User-facing text needs a translation key. The workflow is in [Conventions](./conventions.md#user-facing-text-and-translations).

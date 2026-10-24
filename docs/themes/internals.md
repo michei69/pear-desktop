@@ -72,4 +72,4 @@ Consent applies per theme id, not per file name. Moving a script to another file
 
 The pure parts (manifest parsing, palette resolution, `paletteToCss`, `normalizeThemeState`) live in `packages/sdk/src/themes.ts`; the folder reading and hashing live in `apps/desktop/src/main/theme-load.ts`; the host orchestration is `apps/desktop/src/main/themes.ts`; the page application is `packages/page/src/themes.ts`.
 
-Vitest tests for the desktop app live in `apps/desktop/test/`. Run `pnpm test`. See [Testing and debugging](./debugging.md) for the practical checklist.
+Vitest tests for the desktop app live in `apps/desktop/test/`. Run `nub run test`. See [Testing and debugging](./debugging.md) for the practical checklist.

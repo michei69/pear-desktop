@@ -27,27 +27,13 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320
-        with:
-          version: 11
-          run_install: false
-
-      - name: Setup NodeJS
-        if: startsWith(matrix.os, 'macos') != true
-        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'pnpm'
-
-      - name: Setup NodeJS for macOS
-        if: startsWith(matrix.os, 'macos')
-        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f
+      - name: Setup Nub
+        uses: nubjs/setup-nub@c7b970ec04655a2f0a111cd436cc182a3b660e7a
         with:
           node-version: ${{ env.NODE_VERSION }}
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: nub install --frozen-lockfile
 
       # The release:* scripts pass `-p never`: electron-builder writes the
       # installers and the latest*.yml updater metadata into pack/ but uploads
@@ -56,7 +42,7 @@ jobs:
       # beta build, which stamps `-beta.<run_number>` onto it.
       - name: Build on Mac
         if: startsWith(matrix.os, 'macos')
-        run: pnpm release:mac
+        run: nub run release:mac
 
       - name: Build on Linux
         if: startsWith(matrix.os, 'ubuntu')
@@ -71,11 +57,11 @@ jobs:
           sudo flatpak install -y flathub org.freedesktop.Platform/aarch64/26.08
           sudo flatpak install -y flathub org.freedesktop.Sdk/aarch64/26.08
           sudo flatpak install -y flathub org.electronjs.Electron2.BaseApp/aarch64/26.08
-          pnpm release:linux
+          nub run release:linux
 
       - name: Build on Windows
         if: startsWith(matrix.os, 'windows')
-        run: pnpm release:win
+        run: nub run release:win
 
       - name: Upload macOS artifacts
         if: startsWith(matrix.os, 'macos')
@@ -131,14 +117,8 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320
-        with:
-          version: 11
-          run_install: false
-
-      - name: Setup NodeJS
-        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f
+      - name: Setup Nub
+        uses: nubjs/setup-nub@c7b970ec04655a2f0a111cd436cc182a3b660e7a
         with:
           node-version: ${{ env.NODE_VERSION }}
 
@@ -203,7 +183,7 @@ jobs:
           # auto-changelog builds the top section from the same number. No fetch of
           # the tag created above: auto-changelog compares against the latest stable
           # tag, and fetching v<version> would add an empty duplicate heading.
-          pnpm changelog
+          nub run changelog
 
       - name: Commit changelog
         if: ${{ env.VERSION_HASH == '' }}

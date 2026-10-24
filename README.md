@@ -1,136 +1,300 @@
-# Pear Desktop
+<div align="center">
 
-Pear Desktop is a desktop app for YouTube Music: the site in its own window, with native playback controls, media keys, download support and a set of plugins. This repository is the fork maintained at [michei69/pear-desktop](https://github.com/michei69/pear-desktop); the upstream project is [pear-devs/pear-desktop](https://github.com/pear-devs/pear-desktop).
+# :pear: Pear Desktop
 
-The fork keeps pear-desktop's application identity, so an existing install keeps its settings, window state and data folder. Report bugs in [this fork's issue tracker](https://github.com/michei69/pear-desktop/issues), not upstream; upstream issues that also affect this fork are welcome here.
+[![GitHub release](https://img.shields.io/github/release/michei69/pear-desktop.svg?style=for-the-badge)](https://github.com/michei69/pear-desktop/releases/)
+[![GitHub license](https://img.shields.io/github/license/michei69/pear-desktop.svg?style=for-the-badge)](https://github.com/michei69/pear-desktop/blob/master/license)
+[![Build status](https://img.shields.io/github/actions/workflow/status/michei69/pear-desktop/build.yml?branch=master&style=for-the-badge)](https://GitHub.com/michei69/pear-desktop/releases/)
+[![GitHub All Releases](https://img.shields.io/github/downloads/michei69/pear-desktop/total?style=for-the-badge)](https://GitHub.com/michei69/pear-desktop/releases/)
 
-## Install
+![](https://raw.githubusercontent.com/michei69/disclaimers/refs/heads/main/ai/x4.png)
 
-Grab the latest build from the [releases page](https://github.com/michei69/pear-desktop/releases/latest). Beta builds are the rolling prerelease on the same page.
+</div>
+
+<!-- ![Screenshot](web/screenshot.png "Screenshot") -->
+
+### Note: This is a fork of the original project. [Click here for the upstream version](https://github.com/pear-devs/pear-desktop)
+### Note: Updates may break certain features. Report any issues in [this fork's page](https://github.com/michei69/pear-desktop/issues) NOT in the official one
+### Feel free to crosspost issues from the official one into this fork too, if they replicate! I cant keep track of them correctly otherwise
+
+- Native look & feel extension
+
+> [!IMPORTANT]
+> ⚠️ Disclaimer
+>
+> **No Affiliation**
+>
+> This project, and its contributors, are not affiliated with, authorized by, endorsed by, or in any way officially connected with Google LLC, YouTube, or any of their subsidiaries or affiliates. **This is an independent, non-profit, and unofficial extension developed by a team of volunteers with the goal of providing a desktop experience.**
+>
+> **Trademarks**
+>
+> The names "Google" and "YouTube Music", as well as related names, marks, emblems, and images, are registered trademarks of their respective owners. Any use of these trademarks is for identification and reference purposes only and does not imply any association with the trademark holder. We have no intention of infringing upon these trademarks or causing harm to the trademark holders.
+>
+> **Limitation of Liability**
+>
+> This application (extension) is provided "AS IS", and you use it at your own risk. In no event shall the developers or contributors be liable for any claim, damages, or other liability, including any legal consequences, arising from, out of, or in connection with the software or the use or other dealings in the software. The responsibility for any and all outcomes of using this software rests entirely with the user.
+
+## Content
+
+- [Features](#features)
+- [Translation](#translation)
+- [Download](#download)
+  - [Linux](#linux)
+  - [MacOS](#macos)
+  - [Windows](#windows)
+    - [How to install without a network connection? (in Windows)](#how-to-install-without-a-network-connection-in-windows)
+- [Themes](#themes)
+- [Dev](#dev)
+- [Build your own plugins](#build-your-own-plugins)
+  - [Creating a plugin](#creating-a-plugin)
+  - [Common use cases](#common-use-cases)
+- [Build](#build)
+- [Production Preview](#production-preview)
+- [Tests](#tests)
+- [License](#license)
+- [FAQ](#faq)
+
+## Translation
+
+You can help with official translation on [Hosted Weblate](https://bit.ly/48n5YF7) or by creating an issue or pull request.
+
+<a href="https://bit.ly/48n5YF7">
+  <img src="https://bit.ly/4q83L6S" alt="translation status" />
+  <img src="https://bit.ly/4h3zBxo" alt="translation status 2" />
+</a>
+
+## Download
+
+You can check out the [latest release](https://github.com/michei69/pear-desktop/releases/latest) to quickly find the
+latest version.
 
 ### Linux
 
-Flatpak is the recommended format. AppImage, deb, rpm, snap, tar.gz and freebsd packages are also published. The Flatpak is built against runtime `26.08`.
+Easiest way to install is via the provided **flatpak**. You can also try out the other formats (deb, rpm, snap, tarball, appimage) but be aware these may or may not have issues.
 
 ### macOS
 
-Open the DMG and copy the app to Applications. If macOS says the app is damaged and cannot be opened, remove the quarantine flag:
+Please install manually via the provided DMG.
 
-```sh
-/usr/bin/xattr -cr "/Applications/YouTube Music.app"
+If you get an error "is damaged and can’t be opened." when launching the app, run the following in the Terminal:
+
+```bash
+/usr/bin/xattr -cr /Applications/Pear\ Desktop.app
 ```
-
-The build is ad-hoc signed, not notarized, because the project has no Apple Developer ID.
 
 ### Windows
 
-Run the Web Setup installer. A portable executable is published next to it.
+Please install manually via the provided Web Setup. Alternatively, you can use the provided portable executable instead.
 
-To install on a machine without network access, download the `*.nsis.7z` for your architecture (`x64` or `arm64`) and the matching `*-Setup.exe`, put both in the same directory, and run the installer.
 
-## Features
+#### How to install without a network connection? (in Windows)
 
-- YouTube Music in a desktop window, with native media keys, taskbar and tray media controls, MPRIS on Linux, the Touch Bar on macOS, and Discord Rich Presence.
-- An in-page settings dialog with search and a standalone settings window (`--settings`) for when the page does not load.
-- Folder themes with palettes, presets, live reload and an optional consent-gated script.
-- A downloader (yt-dlp or Innertube, with ffmpeg.wasm conversion), synced lyrics with translation, SponsorBlock, an equalizer, a visualizer, crossfade, playback speed and video quality controls, and more.
-- Audio-only mode, playback recovery, playlist search, SFW music, search commands, seek shortcuts, a fullscreen auto-hide, a preferred-song option, status-bar lyrics and a skip-AI-slop filter, all as plugins.
-- A performance mode that lowers visual cost, an optional in-process GPU, and a memory saver for hidden windows.
-- A local HTTP and WebSocket API with v1 and v2 surfaces, an OpenAPI document, Swagger UI, plugin-defined methods and an optional MCP endpoint.
-- Shared-link cleaning for the share dialog and **Copy current URL**, Windows System Media Transport Controls, and language sync between the app and YouTube Music.
-- Plugins run live: enabling, disabling and most config changes need no restart.
-- External-link routing to the browser and a permission-hardened window.
+- Download the `*.nsis.7z` file for _your device architecture_ in [release page](https://github.com/michei69/pear-desktop/releases/latest).
+  - `x64` for 64-bit Windows
+  - `arm64` for ARM64 Windows
+- Download installer in release page. (`*-Setup.exe`)
+- Place them in the **same directory**.
+- Run the installer.
 
-Plugins are compiled into the app. There is no plugin store and no folder for installing third-party plugins; themes are the user-installable extension.
+## Themes
 
-## Plugins
+Do you have a CSS theme file already? You can load it from **Options ▸ Visual Tweaks ▸ Theme ▸ Import custom CSS file**.
 
-The plugins live in `plugins/`, one workspace package each. The system reference is [docs/plugins/index.md](docs/plugins/index.md); start with [Creating a plugin](docs/plugins/creating.md) to write one, and [Porting from upstream](docs/plugins/porting-from-upstream.md) to bring over a pear-desktop 3.x plugin.
+Are you looking for community-made themes for our app? Check out https://github.com/michei69/pear-desktop-themes
 
-A plugin is one `definePlugin({...})` file with an optional main-process part and page part:
+Want to get started with building themes? [Click here for the documentation](./docs/themes/authoring.md).
 
-```ts
-import { config, definePlugin } from "@pear/sdk";
+## Dev
 
-export default definePlugin({
-  id: "my-plugin",
-  name: "My plugin",
+```bash
+git clone https://github.com/michei69/pear-desktop
+cd pear-desktop
+nub install --frozen-lockfile
+nub run dev
+```
+
+Instead of installing Nub on your system, you can also use [devcontainers](https://containers.dev/). You can use devcontainers either as a development environment in VS Code, or as a way to easily build the project without installing dependencies on your host system.
+
+Note that this has it's own limitations (for example, GUI doesn't work on, at least some, Linux hosts).
+
+## Build your own plugins
+
+Using plugins, you can:
+
+- manipulate the app - the `BrowserWindow` from electron is passed to the plugin handler
+- change the front by manipulating the HTML/CSS
+
+You can learn more about plugins by reading [the documentation](docs/plugins/index.md).
+
+### Creating a plugin
+
+Create a folder in `src/plugins/YOUR-PLUGIN-NAME`:
+
+- `index.ts`: the main file of the plugin
+```typescript
+import style from './style.css?inline'; // import style as inline
+
+import { createPlugin } from '@/utils';
+
+export default createPlugin({
+  name: 'Plugin Label',
+  restartNeeded: true, // if value is true, ytmusic show restart dialog
   config: {
-    greeting: config.string("Hello", { label: "Greeting" }),
+    enabled: false,
+  }, // your custom config
+  stylesheets: [style], // your custom style,
+  menu: async ({ getConfig, setConfig }) => {
+    // All *Config methods are wrapped Promise<T>
+    const config = await getConfig();
+    return [
+      {
+        label: 'menu',
+        submenu: [1, 2, 3].map((value) => ({
+          label: `value ${value}`,
+          type: 'radio',
+          checked: config.value === value,
+          click() {
+            setConfig({ value });
+          },
+        })),
+      },
+    ];
   },
-  host: {
-    start(ctx) {
-      ctx.player.on("trackChange", (track) => ctx.log.info(ctx.config.greeting, track?.title));
+  backend: {
+    start({ window, ipc }) {
+      window.maximize();
+
+      // you can communicate with renderer plugin
+      ipc.handle('some-event', () => {
+        return 'hello';
+      });
     },
+    // it fired when config changed
+    onConfigChange(newConfig) { /* ... */ },
+    // it fired when plugin disabled
+    stop(context) { /* ... */ },
   },
-  page(ctx) {
-    ctx.toast(ctx.config.greeting);
+  renderer: {
+    async start(context) {
+      console.log(await context.ipc.invoke('some-event'));
+    },
+    // Only renderer available hook
+    onPlayerApiReady(api, context) {
+      // set plugin config easily
+      context.setConfig({ myConfig: api.getVolume() });
+    },
+    onConfigChange(newConfig) { /* ... */ },
+    stop(_context) { /* ... */ },
+  },
+  preload: {
+    async start({ getConfig }) {
+      const config = await getConfig();
+    },
+    onConfigChange(newConfig) {},
+    stop(_context) {},
   },
 });
 ```
 
-## Themes
+### Common use cases
 
-Themes are folders under the user data directory's `themes/` folder. Select one in **Options ▸ Theme** or **Settings ▸ Appearance ▸ Theme**. You can import CSS files from the app, edit palettes, and choose presets; a theme script is optional and needs explicit consent.
+- injecting custom CSS: create a `style.css` file in the same folder then:
 
-Read [Writing a theme](docs/themes/authoring.md) for the manifest and folder layout, and [Using themes](docs/themes/using.md) for installation and customisation. Community themes for this app are listed at [michei69/pear-desktop-themes](https://github.com/michei69/pear-desktop-themes).
+```typescript
+// index.ts
+import style from './style.css?inline'; // import style as inline
 
-## Development
+import { createPlugin } from '@/utils';
 
-Requirements: Node.js 22.12 or newer and pnpm 11.
-
-```sh
-git clone https://github.com/michei69/pear-desktop
-cd pear-desktop
-pnpm install --frozen-lockfile
-pnpm dev
+export default createPlugin({
+  name: 'Plugin Label',
+  restartNeeded: true, // if value is true, pear-desktop will show a restart dialog
+  config: {
+    enabled: false,
+  }, // your custom config
+  stylesheets: [style], // your custom style
+  renderer() {} // define renderer hook
+});
 ```
 
-`pnpm dev` runs electron-vite in development mode.
+- If you want to change the HTML:
 
-Useful commands:
+```typescript
+import { createPlugin } from '@/utils';
 
-| Command | What it does |
-| --- | --- |
-| `pnpm dev` | Development build and app |
-| `pnpm build` | Build `out/` |
-| `pnpm start` | Preview the production build |
-| `pnpm typecheck` | `tsc` in every workspace package |
-| `pnpm lint` | oxlint over `apps`, `packages`, `plugins`, `src` |
-| `pnpm format` / `pnpm format:check` | oxfmt over the same tree plus `scripts` |
-| `pnpm test` | Vitest in every workspace package with tests |
-| `pnpm test:e2e` | Build, then Playwright against the real app |
-| `pnpm i18n` | Add missing English keys to `src/i18n/resources/en.json` |
-| `pnpm clean` | Remove `out/` and `pack/` |
+export default createPlugin({
+  name: 'Plugin Label',
+  restartNeeded: true, // if value is true, ytmusic will show the restart dialog
+  config: {
+    enabled: false,
+  }, // your custom config
+  renderer() {
+    console.log('hello from renderer');
+  } // define renderer hook
+});
+```
 
-The docs cover the architecture and conventions: [docs/index.md](docs/index.md), [docs/architecture.md](docs/architecture.md), [docs/conventions.md](docs/conventions.md).
+- communicating between the front and back: can be done using the ipcMain module from electron. See `index.ts` file and
+  example in `sponsorblock` plugin.
 
 ## Build
 
-Packaging uses electron-builder. The scripts write installers into `pack/` and never upload them:
+1. Clone the repo
+2. Install [Nub](https://nubjs.com)
+3. Run `nub install --frozen-lockfile` to install dependencies
+4. Run the build command for your OS:
 
-```sh
-pnpm dist          # Windows, macOS and Linux targets in one electron-builder pass
-pnpm dist:linux    # AppImage, Flatpak, deb, rpm, snap, freebsd, tar.gz
-pnpm dist:mac      # dmg, x64
-pnpm dist:mac:arm64
-pnpm dist:win      # nsis-web and portable
-pnpm dist:win:x64
+- `nub run dist:win` - Windows
+- `nub run dist:linux` - Linux (amd64)
+- `nub run dist:linux:deb-arm64` - Linux (arm64 for Debian)
+- `nub run dist:linux:rpm-arm64` - Linux (arm64 for Fedora)
+- `nub run dist:mac` - macOS (amd64)
+- `nub run dist:mac:arm64` - macOS (arm64)
+
+Builds the app for macOS, Linux, and Windows,
+using [electron-builder](https://github.com/electron-userland/electron-builder).
+
+### Building in devcontainer
+
+1. Clone the repo;
+2. Open the folder in VS Code;
+3. Reopen in container when prompted;
+4. Run `nub run dist:<target>` as above (choosing the desired target);
+5. Collect the built files from the `dist` folder.
+
+Since devcontainer uses a mount for the workspace, the built files will be available on the host system as well.
+
+## Production Preview
+
+```bash
+nub run start
 ```
-
-The `dist:linux:deb-arm64` and `dist:linux:rpm-arm64` scripts build the architecture-specific Linux packages used for releases. The `beta:linux`, `beta:mac`, `beta:win`, `release:linux`, `release:mac` and `release:win` scripts are the ones CI calls; they add the beta or stable publish channel and still write only to `pack/`.
-
-Beta and release builds are produced by GitHub Actions, not by hand:
-
-- A push to `master` runs `.github/workflows/build.yml`. It stamps `<version>-beta.<run_number>`, builds with `PEAR_CHANNEL=beta`, and publishes the rolling prerelease.
-- The manual `Release Pear Desktop` workflow builds the unchanged package version with `PEAR_CHANNEL=stable`, publishes a `v<version>` release, and updates `changelog.md`.
-
-Both workflows use the `beta:*` and `release:*` scripts and install Flatpak runtime and base `26.08` for Linux builds.
 
 ## Tests
 
-`pnpm test` runs Vitest for the desktop app, the SDK, the Vite plugin and the plugins that ship tests. `pnpm test:e2e` builds the app and runs Playwright; the e2e suite drives the real site and needs network access. On Linux it opens windows on Xvfb when available; set `PEAR_E2E_SHOW=1` to watch them.
+```bash
+nub run test
+```
+
+Uses [Playwright](https://playwright.dev/) to test the app.
 
 ## License
 
-MIT. The fork and upstream copyrights are listed in [license](license).
+MIT © [pear-devs](https://github.com/pear-devs/pear-desktop)<br/>
+MIT © [michei69](https://github.com/michei69/pear-desktop)
+
+## FAQ
+
+### Why apps menu isn't showing up?
+
+If `Hide Menu` option is on - you can show the menu with the <kbd>alt</kbd> key (or <kbd>\`</kbd> [backtick] if using
+the in-app-menu plugin)
+
+### Why does YTM skip the cookie consent screen?
+
+The app answers it with "only essential cookies" (`SOCS=CAI`), unless you've chosen otherwise on YTM.
+
+### Musixmatch lyrics are wrong or missing?
+
+Musixmatch (synced-lyrics) needs a Musixmatch user token in the plugin's settings: Musixmatch answers anonymous apps
+with an all-zero token that only gets decoy lyrics.

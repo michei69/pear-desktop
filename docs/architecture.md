@@ -1,6 +1,6 @@
 # Architecture
 
-The repository is a pnpm workspace. The app in `apps/desktop` builds the Electron main process and the preload script and ships two page bundles: the YTM runtime and the standalone settings app. Shared code lives in `packages/`, one workspace package per plugin lives in `plugins/`, and translations live in `src/i18n/resources`.
+The repository is a Nub workspace. The app in `apps/desktop` builds the Electron main process and the preload script and ships two page bundles: the YTM runtime and the standalone settings app. Shared code lives in `packages/`, one workspace package per plugin lives in `plugins/`, and translations live in `src/i18n/resources`.
 
 ## Process model
 

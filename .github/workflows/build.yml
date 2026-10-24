@@ -27,22 +27,8 @@ jobs:
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320
-        with:
-          version: 11
-          run_install: false
-
-      - name: Setup NodeJS
-        if: startsWith(matrix.os, 'macos') != true
-        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'pnpm'
-
-      - name: Setup NodeJS for macOS
-        if: startsWith(matrix.os, 'macos')
-        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f
+      - name: Setup Nub
+        uses: nubjs/setup-nub@c7b970ec04655a2f0a111cd436cc182a3b660e7a
         with:
           node-version: ${{ env.NODE_VERSION }}
 
@@ -62,7 +48,7 @@ jobs:
           node -e "const fs=require('fs');const p='apps/desktop/package.json';const t=fs.readFileSync(p,'utf8');fs.writeFileSync(p,t.replace(/\"version\": \"[^\"]+\"/, '\"version\": \"'+process.argv[1]+'\"'));" "$VERSION"
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: nub install --frozen-lockfile
 
       # Beta builds never publish a versioned release: the installers built here
       # are attached to the v<version> pre-release by the publish-beta job below.
@@ -74,7 +60,7 @@ jobs:
       # keeps the release version, which is what the release workflow ships unchanged.
       - name: Build on Mac
         if: startsWith(matrix.os, 'macos')
-        run: pnpm beta:mac
+        run: nub run beta:mac
 
       - name: Build on Linux
         if: startsWith(matrix.os, 'ubuntu')
@@ -89,11 +75,11 @@ jobs:
           sudo flatpak install -y flathub org.freedesktop.Platform/aarch64/26.08
           sudo flatpak install -y flathub org.freedesktop.Sdk/aarch64/26.08
           sudo flatpak install -y flathub org.electronjs.Electron2.BaseApp/aarch64/26.08
-          pnpm beta:linux
+          nub run beta:linux
 
       - name: Build on Windows
         if: startsWith(matrix.os, 'windows')
-        run: pnpm beta:win
+        run: nub run beta:win
 
       - name: Upload macOS artifacts
         if: startsWith(matrix.os, 'macos')

@@ -48,7 +48,7 @@
     "lint": "oxlint --type-aware apps packages plugins src",
     "format": "oxfmt --write apps packages plugins src scripts",
     "format:check": "oxfmt --check apps packages plugins src scripts",
-    "changelog": "nub run dlx auto-changelog"
+    "changelog": "nub dlx auto-changelog"
   },
   "devDependencies": {
     "@stylistic/eslint-plugin": "5.10.0",
@@ -65,5 +65,38 @@
     "unreleased": true,
     "output": "changelog.md",
     "tagPattern": "^v\\d+\\.\\d+\\.\\d+$"
+  },
+  "devEngines": {
+    "packageManager": {
+      "name": "nub",
+      "version": "^0.9.7",
+      "onFail": "ignore"
+    }
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*",
+    "plugins/*"
+  ],
+  "overrides": {
+    "node-gyp": "13.0.0",
+    "node-abi": "4.39.0",
+    "xml2js": "0.6.2",
+    "node-fetch": "3.3.2",
+    "@electron/universal": "3.0.4",
+    "@babel/runtime": "8.0.0",
+    "electron": "45.0.0",
+    "\u0079\u006f\u0075\u0074\u0075\u0062\u0065i.js": "18.1.0",
+    "hono": "4.13.13",
+    "vite": "8.3.5"
+  },
+  "allowScripts": {
+    "bufferutil": true,
+    "electron": true,
+    "electron-winstaller": true,
+    "esbuild": true,
+    "@michei69/node-smtc": true,
+    "unrs-resolver": true,
+    "utf-8-validate": true
   }
 }

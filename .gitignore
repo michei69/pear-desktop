@@ -13,7 +13,6 @@ playwright-report/
 .DS_Store
 
 .pnp.*
-.pnpm-store
 .yarn/*
 !.yarn/patches
 !.yarn/plugins

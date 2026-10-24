@@ -7,7 +7,7 @@ import packageJson from "../../../../package.json" with { type: "json" };
  * How a build was produced:
  * - `stable`: built by the release workflow, published as a versioned release.
  * - `beta`: built from master on every push, published as the rolling beta pre-release.
- * - `dev`: anything unbaked, i.e. `pnpm dev` and local builds.
+ * - `dev`: anything unbaked, i.e. `nub run dev` and local builds.
  */
 export type Channel = "stable" | "beta" | "dev";
 

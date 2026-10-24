@@ -11,7 +11,7 @@ Plugins are compiled into the app. The build scans `plugins/`, so every plugin s
 - `plugins/<id>/index.ts`
 - `plugins/<id>/index.tsx`
 
-Each plugin is a workspace package (`packages/*` and `plugins/*` are in `pnpm-workspace.yaml`), usually `@pear/plugin-<id>`, with its own `package.json` and `tsconfig.json`. The folder name is the plugin id. It appears unchanged in config keys, RPC paths and `ctx.id`; the generated module identifier is the same id in camelCase.
+Each plugin is a workspace package (`packages/*` and `plugins/*` are in the root `package.json` `workspaces` field), usually `@pear/plugin-<id>`, with its own `package.json` and `tsconfig.json`. The folder name is the plugin id. It appears unchanged in config keys, RPC paths and `ctx.id`; the generated module identifier is the same id in camelCase.
 
 `PEAR_ONLY_PLUGINS=a,b` limits discovery during a build or test run. `scripts/new-plugin.ts` creates the folder, the package manifest, the tsconfig and a minimal `index.ts`.
 
@@ -57,7 +57,7 @@ export default definePlugin({
 | `host` | `HostPart` | Electron main-process half. |
 | `page` | `PagePart` | YTM main-world half. |
 
-Id, name, description, config texts and action labels are translated by the settings catalog using `plugins.<id>.*` keys, with the strings in the definition as English fallbacks. Run `pnpm i18n` to add them to `en.json`.
+Id, name, description, config texts and action labels are translated by the settings catalog using `plugins.<id>.*` keys, with the strings in the definition as English fallbacks. Run `nub run i18n` to add them to `en.json`.
 
 ## Host part
 
@@ -272,7 +272,7 @@ Consequences:
 
 ## Translations
 
-`ctx.t(key, english, vars)` returns the active language's text, the English fallback, or the key. Keys added by literal `ctx.t("plugins.my-plugin.x", "English")` calls are picked up by `pnpm i18n`; computed keys are not, so write the key out in full. The settings texts generated from the config schema are added automatically.
+`ctx.t(key, english, vars)` returns the active language's text, the English fallback, or the key. Keys added by literal `ctx.t("plugins.my-plugin.x", "English")` calls are picked up by `nub run i18n`; computed keys are not, so write the key out in full. The settings texts generated from the config schema are added automatically.
 
 ## Shipped plugins
 
@@ -280,7 +280,7 @@ The tree ships the upstream plugin set plus the fork's additions. The fork-speci
 
 ## Tests
 
-Put plugin unit tests in `plugins/<id>/test/` and run them with `pnpm test`. Plugin package manifests need a `test` script (`vitest run`) for the workspace run to pick them up. E2E tests live in `apps/desktop/e2e/`; see [Creating a plugin](./creating.md#testing).
+Put plugin unit tests in `plugins/<id>/test/` and run them with `nub run test`. Plugin package manifests need a `test` script (`vitest run`) for the workspace run to pick them up. E2E tests live in `apps/desktop/e2e/`; see [Creating a plugin](./creating.md#testing).
 
 ## Where to go next
 
