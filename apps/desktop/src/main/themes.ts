@@ -338,8 +338,12 @@ export class Themes {
   }
 
   #poll() {
+    const idsBefore = this.#themes.map((theme) => theme.id).join("\n");
     if (!this.#refresh()) return;
     this.#onChange();
+    // Adding or removing a folder changes the native menu's theme list; editing
+    // an existing theme's files does not, so the menu is only rebuilt for that.
+    if (this.#themes.map((theme) => theme.id).join("\n") !== idsBefore) this.#onCatalogChange();
   }
 
   /** Turns legacy `options.themes` CSS paths into a single theme folder. */

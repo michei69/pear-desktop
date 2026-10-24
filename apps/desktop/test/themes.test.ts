@@ -95,6 +95,24 @@ describe("theme folders", () => {
 });
 
 describe("Themes", () => {
+  test("polling rebuilds the menu only when a theme is added or removed", async () => {
+    const dir = profile();
+    writeTheme(dir, "sunset", { name: "Sunset", css: "style.css" }, { "style.css": "sunset {}" });
+    const { settings } = fakeSettings();
+    const { instance, onChange, onCatalogChange } = engine(settings);
+    instance.start();
+
+    // Editing an existing theme refreshes the page and the settings UI, not the menu.
+    writeFileSync(join(dir, "themes", "sunset", "style.css"), "sunset { accent: red; }");
+    await vi.waitFor(() => expect(onChange).toHaveBeenCalled(), { timeout: 5000, interval: 50 });
+    expect(onCatalogChange).not.toHaveBeenCalled();
+
+    // A folder added outside the app joins the menu.
+    writeTheme(dir, "forest", { name: "Forest", css: "style.css" }, { "style.css": "forest {}" });
+    await vi.waitFor(() => expect(onCatalogChange).toHaveBeenCalled(), { timeout: 5000, interval: 50 });
+    expect(instance.all.map((theme) => theme.id)).toContain("forest");
+  });
+
   test("seeds the Basic theme on a fresh profile", () => {
     const dir = profile();
     const { settings, config } = fakeSettings({ themesSeeded: false });
