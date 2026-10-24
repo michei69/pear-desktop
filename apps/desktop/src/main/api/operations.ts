@@ -40,6 +40,8 @@ export interface OperationEnvironment {
   settings: Settings;
   /** Pushes a page-surface event to the WebSockets (lyrics, translations). */
   emit(name: "lyrics" | "translation", payload: unknown): void;
+  /** Merges a config patch into config.json and applies it to the running app. */
+  applyConfig(patch: Record<string, unknown>): Promise<void>;
 }
 
 const ok = <T>(value: T): Outcome<T, never> => ({ ok: true, value });
@@ -235,7 +237,7 @@ export function createOperations(env: OperationEnvironment) {
 
     // Config and app
     getConfig: () => settings.all(),
-    patchConfig: (patch: Record<string, unknown>) => settings.patch(patch),
+    patchConfig: (patch: Record<string, unknown>) => env.applyConfig(patch),
     appMeta: () => getAppMeta(),
     featureFlags: async () => {
       const saved = savedFlags();

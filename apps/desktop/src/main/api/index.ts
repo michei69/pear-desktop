@@ -33,6 +33,8 @@ export interface ApiServerEnvironment {
   window: BrowserWindow;
   /** Tells the settings overlay about config and status changes. */
   publish(state: CoreState): void;
+  /** Merges a config patch into config.json and applies it to the running app. */
+  applyConfig(patch: Record<string, unknown>): Promise<void>;
 }
 
 type Running = Awaited<ReturnType<typeof startServer>>;
@@ -80,6 +82,7 @@ export class ApiServer {
       plugins: env.plugins,
       settings: env.settings,
       emit: (name, payload) => this.pageEvent(name, payload),
+      applyConfig: (patch) => env.applyConfig(patch),
     });
     this.#actions = {
       next: this.#operations.nextVideo,
@@ -212,6 +215,11 @@ export class ApiServer {
         this.#playerState.setDetails(this.#details);
         this.#playerState.emitVideoChanged(undefined, 0);
       });
+      // The fork's page-side watcher pushed the new track's lyrics on its own;
+      // it did not come over with the port, so the server asks synced-lyrics for
+      // them instead. Only while a v2 client listens: the plugin owns the fetch
+      // and its providers are network calls.
+      if (this.#socketsV2.size > 0) void this.#operations.lyrics().catch(() => undefined);
     }
   }
 

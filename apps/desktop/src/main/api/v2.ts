@@ -355,11 +355,11 @@ export function createV2Routes(operations: Operations): Route[] {
         path,
         summary: path.endsWith("settings") ? "Alias of `PATCH /pear/config`" : "Deep-merge a partial config into the stored one",
         body: "json",
-        handle({ body }: RouteRequest) {
+        async handle({ body }: RouteRequest) {
           if (typeof body !== "object" || body === null || Array.isArray(body)) {
             return { status: 400, body: { error: "expected a JSON object" } };
           }
-          operations.patchConfig(body);
+          await operations.patchConfig(body as Record<string, unknown>);
           return NO_CONTENT;
         },
       },

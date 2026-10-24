@@ -3,6 +3,7 @@
 import { app, session } from "electron";
 import hostPlugins from "virtual:pear/host-plugins";
 import { ApiServer } from "./api/index.ts";
+import { applyConfigPatch } from "./apply-config.ts";
 import { APP_ID, setAppIdentity } from "./app-identity.ts";
 import { commit, updatesSupported } from "./app-info.ts";
 import { hideOnClose, onActivate } from "./close.ts";
@@ -174,6 +175,30 @@ function main() {
       requests,
       window,
       publish: (state) => send({ type: "core-state", section: "apiServer", state }),
+      // A config patch from the API applies like the same edit in the settings
+      // dialog: core sections live, merged plugins started, stopped or restarted.
+      applyConfig: (patch) =>
+        applyConfigPatch(
+          {
+            settings,
+            plugins,
+            pluginIds: hostPlugins.map((plugin) => plugin.id),
+            applyCore: (section, previous, next) => {
+              core.apply(section);
+              send({ type: "core-state", section, state: core.state(section) });
+              const before = previous as Partial<Record<string, unknown>>;
+              const after = next as Partial<Record<string, unknown>>;
+              if (section !== "general" || (before.updateChannel === after.updateChannel && before.autoUpdates === after.autoUpdates)) {
+                return;
+              }
+              // The update manager rereads the channel itself; the menu mirrors the new values.
+              updates?.channelChanged();
+              refreshMenu();
+            },
+            applyApiServer: async () => void (await api?.apply()),
+          },
+          patch,
+        ),
     });
     plugins.attach({
       app,

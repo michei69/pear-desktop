@@ -345,7 +345,10 @@ const TOOLS: ToolDefinition[] = [
     name: "patch_config",
     description: "Deep-merge a partial config into the app config.",
     input: CONFIG,
-    run: (o, args) => (o.patchConfig(args), ok()),
+    run: async (o, args) => {
+      await o.patchConfig(args);
+      return ok();
+    },
   },
   {
     name: "app_meta",
