@@ -1,305 +1,292 @@
 # Plugins
 
-This page is the reference for the plugin system in this fork of Pear Desktop:
-discovery, definition fields, process halves, contexts and loading rules. It is
-written for contributors; [Creating a plugin](./creating.md) walks through
-writing one, and [Using plugins](./using.md) covers the user-facing side.
+This page is the reference for the plugin system: discovery, definition fields, the host and page parts, contexts, config, communication and cleanup. [Creating a plugin](./creating.md) walks through writing one; [Using plugins](./using.md) covers the user-facing side.
 
-Plugins are compiled into the app. The build scans `src/plugins/`, so every
-plugin ships inside the bundle; there is no loader for externally installed
-plugins, no plugin directory in the user's data folder, and no way to install a
-third-party plugin. Adding one means changing source and rebuilding.
+Plugins are compiled into the app. The build scans `plugins/`, so every plugin ships inside the bundle; there is no plugin store and no folder in the user's data directory for third-party plugins. Themes are the external, user-installable extension; see [Themes](../themes/index.md).
 
 ## Discovery
 
-`vite-plugins/plugin-importer.mts` scans two patterns under `src/plugins/`:
+`packages/vite-plugin-pear/src/index.ts` scans `plugins/` for:
 
-- `src/plugins/<id>/index.{js,ts,jsx,tsx}` - the usual folder form, for example
-  `src/plugins/seek-shortcuts/index.ts`.
-- `src/plugins/<id>.{js,ts,jsx,tsx}` - a single-file plugin, for example
-  `src/plugins/audio-compressor.ts`.
+- `plugins/<id>/index.ts`
+- `plugins/<id>/index.tsx`
 
-`src/plugins/utils/**` is excluded, so shared helpers live there without being
-treated as plugins. The plugin id is the folder name or the file's basename. The
-generated module identifiers are that id in camelCase
-(`always-show-volume-slider` becomes `alwaysShowVolumeSliderPlugin`); the id
-itself stays kebab-case everywhere the app uses it: menus, config keys, IPC.
+Each plugin is a workspace package (`packages/*` and `plugins/*` are in `pnpm-workspace.yaml`), usually `@pear/plugin-<id>`, with its own `package.json` and `tsconfig.json`. The folder name is the plugin id. It appears unchanged in config keys, RPC paths and `ctx.id`; the generated module identifier is the same id in camelCase.
 
-Every entry module default-exports `createPlugin({ ... })` from `@/utils`.
-`createPlugin` is an identity function that exists for type inference, so the
-exported value is the definition object:
+`PEAR_ONLY_PLUGINS=a,b` limits discovery during a build or test run. `scripts/new-plugin.ts` creates the folder, the package manifest, the tsconfig and a minimal `index.ts`.
+
+Every entry default-exports `definePlugin({...})` from `@pear/sdk`. `definePlugin` is an identity function typed for inference, so the exported value is the definition object.
 
 ```ts
-import { t } from '@/i18n';
-import { createPlugin } from '@/utils';
+import { config, definePlugin } from "@pear/sdk";
 
-export default createPlugin({
-  name: () => t('plugins.hello-world.name'),
-  description: () => t('plugins.hello-world.description'),
-  config: { enabled: false },
-  renderer: {
-    start() {
-      console.log('hello from the renderer');
+export default definePlugin({
+  id: "my-plugin",
+  name: "My plugin",
+  description: "Shown in the settings.",
+  config: {
+    greeting: config.string("Hello", { label: "Greeting" }),
+  },
+  host: {
+    start(ctx) {
+      ctx.player.on("trackChange", (track) => ctx.log.info(ctx.config.greeting, track?.title));
     },
+  },
+  page(ctx) {
+    ctx.toast(ctx.config.greeting);
   },
 });
 ```
-
-`src/plugins/always-show-volume-slider/index.ts` is the smallest real example
-of a renderer-only plugin; `src/plugins/ambient-mode/index.ts` shows config,
-settings, a menu and a renderer half together, and
-`src/plugins/downloader/index.ts` shows the backend, renderer and menu halves
-together.
 
 ## The plugin definition
 
-`PluginDef` in `src/types/plugins.ts` is the full shape.
+`PluginDef` in `packages/sdk/src/index.ts` is the full shape.
 
 | Field | Type | Purpose |
-| ----- | ---- | ------- |
-| `name` | `() => string` | Required. Shown in the Plugins menu and the settings card. |
-| `description` | `() => string` | Tooltip in the menu, description on the settings card. |
-| `authors` | `string[]` | Metadata only; the app does not render it today. |
-| `addedVersion` | `string` | Semver range (`'3.12.X'`); the menu shows **NEW** while the build version satisfies it. |
-| `config` | `Config` | Defaults; must include `enabled`. Omitted config means `{ enabled: false }`. |
-| `platform` | `Platform` | Bitmask; the generated plugin maps and the UI leave it out on other platforms. |
-| `essential` | `boolean` | Always on, ignores `config.enabled`, no switch on the settings card. |
-| `menu` | `(ctx: MenuContext) => MenuItemConstructorOptions[] \| Promise<...>` | Entries under the plugin's submenu in the native Plugins menu. |
-| `stylesheets` | `string[]` | CSS text imported with `?inline`; loaded by the renderer loader. |
-| `restartNeeded` | `boolean` | Enabling or disabling the plugin requires a restart. |
-| `settings` | `SettingsSchema` | Declarative fields rendered by the settings UI; see [Creating a plugin](./creating.md#settings-schema). |
-| `backend` | lifecycle or object | Main-process half; see below. |
-| `preload` | lifecycle or object | Preload-script half. |
-| `renderer` | lifecycle or object | Page-world half; also accepts `onPlayerApiReady` and `components`. |
+| --- | --- | --- |
+| `id` | `string` | Required. Same as the folder name. `core` is reserved. |
+| `name` | `string` | Required. Shown in settings. Translated through `plugins.<id>.name`. |
+| `description` | `string` | Shown under the name in settings. |
+| `authors` | `string[]` | Metadata. Not rendered by the app. |
+| `platforms` | `Platform[]` | `linux`, `win32`, `darwin`. Default: all. Other platforms neither list nor run the plugin. |
+| `enabledByDefault` | `boolean \| Platform[]` | Fresh-profile state. Default: off. |
+| `restartRequired` | `boolean` | Enabling or disabling applies on the next app start. Also implied by `host.beforeReady` and `host.windowOptions`. |
+| `config` | `ConfigShape` | Settings schema, defaults and UI metadata. |
+| `actions` | `Record<string, { label, description? }>` | Buttons in the plugin's settings card. Each runs the host command of the same name. |
+| `style` | `string \| (config) => string` | CSS applied while the plugin runs. Usually the result of the `css` macro. |
+| `host` | `HostPart` | Electron main-process half. |
+| `page` | `PagePart` | YTM main-world half. |
 
-`name`, `description`, labels and menu strings are functions returning `t(...)`
-so they follow a runtime language change. The config type must extend
-`PluginConfig` (`{ enabled: boolean }`), which is where the `enabled` flag the
-loaders read comes from.
+Id, name, description, config texts and action labels are translated by the settings catalog using `plugins.<id>.*` keys, with the strings in the definition as English fallbacks. Run `pnpm i18n` to add them to `en.json`.
 
-## Process halves
+## Host part
 
-A plugin can provide up to four halves, one per process or moment. Each half is
-either a single function (no state, no cleanup) or an object with `start` and
-optional `stop` / `onConfigChange` hooks. The renderer object also accepts
-`onPlayerApiReady` and `components`.
+`host` runs in Electron's main process.
 
-| Half | Runs in | Context type | Started |
-| ---- | ------- | ------------ | ------- |
-| `backend` | Electron main process | `BackendContext` | After the main window is created, before the page loads (`loadAllMainPlugins`). |
-| `preload` | Preload script, before the renderer bundle | `PreloadContext` | As the preload script runs, after i18n loads. |
-| `renderer` | Page world, inside YouTube Music | `RendererContext` | After the page boots, in `loadAllRendererPlugins`. |
-| `menu` | Electron main process | `MenuContext` | Whenever the application menu is built, for enabled and essential plugins. |
+| Member | Purpose |
+| --- | --- |
+| `beforeReady(ctx)` | Runs before `app.whenReady()` when the plugin was enabled at launch. For command-line switches and Chromium feature flags. Changes need a restart. |
+| `start(ctx)` | Starts the plugin. May return a cleanup function. |
+| `onConfigChange(config, ctx)` | Handles a config write without a restart. Return `"restart"` to restart anyway. |
+| `windowOptions(config)` | Extra `BrowserWindow` options for the main window. Applied when enabled at launch; changes need a restart. |
+| `commands` | Typed functions the page can call with `ctx.host.invoke`. `this` is the host context. |
+| `rpc` | Methods other apps call through the API server. Each has a valibot `input` schema and a `run` function. |
 
-The menu half is not a lifecycle: `menu(ctx)` is called each time the menu is
-rebuilt and returns the items for that plugin's submenu. Returning an empty array
-means the plugin still gets a plain enable/disable entry but no submenu
-(`src/loader/menu.ts`).
+Disabling stops the host part; its context's cleanups run and its commands are no longer callable until the plugin is enabled again. A config write is offered to the running part; when the part cannot apply it and has a `start`, the part is restarted rather than reloaded in place.
 
-A half that is a plain function gets no `stop`, so it cannot clean up:
+The `beforeReady` context carries `config`, `app`, `enableFeatures(...names)` and `disableFeatures(...names)`. The features collected from all enabled plugins become one `enable-features` or `disable-features` command-line switch.
 
-```ts
-renderer() {
-  document.body.classList.add('my-plugin');
-},
-```
+`windowOptions` may set frame, transparency and colors. Geometry, visibility and the security-relevant `webPreferences` are enforced by `MainWindow` afterwards, so a plugin cannot weaken the sandbox or the preload.
 
-It also cannot be unloaded at runtime: disabling the plugin calls the loader's
-unload path, which has nothing to call on a function half, logs the failure and
-leaves the half running until the process starts again. Use an object half for
-anything users can toggle.
+## Page part
+
+`page` runs in YTM's main world. It is either a function (`start`) or an object:
+
+| Member | Purpose |
+| --- | --- |
+| `runAt` | `"idle"` (default) waits for DOM ready; `"start"` runs before YTM's own scripts. |
+| `start(ctx)` | Starts the plugin. May return a cleanup function. |
+| `onConfigChange(config, ctx)` | Handles a config write without a restart. Return `"restart"` to restart anyway. |
+
+A page part is started when its plugin is enabled in the host bootstrap and stopped when the host reports it disabled. With `restartRequired`, a page part starts only if the plugin was enabled when the page loaded and keeps running until the next load; the settings UI shows the restart banner. Without it, enable, disable and config changes apply live. Performance mode skips the page halves of `ambient-mode`, `blur-nav-bar` and `visualizer`; their config and host parts still run.
+
+`runAt: "start"` runs before there is a `<body>`. Use it only to patch page globals before YTM starts, and `ctx.waitFor` for elements later.
 
 ## Contexts
 
-Each lifecycle call receives a context object, typed in
-`src/types/contexts.ts`. All contexts share `getConfig` and `setConfig`.
+Both parts share the common members:
 
-| Context | Members |
-| ------- | ------- |
-| `BackendContext` | `ipc.send`, `ipc.handle`, `ipc.on`, `ipc.off`, `ipc.removeHandler`, `ipc.removeAllListeners`, `window` (`BrowserWindow`) |
-| `PreloadContext` | `getConfig`, `setConfig` only |
-| `MenuContext` | `getConfig`, `setConfig`, `window`, `refresh()` |
-| `RendererContext` | `ipc.send`, `ipc.invoke`, `ipc.on`, `ipc.off`, `ipc.removeAllListeners` |
+| Member | Purpose |
+| --- | --- |
+| `id`, `config` | The plugin id and the current config, always fresh. |
+| `setConfig(patch)` | Writes a partial config through the host. |
+| `onConfigChange(listener)` | Applies a change without restarting. The listener returns `"restart"` to restart anyway. |
+| `setTimeout` / `setInterval` / `clearTimeout` / `clearInterval` | Timers cleared when the plugin stops. |
+| `onCleanup(fn)` | Runs when the plugin stops, including during a restart or quit. |
+| `t(key, english, vars)` | Translation with `{{name}}` interpolation. |
+| `log.info` / `warn` / `error` | Console logging prefixed with `[pear:<id>]`. |
 
-`getConfig()` resolves the plugin's declared defaults merged with the stored
-config. `setConfig(partial)` writes a partial object; the `enabled` key is
-excluded from its type and is owned by the loaders. IPC listeners registered
-through `ipc.on` receive the channel arguments without Electron's event object,
-and `ipc.off` removes one listener while
-`ipc.removeAllListeners(channel)` removes every listener on the channel. Channel
-names are global to the app, so namespace them (`peard:<kebab-case>` is the
-convention).
+Host context adds:
+
+| Member | Purpose |
+| --- | --- |
+| `app`, `window` | Electron's app and the main window. |
+| `session` | The default session, with this plugin's scoped `webRequest`. |
+| `webRequest` | Electron's `WebRequest` API, composed fairly with the core and other plugins. Listeners are removed when the plugin stops. |
+| `player` | Host player mirror: `state`, `on("change" | "trackChange")`, `control(action)`, `details()`. |
+| `request(event, payload?, { timeout? })` | Asks the page part's `ctx.host.handle` and awaits the answer. |
+| `emit(event, payload?)` | Sends an event to the page part. |
+| `openSettings()`, `focusWindow()` | Opens the settings overlay and focuses the main window. |
+| `addMenuItem(item)`, `pluginMenuItems()`, `onMenuItemsChange(fn)` | App and tray menu entries that live with the plugin. |
+| `listen(emitter, event, fn)` | `emitter.on` that is removed on stop. |
+| `setStatus(text)` | A line on the plugin's settings card; an empty string clears it. |
+| `api.broadcast(event, data)` | Sends `PLUGIN_EVENT` to API server WebSocket clients while the server is on. |
+| `onProtocol(fn)` | Listens to app-protocol commands (`youtubemusic://...`). |
+
+Page context adds:
+
+| Member | Purpose |
+| --- | --- |
+| `player` | Page player facade. See [Player API](./player-api.md). |
+| `host` | `invoke(command, ...args)`, `on(event, fn)`, `handle(event, fn)`. |
+| `sel(name)`, `$`, `$$` | Selector registry lookup and element queries. |
+| `waitFor(name, { timeout? })` | Resolves with the first matching element. |
+| `mount(element, place)`, `mount(element, parentName, position?)` | Keeps an element in the page across YTM re-renders. |
+| `observe(target, options, callback)` | A `MutationObserver` disconnected on stop. |
+| `listen(target, type, fn, options?)` | `addEventListener` removed on stop. |
+| `audio()` | The shared Web Audio graph. Use it instead of connecting the `<video>` yourself. |
+| `addStyle(css)` | Adds a style sheet for the plugin's lifetime; returns `{ update, remove }`. |
+| `toast(message)` | Shows a message in YTM's toast. |
+| `isWindowVisible()` | Whether the window is on screen; visual loops check this to pause. |
+| `signal` | Aborts when the plugin stops. |
+
+Every listener, timer, observer, style, mounted element and audio node registered through these members is undone on stop. That also holds when `start` is still awaiting and the plugin stops meanwhile: anything registered after the stop is undone at once. Page code can check `ctx.signal.aborted` to stop early.
+
+## Config
+
+`config` is a record of fields built with the helpers in `packages/sdk/src/config.ts`:
+
+| Builder | Stored value |
+| --- | --- |
+| `config.bool(default, meta)` | `boolean` |
+| `config.number(default, { min, max, step, unit, variant })` | `number` |
+| `config.string(default, { placeholder, secret })` | `string` |
+| `config.select(default, options, meta)` | one option's `value` |
+| `config.multi(default, options, meta)` | array of option values |
+| `config.shortcut(default, meta)` | Electron accelerator string |
+| `config.list(default, meta)` | `string[]` |
+
+Every field takes `label`, and optionally `description`, `group`, `restart` and `platforms`. Numbers default to a slider when bounded with at most 1000 steps and to a stepper otherwise. Selects default to chips for up to eight options and to a dropdown otherwise. `secret` renders a password input.
+
+`ConfigOf<typeof schema>` is the inferred config type. `normalizeConfig()` drops unknown keys and resets values that no longer fit the schema to their defaults, so a removed option cannot crash a plugin.
+
+Plugin config is stored as `plugins.<id>` in `<userData>/config.json`, next to the `enabled` flag. `setConfig({ key: value })` writes the changed fields through the host. Arrays are stored as lists and replaced, not merged. A config write is offered to the running part; when the part cannot apply it, the part restarts. `restart: true` on a field only tells the settings UI to show a restart pill; it does not change the plugin lifecycle by itself.
+
+## Communication
+
+Page to host, typed commands:
 
 ```ts
-renderer: {
-  handler: null as ((value: unknown) => void) | null,
-
-  start({ ipc }) {
-    this.handler = (value) => console.log(value);
-    ipc.on('peard:my-plugin-event', this.handler);
+host: {
+  commands: {
+    async save(title: string) {
+      await writeFile(join(this.app.getPath("downloads"), `${title}.txt`), title);
+      return true;
+    },
   },
+},
+page: async (ctx) => {
+  const saved = await ctx.host.invoke("save", "My song");
+},
+```
 
-  stop({ ipc }) {
-    if (this.handler) ipc.off('peard:my-plugin-event', this.handler);
-    this.handler = null;
+Host to page, events:
+
+```ts
+// host
+ctx.emit("progress", 0.5);
+// page
+ctx.host.on("progress", (value) => { /* … */ });
+```
+
+Host asks the page:
+
+```ts
+// page
+ctx.host.handle("volume", () => ctx.player.api?.getVolume());
+// host
+const volume = await ctx.request<number>("volume");
+```
+
+Requests time out after 10 seconds by default; `ctx.request` accepts a `timeout`. A missing handler or a stopped page rejects the request. Page events and handlers are removed when the page part stops.
+
+## Actions and RPC
+
+`actions` adds buttons to the plugin's settings card. The settings UI calls `plugin:invoke` with the action name, which runs the host command of the same name:
+
+```ts
+actions: {
+  reconnect: { label: "Reconnect", description: "Connect again now." },
+},
+host: {
+  commands: {
+    reconnect() { /* … */ },
   },
 },
 ```
 
-The `menu` half uses `refresh()` to rebuild the application menu after a change
-that alters its labels or enabled state; a checkbox updates its own state, so
-most menu items do not need it.
-
-## Lifecycle and `this`
-
-A half written as an object stores per-process state as properties, and the
-loader binds every function property to that object before `start` runs
-(`startPlugin` in `src/utils/index.ts`). That is why `this.api`, `this.listener`
-and similar fields work in `start`/`stop`/`onConfigChange`, and why a method can
-be passed as an event listener and still see the right `this`. It also means the
-object is the place for anything that must survive between calls:
+`host.rpc` exposes methods to other apps through the API server:
 
 ```ts
-renderer: {
-  api: null as MusicPlayer | null,
+import { v } from "@pear/sdk/rpc";
 
-  onPlayerApiReady(api) {
-    this.api = api;
-  },
-
-  stop() {
-    this.api = null;
+host: {
+  rpc: {
+    segments: {
+      summary: "Skip segments of a video",
+      input: v.object({ videoId: v.string() }),
+      run({ videoId }) {
+        return fetchSegments(videoId);
+      },
+    },
   },
 },
 ```
 
-`start` is awaited by the loader; `stop` is awaited when the plugin is disabled.
-A throwing `start` is caught and logged (`[YTMusic] ... execute-failed`), the app
-keeps running, and the half is not recorded as started (a renderer half still
-counts as loaded when it also declares `stylesheets`). An object half with no
-`start` still counts as loaded, because the presence of the object is what the
-loader records.
+The method becomes `POST /api/v1/plugins/<id>/<method>`. The body is validated against `input` before `run` is called; invalid input gets 400, a disabled plugin gets 503, and an unknown method gets 404. RPC methods of running plugins are listed by `GET /api/v1/plugins` and in `/doc`. Output is sent as JSON; `undefined` produces 204.
 
-`onConfigChange` is called with the merged config after a write:
+## Menus
 
-- Backend: only while the plugin is loaded and enabled (`src/index.ts`).
-- Renderer: only while the plugin is loaded; a disable unloads it before the
-  change could reach that hook (`src/renderer.ts`).
-- Preload and menu halves do not receive it; the preload half starts with a
-  config snapshot, and the menu half runs again on the next menu build.
+`ctx.addMenuItem({ label, accelerator?, click })` adds an item under the native Options menu and in the tray menu. The item is removed when the plugin stops. The `tray` plugin draws its own menu from `ctx.pluginMenuItems()` and refreshes on `ctx.onMenuItemsChange`.
 
-`onPlayerApiReady(api, ctx)` fires once the YouTube Music player object exists,
-after every loaded renderer plugin has started, and again when the plugin is
-re-enabled mid-session. The raw player surface is documented in [Player
-API](./player-api.md).
+There is no per-plugin native submenu and no `menu` half. Complex controls belong in the plugin's settings card or in the page.
 
-## Loading rules
+## Styles
 
-For each half, the loader walks the plugins that have that half and starts it
-when either condition holds:
-
-- the plugin is `essential`, or
-- the merged `config.enabled` is true. The merged value is the plugin's declared
-  default (`{ enabled: false }` when there is no `config`) overlaid with
-  `plugins.<id>` from the store.
-
-The rest applies on top:
-
-- `platform` is a static bitmask in the definition. The generated
-  `supportsPlatform` helper checks it while the plugin maps are built, so a
-  plugin for another OS is left out of those maps and never appears in the menu
-  or settings on this one.
-- Performance mode skips the renderer half of `ambient-mode`, `blur-nav-bar` and
-  `visualizer` (`src/providers/performance-mode.ts`). Their config is untouched,
-  and their backend, preload and menu halves still run.
-- Enabling or disabling at runtime is driven by the config watcher in
-  `src/index.ts`: main starts/stops its own half, sends `plugin:enable` /
-  `plugin:unload` to preload and the renderer, then sends `config-changed` with
-  the new config.
-- `restartNeeded` does not force a restart and does not change the lifecycle: the
-  plugin is still started or stopped immediately, and main shows the restart
-  dialog (or batches it while a settings window is open) because the change only
-  takes full effect after a restart. Per-field restart requirements live on
-  `settings` fields and are reported by the settings modal; see [Modifying
-  plugins](./modifying.md#restart-requirements).
-- Essential plugins cannot be turned off: the settings card hides the switch,
-  the menu entry is always checked, and the config watcher forces `enabled` back
-  to true.
-
-## Build-time metadata and stripping
-
-`electron.vite.config.mts` builds `virtual:plugins` three times, once per target
-(`main`/backend, `preload`, `renderer`), through two Vite plugins:
-
-- `vite-plugins/plugin-importer.mts` generates the module: a loader per plugin,
-  a memoized `<target>Plugins()` map containing only plugins with that half, an
-  `allPlugins()` map built from `pluginStub`s, and the renderer-only
-  `rendererPluginMeta`.
-- `vite-plugins/plugin-loader.mts` rewrites each plugin entry during the build.
-  It removes the definitions of the other halves from the default export and
-  appends a `pluginStub` export with the lifecycle halves stripped, so a
-  process bundle carries its own half plus metadata. In the backend build the
-  stub keeps `menu`, because main builds the application menu from `allPlugins()`.
-
-`rendererPluginMeta` holds four facts read from the source with ts-morph:
-`hasRenderer`, `essential`, `enabled` (the declared default) and `platform`.
-`null` means the build could not read the fact; the renderer loader then imports
-the plugin definition and reads the real field
-(`src/loader/renderer.ts`). The main build uses deferred dynamic imports, so a
-plugin module's body runs only when the loader asks for it. The renderer build
-uses static imports because wrapping modules in lazy initializers broke the
-bundler for it, and preload uses them too because it never supported dynamic
-import (see the comments in `plugin-importer.mts`).
-
-Two practical rules follow:
-
-- Keep the default export a directly written object literal, or a
-  `createPlugin({ ... })` call with one. The loader looks for exactly that
-  shape, and it is the object the build rewrites.
-- Keep process-specific code in separate modules referenced from the half. The
-  transform edits the definition, not the import list.
-
-## Configuration and stylesheets
-
-Plugin config lives under `plugins.<id>` in the store (an `electron-store`
-persisted to `<userData>/config.json`, see `src/config/store.ts`). The plugin's
-declared `config` supplies defaults; the loaders merge stored values over them,
-and `setConfig` writes partials through `config.setPartial`, which merges arrays
-by replacement. See [Modifying plugins](./modifying.md#config-semantics) for the
-merge details.
-
-`settings` is rendered by the `settings-ui` plugin, which is itself an essential
-plugin. Its keys live at the top level (`settings-ui.*`) instead of under
-`plugins.settings-ui.*`, because the settings UI predates that namespace; a new
-plugin uses `plugins.<id>.*` like the rest.
-
-`stylesheets` entries are CSS strings, normally imported with `?inline`:
+`style` is CSS applied for the plugin's lifetime, before themes in the cascade. The `css` macro validates and minifies it at build time and resolves selector names:
 
 ```ts
-import style from './style.css?inline';
+import { css } from "@pear/sdk/macros" with { type: "macro" };
 
-export default createPlugin({
-  // ...
-  stylesheets: [style],
-  renderer: {},
-});
+style: css`
+  sel(nav_bar) {
+    backdrop-filter: blur(8px);
+  }
+`,
 ```
 
-The renderer loader turns each string into a `CSSStyleSheet`, adopts it with
-`document.adoptedStyleSheets`, and removes it when the plugin unloads. Styles are
-global, not scoped: use a plugin-specific selector or class, as
-`src/plugins/always-show-volume-slider/style.css` does. A `renderer` half must
-exist for the stylesheets to load, even if it is an empty object.
+`sel(name)` becomes the registry selector. A selector present in both player-bar layouts becomes `:is(...)`, so one rule covers both. Unknown selector names fail the build. The macro does not accept `${}` interpolation; use CSS variables for values that change. `style` may be a function of the config.
+
+For CSS outside `style`, use `ctx.addStyle(css)`. It also works at document start and returns a handle whose `update()` replaces the CSS.
+
+## Build splitting
+
+One plugin file contains both halves. The build rewrites a `?pear=host` copy by removing `page` and `style`, and a `?pear=page` copy by removing `host`, then prunes imports and local declarations no longer referenced. That is how a single file can import `node:fs` or Electron in its host part without breaking the page bundle.
+
+Consequences:
+
+- Code outside `host` and `page` runs in both bundles. A top-level `new Tray(icon)` breaks the page; put it in `host.start`.
+- Keep host-only imports referenced from host code only. A type-only import that survives type stripping can keep a host class in the page; the splitter prunes what is no longer used after type stripping, but a runtime reference in shared top-level code is still shared.
+- `page` parts receive no preload half. Anything that must run before YTM's scripts belongs in `runAt: "start"`, after which the same context is available.
+- A plugin without a `page` part contributes nothing to the page bundle except the parts referenced by shared top-level code.
+
+## Translations
+
+`ctx.t(key, english, vars)` returns the active language's text, the English fallback, or the key. Keys added by literal `ctx.t("plugins.my-plugin.x", "English")` calls are picked up by `pnpm i18n`; computed keys are not, so write the key out in full. The settings texts generated from the config schema are added automatically.
+
+## Shipped plugins
+
+The tree ships the upstream plugin set plus the fork's additions. The fork-specific plugins are `always-show-volume-slider`, `audio-only`, `dismiss-multidevice-popup`, `fullscreen-auto-hide`, `memory-saver`, `no-google-login`, `playback-recovery`, `playlist-search`, `prefer-song`, `search-commands`, `seek-shortcuts`, `sfw-music`, `skip-ai-slop`, `statusbar-lyrics` and `toast-autoclose`. Larger examples to read: `plugins/downloader` (host commands, page UI, RPC), `plugins/equalizer` (shared audio graph), `plugins/visualizer` (audio taps and performance-mode skipping) and `plugins/synced-lyrics` (Preact UI, RPC and translation).
+
+## Tests
+
+Put plugin unit tests in `plugins/<id>/test/` and run them with `pnpm test`. Plugin package manifests need a `test` script (`vitest run`) for the workspace run to pick them up. E2E tests live in `apps/desktop/e2e/`; see [Creating a plugin](./creating.md#testing).
 
 ## Where to go next
 
-- [Creating a plugin](./creating.md) - build a new plugin step by step.
-- [Modifying plugins](./modifying.md) - add options, menu entries, migrations.
-- [Using plugins](./using.md) - enable, configure and troubleshoot plugins.
-- [Porting from upstream](./porting-from-upstream.md) - the differences from the
-  upstream fork's plugin API.
-- [Player API](./player-api.md) - the YouTube Music object handed to
-  `onPlayerApiReady`.
-- [Architecture](../architecture.md) - where the loaders sit in the boot
-  sequence.
-- [Conventions](../conventions.md) - i18n, naming, tests and commits.
+- [Creating a plugin](./creating.md): build one step by step.
+- [Modifying plugins](./modifying.md): add options, commands, migrations and tests.
+- [Using plugins](./using.md): enable, configure and troubleshoot.
+- [Player API](./player-api.md): tracks, actions, queue helpers and song details.
+- [Porting from upstream](./porting-from-upstream.md): map pear-desktop 3.x plugins onto this API.
+- [Conventions](../conventions.md): translations, naming, tests and releases.

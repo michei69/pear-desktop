@@ -156,8 +156,8 @@
               "sync": {
                 "label": "Synkronoi kieli",
                 "submenu": {
-                  "from-youtube": "YouTubesta",
-                  "to-youtube": "YouTubeen"
+                  "from-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "\u0059\u006f\u0075\u0054\u0075\u0062\u0065sta",
+                  "to-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "\u0059\u006f\u0075\u0054\u0075\u0062\u0065en"
                 },
                 "failure": {
                   "dialog": {
@@ -181,8 +181,8 @@
               "disabled": "Pois päältä",
               "enabled-and-hide-app": "Suositukset ovat käytössä ja piilota valikko",
               "enabled-and-show-app": "Päällä ja sovellus näkyvissä",
-              "move-to-current-desktop": "Siirrä nykyiselle virtuaalityöpöydälle näytettäessä",
               "play-pause-on-click": "Soita/pysäytä klikkaamalla",
+              "move-to-current-desktop": "Siirrä nykyiselle virtuaalityöpöydälle näytettäessä",
               "force-white-icons": "Pakota valkoisten kuvakkeiden käyttö"
             }
           },
@@ -229,7 +229,7 @@
                   "open-themes-folder": "Avaa teemakansio"
                 }
               },
-              "use-ytm-icons": "Käytä alkuperäisiä YouTube Music -kuvakkeita"
+              "use-ytm-icons": "Käytä alkuperäisiä \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 -kuvakkeita"
             }
           },
           "updates": {
@@ -315,10 +315,6 @@
         "enable-seekbar": "Ota käyttöön hakupalkin teemoitus"
       },
       "name": "Albumin Värinen Teema"
-    },
-    "audio-only": {
-      "description": "Pakottaa vain äänitilan — estää kaikki videovirrat verkko- ja soitintasolla säästääkseen RAM-muistia ja kaistaa",
-      "name": "Vain Ääni"
     },
     "ambient-mode": {
       "description": "Antaa valaistustehosteen heittämällä videosta lempeitä värejä näytön taustalle",
@@ -503,20 +499,6 @@
         "no-captions": "Tekstityksiä ei ole saatavilla tälle kappaleelle"
       }
     },
-    "clock": {
-      "description": "Lisää kello siirtymäpalkkiin",
-      "name": "Kello",
-      "menu": {
-        "format": {
-          "label": "Muoto",
-          "display-seconds": "Näytä sekunnit",
-          "24-hour-format": "24 tunnin muoto"
-        }
-      },
-      "settings": {
-        "hour-12": "Käytä 12 tunnin muotoa"
-      }
-    },
     "compact-sidebar": {
       "description": "Asettaa sivupalkin aina kompaktiin tilaan",
       "name": "Kompakti sivupalkki"
@@ -553,19 +535,6 @@
           "logarithmic": "Logaritminen"
         },
         "seconds-before-end-description": "Sekunnit ennen kappaleen loppua, jolloin ristihäivytys seuraavaan kappaleeseen alkaa"
-      }
-    },
-    "custom-output-device": {
-      "description": "Määritä mukautettu lähtömediatoistolaite kappaleille",
-      "menu": {
-        "device-selector": "Valitse laite"
-      },
-      "name": "Mukautettu Lähtölaite",
-      "prompt": {
-        "device-selector": {
-          "label": "Valitse käytettävä lähtömediatoistolaite",
-          "title": "Valitse Lähtölaite"
-        }
       }
     },
     "disable-autoplay": {
@@ -842,9 +811,9 @@
           "label": "Interaktiiviset Asetukset",
           "submenu": {
             "hide-button-text": "Piilota painikkeen teksti",
-            "hover-controls": "Näytä minisoitin tarjottimen päällä viedessä",
             "refresh-on-play-pause": "Päivitä Toistamisen/Tauottamisen yhteydessä",
-            "tray-controls": "Avaa/Sulje tehtäväpalkista"
+            "tray-controls": "Avaa/Sulje tehtäväpalkista",
+            "hover-controls": "Näytä minisoitin tarjottimen päällä viedessä"
           }
         },
         "priority": "Ilmoitusten tärkeys",
@@ -856,19 +825,6 @@
     "performance-improvement": {
       "description": "Paranna suorituskykyä käyttämällä kokeellisia skriptejä",
       "name": "Suorituskykyparannus [Beta]"
-    },
-    "playback-recovery": {
-      "description": "Automaattisesti palautuu jumiutuneista, pysähtyneistä tai kuolleista toistotiloista",
-      "menu": {
-        "log-to-console": "Kirjaa palautustapahtumat konsoliin"
-      },
-      "name": "Toiston Palautus",
-      "settings": {
-        "stall-timeout": "Toiston pysähtymisen aikakatkaisu",
-        "stall-timeout-description": "Kuinka kauan toisto saa olla edistymättä ennen palautusyritystä",
-        "max-retries": "Uudelleenyritysten enimmäismäärä",
-        "max-retries-description": "Palautusyritysten määrä ennen siirtymistä seuraavaan kappaleeseen"
-      }
     },
     "picture-in-picture": {
       "description": "Sallii sovelluksen vaihtamisen \"kuva kuvassa\" tilaan",
@@ -980,8 +936,8 @@
           "api-root": "ListenBrainz-API-osoite"
         },
         "scrobble-alternative-title": "Käytä vaihtoehtoisia otsikoita",
-        "scrobble-alternative-artist": "Käytä vaihtoehtoisia artisteja",
         "scrobble-other-media": "Jaa muuta mediaa",
+        "scrobble-alternative-artist": "Käytä vaihtoehtoisia artisteja",
         "regex-filters": "Säännöllisten lausekkeiden suodattimet",
         "use-musicbrainz": "Käytä MusicBrainzia metatietojen korjaamiseen",
         "musicbrainz-email": "MusicBrainz-yhteyssähköposti"
@@ -1016,26 +972,101 @@
       }
     },
     "shortcuts": {
+      "prompt": {
+        "keybind": {
+          "keybind-options": {
+            "previous": "Edellinen",
+            "next": "Seuraava",
+            "play-pause": "Toisto / Tauko"
+          },
+          "label": "Valitse yleiset pikanäppäimet kappaleiden hallintaan:",
+          "title": "Yleiset pikanäppäimet"
+        }
+      },
       "description": "Mahdollistaa yleisten pikanäppäinten asettamisen toistolle (toisto/tauko/seuraava/edellinen) ja media-OSD:n poistamisen ohittamalla medianäppäimet, Ctrl/CMD + F käyttöönoton etsimiseen, Linux MPRIS -tuen käyttöönoton medianäppäimille, ja mukautetut pikanäppäimet edistyneille käyttäjille",
       "menu": {
         "override-media-keys": "Ohita medianäppäimet",
         "set-keybinds": "Aseta yleiset kappaleiden hallintanäppäimet"
       },
       "name": "Pikanäppäimet (& MPRIS)",
-      "prompt": {
-        "keybind": {
-          "keybind-options": {
-            "next": "Seuraava",
-            "play-pause": "Toisto / Tauko",
-            "previous": "Edellinen"
-          },
-          "label": "Valitse yleiset pikanäppäimet kappaleiden hallintaan:",
-          "title": "Yleiset pikanäppäimet"
-        }
-      },
       "settings": {
         "global-keybinds": "Globaalit pikanäppäimet (toimivat koko sovelluksessa)",
         "local-keybinds": "Paikalliset pikanäppäimet (vain ikkunan ollessa kohdistettuna)"
+      }
+    },
+    "tuna-obs": {
+      "name": "Tuna OBS",
+      "description": "Integraatio OBS:n Tuna-lisäosan kanssa"
+    },
+    "video-toggle": {
+      "menu": {
+        "align": {
+          "submenu": {
+            "left": "Vasen",
+            "right": "Oikea",
+            "middle": "Keskellä"
+          },
+          "label": "Tasaus"
+        },
+        "force-hide": "Pakota videovälilehden poisto",
+        "mode": {
+          "label": "Tila",
+          "submenu": {
+            "custom": "Mukautettu vaihto",
+            "disabled": "Pois käytöstä",
+            "native": "Natiivi vaihto"
+          }
+        }
+      },
+      "description": "Lisää painikkeen Video/Kappale-tilan vaihtamiseen. Voi myös poistaa koko videovälilehden",
+      "name": "Videon Vaihto",
+      "templates": {
+        "button-song": "Kappale",
+        "button-video": "Video"
+      }
+    },
+    "audio-only": {
+      "description": "Pakottaa vain äänitilan — estää kaikki videovirrat verkko- ja soitintasolla säästääkseen RAM-muistia ja kaistaa",
+      "name": "Vain Ääni"
+    },
+    "clock": {
+      "description": "Lisää kello siirtymäpalkkiin",
+      "name": "Kello",
+      "menu": {
+        "format": {
+          "label": "Muoto",
+          "display-seconds": "Näytä sekunnit",
+          "24-hour-format": "24 tunnin muoto"
+        }
+      },
+      "settings": {
+        "hour-12": "Käytä 12 tunnin muotoa"
+      }
+    },
+    "custom-output-device": {
+      "description": "Määritä mukautettu lähtömediatoistolaite kappaleille",
+      "menu": {
+        "device-selector": "Valitse laite"
+      },
+      "name": "Mukautettu Lähtölaite",
+      "prompt": {
+        "device-selector": {
+          "label": "Valitse käytettävä lähtömediatoistolaite",
+          "title": "Valitse Lähtölaite"
+        }
+      }
+    },
+    "playback-recovery": {
+      "description": "Automaattisesti palautuu jumiutuneista, pysähtyneistä tai kuolleista toistotiloista",
+      "menu": {
+        "log-to-console": "Kirjaa palautustapahtumat konsoliin"
+      },
+      "name": "Toiston Palautus",
+      "settings": {
+        "stall-timeout": "Toiston pysähtymisen aikakatkaisu",
+        "stall-timeout-description": "Kuinka kauan toisto saa olla edistymättä ennen palautusyritystä",
+        "max-retries": "Uudelleenyritysten enimmäismäärä",
+        "max-retries-description": "Palautusyritysten määrä ennen siirtymistä seuraavaan kappaleeseen"
       }
     },
     "skip-silences": {
@@ -1267,7 +1298,7 @@
         },
         "use-ytm-lyrics-without-proxy": {
           "label": "Käytä YTM-lyriikoita ilman välityspalvelinta",
-          "tooltip": "Ohita YTM-selausproxy ja kutsu YouTube Musicia suoraan sovelluksen todennetun istunnon kautta. Hyödyllinen, jos luotat verkkoosi/alueeseesi sallimaan suorat selauskutsut."
+          "tooltip": "Ohita YTM-selausproxy ja kutsu \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063ia suoraan sovelluksen todennetun istunnon kautta. Hyödyllinen, jos luotat verkkoosi/alueeseesi sallimaan suorat selauskutsut."
         },
         "show-custom-search-button": {
           "label": "Näytä mukautettu hakupainike",
@@ -1362,40 +1393,9 @@
         "type-description": "Ikkunan läpinäkyvyyteen käytettävä taustamateriaali"
       }
     },
-    "tuna-obs": {
-      "description": "Integraatio OBS:n Tuna-lisäosan kanssa",
-      "name": "Tuna OBS"
-    },
     "unobtrusive-player": {
       "description": "Estää soitinta ilmestymästä näkyviin, kun kappale alkaa soida",
       "name": "Huomaamaton Soitin"
-    },
-    "video-toggle": {
-      "description": "Lisää painikkeen Video/Kappale-tilan vaihtamiseen. Voi myös poistaa koko videovälilehden",
-      "menu": {
-        "align": {
-          "label": "Tasaus",
-          "submenu": {
-            "left": "Vasen",
-            "middle": "Keskellä",
-            "right": "Oikea"
-          }
-        },
-        "force-hide": "Pakota videovälilehden poisto",
-        "mode": {
-          "label": "Tila",
-          "submenu": {
-            "custom": "Mukautettu vaihto",
-            "disabled": "Pois käytöstä",
-            "native": "Natiivi vaihto"
-          }
-        }
-      },
-      "name": "Videon Vaihto",
-      "templates": {
-        "button-song": "Kappale",
-        "button-video": "Video"
-      }
     },
     "visualizer": {
       "description": "Lisää visualisoijan soittimeen",
@@ -1464,7 +1464,7 @@
     },
     "search-commands": {
       "commands": {
-        "play": "Toista video YouTube-linkistä tai -tunnuksesta",
+        "play": "Toista video \u0059\u006f\u0075\u0054\u0075\u0062\u0065-linkistä tai -tunnuksesta",
         "settings": "Avaa asetukset"
       },
       "description": "Kirjoita / hakukenttään suorittaaksesi komentoja, joiden argumentit täydentyvät automaattisesti",
@@ -1481,11 +1481,11 @@
       "name": "Kelauspikanäppäimet"
     },
     "sfw-music": {
-      "description": "Ohittaa automaattisesti kappaleet, jotka YouTube Music on merkinnyt eksplisiittisiksi. Keskeyttää, jos eksplisiittinen jono toistuu tai seuraavaa kappaletta ei ole saatavilla.",
+      "description": "Ohittaa automaattisesti kappaleet, jotka \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 on merkinnyt eksplisiittisiksi. Keskeyttää, jos eksplisiittinen jono toistuu tai seuraavaa kappaletta ei ole saatavilla.",
       "name": "SFW-musiikki"
     },
     "toast-autoclose": {
-      "description": "Sulkee YouTube Musicin ilmoitukset automaattisesti kolmen sekunnin kuluttua",
+      "description": "Sulkee \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063in ilmoitukset automaattisesti kolmen sekunnin kuluttua",
       "name": "Ilmoitusten automaattinen sulkeminen"
     },
     "statusbar-lyrics": {
@@ -1531,7 +1531,7 @@
     "move-up": "Siirrä ylös",
     "move-down": "Siirrä alas",
     "about": {
-      "tagline": "Ominaisuuksiltaan monipuolinen työpöytäsovellus YouTube Musicille",
+      "tagline": "Ominaisuuksiltaan monipuolinen työpöytäsovellus \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063ille",
       "versions": "Versiot",
       "version-app": "Sovellus",
       "version-build": "Koontiversio",
@@ -1589,7 +1589,7 @@
     "stepper-decrement": "Vähennä",
     "stepper-increment": "Lisää",
     "flags": {
-      "warning": "Ominaisuusliput ovat YouTube Musicin omia sisäisiä kytkimiä. Niiden muuttaminen voi rikkoa toiston, asettelun tai tilitoiminnot, eivätkä ne kuulu tuen piiriin. Ohitukset säilytetään vain muuttamiesi lippujen osalta, ja ne voi poistaa Kumoa-toiminnolla.",
+      "warning": "Ominaisuusliput ovat \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063in omia sisäisiä kytkimiä. Niiden muuttaminen voi rikkoa toiston, asettelun tai tilitoiminnot, eivätkä ne kuulu tuen piiriin. Ohitukset säilytetään vain muuttamiesi lippujen osalta, ja ne voi poistaa Kumoa-toiminnolla.",
       "search-placeholder": "Hae lippuja",
       "overridden": "ohitettu",
       "undo": "Kumoa",

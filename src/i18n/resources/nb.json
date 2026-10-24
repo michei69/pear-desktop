@@ -156,8 +156,8 @@
               "sync": {
                 "label": "Synkroniser språk",
                 "submenu": {
-                  "from-youtube": "Fra YouTube",
-                  "to-youtube": "Til YouTube"
+                  "from-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "Fra \u0059\u006f\u0075\u0054\u0075\u0062\u0065",
+                  "to-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "Til \u0059\u006f\u0075\u0054\u0075\u0062\u0065"
                 },
                 "failure": {
                   "dialog": {
@@ -221,7 +221,7 @@
                   "placeholder": "Eksempel: {{applicationName}}"
                 }
               },
-              "use-ytm-icons": "Bruk originale YouTube Music-ikoner"
+              "use-ytm-icons": "Bruk originale \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063-ikoner"
             }
           },
           "updates": {
@@ -720,6 +720,10 @@
         "local-keybinds": "Lokale hurtigtaster (bare når vinduet har fokus)"
       }
     },
+    "skip-disliked-songs": {
+      "description": "Hopper over mislikte spor",
+      "name": "Hopp over mislikte spor"
+    },
     "skip-silences": {
       "description": "Hopp over stille deler av spor",
       "name": "Hopp over pauser",
@@ -1159,7 +1163,7 @@
     },
     "search-commands": {
       "commands": {
-        "play": "Spill av en video fra en YouTube-lenke eller -ID",
+        "play": "Spill av en video fra en \u0059\u006f\u0075\u0054\u0075\u0062\u0065-lenke eller -ID",
         "settings": "Åpne innstillingene"
       },
       "description": "Skriv / i søkefeltet for å kjøre kommandoer, med autofullføring for argumentene",
@@ -1176,7 +1180,7 @@
       "name": "Spolesnarveier"
     },
     "sfw-music": {
-      "description": "Hopper automatisk over sanger merket som eksplisitt av YouTube Music. Setter på pause hvis en eksplisitt kø gjentas eller ingen neste sang er tilgjengelig.",
+      "description": "Hopper automatisk over sanger merket som eksplisitt av \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063. Setter på pause hvis en eksplisitt kø gjentas eller ingen neste sang er tilgjengelig.",
       "name": "SFW-musikk"
     },
     "synced-lyrics": {
@@ -1248,7 +1252,7 @@
         },
         "use-ytm-lyrics-without-proxy": {
           "label": "Bruk YTM-sangtekst uten proxy",
-          "tooltip": "Hopp over YTM-nettleserproxyen og kall YouTube Music direkte ved hjelp av appens autentiserte økt. Nyttig hvis du stoler på at nettverket/regionen din tillater direkte nettleserkall."
+          "tooltip": "Hopp over YTM-nettleserproxyen og kall \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 direkte ved hjelp av appens autentiserte økt. Nyttig hvis du stoler på at nettverket/regionen din tillater direkte nettleserkall."
         },
         "convert-chinese-character": {
           "label": "Konverter kinesiske tegn",
@@ -1389,7 +1393,7 @@
       }
     },
     "toast-autoclose": {
-      "description": "Lukk YouTube Music-varsler automatisk etter tre sekunder",
+      "description": "Lukk \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063-varsler automatisk etter tre sekunder",
       "name": "Automatisk lukking av varsler"
     },
     "transparent-player": {
@@ -1468,7 +1472,7 @@
     "move-up": "Flytt opp",
     "move-down": "Flytt ned",
     "about": {
-      "tagline": "En funksjonsrik skrivebordsapp for YouTube Music",
+      "tagline": "En funksjonsrik skrivebordsapp for \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063",
       "versions": "Versjoner",
       "version-app": "App",
       "version-build": "Bygg",
@@ -1526,7 +1530,7 @@
     "stepper-decrement": "Reduser",
     "stepper-increment": "Øk",
     "flags": {
-      "warning": "Funksjonsflagg er YouTube Musics egne interne brytere. Hvis du endrer dem, kan avspilling, layout eller kontofunksjoner slutte å fungere, og de dekkes ikke av brukerstøtten. Overstyringer beholdes bare for flaggene du endrer, og kan fjernes med Angre.",
+      "warning": "Funksjonsflagg er \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063s egne interne brytere. Hvis du endrer dem, kan avspilling, layout eller kontofunksjoner slutte å fungere, og de dekkes ikke av brukerstøtten. Overstyringer beholdes bare for flaggene du endrer, og kan fjernes med Angre.",
       "search-placeholder": "Søk etter flagg",
       "overridden": "overstyrt",
       "undo": "Angre",

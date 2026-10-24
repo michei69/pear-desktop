@@ -71,7 +71,7 @@
       "update-available": {
         "buttons": {
           "disable": "Disattiva gli aggiornamenti",
-          "download": "Scarica",
+          "download": "Download",
           "ok": "OK"
         },
         "detail": "È disponibile una nuova versione scaricabile all'indirizzo {{downloadLink}}",
@@ -156,8 +156,8 @@
               "sync": {
                 "label": "Sincronizza lingua",
                 "submenu": {
-                  "from-youtube": "Da YouTube",
-                  "to-youtube": "Verso YouTube"
+                  "from-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "Da \u0059\u006f\u0075\u0054\u0075\u0062\u0065",
+                  "to-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "Verso \u0059\u006f\u0075\u0054\u0075\u0062\u0065"
                 },
                 "failure": {
                   "dialog": {
@@ -229,7 +229,7 @@
                   "open-themes-folder": "Apri cartella dei temi"
                 }
               },
-              "use-ytm-icons": "Usa le icone originali di YouTube Music"
+              "use-ytm-icons": "Usa le icone originali di \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063"
             }
           },
           "updates": {
@@ -393,7 +393,7 @@
           }
         },
         "hostname": {
-          "label": "Nome host"
+          "label": "Hostname"
         },
         "https": {
           "label": "HTTPS & Certificati",
@@ -419,11 +419,11 @@
           "description": "Espone l'API v2 come strumenti MCP su /mcp. Usa la stessa autorizzazione del resto dell'API."
         }
       },
-      "name": "Server API [Beta]",
+      "name": "API Server [Beta]",
       "prompt": {
         "hostname": {
           "label": "Inserisci il nome host (ad esempio 0.0.0.0) per il server API:",
-          "title": "Nome host"
+          "title": "Hostname"
         },
         "port": {
           "label": "Inserisci la porta per il server API:",
@@ -1021,6 +1021,10 @@
         "local-keybinds": "Scorciatoie locali (solo quando la finestra è attiva)"
       }
     },
+    "skip-disliked-songs": {
+      "description": "Salta le canzoni non gradite",
+      "name": "Salta i brani che non ti piacciono"
+    },
     "skip-silences": {
       "description": "Salta automaticamente le parti silenziose nei brani",
       "name": "Salta silenzi",
@@ -1081,7 +1085,7 @@
               "tooltip": "Usa effetti grandi, simili a quelli di un'app sulla riga attuale"
             },
             "focus": {
-              "label": "Messa a fuoco",
+              "label": "Focus",
               "tooltip": "Rendi bianca solo la riga corrente"
             },
             "offset": {
@@ -1139,7 +1143,7 @@
         },
         "use-ytm-lyrics-without-proxy": {
           "label": "Usa i testi di YTM senza proxy",
-          "tooltip": "Salta il proxy di navigazione YTM e chiama direttamente YouTube Music usando la sessione autenticata dell'app. Utile se ritieni che la tua rete/regione consenta chiamate di navigazione dirette."
+          "tooltip": "Salta il proxy di navigazione YTM e chiama direttamente \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 usando la sessione autenticata dell'app. Utile se ritieni che la tua rete/regione consenta chiamate di navigazione dirette."
         },
         "translation": {
           "label": "Traduzione dei testi",
@@ -1417,7 +1421,7 @@
     },
     "search-commands": {
       "commands": {
-        "play": "Riproduci un video da un link o ID YouTube",
+        "play": "Riproduci un video da un link o ID \u0059\u006f\u0075\u0054\u0075\u0062\u0065",
         "settings": "Apri le impostazioni"
       },
       "description": "Digita / nella casella di ricerca per eseguire comandi, con completamento automatico per i relativi argomenti",
@@ -1434,11 +1438,11 @@
       "name": "Scorciatoie di spostamento"
     },
     "sfw-music": {
-      "description": "Salta automaticamente i brani contrassegnati come Explicit da YouTube Music. Mette in pausa se una coda esplicita si ripete o non è disponibile un brano successivo.",
+      "description": "Salta automaticamente i brani contrassegnati come Explicit da \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063. Mette in pausa se una coda esplicita si ripete o non è disponibile un brano successivo.",
       "name": "Musica SFW"
     },
     "toast-autoclose": {
-      "description": "Chiude automaticamente i toast di YouTube Music dopo tre secondi",
+      "description": "Chiude automaticamente i toast di \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 dopo tre secondi",
       "name": "Chiusura automatica dei toast"
     },
     "statusbar-lyrics": {
@@ -1484,7 +1488,7 @@
     "move-up": "Sposta su",
     "move-down": "Sposta giù",
     "about": {
-      "tagline": "Un'app desktop ricca di funzioni per YouTube Music",
+      "tagline": "Un'app desktop ricca di funzioni per \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063",
       "versions": "Versioni",
       "version-app": "App",
       "version-build": "Build",
@@ -1542,7 +1546,7 @@
     "stepper-decrement": "Diminuisci",
     "stepper-increment": "Aumenta",
     "flags": {
-      "warning": "I feature flag sono interruttori interni di YouTube Music. Modificarli può compromettere la riproduzione, il layout o le funzioni dell'account e non sono coperti dall'assistenza. Le sovrascritture vengono mantenute solo per i flag che modifichi e possono essere rimosse con Annulla.",
+      "warning": "I feature flag sono interruttori interni di \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063. Modificarli può compromettere la riproduzione, il layout o le funzioni dell'account e non sono coperti dall'assistenza. Le sovrascritture vengono mantenute solo per i flag che modifichi e possono essere rimosse con Annulla.",
       "search-placeholder": "Cerca flag",
       "overridden": "sovrascritto",
       "undo": "Annulla",

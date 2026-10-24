@@ -156,8 +156,8 @@
               "sync": {
                 "label": "Sprache synchronisieren",
                 "submenu": {
-                  "from-youtube": "Von YouTube",
-                  "to-youtube": "Zu YouTube"
+                  "from-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "Von \u0059\u006f\u0075\u0054\u0075\u0062\u0065",
+                  "to-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "Zu \u0059\u006f\u0075\u0054\u0075\u0062\u0065"
                 },
                 "failure": {
                   "dialog": {
@@ -229,7 +229,7 @@
                   "open-themes-folder": "Themes-Ordner öffnen"
                 }
               },
-              "use-ytm-icons": "Originale YouTube Music-Symbole verwenden"
+              "use-ytm-icons": "Originale \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063-Symbole verwenden"
             }
           },
           "updates": {
@@ -309,7 +309,7 @@
         "color-mix-ratio": {
           "label": "Farbmischungsverhältnis",
           "submenu": {
-            "percent": "{{ratio}} %"
+            "percent": "{{ratio}}%"
           }
         },
         "enable-seekbar": "Suchleisten-Design aktivieren"
@@ -334,7 +334,7 @@
         "opacity": {
           "label": "Transparenz",
           "submenu": {
-            "percent": "{{opacity}} %"
+            "percent": "{{opacity}}%"
           }
         },
         "quality": {
@@ -346,7 +346,7 @@
         "size": {
           "label": "Größe",
           "submenu": {
-            "percent": "{{size}} %"
+            "percent": "{{size}}%"
           }
         },
         "smoothness-transition": {
@@ -460,11 +460,11 @@
       "prompt": {
         "hostname": {
           "label": "Hostnamen eingeben für lokalen Proxy-Server (Neustart erforderlich):",
-          "title": "Proxy-Hostname"
+          "title": "Proxy Hostname"
         },
         "port": {
           "label": "Geben Sie den Port für den lokalen Proxyserver ein (Neustart erforderlich):",
-          "title": "Proxy-Port"
+          "title": "Proxy Port"
         }
       }
     },
@@ -1040,6 +1040,10 @@
         "local-keybinds": "Lokale Tastenkürzel (nur bei fokussiertem Fenster)"
       }
     },
+    "skip-disliked-songs": {
+      "description": "Überspringt Lieder, die ihnen nicht gefallen",
+      "name": "Überspring Lieder, die ihnen nicht gefallen"
+    },
     "skip-silences": {
       "description": "Automatisch stille Abschnitte in Liedern überspringen",
       "name": "Stille überspringen",
@@ -1114,24 +1118,6 @@
           },
           "tooltip": "Effekt für aktive Zeile auswählen"
         },
-        "lyrics-font-size": {
-          "label": "Schriftgröße der Texte",
-          "submenu": {
-            "large": {
-              "label": "Groß",
-              "tooltip": "Ursprüngliche, größere Textgröße verwenden"
-            },
-            "medium": {
-              "label": "Mittel",
-              "tooltip": "Ausgewogene Textgröße verwenden"
-            },
-            "small": {
-              "label": "Klein",
-              "tooltip": "Kompaktere Textgröße verwenden"
-            }
-          },
-          "tooltip": "Wählen Sie, wie groß der Liedtext sein soll"
-        },
         "precise-timing": {
           "label": "Den Songtext perfekt synchronisieren",
           "tooltip": "Auf die Millisekunde genau berechnen, wann die nächste Zeile angezeigt werden soll (Kann Einfluss auf die Leistung haben)"
@@ -1155,6 +1141,24 @@
         "show-time-codes": {
           "label": "Zeitkodierungen anzeigen",
           "tooltip": "Zeitkodierungen neben Songtext anzeigen"
+        },
+        "lyrics-font-size": {
+          "label": "Schriftgröße der Texte",
+          "submenu": {
+            "large": {
+              "label": "Groß",
+              "tooltip": "Ursprüngliche, größere Textgröße verwenden"
+            },
+            "medium": {
+              "label": "Mittel",
+              "tooltip": "Ausgewogene Textgröße verwenden"
+            },
+            "small": {
+              "label": "Klein",
+              "tooltip": "Kompaktere Textgröße verwenden"
+            }
+          },
+          "tooltip": "Wählen Sie, wie groß der Liedtext sein soll"
         },
         "translation": {
           "clear-cache": {
@@ -1269,7 +1273,7 @@
         },
         "use-ytm-lyrics-without-proxy": {
           "label": "YTM-Lyrics ohne Proxy verwenden",
-          "tooltip": "YTM-Browse-Proxy überspringen und YouTube Music direkt über die authentifizierte Sitzung der App aufrufen. Nützlich, wenn Sie Ihrem Netzwerk/Ihrer Region vertrauen, direkte Browse-Aufrufe zuzulassen."
+          "tooltip": "YTM-Browse-Proxy überspringen und \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 direkt über die authentifizierte Sitzung der App aufrufen. Nützlich, wenn Sie Ihrem Netzwerk/Ihrer Region vertrauen, direkte Browse-Aufrufe zuzulassen."
         },
         "show-custom-search-button": {
           "label": "Benutzerdefinierte Suchschaltfläche anzeigen",
@@ -1341,7 +1345,7 @@
         "opacity": {
           "label": "Hintergrund-Sichtbarkeit",
           "submenu": {
-            "percent": "{{opacity}} %"
+            "percent": "{{opacity}}%"
           }
         },
         "type": {
@@ -1464,7 +1468,7 @@
     },
     "search-commands": {
       "commands": {
-        "play": "Ein Video über einen YouTube-Link oder eine -ID abspielen",
+        "play": "Ein Video über einen \u0059\u006f\u0075\u0054\u0075\u0062\u0065-Link oder eine -ID abspielen",
         "settings": "Einstellungen öffnen"
       },
       "description": "Gib / in das Suchfeld ein, um Befehle auszuführen, mit Autovervollständigung für ihre Argumente",
@@ -1481,11 +1485,11 @@
       "name": "Spul-Tastenkürzel"
     },
     "sfw-music": {
-      "description": "Überspringt automatisch Songs, die von YouTube Music als explizit markiert sind. Pausiert, wenn sich eine explizite Warteschlange wiederholt oder kein nächster Song verfügbar ist.",
+      "description": "Überspringt automatisch Songs, die von \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 als explizit markiert sind. Pausiert, wenn sich eine explizite Warteschlange wiederholt oder kein nächster Song verfügbar ist.",
       "name": "SFW-Musik"
     },
     "toast-autoclose": {
-      "description": "YouTube-Music-Toasts nach drei Sekunden automatisch schließen",
+      "description": "\u0059\u006f\u0075\u0054\u0075\u0062\u0065\u002d\u004d\u0075\u0073\u0069\u0063-Toasts nach drei Sekunden automatisch schließen",
       "name": "Toast automatisch schließen"
     },
     "statusbar-lyrics": {
@@ -1531,7 +1535,7 @@
     "move-up": "Nach oben",
     "move-down": "Nach unten",
     "about": {
-      "tagline": "Eine funktionsreiche Desktop-App für YouTube Music",
+      "tagline": "Eine funktionsreiche Desktop-App für \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063",
       "versions": "Versionen",
       "version-app": "App",
       "version-build": "Build",
@@ -1589,7 +1593,7 @@
     "stepper-decrement": "Verringern",
     "stepper-increment": "Erhöhen",
     "flags": {
-      "warning": "Feature-Flags sind interne Schalter von YouTube Music. Änderungen daran können Wiedergabe, Layout oder Kontofunktionen beeinträchtigen, und sie sind nicht vom Support abgedeckt. Überschreibungen werden nur für die Flags gespeichert, die du änderst, und können mit „Rückgängig“ entfernt werden.",
+      "warning": "Feature-Flags sind interne Schalter von \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063. Änderungen daran können Wiedergabe, Layout oder Kontofunktionen beeinträchtigen, und sie sind nicht vom Support abgedeckt. Überschreibungen werden nur für die Flags gespeichert, die du änderst, und können mit „Rückgängig“ entfernt werden.",
       "search-placeholder": "Flags durchsuchen",
       "overridden": "überschrieben",
       "undo": "Rückgängig",

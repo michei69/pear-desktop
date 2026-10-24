@@ -156,8 +156,8 @@
               "sync": {
                 "label": "Sincronizar idioma",
                 "submenu": {
-                  "from-youtube": "Do YouTube",
-                  "to-youtube": "Para o YouTube"
+                  "from-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "Do \u0059\u006f\u0075\u0054\u0075\u0062\u0065",
+                  "to-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "Para o \u0059\u006f\u0075\u0054\u0075\u0062\u0065"
                 },
                 "failure": {
                   "dialog": {
@@ -229,7 +229,7 @@
                   "open-themes-folder": "Abrir pasta de temas"
                 }
               },
-              "use-ytm-icons": "Usar os ícones originais do YouTube Music"
+              "use-ytm-icons": "Usar os ícones originais do \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063"
             }
           },
           "updates": {
@@ -612,6 +612,25 @@
         "hide-duration-left": "Ocultar tempo restante"
       }
     },
+    "do-not-track": {
+      "description": "Começar a bloquear a monitorização",
+      "menu": {
+        "blocker": "Bloqueador"
+      },
+      "name": "Não rastrear",
+      "settings": {
+        "cache": "Armazenar listas de bloqueio em cache",
+        "disable-default-lists": "Desativar listas de bloqueio padrão"
+      },
+      "dialog": {
+        "reload": {
+          "title": "Recarregar página",
+          "message": "As configurações de Não Rastrear foram alteradas.",
+          "detail": "As regras de rede são atualizadas sem reiniciar o aplicativo. Recarregue a página para aplicar totalmente as alterações aos filtros de página. A reprodução pode ser interrompida. Você pode recarregar mais tarde.",
+          "reload-now": "Recarregar página agora"
+        }
+      }
+    },
     "downloader": {
       "backend": {
         "dialog": {
@@ -878,9 +897,9 @@
           }
         }
       },
-      "name": "Imagem em imagem",
+      "name": "Picture-in-picture",
       "templates": {
-        "button": "Imagem em imagem"
+        "button": "Picture-in-picture"
       }
     },
     "playback-speed": {
@@ -1021,6 +1040,10 @@
         "local-keybinds": "Atalhos locais (somente enquanto a janela estiver em foco)"
       }
     },
+    "skip-disliked-songs": {
+      "description": "Ignorar músicas de que não gostei",
+      "name": "Ignorar músicas não gostadas"
+    },
     "skip-silences": {
       "description": "Ignorar automaticamente as partes silenciosas das músicas",
       "name": "Ignorar silêncio",
@@ -1095,24 +1118,6 @@
           },
           "tooltip": "Escolha o efeito para aplicar à linha atual"
         },
-        "lyrics-font-size": {
-          "label": "Tamanho da fonte das letras",
-          "submenu": {
-            "large": {
-              "label": "Grande",
-              "tooltip": "Utilizar o tamanho de letra maior original"
-            },
-            "medium": {
-              "label": "Médio",
-              "tooltip": "Utilizar um tamanho de letra equilibrado"
-            },
-            "small": {
-              "label": "Pequeno",
-              "tooltip": "Utilizar um tamanho de letra mais compacto"
-            }
-          },
-          "tooltip": "Escolha o tamanho do texto das letras"
-        },
         "precise-timing": {
           "label": "Sincronização perfeita da entre letra e música",
           "tooltip": "Calcular, ao milissegundo, a exibição da linha seguinte (pode ter um pequeno impacto no desempenho)"
@@ -1136,6 +1141,24 @@
         "show-time-codes": {
           "label": "Mostrar códigos temporais",
           "tooltip": "Mostrar códigos temporais ao lado das letras"
+        },
+        "lyrics-font-size": {
+          "label": "Tamanho da fonte das letras",
+          "submenu": {
+            "large": {
+              "label": "Grande",
+              "tooltip": "Utilizar o tamanho de letra maior original"
+            },
+            "medium": {
+              "label": "Médio",
+              "tooltip": "Utilizar um tamanho de letra equilibrado"
+            },
+            "small": {
+              "label": "Pequeno",
+              "tooltip": "Utilizar um tamanho de letra mais compacto"
+            }
+          },
+          "tooltip": "Escolha o tamanho do texto das letras"
         },
         "translation": {
           "clear-cache": {
@@ -1250,7 +1273,7 @@
         },
         "use-ytm-lyrics-without-proxy": {
           "label": "Usar letras do YTM sem proxy",
-          "tooltip": "Ignorar o proxy de navegação do YTM e chamar o YouTube Music diretamente usando a sessão autenticada do aplicativo. Útil se você confiar na sua rede/região para permitir chamadas de navegação diretas."
+          "tooltip": "Ignorar o proxy de navegação do YTM e chamar o \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 diretamente usando a sessão autenticada do aplicativo. Útil se você confiar na sua rede/região para permitir chamadas de navegação diretas."
         },
         "show-custom-search-button": {
           "label": "Mostrar botão de pesquisa personalizado",
@@ -1435,25 +1458,6 @@
       "name": "Mostrar sempre o controle de volume",
       "description": "Mantém o controle de volume visível e arrastável, em vez de mostrá-lo apenas ao passar o cursor."
     },
-    "do-not-track": {
-      "description": "Bloquear todo o rastreamento por padrão",
-      "menu": {
-        "blocker": "Bloqueador"
-      },
-      "name": "Não rastrear",
-      "settings": {
-        "cache": "Armazenar listas de bloqueio em cache",
-        "disable-default-lists": "Desativar listas de bloqueio padrão"
-      },
-      "dialog": {
-        "reload": {
-          "title": "Recarregar página",
-          "message": "As configurações de Não Rastrear foram alteradas.",
-          "detail": "As regras de rede são atualizadas sem reiniciar o aplicativo. Recarregue a página para aplicar totalmente as alterações aos filtros de página. A reprodução pode ser interrompida. Você pode recarregar mais tarde.",
-          "reload-now": "Recarregar página agora"
-        }
-      }
-    },
     "fullscreen-auto-hide": {
       "description": "Ocultar automaticamente os controles do player e o cursor do mouse após alguns segundos de inatividade no modo tela cheia",
       "name": "Ocultação automática em tela cheia"
@@ -1464,7 +1468,7 @@
     },
     "search-commands": {
       "commands": {
-        "play": "Reproduzir um vídeo a partir de um link ou ID do YouTube",
+        "play": "Reproduzir um vídeo a partir de um link ou ID do \u0059\u006f\u0075\u0054\u0075\u0062\u0065",
         "settings": "Abrir as configurações"
       },
       "description": "Digite / na caixa de pesquisa para executar comandos, com preenchimento automático para os argumentos",
@@ -1481,11 +1485,11 @@
       "name": "Atalhos de Avanço"
     },
     "sfw-music": {
-      "description": "Pula automaticamente as músicas marcadas como Explícitas pelo YouTube Music. Pausa se uma fila explícita se repetir ou se não houver próxima música disponível.",
+      "description": "Pula automaticamente as músicas marcadas como Explícitas pelo \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063. Pausa se uma fila explícita se repetir ou se não houver próxima música disponível.",
       "name": "Música SFW"
     },
     "toast-autoclose": {
-      "description": "Fecha automaticamente os avisos do YouTube Music após três segundos",
+      "description": "Fecha automaticamente os avisos do \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 após três segundos",
       "name": "Fechamento Automático de Avisos"
     },
     "statusbar-lyrics": {
@@ -1531,7 +1535,7 @@
     "move-up": "Mover para cima",
     "move-down": "Mover para baixo",
     "about": {
-      "tagline": "Um aplicativo de desktop rico em recursos para o YouTube Music",
+      "tagline": "Um aplicativo de desktop rico em recursos para o \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063",
       "versions": "Versões",
       "version-app": "Aplicativo",
       "version-build": "Compilação",
@@ -1589,7 +1593,7 @@
     "stepper-decrement": "Diminuir",
     "stepper-increment": "Aumentar",
     "flags": {
-      "warning": "Os sinalizadores de recursos são comutadores internos do próprio YouTube Music. Alterá-los pode quebrar a reprodução, o layout ou recursos da conta, e eles não são cobertos pelo suporte. As substituições são mantidas apenas para os sinalizadores que você alterar e podem ser removidas com Desfazer.",
+      "warning": "Os sinalizadores de recursos são comutadores internos do próprio \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063. Alterá-los pode quebrar a reprodução, o layout ou recursos da conta, e eles não são cobertos pelo suporte. As substituições são mantidas apenas para os sinalizadores que você alterar e podem ser removidas com Desfazer.",
       "search-placeholder": "Pesquisar sinalizadores",
       "overridden": "substituído",
       "undo": "Desfazer",

@@ -156,8 +156,8 @@
               "sync": {
                 "label": "Nyelv szinkronizálása",
                 "submenu": {
-                  "from-youtube": "YouTube-ról",
-                  "to-youtube": "YouTube-ra"
+                  "from-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "\u0059\u006f\u0075\u0054\u0075\u0062\u0065-ról",
+                  "to-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "\u0059\u006f\u0075\u0054\u0075\u0062\u0065-ra"
                 },
                 "failure": {
                   "dialog": {
@@ -229,7 +229,7 @@
                   "open-themes-folder": "Témák mappájának megnyitása"
                 }
               },
-              "use-ytm-icons": "Eredeti YouTube Music ikonok használata"
+              "use-ytm-icons": "Eredeti \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 ikonok használata"
             }
           },
           "updates": {
@@ -456,7 +456,7 @@
           "label": "Port"
         }
       },
-      "name": "Hitelesítési proxy adapter",
+      "name": "Auth Proxy Adapter",
       "prompt": {
         "hostname": {
           "label": "Adjon meg egy hosztnevet a lokális proxy szerverhez (újraindítást igényel):",
@@ -464,7 +464,7 @@
         },
         "port": {
           "label": "Adjon meg egy portot a lokális proxy szerverhez (újraindátást igényel):",
-          "title": "Proxy port"
+          "title": "Proxy Port"
         }
       }
     },
@@ -1040,6 +1040,10 @@
         "local-keybinds": "Helyi gyorsbillentyűk (csak amíg az ablak fókuszban van)"
       }
     },
+    "skip-disliked-songs": {
+      "description": "Kihagyja a nem kedvelt dalokat",
+      "name": "Nem kedvelt dal kihagyása"
+    },
     "skip-silences": {
       "description": "Automatikusan kihagyja a csendes részeket a dalokban",
       "name": "Csend kihagyása",
@@ -1114,24 +1118,6 @@
           },
           "tooltip": "Válassza ki az aktuális sorra alkalmazandó effektust"
         },
-        "lyrics-font-size": {
-          "label": "Dalszöveg betűméret",
-          "submenu": {
-            "large": {
-              "label": "Nagy",
-              "tooltip": "Az eredeti nagyobb dalszöveg méret használata"
-            },
-            "medium": {
-              "label": "Közepes",
-              "tooltip": "Kiegyensúlyozott dalszöveg méret használata"
-            },
-            "small": {
-              "label": "Kicsi",
-              "tooltip": "Kompaktabb dalszöveg méret használata"
-            }
-          },
-          "tooltip": "Válaszd ki, milyen nagy legyen a dalszöveg"
-        },
         "precise-timing": {
           "label": "Dalszöveg tökéletes szinkronizálása",
           "tooltip": "Számítsa ki az aktuális sor megjelenítésének idejét ezredmásodperc pontossággal (ez kis mértékben befolyásolhatja a teljesítményt)"
@@ -1155,6 +1141,24 @@
         "show-time-codes": {
           "label": "Időkódok megjelenítése",
           "tooltip": "Az időkódok megjelenítése a dalszövegek mellett"
+        },
+        "lyrics-font-size": {
+          "label": "Dalszöveg betűméret",
+          "submenu": {
+            "large": {
+              "label": "Nagy",
+              "tooltip": "Az eredeti nagyobb dalszöveg méret használata"
+            },
+            "medium": {
+              "label": "Közepes",
+              "tooltip": "Kiegyensúlyozott dalszöveg méret használata"
+            },
+            "small": {
+              "label": "Kicsi",
+              "tooltip": "Kompaktabb dalszöveg méret használata"
+            }
+          },
+          "tooltip": "Válaszd ki, milyen nagy legyen a dalszöveg"
         },
         "translation": {
           "clear-cache": {
@@ -1269,7 +1273,7 @@
         },
         "use-ytm-lyrics-without-proxy": {
           "label": "Használj YTM dalszövegeket proxy nélkül",
-          "tooltip": "Hagyja ki az YTM böngésző proxyt, és hívja közvetlenül a YouTube Musicot az alkalmazás hitelesített munkamenetével. Hasznos, ha megbízik a hálózatában/régiójában, hogy engedélyezi a közvetlen böngészési hívásokat."
+          "tooltip": "Hagyja ki az YTM böngésző proxyt, és hívja közvetlenül a \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063ot az alkalmazás hitelesített munkamenetével. Hasznos, ha megbízik a hálózatában/régiójában, hogy engedélyezi a közvetlen böngészési hívásokat."
         },
         "show-custom-search-button": {
           "label": "Egyedi keresés gomb megjelenítése",
@@ -1352,7 +1356,7 @@
             "fullscreen-ui": "Teljes képernyős felület",
             "mica": "Mica",
             "none": "Nincs",
-            "tabbed": "Füles",
+            "tabbed": "Tabbed",
             "under-page": "Oldal alatt",
             "under-window": "Ablak alatt",
             "window": "Ablak"
@@ -1464,7 +1468,7 @@
     },
     "search-commands": {
       "commands": {
-        "play": "Videó lejátszása YouTube-hivatkozásból vagy -azonosítóból",
+        "play": "Videó lejátszása \u0059\u006f\u0075\u0054\u0075\u0062\u0065-hivatkozásból vagy -azonosítóból",
         "settings": "Beállítások megnyitása"
       },
       "description": "Írjon / jelet a keresőmezőbe parancsok futtatásához, az argumentumok automatikus kiegészítésével",
@@ -1481,11 +1485,11 @@
       "name": "Ugrási gyorsparancsok"
     },
     "sfw-music": {
-      "description": "Automatikusan kihagyja a YouTube Music által Explicitként megjelölt dalokat. Szüneteltet, ha egy explicit várólista ismétlődik, vagy nincs elérhető következő dal.",
+      "description": "Automatikusan kihagyja a \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 által Explicitként megjelölt dalokat. Szüneteltet, ha egy explicit várólista ismétlődik, vagy nincs elérhető következő dal.",
       "name": "SFW zene"
     },
     "toast-autoclose": {
-      "description": "A YouTube Music értesítéseinek automatikus bezárása három másodperc után",
+      "description": "A \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 értesítéseinek automatikus bezárása három másodperc után",
       "name": "Értesítések automatikus bezárása"
     },
     "statusbar-lyrics": {
@@ -1531,7 +1535,7 @@
     "move-up": "Mozgatás feljebb",
     "move-down": "Mozgatás lejjebb",
     "about": {
-      "tagline": "Funkciógazdag asztali alkalmazás a YouTube Musichoz",
+      "tagline": "Funkciógazdag asztali alkalmazás a \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063hoz",
       "versions": "Verziók",
       "version-app": "Alkalmazás",
       "version-build": "Build",
@@ -1589,7 +1593,7 @@
     "stepper-decrement": "Csökkentés",
     "stepper-increment": "Növelés",
     "flags": {
-      "warning": "A funkciókapcsolók a YouTube Music saját belső kapcsolói. Módosításuk tönkreteheti a lejátszást, az elrendezést vagy a fiókfunkciókat, és nem tartoznak a támogatás hatálya alá. A felülbírálások csak a módosított kapcsolókra maradnak meg, és a Visszavonás gombbal távolíthatók el.",
+      "warning": "A funkciókapcsolók a \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 saját belső kapcsolói. Módosításuk tönkreteheti a lejátszást, az elrendezést vagy a fiókfunkciókat, és nem tartoznak a támogatás hatálya alá. A felülbírálások csak a módosított kapcsolókra maradnak meg, és a Visszavonás gombbal távolíthatók el.",
       "search-placeholder": "Kapcsolók keresése",
       "overridden": "felülbírálva",
       "undo": "Visszavonás",

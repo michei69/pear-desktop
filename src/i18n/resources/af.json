@@ -6,17 +6,17 @@
         "executed-at-ms": "Inprop {{pluginName}}::{{contextName}} uitgevoer teen {{ms}}ms",
         "initialize-failed": "Kon nie invoegtoepassing \"{{pluginName}}\" inisialiseer nie",
         "load-all": "Laai tans alle inproppe",
-        "load-failed": "Kon nie inprop \"{{pluginName}}\" laai nie",
         "loaded": "Inprop \"{{pluginName}}\" gelaai",
+        "load-failed": "Kon nie inprop \"{{pluginName}}\" laai nie",
         "unload-failed": "Kon nie inprop \"{{pluginName}}\" ontlaai nie",
         "unloaded": "Inprop \"{{pluginName}}\" ontlaai"
       }
     }
   },
   "language": {
-    "code": "af",
-    "local-name": "Afrikaans",
-    "name": "Afrikaans"
+    "local-name": "Die plaaslike naam van die taal.\n\ne.g. 日本語, 한국어, English, Русский",
+    "name": "Engelse naam van die taal.\n\ne.g. Japanese, Korean, English, Russian",
+    "code": "af"
   },
   "main": {
     "console": {
@@ -26,12 +26,6 @@
       "i18n": {
         "loaded": "i18n gelaai"
       },
-      "second-instance": {
-        "receive-command": "Opdrag ontvang via protokol: \"{{command}}\""
-      },
-      "theme": {
-        "css-file-not-found": "CSS-lêer \"{{cssFile}}\" bestaan nie, ignoreer"
-      },
       "unresponsive": {
         "details": "Onreagerende fout\n{{error}}"
       },
@@ -40,6 +34,12 @@
       },
       "window": {
         "tried-to-render-offscreen": "Venster het probeer om die beeld van die skerm af te vertoon, vensterGrootte={{windowSize}}, skermGrootte={{displaySize}}, posisie={{position}}"
+      },
+      "second-instance": {
+        "receive-command": "Opdrag ontvang via protokol: \"{{command}}\""
+      },
+      "theme": {
+        "css-file-not-found": "CSS-lêer \"{{cssFile}}\" bestaan nie, ignoreer"
       }
     },
     "dialog": {
@@ -136,6 +136,52 @@
               "force-smtc": "Dwing die gebruik van eksterne SMTC af"
             }
           },
+          "visual-tweaks": {
+            "submenu": {
+              "theme": {
+                "dialog": {
+                  "button": {
+                    "cancel": "Kanselleer",
+                    "remove": "Verwyder"
+                  },
+                  "remove-theme": "Is jy seker jy wil die aangepaste tema verwyder?",
+                  "remove-theme-message": "Dit sal die aangepaste tema verwyder"
+                },
+                "label": "Tema",
+                "submenu": {
+                  "import-css-file": "Importeer aangepaste CSS-lêer",
+                  "no-theme": "Geen tema",
+                  "colors": {
+                    "label": "Kleure"
+                  },
+                  "presets": {
+                    "label": "Voorafinstellings",
+                    "default": "Verstek",
+                    "custom": "Pasgemaak"
+                  },
+                  "reset-colors": "Herstel kleure",
+                  "open-themes-folder": "Open temas-lêergids"
+                }
+              },
+              "like-buttons": {
+                "default": "Verstek",
+                "force-show": "Dwing wys",
+                "hide": "Versteek",
+                "swap": "Ruil laaik-knoppies volgorde om",
+                "label": "Laaik-knoppies"
+              },
+              "custom-window-title": {
+                "label": "Aangepaste venstertitel",
+                "prompt": {
+                  "label": "Voer aangepaste venstertitel in: (los leeg om te deaktiveer)",
+                  "placeholder": "Voorbeeld: {{applicationName}}"
+                }
+              },
+              "remove-upgrade-button": "Verwyder opgraderingsknoppie",
+              "use-ytm-icons": "Gebruik oorspronklike \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063-ikone"
+            },
+            "label": "Visuele Aanpassings"
+          },
           "always-on-top": "Altyd bo-op",
           "auto-update": "Outomatiese Opdatering",
           "hide-menu": {
@@ -156,8 +202,8 @@
               "sync": {
                 "label": "Sinkroniseer taal",
                 "submenu": {
-                  "from-youtube": "Vanaf YouTube",
-                  "to-youtube": "Na YouTube"
+                  "from-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "Vanaf \u0059\u006f\u0075\u0054\u0075\u0062\u0065",
+                  "to-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "Na \u0059\u006f\u0075\u0054\u0075\u0062\u0065"
                 },
                 "failure": {
                   "dialog": {
@@ -184,52 +230,6 @@
               "play-pause-on-click": "Speel/Onderbreek by klik",
               "move-to-current-desktop": "Skuif na huidige virtuele lessenaar wanneer gewys",
               "force-white-icons": "Dwing die gebruik van wit ikone af"
-            }
-          },
-          "visual-tweaks": {
-            "label": "Visuele Aanpassings",
-            "submenu": {
-              "like-buttons": {
-                "default": "Verstek",
-                "force-show": "Dwing wys",
-                "hide": "Versteek",
-                "swap": "Ruil laaik-knoppies volgorde om",
-                "label": "Laaik-knoppies"
-              },
-              "custom-window-title": {
-                "label": "Aangepaste venstertitel",
-                "prompt": {
-                  "label": "Voer aangepaste venstertitel in: (los leeg om te deaktiveer)",
-                  "placeholder": "Voorbeeld: {{applicationName}}"
-                }
-              },
-              "remove-upgrade-button": "Verwyder opgraderingsknoppie",
-              "theme": {
-                "dialog": {
-                  "button": {
-                    "cancel": "Kanselleer",
-                    "remove": "Verwyder"
-                  },
-                  "remove-theme": "Is jy seker jy wil die aangepaste tema verwyder?",
-                  "remove-theme-message": "Dit sal die aangepaste tema verwyder"
-                },
-                "label": "Tema",
-                "submenu": {
-                  "import-css-file": "Importeer aangepaste CSS-lêer",
-                  "no-theme": "Geen tema",
-                  "colors": {
-                    "label": "Kleure"
-                  },
-                  "presets": {
-                    "label": "Voorafinstellings",
-                    "default": "Verstek",
-                    "custom": "Pasgemaak"
-                  },
-                  "reset-colors": "Herstel kleure",
-                  "open-themes-folder": "Open temas-lêergids"
-                }
-              },
-              "use-ytm-icons": "Gebruik oorspronklike YouTube Music-ikone"
             }
           },
           "updates": {
@@ -1274,7 +1274,7 @@
         },
         "use-ytm-lyrics-without-proxy": {
           "label": "Gebruik YTM-lirieke sonder 'n instaanbediener",
-          "tooltip": "Slaan die YTM-blaaiproxie oor en roep YouTube Music direk aan deur die toepassing se geverifieerde sessie te gebruik. Nuttig as jy jou netwerk/streek vertrou om direkte blaai-oproepe toe te laat."
+          "tooltip": "Slaan die YTM-blaaiproxie oor en roep \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 direk aan deur die toepassing se geverifieerde sessie te gebruik. Nuttig as jy jou netwerk/streek vertrou om direkte blaai-oproepe toe te laat."
         },
         "show-custom-search-button": {
           "label": "Wys pasgemaakte soekknoppie",
@@ -1471,7 +1471,7 @@
     },
     "search-commands": {
       "commands": {
-        "play": "Speel 'n video vanaf 'n YouTube-skakel of -ID",
+        "play": "Speel 'n video vanaf 'n \u0059\u006f\u0075\u0054\u0075\u0062\u0065-skakel of -ID",
         "settings": "Open die instellings"
       },
       "description": "Tik / in die soekveld om opdragte uit te voer, met outovoltooiing vir hul argumente",
@@ -1488,11 +1488,11 @@
       "name": "Spring-snelloetse"
     },
     "sfw-music": {
-      "description": "Slaan liedjies wat deur YouTube Music as Eksplisiet gemerk is, outomaties oor. Wag as 'n eksplisiete waglys herhaal of geen volgende liedjie beskikbaar is nie.",
+      "description": "Slaan liedjies wat deur \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 as Eksplisiet gemerk is, outomaties oor. Wag as 'n eksplisiete waglys herhaal of geen volgende liedjie beskikbaar is nie.",
       "name": "SFW-musiek"
     },
     "toast-autoclose": {
-      "description": "Sluit YouTube Music-kennisgewings outomaties ná drie sekondes",
+      "description": "Sluit \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063-kennisgewings outomaties ná drie sekondes",
       "name": "Kennisgewing-outosluiting"
     },
     "statusbar-lyrics": {
@@ -1538,7 +1538,7 @@
     "move-up": "Skuif op",
     "move-down": "Skuif af",
     "about": {
-      "tagline": "'n Kenmerkryke lessenaartoepassing vir YouTube Music",
+      "tagline": "'n Kenmerkryke lessenaartoepassing vir \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063",
       "versions": "Weergawes",
       "version-app": "Toepassing",
       "version-build": "Bou",
@@ -1596,7 +1596,7 @@
     "stepper-decrement": "Verlaag",
     "stepper-increment": "Verhoog",
     "flags": {
-      "warning": "Kenmerkvlae is YouTube Music se eie interne skakelaars. Om dit te verander kan afspeling, uitleg of rekeningfunksies breek, en dit word nie deur ondersteuning gedek nie. Oorheersings word slegs vir die vlae wat jy verander, behou en kan met Ontdoen verwyder word.",
+      "warning": "Kenmerkvlae is \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 se eie interne skakelaars. Om dit te verander kan afspeling, uitleg of rekeningfunksies breek, en dit word nie deur ondersteuning gedek nie. Oorheersings word slegs vir die vlae wat jy verander, behou en kan met Ontdoen verwyder word.",
       "search-placeholder": "Soek vlae",
       "overridden": "oorheers",
       "undo": "Ontdoen",

@@ -1,9 +1,9 @@
 {
   "$schema": "./node_modules/oxfmt/configuration_schema.json",
-  "singleQuote": true,
+  "singleQuote": false,
   "semi": true,
   "trailingComma": "all",
-  "printWidth": 80,
+  "printWidth": 140,
   "tabWidth": 2,
   "arrowParens": "always",
   "bracketSpacing": true,
@@ -16,6 +16,8 @@
     "pnpm-lock.yaml",
     "changelog.md",
     "**/*.d.ts",
-    "src/plugins/performance-improvement/scripts/**/*.js"
+    "out/",
+    "pack/",
+    "**/*.json"
   ]
 }

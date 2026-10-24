@@ -1,177 +1,100 @@
 # Using plugins
 
-> [!NOTE]  
-> This might be inaccurate! TODO: look over it entirely
-
-This page is for people who use Pear Desktop and want to turn plugins on or off,
-change their settings, and understand the restart prompts. It describes the app
-as it behaves today; writing or changing a plugin is covered in [Creating a
-plugin](./creating.md) and [Modifying plugins](./modifying.md).
+This page is for people who use Pear Desktop: turning plugins on and off, changing their settings and understanding restart prompts. Writing plugins is covered in [Creating a plugin](./creating.md) and [Modifying plugins](./modifying.md).
 
 ## Plugins are part of the app
 
-Every plugin in the app is compiled in at build time. There is no plugin store,
-no plugin folder you can drop files into, and no supported way to install a
-third-party plugin: the list of plugins is fixed by the source under
-`src/plugins/` and only changes when the app is rebuilt. If a plugin you want is
-missing, it has to be added to the source and the app rebuilt.
+Every plugin is compiled in at build time. There is no plugin store, no plugin folder to drop files into and no supported way to install a third-party plugin. The list is fixed by `plugins/` and changes when the app is rebuilt. If a plugin you want is missing, it has to be added to the source.
 
-Themes work differently: a theme is a folder you can install under the user
-themes directory. See [Themes](../themes/index.md).
+Themes are different: a theme is a folder under the user themes directory and can be installed without rebuilding. See [Themes](../themes/index.md).
 
-## Two places to manage plugins
+## Opening settings
 
-The same plugin state is shown in two places, and both write the same config.
+- Select **Settings** at the end of YTM's sidebar.
+- Press `Ctrl+,` (`Cmd+,` on macOS).
+- Use the native menu: **Options ▸ Settings…**, or the app menu on macOS.
+- Start the app with `--settings` to open the standalone settings window.
 
-### The Plugins menu
+The page overlay is used when YTM's page runtime is up. When it is not, the app opens the standalone `pear://settings` window, which has the same sections and works without YTM. The window can also be opened from a second instance started with `--settings`.
 
-The native menu bar has a **Plugins** menu listing every plugin available on
-your platform, sorted by name. Each entry is a checkbox:
+The sidebar has General, Appearance, Window & Tray, Advanced, Developer Tweaks, Plugins and About. The search box filters sections, plugin names and setting labels across all of them.
 
-- Disabled plugin: clicking the entry enables it.
-- Enabled plugin with menu options: the entry opens a submenu with an
-  **Enabled** checkbox, a separator, and the plugin's own entries (for example
-  volume, quality or mode choices).
-- Enabled plugin without menu options: the entry itself is the checkbox.
+**General** holds the language and update settings. **Language** offers **From YouTube** (copy YTM's `hl` language into the app, applied after a restart) and **To YouTube** (point YTM at the app language and reload the page). **Update channel** selects stable or beta; a beta build starts on beta until you choose, and switching a beta build to stable asks first because a downgrade runs no migrations back.
 
-A plugin introduced in the release line you are running carries a **NEW**
-sublabel in this menu. If the menu bar is hidden (Options → Hide Menu), the
-Plugins menu is hidden with it; use Settings instead.
+## The Plugins section
 
-### Settings → Plugins
+Each plugin is a card with a toggle, its description and, when it has any, expandable settings:
 
-Open Settings from the **Settings** entry in YouTube Music's sidebar, from
-Navigation → Open Settings, or with the search command `/settings` when the
-Search Commands plugin is enabled. The Settings entry in the sidebar can be
-switched off, and Settings can be set to always open in a separate window, in
-the Settings UI plugin's card under Settings → Plugins.
+- The toggle enables or disables it immediately. The page and main-process parts start or stop without an app restart.
+- A plugin with a **restart** pill cannot fully change state live. The host part starts or stops at once, but the page part changes on the next page load or app start.
+- The card shows the plugin's error in red when its start failed, and a status line when it reports one (for example a download or connection progress).
+- Settings buttons, when present, run the plugin's commands and show their errors under the buttons.
+- A plugin that cannot be configured has no expander and a disabled name row.
 
-The **Plugins** section of Settings shows one card per plugin with a toggle and,
-for plugins that have them, expandable settings. The plugin toggle here does the
-same thing as the Plugins menu entry. A plugin that is always on has no toggle,
-but its settings are still shown. The section header counts enabled plugins out
-of the total available on your platform.
+Only plugins for the current platform are listed. A plugin enabled by default is on in a fresh profile; you can still turn it off.
 
-## Enabling and disabling plugins
+## Settings fields
 
-Toggling a plugin starts or stops it without restarting the app. Backend,
-preload and renderer halves are started or stopped in their own processes, and a
-plugin's custom menu entries are added or removed as the native menu is rebuilt.
+Fields come from the plugin's schema and can be:
 
-Some plugins cannot fully apply a toggle live. Those show a **restart** pill on
-their card, and the app shows a **Restart Required** dialog after the change:
+- switches,
+- sliders or number steppers, sometimes with a unit,
+- text inputs, including password inputs for secrets,
+- select chips or dropdowns,
+- shortcut recorders,
+- lists of paths, URLs or ids that you add and remove,
+- multi-select option chips.
 
-- **Restart Now** restarts the app immediately.
-- **Later** keeps the toggle but leaves the change partial until you restart.
+Changes are written as you make them. A **restart** pill next to a field means the value is only read at startup. Pending restarts collect in a banner at the top of the dialog: **Restart now** restarts the app, **Later** dismisses the banner until another change is flagged. Reopening the dialog in the same window keeps the pending list.
 
-The dialog names the plugin when one plugin is involved, and summarises the
-changes when several are pending. Settings changes for options that are only
-read at startup show the same pill next to the field and the same dialog; while
-the Settings window is open the requirements are collected and reported when it
-closes.
-
-If **Options → Advanced Options → Restart on config changes** is enabled, app
-options and plugin toggles restart the app immediately instead of showing the
-dialog. It is off by default.
-
-## Per-plugin settings
-
-Expand a plugin's card to see its settings. Fields come from the plugin's
-declared schema and can be switches, radio chips or dropdowns, sliders, number
-steppers, text inputs, multi-select lists, orderable lists, file or folder
-buttons, and custom controls supplied by the plugin. Dropdowns whose options are
-loaded at runtime (for example the output-device list) have a refresh button and
-re-read themselves when the stored value is missing. Lists that cannot change at
-runtime, such as the theme list, are refreshed by the app instead.
-
-Settings are applied as you change them. A restart pill on a field means that
-option is only read at startup, so it needs a restart; plugin cards show the same
-pill when enabling or disabling the plugin needs one.
+Some plugins apply a config change without restarting; others restart their own host or page part in the background. You do not need to do anything for that.
 
 ## Where settings are stored
 
-Plugin settings live in the app's config file, `<userData>/config.json`, under
-`plugins.<plugin-id>` (for example `plugins.ambient-mode`). `<userData>` is
-Electron's per-user data directory; the exact path depends on the OS and build.
-Two menu entries open the file for editing: **Edit config.json** in the Settings
-sidebar and **Options → Advanced Options → Edit config.json**.
+Settings live in `<userData>/config.json`. Plugin state is under `plugins.<id>`, for example `plugins.ambient-mode`. `<userData>` is Electron's per-user data directory; the app keeps pear-desktop's identity, so an existing install uses the same folder.
 
-- The plugin's defaults live in the source. A plugin with no stored entry uses
-  them as-is; removing a key from the file restores its default, and removing a
-  whole `plugins.<id>` object resets that plugin to its defaults.
-- `plugins.<id>.enabled` is the on/off state, so a plugin can also be disabled by
-  editing the file while the app is closed.
-- Plugin settings that hold credentials (Last.fm and ListenBrainz tokens,
-  translation API keys, the API server's secret and authorized clients) end up
-  as plain text in this file. Treat it as sensitive, and do not share it in bug
-  reports; the About section's debug copy contains environment details, feature
-  flags and enabled plugin names, not those tokens.
+- The **Show config.json** button in the About section opens the file in the system file manager. **Options ▸ Edit config.json** opens it directly.
+- `plugins.<id>.enabled` is the on/off state. You can disable a plugin by editing the file while the app is closed.
+- Missing keys use the plugin's defaults. Removing a key restores its default; removing a whole plugin entry resets the plugin to its defaults.
+- Values are validated on load. An invalid value falls back to its default instead of crashing the app.
+- Credentials such as scrobbler tokens, API keys and the API server's secret and authorized clients are stored as plain text in this file. Treat it as sensitive and keep it out of bug reports. The About section's debug copy lists versions, platform and enabled plugin names, not tokens.
+- Back up the file before editing it by hand. A broken file is kept as `config.json.damaged-<timestamp>` and the app starts from defaults, but recovering the old values by hand is easier with a backup.
 
-Back up the file before editing it by hand. A JSON syntax error can make the
-whole store fail to load, not only the key you were changing.
+## Restarting and reloading
 
-## Essential and platform-restricted plugins
+- **Navigation ▸ Restart App** restarts the app. The restart banner uses the same path.
+- **View ▸ Reload** reloads the page. It restarts the page parts and reapplies page settings, but not the main-process host parts. A plugin whose host part changed state needs a full restart.
 
-- **Essential plugins** are always running and cannot be disabled. The Settings
-  UI plugin is the only essential one in this fork; it is what renders the
-  settings window and the sidebar entry, so it has no toggle.
-- **Platform-restricted plugins** only exist on the OS they support. Examples:
-  Touch Bar and Status Bar Lyrics are macOS-only, and Taskbar Media Control is
-  Windows-only. On other systems the plugin does not appear in the menu or in
-  Settings. Platform restrictions also apply to individual settings fields, so a
-  card can show fewer fields on one OS, as with In-App Menu's Linux-only
-  window-controls option.
+## Plugin errors
 
-## The NEW badge
+When a plugin fails to start, the app keeps running and the plugin stays enabled, with the error on its card:
 
-A plugin's entry in the Plugins menu shows **NEW** while the running app's
-version satisfies the plugin's `addedVersion` range (for example `3.12.X`). The
-badge is informational: it disappears once the app moves past that release line,
-and it is only shown in the native menu, not on the Settings cards.
+- The main process logs at `[pear:<id>]` and the page logs at `[pear:<id>]`. Open DevTools with **Options ▸ Toggle DevTools** or `Ctrl+Shift+I`.
+- A failed page part says `failed to start`; a failed host part says `failed to start` and appears in the plugin's card through the host error event.
+- Disable the plugin from its card. If the settings overlay itself is affected, quit the app and set `"enabled": false` under `plugins.<id>` in `config.json`, then start it again.
+- A plugin that reports a missing page handler means its page part is not running, usually because the plugin is disabled, not supported on the platform, or `restartRequired` and not enabled when the page loaded.
 
-## Performance mode
+Plugins write their logs with a `[pear:<id>]` prefix; the core writes `[pear]` and `[pear:api]`.
 
-**Settings → Advanced**, in the *Performance* group, has **Performance mode**,
-which trades some visual fidelity for cheaper rendering. It affects plugins in
-two ways:
+## Performance settings and plugins
 
-- The renderer halves of `ambient-mode`, `blur-nav-bar` and `visualizer` are not
-  started while the mode is on. Their menus and settings stay available, and
-  their saved settings are left untouched, so turning the mode off brings them
-  back.
-- The mode also applies feature-flag overrides, a CSS pass that shortens
-  animations and transitions, and a Web Animations throttle. Those parts are app
-  behaviour rather than plugin toggles.
+**Advanced ▸ Performance mode** trades visual fidelity for cheaper rendering. It is read at page start, so it needs a restart. It forces cheaper YTM feature flags (thumbnail quality, animations, cinematics, queue rendering), removes animations, transitions and backdrop blur, throttles Web Animations that touch layout properties, and skips the page halves of **Ambient mode**, **Blur navigation bar** and **Visualizer**. Their settings and main-process parts stay intact, and turning the mode off restores them.
 
-Performance mode is read when the app starts, so the setting has a restart pill:
-restart for it to take effect. For bisecting a performance problem there is a
-developer escape hatch, `PEAR_PERF_DISABLE=flags,css,animations,plugins`, which
-turns individual parts off while leaving the mode enabled.
+- **Run the GPU process in the app process** is an experimental option that folds the GPU service into the app process. It is ignored when hardware acceleration is disabled.
+- **Use Windows media controls** replaces Chromium's media session with the native System Media Transport Controls on Windows. If the optional native module cannot load, the app logs a warning and keeps running without native transport controls.
+- **Memory saver** checks Blink's resource usage every minute while the window is hidden and clears the renderer caches when they exceed its threshold (64 MB by default). A clear has a ten-minute cooldown. It never runs while the window is visible.
+- **Performance improvement** replaces page timers and element creation with CY Fung's batching scripts at page start. It cannot be undone live, so it is marked `restartRequired`: enable it and restart.
+- Visual plugins (ambient mode, visualizer, lyrics) stop drawing when the window is hidden or minimized, because the page keeps rendering off screen.
 
-## Troubleshooting
+**Appearance** also has **Shared links** switches: **Strip 'music.' from shared links** and **Strip 'si' from shared links** rewrite the share dialog's URL before it is copied, and **Navigation ▸ Copy current URL** applies the same cleaning.
 
-- **A plugin does not seem to load.** Open the developer tools (Options →
-  Advanced Options → Toggle Developer Tools) and check the console for
-  `[YTMusic]` lines. A failed start logs
-  `Failed to execute plugin <id>::<half>` or `Failed to initialize plugin
-  "<id>"`; the app keeps running and the plugin stays enabled, so you can disable
-  it and try again.
-- **A setting has no effect.** Check for a restart pill on the field or the
-  plugin card. Some options are read only at startup.
-- **A plugin breaks the interface.** Disable it in Settings → Plugins. If the
-  Settings window is affected, quit the app, set `"enabled": false` under
-  `plugins.<id>` in `config.json`, and start it again.
-- **Reload versus restart.** View → Reload re-runs the preload and renderer
-  halves of every plugin but not the main-process backend halves. Use a full
-  restart when a backend change is involved.
-- **A plugin has no menu submenu.** A plugin only has one when it declares menu
-  entries and is enabled. Toggling it in Settings updates the plugin but the
-  native menu is rebuilt on the next refresh or restart.
+## The API server
+
+**Advanced ▸ API server** controls a local HTTP and WebSocket server for other apps. It is off by default and binds `127.0.0.1:26538`. When enabled, the card shows the address, the authorization strategy and the authorized clients. A new client triggers an allow/deny dialog unless you choose **None** as the strategy. v1 serves the original client surface and plugin methods at `/api/v1/plugins`; v2 serves the richer video, queue, playback, lyrics, config and debug surface under `/api/v2`; WebSockets are at `/api/v1/ws` and `/api/v2/ws`. **Enable MCP** adds a stateless Model Context Protocol endpoint at `/mcp` with the v2 operations as tools, using the same bearer token.
 
 ## See also
 
-- [Plugins overview](./index.md) - the complete system reference.
-- [Creating a plugin](./creating.md) - write one from scratch.
-- [Modifying plugins](./modifying.md) - extend an existing plugin.
-- [Themes](../themes/index.md) - the user-installable theme system.
-- [Conventions](../conventions.md) - how changes to the app are made.
+- [Plugins overview](./index.md): the system reference.
+- [Creating a plugin](./creating.md): write one from scratch.
+- [Themes](../themes/index.md): user-installable themes.
+- [Conventions](../conventions.md): how changes to the app are made.

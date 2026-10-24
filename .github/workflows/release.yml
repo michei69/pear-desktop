@@ -5,7 +5,7 @@ on:
 
 env:
   NODE_VERSION: "24.x"
-  # Baked into the build and shown in the About window (src/app-info.ts).
+  # Baked into the build and shown in the About window (apps/desktop).
   PEAR_CHANNEL: stable
   PEAR_COMMIT: ${{ github.sha }}
 
@@ -52,8 +52,8 @@ jobs:
       # The release:* scripts pass `-p never`: electron-builder writes the
       # installers and the latest*.yml updater metadata into pack/ but uploads
       # nothing. The publish job below attaches those files to the release.
-      # The version in package.json is shipped unchanged, unlike the beta build,
-      # which stamps `-beta.<run_number>` onto it.
+      # The version in apps/desktop/package.json is shipped unchanged, unlike the
+      # beta build, which stamps `-beta.<run_number>` onto it.
       - name: Build on Mac
         if: startsWith(matrix.os, 'macos')
         run: pnpm release:mac
@@ -144,7 +144,7 @@ jobs:
 
       - name: Get version
         run: |
-          VERSION=$(node -p "require('./package.json').version")
+          VERSION=$(node -p "require('./apps/desktop/package.json').version")
           echo "VERSION=$VERSION" >> $GITHUB_ENV
           echo "VERSION_TAG=v$VERSION" >> $GITHUB_ENV
           echo "CHANGELOG_ANCHOR=$(echo "v$VERSION" | sed -e 's/\.//g')" >> $GITHUB_ENV
@@ -199,10 +199,10 @@ jobs:
       - name: Update changelog
         if: ${{ env.VERSION_HASH == '' }}
         run: |
-          # No fetch of the tag created above: auto-changelog builds the top
-          # section from package.json's version and compares it to the latest
-          # stable tag. Fetching v<version> would add a second, empty heading
-          # for the same version and move the release-notes anchor to it.
+          # The root package.json version mirrors apps/desktop's release version so
+          # auto-changelog builds the top section from the same number. No fetch of
+          # the tag created above: auto-changelog compares against the latest stable
+          # tag, and fetching v<version> would add an empty duplicate heading.
           pnpm changelog
 
       - name: Commit changelog

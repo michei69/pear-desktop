@@ -156,8 +156,8 @@
               "sync": {
                 "label": "Dili eşitle",
                 "submenu": {
-                  "from-youtube": "YouTube'dan",
-                  "to-youtube": "YouTube'a"
+                  "from-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "\u0059\u006f\u0075\u0054\u0075\u0062\u0065'dan",
+                  "to-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "\u0059\u006f\u0075\u0054\u0075\u0062\u0065'a"
                 },
                 "failure": {
                   "dialog": {
@@ -229,7 +229,7 @@
                   "open-themes-folder": "Tema klasörünü aç"
                 }
               },
-              "use-ytm-icons": "Orijinal YouTube Music simgelerini kullan"
+              "use-ytm-icons": "Orijinal \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 simgelerini kullan"
             }
           },
           "updates": {
@@ -412,7 +412,7 @@
           }
         },
         "port": {
-          "label": "Bağlantı Noktası"
+          "label": "Port"
         },
         "mcp": {
           "label": "MCP sunucusu",
@@ -453,7 +453,7 @@
           "label": "Ana makine adı"
         },
         "port": {
-          "label": "Bağlantı Noktası"
+          "label": "Port"
         }
       },
       "name": "Ara Sunucu Doğrulama Bağdaştırıcısı",
@@ -505,7 +505,7 @@
         "format": {
           "24-hour-format": "24-Saat Formatı",
           "display-seconds": "Saniyeleri Göster",
-          "label": "Biçim"
+          "label": "Format"
         }
       },
       "name": "Saat",
@@ -1040,6 +1040,10 @@
         "local-keybinds": "Yerel tuş bağlamaları (yalnızca pencere odaktayken)"
       }
     },
+    "skip-disliked-songs": {
+      "description": "Beğenmediğin şarkıları atlar",
+      "name": "Beğenmediklerini Atla"
+    },
     "skip-silences": {
       "description": "Şarkılardaki sessiz bölümleri otomatik olarak atlar",
       "name": "Sessizlikleri Atla",
@@ -1114,24 +1118,6 @@
           },
           "tooltip": "Geçerli satıra uygulanacak efekti seçin"
         },
-        "lyrics-font-size": {
-          "label": "Şarkı sözü yazı tipi boyutu",
-          "submenu": {
-            "large": {
-              "label": "Büyük",
-              "tooltip": "Orijinal daha büyük şarkı sözü boyutunu kullan"
-            },
-            "medium": {
-              "label": "Orta",
-              "tooltip": "Dengeli bir şarkı sözü boyutu kullan"
-            },
-            "small": {
-              "label": "Küçük",
-              "tooltip": "Daha kompakt bir şarkı sözü boyutu kullan"
-            }
-          },
-          "tooltip": "Şarkı sözü metninin ne kadar büyük olacağını seçin"
-        },
         "precise-timing": {
           "label": "Şarkı sözlerini mükemmel şekilde senkronize edin",
           "tooltip": "Bir sonraki satırın görüntülenmesini milisaniyesine kadar hesaplayın (performans üzerinde küçük bir etkisi olabilir)"
@@ -1155,6 +1141,24 @@
         "show-time-codes": {
           "label": "Zaman kodlarını göster",
           "tooltip": "Şarkı sözlerinin yanında zaman kodlarını gösterin"
+        },
+        "lyrics-font-size": {
+          "label": "Şarkı sözü yazı tipi boyutu",
+          "submenu": {
+            "large": {
+              "label": "Büyük",
+              "tooltip": "Orijinal daha büyük şarkı sözü boyutunu kullan"
+            },
+            "medium": {
+              "label": "Orta",
+              "tooltip": "Dengeli bir şarkı sözü boyutu kullan"
+            },
+            "small": {
+              "label": "Küçük",
+              "tooltip": "Daha kompakt bir şarkı sözü boyutu kullan"
+            }
+          },
+          "tooltip": "Şarkı sözü metninin ne kadar büyük olacağını seçin"
         },
         "translation": {
           "clear-cache": {
@@ -1269,7 +1273,7 @@
         },
         "use-ytm-lyrics-without-proxy": {
           "label": "YTM şarkı sözlerini proxy olmadan kullan",
-          "tooltip": "YTM tarama proxy'sini atla ve uygulamanın kimliği doğrulanmış oturumunu kullanarak doğrudan YouTube Music'i çağır. Ağınıza/bölgenize güveniyorsanız ve doğrudan tarama çağrılarına izin veriyorsanız kullanışlıdır."
+          "tooltip": "YTM tarama proxy'sini atla ve uygulamanın kimliği doğrulanmış oturumunu kullanarak doğrudan \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063'i çağır. Ağınıza/bölgenize güveniyorsanız ve doğrudan tarama çağrılarına izin veriyorsanız kullanışlıdır."
         },
         "show-custom-search-button": {
           "label": "Özel arama düğmesini göster",
@@ -1464,7 +1468,7 @@
     },
     "search-commands": {
       "commands": {
-        "play": "Bir YouTube bağlantısından veya kimliğinden video oynat",
+        "play": "Bir \u0059\u006f\u0075\u0054\u0075\u0062\u0065 bağlantısından veya kimliğinden video oynat",
         "settings": "Ayarları aç"
       },
       "description": "Komutları çalıştırmak için arama kutusuna / yazın; bağımsız değişkenleri için otomatik tamamlama vardır",
@@ -1481,11 +1485,11 @@
       "name": "Sarma Kısayolları"
     },
     "sfw-music": {
-      "description": "YouTube Music tarafından Müstehcen olarak işaretlenen şarkıları otomatik olarak atlar. Müstehcen bir kuyruk tekrarlanırsa veya sonraki şarkı yoksa duraklatır.",
+      "description": "\u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 tarafından Müstehcen olarak işaretlenen şarkıları otomatik olarak atlar. Müstehcen bir kuyruk tekrarlanırsa veya sonraki şarkı yoksa duraklatır.",
       "name": "SFW Müzik"
     },
     "toast-autoclose": {
-      "description": "YouTube Music bildirimlerini üç saniye sonra otomatik olarak kapat",
+      "description": "\u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 bildirimlerini üç saniye sonra otomatik olarak kapat",
       "name": "Bildirim Otomatik Kapanması"
     },
     "statusbar-lyrics": {
@@ -1531,7 +1535,7 @@
     "move-up": "Yukarı taşı",
     "move-down": "Aşağı taşı",
     "about": {
-      "tagline": "YouTube Music için özelliklerle dolu bir masaüstü uygulaması",
+      "tagline": "\u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 için özelliklerle dolu bir masaüstü uygulaması",
       "versions": "Sürümler",
       "version-app": "Uygulama",
       "version-build": "Derleme",
@@ -1589,7 +1593,7 @@
     "stepper-decrement": "Azalt",
     "stepper-increment": "Artır",
     "flags": {
-      "warning": "Özellik bayrakları YouTube Music'in kendi dahili anahtarlarıdır. Bunları değiştirmek oynatmayı, düzeni veya hesap özelliklerini bozabilir ve destek kapsamında değildir. Geçersiz kılmalar yalnızca değiştirdiğiniz bayraklar için saklanır ve Geri Al ile kaldırılabilir.",
+      "warning": "Özellik bayrakları \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063'in kendi dahili anahtarlarıdır. Bunları değiştirmek oynatmayı, düzeni veya hesap özelliklerini bozabilir ve destek kapsamında değildir. Geçersiz kılmalar yalnızca değiştirdiğiniz bayraklar için saklanır ve Geri Al ile kaldırılabilir.",
       "search-placeholder": "Bayraklarda ara",
       "overridden": "geçersiz kılındı",
       "undo": "Geri al",

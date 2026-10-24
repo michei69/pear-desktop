@@ -156,8 +156,8 @@
               "sync": {
                 "label": "Sinkroniziraj jezik",
                 "submenu": {
-                  "from-youtube": "S YouTubea",
-                  "to-youtube": "Na YouTube"
+                  "from-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "S \u0059\u006f\u0075\u0054\u0075\u0062\u0065a",
+                  "to-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "Na \u0059\u006f\u0075\u0054\u0075\u0062\u0065"
                 },
                 "failure": {
                   "dialog": {
@@ -229,7 +229,7 @@
                   "open-themes-folder": "Otvori mapu tema"
                 }
               },
-              "use-ytm-icons": "Koristi izvorne ikone YouTube Musica"
+              "use-ytm-icons": "Koristi izvorne ikone \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063a"
             }
           },
           "updates": {
@@ -499,20 +499,6 @@
         "no-captions": "Za ovu pjesmu nisu dostupni titlovi"
       }
     },
-    "clock": {
-      "description": "Dodaj sat u navigacijsku traku",
-      "menu": {
-        "format": {
-          "24-hour-format": "24-satni format",
-          "display-seconds": "Prikaži sekunde",
-          "label": "Format"
-        }
-      },
-      "name": "Sat",
-      "settings": {
-        "hour-12": "Koristi 12-satni format"
-      }
-    },
     "compact-sidebar": {
       "description": "Uvijek postavi bočnu traku na kompaktni način rada",
       "name": "Kompaktna bočna traka"
@@ -617,14 +603,14 @@
         "dialog": {
           "error": {
             "buttons": {
-              "ok": "U redu"
+              "ok": "OK"
             },
             "message": "Jao! Oprostite, preuzimanje je bilo neuspješno…",
             "title": "Pogreška pri preuzimanju!"
           },
           "start-download-playlist": {
             "buttons": {
-              "ok": "U redu"
+              "ok": "OK"
             },
             "detail": "({{playlistSize}} pjesma)",
             "message": "Preuzimanje Playliste {{playlistTitle}}",
@@ -1021,6 +1007,10 @@
         "local-keybinds": "Lokalni prečaci (samo dok je prozor fokusiran)"
       }
     },
+    "skip-disliked-songs": {
+      "description": "Preskače pjesme koje vam se ne sviđaju",
+      "name": "Preskočite pjesme koje vam se ne sviđaju"
+    },
     "skip-silences": {
       "description": "Automatski preskočite dijelove pjesama gdje nema zvuka",
       "name": "Preskoči tišine",
@@ -1051,24 +1041,6 @@
         "not-found": "⚠️ Tekst ove pjesme nije pronađen."
       },
       "menu": {
-        "convert-chinese-character": {
-          "label": "Pretvori kineske znakove",
-          "submenu": {
-            "disabled": {
-              "label": "Onemogućeno",
-              "tooltip": "Onemogući pretvorbu kineskih znakova"
-            },
-            "simplified-to-traditional": {
-              "label": "Pojednostavljeno u Tradicionalno",
-              "tooltip": "Pretvori pojednostavljene kineske u tradicionalne kineske"
-            },
-            "traditional-to-simplified": {
-              "label": "Tradicionalno u Pojednostavljeno",
-              "tooltip": "Pretvori tradicionalne kineske u pojednostavljene kineske"
-            }
-          },
-          "tooltip": "Pretvori kineske znakove u tradicionalne ili pojednostavljene"
-        },
         "default-text-string": {
           "label": "Zadani karakteri između stihova pjesama",
           "tooltip": "Odaberi zadane karaktere koji će biti korišteni za razmake između stihova pjesama"
@@ -1095,24 +1067,6 @@
           },
           "tooltip": "Odaberi efekt koji će biti primijenjen na trenutnoj crti"
         },
-        "lyrics-font-size": {
-          "label": "Veličina fonta teksta",
-          "submenu": {
-            "large": {
-              "label": "Veliko",
-              "tooltip": "Koristi izvornu veću veličinu teksta"
-            },
-            "medium": {
-              "label": "Srednje",
-              "tooltip": "Koristi uravnoteženu veličinu teksta"
-            },
-            "small": {
-              "label": "Malo",
-              "tooltip": "Koristi kompaktniju veličinu teksta"
-            }
-          },
-          "tooltip": "Odaberi koliko velik tekst stihova treba biti"
-        },
         "precise-timing": {
           "label": "Napravi da tekst pjesme bude izvrsno usklađen",
           "tooltip": "Izračunaj do milisekunde prikaz sljedeće crteteksta (može malo utjecati na učinak)"
@@ -1136,6 +1090,42 @@
         "show-time-codes": {
           "label": "Prikaži vremenske oznake",
           "tooltip": "Prikaži vremenske oznake pored teksta pjesme"
+        },
+        "convert-chinese-character": {
+          "label": "Pretvori kineske znakove",
+          "submenu": {
+            "disabled": {
+              "label": "Onemogućeno",
+              "tooltip": "Onemogući pretvorbu kineskih znakova"
+            },
+            "simplified-to-traditional": {
+              "label": "Pojednostavljeno u Tradicionalno",
+              "tooltip": "Pretvori pojednostavljene kineske u tradicionalne kineske"
+            },
+            "traditional-to-simplified": {
+              "label": "Tradicionalno u Pojednostavljeno",
+              "tooltip": "Pretvori tradicionalne kineske u pojednostavljene kineske"
+            }
+          },
+          "tooltip": "Pretvori kineske znakove u tradicionalne ili pojednostavljene"
+        },
+        "lyrics-font-size": {
+          "label": "Veličina fonta teksta",
+          "submenu": {
+            "large": {
+              "label": "Veliko",
+              "tooltip": "Koristi izvornu veću veličinu teksta"
+            },
+            "medium": {
+              "label": "Srednje",
+              "tooltip": "Koristi uravnoteženu veličinu teksta"
+            },
+            "small": {
+              "label": "Malo",
+              "tooltip": "Koristi kompaktniju veličinu teksta"
+            }
+          },
+          "tooltip": "Odaberi koliko velik tekst stihova treba biti"
         },
         "translation": {
           "clear-cache": {
@@ -1250,7 +1240,7 @@
         },
         "use-ytm-lyrics-without-proxy": {
           "label": "Koristi YTM tekstove bez proxyja",
-          "tooltip": "Preskoči YTM proxy pregledavanja i izravno pozovi YouTube Music koristeći autentificiranu sesiju aplikacije. Korisno ako vjeruješ svojoj mreži/regiji da dopušta izravne pozive pregledavanja."
+          "tooltip": "Preskoči YTM proxy pregledavanja i izravno pozovi \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 koristeći autentificiranu sesiju aplikacije. Korisno ako vjeruješ svojoj mreži/regiji da dopušta izravne pozive pregledavanja."
         },
         "show-custom-search-button": {
           "label": "Prikaži prilagođeni gumb za pretraživanje",
@@ -1406,6 +1396,20 @@
         "vertical-align": "Okomito poravnanje"
       }
     },
+    "clock": {
+      "description": "Dodaj sat u navigacijsku traku",
+      "menu": {
+        "format": {
+          "24-hour-format": "24-satni format",
+          "display-seconds": "Prikaži sekunde",
+          "label": "Format"
+        }
+      },
+      "name": "Sat",
+      "settings": {
+        "hour-12": "Koristi 12-satni format"
+      }
+    },
     "audio-only": {
       "description": "Prisiljava samo audio način — blokira sve video streamove na razini mreže i playera radi uštede RAM-a i propusnosti",
       "name": "Samo Audio"
@@ -1464,7 +1468,7 @@
     },
     "search-commands": {
       "commands": {
-        "play": "Reproduciraj videozapis sa YouTube poveznice ili ID-ja",
+        "play": "Reproduciraj videozapis sa \u0059\u006f\u0075\u0054\u0075\u0062\u0065 poveznice ili ID-ja",
         "settings": "Otvori postavke"
       },
       "description": "Upišite / u okvir za pretraživanje da biste pokrenuli naredbe, uz automatsko dovršavanje njihovih argumenata",
@@ -1481,11 +1485,11 @@
       "name": "Prečaci za premotavanje"
     },
     "sfw-music": {
-      "description": "Automatski preskače pjesme koje je YouTube Music označio kao eksplicitne. Pauzira ako se eksplicitni red čekanja ponavlja ili nema sljedeće pjesme.",
+      "description": "Automatski preskače pjesme koje je \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 označio kao eksplicitne. Pauzira ako se eksplicitni red čekanja ponavlja ili nema sljedeće pjesme.",
       "name": "SFW glazba"
     },
     "toast-autoclose": {
-      "description": "Automatski zatvori skočne obavijesti YouTube Musica nakon tri sekunde",
+      "description": "Automatski zatvori skočne obavijesti \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063a nakon tri sekunde",
       "name": "Automatsko zatvaranje obavijesti"
     },
     "statusbar-lyrics": {
@@ -1531,7 +1535,7 @@
     "move-up": "Pomakni gore",
     "move-down": "Pomakni dolje",
     "about": {
-      "tagline": "Stolna aplikacija bogata značajkama za YouTube Music",
+      "tagline": "Stolna aplikacija bogata značajkama za \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063",
       "versions": "Verzije",
       "version-app": "Aplikacija",
       "version-build": "Build",
@@ -1589,7 +1593,7 @@
     "stepper-decrement": "Smanji",
     "stepper-increment": "Povećaj",
     "flags": {
-      "warning": "Zastavice značajki interne su sklopke samog YouTube Musica. Njihova promjena može pokvariti reprodukciju, izgled ili značajke računa i nije obuhvaćena podrškom. Nadjačavanja se čuvaju samo za zastavice koje promijenite i mogu se ukloniti pomoću Poništi.",
+      "warning": "Zastavice značajki interne su sklopke samog \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063a. Njihova promjena može pokvariti reprodukciju, izgled ili značajke računa i nije obuhvaćena podrškom. Nadjačavanja se čuvaju samo za zastavice koje promijenite i mogu se ukloniti pomoću Poništi.",
       "search-placeholder": "Pretraži zastavice",
       "overridden": "nadjačano",
       "undo": "Poništi",

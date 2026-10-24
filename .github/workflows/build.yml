@@ -7,7 +7,7 @@ on:
 
 env:
   NODE_VERSION: "24.x"
-  # Baked into the build and shown in the About window (src/app-info.ts).
+  # Baked into the build and shown in the About window (apps/desktop).
   PEAR_CHANNEL: beta
   PEAR_COMMIT: ${{ github.sha }}
 
@@ -48,18 +48,18 @@ jobs:
 
       # Every job in the matrix must stamp the SAME version (github.run_number) before
       # installing/building, otherwise the platform artifacts disagree on the version.
-      # The version in package.json is the release the betas lead up to, so 3.12.4
-      # (bumped by hand when a cycle starts) becomes 3.12.4-beta.42. A prerelease sorts
-      # below its release, so the eventual 3.12.4 is a real upgrade for every beta user.
-      # The lockfile has no root version, so `--frozen-lockfile` stays valid after this.
+      # The version in apps/desktop/package.json is the release the betas lead up to, so
+      # 4.0.0 (bumped by hand when a cycle starts) becomes 4.0.0-beta.42. A prerelease
+      # sorts below its release, so the eventual 4.0.0 is a real upgrade for every beta
+      # user. The lockfile has no workspace versions, so `--frozen-lockfile` stays valid.
       - name: Stamp beta version
         shell: bash
         env:
           RUN_NUMBER: ${{ github.run_number }}
         run: |
-          VERSION=$(node -p "const v = JSON.parse(require('fs').readFileSync('package.json', 'utf8')).version.split('-')[0]; v + '-beta.' + process.env.RUN_NUMBER")
+          VERSION=$(node -p "const v = JSON.parse(require('fs').readFileSync('apps/desktop/package.json', 'utf8')).version.split('-')[0]; v + '-beta.' + process.env.RUN_NUMBER")
           echo "Beta version: $VERSION"
-          pnpm version "$VERSION" --no-git-tag-version --allow-same-version --no-git-checks
+          node -e "const fs=require('fs');const p='apps/desktop/package.json';const t=fs.readFileSync(p,'utf8');fs.writeFileSync(p,t.replace(/\"version\": \"[^\"]+\"/, '\"version\": \"'+process.argv[1]+'\"'));" "$VERSION"
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -70,8 +70,8 @@ jobs:
       # The beta:* scripts force -c.publish.channel=beta: GitHub publishing never
       # auto-detects the channel from the version (electron-builder#8589), so without
       # it the metadata would be latest*.yml instead of beta*.yml.
-      # `pnpm version` writes package.json on the runner only; master keeps the
-      # release version, which is what the release workflow ships unchanged.
+      # The version stamp writes apps/desktop/package.json on the runner only; master
+      # keeps the release version, which is what the release workflow ships unchanged.
       - name: Build on Mac
         if: startsWith(matrix.os, 'macos')
         run: pnpm beta:mac
@@ -161,9 +161,9 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           RUN_NUMBER: ${{ github.run_number }}
         run: |
-          # Same derivation as the build job: package.json is untouched on master,
-          # so this reproduces the exact version stamped into the artifacts.
-          VERSION=$(node -p "const v = JSON.parse(require('fs').readFileSync('package.json', 'utf8')).version.split('-')[0]; v + '-beta.' + process.env.RUN_NUMBER")
+          # Same derivation as the build job: apps/desktop/package.json is untouched
+          # on master, so this reproduces the exact version stamped into the artifacts.
+          VERSION=$(node -p "const v = JSON.parse(require('fs').readFileSync('apps/desktop/package.json', 'utf8')).version.split('-')[0]; v + '-beta.' + process.env.RUN_NUMBER")
           echo "Beta version: $VERSION"
 
           # The beta release being replaced: the newest prerelease, or the legacy

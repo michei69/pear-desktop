@@ -156,8 +156,8 @@
               "sync": {
                 "label": "Ziman hevdem bike",
                 "submenu": {
-                  "from-youtube": "Ji YouTube",
-                  "to-youtube": "Bo YouTube"
+                  "from-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "Ji \u0059\u006f\u0075\u0054\u0075\u0062\u0065",
+                  "to-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "Bo \u0059\u006f\u0075\u0054\u0075\u0062\u0065"
                 },
                 "failure": {
                   "dialog": {
@@ -229,7 +229,7 @@
                   "open-themes-folder": "Peldanka temayan veke"
                 }
               },
-              "use-ytm-icons": "Îkonên orîjînal ên YouTube Music bikar bîne"
+              "use-ytm-icons": "Îkonên orîjînal ên \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 bikar bîne"
             }
           },
           "updates": {
@@ -1471,7 +1471,7 @@
     },
     "search-commands": {
       "commands": {
-        "play": "Vîdyoyek ji girêdan an IDya YouTube bilîze",
+        "play": "Vîdyoyek ji girêdan an IDya \u0059\u006f\u0075\u0054\u0075\u0062\u0065 bilîze",
         "settings": "Mîhengan veke"
       },
       "description": "Di qutiya lêgerînê de / binivîse da ku fermanan bimeşînî, bi temamkirina xweber a argûmanan",
@@ -1488,11 +1488,11 @@
       "name": "Kurtebirên Bazdanê"
     },
     "sfw-music": {
-      "description": "Stranên ku YouTube Music wekî Eşkere nîşan kiriye bixweber derbas dike. Heke rêzika eşkere dubare bibe an strana paşîn tune be, disekine.",
+      "description": "Stranên ku \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 wekî Eşkere nîşan kiriye bixweber derbas dike. Heke rêzika eşkere dubare bibe an strana paşîn tune be, disekine.",
       "name": "Muzîka SFW"
     },
     "toast-autoclose": {
-      "description": "Toastên YouTube Music piştî sê çirkeyan bixweber bigire",
+      "description": "Toastên \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 piştî sê çirkeyan bixweber bigire",
       "name": "Girtina Xweber a Toastan"
     },
     "statusbar-lyrics": {
@@ -1538,7 +1538,7 @@
     "move-up": "Ber bi jor ve bibe",
     "move-down": "Ber bi jêr ve bibe",
     "about": {
-      "tagline": "Sepaneke sermaseyê ya dewlemend a taybetmendiyan ji bo YouTube Music",
+      "tagline": "Sepaneke sermaseyê ya dewlemend a taybetmendiyan ji bo \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063",
       "versions": "Guhertov",
       "version-app": "Sepan",
       "version-build": "Çêkirin",
@@ -1596,7 +1596,7 @@
     "stepper-decrement": "Kêm bike",
     "stepper-increment": "Zêde bike",
     "flags": {
-      "warning": "Flagsên taybetmendiyê guhêrbarên navxweyî yên YouTube Music in. Guhertina wan dikare lêdan, raxistin an taybetmendiyên hesabê xera bike, û ew di bin piştgiriyê de ne. Guhertinên serdest tenê ji bo flagsên ku tu diguherînî têne parastin, û bi Vegerê têne rakirin.",
+      "warning": "Flagsên taybetmendiyê guhêrbarên navxweyî yên \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 in. Guhertina wan dikare lêdan, raxistin an taybetmendiyên hesabê xera bike, û ew di bin piştgiriyê de ne. Guhertinên serdest tenê ji bo flagsên ku tu diguherînî têne parastin, û bi Vegerê têne rakirin.",
       "search-placeholder": "Li flagsan bigere",
       "overridden": "hatiye serdestkirin",
       "undo": "Veger",

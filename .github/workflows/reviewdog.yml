@@ -51,7 +51,7 @@ jobs:
         run: |
           set -o pipefail
 
-          pnpm exec oxlint src --type-aware --format=checkstyle |
+          pnpm exec oxlint apps packages plugins src --type-aware --format=checkstyle |
             reviewdog \
               -f=checkstyle \
               -name=oxlint \
