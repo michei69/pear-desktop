@@ -18,7 +18,6 @@ overrides:
 
 patchedDependencies:
   '@malept/flatpak-bundler@0.4.0': c787371eeb2af011ea934e8818a0dad6d7dcb2df31bbb1686babc7231af0183c
-  kuromoji@0.1.2: 4a948f1ea45c61779fa371feb020253ccf7a24e1f7c6b2e250b3ce53d86216d4
   vudio@2.1.1: 0e06c2ed11c02bdc490c209fa80070e98517c2735c641f5738b6e15d7dc1959d
 
 importers:
@@ -5917,7 +5916,7 @@ snapshots:
 
   known-css-properties@0.30.0: {}
 
-  kuromoji@0.1.2(patch_hash=4a948f1ea45c61779fa371feb020253ccf7a24e1f7c6b2e250b3ce53d86216d4):
+  kuromoji@0.1.2:
     dependencies:
       async: 2.6.4
       doublearray: 0.0.2
@@ -5925,7 +5924,7 @@ snapshots:
 
   kuroshiro-analyzer-kuromoji@1.1.0:
     dependencies:
-      kuromoji: 0.1.2(patch_hash=4a948f1ea45c61779fa371feb020253ccf7a24e1f7c6b2e250b3ce53d86216d4)
+      kuromoji: 0.1.2
 
   kuroshiro@1.2.1:
     dependencies:
