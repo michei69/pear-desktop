@@ -45,6 +45,17 @@ const VUDIO_OPTIONS: Record<string, string> = {
   horizontalAlign: "vudioHorizontalAlign",
   verticalAlign: "vudioVerticalAlign",
 };
+/** The Ears-style equalizer's fixed layout, which pear-desktop's 3.12.4 betas stored in `filters`. */
+const EQ_FREQUENCIES = [20, 40, 80, 160, 320, 640, 1280, 2560, 5120, 10240, 20480];
+const EQ_FILTER_TYPES = ["peaking", "lowshelf", "highshelf", "lowpass", "highpass", "bandpass", "notch", "allpass"];
+const EQ_DEFAULT_Q = Math.SQRT1_2;
+/** synced-lyrics' nested OpenAI-compatible translation settings -> flat keys. */
+const OPENAI_OPTIONS: Record<string, string> = {
+  baseUrl: "openaiBaseUrl",
+  apiKey: "openaiApiKey",
+  model: "openaiModel",
+  apiMode: "openaiApiMode",
+};
 /** pear-desktop's notification toast styles, in the order of their numbers. */
 const TOAST_STYLES = ["logo", "banner_centered_top", "hero", "banner_top_custom", "banner_centered_bottom", "banner_bottom", "legacy"];
 const SPONSORBLOCK_CATEGORIES = ["sponsor", "intro", "outro", "interaction", "selfpromo", "music_offtopic", "preview", "filler"];
@@ -138,9 +149,22 @@ export const PLUGIN_MIGRATIONS: Record<string, PluginMigration> = {
     }
   },
   equalizer: (entry) => {
-    // A list of biquad filters (plus the bass booster preset) -> the extra filters, as JSON.
     if (typeof entry.filters === "string") return;
     const filters = Array.isArray(entry.filters) ? entry.filters.filter(isRecord) : [];
+    // pear-desktop's Ears rewrite made the equalizer 11 fixed bands and stored that
+    // curve in `filters`, with `activePreset`/`userPresets` beside it. Those are
+    // the bands, not the extra biquads the rewrite calls `filters`: treating them
+    // as extras moves the curve out of the 11-band UI and applies it in parallel.
+    const earsCurve = filters.some((filter) => isString(filter.id) && /^band\d+$/.test(filter.id));
+    if (earsCurve || isString(entry.activePreset) || Array.isArray(entry.userPresets)) {
+      setNew(entry, "bands", JSON.stringify(earsBands(filters)));
+      if (isString(entry.activePreset) && entry.activePreset) setNew(entry, "preset", entry.activePreset);
+      // Set outright: the old array is under the same key, so setNew would keep it.
+      if (Array.isArray(entry.userPresets)) entry.userPresets = JSON.stringify(entry.userPresets);
+      entry.filters = "";
+      return;
+    }
+    // pear-desktop 3.12 and earlier: a list of biquad filters (plus the bass booster preset) -> the extra filters, as JSON.
     if (isRecord(entry.presets) && entry.presets["bass-booster"] === true) filters.push(BASS_BOOSTER);
     entry.filters = filters.length > 0 ? JSON.stringify(filters) : "";
   },
@@ -186,6 +210,15 @@ export const PLUGIN_MIGRATIONS: Record<string, PluginMigration> = {
     // The plugin also ran the Linux MPRIS player, which is the media-controls plugin now.
     if (entry.enabled === true) setNew(ensurePluginEntry(config, "media-controls"), "enabled", true);
   },
+  "skip-ai-slop": (entry) => {
+    // Keywords were { text, enabled } and channels { id, name }; the rewrite stores
+    // plain string lists. Disabled keywords are dropped on purpose: there is no
+    // per-keyword switch any more, so keeping them would start filtering entries
+    // the user had turned off.
+    entry.keywords = keywordList(entry.keywords) ?? entry.keywords;
+    entry.userAllow = channelList(entry.userAllow) ?? entry.userAllow;
+    entry.userBlock = channelList(entry.userBlock) ?? entry.userBlock;
+  },
   sponsorblock: (entry) => {
     // A list of categories -> one switch per category.
     const categories = entry.categories;
@@ -202,11 +235,29 @@ export const PLUGIN_MIGRATIONS: Record<string, PluginMigration> = {
     if (typeof chinese === "string" && Object.hasOwn(CHINESE_CONVERSIONS, chinese)) {
       setNew(entry, "convertChinese", CHINESE_CONVERSIONS[chinese]);
     }
+    // Translation was one nested object (one entry per provider); the rewrite's
+    // config is a flat record, so every provider's settings became top-level keys.
+    // Without this the plugin reads its defaults: translation off, credentials lost.
+    const translation = entry.translation;
+    if (!isRecord(translation)) return;
+    copyTyped(entry, translation, { enabled: "translationEnabled" }, isBoolean);
+    flattenStrings(entry, translation, { provider: "translationProvider", targetLanguage: "translationTargetLanguage" });
+    const providers = translation.providers;
+    if (!isRecord(providers)) return;
+    flattenStrings(entry, providers["openai-compatible"], OPENAI_OPTIONS);
+    flattenStrings(entry, providers.anthropic, { apiKey: "anthropicApiKey", model: "anthropicModel" });
+    flattenStrings(entry, providers.gemini, { apiKey: "geminiApiKey", model: "geminiModel" });
+    flattenStrings(entry, providers["local-cli"], { engine: "localCliEngine", command: "localCliCommand", model: "localCliModel" });
+    const localCli = providers["local-cli"];
+    if (isRecord(localCli) && isNumber(localCli.timeoutSeconds)) {
+      setNew(entry, "localCliTimeoutSeconds", clamp(localCli.timeoutSeconds, 15, 600));
+    }
+    flattenStrings(entry, providers["google-translate"], { host: "googleTranslateHost" });
   },
   "transparent-player": (entry) => fractionToPercent(entry, "opacity"),
   visualizer: (entry) => {
     // Per-visualizer objects -> flat options; Wave's animations -> JSON.
-    const { butterchurn, vudio, wave } = entry;
+    const { butterchurn, vudio, wave, wavy, bars, circles, experimental, discoBall } = entry;
     if (isRecord(butterchurn)) {
       copyTyped(entry, butterchurn, { preset: "preset" }, isString);
       if (isNumber(butterchurn.blendTimeInSeconds)) setNew(entry, "blendTimeInSeconds", clamp(butterchurn.blendTimeInSeconds, 0, 10));
@@ -217,8 +268,75 @@ export const PLUGIN_MIGRATIONS: Record<string, PluginMigration> = {
       copyTyped(entry, vudio.lighting, VUDIO_OPTIONS, (value) => value !== undefined);
     }
     if (isRecord(wave) && Array.isArray(wave.animations)) setNew(entry, "waveAnimations", JSON.stringify(wave.animations));
+    if (isRecord(wavy)) clampNew(entry, "wavyLineWidth", wavy.lineWidth, 1, 20);
+    if (isRecord(bars)) {
+      copyTyped(entry, bars, { variant: "barsVariant" }, isString);
+      clampNew(entry, "barsBarWidth", bars.barWidth, 5, 80);
+      clampNew(entry, "barsGap", bars.gap, 0, 20);
+    }
+    if (isRecord(circles)) copyTyped(entry, circles, { variant: "circlesVariant" }, isString);
+    if (isRecord(experimental)) copyTyped(entry, experimental, { variant: "experimentalVariant" }, isString);
+    if (isRecord(discoBall)) clampNew(entry, "discoBallSensitivity", discoBall.sensitivity, 0.25, 3);
   },
 };
+
+/** Sets a numeric key, clamped into the range the rewrite accepts, unless it is already set. */
+function clampNew(entry: Json, key: string, value: unknown, min: number, max: number) {
+  if (isNumber(value)) setNew(entry, key, clamp(value, min, max));
+}
+
+/** pear-desktop's 11-band equalizer curve -> the rewrite's `bands` JSON (positional, no ids). */
+function earsBands(filters: readonly Json[]) {
+  return EQ_FREQUENCIES.map((frequency, index) => {
+    const filter = filters[index] ?? {};
+    const type = filter.type;
+    const q = isNumber(filter.Q) ? filter.Q : filter.q;
+    return {
+      type:
+        isString(type) && EQ_FILTER_TYPES.includes(type)
+          ? type
+          : index === 0
+            ? "lowshelf"
+            : index === EQ_FREQUENCIES.length - 1
+              ? "highshelf"
+              : "peaking",
+      frequency: clamp(isNumber(filter.frequency) ? filter.frequency : frequency, 20, 22050),
+      Q: clamp(isNumber(q) ? q : EQ_DEFAULT_Q, 0.1, 30),
+      gain: clamp(isNumber(filter.gain) ? filter.gain : 0, -30, 30),
+    };
+  });
+}
+
+/** Old keyword entries ({ text, enabled }) or plain strings -> the rewrite's string list. */
+function keywordList(value: unknown): string[] | undefined {
+  if (!Array.isArray(value)) return;
+  const texts: string[] = [];
+  for (const item of value) {
+    const text = isString(item) ? item.trim() : isRecord(item) && item.enabled !== false && isString(item.text) ? item.text.trim() : "";
+    if (text) texts.push(text);
+  }
+  return texts;
+}
+
+/** Old channel entries ({ id, name }) or plain strings -> ids, or the exact name when there is no id. */
+function channelList(value: unknown): string[] | undefined {
+  if (!Array.isArray(value)) return;
+  const ids: string[] = [];
+  for (const item of value) {
+    const raw = isString(item)
+      ? item
+      : isRecord(item)
+        ? isString(item.id)
+          ? item.id
+          : isString(item.name)
+            ? item.name
+            : undefined
+        : undefined;
+    const id = raw?.trim();
+    if (id) ids.push(id);
+  }
+  return ids;
+}
 
 /** FFmpeg presets became yt-dlp audio formats; the Custom preset keeps its arguments and extension. */
 function presetToFormat(entry: Json, preset: string) {

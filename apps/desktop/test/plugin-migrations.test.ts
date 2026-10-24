@@ -114,6 +114,38 @@ describe("pear-desktop plugin options", () => {
     expect(twice("equalizer", { filters: ["junk", peak] }).filters).toBe(JSON.stringify([peak]));
   });
 
+  test("equalizer: the 11-band Ears curve becomes bands and user presets", () => {
+    const frequencies = [20, 40, 80, 160, 320, 640, 1280, 2560, 5120, 10240, 20480];
+    const curve = frequencies.map((frequency, index) => ({
+      id: `band${index}`,
+      type: index === 0 ? "lowshelf" : index === frequencies.length - 1 ? "highshelf" : "peaking",
+      frequency,
+      Q: 0.707,
+      gain: index,
+    }));
+    const preset = { id: "preset-abc", name: "Mine", outputGainDb: 3, filters: curve };
+    const entry = twice("equalizer", {
+      filters: curve,
+      activePreset: "preset-abc",
+      recentPresets: ["preset-abc"],
+      userPresets: [preset],
+      outputGainDb: 1,
+    });
+    // The curve is the 11-band layout, not the extra filters that add in parallel.
+    expect(entry.filters).toBe("");
+    expect(entry.preset).toBe("preset-abc");
+    expect(entry.outputGainDb).toBe(1);
+    expect(entry.userPresets).toBe(JSON.stringify([preset]));
+    const bands = JSON.parse(entry.bands as string) as { type: string; frequency: number; gain: number }[];
+    expect(bands).toHaveLength(11);
+    expect(bands[0]).toMatchObject({ type: "lowshelf", frequency: 20, gain: 0 });
+    expect(bands[5]).toMatchObject({ type: "peaking", frequency: 640, gain: 5 });
+    expect(bands[10]).toMatchObject({ type: "highshelf", frequency: 20480, gain: 10 });
+    // A flat, never-saved curve is still the 11-band layout (the preset carries the choice).
+    expect(twice("equalizer", { filters: [], activePreset: "flat" })).toMatchObject({ filters: "", preset: "flat" });
+    expect(JSON.parse(twice("equalizer", { filters: [], activePreset: "flat" }).bands as string)).toHaveLength(11);
+  });
+
   test("in-app-menu: hiding the window buttons is the inverse of showing them", () => {
     expect(twice("in-app-menu", { hideDOMWindowControls: true })).toMatchObject({ windowControls: false });
     expect(twice("in-app-menu", { hideDOMWindowControls: false })).toMatchObject({ windowControls: true });
@@ -166,6 +198,22 @@ describe("pear-desktop plugin options", () => {
     expect(twice("shortcuts", { enabled: true }, { plugins: { "media-controls": { enabled: false } } })).toEqual({ enabled: true });
   });
 
+  test("skip-ai-slop: keyword and channel objects become the flat lists", () => {
+    expect(
+      twice("skip-ai-slop", {
+        keywords: [{ text: "AI cover", enabled: true }, { text: "turned off", enabled: false }, " plain "],
+        userAllow: [{ id: "UCallow", name: "Good channel" }],
+        userBlock: [{ name: "Bad channel" }],
+      }),
+    ).toEqual({
+      // No per-keyword switch any more: a disabled keyword is dropped, not re-enabled.
+      keywords: ["AI cover", "plain"],
+      userAllow: ["UCallow"],
+      userBlock: ["Bad channel"],
+    });
+    expect(twice("skip-ai-slop", { keywords: "junk" })).toEqual({ keywords: "junk" });
+  });
+
   test("sponsorblock: the category list becomes one switch per category", () => {
     expect(twice("sponsorblock", { categories: ["sponsor", "preview", "chapter"], apiURL: "https://sb.lan" })).toMatchObject({
       apiURL: "https://sb.lan",
@@ -202,6 +250,24 @@ describe("pear-desktop plugin options", () => {
       waveAnimations: JSON.stringify(animations),
     });
     expect(twice("visualizer", { type: "wave" })).toEqual({ type: "wave" });
+    // The other per-visualizer objects are flat too, clamped into the rewrite's ranges.
+    expect(
+      twice("visualizer", {
+        wavy: { lineWidth: 3 },
+        bars: { variant: "rgb", barWidth: 120, gap: -1 },
+        circles: { variant: "party" },
+        experimental: { variant: "e14" },
+        discoBall: { sensitivity: 9 },
+      }),
+    ).toMatchObject({
+      wavyLineWidth: 3,
+      barsVariant: "rgb",
+      barsBarWidth: 80,
+      barsGap: 0,
+      circlesVariant: "party",
+      experimentalVariant: "e14",
+      discoBallSensitivity: 3,
+    });
   });
 
   test("runs on the stored entry only, never on a missing or broken one", () => {
@@ -442,5 +508,41 @@ describe("synced-lyrics", () => {
       "synced-lyrics"
     ];
     expect(kept).toMatchObject({ preferredProvider: "LRCLib", lineEffect: "focus", romanization: false });
+  });
+
+  test("the nested translation settings become flat keys, keeping the credentials", () => {
+    const entry = twice("synced-lyrics", {
+      translation: {
+        enabled: true,
+        provider: "anthropic",
+        targetLanguage: "de",
+        providers: {
+          "openai-compatible": { baseUrl: "https://example.test/v1", apiKey: "sk-openai", model: "gpt-4o-mini", apiMode: "responses" },
+          anthropic: { apiKey: "sk-anthropic", model: "claude-haiku-4-5-20251001" },
+          gemini: { apiKey: "sk-gemini", model: "gemini-2.0-flash" },
+          "local-cli": { engine: "codex", command: "my-cli", model: "local-model", timeoutSeconds: 900 },
+          "google-translate": { host: "translate.google.co.jp" },
+        },
+      },
+    });
+    expect(entry).toMatchObject({
+      translationEnabled: true,
+      translationProvider: "anthropic",
+      translationTargetLanguage: "de",
+      openaiBaseUrl: "https://example.test/v1",
+      openaiApiKey: "sk-openai",
+      openaiModel: "gpt-4o-mini",
+      openaiApiMode: "responses",
+      anthropicApiKey: "sk-anthropic",
+      anthropicModel: "claude-haiku-4-5-20251001",
+      geminiApiKey: "sk-gemini",
+      geminiModel: "gemini-2.0-flash",
+      localCliEngine: "codex",
+      localCliCommand: "my-cli",
+      localCliModel: "local-model",
+      localCliTimeoutSeconds: 600,
+      googleTranslateHost: "translate.google.co.jp",
+    });
+    expect(twice("synced-lyrics", { translation: "broken" })).toMatchObject({ translation: "broken" });
   });
 });
