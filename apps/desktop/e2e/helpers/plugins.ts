@@ -22,9 +22,6 @@ export const pluginError = (page: Page, id: string) => page.evaluate((id) => win
 /** The status line on the plugin's settings card ("" without one). */
 export const pluginStatus = (page: Page, id: string) => page.evaluate((id) => window.__pearRuntime!.plugins.status(id) ?? "", id);
 
-export const coreError = (page: Page, section: string) =>
-  page.evaluate((section) => window.__pearRuntime!.plugins.core(section as never).error ?? "", section);
-
 /** Calls a host command of a plugin from the page, like its page part would. */
 export function invoke<T>(page: Page, plugin: string, command: string, ...args: unknown[]) {
   return page.evaluate(([plugin, command, args]) => window.__pear!.invoke("plugin:invoke", plugin, command, args), [

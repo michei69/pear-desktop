@@ -15,7 +15,7 @@ import { dirname, join } from "node:path";
 import { type AnyPlugin, type ConfigOf, type ConfigShape, isEnabledByDefault, normalizeConfig } from "@pear/sdk";
 import { CORE_SECTIONS, type CoreSection } from "@pear/sdk/core-config";
 import type { PluginState } from "@pear/sdk/protocol";
-import { channel } from "./app-info.ts";
+import { defaultUpdateChannel } from "./app-info.ts";
 import { isRecord, type MigratedFiles, type StoredConfig } from "./migrations/helpers.ts";
 import { migrate } from "./migrations/index.ts";
 
@@ -67,7 +67,7 @@ export class Settings {
     this.#definitions = new Map(plugins.map((plugin) => [plugin.id, plugin]));
     // A beta build follows the beta channel until the user picks one, as pear-desktop did.
     const storedChannel = this.#data.options?.updateChannel;
-    if (storedChannel !== "beta" && storedChannel !== "stable" && channel === "beta") {
+    if (storedChannel !== "beta" && storedChannel !== "stable" && defaultUpdateChannel() === "beta") {
       this.#core.general = { ...this.#core.general, updateChannel: "beta" };
       this.#data.options = { ...this.#data.options, updateChannel: "beta" };
       this.#scheduleWrite();
