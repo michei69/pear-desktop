@@ -71,7 +71,10 @@ interface Fixtures {
 export const test = base.extend<Fixtures>({
   appOptions: [{}, { option: true }],
   // Cleanups run last-in first-out: an app closes before the folder or server it was given.
-  defer: async (_fixtures, use) => {
+  // Playwright requires the fixture's first parameter to be a destructuring
+  // pattern; there are no fixtures to request here.
+  // oxlint-disable-next-line no-empty-pattern -- the empty pattern is the only valid form here
+  defer: async ({}, use) => {
     const cleanups: (() => unknown)[] = [];
     await use((cleanup) => void cleanups.push(cleanup));
     for (const cleanup of cleanups.reverse()) await cleanup();
