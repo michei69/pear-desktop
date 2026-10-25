@@ -51,12 +51,20 @@ export const openSettingsWindow = () => {
   });
   settingsWindow.once('ready-to-show', () => settingsWindow?.show());
 
-  if (is.dev() && process.env.ELECTRON_RENDERER_URL) {
-    settingsWindow.loadURL(`${process.env.ELECTRON_RENDERER_URL}/?settings=1`);
+  // A script-less shell: the preload injects the renderer (from the dev server
+  // in dev, from the built bundle otherwise). Loading renderer/index.html here
+  // ran the bundle in the page *and* in the preload's isolated world, so the
+  // second copy failed on the mdui custom elements and the window stayed blank.
+  const devUrl = is.dev() ? process.env.ELECTRON_RENDERER_URL : undefined;
+  if (devUrl) {
+    settingsWindow.loadURL(`${devUrl}/settings.html?settings=1`);
   } else {
-    settingsWindow.loadFile(path.join(buildDir(), 'renderer', 'index.html'), {
-      search: 'settings=1',
-    });
+    settingsWindow.loadFile(
+      path.join(buildDir(), 'renderer', 'settings.html'),
+      {
+        search: 'settings=1',
+      },
+    );
   }
 
   return settingsWindow;

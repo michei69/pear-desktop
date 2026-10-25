@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+  <!--
+    Shell for the standalone settings window. It deliberately carries no
+    script: the preload injects the renderer, exactly like it does into the
+    YouTube Music page. Loading the built renderer/index.html here instead
+    executed the bundle twice (once from the page, once from the preload) and
+    both copies crashed, leaving a blank window.
+  -->
+  <head>
+    <meta charset="utf-8" />
+    <meta name="color-scheme" content="dark" />
+    <title>Settings</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        background: #1d1b20;
+      }
+    </style>
+  </head>
+  <body></body>
+</html>
