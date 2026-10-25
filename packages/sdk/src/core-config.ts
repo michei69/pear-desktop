@@ -76,6 +76,16 @@ export const GENERAL = {
       group: "Updates",
     },
   ),
+  stripMusicFromSharedLinks: config.bool(false, {
+    label: "Strip 'music.' from shared links",
+    description: "Turns music.\u0079\u006f\u0075\u0074\u0075\u0062\u0065.com links back into regular ones.",
+    group: "Shared links",
+  }),
+  stripSIFromSharedLinks: config.bool(true, {
+    label: "Strip 'si' from shared links",
+    description: "Drops YTM's tracking parameter from links copied by the share dialog.",
+    group: "Shared links",
+  }),
 };
 
 export const WINDOW = {
@@ -139,16 +149,6 @@ export const APPEARANCE = {
     label: "Window title",
     placeholder: "The page's title",
     group: "Window",
-  }),
-  stripMusicFromSharedLinks: config.bool(false, {
-    label: "Strip 'music.' from shared links",
-    description: "Turns music.\u0079\u006f\u0075\u0074\u0075\u0062\u0065.com links back into regular ones.",
-    group: "Shared links",
-  }),
-  stripSIFromSharedLinks: config.bool(true, {
-    label: "Strip 'si' from shared links",
-    description: "Drops YTM's tracking parameter from links copied by the share dialog.",
-    group: "Shared links",
   }),
   ...contextMenuFields,
 };

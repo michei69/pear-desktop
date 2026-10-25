@@ -63,7 +63,7 @@ if (performanceMode) {
 // First: YTM's config script runs right after the runtime.
 const siteFlags = overrideSiteFlags(siteOverrides(bridge.bootstrap.core.site.config), performanceMode);
 
-/** The share dialog's cleaning options, from the appearance section. */
+/** The share dialog's cleaning options, from the General section. */
 function shareUrlOptions(config: Record<string, unknown>) {
   return { stripMusic: config.stripMusicFromSharedLinks === true, stripSI: config.stripSIFromSharedLinks === true };
 }
@@ -74,12 +74,12 @@ interface ShareUrlRewriter {
   stop(): void;
 }
 
-let shareUrlOptionsValue = shareUrlOptions(bridge.bootstrap.core.appearance.config);
+let shareUrlOptionsValue = shareUrlOptions(bridge.bootstrap.core.general.config);
 let shareUrlRewriter: ShareUrlRewriter | undefined;
 let shareUrlReady = false;
 
 /** (Re)starts the share dialog rewriter with the current options. */
-const applyShareUrlOptions = (config: Record<string, unknown> = bridge.bootstrap.core.appearance.config): void => {
+const applyShareUrlOptions = (config: Record<string, unknown> = bridge.bootstrap.core.general.config): void => {
   shareUrlOptionsValue = shareUrlOptions(config);
   if (!shareUrlReady) return;
   shareUrlRewriter?.stop();
@@ -155,10 +155,10 @@ bridge.onEvent((event) => {
       return void runner.request(event.id, event.event, event.payload, event.requestId);
     case "core-state":
       runner.applyCore(event.section, event.state);
+      if (event.section === "general") return applyShareUrlOptions(event.state.config);
       if (event.section !== "appearance") return;
       appearance.apply(event.state);
       contextMenu.apply(event.state.config);
-      applyShareUrlOptions(event.state.config);
       return player.setOptions(event.state.config);
     case "themes": {
       const state = normalizeThemeState(event.state);

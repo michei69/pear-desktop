@@ -149,7 +149,7 @@ Translations are JSON files in `src/i18n/resources/<code>.json`. Each starts wit
 
 ## Shared-link cleaning
 
-`packages/sdk/src/share-url.ts` holds the link cleanup helpers: `stripMusicSubdomain()` removes the `music.` host, `stripSIParam()` removes YouTube's `si` tracking parameter while keeping the query valid, and `createShareUrlRewriter(document, options)` watches YTM's `#share-url` input and rewrites it before the user copies. The page runtime applies the rewriter after DOM ready with `appearance.stripMusicFromSharedLinks` and `stripSIFromSharedLinks`, and reconfigures it when that section changes. **Navigation ▸ Copy current URL** uses the same two functions on the current page URL.
+`packages/sdk/src/share-url.ts` holds the link cleanup helpers: `stripMusicSubdomain()` removes the `music.` host, `stripSIParam()` removes YouTube's `si` tracking parameter while keeping the query valid, and `createShareUrlRewriter(document, options)` watches YTM's `#share-url` input and rewrites it before the user copies. The page runtime applies the rewriter after DOM ready with `general.stripMusicFromSharedLinks` and `general.stripSIFromSharedLinks`, and reconfigures it when that section changes. **Navigation ▸ Copy current URL** uses the same two functions on the current page URL.
 
 ## Performance
 

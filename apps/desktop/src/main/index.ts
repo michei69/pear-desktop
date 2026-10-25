@@ -130,8 +130,8 @@ function main() {
       languageToYtm: languageSync.toYtm,
       setLanguage: (value) => void core.set("general", { language: value }),
       shareLinkOptions: () => ({
-        stripMusic: settings.core("appearance").stripMusicFromSharedLinks,
-        stripSI: settings.core("appearance").stripSIFromSharedLinks,
+        stripMusic: settings.core("general").stripMusicFromSharedLinks,
+        stripSI: settings.core("general").stripSIFromSharedLinks,
       }),
       updatesSupported: () => updatesSupported(),
       checkForUpdates: checkUpdatesNow,
