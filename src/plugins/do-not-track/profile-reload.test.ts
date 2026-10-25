@@ -98,7 +98,7 @@ test('one dialog at a time; stale confirmation cannot reload a stopped plugin', 
   expect(dialogs).toBe(1);
 });
 
-test('dialog uses current language and established English fallback', async () => {
+test('dialog follows the current language and its English fallback', async () => {
   const i18n = createInstance();
   const resource = (lang: string) =>
     JSON.parse(
@@ -113,7 +113,6 @@ test('dialog uses current language and established English fallback', async () =
     resources: {
       en: { translation: resource('en') },
       ru: { translation: resource('ru') },
-      de: { translation: resource('de') },
     },
   });
   const options: Electron.MessageBoxOptions[] = [];
@@ -126,19 +125,24 @@ test('dialog uses current language and established English fallback', async () =
     isActive: () => true,
     reload: () => Promise.resolve(),
   });
+  const titleKey = 'plugins.do-not-track.dialog.reload.title';
+
   await prompt();
+  const englishTitle = options[0].title;
+  // The dialog's own strings, not the wording the translation currently holds.
+  expect(englishTitle).toBe(i18n.t(titleKey));
+
   await i18n.changeLanguage('ru');
   await prompt();
-  expect(options[0].title).toBe('Reload page');
-  expect(options[1].title).toBe('Перезагрузка страницы');
+  expect(options[1].title).toBe(i18n.t(titleKey));
+  expect(options[1].title).not.toBe(englishTitle);
   expect(options[1].buttons).toEqual([
-    'Перезагрузить страницу сейчас',
-    'Позже',
-  ]);
-  await i18n.changeLanguage('de');
-  await prompt();
-  expect(options[2].title).toBe('Reload page');
-  expect(options[2].buttons?.[1]).toBe(
+    i18n.t('plugins.do-not-track.dialog.reload.reload-now'),
     i18n.t('main.dialog.need-to-restart.buttons.later'),
-  );
+  ]);
+
+  // A language with no resources keeps the English strings.
+  await i18n.changeLanguage('missing');
+  await prompt();
+  expect(options[2].title).toBe(englishTitle);
 });
