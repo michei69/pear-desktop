@@ -1643,9 +1643,7 @@
       "theme-variable-value": "Waarde",
       "theme-variable-add": "Voeg veranderlike by",
       "performance-mode": "Prestasiemodus",
-      "performance-mode-desc": "Ruil 'n bietjie visuele getrouheid in vir goedkoper weergee.",
-      "in-process-gpu": "Voeg die GPU-proses by die app-proses in",
-      "in-process-gpu-desc": "Eksperimenteel: bespaar een proses, maar skuif GPU-geheue na die hoofproses en kan terugval na sagteware-weergee."
+      "performance-mode-desc": "Ruil 'n bietjie visuele getrouheid in vir goedkoper weergee."
     }
   }
 }

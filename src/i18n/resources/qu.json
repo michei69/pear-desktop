@@ -1643,9 +1643,7 @@
       "theme-variable-value": "Chanin",
       "theme-variable-add": "Variable yapay",
       "performance-mode": "Usqhay ruway ñan",
-      "performance-mode-desc": "Wakin rikch'ay allin kayta qun, aswan pisi chanin render ruwaypaq.",
-      "in-process-gpu": "GPU ruwayta app ruwayman hukllachay",
-      "in-process-gpu-desc": "Prueba: huk ruwayta waqaychan, ichaqa GPU yuyayta hatun ruwayman apachin, software render ruwayman kutiyta atin."
+      "performance-mode-desc": "Wakin rikch'ay allin kayta qun, aswan pisi chanin render ruwaypaq."
     }
   }
 }

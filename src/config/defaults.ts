@@ -26,8 +26,6 @@ export interface DefaultConfig {
     hideMenuWarned: boolean;
     startAtLogin: boolean;
     disableHardwareAcceleration: boolean;
-    /** Fold the GPU process into the browser process. Experimental. */
-    inProcessGpu: boolean;
     /** Trade some visual fidelity for cheaper rendering across plugins. */
     performanceMode: boolean;
     removeUpgradeButton: boolean;
@@ -97,7 +95,6 @@ export const defaultConfig: DefaultConfig = {
     hideMenuWarned: false,
     startAtLogin: false,
     disableHardwareAcceleration: false,
-    inProcessGpu: false,
     performanceMode: false,
     removeUpgradeButton: false,
     restartOnConfigChanges: false,

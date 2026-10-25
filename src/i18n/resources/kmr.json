@@ -1643,9 +1643,7 @@
       "theme-variable-value": "Nirx",
       "theme-variable-add": "Guherbarê zêde bike",
       "performance-mode": "Moda performansê",
-      "performance-mode-desc": "Ji bo rendering a erzantir, hinek dilsoziya dîtbarî bike qurban.",
-      "in-process-gpu": "Pêvajoya GPU bi pêvajoya sepanê re yek bike",
-      "in-process-gpu-desc": "Ceribandinî: pêvajoyekê xilas dike, lê bîra GPU dike nav pêvajoya sereke û dibe ku vegere rendering a nermalavê."
+      "performance-mode-desc": "Ji bo rendering a erzantir, hinek dilsoziya dîtbarî bike qurban."
     }
   }
 }

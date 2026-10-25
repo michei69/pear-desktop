@@ -1636,9 +1636,7 @@
       "theme-variable-value": "Värde",
       "theme-variable-add": "Lägg till variabel",
       "performance-mode": "Prestandaläge",
-      "performance-mode-desc": "Byt bort en del visuell kvalitet mot billigare rendering.",
-      "in-process-gpu": "Slå samman GPU-processen med appens process",
-      "in-process-gpu-desc": "Experimentellt: sparar en process, men flyttar GPU-minnet till huvudprocessen och kan falla tillbaka på mjukvarurendering."
+      "performance-mode-desc": "Byt bort en del visuell kvalitet mot billigare rendering."
     }
   }
 }

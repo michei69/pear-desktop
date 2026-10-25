@@ -1636,9 +1636,7 @@
       "theme-variable-value": "Vērtība",
       "theme-variable-add": "Pievienot mainīgo",
       "performance-mode": "Veiktspējas režīms",
-      "performance-mode-desc": "Apmainīt daļu vizuālās kvalitātes pret lētāku renderēšanu.",
-      "in-process-gpu": "Apvienot GPU procesu ar lietotnes procesu",
-      "in-process-gpu-desc": "Eksperimentāli: ietaupa vienu procesu, bet pārvieto GPU atmiņu uz galveno procesu un var pāriet uz programmatūras renderēšanu."
+      "performance-mode-desc": "Apmainīt daļu vizuālās kvalitātes pret lētāku renderēšanu."
     }
   }
 }

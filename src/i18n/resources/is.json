@@ -1636,9 +1636,7 @@
       "theme-variable-value": "Gildi",
       "theme-variable-add": "Bæta við breytu",
       "performance-mode": "Afkastahamur",
-      "performance-mode-desc": "Skipta á móti hluta sjónrænna gæða fyrir hagkvæmari teikningu.",
-      "in-process-gpu": "Sameina GPU-ferlið forritsferlinu",
-      "in-process-gpu-desc": "Tilraunakennt: sparar eitt ferli, en færir GPU-minni inn í aðalferlið og getur fallið aftur á hugbúnaðarteikningu."
+      "performance-mode-desc": "Skipta á móti hluta sjónrænna gæða fyrir hagkvæmari teikningu."
     }
   }
 }

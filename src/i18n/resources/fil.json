@@ -1636,9 +1636,7 @@
       "theme-variable-value": "Halaga",
       "theme-variable-add": "Magdagdag ng variable",
       "performance-mode": "Performance mode",
-      "performance-mode-desc": "Ipagpalit ang bahagi ng visual fidelity para sa mas magaan na rendering.",
-      "in-process-gpu": "Pagsamahin ang GPU process sa app process",
-      "in-process-gpu-desc": "Eksperimental: nakakatipid ng isang process, pero inililipat ang GPU memory sa main process at maaaring bumalik sa software rendering."
+      "performance-mode-desc": "Ipagpalit ang bahagi ng visual fidelity para sa mas magaan na rendering."
     }
   }
 }

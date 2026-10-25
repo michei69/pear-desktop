@@ -1643,9 +1643,7 @@
       "theme-variable-value": "Vlera",
       "theme-variable-add": "Shto variabël",
       "performance-mode": "Modaliteti i performancës",
-      "performance-mode-desc": "Shkëmbe një pjesë të besnikërisë vizuale për një rendering më efikas.",
-      "in-process-gpu": "Bashko procesin GPU me procesin e aplikacionit",
-      "in-process-gpu-desc": "Eksperimentale: kursen një proces, por zhvendos memorien e GPU-së në procesin kryesor dhe mund të bjerë në rendering me softuer."
+      "performance-mode-desc": "Shkëmbe një pjesë të besnikërisë vizuale për një rendering më efikas."
     }
   }
 }

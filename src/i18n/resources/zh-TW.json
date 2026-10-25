@@ -1636,9 +1636,7 @@
       "theme-variable-value": "值",
       "theme-variable-add": "新增變數",
       "performance-mode": "效能模式",
-      "performance-mode-desc": "犧牲部分視覺精緻度，換取更低的渲染成本。",
-      "in-process-gpu": "將 GPU 程序合併至應用程式程序",
-      "in-process-gpu-desc": "實驗性：可節省一個程序，但會把 GPU 記憶體移入主程序，且可能退回軟體渲染。"
+      "performance-mode-desc": "犧牲部分視覺精緻度，換取更低的渲染成本。"
     }
   }
 }

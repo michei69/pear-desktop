@@ -1636,9 +1636,7 @@
       "theme-variable-value": "Değer",
       "theme-variable-add": "Değişken ekle",
       "performance-mode": "Performans modu",
-      "performance-mode-desc": "Daha düşük işleme maliyeti karşılığında görsel kaliteden biraz ödün verin.",
-      "in-process-gpu": "GPU sürecini uygulama süreciyle birleştir",
-      "in-process-gpu-desc": "Deneysel: bir süreçten tasarruf sağlar, ancak GPU belleğini ana sürece taşır ve yazılım tabanlı işlemeye geri dönebilir."
+      "performance-mode-desc": "Daha düşük işleme maliyeti karşılığında görsel kaliteden biraz ödün verin."
     }
   }
 }

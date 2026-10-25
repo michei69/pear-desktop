@@ -1636,9 +1636,7 @@
       "theme-variable-value": "Hodnota",
       "theme-variable-add": "Pridať premennú",
       "performance-mode": "Režim výkonu",
-      "performance-mode-desc": "Vymeňte časť vizuálnej vernosti za menej náročné vykresľovanie.",
-      "in-process-gpu": "Zlúčiť proces GPU s procesom aplikácie",
-      "in-process-gpu-desc": "Experimentálne: ušetrí jeden proces, ale presunie pamäť GPU do hlavného procesu a môže sa prepnúť na softvérové vykresľovanie."
+      "performance-mode-desc": "Vymeňte časť vizuálnej vernosti za menej náročné vykresľovanie."
     }
   }
 }

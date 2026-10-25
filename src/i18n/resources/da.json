@@ -1580,9 +1580,7 @@
       "theme-variable-value": "Værdi",
       "theme-variable-add": "Tilføj variabel",
       "performance-mode": "Ydelsestilstand",
-      "performance-mode-desc": "Udskift noget visuel kvalitet med billigere rendering.",
-      "in-process-gpu": "Flet GPU-processen ind i appprocessen",
-      "in-process-gpu-desc": "Eksperimentel: sparer en proces, men flytter GPU-hukommelse ind i hovedprocessen og kan falde tilbage til software-rendering."
+      "performance-mode-desc": "Udskift noget visuel kvalitet med billigere rendering."
     }
   }
 }

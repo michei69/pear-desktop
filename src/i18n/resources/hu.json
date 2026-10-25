@@ -1636,9 +1636,7 @@
       "theme-variable-value": "Érték",
       "theme-variable-add": "Változó hozzáadása",
       "performance-mode": "Teljesítmény mód",
-      "performance-mode-desc": "Némileg feláldozza a vizuális hűséget az olcsóbb renderelésért.",
-      "in-process-gpu": "A GPU-folyamat egyesítése az alkalmazásfolyamattal",
-      "in-process-gpu-desc": "Kísérleti: egy folyamatot takarít meg, de a GPU-memóriát a fő folyamatba helyezi át, és visszaeshet szoftveres renderelésre."
+      "performance-mode-desc": "Némileg feláldozza a vizuális hűséget az olcsóbb renderelésért."
     }
   }
 }

@@ -204,13 +204,6 @@ if (disableHardwareAcceleration) {
   app.disableHardwareAcceleration();
 }
 
-// Opt-in experiment, not part of performance mode: folding the GPU service into
-// the browser process moves its memory there and can fall back to software
-// rendering (which costs far more RAM than the separate process saves).
-if (config.get('options.inProcessGpu') && !disableHardwareAcceleration) {
-  app.commandLine.appendSwitch('in-process-gpu');
-}
-
 app.commandLine.appendSwitch('enable-features', enabledFeatures.join(','));
 app.commandLine.appendSwitch('disable-features', disabledFeatures.join(','));
 

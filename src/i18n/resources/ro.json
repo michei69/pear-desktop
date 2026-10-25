@@ -1636,9 +1636,7 @@
       "theme-variable-value": "Valoare",
       "theme-variable-add": "Adaugă variabilă",
       "performance-mode": "Mod de performanță",
-      "performance-mode-desc": "Renunță la o parte din fidelitatea vizuală pentru o randare mai eficientă.",
-      "in-process-gpu": "Îmbină procesul GPU cu procesul aplicației",
-      "in-process-gpu-desc": "Experimental: economisește un proces, dar mută memoria GPU în procesul principal și poate reveni la randarea software."
+      "performance-mode-desc": "Renunță la o parte din fidelitatea vizuală pentru o randare mai eficientă."
     }
   }
 }

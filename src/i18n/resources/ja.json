@@ -1636,9 +1636,7 @@
       "theme-variable-value": "値",
       "theme-variable-add": "変数を追加",
       "performance-mode": "パフォーマンスモード",
-      "performance-mode-desc": "一部の視覚的な忠実度を犠牲にして、レンダリングの負荷を軽減します。",
-      "in-process-gpu": "GPUプロセスをアプリプロセスに統合する",
-      "in-process-gpu-desc": "実験的: プロセスを1つ節約しますが、GPUメモリがメインプロセスに移動し、ソフトウェアレンダリングにフォールバックする可能性があります。"
+      "performance-mode-desc": "一部の視覚的な忠実度を犠牲にして、レンダリングの負荷を軽減します。"
     }
   }
 }

@@ -1589,9 +1589,7 @@
       "theme-variable-value": "值",
       "theme-variable-add": "添加变量",
       "performance-mode": "性能模式",
-      "performance-mode-desc": "牺牲部分视觉保真度以换取更低的渲染开销。",
-      "in-process-gpu": "将 GPU 进程合并到应用进程中",
-      "in-process-gpu-desc": "实验性：可减少一个进程，但会将 GPU 内存移入主进程，并且可能回退到软件渲染。"
+      "performance-mode-desc": "牺牲部分视觉保真度以换取更低的渲染开销。"
     }
   }
 }

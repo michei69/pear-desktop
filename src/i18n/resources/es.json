@@ -1636,9 +1636,7 @@
       "theme-variable-value": "Valor",
       "theme-variable-add": "Añadir variable",
       "performance-mode": "Modo de rendimiento",
-      "performance-mode-desc": "Intercambia algo de fidelidad visual por un renderizado más económico.",
-      "in-process-gpu": "Fusionar el proceso de la GPU con el proceso de la aplicación",
-      "in-process-gpu-desc": "Experimental: ahorra un proceso, pero traslada la memoria de la GPU al proceso principal y puede recurrir al renderizado por software."
+      "performance-mode-desc": "Intercambia algo de fidelidad visual por un renderizado más económico."
     }
   }
 }

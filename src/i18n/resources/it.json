@@ -1589,9 +1589,7 @@
       "theme-variable-value": "Valore",
       "theme-variable-add": "Aggiungi variabile",
       "performance-mode": "Modalità prestazioni",
-      "performance-mode-desc": "Rinuncia a un po' di fedeltà visiva per un rendering più leggero.",
-      "in-process-gpu": "Unisci il processo GPU al processo dell'app",
-      "in-process-gpu-desc": "Sperimentale: risparmia un processo, ma sposta la memoria della GPU nel processo principale e può ricorrere al rendering software."
+      "performance-mode-desc": "Rinuncia a un po' di fedeltà visiva per un rendering più leggero."
     }
   }
 }

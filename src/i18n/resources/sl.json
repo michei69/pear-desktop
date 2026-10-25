@@ -1636,9 +1636,7 @@
       "theme-variable-value": "Vrednost",
       "theme-variable-add": "Dodaj spremenljivko",
       "performance-mode": "Način delovanja",
-      "performance-mode-desc": "Zamenjajte nekaj vizualne kakovosti za cenejše izrisovanje.",
-      "in-process-gpu": "Združi proces GPU s procesom aplikacije",
-      "in-process-gpu-desc": "Preizkusno: prihrani en proces, vendar premakne pomnilnik GPU v glavni proces in se lahko preklopi na programsko izrisovanje."
+      "performance-mode-desc": "Zamenjajte nekaj vizualne kakovosti za cenejše izrisovanje."
     }
   }
 }

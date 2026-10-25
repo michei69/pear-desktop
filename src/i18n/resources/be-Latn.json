@@ -1568,9 +1568,7 @@
       "theme-variable-value": "Značeńnie",
       "theme-variable-add": "Dadać zmiennuju",
       "performance-mode": "Režym pradukcyjnasci",
-      "performance-mode-desc": "Abmianiajcie niekatoruju vizualnuju dakładnasć na bolš ekanomny rendering.",
-      "in-process-gpu": "Abjadnajcie praces GPU z pracesam dadatku",
-      "in-process-gpu-desc": "Eksperymentalna: ekanomić adzin praces, ale pieranosic pamiać GPU u hałoŭny praces i moža viarnucca da prahramnaha renderingu."
+      "performance-mode-desc": "Abmianiajcie niekatoruju vizualnuju dakładnasć na bolš ekanomny rendering."
     }
   }
 }

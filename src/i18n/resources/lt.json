@@ -1636,9 +1636,7 @@
       "theme-variable-value": "Reikšmė",
       "theme-variable-add": "Pridėti kintamąjį",
       "performance-mode": "Našumo režimas",
-      "performance-mode-desc": "Iškeiskite šiek tiek vaizdo kokybės į efektyvesnį atvaizdavimą.",
-      "in-process-gpu": "Sujungti GPU procesą su programos procesu",
-      "in-process-gpu-desc": "Eksperimentinė funkcija: sutaupo vieną procesą, bet perkelia GPU atmintį į pagrindinį procesą ir gali pereiti prie programinio atvaizdavimo."
+      "performance-mode-desc": "Iškeiskite šiek tiek vaizdo kokybės į efektyvesnį atvaizdavimą."
     }
   }
 }

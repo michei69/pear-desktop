@@ -1636,9 +1636,7 @@
       "theme-variable-value": "Giá trị",
       "theme-variable-add": "Thêm biến",
       "performance-mode": "Chế độ hiệu năng",
-      "performance-mode-desc": "Đánh đổi một phần độ sắc nét hình ảnh để có hiệu suất kết xuất tốt hơn.",
-      "in-process-gpu": "Hợp nhất tiến trình GPU vào tiến trình ứng dụng",
-      "in-process-gpu-desc": "Thử nghiệm: tiết kiệm một tiến trình, nhưng chuyển bộ nhớ GPU vào tiến trình chính và có thể chuyển sang kết xuất bằng phần mềm."
+      "performance-mode-desc": "Đánh đổi một phần độ sắc nét hình ảnh để có hiệu suất kết xuất tốt hơn."
     }
   }
 }

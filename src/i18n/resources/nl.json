@@ -1636,9 +1636,7 @@
       "theme-variable-value": "Waarde",
       "theme-variable-add": "Variabele toevoegen",
       "performance-mode": "Prestatiemodus",
-      "performance-mode-desc": "Ruil wat visuele kwaliteit in voor zuinigere rendering.",
-      "in-process-gpu": "Voeg het GPU-proces samen met het app-proces",
-      "in-process-gpu-desc": "Experimenteel: bespaart één proces, maar verplaatst GPU-geheugen naar het hoofdproces en kan terugvallen op softwarerendering."
+      "performance-mode-desc": "Ruil wat visuele kwaliteit in voor zuinigere rendering."
     }
   }
 }

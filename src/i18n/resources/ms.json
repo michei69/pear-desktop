@@ -1636,9 +1636,7 @@
       "theme-variable-value": "Nilai",
       "theme-variable-add": "Tambah pemboleh ubah",
       "performance-mode": "Mod prestasi",
-      "performance-mode-desc": "Mengorbankan sedikit kesetiaan visual demi pemaparan yang lebih ringan.",
-      "in-process-gpu": "Gabungkan proses GPU ke dalam proses aplikasi",
-      "in-process-gpu-desc": "Eksperimen: menjimatkan satu proses, tetapi memindahkan memori GPU ke proses utama dan boleh beralih kepada pemaparan perisian."
+      "performance-mode-desc": "Mengorbankan sedikit kesetiaan visual demi pemaparan yang lebih ringan."
     }
   }
 }

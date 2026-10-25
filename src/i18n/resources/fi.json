@@ -1636,9 +1636,7 @@
       "theme-variable-value": "Arvo",
       "theme-variable-add": "Lisää muuttuja",
       "performance-mode": "Suorituskykytila",
-      "performance-mode-desc": "Vaihda hieman visuaalista tarkkuutta kevyempään renderöintiin.",
-      "in-process-gpu": "Yhdistä GPU-prosessi sovellusprosessiin",
-      "in-process-gpu-desc": "Kokeellinen: säästää yhden prosessin, mutta siirtää GPU-muistin pääprosessiin ja voi palata ohjelmistorenderöintiin."
+      "performance-mode-desc": "Vaihda hieman visuaalista tarkkuutta kevyempään renderöintiin."
     }
   }
 }

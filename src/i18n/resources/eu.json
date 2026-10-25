@@ -1643,9 +1643,7 @@
       "theme-variable-value": "Balioa",
       "theme-variable-add": "Gehitu aldagaia",
       "performance-mode": "Errendimendu modua",
-      "performance-mode-desc": "Ikusmen-fideltasun pixka bat galdu errendatze merkeagoa lortzeko.",
-      "in-process-gpu": "Batu GPU prozesua aplikazioaren prozesura",
-      "in-process-gpu-desc": "Esperimentala: prozesu bat aurreztzen du, baina GPU memoria prozesu nagusira eramaten du eta software bidezko errendatzera jo dezake."
+      "performance-mode-desc": "Ikusmen-fideltasun pixka bat galdu errendatze merkeagoa lortzeko."
     }
   }
 }

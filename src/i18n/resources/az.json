@@ -1636,9 +1636,7 @@
       "theme-variable-value": "Dəyər",
       "theme-variable-add": "Dəyişən əlavə et",
       "performance-mode": "Performans rejimi",
-      "performance-mode-desc": "Daha qənaətli render müqabilində bir qədər vizual keyfiyyətdən güzəştə gedin.",
-      "in-process-gpu": "GPU prosesini tətbiq prosesinə birləşdir",
-      "in-process-gpu-desc": "Eksperimental: bir prosesə qənaət edir, lakin GPU yaddaşını əsas prosesə keçirir və proqram vasitəsilə renderə keçə bilər."
+      "performance-mode-desc": "Daha qənaətli render müqabilində bir qədər vizual keyfiyyətdən güzəştə gedin."
     }
   }
 }

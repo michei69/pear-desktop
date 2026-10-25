@@ -1636,9 +1636,7 @@
       "theme-variable-value": "Wartość",
       "theme-variable-add": "Dodaj zmienną",
       "performance-mode": "Tryb wydajności",
-      "performance-mode-desc": "Poświęć nieco wierności wizualnej na rzecz tańszego renderowania.",
-      "in-process-gpu": "Połącz proces GPU z procesem aplikacji",
-      "in-process-gpu-desc": "Eksperymentalne: oszczędza jeden proces, ale przenosi pamięć GPU do procesu głównego i może spowodować przełączenie na renderowanie programowe."
+      "performance-mode-desc": "Poświęć nieco wierności wizualnej na rzecz tańszego renderowania."
     }
   }
 }

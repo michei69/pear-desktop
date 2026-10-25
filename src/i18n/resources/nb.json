@@ -1573,9 +1573,7 @@
       "theme-variable-value": "Verdi",
       "theme-variable-add": "Legg til variabel",
       "performance-mode": "Ytelsesmodus",
-      "performance-mode-desc": "Bytt bort noe visuell kvalitet for billigere rendering.",
-      "in-process-gpu": "Slå sammen GPU-prosessen med appprosessen",
-      "in-process-gpu-desc": "Eksperimentelt: sparer én prosess, men flytter GPU-minnet inn i hovedprosessen og kan falle tilbake til programvarerendering."
+      "performance-mode-desc": "Bytt bort noe visuell kvalitet for billigere rendering."
     }
   }
 }

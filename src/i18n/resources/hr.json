@@ -1636,9 +1636,7 @@
       "theme-variable-value": "Vrijednost",
       "theme-variable-add": "Dodaj varijablu",
       "performance-mode": "Način performansi",
-      "performance-mode-desc": "Žrtvujte dio vizualne kvalitete za jeftinije renderiranje.",
-      "in-process-gpu": "Spoji GPU proces s procesom aplikacije",
-      "in-process-gpu-desc": "Eksperimentalno: štedi jedan proces, ali premješta GPU memoriju u glavni proces i može se vratiti na softversko renderiranje."
+      "performance-mode-desc": "Žrtvujte dio vizualne kvalitete za jeftinije renderiranje."
     }
   }
 }

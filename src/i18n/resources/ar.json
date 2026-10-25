@@ -1636,9 +1636,7 @@
       "theme-variable-value": "القيمة",
       "theme-variable-add": "إضافة متغير",
       "performance-mode": "وضع الأداء",
-      "performance-mode-desc": "بادِل بعض الدقة البصرية مقابل عرض أقل تكلفة.",
-      "in-process-gpu": "دمج عملية GPU في عملية التطبيق",
-      "in-process-gpu-desc": "تجريبي: يوفّر عملية واحدة، لكنه ينقل ذاكرة GPU إلى العملية الرئيسية وقد يعود إلى العرض البرمجي."
+      "performance-mode-desc": "بادِل بعض الدقة البصرية مقابل عرض أقل تكلفة."
     }
   }
 }

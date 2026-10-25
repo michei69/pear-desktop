@@ -1636,9 +1636,7 @@
       "theme-variable-value": "Väärtus",
       "theme-variable-add": "Lisa muutuja",
       "performance-mode": "Jõudlusrežiim",
-      "performance-mode-desc": "Vaheta veidi visuaalset täpsust odavama renderdamise vastu.",
-      "in-process-gpu": "Ühenda GPU protsess rakenduse protsessiga",
-      "in-process-gpu-desc": "Eksperimentaalne: säästab ühe protsessi, kuid viib GPU mälu põhiprotsessi ja võib langeda tagasi tarkvaralisele renderdamisele."
+      "performance-mode-desc": "Vaheta veidi visuaalset täpsust odavama renderdamise vastu."
     }
   }
 }
