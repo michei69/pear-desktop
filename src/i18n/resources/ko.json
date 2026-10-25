@@ -156,8 +156,8 @@
               "sync": {
                 "label": "언어 동기화",
                 "submenu": {
-                  "from-youtube": "YouTube에서",
-                  "to-youtube": "YouTube로"
+                  "from-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "\u0059\u006f\u0075\u0054\u0075\u0062\u0065에서",
+                  "to-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "\u0059\u006f\u0075\u0054\u0075\u0062\u0065로"
                 },
                 "failure": {
                   "dialog": {
@@ -181,8 +181,8 @@
               "disabled": "비활성화",
               "enabled-and-hide-app": "활성화 및 앱 숨기기",
               "enabled-and-show-app": "활성화 및 앱 표시",
-              "move-to-current-desktop": "표시할 때 현재 가상 데스크톱으로 이동",
               "play-pause-on-click": "클릭 시 재생/일시 정지",
+              "move-to-current-desktop": "표시할 때 현재 가상 데스크톱으로 이동",
               "force-white-icons": "강제로 흰색 아이콘 사용"
             }
           },
@@ -229,7 +229,7 @@
                   "open-themes-folder": "테마 폴더 열기"
                 }
               },
-              "use-ytm-icons": "원래 YouTube Music 아이콘 사용"
+              "use-ytm-icons": "원래 \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 아이콘 사용"
             }
           },
           "updates": {
@@ -315,10 +315,6 @@
         "enable-seekbar": "재생바 색조 변경 활성화"
       },
       "name": "앨범 컬러 기반 테마"
-    },
-    "audio-only": {
-      "description": "오디오 전용 모드 강제 — 모든 비디오 스트림을 네트워크 및 플레이어 수준에서 차단하여 RAM과 대역폭을 절약합니다",
-      "name": "오디오 전용"
     },
     "ambient-mode": {
       "description": "영상의 간접 조명을 화면 배경에 투사하여 조명 효과를 적용합니다",
@@ -861,9 +857,9 @@
           "label": "대화형 알림 설정",
           "submenu": {
             "hide-button-text": "버튼 텍스트 숨기기",
-            "hover-controls": "트레이에 마우스 올릴 시 미니 플레이어 표시",
             "refresh-on-play-pause": "재생/일시정지 시 새로고침",
-            "tray-controls": "트레이 클릭 시 열기/닫기"
+            "tray-controls": "트레이 클릭 시 열기/닫기",
+            "hover-controls": "트레이에 마우스 올릴 시 미니 플레이어 표시"
           }
         },
         "priority": "알림 우선순위",
@@ -875,19 +871,6 @@
     "performance-improvement": {
       "description": "실험적인 스크립트를 활성화하여 성능을 개선합니다",
       "name": "성능 개선 [베타]"
-    },
-    "playback-recovery": {
-      "description": "멈추거나 중단된 재생 상태에서 자동으로 복구합니다",
-      "menu": {
-        "log-to-console": "콘솔에 복구 이벤트 기록"
-      },
-      "name": "재생 복구",
-      "settings": {
-        "stall-timeout": "멈춤 시간 제한",
-        "stall-timeout-description": "복구를 시도하기 전에 재생이 진전 없이 유지될 수 있는 시간",
-        "max-retries": "최대 재시도 횟수",
-        "max-retries-description": "다음 트랙으로 건너뛰기 전까지의 복구 시도 횟수"
-      }
     },
     "picture-in-picture": {
       "description": "앱을 PiP 모드로 전환할 수 있게 허용합니다",
@@ -1057,6 +1040,10 @@
         "local-keybinds": "로컬 키바인드(창에 포커스가 있을 때만)"
       }
     },
+    "skip-disliked-songs": {
+      "description": "싫어요 표시된 노래를 건너뜁니다",
+      "name": "싫어요 표시 노래 건너뛰기"
+    },
     "skip-silences": {
       "description": "노래의 무음 부분을 자동으로 건너뜁니다",
       "name": "무음 건너뛰기",
@@ -1131,24 +1118,6 @@
           },
           "tooltip": "현재 줄에 적용할 효과를 선택합니다"
         },
-        "lyrics-font-size": {
-          "label": "가사 글꼴 크기",
-          "submenu": {
-            "large": {
-              "label": "크게",
-              "tooltip": "원래의 큰 가사 크기 사용"
-            },
-            "medium": {
-              "label": "보통",
-              "tooltip": "균형 잡힌 가사 크기 사용"
-            },
-            "small": {
-              "label": "작게",
-              "tooltip": "더 작은 가사 크기 사용"
-            }
-          },
-          "tooltip": "가사 텍스트의 크기를 선택합니다"
-        },
         "precise-timing": {
           "label": "가사를 최대한 정교하게 동기화",
           "tooltip": "다음 줄의 표시를 밀리초 단위로 계산합니다 (성능에 약간의 영향을 미칠 수 있음)"
@@ -1172,6 +1141,24 @@
         "show-time-codes": {
           "label": "시간 코드 표시",
           "tooltip": "가사 옆에 시간 코드 표시"
+        },
+        "lyrics-font-size": {
+          "label": "가사 글꼴 크기",
+          "submenu": {
+            "large": {
+              "label": "크게",
+              "tooltip": "원래의 큰 가사 크기 사용"
+            },
+            "medium": {
+              "label": "보통",
+              "tooltip": "균형 잡힌 가사 크기 사용"
+            },
+            "small": {
+              "label": "작게",
+              "tooltip": "더 작은 가사 크기 사용"
+            }
+          },
+          "tooltip": "가사 텍스트의 크기를 선택합니다"
         },
         "translation": {
           "clear-cache": {
@@ -1286,7 +1273,7 @@
         },
         "use-ytm-lyrics-without-proxy": {
           "label": "YTM 가사 사용 (프록시 없음)",
-          "tooltip": "YTM 브라우즈 프록시를 건너뛰고 앱의 인증된 세션을 사용하여 YouTube Music에 직접 호출합니다. 네트워크/지역이 직접 브라우즈 호출을 허용한다고 신뢰하는 경우 유용합니다."
+          "tooltip": "YTM 브라우즈 프록시를 건너뛰고 앱의 인증된 세션을 사용하여 \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063에 직접 호출합니다. 네트워크/지역이 직접 브라우즈 호출을 허용한다고 신뢰하는 경우 유용합니다."
         },
         "show-custom-search-button": {
           "label": "사용자 정의 검색 버튼 표시",
@@ -1442,6 +1429,23 @@
         "vertical-align": "세로 정렬"
       }
     },
+    "audio-only": {
+      "description": "오디오 전용 모드 강제 — 모든 비디오 스트림을 네트워크 및 플레이어 수준에서 차단하여 RAM과 대역폭을 절약합니다",
+      "name": "오디오 전용"
+    },
+    "playback-recovery": {
+      "description": "멈추거나 중단된 재생 상태에서 자동으로 복구합니다",
+      "menu": {
+        "log-to-console": "콘솔에 복구 이벤트 기록"
+      },
+      "name": "재생 복구",
+      "settings": {
+        "stall-timeout": "멈춤 시간 제한",
+        "stall-timeout-description": "복구를 시도하기 전에 재생이 진전 없이 유지될 수 있는 시간",
+        "max-retries": "최대 재시도 횟수",
+        "max-retries-description": "다음 트랙으로 건너뛰기 전까지의 복구 시도 횟수"
+      }
+    },
     "playlist-search": {
       "description": "사이드바와 재생목록 추가 대화상자에서 재생목록을 필터링할 수 있는 검색 입력을 추가합니다",
       "name": "플레이리스트 검색",
@@ -1464,7 +1468,7 @@
     },
     "search-commands": {
       "commands": {
-        "play": "YouTube 링크 또는 ID로 영상 재생",
+        "play": "\u0059\u006f\u0075\u0054\u0075\u0062\u0065 링크 또는 ID로 영상 재생",
         "settings": "설정 열기"
       },
       "description": "검색 상자에 /를 입력해 명령을 실행하며, 인수는 자동 완성됩니다",
@@ -1481,11 +1485,11 @@
       "name": "탐색 단축키"
     },
     "sfw-music": {
-      "description": "YouTube Music에서 Explicit로 표시된 노래를 자동으로 건너뜁니다. Explicit 대기열이 반복되거나 다음 노래가 없으면 일시정지합니다.",
+      "description": "\u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063에서 Explicit로 표시된 노래를 자동으로 건너뜁니다. Explicit 대기열이 반복되거나 다음 노래가 없으면 일시정지합니다.",
       "name": "SFW 음악"
     },
     "toast-autoclose": {
-      "description": "YouTube Music 토스트를 3초 후 자동으로 닫습니다",
+      "description": "\u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 토스트를 3초 후 자동으로 닫습니다",
       "name": "토스트 자동 닫기"
     },
     "statusbar-lyrics": {
@@ -1531,7 +1535,7 @@
     "move-up": "위로 이동",
     "move-down": "아래로 이동",
     "about": {
-      "tagline": "기능이 풍부한 YouTube Music 데스크톱 앱",
+      "tagline": "기능이 풍부한 \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 데스크톱 앱",
       "versions": "버전",
       "version-app": "앱",
       "version-build": "빌드",
@@ -1589,7 +1593,7 @@
     "stepper-decrement": "감소",
     "stepper-increment": "증가",
     "flags": {
-      "warning": "기능 플래그는 YouTube Music 자체의 내부 스위치입니다. 변경하면 재생, 레이아웃 또는 계정 기능이 중단될 수 있으며 지원 대상이 아닙니다. 재정의는 변경한 플래그에 대해서만 유지되며 실행 취소로 제거할 수 있습니다.",
+      "warning": "기능 플래그는 \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 자체의 내부 스위치입니다. 변경하면 재생, 레이아웃 또는 계정 기능이 중단될 수 있으며 지원 대상이 아닙니다. 재정의는 변경한 플래그에 대해서만 유지되며 실행 취소로 제거할 수 있습니다.",
       "search-placeholder": "플래그 검색",
       "overridden": "재정의됨",
       "undo": "실행 취소",

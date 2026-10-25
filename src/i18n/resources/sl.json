@@ -72,7 +72,7 @@
         "buttons": {
           "disable": "Izklopi posodobitve",
           "download": "Prenesi",
-          "ok": "V redu"
+          "ok": "OK"
         },
         "detail": "Nova verzija je na voljo, lahko jo naložiš na {{downloadLink}}",
         "message": "Nova verzija je na voljo",
@@ -156,8 +156,8 @@
               "sync": {
                 "label": "Sinhroniziraj jezik",
                 "submenu": {
-                  "from-youtube": "Iz YouTuba",
-                  "to-youtube": "Na YouTube"
+                  "from-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "Iz YouTuba",
+                  "to-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "Na \u0059\u006f\u0075\u0054\u0075\u0062\u0065"
                 },
                 "failure": {
                   "dialog": {
@@ -189,13 +189,6 @@
           "visual-tweaks": {
             "label": "Vizualni popravki",
             "submenu": {
-              "custom-window-title": {
-                "label": "Naslov okna po meri",
-                "prompt": {
-                  "label": "Vnesite naslov okna po meri: (pustite prazno za izklop)",
-                  "placeholder": "Primer: {{applicationName}}"
-                }
-              },
               "like-buttons": {
                 "default": "Privzeto",
                 "force-show": "Prisilno pokaži",
@@ -229,7 +222,14 @@
                   "open-themes-folder": "Odpri mapo tem"
                 }
               },
-              "use-ytm-icons": "Uporabi izvirne ikone YouTube Music"
+              "custom-window-title": {
+                "label": "Naslov okna po meri",
+                "prompt": {
+                  "label": "Vnesite naslov okna po meri: (pustite prazno za izklop)",
+                  "placeholder": "Primer: {{applicationName}}"
+                }
+              },
+              "use-ytm-icons": "Uporabi izvirne ikone \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063"
             }
           },
           "updates": {
@@ -361,13 +361,6 @@
       },
       "name": "Ambienten način"
     },
-    "amuse": {
-      "description": "Doda podporo za {{applicationName}} v pripomočku Amuse za zdaj predvajano podjetja 6K Labs",
-      "name": "Zabavaj",
-      "response": {
-        "query": "Strežnik API Amuse deluje. GET /query za informacije o skladbi."
-      }
-    },
     "api-server": {
       "description": "Doda API strežnik za nadzor predvajalnika",
       "dialog": {
@@ -393,7 +386,10 @@
           }
         },
         "hostname": {
-          "label": "Ime gostitelja"
+          "label": "Hostname"
+        },
+        "port": {
+          "label": "Port"
         },
         "https": {
           "label": "HTTPS in potrdila",
@@ -411,9 +407,6 @@
             }
           }
         },
-        "port": {
-          "label": "Vrata"
-        },
         "mcp": {
           "label": "MCP strežnik",
           "description": "Nudi API v2 kot MCP orodja na /mcp. Uporablja enako avtorizacijo kot preostali API."
@@ -423,11 +416,11 @@
       "prompt": {
         "hostname": {
           "label": "Vnesite hostname (npr. 0.0.0.0) za API strežnik:",
-          "title": "Ime gostitelja"
+          "title": "Hostname"
         },
         "port": {
           "label": "Vnesite port za API strežnik:",
-          "title": "Vrata"
+          "title": "Port"
         }
       },
       "settings": {
@@ -441,30 +434,6 @@
         "auto-track-gain": "Samodejno ojačanje skladb (ojača tihe skladbe)",
         "maximum-gain": {
           "label": "Največje ojačanje"
-        }
-      }
-    },
-    "auth-proxy-adapter": {
-      "description": "Podpora za uporabo avtentikacijskih proxy storitev",
-      "menu": {
-        "disable": "Onemogoči proxy adapter",
-        "enable": "Omogoči proxy adapter",
-        "hostname": {
-          "label": "Ime gostitelja"
-        },
-        "port": {
-          "label": "Vrata"
-        }
-      },
-      "name": "Adapter proxy za avtentikacijo",
-      "prompt": {
-        "hostname": {
-          "label": "Vnesite ime gostitelja za lokalni proxy strežnik (potreben je ponovni zagon):",
-          "title": "Ime gostitelja proxyja"
-        },
-        "port": {
-          "label": "Vnesite vrata za lokalni proxy strežnik (potreben je ponovni zagon):",
-          "title": "Vrata proxyja"
         }
       }
     },
@@ -497,20 +466,6 @@
         "caption-changed": "Podnapis spremenjen v {{language}}",
         "caption-disabled": "Podnapisi onemogočeni",
         "no-captions": "Za to skladbo ni na voljo podnapisov"
-      }
-    },
-    "clock": {
-      "description": "Doda uro v navigacijsko vrstico",
-      "menu": {
-        "format": {
-          "24-hour-format": "24-urni format",
-          "display-seconds": "Prikaži sekunde",
-          "label": "Oblika"
-        }
-      },
-      "name": "Ura",
-      "settings": {
-        "hour-12": "Uporabi 12-urni format"
       }
     },
     "compact-sidebar": {
@@ -549,19 +504,6 @@
           "logarithmic": "Logaritemsko"
         },
         "seconds-before-end-description": "Število sekund pred koncem skladbe, ko se začne prehod v naslednjo."
-      }
-    },
-    "custom-output-device": {
-      "description": "Konfigurirajte izhodno medijsko napravo po meri za skladbe",
-      "menu": {
-        "device-selector": "Izberi napravo"
-      },
-      "name": "Izhodna naprava po meri",
-      "prompt": {
-        "device-selector": {
-          "label": "Izberite izhodno medijsko napravo za uporabo",
-          "title": "Izberi izhodno napravo"
-        }
       }
     },
     "disable-autoplay": {
@@ -617,14 +559,14 @@
         "dialog": {
           "error": {
             "buttons": {
-              "ok": "V redu"
+              "ok": "OK"
             },
             "message": "Uff! Se opravičujemo, prenos neuspešen…",
             "title": "Napaka v prenosu!"
           },
           "start-download-playlist": {
             "buttons": {
-              "ok": "V redu"
+              "ok": "OK"
             },
             "detail": "({{playlistSize}} pesmi)",
             "message": "Prenašanje seznama {{playlistTitle}}",
@@ -689,18 +631,6 @@
         "finish-folder": "Mapa za dokončane prenose",
         "finish-folder-description": "Pustite prazno za uporabo mape za prenose zgoraj."
       }
-    },
-    "equalizer": {
-      "description": "Doda izenačevalnik v predvajalnik",
-      "menu": {
-        "presets": {
-          "label": "Prednastavitve",
-          "list": {
-            "bass-booster": "Ojačevalnik basov"
-          }
-        }
-      },
-      "name": "Izenačevalnik"
     },
     "exponential-volume": {
       "description": "Drsnik za glasnost naredi eksponenten, da bo lažje izbrati nižje glasnosti.",
@@ -813,6 +743,76 @@
         "diagnostics-copy-failed": "Kopiranje povzetka diagnostike ni uspelo",
         "diagnostics-running": "Počakajte, da se preizkus povezave zaključi"
       }
+    },
+    "amuse": {
+      "description": "Doda podporo za {{applicationName}} v pripomočku Amuse za zdaj predvajano podjetja 6K Labs",
+      "name": "Zabavaj",
+      "response": {
+        "query": "Strežnik API Amuse deluje. GET /query za informacije o skladbi."
+      }
+    },
+    "auth-proxy-adapter": {
+      "description": "Podpora za uporabo avtentikacijskih proxy storitev",
+      "menu": {
+        "disable": "Onemogoči proxy adapter",
+        "enable": "Omogoči proxy adapter",
+        "hostname": {
+          "label": "Ime gostitelja"
+        },
+        "port": {
+          "label": "Vrata"
+        }
+      },
+      "name": "Adapter proxy za avtentikacijo",
+      "prompt": {
+        "hostname": {
+          "label": "Vnesite ime gostitelja za lokalni proxy strežnik (potreben je ponovni zagon):",
+          "title": "Ime gostitelja proxyja"
+        },
+        "port": {
+          "label": "Vnesite vrata za lokalni proxy strežnik (potreben je ponovni zagon):",
+          "title": "Vrata proxyja"
+        }
+      }
+    },
+    "clock": {
+      "description": "Doda uro v navigacijsko vrstico",
+      "menu": {
+        "format": {
+          "24-hour-format": "24-urni format",
+          "display-seconds": "Prikaži sekunde",
+          "label": "Oblika"
+        }
+      },
+      "name": "Ura",
+      "settings": {
+        "hour-12": "Uporabi 12-urni format"
+      }
+    },
+    "custom-output-device": {
+      "description": "Konfigurirajte izhodno medijsko napravo po meri za skladbe",
+      "menu": {
+        "device-selector": "Izberi napravo"
+      },
+      "name": "Izhodna naprava po meri",
+      "prompt": {
+        "device-selector": {
+          "label": "Izberite izhodno medijsko napravo za uporabo",
+          "title": "Izberi izhodno napravo"
+        }
+      }
+    },
+    "equalizer": {
+      "description": "Doda izenačevalnik v predvajalnik",
+      "menu": {
+        "presets": {
+          "label": "Prednastavitve",
+          "list": {
+            "bass-booster": "Ojačevalnik basov"
+          }
+        }
+      },
+      "name": "Izenačevalnik"
     },
     "navigation": {
       "description": "Puščice za navigacijo naprej/nazaj so neposredno vgrajene v vmesnik, kot v vašem najljubšem brskalniku",
@@ -1250,7 +1250,7 @@
         },
         "use-ytm-lyrics-without-proxy": {
           "label": "Uporabi YTM besedila brez proxyja",
-          "tooltip": "Preskoči YTM brskalni proxy in pokliči YouTube Music neposredno z uporabo overjene seje aplikacije. Uporabno, če zaupaš svojemu omrežju/regiji, da dovoljuje neposredne brskalne klice."
+          "tooltip": "Preskoči YTM brskalni proxy in pokliči \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 neposredno z uporabo overjene seje aplikacije. Uporabno, če zaupaš svojemu omrežju/regiji, da dovoljuje neposredne brskalne klice."
         },
         "show-custom-search-button": {
           "label": "Prikaži gumb za iskanje po meri",
@@ -1464,7 +1464,7 @@
     },
     "search-commands": {
       "commands": {
-        "play": "Predvajaj video iz povezave ali ID-ja YouTube",
+        "play": "Predvajaj video iz povezave ali ID-ja \u0059\u006f\u0075\u0054\u0075\u0062\u0065",
         "settings": "Odpri nastavitve"
       },
       "description": "V iskalno polje vnesite / za izvajanje ukazov, s samodejnim dokončanjem njihovih argumentov",
@@ -1481,11 +1481,11 @@
       "name": "Bližnjice za premikanje"
     },
     "sfw-music": {
-      "description": "Samodejno preskoči skladbe, ki jih YouTube Music označi kot eksplicitne. Zaustavi predvajanje, če se eksplicitni čakalni seznam ponovi ali ni na voljo naslednje skladbe.",
+      "description": "Samodejno preskoči skladbe, ki jih \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 označi kot eksplicitne. Zaustavi predvajanje, če se eksplicitni čakalni seznam ponovi ali ni na voljo naslednje skladbe.",
       "name": "Glasba, primerna za delo"
     },
     "toast-autoclose": {
-      "description": "Samodejno zapri obvestila YouTube Music po treh sekundah",
+      "description": "Samodejno zapri obvestila \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 po treh sekundah",
       "name": "Samodejno zapiranje obvestil"
     },
     "statusbar-lyrics": {
@@ -1531,7 +1531,7 @@
     "move-up": "Premakni gor",
     "move-down": "Premakni dol",
     "about": {
-      "tagline": "Namizna aplikacija za YouTube Music s številnimi funkcijami",
+      "tagline": "Namizna aplikacija za \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 s številnimi funkcijami",
       "versions": "Različice",
       "version-app": "Aplikacija",
       "version-build": "Gradnja",
@@ -1589,7 +1589,7 @@
     "stepper-decrement": "Zmanjšaj",
     "stepper-increment": "Povečaj",
     "flags": {
-      "warning": "Funkcijske zastavice so interne stikalne možnosti YouTube Music. Njihovo spreminjanje lahko pokvari predvajanje, postavitev ali funkcije računa in zanje ni zagotovljena podpora. Preglasitve se ohranijo samo za zastavice, ki jih spremenite, in jih lahko odstranite z Razveljavi.",
+      "warning": "Funkcijske zastavice so interne stikalne možnosti \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063. Njihovo spreminjanje lahko pokvari predvajanje, postavitev ali funkcije računa in zanje ni zagotovljena podpora. Preglasitve se ohranijo samo za zastavice, ki jih spremenite, in jih lahko odstranite z Razveljavi.",
       "search-placeholder": "Iskanje zastavic",
       "overridden": "prepisano",
       "undo": "Razveljavi",

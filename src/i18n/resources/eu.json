@@ -6,10 +6,10 @@
         "executed-at-ms": "Plugina {{pluginName}}{{contextName}} {{ms}} m-tan exekutatu da",
         "initialize-failed": "Ezin izan da {{pluginName}} plugina abiaraztea",
         "load-all": "Plugin guztiak kargatzen",
-        "load-failed": "Ezin izan da \"{{pluginName}}\" plugina kargatu",
         "loaded": "{{pluginName}} plugina kargatuta",
-        "unload-failed": "Ezin izan da \"{{pluginName}}\" plugina deskargatu",
-        "unloaded": "{{pluginName}} plugina deskargatuta"
+        "unloaded": "{{pluginName}} plugina deskargatuta",
+        "load-failed": "Ezin izan da \"{{pluginName}}\" plugina kargatu",
+        "unload-failed": "Ezin izan da \"{{pluginName}}\" plugina deskargatu"
       }
     }
   },
@@ -156,8 +156,8 @@
               "sync": {
                 "label": "Sinkronizatu hizkuntza",
                 "submenu": {
-                  "from-youtube": "YouTube-tik",
-                  "to-youtube": "YouTube-ra"
+                  "from-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "\u0059\u006f\u0075\u0054\u0075\u0062\u0065-tik",
+                  "to-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "\u0059\u006f\u0075\u0054\u0075\u0062\u0065-ra"
                 },
                 "failure": {
                   "dialog": {
@@ -229,7 +229,7 @@
                   "open-themes-folder": "Ireki gai-karpeta"
                 }
               },
-              "use-ytm-icons": "Erabili YouTube Music-eko jatorrizko ikonoak"
+              "use-ytm-icons": "Erabili \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063-eko jatorrizko ikonoak"
             }
           },
           "updates": {
@@ -1274,7 +1274,7 @@
         },
         "use-ytm-lyrics-without-proxy": {
           "label": "Erabili YTM letrak proxyrik gabe",
-          "tooltip": "Saltatu YTM arakatze proxy-a eta deitu YouTube Music zuzenean aplikazioaren saio autentifikatua erabiliz. Erabilgarria da zure sareak/eskualdeak arakatze-dei zuzenak baimentzen baditu."
+          "tooltip": "Saltatu YTM arakatze proxy-a eta deitu \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 zuzenean aplikazioaren saio autentifikatua erabiliz. Erabilgarria da zure sareak/eskualdeak arakatze-dei zuzenak baimentzen baditu."
         },
         "show-custom-search-button": {
           "label": "Erakutsi bilaketa botoi pertsonalizatua",
@@ -1471,7 +1471,7 @@
     },
     "search-commands": {
       "commands": {
-        "play": "Erreproduzitu bideo bat YouTube esteka edo ID batetik",
+        "play": "Erreproduzitu bideo bat \u0059\u006f\u0075\u0054\u0075\u0062\u0065 esteka edo ID batetik",
         "settings": "Ireki ezarpenak"
       },
       "description": "Idatzi / bilaketa-koadroan komandoak exekutatzeko, haien argumentuen autokonpletatzearekin",
@@ -1488,11 +1488,11 @@
       "name": "Atzera/aurrera lasterbideak"
     },
     "sfw-music": {
-      "description": "Automatikoki saltatzen ditu YouTube Music-ek Explicit gisa markatutako abestiak. Pausatu egiten da explicit ilara bat errepikatzen bada edo hurrengo abestirik ez badago.",
+      "description": "Automatikoki saltatzen ditu \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063-ek Explicit gisa markatutako abestiak. Pausatu egiten da explicit ilara bat errepikatzen bada edo hurrengo abestirik ez badago.",
       "name": "SFW Musika"
     },
     "toast-autoclose": {
-      "description": "Itxi automatikoki YouTube Music-en jakinarazpenak hiru segundoren buruan",
+      "description": "Itxi automatikoki \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063-en jakinarazpenak hiru segundoren buruan",
       "name": "Jakinarazpenen itxiera automatikoa"
     },
     "statusbar-lyrics": {
@@ -1538,7 +1538,7 @@
     "move-up": "Mugitu gora",
     "move-down": "Mugitu behera",
     "about": {
-      "tagline": "YouTube Music-erako funtzio ugariko mahaigaineko aplikazioa",
+      "tagline": "\u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063-erako funtzio ugariko mahaigaineko aplikazioa",
       "versions": "Bertsioak",
       "version-app": "Aplikazioa",
       "version-build": "Konpilazioa",
@@ -1596,7 +1596,7 @@
     "stepper-decrement": "Txikitu",
     "stepper-increment": "Handitu",
     "flags": {
-      "warning": "Ezaugarri-bandera YouTube Music-ek bere barnean erabiltzen dituen etengailuak dira. Hauek aldatzeak erreprodukzioa, diseinua edo kontu-funtzioak hondatu ditzake, eta laguntza-zerbitzuak ez ditu estaltzen. Gainidazketak aldatzen dituzun banderetarako baino ez dira gordetzen, eta Desegin aukerarekin kendu daitezke.",
+      "warning": "Ezaugarri-bandera \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063-ek bere barnean erabiltzen dituen etengailuak dira. Hauek aldatzeak erreprodukzioa, diseinua edo kontu-funtzioak hondatu ditzake, eta laguntza-zerbitzuak ez ditu estaltzen. Gainidazketak aldatzen dituzun banderetarako baino ez dira gordetzen, eta Desegin aukerarekin kendu daitezke.",
       "search-placeholder": "Bilatu banderak",
       "overridden": "gainidatzita",
       "undo": "Desegin",

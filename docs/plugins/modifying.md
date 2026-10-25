@@ -1,341 +1,175 @@
 # Modifying plugins
 
-This page is for changing an existing plugin: adding an option and its settings
-field, adding a menu entry, growing a plugin to a new process, reacting to config
-changes, renaming a stored key with a migration, and getting restart behaviour
-right. It assumes the structure described in [Plugins overview](./index.md); the
-plugin being extended is usually small enough that a `types.ts` or the entry file
-holds its config type.
+This page covers changes to an existing plugin: options, commands, buttons, menus, stored config and tests. The field and context reference is in [Plugins overview](./index.md).
 
-## Find the plugin and its config
+## Files in a plugin
 
-A plugin lives in `src/plugins/<id>/` (or as `src/plugins/<id>.ts`) and its id is
-the folder or file name. Its config type and default object are in the entry file
-or in a `types.ts` beside it, for example
-`src/plugins/ambient-mode/types.ts`. The entry file default-exports
-`createPlugin({ ... })`; if it has several halves, they are usually in
-`backend.ts`, `menu.ts`, `renderer.ts` and imported into the literal.
+A plugin is one workspace package under `plugins/<id>/`. The entry is `index.ts` or `index.tsx`; helper modules sit beside it, and larger page UIs use a `page/` folder (see `plugins/downloader/page/` and `plugins/synced-lyrics/page/`). Tests live in `test/`.
 
-All plugin config is stored under `plugins.<id>` in the config file, and the
-loaders merge the stored values over the plugin's `config` defaults. Changing the
-default object is therefore enough to introduce a new key without a migration,
-for users who never wrote it.
+The entry must keep the shape `export default definePlugin({ ... })`. The build finds that object and splits it for the host and page bundles. Imports referenced only from one half are pruned from the other, so put a host-only dependency behind host code and a page-only UI behind page code.
 
-## Add a config option
+Package dependencies are added to the plugin's own manifest:
 
-Assume a plugin whose config currently is `{ enabled: boolean }` and which has a
-renderer half. Add the option in four places, then wire its behaviour.
-
-First, the type and the default:
-
-```ts
-export type MyPluginConfig = {
-  enabled: boolean;
-  fadeMs: number;
-};
-
-const defaultConfig: MyPluginConfig = {
-  enabled: false,
-  fadeMs: 500,
-};
+```sh
+nub add --filter @pear/plugin-do-not-track some-package
 ```
 
-Second, the settings field. Choose the field type from
-[the settings schema](./creating.md#settings-schema), give it a dotted `key`
-matching the config shape, and translate the label:
+## Add or change an option
+
+Add a field to `config`:
 
 ```ts
-settings: [
-  {
-    type: 'slider',
-    key: 'fadeMs',
-    label: () => t('plugins.my-plugin.settings.fade'),
-    min: 0,
-    max: 2000,
-    step: 50,
-    unit: 'ms',
-  },
-],
+config: {
+  skipShorts: config.bool(true, {
+    label: "Skip Shorts",
+    description: "Treat Shorts as tracks to skip.",
+    group: "Playback",
+  }),
+},
 ```
 
-Third, read the value where the plugin uses it. Read it in `start` for the
-initial value and in `onConfigChange` for later writes; do not read it once into a
-module-level constant unless the plugin really only wants the startup value:
+Then:
+
+1. Read `ctx.config.skipShorts` where it matters.
+2. Apply live changes from `onConfigChange` when possible, or let the part restart and read the new value in `start`.
+3. Run `nub run i18n` to add `plugins.<id>.settings.skip-shorts.label` and `.description`.
+4. Add a unit test for the behavior, not for the schema.
+5. If the default changes, decide whether existing users should keep their stored value; a default change does not rewrite stored config.
+
+The settings UI is generated from the field; there is no separate UI file. A field's `group` becomes a heading. A field's `restart: true` shows a restart pill but does not itself restart anything; the plugin host still applies the write with its normal restart-or-listener rule.
+
+Removing an option: remove the field, its key from the code, its use and its translation entry. `normalizeConfig()` drops the stored key the next time the plugin's config is read. If the old value must be carried into a new shape, add a migration (below).
+
+## Add a host command
+
+Host commands are the page's typed API into the main process:
 
 ```ts
-renderer: {
-  fadeMs: defaultConfig.fadeMs,
-
-  async start({ getConfig }) {
-    const config = await getConfig();
-    this.fadeMs = config.fadeMs;
-    this.applyFade();
-  },
-
-  onConfigChange(newConfig) {
-    this.fadeMs = newConfig.fadeMs;
-    this.applyFade();
+host: {
+  commands: {
+    async exportPlaylist(id: string) {
+      const path = join(this.app.getPath("documents"), `${id}.json`);
+      await writeFile(path, JSON.stringify(this.player.state, null, 2));
+      return path;
+    },
   },
 },
 ```
 
-Fourth, add the English string under the plugin's existing namespace in
-`src/i18n/resources/en.json`:
+Call it from the page with `await ctx.host.invoke("exportPlaylist", id)`. The command runs only while the plugin is enabled. `this` is the host context, so use `this.player`, `this.config`, `this.setStatus`, `this.log` and the rest.
 
-```json
-"my-plugin": {
-  "settings": {
-    "fade": "Fade duration"
-  }
-}
-```
+Commands are not RPC. They are private to the plugin's two halves and are not exposed over HTTP.
 
-If the plugin still exposes its options in a native menu entry, update that
-function too (see the next section). The settings schema is the primary UI for an
-option; a menu entry is optional.
+## Add a settings button
 
-If the value is read only when the app starts (a startup flag, a listener
-registered at boot), mark the field `restartNeeded: true` so the settings modal
-shows the restart pill and reports the requirement when it closes. See
-[Restart requirements](#restart-requirements).
-
-## Dotted keys and nested config
-
-Settings keys are dotted paths, and the settings UI resolves them through
-`src/plugins/settings-ui/paths.ts` (`getByPath`, `setByPathCopy`,
-`nestPartial`). A field with `key: 'downloadOnFinish.enabled'` reads
-`config.downloadOnFinish.enabled`, and a write is sent as the nested partial
-`{ downloadOnFinish: { enabled: true } }`, which `setPartial` merges into the
-stored config. The downloader's finish settings in
-`src/plugins/downloader/index.ts` are a working example.
-
-Two consequences:
-
-- The default object must contain the nested object, otherwise the first read
-  before any write has no value to fall back on.
-- A `custom` settings component may write below its field's key
-  (`presets.classical`); a `restartNeeded` on that field covers writes with the
-  field's key as a prefix (`src/plugins/settings-ui/components/SettingsModal.tsx`).
-
-## Add a menu entry
-
-A plugin's `menu` half returns `Electron.MenuItemConstructorOptions[]`, is called
-each time the application menu is built, and is only loaded for enabled or
-essential plugins. Add the entry to the existing array in `menu.ts` (or to the
-`menu` function in the entry file):
+Declare the action and the host command with the same name:
 
 ```ts
-import { type MenuItemConstructorOptions } from 'electron';
+actions: {
+  clear: { label: "Clear history", description: "Forgets the saved entries." },
+},
+host: {
+  commands: {
+    clear() { /* … */ },
+  },
+},
+```
 
-import { t } from '@/i18n';
-import { type MenuContext } from '@/types/contexts';
+The button appears while the plugin is enabled. Its labels are translated through `plugins.<id>.actions.<name>.label` and `.description`, added by `nub run i18n`.
 
-import { type MyPluginConfig } from './index';
+## Add an API server method
 
-export const menu = async ({
-  getConfig,
-  setConfig,
-}: MenuContext<MyPluginConfig>): Promise<MenuItemConstructorOptions[]> => {
-  const config = await getConfig();
+`host.rpc` exposes a method to other apps:
 
-  return [
-    {
-      label: t('plugins.my-plugin.menu.reset'),
-      type: 'normal',
-      click() {
-        setConfig({ fadeMs: 500 });
+```ts
+import { v } from "@pear/sdk/rpc";
+
+host: {
+  rpc: {
+    status: {
+      summary: "What the plugin is doing",
+      input: v.object({ verbose: v.optional(v.boolean(), false) }),
+      run({ verbose }) {
+        return { enabled: true, track: verbose ? this.player.state.track : undefined };
       },
     },
-  ];
-};
-```
-
-The context's `refresh()` rebuilds the whole application menu. Call it when the
-change alters labels or the checked/enabled state of other items; checkbox and
-radio items update their own state, so a simple option toggle does not need it.
-`src/plugins/ambient-mode/menu.ts` is a real example of radio submenus backed by
-`setConfig`.
-
-The native menu is built at startup and rebuilt by `refreshMenu`; toggling a
-plugin from the in-app settings starts or stops it but does not rebuild the
-native menu, so a newly enabled plugin's submenu appears at the next rebuild (a
-restart, a menu action that refreshes, or an explicit `refresh()` from plugin
-code).
-
-## Add a process half
-
-The loaders do not care how many halves a plugin has; adding one is a matter of
-creating the module and adding the property to the definition.
-
-For a backend, create `backend.ts` with `createBackend`, keep its state in the
-first type argument, and add `backend` to the entry:
-
-```ts
-import { createBackend } from '@/utils';
-
-import type { MyPluginConfig } from './index';
-
-export const backend = createBackend<
-  { interval: NodeJS.Timeout | null },
-  MyPluginConfig
->({
-  interval: null,
-
-  start({ ipc }) {
-    this.interval = setInterval(() => ipc.send('peard:my-plugin-tick'), 1000);
+    reset: {
+      summary: "Forget everything the plugin stored",
+      input: v.object({}),
+      run() { this.reset(); },
+    },
   },
-
-  stop({ ipc }) {
-    clearInterval(this.interval ?? undefined);
-    this.interval = null;
-  },
-});
-```
-
-`src/plugins/memory-saver/index.ts` shows the same shape with config access and
-`onConfigChange`. For a preload half the pattern is `createPreload`; see
-`src/plugins/prefer-song/index.ts`. For a renderer half, add `renderer` to the
-definition or extend the existing object; renderer halves also accept
-`onPlayerApiReady` and the `components` registry.
-
-Converting a one-function half into an object does not change loading rules, but
-it is what enables `stop` and `onConfigChange`, and without `stop` the loader
-cannot unload the half at runtime. Do the conversion when the half starts
-allocating resources: listeners, observers, timers, DOM nodes, adopted
-stylesheets.
-
-## Handle config changes
-
-`onConfigChange` receives the merged config after every write, but only where the
-half is loaded:
-
-- Backend hooks run only while the plugin is enabled and its backend is loaded.
-- Renderer hooks run only while the renderer plugin is loaded.
-- Preload starts with a snapshot and is not notified; re-read with `getConfig`
-  when the value is needed later.
-- The menu half runs again on the next menu build, so it always reads fresh
-  values.
-
-Keep the half's state and the config in sync:
-
-```ts
-onConfigChange(newConfig) {
-  this.fadeMs = newConfig.fadeMs;
-  this.applyFade();
 },
 ```
 
-`src/plugins/ambient-mode/index.ts` re-applies its visual settings from
-`onConfigChange`, and `src/plugins/downloader/index.ts` forwards changes to its
-main-process work. A half that ignores `onConfigChange` keeps using stale values
-until it restarts.
+The API server checks `input` before calling `run`, types its parameter and documents the method in `/doc` and `/swagger`. A method with no parameters still needs an input schema, usually `v.object({})`. Return JSON-serializable data; `undefined` produces 204.
 
-## Config semantics
+To push events to API clients, use `ctx.api.broadcast(event, data)`. It is a no-op while the server is off. Payloads arrive as `{ type: "PLUGIN_EVENT", plugin, event, data }`.
 
-Writes and reads do not merge arrays the same way, and the difference matters when
-an option is a list:
-
-- `ctx.setConfig(partial)` calls `config.setPartial`, which deep-merges using
-  `deepmerge-ts` with `mergeArrays: false` (`src/config/index.ts`). An array in
-  the partial replaces the stored array.
-- `getConfig()` merges the plugin's declared defaults with the stored config
-  using `deepmerge-ts`'s default array behaviour, where arrays concatenate. A
-  non-empty default array is therefore prepended to the stored array on every
-  read; `src/plugins/synced-lyrics/index.ts` documents this and deliberately
-  declares no default for `providerPriority`.
-- The settings UI sends writes through the same `setPartial` path, so a custom
-  component writing an array should write the complete list.
-
-Prefer declaring no default for a user-editable array, or declaring an empty one,
-and always write the full array you want stored. `enabled` is not part of
-`setConfig`: the type omits it and the loaders own it, so a plugin cannot disable
-itself from its own lifecycle.
-
-## Migrate a renamed or removed option
-
-Renaming or removing a stored key needs a migration in `src/config/store.ts`,
-because existing config files still contain the old value. Migrations are keyed
-by the release that introduces them and run once per store when the app's base
-version satisfies the range:
+## Add a menu item
 
 ```ts
-'>=3.13.0'(store: IStore) {
-  const config = store.get('plugins.my-plugin') as
-    | Record<string, unknown>
-    | undefined;
-  if (!config || config.fadeDuration === undefined) return;
-
-  config.fadeMs = config.fadeDuration;
-  delete config.fadeDuration;
-  store.set('plugins.my-plugin', config);
+host: {
+  start(ctx) {
+    ctx.addMenuItem({
+      label: ctx.t("plugins.my-plugin.menu.show", "Show my plugin"),
+      accelerator: "CmdOrCtrl+Shift+M",
+      click: () => ctx.focusWindow(),
+    });
+  },
 },
 ```
 
-Rules observed by the existing entries in that object:
+Menu items appear under Options in the native menu and in the tray menu, and disappear when the plugin stops. The tray plugin also lists them through `ctx.pluginMenuItems()` and refreshes on `ctx.onMenuItemsChange`.
 
-- The key is a range such as `'>=3.12.3'` and names the release that ships the
-  change. `store.ts` runs with `projectVersion = migrationBaseVersion(version)`,
-  so a beta and its final release share one migration marker
-  (`src/providers/app-versions.ts`).
-- Guard on the old key existing. A fresh install has no stored plugin config, and
-  a user who never set the option has nothing to migrate.
-- Copy, then delete the old key, and keep the write idempotent.
-- Do not number migrations by hand; `conf` applies the applicable keys in the
-  order they appear in the object, then stores the app's base version as the
-  migrated version.
-- Extract anything testable into `src/config/migrations.ts`, which is
-  Electron-free and covered by tests, and call it from `store.ts`. The 3.12.3
-  synced-lyrics and 3.12.0 adblocker migrations are the patterns to copy.
-- Remove the old i18n keys and any settings fields in the same change; do not
-  leave a key in the resources that no code references.
+## Change styles and selectors
 
-Existing migrations show the three common shapes: a rename
-(`preferredProvider` to `providerPriority`), a plugin rename (`adblocker` to
-`do-not-track`), and a plugin merge (`lyrics-genius` into `synced-lyrics`).
+- Static CSS belongs in `style`, written with the `css` macro.
+- Dynamic CSS uses `ctx.addStyle`, whose handle can be updated.
+- Selectors come from `packages/sdk/src/selectors.ts`. Add a missing one there, with a comment naming both player-bar layouts when it differs; then use it from `ctx.$`, `ctx.waitFor` or `sel()`.
+- Never match YTM's internal class names directly. They change per layout and per rollout.
+
+## Add page behavior
+
+Use the page context instead of raw DOM APIs so cleanup is automatic: `ctx.listen`, `ctx.observe`, `ctx.mount`, `ctx.setTimeout`, `ctx.addStyle`, `ctx.audio()`. Anything else needs `ctx.onCleanup`.
+
+Visual loops should check `ctx.isWindowVisible()` and `ctx.player.state.ad`, as `plugins/ambient-mode`, `plugins/visualizer` and `plugins/synced-lyrics` do. The window keeps rendering while hidden, so the check is the only way to pause.
+
+Audio plugins must not connect the `<video>` to a new `AudioContext`: a media element can have only one source node. Use `ctx.audio()`, the shared graph, which exposes `insert(input, output?, order?)` to add a processing stage and `tap(node)` to observe the final output. The equalizer, compressor and visualizer are examples.
+
+## Stored config and migrations
+
+Plugin config lives at `plugins.<id>` in `<userData>/config.json`. The plugin's schema supplies defaults; stored values are normalized on read. Changing the meaning of a stored key needs a migration, because existing users keep their file.
+
+Migrations live in `apps/desktop/src/main/migrations/plugins.ts` (plugin entries and window files) and `migrations/index.ts` (app-level moves). Rules:
+
+- Add a function to `PLUGIN_MIGRATIONS` keyed by plugin id. It receives the stored entry, the whole config and the files-to-create map.
+- Use `setNew()` so an existing new key is never overwritten, `copyTyped()`/`flattenStrings()` for renamed keys, `fractionToPercent()` and `clampNumber()` for old value ranges, and `ensurePluginEntry()` for new plugin entries.
+- Old keys stay in the file. Unknown keys are preserved on purpose, so a downgrade still works.
+- Never edit a migration that has shipped. Add another one, or extend the current unreleased one only while it has not left `master`.
+- A migration that creates a file next to `config.json` (for example moved window bounds) returns it through the `files` map; `config.ts` writes it only when it does not exist.
+- Add a case to `apps/desktop/test/plugin-migrations.test.ts` and, when app-level keys move, `apps/desktop/test/config.test.ts`.
+
+The `4.0.0` migration also converts pear-desktop 3.x plugin options. See `migrations/plugins.ts` for the renamed ambient-mode, album-color-theme, auth-proxy-adapter, crossfade, custom-output-device, discord, do-not-track, downloader, equalizer, in-app-menu, notifications, picture-in-picture, playback-speed, precise-volume, scrobbler, shortcuts, skip-ai-slop, sponsorblock, synced-lyrics, transparent-player and visualizer options. App-level moves in `migrations/index.ts`: the tray options became the tray plugin's, `hideVideoCaptions` stays a core option now, `contextMenuHidden` became per-entry switches, and the `options.featureFlags` record became `options.siteFlags` "name=value" entries.
 
 ## Restart requirements
 
-There are two levels, and they mean different things:
+Two different things need a restart:
 
-- `restartNeeded: true` on the plugin makes enabling or disabling it require a
-  restart. The lifecycle still starts or stops the plugin immediately; main shows
-  the restart dialog (or batches it while a settings window is open) because the
-  change only takes effect fully after a restart. Use it when the plugin patches
-  something that is only read once per process.
-- `restartNeeded: true` on a settings field marks that option as read at startup.
-  The modal shows a pill next to the field and a banner when it changes, and the
-  restart requirement names the field. Use it instead of restarting on every
-  write, as `src/plugins/equalizer/index.ts` does for its preset field.
+- **Plugin-level**: `restartRequired` (or `host.beforeReady` / `host.windowOptions`). Enabling or disabling the plugin only fully applies after an app restart. The page part starts only when the plugin was enabled at page load.
+- **Field-level**: `restart: true`. The value is written normally, but the user should restart for it to take effect.
 
-Do not set either when the plugin already handles the change live in
-`onConfigChange`; the restart dialog is user-visible friction. The
-`options.restartOnConfigChanges` app option, when enabled, restarts the app on any
-menu-driven config write, which is separate from these markers and not a reason
-to add them.
+The settings card shows a pill for the first, each field shows a pill for the second, and the dialog collects both in the restart banner. The banner's "Restart now" calls `app:relaunch`. Do not show your own restart dialog.
 
-## Update tests and translations
+When a part could apply a config change but the hook is not implemented, the host restarts the part automatically. The hook is preferred: `start` may own resources that are expensive to rebuild.
 
-- Add or extend tests for the pure parts of the change: option normalization,
-  parsing, path handling. Note
-  `tests/skip-ai-slop-config.test.ts`, which exercises the normalizers behind
-  settings fields without an Electron process.
-- Put plugin-local tests in `src/plugins/<id>/tests/`; cross-cutting ones stay in
-  `tests/`. Both use `@playwright/test` as a plain test runner (`pnpm test`).
-- Add the English strings for every new label, description and menu entry under
-  `plugins.<id>.*`; other locales are normally filled in later. Removing an option
-  removes its keys, and renaming one renames the keys in the same change.
-- Run `pnpm check` (lint, format check, typecheck) before review; it catches
-  config-type and context-type drift that the settings schema's string keys do
-  not.
+## Tests and docs
 
-## Checklist
+- Unit tests go in `plugins/<id>/test/*.test.ts`; the package needs `"test": "vitest run"` in `scripts`. Run `nub run test`.
+- E2E tests go in `apps/desktop/e2e/` and use `launch({ plugins: { ... } })`, `setConfig`, `setEnabled` and `pluginError`/`pluginStatus` from `e2e/helpers/plugins.ts`. Run `nub run test:e2e <name>`.
+- Update [Using plugins](./using.md) if the user-facing behavior changes, and the relevant page in `docs/` if the architecture changes.
+- Run `nub run format`, `nub run lint`, `nub run typecheck` and `nub run i18n --check` before committing.
 
-- Config type, default object, settings field and menu entry (if any) all carry
-  the new option.
-- The value is read in `start` and updated in `onConfigChange`, or marked
-  `restartNeeded` when it is startup-only.
-- Dotted keys have their nested default object, and arrays are written whole.
-- Renamed or removed stored keys have a guarded migration and no leftover i18n
-  keys.
-- Every new resource is released in `stop`.
-- Tests cover the pure logic, the labels are translated, and `pnpm check` passes.
+## Removing a plugin
+
+Delete the folder and its workspace entry, then remove references: imports, migration entries, docs, README feature lists and tests. Its `plugins.<id>` key may stay in user configs; unknown plugin entries are harmless and are not loaded. Do not reuse the old id for a different plugin, because the stored config would be inherited.

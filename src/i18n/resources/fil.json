@@ -156,8 +156,8 @@
               "sync": {
                 "label": "I-sync ang wika",
                 "submenu": {
-                  "from-youtube": "Mula sa YouTube",
-                  "to-youtube": "Papunta sa YouTube"
+                  "from-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "Mula sa \u0059\u006f\u0075\u0054\u0075\u0062\u0065",
+                  "to-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "Papunta sa \u0059\u006f\u0075\u0054\u0075\u0062\u0065"
                 },
                 "failure": {
                   "dialog": {
@@ -181,8 +181,8 @@
               "disabled": "Di-napagana",
               "enabled-and-hide-app": "Napagana at natago ang app",
               "enabled-and-show-app": "Napagana at napakita ang app",
-              "move-to-current-desktop": "Ilipat sa kasalukuyang virtual desktop kapag ipinakita",
               "play-pause-on-click": "Mag play/pause kada click",
+              "move-to-current-desktop": "Ilipat sa kasalukuyang virtual desktop kapag ipinakita",
               "force-white-icons": "Pilitin ang paggamit ng mga puting icon"
             }
           },
@@ -229,7 +229,7 @@
                   "open-themes-folder": "Buksan ang folder ng mga tema"
                 }
               },
-              "use-ytm-icons": "Gamitin ang orihinal na mga icon ng YouTube Music"
+              "use-ytm-icons": "Gamitin ang orihinal na mga icon ng \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063"
             }
           },
           "updates": {
@@ -257,7 +257,7 @@
         "new": "BAGO"
       },
       "view": {
-        "label": "Tingnan",
+        "label": "View",
         "submenu": {
           "force-reload": "Pilitang I-reload",
           "reload": "I-reload",
@@ -316,10 +316,6 @@
       },
       "name": "Tema ng Kulay ng Album"
     },
-    "audio-only": {
-      "description": "Pinipilit ang audio-only mode — binoblock ang lahat ng video stream sa network at player level para makatipid ng RAM at bandwidth",
-      "name": "Audio Lamang"
-    },
     "ambient-mode": {
       "description": "Naglalapat ng lighting effect sa pamamagitan ng pag-cast ng mga magiliw na kulay mula sa video, sa background ng iyong screen",
       "menu": {
@@ -363,14 +359,14 @@
           "label": "Gumamit ng fullscreen"
         }
       },
-      "name": "Ambient na Mode"
+      "name": "Ambient Mode"
     },
     "amuse": {
       "description": "Nagdaragdag ng suporta sa {{applicationName}} para sa Amuse now playing widget ng 6K Labs",
-      "name": "Aliwan",
       "response": {
         "query": "Tumatakbo ang Amuse API server. Gamitin ang GET /query para makuha ang impo ng kanta."
-      }
+      },
+      "name": "Aliwan"
     },
     "api-server": {
       "description": "Nagdadagdag ng API Server upang kontrolin ang player",
@@ -399,24 +395,24 @@
         "hostname": {
           "label": "Hostname"
         },
-        "port": {
-          "label": "Port"
-        },
         "https": {
           "label": "HTTPS at Mga Certificate",
           "submenu": {
+            "cert": {
+              "dialogTitle": "Pumili ng HTTPS certificate file",
+              "label": "Certificate file (.crt o .pem)"
+            },
             "enable-https": {
               "label": "Paganahin ang HTTPS"
             },
-            "cert": {
-              "label": "Certificate file (.crt o .pem)",
-              "dialogTitle": "Pumili ng HTTPS certificate file"
-            },
             "key": {
-              "label": "Private key file (.key o .pem)",
-              "dialogTitle": "Pumili ng HTTPS private key file"
+              "dialogTitle": "Pumili ng HTTPS private key file",
+              "label": "Private key file (.key o .pem)"
             }
           }
+        },
+        "port": {
+          "label": "Port"
         },
         "mcp": {
           "label": "MCP server",
@@ -453,11 +449,11 @@
       "menu": {
         "disable": "Huwag paganahin ang Proxy Adapter",
         "enable": "Paganahin ang Proxy Adapter",
-        "hostname": {
-          "label": "Hostname"
-        },
         "port": {
           "label": "Port"
+        },
+        "hostname": {
+          "label": "Hostname"
         }
       },
       "name": "Auth Proxy Adapter",
@@ -523,10 +519,6 @@
     },
     "crossfade": {
       "description": "I-crossfade kada kanta",
-      "menu": {
-        "advanced": "Advanced"
-      },
-      "name": "Crossfade [Beta]",
       "prompt": {
         "options": {
           "multi-input": {
@@ -543,6 +535,10 @@
           "title": "Pagpipilian sa crossfade"
         }
       },
+      "menu": {
+        "advanced": "Advanced"
+      },
+      "name": "Crossfade [Beta]",
       "settings": {
         "fade-in": "Fade in",
         "fade-out": "Fade out",
@@ -593,12 +589,12 @@
         "play-on-application": "Patugtugin sa {{applicationName}}",
         "set-inactivity-timeout": "I-set ang inactivity timeout",
         "set-status-display-type": {
-          "label": "Teksto ng estado",
           "submenu": {
             "application": "Kumikinig sa {{applicationName}}",
             "artist": "Nakikinig sa {artist}",
             "title": "Nakikinig sa {song title}"
-          }
+          },
+          "label": "Teksto ng estado"
         }
       },
       "name": "Discord Rich Presence",
@@ -690,11 +686,11 @@
             "title": "I-configure kung kailan magda-download"
           },
           "submenu": {
-            "advanced": "Advanced",
             "enabled": "Napagana na",
             "mode": "Sukatan ng oras",
             "percent": "Porsyento",
-            "seconds": "Segundo"
+            "seconds": "Segundo",
+            "advanced": "Advanced"
           }
         },
         "download-playlist": "Dina-download ang playlist",
@@ -861,9 +857,9 @@
           "label": "Mga Interactive na Setting",
           "submenu": {
             "hide-button-text": "Itago ang button na texto",
-            "hover-controls": "Ipakita ang mini-player kapag naka-hover sa tray",
             "refresh-on-play-pause": "I-refresh sa Pag-play/Pag-pause",
-            "tray-controls": "Buksan/Isara sa pag-click sa tray"
+            "tray-controls": "Buksan/Isara sa pag-click sa tray",
+            "hover-controls": "Ipakita ang mini-player kapag naka-hover sa tray"
           }
         },
         "priority": "Prioridad ng Notification",
@@ -876,32 +872,19 @@
       "description": "Pagbutihin ang performance sa pamamagitan ng pagpapagana ng mga mapanganib na script",
       "name": "Pagpapabuti ng performance [Beta]"
     },
-    "playback-recovery": {
-      "description": "Awtomatikong bumabawi mula sa stuck, stalled, o dead na playback states",
-      "menu": {
-        "log-to-console": "I-log ang mga recovery event sa console"
-      },
-      "name": "Pagbawi ng Playback",
-      "settings": {
-        "stall-timeout": "Stall timeout",
-        "stall-timeout-description": "Gaano katagal maaaring walang pag-usad ang pag-playback bago subukan ang pag-recover",
-        "max-retries": "Pinakamataas na bilang ng muling pagsubok",
-        "max-retries-description": "Bilang ng mga pagtatangkang mag-recover bago lumipat sa susunod na track"
-      }
-    },
     "picture-in-picture": {
       "description": "Payagan ang pag-palit ng app sa picture-in-picture mode",
       "menu": {
         "always-on-top": "Laging sa itaas",
         "hotkey": {
-          "label": "Hotkey",
           "prompt": {
+            "label": "Pumili ng hotkey sa pag-toggle ng picture-in-picture",
+            "title": "Hotkey ng Picture-in-picture",
             "keybind-options": {
               "hotkey": "Hotkey"
-            },
-            "label": "Pumili ng hotkey sa pag-toggle ng picture-in-picture",
-            "title": "Hotkey ng Picture-in-picture"
-          }
+            }
+          },
+          "label": "Hotkey"
         },
         "save-window-position": "I-save ang posisyon ng window",
         "save-window-size": "I-save ang laki ng window",
@@ -1005,7 +988,6 @@
         "use-musicbrainz": "Gamitin ang MusicBrainz para iwasto ang metadata",
         "musicbrainz-email": "Email ng contact ng MusicBrainz"
       },
-      "name": "Scrobbler",
       "prompt": {
         "lastfm": {
           "api-key": "API key ng Last.fm",
@@ -1029,6 +1011,7 @@
           "label": "Maglagay ng email para sa MusicBrainz API:"
         }
       },
+      "name": "Scrobbler",
       "settings": {
         "lastfm-api-root": "URL ng Last.fm API",
         "musicbrainz-email-description": "Ginagamit bilang impormasyon sa contact para sa MusicBrainz API; kailangan para sa pagwawasto ng metadata ng MusicBrainz"
@@ -1056,6 +1039,10 @@
         "global-keybinds": "Mga global keybind (gumagana sa buong app)",
         "local-keybinds": "Mga lokal na keybind (habang naka-focus lang ang window)"
       }
+    },
+    "skip-disliked-songs": {
+      "description": "Laktawan ang na-dislike na kanta",
+      "name": "I-skip ang mga Na-dislike na Kanta"
     },
     "skip-silences": {
       "description": "Automatikong laktawan ang mga tahimik na mga seksyon sa kanta",
@@ -1087,13 +1074,23 @@
         "not-found": "⚠️ Walang nakitang lyrics para sa kantang ito."
       },
       "menu": {
-        "preferred-provider": {
-          "label": "Napiling Provider",
-          "tooltip": "Pumili ng default na provider para gagamitin",
-          "none": {
-            "label": "Wala",
-            "tooltip": "Walang napiling provider"
-          }
+        "convert-chinese-character": {
+          "label": "I-convert ang karakter na Chinese",
+          "submenu": {
+            "disabled": {
+              "label": "Di-napagana",
+              "tooltip": "Huwag paganahin ang conversion ng karakter na Chinese"
+            },
+            "simplified-to-traditional": {
+              "label": "Pinasimple sa Tradisyonal",
+              "tooltip": "I-convert ang Pinasimpleng Chinese patungong Tradisyunal na Chinese"
+            },
+            "traditional-to-simplified": {
+              "label": "Tradisyonal patungong Pinasimple",
+              "tooltip": "I-convert ang Tradisyunal na Chinese sa Pinasimpleng Chinese"
+            }
+          },
+          "tooltip": "I-convert ang karakter na Chinese sa Tradisyonal o Pinasimple"
         },
         "default-text-string": {
           "label": "Default na character sa pagitan ng lyrics",
@@ -1107,7 +1104,7 @@
               "tooltip": "Gumamit ng malaki, mala-app na effect sa kasalukuyang linya"
             },
             "focus": {
-              "label": "Pokus",
+              "label": "Focus",
               "tooltip": "Gawing puti lamang ang kasalukuyang linya"
             },
             "offset": {
@@ -1120,6 +1117,30 @@
             }
           },
           "tooltip": "Pumili ng effect na ilalapat sa kasalukuyang linya"
+        },
+        "precise-timing": {
+          "label": "Gawing perpektong naka-sync ang lyrics",
+          "tooltip": "Kalkulahin sa millisecond ang pagpapakita ng susunod na linya (maaaring magkaroon ng maliit na epekto sa performance)"
+        },
+        "preferred-provider": {
+          "label": "Napiling Provider",
+          "none": {
+            "label": "Wala",
+            "tooltip": "Walang napiling provider"
+          },
+          "tooltip": "Pumili ng default na provider para gagamitin"
+        },
+        "romanization": {
+          "label": "I-romanize ang lyrics",
+          "tooltip": "Kung ang lyrics ay nasa ibang wika, subukang magpakita ng latin na bersyon."
+        },
+        "show-lyrics-even-if-inexact": {
+          "label": "Ipakita ang lyrics kahit di-eksakto",
+          "tooltip": "Kung hindi matagpuan ang kanta, susubukan muli ng plugin gamit ang ibang query sa paghahanap.\nAng resulta mula sa pangalawang pagsubok ay maaaring hindi eksakto."
+        },
+        "show-time-codes": {
+          "label": "Ipakita ang mga time code",
+          "tooltip": "Ipakita ang mga time code kasunod sa lyrics"
         },
         "lyrics-font-size": {
           "label": "Laki ng font ng lyrics",
@@ -1138,40 +1159,6 @@
             }
           },
           "tooltip": "Pumili kung gaano kalaki ang teksto ng lyrics"
-        },
-        "precise-timing": {
-          "label": "Gawing perpektong naka-sync ang lyrics",
-          "tooltip": "Kalkulahin sa millisecond ang pagpapakita ng susunod na linya (maaaring magkaroon ng maliit na epekto sa performance)"
-        },
-        "romanization": {
-          "label": "I-romanize ang lyrics",
-          "tooltip": "Kung ang lyrics ay nasa ibang wika, subukang magpakita ng latin na bersyon."
-        },
-        "show-lyrics-even-if-inexact": {
-          "label": "Ipakita ang lyrics kahit di-eksakto",
-          "tooltip": "Kung hindi matagpuan ang kanta, susubukan muli ng plugin gamit ang ibang query sa paghahanap.\nAng resulta mula sa pangalawang pagsubok ay maaaring hindi eksakto."
-        },
-        "show-time-codes": {
-          "label": "Ipakita ang mga time code",
-          "tooltip": "Ipakita ang mga time code kasunod sa lyrics"
-        },
-        "convert-chinese-character": {
-          "label": "I-convert ang karakter na Chinese",
-          "submenu": {
-            "disabled": {
-              "label": "Di-napagana",
-              "tooltip": "Huwag paganahin ang conversion ng karakter na Chinese"
-            },
-            "simplified-to-traditional": {
-              "label": "Pinasimple sa Tradisyonal",
-              "tooltip": "I-convert ang Pinasimpleng Chinese patungong Tradisyunal na Chinese"
-            },
-            "traditional-to-simplified": {
-              "label": "Tradisyonal patungong Pinasimple",
-              "tooltip": "I-convert ang Tradisyunal na Chinese sa Pinasimpleng Chinese"
-            }
-          },
-          "tooltip": "I-convert ang karakter na Chinese sa Tradisyonal o Pinasimple"
         },
         "translation": {
           "label": "Pagsasalin ng lyrics",
@@ -1286,7 +1273,7 @@
         },
         "use-ytm-lyrics-without-proxy": {
           "label": "Gamitin ang YTM lyrics nang walang proxy",
-          "tooltip": "Laktawan ang YTM browse proxy at direktang tumawag sa YouTube Music gamit ang naka-authenticate na session ng app. Kapaki-pakinabang kung pinagkakatiwalaan mo ang iyong network/region na payagan ang direktang browse calls."
+          "tooltip": "Laktawan ang YTM browse proxy at direktang tumawag sa \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 gamit ang naka-authenticate na session ng app. Kapaki-pakinabang kung pinagkakatiwalaan mo ang iyong network/region na payagan ang direktang browse calls."
         },
         "show-custom-search-button": {
           "label": "Ipakita ang custom na search button",
@@ -1354,29 +1341,29 @@
     },
     "transparent-player": {
       "description": "Gawing transparent ang app window",
-      "name": "Transparent na Player",
       "menu": {
-        "opacity": {
-          "label": "Kalabuan (Opacity)",
-          "submenu": {
-            "percent": "{{opacity}}%"
-          }
-        },
         "type": {
           "label": "Uri",
           "submenu": {
+            "fullscreen-ui": "Fullscreen na UI",
+            "none": "Wala",
+            "tabbed": "Naka-tab",
             "acrylic": "Akriliko",
             "mica": "Mika",
-            "tabbed": "Naka-tab",
-            "none": "Wala",
-            "fullscreen-ui": "Fullscreen na UI",
             "content": "Nilalaman",
             "under-page": "Sa Ilalim ng Pahina",
             "under-window": "Sa Ilalim ng Window",
             "window": "Window"
           }
+        },
+        "opacity": {
+          "label": "Kalabuan (Opacity)",
+          "submenu": {
+            "percent": "{{opacity}}%"
+          }
         }
       },
+      "name": "Transparent na Player",
       "settings": {
         "type-description": "Materyal sa background na ginagamit para sa transparency ng window"
       }
@@ -1402,12 +1389,12 @@
         },
         "force-hide": "Piliting tanggalin ang video tab",
         "mode": {
-          "label": "Mode",
           "submenu": {
-            "custom": "Custom na toggle",
             "disabled": "Di-napagana",
+            "custom": "Custom na toggle",
             "native": "Native na toggle"
-          }
+          },
+          "label": "Mode"
         }
       },
       "name": "Pag-toggle ng Video",
@@ -1442,6 +1429,23 @@
         "vertical-align": "Patayong pagkakahanay"
       }
     },
+    "audio-only": {
+      "description": "Pinipilit ang audio-only mode — binoblock ang lahat ng video stream sa network at player level para makatipid ng RAM at bandwidth",
+      "name": "Audio Lamang"
+    },
+    "playback-recovery": {
+      "description": "Awtomatikong bumabawi mula sa stuck, stalled, o dead na playback states",
+      "menu": {
+        "log-to-console": "I-log ang mga recovery event sa console"
+      },
+      "name": "Pagbawi ng Playback",
+      "settings": {
+        "stall-timeout": "Stall timeout",
+        "stall-timeout-description": "Gaano katagal maaaring walang pag-usad ang pag-playback bago subukan ang pag-recover",
+        "max-retries": "Pinakamataas na bilang ng muling pagsubok",
+        "max-retries-description": "Bilang ng mga pagtatangkang mag-recover bago lumipat sa susunod na track"
+      }
+    },
     "playlist-search": {
       "description": "Nagdagdag ng search input para i-filter ang mga playlist sa sidebar at sa Add to playlist dialog",
       "name": "Paghahanap ng Playlist",
@@ -1464,7 +1468,7 @@
     },
     "search-commands": {
       "commands": {
-        "play": "I-play ang video mula sa YouTube link o id",
+        "play": "I-play ang video mula sa \u0059\u006f\u0075\u0054\u0075\u0062\u0065 link o id",
         "settings": "Buksan ang mga setting"
       },
       "description": "I-type ang / sa search box para magpatakbo ng mga command, may autocomplete para sa mga argumento nito",
@@ -1481,11 +1485,11 @@
       "name": "Mga Shortcut sa Pag-seek"
     },
     "sfw-music": {
-      "description": "Awtomatikong nilalaktawan ang mga kantang minarkahang Explicit ng YouTube Music. Nag-pause ito kung paulit-ulit ang explicit na queue o walang susunod na kanta.",
+      "description": "Awtomatikong nilalaktawan ang mga kantang minarkahang Explicit ng \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063. Nag-pause ito kung paulit-ulit ang explicit na queue o walang susunod na kanta.",
       "name": "SFW Music"
     },
     "toast-autoclose": {
-      "description": "Awtomatikong isara ang mga toast ng YouTube Music pagkalipas ng tatlong segundo",
+      "description": "Awtomatikong isara ang mga toast ng \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 pagkalipas ng tatlong segundo",
       "name": "Auto-Close ng Toast"
     },
     "statusbar-lyrics": {
@@ -1531,7 +1535,7 @@
     "move-up": "Ilipat pataas",
     "move-down": "Ilipat pababa",
     "about": {
-      "tagline": "Isang desktop app na may maraming feature para sa YouTube Music",
+      "tagline": "Isang desktop app na may maraming feature para sa \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063",
       "versions": "Mga bersyon",
       "version-app": "App",
       "version-build": "Build",
@@ -1589,7 +1593,7 @@
     "stepper-decrement": "Bawasan",
     "stepper-increment": "Dagdagan",
     "flags": {
-      "warning": "Ang mga feature flag ay sariling panloob na switch ng YouTube Music. Ang pagbabago sa mga ito ay maaaring makasira ng playback, layout o mga feature ng account, at hindi ito saklaw ng suporta. Ang mga override ay pinapanatili lamang para sa mga flag na binago mo, at maaaring alisin gamit ang Undo.",
+      "warning": "Ang mga feature flag ay sariling panloob na switch ng \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063. Ang pagbabago sa mga ito ay maaaring makasira ng playback, layout o mga feature ng account, at hindi ito saklaw ng suporta. Ang mga override ay pinapanatili lamang para sa mga flag na binago mo, at maaaring alisin gamit ang Undo.",
       "search-placeholder": "Maghanap ng flag",
       "overridden": "na-override",
       "undo": "I-undo",

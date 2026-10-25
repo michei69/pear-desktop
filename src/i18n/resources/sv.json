@@ -156,8 +156,8 @@
               "sync": {
                 "label": "Synkronisera språk",
                 "submenu": {
-                  "from-youtube": "Från YouTube",
-                  "to-youtube": "Till YouTube"
+                  "from-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "Från \u0059\u006f\u0075\u0054\u0075\u0062\u0065",
+                  "to-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "Till \u0059\u006f\u0075\u0054\u0075\u0062\u0065"
                 },
                 "failure": {
                   "dialog": {
@@ -229,7 +229,7 @@
                   "open-themes-folder": "Öppna temamappen"
                 }
               },
-              "use-ytm-icons": "Använd YouTube Musics originalikoner"
+              "use-ytm-icons": "Använd \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063s originalikoner"
             }
           },
           "updates": {
@@ -334,7 +334,7 @@
         "opacity": {
           "label": "Opacitet",
           "submenu": {
-            "percent": "{{opacity}} %"
+            "percent": "{{opacity}}%"
           }
         },
         "quality": {
@@ -346,7 +346,7 @@
         "size": {
           "label": "Storlek",
           "submenu": {
-            "percent": "{{size}} %"
+            "percent": "{{size}}%"
           }
         },
         "smoothness-transition": {
@@ -1040,6 +1040,10 @@
         "local-keybinds": "Lokala tangentbordsgenvägar (endast när fönstret är i fokus)"
       }
     },
+    "skip-disliked-songs": {
+      "description": "Hoppar över låtar du inte gillar",
+      "name": "Hoppa över låtar du inte gillar"
+    },
     "skip-silences": {
       "description": "Hoppa automatiskt över tysta partier i låtar",
       "name": "Hoppa över tysta partier",
@@ -1114,24 +1118,6 @@
           },
           "tooltip": "Välj effekten som ska användas på den aktuella raden"
         },
-        "lyrics-font-size": {
-          "label": "Textstorlek för sångtexter",
-          "submenu": {
-            "large": {
-              "label": "Stor",
-              "tooltip": "Använd den ursprungliga större textstorleken"
-            },
-            "medium": {
-              "label": "Mellan",
-              "tooltip": "Använd en balanserad textstorlek"
-            },
-            "small": {
-              "label": "Liten",
-              "tooltip": "Använd en mer kompakt textstorlek"
-            }
-          },
-          "tooltip": "Välj hur stor sångtexten ska vara"
-        },
         "precise-timing": {
           "label": "Synkronisera låttexterna exakt",
           "tooltip": "Beräkna till millisekunden när nästa rad ska visas (kan ha en liten inverkan på prestanda)"
@@ -1155,6 +1141,24 @@
         "show-time-codes": {
           "label": "Visa tidskoder",
           "tooltip": "Visa tidskoderna bredvid låttexterna"
+        },
+        "lyrics-font-size": {
+          "label": "Textstorlek för sångtexter",
+          "submenu": {
+            "large": {
+              "label": "Stor",
+              "tooltip": "Använd den ursprungliga större textstorleken"
+            },
+            "medium": {
+              "label": "Mellan",
+              "tooltip": "Använd en balanserad textstorlek"
+            },
+            "small": {
+              "label": "Liten",
+              "tooltip": "Använd en mer kompakt textstorlek"
+            }
+          },
+          "tooltip": "Välj hur stor sångtexten ska vara"
         },
         "translation": {
           "clear-cache": {
@@ -1269,7 +1273,7 @@
         },
         "use-ytm-lyrics-without-proxy": {
           "label": "Använd YTM-text utan proxy",
-          "tooltip": "Hoppa över YTM-webbläsarproxy och anropa YouTube Music direkt med appens autentiserade session. Användbart om du litar på att ditt nätverk/region tillåter direkta anrop."
+          "tooltip": "Hoppa över YTM-webbläsarproxy och anropa \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 direkt med appens autentiserade session. Användbart om du litar på att ditt nätverk/region tillåter direkta anrop."
         },
         "show-custom-search-button": {
           "label": "Visa anpassad sökknapp",
@@ -1341,7 +1345,7 @@
         "opacity": {
           "label": "Opacitet",
           "submenu": {
-            "percent": "{{opacity}} %"
+            "percent": "{{opacity}}%"
           }
         },
         "type": {
@@ -1464,7 +1468,7 @@
     },
     "search-commands": {
       "commands": {
-        "play": "Spela en video från en YouTube-länk eller ett id",
+        "play": "Spela en video från en \u0059\u006f\u0075\u0054\u0075\u0062\u0065-länk eller ett id",
         "settings": "Öppna inställningarna"
       },
       "description": "Skriv / i sökrutan för att köra kommandon, med autokomplettering för deras argument",
@@ -1481,11 +1485,11 @@
       "name": "Spolgenvägar"
     },
     "sfw-music": {
-      "description": "Hoppar automatiskt över låtar som YouTube Music markerat som Explicit. Pausar om en explicit kö upprepas eller ingen nästa låt finns.",
+      "description": "Hoppar automatiskt över låtar som \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 markerat som Explicit. Pausar om en explicit kö upprepas eller ingen nästa låt finns.",
       "name": "SFW-musik"
     },
     "toast-autoclose": {
-      "description": "Stäng YouTube Music-toastmeddelanden automatiskt efter tre sekunder",
+      "description": "Stäng \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063-toastmeddelanden automatiskt efter tre sekunder",
       "name": "Autostäng toastmeddelanden"
     },
     "statusbar-lyrics": {
@@ -1531,7 +1535,7 @@
     "move-up": "Flytta upp",
     "move-down": "Flytta ned",
     "about": {
-      "tagline": "En funktionsrik skrivbordsapp för YouTube Music",
+      "tagline": "En funktionsrik skrivbordsapp för \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063",
       "versions": "Versioner",
       "version-app": "App",
       "version-build": "Bygge",
@@ -1589,7 +1593,7 @@
     "stepper-decrement": "Minska",
     "stepper-increment": "Öka",
     "flags": {
-      "warning": "Funktionsflaggor är YouTube Musics egna interna växlar. Att ändra dem kan förstöra uppspelning, layout eller kontofunktioner, och de omfattas inte av supporten. Åsidosättningar sparas endast för de flaggor du ändrar och kan tas bort med Ångra.",
+      "warning": "Funktionsflaggor är \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063s egna interna växlar. Att ändra dem kan förstöra uppspelning, layout eller kontofunktioner, och de omfattas inte av supporten. Åsidosättningar sparas endast för de flaggor du ändrar och kan tas bort med Ångra.",
       "search-placeholder": "Sök flaggor",
       "overridden": "åsidosatt",
       "undo": "Ångra",

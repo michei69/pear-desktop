@@ -1,400 +1,142 @@
-# Porting a plugin from upstream
+# Porting from upstream
 
-This page is for moving a plugin written against upstream
-`pear-devs/pear-desktop` into this fork, or for re-applying an upstream change to
-a plugin the fork already carries. It assumes you have read the
-[Plugin reference](./index.md); this page only covers what differs from
-upstream and what the port has to change.
+This page maps a pear-desktop 3.x plugin (one folder per plugin in upstream's source tree) onto this tree. The APIs are not source-compatible: upstream plugins import app internals, this tree exposes one SDK with a host and a page part. Use [Plugins overview](./index.md) for the target API.
 
-## What upstream plugins look like here
+## File and package layout
 
-The plugin contract is the same in both trees: `src/plugins/<kebab-id>/index.ts`
-exports `createPlugin({...})`, and the definition has `name`, `description`,
-`config`, optional `menu`, `stylesheets`, `restartNeeded`, and optional
-`backend`/`preload`/`renderer` halves. This fork extends that contract rather
-than replacing it:
+| Upstream | Here |
+| --- | --- |
+| A plugin folder's `index.ts` | `plugins/<id>/index.ts` in a workspace package |
+| A single-file plugin beside the folders | Not supported; every plugin is a folder |
+| Upstream's shared plugin utilities | `packages/sdk/src/` (`@pear/sdk` and its subpaths) |
+| `@/utils`, `@/i18n`, `@/types/*` imports | `@pear/sdk` (or a subpath) and `ctx.t` |
+| Upstream's plugin importer | `packages/vite-plugin-pear/src/index.ts` |
+| A plugin's `settings.ts` | The `config` schema in `index.ts` or a helper module |
+| A plugin's `menu.ts` | `ctx.addMenuItem` calls in `host.start` |
+| A plugin's `backend.ts` | The `host` part, or a helper it imports |
+| A plugin's `preload.ts` | No equivalent; use `page.runAt: "start"` for early page patches |
+| A plugin's `renderer.ts` | The `page` part |
+| A plugin's `style.css?inline` | The `style` field with the `css` macro, or `ctx.addStyle` |
+| A plugin's test folder | `plugins/<id>/test/` with Vitest |
 
-| Surface | Upstream | This fork |
-| --- | --- | --- |
-| `PluginDef` | base fields plus contexts | adds `essential`, `settings`, and a renderer `components` map (`src/types/plugins.ts`) |
-| Settings UI | no in-app Settings modal; options are edited through `menu` handlers when a plugin has a menu | `settings-ui` essential plugin renders each plugin's `settings` schema in the Settings modal |
-| Renderer loading | imports every plugin, then checks the merged config | reads build-time metadata first (`rendererPluginMeta`) and only resolves definitions that cannot be decided statically |
-| IPC context | `on` only, no `off` (the renderer had a heavy-handed `removeAllListeners`) | `off` on both contexts, with a per-plugin listener registry so a plugin can unsubscribe exactly its own listener |
-| i18n delivery | every locale resource is bundled and imported eagerly | only English plus the active language are loaded; the renderer bundle carries no translations and gets them from preload |
-| Themes | no theme plugin | folder-based theme engine in `src/themes`; the earlier `custom-theme` plugin was removed |
-| Plugin helpers | `fileExists`, `injectCSSAsFile` in `src/plugins/utils/main/` | removed; use `node:fs` and `injectCSS`; `innertube.ts` helpers were added |
-| API server | older route layout under `src/plugins/api-server/backend/` | Hono v1/v2 + MCP layout; not a drop-in merge |
+Create the package with `nub scripts/new-plugin.ts <id>`, then `nub install`. Package dependencies go into the plugin's own `package.json`; the app imports the plugin from `plugins/<id>/index.ts`.
 
-What still works unchanged: `createPlugin` and the `createBackend` /
-`createPreload` / `createRenderer` helpers, the lifecycle names (`start`,
-`stop`, `onConfigChange`, `onPlayerApiReady`), `menu`, `stylesheets`,
-`platform`, `addedVersion`, `restartNeeded`, and the `backend`/`preload`/
-`renderer` split. A port is usually an audit of the fields and imports around
-that unchanged core.
+## Definition fields
 
-There is no runtime loader for third-party plugins. The build globs
-`src/plugins/*/index.{js,ts,jsx,tsx}` and `src/plugins/*.{js,ts,jsx,tsx}`,
-generates `virtual:plugins`, and bundles the result. A ported plugin is compiled
-into the app; it is not dropped into a user directory and loaded at runtime.
+| Upstream | Here |
+| --- | --- |
+| `createPlugin({...})` | `definePlugin({...})` |
+| Folder name as id | `id` is explicit and must match the folder |
+| `name: () => t(...)` | `name: "Plain English"`; the catalog translates `plugins.<id>.name` |
+| `description: () => t(...)` | `description: "Plain English"` |
+| `config: { enabled: false, ... }` | `config: { ... }` without `enabled`; the flag is stored separately |
+| `config` type extends `PluginConfig` | Infer with `ConfigOf<typeof schema>` or `HostContextOf<typeof schema>` |
+| `platform` bitmask | `platforms: ["linux", "win32", "darwin"]` |
+| `essential: true` | No equivalent; the plugin is either enabled by default or off |
+| `enabledByDefault` | Same name; also accepts a list of platforms |
+| `restartNeeded: true` | `restartRequired: true` |
+| `addedVersion` / NEW badge | No equivalent |
+| `settings: [...]` / `settings: { groups }` | `config` field builders; the settings UI is generated |
+| `stylesheets: [cssString]` | `style: css\`...\`` or `style: (config) => ...` |
+| `menu: (ctx) => items` | `ctx.addMenuItem({ label, accelerator?, click })` |
+| `backend` object | `host` object |
+| `preload` object | No equivalent |
+| `renderer` object or function | `page` object or function |
+| `renderer.onPlayerApiReady(api)` | `await ctx.player.ready()` in `page.start` |
+| `renderer.components` | Preact rendered by the plugin, or shared helpers from `@pear/sdk/dom` |
 
-## Settings: menu-only options must become a schema
+## Lifecycle
 
-Upstream plugins commonly configure themselves through `menu` handlers that call
-`ctx.getConfig()` / `ctx.setConfig()`. `menu` still works here, but the in-app
-Settings modal is the primary configuration surface, and it only shows what the
-plugin declares in `settings`. A ported plugin with only a `menu` will look
-configurable in the native menu and empty in Settings.
+| Upstream | Here |
+| --- | --- |
+| `backend.start(ctx)` | `host.start(ctx)` |
+| `backend.stop(ctx)` | Return a cleanup from `start`, or use `ctx.onCleanup` |
+| `backend.onConfigChange(config)` | `host.onConfigChange(config, ctx)` or `ctx.onConfigChange` from `start` |
+| `renderer.start(ctx)`, `renderer.stop()` | `page.start(ctx)`, return a cleanup |
+| `renderer.onConfigChange(config)` | `page.onConfigChange(config, ctx)` or `ctx.onConfigChange` |
+| `this` on methods, fields for state | `this` in commands only; `start` closures hold page state |
+| `ipc.send` / `ipc.invoke` from the page | `ctx.host.invoke(command, ...args)` |
+| `ipc.handle` / `ipc.on` in the backend | `host.commands`, or `ctx.host.handle` on the page |
+| `peard:*` custom IPC channels | Not needed inside a plugin; use commands, events and requests |
 
-`src/plugins/disable-autoplay/index.ts` is a real before/after example. Upstream:
+There is no direct `ipcMain`/`ipcRenderer` access for plugins. Do not import Electron in a page part: it does not exist there. A host part may import Electron and Node.
+
+## Config and settings
+
+Upstream's `settings` array had types such as `switch`, `select`, `slider`, `text`, `multiselect`, `orderable`, `action` and `custom`. In this tree:
+
+| Upstream setting | Here |
+| --- | --- |
+| `switch` | `config.bool(default, { label })` |
+| `slider` / `number` | `config.number(default, { min, max, step, unit, variant })` |
+| `text` | `config.string(default, { placeholder, secret })` |
+| `select` | `config.select(default, options, { label })` |
+| `multiselect` | `config.multi(default, options, { label })` |
+| `orderable` | Not supported |
+| `action` buttons | `actions` plus `host.commands` |
+| Custom components | Preact in the plugin's own UI, not in the settings card |
+| `visible` conditions | Not supported; show or hide in page UI instead |
+| `languageSync` | No equivalent |
+| Dotted setting keys | Fields are a flat schema; nest with `group` headings |
+
+The settings card is generated from `config`, so there is no separate settings editor to port. Field texts are translated through `plugins.<id>.settings.<field>.*`; run `nub run i18n`.
+
+Stored config is still `plugins.<id>` with the old option names where they still mean the same. Upstream stored only values that differed from defaults and deep-merged on read. This tree normalizes the stored object against the schema on read, keeps unknown keys, and never writes defaults into the file. A ported plugin can usually keep its stored options; the `4.0.0` migration in `apps/desktop/src/main/migrations/plugins.ts` already converts the plugins that ship here. A ported third-party plugin needs its own migration only if it renames or reshapes options.
+
+## Page and player APIs
+
+Upstream renderer code reached into `document`, `#movie_player`, IPC and app internals. This tree provides:
+
+- `ctx.player` instead of caching the player element or wiring `song-info` callbacks.
+- `ctx.$`, `ctx.$$`, `ctx.waitFor`, `ctx.mount`, `ctx.observe` and selector names instead of CSS class selectors.
+- `ctx.listen`, `ctx.setTimeout` and `ctx.setInterval` instead of raw DOM and timer APIs.
+- `ctx.audio()` instead of connecting the `<video>` to a new `AudioContext`.
+- `ctx.addStyle` or `style` instead of injecting `<style>` elements.
+- `ctx.toast` instead of YTM's internal toast API.
+- `@pear/sdk/queue` instead of reaching into the queue element.
+- `@pear/sdk/dom` pickers, popovers, sidebar entries and popup menu items instead of copying the app's DOM code.
+
+The page part is not preloaded before the page. For work that must precede YTM's scripts, use `page: { runAt: "start", start(ctx) { ... } }`; it runs in the page's main world. Anything that needs DOM readiness uses the default `runAt: "idle"` and `ctx.waitFor`.
+
+`onPlayerApiReady` is gone. If a plugin needs YTM's raw API before doing anything, await `ctx.player.ready()` inside `start`. If it can start earlier, subscribe to `ctx.player` events first.
+
+## Menus and native UI
+
+Upstream's `menu` half returned Electron menu items, including submenus and radio groups. This tree supports one flat item per plugin in the app and tray menus:
 
 ```ts
-config: {
-  enabled: false,
-  applyOnce: false,
-},
-menu: async ({ getConfig, setConfig }) => {
-  const config = await getConfig();
-  return [
-    {
-      label: t('plugins.disable-autoplay.menu.apply-once'),
-      type: 'checkbox',
-      checked: config.applyOnce,
-      async click() {
-        setConfig({ applyOnce: !(await getConfig()).applyOnce });
-      },
-    },
-  ];
-},
-```
-
-The fork adds the same option declaratively:
-
-```ts
-settings: [
-  {
-    type: 'switch',
-    key: 'applyOnce',
-    label: () => t('plugins.disable-autoplay.menu.apply-once'),
+host: {
+  start(ctx) {
+    ctx.addMenuItem({ label: "Show my plugin", click: () => ctx.focusWindow() });
   },
-],
-```
-
-The schema type is `SettingsSchema` in `src/types/settings.ts`: either a flat
-`SettingField[]` or a `SettingsGroup[]` when the options need headings (the
-scrobbler does this per provider). Supported field types:
-
-| `type` | Purpose | Notable extras |
-| --- | --- | --- |
-| `switch` | boolean | |
-| `select` | one of a list | `variant: 'radio'` or `'dropdown'`, async `options`, `refreshable`, `languageSync` |
-| `slider` | bounded number | `min`, `max`, `step`, `unit`, `scale` |
-| `number` | plain number | `min`, `max`, `step`, `unit`, `placeholder` |
-| `text` | string | `placeholder` |
-| `multiselect` | several of a list | |
-| `orderable` | ordered list | `options` supply the rows; up/down buttons reorder them |
-| `action` | one or buttons | `onClick({ getValue, setValue, pickDirectory, pickFile })` |
-| `custom` | Solid component | `component: '<pluginId>.<name>'`, resolved through the renderer `components` map |
-
-Every field also accepts `restartNeeded` (that one setting needs a restart),
-`platform` (a `Platform` bitmask), `visible` (a predicate evaluated while the
-modal renders) and `hideLabel`. Labels and descriptions are functions
-(`() => t(...)`) because the language can change without a reload; `options` may
-be a function and may return a promise when the list comes from disk or the
-network. The full field reference is in
-[Creating a plugin](./creating.md#settings-schema); if the fork already carries
-the plugin you are porting, extend it as described in
-[Modifying plugins](./modifying.md).
-
-Keys are dotted paths into the plugin's own config, so nested options do not
-need a custom field: the scrobbler declares `scrobblers.lastfm.apiKey`,
-`scrobblers.listenbrainz.token` and so on, and the downloader declares
-`downloadOnFinish.mode`. The modal reads and writes them through
-`getByPath`/`setByPath` in `src/plugins/settings-ui/paths.ts`; a write crosses
-`peard:set-config` and lands in the same `config.setPartial` call a menu
-`setConfig` makes. That means:
-
-- writes deep-merge into `plugins.<id>`; an unrelated option is not clobbered;
-- `onConfigChange` fires for loaded plugins exactly as it does for menu writes;
-- slider writes are debounced in the modal, so do not assume one write per pixel.
-
-A custom field needs two halves: `component: '<pluginId>.<name>'` in the schema
-and a renderer `components` entry. `src/plugins/equalizer/index.ts` is the small
-example:
-
-```ts
-settings: [
-  {
-    type: 'custom',
-    key: 'presets',
-    label: () => t('plugins.equalizer.menu.presets.label'),
-    component: 'equalizer.presets',
-    restartNeeded: true,
-  },
-],
-renderer: {
-  components: { presets: EqualizerPresets },
-  // ...
 },
 ```
 
-The component receives `{ ctx: CustomFieldContext }`, which is the field's
-`getValue(key)` / `setValue(key, value)` pair, so it can write below its own key
-(the equalizer writes `presets.<name>`). Custom fields are resolved only from
-the renderer half; a `custom` field with no matching component renders
-`missing component: <id>` instead of crashing.
+Menus that need dynamic radio groups (quality, speed, captions) are now page pickers on the player bar. See `plugins/quality-changer`, `plugins/playback-speed` and `plugins/captions-selector`.
 
 ## Translations
 
-The rule and the key layout are in
-[Conventions](../conventions.md#user-facing-text-and-translations). Upstream code
-may not meet all of it; audit before porting.
+Upstream's plugin `name` and `description` were functions returning `t(...)`, and settings labels were functions. Here they are plain strings; the catalog translates them from `plugins.<id>.*`. Visible text created at runtime uses `ctx.t(key, english, vars)`. Run `nub run i18n`; keys found by the generator are literal `t("key", "English")` calls in the source.
 
-- Every user-facing string goes through `t` from `@/i18n`, including menu items,
-  settings labels, dialog text and toast messages.
-- English keys go in `src/i18n/resources/en.json` under `plugins.<id>.*`. Other
-  locales are optional in a change and are normally filled in later through
-  Weblate.
-- `name` and `description` are functions: `name: () => t('plugins.<id>.name')`.
-  The settings schema's `label`/`description`/`placeholder` are functions too.
-- Console messages that describe app state belong under `common.console.*` and
-  are translated in both trees; internal debug logging is the exception.
-- The renderer has no translation loaders of its own. Preload injects the loaded
-  resources as `globalThis.__PEAR_I18N_RESOURCES__` and the renderer initializes
-  i18next from them, so a plugin must not import a language JSON directly.
+## Things that no longer exist
 
-A minimal resource entry for the ported plugin:
+- The per-process plugin loaders (main, preload, renderer, menu), their loaded-plugin maps and their IPC channels.
+- The `settings-ui` plugin and its modal protocol. Settings are core now.
+- The `api-server` plugin. The API server is a core section, stored at `plugins.api-server`, with v1 routes and plugin RPC.
+- The `memory-saver` and `performance-improvement` scripts are plugins, not core providers. The old app-level performance mode is not in this tree.
+- The old app-internal config, provider, theme and type modules as plugin-visible imports. The SDK owns the shared surface.
+- Direct `peard:*` IPC and `electron-store`.
 
-```json
-"plugins": {
-  "disable-autoplay": {
-    "name": "Disable Autoplay",
-    "description": "Makes song start in \"paused\" mode",
-    "menu": {
-      "apply-once": "Applies only on startup"
-    }
-  }
-}
-```
+## Porting checklist
 
-If you rename an option while porting, update `en.json` in the same change. A
-key left behind is dead weight; a key removed while code still calls it renders
-the key string to the user.
-
-## Static plugin metadata
-
-The renderer decides what to start without necessarily resolving each plugin
-definition. `vite-plugins/plugin-importer.mts` reads the plugin source with
-ts-morph at build time and emits `rendererPluginMeta`, one entry per plugin:
-
-```ts
-{ "settings-ui": { "hasRenderer": true, "essential": true, "enabled": true, "platform": null } }
-```
-
-`src/loader/renderer.ts` uses that to skip plugins without a renderer, filter by
-`platform`, and decide `essential || enabled`. When `hasRenderer`, `essential`
-or `enabled` could not be read, it imports the definition and uses the real
-object instead. The fields that must be statically readable:
-
-| Field | Accepted form | When unreadable |
-| --- | --- | --- |
-| `renderer` | property present or absent on the definition | `hasRenderer: null`, definition imported |
-| `config.enabled` | literal `true` / `false` in the inline config object (or a config identifier ts-morph can follow to one) | `enabled: null`, definition imported |
-| `essential` | literal `true` / `false`; absent means `false` | `essential: null`, definition imported |
-| `platform` | numeric literal, `Platform.Name`, or a bitwise-OR combination of those | `platform: null`; the metadata pass treats the plugin as available on every platform and the real definition decides after import |
-
-The harder constraint is the second build pass, `vite-plugins/plugin-loader.mts`.
-For each bundle it rewrites the plugin module: the main bundle keeps `backend`
-and `menu`, preload keeps `preload`, the renderer keeps `renderer`, and a named
-`pluginStub` export is added everywhere - a copy of the definition with the
-lifecycle implementations removed (the backend stub keeps `menu`, because main
-builds the application menu from `allPlugins()`). `allPlugins()` lists plugins
-from that stub, so the main process can build its menu without pulling renderer
-code into its bundle. The transform recognizes only two shapes:
-
-```ts
-export default createPlugin({ /* object literal */ });
-export default { /* object literal */ };
-```
-
-If the definition is a variable (`const def = {...}; export default def;`), a
-call with a non-literal argument, or a cast such as
-`createPlugin({...} as PluginDef<...>)`, the loader cannot find the object
-literal: it emits the module unchanged and the generated `virtual:plugins`
-imports a `pluginStub` that does not exist. The preload and renderer builds fail
-on that missing named export, and the main plugin map would be broken at runtime.
-Keep the definition's object literal inline even though the metadata pass is more
-forgiving. A top-level spread inside the object is a different problem: it is
-copied into the stub as-is, so whatever process-specific properties it carries
-are not stripped; keep the half properties written out explicitly.
-
-Two more build-time rules:
-
-- The entry file is `src/plugins/<id>/index.ts` (or `.tsx`/`.js`/`.jsx`, or a
-  bare `src/plugins/<id>.ts`). Nested files that are not the entry are not
-  plugins; `src/plugins/utils/**` is excluded from discovery on purpose.
-- `addedVersion` is compared against `package.json` with semver's `satisfies`
-  (`src/menu.ts`) to render the **NEW** badge. A ported plugin should use the
-  release line that will actually ship it, for example `'3.13.X'`.
-
-## Lifecycle and IPC differences
-
-The per-process contexts are in `src/types/contexts.ts`. The base is unchanged:
-`getConfig()` returns the merged config, and `setConfig(partial)` writes through
-`config.setPartial`. `setConfig` cannot change `enabled`; the type is
-`Partial<Omit<Config, 'enabled'>>` because enabling is owned by the loaders and
-the config watcher.
-
-The IPC surface grew in this fork:
-
-| Context | Upstream | This fork |
-| --- | --- | --- |
-| `backend` | `send`, `handle`, `on`, `removeHandler` | adds `off` and `removeAllListeners` |
-| `preload` | config only | config only |
-| `renderer` | `send`, `invoke`, `on`, `removeAllListeners` | adds `off` |
-| `menu` | `window`, `refresh` | unchanged |
-
-`off(channel, listener)` removes exactly the listener you registered, using a
-registry kept per plugin id. This matters because the context object is recreated
-for every lifecycle call and the preload-side subscription is a different
-function object than the one you passed in; the registry maps your listener to
-the wrapper or unsubscribe closure that was actually registered. The rule when
-porting: keep a reference to every handler, add it through `ctx.ipc.on`, and
-remove it in `stop` with `ctx.ipc.off`. The sponsorblock plugin's shape:
-
-```ts
-start({ ipc }) {
-  this.handleSkipSegments = (segments) => (currentSegments = segments);
-  ipc.on('sponsorblock-skip', this.handleSkipSegments);
-},
-stop({ ipc }) {
-  ipc.off('sponsorblock-skip', this.handleSkipSegments);
-},
-```
-
-Upstream code often had no `off`, so it either leaked the listener across
-disable/enable cycles or reached for `removeAllListeners`, which still drops
-every listener on the channel (`ipcMain.removeAllListeners` /
-`ipcRenderer.removeAllListeners`), including ones registered by the app or
-another plugin. Do not use it on a shared channel; prefer `off`.
-
-Channel naming matters for the same reason. App and plugin channels use
-`peard:<kebab-case>` (`peard:player-api-loaded`, `peard:update-song-info`,
-`peard:audio-can-play`). The Settings UI keeps the historical
-`ytmd-sui:<kebab-case>` prefix for its own channels. A few app control channels
-are unprefixed and are owned by main (`plugin:enable`, `plugin:unload`,
-`config-changed`); a ported plugin should not send or listen on those.
-
-Two lifecycle details that differ from what a naive port assumes:
-
-- `forceLoadRendererPlugin` refuses to start a plugin that is already loaded, so
-  a duplicate `plugin:enable` does not re-run `start`. The enable handler still
-  calls `onPlayerApiReady` afterwards when the player exists, so that hook has to
-  be idempotent.
-- The renderer only calls `onPlayerApiReady` for plugins whose `renderer` is an
-  object. A plugin written as a single `renderer` function cannot use that hook.
-  The hook itself is covered in [Player API](./player-api.md).
-
-## App-level options a port needs
-
-Most ported plugins keep their options under `plugins.<id>` and only need the
-settings schema. If the feature genuinely belongs to the app (a window style, a
-link rewriter, a performance switch), it must be an app option, and an app
-option is only complete when all of these agree - the checklist is also in
-[Conventions](../conventions.md):
-
-1. `src/config/defaults.ts` - the default and its type.
-2. `src/plugins/settings-ui/schema/app-settings.ts` - the control in the modal.
-3. `src/menu.ts` - the native menu entry, if the option has one.
-4. `src/providers/option-effects.ts` - side effects that must happen
-   immediately (window flags, tray icons, renderer pushes).
-5. `src/preload.ts` - add the key to `rendererConfigKeys` if the page reads it.
-   `window.mainConfig.get` returns `undefined` for anything not on the list.
-6. `src/config/store.ts` - a migration if a stored key is renamed or removed.
-
-`restartNeeded` is not a single switch. On the plugin definition it means
-"enabling/disabling this plugin needs a restart" and drives the restart dialog
-in `src/index.ts`. On a settings field it means "this value is read once at
-startup" and drives the restart banner in the modal. A plugin can be
-live-toggleable and still have startup-only fields: the equalizer declares
-`restartNeeded: false` on the plugin but `restartNeeded: true` on its `presets`
-field.
-
-Feature flags are an app option, not a plugin option:
-`options.featureFlags` is applied to YouTube Music's `ytcfg` before the page's
-scripts run (`startFeatureFlags` in
-`src/plugins/settings-ui/flags-preload.ts`, installer in
-`src/plugins/settings-ui/injectors/flags.ts`) and is edited in the Settings flags
-section. A ported plugin that used to poke `EXPERIMENT_FLAGS` itself should
-either stop doing that or document the flag the user must set.
-
-## Port checklist
-
-1. Copy the upstream plugin into `src/plugins/<id>/index.ts` (lower-case
-   kebab-case; the folder name is the plugin id and the config namespace). If
-   the fork already has the plugin, follow
-   [Modifying plugins](./modifying.md) instead of replacing it.
-2. Keep the top-level definition an inline `createPlugin({...})` object literal
-   so `pluginStub` generation works, and make `config.enabled`, `essential` and
-   `platform` literal.
-3. Add `settings` for every option the ported plugin exposes. Do not rely on the
-   menu as the only entry point.
-4. Add `plugins.<id>.*` keys to `src/i18n/resources/en.json`; remove keys whose
-   options disappeared.
-5. Port IPC cleanup to `ctx.ipc.off`; rename channels to `peard:*` unless the
-   plugin already owns a prefix.
-6. Replace imports that no longer exist (`fileExists`, `injectCSSAsFile`,
-   removed provider modules) and check `src/types/` for moved types.
-7. Decide whether a renamed plugin id needs a migration in `src/config/store.ts`.
-8. Run the checks:
-
-```bash
-pnpm check   # oxlint, oxfmt --check, tsc --noEmit
-pnpm test    # Playwright runner; most tests are plain Node, a few launch Electron
-pnpm build   # the real test of pluginStub generation and virtual:plugins
-```
-
-`pnpm build` matters more for a port than for ordinary code: it exercises the
-static metadata pass and the stub transform, so a definition that typechecks can
-still fail here.
-
-## Pitfalls
-
-- **Arrays in plugin configs concatenate on read.** The loaders merge
-  `def.config` with the stored config using `deepmerge-ts`'s default behaviour,
-  where arrays concatenate, so a non-empty default array is prepended to the
-  stored one every time `getConfig()` runs. This fork writes app config with
-  `mergeArrays: false` (`src/config/index.ts`), but plugin `getConfig` does not.
-  The synced-lyrics plugin avoids a default for `providerPriority` for exactly
-  this reason and names the absent value in a comment. Omit user-editable array
-  defaults. The full write/read semantics are in
-  [Modifying plugins](./modifying.md#config-semantics).
-- **Old ids were renamed.** Porting from an older commit that still uses
-  `adblocker`, `lyrics-genius`, `lastfm` or `hide-video-player` creates a second
-  plugin and orphaned config. Check the migrations in `src/config/store.ts`
-  before choosing an id.
-- **Listener leaks across enable/disable.** Disabling a plugin calls `stop`; if
-  `stop` does not remove every listener and observer, re-enabling stacks another
-  copy. `forceLoadRendererPlugin` guards against loading twice, not against
-  duplicate listeners inside the plugin.
-- **Global `removeAllListeners`.** It removes the app's and other plugins'
-  listeners on that channel. Use `off`.
-- **`restartNeeded` is not "reload on save".** Nothing is reloaded for you;
-  main shows the restart dialog and the user restarts. Do not write code that
-  depends on a live reload of a startup-time value.
-- **Stale translation keys.** A renamed option leaves both keys; a deleted
-  option leaves a key. Grep `plugins.<id>` in `en.json` against the schema.
-- **Stylesheet strings.** `stylesheets` takes CSS text, not file paths. Import
-  the file with `?inline` (`import style from './style.css?inline'`) as the
-  existing plugins do. The renderer adopts each plugin's sheets and removes them
-  on unload; main-process plugins do not get this treatment, and the sheets only
-  load if the plugin has a `renderer` half (an empty object is enough).
-- **Imports are not rewritten.** The stub transform edits the definition, not the
-  import list. A backend-half plugin whose entry module imports renderer-only
-  code still bundles and evaluates that code in main; keep process-specific code
-  in separate modules referenced from the half that needs it.
-- **Platform detection is static.** `platform` is turned into the bitmask at
-  build time, so it cannot depend on runtime information. If it is not readable,
-  the plugin is considered for every platform and filtered after import.
-- **`config.enabled` defaults to false.** Upstream plugins that ship enabled by
-  default declare `enabled: true`; an omitted `config` means disabled, and an
-  omitted `enabled` in an inline config means disabled too.
+1. Create the workspace package and move the entry to `plugins/<id>/index.ts`.
+2. Convert the definition to `definePlugin`, with an explicit id and plain strings.
+3. Convert settings to a `config` schema; move buttons to `actions` and host commands.
+4. Split behavior into `host` and `page`; move Electron, Node and filesystem code to `host`.
+5. Replace app internals and IPC with SDK APIs and `ctx` members.
+6. Replace class selectors with names from `packages/sdk/src/selectors.ts`, adding missing names there.
+7. Move timers, listeners, observers and styles to `ctx`; return cleanups or use `ctx.onCleanup`.
+8. Mark `restartRequired` for global patches; move early page patches to `runAt: "start"`.
+9. Convert visible strings to schema texts and `ctx.t`, then run `nub run i18n`.
+10. Add Vitest tests and an e2e test when the behavior is observable in the app.
+11. Run `nub run typecheck`, `nub run lint`, `nub run format` and `nub run test`.

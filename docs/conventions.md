@@ -2,8 +2,7 @@
 
 ## Commit messages
 
-The history follows [Conventional Commits](https://www.conventionalcommits.org/).
-New commits should keep doing so, because the changelog is generated from commit subjects.
+The history follows [Conventional Commits](https://www.conventionalcommits.org/). Keep doing so, because the changelog is generated from commit subjects.
 
 ```
 <type>(<optional scope>): <subject>
@@ -14,115 +13,126 @@ New commits should keep doing so, because the changelog is generated from commit
 ```
 
 - `type` is one of `feat`, `fix`, `perf`, `refactor`, `test`, `docs`, `style`, `build`, `ci`, `chore`, `revert`.
-- `scope` is the plugin id or the subsystem (e.g. `fix(synced-lyrics)`)
-- The subject is imperative and does not end with a period: `add plugin that skips explicit songs`, not `Added plugin`.
-- The body explains the problem and the chosen fix. Bullet lists are common and welcome when a change has several parts.
-- Trailers go either in a parantheses `fix: something something (#123)` (only referencing), or after a blank line: `Closes #123`, `ref: #123`, etc. When utilizing an AI agent, please mention it either via `Co-authored-by:` or `Assisted-by:` (e.g. `Co-authored-by: Claude Opus 5.5 <noreply@anthropic.com>`, `Assisted-by: MiMo V2.6 Pro`)
-- One logical change per commit. Do not mix a refactor, a dependency bump and a feature. Formatting-only changes are usually separate (`style:`/`chore:`).
+- `scope` is the plugin id or the subsystem, for example `fix(synced-lyrics)` or `feat(settings-ui)`.
+- The subject is imperative and has no trailing period: `add plugin that skips explicit songs`, not `Added plugin`.
+- The body explains the problem and the chosen fix.
+- Trailers go inline as `fix: something (#123)` for references, or after a blank line: `Closes #123`. When an AI agent contributed, say so with `Co-authored-by:` or `Assisted-by:`.
+- One logical change per commit. Do not mix a refactor, a dependency bump and a feature.
 - Upstream work is merged with merge commits so provenance and credits are preserved.
+- Work-in-progress commits (`wip(scope): ...`) are fine on topic branches, not on `master`.
 
-Work-in-progress commits (`wip(scope): ...`) exist on topic branches. They are fine while iterating, but refrain from overusing them.
+## Repository layout
+
+- The app is `apps/desktop`; shared code is `packages/*`; plugins are `plugins/*`; scripts are `scripts/`.
+- A plugin is one workspace package. Its folder, its `id`, its package name suffix and its translation key prefix all use the same lower-case kebab-case id: `plugins/synced-lyrics/index.ts` has id `synced-lyrics`, package `@pear/plugin-synced-lyrics` and keys under `plugins.synced-lyrics.*`.
+- Shared code belongs in an existing `packages` module. Do not import app code from a plugin: plugins may import `@pear/sdk` subpaths and their own files.
+- App-wide types live in the package that owns them. The bridge protocol is `packages/sdk/src/protocol.ts`.
+- New plugin entries are scaffolded with `nub scripts/new-plugin.ts <id>`; see [Creating a plugin](./plugins/creating.md#step-1-scaffold-the-plugin).
+- Do not add a second convention beside an existing one. Reuse the field builders, the selector registry, the DOM helpers and the settings components.
+
+## TypeScript and code style
+
+Formatting is oxfmt and linting is oxlint with type-aware rules. Both cover `apps`, `packages`, `plugins`, `src` and `scripts`:
+
+```bash
+nub run format        # write
+nub run format:check  # verify
+nub run lint          # oxlint --type-aware apps packages plugins src
+nub run typecheck     # tsc in every workspace package that has a typecheck script
+```
+
+There is no combined `check` script; run the three commands. CI runs oxlint through reviewdog and the release workflows run no tests, so run them locally.
+
+Other conventions:
+
+- `tsconfig.base.json` enables `strict`, `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`, `verbatimModuleSyntax` and `allowImportingTsExtensions`. Imports carry `.ts`/`.tsx` extensions inside source.
+- JSX defaults to Preact in `packages/ui` and the UI components. Files with `/** @jsxImportSource @pear/sdk */` use the SDK's DOM runtime for page elements.
+- Config fields are declared with the builders in `packages/sdk/src/config.ts`; never hand-write a settings schema.
+- YTM selectors are names from `packages/sdk/src/selectors.ts`, used through `ctx.$`, `ctx.sel` or the `sel()` CSS macro. Do not put YTM class names in plugin code.
+- Comments explain why, not what. Non-obvious timing constraints, workarounds and rejected alternatives get a short comment.
+- Prefer named exports. Plugin entry points default-export `definePlugin({...})`.
+- No hard-wrapped prose in docs: one paragraph per line. Markdown tables and code blocks may use lines.
 
 ## User-facing text and translations
 
-**Any string a normal user can see in-app must come from the translation files.** A feature that surfaces text without an English entry is incomplete, even if it works.
+Any string a user can see must come from the translation files. A feature that shows text without an English entry is incomplete even if it works.
 
-- Use `t` from `@/i18n`. Do not hardcode language strings in your work.
-- Add the English string to `src/i18n/resources/en.json`. English is the required baseline; translations in other locales are optional and are normally supplied later either through Weblate, LLM generations, or future PRs/commits
-- Labels and descriptions are passed as functions (`() => t(...)`), not computed strings, because the language can change at runtime without a reload.
-
-```ts
-name: () => t('plugins.my-plugin.name'),
-description: () => t('plugins.my-plugin.description'),
-```
-
-Key layout:
-
-| Prefix                      | Used for                                                   |
-| --------------------------- | ---------------------------------------------------------- |
-| `plugins.<id>.*`            | A plugin's name, description, menu and settings strings    |
-| `settings-ui.*`             | The settings UI plugin itself (top-level, not under `plugins`) |
-| `main.*`                    | Main-process strings: dialogs, native menu, tray, console  |
-| `common.*`                  | Shared strings such as plugin-loader console messages      |
-| `language.*`                | The locale metadata block (`code`, `name`, `local-name`)   |
-
-- Leaf keys are lower-case kebab-case: `show-button`, `smoothness-transition`.
-- Interpolate with i18next syntax: `t('...', { pluginName: id })` against `"Failed to load plugin \"{{pluginName}}\""`. There are currently no plural forms in the resources. (TODO)
-- Console messages that describe app state are sometimes translated too (`common.console.plugins.*`). They're not a requirement though.
-- Do not rename or delete a key that code still references. When an option is removed, remove its key in the same change.
-- Every language resource carries the metadata block, so the language menus can render without loading the file's translations:
+- In plugins, use `ctx.t(key, english, vars)`. The English text is the fallback and the source for `src/i18n/resources/en.json`. Never hardcode visible text.
+- Plugin names, descriptions, config labels, descriptions, placeholders, options and action labels are translated by the settings catalog automatically. They are written as plain strings in the schema; do not call `t` there.
+- The settings dialog's own strings live in `packages/ui/src/strings.ts` and use the `settings-ui.*` namespace.
+- Core settings field keys are `settings-ui.core.<field>.label` and `.description`; plugin field keys are `plugins.<id>.settings.<field>.label`, `.description`, `.placeholder` and `.options.<value>`. Group headings are `settings-ui.groups.<slug>`. The generator is `fieldKey()` and `groupKey()` in `packages/sdk/src/i18n.ts`.
+- Run `nub run i18n` after adding text. It reads plugin schemas, core sections, `packages/ui/src/strings.ts` and literal `t("key", "English")` calls, and appends missing keys to `src/i18n/resources/en.json`. Existing keys are never changed.
+- `nub run i18n --check` reports missing keys without writing and exits non-zero.
+- Leaf keys are lower-case kebab-case: `show-button`, `smoothness-transition`. Interpolate with `{{name}}` placeholders.
+- Do not rename or delete a key that code still references. When removing an option, remove its key in the same change.
+- Every resource starts with its metadata block, so the language picker can render without loading translations:
 
 ```json
 "language": { "code": "en", "local-name": "English", "name": "English" }
 ```
 
-- When adding a new language, you should also verify it's existence in youtube's own i18n. Update `src/providers/language-sync.ts` accordingly.
+- Keep the trademarked service name out of source strings: write "YTM" in prose and use `YTM_NAME` or `ytmUrl` from `@pear/sdk/util`. `scripts/escape-names.ts` enforces this in CI and in the pre-commit hook.
 
-## TypeScript and code style
+## Changing an app option
 
-Formatting is [oxfmt](https://oxc.rs/), linting is oxlint with type-aware rules, and both run over `src/` only:
+A core option is complete when all of these agree:
 
-```bash
-pnpm format        # write
-pnpm format:check  # verify
-pnpm lint          # oxlint --type-aware src
-pnpm typecheck     # tsc --noEmit
-pnpm check         # lint + format:check + typecheck
-```
+1. `packages/sdk/src/core-config.ts`: the field, its default, group, platforms and `restart` flag.
+2. The code that applies it: `apps/desktop/src/main/core-options.ts` for live window behavior, or the page runtime for page behavior.
+3. `apps/desktop/src/main/migrations/index.ts` or `migrations/plugins.ts`: a migration when a stored key is renamed, moved or reshaped.
+4. `src/i18n/resources/en.json` through `nub run i18n`.
+5. A test in `apps/desktop/test/` for parsing, defaults or migration behavior.
 
-Other naming and layout conventions:
+The settings UI, the API server options and the translation keys of fields are generated from the schema, so no separate UI file is needed. The native menu only carries options it explicitly lists (`apps/desktop/src/main/menu.ts`).
 
-- Plugin ids and plugin folders are lower-case kebab-case and match: `src/plugins/synced-lyrics/` has id `synced-lyrics` and config under `plugins.synced-lyrics`.
-- Reactivity-free UI helpers stay `.ts`; Solid components are `.tsx` and PascalCase (`SettingsModal.tsx`).
-- App-wide types live in `src/types/`; a plugin's own config/type aliases live either in its `types.ts` or in its `index.ts` when small.
-- IPC channels are namespaced strings: `peard:<kebab-case>` for the app. Plugins should preferably use `peard-<plugin-slug>:<kebab-case>`.
-- Comments explain *why*, not *what*. Non-obvious workarounds, timing constraints and rejected alternatives get a short comment; trivial code does not. JSDoc exported functions whose contract is not obvious.
-- Keep the public surface of a module explicit; prefer named exports except for plugin entry points, which export a default `createPlugin({...})`.
+## Changing a plugin
 
-When changing an app-level option rather than a plugin option, the change is only complete when all of these agree:
-
-1. `src/config/defaults.ts` - the default and its type.
-2. `src/plugins/settings-ui/schema/app-settings.ts` - the in-app control.
-3. `src/menu.ts` - the native menu entry, if the option has one.
-4. `src/providers/option-effects.ts` - side effects that must happen immediately.
-5. `src/preload.ts` - `rendererConfigKeys`, if the renderer reads the value.
-6. A migration in `src/config/store.ts` - if a stored key is renamed or removed.
+- Add fields to the plugin's `config` schema; do not add a parallel settings schema.
+- Add host commands for work the page asks for, and `actions` for buttons in settings.
+- Expose other-app functionality through `host.rpc` with a valibot input schema.
+- Register every listener, timer, observer, style and DOM mount through `ctx`, so stopping the plugin undoes it. Use `ctx.onCleanup` for anything else.
+- If a change cannot be undone (replacing page globals, adding window options), set `restartRequired` and make the page part tolerate the old state until the next load.
+- Update `plugins/<id>/test/` and, for user-visible changes, the keys in `en.json`.
+- If the stored shape changes, add a migration entry in `apps/desktop/src/main/migrations/plugins.ts` and a case in `apps/desktop/test/plugin-migrations.test.ts`.
 
 ## Tests
 
-The test runner is Playwright's (`@playwright/test`). Most tests are plain Node tests that never open a window; three tests drive the real app with `_electron.launch`: `tests/index.test.js`, `tests/do-not-track.test.js` and `tests/ipc-subscription.test.js`. `tests/index.test.js` loads the live `music.youtube.com` page, so it needs network access and a build that runs. Run them with:
+The unit runner is Vitest; the app-level runner is Playwright.
 
 ```bash
-pnpm test          # playwright test
-pnpm test:debug    # same, with Playwright protocol debugging
+nub run test          # vitest in every workspace package with a test script
+nub run test:e2e      # electron-vite build, then playwright test
 ```
 
-- Cross-cutting tests live in `tests/`. Plugin internals live next to the plugin: `src/plugins/<id>/tests/` or a `*.test.ts` beside the module under test. `tsconfig.test.json` covers `tests/**`, while `tsconfig.json` includes `src/**`, so both locations are type-checked.
-- Test behavior, not implementation.
-- Prefer pure functions and dependency-free modules so a test needs no Electron process. When a module imports Electron, the common move is to extract the pure part (see `src/config/migrations.ts` vs `src/config/store.ts`).
-- Filesystem tests create their own temporary directories instead of touching the real config/themes folders (see `tests/themes-load.test.ts`).
-- A bug fix should ship with a regression test when the bug is reachable from a pure unit. UI/Electron-only behavior is manually verified.
-- Tests must be deterministic: no real network, no sleeps racing the app, no dependence on the developer's config.
+- Vitest tests live in `test/` beside the code: `packages/sdk/test`, `packages/vite-plugin-pear/test`, `apps/desktop/test`, `plugins/<id>/test`. The desktop include pattern is `test/**/*.test.ts`.
+- Playwright tests live in `apps/desktop/e2e/` and use the fixtures in `e2e/fixtures.ts`. They launch the real built app with a temporary profile, and most use `playTestTrack()` and the real YTM. They need network access and a build.
+- The e2e suite opens its windows on Xvfb when it is installed on Linux; `PEAR_E2E_SHOW=1` shows them on the desktop instead. CI runs one worker.
+- Never sign in to Google in a test; Google then blocks the network for a while.
+- Test behavior, not implementation. Prefer pure modules so a test needs no Electron process.
+- Filesystem tests create their own temporary directories and never touch the real config or theme folders.
+- A bug fix ships with a regression test when the bug is reachable from a unit. UI and Electron-only behavior is verified in e2e or manually.
+- Tests must be deterministic: no real network outside e2e, no sleeps racing the app, no dependence on the developer's profile.
 
 ## Documentation
 
-- New documentation belongs in `docs/`.
-- Root `README.md` is user-facing and maintained separately.
-- Documents describe the current code. When a change invalidates a page, update the page in the same change; when in doubt, prefer linking to the code path over restating it.
-- Code examples in docs must be valid for this fork's APIs, not upstream's. See [Porting from upstream](./plugins/porting-from-upstream.md) for the places the APIs differ.
+- New documentation belongs in `docs/`. Keep the map in `docs/index.md` current.
+- The root `README.md` is user-facing and separate from this set.
+- Documents describe the current code. When a change invalidates a page, update it in the same change.
+- Code examples must be valid for this tree: `@pear/sdk`, `definePlugin`, `ctx`, Nub. See [Porting from upstream](./plugins/porting-from-upstream.md) for the differences from pear-desktop 3.x.
 
-## Releases, versioning and CI
+## Releases and CI
 
-- `package.json` holds the release version. It is bumped by hand at the start of a cycle, not in every feature PR.
-- Every push to `master` builds a beta; CI stamps `<version>-beta.<run_number>` before building, so all platform artifacts agree on one version. Beta builds publish to the rolling `beta` pre-release.
-- The stable release is a manual `Release Pear Desktop` workflow run: it builds with `PEAR_CHANNEL=stable`, attaches the installers and the `latest*.yml` updater metadata to a `v<version>` release with `gh`, then generates `changelog.md` with `pnpm changelog` and commits it.
-- Builds are produced by `electron-vite` (`pnpm build`); packaging is `electron-builder` via the `dist:*`, `beta:*` and `release:*` scripts. Every script passes `-p never`, so electron-builder only writes into `pack/`; the workflows own the GitHub release.
-- The baked channel (`__PEAR_CHANNEL__`) and commit (`__PEAR_COMMIT__`) feed the About window and update logic (`src/app-info.ts`). Dev builds do not update.
-- Commit subjects are user-visible through the generated changelog. Write them as release notes.
+- `apps/desktop/package.json` holds the release version; the root `package.json` mirrors it for `auto-changelog`. Bump both by hand at the start of a cycle, not in every feature pull request.
+- Every push to `master` runs `.github/workflows/build.yml`. It stamps `<version>-beta.<run_number>` into `apps/desktop/package.json` on each runner, builds with `PEAR_CHANNEL=beta` and `PEAR_COMMIT`, and the `publish-beta` job replaces the rolling prerelease with the new installers and `beta*.yml` metadata.
+- The stable release is a manual `Release Pear Desktop` run (`.github/workflows/release.yml`) on `master`. It builds with `PEAR_CHANNEL=stable` and the unchanged package version, publishes the installers and `latest*.yml` to a `v<version>` release, generates `changelog.md` with `nub run changelog`, and commits it. An existing tag skips publishing.
+- `pr-build-artifacts.yml` builds Linux, macOS and Windows installers for same-repository pull requests by users with write access, keeps them for seven days, and comments the run link.
+- Packaging is electron-builder through the `dist:*`, `beta:*` and `release:*` scripts. Every script passes `-p never`, so electron-builder writes to `pack/` and never uploads; the workflows own the GitHub release.
+- Linux packaging uses Flatpak runtime and base `26.08`, and the CI setup installs those runtimes for x86_64 and aarch64 before `nub run beta:linux` or `nub run release:linux`.
+- The baked `__PEAR_CHANNEL__` and `__PEAR_COMMIT__` feed the About window and the update check (`apps/desktop/src/main/app-info.ts`, `updates.ts`). `general.updateChannel` selects stable or beta; a beta build starts on beta until the user chooses. `UpdateManager` asks GitHub shortly after startup and every six hours while **Check for updates** is on, rechecks when the channel changes, and its dialog opens the release page or turns checks off. A beta build switching to stable asks before downgrading.
+- Commit subjects are user-visible through the changelog. Write them as release notes.
 
 ## Repository hygiene
 
-- Dependencies are managed with pnpm (`pnpm-lock.yaml`, `pnpm-workspace.yaml`). Do not hand-edit the lockfile.
-- `patches/` holds pnpm patches for packages that need local fixes. A patch is referenced from `pnpm-workspace.yaml`.
-- Never commit secrets, build output or local state.
-- Do not reformat unrelated files in a focused change. `pnpm format` formats all of `src/`; run it before committing so the diff stays intentional.
+- Dependencies are managed with Nub (`nub.lock` and the `workspaces`, `overrides` and `allowScripts` fields in the root `package.json`). Do not hand-edit the lockfile.
+- Never commit secrets, build output (`out/`, `pack/`) or local state.
+- Do not reformat unrelated files in a focused change. Run `nub run format` before committing so the diff stays intentional.

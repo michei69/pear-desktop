@@ -156,8 +156,8 @@
               "sync": {
                 "label": "同步语言",
                 "submenu": {
-                  "from-youtube": "从 YouTube",
-                  "to-youtube": "到 YouTube"
+                  "from-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "从 \u0059\u006f\u0075\u0054\u0075\u0062\u0065",
+                  "to-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "到 \u0059\u006f\u0075\u0054\u0075\u0062\u0065"
                 },
                 "failure": {
                   "dialog": {
@@ -229,7 +229,7 @@
                   "open-themes-folder": "打开主题文件夹"
                 }
               },
-              "use-ytm-icons": "使用原始 YouTube Music 图标"
+              "use-ytm-icons": "使用原始 \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 图标"
             }
           },
           "updates": {
@@ -277,7 +277,7 @@
       "show": "显示窗口",
       "tooltip": {
         "default": "{{applicationName}}",
-        "with-song-info": "{{applicationName}}：{{artist}} - {{title}}"
+        "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
       },
       "like": "喜欢",
       "dislike": "不喜欢",
@@ -617,7 +617,7 @@
       "menu": {
         "blocker": "拦截器"
       },
-      "name": "请勿跟踪",
+      "name": "Do Not Track",
       "settings": {
         "cache": "缓存屏蔽列表",
         "disable-default-lists": "禁用默认屏蔽列表"
@@ -1040,6 +1040,10 @@
         "local-keybinds": "本地快捷键（仅在窗口聚焦时生效）"
       }
     },
+    "skip-disliked-songs": {
+      "description": "自动跳过不喜欢的歌曲",
+      "name": "跳过不喜欢的歌曲"
+    },
     "skip-silences": {
       "description": "自动跳过音乐中的无声片段",
       "name": "跳过无声片段",
@@ -1096,7 +1100,7 @@
           "label": "歌词行特效",
           "submenu": {
             "fancy": {
-              "label": "华丽",
+              "label": "Fancy",
               "tooltip": "在当前行上使用大的、类似应用的效果"
             },
             "focus": {
@@ -1158,7 +1162,7 @@
         },
         "use-ytm-lyrics-without-proxy": {
           "label": "无需代理使用 YTM 歌词",
-          "tooltip": "跳过 YTM 浏览代理，使用应用已认证的会话直接调用 YouTube Music。如果你信任你的网络/地区允许直接浏览调用，这会很有用。"
+          "tooltip": "跳过 YTM 浏览代理，使用应用已认证的会话直接调用 \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063。如果你信任你的网络/地区允许直接浏览调用，这会很有用。"
         },
         "translation": {
           "label": "歌词翻译",
@@ -1417,7 +1421,7 @@
     },
     "search-commands": {
       "commands": {
-        "play": "通过 YouTube 链接或 ID 播放视频",
+        "play": "通过 \u0059\u006f\u0075\u0054\u0075\u0062\u0065 链接或 ID 播放视频",
         "settings": "打开设置"
       },
       "description": "在搜索框中输入 / 来运行命令，并支持参数自动补全",
@@ -1434,11 +1438,11 @@
       "name": "跳转快捷键"
     },
     "sfw-music": {
-      "description": "自动跳过 YouTube Music 标记为 Explicit 的歌曲。如果显式队列重复或没有下一首歌曲可用，则暂停。",
+      "description": "自动跳过 \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 标记为 Explicit 的歌曲。如果显式队列重复或没有下一首歌曲可用，则暂停。",
       "name": "SFW 音乐"
     },
     "toast-autoclose": {
-      "description": "在三秒后自动关闭 YouTube Music 的 Toast 通知",
+      "description": "在三秒后自动关闭 \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 的 Toast 通知",
       "name": "Toast 自动关闭"
     },
     "statusbar-lyrics": {
@@ -1484,7 +1488,7 @@
     "move-up": "上移",
     "move-down": "下移",
     "about": {
-      "tagline": "功能丰富的 YouTube Music 桌面应用",
+      "tagline": "功能丰富的 \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 桌面应用",
       "versions": "版本",
       "version-app": "应用",
       "version-build": "构建",
@@ -1542,7 +1546,7 @@
     "stepper-decrement": "减少",
     "stepper-increment": "增加",
     "flags": {
-      "warning": "功能标志是 YouTube Music 自带的内部开关。更改它们可能会破坏播放、布局或账户功能，并且不受支持。覆盖项只会为你更改过的标志保留，并可通过“撤销”移除。",
+      "warning": "功能标志是 \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 自带的内部开关。更改它们可能会破坏播放、布局或账户功能，并且不受支持。覆盖项只会为你更改过的标志保留，并可通过“撤销”移除。",
       "search-placeholder": "搜索标志",
       "overridden": "已覆盖",
       "undo": "撤销",

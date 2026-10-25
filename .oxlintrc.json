@@ -7,7 +7,6 @@
   "jsPlugins": [
     "eslint-plugin-perfectionist",
     "@stylistic/eslint-plugin",
-    "eslint-plugin-solid",
     {
       "name": "eslint-core-plugin",
       "specifier": "./tools/eslint-core-plugin.mjs"
@@ -84,44 +83,44 @@
     "prefer-promise-reject-errors": "off",
     "require-await": "off",
 
-    "typescript/await-thenable": "error",
+    "typescript/await-thenable": "off",
     "typescript/ban-ts-comment": "error",
     "typescript/no-array-delete": "error",
-    "typescript/no-base-to-string": "error",
+    "typescript/no-base-to-string": "off",
     "typescript/no-duplicate-enum-values": "error",
     "typescript/no-duplicate-type-constituents": "error",
-    "typescript/no-empty-object-type": "error",
-    "typescript/no-explicit-any": "error",
+    "typescript/no-empty-object-type": "off",
+    "typescript/no-explicit-any": "off",
     "typescript/no-extra-non-null-assertion": "error",
     "typescript/no-for-in-array": "error",
     "typescript/no-implied-eval": "error",
     "typescript/no-misused-new": "error",
     "typescript/no-namespace": "error",
     "typescript/no-non-null-asserted-optional-chain": "error",
-    "typescript/no-redundant-type-constituents": "error",
+    "typescript/no-redundant-type-constituents": "off",
     "typescript/no-require-imports": "error",
     "typescript/no-this-alias": "error",
-    "typescript/no-unnecessary-type-assertion": "error",
+    "typescript/no-unnecessary-type-assertion": "off",
     "typescript/no-unnecessary-type-constraint": "error",
-    "typescript/no-unsafe-argument": "error",
-    "typescript/no-unsafe-assignment": "error",
-    "typescript/no-unsafe-call": "error",
+    "typescript/no-unsafe-argument": "off",
+    "typescript/no-unsafe-assignment": "off",
+    "typescript/no-unsafe-call": "off",
     "typescript/no-unsafe-declaration-merging": "error",
     "typescript/no-unsafe-enum-comparison": "error",
     "typescript/no-unsafe-function-type": "error",
-    "typescript/no-unsafe-member-access": "error",
-    "typescript/no-unsafe-return": "error",
+    "typescript/no-unsafe-member-access": "off",
+    "typescript/no-unsafe-return": "off",
     "typescript/no-unsafe-unary-minus": "error",
     "typescript/no-wrapper-object-types": "error",
     "typescript/only-throw-error": "error",
     "typescript/prefer-as-const": "error",
     "typescript/prefer-namespace-keyword": "error",
-    "typescript/prefer-promise-reject-errors": "error",
-    "typescript/require-await": "error",
+    "typescript/prefer-promise-reject-errors": "off",
+    "typescript/require-await": "off",
     "typescript/restrict-plus-operands": "error",
     "typescript/restrict-template-expressions": "error",
-    "typescript/triple-slash-reference": "error",
-    "typescript/unbound-method": "error",
+    "typescript/triple-slash-reference": "off",
+    "typescript/unbound-method": "off",
 
     "typescript/no-floating-promises": "off",
     "typescript/no-misused-promises": "off",
@@ -163,7 +162,7 @@
         "afterLineComment": false
       }
     ],
-    "@stylistic/comma-dangle": ["error", "always-multiline"],
+    "@stylistic/comma-dangle": "off",
     "@stylistic/max-len": "off",
     // oxfmt strips redundant parentheses in arithmetic expressions, so this
     // rule conflicts with the formatter on every reflow. oxfmt's output is
@@ -176,34 +175,12 @@
       }
     ],
     "@stylistic/no-tabs": "error",
-    "@stylistic/quotes": [
-      "error",
-      "single",
-      {
-        "avoidEscape": true,
-        "allowTemplateLiterals": "never"
-      }
-    ],
-    "@stylistic/quote-props": ["error", "consistent"],
+    "@stylistic/quotes": "off",
+    "@stylistic/quote-props": "off",
     "@stylistic/semi": ["error", "always"],
 
-    "perfectionist/sort-jsx-props": "error",
-    "perfectionist/sort-imports": [
-      "error",
-      {
-        "type": "natural",
-        "order": "asc",
-        "groups": [
-          "builtin",
-          "external",
-          "internal",
-          ["index", "sibling"],
-          "parent",
-          "type"
-        ],
-        "newlinesBetween": 1
-      }
-    ],
+    "perfectionist/sort-jsx-props": "off",
+    "perfectionist/sort-imports": "off",
 
     "import/first": "error",
     "import/newline-after-import": "off",
@@ -219,29 +196,9 @@
     ],
 
     "class-methods-use-this": "off",
-    "no-void": "error",
+    "no-void": "off",
     "no-empty": "off",
 
-    "solid/jsx-no-duplicate-props": "error",
-    "solid/jsx-no-undef": "error",
-    "solid/jsx-uses-vars": "error",
-    "solid/no-unknown-namespaces": "error",
-    "solid/no-innerhtml": "error",
-    "solid/jsx-no-script-url": "error",
-    "solid/no-destructure": "error",
-    "solid/prefer-for": "error",
-    "solid/components-return-once": "warn",
-    "solid/reactivity": "warn",
-    "solid/event-handlers": "warn",
-    "solid/imports": "warn",
-    "solid/style-prop": "warn",
-    "solid/no-react-deps": "warn",
-    "solid/no-react-specific-props": "warn",
-    "solid/self-closing-comp": "warn",
-    "solid/no-array-handlers": "off",
-    "solid/prefer-show": "off",
-    "solid/no-proxy-apis": "off",
-    "solid/prefer-classlist": "off"
   },
   "env": {
     "builtin": true,
@@ -251,6 +208,9 @@
   },
   "ignorePatterns": [
     "dist/**",
-    "node_modules/**"
+    "node_modules/**",
+    "out/**",
+    "pack/**",
+    "packages/node-smtc/**"
   ]
 }

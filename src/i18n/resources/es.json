@@ -72,7 +72,7 @@
         "buttons": {
           "disable": "Desactivar actualizaciones",
           "download": "Descargar",
-          "ok": "Aceptar"
+          "ok": "OK"
         },
         "detail": "Una nueva versión está disponible y puede descargarse en {{downloadLink}}",
         "message": "Hay una nueva versión disponible",
@@ -156,8 +156,8 @@
               "sync": {
                 "label": "Sincronizar idioma",
                 "submenu": {
-                  "from-youtube": "Desde YouTube",
-                  "to-youtube": "A YouTube"
+                  "from-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "Desde \u0059\u006f\u0075\u0054\u0075\u0062\u0065",
+                  "to-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "A \u0059\u006f\u0075\u0054\u0075\u0062\u0065"
                 },
                 "failure": {
                   "dialog": {
@@ -181,8 +181,8 @@
               "disabled": "Desactivado",
               "enabled-and-hide-app": "Habilitado y ocultar la aplicación",
               "enabled-and-show-app": "Habilitado y mostrar aplicación",
-              "move-to-current-desktop": "Mover al escritorio virtual actual al mostrar",
               "play-pause-on-click": "Reproducir/Pausar al hacer clic",
+              "move-to-current-desktop": "Mover al escritorio virtual actual al mostrar",
               "force-white-icons": "Forzar el uso de iconos blancos"
             }
           },
@@ -229,7 +229,7 @@
                   "open-themes-folder": "Abrir carpeta de temas"
                 }
               },
-              "use-ytm-icons": "Usar los iconos originales de YouTube Music"
+              "use-ytm-icons": "Usar los iconos originales de \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063"
             }
           },
           "updates": {
@@ -316,10 +316,6 @@
       },
       "name": "Tema de color del álbum"
     },
-    "audio-only": {
-      "description": "Fuerza el modo solo audio — bloquea todos los flujos de video a nivel de red y reproductor para ahorrar RAM y ancho de banda",
-      "name": "Solo Audio"
-    },
     "ambient-mode": {
       "description": "Aplica un efecto de iluminación mediante la proyección de colores suaves extraídos del vídeo sobre el fondo de pantalla",
       "menu": {
@@ -330,7 +326,7 @@
           }
         },
         "buffer": {
-          "label": "Búfer",
+          "label": "Buffer",
           "submenu": {
             "buffer": "{{buffer}}"
           }
@@ -526,7 +522,7 @@
       "menu": {
         "advanced": "Avanzado"
       },
-      "name": "Fundido cruzado [Beta]",
+      "name": "Crossfade [Beta]",
       "prompt": {
         "options": {
           "multi-input": {
@@ -601,7 +597,7 @@
           }
         }
       },
-      "name": "Presencia enriquecida de Discord",
+      "name": "Discord Rich Presence",
       "prompt": {
         "set-inactivity-timeout": {
           "label": "Introduzca el tiempo de inactividad en segundos:",
@@ -640,14 +636,14 @@
         "dialog": {
           "error": {
             "buttons": {
-              "ok": "Aceptar"
+              "ok": "OK"
             },
             "message": "¡Argh! Lo siento, la descarga falló…",
             "title": "¡Error en la descarga!"
           },
           "start-download-playlist": {
             "buttons": {
-              "ok": "Aceptar"
+              "ok": "OK"
             },
             "detail": "({{playlistSize}} canciones)",
             "message": "Descargando lista de reproducción {{playlistTitle}}",
@@ -861,9 +857,9 @@
           "label": "Ajustes interactivos",
           "submenu": {
             "hide-button-text": "Ocultar el texto del botón",
-            "hover-controls": "Mostrar mini-reproductor al pasar el cursor sobre la bandeja",
             "refresh-on-play-pause": "Actualizar al reproducir/pausar",
-            "tray-controls": "Abrir/Cerrar al hacer clic en la bandeja"
+            "tray-controls": "Abrir/Cerrar al hacer clic en la bandeja",
+            "hover-controls": "Mostrar mini-reproductor al pasar el cursor sobre la bandeja"
           }
         },
         "priority": "Prioridad de notificación",
@@ -875,19 +871,6 @@
     "performance-improvement": {
       "description": "Mejore el rendimiento habilitando scripts experimentales",
       "name": "Mejora del rendimiento [Beta]"
-    },
-    "playback-recovery": {
-      "description": "Se recupera automáticamente de estados de reproducción atascados, estancados o inactivos",
-      "menu": {
-        "log-to-console": "Registrar eventos de recuperación en la consola"
-      },
-      "name": "Recuperación de reproducción",
-      "settings": {
-        "stall-timeout": "Tiempo de espera por estancamiento",
-        "stall-timeout-description": "Cuánto tiempo puede transcurrir sin que la reproducción avance antes de intentar una recuperación",
-        "max-retries": "Reintentos máximos",
-        "max-retries-description": "Número de intentos de recuperación antes de pasar a la siguiente pista"
-      }
     },
     "picture-in-picture": {
       "description": "Permite cambiar la aplicación al modo picture-in-picture",
@@ -914,9 +897,9 @@
           }
         }
       },
-      "name": "Imagen en imagen",
+      "name": "Picture-in-picture",
       "templates": {
-        "button": "Imagen en imagen"
+        "button": "Picture-in-picture"
       }
     },
     "playback-speed": {
@@ -1057,6 +1040,10 @@
         "local-keybinds": "Atajos locales (solo mientras la ventana tiene el foco)"
       }
     },
+    "skip-disliked-songs": {
+      "description": "Omite las canciones que no le gustan",
+      "name": "Saltar canciones que no me gustan"
+    },
     "skip-silences": {
       "description": "Salta automáticamente las secciones silenciosas de las canciones",
       "name": "Saltar silencios",
@@ -1131,24 +1118,6 @@
           },
           "tooltip": "Elige el efecto que deseas aplicar a la línea actual"
         },
-        "lyrics-font-size": {
-          "label": "Tamaño de fuente de letras",
-          "submenu": {
-            "large": {
-              "label": "Grande",
-              "tooltip": "Usar el tamaño de letras original más grande"
-            },
-            "medium": {
-              "label": "Mediano",
-              "tooltip": "Usar un tamaño de letras equilibrado"
-            },
-            "small": {
-              "label": "Pequeño",
-              "tooltip": "Usar un tamaño de letras más compacto"
-            }
-          },
-          "tooltip": "Elige qué tan grande debe ser el texto de las letras"
-        },
         "precise-timing": {
           "label": "Haz que la letra esté perfectamente sincronizada",
           "tooltip": "Calcular al milisegundo la visualización de la siguiente línea (puede tener un pequeño impacto en el rendimiento)"
@@ -1172,6 +1141,24 @@
         "show-time-codes": {
           "label": "Visualización del código de tiempo",
           "tooltip": "Mostrar los códigos de tiempo junto a la letra"
+        },
+        "lyrics-font-size": {
+          "label": "Tamaño de fuente de letras",
+          "submenu": {
+            "large": {
+              "label": "Grande",
+              "tooltip": "Usar el tamaño de letras original más grande"
+            },
+            "medium": {
+              "label": "Mediano",
+              "tooltip": "Usar un tamaño de letras equilibrado"
+            },
+            "small": {
+              "label": "Pequeño",
+              "tooltip": "Usar un tamaño de letras más compacto"
+            }
+          },
+          "tooltip": "Elige qué tan grande debe ser el texto de las letras"
         },
         "translation": {
           "clear-cache": {
@@ -1286,7 +1273,7 @@
         },
         "use-ytm-lyrics-without-proxy": {
           "label": "Usar letras de YTM sin proxy",
-          "tooltip": "Omitir el proxy de navegación de YTM y llamar a YouTube Music directamente usando la sesión autenticada de la app. Útil si confías en tu red/región para permitir llamadas de navegación directas."
+          "tooltip": "Omitir el proxy de navegación de YTM y llamar a \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 directamente usando la sesión autenticada de la app. Útil si confías en tu red/región para permitir llamadas de navegación directas."
         },
         "show-custom-search-button": {
           "label": "Mostrar botón de búsqueda personalizado",
@@ -1442,6 +1429,23 @@
         "vertical-align": "Alineación vertical"
       }
     },
+    "audio-only": {
+      "description": "Fuerza el modo solo audio — bloquea todos los flujos de video a nivel de red y reproductor para ahorrar RAM y ancho de banda",
+      "name": "Solo Audio"
+    },
+    "playback-recovery": {
+      "description": "Se recupera automáticamente de estados de reproducción atascados, estancados o inactivos",
+      "menu": {
+        "log-to-console": "Registrar eventos de recuperación en la consola"
+      },
+      "name": "Recuperación de reproducción",
+      "settings": {
+        "stall-timeout": "Tiempo de espera por estancamiento",
+        "stall-timeout-description": "Cuánto tiempo puede transcurrir sin que la reproducción avance antes de intentar una recuperación",
+        "max-retries": "Reintentos máximos",
+        "max-retries-description": "Número de intentos de recuperación antes de pasar a la siguiente pista"
+      }
+    },
     "playlist-search": {
       "description": "Agrega un campo de búsqueda para filtrar listas de reproducción en la barra lateral y en el diálogo Agregar a lista de reproducción",
       "name": "Búsqueda de listas de reproducción",
@@ -1464,7 +1468,7 @@
     },
     "search-commands": {
       "commands": {
-        "play": "Reproduce un vídeo desde un enlace o ID de YouTube",
+        "play": "Reproduce un vídeo desde un enlace o ID de \u0059\u006f\u0075\u0054\u0075\u0062\u0065",
         "settings": "Abre los ajustes"
       },
       "description": "Escribe / en el cuadro de búsqueda para ejecutar comandos, con autocompletado para sus argumentos",
@@ -1481,11 +1485,11 @@
       "name": "Atajos de desplazamiento"
     },
     "sfw-music": {
-      "description": "Omite automáticamente las canciones marcadas como explícitas por YouTube Music. Se pausa si una cola explícita se repite o no hay una siguiente canción disponible.",
+      "description": "Omite automáticamente las canciones marcadas como explícitas por \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063. Se pausa si una cola explícita se repite o no hay una siguiente canción disponible.",
       "name": "Música SFW"
     },
     "toast-autoclose": {
-      "description": "Cierra automáticamente los avisos de YouTube Music después de tres segundos",
+      "description": "Cierra automáticamente los avisos de \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 después de tres segundos",
       "name": "Cierre automático de avisos"
     },
     "statusbar-lyrics": {
@@ -1531,7 +1535,7 @@
     "move-up": "Subir",
     "move-down": "Bajar",
     "about": {
-      "tagline": "Una aplicación de escritorio con muchas funciones para YouTube Music",
+      "tagline": "Una aplicación de escritorio con muchas funciones para \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063",
       "versions": "Versiones",
       "version-app": "Aplicación",
       "version-build": "Compilación",
@@ -1589,7 +1593,7 @@
     "stepper-decrement": "Disminuir",
     "stepper-increment": "Aumentar",
     "flags": {
-      "warning": "Los flags de funciones son interruptores internos de YouTube Music. Cambiarlos puede romper la reproducción, el diseño o funciones de la cuenta, y no están cubiertos por el soporte. Los reemplazos solo se guardan para los flags que cambies y se pueden eliminar con Deshacer.",
+      "warning": "Los flags de funciones son interruptores internos de \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063. Cambiarlos puede romper la reproducción, el diseño o funciones de la cuenta, y no están cubiertos por el soporte. Los reemplazos solo se guardan para los flags que cambies y se pueden eliminar con Deshacer.",
       "search-placeholder": "Buscar flags",
       "overridden": "sobrescrito",
       "undo": "Deshacer",

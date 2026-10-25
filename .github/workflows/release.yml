@@ -5,7 +5,7 @@ on:
 
 env:
   NODE_VERSION: "24.x"
-  # Baked into the build and shown in the About window (src/app-info.ts).
+  # Baked into the build and shown in the About window (apps/desktop).
   PEAR_CHANNEL: stable
   PEAR_COMMIT: ${{ github.sha }}
 
@@ -27,36 +27,22 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320
-        with:
-          version: 11
-          run_install: false
-
-      - name: Setup NodeJS
-        if: startsWith(matrix.os, 'macos') != true
-        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'pnpm'
-
-      - name: Setup NodeJS for macOS
-        if: startsWith(matrix.os, 'macos')
-        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f
+      - name: Setup Nub
+        uses: nubjs/setup-nub@c7b970ec04655a2f0a111cd436cc182a3b660e7a
         with:
           node-version: ${{ env.NODE_VERSION }}
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: nub install --frozen-lockfile
 
       # The release:* scripts pass `-p never`: electron-builder writes the
       # installers and the latest*.yml updater metadata into pack/ but uploads
       # nothing. The publish job below attaches those files to the release.
-      # The version in package.json is shipped unchanged, unlike the beta build,
-      # which stamps `-beta.<run_number>` onto it.
+      # The version in apps/desktop/package.json is shipped unchanged, unlike the
+      # beta build, which stamps `-beta.<run_number>` onto it.
       - name: Build on Mac
         if: startsWith(matrix.os, 'macos')
-        run: pnpm release:mac
+        run: nub run release:mac
 
       - name: Build on Linux
         if: startsWith(matrix.os, 'ubuntu')
@@ -71,11 +57,11 @@ jobs:
           sudo flatpak install -y flathub org.freedesktop.Platform/aarch64/26.08
           sudo flatpak install -y flathub org.freedesktop.Sdk/aarch64/26.08
           sudo flatpak install -y flathub org.electronjs.Electron2.BaseApp/aarch64/26.08
-          pnpm release:linux
+          nub run release:linux
 
       - name: Build on Windows
         if: startsWith(matrix.os, 'windows')
-        run: pnpm release:win
+        run: nub run release:win
 
       - name: Upload macOS artifacts
         if: startsWith(matrix.os, 'macos')
@@ -131,20 +117,14 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320
-        with:
-          version: 11
-          run_install: false
-
-      - name: Setup NodeJS
-        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f
+      - name: Setup Nub
+        uses: nubjs/setup-nub@c7b970ec04655a2f0a111cd436cc182a3b660e7a
         with:
           node-version: ${{ env.NODE_VERSION }}
 
       - name: Get version
         run: |
-          VERSION=$(node -p "require('./package.json').version")
+          VERSION=$(node -p "require('./apps/desktop/package.json').version")
           echo "VERSION=$VERSION" >> $GITHUB_ENV
           echo "VERSION_TAG=v$VERSION" >> $GITHUB_ENV
           echo "CHANGELOG_ANCHOR=$(echo "v$VERSION" | sed -e 's/\.//g')" >> $GITHUB_ENV
@@ -199,11 +179,11 @@ jobs:
       - name: Update changelog
         if: ${{ env.VERSION_HASH == '' }}
         run: |
-          # No fetch of the tag created above: auto-changelog builds the top
-          # section from package.json's version and compares it to the latest
-          # stable tag. Fetching v<version> would add a second, empty heading
-          # for the same version and move the release-notes anchor to it.
-          pnpm changelog
+          # The root package.json version mirrors apps/desktop's release version so
+          # auto-changelog builds the top section from the same number. No fetch of
+          # the tag created above: auto-changelog compares against the latest stable
+          # tag, and fetching v<version> would add an empty duplicate heading.
+          nub run changelog
 
       - name: Commit changelog
         if: ${{ env.VERSION_HASH == '' }}

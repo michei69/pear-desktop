@@ -1,0 +1,552 @@
+// pear-desktop 3.12.4's config defaults, from its sources: src/config/defaults.ts
+// (the app options, the window keys and the last-page URL) and every plugin's
+// `config` defaults (`src/plugins/<id>/index.ts` and the types/config modules
+// it imports). The migration tests use this to check that the 3.12.4 fixture
+// sets every one of them to a non-default value, and that the 4.0.0 migration
+// accounts for each stored key.
+//
+// `null` stands for a key pear-desktop had no default for (undefined): the API
+// server's generated secret, the downloader's optional paths, the scrobbler
+// tokens, the precise-volume's saved volume, the optional app options, and
+// in-app-menu's platform-dependent `enabled`.
+
+/** The window state and last page, pear-desktop's other stored keys. */
+export const PEAR_DESKTOP_3_WINDOW_DEFAULTS: Record<string, unknown> = {
+  "window-size": { width: 1100, height: 550 },
+  "window-maximized": false,
+  "window-position": { x: -1, y: -1 },
+  url: "https://music.\u0079\u006f\u0075\u0074\u0075\u0062\u0065.com",
+};
+
+/** App options: pear-desktop's defaults object. */
+export const PEAR_DESKTOP_3_OPTION_DEFAULTS: Record<string, unknown> = {
+  "language": null,
+  "tray": false,
+  "appVisible": true,
+  "autoUpdates": true,
+  "updateChannel": "stable",
+  "alwaysOnTop": false,
+  "hideMenu": false,
+  "hideMenuWarned": false,
+  "startAtLogin": false,
+  "disableHardwareAcceleration": false,
+  "inProcessGpu": false,
+  "performanceMode": false,
+  "removeUpgradeButton": false,
+  "restartOnConfigChanges": false,
+  "trayClickPlayPause": false,
+  "trayMoveToCurrentDesktop": false,
+  "trayForceWhiteIcons": false,
+  "useYtmIcons": false,
+  "autoResetAppCache": false,
+  "forceSmtc": false,
+  "resumeOnStart": true,
+  "likeButtons": "",
+  "swapLikeButtonsOrder": false,
+  "hideDislikeButton": false,
+  "hideVideoCaptions": false,
+  "contextMenuHidden": {},
+  "proxy": "",
+  "startingPage": "",
+  "overrideUserAgent": false,
+  "usePodcastParticipantAsArtist": false,
+  "stripMusicFromSharedLinks": false,
+  "stripSIFromSharedLinks": true,
+  "theme": "",
+  "themePresets": {},
+  "themeOverrides": {},
+  "themeConsent": {},
+  "themesSeeded": false,
+  "featureFlags": {},
+  "customWindowTitle": null,
+  "themes": [],
+};
+
+/** Every plugin's config defaults, including `enabled`. */
+export const PEAR_DESKTOP_3_PLUGIN_DEFAULTS: Record<string, Record<string, unknown>> = {
+  "album-actions": {
+    "enabled": false,
+  },
+  "album-color-theme": {
+    "enabled": false,
+    "ratio": 0.5,
+    "enableSeekbar": true,
+  },
+  "always-show-volume-slider": {},
+  "ambient-mode": {
+    "enabled": false,
+    "quality": 50,
+    "buffer": 30,
+    "interpolationTime": 1500,
+    "blur": 100,
+    "size": 100,
+    "opacity": 1,
+    "fullscreen": false,
+    "extendSidebar": false,
+  },
+  "amuse": {
+    "enabled": false,
+  },
+  "api-server": {
+    "enabled": false,
+    "hostname": "127.0.0.1",
+    "port": 26538,
+    "authStrategy": "AUTH_AT_FIRST",
+    "secret": null,
+    "authorizedClients": [],
+    "useHttps": false,
+    "certPath": "",
+    "keyPath": "",
+    "mcpEnabled": false,
+  },
+  "audio-only": {
+    "enabled": false,
+  },
+  "auth-proxy-adapter": {
+    "enabled": false,
+    "hostname": "127.0.0.1",
+    "port": 4545,
+  },
+  "blur-nav-bar": {},
+  "captions-selector": {
+    "enabled": false,
+    "disableCaptions": false,
+    "autoload": false,
+    "lastCaptionsCode": "",
+  },
+  "clock": {
+    "enabled": false,
+    "displaySeconds": false,
+    "hour12": false,
+  },
+  "crossfade": {
+    "enabled": false,
+    "fadeInDuration": 5000,
+    "fadeOutDuration": 5000,
+    "secondsBeforeEnd": 10,
+    "fadeScaling": "equalPower",
+  },
+  "custom-output-device": {
+    "enabled": false,
+    "output": "default",
+    "devices": [],
+  },
+  "disable-autoplay": {
+    "enabled": false,
+    "applyOnce": false,
+  },
+  "discord": {
+    "enabled": false,
+    "autoReconnect": true,
+    "activityTimeoutEnabled": true,
+    "activityTimeoutTime": 600000,
+    "playOn\u0059\u006f\u0075\u0054\u0075\u0062\u0065\u004d\u0075\u0073\u0069\u0063": true,
+    "hideGitHubButton": false,
+    "hideDurationLeft": false,
+    "statusDisplayType": 2,
+  },
+  "dismiss-multidevice-popup": {},
+  "do-not-track": {
+    "enabled": true,
+    "cache": true,
+    "blocker": "Lite",
+    "additionalBlockLists": [],
+    "additionalBlockListRules": [],
+    "customEnabled": false,
+    "disabledLocalBlockLists": [],
+    "disableDefaultLists": false,
+  },
+  "downloader": {
+    "enabled": false,
+    "downloadFolder": null,
+    "downloadOnFinish": {
+      "enabled": false,
+      "seconds": 20,
+      "percent": 10,
+      "mode": "seconds",
+      "folder": null,
+    },
+    "selectedPreset": "mp3 (256kbps)",
+    "customPresetSetting": {
+      "extension": "mp3",
+      "ffmpegArgs": ["-b:a", "256k"],
+    },
+    "skipExisting": false,
+    "playlistMaxItems": null,
+  },
+  "equalizer": {
+    "enabled": false,
+    "bypass": false,
+    "outputGainDb": 0,
+    "filters": [],
+    "activePreset": "flat",
+    "recentPresets": [],
+    "userPresets": [],
+  },
+  "exponential-volume": {
+    "enabled": false,
+  },
+  "fullscreen-auto-hide": {
+    "enabled": false,
+  },
+  "in-app-menu": {
+    "enabled": null,
+    "hideDOMWindowControls": false,
+  },
+  "lumiastream": {
+    "enabled": false,
+  },
+  "memory-saver": {
+    "enabled": false,
+    "thresholdMB": 64,
+  },
+  "music-together": {
+    "enabled": false,
+  },
+  "navigation": {
+    "enabled": true,
+  },
+  "no-google-login": {
+    "enabled": false,
+  },
+  "notifications": {
+    "enabled": false,
+    "unpauseNotification": false,
+    "urgency": "normal",
+    "interactive": true,
+    "toastStyle": 1,
+    "refreshOnPlayPause": false,
+    "hideButtonText": false,
+    "hoverControls": true,
+  },
+  "performance-improvement": {
+    "enabled": false,
+  },
+  "picture-in-picture": {
+    "enabled": false,
+    "alwaysOnTop": true,
+    "savePosition": true,
+    "saveSize": false,
+    "hotkey": "P",
+    "pip-position": [10, 10],
+    "pip-size": [450, 275],
+    "isInPiP": false,
+    "useNativePiP": true,
+  },
+  "playback-recovery": {
+    "enabled": false,
+    "stallTimeoutMs": 8000,
+    "maxRetries": 5,
+    "logToConsole": true,
+  },
+  "playback-speed": {
+    "enabled": false,
+    "noPreservesPitch": false,
+  },
+  "playlist-search": {},
+  "precise-volume": {
+    "enabled": false,
+    "steps": 1,
+    "arrowsShortcut": true,
+    "globalShortcuts": {
+      "volumeUp": "",
+      "volumeDown": "",
+    },
+    "savedVolume": null,
+  },
+  "prefer-song": {
+    "enabled": false,
+  },
+  "quality-changer": {
+    "enabled": false,
+  },
+  "scrobbler": {
+    "enabled": false,
+    "scrobbleOtherMedia": true,
+    "alternativeTitles": true,
+    "alternativeArtist": true,
+    "useMusicBrainz": false,
+    "musicBrainzEmail": "",
+    "customRegexFilters": [
+      "\\s[([]Explicit[)\\]]",
+      "\\s[([]Clean[)\\]]",
+      "\\s[([]feat\\. [^)\\]]+[)\\]]",
+      "\\s[([]ft\\. [^)\\]]+[)\\]]",
+      "\\s-\\sLive(\\s.+)?$",
+      "\\s[([]Live[)\\]]$",
+      '\\s\\(Parody of ".*" by .*\\)$',
+      '\\s\\(Lyrical Adaption of ".*"\\)$',
+      "\\sRe-?issue$",
+      "\\s\\[.*?Re-?issue.*?\\]",
+      "\\s\\(.*?Re-?issue.*?\\)",
+      "Live\\s\\/\\sRemastered",
+      "\\s[([][^)\\]]*Re-?[Mm]aster(ed)?[^)\\]]*[)\\]]$",
+      "\\s-\\s\\d{4}(\\s-)?\\s.*Re-?[Mm]aster(ed)?.*$",
+      "\\s-\\sRe-?[Mm]aster(ed)?.*$",
+      "\\s\\[Remastered\\]\\s\\(Remastered\\sVersion\\)$",
+      "\\s[([]Album Version[)\\]]$",
+      "\\s[([]Re-?recorded[)\\]]$",
+      "\\s[([]Single Version[)\\]]$",
+      "\\s[([]Edit[)\\]]$",
+      "\\s-\\sMono Version$",
+      "\\s-\\sStereo Version$",
+      "\\s\\(Deluxe Edition\\)$",
+      "\\s[([]Expanded.*[)\\]]$",
+      "\\s-\\sExpanded Edition$",
+      "\\s[([]Explicit Version[)\\]]",
+      "\\s[([]Bonus Track Edition[)\\]]",
+      "\\s[([]\\d+th\\sAnniversary.*[)\\]]",
+      "\\s-\\sOriginal$",
+      "\\s-\\sOriginal.*Version(\\s\\d{4})?$",
+      "\\*+\\s?\\S+\\s?\\*+$",
+      "\\[[^\\]]+\\]",
+      "【[^】]+】",
+      "（[^）]+）",
+      "\\([^)]*version\\)$",
+      "\\.(avi|wmv|mpg|mpeg|flv)$",
+      "\\(.*lyrics?\\s*(video)?\\)",
+      "\\((of+icial\\s*)?(track\\s*)?stream\\)",
+      "\\((of+icial\\s*)?((music|hd)\\s*)?(video|audio)\\)",
+      "-\\s(of+icial\\s*)?(music\\s*)?(video|audio)$",
+      "\\(.*Album\\sTrack\\)",
+      "\\(\\s*of+icial\\s*\\)",
+      "\\(\\s*[0-9]{4}\\s*\\)",
+      "\\(\\s*(HD|HQ)\\s*\\)$",
+      "(HD|HQ)\\s?$",
+      "(vid[ée]o)?\\s?clip\\sof+ici[ae]l",
+      "of+iziel+es\\s*video",
+      "vid[ée]o\\s?clip",
+      "\\sclip",
+      "full\\s*album",
+      "\\(live.*?\\)$",
+      "\\|.*$",
+      "\\(.*[0-9]{1,2}\\/[0-9]{1,2}\\/[0-9]{2,4}.*\\)",
+      "sub\\s*español",
+      "\\s\\(Letra\\)",
+      "\\s\\(En\\svivo\\)",
+    ],
+    "scrobblers": {
+      "lastfm": {
+        "enabled": false,
+        "token": null,
+        "sessionKey": null,
+        "apiRoot": "https://ws.audioscrobbler.com/2.0/",
+        "apiKey": "04d76faaac8726e60988e14c105d421a",
+        "secret": "a5d2a36fdf64819290f6982481eaffa2",
+      },
+      "listenbrainz": {
+        "enabled": false,
+        "token": null,
+        "apiRoot": "https://api.listenbrainz.org/1/",
+      },
+    },
+  },
+  "search-commands": {
+    "enabled": true,
+    "openShortcut": true,
+    "openKeybind": "CmdOrCtrl+/",
+  },
+  "seek-shortcuts": {
+    "enabled": false,
+  },
+  "settings-ui": {
+    "enabled": true,
+    "showButton": true,
+    "separateWindow": false,
+  },
+  "sfw-music": {
+    "enabled": false,
+  },
+  "shortcuts": {
+    "enabled": false,
+    "overrideMediaKeys": false,
+    "global": {
+      "previous": "",
+      "playPause": "",
+      "next": "",
+    },
+    "local": {
+      "previous": "",
+      "playPause": "",
+      "next": "",
+    },
+  },
+  "skip-ai-slop": {
+    "enabled": false,
+    "userAllow": [],
+    "userBlock": [],
+    "keywords": [],
+    "reportFeedback": false,
+    "hideInPages": true,
+  },
+  "skip-silences": {
+    "enabled": false,
+    "onlySkipBeginning": false,
+  },
+  "sponsorblock": {
+    "enabled": false,
+    "apiURL": "https://sponsor.ajay.app",
+    "categories": ["sponsor", "intro", "outro", "interaction", "selfpromo", "music_offtopic"],
+  },
+  "statusbar-lyrics": {
+    "enabled": false,
+    "maxLength": 55,
+    "includePronunciation": false,
+  },
+  "synced-lyrics": {
+    "enabled": false,
+    "usePriorityList": false,
+    "preferSynced": true,
+    "preciseTiming": true,
+    "showLyricsEvenIfInexact": true,
+    "showTimeCodes": false,
+    "defaultTextString": "♪",
+    "lineEffect": "fancy",
+    "lyricsFontSize": "small",
+    "romanization": true,
+    "translation": {
+      "enabled": false,
+      "provider": "openai-compatible",
+      "targetLanguage": "auto",
+      "providers": {
+        "openai-compatible": {
+          "baseUrl": "https://api.openai.com/v1",
+          "apiKey": "",
+          "model": "gpt-4o-mini",
+          "apiMode": "auto",
+        },
+        "anthropic": {
+          "apiKey": "",
+          "model": "claude-haiku-4-5-20251001",
+        },
+        "gemini": {
+          "apiKey": "",
+          "model": "gemini-2.0-flash",
+        },
+        "local-cli": {
+          "engine": "claude",
+          "command": "",
+          "model": "",
+          "timeoutSeconds": 120,
+        },
+        "google-translate": {
+          "host": "translate.google.com",
+        },
+      },
+    },
+    "useYTMLyricsWithoutProxy": false,
+    "showCustomSearchButton": true,
+  },
+  "taskbar-mediacontrol": {
+    "enabled": false,
+  },
+  "toast-autoclose": {
+    "enabled": true,
+  },
+  "touchbar": {
+    "enabled": false,
+  },
+  "transparent-player": {
+    "enabled": false,
+    "opacity": 0.5,
+    "type": "none",
+  },
+  "tuna-obs": {
+    "enabled": false,
+  },
+  "unobtrusive-player": {
+    "enabled": false,
+  },
+  "video-toggle": {
+    "enabled": false,
+    "hideVideo": false,
+    "mode": "custom",
+    "forceHide": false,
+    "align": "left",
+  },
+  "visualizer": {
+    "enabled": false,
+    "type": "butterchurn",
+    "butterchurn": {
+      "preset": "martin [shadow harlequins shape code] - fata morgana",
+      "blendTimeInSeconds": 2.7,
+    },
+    "vudio": {
+      "effect": "lighting",
+      "accuracy": 128,
+      "lighting": {
+        "maxHeight": 160,
+        "maxSize": 12,
+        "lineWidth": 1,
+        "color": "#49f3f7",
+        "shadowBlur": 2,
+        "shadowColor": "rgba(244,244,244,.5)",
+        "fadeSide": true,
+        "prettify": false,
+        "horizontalAlign": "center",
+        "verticalAlign": "middle",
+        "dottify": true,
+      },
+    },
+    "wavy": {
+      "lineWidth": 8,
+    },
+    "bars": {
+      "variant": "dancing-palette",
+      "barWidth": 30,
+      "gap": 8,
+    },
+    "circles": {
+      "variant": "palette",
+    },
+    "experimental": {
+      "variant": "e8",
+    },
+    "discoBall": {
+      "sensitivity": 1,
+    },
+    "wave": {
+      "animations": [
+        {
+          "type": "Cubes",
+          "config": {
+            "bottom": true,
+            "count": 30,
+            "cubeHeight": 5,
+            "fillColor": {
+              "gradient": ["#FAD961", "#F76B1C"],
+            },
+            "lineColor": "rgba(0,0,0,0)",
+            "radius": 20,
+          },
+        },
+        {
+          "type": "Cubes",
+          "config": {
+            "top": true,
+            "count": 12,
+            "cubeHeight": 5,
+            "fillColor": {
+              "gradient": ["#FAD961", "#F76B1C"],
+            },
+            "lineColor": "rgba(0,0,0,0)",
+            "radius": 10,
+          },
+        },
+        {
+          "type": "Circles",
+          "config": {
+            "lineColor": {
+              "gradient": ["#FAD961", "#FAD961", "#F76B1C"],
+              "rotate": 90,
+            },
+            "lineWidth": 4,
+            "diameter": 20,
+            "count": 10,
+            "frequencyBand": "base",
+          },
+        },
+      ],
+    },
+  },
+};

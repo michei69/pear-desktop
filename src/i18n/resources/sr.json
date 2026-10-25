@@ -156,8 +156,8 @@
               "sync": {
                 "label": "Синхронизуј језик",
                 "submenu": {
-                  "from-youtube": "Са YouTube-а",
-                  "to-youtube": "На YouTube"
+                  "from-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "Са \u0059\u006f\u0075\u0054\u0075\u0062\u0065-а",
+                  "to-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "На \u0059\u006f\u0075\u0054\u0075\u0062\u0065"
                 },
                 "failure": {
                   "dialog": {
@@ -229,7 +229,7 @@
                   "open-themes-folder": "Отвори фасциклу тема"
                 }
               },
-              "use-ytm-icons": "Користи оригиналне YouTube Music иконе"
+              "use-ytm-icons": "Користи оригиналне \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 иконе"
             }
           },
           "updates": {
@@ -412,14 +412,14 @@
           }
         },
         "port": {
-          "label": "Порт"
+          "label": "Port"
         },
         "mcp": {
           "label": "MCP сервер",
           "description": "Излаже v2 API као MCP алате на /mcp. Користи исту ауторизацију као остатак API-ја."
         }
       },
-      "name": "API сервер [Бета]",
+      "name": "API Server [Beta]",
       "prompt": {
         "hostname": {
           "label": "Unesite ime host-a (npr. 0.0.0.0) za API server:",
@@ -427,7 +427,7 @@
         },
         "port": {
           "label": "Unesite port za API server:",
-          "title": "Порт"
+          "title": "Port"
         }
       },
       "settings": {
@@ -453,7 +453,7 @@
           "label": "Ime host-a"
         },
         "port": {
-          "label": "Порт"
+          "label": "Port"
         }
       },
       "name": "Proxy adapter za autentifikaciju",
@@ -464,7 +464,7 @@
         },
         "port": {
           "label": "Unesi port za lokalni proxy server (zahteva ponovno pokretanje):",
-          "title": "Прокси порт"
+          "title": "Proxy Port"
         }
       }
     },
@@ -497,20 +497,6 @@
         "caption-changed": "Prevod promenjen u {{language}}",
         "caption-disabled": "Prevod onemogućen",
         "no-captions": "Za ovu pesmu nisu dostupni prevodi"
-      }
-    },
-    "clock": {
-      "description": "Dodaj sat na navigacioni meni",
-      "menu": {
-        "format": {
-          "24-hour-format": "24-časovni format",
-          "display-seconds": "Prikaži sekunde",
-          "label": "Формат"
-        }
-      },
-      "name": "Sat",
-      "settings": {
-        "hour-12": "Користи 12-часовни формат"
       }
     },
     "compact-sidebar": {
@@ -715,7 +701,7 @@
     },
     "lumiastream": {
       "description": "Dodaje podršku za Lumia Stream",
-      "name": "Lumia Stream [Бета]"
+      "name": "Lumia Stream [Beta]"
     },
     "lyrics-genius": {
       "description": "Dodaje podršku za tekstove za većinu pesama",
@@ -795,7 +781,7 @@
           }
         }
       },
-      "name": "Music Together [Бета]",
+      "name": "Music Together [Beta]",
       "toast": {
         "add-song-failed": "Dodavanje pesme nije uspelo",
         "closed": "'Music Together' je zatvorena",
@@ -1021,6 +1007,10 @@
         "local-keybinds": "Локалне пречице (само док је прозор у фокусу)"
       }
     },
+    "skip-disliked-songs": {
+      "description": "Preskače pesme koje vam se nisu svidele",
+      "name": "Preskočite pesme koje vam se nisu svidele"
+    },
     "skip-silences": {
       "description": "Automatski preskočite delove pesama gde nema zvuka",
       "name": "Preskoči tišine",
@@ -1051,24 +1041,6 @@
         "not-found": "⚠️ Tekst za ovu pesmu nije pronađen."
       },
       "menu": {
-        "convert-chinese-character": {
-          "label": "Konvertuj kineske karaktere",
-          "submenu": {
-            "disabled": {
-              "label": "Onemogućeno",
-              "tooltip": "Onemogući konverziju kineskih karaktera"
-            },
-            "simplified-to-traditional": {
-              "label": "Pojednostavljeno u Tradicionalno",
-              "tooltip": "Konvertuj pojednostavljene kineske karaktere u tradicionalne"
-            },
-            "traditional-to-simplified": {
-              "label": "Tradicionalno u Pojednostavljeno",
-              "tooltip": "Konvertuj tradicionalne kineske karaktere u pojednostavljene"
-            }
-          },
-          "tooltip": "Konvertuj kineske karaktere u tradicionalne ili pojednostavljene"
-        },
         "default-text-string": {
           "label": "Podrazumevani karakteri između tekstova pesama",
           "tooltip": "Izaberi podrazumevane karaktere koji će biti korišćeni za razmake između tekstova pesama"
@@ -1095,24 +1067,6 @@
           },
           "tooltip": "Izaberi efekat koji će biti primenjen na trenutnoj liniji"
         },
-        "lyrics-font-size": {
-          "label": "Veličina fonta teksta pesme",
-          "submenu": {
-            "large": {
-              "label": "Velika",
-              "tooltip": "Koristi originalnu veću veličinu teksta"
-            },
-            "medium": {
-              "label": "Srednja",
-              "tooltip": "Koristi uravnoteženu veličinu teksta"
-            },
-            "small": {
-              "label": "Mala",
-              "tooltip": "Koristi kompaktniju veličinu teksta"
-            }
-          },
-          "tooltip": "Izaberi koliko veliki tekst pesme treba da bude"
-        },
         "precise-timing": {
           "label": "Učini da tekst pesme bude savršeno usklađen",
           "tooltip": "Izračunaj do milisekunde prikaz sledeće linije teksta (može malo uticati na učinak)"
@@ -1136,6 +1090,42 @@
         "show-time-codes": {
           "label": "Prikaži vremenske oznake",
           "tooltip": "Prikaži vremenske oznake pored teksta pesme"
+        },
+        "convert-chinese-character": {
+          "label": "Konvertuj kineske karaktere",
+          "submenu": {
+            "disabled": {
+              "label": "Onemogućeno",
+              "tooltip": "Onemogući konverziju kineskih karaktera"
+            },
+            "simplified-to-traditional": {
+              "label": "Pojednostavljeno u Tradicionalno",
+              "tooltip": "Konvertuj pojednostavljene kineske karaktere u tradicionalne"
+            },
+            "traditional-to-simplified": {
+              "label": "Tradicionalno u Pojednostavljeno",
+              "tooltip": "Konvertuj tradicionalne kineske karaktere u pojednostavljene"
+            }
+          },
+          "tooltip": "Konvertuj kineske karaktere u tradicionalne ili pojednostavljene"
+        },
+        "lyrics-font-size": {
+          "label": "Veličina fonta teksta pesme",
+          "submenu": {
+            "large": {
+              "label": "Velika",
+              "tooltip": "Koristi originalnu veću veličinu teksta"
+            },
+            "medium": {
+              "label": "Srednja",
+              "tooltip": "Koristi uravnoteženu veličinu teksta"
+            },
+            "small": {
+              "label": "Mala",
+              "tooltip": "Koristi kompaktniju veličinu teksta"
+            }
+          },
+          "tooltip": "Izaberi koliko veliki tekst pesme treba da bude"
         },
         "translation": {
           "clear-cache": {
@@ -1250,7 +1240,7 @@
         },
         "use-ytm-lyrics-without-proxy": {
           "label": "Koristi YTM tekstove bez proxy-ja",
-          "tooltip": "Прескочи YTM browse proxy и позови YouTube Music директно користећи аутентификовану сесију апликације. Корисно ако верујеш својој мрежи/региону да дозвољава директне browse позиве."
+          "tooltip": "Прескочи YTM browse proxy и позови \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 директно користећи аутентификовану сесију апликације. Корисно ако верујеш својој мрежи/региону да дозвољава директне browse позиве."
         },
         "show-custom-search-button": {
           "label": "Прикажи прилагођено дугме за претрагу",
@@ -1377,7 +1367,7 @@
       "name": "Video prebacivanje",
       "templates": {
         "button-song": "Pesma",
-        "button-video": "Видео"
+        "button-video": "Video"
       }
     },
     "visualizer": {
@@ -1404,6 +1394,20 @@
         "dottify-description": "Цртај тачке уместо непрекинуте линије",
         "horizontal-align": "Хоризонтално поравнање",
         "vertical-align": "Вертикално поравнање"
+      }
+    },
+    "clock": {
+      "description": "Dodaj sat na navigacioni meni",
+      "menu": {
+        "format": {
+          "24-hour-format": "24-časovni format",
+          "display-seconds": "Prikaži sekunde",
+          "label": "Формат"
+        }
+      },
+      "name": "Sat",
+      "settings": {
+        "hour-12": "Користи 12-часовни формат"
       }
     },
     "audio-only": {
@@ -1464,7 +1468,7 @@
     },
     "search-commands": {
       "commands": {
-        "play": "Пусти видео са YouTube везе или ID-ја",
+        "play": "Пусти видео са \u0059\u006f\u0075\u0054\u0075\u0062\u0065 везе или ID-ја",
         "settings": "Отвори подешавања"
       },
       "description": "Укуцајте / у поље за претрагу да бисте покренули команде, уз аутоматско довршавање њихових аргумената",
@@ -1481,11 +1485,11 @@
       "name": "Пречице за премотавање"
     },
     "sfw-music": {
-      "description": "Аутоматски прескаче песме које је YouTube Music означио као експлицитне. Паузира ако се експлицитни ред понавља или нема следеће песме.",
+      "description": "Аутоматски прескаче песме које је \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 означио као експлицитне. Паузира ако се експлицитни ред понавља или нема следеће песме.",
       "name": "SFW музика"
     },
     "toast-autoclose": {
-      "description": "Аутоматски затвори обавештења YouTube Music-а после три секунде",
+      "description": "Аутоматски затвори обавештења \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063-а после три секунде",
       "name": "Аутоматско затварање обавештења"
     },
     "statusbar-lyrics": {
@@ -1531,7 +1535,7 @@
     "move-up": "Помери горе",
     "move-down": "Помери доле",
     "about": {
-      "tagline": "Десктоп апликација за YouTube Music са мноштвом функција",
+      "tagline": "Десктоп апликација за \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 са мноштвом функција",
       "versions": "Верзије",
       "version-app": "Апликација",
       "version-build": "Билд",
@@ -1589,7 +1593,7 @@
     "stepper-decrement": "Смањи",
     "stepper-increment": "Повећај",
     "flags": {
-      "warning": "Заставице функција су интерни прекидачи самог YouTube Music-а. Њихова измена може покварити репродукцију, распоред или функције налога и није обухваћена подршком. Измене се чувају само за заставице које промените и могу се уклонити помоћу дугмета Опозови.",
+      "warning": "Заставице функција су интерни прекидачи самог \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063-а. Њихова измена може покварити репродукцију, распоред или функције налога и није обухваћена подршком. Измене се чувају само за заставице које промените и могу се уклонити помоћу дугмета Опозови.",
       "search-placeholder": "Претражи заставице",
       "overridden": "измењено",
       "undo": "Опозови",
