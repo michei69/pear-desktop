@@ -235,12 +235,18 @@ export default definePlugin({
      * the picker's classes too: both class names, to win over its sheet.
      */
     :is(.pear-picker-popover.pear-dl-downloads-popover, .pear-dl-section) {
-      /* YTM's colours: its menus' surface, its text, white progress and its link blue. */
-      --pear-dl-surface: #212121;
-      --pear-dl-surface-high: #212121;
+      /*
+       * YTM's colours, read from its own variables so themes and the album color
+       * plugin tint these surfaces too: its menus' surface, its text, white
+       * progress and its link blue. The fallbacks are YTM's dark palette.
+       */
+      --pear-dl-surface: var(--yt-spec-menu-background, #212121);
+      /* The queue strip's surface: .pear-dl-queue is what paints the strip and
+         strip-body backgrounds (they are transparent), so this pair is the fix. */
+      --pear-dl-surface-high: var(--yt-spec-raised-background, #212121);
       --pear-dl-on-surface: var(--ytmusic-text-primary, #fff);
       --pear-dl-on-surface-variant: var(--ytmusic-text-secondary, #aaa);
-      --pear-dl-outline: #909090;
+      --pear-dl-outline: var(--ytmusic-text-secondary, #909090);
       --pear-dl-outline-variant: rgb(255 255 255 / 0.1);
       --pear-dl-primary: #3ea6ff;
       --pear-dl-fill: #fff;
