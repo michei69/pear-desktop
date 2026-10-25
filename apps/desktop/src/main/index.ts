@@ -51,6 +51,14 @@ function main() {
     refreshTrayIcons: () => void plugins.invoke("tray", "refreshIcons", []).catch(() => {}),
   });
   const player = new PlayerMirror((action) => send({ type: "player-control", action }));
+  // pear-desktop's `url` key held the playing track; the startup toggle reopens it.
+  player.on("trackChange", (track) => {
+    if (!track) return;
+    const url = new URL(track.url);
+    // Keep the list, so YTM restores the queue the track was played from.
+    if (track.playlistId) url.searchParams.set("list", track.playlistId);
+    settings.lastPlayback = url.toString();
+  });
   const requests = new PageRequests(send);
   const menuItems = new MenuItems();
   // pear-desktop's app protocol: links control playback; plugins hear about them too.

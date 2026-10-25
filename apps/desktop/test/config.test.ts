@@ -337,9 +337,9 @@ describe("config.json from pear-desktop 3.x", () => {
     expect(saved(dir).plugins.downloader).toMatchObject({ selectedPreset: "Source", downloadOnFinish: { enabled: true } });
   });
 
-  test("reads the window state and last page", () => {
+  test("reads the window state and the last played track", () => {
     expect(settings.window).toEqual({ width: 1100, height: 550, x: 40, y: 60, maximized: true });
-    expect(settings.lastUrl).toBe("https://music.\u0079\u006f\u0075\u0074\u0075\u0062\u0065.com/playlist?list=LM");
+    expect(settings.lastPlayback).toBe("https://music.\u0079\u006f\u0075\u0074\u0075\u0062\u0065.com/playlist?list=LM");
   });
 
   test("records the migration at once and keeps unknown keys", () => {

@@ -176,7 +176,7 @@ test("restart-only core options offer a restart, kept while the dialog is closed
 test.describe(() => {
   test.use({ appOptions: { core: { general: { resumeOnStart: false, startingPage: "Explore" } } } });
 
-  test("opens on the starting page when the last page isn't reopened", async ({ page }) => {
+  test("opens on the starting page when no last song is resumed", async ({ page }) => {
     await expect.poll(() => new URL(page.url()).pathname).toBe("/explore");
   });
 });

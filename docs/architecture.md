@@ -67,7 +67,7 @@ Settings are stored in `<userData>/config.json` by `apps/desktop/src/main/config
 
 - `plugins.<id>` holds `{ enabled, ...config }`. The API server is stored as `plugins.api-server`, where pear-desktop kept it.
 - `options.*` holds the core sections `general`, `window`, `appearance`, `advanced` and `site`, plus the theme keys `theme`, `themePresets`, `themeOverrides`, `themeConsent` and `themesSeeded`, and the legacy `themes` CSS list until it is migrated.
-- `url`, `window-size`, `window-position` and `window-maximized` hold the last page and window state.
+- `url`, `window-size`, `window-position` and `window-maximized` hold the last played track (pear-desktop's key, reopened by `general.resumeOnStart`) and the window state.
 - `__internal__.migrations.version` records the version that last wrote the file.
 
 Values are normalized against their schema on load: unknown keys are kept, invalid values fall back to defaults. Writes are debounced by 300 ms and go through a temporary file plus rename. A damaged file is copied to `config.json.damaged-<timestamp>` before defaults replace it. `flush()` writes pending changes on quit.

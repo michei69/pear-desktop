@@ -3140,12 +3140,12 @@
   "settings-ui": {
     "core": {
       "resumeOnStart": {
-        "label": "Reopen the last page",
-        "description": "Start where you left off (never straight into playback)."
+        "label": "Resume the last song",
+        "description": "Plays the track that was playing when the app last closed."
       },
       "startingPage": {
         "label": "Starting page",
-        "description": "Used when the last page isn't reopened.",
+        "description": "Used when the last song isn't resumed.",
         "options": {
           "": "Default",
           "Home": "Home",

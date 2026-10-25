@@ -249,7 +249,7 @@ describe("a complete pear-desktop 3.12.4 config.json, migrated to 4.0.0", () => 
     });
     expect(settings.legacyThemeCss()).toEqual(fixtureOptions.themes);
     expect(settings.window).toEqual({ width: 1280, height: 720, x: 40, y: 60, maximized: true });
-    expect(settings.lastUrl).toBe(PEAR_DESKTOP_3_COMPLETE.url);
+    expect(settings.lastPlayback).toBe(PEAR_DESKTOP_3_COMPLETE.url);
   });
 
   test("the app options a migration moves still work in their new homes", () => {

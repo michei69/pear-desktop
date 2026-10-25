@@ -124,7 +124,7 @@ export class MainWindow {
     this.#saveBounds(window);
     this.#reportVisibility(window);
     openHomeWhenOffline(window);
-    void window.loadURL(net.isOnline() ? startUrl(settings.core("general"), settings.lastUrl) : `${YTM_ORIGIN}/`);
+    void window.loadURL(net.isOnline() ? startUrl(settings.core("general"), settings.lastPlayback) : `${YTM_ORIGIN}/`);
     return window;
   }
 
@@ -162,9 +162,6 @@ export class MainWindow {
       if (!isSameDocument) this.#runtimeUp = false;
       const userAgent = isGoogleAuth(url) ? this.#electronUserAgent : this.#ytmUserAgent;
       if (window.webContents.getUserAgent() !== userAgent) window.webContents.setUserAgent(userAgent);
-    });
-    window.webContents.on("did-navigate-in-page", (_, url, isMainFrame) => {
-      if (isMainFrame && isYtmUrl(url)) this.#settings.lastUrl = url;
     });
   }
 
@@ -255,10 +252,11 @@ export function windowTitle(settings: Settings, window: BrowserWindow) {
   return settings.core("appearance").customWindowTitle || window.webContents.getTitle() || APP_NAME;
 }
 
-/** The last YTM page (never straight into a track) if enabled, otherwise the starting page. */
-function startUrl(general: { resumeOnStart: boolean; startingPage: StartingPage }, lastUrl: string | undefined) {
-  const last = general.resumeOnStart && lastUrl ? URL.parse(lastUrl) : null;
-  if (last && last.origin === YTM_ORIGIN && last.pathname !== "/watch") return last.toString();
+/** The last song if the startup toggle is on, otherwise the starting page. */
+function startUrl(general: { resumeOnStart: boolean; startingPage: StartingPage }, lastPlayback: string | undefined) {
+  const last = general.resumeOnStart && lastPlayback ? URL.parse(lastPlayback) : null;
+  // Only a track resumes: the key can hold an older build's page URL.
+  if (last && last.origin === YTM_ORIGIN && last.pathname === "/watch") return last.toString();
   return new URL(STARTING_PAGES[general.startingPage] ?? "/", `${YTM_ORIGIN}/`).toString();
 }
 

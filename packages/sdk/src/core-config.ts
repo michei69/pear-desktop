@@ -42,13 +42,13 @@ const startingPageOptions = Object.keys(STARTING_PAGES).map((value) => ({
 
 export const GENERAL = {
   resumeOnStart: config.bool(true, {
-    label: "Reopen the last page",
-    description: "Start where you left off (never straight into playback).",
+    label: "Resume the last song",
+    description: "Plays the track that was playing when the app last closed.",
     group: "Startup",
   }),
   startingPage: config.select("", startingPageOptions, {
     label: "Starting page",
-    description: "Used when the last page isn't reopened.",
+    description: "Used when the last song isn't resumed.",
     group: "Startup",
     variant: "dropdown",
   }),

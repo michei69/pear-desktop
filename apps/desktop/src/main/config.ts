@@ -197,11 +197,15 @@ export class Settings {
     this.#scheduleWrite();
   }
 
-  get lastUrl(): string | undefined {
+  /**
+   * The last playing track's URL, in pear-desktop's `url` key: the startup
+   * toggle reopens it. Written as tracks change (see index.ts), flushed on quit.
+   */
+  get lastPlayback(): string | undefined {
     return typeof this.#data.url === "string" ? this.#data.url : undefined;
   }
 
-  set lastUrl(url: string) {
+  set lastPlayback(url: string) {
     if (this.#data.url === url) return;
     this.#data.url = url;
     this.#scheduleWrite();
