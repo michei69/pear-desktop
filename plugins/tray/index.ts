@@ -1,5 +1,5 @@
 import { config, definePlugin, type HostContextOf, type NowPlaying } from "@pear/sdk";
-import { trayIconBitmap } from "@pear/sdk/icon";
+import { trayIconBitmap, ytmTrayIconBitmap } from "@pear/sdk/icon";
 import { isPlaying, YTM_NAME } from "@pear/sdk/util";
 import { Menu, nativeImage, Tray, type MenuItemConstructorOptions } from "electron";
 
@@ -20,9 +20,14 @@ const schema = {
     label: "Click plays and pauses",
     description: "Instead of toggling the window.",
   }),
+  moveToCurrentDesktop: config.bool(false, { label: "Show the window on the current desktop" }),
+  forceWhiteIcons: config.bool(false, { label: "Force white tray icons" }),
 };
 
 type Ctx = HostContextOf<typeof schema>;
+
+/** Rebuilds the running tray's artwork; set while the tray is up. */
+let rebuildTrayIcons: (() => void) | undefined;
 
 export default definePlugin({
   id: "tray",
@@ -33,15 +38,23 @@ export default definePlugin({
   host: {
     start(ctx) {
       // pear-desktop's icons: a paused variant while a track is paused.
-      const icons = { playing: trayImage(false), paused: trayImage(true) };
+      const icons = { playing: trayImage(false, trayIconStyle(ctx)), paused: trayImage(true, trayIconStyle(ctx)) };
       const tray = new Tray(icons.playing);
       let shownIcon: keyof typeof icons = "playing";
       const { window, app } = ctx;
+      // The artwork follows the icon options: the app calls `refreshIcons` after
+      // an appearance change, the plugin rebuilds it on a config change.
+      const showIcons = () => {
+        icons.playing = trayImage(false, trayIconStyle(ctx));
+        icons.paused = trayImage(true, trayIconStyle(ctx));
+        tray.setImage(icons[shownIcon]);
+      };
       // The app doubles as the cross-plugin event bus (Electron's App is an
       // EventEmitter, but its public type lists only its own events).
       const bus = app as unknown as NodeJS.EventEmitter;
       const showWindow = () => {
-        ctx.focusWindow();
+        if (ctx.config.moveToCurrentDesktop) showOnCurrentDesktop(window);
+        else ctx.focusWindow();
         app.dock?.show();
       };
       // As pear-desktop: on macOS a window hidden to the tray leaves the Dock too.
@@ -64,6 +77,11 @@ export default definePlugin({
         tray.setContextMenu(Menu.buildFromTemplate(menu(ctx, state, toggleWindow)));
       };
       update(ctx.player.state);
+      rebuildTrayIcons = showIcons;
+      ctx.onCleanup(() => {
+        if (rebuildTrayIcons === showIcons) rebuildTrayIcons = undefined;
+      });
+      ctx.onConfigChange(showIcons);
       // Rebuild the menu only when something it shows changes.
       ctx.player.on("change", (state, previous) => {
         if (state.track !== previous.track || state.status !== previous.status) update(state);
@@ -108,17 +126,44 @@ export default definePlugin({
         tray.destroy();
       };
     },
-    // Both options are read when used; no restart needed.
+    // The options are read when used; no restart needed.
     onConfigChange() {},
+    commands: {
+      /** Rebuilds the tray artwork from the current core and plugin settings. */
+      refreshIcons() {
+        rebuildTrayIcons?.();
+      },
+    },
   },
 });
 
-function trayImage(paused: boolean) {
+type TrayIconStyle = "default" | "white" | "ytm";
+
+/** pear-desktop's order: YT Music's logo when asked for, white on macOS or when forced, otherwise pear's colors. */
+function trayIconStyle(ctx: Ctx): TrayIconStyle {
+  if (ctx.core("appearance").useYtmIcons) return "ytm";
+  return isMac || ctx.config.forceWhiteIcons ? "white" : "default";
+}
+
+function trayImage(paused: boolean, style: TrayIconStyle) {
   const pixels = (isMac ? MAC_ICON_SIZE : ICON_SIZE) * 2;
-  const image = nativeImage.createFromBitmap(trayIconBitmap(pixels, paused), { width: pixels, height: pixels, scaleFactor: 2 });
-  // A template image: macOS draws it in the menu bar's own color, so it shows on light and dark bars.
-  if (isMac) image.setTemplateImage(true);
+  const data = style === "ytm" ? ytmTrayIconBitmap(pixels, paused) : trayIconBitmap(pixels, paused, style === "white");
+  const image = nativeImage.createFromBitmap(data, { width: pixels, height: pixels, scaleFactor: 2 });
+  // A template image: macOS draws it in the menu bar's own color, so it shows on
+  // light and dark bars. YT Music's logo keeps its own colors.
+  if (isMac && style !== "ytm") image.setTemplateImage(true);
   return image;
+}
+
+/**
+ * Shows the window on the current virtual desktop instead of switching to the
+ * one it was created on: pin it to all workspaces, show and focus, then unpin.
+ */
+function showOnCurrentDesktop(window: Electron.BrowserWindow) {
+  window.setVisibleOnAllWorkspaces(true);
+  window.show();
+  window.focus();
+  window.setVisibleOnAllWorkspaces(false);
 }
 
 // pear-desktop's tray texts and translations (main.tray.*).
