@@ -9,9 +9,6 @@ import { fieldMatches, groupFields, matches } from "./groups.ts";
 import { type Section, coreSectionLabel } from "./sections.ts";
 import type { Dialog } from "./state.ts";
 
-/** Fields the search leaves out: the player bar pick is in Advanced, flag overrides are the Flags section. */
-const SEARCH_EXCLUDED: Partial<Record<CoreSection, readonly string[]>> = { site: ["siteFlags"] };
-
 export function SectionBody({ dialog, section, enabled }: { dialog: Dialog; section: Section; enabled: string[] }) {
   switch (section.id) {
     case "plugins":
@@ -53,7 +50,9 @@ export function SearchResults({ dialog, query }: { dialog: Dialog; query: string
   const results: ComponentChildren[] = [];
 
   for (const name of Object.keys(CORE_SECTIONS) as CoreSection[]) {
-    const groups = coreGroups(dialog, name, filter, SEARCH_EXCLUDED[name]);
+    // The site section has no card of its own; its flag list is edited in the Flags section.
+    if (name === "site") continue;
+    const groups = coreGroups(dialog, name, filter);
     if (groups.length === 0) continue;
     results.push(<CoreCards key={name} dialog={dialog} section={name} groups={groups} title={coreSectionLabel(text, name)} joinTitle />);
   }

@@ -42,7 +42,6 @@ export const UI_STRINGS = {
   "settings-ui.blocks.tray": "Tray",
   "settings-ui.blocks.title-bar": "Title bar",
   "settings-ui.blocks.api-server": "API server",
-  "settings-ui.blocks.site-features": "Site features",
   "settings-ui.blocks.updates": "Updates",
   "settings-ui.blocks.configuration": "Configuration",
   "settings-ui.toggle-devtools": "Toggle developer tools",

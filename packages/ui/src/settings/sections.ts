@@ -54,8 +54,6 @@ export const SECTIONS: Record<SectionId, Section> = {
     icon: "tune",
     blocks: [
       { kind: "core", section: "advanced" },
-      // The player bar pick; its flag list is the Flags section's job now.
-      { kind: "core", section: "site", exclude: ["siteFlags"] },
       { kind: "core", section: "apiServer", title: "settings-ui.blocks.api-server", prefix: true },
       { kind: "configuration" },
     ],
@@ -70,9 +68,8 @@ export const SECTION_ORDER: readonly SectionId[] = ["general", "appearance", "wi
 
 export const sectionLabel = (text: Text, id: SectionId) => text(`settings-ui.sections.${id}.label`);
 
-/** A core section's title where it is not a sidebar section of its own (search results). */
-export const coreSectionLabel = (text: Text, section: CoreSection): string => {
-  if (section === "site") return text("settings-ui.blocks.site-features");
+/** A core section's title where it is not a sidebar section of its own (search results); the site section has no card. */
+export const coreSectionLabel = (text: Text, section: Exclude<CoreSection, "site">): string => {
   if (section === "apiServer") return text("settings-ui.blocks.api-server");
   return sectionLabel(text, section);
 };
