@@ -1,5 +1,5 @@
 /** @jsxImportSource @pear/sdk */
-import { definePlugin } from "@pear/sdk";
+import { config, definePlugin } from "@pear/sdk";
 import { Icon } from "@pear/sdk/dom";
 import { css } from "@pear/sdk/macros" with { type: "macro" };
 
@@ -17,12 +17,30 @@ export default definePlugin({
   name: "Navigation buttons",
   description: "Back and forward buttons in the top bar.",
   enabledByDefault: true,
+  config: {
+    placement: config.select(
+      "left",
+      [
+        { value: "left", label: "Top bar, left" },
+        { value: "right", label: "Top bar, right" },
+      ],
+      {
+        label: "Placement",
+        description: "Where the back and forward buttons sit. pear-desktop put them on the right of the top bar.",
+      },
+    ),
+  },
   style: css`
     .pear-navigation {
       display: flex;
       align-items: center;
       gap: 2px;
       margin-left: 12px;
+    }
+    /* The right of the top bar has the clock and avatar; sit before them, not after the left content. */
+    .pear-navigation[data-placement="right"] {
+      margin-right: 8px;
+      margin-left: 0;
     }
     .pear-navigation button {
       display: grid;
@@ -62,7 +80,7 @@ export default definePlugin({
       history.forward(),
     );
     const container = (
-      <div class="pear-navigation">
+      <div class="pear-navigation" data-placement={ctx.config.placement}>
         {back}
         {forward}
       </div>
@@ -77,8 +95,10 @@ export default definePlugin({
     update();
     if (navigation) ctx.listen(navigation, "currententrychange", update);
 
-    // YTM re-renders the nav bar on some navigations.
-    ctx.mount(container, "nav_bar.left", "append");
+    // YTM re-renders the nav bar on some navigations. "right" is pear-desktop's
+    // spot: prepended before the clock and avatar instead of after the left content.
+    if (ctx.config.placement === "right") ctx.mount(container, "nav_bar.right", "prepend");
+    else ctx.mount(container, "nav_bar.left", "append");
   },
 });
 
