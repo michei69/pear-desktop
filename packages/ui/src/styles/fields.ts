@@ -137,6 +137,8 @@ export const controls = css`
     padding: 0 12px;
   }
   .dropdown {
+    /* Fill the control row: a select sizes to its widest option, and the Language list has very long names. */
+    width: 100%;
     min-width: 220px;
   }
   .text {
