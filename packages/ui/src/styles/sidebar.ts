@@ -3,7 +3,10 @@ import { css } from "@pear/sdk/macros" with { type: "macro" };
 /** Title, search, the sections and the version line. */
 export const sidebar = css`
   .sidebar {
+    position: relative;
     width: 244px;
+    min-width: 180px;
+    max-width: 420px;
     flex-shrink: 0;
     display: flex;
     flex-direction: column;
@@ -16,14 +19,6 @@ export const sidebar = css`
   .sidebar-title {
     font-size: 22px;
     line-height: 28px;
-  }
-  .sidebar-subtitle {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    margin-top: 3px;
-    font-size: 12px;
-    color: var(--on-surface-variant);
   }
   .search {
     display: flex;
@@ -82,6 +77,7 @@ export const sidebar = css`
   }
   .nav-count {
     font-size: 11px;
+    font-weight: 500;
     opacity: 0.8;
   }
   .sidebar-foot {
@@ -93,12 +89,21 @@ export const sidebar = css`
     font-size: 11px;
     color: var(--on-surface-variant);
   }
-  .link {
+  /* The version doubles as a "copy debug info" button, like pear-desktop's. */
+  .sidebar-version {
+    padding: 0;
+    color: inherit;
+    font-size: 11px;
+  }
+  .sidebar-version:hover {
+    color: var(--on-surface);
+  }
+  .link-button {
     padding: 0;
     color: var(--primary);
     font-size: 11px;
   }
-  .link:hover {
+  .link-button:hover {
     text-decoration: underline;
   }
 `;

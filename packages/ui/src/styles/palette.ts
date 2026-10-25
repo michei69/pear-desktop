@@ -13,7 +13,7 @@ export const palette = css`
     --surface-highest: #36343b;
     --secondary-container: #4a4458;
     --on-secondary-container: #e8def8;
-    --tertiary-container: #633b48;
+    --tertiary-container: #4a4458;
     --on-tertiary-container: #ffd8e4;
     --outline: #938f99;
     --edge: #49454f;

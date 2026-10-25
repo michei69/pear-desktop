@@ -1,7 +1,8 @@
 // Schemas of the core's own settings sections, rendered in the settings
 // overlay next to the plugins with the same field builders.
 
-import { config, type ConfigOf } from "./config.ts";
+import { config, type BoolField, type ConfigOf } from "./config.ts";
+import { CONTEXT_MENU_ENTRIES } from "./context-menu.ts";
 import { languages } from "./macros.ts" with { type: "macro" };
 
 /**
@@ -97,6 +98,11 @@ export const WINDOW = {
   }),
 };
 
+/** One "hide this entry" switch per three-dot menu entry, stored as `contextMenu<Entry>`. */
+const contextMenuFields = Object.fromEntries(
+  CONTEXT_MENU_ENTRIES.map((entry) => [entry.configKey, config.bool(false, { label: `Hide “${entry.label}”`, group: "Context menu" })]),
+) as Record<string, BoolField>;
+
 export const APPEARANCE = {
   removeUpgradeButton: config.bool(false, { label: "Remove the Upgrade button", group: "Interface" }),
   likeButtons: config.select(
@@ -109,6 +115,21 @@ export const APPEARANCE = {
     { label: "Like buttons", group: "Interface" },
   ),
   swapLikeButtonsOrder: config.bool(false, { label: "Swap the like and dislike buttons", group: "Interface" }),
+  useYtmIcons: config.bool(false, {
+    label: "Use Music's icons",
+    description: "The window, tray and About artwork use YTM's logo instead of Pear Desktop's.",
+    group: "Interface",
+  }),
+  hideDislikeButton: config.bool(false, {
+    label: "Hide the dislike button",
+    description: "Only the old player bar has one to hide.",
+    group: "Interface",
+  }),
+  hideVideoCaptions: config.bool(false, {
+    label: "Hide video captions",
+    description: "Hides the player's captions button; captions already on keep showing.",
+    group: "Interface",
+  }),
   usePodcastParticipantAsArtist: config.bool(false, {
     label: "Show the listed participant as a podcast's artist",
     description: "Off: the channel that publishes it, usually the host. Used in notifications and integrations.",
@@ -129,6 +150,7 @@ export const APPEARANCE = {
     description: "Drops YTM's tracking parameter from links copied by the share dialog.",
     group: "Shared links",
   }),
+  ...contextMenuFields,
 };
 
 export const ADVANCED = {
@@ -165,6 +187,12 @@ export const ADVANCED = {
     label: "Proxy",
     description: "For proxies that need a username and password, use the Proxy plugin.",
     placeholder: "socks5://127.0.0.1:9999",
+    group: "Network",
+    restart: true,
+  }),
+  overrideUserAgent: config.bool(false, {
+    label: "Override the user agent",
+    description: "Send a plain Chrome user agent instead of Electron's; some sites behave differently.",
     group: "Network",
     restart: true,
   }),
@@ -270,6 +298,7 @@ export const API_SERVER = {
   mcpEnabled: config.bool(false, {
     label: "Enable MCP",
     description: "Exposes the API server's operations as Model Context Protocol tools at /mcp.",
+    group: "MCP",
   }),
   useHttps: config.bool(false, { label: "Use HTTPS", group: "HTTPS" }),
   certPath: config.string("", { label: "Certificate file", group: "HTTPS", placeholder: "/path/to/cert.pem" }),

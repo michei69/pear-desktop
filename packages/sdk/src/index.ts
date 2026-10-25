@@ -4,6 +4,7 @@
 
 import type { App, BrowserWindow, BrowserWindowConstructorOptions, Session, WebRequest } from "electron";
 import { type ConfigOf, type ConfigShape, onPlatform } from "./config.ts";
+import type { CORE_SECTIONS, CoreSection } from "./core-config.ts";
 import type { NowPlaying, PlayerAction, Track, PlaybackStatus, Unsubscribe, YTPlayerApi } from "./player.ts";
 import type { RpcMethods, RpcSchemas } from "./rpc.ts";
 import type { SelectorName } from "./selectors.ts";
@@ -89,6 +90,11 @@ export interface HostPlayer {
 export interface HostContext<C> extends CommonContext<C> {
   readonly app: App;
   readonly window: BrowserWindow;
+  /**
+   * The app's own settings section, live (e.g. `core("appearance").useYtmIcons`).
+   * `config` is this plugin's settings; this is the core's.
+   */
+  core<K extends CoreSection>(section: K): ConfigOf<(typeof CORE_SECTIONS)[K]>;
   /** The default session, except `webRequest` is this plugin's (see `webRequest`). */
   readonly session: Session;
   /**

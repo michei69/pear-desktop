@@ -12,7 +12,6 @@ import type { SettingsModel } from "../model.ts";
 import { useText } from "../strings.ts";
 import { type FieldFilter, type Group, groupFields, hasFields } from "./groups.ts";
 import { type Block, joinTitles } from "./sections.ts";
-import { SiteFlagsCard } from "./site-flags.tsx";
 import type { Dialog } from "./state.ts";
 import { ThemeCard } from "./themes.tsx";
 
@@ -25,14 +24,31 @@ export function CardGroup(props: { title: string | undefined; children: Componen
   );
 }
 
-/** A core section's field groups, if the host has its state. */
-export function coreGroups(dialog: Dialog, section: CoreSection, filter?: FieldFilter): Group[] {
+/** A core section's field groups, if the host has its state; `exclude` leaves out fields shown elsewhere. */
+export function coreGroups(dialog: Dialog, section: CoreSection, filter?: FieldFilter, exclude?: readonly string[]): Group[] {
   if (!dialog.model.core(section)) return [];
-  return groupFields(CORE_SECTIONS[section] as ConfigShape, dialog.platform, dialog.localizer("core"), filter);
+  const keep = (key: string, field: Parameters<FieldFilter>[1]) => !exclude?.includes(key) && (!filter || filter(key, field));
+  return groupFields(CORE_SECTIONS[section] as ConfigShape, dialog.platform, dialog.localizer("core"), keep);
 }
 
-/** One card per field group; the first one also says what the core is doing with the section. */
-export function CoreCards(props: { dialog: Dialog; section: CoreSection; groups: Group[]; title?: string | undefined }) {
+/** Some of a core section's fields, keeping their declared groups. */
+export function coreKeyGroups(dialog: Dialog, section: CoreSection, keys: readonly string[]): Group[] {
+  const shape = CORE_SECTIONS[section] as ConfigShape;
+  const subset = Object.fromEntries(keys.flatMap((key) => (shape[key] ? [[key, shape[key]]] : [])));
+  return groupFields(subset, dialog.platform, dialog.localizer("core"));
+}
+
+/**
+ * One card per field group; the first one also says what the core is doing with
+ * the section. `joinTitle` prefixes the section's name, for search results.
+ */
+export function CoreCards(props: {
+  dialog: Dialog;
+  section: CoreSection;
+  groups: Group[];
+  title?: string | undefined;
+  joinTitle?: boolean | undefined;
+}) {
   const { dialog, section } = props;
   const text = useText();
   const state = dialog.model.core(section);
@@ -41,7 +57,11 @@ export function CoreCards(props: { dialog: Dialog; section: CoreSection; groups:
   return (
     <>
       {props.groups.map((group, index) => (
-        <CardGroup key={`${section}-${index}`} title={joinTitles(props.title, group.title)} data-core={section}>
+        <CardGroup
+          key={`${section}-${index}`}
+          title={props.joinTitle ? joinTitles(props.title, group.title) : (group.title ?? props.title)}
+          data-core={section}
+        >
           {group.fields.map(([key, field]) => (
             <SettingsField
               key={key}
@@ -68,7 +88,19 @@ export function BlockView({ dialog, block }: { dialog: Dialog; block: Block }) {
   switch (block.kind) {
     case "core": {
       const title = block.title && text(block.title);
-      return <CoreCards dialog={dialog} section={block.section} groups={coreGroups(dialog, block.section)} title={title} />;
+      return (
+        <CoreCards
+          dialog={dialog}
+          section={block.section}
+          groups={coreGroups(dialog, block.section, undefined, block.exclude)}
+          title={title}
+          joinTitle={block.prefix}
+        />
+      );
+    }
+    case "core-keys": {
+      const title = block.title && text(block.title);
+      return <CoreCards dialog={dialog} section={block.section} groups={coreKeyGroups(dialog, block.section, block.keys)} title={title} />;
     }
     case "plugin": {
       const plugin = dialog.plugins.find((p) => p.id === block.id);
@@ -81,23 +113,24 @@ export function BlockView({ dialog, block }: { dialog: Dialog; block: Block }) {
     }
     case "themes":
       return <ThemeCard dialog={dialog} />;
-    case "developer":
+    case "updates":
+      // Dev builds have no updater, so the options do nothing there.
+      return dialog.model.app.channel === "dev" ? null : (
+        <CoreCards dialog={dialog} section="general" groups={coreKeyGroups(dialog, "general", ["autoUpdates", "updateChannel"])} />
+      );
+    case "configuration":
       return (
-        <CardGroup title={text("settings-ui.blocks.developer")}>
+        <CardGroup title={text("settings-ui.blocks.configuration")}>
           <div class="field actions">
             <button type="button" class="outlined" onClick={() => void dialog.model.toggleDevTools()}>
               {text("settings-ui.toggle-devtools")}
             </button>
-            <button type="button" class="outlined" onClick={() => void dialog.model.showSettingsFile()}>
-              {text("settings-ui.show-config")}
+            <button type="button" class="outlined" onClick={() => void dialog.model.editConfig()}>
+              {text("settings-ui.edit-config")}
             </button>
           </div>
         </CardGroup>
       );
-    case "site-flags": {
-      const served = dialog.model.siteFlags?.();
-      return served ? <SiteFlagsCard dialog={dialog} served={served} /> : null;
-    }
   }
 }
 

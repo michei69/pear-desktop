@@ -4,6 +4,7 @@
 // the server is off.
 
 import { type LikeStatus, queueRenderer } from "@pear/sdk";
+import type { FlagValue } from "@pear/sdk/core-config";
 import { selectors, type SelectorName } from "@pear/sdk/selectors";
 import { readSongDetails } from "@pear/sdk/song-details";
 import { YTM_NAME } from "@pear/sdk/util";
@@ -114,11 +115,20 @@ function experimentFlags(): Record<string, unknown> | undefined {
 }
 
 function setFlag({ name, value }: { name: string; value: unknown }) {
+  if (value !== null && typeof value === "object") return;
+
+  // Through the runtime's override map, so a later EXPERIMENT_FLAGS payload keeps it.
+  const live = window.__pearFeatureFlags;
+  if (live) return live.set(name, value as FlagValue);
+
   const flags = experimentFlags();
   if (flags) flags[name] = value;
 }
 
 function removeFlag(name: string) {
+  const live = window.__pearFeatureFlags;
+  if (live) return live.remove(name);
+
   const flags = experimentFlags();
   if (flags) delete flags[name];
 }

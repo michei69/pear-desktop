@@ -1,12 +1,16 @@
 // What the dialog's body shows: a section, or the search results.
 
+import { CORE_SECTIONS, type CoreSection } from "@pear/sdk/core-config";
 import type { ComponentChildren } from "preact";
 import { useText } from "../strings.ts";
 import { About } from "./about.tsx";
 import { BlockView, CoreCards, coreGroups, PluginCard } from "./cards.tsx";
 import { fieldMatches, groupFields, matches } from "./groups.ts";
-import { joinTitles, SECTIONS, type Section, sectionText } from "./sections.ts";
+import { type Section, coreSectionLabel } from "./sections.ts";
 import type { Dialog } from "./state.ts";
+
+/** Fields the search leaves out: the player bar pick is in Advanced, flag overrides are the Flags section. */
+const SEARCH_EXCLUDED: Partial<Record<CoreSection, readonly string[]>> = { site: ["siteFlags"] };
 
 export function SectionBody({ dialog, section, enabled }: { dialog: Dialog; section: Section; enabled: string[] }) {
   switch (section.id) {
@@ -19,7 +23,17 @@ export function SectionBody({ dialog, section, enabled }: { dialog: Dialog; sect
         </>
       );
     case "about":
-      return <About model={dialog.model} enabled={enabled} />;
+      // About owns its cards; the update options are drawn under its actions.
+      return (
+        <About model={dialog.model} enabled={enabled}>
+          {section.blocks.map((block, index) => (
+            <BlockView key={index} dialog={dialog} block={block} />
+          ))}
+        </About>
+      );
+    case "flags":
+      // Rendered by the dialog itself, which owns the search box while it is open.
+      return null;
     default:
       return (
         <>
@@ -38,15 +52,10 @@ export function SearchResults({ dialog, query }: { dialog: Dialog; query: string
   const filter = fieldMatches(needle);
   const results: ComponentChildren[] = [];
 
-  for (const section of Object.values(SECTIONS)) {
-    const label = sectionText(text, section.id).label;
-    for (const block of section.blocks) {
-      if (block.kind !== "core") continue;
-      const groups = coreGroups(dialog, block.section, filter);
-      if (groups.length === 0) continue;
-      const title = joinTitles(label, block.title && text(block.title));
-      results.push(<CoreCards dialog={dialog} section={block.section} groups={groups} title={title} />);
-    }
+  for (const name of Object.keys(CORE_SECTIONS) as CoreSection[]) {
+    const groups = coreGroups(dialog, name, filter, SEARCH_EXCLUDED[name]);
+    if (groups.length === 0) continue;
+    results.push(<CoreCards key={name} dialog={dialog} section={name} groups={groups} title={coreSectionLabel(text, name)} joinTitle />);
   }
   for (const plugin of dialog.plugins) {
     if (matches(needle, plugin.name, plugin.description, plugin.id)) {

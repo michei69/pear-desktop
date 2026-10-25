@@ -16,6 +16,8 @@ export function setAppIdentity() {
   app.setPath("userData", app.getPath("userData"));
   app.setName(APP_ID);
   app.commandLine.appendSwitch("class", APP_ID);
+  // Wayland when the session has it (pear-desktop's hint); X11 otherwise.
+  app.commandLine.appendSwitch("ozone-platform-hint", "auto");
   if (process.platform === "win32") app.setAppUserModelId(APP_ID);
   // Without this the About panel shows the raw app id; the channel and commit
   // ride along in the version line, since GTK prints only that field.

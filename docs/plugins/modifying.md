@@ -150,7 +150,7 @@ Migrations live in `apps/desktop/src/main/migrations/plugins.ts` (plugin entries
 - A migration that creates a file next to `config.json` (for example moved window bounds) returns it through the `files` map; `config.ts` writes it only when it does not exist.
 - Add a case to `apps/desktop/test/plugin-migrations.test.ts` and, when app-level keys move, `apps/desktop/test/config.test.ts`.
 
-The `4.0.0` migration also converts pear-desktop 3.x plugin options. See `migrations/plugins.ts` for the renamed discord, downloader, equalizer, notifications, scrobbler, shortcuts, sponsorblock, visualizer and synced-lyrics options.
+The `4.0.0` migration also converts pear-desktop 3.x plugin options. See `migrations/plugins.ts` for the renamed ambient-mode, album-color-theme, auth-proxy-adapter, crossfade, custom-output-device, discord, do-not-track, downloader, equalizer, in-app-menu, notifications, picture-in-picture, playback-speed, precise-volume, scrobbler, shortcuts, skip-ai-slop, sponsorblock, synced-lyrics, transparent-player and visualizer options. App-level moves in `migrations/index.ts`: the tray options became the tray plugin's, `hideVideoCaptions` stays a core option now, `contextMenuHidden` became per-entry switches, and the `options.featureFlags` record became `options.siteFlags` "name=value" entries.
 
 ## Restart requirements
 

@@ -19,6 +19,14 @@ export const ICON_PATHS = {
   info: "M11 17h2v-6h-2v6zm1-8a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm0 13C6.48 22 2 17.52 2 12S6.48 2 12 2s10 4.48 10 10-4.48 10-10 10zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16z",
   code: "M9.4 16.6 4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0 4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z",
   api: "M7 7H5a2 2 0 0 0-2 2v8h2v-4h2v4h2V9a2 2 0 0 0-2-2zm0 4H5V9h2v2zm7-4h-4v10h2v-4h2a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2zm0 4h-2V9h2v2zm6-4h2v10h-2z",
+  flag: "M14.4 6 14 4H5v17h2v-7h5.6l.4 2h7V6z",
+  warning: "M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z",
+  github:
+    "M12 2C6.48 2 2 6.48 2 12c0 4.42 2.87 8.17 6.84 9.5.5.09.68-.22.68-.48 0-.24-.01-.87-.01-1.7-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.61.07-.61 1 .07 1.53 1.03 1.53 1.03.89 1.53 2.34 1.09 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02.8-.22 1.65-.33 2.5-.34.85.01 1.7.12 2.5.34 1.91-1.29 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85 0 1.34-.01 2.42-.01 2.75 0 .27.18.58.69.48A10.01 10.01 0 0 0 22 12c0-5.52-4.48-10-10-10z",
+  external:
+    "M19 19H5V5h7V3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z",
+  refresh:
+    "M17.65 6.35A7.958 7.958 0 0 0 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0 1 12 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z",
 } as const;
 
 export type IconName = keyof typeof ICON_PATHS;
@@ -32,7 +40,13 @@ export function Icon({ name, size = 20 }: { name: IconName; size?: number }) {
 }
 
 const APP_ICON = embed("generated/icons/png/128x128.png");
+const YTM_APP_ICON = embed("icon-ytm.png");
 
 export function PearIcon({ size = 22 }: { size?: number }) {
   return <img src={`data:image/png;base64,${APP_ICON}`} width={size} height={size} alt="" aria-hidden="true" />;
+}
+
+/** Music's logo, shown when `appearance.useYtmIcons` is on. */
+export function YtmIcon({ size = 22 }: { size?: number }) {
+  return <img src={`data:image/png;base64,${YTM_APP_ICON}`} width={size} height={size} alt="" aria-hidden="true" />;
 }

@@ -2,7 +2,7 @@
 // runtime. Plugins never use this directly.
 
 import type { ConfigShape } from "./config.ts";
-import type { CoreSection } from "./core-config.ts";
+import type { CoreSection, FlagValue, Flags } from "./core-config.ts";
 import type { NowPlaying, PlayerAction } from "./player.ts";
 import type { ThemeState } from "./themes.ts";
 
@@ -23,6 +23,55 @@ export interface PluginState {
 export interface PluginMeta {
   /** `restartRequired` or a beforeReady/windowOptions hook: enabling/disabling only fully applies after a restart. */
   restartRequired: boolean;
+}
+
+/** The debug info the settings window's About section shows, and `GET /api/v2/pear` (getAppMeta). */
+export interface AppDebugInfo {
+  name: string;
+  version: string;
+  /** Channel and commit, e.g. `stable` or `beta 1a2b3c4`. */
+  build: string;
+  /** One line per copyright holder. */
+  copyright: string;
+  platform: string;
+  arch: string;
+  osVersion: string;
+  versions: { electron: string; chrome: string; node: string };
+  cpu: { model: string; threads: number };
+  gpu: {
+    renderer?: string;
+    vendor?: string;
+    driver?: string;
+    /** From app.getGPUFeatureStatus(), e.g. `{ gpu_compositing: 'enabled' }`. */
+    features: Record<string, string>;
+  };
+  /** Working set in kilobytes, per process group. */
+  memory: { main: number; renderers: number; gpu: number };
+}
+
+/** What the published `flags.json` says about one Music feature flag. */
+export interface FlagMetadata {
+  /** Shown under the flag's name. */
+  description?: string;
+  /** Whether a change needs a restart. */
+  requires_restart: boolean;
+  /** Group the flag belongs to, shown as a tag. */
+  family: string;
+}
+
+/** The published flag metadata, keyed by flag name. */
+export type FlagMetadataMap = Record<string, FlagMetadata>;
+
+/** YTM's live feature flags, as the page runtime exposes them to the settings UI. */
+export interface LiveFeatureFlags {
+  /** The flags YTM served this session, before any override. */
+  served(): Flags;
+  /** Add or replace one override and apply it live. */
+  set(name: string, value: FlagValue): void;
+  /** Drop one override, putting the page's own value back. */
+  remove(name: string): void;
+  /** YTM's client version this session. */
+  clientVersion(): string | undefined;
 }
 
 /** A core settings section: its config and what the core is doing with it. */
@@ -128,7 +177,17 @@ export interface CoreCommands {
   "api:page-event"(name: string, payload: unknown): void;
   /** Reveals config.json in the file manager. */
   "app:show-settings-file"(): void;
+  /** Opens config.json in the default editor. */
+  "app:edit-config"(): Promise<void>;
   "app:toggle-devtools"(): void;
+  /** Opens a URL in the user's browser (the About links). */
+  "app:open-external"(url: string): Promise<void>;
+  /** The About section's debug info (and its copied report). */
+  "app:meta"(): Promise<AppDebugInfo>;
+  /** Descriptions, families and restart requirements for YTM's feature flags. */
+  "flags:metadata"(): Promise<FlagMetadataMap>;
+  /** Runs the update check now (the About "Check for updates" button). */
+  "app:check-updates"(): void;
   "player:update"(state: NowPlaying): void;
 }
 

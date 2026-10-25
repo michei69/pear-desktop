@@ -3,7 +3,9 @@ import { pluginActions } from "@pear/sdk";
 import { isCoreSection, type CoreSection } from "@pear/sdk/core-config";
 import { type Bootstrap, CHANNEL, type CoreCommandName, type CoreCommands, type CoreState, type PluginInfo } from "@pear/sdk/protocol";
 import { isSettingsUrl, isYtmUrl } from "../shared/user-agent.ts";
+import { getAppMeta } from "./app-meta.ts";
 import { buildLabel, channel, commit, copyright } from "./app-info.ts";
+import { flagMetadata } from "./flag-metadata.ts";
 import type { PageRequests } from "./page-requests.ts";
 import type { PlayerMirror } from "./player.ts";
 import type { PluginHost } from "./plugins.ts";
@@ -53,6 +55,8 @@ export interface IpcEnvironment {
   };
   /** Forwards page-side events (lyrics updates) to the API server, when it runs. */
   apiPageEvent?(name: string, payload: unknown): void;
+  /** Runs the update check now (the About section's button, and the menu's entry). */
+  checkUpdates?(): void;
   core: {
     states(): Record<CoreSection, CoreState>;
     setConfig(section: CoreSection, patch: Record<string, unknown>): void | Promise<void>;
@@ -70,6 +74,7 @@ export function setupIpc({
   themes,
   language,
   apiPageEvent,
+  checkUpdates,
   core,
 }: IpcEnvironment) {
   const handlers: Handlers = {
@@ -108,6 +113,13 @@ export function setupIpc({
     "language:to-\u0079outube": () => language.toYtm(),
     "api:page-event": (name, payload) => apiPageEvent?.(String(name), payload),
     "app:show-settings-file": () => shell.showItemInFolder(settingsPath),
+    "app:edit-config": async () => {
+      await shell.openPath(settingsPath);
+    },
+    "app:open-external": (url) => shell.openExternal(String(url)).then(() => undefined),
+    "app:meta": () => getAppMeta(),
+    "flags:metadata": () => flagMetadata(),
+    "app:check-updates": () => checkUpdates?.(),
     "app:toggle-devtools": () => {
       for (const window of BrowserWindow.getAllWindows()) {
         if (isYtmUrl(window.webContents.getURL())) window.webContents.toggleDevTools();

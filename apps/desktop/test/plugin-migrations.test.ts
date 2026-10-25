@@ -69,11 +69,19 @@ describe("pear-desktop plugin options", () => {
   });
 
   test("custom-output-device: the device's name instead of its id", () => {
-    const devices = { abc123: "USB DAC", def456: "" };
-    expect(twice("custom-output-device", { output: "abc123", devices })).toMatchObject({ output: "USB DAC" });
+    // Older builds stored a record; 3.12 replaced it with [id, name] pairs (deepmerge cannot delete record keys).
+    const record = { abc123: "USB DAC", def456: "" };
+    expect(twice("custom-output-device", { output: "abc123", devices: record })).toMatchObject({ output: "USB DAC" });
+    const pairs = [
+      ["default", "Default"],
+      ["abc123", "USB DAC"],
+      ["def456", ""],
+    ];
+    expect(twice("custom-output-device", { output: "abc123", devices: pairs })).toMatchObject({ output: "USB DAC" });
     // No name known: the id still works.
-    expect(twice("custom-output-device", { output: "def456", devices })).toMatchObject({ output: "def456" });
-    expect(twice("custom-output-device", { output: "default", devices })).toMatchObject({ output: "" });
+    expect(twice("custom-output-device", { output: "def456", devices: record })).toMatchObject({ output: "def456" });
+    expect(twice("custom-output-device", { output: "def456", devices: pairs })).toMatchObject({ output: "def456" });
+    expect(twice("custom-output-device", { output: "default", devices: pairs })).toMatchObject({ output: "" });
   });
 
   test("discord: renamed options, seconds, and the status display enum", () => {
@@ -97,6 +105,15 @@ describe("pear-desktop plugin options", () => {
     // Sub-minute timeouts, which pear-desktop's prompt allowed, are kept.
     expect(twice("discord", { activityTimeoutTime: 30_000 })).toMatchObject({ activityTimeoutSeconds: 30 });
     expect(twice("discord", { activityTimeoutTime: 1000 })).toMatchObject({ activityTimeoutSeconds: 1 });
+  });
+
+  test('playback-speed: it stored the inverse option, "don\'t preserve the pitch"', () => {
+    expect(twice("playback-speed", { enabled: true, noPreservesPitch: true })).toMatchObject({ preservePitch: false });
+    expect(twice("playback-speed", { enabled: true, noPreservesPitch: false })).toMatchObject({ preservePitch: true });
+    expect(twice("playback-speed", { enabled: true, noPreservesPitch: "yes" })).toEqual({
+      enabled: true,
+      noPreservesPitch: "yes",
+    });
   });
 
   test("notifications: the numbered toast style becomes its name", () => {
@@ -272,8 +289,12 @@ describe("pear-desktop plugin options", () => {
 
   test("runs on the stored entry only, never on a missing or broken one", () => {
     expect(migrated({ visualizer: "broken" as unknown as Json }).visualizer).toBe("broken");
-    // Only performance-improvement (on by default in pear-desktop) and the downloader (saving to the folder) get an entry.
-    expect(migrated({})).toEqual({ "performance-improvement": { enabled: true }, downloader: { exportFiles: true } });
+    // pear-desktop's on-by-default do-not-track and its file-saving downloader get entries;
+    // performance-improvement is off by default there, so nothing forces it on.
+    expect(migrated({})).toEqual({
+      "do-not-track": { enabled: true, blocker: "Lite" },
+      downloader: { exportFiles: true, skipExisting: false },
+    });
   });
 });
 
@@ -376,7 +397,15 @@ const EXPECTED: Record<string, { enabled: boolean; config: Json }> = {
   "playback-speed": { enabled: true, config: { speed: 1, preservePitch: true } },
   "precise-volume": {
     enabled: true,
-    config: { steps: 50, wheel: true, arrowsShortcut: false, showHud: true, volumeUp: "Ctrl+Up", volumeDown: "Ctrl+Down" },
+    config: {
+      steps: 50,
+      wheel: true,
+      arrowsShortcut: false,
+      showHud: true,
+      volumeUp: "Ctrl+Up",
+      volumeDown: "Ctrl+Down",
+      savedVolume: 42,
+    },
   },
   "quality-changer": { enabled: true, config: {} },
   scrobbler: {
@@ -484,6 +513,29 @@ describe("a pear-desktop 3.12 config.json, loaded with the real plugins", () => 
     expect(file.plugins["picture-in-picture"]["pip-size"]).toEqual([500, 300]);
     expect(file.plugins.discord[PLAY_BUTTON]).toBe(false);
     expect(file.__internal__.migrations.version).toBe("4.0.0");
+  });
+});
+
+describe("pear-desktop's tray options, loaded with the real tray plugin", () => {
+  const dir = mkdtempSync(join(tmpdir(), "pear-tray-"));
+  afterAll(() => rmSync(dir, { recursive: true, force: true }));
+  writeFileSync(
+    join(dir, "config.json"),
+    `${JSON.stringify(
+      from312({
+        options: { tray: true, trayClickPlayPause: true, trayMoveToCurrentDesktop: true, trayForceWhiteIcons: true },
+      }),
+      null,
+      "\t",
+    )}\n`,
+  );
+  const settings = new Settings(dir, hostPlugins, "4.0.0");
+
+  test("the tray stays on and its window and icon options follow", () => {
+    expect(settings.plugin("tray")).toMatchObject({
+      enabled: true,
+      config: { closeToTray: true, clickPlayPause: true, moveToCurrentDesktop: true, forceWhiteIcons: true },
+    });
   });
 });
 

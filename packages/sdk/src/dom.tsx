@@ -398,12 +398,12 @@ const MENU_ITEM_CSS = `
 // ---------------------------------------------------------------- sidebar entries
 
 export interface SidebarEntryOptions {
-  /** Names the entry's element, `pear-<name>-entry`. */
+  /** Names the entry's element class, `pear-<name>-entry`. */
   name: string;
   /** The text under or next to the icon. */
   label: string;
-  /** The icon (an SVG path). */
-  icon: string;
+  /** YTM's icon id, e.g. "SETTINGS_MATERIAL" or "DOWNLOAD". */
+  iconType: string;
   /** The tooltip; default `label`. */
   title?: string;
   /** The accessible name; default `label`. */
@@ -422,6 +422,16 @@ export interface SidebarEntry {
   setSelected(selected: boolean): void;
 }
 
+/** YTM's sidebar entry, which draws itself from the data it is given. */
+interface GuideEntryRendererElement extends HTMLElement {
+  isCollapsed: boolean;
+  data: {
+    isPrimary: boolean;
+    icon: { iconType: string };
+    formattedTitle: { runs: { text: string }[] };
+  };
+}
+
 /** The sidebar's two layouts: the full guide and the collapsed ("mini") one. */
 const GUIDES = [
   ["guide.full", false],
@@ -434,48 +444,47 @@ const GUIDES = [
  * stops (a plugin's `ctx`).
  */
 export function sidebarEntry(owner: Pick<PageContext<unknown, {}>, "onCleanup">, options: SidebarEntryOptions): SidebarEntry {
-  const badges: HTMLElement[] = [];
-  const elements: HTMLElement[] = [];
-  const buttons: HTMLElement[] = [];
+  const elements: GuideEntryRendererElement[] = [];
+  const entryData = (badge: string): GuideEntryRendererElement["data"] => ({
+    isPrimary: true,
+    icon: { iconType: options.iconType },
+    formattedTitle: { runs: badge ? [{ text: options.label }, { text: ` (${badge})` }] : [{ text: options.label }] },
+  });
   for (const [guide, mini] of GUIDES) {
-    const { host, root } = shadowHost(`pear-${options.name}-entry`, SIDEBAR_ENTRY_CSS);
-    host.toggleAttribute("mini", mini);
-    const badge = <span class="badge" />;
-    const button = (
-      <button
-        type="button"
-        title={options.title ?? options.label}
-        aria-label={options.ariaLabel ?? options.label}
-        onClick={() => options.onClick()}
-      >
-        <Icon path={options.icon} />
-        <span class="label">{options.label}</span>
-        {badge}
-      </button>
-    );
-    root.append(button);
-    badges.push(badge);
-    elements.push(host);
-    buttons.push(button);
+    const element = document.createElement("ytmusic-guide-entry-renderer") as GuideEntryRendererElement;
+    element.classList.add(`pear-${options.name}-entry`);
+    // The mini guide shows icons only; YTM's entry lays itself out from this flag.
+    element.isCollapsed = mini;
+    element.data = entryData("");
+    element.title = options.title ?? options.label;
+    element.setAttribute("aria-label", options.ariaLabel ?? options.label);
+    // Without a navigation endpoint YTM's own tap handler does nothing, so ours is the click.
+    element.addEventListener("tap", () => options.onClick());
+    elements.push(element);
     // YTM renders the sidebar late and again on some navigations; the entry stays in place.
-    const stop = keepMounted(host, (element) => {
+    const stop = keepMounted(element, (entry) => {
       const items = document.querySelector(selectors[guide])?.querySelector(selectors["guide.primary_items"]);
-      items?.append(element);
+      items?.append(entry);
     });
     owner.onCleanup(stop);
   }
   return {
     setBadge(text) {
-      for (const badge of badges) badge.textContent = text;
+      for (const element of elements) element.data = entryData(text);
     },
     elements,
     focus() {
-      buttons.find((button) => button.getClientRects().length > 0)?.focus();
+      const shown = elements.find((element) => element.getClientRects().length > 0);
+      // YTM's entry keeps the focusable item in its shadow root, or as its own child.
+      const item =
+        shown?.shadowRoot?.querySelector<HTMLElement>("tp-yt-paper-item") ?? shown?.querySelector<HTMLElement>("tp-yt-paper-item");
+      (item ?? shown)?.focus();
     },
     setSelected(selected) {
-      for (const button of buttons) {
-        if (selected) button.setAttribute("aria-current", "page");
-        else button.removeAttribute("aria-current");
+      for (const element of elements) {
+        element.toggleAttribute("active", selected);
+        if (selected) element.setAttribute("aria-current", "page");
+        else element.removeAttribute("aria-current");
       }
     },
   };
@@ -486,60 +495,3 @@ export function openBrowsePage(browseId: string) {
   const detail = { endpoint: { browseEndpoint: { browseId } } };
   document.querySelector(selectors.app)?.dispatchEvent(new CustomEvent("yt-navigate", { bubbles: true, composed: true, detail }));
 }
-
-/** YTM's own look for sidebar entries. */
-const SIDEBAR_ENTRY_CSS = `
-  :host { display: block; }
-  button {
-    position: relative;
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    width: 100%;
-    height: 48px;
-    margin: 0;
-    padding: 0 14px;
-    border: 0;
-    border-radius: 8px;
-    background: transparent;
-    color: #fff;
-    font: 16px Roboto, system-ui, sans-serif;
-    text-align: left;
-    cursor: pointer;
-    user-select: none;
-  }
-  button:hover, button[aria-current="page"] { background: rgb(255 255 255 / 0.1); }
-  button:focus-visible { outline: 2px solid #d0bcff; }
-  svg { flex: none; width: 24px; height: 24px; fill: currentColor; }
-  .badge {
-    min-width: 20px;
-    height: 20px;
-    margin-left: auto;
-    padding: 0 6px;
-    border-radius: 10px;
-    background: #fff;
-    color: #030303;
-    font: 500 12px/20px Roboto, system-ui, sans-serif;
-    text-align: center;
-  }
-  .badge:empty { display: none; }
-  :host([mini]) button {
-    flex-direction: column;
-    justify-content: center;
-    gap: 2px;
-    height: 64px;
-    padding: 0;
-    font-size: 10px;
-  }
-  :host([mini]) .badge {
-    position: absolute;
-    top: 6px;
-    left: calc(50% + 6px);
-    min-width: 16px;
-    height: 16px;
-    margin: 0;
-    padding: 0 4px;
-    font-size: 10px;
-    line-height: 16px;
-  }
-`;

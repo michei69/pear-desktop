@@ -46,10 +46,23 @@ export const base = css`
       transform: none;
     }
   }
+  @keyframes scrim-out {
+    to {
+      opacity: 0;
+    }
+  }
+  @keyframes pop-out {
+    to {
+      opacity: 0;
+      transform: translateY(8px) scale(0.98);
+    }
+  }
 
   /* buttons without a frame, and outlined ones */
   .nav-item,
   .link,
+  .link-button,
+  .sidebar-version,
   .icon-button,
   .plugin-toggle,
   .restart-later,
@@ -59,6 +72,7 @@ export const base = css`
     cursor: pointer;
   }
   .outlined,
+  .field-button,
   .chip,
   .stepper-button {
     border: 1px solid var(--outline);
@@ -67,9 +81,17 @@ export const base = css`
   }
   .icon-button:hover,
   .outlined:hover,
+  .field-button:hover,
   .chip:hover,
   .stepper-button:hover {
     background: var(--surface-highest);
+  }
+  .field-button {
+    padding: 9px 18px;
+    border-radius: 20px;
+    color: var(--primary);
+    font-size: 13px;
+    font-weight: 500;
   }
 
   /* text inputs and dropdowns */

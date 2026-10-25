@@ -3,6 +3,7 @@
 
 import os from "node:os";
 import { app } from "electron";
+import type { AppDebugInfo } from "@pear/sdk/protocol";
 import { buildLabel, copyright } from "./app-info.ts";
 
 /** Subset of chromium's GPUInfo that the debug info cares about. */
@@ -63,28 +64,7 @@ function describeGpu(info: GpuInfo) {
 }
 
 /** The debug info the About section shows: app, OS, CPU, GPU and memory use. */
-export interface AppMeta {
-  name: string;
-  version: string;
-  /** Channel and commit, e.g. `stable` or `beta 1a2b3c4`. */
-  build: string;
-  /** One line per copyright holder. */
-  copyright: string;
-  platform: string;
-  arch: string;
-  osVersion: string;
-  versions: { electron: string; chrome: string; node: string };
-  cpu: { model: string; threads: number };
-  gpu: {
-    renderer?: string;
-    vendor?: string;
-    driver?: string;
-    /** From app.getGPUFeatureStatus(), e.g. `{ gpu_compositing: 'enabled' }`. */
-    features: Record<string, string>;
-  };
-  /** Working set in kilobytes, per process group. */
-  memory: { main: number; renderers: number; gpu: number };
-}
+export type AppMeta = AppDebugInfo;
 
 /** Reads the debug info. Shared by the settings window and the API server. */
 export async function getAppMeta(): Promise<AppMeta> {

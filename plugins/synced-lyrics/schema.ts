@@ -117,10 +117,21 @@ export const schema = {
     label: "\u0059\u006f\u0075\u0054\u0075\u0062\u0065 Music lyrics without proxy",
     description: "Fetch YTM's own lyrics directly. Off keeps the direct request and retries through the public browse proxy if it fails.",
   }),
+  musixmatchTokenMode: config.select(
+    "auto",
+    [
+      { value: "auto", label: "Automatic (mobile app token)" },
+      { value: "user", label: "Your own token" },
+    ],
+    {
+      label: "Musixmatch token source",
+      description:
+        "Automatic asks Musixmatch for the mobile app's token and renews it every minute. Your own token sends the token below instead.",
+    },
+  ),
   musixmatchToken: config.string("", {
     label: "Musixmatch user token",
-    description:
-      "Musixmatch only serves lyrics to signed-in apps: the usertoken of your own Musixmatch desktop app session. Without one, Musixmatch reports that it needs it.",
+    description: "The usertoken of your own signed-in Musixmatch app, sent when the token source above is your own token.",
     secret: true,
   }),
 

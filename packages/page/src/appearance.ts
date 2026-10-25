@@ -1,6 +1,6 @@
 // The core's appearance options that act on YTM's page (the Upgrade
-// button, like buttons). All of it applies live: each tweak is a style sheet
-// that comes and goes with its option. Theme files: @pear/sdk/stylesheets.
+// button, like buttons, captions). All of it applies live: each tweak is a
+// style sheet that comes and goes with its option. Theme files: @pear/sdk/stylesheets.
 
 import type { CoreState } from "@pear/sdk/protocol";
 import { css } from "@pear/sdk/macros" with { type: "macro" };
@@ -22,6 +22,14 @@ const STYLES = {
     sel(player_bar.like_pair) dislike-button-view-model button { border-radius: 16px 0 0 16px !important; }
     sel(player_bar.like_pair) like-button-view-model button::after { left: 0 !important; right: auto !important; }
   `,
+  // The old player bar's dislike button; the new one is half of a pill, so there is nothing to hide.
+  // The like button takes the margins the hidden half leaves behind.
+  hideDislikeButton: css`
+    sel(player_bar.like_buttons) .dislike { display: none !important; }
+    sel(player_bar.like_buttons) .like { margin-left: 15px; margin-right: 10px; }
+  `,
+  // YTM's captions button: `.captions` in the old player bar, a [client-ve-type="16500"] wrapper in the new one.
+  hideVideoCaptions: css`sel(player_bar.captions) { display: none !important; }`,
 };
 
 type Tweak = keyof typeof STYLES;
@@ -50,6 +58,8 @@ export class Appearance {
     this.#toggle("forceLikeButtons", likes === "force");
     this.#toggle("hideLikeButtons", likes === "hide");
     this.#toggle("swapLikeButtonsOrder", config.swapLikeButtonsOrder === true);
+    this.#toggle("hideDislikeButton", config.hideDislikeButton === true);
+    this.#toggle("hideVideoCaptions", config.hideVideoCaptions === true);
     if (config.removeUpgradeButton === true) this.#markUpgradeEntries();
     else this.#stopMarking();
   }

@@ -26,7 +26,11 @@ export default definePlugin({
     commands: {
       search(provider: ProviderId, query: SearchQuery): Promise<LyricResult | null> {
         return hostOf(this).search(provider, query, {
-          musixmatch: { userToken: this.config.musixmatchToken, t: this.t },
+          musixmatch: {
+            tokenMode: this.config.musixmatchTokenMode,
+            userToken: this.config.musixmatchToken,
+            t: this.t,
+          },
           ytmusic: { useProxyFallback: !this.config.useYTMLyricsWithoutProxy },
         });
       },

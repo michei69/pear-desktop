@@ -13,6 +13,7 @@
     "./song-details": "./src/song-details.ts",
     "./rpc": "./src/rpc.ts",
     "./core-config": "./src/core-config.ts",
+    "./context-menu": "./src/context-menu.ts",
     "./i18n": "./src/i18n.ts",
     "./accelerator": "./src/accelerator.ts",
     "./util": "./src/util.ts",

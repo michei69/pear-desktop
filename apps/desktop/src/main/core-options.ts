@@ -11,7 +11,7 @@ import { type MainWindow, windowTitle } from "./main-window.ts";
 import { applyHideMenu, syncMenu } from "./menu.ts";
 import { Themes } from "./themes.ts";
 import { isBetaVersion } from "./version.ts";
-import { alive } from "./windows.ts";
+import { alive, appIcon } from "./windows.ts";
 
 export type AppSection = Exclude<CoreSection, "apiServer">;
 
@@ -20,6 +20,8 @@ export interface CoreOptionsEnvironment {
   updates?: { channelChanged(): void };
   /** Rebuilds the native menu, whose radios and checkboxes mirror these options. */
   refreshMenu?(): void;
+  /** Rebuilds artwork that plugins draw from core settings (the tray). */
+  refreshTrayIcons?(): void;
 }
 
 export class CoreOptions {
@@ -133,8 +135,13 @@ export class CoreOptions {
   }
 
   #applyAppearance() {
-    // The page applies the rest itself (core-state events).
+    // The page applies the rest itself (core-state events); the icon option also
+    // swaps the native window/Dock artwork and the tray plugin's icons.
+    const icon = appIcon(this.#settings.core("appearance").useYtmIcons);
     const window = this.#mainWindow.window;
     if (window) window.setTitle(windowTitle(this.#settings, window));
+    if (process.platform === "darwin") app.dock?.setIcon(icon);
+    else window?.setIcon(icon);
+    this.#env.refreshTrayIcons?.();
   }
 }

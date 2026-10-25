@@ -1,0 +1,19 @@
+{
+ "message": {
+  "header": {
+   "status_code": 200,
+   "execute_time": 0.442,
+   "pid": 21,
+   "surrogate_key_list": []
+  },
+  "body": {
+   "user_token": "82e353709b40b83b457044da34f86979040bc2ee0ba3360384527a",
+   "app_config": {
+    "last_updated": "2023-10-19T08:57:50.072Z",
+    "cluster": "2e",
+    "event_map": [],
+    "notification_hub_tag_list": []
+   }
+  }
+ }
+}

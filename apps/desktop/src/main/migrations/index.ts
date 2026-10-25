@@ -6,8 +6,9 @@
 // Add a migration for every change to what config.json means; never edit a
 // released one.
 
+import { CONTEXT_MENU_ENTRIES } from "@pear/sdk/context-menu";
 import { compareVersions } from "../version.ts";
-import { ensurePluginEntry, isRecord, type MigratedFiles, setNew, type StoredConfig } from "./helpers.ts";
+import { ensurePluginEntry, isRecord, type MigratedFiles, setNew, siteFlagEntries, type StoredConfig } from "./helpers.ts";
 import { PLUGIN_MIGRATIONS } from "./plugins.ts";
 
 export type { MigratedFiles, StoredConfig } from "./helpers.ts";
@@ -34,23 +35,47 @@ const MIGRATIONS: [version: string, migration: Migration][] = [
     "4.0.0",
     (config, files) => {
       const options = config.options ?? {};
+      // The file's last writer, before this migration: some 3.x defaults changed over time.
+      const previous = typeof config.__internal__?.migrations?.version === "string" ? config.__internal__.migrations.version : "0.0.0";
       // The tray was an app option; it is a plugin now.
       if (typeof options.tray === "boolean") ensurePluginEntry(config, "tray").enabled = options.tray;
       // With the tray on, closing the window only hid it; that is an option of its own now.
       if (options.tray === true) setNew(ensurePluginEntry(config, "tray"), "closeToTray", true);
-      // The API server listened on every interface by default (phone remotes); the rewrite's
-      // default is this machine only. pear-desktop didn't store defaults, so set it for its users.
-      const apiServer = config.plugins?.["api-server"];
-      if (isRecord(apiServer)) setNew(apiServer, "hostname", "0.0.0.0");
-      // On by default in pear-desktop (off in the rewrite): keep it for everyone who didn't turn it off.
-      const performance = ensurePluginEntry(config, "performance-improvement");
-      if (performance.enabled !== false) performance.enabled = true;
       if (typeof options.trayClickPlayPause === "boolean") ensurePluginEntry(config, "tray").clickPlayPause = options.trayClickPlayPause;
+      // The tray's own window/icon behavior was app options; the tray plugin carries them now.
+      for (const [option, key] of [
+        ["trayMoveToCurrentDesktop", "moveToCurrentDesktop"],
+        ["trayForceWhiteIcons", "forceWhiteIcons"],
+      ] as const) {
+        if (typeof options[option] === "boolean") setNew(ensurePluginEntry(config, "tray"), key, options[option]);
+      }
+      // The API server listened on every interface (phone remotes) until 3.12.4 changed that
+      // default to this machine only; pear-desktop didn't store defaults, so files from before
+      // 3.12.4 get the old default set for them. 3.12.4 files keep its local-only default.
+      const apiServer = config.plugins?.["api-server"];
+      if (isRecord(apiServer) && compareVersions(previous, "3.12.4") < 0) setNew(apiServer, "hostname", "0.0.0.0");
+      // On by default in pear-desktop (off in the rewrite): keep it for everyone who didn't turn it off.
+      const doNotTrack = ensurePluginEntry(config, "do-not-track");
+      if (doNotTrack.enabled !== false) doNotTrack.enabled = true;
+      // Appearance -> Context menu kept the hidden entry keys in one record; the rewrite has a
+      // flat switch per entry (`contextMenu<Entry>`). The record stays for a downgrade.
+      const hiddenMenuEntries = options.contextMenuHidden;
+      if (isRecord(hiddenMenuEntries)) {
+        for (const entry of CONTEXT_MENU_ENTRIES) {
+          if (hiddenMenuEntries[entry.key] === true) setNew(options, entry.configKey, true);
+        }
+      }
+      // YTM's feature-flag overrides record became the site section's "name=value" list.
+      if (isRecord(options.featureFlags)) {
+        const flags = siteFlagEntries(options.featureFlags);
+        if (flags.length > 0) setNew(options, "siteFlags", flags);
+      }
+      // Created before the plugin conversions: they set pear-desktop's defaults (skipExisting) on it too.
+      const downloader = ensurePluginEntry(config, "downloader");
       migratePlugins(config, files);
       // pear-desktop saved every download to the download folder; the rewrite keeps them in the app
-      // unless asked (exportFiles). Everyone upgrading keeps getting the files. After migratePlugins,
-      // which would treat a new entry as one pear-desktop wrote.
-      setNew(ensurePluginEntry(config, "downloader"), "exportFiles", true);
+      // unless asked (exportFiles). Everyone upgrading keeps getting the files.
+      setNew(downloader, "exportFiles", true);
     },
   ],
 ];

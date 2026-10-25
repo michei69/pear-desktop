@@ -12,6 +12,8 @@ interface FieldMeta {
   restart?: boolean;
   /** Only shown on these platforms (default: all). */
   platforms?: readonly Platform[];
+  /** Stored state the settings UI leaves out (a plugin's saved position, the current volume). */
+  hidden?: boolean;
 }
 
 interface FieldBase<K extends string, T> extends FieldMeta {

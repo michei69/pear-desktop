@@ -296,5 +296,6 @@ The app answers it with "only essential cookies" (`SOCS=CAI`), unless you've cho
 
 ### Musixmatch lyrics are wrong or missing?
 
-Musixmatch (synced-lyrics) needs a Musixmatch user token in the plugin's settings: Musixmatch answers anonymous apps
-with an all-zero token that only gets decoy lyrics.
+Musixmatch (synced-lyrics) asks for a token automatically by default (the mobile app's, renewed every minute). If it
+reports that it needs a token, switch its token source to "Your own token" and paste the usertoken from your signed-in
+Musixmatch app.

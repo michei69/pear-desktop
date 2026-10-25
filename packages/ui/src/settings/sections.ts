@@ -6,30 +6,34 @@ import type { Text, UiKey } from "../strings.ts";
 
 export type Block =
   /** A core settings section, one card per field group. */
-  | { kind: "core"; section: CoreSection; title?: UiKey }
+  | { kind: "core"; section: CoreSection; title?: UiKey; exclude?: readonly string[]; prefix?: boolean }
+  /** Some of a core section's fields, for options that belong elsewhere (the update settings in About). */
+  | { kind: "core-keys"; section: CoreSection; keys: readonly string[]; title?: UiKey }
   /** A plugin's card, embedded where it belongs thematically. */
   | { kind: "plugin"; id: string; title: UiKey }
   /** The folder themes: selection, presets, palette, import. */
   | { kind: "themes" }
-  | { kind: "developer" }
-  /** YTM's feature flags this session (only in YTM's page). */
-  | { kind: "site-flags" };
+  /** The update options, under About's action buttons like pear-desktop's. */
+  | { kind: "updates" }
+  /** The developer actions (devtools, edit config). */
+  | { kind: "configuration" };
 
-export type SectionId = "general" | "appearance" | "window" | "advanced" | "developer" | "plugins" | "about";
+export type SectionId = "general" | "appearance" | "window" | "advanced" | "plugins" | "flags" | "about";
 
 export interface Section {
   id: SectionId;
   icon: IconName;
-  /** What the section shows; "plugins" and "about" have views of their own. */
+  /** What the section shows; "plugins", "flags" and "about" have views of their own. */
   blocks: Block[];
 }
 
-/** By id, in the sidebar's order. */
+/** In the sidebar's order. */
 export const SECTIONS: Record<SectionId, Section> = {
   general: {
     id: "general",
     icon: "settings",
-    blocks: [{ kind: "core", section: "general" }],
+    // The update settings live in About, like pear-desktop's.
+    blocks: [{ kind: "core", section: "general", exclude: ["autoUpdates", "updateChannel"] }],
   },
   appearance: {
     id: "appearance",
@@ -50,22 +54,28 @@ export const SECTIONS: Record<SectionId, Section> = {
     icon: "tune",
     blocks: [
       { kind: "core", section: "advanced" },
-      { kind: "core", section: "apiServer", title: "settings-ui.blocks.api-server" },
+      // The player bar pick; its flag list is the Flags section's job now.
+      { kind: "core", section: "site", exclude: ["siteFlags"] },
+      { kind: "core", section: "apiServer", title: "settings-ui.blocks.api-server", prefix: true },
+      { kind: "configuration" },
     ],
   },
-  developer: {
-    id: "developer",
-    icon: "code",
-    blocks: [{ kind: "core", section: "site" }, { kind: "site-flags" }, { kind: "developer" }],
-  },
   plugins: { id: "plugins", icon: "puzzle", blocks: [] },
-  about: { id: "about", icon: "info", blocks: [] },
+  flags: { id: "flags", icon: "flag", blocks: [] },
+  about: { id: "about", icon: "info", blocks: [{ kind: "updates" }] },
 };
 
-export const sectionText = (text: Text, id: SectionId) => ({
-  label: text(`settings-ui.sections.${id}.label`),
-  sub: text(`settings-ui.sections.${id}.sub`),
-});
+/** The sections in the sidebar (SECTIONS is keyed by id, not ordered for display). */
+export const SECTION_ORDER: readonly SectionId[] = ["general", "appearance", "window", "advanced", "plugins", "flags", "about"];
+
+export const sectionLabel = (text: Text, id: SectionId) => text(`settings-ui.sections.${id}.label`);
+
+/** A core section's title where it is not a sidebar section of its own (search results). */
+export const coreSectionLabel = (text: Text, section: CoreSection): string => {
+  if (section === "site") return text("settings-ui.blocks.site-features");
+  if (section === "apiServer") return text("settings-ui.blocks.api-server");
+  return sectionLabel(text, section);
+};
 
 /** "Label · Sub-label", leaving out the missing parts; undefined when both are. */
 export function joinTitles(...titles: (string | undefined)[]) {

@@ -17,7 +17,7 @@ import { startOffline } from "./offline.ts";
 import { pageButton } from "./page-button.tsx";
 import { popupEntry } from "./popup-entry.ts";
 import { createToast, type ShowToast } from "./toast.tsx";
-import { type Ctx, ICON } from "./types.ts";
+import { type Ctx } from "./types.ts";
 
 export function startPage(ctx: Ctx) {
   const { t } = ctx;
@@ -44,7 +44,8 @@ export function startPage(ctx: Ctx) {
   const entry = sidebarEntry(ctx, {
     name: "downloader",
     label: t("plugins.downloader.downloads", "Downloads"),
-    icon: ICON,
+    // YTM's own "download" icon, as its Downloads page uses.
+    iconType: "DOWNLOAD",
     onClick: () => openDownloads(),
   });
   const page = downloadsPage(ctx, entry);

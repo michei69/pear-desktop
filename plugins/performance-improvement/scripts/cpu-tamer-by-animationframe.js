@@ -26,7 +26,7 @@ SOFTWARE.
 
 /* oxlint-disable */
 
-export const injectCpuTamerByAnimationFrame = (__CONTEXT__) => {
+export const injectCpuTamerByAnimationFrame = (__CONTEXT__, isGPUAccelerationAvailable) => {
   "use strict";
 
   const win = this instanceof Window ? this : window;
@@ -56,18 +56,8 @@ export const injectCpuTamerByAnimationFrame = (__CONTEXT__) => {
     };
   })();
 
-  const isGPUAccelerationAvailable = (() => {
-    // https://gist.github.com/cvan/042b2448fcecefafbb6a91469484cdf8
-    try {
-      const canvas = document.createElement("canvas");
-      return !!(canvas.getContext("webgl") || canvas.getContext("experimental-webgl"));
-    } catch (e) {
-      return false;
-    }
-  })();
-
   if (!isGPUAccelerationAvailable) {
-    throw new Error("Your browser does not support GPU Acceleration. CPU Tamer by AnimationFrame is skipped.");
+    return;
   }
 
   const timeupdateDT = (() => {
@@ -152,54 +142,8 @@ export const injectCpuTamerByAnimationFrame = (__CONTEXT__) => {
     /** @type {Function|null} */
     let afInterupter = null;
 
-    const getRAFHelper = () => {
-      const asc = document.createElement("a-f");
-      if (!("onanimationiteration" in asc)) {
-        return (resolve) => requestAnimationFrame((afInterupter = resolve));
-      }
-      asc.id = "a-f";
-      let qr = null;
-      asc.onanimationiteration = function () {
-        if (qr !== null) qr = (qr(), null);
-      };
-      if (!document.getElementById("afscript")) {
-        const style = document.createElement("style");
-        style.id = "afscript";
-        style.textContent = `
-          @keyFrames aF1 {
-            0% {
-              order: 0;
-            }
-            100% {
-              order: 1;
-            }
-          }
-          #a-f[id] {
-            visibility: collapse !important;
-            position: fixed !important;
-            display: block !important;
-            top: -100px !important;
-            left: -100px !important;
-            margin:0 !important;
-            padding:0 !important;
-            outline:0 !important;
-            border:0 !important;
-            z-index:-1 !important;
-            width: 0px !important;
-            height: 0px !important;
-            contain: strict !important;
-            pointer-events: none !important;
-            animation: 1ms steps(2, jump-none) 0ms infinite alternate forwards running aF1 !important;
-          }
-        `;
-        (document.head || document.documentElement).appendChild(style);
-      }
-      document.documentElement.insertBefore(asc, document.documentElement.firstChild);
-      return (resolve) => (qr = afInterupter = resolve);
-    };
-
     /** @type {(resolve: () => void)}  */
-    const rafPN = getRAFHelper(); // rAF will not execute if document is hidden
+    const rafPN = (resolve) => requestAnimationFrame((afInterupter = resolve)); // rAF will not execute if document is hidden
 
     (() => {
       let afPromiseP, afPromiseQ; // non-null
@@ -233,7 +177,7 @@ export const injectCpuTamerByAnimationFrame = (__CONTEXT__) => {
       const wFunc = async (handler, wStore) => {
         try {
           const ct = Date.now();
-          if (ct - timeupdateDT() < 800 && ct - wStore.dt < 800) {
+          if (wStore.deferrable && ct - timeupdateDT() < 800 && ct - wStore.lastFire < 800) {
             const cid = wStore.cid;
             inExec.add(cid);
             const t = await eFunc();
@@ -241,30 +185,33 @@ export const injectCpuTamerByAnimationFrame = (__CONTEXT__) => {
             if (!didNotRemove || t === wStore.lastExecution) return;
             wStore.lastExecution = t;
           }
-          wStore.dt = ct;
+          wStore.lastFire = Date.now();
           handler();
         } catch (e) {
           console.error(e);
           throw e;
         }
       };
-      const sFunc = (propFunc) => {
+      const sFunc = (propFunc, isInterval) => {
         return (func, ms = 0, ...args) => {
           if (typeof func === "function") {
             // ignore all non-function parameter (e.g. string)
-            const wStore = { dt: Date.now() };
+            const wStore = { lastFire: 0, deferrable: isInterval || ms > 0 };
             return (wStore.cid = propFunc(wFunc, ms, args.length > 0 ? func.bind(null, ...args) : func, wStore));
           } else {
             return propFunc(func, ms, ...args);
           }
         };
       };
-      win.setTimeout = sFunc(setTimeout);
-      win.setInterval = sFunc(setInterval);
+      win.setTimeout = sFunc(setTimeout, false);
+      win.setInterval = sFunc(setInterval, true);
 
       const dFunc = (propFunc) => {
         return (cid) => {
-          if (cid) inExec.delete(cid) || propFunc(cid);
+          if (cid) {
+            inExec.delete(cid);
+            propFunc(cid);
+          }
         };
       };
 

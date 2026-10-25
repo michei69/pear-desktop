@@ -2,6 +2,8 @@ import { mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from "n
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { config, definePlugin } from "@pear/sdk";
+import { CONTEXT_MENU_ENTRIES } from "@pear/sdk/context-menu";
+import { flagOverrides } from "@pear/sdk/core-config";
 import { afterAll, describe, expect, test, vi } from "vitest";
 import { Settings } from "../src/main/config.ts";
 import { migrate } from "../src/main/migrations/index.ts";
@@ -17,6 +19,8 @@ const tray = definePlugin({
   config: {
     closeToTray: config.bool(false, { label: "Close to tray" }),
     clickPlayPause: config.bool(false, { label: "Click toggles playback" }),
+    moveToCurrentDesktop: config.bool(false, { label: "Move to current desktop" }),
+    forceWhiteIcons: config.bool(false, { label: "Force white icons" }),
   },
 });
 const lyrics = definePlugin({
@@ -32,6 +36,22 @@ const lyrics = definePlugin({
       ],
       { label: "Effect" },
     ),
+  },
+});
+const doNotTrack = definePlugin({
+  id: "do-not-track",
+  name: "Do Not Track",
+  config: {
+    blocker: config.select(
+      "Balanced",
+      [
+        { value: "Lite", label: "Lite" },
+        { value: "Balanced", label: "Balanced" },
+        { value: "Strict", label: "Strict" },
+      ],
+      { label: "Profile" },
+    ),
+    cache: config.bool(true, { label: "Cache" }),
   },
 });
 /** Not in PEAR_DESKTOP_3. */
@@ -72,7 +92,7 @@ const downloader = definePlugin({
     autoDownloadFolder: config.string("", { label: "Auto folder" }),
   },
 });
-const PLUGINS = [tray, lyrics, genius, menu, downloader];
+const PLUGINS = [tray, lyrics, genius, menu, downloader, doNotTrack];
 
 const profiles: string[] = [];
 afterAll(() => profiles.forEach((dir) => rmSync(dir, { recursive: true, force: true })));
@@ -113,39 +133,188 @@ describe("config.json from pear-desktop 3.x", () => {
 
   test("moves the tray option onto the tray plugin", () => {
     // With the tray on, pear-desktop hid the window when it was closed.
-    expect(settings.plugin("tray")).toEqual({ enabled: true, config: { closeToTray: true, clickPlayPause: true } });
+    expect(settings.plugin("tray")).toMatchObject({ enabled: true, config: { closeToTray: true, clickPlayPause: true } });
     const off = (options: Record<string, unknown>) => migrated312({ options }).config.plugins?.tray;
     expect(off({ tray: false })).toEqual({ enabled: false });
     expect(off({})).toBeUndefined();
+  });
+
+  test("the tray's window and icon options move onto the tray plugin", () => {
+    const trayOf = (options: Record<string, unknown>, plugins: Record<string, unknown> = {}) =>
+      migrated312({ options, plugins }).config.plugins?.tray;
+    expect(trayOf({ trayMoveToCurrentDesktop: true, trayForceWhiteIcons: true })).toEqual({
+      moveToCurrentDesktop: true,
+      forceWhiteIcons: true,
+    });
+    // A choice stored under the plugin's own key wins.
+    expect(trayOf({ trayMoveToCurrentDesktop: true }, { tray: { moveToCurrentDesktop: false } })).toMatchObject({
+      moveToCurrentDesktop: false,
+    });
+    // Only booleans; anything else leaves the plugin entry alone.
+    expect(trayOf({ trayMoveToCurrentDesktop: "yes", trayForceWhiteIcons: 1 })).toBeUndefined();
+    const loaded = load({
+      ...from312({ options: { trayMoveToCurrentDesktop: true, trayForceWhiteIcons: true } }),
+      __internal__: { migrations: { version: "3.12.4" } },
+    });
+    expect(loaded.plugin("tray")?.config).toMatchObject({ moveToCurrentDesktop: true, forceWhiteIcons: true });
+    // The old keys stay for a downgrade.
+    expect(loaded.all().options).toMatchObject({ trayMoveToCurrentDesktop: true, trayForceWhiteIcons: true });
   });
 
   test("reads the API server where the plugin kept it", () => {
     expect(settings.core("apiServer")).toMatchObject({ enabled: true, port: 9000, authorizedClients: ["remote"], secret: "s3cret" });
   });
 
-  test("the API server keeps listening on every interface, pear-desktop's default", () => {
-    const apiServer = (entry: Record<string, unknown>) => load(from312({ plugins: { "api-server": entry } })).core("apiServer");
-    expect(apiServer({ enabled: true, authorizedClients: ["phone"] })).toMatchObject({ enabled: true, hostname: "0.0.0.0" });
-    expect(apiServer({ enabled: true, hostname: "127.0.0.1" })).toMatchObject({ hostname: "127.0.0.1" });
-    // Never set up in pear-desktop, or a new profile: this machine only.
-    expect(load(from312({})).core("apiServer")).toMatchObject({ hostname: "127.0.0.1" });
+  test("the API server keeps the hostname its pear-desktop version defaulted to", () => {
+    // 3.12.4 made the default this machine only; its files keep it.
+    const from3124 = (entry: Record<string, unknown>) =>
+      load({ ...from312({ plugins: { "api-server": entry } }), __internal__: { migrations: { version: "3.12.4" } } }).core("apiServer");
+    expect(from3124({ enabled: true, authorizedClients: ["phone"] })).toMatchObject({ enabled: true, hostname: "127.0.0.1" });
+    expect(from3124({ enabled: true, hostname: "0.0.0.0" })).toMatchObject({ hostname: "0.0.0.0" });
+
+    // Before 3.12.4, pear-desktop listened on every interface; those users keep the old default.
+    const from3123 = (entry?: Record<string, unknown>) =>
+      load({
+        ...from312({ options: {}, plugins: entry ? { "api-server": entry } : {} }),
+        __internal__: { migrations: { version: "3.12.3" } },
+      }).core("apiServer");
+    expect(from3123({ enabled: true, authorizedClients: ["phone"] })).toMatchObject({ enabled: true, hostname: "0.0.0.0" });
+    expect(from3123()).toMatchObject({ hostname: "127.0.0.1" });
+
+    // New profiles: this machine only.
     expect(load().core("apiServer")).toMatchObject({ hostname: "127.0.0.1" });
   });
 
-  test("performance-improvement stays on unless it was turned off (on by default in pear-desktop)", () => {
+  test("performance-improvement keeps the state pear-desktop stored (off by default there too)", () => {
     const performance = (plugins: Record<string, unknown>) => migrated312({ plugins }).config.plugins?.["performance-improvement"];
-    expect(performance({})).toEqual({ enabled: true });
+    // pear-desktop's plugin defaults to off; the migration neither turns it on nor creates the entry.
+    expect(performance({})).toBeUndefined();
+    expect(performance({ "performance-improvement": { enabled: true } })).toEqual({ enabled: true });
     expect(performance({ "performance-improvement": { enabled: false } })).toEqual({ enabled: false });
-    // New profiles: off, the rewrite's default.
     expect(migrate(undefined, "4.0.0").config.plugins).toBeUndefined();
   });
 
-  test("everyone upgrading keeps the downloader saving files to the folder; new profiles keep songs in the app", () => {
-    expect(migrated312({}).config.plugins?.downloader).toMatchObject({ exportFiles: true });
-    expect(migrated312({ plugins: { downloader: { exportFiles: false } } }).config.plugins?.downloader).toMatchObject({
-      exportFiles: false,
+  test("pear-desktop's on-by-default do-not-track stays on unless it was turned off", () => {
+    const doNotTrack = (plugins: Record<string, unknown>) => migrated312({ plugins }).config.plugins?.["do-not-track"];
+    expect(doNotTrack({})).toEqual({ enabled: true, blocker: "Lite" });
+    // Turned off in pear-desktop: stays off.
+    expect(doNotTrack({ "do-not-track": { enabled: false } })).toEqual({ enabled: false, blocker: "Lite" });
+    // A chosen profile is kept.
+    expect(doNotTrack({ "do-not-track": { blocker: "Strict", cache: false } })).toMatchObject({
+      enabled: true,
+      blocker: "Strict",
+      cache: false,
     });
-    expect(load().plugin("downloader")?.config).toMatchObject({ exportFiles: false });
+    // A new rewrite profile: off, the rewrite's default.
+    expect(load().plugin("do-not-track")?.enabled).toBe(false);
+  });
+
+  test("hideVideoCaptions and the other ported app options carry over as core options", () => {
+    const migrated = migrated312({
+      options: { hideVideoCaptions: true, useYtmIcons: true, hideDislikeButton: true, overrideUserAgent: true },
+    }).config.options!;
+    expect(migrated).toMatchObject({
+      hideVideoCaptions: true,
+      useYtmIcons: true,
+      hideDislikeButton: true,
+      overrideUserAgent: true,
+    });
+    // The earlier captions-plugin conversion is gone: hideVideoCaptions is a core option now.
+    expect(migrated312({ options: { hideVideoCaptions: true } }).config.plugins?.["captions-selector"]).toBeUndefined();
+    // A captions plugin entry the user had is left exactly as stored.
+    expect(
+      migrated312({ options: { hideVideoCaptions: true }, plugins: { "captions-selector": { enabled: false, lastCaptionsCode: "de" } } })
+        .config.plugins?.["captions-selector"],
+    ).toEqual({ enabled: false, lastCaptionsCode: "de" });
+
+    const loaded = load({
+      ...from312({ options: { hideVideoCaptions: true, useYtmIcons: true, hideDislikeButton: true, overrideUserAgent: true } }),
+      __internal__: { migrations: { version: "3.12.4" } },
+    });
+    expect(loaded.core("appearance")).toMatchObject({ hideVideoCaptions: true, useYtmIcons: true, hideDislikeButton: true });
+    expect(loaded.core("advanced")).toMatchObject({ overrideUserAgent: true });
+  });
+
+  test("the context-menu hidden record becomes one flat switch per entry", () => {
+    const hidden = Object.fromEntries(CONTEXT_MENU_ENTRIES.map((entry) => [entry.key, true]));
+    const record = { ...hidden, "not-an-entry": true };
+    const options = migrated312({ options: { contextMenuHidden: record } }).config.options!;
+    for (const entry of CONTEXT_MENU_ENTRIES) expect(options[entry.configKey], entry.key).toBe(true);
+    // Entries YTM grew that pear-desktop did not know have no switch; they stay in the record.
+    expect(options.contextMenuNotAnEntry).toBeUndefined();
+    // The old record stays for a downgrade.
+    expect(options.contextMenuHidden).toEqual(record);
+    // Only true hides: a false value creates no switch.
+    const partial = migrated312({ options: { contextMenuHidden: { share: false, download: true } } }).config.options!;
+    expect(partial.contextMenuDownload).toBe(true);
+    expect(partial).not.toHaveProperty("contextMenuShare");
+    // A hand-written flat switch is never overwritten.
+    expect(migrated312({ options: { contextMenuHidden: { share: true }, contextMenuShare: false } }).config.options!.contextMenuShare).toBe(
+      false,
+    );
+
+    const loaded = load({
+      ...from312({ options: { contextMenuHidden: { share: true, "play-next": true } } }),
+      __internal__: { migrations: { version: "3.12.4" } },
+    });
+    expect(loaded.core("appearance")).toMatchObject({ contextMenuShare: true, contextMenuPlayNext: true, contextMenuDownload: false });
+  });
+
+  test("YTM feature-flag overrides become the site section's name=value list", () => {
+    const flags = {
+      music_web_enable_wiz_miniplayer: false,
+      music_web_enable_like_count: 2,
+      music_web_enable_contained_content_layout: true,
+      some_text_flag: "alpha",
+      "invalid name": true,
+    };
+    const options = migrated312({ options: { featureFlags: flags } }).config.options!;
+    expect(options.siteFlags).toEqual([
+      "music_web_enable_wiz_miniplayer=false",
+      "music_web_enable_like_count=2",
+      "music_web_enable_contained_content_layout=true",
+      "some_text_flag=alpha",
+    ]);
+    // The old record stays for a downgrade.
+    expect(options.featureFlags).toEqual(flags);
+    // Values with no text form become their JSON text, so no override is dropped.
+    expect(migrated312({ options: { featureFlags: { complex: { a: 1 }, list: [1, 2] } } }).config.options!.siteFlags).toEqual([
+      'complex={"a":1}',
+      "list=[1,2]",
+    ]);
+    // An empty record does not create the list.
+    expect(migrated312({ options: { featureFlags: {} } }).config.options).not.toHaveProperty("siteFlags");
+    expect(migrated312({ options: {} }).config.options).not.toHaveProperty("siteFlags");
+    // A stored list is never overwritten.
+    expect(migrated312({ options: { featureFlags: { a: true }, siteFlags: ["b=false"] } }).config.options!.siteFlags).toEqual(["b=false"]);
+
+    // The page reads the overrides back, typed like the list's own entries.
+    const settings = load({
+      ...from312({ options: { featureFlags: flags } }),
+      __internal__: { migrations: { version: "3.12.4" } },
+    });
+    expect(settings.core("site").siteFlags).toEqual([
+      "music_web_enable_wiz_miniplayer=false",
+      "music_web_enable_like_count=2",
+      "music_web_enable_contained_content_layout=true",
+      "some_text_flag=alpha",
+    ]);
+    expect(flagOverrides(settings.core("site").siteFlags)).toEqual({
+      music_web_enable_wiz_miniplayer: false,
+      music_web_enable_like_count: 2,
+      music_web_enable_contained_content_layout: true,
+      some_text_flag: "alpha",
+    });
+  });
+
+  test("everyone upgrading keeps the downloader saving files to the folder; new profiles keep songs in the app", () => {
+    // pear-desktop also overwrote an existing file by default; the rewrite skips it.
+    expect(migrated312({}).config.plugins?.downloader).toEqual({ exportFiles: true, skipExisting: false });
+    expect(migrated312({ plugins: { downloader: { exportFiles: false, skipExisting: true } } }).config.plugins?.downloader).toMatchObject({
+      exportFiles: false,
+      skipExisting: true,
+    });
+    expect(load().plugin("downloader")?.config).toMatchObject({ exportFiles: false, skipExisting: true });
   });
 
   test("maps the downloader's presets and download-on-finish settings", () => {

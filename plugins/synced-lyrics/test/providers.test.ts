@@ -1,4 +1,4 @@
-import { describe, expect, test } from "vitest";
+import { beforeEach, describe, expect, test } from "vitest";
 import { artistSimilarity, jaroWinkler, titleSimilarity } from "../match.ts";
 import { extractLyrics } from "../providers/genius.ts";
 import { SearchCache } from "../providers/index.ts";
@@ -21,6 +21,8 @@ import megalobizLrc from "./fixtures/megalobiz-lrc.json" with { type: "json" };
 import megalobizSearch from "./fixtures/megalobiz-search.json" with { type: "json" };
 import musixmatchDecoy from "./fixtures/musixmatch-macro-decoy.json" with { type: "json" };
 import musixmatchToken from "./fixtures/musixmatch-token-anonymous.json" with { type: "json" };
+// The mobile app's token.get answer; its token is replaced by a placeholder.
+import musixmatchMobileToken from "./fixtures/musixmatch-token-mobile.json" with { type: "json" };
 
 const query: SearchQuery = {
   videoId: "dQw4w9WgXcQ",
@@ -32,14 +34,17 @@ const query: SearchQuery = {
 
 function mockFetch(routes: [RegExp, unknown][]) {
   const calls: string[] = [];
+  const inits: RequestInit[] = [];
   const fetch = async (url: string, init?: RequestInit) => {
     calls.push(`${init?.method ?? "GET"} ${url}`);
+    inits.push(init ?? {});
     const route = routes.find(([pattern]) => pattern.test(url));
     if (!route) return new Response("not found", { status: 404 });
     const body = route[1];
-    return new Response(typeof body === "string" ? body : JSON.stringify(body));
+    const answer = typeof body === "function" ? (body as () => unknown)() : body;
+    return new Response(typeof answer === "string" ? answer : JSON.stringify(answer));
   };
-  return Object.assign(fetch, { calls });
+  return Object.assign(fetch, { calls, inits });
 }
 
 const entry = (overrides: object) => ({
@@ -262,27 +267,14 @@ describe("megalobiz", () => {
 });
 
 describe("musixmatch", () => {
-  const options = { userToken: "", t: (_key: string, english = "") => english };
+  const options = { tokenMode: "auto" as const, userToken: "", t: (_key: string, english = "") => english };
+  const tokenCalls = (fetch: ReturnType<typeof mockFetch>) => fetch.calls.filter((call) => call.includes("token.get"));
+  const macroCalls = (fetch: ReturnType<typeof mockFetch>) => fetch.calls.filter((call) => call.includes("macro.subtitles.get"));
 
-  test("refuses the all-zero token Musixmatch gives anonymous apps", async () => {
-    resetMusixmatchToken();
-    expect(isUsableToken(musixmatchToken.message.body.user_token)).toBe(false);
-    const fetch = mockFetch([[/token\.get/, musixmatchToken]]);
-    await expect(musixmatch(yellow, fetch, options)).rejects.toThrow(/user token/);
-    // The refusal is remembered for a while instead of asking again for every track.
-    await expect(musixmatch(yellow, fetch, options)).rejects.toThrow(/user token/);
-    expect(fetch.calls.filter((call) => call.includes("token.get"))).toHaveLength(1);
-    expect(fetch.calls.some((call) => call.includes("macro.subtitles.get"))).toBe(false);
-  });
+  beforeEach(resetMusixmatchToken);
 
-  test("rejects the decoy track it matches with that token", () => {
-    // Asked for Coldplay's Yellow, it "found" another song with made-up lyrics.
-    const decoy = musixmatchDecoy.message.body.macro_calls["matcher.track.get"].message.body.track;
-    expect([decoy.track_name, decoy.artist_name]).toEqual(["NOKIA", "Drake"]);
-    expect(parseMacro(musixmatchDecoy, yellow)).toBeNull();
-  });
-
-  test("reads the lyrics and LRC of the matched track with the user's token", async () => {
+  // The decoy answer, with the track, lyrics and LRC of Yellow instead.
+  const yellowAnswer = () => {
     const answer = structuredClone(musixmatchDecoy) as Record<string, any>;
     const calls = answer.message.body.macro_calls;
     Object.assign(calls["matcher.track.get"].message.body.track, { track_name: "Yellow", artist_name: "Coldplay" });
@@ -290,22 +282,106 @@ describe("musixmatch", () => {
       "Look at the stars\nLook how they shine\n\n******* This Lyrics is NOT for Commercial use *******\n(1409623456789)";
     calls["track.subtitles.get"].message.body.subtitle_list[0].subtitle.subtitle_body =
       "[00:33.24] Look at the stars\n[00:36.01] Look how they shine";
-    const fetch = mockFetch([[/macro\.subtitles\.get/, answer]]);
+    return answer;
+  };
+  const rejected = { message: { header: { status_code: 401, hint: "captcha" }, body: "" } };
+  const tokenAnswer = (token: string) => ({ message: { header: { status_code: 200 }, body: { user_token: token } } });
 
+  test("auto: fetches the mobile app's token, ignores the user token and reuses it", async () => {
+    const fetch = mockFetch([
+      [/token\.get/, musixmatchMobileToken],
+      [/macro\.subtitles\.get/, yellowAnswer()],
+    ]);
     const result = await musixmatch(yellow, fetch, { ...options, userToken: "2501abc" });
-    expect(fetch.calls).toHaveLength(1);
-    expect(fetch.calls[0]).toContain("usertoken=2501abc");
-    expect(fetch.calls[0]).toContain("q_track=Yellow&q_artist=Coldplay&q_duration=269");
+
     expect(result).toMatchObject({ title: "Yellow", artists: ["Coldplay"], plain: "Look at the stars\nLook how they shine" });
     expect(result?.lines?.map((l) => l.text)).toEqual(["", "Look at the stars", "Look how they shine"]);
+    expect(tokenCalls(fetch)).toHaveLength(1);
+    expect(fetch.calls[0]).toContain("https://apic-appmobile.musixmatch.com/ws/1.1/token.get?app_id=mac-ios-v2.0");
+    // The mobile app's headers, as pear-desktop sent them.
+    expect(fetch.inits[0]?.headers).toMatchObject({
+      "x-mxm-app-version": "10.1.1",
+      "X-User-Agent": expect.stringContaining("Musixmatch/"),
+    });
+    expect(fetch.calls[1]).toContain("usertoken=" + musixmatchMobileToken.message.body.user_token);
+    expect(fetch.calls[1]).toContain("q_track=Yellow&q_artist=Coldplay&q_duration=269");
+
+    // The token is cached, so the next search asks for no new one.
+    expect(await musixmatch(yellow, fetch, options)).not.toBeNull();
+    expect(tokenCalls(fetch)).toHaveLength(1);
+    expect(macroCalls(fetch)).toHaveLength(2);
   });
 
-  test("tells when the token is rejected", async () => {
-    const fetch = mockFetch([[/macro/, { message: { header: { status_code: 401, hint: "captcha" }, body: "" } }]]);
-    await expect(musixmatch(yellow, fetch, { ...options, userToken: "2501abc" })).rejects.toThrow(/rejected/);
+  test("auto: refreshes a stale token on 401 and retries once", async () => {
+    let tokens = 0;
+    let attempts = 0;
+    const fetch = mockFetch([
+      [/token\.get/, () => tokenAnswer("mobile-token-" + ++tokens)],
+      [/macro\.subtitles\.get/, () => (attempts++ === 0 ? rejected : yellowAnswer())],
+    ]);
+    const result = await musixmatch(yellow, fetch, options);
+    expect(result?.title).toBe("Yellow");
+    expect(tokenCalls(fetch)).toHaveLength(2);
+    expect(macroCalls(fetch)).toHaveLength(2);
+    expect(fetch.calls[1]).toContain("usertoken=mobile-token-1");
+    expect(fetch.calls[3]).toContain("usertoken=mobile-token-2");
   });
 
-  test("handles calls without results", () => {
+  test("auto: reports a rejection when the refreshed token is rejected too", async () => {
+    let tokens = 0;
+    const fetch = mockFetch([
+      [/token\.get/, () => tokenAnswer("mobile-token-" + ++tokens)],
+      [/macro\.subtitles\.get/, rejected],
+    ]);
+    await expect(musixmatch(yellow, fetch, options)).rejects.toThrow(/rejected/);
+    // Retried once, not in a loop.
+    expect(tokenCalls(fetch)).toHaveLength(2);
+    expect(macroCalls(fetch)).toHaveLength(2);
+  });
+
+  test("auto: refuses the all-zero token Musixmatch hands out when it has none", async () => {
+    expect(isUsableToken(musixmatchToken.message.body.user_token)).toBe(false);
+    const fetch = mockFetch([[/token\.get/, musixmatchToken]]);
+    await expect(musixmatch(yellow, fetch, options)).rejects.toThrow(/user token/);
+    // The useless token is remembered for a minute instead of asking again for every track.
+    await expect(musixmatch(yellow, fetch, options)).rejects.toThrow(/user token/);
+    expect(tokenCalls(fetch)).toHaveLength(1);
+    expect(macroCalls(fetch)).toHaveLength(0);
+  });
+
+  test("user: sends the configured token without asking for one", async () => {
+    const fetch = mockFetch([
+      [/macro\.subtitles\.get/, yellowAnswer()],
+      [/token\.get/, musixmatchMobileToken],
+    ]);
+    const result = await musixmatch(yellow, fetch, { ...options, tokenMode: "user", userToken: " 2501abc " });
+    expect(result?.title).toBe("Yellow");
+    expect(fetch.calls).toHaveLength(1);
+    expect(fetch.calls[0]).toContain("usertoken=2501abc");
+    expect(tokenCalls(fetch)).toHaveLength(0);
+  });
+
+  test("user: tells when the token is rejected and keeps to the user token", async () => {
+    const fetch = mockFetch([
+      [/macro\.subtitles\.get/, rejected],
+      [/token\.get/, musixmatchMobileToken],
+    ]);
+    await expect(musixmatch(yellow, fetch, { ...options, tokenMode: "user", userToken: "2501abc" })).rejects.toThrow(/rejected/);
+    expect(macroCalls(fetch)).toHaveLength(1);
+    expect(tokenCalls(fetch)).toHaveLength(0);
+  });
+
+  test("user: asks for a token in the settings when none is set", async () => {
+    const fetch = mockFetch([]);
+    await expect(musixmatch(yellow, fetch, { ...options, tokenMode: "user", userToken: " " })).rejects.toThrow(/user token/);
+    expect(fetch.calls).toHaveLength(0);
+  });
+
+  test("rejects the decoy track and handles calls without results", () => {
+    // Asked for Coldplay's Yellow, it "found" another song with made-up lyrics.
+    const decoy = musixmatchDecoy.message.body.macro_calls["matcher.track.get"].message.body.track;
+    expect([decoy.track_name, decoy.artist_name]).toEqual(["NOKIA", "Drake"]);
+    expect(parseMacro(musixmatchDecoy, yellow)).toBeNull();
     const empty = { message: { header: { status_code: 200 }, body: { macro_calls: { "matcher.track.get": { message: { body: [] } } } } } };
     expect(parseMacro(empty, yellow)).toBeNull();
   });

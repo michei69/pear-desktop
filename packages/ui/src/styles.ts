@@ -6,10 +6,24 @@ import { about } from "./styles/about.ts";
 import { base, scrollbars } from "./styles/base.ts";
 import { cards, pluginCards } from "./styles/cards.ts";
 import { controls, fieldRows } from "./styles/fields.ts";
+import { flags } from "./styles/flags.ts";
 import { layout } from "./styles/layout.ts";
 import { palette } from "./styles/palette.ts";
 import { sidebar } from "./styles/sidebar.ts";
 import { theme } from "./styles/themes.ts";
 
 // In cascade order: later parts override earlier ones.
-export const overlayStyles = [palette, base, layout, sidebar, cards, fieldRows, pluginCards, controls, theme, about, scrollbars].join("");
+export const overlayStyles = [
+  palette,
+  base,
+  layout,
+  sidebar,
+  cards,
+  fieldRows,
+  pluginCards,
+  controls,
+  theme,
+  flags,
+  about,
+  scrollbars,
+].join("");

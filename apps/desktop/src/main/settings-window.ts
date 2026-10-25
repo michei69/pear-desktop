@@ -45,7 +45,7 @@ export const SETTINGS_FLAG = "--settings";
 
 let settingsWindow: BrowserWindow | undefined;
 
-export function openSettingsWindow() {
+export function openSettingsWindow(useYtmIcons: boolean) {
   const open = alive(settingsWindow);
   if (open) {
     focusWindow(open);
@@ -58,7 +58,7 @@ export function openSettingsWindow() {
     minHeight: 480,
     backgroundColor: "#1d1b20",
     title: "Pear Desktop settings",
-    icon: appIcon(),
+    icon: appIcon(useYtmIcons),
     autoHideMenuBar: true,
     show: false,
     webPreferences: secureWebPreferences(),

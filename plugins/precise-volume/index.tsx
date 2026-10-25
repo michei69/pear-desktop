@@ -14,6 +14,8 @@ const schema = {
   showHud: config.bool(true, { label: "Show the volume while changing it" }),
   volumeUp: config.shortcut("", { label: "Global shortcut: volume up" }),
   volumeDown: config.shortcut("", { label: "Global shortcut: volume down" }),
+  /** The last volume, restored on the next launch (pear-desktop's savedVolume). -1 until one is saved. */
+  savedVolume: config.number(-1, { label: "Saved volume", hidden: true }),
 };
 
 type Ctx = PageContextOf<typeof schema>;
@@ -76,6 +78,10 @@ export default definePlugin({
       const showHud = volumeHud(ctx);
       const showSlider = sliderReveal(ctx);
 
+      // pear-desktop restored the volume it saved between sessions.
+      const saved = ctx.config.savedVolume;
+      if (saved >= 0 && saved <= 100) ctx.player.control({ type: "volume", value: saved });
+
       const setTooltips = (volume: number) => {
         for (const name of TOOLTIP_TARGETS) {
           for (const element of ctx.$$(name)) element.title = `${volume}%`;
@@ -97,10 +103,17 @@ export default definePlugin({
         showSlider();
       };
 
+      // Volume changes come per frame while dragging the slider; save the last one.
+      const saveVolume = debounce(() => ctx.setConfig({ savedVolume: Math.round(position()) }), 500);
+
       listenForWheel(ctx, change);
       listenForArrows(ctx, change);
       ctx.host.on("step", (direction) => change(Number(direction)));
-      ctx.player.on("volumeChange", () => setTooltips(position()));
+      ctx.player.on("volumeChange", () => {
+        setTooltips(position());
+        saveVolume();
+      });
+      ctx.onCleanup(() => saveVolume.cancel());
       setTooltips(position());
     },
     // Every option is read when used.

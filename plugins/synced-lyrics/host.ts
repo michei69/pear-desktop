@@ -201,7 +201,7 @@ export class LyricsHost {
 
   #providerOptions(config: Readonly<LyricsConfig>, t: Translate): ProviderOptions {
     return {
-      musixmatch: { userToken: config.musixmatchToken, t },
+      musixmatch: { tokenMode: config.musixmatchTokenMode, userToken: config.musixmatchToken, t },
       ytmusic: { useProxyFallback: !config.useYTMLyricsWithoutProxy },
     };
   }

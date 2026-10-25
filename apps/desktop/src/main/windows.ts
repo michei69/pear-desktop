@@ -1,6 +1,6 @@
 import { join } from "node:path";
 import { type BrowserWindow, nativeImage, type WebPreferences } from "electron";
-import { pearIconBitmap } from "@pear/sdk/icon";
+import { pearIconBitmap, ytmIconBitmap } from "@pear/sdk/icon";
 
 const ICON_SIZE = 256;
 
@@ -16,9 +16,10 @@ export function focusWindow(window: BrowserWindow) {
   window.focus();
 }
 
-/** The pear icon of the app's windows. A function, so importing this module needs no Electron (unit tests). */
-export function appIcon() {
-  return nativeImage.createFromBitmap(pearIconBitmap(ICON_SIZE), { width: ICON_SIZE, height: ICON_SIZE });
+/** The icon of the app's windows: pear's, or Music's with `appearance.useYtmIcons`. */
+export function appIcon(useYtmIcons: boolean) {
+  const pixels = useYtmIcons ? ytmIconBitmap(ICON_SIZE) : pearIconBitmap(ICON_SIZE);
+  return nativeImage.createFromBitmap(pixels, { width: ICON_SIZE, height: ICON_SIZE });
 }
 
 /** What every app window runs with: the preload bridge in an isolated, sandboxed renderer. */
@@ -27,5 +28,7 @@ export function secureWebPreferences(): WebPreferences {
     preload: join(import.meta.dirname, "../preload/index.cjs"),
     contextIsolation: true,
     sandbox: true,
+    // The session-wide spellchecker is off; the window-level flag matches pear-desktop.
+    spellcheck: false,
   };
 }

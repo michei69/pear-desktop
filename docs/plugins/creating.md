@@ -243,7 +243,7 @@ export default definePlugin({
 - `shadowHost(tag, css)`: a custom element whose content YTM's CSS cannot reach.
 - `anchoredPopover(ctx, { name, label })`: an empty popover in the pickers' look that you fill and show next to an element.
 - `containScroll(element, signal)` and `isolateKeys(element, signal)`: keep the wheel and key presses inside an element from reaching the page.
-- `sidebarEntry(ctx, { name, label, icon, onClick })`: an entry under Home and Library in both sidebar layouts. It returns `setBadge`, `elements`, `focus` and `setSelected`.
+- `sidebarEntry(ctx, { name, label, iconType, onClick })`: an entry under Home and Library in both sidebar layouts. `iconType` is YouTube Music's icon id (`SETTINGS_MATERIAL`, `DOWNLOAD`, …). It returns `setBadge`, `elements`, `focus` and `setSelected`.
 - `openBrowsePage(browseId)`: opens one of YTM's browse pages in place.
 - `keepMounted(element, place)`, `observe(target, options, callback)`: the primitives behind `ctx.mount` and `ctx.observe`.
 

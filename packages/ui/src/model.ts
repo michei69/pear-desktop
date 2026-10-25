@@ -4,8 +4,25 @@
 
 import type { CoreSection, Flags } from "@pear/sdk/core-config";
 import { type Translate, translator } from "@pear/sdk/i18n";
-import type { AppInfo, Bootstrap, Bridge, CoreState, HostEvent, PluginInfo, PluginMeta, PluginState } from "@pear/sdk/protocol";
+import type {
+  AppDebugInfo,
+  AppInfo,
+  Bootstrap,
+  Bridge,
+  CoreState,
+  FlagMetadataMap,
+  HostEvent,
+  PluginInfo,
+  PluginMeta,
+  PluginState,
+} from "@pear/sdk/protocol";
 import type { ThemeState } from "@pear/sdk/themes";
+
+/** The page's flags as YTM served them and the overrides this app applies. */
+export interface SiteFlags {
+  readonly served: Flags;
+  readonly overrides: Flags;
+}
 
 export interface SettingsModel {
   readonly app: AppInfo;
@@ -26,7 +43,17 @@ export interface SettingsModel {
   setCoreConfig(section: CoreSection, patch: Record<string, unknown>): Promise<unknown>;
   relaunch(): Promise<unknown>;
   showSettingsFile(): Promise<unknown>;
+  /** Opens config.json in the default editor. */
+  editConfig(): Promise<unknown>;
   toggleDevTools(): Promise<unknown>;
+  /** Opens a link in the user's browser (the About links). */
+  openExternal(url: string): Promise<unknown>;
+  /** The About section's machine and memory details. */
+  appMeta(): Promise<AppDebugInfo>;
+  /** Descriptions, families and restart requirements for YTM's feature flags. */
+  flagMetadata(): Promise<FlagMetadataMap>;
+  /** Runs the update check now ("Check for updates"). */
+  checkUpdates(): Promise<unknown>;
   /** Runs one of the plugin's settings actions (its host command of that name). */
   runAction(id: string, name: string): Promise<unknown>;
   /** Selects a theme ('' for none); false when the user declined its script. */
@@ -44,7 +71,7 @@ export interface SettingsModel {
   /** Points the page at the active app language; it reloads. */
   languageToYtm(): Promise<void>;
   /** YTM's feature flags as it served them; only in YTM's page. */
-  siteFlags?(): Readonly<Flags>;
+  siteFlags?(): SiteFlags;
 }
 
 /** The model's commands, each a request to the host. */
@@ -55,7 +82,12 @@ type SettingsCommands = Pick<
   | "setCoreConfig"
   | "relaunch"
   | "showSettingsFile"
+  | "editConfig"
   | "toggleDevTools"
+  | "openExternal"
+  | "appMeta"
+  | "flagMetadata"
+  | "checkUpdates"
   | "runAction"
   | "selectTheme"
   | "allowThemeScript"
@@ -75,7 +107,12 @@ function bridgeCommands(bridge: Bridge): SettingsCommands {
     setCoreConfig: (section, patch) => bridge.invoke("core:set-config", section, patch),
     relaunch: () => bridge.invoke("app:relaunch"),
     showSettingsFile: () => bridge.invoke("app:show-settings-file"),
+    editConfig: () => bridge.invoke("app:edit-config"),
     toggleDevTools: () => bridge.invoke("app:toggle-devtools"),
+    openExternal: (url) => bridge.invoke("app:open-external", url),
+    appMeta: () => bridge.invoke("app:meta"),
+    flagMetadata: () => bridge.invoke("flags:metadata"),
+    checkUpdates: () => bridge.invoke("app:check-updates"),
     runAction: (id, name) => bridge.invoke("plugin:invoke", id, name, []),
     selectTheme: (id) => bridge.invoke("theme:select", id),
     allowThemeScript: (id) => bridge.invoke("theme:allow-script", id),

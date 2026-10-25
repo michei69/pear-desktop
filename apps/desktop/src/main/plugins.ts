@@ -300,6 +300,7 @@ export class PluginHost {
       setConfig: (patch) => void this.setConfig(id, patch),
       app: env.app,
       window: env.window,
+      core: (section) => settings.core(section),
       session: env.router.scopedSession(id, active),
       webRequest: env.router.scoped(id, active),
       request: (event, payload, options) => env.requests.request(id, event, payload, options),

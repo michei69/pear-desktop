@@ -10,6 +10,7 @@ import { hideOnClose, onActivate } from "./close.ts";
 import { Settings } from "./config.ts";
 import { seedConsent } from "./consent.ts";
 import { CoreOptions } from "./core-options.ts";
+import { loadFlagMetadata } from "./flag-metadata.ts";
 import { loadI18n, resolveLanguage } from "./i18n.ts";
 import { setupIpc } from "./ipc.ts";
 import { languageFromYtm, setYtmLanguage } from "./language-sync.ts";
@@ -24,7 +25,7 @@ import { PluginHost } from "./plugins.ts";
 import { findProtocolLink, ProtocolLinks, registerProtocol } from "./protocol.ts";
 import { openSettingsWindow, SETTINGS_FLAG, serveSettings } from "./settings-window.ts";
 import { startSmtc } from "./smtc.ts";
-import { applyProxy, beforeReady, PROXY_PLUGIN, scheduleLaterTasks } from "./startup-tasks.ts";
+import { applyProxy, beforeReady, clearStaleCodeCaches, PROXY_PLUGIN, scheduleLaterTasks } from "./startup-tasks.ts";
 import { checkForUpdates, UpdateManager } from "./updates.ts";
 import { WebRequestRouter } from "./web-request.ts";
 import { focusWindow } from "./windows.ts";
@@ -46,6 +47,8 @@ function main() {
   const core = new CoreOptions(settings, plugins.t, mainWindow, () => refreshMenu(), {
     updates: { channelChanged: () => updates?.channelChanged() },
     refreshMenu: () => refreshMenu(),
+    // The tray plugin draws its own artwork; a no-op while it is disabled.
+    refreshTrayIcons: () => void plugins.invoke("tray", "refreshIcons", []).catch(() => {}),
   });
   const player = new PlayerMirror((action) => send({ type: "player-control", action }));
   const requests = new PageRequests(send);
@@ -60,7 +63,7 @@ function main() {
   app.on("second-instance", (_, argv) => {
     const link = findProtocolLink(argv);
     if (link) links.run(link);
-    else if (argv.includes(SETTINGS_FLAG)) openSettingsWindow();
+    else if (argv.includes(SETTINGS_FLAG)) openSettingsWindow(settings.core("appearance").useYtmIcons);
     else mainWindow.focus();
   });
 
@@ -68,6 +71,8 @@ function main() {
     console.info(`[pear] startup: app ready after ${Math.round(performance.now())}ms`);
     // Before any page loads: YTM and the settings window get only what they need.
     hardenSession(session.defaultSession);
+    // Not awaited: a few file stats must not hold the window back.
+    void clearStaleCodeCaches(app);
     const language = resolveLanguage(settings.core("general").language, app.getLocale());
     plugins.setI18n(await loadI18n(language));
     const activeLanguage = plugins.i18n?.language ?? language;
@@ -76,8 +81,11 @@ function main() {
       toYtm: () => setYtmLanguage(session.defaultSession, mainWindow.window, activeLanguage),
     };
     const router = new WebRequestRouter(session.defaultSession);
-    setupNet(router.scoped("core"), { electronUserAgent: mainWindow.useYtmUserAgent() });
+    const electronUserAgent = mainWindow.useYtmUserAgent(settings.core("advanced").overrideUserAgent);
+    setupNet(router.scoped("core"), { electronUserAgent });
     serveSettings();
+    // Started here, not when the Flags section opens: the download takes a while.
+    void loadFlagMetadata();
     setupIpc({
       plugins,
       player,
@@ -89,6 +97,7 @@ function main() {
       themes: core.themes,
       language: languageSync,
       apiPageEvent: (name, payload) => api?.pageEvent?.(name, payload),
+      checkUpdates: () => checkUpdatesNow(),
       core: {
         states: () => ({ ...core.states(), apiServer: api?.state() ?? { config: settings.core("apiServer") } }),
         async setConfig(section, patch) {
@@ -220,8 +229,10 @@ function main() {
     });
     registerProtocol(app);
     core.apply("window");
+    // Picks up the saved icon option (the Dock icon on macOS, the window icon).
+    core.apply("appearance");
     void api.apply();
-    if (process.argv.includes(SETTINGS_FLAG)) openSettingsWindow();
+    if (process.argv.includes(SETTINGS_FLAG)) openSettingsWindow(settings.core("appearance").useYtmIcons);
     scheduleLaterTasks({ settings });
   });
 

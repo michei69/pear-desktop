@@ -11,6 +11,7 @@ import { mountSettings, type SettingsController } from "@pear/ui";
 import plugins from "virtual:pear/page-plugins";
 import { registerApiHandlers } from "./api.ts";
 import { Appearance } from "./appearance.ts";
+import { ContextMenuCustomizer } from "./context-menu.ts";
 import { domReady } from "./dom.ts";
 import { installAnimationThrottle, performanceModeCss } from "./performance.ts";
 import { Player, type StatePublisher } from "./player.ts";
@@ -60,7 +61,7 @@ if (performanceMode) {
 }
 
 // First: YTM's config script runs right after the runtime.
-const siteFlags = overrideSiteFlags(siteOverrides(bridge.bootstrap.core.site.config, performanceMode));
+const siteFlags = overrideSiteFlags(siteOverrides(bridge.bootstrap.core.site.config), performanceMode);
 
 /** The share dialog's cleaning options, from the appearance section. */
 function shareUrlOptions(config: Record<string, unknown>) {
@@ -129,12 +130,14 @@ const player = new Player(hostPublisher(bridge), bridge.bootstrap.core.appearanc
 const runner = new PluginRunner(plugins, bridge, player);
 const appearance = new Appearance();
 appearance.apply(runner.core("appearance"));
+const contextMenu = new ContextMenuCustomizer();
+contextMenu.apply(runner.core("appearance").config);
 const themes = new ThemesRuntime();
 themes.apply(normalizeThemeState(bridge.bootstrap.themes));
 
 let settings: SettingsController | undefined;
 const settingsReady = domReady().then(() => {
-  settings = mountSettings({ ...runner.settings, siteFlags: () => siteFlags.served });
+  settings = mountSettings({ ...runner.settings, siteFlags: () => siteFlags });
   return settings;
 });
 
@@ -154,6 +157,7 @@ bridge.onEvent((event) => {
       runner.applyCore(event.section, event.state);
       if (event.section !== "appearance") return;
       appearance.apply(event.state);
+      contextMenu.apply(event.state.config);
       applyShareUrlOptions(event.state.config);
       return player.setOptions(event.state.config);
     case "themes": {

@@ -411,11 +411,17 @@ export default definePlugin({
     html[pear-dl-downloads-page] sel(browse.tabs) {
       display: none;
     }
-    html[pear-dl-downloads-page] sel(guide.active_entry) tp-yt-paper-item {
+    html[pear-dl-downloads-page] sel(guide.active_entry):not(.pear-downloader-entry) tp-yt-paper-item {
       background: transparent;
     }
-    html[pear-dl-downloads-page] sel(guide.active_entry) .title {
+    html[pear-dl-downloads-page] sel(guide.active_entry):not(.pear-downloader-entry) .title {
       font-weight: 400;
+    }
+    /* YTM's active state is computed from its own route, which the Downloads page
+       is not: mark our entry itself instead. */
+    .pear-downloader-entry[active] {
+      background: rgb(255 255 255 / 0.1);
+      border-radius: 10px;
     }
     /* As wide as the page's shelves, as the site sizes them. */
     .pear-dl-section {

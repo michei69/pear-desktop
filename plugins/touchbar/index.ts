@@ -1,5 +1,5 @@
 import { definePlugin, type NowPlaying, type PlayerAction } from "@pear/sdk";
-import { pearIconBitmap } from "@pear/sdk/icon";
+import { pearIconBitmap, ytmIconBitmap } from "@pear/sdk/icon";
 import { isPlaying } from "@pear/sdk/util";
 import { nativeImage, net, type NativeImage, TouchBar } from "electron";
 
@@ -16,7 +16,10 @@ export default definePlugin({
     start(ctx) {
       const { TouchBarButton, TouchBarLabel, TouchBarSpacer, TouchBarSegmentedControl, TouchBarScrubber } = TouchBar;
       const fallbackIcon = nativeImage
-        .createFromBitmap(pearIconBitmap(FALLBACK_SIZE), { width: FALLBACK_SIZE, height: FALLBACK_SIZE })
+        .createFromBitmap(ctx.core("appearance").useYtmIcons ? ytmIconBitmap(FALLBACK_SIZE) : pearIconBitmap(FALLBACK_SIZE), {
+          width: FALLBACK_SIZE,
+          height: FALLBACK_SIZE,
+        })
         .resize({ height: ARTWORK_HEIGHT });
 
       const title = new TouchBarLabel({ label: "" });

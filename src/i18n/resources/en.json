@@ -1726,7 +1726,10 @@
         },
         "arrows-shortcut": "Arrow key shortcuts",
         "shortcut-up": "Global shortcut: volume up",
-        "shortcut-down": "Global shortcut: volume down"
+        "shortcut-down": "Global shortcut: volume down",
+        "savedVolume": {
+          "label": "Saved volume"
+        }
       }
     },
     "quality-changer": {
@@ -2298,7 +2301,7 @@
         },
         "musixmatchToken": {
           "label": "Musixmatch user token",
-          "description": "Musixmatch only serves lyrics to signed-in apps: the usertoken of your own Musixmatch desktop app session. Without one, Musixmatch reports that it needs it."
+          "description": "The usertoken of your own signed-in Musixmatch app, sent when the token source above is your own token."
         },
         "precise-timing": "Precise timing",
         "show-inexact": "Show inexact lyrics",
@@ -2463,6 +2466,14 @@
         "googleTranslateHost": {
           "label": "Google Translate host",
           "description": "A regional host such as translate.google.co.jp, or your own Google Translate mirror."
+        },
+        "musixmatchTokenMode": {
+          "label": "Musixmatch token source",
+          "description": "Automatic asks Musixmatch for the mobile app's token and renews it every minute. Your own token sends the token below instead.",
+          "options": {
+            "auto": "Automatic (mobile app token)",
+            "user": "Your own token"
+          }
         }
       },
       "musixmatch": {
@@ -2937,6 +2948,12 @@
         "clickPlayPause": {
           "label": "Click plays and pauses",
           "description": "Instead of toggling the window."
+        },
+        "moveToCurrentDesktop": {
+          "label": "Show the window on the current desktop"
+        },
+        "forceWhiteIcons": {
+          "label": "Force white tray icons"
         }
       }
     },
@@ -3282,6 +3299,82 @@
       "mcpEnabled": {
         "label": "Enable MCP",
         "description": "Exposes the API server's operations as Model Context Protocol tools at /mcp."
+      },
+      "useYtmIcons": {
+        "label": "Use \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063's icons",
+        "description": "The window, tray and About artwork use YTM's logo instead of Pear Desktop's."
+      },
+      "hideDislikeButton": {
+        "label": "Hide the dislike button",
+        "description": "Only the old player bar has one to hide."
+      },
+      "hideVideoCaptions": {
+        "label": "Hide video captions",
+        "description": "Hides the player's captions button; captions already on keep showing."
+      },
+      "contextMenuDownload": {
+        "label": "Hide “Download”"
+      },
+      "contextMenuLike": {
+        "label": "Hide “Like”"
+      },
+      "contextMenuSaveToLibrary": {
+        "label": "Hide “Save to library”"
+      },
+      "contextMenuPlayNext": {
+        "label": "Hide “Play next”"
+      },
+      "contextMenuAddToQueue": {
+        "label": "Hide “Add to queue”"
+      },
+      "contextMenuRemoveFromQueue": {
+        "label": "Hide “Remove from queue”"
+      },
+      "contextMenuShufflePlay": {
+        "label": "Hide “Shuffle play”"
+      },
+      "contextMenuStartMix": {
+        "label": "Hide “Start mix”"
+      },
+      "contextMenuSaveToPlaylist": {
+        "label": "Hide “Save to playlist”"
+      },
+      "contextMenuGoToArtist": {
+        "label": "Hide “Go to artist”"
+      },
+      "contextMenuGoToAlbum": {
+        "label": "Hide “Go to album”"
+      },
+      "contextMenuGoToPlaylist": {
+        "label": "Hide “Go to playlist”"
+      },
+      "contextMenuShare": {
+        "label": "Hide “Share”"
+      },
+      "contextMenuReport": {
+        "label": "Hide “Report”"
+      },
+      "contextMenuStatsForNerds": {
+        "label": "Hide “Stats for nerds”"
+      },
+      "contextMenuPinToListenAgain": {
+        "label": "Hide “Pin to listen again”"
+      },
+      "contextMenuNotInterested": {
+        "label": "Hide “Not interested”"
+      },
+      "contextMenuRemoveFromPlaylist": {
+        "label": "Hide “Remove from playlist”"
+      },
+      "contextMenuDismissQueue": {
+        "label": "Hide “Dismiss queue”"
+      },
+      "contextMenuDeletePlaylist": {
+        "label": "Hide “Delete playlist”"
+      },
+      "overrideUserAgent": {
+        "label": "Override the user agent",
+        "description": "Send a plain Chrome user agent instead of Electron's; some sites behave differently."
       }
     },
     "groups": {
@@ -3327,7 +3420,8 @@
       "experimental": "Experimental",
       "disco-ball": "Disco ball",
       "shared-links": "Shared links",
-      "integration": "Integration"
+      "integration": "Integration",
+      "mcp": "MCP"
     },
     "title": "Settings",
     "search-placeholder": "Search settings",
@@ -3362,7 +3456,10 @@
       "title-bar": "Title bar",
       "api-server": "API server",
       "developer": "Developer",
-      "site-flags": "Site feature flags"
+      "site-flags": "Site feature flags",
+      "site-features": "Site features",
+      "updates": "Updates",
+      "configuration": "Configuration"
     },
     "toggle-devtools": "Toggle developer tools",
     "sections": {

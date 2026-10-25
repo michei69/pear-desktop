@@ -51,6 +51,31 @@ export function flattenStrings(entry: Json, from: unknown, mapping: Readonly<Rec
   copyTyped(entry, from, mapping, isString);
 }
 
+/** A flag name `siteFlags` entries can hold (the same names core-config accepts). */
+const FLAG_NAME = /^[\w.-]+$/;
+
+/**
+ * pear-desktop's feature-flag overrides record -> the rewrite's "name=value"
+ * `siteFlags` entries. A boolean or finite number reads back as itself; a
+ * string is raw text (the list has no quoting, so text that looks like a number
+ * or boolean reads back as one); other values become their JSON text. A name
+ * that would not parse back is left out; the old record stays in the file.
+ */
+export function siteFlagEntries(flags: Json): string[] {
+  const entries: string[] = [];
+  for (const [name, value] of Object.entries(flags)) {
+    if (!FLAG_NAME.test(name) || value === undefined) continue;
+    entries.push(`${name}=${flagText(value)}`);
+  }
+  return entries;
+}
+
+function flagText(value: unknown): string {
+  if (typeof value === "boolean" || (typeof value === "number" && Number.isFinite(value))) return String(value);
+  if (typeof value === "string") return value;
+  return JSON.stringify(value) ?? String(value);
+}
+
 /** pear-desktop stored fractions (0.5) where the rewrite shows percentages (50). */
 export function fractionToPercent(entry: Json, key: string) {
   const value = entry[key];

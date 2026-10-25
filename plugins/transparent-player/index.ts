@@ -34,6 +34,15 @@ export default definePlugin({
     ),
   },
   host: {
+    // A transparent window needs software compositing on Linux, and those
+    // switches only apply before the app is ready (pear-desktop's workaround for
+    // https://github.com/electron/electron/issues/15947).
+    beforeReady({ app }) {
+      if (process.platform !== "linux") return;
+      app.disableHardwareAcceleration();
+      app.commandLine.appendSwitch("enable-transparent-visuals");
+      app.commandLine.appendSwitch("enable-unsafe-swiftshader");
+    },
     // A window can only be made transparent when it is created.
     windowOptions: () => ({ transparent: true, backgroundColor: "#00000000" }),
     start(ctx) {

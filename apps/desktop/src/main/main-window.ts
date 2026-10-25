@@ -4,7 +4,7 @@
 import { app, type BrowserWindowConstructorOptions, BrowserWindow, net, screen, shell } from "electron";
 import { STARTING_PAGES, type StartingPage } from "@pear/sdk/core-config";
 import { CHANNEL, type HostEvent } from "@pear/sdk/protocol";
-import { chromeUserAgent, isGoogleAuth, isYtmUrl, YTM_ORIGIN } from "../shared/user-agent.ts";
+import { chromeUserAgent, fixedChromeUserAgent, isGoogleAuth, isYtmUrl, YTM_ORIGIN } from "../shared/user-agent.ts";
 import { APP_NAME } from "./app-identity.ts";
 import type { Settings, WindowState } from "./config.ts";
 import { navigationAction, windowOpenAction } from "./links.ts";
@@ -14,6 +14,8 @@ import { alive, appIcon, focusWindow, secureWebPreferences } from "./windows.ts"
 
 const MIN_WIDTH = 360;
 const MIN_HEIGHT = 300;
+/** 'ready-to-show' waits for the remote page's first paint, which takes seconds on a cold start. */
+const EARLY_SHOW_DELAY_MS = 500;
 /** YTM's own background, so the window doesn't flash white while loading. */
 const BACKGROUND_COLOR = "#030303";
 const DEFAULT_SIZE = { width: 1280, height: 800 };
@@ -48,9 +50,9 @@ export class MainWindow {
   }
 
   /** Once the app is ready: YTM gets a Chrome UA, Google sign-in Electron's (returned). */
-  useYtmUserAgent() {
+  useYtmUserAgent(override: boolean) {
     this.#electronUserAgent = app.userAgentFallback;
-    this.#ytmUserAgent = chromeUserAgent(this.#electronUserAgent);
+    this.#ytmUserAgent = override ? fixedChromeUserAgent(process.platform) : chromeUserAgent(this.#electronUserAgent);
     app.userAgentFallback = this.#ytmUserAgent;
     return this.#electronUserAgent;
   }
@@ -65,7 +67,7 @@ export class MainWindow {
   readonly openSettings = () => {
     const window = this.window;
     if (!window || !this.#runtimeUp) {
-      openSettingsWindow();
+      openSettingsWindow(this.#settings.core("appearance").useYtmIcons);
       return;
     }
     focusWindow(window);
@@ -93,11 +95,17 @@ export class MainWindow {
     const window = new BrowserWindow(this.#options());
     this.#window = window;
     if (settings.window?.maximized) window.maximize();
-    window.once("ready-to-show", () => {
-      if (this.#startsHidden()) return;
+    // The window paints its own background colour, so show it once the page has
+    // painted or after a short timer, whichever comes first (pear-desktop's rule).
+    const show = () => {
+      if (window.isDestroyed() || window.isVisible() || this.#startsHidden()) return;
       window.show();
       console.info(`[pear] startup: window shown after ${Math.round(performance.now())}ms`);
-    });
+    };
+    window.once("ready-to-show", show);
+    const earlyShow = setTimeout(show, EARLY_SHOW_DELAY_MS);
+    window.once("show", () => clearTimeout(earlyShow));
+    window.once("closed", () => clearTimeout(earlyShow));
 
     // The custom title stays put; without one the window follows the page's.
     window.on("page-title-updated", (event) => {
@@ -130,7 +138,7 @@ export class MainWindow {
       backgroundColor: BACKGROUND_COLOR,
       alwaysOnTop: settings.core("window").alwaysOnTop,
       title: settings.core("appearance").customWindowTitle || APP_NAME,
-      icon: appIcon(),
+      icon: appIcon(settings.core("appearance").useYtmIcons),
       autoHideMenuBar: settings.core("window").hideMenu,
     };
     // …but not geometry, visibility or the security-relevant preferences.

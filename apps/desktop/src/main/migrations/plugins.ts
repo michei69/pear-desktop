@@ -103,8 +103,8 @@ export const PLUGIN_MIGRATIONS: Record<string, PluginMigration> = {
       entry.output = "";
       return;
     }
-    const name = typeof output === "string" && isRecord(entry.devices) ? entry.devices[output] : undefined;
-    if (typeof name === "string" && name) entry.output = name;
+    const name = isString(output) ? deviceName(entry.devices, output) : undefined;
+    if (name) entry.output = name;
   },
   discord: (entry) => {
     if (isBoolean(entry[DISCORD_PLAY_BUTTON])) setNew(entry, "playButton", entry[DISCORD_PLAY_BUTTON]);
@@ -174,6 +174,10 @@ export const PLUGIN_MIGRATIONS: Record<string, PluginMigration> = {
   notifications: (entry) => {
     // The Windows toast style was a number (1-based).
     if (isNumber(entry.toastStyle) && TOAST_STYLES[entry.toastStyle - 1]) entry.toastStyle = TOAST_STYLES[entry.toastStyle - 1];
+  },
+  "playback-speed": (entry) => {
+    // pear-desktop stored the inverse: "don't preserve the pitch".
+    if (isBoolean(entry.noPreservesPitch)) setNew(entry, "preservePitch", !entry.noPreservesPitch);
   },
   "picture-in-picture": (entry, _config, files) => {
     // The small window's last position and size; the rewrite keeps them in a file of their own.
@@ -336,6 +340,19 @@ function channelList(value: unknown): string[] | undefined {
     if (id) ids.push(id);
   }
   return ids;
+}
+
+/** A device id's name from pear-desktop's stored list: a record, or the [id, name] pairs 3.12 writes. */
+function deviceName(devices: unknown, id: string): string | undefined {
+  if (isRecord(devices)) {
+    const name = devices[id];
+    return isString(name) && name ? name : undefined;
+  }
+  if (!Array.isArray(devices)) return undefined;
+  for (const pair of devices) {
+    if (Array.isArray(pair) && pair[0] === id && isString(pair[1]) && pair[1]) return pair[1];
+  }
+  return undefined;
 }
 
 /** FFmpeg presets became yt-dlp audio formats; the Custom preset keeps its arguments and extension. */

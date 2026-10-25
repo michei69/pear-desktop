@@ -5,12 +5,14 @@
 import { containScroll, shadowHost, sidebarEntry } from "@pear/sdk/dom";
 import type { Translate } from "@pear/sdk/i18n";
 import { render } from "preact";
-import { ICON_PATHS } from "./icons.tsx";
 import { Settings, type SettingsModel } from "./settings.tsx";
 import { UI_STRINGS } from "./strings.ts";
 import { overlayStyles } from "./styles.ts";
 
 export { HostState, type SettingsModel, setMessage, settingsModel } from "./model.ts";
+
+/** The exit animation's duration, mirroring the dialog's in styles/layout.ts. */
+const CLOSE_ANIMATION_MS = 220;
 
 export interface SettingsController {
   open(): void;
@@ -22,23 +24,45 @@ export interface SettingsController {
 export function mountSettings(model: SettingsModel): SettingsController {
   let container: HTMLElement | undefined;
   let isOpen = false;
+  let closing = false;
+  let closeTimer: ReturnType<typeof setTimeout> | undefined;
   let returnFocus: Element | null = null;
 
-  const close = () => {
-    if (!isOpen) return;
-    isOpen = false;
-    if (container) render(null, container);
-    if (returnFocus instanceof HTMLElement) returnFocus.focus();
-  };
-  const open = () => {
-    if (isOpen) return;
+  const renderDialog = (isClosing: boolean) => {
     // Built on first open: nothing to pay for at startup.
-    container ??= createOverlay(close);
+    container ??= createOverlay();
+    render(<Settings closing={isClosing} model={model} onClose={close} />, container);
+  };
+
+  /** Plays the exit animation, then unmounts; a click while closing reopens at once. */
+  const close = () => {
+    if (!isOpen || closing) return;
+    closing = true;
+    renderDialog(true);
+    closeTimer = setTimeout(() => {
+      closeTimer = undefined;
+      closing = false;
+      isOpen = false;
+      if (container) render(null, container);
+      if (returnFocus instanceof HTMLElement) returnFocus.focus();
+    }, CLOSE_ANIMATION_MS);
+  };
+
+  const open = () => {
+    if (closeTimer !== undefined) {
+      clearTimeout(closeTimer);
+      closeTimer = undefined;
+      closing = false;
+      renderDialog(false);
+      return;
+    }
+    if (isOpen) return;
     isOpen = true;
     returnFocus = document.activeElement;
-    render(<Settings model={model} onClose={close} />, container);
+    renderDialog(false);
   };
-  const toggle = () => (isOpen ? close() : open());
+
+  const toggle = () => (isOpen && !closing ? close() : open());
 
   document.addEventListener(
     "keydown",
@@ -54,7 +78,7 @@ export function mountSettings(model: SettingsModel): SettingsController {
   mountSidebarEntries(open, model.t);
   return {
     get isOpen() {
-      return isOpen;
+      return isOpen && !closing;
     },
     open,
     close,
@@ -63,15 +87,12 @@ export function mountSettings(model: SettingsModel): SettingsController {
 }
 
 /** The overlay's shadow host, in <body>; returns the element the dialog renders into. */
-function createOverlay(close: () => void) {
+function createOverlay() {
   const { host, root } = shadowHost("pear-settings", overlayStyles);
   const container = document.createElement("div");
   root.append(container);
   // Keep YTM's global shortcuts (space, j/k, …) from firing while typing here.
   for (const type of ["keydown", "keyup", "keypress"]) host.addEventListener(type, (event) => event.stopPropagation());
-  host.addEventListener("keydown", (event) => {
-    if (event.key === "Escape") close();
-  });
   // The page behind doesn't scroll either: over the scrim, or past the end of the dialog's lists.
   containScroll(host);
   document.body.append(host);
@@ -85,7 +106,7 @@ function mountSidebarEntries(open: () => void, t: Translate) {
   sidebarEntry(page, {
     name: "settings",
     label: t("settings-ui.title", UI_STRINGS["settings-ui.title"]),
-    icon: ICON_PATHS.settings,
+    iconType: "SETTINGS_MATERIAL",
     title: t("settings-ui.open-hint", UI_STRINGS["settings-ui.open-hint"]),
     ariaLabel: t("settings-ui.open", UI_STRINGS["settings-ui.open"]),
     onClick: open,
