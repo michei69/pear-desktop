@@ -2,7 +2,10 @@ import { expect, test } from '@playwright/test';
 
 import { flatProfile, normalizeConfig } from '../src/plugins/equalizer/config';
 import { EqualizerAudioChain } from '../src/plugins/equalizer/controller';
-import { getAudioGraph } from '../src/providers/audio-graph';
+import {
+  getAudioGraph,
+  resetAudioGraphForTests,
+} from '../src/providers/audio-graph';
 
 type Param = AudioParam & { value: number };
 type FakeNode = AudioNode & {
@@ -73,6 +76,10 @@ const context = {
 (globalThis as Record<string, unknown>).AudioContext = function () {
   return context;
 };
+
+// The graph owner is module-global and Playwright reuses a worker across test
+// files, so make this file start from the destination above.
+resetAudioGraphForTests();
 
 test('the equalizer owns one serial chain and updates gain in place', () => {
   const source = getAudioGraph({} as HTMLVideoElement).source as FakeNode;

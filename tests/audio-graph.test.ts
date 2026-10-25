@@ -4,6 +4,7 @@ import {
   clearAudioChain,
   getAudioGraph,
   rebindAudioGraphSource,
+  resetAudioGraphForTests,
   setAudioChain,
 } from '../src/providers/audio-graph';
 
@@ -49,10 +50,10 @@ const fakeContext = (): FakeAudioContext => {
   return context as unknown as FakeAudioContext;
 };
 
-// The owner is module-global and the tests run in one process, so they walk a
-// single lifecycle in order instead of resetting state the production code
-// must not expose a reset for.
+// The owner is module-global and Playwright reuses a worker across test files,
+// so start from no graph instead of inheriting one an earlier file created.
 const ctx = fakeContext();
+resetAudioGraphForTests();
 (globalThis as Record<string, unknown>).AudioContext = function () {
   return ctx;
 };

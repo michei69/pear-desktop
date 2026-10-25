@@ -93,3 +93,14 @@ export const clearAudioChain = (id: string) => {
   if (!inserts.delete(id)) return;
   rewire();
 };
+
+/**
+ * Test seam: the owner is process-global, and Playwright reuses a worker for
+ * several test files, so a file that walks the singleton's lifecycle must not
+ * inherit a graph created by the one before it. The app never calls this.
+ */
+export const resetAudioGraphForTests = () => {
+  graph = null;
+  inserts.clear();
+  wired = [];
+};
