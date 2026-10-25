@@ -64,7 +64,7 @@ export const schema = {
     { label: "Current line effect" },
   ),
   lyricsFontSize: config.select(
-    "medium",
+    "small",
     [
       { value: "small", label: "Small" },
       { value: "medium", label: "Medium" },

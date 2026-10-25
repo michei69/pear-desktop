@@ -64,28 +64,29 @@ export const lyricsStyles = css`
     --active-offset: 5%;
   }
 
-  /* User-selected lyrics size; overrides the effect's default. */
+  /* User-selected lyrics size; overrides the effect's default. pear-desktop's px
+     map: every effect and the plain lyrics use the same size, matching its panel. */
   .root[data-font-size="small"] {
-    --size: clamp(1.15rem, 0.9vmax, 2.4rem);
+    --lyrics-font-size: 28px;
+    --size: 28px;
   }
-  .root[data-font-size="small"].effect-fancy {
-    --lyrics-font-size: 2rem;
-  }
-  .root[data-font-size="small"].effect-scale,
-  .root[data-font-size="small"].effect-offset,
-  .root[data-font-size="small"].effect-focus {
-    --lyrics-font-size: clamp(1.15rem, 0.9vmax, 2.4rem);
+  .root[data-font-size="medium"] {
+    --lyrics-font-size: 36px;
+    --size: 36px;
   }
   .root[data-font-size="large"] {
-    --size: clamp(1.7rem, 1.35vmax, 3.6rem);
+    --lyrics-font-size: 48px;
+    --size: 48px;
+  }
+  /* The glow effect pads the line by the same notch (pear-desktop's --lyrics-padding). */
+  .root[data-font-size="small"].effect-fancy {
+    --lyrics-padding: 12px;
+  }
+  .root[data-font-size="medium"].effect-fancy {
+    --lyrics-padding: 14px;
   }
   .root[data-font-size="large"].effect-fancy {
-    --lyrics-font-size: 4rem;
-  }
-  .root[data-font-size="large"].effect-scale,
-  .root[data-font-size="large"].effect-offset,
-  .root[data-font-size="large"].effect-focus {
-    --lyrics-font-size: clamp(1.7rem, 1.35vmax, 3.6rem);
+    --lyrics-padding: 18px;
   }
 
   /* pear-desktop's lyrics picker. */
