@@ -29,7 +29,7 @@ export const createVersion = (
   // `requireAuth` matches `ctx.req.path`, which is absolute even inside a
   // sub-app, while `createRoute` paths are relative to `basePath`.
   app.use('*', requireAuth(getConfig, wsPath));
-  const stopWebsocket = register(app, wsPath);
+  const stopWebsocket = register(app, WS_PATH);
 
   return { app, stopWebsocket };
 };
