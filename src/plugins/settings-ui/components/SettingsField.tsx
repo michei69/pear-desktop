@@ -12,11 +12,14 @@ import { Dynamic } from 'solid-js/web';
 
 import { t } from '@/i18n';
 import {
+  formatListValue,
   normalizeOrder,
+  parseListValue,
   type ActionField,
   type CustomField,
   type CustomFieldContext,
   type FieldAccessors,
+  type ListField,
   type MultiSelectField,
   type NumberField,
   type OrderableField,
@@ -232,6 +235,30 @@ const TextControl = (p: {
   </div>
 );
 
+const ListControl = (p: {
+  field: ListField;
+  value: unknown;
+  onChange: (value: unknown) => void;
+}) => (
+  <div class="sui-field__control">
+    <textarea
+      class="sui-text"
+      onChange={(event) =>
+        p.onChange(parseListValue(event.currentTarget.value))
+      }
+      placeholder={p.field.placeholder?.()}
+      rows={5}
+      style={{
+        'height': 'auto',
+        'min-height': '96px',
+        'padding': '10px 12px',
+        'resize': 'vertical',
+      }}
+      value={formatListValue(p.value)}
+    />
+  </div>
+);
+
 const MultiSelectControl = (p: {
   field: MultiSelectField;
   value: unknown;
@@ -425,6 +452,14 @@ export const SettingsField = (props: SettingsFieldProps) => {
         <Match when={field().type === 'text'}>
           <TextControl
             field={field() as TextField}
+            onChange={props.onChange}
+            value={props.value}
+          />
+        </Match>
+
+        <Match when={field().type === 'list'}>
+          <ListControl
+            field={field() as ListField}
             onChange={props.onChange}
             value={props.value}
           />

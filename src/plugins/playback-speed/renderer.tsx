@@ -1,4 +1,4 @@
-import { createSignal } from 'solid-js';
+import { createSignal, untrack } from 'solid-js';
 import { render } from 'solid-js/web';
 
 import { t } from '@/i18n';
@@ -10,23 +10,31 @@ import { getSongMenu } from '@/providers/dom-elements';
 import { observePlayerPage } from '@/providers/player-page-observer';
 import { type RendererContext } from '@/types/contexts';
 
+import { SettingsSlider } from './components/SettingsSlider';
 import { PlaybackSpeedSlider } from './components/slider';
+import {
+  MAX_PLAYBACK_SPEED,
+  MIN_PLAYBACK_SPEED,
+  normalizePlaybackSpeed,
+} from './speed';
 import { StartupLifecycle } from './startup-lifecycle';
 
 import type { PlaybackSpeedConfig } from './index';
 
-const MIN_PLAYBACK_SPEED = 0.07;
-const MAX_PLAYBACK_SPEED = 16;
+export const components = { settingsSlider: SettingsSlider };
 
 let currentConfig: PlaybackSpeedConfig | null = null;
+let currentContext: RendererContext<PlaybackSpeedConfig> | null = null;
 let activeVideo: HTMLVideoElement | null = null;
 let unwatchVideo: (() => void) | null = null;
 let unwatchPopup: (() => void) | null = null;
+let disposeSlider: (() => void) | undefined;
 const startupLifecycle = new StartupLifecycle();
 const observedVideos = new Set<HTMLVideoElement>();
 
 export const onConfigChange = (newConfig: PlaybackSpeedConfig) => {
   currentConfig = newConfig;
+  setSpeed(normalizePlaybackSpeed(newConfig.playbackSpeed));
 
   for (const video of observedVideos) {
     updatePlayBackSpeed(video);
@@ -62,8 +70,6 @@ const setActiveVideo = (e: Event) => {
   }
 };
 
-const roundToTwo = (n: number) => Math.round(n * 1e2) / 1e2;
-
 const [speed, setSpeed] = createSignal(1);
 const sliderContainer = document.createElement('div');
 
@@ -79,12 +85,29 @@ const updatePlayBackSpeed = (videoElement = activeVideo) => {
 
   setSpeed(speed());
 };
+
+let persistTimer: ReturnType<typeof setTimeout> | undefined;
+const persistSpeed = () => {
+  const context = currentContext;
+  if (!context) return;
+
+  clearTimeout(persistTimer);
+  persistTimer = setTimeout(() => {
+    Promise.resolve(context.setConfig({ playbackSpeed: speed() })).catch(
+      console.error,
+    );
+  }, 300);
+};
+
 export const onPlayerApiReady = async (
   _api: unknown,
-  { getConfig }: RendererContext<PlaybackSpeedConfig>,
+  context: RendererContext<PlaybackSpeedConfig>,
 ) => {
+  currentContext = context;
+
   const observePopupContainer = () => {
-    render(
+    disposeSlider?.();
+    disposeSlider = render(
       () => (
         <PlaybackSpeedSlider
           onImmediateValueChanged={(e) => {
@@ -94,13 +117,9 @@ export const onPlayerApiReady = async (
               targetSpeed = 1;
             }
 
-            targetSpeed = Math.min(
-              Math.max(MIN_PLAYBACK_SPEED, targetSpeed),
-              MAX_PLAYBACK_SPEED,
-            );
-
-            setSpeed(targetSpeed);
+            setSpeed(normalizePlaybackSpeed(targetSpeed));
             updatePlayBackSpeed();
+            persistSpeed();
           }}
           onWheel={(e) => {
             e.preventDefault();
@@ -109,16 +128,20 @@ export const onPlayerApiReady = async (
               setSpeed(1);
             }
 
-            // A negative deltaY is a wheel-up
-            setSpeed((prev) =>
-              roundToTwo(
-                e.deltaY < 0
-                  ? Math.min(prev + 0.01, MAX_PLAYBACK_SPEED)
-                  : Math.max(prev - 0.01, MIN_PLAYBACK_SPEED),
+            setSpeed(
+              normalizePlaybackSpeed(
+                Math.min(
+                  Math.max(
+                    speed() + (e.deltaY < 0 ? 0.01 : -0.01),
+                    MIN_PLAYBACK_SPEED,
+                  ),
+                  MAX_PLAYBACK_SPEED,
+                ),
               ),
             );
 
             updatePlayBackSpeed();
+            persistSpeed();
           }}
           speed={speed()}
           title={t('plugins.playback-speed.templates.button')}
@@ -127,23 +150,47 @@ export const onPlayerApiReady = async (
       sliderContainer,
     );
 
+    const syncSlider = () => {
+      const menu = getSongMenu();
+
+      if (
+        menu &&
+        !menu.contains(sliderContainer) &&
+        isMusicOrVideoTrack() &&
+        isPlayerMenu(menu)
+      ) {
+        menu.prepend(sliderContainer);
+      }
+    };
+
+    const watchPopup = () => {
+      unwatchPopup = observePlayerPage('ytmusic-popup-container', {
+        childList: true,
+        subtree: true,
+        callback: syncSlider,
+      });
+    };
+
     unwatchPopup?.();
-    unwatchPopup = observePlayerPage('ytmusic-popup-container', {
+    unwatchPopup = null;
+
+    // HACK: the popup container can be created after the player API is ready,
+    // and the shared observer is a no-op until its root exists.
+    if (document.querySelector('ytmusic-popup-container')) {
+      watchPopup();
+      return;
+    }
+
+    const popupObserver = new MutationObserver(() => {
+      if (!document.querySelector('ytmusic-popup-container')) return;
+      popupObserver.disconnect();
+      watchPopup();
+    });
+    popupObserver.observe(document.documentElement, {
       childList: true,
       subtree: true,
-      callback: () => {
-        const menu = getSongMenu();
-
-        if (
-          menu &&
-          !menu.contains(sliderContainer) &&
-          isMusicOrVideoTrack() &&
-          isPlayerMenu(menu)
-        ) {
-          menu.prepend(sliderContainer);
-        }
-      },
     });
+    unwatchPopup = () => popupObserver.disconnect();
   };
 
   const observeVideo = () => {
@@ -164,8 +211,6 @@ export const onPlayerApiReady = async (
       video.dataset.playbackSpeedObserved = 'true';
     }
 
-    // The video lives inside #movie_player; watching it instead of the whole
-    // body keeps a per-mutation callback off every page update.
     unwatchVideo?.();
     unwatchVideo = observePlayerPage('#movie_player', {
       childList: true,
@@ -181,15 +226,22 @@ export const onPlayerApiReady = async (
     });
   };
 
-  await startupLifecycle.initialize(getConfig, (config) => {
-    currentConfig = config;
-    observePopupContainer();
-    observeVideo();
+  await startupLifecycle.initialize(context.getConfig, (config) => {
+    untrack(() => {
+      currentConfig = config;
+      setSpeed(normalizePlaybackSpeed(config.playbackSpeed));
+      observePopupContainer();
+      observeVideo();
+    });
   });
 };
 
 export const onUnload = () => {
   startupLifecycle.dispose();
+
+  clearTimeout(persistTimer);
+  persistTimer = undefined;
+  currentContext = null;
 
   for (const video of observedVideos) {
     video.removeEventListener('playing', setActiveVideo);
@@ -206,5 +258,7 @@ export const onUnload = () => {
   unwatchVideo = null;
   unwatchPopup?.();
   unwatchPopup = null;
-  getSongMenu()?.removeChild(sliderContainer);
+  disposeSlider?.();
+  disposeSlider = undefined;
+  sliderContainer.remove();
 };

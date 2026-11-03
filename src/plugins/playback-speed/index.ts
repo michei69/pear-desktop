@@ -1,11 +1,18 @@
 import { t } from '@/i18n';
 import { createPlugin } from '@/utils';
 
-import { onPlayerApiReady, onUnload, onConfigChange } from './renderer';
+import {
+  components,
+  onPlayerApiReady,
+  onUnload,
+  onConfigChange,
+} from './renderer';
 
 export type PlaybackSpeedConfig = {
   enabled: boolean;
   noPreservesPitch: boolean;
+  /** Playback rate applied when the plugin starts and from the settings slider. */
+  playbackSpeed: number;
 };
 
 export default createPlugin({
@@ -15,8 +22,17 @@ export default createPlugin({
   config: {
     enabled: false,
     noPreservesPitch: false,
+    playbackSpeed: 1,
   } satisfies PlaybackSpeedConfig as PlaybackSpeedConfig,
   settings: [
+    {
+      type: 'custom',
+      key: 'playbackSpeed',
+      label: () => t('plugins.playback-speed.settings.playback-speed'),
+      description: () =>
+        t('plugins.playback-speed.settings.playback-speed-description'),
+      component: 'playback-speed.settingsSlider',
+    },
     {
       type: 'switch',
       key: 'noPreservesPitch',
@@ -37,6 +53,7 @@ export default createPlugin({
     ];
   },
   renderer: {
+    components,
     stop: onUnload,
     onPlayerApiReady,
     onConfigChange,

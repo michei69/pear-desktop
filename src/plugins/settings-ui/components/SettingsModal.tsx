@@ -31,6 +31,7 @@ import { SettingsField } from './SettingsField';
 import { buildDebugInfo, useCopyFeedback } from '../debug-info';
 import { getByPath } from '../paths';
 import { filterGroupsByPlatform } from '../platform';
+import { groupPluginsByCategory } from '../plugin-categories';
 import { buildAppSections } from '../schema/app-settings';
 import {
   bridge,
@@ -85,6 +86,7 @@ export const SettingsModal = (props: {
   let modalEl: HTMLDivElement | undefined;
   let sidebarEl: HTMLElement | undefined;
   let isClosing = false;
+  let restartSessionClosed = false;
   let searchInputRef: HTMLInputElement | undefined;
   let previousFocus: HTMLElement | null = null;
 
@@ -125,6 +127,12 @@ export const SettingsModal = (props: {
     return renderer.components?.[id.slice(dot + 1)];
   };
 
+  const endRestartSession = () => {
+    if (restartSessionClosed) return;
+    restartSessionClosed = true;
+    bridge.restartSessionClose(restartRequirements());
+  };
+
   onMount(() => {
     bridge.restartSessionOpen();
 
@@ -135,14 +143,14 @@ export const SettingsModal = (props: {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') close();
     };
+    const onPageHide = () => endRestartSession();
     window.addEventListener('keydown', onKey);
+    window.addEventListener('pagehide', onPageHide);
     onCleanup(() => {
       window.removeEventListener('keydown', onKey);
+      window.removeEventListener('pagehide', onPageHide);
       previousFocus?.focus?.();
-      // The window can also go away without close() (the tray window's X, a
-      // renderer reload); the main process would otherwise never show its
-      // restart dialog again.
-      bridge.restartSessionClose(restartRequirements());
+      endRestartSession();
     });
   });
 
@@ -298,7 +306,7 @@ export const SettingsModal = (props: {
     // Flush debounced slider writes so recent changes are not lost.
     await flushPendingPluginSliderWrites();
     props.onClose();
-    bridge.restartSessionClose(restartRequirements());
+    endRestartSession();
   };
 
   const closeNow = async () => {
@@ -371,6 +379,10 @@ export const SettingsModal = (props: {
         : matchingGroups(meta.groups);
       return groups.length ? [{ meta, groups }] : [];
     }),
+  );
+
+  const pluginGroups = createMemo(() =>
+    groupPluginsByCategory(plugins() ?? []),
   );
 
   const AppGroupView = (p: {
@@ -643,9 +655,16 @@ export const SettingsModal = (props: {
                 </Show>
 
                 <Show when={active() === 'plugins'}>
-                  <For each={plugins()}>
-                    {(meta) => (
-                      <PluginCardView groups={meta.groups} meta={meta} />
+                  <For each={pluginGroups()}>
+                    {(group) => (
+                      <div class="sui-group">
+                        <div class="sui-group__title">{group.label()}</div>
+                        <For each={group.plugins}>
+                          {(meta) => (
+                            <PluginCardView groups={meta.groups} meta={meta} />
+                          )}
+                        </For>
+                      </div>
                     )}
                   </For>
                 </Show>

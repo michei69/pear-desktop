@@ -22,8 +22,8 @@ interface AppSection {
     | 'general'
     | 'appearance'
     | 'window'
-    | 'advanced'
     | 'plugins'
+    | 'advanced'
     | 'flags'
     | 'about';
   /** Icon id resolved to an inline SVG in the renderer. */
@@ -123,22 +123,22 @@ export const buildAppSections = (): AppSection[] => {
       label: () => t('settings-ui.sections.general.label'),
       groups: [
         {
-          title: () => t('settings-ui.groups.updates-session'),
+          title: () => t('settings-ui.groups.startup'),
           fields: [
             toggle('options.resumeOnStart', menuLabel('resume-on-start'), {
               restartNeeded: true,
             }),
-          ],
-        },
-        {
-          title: () => t('settings-ui.groups.startup-language'),
-          fields: [
             select(
               'options.startingPage',
               menuLabel('starting-page.label'),
               startingPageOptions,
               { variant: 'dropdown', ...AT_STARTUP },
             ),
+          ],
+        },
+        {
+          title: () => t('settings-ui.groups.language'),
+          fields: [
             select(
               'options.language',
               menuLabel('language.label'),
@@ -235,35 +235,7 @@ export const buildAppSections = (): AppSection[] => {
           ],
         },
         {
-          title: () => t('settings-ui.groups.context-menu'),
-          fields: MENU_ENTRIES.map((entry): SwitchField => ({
-            type: 'switch',
-            key: `options.contextMenuHidden.${entry.key}`,
-            label: () =>
-              t('settings-ui.fields.context-menu.hide-entry', {
-                entry: t(
-                  `settings-ui.fields.context-menu.entries.${entry.key}`,
-                ),
-              }),
-          })),
-        },
-        {
-          title: () => t('settings-ui.groups.window-title'),
-          fields: [
-            text(
-              'options.customWindowTitle',
-              menuLabel('visual-tweaks.submenu.custom-window-title.label'),
-              {
-                ...AT_STARTUP,
-                placeholder: menuLabel(
-                  'visual-tweaks.submenu.custom-window-title.prompt.placeholder',
-                ),
-              },
-            ),
-          ],
-        },
-        {
-          title: menuLabel('visual-tweaks.submenu.theme.label'),
+          title: () => t('settings-ui.groups.theme'),
           fields: [
             select(
               'options.theme',
@@ -319,6 +291,19 @@ export const buildAppSections = (): AppSection[] => {
             ),
           ],
         },
+        {
+          title: () => t('settings-ui.groups.context-menu'),
+          fields: MENU_ENTRIES.map((entry): SwitchField => ({
+            type: 'switch',
+            key: `options.contextMenuHidden.${entry.key}`,
+            label: () =>
+              t('settings-ui.fields.context-menu.hide-entry', {
+                entry: t(
+                  `settings-ui.fields.context-menu.entries.${entry.key}`,
+                ),
+              }),
+          })),
+        },
       ],
     },
     {
@@ -334,23 +319,20 @@ export const buildAppSections = (): AppSection[] => {
               ...AT_STARTUP,
               platform: Platform.Windows | Platform.Linux,
             }),
-          ],
-        },
-        {
-          title: () => t('settings-ui.groups.system'),
-          fields: [
-            toggle('options.startAtLogin', menuLabel('start-at-login'), {
-              platform: DESKTOP,
-            }),
-            toggle(
-              'options.forceSmtc',
-              menuLabel('advanced-options.submenu.force-smtc'),
-              { ...AT_STARTUP, platform: Platform.Windows },
+            text(
+              'options.customWindowTitle',
+              menuLabel('visual-tweaks.submenu.custom-window-title.label'),
+              {
+                ...AT_STARTUP,
+                placeholder: menuLabel(
+                  'visual-tweaks.submenu.custom-window-title.prompt.placeholder',
+                ),
+              },
             ),
           ],
         },
         {
-          title: menuLabel('tray.label'),
+          title: () => t('settings-ui.groups.tray'),
           fields: [
             select(
               'options.__trayMode',
@@ -385,7 +367,26 @@ export const buildAppSections = (): AppSection[] => {
             ),
           ],
         },
+        {
+          title: () => t('settings-ui.groups.system'),
+          fields: [
+            toggle('options.startAtLogin', menuLabel('start-at-login'), {
+              platform: DESKTOP,
+            }),
+            toggle(
+              'options.forceSmtc',
+              menuLabel('advanced-options.submenu.force-smtc'),
+              { ...AT_STARTUP, platform: Platform.Windows },
+            ),
+          ],
+        },
       ],
+    },
+    {
+      id: 'plugins',
+      icon: 'puzzle',
+      label: () => t('settings-ui.sections.plugins.label'),
+      groups: [],
     },
     {
       id: 'advanced',
@@ -423,11 +424,6 @@ export const buildAppSections = (): AppSection[] => {
               AT_STARTUP,
             ),
             toggle(
-              'options.autoResetAppCache',
-              menuLabel('advanced-options.submenu.auto-reset-app-cache'),
-              AT_STARTUP,
-            ),
-            toggle(
               'options.performanceMode',
               () => t('settings-ui.fields.performance-mode'),
               {
@@ -435,6 +431,11 @@ export const buildAppSections = (): AppSection[] => {
                 description: () =>
                   t('settings-ui.fields.performance-mode-desc'),
               },
+            ),
+            toggle(
+              'options.autoResetAppCache',
+              menuLabel('advanced-options.submenu.auto-reset-app-cache'),
+              AT_STARTUP,
             ),
           ],
         },
@@ -470,14 +471,6 @@ export const buildAppSections = (): AppSection[] => {
       ],
     },
     {
-      id: 'plugins',
-      icon: 'puzzle',
-      label: () => t('settings-ui.sections.plugins.label'),
-      groups: [],
-    },
-    {
-      // Rendered by FlagsSection, and deliberately out of the settings search:
-      // no groups, so no field of it can match a query.
       id: 'flags',
       icon: 'flag',
       label: () => t('settings-ui.sections.flags.label'),

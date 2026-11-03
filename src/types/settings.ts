@@ -55,6 +55,28 @@ export interface TextField extends SettingFieldBase {
   placeholder?: () => string;
 }
 
+export interface ListField extends SettingFieldBase {
+  type: 'list';
+  placeholder?: () => string;
+}
+
+export const parseListValue = (value: unknown): string[] => {
+  const lines = Array.isArray(value)
+    ? value
+    : typeof value === 'string'
+      ? value.split(/\r?\n/)
+      : [];
+
+  return lines.flatMap((line) => {
+    if (typeof line !== 'string') return [];
+    const trimmed = line.trim();
+    return trimmed === '' ? [] : [trimmed];
+  });
+};
+
+export const formatListValue = (value: unknown): string =>
+  parseListValue(value).join('\n');
+
 export interface MultiSelectField extends SettingFieldBase {
   type: 'multiselect';
   options: SettingOptions;
@@ -132,6 +154,7 @@ export type SettingField =
   | SelectField
   | SliderField
   | TextField
+  | ListField
   | MultiSelectField
   | NumberField
   | ActionField

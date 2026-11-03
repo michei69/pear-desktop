@@ -62,7 +62,8 @@ export default createPlugin({
       type: 'text',
       key: 'globalShortcuts.volumeUp',
       label: () => t('plugins.precise-volume.settings.shortcut-up'),
-      placeholder: () => 'e.g. Ctrl+Shift+Up',
+      placeholder: () =>
+        t('plugins.precise-volume.settings.shortcut-up-placeholder'),
       // Registered by the backend on start, never re-read.
       restartNeeded: true,
     },
@@ -70,7 +71,8 @@ export default createPlugin({
       type: 'text',
       key: 'globalShortcuts.volumeDown',
       label: () => t('plugins.precise-volume.settings.shortcut-down'),
-      placeholder: () => 'e.g. Ctrl+Shift+Down',
+      placeholder: () =>
+        t('plugins.precise-volume.settings.shortcut-down-placeholder'),
       restartNeeded: true,
     },
   ],

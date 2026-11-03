@@ -1,12 +1,5 @@
 <!doctype html>
 <html lang="en">
-  <!--
-    Shell for the standalone settings window. It deliberately carries no
-    script: the preload injects the renderer, exactly like it does into the
-    YouTube Music page. Loading the built renderer/index.html here instead
-    executed the bundle twice (once from the page, once from the preload) and
-    both copies crashed, leaving a blank window.
-  -->
   <head>
     <meta charset="utf-8" />
     <meta name="color-scheme" content="dark" />
@@ -18,7 +11,33 @@
         height: 100%;
         background: #1d1b20;
       }
+
+      #sui-boot-fallback {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      #sui-boot-fallback::after {
+        width: 28px;
+        height: 28px;
+        border: 3px solid #49454f;
+        border-top-color: #d0bcff;
+        border-radius: 50%;
+        content: '';
+        animation: sui-boot-spin 0.9s linear infinite;
+      }
+
+      @keyframes sui-boot-spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
     </style>
   </head>
-  <body></body>
+  <body>
+    <div id="sui-boot-fallback"></div>
+  </body>
 </html>

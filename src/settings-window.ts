@@ -1,9 +1,10 @@
-import path from 'node:path';
+import fs from 'node:fs';
 
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, dialog } from 'electron';
 import is from 'electron-is';
 
 import { t } from '@/i18n';
+import { settingsWindowPaths } from '@/plugins/settings-ui/window-paths';
 
 let icon = 'assets/icon.png';
 if (process.platform === 'win32') {
@@ -12,12 +13,7 @@ if (process.platform === 'win32') {
   icon = 'assets/generated/icons/mac/icon.icns';
 }
 
-// This module can be code-split into a chunk under `dist/main/chunks`, where
-// `__dirname` points at the chunk instead of the main bundle and the `'..'`
-// in the paths below then lands in `dist/main`. Resolve from the app root (the
-// project root in dev, `app.asar` when packaged) against electron-vite's outDir
-// so the paths hold wherever this module ends up in the build.
-const buildDir = () => path.join(app.getAppPath(), 'dist');
+const SHOW_FALLBACK_DELAY = 500;
 
 let settingsWindow: Electron.BrowserWindow | undefined;
 
@@ -26,6 +22,29 @@ export const openSettingsWindow = () => {
     if (settingsWindow.isMinimized()) settingsWindow.restore();
     settingsWindow.focus();
     return settingsWindow;
+  }
+
+  const appPath = app.getAppPath();
+  const paths = settingsWindowPaths(appPath);
+  const devUrl = is.dev() ? process.env.ELECTRON_RENDERER_URL : undefined;
+
+  if (!devUrl) {
+    const missing = [paths.preload, paths.html].filter(
+      (file) => !fs.existsSync(file),
+    );
+    if (missing.length > 0) {
+      console.error(
+        '[settings-ui] cannot open the settings window, missing build files:',
+        missing,
+      );
+      dialog.showErrorBox(
+        t('settings-ui.window.open-failed-title'),
+        t('settings-ui.window.missing-files', {
+          files: missing.join('\n'),
+        }),
+      );
+      return undefined;
+    }
   }
 
   settingsWindow = new BrowserWindow({
@@ -41,30 +60,45 @@ export const openSettingsWindow = () => {
     webPreferences: {
       contextIsolation: true,
       spellcheck: false,
-      preload: path.join(buildDir(), 'preload', 'preload.cjs'),
+      preload: paths.preload,
       sandbox: false,
     },
   });
 
+  const showWindow = () => {
+    if (settingsWindow && !settingsWindow.isDestroyed()) settingsWindow.show();
+  };
+  const showFallbackTimer = setTimeout(showWindow, SHOW_FALLBACK_DELAY);
+
+  settingsWindow.once('show', () => clearTimeout(showFallbackTimer));
+  settingsWindow.once('ready-to-show', showWindow);
   settingsWindow.on('closed', () => {
+    clearTimeout(showFallbackTimer);
     settingsWindow = undefined;
   });
-  settingsWindow.once('ready-to-show', () => settingsWindow?.show());
 
-  // A script-less shell: the preload injects the renderer (from the dev server
-  // in dev, from the built bundle otherwise). Loading renderer/index.html here
-  // ran the bundle in the page *and* in the preload's isolated world, so the
-  // second copy failed on the mdui custom elements and the window stayed blank.
-  const devUrl = is.dev() ? process.env.ELECTRON_RENDERER_URL : undefined;
+  settingsWindow.webContents.on(
+    'did-fail-load',
+    (_event, errorCode, errorDescription, validatedURL, isMainFrame) => {
+      if (!isMainFrame || errorCode === -3) return;
+      console.error('[settings-ui] settings window failed to load:', {
+        errorCode,
+        errorDescription,
+        validatedURL,
+      });
+      showWindow();
+    },
+  );
+
+  settingsWindow.webContents.on('render-process-gone', (_event, details) => {
+    console.error('[settings-ui] settings window renderer gone:', details);
+    showWindow();
+  });
+
   if (devUrl) {
     settingsWindow.loadURL(`${devUrl}/settings.html?settings=1`);
   } else {
-    settingsWindow.loadFile(
-      path.join(buildDir(), 'renderer', 'settings.html'),
-      {
-        search: 'settings=1',
-      },
-    );
+    settingsWindow.loadFile(paths.html, { search: 'settings=1' });
   }
 
   return settingsWindow;

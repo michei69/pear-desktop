@@ -11,6 +11,20 @@ function $<E extends Element = Element>(selector: string) {
 
 let api: MusicPlayer;
 
+type YtMusicAppElement = HTMLElement & {
+  dispatch?: (action: { type: string; payload?: unknown }) => void;
+};
+
+/**
+ * YTM's own volume slider reads the app's redux state, which `player.setVolume`
+ * does not update. Dispatching the action the API server uses keeps the bar in
+ * step with the effective volume.
+ */
+const syncPlayerBarVolume = (volume: number) => {
+  const app = $<YtMusicAppElement>('ytmusic-app');
+  app?.dispatch?.({ type: 'SET_VOLUME', payload: volume });
+};
+
 export const moveVolumeHud = debounce((showVideo: boolean) => {
   const volumeHud = $<HTMLElement>('#volumeHud');
   if (!volumeHud) {
@@ -31,12 +45,15 @@ const newSliderSelector =
  * Script that applies the saved volume as soon as the player exists.
  * Injected from the preload: YTM can start playing at its default (full)
  * volume well before the renderer plugins and onPlayerApiReady are loaded.
+ * `setVolume` alone leaves the player bar's slider on its startup value, so the
+ * same `SET_VOLUME` action the API server dispatches is sent too.
  */
 export const restoreVolumeScript = (volume: number) => `(() => {
   const apply = () => {
     const player = document.querySelector('#movie_player');
     if (typeof player?.setVolume !== 'function') return false;
     player.setVolume(${volume});
+    document.querySelector('ytmusic-app')?.dispatch?.({ type: 'SET_VOLUME', payload: ${volume} });
     return true;
   };
   if (apply()) return;
@@ -89,6 +106,11 @@ export const onPlayerApiReady = async (
 
       if (api.getVolume() !== options.savedVolume) {
         setVolume(options.savedVolume);
+      } else {
+        // The preload restored the volume before YTM built its UI: the audio is
+        // correct, but the player bar still shows the startup volume.
+        syncPlayerBarVolume(options.savedVolume);
+        updateVolumeSlider();
       }
     }
 
@@ -239,6 +261,7 @@ export const onPlayerApiReady = async (
 
   function setVolume(value: number) {
     api.setVolume(value);
+    syncPlayerBarVolume(value);
     saveVolume(value);
 
     updateVolumeSlider();
