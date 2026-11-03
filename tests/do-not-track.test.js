@@ -75,8 +75,9 @@ globalThis.checkProfileNotification = async () => {
   window.webContents.reload = () => { reloads++; };
   ElectronBlocker.fromLists = async () => ElectronBlocker.parse('||tracker.fixture.invalid^');
   const config = { ...plugin.config, enabled: true, cache: false };
+  const ipc = { handle() {}, removeHandler() {}, on() {}, off() {} };
   try {
-    await backend.start({ window, getConfig: async () => config, setConfig: async () => {} });
+    await backend.start({ window, ipc, getConfig: async () => config, setConfig: async () => {} });
     const startupDialogs = dialogs;
     await backend.onConfigChange({ ...config, blocker: 'Balanced' });
     await new Promise(setImmediate);
@@ -90,7 +91,7 @@ globalThis.checkProfileNotification = async () => {
     await new Promise(setImmediate);
     return { startupDialogs, laterReloads, confirmedReloads, liteReloads: reloads, dialogs };
   } finally {
-    backend.stop({ window });
+    backend.stop({ window, ipc });
     dialog.showMessageBox = originalDialog;
     window.webContents.reload = originalReload;
     ElectronBlocker.fromLists = originalFromLists;
