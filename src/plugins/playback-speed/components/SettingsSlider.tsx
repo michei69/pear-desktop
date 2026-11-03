@@ -11,7 +11,6 @@ import type { CustomFieldContext } from '@/types/settings';
 
 const STEP = 0.05;
 
-/** The playback-speed settings field: a slider shown by the settings UI. */
 export const SettingsSlider = (props: { ctx: CustomFieldContext }) => {
   const [speed, setSpeed] = createSignal(1);
 

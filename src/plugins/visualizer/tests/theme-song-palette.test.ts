@@ -65,7 +65,6 @@ test('every palette entry is a parsed color, not a mix of hex strings and hsl', 
       expect(color.l).toBeGreaterThanOrEqual(0);
       expect(color.l).toBeLessThanOrEqual(1);
     }
-    // The fallback colors keep their own hue instead of collapsing to the accent.
     const fallback = rgbToHsl(hexToRgb('#06d6a0'));
     expect(palette[5]?.h).toBeCloseTo(fallback.h, 5);
     expect(palette[5]?.s).toBeCloseTo(fallback.s, 5);

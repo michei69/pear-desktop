@@ -134,7 +134,6 @@ export default createPlugin<
         const images = this.images;
         const isPaused = songInfo.isPaused ?? false;
 
-        // Only rebuild when the rendered state actually changed.
         if (
           !force &&
           this.lastThumbarImages === images &&
@@ -147,7 +146,6 @@ export default createPlugin<
         this.lastThumbarPaused = isPaused;
         this.lastThumbarLikeStatus = this.currentLikeStatus;
 
-        // Win32 needs the whole component list rewritten.
         window.setThumbarButtons([
           {
             tooltip: t('plugins.taskbar-mediacontrol.tooltip.dislike'),
@@ -217,7 +215,6 @@ export default createPlugin<
       };
       registerCallback(this.songInfoCallback);
 
-      // win.show() drops the thumbar, so it has to be set again.
       this.showListener = () => setThumbar(this.currentSongInfo, true);
       window.on('show', this.showListener);
     },
