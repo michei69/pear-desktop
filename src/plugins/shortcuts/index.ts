@@ -16,6 +16,33 @@ export type ShortcutsPluginConfig = {
   local: ShortcutMappingType;
 };
 
+const KEYBIND_FIELDS = [
+  {
+    action: 'previous',
+    labelKey: 'plugins.shortcuts.prompt.keybind.keybind-options.previous',
+    placeholderKey: 'plugins.shortcuts.settings.placeholder.previous',
+  },
+  {
+    action: 'playPause',
+    labelKey: 'plugins.shortcuts.prompt.keybind.keybind-options.play-pause',
+    placeholderKey: 'plugins.shortcuts.settings.placeholder.play-pause',
+  },
+  {
+    action: 'next',
+    labelKey: 'plugins.shortcuts.prompt.keybind.keybind-options.next',
+    placeholderKey: 'plugins.shortcuts.settings.placeholder.next',
+  },
+] as const;
+
+const keybindFields = (scope: 'global' | 'local') =>
+  KEYBIND_FIELDS.map((field) => ({
+    type: 'text' as const,
+    key: `${scope}.${field.action}`,
+    label: () => t(field.labelKey),
+    placeholder: () => t(field.placeholderKey),
+    restartNeeded: true,
+  }));
+
 export default createPlugin({
   name: () => t('plugins.shortcuts.name'),
   description: () => t('plugins.shortcuts.description'),
@@ -47,61 +74,11 @@ export default createPlugin({
     },
     {
       title: () => t('plugins.shortcuts.settings.global-keybinds'),
-      fields: [
-        {
-          type: 'text',
-          key: 'global.previous',
-          label: () =>
-            t('plugins.shortcuts.prompt.keybind.keybind-options.previous'),
-          placeholder: () => 'e.g. CmdOrCtrl+Shift+Left',
-          restartNeeded: true,
-        },
-        {
-          type: 'text',
-          key: 'global.playPause',
-          label: () =>
-            t('plugins.shortcuts.prompt.keybind.keybind-options.play-pause'),
-          placeholder: () => 'e.g. CmdOrCtrl+Shift+Space',
-          restartNeeded: true,
-        },
-        {
-          type: 'text',
-          key: 'global.next',
-          label: () =>
-            t('plugins.shortcuts.prompt.keybind.keybind-options.next'),
-          placeholder: () => 'e.g. CmdOrCtrl+Shift+Right',
-          restartNeeded: true,
-        },
-      ],
+      fields: keybindFields('global'),
     },
     {
       title: () => t('plugins.shortcuts.settings.local-keybinds'),
-      fields: [
-        {
-          type: 'text',
-          key: 'local.previous',
-          label: () =>
-            t('plugins.shortcuts.prompt.keybind.keybind-options.previous'),
-          placeholder: () => 'e.g. CmdOrCtrl+Shift+Left',
-          restartNeeded: true,
-        },
-        {
-          type: 'text',
-          key: 'local.playPause',
-          label: () =>
-            t('plugins.shortcuts.prompt.keybind.keybind-options.play-pause'),
-          placeholder: () => 'e.g. CmdOrCtrl+Shift+Space',
-          restartNeeded: true,
-        },
-        {
-          type: 'text',
-          key: 'local.next',
-          label: () =>
-            t('plugins.shortcuts.prompt.keybind.keybind-options.next'),
-          placeholder: () => 'e.g. CmdOrCtrl+Shift+Right',
-          restartNeeded: true,
-        },
-      ],
+      fields: keybindFields('local'),
     },
   ],
   menu: onMenu,

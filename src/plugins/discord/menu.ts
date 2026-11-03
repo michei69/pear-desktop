@@ -1,29 +1,15 @@
 import prompt from 'custom-electron-prompt';
-import { StatusDisplayType } from 'discord-api-types/v10';
 
 import { setMenuOptions } from '@/config/plugins';
 import { APPLICATION_NAME, t } from '@/i18n';
-import { singleton } from '@/providers/decorators';
 import promptOptions from '@/providers/prompt-options';
 
 import { discordService } from './main';
+import { STATUS_DISPLAY_TYPES, statusDisplayLabel } from './status-display';
 
 import type { DiscordPluginConfig } from './index';
 import type { MenuTemplate } from '@/menu';
 import type { MenuContext } from '@/types/contexts';
-
-const registerRefreshOnce = singleton((refreshMenu: () => void) => {
-  discordService?.registerRefreshCallback(refreshMenu);
-});
-
-const DiscordStatusDisplayTypeLabels: Record<StatusDisplayType, string> = {
-  [StatusDisplayType.Name]:
-    'plugins.discord.menu.set-status-display-type.submenu.application',
-  [StatusDisplayType.State]:
-    'plugins.discord.menu.set-status-display-type.submenu.artist',
-  [StatusDisplayType.Details]:
-    'plugins.discord.menu.set-status-display-type.submenu.title',
-};
 
 export const onMenu = async ({
   window,
@@ -32,7 +18,7 @@ export const onMenu = async ({
   refresh,
 }: MenuContext<DiscordPluginConfig>): Promise<MenuTemplate> => {
   const config = await getConfig();
-  registerRefreshOnce(refresh);
+  discordService?.registerRefreshCallback(refresh);
 
   return [
     {
@@ -40,7 +26,7 @@ export const onMenu = async ({
         ? t('plugins.discord.menu.connected')
         : t('plugins.discord.menu.disconnected'),
       enabled: !discordService?.isConnected(),
-      click: () => discordService?.connect(true),
+      click: () => discordService?.connect(),
     },
     {
       label: t('plugins.discord.menu.auto-reconnect'),
@@ -67,7 +53,9 @@ export const onMenu = async ({
       },
     },
     {
-      label: t('plugins.discord.menu.play-on-application'),
+      label: t('plugins.discord.menu.play-on-application', {
+        applicationName: APPLICATION_NAME,
+      }),
       type: 'checkbox',
       checked:
         config[
@@ -106,27 +94,14 @@ export const onMenu = async ({
     },
     {
       label: t('plugins.discord.menu.set-status-display-type.label'),
-      submenu: Object.values(StatusDisplayType)
-        .filter(
-          (v) => typeof StatusDisplayType[v as StatusDisplayType] !== 'number',
-        )
-        .map((statusDisplayType) => ({
-          label: t(
-            DiscordStatusDisplayTypeLabels[
-              statusDisplayType as StatusDisplayType
-            ],
-            {
-              applicationName: APPLICATION_NAME,
-            },
-          ),
-          type: 'radio',
-          checked: config.statusDisplayType === statusDisplayType,
-          click() {
-            setConfig({
-              statusDisplayType: statusDisplayType as StatusDisplayType,
-            });
-          },
-        })),
+      submenu: STATUS_DISPLAY_TYPES.map((statusDisplayType) => ({
+        label: statusDisplayLabel(statusDisplayType),
+        type: 'radio' as const,
+        checked: config.statusDisplayType === statusDisplayType,
+        click() {
+          setConfig({ statusDisplayType });
+        },
+      })),
     },
   ];
 };

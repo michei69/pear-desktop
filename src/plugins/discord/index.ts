@@ -5,11 +5,13 @@ import { createPlugin } from '@/utils';
 
 import { backend } from './main';
 import { onMenu } from './menu';
+import { STATUS_DISPLAY_TYPES, statusDisplayLabel } from './status-display';
 
 export type DiscordPluginConfig = {
   'enabled': boolean;
   /**
-   * Reconnect every 5 seconds after disconnecting or failing to connect
+   * Reconnect after disconnecting or failing to connect, backing off from 5
+   * seconds up to 5 minutes
    * @default true
    */
   'autoReconnect': boolean;
@@ -97,28 +99,10 @@ export default createPlugin({
       variant: 'dropdown',
       key: 'statusDisplayType',
       label: () => t('plugins.discord.menu.set-status-display-type.label'),
-      options: [
-        {
-          value: StatusDisplayType.Name,
-          label: () =>
-            t(
-              'plugins.discord.menu.set-status-display-type.submenu.application',
-              {
-                applicationName: APPLICATION_NAME,
-              },
-            ),
-        },
-        {
-          value: StatusDisplayType.State,
-          label: () =>
-            t('plugins.discord.menu.set-status-display-type.submenu.artist'),
-        },
-        {
-          value: StatusDisplayType.Details,
-          label: () =>
-            t('plugins.discord.menu.set-status-display-type.submenu.title'),
-        },
-      ],
+      options: STATUS_DISPLAY_TYPES.map((value) => ({
+        value,
+        label: () => statusDisplayLabel(value),
+      })),
     },
   ],
   menu: onMenu,

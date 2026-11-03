@@ -99,7 +99,7 @@ export default createPlugin({
       label: () => t('plugins.ambient-mode.menu.use-fullscreen.label'),
     },
   ],
-  menu: menu,
+  menu,
 
   renderer: {
     interpolationTime: defaultConfig.interpolationTime,
@@ -116,9 +116,13 @@ export default createPlugin({
     lastMediaType: null as 'video' | 'image' | null,
     lastVideoSource: null as string | null,
     lastImageSource: null as string | null,
+    generation: 0,
 
     async start({ getConfig }) {
+      const generation = ++this.generation;
       const config = await getConfig();
+      if (generation !== this.generation) return;
+
       this.interpolationTime = config.interpolationTime;
       this.buffer = config.buffer;
       this.qualityRatio = config.quality;
@@ -136,6 +140,7 @@ export default createPlugin({
       const video = await waitForElement<HTMLVideoElement>(
         '.html5-video-container > video',
       );
+      if (generation !== this.generation) return;
 
       const videoWrapper = document.querySelector(
         '#song-video > .player-wrapper',
@@ -377,6 +382,7 @@ export default createPlugin({
       this.update?.();
     },
     stop() {
+      this.generation++;
       setExtendSidebar(false);
       this.update = null;
       this.unregister?.();

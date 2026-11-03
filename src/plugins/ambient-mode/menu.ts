@@ -5,21 +5,12 @@ import { type MenuContext } from '@/types/contexts';
 
 import { type AmbientModePluginConfig } from './types';
 
-export interface menuParameters {
-  getConfig: () => AmbientModePluginConfig | Promise<AmbientModePluginConfig>;
-  setConfig: (
-    conf: Partial<Omit<AmbientModePluginConfig, 'enabled'>>,
-  ) => void | Promise<void>;
-}
-
-export const menu: (
-  ctx: MenuContext<AmbientModePluginConfig>,
-) =>
-  | MenuItemConstructorOptions[]
-  | Promise<MenuItemConstructorOptions[]> = async ({
+export const menu = async ({
   getConfig,
   setConfig,
-}: menuParameters) => {
+}: MenuContext<AmbientModePluginConfig>): Promise<
+  MenuItemConstructorOptions[]
+> => {
   const interpolationTimeList = [0, 500, 1000, 1500, 2000, 3000, 4000, 5000];
   const qualityList = [10, 25, 50, 100, 200, 500, 1000];
   const sizeList = [100, 110, 125, 150, 175, 200, 300];

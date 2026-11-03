@@ -26,7 +26,9 @@ export const registerBuiltinCommands = (
         const videoId = parseVideoId(args[0] ?? '');
         if (!videoId) return;
 
-        ctx.ipc.invoke('search-commands:play', videoId);
+        ctx.ipc
+          .invoke('search-commands:play', videoId)
+          .catch((error) => console.error('Could not play video', error));
       },
     }),
   ];

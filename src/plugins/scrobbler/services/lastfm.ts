@@ -248,6 +248,7 @@ const authenticate = async (
   return new Promise<boolean>((resolve) => {
     if (!authWindowOpened) {
       authWindowOpened = true;
+      latestAuthResult = false;
       const url = `https://www.last.fm/api/auth/?api_key=${config.scrobblers.lastfm.apiKey}&token=${config.scrobblers.lastfm.token}`;
       const browserWindow = new BrowserWindow({
         width: 500,

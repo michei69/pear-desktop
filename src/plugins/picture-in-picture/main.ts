@@ -9,14 +9,18 @@ import type { BackendContext } from '@/types/contexts';
 const PIP_GEOMETRY_SAVE_MS = 500;
 
 let config: PictureInPicturePluginConfig;
+let teardown: (() => void) | null = null;
+let generation = 0;
 
 export const onMainLoad = async ({
   window,
   getConfig,
   setConfig,
-  ipc: { send, on },
+  ipc: { send, on, off },
 }: BackendContext<PictureInPicturePluginConfig>) => {
+  const currentGeneration = ++generation;
   let isInPiP = false;
+  let stopped = false;
   let originalPosition: number[];
   let originalSize: number[];
   let originalFullScreen: boolean;
@@ -103,38 +107,61 @@ export const onMainLoad = async ({
     }
   };
 
-  config ??= await getConfig();
+  config = await getConfig();
+  if (currentGeneration !== generation) return;
   setConfig({ isInPiP });
-  on('plugin:toggle-picture-in-picture', () => {
-    togglePiP();
-  });
+
+  const toggleHandler = () => togglePiP();
+  on('plugin:toggle-picture-in-picture', toggleHandler);
 
   // A drag fires these tens of times per second and every write rewrites the
   // whole config file, so only the last geometry of a gesture is persisted.
   // The values are captured per event: by the time the timer fires the window
   // may already be back at its restored place.
-  const savePosition = debounce(
-    (position: [number, number]) => setConfig({ 'pip-position': position }),
-    PIP_GEOMETRY_SAVE_MS,
-  );
-  const saveSize = debounce(
-    (size: [number, number]) => setConfig({ 'pip-size': size }),
-    PIP_GEOMETRY_SAVE_MS,
-  );
+  const savePosition = debounce((position: [number, number]) => {
+    if (!stopped) {
+      setConfig({ 'pip-position': position });
+    }
+  }, PIP_GEOMETRY_SAVE_MS);
+  const saveSize = debounce((size: [number, number]) => {
+    if (!stopped) {
+      setConfig({ 'pip-size': size });
+    }
+  }, PIP_GEOMETRY_SAVE_MS);
 
-  window.on('move', () => {
+  const onMove = () => {
     if (!isInPiP || config.useNativePiP) return;
 
     const [x, y] = window.getPosition();
     savePosition([x, y]);
-  });
-
-  window.on('resize', () => {
+  };
+  const onResize = () => {
     if (!isInPiP || config.useNativePiP) return;
 
     const [width, height] = window.getSize();
     saveSize([width, height]);
-  });
+  };
+
+  window.on('move', onMove);
+  window.on('resize', onResize);
+
+  teardown = () => {
+    stopped = true;
+    off('plugin:toggle-picture-in-picture', toggleHandler);
+    window.removeListener('move', onMove);
+    window.removeListener('resize', onResize);
+
+    if (isInPiP) {
+      togglePiP();
+    }
+
+    teardown = null;
+  };
+};
+
+export const onMainStop = () => {
+  generation++;
+  teardown?.();
 };
 
 export const onConfigChange = (newConfig: PictureInPicturePluginConfig) => {

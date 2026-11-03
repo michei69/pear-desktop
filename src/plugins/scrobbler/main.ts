@@ -26,6 +26,7 @@ export const backend = createBackend<
     window?: BrowserWindow;
     enabledScrobblers: Map<string, ScrobblerBase>;
     configRevision: number;
+    generation: number;
     scrobbleTimer?: NodeJS.Timeout;
     toggleScrobblers(
       config: ScrobblerPluginConfig,
@@ -42,6 +43,7 @@ export const backend = createBackend<
 >({
   enabledScrobblers: new Map(),
   configRevision: 0,
+  generation: 0,
 
   toggleScrobblers(config: ScrobblerPluginConfig, window: BrowserWindow) {
     if (config.scrobblers.lastfm && config.scrobblers.lastfm.enabled) {
@@ -69,17 +71,21 @@ export const backend = createBackend<
   },
 
   async start({ getConfig, setConfig, window }) {
+    const startedAt = ++this.generation;
     const config = (this.config = await getConfig());
-    let generation = 0;
+    if (startedAt !== this.generation) return;
+
+    let callbackGeneration = 0;
 
     this.window = window;
     this.toggleScrobblers(config, window);
     await this.createSessions(config, setConfig);
+    if (startedAt !== this.generation) return;
     this.setConfig = setConfig;
 
     this.songInfoCallback = async (songInfo: SongInfo, event) => {
       if (event === SongInfoEvent.TimeChanged) return;
-      const currentGeneration = ++generation;
+      const currentGeneration = ++callbackGeneration;
 
       // Clear the previous scrobble timer
       clearTimeout(this.scrobbleTimer);
@@ -101,7 +107,7 @@ export const backend = createBackend<
 
         if (configNonnull.useMusicBrainz && configNonnull.musicBrainzEmail) {
           const isCorrectionObsolete = () =>
-            currentGeneration !== generation ||
+            currentGeneration !== callbackGeneration ||
             currentConfigRevision !== this.configRevision;
           const corrected = await fetchMusicBrainzCorrection(
             title,
@@ -158,11 +164,13 @@ export const backend = createBackend<
   },
 
   stop() {
+    this.generation++;
     clearTimeout(this.scrobbleTimer);
     this.scrobbleTimer = undefined;
     if (this.songInfoCallback) {
       unregisterCallback(this.songInfoCallback);
     }
+    this.enabledScrobblers.clear();
   },
 
   async onConfigChange(newConfig: ScrobblerPluginConfig) {

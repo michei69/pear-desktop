@@ -55,14 +55,13 @@ export const onMenu = async ({
     );
 
     if (output) {
-      const newConfig = { ...config };
+      const global = { ...config.global };
 
       for (const { value, accelerator } of output) {
-        newConfig.global[value as keyof ShortcutsPluginConfig['global']] =
-          accelerator;
+        global[value as keyof ShortcutsPluginConfig['global']] = accelerator;
       }
 
-      setConfig(newConfig);
+      setConfig({ global });
     }
     // Falsy output means the user cancelled
   }

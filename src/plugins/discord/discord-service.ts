@@ -29,19 +29,13 @@ export class DiscordService {
   lastSongInfo?: SongInfo;
   lastProgressUpdate = 0;
   config?: DiscordPluginConfig;
-  refreshCallbacks: (() => void)[] = [];
+  refreshCallback: (() => void) | null = null;
   timerManager = new TimerManager();
   reconnectAttempt = 0;
   reconnectTimerPending = false;
 
-  mainWindow: Electron.BrowserWindow;
-
-  constructor(
-    mainWindow: Electron.BrowserWindow,
-    config?: DiscordPluginConfig,
-  ) {
+  constructor(config?: DiscordPluginConfig) {
     this.config = config;
-    this.mainWindow = mainWindow;
     this.autoReconnect = config?.autoReconnect ?? true;
 
     this.initializeRpc();
@@ -63,7 +57,7 @@ export class DiscordService {
       if (is.dev()) {
         console.log(LoggerPrefix, t('plugins.discord.backend.connected'));
       }
-      this.refreshCallbacks.forEach((cb) => cb());
+      this.refreshCallback?.();
     });
 
     this.rpc.on('ready', () => {
@@ -195,7 +189,7 @@ export class DiscordService {
     this.connectWithRetry();
   };
 
-  connect(showErrorDialog = false): void {
+  connect(): void {
     if (this.rpc.isConnected) {
       if (is.dev()) {
         console.log(
@@ -222,8 +216,6 @@ export class DiscordService {
         // so recreate the client before reconnecting
         this.initializeRpc();
         this.connectRecursive();
-      } else if (showErrorDialog && this.mainWindow) {
-        // connection failed
       }
     });
   }
@@ -355,7 +347,7 @@ export class DiscordService {
   }
 
   registerRefreshCallback(cb: () => void): void {
-    this.refreshCallbacks.push(cb);
+    this.refreshCallback = cb;
   }
 
   isConnected(): boolean {
@@ -364,6 +356,6 @@ export class DiscordService {
 
   cleanup(): void {
     this.disconnect();
-    this.refreshCallbacks = [];
+    this.refreshCallback = null;
   }
 }

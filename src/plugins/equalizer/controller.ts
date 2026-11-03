@@ -75,7 +75,10 @@ export class EqualizerAudioChain {
       param.setTargetAtTime(value, now, 0.01);
     };
 
-    smooth(this.outputGain.gain, dbToLinear(config.outputGainDb));
+    smooth(
+      this.outputGain.gain,
+      config.bypass ? 1 : dbToLinear(config.outputGainDb),
+    );
     this.filters.forEach((filter, index) => {
       const band = config.filters[index];
       filter.type =

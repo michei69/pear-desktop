@@ -1,7 +1,7 @@
 import { t } from '@/i18n';
 import { createPlugin } from '@/utils';
 
-import { onConfigChange, onMainLoad } from './main';
+import { onConfigChange, onMainLoad, onMainStop } from './main';
 import { onMenu } from './menu';
 import { onPlayerApiReady, onUnload } from './renderer';
 import style from './style.css?inline';
@@ -11,7 +11,7 @@ export type PictureInPicturePluginConfig = {
   'alwaysOnTop': boolean;
   'savePosition': boolean;
   'saveSize': boolean;
-  'hotkey': 'P';
+  'hotkey': string;
   'pip-position': [number, number];
   'pip-size': [number, number];
   'isInPiP': boolean;
@@ -59,7 +59,8 @@ export default createPlugin({
       type: 'text',
       key: 'hotkey',
       label: () => t('plugins.picture-in-picture.menu.hotkey.label'),
-      placeholder: () => 'e.g. P',
+      placeholder: () =>
+        t('plugins.picture-in-picture.settings.hotkey-placeholder'),
       restartNeeded: true,
     },
   ],
@@ -67,6 +68,7 @@ export default createPlugin({
 
   backend: {
     start: onMainLoad,
+    stop: onMainStop,
     onConfigChange,
   },
   renderer: {

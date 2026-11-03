@@ -19,85 +19,111 @@ import type { DiscordPluginConfig } from './index';
 
 export let discordService = null as DiscordService | null;
 
+const createSongInfoCallback = (state: { lastTimeUpdateSent: number }) => {
+  return (songInfo: SongInfo, event: SongInfoEvent) => {
+    if (!discordService?.isConnected()) {
+      return;
+    }
+
+    if (event !== SongInfoEvent.TimeChanged) {
+      discordService.updateActivity(songInfo);
+      state.lastTimeUpdateSent = Date.now();
+      return;
+    }
+
+    const now = Date.now();
+    if (now - state.lastTimeUpdateSent > TIME_UPDATE_DEBOUNCE_MS) {
+      discordService.updateActivity(songInfo);
+      state.lastTimeUpdateSent = now;
+    }
+  };
+};
+
 export const backend = createBackend<
   {
     config?: DiscordPluginConfig;
     lastTimeUpdateSent: number;
     songInfoCallback?: (songInfo: SongInfo, event: SongInfoEvent) => void;
+    playerApiLoadedHandler?: () => void;
+    beforeQuitHandler?: () => void;
+    readyToShowHandler?: () => void;
+    generation: number;
+    startService(): void;
   },
   DiscordPluginConfig
 >({
   lastTimeUpdateSent: 0,
+  generation: 0,
 
   async start(ctx) {
+    const currentGeneration = ++this.generation;
     const config = await ctx.getConfig();
-    discordService = new DiscordService(ctx.window, config);
+    if (currentGeneration !== this.generation) return;
+    discordService = new DiscordService(config);
 
-    if (config.enabled) {
-      ctx.window.once('ready-to-show', () => {
-        this.songInfoCallback = (songInfo, event) => {
-          if (!discordService?.isConnected()) return;
-
-          if (event !== SongInfoEvent.TimeChanged) {
-            discordService?.updateActivity(songInfo);
-            this.lastTimeUpdateSent = Date.now();
-          } else {
-            const now = Date.now();
-            if (now - this.lastTimeUpdateSent > TIME_UPDATE_DEBOUNCE_MS) {
-              discordService?.updateActivity(songInfo);
-              this.lastTimeUpdateSent = now;
-            }
-          }
-        };
-
-        registerCallback(this.songInfoCallback);
-        discordService?.connect(!config.autoReconnect);
-      });
+    // HACK: 'ready-to-show' is emitted once per window, so a plugin enabled
+    // mid-session would wait for it forever; only defer while the page is
+    // still unloaded.
+    if (ctx.window.isVisible() || ctx.window.webContents.getURL()) {
+      this.startService();
+    } else {
+      this.readyToShowHandler = () => this.startService();
+      ctx.window.once('ready-to-show', this.readyToShowHandler);
     }
 
-    ctx.ipc.on('peard:player-api-loaded', () => {
+    this.playerApiLoadedHandler = () => {
       ctx.ipc.send(SONG_INFO_SETUP_CHANNEL, SongInfoEventFlag.TimeChanged);
-    });
+    };
+    ctx.ipc.on('peard:player-api-loaded', this.playerApiLoadedHandler);
 
-    app.on('before-quit', () => {
-      discordService?.cleanup();
-    });
+    this.beforeQuitHandler = () => discordService?.cleanup();
+    app.on('before-quit', this.beforeQuitHandler);
   },
 
-  stop() {
+  startService() {
+    this.readyToShowHandler = undefined;
+
+    if (!this.songInfoCallback) {
+      this.songInfoCallback = createSongInfoCallback(this);
+      registerCallback(this.songInfoCallback);
+    }
+
+    discordService?.connect();
+  },
+
+  stop(ctx) {
+    this.generation++;
+    if (this.readyToShowHandler) {
+      ctx.window.removeListener('ready-to-show', this.readyToShowHandler);
+      this.readyToShowHandler = undefined;
+    }
+
+    if (this.playerApiLoadedHandler) {
+      ctx.ipc.off('peard:player-api-loaded', this.playerApiLoadedHandler);
+      this.playerApiLoadedHandler = undefined;
+    }
+
+    if (this.beforeQuitHandler) {
+      app.off('before-quit', this.beforeQuitHandler);
+      this.beforeQuitHandler = undefined;
+    }
+
     if (this.songInfoCallback) {
       unregisterCallback(this.songInfoCallback);
+      this.songInfoCallback = undefined;
     }
+
     discordService?.cleanup();
+    discordService = null;
   },
 
   onConfigChange(newConfig) {
     discordService?.onConfigChange(newConfig);
 
-    const currentlyConnected = discordService?.isConnected() ?? false;
-    if (newConfig.enabled && !currentlyConnected) {
-      // Enabling after startup skips the ready-to-show registration, so register
-      // the callback before connecting
-      if (!this.songInfoCallback) {
-        this.songInfoCallback = (songInfo, event) => {
-          if (!discordService?.isConnected()) return;
+    if (this.readyToShowHandler) return;
 
-          if (event !== SongInfoEvent.TimeChanged) {
-            discordService?.updateActivity(songInfo);
-            this.lastTimeUpdateSent = Date.now();
-          } else {
-            const now = Date.now();
-            if (now - this.lastTimeUpdateSent > TIME_UPDATE_DEBOUNCE_MS) {
-              discordService?.updateActivity(songInfo);
-              this.lastTimeUpdateSent = now;
-            }
-          }
-        };
-        registerCallback(this.songInfoCallback);
-      }
-      discordService?.connect(!newConfig.autoReconnect);
-    } else if (!newConfig.enabled && currentlyConnected) {
-      discordService?.disconnect();
+    if (newConfig.enabled && !(discordService?.isConnected() ?? false)) {
+      this.startService();
     }
   },
 });

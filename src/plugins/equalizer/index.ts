@@ -42,7 +42,6 @@ const attachCurrentGraph = (state: Runtime) => {
   // compressor does, otherwise it keeps processing a detached source.
   const source = rebindAudioGraphSource(video) ?? graph.source;
   state.controller.connect(source, graph.context);
-  state.controller.apply(state.raw);
 };
 
 const applyConfig = (state: Runtime, raw: EqualizerPluginConfig) => {

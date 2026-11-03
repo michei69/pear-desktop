@@ -21,6 +21,9 @@ export default createPlugin<
     changeObserver?: MutationObserver;
     countsTimer?: NodeJS.Timeout;
     waiting: boolean;
+    generation: number;
+    disposeButtons?: () => void;
+    menuElement?: HTMLElement;
     onPageChange(): void;
     updateCounts?: () => void;
     loadFullList: (event: MouseEvent) => void;
@@ -38,12 +41,15 @@ export default createPlugin<
   },
   renderer: {
     waiting: false,
+    generation: 0,
     start() {
       this.onPageChange();
       this.observer = new MutationObserver(() => {
         this.onPageChange();
       });
-      this.observer.observe(document.querySelector('#browse-page')!, {
+      const browsePage = document.querySelector('#browse-page');
+      if (!browsePage) return;
+      this.observer.observe(browsePage, {
         attributes: false,
         childList: true,
         subtree: true,
@@ -54,6 +60,7 @@ export default createPlugin<
         return;
       }
       this.waiting = true;
+      const generation = this.generation;
       let continuations: HTMLElement | undefined;
       try {
         continuations = await waitForElement<HTMLElement>('#continuations');
@@ -63,10 +70,14 @@ export default createPlugin<
       } finally {
         this.waiting = false;
       }
-      if (!continuations) return;
+      if (!continuations || generation !== this.generation) return;
 
       // Counts from the previous page must not be reachable after this run.
       this.updateCounts = undefined;
+      this.disposeButtons?.();
+      this.disposeButtons = undefined;
+      this.menuElement?.remove();
+      this.menuElement = undefined;
 
       const [showUnDislike, setShowUnDislike] = createSignal(true);
       const [showDislike, setShowDislike] = createSignal(true);
@@ -86,7 +97,7 @@ export default createPlugin<
       buttonContainer.style.display = 'flex';
       buttonContainer.style.flexDirection = 'row';
 
-      render(
+      this.disposeButtons = render(
         () => (
           <>
             <Show when={showUnDislike()}>
@@ -222,6 +233,7 @@ export default createPlugin<
           menuParent.children[menuParent.children.length - 1],
         );
         menu.appendChild(buttonContainer);
+        this.menuElement = menu;
       }
     },
     loadFullList(event: MouseEvent) {
@@ -230,7 +242,9 @@ export default createPlugin<
         const button = event.target.closest('button') as HTMLElement;
         if (!button?.id) return;
         const id = button.id;
-        const loader = document.getElementById('continuations')!;
+        const loader = document.getElementById('continuations');
+        if (!loader) return;
+        this.loadObserver?.disconnect();
         this.loadObserver = new MutationObserver(() => {
           this.applyToList(id, loader);
         });
@@ -240,14 +254,14 @@ export default createPlugin<
           childList: true,
           subtree: true,
         });
-        loader?.style.setProperty('top', '0');
-        loader?.style.setProperty('left', '50%');
-        loader?.style.setProperty('position', 'absolute');
+        loader.style.setProperty('top', '0');
+        loader.style.setProperty('left', '50%');
+        loader.style.setProperty('position', 'absolute');
       }
     },
     applyToList(id: string, loader: HTMLElement) {
-      if (loader.children.length != 0) return;
       this.loadObserver?.disconnect();
+      if (loader.children.length != 0) return;
       let playlistButtons: NodeListOf<HTMLElement> | undefined;
       const playlist =
         document.querySelector('ytmusic-playlist-shelf-renderer') ??
@@ -278,10 +292,17 @@ export default createPlugin<
       playlistButtons?.forEach((elem) => elem.click());
     },
     stop() {
+      this.generation++;
       this.observer?.disconnect();
       this.changeObserver?.disconnect();
+      this.loadObserver?.disconnect();
       clearTimeout(this.countsTimer);
       this.updateCounts = undefined;
+      this.disposeButtons?.();
+      this.disposeButtons = undefined;
+      this.menuElement?.remove();
+      this.menuElement = undefined;
+      this.waiting = false;
       for (const button of document.querySelectorAll('.like-menu')) {
         button.remove();
       }

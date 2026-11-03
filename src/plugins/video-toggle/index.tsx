@@ -20,7 +20,27 @@ export type VideoTogglePluginConfig = {
   align: 'left' | 'middle' | 'right';
 };
 
-export default createPlugin({
+type VideoToggleRenderer = {
+  config: VideoTogglePluginConfig | null;
+  audioOnlyEnabled: boolean;
+  disposeRoot: (() => void) | null;
+  switchButtonContainer: HTMLDivElement | null;
+  videoElement: HTMLVideoElement | null;
+  srcChangedHandler: (() => void) | null;
+  observers: MutationObserver[];
+  unwatchPlaybackMode: (() => void) | null;
+  startTimeout: NodeJS.Timeout | null;
+  generation: number;
+  applyStyleClass(config: VideoTogglePluginConfig): void;
+  dispose(): void;
+};
+
+export default createPlugin<
+  unknown,
+  unknown,
+  VideoToggleRenderer,
+  VideoTogglePluginConfig
+>({
   name: () => t('plugins.video-toggle.name'),
   description: () => t('plugins.video-toggle.description'),
   restartNeeded: true,
@@ -164,17 +184,19 @@ export default createPlugin({
     observers: [] as MutationObserver[],
     unwatchPlaybackMode: null as (() => void) | null,
     startTimeout: null as NodeJS.Timeout | null,
+    generation: 0,
     applyStyleClass: (config: VideoTogglePluginConfig) => {
-      if (config.forceHide) {
-        document.body.classList.add('video-toggle-force-hide');
-        document.body.classList.remove('video-toggle-custom-mode');
-      } else if (!config.mode || config.mode === 'custom') {
-        document.body.classList.add('video-toggle-custom-mode');
-        document.body.classList.remove('video-toggle-force-hide');
-      }
+      const customMode = !config.forceHide && config.mode === 'custom';
+      document.body.classList.toggle(
+        'video-toggle-force-hide',
+        config.forceHide,
+      );
+      document.body.classList.toggle('video-toggle-custom-mode', customMode);
     },
     async start({ getConfig }) {
+      const generation = ++this.generation;
       const config = await getConfig();
+      if (generation !== this.generation) return;
       this.applyStyleClass(config);
 
       if (config.forceHide) {
@@ -210,6 +232,8 @@ export default createPlugin({
       }
     },
     async onPlayerApiReady(api, { getConfig }) {
+      this.dispose();
+      const generation = ++this.generation;
       const [showButton, setShowButton] = createSignal(true);
 
       const config = await getConfig();
@@ -217,12 +241,14 @@ export default createPlugin({
 
       this.audioOnlyEnabled =
         await window.mainConfig.plugins.isEnabled('audio-only');
+      if (generation !== this.generation) return;
 
       const moveVolumeHud = (await window.mainConfig.plugins.isEnabled(
         'precise-volume',
       ))
         ? (preciseVolumeMoveVolumeHud as (_: boolean) => void)
         : () => {};
+      if (generation !== this.generation) return;
 
       const player = document.querySelector<
         HTMLElement & { videoMode_: boolean }
@@ -285,11 +311,16 @@ export default createPlugin({
             );
           }
 
-          document.querySelector<HTMLElement>(
+          const songVideo = document.querySelector<HTMLElement>(
             '#song-video.ytmusic-player',
-          )!.style.display = showVideo ? 'block' : 'none';
-          document.querySelector<HTMLElement>('#song-image')!.style.display =
-            showVideo ? 'none' : 'block';
+          );
+          const songImage = document.querySelector<HTMLElement>('#song-image');
+          if (songVideo) {
+            songVideo.style.display = showVideo ? 'block' : 'none';
+          }
+          if (songImage) {
+            songImage.style.display = showVideo ? 'none' : 'block';
+          }
 
           if (showVideo && video && !video.style.top) {
             video.style.top = `${
@@ -371,10 +402,13 @@ export default createPlugin({
             }
           }
         });
-        playbackModeObserver.observe(
-          document.querySelector('#song-image #img.style-scope.yt-img-shadow')!,
-          { attributeFilter: ['src'] },
+        const thumbnail = document.querySelector(
+          '#song-image #img.style-scope.yt-img-shadow',
         );
+        if (!thumbnail) return;
+        playbackModeObserver.observe(thumbnail, {
+          attributeFilter: ['src'],
+        });
         this.observers.push(playbackModeObserver);
       };
 
@@ -417,7 +451,7 @@ export default createPlugin({
         }, 0);
       }
     },
-    stop() {
+    dispose() {
       if (this.startTimeout) {
         clearTimeout(this.startTimeout);
         this.startTimeout = null;
@@ -445,6 +479,10 @@ export default createPlugin({
 
       this.switchButtonContainer?.remove();
       this.switchButtonContainer = null;
+    },
+    stop() {
+      this.generation++;
+      this.dispose();
 
       document.body.classList.remove(
         'video-toggle-custom-mode',

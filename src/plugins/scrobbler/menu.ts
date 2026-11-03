@@ -330,8 +330,8 @@ export const onMenu = async ({
           type: 'checkbox',
           checked: Boolean(config.scrobblers.lastfm?.enabled),
           click(item) {
-            backend.toggleScrobblers(config, window);
             config.scrobblers.lastfm.enabled = item.checked;
+            backend.toggleScrobblers(config, window);
             setConfig(config);
           },
         },
@@ -351,8 +351,8 @@ export const onMenu = async ({
           type: 'checkbox',
           checked: Boolean(config.scrobblers.listenbrainz?.enabled),
           click(item) {
-            backend.toggleScrobblers(config, window);
             config.scrobblers.listenbrainz.enabled = item.checked;
+            backend.toggleScrobblers(config, window);
             setConfig(config);
           },
         },

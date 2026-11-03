@@ -27,7 +27,7 @@ export interface ScrobblerPluginConfig {
       token: string | undefined;
       /** Session key used for scrobbling */
       sessionKey: string | undefined;
-      /** Root of the Last.fm API. @default 'http://ws.audioscrobbler.com/2.0/' */
+      /** Root of the Last.fm API. @default 'https://ws.audioscrobbler.com/2.0/' */
       apiRoot: string;
       /** Last.fm api key registered by @semvis123. @default '04d76faaac8726e60988e14c105d421a' */
       apiKey: string;
@@ -104,7 +104,8 @@ export default createPlugin({
           label: () => t('plugins.scrobbler.menu.musicbrainz-email'),
           description: () =>
             t('plugins.scrobbler.settings.musicbrainz-email-description'),
-          placeholder: () => 'you@example.com',
+          placeholder: () =>
+            t('plugins.scrobbler.settings.musicbrainz-email-placeholder'),
         },
       ],
     },
