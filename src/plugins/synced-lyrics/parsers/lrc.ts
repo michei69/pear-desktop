@@ -89,7 +89,7 @@ export const LRC = {
       for (const { time, timeInMs } of timestamps) {
         lrc.lines.push({
           time,
-          timeInMs: timeInMs + offset,
+          timeInMs,
           text,
           words,
           duration: Infinity,
@@ -98,6 +98,17 @@ export const LRC = {
     }
 
     lrc.lines.sort(({ timeInMs: timeA }, { timeInMs: timeB }) => timeA - timeB);
+
+    const shiftedWords = new Set<LRCLine['words']>();
+    for (const line of lrc.lines) {
+      line.timeInMs += offset;
+      if (shiftedWords.has(line.words)) continue;
+      shiftedWords.add(line.words);
+      for (const word of line.words) {
+        word.timeInMs += offset;
+      }
+    }
+
     for (let i = 0; i < lrc.lines.length; i++) {
       const current = lrc.lines[i];
       const next = lrc.lines[i + 1];

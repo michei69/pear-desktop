@@ -79,12 +79,12 @@ export const renderer = createRenderer<
       // getSongInfo() may have no videoId yet if the peard:update-song-info IPC
       // roundtrip from the main process has not completed. Read from the player API
       // instead so lyricsStore.videoId is set at once and the UI leaves loading.
-      const vd = api.getVideoData();
+      const videoData = api.getVideoData();
       refreshCurrentLyrics('player-api-ready', {
         ...info,
-        videoId: vd.video_id,
-        title: vd.title || info.title || '',
-        artist: vd.author || info.artist || '',
+        videoId: videoData?.video_id ?? info.videoId ?? '',
+        title: videoData?.title || info.title || '',
+        artist: videoData?.author || info.artist || '',
         songDuration: api.getDuration() || info.songDuration || 0,
       } as SongInfo);
     }

@@ -1,185 +1,227 @@
 import { jaroWinkler } from '@skyra/jaro-winkler';
 
+import {
+  buildSearchQueries,
+  isUsableSearchRecord,
+  isWithinDurationTolerance,
+  LRCLIB_CLIENT_ID,
+  MAX_SEARCH_ATTEMPTS,
+  parseSearchResponse,
+  rankSearchResults,
+  retryDecision,
+  splitArtists,
+  type LRCLIBSearchResponse,
+} from './lrclib-utils';
+
 import { LRC } from '../parsers/lrc';
+import { netFetch } from '../renderer/ipc-bridge';
 import { config } from '../renderer/renderer';
 
 import type { LyricProvider, LyricResult, SearchSongInfo } from '../types';
+
+const sendSearchRequest = async (
+  url: string,
+): Promise<{
+  status: number;
+  statusText: string;
+  body: string;
+  retryAfterHeader?: string;
+}> => {
+  if (typeof netFetch === 'function') {
+    const [status, body, responseHeaders] = await netFetch(url, {
+      headers: {
+        'Accept': 'application/json',
+        'Lrclib-Client': LRCLIB_CLIENT_ID,
+        'User-Agent': LRCLIB_CLIENT_ID,
+      },
+    });
+    return {
+      status,
+      statusText: '',
+      body,
+      retryAfterHeader: Object.entries(responseHeaders).find(
+        ([key]) => key.toLowerCase() === 'retry-after',
+      )?.[1],
+    };
+  }
+
+  const response = await fetch(url, {
+    headers: {
+      'Accept': 'application/json',
+      'Lrclib-Client': LRCLIB_CLIENT_ID,
+    },
+  });
+  return {
+    status: response.status,
+    statusText: response.statusText,
+    body: await response.text(),
+    retryAfterHeader: response.headers.get('retry-after') ?? undefined,
+  };
+};
 
 export class LRCLib implements LyricProvider {
   name = 'LRCLib';
   baseUrl = 'https://lrclib.net';
 
+  private sleepWithJitter(baseDelayMs: number): Promise<void> {
+    const jitter = Math.random() * 0.3;
+    return new Promise((resolve) => {
+      setTimeout(resolve, Math.round(baseDelayMs * (1 + jitter)));
+    });
+  }
+
+  private async fetchSearch(
+    q: string,
+    maxAttempts = MAX_SEARCH_ATTEMPTS,
+  ): Promise<LRCLIBSearchResponse> {
+    const url = `${this.baseUrl}/api/search?${new URLSearchParams({ q }).toString()}`;
+    let lastStatus = 0;
+    let lastStatusText = '';
+
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+      let response: Awaited<ReturnType<typeof sendSearchRequest>>;
+
+      try {
+        response = await sendSearchRequest(url);
+      } catch (error) {
+        if (attempt === maxAttempts) throw error;
+        await this.sleepWithJitter(1000 * attempt);
+        continue;
+      }
+
+      const { status, statusText, body, retryAfterHeader } = response;
+      if (status >= 200 && status < 300) {
+        return parseSearchResponse(body);
+      }
+
+      lastStatus = status;
+      lastStatusText = statusText;
+
+      const decision = retryDecision({
+        status,
+        attempt,
+        maxAttempts,
+        retryAfterHeader,
+      });
+      if (!decision.retry) break;
+      await this.sleepWithJitter(decision.delayMs);
+    }
+
+    throw Object.assign(
+      new Error(
+        `bad HTTPStatus(${lastStatus}${lastStatusText ? ` ${lastStatusText}` : ''})`,
+      ),
+      { status: lastStatus },
+    );
+  }
+
   async search({
     title,
     alternativeTitle,
     artist,
-    album,
     songDuration,
     tags,
   }: SearchSongInfo): Promise<LyricResult | null> {
-    let query = new URLSearchParams({
-      artist_name: artist,
-      track_name: title,
+    const allowInexact = Boolean(config()?.showLyricsEvenIfInexact);
+    const candidateQueries = buildSearchQueries({
+      title,
+      alternativeTitle,
+      artist,
+      allowInexact,
     });
 
-    if (album) {
-      query.set('album_name', album);
-    }
+    let data: LRCLIBSearchResponse = [];
+    let lastError: Error | undefined;
 
-    let url = `${this.baseUrl}/api/search?${query.toString()}`;
-    let response = await fetch(url);
+    for (let i = 0; i < candidateQueries.length; i++) {
+      const isLast = i === candidateQueries.length - 1;
 
-    if (!response.ok) {
-      throw new Error(`bad HTTPStatus(${response.statusText})`);
-    }
-
-    let data = (await response.json()) as LRCLIBSearchResponse;
-    if (!data || !Array.isArray(data)) {
-      throw new Error(`Expected an array, instead got ${typeof data}`);
-    }
-
-    if (data.length === 0) {
-      if (!config()?.showLyricsEvenIfInexact) {
-        return null;
-      }
-
-      // Try to search with the alternative title (original language)
-      const trackName = alternativeTitle || title;
-      query = new URLSearchParams({ q: `${trackName}` });
-      url = `${this.baseUrl}/api/search?${query.toString()}`;
-
-      response = await fetch(url);
-      if (!response.ok) {
-        throw new Error(`bad HTTPStatus(${response.statusText})`);
-      }
-
-      data = (await response.json()) as LRCLIBSearchResponse;
-      if (!Array.isArray(data)) {
-        throw new Error(`Expected an array, instead got ${typeof data}`);
-      }
-
-      // If still no results, try with the original title as fallback
-      if (data.length === 0 && alternativeTitle) {
-        query = new URLSearchParams({ q: title });
-        url = `${this.baseUrl}/api/search?${query.toString()}`;
-
-        response = await fetch(url);
-        if (!response.ok) {
-          throw new Error(`bad HTTPStatus(${response.statusText})`);
+      try {
+        const results = await this.fetchSearch(
+          candidateQueries[i],
+          isLast ? MAX_SEARCH_ATTEMPTS : 2,
+        );
+        lastError = undefined;
+        if (results.length > 0) {
+          data = results;
+          break;
         }
-
-        data = (await response.json()) as LRCLIBSearchResponse;
-        if (!Array.isArray(data)) {
-          throw new Error(`Expected an array, instead got ${typeof data}`);
-        }
+      } catch (error) {
+        lastError = error instanceof Error ? error : new Error(String(error));
+        const status = (error as { status?: number }).status;
+        if (isLast || status === 429 || status === 503) break;
       }
     }
 
-    const filteredResults = [];
-    const artists = artist.split(/[&,]/g).map((i) => i.trim());
+    if (data.length === 0 && lastError) {
+      throw lastError;
+    }
 
-    for (const item of data) {
-      const { artistName } = item;
+    const artists = splitArtists(artist);
+    const filteredResults = data.filter((item) => {
+      if (!isUsableSearchRecord(item)) return false;
 
-      const itemArtists = artistName.split(/[&,]/g).map((i) => i.trim());
-
-      // Try to match using artist name first
-      const permutations = [];
+      const itemArtists = splitArtists(item.artistName);
+      const permutations: [string, string][] = [];
       for (const artistA of artists) {
         for (const artistB of itemArtists) {
-          permutations.push([artistA.toLowerCase(), artistB.toLowerCase()]);
+          permutations.push([artistA, artistB]);
         }
       }
 
-      for (const artistA of itemArtists) {
-        for (const artistB of artists) {
-          permutations.push([artistA.toLowerCase(), artistB.toLowerCase()]);
-        }
-      }
+      let ratio = Math.max(
+        0,
+        ...permutations.map(([x, y]) => jaroWinkler(x, y)),
+      );
 
-      let ratio = Math.max(...permutations.map(([x, y]) => jaroWinkler(x, y)));
-
-      // If direct artist match is below threshold and we have tags, try matching with tags
       if (ratio <= 0.9 && tags && tags.length > 0) {
-        // Filter out the artist from tags to avoid duplicate comparisons
-        const filteredTags = tags.filter(
-          (tag) => tag.toLowerCase() !== artist.toLowerCase(),
-        );
+        const filteredTags = tags
+          .filter((tag) => tag.toLowerCase() !== artist.toLowerCase())
+          .flatMap((tag) => splitArtists(tag));
 
-        const tagPermutations = [];
+        const tagPermutations: [string, string][] = [];
         for (const tag of filteredTags) {
           for (const itemArtist of itemArtists) {
-            tagPermutations.push([tag.toLowerCase(), itemArtist.toLowerCase()]);
-          }
-        }
-
-        for (const itemArtist of itemArtists) {
-          for (const tag of filteredTags) {
-            tagPermutations.push([itemArtist.toLowerCase(), tag.toLowerCase()]);
+            tagPermutations.push([tag, itemArtist]);
           }
         }
 
         if (tagPermutations.length > 0) {
-          const tagRatio = Math.max(
+          ratio = Math.max(
+            ratio,
             ...tagPermutations.map(([x, y]) => jaroWinkler(x, y)),
           );
-
-          ratio = Math.max(ratio, tagRatio);
         }
       }
 
-      if (ratio <= 0.9) continue;
-      filteredResults.push(item);
-    }
-
-    filteredResults.sort(({ duration: durationA }, { duration: durationB }) => {
-      const left = Math.abs(durationA - songDuration);
-      const right = Math.abs(durationB - songDuration);
-
-      return left - right;
+      return ratio > 0.9;
     });
 
-    const closestResult = filteredResults[0];
+    const closestResult = rankSearchResults(filteredResults, songDuration)[0];
     if (!closestResult) {
       return null;
     }
 
-    if (Math.abs(closestResult.duration - songDuration) > 15) {
-      return null;
-    }
-
-    if (closestResult.instrumental) {
+    if (!isWithinDurationTolerance(closestResult, songDuration)) {
       return null;
     }
 
     const raw = closestResult.syncedLyrics;
     const plain = closestResult.plainLyrics;
-    if (!raw && !plain) {
-      return null;
-    }
 
     return {
       title: closestResult.trackName,
-      artists: closestResult.artistName.split(/[&,]/g),
+      artists: closestResult.artistName
+        .split(/[&,]|\s+(?:feat\.?|ft\.?)\s+/i)
+        .map((item) => item.trim())
+        .filter(Boolean),
       lines: raw
-        ? LRC.parse(raw).lines.map((l) => ({
-            ...l,
+        ? LRC.parse(raw).lines.map((line) => ({
+            ...line,
             status: 'upcoming' as const,
           }))
         : undefined,
-      lyrics: plain,
+      lyrics: plain ?? undefined,
     };
   }
 }
-
-type LRCLIBSearchResponse = {
-  id: number;
-  name: string;
-  trackName: string;
-  artistName: string;
-  albumName: string;
-  duration: number;
-  instrumental: boolean;
-  plainLyrics: string;
-  syncedLyrics: string;
-}[];

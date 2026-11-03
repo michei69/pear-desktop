@@ -123,19 +123,47 @@ export class YTMusic implements LyricProvider {
     });
   }
 
-  private fetchBrowse(browseId: string): Promise<BrowseData | null> {
+  private async fetchBrowse(browseId: string): Promise<BrowseData | null> {
     if (config()?.useYTMLyricsWithoutProxy) {
       return this.fetchBrowseDirect(browseId);
     }
 
-    return fetch(this.PROXIED_ENDPOINT + 'browse?prettyPrint=false', {
-      headers,
-      method: 'POST',
-      body: JSON.stringify({
-        browseId,
-        context: { client },
-      }),
-    }).then((res) => res.json()) as Promise<BrowseData>;
+    const proxied = await this.fetchBrowseProxied(browseId);
+    if (proxied) {
+      return proxied;
+    }
+
+    return this.fetchBrowseDirect(browseId);
+  }
+
+  private async fetchBrowseProxied(
+    browseId: string,
+  ): Promise<BrowseData | null> {
+    try {
+      const response = await fetch(
+        this.PROXIED_ENDPOINT + 'browse?prettyPrint=false',
+        {
+          headers,
+          method: 'POST',
+          body: JSON.stringify({
+            browseId,
+            context: { client },
+          }),
+        },
+      );
+      if (!response.ok) return null;
+
+      const body = (await response.text()).trim();
+      if (!body || body.startsWith('<')) return null;
+
+      try {
+        return JSON.parse(body) as BrowseData;
+      } catch {
+        return null;
+      }
+    } catch {
+      return null;
+    }
   }
 
   // Calls browse through the app's authenticated network manager, which injects
