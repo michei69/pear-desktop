@@ -4,6 +4,7 @@ import { cors } from 'hono/cors';
 import { t } from 'i18next';
 
 import {
+  getCurrentSongInfo,
   registerCallback,
   unregisterCallback,
   type SongInfo,
@@ -34,9 +35,10 @@ export default createBackend({
     };
     ipc.on('peard:amuse-ad-state', this.adStateListener);
 
-    this.playerApiLoadedListener = () => {
+    const requestTimeUpdates = () => {
       ipc.send(SONG_INFO_SETUP_CHANNEL, SongInfoEventFlag.TimeChanged);
     };
+    this.playerApiLoadedListener = requestTimeUpdates;
     ipc.on('peard:player-api-loaded', this.playerApiLoadedListener);
 
     this.songInfoCallback = (songInfo) => {
@@ -51,6 +53,16 @@ export default createBackend({
       this.currentSongInfo = { ...songInfo };
     };
     registerCallback(this.songInfoCallback);
+
+    // A live enable happens after player-api-loaded already fired: arm time
+    // updates now and replay the current song so /query is not empty until the
+    // next track arrives.
+    requestTimeUpdates();
+    const current = getCurrentSongInfo();
+    if (current) {
+      this.currentSongInfo = { ...current };
+      this.positionUpdatedAt = Date.now();
+    }
 
     this.app = new Hono();
     this.app.use('*', cors());

@@ -39,7 +39,6 @@ export default createPlugin<
 >({
   name: () => t('plugins.tuna-obs.name'),
   description: () => t('plugins.tuna-obs.description'),
-  restartNeeded: true,
   config: {
     enabled: false,
   },
@@ -90,8 +89,9 @@ export default createPlugin<
           });
       };
 
-      this.playerApiLoadedListener = () =>
+      const requestTimeUpdates = () =>
         ipc.send(SONG_INFO_SETUP_CHANNEL, SongInfoEventFlag.TimeChanged);
+      this.playerApiLoadedListener = requestTimeUpdates;
       ipc.on('peard:player-api-loaded', this.playerApiLoadedListener);
 
       // TimeChanged carries the elapsed time OBS renders as progress, so this
@@ -119,6 +119,10 @@ export default createPlugin<
 
       this.callback = callback;
       registerCallback(callback);
+
+      // A live enable happens after player-api-loaded already fired, so request
+      // the current time now instead of waiting for the next track.
+      requestTimeUpdates();
     },
     stop({ ipc }) {
       if (this.callback) {

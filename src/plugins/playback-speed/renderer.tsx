@@ -86,6 +86,12 @@ const updatePlayBackSpeed = (videoElement = activeVideo) => {
   setSpeed(speed());
 };
 
+const resetPlaybackSpeed = (video: HTMLVideoElement) => {
+  video.playbackRate = 1;
+  (video as HTMLMediaElement & { preservesPitch?: boolean }).preservesPitch =
+    true;
+};
+
 let persistTimer: ReturnType<typeof setTimeout> | undefined;
 const persistSpeed = () => {
   const context = currentContext;
@@ -243,17 +249,20 @@ export const onUnload = () => {
   persistTimer = undefined;
   currentContext = null;
 
-  for (const video of observedVideos) {
+  const trackedVideos = new Set(observedVideos);
+  if (activeVideo) trackedVideos.add(activeVideo);
+
+  for (const video of trackedVideos) {
     video.removeEventListener('playing', setActiveVideo);
     video.removeEventListener('ratechange', forcePlaybackRate);
     video.removeEventListener('peard:src-changed', forcePlaybackRate);
     delete video.dataset.playbackSpeedObserved;
+    // The plugin is the only speed setter while it is enabled: put the current
+    // element back to stock so a disabled plugin does not keep the old rate.
+    resetPlaybackSpeed(video);
   }
   observedVideos.clear();
-
-  if (activeVideo) {
-    activeVideo = null;
-  }
+  activeVideo = null;
   unwatchVideo?.();
   unwatchVideo = null;
   unwatchPopup?.();

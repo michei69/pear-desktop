@@ -71,13 +71,18 @@ export const backend = createBackend<
       ctx.window.once('ready-to-show', this.readyToShowHandler);
     }
 
-    this.playerApiLoadedHandler = () => {
+    const requestTimeUpdates = () => {
       ctx.ipc.send(SONG_INFO_SETUP_CHANNEL, SongInfoEventFlag.TimeChanged);
     };
+    this.playerApiLoadedHandler = requestTimeUpdates;
     ctx.ipc.on('peard:player-api-loaded', this.playerApiLoadedHandler);
 
     this.beforeQuitHandler = () => discordService?.cleanup();
     app.on('before-quit', this.beforeQuitHandler);
+
+    // A live enable happens after player-api-loaded already fired; the presence
+    // progress is fed by TimeChanged, so request it now too.
+    requestTimeUpdates();
   },
 
   startService() {

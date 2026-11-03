@@ -25,6 +25,12 @@ interface ReleaseRow {
  */
 export function installPreferSong() {
   const originalFetch = window.fetch.bind(window);
+  // Published for uninstallPreferSong, which runs as its own injected source.
+  (
+    window as unknown as { __pearPreferSongRestore?: () => void }
+  ).__pearPreferSongRestore = () => {
+    window.fetch = originalFetch;
+  };
   const studioIdBySetId = new Map<string, string>();
   const releaseRequests = new Map<string, Promise<void>>();
   const playlistRequests = new Map<string, Promise<void>>();
@@ -222,4 +228,17 @@ export function installPreferSong() {
     }
     return originalFetch(input, init);
   };
+}
+
+/**
+ * Undoes installPreferSong by restoring the page-world fetch. Injected as its
+ * own source, so it must stay self-contained.
+ */
+export function uninstallPreferSong() {
+  const page = window as unknown as {
+    __pearPreferSongRestore?: () => void;
+  };
+  page.__pearPreferSongRestore?.();
+  delete page.__pearPreferSongRestore;
+  return 0;
 }

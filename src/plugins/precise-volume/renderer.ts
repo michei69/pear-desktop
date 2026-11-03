@@ -11,6 +11,22 @@ function $<E extends Element = Element>(selector: string) {
 
 let api: MusicPlayer;
 
+/**
+ * Every listener, observer and DOM node `onPlayerApiReady` installs registers
+ * its undo here, so `onUnload` can take the renderer half down live.
+ */
+const teardownHandlers: (() => void)[] = [];
+
+const registerTeardown = (handler: () => void) => {
+  teardownHandlers.push(handler);
+};
+
+const teardown = () => {
+  for (const handler of teardownHandlers.splice(0)) {
+    handler();
+  }
+};
+
 type YtMusicAppElement = HTMLElement & {
   dispatch?: (action: { type: string; payload?: unknown }) => void;
 };
@@ -83,6 +99,10 @@ export const onPlayerApiReady = async (
   playerApi: MusicPlayer,
   context: RendererContext<PreciseVolumePluginConfig>,
 ) => {
+  // The hook can run again without an unload between (a repeated enable), so
+  // start from a clean slate instead of stacking duplicate listeners.
+  teardown();
+
   options = await context.getConfig();
   api = playerApi;
 
@@ -130,9 +150,14 @@ export const onPlayerApiReady = async (
         const videoMode = () =>
           api.getPlayerResponse().videoDetails?.musicVideoType !==
           'MUSIC_VIDEO_TYPE_ATV';
-        $('video')?.addEventListener('peard:src-changed', () =>
-          moveVolumeHud(videoMode()),
-        );
+        const video = $<HTMLVideoElement>('video');
+        const onVideoSrcChanged = () => moveVolumeHud(videoMode());
+        if (video) {
+          video.addEventListener('peard:src-changed', onVideoSrcChanged);
+          registerTeardown(() => {
+            video.removeEventListener('peard:src-changed', onVideoSrcChanged);
+          });
+        }
       }
     }
   }
@@ -156,6 +181,10 @@ export const onPlayerApiReady = async (
         `<span id="volumeHud" style="${position + mainStyle}"></span>`,
       );
     }
+
+    registerTeardown(() => {
+      $<HTMLElement>('#volumeHud')?.remove();
+    });
   }
 
   function showVolumeHud(volume: number) {
@@ -175,10 +204,14 @@ export const onPlayerApiReady = async (
     const panel = $<HTMLElement>('#main-panel');
     if (!panel) return;
 
-    panel.addEventListener('wheel', (event) => {
+    const onWheel = (event: WheelEvent) => {
       event.preventDefault();
       // Event.deltaY < 0 means wheel-up
       changeVolume(event.deltaY < 0);
+    };
+    panel.addEventListener('wheel', onWheel);
+    registerTeardown(() => {
+      panel.removeEventListener('wheel', onWheel);
     });
   }
 
@@ -195,17 +228,28 @@ export const onPlayerApiReady = async (
       $<HTMLElement>('ytmusic-miniplayer');
     if (!playerbar) return;
 
-    playerbar.addEventListener('wheel', (event) => {
+    const onWheel = (event: WheelEvent) => {
       event.preventDefault();
       changeVolume(event.deltaY < 0);
-    });
+    };
 
     // Hover state for showVolumeSlider()
-    playerbar.addEventListener('mouseenter', () => {
+    const onMouseEnter = () => {
       playerbar.classList.add('on-hover');
-    });
+    };
 
-    playerbar.addEventListener('mouseleave', () => {
+    const onMouseLeave = () => {
+      playerbar.classList.remove('on-hover');
+    };
+
+    playerbar.addEventListener('wheel', onWheel);
+    playerbar.addEventListener('mouseenter', onMouseEnter);
+    playerbar.addEventListener('mouseleave', onMouseLeave);
+
+    registerTeardown(() => {
+      playerbar.removeEventListener('wheel', onWheel);
+      playerbar.removeEventListener('mouseenter', onMouseEnter);
+      playerbar.removeEventListener('mouseleave', onMouseLeave);
       playerbar.classList.remove('on-hover');
     });
 
@@ -230,9 +274,12 @@ export const onPlayerApiReady = async (
     document.addEventListener('change', onNewSliderChange, true);
   }
 
+  let sliderObserver: MutationObserver | undefined;
+
   /** Save the volume and update the tooltip when volume-slider is changed manually */
   function setupSliderObserver() {
-    const sliderObserver = new MutationObserver((mutations) => {
+    sliderObserver?.disconnect();
+    const observer = new MutationObserver((mutations) => {
       for (const mutation of mutations) {
         if (mutation.target.nodeName === 'TP-YT-PAPER-SLIDER') {
           const target = mutation.target as HTMLInputElement;
@@ -250,10 +297,12 @@ export const onPlayerApiReady = async (
       }
     });
 
+    sliderObserver = observer;
+
     const slider = $('#volume-slider');
     if (!slider) return;
 
-    sliderObserver.observe(slider, {
+    observer.observe(slider, {
       attributeFilter: ['value'],
       attributeOldValue: true,
     });
@@ -323,47 +372,81 @@ export const onPlayerApiReady = async (
     '#expand-volume',
   ];
 
+  /** Titles the tooltip targets had before the plugin wrote its own. */
+  const originalTitles = new Map<HTMLElement, string | null>();
+
   function setTooltip(volume: number) {
     for (const target of tooltipTargets) {
       const tooltipTargetElement = $<HTMLElement>(target);
       if (tooltipTargetElement) {
+        if (!originalTitles.has(tooltipTargetElement)) {
+          originalTitles.set(
+            tooltipTargetElement,
+            tooltipTargetElement.getAttribute('title'),
+          );
+        }
         tooltipTargetElement.title = `${volume}%`;
       }
     }
   }
 
   function setupLocalArrowShortcuts() {
-    if (options.arrowsShortcut) {
-      window.addEventListener('keydown', (event) => {
-        if (
-          $<HTMLElement & { opened: boolean }>('ytmusic-search-box')?.opened
-        ) {
-          return;
+    if (!options.arrowsShortcut) return;
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if ($<HTMLElement & { opened: boolean }>('ytmusic-search-box')?.opened) {
+        return;
+      }
+
+      switch (event.code) {
+        case 'ArrowUp': {
+          event.preventDefault();
+          changeVolume(true);
+          break;
         }
 
-        switch (event.code) {
-          case 'ArrowUp': {
-            event.preventDefault();
-            changeVolume(true);
-            break;
-          }
-
-          case 'ArrowDown': {
-            event.preventDefault();
-            changeVolume(false);
-            break;
-          }
+        case 'ArrowDown': {
+          event.preventDefault();
+          changeVolume(false);
+          break;
         }
-      });
-    }
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    registerTeardown(() => {
+      window.removeEventListener('keydown', onKeyDown);
+    });
   }
 
-  context.ipc.on('changeVolume', (toIncrease: boolean) =>
-    changeVolume(toIncrease),
-  );
-  context.ipc.on('setVolume', (value: number) => setVolume(value));
+  const onChangeVolume = (toIncrease: boolean) => changeVolume(toIncrease);
+  const onSetVolume = (value: number) => setVolume(value);
+  context.ipc.on('changeVolume', onChangeVolume);
+  context.ipc.on('setVolume', onSetVolume);
+  registerTeardown(() => {
+    context.ipc.off('changeVolume', onChangeVolume);
+    context.ipc.off('setVolume', onSetVolume);
+  });
+
+  registerTeardown(() => {
+    sliderObserver?.disconnect();
+    sliderObserver = undefined;
+  });
+
+  registerTeardown(() => {
+    for (const [element, title] of originalTitles) {
+      if (title === null) element.removeAttribute('title');
+      else element.title = title;
+    }
+    originalTitles.clear();
+  });
 
   await firstRun();
+};
+
+/** Undo every registration and DOM side effect of the renderer half (disable). */
+export const onUnload = () => {
+  teardown();
+  removeNewSliderListener();
 };
 
 export const onConfigChange = (config: PreciseVolumePluginConfig) => {

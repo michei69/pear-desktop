@@ -54,7 +54,6 @@ export const defaultConfig: DownloaderPluginConfig = {
 export default createPlugin({
   name: () => t('plugins.downloader.name'),
   description: () => t('plugins.downloader.description'),
-  restartNeeded: true,
   config: defaultConfig,
   stylesheets: [style],
   settings: [

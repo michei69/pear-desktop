@@ -1,6 +1,7 @@
 import { t } from '@/i18n';
 import {
   clearAudioChain,
+  getAudioGraph,
   rebindAudioGraphSource,
   setAudioChain,
 } from '@/providers/audio-graph';
@@ -89,6 +90,11 @@ class Chain {
 }
 
 const chain = new Chain();
+
+/** Invalidates an async start that was superseded by a stop. */
+let generation = 0;
+/** Whether the renderer lifecycle is currently active. */
+let active = false;
 
 let currentConfig: AudioCompressorPluginConfig = {
   enabled: false,
@@ -198,6 +204,24 @@ const watchForVideoSwap = () => {
   videoSwapObserver.observe(target, { childList: true, subtree: true });
 };
 
+/**
+ * Splices the chain into the shared graph for the element that is already
+ * loaded when the plugin is enabled mid-session. `peard:audio-can-play` only
+ * fires on a video load, so enabling over a paused track would otherwise stay
+ * uncompressed until the next track.
+ */
+const attachCurrentGraph = () => {
+  const video = document.querySelector<HTMLVideoElement>('video');
+  if (!video) return;
+
+  const graph = getAudioGraph(video);
+  // The graph is bound to the boot element; follow the live one after a swap.
+  const source = rebindAudioGraphSource(video) ?? graph.source;
+  chain.build(source, graph.context);
+  updateTrackGain();
+  watchForVideoSwap();
+};
+
 const audioCanPlayHandler = ({
   detail: { audioSource, audioContext },
 }: CustomEvent<Compressor>) => {
@@ -279,11 +303,16 @@ export default createPlugin({
 
   renderer: {
     async start({ getConfig }) {
+      const run = ++generation;
       // Register synchronously so we never miss an event during the await.
       document.addEventListener('peard:audio-can-play', audioCanPlayHandler, {
         passive: true,
       });
-      currentConfig = await getConfig();
+      const config = await getConfig();
+      // A stop that raced this start owns the renderer now; don't attach after it.
+      if (run !== generation) return;
+      active = true;
+      currentConfig = config;
       // Re-enabled with a chain already built: rebuild now, not on next track.
       if (chain.source && chain.context) {
         // The element may have been swapped while disabled (observer was off):
@@ -296,11 +325,19 @@ export default createPlugin({
           updateTrackGain();
           watchForVideoSwap();
         }
+      } else {
+        // First enable: the shared graph already exists (it is created before
+        // media loads), so splice in immediately instead of waiting for the
+        // next track's `peard:audio-can-play`.
+        attachCurrentGraph();
       }
     },
 
     onPlayerApiReady(playerApi) {
       ensureAudioContextLoad(playerApi);
+      // An enable that lands before the <video> exists still needs the direct
+      // attach once the player API appears; Chain.build is idempotent.
+      if (active && !chain.compressor) attachCurrentGraph();
     },
 
     onConfigChange(newConfig: AudioCompressorPluginConfig) {
@@ -309,6 +346,8 @@ export default createPlugin({
     },
 
     stop() {
+      generation++;
+      active = false;
       document.removeEventListener('peard:audio-can-play', audioCanPlayHandler);
       stopWatchingForVideoSwap();
       cancelPendingRetry();

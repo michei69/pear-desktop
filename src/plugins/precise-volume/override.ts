@@ -9,11 +9,39 @@ type CustomElementPrototype = typeof Element.prototype & {
   _addEventListener?: typeof Element.prototype.addEventListener;
 };
 
+/**
+ * Resolved lazily: the plugin entry (and so this module) is also evaluated in
+ * the main process bundle, where `Element` does not exist.
+ */
+const elementPrototype = () => Element.prototype as CustomElementPrototype;
+
+/** Undoes the addEventListener override; set only while it is installed. */
+let restorePrototype: (() => void) | undefined;
+
+const restore = () => {
+  if (!restorePrototype) return;
+
+  const prototype = elementPrototype();
+  const nativeAddEventListener = prototype._addEventListener;
+  if (nativeAddEventListener) {
+    Element.prototype.addEventListener = nativeAddEventListener;
+  }
+  delete prototype._addEventListener;
+  restorePrototype = undefined;
+};
+
+// Restore as soon as the page finished booting: only its own startup listeners
+// have to be filtered, and a live enable happens after 'load' already fired.
+const onWindowLoad = () => {
+  window.removeEventListener('load', onWindowLoad);
+  restore();
+};
+
 function overrideAddEventListener() {
+  const prototype = elementPrototype();
   // Save native addEventListener
-  // @ts-expect-error - We know what we're doing
   // oxlint-disable-next-line typescript/unbound-method
-  Element.prototype._addEventListener = Element.prototype.addEventListener;
+  prototype._addEventListener = Element.prototype.addEventListener;
   // Override addEventListener to ignore specific events in volume-slider
   Element.prototype.addEventListener = function (
     type: string,
@@ -33,17 +61,23 @@ function overrideAddEventListener() {
 }
 
 export const overrideListener = () => {
+  if (restorePrototype) return;
+
   overrideAddEventListener();
-  // Restore the original after load, so Element.prototype is not left altered
-  window.addEventListener(
-    'load',
-    () => {
-      Element.prototype.addEventListener = (
-        Element.prototype as CustomElementPrototype
-      )._addEventListener!;
-      (Element.prototype as CustomElementPrototype)._addEventListener =
-        undefined;
-    },
-    { once: true },
-  );
+  restorePrototype = restore;
+
+  if (document.readyState === 'complete') {
+    // Enabling after the page loaded: there are no startup listeners left to
+    // filter, so do not leave the prototype patched for the whole session.
+    restore();
+    return;
+  }
+
+  window.addEventListener('load', onWindowLoad, { once: true });
+};
+
+/** Undo a pending or installed override (called when the plugin is disabled). */
+export const restoreOverrideListener = () => {
+  window.removeEventListener('load', onWindowLoad);
+  restore();
 };

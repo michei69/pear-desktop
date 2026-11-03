@@ -130,9 +130,14 @@ export const unregisterCallback = (callback: SongInfoCallback) => {
   callbacks.delete(callback);
 };
 
-const registerProvider = (win: BrowserWindow) => {
-  let songInfo: SongInfo | null = null;
+// Module scope so a plugin enabled mid-session can read the current track
+// through `getCurrentSongInfo` before the next change arrives.
+let songInfo: SongInfo | null = null;
 
+/** The current track's latest known info, or null before the first song. */
+export const getCurrentSongInfo = (): SongInfo | null => songInfo;
+
+const registerProvider = (win: BrowserWindow) => {
   // The last played URL is the only config value the song-change path used to
   // write; flush it once instead of rewriting the store per track.
   app.on('before-quit', () => {

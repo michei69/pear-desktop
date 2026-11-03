@@ -19,7 +19,6 @@ export default createPlugin({
       applicationName: APPLICATION_NAME,
     }),
   addedVersion: '3.7.X',
-  restartNeeded: true,
   config: defaultConfig,
   backend,
   renderer,

@@ -21,9 +21,13 @@ export const selectors = {
   },
 };
 
+let disposeLyricsRoot: (() => void) | undefined;
+let containerGeneration = 0;
+
 export const tabStates: Record<string, () => void> = {
   true: async () => {
     setIsVisible(true);
+    const generation = containerGeneration;
 
     let container = document.querySelector('#synced-lyrics-container');
     if (container) return;
@@ -31,17 +35,29 @@ export const tabStates: Record<string, () => void> = {
     const tabRenderer = await waitForElement<HTMLElement>(
       selectors.body.tabRenderer,
     );
+    // The plugin may have stopped while the tab was loading.
+    if (generation !== containerGeneration) return;
+    if (document.querySelector('#synced-lyrics-container')) return;
 
     container = Object.assign(document.createElement('div'), {
       id: 'synced-lyrics-container',
     });
 
     tabRenderer.appendChild(container);
-    render(() => <LyricsRenderer />, container);
+    disposeLyricsRoot = render(() => <LyricsRenderer />, container);
   },
   false: () => {
     setIsVisible(false);
   },
+};
+
+/** Disposes the mounted lyrics UI and removes its container from the page. */
+export const disposeLyricsContainer = () => {
+  containerGeneration++;
+  setIsVisible(false);
+  disposeLyricsRoot?.();
+  disposeLyricsRoot = undefined;
+  document.querySelector('#synced-lyrics-container')?.remove();
 };
 
 export const canonicalize = (text: string) => {

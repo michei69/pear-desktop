@@ -5,11 +5,11 @@ import { t } from '@/i18n';
 import promptOptions from '@/providers/prompt-options';
 import { createPlugin } from '@/utils';
 
-import { overrideListener } from './override';
+import { overrideListener, restoreOverrideListener } from './override';
 import {
   onConfigChange,
   onPlayerApiReady,
-  removeNewSliderListener,
+  onUnload,
   restoreVolumeScript,
 } from './renderer';
 import hudStyle from './volume-hud.css?inline';
@@ -31,7 +31,6 @@ export type PreciseVolumePluginConfig = {
 export default createPlugin({
   name: () => t('plugins.precise-volume.name'),
   description: () => t('plugins.precise-volume.description'),
-  restartNeeded: true,
   config: {
     enabled: false,
     steps: 1,
@@ -245,7 +244,8 @@ export default createPlugin({
       overrideListener();
     },
     stop() {
-      removeNewSliderListener();
+      restoreOverrideListener();
+      onUnload();
     },
     onPlayerApiReady,
     onConfigChange,

@@ -9,10 +9,9 @@ import {
   setTranslateInvoke,
   translateInvoke,
 } from './ipc-bridge';
-import { disposeReactiveRoot } from './reactive-root';
 import { setConfig, setCurrentTime } from './renderer';
 import { refreshCurrentLyrics } from './store';
-import { selectors, tabStates } from './utils';
+import { disposeLyricsContainer, selectors, tabStates } from './utils';
 
 import type { SyncedLyricsPluginConfig } from '../types';
 import type { SongInfo } from '@/providers/song-info';
@@ -22,6 +21,14 @@ import type { MusicPlayer } from '@/types/music-player';
 export { netFetch, translateInvoke };
 
 export let _ytAPI: MusicPlayer | null = null;
+
+const onSongInfoUpdate = (info: SongInfo) => {
+  translationDebug('song-info update', {
+    videoId: info.videoId,
+    title: info.title,
+  });
+  refreshCurrentLyrics('song-info-update', info);
+};
 
 export const renderer = createRenderer<
   {
@@ -127,13 +134,7 @@ export const renderer = createRenderer<
     refreshCurrentLyrics('renderer-start');
     setTimeout(() => refreshCurrentLyrics('renderer-start-delayed'), 1500);
 
-    ctx.ipc.on('peard:update-song-info', (info: SongInfo) => {
-      translationDebug('song-info update', {
-        videoId: info.videoId,
-        title: info.title,
-      });
-      refreshCurrentLyrics('song-info-update', info);
-    });
+    ctx.ipc.on('peard:update-song-info', onSongInfoUpdate);
 
     this.videoDataDocumentListener = () => {
       setTimeout(() => refreshCurrentLyrics('document-videodatachange'), 0);
@@ -144,7 +145,7 @@ export const renderer = createRenderer<
     );
   },
 
-  stop() {
+  stop(ctx: RendererContext<SyncedLyricsPluginConfig>) {
     if (this.progressListener) {
       _ytAPI?.removeEventListener('onVideoProgress', this.progressListener);
       this.progressListener = undefined;
@@ -163,7 +164,8 @@ export const renderer = createRenderer<
       );
       this.videoDataDocumentListener = undefined;
     }
+    ctx.ipc.off('peard:update-song-info', onSongInfoUpdate);
+    disposeLyricsContainer();
     document.documentElement.removeAttribute('data-lyrics-performance');
-    disposeReactiveRoot();
   },
 });

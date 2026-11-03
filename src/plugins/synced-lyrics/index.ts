@@ -81,7 +81,6 @@ export default createPlugin<
   name: () => t('plugins.synced-lyrics.name'),
   description: () => t('plugins.synced-lyrics.description'),
   authors: ['Non0reo', 'ArjixWasTaken', 'KimJammer', 'Strvm'],
-  restartNeeded: true,
   addedVersion: '3.5.X',
   config: {
     enabled: false,

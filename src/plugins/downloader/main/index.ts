@@ -385,6 +385,9 @@ function downloadSongOnFinishSetup({
   };
 
   ipc.on('peard:player-api-loaded', onPlayerApiLoaded);
+  // A live enable happens after player-api-loaded already fired; the
+  // seconds/percent modes are fed only by TimeChanged, so request it now too.
+  onPlayerApiLoaded();
 
   return () => {
     unregisterCallback(songInfoCallback);

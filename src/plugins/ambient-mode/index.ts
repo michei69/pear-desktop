@@ -389,6 +389,11 @@ export default createPlugin({
       this.unregister = null;
       for (const teardown of this.teardowns) teardown();
       this.teardowns = [];
+      // Forget what was injected: a re-enable over the same track must inject
+      // again instead of being skipped by injectBlurElement's dedupe guard.
+      this.lastMediaType = null;
+      this.lastVideoSource = null;
+      this.lastImageSource = null;
     },
   },
 });

@@ -331,6 +331,9 @@ export default (
     send(SONG_INFO_SETUP_CHANNEL, SongInfoEventFlag.TimeChanged);
   };
   on('peard:player-api-loaded', onPlayerApiLoaded);
+  // A live enable happens after player-api-loaded already fired; arm the
+  // TimeChanged listener now so the pause refresh has a current elapsed time.
+  onPlayerApiLoaded();
 
   const songInfoCallback = (songInfo: SongInfo, event: SongInfoEvent) => {
     if (event === SongInfoEvent.TimeChanged) {

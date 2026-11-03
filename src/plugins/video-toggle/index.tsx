@@ -20,6 +20,71 @@ export type VideoTogglePluginConfig = {
   align: 'left' | 'middle' | 'right';
 };
 
+type OwnedAttributes = Map<string, string | null>;
+
+/**
+ * Records the YTM-owned page state the plugin overwrites, so disabling can put
+ * every attribute/style back. Only the value found before the plugin's first
+ * write to a property is kept; later writes are the plugin's own values.
+ */
+class PageStateTracker {
+  private readonly attributes = new Map<Element, OwnedAttributes>();
+  private readonly styles = new Map<HTMLElement, Map<string, string>>();
+
+  setAttribute(element: Element, name: string, value: string) {
+    this.rememberAttribute(element, name);
+    element.setAttribute(name, value);
+  }
+
+  removeAttribute(element: Element, name: string) {
+    this.rememberAttribute(element, name);
+    element.removeAttribute(name);
+  }
+
+  setStyle(element: HTMLElement, property: string, value: string) {
+    const owned = this.styles.get(element) ?? new Map<string, string>();
+    if (!owned.has(property)) {
+      owned.set(property, element.style.getPropertyValue(property));
+      this.styles.set(element, owned);
+    }
+    element.style.setProperty(property, value);
+  }
+
+  restore() {
+    for (const [element, owned] of this.attributes) {
+      for (const [name, previous] of owned) {
+        if (previous === null) {
+          element.removeAttribute(name);
+        } else {
+          element.setAttribute(name, previous);
+        }
+      }
+    }
+    this.attributes.clear();
+
+    for (const [element, owned] of this.styles) {
+      for (const [property, previous] of owned) {
+        if (previous === '') {
+          element.style.removeProperty(property);
+        } else {
+          element.style.setProperty(property, previous);
+        }
+      }
+    }
+    this.styles.clear();
+  }
+
+  private rememberAttribute(element: Element, name: string) {
+    const owned =
+      this.attributes.get(element) ?? new Map<string, string | null>();
+    if (owned.has(name)) {
+      return;
+    }
+    owned.set(name, element.getAttribute(name));
+    this.attributes.set(element, owned);
+  }
+}
+
 type VideoToggleRenderer = {
   config: VideoTogglePluginConfig | null;
   audioOnlyEnabled: boolean;
@@ -31,6 +96,7 @@ type VideoToggleRenderer = {
   unwatchPlaybackMode: (() => void) | null;
   startTimeout: NodeJS.Timeout | null;
   generation: number;
+  pageState: PageStateTracker;
   applyStyleClass(config: VideoTogglePluginConfig): void;
   dispose(): void;
 };
@@ -43,7 +109,6 @@ export default createPlugin<
 >({
   name: () => t('plugins.video-toggle.name'),
   description: () => t('plugins.video-toggle.description'),
-  restartNeeded: true,
   config: {
     enabled: false,
     hideVideo: false,
@@ -185,6 +250,7 @@ export default createPlugin<
     unwatchPlaybackMode: null as (() => void) | null,
     startTimeout: null as NodeJS.Timeout | null,
     generation: 0,
+    pageState: new PageStateTracker(),
     applyStyleClass: (config: VideoTogglePluginConfig) => {
       const customMode = !config.forceHide && config.mode === 'custom';
       document.body.classList.toggle(
@@ -205,28 +271,34 @@ export default createPlugin<
 
       switch (config.mode) {
         case 'native': {
-          document
-            .querySelector('ytmusic-player-page')
-            ?.setAttribute('has-av-switcher', '');
-          document
-            .querySelector('ytmusic-player')
-            ?.setAttribute('has-av-switcher', '');
-          document
-            .querySelector('ytmusic-av-toggle')
-            ?.removeAttribute('toggle-disabled');
+          const playerPage = document.querySelector('ytmusic-player-page');
+          if (playerPage) {
+            this.pageState.setAttribute(playerPage, 'has-av-switcher', '');
+          }
+          const player = document.querySelector('ytmusic-player');
+          if (player) {
+            this.pageState.setAttribute(player, 'has-av-switcher', '');
+          }
+          const avToggle = document.querySelector('ytmusic-av-toggle');
+          if (avToggle) {
+            this.pageState.removeAttribute(avToggle, 'toggle-disabled');
+          }
           return;
         }
 
         case 'disabled': {
-          document
-            .querySelector('ytmusic-player-page')
-            ?.removeAttribute('has-av-switcher');
-          document
-            .querySelector('ytmusic-player')
-            ?.removeAttribute('has-av-switcher');
-          document
-            .querySelector('ytmusic-av-toggle')
-            ?.setAttribute('toggle-disabled', '');
+          const playerPage = document.querySelector('ytmusic-player-page');
+          if (playerPage) {
+            this.pageState.removeAttribute(playerPage, 'has-av-switcher');
+          }
+          const player = document.querySelector('ytmusic-player');
+          if (player) {
+            this.pageState.removeAttribute(player, 'has-av-switcher');
+          }
+          const avToggle = document.querySelector('ytmusic-av-toggle');
+          if (avToggle) {
+            this.pageState.setAttribute(avToggle, 'toggle-disabled', '');
+          }
           return;
         }
       }
@@ -300,12 +372,17 @@ export default createPlugin<
         if (checkbox) checkbox.checked = !this.config?.hideVideo;
 
         if (player) {
-          player.style.margin = showVideo ? '' : 'auto 0px';
+          this.pageState.setStyle(
+            player,
+            'margin',
+            showVideo ? '' : 'auto 0px',
+          );
           // audio-only asserts ATV_PREFERRED from its own persistent observer,
           // so writing that value here is duplicated work. Its non-ATV
           // behavior (the OMV write when video is shown) is unchanged.
           if (showVideo || !this.audioOnlyEnabled) {
-            player.setAttribute(
+            this.pageState.setAttribute(
+              player,
               'playback-mode',
               showVideo ? 'OMV_PREFERRED' : 'ATV_PREFERRED',
             );
@@ -316,16 +393,26 @@ export default createPlugin<
           );
           const songImage = document.querySelector<HTMLElement>('#song-image');
           if (songVideo) {
-            songVideo.style.display = showVideo ? 'block' : 'none';
+            this.pageState.setStyle(
+              songVideo,
+              'display',
+              showVideo ? 'block' : 'none',
+            );
           }
           if (songImage) {
-            songImage.style.display = showVideo ? 'none' : 'block';
+            this.pageState.setStyle(
+              songImage,
+              'display',
+              showVideo ? 'none' : 'block',
+            );
           }
 
           if (showVideo && video && !video.style.top) {
-            video.style.top = `${
-              (player.clientHeight - video.clientHeight) / 2
-            }px`;
+            this.pageState.setStyle(
+              video,
+              'top',
+              `${(player.clientHeight - video.clientHeight) / 2}px`,
+            );
           }
 
           moveVolumeHud(showVideo);
@@ -377,7 +464,11 @@ export default createPlugin<
               ) {
                 this.unwatchPlaybackMode?.();
                 this.unwatchPlaybackMode = null;
-                mutation.target.setAttribute('playback-mode', 'ATV_PREFERRED');
+                this.pageState.setAttribute(
+                  mutation.target,
+                  'playback-mode',
+                  'ATV_PREFERRED',
+                );
                 return;
               }
             }
@@ -425,7 +516,7 @@ export default createPlugin<
           // would be a second owner of the same attribute.
           if (!this.audioOnlyEnabled) forcePlaybackMode();
           if (video) {
-            video.style.height = 'auto';
+            this.pageState.setStyle(video, 'height', 'auto');
             this.videoElement = video;
             this.srcChangedHandler = videoStarted;
             video.addEventListener('peard:src-changed', videoStarted);
@@ -483,6 +574,7 @@ export default createPlugin<
     stop() {
       this.generation++;
       this.dispose();
+      this.pageState.restore();
 
       document.body.classList.remove(
         'video-toggle-custom-mode',

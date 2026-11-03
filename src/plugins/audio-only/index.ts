@@ -8,28 +8,46 @@ type AudioOnlyConfig = {
   enabled: boolean;
 };
 
+/**
+ * The player element also exposes the playback-quality getters/setters
+ * (see src/types/music-player.ts:564-575).
+ */
+type MoviePlayerElement = HTMLVideoElement & {
+  setPlaybackQualityRange?: (quality: string) => void;
+  setPlaybackQuality?: (quality: string) => void;
+  getPlaybackQuality?: () => string;
+  getUserPlaybackQualityPreference?: () => string;
+};
+
+const getMoviePlayer = () =>
+  document.querySelector<MoviePlayerElement>('#movie_player');
+
 export default createPlugin<
   unknown,
   unknown,
   {
     unwatchPlaybackMode: (() => void) | null;
     videoDataListener: ((e: Event) => void) | null;
+    savedQualityPreference: string | null;
     setAudioOnly: () => void;
     applyVisualMode: () => void;
     lockPlaybackMode: () => void;
+    rememberPlaybackQuality: () => void;
+    restorePlaybackQuality: () => void;
     restorePlayerStyles: () => void;
   },
   AudioOnlyConfig
 >({
   name: () => t('plugins.audio-only.name'),
   description: () => t('plugins.audio-only.description'),
-  restartNeeded: true,
   config: {
     enabled: false,
   },
   renderer: {
     unwatchPlaybackMode: null,
     videoDataListener: null,
+    /** User preference captured before the first forced 'tiny'. */
+    savedQualityPreference: null,
 
     start() {
       // Hide video element, show album art
@@ -74,6 +92,7 @@ export default createPlugin<
       }
 
       this.restorePlayerStyles();
+      this.restorePlaybackQuality();
     },
 
     setAudioOnly() {
@@ -88,14 +107,11 @@ export default createPlugin<
         }
       }
 
-      // Lowest quality triggers the audio-only path.
+      // Lowest quality triggers the audio-only path. Remember the user's
+      // preference before the first override, so stop() can put it back.
+      this.rememberPlaybackQuality();
       try {
-        const moviePlayer = document.querySelector<
-          HTMLVideoElement & {
-            setPlaybackQualityRange?: (quality: string) => void;
-            setPlaybackQuality?: (quality: string) => void;
-          }
-        >('#movie_player');
+        const moviePlayer = getMoviePlayer();
         if (moviePlayer) {
           if (moviePlayer.setPlaybackQualityRange) {
             moviePlayer.setPlaybackQualityRange('tiny');
@@ -109,6 +125,50 @@ export default createPlugin<
       }
 
       this.applyVisualMode();
+    },
+
+    rememberPlaybackQuality() {
+      if (this.savedQualityPreference !== null) {
+        return;
+      }
+
+      const moviePlayer = getMoviePlayer();
+      if (!moviePlayer) {
+        return;
+      }
+
+      try {
+        // The preference survives the forced override; the current quality is
+        // the fallback for players that do not expose it.
+        const preference =
+          moviePlayer.getUserPlaybackQualityPreference?.() ||
+          moviePlayer.getPlaybackQuality?.() ||
+          '';
+        if (preference) {
+          this.savedQualityPreference = preference;
+        }
+      } catch {
+        /* ignore */
+      }
+    },
+
+    restorePlaybackQuality() {
+      const quality = this.savedQualityPreference;
+      this.savedQualityPreference = null;
+      if (!quality) {
+        return;
+      }
+
+      try {
+        const moviePlayer = getMoviePlayer();
+        if (!moviePlayer) {
+          return;
+        }
+        moviePlayer.setPlaybackQualityRange?.(quality);
+        moviePlayer.setPlaybackQuality?.(quality);
+      } catch {
+        /* ignore */
+      }
     },
 
     applyVisualMode() {
