@@ -42,6 +42,7 @@ export default createPlugin<unknown, unknown, { observer?: MutationObserver }>({
     },
     stop() {
       this.observer?.disconnect();
+      this.observer = undefined;
     },
   },
 });

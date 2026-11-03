@@ -8,18 +8,28 @@ export default createBackend({
   start({ ipc: { handle }, window }) {
     handle(
       'peard:captions-selector',
-      async (captionLabels: Record<string, string>, currentIndex: string) =>
+      async (captionLabels: string[], currentIndex: number | null) =>
         await prompt(
           {
             title: t('plugins.captions-selector.prompt.selector.title'),
             label: t('plugins.captions-selector.prompt.selector.label', {
               language:
-                captionLabels[currentIndex] ||
+                (currentIndex === null
+                  ? undefined
+                  : captionLabels[currentIndex]) ||
                 t('plugins.captions-selector.prompt.selector.none'),
             }),
             type: 'select',
-            value: currentIndex,
-            selectOptions: captionLabels,
+            value:
+              currentIndex === null || currentIndex < 0
+                ? undefined
+                : String(currentIndex),
+            selectOptions: Object.fromEntries(
+              captionLabels.map((captionLabel, index) => [
+                String(index),
+                captionLabel,
+              ]),
+            ),
             resizable: true,
             ...promptOptions(),
           },

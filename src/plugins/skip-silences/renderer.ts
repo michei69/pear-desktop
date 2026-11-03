@@ -7,6 +7,9 @@ let isSilent = false;
 let hasAudioStarted = false;
 
 let loopTimer: number | undefined;
+let analyser: AnalyserNode | null = null;
+let analyserSource: MediaElementAudioSourceNode | null = null;
+let video: HTMLVideoElement | null = null;
 
 const smoothing = 0.1;
 const threshold = -100; // DB (-100 = absolute silence, 0 = loudest)
@@ -18,11 +21,11 @@ let playOrSeekHandler: (() => void) | undefined;
 let pauseOrEndedHandler: (() => void) | undefined;
 
 const getMaxVolume = (
-  analyser: AnalyserNode,
+  node: AnalyserNode,
   fftBins: Float32Array<ArrayBuffer>,
 ) => {
   let maxVolume = Number.NEGATIVE_INFINITY;
-  analyser.getFloatFrequencyData(fftBins);
+  node.getFloatFrequencyData(fftBins);
 
   for (let i = 4, ii = fftBins.length; i < ii; i++) {
     if (fftBins[i] > maxVolume && fftBins[i] < 0) {
@@ -40,21 +43,62 @@ const stopLoop = () => {
   }
 };
 
+const stopAnalyser = () => {
+  try {
+    if (analyserSource && analyser) {
+      analyserSource.disconnect(analyser);
+    }
+  } catch {}
+
+  analyser?.disconnect();
+  analyser = null;
+  analyserSource = null;
+};
+
+const detachVideoListeners = () => {
+  if (!video) return;
+
+  if (playOrSeekHandler) {
+    video.removeEventListener('play', playOrSeekHandler);
+    video.removeEventListener('seeked', playOrSeekHandler);
+    playOrSeekHandler = undefined;
+  }
+
+  if (pauseOrEndedHandler) {
+    video.removeEventListener('pause', pauseOrEndedHandler);
+    video.removeEventListener('ended', pauseOrEndedHandler);
+    pauseOrEndedHandler = undefined;
+  }
+};
+
+const resetState = () => {
+  isSilent = false;
+  hasAudioStarted = false;
+  speakingHistory.fill(0);
+};
+
 const audioCanPlayListener = (e: CustomEvent<Compressor>) => {
-  const video = document.querySelector('video');
+  const mediaElement = document.querySelector<HTMLVideoElement>('video');
   const { audioContext } = e.detail;
   const sourceNode = e.detail.audioSource;
 
-  // One audio-can-play fires per track, so stop the previous loop first to
-  // avoid piling up timers and analysers.
+  // One audio-can-play fires per track: replace the previous loop, analyser and
+  // element listeners instead of stacking another set.
   stopLoop();
+  detachVideoListeners();
+  stopAnalyser();
+  resetState();
 
-  const analyser = audioContext.createAnalyser();
-  analyser.fftSize = 512;
-  analyser.smoothingTimeConstant = smoothing;
-  const fftBins = new Float32Array(analyser.frequencyBinCount);
+  const trackAnalyser = audioContext.createAnalyser();
+  trackAnalyser.fftSize = 512;
+  trackAnalyser.smoothingTimeConstant = smoothing;
+  const fftBins = new Float32Array(trackAnalyser.frequencyBinCount);
 
-  sourceNode.connect(analyser);
+  sourceNode.connect(trackAnalyser);
+
+  analyser = trackAnalyser;
+  analyserSource = sourceNode;
+  video = mediaElement;
 
   const skipSilence = () => {
     if (config.onlySkipBeginning && hasAudioStarted) {
@@ -73,9 +117,9 @@ const audioCanPlayListener = (e: CustomEvent<Compressor>) => {
       // Paused or ended playback has nothing to analyse; `play` restarts it.
       if (video && (video.paused || video.ended)) return;
 
-      const currentVolume = getMaxVolume(analyser, fftBins);
+      const currentVolume = getMaxVolume(trackAnalyser, fftBins);
 
-      let history = 0;
+      let speakingCount = 0;
       if (currentVolume > threshold && isSilent) {
         // Trigger quickly: only the last 3 samples decide.
         for (
@@ -83,20 +127,20 @@ const audioCanPlayListener = (e: CustomEvent<Compressor>) => {
           i < speakingHistory.length;
           i++
         ) {
-          history += speakingHistory[i];
+          speakingCount += speakingHistory[i];
         }
 
-        if (history >= 2) {
+        if (speakingCount >= 2) {
           isSilent = false;
           hasAudioStarted = true;
         }
       } else if (currentVolume < threshold && !isSilent) {
         for (const element of speakingHistory) {
-          history += element;
+          speakingCount += element;
         }
 
         if (
-          history == 0 && // Silent
+          speakingCount == 0 && // Silent
           !(
             video &&
             (video.paused ||
@@ -147,28 +191,23 @@ export const onRendererLoad = async ({
   getConfig,
 }: RendererContext<SkipSilencesPluginConfig>) => {
   config = await getConfig();
+  resetState();
 
   document.addEventListener('peard:audio-can-play', audioCanPlayListener, {
     passive: true,
   });
 };
 
+export const onRendererConfigChange = (newConfig: SkipSilencesPluginConfig) => {
+  config = newConfig;
+};
+
 export const onRendererUnload = () => {
   stopLoop();
+  detachVideoListeners();
+  stopAnalyser();
+  video = null;
+  resetState();
 
   document.removeEventListener('peard:audio-can-play', audioCanPlayListener);
-
-  if (playOrSeekHandler) {
-    const video = document.querySelector('video');
-    video?.removeEventListener('play', playOrSeekHandler);
-    video?.removeEventListener('seeked', playOrSeekHandler);
-    playOrSeekHandler = undefined;
-  }
-
-  if (pauseOrEndedHandler) {
-    const video = document.querySelector('video');
-    video?.removeEventListener('pause', pauseOrEndedHandler);
-    video?.removeEventListener('ended', pauseOrEndedHandler);
-    pauseOrEndedHandler = undefined;
-  }
 };

@@ -1,44 +1,27 @@
-export const isMusicOrVideoTrack = () => {
-  for (const menuSelector of document.querySelectorAll<
-    HTMLAnchorElement & {
-      data: {
-        watchEndpoint: {
-          videoId: string;
-        };
-        addToPlaylistEndpoint: {
-          videoId: string;
-        };
-        clickTrackingParams: string;
-      };
-    }
-  >('tp-yt-paper-listbox #navigation-endpoint')) {
-    if (
-      menuSelector?.data?.addToPlaylistEndpoint?.videoId ||
-      menuSelector?.data?.watchEndpoint?.videoId
-    ) {
-      return true;
-    }
-  }
-  return false;
+type NavigationEndpoint = HTMLAnchorElement & {
+  data?: {
+    watchEndpoint?: { videoId?: string };
+    addToPlaylistEndpoint?: { videoId?: string; playlistId?: string };
+    clickTrackingParams?: string;
+  };
 };
 
-export const isAlbumOrPlaylist = () => {
-  for (const menuSelector of document.querySelectorAll<
-    HTMLAnchorElement & {
-      data: {
-        addToPlaylistEndpoint: {
-          playlistId: string;
-        };
-        clickTrackingParams: string;
-      };
-    }
-  >('tp-yt-paper-listbox #navigation-endpoint')) {
-    if (menuSelector?.data?.addToPlaylistEndpoint?.playlistId) {
-      return true;
-    }
-  }
-  return false;
-};
+const getNavigationEndpoints = () =>
+  document.querySelectorAll<NavigationEndpoint>(
+    'tp-yt-paper-listbox #navigation-endpoint',
+  );
+
+export const isMusicOrVideoTrack = () =>
+  Array.from(getNavigationEndpoints()).some(
+    (endpoint) =>
+      Boolean(endpoint.data?.addToPlaylistEndpoint?.videoId) ||
+      Boolean(endpoint.data?.watchEndpoint?.videoId),
+  );
+
+export const isAlbumOrPlaylist = () =>
+  Array.from(getNavigationEndpoints()).some((endpoint) =>
+    Boolean(endpoint.data?.addToPlaylistEndpoint?.playlistId),
+  );
 
 export const isPlayerMenu = (menu?: HTMLElement | null) => {
   return (

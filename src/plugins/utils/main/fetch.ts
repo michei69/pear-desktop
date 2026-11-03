@@ -9,14 +9,13 @@ export const getNetFetchAsFetch = (): typeof fetch =>
           ? input
           : new URL(input.url);
 
-    if (init?.body && !init.method) {
-      init.method = 'POST';
-    }
+    const requestInit =
+      init?.body && !init.method ? { ...init, method: 'POST' } : init;
 
     const request = new Request(
       url,
       input instanceof Request ? input : undefined,
     );
 
-    return net.fetch(request, init) as unknown as Response;
+    return net.fetch(request, requestInit) as unknown as Response;
   }) as unknown as typeof fetch;

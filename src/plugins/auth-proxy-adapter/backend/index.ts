@@ -28,6 +28,7 @@ export const backend = createBackend<BackendType, AuthProxyConfig>({
   async start(ctx: BackendContext<AuthProxyConfig>) {
     const pluginConfig = await ctx.getConfig();
     this.startServer(pluginConfig);
+    this.oldConfig = pluginConfig;
   },
   stop() {
     this.stopServer();

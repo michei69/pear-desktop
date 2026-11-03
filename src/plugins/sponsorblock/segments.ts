@@ -2,7 +2,7 @@
 import type { Segment } from './types';
 
 export const sortSegments = (segments: Segment[]) => {
-  segments.sort((segment1, segment2) =>
+  const sortedSegments = [...segments].sort((segment1, segment2) =>
     segment1[0] === segment2[0]
       ? segment1[1] - segment2[1]
       : segment1[0] - segment2[0],
@@ -11,15 +11,15 @@ export const sortSegments = (segments: Segment[]) => {
   const compiledSegments: Segment[] = [];
   let currentSegment: Segment | undefined;
 
-  for (const segment of segments) {
+  for (const segment of sortedSegments) {
     if (!currentSegment) {
-      currentSegment = segment;
+      currentSegment = [segment[0], segment[1]];
       continue;
     }
 
     if (currentSegment[1] < segment[0]) {
       compiledSegments.push(currentSegment);
-      currentSegment = segment;
+      currentSegment = [segment[0], segment[1]];
       continue;
     }
 

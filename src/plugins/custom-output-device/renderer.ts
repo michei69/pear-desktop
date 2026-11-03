@@ -36,11 +36,17 @@ const updateSinkId = async (
   },
   sinkId?: string,
 ) => {
-  if (!audioContext || !sinkId) return;
-  if (!('setSinkId' in audioContext)) return;
+  if (!audioContext || sinkId === undefined) return;
   if (typeof audioContext.setSinkId !== 'function') return;
 
-  await audioContext.setSinkId(sinkId);
+  try {
+    await audioContext.setSinkId(sinkId);
+  } catch (error) {
+    console.warn(
+      'custom-output-device: failed to set the output device',
+      error,
+    );
+  }
 };
 
 export const renderer = createRenderer<
@@ -93,6 +99,9 @@ export const renderer = createRenderer<
       this.audioCanPlayHandler,
     );
     navigator.mediaDevices.ondevicechange = null;
+    const audioContext = this.audioContext;
+    this.audioContext = undefined;
+    return updateSinkId(audioContext, '');
   },
 
   async onConfigChange(config) {

@@ -33,4 +33,27 @@ test('Segment sorting', () => {
     [0, 6],
     [7, 8],
   ]);
+
+  expect(
+    sortSegments([
+      [5, 6],
+      [0, 3],
+    ]),
+  ).toEqual([
+    [0, 3],
+    [5, 6],
+  ]);
+});
+
+test('Segment sorting leaves the input untouched', () => {
+  const input = [
+    [0, 6],
+    [7, 8],
+    [4, 6],
+  ];
+  const original = input.map((segment) => [...segment]);
+
+  sortSegments(input);
+
+  expect(input).toEqual(original);
 });

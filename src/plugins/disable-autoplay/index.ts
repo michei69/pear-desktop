@@ -79,10 +79,16 @@ export default createPlugin<
     onPlayerApiReady(api) {
       this.api = api;
 
+      document.removeEventListener('videodatachange', this.eventListener);
       document.addEventListener('videodatachange', this.eventListener);
     },
     stop() {
       document.removeEventListener('videodatachange', this.eventListener);
+      document
+        .querySelector<HTMLVideoElement>('video')
+        ?.removeEventListener('timeupdate', this.timeUpdateListener);
+      this.api = null;
+      this.config = null;
     },
     onConfigChange(newConfig) {
       this.config = newConfig;

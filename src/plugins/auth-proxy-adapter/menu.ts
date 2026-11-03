@@ -8,12 +8,11 @@ import { type AuthProxyConfig, defaultAuthProxyConfig } from './config';
 import type { MenuTemplate } from '@/menu';
 import type { MenuContext } from '@/types/contexts';
 
-export const onMenu = async ({
+export const onMenu = ({
   getConfig,
   setConfig,
   window,
-}: MenuContext<AuthProxyConfig>): Promise<MenuTemplate> => {
-  await getConfig();
+}: MenuContext<AuthProxyConfig>): MenuTemplate => {
   return [
     {
       label: t('plugins.auth-proxy-adapter.menu.hostname.label'),
@@ -36,7 +35,7 @@ export const onMenu = async ({
           config.hostname ??
           defaultAuthProxyConfig.hostname;
 
-        setConfig({ ...config, hostname: newHostname });
+        setConfig({ hostname: newHostname });
       },
     },
     {
@@ -61,7 +60,7 @@ export const onMenu = async ({
           config.port ??
           defaultAuthProxyConfig.port;
 
-        setConfig({ ...config, port: newPort });
+        setConfig({ port: newPort });
       },
     },
   ];

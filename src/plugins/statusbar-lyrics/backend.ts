@@ -31,7 +31,6 @@ export const backend = createBackend({
 
         const trayInstance = getTray();
         trayInstance.setTitle(normalizeText(text, maxLength));
-        // trayInstance.setTitle(text);
       },
     );
 

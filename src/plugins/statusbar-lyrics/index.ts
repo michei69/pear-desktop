@@ -19,13 +19,20 @@ export const defaultConfig: StatusbarLyricsPluginConfig = {
 };
 
 export default createPlugin({
-  name: () => 'Status Bar Lyrics',
-  description: () =>
-    'Show the current lyric line in the macOS menu bar title. Requires Synced Lyrics to be enabled.',
+  name: () => t('plugins.statusbar-lyrics.name'),
+  description: () => t('plugins.statusbar-lyrics.description'),
   restartNeeded: false,
   platform: Platform.macOS,
   config: defaultConfig,
   settings: [
+    {
+      type: 'slider',
+      key: 'maxLength',
+      label: () => t('plugins.statusbar-lyrics.settings.max-length'),
+      min: 16,
+      max: 200,
+      step: 1,
+    },
     {
       type: 'switch',
       key: 'includePronunciation',

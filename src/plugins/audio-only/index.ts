@@ -2,10 +2,9 @@ import { t } from '@/i18n';
 import { observePlayerPage } from '@/providers/player-page-observer';
 import { createPlugin } from '@/utils';
 
-import type { MusicPlayer } from '@/types/music-player';
 import type { VideoDataChanged } from '@/types/video-data-changed';
 
-export type AudioOnlyConfig = {
+type AudioOnlyConfig = {
   enabled: boolean;
 };
 
@@ -13,12 +12,12 @@ export default createPlugin<
   unknown,
   unknown,
   {
-    api: MusicPlayer | null;
     unwatchPlaybackMode: (() => void) | null;
     videoDataListener: ((e: Event) => void) | null;
     setAudioOnly: () => void;
     applyVisualMode: () => void;
     lockPlaybackMode: () => void;
+    restorePlayerStyles: () => void;
   },
   AudioOnlyConfig
 >({
@@ -29,7 +28,6 @@ export default createPlugin<
     enabled: false,
   },
   renderer: {
-    api: null,
     unwatchPlaybackMode: null,
     videoDataListener: null,
 
@@ -46,9 +44,7 @@ export default createPlugin<
       }
     },
 
-    onPlayerApiReady(api) {
-      this.api = api;
-
+    onPlayerApiReady() {
       // The API can re-initialize, so drop the old listener instead of stacking.
       if (this.videoDataListener) {
         document.removeEventListener('videodatachange', this.videoDataListener);
@@ -76,9 +72,9 @@ export default createPlugin<
         document.removeEventListener('videodatachange', this.videoDataListener);
         this.videoDataListener = null;
       }
-    },
 
-    // --- Internal methods ---
+      this.restorePlayerStyles();
+    },
 
     setAudioOnly() {
       const player = document.querySelector<HTMLElement>('ytmusic-player');
@@ -127,6 +123,22 @@ export default createPlugin<
       if (video) {
         video.style.display = 'none';
       }
+    },
+
+    restorePlayerStyles() {
+      const player = document.querySelector<HTMLElement>('ytmusic-player');
+      player?.removeAttribute('playback-mode');
+      player?.style.removeProperty('margin');
+
+      document
+        .querySelector<HTMLElement>('#song-video.ytmusic-player')
+        ?.style.removeProperty('display');
+      document
+        .querySelector<HTMLElement>('#song-image')
+        ?.style.removeProperty('display');
+      document
+        .querySelector<HTMLVideoElement>('video')
+        ?.style.removeProperty('display');
     },
 
     lockPlaybackMode() {

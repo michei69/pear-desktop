@@ -7,11 +7,19 @@ import {
   getImage,
   registerCallback,
   SongInfoEvent,
+  type SongInfoCallback,
+  unregisterCallback,
 } from '@/providers/song-info';
 import { Platform } from '@/types/plugins';
 import { createPlugin } from '@/utils';
 
-export default createPlugin({
+export default createPlugin<
+  {
+    handler: SongInfoCallback | null;
+  },
+  unknown,
+  unknown
+>({
   name: () => t('plugins.touchbar.name'),
   description: () => t('plugins.touchbar.description'),
   restartNeeded: true,
@@ -19,73 +27,73 @@ export default createPlugin({
   config: {
     enabled: false,
   },
-  backend({ window }) {
-    const {
-      TouchBarButton,
-      TouchBarLabel,
-      TouchBarSpacer,
-      TouchBarSegmentedControl,
-      TouchBarScrubber,
-    } = TouchBar;
+  backend: {
+    handler: null,
+    start({ window }) {
+      const {
+        TouchBarButton,
+        TouchBarLabel,
+        TouchBarSpacer,
+        TouchBarSegmentedControl,
+        TouchBarScrubber,
+      } = TouchBar;
 
-    const songTitle = new TouchBarLabel({
-      label: '',
-    });
-    let controls: (() => void)[] = [];
+      const songTitle = new TouchBarLabel({
+        label: '',
+      });
+      let controls: (() => void)[] = [];
 
-    const songImage: {
-      icon?: NativeImage;
-    } = {};
+      const songImage: {
+        icon?: NativeImage;
+      } = {};
 
-    const pausePlayButton = new TouchBarButton({});
+      const pausePlayButton = new TouchBarButton({});
 
-    // Order matches the control functions.
-    const buttons = new TouchBarSegmentedControl({
-      mode: 'buttons',
-      segments: [
-        new TouchBarButton({
-          label: '⏮',
-        }),
-        pausePlayButton,
-        new TouchBarButton({
-          label: '⏭',
-        }),
-        new TouchBarButton({
-          label: '👎',
-        }),
-        new TouchBarButton({
-          label: '👍',
-        }),
-      ],
-      change: (i) => controls[i](),
-    });
+      // Order matches the control functions.
+      const buttons = new TouchBarSegmentedControl({
+        mode: 'buttons',
+        segments: [
+          new TouchBarButton({
+            label: '⏮',
+          }),
+          pausePlayButton,
+          new TouchBarButton({
+            label: '⏭',
+          }),
+          new TouchBarButton({
+            label: '👎',
+          }),
+          new TouchBarButton({
+            label: '👍',
+          }),
+        ],
+        change: (i) => controls[i]?.(),
+      });
 
-    const touchBar = new TouchBar({
-      items: [
-        new TouchBarScrubber({
-          items: [songImage, songTitle],
-          continuous: false,
-        }),
-        new TouchBarSpacer({
-          size: 'flexible',
-        }),
-        buttons,
-      ],
-    });
+      const touchBar = new TouchBar({
+        items: [
+          new TouchBarScrubber({
+            items: [songImage, songTitle],
+            continuous: false,
+          }),
+          new TouchBarSpacer({
+            size: 'flexible',
+          }),
+          buttons,
+        ],
+      });
 
-    const { playPause, next, previous, dislike, like } =
-      getSongControls(window);
+      const { playPause, next, previous, dislike, like } =
+        getSongControls(window);
 
-    // The latest song reported to the TouchBar; an artwork decode that lands
-    // after a track change must not overwrite the newer icon.
-    let currentVideoId: string | undefined;
+      // The latest song reported to the TouchBar; an artwork decode that lands
+      // after a track change must not overwrite the newer icon.
+      let currentVideoId: string | undefined;
 
-    window.once('ready-to-show', () => {
       controls = [previous, playPause, next, dislike, like];
 
-      registerCallback((songInfo, event) => {
+      const handler: SongInfoCallback = (songInfo, event) => {
         if (event === SongInfoEvent.TimeChanged) return;
-        // Ignore time ticks; anything else is a song info change.
 
         songTitle.label = songInfo.title;
 
@@ -116,7 +124,17 @@ export default createPlugin({
         }
 
         window.setTouchBar(touchBar);
-      });
-    });
+      };
+
+      this.handler = handler;
+      registerCallback(handler);
+    },
+    stop({ window }) {
+      if (this.handler) {
+        unregisterCallback(this.handler);
+        this.handler = null;
+      }
+      window.setTouchBar(null);
+    },
   },
 });

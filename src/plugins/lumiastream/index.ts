@@ -1,11 +1,12 @@
 import { net } from 'electron';
 
 import { t } from '@/i18n';
-import { registerCallback, SongInfoEvent } from '@/providers/song-info';
 import {
-  SONG_INFO_SETUP_CHANNEL,
-  SongInfoEventFlag,
-} from '@/types/song-info-events';
+  registerCallback,
+  SongInfoEvent,
+  type SongInfoCallback,
+  unregisterCallback,
+} from '@/providers/song-info';
 import { createPlugin } from '@/utils';
 
 type LumiaData = {
@@ -27,83 +28,99 @@ type LumiaData = {
   isPaused?: boolean;
 };
 
-export default createPlugin({
+export default createPlugin<
+  { callback: SongInfoCallback | null },
+  unknown,
+  unknown
+>({
   name: () => t('plugins.lumiastream.name'),
   description: () => t('plugins.lumiastream.description'),
-  restartNeeded: true,
+  restartNeeded: false,
   config: {
     enabled: false,
   },
-  backend({ ipc }) {
-    const secToMilisec = (t?: number) =>
-      t ? Math.round(Number(t) * 1e3) : undefined;
-    const previousStatePaused = null;
+  backend: {
+    callback: null,
+    start() {
+      const secToMilisec = (seconds?: number) =>
+        seconds ? Math.round(Number(seconds) * 1e3) : undefined;
+      let previousStatePaused: boolean | null = null;
 
-    const data: LumiaData = {
-      origin:
-        '\u0079\u006f\u0075\u0074\u0075\u0062\u0065\u006d\u0075\u0073\u0069\u0063',
-      eventType: 'switchSong',
-    };
+      const data: LumiaData = {
+        origin:
+          '\u0079\u006f\u0075\u0074\u0075\u0062\u0065\u006d\u0075\u0073\u0069\u0063',
+        eventType: 'switchSong',
+      };
 
-    const post = (data: LumiaData) => {
-      const port = 39231;
-      const headers = {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'Access-Control-Allow-Headers': '*',
-        'Access-Control-Allow-Origin': '*',
-      } as const;
-      const url = `http://127.0.0.1:${port}/api/media`;
+      const post = (payload: LumiaData) => {
+        const port = 39231;
+        const headers = {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Access-Control-Allow-Headers': '*',
+          'Access-Control-Allow-Origin': '*',
+        } as const;
+        const url = `http://127.0.0.1:${port}/api/media`;
 
-      net
-        .fetch(url, {
-          method: 'POST',
-          body: JSON.stringify({ token: 'lsmedia_ytmsI7812', data }),
-          headers,
-        })
-        .catch((error: { code: number; errno: number }) => {
-          console.log(
-            `Error: '${
-              error.code || error.errno
-            }' - when trying to access lumiastream webserver at port ${port}`,
-          );
-        });
-    };
+        net
+          .fetch(url, {
+            method: 'POST',
+            body: JSON.stringify({ token: 'lsmedia_ytmsI7812', data: payload }),
+            headers,
+          })
+          .catch((error: { code: number; errno: number }) => {
+            console.log(
+              `Error: '${
+                error.code || error.errno
+              }' - when trying to access lumiastream webserver at port ${port}`,
+            );
+          });
+      };
 
-    ipc.on('peard:player-api-loaded', () =>
-      ipc.send(SONG_INFO_SETUP_CHANNEL, SongInfoEventFlag.TimeChanged),
-    );
+      const callback: SongInfoCallback = (songInfo, event) => {
+        if (event === SongInfoEvent.TimeChanged) {
+          return;
+        }
 
-    registerCallback((songInfo, event) => {
-      if (event === SongInfoEvent.TimeChanged) {
-        return;
+        if (!songInfo.title && !songInfo.artist) {
+          return;
+        }
+
+        const isPaused = songInfo.isPaused ?? false;
+
+        if (previousStatePaused === null) {
+          data.eventType = 'switchSong';
+        } else if (previousStatePaused !== isPaused) {
+          data.eventType = 'playPause';
+        }
+
+        data.duration = secToMilisec(songInfo.songDuration);
+        data.progress = secToMilisec(songInfo.elapsedSeconds);
+        data.url = songInfo.url;
+        data.videoId = songInfo.videoId;
+        data.playlistId = songInfo.playlistId;
+        data.cover = songInfo.imageSrc;
+        data.cover_url = songInfo.imageSrc;
+        data.album_url = songInfo.imageSrc;
+        data.title = songInfo.title;
+        data.artists = [songInfo.artist];
+        data.status = isPaused ? 'stopped' : 'playing';
+        data.isPaused = isPaused;
+        data.album = songInfo.album;
+        data.views = songInfo.views;
+        post(data);
+
+        previousStatePaused = isPaused;
+      };
+
+      this.callback = callback;
+      registerCallback(callback);
+    },
+    stop() {
+      if (this.callback) {
+        unregisterCallback(this.callback);
+        this.callback = null;
       }
-
-      if (!songInfo.title && !songInfo.artist) {
-        return;
-      }
-
-      if (previousStatePaused === null) {
-        data.eventType = 'switchSong';
-      } else if (previousStatePaused !== songInfo.isPaused) {
-        data.eventType = 'playPause';
-      }
-
-      data.duration = secToMilisec(songInfo.songDuration);
-      data.progress = secToMilisec(songInfo.elapsedSeconds);
-      data.url = songInfo.url;
-      data.videoId = songInfo.videoId;
-      data.playlistId = songInfo.playlistId;
-      data.cover = songInfo.imageSrc;
-      data.cover_url = songInfo.imageSrc;
-      data.album_url = songInfo.imageSrc;
-      data.title = songInfo.title;
-      data.artists = [songInfo.artist];
-      data.status = songInfo.isPaused ? 'stopped' : 'playing';
-      data.isPaused = songInfo.isPaused;
-      data.album = songInfo.album;
-      data.views = songInfo.views;
-      post(data);
-    });
+    },
   },
 });

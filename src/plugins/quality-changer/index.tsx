@@ -14,10 +14,11 @@ import type { MusicPlayer } from '@/types/music-player';
 let playerApi: MusicPlayer | null = null;
 
 type QualityChangerRenderer = {
-  qualitySettingsButtonContainer: HTMLElement;
+  qualitySettingsButtonContainer: HTMLElement | null;
   unwatchPlayer: (() => void) | null;
   rafId: number;
   mounted: boolean;
+  dispose: (() => void) | null;
   sync: () => void;
 };
 
@@ -29,50 +30,57 @@ export default createPlugin({
     enabled: false,
   },
 
-  backend({ ipc, window }) {
-    ipc.handle(
-      'peard:quality-changer',
-      async (qualityLabels: string[], currentIndex: number) =>
-        await dialog.showMessageBox(window, {
-          type: 'question',
-          buttons: qualityLabels,
-          defaultId: currentIndex,
-          title: t(
-            'plugins.quality-changer.backend.dialog.quality-changer.title',
-          ),
-          message: t(
-            'plugins.quality-changer.backend.dialog.quality-changer.message',
-          ),
-          detail: t(
-            'plugins.quality-changer.backend.dialog.quality-changer.detail',
-            {
-              quality: qualityLabels[currentIndex],
-            },
-          ),
-          cancelId: -1,
-        }),
-    );
+  backend: {
+    start({ ipc, window }) {
+      ipc.handle(
+        'peard:quality-changer',
+        async (qualityLabels: string[], currentIndex: number) =>
+          await dialog.showMessageBox(window, {
+            type: 'question',
+            buttons: qualityLabels,
+            defaultId: currentIndex,
+            title: t(
+              'plugins.quality-changer.backend.dialog.quality-changer.title',
+            ),
+            message: t(
+              'plugins.quality-changer.backend.dialog.quality-changer.message',
+            ),
+            detail: t(
+              'plugins.quality-changer.backend.dialog.quality-changer.detail',
+              {
+                quality: qualityLabels[currentIndex],
+              },
+            ),
+            cancelId: -1,
+          }),
+      );
+    },
+    stop({ ipc }) {
+      ipc.removeHandler('peard:quality-changer');
+    },
   },
 
   renderer: {
-    qualitySettingsButtonContainer: document.createElement('div'),
+    qualitySettingsButtonContainer: null as HTMLElement | null,
     unwatchPlayer: null as (() => void) | null,
     rafId: 0,
     mounted: false,
+    dispose: null as (() => void) | null,
     /** Puts the button back whenever the player UI is rebuilt without it. */
     sync(this: QualityChangerRenderer) {
-      if (!this.mounted) {
+      const container = this.qualitySettingsButtonContainer;
+      if (!this.mounted || !container) {
         return;
       }
 
       const topRowButtons = document.querySelector(
         '.top-row-buttons.ytmusic-player',
       );
-      if (topRowButtons?.contains(this.qualitySettingsButtonContainer)) {
+      if (topRowButtons?.contains(container)) {
         return;
       }
 
-      topRowButtons?.prepend(this.qualitySettingsButtonContainer);
+      topRowButtons?.prepend(container);
     },
     onPlayerApiReady(api: MusicPlayer, context) {
       playerApi = api;
@@ -112,8 +120,9 @@ export default createPlugin({
       }
 
       this.mounted = true;
-
-      render(
+      const container = document.createElement('div');
+      this.qualitySettingsButtonContainer = container;
+      this.dispose = render(
         () => (
           <QualitySettingButton
             label={t(
@@ -122,7 +131,7 @@ export default createPlugin({
             onClick={chooseQuality}
           />
         ),
-        this.qualitySettingsButtonContainer,
+        container,
       );
 
       // Observing the player rather than body keeps this cheap, and it is only
@@ -146,8 +155,11 @@ export default createPlugin({
       this.unwatchPlayer?.();
       this.unwatchPlayer = null;
       cancelAnimationFrame(this.rafId);
+      this.dispose?.();
+      this.dispose = null;
+      this.qualitySettingsButtonContainer?.remove();
+      this.qualitySettingsButtonContainer = null;
       playerApi = null;
-      this.qualitySettingsButtonContainer.remove();
     },
   },
 });

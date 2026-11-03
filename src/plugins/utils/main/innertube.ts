@@ -170,14 +170,16 @@ const queryIsPremium = async (win: BrowserWindow): Promise<boolean> => {
   )) as boolean;
 };
 
-/**
- * What `info.download({ type: 'video+audio' })` returns: a muxed mp4. A music
- * track still only plays its soundtrack, and every browser decodes this one.
- */
-const MUXED_MIME = 'video/mp4; codecs="avc1.42001E, mp4a.40.2"';
-
 /** A track's audio, ready to be turned into a Blob by the renderer. */
 export type AudioBytes = { bytes: Uint8Array<ArrayBuffer>; mimeType: string };
+
+const sniffAudioMime = (bytes: Uint8Array): string =>
+  bytes[0] === 0x1a &&
+  bytes[1] === 0x45 &&
+  bytes[2] === 0xdf &&
+  bytes[3] === 0xa3
+    ? 'audio/webm'
+    : 'video/mp4';
 
 /**
  * The playable audio of a track, as bytes. A media element cannot play a track
@@ -203,19 +205,21 @@ export const getAudioBytes = async (
 
   // `info.download()` is the downloader's own path; hand-built stream URLs
   // (decipher + range request) 403 far more often, so the transport stays in the
-  // library. `video+audio`, not `audio`: audio-only streams resolve fine (itag
-  // 251, opus) but the CDN refuses to serve them on licensed tracks, whereas the
-  // muxed format works. The video track is ignored on playback, so it costs bytes.
-  const stream = await info.download({
-    type: (await isPremium(win)) ? 'audio' : 'video+audio',
-    quality: 'best',
-    format: 'any',
-  });
+  // library. `video+audio`, not `audio`, for the non-premium path: audio-only
+  // streams resolve fine (itag 251, opus) but the CDN refuses to serve them on
+  // licensed tracks, whereas the muxed format works. The video track is ignored
+  // on playback, so it costs bytes. The mime type comes from the format
+  // `download()` picks, so the Blob the renderer builds matches the container.
+  const type = (await isPremium(win)) ? 'audio' : 'video+audio';
+  const format = info.chooseFormat({ type, quality: 'best', format: 'any' });
+  const stream = await info.download({ type, quality: 'best', format: 'any' });
 
   const chunks: Buffer[] = [];
   for await (const chunk of Utils.streamToIterable(stream)) {
     chunks.push(Buffer.from(chunk));
   }
 
-  return { bytes: new Uint8Array(Buffer.concat(chunks)), mimeType: MUXED_MIME };
+  const bytes = new Uint8Array(Buffer.concat(chunks));
+
+  return { bytes, mimeType: format.mime_type || sniffAudioMime(bytes) };
 };

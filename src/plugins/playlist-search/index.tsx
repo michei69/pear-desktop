@@ -20,8 +20,8 @@ export default createPlugin<
     dialogObserver: MutationObserver | null;
     isDialogVisible: boolean;
 
-    start(): Promise<void>;
-    stop(): Promise<void>;
+    start(): void;
+    stop(): void;
     setupSidebarSearch(): void;
     setupDialogObserver(): void;
     setupDialogSearch(): void;
@@ -40,9 +40,7 @@ export default createPlugin<
     dialogObserver: null as MutationObserver | null,
     isDialogVisible: false,
 
-    // biome-ignore lint/suspicious/useAwait: start has to be async
-    // oxlint-disable-next-line typescript/require-await
-    async start() {
+    start() {
       this.setupSidebarSearch();
 
       this.sidebarObserver = new MutationObserver(() => {
@@ -274,14 +272,24 @@ export default createPlugin<
       }
     },
 
-    // biome-ignore lint/suspicious/useAwait: start has to be async
-    // oxlint-disable-next-line typescript/require-await
-    async stop() {
+    stop() {
       this.sidebarObserver?.disconnect();
+      this.sidebarObserver = null;
       this.dialogObserver?.disconnect();
+      this.dialogObserver = null;
+      this.isDialogVisible = false;
       document
         .querySelectorAll('[id^="pear-pls-"]')
         .forEach((el) => el.remove());
+      document
+        .querySelectorAll<HTMLElement>('ytmusic-guide-entry-renderer')
+        .forEach((item) => {
+          item.style.display = '';
+        });
+      const playlistsContainer = document.getElementById('playlists');
+      if (playlistsContainer) {
+        playlistsContainer.style.display = '';
+      }
     },
   },
 });

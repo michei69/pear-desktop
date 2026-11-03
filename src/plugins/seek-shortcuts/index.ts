@@ -26,6 +26,10 @@ export default createPlugin({
     onPlayerApiReady(api) {
       this.api = api;
 
+      if (this.listener) {
+        window.removeEventListener('keydown', this.listener);
+      }
+
       this.listener = (event: KeyboardEvent) => {
         if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey)
           return;

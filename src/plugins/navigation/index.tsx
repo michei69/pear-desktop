@@ -14,12 +14,10 @@ export default createPlugin({
     enabled: true,
   },
   renderer: {
-    buttonContainer: document.createElement('div'),
+    buttonContainer: null as HTMLDivElement | null,
     dispose: undefined as (() => void) | undefined,
     start() {
-      if (!this.buttonContainer) {
-        this.buttonContainer = document.createElement('div');
-      }
+      this.buttonContainer = document.createElement('div');
 
       this.dispose = render(
         () => (
@@ -66,14 +64,13 @@ export default createPlugin({
         ),
         this.buttonContainer,
       );
-      const menu = document.querySelector('#right-content');
-      menu?.prepend(this.buttonContainer);
+      document.querySelector('#right-content')?.prepend(this.buttonContainer);
     },
     stop() {
       this.dispose?.();
       this.dispose = undefined;
-      this.buttonContainer.remove();
-      this.buttonContainer.replaceChildren();
+      this.buttonContainer?.remove();
+      this.buttonContainer = null;
     },
   },
 });

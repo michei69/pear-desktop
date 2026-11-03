@@ -2,7 +2,11 @@ import { net } from 'electron';
 import is from 'electron-is';
 
 import { t } from '@/i18n';
-import { registerCallback } from '@/providers/song-info';
+import {
+  registerCallback,
+  type SongInfoCallback,
+  unregisterCallback,
+} from '@/providers/song-info';
 import {
   SONG_INFO_SETUP_CHANNEL,
   SongInfoEventFlag,
@@ -24,7 +28,15 @@ interface Data {
   tags: string[];
 }
 
-export default createPlugin({
+export default createPlugin<
+  {
+    liteMode: boolean;
+    callback: SongInfoCallback | null;
+    playerApiLoadedListener: (() => void) | null;
+  },
+  unknown,
+  unknown
+>({
   name: () => t('plugins.tuna-obs.name'),
   description: () => t('plugins.tuna-obs.description'),
   restartNeeded: true,
@@ -33,8 +45,11 @@ export default createPlugin({
   },
   backend: {
     liteMode: false,
+    callback: null,
+    playerApiLoadedListener: null,
     start({ ipc }) {
-      const secToMilisec = (t: number) => Math.round(Number(t) * 1e3);
+      const secToMilisec = (seconds: number) =>
+        Math.round(Number(seconds) * 1e3);
 
       const post = (data: Data) => {
         const port = 1608;
@@ -75,13 +90,13 @@ export default createPlugin({
           });
       };
 
-      ipc.on('peard:player-api-loaded', () =>
-        ipc.send(SONG_INFO_SETUP_CHANNEL, SongInfoEventFlag.TimeChanged),
-      );
+      this.playerApiLoadedListener = () =>
+        ipc.send(SONG_INFO_SETUP_CHANNEL, SongInfoEventFlag.TimeChanged);
+      ipc.on('peard:player-api-loaded', this.playerApiLoadedListener);
 
       // TimeChanged carries the elapsed time OBS renders as progress, so this
       // callback must run for it too.
-      registerCallback((songInfo) => {
+      const callback: SongInfoCallback = (songInfo) => {
         if (!songInfo.title && !songInfo.artist) {
           return;
         }
@@ -100,7 +115,21 @@ export default createPlugin({
           url: songInfo.url ?? '',
           tags: songInfo.tags ?? [],
         });
-      });
+      };
+
+      this.callback = callback;
+      registerCallback(callback);
+    },
+    stop({ ipc }) {
+      if (this.callback) {
+        unregisterCallback(this.callback);
+        this.callback = null;
+      }
+      if (this.playerApiLoadedListener) {
+        ipc.off('peard:player-api-loaded', this.playerApiLoadedListener);
+        this.playerApiLoadedListener = null;
+      }
+      this.liteMode = false;
     },
   },
 });

@@ -1,4 +1,4 @@
-import { createSignal, onMount } from 'solid-js';
+import { createSignal } from 'solid-js';
 import { render } from 'solid-js/web';
 
 import { t } from '@/i18n';
@@ -63,62 +63,54 @@ export default createPlugin({
     displaySeconds: defaultConfig.displaySeconds,
     hour12: defaultConfig.hour12,
 
-    interval: null as NodeJS.Timeout | null,
-    clockContainer: document.createElement('div'),
+    interval: null as ReturnType<typeof setInterval> | null,
+    clockContainer: null as HTMLElement | null,
     dispose: undefined as (() => void) | undefined,
-    updateTime: null as unknown as () => void,
+    updateTime: null as (() => void) | null,
 
     async start({ getConfig }) {
       const config = await getConfig();
       this.displaySeconds = config.displaySeconds;
       this.hour12 = config.hour12;
 
-      if (!this.clockContainer) {
-        this.clockContainer = document.createElement('div');
-      }
+      const [time, setTime] = createSignal('');
 
-      const [time, setTime] = createSignal<string>();
-
-      const updateTime = () => {
+      this.updateTime = () => {
         const timeFormat: Intl.DateTimeFormatOptions = {
           hour12: this.hour12,
           hour: 'numeric',
           minute: 'numeric',
-          second: this.displaySeconds ? 'numeric' : undefined,
+          ...(this.displaySeconds && { second: 'numeric' }),
         };
-        const now = new Date();
-        setTime(now.toLocaleTimeString('en', timeFormat));
+        const locale = window.mainConfig.get('options.language');
+        setTime(new Date().toLocaleTimeString(locale, timeFormat));
       };
-      this.updateTime = updateTime;
+      this.updateTime();
 
-      onMount(() => {
-        this.interval = setInterval(updateTime, 1000);
-      });
-
+      this.clockContainer = document.createElement('div');
       this.dispose = render(
-        () => (
-          <>
-            <h1 class="clock"> {time()} </h1>
-          </>
-        ),
+        () => <h1 class="clock"> {time()} </h1>,
         this.clockContainer,
       );
-      const menu = document.querySelector('.center-content');
-      menu?.append(this.clockContainer);
+      document.querySelector('.center-content')?.append(this.clockContainer);
+
+      this.interval = setInterval(this.updateTime, 1000);
     },
     onConfigChange(newConfig) {
       this.displaySeconds = newConfig.displaySeconds;
       this.hour12 = newConfig.hour12;
-      this.updateTime();
+      this.updateTime?.();
     },
     stop() {
-      this.dispose?.();
-      this.dispose = undefined;
-      this.clockContainer.remove();
-      this.clockContainer.replaceChildren();
       if (this.interval) {
         clearInterval(this.interval);
+        this.interval = null;
       }
+      this.dispose?.();
+      this.dispose = undefined;
+      this.clockContainer?.remove();
+      this.clockContainer = null;
+      this.updateTime = null;
     },
   },
 });

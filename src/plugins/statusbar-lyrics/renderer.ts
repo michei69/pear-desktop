@@ -1,6 +1,7 @@
 import { createRenderer } from '@/utils';
 
 import type { StatusbarLyricsPluginConfig } from './index';
+import type { MusicPlayer } from '@/types/music-player';
 
 let activeLineText = '';
 let activeLineStartedAt = 0;
@@ -18,34 +19,9 @@ let lastPayload: string | undefined;
 let pluginConfig: StatusbarLyricsPluginConfig | undefined;
 let isPlaying = false;
 let resetLineBaseline = true;
-let playbackSubscriptions: Array<() => void> = [];
-
-/** Subscribe once per start, replacing any previous page subscriptions. */
-const subscribeToPlayback = () => {
-  for (const unsubscribe of playbackSubscriptions) unsubscribe();
-  playbackSubscriptions = [
-    window.ipcRenderer.subscribe('peard:play-or-paused', onPlayOrPaused),
-    window.ipcRenderer.subscribe('peard:time-changed', onTimeChanged),
-  ];
-};
-
-const unsubscribeFromPlayback = () => {
-  for (const unsubscribe of playbackSubscriptions) unsubscribe();
-  playbackSubscriptions = [];
-};
-
-const onPlayOrPaused = (payload: {
-  isPaused: boolean;
-  elapsedSeconds: number;
-}) => {
-  isPlaying = !payload.isPaused;
-  resetLineBaseline = true;
-  sendLyrics?.();
-};
-
-const onTimeChanged = () => {
-  sendLyrics?.();
-};
+let api: MusicPlayer | null = null;
+let stateListener: ((state: number) => void) | null = null;
+let sendGeneration = 0;
 
 const resetLineState = () => {
   activeLineText = '';
@@ -67,7 +43,7 @@ const resetSendState = () => {
 // Collapse whitespace: DOM nodes can split one lyric line into pieces
 const normalizeText = (text: string) => text.replace(/\s+/g, ' ').trim();
 
-// Detect translation/pronunciation nodes so the main lyric line wins
+// Translation, pronunciation and romanization nodes are auxiliary text
 const isLikelyPronunciation = (element: HTMLElement | null) => {
   if (!element) return false;
 
@@ -86,26 +62,12 @@ const isLikelyPronunciation = (element: HTMLElement | null) => {
   );
 };
 
-// Romanization-only nodes are auxiliary text too
-const isLikelyRomaji = (element: HTMLElement | null) => {
-  if (!element) return false;
-
-  const className = element.className?.toString() ?? '';
-  if (/(romaji|romanization|pronunciation)/i.test(className)) return true;
-
-  return Boolean(
-    element.closest('.romaji, [data-romanization], [aria-label*="romaji" i]'),
-  );
-};
-
 const getPrimaryText = (element: HTMLElement | null) => {
   if (!element) return '';
 
   const primaryChildren = Array.from(element.children).filter(
     (child): child is HTMLElement =>
-      child instanceof HTMLElement &&
-      !isLikelyPronunciation(child) &&
-      !isLikelyRomaji(child),
+      child instanceof HTMLElement && !isLikelyPronunciation(child),
   );
 
   const directText = primaryChildren
@@ -206,7 +168,11 @@ const pollLyrics = (includePronunciation: boolean) => {
     return currentText;
   }
 
-  const durationMs = parseDurationMs(currentTextElement) ?? 0;
+  const durationMs = parseDurationMs(currentTextElement);
+  if (!durationMs) {
+    return currentText;
+  }
+
   const leadMs = Math.max(180, Math.min(400, durationMs * 0.18));
   const switchAtMs = Math.max(0, durationMs - leadMs);
 
@@ -224,14 +190,19 @@ const pollLyrics = (includePronunciation: boolean) => {
 export const renderer = createRenderer({
   // Push the current line to the backend on DOM, playback and timer changes
   start(ctx) {
+    const generation = sendGeneration;
+
     const send = async () => {
       const config =
         pluginConfig ??
         ((await ctx.getConfig()) as StatusbarLyricsPluginConfig);
+      if (generation !== sendGeneration) return;
       pluginConfig = config;
       const text = pollLyrics(config.includePronunciation);
       const payload =
         config.enabled && text ? `${config.maxLength}\u0000${text}` : '';
+
+      if (generation !== sendGeneration) return;
 
       if (payload === lastPayload) {
         return;
@@ -297,14 +268,27 @@ export const renderer = createRenderer({
     timer = window.setInterval(() => {
       sendLyrics?.();
     }, 250);
-
-    subscribeToPlayback();
+  },
+  onPlayerApiReady(playerApi: MusicPlayer) {
+    if (stateListener && api) {
+      api.removeEventListener('onStateChange', stateListener);
+    }
+    api = playerApi;
+    isPlaying = playerApi.getPlayerState() === 1;
+    stateListener = (state: number) => {
+      isPlaying = state === 1;
+      resetLineBaseline = true;
+      sendLyrics?.();
+    };
+    api.addEventListener('onStateChange', stateListener);
   },
   onConfigChange(newConfig) {
     pluginConfig = newConfig as StatusbarLyricsPluginConfig;
     sendLyrics?.();
   },
   stop() {
+    sendGeneration += 1;
+
     if (timer) {
       window.clearInterval(timer);
       timer = undefined;
@@ -313,7 +297,11 @@ export const renderer = createRenderer({
     observer?.disconnect();
     observer = undefined;
 
-    unsubscribeFromPlayback();
+    if (stateListener && api) {
+      api.removeEventListener('onStateChange', stateListener);
+    }
+    stateListener = null;
+    api = null;
 
     sendLyrics = undefined;
     pluginConfig = undefined;
@@ -321,6 +309,6 @@ export const renderer = createRenderer({
     resetPlaybackState();
     resetSendState();
 
-    window.ipcRenderer.invoke('statusbar-lyrics:clear');
+    window.ipcRenderer.invoke('statusbar-lyrics:clear').catch(() => {});
   },
 });

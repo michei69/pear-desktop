@@ -3,6 +3,11 @@ import { createPlugin } from '@/utils';
 
 import type { MusicPlayer } from '@/types/music-player';
 
+// Manipulation exponent: higher = lower volume. 3 is what pulseaudio uses,
+// per Barteks2x (https://gist.github.com/Barteks2x/a4e189a36a10c159bb1644ffca21c02a);
+// 0.05 (5%), the lowest the UI offers, becomes 0.000125 at this exponent.
+const EXPONENT = 3;
+
 let playerApi: MusicPlayer | null = null;
 let syncVolume: (() => void) | null = null;
 let restoreVolumeDescriptor: (() => void) | null = null;
@@ -37,11 +42,6 @@ export default createPlugin({
       // "fix volume ratio 0.4" by Marco Pfeiffer
       // https://bit.ly/4nMu2WF
 
-      // Manipulation exponent: higher = lower volume. 3 is what pulseaudio uses,
-      // per Barteks2x (https://gist.github.com/Barteks2x/a4e189a36a10c159bb1644ffca21c02a);
-      // 0.05 (5%), the lowest the UI offers, becomes 0.000125 at this exponent.
-      const EXPONENT = 3;
-
       const storedOriginalVolumes = new WeakMap<HTMLMediaElement, number>();
       const propertyDescriptor = Object.getOwnPropertyDescriptor(
         HTMLMediaElement.prototype,
@@ -73,13 +73,27 @@ export default createPlugin({
       });
 
       restoreVolumeDescriptor = () => {
-        if (propertyDescriptor) {
-          Object.defineProperty(
-            HTMLMediaElement.prototype,
-            'volume',
-            propertyDescriptor,
-          );
+        if (!propertyDescriptor) {
+          return;
         }
+
+        // HACK: undo the scaled-down media volume before the native accessor returns.
+        for (const media of document.querySelectorAll<HTMLMediaElement>(
+          'video, audio',
+        )) {
+          const lowVolume = propertyDescriptor.get?.call(media) as
+            | number
+            | undefined;
+          if (typeof lowVolume === 'number') {
+            propertyDescriptor.set?.call(media, lowVolume ** (1 / EXPONENT));
+          }
+        }
+
+        Object.defineProperty(
+          HTMLMediaElement.prototype,
+          'volume',
+          propertyDescriptor,
+        );
       };
 
       syncVolume = () => {

@@ -7,25 +7,6 @@ export default createPlugin({
   name: () => t('plugins.blur-nav-bar.name'),
   description: () => t('plugins.blur-nav-bar.description'),
   restartNeeded: false,
-  renderer: {
-    styleSheet: null as CSSStyleSheet | null,
-
-    async start() {
-      this.styleSheet = new CSSStyleSheet();
-      await this.styleSheet.replace(style);
-
-      document.adoptedStyleSheets = [
-        ...document.adoptedStyleSheets,
-        this.styleSheet,
-      ];
-    },
-    stop() {
-      if (this.styleSheet) {
-        document.adoptedStyleSheets = document.adoptedStyleSheets.filter(
-          (sheet) => sheet !== this.styleSheet,
-        );
-        this.styleSheet = null;
-      }
-    },
-  },
+  stylesheets: [style],
+  renderer: {},
 });

@@ -1,7 +1,11 @@
 import { t } from '@/i18n';
 import { createPlugin } from '@/utils';
 
-import { onRendererLoad, onRendererUnload } from './renderer';
+import {
+  onRendererConfigChange,
+  onRendererLoad,
+  onRendererUnload,
+} from './renderer';
 
 export type SkipSilencesPluginConfig = {
   enabled: boolean;
@@ -11,7 +15,7 @@ export type SkipSilencesPluginConfig = {
 export default createPlugin({
   name: () => t('plugins.skip-silences.name'),
   description: () => t('plugins.skip-silences.description'),
-  restartNeeded: true,
+  restartNeeded: false,
   config: {
     enabled: false,
     onlySkipBeginning: false,
@@ -21,11 +25,11 @@ export default createPlugin({
       type: 'switch',
       key: 'onlySkipBeginning',
       label: () => t('plugins.skip-silences.settings.only-skip-beginning'),
-      restartNeeded: true,
     },
   ],
   renderer: {
     start: onRendererLoad,
     stop: onRendererUnload,
+    onConfigChange: onRendererConfigChange,
   },
 });

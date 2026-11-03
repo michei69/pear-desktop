@@ -29,7 +29,7 @@ type SrcChangedHandler = (data: GetPlayerResponse) => Promise<void>;
 export default createPlugin({
   name: () => t('plugins.sponsorblock.name'),
   description: () => t('plugins.sponsorblock.description'),
-  restartNeeded: true,
+  restartNeeded: false,
   config: {
     enabled: false,
     apiURL: 'https://sponsor.ajay.app',
@@ -161,10 +161,11 @@ export default createPlugin({
     handleSkipSegments: undefined as
       | ((segments: Segment[]) => void)
       | undefined,
+    video: null as HTMLVideoElement | null,
     timeUpdateListener: (e: Event) => {
       if (e.target instanceof HTMLVideoElement) {
         const target = e.target;
-        const t = target.currentTime;
+        const currentTime = target.currentTime;
 
         // Binary search the sorted segments.
         let lo = 0;
@@ -172,9 +173,9 @@ export default createPlugin({
         let found = -1;
         while (lo <= hi) {
           const mid = (lo + hi) >>> 1;
-          if (t < currentSegments[mid][0]) {
+          if (currentTime < currentSegments[mid][0]) {
             hi = mid - 1;
-          } else if (t >= currentSegments[mid][1]) {
+          } else if (currentTime >= currentSegments[mid][1]) {
             lo = mid + 1;
           } else {
             found = mid;
@@ -193,7 +194,9 @@ export default createPlugin({
         }
       }
     },
-    resetSegments: () => (currentSegments = []),
+    resetSegments() {
+      currentSegments = [];
+    },
     start({ ipc }) {
       this.handleSkipSegments = (segments: Segment[]) => {
         currentSegments = segments;
@@ -204,6 +207,7 @@ export default createPlugin({
       const video = document.querySelector<HTMLVideoElement>('video');
       if (!video) return;
 
+      this.video = video;
       video.addEventListener('timeupdate', this.timeUpdateListener);
       // 'emptied' fires when the track ends
       video.addEventListener('emptied', this.resetSegments);
@@ -215,7 +219,8 @@ export default createPlugin({
       }
       currentSegments = [];
 
-      const video = document.querySelector<HTMLVideoElement>('video');
+      const video = this.video;
+      this.video = null;
       if (!video) return;
 
       video.removeEventListener('timeupdate', this.timeUpdateListener);

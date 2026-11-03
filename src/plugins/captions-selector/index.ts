@@ -7,17 +7,28 @@ import renderer, {
   type LanguageOptions,
 } from './renderer';
 
+import type { RendererContext } from '@/types/contexts';
 import type { MusicPlayer } from '@/types/music-player';
 
 export default createPlugin<
   unknown,
   unknown,
   {
-    captionsSettingsButton?: HTMLElement;
     captionTrackList: LanguageOptions[] | null;
     api: MusicPlayer | null;
     config: CaptionsSelectorConfig | null;
     videoChangeListener: () => void;
+    video: HTMLVideoElement | null;
+    controls: HTMLElement | null;
+    dispose: (() => void) | null;
+    trackListTimer: ReturnType<typeof setTimeout> | null;
+    captionSwitchTimer: ReturnType<typeof setTimeout> | null;
+    unwatchPlayer: (() => void) | null;
+    rafId: number;
+    ipc: RendererContext<CaptionsSelectorConfig>['ipc'] | null;
+    setConfig: RendererContext<CaptionsSelectorConfig>['setConfig'] | null;
+    sync(): void;
+    chooseCaptions(): Promise<void>;
   },
   CaptionsSelectorConfig
 >({

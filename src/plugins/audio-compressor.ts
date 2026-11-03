@@ -210,8 +210,11 @@ const audioCanPlayHandler = ({
 const ensureAudioContextLoad = (playerApi: MusicPlayer) => {
   if (playerApi.getPlayerState() !== 1 || chain.context) return;
 
+  const videoId = playerApi.getPlayerResponse()?.videoDetails?.videoId;
+  if (!videoId) return;
+
   playerApi.loadVideoById(
-    playerApi.getPlayerResponse().videoDetails.videoId,
+    videoId,
     playerApi.getCurrentTime(),
     playerApi.getUserPlaybackQualityPreference(),
   );
@@ -226,6 +229,23 @@ export default createPlugin({
     autoTrackGain: false,
     maxTrackGainDb: 12,
   } as AudioCompressorPluginConfig,
+
+  settings: [
+    {
+      type: 'switch',
+      key: 'autoTrackGain',
+      label: () => t('plugins.audio-compressor.menu.auto-track-gain'),
+    },
+    {
+      type: 'slider',
+      key: 'maxTrackGainDb',
+      label: () => t('plugins.audio-compressor.menu.maximum-gain.label'),
+      min: 6,
+      max: 24,
+      step: 3,
+      unit: 'dB',
+    },
+  ],
 
   menu: async ({
     getConfig,

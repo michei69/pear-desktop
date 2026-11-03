@@ -31,7 +31,10 @@ export default createPlugin({
       options: async () => {
         const devices = await navigator.mediaDevices.enumerateDevices();
         return [
-          { value: 'default', label: () => 'Default' },
+          {
+            value: 'default',
+            label: () => t('plugins.custom-output-device.settings.default'),
+          },
           ...devices
             .filter((d) => d.kind === 'audiooutput' && d.deviceId !== 'default')
             .map((d) => ({
@@ -67,8 +70,7 @@ export default createPlugin({
       ).catch(console.error);
 
       if (!response) return;
-      options.output = response;
-      setConfig(options);
+      setConfig({ output: response });
     };
 
     return [

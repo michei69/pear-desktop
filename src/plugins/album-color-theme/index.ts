@@ -6,6 +6,9 @@ import { createPlugin } from '@/utils';
 
 import style from './style.css?inline';
 
+import type { MusicPlayer } from '@/types/music-player';
+import type { VideoDataChanged } from '@/types/video-data-changed';
+
 type AlbumColors = {
   color: ColorInstance;
   darkColor: ColorInstance;
@@ -13,9 +16,26 @@ type AlbumColors = {
 
 const BLACK = '#000';
 
+const fastAverageColor = new FastAverageColor();
+
 // Thumbnails are fetched by URL and can be requested again for the same track
 // (seek, repeat, page re-entry), so keep the resolved colors keyed by URL.
+const MAX_CACHED_ALBUM_COLORS = 50;
 const albumColorCache = new Map<string, Promise<AlbumColors | null>>();
+
+/** Insert as most-recently-used, evicting the oldest once over the bound. */
+const rememberAlbumColors = (
+  url: string,
+  pending: Promise<AlbumColors | null>,
+) => {
+  albumColorCache.delete(url);
+  albumColorCache.set(url, pending);
+  while (albumColorCache.size > MAX_CACHED_ALBUM_COLORS) {
+    const oldest = albumColorCache.keys().next();
+    if (oldest.done) break;
+    albumColorCache.delete(oldest.value);
+  }
+};
 
 function computeAlbumColors(hex: string): AlbumColors {
   const target = Color(hex);
@@ -36,7 +56,11 @@ async function fetchAlbumColors(
   url: string,
 ): Promise<AlbumColors | null> {
   const cached = albumColorCache.get(url);
-  if (cached) return cached;
+  if (cached) {
+    albumColorCache.delete(url);
+    albumColorCache.set(url, cached);
+    return cached;
+  }
 
   const pending = fastAverageColor
     .getColorAsync(url)
@@ -53,7 +77,7 @@ async function fetchAlbumColors(
       return null;
     });
 
-  albumColorCache.set(url, pending);
+  rememberAlbumColors(url, pending);
   return pending;
 }
 
@@ -139,7 +163,7 @@ const DARK_KEYED: Record<string, true> = {
   '--ytmusic-background': true,
 };
 
-const RATIO_MAP: Record<string, number> = {
+const TINT_MULTIPLIER: Record<string, number> = {
   '--paper-progress-active-color-1': 1.75,
   '--paper-progress-active-color-2': 1.75,
   '--yt-spec-inverted-background': 1.75,
@@ -152,6 +176,7 @@ type Config = {
 };
 
 type Renderer = {
+  applyCurrentTrack(): Promise<void>;
   updateColor(alpha: number): void;
   onConfigChange(newConfig: Config): void;
 };
@@ -216,64 +241,54 @@ export default createPlugin({
     ];
   },
   renderer: {
-    playerPage: null as HTMLElement | null,
-    navBarBackground: null as HTMLElement | null,
-    ytmusicPlayerBar: null as HTMLElement | null,
-    playerBarBackground: null as HTMLElement | null,
-    sidebarBig: null as HTMLElement | null,
-    sidebarSmall: null as HTMLElement | null,
-    ytmusicAppLayout: null as HTMLElement | null,
+    api: null as MusicPlayer | null,
     color: null as ColorInstance | null,
     darkColor: null as ColorInstance | null,
+    videoDataListener: null as
+      | ((event: CustomEvent<VideoDataChanged>) => void)
+      | null,
     ratio: 0.5,
     alpha: 1,
 
-    start() {
-      this.playerPage = document.querySelector<HTMLElement>('#player-page');
-      this.navBarBackground = document.querySelector<HTMLElement>(
-        '#nav-bar-background',
-      );
-      this.ytmusicPlayerBar =
-        document.querySelector<HTMLElement>('ytmusic-player-bar');
-      this.playerBarBackground = document.querySelector<HTMLElement>(
-        '#player-bar-background',
-      );
-      this.sidebarBig = document.querySelector<HTMLElement>('#guide-wrapper');
-      this.sidebarSmall = document.querySelector<HTMLElement>(
-        '#mini-guide-background',
-      );
-      this.ytmusicAppLayout = document.querySelector<HTMLElement>('#layout');
+    async applyCurrentTrack() {
+      const playerResponse = this.api?.getPlayerResponse();
+      const thumbnail =
+        playerResponse?.videoDetails?.thumbnail?.thumbnails?.at(0);
+      if (!thumbnail) return;
+
+      const colors = await fetchAlbumColors(fastAverageColor, thumbnail.url);
+
+      this.color = colors?.color ?? Color(BLACK);
+      this.darkColor = colors?.darkColor ?? Color(BLACK);
+
+      let alpha = 1;
+      if (await window.mainConfig.plugins.isEnabled('transparent-player')) {
+        const value: unknown = window.mainConfig.get(
+          'plugins.transparent-player.opacity',
+        );
+        if (typeof value === 'number' && value >= 0 && value <= 1) {
+          alpha = value;
+        }
+      }
+      (this as Renderer).updateColor(alpha);
     },
     async onPlayerApiReady(playerApi, { getConfig }) {
+      this.api = playerApi;
+
       const config = await getConfig();
       (this as Renderer).onConfigChange(config);
 
-      const fastAverageColor = new FastAverageColor();
+      if (this.videoDataListener) {
+        document.removeEventListener('videodatachange', this.videoDataListener);
+      }
 
-      document.addEventListener('videodatachange', async (event) => {
+      this.videoDataListener = (event) => {
         if (event.detail.name !== 'dataloaded') return;
+        (this as Renderer).applyCurrentTrack().catch(() => {});
+      };
+      document.addEventListener('videodatachange', this.videoDataListener);
 
-        const playerResponse = playerApi.getPlayerResponse();
-        const thumbnail =
-          playerResponse?.videoDetails?.thumbnail?.thumbnails?.at(0);
-        if (!thumbnail) return;
-
-        const colors = await fetchAlbumColors(fastAverageColor, thumbnail.url);
-
-        this.color = colors?.color ?? Color(BLACK);
-        this.darkColor = colors?.darkColor ?? Color(BLACK);
-
-        let alpha = 1;
-        if (await window.mainConfig.plugins.isEnabled('transparent-player')) {
-          const value: unknown = window.mainConfig.get(
-            'plugins.transparent-player.opacity',
-          );
-          if (typeof value === 'number' && value >= 0 && value <= 1) {
-            alpha = value;
-          }
-        }
-        (this as Renderer).updateColor(alpha);
-      });
+      (this as Renderer).applyCurrentTrack().catch(() => {});
     },
     onConfigChange(config) {
       this.ratio = config.ratio;
@@ -288,11 +303,29 @@ export default createPlugin({
       const rootStyle = document.documentElement.style;
       for (const [variable, color] of Object.entries(VARIABLE_MAP)) {
         const tint = DARK_KEYED[variable] ? this.darkColor : this.color;
+        const tintWeight = Math.min(
+          this.ratio * (TINT_MULTIPLIER[variable] ?? 1),
+          1,
+        );
         rootStyle.setProperty(
           variable,
-          mixColor(color, tint, alpha, this.ratio * (RATIO_MAP[variable] ?? 1)),
+          mixColor(color, tint, alpha, tintWeight),
           'important',
         );
+      }
+    },
+    stop() {
+      if (this.videoDataListener) {
+        document.removeEventListener('videodatachange', this.videoDataListener);
+        this.videoDataListener = null;
+      }
+      this.api = null;
+      this.color = null;
+      this.darkColor = null;
+      document.body.classList.remove('seekbar-theme');
+      const rootStyle = document.documentElement.style;
+      for (const variable of Object.keys(VARIABLE_MAP)) {
+        rootStyle.removeProperty(variable);
       }
     },
   },
