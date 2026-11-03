@@ -22,7 +22,7 @@ export abstract class ThemeSongVisualizer extends Visualizer {
   private animationFrame: number | null = null;
   private lastFrameTime: number | null = null;
   private destroyed = false;
-  private readonly onVisibilityChange = () => this.syncAnimationLoop();
+  private paused = false;
   private readonly onPlaybackChange = () => this.syncAnimationLoop();
 
   protected constructor(
@@ -58,7 +58,6 @@ export abstract class ThemeSongVisualizer extends Visualizer {
     const mediaElement = audioSource.mediaElement;
     mediaElement?.addEventListener('play', this.onPlaybackChange);
     mediaElement?.addEventListener('pause', this.onPlaybackChange);
-    document.addEventListener('visibilitychange', this.onVisibilityChange);
     this.syncAnimationLoop();
   }
 
@@ -73,18 +72,6 @@ export abstract class ThemeSongVisualizer extends Visualizer {
   /** Optional hook after the backing-store size changes. */
   protected onResize(): void {}
 
-  protected getPaletteColor(index: number): string {
-    const palette = [
-      '#ff006e',
-      '#fb5607',
-      '#ffbe0b',
-      '#3a86ff',
-      '#8338ec',
-      '#06d6a0',
-    ];
-    return palette[index % palette.length];
-  }
-
   resize(width: number, height: number): void {
     this.width = Math.max(1, Math.floor(width));
     this.height = Math.max(1, Math.floor(height));
@@ -94,7 +81,7 @@ export abstract class ThemeSongVisualizer extends Visualizer {
   }
 
   private shouldAnimate() {
-    if (this.destroyed || document.visibilityState === 'hidden') return false;
+    if (this.destroyed || this.paused) return false;
     const mediaElement = this.audioSource.mediaElement;
     return !mediaElement || !mediaElement.paused;
   }
@@ -133,6 +120,24 @@ export abstract class ThemeSongVisualizer extends Visualizer {
     this.lastFrameTime = null;
   }
 
+  pause(): void {
+    if (this.paused || this.destroyed) return;
+    this.paused = true;
+    this.stopAnimationLoop();
+    try {
+      this.audioSource.disconnect(this.analyser);
+    } catch {}
+  }
+
+  resume(): void {
+    if (!this.paused || this.destroyed) return;
+    this.paused = false;
+    try {
+      this.audioSource.connect(this.analyser);
+    } catch {}
+    this.syncAnimationLoop();
+  }
+
   destroy(): void {
     if (this.destroyed) return;
     this.destroyed = true;
@@ -140,7 +145,9 @@ export abstract class ThemeSongVisualizer extends Visualizer {
     const mediaElement = this.audioSource.mediaElement;
     mediaElement?.removeEventListener('play', this.onPlaybackChange);
     mediaElement?.removeEventListener('pause', this.onPlaybackChange);
-    document.removeEventListener('visibilitychange', this.onVisibilityChange);
+    try {
+      this.audioSource.disconnect(this.audioNode);
+    } catch {}
     try {
       this.audioSource.disconnect(this.analyser);
     } catch {
@@ -149,13 +156,3 @@ export abstract class ThemeSongVisualizer extends Visualizer {
     this.analyser.disconnect();
   }
 }
-
-export const fillBackground = (
-  ctx: CanvasRenderingContext2D,
-  width: number,
-  height: number,
-  style: string | CanvasGradient,
-) => {
-  ctx.fillStyle = style;
-  ctx.fillRect(0, 0, width, height);
-};

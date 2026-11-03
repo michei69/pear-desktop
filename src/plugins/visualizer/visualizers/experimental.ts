@@ -3,6 +3,7 @@ import {
   getAccentHsl,
   getThemeSongPalette,
   hslToCss,
+  type Hsl,
 } from './theme-song-palette';
 
 import type { ExperimentalVariant, VisualizerPluginConfig } from '../index';
@@ -31,6 +32,8 @@ const hue = (value: number): number => ((value % 360) + 360) % 360;
  */
 export class ExperimentalVisualizer extends ThemeSongVisualizer {
   private readonly variant: ExperimentalVariant;
+  private readonly accent: Hsl;
+  private readonly palette: Hsl[];
   private readonly particles: Particle[];
   private zoom = 1;
   private lastElapsed = 0;
@@ -53,6 +56,8 @@ export class ExperimentalVisualizer extends ThemeSongVisualizer {
       0.8,
     );
     this.variant = variant;
+    this.accent = getAccentHsl();
+    this.palette = getThemeSongPalette();
     this.particles =
       variant === 'e5'
         ? Array.from({ length: PARTICLE_COUNT }, () => ({
@@ -259,8 +264,8 @@ export class ExperimentalVisualizer extends ThemeSongVisualizer {
     height: number,
     elapsedSeconds: number,
   ): void {
-    const palette = getThemeSongPalette();
-    const accent = getAccentHsl();
+    const palette = this.palette;
+    const accent = this.accent;
     const background = ctx.createLinearGradient(0, 0, 0, height);
     background.addColorStop(0, hslToCss(accent, 0.15));
     background.addColorStop(1, 'rgba(0, 0, 0, 0.8)');
@@ -283,8 +288,8 @@ export class ExperimentalVisualizer extends ThemeSongVisualizer {
       shortSide * 0.13,
       shortSide * 0.13,
     );
-    boxGradient.addColorStop(0, palette[0] ?? '#ff006e');
-    boxGradient.addColorStop(1, palette[2] ?? '#ffbe0b');
+    boxGradient.addColorStop(0, hslToCss(palette[0] ?? accent));
+    boxGradient.addColorStop(1, hslToCss(palette[2] ?? accent));
     ctx.fillStyle = boxGradient;
     ctx.fillRect(
       -shortSide * 0.13,
@@ -306,8 +311,8 @@ export class ExperimentalVisualizer extends ThemeSongVisualizer {
       0,
       sphereRadius,
     );
-    sphere.addColorStop(0, palette[4] ?? '#8338ec');
-    sphere.addColorStop(0.55, palette[3] ?? '#3a86ff');
+    sphere.addColorStop(0, hslToCss(palette[4] ?? accent));
+    sphere.addColorStop(0.55, hslToCss(palette[3] ?? accent));
     sphere.addColorStop(1, 'rgba(5, 8, 25, 0.95)');
     ctx.fillStyle = sphere;
     ctx.beginPath();

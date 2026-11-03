@@ -306,15 +306,16 @@ export class Connection {
           conn.close();
         }
 
+        const wasOpen = Object.hasOwn(this.connections, conn.connectionId);
         delete this.connections[conn.connectionId];
 
-        if (err) {
-          if (err.type === 'connection-closed') {
-            this.connectionListeners.forEach((listener) => listener());
-          }
-          reject(err);
-        } else {
+        if (wasOpen) {
           this.connectionListeners.forEach((listener) => listener(conn));
+        }
+        if (err) {
+          reject(err);
+        } else if (!wasOpen) {
+          reject(new Error('Music Together: connection closed before opening'));
         }
       };
       conn.on('error', onClose);

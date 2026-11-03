@@ -1,6 +1,8 @@
 // Copyright (c) 2026 bwedirhan. MIT License.
 import { createMemo, createSignal, For, onCleanup, Show } from 'solid-js';
 
+import { t } from '@/i18n';
+
 import {
   forgetFiltered,
   normalizeChannels,
@@ -109,15 +111,12 @@ export const SearchBlocked = (props: { ctx: CustomFieldContext }) => {
       <input
         class="sui-text"
         onInput={(e) => setQuery(e.currentTarget.value)}
-        placeholder="Type a name or paste a channel ID…"
+        placeholder={t('plugins.skip-ai-slop.search.placeholder')}
         type="text"
         value={query()}
       />
       <Show when={!hasNames()}>
-        <div style={hintStyle}>
-          The community list hasn't been saved yet. It downloads when the app
-          starts, so try again in a minute.
-        </div>
+        <div style={hintStyle}>{t('plugins.skip-ai-slop.search.no-names')}</div>
       </Show>
       <Show
         when={
@@ -126,7 +125,9 @@ export const SearchBlocked = (props: { ctx: CustomFieldContext }) => {
           search().total === 0
         }
       >
-        <div style={hintStyle}>No matches.</div>
+        <div style={hintStyle}>
+          {t('plugins.skip-ai-slop.search.no-matches')}
+        </div>
       </Show>
       <Show when={search().shown.length > 0}>
         <div style={{ 'margin-top': '8px' }}>
@@ -136,15 +137,22 @@ export const SearchBlocked = (props: { ctx: CustomFieldContext }) => {
                 <span style={nameStyle}>
                   {item.name}
                   <div style={mutedStyle}>
-                    {item.kind === 'track' ? 'Track' : 'Channel'} · {item.id}
+                    {item.kind === 'track'
+                      ? t('plugins.skip-ai-slop.search.kind-track')
+                      : t('plugins.skip-ai-slop.search.kind-channel')}{' '}
+                    · {item.id}
                   </div>
                 </span>
                 <span style={mutedStyle}>
-                  {allowedIds().has(item.id) ? 'Allowed' : 'Allow'}
+                  {allowedIds().has(item.id)
+                    ? t('plugins.skip-ai-slop.actions.allowed')
+                    : t('plugins.skip-ai-slop.actions.allow')}
                 </span>
                 <button
                   aria-checked={allowedIds().has(item.id)}
-                  aria-label={`Allow ${item.name}`}
+                  aria-label={t('plugins.skip-ai-slop.search.allow-aria', {
+                    name: item.name,
+                  })}
                   class="sui-switch"
                   classList={{ 'sui-switch--on': allowedIds().has(item.id) }}
                   onClick={() => toggle(item)}
@@ -158,8 +166,10 @@ export const SearchBlocked = (props: { ctx: CustomFieldContext }) => {
           </For>
           <Show when={search().total > search().shown.length}>
             <div style={hintStyle}>
-              Showing {search().shown.length} of {search().total}. Type more to
-              narrow it down.
+              {t('plugins.skip-ai-slop.search.showing', {
+                shown: search().shown.length,
+                total: search().total,
+              })}
             </div>
           </Show>
         </div>

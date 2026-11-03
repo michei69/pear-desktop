@@ -45,6 +45,35 @@ const copyToClipboard = (
 /** Minimum gap between progress broadcasts driven by `onVideoProgress`. */
 const PROGRESS_BROADCAST_MS = 1000;
 
+const PERMISSION_LEVEL: Record<Permission, number> = {
+  'host-only': 0,
+  'playlist': 1,
+  'all': 2,
+};
+
+const applyProgressSync = (
+  playerApi: MusicPlayer | undefined,
+  queue: Queue | undefined,
+  payload: { progress?: number; state?: number; index?: number } | undefined,
+  parts: { seek: boolean; state: boolean; index: boolean },
+) => {
+  if (parts.seek && typeof payload?.progress === 'number') {
+    const currentTime = playerApi?.getCurrentTime() ?? 0;
+    if (Math.abs(payload.progress - currentTime) > 3) {
+      playerApi?.seekTo(payload.progress);
+    }
+  }
+  if (parts.state && playerApi?.getPlayerState() !== payload?.state) {
+    if (payload?.state === 2) playerApi?.pauseVideo();
+    if (payload?.state === 1) playerApi?.playVideo();
+  }
+  if (parts.index && typeof payload?.index === 'number') {
+    if ((queue?.selectedIndex ?? 0) !== payload.index) {
+      queue?.setIndex(payload.index);
+    }
+  }
+};
+
 type RawAccountData = {
   accountName: {
     runs: { text: string }[];
@@ -88,6 +117,7 @@ export default createPlugin<
     diagnosticsRunning: boolean;
     /** Invalidates callbacks from a run that was superseded by a plugin stop. */
     diagnosticsRun: number;
+    profileRun: number;
     rollbackInjector?: () => void;
     me?: Omit<Profile, 'id'>;
     profiles: Record<string, Profile>;
@@ -115,15 +145,22 @@ export default createPlugin<
     enabled: false,
   },
   stylesheets: [style],
-  backend({ ipc }) {
-    ipc.handle('music-together:prompt', async (title: string, label: string) =>
-      prompt({
-        title,
-        label,
-        type: 'input',
-        ...promptOptions(),
-      }),
-    );
+  backend: {
+    start({ ipc }) {
+      ipc.handle(
+        'music-together:prompt',
+        async (title: string, label: string) =>
+          prompt({
+            title,
+            label,
+            type: 'input',
+            ...promptOptions(),
+          }),
+      );
+    },
+    stop({ ipc }) {
+      ipc.removeHandler('music-together:prompt');
+    },
   },
   renderer: {
     updateNext: false,
@@ -131,6 +168,7 @@ export default createPlugin<
     lastProgressAt: 0,
     diagnosticsRunning: false,
     diagnosticsRun: 0,
+    profileRun: 0,
     permission: 'playlist',
     popups: {} as {
       host: ReturnType<typeof createHostPopup>;
@@ -226,7 +264,11 @@ export default createPlugin<
     async onHost() {
       this.connection = new Connection();
       const wait = await this.connection.waitForReady().catch(() => null);
-      if (!wait) return false;
+      if (!wait) {
+        this.connection.disconnect();
+        this.connection = undefined;
+        return false;
+      }
 
       if (!this.me) this.me = getDefaultProfile(this.connection.id);
 
@@ -265,7 +307,9 @@ export default createPlugin<
         if (!connection.open) {
           this.api?.toastService?.show(
             t('plugins.music-together.toast.user-disconnected', {
-              name: this.profiles[connection.peer]?.name,
+              name:
+                this.profiles[connection.peer]?.name ??
+                t('plugins.music-together.internal.unknown-user'),
             }),
           );
           this.putProfile(connection.peer, undefined);
@@ -401,33 +445,14 @@ export default createPlugin<
             break;
           }
           case 'SYNC_PROGRESS': {
-            let permissionLevel = 0;
-            if (this.permission === 'all') permissionLevel = 2;
-            if (this.permission === 'playlist') permissionLevel = 1;
-            if (this.permission === 'host-only') permissionLevel = 0;
-            if (!conn) permissionLevel = 3;
-
-            if (permissionLevel >= 2) {
-              if (typeof event.payload?.progress === 'number') {
-                const currentTime = this.playerApi?.getCurrentTime() ?? 0;
-                if (Math.abs(event.payload.progress - currentTime) > 3)
-                  this.playerApi?.seekTo(event.payload.progress);
-              }
-              if (this.playerApi?.getPlayerState() !== event.payload?.state) {
-                if (event.payload?.state === 2) this.playerApi?.pauseVideo();
-                if (event.payload?.state === 1) this.playerApi?.playVideo();
-              }
-            }
-            if (permissionLevel >= 1) {
-              if (typeof event.payload?.index === 'number') {
-                const nowIndex = this.queue?.selectedIndex ?? 0;
-
-                if (nowIndex !== event.payload.index) {
-                  this.queue?.setIndex(event.payload.index);
-                }
-              }
-            }
-
+            const permissionLevel = conn
+              ? PERMISSION_LEVEL[this.permission]
+              : 3;
+            applyProgressSync(this.playerApi, this.queue, event.payload, {
+              seek: permissionLevel >= 2,
+              state: permissionLevel >= 2,
+              index: permissionLevel >= 1,
+            });
             break;
           }
           case 'CONNECTION_CLOSED': {
@@ -460,7 +485,11 @@ export default createPlugin<
     async onJoin() {
       this.connection = new Connection();
       const wait = await this.connection.waitForReady().catch(() => null);
-      if (!wait) return false;
+      if (!wait) {
+        this.connection.disconnect();
+        this.connection = undefined;
+        return false;
+      }
 
       this.profiles = {};
 
@@ -608,22 +637,11 @@ export default createPlugin<
             break;
           }
           case 'SYNC_PROGRESS': {
-            if (typeof event.payload?.progress === 'number') {
-              const currentTime = this.playerApi?.getCurrentTime() ?? 0;
-              if (Math.abs(event.payload.progress - currentTime) > 3)
-                this.playerApi?.seekTo(event.payload.progress);
-            }
-            if (this.playerApi?.getPlayerState() !== event.payload?.state) {
-              if (event.payload?.state === 2) this.playerApi?.pauseVideo();
-              if (event.payload?.state === 1) this.playerApi?.playVideo();
-            }
-            if (typeof event.payload?.index === 'number') {
-              const nowIndex = this.queue?.selectedIndex ?? 0;
-
-              if (nowIndex !== event.payload.index) {
-                this.queue?.setIndex(event.payload.index);
-              }
-            }
+            applyProgressSync(this.playerApi, this.queue, event.payload, {
+              seek: true,
+              state: true,
+              index: true,
+            });
             break;
           }
           case 'PERMISSION': {
@@ -739,6 +757,7 @@ export default createPlugin<
       if (this.connection?.mode !== 'disconnected') {
         this.connection?.disconnect();
       }
+      this.connection = undefined;
       this.queue?.rollbackInjection();
       this.queue?.removeQueueOwner();
       if (this.rollbackInjector) {
@@ -818,12 +837,14 @@ export default createPlugin<
     },
 
     async initMyProfile() {
+      const run = ++this.profileRun;
       const accountButton = await waitForElement<HTMLElement>(
         '#right-content > ytmusic-settings-button *:where(tp-yt-paper-icon-button,yt-icon-button,.ytmusic-settings-button)',
         {
           maxRetry: 10000,
         },
       );
+      if (run !== this.profileRun) return;
 
       accountButton?.click();
       setTimeout(async () => {
@@ -833,6 +854,7 @@ export default createPlugin<
             maxRetry: 10000,
           },
         );
+        if (run !== this.profileRun) return;
         if (!accountButton || !renderer) {
           console.warn('Music Together: Cannot find account');
           this.me = getDefaultProfile(this.connection?.id ?? '');
@@ -1064,6 +1086,7 @@ export default createPlugin<
       // Abandon an in-flight diagnostics run and drop the popups it writes to.
       this.diagnosticsRun += 1;
       this.diagnosticsRunning = false;
+      this.profileRun += 1;
       for (const popup of Object.values(this.popups)) popup?.element.remove();
 
       const dividers = Array.from(

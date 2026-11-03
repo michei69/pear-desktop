@@ -1,6 +1,8 @@
 import { t } from '@/i18n';
+import { getAudioGraph, rebindAudioGraphSource } from '@/providers/audio-graph';
 import { createPlugin } from '@/utils';
 
+import { BUTTERCHURN_DEFAULT_PRESET } from './constants';
 import emptyStyle from './empty-player.css?inline';
 import {
   BarsVisualizer,
@@ -146,6 +148,14 @@ type RenderProps = {
   audioSource: MediaElementAudioSourceNode | null;
   observer: ResizeObserver | null;
   gainNode: GainNode | null;
+  windowHidden: boolean;
+};
+
+const setWindowVisibility = (props: RenderProps, hidden: boolean) => {
+  props.windowHidden = hidden;
+  if (!props.visualizerInstance) return;
+  if (hidden) props.visualizerInstance.pause();
+  else props.visualizerInstance.resume();
 };
 
 export default createPlugin({
@@ -156,7 +166,7 @@ export default createPlugin({
     enabled: false,
     type: 'butterchurn',
     butterchurn: {
-      preset: 'martin [shadow harlequins shape code] - fata morgana',
+      preset: BUTTERCHURN_DEFAULT_PRESET,
       blendTimeInSeconds: 2.7,
     },
     vudio: {
@@ -243,7 +253,7 @@ export default createPlugin({
           label: () => t('plugins.visualizer.menu.visualizer-type'),
           options: VISUALIZER_TYPES.map((value) => ({
             value,
-            label: () => value,
+            label: () => t(`plugins.visualizer.types.${value}`),
           })),
         },
       ],
@@ -277,7 +287,10 @@ export default createPlugin({
           key: 'vudio.effect',
           label: () => t('plugins.visualizer.settings.effect'),
           options: ['waveform', 'circlewave', 'circlebar', 'lighting'].map(
-            (value) => ({ value, label: () => value }),
+            (value) => ({
+              value,
+              label: () => t(`plugins.visualizer.effects.${value}`),
+            }),
           ),
         },
         {
@@ -365,7 +378,7 @@ export default createPlugin({
           label: () => t('plugins.visualizer.settings.horizontal-align'),
           options: ['left', 'center', 'right'].map((value) => ({
             value,
-            label: () => value,
+            label: () => t(`plugins.visualizer.alignments.${value}`),
           })),
         },
         {
@@ -375,7 +388,7 @@ export default createPlugin({
           label: () => t('plugins.visualizer.settings.vertical-align'),
           options: ['top', 'middle', 'bottom'].map((value) => ({
             value,
-            label: () => value,
+            label: () => t(`plugins.visualizer.alignments.${value}`),
           })),
         },
       ],
@@ -386,7 +399,7 @@ export default createPlugin({
         {
           type: 'slider',
           key: 'wavy.lineWidth',
-          label: () => 'Line width',
+          label: () => t('plugins.visualizer.settings.line-width'),
           min: 1,
           max: 20,
           step: 1,
@@ -401,16 +414,16 @@ export default createPlugin({
           type: 'select',
           variant: 'dropdown',
           key: 'bars.variant',
-          label: () => 'Variant',
+          label: () => t('plugins.visualizer.settings.variant'),
           options: BARS_VARIANTS.map((value) => ({
             value,
-            label: () => value,
+            label: () => t(`plugins.visualizer.variants.${value}`),
           })),
         },
         {
           type: 'slider',
           key: 'bars.barWidth',
-          label: () => 'Bar width',
+          label: () => t('plugins.visualizer.settings.bar-width'),
           min: 5,
           max: 80,
           step: 1,
@@ -419,7 +432,7 @@ export default createPlugin({
         {
           type: 'slider',
           key: 'bars.gap',
-          label: () => 'Bar gap',
+          label: () => t('plugins.visualizer.settings.bar-gap'),
           min: 0,
           max: 20,
           step: 1,
@@ -434,10 +447,10 @@ export default createPlugin({
           type: 'select',
           variant: 'dropdown',
           key: 'circles.variant',
-          label: () => 'Variant',
+          label: () => t('plugins.visualizer.settings.variant'),
           options: CIRCLES_VARIANTS.map((value) => ({
             value,
-            label: () => value,
+            label: () => t(`plugins.visualizer.variants.${value}`),
           })),
         },
       ],
@@ -449,7 +462,7 @@ export default createPlugin({
           type: 'select',
           variant: 'dropdown',
           key: 'experimental.variant',
-          label: () => 'Variant',
+          label: () => t('plugins.visualizer.settings.variant'),
           options: EXPERIMENTAL_VARIANTS.map((value) => ({
             value,
             label: () => value,
@@ -463,7 +476,7 @@ export default createPlugin({
         {
           type: 'slider',
           key: 'discoBall.sensitivity',
-          label: () => 'Sensitivity',
+          label: () => t('plugins.visualizer.settings.sensitivity'),
           min: 0.25,
           max: 3,
           step: 0.25,
@@ -473,13 +486,12 @@ export default createPlugin({
   ],
   menu: async ({ getConfig, setConfig }) => {
     const config = await getConfig();
-    const visualizerTypes = VISUALIZER_TYPES;
 
     return [
       {
         label: t('plugins.visualizer.menu.visualizer-type'),
-        submenu: visualizerTypes.map((visualizerType) => ({
-          label: visualizerType,
+        submenu: VISUALIZER_TYPES.map((visualizerType) => ({
+          label: t(`plugins.visualizer.types.${visualizerType}`),
           type: 'radio',
           checked: config.type === visualizerType,
           click() {
@@ -498,7 +510,19 @@ export default createPlugin({
       observer: null,
       gainNode: null,
       audioCanPlayHandler: undefined,
+      windowHidden: false,
     } as RenderProps & { audioCanPlayHandler?: EventListener },
+
+    visibilityUnsubscribe: undefined as (() => void) | undefined,
+
+    start() {
+      const props = this.props;
+      props.windowHidden = window.peardWindowHidden === true;
+      this.visibilityUnsubscribe = window.ipcRenderer.subscribe(
+        'peard:window-visibility',
+        (hidden: boolean) => setWindowVisibility(props, hidden === true),
+      );
+    },
 
     createVisualizer(
       this: { props: RenderProps },
@@ -565,6 +589,7 @@ export default createPlugin({
         video.captureStream(),
         config,
       );
+      if (this.props.windowHidden) this.props.visualizerInstance.pause();
 
       const resizeVisualizer = () => {
         if (canvas && visualizerContainer) {
@@ -605,7 +630,12 @@ export default createPlugin({
         // Re-emitted per track, but the graph (and so the source node) only
         // changes on a rebind. Rebuilding on the same source would drop the
         // GL context and restart the loop for nothing.
-        const { audioContext, audioSource } = detail;
+        const { audioContext } = detail;
+        const video = document.querySelector<HTMLVideoElement>('video');
+        const audioSource =
+          video && detail.audioSource.mediaElement !== video
+            ? (rebindAudioGraphSource(video) ?? detail.audioSource)
+            : detail.audioSource;
         const sameGraph =
           this.props.audioContext === audioContext &&
           this.props.audioSource === audioSource;
@@ -619,9 +649,20 @@ export default createPlugin({
         this.props.audioCanPlayHandler,
         { passive: true },
       );
+
+      const video = document.querySelector<HTMLVideoElement>('video');
+      if (!video || video.readyState < 2) return;
+      const { context, source } = getAudioGraph(video);
+      document.dispatchEvent(
+        new CustomEvent('peard:audio-can-play', {
+          detail: { audioContext: context, audioSource: source },
+        }),
+      );
     },
 
     stop() {
+      this.visibilityUnsubscribe?.();
+      this.visibilityUnsubscribe = undefined;
       if (this.props.audioCanPlayHandler) {
         document.removeEventListener(
           'peard:audio-can-play',

@@ -1,6 +1,8 @@
 // Copyright (c) 2026 bwedirhan. MIT License.
 import { createSignal, For, onCleanup, Show } from 'solid-js';
 
+import { t } from '@/i18n';
+
 import {
   forgetFiltered,
   normalizeChannels,
@@ -81,17 +83,17 @@ const Row = (props: {
     </span>
     <Show when={props.onAllow}>
       <button onClick={() => props.onAllow?.()} style={linkBtn} type="button">
-        Allow
+        {t('plugins.skip-ai-slop.actions.allow')}
       </button>
     </Show>
     <Show when={props.onBlock}>
       <button onClick={() => props.onBlock?.()} style={linkBtn} type="button">
-        Block
+        {t('plugins.skip-ai-slop.actions.block')}
       </button>
     </Show>
     <Show when={props.onRemove}>
       <button
-        aria-label="Remove"
+        aria-label={t('plugins.skip-ai-slop.actions.remove')}
         onClick={() => props.onRemove?.()}
         style={xBtn}
         type="button"
@@ -108,7 +110,7 @@ export const BlockedList = (props: { ctx: CustomFieldContext }) => {
   return (
     <div>
       <Show
-        fallback={<Empty text="No blocked channels" />}
+        fallback={<Empty text={t('plugins.skip-ai-slop.list.blocked')} />}
         when={list().length}
       >
         <For each={list()}>
@@ -136,7 +138,7 @@ export const AllowedList = (props: { ctx: CustomFieldContext }) => {
   return (
     <div>
       <Show
-        fallback={<Empty text="No allowed channels" />}
+        fallback={<Empty text={t('plugins.skip-ai-slop.list.allowed')} />}
         when={list().length}
       >
         <For each={list()}>
@@ -176,7 +178,7 @@ export const RecentList = (props: { ctx: CustomFieldContext }) => {
   return (
     <div>
       <Show
-        fallback={<Empty text="No filtered channels yet" />}
+        fallback={<Empty text={t('plugins.skip-ai-slop.list.recent')} />}
         when={list().length}
       >
         <For each={list()}>

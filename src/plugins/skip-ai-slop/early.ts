@@ -11,17 +11,15 @@
  */
 import {
   allowedNames,
+  BLACKLIST_CACHE_KEY,
   compileKeywords,
+  isValidBlacklist,
   normalizeChannels,
   type SkipAiSlopConfig,
 } from './config';
 
 export const EARLY_ATTR = 'data-skip-ai-slop-early';
 export const READY_ATTR = 'data-skip-ai-slop-ready';
-
-// keep in sync with index.ts
-const CACHE_KEY = 'skip-ai-slop:blacklist';
-const SUPPORTED_SCHEMA = 2;
 
 const GIVE_UP_MS = 60_000; // SAFETY: stop watching if the renderer never takes over
 
@@ -61,17 +59,10 @@ const buildRules = (cfg: Partial<SkipAiSlopConfig>): Rules => {
     tracks: new Set(),
   };
   try {
-    const raw = localStorage.getItem(CACHE_KEY);
-    // keep in sync with the shape index.ts writes (loadCachedList)
-    const cached = (raw ? JSON.parse(raw) : null) as {
-      data?: {
-        version?: unknown;
-        channels?: Record<string, unknown>;
-        tracks?: Record<string, unknown>;
-      };
-    } | null;
+    const raw = localStorage.getItem(BLACKLIST_CACHE_KEY);
+    const cached = (raw ? JSON.parse(raw) : null) as { data?: unknown } | null;
     const data = cached?.data;
-    if (data?.version === SUPPORTED_SCHEMA && data.channels && data.tracks) {
+    if (isValidBlacklist(data)) {
       out.channels = new Set(Object.keys(data.channels));
       out.tracks = new Set(Object.keys(data.tracks));
     }
@@ -140,6 +131,7 @@ const onMutations = (records: MutationRecord[]) => {
 export const stopEarlyScan = () => {
   observer?.disconnect();
   observer = null;
+  rules = null;
   if (giveUpTimer) {
     clearTimeout(giveUpTimer);
     giveUpTimer = null;
@@ -160,6 +152,7 @@ export const startEarlyScan = async (getConfig: () => unknown) => {
 
   try {
     const cfg = ((await getConfig()) ?? {}) as Partial<SkipAiSlopConfig>;
+    if (!observer) return;
     if (cfg.hideInPages === false) {
       stopEarlyScan();
       return;

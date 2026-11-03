@@ -1,6 +1,8 @@
 // Copyright (c) 2026 bwedirhan. MIT License.
 import { createSignal, onCleanup, onMount } from 'solid-js';
 
+import { t } from '@/i18n';
+
 import {
   EVT_CLEAR,
   EVT_DOWNLOAD,
@@ -53,7 +55,7 @@ export const ListTools = () => {
           style={btnStyle}
           type="button"
         >
-          Download list now
+          {t('plugins.skip-ai-slop.actions.download-list')}
         </button>
         <button
           disabled={busy()}
@@ -61,7 +63,7 @@ export const ListTools = () => {
           style={btnStyle}
           type="button"
         >
-          Clear cache
+          {t('plugins.skip-ai-slop.actions.clear-cache')}
         </button>
       </div>
       <div style={mutedStyle}>{status()}</div>

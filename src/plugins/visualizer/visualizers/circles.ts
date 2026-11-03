@@ -1,5 +1,6 @@
 import { ThemeSongVisualizer } from './theme-song-base';
 import {
+  clamp01,
   getAccentHsl,
   getThemeSongPalette,
   hslToCss,
@@ -9,8 +10,6 @@ import {
 import type { VisualizerPluginConfig } from '../index';
 
 const CIRCUMFERENCE = 2 * Math.PI;
-const HSL_PATTERN =
-  /^hsla?\(\s*(-?[\d.]+)\s*(?:deg)?[\s,]+(-?[\d.]+)%[\s,]+(-?[\d.]+)%(?:\s*\/\s*[-\d.]+%?)?\s*\)$/i;
 
 interface CircleSpec {
   x: number;
@@ -37,21 +36,6 @@ function cloneCircle(spec: CircleSpec): CircleState {
   return { ...spec, radius: 0 };
 }
 
-function parseHslCss(color: string, fallback: Hsl): Hsl {
-  const match = HSL_PATTERN.exec(color);
-  if (!match) return fallback;
-
-  return {
-    h: Number(match[1] ?? 0),
-    s: Number(match[2] ?? 0) / 100,
-    l: Number(match[3] ?? 0) / 100,
-  };
-}
-
-function clamp01(value: number): number {
-  return Math.min(1, Math.max(0, value));
-}
-
 export class CirclesVisualizer extends ThemeSongVisualizer {
   private readonly config: VisualizerPluginConfig;
   private readonly accent: Hsl;
@@ -70,9 +54,7 @@ export class CirclesVisualizer extends ThemeSongVisualizer {
 
     this.config = config;
     this.accent = getAccentHsl();
-    this.palette = getThemeSongPalette().map((color) =>
-      parseHslCss(color, this.accent),
-    );
+    this.palette = getThemeSongPalette();
     this.circles = this.createCircles(config.circles.variant);
   }
 

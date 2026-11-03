@@ -4,12 +4,15 @@ import Butterchurn, {
 
 import { Visualizer } from './visualizer';
 
+import { BUTTERCHURN_DEFAULT_PRESET } from '../constants';
+
 import type { VisualizerPluginConfig } from '../index';
 
 class ButterchurnVisualizer extends Visualizer {
   private readonly visualizer: ButterchurnInstance;
   private destroyed: boolean = false;
   private presetLoaded: boolean = false;
+  private paused: boolean = false;
   private animFrameHandle: number | null = null;
 
   constructor(
@@ -30,7 +33,6 @@ class ButterchurnVisualizer extends Visualizer {
       pixelRatio: 1,
     });
     this.visualizer.connectAudio(audioNode);
-    document.addEventListener('visibilitychange', this.onVisibilityChange);
 
     // Presets are ~1 MB and this visualizer is off by default, so they are
     // loaded on demand rather than pulled into the static import graph.
@@ -41,8 +43,22 @@ class ButterchurnVisualizer extends Visualizer {
     try {
       const { default: presets } = await import('butterchurn-presets');
       if (this.destroyed) return;
+      const requested = config.butterchurn.preset;
+      const preset =
+        presets[requested] ??
+        presets[BUTTERCHURN_DEFAULT_PRESET] ??
+        Object.values(presets)[0];
+      if (!preset) {
+        console.error('visualizer: no butterchurn preset available');
+        return;
+      }
+      if (!presets[requested]) {
+        console.warn(
+          `visualizer: unknown butterchurn preset "${requested}", using the default`,
+        );
+      }
       await this.visualizer.loadPreset(
-        presets[config.butterchurn.preset],
+        preset,
         config.butterchurn.blendTimeInSeconds,
       );
     } catch (error) {
@@ -54,22 +70,21 @@ class ButterchurnVisualizer extends Visualizer {
     this.startLoop();
   }
 
-  private readonly onVisibilityChange = () => {
-    if (document.visibilityState === 'hidden') this.stopLoop();
-    else this.startLoop();
-  };
-
   private readonly renderFrame = () => {
     this.animFrameHandle = null;
-    if (this.destroyed || document.visibilityState === 'hidden') return;
+    if (this.destroyed || this.paused) return;
     this.visualizer.render();
     this.animFrameHandle = requestAnimationFrame(this.renderFrame);
   };
 
   private startLoop() {
-    if (this.animFrameHandle !== null || this.destroyed || !this.presetLoaded)
+    if (
+      this.animFrameHandle !== null ||
+      this.destroyed ||
+      this.paused ||
+      !this.presetLoaded
+    )
       return;
-    if (document.visibilityState === 'hidden') return;
     this.animFrameHandle = requestAnimationFrame(this.renderFrame);
   }
 
@@ -83,11 +98,28 @@ class ButterchurnVisualizer extends Visualizer {
     this.visualizer.setRendererSize(width, height);
   }
 
+  pause() {
+    if (this.paused || this.destroyed) return;
+    this.paused = true;
+    this.stopLoop();
+    try {
+      this.visualizer.disconnectAudio(this.audioNode);
+    } catch {}
+  }
+
+  resume() {
+    if (!this.paused || this.destroyed) return;
+    this.paused = false;
+    try {
+      this.visualizer.connectAudio(this.audioNode);
+    } catch {}
+    this.startLoop();
+  }
+
   destroy() {
     if (this.destroyed) return;
     this.destroyed = true;
     this.stopLoop();
-    document.removeEventListener('visibilitychange', this.onVisibilityChange);
     try {
       this.audioSource.disconnect(this.audioNode);
     } catch {}

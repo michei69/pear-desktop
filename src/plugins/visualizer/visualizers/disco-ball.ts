@@ -260,10 +260,7 @@ const createDiscoFaces = (subdivisions: number): DiscoFace[] => {
 };
 
 const getSensitivity = (config: VisualizerPluginConfig): number => {
-  const settings = config as VisualizerPluginConfig & {
-    discoBall?: { sensitivity?: number };
-  };
-  const value = settings.discoBall?.sensitivity;
+  const value = config.discoBall.sensitivity;
   return typeof value === 'number' && Number.isFinite(value)
     ? clamp(value, 0.2, 3)
     : 1;

@@ -10,8 +10,13 @@ const FALLBACK = [
   '#06d6a0',
 ] as const;
 
-const clamp = (value: number, min: number, max: number) =>
-  Math.min(max, Math.max(min, value));
+const HEX_PATTERN = /^#([\da-f]{3}|[\da-f]{6})$/i;
+const RGB_PATTERN = /^rgba?\(\s*([\d.]+)[\s,]+([\d.]+)[\s,]+([\d.]+)/i;
+const HSL_PATTERN =
+  /^hsla?\(\s*(-?[\d.]+)\s*(?:deg)?[\s,]+(-?[\d.]+)%[\s,]+(-?[\d.]+)%(?:\s*\/\s*[-\d.]+%?)?\s*\)$/i;
+
+export const clamp01 = (value: number): number =>
+  Math.min(1, Math.max(0, value));
 
 export function hexToRgb(hex: string): Rgb {
   const normalized = hex.trim().replace(/^#/, '');
@@ -40,55 +45,75 @@ export function rgbToHsl({ r, g, b }: Rgb): Hsl {
   const delta = max - min;
   if (delta === 0) return { h: 0, s: 0, l: lightness };
 
-  const saturation = delta / (1 - Math.abs(2 * lightness - 1));
+  const saturation = clamp01(delta / (1 - Math.abs(2 * lightness - 1)));
   let hue: number;
   if (max === red) hue = ((green - blue) / delta) % 6;
   else if (max === green) hue = (blue - red) / delta + 2;
   else hue = (red - green) / delta + 4;
 
-  return { h: (hue * 60 + 360) % 360, s: saturation, l: lightness };
+  return {
+    h: (hue * 60 + 360) % 360,
+    s: saturation,
+    l: clamp01(lightness),
+  };
 }
 
 export function hslToCss({ h, s, l }: Hsl, alpha = 1): string {
-  return `hsla(${h.toFixed(1)} ${clamp(s, 0, 1) * 100}% ${clamp(l, 0, 1) * 100}% / ${alpha})`;
+  return `hsla(${h.toFixed(1)} ${clamp01(s) * 100}% ${clamp01(l) * 100}% / ${alpha})`;
+}
+
+const channel = (value: string | undefined): number =>
+  Math.min(255, Math.max(0, Number(value ?? 0)));
+
+export function parseCssColor(color: string): Hsl | null {
+  const value = color.trim();
+  if (HEX_PATTERN.test(value)) return rgbToHsl(hexToRgb(value));
+  const rgb = RGB_PATTERN.exec(value);
+  if (rgb) {
+    return rgbToHsl({
+      r: channel(rgb[1]),
+      g: channel(rgb[2]),
+      b: channel(rgb[3]),
+    });
+  }
+
+  const hsl = HSL_PATTERN.exec(value);
+  if (!hsl) return null;
+  return {
+    h: Number(hsl[1] ?? 0),
+    s: clamp01(Number(hsl[2] ?? 0) / 100),
+    l: clamp01(Number(hsl[3] ?? 0) / 100),
+  };
 }
 
 /**
  * ThemeSong normally receives the album's Vibrant palette from its global
  * store. Pear's visualizer is independent from the album-color-theme plugin,
- * so read the colors that plugin publishes and fall back to its own vivid
- * defaults. This keeps the Palette/Accent variants useful in every theme.
+ * so read the colors that plugin publishes as CSS custom properties and fall
+ * back to its own vivid defaults. This keeps the Palette/Accent variants
+ * useful in every theme.
  */
-export function getThemeSongPalette(): string[] {
-  if (typeof document === 'undefined') return [...FALLBACK];
+export function getThemeSongPalette(): Hsl[] {
+  const fallback = FALLBACK.map((color) => rgbToHsl(hexToRgb(color)));
+  if (typeof document === 'undefined') return fallback;
+
   const style = getComputedStyle(document.documentElement);
-  const candidates = [
+  const parsed = [
     '--paper-progress-active-color-1',
     '--yt-spec-static-brand-red',
     '--ytmusic-color-white1',
     '--yt-spec-text-primary',
   ]
     .map((property) => style.getPropertyValue(property).trim())
-    .filter((color) => /^(#|rgb|hsl)/i.test(color));
-
-  const parsed = candidates
-    .map((color) => {
-      const match = color.match(/^#([\da-f]{3}|[\da-f]{6})$/i);
-      if (!match) return null;
-      const rgb = hexToRgb(color);
-      const hsl = rgbToHsl(rgb);
-      return hslToCss(hsl);
-    })
-    .filter((color): color is string => color !== null);
+    .filter((color) => /^(#|rgb|hsl)/i.test(color))
+    .map(parseCssColor)
+    .filter((color): color is Hsl => color !== null);
 
   return parsed.length > 0
-    ? [...parsed, ...FALLBACK.slice(parsed.length)]
-    : [...FALLBACK];
+    ? [...parsed, ...fallback.slice(parsed.length)]
+    : fallback;
 }
 
 export function getAccentHsl(): Hsl {
-  const first = getThemeSongPalette()[0] ?? FALLBACK[0];
-  const hexMatch = first.match(/^#([\da-f]{3}|[\da-f]{6})$/i);
-  if (!hexMatch) return { h: 326, s: 1, l: 0.5 };
-  return rgbToHsl(hexToRgb(first));
+  return getThemeSongPalette()[0] ?? rgbToHsl(hexToRgb(FALLBACK[0]));
 }

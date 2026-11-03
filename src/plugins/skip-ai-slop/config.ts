@@ -2,6 +2,34 @@
 export type KeywordEntry = { text: string; enabled: boolean };
 export type ChannelEntry = { id: string; name: string };
 
+export type BlacklistEntry = {
+  name?: string;
+  title?: string;
+  reason?: string;
+  added_at?: string;
+};
+export type Blacklist = {
+  version: number;
+  updated_at: string;
+  channels: Record<string, BlacklistEntry>;
+  tracks: Record<string, BlacklistEntry>;
+};
+
+export const BLACKLIST_CACHE_KEY = 'skip-ai-slop:blacklist';
+export const BLACKLIST_SCHEMA_VERSION = 2;
+
+export const isValidBlacklist = (data: unknown): data is Blacklist => {
+  const candidate = data as Blacklist | undefined;
+  return (
+    !!candidate &&
+    candidate.version === BLACKLIST_SCHEMA_VERSION &&
+    typeof candidate.channels === 'object' &&
+    candidate.channels !== null &&
+    typeof candidate.tracks === 'object' &&
+    candidate.tracks !== null
+  );
+};
+
 /**
  * A stored entry as a hand-edited config.json may hold it: any field, any type.
  * Reading through `?.` makes a wrong field harmless — it yields undefined, which
@@ -130,7 +158,7 @@ export const forgetFiltered = (id: string) => {
 // matching cache (skip-ai-slop:blacklist) keeps IDs only, so it stays small and
 // quick to parse (index.ts and early.ts both read it); names live in this separate
 // store, which only the settings search reads, lazily.
-export const NAMES_KEY = 'skip-ai-slop:blacklist-names';
+const NAMES_KEY = 'skip-ai-slop:blacklist-names';
 
 export type BlacklistName = {
   id: string;

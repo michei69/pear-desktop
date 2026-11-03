@@ -1,6 +1,8 @@
 // Copyright (c) 2026 bwedirhan. MIT License.
 import { createSignal, For } from 'solid-js';
 
+import { t } from '@/i18n';
+
 import { normalizeKeywords, type KeywordEntry } from './config';
 
 import type { CustomFieldContext } from '@/types/settings';
@@ -53,7 +55,7 @@ export const KeywordList = (props: { ctx: CustomFieldContext }) => {
               <span class="sui-switch__thumb" />
             </button>
             <button
-              aria-label="Delete"
+              aria-label={t('plugins.skip-ai-slop.actions.delete')}
               onClick={() => save(list().filter((_, idx) => idx !== i()))}
               style={{
                 'background': 'none',
@@ -76,7 +78,7 @@ export const KeywordList = (props: { ctx: CustomFieldContext }) => {
         onChange={add}
         onInput={(e) => setDraft(e.currentTarget.value)}
         onKeyDown={(e) => e.key === 'Enter' && add()}
-        placeholder="Add a keyword... (press Enter)"
+        placeholder={t('plugins.skip-ai-slop.keywords.placeholder')}
         type="text"
         value={draft()}
       />

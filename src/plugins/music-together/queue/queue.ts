@@ -202,7 +202,7 @@ export class Queue {
     if (!response) return false;
 
     const items = response.queueDatas.map((it) => it?.content).filter(Boolean);
-    if (!items) return false;
+    if (!items.length) return false;
 
     this.internalDispatch = true;
     this._videoList = this._videoList.map(
@@ -255,6 +255,12 @@ export class Queue {
   }
 
   removeVideo(index: number) {
+    if (
+      !Number.isInteger(index) ||
+      index < 0 ||
+      index >= this._videoList.length
+    )
+      return;
     this.internalDispatch = true;
     this._videoList.splice(index, 1);
     this.queue?.dispatch({
@@ -269,6 +275,7 @@ export class Queue {
   }
 
   setIndex(index: number) {
+    if (!Number.isInteger(index) || index < 0) return;
     this.internalDispatch = true;
     this.queue?.dispatch({
       type: 'SET_INDEX',
@@ -278,8 +285,23 @@ export class Queue {
   }
 
   moveItem(fromIndex: number, toIndex: number) {
+    const length = this._videoList.length;
+    if (
+      !Number.isInteger(fromIndex) ||
+      !Number.isInteger(toIndex) ||
+      fromIndex < 0 ||
+      toIndex < 0 ||
+      fromIndex >= length ||
+      toIndex > length
+    ) {
+      return;
+    }
     this.internalDispatch = true;
-    const data = this._videoList.splice(fromIndex, 1)[0];
+    const [data] = this._videoList.splice(fromIndex, 1);
+    if (!data) {
+      this.internalDispatch = false;
+      return;
+    }
     this._videoList.splice(toIndex, 0, data);
     this.queue?.dispatch({
       type: 'MOVE_ITEM',

@@ -9,11 +9,15 @@
  * payload, feedback menu fields, YouTube Music element names). Track changes use
  * standard <video> events, not app-internal event names.
  */
+import { t } from '@/i18n';
 import { createPlugin } from '@/utils';
 
 import { AllowedList, BlockedList, RecentList } from './ChannelLists';
 import {
   allowedNames,
+  BLACKLIST_CACHE_KEY,
+  type Blacklist,
+  type BlacklistEntry,
   compileKeywords,
   clearBlacklistNames,
   defaultConfig,
@@ -22,6 +26,7 @@ import {
   EVT_INFO,
   EVT_STATUS,
   hasBlacklistNames,
+  isValidBlacklist,
   type ListStatus,
   normalizeChannels,
   recordFiltered,
@@ -37,25 +42,11 @@ import type { MusicPlayer } from '@/types/music-player';
 
 const BLACKLIST_URL =
   'https://raw.githubusercontent.com/bwedirhan/pear-desktop-ai-slop-filter/main/blacklist.json';
-const CACHE_KEY = 'skip-ai-slop:blacklist';
 const CACHE_TTL_MS = 24 * 60 * 60 * 1000;
 const REFRESH_INTERVAL_MS = 60 * 60 * 1000; // hourly; refreshList() exits early while the cache is fresh
-const SUPPORTED_SCHEMA = 2;
 const MAX_SKIPS = 5; // SAFETY: stop skipping after this many skips
 const SKIP_WINDOW_MS = 10_000; // ...within this window (e.g. whole queue is blacklisted)
 
-type Entry = {
-  name?: string;
-  title?: string;
-  reason?: string;
-  added_at?: string;
-};
-type Blacklist = {
-  version: number;
-  updated_at: string;
-  channels: Record<string, Entry>;
-  tracks: Record<string, Entry>;
-};
 type Config = SkipAiSlopConfig;
 
 /** A renderer node from YouTube Music's page data, which has no published shape. */
@@ -142,19 +133,7 @@ let lastCheckedId: string | null = null;
 let recentSkips: number[] = [];
 let refreshTimer: ReturnType<typeof setInterval> | null = null;
 
-const isValid = (d: unknown): d is Blacklist => {
-  const data = d as Blacklist | undefined;
-  return (
-    !!data &&
-    data.version === SUPPORTED_SCHEMA &&
-    typeof data.channels === 'object' &&
-    data.channels !== null &&
-    typeof data.tracks === 'object' &&
-    data.tracks !== null
-  );
-};
-
-const has = (o: Record<string, Entry>, k: string) =>
+const has = (o: Record<string, BlacklistEntry>, k: string) =>
   Object.prototype.hasOwnProperty.call(o, k);
 
 /**
@@ -163,8 +142,8 @@ const has = (o: Record<string, Entry>, k: string) =>
  * also depends on. Names for the settings search are saved separately.
  */
 const slim = (d: Blacklist): Blacklist => {
-  const keysOnly = (o: Record<string, Entry>) =>
-    Object.fromEntries(Object.keys(o).map((k) => [k, {} as Entry]));
+  const keysOnly = (o: Record<string, BlacklistEntry>) =>
+    Object.fromEntries(Object.keys(o).map((k) => [k, {} as BlacklistEntry]));
   return {
     version: d.version,
     updated_at: d.updated_at,
@@ -180,10 +159,10 @@ const slim = (d: Blacklist): Blacklist => {
  */
 const loadCachedList = (): boolean => {
   try {
-    const raw = localStorage.getItem(CACHE_KEY);
+    const raw = localStorage.getItem(BLACKLIST_CACHE_KEY);
     if (raw) {
       const parsed = JSON.parse(raw) as { data?: unknown; ts?: number };
-      if (isValid(parsed.data)) {
+      if (isValidBlacklist(parsed.data)) {
         list = parsed.data;
         return !!parsed.ts && Date.now() - parsed.ts < CACHE_TTL_MS;
       }
@@ -200,7 +179,7 @@ const downloadList = async (): Promise<boolean> => {
     const res = await fetch(BLACKLIST_URL, { cache: 'no-cache' });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data: unknown = await res.json();
-    if (!isValid(data)) {
+    if (!isValidBlacklist(data)) {
       console.warn(
         '[skip-ai-slop] invalid or unsupported blacklist, keeping old list',
       );
@@ -210,7 +189,7 @@ const downloadList = async (): Promise<boolean> => {
     list = slim(data);
     try {
       localStorage.setItem(
-        CACHE_KEY,
+        BLACKLIST_CACHE_KEY,
         JSON.stringify({ data: list, ts: Date.now() }),
       );
     } catch {
@@ -249,34 +228,38 @@ const emitStatus = (text: string, busy = false) =>
 
 const listSummary = () =>
   list
-    ? `Loaded: ${Object.keys(list.channels).length} channels, ${Object.keys(list.tracks).length} tracks (list dated ${list.updated_at}).`
-    : 'No list loaded right now.';
+    ? t('plugins.skip-ai-slop.status.summary', {
+        channels: Object.keys(list.channels).length,
+        tracks: Object.keys(list.tracks).length,
+        date: list.updated_at,
+      })
+    : t('plugins.skip-ai-slop.status.none');
 
 const onInfoRequest = () => emitStatus(listSummary());
 
 const onDownloadRequest = async () => {
-  emitStatus('Downloading…', true);
+  emitStatus(t('plugins.skip-ai-slop.status.downloading'), true);
   const ok = await downloadList();
   if (ok) onListChanged();
   emitStatus(
     ok
-      ? `Downloaded. ${listSummary()}`
-      : 'Download failed, the old list was kept (details in the console).',
+      ? t('plugins.skip-ai-slop.status.downloaded', {
+          summary: listSummary(),
+        })
+      : t('plugins.skip-ai-slop.status.download-failed'),
   );
 };
 
 const onClearRequest = () => {
   try {
-    localStorage.removeItem(CACHE_KEY);
+    localStorage.removeItem(BLACKLIST_CACHE_KEY);
   } catch {
     /* ignore */
   }
   clearBlacklistNames();
   list = null;
   onListChanged(); // re-judge everything without the community list
-  emitStatus(
-    'Cache cleared. The community list is off until you press "Download list now" (or restart the app).',
-  );
+  emitStatus(t('plugins.skip-ai-slop.status.cache-cleared'));
 };
 
 const listenForListTools = () => {
@@ -609,9 +592,10 @@ const filterAutomixPayload = (payload: unknown) => {
 };
 
 const hookStore = () => {
-  if (hookedStore) return;
   const target = document.querySelector<QueueEl>('#queue')?.queue?.store?.store;
   if (!target || typeof target.dispatch !== 'function') return;
+  if (hookedStore === target) return;
+  unhookStore();
   originalDispatch = target.dispatch;
   hookedStore = target;
   target.dispatch = function (this: unknown, event) {
@@ -1250,69 +1234,68 @@ const detach = () => {
 };
 
 export default createPlugin({
-  name: () => 'Skip AI Slop',
+  name: () => t('plugins.skip-ai-slop.name'),
+  description: () => t('plugins.skip-ai-slop.description'),
   restartNeeded: false,
   config: defaultConfig,
   settings: [
     {
       type: 'switch',
       key: 'hideInPages',
-      label: () => 'Hide in pages',
+      label: () => t('plugins.skip-ai-slop.settings.hide-in-pages.label'),
       description: () =>
-        'Hides AI slop tracks in search, home, explore, library and playlists',
+        t('plugins.skip-ai-slop.settings.hide-in-pages.description'),
     },
     {
       type: 'switch',
       key: 'reportFeedback',
-      label: () => 'Send "Not interested" to YouTube for home recommendations',
+      label: () => t('plugins.skip-ai-slop.settings.report-feedback.label'),
       description: () =>
-        'Sends permanent feedback to your YouTube account (slow and limited). Off by default',
+        t('plugins.skip-ai-slop.settings.report-feedback.description'),
     },
     {
       type: 'custom',
       key: 'keywords',
-      label: () => 'Blocked keywords',
+      label: () => t('plugins.skip-ai-slop.settings.keywords.label'),
       description: () =>
-        'Skips tracks whose title or channel name contains one of these words (whole words only)',
+        t('plugins.skip-ai-slop.settings.keywords.description'),
       component: 'skip-ai-slop.keywords',
     },
     {
       type: 'custom',
       key: 'userBlock',
-      label: () => 'Blocked channels',
-      description: () =>
-        'Channels you marked "Don\'t recommend", plus ones the plugin reported to YouTube',
+      label: () => t('plugins.skip-ai-slop.settings.blocked.label'),
+      description: () => t('plugins.skip-ai-slop.settings.blocked.description'),
       component: 'skip-ai-slop.blocked',
     },
     {
       type: 'custom',
       key: 'recent',
-      label: () => 'Recently filtered',
-      description: () =>
-        'Channels caught by a keyword or the community list. Press Allow if one is a false match',
+      label: () => t('plugins.skip-ai-slop.settings.recent.label'),
+      description: () => t('plugins.skip-ai-slop.settings.recent.description'),
       component: 'skip-ai-slop.recent',
     },
     {
       type: 'custom',
       key: 'userAllow',
-      label: () => 'Allowed channels',
-      description: () => 'Never filtered, no matter what',
+      label: () => t('plugins.skip-ai-slop.settings.allowed.label'),
+      description: () => t('plugins.skip-ai-slop.settings.allowed.description'),
       component: 'skip-ai-slop.allowed',
     },
     {
       type: 'custom',
       key: 'listTools',
-      label: () => 'Community list',
+      label: () => t('plugins.skip-ai-slop.settings.list-tools.label'),
       description: () =>
-        'Download the list from GitHub again, or clear its saved copy',
+        t('plugins.skip-ai-slop.settings.list-tools.description'),
       component: 'skip-ai-slop.tools',
     },
     {
       type: 'custom',
       key: 'searchBlocked',
-      label: () => 'Search the community list',
+      label: () => t('plugins.skip-ai-slop.settings.search-blocked.label'),
       description: () =>
-        'Find a channel or track on the community list by name or ID, and allow it',
+        t('plugins.skip-ai-slop.settings.search-blocked.description'),
       component: 'skip-ai-slop.search',
     },
   ],

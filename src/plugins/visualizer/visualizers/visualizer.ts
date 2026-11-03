@@ -12,4 +12,7 @@ export abstract class Visualizer {
 
   abstract resize(width: number, height: number): void;
   abstract destroy(): void;
+
+  pause(): void {}
+  resume(): void {}
 }

@@ -1,5 +1,6 @@
 import { ThemeSongVisualizer } from './theme-song-base';
 import {
+  clamp01,
   getAccentHsl,
   getThemeSongPalette,
   hslToCss,
@@ -11,23 +12,6 @@ import type { VisualizerPluginConfig } from '../index';
 const DESIGN_WIDTH = 2400;
 const DESIGN_HEIGHT = 520;
 const BARS_HEIGHT_RATIO = 0.4;
-const HSL_PATTERN =
-  /^hsla?\(\s*(-?[\d.]+)\s*(?:deg)?[\s,]+(-?[\d.]+)%[\s,]+(-?[\d.]+)%(?:\s*\/\s*[-\d.]+%?)?\s*\)$/i;
-
-function parseHslCss(color: string, fallback: Hsl): Hsl {
-  const match = HSL_PATTERN.exec(color);
-  if (!match) return fallback;
-
-  return {
-    h: Number(match[1] ?? 0),
-    s: Number(match[2] ?? 0) / 100,
-    l: Number(match[3] ?? 0) / 100,
-  };
-}
-
-function clamp01(value: number): number {
-  return Math.min(1, Math.max(0, value));
-}
 
 export class BarsVisualizer extends ThemeSongVisualizer {
   private readonly config: VisualizerPluginConfig;
@@ -46,9 +30,7 @@ export class BarsVisualizer extends ThemeSongVisualizer {
 
     this.config = config;
     this.accent = getAccentHsl();
-    this.palette = getThemeSongPalette().map((color) =>
-      parseHslCss(color, this.accent),
-    );
+    this.palette = getThemeSongPalette();
   }
 
   private dancingSwatch(amplitude: number): Hsl {
