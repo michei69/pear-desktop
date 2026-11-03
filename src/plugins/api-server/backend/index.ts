@@ -20,8 +20,8 @@ import type { OpenAPIHono } from '@hono/zod-openapi';
 
 /**
  * Renderer listeners the API server needs so the player state it reports stays
- * current. Requested again on every `player-api-loaded`, since the renderer
- * reloads independently of this plugin.
+ * current. Requested on every `player-api-loaded`, and once when the backend
+ * starts, since a live enable happens after that signal has already fired.
  */
 const PLAYER_STATE_EVENTS =
   SongInfoEventFlag.Seeked |
@@ -62,11 +62,13 @@ export const backend = createBackend<BackendType, APIServerConfig>({
     this.app = app;
     this.stopWebsocket = stopWebsocket;
 
+    const requestPlayerState = () => {
+      ctx.ipc.send(SONG_INFO_SETUP_CHANNEL, PLAYER_STATE_EVENTS);
+    };
+
     const unsubscribePlayerApiLoaded = subscribeIpc(
       'peard:player-api-loaded',
-      () => {
-        ctx.ipc.send(SONG_INFO_SETUP_CHANNEL, PLAYER_STATE_EVENTS);
-      },
+      requestPlayerState,
     );
 
     // Notify WebSocket clients playback stopped before the app goes away.
@@ -78,7 +80,10 @@ export const backend = createBackend<BackendType, APIServerConfig>({
       electronApp.removeListener('before-quit', onBeforeQuit);
     };
 
-    this.run(await ctx.getConfig());
+    const config = await ctx.getConfig();
+    this.run(config);
+    this.oldConfig = config;
+    requestPlayerState();
   },
 
   async stop() {

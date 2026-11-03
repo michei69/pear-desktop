@@ -1,9 +1,13 @@
+import { randomUUID } from 'node:crypto';
+
 import { type BrowserWindow, ipcMain } from 'electron';
 
 import { LikeType } from '@/types/datahost-get-state';
 
 // see protocol-handler.ts
 type ArgsType<T> = T | string[] | undefined;
+
+export type SearchResults = Record<string, unknown>;
 
 const parseNumberFromArgsType = (args: ArgsType<number>) => {
   if (typeof args === 'number') {
@@ -139,18 +143,36 @@ export const getSongControls = (win: BrowserWindow) => {
     },
     clearQueue: () => win.webContents.send('peard:clear-queue'),
 
-    search: (query: string, params?: string, continuation?: string) =>
-      new Promise<string>((resolve, reject) => {
+    search: (
+      query: string,
+      params?: string,
+      continuation?: string,
+    ): Promise<SearchResults> =>
+      new Promise<SearchResults>((resolve, reject) => {
+        const requestId = randomUUID();
+        const onResult = (_: unknown, id: string, result: SearchResults) => {
+          if (id !== requestId) return;
+
+          cleanup();
+          resolve(result);
+        };
+        const cleanup = () => {
+          clearTimeout(timeout);
+          ipcMain.removeListener('peard:search-results', onResult);
+        };
         const timeout = setTimeout(() => {
-          ipcMain.removeAllListeners('peard:search-results');
+          cleanup();
           reject(new Error('Search request timed out after 30s'));
         }, 30_000);
 
-        ipcMain.once('peard:search-results', (_, result) => {
-          clearTimeout(timeout);
-          resolve(result as string);
-        });
-        win.webContents.send('peard:search', query, params, continuation);
+        ipcMain.on('peard:search-results', onResult);
+        win.webContents.send(
+          'peard:search',
+          requestId,
+          query,
+          params,
+          continuation,
+        );
       }),
 
     loadVideo: (videoId: ArgsType<string>) => {

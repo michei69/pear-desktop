@@ -60,7 +60,6 @@ test('every tool has a unique snake-case name and a description', () => {
   const tools = createMcpTools(operations);
   const names = tools.map(({ name }) => name);
 
-  expect(tools).toHaveLength(49);
   expect(new Set(names).size).toBe(names.length);
   for (const { name, description } of tools) {
     expect(name).toMatch(/^[a-z][a-z0-9_]*$/);

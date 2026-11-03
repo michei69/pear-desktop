@@ -18,6 +18,18 @@ import {
   type SearchResult,
 } from '../renderer/v2';
 
+const GLOBAL_KEYS = [
+  'document',
+  'window',
+  'lyricsStub',
+  'lyricsTranslateStub',
+] as const;
+
+const globals = globalThis as unknown as Record<string, unknown>;
+const previousGlobals = Object.fromEntries(
+  GLOBAL_KEYS.map((key) => [key, globals[key]]),
+) as Record<(typeof GLOBAL_KEYS)[number], unknown>;
+
 /**
  * The seam between the API server's backend and its renderer half: the backend
  * sends an action plus arguments, the renderer's handler performs a player
@@ -1548,7 +1560,7 @@ export const translateForLanguage = (language) => {
 };
 `;
 
-registerHooks({
+const moduleHooks = registerHooks({
   resolve(specifier, context, nextResolve) {
     if (!serveStoreStub) return nextResolve(specifier, context);
 
@@ -1574,6 +1586,16 @@ registerHooks({
 
 test.afterAll(() => {
   serveStoreStub = false;
+  moduleHooks.deregister();
+
+  for (const key of GLOBAL_KEYS) {
+    const previous = previousGlobals[key];
+    if (previous === undefined) {
+      delete globals[key];
+    } else {
+      globals[key] = previous;
+    }
+  }
 });
 
 /** Fires `getLyrics` with the plugin in the state `overrides` describes. */

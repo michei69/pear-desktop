@@ -10,7 +10,6 @@ export {
   SetQueueIndexSchema,
   SetVolumeSchema,
   ShuffleStateSchema,
-  SongInfoBaseSchema,
 } from './schemas-common';
 
 export const SongInfoSchema = SongInfoBaseSchema;
@@ -50,7 +49,7 @@ export const MoveSongInQueueSchema = z.object({
 });
 
 export const LoadVideoSchema = z.object({
-  videoId: z.string().optional().describe('Video ID'),
+  videoId: z.string().describe('Video ID'),
 });
 
 export const LoadPlaylistSchema = z.object({

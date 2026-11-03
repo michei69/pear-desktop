@@ -11,6 +11,8 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { WebStandardStreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js';
 
+import { API_SERVER_VERSION } from './api-version';
+
 import type { APIServerConfig } from '../config';
 import type { McpTool } from './mcp-tools';
 import type { BackendContext } from '@/types/contexts';
@@ -23,7 +25,7 @@ import type { OpenAPIHono } from '@hono/zod-openapi';
 export const MCP_PATH = '/mcp';
 
 /** Shown by MCP clients in their server list. */
-const SERVER_INFO = { name: 'pear-desktop', version: '2.1.0' };
+const SERVER_INFO = { name: 'pear-desktop', version: API_SERVER_VERSION };
 
 const createServer = (tools: McpTool[]) => {
   const server = new McpServer(SERVER_INFO);

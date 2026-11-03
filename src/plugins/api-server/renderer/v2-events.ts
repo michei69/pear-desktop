@@ -3,6 +3,7 @@ import { createEffect, createRoot, runWithOwner, type Owner } from 'solid-js';
 import { providerNames } from '@/plugins/synced-lyrics/providers';
 
 import { getLyricsReply, type LyricsReply } from './lyrics-reply';
+import { toPlain } from './to-plain';
 
 import { V2RendererEvents, type TranslationUpdatedPayload } from '../channels';
 
@@ -57,7 +58,7 @@ const watchLatest = <T>(
     const next = signature(payload);
     if (next === last) return;
     last = next;
-    context.ipc.send(channel, payload);
+    context.ipc.send(channel, toPlain(payload));
   };
   const schedule = () => {
     clearTimeout(timer);

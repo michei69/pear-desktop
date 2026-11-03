@@ -8,13 +8,10 @@ import {
 import type { LineLyrics, LyricResult } from '@/plugins/synced-lyrics/types';
 
 /** One line of synced lyrics, minus the UI-only `status` field. */
-export type LyricsLine = Pick<
-  LineLyrics,
-  'time' | 'timeInMs' | 'duration' | 'text'
->;
+type LyricsLine = Pick<LineLyrics, 'time' | 'timeInMs' | 'duration' | 'text'>;
 
 /** One provider's lyrics for the current song. */
-export type LyricsProviderResult = {
+type LyricsProviderResult = {
   provider: ProviderName;
   state: ProviderState['state'];
   title: string;

@@ -9,6 +9,7 @@ import {
   body,
   JSON_CONTENT,
   noContent,
+  PLAYER_UNAVAILABLE,
   readable,
   SUCCESS,
 } from './route-helpers';
@@ -35,6 +36,7 @@ import {
   VolumeStateSchema,
   type ResponseSongInfo,
 } from './schemas';
+import { ErrorSchema } from './schemas-common';
 import { v1Tag } from './tags';
 import { createVersion } from './version';
 import { registerWebsocket } from './websocket';
@@ -134,6 +136,7 @@ export const routes = {
     summary: 'get shuffle state',
     description: 'Get the current shuffle state',
     schema: ShuffleStateSchema,
+    rendererBacked: true,
     tags: [v1Tag('Shuffle & repeat')],
   }),
   shuffle: action('post', '/shuffle', 'shuffle', 'Shuffle the queue', [
@@ -184,6 +187,7 @@ export const routes = {
     summary: 'get fullscreen state',
     description: 'Get the current fullscreen state',
     schema: FullscreenStateSchema,
+    rendererBacked: true,
     tags: [v1Tag('Volume & fullscreen')],
   }),
   toggleMute: action(
@@ -220,6 +224,7 @@ export const routes = {
     description: 'Get the current queue info',
     schema: QueueSchema,
     emptyDescription: 'No queue info',
+    rendererBacked: true,
     tags: [v1Tag('Queue')],
   }),
   legacyQueue: readable({
@@ -228,6 +233,7 @@ export const routes = {
     description: 'Get the current queue info',
     schema: QueueSchema,
     emptyDescription: 'No queue info',
+    rendererBacked: true,
     deprecated: true,
     tags: [v1Tag('Queue')],
   }),
@@ -238,6 +244,7 @@ export const routes = {
       'Get information about the next song in the queue (relative index +1)',
     schema: NextSongSchema,
     emptyDescription: 'No next song in queue',
+    rendererBacked: true,
     tags: [v1Tag('Queue')],
   }),
   addToQueue: actionWithBody(
@@ -294,6 +301,10 @@ export const routes = {
         description: 'Success',
         content: { [JSON_CONTENT]: { schema: SearchResultSchema } },
       },
+      502: {
+        description: PLAYER_UNAVAILABLE,
+        content: { [JSON_CONTENT]: { schema: ErrorSchema } },
+      },
     },
   }),
   loadVideo: createRoute({
@@ -322,6 +333,9 @@ const registerRoutes = (
   playerState: PlayerState,
 ) => {
   const controller = getSongControls(window);
+
+  const playerUnavailable = (ctx: Context) =>
+    ctx.json({ error: PLAYER_UNAVAILABLE }, 502);
 
   // Playback
   app.openapi(routes.previous, (ctx) => {
@@ -372,12 +386,16 @@ const registerRoutes = (
 
   // Shuffle / repeat
   app.openapi(routes.shuffleState, async (ctx) => {
-    const isShuffled = await waitForIpcResponse<boolean | undefined>(
-      'peard:get-shuffle-response',
-      () => controller.requestShuffleInformation(),
-    );
+    try {
+      const isShuffled = await waitForIpcResponse<boolean | undefined>(
+        'peard:get-shuffle-response',
+        () => controller.requestShuffleInformation(),
+      );
 
-    return ctx.json({ state: !!isShuffled }, 200);
+      return ctx.json({ state: !!isShuffled }, 200);
+    } catch {
+      return playerUnavailable(ctx);
+    }
   });
   app.openapi(routes.shuffle, (ctx) => {
     controller.shuffle();
@@ -407,12 +425,16 @@ const registerRoutes = (
     return noContent(ctx);
   });
   app.openapi(routes.fullscreenState, async (ctx) => {
-    const fullscreen = await waitForIpcResponse<boolean | undefined>(
-      'peard:set-fullscreen',
-      () => controller.requestFullscreenInformation(),
-    );
+    try {
+      const fullscreen = await waitForIpcResponse<boolean | undefined>(
+        'peard:set-fullscreen',
+        () => controller.requestFullscreenInformation(),
+      );
 
-    return ctx.json({ state: !!fullscreen }, 200);
+      return ctx.json({ state: !!fullscreen }, 200);
+    } catch {
+      return playerUnavailable(ctx);
+    }
   });
   app.openapi(routes.toggleMute, (ctx) => {
     controller.muteUnmute();
@@ -434,16 +456,20 @@ const registerRoutes = (
 
   // Queue
   const queueInfo = async (ctx: Context) => {
-    const info = await waitForIpcResponse<QueueResponse>(
-      'peard:get-queue-response',
-      () => controller.requestQueueInformation(),
-    );
+    try {
+      const info = await waitForIpcResponse<QueueResponse>(
+        'peard:get-queue-response',
+        () => controller.requestQueueInformation(),
+      );
 
-    if (!info) {
-      return noContent(ctx);
+      if (!info) {
+        return noContent(ctx);
+      }
+
+      return ctx.json(info, 200);
+    } catch {
+      return playerUnavailable(ctx);
     }
-
-    return ctx.json(info, 200);
   };
   app.openapi(routes.queue, queueInfo);
   app.openapi(routes.legacyQueue, queueInfo);
@@ -451,16 +477,20 @@ const registerRoutes = (
   app.openapi(routes.nextSong, async (ctx) => {
     // The renderer projects the entry to the five fields the route answers, so
     // the whole queue never crosses IPC.
-    const next = await callRenderer<NextQueueItemReply | null>(
-      window,
-      ApiActions.getNextQueueItem,
-    );
+    try {
+      const next = await callRenderer<NextQueueItemReply | null>(
+        window,
+        ApiActions.getNextQueueItem,
+      );
 
-    if (!next) {
-      return noContent(ctx);
+      if (!next) {
+        return noContent(ctx);
+      }
+
+      return ctx.json(next, 200);
+    } catch {
+      return playerUnavailable(ctx);
     }
-
-    return ctx.json(next, 200);
   });
 
   app.openapi(routes.addToQueue, (ctx) => {
@@ -491,9 +521,13 @@ const registerRoutes = (
   // Search / navigation
   app.openapi(routes.search, async (ctx) => {
     const { query, params, continuation } = ctx.req.valid('json');
-    const response = await controller.search(query, params, continuation);
+    try {
+      const response = await controller.search(query, params, continuation);
 
-    return ctx.json(response as unknown as Record<string, unknown>, 200);
+      return ctx.json(response, 200);
+    } catch {
+      return playerUnavailable(ctx);
+    }
   });
   app.openapi(routes.loadVideo, (ctx) => {
     controller.loadVideo(ctx.req.valid('json').videoId);

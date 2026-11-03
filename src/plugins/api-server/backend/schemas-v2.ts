@@ -330,7 +330,7 @@ export const SearchResponseSchema = z.union([
 export type ResponseSearch = z.infer<typeof SearchResponseSchema>;
 
 /** `GET|POST|QUERY /browse` returns curated page info. */
-export const BrowseResultSchema = z.object({
+const BrowseResultSchema = z.object({
   browseId: z.string().nullable().describe('The page that was browsed'),
   title: z.string().optional(),
   subtitle: z.string().optional(),
@@ -362,7 +362,7 @@ const LyricsLineSchema = z.object({
 });
 
 /** One provider's lyrics for the current song. */
-export const LyricsProviderSchema = z.object({
+const LyricsProviderSchema = z.object({
   provider: z.string().describe('The lyrics provider that found these'),
   state: z
     .enum(['fetching', 'done', 'error'])

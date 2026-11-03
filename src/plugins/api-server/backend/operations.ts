@@ -52,14 +52,14 @@ export type Outcome<T = undefined, S extends FailureStatus = FailureStatus> =
   | { ok: true; value: T }
   | { ok: false; status: S; error: string };
 
-export type SearchArgs = {
+type SearchArgs = {
   query: string;
   params?: string;
   continuation?: string;
   raw?: boolean;
 };
 
-export type BrowseArgs = {
+type BrowseArgs = {
   browseId?: string;
   continuation?: string;
   raw?: boolean;
@@ -205,14 +205,21 @@ export const createOperations = (
 
       return ok(result.value);
     },
-    search: (args: SearchArgs) =>
-      call<ResponseSearch>(
+    search: async (args: SearchArgs): Promise<Outcome<ResponseSearch, 502>> => {
+      const result = await call<ResponseSearch | null>(
         ApiActions.search,
         args.query,
         args.params,
         args.continuation,
         args.raw ?? false,
-      ),
+      );
+
+      if (!result.ok || !result.value) {
+        return result.ok ? fail(502, 'The search request failed.') : result;
+      }
+
+      return ok(result.value);
+    },
     browse: async (
       args: BrowseArgs,
     ): Promise<Outcome<ResponseBrowseRaw, 502>> => {

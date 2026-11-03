@@ -20,6 +20,7 @@ import { clamp } from '@/utils/math';
 import { parseByline, queueRenderer } from '@/utils/queue';
 
 import { getLyricsReply } from './lyrics-reply';
+import { toPlain } from './to-plain';
 
 import {
   ApiActions,
@@ -515,7 +516,7 @@ export const registerV2 = (
 
   /** Answers a getter on its matching reply channel. */
   const reply = (action: ApiAction, payload: unknown) => {
-    context.ipc.send(apiReply(action), payload);
+    context.ipc.send(apiReply(action), toPlain(payload));
   };
 
   const apiNextVideo = () => api.nextVideo();
@@ -526,11 +527,35 @@ export const registerV2 = (
     if (api.getPlayerState() === 2) api.playVideo();
     else api.pauseVideo();
   };
+  const applyMediaPlaybackRate = (value: number) => {
+    const video = document.querySelector<HTMLVideoElement>('video');
+    if (!video) return;
+
+    video.preservesPitch = true;
+    video.playbackRate = value;
+  };
   const apiSetPlaybackSpeed = (value = 1) => {
-    api.setPlaybackRate(value);
+    const rateApi = api as MusicPlayer & {
+      setPlaybackRate?: (rate: number) => void;
+    };
+    if (typeof rateApi.setPlaybackRate === 'function') {
+      try {
+        rateApi.setPlaybackRate(value);
+      } catch {
+        // HACK: setPlaybackRate is only attached once the player's speed UI module has loaded.
+      }
+    }
+
+    const mediaRate =
+      document.querySelector<HTMLVideoElement>('video')?.playbackRate;
+    if (mediaRate !== value) {
+      applyMediaPlaybackRate(value);
+    }
   };
   const apiGetPlaybackPosition = (percentage = false) => {
-    const { current, duration } = api.getProgressState();
+    const progress = api.getProgressState();
+    const current = progress?.current ?? api.getCurrentTime();
+    const duration = progress?.duration ?? api.getDuration();
     // Without a duration (live, or before metadata loads) the fraction is 0,
     // not Infinity — which JSON.stringify would turn into null.
     reply(
@@ -647,7 +672,10 @@ export const registerV2 = (
     const items = getQueue()?.items;
     const currentIndex =
       items?.findIndex((item) => queueRenderer(item)?.selected === true) ?? -1;
-    const renderer = items && queueRenderer(items[currentIndex + 1]);
+    const renderer =
+      items && currentIndex >= 0
+        ? queueRenderer(items[currentIndex + 1])
+        : undefined;
 
     reply(
       ApiActions.getNextQueueItem,
@@ -800,7 +828,7 @@ export const registerV2 = (
           Array.isArray(result.queueDatas)
         ) {
           const queueItems = queue.items;
-          const queueItemsLength = queueItems.length ?? 0;
+          const queueItemsLength = queueItems.length;
           app.dispatch({
             type: 'ADD_ITEMS',
             payload: {
@@ -822,7 +850,10 @@ export const registerV2 = (
             },
           });
         }
-      });
+      })
+      .catch((error: unknown) =>
+        console.error('[api-server] addToQueue failed:', error),
+      );
   };
   /**
    * A queue position from either an index or a video id. `-1` means the id is
@@ -901,6 +932,10 @@ export const registerV2 = (
           ApiActions.search,
           raw ? result : { query, results: searchResults(result) },
         );
+      })
+      .catch((error: unknown) => {
+        console.error('[api-server] search failed:', error);
+        reply(ApiActions.search, null);
       });
   };
   const apiGetCurrentVideo = () => {

@@ -54,7 +54,7 @@ export const ApiActions = { ...queryActions, ...commandActions } as const;
 
 export type ApiAction = (typeof ApiActions)[keyof typeof ApiActions];
 
-export const API_IPC_PREFIX = 'peard-api:';
+const API_IPC_PREFIX = 'peard-api:';
 
 export const apiRequest = (action: ApiAction) => `${API_IPC_PREFIX}${action}`;
 

@@ -4,6 +4,7 @@ import { cors } from 'hono/cors';
 
 import { APPLICATION_NAME } from '@/i18n';
 
+import { API_SERVER_VERSION } from './api-version';
 import { registerAuthRoute, requireAuth } from './auth';
 import { MCP_PATH, registerMcp } from './mcp';
 import { createMcpTools } from './mcp-tools';
@@ -64,7 +65,7 @@ export const buildApp = (
     // loads 5.3x, which understands it.
     openapi: '3.2.0',
     info: {
-      version: '2.1.0',
+      version: API_SERVER_VERSION,
       title: `${APPLICATION_NAME} API Server`,
       description:
         'Note: You need to get an access token using the `/auth/{id}` endpoint first to call any API endpoints under `/api`.',
