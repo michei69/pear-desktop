@@ -596,8 +596,8 @@
           "label": "Status mətni",
           "submenu": {
             "application": "{{applicationName}} dinlənilir",
-            "artist": "{artist} dinlənilir",
-            "title": "{song title} dinlənilir"
+            "artist": "{{artist}} dinlənilir",
+            "title": "{{songTitle}} dinlənilir"
           }
         }
       },

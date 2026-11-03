@@ -600,8 +600,8 @@
           "label": "സ്റ്റാറ്റസ് ടെക്സ്റ്റ്",
           "submenu": {
             "application": "{{applicationName}} കേൾക്കുന്നു",
-            "artist": "{artist} കേൾക്കുന്നു",
-            "title": "{song title} കേൾക്കുന്നു"
+            "artist": "{{artist}} കേൾക്കുന്നു",
+            "title": "{{songTitle}} കേൾക്കുന്നു"
           }
         }
       },

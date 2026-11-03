@@ -596,8 +596,8 @@
           "label": "狀態樣式",
           "submenu": {
             "application": "正在聆聽 {{applicationName}}",
-            "artist": "正在聆聽 {artist} 的歌曲",
-            "title": "正在聆聽 {song title}"
+            "artist": "正在聆聽 {{artist}} 的歌曲",
+            "title": "正在聆聽 {{songTitle}}"
           }
         }
       },

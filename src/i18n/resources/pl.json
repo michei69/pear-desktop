@@ -592,8 +592,8 @@
           "label": "Opis statusu",
           "submenu": {
             "application": "Słucha {{applicationName}}",
-            "artist": "Słucha {artist}",
-            "title": "Słucha {song title}"
+            "artist": "Słucha {{artist}}",
+            "title": "Słucha {{songTitle}}"
           }
         }
       },

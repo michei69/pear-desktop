@@ -600,8 +600,8 @@
           "label": "තත්ත්ව පෙළ",
           "submenu": {
             "application": "{{applicationName}} සවන් දෙමින්",
-            "artist": "{artist} සවන් දෙමින්",
-            "title": "{song title} සවන් දෙමින්"
+            "artist": "{{artist}} සවන් දෙමින්",
+            "title": "{{songTitle}} සවන් දෙමින්"
           }
         }
       },

@@ -592,8 +592,8 @@
           "label": "Statustext",
           "submenu": {
             "application": "Lyssnar på {{applicationName}}",
-            "artist": "Lyssnar på {artist}",
-            "title": "Lyssnar på {song title}"
+            "artist": "Lyssnar på {{artist}}",
+            "title": "Lyssnar på {{songTitle}}"
           }
         }
       },

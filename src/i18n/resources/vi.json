@@ -596,8 +596,8 @@
           "label": "Văn bản trạng thái",
           "submenu": {
             "application": "Đang nghe {{applicationName}}",
-            "artist": "Đang nghe nhạc của {artist}",
-            "title": "Đang nghe nhạc {song title}"
+            "artist": "Đang nghe nhạc của {{artist}}",
+            "title": "Đang nghe nhạc {{songTitle}}"
           }
         }
       },

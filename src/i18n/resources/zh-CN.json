@@ -592,8 +592,8 @@
           "label": "状态文本",
           "submenu": {
             "application": "在听 {{applicationName}}",
-            "artist": "在听 {artist}",
-            "title": "在听 {song title}"
+            "artist": "在听 {{artist}}",
+            "title": "在听 {{songTitle}}"
           }
         }
       },

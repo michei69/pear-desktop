@@ -599,8 +599,8 @@
           "label": "Teksti i statusit",
           "submenu": {
             "application": "Duke dëgjuar {{applicationName}}",
-            "artist": "Duke dëgjuar {artist}",
-            "title": "Duke dëgjuar {song title}"
+            "artist": "Duke dëgjuar {{artist}}",
+            "title": "Duke dëgjuar {{songTitle}}"
           }
         }
       },

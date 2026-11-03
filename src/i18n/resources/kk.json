@@ -588,8 +588,8 @@
           "label": "Мәртебе мәтіні",
           "submenu": {
             "application": "{{applicationName}} тыңдап жатыр",
-            "artist": "{artist} тыңдап жатыр",
-            "title": "{song title} тыңдап жатыр"
+            "artist": "{{artist}} тыңдап жатыр",
+            "title": "{{songTitle}} тыңдап жатыр"
           }
         }
       },

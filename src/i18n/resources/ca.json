@@ -592,8 +592,8 @@
           "label": "Text d'estat",
           "submenu": {
             "application": "Escoltant {{applicationName}}",
-            "artist": "Escoltant {artist}",
-            "title": "Escoltant {song title}"
+            "artist": "Escoltant {{artist}}",
+            "title": "Escoltant {{songTitle}}"
           }
         }
       },

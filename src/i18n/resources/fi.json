@@ -596,8 +596,8 @@
           "label": "Tilan teksti",
           "submenu": {
             "application": "Kuuntelee: {{applicationName}}",
-            "artist": "Kuuntelee: {artist}",
-            "title": "Kuuntelee: {song title}"
+            "artist": "Kuuntelee: {{artist}}",
+            "title": "Kuuntelee: {{songTitle}}"
           }
         }
       },

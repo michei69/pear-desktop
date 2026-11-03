@@ -592,8 +592,8 @@
           "label": "Tekst statusa",
           "submenu": {
             "application": "Slušanje {{applicationName}}",
-            "artist": "Slušanje {artist}",
-            "title": "Slušanje {song title}"
+            "artist": "Slušanje {{artist}}",
+            "title": "Slušanje {{songTitle}}"
           }
         }
       },

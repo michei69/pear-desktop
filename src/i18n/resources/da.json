@@ -600,8 +600,8 @@
           "label": "Statustekst",
           "submenu": {
             "application": "Lytter til {{applicationName}}",
-            "artist": "Lytter til {artist}",
-            "title": "Lytter til {song title}"
+            "artist": "Lytter til {{artist}}",
+            "title": "Lytter til {{songTitle}}"
           }
         }
       },

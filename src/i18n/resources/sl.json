@@ -592,8 +592,8 @@
           "label": "Besedilo stanja",
           "submenu": {
             "application": "Poslušanje {{applicationName}}",
-            "artist": "Poslušanje {artist}",
-            "title": "Poslušanje {song title}"
+            "artist": "Poslušanje {{artist}}",
+            "title": "Poslušanje {{songTitle}}"
           }
         }
       },

@@ -605,7 +605,7 @@
           "submenu": {
             "application": "{{applicationName}}-ის მოსმენა",
             "artist": "{{artist}}-ის მოსმენა",
-            "title": "{{song title}}-ის მოსმენა"
+            "title": "{{songTitle}}-ის მოსმენა"
           }
         }
       },

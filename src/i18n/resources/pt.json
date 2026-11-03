@@ -592,8 +592,8 @@
           "label": "Texto de estado",
           "submenu": {
             "application": "A reproduzir {{applicationName}}",
-            "artist": "A ouvir {artist}",
-            "title": "A ouvir {song title}"
+            "artist": "A ouvir {{artist}}",
+            "title": "A ouvir {{songTitle}}"
           }
         }
       },

@@ -592,8 +592,8 @@
           "label": "Текст статуса",
           "submenu": {
             "application": "Слушает {{applicationName}}",
-            "artist": "Слушает {исполнитель}",
-            "title": "Слушает {название трека}"
+            "artist": "Слушает {{artist}}",
+            "title": "Слушает {{songTitle}}"
           }
         }
       },

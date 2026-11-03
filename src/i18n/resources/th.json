@@ -592,8 +592,8 @@
           "label": "ข้อความสถานะ",
           "submenu": {
             "application": "กำลังฟัง {{applicationName}}",
-            "artist": "กำลังฟัง {ชื่อนักร้อง}",
-            "title": "กำลังฟัง {ชื่อเพลง}"
+            "artist": "กำลังฟัง {{artist}}",
+            "title": "กำลังฟัง {{songTitle}}"
           }
         }
       },

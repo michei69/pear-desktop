@@ -592,8 +592,8 @@
           "label": "Text stare",
           "submenu": {
             "application": "Ascultând {{applicationName}}",
-            "artist": "Ascultând {artist}",
-            "title": "Ascultând {song title}"
+            "artist": "Ascultând {{artist}}",
+            "title": "Ascultând {{songTitle}}"
           }
         }
       },

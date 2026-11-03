@@ -592,8 +592,8 @@
           "label": "Κείμενο κατάστασης",
           "submenu": {
             "application": "Ακούει {{applicationName}}",
-            "artist": "Ακούει {artist}",
-            "title": "Ακούει {song title}"
+            "artist": "Ακούει {{artist}}",
+            "title": "Ακούει {{songTitle}}"
           }
         }
       },

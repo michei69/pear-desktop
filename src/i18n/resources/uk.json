@@ -592,8 +592,8 @@
           "label": "Статус",
           "submenu": {
             "application": "Відтворення з {{applicationName}}",
-            "artist": "Ви слухаєте {artist}",
-            "title": "Ви слухаєте {song title}"
+            "artist": "Ви слухаєте {{artist}}",
+            "title": "Ви слухаєте {{songTitle}}"
           }
         }
       },

@@ -603,8 +603,8 @@
           "label": "Egoera testua",
           "submenu": {
             "application": "{{applicationName}} entzuten",
-            "artist": "{artist} entzuten",
-            "title": "{song title} entzuten"
+            "artist": "{{artist}} entzuten",
+            "title": "{{songTitle}} entzuten"
           }
         }
       },

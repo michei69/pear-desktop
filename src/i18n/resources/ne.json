@@ -592,8 +592,8 @@
           "label": "स्थिति पाठ",
           "submenu": {
             "application": "{{applicationName}} सुन्दै",
-            "artist": "{artist} सुन्दै",
-            "title": "{song title} सुन्दै"
+            "artist": "{{artist}} सुन्दै",
+            "title": "{{songTitle}} सुन्दै"
           }
         }
       },

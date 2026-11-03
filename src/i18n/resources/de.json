@@ -592,8 +592,8 @@
           "label": "Status Text",
           "submenu": {
             "application": "Hört {{applicationName}}",
-            "artist": "Hört {artist} zu",
-            "title": "Du hörst {song title}"
+            "artist": "Hört {{artist}} zu",
+            "title": "Du hörst {{songTitle}}"
           }
         }
       },

@@ -596,8 +596,8 @@
           "label": "Būsenos tekstas",
           "submenu": {
             "application": "Klausosi {{applicationName}}",
-            "artist": "Klausosi {artist]",
-            "title": "Klausosi {song title}"
+            "artist": "Klausosi {{artist}}",
+            "title": "Klausosi {{songTitle}}"
           }
         }
       },

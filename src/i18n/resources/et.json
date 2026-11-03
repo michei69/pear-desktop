@@ -596,8 +596,8 @@
           "label": "Staatuse tekst",
           "submenu": {
             "application": "Kuulan rakendust {{applicationName}}",
-            "artist": "Kuulan artisti {artist}",
-            "title": "Kuulan lugu {song title}"
+            "artist": "Kuulan artisti {{artist}}",
+            "title": "Kuulan lugu {{songTitle}}"
           }
         }
       },

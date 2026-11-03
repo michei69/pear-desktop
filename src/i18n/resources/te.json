@@ -599,8 +599,8 @@
           "label": "స్థితి టెక్స్ట్",
           "submenu": {
             "application": "{{applicationName}} వింటున్నారు",
-            "artist": "{artist} వింటున్నారు",
-            "title": "{song title} వింటున్నారు"
+            "artist": "{{artist}} వింటున్నారు",
+            "title": "{{songTitle}} వింటున్నారు"
           }
         }
       },

@@ -596,8 +596,8 @@
           "label": "Texto de estado",
           "submenu": {
             "application": "Escuchando {{applicationName}}",
-            "artist": "Escuchando a {artist}",
-            "title": "Escuchando {song title}"
+            "artist": "Escuchando a {{artist}}",
+            "title": "Escuchando {{songTitle}}"
           }
         }
       },

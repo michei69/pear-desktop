@@ -603,8 +603,8 @@
           "label": "Текст на статус",
           "submenu": {
             "application": "Слушање на {{applicationName}}",
-            "artist": "Слушање на {artist}",
-            "title": "Слушање на {song title}"
+            "artist": "Слушање на {{artist}}",
+            "title": "Слушање на {{songTitle}}"
           }
         }
       },

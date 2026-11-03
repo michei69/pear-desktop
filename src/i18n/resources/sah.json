@@ -599,8 +599,8 @@
           "label": "Статус текста",
           "submenu": {
             "application": "{{applicationName}} истэр",
-            "artist": "{artist} истэр",
-            "title": "{song title} истэр"
+            "artist": "{{artist}} истэр",
+            "title": "{{songTitle}} истэр"
           }
         }
       },

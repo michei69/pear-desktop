@@ -592,8 +592,8 @@
           "label": "ຂໍ້ຄວາມສະຖານະ",
           "submenu": {
             "application": "ກຳລັງຟັງ {{applicationName}}",
-            "artist": "ກຳລັງຟັງ {artist}",
-            "title": "ກຳລັງຟັງ {song title}"
+            "artist": "ກຳລັງຟັງ {{artist}}",
+            "title": "ກຳລັງຟັງ {{songTitle}}"
           }
         }
       },

@@ -599,8 +599,8 @@
           "label": "Statusni tekst",
           "submenu": {
             "application": "Slušate {{applicationName}}",
-            "artist": "Slušate {muzičar}",
-            "title": "Slušate {naziv pesme}"
+            "artist": "Slušate {{artist}}",
+            "title": "Slušate {{songTitle}}"
           }
         }
       },

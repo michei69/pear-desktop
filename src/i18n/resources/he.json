@@ -592,8 +592,8 @@
           "label": "טקסט סטטוס",
           "submenu": {
             "application": "מאזין ל{{applicationName}}",
-            "artist": "מאזין ל{artist}",
-            "title": "מאזין ל{song title}"
+            "artist": "מאזין ל{{artist}}",
+            "title": "מאזין ל{{songTitle}}"
           }
         }
       },

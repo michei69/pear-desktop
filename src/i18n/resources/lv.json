@@ -596,8 +596,8 @@
           "label": "Statusa teksts",
           "submenu": {
             "application": "Klausās {{applicationName}}",
-            "artist": "Klausos {mākslinieku}",
-            "title": "Klausos {dziesmas nosaukums}"
+            "artist": "Klausos {{artist}}",
+            "title": "Klausos {{songTitle}}"
           }
         }
       },

@@ -578,8 +578,8 @@
           "label": "متن وضعىت",
           "submenu": {
             "application": "به پىر دسکتاپ گوش مىکند",
-            "artist": "به {artist} گوش مىکند",
-            "title": "به {song title} گوش مىکند"
+            "artist": "به {{artist}} گوش مىکند",
+            "title": "به {{songTitle}} گوش مىکند"
           }
         }
       },

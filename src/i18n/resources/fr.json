@@ -596,8 +596,8 @@
           "label": "Texte d'état",
           "submenu": {
             "application": "Écoute {{applicationName}}",
-            "artist": "Écoute {artiste}",
-            "title": "Écoute {titre de la chanson}"
+            "artist": "Écoute {{artist}}",
+            "title": "Écoute {{songTitle}}"
           }
         }
       },

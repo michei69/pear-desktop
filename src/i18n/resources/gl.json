@@ -600,8 +600,8 @@
           "label": "Texto de estado",
           "submenu": {
             "application": "Escoitando en {{applicationName}}",
-            "artist": "Escoitando a {artist}",
-            "title": "Escoitando {song title}"
+            "artist": "Escoitando a {{artist}}",
+            "title": "Escoitando {{songTitle}}"
           }
         }
       },

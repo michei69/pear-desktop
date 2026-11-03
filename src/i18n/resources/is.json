@@ -592,8 +592,8 @@
           "label": "Stöðutexti",
           "submenu": {
             "application": "Hlustar á {{applicationName}}",
-            "artist": "Hlustar á {artist}",
-            "title": "Hlustar á {song title}"
+            "artist": "Hlustar á {{artist}}",
+            "title": "Hlustar á {{songTitle}}"
           }
         }
       },

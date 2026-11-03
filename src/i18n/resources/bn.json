@@ -592,8 +592,8 @@
           "label": "স্ট্যাটাস টেক্সট",
           "submenu": {
             "application": "{{applicationName}} শুনছেন",
-            "artist": "{artist} শুনছেন",
-            "title": "{গানের শিরোনাম} শুনছেন"
+            "artist": "{{artist}} শুনছেন",
+            "title": "{{songTitle}} শুনছেন"
           }
         }
       },

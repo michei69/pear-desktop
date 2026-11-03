@@ -603,8 +603,8 @@
           "label": "Statusteks",
           "submenu": {
             "application": "Luister na {{applicationName}}",
-            "artist": "Luister na {artist}",
-            "title": "Luister na {liedjie titel}"
+            "artist": "Luister na {{artist}}",
+            "title": "Luister na {{songTitle}}"
           }
         }
       },

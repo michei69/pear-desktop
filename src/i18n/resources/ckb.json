@@ -588,8 +588,8 @@
           "label": "دەقی دۆخ",
           "submenu": {
             "application": "گوێگرتن لە {{applicationName}}",
-            "artist": "گوێگرتن لە {artist}",
-            "title": "گوێگرتن لە {song title}"
+            "artist": "گوێگرتن لە {{artist}}",
+            "title": "گوێگرتن لە {{songTitle}}"
           }
         }
       },

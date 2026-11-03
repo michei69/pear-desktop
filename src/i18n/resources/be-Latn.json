@@ -588,8 +588,8 @@
           "label": "Tekst statusu",
           "submenu": {
             "application": "Słuchaju {{applicationName}}",
-            "artist": "Słuchaju {artist}",
-            "title": "Słuchaju {song title}"
+            "artist": "Słuchaju {{artist}}",
+            "title": "Słuchaju {{songTitle}}"
           }
         }
       },

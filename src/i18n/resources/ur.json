@@ -600,8 +600,8 @@
           "label": "اسٹیٹس متن",
           "submenu": {
             "application": "{{applicationName}} سن رہے ہیں",
-            "artist": "{artist} سن رہے ہیں",
-            "title": "{song title} سن رہے ہیں"
+            "artist": "{{artist}} سن رہے ہیں",
+            "title": "{{songTitle}} سن رہے ہیں"
           }
         }
       },

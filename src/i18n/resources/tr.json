@@ -592,8 +592,8 @@
           "label": "Durum metni",
           "submenu": {
             "application": "{{applicationName}} Dinleniyor",
-            "artist": "{artist} Dinleniyor",
-            "title": "{song title} Dinleniyor"
+            "artist": "{{artist}} Dinleniyor",
+            "title": "{{songTitle}} Dinleniyor"
           }
         }
       },

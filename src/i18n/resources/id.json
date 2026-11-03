@@ -592,8 +592,8 @@
           "label": "Teks status",
           "submenu": {
             "application": "Sedang mendengarkan {{applicationName}}",
-            "artist": "Sedang mendengarkan {artist}",
-            "title": "Sedang mendengarkan {song title}"
+            "artist": "Sedang mendengarkan {{artist}}",
+            "title": "Sedang mendengarkan {{songTitle}}"
           }
         }
       },

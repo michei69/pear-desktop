@@ -592,8 +592,8 @@
           "label": "Text stavu",
           "submenu": {
             "application": "Počúvať {{applicationName}}",
-            "artist": "Práve počúvate {artist}",
-            "title": "Práve počúvate {song title}"
+            "artist": "Práve počúvate {{artist}}",
+            "title": "Práve počúvate {{songTitle}}"
           }
         }
       },

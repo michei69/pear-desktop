@@ -289,7 +289,13 @@
     },
     "album-actions": {
       "description": "Adds Undislike, Dislike, Like, and Unlike buttons to apply this to all songs in a playlist or album",
-      "name": "Album Actions"
+      "name": "Album Actions",
+      "templates": {
+        "dislike-all": "Dislike all",
+        "like-all": "Like all",
+        "undislike-all": "Undislike all",
+        "unlike-all": "Unlike all"
+      }
     },
     "album-color-theme": {
       "description": "Applies a dynamic theme and visual effects based on the album color palette",
@@ -444,6 +450,29 @@
       },
       "name": "Audio Compressor"
     },
+    "audio-track": {
+      "description": "Choose the audio track used for playback and prefer the original audio over auto-dubbed translations",
+      "menu": {
+        "automatic": "Automatic",
+        "prefer-original": "Prefer the original audio",
+        "select-track": "Select audio track…"
+      },
+      "name": "Audio Track",
+      "prompt": {
+        "label": "Select the audio track to use for playback:",
+        "title": "Audio Track"
+      },
+      "settings": {
+        "audio-track": "Audio track",
+        "audio-track-description": "Force a specific audio track. Automatic lets YouTube Music decide per song.",
+        "automatic": "Automatic",
+        "prefer-original": "Prefer the original audio track",
+        "prefer-original-description": "Switch away from auto-dubbed or translated audio back to the original track when both are available."
+      },
+      "toast": {
+        "no-tracks": "No alternative audio tracks are available for this song"
+      }
+    },
     "auth-proxy-adapter": {
       "description": "Support for the use of authentication proxy services",
       "menu": {
@@ -460,11 +489,11 @@
       "prompt": {
         "hostname": {
           "title": "Proxy Hostname",
-          "label": "Enter hostname for local proxy server (requires restart):"
+          "label": "Enter hostname for local proxy server:"
         },
         "port": {
           "title": "Proxy Port",
-          "label": "Enter port for local proxy server (requires restart):"
+          "label": "Enter port for local proxy server:"
         }
       }
     },
@@ -562,6 +591,9 @@
           "label": "Choose the output media device to be used",
           "title": "Select Output Device"
         }
+      },
+      "settings": {
+        "default": "Default"
       }
     },
     "disable-autoplay": {
@@ -592,8 +624,8 @@
           "label": "Status text",
           "submenu": {
             "application": "Listening to {{applicationName}}",
-            "artist": "Listening to {artist}",
-            "title": "Listening to {song title}"
+            "artist": "Listening to {{artist}}",
+            "title": "Listening to {{songTitle}}"
           }
         }
       },
@@ -613,6 +645,11 @@
       }
     },
     "do-not-track": {
+      "blockers": {
+        "balanced": "Balanced",
+        "lite": "Lite",
+        "strict": "Strict"
+      },
       "description": "Block all tracking out of the box",
       "dialog": {
         "reload": {
@@ -623,12 +660,26 @@
         }
       },
       "menu": {
-        "blocker": "Blocker"
+        "blocker": "Blocker",
+        "custom": {
+          "enabled": "Enabled",
+          "label": "Custom"
+        }
       },
       "name": "Do Not Track",
       "settings": {
+        "additional-block-list-rules": "Additional filter rules",
+        "additional-block-list-rules-description": "One Adblock Plus/uBlock rule per line. Applied in custom mode.",
+        "additional-block-list-rules-placeholder": "||example.com^",
+        "additional-block-lists": "Additional block list URLs",
+        "additional-block-lists-description": "One list URL per line. The lists are fetched and applied in custom mode.",
+        "additional-block-lists-placeholder": "https://example.org/blocklist.txt",
         "cache": "Cache blocklists",
-        "disable-default-lists": "Disable default blocklists"
+        "custom-enabled": "Enable custom block lists",
+        "custom-enabled-description": "Apply local and remote block lists and individual rules in addition to the selected blocker profile.",
+        "disable-default-lists": "Disable default blocklists",
+        "disabled-local-blocklists": "Disabled local block lists",
+        "disabled-local-blocklists-description": "Select the local block list files to skip in custom mode. Unselected files stay enabled."
       }
     },
     "downloader": {
@@ -659,11 +710,11 @@
           "downloading": "Downloading…",
           "downloading-counter": "Downloading {{current}}/{{total}}…",
           "downloading-playlist": "Downloading playlist \"{{playlistTitle}}\" - {{playlistSize}} songs ({{playlistId}})",
-          "error-while-downloading": "Error downloading \"{{author}} - {{title}}\": {{error}}",
           "ffmpeg-missing": "FFmpeg was not found. Install FFmpeg and make sure `ffmpeg` is on your PATH to download in this format.",
           "folder-already-exists": "The folder {{playlistFolder}} already exists",
           "getting-playlist-info": "Getting playlist info…",
           "loading": "Loading…",
+          "no-title": "Untitled",
           "playlist-has-only-one-song": "Playlist has only one item, downloading it directly",
           "playlist-id-not-found": "No playlist ID found",
           "playlist-is-empty": "Playlist is empty",
@@ -698,6 +749,11 @@
         "skip-existing": "Skip existing files"
       },
       "name": "Downloader",
+      "presets": {
+        "custom": "Custom",
+        "mp3-256kbps": "MP3 (256 kbps)",
+        "source": "Source"
+      },
       "renderer": {
         "can-not-update-progress": "Cannot update progress"
       },
@@ -705,8 +761,15 @@
         "button": "Download"
       },
       "settings": {
+        "custom-preset": "Custom preset",
+        "custom-preset-description": "Used when the Custom preset is selected.",
+        "custom-preset-extension": "Output file extension",
+        "custom-preset-ffmpeg-args": "ffmpeg arguments",
+        "custom-preset-ffmpeg-args-description": "One argument per line; they are passed to ffmpeg between the input and the output file.",
         "finish-folder": "Folder for finished downloads",
-        "finish-folder-description": "Leave unset to use the download folder above."
+        "finish-folder-description": "Leave unset to use the download folder above.",
+        "playlist-max-items": "Playlist item limit",
+        "playlist-max-items-description": "Maximum number of songs downloaded from a playlist. 0 downloads the whole playlist."
       }
     },
     "equalizer": {
@@ -879,7 +942,6 @@
       },
       "name": "Music Together [Beta]",
       "toast": {
-        "add-song-failed": "Failed to add song",
         "closed": "Music Together closed",
         "diagnostics-copied": "Diagnostics summary copied to clipboard",
         "diagnostics-copy-failed": "Failed to copy diagnostics summary",
@@ -891,7 +953,6 @@
         "join-failed": "Failed to join Music Together",
         "joined": "Joined Music Together",
         "permission-changed": "Music Together permission changed to \"{{permission}}\"",
-        "remove-song-failed": "Failed to remove song",
         "user-connected": "{{name}} joined Music Together",
         "user-disconnected": "{{name}} left Music Together"
       }
@@ -913,6 +974,12 @@
       "name": "No Google Login"
     },
     "notifications": {
+      "buttons": {
+        "next": "Next",
+        "pause": "Pause",
+        "play": "Play",
+        "previous": "Previous"
+      },
       "description": "Display a notification when a song starts playing (interactive notifications are available on Windows)",
       "menu": {
         "interactive": "Interactive Notifications",
@@ -928,7 +995,22 @@
         "toast-style": "Toast style",
         "unpause-notification": "Show notification on unpause"
       },
-      "name": "Notifications"
+      "name": "Notifications",
+      "playing": "Playing",
+      "toast-style": {
+        "banner-bottom": "Banner Bottom",
+        "banner-centered-bottom": "Banner Centered Bottom",
+        "banner-centered-top": "Banner Centered Top",
+        "banner-top-custom": "Banner Top Custom",
+        "hero": "Hero",
+        "legacy": "Legacy",
+        "logo": "Logo"
+      },
+      "urgency": {
+        "high": "High",
+        "low": "Low",
+        "normal": "Normal"
+      }
     },
     "performance-improvement": {
       "description": "Improve performance by enabling experimental scripts",
@@ -952,14 +1034,7 @@
       "menu": {
         "always-on-top": "Always on top",
         "hotkey": {
-          "label": "Hotkey",
-          "prompt": {
-            "keybind-options": {
-              "hotkey": "Hotkey"
-            },
-            "label": "Choose a hotkey to toggle picture-in-picture",
-            "title": "Picture-in-picture Hotkey"
-          }
+          "label": "Hotkey"
         },
         "save-window-position": "Save window position",
         "save-window-size": "Save window size",
@@ -973,16 +1048,23 @@
         }
       },
       "name": "Picture-in-picture",
+      "settings": {
+        "hotkey-placeholder": "e.g. P"
+      },
       "templates": {
         "button": "Picture-in-picture"
       }
     },
     "playback-speed": {
-      "description": "Listen fast, listen slow! Adds a slider that controls song speed",
+      "description": "Adds a speed slider to the player menu and to the plugin's settings",
       "menu": {
         "no-preserves-pitch": "Disable pitch preservation"
       },
       "name": "Playback Speed",
+      "settings": {
+        "playback-speed": "Playback speed",
+        "playback-speed-description": "Changes the speed of the song being played"
+      },
       "templates": {
         "button": "Speed"
       }
@@ -1021,7 +1103,9 @@
         "steps": "Volume step",
         "arrows-shortcut": "Arrow key shortcuts",
         "shortcut-up": "Global shortcut: volume up",
-        "shortcut-down": "Global shortcut: volume down"
+        "shortcut-down": "Global shortcut: volume down",
+        "shortcut-up-placeholder": "e.g. Ctrl+Shift+Up",
+        "shortcut-down-placeholder": "e.g. Ctrl+Shift+Down"
       }
     },
     "prefer-song": {
@@ -1101,7 +1185,8 @@
       },
       "settings": {
         "lastfm-api-root": "Last.fm API URL",
-        "musicbrainz-email-description": "Used as contact info for the MusicBrainz API; required for MusicBrainz metadata correction"
+        "musicbrainz-email-description": "Used as contact info for the MusicBrainz API; required for MusicBrainz metadata correction",
+        "musicbrainz-email-placeholder": "you@example.com"
       }
     },
     "search-commands": {
@@ -1146,7 +1231,84 @@
       },
       "settings": {
         "global-keybinds": "Global keybinds (work app-wide)",
-        "local-keybinds": "Local keybinds (only while the window is focused)"
+        "local-keybinds": "Local keybinds (only while the window is focused)",
+        "placeholder": {
+          "next": "e.g. CmdOrCtrl+Shift+Right",
+          "play-pause": "e.g. CmdOrCtrl+Shift+Space",
+          "previous": "e.g. CmdOrCtrl+Shift+Left"
+        }
+      }
+    },
+    "skip-ai-slop": {
+      "actions": {
+        "allow": "Allow",
+        "allowed": "Allowed",
+        "block": "Block",
+        "clear-cache": "Clear cache",
+        "delete": "Delete",
+        "download-list": "Download list now",
+        "remove": "Remove"
+      },
+      "description": "Skips AI-generated tracks and hides them from pages, using keywords, channel lists and a community blacklist",
+      "keywords": {
+        "placeholder": "Add a keyword... (press Enter)"
+      },
+      "list": {
+        "allowed": "No allowed channels",
+        "blocked": "No blocked channels",
+        "recent": "No filtered channels yet"
+      },
+      "name": "Skip AI Slop",
+      "search": {
+        "allow-aria": "Allow {{name}}",
+        "kind-channel": "Channel",
+        "kind-track": "Track",
+        "no-matches": "No matches.",
+        "no-names": "The community list hasn't been saved yet. It downloads when the app starts, so try again in a minute.",
+        "placeholder": "Type a name or paste a channel ID…",
+        "showing": "Showing {{shown}} of {{total}}. Type more to narrow it down."
+      },
+      "settings": {
+        "allowed": {
+          "description": "Never filtered, no matter what",
+          "label": "Allowed channels"
+        },
+        "blocked": {
+          "description": "Channels you marked \"Don't recommend\", plus ones the plugin reported to YouTube",
+          "label": "Blocked channels"
+        },
+        "hide-in-pages": {
+          "description": "Hides AI slop tracks in search, home, explore, library and playlists",
+          "label": "Hide in pages"
+        },
+        "keywords": {
+          "description": "Skips tracks whose title or channel name contains one of these words (whole words only)",
+          "label": "Blocked keywords"
+        },
+        "list-tools": {
+          "description": "Download the list from GitHub again, or clear its saved copy",
+          "label": "Community list"
+        },
+        "recent": {
+          "description": "Channels caught by a keyword or the community list. Press Allow if one is a false match",
+          "label": "Recently filtered"
+        },
+        "report-feedback": {
+          "description": "Sends permanent feedback to your YouTube account (slow and limited). Off by default",
+          "label": "Send \"Not interested\" to YouTube for home recommendations"
+        },
+        "search-blocked": {
+          "description": "Find a channel or track on the community list by name or ID, and allow it",
+          "label": "Search the community list"
+        }
+      },
+      "status": {
+        "cache-cleared": "Cache cleared. The community list is off until you press \"Download list now\" (or restart the app).",
+        "download-failed": "Download failed, the old list was kept (details in the console).",
+        "downloaded": "Downloaded. {{summary}}",
+        "downloading": "Downloading…",
+        "none": "No list loaded right now.",
+        "summary": "Loaded: {{channels}} channels, {{tracks}} tracks (list dated {{date}})."
       }
     },
     "skip-silences": {
@@ -1430,7 +1592,14 @@
     },
     "taskbar-mediacontrol": {
       "description": "Control playback from your Windows taskbar",
-      "name": "Taskbar Media Control"
+      "name": "Taskbar Media Control",
+      "tooltip": {
+        "dislike": "Dislike",
+        "like": "Like",
+        "next": "Next",
+        "play-pause": "Play/Pause",
+        "previous": "Previous"
+      }
     },
     "toast-autoclose": {
       "description": "Automatically close YouTube Music toasts after three seconds",
@@ -1441,7 +1610,7 @@
       "name": "TouchBar"
     },
     "transparent-player": {
-      "description": "Makes the app window transparent",
+      "description": "Makes the app window transparent. On Linux this needs a compositing window manager",
       "name": "Transparent Player",
       "menu": {
         "opacity": {
@@ -1466,7 +1635,8 @@
         }
       },
       "settings": {
-        "type-description": "Background material used for window transparency"
+        "opacity-description": "How much of the desktop shows through the window",
+        "type-description": "Background material used for window transparency. Materials are Windows and macOS only"
       }
     },
     "tuna-obs": {
@@ -1506,6 +1676,20 @@
     },
     "visualizer": {
       "description": "Adds a visualizer to the player",
+      "alignments": {
+        "bottom": "Bottom",
+        "center": "Center",
+        "left": "Left",
+        "middle": "Middle",
+        "right": "Right",
+        "top": "Top"
+      },
+      "effects": {
+        "circlebar": "Circle bar",
+        "circlewave": "Circle wave",
+        "lighting": "Lighting",
+        "waveform": "Waveform"
+      },
       "menu": {
         "visualizer-type": "Visualizer Type"
       },
@@ -1527,12 +1711,47 @@
         "dottify": "Dottify",
         "dottify-description": "Draw dots instead of a continuous line",
         "horizontal-align": "Horizontal alignment",
-        "vertical-align": "Vertical alignment"
+        "vertical-align": "Vertical alignment",
+        "variant": "Variant",
+        "bar-width": "Bar width",
+        "bar-gap": "Bar gap",
+        "sensitivity": "Sensitivity"
+      },
+      "types": {
+        "bars": "Bars",
+        "butterchurn": "Butterchurn",
+        "circles": "Circles",
+        "disco-ball": "Disco Ball",
+        "experimental": "Experimental",
+        "retro-bars": "Retro Bars",
+        "snowfall": "Snowfall",
+        "spider-verse": "Spider-Verse",
+        "vudio": "Vudio",
+        "wave": "Wave",
+        "wavy": "Wavy"
+      },
+      "variants": {
+        "accent": "Accent",
+        "bubbles": "Bubbles",
+        "dancing-palette": "Dancing palette",
+        "palette": "Palette",
+        "party": "Party",
+        "rgb": "RGB",
+        "stayc": "STAYC",
+        "twice": "TWICE"
       }
     },
     "statusbar-lyrics": {
+      "name": "Status Bar Lyrics",
+      "description": "Show the current lyric line in the macOS menu bar title. Requires Synced Lyrics to be enabled.",
+      "menu": {
+        "include-pronunciation": "Include pronunciation",
+        "include-pronunciation-tooltip": "Include pronunciation or romanization lines in the status bar text when available.",
+        "max-length": "Maximum length"
+      },
       "settings": {
-        "include-pronunciation": "Include pronunciation"
+        "include-pronunciation": "Include pronunciation",
+        "max-length": "Maximum length"
       }
     },
     "dismiss-multidevice-popup": {
@@ -1544,6 +1763,15 @@
     "name": "Settings UI",
     "description": "Adds an in-app settings panel, opened from the sidebar",
     "title": "Settings",
+    "boot-failed": {
+      "title": "Settings failed to load",
+      "message": "The settings window could not start: {{error}}",
+      "reload": "Reload"
+    },
+    "window": {
+      "open-failed-title": "Cannot open Settings",
+      "missing-files": "The settings window assets are missing from this build:\n{{files}}\n\nReinstall or rebuild the app."
+    },
     "settings": {
       "show-button": "Show the settings entry in the sidebar",
       "show-button-description": "Turn this off to keep the sidebar clean; Settings is still under Navigation → Open Settings.",
@@ -1608,17 +1836,27 @@
       }
     },
     "groups": {
-      "updates-session": "Updates & session",
-      "startup-language": "Startup & language",
+      "startup": "Startup",
+      "language": "Language",
       "interface": "Interface",
+      "theme": "Theme & colors",
       "context-menu": "Context menu",
-      "window-title": "Window",
       "window": "Window",
+      "tray": "Tray",
       "system": "System",
       "network": "Network",
       "performance": "Performance",
       "configuration": "Configuration",
       "updates": "Updates"
+    },
+    "plugin-categories": {
+      "playback": "Playback",
+      "audio": "Audio",
+      "interface": "Interface",
+      "lyrics": "Lyrics",
+      "integrations": "Integrations",
+      "system": "System",
+      "other": "Other"
     },
     "stepper-decrement": "Decrease",
     "stepper-increment": "Increase",

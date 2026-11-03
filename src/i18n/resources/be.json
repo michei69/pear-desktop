@@ -603,8 +603,8 @@
           "label": "Тэкст статусу",
           "submenu": {
             "application": "Слухае {{applicationName}}",
-            "artist": "Слухае {artist}",
-            "title": "Слухае {song title}"
+            "artist": "Слухае {{artist}}",
+            "title": "Слухае {{songTitle}}"
           }
         }
       },

@@ -592,8 +592,8 @@
           "label": "Text statusu",
           "submenu": {
             "application": "Poslouchám {{applicationName}}",
-            "artist": "Poslouchám: {artist}",
-            "title": "Poslouchám {song title}"
+            "artist": "Poslouchám: {{artist}}",
+            "title": "Poslouchám {{songTitle}}"
           }
         }
       },

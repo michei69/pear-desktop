@@ -592,8 +592,8 @@
           "label": "स्टेटस टेक्स्ट",
           "submenu": {
             "application": "{{applicationName}} सुन रहे है",
-            "artist": "{artist} को सुन रहे है",
-            "title": "{song title} सुन रहे है"
+            "artist": "{{artist}} को सुन रहे है",
+            "title": "{{songTitle}} सुन रहे है"
           }
         }
       },

@@ -592,8 +592,8 @@
           "label": "Tevékenység szöveg",
           "submenu": {
             "application": "Hallgatja: {{applicationName}}",
-            "artist": "Hallgatja: {artist}",
-            "title": "Hallgatja: {song title}"
+            "artist": "Hallgatja: {{artist}}",
+            "title": "Hallgatja: {{songTitle}}"
           }
         }
       },

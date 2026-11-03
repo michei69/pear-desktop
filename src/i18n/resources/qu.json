@@ -599,8 +599,8 @@
           "label": "Kay qillqa",
           "submenu": {
             "application": "{{applicationName}}ta uyariq",
-            "artist": "{artist}ta uyariq",
-            "title": "{song title}ta uyariq"
+            "artist": "{{artist}}ta uyariq",
+            "title": "{{songTitle}}ta uyariq"
           }
         }
       },

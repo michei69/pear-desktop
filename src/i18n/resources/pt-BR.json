@@ -592,8 +592,8 @@
           "label": "Texto de status",
           "submenu": {
             "application": "Ouvindo {{applicationName}}",
-            "artist": "Ouvindo {artist}",
-            "title": "Ouvindo {song title}"
+            "artist": "Ouvindo {{artist}}",
+            "title": "Ouvindo {{songTitle}}"
           }
         }
       },

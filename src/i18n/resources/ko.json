@@ -596,8 +596,8 @@
           "label": "상태 텍스트",
           "submenu": {
             "application": "{{applicationName}} 듣는 중",
-            "artist": "{아티스트} 듣는 중",
-            "title": "{곡 제목} 듣는 중"
+            "artist": "{{artist}} 듣는 중",
+            "title": "{{songTitle}} 듣는 중"
           }
         }
       },

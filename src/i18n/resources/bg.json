@@ -592,8 +592,8 @@
           "label": "Статус текст",
           "submenu": {
             "application": "Слушам {{applicationName}}",
-            "artist": "Слушам {artist}",
-            "title": "Слушам {song title}"
+            "artist": "Слушам {{artist}}",
+            "title": "Слушам {{songTitle}}"
           }
         }
       },

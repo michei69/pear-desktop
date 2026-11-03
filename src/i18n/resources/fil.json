@@ -596,8 +596,8 @@
           "label": "Teksto ng estado",
           "submenu": {
             "application": "Kumikinig sa {{applicationName}}",
-            "artist": "Nakikinig sa {artist}",
-            "title": "Nakikinig sa {song title}"
+            "artist": "Nakikinig sa {{artist}}",
+            "title": "Nakikinig sa {{songTitle}}"
           }
         }
       },

@@ -592,8 +592,8 @@
           "label": "ステータステキスト",
           "submenu": {
             "application": "{{applicationName}}を聴く",
-            "artist": "{artist}を聴いている",
-            "title": "{曲名}を聴いている"
+            "artist": "{{artist}}を聴いている",
+            "title": "{{songTitle}}を聴いている"
           }
         }
       },
