@@ -10,6 +10,8 @@ export enum ProviderNames {
   MusixMatch = 'MusixMatch',
   LyricsGenius = 'LyricsGenius',
   NetEase = 'NetEase',
+  LRCHub = 'LRCHub',
+  SimpMusic = 'SimpMusic',
   // Megalobiz = 'Megalobiz',
 }
 
