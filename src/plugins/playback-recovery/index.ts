@@ -147,6 +147,9 @@ export default createPlugin<
       // A teardown can land mid-recovery; a stale flag would block the next
       // watchdog/recovery cycle after the plugin is re-enabled.
       this.recovering = false;
+      this.consecutiveFailures = 0;
+      this.lastGoodTime = 0;
+      this.lastGoodTimestamp = 0;
 
       this._detachMediaEvents?.();
       this._attachMediaEvents = null;
@@ -262,17 +265,25 @@ export default createPlugin<
             }
           }
           for (const node of mutation.addedNodes) {
-            if (node instanceof HTMLVideoElement) {
+            if (!(node instanceof HTMLElement)) continue;
+            const video =
+              node instanceof HTMLVideoElement
+                ? node
+                : node.querySelector<HTMLVideoElement>('video');
+            if (video) {
               this.log(
                 'New video element detected — re-attaching recovery hooks',
               );
-              this._attachMediaEvents?.(node);
+              this._attachMediaEvents?.(video);
             }
           }
         }
       });
       const observerTarget =
-        document.querySelector('ytmusic-app') || document.body;
+        document.querySelector('ytmusic-player') ??
+        document.querySelector('#movie_player') ??
+        document.querySelector('ytmusic-app') ??
+        document.body;
       this.videoObserver.observe(observerTarget, {
         childList: true,
         subtree: true,
@@ -384,8 +395,13 @@ export default createPlugin<
       else if (this.consecutiveFailures <= 4) {
         this.log('Strategy: seek-forward');
         try {
+          const duration = video?.duration ?? 0;
+          const seekTarget =
+            Number.isFinite(duration) && duration > 0
+              ? Math.min(currentTime + 1, duration - 0.5)
+              : currentTime + 1;
           if (this.api && currentTime > 0) {
-            this.api.seekTo(currentTime + 1);
+            this.api.seekTo(seekTarget);
             this.api.playVideo();
           } else if (this.api) {
             this.api.playVideo();

@@ -14,7 +14,13 @@ import nextIconWhite from '@assets/media-icons-white/next.png?asset&asarUnpack';
 import pauseIconWhite from '@assets/media-icons-white/pause.png?asset&asarUnpack';
 import playIconWhite from '@assets/media-icons-white/play.png?asset&asarUnpack';
 import previousIconWhite from '@assets/media-icons-white/previous.png?asset&asarUnpack';
-import { ipcMain, nativeImage, nativeTheme, type NativeImage } from 'electron';
+import {
+  ipcMain,
+  nativeImage,
+  nativeTheme,
+  type BrowserWindow,
+  type NativeImage,
+} from 'electron';
 
 import { t } from '@/i18n';
 import { getSongControls } from '@/providers/song-controls';
@@ -22,6 +28,7 @@ import {
   registerCallback,
   type SongInfo,
   SongInfoEvent,
+  unregisterCallback,
 } from '@/providers/song-info';
 import { LikeType } from '@/types/datahost-get-state';
 import { Platform } from '@/types/plugins';
@@ -31,7 +38,62 @@ import {
 } from '@/types/song-info-events';
 import { createPlugin } from '@/utils';
 
-export default createPlugin({
+type ThumbarImages = Record<
+  | 'play'
+  | 'pause'
+  | 'next'
+  | 'previous'
+  | 'like'
+  | 'dislike'
+  | 'likeHollow'
+  | 'dislikeHollow',
+  NativeImage
+>;
+
+type TaskbarState = {
+  window: BrowserWindow | null;
+  currentSongInfo: SongInfo | undefined;
+  currentLikeStatus: LikeType;
+  images: ThumbarImages | undefined;
+  lastThumbarImages: ThumbarImages | undefined;
+  lastThumbarPaused: boolean | undefined;
+  lastThumbarLikeStatus: LikeType | undefined;
+  themeListener: (() => void) | null;
+  likeChangedListener:
+    | ((_: Electron.IpcMainEvent, status: LikeType) => void)
+    | null;
+  songInfoCallback: ((songInfo: SongInfo, event: SongInfoEvent) => void) | null;
+  showListener: (() => void) | null;
+};
+
+const getImages = (): ThumbarImages => {
+  const isDark = nativeTheme.shouldUseDarkColors;
+  return {
+    play: nativeImage.createFromPath(isDark ? playIconWhite : playIconBlack),
+    pause: nativeImage.createFromPath(isDark ? pauseIconWhite : pauseIconBlack),
+    next: nativeImage.createFromPath(isDark ? nextIconWhite : nextIconBlack),
+    previous: nativeImage.createFromPath(
+      isDark ? previousIconWhite : previousIconBlack,
+    ),
+    like: nativeImage.createFromPath(isDark ? likeIconWhite : likeIconBlack),
+    dislike: nativeImage.createFromPath(
+      isDark ? dislikeIconWhite : dislikeIconBlack,
+    ),
+    likeHollow: nativeImage.createFromPath(
+      isDark ? likeHollowIconWhite : likeHollowIconBlack,
+    ),
+    dislikeHollow: nativeImage.createFromPath(
+      isDark ? dislikeHollowIconWhite : dislikeHollowIconBlack,
+    ),
+  };
+};
+
+export default createPlugin<
+  TaskbarState,
+  unknown,
+  unknown,
+  { enabled: boolean }
+>({
   name: () => t('plugins.taskbar-mediacontrol.name'),
   description: () => t('plugins.taskbar-mediacontrol.description'),
   restartNeeded: true,
@@ -40,149 +102,153 @@ export default createPlugin({
     enabled: false,
   },
 
-  backend({ window }) {
-    let currentSongInfo: SongInfo;
-    let currentLikeStatus: LikeType = LikeType.Indifferent;
+  backend: {
+    window: null,
+    currentSongInfo: undefined,
+    currentLikeStatus: LikeType.Indifferent,
+    images: undefined,
+    lastThumbarImages: undefined,
+    lastThumbarPaused: undefined,
+    lastThumbarLikeStatus: undefined,
+    themeListener: null,
+    likeChangedListener: null,
+    songInfoCallback: null,
+    showListener: null,
 
-    const { playPause, next, previous, like, dislike } =
-      getSongControls(window);
+    start({ window }) {
+      this.window = window;
+      this.currentSongInfo = undefined;
+      this.currentLikeStatus = LikeType.Indifferent;
+      this.images = getImages();
+      this.lastThumbarImages = undefined;
+      this.lastThumbarPaused = undefined;
+      this.lastThumbarLikeStatus = undefined;
 
-    const getImages = (): Record<
-      | 'play'
-      | 'pause'
-      | 'next'
-      | 'previous'
-      | 'like'
-      | 'dislike'
-      | 'likeHollow'
-      | 'dislikeHollow',
-      NativeImage
-    > => {
-      const isDark = nativeTheme.shouldUseDarkColors;
-      return {
-        play: nativeImage.createFromPath(
-          isDark ? playIconWhite : playIconBlack,
-        ),
-        pause: nativeImage.createFromPath(
-          isDark ? pauseIconWhite : pauseIconBlack,
-        ),
-        next: nativeImage.createFromPath(
-          isDark ? nextIconWhite : nextIconBlack,
-        ),
-        previous: nativeImage.createFromPath(
-          isDark ? previousIconWhite : previousIconBlack,
-        ),
-        like: nativeImage.createFromPath(
-          isDark ? likeIconWhite : likeIconBlack,
-        ),
-        dislike: nativeImage.createFromPath(
-          isDark ? dislikeIconWhite : dislikeIconBlack,
-        ),
-        likeHollow: nativeImage.createFromPath(
-          isDark ? likeHollowIconWhite : likeHollowIconBlack,
-        ),
-        dislikeHollow: nativeImage.createFromPath(
-          isDark ? dislikeHollowIconWhite : dislikeHollowIconBlack,
-        ),
+      const { playPause, next, previous, like, dislike } =
+        getSongControls(window);
+
+      const setThumbar = (songInfo: SongInfo | undefined, force = false) => {
+        if (!songInfo?.title || !this.images) return;
+        if (window.isDestroyed()) return;
+
+        const images = this.images;
+        const isPaused = songInfo.isPaused ?? false;
+
+        // Only rebuild when the rendered state actually changed.
+        if (
+          !force &&
+          this.lastThumbarImages === images &&
+          this.lastThumbarPaused === isPaused &&
+          this.lastThumbarLikeStatus === this.currentLikeStatus
+        ) {
+          return;
+        }
+        this.lastThumbarImages = images;
+        this.lastThumbarPaused = isPaused;
+        this.lastThumbarLikeStatus = this.currentLikeStatus;
+
+        // Win32 needs the whole component list rewritten.
+        window.setThumbarButtons([
+          {
+            tooltip: t('plugins.taskbar-mediacontrol.tooltip.dislike'),
+            icon:
+              this.currentLikeStatus === LikeType.Dislike
+                ? images.dislike
+                : images.dislikeHollow,
+            click() {
+              dislike();
+            },
+          },
+          {
+            tooltip: t('plugins.taskbar-mediacontrol.tooltip.previous'),
+            icon: images.previous,
+            click() {
+              previous();
+            },
+          },
+          {
+            tooltip: t('plugins.taskbar-mediacontrol.tooltip.play-pause'),
+            icon: isPaused ? images.play : images.pause,
+            click() {
+              playPause();
+            },
+          },
+          {
+            tooltip: t('plugins.taskbar-mediacontrol.tooltip.next'),
+            icon: images.next,
+            click() {
+              next();
+            },
+          },
+          {
+            tooltip: t('plugins.taskbar-mediacontrol.tooltip.like'),
+            icon:
+              this.currentLikeStatus === LikeType.Like
+                ? images.like
+                : images.likeHollow,
+            click() {
+              like();
+            },
+          },
+        ]);
       };
-    };
-    let images = getImages();
-    let lastThumbarImages: typeof images | undefined;
-    let lastThumbarPaused: boolean | undefined;
-    let lastThumbarLikeStatus: LikeType | undefined;
 
-    nativeTheme.on('updated', () => {
-      images = getImages();
-      setThumbar(currentSongInfo);
-    });
+      this.themeListener = () => {
+        this.images = getImages();
+        setThumbar(this.currentSongInfo);
+      };
+      nativeTheme.on('updated', this.themeListener);
 
-    const setThumbar = (songInfo: SongInfo, force = false) => {
-      // Wait for the song to start.
-      if (!songInfo?.title) {
-        return;
-      }
+      window.webContents.send(
+        SONG_INFO_SETUP_CHANNEL,
+        SongInfoEventFlag.LikeChanged,
+      );
 
-      const isPaused = songInfo.isPaused ?? false;
+      this.likeChangedListener = (_, status) => {
+        this.currentLikeStatus = status;
+        setThumbar(this.currentSongInfo);
+      };
+      ipcMain.on('peard:like-changed', this.likeChangedListener);
 
-      // Only rebuild when the rendered state actually changed.
-      if (
-        !force &&
-        lastThumbarImages === images &&
-        lastThumbarPaused === isPaused &&
-        lastThumbarLikeStatus === currentLikeStatus
-      ) {
-        return;
-      }
-      lastThumbarImages = images;
-      lastThumbarPaused = isPaused;
-      lastThumbarLikeStatus = currentLikeStatus;
-
-      // Win32 needs the whole component list rewritten.
-      window.setThumbarButtons([
-        {
-          tooltip: 'Dislike',
-          icon:
-            currentLikeStatus === LikeType.Dislike
-              ? images.dislike
-              : images.dislikeHollow,
-          click() {
-            dislike(); // frontend toggles: re-disliking clears it
-          },
-        },
-        {
-          tooltip: 'Previous',
-          icon: images.previous,
-          click() {
-            previous();
-          },
-        },
-        {
-          tooltip: 'Play/Pause',
-          icon: songInfo.isPaused ? images.play : images.pause,
-          click() {
-            playPause();
-          },
-        },
-        {
-          tooltip: 'Next',
-          icon: images.next,
-          click() {
-            next();
-          },
-        },
-        {
-          tooltip: 'Like',
-          icon:
-            currentLikeStatus === LikeType.Like
-              ? images.like
-              : images.likeHollow,
-          click() {
-            like(); // frontend toggles: re-liking clears it
-          },
-        },
-      ]);
-    };
-
-    window.webContents.send(
-      SONG_INFO_SETUP_CHANNEL,
-      SongInfoEventFlag.LikeChanged,
-    );
-
-    ipcMain.on('peard:like-changed', (_, status: LikeType) => {
-      currentLikeStatus = status;
-      if (currentSongInfo) {
-        setThumbar(currentSongInfo);
-      }
-    });
-
-    registerCallback((songInfo, event) => {
-      if (event !== SongInfoEvent.TimeChanged) {
-        currentSongInfo = songInfo; // kept for win.on('show')
+      this.songInfoCallback = (songInfo, event) => {
+        if (event === SongInfoEvent.TimeChanged) return;
+        this.currentSongInfo = songInfo;
         setThumbar(songInfo);
-      }
-    });
+      };
+      registerCallback(this.songInfoCallback);
 
-    // win.show() drops the thumbar, so it has to be set again.
-    window.on('show', () => setThumbar(currentSongInfo, true));
+      // win.show() drops the thumbar, so it has to be set again.
+      this.showListener = () => setThumbar(this.currentSongInfo, true);
+      window.on('show', this.showListener);
+    },
+
+    stop({ window }) {
+      if (this.themeListener) {
+        nativeTheme.off('updated', this.themeListener);
+        this.themeListener = null;
+      }
+      if (this.likeChangedListener) {
+        ipcMain.off('peard:like-changed', this.likeChangedListener);
+        this.likeChangedListener = null;
+      }
+      if (this.songInfoCallback) {
+        unregisterCallback(this.songInfoCallback);
+        this.songInfoCallback = null;
+      }
+      if (this.showListener) {
+        window.off('show', this.showListener);
+        this.showListener = null;
+      }
+      if (!window.isDestroyed()) {
+        window.setThumbarButtons([]);
+      }
+
+      this.window = null;
+      this.currentSongInfo = undefined;
+      this.images = undefined;
+      this.lastThumbarImages = undefined;
+      this.lastThumbarPaused = undefined;
+      this.lastThumbarLikeStatus = undefined;
+    },
   },
 });

@@ -29,6 +29,8 @@ export default createPlugin({
       type: 'slider',
       key: 'opacity',
       label: () => t('plugins.transparent-player.menu.opacity.label'),
+      description: () =>
+        t('plugins.transparent-player.settings.opacity-description'),
       min: 10,
       max: 100,
       step: 10,

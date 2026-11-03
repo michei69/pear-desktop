@@ -1,3 +1,4 @@
+import { observePlayerPage } from '@/providers/player-page-observer';
 import { LikeType, type GetState } from '@/types/datahost-get-state';
 import {
   SONG_INFO_SETUP_CHANNEL,
@@ -17,6 +18,12 @@ import type {
 import type { VideoDataChanged } from '@/types/video-data-changed';
 
 const DATAUPDATED_FALLBACK_TIMEOUT_MS = 1500;
+const PROGRESS_THROTTLE_MS = 250;
+const BACKGROUND_PROGRESS_THROTTLE_MS = 1000;
+const ACTIVITY_REFRESH_MS = 5000;
+const YOU_THERE_HANDLE_COOLDOWN_MS = 10_000;
+const YOU_THERE_RESUME_WINDOW_MS = 60_000;
+const YOU_THERE_RENDERER = 'ytmusic-you-there-renderer';
 
 let songInfo: SongInfo = {} as SongInfo;
 export const getSongInfo = () => songInfo;
@@ -41,20 +48,21 @@ export const setupSeekedListener = singleton(() => {
 
 export const setupTimeChangedListener = singleton((api: MusicPlayer) => {
   let lastSent = 0;
-  const THROTTLE_MS = 250;
 
   // The player reports its own media position, independent of the player bar's
   // DOM: it survives UI changes and keeps sub-second precision.
   api.addEventListener('onVideoProgress', (seconds) => {
     const now = Date.now();
-    if (now - lastSent < THROTTLE_MS || !Number.isFinite(seconds)) return;
+    const throttle = document.hasFocus()
+      ? PROGRESS_THROTTLE_MS
+      : BACKGROUND_PROGRESS_THROTTLE_MS;
+    if (now - lastSent < throttle || !Number.isFinite(seconds)) return;
 
     lastSent = now;
     window.ipcRenderer.send('peard:time-changed', seconds);
     songInfo.elapsedSeconds = seconds;
   });
 });
-
 export const setupRepeatChangedListener = singleton(() => {
   const repeatObserver = new MutationObserver((mutations) => {
     // provided by App
@@ -280,24 +288,114 @@ export const setupSongInfo = (api: MusicPlayer) => {
     setupSeekedListener();
   });
 
-  const playPausedHandler = (e: Event, status: string) => {
+  let lastReportedPaused: boolean | undefined;
+  let lastPlaybackActivityAt = 0;
+  let lastActivityRefresh = 0;
+  let lastYouThereHandledAt = 0;
+  const handledYouThereDialogs = new WeakSet<Element>();
+
+  const refreshYtmActivity = () => {
+    const now = Date.now();
+    lastPlaybackActivityAt = now;
+    if (now - lastActivityRefresh < ACTIVITY_REFRESH_MS) return;
+    lastActivityRefresh = now;
+    // HACK: YTM's "you there" prompt compares Date.now() with this stamp and
+    // pauses playback when it goes stale; Chromium throttles the renderer's own
+    // timers in a background window, playback media events do not.
+    window._lact = now;
+  };
+
+  const reportPlaybackState = (video: HTMLVideoElement, isPaused: boolean) => {
+    if (lastReportedPaused === isPaused) return;
+    // HACK: YTM fires a pause at position 0 while loading the next track; only
+    // the pause of a track that was already reported as running is real.
     if (
-      e.target instanceof HTMLVideoElement &&
-      Math.round(e.target.currentTime) > 0
+      isPaused &&
+      lastReportedPaused !== false &&
+      Math.round(video.currentTime) === 0
     ) {
-      window.ipcRenderer.send('peard:play-or-paused', {
-        isPaused: status === 'pause',
-        // Float, like onVideoProgress: v1 floors it in its socket adapter and
-        // v2 reports the player's real position.
-        elapsedSeconds: e.target.currentTime,
-      });
+      return;
     }
+
+    lastReportedPaused = isPaused;
+    window.ipcRenderer.send('peard:play-or-paused', {
+      isPaused,
+      // Float, like onVideoProgress: v1 floors it in its socket adapter and
+      // v2 reports the player's real position.
+      elapsedSeconds: video.currentTime,
+    });
   };
 
   const playPausedHandlers = {
-    playing: (e: Event) => playPausedHandler(e, 'playing'),
-    pause: (e: Event) => playPausedHandler(e, 'pause'),
+    playing: (e: Event) => {
+      if (e.target instanceof HTMLVideoElement) {
+        refreshYtmActivity();
+        reportPlaybackState(e.target, false);
+      }
+    },
+    pause: (e: Event) => {
+      if (e.target instanceof HTMLVideoElement) {
+        reportPlaybackState(e.target, true);
+      }
+    },
   };
+
+  const mediaActivityHandler = () => refreshYtmActivity();
+
+  const dismissYouTherePrompt = () => {
+    if (Date.now() - lastPlaybackActivityAt >= YOU_THERE_RESUME_WINDOW_MS) {
+      return;
+    }
+    if (Date.now() - lastYouThereHandledAt < YOU_THERE_HANDLE_COOLDOWN_MS) {
+      return;
+    }
+
+    for (const el of document.querySelectorAll(YOU_THERE_RENDERER)) {
+      const dialog = el.closest<HTMLElement & { close?: () => void }>(
+        'tp-yt-paper-dialog',
+      );
+      if (!dialog || handledYouThereDialogs.has(dialog)) continue;
+
+      handledYouThereDialogs.add(dialog);
+      lastYouThereHandledAt = Date.now();
+      window._lact = Date.now();
+      lastActivityRefresh = Date.now();
+
+      const confirm = dialog.querySelector<HTMLElement>(
+        '[dialog-confirm], yt-button-renderer, tp-yt-paper-button, button',
+      );
+      if (confirm) {
+        confirm.click();
+      } else {
+        dialog.close?.();
+      }
+
+      if (api.getPlayerState() === 2) {
+        api.playVideo();
+      }
+    }
+  };
+
+  observePlayerPage('body', {
+    childList: true,
+    subtree: true,
+    callback: (mutations) => {
+      for (const mutation of mutations) {
+        for (const node of mutation.addedNodes) {
+          if (
+            node instanceof HTMLElement &&
+            (node.matches(YOU_THERE_RENDERER) ||
+              node.querySelector(YOU_THERE_RENDERER))
+          ) {
+            dismissYouTherePrompt();
+            return;
+          }
+        }
+      }
+    },
+  });
+
+  dismissYouTherePrompt();
 
   let currentVideo: HTMLVideoElement | null = null;
 
@@ -309,10 +407,12 @@ export const setupSongInfo = (api: MusicPlayer) => {
     for (const status of ['playing', 'pause'] as const) {
       currentVideo?.removeEventListener(status, playPausedHandlers[status]);
     }
+    currentVideo?.removeEventListener('timeupdate', mediaActivityHandler);
     currentVideo = video;
     for (const status of ['playing', 'pause'] as const) {
       video.addEventListener(status, playPausedHandlers[status]);
     }
+    video.addEventListener('timeupdate', mediaActivityHandler);
   };
 
   const videoEventDispatcher = async (

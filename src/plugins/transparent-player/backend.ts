@@ -3,9 +3,9 @@ import is from 'electron-is';
 import { createBackend } from '@/utils';
 
 import {
-  MaterialType,
   WINDOWS_MATERIALS,
   MACOS_MATERIALS,
+  type MaterialType,
   type TransparentPlayerConfig,
 } from './types';
 
@@ -17,26 +17,23 @@ const setWindowTransparency = (
   material: MaterialType,
   opacity: number,
 ) => {
-  // Background materials are only supported on macOS and Windows
   if (is.windows()) {
-    if (WINDOWS_MATERIALS.includes(material)) {
-      window.setBackgroundMaterial(
-        material as Parameters<BrowserWindow['setBackgroundMaterial']>[0],
-      );
-    } else {
-      window.setBackgroundMaterial('none');
-    }
+    window.setBackgroundMaterial(
+      WINDOWS_MATERIALS.includes(material)
+        ? (material as Parameters<BrowserWindow['setBackgroundMaterial']>[0])
+        : 'none',
+    );
+    window.setBackgroundColor(`rgba(0, 0, 0, ${opacity})`);
   } else if (is.macOS()) {
-    if (MACOS_MATERIALS.includes(material)) {
-      window.setVibrancy(
-        material as Parameters<BrowserWindow['setVibrancy']>[0],
-      );
-    } else {
-      window.setVibrancy(null);
-    }
+    window.setVibrancy(
+      MACOS_MATERIALS.includes(material)
+        ? (material as Parameters<BrowserWindow['setVibrancy']>[0])
+        : null,
+    );
+    window.setBackgroundColor(`rgba(0, 0, 0, ${opacity})`);
+  } else {
+    window.setBackgroundColor('#00000000');
   }
-
-  window.setBackgroundColor(`rgba(0, 0, 0, ${opacity})`);
 };
 
 export const backend = createBackend({
@@ -51,7 +48,12 @@ export const backend = createBackend({
     setWindowTransparency(this.window, newConfig.type, newConfig.opacity);
   },
   stop({ window }) {
-    setWindowTransparency(window, MaterialType.NONE, 1);
+    if (is.windows()) {
+      window.setBackgroundMaterial('none');
+    } else if (is.macOS()) {
+      window.setVibrancy(null);
+    }
+    window.setBackgroundColor('#000');
     this.window = null;
   },
 });

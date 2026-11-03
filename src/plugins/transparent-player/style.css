@@ -10,6 +10,11 @@
   --ytmd-transparent-player-backdrop-blur: blur(20px);
 }
 
+/* HACK: the window itself is transparent; the root must not paint over it. */
+html {
+  background-color: transparent !important;
+}
+
 body.transparent-background-color {
   background-color: var(
     --ytmd-transparent-player-transparent-background
