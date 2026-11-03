@@ -1,8 +1,8 @@
-import { deepmerge } from 'deepmerge-ts';
 import { type BrowserWindow, ipcMain } from 'electron';
 import { allPlugins, mainPlugins } from 'virtual:plugins';
 
 import * as config from '@/config';
+import { mergePluginConfig } from '@/config/plugins';
 import { t } from '@/i18n';
 import { LoggerPrefix, startPlugin, stopPlugin } from '@/utils';
 
@@ -26,6 +26,7 @@ export const createContext = (
   id: string,
   win: BrowserWindow,
 ): BackendContext<PluginConfig> => {
+  const allPluginDefs = allPlugins();
   // One ipcMain subscription per (channel, listener): `off` can then remove the
   // wrapper that was actually registered, leaving the channel's other listeners
   // (the provider's, other plugins') alone.
@@ -34,15 +35,15 @@ export const createContext = (
 
   return {
     getConfig: async () =>
-      deepmerge(
-        (await allPlugins())[id].config ?? { enabled: false },
-        config.get(`plugins.${id}`) ?? {},
-      ) as PluginConfig,
+      mergePluginConfig(
+        (await allPluginDefs)[id].config,
+        config.get(`plugins.${id}`),
+      ),
     setConfig: async (newConfig) => {
       config.setPartial(
         `plugins.${id}`,
         newConfig,
-        (await allPlugins())[id].config,
+        (await allPluginDefs)[id].config,
       );
     },
 
@@ -95,38 +96,27 @@ export const forceUnloadMainPlugin = async (
   const plugin = loadedPluginMap[id];
   if (!plugin) return;
 
-  try {
-    const hasStopped = await stopPlugin(id, plugin, {
-      ctx: 'backend',
-      context: createContext(id, win),
-    });
-    if (
-      hasStopped ||
-      (hasStopped === null &&
-        typeof plugin.backend !== 'function' &&
-        plugin.backend)
-    ) {
-      delete loadedPluginMap[id];
-      console.log(
-        LoggerPrefix,
-        t('common.console.plugins.unloaded', { pluginName: id }),
-      );
-      return;
-    } else {
-      const message = t('common.console.plugins.unload-failed', {
-        pluginName: id,
-      });
-      console.log(LoggerPrefix, message);
-      return Promise.reject(new Error(message));
-    }
-  } catch (err) {
-    console.error(
+  const hasStopped = await stopPlugin(id, plugin, {
+    ctx: 'backend',
+    context: createContext(id, win),
+  });
+  if (
+    hasStopped ||
+    (hasStopped === null &&
+      typeof plugin.backend !== 'function' &&
+      plugin.backend)
+  ) {
+    delete loadedPluginMap[id];
+    console.log(
       LoggerPrefix,
-      t('common.console.plugins.unload-failed', { pluginName: id }),
+      t('common.console.plugins.unloaded', { pluginName: id }),
     );
-    console.trace(err);
-    return Promise.reject(err as Error);
+    return;
   }
+
+  const message = t('common.console.plugins.unload-failed', { pluginName: id });
+  console.log(LoggerPrefix, message);
+  return Promise.reject(new Error(message));
 };
 
 export const forceLoadMainPlugin = async (
@@ -136,33 +126,23 @@ export const forceLoadMainPlugin = async (
   const plugin = (await mainPlugins())[id];
   if (!plugin) return;
 
-  try {
-    const hasStarted = await startPlugin(id, plugin, {
-      ctx: 'backend',
-      context: createContext(id, win),
-    });
-    if (
-      hasStarted ||
-      (hasStarted === null &&
-        typeof plugin.backend !== 'function' &&
-        plugin.backend)
-    ) {
-      loadedPluginMap[id] = plugin;
-    } else {
-      const message = t('common.console.plugins.load-failed', {
-        pluginName: id,
-      });
-      console.log(LoggerPrefix, message);
-      return Promise.reject(new Error(message));
-    }
-  } catch (err) {
-    console.error(
-      LoggerPrefix,
-      t('common.console.plugins.initialize-failed', { pluginName: id }),
-    );
-    console.trace(err);
-    return Promise.reject(err as Error);
+  const hasStarted = await startPlugin(id, plugin, {
+    ctx: 'backend',
+    context: createContext(id, win),
+  });
+  if (
+    hasStarted ||
+    (hasStarted === null &&
+      typeof plugin.backend !== 'function' &&
+      plugin.backend)
+  ) {
+    loadedPluginMap[id] = plugin;
+    return;
   }
+
+  const message = t('common.console.plugins.load-failed', { pluginName: id });
+  console.log(LoggerPrefix, message);
+  return Promise.reject(new Error(message));
 };
 
 export const loadAllMainPlugins = async (win: BrowserWindow) => {
@@ -171,10 +151,7 @@ export const loadAllMainPlugins = async (win: BrowserWindow) => {
   const queue: Promise<void>[] = [];
 
   for (const [plugin, pluginDef] of Object.entries(await mainPlugins())) {
-    const config = deepmerge(
-      pluginDef.config ?? { enabled: false },
-      pluginConfigs[plugin] ?? {},
-    );
+    const config = mergePluginConfig(pluginDef.config, pluginConfigs[plugin]);
     if (pluginDef.essential || config.enabled) {
       queue.push(forceLoadMainPlugin(plugin, win));
     } else if (loadedPluginMap[plugin]) {

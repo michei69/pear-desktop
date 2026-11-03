@@ -2,12 +2,12 @@
 
 ## Process model
 
-| Surface          | Entry point                         | Role                                                                 |
-| ---------------- | ----------------------------------- | -------------------------------------------------------------------- |
-| Main process     | `src/index.ts`                      | Window/tray/menu/protocol, config store, main-process plugins, themes |
-| Preload          | `src/preload.ts`                    | Loads i18n and preload plugins, exposes the bridge, injects the renderer |
-| Renderer         | `src/renderer.ts`                   | Page-world boot in the YouTube Music window; renderer plugins, themes, player API |
-| Settings window  | `src/settings-window.ts` + `?settings=1` | Standalone settings UI loading the same renderer bundle           |
+| Surface         | Entry point                              | Role                                                                              |
+| --------------- | ---------------------------------------- | --------------------------------------------------------------------------------- |
+| Main process    | `src/index.ts`                           | Window/tray/menu/protocol, config store, main-process plugins, themes             |
+| Preload         | `src/preload.ts`                         | Loads i18n and preload plugins, exposes the bridge, injects the renderer          |
+| Renderer        | `src/renderer.ts`                        | Page-world boot in the YouTube Music window; renderer plugins, themes, player API |
+| Settings window | `src/settings-window.ts` + `?settings=1` | Standalone settings UI loading the same renderer bundle                           |
 
 ## Boot sequence
 
@@ -31,7 +31,7 @@ Renderer (`src/renderer.ts`):
 1. If `?settings=1`, boot the standalone settings UI and stop.
 2. Otherwise start `initObserver()`: wait for DOM-ready, look for `#movie_player`, call `setupSongInfo(playerApi)` when it appears, and arm a throttled `MutationObserver` while it is missing. The chained `preload()` then loads i18n from the injected resources and `main()` starts the page-side services.
 3. `main()` sets up share-link rewriting, the context-menu customizer, loads all renderer plugins, initializes themes, subscribes to plugin enable/unload and `config-changed`, and ends with a one-shot `listenForApiLoad()`.
-4. `onApiLoaded()` runs once the player API exists *and* renderer plugins are loaded: video/CORS/audio-graph setup, `onPlayerApiReady` for every loaded renderer plugin, and the `peard:player-api-loaded` signal to main. The song-info listeners themselves are armed by `setupSongInfo` from the observer step.
+4. `onApiLoaded()` runs once the player API exists _and_ renderer plugins are loaded: video/CORS/audio-graph setup, `onPlayerApiReady` for every loaded renderer plugin, and the `peard:player-api-loaded` signal to main. The song-info listeners themselves are armed by `setupSongInfo` from the observer step.
 
 ## Build
 
@@ -68,9 +68,9 @@ Plugin discovery, lifecycle and the per-process contexts are covered in
 Configuration is an `electron-store` (the `conf` package) instance persisted to `<userData>/config.json` (`src/config/store.ts`). Shape and defaults live in `src/config/defaults.ts`; the store is typed from that object.
 
 - `config.get(key)` reads a dotted path (`plugins.synced-lyrics.enabled`).
-- `config.set` / `setPartial` / `patch` write; `setPartial` deep-merges into the existing object using `deepmerge-ts` with **arrays replaced, not concatenated** (`mergeArrays: false` in `src/config/index.ts`). Plugin config is merged over the plugin's own `config` default by the loaders with the default `deepmerge-ts` behaviour, where arrays *do* concatenate - a default array can therefore be prepended to the stored one (see the comment in `src/plugins/synced-lyrics/index.ts`). Prefer omitting default arrays when the value is user-editable.
+- `config.set` / `setPartial` / `patch` write; `setPartial` deep-merges into the existing object using `deepmerge-ts` with **arrays replaced, not concatenated** (`mergeArrays: false` in `src/config/index.ts`). Plugin config is merged over the plugin's own `config` default by the loaders with the default `deepmerge-ts` behaviour, where arrays _do_ concatenate - a default array can therefore be prepended to the stored one (see the comment in `src/plugins/synced-lyrics/index.ts`). Prefer omitting default arrays when the value is user-editable.
 - `config.watch` observes the whole store; main uses it to start/stop plugins, show restart dialogs and broadcast `config-changed`.
-- Migrations are keyed by version in `src/config/store.ts` (for example `'>=3.12.3'`). They run once, move/rename/delete stored keys, and never touch keys the user did not have.
+- Migrations are keyed by version in `src/config/migrations.ts` (for example `'>=3.12.3'`) and wired into the store by `src/config/store.ts`. They are declared oldest first, because `conf` applies the applicable keys in insertion order; a later one may rely on an earlier one having converted the stored shape. They run once, move/rename/delete stored keys, and never touch keys the user did not have.
 - Options read only at startup are marked `restartNeeded` in the settings schema; the menu sets `restartOnConfigChanges` to restart on any menu write when the user opted in.
 - Side effects of option writes go through `src/providers/option-effects.ts` so the native menu and the in-app settings behave the same.
 - The renderer sees only the allowlisted `mainConfig` keys; plugin code that needs a new option in the page must add it to `rendererConfigKeys` in `src/preload.ts`.
@@ -129,30 +129,29 @@ Writes go through the `ytmd-sui:*` channels in the plugin backend, which apply t
 
 `src/providers/` holds the cross-cutting services. The main ones:
 
-| Provider                                | Responsibility                                                        |
-| --------------------------------------- | --------------------------------------------------------------------- |
-| `app-controls`                          | Restart/reload, downloads folder, path joining, window broadcast      |
-| `app-icon`                              | Icon paths per platform and per logo option                           |
-| `app-meta`                              | GPU/app debug info for the About section                              |
-| `app-updates`                           | electron-updater wiring, channels, retry and dev-behind-master check  |
-| `app-versions`                          | Version/prerelease helpers and migration base version                 |
-| `audio-graph`                           | Single owner of the media element's Web Audio graph                   |
-| `cache-maintenance`                     | Stale code-cache cleanup after updates; hidden-window cache release   |
-| `context-menu`                          | Hiding YouTube Music's three-dot menu entries                         |
-| `decorators`                            | `singleton`, `debounce`, `cacheNoArgs` helpers                        |
-| `dom-elements`                          | Cached/typed DOM queries for the player page                          |
-| `external-links`                        | Deciding browser vs in-app navigation for clicked links               |
-| `extracted-data`                        | Static maps such as the starting-page ids                             |
-| `flag-metadata`                         | Descriptions/families for YouTube Music feature flags                 |
-| `language-sync`                         | App language ↔ YouTube `hl` value                                     |
-| `memory-report`                         | Opt-in per-process/cache memory snapshots                             |
-| `option-effects`                        | Side effects of writing an app option                                 |
-| `performance-mode` / `-animations`      | Performance mode flags, CSS and animation throttle                    |
-| `player-page-observer`                  | Shared `MutationObserver`s for player-page nodes                      |
-| `prompt-options`                        | Shared `custom-electron-prompt` defaults                              |
-| `protocol-handler`                      | `youtubemusic://` protocol commands and focus handling                |
-| `share-url`                             | Stripping `si`/music-subdomain parameters from shared links           |
-| `shortcut-icons`                        | Keeping Windows `.lnk` icons in sync with the icon option             |
-| `song-controls`                         | Command handlers used by the protocol and IPC controls                |
-| `song-info` / `-data` / `-front`         | The song-info pipeline described above                                |
-
+| Provider                           | Responsibility                                                       |
+| ---------------------------------- | -------------------------------------------------------------------- |
+| `app-controls`                     | Restart/reload, downloads folder, path joining, window broadcast     |
+| `app-icon`                         | Icon paths per platform and per logo option                          |
+| `app-meta`                         | GPU/app debug info for the About section                             |
+| `app-updates`                      | electron-updater wiring, channels, retry and dev-behind-master check |
+| `app-versions`                     | Version/prerelease helpers and migration base version                |
+| `audio-graph`                      | Single owner of the media element's Web Audio graph                  |
+| `cache-maintenance`                | Stale code-cache cleanup after updates; hidden-window cache release  |
+| `context-menu`                     | Hiding YouTube Music's three-dot menu entries                        |
+| `decorators`                       | `singleton`, `debounce`, `cacheNoArgs` helpers                       |
+| `dom-elements`                     | Cached/typed DOM queries for the player page                         |
+| `external-links`                   | Deciding browser vs in-app navigation for clicked links              |
+| `extracted-data`                   | Static maps such as the starting-page ids                            |
+| `flag-metadata`                    | Descriptions/families for YouTube Music feature flags                |
+| `language-sync`                    | App language ↔ YouTube `hl` value                                    |
+| `memory-report`                    | Opt-in per-process/cache memory snapshots                            |
+| `option-effects`                   | Side effects of writing an app option                                |
+| `performance-mode` / `-animations` | Performance mode flags, CSS and animation throttle                   |
+| `player-page-observer`             | Shared `MutationObserver`s for player-page nodes                     |
+| `prompt-options`                   | Shared `custom-electron-prompt` defaults                             |
+| `protocol-handler`                 | `youtubemusic://` protocol commands and focus handling               |
+| `share-url`                        | Stripping `si`/music-subdomain parameters from shared links          |
+| `shortcut-icons`                   | Keeping Windows `.lnk` icons in sync with the icon option            |
+| `song-controls`                    | Command handlers used by the protocol and IPC controls               |
+| `song-info` / `-data` / `-front`   | The song-info pipeline described above                               |

@@ -1,10 +1,10 @@
-import { deepmerge } from 'deepmerge-ts';
 import {
   rendererPlugin,
   rendererPluginMeta,
   supportsPlatform,
 } from 'virtual:plugins';
 
+import { mergePluginConfig } from '@/config/merge';
 import { t } from '@/i18n';
 import { isSkippedInPerformanceMode } from '@/providers/performance-mode';
 import { LoggerPrefix, startPlugin, stopPlugin } from '@/utils';
@@ -116,9 +116,6 @@ export const forceUnloadRendererPlugin = async (id: string) => {
     ctx: 'renderer',
     context: createContext(id),
   });
-  if (plugin?.stylesheets) {
-    document.querySelector(`style#plugin-${id}`)?.remove();
-  }
   if (hasStopped || (hasStopped === null && plugin?.renderer)) {
     delete loadedPluginMap[id];
     console.log(
@@ -227,9 +224,9 @@ export const loadAllRendererPlugins = async () => {
       : undefined;
     if (needsDefinition && !pluginDef) continue;
 
-    const config = deepmerge(
+    const config = mergePluginConfig(
       pluginDef?.config ?? { enabled: meta.enabled ?? false },
-      pluginConfigs[pluginId] ?? {},
+      pluginConfigs[pluginId],
     );
     const essential = pluginDef?.essential ?? meta.essential === true;
 

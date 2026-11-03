@@ -31,7 +31,8 @@ declare global {
       getScrobbleOptions: () => ScrobbleOptions;
     };
     electronIs: typeof is;
-    ELECTRON_RENDERER_URL: string | undefined;
+    /** Real window visibility, set from main's `peard:window-visibility`. */
+    peardWindowHidden: boolean;
     /** Internal variable (last interaction time). */
     _lact: number;
     navigation: Navigation;

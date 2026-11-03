@@ -1,7 +1,7 @@
-import { deepmerge } from 'deepmerge-ts';
 import { allPlugins } from 'virtual:plugins';
 
 import * as config from '@/config';
+import { mergePluginConfig } from '@/config/plugins';
 import { t } from '@/i18n';
 import { setApplicationMenu } from '@/menu';
 import { LoggerPrefix } from '@/utils';
@@ -14,30 +14,34 @@ const menuTemplateMap: Record<string, MenuItemConstructorOptions[]> = {};
 const createContext = (
   id: string,
   win: BrowserWindow,
-): MenuContext<PluginConfig> => ({
-  getConfig: async () =>
-    deepmerge(
-      (await allPlugins())[id].config ?? { enabled: false },
-      config.get(`plugins.${id}`) ?? {},
-    ) as PluginConfig,
-  setConfig: async (newConfig) => {
-    config.setPartial(
-      `plugins.${id}`,
-      newConfig,
-      (await allPlugins())[id].config,
-    );
-  },
-  window: win,
-  refresh: async () => {
-    await setApplicationMenu(win);
+): MenuContext<PluginConfig> => {
+  const allPluginDefs = allPlugins();
 
-    if (await config.plugins.isEnabled('in-app-menu')) {
-      win.webContents.send('refresh-in-app-menu');
-    }
-  },
-});
+  return {
+    getConfig: async () =>
+      mergePluginConfig(
+        (await allPluginDefs)[id].config,
+        config.get(`plugins.${id}`),
+      ),
+    setConfig: async (newConfig) => {
+      config.setPartial(
+        `plugins.${id}`,
+        newConfig,
+        (await allPluginDefs)[id].config,
+      );
+    },
+    window: win,
+    refresh: async () => {
+      await setApplicationMenu(win);
 
-export const forceLoadMenuPlugin = async (id: string, win: BrowserWindow) => {
+      if (await config.plugins.isEnabled('in-app-menu')) {
+        win.webContents.send('refresh-in-app-menu');
+      }
+    },
+  };
+};
+
+const forceLoadMenuPlugin = async (id: string, win: BrowserWindow) => {
   try {
     const plugin = (await allPlugins())[id];
     if (!plugin) return;
@@ -71,10 +75,7 @@ export const loadAllMenuPlugins = async (win: BrowserWindow) => {
   const pluginConfigs = config.plugins.getPlugins();
 
   for (const [pluginId, pluginDef] of Object.entries(await allPlugins())) {
-    const config = deepmerge(
-      pluginDef.config ?? { enabled: false },
-      pluginConfigs[pluginId] ?? {},
-    );
+    const config = mergePluginConfig(pluginDef.config, pluginConfigs[pluginId]);
 
     if (pluginDef.essential || config.enabled) {
       await forceLoadMenuPlugin(pluginId, win);

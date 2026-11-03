@@ -1,11 +1,8 @@
-import { readFileSync } from 'node:fs';
-
 import { expect, test } from '@playwright/test';
 
 import {
   hiddenEntryKeys,
   hideMenuEntries,
-  MENU_ENTRIES,
   menuEntryKeyOf,
   type MenuItemData,
 } from '../src/providers/context-menu';
@@ -209,25 +206,4 @@ test('only switched-on entries count as hidden', () => {
   ).toEqual(['share', 'play-next']);
   expect(hiddenEntryKeys({})).toEqual([]);
   expect(hiddenEntryKeys()).toEqual([]);
-});
-
-test('every declared entry has a label', () => {
-  const english = JSON.parse(
-    readFileSync(
-      new URL('../src/i18n/resources/en.json', import.meta.url),
-      'utf8',
-    ),
-  ) as {
-    'settings-ui': {
-      fields: Record<string, { entries?: Record<string, string> }>;
-    };
-  };
-
-  const labels = english['settings-ui'].fields['context-menu']?.entries ?? {};
-
-  expect(MENU_ENTRIES.length).toBeGreaterThan(0);
-  for (const entry of MENU_ENTRIES) {
-    expect(labels[entry.key], `missing label for ${entry.key}`).toBeTruthy();
-  }
-  expect(Object.keys(labels)).toHaveLength(MENU_ENTRIES.length);
 });

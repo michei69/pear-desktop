@@ -46,8 +46,9 @@ The `api` argument is `document.querySelector('#movie_player')` typed as
 `Element & MusicPlayer`. It is not a wrapper built by this app: it is YouTube
 Music's own player proxy, which forwards to the external and trusted/internal
 player interfaces. `MusicPlayer` in `src/types/music-player.ts` describes that
-surface; the raw methods and their real signatures are covered by the YouTube
-Music API reference being added to this docs folder.
+surface with method names, parameter lists and payload types read from the
+player source; the minified implementation itself is the reference for anything
+that type does not model.
 
 Consequences worth designing around:
 
@@ -89,21 +90,22 @@ if (state?.isPlaying) {
 }
 ```
 
-`getPlayerStateObject` is one of the methods the raw YouTube Music API exposes
-but `MusicPlayer` does not model; the YouTube Music API reference being added to
-this folder lists the rest.
+`getPlayerStateObject` is the typed replacement for reading `getPlayerState()`
+values by number: it returns `PlayerStateObject` with named booleans
+(`isPlaying`, `isPaused`, `isBuffering`, ...), also declared in
+`src/types/music-player.ts`.
 
 `getInternalApiInterface` / `getApiInterface` expose the raw trusted and classic
 interfaces for anything not modelled on `MusicPlayer`.
 
 The data shapes show up in different places and do not share field naming:
 
-| Accessor | Type | Shape |
-| --- | --- | --- |
-| `api.getVideoData()` | `VideoDetails` (`src/types/video-details.ts`) | snake_case: `video_id`, `title`, `author`, `list`, `video_quality`, `isLive`, ... |
-| `api.getPlayerResponse()` | `GetPlayerResponse` (`src/types/get-player-response.ts`) | full Innertube `/player` response: `videoDetails`, `streamingData`, `playbackTracking`, `captions`, ... |
-| `api.getWatchNextResponse()` | `WatchNextResponse` (`src/types/music-player-desktop-internal.ts`) | the `/next` data the app reads; the type currently models `playerOverlays` only |
-| `api.addEventListener('videodatachange', ...)` | `VideoDataChangeValue` (`src/types/player-api-events.ts`) | camelCase: `videoId`, `title`, `author`, `playlistId`, `lengthSeconds`, `loading`, ... |
+| Accessor                                       | Type                                                               | Shape                                                                                                   |
+| ---------------------------------------------- | ------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------- |
+| `api.getVideoData()`                           | `VideoDetails` (`src/types/video-details.ts`)                      | snake_case: `video_id`, `title`, `author`, `list`, `video_quality`, `isLive`, ...                       |
+| `api.getPlayerResponse()`                      | `GetPlayerResponse` (`src/types/get-player-response.ts`)           | full Innertube `/player` response: `videoDetails`, `streamingData`, `playbackTracking`, `captions`, ... |
+| `api.getWatchNextResponse()`                   | `WatchNextResponse` (`src/types/music-player-desktop-internal.ts`) | the `/next` data the app reads; the type currently models `playerOverlays` only                         |
+| `api.addEventListener('videodatachange', ...)` | `VideoDataChangeValue` (`src/types/player-api-events.ts`)          | camelCase: `videoId`, `title`, `author`, `playlistId`, `lengthSeconds`, `loading`, ...                  |
 
 The event payload and `getVideoData()` are not interchangeable: the event uses
 `videoId`, the accessor uses `video_id`.
@@ -135,15 +137,15 @@ read that, not the raw player response.
 
 ## Controlling playback
 
-| Task | Call | Notes |
-| --- | --- | --- |
-| Play / pause | `playVideo()`, `pauseVideo()` | The type comment warns `playVideo` "does not resume playback; plays from the start"; the app's own `peard:toggle-play` handler still calls it when `getPlayerState() === 2`, so verify behavior if resuming matters to your feature. |
-| State | `getPlayerState()` | `1` playing, `2` paused according to the type; `src/plugins/exponential-volume/index.ts` treats `3` as buffering. The raw reference lists the complete enum. |
-| Position / duration | `getCurrentTime()`, `getDuration()` | Seconds; position is a float. |
-| Seek | `seekTo(seconds)`, `seekBy(deltaSeconds)` | `src/plugins/seek-shortcuts/index.ts` uses `seekBy`; the app's own `peard:seek-to` uses `seekTo`. |
-| Volume | `getVolume()`, `setVolume(0..100)`, `mute()`, `unMute()`, `isMuted()` | Volume changes are rejected while buffering; exponential-volume retries on the next state change. |
-| Quality | `getAvailableQualityLevels()`, `getPlaybackQuality()`, `setPlaybackQuality()`, `setPlaybackQualityRange()` | `src/plugins/quality-changer/index.tsx` reads the first pair and writes `setPlaybackQualityRange()` then `setPlaybackQuality()`. |
-| Fullscreen / inline | `isFullscreen()`, `toggleFullscreen()`, `isInline()`, `setInline()` | The app generally drives fullscreen through the page UI (`src/renderer.ts`), not this API. |
+| Task                | Call                                                                                                       | Notes                                                                                                                                                                                                                                |
+| ------------------- | ---------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Play / pause        | `playVideo()`, `pauseVideo()`                                                                              | The type comment warns `playVideo` "does not resume playback; plays from the start"; the app's own `peard:toggle-play` handler still calls it when `getPlayerState() === 2`, so verify behavior if resuming matters to your feature. |
+| State               | `getPlayerState()`                                                                                         | `1` playing, `2` paused according to the type; `src/plugins/exponential-volume/index.ts` treats `3` as buffering. The raw reference lists the complete enum.                                                                         |
+| Position / duration | `getCurrentTime()`, `getDuration()`                                                                        | Seconds; position is a float.                                                                                                                                                                                                        |
+| Seek                | `seekTo(seconds)`, `seekBy(deltaSeconds)`                                                                  | `src/plugins/seek-shortcuts/index.ts` uses `seekBy`; the app's own `peard:seek-to` uses `seekTo`.                                                                                                                                    |
+| Volume              | `getVolume()`, `setVolume(0..100)`, `mute()`, `unMute()`, `isMuted()`                                      | Volume changes are rejected while buffering; exponential-volume retries on the next state change.                                                                                                                                    |
+| Quality             | `getAvailableQualityLevels()`, `getPlaybackQuality()`, `setPlaybackQuality()`, `setPlaybackQualityRange()` | `src/plugins/quality-changer/index.tsx` reads the first pair and writes `setPlaybackQualityRange()` then `setPlaybackQuality()`.                                                                                                     |
+| Fullscreen / inline | `isFullscreen()`, `toggleFullscreen()`, `isInline()`, `setInline()`                                        | The app generally drives fullscreen through the page UI (`src/renderer.ts`), not this API.                                                                                                                                           |
 
 The playback methods are also what the app's own transport controls use:
 `peard:play` / `peard:pause` / `peard:toggle-play` call `playVideo` /
@@ -159,11 +161,11 @@ app.
 interface and a `PlayerAPIEventArgs` helper in `src/types/music-player.ts`;
 upstream code that typed the listener itself may need adjusting.
 
-| Event | Listener arguments | Notes |
-| --- | --- | --- |
-| `videodatachange` | `(name, data)` | `name` is `'dataloaded'` or `'dataupdated'`; `data` is `VideoDataChangeValue`. |
-| `onStateChange` | `(state: number)` | Player state; see `getPlayerState()` above. |
-| `onVideoProgress` | `(seconds: number)` | Fires roughly four times a second; throttle anything expensive. |
+| Event             | Listener arguments  | Notes                                                                          |
+| ----------------- | ------------------- | ------------------------------------------------------------------------------ |
+| `videodatachange` | `(name, data)`      | `name` is `'dataloaded'` or `'dataupdated'`; `data` is `VideoDataChangeValue`. |
+| `onStateChange`   | `(state: number)`   | Player state; see `getPlayerState()` above.                                    |
+| `onVideoProgress` | `(seconds: number)` | Fires roughly four times a second; throttle anything expensive.                |
 
 `videodatachange` is the per-track signal. `dataloaded` fires first and
 `dataupdated` follows a moment later, but `dataupdated` is not guaranteed: the
@@ -247,14 +249,15 @@ code.
 The page has no Node or Electron APIs. Preload exposes a small surface; most of
 it is typed in `src/reset.d.ts`:
 
-| Global | Use |
-| --- | --- |
-| `window.mainConfig` | The allowlisted app options and plugin enablement: `get`, `plugins.getPlugins`, `plugins.isEnabled`, `plugins.setOptions` (currently accepted only for `video-toggle`), `getContextMenuHidden`, `getScrobbleOptions`. Keys not on `rendererConfigKeys` in `src/preload.ts` read as `undefined`. |
-| `window.ipcRenderer` | The audited IPC surface. `subscribe(channel, listener)` returns an unsubscribe closure and is what `ctx.ipc.on` uses; prefer the context object over calling this directly. |
-| `window.electronIs` | The `electron-is` instance, for platform/dev checks. |
-| `window.i18n` | `{ t }` bound to the renderer's i18next instance, set up in `src/renderer.ts`. |
-| `window.reload` | Reloads the page (sends `peard:reload` to main). |
-| `window.peardPerf` | `webFrame.getResourceUsage()`, used by the memory report; exposed in `src/preload.ts`. |
+| Global                     | Use                                                                                                                                                                                                                                                                                                                                                            |
+| -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `window.mainConfig`        | The allowlisted app options and plugin enablement: `get`, `plugins.getPlugins`, `plugins.isEnabled`, `plugins.setOptions` (currently accepted only for `video-toggle`), `getContextMenuHidden`, `getScrobbleOptions`. Keys not on `rendererConfigKeys` in `src/preload.ts` read as `undefined`.                                                                |
+| `window.ipcRenderer`       | The audited IPC surface. `subscribe(channel, listener)` returns an unsubscribe closure and is what `ctx.ipc.on` uses; prefer the context object over calling this directly.                                                                                                                                                                                    |
+| `window.electronIs`        | The `electron-is` instance, for platform/dev checks.                                                                                                                                                                                                                                                                                                           |
+| `window.i18n`              | `{ t }` bound to the renderer's i18next instance, set up in `src/renderer.ts`.                                                                                                                                                                                                                                                                                 |
+| `window.reload`            | Reloads the page (sends `peard:reload` to main).                                                                                                                                                                                                                                                                                                               |
+| `window.peardPerf`         | `webFrame.getResourceUsage()`, used by the memory report; exposed in `src/preload.ts`.                                                                                                                                                                                                                                                                         |
+| `window.peardWindowHidden` | `true` while the main window is hidden or minimized. The page fakes `document.hidden`/`visibilityState` so YouTube Music keeps playing, so this is the only real visibility signal. Main sends it on `peard:window-visibility` and `src/renderer.ts` also dispatches a `peard:window-visibility` `CustomEvent` on `window` with `detail: { hidden: boolean }`. |
 
 ## Caveats
 

@@ -6,7 +6,7 @@ import {
 } from 'electron';
 import is from 'electron-is';
 
-import { getLoadedResources, loadI18n } from '@/i18n';
+import { getLoadedResources, loadI18n, t } from '@/i18n';
 import { isPerformancePartEnabled } from '@/providers/performance-mode';
 import { installAnimationThrottle } from '@/providers/performance-mode-animations';
 
@@ -109,6 +109,7 @@ const rendererConfig = {
   },
 };
 
+// HACK: stop YTM's ES5 custom-elements adapter from replacing the real registry.
 // @ts-expect-error dummy
 globalThis.customElements = { define() {} };
 
@@ -191,10 +192,6 @@ contextBridge.exposeInMainWorld('ipcRenderer', {
 contextBridge.exposeInMainWorld('reload', () =>
   ipcRenderer.send('peard:reload'),
 );
-contextBridge.exposeInMainWorld(
-  'ELECTRON_RENDERER_URL',
-  process.env.ELECTRON_RENDERER_URL,
-);
 // Renderer-side perf bisect switch; the page has no `process` to read it from.
 contextBridge.exposeInMainWorld(
   'pearPerfDisabledParts',
@@ -222,22 +219,76 @@ contextBridge.exposeInMainWorld('peardPerf', {
 });
 ipcRenderer.on('peard:clear-cache', () => webFrame.clearCache());
 
+const showInjectionError = (error: unknown) => {
+  console.error('Failed to inject the renderer:', error);
+  if (!new URLSearchParams(window.location.search).has('settings')) return;
+
+  const render = () => {
+    if (!document.body) return;
+
+    const host = document.createElement('div');
+    host.style.cssText =
+      'position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:32px;background:#1d1b20;color:#e6e1e5;font-family:Roboto,system-ui,sans-serif;';
+    const card = document.createElement('div');
+    card.style.cssText = 'max-width:560px;';
+    const title = document.createElement('div');
+    title.style.cssText = 'font-size:20px;font-weight:600;margin-bottom:12px;';
+    title.textContent = t('settings-ui.boot-failed.title');
+    const message = document.createElement('div');
+    message.style.cssText =
+      'margin-bottom:20px;color:#cac4d0;font-size:13px;line-height:1.5;white-space:pre-wrap;word-break:break-word;';
+    message.textContent = t('settings-ui.boot-failed.message', {
+      error: error instanceof Error ? error.message : String(error),
+    });
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.style.cssText =
+      'padding:9px 18px;border:1px solid #938f99;border-radius:20px;background:transparent;color:#d0bcff;cursor:pointer;font-family:inherit;font-size:13px;font-weight:500;';
+    button.textContent = t('settings-ui.boot-failed.reload');
+    button.addEventListener('click', () => location.reload());
+    card.append(title, message, button);
+    host.appendChild(card);
+    document.body.replaceChildren(host);
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', render, { once: true });
+  } else {
+    render();
+  }
+};
+
 const bootRenderer = () => {
-  const [path, script] = ipcRenderer.sendSync('get-renderer-script') as [
-    string | null,
-    string,
-  ];
-  if (!path && !script) return;
+  let result: [string | null, string] | undefined;
+  try {
+    result = ipcRenderer.sendSync('get-renderer-script') as [
+      string | null,
+      string,
+    ];
+  } catch (error) {
+    showInjectionError(error);
+    return;
+  }
+
+  const [path, script] = result ?? [null, ''];
+  if (!path && !script) {
+    showInjectionError(new Error('The renderer script is missing'));
+    return;
+  }
 
   // The renderer bundle carries no translations: hand it the ones loaded here.
   const code = `globalThis.__PEAR_I18N_RESOURCES__ = ${JSON.stringify(
     getLoadedResources(),
   )};\n${script}`;
 
-  if (path) {
-    webFrame.executeJavaScriptInIsolatedWorld(0, [{ code, url: path }], true);
-  } else {
-    webFrame.executeJavaScript(code, true);
+  try {
+    if (path) {
+      webFrame.executeJavaScriptInIsolatedWorld(0, [{ code, url: path }], true);
+    } else {
+      webFrame.executeJavaScript(code, true);
+    }
+  } catch (error) {
+    showInjectionError(error);
   }
 };
 

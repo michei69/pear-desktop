@@ -38,13 +38,13 @@ description: () => t('plugins.my-plugin.description'),
 
 Key layout:
 
-| Prefix                      | Used for                                                   |
-| --------------------------- | ---------------------------------------------------------- |
-| `plugins.<id>.*`            | A plugin's name, description, menu and settings strings    |
-| `settings-ui.*`             | The settings UI plugin itself (top-level, not under `plugins`) |
-| `main.*`                    | Main-process strings: dialogs, native menu, tray, console  |
-| `common.*`                  | Shared strings such as plugin-loader console messages      |
-| `language.*`                | The locale metadata block (`code`, `name`, `local-name`)   |
+| Prefix           | Used for                                                       |
+| ---------------- | -------------------------------------------------------------- |
+| `plugins.<id>.*` | A plugin's name, description, menu and settings strings        |
+| `settings-ui.*`  | The settings UI plugin itself (top-level, not under `plugins`) |
+| `main.*`         | Main-process strings: dialogs, native menu, tray, console      |
+| `common.*`       | Shared strings such as plugin-loader console messages          |
+| `language.*`     | The locale metadata block (`code`, `name`, `local-name`)       |
 
 - Leaf keys are lower-case kebab-case: `show-button`, `smoothness-transition`.
 - Interpolate with i18next syntax: `t('...', { pluginName: id })` against `"Failed to load plugin \"{{pluginName}}\""`. There are currently no plural forms in the resources. (TODO)
@@ -76,7 +76,7 @@ Other naming and layout conventions:
 - Reactivity-free UI helpers stay `.ts`; Solid components are `.tsx` and PascalCase (`SettingsModal.tsx`).
 - App-wide types live in `src/types/`; a plugin's own config/type aliases live either in its `types.ts` or in its `index.ts` when small.
 - IPC channels are namespaced strings: `peard:<kebab-case>` for the app. Plugins should preferably use `peard-<plugin-slug>:<kebab-case>`.
-- Comments explain *why*, not *what*. Non-obvious workarounds, timing constraints and rejected alternatives get a short comment; trivial code does not. JSDoc exported functions whose contract is not obvious.
+- Comments explain _why_, not _what_. Non-obvious workarounds, timing constraints and rejected alternatives get a short comment; trivial code does not. JSDoc exported functions whose contract is not obvious.
 - Keep the public surface of a module explicit; prefer named exports except for plugin entry points, which export a default `createPlugin({...})`.
 
 When changing an app-level option rather than a plugin option, the change is only complete when all of these agree:
@@ -86,18 +86,19 @@ When changing an app-level option rather than a plugin option, the change is onl
 3. `src/menu.ts` - the native menu entry, if the option has one.
 4. `src/providers/option-effects.ts` - side effects that must happen immediately.
 5. `src/preload.ts` - `rendererConfigKeys`, if the renderer reads the value.
-6. A migration in `src/config/store.ts` - if a stored key is renamed or removed.
+6. A migration in `src/config/migrations.ts` - if a stored key is renamed or removed.
 
 ## Tests
 
-The test runner is Playwright's (`@playwright/test`). Most tests are plain Node tests that never open a window; three tests drive the real app with `_electron.launch`: `tests/index.test.js`, `tests/do-not-track.test.js` and `tests/ipc-subscription.test.js`. `tests/index.test.js` loads the live `music.youtube.com` page, so it needs network access and a build that runs. Run them with:
+The test runner is Playwright's (`@playwright/test`). Most tests are plain Node tests that never open a window. Four tests drive the real app with `_electron.launch`: `tests/index.test.js`, `tests/do-not-track.test.js`, `tests/ipc-subscription.test.js` and `tests/settings-window.test.js`. `playwright.config.ts` declares two projects: `unit` (everything except those four; one worker, 60s per test) and `electron` (the four launch tests; 120s). The Electron project runs against `dist/`, so `pnpm test:e2e` needs a `pnpm build` first; `tests/index.test.js` also loads the live `music.youtube.com` page, so it needs network access. Run them with:
 
 ```bash
-pnpm test          # playwright test
-pnpm test:debug    # same, with Playwright protocol debugging
+pnpm test          # playwright test --project=unit
+pnpm test:e2e      # playwright test --project=electron (needs pnpm build)
+pnpm test:debug    # unit project, with Playwright protocol debugging
 ```
 
-- Cross-cutting tests live in `tests/`. Plugin internals live next to the plugin: `src/plugins/<id>/tests/` or a `*.test.ts` beside the module under test. `tsconfig.test.json` covers `tests/**`, while `tsconfig.json` includes `src/**`, so both locations are type-checked.
+- Cross-cutting tests live in `tests/`. Plugin internals live next to the plugin: `src/plugins/<id>/tests/` or a `*.test.ts` beside the module under test. `playwright.config.ts` discovers both locations. `tsconfig.test.json` covers `tests/**` for a manual `tsc -p tsconfig.test.json --noEmit`; it is not part of `pnpm check`, so tests are not type-checked by default.
 - Test behavior, not implementation.
 - Prefer pure functions and dependency-free modules so a test needs no Electron process. When a module imports Electron, the common move is to extract the pure part (see `src/config/migrations.ts` vs `src/config/store.ts`).
 - Filesystem tests create their own temporary directories instead of touching the real config/themes folders (see `tests/themes-load.test.ts`).

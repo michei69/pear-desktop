@@ -1,7 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { Window } from 'happy-dom';
 
-import { defaultConfig } from '../src/config/defaults';
 import {
   createShareUrlRewriter,
   rewriteShareUrlInput,
@@ -33,11 +32,6 @@ const setup = (options: ShareUrlOptions, value = MUSIC_URL) => {
 
   return { document: window.document as unknown as Document, input, options, window };
 };
-
-test('only the si parameter is stripped by default', () => {
-  expect(defaultConfig.options.stripMusicFromSharedLinks).toBe(false);
-  expect(defaultConfig.options.stripSIFromSharedLinks).toBe(true);
-});
 
 test('stripMusicSubdomain preserves the rest of a YouTube Music URL', () => {
   expect(

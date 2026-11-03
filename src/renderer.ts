@@ -327,7 +327,13 @@ function onApiLoaded() {
 
   window.ipcRenderer.on(
     'peard:search',
-    async (_, query: string, params?: string, continuation?: string) => {
+    async (
+      _,
+      requestId: string,
+      query: string,
+      params?: string,
+      continuation?: string,
+    ) => {
       const app = getPlayerApp();
       const searchBox =
         document.querySelector<SearchBoxElement>('ytmusic-search-box');
@@ -349,7 +355,7 @@ function onApiLoaded() {
         suggestStats: searchBox.getSearchboxStats(),
       });
 
-      window.ipcRenderer.send('peard:search-results', result);
+      window.ipcRenderer.send('peard:search-results', requestId, result);
     },
   );
 
@@ -593,7 +599,7 @@ const preload = async () => {
     t: i18t.bind(i18next),
   };
   definePearTransElements();
-  if (document.body?.dataset?.os) {
+  if (document.body) {
     document.body.dataset.os = navigator.userAgent;
   }
 };
@@ -674,9 +680,6 @@ const main = async () => {
 
   listenForApiLoad();
 
-  // Blocks the "Are You Still There?" popup by refreshing `_lact` every 15min.
-  setInterval(() => (window._lact = Date.now()), 900_000);
-
   // A minimized/hidden window makes Chromium report the page hidden, and YTM
   // then pauses playback after a few tracks. Keep the page visible.
   Object.defineProperties(document, {
@@ -687,6 +690,20 @@ const main = async () => {
     'visibilitychange',
     (e) => e.stopImmediatePropagation(),
     true,
+  );
+
+  // HACK: the spoof above hides the real window state, so expose main's
+  // hide/minimize/show/restore events for page plugins that pump animation.
+  window.ipcRenderer.on(
+    'peard:window-visibility',
+    (_event, hidden: boolean) => {
+      window.peardWindowHidden = hidden === true;
+      window.dispatchEvent(
+        new CustomEvent('peard:window-visibility', {
+          detail: { hidden: window.peardWindowHidden },
+        }),
+      );
+    },
   );
 
   // Forward main-process logs into the renderer console (dev only).
@@ -755,7 +772,9 @@ const initObserver = async () => {
 };
 
 if (new URLSearchParams(window.location.search).has('settings')) {
-  bootStandaloneSettings();
+  bootStandaloneSettings().catch((err) => {
+    console.error('Failed to initialize the settings window:', err);
+  });
 } else {
   initObserver()
     .then(preload)

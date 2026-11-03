@@ -111,6 +111,17 @@ test('the equalizer owns one serial chain and updates gain in place', () => {
   expect(filters[5].gain?.value).toBe(6);
   expect(output.gain?.value).toBeCloseTo(10 ** (-3 / 20), 5);
 
+  // Bypass is unity on the output stage: a trim must not quieten the mix.
+  chain.apply(
+    normalizeConfig({
+      filters: flatProfile().filters,
+      outputGainDb: -3,
+      bypass: true,
+    }),
+  );
+  expect(output.gain?.value).toBe(1);
+  expect(filters.every((filter) => filter.gain?.value === 0)).toBe(true);
+
   chain.stop();
   expect([...source.edges]).toEqual([destination]);
   expect(filters.every((filter) => filter.edges.size === 0)).toBe(true);

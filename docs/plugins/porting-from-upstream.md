@@ -14,16 +14,16 @@ exports `createPlugin({...})`, and the definition has `name`, `description`,
 `backend`/`preload`/`renderer` halves. This fork extends that contract rather
 than replacing it:
 
-| Surface | Upstream | This fork |
-| --- | --- | --- |
-| `PluginDef` | base fields plus contexts | adds `essential`, `settings`, and a renderer `components` map (`src/types/plugins.ts`) |
-| Settings UI | no in-app Settings modal; options are edited through `menu` handlers when a plugin has a menu | `settings-ui` essential plugin renders each plugin's `settings` schema in the Settings modal |
-| Renderer loading | imports every plugin, then checks the merged config | reads build-time metadata first (`rendererPluginMeta`) and only resolves definitions that cannot be decided statically |
-| IPC context | `on` only, no `off` (the renderer had a heavy-handed `removeAllListeners`) | `off` on both contexts, with a per-plugin listener registry so a plugin can unsubscribe exactly its own listener |
-| i18n delivery | every locale resource is bundled and imported eagerly | only English plus the active language are loaded; the renderer bundle carries no translations and gets them from preload |
-| Themes | no theme plugin | folder-based theme engine in `src/themes`; the earlier `custom-theme` plugin was removed |
-| Plugin helpers | `fileExists`, `injectCSSAsFile` in `src/plugins/utils/main/` | removed; use `node:fs` and `injectCSS`; `innertube.ts` helpers were added |
-| API server | older route layout under `src/plugins/api-server/backend/` | Hono v1/v2 + MCP layout; not a drop-in merge |
+| Surface          | Upstream                                                                                      | This fork                                                                                                                |
+| ---------------- | --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `PluginDef`      | base fields plus contexts                                                                     | adds `essential`, `settings`, and a renderer `components` map (`src/types/plugins.ts`)                                   |
+| Settings UI      | no in-app Settings modal; options are edited through `menu` handlers when a plugin has a menu | `settings-ui` essential plugin renders each plugin's `settings` schema in the Settings modal                             |
+| Renderer loading | imports every plugin, then checks the merged config                                           | reads build-time metadata first (`rendererPluginMeta`) and only resolves definitions that cannot be decided statically   |
+| IPC context      | `on` only, no `off` (the renderer had a heavy-handed `removeAllListeners`)                    | `off` on both contexts, with a per-plugin listener registry so a plugin can unsubscribe exactly its own listener         |
+| i18n delivery    | every locale resource is bundled and imported eagerly                                         | only English plus the active language are loaded; the renderer bundle carries no translations and gets them from preload |
+| Themes           | no theme plugin                                                                               | folder-based theme engine in `src/themes`; the earlier `custom-theme` plugin was removed                                 |
+| Plugin helpers   | `fileExists`, `injectCSSAsFile` in `src/plugins/utils/main/`                                  | removed; use `node:fs` and `injectCSS`; `innertube.ts` helpers were added                                                |
+| API server       | older route layout under `src/plugins/api-server/backend/`                                    | Hono v1/v2 + MCP layout; not a drop-in merge                                                                             |
 
 What still works unchanged: `createPlugin` and the `createBackend` /
 `createPreload` / `createRenderer` helpers, the lifecycle names (`start`,
@@ -83,17 +83,17 @@ The schema type is `SettingsSchema` in `src/types/settings.ts`: either a flat
 `SettingField[]` or a `SettingsGroup[]` when the options need headings (the
 scrobbler does this per provider). Supported field types:
 
-| `type` | Purpose | Notable extras |
-| --- | --- | --- |
-| `switch` | boolean | |
-| `select` | one of a list | `variant: 'radio'` or `'dropdown'`, async `options`, `refreshable`, `languageSync` |
-| `slider` | bounded number | `min`, `max`, `step`, `unit`, `scale` |
-| `number` | plain number | `min`, `max`, `step`, `unit`, `placeholder` |
-| `text` | string | `placeholder` |
-| `multiselect` | several of a list | |
-| `orderable` | ordered list | `options` supply the rows; up/down buttons reorder them |
-| `action` | one or buttons | `onClick({ getValue, setValue, pickDirectory, pickFile })` |
-| `custom` | Solid component | `component: '<pluginId>.<name>'`, resolved through the renderer `components` map |
+| `type`        | Purpose           | Notable extras                                                                     |
+| ------------- | ----------------- | ---------------------------------------------------------------------------------- |
+| `switch`      | boolean           |                                                                                    |
+| `select`      | one of a list     | `variant: 'radio'` or `'dropdown'`, async `options`, `refreshable`, `languageSync` |
+| `slider`      | bounded number    | `min`, `max`, `step`, `unit`, `scale`                                              |
+| `number`      | plain number      | `min`, `max`, `step`, `unit`, `placeholder`                                        |
+| `text`        | string            | `placeholder`                                                                      |
+| `multiselect` | several of a list |                                                                                    |
+| `orderable`   | ordered list      | `options` supply the rows; up/down buttons reorder them                            |
+| `action`      | one or buttons    | `onClick({ getValue, setValue, pickDirectory, pickFile })`                         |
+| `custom`      | Solid component   | `component: '<pluginId>.<name>'`, resolved through the renderer `components` map   |
 
 Every field also accepts `restartNeeded` (that one setting needs a restart),
 `platform` (a `Platform` bitmask), `visible` (a predicate evaluated while the
@@ -195,12 +195,12 @@ ts-morph at build time and emits `rendererPluginMeta`, one entry per plugin:
 or `enabled` could not be read, it imports the definition and uses the real
 object instead. The fields that must be statically readable:
 
-| Field | Accepted form | When unreadable |
-| --- | --- | --- |
-| `renderer` | property present or absent on the definition | `hasRenderer: null`, definition imported |
-| `config.enabled` | literal `true` / `false` in the inline config object (or a config identifier ts-morph can follow to one) | `enabled: null`, definition imported |
-| `essential` | literal `true` / `false`; absent means `false` | `essential: null`, definition imported |
-| `platform` | numeric literal, `Platform.Name`, or a bitwise-OR combination of those | `platform: null`; the metadata pass treats the plugin as available on every platform and the real definition decides after import |
+| Field            | Accepted form                                                                                            | When unreadable                                                                                                                   |
+| ---------------- | -------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| `renderer`       | property present or absent on the definition                                                             | `hasRenderer: null`, definition imported                                                                                          |
+| `config.enabled` | literal `true` / `false` in the inline config object (or a config identifier ts-morph can follow to one) | `enabled: null`, definition imported                                                                                              |
+| `essential`      | literal `true` / `false`; absent means `false`                                                           | `essential: null`, definition imported                                                                                            |
+| `platform`       | numeric literal, `Platform.Name`, or a bitwise-OR combination of those                                   | `platform: null`; the metadata pass treats the plugin as available on every platform and the real definition decides after import |
 
 The harder constraint is the second build pass, `vite-plugins/plugin-loader.mts`.
 For each bundle it rewrites the plugin module: the main bundle keeps `backend`
@@ -212,8 +212,8 @@ from that stub, so the main process can build its menu without pulling renderer
 code into its bundle. The transform recognizes only two shapes:
 
 ```ts
-export default createPlugin({ /* object literal */ });
-export default { /* object literal */ };
+export default createPlugin({/* object literal */});
+export default {/* object literal */};
 ```
 
 If the definition is a variable (`const def = {...}; export default def;`), a
@@ -246,12 +246,12 @@ the config watcher.
 
 The IPC surface grew in this fork:
 
-| Context | Upstream | This fork |
-| --- | --- | --- |
-| `backend` | `send`, `handle`, `on`, `removeHandler` | adds `off` and `removeAllListeners` |
-| `preload` | config only | config only |
-| `renderer` | `send`, `invoke`, `on`, `removeAllListeners` | adds `off` |
-| `menu` | `window`, `refresh` | unchanged |
+| Context    | Upstream                                     | This fork                           |
+| ---------- | -------------------------------------------- | ----------------------------------- |
+| `backend`  | `send`, `handle`, `on`, `removeHandler`      | adds `off` and `removeAllListeners` |
+| `preload`  | config only                                  | config only                         |
+| `renderer` | `send`, `invoke`, `on`, `removeAllListeners` | adds `off`                          |
+| `menu`     | `window`, `refresh`                          | unchanged                           |
 
 `off(channel, listener)` removes exactly the listener you registered, using a
 registry kept per plugin id. This matters because the context object is recreated
@@ -309,7 +309,7 @@ option is only complete when all of these agree - the checklist is also in
    immediately (window flags, tray icons, renderer pushes).
 5. `src/preload.ts` - add the key to `rendererConfigKeys` if the page reads it.
    `window.mainConfig.get` returns `undefined` for anything not on the list.
-6. `src/config/store.ts` - a migration if a stored key is renamed or removed.
+6. `src/config/migrations.ts` - a migration if a stored key is renamed or removed.
 
 `restartNeeded` is not a single switch. On the plugin definition it means
 "enabling/disabling this plugin needs a restart" and drives the restart dialog
@@ -344,7 +344,7 @@ either stop doing that or document the flag the user must set.
    plugin already owns a prefix.
 6. Replace imports that no longer exist (`fileExists`, `injectCSSAsFile`,
    removed provider modules) and check `src/types/` for moved types.
-7. Decide whether a renamed plugin id needs a migration in `src/config/store.ts`.
+7. Decide whether a renamed plugin id needs a migration in `src/config/migrations.ts`.
 8. Run the checks:
 
 ```bash
@@ -370,7 +370,7 @@ still fail here.
   [Modifying plugins](./modifying.md#config-semantics).
 - **Old ids were renamed.** Porting from an older commit that still uses
   `adblocker`, `lyrics-genius`, `lastfm` or `hide-video-player` creates a second
-  plugin and orphaned config. Check the migrations in `src/config/store.ts`
+  plugin and orphaned config. Check the migrations in `src/config/migrations.ts`
   before choosing an id.
 - **Listener leaks across enable/disable.** Disabling a plugin calls `stop`; if
   `stop` does not remove every listener and observer, re-enabling stacks another

@@ -27,8 +27,6 @@ import {
   type ThemePalette,
 } from './types';
 
-export { MANIFEST_FILE } from './load';
-
 /**
  * Palette for the theme seeded on first run, kept identical to the old built-in
  * default so an install with no authored themes is unchanged.
@@ -69,7 +67,7 @@ export const themesForRenderer = (): PearTheme[] => {
  * changed since they last agreed. Returns false if the user declined, in which
  * case the caller must not switch to the theme.
  */
-export const ensureJsConsent = async (
+const ensureJsConsent = async (
   theme: PearTheme,
   win?: BrowserWindow,
 ): Promise<boolean> => {

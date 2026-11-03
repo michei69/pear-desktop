@@ -1,11 +1,13 @@
-import { deepmerge } from 'deepmerge-ts';
 import { allPlugins } from 'virtual:plugins';
 
 import { restart } from '@/providers/app-controls';
 
+import { mergePluginConfig } from './merge';
 import { store } from './store';
 
 import type { PluginConfig } from '@/types/plugins';
+
+export { mergePluginConfig };
 
 export function getPlugins() {
   return store.get('plugins') as Record<string, PluginConfig>;
@@ -15,9 +17,9 @@ export async function isEnabled(plugin: string) {
   const pluginDef = (await allPlugins())[plugin];
   if (pluginDef?.essential) return true;
 
-  const pluginConfig = deepmerge(
-    pluginDef?.config ?? { enabled: false },
-    (store.get('plugins') as Record<string, PluginConfig>)[plugin] ?? {},
+  const pluginConfig = mergePluginConfig(
+    pluginDef?.config,
+    (store.get('plugins') as Record<string, PluginConfig>)[plugin],
   );
   return pluginConfig !== undefined && pluginConfig.enabled;
 }

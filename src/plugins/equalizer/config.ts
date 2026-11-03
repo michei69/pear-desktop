@@ -31,8 +31,6 @@ export type UserPreset = EqualizerProfile & {
   name: string;
 };
 
-export type LegacyFilterConfig = FilterConfig;
-
 export type EqualizerPluginConfig = {
   enabled: boolean;
   /** The EQ passes audio, but leaves the response flat for A/B checks. */
@@ -139,19 +137,28 @@ export const defaultConfig: EqualizerPluginConfig = {
   userPresets: [],
 };
 
+const RESERVED_PRESET_IDS = new Set(['flat', 'bass-booster', 'custom']);
+
 const normalizePresetList = (value: unknown): UserPreset[] => {
   if (!Array.isArray(value)) return [];
   const seen = new Set<string>();
   const presets: UserPreset[] = [];
+  const generatedId = () => {
+    let index = presets.length;
+    while (seen.has(`preset-${index}`)) index += 1;
+    return `preset-${index}`;
+  };
   for (const entry of value) {
     if (!entry || typeof entry !== 'object') continue;
     const item = entry as Partial<UserPreset>;
     const name = typeof item.name === 'string' ? item.name.trim() : '';
     if (!name || name.length > 80) continue;
     const id =
-      typeof item.id === 'string' && item.id
+      typeof item.id === 'string' &&
+      item.id &&
+      !RESERVED_PRESET_IDS.has(item.id)
         ? item.id
-        : `preset-${presets.length}`;
+        : generatedId();
     if (seen.has(id)) continue;
     seen.add(id);
     presets.push({
@@ -252,26 +259,6 @@ export function profilesMatch(
       Math.abs((left.outputGainDb ?? 0) - right.outputGainDb) < 0.01) &&
     filtersMatch(left.filters, right.filters)
   );
-}
-
-/** The preset matching the live profile, or null when it was edited. */
-export function matchingPreset(config: EqualizerPluginConfig): string | null {
-  for (const preset of ['flat', 'bass-booster'] as const) {
-    if (profilesMatch(config, builtInProfile(preset))) return preset;
-  }
-  return (
-    config.userPresets.find((preset) => profilesMatch(config, preset))?.id ??
-    null
-  );
-}
-
-export function snapshotProfile(
-  config: EqualizerPluginConfig,
-): EqualizerProfile {
-  return {
-    outputGainDb: config.outputGainDb,
-    filters: structuredClone(normalizeFilters(config.filters)),
-  };
 }
 
 const profileFromEarsPreset = (

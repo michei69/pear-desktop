@@ -27,7 +27,7 @@ import unhandled from 'electron-unhandled';
 import { deepEqual } from 'fast-equals';
 import { parse } from 'node-html-parser';
 import { languageCodes } from 'virtual:i18n';
-import { allPlugins, mainPlugins } from 'virtual:plugins';
+import { allPlugins } from 'virtual:plugins';
 
 import { buildLabel, copyright } from '@/app-info';
 import * as config from '@/config';
@@ -194,8 +194,18 @@ if (is.linux()) {
   );
 }
 
-// node-smtc replaces Chromium's media session on Windows.
-if (is.windows() && config.get('options.forceSmtc')) {
+// node-smtc replaces Chromium's media session on Windows. Resolve it before the
+// feature switches are applied: when the optional addon is missing or fails to
+// build, Chromium's own media session has to stay enabled as the fallback.
+const nodeSmtc =
+  is.windows() && config.get('options.forceSmtc')
+    ? await import('node-smtc').then(
+        (module) => module.default,
+        () => null,
+      )
+    : null;
+
+if (nodeSmtc) {
   disabledFeatures.push('HardwareMediaKeyHandling', 'MediaSessionService');
 }
 
@@ -207,94 +217,85 @@ if (disableHardwareAcceleration) {
 app.commandLine.appendSwitch('enable-features', enabledFeatures.join(','));
 app.commandLine.appendSwitch('disable-features', disabledFeatures.join(','));
 
-// Windows SMTC support via node-smtc
-if (is.windows()) {
-  if (config.get('options.forceSmtc')) {
-    import('node-smtc').then((mod) => {
-      const SMTCPlayer = mod.default;
-      console.log('disabled mediasess');
+// Windows SMTC support via node-smtc. Started once the app identity and the
+// window exist: Windows drops a session whose AUMID is set afterwards.
+function setupSmtc(win: BrowserWindow) {
+  if (!nodeSmtc) return;
 
-      const smtc = new SMTCPlayer();
-      smtc.addListener('play', () => {
-        mainWindow?.webContents.send('peard:play');
-      });
-      smtc.addListener('pause', () => {
-        mainWindow?.webContents.send('peard:pause');
-      });
-      smtc.addListener('next', () => {
-        mainWindow?.webContents.send('peard:next-video');
-      });
-      smtc.addListener('previous', () => {
-        mainWindow?.webContents.send('peard:previous-video');
-      });
-      smtc.addListener('shuffle', () => {
-        mainWindow?.webContents.send('peard:shuffle');
-        mainWindow?.webContents.send('peard:get-shuffle');
-      });
-      smtc.addListener('repeat', () => {
-        mainWindow?.webContents.send('peard:switch-repeat');
-      });
-      smtc.addListener('positionchange', (ms: number) => {
-        mainWindow?.webContents.send('peard:seek-to', ms / 1000);
-      });
-      ipcMain.on('peard:get-shuffle-response', (_, val: boolean) => {
-        smtc.setShuffle(val);
-      });
-      ipcMain.on('peard:shuffle-changed', (_, val: boolean) => {
-        smtc.setShuffle(val);
-      });
-      ipcMain.on('peard:repeat-changed', (_, repeatMode: RepeatMode) => {
-        return smtc.setAutoRepeat(
-          repeatMode == 'NONE'
-            ? 'none'
-            : repeatMode == 'ONE'
-              ? 'track'
-              : 'list',
-        );
-      });
-      registerCallback((songInfo, event) => {
-        if (event === SongInfoEvent.VideoSrcChanged) {
-          smtc.setAlbumArtist(songInfo.artist);
-          smtc.setAlbumTitle(songInfo.album ?? '');
-          smtc.setArtist(songInfo.artist);
-          smtc.setTitle(songInfo.title);
-          if (songInfo.imageSrc) {
-            getImage(songInfo.imageSrc)
-              .then((image) => {
-                if (image.isEmpty()) return;
-                const p = path.join(tmpdir(), 'thumb.png');
-                fs.writeFileSync(p, image.toPNG());
-                smtc.setThumbnail(p);
-              })
-              .catch(() => {
-                // The thumbnail is cosmetic: a failed decode must not break
-                // the media-session update.
-              });
-          }
-          smtc.setStartTime(0);
-          smtc.setMinSeekTime(0);
-          smtc.setPosition(0);
-          smtc.setEndTime(songInfo.songDuration * 1000);
-          smtc.setMaxSeekTime(songInfo.songDuration * 1000);
-        }
+  const smtc = new nodeSmtc();
+  smtc.addListener('play', () => {
+    win.webContents.send('peard:play');
+  });
+  smtc.addListener('pause', () => {
+    win.webContents.send('peard:pause');
+  });
+  smtc.addListener('next', () => {
+    win.webContents.send('peard:next-video');
+  });
+  smtc.addListener('previous', () => {
+    win.webContents.send('peard:previous-video');
+  });
+  smtc.addListener('shuffle', () => {
+    win.webContents.send('peard:shuffle');
+    win.webContents.send('peard:get-shuffle');
+  });
+  smtc.addListener('repeat', () => {
+    win.webContents.send('peard:switch-repeat');
+  });
+  smtc.addListener('positionchange', (ms: number) => {
+    win.webContents.send('peard:seek-to', ms / 1000);
+  });
+  ipcMain.on('peard:get-shuffle-response', (_, val: boolean) => {
+    smtc.setShuffle(val);
+  });
+  ipcMain.on('peard:shuffle-changed', (_, val: boolean) => {
+    smtc.setShuffle(val);
+  });
+  ipcMain.on('peard:repeat-changed', (_, repeatMode: RepeatMode) => {
+    return smtc.setAutoRepeat(
+      repeatMode == 'NONE' ? 'none' : repeatMode == 'ONE' ? 'track' : 'list',
+    );
+  });
+  registerCallback((songInfo, event) => {
+    if (event === SongInfoEvent.VideoSrcChanged) {
+      smtc.setAlbumArtist(songInfo.artist);
+      smtc.setAlbumTitle(songInfo.album ?? '');
+      smtc.setArtist(songInfo.artist);
+      smtc.setTitle(songInfo.title);
+      if (songInfo.imageSrc) {
+        getImage(songInfo.imageSrc)
+          .then((image) => {
+            if (image.isEmpty()) return;
+            const p = path.join(tmpdir(), 'thumb.png');
+            fs.writeFileSync(p, image.toPNG());
+            smtc.setThumbnail(p);
+          })
+          .catch(() => {});
+      }
+      const durationMs = Number.isFinite(songInfo.songDuration)
+        ? Math.round(songInfo.songDuration * 1000)
+        : 0;
+      smtc.setStartTime(0);
+      smtc.setMinSeekTime(0);
+      smtc.setPosition(0);
+      smtc.setEndTime(durationMs);
+      smtc.setMaxSeekTime(durationMs);
+    }
 
-        if (event === SongInfoEvent.PlayOrPaused) {
-          smtc.setPosition((songInfo.elapsedSeconds ?? 0) * 1000);
-          smtc.setPlaybackStatus(songInfo.isPaused ? 'paused' : 'playing');
-        }
+    if (event === SongInfoEvent.PlayOrPaused) {
+      smtc.setPosition((songInfo.elapsedSeconds ?? 0) * 1000);
+      smtc.setPlaybackStatus(songInfo.isPaused ? 'paused' : 'playing');
+    }
 
-        if (event === SongInfoEvent.TimeChanged) {
-          smtc.setPosition((songInfo.elapsedSeconds ?? 0) * 1000);
-        }
-      });
-      smtc.setAppMediaId(
-        'com.github.th-ch.\u0079\u006f\u0075\u0074\u0075\u0062\u0065\u002d\u006d\u0075\u0073\u0069\u0063',
-      );
-      smtc.start();
-    });
-  }
+    if (event === SongInfoEvent.TimeChanged) {
+      smtc.setPosition((songInfo.elapsedSeconds ?? 0) * 1000);
+    }
+  });
+  smtc.setAppMediaId(
+    'com.github.th-ch.\u0079\u006f\u0075\u0074\u0075\u0062\u0065\u002d\u006d\u0075\u0073\u0069\u0063',
+  );
+  smtc.start();
 }
-
 if (config.get('options.proxy')) {
   const authProxyEnabled = await config.plugins.isEnabled('auth-proxy-adapter');
 
@@ -340,9 +341,10 @@ function onClosed() {
   mainWindow = null;
 }
 
-ipcMain.handle('peard:get-main-plugin-names', async () =>
-  Object.keys(await mainPlugins()),
-);
+const showMessageBox = (options: Electron.MessageBoxOptions) =>
+  mainWindow
+    ? dialog.showMessageBox(mainWindow, options)
+    : dialog.showMessageBox(options);
 
 const initHook = async (win: BrowserWindow) => {
   const allPluginStubs = await allPlugins();
@@ -356,39 +358,64 @@ const initHook = async (win: BrowserWindow) => {
     );
   };
 
+  const endSettingsRestartSession = async (
+    senderId: number,
+    requirements: RestartRequirement[] = [],
+  ) => {
+    if (!settingsRestartSessions.delete(senderId)) return;
+
+    requirements.forEach(addPendingSettingsRestartRequirement);
+
+    // Keep batching while any settings window remains active.
+    if (settingsRestartSessions.size > 0) return;
+
+    const pending = [...pendingSettingsRestartRequirements.values()];
+    pendingSettingsRestartRequirements.clear();
+    if (pending.length) await showNeedToRestartDialog(pending, true);
+  };
+
   ipcMain.handle('ytmd-sui:restart-session-open', (event) => {
     // First active session starts a fresh batch; later ones join it.
     if (settingsRestartSessions.size === 0) {
       pendingSettingsRestartRequirements.clear();
     }
-    settingsRestartSessions.add(event.sender.id);
+
+    const sender = event.sender;
+    settingsRestartSessions.add(sender.id);
+
+    // A window can go away without closing its session (tray X, renderer
+    // crash), and the id would then batch restart dialogs forever.
+    sender.once('destroyed', () => {
+      endSettingsRestartSession(sender.id).catch((err) =>
+        console.error('Failed to end restart session:', err),
+      );
+    });
   });
   ipcMain.handle(
     'ytmd-sui:restart-session-close',
     async (event, requirements: RestartRequirement[]) => {
-      settingsRestartSessions.delete(event.sender.id);
-      requirements.forEach(addPendingSettingsRestartRequirement);
-
-      // Keep batching while any settings window remains active.
-      if (settingsRestartSessions.size > 0) return;
-
-      const pending = [...pendingSettingsRestartRequirements.values()];
-      pendingSettingsRestartRequirements.clear();
-      if (pending.length) await showNeedToRestartDialog(pending, true);
+      await endSettingsRestartSession(
+        event.sender.id,
+        Array.isArray(requirements) ? requirements : [],
+      );
     },
   );
 
-  ipcMain.handle(
-    'peard:get-config',
-    (_, id: string) =>
-      deepmerge(
-        allPluginStubs[id].config ?? { enabled: false },
-        config.get(`plugins.${id}`) ?? {},
-      ) as PluginConfig,
-  );
-  ipcMain.handle('peard:set-config', (_, name: string, obj: object) =>
-    config.setPartial(`plugins.${name}`, obj, allPluginStubs[name].config),
-  );
+  ipcMain.handle('peard:get-config', (_, id: string) => {
+    const pluginDef = allPluginStubs[id];
+    if (!pluginDef) return { enabled: false };
+
+    return deepmerge(
+      pluginDef.config ?? { enabled: false },
+      config.get(`plugins.${id}`) ?? {},
+    ) as PluginConfig;
+  });
+  ipcMain.handle('peard:set-config', (_, name: string, obj: object) => {
+    const pluginDef = allPluginStubs[name];
+    if (!pluginDef) return;
+
+    config.setPartial(`plugins.${name}`, obj, pluginDef.config);
+  });
 
   ipcMain.handle('peard:get-themes', () => ({
     themes: themesForRenderer(),
@@ -414,17 +441,23 @@ const initHook = async (win: BrowserWindow) => {
     >;
 
     Object.entries(newPluginConfigList).forEach(([id, newPluginConfig]) => {
+      // The store can still hold config for plugins this build does not have
+      // (removed plugins, plugins filtered out by platform). Ignoring it keeps
+      // an unrelated write from failing on the missing definition.
+      const pluginDef = allPluginStubs[id];
+      if (!pluginDef) return;
+
       const isEqual = deepEqual(oldPluginConfigList[id], newPluginConfig);
 
       if (!isEqual) {
         const oldConfig = oldPluginConfigList[id] as PluginConfig | undefined;
         const config = deepmerge(
-          allPluginStubs[id].config ?? { enabled: false },
+          pluginDef.config ?? { enabled: false },
           newPluginConfig ?? {},
         ) as PluginConfig;
 
         // Essential plugins can never be disabled.
-        const essential = !!allPluginStubs[id]?.essential;
+        const essential = !!pluginDef.essential;
         if (essential) config.enabled = true;
 
         // A stored config may not carry `enabled` at all (it was never
@@ -433,7 +466,7 @@ const initHook = async (win: BrowserWindow) => {
         // default-enabled plugins.
         const oldEnabled = essential
           ? true
-          : (oldConfig?.enabled ?? allPluginStubs[id].config?.enabled ?? false);
+          : (oldConfig?.enabled ?? pluginDef.config?.enabled ?? false);
 
         if (config.enabled !== oldEnabled) {
           if (config.enabled) {
@@ -450,7 +483,7 @@ const initHook = async (win: BrowserWindow) => {
             );
           }
 
-          if (allPluginStubs[id]?.restartNeeded) {
+          if (pluginDef.restartNeeded) {
             const requirement: RestartRequirement = { type: 'plugin', id };
             if (settingsRestartSessions.size > 0) {
               addPendingSettingsRestartRequirement(requirement);
@@ -522,14 +555,7 @@ const showNeedToRestartDialog = async (
     cancelId: 1,
   };
 
-  let dialogPromise: Promise<Electron.MessageBoxReturnValue>;
-  if (mainWindow) {
-    dialogPromise = dialog.showMessageBox(mainWindow, dialogOptions);
-  } else {
-    dialogPromise = dialog.showMessageBox(dialogOptions);
-  }
-
-  dialogPromise
+  showMessageBox(dialogOptions)
     .then((dialogOutput) => {
       switch (dialogOutput.response) {
         case 0: {
@@ -616,6 +642,8 @@ async function createMainWindow() {
   const windowMaximized = config.get('window-maximized');
   const windowPosition: Electron.Point = config.get('window-position');
   const useInlineMenu = await config.plugins.isEnabled('in-app-menu');
+  const useTransparentPlayer =
+    await config.plugins.isEnabled('transparent-player');
 
   const defaultTitleBarOverlayOptions: Electron.TitleBarOverlay = {
     color: '#00000000',
@@ -646,7 +674,8 @@ async function createMainWindow() {
     height: windowSize.height,
     minWidth: 325,
     minHeight: 425,
-    backgroundColor: '#000',
+    backgroundColor: useTransparentPlayer && is.linux() ? '#00000000' : '#000',
+    ...(useTransparentPlayer && is.linux() ? { transparent: true } : {}),
     show: false,
     webPreferences: {
       contextIsolation: true,
@@ -784,7 +813,7 @@ async function createMainWindow() {
   if (!renderProcessGoneRegistered) {
     renderProcessGoneRegistered = true;
     app.on('render-process-gone', (_event, _webContents, details) => {
-      showUnresponsiveDialog(win, details);
+      showUnresponsiveDialog(details);
     });
   }
 
@@ -802,6 +831,21 @@ async function createMainWindow() {
   const earlyShowTimer = setTimeout(showWindow, EARLY_SHOW_DELAY);
   win.once('show', () => clearTimeout(earlyShowTimer));
   win.once('closed', () => clearTimeout(earlyShowTimer));
+
+  // The page fakes document.hidden/visibilityState so YTM keeps playing while
+  // the window is hidden; plugins that throttle animation on visibility get the
+  // real state from this signal instead.
+  const sendWindowVisibility = (hidden: boolean) => {
+    if (win.isDestroyed()) return;
+    win.webContents.send('peard:window-visibility', hidden);
+  };
+  win.on('hide', () => sendWindowVisibility(true));
+  win.on('minimize', () => sendWindowVisibility(true));
+  win.on('show', () => sendWindowVisibility(false));
+  win.on('restore', () => sendWindowVisibility(false));
+  win.webContents.once('did-finish-load', () =>
+    sendWindowVisibility(win.isMinimized() || !win.isVisible()),
+  );
 
   // Hidden to tray: Blink's resource caches (decoded images, fonts) are
   // re-fetchable, so hand them back after a minute hidden instead of holding
@@ -1127,6 +1171,8 @@ app.whenReady().then(async () => {
   });
 
   mainWindow = await createMainWindow();
+  // After setAppUserModelId: Windows keys the media session by app identity.
+  if (mainWindow) setupSmtc(mainWindow);
   setupMemoryReport(mainWindow);
   await setApplicationMenu(mainWindow);
   await refreshMenu(mainWindow);
@@ -1229,10 +1275,7 @@ app.whenReady().then(async () => {
   }
 });
 
-function showUnresponsiveDialog(
-  _win: Electron.BrowserWindow,
-  details: Electron.RenderProcessGoneDetails,
-) {
+function showUnresponsiveDialog(details: Electron.RenderProcessGoneDetails) {
   const buttons = [
     t('main.dialog.unresponsive.buttons.wait'),
     t('main.dialog.unresponsive.buttons.relaunch'),
@@ -1251,14 +1294,7 @@ function showUnresponsiveDialog(
     cancelId: 0,
   };
 
-  let dialogPromise: Promise<Electron.MessageBoxReturnValue>;
-  if (mainWindow) {
-    dialogPromise = dialog.showMessageBox(mainWindow, dialogOptions);
-  } else {
-    dialogPromise = dialog.showMessageBox(dialogOptions);
-  }
-
-  dialogPromise.then((dialogOutput) => {
+  showMessageBox(dialogOptions).then((dialogOutput) => {
     switch (dialogOutput.response) {
       case 1: {
         restart();

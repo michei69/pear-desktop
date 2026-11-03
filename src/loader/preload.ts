@@ -1,7 +1,7 @@
-import { deepmerge } from 'deepmerge-ts';
 import { allPlugins, preloadPlugins } from 'virtual:plugins';
 
 import * as config from '@/config';
+import { mergePluginConfig } from '@/config/merge';
 import { t } from '@/i18n';
 import { LoggerPrefix, startPlugin, stopPlugin } from '@/utils';
 
@@ -12,20 +12,24 @@ const loadedPluginMap: Record<
   string,
   PluginDef<unknown, unknown, unknown>
 > = {};
-const createContext = (id: string): PreloadContext<PluginConfig> => ({
-  getConfig: async () =>
-    deepmerge(
-      (await allPlugins())[id].config ?? { enabled: false },
-      config.get(`plugins.${id}`) ?? {},
-    ) as PluginConfig,
-  setConfig: async (newConfig) => {
-    config.setPartial(
-      `plugins.${id}`,
-      newConfig,
-      (await allPlugins())[id].config,
-    );
-  },
-});
+const createContext = (id: string): PreloadContext<PluginConfig> => {
+  const allPluginDefs = allPlugins();
+
+  return {
+    getConfig: async () =>
+      mergePluginConfig(
+        (await allPluginDefs)[id].config,
+        config.get(`plugins.${id}`),
+      ),
+    setConfig: async (newConfig) => {
+      config.setPartial(
+        `plugins.${id}`,
+        newConfig,
+        (await allPluginDefs)[id].config,
+      );
+    },
+  };
+};
 
 export const forceUnloadPreloadPlugin = async (id: string) => {
   if (!loadedPluginMap[id]) return;
@@ -65,12 +69,11 @@ export const forceLoadPreloadPlugin = async (id: string) => {
         plugin.preload)
     ) {
       loadedPluginMap[id] = plugin;
+      console.log(
+        LoggerPrefix,
+        t('common.console.plugins.loaded', { pluginName: id }),
+      );
     }
-
-    console.log(
-      LoggerPrefix,
-      t('common.console.plugins.loaded', { pluginName: id }),
-    );
   } catch (err) {
     console.error(
       LoggerPrefix,
@@ -84,10 +87,7 @@ export const loadAllPreloadPlugins = async () => {
   const pluginConfigs = config.plugins.getPlugins();
 
   for (const [pluginId, pluginDef] of Object.entries(await preloadPlugins())) {
-    const config = deepmerge(
-      pluginDef.config ?? { enabled: false },
-      pluginConfigs[pluginId] ?? {},
-    );
+    const config = mergePluginConfig(pluginDef.config, pluginConfigs[pluginId]);
 
     if (pluginDef.essential || config.enabled) {
       await forceLoadPreloadPlugin(pluginId);

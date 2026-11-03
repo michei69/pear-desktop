@@ -26,7 +26,7 @@ export const isJsConsented = (
 ) => !theme.js || consent[theme.id] === theme.js.hash;
 
 /** Reads one theme folder; `id` is the folder name. */
-export const readTheme = (id: string, folder: string): PearTheme | null => {
+const readTheme = (id: string, folder: string): PearTheme | null => {
   const raw = readIfExists(join(folder, MANIFEST_FILE));
   if (raw === null) return null;
 

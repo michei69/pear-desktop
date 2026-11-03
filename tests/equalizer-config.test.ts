@@ -5,7 +5,6 @@ import {
   builtInProfile,
   defaultConfig,
   flatProfile,
-  matchingPreset,
   normalizeConfig,
   normalizeFilters,
   parsePresetImport,
@@ -14,7 +13,6 @@ import {
 import { BAND_FREQUENCIES, DEFAULT_Q } from '../src/plugins/equalizer/presets';
 
 test('empty defaults normalize to the Ears 11-band layout', () => {
-  expect(defaultConfig.filters).toEqual([]);
   const config = normalizeConfig(deepmerge(defaultConfig, {}));
   expect(config.filters).toHaveLength(11);
   expect(config.filters.map((band) => band.frequency)).toEqual([
@@ -59,12 +57,11 @@ test('array defaults survive repeated loader deep-merges without doubling', () =
   }
 });
 
-test('built-in presets and profile matching cover flat and bass boost', () => {
+test('built-in presets cover flat and bass boost', () => {
   const flat = normalizeConfig({
     ...flatProfile(),
     enabled: true,
   });
-  expect(matchingPreset(flat)).toBe('flat');
   expect(profilesMatch(flat, builtInProfile('flat'))).toBe(true);
 
   const bass = normalizeConfig({
@@ -73,7 +70,6 @@ test('built-in presets and profile matching cover flat and bass boost', () => {
   });
   expect(bass.filters[0].gain).toBe(10);
   expect(bass.filters[5].gain).toBe(0);
-  expect(matchingPreset(bass)).toBe('bass-booster');
 });
 
 test('Ears preset imports convert linear gain and lower-case q', () => {

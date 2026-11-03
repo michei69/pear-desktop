@@ -253,8 +253,9 @@ itself from its own lifecycle.
 
 ## Migrate a renamed or removed option
 
-Renaming or removing a stored key needs a migration in `src/config/store.ts`,
-because existing config files still contain the old value. Migrations are keyed
+Renaming or removing a stored key needs a migration in
+`src/config/migrations.ts`, because existing config files still contain the old
+value. Migrations are keyed
 by the release that introduces them and run once per store when the app's base
 version satisfies the range:
 
@@ -274,18 +275,21 @@ version satisfies the range:
 Rules observed by the existing entries in that object:
 
 - The key is a range such as `'>=3.12.3'` and names the release that ships the
-  change. `store.ts` runs with `projectVersion = migrationBaseVersion(version)`,
-  so a beta and its final release share one migration marker
-  (`src/providers/app-versions.ts`).
+  change. `src/config/store.ts` runs the store with
+  `projectVersion = migrationBaseVersion(version)`, so a beta and its final
+  release share one migration marker (`src/providers/app-versions.ts`).
 - Guard on the old key existing. A fresh install has no stored plugin config, and
   a user who never set the option has nothing to migrate.
 - Copy, then delete the old key, and keep the write idempotent.
-- Do not number migrations by hand; `conf` applies the applicable keys in the
-  order they appear in the object, then stores the app's base version as the
-  migrated version.
+- Keep the list oldest first. `conf` applies the applicable keys in the order
+  they appear in the object, so an earlier migration may be what converts the
+  shape the later ones expect (the 1.7.0 array-to-object conversion has to run
+  before 3.12.0's adblocker rename). The order in the object is the only
+  ordering; migrations are not numbered by hand.
 - Extract anything testable into `src/config/migrations.ts`, which is
-  Electron-free and covered by tests, and call it from `store.ts`. The 3.12.3
-  synced-lyrics and 3.12.0 adblocker migrations are the patterns to copy.
+  Electron-free and covered by `tests/config-migrations.test.ts`, and call it
+  from `store.ts`. The 3.12.3 synced-lyrics and 3.12.0 adblocker migrations are
+  the patterns to copy.
 - Remove the old i18n keys and any settings fields in the same change; do not
   leave a key in the resources that no code references.
 
@@ -304,8 +308,11 @@ There are two levels, and they mean different things:
   something that is only read once per process.
 - `restartNeeded: true` on a settings field marks that option as read at startup.
   The modal shows a pill next to the field and a banner when it changes, and the
-  restart requirement names the field. Use it instead of restarting on every
-  write, as `src/plugins/equalizer/index.ts` does for its preset field.
+  restart requirement names the field. App options that only main reads once, at
+  startup, use it (`AT_STARTUP` in
+  `src/plugins/settings-ui/schema/app-settings.ts`). A plugin option that is
+  applied live from `onConfigChange`, such as the equalizer's presets, is not
+  `restartNeeded`.
 
 Do not set either when the plugin already handles the change live in
 `onConfigChange`; the restart dialog is user-visible friction. The
