@@ -3,9 +3,9 @@ import { Platform } from '@/types/plugins';
 import { createPlugin } from '@/utils';
 
 import { defaultInAppMenuConfig } from './constants';
-import { onMainLoad } from './main';
+import { onMainLoad, onStop } from './main';
 import { onMenu } from './menu';
-import { onConfigChange, onPlayerApiReady, onRendererLoad } from './renderer';
+import { onConfigChange, onRendererLoad, onRendererStop } from './renderer';
 import titlebarStyle from './titlebar.css?inline';
 
 export default createPlugin({
@@ -24,10 +24,13 @@ export default createPlugin({
   ],
   menu: onMenu,
 
-  backend: onMainLoad,
+  backend: {
+    start: onMainLoad,
+    stop: onStop,
+  },
   renderer: {
     start: onRendererLoad,
-    onPlayerApiReady,
+    stop: onRendererStop,
     onConfigChange,
   },
 });

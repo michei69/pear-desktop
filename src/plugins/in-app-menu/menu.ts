@@ -19,8 +19,7 @@ export const onMenu = async ({
         type: 'checkbox',
         checked: config.hideDOMWindowControls,
         click(item) {
-          config.hideDOMWindowControls = item.checked;
-          setConfig(config);
+          setConfig({ hideDOMWindowControls: item.checked });
         },
       },
     ];

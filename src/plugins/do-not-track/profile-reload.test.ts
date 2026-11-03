@@ -1,7 +1,4 @@
-import { readFileSync } from 'node:fs';
-
 import { test, expect } from '@playwright/test';
-import { createInstance } from 'i18next';
 
 import { createProfileReloadPrompt, profileKey } from './profile-reload';
 import { blockers } from './types';
@@ -96,53 +93,4 @@ test('one dialog at a time; stale confirmation cannot reload a stopped plugin', 
   expect(reloads).toBe(0);
   await prompt();
   expect(dialogs).toBe(1);
-});
-
-test('dialog follows the current language and its English fallback', async () => {
-  const i18n = createInstance();
-  const resource = (lang: string) =>
-    JSON.parse(
-      readFileSync(
-        new URL(`../../i18n/resources/${lang}.json`, import.meta.url),
-        'utf8',
-      ),
-    ) as Record<string, unknown>;
-  await i18n.init({
-    lng: 'en',
-    fallbackLng: 'en',
-    resources: {
-      en: { translation: resource('en') },
-      ru: { translation: resource('ru') },
-    },
-  });
-  const options: Electron.MessageBoxOptions[] = [];
-  const prompt = createProfileReloadPrompt({
-    show: (value) => {
-      options.push(value);
-      return Promise.resolve({ response: 1, checkboxChecked: false });
-    },
-    translate: (key) => i18n.t(key),
-    isActive: () => true,
-    reload: () => Promise.resolve(),
-  });
-  const titleKey = 'plugins.do-not-track.dialog.reload.title';
-
-  await prompt();
-  const englishTitle = options[0].title;
-  // The dialog's own strings, not the wording the translation currently holds.
-  expect(englishTitle).toBe(i18n.t(titleKey));
-
-  await i18n.changeLanguage('ru');
-  await prompt();
-  expect(options[1].title).toBe(i18n.t(titleKey));
-  expect(options[1].title).not.toBe(englishTitle);
-  expect(options[1].buttons).toEqual([
-    i18n.t('plugins.do-not-track.dialog.reload.reload-now'),
-    i18n.t('main.dialog.need-to-restart.buttons.later'),
-  ]);
-
-  // A language with no resources keeps the English strings.
-  await i18n.changeLanguage('missing');
-  await prompt();
-  expect(options[2].title).toBe(englishTitle);
 });

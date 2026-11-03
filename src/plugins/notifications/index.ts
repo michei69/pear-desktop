@@ -2,6 +2,7 @@ import { t } from '@/i18n';
 import { Platform } from '@/types/plugins';
 import { createPlugin } from '@/utils';
 
+import { ToastStyles, toastStyleLabel, urgencyLevels } from './labels';
 import { onConfigChange, onMainLoad, onStop } from './main';
 import { onMenu } from './menu';
 
@@ -46,11 +47,10 @@ export default createPlugin({
       key: 'urgency',
       label: () => t('plugins.notifications.menu.priority'),
       platform: Platform.Linux,
-      options: [
-        { value: 'low', label: () => 'Low' },
-        { value: 'normal', label: () => 'Normal' },
-        { value: 'critical', label: () => 'High' },
-      ],
+      options: urgencyLevels.map(({ name, value }) => ({
+        value,
+        label: name,
+      })),
     },
     {
       type: 'switch',
@@ -92,15 +92,10 @@ export default createPlugin({
       key: 'toastStyle',
       label: () => t('plugins.notifications.menu.toast-style'),
       platform: Platform.Windows,
-      options: [
-        { value: 1, label: () => 'Logo' },
-        { value: 2, label: () => 'Banner Centered Top' },
-        { value: 3, label: () => 'Hero' },
-        { value: 4, label: () => 'Banner Top Custom' },
-        { value: 5, label: () => 'Banner Centered Bottom' },
-        { value: 6, label: () => 'Banner Bottom' },
-        { value: 7, label: () => 'Legacy' },
-      ],
+      options: Object.entries(ToastStyles).map(([name, value]) => ({
+        value,
+        label: () => toastStyleLabel(name as keyof typeof ToastStyles),
+      })),
     },
   ],
   menu: onMenu,

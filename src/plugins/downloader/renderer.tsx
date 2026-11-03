@@ -15,26 +15,40 @@ import { DownloadButton } from './templates/download';
 import type { DownloaderPluginConfig } from './index';
 import type { RendererContext } from '@/types/contexts';
 
-let download: () => void;
-
 const [downloadButtonText, setDownloadButtonText] = createSignal<string>('');
 
+let download: () => void = () => {};
+
 let buttonContainer: HTMLDivElement | null = null;
+let feedbackListener: ((feedback: string) => void) | undefined;
+let disposeButton: (() => void) | undefined;
+let popupContainerObserver: MutationObserver | undefined;
 
 const menuObserver = new MutationObserver(() => {
   const menu = getSongMenu();
 
   if (
     !menu ||
+    !buttonContainer ||
     menu.contains(buttonContainer) ||
-    !(isMusicOrVideoTrack() || isAlbumOrPlaylist()) ||
-    !buttonContainer
+    !(isMusicOrVideoTrack() || isAlbumOrPlaylist())
   ) {
     return;
   }
 
   menu.prepend(buttonContainer);
 });
+
+const observePopupContainer = () => {
+  const popupContainer = document.querySelector('ytmusic-popup-container');
+  if (!popupContainer) return false;
+
+  menuObserver.observe(popupContainer, {
+    childList: true,
+    subtree: true,
+  });
+  return true;
+};
 
 export const onRendererLoad = ({
   ipc,
@@ -80,10 +94,10 @@ export const onRendererLoad = ({
     ipc.invoke('download-song', videoUrl);
   };
 
-  ipc.on('downloader-feedback', (feedback: string) => {
-    const targetHtml = feedback || t('plugins.downloader.templates.button');
-    setDownloadButtonText(targetHtml);
-  });
+  feedbackListener = (feedback: string) => {
+    setDownloadButtonText(feedback || t('plugins.downloader.templates.button'));
+  };
+  ipc.on('downloader-feedback', feedbackListener);
 
   setDownloadButtonText(t('plugins.downloader.templates.button'));
 
@@ -98,31 +112,43 @@ export const onRendererLoad = ({
   buttonContainer.setAttribute('role', 'option');
   buttonContainer.setAttribute('tabindex', '-1');
 
-  render(
-    () => <DownloadButton onClick={download} text={downloadButtonText()} />,
+  disposeButton = render(
+    () => (
+      <DownloadButton onClick={() => download()} text={downloadButtonText()} />
+    ),
     buttonContainer,
   );
 
   // The popup container can be created after plugin load; observe the document
   // until it exists instead of polling on a timer.
-  const observePopupContainer = () => {
-    const popupContainer = document.querySelector('ytmusic-popup-container');
-    if (!popupContainer) return false;
-
-    menuObserver.observe(popupContainer, {
-      childList: true,
-      subtree: true,
-    });
-    return true;
-  };
-
   if (!observePopupContainer()) {
-    const containerObserver = new MutationObserver(() => {
-      if (observePopupContainer()) containerObserver.disconnect();
+    popupContainerObserver = new MutationObserver(() => {
+      if (observePopupContainer()) popupContainerObserver?.disconnect();
     });
-    containerObserver.observe(document.documentElement, {
+    popupContainerObserver.observe(document.documentElement, {
       childList: true,
       subtree: true,
     });
   }
+};
+
+export const onRendererStop = ({
+  ipc,
+}: RendererContext<DownloaderPluginConfig>) => {
+  popupContainerObserver?.disconnect();
+  popupContainerObserver = undefined;
+  menuObserver.disconnect();
+
+  if (feedbackListener) {
+    ipc.off('downloader-feedback', feedbackListener);
+    feedbackListener = undefined;
+  }
+
+  disposeButton?.();
+  disposeButton = undefined;
+
+  buttonContainer?.remove();
+  buttonContainer = null;
+
+  download = () => {};
 };

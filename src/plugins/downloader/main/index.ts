@@ -9,7 +9,6 @@ import { Mutex } from 'async-mutex';
 import {
   type BrowserWindow,
   dialog,
-  ipcMain,
   type UtilityProcess,
   utilityProcess,
 } from 'electron';
@@ -115,7 +114,12 @@ class FfmpegWorker {
       serviceName: 'pear-downloader-ffmpeg',
     });
     this.child = child;
-    this.ready = new Promise((resolve) => child.once('spawn', () => resolve()));
+
+    let markFailed!: (error: Error) => void;
+    this.ready = new Promise((resolve, reject) => {
+      markFailed = reject;
+      child.once('spawn', () => resolve());
+    });
 
     child.on('message', (message: WorkerMessage) => {
       if (this.child !== child) return;
@@ -133,14 +137,15 @@ class FfmpegWorker {
       if (this.pending.size === 0) this.scheduleIdleShutdown();
     });
 
-    const reset = (reason: string) => {
+    const fail = (reason: string) => {
       if (this.child !== child) return;
+      markFailed(new Error(reason));
       this.reset(reason);
     };
     child.on('exit', (code) =>
-      reset(`utility process exited with code ${code}`),
+      fail(`utility process exited with code ${code}`),
     );
-    child.on('error', (type) => reset(`utility process failed: ${type}`));
+    child.on('error', (type) => fail(`utility process failed: ${type}`));
 
     return this.ready;
   }
@@ -168,7 +173,15 @@ class FfmpegWorker {
   }
 
   async run(job: DownloadJob, onProgress?: (ratio: number) => void) {
-    await this.start();
+    try {
+      await this.start();
+    } catch (error: unknown) {
+      return {
+        ok: false,
+        code: 'failed',
+        message: error instanceof Error ? error.message : String(error),
+      } satisfies JobOutcome;
+    }
     clearTimeout(this.idleTimer);
 
     const id = this.nextId++;
@@ -198,6 +211,7 @@ const runDownloadJob = (
 let yt: Innertube;
 let win: BrowserWindow;
 let playingUrl: string;
+let onVideoSrcChanged: ((data: GetPlayerResponse) => void) | undefined;
 
 const sendError = (error: Error, source?: string) => {
   win.setProgressBar(-1); // Close progress bar
@@ -245,72 +259,87 @@ export const onMainLoad = async ({
   config = await getConfig();
 
   ipc.handle('download-song', (url: string) => downloadSong(url));
-  ipc.on('peard:video-src-changed', (data: GetPlayerResponse) => {
+  onVideoSrcChanged = (data: GetPlayerResponse) => {
     playingUrl = data.microformat.microformatDataRenderer.urlCanonical;
-  });
+  };
+  ipc.on('peard:video-src-changed', onVideoSrcChanged);
   ipc.handle('download-playlist-request', async (url: string) =>
     downloadPlaylist(url),
   );
 
-  cleanupFinishSetup = downloadSongOnFinishSetup({ ipc, getConfig });
+  cleanupFinishSetup = downloadSongOnFinishSetup({ ipc });
 };
 
 export const onConfigChange = (newConfig: DownloaderPluginConfig) => {
   config = newConfig;
 };
 
-export const onStop = () => {
+export const onStop = ({ ipc }: BackendContext<DownloaderPluginConfig>) => {
   cleanupFinishSetup?.();
+  cleanupFinishSetup = undefined;
   ffmpegWorker.shutdown();
+  ipc.removeHandler('download-song');
+  ipc.removeHandler('download-playlist-request');
+  if (onVideoSrcChanged) {
+    ipc.off('peard:video-src-changed', onVideoSrcChanged);
+    onVideoSrcChanged = undefined;
+  }
 };
 
-export async function downloadSong(
+const downloadAndReport = async (
+  isId: boolean,
+  idOrUrl: string,
+  playlistFolder?: string,
+  trackId?: string,
+  increasePlaylistProgress: (value: number) => void = () => {},
+) => {
+  let resolvedName: string | undefined;
+  try {
+    await ensureInitialized();
+    await downloadSongUnsafe(
+      isId,
+      idOrUrl,
+      (name: string) => (resolvedName = name),
+      playlistFolder,
+      trackId,
+      increasePlaylistProgress,
+    );
+  } catch (error: unknown) {
+    sendError(error as Error, resolvedName || idOrUrl);
+  }
+};
+
+export const downloadSong = (
   url: string,
   playlistFolder?: string,
   trackId?: string,
   increasePlaylistProgress: (value: number) => void = () => {},
-) {
-  let resolvedName;
-  try {
-    await ensureInitialized();
-    await downloadSongUnsafe(
-      false,
-      url,
-      (name: string) => (resolvedName = name),
-      playlistFolder,
-      trackId,
-      increasePlaylistProgress,
-    );
-  } catch (error: unknown) {
-    sendError(error as Error, resolvedName || url);
-  }
-}
+) =>
+  downloadAndReport(
+    false,
+    url,
+    playlistFolder,
+    trackId,
+    increasePlaylistProgress,
+  );
 
-export async function downloadSongFromId(
+export const downloadSongFromId = (
   id: string,
   playlistFolder?: string,
   trackId?: string,
   increasePlaylistProgress: (value: number) => void = () => {},
-) {
-  let resolvedName;
-  try {
-    await ensureInitialized();
-    await downloadSongUnsafe(
-      true,
-      id,
-      (name: string) => (resolvedName = name),
-      playlistFolder,
-      trackId,
-      increasePlaylistProgress,
-    );
-  } catch (error: unknown) {
-    sendError(error as Error, resolvedName || id);
-  }
-}
+) =>
+  downloadAndReport(
+    true,
+    id,
+    playlistFolder,
+    trackId,
+    increasePlaylistProgress,
+  );
 
 function downloadSongOnFinishSetup({
   ipc,
-}: Pick<BackendContext<DownloaderPluginConfig>, 'ipc' | 'getConfig'>) {
+}: Pick<BackendContext<DownloaderPluginConfig>, 'ipc'>) {
   let currentUrl: string | undefined;
   let duration: number | undefined;
   let time = 0;
@@ -327,22 +356,19 @@ function downloadSongOnFinishSetup({
       config.downloadOnFinish?.enabled
     ) {
       if (typeof currentUrl === 'string' && duration && duration > 0) {
+        const folder = getFolder(
+          config.downloadOnFinish.folder ?? config.downloadFolder,
+        );
         if (
           config.downloadOnFinish.mode === 'seconds' &&
           duration - time <= config.downloadOnFinish.seconds
         ) {
-          downloadSong(
-            currentUrl,
-            getFolder(config.downloadOnFinish.folder ?? config.downloadFolder),
-          );
+          downloadSong(currentUrl, folder);
         } else if (
           config.downloadOnFinish.mode === 'percent' &&
           time >= duration * (config.downloadOnFinish.percent / 100)
         ) {
-          downloadSong(
-            currentUrl,
-            getFolder(config.downloadOnFinish.folder ?? config.downloadFolder),
-          );
+          downloadSong(currentUrl, folder);
         }
       }
 
@@ -358,11 +384,11 @@ function downloadSongOnFinishSetup({
     ipc.send(SONG_INFO_SETUP_CHANNEL, SongInfoEventFlag.TimeChanged);
   };
 
-  ipcMain.on('peard:player-api-loaded', onPlayerApiLoaded);
+  ipc.on('peard:player-api-loaded', onPlayerApiLoaded);
 
   return () => {
     unregisterCallback(songInfoCallback);
-    ipcMain.removeListener('peard:player-api-loaded', onPlayerApiLoaded);
+    ipc.off('peard:player-api-loaded', onPlayerApiLoaded);
   };
 }
 
@@ -516,7 +542,7 @@ async function downloadSongUnsafe(
 
   let filename = filenamify(`${name}.${targetFileExtension}`, {
     replacement: '_',
-    maxLength: 255,
+    maxLength: Math.max(32, 255 - dir.length),
   });
   if (!is.macOS()) {
     filename = filename.normalize('NFC');
@@ -765,7 +791,7 @@ export async function downloadPlaylist(givenUrl?: string | URL) {
       ?.get('MusicResponsiveListItemFlexColumn')
       ?.at(2)
       ?.as(YTNodes.MusicResponsiveListItemFlexColumn)?.title?.text ??
-    'NO_TITLE';
+    t('plugins.downloader.backend.feedback.no-title');
   const isAlbum = !normalPlaylistTitle;
 
   while (playlist.has_continuation && items.length < itemLimit) {
@@ -856,7 +882,7 @@ export async function downloadPlaylist(givenUrl?: string | URL) {
   const progressStep = 1 / items.length;
 
   const increaseProgress = (itemPercentage: number) => {
-    const currentProgress = (counter - 1) / (items.length ?? 1);
+    const currentProgress = (counter - 1) / items.length;
     const newProgress = currentProgress + progressStep * itemPercentage;
     win.setProgressBar(newProgress);
   };
@@ -875,16 +901,6 @@ export async function downloadPlaylist(givenUrl?: string | URL) {
         playlistFolder,
         trackId?.toString(),
         increaseProgress,
-      ).catch((error) =>
-        sendError(
-          new Error(
-            t('plugins.downloader.backend.feedback.error-while-downloading', {
-              author: song.author!.name,
-              title: song.title!,
-              error: String(error),
-            }),
-          ),
-        ),
       );
 
       win.setProgressBar(counter / items.length);

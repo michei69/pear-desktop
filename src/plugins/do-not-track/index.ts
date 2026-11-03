@@ -16,6 +16,11 @@ import strictRules from './lists/strict-addon.txt?raw';
 import { createProfileReloadPrompt, profileKey } from './profile-reload';
 import { blockers, isLegacyCustomBlocker, normalizeBlocker } from './types';
 
+const LOCAL_BLOCKLISTS_CHANNEL = 'peard-do-not-track:local-blocklists';
+
+const blockerLabel = (blocker: string) =>
+  t(`plugins.do-not-track.blockers.${blocker.toLowerCase()}`);
+
 const usesBlockLists = (blocker: unknown, customEnabled: unknown) =>
   normalizeBlocker(blocker) !== blockers.Lite || customEnabled === true;
 
@@ -88,7 +93,7 @@ export default createPlugin({
       label: () => t('plugins.do-not-track.menu.blocker'),
       options: Object.values(blockers).map((blocker) => ({
         value: blocker,
-        label: () => blocker,
+        label: () => blockerLabel(blocker),
       })),
     },
     {
@@ -103,6 +108,55 @@ export default createPlugin({
       label: () => t('plugins.do-not-track.settings.disable-default-lists'),
       restartNeeded: true,
     },
+    {
+      type: 'switch',
+      key: 'customEnabled',
+      label: () => t('plugins.do-not-track.settings.custom-enabled'),
+      description: () =>
+        t('plugins.do-not-track.settings.custom-enabled-description'),
+    },
+    {
+      type: 'list',
+      key: 'additionalBlockLists',
+      label: () => t('plugins.do-not-track.settings.additional-block-lists'),
+      description: () =>
+        t('plugins.do-not-track.settings.additional-block-lists-description'),
+      placeholder: () =>
+        t('plugins.do-not-track.settings.additional-block-lists-placeholder'),
+    },
+    {
+      type: 'list',
+      key: 'additionalBlockListRules',
+      label: () =>
+        t('plugins.do-not-track.settings.additional-block-list-rules'),
+      description: () =>
+        t(
+          'plugins.do-not-track.settings.additional-block-list-rules-description',
+        ),
+      placeholder: () =>
+        t(
+          'plugins.do-not-track.settings.additional-block-list-rules-placeholder',
+        ),
+    },
+    {
+      type: 'multiselect',
+      key: 'disabledLocalBlockLists',
+      label: () => t('plugins.do-not-track.settings.disabled-local-blocklists'),
+      description: () =>
+        t(
+          'plugins.do-not-track.settings.disabled-local-blocklists-description',
+        ),
+      options: async () => {
+        try {
+          const names = (await window.ipcRenderer.invoke(
+            LOCAL_BLOCKLISTS_CHANNEL,
+          )) as string[];
+          return names.map((name) => ({ value: name, label: () => name }));
+        } catch {
+          return [];
+        }
+      },
+    },
   ],
   menu: async ({ getConfig, setConfig, refresh }) => {
     const config = await getConfig();
@@ -113,7 +167,7 @@ export default createPlugin({
     // this invocation was built from.
     return [
       ...Object.values(blockers).map((blocker) => ({
-        label: blocker,
+        label: blockerLabel(blocker),
         type: 'radio' as const,
         checked: normalizeBlocker(config.blocker) === blocker,
         async click() {
@@ -123,10 +177,10 @@ export default createPlugin({
       })),
       { type: 'separator' },
       {
-        label: 'Custom',
+        label: t('plugins.do-not-track.menu.custom.label'),
         submenu: [
           {
-            label: 'Enabled',
+            label: t('plugins.do-not-track.menu.custom.enabled'),
             type: 'checkbox',
             checked: config.customEnabled === true,
             async click() {
@@ -162,7 +216,9 @@ export default createPlugin({
     generation: 0,
     currentProfile: null as string | null,
     promptReload: null as (() => Promise<void>) | null,
-    async start({ getConfig, setConfig, window }) {
+    async start({ getConfig, setConfig, window, ipc }) {
+      ipc.handle(LOCAL_BLOCKLISTS_CHANNEL, () => getLocalBlockListNames());
+
       const generation = ++this.generation;
       const config = await getConfig();
       const blocker = normalizeBlocker(config.blocker);
@@ -207,8 +263,9 @@ export default createPlugin({
         );
       }
     },
-    stop({ window }) {
+    stop({ window, ipc }) {
       ++this.generation;
+      ipc.removeHandler(LOCAL_BLOCKLISTS_CHANNEL);
       this.mainWindow = null;
       this.currentProfile = null;
       this.promptReload = null;

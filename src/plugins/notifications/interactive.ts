@@ -4,6 +4,7 @@ import playIcon from '@assets/media-icons-black/play.png?asset&asarUnpack';
 import previousIcon from '@assets/media-icons-black/previous.png?asset&asarUnpack';
 import { app, type BrowserWindow, Notification } from 'electron';
 
+import { t } from '@/i18n';
 import {
   APP_PROTOCOL,
   changeProtocolHandler,
@@ -22,11 +23,11 @@ import {
 } from '@/types/song-info-events';
 
 import { isHoverPopupVisible } from './hover-popup';
+import { ToastStyles } from './labels';
 import {
   focusWindowOnNotificationClick,
   notificationImage,
   secondsToMinutes,
-  ToastStyles,
 } from './utils';
 
 import type { NotificationsPluginConfig } from './index';
@@ -40,7 +41,7 @@ type Accessor<T> = () => T;
 export default (
   win: BrowserWindow,
   config: Accessor<NotificationsPluginConfig>,
-  { ipc: { on, send } }: BackendContext<NotificationsPluginConfig>,
+  { ipc: { on, off, send } }: BackendContext<NotificationsPluginConfig>,
 ) => {
   const sendNotification = async (songInfo: SongInfo) => {
     const iconSrc = await notificationImage(songInfo, config());
@@ -60,7 +61,7 @@ export default (
     }
 
     const notification = new Notification({
-      title: songInfo.title || 'Playing',
+      title: songInfo.title || t('plugins.notifications.playing'),
       body: songInfo.artist,
       icon: iconSrc,
       silent: true,
@@ -144,9 +145,9 @@ export default (
 
     return `\
             content="${
-              config().toastStyle
+              config().hideButtonText
                 ? ''
-                : kind.charAt(0).toUpperCase() + kind.slice(1)
+                : t(`plugins.notifications.buttons.${kind}`)
             }"\
             imageUri="file:///${selectIcon(kind)}"
         `;
@@ -293,12 +294,43 @@ export default (
   songControls = getSongControls(win);
 
   let currentSeconds = 0;
-  on('peard:player-api-loaded', () =>
-    send(SONG_INFO_SETUP_CHANNEL, SongInfoEventFlag.TimeChanged),
-  );
-
   let savedSongInfo: SongInfo;
   let lastUrl: string | undefined;
+
+  const runSongControl = (cmd: string, args: string[]) => {
+    if (!Object.hasOwn(songControls, cmd)) return false;
+    (songControls as unknown as Record<string, (...a: string[]) => void>)[cmd](
+      ...args,
+    );
+    return true;
+  };
+
+  const onProtocolCommand = (cmd: string, ...args: string[]) => {
+    if (!runSongControl(cmd, args)) return;
+    if (
+      config().refreshOnPlayPause &&
+      (cmd === 'pause' || (cmd === 'play' && !config().unpauseNotification))
+    ) {
+      setImmediate(() =>
+        sendNotification({
+          ...savedSongInfo,
+          isPaused: cmd === 'pause',
+          elapsedSeconds: currentSeconds,
+        }),
+      );
+    }
+  };
+
+  // HACK: setupProtocolHandler() runs after plugin start, so the handler has to
+  // be installed again once the player is up.
+  const installProtocolHandler = () => changeProtocolHandler(onProtocolCommand);
+  installProtocolHandler();
+
+  const onPlayerApiLoaded = () => {
+    installProtocolHandler();
+    send(SONG_INFO_SETUP_CHANNEL, SongInfoEventFlag.TimeChanged);
+  };
+  on('peard:player-api-loaded', onPlayerApiLoaded);
 
   const songInfoCallback = (songInfo: SongInfo, event: SongInfoEvent) => {
     if (event === SongInfoEvent.TimeChanged) {
@@ -324,28 +356,19 @@ export default (
 
   registerCallback(songInfoCallback);
 
-  app.once('before-quit', () => {
+  const closeOnQuit = () => {
     savedNotification?.close();
-  });
+  };
+  app.once('before-quit', closeOnQuit);
 
-  changeProtocolHandler((cmd, ...args) => {
-    if (Object.keys(songControls).includes(cmd)) {
-      // @ts-expect-error: cmd is a key of songControls
-      songControls[cmd as keyof typeof songControls](...args);
-      if (
-        config().refreshOnPlayPause &&
-        (cmd === 'pause' || (cmd === 'play' && !config().unpauseNotification))
-      ) {
-        setImmediate(() =>
-          sendNotification({
-            ...savedSongInfo,
-            isPaused: cmd === 'pause',
-            elapsedSeconds: currentSeconds,
-          }),
-        );
-      }
-    }
-  });
-
-  return () => unregisterCallback(songInfoCallback);
+  return () => {
+    unregisterCallback(songInfoCallback);
+    off('peard:player-api-loaded', onPlayerApiLoaded);
+    app.removeListener('before-quit', closeOnQuit);
+    savedNotification?.close();
+    savedNotification = undefined;
+    changeProtocolHandler((cmd, ...args) => {
+      runSongControl(cmd, args);
+    });
+  };
 };

@@ -1,6 +1,6 @@
 import { autoUpdate, offset, size } from '@floating-ui/dom';
 import { useFloating } from 'solid-floating-ui';
-import { createSignal, Match, Show, Switch } from 'solid-js';
+import { createSignal, Match, onCleanup, Show, Switch } from 'solid-js';
 import { type JSX } from 'solid-js/jsx-runtime';
 import { Portal } from 'solid-js/web';
 import { css } from 'solid-styled-components';
@@ -219,6 +219,29 @@ export const PanelItem = (props: PanelItemProps) => {
     },
   );
 
+  const hoverTimers = new Set<ReturnType<typeof setTimeout>>();
+  const documentListeners = new Set<() => void>();
+
+  const listenOnDocument = (
+    type: 'mousemove',
+    handler: (event: MouseEvent) => void,
+  ) => {
+    document.addEventListener(type, handler);
+    const remove = () => document.removeEventListener(type, handler);
+    documentListeners.add(remove);
+    return () => {
+      if (!documentListeners.delete(remove)) return;
+      remove();
+    };
+  };
+
+  onCleanup(() => {
+    for (const timer of hoverTimers) clearTimeout(timer);
+    hoverTimers.clear();
+    for (const remove of documentListeners) remove();
+    documentListeners.clear();
+  });
+
   const handleHover = (event: MouseEvent) => {
     setToolTipOpen(true);
     event.target?.addEventListener(
@@ -231,6 +254,7 @@ export const PanelItem = (props: PanelItemProps) => {
 
     if (props.type === 'submenu') {
       const timer = setTimeout(() => {
+        hoverTimers.delete(timer);
         setOpen(true);
 
         let mouseX = event.clientX;
@@ -239,13 +263,14 @@ export const PanelItem = (props: PanelItemProps) => {
           mouseX = event.clientX;
           mouseY = event.clientY;
         };
-        document.addEventListener('mousemove', onMouseMove);
+        const removeMouseMove = listenOnDocument('mousemove', onMouseMove);
 
         event.target?.addEventListener(
           'mouseleave',
           () => {
-            setTimeout(() => {
-              document.removeEventListener('mousemove', onMouseMove);
+            const leaveTimer = setTimeout(() => {
+              hoverTimers.delete(leaveTimer);
+              removeMouseMove();
               const parents = getParents(
                 document.elementFromPoint(mouseX, mouseY),
               );
@@ -271,21 +296,27 @@ export const PanelItem = (props: PanelItemProps) => {
 
                   if (isOtherItem && !isChild) {
                     setOpen(false);
-                    document.removeEventListener('mousemove', onOtherHover);
+                    removeOtherHover();
                   }
                 };
-                document.addEventListener('mousemove', onOtherHover);
+                const removeOtherHover = listenOnDocument(
+                  'mousemove',
+                  onOtherHover,
+                );
               }
             }, 225);
+            hoverTimers.add(leaveTimer);
           },
           { once: true },
         );
       }, 225);
+      hoverTimers.add(timer);
 
       event.target?.addEventListener(
         'mouseleave',
         () => {
           clearTimeout(timer);
+          hoverTimers.delete(timer);
         },
         { once: true },
       );

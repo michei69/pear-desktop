@@ -3,7 +3,7 @@ import is from 'electron-is';
 
 import { t } from '@/i18n';
 
-import { snakeToCamel, ToastStyles, urgencyLevels } from './utils';
+import { toastStyleLabel, ToastStyles, urgencyLevels } from './labels';
 
 import type { NotificationsPluginConfig } from './index';
 import type { MenuTemplate } from '@/menu';
@@ -21,7 +21,7 @@ export const onMenu = async ({
     // ToastStyles indexes start at 1.
     for (const [name, index] of Object.entries(ToastStyles)) {
       array[index - 1] = {
-        label: snakeToCamel(name),
+        label: toastStyleLabel(name as keyof typeof ToastStyles),
         type: 'radio',
         checked: options.toastStyle === index,
         click: () => setConfig({ toastStyle: index }),
@@ -37,7 +37,7 @@ export const onMenu = async ({
         {
           label: t('plugins.notifications.menu.priority'),
           submenu: urgencyLevels.map((level) => ({
-            label: level.name,
+            label: level.name(),
             type: 'radio',
             checked: config.urgency === level.value,
             click: () => setConfig({ urgency: level.value }),

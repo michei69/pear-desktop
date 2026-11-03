@@ -8,12 +8,6 @@ import { TitleBar } from './renderer/TitleBar';
 
 import type { RendererContext } from '@/types/contexts';
 
-const scrollStyle = `
-  html::-webkit-scrollbar {
-    background-color: red;
-  }
-`;
-
 const isMacOS = navigator.userAgent.includes('Macintosh');
 const isNotWindowsOrMacOS =
   !navigator.userAgent.includes('Windows') && !isMacOS;
@@ -21,6 +15,9 @@ const isNotWindowsOrMacOS =
 const [config, setConfig] = createSignal<InAppMenuConfig>(
   defaultInAppMenuConfig,
 );
+
+let disposeTitleBar: (() => void) | undefined;
+
 export const onRendererLoad = async ({
   getConfig,
   ipc,
@@ -28,11 +25,8 @@ export const onRendererLoad = async ({
   setConfig(await getConfig());
 
   document.title = APPLICATION_NAME;
-  const stylesheet = new CSSStyleSheet();
-  stylesheet.replaceSync(scrollStyle);
-  document.adoptedStyleSheets = [...document.adoptedStyleSheets, stylesheet];
 
-  render(
+  disposeTitleBar = render(
     () => (
       <TitleBar
         enableController={
@@ -47,17 +41,9 @@ export const onRendererLoad = async ({
   );
 };
 
-export const onPlayerApiReady = () => {
-  // HACK: broken since a YTM update (last checked 2024-02-04).
-  //
-  // const htmlHeadStyle = document.querySelector('head > div > style');
-  // if (htmlHeadStyle) {
-  //   // HACK: This is a hack to remove the scrollbar width
-  //   htmlHeadStyle.innerHTML = htmlHeadStyle.innerHTML.replace(
-  //     'html::-webkit-scrollbar {width: var(--ytmusic-scrollbar-width);',
-  //     'html::-webkit-scrollbar { width: 0;',
-  //   );
-  // }
+export const onRendererStop = () => {
+  disposeTitleBar?.();
+  disposeTitleBar = undefined;
 };
 
 export const onConfigChange = (newConfig: InAppMenuConfig) => {

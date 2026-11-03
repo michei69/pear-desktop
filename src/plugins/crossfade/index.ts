@@ -15,7 +15,7 @@ export default createPlugin<
 >({
   name: () => t('plugins.crossfade.name'),
   description: () => t('plugins.crossfade.description'),
-  restartNeeded: true,
+  restartNeeded: false,
   config: {
     enabled: false,
     fadeInDuration: 5000,

@@ -5,7 +5,11 @@ import { dialog } from 'electron';
 import { t } from '@/i18n';
 import promptOptions from '@/providers/prompt-options';
 
-import { type DownloaderPluginConfig, defaultConfig } from './index';
+import {
+  type DownloaderPluginConfig,
+  defaultConfig,
+  presetLabel,
+} from './index';
 import { downloadPlaylist } from './main';
 import { getFolder } from './main/utils';
 import { DefaultPresetList } from './types';
@@ -19,6 +23,16 @@ export const onMenu = async ({
 }: MenuContext<DownloaderPluginConfig>): Promise<MenuTemplate> => {
   const config = await getConfig();
 
+  const setFinishConfig = (
+    patch: Partial<NonNullable<DownloaderPluginConfig['downloadOnFinish']>>,
+  ) =>
+    setConfig({
+      downloadOnFinish: {
+        ...deepmerge(defaultConfig.downloadOnFinish, config.downloadOnFinish),
+        ...patch,
+      },
+    });
+
   return [
     {
       label: t('plugins.downloader.menu.download-finish-settings.label'),
@@ -31,15 +45,7 @@ export const onMenu = async ({
           type: 'checkbox',
           checked: config.downloadOnFinish?.enabled ?? false,
           click(item) {
-            setConfig({
-              downloadOnFinish: {
-                ...deepmerge(
-                  defaultConfig.downloadOnFinish,
-                  config.downloadOnFinish,
-                ),
-                enabled: item.checked,
-              },
-            });
+            setFinishConfig({ enabled: item.checked });
           },
         },
         {
@@ -55,15 +61,7 @@ export const onMenu = async ({
               ),
             });
             if (result) {
-              setConfig({
-                downloadOnFinish: {
-                  ...deepmerge(
-                    defaultConfig.downloadOnFinish,
-                    config.downloadOnFinish,
-                  ),
-                  folder: result[0],
-                },
-              });
+              setFinishConfig({ folder: result[0] });
             }
           },
         },
@@ -80,15 +78,7 @@ export const onMenu = async ({
               type: 'radio',
               checked: config.downloadOnFinish?.mode === 'seconds',
               click() {
-                setConfig({
-                  downloadOnFinish: {
-                    ...deepmerge(
-                      defaultConfig.downloadOnFinish,
-                      config.downloadOnFinish,
-                    ),
-                    mode: 'seconds',
-                  },
-                });
+                setFinishConfig({ mode: 'seconds' });
               },
             },
             {
@@ -98,15 +88,7 @@ export const onMenu = async ({
               type: 'radio',
               checked: config.downloadOnFinish?.mode === 'percent',
               click() {
-                setConfig({
-                  downloadOnFinish: {
-                    ...deepmerge(
-                      defaultConfig.downloadOnFinish,
-                      config.downloadOnFinish,
-                    ),
-                    mode: 'percent',
-                  },
-                });
+                setFinishConfig({ mode: 'percent' });
               },
             },
           ],
@@ -161,15 +143,9 @@ export const onMenu = async ({
               return undefined;
             }
 
-            setConfig({
-              downloadOnFinish: {
-                ...deepmerge(
-                  defaultConfig.downloadOnFinish,
-                  config.downloadOnFinish,
-                ),
-                seconds: Number(res[0]),
-                percent: Number(res[1]),
-              },
+            setFinishConfig({
+              seconds: Number(res[0]),
+              percent: Number(res[1]),
             });
             return;
           },
@@ -196,7 +172,7 @@ export const onMenu = async ({
     {
       label: t('plugins.downloader.menu.presets'),
       submenu: Object.keys(DefaultPresetList).map((preset) => ({
-        label: preset,
+        label: presetLabel(preset),
         type: 'radio',
         checked: config.selectedPreset === preset,
         click() {

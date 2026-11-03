@@ -255,9 +255,12 @@ export const renderer = createRenderer<
                 fadeOut,
               );
             }
-          } else if (gain) {
-            gain.gain.cancelScheduledValues(0);
-            gain.gain.value = 0;
+          } else {
+            if (gain) {
+              gain.gain.cancelScheduledValues(0);
+              gain.gain.value = 0;
+            }
+            releaseAudio(outgoing);
           }
 
           // Whatever level the fade ends at, the audio behind it is freed once it
@@ -397,6 +400,7 @@ export const renderer = createRenderer<
               // The audio is about to be heard, so it goes back to its own rate
               // before any of it is.
               stopAligning?.();
+              stopAligning = null;
 
               document
                 .querySelector<HTMLButtonElement>('.next-button')

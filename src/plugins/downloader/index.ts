@@ -3,9 +3,21 @@ import { createPlugin } from '@/utils';
 
 import { onConfigChange, onMainLoad, onStop } from './main';
 import { onMenu } from './menu';
-import { onRendererLoad } from './renderer';
+import { onRendererLoad, onRendererStop } from './renderer';
+import { CustomPresetField } from './settings/CustomPresetField';
 import style from './style.css?inline';
 import { DefaultPresetList, type Preset } from './types';
+
+const PRESET_LABEL_KEYS: Record<string, string> = {
+  'mp3 (256kbps)': 'plugins.downloader.presets.mp3-256kbps',
+  'Source': 'plugins.downloader.presets.source',
+  'Custom': 'plugins.downloader.presets.custom',
+};
+
+export const presetLabel = (preset: string) => {
+  const key = PRESET_LABEL_KEYS[preset];
+  return key ? t(key) : preset;
+};
 
 export type DownloaderPluginConfig = {
   enabled: boolean;
@@ -55,8 +67,16 @@ export default createPlugin({
           label: () => t('plugins.downloader.menu.presets'),
           options: Object.keys(DefaultPresetList).map((name) => ({
             value: name,
-            label: () => name,
+            label: () => presetLabel(name),
           })),
+        },
+        {
+          type: 'custom',
+          key: 'customPresetSetting',
+          label: () => t('plugins.downloader.settings.custom-preset'),
+          description: () =>
+            t('plugins.downloader.settings.custom-preset-description'),
+          component: 'downloader.customPreset',
         },
         {
           type: 'action',
@@ -76,6 +96,15 @@ export default createPlugin({
           type: 'switch',
           key: 'skipExisting',
           label: () => t('plugins.downloader.menu.skip-existing'),
+        },
+        {
+          type: 'number',
+          key: 'playlistMaxItems',
+          label: () => t('plugins.downloader.settings.playlist-max-items'),
+          description: () =>
+            t('plugins.downloader.settings.playlist-max-items-description'),
+          min: 0,
+          step: 1,
         },
       ],
     },
@@ -161,6 +190,10 @@ export default createPlugin({
     onConfigChange,
   },
   renderer: {
+    components: {
+      customPreset: CustomPresetField,
+    },
     start: onRendererLoad,
+    stop: onRendererStop,
   },
 });

@@ -9,4 +9,8 @@ export const backend = createBackend({
       getAudioBytes(yt, videoID, window),
     );
   },
+
+  stop({ ipc }) {
+    ipc.removeHandler('audio-bytes');
+  },
 });

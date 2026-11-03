@@ -272,37 +272,43 @@ export const TitleBar = (props: TitleBarProps) => {
   /** Reads through the setter, so nothing reactive is tracked in the IPC handler. */
   const toggleCollapsed = () => setCollapsed((value) => !value);
 
+  const closeAllPanels = async () => {
+    setIgnoreTransition(true);
+    setMenu(null);
+    await refetch();
+    setMenu(data() ?? null);
+    setIgnoreTransition(false);
+  };
+
+  const refreshMenu = async () => {
+    setIgnoreTransition(true);
+    await refetch();
+    setMenu(data() ?? null);
+    setIgnoreTransition(false);
+  };
+
+  const collapseOnOutsideClick = (e: MouseEvent) => {
+    if (
+      e.target instanceof HTMLElement &&
+      !(
+        e.target.closest('nav[data-ytmd-main-panel]') ||
+        e.target.closest('ul[data-ytmd-sub-panel]')
+      )
+    ) {
+      setOpenTarget(null);
+    }
+  };
+
   onMount(() => {
-    props.ipc.on('close-all-in-app-menu-panel', async () => {
-      setIgnoreTransition(true);
-      setMenu(null);
-      await refetch();
-      setMenu(data() ?? null);
-      setIgnoreTransition(false);
-    });
-    props.ipc.on('refresh-in-app-menu', async () => {
-      setIgnoreTransition(true);
-      await refetch();
-      setMenu(data() ?? null);
-      setIgnoreTransition(false);
-    });
+    props.ipc.on('close-all-in-app-menu-panel', closeAllPanels);
+    props.ipc.on('refresh-in-app-menu', refreshMenu);
     props.ipc.on('toggle-in-app-menu', toggleCollapsed);
 
     props.ipc.on('window-maximize', refetchMaximize);
     props.ipc.on('window-unmaximize', refetchMaximize);
 
     // Close the menu when the click lands outside both panels.
-    document.body.addEventListener('click', (e) => {
-      if (
-        e.target instanceof HTMLElement &&
-        !(
-          e.target.closest('nav[data-ytmd-main-panel]') ||
-          e.target.closest('ul[data-ytmd-sub-panel]')
-        )
-      ) {
-        setOpenTarget(null);
-      }
-    });
+    document.body.addEventListener('click', collapseOnOutsideClick);
 
     window.addEventListener('mousemove', listener);
     ytmusicAppLayout = document.querySelector<HTMLElement>('#layout');
@@ -340,10 +346,19 @@ export const TitleBar = (props: TitleBarProps) => {
   });
 
   onCleanup(() => {
+    props.ipc.off('close-all-in-app-menu-panel', closeAllPanels);
+    props.ipc.off('refresh-in-app-menu', refreshMenu);
+    props.ipc.off('toggle-in-app-menu', toggleCollapsed);
+    props.ipc.off('window-maximize', refetchMaximize);
+    props.ipc.off('window-unmaximize', refetchMaximize);
+
+    document.body.removeEventListener('click', collapseOnOutsideClick);
+
     window.removeEventListener('mousemove', listener);
     if (scrollRafHandle !== null) cancelAnimationFrame(scrollRafHandle);
     if (scrollListener) {
       ytmusicAppLayout?.removeEventListener('scroll', scrollListener);
+      ytmusicAppLayout?.classList.remove('content-scrolled');
     }
   });
 

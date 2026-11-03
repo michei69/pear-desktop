@@ -5,6 +5,12 @@ import { extname } from 'node:path';
 
 import NodeID3 from 'node-id3';
 
+import {
+  parseProgressSeconds,
+  systemFfmpegArgs,
+  wasmFfmpegArgs,
+} from './ffmpeg-args';
+
 /**
  * The downloader's ffmpeg invocation and ID3 tagging run here, in one
  * long-lived utility process: the ffmpeg child and the blocking ID3 writer must
@@ -55,36 +61,12 @@ const post = (message: WorkerMessage) => {
   process.parentPort.postMessage(message);
 };
 
-/** ffmpeg's `-progress` output reports both of these in microseconds. */
-const parseProgressSeconds = (line: string) => {
-  const separator = line.indexOf('=');
-  if (separator === -1) return undefined;
-
-  const key = line.slice(0, separator);
-  if (key !== 'out_time_us' && key !== 'out_time_ms') return undefined;
-
-  const microseconds = Number(line.slice(separator + 1));
-  return Number.isFinite(microseconds) ? microseconds / 1e6 : undefined;
-};
-
 const runSystemFfmpeg = async (
   job: DownloadJob,
   id: number,
 ): Promise<JobResult> => {
   const convert = job.convert!;
-  const args = [
-    '-hide_banner',
-    '-loglevel',
-    'error',
-    '-y',
-    '-progress',
-    'pipe:1',
-    '-nostats',
-    '-i',
-    job.inputPath,
-    ...convert.args,
-    job.outputPath,
-  ];
+  const args = systemFfmpegArgs(job.inputPath, convert.args, job.outputPath);
 
   return await new Promise<JobResult>((resolve) => {
     const child = spawn('ffmpeg', args, { stdio: ['ignore', 'pipe', 'pipe'] });
@@ -196,16 +178,7 @@ const runWasmFfmpeg = async (
 
     ffmpeg.FS('writeFile', inputName, await readFile(job.inputPath));
     try {
-      await ffmpeg.run(
-        '-hide_banner',
-        '-loglevel',
-        'error',
-        '-y',
-        '-i',
-        inputName,
-        ...convert.args,
-        outputName,
-      );
+      await ffmpeg.run(...wasmFfmpegArgs(inputName, convert.args, outputName));
       await writeFile(job.outputPath, ffmpeg.FS('readFile', outputName));
     } finally {
       // MEMFS lives for the whole session now, so every file must be released.

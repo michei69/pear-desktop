@@ -11,27 +11,13 @@ import {
 import { appIconPath } from '@/providers/app-icon';
 import { getImage, type SongInfo } from '@/providers/song-info';
 
+import { ToastStyles } from './labels';
+
 import type { NotificationsPluginConfig } from './index';
 
 const userData = app.getPath('userData');
 const temporaryIcon = path.join(userData, 'tempIcon.png');
 const temporaryBanner = path.join(userData, 'tempBanner.png');
-
-export const ToastStyles = {
-  logo: 1,
-  banner_centered_top: 2,
-  hero: 3,
-  banner_top_custom: 4,
-  banner_centered_bottom: 5,
-  banner_bottom: 6,
-  legacy: 7,
-};
-
-export const urgencyLevels = [
-  { name: 'Low', value: 'low' } as const,
-  { name: 'Normal', value: 'normal' } as const,
-  { name: 'High', value: 'critical' } as const,
-];
 
 const nativeImageToLogo = (nativeImage: NativeImage) => {
   const temporaryImage = nativeImage.resize({ height: 256 });
@@ -88,14 +74,9 @@ export const saveImage = (img: NativeImage, savePath: string) => {
   return savePath;
 };
 
-export const snakeToCamel = (string_: string) =>
-  string_.replaceAll(/([-_][a-z]|^[a-z])/g, (group) =>
-    group.toUpperCase().replace('-', ' ').replace('_', ' '),
-  );
-
 export const secondsToMinutes = (seconds: number) => {
   const minutes = Math.floor(seconds / 60);
-  const secondsLeft = seconds % 60;
+  const secondsLeft = Math.floor(seconds % 60);
   return `${minutes}:${secondsLeft < 10 ? '0' : ''}${secondsLeft}`;
 };
 

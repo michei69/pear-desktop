@@ -1,6 +1,7 @@
 import { Notification } from 'electron';
 import is from 'electron-is';
 
+import { t } from '@/i18n';
 import {
   registerCallback,
   unregisterCallback,
@@ -22,6 +23,7 @@ let songInfoCallback:
   | null = null;
 let disposeHoverPopup: (() => void) | null = null;
 let disposeInteractive: (() => void) | null = null;
+let disposeSetup: (() => void) | null = null;
 // The track the last toast was for; artwork decoding is async, so a toast that
 // lands after a track change is dropped instead of shown stale.
 let currentUrl: string | undefined;
@@ -33,7 +35,7 @@ const notify = async (info: SongInfo) => {
   }
 
   const currentNotification = new Notification({
-    title: info.title || 'Playing',
+    title: info.title || t('plugins.notifications.playing'),
     body: info.artist,
     icon,
     silent: true,
@@ -50,7 +52,8 @@ const notify = async (info: SongInfo) => {
 };
 
 const setup = () => {
-  let oldNotification: Notification;
+  let oldNotification: Notification | undefined;
+  let pendingTimer: ReturnType<typeof setTimeout> | undefined;
 
   songInfoCallback = (songInfo: SongInfo, event) => {
     if (
@@ -59,9 +62,11 @@ const setup = () => {
       (songInfo.url !== currentUrl || config.unpauseNotification)
     ) {
       oldNotification?.close();
+      oldNotification = undefined;
       currentUrl = songInfo.url;
       // The 10ms delay stops the notification being updated instead of shown.
-      setTimeout(() => {
+      pendingTimer = setTimeout(() => {
+        pendingTimer = undefined;
         notify(songInfo).then((notification) => {
           if (notification) {
             oldNotification = notification;
@@ -72,6 +77,17 @@ const setup = () => {
   };
 
   registerCallback(songInfoCallback);
+
+  return () => {
+    clearTimeout(pendingTimer);
+    pendingTimer = undefined;
+    oldNotification?.close();
+    oldNotification = undefined;
+    if (songInfoCallback) {
+      unregisterCallback(songInfoCallback);
+      songInfoCallback = null;
+    }
+  };
 };
 
 export const onMainLoad = async (
@@ -81,7 +97,7 @@ export const onMainLoad = async (
   config = await context.getConfig();
   if (is.windows() && config.interactive)
     disposeInteractive = interactive(context.window, () => config, context);
-  else setup();
+  else disposeSetup = setup();
 
   if (config.hoverControls) {
     disposeHoverPopup = setupHoverPopup(context.window);
@@ -105,11 +121,9 @@ export const onStop = () => {
   // one, so it must be disposed through the function it returned.
   disposeInteractive?.();
   disposeInteractive = null;
+  disposeSetup?.();
+  disposeSetup = null;
   currentUrl = undefined;
-  if (songInfoCallback) {
-    unregisterCallback(songInfoCallback);
-    songInfoCallback = null;
-  }
   if (disposeHoverPopup) {
     disposeHoverPopup();
     disposeHoverPopup = null;

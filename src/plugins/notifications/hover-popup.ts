@@ -7,6 +7,7 @@ import {
   registerCallback,
   type SongInfo,
   SongInfoEvent,
+  unregisterCallback,
 } from '@/providers/song-info';
 import {
   setTrayOnMouseMove,
@@ -293,13 +294,14 @@ export const setupHoverPopup = (win: BrowserWindow): (() => void) => {
     doShow();
   });
 
-  registerCallback((songInfo, event) => {
+  const songInfoCallback = (songInfo: SongInfo, event: SongInfoEvent) => {
     if (event === SongInfoEvent.TimeChanged) return;
     if (!songInfo.artist && !songInfo.title) return;
 
     currentSongInfo = { ...songInfo };
     if (_isVisible) pushSongInfo();
-  });
+  };
+  registerCallback(songInfoCallback);
 
   // Detaches its own quit listener, so a disable/re-enable cycle does not
   // leave one behind per toggle.
@@ -307,6 +309,8 @@ export const setupHoverPopup = (win: BrowserWindow): (() => void) => {
     if (disposed) return;
     disposed = true;
     app.removeListener('before-quit', dispose);
+    unregisterCallback(songInfoCallback);
+    currentSongInfo = null;
     stopMouseTracking();
     stopFlyoutWatching();
     popup?.close();
