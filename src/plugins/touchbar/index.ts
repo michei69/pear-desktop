@@ -22,7 +22,6 @@ export default createPlugin<
 >({
   name: () => t('plugins.touchbar.name'),
   description: () => t('plugins.touchbar.description'),
-  restartNeeded: true,
   platform: Platform.macOS,
   config: {
     enabled: false,

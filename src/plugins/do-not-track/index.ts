@@ -75,7 +75,7 @@ export interface TrackerBlockerConfig {
 export default createPlugin({
   name: () => t('plugins.do-not-track.name'),
   description: () => t('plugins.do-not-track.description'),
-  restartNeeded: false,
+  restartNeeded: true,
   config: {
     enabled: true,
     cache: true,

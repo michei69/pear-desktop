@@ -21,7 +21,6 @@ export type PictureInPicturePluginConfig = {
 export default createPlugin({
   name: () => t('plugins.picture-in-picture.name'),
   description: () => t('plugins.picture-in-picture.description'),
-  restartNeeded: true,
   config: {
     'enabled': false,
     'alwaysOnTop': true,

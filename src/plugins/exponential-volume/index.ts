@@ -27,7 +27,6 @@ const teardown = () => {
 export default createPlugin({
   name: () => t('plugins.exponential-volume.name'),
   description: () => t('plugins.exponential-volume.description'),
-  restartNeeded: true,
   config: {
     enabled: false,
   },

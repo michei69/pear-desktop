@@ -73,7 +73,6 @@ export const defaultConfig: ScrobblerPluginConfig = {
 export default createPlugin({
   name: () => t('plugins.scrobbler.name'),
   description: () => t('plugins.scrobbler.description'),
-  restartNeeded: true,
   config: defaultConfig,
   settings: [
     {

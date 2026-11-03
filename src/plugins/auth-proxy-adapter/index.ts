@@ -8,7 +8,7 @@ import { onMenu } from './menu';
 export default createPlugin({
   name: () => t('plugins.auth-proxy-adapter.name'),
   description: () => t('plugins.auth-proxy-adapter.description'),
-  restartNeeded: false,
+  restartNeeded: true,
   config: defaultAuthProxyConfig,
   addedVersion: '3.10.X',
   settings: [
@@ -16,11 +16,13 @@ export default createPlugin({
       type: 'text',
       key: 'hostname',
       label: () => t('plugins.auth-proxy-adapter.menu.hostname.label'),
+      restartNeeded: true,
     },
     {
       type: 'number',
       key: 'port',
       label: () => t('plugins.auth-proxy-adapter.menu.port.label'),
+      restartNeeded: true,
       min: 0,
       max: 65535,
     },

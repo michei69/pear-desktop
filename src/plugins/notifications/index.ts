@@ -34,7 +34,6 @@ export const defaultConfig: NotificationsPluginConfig = {
 export default createPlugin({
   name: () => t('plugins.notifications.name'),
   description: () => t('plugins.notifications.description'),
-  restartNeeded: true,
   config: defaultConfig,
   settings: [
     {
