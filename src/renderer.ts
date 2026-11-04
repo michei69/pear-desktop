@@ -9,6 +9,7 @@ import 'mdui/components/tooltip.js';
 import { loadI18n, t as i18t } from '@/i18n';
 import { bootStandaloneSettings } from '@/plugins/settings-ui/standalone';
 import { getAudioGraph } from '@/providers/audio-graph';
+import { LoggerPrefix } from '@/utils';
 import { GUIDE_UPSELL_SELECTOR } from '@/utils/guide';
 import { isNewUI } from '@/utils/new-ui';
 import {
@@ -37,7 +38,7 @@ import { initThemes } from './themes/renderer';
 import type { MusicPlayer } from '@/types/music-player';
 import type { MusicPlayerAppElement } from '@/types/music-player-app-element';
 import type { QueueResponse } from '@/types/music-player-desktop-internal';
-import type { PluginConfig } from '@/types/plugins';
+import type { PluginConfig, PluginDef } from '@/types/plugins';
 import type { QueueElement } from '@/types/queue';
 import type { SearchBoxElement } from '@/types/search-box-element';
 
@@ -107,6 +108,34 @@ function listenForApiLoad() {
 
       return;
     }
+  }
+}
+
+// One plugin's onPlayerApiReady throwing (e.g. a network-dependent fetch
+// failing while offline) must not stop the app from initializing every other
+// plugin — both the startup loop and the plugin:enable IPC handler call this
+// instead of invoking onPlayerApiReady directly.
+async function callOnPlayerApiReady(
+  id: string,
+  renderer: PluginDef<unknown, unknown, unknown>['renderer'],
+  playerApi: MusicPlayer,
+) {
+  if (typeof renderer === 'function') return;
+  try {
+    await renderer?.onPlayerApiReady?.call(
+      renderer,
+      playerApi,
+      createContext(id),
+    );
+  } catch (err) {
+    console.error(
+      LoggerPrefix,
+      i18t('common.console.plugins.execute-failed', {
+        pluginName: id,
+        contextName: 'onPlayerApiReady',
+      }),
+    );
+    console.trace(err);
   }
 }
 
@@ -464,13 +493,10 @@ function onApiLoaded() {
   getAudioGraph(video);
 
   for (const [id, plugin] of Object.entries(getAllLoadedRendererPlugins())) {
-    if (typeof plugin.renderer !== 'function') {
-      plugin.renderer?.onPlayerApiReady?.call(
-        plugin.renderer,
-        api!,
-        createContext(id),
-      );
-    }
+    // Deliberately not awaited: startup keeps the plugin init order it had
+    // before error isolation; the helper handles both sync throws and async
+    // rejections.
+    callOnPlayerApiReady(id, plugin.renderer, api!);
   }
 
   if (firstDataLoaded) {
@@ -658,13 +684,7 @@ const main = async () => {
     await forceLoadRendererPlugin(id);
     if (api) {
       const plugin = getLoadedRendererPlugin(id);
-      if (plugin && typeof plugin.renderer !== 'function') {
-        await plugin.renderer?.onPlayerApiReady?.call(
-          plugin.renderer,
-          api,
-          createContext(id),
-        );
-      }
+      if (plugin) await callOnPlayerApiReady(id, plugin.renderer, api);
     }
   });
 
