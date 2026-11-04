@@ -26,3 +26,21 @@
     #000 calc(var(--pear-sponsorblock-playhead, 0%) + 9px)
   );
 }
+
+/* Names the segment under the pointer, sitting right above YTM's hover
+   timestamp. Matches the timestamp's own look. */
+#pear-sponsorblock-hover {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 2147483000;
+  display: none;
+  padding: 4px 8px;
+  border-radius: 2px;
+  background: rgb(33, 33, 33);
+  color: #fff;
+  font-size: 12px;
+  line-height: 14.4px;
+  white-space: nowrap;
+  pointer-events: none;
+}

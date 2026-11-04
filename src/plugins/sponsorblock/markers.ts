@@ -56,3 +56,17 @@ export const buildSegmentsGradient = (
     ? ''
     : `linear-gradient(to right, ${stops.join(', ')})`;
 };
+
+/** The marker painted topmost at `time`, if any (drawn later wins). */
+export const markerAt = (markers: SegmentMarker[], time: number) => {
+  let found: SegmentMarker | undefined;
+  for (const marker of [...markers].sort(
+    (markerA, markerB) => markerA.segment[0] - markerB.segment[0],
+  )) {
+    if (time >= marker.segment[0] && time < marker.segment[1]) {
+      found = marker;
+    }
+  }
+
+  return found;
+};

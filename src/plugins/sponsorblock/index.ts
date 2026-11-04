@@ -3,7 +3,7 @@ import is from 'electron-is';
 import { t } from '@/i18n';
 import { createPlugin } from '@/utils';
 
-import { buildSegmentsGradient } from './markers';
+import { buildSegmentsGradient, markerAt } from './markers';
 import { sortSegments } from './segments';
 import style from './style.css?inline';
 
@@ -81,6 +81,7 @@ const renderMarkers = (video: HTMLVideoElement | null) => {
   // on top of them (a later sibling on the classic bar; the input's own thumb
   // on the new-UI bar, which the stylesheet uncovers at the playhead).
   container.append(bar);
+  trackHover(container);
 };
 
 /** Moves the marker cut-out with the playhead, re-adding the bar if YTM
@@ -97,6 +98,125 @@ const syncMarkers = (video: HTMLVideoElement) => {
       `${(video.currentTime / video.duration) * 100}%`,
     );
   }
+};
+
+/** YTM's own hover timestamp above the seek bar, on either player bar. */
+const HOVER_TIME_SELECTOR = '#hover-time-info, .ytMusicMiniPlayerHoverTimeInfo';
+const HOVER_LABEL_ID = 'pear-sponsorblock-hover';
+
+let markerVideo: HTMLVideoElement | null = null;
+let stopHoverTracking: (() => void) | undefined;
+
+/** The segment currently under the pointer, and where the pointer is. */
+let hovered: { category: string; pointerX: number; trackTop: number } | null =
+  null;
+
+/** Sits the label just above YTM's timestamp (or above the track). */
+const positionHoverLabel = () => {
+  const label = document.querySelector<HTMLElement>(`#${HOVER_LABEL_ID}`);
+  if (!hovered || !label || label.style.display === 'none') {
+    return;
+  }
+
+  const tooltipElement =
+    document.querySelector<HTMLElement>(HOVER_TIME_SELECTOR);
+  const tooltip = tooltipElement?.getBoundingClientRect();
+  const hasTooltip = !!tooltip && tooltip.width > 0 && tooltip.height > 0;
+  if (hasTooltip && tooltipElement) {
+    // Match the timestamp's own surface (it is black on the new-UI bar).
+    label.style.backgroundColor =
+      getComputedStyle(tooltipElement).backgroundColor;
+  }
+  const centerX = hasTooltip ? tooltip.x + tooltip.width / 2 : hovered.pointerX;
+  const top = hasTooltip
+    ? tooltip.y - label.offsetHeight - 6
+    : hovered.trackTop - label.offsetHeight - 6;
+  label.style.transform = `translate(${Math.round(centerX)}px, ${Math.round(top)}px) translateX(-50%)`;
+};
+
+const hideHoverLabel = () => {
+  hovered = null;
+  const label = document.querySelector<HTMLElement>(`#${HOVER_LABEL_ID}`);
+  if (label) {
+    label.style.display = 'none';
+  }
+};
+
+/** Names the segment under the pointer, right above YTM's timestamp. */
+const showHoverLabel = (
+  category: string,
+  pointerX: number,
+  trackTop: number,
+) => {
+  hovered = { category, pointerX, trackTop };
+
+  let label = document.querySelector<HTMLElement>(`#${HOVER_LABEL_ID}`);
+  if (!label) {
+    label = document.createElement('div');
+    label.id = HOVER_LABEL_ID;
+    document.body.append(label);
+  }
+
+  const text = t(`plugins.sponsorblock.settings.category.${category}`, {
+    defaultValue: category,
+  });
+  if (label.textContent !== text) {
+    label.textContent = text;
+  }
+  label.style.display = 'block';
+
+  // YTM creates/moves its timestamp in a handler that runs after ours, so the
+  // next frames re-anchor the label above it instead of guessing.
+  positionHoverLabel();
+  requestAnimationFrame(positionHoverLabel);
+  setTimeout(positionHoverLabel, 60);
+};
+
+/** Follows the pointer along the seek bar to label the segment under it. */
+const trackHover = (container: HTMLElement) => {
+  stopHoverTracking?.();
+
+  // The classic bar's slider covers the track; the new-UI bar's input is the
+  // hover target YTM shows its own timestamp for.
+  const host =
+    container.closest<HTMLElement>('#progress-bar') ??
+    container.querySelector<HTMLElement>('input') ??
+    container;
+
+  const onMove = (event: MouseEvent) => {
+    const duration = markerVideo?.duration ?? 0;
+    const rect = container.getBoundingClientRect();
+    if (
+      !showMarkers ||
+      segmentMarkers.length === 0 ||
+      !Number.isFinite(duration) ||
+      duration <= 0 ||
+      rect.width <= 0
+    ) {
+      hideHoverLabel();
+      return;
+    }
+
+    const time = ((event.clientX - rect.left) / rect.width) * duration;
+    const marker = markerAt(segmentMarkers, time);
+    if (!marker) {
+      hideHoverLabel();
+      return;
+    }
+
+    showHoverLabel(marker.category, event.clientX, rect.top);
+  };
+
+  const onLeave = () => hideHoverLabel();
+
+  host.addEventListener('mousemove', onMove);
+  host.addEventListener('mouseleave', onLeave);
+  stopHoverTracking = () => {
+    host.removeEventListener('mousemove', onMove);
+    host.removeEventListener('mouseleave', onLeave);
+    stopHoverTracking = undefined;
+    hideHoverLabel();
+  };
 };
 
 /** Jumps `video` past the segment it is inside, if any. */
@@ -298,6 +418,7 @@ export default createPlugin({
       currentSegments = [];
       segmentMarkers = [];
       document.querySelector(`#${SEGMENTS_BAR_ID}`)?.remove();
+      hideHoverLabel();
     },
     async start({ ipc, getConfig }) {
       showMarkers = (await getConfig()).showSegmentsOnProgressBar === true;
@@ -321,6 +442,7 @@ export default createPlugin({
       if (!video) return;
 
       this.video = video;
+      markerVideo = video;
       video.addEventListener('timeupdate', this.timeUpdateListener);
       // Duration is unknown when the plugin starts; the bar waits for it.
       video.addEventListener('durationchange', this.durationChangeListener);
@@ -343,9 +465,12 @@ export default createPlugin({
         this.handleSkipSegments = undefined;
       }
       this.resetSegments();
+      stopHoverTracking?.();
+      document.querySelector(`#${HOVER_LABEL_ID}`)?.remove();
 
       const video = this.video;
       this.video = null;
+      markerVideo = null;
       if (!video) return;
 
       video.removeEventListener('timeupdate', this.timeUpdateListener);

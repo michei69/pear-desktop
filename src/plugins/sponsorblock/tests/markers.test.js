@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-import { buildSegmentsGradient, CATEGORY_COLORS } from '../markers';
+import { buildSegmentsGradient, CATEGORY_COLORS, markerAt } from '../markers';
 
 test('paints one hard-stop run per segment', () => {
   expect(
@@ -61,4 +61,18 @@ test('leaves the input untouched', () => {
 
   expect(markers[0].segment).toEqual([150, 180]);
   expect(markers[1].segment).toEqual([30, 50]);
+});
+
+test('finds the topmost marker under a time', () => {
+  const markers = [
+    { segment: [0, 100], category: 'sponsor' },
+    { segment: [20, 40], category: 'outro' },
+  ];
+
+  expect(markerAt(markers, 0)?.category).toBe('sponsor');
+  expect(markerAt(markers, 30)?.category).toBe('outro');
+  expect(markerAt(markers, 50)?.category).toBe('sponsor');
+  expect(markerAt(markers, 100)).toBeUndefined();
+  expect(markerAt(markers, -1)).toBeUndefined();
+  expect(markerAt([], 10)).toBeUndefined();
 });
