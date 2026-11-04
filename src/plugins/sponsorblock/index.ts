@@ -23,6 +23,34 @@ export type SponsorBlockPluginConfig = {
 
 let currentSegments: Segment[] = [];
 
+/** Jumps `video` past the segment it is inside, if any. */
+const applySegments = (video: HTMLVideoElement) => {
+  const currentTime = video.currentTime;
+
+  // Binary search the sorted segments.
+  let lo = 0;
+  let hi = currentSegments.length - 1;
+  let found = -1;
+  while (lo <= hi) {
+    const mid = (lo + hi) >>> 1;
+    if (currentTime < currentSegments[mid][0]) {
+      hi = mid - 1;
+    } else if (currentTime >= currentSegments[mid][1]) {
+      lo = mid + 1;
+    } else {
+      found = mid;
+      break;
+    }
+  }
+
+  if (found !== -1) {
+    video.currentTime = currentSegments[found][1];
+    if (window.electronIs.dev()) {
+      console.log('SponsorBlock: skipping segment', currentSegments[found]);
+    }
+  }
+};
+
 /** Stored on the def context (already `this`-bound) so `stop` can `off` it. */
 type SrcChangedHandler = (data: GetPlayerResponse) => Promise<void>;
 
@@ -127,6 +155,11 @@ export default createPlugin({
       const { apiURL, categories } = config;
 
       this.handleVideoSrcChanged = async (data: GetPlayerResponse) => {
+        const videoId = data?.videoDetails?.videoId;
+        if (!videoId) {
+          return;
+        }
+
         this.abortController?.abort();
         const controller = new AbortController();
         this.abortController = controller;
@@ -134,7 +167,7 @@ export default createPlugin({
         const segments = await fetchSegments(
           apiURL,
           categories,
-          data?.videoDetails?.videoId,
+          videoId,
           controller.signal,
         );
         // A newer track started while this request was in flight.
@@ -164,34 +197,7 @@ export default createPlugin({
     video: null as HTMLVideoElement | null,
     timeUpdateListener: (e: Event) => {
       if (e.target instanceof HTMLVideoElement) {
-        const target = e.target;
-        const currentTime = target.currentTime;
-
-        // Binary search the sorted segments.
-        let lo = 0;
-        let hi = currentSegments.length - 1;
-        let found = -1;
-        while (lo <= hi) {
-          const mid = (lo + hi) >>> 1;
-          if (currentTime < currentSegments[mid][0]) {
-            hi = mid - 1;
-          } else if (currentTime >= currentSegments[mid][1]) {
-            lo = mid + 1;
-          } else {
-            found = mid;
-            break;
-          }
-        }
-
-        if (found !== -1) {
-          target.currentTime = currentSegments[found][1];
-          if (window.electronIs.dev()) {
-            console.log(
-              'SponsorBlock: skipping segment',
-              currentSegments[found],
-            );
-          }
-        }
+        applySegments(e.target);
       }
     },
     resetSegments() {
@@ -200,10 +206,17 @@ export default createPlugin({
     start({ ipc }) {
       this.handleSkipSegments = (segments: Segment[]) => {
         currentSegments = segments;
+
+        // Apply right away instead of waiting for the next `timeupdate`: the
+        // segment the user is already inside should be skipped immediately.
+        const video = document.querySelector<HTMLVideoElement>('video');
+        if (video) {
+          applySegments(video);
+        }
       };
       ipc.on('sponsorblock-skip', this.handleSkipSegments);
     },
-    onPlayerApiReady() {
+    onPlayerApiReady(playerApi, { ipc }) {
       const video = document.querySelector<HTMLVideoElement>('video');
       if (!video) return;
 
@@ -211,6 +224,11 @@ export default createPlugin({
       video.addEventListener('timeupdate', this.timeUpdateListener);
       // 'emptied' fires when the track ends
       video.addEventListener('emptied', this.resetSegments);
+
+      // The backend only fetches on a video change, so ask it for the current
+      // track's segments instead of waiting for the next one.
+      ipc.send('peard:video-src-changed', playerApi.getPlayerResponse());
+      applySegments(video);
     },
     stop({ ipc }) {
       if (this.handleSkipSegments) {
