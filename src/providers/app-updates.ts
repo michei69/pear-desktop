@@ -11,32 +11,50 @@ import {
   withRetry,
   type CommitComparison,
 } from '@/providers/app-versions';
+import { supportsInAppInstall } from '@/providers/update-install-support';
 import { LoggerPrefix } from '@/utils';
 
 const REPO = 'michei69/pear-desktop';
 const REPO_URL = `https://github.com/${REPO}`;
 const COMMITS_URL = `${REPO_URL}/commits/master`;
-
-/** `latest` for stable, `beta` for betas: the feed and the `.yml` it reads. */
-const feedChannel = (updateChannel: UpdateChannel) =>
-  updateChannel === 'beta' ? 'beta' : 'latest';
-
-let win: BrowserWindow | null = null;
-/** Latched while a dialog is open, so one check pops one dialog. */
-let dialogOpen = false;
-let repeatCheck: NodeJS.Timeout | undefined;
-
 /**
  * How often a running app looks again: beta users must hear about the next beta
  * without restarting, and a release only lands on the feed after the publish
  * job. Six hours catches a working day's builds without hammering the feed.
  */
 const RECHECK_MS = 6 * 60 * 60 * 1000;
+const DOWNLOAD_TIMEOUT_MS = 15 * 60 * 1000;
+
+const feedChannel = (updateChannel: UpdateChannel) =>
+  updateChannel === 'beta' ? 'beta' : 'latest';
+
+let win: BrowserWindow | null = null;
+let dialogOpen = false;
+let downloading = false;
+let downloadReadyHandled = false;
+let downloadTimeout: NodeJS.Timeout | undefined;
+let repeatCheck: NodeJS.Timeout | undefined;
 
 const ask = (options: Electron.MessageBoxOptions) =>
   win && !win.isDestroyed()
     ? dialog.showMessageBox(win, options)
     : dialog.showMessageBox(options);
+
+const setProgress = (
+  progress: number,
+  options?: Electron.ProgressBarOptions,
+) => {
+  if (win && !win.isDestroyed()) {
+    win.setProgressBar(progress, options);
+  }
+};
+
+const resetDownloadState = () => {
+  downloading = false;
+  clearTimeout(downloadTimeout);
+  downloadTimeout = undefined;
+  setProgress(-1);
+};
 
 /**
  * Pins the updater to one channel. Both flags are needed: `allowPrerelease`
@@ -56,18 +74,110 @@ const applyChannel = (updateChannel: UpdateChannel) => {
   });
 };
 
+const releaseLink = (version: string, updateChannel: UpdateChannel) =>
+  updateChannel === 'beta'
+    ? `${REPO_URL}/releases/tag/v${version}`
+    : `${REPO_URL}/releases/latest`;
+
+const showDownloadFailure = (downloadLink: string) => {
+  if (dialogOpen) return;
+
+  dialogOpen = true;
+  ask({
+    type: 'warning',
+    buttons: [
+      t('main.dialog.update-download-failed.buttons.ok'),
+      t('main.dialog.update-download-failed.buttons.release'),
+    ],
+    title: t('main.dialog.update-download-failed.title'),
+    message: t('main.dialog.update-download-failed.message'),
+    detail: t('main.dialog.update-download-failed.detail'),
+    defaultId: 0,
+    cancelId: 0,
+  })
+    .then((answer) => {
+      if (answer.response === 1) shell.openExternal(downloadLink);
+    })
+    .catch((err) => {
+      console.error(LoggerPrefix, 'Failed to show update download error:', err);
+    })
+    .finally(() => {
+      dialogOpen = false;
+    });
+};
+
+const showDownloadedUpdate = (version: string) => {
+  if (downloadReadyHandled) return;
+
+  downloadReadyHandled = true;
+  resetDownloadState();
+
+  if (dialogOpen) return;
+
+  dialogOpen = true;
+  ask({
+    type: 'info',
+    buttons: [
+      t('main.dialog.update-downloaded.buttons.restart'),
+      t('main.dialog.update-downloaded.buttons.later'),
+    ],
+    title: t('main.dialog.update-downloaded.title'),
+    message: t('main.dialog.update-downloaded.message', { version }),
+    detail: t('main.dialog.update-downloaded.detail'),
+    defaultId: 0,
+    cancelId: 1,
+  })
+    .then((answer) => {
+      if (answer.response === 0) autoUpdater.quitAndInstall();
+    })
+    .catch((err) => {
+      console.error(LoggerPrefix, 'Failed to show update ready dialog:', err);
+    })
+    .finally(() => {
+      dialogOpen = false;
+    });
+};
+
+const startDownload = (version: string, downloadLink: string) => {
+  if (downloading) return;
+
+  downloading = true;
+  downloadReadyHandled = false;
+  setProgress(0, { mode: 'indeterminate' });
+
+  downloadTimeout = setTimeout(() => {
+    if (!downloading) return;
+
+    resetDownloadState();
+    showDownloadFailure(downloadLink);
+  }, DOWNLOAD_TIMEOUT_MS);
+
+  autoUpdater
+    .downloadUpdate()
+    .then(() => {
+      showDownloadedUpdate(version);
+    })
+    .catch((err) => {
+      resetDownloadState();
+      console.error(LoggerPrefix, 'Failed to download update:', err);
+      showDownloadFailure(downloadLink);
+    });
+};
+
 const showUpdateAvailable = (version: string, updateChannel: UpdateChannel) => {
-  const downloadLink =
-    updateChannel === 'beta'
-      ? `${REPO_URL}/releases/tag/v${version}`
-      : `${REPO_URL}/releases/latest`;
+  const downloadLink = releaseLink(version, updateChannel);
+  const canInstall = supportsInAppInstall(process.platform, process.env);
 
   dialogOpen = true;
   ask({
     type: 'info',
     buttons: [
       t('main.dialog.update-available.buttons.ok'),
-      t('main.dialog.update-available.buttons.download'),
+      t(
+        canInstall
+          ? 'main.dialog.update-available.buttons.install'
+          : 'main.dialog.update-available.buttons.release',
+      ),
       t('main.dialog.update-available.buttons.disable'),
     ],
     title: t('main.dialog.update-available.title'),
@@ -77,7 +187,10 @@ const showUpdateAvailable = (version: string, updateChannel: UpdateChannel) => {
     cancelId: 0,
   })
     .then((answer) => {
-      if (answer.response === 1) shell.openExternal(downloadLink);
+      if (answer.response === 1) {
+        if (canInstall) startDownload(version, downloadLink);
+        else shell.openExternal(downloadLink);
+      }
       if (answer.response === 2) config.set('options.autoUpdates', false);
     })
     .catch((err) => {
@@ -88,10 +201,6 @@ const showUpdateAvailable = (version: string, updateChannel: UpdateChannel) => {
     });
 };
 
-/**
- * A dev build has no feed, so all it can report is whether its commit is still
- * the tip of master.
- */
 const checkDevCommit = async () => {
   if (!commit) return;
 
@@ -193,7 +302,7 @@ export const runUpdateCheck = async (): Promise<void> => {
   if (!outcome.ok) return;
 
   const { isUpdateAvailable, updateInfo } = outcome.value ?? {};
-  if (isUpdateAvailable && updateInfo && !dialogOpen) {
+  if (isUpdateAvailable && updateInfo && !dialogOpen && !downloading) {
     showUpdateAvailable(updateInfo.version, config.updateChannel());
   }
 };
@@ -220,6 +329,7 @@ export const setupAutoUpdates = (mainWindow: BrowserWindow) => {
   win = mainWindow;
   // The dialog offers the download; the updater does not grab it.
   autoUpdater.autoDownload = false;
+  autoUpdater.autoInstallOnAppQuit = false;
 
   if (!updatesSupported()) {
     // Dev builds cannot update, but they can still be behind master.
@@ -233,12 +343,25 @@ export const setupAutoUpdates = (mainWindow: BrowserWindow) => {
   applyChannel(config.updateChannel());
 
   autoUpdater.on('error', (err) => {
+    if (downloading) resetDownloadState();
     console.debug(LoggerPrefix, 'Updater error:', err);
   });
 
-  /** Looks again later, so betas landing mid-session are still noticed. */
+  autoUpdater.on('download-progress', (progress) => {
+    if (!downloading) return;
+    const percent = Number.isFinite(progress.percent)
+      ? Math.min(100, Math.max(0, progress.percent))
+      : 0;
+    setProgress(percent / 100);
+  });
+
+  autoUpdater.on('update-downloaded', (update) => {
+    showDownloadedUpdate(update.version);
+  });
+
   const startRepeating = () => {
     clearInterval(repeatCheck);
+    /** Looks again later, so betas landing mid-session are still noticed. */
     repeatCheck = setInterval(() => {
       checkForAppUpdates().catch(() => {});
     }, RECHECK_MS);
@@ -247,6 +370,8 @@ export const setupAutoUpdates = (mainWindow: BrowserWindow) => {
   };
 
   if (config.get('options.autoUpdates')) {
+    // Delay the first packaged update check until startup and window creation
+    // have settled, avoiding an update dialog during initial UI work.
     const timeout = setTimeout(() => {
       checkForAppUpdates().catch(() => {});
       clearTimeout(timeout);

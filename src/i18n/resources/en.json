@@ -74,6 +74,8 @@
         "buttons": {
           "disable": "Disable Updates",
           "download": "Download",
+          "install": "Download and Install",
+          "release": "View Release",
           "ok": "OK"
         },
         "detail": "A new version is available and can be downloaded at {{downloadLink}}",
@@ -88,6 +90,24 @@
         "title": "Update Available",
         "message": "This dev build is behind the master branch",
         "detail": "The commit this build runs on ({{commit}}) is older than the latest commit on master. Newer commits can be viewed at {{commitsLink}}"
+      },
+      "update-downloaded": {
+        "buttons": {
+          "restart": "Restart Now",
+          "later": "Later"
+        },
+        "title": "Update Downloaded",
+        "message": "Version {{version}} has been downloaded.",
+        "detail": "Restart the application to install the update."
+      },
+      "update-download-failed": {
+        "buttons": {
+          "ok": "OK",
+          "release": "View Release"
+        },
+        "title": "Update Download Failed",
+        "message": "The update could not be downloaded.",
+        "detail": "You can download the update manually from the GitHub release page."
       },
       "downgrade-warning": {
         "title": "Switch back to stable?",
