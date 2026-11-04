@@ -1,5 +1,11 @@
 export type Segment = [number, number];
 
+/** A segment as the renderer draws it: the range plus its category. */
+export interface SegmentMarker {
+  segment: Segment;
+  category: string;
+}
+
 export interface SkipSegment {
   segment: Segment; // [start, end] in seconds, e.g. [0, 15.23]
   UUID: string;

@@ -1359,7 +1359,8 @@
           "selfpromo": "Self-promotion",
           "music_offtopic": "Non-music section"
         },
-        "api-url": "API URL"
+        "api-url": "API URL",
+        "show-segments-on-progress-bar": "Show segments on the progress bar"
       }
     },
     "synced-lyrics": {

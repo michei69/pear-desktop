@@ -1,0 +1,19 @@
+/* Segment markers painted over YTM's seek track. Injected into the classic
+   seek track (#progress-bar > … > #progressContainer, 2px tall, overflow
+   visible) or the new-UI miniplayer's progress wrapper (3px tall).
+   `inset: 0` keeps the band exactly the height of whichever track holds it.
+   The markers sit under YTM's own played progress and knob:
+   - classic: the overlay is the track's first child, so the absolutely
+     positioned #secondaryProgress/#primaryProgress paint over it;
+   - new UI: the progress is an <input> (non-positioned), which paints below
+     positioned siblings, so a negative z-index keeps the markers underneath
+     it. The wrapper is a stacking context, so the markers stay in the bar. */
+#pear-sponsorblock-bar {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.ytMusicMiniPlayerProgressBarWrapper > #pear-sponsorblock-bar {
+  z-index: -1;
+}
