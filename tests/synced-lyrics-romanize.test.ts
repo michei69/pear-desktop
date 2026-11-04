@@ -83,7 +83,7 @@ test('romanize memoises lines and lazy-loads pinyin', async () => {
     // resolve to the shared, already-cached copy. The `.tsx` extension is
     // explicit because Node's extensionless resolution never tries it.
     const utilsModule = `../src/plugins/synced-lyrics/renderer/utils.tsx${FRESH}`;
-    const { romanize } = await import(utilsModule);
+    const { romanize, romanizeHangul } = await import(utilsModule);
     importing = false;
 
     // A repeated line must not re-run detection/transliteration.
@@ -94,6 +94,10 @@ test('romanize memoises lines and lazy-loads pinyin', async () => {
 
     expect(romanize('hello world')).toBe(romanize('hello world'));
     expect(await romanize('hello world')).toBe('hello world');
+
+    // Node's ESM loader exposes `hanja` (CommonJS) as `{ default: api }`, so a
+    // direct `hanja.translate` call is undefined; the module must interop.
+    expect(romanizeHangul('안녕하세요')).toBe('annyeonghaseyo');
   } finally {
     importing = false;
     stopStubbing();
