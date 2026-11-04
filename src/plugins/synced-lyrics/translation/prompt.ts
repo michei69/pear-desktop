@@ -24,6 +24,7 @@ export const buildSystemPrompt = (req: TranslationRequest): string => {
     '- When translating into Chinese, avoid stiff word-for-word Japanese syntax; preserve ambiguity and imagery while making the line read like natural Chinese lyrics.',
     '- Keep proper nouns, brand names, and untranslatable interjections as-is when natural.',
     '- For lines that contain only punctuation, symbols, or musical marks (e.g. ♪), copy them unchanged.',
+    '- Background/ad-lib vocals shown in parentheses are part of the line: translate them in place and keep the parentheses.',
     '- Do NOT include any explanation, notes, or the [N] index prefix in the output.',
   ].join('\n');
 };

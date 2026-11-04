@@ -2,6 +2,10 @@ import type { LineLyrics, LyricWord } from '../types';
 
 type SynthesizeOptions = {
   songwriters?: string;
+  /** Translated line per line index; entries without text are left out. */
+  translations?: readonly (string | undefined)[];
+  /** Language of the translations, for the `<translation>` label. */
+  translationLanguage?: string;
 };
 
 const pad = (value: number, size = 2) => String(value).padStart(size, '0');
@@ -87,10 +91,14 @@ export const synthesizeTTML = (
   lines: LineLyrics[],
   options: SynthesizeOptions = {},
 ): string => {
+  const hasTranslations = Boolean(
+    options.translations?.some((text) => text?.trim()),
+  );
   const hasAgents = lines.some((line) => line.alignment !== undefined);
+  const hasHead = hasAgents || options.songwriters || hasTranslations;
 
   const head: string[] = [];
-  if (hasAgents || options.songwriters) {
+  if (hasHead) {
     head.push('  <head>', '    <metadata>');
     if (hasAgents)
       head.push(
@@ -101,6 +109,21 @@ export const synthesizeTTML = (
       head.push(
         `      <songwriter>${escapeXml(options.songwriters)}</songwriter>`,
       );
+    if (hasTranslations) {
+      const language = options.translationLanguage
+        ? ` xml:lang="${escapeXml(options.translationLanguage)}"`
+        : '';
+      head.push(`      <translation${language}>`);
+      options.translations?.forEach((text, index) => {
+        const line = text?.trim();
+        if (line) {
+          head.push(
+            `        <text for="L${index + 1}">${escapeXml(line)}</text>`,
+          );
+        }
+      });
+      head.push('      </translation>');
+    }
     head.push('    </metadata>', '  </head>');
   }
 

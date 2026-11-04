@@ -6,6 +6,7 @@ import { parseByline, queueRenderer } from '@/utils/queue';
 
 import { getCustomQuery } from './custom-query-store';
 import { translationDebug } from './debug';
+import { lineTextForTranslation } from './line-text';
 import { reactiveOwner } from './reactive-root';
 import { config } from './renderer';
 import {
@@ -112,7 +113,7 @@ export const splitPlainLyrics = (lyrics: string): string[] =>
 const getLyricLineTexts = (data?: LyricResult | null): string[] => {
   if (!data || !hasLyricText(data)) return [];
   if (data.lines?.some((line) => line.text.trim())) {
-    return data.lines.map((line) => line.text);
+    return data.lines.map(lineTextForTranslation);
   }
   return data.lyrics ? splitPlainLyrics(data.lyrics) : [];
 };

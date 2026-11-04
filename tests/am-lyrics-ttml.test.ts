@@ -25,6 +25,7 @@ type ParsedLine = {
   oppositeTurn: boolean;
   alignment?: 'start' | 'end';
   direction?: 'ltr' | 'rtl';
+  translation?: string;
 };
 
 type ParseTTML = (ttml: string) => {
@@ -249,6 +250,30 @@ test('songwriters come from the options', () => {
     synthesizeTTML([line({ text: 'Hi' })], { songwriters: 'A & B' }),
   )!;
   expect(parsed.songwriters).toBe('A & B');
+});
+
+test('translations ride along as <translation><text for> entries', () => {
+  const ttml = synthesizeTTML(
+    [
+      line({ timeInMs: 0, duration: 1000, text: 'Hello' }),
+      line({ timeInMs: 1000, duration: 1000, text: 'World' }),
+      line({ timeInMs: 2000, duration: 1000, text: 'Untranslated' }),
+    ],
+    { translations: ['Bonjour', '  '], translationLanguage: 'fr' },
+  );
+
+  // Only translated lines get a key; empty entries are skipped.
+  expect(ttml).toContain('<translation xml:lang="fr">');
+  expect(ttml).toContain('<text for="L1">Bonjour</text>');
+  expect(ttml).not.toContain('for="L2"');
+  expect(ttml).not.toContain('for="L3"');
+
+  const parsed = parseTTML(ttml)!;
+  expect(parsed.lines.map((entry) => entry.translation)).toStrictEqual([
+    'Bonjour',
+    undefined,
+    undefined,
+  ]);
 });
 
 test('every input line maps to one paragraph, empty gaps and escaping included', () => {

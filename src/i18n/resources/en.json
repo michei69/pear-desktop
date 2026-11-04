@@ -1410,7 +1410,7 @@
           "submenu": {
             "apple-music": {
               "label": "Apple Music",
-              "tooltip": "Word-by-word Apple Music lyrics rendered by the am-lyrics component. Line effects, lyrics font size, romanization and translation only apply to the standard style."
+              "tooltip": "Word-by-word Apple Music lyrics rendered by the am-lyrics component, with the plugin's translations under each line. Line effects, lyrics font size and romanization only apply to the standard style."
             },
             "standard": {
               "label": "Standard",

@@ -22,12 +22,14 @@ import { _ytAPI } from '..';
 import { synthesizeTTML } from '../../am-lyrics/ttml';
 import { hasLyricText } from '../../providers';
 import {
+  config,
   currentTime,
   getPlaybackTime,
   isPlaying,
   isVisible,
 } from '../renderer';
-import { currentLyrics, splitPlainLyrics } from '../store';
+import { currentLyrics, lyricsStore, splitPlainLyrics } from '../store';
+import { translationStore } from '../translation-store';
 
 /**
  * am-lyrics ships its own source switcher, romanization/translation toggles and
@@ -63,10 +65,15 @@ type AmLyricsElement = HTMLElement & {
   currentTime: number;
   noAutoAlternates: boolean;
   highlightColor: string;
+  /** Renders the `<translation>` entries of the TTML; no network by itself. */
+  showTranslation: boolean;
   updateComplete: Promise<unknown>;
 };
 
-const createAmLyrics = (ttml: string): AmLyricsElement => {
+const createAmLyrics = (
+  ttml: string,
+  showTranslation: boolean,
+): AmLyricsElement => {
   const element = document.createElement('am-lyrics') as AmLyricsElement;
 
   // Every property is set before the element is connected: `connectedCallback`
@@ -76,6 +83,9 @@ const createAmLyrics = (ttml: string): AmLyricsElement => {
   element.currentTime = Math.max(0, untrack(getPlaybackTime));
   // The component is fed exactly one source; never let it look for alternates.
   element.noAutoAlternates = true;
+  // The translations come from the lyrics plugin, not from the component's own
+  // Google requests: enabling the state only renders the TTML's entries.
+  element.showTranslation = showTranslation;
   // Follow the app's theme through the component's own palette hook, so light
   // themes do not render white-on-white.
   element.highlightColor = 'var(--ytmusic-text-primary, #ffffff)';
@@ -189,11 +199,32 @@ export const AppleMusicStyle = () => {
 
   const lines = createMemo(() => currentLyrics()?.data?.lines ?? []);
 
+  // The plugin's own translation pass (machine or official), not the TTML's.
+  const translations = createMemo(() => {
+    if (!config()?.translation?.enabled) return undefined;
+
+    const current = translationStore.current;
+    if (
+      !current ||
+      current.state !== 'done' ||
+      translationStore.videoId !== lyricsStore.videoId
+    ) {
+      return undefined;
+    }
+
+    return current.lines;
+  });
+
   // Everything the component renders comes from the lyrics synced-lyrics
   // already fetched and picked, serialized into the TTML it accepts.
   const ttml = createMemo(() => {
     const current = lines();
-    return current.length ? synthesizeTTML(current) : null;
+    if (!current.length) return null;
+
+    return synthesizeTTML(current, {
+      translations: translations(),
+      translationLanguage: translationStore.current?.language,
+    });
   });
 
   createEffect(() => {
@@ -210,7 +241,7 @@ export const AppleMusicStyle = () => {
     }
 
     if (!current) {
-      current = createAmLyrics(xml);
+      current = createAmLyrics(xml, Boolean(config()?.translation?.enabled));
 
       const created = current;
       created.addEventListener('line-click', (event) => {
@@ -237,6 +268,15 @@ export const AppleMusicStyle = () => {
   });
 
   onCleanup(() => element()?.remove());
+
+  createEffect(() => {
+    const current = element();
+    if (!current) return;
+
+    // Toggling the plugin's translation setting must not reparse the TTML; the
+    // component's state only decides whether it renders the translation nodes.
+    current.showTranslation = Boolean(config()?.translation?.enabled);
+  });
 
   createEffect(() => {
     const current = element();

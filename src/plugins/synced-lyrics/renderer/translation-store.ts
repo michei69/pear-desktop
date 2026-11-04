@@ -5,6 +5,7 @@ import { getSongInfo } from '@/providers/song-info-front';
 
 import { translationDebug } from './debug';
 import { translateInvoke } from './index';
+import { lineTextForTranslation } from './line-text';
 import { config } from './renderer';
 
 import { hasLyricText } from '../providers';
@@ -523,7 +524,7 @@ const songLines = async (
   if (!sourceVideoId || !data || !hasLyricText(data)) return null;
 
   const lines = data.lines?.some((line) => line.text.trim())
-    ? data.lines.map((line) => line.text)
+    ? data.lines.map(lineTextForTranslation)
     : data.lyrics
       ? splitPlainLyrics(data.lyrics)
       : [];
