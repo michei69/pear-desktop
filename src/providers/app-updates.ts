@@ -16,35 +16,29 @@ import { LoggerPrefix } from '@/utils';
 const REPO = 'michei69/pear-desktop';
 const REPO_URL = `https://github.com/${REPO}`;
 const COMMITS_URL = `${REPO_URL}/commits/master`;
-
-/** `latest` for stable, `beta` for betas: the feed and the `.yml` it reads. */
 const feedChannel = (updateChannel: UpdateChannel) =>
   updateChannel === 'beta' ? 'beta' : 'latest';
+const RECHECK_MS = 6 * 60 * 60 * 1000;
 
 let win: BrowserWindow | null = null;
-/** Latched while a dialog is open, so one check pops one dialog. */
 let dialogOpen = false;
+let downloading = false;
 let repeatCheck: NodeJS.Timeout | undefined;
-
-/**
- * How often a running app looks again: beta users must hear about the next beta
- * without restarting, and a release only lands on the feed after the publish
- * job. Six hours catches a working day's builds without hammering the feed.
- */
-const RECHECK_MS = 6 * 60 * 60 * 1000;
 
 const ask = (options: Electron.MessageBoxOptions) =>
   win && !win.isDestroyed()
     ? dialog.showMessageBox(win, options)
     : dialog.showMessageBox(options);
 
-/**
- * Pins the updater to one channel. Both flags are needed: `allowPrerelease`
- * decides which release the provider considers, `channel` which `.yml` it
- * fetches. The GitHub provider falls back to `latest.yml` when a channel's file
- * is missing, so betas must ship `beta.yml` — hence the `-beta.N` version the
- * beta workflow builds.
- */
+const supportsInAppInstall = () => {
+  if (process.platform === 'darwin') return true;
+  if (process.platform === 'win32') {
+    return !process.env.PORTABLE_EXECUTABLE_DIR && !process.env.PORTABLE_EXECUTABLE_FILE;
+  }
+  if (process.platform === 'linux') return Boolean(process.env.APPIMAGE);
+  return false;
+};
+
 const applyChannel = (updateChannel: UpdateChannel) => {
   autoUpdater.allowPrerelease = updateChannel === 'beta';
   autoUpdater.channel = feedChannel(updateChannel);
@@ -56,18 +50,59 @@ const applyChannel = (updateChannel: UpdateChannel) => {
   });
 };
 
-const showUpdateAvailable = (version: string, updateChannel: UpdateChannel) => {
-  const downloadLink =
-    updateChannel === 'beta'
-      ? `${REPO_URL}/releases/tag/v${version}`
-      : `${REPO_URL}/releases/latest`;
+const releaseLink = (version: string, updateChannel: UpdateChannel) =>
+  updateChannel === 'beta'
+    ? `${REPO_URL}/releases/tag/v${version}`
+    : `${REPO_URL}/releases/latest`;
 
+const showDownloadFailure = (downloadLink: string) => {
+  ask({
+    type: 'warning',
+    buttons: [
+      t('main.dialog.update-download-failed.buttons.ok'),
+      t('main.dialog.update-download-failed.buttons.release'),
+    ],
+    title: t('main.dialog.update-download-failed.title'),
+    message: t('main.dialog.update-download-failed.message'),
+    detail: t('main.dialog.update-download-failed.detail'),
+    defaultId: 0,
+    cancelId: 0,
+  })
+    .then((answer) => {
+      if (answer.response === 1) shell.openExternal(downloadLink);
+    })
+    .catch((err) => {
+      console.error(LoggerPrefix, 'Failed to show update download error:', err);
+    });
+};
+
+const startDownload = (downloadLink: string) => {
+  if (downloading) return;
+  downloading = true;
+  win?.setProgressBar(0, { mode: 'indeterminate' });
+  autoUpdater
+    .downloadUpdate()
+    .catch((err) => {
+      downloading = false;
+      win?.setProgressBar(-1);
+      console.error(LoggerPrefix, 'Failed to download update:', err);
+      showDownloadFailure(downloadLink);
+    });
+};
+
+const showUpdateAvailable = (version: string, updateChannel: UpdateChannel) => {
+  const downloadLink = releaseLink(version, updateChannel);
+  const canInstall = supportsInAppInstall();
   dialogOpen = true;
   ask({
     type: 'info',
     buttons: [
       t('main.dialog.update-available.buttons.ok'),
-      t('main.dialog.update-available.buttons.download'),
+      t(
+        canInstall
+          ? 'main.dialog.update-available.buttons.install'
+          : 'main.dialog.update-available.buttons.release',
+      ),
       t('main.dialog.update-available.buttons.disable'),
     ],
     title: t('main.dialog.update-available.title'),
@@ -77,7 +112,10 @@ const showUpdateAvailable = (version: string, updateChannel: UpdateChannel) => {
     cancelId: 0,
   })
     .then((answer) => {
-      if (answer.response === 1) shell.openExternal(downloadLink);
+      if (answer.response === 1) {
+        if (canInstall) startDownload(downloadLink);
+        else shell.openExternal(downloadLink);
+      }
       if (answer.response === 2) config.set('options.autoUpdates', false);
     })
     .catch((err) => {
@@ -88,10 +126,6 @@ const showUpdateAvailable = (version: string, updateChannel: UpdateChannel) => {
     });
 };
 
-/**
- * A dev build has no feed, so all it can report is whether its commit is still
- * the tip of master.
- */
 const checkDevCommit = async () => {
   if (!commit) return;
 
@@ -133,11 +167,6 @@ const checkDevCommit = async () => {
     });
 };
 
-/**
- * Warns before switching to stable when this run is a beta: the store already
- * ran this beta's migrations and a downgrade runs none of them back, which can
- * reset settings.
- */
 const confirmDowngrade = async (): Promise<boolean> => {
   const answer = await ask({
     type: 'warning',
@@ -155,10 +184,6 @@ const confirmDowngrade = async (): Promise<boolean> => {
   return answer.response === 1;
 };
 
-/**
- * Changes the channel the menu and the settings share. Returns false when the
- * user backs out, so callers can re-read the store.
- */
 export const setUpdateChannel = async (value: string): Promise<boolean> => {
   if (value !== 'stable' && value !== 'beta') return false;
   if (config.updateChannel() === value) return true;
@@ -168,16 +193,10 @@ export const setUpdateChannel = async (value: string): Promise<boolean> => {
   }
 
   config.set('options.updateChannel', value);
-  // A check right after the switch must read the new channel.
   applyChannel(value);
   return true;
 };
 
-/**
- * Runs one update check, retrying a failure a couple of times (see `withRetry`).
- * The updater resolves with `updateInfo` whether or not anything is newer, so
- * `isUpdateAvailable` decides whether there is an update to announce.
- */
 export const runUpdateCheck = async (): Promise<void> => {
   const outcome = await withRetry(
     () => autoUpdater.checkForUpdates(),
@@ -193,15 +212,11 @@ export const runUpdateCheck = async (): Promise<void> => {
   if (!outcome.ok) return;
 
   const { isUpdateAvailable, updateInfo } = outcome.value ?? {};
-  if (isUpdateAvailable && updateInfo && !dialogOpen) {
+  if (isUpdateAvailable && updateInfo && !dialogOpen && !downloading) {
     showUpdateAvailable(updateInfo.version, config.updateChannel());
   }
 };
 
-/**
- * Checks the channel the user follows. The dialog comes from the returned
- * update info, so one check pops exactly one dialog.
- */
 export const checkForAppUpdates = async (): Promise<void> => {
   if (!updatesSupported()) {
     await checkDevCommit();
@@ -212,17 +227,12 @@ export const checkForAppUpdates = async (): Promise<void> => {
   await runUpdateCheck();
 };
 
-/**
- * Wires the updater once the main window exists. The stored channel is applied
- * even when auto-updates are off, so a manual check uses it too.
- */
 export const setupAutoUpdates = (mainWindow: BrowserWindow) => {
   win = mainWindow;
-  // The dialog offers the download; the updater does not grab it.
   autoUpdater.autoDownload = false;
+  autoUpdater.autoInstallOnAppQuit = false;
 
   if (!updatesSupported()) {
-    // Dev builds cannot update, but they can still be behind master.
     const timeout = setTimeout(() => {
       checkDevCommit().catch(() => {});
       clearTimeout(timeout);
@@ -236,13 +246,48 @@ export const setupAutoUpdates = (mainWindow: BrowserWindow) => {
     console.debug(LoggerPrefix, 'Updater error:', err);
   });
 
-  /** Looks again later, so betas landing mid-session are still noticed. */
+  autoUpdater.on('download-progress', (progress) => {
+    if (!downloading) return;
+    const percent = Number.isFinite(progress.percent)
+      ? Math.min(100, Math.max(0, progress.percent))
+      : 0;
+    win?.setProgressBar(percent / 100);
+  });
+
+  autoUpdater.on('update-downloaded', (update) => {
+    downloading = false;
+    win?.setProgressBar(-1);
+    dialogOpen = true;
+    ask({
+      type: 'info',
+      buttons: [
+        t('main.dialog.update-downloaded.buttons.restart'),
+        t('main.dialog.update-downloaded.buttons.later'),
+      ],
+      title: t('main.dialog.update-downloaded.title'),
+      message: t('main.dialog.update-downloaded.message', {
+        version: update.version,
+      }),
+      detail: t('main.dialog.update-downloaded.detail'),
+      defaultId: 0,
+      cancelId: 1,
+    })
+      .then((answer) => {
+        if (answer.response === 0) autoUpdater.quitAndInstall();
+      })
+      .catch((err) => {
+        console.error(LoggerPrefix, 'Failed to show update ready dialog:', err);
+      })
+      .finally(() => {
+        dialogOpen = false;
+      });
+  });
+
   const startRepeating = () => {
     clearInterval(repeatCheck);
     repeatCheck = setInterval(() => {
       checkForAppUpdates().catch(() => {});
     }, RECHECK_MS);
-    // Never hold the app open just for a timer.
     repeatCheck.unref?.();
   };
 
@@ -255,7 +300,6 @@ export const setupAutoUpdates = (mainWindow: BrowserWindow) => {
   }
 
   config.watch((newValue, oldValue) => {
-    // A channel switched while the window is open must be honoured.
     const before = (oldValue?.options as { updateChannel?: UpdateChannel })
       ?.updateChannel;
     const after = (newValue?.options as { updateChannel?: UpdateChannel })
@@ -264,8 +308,6 @@ export const setupAutoUpdates = (mainWindow: BrowserWindow) => {
       applyChannel(after);
     }
 
-    // Turning auto-updates off stops the repeating check, turning it back on
-    // starts one — no restart either way.
     if (config.get('options.autoUpdates')) startRepeating();
     else clearInterval(repeatCheck);
   });
