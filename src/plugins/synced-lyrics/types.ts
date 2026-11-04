@@ -117,6 +117,17 @@ export type SyncedLyricsPluginConfig = {
 
 export type LineLyricsStatus = 'previous' | 'current' | 'upcoming';
 
+/**
+ * One timed word (or syllable) inside a synced line. `text` keeps the trailing
+ * space of the source so a word-by-word renderer can lay the line out without
+ * re-splitting it.
+ */
+export type LyricWord = {
+  text: string;
+  timeInMs: number;
+  duration: number;
+};
+
 export type LineLyrics = {
   time: string;
   timeInMs: number;
@@ -124,6 +135,15 @@ export type LineLyrics = {
 
   text: string;
   status: LineLyricsStatus;
+
+  /** Word/syllable timings: enhanced LRC `<mm:ss.xx>` or TTML spans. */
+  words?: LyricWord[];
+  /** Timings of the background vocals sung over this line. */
+  background?: LyricWord[];
+  /** Duet line alignment: right-aligned when the other singer takes over. */
+  alignment?: 'start' | 'end';
+  /** Right-to-left line, so the karaoke fill runs right-to-left. */
+  rtl?: boolean;
 };
 
 export type LineEffect = 'fancy' | 'scale' | 'offset' | 'focus';

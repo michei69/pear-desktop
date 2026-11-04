@@ -91,7 +91,7 @@ test('attributes', () => {
   });
 });
 
-test('karaoke', () => {
+test('karaoke word timings', () => {
   const lrc = LRC.parse(
     '[00:00.00] <00:00.04> When <00:00.16> the <00:00.82> truth <00:01.29> is <00:01.63> found <00:03.09> to <00:03.37> be <00:05.92> lies',
   );
@@ -104,38 +104,14 @@ test('karaoke', () => {
         time: '00:00:00',
         timeInMs: 0,
         words: [
-          {
-            timeInMs: 40,
-            word: 'When',
-          },
-          {
-            timeInMs: 160,
-            word: 'the',
-          },
-          {
-            timeInMs: 820,
-            word: 'truth',
-          },
-          {
-            timeInMs: 1290,
-            word: 'is',
-          },
-          {
-            timeInMs: 1630,
-            word: 'found',
-          },
-          {
-            timeInMs: 3090,
-            word: 'to',
-          },
-          {
-            timeInMs: 3370,
-            word: 'be',
-          },
-          {
-            timeInMs: 5920,
-            word: 'lies',
-          },
+          { duration: 120, text: 'When ', timeInMs: 40 },
+          { duration: 660, text: 'the ', timeInMs: 160 },
+          { duration: 470, text: 'truth ', timeInMs: 820 },
+          { duration: 340, text: 'is ', timeInMs: 1290 },
+          { duration: 1460, text: 'found ', timeInMs: 1630 },
+          { duration: 280, text: 'to ', timeInMs: 3090 },
+          { duration: 2550, text: 'be ', timeInMs: 3370 },
+          { duration: Infinity, text: 'lies', timeInMs: 5920 },
         ],
       },
     ],
@@ -143,10 +119,70 @@ test('karaoke', () => {
   });
 });
 
-test('offset', () => {
+test('hospitality: word tags keep CJK, apostrophes and punctuation', () => {
+  const lrc = LRC.parse(`\
+[00:01.00]<00:01.00>ア<00:01.25>パート <00:01.80>歌おう
+[00:03.00]<00:03.00>I'm <00:03.50>here, <00:04.00>“right”?`);
+
+  const line = (index: number) => lrc.lines[index];
+  expect(line(0)).toMatchObject({ timeInMs: 0, duration: 1000, text: '' });
+  expect(line(1)).toMatchObject({
+    timeInMs: 1000,
+    duration: 2000,
+    text: 'アパート 歌おう',
+    words: [
+      { duration: 250, text: 'ア', timeInMs: 1000 },
+      { duration: 550, text: 'パート ', timeInMs: 1250 },
+      { duration: 1200, text: '歌おう', timeInMs: 1800 },
+    ],
+  });
+  expect(line(2)).toMatchObject({
+    timeInMs: 3000,
+    text: "I'm here, “right”?",
+    words: [
+      { duration: 500, text: "I'm ", timeInMs: 3000 },
+      { duration: 500, text: 'here, ', timeInMs: 3500 },
+      { duration: Infinity, text: '“right”?', timeInMs: 4000 },
+    ],
+  });
+});
+
+test('timestamp variants', () => {
+  const lrc = LRC.parse(`\
+[1:02]line a
+[01:02.5]line b
+[01:02.500][01:03]line c`);
+
+  expect(
+    lrc.lines.map(({ timeInMs, time, text }) => ({ timeInMs, time, text })),
+  ).toStrictEqual([
+    { timeInMs: 0, time: '00:00:00', text: '' },
+    { timeInMs: 62000, time: '01:02:00', text: 'line a' },
+    { timeInMs: 62500, time: '01:02:50', text: 'line b' },
+    { timeInMs: 62500, time: '01:02:50', text: 'line c' },
+    { timeInMs: 63000, time: '01:03:00', text: 'line c' },
+  ]);
+});
+
+test('last word duration stops at the next line', () => {
+  const lrc = LRC.parse(`\
+[00:10.00]<00:10.00>Hello <00:11.00>world
+[00:12.00]Next`);
+
+  expect(lrc.lines[1]).toMatchObject({
+    timeInMs: 10000,
+    duration: 2000,
+    words: [
+      { duration: 1000, text: 'Hello ', timeInMs: 10000 },
+      { duration: 1000, text: 'world', timeInMs: 11000 },
+    ],
+  });
+});
+
+test('offset shifts lines and words', () => {
   const lrc = LRC.parse(`\
 [offset:500]
-[00:10.00]Line 1 lyrics
+[00:10.00]<00:10.00>Line <00:11.00>1 lyrics
 [00:20.00]Line 2 lyrics\
 `);
 
@@ -157,5 +193,8 @@ test('offset', () => {
   ).toStrictEqual([
     { timeInMs: 10500, duration: 10000 },
     { timeInMs: 20500, duration: Infinity },
+  ]);
+  expect(lrc.lines[1].words.map((word) => word.timeInMs)).toStrictEqual([
+    10500, 11500,
   ]);
 });
