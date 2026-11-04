@@ -9,6 +9,7 @@ import { normalizeGoogleTranslateHost } from './translation/providers/google-tra
 import type {
   LocalCliProviderEngine,
   LyricsFontSize,
+  LyricsStyle,
   OpenAICompatibleApiMode,
   SyncedLyricsPluginConfig,
   TranslationConfig,
@@ -75,6 +76,7 @@ const providerOrder: TranslationProviderName[] = [
 ];
 
 const lyricsFontSizeOptions: LyricsFontSize[] = ['small', 'medium', 'large'];
+const lyricsStyleOptions: LyricsStyle[] = ['standard', 'apple-music'];
 
 const normalizeApiMode = (value: string): OpenAICompatibleApiMode => {
   if (value === 'responses' || value === 'chat-completions') return value;
@@ -337,6 +339,26 @@ export const menu = async (
           preciseTiming: item.checked,
         });
       },
+    },
+    {
+      label: t('plugins.synced-lyrics.menu.lyrics-style.label'),
+      toolTip: t('plugins.synced-lyrics.menu.lyrics-style.tooltip'),
+      type: 'submenu',
+      submenu: lyricsStyleOptions.map((style) => ({
+        label: t(
+          `plugins.synced-lyrics.menu.lyrics-style.submenu.${style}.label`,
+        ),
+        toolTip: t(
+          `plugins.synced-lyrics.menu.lyrics-style.submenu.${style}.tooltip`,
+        ),
+        type: 'radio' as const,
+        checked: (config.lyricsStyle ?? 'standard') === style,
+        click() {
+          ctx.setConfig({
+            lyricsStyle: style,
+          });
+        },
+      })),
     },
     {
       label: t('plugins.synced-lyrics.menu.line-effect.label'),

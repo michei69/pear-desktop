@@ -104,6 +104,11 @@ export type SyncedLyricsPluginConfig = {
   defaultTextString: string | string[];
   showLyricsEvenIfInexact: boolean;
   lineEffect: LineEffect;
+  /**
+   * Which renderer draws the lyrics: the plugin's own line list, or the
+   * am-lyrics component in Apple Music style.
+   */
+  lyricsStyle: LyricsStyle;
   lyricsFontSize?: LyricsFontSize;
   romanization: boolean;
   useYTMLyricsWithoutProxy: boolean;
@@ -148,6 +153,9 @@ export type LineLyrics = {
 
 export type LineEffect = 'fancy' | 'scale' | 'offset' | 'focus';
 export type LyricsFontSize = 'small' | 'medium' | 'large';
+
+/** Which renderer draws the lyrics: the plugin's own, or am-lyrics. */
+export type LyricsStyle = 'standard' | 'apple-music';
 
 export interface LyricResult {
   title: string;

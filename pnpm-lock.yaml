@@ -80,6 +80,9 @@ importers:
       '@skyra/jaro-winkler':
         specifier: 1.1.1
         version: 1.1.1
+      '@uimaxbai/am-lyrics':
+        specifier: 1.8.9
+        version: 1.8.9
       '@xhayper/discord-rpc':
         specifier: 1.3.4
         version: 1.3.4(bufferutil@4.1.0)(utf-8-validate@6.0.6)
@@ -1652,6 +1655,17 @@ packages:
     engines: {node: '>=16.20.0'}
     cpu: [x64]
     os: [win32]
+
+  '@uimaxbai/am-lyrics@1.8.9':
+    resolution: {integrity: sha512-2nBJqrTIw/ZGdA06G+/fAnQMQX6QVw325Dzw79yNE38UKipYDMl1gsne9zY2l37XihyFkAEyUHasI8KonkUM4Q==}
+    peerDependencies:
+      '@lit/react': ^1.0.0
+      react: '>=17.0.0'
+    peerDependenciesMeta:
+      '@lit/react':
+        optional: true
+      react:
+        optional: true
 
   '@vladfrangu/async_event_emitter@2.4.7':
     resolution: {integrity: sha512-Xfe6rpCTxSxfbswi/W/Pz7zp1WWSNn4A0eW4mLkQUewCrXXtMj31lCg+iQyTkh/CkusZSq9eDflu7tjEDXUY6g==}
@@ -5492,6 +5506,11 @@ snapshots:
 
   '@typescript/typescript-win32-x64@7.0.1-rc':
     optional: true
+
+  '@uimaxbai/am-lyrics@1.8.9':
+    dependencies:
+      '@babel/runtime': 8.0.0
+      lit: 3.3.3
 
   '@vladfrangu/async_event_emitter@2.4.7': {}
 

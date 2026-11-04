@@ -9,12 +9,14 @@ import style from './style.css?inline';
 
 import type {
   LyricsFontSize,
+  LyricsStyle,
   SyncedLyricsPluginConfig,
   TranslationProviderName,
   TranslationTargetLanguage,
 } from './types';
 
 const lyricsFontSizeOptions: LyricsFontSize[] = ['small', 'medium', 'large'];
+const lyricsStyleOptions: LyricsStyle[] = ['standard', 'apple-music'];
 
 const translateProviderOptions: TranslationProviderName[] = [
   'openai-compatible',
@@ -95,6 +97,7 @@ export default createPlugin<
     showTimeCodes: false,
     defaultTextString: '♪',
     lineEffect: 'fancy',
+    lyricsStyle: 'standard',
     lyricsFontSize: 'small',
     romanization: true,
     translation: {
@@ -184,6 +187,18 @@ export default createPlugin<
           label: () => t('plugins.synced-lyrics.settings.romanization'),
           description: () =>
             t('plugins.synced-lyrics.menu.romanization.tooltip'),
+        },
+        {
+          type: 'select',
+          variant: 'dropdown',
+          key: 'lyricsStyle',
+          label: () => t('plugins.synced-lyrics.settings.lyrics-style'),
+          description: () =>
+            t('plugins.synced-lyrics.menu.lyrics-style.tooltip'),
+          options: lyricsStyleOptions.map((style) => ({
+            value: style,
+            label: () => t(`plugins.synced-lyrics.settings.style.${style}`),
+          })),
         },
         {
           type: 'select',

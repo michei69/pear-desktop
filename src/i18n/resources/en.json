@@ -1405,6 +1405,20 @@
           },
           "tooltip": "Choose how large the lyrics text should be"
         },
+        "lyrics-style": {
+          "label": "Lyrics style",
+          "submenu": {
+            "apple-music": {
+              "label": "Apple Music",
+              "tooltip": "Word-by-word Apple Music lyrics rendered by the am-lyrics component. Line effects, lyrics font size, romanization and translation only apply to the standard style."
+            },
+            "standard": {
+              "label": "Standard",
+              "tooltip": "The plugin's own lyrics list, with line effects, lyrics font size, romanization and translation."
+            }
+          },
+          "tooltip": "Choose how the lyrics are rendered"
+        },
         "precise-timing": {
           "label": "Make the lyrics perfectly synced",
           "tooltip": "Calculate to the milisecond the display of the next line (can have a small impact on performance)"
@@ -1599,11 +1613,16 @@
         "show-time-codes": "Show time codes",
         "romanization": "Romanize lyrics",
         "line-effect": "Line effect",
+        "lyrics-style": "Lyrics style",
         "effect": {
           "fancy": "Fancy",
           "scale": "Scale",
           "offset": "Offset",
           "focus": "Focus"
+        },
+        "style": {
+          "apple-music": "Apple Music",
+          "standard": "Standard"
         },
         "prefer-synced": "Prefer synced lyrics",
         "provider-priority": "Provider Priority",

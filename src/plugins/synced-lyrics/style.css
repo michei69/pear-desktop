@@ -474,3 +474,53 @@ div:has(> .lyrics-picker) {
 .lyrics-picker mdui-icon-warning {
   font-size: 24px;
 }
+
+/* ── Apple Music style ──
+ * The lyrics themselves are rendered by the am-lyrics web component inside its
+ * own shadow root, so only the host layout lives here: the app's provider
+ * picker floating over the top edge, then the component filling the tab.
+ *
+ * The picker is wrapped in a `<section>` on purpose: the standard renderer's
+ * `div:has(> .lyrics-picker)` rule would otherwise make it a sticky list row.
+ */
+.apple-music-style {
+  position: relative;
+  height: 100%;
+  /* Keeps the slid-out picker from showing above the tab. */
+  overflow: hidden;
+}
+
+.apple-music-picker {
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 100;
+  backdrop-filter: blur(5px);
+  transform: translateY(var(--apple-music-picker-offset, 0));
+  transition: transform 325ms ease-in-out;
+}
+
+/* A little tighter than the standard renderer's row: it floats over lyrics. */
+.apple-music-picker .lyrics-picker {
+  height: 4em;
+  padding-block: 0.25em;
+}
+
+.apple-music-host {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+}
+
+.apple-music-host > am-lyrics {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Plain-text fallback when the selected provider has no timed lines. */
+.apple-music-plain {
+  height: 100%;
+  overflow-y: auto;
+  padding: 16px;
+  scrollbar-width: none;
+}

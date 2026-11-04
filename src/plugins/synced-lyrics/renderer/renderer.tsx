@@ -16,6 +16,7 @@ import {
   SyncedLine,
   PlainLyrics,
 } from './components';
+import { AppleMusicStyle } from './components/AppleMusicStyle';
 import { LyricsPicker } from './components/LyricsPicker';
 import { reactiveOwner } from './reactive-root';
 import { currentLyrics, splitPlainLyrics } from './store';
@@ -487,45 +488,52 @@ export const LyricsRenderer = () => {
 
   return (
     <Show when={isVisible()}>
-      <VList
-        {...{
-          ref: setScroller,
-          style: { 'scrollbar-width': 'none' },
-          class: 'synced-lyrics-vlist',
-          keepMounted: [0],
-          // Two rows of headroom is enough to cover a frame of fast scrolling;
-          // four was mounting double the lyric DOM for no visible benefit.
-          overscan: 2,
-        }}
-        data={[lyricsPicker, ...children()]}
+      <Show
+        fallback={
+          <VList
+            {...{
+              ref: setScroller,
+              style: { 'scrollbar-width': 'none' },
+              class: 'synced-lyrics-vlist',
+              keepMounted: [0],
+              // Two rows of headroom is enough to cover a frame of fast scrolling;
+              // four was mounting double the lyric DOM for no visible benefit.
+              overscan: 2,
+            }}
+            data={[lyricsPicker, ...children()]}
+          >
+            {(props, idx) => {
+              if (typeof props === 'undefined') return null;
+              switch (props.kind) {
+                case 'LyricsPicker':
+                  return <LyricsPicker setStickRef={setStickRef} />;
+                case 'Error':
+                  return <ErrorDisplay {...props} />;
+                case 'LoadingKaomoji':
+                  return <LoadingKaomoji />;
+                case 'NotFoundKaomoji':
+                  return <NotFoundKaomoji />;
+                case 'SyncedLine': {
+                  return (
+                    <SyncedLine
+                      {...props}
+                      index={idx()}
+                      scroller={scroller()!}
+                      status={statuses()[idx() - 1]}
+                    />
+                  );
+                }
+                case 'PlainLine': {
+                  return <PlainLyrics {...props} index={idx() - 1} />;
+                }
+              }
+            }}
+          </VList>
+        }
+        when={config()?.lyricsStyle === 'apple-music'}
       >
-        {(props, idx) => {
-          if (typeof props === 'undefined') return null;
-          switch (props.kind) {
-            case 'LyricsPicker':
-              return <LyricsPicker setStickRef={setStickRef} />;
-            case 'Error':
-              return <ErrorDisplay {...props} />;
-            case 'LoadingKaomoji':
-              return <LoadingKaomoji />;
-            case 'NotFoundKaomoji':
-              return <NotFoundKaomoji />;
-            case 'SyncedLine': {
-              return (
-                <SyncedLine
-                  {...props}
-                  index={idx()}
-                  scroller={scroller()!}
-                  status={statuses()[idx() - 1]}
-                />
-              );
-            }
-            case 'PlainLine': {
-              return <PlainLyrics {...props} index={idx() - 1} />;
-            }
-          }
-        }}
-      </VList>
+        <AppleMusicStyle />
+      </Show>
     </Show>
   );
 };

@@ -18,7 +18,11 @@ import {
 import { refreshCurrentLyrics } from './store';
 import { disposeLyricsContainer, selectors, tabStates } from './utils';
 
-import type { LineEffect, SyncedLyricsPluginConfig } from '../types';
+import type {
+  LineEffect,
+  LyricsStyle,
+  SyncedLyricsPluginConfig,
+} from '../types';
 import type { SongInfo } from '@/providers/song-info';
 import type { RendererContext } from '@/types/contexts';
 import type { MusicPlayer } from '@/types/music-player';
@@ -28,13 +32,17 @@ export { netFetch, translateInvoke };
 export let _ytAPI: MusicPlayer | null = null;
 
 const lineEffects: LineEffect[] = ['fancy', 'scale', 'offset', 'focus'];
+const lyricsStyles: LyricsStyle[] = ['standard', 'apple-music'];
 
-/** Older configs may still point at a line effect that no longer exists. */
-const withValidLineEffect = (config: SyncedLyricsPluginConfig) => ({
+/** Older configs may still point at a line effect or style that no longer exists. */
+const withValidStyle = (config: SyncedLyricsPluginConfig) => ({
   ...config,
   lineEffect: lineEffects.includes(config.lineEffect)
     ? config.lineEffect
     : 'fancy',
+  lyricsStyle: lyricsStyles.includes(config.lyricsStyle)
+    ? config.lyricsStyle
+    : 'standard',
 });
 
 const onSongInfoUpdate = (info: SongInfo) => {
@@ -57,7 +65,7 @@ export const renderer = createRenderer<
   SyncedLyricsPluginConfig
 >({
   onConfigChange(newConfig) {
-    setConfig(withValidLineEffect(newConfig));
+    setConfig(withValidStyle(newConfig));
     refreshCurrentLyrics('config-change');
   },
 
@@ -152,7 +160,7 @@ export const renderer = createRenderer<
       ctx.ipc.send('synced-lyrics:translation-debug', message, data);
     });
 
-    setConfig(withValidLineEffect(await ctx.getConfig()));
+    setConfig(withValidStyle(await ctx.getConfig()));
     refreshCurrentLyrics('renderer-start');
     setTimeout(() => refreshCurrentLyrics('renderer-start-delayed'), 1500);
 
