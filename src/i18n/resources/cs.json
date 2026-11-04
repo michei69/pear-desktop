@@ -201,7 +201,7 @@
                 "force-show": "Vynutit zobrazení",
                 "hide": "Skrýt",
                 "label": "Like tlačítka",
-                "swap": "Prohodit pořadí like tlačítek"
+                "swap": "Prohodit pořadí tlačítek To se mi líbí"
               },
               "remove-upgrade-button": "Odebrat upgrade tlačítko",
               "theme": {
@@ -312,7 +312,7 @@
             "percent": "{{ratio}} %"
           }
         },
-        "enable-seekbar": "Povolit motivování posuvníku"
+        "enable-seekbar": "Povolit stylování časové osy"
       },
       "name": "Motiv podle barvy Alba"
     },
@@ -500,11 +500,11 @@
       }
     },
     "clock": {
-      "description": "Přidat hodiny do navigačního panelu",
+      "description": "Přidat hodiny na navigační řádek",
       "menu": {
         "format": {
           "24-hour-format": "24hodinový formát",
-          "display-seconds": "Zobrazovat sekundy",
+          "display-seconds": "Zobrazit vteřiny",
           "label": "Formát"
         }
       },
