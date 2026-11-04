@@ -1241,6 +1241,8 @@
       "prompt": {
         "keybind": {
           "keybind-options": {
+            "dislike": "Dislike",
+            "like": "Like",
             "next": "Next",
             "play-pause": "Play / Pause",
             "previous": "Previous"
@@ -1253,6 +1255,8 @@
         "global-keybinds": "Global keybinds (work app-wide)",
         "local-keybinds": "Local keybinds (only while the window is focused)",
         "placeholder": {
+          "dislike": "e.g. CmdOrCtrl+Shift+D",
+          "like": "e.g. CmdOrCtrl+Shift+L",
           "next": "e.g. CmdOrCtrl+Shift+Right",
           "play-pause": "e.g. CmdOrCtrl+Shift+Space",
           "previous": "e.g. CmdOrCtrl+Shift+Left"

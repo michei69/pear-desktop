@@ -8,6 +8,8 @@ export type ShortcutMappingType = {
   previous: string;
   playPause: string;
   next: string;
+  like: string;
+  dislike: string;
 };
 export type ShortcutsPluginConfig = {
   enabled: boolean;
@@ -32,6 +34,16 @@ const KEYBIND_FIELDS = [
     labelKey: 'plugins.shortcuts.prompt.keybind.keybind-options.next',
     placeholderKey: 'plugins.shortcuts.settings.placeholder.next',
   },
+  {
+    action: 'like',
+    labelKey: 'plugins.shortcuts.prompt.keybind.keybind-options.like',
+    placeholderKey: 'plugins.shortcuts.settings.placeholder.like',
+  },
+  {
+    action: 'dislike',
+    labelKey: 'plugins.shortcuts.prompt.keybind.keybind-options.dislike',
+    placeholderKey: 'plugins.shortcuts.settings.placeholder.dislike',
+  },
 ] as const;
 
 const keybindFields = (scope: 'global' | 'local') =>
@@ -54,11 +66,15 @@ export default createPlugin({
       previous: '',
       playPause: '',
       next: '',
+      like: '',
+      dislike: '',
     },
     local: {
       previous: '',
       playPause: '',
       next: '',
+      like: '',
+      dislike: '',
     },
   } as ShortcutsPluginConfig,
   settings: [
