@@ -2,18 +2,27 @@
    seek track (#progress-bar > … > #progressContainer, 2px tall, overflow
    visible) or the new-UI miniplayer's progress wrapper (3px tall).
    `inset: 0` keeps the band exactly the height of whichever track holds it.
-   The markers sit under YTM's own played progress and knob:
-   - classic: the overlay is the track's first child, so the absolutely
-     positioned #secondaryProgress/#primaryProgress paint over it;
-   - new UI: the progress is an <input> (non-positioned), which paints below
-     positioned siblings, so a negative z-index keeps the markers underneath
-     it. The wrapper is a stacking context, so the markers stay in the bar. */
+
+   The markers paint over YTM's played progress, but the seek knob stays on
+   top of them:
+   - classic: the knob lives in a sibling after the track, so it wins already;
+   - new UI: the knob is the progress <input>'s own thumb, painted inside that
+     element, so the markers are cut away at the playhead while the thumb is
+     visible (it only shows on hover/focus). */
 #pear-sponsorblock-bar {
   position: absolute;
   inset: 0;
   pointer-events: none;
 }
 
-.ytMusicMiniPlayerProgressBarWrapper > #pear-sponsorblock-bar {
-  z-index: -1;
+.ytMusicMiniPlayerProgressBarWrapper:hover > #pear-sponsorblock-bar,
+.ytMusicMiniPlayerProgressBarWrapper:focus-within > #pear-sponsorblock-bar {
+  mask-image: linear-gradient(
+    to right,
+    #000 0,
+    #000 calc(var(--pear-sponsorblock-playhead, 0%) - 9px),
+    transparent calc(var(--pear-sponsorblock-playhead, 0%) - 9px),
+    transparent calc(var(--pear-sponsorblock-playhead, 0%) + 9px),
+    #000 calc(var(--pear-sponsorblock-playhead, 0%) + 9px)
+  );
 }

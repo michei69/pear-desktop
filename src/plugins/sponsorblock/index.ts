@@ -29,6 +29,8 @@ let segmentMarkers: SegmentMarker[] = [];
 let showMarkers = false;
 
 const SEGMENTS_BAR_ID = 'pear-sponsorblock-bar';
+/** Where the playhead sits on the track, as the marker mask's cut-out. */
+const PLAYHEAD_PROPERTY = '--pear-sponsorblock-playhead';
 /**
  * Where the markers go: the `tp-yt-paper-progress` track of YTM's classic seek
  * slider, or the new-UI miniplayer's full-width progress line.
@@ -39,7 +41,8 @@ const SEGMENTS_BAR_CONTAINERS = [
 ];
 
 /** Paints the segments' colours over the seek track, or clears them. */
-const renderMarkers = (duration: number) => {
+const renderMarkers = (video: HTMLVideoElement | null) => {
+  const duration = video?.duration ?? 0;
   const gradient = showMarkers
     ? buildSegmentsGradient(segmentMarkers, duration)
     : '';
@@ -50,8 +53,14 @@ const renderMarkers = (duration: number) => {
     return;
   }
 
+  const playhead =
+    video && Number.isFinite(duration) && duration > 0
+      ? `${(video.currentTime / duration) * 100}%`
+      : '0%';
+
   if (existing) {
     existing.style.backgroundImage = gradient;
+    existing.style.setProperty(PLAYHEAD_PROPERTY, playhead);
     return;
   }
 
@@ -67,9 +76,27 @@ const renderMarkers = (duration: number) => {
   const bar = document.createElement('div');
   bar.id = SEGMENTS_BAR_ID;
   bar.style.backgroundImage = gradient;
-  // First child: YTM's played progress and its knob must paint over the
-  // markers, so the playhead keeps reading through a segment.
-  container.prepend(bar);
+  bar.style.setProperty(PLAYHEAD_PROPERTY, playhead);
+  // Last child: the markers paint over YTM's played progress. The knob stays
+  // on top of them (a later sibling on the classic bar; the input's own thumb
+  // on the new-UI bar, which the stylesheet uncovers at the playhead).
+  container.append(bar);
+};
+
+/** Moves the marker cut-out with the playhead, re-adding the bar if YTM
+ * rebuilt its seek track. */
+const syncMarkers = (video: HTMLVideoElement) => {
+  const bar = document.querySelector<HTMLElement>(`#${SEGMENTS_BAR_ID}`);
+  if (!bar) {
+    renderMarkers(video);
+    return;
+  }
+  if (Number.isFinite(video.duration) && video.duration > 0) {
+    bar.style.setProperty(
+      PLAYHEAD_PROPERTY,
+      `${(video.currentTime / video.duration) * 100}%`,
+    );
+  }
 };
 
 /** Jumps `video` past the segment it is inside, if any. */
@@ -258,18 +285,13 @@ export default createPlugin({
     timeUpdateListener: (e: Event) => {
       if (!(e.target instanceof HTMLVideoElement)) return;
       applySegments(e.target);
-      // YTM rebuilds the seek slider when the layout changes; the markers must
-      // follow it instead of vanishing.
-      if (
-        segmentMarkers.length > 0 &&
-        !document.querySelector(`#${SEGMENTS_BAR_ID}`)
-      ) {
-        renderMarkers(e.target.duration);
-      }
+      // Moves the playhead cut-out, and re-adds the bar if YTM rebuilt the
+      // seek slider (the markers must follow it instead of vanishing).
+      syncMarkers(e.target);
     },
     durationChangeListener: (e: Event) => {
       if (e.target instanceof HTMLVideoElement) {
-        renderMarkers(e.target.duration);
+        renderMarkers(e.target);
       }
     },
     resetSegments() {
@@ -290,7 +312,7 @@ export default createPlugin({
         if (video) {
           applySegments(video);
         }
-        renderMarkers(video?.duration ?? 0);
+        renderMarkers(video);
       };
       ipc.on('sponsorblock-skip', this.handleSkipSegments);
     },
@@ -309,13 +331,11 @@ export default createPlugin({
       // track's segments instead of waiting for the next one.
       ipc.send('peard:video-src-changed', playerApi.getPlayerResponse());
       applySegments(video);
-      renderMarkers(video.duration);
+      renderMarkers(video);
     },
     onConfigChange(config: SponsorBlockPluginConfig) {
       showMarkers = config.showSegmentsOnProgressBar === true;
-      renderMarkers(
-        document.querySelector<HTMLVideoElement>('video')?.duration ?? 0,
-      );
+      renderMarkers(document.querySelector<HTMLVideoElement>('video'));
     },
     stop({ ipc }) {
       if (this.handleSkipSegments) {
