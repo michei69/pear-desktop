@@ -11,18 +11,22 @@ import {
   withRetry,
   type CommitComparison,
 } from '@/providers/app-versions';
+import { supportsInAppInstall } from '@/providers/update-install-support';
 import { LoggerPrefix } from '@/utils';
 
 const REPO = 'michei69/pear-desktop';
 const REPO_URL = `https://github.com/${REPO}`;
 const COMMITS_URL = `${REPO_URL}/commits/master`;
+const RECHECK_MS = 6 * 60 * 60 * 1000;
+const DOWNLOAD_TIMEOUT_MS = 15 * 60 * 1000;
+
 const feedChannel = (updateChannel: UpdateChannel) =>
   updateChannel === 'beta' ? 'beta' : 'latest';
-const RECHECK_MS = 6 * 60 * 60 * 1000;
 
 let win: BrowserWindow | null = null;
 let dialogOpen = false;
 let downloading = false;
+let downloadTimeout: NodeJS.Timeout | undefined;
 let repeatCheck: NodeJS.Timeout | undefined;
 
 const ask = (options: Electron.MessageBoxOptions) =>
@@ -30,13 +34,20 @@ const ask = (options: Electron.MessageBoxOptions) =>
     ? dialog.showMessageBox(win, options)
     : dialog.showMessageBox(options);
 
-const supportsInAppInstall = () => {
-  if (process.platform === 'darwin') return true;
-  if (process.platform === 'win32') {
-    return !process.env.PORTABLE_EXECUTABLE_DIR && !process.env.PORTABLE_EXECUTABLE_FILE;
+const setProgress = (
+  progress: number,
+  options?: Electron.ProgressBarOptions,
+) => {
+  if (win && !win.isDestroyed()) {
+    win.setProgressBar(progress, options);
   }
-  if (process.platform === 'linux') return Boolean(process.env.APPIMAGE);
-  return false;
+};
+
+const resetDownloadState = () => {
+  downloading = false;
+  clearTimeout(downloadTimeout);
+  downloadTimeout = undefined;
+  setProgress(-1);
 };
 
 const applyChannel = (updateChannel: UpdateChannel) => {
@@ -56,6 +67,9 @@ const releaseLink = (version: string, updateChannel: UpdateChannel) =>
     : `${REPO_URL}/releases/latest`;
 
 const showDownloadFailure = (downloadLink: string) => {
+  if (dialogOpen) return;
+
+  dialogOpen = true;
   ask({
     type: 'warning',
     buttons: [
@@ -73,26 +87,38 @@ const showDownloadFailure = (downloadLink: string) => {
     })
     .catch((err) => {
       console.error(LoggerPrefix, 'Failed to show update download error:', err);
+    })
+    .finally(() => {
+      dialogOpen = false;
     });
 };
 
 const startDownload = (downloadLink: string) => {
   if (downloading) return;
+
   downloading = true;
-  win?.setProgressBar(0, { mode: 'indeterminate' });
-  autoUpdater
-    .downloadUpdate()
-    .catch((err) => {
-      downloading = false;
-      win?.setProgressBar(-1);
-      console.error(LoggerPrefix, 'Failed to download update:', err);
-      showDownloadFailure(downloadLink);
-    });
+  setProgress(0, { mode: 'indeterminate' });
+
+  downloadTimeout = setTimeout(() => {
+    if (!downloading) return;
+
+    // Do not allow a second download while electron-updater may still be active.
+    // The error event or update-downloaded event remains authoritative.
+    setProgress(-1);
+    showDownloadFailure(downloadLink);
+  }, DOWNLOAD_TIMEOUT_MS);
+
+  autoUpdater.downloadUpdate().catch((err) => {
+    resetDownloadState();
+    console.error(LoggerPrefix, 'Failed to download update:', err);
+    showDownloadFailure(downloadLink);
+  });
 };
 
 const showUpdateAvailable = (version: string, updateChannel: UpdateChannel) => {
   const downloadLink = releaseLink(version, updateChannel);
-  const canInstall = supportsInAppInstall();
+  const canInstall = supportsInAppInstall(process.platform, process.env);
+
   dialogOpen = true;
   ask({
     type: 'info',
@@ -184,6 +210,10 @@ const confirmDowngrade = async (): Promise<boolean> => {
   return answer.response === 1;
 };
 
+/**
+ * Changes the update channel after validating the requested value.
+ * Prompts before switching from a beta build to stable.
+ */
 export const setUpdateChannel = async (value: string): Promise<boolean> => {
   if (value !== 'stable' && value !== 'beta') return false;
   if (config.updateChannel() === value) return true;
@@ -197,6 +227,10 @@ export const setUpdateChannel = async (value: string): Promise<boolean> => {
   return true;
 };
 
+/**
+ * Checks the configured update feed and displays an update prompt
+ * when an update is available.
+ */
 export const runUpdateCheck = async (): Promise<void> => {
   const outcome = await withRetry(
     () => autoUpdater.checkForUpdates(),
@@ -217,6 +251,10 @@ export const runUpdateCheck = async (): Promise<void> => {
   }
 };
 
+/**
+ * Checks for application updates, or checks the latest master commit
+ * when running a development build without packaged updater support.
+ */
 export const checkForAppUpdates = async (): Promise<void> => {
   if (!updatesSupported()) {
     await checkDevCommit();
@@ -227,12 +265,15 @@ export const checkForAppUpdates = async (): Promise<void> => {
   await runUpdateCheck();
 };
 
+/** Configures automatic update checks and updater event handlers. */
 export const setupAutoUpdates = (mainWindow: BrowserWindow) => {
   win = mainWindow;
   autoUpdater.autoDownload = false;
   autoUpdater.autoInstallOnAppQuit = false;
 
   if (!updatesSupported()) {
+    // Let startup and window creation settle before checking the development
+    // commit, so any resulting dialog does not compete with initial UI work.
     const timeout = setTimeout(() => {
       checkDevCommit().catch(() => {});
       clearTimeout(timeout);
@@ -243,6 +284,7 @@ export const setupAutoUpdates = (mainWindow: BrowserWindow) => {
   applyChannel(config.updateChannel());
 
   autoUpdater.on('error', (err) => {
+    if (downloading) resetDownloadState();
     console.debug(LoggerPrefix, 'Updater error:', err);
   });
 
@@ -251,12 +293,13 @@ export const setupAutoUpdates = (mainWindow: BrowserWindow) => {
     const percent = Number.isFinite(progress.percent)
       ? Math.min(100, Math.max(0, progress.percent))
       : 0;
-    win?.setProgressBar(percent / 100);
+    setProgress(percent / 100);
   });
 
   autoUpdater.on('update-downloaded', (update) => {
-    downloading = false;
-    win?.setProgressBar(-1);
+    resetDownloadState();
+    if (dialogOpen) return;
+
     dialogOpen = true;
     ask({
       type: 'info',
@@ -285,6 +328,8 @@ export const setupAutoUpdates = (mainWindow: BrowserWindow) => {
 
   const startRepeating = () => {
     clearInterval(repeatCheck);
+    // A six-hour interval catches updates published while the app remains open
+    // without repeatedly polling the release feed.
     repeatCheck = setInterval(() => {
       checkForAppUpdates().catch(() => {});
     }, RECHECK_MS);
@@ -292,6 +337,8 @@ export const setupAutoUpdates = (mainWindow: BrowserWindow) => {
   };
 
   if (config.get('options.autoUpdates')) {
+    // Delay the first packaged update check until startup and window creation
+    // have settled, avoiding an update dialog during initial UI work.
     const timeout = setTimeout(() => {
       checkForAppUpdates().catch(() => {});
       clearTimeout(timeout);

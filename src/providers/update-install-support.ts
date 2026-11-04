@@ -5,10 +5,7 @@ export const supportsInAppInstall = (
   if (platform === 'darwin') return false;
 
   if (platform === 'win32') {
-    return (
-      !env.PORTABLE_EXECUTABLE_DIR &&
-      !env.PORTABLE_EXECUTABLE_FILE
-    );
+    return !env.PORTABLE_EXECUTABLE_DIR && !env.PORTABLE_EXECUTABLE_FILE;
   }
 
   if (platform === 'linux') {
