@@ -9,11 +9,16 @@ import {
   setTranslateInvoke,
   translateInvoke,
 } from './ipc-bridge';
-import { setConfig, setCurrentTime } from './renderer';
+import {
+  setConfig,
+  setCurrentTime,
+  setIsPlaying,
+  setPlaybackRate,
+} from './renderer';
 import { refreshCurrentLyrics } from './store';
 import { disposeLyricsContainer, selectors, tabStates } from './utils';
 
-import type { SyncedLyricsPluginConfig } from '../types';
+import type { LineEffect, SyncedLyricsPluginConfig } from '../types';
 import type { SongInfo } from '@/providers/song-info';
 import type { RendererContext } from '@/types/contexts';
 import type { MusicPlayer } from '@/types/music-player';
@@ -21,6 +26,16 @@ import type { MusicPlayer } from '@/types/music-player';
 export { netFetch, translateInvoke };
 
 export let _ytAPI: MusicPlayer | null = null;
+
+const lineEffects: LineEffect[] = ['fancy', 'scale', 'offset', 'focus'];
+
+/** Older configs may still point at a line effect that no longer exists. */
+const withValidLineEffect = (config: SyncedLyricsPluginConfig) => ({
+  ...config,
+  lineEffect: lineEffects.includes(config.lineEffect)
+    ? config.lineEffect
+    : 'fancy',
+});
 
 const onSongInfoUpdate = (info: SongInfo) => {
   translationDebug('song-info update', {
@@ -42,7 +57,7 @@ export const renderer = createRenderer<
   SyncedLyricsPluginConfig
 >({
   onConfigChange(newConfig) {
-    setConfig(newConfig);
+    setConfig(withValidLineEffect(newConfig));
     refreshCurrentLyrics('config-change');
   },
 
@@ -69,10 +84,17 @@ export const renderer = createRenderer<
     // The player reports its position about four times a second, which is
     // enough for line highlighting and replaces a 100ms polling timer. A state
     // change refreshes the time once too, so pausing/seeking while paused is
-    // reflected without progress ticks.
-    this.progressListener = (seconds: number) => setCurrentTime(seconds * 1000);
-    this.stateListener = () =>
+    // reflected without progress ticks. Playing state and rate let the karaoke
+    // fill interpolate smoothly between the coarse ticks.
+    this.progressListener = (seconds: number) => {
+      setPlaybackRate(_ytAPI?.getPlaybackRate() ?? 1);
+      setCurrentTime(seconds * 1000);
+    };
+    this.stateListener = () => {
+      setIsPlaying(_ytAPI?.getPlayerState() === 1);
+      setPlaybackRate(_ytAPI?.getPlaybackRate() ?? 1);
       setCurrentTime((_ytAPI?.getCurrentTime() ?? 0) * 1000);
+    };
     api.addEventListener('onVideoProgress', this.progressListener);
     api.addEventListener('onStateChange', this.stateListener);
     this.stateListener();
@@ -130,7 +152,7 @@ export const renderer = createRenderer<
       ctx.ipc.send('synced-lyrics:translation-debug', message, data);
     });
 
-    setConfig(await ctx.getConfig());
+    setConfig(withValidLineEffect(await ctx.getConfig()));
     refreshCurrentLyrics('renderer-start');
     setTimeout(() => refreshCurrentLyrics('renderer-start-delayed'), 1500);
 

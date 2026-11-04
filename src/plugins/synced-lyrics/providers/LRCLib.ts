@@ -2,6 +2,7 @@ import { jaroWinkler } from '@skyra/jaro-winkler';
 
 import {
   buildSearchQueries,
+  isRetryableStatus,
   isUsableSearchRecord,
   isWithinDurationTolerance,
   LRCLIB_CLIENT_ID,
@@ -154,6 +155,12 @@ export class LRCLib implements LyricProvider {
     }
 
     if (data.length === 0 && lastError) {
+      const status = (lastError as { status?: number }).status;
+      if (status !== undefined && isRetryableStatus(status)) {
+        // Overloaded, not broken: no lyrics from this provider right now.
+        return null;
+      }
+
       throw lastError;
     }
 

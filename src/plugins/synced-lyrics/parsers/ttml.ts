@@ -25,16 +25,7 @@ export type TTMLParseResult = {
   translationLanguage?: string;
 };
 
-const RTL_LANGUAGES = new Set([
-  'ar',
-  'dv',
-  'fa',
-  'he',
-  'ku',
-  'ps',
-  'ur',
-  'yi',
-]);
+const RTL_LANGUAGES = new Set(['ar', 'dv', 'fa', 'he', 'ku', 'ps', 'ur', 'yi']);
 
 const localName = (element: Element) =>
   (element.localName ?? element.nodeName).toLowerCase();
@@ -75,7 +66,10 @@ export const parseTTMLTime = (value: string | null, fallback = 0): number => {
       m: 60_000,
       h: 3_600_000,
     };
-    return Math.max(0, Math.round(Number(unitMatch[1]) * multipliers[unitMatch[2]]));
+    return Math.max(
+      0,
+      Math.round(Number(unitMatch[1]) * multipliers[unitMatch[2]]),
+    );
   }
 
   const parts = normalized.split(':').map(Number);
@@ -154,9 +148,7 @@ const collectWords = (
 /** `<p>` text with the background-vocal spans removed. */
 const lineText = (p: Element): string =>
   Array.from(p.childNodes)
-    .filter(
-      (node) => !(node.nodeType === 1 && isBackground(node as Element)),
-    )
+    .filter((node) => !(node.nodeType === 1 && isBackground(node as Element)))
     .map((node) => node.textContent ?? '')
     .join('');
 
@@ -205,14 +197,21 @@ const assignAlignments = (
   });
 };
 
-const fillWordDurations = (words: LyricWord[], end: number) => {
+/**
+ * A word is sung until the earlier of its own `<span end>` and the next word:
+ * the span end keeps the karaoke fill from bleeding into a gap after the word.
+ */
+const fillWordDurations = (words: LyricWord[], lineEnd: number) => {
   words.forEach((word, index) => {
     const next = words[index + 1];
-    word.duration = next
-      ? Math.max(0, next.timeInMs - word.timeInMs)
-      : Number.isFinite(end)
-        ? Math.max(0, end - word.timeInMs)
-        : Infinity;
+    const explicitEnd =
+      word.duration > 0 ? word.timeInMs + word.duration : Infinity;
+    const availableEnd = next ? next.timeInMs : lineEnd;
+
+    word.duration = Math.max(
+      0,
+      Math.min(availableEnd, explicitEnd) - word.timeInMs,
+    );
   });
 };
 
@@ -240,7 +239,6 @@ export const parseTTML = (
 
   const language = languageOf(root);
   const primaryLanguage = language?.toLowerCase().split(/[-_]/)[0];
-  const docRtl = Boolean(primaryLanguage && RTL_LANGUAGES.has(primaryLanguage));
 
   const agentTypes = new Map<string, string>();
   for (const agent of elementsWithName(doc, 'agent')) {
@@ -286,7 +284,10 @@ export const parseTTML = (
 
     const content = lineText(p).trim();
     const text = words.length
-      ? words.map((word) => word.text).join('').trim()
+      ? words
+          .map((word) => word.text)
+          .join('')
+          .trim()
       : content;
 
     lines.push({
@@ -300,7 +301,7 @@ export const parseTTML = (
         p.getAttribute('dir') === 'rtl' ||
         Boolean(
           pLanguage &&
-            RTL_LANGUAGES.has(pLanguage.toLowerCase().split(/[-_]/)[0]),
+          RTL_LANGUAGES.has(pLanguage.toLowerCase().split(/[-_]/)[0]),
         )
           ? true
           : undefined,

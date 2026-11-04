@@ -4,7 +4,11 @@ export const LRCLIB_CLIENT_ID =
 export const MAX_SEARCH_ATTEMPTS = 4;
 export const DURATION_TOLERANCE_SECONDS = 15;
 const MAX_RETRY_AFTER_SECONDS = 10;
-const RETRYABLE_STATUSES = new Set([429, 500, 502, 503, 504]);
+export const RETRYABLE_STATUSES = new Set([429, 500, 502, 503, 504]);
+
+/** LRCLib is overloaded or rate limited, not broken: retrying now will not help. */
+export const isRetryableStatus = (status: number): boolean =>
+  RETRYABLE_STATUSES.has(status);
 
 const NOISE_TAG_PATTERN =
   /\s*[([](?:video\s+oficial|v[ií]deo\s+oficial|letra\s+oficial|video\s+musical|audio\s+oficial|lyric\s+video|official\s+[^)\]]*|visualizer)[)\]]/gi;

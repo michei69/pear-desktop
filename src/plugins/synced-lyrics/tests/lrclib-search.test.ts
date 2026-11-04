@@ -3,6 +3,7 @@ import { expect, test } from '@playwright/test';
 import {
   buildSearchQueries,
   cleanTrackTitle,
+  isRetryableStatus,
   isUsableSearchRecord,
   isWithinDurationTolerance,
   parseSearchResponse,
@@ -71,6 +72,16 @@ test('splits collaborators and strip diacritics for artist matching', () => {
   expect(splitArtists('Artist y Other')).toContain('other');
   expect(splitArtists('Artist and Other')).toContain('other');
   expect(splitArtists('Artist with Other')).toContain('other');
+});
+
+test('marks overloaded and rate-limited statuses as retryable', () => {
+  expect(isRetryableStatus(429)).toBe(true);
+  expect(isRetryableStatus(500)).toBe(true);
+  expect(isRetryableStatus(502)).toBe(true);
+  expect(isRetryableStatus(503)).toBe(true);
+  expect(isRetryableStatus(504)).toBe(true);
+  expect(isRetryableStatus(404)).toBe(false);
+  expect(isRetryableStatus(403)).toBe(false);
 });
 
 test('retries only transient statuses, with bounded backoff', () => {

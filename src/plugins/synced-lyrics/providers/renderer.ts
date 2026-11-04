@@ -1,17 +1,17 @@
 import { ProviderNames } from './index';
 import { LRCHub } from './LRCHub';
 import { LRCLib } from './LRCLib';
-import { LyricsGenius } from './LyricsGenius';
+import { LrcRed } from './LrcRed';
 import { MusixMatch } from './MusixMatch';
 import { Netease } from './NetEase';
 import { SimpMusic } from './SimpMusic';
 import { YTMusic } from './YTMusic';
 
 export const providers = {
+  [ProviderNames.LrcRed]: new LrcRed(),
   [ProviderNames.YTMusic]: new YTMusic(),
   [ProviderNames.LRCLib]: new LRCLib(),
   [ProviderNames.MusixMatch]: new MusixMatch(),
-  [ProviderNames.LyricsGenius]: new LyricsGenius(),
   [ProviderNames.NetEase]: new Netease(),
   [ProviderNames.LRCHub]: new LRCHub(),
   [ProviderNames.SimpMusic]: new SimpMusic(),

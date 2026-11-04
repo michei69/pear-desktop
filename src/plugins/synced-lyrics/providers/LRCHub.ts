@@ -1,3 +1,5 @@
+import { isRetryableStatus } from './lrclib-utils';
+
 import { LRC } from '../parsers/lrc';
 import { netFetch } from '../renderer/ipc-bridge';
 
@@ -19,25 +21,15 @@ type LrchubRecord = {
 const textOf = (value: unknown) =>
   typeof value === 'string' ? value.trim() : '';
 
-/** Inline word timings (`<mm:ss.xx>`) from a word-synced LRC, not displayable. */
-const WORD_TAG = /<\d+:\d+[.:]\d+>/g;
-
-export const stripWordTags = (lrc: string) => lrc.replace(WORD_TAG, '');
-
 /**
- * The line-synced LRC LRCHub has for a record. `/api/lyrics` returns a clean
- * `synced_lyrics`; the record/fallback fields can be word-synced, so their
- * inline timings are stripped before the text is shown as lines.
+ * The LRC LRCHub has for a record, best first. The fields can be word-synced
+ * (`<mm:ss.xx>` inline timings); the line parser understands those, so they are
+ * kept instead of flattened to line-only lyrics.
  */
-export const pickLrchubLrc = (record: LrchubRecord): string => {
-  const synced = textOf(record.synced_lyrics);
-  if (synced) return synced;
-
-  const lyrics = stripWordTags(textOf(record.lyrics));
-  if (lyrics.trim()) return lyrics;
-
-  return stripWordTags(textOf(record.dynamic_lrc));
-};
+export const pickLrchubLrc = (record: LrchubRecord): string =>
+  textOf(record.synced_lyrics) ||
+  textOf(record.lyrics) ||
+  textOf(record.dynamic_lrc);
 
 const splitArtists = (artists: string) =>
   artists
@@ -45,6 +37,26 @@ const splitArtists = (artists: string) =>
     .map((artist) => artist.trim())
     .filter(Boolean);
 
+const ATTEMPTS = 3;
+
+const requestOnce = async (
+  url: string,
+  init: RequestInit,
+): Promise<[number, string]> => {
+  if (typeof netFetch === 'function') {
+    const [status, text] = await netFetch(url, init);
+    return [status, text];
+  }
+
+  const response = await fetch(url, init);
+  return [response.status, await response.text()];
+};
+
+/**
+ * LRCHub answers a flat 503 `SERVER_BUSY` when it is overloaded, with a message
+ * asking the client to wait and retry. Two short retries keep the provider
+ * usable without surfacing the load as a lyrics error.
+ */
 const requestLyrics = async (body: object): Promise<[number, string]> => {
   const url = `${BASE_URL}/api/lyrics`;
   const init: RequestInit = {
@@ -56,13 +68,21 @@ const requestLyrics = async (body: object): Promise<[number, string]> => {
     body: JSON.stringify(body),
   };
 
-  if (typeof netFetch === 'function') {
-    const [status, text] = await netFetch(url, init);
-    return [status, text];
+  let response: [number, string] = [0, ''];
+
+  for (let attempt = 1; attempt <= ATTEMPTS; attempt++) {
+    try {
+      response = await requestOnce(url, init);
+    } catch (error) {
+      if (attempt === ATTEMPTS) throw error;
+      response = [0, ''];
+    }
+
+    if (!isRetryableStatus(response[0]) || attempt === ATTEMPTS) break;
+    await new Promise((resolve) => setTimeout(resolve, 750 * attempt));
   }
 
-  const response = await fetch(url, init);
-  return [response.status, await response.text()];
+  return response;
 };
 
 export class LRCHub implements LyricProvider {
@@ -83,6 +103,10 @@ export class LRCHub implements LyricProvider {
     });
 
     if (status === 404) return null;
+    if (isRetryableStatus(status)) {
+      // Overloaded, not broken: no lyrics this time, next song may work.
+      return null;
+    }
     if (status < 200 || status >= 300) {
       throw new Error(`bad HTTPStatus(${status})`);
     }

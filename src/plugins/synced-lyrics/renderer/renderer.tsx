@@ -175,7 +175,34 @@ type LyricsRendererChild =
 
 const lyricsPicker: LyricsRendererChild = { kind: 'LyricsPicker' };
 
-export const [currentTime, setCurrentTime] = createSignal<number>(-1);
+export const [currentTime, setCurrentTimeSignal] = createSignal<number>(-1);
+export const [isPlaying, setIsPlaying] = createSignal(false);
+export const [playbackRate, setPlaybackRate] = createSignal(1);
+
+/** When the player last reported its position, for interpolation. */
+let lastProgressAt = 0;
+
+export const setCurrentTime = (timeInMs: number) => {
+  lastProgressAt = performance.now();
+  setCurrentTimeSignal(timeInMs);
+};
+
+/**
+ * The player reports its position ~4 times a second, too coarse for a
+ * word-by-word karaoke fill. Between ticks, advance the last reported position
+ * by the time elapsed at the current playback rate; the next tick corrects the
+ * prediction, so a pause or seek only shows up for one short frame.
+ */
+export const getPlaybackTime = () =>
+  currentTime() +
+  (isPlaying()
+    ? Math.min(
+        1_000,
+        Math.max(0, performance.now() - lastProgressAt) *
+          Math.max(0, playbackRate()),
+      )
+    : 0);
+
 export const LyricsRenderer = () => {
   const [scroller, setScroller] = createSignal<VirtualizerHandle>();
   const [stickyRef, setStickRef] = createSignal<HTMLElement | null>(null);

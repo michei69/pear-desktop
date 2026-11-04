@@ -5,10 +5,12 @@ import { normalizeOrder } from '@/types/settings';
 import type { LyricResult } from '../types';
 
 export enum ProviderNames {
+  // lrc.red first: it is the only provider with word/syllable-synced TTML for
+  // most tracks, and the request in issue #86 asks for it ahead of the rest.
+  LrcRed = 'lrc.red',
   YTMusic = 'YTMusic',
   LRCLib = 'LRCLib',
   MusixMatch = 'MusixMatch',
-  LyricsGenius = 'LyricsGenius',
   NetEase = 'NetEase',
   LRCHub = 'LRCHub',
   SimpMusic = 'SimpMusic',
@@ -73,6 +75,7 @@ const orderByBias = (
     const { state, data } = lyrics[provider];
     const synced = hasSyncedText(data);
     const plain = Boolean(data?.lyrics?.trim());
+    const wordSynced = Boolean(data?.lines?.some((line) => line.words?.length));
     const officialTranslation = Boolean(
       data?.translation?.lines?.some((line) => line.text.trim()) ||
       data?.translation?.lyrics?.trim(),
@@ -83,6 +86,7 @@ const orderByBias = (
       (hasLyricText(data) ? 2 : -2) +
       (officialTranslation && wantsOfficialTranslation ? 3 : 0) +
       (synced ? 2 : -1) +
+      (wordSynced ? 2 : 0) +
       (synced && provider === ProviderNames.YTMusic ? 1 : 0) +
       (plain ? 1 : -1)
     );

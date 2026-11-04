@@ -89,9 +89,9 @@ const parseTimedPieces = (line: string): TimedPiece[] => {
 };
 
 /**
- * Word timings: each word ends where the next one starts, the last word at the
- * end of the line. The first piece may carry the line's leading silence, so it
- * uses its own start.
+ * Word timings: a word ends at the earlier of the next word and its own known
+ * end (a trailing `<mm:ss.xx>` tag with no text marks it, as in Apple-Music
+ * rich sync); the last word otherwise runs to the end of the line.
  */
 const fillWordDurations = (
   words: LyricWord[],
@@ -101,10 +101,38 @@ const fillWordDurations = (
   for (let i = 0; i < words.length; i++) {
     const word = words[i];
     const next = words[i + 1];
-    word.duration = next
-      ? Math.max(0, next.timeInMs - word.timeInMs)
-      : Math.max(0, lineEnd - Math.max(word.timeInMs, lineStart));
+    const availableEnd = next
+      ? next.timeInMs
+      : Math.max(lineEnd, Math.max(word.timeInMs, lineStart));
+    const explicitEnd =
+      word.duration > 0
+        ? word.timeInMs + word.duration
+        : Number.POSITIVE_INFINITY;
+
+    word.duration = Math.max(
+      0,
+      Math.min(availableEnd, explicitEnd) - word.timeInMs,
+    );
   }
+};
+
+/** Splits timed pieces into words, keeping an end marker as the previous end. */
+const piecesToWords = (pieces: TimedPiece[]): LyricWord[] => {
+  const words: LyricWord[] = [];
+
+  for (const piece of pieces) {
+    if (!piece.text.trim()) {
+      const previous = words.at(-1);
+      if (previous && !piece.text) {
+        previous.duration = Math.max(0, piece.timeInMs - previous.timeInMs);
+      }
+      continue;
+    }
+
+    words.push({ ...piece, duration: 0 });
+  }
+
+  return words;
 };
 
 export const LRC = {
@@ -143,11 +171,12 @@ export const LRC = {
       }
 
       const pieces = parseTimedPieces(line);
-      const words: LyricWord[] = pieces
-        .filter((piece) => piece.text.trim() !== '')
-        .map((piece) => ({ ...piece, duration: 0 }));
+      const words = piecesToWords(pieces);
       const content = words.length
-        ? words.map((word) => word.text).join('').trim()
+        ? words
+            .map((word) => word.text)
+            .join('')
+            .trim()
         : line.trim();
 
       for (const { time, timeInMs } of timestamps) {

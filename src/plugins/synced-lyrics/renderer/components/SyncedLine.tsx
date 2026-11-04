@@ -1,10 +1,17 @@
-import { createEffect, For, Show, createSignal, createMemo } from 'solid-js';
+import {
+  createEffect,
+  For,
+  Show,
+  createSignal,
+  createMemo,
+  onCleanup,
+} from 'solid-js';
 import { type VirtualizerHandle } from 'virtua/solid';
 
-import { type LineLyrics } from '@/plugins/synced-lyrics/types';
+import { type LineLyrics, type LyricWord } from '@/plugins/synced-lyrics/types';
 
 import { _ytAPI } from '..';
-import { config, currentTime } from '../renderer';
+import { config, currentTime, getPlaybackTime } from '../renderer';
 import { lyricsStore } from '../store';
 import { getLineTranslation } from '../translation-store';
 import {
@@ -118,10 +125,72 @@ export const SyncedLine = (props: SyncedLineProps) => {
     return getLineTranslation(videoId, lyricIndex) ?? '';
   });
 
+  // Timed words let every effect step each word on as it is sung.
+  const timedWords = () => Boolean(props.line.words?.length);
+  const hasContent = () => Boolean(text() || props.line.background?.length);
+
+  /** Word element per timing, filled in by the karaoke loop below. */
+  const wordElements = new Map<LyricWord, HTMLElement>();
+
+  // Timed words light up as they are sung, on animation frames between the
+  // player's ~4 Hz progress ticks so each word lands on time.
+  createEffect(() => {
+    const line = props.line;
+    const status = props.status;
+    const words = [...(line.words ?? []), ...(line.background ?? [])];
+    if (!words.length || status !== 'current') return;
+
+    const sung = new Map<LyricWord, boolean>();
+    let frame = 0;
+
+    const tick = () => {
+      const time = getPlaybackTime();
+
+      for (const word of words) {
+        const element = wordElements.get(word);
+        if (!element) continue;
+
+        const isSung = time >= word.timeInMs;
+        if (sung.get(word) !== isSung) {
+          sung.set(word, isSung);
+          element.classList.toggle('sung', isSung);
+        }
+      }
+
+      frame = requestAnimationFrame(tick);
+    };
+
+    frame = requestAnimationFrame(tick);
+    onCleanup(() => cancelAnimationFrame(frame));
+  });
+
+  const wordSpans = (words: LyricWord[]) => (
+    <For each={words}>
+      {(word) => {
+        const trimmed = word.text.trimEnd();
+        return (
+          <>
+            <span
+              class="lyrics-word"
+              ref={(element: HTMLElement) => wordElements.set(word, element)}
+            >
+              {trimmed}
+            </span>
+            {trimmed === word.text ? undefined : ' '}
+          </>
+        );
+      }}
+    </For>
+  );
+
   return (
-    <Show fallback={<EmptyLine {...props} />} when={text()}>
+    <Show fallback={<EmptyLine {...props} />} when={hasContent()}>
       <div
-        class={`synced-line ${props.status}`}
+        class={`synced-line ${props.status}${
+          timedWords() ? ' word-synced' : ''
+        }${props.line.alignment === 'end' ? ' singer-right' : ''}${
+          props.line.rtl ? ' rtl-text' : ''
+        }`}
         onClick={() => {
           _ytAPI?.seekTo((props.line.timeInMs + 10) / 1000);
         }}
@@ -152,26 +221,44 @@ export const SyncedLine = (props: SyncedLineProps) => {
             }}
             style={{ 'display': 'flex', 'flex-direction': 'column' }}
           >
-            <span dir="auto">
-              <For each={text().split(' ')}>
-                {(word, index) => {
-                  return (
-                    <span
-                      style={{
-                        'transition-delay': `${index() * 0.05}s`,
-                        'animation-delay': `${index() * 0.05}s`,
-                      }}
-                    >
-                      <yt-formatted-string
-                        text={{
-                          runs: [{ text: `${word} ` }],
-                        }}
-                      />
-                    </span>
-                  );
-                }}
-              </For>
-            </span>
+            <Show
+              fallback={
+                <span dir="auto">
+                  <For each={text().split(' ')}>
+                    {(word, index) => {
+                      return (
+                        <span
+                          style={{
+                            'transition-delay': `${index() * 0.05}s`,
+                            'animation-delay': `${index() * 0.05}s`,
+                          }}
+                        >
+                          <yt-formatted-string
+                            text={{
+                              runs: [{ text: `${word} ` }],
+                            }}
+                          />
+                        </span>
+                      );
+                    }}
+                  </For>
+                </span>
+              }
+              when={timedWords()}
+            >
+              <span class="lyrics-words" dir={props.line.rtl ? 'rtl' : 'auto'}>
+                {wordSpans(props.line.words!)}
+              </span>
+            </Show>
+
+            <Show when={props.line.background?.length}>
+              <span
+                class="background-vocals"
+                dir={props.line.rtl ? 'rtl' : 'auto'}
+              >
+                {wordSpans(props.line.background!)}
+              </span>
+            </Show>
 
             <Show
               when={

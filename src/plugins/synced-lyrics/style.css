@@ -162,13 +162,48 @@
   transition: opacity var(--lyrics-opacity-transition);
 }
 
+/* Timed words are laid out as individual spans. */
+.lyrics-word {
+  white-space: pre;
+}
+
+.background-vocals {
+  display: block;
+  margin-top: 0.1em;
+  font-size: 0.65em;
+  font-weight: var(--lyrics-inactive-font-weight) !important;
+  line-height: 1.2 !important;
+  color: var(--ytmusic-text-secondary) !important;
+}
+
+/* Duet lines sit on the opposite side from the other singer. */
+.synced-line.singer-right .description {
+  text-align: right !important;
+}
+
+.synced-line.singer-right .text-lyrics {
+  transform-origin: 100% 50%;
+}
+
 .current .text-lyrics {
   font-weight: var(--lyrics-active-font-weight) !important;
   scale: var(--lyrics-active-scale);
   translate: var(--lyrics-active-offset);
 }
 
-.current .text-lyrics > span > span {
+.current .text-lyrics > span:not(.lyrics-words):not(.background-vocals) > span {
+  opacity: var(--lyrics-active-opacity);
+  animation: var(--lyrics-animations);
+}
+
+/* Word-timed highlighting for every effect: a word lights up (and runs the
+   effect's word animation) when the singer reaches it. */
+.current .lyrics-word {
+  opacity: var(--lyrics-inactive-opacity);
+  transition: opacity var(--lyrics-opacity-transition);
+}
+
+.current .lyrics-word.sung {
   opacity: var(--lyrics-active-opacity);
   animation: var(--lyrics-animations);
 }

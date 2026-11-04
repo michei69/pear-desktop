@@ -1,5 +1,5 @@
-import { Window } from 'happy-dom';
 import { test, expect } from '@playwright/test';
+import { Window } from 'happy-dom';
 
 import { parseTTML, parseTTMLTime } from './ttml';
 
@@ -37,11 +37,11 @@ test('word and syllable timings, background vocals and line end', () => {
   expect(first.text).toBe('Hello world');
   expect(first.words).toStrictEqual([
     { duration: 500, text: 'Hello ', timeInMs: 1000 },
-    { duration: 1500, text: 'world ', timeInMs: 1500 },
+    { duration: 700, text: 'world ', timeInMs: 1500 },
   ]);
   expect(first.background).toStrictEqual([
     { duration: 300, text: '(ooh ', timeInMs: 2300 },
-    { duration: 400, text: 'yeah)', timeInMs: 2600 },
+    { duration: 300, text: 'yeah)', timeInMs: 2600 },
   ]);
 
   expect(second.timeInMs).toBe(4000);

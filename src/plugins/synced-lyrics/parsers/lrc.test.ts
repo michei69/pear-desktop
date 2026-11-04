@@ -179,6 +179,17 @@ test('last word duration stops at the next line', () => {
   });
 });
 
+test('a trailing karaoke tag ends the last word', () => {
+  const lrc = LRC.parse(`\
+[00:06.00]<00:06.00>hello <00:06.50>world <00:07.00>
+[00:09.00]Next`);
+
+  expect(lrc.lines[1].words).toStrictEqual([
+    { duration: 500, text: 'hello ', timeInMs: 6000 },
+    { duration: 500, text: 'world ', timeInMs: 6500 },
+  ]);
+});
+
 test('offset shifts lines and words', () => {
   const lrc = LRC.parse(`\
 [offset:500]

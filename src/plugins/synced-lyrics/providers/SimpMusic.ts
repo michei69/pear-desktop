@@ -23,26 +23,59 @@ type SimpMusicEntry = {
 const textOf = (value: unknown) =>
   typeof value === 'string' ? value.trim() : '';
 
-const ENTITIES: Record<string, string> = {
+const NAMED_ENTITIES: Record<string, string> = {
   'amp': '&',
   'lt': '<',
   'gt': '>',
   'quot': '"',
   'apos': "'",
-  '#39': "'",
+  'nbsp': '\u00a0',
+  'hellip': '…',
+  'mdash': '—',
+  'ndash': '–',
+  'lsquo': '‘',
+  'rsquo': '’',
+  'ldquo': '“',
+  'rdquo': '”',
+  'middot': '·',
+  'bull': '•',
+  'copy': '©',
+  'reg': '®',
+  'trade': '™',
+  'deg': '°',
 };
 
+const ENTITY = /&(#x[0-9a-f]+|#\d+|[a-z][a-z0-9]*);/gi;
+
+/**
+ * SimpMusic puts HTML entities in its payloads, including numeric ones such as
+ * `&#x27;` that a named-entity table alone leaves visible in the lyrics.
+ */
 export const decodeHtmlEntities = (text: string) =>
-  text.replace(/&(#?\w+);/g, (match, name: string) => {
-    return ENTITIES[name.toLowerCase()] ?? match;
+  text.replace(ENTITY, (match, entity: string) => {
+    if (entity.startsWith('#')) {
+      const codePoint =
+        entity[1]?.toLowerCase() === 'x'
+          ? Number.parseInt(entity.slice(2), 16)
+          : Number.parseInt(entity.slice(1), 10);
+
+      return Number.isFinite(codePoint) &&
+        codePoint > 0 &&
+        codePoint <= 0x10ffff
+        ? String.fromCodePoint(codePoint)
+        : match;
+    }
+
+    return NAMED_ENTITIES[entity.toLowerCase()] ?? match;
   });
 
-const RICH_LINE = /^\[(\d+):(\d+(?:[.:]\d+)?)\](.*)$/;
-const WORD_TAG = /<\d+:\d+[.:]\d+>/g;
-/** Apple Music marks the singer of a word-synced line with `v1:`/`v2:`. */
-const SINGER_PREFIX = /^v\d+:\s*/;
+const RICH_LINE = /^\[(\d+):(\d+(?:[.:]\d+)?)\](?:v\d+:\s*)?(.*)$/;
 
-/** Apple-Music-style rich sync (`[line]<word time>...`) to line-synced LRC. */
+/**
+ * Apple-Music-style rich sync (`[line]v1:<word time>text ...`) to enhanced
+ * LRC: the word tags are kept so the line parser can build the karaoke words,
+ * only the singer prefix is dropped.
+ */
 export const richSyncToLrc = (rich: string): string =>
   rich
     .split(/\r?\n/)
@@ -51,13 +84,7 @@ export const richSyncToLrc = (rich: string): string =>
       if (!match) return '';
 
       const [, minutes, seconds, rest] = match;
-      const text = rest
-        .replace(WORD_TAG, '')
-        .replace(SINGER_PREFIX, '')
-        .replace(/\s+/g, ' ')
-        .trim();
-
-      return text ? `[${minutes}:${seconds}]${text}` : '';
+      return rest.trim() ? `[${minutes}:${seconds}]${rest.trim()}` : '';
     })
     .filter(Boolean)
     .join('\n');

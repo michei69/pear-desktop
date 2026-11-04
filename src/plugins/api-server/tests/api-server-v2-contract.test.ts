@@ -1680,14 +1680,14 @@ test('getLyrics reports every provider with lyrics, in provider order', async ()
     videoId: 'vid-1',
     provider: 'NetEase',
     states: lyricsStates({
-      LRCLib: {
+      'LRCLib': {
         data: { title: 'Song', artists: ['Artist'], lyrics: 'plain words' },
       },
-      MusixMatch: { state: 'error', error: new Error('down') },
-      LyricsGenius: {
+      'MusixMatch': { state: 'error', error: new Error('down') },
+      'lrc.red': {
         data: { title: 'Song', artists: ['Artist'], lines: [syncedLine] },
       },
-      NetEase: { state: 'fetching' },
+      'NetEase': { state: 'fetching' },
     }),
   });
 
@@ -1697,14 +1697,7 @@ test('getLyrics reports every provider with lyrics, in provider order', async ()
     activeProvider: 'NetEase',
     providers: [
       {
-        provider: 'LRCLib',
-        state: 'done',
-        title: 'Song',
-        artists: ['Artist'],
-        lyrics: 'plain words',
-      },
-      {
-        provider: 'LyricsGenius',
+        provider: 'lrc.red',
         state: 'done',
         title: 'Song',
         artists: ['Artist'],
@@ -1717,11 +1710,18 @@ test('getLyrics reports every provider with lyrics, in provider order', async ()
           },
         ],
       },
+      {
+        provider: 'LRCLib',
+        state: 'done',
+        title: 'Song',
+        artists: ['Artist'],
+        lyrics: 'plain words',
+      },
     ],
   });
 
   // The UI-only field is stripped, not carried along as undefined.
-  const [line] = (payload as { providers: { lines: object[] }[] }).providers[1]
+  const [line] = (payload as { providers: { lines: object[] }[] }).providers[0]
     .lines;
   expect('status' in line).toBe(false);
 });
