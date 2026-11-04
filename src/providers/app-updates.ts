@@ -17,6 +17,11 @@ import { LoggerPrefix } from '@/utils';
 const REPO = 'michei69/pear-desktop';
 const REPO_URL = `https://github.com/${REPO}`;
 const COMMITS_URL = `${REPO_URL}/commits/master`;
+/**
+ * How often a running app looks again: beta users must hear about the next beta
+ * without restarting, and a release only lands on the feed after the publish
+ * job. Six hours catches a working day's builds without hammering the feed.
+ */
 const RECHECK_MS = 6 * 60 * 60 * 1000;
 const DOWNLOAD_TIMEOUT_MS = 15 * 60 * 1000;
 
@@ -322,6 +327,7 @@ export const checkForAppUpdates = async (): Promise<void> => {
  */
 export const setupAutoUpdates = (mainWindow: BrowserWindow) => {
   win = mainWindow;
+  // The dialog offers the download; the updater does not grab it.
   autoUpdater.autoDownload = false;
   autoUpdater.autoInstallOnAppQuit = false;
 
