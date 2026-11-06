@@ -7,6 +7,7 @@ import { waitForElement } from '@/utils/wait-for-element';
 
 import { Connection, type ConnectionEventUnion } from './connection';
 import { runDiagnostics } from './diagnostics';
+import { createIgnoreGate, type IgnoreGate } from './ignore-gate';
 import { Queue } from './queue';
 import style from './style.css?inline';
 import settingHTML from './templates/setting.html?raw';
@@ -74,6 +75,15 @@ const applyProgressSync = (
   }
 };
 
+/**
+ * `selectedIndex` is -1 while YouTube Music rebuilds the queue. Broadcasting
+ * that would clear the peer's current row, so leave the field out instead.
+ */
+const indexPayload = (queue: Queue | undefined) => {
+  const index = queue?.selectedIndex ?? -1;
+  return index >= 0 ? { index } : {};
+};
+
 type RawAccountData = {
   accountName: {
     runs: { text: string }[];
@@ -111,7 +121,8 @@ export default createPlugin<
       spinner: HTMLElement;
     };
     updateNext: boolean;
-    ignoreChange: boolean;
+    /** Holds outgoing player state while a remote edit is being applied. */
+    ignoreGate: IgnoreGate;
     /** Timestamp of the last progress broadcast, throttling `onVideoProgress`. */
     lastProgressAt: number;
     diagnosticsRunning: boolean;
@@ -164,7 +175,7 @@ export default createPlugin<
   },
   renderer: {
     updateNext: false,
-    ignoreChange: false,
+    ignoreGate: createIgnoreGate(),
     lastProgressAt: 0,
     diagnosticsRunning: false,
     diagnosticsRun: 0,
@@ -195,12 +206,7 @@ export default createPlugin<
       // Keep the local owner list aligned with the queue YTM rendered:
       // autoplay/radio can append items that never arrive as ADD_SONGS.
       if (this.queue) {
-        const videoList: VideoData[] = this.queue.flatItems.map(
-          (it, index) => ({
-            videoId: it!.videoId,
-            ownerId: this.queue?.videoList[index]?.ownerId ?? connection.id,
-          }),
-        );
+        const videoList = this.queue.videoDataFromQueue();
 
         this.queue.setVideoList(videoList, false);
         this.queue.syncQueueOwner();
@@ -209,15 +215,16 @@ export default createPlugin<
         await connection.broadcast('SYNC_QUEUE', { videoList });
       }
 
-      await connection.broadcast('SET_INDEX', {
-        index: this.queue?.selectedIndex ?? 0,
-      });
+      // `selectedIndex` is -1 when YouTube Music has no current row; sending
+      // that would clear the guest's selection, so only sync a real row.
+      const index = this.queue?.selectedIndex ?? -1;
+      if (index >= 0) await connection.broadcast('SET_INDEX', { index });
 
       this.updateNext = event.detail.name === 'dataloaded';
     },
 
     async videoStateChangeListener() {
-      if (this.ignoreChange) return;
+      if (this.ignoreGate.active) return;
 
       const state = this.playerApi?.getPlayerState();
       if (state !== 1 && state !== 2) return;
@@ -228,7 +235,7 @@ export default createPlugin<
         await this.connection.broadcast('SYNC_PROGRESS', {
           progress: this.playerApi?.getCurrentTime(),
           state,
-          index: this.queue?.selectedIndex ?? 0,
+          ...indexPayload(this.queue),
         });
         return;
       }
@@ -242,7 +249,7 @@ export default createPlugin<
     },
 
     async progressListener(seconds: number) {
-      if (this.ignoreChange) return;
+      if (this.ignoreGate.active) return;
       if (this.connection?.mode !== 'host') return;
       // Paused playback reports progress too, but nothing needs syncing then.
       if (this.playerApi?.getPlayerState() !== 1) return;
@@ -256,7 +263,7 @@ export default createPlugin<
       await this.connection.broadcast('SYNC_PROGRESS', {
         progress: seconds,
         state: 1,
-        index: this.queue?.selectedIndex ?? 0,
+        ...indexPayload(this.queue),
       });
     },
 
@@ -282,15 +289,7 @@ export default createPlugin<
         id: this.connection.id,
         ...this.me,
       });
-      const rawItems =
-        this.queue?.flatItems?.map(
-          (it) =>
-            ({
-              videoId: it!.videoId,
-              ownerId: this.connection!.id,
-            }) satisfies VideoData,
-        ) ?? [];
-      this.queue?.setVideoList(rawItems, false);
+      this.queue?.setVideoList(this.queue.videoDataFromQueue(), false);
       this.queue?.syncQueueOwner();
       this.queue?.initQueue();
       this.queue?.injection();
@@ -316,12 +315,10 @@ export default createPlugin<
         }
       });
 
-      const listener = async (
+      const handleEvent = async (
         event: ConnectionEventUnion,
         conn?: DataConnection | null,
       ) => {
-        this.ignoreChange = true;
-
         switch (event.type) {
           case 'CLEAR_QUEUE': {
             if (conn && this.permission === 'host-only') {
@@ -336,6 +333,13 @@ export default createPlugin<
             break;
           }
           case 'SET_INDEX': {
+            if (typeof event.payload?.index !== 'number') {
+              console.warn(
+                'Music Together [Host]: Received "SET_INDEX" without an index',
+              );
+              break;
+            }
+
             this.queue?.setIndex(event.payload.index);
             await this.connection?.broadcast('SET_INDEX', {
               index: event.payload.index,
@@ -350,6 +354,13 @@ export default createPlugin<
               return;
             }
 
+            if (!Array.isArray(event.payload?.videoList)) {
+              console.warn(
+                'Music Together [Host]: Received "ADD_SONGS" without a list',
+              );
+              break;
+            }
+
             const videoList: VideoData[] = event.payload.videoList.map(
               (it) => ({
                 ...it,
@@ -357,7 +368,19 @@ export default createPlugin<
               }),
             );
 
-            await this.queue?.addVideos(videoList, event.payload.index);
+            const applied = await this.queue?.addVideos(
+              videoList,
+              event.payload.index,
+            );
+            if (applied === false) {
+              // The rows could not be resolved locally, so inserting them on
+              // the peers would leave them with a track the host does not have.
+              await this.connection?.broadcast('SYNC_QUEUE', {
+                videoList: this.queue?.videoList ?? [],
+              });
+              break;
+            }
+
             await this.connection?.broadcast(
               'ADD_SONGS',
               {
@@ -382,6 +405,13 @@ export default createPlugin<
               return;
             }
 
+            if (typeof event.payload?.index !== 'number') {
+              console.warn(
+                'Music Together [Host]: Received "REMOVE_SONG" without an index',
+              );
+              break;
+            }
+
             this.queue?.removeVideo(event.payload.index);
             await this.connection?.broadcast('REMOVE_SONG', event.payload);
             break;
@@ -394,6 +424,16 @@ export default createPlugin<
               break;
             }
 
+            if (
+              typeof event.payload?.fromIndex !== 'number' ||
+              typeof event.payload?.toIndex !== 'number'
+            ) {
+              console.warn(
+                'Music Together [Host]: Received "MOVE_SONG" without indices',
+              );
+              break;
+            }
+
             this.queue?.moveItem(
               event.payload.fromIndex,
               event.payload.toIndex,
@@ -402,7 +442,11 @@ export default createPlugin<
             break;
           }
           case 'IDENTIFY': {
-            if (!event.payload || !conn) {
+            if (
+              !event.payload?.profile ||
+              typeof event.payload.profile !== 'object' ||
+              !conn
+            ) {
               console.warn(
                 'Music Together [Host]: Received "IDENTIFY" event without payload or connection',
               );
@@ -440,7 +484,7 @@ export default createPlugin<
             await this.connection?.broadcast('SYNC_PROGRESS', {
               progress: this.playerApi?.getCurrentTime(),
               state: this.playerApi?.getPlayerState(),
-              index: this.queue?.selectedIndex ?? 0,
+              ...indexPayload(this.queue),
             });
             break;
           }
@@ -473,12 +517,20 @@ export default createPlugin<
           }
         }
       };
+      const listener = async (
+        event: ConnectionEventUnion,
+        conn?: DataConnection | null,
+      ) => {
+        this.ignoreGate.hold();
+        try {
+          await handleEvent(event, conn);
+        } finally {
+          this.ignoreGate.release();
+        }
+      };
       this.connection.on(listener);
       this.queue?.on(listener);
 
-      setTimeout(() => {
-        this.ignoreChange = false;
-      }, 16); // wait 1 frame
       return true;
     },
 
@@ -522,21 +574,23 @@ export default createPlugin<
         }
       });
 
-      let resolveIgnore: number | null = null;
-      const queueListener = async (event: ConnectionEventUnion) => {
-        this.ignoreChange = true;
+      const handleQueueEvent = async (event: ConnectionEventUnion) => {
         switch (event.type) {
           case 'CLEAR_QUEUE': {
             await this.connection?.broadcast('CLEAR_QUEUE', null);
             break;
           }
           case 'SET_INDEX': {
+            if (typeof event.payload?.index !== 'number') break;
+
             await this.connection?.broadcast('SET_INDEX', {
               index: event.payload.index,
             });
             break;
           }
           case 'ADD_SONGS': {
+            if (!Array.isArray(event.payload?.videoList)) break;
+
             await this.connection?.broadcast(
               'ADD_SONGS',
               {
@@ -566,24 +620,30 @@ export default createPlugin<
             break;
           }
         }
-
-        if (typeof resolveIgnore === 'number') clearTimeout(resolveIgnore);
-        resolveIgnore = window.setTimeout(() => {
-          this.ignoreChange = false;
-        }, 16);
       };
-      const listener = async (event: ConnectionEventUnion) => {
-        this.ignoreChange = true;
+      const queueListener = async (event: ConnectionEventUnion) => {
+        this.ignoreGate.hold();
+        try {
+          await handleQueueEvent(event);
+        } finally {
+          this.ignoreGate.release();
+        }
+      };
+      const handleGuestEvent = async (event: ConnectionEventUnion) => {
         switch (event.type) {
           case 'CLEAR_QUEUE': {
             this.queue?.clear();
             break;
           }
           case 'SET_INDEX': {
+            if (typeof event.payload?.index !== 'number') break;
+
             this.queue?.setIndex(event.payload.index);
             break;
           }
           case 'ADD_SONGS': {
+            if (!Array.isArray(event.payload?.videoList)) break;
+
             const videoList: VideoData[] = event.payload.videoList.map(
               (it) => ({
                 ...it,
@@ -601,10 +661,19 @@ export default createPlugin<
             break;
           }
           case 'REMOVE_SONG': {
+            if (typeof event.payload?.index !== 'number') break;
+
             this.queue?.removeVideo(event.payload.index);
             break;
           }
           case 'MOVE_SONG': {
+            if (
+              typeof event.payload?.fromIndex !== 'number' ||
+              typeof event.payload?.toIndex !== 'number'
+            ) {
+              break;
+            }
+
             this.queue?.moveItem(
               event.payload.fromIndex,
               event.payload.toIndex,
@@ -624,7 +693,11 @@ export default createPlugin<
             break;
           }
           case 'SYNC_PROFILE': {
-            if (!event.payload) {
+            if (
+              !event.payload ||
+              typeof event.payload.profiles !== 'object' ||
+              event.payload.profiles === null
+            ) {
               console.warn(
                 'Music Together [Guest]: Received "SYNC_PROFILE" event without payload',
               );
@@ -632,7 +705,7 @@ export default createPlugin<
             }
 
             Object.entries(event.payload.profiles).forEach(([id, profile]) => {
-              this.putProfile(id, profile);
+              if (profile) this.putProfile(id, profile);
             });
             break;
           }
@@ -677,11 +750,14 @@ export default createPlugin<
             break;
           }
         }
-
-        if (typeof resolveIgnore === 'number') clearTimeout(resolveIgnore);
-        resolveIgnore = window.setTimeout(() => {
-          this.ignoreChange = false;
-        }, 16);
+      };
+      const listener = async (event: ConnectionEventUnion) => {
+        this.ignoreGate.hold();
+        try {
+          await handleGuestEvent(event);
+        } finally {
+          this.ignoreGate.release();
+        }
       };
 
       this.connection.on(listener);
@@ -766,7 +842,7 @@ export default createPlugin<
       }
 
       this.updateNext = false;
-      this.ignoreChange = false;
+      this.ignoreGate.reset();
       this.lastProgressAt = 0;
 
       this.profiles = {};

@@ -1,5 +1,11 @@
 {
   "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "paths": {
+      "@/*": ["./src/*"],
+      "virtual:i18n": ["./tests/helpers/virtual-i18n.ts"]
+    }
+  },
   "exclude": ["./dist"],
   "include": ["playwright.config.ts", "./tests/**/*", "./src/**/*.d.ts"]
 }

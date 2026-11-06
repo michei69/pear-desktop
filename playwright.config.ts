@@ -9,6 +9,7 @@ const ELECTRON_TESTS = [
 
 export default defineConfig({
   testDir: '.',
+  tsconfig: './tsconfig.test.json',
   timeout: 60_000,
   expect: { timeout: 10_000 },
   fullyParallel: false,

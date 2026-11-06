@@ -1,7 +1,18 @@
 import { t } from '@/i18n';
 
 import { getMusicQueueRenderer } from './song';
-import { hasSameVideoIds, mapQueueItem } from './utils';
+import {
+  hasSameVideoIds,
+  indexOfQueueVideoId,
+  insertVideoData,
+  mapQueueItem,
+  moveVideoData,
+  queueEntries,
+  queueVideoIds,
+  reconcileVideoData,
+  removeVideoData,
+  selectedQueueIndex,
+} from './utils';
 
 import { getDefaultProfile, type Profile, type VideoData } from '../types';
 
@@ -130,6 +141,20 @@ export class Queue {
 
   /** Set while a queued `syncVideo` fetch is waiting for the debounce. */
   private syncTimeout?: number;
+  /** Bumped when a newer full sync supersedes one that is already in flight. */
+  private syncToken = 0;
+  /** Bumped on a local queue edit so in-flight fetches cannot undo it. */
+  private revision = 0;
+  /** Bumped on clear so a stale fetch cannot repopulate the queue. */
+  private generation = 0;
+  /** Runs the queue fetches one at a time, in the order the events arrived. */
+  private mutations: Promise<unknown> = Promise.resolve();
+  /** Last index either peer asked for; restored after a full queue replacement. */
+  private requestedIndex?: number;
+  /** Index a peer sent while a full sync was pending, to apply after it. */
+  private pendingSyncIndex?: number;
+  /** Set while `replaceQueue` holds the queue being replaced. */
+  private syncing = false;
   /** Set while an owner-marker patch is waiting for the next frame. */
   private ownerFrame?: number;
   /** Last owner data written per rendered row, to skip unchanged rows. */
@@ -153,73 +178,157 @@ export class Queue {
   }
 
   get selectedIndex() {
-    this.cachedSelectedIndex ??= mapQueueItem(
-      (it) => it?.selected,
-      this.queue.queue.store.store.getState().queue.items,
-    ).findIndex(Boolean);
+    this.cachedSelectedIndex ??= selectedQueueIndex(this.rawItems);
 
     return this.cachedSelectedIndex;
   }
 
-  get rawItems() {
-    return this.queue?.queue.store.store.getState().queue.items;
-  }
-
-  get flatItems() {
-    return mapQueueItem((it) => it, this.rawItems);
+  get rawItems(): QueueItem[] {
+    return this.queue?.queue.store.store.getState().queue.items ?? [];
   }
 
   setOwner(owner: Profile) {
     this.owner = owner;
   }
 
+  /** The rendered queue as owner data, for broadcasting a full queue sync. */
+  videoDataFromQueue() {
+    return this.currentVideoData();
+  }
+
+  /** The owner mirror the rendered queue store implies, in store order. */
+  private currentVideoData(): VideoData[] {
+    return queueVideoIds(this.rawItems).map((videoId, index) => ({
+      videoId: videoId ?? '',
+      ownerId: this._videoList[index]?.ownerId ?? this.owner?.id ?? '',
+    }));
+  }
+
+  /**
+   * Rebuilds the owner mirror from the store. Every queue edit ends here, so a
+   * stale index from a peer can never leave the mirror one row behind the list
+   * YouTube Music actually renders.
+   */
+  private reconcileVideoList() {
+    this._videoList = reconcileVideoData(
+      this._videoList,
+      this.rawItems,
+      this.owner?.id ?? '',
+    );
+  }
+
+  /** Dispatches through the wrapped store without re-broadcasting the edit. */
+  private dispatchInternal(event: { type: string; payload?: unknown }) {
+    this.internalDispatch = true;
+    try {
+      this.queue?.dispatch(event);
+    } finally {
+      this.internalDispatch = false;
+    }
+  }
+
+  /** Runs the queue fetches in order, so rapid edits cannot be reordered. */
+  private serialize<T>(task: () => Promise<T>): Promise<T> {
+    const result = this.mutations.then(task, task);
+    this.mutations = result.then(
+      () => undefined,
+      () => undefined,
+    );
+
+    return result;
+  }
+
+  private afterMutation() {
+    setTimeout(() => {
+      this.initQueue();
+      this.syncQueueOwner();
+    }, 0);
+  }
+
   /* public */
   setVideoList(videoList: VideoData[], sync = true) {
-    const sameVideos = hasSameVideoIds(videoList, this._videoList);
+    // The list comes from the peer: drop anything that is not a real row so a
+    // malformed message cannot poison the owner mirror.
+    const videos = videoList.filter(
+      (it): it is VideoData => Boolean(it) && typeof it.videoId === 'string',
+    );
 
-    this._videoList = videoList;
+    // Compare against the rows YouTube Music actually has, not against the
+    // cached mirror: an optimistic local edit must never hide a missing row.
+    const sameVideos = hasSameVideoIds(videos, this.currentVideoData());
+
+    this._videoList = videos;
 
     if (!sync) return;
 
+    // An empty host queue means the rendered queue is gone; the store has to
+    // follow instead of keeping rows nobody can play.
+    if (!videos.length) {
+      if (this.rawItems.length) this.clear();
+      return;
+    }
+
     // A repeated full sync (the host re-sends on joins and permission
     // rejections) does not need another `/music/get_queue` fetch or re-render.
+    // It also supersedes any sync still queued or running for an older list.
     if (sameVideos) {
+      clearTimeout(this.syncTimeout);
+      this.syncTimeout = undefined;
+      this.syncToken += 1;
       this.syncQueueOwner();
       return;
     }
 
     clearTimeout(this.syncTimeout);
-    this.syncTimeout = window.setTimeout(async () => {
+    const token = ++this.syncToken;
+    this.syncTimeout = window.setTimeout(() => {
       this.syncTimeout = undefined;
-      await this.syncVideo();
+      if (token !== this.syncToken) return;
+      this.syncVideo().catch((error: unknown) =>
+        console.warn('Music Together: queue sync failed', error),
+      );
     }, SYNC_DEBOUNCE_MS);
   }
 
-  async addVideos(videos: VideoData[], index?: number) {
+  async addVideos(videoData: VideoData[], index?: number) {
+    // Same guard as `setVideoList`: these rows arrive over the wire.
+    const videos = videoData.filter(
+      (it): it is VideoData =>
+        Boolean(it) && typeof it.videoId === 'string' && it.videoId.length > 0,
+    );
+    if (!videos.length) return false;
+
+    return this.serialize(() => this.insertVideos(videos, index)).catch(
+      (error: unknown) => {
+        console.warn('Music Together: queue insert failed', error);
+        return false;
+      },
+    );
+  }
+
+  private async insertVideos(videos: VideoData[], index?: number) {
+    const generation = this.generation;
     const response = await getMusicQueueRenderer(
       videos.map((it) => it.videoId),
     );
-    if (!response) return false;
+    if (!response || generation !== this.generation) return false;
 
     const items = response.queueDatas.map((it) => it?.content).filter(Boolean);
     if (!items.length) return false;
 
-    this.internalDispatch = true;
-    this._videoList = this._videoList.map(
-      (it) =>
-        ({
-          videoId: it.videoId,
-          ownerId: it.ownerId ?? this.owner!.id,
-        }) satisfies VideoData,
-    );
+    // The payload index addresses the rendered queue, so clamp it there; the
+    // mirror is rebuilt from the store right after the dispatch anyway.
+    const length = this.rawItems.length;
+    const indexToUse = Number.isInteger(index)
+      ? Math.min(Math.max(index!, 0), length)
+      : length;
 
-    const state = this.queue.queue.store.store.getState();
-    const indexToUse = index ?? this._videoList.length;
-
-    this.queue?.dispatch({
+    this.revision += 1;
+    this.dispatchInternal({
       type: 'ADD_ITEMS',
       payload: {
-        nextQueueItemId: state.queue.nextQueueItemId,
+        nextQueueItemId:
+          this.queue.queue.store.store.getState().queue.nextQueueItemId,
         // The queue store inserts before `index`; indexToUse is the plain
         // _videoList position.
         index: indexToUse,
@@ -229,63 +338,64 @@ export class Queue {
       },
     });
 
-    const insertedItem = this._videoList[indexToUse];
-    if (
-      !insertedItem ||
-      (insertedItem.videoId !== videos[0].videoId &&
-        insertedItem.ownerId !== videos[0].ownerId)
-    ) {
-      this._videoList.splice(
-        indexToUse,
-        0,
-        ...videos.map((it) => ({
-          ...it,
-          ownerId: it.ownerId ?? this.owner?.id,
-        })),
-      );
-    }
+    // The server can return a different number of rows than requested (an
+    // unavailable track, for instance); mirror whatever the store inserted.
+    this._videoList = insertVideoData(
+      this._videoList,
+      videos.map(
+        (it) =>
+          ({
+            videoId: it.videoId,
+            ownerId: it.ownerId ?? this.owner?.id ?? '',
+          }) satisfies VideoData,
+      ),
+      indexToUse,
+    );
+    this.reconcileVideoList();
 
-    this.internalDispatch = false;
-    setTimeout(() => {
-      this.initQueue();
-      this.syncQueueOwner();
-    }, 0);
+    this.afterMutation();
 
     return true;
   }
 
   removeVideo(index: number) {
-    if (
-      !Number.isInteger(index) ||
-      index < 0 ||
-      index >= this._videoList.length
-    )
+    if (!Number.isInteger(index) || index < 0 || index >= this.rawItems.length)
       return;
-    this.internalDispatch = true;
-    this._videoList.splice(index, 1);
-    this.queue?.dispatch({
+
+    this.revision += 1;
+    this.dispatchInternal({
       type: 'REMOVE_ITEM',
       payload: index,
     });
-    this.internalDispatch = false;
-    setTimeout(() => {
-      this.initQueue();
-      this.syncQueueOwner();
-    }, 0);
+    this._videoList = removeVideoData(this._videoList, index);
+    this.reconcileVideoList();
+    this.afterMutation();
   }
 
   setIndex(index: number) {
     if (!Number.isInteger(index) || index < 0) return;
-    this.internalDispatch = true;
-    this.queue?.dispatch({
+
+    // An out-of-range SET_INDEX clears every `selected` flag in the queue
+    // store, which leaves YouTube Music with no current item: clamp it.
+    const length = this.rawItems.length;
+    const target = length > 0 ? Math.min(index, length - 1) : index;
+    this.requestedIndex = length > 0 ? target : undefined;
+
+    // A track change can arrive while the guest is re-fetching its queue. The
+    // replacement drops the selection flags, so remember this index and apply
+    // it once the new rows are in place.
+    if (this.syncing || this.syncTimeout !== undefined) {
+      this.pendingSyncIndex = target;
+    }
+
+    this.dispatchInternal({
       type: 'SET_INDEX',
-      payload: index,
+      payload: target,
     });
-    this.internalDispatch = false;
   }
 
   moveItem(fromIndex: number, toIndex: number) {
-    const length = this._videoList.length;
+    const length = this.rawItems.length;
     if (
       !Number.isInteger(fromIndex) ||
       !Number.isInteger(toIndex) ||
@@ -296,34 +406,36 @@ export class Queue {
     ) {
       return;
     }
-    this.internalDispatch = true;
-    const [data] = this._videoList.splice(fromIndex, 1);
-    if (!data) {
-      this.internalDispatch = false;
-      return;
-    }
-    this._videoList.splice(toIndex, 0, data);
-    this.queue?.dispatch({
+
+    this.revision += 1;
+    this.dispatchInternal({
       type: 'MOVE_ITEM',
       payload: {
         fromIndex,
         toIndex,
       },
     });
-    this.internalDispatch = false;
-    setTimeout(() => {
-      this.initQueue();
-      this.syncQueueOwner();
-    }, 0);
+    this._videoList = moveVideoData(this._videoList, fromIndex, toIndex);
+    this.reconcileVideoList();
+    this.afterMutation();
   }
 
   clear() {
-    this.internalDispatch = true;
+    // A queued or in-flight sync belongs to the queue being cleared: never let
+    // it repopulate the new one.
+    this.generation += 1;
+    this.syncToken += 1;
+    clearTimeout(this.syncTimeout);
+    this.syncTimeout = undefined;
+
+    this.requestedIndex = undefined;
+    this.pendingSyncIndex = undefined;
+    this.cachedSelectedIndex = undefined;
     this._videoList = [];
-    this.queue?.dispatch({
+
+    this.dispatchInternal({
       type: 'CLEAR',
     });
-    this.internalDispatch = false;
   }
 
   on(listener: QueueEventListener) {
@@ -344,6 +456,7 @@ export class Queue {
 
     clearTimeout(this.syncTimeout);
     this.syncTimeout = undefined;
+    this.syncToken += 1;
     this.cachedSelectedIndex = undefined;
 
     if (!this.originalDispatch) return;
@@ -384,95 +497,53 @@ export class Queue {
           return;
         }
         if (event.type === 'ADD_ITEMS') {
-          if (this.ignoreFlag) {
-            this.ignoreFlag = false;
-            const videoList = mapQueueItem(
-              (it) =>
-                ({
-                  videoId: it!.videoId,
-                  ownerId: this.owner!.id,
-                }) satisfies VideoData,
-              (
-                event.payload! as {
-                  items: QueueItem[];
-                }
-              ).items,
-            );
-            const index = this._videoList.length;
+          const payload = event.payload as {
+            items?: QueueItem[] | undefined;
+            index?: number;
+          };
+          const videoList = mapQueueItem(
+            (it) =>
+              ({
+                videoId: it?.videoId ?? '',
+                ownerId: this.owner!.id,
+              }) satisfies VideoData,
+            payload.items ?? [],
+          ).filter((it) => it.videoId);
 
-            if (videoList.length > 0) {
-              this._videoList = [
-                ...videoList.map((it) => ({
-                  ...it,
-                  ownerId: it.ownerId ?? this.owner?.id,
-                })),
-              ];
-              this.broadcast({
-                // play
-                type: 'ADD_SONGS',
-                payload: {
-                  videoList,
-                },
-                after: [
-                  {
-                    type: 'SET_INDEX',
-                    payload: {
-                      index,
-                    },
-                  },
-                ],
-              });
-            }
-          } else if (
-            (
-              event.payload as {
-                items: unknown[];
-              }
-            ).items.length === 1
-          ) {
-            const videoList = mapQueueItem(
-              (it) =>
-                ({
-                  videoId: it!.videoId,
-                  ownerId: this.owner!.id,
-                }) satisfies VideoData,
-              (
-                event.payload! as {
-                  items: QueueItem[];
-                }
-              ).items,
-            );
+          if (!videoList.length) return;
+
+          if (this.ignoreFlag) {
+            // A fresh playlist: the queue was cleared right before this
+            // dispatch, so the rows start at the top and playback starts there.
+            this.ignoreFlag = false;
             this.broadcast({
-              // add playlist
               type: 'ADD_SONGS',
               payload: {
-                index:
-                  event.payload && Object.hasOwn(event.payload, 'index')
-                    ? (
-                        event.payload as {
-                          index: number;
-                        }
-                      ).index
-                    : undefined,
                 videoList,
               },
+              after: [
+                {
+                  type: 'SET_INDEX',
+                  payload: {
+                    index: 0,
+                  },
+                },
+              ],
             });
-            this._videoList.splice(
-              event.payload && Object.hasOwn(event.payload, 'index')
-                ? (
-                    event.payload as {
-                      index: number;
-                    }
-                  ).index
-                : this._videoList.length,
-              0,
-              ...videoList.map((it) => ({
-                ...it,
-                ownerId: it.ownerId ?? this.owner?.id,
-              })),
-            );
+            return;
           }
 
+          // One row is "play next"/"add to queue", several rows are an album
+          // or playlist added from a menu; both insert at `index`.
+          this.broadcast({
+            type: 'ADD_SONGS',
+            payload: {
+              index: Object.hasOwn(payload, 'index')
+                ? payload.index
+                : undefined,
+              videoList,
+            },
+          });
           return;
         }
 
@@ -521,7 +592,7 @@ export class Queue {
         if (event.type === 'SET_PLAYER_UI_STATE') {
           if (
             (event.payload as string) === 'INACTIVE' &&
-            this.videoList.length > 0
+            this.rawItems.length > 0
           ) {
             return;
           }
@@ -557,46 +628,125 @@ export class Queue {
     if (!this.queue) return;
 
     this.internalDispatch = true;
-    this.queue.dispatch({
-      type: 'HAS_SHOWN_AUTOPLAY',
-      payload: false,
-    });
-    this.queue.dispatch({
-      type: 'SET_HEADER',
-      payload: getHeaderPayload(),
-    });
-    this.queue.dispatch({
-      type: 'CLEAR_STEERING_CHIPS',
-    });
-    this.internalDispatch = false;
+    try {
+      this.queue.dispatch({
+        type: 'HAS_SHOWN_AUTOPLAY',
+        payload: false,
+      });
+      this.queue.dispatch({
+        type: 'SET_HEADER',
+        payload: getHeaderPayload(),
+      });
+      this.queue.dispatch({
+        type: 'CLEAR_STEERING_CHIPS',
+      });
+    } finally {
+      this.internalDispatch = false;
+    }
   }
 
   async syncVideo() {
-    const response = await getMusicQueueRenderer(
-      this._videoList.map((it) => it.videoId),
-    );
-    if (!response) return false;
-
-    const items = response.queueDatas.map((it) => it.content);
-
-    this.internalDispatch = true;
-    this.queue?.dispatch({
-      type: 'UPDATE_ITEMS',
-      payload: {
-        items: items,
-        nextQueueItemId:
-          this.queue.queue.store.store.getState().queue.nextQueueItemId,
-        shouldAssignIds: true,
-        currentIndex: -1,
-      },
+    return this.serialize(() => this.replaceQueue()).catch((error: unknown) => {
+      console.warn('Music Together: queue sync failed', error);
+      return false;
     });
-    this.internalDispatch = false;
-    setTimeout(() => {
-      this.initQueue();
-      this.syncQueueOwner();
-    }, 0);
+  }
+
+  /**
+   * Replaces the whole queue with the one the host rendered. The store keeps
+   * the `selected` flags on the rows it replaces, so the current row has to be
+   * restored explicitly afterwards - otherwise YouTube Music loses its
+   * "current item" and the player stalls on the next transition.
+   */
+  private async replaceQueue() {
+    const token = this.syncToken;
+    const generation = this.generation;
+    const revision = this.revision;
+    const videoIds = this._videoList.map((it) => it.videoId).filter(Boolean);
+    if (!videoIds.length) {
+      this.pendingSyncIndex = undefined;
+      return false;
+    }
+
+    // A sync that never rebuilt the queue must not leave an index behind for a
+    // later, unrelated replacement. A newer sync may still consume it.
+    const abort = () => {
+      if (token === this.syncToken) this.pendingSyncIndex = undefined;
+      return false;
+    };
+
+    // An index can arrive while this fetch is in flight; keep it until the
+    // rebuilt rows are in place (see `setIndex`).
+    this.syncing = true;
+    let selectedVideoId: string | undefined;
+
+    try {
+      const response = await getMusicQueueRenderer(videoIds);
+      if (
+        !response ||
+        generation !== this.generation ||
+        revision !== this.revision
+      ) {
+        return abort();
+      }
+      if (token !== this.syncToken) return false;
+
+      const items = response.queueDatas
+        .map((it) => it?.content)
+        .filter(Boolean);
+      if (!items.length) return abort();
+
+      selectedVideoId = queueEntries(this.rawItems).find(
+        (entry) => entry?.selected,
+      )?.videoId;
+
+      this.dispatchInternal({
+        type: 'UPDATE_ITEMS',
+        payload: {
+          items,
+          nextQueueItemId:
+            this.queue.queue.store.store.getState().queue.nextQueueItemId,
+          shouldAssignIds: true,
+          currentIndex: -1,
+        },
+      });
+      this.reconcileVideoList();
+    } finally {
+      this.syncing = false;
+    }
+
+    this.restoreSelection(selectedVideoId);
+    this.afterMutation();
 
     return true;
+  }
+
+  /** Re-selects the current row after an `UPDATE_ITEMS` replacement. */
+  private restoreSelection(videoId?: string) {
+    const items = this.rawItems;
+    const pending = this.pendingSyncIndex;
+    this.pendingSyncIndex = undefined;
+
+    if (!items.length) return;
+
+    // A peer's index for the rebuilt queue wins over the row this peer had
+    // selected while its old (possibly incomplete) queue was still rendered.
+    if (typeof pending === 'number') {
+      this.setIndex(pending);
+      return;
+    }
+
+    if (selectedQueueIndex(items) >= 0) return;
+
+    const byVideoId = videoId ? indexOfQueueVideoId(items, videoId) : -1;
+    if (byVideoId >= 0) {
+      this.setIndex(byVideoId);
+      return;
+    }
+
+    if (typeof this.requestedIndex === 'number') {
+      this.setIndex(this.requestedIndex);
+    }
   }
 
   syncQueueOwner() {
