@@ -1584,8 +1584,8 @@
         "provider-priority": {
           "tooltip": "Providers are tried in this order: the first one with lyrics for the current song wins. Use the arrows to reorder."
         },
-        "prefer-synced": {
-          "tooltip": "Pick the first provider in the list with time-synced lyrics, instead of the first one with any lyrics."
+        "lyrics-type-priority": {
+          "tooltip": "Lyrics are picked by type in this order: a word-by-word result wins over a time-synced one over a plain text block. Providers with the same kind of lyrics are picked by the provider priority above."
         },
         "previous-provider": {
           "tooltip": "Previous provider"
@@ -1633,7 +1633,12 @@
           "apple-music": "Apple Music",
           "standard": "Standard"
         },
-        "prefer-synced": "Prefer synced lyrics",
+        "lyrics-type": {
+          "word": "Word-by-word",
+          "synced": "Time-synced",
+          "plain": "Plain"
+        },
+        "lyrics-type-priority": "Lyrics Type Priority",
         "provider-priority": "Provider Priority",
         "use-priority-list": "Use priority list"
       }

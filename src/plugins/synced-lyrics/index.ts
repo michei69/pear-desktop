@@ -3,7 +3,7 @@ import { createPlugin } from '@/utils';
 
 import { backend } from './backend';
 import { menu } from './menu';
-import { providerNames } from './providers';
+import { lyricsTypes, providerNames } from './providers';
 import { renderer } from './renderer';
 import style from './style.css?inline';
 
@@ -86,12 +86,11 @@ export default createPlugin<
   addedVersion: '3.5.X',
   config: {
     enabled: false,
-    // No default for `providerPriority`: deepmerge concatenates arrays, so a
-    // default order would be prepended to the stored one on every read. Absent
-    // means the declared order; the 3.12.3 migration turns this on for a legacy
-    // `preferredProvider`.
+    // No default for `providerPriority` or `lyricsTypePriority`: deepmerge
+    // concatenates arrays, so a default order would be prepended to the stored
+    // one on every read. Absent means the declared order; the 3.12.3 migration
+    // turns `usePriorityList` on for a legacy `preferredProvider`.
     usePriorityList: false,
-    preferSynced: true,
     preciseTiming: true,
     showLyricsEvenIfInexact: true,
     showTimeCodes: false,
@@ -156,11 +155,16 @@ export default createPlugin<
           })),
         },
         {
-          type: 'switch',
-          key: 'preferSynced',
-          label: () => t('plugins.synced-lyrics.settings.prefer-synced'),
+          type: 'orderable',
+          key: 'lyricsTypePriority',
+          label: () => t('plugins.synced-lyrics.settings.lyrics-type-priority'),
           description: () =>
-            t('plugins.synced-lyrics.menu.prefer-synced.tooltip'),
+            t('plugins.synced-lyrics.menu.lyrics-type-priority.tooltip'),
+          options: lyricsTypes.map((type) => ({
+            value: type,
+            label: () =>
+              t(`plugins.synced-lyrics.settings.lyrics-type.${type}`),
+          })),
         },
         {
           type: 'switch',

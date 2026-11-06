@@ -27,6 +27,7 @@ import {
   type ProviderState,
   readStarredProvider,
   resolvePriority,
+  resolveTypePriority,
 } from '../providers';
 import { providers } from '../providers/renderer';
 
@@ -493,7 +494,7 @@ export const pickProvider = (
   return pickWithStar({
     priority: resolvePriority(cfg?.providerPriority),
     lyrics,
-    preferSynced: cfg?.preferSynced ?? true,
+    typePriority: resolveTypePriority(cfg?.lyricsTypePriority),
     starred: videoId ? readStarredProvider(videoId) : null,
     usePriorityList: cfg?.usePriorityList ?? false,
     wantsOfficialTranslation: Boolean(

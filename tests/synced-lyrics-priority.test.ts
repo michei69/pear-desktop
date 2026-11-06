@@ -1,10 +1,13 @@
 import { expect, test } from '@playwright/test';
 
 import {
+  lyricsTypes,
+  type LyricsType,
   pickWithStar,
   type ProviderName,
   providerNames,
   resolvePriority,
+  resolveTypePriority,
   type ProviderState,
 } from '../src/plugins/synced-lyrics/providers';
 
@@ -41,7 +44,7 @@ const states = (
 const pick = (options: {
   lyrics: Record<ProviderName, ProviderState>;
   priority?: readonly ProviderName[];
-  preferSynced?: boolean;
+  typePriority?: readonly LyricsType[];
   starred?: ProviderName | null;
   usePriorityList?: boolean;
   wantsOfficialTranslation?: boolean;
@@ -49,7 +52,7 @@ const pick = (options: {
   pickWithStar({
     priority: options.priority ?? [...providerNames],
     lyrics: options.lyrics,
-    preferSynced: options.preferSynced ?? true,
+    typePriority: options.typePriority ?? resolveTypePriority(undefined),
     starred: options.starred ?? null,
     usePriorityList: options.usePriorityList ?? true,
     wantsOfficialTranslation: options.wantsOfficialTranslation ?? false,
@@ -57,6 +60,14 @@ const pick = (options: {
 
 const plain = result({ lyrics: 'plain words' });
 const synced = result({ lines: [line('synced line')] });
+const word = result({
+  lines: [
+    {
+      ...line('word by word'),
+      words: [{ text: 'word ', timeInMs: 0, duration: 500 }],
+    },
+  ],
+});
 
 test('follows the declared order without a stored one', () => {
   expect(resolvePriority(undefined)).toEqual([...providerNames]);
@@ -82,32 +93,62 @@ test('drops unknown and duplicate entries instead of throwing', () => {
   ]);
 });
 
-test('walks the order, synced first and plain as the fallback', () => {
-  const lyrics = states({ LRCLib: plain, NetEase: synced });
+test('prefers the declared type order, whatever the provider order says', () => {
+  expect(resolveTypePriority(undefined)).toEqual([...lyricsTypes]);
 
-  // LRCLib is declared before NetEase.
-  expect(pick({ lyrics, preferSynced: false })).toBe('LRCLib');
-  expect(pick({ lyrics, preferSynced: true })).toBe('NetEase');
-  expect(pick({ lyrics: states({ LRCLib: plain }), preferSynced: true })).toBe(
+  const lyrics = states({ LRCLib: plain, YTMusic: synced, NetEase: word });
+  const priority = resolvePriority(['LRCLib', 'YTMusic']);
+
+  // Word-by-word beats synced beats plain, even though NetEase is last.
+  expect(pick({ lyrics, priority })).toBe('NetEase');
+  expect(
+    pick({ lyrics, priority, typePriority: ['synced', 'word', 'plain'] }),
+  ).toBe('YTMusic');
+  expect(
+    pick({ lyrics, priority, typePriority: ['plain', 'synced', 'word'] }),
+  ).toBe('LRCLib');
+});
+
+test('a custom type order is normalised like the provider one', () => {
+  expect(resolveTypePriority(['synced'])).toEqual(['synced', 'word', 'plain']);
+  expect(
+    resolveTypePriority(['nope', 'plain', 'plain'] as unknown as LyricsType[]),
+  ).toEqual(['plain', 'word', 'synced']);
+});
+
+test('within a type, the provider order decides', () => {
+  const lyrics = states({ LRCLib: synced, YTMusic: synced });
+
+  expect(pick({ lyrics, priority: resolvePriority(['LRCLib']) })).toBe(
     'LRCLib',
   );
+  expect(pick({ lyrics, priority: resolvePriority(['YTMusic']) })).toBe(
+    'YTMusic',
+  );
+});
+
+test('plain is the fallback when nothing is timed, and the top provider when nothing is found', () => {
+  expect(pick({ lyrics: states({ LRCLib: plain }) })).toBe('LRCLib');
+  expect(
+    pick({ lyrics: states({}), priority: resolvePriority(['NetEase']) }),
+  ).toBe('NetEase');
 });
 
 test('a starred provider wins while it has lyrics, and falls back when it does not', () => {
   const lyrics = states({ LRCLib: plain, NetEase: synced });
 
+  // The pin beats the type priority; without it the synced result wins.
   expect(pick({ lyrics, starred: 'LRCLib' })).toBe('LRCLib');
   expect(pick({ lyrics, starred: 'YTMusic' })).toBe('NetEase');
+  expect(pick({ lyrics })).toBe('NetEase');
 });
 
 test('with the list off, the better result wins over the configured order', () => {
-  const lyrics = states({ YTMusic: synced, NetEase: plain });
+  const lyrics = states({ YTMusic: synced, NetEase: synced });
   const priority = resolvePriority(['NetEase']);
 
-  expect(pick({ lyrics, priority, preferSynced: false })).toBe('NetEase');
-  expect(
-    pick({ lyrics, priority, preferSynced: false, usePriorityList: false }),
-  ).toBe('YTMusic');
+  expect(pick({ lyrics, priority })).toBe('NetEase');
+  expect(pick({ lyrics, priority, usePriorityList: false })).toBe('YTMusic');
 });
 
 test('with the list off, a wanted official translation is ranked first', () => {

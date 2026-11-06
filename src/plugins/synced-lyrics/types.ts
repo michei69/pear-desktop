@@ -1,4 +1,4 @@
-import type { ProviderName } from './providers';
+import type { LyricsType, ProviderName } from './providers';
 import type { SongInfo } from '@/providers/song-info';
 
 export type TranslationProviderName =
@@ -93,12 +93,16 @@ export type SyncedLyricsPluginConfig = {
    */
   providerPriority?: ProviderName[];
   /**
+   * Lyrics types in the order they are preferred, best first: a word-by-word
+   * result wins over a time-synced one over a plain text block. Absent means the
+   * declared order.
+   */
+  lyricsTypePriority?: LyricsType[];
+  /**
    * Follow `providerPriority`. Off restores the old behaviour: best lyrics win,
-   * the list only breaks ties.
+   * the list only breaks ties. `lyricsTypePriority` still ranks types first.
    */
   usePriorityList: boolean;
-  /** Prefer time-synced lyrics over plain ones while walking the order. */
-  preferSynced: boolean;
   preciseTiming: boolean;
   showTimeCodes: boolean;
   defaultTextString: string | string[];

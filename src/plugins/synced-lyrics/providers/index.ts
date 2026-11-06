@@ -21,6 +21,11 @@ export const ProviderNameSchema = z.enum(ProviderNames);
 export type ProviderName = z.infer<typeof ProviderNameSchema>;
 export const providerNames = ProviderNameSchema.options;
 
+/** How a provider times its lyrics. Declared best-first: the default priority. */
+export const LyricsTypeSchema = z.enum(['word', 'synced', 'plain']);
+export type LyricsType = z.infer<typeof LyricsTypeSchema>;
+export const lyricsTypes = LyricsTypeSchema.options;
+
 export type ProviderState = {
   state: 'fetching' | 'done' | 'error';
   data: LyricResult | null;
@@ -46,23 +51,39 @@ export const resolvePriority = (
 ): ProviderName[] => normalizeOrder(configured, providerNames);
 
 /**
- * First provider in `priority` with usable lyrics, falling back to `priority[0]`
- * while nothing has arrived. `preferSynced` wants time-synced lyrics but still
- * takes a plain-text provider when none are synced: unsynced beats none.
+ * Order to prefer lyrics types in. Types added since the order was saved are
+ * appended, so they are still tried.
  */
-const pickByPriority = (
+export const resolveTypePriority = (
+  configured: readonly LyricsType[] | undefined,
+): LyricsType[] => normalizeOrder(configured, lyricsTypes);
+
+/** How `data` is timed; null when it has no lyrics at all. */
+export const lyricType = (data?: LyricResult | null): LyricsType | null => {
+  if (!hasLyricText(data)) return null;
+  if (data?.lines?.some((line) => line.words?.length)) return 'word';
+
+  return hasSyncedText(data) ? 'synced' : 'plain';
+};
+
+/**
+ * The provider to show: walk the types in `typePriority`, and within a type the
+ * providers in `priority`, so a word-by-word result beats a synced one beats a
+ * plain text block. Falls back to `priority[0]` while nothing has arrived.
+ */
+const pickByType = (
   priority: readonly ProviderName[],
   lyrics: Record<ProviderName, ProviderState>,
-  preferSynced: boolean,
+  typePriority: readonly LyricsType[],
 ): ProviderName | undefined => {
-  const firstWith = (predicate: (data: LyricResult | null) => boolean) =>
-    priority.find((provider) => predicate(lyrics[provider]?.data ?? null));
+  for (const type of typePriority) {
+    const hit = priority.find(
+      (provider) => lyricType(lyrics[provider]?.data) === type,
+    );
+    if (hit !== undefined) return hit;
+  }
 
-  return (
-    (preferSynced
-      ? (firstWith(hasSyncedText) ?? firstWith(hasLyricText))
-      : firstWith(hasLyricText)) ?? priority[0]
-  );
+  return undefined;
 };
 
 /** `priority` best-first by how good each provider's result looks. */
@@ -129,14 +150,15 @@ export const writeStarredProvider = (
 
 /**
  * The provider to show: the one starred for this song while it has lyrics,
- * otherwise the first hit walking the order. A starred provider that cannot serve
- * the song falls back to the order, so pinning never leaves a blank tab. With
- * `usePriorityList` off the order is ranked by result quality instead.
+ * otherwise the best type in `typePriority` walking `priority`. A starred
+ * provider that cannot serve the song falls back to the order, so pinning never
+ * leaves a blank tab. With `usePriorityList` off the provider order is ranked by
+ * result quality instead, and `typePriority` still ranks the types ahead of it.
  */
 export const pickWithStar = (options: {
   priority: readonly ProviderName[];
   lyrics: Record<ProviderName, ProviderState>;
-  preferSynced: boolean;
+  typePriority: readonly LyricsType[];
   starred: ProviderName | null;
   usePriorityList: boolean;
   wantsOfficialTranslation: boolean;
@@ -144,7 +166,7 @@ export const pickWithStar = (options: {
   const {
     priority,
     lyrics,
-    preferSynced,
+    typePriority,
     starred,
     usePriorityList,
     wantsOfficialTranslation,
@@ -152,11 +174,9 @@ export const pickWithStar = (options: {
 
   if (starred && hasLyricText(lyrics[starred]?.data)) return starred;
 
-  return pickByPriority(
-    usePriorityList
-      ? priority
-      : orderByBias(priority, lyrics, wantsOfficialTranslation),
-    lyrics,
-    preferSynced,
-  );
+  const ranked = usePriorityList
+    ? priority
+    : orderByBias(priority, lyrics, wantsOfficialTranslation);
+
+  return pickByType(ranked, lyrics, typePriority) ?? ranked[0];
 };

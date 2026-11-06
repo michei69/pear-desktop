@@ -34,6 +34,7 @@ import {
   type ProviderState,
   readStarredProvider,
   resolvePriority,
+  resolveTypePriority,
   writeStarredProvider,
 } from '../../providers';
 import {
@@ -69,7 +70,7 @@ const pickBestProvider = (starred: ProviderName | null): ProviderName => {
     pickWithStar({
       priority: resolvePriority(cfg?.providerPriority),
       lyrics: lyricsStore.lyrics,
-      preferSynced: cfg?.preferSynced ?? true,
+      typePriority: resolveTypePriority(cfg?.lyricsTypePriority),
       starred,
       usePriorityList: cfg?.usePriorityList ?? false,
       wantsOfficialTranslation: Boolean(
