@@ -346,6 +346,13 @@ export default createPlugin({
           attributes: ['src'],
           callback: () => injectBlurElement(),
         }),
+        // YTM shows and hides the video view by flipping attributes on
+        // `#player`, never on `#song-video` itself, so without this watch a
+        // start while the video area is still hidden stays on the artwork.
+        observePlayerPage('#player', {
+          attributes: ['playable', 'playback-mode', 'video-mode'],
+          callback: () => injectBlurElement(true),
+        }),
       ];
 
       const onVideoDataChange = (event: Event) => {
