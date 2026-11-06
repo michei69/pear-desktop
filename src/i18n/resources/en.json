@@ -401,9 +401,27 @@
       },
       "name": "Ambient Mode",
       "settings": {
+        "bar-detection": "Ignore black bars",
+        "bar-detection-hint": "Skips black letterbox and pillarbox bars when drawing the ambilight",
+        "brightness": "Brightness",
+        "contrast": "Contrast",
+        "dimming": "Dimming",
+        "dimming-hint": "How strongly the theme tone covers the ambilight",
+        "group": {
+          "ambilight": "Ambilight",
+          "general": "General"
+        },
+        "saturation": "Saturation",
         "style": {
           "ambilight": "Ambilight",
           "standard": "Standard"
+        },
+        "theme": "Theme",
+        "theme-hint": "Tone mixed over the ambilight to keep the page readable",
+        "theme-options": {
+          "auto": "Auto",
+          "dark": "Dark",
+          "light": "Light"
         }
       }
     },

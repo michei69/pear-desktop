@@ -1,4 +1,5 @@
 export type AmbientModeStyle = 'standard' | 'ambilight';
+export type AmbientModeTheme = 'auto' | 'light' | 'dark';
 
 export type AmbientModePluginConfig = {
   enabled: boolean;
@@ -11,4 +12,10 @@ export type AmbientModePluginConfig = {
   opacity: number;
   fullscreen: boolean;
   extendSidebar: boolean;
+  barDetection: boolean;
+  brightness: number;
+  contrast: number;
+  saturation: number;
+  theme: AmbientModeTheme;
+  dimming: number;
 };

@@ -9,10 +9,22 @@ canvas.ambient-mode-canvas {
   height: 100vh;
 
   pointer-events: none;
-  filter: blur(var(--blur, 100px));
+  filter: blur(var(--blur, 100px)) brightness(var(--brightness, 100%))
+    contrast(var(--contrast, 100%)) saturate(var(--saturation, 100%));
   opacity: var(--opacity, 1);
   /* Bleed the blurred edges out of the viewport. */
   transform: scale(1.15);
+}
+
+/* Mixed over the ambilight, underneath the page content, so text keeps its
+   contrast. `--fill-color` follows the theme and `--dimming` its strength. */
+.ambient-mode-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-color: var(--fill-color, transparent);
+  opacity: var(--dimming, 0);
 }
 
 body.ambient-mode-page ytmusic-app-layout #player-page {

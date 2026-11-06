@@ -6,11 +6,16 @@ import { waitForElement } from '@/utils/wait-for-element';
 import { mountAmbientLight } from './ambient-light';
 import { menu } from './menu';
 import style from './style.css?inline';
-import { type AmbientModePluginConfig, type AmbientModeStyle } from './types';
+import {
+  type AmbientModePluginConfig,
+  type AmbientModeStyle,
+  type AmbientModeTheme,
+} from './types';
 
 import type { VideoDataChanged } from '@/types/video-data-changed';
 
 const ambientStyleOptions: AmbientModeStyle[] = ['standard', 'ambilight'];
+const ambientThemeOptions: AmbientModeTheme[] = ['auto', 'light', 'dark'];
 
 const defaultConfig: AmbientModePluginConfig = {
   enabled: false,
@@ -23,6 +28,12 @@ const defaultConfig: AmbientModePluginConfig = {
   opacity: 1,
   fullscreen: false,
   extendSidebar: false,
+  barDetection: true,
+  brightness: 100,
+  contrast: 100,
+  saturation: 100,
+  theme: 'auto',
+  dimming: 0,
 };
 
 const setExtendSidebar = (enabled: boolean) =>
@@ -36,81 +47,147 @@ export default createPlugin({
   stylesheets: [style],
   settings: [
     {
-      type: 'select',
-      key: 'style',
-      label: () => t('plugins.ambient-mode.menu.style.label'),
-      description: () => t('plugins.ambient-mode.menu.style.tooltip'),
-      options: ambientStyleOptions.map((option) => ({
-        value: option,
-        label: () => t(`plugins.ambient-mode.settings.style.${option}`),
-      })),
+      title: () => t('plugins.ambient-mode.settings.group.general'),
+      fields: [
+        {
+          type: 'select',
+          key: 'style',
+          label: () => t('plugins.ambient-mode.menu.style.label'),
+          description: () => t('plugins.ambient-mode.menu.style.tooltip'),
+          options: ambientStyleOptions.map((option) => ({
+            value: option,
+            label: () => t(`plugins.ambient-mode.settings.style.${option}`),
+          })),
+        },
+        {
+          type: 'slider',
+          key: 'interpolationTime',
+          label: () =>
+            t('plugins.ambient-mode.menu.smoothness-transition.label'),
+          min: 0,
+          max: 5,
+          step: 0.5,
+          unit: 's',
+          scale: 1000,
+        },
+        {
+          type: 'slider',
+          key: 'quality',
+          label: () => t('plugins.ambient-mode.menu.quality.label'),
+          min: 10,
+          max: 1000,
+          step: 10,
+          unit: 'px',
+        },
+        {
+          type: 'slider',
+          key: 'size',
+          label: () => t('plugins.ambient-mode.menu.size.label'),
+          min: 100,
+          max: 300,
+          step: 5,
+          unit: '%',
+        },
+        {
+          type: 'slider',
+          key: 'buffer',
+          label: () => t('plugins.ambient-mode.menu.buffer.label'),
+          min: 1,
+          max: 30,
+          step: 1,
+        },
+        {
+          type: 'slider',
+          key: 'opacity',
+          label: () => t('plugins.ambient-mode.menu.opacity.label'),
+          min: 10,
+          max: 100,
+          step: 10,
+          unit: '%',
+          scale: 0.01,
+        },
+        {
+          type: 'slider',
+          key: 'blur',
+          label: () => t('plugins.ambient-mode.menu.blur-amount.label'),
+          min: 0,
+          max: 500,
+          step: 5,
+          unit: 'px',
+        },
+        {
+          type: 'switch',
+          key: 'extendSidebar',
+          label: () => t('plugins.ambient-mode.menu.extend-sidebar.label'),
+          description: () =>
+            t('plugins.ambient-mode.menu.extend-sidebar.description'),
+        },
+        {
+          type: 'switch',
+          key: 'fullscreen',
+          label: () => t('plugins.ambient-mode.menu.use-fullscreen.label'),
+        },
+      ],
     },
     {
-      type: 'slider',
-      key: 'interpolationTime',
-      label: () => t('plugins.ambient-mode.menu.smoothness-transition.label'),
-      min: 0,
-      max: 5,
-      step: 0.5,
-      unit: 's',
-      scale: 1000,
-    },
-    {
-      type: 'slider',
-      key: 'quality',
-      label: () => t('plugins.ambient-mode.menu.quality.label'),
-      min: 10,
-      max: 1000,
-      step: 10,
-      unit: 'px',
-    },
-    {
-      type: 'slider',
-      key: 'size',
-      label: () => t('plugins.ambient-mode.menu.size.label'),
-      min: 100,
-      max: 300,
-      step: 5,
-      unit: '%',
-    },
-    {
-      type: 'slider',
-      key: 'buffer',
-      label: () => t('plugins.ambient-mode.menu.buffer.label'),
-      min: 1,
-      max: 30,
-      step: 1,
-    },
-    {
-      type: 'slider',
-      key: 'opacity',
-      label: () => t('plugins.ambient-mode.menu.opacity.label'),
-      min: 10,
-      max: 100,
-      step: 10,
-      unit: '%',
-      scale: 0.01,
-    },
-    {
-      type: 'slider',
-      key: 'blur',
-      label: () => t('plugins.ambient-mode.menu.blur-amount.label'),
-      min: 0,
-      max: 500,
-      step: 5,
-      unit: 'px',
-    },
-    {
-      type: 'switch',
-      key: 'extendSidebar',
-      label: () => t('plugins.ambient-mode.menu.extend-sidebar.label'),
-      description: () =>
-        t('plugins.ambient-mode.menu.extend-sidebar.description'),
-    },
-    {
-      type: 'switch',
-      key: 'fullscreen',
-      label: () => t('plugins.ambient-mode.menu.use-fullscreen.label'),
+      title: () => t('plugins.ambient-mode.settings.group.ambilight'),
+      fields: [
+        {
+          type: 'switch',
+          key: 'barDetection',
+          label: () => t('plugins.ambient-mode.settings.bar-detection'),
+          description: () =>
+            t('plugins.ambient-mode.settings.bar-detection-hint'),
+        },
+        {
+          type: 'slider',
+          key: 'brightness',
+          label: () => t('plugins.ambient-mode.settings.brightness'),
+          min: 0,
+          max: 200,
+          step: 5,
+          unit: '%',
+        },
+        {
+          type: 'slider',
+          key: 'contrast',
+          label: () => t('plugins.ambient-mode.settings.contrast'),
+          min: 0,
+          max: 200,
+          step: 5,
+          unit: '%',
+        },
+        {
+          type: 'slider',
+          key: 'saturation',
+          label: () => t('plugins.ambient-mode.settings.saturation'),
+          min: 0,
+          max: 200,
+          step: 5,
+          unit: '%',
+        },
+        {
+          type: 'select',
+          key: 'theme',
+          label: () => t('plugins.ambient-mode.settings.theme'),
+          description: () => t('plugins.ambient-mode.settings.theme-hint'),
+          options: ambientThemeOptions.map((option) => ({
+            value: option,
+            label: () =>
+              t(`plugins.ambient-mode.settings.theme-options.${option}`),
+          })),
+        },
+        {
+          type: 'slider',
+          key: 'dimming',
+          label: () => t('plugins.ambient-mode.settings.dimming'),
+          description: () => t('plugins.ambient-mode.settings.dimming-hint'),
+          min: 0,
+          max: 100,
+          step: 5,
+          unit: '%',
+        },
+      ],
     },
   ],
   menu,
@@ -124,6 +201,12 @@ export default createPlugin({
     opacity: defaultConfig.opacity,
     isFullscreen: defaultConfig.fullscreen,
     style: defaultConfig.style,
+    barDetection: defaultConfig.barDetection,
+    brightness: defaultConfig.brightness,
+    contrast: defaultConfig.contrast,
+    saturation: defaultConfig.saturation,
+    theme: defaultConfig.theme,
+    dimming: defaultConfig.dimming,
 
     unregister: null as (() => void) | null,
     update: null as (() => void) | null,
@@ -147,6 +230,12 @@ export default createPlugin({
       this.opacity = config.opacity;
       this.isFullscreen = config.fullscreen;
       this.style = config.style;
+      this.barDetection = config.barDetection;
+      this.brightness = config.brightness;
+      this.contrast = config.contrast;
+      this.saturation = config.saturation;
+      this.theme = config.theme;
+      this.dimming = config.dimming;
       setExtendSidebar(config.extendSidebar);
 
       const songImage = document.querySelector<HTMLImageElement>('#song-image');
@@ -203,6 +292,12 @@ export default createPlugin({
           interpolationTime: this.interpolationTime,
           blur: this.blur,
           opacity: this.opacity,
+          barDetection: this.barDetection,
+          brightness: this.brightness,
+          contrast: this.contrast,
+          saturation: this.saturation,
+          theme: this.theme,
+          dimming: this.dimming,
         }));
         this.update = ambient.refresh;
 
@@ -430,6 +525,12 @@ export default createPlugin({
       this.opacity = newConfig.opacity;
       this.isFullscreen = newConfig.fullscreen;
       this.style = newConfig.style;
+      this.barDetection = newConfig.barDetection;
+      this.brightness = newConfig.brightness;
+      this.contrast = newConfig.contrast;
+      this.saturation = newConfig.saturation;
+      this.theme = newConfig.theme;
+      this.dimming = newConfig.dimming;
       setExtendSidebar(newConfig.extendSidebar);
 
       if (styleChanged) this.apply?.();
