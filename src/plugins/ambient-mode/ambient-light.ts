@@ -1,7 +1,7 @@
 import { AMBIENT_LAYER_COUNT, ambientLayerRects } from './ambient-layers';
 import { type AmbientBars, detectBlackBars, NO_BARS } from './black-bars';
 
-import type { AmbientModeTheme } from './types';
+import type { AmbientModeSync, AmbientModeTheme } from './types';
 
 export type AmbientLightSource = HTMLVideoElement | HTMLImageElement;
 
@@ -26,6 +26,16 @@ export type AmbientLightConfig = {
   theme: AmbientModeTheme;
   /** Opacity of that tone, in percent. */
   dimming: number;
+  /** Percentage of the way to the page edge where the wash starts fading. */
+  fadeStart: number;
+  /** Shape of that fade, 1-100. */
+  fadeCurve: number;
+  /** Seconds the layer takes to fade in when it appears. */
+  fadeIn: number;
+  /** What schedules the redraws. */
+  sync: AmbientModeSync;
+  /** Skip redraws while the video frame does not change. */
+  energySaver: boolean;
 };
 
 type Rect = { x: number; y: number; width: number; height: number };
@@ -33,6 +43,7 @@ type Rect = { x: number; y: number; width: number; height: number };
 /** Marks the page whose player page must be transparent for the layer to show. */
 const AMBIENT_LIGHT_BODY_CLASS = 'ambient-mode-page';
 const AMBIENT_LIGHT_CANVAS_CLASS = 'ambient-mode-canvas';
+const AMBIENT_LIGHT_FADE_CLASS = 'ambient-mode-canvas--fade';
 const AMBIENT_LIGHT_SCRIM_CLASS = 'ambient-mode-scrim';
 
 /** Bars change slowly; sampling the frame four times a second is plenty. */
@@ -40,6 +51,16 @@ const BAR_DETECTION_INTERVAL = 200;
 /** Weight of a new detection against the running average. */
 const BAR_DETECTION_SMOOTHING = 0.35;
 const BAR_DETECTION_WIDTH = 96;
+
+/** How often the energy saver compares two frames. */
+const SIGNATURE_INTERVAL = 250;
+const SIGNATURE_WIDTH = 16;
+const SIGNATURE_HEIGHT = 9;
+/** Mean per-channel difference (0-255) below which a frame is "unchanged". */
+const SIGNATURE_THRESHOLD = 1;
+
+const clamp = (value: number, min: number, max: number) =>
+  Math.min(max, Math.max(min, value));
 
 /** The app's own page background, used as the fill colour of the `auto` theme. */
 const pageFillColor = () => {
@@ -182,7 +203,65 @@ export const mountAmbientLight = (
     }
   };
 
-  const draw = (alpha: number) => {
+  let signatureCanvas: HTMLCanvasElement | null = null;
+  let signatureBlocked = false;
+  let signature: Uint8ClampedArray | null = null;
+  let signatureTime = 0;
+  let frameChanged = true;
+
+  /** Whether the current video frame differs from the previously drawn one. */
+  const frameChangedNow = () => {
+    if (signatureBlocked) return true;
+
+    const now = performance.now();
+    if (signature && now - signatureTime < SIGNATURE_INTERVAL) {
+      return frameChanged;
+    }
+    signatureTime = now;
+
+    const video = source as HTMLVideoElement;
+    if (video.videoWidth === 0 || video.videoHeight === 0) return frameChanged;
+
+    signatureCanvas ??= document.createElement('canvas');
+    signatureCanvas.width = SIGNATURE_WIDTH;
+    signatureCanvas.height = SIGNATURE_HEIGHT;
+    const signatureContext = signatureCanvas.getContext('2d', {
+      willReadFrequently: true,
+    });
+    if (!signatureContext) return true;
+
+    signatureContext.drawImage(video, 0, 0, SIGNATURE_WIDTH, SIGNATURE_HEIGHT);
+
+    let data: Uint8ClampedArray;
+    try {
+      data = signatureContext.getImageData(
+        0,
+        0,
+        SIGNATURE_WIDTH,
+        SIGNATURE_HEIGHT,
+      ).data;
+    } catch {
+      // Cross-origin video: the canvas cannot be read, so never skip a frame.
+      signatureBlocked = true;
+      return true;
+    }
+
+    if (!signature) {
+      signature = data;
+      frameChanged = true;
+      return true;
+    }
+
+    let difference = 0;
+    for (let index = 0; index < data.length; index++) {
+      difference += Math.abs(data[index] - signature[index]);
+    }
+    signature = data;
+    frameChanged = difference / data.length > SIGNATURE_THRESHOLD;
+    return frameChanged;
+  };
+
+  const draw = (alpha: number, force = false) => {
     if (!context) return;
 
     const config = getConfig();
@@ -191,6 +270,7 @@ export const mountAmbientLight = (
     canvas.style.setProperty('--brightness', `${config.brightness}%`);
     canvas.style.setProperty('--contrast', `${config.contrast}%`);
     canvas.style.setProperty('--saturation', `${config.saturation}%`);
+    canvas.style.setProperty('--fade-in', `${Math.max(0, config.fadeIn)}s`);
     scrim.style.setProperty(
       '--fill-color',
       config.theme === 'light'
@@ -201,15 +281,30 @@ export const mountAmbientLight = (
     );
     scrim.style.setProperty(
       '--dimming',
-      `${Math.max(0, Math.min(100, config.dimming)) / 100}`,
+      `${clamp(config.dimming, 0, 100) / 100}`,
     );
+    scrim.style.setProperty('--fade-in', `${Math.max(0, config.fadeIn)}s`);
+
+    // The wash fades toward the page edges so text there keeps its contrast.
+    const fading = config.fadeStart < 100;
+    canvas.classList.toggle(AMBIENT_LIGHT_FADE_CLASS, fading);
+    if (fading) {
+      const start = clamp(config.fadeStart, 0, 99.9);
+      const curve = clamp(config.fadeCurve, 1, 100);
+      canvas.style.setProperty('--fade-start', `${start}%`);
+      canvas.style.setProperty(
+        '--fade-hint',
+        `${start + ((100 - start) * curve) / 100}%`,
+      );
+    }
 
     const width = Math.max(1, Math.round(config.quality));
     const height = Math.max(
       1,
       Math.round((width * window.innerHeight) / window.innerWidth),
     );
-    if (canvas.width !== width || canvas.height !== height) {
+    const resized = canvas.width !== width || canvas.height !== height;
+    if (resized) {
       canvas.width = width;
       canvas.height = height;
     }
@@ -218,6 +313,15 @@ export const mountAmbientLight = (
     const sourceWidth = isVideo ? source.videoWidth : source.naturalWidth;
     const sourceHeight = isVideo ? source.videoHeight : source.naturalHeight;
     if (rect.width === 0 || rect.height === 0 || sourceWidth === 0) return;
+
+    if (
+      isVideo &&
+      config.energySaver &&
+      !force &&
+      !resized &&
+      !frameChangedNow()
+    )
+      return;
 
     // The canvas is the whole viewport at a fraction of its resolution, so
     // screen coordinates scale down by exactly this ratio.
@@ -234,11 +338,17 @@ export const mountAmbientLight = (
       readBars();
       picture = pictureArea(frame, bars, sourceWidth, sourceHeight);
     }
-    const layers = ambientLayerRects(
-      picture?.rect ?? frame,
-      canvas,
-      AMBIENT_LAYER_COUNT,
+
+    // The fade mask is a radial gradient around the picture, not the page.
+    const focus = picture?.rect ?? frame;
+    canvas.style.setProperty(
+      '--ambient-center',
+      `${((focus.x + focus.width / 2) / canvas.width) * 100}% ${
+        ((focus.y + focus.height / 2) / canvas.height) * 100
+      }%`,
     );
+
+    const layers = ambientLayerRects(focus, canvas, AMBIENT_LAYER_COUNT);
 
     // Not clearing keeps the previous frame underneath, and drawing the new
     // one at partial alpha blends the two: motion smoothing for free.
@@ -263,58 +373,140 @@ export const mountAmbientLight = (
     }
   };
 
-  const redraw = () => {
+  const redraw = (force = false) => {
     context?.clearRect(0, 0, canvas.width, canvas.height);
-    draw(1);
+    draw(1, force);
   };
 
+  let running = false;
   let timer: number | undefined;
-  const stop = () => {
-    window.clearTimeout(timer);
-    timer = undefined;
+  let rafId: number | undefined;
+  let videoFrameId: number | undefined;
+  let lastDraw = 0;
+
+  const cancelScheduled = () => {
+    if (timer !== undefined) {
+      window.clearTimeout(timer);
+      timer = undefined;
+    }
+    if (rafId !== undefined) {
+      window.cancelAnimationFrame(rafId);
+      rafId = undefined;
+    }
+    if (videoFrameId !== undefined) {
+      (source as HTMLVideoElement).cancelVideoFrameCallback(videoFrameId);
+      videoFrameId = undefined;
+    }
   };
-  const tick = () => {
+
+  const drawNow = () => {
     const { fps, interpolationTime } = getConfig();
+    lastDraw = performance.now();
     draw(
       interpolationTime > 0
         ? Math.min(1000 / interpolationTime / Math.max(1, fps), 1)
         : 1,
     );
-    timer = window.setTimeout(tick, Math.max(1, Math.ceil(1000 / fps)));
-  };
-  const start = () => {
-    if (timer === undefined) tick();
   };
 
-  window.addEventListener('resize', redraw);
+  /** Decoded: one fixed timer, the cheapest option and the old behaviour. */
+  const timerLoop = () => {
+    if (!running) return;
+    drawNow();
+    const { fps } = getConfig();
+    timer = window.setTimeout(timerLoop, Math.max(1, Math.ceil(1000 / fps)));
+  };
+
+  /** Display: draw at most once per `fps` while the screen refreshes. */
+  const rafLoop = () => {
+    if (!running) return;
+    const { fps } = getConfig();
+    if (performance.now() - lastDraw >= 1000 / Math.max(1, fps)) drawNow();
+    rafId = window.requestAnimationFrame(rafLoop);
+  };
+
+  /** Video: draw once per presented video frame, capped by `fps`. */
+  const videoLoop = () => {
+    if (!running) return;
+    const video = source as HTMLVideoElement;
+    videoFrameId = video.requestVideoFrameCallback(() => {
+      videoFrameId = undefined;
+      if (!running) return;
+      const { fps } = getConfig();
+      if (performance.now() - lastDraw >= 1000 / Math.max(1, fps)) drawNow();
+      videoLoop();
+    });
+  };
+
+  const stop = () => {
+    running = false;
+    cancelScheduled();
+  };
+
+  const start = () => {
+    if (running) return;
+    running = true;
+
+    const video = source as HTMLVideoElement;
+    const { sync } = getConfig();
+    if (sync === 'display') {
+      rafId = window.requestAnimationFrame(rafLoop);
+    } else if (
+      sync === 'video' &&
+      isVideo &&
+      typeof video.requestVideoFrameCallback === 'function'
+    ) {
+      videoLoop();
+    } else {
+      timerLoop();
+    }
+  };
+
+  const refresh = () => {
+    const playing = isVideo && !source.paused;
+    stop();
+    redraw(true);
+    if (playing) start();
+  };
+
+  const onResize = () => redraw(true);
+  const onImageLoad = () => redraw(true);
+
+  window.addEventListener('resize', onResize);
 
   if (isVideo) {
     source.addEventListener('play', start);
     source.addEventListener('pause', stop);
     source.addEventListener('ended', stop);
-
-    // Draw once right away: the page background is transparent while the layer
-    // is mounted, so an empty canvas would leave a hole until the first play.
-    redraw();
-    if (!source.paused) start();
-  } else {
-    if (source.complete && source.naturalWidth > 0) redraw();
-    else source.addEventListener('load', redraw, { once: true });
+  } else if (!(source.complete && source.naturalWidth > 0)) {
+    source.addEventListener('load', onImageLoad, { once: true });
   }
+
+  // The fade-in animation starts on insertion, so the duration has to be set
+  // before the element is in the document.
+  const fadeIn = `${Math.max(0, getConfig().fadeIn)}s`;
+  canvas.style.setProperty('--fade-in', fadeIn);
+  scrim.style.setProperty('--fade-in', fadeIn);
 
   document.body.classList.add(AMBIENT_LIGHT_BODY_CLASS);
   document.body.prepend(canvas);
   canvas.insertAdjacentElement('afterend', scrim);
 
+  // Draw once right away: the page background is transparent while the layer
+  // is mounted, so an empty canvas would leave a hole. Appending the canvas
+  // before this draw also starts the fade-in animation.
+  redraw(true);
+  if (isVideo && !source.paused) start();
+
   return {
-    refresh: redraw,
+    refresh,
     unregister() {
       stop();
-      window.removeEventListener('resize', redraw);
+      window.removeEventListener('resize', onResize);
       source.removeEventListener('play', start);
       source.removeEventListener('pause', stop);
       source.removeEventListener('ended', stop);
-      source.removeEventListener('load', redraw);
+      source.removeEventListener('load', onImageLoad);
       canvas.remove();
       scrim.remove();
       document.body.classList.remove(AMBIENT_LIGHT_BODY_CLASS);

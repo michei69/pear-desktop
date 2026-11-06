@@ -407,6 +407,13 @@
         "contrast": "Contrast",
         "dimming": "Dimming",
         "dimming-hint": "How strongly the theme tone covers the ambilight",
+        "energy-saver": "Save energy on static videos",
+        "energy-saver-hint": "Skips redraws while the video frame does not change",
+        "fade-curve": "Fade out curve",
+        "fade-curve-hint": "Shape of the fade toward the page edges",
+        "fade-in": "Fade in duration",
+        "fade-start": "Fade out start",
+        "fade-start-hint": "Where the ambilight starts fading toward the page edges (100%: no fade)",
         "group": {
           "ambilight": "Ambilight",
           "general": "General"
@@ -415,6 +422,13 @@
         "style": {
           "ambilight": "Ambilight",
           "standard": "Standard"
+        },
+        "sync": "Synchronization",
+        "sync-hint": "Decoded: one timer. Display: the screen refresh. Video: the video's own frame callbacks",
+        "sync-options": {
+          "decoded": "Decoded",
+          "display": "Display",
+          "video": "Video"
         },
         "theme": "Theme",
         "theme-hint": "Tone mixed over the ambilight to keep the page readable",

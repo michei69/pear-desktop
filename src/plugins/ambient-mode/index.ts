@@ -9,6 +9,7 @@ import style from './style.css?inline';
 import {
   type AmbientModePluginConfig,
   type AmbientModeStyle,
+  type AmbientModeSync,
   type AmbientModeTheme,
 } from './types';
 
@@ -16,6 +17,7 @@ import type { VideoDataChanged } from '@/types/video-data-changed';
 
 const ambientStyleOptions: AmbientModeStyle[] = ['standard', 'ambilight'];
 const ambientThemeOptions: AmbientModeTheme[] = ['auto', 'light', 'dark'];
+const ambientSyncOptions: AmbientModeSync[] = ['decoded', 'display', 'video'];
 
 const defaultConfig: AmbientModePluginConfig = {
   enabled: false,
@@ -34,6 +36,11 @@ const defaultConfig: AmbientModePluginConfig = {
   saturation: 100,
   theme: 'auto',
   dimming: 0,
+  fadeStart: 100,
+  fadeCurve: 50,
+  fadeIn: 0,
+  sync: 'video',
+  energySaver: false,
 };
 
 const setExtendSidebar = (enabled: boolean) =>
@@ -187,6 +194,53 @@ export default createPlugin({
           step: 5,
           unit: '%',
         },
+        {
+          type: 'slider',
+          key: 'fadeStart',
+          label: () => t('plugins.ambient-mode.settings.fade-start'),
+          description: () => t('plugins.ambient-mode.settings.fade-start-hint'),
+          min: 0,
+          max: 100,
+          step: 5,
+          unit: '%',
+        },
+        {
+          type: 'slider',
+          key: 'fadeCurve',
+          label: () => t('plugins.ambient-mode.settings.fade-curve'),
+          description: () => t('plugins.ambient-mode.settings.fade-curve-hint'),
+          min: 1,
+          max: 100,
+          step: 1,
+          unit: '%',
+        },
+        {
+          type: 'slider',
+          key: 'fadeIn',
+          label: () => t('plugins.ambient-mode.settings.fade-in'),
+          min: 0,
+          max: 5,
+          step: 0.5,
+          unit: 's',
+        },
+        {
+          type: 'select',
+          key: 'sync',
+          label: () => t('plugins.ambient-mode.settings.sync'),
+          description: () => t('plugins.ambient-mode.settings.sync-hint'),
+          options: ambientSyncOptions.map((option) => ({
+            value: option,
+            label: () =>
+              t(`plugins.ambient-mode.settings.sync-options.${option}`),
+          })),
+        },
+        {
+          type: 'switch',
+          key: 'energySaver',
+          label: () => t('plugins.ambient-mode.settings.energy-saver'),
+          description: () =>
+            t('plugins.ambient-mode.settings.energy-saver-hint'),
+        },
       ],
     },
   ],
@@ -207,6 +261,11 @@ export default createPlugin({
     saturation: defaultConfig.saturation,
     theme: defaultConfig.theme,
     dimming: defaultConfig.dimming,
+    fadeStart: defaultConfig.fadeStart,
+    fadeCurve: defaultConfig.fadeCurve,
+    fadeIn: defaultConfig.fadeIn,
+    sync: defaultConfig.sync,
+    energySaver: defaultConfig.energySaver,
 
     unregister: null as (() => void) | null,
     update: null as (() => void) | null,
@@ -236,6 +295,11 @@ export default createPlugin({
       this.saturation = config.saturation;
       this.theme = config.theme;
       this.dimming = config.dimming;
+      this.fadeStart = config.fadeStart;
+      this.fadeCurve = config.fadeCurve;
+      this.fadeIn = config.fadeIn;
+      this.sync = config.sync;
+      this.energySaver = config.energySaver;
       setExtendSidebar(config.extendSidebar);
 
       const songImage = document.querySelector<HTMLImageElement>('#song-image');
@@ -298,6 +362,11 @@ export default createPlugin({
           saturation: this.saturation,
           theme: this.theme,
           dimming: this.dimming,
+          fadeStart: this.fadeStart,
+          fadeCurve: this.fadeCurve,
+          fadeIn: this.fadeIn,
+          sync: this.sync,
+          energySaver: this.energySaver,
         }));
         this.update = ambient.refresh;
 
@@ -531,6 +600,11 @@ export default createPlugin({
       this.saturation = newConfig.saturation;
       this.theme = newConfig.theme;
       this.dimming = newConfig.dimming;
+      this.fadeStart = newConfig.fadeStart;
+      this.fadeCurve = newConfig.fadeCurve;
+      this.fadeIn = newConfig.fadeIn;
+      this.sync = newConfig.sync;
+      this.energySaver = newConfig.energySaver;
       setExtendSidebar(newConfig.extendSidebar);
 
       if (styleChanged) this.apply?.();

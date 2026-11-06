@@ -14,6 +14,18 @@ canvas.ambient-mode-canvas {
   opacity: var(--opacity, 1);
   /* Bleed the blurred edges out of the viewport. */
   transform: scale(1.15);
+
+  animation: ambient-mode-fade-in var(--fade-in, 0s) ease-out;
+}
+
+/* Fades the wash toward the page edges, around the player. */
+canvas.ambient-mode-canvas.ambient-mode-canvas--fade {
+  mask-image: radial-gradient(
+    circle at var(--ambient-center, 50% 50%),
+    #000 var(--fade-start, 100%),
+    var(--fade-hint, 50%),
+    transparent
+  );
 }
 
 /* Mixed over the ambilight, underneath the page content, so text keeps its
@@ -25,6 +37,14 @@ canvas.ambient-mode-canvas {
   pointer-events: none;
   background-color: var(--fill-color, transparent);
   opacity: var(--dimming, 0);
+
+  animation: ambient-mode-fade-in var(--fade-in, 0s) ease-out;
+}
+
+@keyframes ambient-mode-fade-in {
+  from {
+    opacity: 0;
+  }
 }
 
 body.ambient-mode-page ytmusic-app-layout #player-page {
