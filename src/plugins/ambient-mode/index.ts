@@ -3,14 +3,18 @@ import { observePlayerPage } from '@/providers/player-page-observer';
 import { createPlugin } from '@/utils';
 import { waitForElement } from '@/utils/wait-for-element';
 
+import { mountAmbientLight } from './ambient-light';
 import { menu } from './menu';
 import style from './style.css?inline';
-import { type AmbientModePluginConfig } from './types';
+import { type AmbientModePluginConfig, type AmbientModeStyle } from './types';
 
 import type { VideoDataChanged } from '@/types/video-data-changed';
 
+const ambientStyleOptions: AmbientModeStyle[] = ['standard', 'ambilight'];
+
 const defaultConfig: AmbientModePluginConfig = {
   enabled: false,
+  style: 'standard',
   quality: 50,
   buffer: 30,
   interpolationTime: 1500,
@@ -31,6 +35,16 @@ export default createPlugin({
   config: defaultConfig,
   stylesheets: [style],
   settings: [
+    {
+      type: 'select',
+      key: 'style',
+      label: () => t('plugins.ambient-mode.menu.style.label'),
+      description: () => t('plugins.ambient-mode.menu.style.tooltip'),
+      options: ambientStyleOptions.map((option) => ({
+        value: option,
+        label: () => t(`plugins.ambient-mode.settings.style.${option}`),
+      })),
+    },
     {
       type: 'slider',
       key: 'interpolationTime',
@@ -109,9 +123,11 @@ export default createPlugin({
     blur: defaultConfig.blur,
     opacity: defaultConfig.opacity,
     isFullscreen: defaultConfig.fullscreen,
+    style: defaultConfig.style,
 
     unregister: null as (() => void) | null,
     update: null as (() => void) | null,
+    apply: null as (() => void) | null,
     teardowns: [] as (() => void)[],
     lastMediaType: null as 'video' | 'image' | null,
     lastVideoSource: null as string | null,
@@ -130,6 +146,7 @@ export default createPlugin({
       this.blur = config.blur;
       this.opacity = config.opacity;
       this.isFullscreen = config.fullscreen;
+      this.style = config.style;
       setExtendSidebar(config.extendSidebar);
 
       const songImage = document.querySelector<HTMLImageElement>('#song-image');
@@ -171,6 +188,25 @@ export default createPlugin({
         return () => {
           if (blurImage.isConnected) blurImage.remove();
         };
+      };
+
+      const injectAmbientLight = (isVideo: boolean) => {
+        const source = isVideo ? video : image;
+        if (!source) return null;
+
+        if (isVideo) this.lastVideoSource = video.src;
+        else this.lastImageSource = image?.src ?? null;
+
+        const ambient = mountAmbientLight(source, () => ({
+          quality: this.qualityRatio,
+          fps: this.buffer,
+          interpolationTime: this.interpolationTime,
+          blur: this.blur,
+          opacity: this.opacity,
+        }));
+        this.update = ambient.refresh;
+
+        return ambient.unregister;
       };
 
       const injectBlurVideo = () => {
@@ -316,12 +352,19 @@ export default createPlugin({
           }
           this.unregister?.();
           this.unregister =
-            (isVideo ? injectBlurVideo() : injectBlurImage()) ?? null;
+            (this.style === 'ambilight'
+              ? injectAmbientLight(isVideo)
+              : isVideo
+                ? injectBlurVideo()
+                : injectBlurImage()) ?? null;
         } else {
           this.unregister?.();
           this.unregister = null;
         }
       };
+      // Re-injecting is what a style switch needs; mode switches reuse it
+      // too so config changes and observers share one path.
+      this.apply = () => injectBlurElement(true);
 
       // Replaces the old 1 s ticker: these are the only inputs that change
       // what should be drawn. The layout attribute flips on view switches
@@ -377,6 +420,8 @@ export default createPlugin({
       injectBlurElement();
     },
     onConfigChange(newConfig) {
+      const styleChanged = newConfig.style !== this.style;
+
       this.interpolationTime = newConfig.interpolationTime;
       this.buffer = newConfig.buffer;
       this.qualityRatio = newConfig.quality;
@@ -384,14 +429,17 @@ export default createPlugin({
       this.blur = newConfig.blur;
       this.opacity = newConfig.opacity;
       this.isFullscreen = newConfig.fullscreen;
+      this.style = newConfig.style;
       setExtendSidebar(newConfig.extendSidebar);
 
-      this.update?.();
+      if (styleChanged) this.apply?.();
+      else this.update?.();
     },
     stop() {
       this.generation++;
       setExtendSidebar(false);
       this.update = null;
+      this.apply = null;
       this.unregister?.();
       this.unregister = null;
       for (const teardown of this.teardowns) teardown();

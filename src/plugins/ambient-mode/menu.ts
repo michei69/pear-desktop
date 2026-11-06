@@ -3,7 +3,9 @@ import { type MenuItemConstructorOptions } from 'electron';
 import { t } from '@/i18n';
 import { type MenuContext } from '@/types/contexts';
 
-import { type AmbientModePluginConfig } from './types';
+import { type AmbientModePluginConfig, type AmbientModeStyle } from './types';
+
+const ambientStyleOptions: AmbientModeStyle[] = ['standard', 'ambilight'];
 
 export const menu = async ({
   getConfig,
@@ -21,6 +23,18 @@ export const menu = async ({
   const config = await getConfig();
 
   return [
+    {
+      label: t('plugins.ambient-mode.menu.style.label'),
+      submenu: ambientStyleOptions.map((style) => ({
+        label: t(`plugins.ambient-mode.menu.style.submenu.${style}.label`),
+        toolTip: t(`plugins.ambient-mode.menu.style.submenu.${style}.tooltip`),
+        type: 'radio',
+        checked: (config.style ?? 'standard') === style,
+        click() {
+          setConfig({ style });
+        },
+      })),
+    },
     {
       label: t('plugins.ambient-mode.menu.smoothness-transition.label'),
       submenu: interpolationTimeList.map((interpolationTime) => ({

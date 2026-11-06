@@ -381,11 +381,31 @@
             "during": "During {{interpolationTime}} s"
           }
         },
+        "style": {
+          "label": "Style",
+          "submenu": {
+            "ambilight": {
+              "label": "Ambilight",
+              "tooltip": "Stretches the edge colors of the video or artwork across the whole page"
+            },
+            "standard": {
+              "label": "Standard",
+              "tooltip": "Blurs a copy of the video or artwork behind the player"
+            }
+          },
+          "tooltip": "Choose how the ambient light is drawn"
+        },
         "use-fullscreen": {
           "label": "Using fullscreen"
         }
       },
-      "name": "Ambient Mode"
+      "name": "Ambient Mode",
+      "settings": {
+        "style": {
+          "ambilight": "Ambilight",
+          "standard": "Standard"
+        }
+      }
     },
     "amuse": {
       "description": "Adds {{applicationName}} support for the Amuse now playing widget by 6K Labs",

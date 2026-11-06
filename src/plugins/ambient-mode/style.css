@@ -1,3 +1,24 @@
+/* The full-page ambient light layer. It is prepended to <body> and painted
+   above the page background, so the player page has to drop its own background
+   for the layer to show through. */
+canvas.ambient-mode-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  width: 100vw;
+  height: 100vh;
+
+  pointer-events: none;
+  filter: blur(var(--blur, 100px));
+  opacity: var(--opacity, 1);
+  /* Bleed the blurred edges out of the viewport. */
+  transform: scale(1.15);
+}
+
+body.ambient-mode-page ytmusic-app-layout #player-page {
+  background-color: transparent !important;
+}
+
 #song-video canvas.html5-blur-canvas,
 #song-image .html5-blur-image {
   filter: blur(var(--blur, 100px));
