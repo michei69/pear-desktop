@@ -23,6 +23,19 @@ const clock = (ms: number): string => {
 const escapeXml = (text: string) =>
   text.replace(/[&<>"']/g, (char) => `&#${char.charCodeAt(0)};`);
 
+/**
+ * Whether a line has anything to render. Blank timed lines are interlude
+ * markers in LRC data (the parser also inserts one for an intro over 300 ms);
+ * they carry the timing of the gap but must not become empty rows, or the
+ * component renders a block of whitespace instead of its animated dots.
+ */
+const hasRenderableText = (line: LineLyrics) =>
+  Boolean(
+    line.text.trim() ||
+    line.words?.some((word) => word.text.trim()) ||
+    line.background?.some((word) => word.text.trim()),
+  );
+
 /** A timed word, with the separator space left outside the span. */
 const wordXml = (word: LyricWord, fallbackEnd: number): string => {
   const knownEnd =
@@ -86,15 +99,36 @@ const lineXml = (line: LineLyrics, index: number, end: number): string => {
  * (right-aligned lines alternate between `v1`/`v2`), `<p>` lines with timed
  * `<span>` words, `ttm:role="x-bg"` background vocals and `dir="rtl"` lines.
  * `v2` is typed `other` so a duet that opens on the right still starts there.
+ *
+ * Blank timed lines are interlude markers (LRC data uses them for breaks, and
+ * the parser inserts one for a long intro): they are dropped, leaving their
+ * musically timed gap between the surrounding paragraphs so the component can
+ * draw its instrumental dots instead of blank rows.
  */
 export const synthesizeTTML = (
   lines: LineLyrics[],
   options: SynthesizeOptions = {},
 ): string => {
+  // Keep each line's original end (computed against the next input line) so a
+  // dropped interlude marker still leaves the gap between the surrounding
+  // lines for am-lyrics to animate.
+  const paragraphsIn = lines
+    .map((line, index) => ({
+      line,
+      index,
+      end: lineEnd(line, lines[index + 1]),
+    }))
+    .filter(({ line }) => hasRenderableText(line));
+
+  const rendered = new Set(paragraphsIn.map(({ index }) => index));
   const hasTranslations = Boolean(
-    options.translations?.some((text) => text?.trim()),
+    options.translations?.some(
+      (text, index) => text?.trim() && rendered.has(index),
+    ),
   );
-  const hasAgents = lines.some((line) => line.alignment !== undefined);
+  const hasAgents = paragraphsIn.some(
+    ({ line }) => line.alignment !== undefined,
+  );
   const hasHead = hasAgents || options.songwriters || hasTranslations;
 
   const head: string[] = [];
@@ -116,7 +150,7 @@ export const synthesizeTTML = (
       head.push(`      <translation${language}>`);
       options.translations?.forEach((text, index) => {
         const line = text?.trim();
-        if (line) {
+        if (line && rendered.has(index)) {
           head.push(
             `        <text for="L${index + 1}">${escapeXml(line)}</text>`,
           );
@@ -127,8 +161,8 @@ export const synthesizeTTML = (
     head.push('    </metadata>', '  </head>');
   }
 
-  const paragraphs = lines.map((line, index) =>
-    lineXml(line, index, lineEnd(line, lines[index + 1])),
+  const paragraphs = paragraphsIn.map(({ line, index, end }) =>
+    lineXml(line, index, end),
   );
 
   return [

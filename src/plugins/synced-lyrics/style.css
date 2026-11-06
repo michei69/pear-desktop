@@ -515,6 +515,11 @@ div:has(> .lyrics-picker) {
   display: block;
   width: 100%;
   height: 100%;
+  /* The component pins its own system font stack on `:host` inside its shadow
+     root, so page and theme CSS never reaches the lyrics. Inherit the page
+     font instead, which keeps themes such as Inter to Pear working in this
+     style exactly like they do in the standard renderer. */
+  font-family: inherit !important;
 }
 
 /* Plain-text fallback when the selected provider has no timed lines. */

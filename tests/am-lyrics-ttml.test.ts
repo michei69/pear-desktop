@@ -276,16 +276,14 @@ test('translations ride along as <translation><text for> entries', () => {
   ]);
 });
 
-test('every input line maps to one paragraph, empty gaps and escaping included', () => {
+test('text lines keep their text and escaping', () => {
   const parsed = parseTTML(
     synthesizeTTML([
       line({ timeInMs: 0, duration: 500, text: 'Rock & Roll <3' }),
-      line({ timeInMs: 500, duration: 500, text: '' }),
-      line({ timeInMs: 1000, duration: 500, text: 'Bye' }),
+      line({ timeInMs: 500, duration: 500, text: 'Bye' }),
     ]),
   )!;
 
-  expect(parsed.lines).toHaveLength(3);
   expect(
     parsed.lines.map((entry) =>
       entry.text
@@ -293,5 +291,68 @@ test('every input line maps to one paragraph, empty gaps and escaping included',
         .join('')
         .trim(),
     ),
-  ).toStrictEqual(['Rock & Roll <3', '', 'Bye']);
+  ).toStrictEqual(['Rock & Roll <3', 'Bye']);
+});
+
+test('an interlude marker leaves a timed gap instead of an empty row', () => {
+  const parsed = parseTTML(
+    synthesizeTTML([
+      line({ timeInMs: 10_000, duration: 2_000, text: 'Before the break' }),
+      // The LRC parser inserts one of these for breaks (and for long intros).
+      line({ timeInMs: 12_000, duration: 8_000, text: '' }),
+      line({ timeInMs: 20_000, duration: 2_000, text: 'After the break' }),
+    ]),
+  )!;
+
+  // The blank marker is not a row; its timing still bounds the previous line,
+  // so the component sees an 8 s gap and draws its instrumental dots there.
+  expect(parsed.lines).toHaveLength(2);
+  expect(parsed.lines[0].endtime).toBe(12_000);
+  expect(parsed.lines[1].timestamp).toBe(20_000);
+  expect(parsed.lines[1].timestamp - parsed.lines[0].endtime).toBeGreaterThan(
+    7_000,
+  );
+});
+
+test('a long intro marker also becomes a gap, not a first blank row', () => {
+  const parsed = parseTTML(
+    synthesizeTTML([
+      line({ timeInMs: 0, duration: 9_000, text: '' }),
+      line({ timeInMs: 9_000, duration: 2_000, text: 'First words' }),
+    ]),
+  )!;
+
+  expect(parsed.lines).toHaveLength(1);
+  expect(parsed.lines[0].timestamp).toBe(9_000);
+});
+
+test('lines with only word timings still render', () => {
+  const parsed = parseTTML(
+    synthesizeTTML([
+      line({
+        timeInMs: 1000,
+        duration: 1000,
+        text: '',
+        words: [{ text: 'word ', timeInMs: 1000, duration: 400 }],
+      }),
+    ]),
+  )!;
+
+  expect(parsed.lines).toHaveLength(1);
+  expect(parsed.lines[0].text[0].text.trim()).toBe('word');
+});
+
+test('a translation for a dropped interlude marker is not emitted', () => {
+  const ttml = synthesizeTTML(
+    [
+      line({ timeInMs: 0, duration: 1000, text: 'Hello' }),
+      line({ timeInMs: 1000, duration: 1000, text: '' }),
+      line({ timeInMs: 2000, duration: 1000, text: 'World' }),
+    ],
+    { translations: ['Bonjour', 'Interlude', 'Monde'] },
+  );
+
+  expect(ttml).toContain('<text for="L1">Bonjour</text>');
+  expect(ttml).not.toContain('Interlude');
+  expect(ttml).toContain('<text for="L3">Monde</text>');
 });
