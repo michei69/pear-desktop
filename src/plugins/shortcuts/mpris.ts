@@ -10,6 +10,7 @@ import { type BrowserWindow, ipcMain } from 'electron';
 import { APPLICATION_NAME } from '@/i18n';
 import { getSongControls } from '@/providers/song-controls';
 import {
+  getCurrentSongInfo,
   registerCallback,
   unregisterCallback,
   type SongInfo,
@@ -95,6 +96,8 @@ export function registerMPRIS(win: BrowserWindow) {
 
   const songControls = getSongControls(win);
   const {
+    play,
+    pause,
     playPause,
     next,
     previous,
@@ -160,7 +163,10 @@ export function registerMPRIS(win: BrowserWindow) {
       player.setPosition(player.getPosition() + offset);
     };
 
-    const onPlayerApiLoaded = (_: Electron.IpcMainEvent) => {
+    // Asks the renderer for the state MPRIS mirrors. Requested on every
+    // `player-api-loaded`, and once at registration: a live enable happens
+    // after that signal has already fired.
+    const requestPlayerState = () => {
       win.webContents.send(
         SONG_INFO_SETUP_CHANNEL,
         SongInfoEventFlag.Seeked |
@@ -174,6 +180,9 @@ export function registerMPRIS(win: BrowserWindow) {
       requestShuffleInformation();
       requestFullscreenInformation();
       requestQueueInformation();
+    };
+    const onPlayerApiLoaded = (_: Electron.IpcMainEvent) => {
+      requestPlayerState();
     };
     ipcMain.on('peard:player-api-loaded', onPlayerApiLoaded);
 
@@ -315,16 +324,18 @@ export function registerMPRIS(win: BrowserWindow) {
       setFullscreen(fullscreenEnabled);
     });
 
+    // `play`/`pause` are idempotent controls: unlike the `playPause` toggle
+    // they cannot invert the user's intent when the mirror is stale.
     player.on('play', () => {
       if (!player.isPlaying()) {
         player.setPlaybackStatus(MprisPlayer.PLAYBACK_STATUS_PLAYING);
-        playPause();
+        play();
       }
     });
     player.on('pause', () => {
       if (!player.isPaused()) {
         player.setPlaybackStatus(MprisPlayer.PLAYBACK_STATUS_PAUSED);
-        playPause();
+        pause();
       }
     });
     player.on('playpause', () => {
@@ -387,6 +398,15 @@ export function registerMPRIS(win: BrowserWindow) {
     const onSongInfo = (songInfo: SongInfo, event: SongInfoEvent) => {
       if (event === SongInfoEvent.TimeChanged) {
         player.setPosition(secToMicro(songInfo.elapsedSeconds ?? 0));
+        // Cheap reconciliation: a dropped play/pause event must not leave the
+        // published status inverted. The setter only emits when it changes.
+        if (typeof songInfo.isPaused === 'boolean') {
+          player.setPlaybackStatus(
+            songInfo.isPaused
+              ? MprisPlayer.PLAYBACK_STATUS_PAUSED
+              : MprisPlayer.PLAYBACK_STATUS_PLAYING,
+          );
+        }
         return;
       }
       if (player) {
@@ -437,6 +457,15 @@ export function registerMPRIS(win: BrowserWindow) {
       requestQueueInformation();
     };
     registerCallback(onSongInfo);
+
+    // A live enable happens after `player-api-loaded` already fired, so seed
+    // the mirror from the track the provider already knows about and re-request
+    // the rest; otherwise the service publishes Stopped/empty metadata.
+    const seededSongInfo = getCurrentSongInfo();
+    if (seededSongInfo) {
+      onSongInfo(seededSongInfo, SongInfoEvent.PlayOrPaused);
+    }
+    requestPlayerState();
 
     // Every handler is registered with raw `ipcMain`, so removal has to target
     // the same instance and the exact references registered above.
