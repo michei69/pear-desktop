@@ -45,6 +45,7 @@ export default createPlugin<
       const secToMilisec = (seconds?: number) =>
         seconds ? Math.round(Number(seconds) * 1e3) : undefined;
       let previousStatePaused: boolean | null = null;
+      let previousVideoId: string | undefined;
 
       const data: LumiaData = {
         origin:
@@ -87,8 +88,13 @@ export default createPlugin<
         }
 
         const isPaused = songInfo.isPaused ?? false;
+        // A track change is a switch even when the pause flag did not move.
+        // Without this branch `switchSong` could only ever be emitted once per
+        // session, after which every new track was reported as a pause toggle.
+        const songChanged =
+          previousVideoId !== undefined && songInfo.videoId !== previousVideoId;
 
-        if (previousStatePaused === null) {
+        if (previousStatePaused === null || songChanged) {
           data.eventType = 'switchSong';
         } else if (previousStatePaused !== isPaused) {
           data.eventType = 'playPause';
@@ -111,6 +117,7 @@ export default createPlugin<
         post(data);
 
         previousStatePaused = isPaused;
+        previousVideoId = songInfo.videoId;
       };
 
       this.callback = callback;
