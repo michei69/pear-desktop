@@ -21,10 +21,24 @@ const registerTeardown = (handler: () => void) => {
   teardownHandlers.push(handler);
 };
 
+/**
+ * Marks the page while this plugin's volume IPC receiver is registered. The
+ * main process probes it (see `song-controls.ts`) instead of routing on the
+ * config alone, which would drop a command sent before the receiver exists.
+ */
+const markReceiverReady = () => {
+  document.documentElement.dataset.preciseVolumeReceiver = '1';
+};
+
+const clearReceiverReady = () => {
+  delete document.documentElement.dataset.preciseVolumeReceiver;
+};
+
 const teardown = () => {
   for (const handler of teardownHandlers.splice(0)) {
     handler();
   }
+  clearReceiverReady();
 };
 
 type YtMusicAppElement = HTMLElement & {
@@ -276,23 +290,31 @@ export const onPlayerApiReady = async (
 
   let sliderObserver: MutationObserver | undefined;
 
+  /**
+   * Value the plugin itself last wrote to the volume slider. The slider's
+   * `value` mutation is how a manual change is detected, so the plugin's own
+   * write has to be told apart explicitly: a distance threshold drops small
+   * manual drags and keeps no record of who wrote.
+   */
+  let programmaticSliderValue: string | null = null;
+
   /** Save the volume and update the tooltip when volume-slider is changed manually */
   function setupSliderObserver() {
     sliderObserver?.disconnect();
     const observer = new MutationObserver((mutations) => {
+      const written = programmaticSliderValue;
+      programmaticSliderValue = null;
       for (const mutation of mutations) {
         if (mutation.target.nodeName === 'TP-YT-PAPER-SLIDER') {
           const target = mutation.target as HTMLInputElement;
           const targetValueNumeric = Number(target.value);
-          if (
-            mutation.oldValue !== target.value &&
-            (typeof options.savedVolume !== 'number' ||
-              Math.abs(options.savedVolume - targetValueNumeric) > 4)
-          ) {
-            // Diff > 4 means it was set manually
-            setTooltip(targetValueNumeric);
-            saveVolume(targetValueNumeric);
-          }
+          if (mutation.oldValue === target.value) continue;
+          // The plugin's own slider write is not a manual change: persisting it
+          // would round the saved volume through the slider's step.
+          if (written !== null && target.value === written) continue;
+
+          setTooltip(targetValueNumeric);
+          saveVolume(targetValueNumeric);
         }
       }
     });
@@ -334,12 +356,19 @@ export const onPlayerApiReady = async (
   function updateVolumeSlider() {
     const savedVolume = options.savedVolume ?? 0;
     // The slider rounds to multiples of 5
+    const sliderValue = String(
+      savedVolume > 0 && savedVolume < 5 ? 5 : savedVolume,
+    );
+    // Record the write so the observer can skip exactly this mutation. The
+    // microtask is queued after the writes, so the observer (queued by the
+    // mutation itself) runs first and a slider that did not change does not
+    // leave the marker armed for a later manual drag.
+    programmaticSliderValue = sliderValue;
+
     for (const slider of ['#volume-slider', '#expand-volume-slider']) {
       const silderElement = $<HTMLInputElement>(slider);
       if (silderElement) {
-        silderElement.value = String(
-          savedVolume > 0 && savedVolume < 5 ? 5 : savedVolume,
-        );
+        silderElement.value = sliderValue;
       }
     }
 
@@ -352,6 +381,10 @@ export const onPlayerApiReady = async (
         `${savedVolume}%`,
       );
     }
+
+    queueMicrotask(() => {
+      programmaticSliderValue = null;
+    });
   }
 
   function showVolumeSlider() {
@@ -422,6 +455,7 @@ export const onPlayerApiReady = async (
   const onSetVolume = (value: number) => setVolume(value);
   context.ipc.on('changeVolume', onChangeVolume);
   context.ipc.on('setVolume', onSetVolume);
+  markReceiverReady();
   registerTeardown(() => {
     context.ipc.off('changeVolume', onChangeVolume);
     context.ipc.off('setVolume', onSetVolume);
