@@ -1,3 +1,4 @@
+import { observePlayerPage } from '@/providers/player-page-observer';
 import { createRenderer } from '@/utils';
 
 import type { MusicWidgetConfig } from './index';
@@ -15,35 +16,37 @@ const isAdPlaying = (api?: MusicPlayer) => {
 
 export const renderer = createRenderer<
   {
-    observer?: MutationObserver;
-    lastState?: boolean;
+    unwatchPlayer?: () => void;
+    /**
+     * Last ad state sent over IPC. Only a send dedupe — the backend's
+     * `isAdvertisement` is the single state served to clients.
+     */
+    lastSentAdState?: boolean;
   },
   MusicWidgetConfig
 >({
   onPlayerApiReady(api, { ipc }) {
-    this.observer?.disconnect();
+    this.unwatchPlayer?.();
 
     const report = () => {
       const isAd = isAdPlaying(api);
-      if (isAd === this.lastState) return;
-      this.lastState = isAd;
+      if (isAd === this.lastSentAdState) return;
+      this.lastSentAdState = isAd;
       ipc.send('peard:amuse-ad-state', isAd);
     };
 
-    const player = document.querySelector('#movie_player');
-    if (player) {
-      this.observer = new MutationObserver(report);
-      this.observer.observe(player, {
-        attributes: true,
-        attributeFilter: ['class'],
-      });
-    }
+    // The shared observer retargets when another plugin re-subscribes after a
+    // player rebuild, so a replaced #movie_player does not stop the reports.
+    this.unwatchPlayer = observePlayerPage('#movie_player', {
+      attributes: ['class'],
+      callback: report,
+    });
     report();
   },
 
   stop() {
-    this.observer?.disconnect();
-    this.observer = undefined;
-    this.lastState = undefined;
+    this.unwatchPlayer?.();
+    this.unwatchPlayer = undefined;
+    this.lastSentAdState = undefined;
   },
 });

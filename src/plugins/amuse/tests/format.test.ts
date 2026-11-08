@@ -86,3 +86,11 @@ test('carries the ad flag and detects video media types', () => {
 test('falls back to an empty query before the first song', () => {
   expect(formatSongInfo({} as SongInfo, false, 99)).toEqual(emptyQuery());
 });
+
+test('keeps the ad flag in the empty query', () => {
+  // The empty branch used to hardcode `isAdvertisement: false`, so an ad with
+  // no artist/title collapsed both modes into one on the wire.
+  expect(emptyQuery(true).track.isAdvertisement).toBe(true);
+  expect(emptyQuery().track.isAdvertisement).toBe(false);
+  expect(formatSongInfo({} as SongInfo, true, 99)).toEqual(emptyQuery(true));
+});

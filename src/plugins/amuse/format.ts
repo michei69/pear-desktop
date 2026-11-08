@@ -10,7 +10,7 @@ export const toHumanTime = (seconds: number) => {
   return `${minutes}:${remaining.toString().padStart(2, '0')}`;
 };
 
-export const emptyQuery = (): AmuseSongInfo => ({
+export const emptyQuery = (isAdvertisement = false): AmuseSongInfo => ({
   apiVersion: 2,
   player: {
     hasSong: false,
@@ -33,7 +33,7 @@ export const emptyQuery = (): AmuseSongInfo => ({
     url: '',
     id: '',
     isVideo: false,
-    isAdvertisement: false,
+    isAdvertisement,
     inLibrary: false,
     mediaType: MediaType.Audio,
     playlistId: null,
@@ -46,7 +46,7 @@ export const formatSongInfo = (
   positionUpdatedAt: number,
 ): AmuseSongInfo => {
   if (!info.artist || !info.title) {
-    return emptyQuery();
+    return emptyQuery(isAdvertisement);
   }
 
   const elapsedSeconds = Math.floor(info.elapsedSeconds ?? 0);
