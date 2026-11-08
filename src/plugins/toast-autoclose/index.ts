@@ -19,6 +19,8 @@ export default createPlugin({
         document.querySelector<HTMLElement>('ytmusic-app') ?? document.body;
 
       const arm = (toast: Toast) => {
+        // One deadline per toast: a scan must not push an open toast's timer
+        // out just because something else mutated.
         if (timers.has(toast)) return;
 
         timers.set(
@@ -36,6 +38,14 @@ export default createPlugin({
         );
       };
 
+      const disarm = (toast: Toast) => {
+        const timer = timers.get(toast);
+        if (timer === undefined) return;
+
+        clearTimeout(timer);
+        timers.delete(toast);
+      };
+
       const scan = () => {
         for (const [toast, timer] of timers) {
           if (
@@ -50,6 +60,55 @@ export default createPlugin({
         root
           .querySelectorAll<Toast>('tp-yt-paper-toast.paper-toast-open')
           .forEach(arm);
+      };
+
+      const toastOf = (node: Node): Toast | null => {
+        if (!(node instanceof Element)) return null;
+        if (node.localName === 'tp-yt-paper-toast') return node as Toast;
+        return node.closest<Toast>('tp-yt-paper-toast');
+      };
+
+      /**
+       * Drop the old deadline as soon as a toast loses `paper-toast-open`.
+       *
+       * YTM reuses the element, so a close and a reopen can land in one
+       * mutation batch and the toast is open again by the time this runs.
+       * Walking the class records in order — each record's oldValue, or the
+       * current class list for the last one — recovers the present → absent
+       * step the final state hides; the next scan then arms a fresh deadline.
+       */
+      const disarmClosed = (mutations: MutationRecord[]) => {
+        const recordsByToast = new Map<Toast, MutationRecord[]>();
+
+        for (const mutation of mutations) {
+          if (
+            mutation.type !== 'attributes' ||
+            mutation.attributeName !== 'class'
+          ) {
+            continue;
+          }
+
+          const toast = toastOf(mutation.target);
+          if (!toast) continue;
+
+          const records = recordsByToast.get(toast);
+          if (records) records.push(mutation);
+          else recordsByToast.set(toast, [mutation]);
+        }
+
+        for (const [toast, records] of recordsByToast) {
+          let isOpen = toast.classList.contains('paper-toast-open');
+          for (let index = records.length - 1; index >= 0; index--) {
+            const wasOpen = (records[index].oldValue ?? '')
+              .split(/\s+/)
+              .includes('paper-toast-open');
+            if (wasOpen && !isOpen) {
+              disarm(toast);
+              break;
+            }
+            isOpen = wasOpen;
+          }
+        }
       };
 
       const isToastRelated = (node: Node) => {
@@ -73,6 +132,10 @@ export default createPlugin({
 
       scan();
       this.observer = new MutationObserver((mutations) => {
+        // Before the scan: a close + reopen in this batch must not inherit the
+        // first message's deadline.
+        disarmClosed(mutations);
+
         if (
           mutations.some(
             ({ target, addedNodes, removedNodes }) =>
@@ -87,6 +150,7 @@ export default createPlugin({
         childList: true,
         subtree: true,
         attributes: true,
+        attributeOldValue: true,
         attributeFilter: ['class'],
       });
 
