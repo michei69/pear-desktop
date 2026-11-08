@@ -8,6 +8,9 @@ import {
 
 import type { TranslationProvider } from '../types';
 
+/** A hung connection must fail instead of leaving the renderer on "fetching". */
+const REQUEST_TIMEOUT_MS = 60_000;
+
 export const anthropicProvider: TranslationProvider = {
   name: 'anthropic',
   async translate(req, settings) {
@@ -36,6 +39,7 @@ export const anthropicProvider: TranslationProvider = {
         'anthropic-version': '2023-06-01',
       },
       body: JSON.stringify(body),
+      signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
     });
 
     if (!res.ok) {

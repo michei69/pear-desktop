@@ -9,6 +9,9 @@ import {
 import type { OpenAICompatibleApiMode } from '../../types';
 import type { TranslationProvider } from '../types';
 
+/** A hung connection must fail instead of leaving the renderer on "fetching". */
+const REQUEST_TIMEOUT_MS = 60_000;
+
 const normalizeChatCompletionsUrl = (baseUrl: string): string => {
   const trimmed = baseUrl.replace(/\/+$/, '');
   if (/\/chat\/completions$/i.test(trimmed)) return trimmed;
@@ -107,6 +110,7 @@ export const openAICompatibleProvider: TranslationProvider = {
           method: 'POST',
           headers,
           body: JSON.stringify(buildBody(jsonMode, includeTemperature)),
+          signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
         });
 
       let jsonMode = true;
@@ -181,6 +185,7 @@ export const openAICompatibleProvider: TranslationProvider = {
           method: 'POST',
           headers,
           body: JSON.stringify(buildBody(jsonMode, includeTemperature)),
+          signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
         });
 
       let jsonMode = true;

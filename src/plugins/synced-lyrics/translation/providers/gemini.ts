@@ -8,6 +8,9 @@ import {
 
 import type { TranslationProvider } from '../types';
 
+/** A hung connection must fail instead of leaving the renderer on "fetching". */
+const REQUEST_TIMEOUT_MS = 60_000;
+
 export const geminiProvider: TranslationProvider = {
   name: 'gemini',
   async translate(req, settings) {
@@ -40,6 +43,7 @@ export const geminiProvider: TranslationProvider = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
+      signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
     });
 
     if (!res.ok) {
