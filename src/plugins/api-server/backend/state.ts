@@ -52,6 +52,12 @@ export interface PlayerSnapshot {
  */
 export const createPlayerState = () => {
   let song: WireSongInfo | undefined;
+  /**
+   * Playback mode, kept as a tri-state: `undefined` until the renderer reports
+   * a pause flag. Deriving it from `song.isPaused` alone made an unreported
+   * flag look like playback (`!undefined === true`).
+   */
+  let playing: boolean | undefined;
   let volume: VolumeState | undefined;
   // Left undefined until the renderer reports a mode, so `/repeat-mode` can tell
   // "not known yet" apart from an actual NONE.
@@ -72,10 +78,11 @@ export const createPlayerState = () => {
   const DUPLICATE_EVENT_WINDOW_MS = 1_000;
   let lastMessage: string | undefined;
   let lastMessageAt = 0;
-  const emit = (event: PlayerEvent) => {
+  const emit = (event: PlayerEvent, force = false) => {
     const message = JSON.stringify(event);
     const now = Date.now();
     if (
+      !force &&
       message === lastMessage &&
       now - lastMessageAt < DUPLICATE_EVENT_WINDOW_MS
     ) {
@@ -100,6 +107,7 @@ export const createPlayerState = () => {
     delete current.scrobbleTitle;
     delete current.scrobbleArtist;
     song = current;
+    if (typeof info.isPaused === 'boolean') playing = !info.isPaused;
 
     switch (event) {
       case SongInfoEvent.VideoSrcChanged: {
@@ -109,7 +117,7 @@ export const createPlayerState = () => {
       case SongInfoEvent.PlayOrPaused: {
         emit({
           type: 'PLAYER_STATE_CHANGED',
-          isPlaying: !(info.isPaused ?? true),
+          isPlaying: playing ?? false,
           position: info.elapsedSeconds ?? 0,
         });
         break;
@@ -157,8 +165,9 @@ export const createPlayerState = () => {
     get song() {
       return song;
     },
+    /** The reported playback mode; `undefined` until the renderer says. */
     get playing() {
-      return song ? !song.isPaused : false;
+      return playing;
     },
     get repeat() {
       return repeat;
@@ -187,7 +196,10 @@ export const createPlayerState = () => {
     snapshot(): PlayerSnapshot {
       return {
         song,
-        isPlaying: song ? !song.isPaused : false,
+        // The wire field has always been a boolean; an unknown mode reports
+        // the same `false` a paused player does, but is no longer derived from
+        // the song (which can carry an unreported `isPaused`).
+        isPlaying: playing ?? false,
         muted: muted(),
         position: song?.elapsedSeconds ?? 0,
         // WebSocket clients have always been told 100 until the renderer
@@ -204,11 +216,17 @@ export const createPlayerState = () => {
     },
     /** Tell clients playback stopped (app quitting or the server restarting). */
     notifyStopped() {
-      emit({
-        type: 'PLAYER_STATE_CHANGED',
-        isPlaying: false,
-        position: song?.elapsedSeconds ?? 0,
-      });
+      // Forced: the stop frame can be byte-identical to a pause reported less
+      // than a second earlier, and dropping it leaves clients believing the
+      // player is still there.
+      emit(
+        {
+          type: 'PLAYER_STATE_CHANGED',
+          isPlaying: false,
+          position: song?.elapsedSeconds ?? 0,
+        },
+        true,
+      );
     },
     stop() {
       unregisterCallback(songInfoCallback);

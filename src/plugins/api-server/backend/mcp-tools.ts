@@ -182,7 +182,7 @@ export const createMcpTools = (operations: Operations): McpTool[] => [
   tool(
     'playing',
     'Check whether playback is running.',
-    () => ok({ state: operations.playing() }),
+    () => ok({ state: operations.playing() ?? false }),
     { readOnly: true },
   ),
   tool('play', 'Start playback.', () => {

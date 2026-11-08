@@ -49,11 +49,33 @@ export type BackendType = {
   stopWebsocket?: () => void;
   detachRenderer?: () => void;
 
+  /**
+   * Whether this backend owns a listener. `server === undefined` alone cannot
+   * tell "never started" from "stopped", and a restart needs to know both.
+   */
+  phase: 'idle' | 'serving' | 'stopped';
+  /** Serialises restarts and stops so two config writes cannot overlap. */
+  lifecycle: Promise<void>;
+
+  serialize: <T>(task: () => Promise<T> | T) => Promise<T>;
   run: (config: APIServerConfig) => void;
+  closeServer: () => Promise<void>;
   end: () => Promise<void>;
 };
 
 export const backend = createBackend<BackendType, APIServerConfig>({
+  phase: 'idle',
+  lifecycle: Promise.resolve(),
+
+  serialize<T>(task: () => Promise<T> | T): Promise<T> {
+    const result = this.lifecycle.then(task, task);
+    this.lifecycle = result.then(
+      () => undefined,
+      () => undefined,
+    );
+    return result;
+  },
+
   async start(ctx) {
     const { app: electronApp } = await import('electron');
 
@@ -81,22 +103,29 @@ export const backend = createBackend<BackendType, APIServerConfig>({
     };
 
     const config = await ctx.getConfig();
-    this.run(config);
-    this.oldConfig = config;
+    await this.serialize(() => {
+      this.run(config);
+      // A config change that landed while the config was loading already owns
+      // the newer snapshot; don't overwrite it with the stale one.
+      this.oldConfig ??= config;
+    });
     requestPlayerState();
   },
 
   async stop() {
-    await this.end();
-    // The WebSocket subscriptions outlive the HTTP server, so they are released
-    // here, once, rather than in `end()` — which also runs when a config change
-    // restarts the server under the same app.
-    this.stopWebsocket?.();
-    this.stopWebsocket = undefined;
-    this.detachRenderer?.();
-    this.detachRenderer = undefined;
-    this.playerState?.stop();
-    this.playerState = undefined;
+    await this.serialize(async () => {
+      await this.closeServer();
+      // The WebSocket subscriptions outlive the HTTP server, so they are
+      // released here, once, rather than in `closeServer()` — which also runs
+      // when a config change restarts the server under the same app.
+      this.stopWebsocket?.();
+      this.stopWebsocket = undefined;
+      this.detachRenderer?.();
+      this.detachRenderer = undefined;
+      this.playerState?.stop();
+      this.playerState = undefined;
+      this.phase = 'stopped';
+    });
   },
 
   async onConfigChange(config) {
@@ -107,12 +136,19 @@ export const backend = createBackend<BackendType, APIServerConfig>({
       return;
     }
 
-    await this.end();
-    this.run(config);
+    // A restart is a close followed by a listen. `closeServer` drops the handle
+    // before it awaits, so without serialisation a second config write landing
+    // in that window would start a second listener whose handle overwrites the
+    // first one and can never be closed.
+    await this.serialize(async () => {
+      await this.closeServer();
+      this.run(config);
+    });
   },
 
   run(config) {
-    if (!this.app) {
+    // One listener at a time: the mode says whether one is already owned.
+    if (!this.app || this.phase === 'serving') {
       return;
     }
 
@@ -138,19 +174,28 @@ export const backend = createBackend<BackendType, APIServerConfig>({
 
       // A port already in use emits 'error' asynchronously; without a listener
       // that would take the whole app down.
-      server.on('error', (err) => {
+      server.on('error', (err: NodeJS.ErrnoException) => {
         console.error(LoggerPrefix, 'API server error:', err);
+        // A failed bind leaves a dead handle behind: drop it so the mode is
+        // honest and the next restart is not blocked by a phantom listener.
+        if (this.server === server && err?.code === 'EADDRINUSE') {
+          this.server = undefined;
+          this.phase = 'stopped';
+        }
       });
 
       this.server = server;
+      this.phase = 'serving';
     } catch (err) {
+      this.phase = 'stopped';
       console.error(LoggerPrefix, 'Failed to start API server:', err);
     }
   },
 
-  async end() {
+  async closeServer() {
     const server = this.server;
     this.server = undefined;
+    if (this.phase !== 'idle') this.phase = 'stopped';
 
     this.playerState?.notifyStopped();
 
@@ -165,6 +210,12 @@ export const backend = createBackend<BackendType, APIServerConfig>({
         server.closeAllConnections();
       }
       server.close(() => resolve());
+    });
+  },
+
+  async end() {
+    await this.serialize(async () => {
+      await this.closeServer();
     });
   },
 });
