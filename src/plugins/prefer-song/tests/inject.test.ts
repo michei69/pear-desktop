@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-import { installPreferSong } from '../injectors/inject';
+import { installPreferSong, uninstallPreferSong } from '../injectors/inject';
 
 const RELEASE_PLAYLIST = 'OLAK5uy_album';
 const RELEASE_BROWSE = 'MPREb_album';
@@ -134,6 +134,9 @@ const setupYouTubeMusic = (
     fetch: typeof fetch;
   };
   scope.window = globalThis;
+  // Each setup installs a patch closing over its own upstream: release the
+  // previous test's one, or the duplicate-install guard keeps it in place.
+  uninstallPreferSong();
   scope.ytcfg = { get: () => 'stub' };
   scope.fetch = upstream as typeof fetch;
   installPreferSong();
@@ -316,4 +319,15 @@ test('a release lookup that failed is retried on the next play', async () => {
     await post('/youtubei/v1/next', { playlistId: RELEASE_PLAYLIST }),
   );
   expect(second[0].videoId).toBe('song-1');
+});
+
+test('a duplicate install keeps the single restore handle', () => {
+  setupYouTubeMusic([], []);
+
+  const patched = (globalThis as unknown as { fetch: unknown }).fetch;
+  installPreferSong();
+
+  // A second enable must not wrap the wrapper: the page would rewrite requests
+  // twice and the restore handle would point at the first patch.
+  expect((globalThis as unknown as { fetch: unknown }).fetch).toBe(patched);
 });
