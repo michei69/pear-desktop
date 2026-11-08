@@ -208,14 +208,20 @@ export const renderer = createRenderer({
         return;
       }
 
-      lastPayload = payload;
-
       if (!payload) {
         await ctx.ipc.invoke('statusbar-lyrics:clear');
-        return;
+      } else {
+        await ctx.ipc.invoke(
+          'statusbar-lyrics:set-text',
+          text,
+          config.maxLength,
+        );
       }
 
-      await ctx.ipc.invoke('statusbar-lyrics:set-text', text, config.maxLength);
+      // Only a delivered payload counts as sent: a rejected invoke must leave
+      // the dedupe open so the next trigger retries the same line.
+      if (generation !== sendGeneration) return;
+      lastPayload = payload;
     };
 
     const flushSend = async () => {
@@ -231,6 +237,13 @@ export const renderer = createRenderer({
           sendRequested = false;
           await send();
         } while (sendRequested);
+      } catch (error) {
+        // A failed send is retried by the next trigger (timer/observer) because
+        // `lastPayload` was not committed; never let it escape unhandled.
+        console.error(
+          '[statusbar-lyrics] failed to update the status bar',
+          error,
+        );
       } finally {
         sendInFlight = false;
       }
