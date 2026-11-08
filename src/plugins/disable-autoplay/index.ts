@@ -55,18 +55,21 @@ export default createPlugin<
     config: null,
     api: null,
     eventListener(event: CustomEvent<VideoDataChanged>) {
+      // The one-shot may only be consumed by the event it acts on: the channel
+      // also carries `newdata`/`dataupdated`, and removing the listener there
+      // would disarm the plugin without ever pausing.
+      if (event.detail.name !== 'dataloaded') return;
+
       if (this.config?.applyOnce) {
         document.removeEventListener('videodatachange', this.eventListener);
       }
 
-      if (event.detail.name === 'dataloaded') {
-        this.api?.pauseVideo();
-        document
-          .querySelector<HTMLVideoElement>('video')
-          ?.addEventListener('timeupdate', this.timeUpdateListener, {
-            once: true,
-          });
-      }
+      this.api?.pauseVideo();
+      document
+        .querySelector<HTMLVideoElement>('video')
+        ?.addEventListener('timeupdate', this.timeUpdateListener, {
+          once: true,
+        });
     },
     timeUpdateListener(e: Event) {
       if (e.target instanceof HTMLVideoElement) {
@@ -92,6 +95,12 @@ export default createPlugin<
     },
     onConfigChange(newConfig) {
       this.config = newConfig;
+      // Turning "applies only on startup" off must revive a one-shot that was
+      // already consumed: the user is asking for every track again, and there is
+      // no other path that re-arms the listener.
+      if (!newConfig.applyOnce) {
+        document.addEventListener('videodatachange', this.eventListener);
+      }
     },
   },
 });
