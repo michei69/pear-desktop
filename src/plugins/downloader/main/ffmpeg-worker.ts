@@ -10,6 +10,7 @@ import {
   systemFfmpegArgs,
   wasmFfmpegArgs,
 } from './ffmpeg-args';
+import { type JobResult, wasmLoadFailure } from './ffmpeg-outcome';
 
 /**
  * The downloader's ffmpeg invocation and ID3 tagging run here, in one
@@ -52,10 +53,6 @@ export type WorkerMessage =
       code: 'ffmpeg-not-found' | 'failed';
       message: string;
     };
-
-type JobResult =
-  | { ok: true; tagError?: string }
-  | { ok: false; code: 'ffmpeg-not-found' | 'failed'; message: string };
 
 const post = (message: WorkerMessage) => {
   process.parentPort.postMessage(message);
@@ -164,9 +161,16 @@ const runWasmFfmpeg = async (
   const inputName = `input-${id}${extname(job.inputPath)}`;
   const outputName = `output-${id}${extname(job.outputPath)}`;
 
+  let ffmpeg: Awaited<ReturnType<typeof getWasmFfmpeg>>;
   try {
-    const ffmpeg = await getWasmFfmpeg();
+    ffmpeg = await getWasmFfmpeg();
+  } catch (error) {
+    // The system binary was already missing (that is why this path ran) and
+    // the bundled core cannot load either: no conversion backend is available.
+    return wasmLoadFailure(error);
+  }
 
+  try {
     let lastPercent = -1;
     ffmpeg.setProgress(({ ratio }: { ratio: number }) => {
       const clamped = Math.min(Math.max(ratio, 0), 1);

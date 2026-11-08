@@ -39,6 +39,7 @@ import {
   SongInfoEventFlag,
 } from '@/types/song-info-events';
 
+import { tempFilesToRemove } from './ffmpeg-outcome';
 // oxlint-disable-next-line import/default -- `?modulePath` is a build-time path string.
 import ffmpegWorkerPath from './ffmpeg-worker?modulePath';
 import {
@@ -83,6 +84,15 @@ const noteMissingFfmpeg = () => {
   if (ffmpegMissing) return;
   ffmpegMissing = true;
   console.warn(FFMPEG_MISSING_MESSAGE);
+};
+
+/**
+ * A new user-initiated download probes FFmpeg again. The latch only suppresses
+ * the remaining tracks of one playlist after its first failure, so installing
+ * FFmpeg mid-session recovers without a restart.
+ */
+const probeFfmpeg = () => {
+  ffmpegMissing = false;
 };
 
 /**
@@ -293,6 +303,10 @@ const downloadAndReport = async (
   trackId?: string,
   increasePlaylistProgress: (value: number) => void = () => {},
 ) => {
+  // Playlist items keep the latch so they fail fast after the first missing
+  // FFmpeg; a standalone download is a new user attempt and probes again.
+  if (!playlistFolder) probeFfmpeg();
+
   let resolvedName: string | undefined;
   try {
     await ensureInitialized();
@@ -579,6 +593,7 @@ async function downloadSongUnsafe(
   const convertedPath = join(dir, `${tempBase}.${targetFileExtension}`);
 
   let outputPath = downloadPath;
+  let downloaded = false;
   try {
     await streamDownload(
       info,
@@ -587,6 +602,7 @@ async function downloadSongUnsafe(
       downloadPath,
       reportDownloadProgress,
     );
+    downloaded = true;
 
     const ffmpegArgs = presetSetting?.ffmpegArgs ?? [];
     const needsConversion = ffmpegArgs.length > 0 || !sameContainer;
@@ -627,6 +643,14 @@ async function downloadSongUnsafe(
       }
     }
 
+    if (needsConversion && ffmpegMissing && sameContainer) {
+      // Conversion was explicitly requested (preset ffmpeg args) but is
+      // unavailable; keeping the source is intentional, but say so.
+      console.warn(
+        `Skipping requested ffmpeg conversion for ${metadata.artist} - ${metadata.title}: FFmpeg is unavailable; keeping the downloaded ${sourceContainer ?? 'source'} file.`,
+      );
+    }
+
     // Tags are best effort and never cost the file: a failure still renames.
     if (targetFileExtension === 'mp3') {
       sendPhase(t('plugins.downloader.backend.feedback.writing-id3'));
@@ -648,13 +672,21 @@ async function downloadSongUnsafe(
     await rename(outputPath, filePath);
     outputPath = filePath;
   } finally {
-    if (outputPath !== filePath) {
-      await rm(outputPath, { force: true }).catch(() => {});
+    const finished = outputPath === filePath;
+    // A completed download keeps its finished output when finishing failed: it
+    // is the only retry material left. Half-written conversion output is not.
+    for (const path of tempFilesToRemove({
+      finished,
+      downloaded,
+      outputPath,
+      downloadPath,
+      convertedPath,
+    })) {
+      await rm(path, { force: true }).catch(() => {});
     }
-    await rm(downloadPath, { force: true }).catch(() => {});
-    // A failed conversion can leave a half-written file behind; the download
-    // path and the final file are cleaned above, but not this one.
-    await rm(convertedPath, { force: true }).catch(() => {});
+    if (!finished && downloaded) {
+      console.warn(`Download kept for retry: ${outputPath}`);
+    }
   }
 
   increasePlaylistProgress(1);
@@ -717,6 +749,10 @@ const getCoverBuffer = async (url: string) => {
 };
 
 export async function downloadPlaylist(givenUrl?: string | URL) {
+  // The playlist as a whole is one user attempt: probe once, then the latch
+  // makes the remaining tracks fail fast if FFmpeg is unusable.
+  probeFfmpeg();
+
   try {
     await ensureInitialized();
   } catch (error: unknown) {
