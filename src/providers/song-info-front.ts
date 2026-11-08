@@ -18,6 +18,8 @@ import type {
 import type { VideoDataChanged } from '@/types/video-data-changed';
 
 const DATAUPDATED_FALLBACK_TIMEOUT_MS = 1500;
+/** How long a position-0 pause waits before it is treated as a real pause. */
+const PAUSE_REPORT_RECHECK_MS = 1500;
 const PROGRESS_THROTTLE_MS = 250;
 const BACKGROUND_PROGRESS_THROTTLE_MS = 1000;
 const ACTIVITY_REFRESH_MS = 5000;
@@ -305,18 +307,7 @@ export const setupSongInfo = (api: MusicPlayer) => {
     window._lact = now;
   };
 
-  const reportPlaybackState = (video: HTMLVideoElement, isPaused: boolean) => {
-    if (lastReportedPaused === isPaused) return;
-    // HACK: YTM fires a pause at position 0 while loading the next track; only
-    // the pause of a track that was already reported as running is real.
-    if (
-      isPaused &&
-      lastReportedPaused !== false &&
-      Math.round(video.currentTime) === 0
-    ) {
-      return;
-    }
-
+  const sendPlaybackState = (video: HTMLVideoElement, isPaused: boolean) => {
     lastReportedPaused = isPaused;
     window.ipcRenderer.send('peard:play-or-paused', {
       isPaused,
@@ -324,6 +315,38 @@ export const setupSongInfo = (api: MusicPlayer) => {
       // v2 reports the player's real position.
       elapsedSeconds: video.currentTime,
     });
+  };
+
+  let pendingPauseReport: ReturnType<typeof setTimeout> | undefined;
+
+  const reportPlaybackState = (video: HTMLVideoElement, isPaused: boolean) => {
+    if (lastReportedPaused === isPaused) return;
+    // HACK: YTM fires a pause at position 0 while loading the next track; only
+    // the pause of a track that was already reported as running is real. That
+    // veto is permanent for a session restored paused, though, so re-check
+    // once the load has settled: still paused at 0 means a real pause.
+    if (
+      isPaused &&
+      lastReportedPaused !== false &&
+      Math.round(video.currentTime) === 0
+    ) {
+      clearTimeout(pendingPauseReport);
+      pendingPauseReport = setTimeout(() => {
+        pendingPauseReport = undefined;
+        // A real pause/play reported in the meantime already settled the
+        // state; only an unresolved (still unknown) pause is re-reported.
+        if (
+          currentVideo === video &&
+          lastReportedPaused !== true &&
+          video.paused
+        ) {
+          sendPlaybackState(video, true);
+        }
+      }, PAUSE_REPORT_RECHECK_MS);
+      return;
+    }
+
+    sendPlaybackState(video, isPaused);
   };
 
   const playPausedHandlers = {
