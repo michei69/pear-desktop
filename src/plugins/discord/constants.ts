@@ -13,4 +13,5 @@ export enum TimerKey {
   ClearActivity = 'clearActivity', // clears activity after a pause
   UpdateTimeout = 'updateTimeout',
   DiscordConnectRetry = 'discordConnectRetry',
+  ReadyTimeout = 'readyTimeout', // transport connected but never became ready
 }
