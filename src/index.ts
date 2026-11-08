@@ -96,8 +96,9 @@ unhandled({
 // How long to wait for the page to paint before showing the window anyway.
 const EARLY_SHOW_DELAY = 500;
 
-// Prevent window being garbage collected
-let mainWindow: Electron.BrowserWindow | null;
+// Prevent window being garbage collected. `undefined` until the first window
+// is created, `null` once it was closed.
+let mainWindow: Electron.BrowserWindow | null | undefined;
 let renderProcessGoneRegistered = false;
 const settingsRestartSessions = new Set<number>();
 const pendingSettingsRestartRequirements = new Map<
@@ -391,6 +392,17 @@ const initHook = async (win: BrowserWindow) => {
       );
     });
   });
+  ipcMain.handle(
+    'ytmd-sui:restart-session-add',
+    (event, requirements: RestartRequirement[]) => {
+      // Requirements are reported as soon as they are flagged, so a settings
+      // window that is destroyed before its close RPC still flushes them.
+      if (!settingsRestartSessions.has(event.sender.id)) return;
+      if (!Array.isArray(requirements)) return;
+
+      requirements.forEach(addPendingSettingsRestartRequirement);
+    },
+  );
   ipcMain.handle(
     'ytmd-sui:restart-session-close',
     async (event, requirements: RestartRequirement[]) => {
@@ -1001,6 +1013,10 @@ app.on('window-all-closed', () => {
 app.on('activate', async () => {
   // On OS X it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
+  // `undefined` means whenReady is still creating the first window: creating
+  // another one here would race it (and duplicate its per-window initHook).
+  if (mainWindow === undefined) return;
+
   if (mainWindow === null) {
     mainWindow = await createMainWindow();
   } else if (!mainWindow.isVisible()) {
