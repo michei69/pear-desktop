@@ -249,14 +249,21 @@ export default createPlugin({
       | null,
     ratio: 0.5,
     alpha: 1,
+    /**
+     * Bumped by every track application and by `stop()`, so only the newest
+     * fetch may paint and an in-flight one cannot undo the teardown.
+     */
+    generation: 0,
 
     async applyCurrentTrack() {
+      const generation = ++this.generation;
       const playerResponse = this.api?.getPlayerResponse();
       const thumbnail =
         playerResponse?.videoDetails?.thumbnail?.thumbnails?.at(0);
       if (!thumbnail) return;
 
       const colors = await fetchAlbumColors(fastAverageColor, thumbnail.url);
+      if (generation !== this.generation) return;
 
       this.color = colors?.color ?? Color(BLACK);
       this.darkColor = colors?.darkColor ?? Color(BLACK);
@@ -270,6 +277,7 @@ export default createPlugin({
           alpha = value;
         }
       }
+      if (generation !== this.generation) return;
       (this as Renderer).updateColor(alpha);
     },
     async onPlayerApiReady(playerApi, { getConfig }) {
@@ -315,6 +323,7 @@ export default createPlugin({
       }
     },
     stop() {
+      ++this.generation;
       if (this.videoDataListener) {
         document.removeEventListener('videodatachange', this.videoDataListener);
         this.videoDataListener = null;
