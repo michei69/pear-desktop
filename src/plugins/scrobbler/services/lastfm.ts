@@ -240,34 +240,111 @@ const createToken = async ({
 
 let authWindowOpened = false;
 let latestAuthResult = false;
+/** Abandons the in-flight auth window; set only while one is open. */
+let cancelAuth: (() => void) | undefined;
+let authGeneration = 0;
+
+/**
+ * Abandons an in-progress auth (plugin stop, Last.fm disabled): closes the
+ * window and clears the latch so later auth attempts do not spin forever.
+ */
+export const resetAuthState = () => {
+  const cancel = cancelAuth;
+  if (cancel) {
+    cancel();
+    return;
+  }
+
+  authWindowOpened = false;
+  latestAuthResult = false;
+};
 
 const authenticate = async (
   config: ScrobblerPluginConfig,
   mainWindow: BrowserWindow,
 ) => {
   return new Promise<boolean>((resolve) => {
-    if (!authWindowOpened) {
-      authWindowOpened = true;
-      latestAuthResult = false;
-      const url = `https://www.last.fm/api/auth/?api_key=${config.scrobblers.lastfm.apiKey}&token=${config.scrobblers.lastfm.token}`;
-      const browserWindow = new BrowserWindow({
-        width: 500,
-        height: 600,
-        show: false,
-        webPreferences: {
-          nodeIntegration: false,
-        },
-        autoHideMenuBar: true,
-        parent: mainWindow,
-        minimizable: false,
-        maximizable: false,
-        paintWhenInitiallyHidden: true,
-        modal: true,
-        center: true,
-      });
-      browserWindow.loadURL(url).then(() => {
+    if (authWindowOpened) {
+      // wait for the previous auth window to close
+      const waitForClose = async () => {
+        while (authWindowOpened) {
+          await new Promise((r) => setTimeout(r, 100));
+        }
+        resolve(latestAuthResult);
+      };
+      waitForClose();
+      return;
+    }
+
+    authWindowOpened = true;
+    latestAuthResult = false;
+    const generation = ++authGeneration;
+
+    const url = `https://www.last.fm/api/auth/?api_key=${config.scrobblers.lastfm.apiKey}&token=${config.scrobblers.lastfm.token}`;
+    const browserWindow = new BrowserWindow({
+      width: 500,
+      height: 600,
+      show: false,
+      webPreferences: {
+        nodeIntegration: false,
+      },
+      autoHideMenuBar: true,
+      parent: mainWindow,
+      minimizable: false,
+      maximizable: false,
+      paintWhenInitiallyHidden: true,
+      modal: true,
+      center: true,
+    });
+
+    let settled = false;
+    let cancelled = false;
+
+    const finish = (result: boolean) => {
+      if (settled) return;
+      settled = true;
+      latestAuthResult = result;
+      resolve(result);
+    };
+
+    /** Only the window that owns the current generation may clear the latch. */
+    const clearLatch = () => {
+      if (generation !== authGeneration) return;
+      authWindowOpened = false;
+      cancelAuth = undefined;
+    };
+
+    // Registered before loadURL: every close path (success, user close, load
+    // failure, plugin stop) clears the latch, not just a successful load.
+    browserWindow.on('closed', () => {
+      const wasCancelled = cancelled;
+      clearLatch();
+      finish(false);
+      if (!latestAuthResult && !wasCancelled) {
+        dialog.showMessageBox({
+          title: t('plugins.scrobbler.dialog.lastfm.auth-failed.title'),
+          message: t('plugins.scrobbler.dialog.lastfm.auth-failed.message'),
+          type: 'error',
+        });
+      }
+    });
+
+    cancelAuth = () => {
+      cancelled = true;
+      clearLatch();
+      finish(false);
+      if (!browserWindow.isDestroyed()) browserWindow.destroy();
+    };
+
+    browserWindow
+      .loadURL(url)
+      .then(() => {
+        if (settled) return;
+
         browserWindow.show();
         browserWindow.webContents.on('did-navigate', async (_, newUrl) => {
+          if (settled) return;
+
           const url = URL.parse(newUrl);
           if (url?.hostname.endsWith('last.fm')) {
             if (url.pathname === '/api/auth') {
@@ -277,37 +354,26 @@ const authenticate = async (
                 )) as boolean;
               // not the approve screen, so authentication succeeded
               if (!isApproveScreen) {
-                resolve(true);
-                latestAuthResult = true;
+                finish(true);
                 browserWindow.close();
               }
             } else if (url.pathname === '/api/None') {
-              resolve(false);
-              latestAuthResult = false;
+              finish(false);
               browserWindow.close();
             }
           }
         });
-        browserWindow.on('closed', () => {
-          if (!latestAuthResult) {
-            dialog.showMessageBox({
-              title: t('plugins.scrobbler.dialog.lastfm.auth-failed.title'),
-              message: t('plugins.scrobbler.dialog.lastfm.auth-failed.message'),
-              type: 'error',
-            });
-          }
-          authWindowOpened = false;
-        });
-      });
-    } else {
-      // wait for the previous auth window to close
-      const waitForClose = async () => {
-        while (authWindowOpened) {
-          await new Promise((r) => setTimeout(r, 100));
+      })
+      .catch((error: unknown) => {
+        // A load failure used to leave the window hidden and the latch set
+        // forever. Tear the window down so `closed` reports the failure.
+        console.error('Failed to open the Last.fm auth window:', error);
+        if (!browserWindow.isDestroyed()) {
+          browserWindow.destroy();
+        } else {
+          clearLatch();
+          finish(false);
         }
-        resolve(latestAuthResult);
-      };
-      waitForClose();
-    }
+      });
   });
 };
