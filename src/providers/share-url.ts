@@ -18,17 +18,36 @@ export const stripSIParam = (url: string) =>
     match.endsWith('&') ? '?' : '',
   );
 
-export const rewriteShareUrlInput = (root: Document) => {
+/** Which URL parts to strip; both off means nothing is rewritten. */
+export type ShareUrlRewriteOptions = {
+  stripMusicFromSharedLinks?: boolean;
+  stripSIFromSharedLinks?: boolean;
+};
+
+/** The window's config, used when the caller passes no explicit options. */
+const optionsFromWindow = (root: Document): ShareUrlRewriteOptions => {
+  const config = root.defaultView?.mainConfig;
+  return {
+    stripMusicFromSharedLinks: Boolean(
+      config?.get('options.stripMusicFromSharedLinks'),
+    ),
+    stripSIFromSharedLinks: Boolean(
+      config?.get('options.stripSIFromSharedLinks'),
+    ),
+  };
+};
+
+export const rewriteShareUrlInput = (
+  root: Document,
+  options: ShareUrlRewriteOptions = optionsFromWindow(root),
+) => {
   const input = root.querySelector<HTMLInputElement>('#share-url');
   if (!input) return false;
 
-  // The preload puts the config on the window this document belongs to.
-  const config = root.defaultView?.mainConfig;
   let canonicalUrl = input.value;
-  if (config?.get('options.stripMusicFromSharedLinks'))
+  if (options.stripMusicFromSharedLinks)
     canonicalUrl = stripMusicSubdomain(canonicalUrl);
-  if (config?.get('options.stripSIFromSharedLinks'))
-    canonicalUrl = stripSIParam(canonicalUrl);
+  if (options.stripSIFromSharedLinks) canonicalUrl = stripSIParam(canonicalUrl);
   if (canonicalUrl === input.value) return false;
 
   input.value = canonicalUrl;
@@ -38,11 +57,12 @@ export const rewriteShareUrlInput = (root: Document) => {
 export const createShareUrlRewriter = (
   root: Document = document,
   Observer: typeof MutationObserver = MutationObserver,
+  getOptions: () => ShareUrlRewriteOptions = () => optionsFromWindow(root),
 ) => {
   let observer: MutationObserver | undefined;
   let pendingRewrite: ReturnType<typeof setTimeout> | undefined;
 
-  const rewrite = () => rewriteShareUrlInput(root);
+  const rewrite = () => rewriteShareUrlInput(root, getOptions());
   const rewriteBeforeClick = () => rewrite();
   const rewriteAfterChange = () => {
     if (pendingRewrite) clearTimeout(pendingRewrite);
@@ -54,15 +74,17 @@ export const createShareUrlRewriter = (
 
   return {
     start() {
-      if (observer) return;
-
-      observer = new Observer(rewrite);
-      observer.observe(root.documentElement, {
-        childList: true,
-        subtree: true,
-      });
-      root.addEventListener('click', rewriteBeforeClick, true);
-      root.addEventListener('change', rewriteAfterChange, true);
+      if (!observer) {
+        observer = new Observer(rewrite);
+        observer.observe(root.documentElement, {
+          childList: true,
+          subtree: true,
+        });
+        root.addEventListener('click', rewriteBeforeClick, true);
+        root.addEventListener('change', rewriteAfterChange, true);
+      }
+      // Also rewrites an already-started rewriter, so a newly enabled option
+      // applies to the value on screen without waiting for an interaction.
       rewrite();
     },
     stop() {

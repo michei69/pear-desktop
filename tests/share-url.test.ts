@@ -19,18 +19,24 @@ const MUSIC_URL = 'https://music.youtube.com/watch?v=abc123';
 // the preload exposes it. Kept by reference so a test can flip an option live.
 const setup = (options: ShareUrlOptions, value = MUSIC_URL) => {
   const window = new Window();
-  (window as unknown as { mainConfig: { get(key: string): unknown } }).mainConfig =
-    {
-      get: (key: string) =>
-        options[key.replace('options.', '') as keyof ShareUrlOptions],
-    };
+  (
+    window as unknown as { mainConfig: { get(key: string): unknown } }
+  ).mainConfig = {
+    get: (key: string) =>
+      options[key.replace('options.', '') as keyof ShareUrlOptions],
+  };
 
   const input = window.document.createElement('input');
   input.id = 'share-url';
   input.value = value;
   window.document.body.append(input);
 
-  return { document: window.document as unknown as Document, input, options, window };
+  return {
+    document: window.document as unknown as Document,
+    input,
+    options,
+    window,
+  };
 };
 
 test('stripMusicSubdomain preserves the rest of a YouTube Music URL', () => {
@@ -56,9 +62,9 @@ test('stripSIParam removes the tracking parameter and keeps the others', () => {
   expect(stripSIParam('https://youtube.com/watch?v=abc&si=xyz')).toBe(
     'https://youtube.com/watch?v=abc',
   );
-  expect(
-    stripSIParam('https://youtube.com/watch?v=abc&si=xyz&list=PL1'),
-  ).toBe('https://youtube.com/watch?v=abc&list=PL1');
+  expect(stripSIParam('https://youtube.com/watch?v=abc&si=xyz&list=PL1')).toBe(
+    'https://youtube.com/watch?v=abc&list=PL1',
+  );
   expect(stripSIParam('https://youtube.com/watch?si=xyz&v=abc')).toBe(
     'https://youtube.com/watch?v=abc',
   );
@@ -85,9 +91,7 @@ test('each option is stripped only while it is on', () => {
     'https://music.youtube.com/watch?v=abc123&si=xyz',
   );
   expect(rewriteShareUrlInput(siOnly.document)).toBe(true);
-  expect(siOnly.input.value).toBe(
-    'https://music.youtube.com/watch?v=abc123',
-  );
+  expect(siOnly.input.value).toBe('https://music.youtube.com/watch?v=abc123');
 });
 
 test('both options together strip the subdomain and the parameter', () => {
@@ -116,9 +120,60 @@ test('a page without the share field is left alone', () => {
   const { window } = setup({ stripMusicFromSharedLinks: true });
   window.document.body.innerHTML = '';
 
+  expect(rewriteShareUrlInput(window.document as unknown as Document)).toBe(
+    false,
+  );
+});
+
+test('explicit options are used instead of the window config', () => {
+  // The window config says "strip music"; the explicit options are the source
+  // of truth for this call.
+  const { document, input } = setup({ stripMusicFromSharedLinks: true });
+
   expect(
-    rewriteShareUrlInput(window.document as unknown as Document),
+    rewriteShareUrlInput(document, {
+      stripMusicFromSharedLinks: false,
+      stripSIFromSharedLinks: false,
+    }),
   ).toBe(false);
+  expect(input.value).toBe(MUSIC_URL);
+
+  expect(
+    rewriteShareUrlInput(document, {
+      stripMusicFromSharedLinks: true,
+      stripSIFromSharedLinks: false,
+    }),
+  ).toBe(true);
+  expect(input.value).toBe('https://youtube.com/watch?v=abc123');
+});
+
+test('the rewriter takes its options from the getter and re-applies them on start', () => {
+  const { document, input, window } = setup(
+    { stripMusicFromSharedLinks: true },
+    'https://music.youtube.com/watch?v=abc123&si=xyz',
+  );
+  const live: ShareUrlOptions = {
+    stripMusicFromSharedLinks: false,
+    stripSIFromSharedLinks: false,
+  };
+  const rewriter = createShareUrlRewriter(
+    document,
+    window.MutationObserver as unknown as typeof MutationObserver,
+    () => live,
+  );
+
+  // The getter is the source of truth: with both options off the URL is left
+  // alone even though the window config says "strip music".
+  rewriter.start();
+  expect(input.value).toBe('https://music.youtube.com/watch?v=abc123&si=xyz');
+
+  // start() re-runs the rewrite, so a newly enabled option applies to the
+  // current value without waiting for an interaction.
+  live.stripSIFromSharedLinks = true;
+  rewriter.start();
+  expect(input.value).toBe('https://music.youtube.com/watch?v=abc123');
+
+  rewriter.stop();
 });
 
 test('share URL rewriting starts and stops with the setting', () => {

@@ -48,6 +48,8 @@ let api: (Element & MusicPlayer) | null = null;
 let isPluginLoaded = false;
 let isApiLoaded = false;
 let firstDataLoaded = false;
+/** `setupSongInfo` registers process-lifetime IPC listeners; it must run once. */
+let songInfoSetup = false;
 
 // The app shell elements live for the whole SPA session; re-querying them per
 // IPC message is pure waste. `isConnected` keeps the cache honest across UI
@@ -639,29 +641,42 @@ const preload = async () => {
 };
 
 const main = async () => {
-  const shareUrlRewriter = createShareUrlRewriter();
-  const setShareUrlRewriterEnabled = (enabled: boolean) => {
-    if (enabled) shareUrlRewriter.start();
-    else shareUrlRewriter.stop();
+  // The two share options are tracked from their option IPC events, so
+  // start/stop and the rewrite itself read one source of truth and a newly
+  // enabled option applies to the value on screen immediately.
+  let stripMusicFromSharedLinks = Boolean(
+    window.mainConfig.get('options.stripMusicFromSharedLinks'),
+  );
+  let stripSIFromSharedLinks = Boolean(
+    window.mainConfig.get('options.stripSIFromSharedLinks'),
+  );
+  const shareUrlRewriter = createShareUrlRewriter(
+    document,
+    MutationObserver,
+    () => ({ stripMusicFromSharedLinks, stripSIFromSharedLinks }),
+  );
+  const setShareUrlRewriterEnabled = () => {
+    if (stripMusicFromSharedLinks || stripSIFromSharedLinks) {
+      shareUrlRewriter.start();
+    } else {
+      shareUrlRewriter.stop();
+    }
   };
 
-  setShareUrlRewriterEnabled(
-    window.mainConfig.get('options.stripMusicFromSharedLinks') ||
-      window.mainConfig.get('options.stripSIFromSharedLinks'),
-  );
+  setShareUrlRewriterEnabled();
   window.ipcRenderer.on(
     'peard:strip-music-from-shared-links',
-    (_event, enabled: boolean) =>
-      setShareUrlRewriterEnabled(
-        enabled || window.mainConfig.get('options.stripSIFromSharedLinks'),
-      ),
+    (_event, enabled: boolean) => {
+      stripMusicFromSharedLinks = Boolean(enabled);
+      setShareUrlRewriterEnabled();
+    },
   );
   window.ipcRenderer.on(
     'peard:strip-si-from-shared-links',
-    (_event, enabled: boolean) =>
-      setShareUrlRewriterEnabled(
-        enabled || window.mainConfig.get('options.stripMusicFromSharedLinks'),
-      ),
+    (_event, enabled: boolean) => {
+      stripSIFromSharedLinks = Boolean(enabled);
+      setShareUrlRewriterEnabled();
+    },
   );
 
   startContextMenuCustomizer(window.mainConfig.getContextMenuHidden());
@@ -763,14 +778,23 @@ const initObserver = async () => {
     if (playerApi) {
       observer?.disconnect();
 
-      setupSongInfo(playerApi);
-      const dataLoadedListener = (name: string) => {
-        if (!firstDataLoaded && name === 'dataloaded') {
-          firstDataLoaded = true;
-          playerApi.removeEventListener('videodatachange', dataLoadedListener);
-        }
-      };
-      playerApi.addEventListener('videodatachange', dataLoadedListener);
+      // The observer can fire again before api-ready, and listenForApiLoad has
+      // its own path into onApiLoaded; both would run setupSongInfo a second
+      // time, duplicating its IPC listeners and media-event reporters.
+      if (!songInfoSetup) {
+        songInfoSetup = true;
+        setupSongInfo(playerApi);
+        const dataLoadedListener = (name: string) => {
+          if (!firstDataLoaded && name === 'dataloaded') {
+            firstDataLoaded = true;
+            playerApi.removeEventListener(
+              'videodatachange',
+              dataLoadedListener,
+            );
+          }
+        };
+        playerApi.addEventListener('videodatachange', dataLoadedListener);
+      }
 
       if (isPluginLoaded && !isApiLoaded) {
         api = playerApi;
