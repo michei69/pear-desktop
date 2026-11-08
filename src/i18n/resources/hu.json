@@ -1634,9 +1634,7 @@
       "theme-preset": "Előbeállítás",
       "theme-variable-name": "Változó",
       "theme-variable-value": "Érték",
-      "theme-variable-add": "Változó hozzáadása",
-      "performance-mode": "Teljesítmény mód",
-      "performance-mode-desc": "Némileg feláldozza a vizuális hűséget az olcsóbb renderelésért."
+      "theme-variable-add": "Változó hozzáadása"
     }
   }
 }

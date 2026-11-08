@@ -1566,9 +1566,7 @@
       "theme-preset": "Дайын баптау",
       "theme-variable-name": "Айнымалы",
       "theme-variable-value": "Мән",
-      "theme-variable-add": "Айнымалы қосу",
-      "performance-mode": "Өнімділік режимі",
-      "performance-mode-desc": "Рендерлеуді жеңілдету үшін көрнекі сападан аздап бас тартыңыз."
+      "theme-variable-add": "Айнымалы қосу"
     }
   }
 }

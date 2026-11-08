@@ -1634,9 +1634,7 @@
       "theme-preset": "プリセット",
       "theme-variable-name": "変数",
       "theme-variable-value": "値",
-      "theme-variable-add": "変数を追加",
-      "performance-mode": "パフォーマンスモード",
-      "performance-mode-desc": "一部の視覚的な忠実度を犠牲にして、レンダリングの負荷を軽減します。"
+      "theme-variable-add": "変数を追加"
     }
   }
 }

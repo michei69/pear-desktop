@@ -22,6 +22,7 @@ interface AppSection {
     | 'general'
     | 'appearance'
     | 'window'
+    | 'performance'
     | 'plugins'
     | 'advanced'
     | 'flags'
@@ -383,6 +384,66 @@ export const buildAppSections = (): AppSection[] => {
       ],
     },
     {
+      id: 'performance',
+      icon: 'speed',
+      label: () => t('settings-ui.sections.performance.label'),
+      groups: [
+        {
+          title: () => t('settings-ui.groups.rendering'),
+          fields: [
+            toggle(
+              'options.performanceMode.flags',
+              () => t('settings-ui.fields.performance-flags'),
+              {
+                ...AT_STARTUP,
+                description: () =>
+                  t('settings-ui.fields.performance-flags-desc'),
+              },
+            ),
+            toggle(
+              'options.performanceMode.css',
+              () => t('settings-ui.fields.performance-css'),
+              {
+                ...AT_STARTUP,
+                description: () => t('settings-ui.fields.performance-css-desc'),
+              },
+            ),
+            toggle(
+              'options.performanceMode.animations',
+              () => t('settings-ui.fields.performance-animations'),
+              {
+                ...AT_STARTUP,
+                description: () =>
+                  t('settings-ui.fields.performance-animations-desc'),
+              },
+            ),
+            toggle(
+              'options.performanceMode.plugins',
+              () => t('settings-ui.fields.performance-plugins'),
+              {
+                ...AT_STARTUP,
+                description: () =>
+                  t('settings-ui.fields.performance-plugins-desc'),
+              },
+            ),
+          ],
+        },
+        {
+          title: () => t('settings-ui.groups.settings-ui'),
+          fields: [
+            toggle(
+              'plugins.settings-ui.removeBackdropBlur',
+              () => t('settings-ui.settings.remove-backdrop-blur'),
+              {
+                description: () =>
+                  t('settings-ui.settings.remove-backdrop-blur-description'),
+              },
+            ),
+          ],
+        },
+      ],
+    },
+    {
       id: 'plugins',
       icon: 'puzzle',
       label: () => t('settings-ui.sections.plugins.label'),
@@ -422,15 +483,6 @@ export const buildAppSections = (): AppSection[] => {
                 'advanced-options.submenu.disable-hardware-acceleration',
               ),
               AT_STARTUP,
-            ),
-            toggle(
-              'options.performanceMode',
-              () => t('settings-ui.fields.performance-mode'),
-              {
-                ...AT_STARTUP,
-                description: () =>
-                  t('settings-ui.fields.performance-mode-desc'),
-              },
             ),
             toggle(
               'options.autoResetAppCache',

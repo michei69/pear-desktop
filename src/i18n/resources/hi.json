@@ -1634,9 +1634,7 @@
       "theme-preset": "प्रीसेट",
       "theme-variable-name": "वेरिएबल",
       "theme-variable-value": "मान",
-      "theme-variable-add": "वेरिएबल जोड़ें",
-      "performance-mode": "प्रदर्शन मोड",
-      "performance-mode-desc": "थोड़ी दृश्य निष्ठा के बदले हल्के रेंडरिंग का उपयोग करें।"
+      "theme-variable-add": "वेरिएबल जोड़ें"
     }
   }
 }

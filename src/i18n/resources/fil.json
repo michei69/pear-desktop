@@ -1634,9 +1634,7 @@
       "theme-preset": "Preset",
       "theme-variable-name": "Variable",
       "theme-variable-value": "Halaga",
-      "theme-variable-add": "Magdagdag ng variable",
-      "performance-mode": "Performance mode",
-      "performance-mode-desc": "Ipagpalit ang bahagi ng visual fidelity para sa mas magaan na rendering."
+      "theme-variable-add": "Magdagdag ng variable"
     }
   }
 }

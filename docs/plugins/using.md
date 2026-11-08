@@ -131,22 +131,24 @@ and it is only shown in the native menu, not on the Settings cards.
 
 ## Performance mode
 
-**Settings → Advanced**, in the *Performance* group, has **Performance mode**,
-which trades some visual fidelity for cheaper rendering. It affects plugins in
-two ways:
+**Settings → Performance** has the four independent switches that used to be one
+performance mode: lighter YouTube Music flags, a CSS pass that shortens
+animations and transitions and drops backdrop blur, the main-thread Web
+Animations throttle, and skipping the heavy visual plugins' renderer halves. Turn
+on only the parts whose visual cost you are willing to trade.
 
-- The renderer halves of `ambient-mode`, `blur-nav-bar` and `visualizer` are not
-  started while the mode is on. Their menus and settings stay available, and
-  their saved settings are left untouched, so turning the mode off brings them
-  back.
-- The mode also applies feature-flag overrides, a CSS pass that shortens
-  animations and transitions, and a Web Animations throttle. Those parts are app
-  behaviour rather than plugin toggles.
+The *Skip heavy visual plugins* switch affects plugins directly: while it is on,
+the renderer halves of `ambient-mode`, `blur-nav-bar` and `visualizer` are not
+started. Their menus and settings stay available, and their saved settings are
+left untouched, so turning the switch off brings them back.
 
-Performance mode is read when the app starts, so the setting has a restart pill:
-restart for it to take effect. For bisecting a performance problem there is a
-developer escape hatch, `PEAR_PERF_DISABLE=flags,css,animations,plugins`, which
-turns individual parts off while leaving the mode enabled.
+Every switch is read when the app starts, so they carry a restart pill: restart
+for a change to take effect.
+
+The same section's *Settings UI* group has **Remove the settings backdrop blur**,
+which drops the blur behind the in-app settings panel while it is open. It
+applies immediately, and other blurs in the app keep working. The switch is also
+on the Settings UI plugin's card under Plugins → System.
 
 ## Troubleshooting
 

@@ -1587,9 +1587,7 @@
       "theme-preset": "预设",
       "theme-variable-name": "变量",
       "theme-variable-value": "值",
-      "theme-variable-add": "添加变量",
-      "performance-mode": "性能模式",
-      "performance-mode-desc": "牺牲部分视觉保真度以换取更低的渲染开销。"
+      "theme-variable-add": "添加变量"
     }
   }
 }

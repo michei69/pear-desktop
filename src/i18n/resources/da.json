@@ -1578,9 +1578,7 @@
       "theme-preset": "Forudindstilling",
       "theme-variable-name": "Variabel",
       "theme-variable-value": "Værdi",
-      "theme-variable-add": "Tilføj variabel",
-      "performance-mode": "Ydelsestilstand",
-      "performance-mode-desc": "Udskift noget visuel kvalitet med billigere rendering."
+      "theme-variable-add": "Tilføj variabel"
     }
   }
 }

@@ -1634,9 +1634,7 @@
       "theme-preset": "Ustawienie wstępne",
       "theme-variable-name": "Zmienna",
       "theme-variable-value": "Wartość",
-      "theme-variable-add": "Dodaj zmienną",
-      "performance-mode": "Tryb wydajności",
-      "performance-mode-desc": "Poświęć nieco wierności wizualnej na rzecz tańszego renderowania."
+      "theme-variable-add": "Dodaj zmienną"
     }
   }
 }

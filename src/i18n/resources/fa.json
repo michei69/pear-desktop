@@ -1587,9 +1587,7 @@
       "theme-preset": "پیش‌تنظیم",
       "theme-variable-name": "متغیر",
       "theme-variable-value": "مقدار",
-      "theme-variable-add": "افزودن متغیر",
-      "performance-mode": "حالت کارایی",
-      "performance-mode-desc": "کمی از کیفیت بصری را برای رندر سبک‌تر فدا کنید."
+      "theme-variable-add": "افزودن متغیر"
     }
   }
 }

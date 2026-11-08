@@ -1634,9 +1634,7 @@
       "theme-preset": "Pratetap",
       "theme-variable-name": "Pemboleh ubah",
       "theme-variable-value": "Nilai",
-      "theme-variable-add": "Tambah pemboleh ubah",
-      "performance-mode": "Mod prestasi",
-      "performance-mode-desc": "Mengorbankan sedikit kesetiaan visual demi pemaparan yang lebih ringan."
+      "theme-variable-add": "Tambah pemboleh ubah"
     }
   }
 }

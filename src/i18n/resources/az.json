@@ -1634,9 +1634,7 @@
       "theme-preset": "Hazır parametr",
       "theme-variable-name": "Dəyişən",
       "theme-variable-value": "Dəyər",
-      "theme-variable-add": "Dəyişən əlavə et",
-      "performance-mode": "Performans rejimi",
-      "performance-mode-desc": "Daha qənaətli render müqabilində bir qədər vizual keyfiyyətdən güzəştə gedin."
+      "theme-variable-add": "Dəyişən əlavə et"
     }
   }
 }

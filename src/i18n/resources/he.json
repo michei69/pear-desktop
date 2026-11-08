@@ -1634,9 +1634,7 @@
       "theme-preset": "פריסט",
       "theme-variable-name": "משתנה",
       "theme-variable-value": "ערך",
-      "theme-variable-add": "הוספת משתנה",
-      "performance-mode": "מצב ביצועים",
-      "performance-mode-desc": "הפחת מעט את הנאמנות החזותית כדי לקבל רינדור חסכוני יותר."
+      "theme-variable-add": "הוספת משתנה"
     }
   }
 }

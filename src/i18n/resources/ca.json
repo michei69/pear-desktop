@@ -1634,9 +1634,7 @@
       "theme-preset": "Predefinit",
       "theme-variable-name": "Variable",
       "theme-variable-value": "Valor",
-      "theme-variable-add": "Afegeix una variable",
-      "performance-mode": "Mode de rendiment",
-      "performance-mode-desc": "Sacrifica una mica de fidelitat visual a canvi d'un renderitzat més lleuger."
+      "theme-variable-add": "Afegeix una variable"
     }
   }
 }

@@ -1587,9 +1587,7 @@
       "theme-preset": "ຄ່າຕັ້ງສຳເລັດ",
       "theme-variable-name": "ຕົວແປ",
       "theme-variable-value": "ຄ່າ",
-      "theme-variable-add": "ເພີ່ມຕົວແປ",
-      "performance-mode": "ໂໝດປະສິດທິພາບ",
-      "performance-mode-desc": "ສະຫຼະຄວາມຄົມຊັດທາງພາບບາງສ່ວນ ເພື່ອໃຫ້ການສະແດງຜົນປະຫຍັດກວ່າ."
+      "theme-variable-add": "ເພີ່ມຕົວແປ"
     }
   }
 }

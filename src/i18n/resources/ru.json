@@ -1634,9 +1634,7 @@
       "theme-preset": "Пресет",
       "theme-variable-name": "Переменная",
       "theme-variable-value": "Значение",
-      "theme-variable-add": "Добавить переменную",
-      "performance-mode": "Режим производительности",
-      "performance-mode-desc": "Обменять часть визуального качества на более экономный рендеринг."
+      "theme-variable-add": "Добавить переменную"
     }
   }
 }

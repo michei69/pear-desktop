@@ -1641,9 +1641,7 @@
       "theme-preset": "Aurrezarpena",
       "theme-variable-name": "Aldagaia",
       "theme-variable-value": "Balioa",
-      "theme-variable-add": "Gehitu aldagaia",
-      "performance-mode": "Errendimendu modua",
-      "performance-mode-desc": "Ikusmen-fideltasun pixka bat galdu errendatze merkeagoa lortzeko."
+      "theme-variable-add": "Gehitu aldagaia"
     }
   }
 }

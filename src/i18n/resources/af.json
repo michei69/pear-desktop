@@ -1641,9 +1641,7 @@
       "theme-preset": "Voorafinstelling",
       "theme-variable-name": "Veranderlike",
       "theme-variable-value": "Waarde",
-      "theme-variable-add": "Voeg veranderlike by",
-      "performance-mode": "Prestasiemodus",
-      "performance-mode-desc": "Ruil 'n bietjie visuele getrouheid in vir goedkoper weergee."
+      "theme-variable-add": "Voeg veranderlike by"
     }
   }
 }

@@ -367,4 +367,18 @@ export const createMigrations = ({
       store.delete(`plugins.${id}`);
     }
   },
+  // The one performance mode toggle became a switch per part; a config written
+  // before the split still holds the boolean, while the store default is the
+  // object and skips it.
+  '>=3.13.0'(store: IStore) {
+    const performanceMode = store.get('options.performanceMode');
+    if (typeof performanceMode !== 'boolean') return;
+
+    store.set('options.performanceMode', {
+      flags: performanceMode,
+      css: performanceMode,
+      animations: performanceMode,
+      plugins: performanceMode,
+    });
+  },
 });

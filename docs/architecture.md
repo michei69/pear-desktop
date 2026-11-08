@@ -23,7 +23,7 @@ Preload (`src/preload.ts`):
 1. `loadI18n(active language)` - English plus the active language.
 2. `loadAllPreloadPlugins()` after i18n resolves.
 3. Expose the bridge and register `plugin:enable` / `plugin:unload` forwarding.
-4. If performance mode is on, install the animation throttle into the page before the app's own renderer runs.
+4. If the performance animation switch is on, install the animation throttle into the page before the app's own renderer runs.
 5. Synchronously ask main for the renderer script (`get-renderer-script`) and execute it in the page world, prefixing the bundle with the loaded i18n resources as `globalThis.__PEAR_I18N_RESOURCES__`. In dev, this instead injects Vite's client and `renderer.ts`.
 
 Renderer (`src/renderer.ts`):
@@ -61,7 +61,7 @@ Plugin discovery, lifecycle and the per-process contexts are covered in
 - Enabling/disabling a plugin at runtime is signalled from main over `plugin:enable` / `plugin:unload` to preload and the renderer, and `ipcMain.emit(...)` for main-process plugins. The main-process config watcher (`initHook`) drives this when `plugins.<id>.enabled` changes.
 - The renderer reads static metadata from the generated `rendererPluginMeta` to decide which plugins to start without resolving definitions that are statically known to be disabled or platform-mismatched; if a field could not be read statically, it falls back to importing the definition. The main build uses deferred dynamic imports, so a main-process plugin module evaluates only when loaded; the renderer and preload builds import every plugin entry statically, so their top-level code is part of the bundle and evaluates with it. Keep plugin top-level code side-effect-free either way.
 - `restartNeeded` does not unload/reload anything by itself: main shows the restart dialog (or batches it for the settings window) and the user restarts.
-- Performance mode can skip the renderer half of a fixed list of visual plugins (`src/providers/performance-mode.ts`) without touching their config.
+- The performance plugins switch can skip the renderer half of a fixed list of visual plugins (`src/providers/performance-mode.ts`) without touching their config.
 
 ## Configuration
 
@@ -123,7 +123,7 @@ Writes go through the `ytmd-sui:*` channels in the plugin backend, which apply t
 
 ## Performance mode
 
-`options.performanceMode` is an app-level option with four independent parts (`src/providers/performance-mode.ts`): feature-flag overrides, a CSS pass that disables animations/transitions/backdrop filters, an injected Web Animations throttle, and skipping the renderer half of `ambient-mode`, `blur-nav-bar` and `visualizer`. `PEAR_PERF_DISABLE=flags,css,...` turns individual parts off for bisecting. User feature-flag overrides win over the mode's defaults.
+`options.performanceMode` is an app-level object with four independent switches (`src/providers/performance-mode.ts`), each read where its part applies and each exposed in Settings → Performance: feature-flag overrides, a CSS pass that disables animations/transitions/backdrop filters, an injected Web Animations throttle, and skipping the renderer half of `ambient-mode`, `blur-nav-bar` and `visualizer`. User feature-flag overrides win over the switches' defaults.
 
 ## Shared providers
 
@@ -147,7 +147,7 @@ Writes go through the `ytmd-sui:*` channels in the plugin backend, which apply t
 | `language-sync`                    | App language ↔ YouTube `hl` value                                    |
 | `memory-report`                    | Opt-in per-process/cache memory snapshots                            |
 | `option-effects`                   | Side effects of writing an app option                                |
-| `performance-mode` / `-animations` | Performance mode flags, CSS and animation throttle                   |
+| `performance-mode` / `-animations` | Performance switches, CSS and animation throttle                      |
 | `player-page-observer`             | Shared `MutationObserver`s for player-page nodes                     |
 | `prompt-options`                   | Shared `custom-electron-prompt` defaults                             |
 | `protocol-handler`                 | `youtubemusic://` protocol commands and focus handling               |

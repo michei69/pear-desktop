@@ -1,33 +1,13 @@
 import type { FeatureFlagOverrides } from '@/plugins/settings-ui/injectors/flags';
 
-type PerformancePart = 'flags' | 'css' | 'animations' | 'plugins';
+// The app's performance switches (`options.performanceMode`) are read where
+// each part applies: `flags` in preload and main, `css` in main, `animations` in
+// preload and `plugins` in the renderer loader.
 
 /**
- * Debug escape hatch: `PEAR_PERF_DISABLE=flags,css` keeps performance mode on
- * but turns individual parts off, to bisect which one costs what. The renderer
- * has no `process`, so preload forwards the value through the bridge.
- */
-const disabledParts = () => {
-  if (typeof process !== 'undefined' && process.env) {
-    return process.env.PEAR_PERF_DISABLE ?? '';
-  }
-
-  return (
-    (globalThis as { pearPerfDisabledParts?: string }).pearPerfDisabledParts ??
-    ''
-  );
-};
-
-export const isPerformancePartEnabled = (part: PerformancePart) =>
-  !disabledParts()
-    .split(',')
-    .map((value) => value.trim())
-    .includes(part);
-
-/**
- * YouTube Music flags forced while performance mode is on. Values are read by
- * the page's own `EXPERIMENT_FLAGS`; a flag the user overrides wins (see
- * `performanceModeOverrides`).
+ * YouTube Music flags forced while the performance flags switch is on. Values
+ * are read by the page's own `EXPERIMENT_FLAGS`; a flag the user overrides wins
+ * (see `performanceModeOverrides`).
  */
 export const performanceModeFeatureFlags: FeatureFlagOverrides = {
   // Artwork: fixed 1x thumbnail factor instead of the device pixel ratio, no
@@ -57,7 +37,7 @@ export const performanceModeFeatureFlags: FeatureFlagOverrides = {
 };
 
 /**
- * Performance mode flags first, the user's own flag overrides second, so a
+ * Performance flags first, the user's own flag overrides second, so a
  * deliberate choice always wins.
  */
 export const performanceModeOverrides = (
@@ -70,8 +50,8 @@ export const performanceModeOverrides = (
 
 /**
  * Plugins whose whole purpose is expensive visuals. Their renderer half is not
- * started in performance mode; their config is left untouched, so turning the
- * mode off brings them back.
+ * started while the performance plugins switch is on; their config is left
+ * untouched, so turning the switch off brings them back.
  */
 const PERFORMANCE_MODE_SKIPPED_PLUGINS = new Set([
   'ambient-mode',
@@ -80,9 +60,7 @@ const PERFORMANCE_MODE_SKIPPED_PLUGINS = new Set([
 ]);
 
 export const isSkippedInPerformanceMode = (id: string, enabled: boolean) =>
-  enabled &&
-  isPerformancePartEnabled('plugins') &&
-  PERFORMANCE_MODE_SKIPPED_PLUGINS.has(id);
+  enabled && PERFORMANCE_MODE_SKIPPED_PLUGINS.has(id);
 
 /**
  * Stops per-frame compositing work: animations, transitions, backdrop blurs and

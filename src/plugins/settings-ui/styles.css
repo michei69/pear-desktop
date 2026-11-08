@@ -61,6 +61,10 @@
   backdrop-filter: blur(3px);
   animation: sui-scrim-in 0.18s ease both;
 }
+/* The performance section's settings switch; the scrim alone loses its blur. */
+.sui-root--no-blur .sui-scrim {
+  backdrop-filter: none;
+}
 
 .sui-modal {
   position: relative;

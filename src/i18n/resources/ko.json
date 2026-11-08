@@ -1634,9 +1634,7 @@
       "theme-preset": "프리셋",
       "theme-variable-name": "변수",
       "theme-variable-value": "값",
-      "theme-variable-add": "변수 추가",
-      "performance-mode": "성능 모드",
-      "performance-mode-desc": "일부 시각적 품질을 포기하는 대신 렌더링 비용을 줄입니다."
+      "theme-variable-add": "변수 추가"
     }
   }
 }

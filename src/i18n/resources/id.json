@@ -1634,9 +1634,7 @@
       "theme-preset": "Preset",
       "theme-variable-name": "Variabel",
       "theme-variable-value": "Nilai",
-      "theme-variable-add": "Tambah variabel",
-      "performance-mode": "Mode performa",
-      "performance-mode-desc": "Tukar sebagian ketajaman visual dengan rendering yang lebih ringan."
+      "theme-variable-add": "Tambah variabel"
     }
   }
 }

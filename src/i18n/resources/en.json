@@ -1881,7 +1881,9 @@
       "show-button": "Show the settings entry in the sidebar",
       "show-button-description": "Turn this off to keep the sidebar clean; Settings is still under Navigation → Open Settings.",
       "separate-window": "Always open Settings in a separate window",
-      "separate-window-description": "Opens the standalone settings window, the way the tray entry does, instead of the in-app panel."
+      "separate-window-description": "Opens the standalone settings window, the way the tray entry does, instead of the in-app panel.",
+      "remove-backdrop-blur": "Remove the settings backdrop blur",
+      "remove-backdrop-blur-description": "Turns off the blur behind the in-app settings panel while it is open. Other blurs in the app keep working."
     },
     "search-placeholder": "Search settings",
     "search-results": "Search results",
@@ -1927,6 +1929,9 @@
       "window": {
         "label": "Window & Tray"
       },
+      "performance": {
+        "label": "Performance"
+      },
       "advanced": {
         "label": "Advanced"
       },
@@ -1951,6 +1956,8 @@
       "system": "System",
       "network": "Network",
       "performance": "Performance",
+      "rendering": "Rendering",
+      "settings-ui": "Settings UI",
       "configuration": "Configuration",
       "updates": "Updates"
     },
@@ -1979,8 +1986,14 @@
       "add": "Add"
     },
     "fields": {
-      "performance-mode": "Performance mode",
-      "performance-mode-desc": "Trade some visual fidelity for cheaper rendering.",
+      "performance-flags": "Lighter YouTube Music interface",
+      "performance-flags-desc": "Turns off YouTube Music's heavier artwork, motion and list-rendering features. Your own flag overrides still win.",
+      "performance-css": "Disable animations and backdrop blur",
+      "performance-css-desc": "Injects a stylesheet that collapses animations and transitions and turns off backdrop blur across the interface.",
+      "performance-animations": "Reduce main-thread animation work",
+      "performance-animations-desc": "Ends the layout animations YouTube Music runs on the main thread as soon as they start, and moves the lyrics glow onto the compositor.",
+      "performance-plugins": "Skip heavy visual plugins",
+      "performance-plugins-desc": "Does not start the renderer half of Ambient mode, Blur nav bar and Visualizer. Their settings are kept.",
       "hide-dislike-button": "Hide Dislike Button",
       "hide-video-captions": "Hide Video Captions",
       "context-menu": {

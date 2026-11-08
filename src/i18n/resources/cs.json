@@ -1634,9 +1634,7 @@
       "theme-preset": "Předvolba",
       "theme-variable-name": "Proměnná",
       "theme-variable-value": "Hodnota",
-      "theme-variable-add": "Přidat proměnnou",
-      "performance-mode": "Režim výkonu",
-      "performance-mode-desc": "Vyměňte část vizuální věrnosti za méně náročné vykreslování."
+      "theme-variable-add": "Přidat proměnnou"
     }
   }
 }

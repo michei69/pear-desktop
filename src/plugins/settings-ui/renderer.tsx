@@ -72,6 +72,7 @@ let config: SettingsUIConfig = {
   enabled: true,
   showButton: true,
   separateWindow: false,
+  removeBackdropBlur: false,
 };
 let ipc: RendererContext<SettingsUIConfig>['ipc'] | undefined;
 

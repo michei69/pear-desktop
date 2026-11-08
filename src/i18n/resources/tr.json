@@ -1634,9 +1634,7 @@
       "theme-preset": "Ön ayar",
       "theme-variable-name": "Değişken",
       "theme-variable-value": "Değer",
-      "theme-variable-add": "Değişken ekle",
-      "performance-mode": "Performans modu",
-      "performance-mode-desc": "Daha düşük işleme maliyeti karşılığında görsel kaliteden biraz ödün verin."
+      "theme-variable-add": "Değişken ekle"
     }
   }
 }

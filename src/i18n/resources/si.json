@@ -1578,9 +1578,7 @@
       "theme-preset": "පෙරසිටුවම",
       "theme-variable-name": "විචල්‍යය",
       "theme-variable-value": "අගය",
-      "theme-variable-add": "විචල්‍යයක් එකතු කරන්න",
-      "performance-mode": "කාර්ය සාධන ප්‍රකාරය",
-      "performance-mode-desc": "වඩා අඩු වියදමකින් රෙන්ඩර් කිරීම සඳහා යම් දෘශ්‍ය ගුණත්වයක් අත්හරියි."
+      "theme-variable-add": "විචල්‍යයක් එකතු කරන්න"
     }
   }
 }

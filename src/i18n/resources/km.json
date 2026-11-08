@@ -1641,9 +1641,7 @@
       "theme-preset": "កំណត់ជាមុន",
       "theme-variable-name": "អថេរ",
       "theme-variable-value": "តម្លៃ",
-      "theme-variable-add": "បន្ថែមអថេរ",
-      "performance-mode": "របៀបដំណើរការ",
-      "performance-mode-desc": "ប្តូរភាពច្បាស់នៃរូបរាងមួយចំនួន ដើម្បីឱ្យការបង្ហាញសន្សំសំចៃជាង។"
+      "theme-variable-add": "បន្ថែមអថេរ"
     }
   }
 }

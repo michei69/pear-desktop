@@ -1634,9 +1634,7 @@
       "theme-preset": "Esiasetus",
       "theme-variable-name": "Muuttuja",
       "theme-variable-value": "Arvo",
-      "theme-variable-add": "Lisää muuttuja",
-      "performance-mode": "Suorituskykytila",
-      "performance-mode-desc": "Vaihda hieman visuaalista tarkkuutta kevyempään renderöintiin."
+      "theme-variable-add": "Lisää muuttuja"
     }
   }
 }

@@ -143,10 +143,10 @@ export const renderer = createRenderer<
   },
 
   async start(ctx: RendererContext<SyncedLyricsPluginConfig>) {
-    // The app's performance mode opts this plugin's glow into a composited filter.
+    // The performance animation switch opts this plugin's glow into a composited filter.
     document.documentElement.toggleAttribute(
       'data-lyrics-performance',
-      Boolean(window.mainConfig.get('options.performanceMode')),
+      Boolean(window.mainConfig.get('options.performanceMode.animations')),
     );
 
     setNetFetch(ctx.ipc.invoke.bind(ctx.ipc, 'synced-lyrics:fetch'));

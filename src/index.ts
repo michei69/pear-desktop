@@ -49,10 +49,7 @@ import { clearStaleCodeCaches } from '@/providers/cache-maintenance';
 import { classifyLink } from '@/providers/external-links';
 import { loadFlagMetadata } from '@/providers/flag-metadata';
 import { setupMemoryReport } from '@/providers/memory-report';
-import {
-  performanceModeCss,
-  isPerformancePartEnabled,
-} from '@/providers/performance-mode';
+import { performanceModeCss } from '@/providers/performance-mode';
 import {
   APP_PROTOCOL,
   handleProtocol,
@@ -586,10 +583,7 @@ const showNeedToRestartDialog = async (
 function initTheme(win: BrowserWindow) {
   injectCSS(win.webContents, musicPlayerCss);
 
-  if (
-    config.get('options.performanceMode') &&
-    isPerformancePartEnabled('css')
-  ) {
+  if (config.get('options.performanceMode.css')) {
     injectCSS(win.webContents, performanceModeCss);
   }
 

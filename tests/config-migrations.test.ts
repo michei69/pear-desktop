@@ -163,6 +163,48 @@ test('the 3.12.4 cleanup drops only the keys this build no longer has', () => {
   expect(store.get('options.updateChannel')).toBe('beta');
 });
 
+test('the single performance mode toggle is split into its parts', () => {
+  const store = new FakeStore({ options: { performanceMode: true } });
+
+  runAll(store, migrations);
+
+  expect(store.get('options.performanceMode')).toEqual({
+    flags: true,
+    css: true,
+    animations: true,
+    plugins: true,
+  });
+
+  // Off for every part when the old toggle was off.
+  const off = new FakeStore({ options: { performanceMode: false } });
+  runAll(off, migrations);
+  expect(off.get('options.performanceMode')).toEqual({
+    flags: false,
+    css: false,
+    animations: false,
+    plugins: false,
+  });
+
+  // A config that already holds the object (or a fresh one) is left alone.
+  const split = new FakeStore({
+    options: {
+      performanceMode: {
+        flags: true,
+        css: false,
+        animations: true,
+        plugins: false,
+      },
+    },
+  });
+  runAll(split, migrations);
+  expect(split.get('options.performanceMode')).toEqual({
+    flags: true,
+    css: false,
+    animations: true,
+    plugins: false,
+  });
+});
+
 test('re-running the migrations is idempotent', () => {
   const store = new FakeStore({
     plugins: {

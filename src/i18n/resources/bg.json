@@ -1634,9 +1634,7 @@
       "theme-preset": "Предварителна настройка",
       "theme-variable-name": "Променлива",
       "theme-variable-value": "Стойност",
-      "theme-variable-add": "Добави променлива",
-      "performance-mode": "Режим за производителност",
-      "performance-mode-desc": "Жертва част от визуалната точност за по-леко рендиране."
+      "theme-variable-add": "Добави променлива"
     }
   }
 }

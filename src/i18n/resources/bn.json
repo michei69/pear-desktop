@@ -1634,9 +1634,7 @@
       "theme-preset": "প্রিসেট",
       "theme-variable-name": "ভেরিয়েবল",
       "theme-variable-value": "মান",
-      "theme-variable-add": "ভেরিয়েবল যোগ করুন",
-      "performance-mode": "পারফরম্যান্স মোড",
-      "performance-mode-desc": "সাশ্রয়ী রেন্ডারিংয়ের বদলে কিছুটা ভিজ্যুয়াল মান কমিয়ে নিন।"
+      "theme-variable-add": "ভেরিয়েবল যোগ করুন"
     }
   }
 }

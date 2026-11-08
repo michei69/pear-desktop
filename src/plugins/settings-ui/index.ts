@@ -12,6 +12,8 @@ export interface SettingsUIConfig {
   showButton: boolean;
   /** Opens the standalone window instead of the in-app panel, like the tray. */
   separateWindow: boolean;
+  /** Drops the scrim's backdrop blur while the in-app panel is open. */
+  removeBackdropBlur: boolean;
 }
 
 export default createPlugin({
@@ -23,6 +25,7 @@ export default createPlugin({
     enabled: true,
     showButton: true,
     separateWindow: false,
+    removeBackdropBlur: false,
   } as SettingsUIConfig,
   settings: [
     {
@@ -36,6 +39,13 @@ export default createPlugin({
       key: 'separateWindow',
       label: () => t('settings-ui.settings.separate-window'),
       description: () => t('settings-ui.settings.separate-window-description'),
+    },
+    {
+      type: 'switch',
+      key: 'removeBackdropBlur',
+      label: () => t('settings-ui.settings.remove-backdrop-blur'),
+      description: () =>
+        t('settings-ui.settings.remove-backdrop-blur-description'),
     },
   ],
   stylesheets: [style],

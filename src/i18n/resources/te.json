@@ -1641,9 +1641,7 @@
       "theme-preset": "ప్రీసెట్",
       "theme-variable-name": "వేరియబుల్",
       "theme-variable-value": "విలువ",
-      "theme-variable-add": "వేరియబుల్ జోడించు",
-      "performance-mode": "పెర్ఫార్మెన్స్ మోడ్",
-      "performance-mode-desc": "తక్కువ వనరులతో రెండరింగ్ కోసం కొంత విజువల్ నాణ్యతను త్యాగం చేయండి."
+      "theme-variable-add": "వేరియబుల్ జోడించు"
     }
   }
 }

@@ -1,10 +1,7 @@
 import { webFrame } from 'electron';
 
 import * as config from '@/config';
-import {
-  isPerformancePartEnabled,
-  performanceModeOverrides,
-} from '@/providers/performance-mode';
+import { performanceModeOverrides } from '@/providers/performance-mode';
 
 import {
   installFeatureFlags,
@@ -22,9 +19,10 @@ export const startFeatureFlags = () => {
 
   const saved = (config.get('options.featureFlags') ??
     {}) as FeatureFlagOverrides;
-  const overrides = isPerformancePartEnabled('flags')
-    ? performanceModeOverrides(saved, config.get('options.performanceMode'))
-    : saved;
+  const overrides = performanceModeOverrides(
+    saved,
+    config.get('options.performanceMode.flags'),
+  );
 
   return webFrame.executeJavaScript(
     `(${installFeatureFlags.toString()})(${JSON.stringify(overrides)}); 0`,

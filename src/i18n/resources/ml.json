@@ -1642,9 +1642,7 @@
       "theme-preset": "പ്രീസെറ്റ്",
       "theme-variable-name": "വേരിയബിൾ",
       "theme-variable-value": "മൂല്യം",
-      "theme-variable-add": "വേരിയബിൾ ചേർക്കുക",
-      "performance-mode": "പ്രകടന മോഡ്",
-      "performance-mode-desc": "ചെലവുകുറഞ്ഞ റെൻഡറിംഗിനായി കുറച്ച് ദൃശ്യനിലവാരം വിട്ടുകൊടുക്കുക."
+      "theme-variable-add": "വേരിയബിൾ ചേർക്കുക"
     }
   }
 }

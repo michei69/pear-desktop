@@ -1634,9 +1634,7 @@
       "theme-preset": "พรีเซ็ต",
       "theme-variable-name": "ตัวแปร",
       "theme-variable-value": "ค่า",
-      "theme-variable-add": "เพิ่มตัวแปร",
-      "performance-mode": "โหมดประสิทธิภาพ",
-      "performance-mode-desc": "แลกความสวยงามของภาพบางส่วนเพื่อการเรนเดอร์ที่เบาลง"
+      "theme-variable-add": "เพิ่มตัวแปร"
     }
   }
 }

@@ -252,6 +252,11 @@ export const SettingsModal = (props: {
     const snap = store();
     return snap ? getAppValue(snap, key) : undefined;
   };
+  /** The settings-ui plugin's own config, absent until one of its options is written. */
+  const settingsUiConfig = () =>
+    (store()?.plugins as PluginConfigMap | undefined)?.['settings-ui'];
+  /** The scrim blur is the only costly composite left while the panel is open. */
+  const removeScrimBlur = () => settingsUiConfig()?.removeBackdropBlur === true;
   const pluginVal = (meta: PluginMeta, key: string) => {
     const snap = store();
     if (!snap) return undefined;
@@ -466,6 +471,7 @@ export const SettingsModal = (props: {
       classList={{
         'sui-root--standalone': props.standalone,
         'sui-root--closing': props.closing,
+        'sui-root--no-blur': removeScrimBlur(),
       }}
     >
       <Show when={!props.standalone}>

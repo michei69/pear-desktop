@@ -1634,9 +1634,7 @@
       "theme-preset": "Voorinstelling",
       "theme-variable-name": "Variabele",
       "theme-variable-value": "Waarde",
-      "theme-variable-add": "Variabele toevoegen",
-      "performance-mode": "Prestatiemodus",
-      "performance-mode-desc": "Ruil wat visuele kwaliteit in voor zuinigere rendering."
+      "theme-variable-add": "Variabele toevoegen"
     }
   }
 }

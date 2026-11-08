@@ -1634,9 +1634,7 @@
       "theme-preset": "Mẫu",
       "theme-variable-name": "Biến",
       "theme-variable-value": "Giá trị",
-      "theme-variable-add": "Thêm biến",
-      "performance-mode": "Chế độ hiệu năng",
-      "performance-mode-desc": "Đánh đổi một phần độ sắc nét hình ảnh để có hiệu suất kết xuất tốt hơn."
+      "theme-variable-add": "Thêm biến"
     }
   }
 }

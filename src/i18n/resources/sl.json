@@ -1634,9 +1634,7 @@
       "theme-preset": "Prednastavitev",
       "theme-variable-name": "Spremenljivka",
       "theme-variable-value": "Vrednost",
-      "theme-variable-add": "Dodaj spremenljivko",
-      "performance-mode": "Način delovanja",
-      "performance-mode-desc": "Zamenjajte nekaj vizualne kakovosti za cenejše izrisovanje."
+      "theme-variable-add": "Dodaj spremenljivko"
     }
   }
 }

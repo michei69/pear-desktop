@@ -1634,9 +1634,7 @@
       "theme-preset": "Forsnið",
       "theme-variable-name": "Breyta",
       "theme-variable-value": "Gildi",
-      "theme-variable-add": "Bæta við breytu",
-      "performance-mode": "Afkastahamur",
-      "performance-mode-desc": "Skipta á móti hluta sjónrænna gæða fyrir hagkvæmari teikningu."
+      "theme-variable-add": "Bæta við breytu"
     }
   }
 }

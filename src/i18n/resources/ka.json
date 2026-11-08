@@ -1669,9 +1669,7 @@
       "theme-preset": "პრესეტი",
       "theme-variable-name": "ცვლადი",
       "theme-variable-value": "მნიშვნელობა",
-      "theme-variable-add": "ცვლადის დამატება",
-      "performance-mode": "წარმადობის რეჟიმი",
-      "performance-mode-desc": "შეცვალეთ გარკვეული ვიზუალური სიზუსტე უფრო მსუბუქი რენდერინგისთვის."
+      "theme-variable-add": "ცვლადის დამატება"
     }
   }
 }

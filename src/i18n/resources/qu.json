@@ -1641,9 +1641,7 @@
       "theme-preset": "Preset",
       "theme-variable-name": "Hukchakuq",
       "theme-variable-value": "Chanin",
-      "theme-variable-add": "Variable yapay",
-      "performance-mode": "Usqhay ruway ñan",
-      "performance-mode-desc": "Wakin rikch'ay allin kayta qun, aswan pisi chanin render ruwaypaq."
+      "theme-variable-add": "Variable yapay"
     }
   }
 }

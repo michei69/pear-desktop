@@ -1634,9 +1634,7 @@
       "theme-preset": "Förinställning",
       "theme-variable-name": "Variabel",
       "theme-variable-value": "Värde",
-      "theme-variable-add": "Lägg till variabel",
-      "performance-mode": "Prestandaläge",
-      "performance-mode-desc": "Byt bort en del visuell kvalitet mot billigare rendering."
+      "theme-variable-add": "Lägg till variabel"
     }
   }
 }

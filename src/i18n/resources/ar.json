@@ -1634,9 +1634,7 @@
       "theme-preset": "إعداد مسبق",
       "theme-variable-name": "المتغير",
       "theme-variable-value": "القيمة",
-      "theme-variable-add": "إضافة متغير",
-      "performance-mode": "وضع الأداء",
-      "performance-mode-desc": "بادِل بعض الدقة البصرية مقابل عرض أقل تكلفة."
+      "theme-variable-add": "إضافة متغير"
     }
   }
 }

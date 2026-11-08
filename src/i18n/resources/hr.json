@@ -1634,9 +1634,7 @@
       "theme-preset": "Unaprijed postavljeno",
       "theme-variable-name": "Varijabla",
       "theme-variable-value": "Vrijednost",
-      "theme-variable-add": "Dodaj varijablu",
-      "performance-mode": "Način performansi",
-      "performance-mode-desc": "Žrtvujte dio vizualne kvalitete za jeftinije renderiranje."
+      "theme-variable-add": "Dodaj varijablu"
     }
   }
 }

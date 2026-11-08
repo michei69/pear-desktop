@@ -1641,9 +1641,7 @@
       "theme-preset": "Paraprake",
       "theme-variable-name": "Variabli",
       "theme-variable-value": "Vlera",
-      "theme-variable-add": "Shto variabël",
-      "performance-mode": "Modaliteti i performancës",
-      "performance-mode-desc": "Shkëmbe një pjesë të besnikërisë vizuale për një rendering më efikas."
+      "theme-variable-add": "Shto variabël"
     }
   }
 }

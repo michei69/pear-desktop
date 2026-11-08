@@ -209,9 +209,9 @@ The rest applies on top:
   `supportsPlatform` helper checks it while the plugin maps are built, so a
   plugin for another OS is left out of those maps and never appears in the menu
   or settings on this one.
-- Performance mode skips the renderer half of `ambient-mode`, `blur-nav-bar` and
-  `visualizer` (`src/providers/performance-mode.ts`). Their config is untouched,
-  and their backend, preload and menu halves still run.
+- The performance plugins switch skips the renderer half of `ambient-mode`,
+  `blur-nav-bar` and `visualizer` (`src/providers/performance-mode.ts`). Their
+  config is untouched, and their backend, preload and menu halves still run.
 - Enabling or disabling at runtime is driven by the config watcher in
   `src/index.ts`: main starts/stops its own half, sends `plugin:enable` /
   `plugin:unload` to preload and the renderer, then sends `config-changed` with

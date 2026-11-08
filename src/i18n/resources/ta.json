@@ -1634,9 +1634,7 @@
       "theme-preset": "முன்னமைவு",
       "theme-variable-name": "மாறி",
       "theme-variable-value": "மதிப்பு",
-      "theme-variable-add": "மாறியைச் சேர்",
-      "performance-mode": "செயல்திறன் பயன்முறை",
-      "performance-mode-desc": "சில காட்சி துல்லியத்தை விட்டுக்கொடுத்து குறைந்த செலவில் ரெண்டரிங் செய்ய அனுமதிக்கிறது."
+      "theme-variable-add": "மாறியைச் சேர்"
     }
   }
 }

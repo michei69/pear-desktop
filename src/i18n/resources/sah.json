@@ -1645,9 +1645,7 @@
       "theme-preset": "Бэрисин",
       "theme-variable-name": "Уларыйааччы",
       "theme-variable-value": "Суолта",
-      "theme-variable-add": "Уларыйааччыны эб",
-      "performance-mode": "Үлэлээһин режима",
-      "performance-mode-desc": "Көстүү хаачыстыбатын аҕыйатан, рендериҥҥэ аҕыйах ресурс туттуу."
+      "theme-variable-add": "Уларыйааччыны эб"
     }
   }
 }

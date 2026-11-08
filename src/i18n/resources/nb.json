@@ -1571,9 +1571,7 @@
       "theme-preset": "Forhåndsinnstilling",
       "theme-variable-name": "Variabel",
       "theme-variable-value": "Verdi",
-      "theme-variable-add": "Legg til variabel",
-      "performance-mode": "Ytelsesmodus",
-      "performance-mode-desc": "Bytt bort noe visuell kvalitet for billigere rendering."
+      "theme-variable-add": "Legg til variabel"
     }
   }
 }

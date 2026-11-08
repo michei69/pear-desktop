@@ -1566,9 +1566,7 @@
       "theme-preset": "Pradvyznačany",
       "theme-variable-name": "Zmiennaja",
       "theme-variable-value": "Značeńnie",
-      "theme-variable-add": "Dadać zmiennuju",
-      "performance-mode": "Režym pradukcyjnasci",
-      "performance-mode-desc": "Abmianiajcie niekatoruju vizualnuju dakładnasć na bolš ekanomny rendering."
+      "theme-variable-add": "Dadać zmiennuju"
     }
   }
 }

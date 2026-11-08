@@ -1634,9 +1634,7 @@
       "theme-preset": "Пресет",
       "theme-variable-name": "Змінна",
       "theme-variable-value": "Значення",
-      "theme-variable-add": "Додати змінну",
-      "performance-mode": "Режим продуктивності",
-      "performance-mode-desc": "Поступитися частиною візуальної якості заради економнішого рендерингу."
+      "theme-variable-add": "Додати змінну"
     }
   }
 }

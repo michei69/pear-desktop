@@ -7,7 +7,6 @@ import {
 import is from 'electron-is';
 
 import { getLoadedResources, loadI18n, t } from '@/i18n';
-import { isPerformancePartEnabled } from '@/providers/performance-mode';
 import { installAnimationThrottle } from '@/providers/performance-mode-animations';
 
 import * as config from './config';
@@ -31,7 +30,8 @@ const rendererConfigKeys = new Set([
   'options.stripMusicFromSharedLinks',
   'options.stripSIFromSharedLinks',
   'options.usePodcastParticipantAsArtist',
-  'options.performanceMode',
+  'options.performanceMode.animations',
+  'options.performanceMode.plugins',
   'plugins.transparent-player.opacity',
 ]);
 
@@ -192,17 +192,11 @@ contextBridge.exposeInMainWorld('ipcRenderer', {
 contextBridge.exposeInMainWorld('reload', () =>
   ipcRenderer.send('peard:reload'),
 );
-// Renderer-side perf bisect switch; the page has no `process` to read it from.
-contextBridge.exposeInMainWorld(
-  'pearPerfDisabledParts',
-  process.env.PEAR_PERF_DISABLE ?? '',
-);
 
 // Collapse YTM's non-composited Web Animations before the page creates them.
 // The settings window is mdui/solid and does not need the patch.
 if (
-  config.get('options.performanceMode') &&
-  isPerformancePartEnabled('animations') &&
+  config.get('options.performanceMode.animations') &&
   !new URLSearchParams(window.location.search).has('settings')
 ) {
   webFrame

@@ -26,8 +26,17 @@ export interface DefaultConfig {
     hideMenuWarned: boolean;
     startAtLogin: boolean;
     disableHardwareAcceleration: boolean;
-    /** Trade some visual fidelity for cheaper rendering across plugins. */
-    performanceMode: boolean;
+    /**
+     * Independent visual-cost switches: YouTube Music feature flags, the
+     * animations/blur stylesheet, the main-thread animation throttle, and
+     * skipping the heavy visual plugins' renderer halves.
+     */
+    performanceMode: {
+      flags: boolean;
+      css: boolean;
+      animations: boolean;
+      plugins: boolean;
+    };
     removeUpgradeButton: boolean;
     restartOnConfigChanges: boolean;
     trayClickPlayPause: boolean;
@@ -95,7 +104,12 @@ export const defaultConfig: DefaultConfig = {
     hideMenuWarned: false,
     startAtLogin: false,
     disableHardwareAcceleration: false,
-    performanceMode: false,
+    performanceMode: {
+      flags: false,
+      css: false,
+      animations: false,
+      plugins: false,
+    },
     removeUpgradeButton: false,
     restartOnConfigChanges: false,
     trayClickPlayPause: false,

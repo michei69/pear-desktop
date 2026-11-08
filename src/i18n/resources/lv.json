@@ -1634,9 +1634,7 @@
       "theme-preset": "Priekšiestatījums",
       "theme-variable-name": "Mainīgais",
       "theme-variable-value": "Vērtība",
-      "theme-variable-add": "Pievienot mainīgo",
-      "performance-mode": "Veiktspējas režīms",
-      "performance-mode-desc": "Apmainīt daļu vizuālās kvalitātes pret lētāku renderēšanu."
+      "theme-variable-add": "Pievienot mainīgo"
     }
   }
 }

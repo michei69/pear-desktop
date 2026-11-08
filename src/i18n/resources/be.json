@@ -1641,9 +1641,7 @@
       "theme-preset": "Прадусталяванне",
       "theme-variable-name": "Зменная",
       "theme-variable-value": "Значэнне",
-      "theme-variable-add": "Дадаць зменную",
-      "performance-mode": "Рэжым прадукцыйнасці",
-      "performance-mode-desc": "Прынесці ў ахвяру частку візуальнай дакладнасці дзеля больш эканомнага рэндэрынгу."
+      "theme-variable-add": "Дадаць зменную"
     }
   }
 }

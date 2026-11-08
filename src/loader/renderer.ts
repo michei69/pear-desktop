@@ -146,7 +146,7 @@ export const forceLoadRendererPlugin = async (
   if (
     isSkippedInPerformanceMode(
       id,
-      Boolean(window.mainConfig.get('options.performanceMode')),
+      Boolean(window.mainConfig.get('options.performanceMode.plugins')),
     )
   ) {
     console.log(LoggerPrefix, `Plugin "${id}" skipped: performance mode`);

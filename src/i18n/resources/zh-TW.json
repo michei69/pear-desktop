@@ -1634,9 +1634,7 @@
       "theme-preset": "預設集",
       "theme-variable-name": "變數",
       "theme-variable-value": "值",
-      "theme-variable-add": "新增變數",
-      "performance-mode": "效能模式",
-      "performance-mode-desc": "犧牲部分視覺精緻度，換取更低的渲染成本。"
+      "theme-variable-add": "新增變數"
     }
   }
 }

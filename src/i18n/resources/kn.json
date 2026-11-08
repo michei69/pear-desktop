@@ -1641,9 +1641,7 @@
       "theme-preset": "ಪ್ರೀಸೆಟ್",
       "theme-variable-name": "ವೇರಿಯೇಬಲ್",
       "theme-variable-value": "ಮೌಲ್ಯ",
-      "theme-variable-add": "ವೇರಿಯೇಬಲ್ ಸೇರಿಸಿ",
-      "performance-mode": "ಕಾರ್ಯಕ್ಷಮತೆ ಮೋಡ್",
-      "performance-mode-desc": "ಕಡಿಮೆ ವೆಚ್ಚದ ರೆಂಡರಿಂಗ್‌ಗಾಗಿ ಸ್ವಲ್ಪ ದೃಶ್ಯ ನಿಷ್ಠೆಯನ್ನು ಬಿಟ್ಟುಕೊಡಿ."
+      "theme-variable-add": "ವೇರಿಯೇಬಲ್ ಸೇರಿಸಿ"
     }
   }
 }

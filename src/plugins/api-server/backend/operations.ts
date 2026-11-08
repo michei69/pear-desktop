@@ -13,10 +13,7 @@ import * as config from '@/config';
 import { isEnabled } from '@/config/plugins';
 import { cacheEntriesForVideo } from '@/plugins/synced-lyrics/translation/cache';
 import { getAppMeta } from '@/providers/app-meta';
-import {
-  isPerformancePartEnabled,
-  performanceModeOverrides,
-} from '@/providers/performance-mode';
+import { performanceModeOverrides } from '@/providers/performance-mode';
 import { getSongControls } from '@/providers/song-controls';
 
 import { callRenderer, callRendererWithTimeout, sendToRenderer } from './ipc';
@@ -333,11 +330,12 @@ export const createOperations = (
     appMeta: () => getAppMeta(),
     featureFlags: async () => {
       const saved = flagsOverride();
-      // What the app actually sets: performance mode's flags, then the user's,
-      // the same merge the preload applies to the page.
-      const applied = isPerformancePartEnabled('flags')
-        ? performanceModeOverrides(saved, config.get('options.performanceMode'))
-        : saved;
+      // What the app actually sets: the performance flags, then the user's, the
+      // same merge the preload applies to the page.
+      const applied = performanceModeOverrides(
+        saved,
+        config.get('options.performanceMode.flags'),
+      );
       const names = Object.keys(applied).sort();
       // With nothing set, the page is running its own defaults and there is
       // nothing to report — or to ask it for.

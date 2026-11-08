@@ -1634,9 +1634,7 @@
       "theme-preset": "Eelseadistus",
       "theme-variable-name": "Muutuja",
       "theme-variable-value": "Väärtus",
-      "theme-variable-add": "Lisa muutuja",
-      "performance-mode": "Jõudlusrežiim",
-      "performance-mode-desc": "Vaheta veidi visuaalset täpsust odavama renderdamise vastu."
+      "theme-variable-add": "Lisa muutuja"
     }
   }
 }

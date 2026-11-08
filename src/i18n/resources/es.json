@@ -1634,9 +1634,7 @@
       "theme-preset": "Preajuste",
       "theme-variable-name": "Variable",
       "theme-variable-value": "Valor",
-      "theme-variable-add": "Añadir variable",
-      "performance-mode": "Modo de rendimiento",
-      "performance-mode-desc": "Intercambia algo de fidelidad visual por un renderizado más económico."
+      "theme-variable-add": "Añadir variable"
     }
   }
 }

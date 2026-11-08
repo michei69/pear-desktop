@@ -1634,9 +1634,7 @@
       "theme-preset": "Пресет",
       "theme-variable-name": "Променљива",
       "theme-variable-value": "Вредност",
-      "theme-variable-add": "Додај променљиву",
-      "performance-mode": "Режим перформанси",
-      "performance-mode-desc": "Одричите се дела визуелне верности ради јефтинијег рендеровања."
+      "theme-variable-add": "Додај променљиву"
     }
   }
 }

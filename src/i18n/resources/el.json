@@ -1634,9 +1634,7 @@
       "theme-preset": "Προεπιλογή",
       "theme-variable-name": "Μεταβλητή",
       "theme-variable-value": "Τιμή",
-      "theme-variable-add": "Προσθήκη μεταβλητής",
-      "performance-mode": "Λειτουργία απόδοσης",
-      "performance-mode-desc": "Ανταλλάσσει μέρος της οπτικής πιστότητας για οικονομικότερη απόδοση."
+      "theme-variable-add": "Προσθήκη μεταβλητής"
     }
   }
 }

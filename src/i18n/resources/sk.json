@@ -1634,9 +1634,7 @@
       "theme-preset": "Predvoľba",
       "theme-variable-name": "Premenná",
       "theme-variable-value": "Hodnota",
-      "theme-variable-add": "Pridať premennú",
-      "performance-mode": "Režim výkonu",
-      "performance-mode-desc": "Vymeňte časť vizuálnej vernosti za menej náročné vykresľovanie."
+      "theme-variable-add": "Pridať premennú"
     }
   }
 }
