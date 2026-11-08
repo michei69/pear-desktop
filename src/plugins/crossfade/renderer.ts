@@ -31,6 +31,13 @@ const AUDIO_FETCH_ATTEMPTS = 3;
 /** Delay between audio fetch attempts, in milliseconds. */
 const AUDIO_FETCH_RETRY_MS = 500;
 
+/**
+ * How long an auto-transition may stay armed without a navigation: the synthetic
+ * next-track click may do nothing (no button, end of queue, repeat-one), and the
+ * flag must not turn the user's next manual skip into a crossfade.
+ */
+const AUTO_TRANSITION_TIMEOUT_MS = 5000;
+
 export const renderer = createRenderer<
   CrossfadeRendererProperties,
   CrossfadePluginConfig
@@ -77,6 +84,8 @@ export const renderer = createRenderer<
     /** Video ID the current audio is playing, once its bytes arrived. */
     let currentID: string | null = null;
     let isAutoTransition = false;
+    /** Clears `isAutoTransition` if no navigation consumes it in time. */
+    let autoTransitionTimer: number | undefined;
     let navigationGeneration = 0;
 
     /** Audio of the current track: kept in sync with the video, silent until it takes over. */
@@ -127,6 +136,19 @@ export const renderer = createRenderer<
         start,
         duration,
       );
+    };
+
+    /**
+     * Releases an armed auto-transition. It is only consumed by a navigation to
+     * another video id, so every other way out has to clear it: a pause, a
+     * teardown, or the click that never navigated.
+     */
+    const clearAutoTransition = () => {
+      isAutoTransition = false;
+      if (autoTransitionTimer !== undefined) {
+        window.clearTimeout(autoTransitionTimer);
+        autoTransitionTimer = undefined;
+      }
     };
 
     // Drop an in-flight crossfade: its fade out carries on over the outgoing
@@ -204,7 +226,7 @@ export const renderer = createRenderer<
       // Read and cleared up front: an auto-transition that never became a
       // crossfade must not turn the next manual skip into one.
       const isAuto = isAutoTransition;
-      isAutoTransition = false;
+      clearAutoTransition();
 
       // Nothing to sync or fade in without a video element; the previous
       // navigation is already dropped above.
@@ -311,7 +333,14 @@ export const renderer = createRenderer<
         .then((bytes) => {
           // A newer navigation started while this audio downloaded, so it no
           // longer belongs to the track being played.
-          if (!bytes || generation !== navigationGeneration) return;
+          if (generation !== navigationGeneration) return;
+
+          // Without the incoming audio nothing would ever ramp the gain back
+          // up: the armed fade in would leave the video silent for the track.
+          if (!bytes) {
+            cancelTransition();
+            return;
+          }
 
           const audio = createAudio(
             bytes.bytes,
@@ -323,6 +352,8 @@ export const renderer = createRenderer<
           const element = elementOf(audio);
           /** Whether the audio is between being told to play and running. */
           let starting = false;
+          /** When the pending start was issued, to bound its measurement. */
+          let startTimestamp = 0;
 
           // Starts the audio on the video's clock from where it stands. The
           // position is handed over only while the element is stopped: seeking a
@@ -334,11 +365,13 @@ export const renderer = createRenderer<
             element.playbackRate = 1;
             element.currentTime = video.currentTime + startLead;
             starting = true;
-            element
-              .play()
-              .catch((error) =>
-                console.error('[crossfade] audio failed to play', error),
-              );
+            startTimestamp = performance.now();
+            element.play().catch((error) => {
+              // A start that never runs must not stay pending, or the next
+              // `playing` (possibly from a seek) would be measured as its lead.
+              starting = false;
+              console.error('[crossfade] audio failed to play', error);
+            });
           };
 
           // Runs the audio with the video: stopped while the video's clock is
@@ -368,6 +401,12 @@ export const renderer = createRenderer<
 
             starting = false;
 
+            // A start that reported back this late was not the one heard: a
+            // measurement past the bound would be rejected below anyway.
+            if (performance.now() - startTimestamp > MAX_START_LEAD * 1000) {
+              return;
+            }
+
             const lead = video.currentTime - element.currentTime + startLead;
 
             // Anything else was measured across a seek, not a start.
@@ -384,6 +423,15 @@ export const renderer = createRenderer<
               syncedAudio?.state() === 'loaded'
             ) {
               isAutoTransition = true;
+              // Bounded: a click that does not navigate (no next button, end of
+              // queue, repeat-one) must not stay armed for the next track.
+              if (autoTransitionTimer !== undefined) {
+                window.clearTimeout(autoTransitionTimer);
+              }
+              autoTransitionTimer = window.setTimeout(
+                clearAutoTransition,
+                AUTO_TRANSITION_TIMEOUT_MS,
+              );
               video.removeEventListener('timeupdate', transitionBeforeEnd);
 
               // The crossfade is a moment from handing this track to the audio, and a
@@ -428,9 +476,12 @@ export const renderer = createRenderer<
 
           followVideo();
         })
-        .catch((error) =>
-          console.error('[crossfade] audio fetch failed', error),
-        );
+        .catch((error) => {
+          console.error('[crossfade] audio fetch failed', error);
+          // Only an attempt of the current navigation may touch the graph: a
+          // newer one owns the fade already.
+          if (generation === navigationGeneration) cancelTransition();
+        });
     };
 
     // Splice the crossfade's own gain node into the graph: the player never writes
@@ -506,7 +557,10 @@ export const renderer = createRenderer<
       // The player parks the element on an empty buffer while it loads the next
       // track and reports buffering (state 3); state 2 is the user stopping
       // playback, which drops the transition mid flight.
-      if (api.getPlayerState() === 2) cancelTransition();
+      if (api.getPlayerState() === 2) {
+        clearAutoTransition();
+        cancelTransition();
+      }
     };
 
     const onNavigate = (event: NavigateEvent) => {
@@ -516,7 +570,12 @@ export const renderer = createRenderer<
 
       // Its audio is already being synced, from the previous navigation or from
       // the player's data event on startup.
-      if (nextVideoID === currentID) return;
+      if (nextVideoID === currentID) {
+        // Repeat-one restarts the same video: the armed transition never became
+        // a crossfade, so it must not turn the next skip into one.
+        clearAutoTransition();
+        return;
+      }
 
       playVideo(nextVideoID);
     };
@@ -532,6 +591,9 @@ export const renderer = createRenderer<
       // Drops a fetch still in flight, so it cannot install listeners or audio on
       // a plugin that is already unloaded.
       navigationGeneration += 1;
+
+      // The session that armed the transition is gone with its listeners.
+      clearAutoTransition();
 
       api.removeEventListener('videodatachange', onVideoDataChange);
       window.navigation.removeEventListener('navigate', onNavigate);
