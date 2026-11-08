@@ -141,10 +141,12 @@ export const mountAmbientLight = (
 
     const now = performance.now();
     if (now - lastDetection < BAR_DETECTION_INTERVAL) return;
-    lastDetection = now;
 
     const video = source as HTMLVideoElement;
+    // Stamp only after a usable source: a read during startup must not burn
+    // the throttle slot.
     if (video.videoWidth === 0 || video.videoHeight === 0) return;
+    lastDetection = now;
 
     detectCanvas ??= document.createElement('canvas');
     const height = Math.max(
@@ -217,10 +219,12 @@ export const mountAmbientLight = (
     if (signature && now - signatureTime < SIGNATURE_INTERVAL) {
       return frameChanged;
     }
-    signatureTime = now;
 
     const video = source as HTMLVideoElement;
+    // A zero-sized frame has no signature; leaving the slot unstamped lets the
+    // next draw retry instead of reusing a stale verdict.
     if (video.videoWidth === 0 || video.videoHeight === 0) return frameChanged;
+    signatureTime = now;
 
     signatureCanvas ??= document.createElement('canvas');
     signatureCanvas.width = SIGNATURE_WIDTH;
@@ -464,6 +468,10 @@ export const mountAmbientLight = (
 
   const refresh = () => {
     const playing = isVideo && !source.paused;
+    // A config change is a fresh attempt: retry the readbacks a previous layer
+    // gave up on instead of leaving bar detection / energy saving inert.
+    detectionBlocked = false;
+    signatureBlocked = false;
     stop();
     redraw(true);
     if (playing) start();
