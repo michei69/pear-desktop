@@ -12,6 +12,14 @@ import type { SettingOption } from '@/types/settings';
 const SELECT_TRACK_CHANNEL = 'peard:audio-track-select';
 const MENU_REQUEST_CHANNEL = 'peard:audio-track-menu';
 
+/**
+ * How many times one track selection is re-issued before giving up. A player
+ * that accepts `setAudioTrack` but keeps the old track emits
+ * `onPlaybackAudioChange` again, and without a cap that becomes a permanent
+ * 100 ms renegotiation loop.
+ */
+const MAX_REAPPLY_ATTEMPTS = 3;
+
 export type AudioTrackConfig = {
   enabled: boolean;
   preferOriginal: boolean;
@@ -105,6 +113,8 @@ const renderer = createRenderer<
     ipc: RendererContext<AudioTrackConfig>['ipc'] | null;
     setConfig: RendererContext<AudioTrackConfig>['setConfig'] | null;
     reapplyTimer: ReturnType<typeof setTimeout> | null;
+    /** Re-issues of the current desired track; reset on a track/config change. */
+    reapplyAttempts: number;
     audioTrackHandler: (() => void) | null;
     videoDataHandler: ((event: Event) => void) | null;
     menuHandler: (() => void) | null;
@@ -124,6 +134,7 @@ const renderer = createRenderer<
   ipc: null,
   setConfig: null,
   reapplyTimer: null,
+  reapplyAttempts: 0,
   audioTrackHandler: null,
   videoDataHandler: null,
   menuHandler: null,
@@ -163,7 +174,17 @@ const renderer = createRenderer<
     if (!desiredTrack) return;
 
     const desiredId = trackId(desiredTrack);
-    if (!desiredId || desiredId === readCurrentTrackId(api)) return;
+    if (!desiredId || desiredId === readCurrentTrackId(api)) {
+      // Converged: the next mismatch starts a fresh attempt budget.
+      this.reapplyAttempts = 0;
+      return;
+    }
+
+    // A track the player refuses must not be re-issued forever: the audio
+    // change event would schedule another apply every 100 ms. Stop until the
+    // track or the configuration changes.
+    if (this.reapplyAttempts >= MAX_REAPPLY_ATTEMPTS) return;
+    this.reapplyAttempts += 1;
 
     try {
       api.setAudioTrack?.(desiredTrack);
@@ -180,6 +201,7 @@ const renderer = createRenderer<
   videoDataChangeListener(event: Event) {
     const name = (event as CustomEvent<{ name?: string }>).detail?.name;
     if (name !== 'dataloaded') return;
+    this.reapplyAttempts = 0;
     this.refreshTracks();
     this.scheduleApply();
   },
@@ -221,6 +243,7 @@ const renderer = createRenderer<
     if (index === 0) {
       setConfig({ audioTrack: '' });
       if (this.config) this.config = { ...this.config, audioTrack: '' };
+      this.reapplyAttempts = 0;
       this.applyPreferredTrack();
       return;
     }
@@ -231,6 +254,7 @@ const renderer = createRenderer<
 
     setConfig({ audioTrack: id });
     if (this.config) this.config = { ...this.config, audioTrack: id };
+    this.reapplyAttempts = 0;
     try {
       api.setAudioTrack?.(track);
     } catch {
@@ -250,6 +274,7 @@ const renderer = createRenderer<
       clearTimeout(this.reapplyTimer);
       this.reapplyTimer = null;
     }
+    this.reapplyAttempts = 0;
 
     this.detachPlayerListeners();
     if (this.menuHandler) {
@@ -265,6 +290,7 @@ const renderer = createRenderer<
   onPlayerApiReady(playerApi) {
     this.detachPlayerListeners();
     this.api = playerApi;
+    this.reapplyAttempts = 0;
     this.refreshTracks();
     this.audioTrackHandler = () => this.audioTrackChangeListener();
     this.videoDataHandler = (event) => this.videoDataChangeListener(event);
@@ -277,6 +303,9 @@ const renderer = createRenderer<
   },
   onConfigChange(newConfig) {
     this.config = newConfig;
+    // A new selection gets its own attempts, even if the previous one was
+    // abandoned as unservable.
+    this.reapplyAttempts = 0;
     this.applyPreferredTrack();
   },
 });
