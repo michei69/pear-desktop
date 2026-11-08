@@ -24,6 +24,12 @@ const parseSocksUrl = (socksUrl: string) => {
   };
 };
 
+/**
+ * Distinguishes listen attempts: `server` only becomes the handle once that
+ * attempt's listen callback succeeds, so a superseded attempt can never claim it.
+ */
+let serverGeneration = 0;
+
 export const backend = createBackend<BackendType, AuthProxyConfig>({
   async start(ctx: BackendContext<AuthProxyConfig>) {
     const pluginConfig = await ctx.getConfig();
@@ -52,6 +58,8 @@ export const backend = createBackend<BackendType, AuthProxyConfig>({
     if (this.server) {
       this.stopServer();
     }
+
+    const generation = ++serverGeneration;
 
     const { port, hostname } = serverConfig;
     // Upstream proxy from system settings
@@ -85,9 +93,25 @@ export const backend = createBackend<BackendType, AuthProxyConfig>({
 
     socksServer.on('error', (err) => {
       console.error(LoggerPrefix, '[SOCKS Server Error]', err.message);
+      // A failed bind must not leave the handle claiming a listening proxy.
+      if (!socksServer.listening && generation === serverGeneration) {
+        this.server = undefined;
+      }
+    });
+
+    socksServer.on('close', () => {
+      if (generation === serverGeneration) this.server = undefined;
     });
 
     socksServer.listen(port, hostname, () => {
+      if (generation !== serverGeneration) {
+        // A later start/stop superseded this attempt while it was binding.
+        socksServer.close();
+        return;
+      }
+
+      // Only a completed listen() makes the handle mean "listening".
+      this.server = socksServer;
       console.log(LoggerPrefix, '===========================================');
       console.log(
         LoggerPrefix,
@@ -99,8 +123,6 @@ export const backend = createBackend<BackendType, AuthProxyConfig>({
       );
       console.log(LoggerPrefix, '===========================================');
     });
-
-    this.server = socksServer;
   },
 
   handleSocks5(
@@ -261,6 +283,8 @@ export const backend = createBackend<BackendType, AuthProxyConfig>({
   },
 
   stopServer() {
+    // Any in-flight listen() from before this stop is stale now.
+    serverGeneration++;
     if (this.server) {
       this.server.close();
       this.server = undefined;
