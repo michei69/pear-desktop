@@ -9,6 +9,7 @@ import style from './style.css?inline';
 
 import type { Segment, SegmentMarker, SkipSegment } from './types';
 import type { GetPlayerResponse } from '@/types/get-player-response';
+import type { MusicPlayer } from '@/types/music-player';
 
 export type SponsorBlockPluginConfig = {
   enabled: boolean;
@@ -140,6 +141,14 @@ const hideHoverLabel = () => {
   if (label) {
     label.style.display = 'none';
   }
+};
+
+/** Drops the segment set and its progress-bar bar. */
+const resetSegmentState = () => {
+  currentSegments = [];
+  segmentMarkers = [];
+  document.querySelector(`#${SEGMENTS_BAR_ID}`)?.remove();
+  hideHoverLabel();
 };
 
 /** Names the segment under the pointer, right above YTM's timestamp. */
@@ -401,7 +410,15 @@ export default createPlugin({
     handleSkipSegments: undefined as
       | ((markers: SegmentMarker[]) => void)
       | undefined,
+    api: null as MusicPlayer | null,
     video: null as HTMLVideoElement | null,
+    videoDataListener: (name: 'newdata' | 'dataloaded' | 'dataupdated') => {
+      if (name !== 'dataloaded') return;
+      // The next track's segments are only fetched after this event, so
+      // clearing here cannot race them. The media element's `emptied` event can
+      // fire after that fetch has resolved and used to wipe the fresh set.
+      resetSegmentState();
+    },
     timeUpdateListener: (e: Event) => {
       if (!(e.target instanceof HTMLVideoElement)) return;
       applySegments(e.target);
@@ -415,10 +432,7 @@ export default createPlugin({
       }
     },
     resetSegments() {
-      currentSegments = [];
-      segmentMarkers = [];
-      document.querySelector(`#${SEGMENTS_BAR_ID}`)?.remove();
-      hideHoverLabel();
+      resetSegmentState();
     },
     async start({ ipc, getConfig }) {
       showMarkers = (await getConfig()).showSegmentsOnProgressBar === true;
@@ -441,13 +455,15 @@ export default createPlugin({
       const video = document.querySelector<HTMLVideoElement>('video');
       if (!video) return;
 
+      this.api?.removeEventListener('videodatachange', this.videoDataListener);
+      this.api = playerApi;
       this.video = video;
       markerVideo = video;
       video.addEventListener('timeupdate', this.timeUpdateListener);
       // Duration is unknown when the plugin starts; the bar waits for it.
       video.addEventListener('durationchange', this.durationChangeListener);
-      // 'emptied' fires when the track ends
-      video.addEventListener('emptied', this.resetSegments);
+      // A new track resets the segment set before its fetch can deliver.
+      playerApi.addEventListener('videodatachange', this.videoDataListener);
 
       // The backend only fetches on a video change, so ask it for the current
       // track's segments instead of waiting for the next one.
@@ -468,6 +484,9 @@ export default createPlugin({
       stopHoverTracking?.();
       document.querySelector(`#${HOVER_LABEL_ID}`)?.remove();
 
+      this.api?.removeEventListener('videodatachange', this.videoDataListener);
+      this.api = null;
+
       const video = this.video;
       this.video = null;
       markerVideo = null;
@@ -475,7 +494,6 @@ export default createPlugin({
 
       video.removeEventListener('timeupdate', this.timeUpdateListener);
       video.removeEventListener('durationchange', this.durationChangeListener);
-      video.removeEventListener('emptied', this.resetSegments);
     },
   },
 });
