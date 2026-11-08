@@ -22,7 +22,7 @@ const getApp = () =>
 const getQueueApi = () => getApp()?.queue;
 
 const readQueue = () =>
-  getApp()?.ytmusicReduxBehavior.store.store.getState().queue;
+  getApp()?.ytmusicReduxBehavior?.store?.store?.getState().queue;
 
 const isShuffled = () => readQueue()?.shuffleEnabled ?? false;
 
@@ -116,7 +116,7 @@ export default createPlugin<
         if (save) setConfig({ shuffled: isShuffled() });
       };
 
-      const store = getApp()?.ytmusicReduxBehavior.store.store;
+      const store = getApp()?.ytmusicReduxBehavior?.store?.store;
       if (store) {
         // The subscription only reacts to changes, so record the initial state
         // too (skipped while a restore is pending)
@@ -133,11 +133,23 @@ export default createPlugin<
         this.cancelShuffle = shuffleWhenReady(queue, () => {
           save = true;
         });
-      } else if (store) {
-        // No queue to restore: keep the saved flag, but record changes once the
-        // startup window is over
+      } else {
+        // No queue to restore (or no store resolved yet): keep the saved flag,
+        // but record changes once the startup window is over. Without this
+        // branch a boot where neither the queue API nor the redux store is
+        // readable yet would leave `save` false for the whole session, so the
+        // shuffle state would never be persisted again.
         const timeout = setTimeout(() => {
           save = true;
+          // The store can appear while the restore window is open: subscribe
+          // then, or nothing would ever write the persisted state.
+          const lateStore = getApp()?.ytmusicReduxBehavior?.store?.store;
+          if (lateStore && !this.unsubscribeShuffleState) {
+            this.unsubscribeShuffleState = lateStore.subscribe(
+              persistShuffleState,
+            ) as () => void;
+            persistShuffleState();
+          }
         }, RESTORE_TIMEOUT_MS);
         this.cancelShuffle = () => clearTimeout(timeout);
       }
