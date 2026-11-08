@@ -132,7 +132,8 @@ export class Queue {
     payload?: { items?: QueueItem[] | undefined };
   }) => void;
 
-  private internalDispatch = false;
+  /** Depth of our own store dispatches; nested ones must stay silent too. */
+  private internalDispatch = 0;
   private ignoreFlag = false;
   private listeners: QueueEventListener[] = [];
 
@@ -219,11 +220,11 @@ export class Queue {
 
   /** Dispatches through the wrapped store without re-broadcasting the edit. */
   private dispatchInternal(event: { type: string; payload?: unknown }) {
-    this.internalDispatch = true;
+    this.internalDispatch += 1;
     try {
       this.queue?.dispatch(event);
     } finally {
-      this.internalDispatch = false;
+      this.internalDispatch -= 1;
     }
   }
 
@@ -275,6 +276,9 @@ export class Queue {
       clearTimeout(this.syncTimeout);
       this.syncTimeout = undefined;
       this.syncToken += 1;
+      // The cancelled sync will never rebuild the queue, so the index it was
+      // holding must not re-select an old row after a later replacement.
+      this.pendingSyncIndex = undefined;
       this.syncQueueOwner();
       return;
     }
@@ -458,6 +462,9 @@ export class Queue {
     this.syncTimeout = undefined;
     this.syncToken += 1;
     this.cachedSelectedIndex = undefined;
+    // A latch left by a swallowed CLEAR must not survive a plugin restart on
+    // the same Queue instance (the instance is constructed once).
+    this.ignoreFlag = false;
 
     if (!this.originalDispatch) return;
 
@@ -487,7 +494,13 @@ export class Queue {
         return;
       }
 
-      if (!this.internalDispatch) {
+      if (this.internalDispatch === 0) {
+        if (event.type === 'UPDATE_ITEMS') {
+          // A full replacement after the swallowed CLEAR means the fresh
+          // playlist window is over: the next ADD_ITEMS is an ordinary edit,
+          // not the playlist that replaces the cleared queue.
+          this.ignoreFlag = false;
+        }
         if (event.type === 'CLEAR') {
           this.ignoreFlag = true;
           this.broadcast({
@@ -627,7 +640,7 @@ export class Queue {
   initQueue() {
     if (!this.queue) return;
 
-    this.internalDispatch = true;
+    this.internalDispatch += 1;
     try {
       this.queue.dispatch({
         type: 'HAS_SHOWN_AUTOPLAY',
@@ -641,7 +654,7 @@ export class Queue {
         type: 'CLEAR_STEERING_CHIPS',
       });
     } finally {
-      this.internalDispatch = false;
+      this.internalDispatch -= 1;
     }
   }
 

@@ -30,6 +30,7 @@ const makeStore = (initial: string[]) => {
     selected: false,
   }));
   let nextQueueItemId = entries.length;
+  let onReduce: ((action: Action) => void) | undefined;
 
   const items = () =>
     entries.map((entry) => video(entry.videoId, entry.selected));
@@ -100,12 +101,20 @@ const makeStore = (initial: string[]) => {
       default:
         break;
     }
+
+    // Runs inside the synchronous dispatch, like a store subscriber that
+    // dispatches again.
+    onReduce?.(action);
   };
 
   return {
     getState,
     dispatch: (action: Action) => reduce(action),
     items,
+    /** Runs inside every store dispatch (before the wrapper returns). */
+    setOnReduce: (fn: ((action: Action) => void) | undefined) => {
+      onReduce = fn;
+    },
   };
 };
 
@@ -457,6 +466,158 @@ test('host and guest stay in step when a play-next track starts', async () => {
     // The lists matched, so the guest never re-fetched the queue and never
     // lost the playing row to an `UPDATE_ITEMS` replacement.
     expect(page.requested).toHaveLength(2);
+  } finally {
+    await page.close();
+  }
+});
+
+test('an index from a cancelled sync cannot re-select an old row', async () => {
+  const page = createPage();
+  const guest = page.createPeer(['a', 'b', 'c'], 'guest', true);
+  const hostList = (ids: string[]) =>
+    ids.map((videoId) => ({ videoId, ownerId: 'host' }));
+
+  try {
+    guest.queue.injection();
+    guest.queue.setIndex(1);
+    await flush();
+
+    // A different list queues a sync; the index for that future replacement
+    // arrives while it is still pending.
+    guest.queue.setVideoList(hostList(['a', 'b', 'c', 'x']));
+    guest.queue.setIndex(2);
+    await flush();
+
+    // The host re-sends the list the guest already renders: the queued sync is
+    // cancelled, so its pending index must be dropped with it.
+    guest.queue.setVideoList(hostList(['a', 'b', 'c']));
+    // The user moves to another row after the cancellation.
+    guest.queue.setIndex(1);
+    await flush();
+
+    // A later, unrelated replacement must not jump back to the stale index 2.
+    guest.queue.setVideoList(hostList(['a', 'b', 'c', 'd']));
+    await waitForSync();
+
+    expect(idsOf(guest.store.items())).toEqual(['a', 'b', 'c', 'd']);
+    expect(guest.queue.selectedIndex).toBe(1);
+  } finally {
+    await page.close();
+  }
+});
+
+type Broadcast = {
+  type: string;
+  payload?: { index?: number };
+  after?: unknown[];
+};
+
+const collectBroadcasts = (queue: Queue) => {
+  const events: Broadcast[] = [];
+  const listener = (event: Broadcast) => {
+    events.push(event);
+  };
+  queue.on(listener as never);
+  return events;
+};
+
+test('a replacement after a local clear does not turn the next add into a fresh playlist', async () => {
+  const page = createPage();
+  const host = page.createPeer(['a', 'b'], 'host', true);
+  const events = collectBroadcasts(host.queue);
+
+  try {
+    host.queue.injection();
+
+    // A local clear is swallowed and announced as CLEAR_QUEUE; the fresh
+    // playlist flag is armed for the ADD_ITEMS that usually follows.
+    host.store.dispatch({ type: 'CLEAR' });
+    // The store follows with a full replacement instead of ADD_ITEMS.
+    host.store.dispatch({
+      type: 'UPDATE_ITEMS',
+      payload: { items: [video('a')], currentIndex: -1 },
+    });
+    events.length = 0;
+
+    // The next ordinary "add to queue" must keep its insert position instead
+    // of being broadcast as a fresh playlist that rewinds every guest.
+    host.store.dispatch({
+      type: 'ADD_ITEMS',
+      payload: {
+        items: [video('x')],
+        index: 1,
+        nextQueueItemId: 2,
+        shouldAssignIds: true,
+        shuffleEnabled: false,
+      },
+    });
+
+    const add = events.find((event) => event.type === 'ADD_SONGS');
+    expect(add?.after).toBeUndefined();
+    expect(add?.type === 'ADD_SONGS' ? add.payload?.index : undefined).toBe(1);
+  } finally {
+    await page.close();
+  }
+});
+
+test('rollbackInjection drops a latch left by a swallowed clear', async () => {
+  const page = createPage();
+  const host = page.createPeer(['a', 'b'], 'host', true);
+  const events = collectBroadcasts(host.queue);
+
+  try {
+    host.queue.injection();
+
+    host.store.dispatch({ type: 'CLEAR' });
+    // A plugin stop rolls the injection back; the same Queue instance is
+    // re-injected when the plugin is enabled again.
+    host.queue.rollbackInjection();
+    host.queue.injection();
+    events.length = 0;
+
+    host.store.dispatch({
+      type: 'ADD_ITEMS',
+      payload: {
+        items: [video('x')],
+        index: 1,
+        nextQueueItemId: 2,
+        shouldAssignIds: true,
+        shuffleEnabled: false,
+      },
+    });
+
+    const add = events.find((event) => event.type === 'ADD_SONGS');
+    expect(add?.after).toBeUndefined();
+    expect(add?.type === 'ADD_SONGS' ? add.payload?.index : undefined).toBe(1);
+  } finally {
+    await page.close();
+  }
+});
+
+test('a nested dispatch during an internal edit is not broadcast', async () => {
+  const page = createPage();
+  const host = page.createPeer(['a', 'b'], 'host', true);
+  const events = collectBroadcasts(host.queue);
+  let nested = false;
+
+  try {
+    host.queue.injection();
+    host.store.setOnReduce((action) => {
+      if (nested || action.type !== 'ADD_ITEMS') return;
+      nested = true;
+      // A nested internal dispatch must not clear the outer guard: the edit
+      // that follows it is still ours, not a user edit.
+      host.queue.setIndex(0);
+      host.store.dispatch({
+        type: 'MOVE_ITEM',
+        payload: { fromIndex: 0, toIndex: 1 },
+      });
+    });
+
+    await host.queue.addVideos([{ videoId: 'x', ownerId: 'host' }], 0);
+    await flush(8);
+
+    expect(events.map((event) => event.type)).not.toContain('MOVE_SONG');
   } finally {
     await page.close();
   }
