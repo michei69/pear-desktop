@@ -139,32 +139,87 @@ export default createPlugin<
     },
 
     setupDialogObserver() {
+      const DIALOG_SELECTOR =
+        'ytmusic-add-to-playlist-renderer, tp-yt-paper-dialog';
+
+      // Visibility is a computed style, not just the inline `display`: YTM may
+      // hide the dialog through a class or attribute instead.
+      const isShown = (element: Element | null | undefined) => {
+        if (!(element instanceof HTMLElement) || !element.isConnected) {
+          return false;
+        }
+
+        const style = getComputedStyle(element);
+        return style.display !== 'none' && style.visibility !== 'hidden';
+      };
+
+      const isDialogRelated = (node: Node): boolean => {
+        if (!(node instanceof Element)) return false;
+        return (
+          node.localName === 'ytmusic-add-to-playlist-renderer' ||
+          node.localName === 'tp-yt-paper-dialog' ||
+          node.closest(DIALOG_SELECTOR) !== null ||
+          node.querySelector(DIALOG_SELECTOR) !== null
+        );
+      };
+
       const checkDialog = () => {
         const dialogElement = document
           .querySelector('ytmusic-add-to-playlist-renderer')
           ?.closest('tp-yt-paper-dialog');
 
-        const isNowVisible =
-          dialogElement &&
-          (dialogElement as HTMLElement).style.display !== 'none';
-
-        if (isNowVisible && !this.isDialogVisible) {
+        if (isShown(dialogElement)) {
           this.isDialogVisible = true;
+          // Re-run on every observation: YTM may rebuild the dialog's contents
+          // while it stays open, and the flag alone would skip re-injection.
           this.setupDialogSearch();
-        } else if (!isNowVisible && this.isDialogVisible) {
+        } else if (this.isDialogVisible) {
           this.isDialogVisible = false;
           this.resetDialogFilter();
         }
       };
 
-      this.dialogObserver = new MutationObserver(() => {
-        checkDialog();
+      this.dialogObserver = new MutationObserver((mutations) => {
+        // `checkDialog` reads a computed style, so only run it for mutations
+        // that can concern the dialog; the page mutates constantly while it is
+        // open. The renderer is looked up once per batch, so an attribute
+        // mutation costs a couple of containment checks, not a subtree scan.
+        const dialogRenderer = mutations.some(
+          ({ type }) => type === 'attributes',
+        )
+          ? document.querySelector('ytmusic-add-to-playlist-renderer')
+          : null;
+
+        const isDialogMutation = ({
+          type,
+          target,
+          addedNodes,
+          removedNodes,
+        }: MutationRecord) => {
+          if (type === 'childList') {
+            // The target is often `<body>` (which contains the dialog), so
+            // only the added/removed nodes are inspected.
+            return [...addedNodes, ...removedNodes].some(isDialogRelated);
+          }
+
+          if (!(target instanceof Element) || !dialogRenderer) return false;
+          // The dialog itself, something inside it, or an ancestor that may
+          // have been hidden/shown.
+          return (
+            target === dialogRenderer ||
+            dialogRenderer.contains(target) ||
+            target.contains(dialogRenderer)
+          );
+        };
+
+        if (mutations.some(isDialogMutation)) checkDialog();
       });
 
       this.dialogObserver.observe(document.body, {
         childList: true,
         subtree: true,
-        attributeFilter: ['style'],
+        attributes: true,
+        attributeFilter: ['style', 'class', 'open', 'aria-hidden'],
       });
     },
 
@@ -283,6 +338,13 @@ export default createPlugin<
         .forEach((el) => el.remove());
       document
         .querySelectorAll<HTMLElement>('ytmusic-guide-entry-renderer')
+        .forEach((item) => {
+          item.style.display = '';
+        });
+      document
+        .querySelectorAll<HTMLElement>(
+          'ytmusic-playlist-add-to-option-renderer',
+        )
         .forEach((item) => {
           item.style.display = '';
         });
