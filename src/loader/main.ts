@@ -123,6 +123,10 @@ export const forceLoadMainPlugin = async (
   id: string,
   win: BrowserWindow,
 ): Promise<void> => {
+  // An enable can follow a failed unload (the map entry is kept) or arrive
+  // twice: re-running backend.start() would duplicate its IPC subscriptions.
+  if (loadedPluginMap[id]) return;
+
   const plugin = (await mainPlugins())[id];
   if (!plugin) return;
 

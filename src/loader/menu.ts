@@ -79,6 +79,10 @@ export const loadAllMenuPlugins = async (win: BrowserWindow) => {
 
     if (pluginDef.essential || config.enabled) {
       await forceLoadMenuPlugin(pluginId, win);
+    } else if (menuTemplateMap[pluginId]) {
+      // The unload branch the main/preload loaders already have: a disabled
+      // plugin's template must not survive to be resurrected on re-enable.
+      delete menuTemplateMap[pluginId];
     }
   }
 };
