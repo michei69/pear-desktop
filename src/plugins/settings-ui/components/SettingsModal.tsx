@@ -289,14 +289,16 @@ export const SettingsModal = (props: {
     if (!needed) return;
 
     setRestartFlagged(true);
-    setRestartRequirements((current) =>
-      current.some(
-        (item) =>
-          restartRequirementKey(item) === restartRequirementKey(requirement),
-      )
-        ? current
-        : [...current, requirement],
+    const alreadyFlagged = restartRequirements().some(
+      (item) =>
+        restartRequirementKey(item) === restartRequirementKey(requirement),
     );
+    if (alreadyFlagged) return;
+
+    setRestartRequirements((current) => [...current, requirement]);
+    // Tell main immediately: if this window is destroyed before the close RPC,
+    // the batch must still contain the requirement.
+    bridge.restartSessionAdd([requirement]);
   };
 
   const close = async () => {

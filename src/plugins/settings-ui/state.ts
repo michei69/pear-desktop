@@ -71,6 +71,9 @@ export const bridge = {
   pluginSet: (id: string, partial: object) =>
     ipc!.invoke('peard:set-config', id, partial),
   restartSessionOpen: () => ipc!.invoke('ytmd-sui:restart-session-open'),
+  /** Reports requirements early, so a destroyed window cannot lose them. */
+  restartSessionAdd: (changes: RestartRequirement[]) =>
+    ipc!.invoke('ytmd-sui:restart-session-add', changes),
   restartSessionClose: (changes: RestartRequirement[]) =>
     ipc!.invoke('ytmd-sui:restart-session-close', changes),
   pickPath: (options: object) =>
@@ -107,8 +110,18 @@ export const bridge = {
 /** Changes pushed before the store arrived; applied over the load's snapshot. */
 let pendingDelta: ConfigDelta = [];
 
+/**
+ * Only the newest load may publish: an older snapshot that resolves later must
+ * not overwrite a newer one (and the deltas queued meanwhile belong to the
+ * newest load).
+ */
+let refreshGeneration = 0;
+
 export const refreshStore = async () => {
+  const generation = ++refreshGeneration;
   const loaded = await bridge.loadStore();
+  if (generation !== refreshGeneration) return;
+
   const queued = pendingDelta;
   pendingDelta = [];
   setStore(
@@ -330,6 +343,9 @@ export const getPluginConfig = (
 };
 
 export const setPluginValue = (id: string, key: string, value: unknown) => {
+  // A discrete write supersedes any slider burst still waiting on the same key:
+  // flushing it later would overwrite this newer value.
+  cancelPendingPluginWrite(id, key);
   patchLocal(`plugins.${id}.${key}`, value);
   bridge.pluginSet(id, nestPartial(key, value));
 };
@@ -343,6 +359,16 @@ const pendingPluginWrites = new Map<
   string,
   { timeout: ReturnType<typeof setTimeout>; write: () => Promise<unknown> }
 >();
+
+/** Drop the debounced slider write for one plugin key, if there is one. */
+const cancelPendingPluginWrite = (id: string, key: string) => {
+  const writeKey = `${id}:${key}`;
+  const pending = pendingPluginWrites.get(writeKey);
+  if (!pending) return;
+
+  clearTimeout(pending.timeout);
+  pendingPluginWrites.delete(writeKey);
+};
 
 export const setPluginSliderValue = (
   id: string,

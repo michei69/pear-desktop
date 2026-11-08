@@ -28,6 +28,11 @@ import type { RendererContext } from '@/types/contexts';
 const [open, setOpen] = createSignal(false);
 const [closing, setClosing] = createSignal(false);
 
+/** The pending unmount from the exit animation, so teardown can cancel it. */
+let closeTimer: ReturnType<typeof setTimeout> | undefined;
+/** A reopen asked for while the exit animation is still running. */
+let reopenAfterClose = false;
+
 /**
  * Lets other plugins (the `/settings` search command) open the settings, and the
  * one place the separate-window option is honoured: every entry point funnels
@@ -39,8 +44,15 @@ export const openSettings = () => {
     return;
   }
 
-  // Also cancels a close still animating, so asking again reopens instead of
-  // landing on a modal already on its way out.
+  // The close latches live on the mounted SettingsModal instance, so an
+  // in-flight exit has to finish (and unmount) first: reopening the same
+  // instance would leave it with `isClosing`/`restartSessionClosed` stuck true.
+  // Remount after the animation instead, which starts a fresh restart session.
+  if (closing()) {
+    reopenAfterClose = true;
+    return;
+  }
+
   setClosing(false);
   setOpen(true);
 };
@@ -114,13 +126,24 @@ const syncButton = () => {
 
 let stopGuideWatch: (() => void) | undefined;
 
-/** Play the exit animation, then unmount. */
+/** Play the exit animation, then unmount (and remount if a reopen waited). */
 const closeModal = () => {
   setClosing(true);
+  clearTimeout(closeTimer);
   // ponytail: mirrors the .sui-modal exit animation duration in styles.css
-  setTimeout(() => {
+  closeTimer = setTimeout(() => {
+    closeTimer = undefined;
     setOpen(false);
     setClosing(false);
+
+    if (reopenAfterClose) {
+      reopenAfterClose = false;
+      // A new task, so the old instance is fully disposed (and its restart
+      // session closed) before the fresh one mounts.
+      queueMicrotask(() => {
+        if (started) setOpen(true);
+      });
+    }
   }, 220);
 };
 
@@ -143,6 +166,10 @@ const mountModal = () => {
 
 const teardownUi = () => {
   started = false;
+
+  clearTimeout(closeTimer);
+  closeTimer = undefined;
+  reopenAfterClose = false;
 
   stopGuideWatch?.();
   stopGuideWatch = undefined;
@@ -206,4 +233,6 @@ const hot = (
     hot?: { dispose: (cb: () => void) => void };
   }
 ).hot;
+// Lifecycle teardown, not a reactive read: this is what HMR/stop() call.
+// oxlint-disable-next-line solid/reactivity -- teardown callback, not a tracked scope
 hot?.dispose(teardownUi);
