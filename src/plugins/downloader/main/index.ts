@@ -43,6 +43,11 @@ import { tempFilesToRemove } from './ffmpeg-outcome';
 // oxlint-disable-next-line import/default -- `?modulePath` is a build-time path string.
 import ffmpegWorkerPath from './ffmpeg-worker?modulePath';
 import {
+  emptyFinishTracker,
+  trackElapsed,
+  trackSongChange,
+} from './finish-tracker';
+import {
   cropMaxWidth,
   getFolder,
   sendFeedback as sendFeedback_,
@@ -354,42 +359,31 @@ export const downloadSongFromId = (
 function downloadSongOnFinishSetup({
   ipc,
 }: Pick<BackendContext<DownloaderPluginConfig>, 'ipc'>) {
-  let currentUrl: string | undefined;
-  let duration: number | undefined;
-  let time = 0;
+  let tracker = emptyFinishTracker();
 
   const songInfoCallback = (songInfo: SongInfo, event: SongInfoEvent) => {
     if (event === SongInfoEvent.TimeChanged) {
-      const elapsedSeconds = songInfo.elapsedSeconds ?? 0;
-      if (elapsedSeconds > time) time = elapsedSeconds;
+      trackElapsed(tracker, songInfo.elapsedSeconds ?? 0);
       return;
     }
-    if (
-      !songInfo.isPaused &&
-      songInfo.url !== currentUrl &&
-      config.downloadOnFinish?.enabled
-    ) {
-      if (typeof currentUrl === 'string' && duration && duration > 0) {
-        const folder = getFolder(
-          config.downloadOnFinish.folder ?? config.downloadFolder,
-        );
-        if (
-          config.downloadOnFinish.mode === 'seconds' &&
-          duration - time <= config.downloadOnFinish.seconds
-        ) {
-          downloadSong(currentUrl, folder);
-        } else if (
-          config.downloadOnFinish.mode === 'percent' &&
-          time >= duration * (config.downloadOnFinish.percent / 100)
-        ) {
-          downloadSong(currentUrl, folder);
-        }
-      }
 
-      currentUrl = songInfo.url;
-      duration = songInfo.songDuration;
-      time = 0;
-    }
+    // The tracker follows the current track even while the feature is off, so
+    // enabling it across a track change cannot decide on a stale url/time.
+    const change = trackSongChange(
+      tracker,
+      songInfo,
+      songInfo.isPaused || !config.downloadOnFinish
+        ? undefined
+        : config.downloadOnFinish,
+    );
+    tracker = change.tracker;
+
+    if (!change.downloadUrl) return;
+
+    const folder = getFolder(
+      config.downloadOnFinish?.folder ?? config.downloadFolder,
+    );
+    downloadSong(change.downloadUrl, folder);
   };
 
   registerCallback(songInfoCallback);
