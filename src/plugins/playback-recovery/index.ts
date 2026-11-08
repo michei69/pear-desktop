@@ -3,6 +3,12 @@ import { createPlugin } from '@/utils';
 
 import type { MusicPlayer } from '@/types/music-player';
 
+/**
+ * How long playback has to run without a failure before the retry ladder is
+ * reset: a stream that only stutters forward must keep its failure count.
+ */
+const HEALTHY_PLAYBACK_MS = 10_000;
+
 export type PlaybackRecoveryConfig = {
   enabled: boolean;
   stallTimeoutMs: number;
@@ -24,6 +30,8 @@ export default createPlugin<
     consecutiveFailures: number;
     lastGoodTime: number;
     lastGoodTimestamp: number;
+    /** When the last recovery attempt started, for the healthy-window reset. */
+    lastFailureTimestamp: number;
     recovering: boolean;
     log: (msg: string) => void;
     getVideo: () => HTMLVideoElement | null;
@@ -34,6 +42,7 @@ export default createPlugin<
     _onError: (() => void) | null;
     _onStalled: (() => void) | null;
     _onWaiting: (() => void) | null;
+    _onTrackChange: (() => void) | null;
     watchVideoElement: () => void;
     startWatchdog: () => void;
     attemptRecovery: (reason: string) => void;
@@ -107,9 +116,11 @@ export default createPlugin<
     _onError: null,
     _onStalled: null,
     _onWaiting: null,
+    _onTrackChange: null,
     consecutiveFailures: 0,
     lastGoodTime: 0,
     lastGoodTimestamp: 0,
+    lastFailureTimestamp: 0,
     recovering: false,
 
     async start({ getConfig }) {
@@ -150,6 +161,7 @@ export default createPlugin<
       this.consecutiveFailures = 0;
       this.lastGoodTime = 0;
       this.lastGoodTimestamp = 0;
+      this.lastFailureTimestamp = 0;
 
       this._detachMediaEvents?.();
       this._attachMediaEvents = null;
@@ -178,8 +190,18 @@ export default createPlugin<
         if (video && video.currentTime > 0 && !video.paused) {
           this.lastGoodTime = video.currentTime;
           this.lastGoodTimestamp = Date.now();
-          this.consecutiveFailures = 0;
-          this.recovering = false;
+          // The stall resolved, so its timer must not fire on a later stall.
+          if (this.stallTimer !== undefined) {
+            clearTimeout(this.stallTimer);
+            this.stallTimer = undefined;
+          }
+          // A stream that advances a fraction of a second and stalls again
+          // ticks here too: the ladder is only reset once playback has stayed
+          // healthy for a sustained window since the last attempt.
+          if (Date.now() - this.lastFailureTimestamp >= HEALTHY_PLAYBACK_MS) {
+            this.consecutiveFailures = 0;
+            this.recovering = false;
+          }
         }
       };
 
@@ -191,10 +213,15 @@ export default createPlugin<
         this.attemptRecovery('media-error');
       };
 
-      // Recover if the stall does not clear.
+      // Recover if the stall does not clear. A second event must not push the
+      // deadline out again, or a stream that keeps reporting the stall would
+      // never reach the timeout. Both handlers share the same "cannot continue
+      // playback" predicate (`readyState < 3`), so a timer armed by `waiting`
+      // still fires when a later `stalled` event lands at HAVE_CURRENT_DATA
+      // instead of leaving the state with no recovery path.
       this._onStalled = () => {
+        if (this.stallTimer !== undefined) return;
         this.log('Stream stalled, waiting for recovery...');
-        clearTimeout(this.stallTimer);
         this.stallTimer = window.setTimeout(() => {
           this.stallTimer = undefined;
           const v = this.getVideo();
@@ -205,17 +232,33 @@ export default createPlugin<
         }, this.config?.stallTimeoutMs ?? 8000);
       };
 
-      // Recover if buffering persists.
+      // Recover if buffering persists. Like `stalled`, a repeated event keeps
+      // the already-running timer instead of restarting it, and the shared
+      // predicate covers the readyState-2 stall `waiting` reports.
       this._onWaiting = () => {
-        clearTimeout(this.stallTimer);
+        if (this.stallTimer !== undefined) return;
         this.stallTimer = window.setTimeout(() => {
           this.stallTimer = undefined;
           const v = this.getVideo();
-          if (v && !v.paused && v.readyState < 2) {
+          if (v && !v.paused && v.readyState < 3) {
             this.log('Buffering did not resolve');
             this.attemptRecovery('buffer-timeout');
           }
         }, this.config?.stallTimeoutMs ?? 8000);
+      };
+
+      // A new media load is a new track, so the retry ladder starts over: two
+      // failures on the previous track must not make the next one skip earlier
+      // than policy. `emptied`/`loadstart` only fire for a load, not for the
+      // seeks recovery itself issues.
+      this._onTrackChange = () => {
+        this.consecutiveFailures = 0;
+        this.lastFailureTimestamp = 0;
+        this.recovering = false;
+        // Give the new track its own stall-timeout grace period.
+        this.lastGoodTimestamp = Date.now();
+        clearTimeout(this.stallTimer);
+        this.stallTimer = undefined;
       };
 
       const attachTo = (video: HTMLVideoElement) => {
@@ -229,6 +272,8 @@ export default createPlugin<
         video.addEventListener('error', this._onError!);
         video.addEventListener('stalled', this._onStalled!);
         video.addEventListener('waiting', this._onWaiting!);
+        video.addEventListener('emptied', this._onTrackChange!);
+        video.addEventListener('loadstart', this._onTrackChange!);
       };
 
       this._detachMediaEvents = () => {
@@ -242,6 +287,10 @@ export default createPlugin<
           video.removeEventListener('stalled', this._onStalled);
         if (this._onWaiting)
           video.removeEventListener('waiting', this._onWaiting);
+        if (this._onTrackChange) {
+          video.removeEventListener('emptied', this._onTrackChange);
+          video.removeEventListener('loadstart', this._onTrackChange);
+        }
 
         this.mediaVideo = null;
       };
@@ -291,6 +340,10 @@ export default createPlugin<
     },
 
     startWatchdog() {
+      // `lastGoodTimestamp` is a time, not a flag: starting from 0 would make
+      // the first dead-playback check see an infinite stall. Count the grace
+      // period from the moment the watchdog starts instead.
+      this.lastGoodTimestamp = Date.now();
       this.watchdog = window.setInterval(() => {
         if (this.recovering) return;
 
@@ -305,7 +358,10 @@ export default createPlugin<
 
         if (video.readyState === 0 && !video.paused) {
           const elapsed = now - this.lastGoodTimestamp;
-          if (elapsed > (this.config?.stallTimeoutMs ?? 8000)) {
+          if (
+            this.lastGoodTimestamp > 0 &&
+            elapsed > (this.config?.stallTimeoutMs ?? 8000)
+          ) {
             this.log(
               `Dead playback: readyState=0, no progress for ${elapsed}ms`,
             );
@@ -346,6 +402,9 @@ export default createPlugin<
 
       const maxRetries = this.config?.maxRetries ?? 5;
       this.consecutiveFailures++;
+      // Recorded so a brief `timeupdate` after the attempt cannot reset the
+      // ladder before playback has actually stayed healthy.
+      this.lastFailureTimestamp = Date.now();
 
       if (this.consecutiveFailures > maxRetries) {
         this.log(
@@ -391,8 +450,10 @@ export default createPlugin<
           this.log('Seek failed: ' + String(e));
         }
       }
-      // Seek slightly forward to reload the video.
-      else if (this.consecutiveFailures <= 4) {
+      // Seek slightly forward to reload the video. Every attempt below the
+      // retry cap has a strategy: attempts past the second one keep seeking
+      // forward until the ladder escalates to the next track.
+      else {
         this.log('Strategy: seek-forward');
         try {
           const duration = video?.duration ?? 0;
