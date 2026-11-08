@@ -88,6 +88,9 @@ const isPlayerPageOpen = () => {
 
 const handleVideoDataChange = () => {
   if (!document.body.classList.contains(DID_PLAY_CLASS)) return;
+  // A second change inside the window would click the toggle again, this time
+  // while the page is closing, and can reopen it.
+  if (document.body.classList.contains(AUTO_CLOSING_CLASS)) return;
   if (!isPlayerPageOpen()) return;
 
   document.body.classList.add(AUTO_CLOSING_CLASS);
@@ -99,6 +102,9 @@ const handleVideoDataChange = () => {
   // prevent animation flickering
   setTimeout(() => {
     document.body.classList.remove(AUTO_CLOSING_CLASS);
+    // The latch is only useful if the auto-close actually closed the page;
+    // otherwise the plugin would force-close it on every later track.
+    if (isPlayerPageOpen()) document.body.classList.remove(DID_PLAY_CLASS);
   }, 500);
 };
 
