@@ -168,6 +168,14 @@ class MusixMatchAPI {
         : unknown;
     },
   >(endpoint: T, params: Params[T]): Promise<R> {
+    return this.queryWithRetry<T, R>(endpoint, params, 0);
+  }
+
+  private async queryWithRetry<T extends Endpoint, R>(
+    endpoint: T,
+    params: Params[T],
+    attempt: number,
+  ): Promise<R> {
     await this.initPromise;
     if (!this.token) throw new Error('Token not initialized');
 
@@ -197,8 +205,13 @@ class MusixMatchAPI {
       'status_code' in response.message.header && typeof response.message.header.status_code === 'number' &&
       response.message.header.status_code === 401
     ) {
+      // One reinit per request: a token the API keeps rejecting must fail
+      // instead of recursing token-fetch → 401 forever.
+      if (attempt > 0) {
+        throw new Error('MusixMatch API rejected the refreshed token');
+      }
       await this.reinit();
-      return this.query(endpoint, params);
+      return this.queryWithRetry<T, R>(endpoint, params, attempt + 1);
     }
 
     const parsed = z
