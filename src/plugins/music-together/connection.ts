@@ -100,6 +100,7 @@ export class Connection {
 
   private isDestroyed = false;
   private isReconnecting = false;
+  private cleanedUp = false;
 
   private waitOpen: PromiseUtil<string> = {} as PromiseUtil<string>;
   private listeners: ConnectionListener[] = [];
@@ -114,12 +115,23 @@ export class Connection {
     });
 
     this.peer.on('open', (id) => {
-      if (this._mode === 'disconnected') this._mode = 'host';
+      // An open signaling socket is not a session: hosting is claimed by the
+      // plugin once it commits (`markHost`), joining by `connect`. Otherwise a
+      // join that is still waiting for its host id reports `host`.
       this.waitOpen.resolve(id);
     });
 
     this.peer.on('connection', async (conn) => {
-      this._mode = 'host';
+      // Only a host accepts dial-in peers. A guest's id is public, and a
+      // second connection must not relabel the guest as host mid-session.
+      if (this.isDestroyed || this._mode !== 'host') {
+        try {
+          conn.close();
+        } catch {
+          // ignore
+        }
+        return;
+      }
       try {
         await this.registerConnection(conn);
       } catch {
@@ -152,6 +164,10 @@ export class Connection {
 
       console.error('Music Together: fatal peer error', err);
       this.waitOpen.reject(err);
+      // A fatal error tears the session down without the user asking, so the
+      // plugin still has to be told (the explicit `disconnect()` below is
+      // already announced and must not fire it twice).
+      this.notifyClosed();
       this.disconnect();
     });
   }
@@ -159,6 +175,13 @@ export class Connection {
   /* public */
   async waitForReady() {
     return this.waitOpen.promise;
+  }
+
+  /** Claims the host role once the plugin has committed to hosting. */
+  markHost() {
+    if (!this.isDestroyed && this._mode === 'disconnected') {
+      this._mode = 'host';
+    }
   }
 
   async connect(id: string) {
@@ -261,10 +284,7 @@ export class Connection {
     this.isReconnecting = false;
   }
 
-  private cleanup() {
-    this._mode = 'disconnected';
-    this.connections = {};
-
+  private notifyClosed() {
     for (const listener of this.listeners) {
       listener({ type: 'CONNECTION_CLOSED', payload: null }, null);
     }
@@ -272,6 +292,25 @@ export class Connection {
 
     this.connectionListeners.forEach((listener) => listener());
     this.connectionListeners = [];
+  }
+
+  private cleanup() {
+    // The peer emits `close` at least once per teardown; notify the session
+    // listeners only on the first, remote-initiated one. An explicit
+    // `disconnect()` is already announced by the plugin, so re-firing the
+    // transition there only duplicates toasts and queue rollbacks.
+    if (this.cleanedUp) return;
+    this.cleanedUp = true;
+
+    this._mode = 'disconnected';
+    this.connections = {};
+
+    if (this.isDestroyed) {
+      this.listeners = [];
+      this.connectionListeners = [];
+    } else {
+      this.notifyClosed();
+    }
   }
 
   private async registerConnection(conn: DataConnection) {
@@ -309,7 +348,7 @@ export class Connection {
         const wasOpen = Object.hasOwn(this.connections, conn.connectionId);
         delete this.connections[conn.connectionId];
 
-        if (wasOpen) {
+        if (wasOpen && !this.isDestroyed) {
           this.connectionListeners.forEach((listener) => listener(conn));
         }
         if (err) {
