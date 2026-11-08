@@ -349,9 +349,11 @@ export default (
       !songInfo.isPaused &&
       (songInfo.url !== lastUrl || config().unpauseNotification)
     ) {
-      lastUrl = songInfo.url;
-      // Skip the toast while the hover popup is visible.
+      // Skip the toast while the hover popup is visible. The dedupe key only
+      // advances when a toast is actually shown, or that track would count as
+      // announced with nothing ever displayed for it.
       if (!isHoverPopupVisible()) {
+        lastUrl = songInfo.url;
         sendNotification(songInfo);
       }
     }
