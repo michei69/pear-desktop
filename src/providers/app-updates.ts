@@ -24,6 +24,8 @@ const COMMITS_URL = `${REPO_URL}/commits/master`;
  */
 const RECHECK_MS = 6 * 60 * 60 * 1000;
 const DOWNLOAD_TIMEOUT_MS = 15 * 60 * 1000;
+/** Overall bound for one check, so a hung request cannot wedge `checkInFlight`. */
+const CHECK_DEADLINE_MS = 2 * 60 * 1000;
 
 const feedChannel = (updateChannel: UpdateChannel) =>
   updateChannel === 'beta' ? 'beta' : 'latest';
@@ -34,6 +36,9 @@ let downloading = false;
 let downloadReadyHandled = false;
 let downloadTimeout: NodeJS.Timeout | undefined;
 let repeatCheck: NodeJS.Timeout | undefined;
+/** A finished download whose restart prompt waits for the open dialog to close. */
+let pendingDownloadedUpdate: string | null = null;
+let checkInFlight = false;
 
 const ask = (options: Electron.MessageBoxOptions) =>
   win && !win.isDestroyed()
@@ -103,17 +108,26 @@ const showDownloadFailure = (downloadLink: string) => {
     })
     .finally(() => {
       dialogOpen = false;
+      showPendingDownloadedUpdate();
     });
 };
 
 const showDownloadedUpdate = (version: string) => {
   if (downloadReadyHandled) return;
 
-  downloadReadyHandled = true;
+  // The download is done either way, so the watchdog and the progress bar can
+  // go now; the flag stays clear until the prompt is actually on screen.
   resetDownloadState();
 
-  if (dialogOpen) return;
+  if (dialogOpen) {
+    // Another dialog owns the screen. Offer the restart when it closes instead
+    // of latching the prompt off for the rest of the session.
+    pendingDownloadedUpdate = version;
+    return;
+  }
 
+  pendingDownloadedUpdate = null;
+  downloadReadyHandled = true;
   dialogOpen = true;
   ask({
     type: 'info',
@@ -135,7 +149,17 @@ const showDownloadedUpdate = (version: string) => {
     })
     .finally(() => {
       dialogOpen = false;
+      showPendingDownloadedUpdate();
     });
+};
+
+/** Shows a restart prompt that had to wait while another dialog was open. */
+const showPendingDownloadedUpdate = () => {
+  const version = pendingDownloadedUpdate;
+  if (version === null || dialogOpen) return;
+
+  pendingDownloadedUpdate = null;
+  showDownloadedUpdate(version);
 };
 
 const startDownload = (version: string, downloadLink: string) => {
@@ -143,6 +167,8 @@ const startDownload = (version: string, downloadLink: string) => {
 
   downloading = true;
   downloadReadyHandled = false;
+  // A new download supersedes any prompt still waiting for a dialog to close.
+  pendingDownloadedUpdate = null;
   setProgress(0, { mode: 'indeterminate' });
 
   downloadTimeout = setTimeout(() => {
@@ -165,6 +191,8 @@ const startDownload = (version: string, downloadLink: string) => {
 };
 
 const showUpdateAvailable = (version: string, updateChannel: UpdateChannel) => {
+  if (dialogOpen || downloading) return;
+
   const downloadLink = releaseLink(version, updateChannel);
   const canInstall = supportsInAppInstall(process.platform, process.env);
 
@@ -198,6 +226,7 @@ const showUpdateAvailable = (version: string, updateChannel: UpdateChannel) => {
     })
     .finally(() => {
       dialogOpen = false;
+      showPendingDownloadedUpdate();
     });
 };
 
@@ -288,22 +317,42 @@ export const setUpdateChannel = async (value: string): Promise<boolean> => {
  * `isUpdateAvailable` decides whether there is an update to announce.
  */
 export const runUpdateCheck = async (): Promise<void> => {
-  const outcome = await withRetry(
-    () => autoUpdater.checkForUpdates(),
-    (err, attempt, last) => {
-      console.debug(
-        LoggerPrefix,
-        `Update check attempt ${attempt} of ${CHECK_ATTEMPTS} failed${last ? ' (giving up)' : ', retrying'}:`,
-        err,
-      );
-    },
-  );
+  // Overlapping checks (startup timer, menu click, 6 h repeat) would stack
+  // dialogs and race the `dialogOpen` guard, so one check at a time.
+  if (checkInFlight) return;
 
-  if (!outcome.ok) return;
+  checkInFlight = true;
+  let deadline: NodeJS.Timeout | undefined;
+  try {
+    const outcome = await Promise.race([
+      withRetry(
+        () => autoUpdater.checkForUpdates(),
+        (err, attempt, last) => {
+          console.debug(
+            LoggerPrefix,
+            `Update check attempt ${attempt} of ${CHECK_ATTEMPTS} failed${last ? ' (giving up)' : ', retrying'}:`,
+            err,
+          );
+        },
+      ),
+      // A request that never settles must not wedge the single-flight latch
+      // (and with it every later check) for the rest of the session.
+      new Promise<null>((resolve) => {
+        deadline = setTimeout(() => resolve(null), CHECK_DEADLINE_MS);
+        deadline.unref?.();
+      }),
+    ]);
 
-  const { isUpdateAvailable, updateInfo } = outcome.value ?? {};
-  if (isUpdateAvailable && updateInfo && !dialogOpen && !downloading) {
-    showUpdateAvailable(updateInfo.version, config.updateChannel());
+    // A timed-out check shows nothing: there is no result to announce.
+    if (!outcome?.ok) return;
+
+    const { isUpdateAvailable, updateInfo } = outcome.value ?? {};
+    if (isUpdateAvailable && updateInfo && !dialogOpen && !downloading) {
+      showUpdateAvailable(updateInfo.version, config.updateChannel());
+    }
+  } finally {
+    clearTimeout(deadline);
+    checkInFlight = false;
   }
 };
 
@@ -369,7 +418,9 @@ export const setupAutoUpdates = (mainWindow: BrowserWindow) => {
     repeatCheck.unref?.();
   };
 
-  if (config.get('options.autoUpdates')) {
+  let autoUpdatesEnabled = config.get('options.autoUpdates');
+
+  if (autoUpdatesEnabled) {
     // Delay the first packaged update check until startup and window creation
     // have settled, avoiding an update dialog during initial UI work.
     const timeout = setTimeout(() => {
@@ -390,8 +441,14 @@ export const setupAutoUpdates = (mainWindow: BrowserWindow) => {
     }
 
     // Turning auto-updates off stops the repeating check, turning it back on
-    // starts one — no restart either way.
-    if (config.get('options.autoUpdates')) startRepeating();
-    else clearInterval(repeatCheck);
+    // starts one — no restart either way. Only an actual flip may restart the
+    // 6 h clock: restarting it on every config write would postpone the recheck
+    // forever for a user who touches settings.
+    const nextAutoUpdates = config.get('options.autoUpdates');
+    if (nextAutoUpdates !== autoUpdatesEnabled) {
+      autoUpdatesEnabled = nextAutoUpdates;
+      if (nextAutoUpdates) startRepeating();
+      else clearInterval(repeatCheck);
+    }
   });
 };
