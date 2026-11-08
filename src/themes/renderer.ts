@@ -92,7 +92,12 @@ const applyTheme = () => {
   inject(paletteToCss(palette));
 
   if (theme?.js && isNewScript) {
-    const hooks = evaluate(theme.js.source, theme.id) ?? {};
+    const hooks = evaluate(theme.js.source, theme.id);
+    // A script that failed to evaluate, or a mount that threw, did not mount:
+    // leaving `mounted` unset retries on the next refresh instead of pinning
+    // the failure to this (id, hash) for the session.
+    if (!hooks) return;
+
     if (hooks.mount) {
       try {
         const result = hooks.mount({
@@ -104,6 +109,7 @@ const applyTheme = () => {
         cleanup = typeof result === 'function' ? result : null;
       } catch (err) {
         console.error(`[themes] mount for "${theme.id}" threw:`, err);
+        return;
       }
     }
     mounted = { id: theme.id, hash: theme.js.hash, hooks };
