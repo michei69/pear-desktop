@@ -55,6 +55,10 @@ export default createPlugin<
       this.thresholdBytes = thresholdBytesFor((await getConfig()).thresholdMB);
       if (generation !== this.generation || window.isDestroyed()) return;
 
+      // A fresh start is not cooling down: the previous enable's clear must not
+      // suppress the first clear after a disable → enable.
+      this.lastClearAt = 0;
+
       clearInterval(this.interval ?? undefined);
       this.interval = setInterval(() => {
         // Only while the user cannot see the cache being dropped.
@@ -79,6 +83,7 @@ export default createPlugin<
       ++this.generation;
       clearInterval(this.interval ?? undefined);
       this.interval = null;
+      this.lastClearAt = 0;
     },
     onConfigChange(newConfig) {
       this.thresholdBytes = thresholdBytesFor(newConfig.thresholdMB);
