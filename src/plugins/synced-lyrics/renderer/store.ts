@@ -532,11 +532,17 @@ export const lyricsForVideo = async (
 export const retrySearch = (provider: ProviderName, info: SongInfo) => {
   activeSongInfo = info;
 
+  // The retry writes the same cache object the fan-out owns, so switching away
+  // and back to this video republishes the retried state, not the pre-retry one.
+  const cache =
+    searchCache.get(info.videoId) ?? createSearchCache(info.videoId);
+
   const pCache: ProviderState = {
     state: 'fetching',
     data: null,
     error: null,
   };
+  cache.data[provider] = pCache;
 
   if (lyricsStore.videoId !== info.videoId) {
     clearCurrentTranslation();
@@ -549,26 +555,33 @@ export const retrySearch = (provider: ProviderName, info: SongInfo) => {
     },
   });
 
-  providers[provider]
+  const settle = (state: ProviderState) => {
+    cache.data[provider] = state;
+    if (!isStillActiveVideo(info.videoId)) return;
+    setLyricsStore('lyrics', (old) => {
+      return {
+        ...old,
+        [provider]: { ...state, data: state.data ? { ...state.data } : null },
+      };
+    });
+  };
+
+  const retry = providers[provider]
     .search(info)
     .then((res) => {
-      if (!isStillActiveVideo(info.videoId)) return;
-      setLyricsStore('lyrics', (old) => {
-        return {
-          ...old,
-          [provider]: { state: 'done', data: res, error: null },
-        };
-      });
+      settle({ state: 'done', data: res, error: null });
     })
-    .catch((error) => {
-      if (!isStillActiveVideo(info.videoId)) return;
-      setLyricsStore('lyrics', (old) => {
-        return {
-          ...old,
-          [provider]: { state: 'error', data: null, error },
-        };
-      });
+    .catch((error: Error) => {
+      settle({ state: 'error', data: null, error });
     });
+
+  // Callers that await the cache (`lyricsForVideo`, `allProviderLyrics`) must
+  // wait for the retry too; keep the earlier fetch's settle promise as well.
+  const previousSettled = cache.settled ?? Promise.resolve();
+  cache.settled = Promise.all([previousSettled, retry]).then(() => {
+    searchCache.set(info.videoId, cache);
+    pruneSearchCache();
+  });
 };
 
 export const translateCurrentLyrics = (

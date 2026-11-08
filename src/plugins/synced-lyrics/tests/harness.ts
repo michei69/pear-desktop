@@ -80,8 +80,17 @@ const replacedGlobals = new Map<string, { had: boolean; value: unknown }>();
 export const uninstallDom = () => {
   const globals = globalThis as unknown as Record<string, unknown>;
   for (const [key, saved] of replacedGlobals) {
-    if (saved.had) globals[key] = saved.value;
-    else delete globals[key];
+    try {
+      if (saved.had) globals[key] = saved.value;
+      else delete globals[key];
+    } catch {
+      // Another test file may have defined the global non-writable.
+      Object.defineProperty(globals, key, {
+        value: saved.value,
+        configurable: true,
+        writable: true,
+      });
+    }
   }
   replacedGlobals.clear();
 };
@@ -122,7 +131,13 @@ export const installDom = () => {
     try {
       globals[key] = value;
     } catch {
-      Object.defineProperty(globals, key, { value, configurable: true });
+      // Another test file may have defined the global non-writable; replace it
+      // with a writable property so uninstall can restore the original.
+      Object.defineProperty(globals, key, {
+        value,
+        configurable: true,
+        writable: true,
+      });
     }
   }
 
