@@ -85,7 +85,11 @@ class Chain {
     );
     this.compressor = null;
     this.trackGain = null;
-    // source/context are kept so a re-enable can rebuild without a new event.
+    // The attach state has to say what it is: a stopped chain is attached to
+    // nothing. A re-enable resolves the live element again instead of rebuilding
+    // onto a source that may have been swapped while the plugin was off.
+    this.source = null;
+    this.context = null;
   }
 }
 
@@ -226,7 +230,16 @@ const audioCanPlayHandler = ({
   detail: { audioSource, audioContext },
 }: CustomEvent<Compressor>) => {
   cancelPendingRetry();
-  chain.build(audioSource, audioContext);
+  // The announcement is dispatched on the boot element's graph, which can still
+  // be bound to a <video> that has since been swapped. Follow the live element,
+  // as `handleVideoSwap` and `attachCurrentGraph` do, or the chain would be
+  // spliced onto a detached source and the swap observer armed from it.
+  const liveVideo = document.querySelector<HTMLVideoElement>('video');
+  const source =
+    liveVideo && audioSource.mediaElement !== liveVideo
+      ? (rebindAudioGraphSource(liveVideo) ?? audioSource)
+      : audioSource;
+  chain.build(source, audioContext);
   updateTrackGain();
   watchForVideoSwap();
 };
@@ -313,24 +326,10 @@ export default createPlugin({
       if (run !== generation) return;
       active = true;
       currentConfig = config;
-      // Re-enabled with a chain already built: rebuild now, not on next track.
-      if (chain.source && chain.context) {
-        // The element may have been swapped while disabled (observer was off):
-        // rebind to the live one rather than rebuild onto a dead source.
-        const currentVideo = document.querySelector<HTMLVideoElement>('video');
-        if (currentVideo && sourceMediaElement(chain.source) !== currentVideo) {
-          handleVideoSwap(currentVideo);
-        } else {
-          chain.build(chain.source, chain.context);
-          updateTrackGain();
-          watchForVideoSwap();
-        }
-      } else {
-        // First enable: the shared graph already exists (it is created before
-        // media loads), so splice in immediately instead of waiting for the
-        // next track's `peard:audio-can-play`.
-        attachCurrentGraph();
-      }
+      // First enable, or a re-enable after `stop` tore the chain down: resolve
+      // the live element and splice in immediately instead of waiting for the
+      // next track's `peard:audio-can-play`.
+      attachCurrentGraph();
     },
 
     onPlayerApiReady(playerApi) {
