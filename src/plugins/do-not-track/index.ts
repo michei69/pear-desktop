@@ -234,7 +234,9 @@ export default createPlugin({
       }
       if (generation !== this.generation || window.isDestroyed()) return;
       this.mainWindow = window;
-      this.currentProfile = profileKey(config);
+      // Nothing is applied until the load below succeeds; a null profile makes
+      // the next config change retry instead of believing the profile is live.
+      this.currentProfile = null;
       const isActive = () =>
         generation === this.generation &&
         this.mainWindow === window &&
@@ -250,8 +252,14 @@ export default createPlugin({
         },
       });
 
+      // A repeated start must release the engine it replaces, or the old
+      // cosmetic disposer and preload scripts are overwritten and leak.
+      if (isBlockerEnabled(window.webContents.session)) {
+        unloadTrackerBlockerEngine(window.webContents.session, true);
+      }
+
       if (usesBlockLists(config.blocker, config.customEnabled)) {
-        await loadTrackerBlockerEngine(
+        const applied = await loadTrackerBlockerEngine(
           window.webContents.session,
           config.cache,
           config.customEnabled ? config.additionalBlockLists : [],
@@ -261,6 +269,13 @@ export default createPlugin({
           config.customEnabled,
           config.disabledLocalBlockLists,
         );
+        if (generation === this.generation && applied) {
+          this.currentProfile = profileKey(config);
+        }
+      } else if (generation === this.generation) {
+        // Lite with no custom lists has nothing to load, so the profile is
+        // applied as an intentional "off".
+        this.currentProfile = profileKey(config);
       }
     },
     stop({ window, ipc }) {
@@ -287,16 +302,18 @@ export default createPlugin({
 
           const session = this.mainWindow.webContents.session;
           const nextProfile = profileKey(newConfig);
-          const profileChanged =
-            this.currentProfile !== null && this.currentProfile !== nextProfile;
-          this.currentProfile = nextProfile;
+          // A null `currentProfile` means the previous load failed (or never
+          // landed), so any config change retries instead of silently staying
+          // off; it is only claimed again after a successful load.
+          const profileChanged = this.currentProfile !== nextProfile;
           if (!profileChanged) return;
           const wasBlockerEnabled = isBlockerEnabled(session);
           if (wasBlockerEnabled) {
             unloadTrackerBlockerEngine(session, true);
           }
+          let applied = true;
           if (usesBlockLists(newConfig.blocker, newConfig.customEnabled)) {
-            await loadTrackerBlockerEngine(
+            applied = await loadTrackerBlockerEngine(
               session,
               newConfig.cache,
               newConfig.customEnabled ? newConfig.additionalBlockLists : [],
@@ -307,7 +324,8 @@ export default createPlugin({
               newConfig.disabledLocalBlockLists,
             );
           }
-          if (generation === this.generation && profileChanged) {
+          if (generation === this.generation) {
+            this.currentProfile = applied ? nextProfile : null;
             this.promptReload?.().catch((error: unknown) =>
               console.error('Error showing DNT reload dialog', error),
             );

@@ -104,7 +104,7 @@ export const loadTrackerBlockerEngine = async (
   disableDefaultLists: boolean | unknown[] = false,
   loadCustomBlockLists: boolean = true,
   disabledLocalBlockLists: string[] = [],
-) => {
+): Promise<boolean> => {
   const generation = ++loadGeneration;
   const localLists = loadCustomBlockLists
     ? await loadLocalBlockLists(disabledLocalBlockLists)
@@ -188,7 +188,7 @@ export const loadTrackerBlockerEngine = async (
       },
       cachingOptions,
     );
-    if (generation !== loadGeneration) return;
+    if (generation !== loadGeneration) return false;
     disposeCosmetics = installCosmeticInjection(engine);
     blocker = engine;
     if (session) {
@@ -230,10 +230,12 @@ export const loadTrackerBlockerEngine = async (
         },
       );
     }
+    return true;
   } catch (error) {
     if (generation === loadGeneration && session && blocker)
       unloadTrackerBlockerEngine(session);
     console.error('Error loading blocker engine', error);
+    return false;
   }
 };
 
