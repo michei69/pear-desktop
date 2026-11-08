@@ -49,6 +49,7 @@ const yToGain = (y: number) =>
 const FREQUENCY_TICKS = [20, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000];
 const GAIN_TICKS = [-30, -20, -10, 0, 10, 20, 30];
 const BANDS_EVENT = 'peard:equalizer-bands';
+const ACTIVE_PRESET_EVENT = 'peard:equalizer-active-preset';
 
 const formatGain = (gain: number) =>
   `${gain > 0 ? '+' : ''}${gain.toFixed(1)} dB`;
@@ -72,6 +73,11 @@ export const EqualizerCurve = (props: { ctx: CustomFieldContext }) => {
     if (!pendingFilters) return;
     props.ctx.setValue('filters', pendingFilters);
     props.ctx.setValue('activePreset', 'custom');
+    // The presets panel keeps its own copy of the active preset; tell it that a
+    // band edit moved the config to `custom`, or it keeps showing the old one.
+    window.dispatchEvent(
+      new CustomEvent(ACTIVE_PRESET_EVENT, { detail: 'custom' }),
+    );
     pendingFilters = undefined;
   };
 

@@ -1,4 +1,4 @@
-import { createSignal, For, Show, untrack } from 'solid-js';
+import { createSignal, For, onCleanup, Show, untrack } from 'solid-js';
 
 import { t } from '@/i18n';
 
@@ -22,6 +22,7 @@ import style from './style.css?inline';
 import type { CustomFieldContext } from '@/types/settings';
 
 const BANDS_EVENT = 'peard:equalizer-bands';
+const ACTIVE_PRESET_EVENT = 'peard:equalizer-active-preset';
 const RESERVED_NAMES = new Set([
   'flat',
   'bass boost',
@@ -96,6 +97,21 @@ export const EqualizerPresets = (props: { ctx: CustomFieldContext }) => {
   };
   const selectedUser = () =>
     userPresets().find((preset) => preset.id === selectedPreset());
+
+  // The curve writes `activePreset: 'custom'` on a band edit and cannot reach
+  // this panel directly; without the event the dropdown keeps the old preset
+  // selected while the config says custom.
+  const onActivePresetChange = (event: Event) => {
+    const id = (event as CustomEvent<string>).detail;
+    if (typeof id !== 'string' || !id) return;
+    setActivePreset(id);
+    setSelectedPreset(id);
+    setPresetName(userPresets().find((preset) => preset.id === id)?.name ?? '');
+  };
+  window.addEventListener(ACTIVE_PRESET_EVENT, onActivePresetChange);
+  onCleanup(() =>
+    window.removeEventListener(ACTIVE_PRESET_EVENT, onActivePresetChange),
+  );
 
   const remember = (id: string) => {
     const next = [id, ...recentPresets().filter((item) => item !== id)].slice(
