@@ -274,17 +274,24 @@ export const TitleBar = (props: TitleBarProps) => {
 
   const closeAllPanels = async () => {
     setIgnoreTransition(true);
-    setMenu(null);
-    await refetch();
-    setMenu(data() ?? null);
-    setIgnoreTransition(false);
+    try {
+      setMenu(null);
+      await refetch();
+      setMenu(data() ?? null);
+    } finally {
+      // A rejected refetch must not leave every later panel opening instantly.
+      setIgnoreTransition(false);
+    }
   };
 
   const refreshMenu = async () => {
     setIgnoreTransition(true);
-    await refetch();
-    setMenu(data() ?? null);
-    setIgnoreTransition(false);
+    try {
+      await refetch();
+      setMenu(data() ?? null);
+    } finally {
+      setIgnoreTransition(false);
+    }
   };
 
   const collapseOnOutsideClick = (e: MouseEvent) => {
