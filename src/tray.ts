@@ -29,6 +29,8 @@ let traySongInfoCallback: SongInfoCallback | null = null;
 let likeChangedListener:
   | ((event: Electron.IpcMainEvent, status: LikeType) => void)
   | null = null;
+/** Re-asks for the like state once the renderer's song-info listeners exist. */
+let playerApiLoadedListener: (() => void) | null = null;
 let currentLikeStatus: LikeType = LikeType.Indifferent;
 let defaultTrayIcon: Electron.NativeImage = nativeImage.createEmpty();
 let pausedTrayIcon: Electron.NativeImage = nativeImage.createEmpty();
@@ -76,6 +78,9 @@ type MouseMoveEvent = (
 
 // Plugins load before the tray, so queue early handlers and apply them in setUpTray.
 let pendingMouseMove: MouseMoveEvent | null = null;
+// The handler this module attached to the current tray: only that one may be
+// removed, so other producers' `mouse-move` listeners survive a re-registration.
+let trayMouseMoveHandler: MouseMoveEvent | null = null;
 
 // macOS and Windows only
 export const setTrayOnMouseMove = (fn: MouseMoveEvent) => {
@@ -84,7 +89,10 @@ export const setTrayOnMouseMove = (fn: MouseMoveEvent) => {
     return;
   }
 
-  tray.removeAllListeners('mouse-move');
+  if (trayMouseMoveHandler) {
+    tray.removeListener('mouse-move', trayMouseMoveHandler);
+  }
+  trayMouseMoveHandler = fn;
   tray.on('mouse-move', fn);
 };
 
@@ -101,6 +109,13 @@ const removeLikeChangedListener = () => {
   likeChangedListener = null;
 };
 
+const removePlayerApiLoadedListener = () => {
+  if (!playerApiLoadedListener) return;
+
+  ipcMain.removeListener('peard:player-api-loaded', playerApiLoadedListener);
+  playerApiLoadedListener = null;
+};
+
 export const setUpTray = (app: Electron.App, win: Electron.BrowserWindow) => {
   if (!config.get('options.tray')) {
     tray?.destroy();
@@ -110,6 +125,7 @@ export const setUpTray = (app: Electron.App, win: Electron.BrowserWindow) => {
       traySongInfoCallback = null;
     }
     removeLikeChangedListener();
+    removePlayerApiLoadedListener();
     return;
   }
 
@@ -118,6 +134,11 @@ export const setUpTray = (app: Electron.App, win: Electron.BrowserWindow) => {
   }
 
   removeLikeChangedListener();
+  removePlayerApiLoadedListener();
+
+  // A rebuild must not leak the previous tray icon and its listeners.
+  tray?.destroy();
+  tray = undefined;
 
   const { playPause, next, previous, like, dislike } = getSongControls(win);
 
@@ -125,7 +146,12 @@ export const setUpTray = (app: Electron.App, win: Electron.BrowserWindow) => {
 
   tray = new Tray(defaultTrayIcon);
 
-  trayTooltipText = t('main.tray.tooltip.default', {
+  // Keep the presentation the old tray had: a paused app keeps its paused icon,
+  // and a suppression left over from the old tray's hover popup must not blank
+  // the new tooltip forever (the popup re-asserts it on its next show/hide).
+  trayTooltipSuppressed = false;
+  if (trayIsPaused) tray.setImage(pausedTrayIcon);
+  trayTooltipText ||= t('main.tray.tooltip.default', {
     applicationName: APPLICATION_NAME,
   });
   updateTrayTooltip();
@@ -228,8 +254,20 @@ export const setUpTray = (app: Electron.App, win: Electron.BrowserWindow) => {
 
   tray.setContextMenu(buildTrayMenu());
 
-  // Like status changes come from the renderer.
-  win.webContents.send(SONG_INFO_SETUP_CHANNEL, SongInfoEventFlag.LikeChanged);
+  // Like status changes come from the renderer. It can only listen once its
+  // song-info setup ran, which may be after this call, so ask again when the
+  // renderer announces the player API; arming the flag is idempotent.
+  const requestLikeState = () => {
+    if (!win.isDestroyed()) {
+      win.webContents.send(
+        SONG_INFO_SETUP_CHANNEL,
+        SongInfoEventFlag.LikeChanged,
+      );
+    }
+  };
+  requestLikeState();
+  playerApiLoadedListener = requestLikeState;
+  ipcMain.on('peard:player-api-loaded', playerApiLoadedListener);
   likeChangedListener = (_, status: LikeType) => {
     currentLikeStatus = status;
     if (tray) {
@@ -260,9 +298,13 @@ export const setUpTray = (app: Electron.App, win: Electron.BrowserWindow) => {
   };
   registerCallback(traySongInfoCallback);
 
-  // Apply handlers plugins registered before the tray existed.
+  // Apply handlers plugins registered before the tray existed, or the one the
+  // previous tray instance carried.
   if (pendingMouseMove) {
-    tray.on('mouse-move', pendingMouseMove);
+    trayMouseMoveHandler = pendingMouseMove;
     pendingMouseMove = null;
+  }
+  if (trayMouseMoveHandler) {
+    tray.on('mouse-move', trayMouseMoveHandler);
   }
 };
