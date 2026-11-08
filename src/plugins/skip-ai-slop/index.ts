@@ -1080,11 +1080,13 @@ const skipped = new Set<string>(); // videoIds we already tried to skip (once ea
 
 const trySkip = (videoId: string, reason: string) => {
   if (skipped.has(videoId)) return;
-  skipped.add(videoId);
   if (!canSkipNow()) {
     console.warn('[skip-ai-slop] skip limit reached, not skipping', videoId);
     return;
   }
+  // Only a performed skip is recorded, so a rate-limited attempt can still be
+  // retried once the window frees up.
+  skipped.add(videoId);
   recentSkips.push(Date.now());
   console.info(`[skip-ai-slop] skipping ${videoId} (${reason})`);
   api?.nextVideo();
