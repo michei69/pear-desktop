@@ -274,6 +274,16 @@ export default createRenderer<
     }
   },
   onConfigChange(newConfig) {
+    const previous = this.config;
     this.config = newConfig;
+    // Both settings were only read on a track change: toggling "disable
+    // captions" off used to leave the module unloaded and the button hidden for
+    // the rest of the track. Apply the new mode now.
+    if (
+      previous?.disableCaptions !== newConfig.disableCaptions ||
+      previous?.autoload !== newConfig.autoload
+    ) {
+      this.videoChangeListener();
+    }
   },
 });
