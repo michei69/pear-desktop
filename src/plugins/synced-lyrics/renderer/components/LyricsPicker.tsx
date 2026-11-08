@@ -87,8 +87,15 @@ const shouldSwitchProvider = (providerData: ProviderState) => {
   return providerData.state === 'done' && !hasLyricText(providerData.data);
 };
 
-const [hasManuallySwitchedProvider, setHasManuallySwitchedProvider] =
-  createSignal(false);
+/**
+ * The manual pick is keyed by video: it sticks for the rest of that song, and a
+ * track change releases it even though the picker only exists while the lyrics
+ * tab is visible (a module-level boolean used to survive the unmount and keep
+ * the previous song's provider).
+ */
+const [manualProviderVideoId, setManualProviderVideoId] = createSignal<
+  string | null
+>(null);
 
 export const LyricsPicker = (props: {
   setStickRef: Setter<HTMLElement | null>;
@@ -157,11 +164,8 @@ export const LyricsPicker = (props: {
     closeSearchModal();
   };
 
-  const handleVideoData = (videoId: string, name: string) => {
+  const handleVideoData = (videoId: string, _name: string) => {
     setVideoId(videoId);
-
-    if (name !== 'dataloaded') return;
-    setHasManuallySwitchedProvider(false);
   };
 
   const videoDataChangeHandler = (
@@ -196,8 +200,9 @@ export const LyricsPicker = (props: {
   }
 
   createEffect(() => {
-    // A manual pick (arrow buttons, dots) sticks for the rest of the song.
-    if (videoId() === null || hasManuallySwitchedProvider()) return;
+    // A manual pick (arrow buttons, dots) sticks for the rest of the song; a
+    // track change makes it stale and the effect decides again.
+    if (videoId() === null || manualProviderVideoId() === videoId()) return;
 
     // Nothing to pick from while every provider is still fetching or errored.
     if (
@@ -213,7 +218,7 @@ export const LyricsPicker = (props: {
   });
 
   const chooseProvider = (provider: ProviderName) => {
-    setHasManuallySwitchedProvider(true);
+    setManualProviderVideoId(videoId());
     setLyricsStore('provider', provider);
   };
 
@@ -228,7 +233,7 @@ export const LyricsPicker = (props: {
 
     if (id !== null) writeStarredProvider(id, next);
 
-    setHasManuallySwitchedProvider(false);
+    setManualProviderVideoId(null);
     setStarredProvider(next);
   };
 
