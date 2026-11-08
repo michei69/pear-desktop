@@ -41,12 +41,7 @@ const parseStringFromArgsType = (args: ArgsType<string>) => {
   }
 };
 
-/**
- * Whether precise-volume's renderer half has registered its volume receiver.
- * The plugin marks the page when it registers and clears the mark on unload
- * (`precise-volume/renderer.ts`), so routing by config alone cannot send a
- * command to a channel nobody listens on during boot or a re-enable.
- */
+// Probe the receiver: config can be on before the renderer registers it.
 const PRECISE_VOLUME_RECEIVER_PROBE =
   "document.documentElement.dataset.preciseVolumeReceiver === '1'";
 
@@ -110,8 +105,7 @@ export const getSongControls = (win: BrowserWindow) => {
         (await isPreciseVolumeReceiverReady(win))
       ) {
         // precise-volume owns the volume UI (saved volume, tooltip, slider,
-        // HUD), so let it apply the change instead of writing the player. It
-        // only gets the command while its receiver is actually registered.
+        // HUD), so let it apply the change instead of writing the player.
         win.webContents.send('setVolume', volumeNumber);
       } else {
         win.webContents.send('peard:update-volume', volumeNumber);

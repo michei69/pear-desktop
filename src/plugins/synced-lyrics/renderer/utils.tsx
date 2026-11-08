@@ -44,8 +44,7 @@ export const tabStates: Record<string, () => void> = {
     });
 
     tabRenderer.appendChild(container);
-    // A previous root can still be alive when YTM replaces the tab node: its
-    // effects, list and rAF loop would keep running against a detached tree.
+    // YTM can replace the tab node: dispose the old root or its effects/rAF keep running.
     disposeLyricsRoot?.();
     disposeLyricsRoot = render(() => <LyricsRenderer />, container);
   },

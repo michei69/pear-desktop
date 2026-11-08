@@ -19,8 +19,7 @@ export default createPlugin({
         document.querySelector<HTMLElement>('ytmusic-app') ?? document.body;
 
       const arm = (toast: Toast) => {
-        // One deadline per toast: a scan must not push an open toast's timer
-        // out just because something else mutated.
+        // One deadline per toast; repeated scans must not postpone an open toast.
         if (timers.has(toast)) return;
 
         timers.set(
@@ -68,15 +67,7 @@ export default createPlugin({
         return node.closest<Toast>('tp-yt-paper-toast');
       };
 
-      /**
-       * Drop the old deadline as soon as a toast loses `paper-toast-open`.
-       *
-       * YTM reuses the element, so a close and a reopen can land in one
-       * mutation batch and the toast is open again by the time this runs.
-       * Walking the class records in order — each record's oldValue, or the
-       * current class list for the last one — recovers the present → absent
-       * step the final state hides; the next scan then arms a fresh deadline.
-       */
+      // YTM reuses the element: walk class records to catch a close+reopen in one batch.
       const disarmClosed = (mutations: MutationRecord[]) => {
         const recordsByToast = new Map<Toast, MutationRecord[]>();
 
@@ -132,8 +123,7 @@ export default createPlugin({
 
       scan();
       this.observer = new MutationObserver((mutations) => {
-        // Before the scan: a close + reopen in this batch must not inherit the
-        // first message's deadline.
+        // Before the scan: a close+reopen must not inherit the first message's deadline.
         disarmClosed(mutations);
 
         if (

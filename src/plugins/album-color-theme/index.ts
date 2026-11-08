@@ -249,10 +249,7 @@ export default createPlugin({
       | null,
     ratio: 0.5,
     alpha: 1,
-    /**
-     * Bumped by every track application and by `stop()`, so only the newest
-     * fetch may paint and an in-flight one cannot undo the teardown.
-     */
+    // Bumped by track changes and stop(); only the newest fetch may paint.
     generation: 0,
 
     async applyCurrentTrack() {

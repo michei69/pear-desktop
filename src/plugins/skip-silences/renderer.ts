@@ -169,10 +169,7 @@ const audioCanPlayListener = (e: CustomEvent<Compressor>) => {
   };
 
   playOrSeekHandler = () => {
-    // A seek does not restart the track: `hasAudioStarted` ("real audio heard
-    // since the track began") must survive it, or any seek — including the one
-    // skipSilence() makes itself — re-arms beginning-only skipping mid-track.
-    // The samples from before the jump would otherwise be counted after it.
+    // A seek is not a new track: keep hasAudioStarted and only drop pre-jump samples.
     speakingHistory.fill(0);
     skipSilence();
     startLoop();

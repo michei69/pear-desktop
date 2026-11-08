@@ -109,9 +109,7 @@ export const onPlayerApiReady = async (
     togglePictureInPicture();
   };
 
-  // Main mirrors the mode into config; after a renderer reload the layout is
-  // gone but main still believes the window is in PiP, so seed the local flag
-  // or the next toggle's exitPip() would be a no-op.
+  // Main still believes PiP after a renderer reload; seed the flag or exitPip() no-ops.
   let inPiP = Boolean(config.isInPiP);
 
   const enterPip = () => {

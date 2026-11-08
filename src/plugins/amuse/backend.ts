@@ -30,8 +30,6 @@ export default createBackend({
   songInfoCallback: null as ((songInfo: SongInfo) => void) | null,
 
   start({ ipc }) {
-    // The backend owns the advertisement mode served to clients; a re-enable
-    // starts from "not an ad" until the renderer reports again.
     this.isAdvertisement = false;
 
     this.adStateListener = (isAd: boolean) => {

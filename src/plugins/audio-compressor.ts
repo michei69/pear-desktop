@@ -85,9 +85,7 @@ class Chain {
     );
     this.compressor = null;
     this.trackGain = null;
-    // The attach state has to say what it is: a stopped chain is attached to
-    // nothing. A re-enable resolves the live element again instead of rebuilding
-    // onto a source that may have been swapped while the plugin was off.
+    // Clear on stop: a re-enable must bind the live element, not a swapped-away one.
     this.source = null;
     this.context = null;
   }
@@ -230,10 +228,7 @@ const audioCanPlayHandler = ({
   detail: { audioSource, audioContext },
 }: CustomEvent<Compressor>) => {
   cancelPendingRetry();
-  // The announcement is dispatched on the boot element's graph, which can still
-  // be bound to a <video> that has since been swapped. Follow the live element,
-  // as `handleVideoSwap` and `attachCurrentGraph` do, or the chain would be
-  // spliced onto a detached source and the swap observer armed from it.
+  // The event's graph can be bound to a swapped-away video; follow the live element.
   const liveVideo = document.querySelector<HTMLVideoElement>('video');
   const source =
     liveVideo && audioSource.mediaElement !== liveVideo
@@ -326,9 +321,6 @@ export default createPlugin({
       if (run !== generation) return;
       active = true;
       currentConfig = config;
-      // First enable, or a re-enable after `stop` tore the chain down: resolve
-      // the live element and splice in immediately instead of waiting for the
-      // next track's `peard:audio-can-play`.
       attachCurrentGraph();
     },
 

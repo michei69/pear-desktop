@@ -532,8 +532,7 @@ export const lyricsForVideo = async (
 export const retrySearch = (provider: ProviderName, info: SongInfo) => {
   activeSongInfo = info;
 
-  // The retry writes the same cache object the fan-out owns, so switching away
-  // and back to this video republishes the retried state, not the pre-retry one.
+  // Mutate the fan-out's cache object so switching back republishes the retried state.
   const cache =
     searchCache.get(info.videoId) ?? createSearchCache(info.videoId);
 
@@ -575,8 +574,7 @@ export const retrySearch = (provider: ProviderName, info: SongInfo) => {
       settle({ state: 'error', data: null, error });
     });
 
-  // Callers that await the cache (`lyricsForVideo`, `allProviderLyrics`) must
-  // wait for the retry too; keep the earlier fetch's settle promise as well.
+  // Keep the earlier settle promise: callers awaiting the cache must wait for this retry too.
   const previousSettled = cache.settled ?? Promise.resolve();
   cache.settled = Promise.all([previousSettled, retry]).then(() => {
     searchCache.set(info.videoId, cache);

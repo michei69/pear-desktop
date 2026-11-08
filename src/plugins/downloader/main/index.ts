@@ -91,11 +91,7 @@ const noteMissingFfmpeg = () => {
   console.warn(FFMPEG_MISSING_MESSAGE);
 };
 
-/**
- * A new user-initiated download probes FFmpeg again. The latch only suppresses
- * the remaining tracks of one playlist after its first failure, so installing
- * FFmpeg mid-session recovers without a restart.
- */
+// A new user attempt re-probes ffmpeg: the missing latch only suppresses one playlist.
 const probeFfmpeg = () => {
   ffmpegMissing = false;
 };
@@ -308,8 +304,6 @@ const downloadAndReport = async (
   trackId?: string,
   increasePlaylistProgress: (value: number) => void = () => {},
 ) => {
-  // Playlist items keep the latch so they fail fast after the first missing
-  // FFmpeg; a standalone download is a new user attempt and probes again.
   if (!playlistFolder) probeFfmpeg();
 
   let resolvedName: string | undefined;
@@ -367,8 +361,7 @@ function downloadSongOnFinishSetup({
       return;
     }
 
-    // The tracker follows the current track even while the feature is off, so
-    // enabling it across a track change cannot decide on a stale url/time.
+    // Track changes feed the tracker even while off, so an enable cannot act on a stale url.
     const change = trackSongChange(
       tracker,
       songInfo,
@@ -638,8 +631,6 @@ async function downloadSongUnsafe(
     }
 
     if (needsConversion && ffmpegMissing && sameContainer) {
-      // Conversion was explicitly requested (preset ffmpeg args) but is
-      // unavailable; keeping the source is intentional, but say so.
       console.warn(
         `Skipping requested ffmpeg conversion for ${metadata.artist} - ${metadata.title}: FFmpeg is unavailable; keeping the downloaded ${sourceContainer ?? 'source'} file.`,
       );
@@ -667,8 +658,7 @@ async function downloadSongUnsafe(
     outputPath = filePath;
   } finally {
     const finished = outputPath === filePath;
-    // A completed download keeps its finished output when finishing failed: it
-    // is the only retry material left. Half-written conversion output is not.
+    // Keep the finished output when finishing failed: it is the only retry material left.
     for (const path of tempFilesToRemove({
       finished,
       downloaded,
@@ -743,8 +733,6 @@ const getCoverBuffer = async (url: string) => {
 };
 
 export async function downloadPlaylist(givenUrl?: string | URL) {
-  // The playlist as a whole is one user attempt: probe once, then the latch
-  // makes the remaining tracks fail fast if FFmpeg is unusable.
   probeFfmpeg();
 
   try {

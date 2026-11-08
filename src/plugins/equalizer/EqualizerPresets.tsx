@@ -98,9 +98,7 @@ export const EqualizerPresets = (props: { ctx: CustomFieldContext }) => {
   const selectedUser = () =>
     userPresets().find((preset) => preset.id === selectedPreset());
 
-  // The curve writes `activePreset: 'custom'` on a band edit and cannot reach
-  // this panel directly; without the event the dropdown keeps the old preset
-  // selected while the config says custom.
+  // The curve switches the config to custom; this panel must follow or the dropdown lies.
   const onActivePresetChange = (event: Event) => {
     const id = (event as CustomEvent<string>).detail;
     if (typeof id !== 'string' || !id) return;

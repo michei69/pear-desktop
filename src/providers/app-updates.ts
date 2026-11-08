@@ -24,7 +24,6 @@ const COMMITS_URL = `${REPO_URL}/commits/master`;
  */
 const RECHECK_MS = 6 * 60 * 60 * 1000;
 const DOWNLOAD_TIMEOUT_MS = 15 * 60 * 1000;
-/** Overall bound for one check, so a hung request cannot wedge `checkInFlight`. */
 const CHECK_DEADLINE_MS = 2 * 60 * 1000;
 
 const feedChannel = (updateChannel: UpdateChannel) =>
@@ -36,7 +35,6 @@ let downloading = false;
 let downloadReadyHandled = false;
 let downloadTimeout: NodeJS.Timeout | undefined;
 let repeatCheck: NodeJS.Timeout | undefined;
-/** A finished download whose restart prompt waits for the open dialog to close. */
 let pendingDownloadedUpdate: string | null = null;
 let checkInFlight = false;
 
@@ -115,13 +113,10 @@ const showDownloadFailure = (downloadLink: string) => {
 const showDownloadedUpdate = (version: string) => {
   if (downloadReadyHandled) return;
 
-  // The download is done either way, so the watchdog and the progress bar can
-  // go now; the flag stays clear until the prompt is actually on screen.
   resetDownloadState();
 
   if (dialogOpen) {
-    // Another dialog owns the screen. Offer the restart when it closes instead
-    // of latching the prompt off for the rest of the session.
+    // Another dialog owns the screen; offer the restart when it closes instead of latching.
     pendingDownloadedUpdate = version;
     return;
   }
@@ -153,7 +148,6 @@ const showDownloadedUpdate = (version: string) => {
     });
 };
 
-/** Shows a restart prompt that had to wait while another dialog was open. */
 const showPendingDownloadedUpdate = () => {
   const version = pendingDownloadedUpdate;
   if (version === null || dialogOpen) return;
@@ -317,8 +311,7 @@ export const setUpdateChannel = async (value: string): Promise<boolean> => {
  * `isUpdateAvailable` decides whether there is an update to announce.
  */
 export const runUpdateCheck = async (): Promise<void> => {
-  // Overlapping checks (startup timer, menu click, 6 h repeat) would stack
-  // dialogs and race the `dialogOpen` guard, so one check at a time.
+  // Single-flight: overlapping checks (timer, menu, 6h repeat) would race dialogOpen.
   if (checkInFlight) return;
 
   checkInFlight = true;
@@ -335,15 +328,13 @@ export const runUpdateCheck = async (): Promise<void> => {
           );
         },
       ),
-      // A request that never settles must not wedge the single-flight latch
-      // (and with it every later check) for the rest of the session.
+      // A request that never settles must not wedge the single-flight latch forever.
       new Promise<null>((resolve) => {
         deadline = setTimeout(() => resolve(null), CHECK_DEADLINE_MS);
         deadline.unref?.();
       }),
     ]);
 
-    // A timed-out check shows nothing: there is no result to announce.
     if (!outcome?.ok) return;
 
     const { isUpdateAvailable, updateInfo } = outcome.value ?? {};
@@ -441,9 +432,7 @@ export const setupAutoUpdates = (mainWindow: BrowserWindow) => {
     }
 
     // Turning auto-updates off stops the repeating check, turning it back on
-    // starts one — no restart either way. Only an actual flip may restart the
-    // 6 h clock: restarting it on every config write would postpone the recheck
-    // forever for a user who touches settings.
+    // starts one — no restart either way.
     const nextAutoUpdates = config.get('options.autoUpdates');
     if (nextAutoUpdates !== autoUpdatesEnabled) {
       autoUpdatesEnabled = nextAutoUpdates;

@@ -73,8 +73,6 @@ export const EqualizerCurve = (props: { ctx: CustomFieldContext }) => {
     if (!pendingFilters) return;
     props.ctx.setValue('filters', pendingFilters);
     props.ctx.setValue('activePreset', 'custom');
-    // The presets panel keeps its own copy of the active preset; tell it that a
-    // band edit moved the config to `custom`, or it keeps showing the old one.
     window.dispatchEvent(
       new CustomEvent(ACTIVE_PRESET_EVENT, { detail: 'custom' }),
     );

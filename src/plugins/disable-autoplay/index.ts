@@ -55,9 +55,7 @@ export default createPlugin<
     config: null,
     api: null,
     eventListener(event: CustomEvent<VideoDataChanged>) {
-      // The one-shot may only be consumed by the event it acts on: the channel
-      // also carries `newdata`/`dataupdated`, and removing the listener there
-      // would disarm the plugin without ever pausing.
+      // Only `dataloaded` may consume the one-shot; other events would disarm it unpaused.
       if (event.detail.name !== 'dataloaded') return;
 
       if (this.config?.applyOnce) {
@@ -95,9 +93,7 @@ export default createPlugin<
     },
     onConfigChange(newConfig) {
       this.config = newConfig;
-      // Turning "applies only on startup" off must revive a one-shot that was
-      // already consumed: the user is asking for every track again, and there is
-      // no other path that re-arms the listener.
+      // Turning applyOnce off must revive a consumed one-shot; nothing else re-arms it.
       if (!newConfig.applyOnce) {
         document.addEventListener('videodatachange', this.eventListener);
       }

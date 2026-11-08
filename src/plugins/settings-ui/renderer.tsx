@@ -28,9 +28,7 @@ import type { RendererContext } from '@/types/contexts';
 const [open, setOpen] = createSignal(false);
 const [closing, setClosing] = createSignal(false);
 
-/** The pending unmount from the exit animation, so teardown can cancel it. */
 let closeTimer: ReturnType<typeof setTimeout> | undefined;
-/** A reopen asked for while the exit animation is still running. */
 let reopenAfterClose = false;
 
 /**
@@ -44,10 +42,7 @@ export const openSettings = () => {
     return;
   }
 
-  // The close latches live on the mounted SettingsModal instance, so an
-  // in-flight exit has to finish (and unmount) first: reopening the same
-  // instance would leave it with `isClosing`/`restartSessionClosed` stuck true.
-  // Remount after the animation instead, which starts a fresh restart session.
+  // Exit must finish first: reusing the instance leaves its close latches stuck true.
   if (closing()) {
     reopenAfterClose = true;
     return;
@@ -126,7 +121,6 @@ const syncButton = () => {
 
 let stopGuideWatch: (() => void) | undefined;
 
-/** Play the exit animation, then unmount (and remount if a reopen waited). */
 const closeModal = () => {
   setClosing(true);
   clearTimeout(closeTimer);
@@ -138,8 +132,6 @@ const closeModal = () => {
 
     if (reopenAfterClose) {
       reopenAfterClose = false;
-      // A new task, so the old instance is fully disposed (and its restart
-      // session closed) before the fresh one mounts.
       queueMicrotask(() => {
         if (started) setOpen(true);
       });
@@ -233,6 +225,5 @@ const hot = (
     hot?: { dispose: (cb: () => void) => void };
   }
 ).hot;
-// Lifecycle teardown, not a reactive read: this is what HMR/stop() call.
 // oxlint-disable-next-line solid/reactivity -- teardown callback, not a tracked scope
 hot?.dispose(teardownUi);

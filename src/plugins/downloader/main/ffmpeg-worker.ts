@@ -165,8 +165,6 @@ const runWasmFfmpeg = async (
   try {
     ffmpeg = await getWasmFfmpeg();
   } catch (error) {
-    // The system binary was already missing (that is why this path ran) and
-    // the bundled core cannot load either: no conversion backend is available.
     return wasmLoadFailure(error);
   }
 

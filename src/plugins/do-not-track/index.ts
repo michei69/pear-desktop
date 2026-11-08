@@ -234,8 +234,7 @@ export default createPlugin({
       }
       if (generation !== this.generation || window.isDestroyed()) return;
       this.mainWindow = window;
-      // Nothing is applied until the load below succeeds; a null profile makes
-      // the next config change retry instead of believing the profile is live.
+      // Null until the load succeeds: a failed load retries on the next config change.
       this.currentProfile = null;
       const isActive = () =>
         generation === this.generation &&
@@ -252,8 +251,7 @@ export default createPlugin({
         },
       });
 
-      // A repeated start must release the engine it replaces, or the old
-      // cosmetic disposer and preload scripts are overwritten and leak.
+      // Release the previous engine first, or its cosmetic disposer/preloads leak.
       if (isBlockerEnabled(window.webContents.session)) {
         unloadTrackerBlockerEngine(window.webContents.session, true);
       }
@@ -273,8 +271,6 @@ export default createPlugin({
           this.currentProfile = profileKey(config);
         }
       } else if (generation === this.generation) {
-        // Lite with no custom lists has nothing to load, so the profile is
-        // applied as an intentional "off".
         this.currentProfile = profileKey(config);
       }
     },
@@ -302,9 +298,6 @@ export default createPlugin({
 
           const session = this.mainWindow.webContents.session;
           const nextProfile = profileKey(newConfig);
-          // A null `currentProfile` means the previous load failed (or never
-          // landed), so any config change retries instead of silently staying
-          // off; it is only claimed again after a successful load.
           const profileChanged = this.currentProfile !== nextProfile;
           if (!profileChanged) return;
           const wasBlockerEnabled = isBlockerEnabled(session);

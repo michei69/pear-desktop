@@ -48,7 +48,6 @@ let api: (Element & MusicPlayer) | null = null;
 let isPluginLoaded = false;
 let isApiLoaded = false;
 let firstDataLoaded = false;
-/** `setupSongInfo` registers process-lifetime IPC listeners; it must run once. */
 let songInfoSetup = false;
 
 // The app shell elements live for the whole SPA session; re-querying them per
@@ -641,9 +640,6 @@ const preload = async () => {
 };
 
 const main = async () => {
-  // The two share options are tracked from their option IPC events, so
-  // start/stop and the rewrite itself read one source of truth and a newly
-  // enabled option applies to the value on screen immediately.
   let stripMusicFromSharedLinks = Boolean(
     window.mainConfig.get('options.stripMusicFromSharedLinks'),
   );
@@ -778,9 +774,7 @@ const initObserver = async () => {
     if (playerApi) {
       observer?.disconnect();
 
-      // The observer can fire again before api-ready, and listenForApiLoad has
-      // its own path into onApiLoaded; both would run setupSongInfo a second
-      // time, duplicating its IPC listeners and media-event reporters.
+      // Both observer paths can reach here; re-running setupSongInfo duplicates IPC listeners.
       if (!songInfoSetup) {
         songInfoSetup = true;
         setupSongInfo(playerApi);

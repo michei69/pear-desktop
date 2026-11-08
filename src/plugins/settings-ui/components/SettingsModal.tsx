@@ -296,8 +296,7 @@ export const SettingsModal = (props: {
     if (alreadyFlagged) return;
 
     setRestartRequirements((current) => [...current, requirement]);
-    // Tell main immediately: if this window is destroyed before the close RPC,
-    // the batch must still contain the requirement.
+    // Flush early too: this window can be destroyed before the close RPC.
     bridge.restartSessionAdd([requirement]);
   };
 

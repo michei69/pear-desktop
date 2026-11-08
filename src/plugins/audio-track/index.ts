@@ -12,12 +12,7 @@ import type { SettingOption } from '@/types/settings';
 const SELECT_TRACK_CHANNEL = 'peard:audio-track-select';
 const MENU_REQUEST_CHANNEL = 'peard:audio-track-menu';
 
-/**
- * How many times one track selection is re-issued before giving up. A player
- * that accepts `setAudioTrack` but keeps the old track emits
- * `onPlaybackAudioChange` again, and without a cap that becomes a permanent
- * 100 ms renegotiation loop.
- */
+// The player can accept setAudioTrack yet keep the old track and re-emit; cap retries.
 const MAX_REAPPLY_ATTEMPTS = 3;
 
 export type AudioTrackConfig = {
@@ -113,7 +108,6 @@ const renderer = createRenderer<
     ipc: RendererContext<AudioTrackConfig>['ipc'] | null;
     setConfig: RendererContext<AudioTrackConfig>['setConfig'] | null;
     reapplyTimer: ReturnType<typeof setTimeout> | null;
-    /** Re-issues of the current desired track; reset on a track/config change. */
     reapplyAttempts: number;
     audioTrackHandler: (() => void) | null;
     videoDataHandler: ((event: Event) => void) | null;
@@ -175,14 +169,10 @@ const renderer = createRenderer<
 
     const desiredId = trackId(desiredTrack);
     if (!desiredId || desiredId === readCurrentTrackId(api)) {
-      // Converged: the next mismatch starts a fresh attempt budget.
       this.reapplyAttempts = 0;
       return;
     }
 
-    // A track the player refuses must not be re-issued forever: the audio
-    // change event would schedule another apply every 100 ms. Stop until the
-    // track or the configuration changes.
     if (this.reapplyAttempts >= MAX_REAPPLY_ATTEMPTS) return;
     this.reapplyAttempts += 1;
 
@@ -303,8 +293,6 @@ const renderer = createRenderer<
   },
   onConfigChange(newConfig) {
     this.config = newConfig;
-    // A new selection gets its own attempts, even if the previous one was
-    // abandoned as unservable.
     this.reapplyAttempts = 0;
     this.applyPreferredTrack();
   },

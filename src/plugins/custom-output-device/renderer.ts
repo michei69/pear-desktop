@@ -105,13 +105,7 @@ export const renderer = createRenderer<
     return updateSinkId(audioContext, '');
   },
 
-  /**
-   * Applies the sink when the plugin is enabled over a track that is already
-   * loaded: `peard:audio-can-play` only fires on a video load, so enabling
-   * while paused would otherwise leave the output on the system default for
-   * the whole session. The shared graph exists by the time the player API is
-   * ready, so this reuses it instead of creating one.
-   */
+  // audio-can-play only fires on a track load, so apply the sink now on a live enable.
   onPlayerApiReady() {
     const video = document.querySelector<HTMLVideoElement>('video');
     if (!video) return;

@@ -143,8 +143,7 @@ export const mountAmbientLight = (
     if (now - lastDetection < BAR_DETECTION_INTERVAL) return;
 
     const video = source as HTMLVideoElement;
-    // Stamp only after a usable source: a read during startup must not burn
-    // the throttle slot.
+    // Stamp only after a usable source; an early read must not burn the throttle slot.
     if (video.videoWidth === 0 || video.videoHeight === 0) return;
     lastDetection = now;
 
@@ -221,8 +220,6 @@ export const mountAmbientLight = (
     }
 
     const video = source as HTMLVideoElement;
-    // A zero-sized frame has no signature; leaving the slot unstamped lets the
-    // next draw retry instead of reusing a stale verdict.
     if (video.videoWidth === 0 || video.videoHeight === 0) return frameChanged;
     signatureTime = now;
 
@@ -468,8 +465,7 @@ export const mountAmbientLight = (
 
   const refresh = () => {
     const playing = isVideo && !source.paused;
-    // A config change is a fresh attempt: retry the readbacks a previous layer
-    // gave up on instead of leaving bar detection / energy saving inert.
+    // Config change retries readbacks a previous layer gave up on.
     detectionBlocked = false;
     signatureBlocked = false;
     stop();

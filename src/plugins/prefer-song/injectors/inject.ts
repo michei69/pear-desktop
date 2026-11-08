@@ -24,10 +24,7 @@ interface ReleaseRow {
  * self-contained.
  */
 export function installPreferSong() {
-  // The preload loader has no "already running" guard, so a duplicate enable
-  // reaches here again. Wrapping the wrapper would both double the request
-  // rewriting and overwrite the only restore handle, leaving the page patched
-  // after a disable.
+  // The loader can enable twice: re-wrapping would double patching and lose the restore handle.
   if (
     (window as unknown as { __pearPreferSongRestore?: () => void })
       .__pearPreferSongRestore

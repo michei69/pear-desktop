@@ -115,15 +115,12 @@ export class Connection {
     });
 
     this.peer.on('open', (id) => {
-      // An open signaling socket is not a session: hosting is claimed by the
-      // plugin once it commits (`markHost`), joining by `connect`. Otherwise a
-      // join that is still waiting for its host id reports `host`.
+      // An open socket is not a session: mode is claimed by markHost (host) or connect (guest).
       this.waitOpen.resolve(id);
     });
 
     this.peer.on('connection', async (conn) => {
-      // Only a host accepts dial-in peers. A guest's id is public, and a
-      // second connection must not relabel the guest as host mid-session.
+      // Only a host accepts dial-in peers; a guest's public id must not be relabeled.
       if (this.isDestroyed || this._mode !== 'host') {
         try {
           conn.close();
@@ -164,9 +161,7 @@ export class Connection {
 
       console.error('Music Together: fatal peer error', err);
       this.waitOpen.reject(err);
-      // A fatal error tears the session down without the user asking, so the
-      // plugin still has to be told (the explicit `disconnect()` below is
-      // already announced and must not fire it twice).
+      // Fatal error must notify once; disconnect() is already announced and must not re-fire.
       this.notifyClosed();
       this.disconnect();
     });
@@ -177,7 +172,6 @@ export class Connection {
     return this.waitOpen.promise;
   }
 
-  /** Claims the host role once the plugin has committed to hosting. */
   markHost() {
     if (!this.isDestroyed && this._mode === 'disconnected') {
       this._mode = 'host';
@@ -295,10 +289,7 @@ export class Connection {
   }
 
   private cleanup() {
-    // The peer emits `close` at least once per teardown; notify the session
-    // listeners only on the first, remote-initiated one. An explicit
-    // `disconnect()` is already announced by the plugin, so re-firing the
-    // transition there only duplicates toasts and queue rollbacks.
+    // Peer emits close more than once: notify only the first, and skip explicit disconnects.
     if (this.cleanedUp) return;
     this.cleanedUp = true;
 

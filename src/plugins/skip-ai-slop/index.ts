@@ -1084,8 +1084,7 @@ const trySkip = (videoId: string, reason: string) => {
     console.warn('[skip-ai-slop] skip limit reached, not skipping', videoId);
     return;
   }
-  // Only a performed skip is recorded, so a rate-limited attempt can still be
-  // retried once the window frees up.
+  // Record only performed skips; a rate-limited attempt may retry later.
   skipped.add(videoId);
   recentSkips.push(Date.now());
   console.info(`[skip-ai-slop] skipping ${videoId} (${reason})`);

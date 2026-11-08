@@ -8,7 +8,6 @@ import {
 
 import type { TranslationProvider } from '../types';
 
-/** A hung connection must fail instead of leaving the renderer on "fetching". */
 const REQUEST_TIMEOUT_MS = 60_000;
 
 export const anthropicProvider: TranslationProvider = {

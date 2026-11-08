@@ -18,7 +18,6 @@ import type {
 import type { VideoDataChanged } from '@/types/video-data-changed';
 
 const DATAUPDATED_FALLBACK_TIMEOUT_MS = 1500;
-/** How long a position-0 pause waits before it is treated as a real pause. */
 const PAUSE_REPORT_RECHECK_MS = 1500;
 const PROGRESS_THROTTLE_MS = 250;
 const BACKGROUND_PROGRESS_THROTTLE_MS = 1000;
@@ -311,8 +310,7 @@ export const setupSongInfo = (api: MusicPlayer) => {
     lastReportedPaused = isPaused;
     window.ipcRenderer.send('peard:play-or-paused', {
       isPaused,
-      // Float, like onVideoProgress: v1 floors it in its socket adapter and
-      // v2 reports the player's real position.
+      // Float like onVideoProgress: v1 floors it in its socket adapter, v2 reports real.
       elapsedSeconds: video.currentTime,
     });
   };
@@ -322,9 +320,8 @@ export const setupSongInfo = (api: MusicPlayer) => {
   const reportPlaybackState = (video: HTMLVideoElement, isPaused: boolean) => {
     if (lastReportedPaused === isPaused) return;
     // HACK: YTM fires a pause at position 0 while loading the next track; only
-    // the pause of a track that was already reported as running is real. That
-    // veto is permanent for a session restored paused, though, so re-check
-    // once the load has settled: still paused at 0 means a real pause.
+    // the pause of a track that was already reported as running is real.
+    // Re-check after the load: a session restored paused still ends in a real pause.
     if (
       isPaused &&
       lastReportedPaused !== false &&
@@ -333,8 +330,6 @@ export const setupSongInfo = (api: MusicPlayer) => {
       clearTimeout(pendingPauseReport);
       pendingPauseReport = setTimeout(() => {
         pendingPauseReport = undefined;
-        // A real pause/play reported in the meantime already settled the
-        // state; only an unresolved (still unknown) pause is re-reported.
         if (
           currentVideo === video &&
           lastReportedPaused !== true &&

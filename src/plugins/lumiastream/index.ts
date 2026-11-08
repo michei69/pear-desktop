@@ -88,9 +88,6 @@ export default createPlugin<
         }
 
         const isPaused = songInfo.isPaused ?? false;
-        // A track change is a switch even when the pause flag did not move.
-        // Without this branch `switchSong` could only ever be emitted once per
-        // session, after which every new track was reported as a pause toggle.
         const songChanged =
           previousVideoId !== undefined && songInfo.videoId !== previousVideoId;
 

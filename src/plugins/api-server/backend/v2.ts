@@ -438,8 +438,6 @@ const registerRoutes = (app: OpenAPIHono, operations: Operations) => {
       schema: PlayingStateSchema,
       tags: [v2Tag('Playback')],
     }),
-    // The schema (and every existing client) says boolean: the unknown mode
-    // stays internal and reports the same false it always has here.
     (ctx) => ctx.json({ state: operations.playing() ?? false }, 200),
   );
   for (const [path, command, summary, description] of [

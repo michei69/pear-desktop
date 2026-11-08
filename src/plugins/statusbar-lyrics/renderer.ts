@@ -218,8 +218,7 @@ export const renderer = createRenderer({
         );
       }
 
-      // Only a delivered payload counts as sent: a rejected invoke must leave
-      // the dedupe open so the next trigger retries the same line.
+      // Only a delivered payload counts as sent: on invoke failure the dedupe stays open.
       if (generation !== sendGeneration) return;
       lastPayload = payload;
     };
@@ -238,8 +237,6 @@ export const renderer = createRenderer({
           await send();
         } while (sendRequested);
       } catch (error) {
-        // A failed send is retried by the next trigger (timer/observer) because
-        // `lastPayload` was not committed; never let it escape unhandled.
         console.error(
           '[statusbar-lyrics] failed to update the status bar',
           error,

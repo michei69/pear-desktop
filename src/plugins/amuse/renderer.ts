@@ -17,10 +17,7 @@ const isAdPlaying = (api?: MusicPlayer) => {
 export const renderer = createRenderer<
   {
     unwatchPlayer?: () => void;
-    /**
-     * Last ad state sent over IPC. Only a send dedupe — the backend's
-     * `isAdvertisement` is the single state served to clients.
-     */
+    // Send dedupe only; the backend's `isAdvertisement` is the state served to clients.
     lastSentAdState?: boolean;
   },
   MusicWidgetConfig
@@ -35,8 +32,7 @@ export const renderer = createRenderer<
       ipc.send('peard:amuse-ad-state', isAd);
     };
 
-    // The shared observer retargets when another plugin re-subscribes after a
-    // player rebuild, so a replaced #movie_player does not stop the reports.
+    // Shared observer retargets after a player rebuild; a private one would go stale.
     this.unwatchPlayer = observePlayerPage('#movie_player', {
       attributes: ['class'],
       callback: report,

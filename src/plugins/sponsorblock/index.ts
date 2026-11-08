@@ -143,7 +143,6 @@ const hideHoverLabel = () => {
   }
 };
 
-/** Drops the segment set and its progress-bar bar. */
 const resetSegmentState = () => {
   currentSegments = [];
   segmentMarkers = [];
@@ -414,9 +413,7 @@ export default createPlugin({
     video: null as HTMLVideoElement | null,
     videoDataListener: (name: 'newdata' | 'dataloaded' | 'dataupdated') => {
       if (name !== 'dataloaded') return;
-      // The next track's segments are only fetched after this event, so
-      // clearing here cannot race them. The media element's `emptied` event can
-      // fire after that fetch has resolved and used to wipe the fresh set.
+      // Fetch follows this event; `emptied` can fire after it and wipe fresh segments.
       resetSegmentState();
     },
     timeUpdateListener: (e: Event) => {
@@ -462,7 +459,6 @@ export default createPlugin({
       video.addEventListener('timeupdate', this.timeUpdateListener);
       // Duration is unknown when the plugin starts; the bar waits for it.
       video.addEventListener('durationchange', this.durationChangeListener);
-      // A new track resets the segment set before its fetch can deliver.
       playerApi.addEventListener('videodatachange', this.videoDataListener);
 
       // The backend only fetches on a video change, so ask it for the current

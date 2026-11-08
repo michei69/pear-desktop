@@ -13,7 +13,6 @@ import {
 } from '@/types/song-info-events';
 import { createPlugin } from '@/utils';
 
-/** How long a failed probe suppresses payloads before the real POST is retried. */
 const LITE_RETRY_MS = 30_000;
 
 interface Data {
@@ -34,7 +33,6 @@ interface Data {
 export default createPlugin<
   {
     liteMode: boolean;
-    /** Set while lite mode waits to retry the real request. */
     liteRetryTimer: ReturnType<typeof setTimeout> | null;
     callback: SongInfoCallback | null;
     playerApiLoadedListener: (() => void) | null;
@@ -99,9 +97,7 @@ export default createPlugin<
               this.liteMode = true;
             }
 
-            // A probe that keeps failing must not latch the plugin in
-            // empty-payload mode forever: retry the real request later, then
-            // fall back to probing if it fails again.
+            // Do not latch lite mode forever: retry the real request later, then probe again.
             if (!this.liteRetryTimer) {
               this.liteRetryTimer = setTimeout(() => {
                 this.liteRetryTimer = null;

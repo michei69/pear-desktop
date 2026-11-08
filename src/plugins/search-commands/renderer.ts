@@ -437,9 +437,7 @@ const dismissSpotlight = () => {
 };
 
 const enterSpotlight = (el: SearchBox) => {
-  // Idempotent: re-entering while the overlay is up would raise the ancestors
-  // again with their already-raised values and overwrite the originals that
-  // `exitSpotlight` has to restore.
+  // Exit first: re-raising raised ancestors would lose the values exitSpotlight restores.
   if (spotlightEl) exitSpotlight();
 
   if (!scrim) {

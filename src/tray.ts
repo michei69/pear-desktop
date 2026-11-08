@@ -29,7 +29,6 @@ let traySongInfoCallback: SongInfoCallback | null = null;
 let likeChangedListener:
   | ((event: Electron.IpcMainEvent, status: LikeType) => void)
   | null = null;
-/** Re-asks for the like state once the renderer's song-info listeners exist. */
 let playerApiLoadedListener: (() => void) | null = null;
 let currentLikeStatus: LikeType = LikeType.Indifferent;
 let defaultTrayIcon: Electron.NativeImage = nativeImage.createEmpty();
@@ -78,8 +77,7 @@ type MouseMoveEvent = (
 
 // Plugins load before the tray, so queue early handlers and apply them in setUpTray.
 let pendingMouseMove: MouseMoveEvent | null = null;
-// The handler this module attached to the current tray: only that one may be
-// removed, so other producers' `mouse-move` listeners survive a re-registration.
+// Track only our handler: removeListener must not drop other producers' listeners.
 let trayMouseMoveHandler: MouseMoveEvent | null = null;
 
 // macOS and Windows only
@@ -136,7 +134,6 @@ export const setUpTray = (app: Electron.App, win: Electron.BrowserWindow) => {
   removeLikeChangedListener();
   removePlayerApiLoadedListener();
 
-  // A rebuild must not leak the previous tray icon and its listeners.
   tray?.destroy();
   tray = undefined;
 
@@ -146,9 +143,7 @@ export const setUpTray = (app: Electron.App, win: Electron.BrowserWindow) => {
 
   tray = new Tray(defaultTrayIcon);
 
-  // Keep the presentation the old tray had: a paused app keeps its paused icon,
-  // and a suppression left over from the old tray's hover popup must not blank
-  // the new tooltip forever (the popup re-asserts it on its next show/hide).
+  // Old tray's hover suppression must not blank the new tooltip; keep the paused icon.
   trayTooltipSuppressed = false;
   if (trayIsPaused) tray.setImage(pausedTrayIcon);
   trayTooltipText ||= t('main.tray.tooltip.default', {
@@ -254,9 +249,7 @@ export const setUpTray = (app: Electron.App, win: Electron.BrowserWindow) => {
 
   tray.setContextMenu(buildTrayMenu());
 
-  // Like status changes come from the renderer. It can only listen once its
-  // song-info setup ran, which may be after this call, so ask again when the
-  // renderer announces the player API; arming the flag is idempotent.
+  // Renderer may not be listening yet; re-ask when it announces the player API.
   const requestLikeState = () => {
     if (!win.isDestroyed()) {
       win.webContents.send(
@@ -298,8 +291,7 @@ export const setUpTray = (app: Electron.App, win: Electron.BrowserWindow) => {
   };
   registerCallback(traySongInfoCallback);
 
-  // Apply handlers plugins registered before the tray existed, or the one the
-  // previous tray instance carried.
+  // Apply handlers plugins registered before the tray existed.
   if (pendingMouseMove) {
     trayMouseMoveHandler = pendingMouseMove;
     pendingMouseMove = null;

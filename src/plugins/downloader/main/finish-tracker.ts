@@ -1,13 +1,6 @@
 import type { SongInfo } from '@/providers/song-info';
 
-/**
- * "Download on finish" state for the playing session. `time` is the highest
- * elapsed position seen for `url`: TimeChanged ticks feed it, and it resets
- * whenever the track changes — even while the feature is off. Keeping the
- * tracker on the current track while disabled means a later enable cannot
- * compare the previous track's duration with this track's elapsed time (which
- * used to download a stale url).
- */
+// `time` is the max elapsed seen for `url`; track changes reset it even while disabled.
 export type FinishTracker = {
   url?: string;
   duration?: number;
@@ -16,7 +9,6 @@ export type FinishTracker = {
 
 export const emptyFinishTracker = (): FinishTracker => ({ time: 0 });
 
-/** Fold a TimeChanged tick into the tracker: `time` is a maximum, not a position. */
 export const trackElapsed = (
   tracker: FinishTracker,
   elapsedSeconds: number,
@@ -31,16 +23,11 @@ export type FinishTrackerConfig = {
   percent: number;
 };
 
-/**
- * Fold a non-TimeChanged song-info event into the tracker. Returns the url to
- * download when the track that just ended passed the configured threshold.
- */
 export const trackSongChange = (
   tracker: FinishTracker,
   songInfo: Pick<SongInfo, 'url' | 'songDuration'>,
   config: FinishTrackerConfig | undefined,
 ): { tracker: FinishTracker; downloadUrl?: string } => {
-  // Pause/resume and other events for the same track must not reset the max.
   if (!songInfo.url || songInfo.url === tracker.url) return { tracker };
 
   const finished = tracker;

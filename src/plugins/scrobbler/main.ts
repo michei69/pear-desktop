@@ -29,11 +29,8 @@ export const backend = createBackend<
     configRevision: number;
     generation: number;
     scrobbleTimer?: NodeJS.Timeout;
-    /** True once this track instance was submitted, so it is not sent twice. */
     scrobbleSubmitted: boolean;
-    /** Video id of the last submitted track; survives plugin stop/start. */
     lastScrobbledVideoId?: string;
-    /** Latest processed track, kept so a config change can re-arm its scrobble. */
     lastScrobbleInfo?: SongInfo;
     lastScrobbleAt: number;
     submitScrobble(
@@ -61,7 +58,6 @@ export const backend = createBackend<
   lastScrobbleAt: 0,
   scrobbleSubmitted: false,
 
-  /** Submit the track once and remember that this track instance was submitted. */
   submitScrobble(songInfo, config, setConfig) {
     this.scrobbleSubmitted = true;
     this.lastScrobbledVideoId = songInfo.videoId;
@@ -70,14 +66,9 @@ export const backend = createBackend<
     );
   },
 
-  /**
-   * Re-arm the current track's pending scrobble after a config change. The old
-   * timer is cancelled with the old config; without this, uninterrupted
-   * playback produces no further event and the track is never scrobbled.
-   */
+  // A config change cancels the pending timer; re-arm or the track is never scrobbled.
   rearmScrobble(config) {
-    // A pause/resume can run while `onConfigChange` awaits a session creation
-    // and arm its own timer; cancel it so only one live timer can submit.
+    // Pause/resume can arm a timer during the await; cancel it so only one timer submits.
     clearTimeout(this.scrobbleTimer);
     this.scrobbleTimer = undefined;
 
@@ -151,8 +142,7 @@ export const backend = createBackend<
 
     let callbackGeneration = 0;
 
-    // `scrobbleSubmitted` is deliberately kept across stop/start: re-enabling
-    // the plugin on the same track must not resubmit a track already scrobbled.
+    // Keep scrobbleSubmitted across stop/start: re-enable on the same track must not resubmit.
     this.lastScrobbleInfo = undefined;
     this.lastScrobbleAt = 0;
 
@@ -170,17 +160,13 @@ export const backend = createBackend<
       clearTimeout(this.scrobbleTimer);
       this.scrobbleTimer = undefined;
 
-      // A new track instance may scrobble again; the same track's pause, seek
-      // back and resume must not (the submitted state below suppresses it). The
-      // old track's info is dropped so a config change during this event cannot
-      // re-arm a scrobble that was already submitted.
+      // New track may scrobble again; drop the old info so a config change cannot resubmit it.
       if (event === SongInfoEvent.VideoSrcChanged) {
         this.scrobbleSubmitted = false;
         this.lastScrobbleInfo = undefined;
       }
 
-      // Re-enable on the same track keeps the submitted memory; a genuinely
-      // different track releases it.
+      // Re-enable on the same track keeps the submitted memory; a different track releases it.
       if (songInfo.videoId !== this.lastScrobbledVideoId) {
         this.scrobbleSubmitted = false;
       }
@@ -243,8 +229,6 @@ export const backend = createBackend<
       });
 
       if (decision.action === 'now') {
-        // The track is already past its scrobble threshold when first seen
-        // (seek into it, restored position): submit now instead of never.
         this.submitScrobble(processedSongInfo, configNonnull, setConfig);
       } else if (decision.action === 'after') {
         const generation = this.generation;
@@ -272,8 +256,6 @@ export const backend = createBackend<
     this.generation++;
     clearTimeout(this.scrobbleTimer);
     this.scrobbleTimer = undefined;
-    // Keep `scrobbleSubmitted`/`lastScrobbledVideoId` so a re-enable on the same
-    // track cannot resubmit it; a track change releases the memory.
     this.lastScrobbleInfo = undefined;
     this.lastScrobbleAt = 0;
     resetAuthState();
@@ -284,8 +266,7 @@ export const backend = createBackend<
   },
 
   async onConfigChange(newConfig: ScrobblerPluginConfig) {
-    // Disabling Last.fm while its auth window is open must not leave the
-    // window (and its latch) behind; re-enabling would then wait forever.
+    // Disabling Last.fm must close its auth window/latch, or a later enable waits forever.
     if (
       this.config?.scrobblers.lastfm.enabled &&
       !newConfig.scrobblers.lastfm.enabled
@@ -320,8 +301,6 @@ export const backend = createBackend<
 
     this.config = newConfig;
 
-    // Re-arm the pending scrobble under the new config instead of losing it:
-    // uninterrupted playback produces no further song-info event.
     this.rearmScrobble(newConfig);
   },
 });

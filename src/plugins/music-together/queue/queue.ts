@@ -132,7 +132,6 @@ export class Queue {
     payload?: { items?: QueueItem[] | undefined };
   }) => void;
 
-  /** Depth of our own store dispatches; nested ones must stay silent too. */
   private internalDispatch = 0;
   private ignoreFlag = false;
   private listeners: QueueEventListener[] = [];
@@ -276,8 +275,7 @@ export class Queue {
       clearTimeout(this.syncTimeout);
       this.syncTimeout = undefined;
       this.syncToken += 1;
-      // The cancelled sync will never rebuild the queue, so the index it was
-      // holding must not re-select an old row after a later replacement.
+      // The cancelled sync never rebuilds; drop its index so it cannot re-select an old row.
       this.pendingSyncIndex = undefined;
       this.syncQueueOwner();
       return;
@@ -462,8 +460,7 @@ export class Queue {
     this.syncTimeout = undefined;
     this.syncToken += 1;
     this.cachedSelectedIndex = undefined;
-    // A latch left by a swallowed CLEAR must not survive a plugin restart on
-    // the same Queue instance (the instance is constructed once).
+    // Don't let a swallowed CLEAR's latch survive a restart on this same Queue instance.
     this.ignoreFlag = false;
 
     if (!this.originalDispatch) return;
@@ -496,9 +493,7 @@ export class Queue {
 
       if (this.internalDispatch === 0) {
         if (event.type === 'UPDATE_ITEMS') {
-          // A full replacement after the swallowed CLEAR means the fresh
-          // playlist window is over: the next ADD_ITEMS is an ordinary edit,
-          // not the playlist that replaces the cleared queue.
+          // A full replacement ends the swallowed-CLEAR window: later ADD_ITEMS is an ordinary edit.
           this.ignoreFlag = false;
         }
         if (event.type === 'CLEAR') {

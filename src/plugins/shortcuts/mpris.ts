@@ -163,9 +163,7 @@ export function registerMPRIS(win: BrowserWindow) {
       player.setPosition(player.getPosition() + offset);
     };
 
-    // Asks the renderer for the state MPRIS mirrors. Requested on every
-    // `player-api-loaded`, and once at registration: a live enable happens
-    // after that signal has already fired.
+    // Also request at registration: a live enable happens after player-api-loaded fired.
     const requestPlayerState = () => {
       win.webContents.send(
         SONG_INFO_SETUP_CHANNEL,
@@ -324,8 +322,7 @@ export function registerMPRIS(win: BrowserWindow) {
       setFullscreen(fullscreenEnabled);
     });
 
-    // `play`/`pause` are idempotent controls: unlike the `playPause` toggle
-    // they cannot invert the user's intent when the mirror is stale.
+    // play/pause are idempotent; the toggle would invert intent when the mirror is stale.
     player.on('play', () => {
       if (!player.isPlaying()) {
         player.setPlaybackStatus(MprisPlayer.PLAYBACK_STATUS_PLAYING);
@@ -398,8 +395,7 @@ export function registerMPRIS(win: BrowserWindow) {
     const onSongInfo = (songInfo: SongInfo, event: SongInfoEvent) => {
       if (event === SongInfoEvent.TimeChanged) {
         player.setPosition(secToMicro(songInfo.elapsedSeconds ?? 0));
-        // Cheap reconciliation: a dropped play/pause event must not leave the
-        // published status inverted. The setter only emits when it changes.
+        // Reconcile: a dropped play/pause event must not leave the published status inverted.
         if (typeof songInfo.isPaused === 'boolean') {
           player.setPlaybackStatus(
             songInfo.isPaused
@@ -458,9 +454,6 @@ export function registerMPRIS(win: BrowserWindow) {
     };
     registerCallback(onSongInfo);
 
-    // A live enable happens after `player-api-loaded` already fired, so seed
-    // the mirror from the track the provider already knows about and re-request
-    // the rest; otherwise the service publishes Stopped/empty metadata.
     const seededSongInfo = getCurrentSongInfo();
     if (seededSongInfo) {
       onSongInfo(seededSongInfo, SongInfoEvent.PlayOrPaused);

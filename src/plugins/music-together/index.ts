@@ -55,19 +55,13 @@ const PERMISSION_RULES: Record<
   'all': { queueEdits: true, seek: true, playState: true },
 };
 
-/** The one permission ladder: host-only → playlist → all → host-only. */
 const PERMISSION_CYCLE: Permission[] = ['host-only', 'playlist', 'all'];
 
-/** Rules for a level, failing closed if the wire sends an unknown value. */
+// Rules for a level; an unknown wire value fails closed.
 const rulesFor = (permission: Permission) =>
   PERMISSION_RULES[permission] ?? PERMISSION_RULES['host-only'];
 
-/**
- * Events with no peer are this peer's own queue loopback (the wrapped store
- * dispatch re-broadcasts `SET_INDEX` to apply the local selection). They may
- * move the index, but never seek or play/pause: an event that forgot its peer
- * must not be granted the highest level.
- */
+// No peer = local loopback: only the index may move, never seek or play state.
 const LOCAL_EVENT_RULES = {
   queueEdits: true,
   seek: false,
@@ -145,9 +139,7 @@ export default createPlugin<
     updateNext: boolean;
     /** Holds outgoing player state while a remote edit is being applied. */
     ignoreGate: IgnoreGate;
-    /** Removes the current session's queue listener on teardown. */
     queueListener?: (event: ConnectionEventUnion) => void;
-    /** The role the current session was started with. */
     sessionRole?: 'host' | 'guest';
     /** Timestamp of the last progress broadcast, throttling `onVideoProgress`. */
     lastProgressAt: number;
@@ -302,8 +294,6 @@ export default createPlugin<
         this.connection = undefined;
         return false;
       }
-      // The signaling socket alone does not make this peer a host; the plugin
-      // does, now that hosting has been committed to.
       this.connection.markHost();
 
       if (!this.me) this.me = getDefaultProfile(this.connection.id);
@@ -518,8 +508,6 @@ export default createPlugin<
             break;
           }
           case 'SYNC_PROGRESS': {
-            // Fail closed: an event without a peer only gets the local
-            // loopback's index permission, never the highest level.
             const rules = conn ? rulesFor(this.permission) : LOCAL_EVENT_RULES;
             applyProgressSync(this.playerApi, this.queue, event.payload, {
               seek: rules.seek,
@@ -557,10 +545,6 @@ export default createPlugin<
           this.ignoreGate.release();
         }
       };
-      // A session's queue listener must be detached by the next teardown even
-      // when that teardown is an explicit disconnect (which skips
-      // CONNECTION_CLOSED): otherwise every later session stacks another
-      // handler and local edits are applied/broadcast once per old session.
       if (this.queueListener) this.queue?.off(this.queueListener);
       this.queueListener = listener;
       this.sessionRole = 'host';
@@ -871,8 +855,7 @@ export default createPlugin<
     },
 
     onStop() {
-      // A guest's permission is the host's grant, so it must not survive into
-      // the next session; the host keeps the level it chose.
+      // A guest's permission is the host's grant; reset it so it doesn't leak into the next session.
       const wasGuest = this.sessionRole === 'guest';
 
       if (this.connection?.mode !== 'disconnected') {
@@ -880,9 +863,7 @@ export default createPlugin<
       }
       this.connection = undefined;
 
-      // Explicit teardown does not deliver CONNECTION_CLOSED (the connection
-      // skips it when destroyed), so the per-session queue listener is
-      // detached here instead of leaking into the next session.
+      // Explicit teardown skips CONNECTION_CLOSED, so detach the session queue listener here.
       if (this.queueListener) {
         this.queue?.off(this.queueListener);
         this.queueListener = undefined;

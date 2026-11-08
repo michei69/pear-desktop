@@ -21,10 +21,7 @@ import type { SetActivity } from '@xhayper/discord-rpc/dist/structures/ClientUse
 /** Reconnect delay doubles from the base, capped so retries never stall. */
 const RECONNECT_BASE_DELAY_MS = 5_000;
 const RECONNECT_MAX_DELAY_MS = 5 * 60_000;
-/**
- * A transport that connects but never becomes ready has no event left to
- * recover from, so the login path gives it this long before rebuilding it.
- */
+// A connected transport that never becomes ready emits nothing more; time it out.
 const READY_TIMEOUT_MS = 15_000;
 
 export class DiscordService {
@@ -150,11 +147,6 @@ export class DiscordService {
     }
   }
 
-  /**
-   * The transport can report `connected` and then never become `ready` (for
-   * example a server CLOSE that leaves the socket open). Nothing would retry,
-   * so a timed-out login rebuilds the client and re-enters the ladder.
-   */
   private armReadyTimeout(): void {
     this.timerManager.clear(TimerKey.ReadyTimeout);
     this.timerManager.set(
@@ -190,8 +182,6 @@ export class DiscordService {
           return;
         }
 
-        // Connected but never ready: the transport counts as up while the
-        // client is wedged, so recreate it instead of reporting success.
         if (this.rpc.isConnected) {
           this.initializeRpc();
           this.connectRecursive();
@@ -219,8 +209,6 @@ export class DiscordService {
       this.reconnectTimerPending = false;
       return;
     }
-    // A client whose transport is connected but that never became ready is not
-    // a successful connection: drop it so the retry ladder can rebuild it.
     if (this.rpc.isConnected) {
       this.initializeRpc();
     }
@@ -241,8 +229,6 @@ export class DiscordService {
       return;
     }
 
-    // A connected-but-not-ready client cannot log in again on the same
-    // transport; recreate it before retrying.
     if (this.rpc.isConnected) {
       this.resetInfo();
       this.initializeRpc();

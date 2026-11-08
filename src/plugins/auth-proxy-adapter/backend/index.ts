@@ -24,10 +24,6 @@ const parseSocksUrl = (socksUrl: string) => {
   };
 };
 
-/**
- * Distinguishes listen attempts: `server` only becomes the handle once that
- * attempt's listen callback succeeds, so a superseded attempt can never claim it.
- */
 let serverGeneration = 0;
 
 export const backend = createBackend<BackendType, AuthProxyConfig>({
@@ -93,7 +89,6 @@ export const backend = createBackend<BackendType, AuthProxyConfig>({
 
     socksServer.on('error', (err) => {
       console.error(LoggerPrefix, '[SOCKS Server Error]', err.message);
-      // A failed bind must not leave the handle claiming a listening proxy.
       if (!socksServer.listening && generation === serverGeneration) {
         this.server = undefined;
       }
@@ -105,12 +100,11 @@ export const backend = createBackend<BackendType, AuthProxyConfig>({
 
     socksServer.listen(port, hostname, () => {
       if (generation !== serverGeneration) {
-        // A later start/stop superseded this attempt while it was binding.
         socksServer.close();
         return;
       }
 
-      // Only a completed listen() makes the handle mean "listening".
+      // Only the newest completed listen() may claim the handle.
       this.server = socksServer;
       console.log(LoggerPrefix, '===========================================');
       console.log(
@@ -283,7 +277,6 @@ export const backend = createBackend<BackendType, AuthProxyConfig>({
   },
 
   stopServer() {
-    // Any in-flight listen() from before this stop is stale now.
     serverGeneration++;
     if (this.server) {
       this.server.close();

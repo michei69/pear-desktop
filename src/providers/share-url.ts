@@ -18,13 +18,11 @@ export const stripSIParam = (url: string) =>
     match.endsWith('&') ? '?' : '',
   );
 
-/** Which URL parts to strip; both off means nothing is rewritten. */
 export type ShareUrlRewriteOptions = {
   stripMusicFromSharedLinks?: boolean;
   stripSIFromSharedLinks?: boolean;
 };
 
-/** The window's config, used when the caller passes no explicit options. */
 const optionsFromWindow = (root: Document): ShareUrlRewriteOptions => {
   const config = root.defaultView?.mainConfig;
   return {
@@ -83,8 +81,6 @@ export const createShareUrlRewriter = (
         root.addEventListener('click', rewriteBeforeClick, true);
         root.addEventListener('change', rewriteAfterChange, true);
       }
-      // Also rewrites an already-started rewriter, so a newly enabled option
-      // applies to the value on screen without waiting for an interaction.
       rewrite();
     },
     stop() {

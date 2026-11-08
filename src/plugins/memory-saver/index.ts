@@ -55,8 +55,7 @@ export default createPlugin<
       this.thresholdBytes = thresholdBytesFor((await getConfig()).thresholdMB);
       if (generation !== this.generation || window.isDestroyed()) return;
 
-      // A fresh start is not cooling down: the previous enable's clear must not
-      // suppress the first clear after a disable → enable.
+      // Reset the cooldown: the previous enable's clear must not suppress this one.
       this.lastClearAt = 0;
 
       clearInterval(this.interval ?? undefined);

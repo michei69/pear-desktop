@@ -134,15 +134,9 @@ export default createPlugin<
           save = true;
         });
       } else {
-        // No queue to restore (or no store resolved yet): keep the saved flag,
-        // but record changes once the startup window is over. Without this
-        // branch a boot where neither the queue API nor the redux store is
-        // readable yet would leave `save` false for the whole session, so the
-        // shuffle state would never be persisted again.
+        // No queue/store yet: keep the saved flag and subscribe late, or nothing persists.
         const timeout = setTimeout(() => {
           save = true;
-          // The store can appear while the restore window is open: subscribe
-          // then, or nothing would ever write the persisted state.
           const lateStore = getApp()?.ytmusicReduxBehavior?.store?.store;
           if (lateStore && !this.unsubscribeShuffleState) {
             this.unsubscribeShuffleState = lateStore.subscribe(

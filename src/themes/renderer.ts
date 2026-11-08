@@ -93,9 +93,7 @@ const applyTheme = () => {
 
   if (theme?.js && isNewScript) {
     const hooks = evaluate(theme.js.source, theme.id);
-    // A script that failed to evaluate, or a mount that threw, did not mount:
-    // leaving `mounted` unset retries on the next refresh instead of pinning
-    // the failure to this (id, hash) for the session.
+    // Leave `mounted` unset on failure so the next refresh retries instead of pinning it.
     if (!hooks) return;
 
     if (hooks.mount) {

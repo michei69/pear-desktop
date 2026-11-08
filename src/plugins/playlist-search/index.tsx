@@ -142,8 +142,7 @@ export default createPlugin<
       const DIALOG_SELECTOR =
         'ytmusic-add-to-playlist-renderer, tp-yt-paper-dialog';
 
-      // Visibility is a computed style, not just the inline `display`: YTM may
-      // hide the dialog through a class or attribute instead.
+      // YTM may hide the dialog via class/attribute; check computed style, not inline display.
       const isShown = (element: Element | null | undefined) => {
         if (!(element instanceof HTMLElement) || !element.isConnected) {
           return false;
@@ -170,8 +169,7 @@ export default createPlugin<
 
         if (isShown(dialogElement)) {
           this.isDialogVisible = true;
-          // Re-run on every observation: YTM may rebuild the dialog's contents
-          // while it stays open, and the flag alone would skip re-injection.
+          // Re-inject on every observation: YTM rebuilds the open dialog's contents.
           this.setupDialogSearch();
         } else if (this.isDialogVisible) {
           this.isDialogVisible = false;
@@ -180,10 +178,6 @@ export default createPlugin<
       };
 
       this.dialogObserver = new MutationObserver((mutations) => {
-        // `checkDialog` reads a computed style, so only run it for mutations
-        // that can concern the dialog; the page mutates constantly while it is
-        // open. The renderer is looked up once per batch, so an attribute
-        // mutation costs a couple of containment checks, not a subtree scan.
         const dialogRenderer = mutations.some(
           ({ type }) => type === 'attributes',
         )
@@ -197,14 +191,10 @@ export default createPlugin<
           removedNodes,
         }: MutationRecord) => {
           if (type === 'childList') {
-            // The target is often `<body>` (which contains the dialog), so
-            // only the added/removed nodes are inspected.
             return [...addedNodes, ...removedNodes].some(isDialogRelated);
           }
 
           if (!(target instanceof Element) || !dialogRenderer) return false;
-          // The dialog itself, something inside it, or an ancestor that may
-          // have been hidden/shown.
           return (
             target === dialogRenderer ||
             dialogRenderer.contains(target) ||

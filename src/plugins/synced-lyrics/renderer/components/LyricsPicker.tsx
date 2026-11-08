@@ -87,12 +87,7 @@ const shouldSwitchProvider = (providerData: ProviderState) => {
   return providerData.state === 'done' && !hasLyricText(providerData.data);
 };
 
-/**
- * The manual pick is keyed by video: it sticks for the rest of that song, and a
- * track change releases it even though the picker only exists while the lyrics
- * tab is visible (a module-level boolean used to survive the unmount and keep
- * the previous song's provider).
- */
+// Manual pick is tied to the video: a track change releases it (the picker unmounts).
 const [manualProviderVideoId, setManualProviderVideoId] = createSignal<
   string | null
 >(null);
@@ -200,8 +195,6 @@ export const LyricsPicker = (props: {
   }
 
   createEffect(() => {
-    // A manual pick (arrow buttons, dots) sticks for the rest of the song; a
-    // track change makes it stale and the effect decides again.
     if (videoId() === null || manualProviderVideoId() === videoId()) return;
 
     // Nothing to pick from while every provider is still fetching or errored.

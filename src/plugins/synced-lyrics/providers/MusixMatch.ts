@@ -205,8 +205,7 @@ class MusixMatchAPI {
       'status_code' in response.message.header && typeof response.message.header.status_code === 'number' &&
       response.message.header.status_code === 401
     ) {
-      // One reinit per request: a token the API keeps rejecting must fail
-      // instead of recursing token-fetch → 401 forever.
+      // One reinit per request: a repeatedly rejected token must fail, not recurse forever.
       if (attempt > 0) {
         throw new Error('MusixMatch API rejected the refreshed token');
       }

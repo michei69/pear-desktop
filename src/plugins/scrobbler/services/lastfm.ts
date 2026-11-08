@@ -240,14 +240,9 @@ const createToken = async ({
 
 let authWindowOpened = false;
 let latestAuthResult = false;
-/** Abandons the in-flight auth window; set only while one is open. */
 let cancelAuth: (() => void) | undefined;
 let authGeneration = 0;
 
-/**
- * Abandons an in-progress auth (plugin stop, Last.fm disabled): closes the
- * window and clears the latch so later auth attempts do not spin forever.
- */
 export const resetAuthState = () => {
   const cancel = cancelAuth;
   if (cancel) {
@@ -307,15 +302,14 @@ const authenticate = async (
       resolve(result);
     };
 
-    /** Only the window that owns the current generation may clear the latch. */
+    // Only the window owning the current generation may clear the latch.
     const clearLatch = () => {
       if (generation !== authGeneration) return;
       authWindowOpened = false;
       cancelAuth = undefined;
     };
 
-    // Registered before loadURL: every close path (success, user close, load
-    // failure, plugin stop) clears the latch, not just a successful load.
+    // Registered before loadURL so every close path clears the latch, not just success.
     browserWindow.on('closed', () => {
       const wasCancelled = cancelled;
       clearLatch();
@@ -365,8 +359,6 @@ const authenticate = async (
         });
       })
       .catch((error: unknown) => {
-        // A load failure used to leave the window hidden and the latch set
-        // forever. Tear the window down so `closed` reports the failure.
         console.error('Failed to open the Last.fm auth window:', error);
         if (!browserWindow.isDestroyed()) {
           browserWindow.destroy();

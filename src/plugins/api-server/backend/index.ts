@@ -49,12 +49,8 @@ export type BackendType = {
   stopWebsocket?: () => void;
   detachRenderer?: () => void;
 
-  /**
-   * Whether this backend owns a listener. `server === undefined` alone cannot
-   * tell "never started" from "stopped", and a restart needs to know both.
-   */
+  // `server === undefined` cannot tell never-started from stopped; restart needs both.
   phase: 'idle' | 'serving' | 'stopped';
-  /** Serialises restarts and stops so two config writes cannot overlap. */
   lifecycle: Promise<void>;
 
   serialize: <T>(task: () => Promise<T> | T) => Promise<T>;
@@ -105,8 +101,7 @@ export const backend = createBackend<BackendType, APIServerConfig>({
     const config = await ctx.getConfig();
     await this.serialize(() => {
       this.run(config);
-      // A config change that landed while the config was loading already owns
-      // the newer snapshot; don't overwrite it with the stale one.
+      // A config change during load already owns the newer snapshot; keep it.
       this.oldConfig ??= config;
     });
     requestPlayerState();
@@ -115,9 +110,7 @@ export const backend = createBackend<BackendType, APIServerConfig>({
   async stop() {
     await this.serialize(async () => {
       await this.closeServer();
-      // The WebSocket subscriptions outlive the HTTP server, so they are
-      // released here, once, rather than in `closeServer()` — which also runs
-      // when a config change restarts the server under the same app.
+      // WebSockets outlive the HTTP server; release them once here, not in closeServer().
       this.stopWebsocket?.();
       this.stopWebsocket = undefined;
       this.detachRenderer?.();
@@ -136,10 +129,7 @@ export const backend = createBackend<BackendType, APIServerConfig>({
       return;
     }
 
-    // A restart is a close followed by a listen. `closeServer` drops the handle
-    // before it awaits, so without serialisation a second config write landing
-    // in that window would start a second listener whose handle overwrites the
-    // first one and can never be closed.
+    // closeServer drops the handle before awaiting; serialise or a second write starts another.
     await this.serialize(async () => {
       await this.closeServer();
       this.run(config);
@@ -147,7 +137,6 @@ export const backend = createBackend<BackendType, APIServerConfig>({
   },
 
   run(config) {
-    // One listener at a time: the mode says whether one is already owned.
     if (!this.app || this.phase === 'serving') {
       return;
     }
@@ -176,8 +165,7 @@ export const backend = createBackend<BackendType, APIServerConfig>({
       // that would take the whole app down.
       server.on('error', (err: NodeJS.ErrnoException) => {
         console.error(LoggerPrefix, 'API server error:', err);
-        // A failed bind leaves a dead handle behind: drop it so the mode is
-        // honest and the next restart is not blocked by a phantom listener.
+        // EADDRINUSE fires async; drop the dead handle so a restart is not blocked.
         if (this.server === server && err?.code === 'EADDRINUSE') {
           this.server = undefined;
           this.phase = 'stopped';

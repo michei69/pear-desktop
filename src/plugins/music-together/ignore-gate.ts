@@ -4,9 +4,7 @@
  * otherwise a local echo is reported back to the peer as a local change.
  */
 export const createIgnoreGate = (releaseAfterMs = 16) => {
-  // Independent handlers hold the gate concurrently, so a single boolean
-  // release would let the first finisher open it while the second is still
-  // applying its edit. Count the holds instead.
+  // Concurrent holders: a boolean release would open the gate while another still applies.
   let depth = 0;
   let active = false;
   let timer: ReturnType<typeof setTimeout> | undefined;
@@ -26,7 +24,7 @@ export const createIgnoreGate = (releaseAfterMs = 16) => {
       depth += 1;
       active = true;
     },
-    /** Releases one hold; the gate opens after one frame once none remain. */
+    /** Allows outgoing state again after one frame. */
     release() {
       depth = Math.max(0, depth - 1);
       if (depth > 0) return;
@@ -37,7 +35,7 @@ export const createIgnoreGate = (releaseAfterMs = 16) => {
         if (depth === 0) active = false;
       }, releaseAfterMs);
     },
-    /** Drops every hold immediately (plugin stop). */
+    /** Drops the hold immediately (plugin stop). */
     reset() {
       cancel();
       depth = 0;
