@@ -4,7 +4,7 @@
 import { app, type BrowserWindowConstructorOptions, BrowserWindow, dialog, net, screen, shell } from "electron";
 import { STARTING_PAGES, type StartingPage } from "@pear/sdk/core-config";
 import { CHANNEL, type HostEvent } from "@pear/sdk/protocol";
-import { chromeUserAgent, isGoogleAuth, isYtmUrl, YTM_ORIGIN } from "../shared/user-agent.ts";
+import { chromeUserAgent, fixedChromeUserAgent, isGoogleAuth, isYtmUrl, YTM_ORIGIN } from "../shared/user-agent.ts";
 import { APP_NAME, relaunchOptions } from "./app-identity.ts";
 import type { Settings, WindowState } from "./config.ts";
 import { errorPage, loadFailureAction } from "./load-failure.ts";
@@ -63,12 +63,12 @@ export class MainWindow {
 
   /**
    * Once the app is ready: YTM gets Chromium's own user agent unless
-   * advanced.overrideUserAgent is on; Google sign-in always gets Electron's
-   * (returned).
+   * advanced.overrideUserAgent is on, which sends pear-desktop's fixed Chrome
+   * one; Google sign-in always gets Electron's (returned).
    */
   useYtmUserAgent(override: boolean) {
     this.#electronUserAgent = app.userAgentFallback;
-    this.#ytmUserAgent = override ? chromeUserAgent(this.#electronUserAgent) : this.#electronUserAgent;
+    this.#ytmUserAgent = override ? fixedChromeUserAgent(process.platform) : this.#electronUserAgent;
     app.userAgentFallback = this.#ytmUserAgent;
     return this.#electronUserAgent;
   }

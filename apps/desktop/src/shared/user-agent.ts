@@ -1,7 +1,9 @@
-// User agents per destination. YTM gets a Chrome UA (Electron's minus
-// the Electron/app tokens). Google sign-in gets Electron's own UA: claiming to
-// be Chrome (or Firefox) from Chromium is detectable and gets sign-in rejected
-// as an insecure browser, while the honest Electron UA is accepted.
+// User agents per destination. YTM gets Chromium's own UA by default (Electron's,
+// with its tokens), pear-desktop's fixed Chrome one while advanced.overrideUserAgent
+// is on, and a Chrome UA without the Electron/app tokens for the cases that only
+// need those gone. Google sign-in always gets Electron's own UA: claiming to be
+// Chrome (or Firefox) from Chromium is detectable and gets sign-in rejected as an
+// insecure browser, while the honest Electron UA is accepted.
 
 /** Electron's default UA advertises Electron and the app name; strip them. */
 export function chromeUserAgent(electronUserAgent: string) {
