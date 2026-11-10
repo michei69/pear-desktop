@@ -15,6 +15,8 @@ describe("menuTemplate", () => {
     openSettings: vi.fn(),
     alwaysOnTop: () => true,
     setAlwaysOnTop: vi.fn(),
+    singleInstanceLock: () => true,
+    setSingleInstanceLock: vi.fn(),
     themes: {
       all: [],
       selected: "",
@@ -37,6 +39,7 @@ describe("menuTemplate", () => {
     expect(labels(options)).toEqual([
       "Settings…",
       "separator",
+      "Single Instance Lock",
       "Always on top",
       "separator",
       "Theme",
@@ -45,6 +48,7 @@ describe("menuTemplate", () => {
       "Edit config.json",
     ]);
     expect(options[2]).toMatchObject({ type: "checkbox", checked: true });
+    expect(options[3]).toMatchObject({ type: "checkbox", checked: true });
     // The page handles Ctrl+, itself (it toggles the dialog).
     expect(options[0]).toMatchObject({ accelerator: "CmdOrCtrl+,", registerAccelerator: false });
   });
@@ -62,6 +66,8 @@ describe("menuTemplate", () => {
     (options[0]!.click as () => void)();
     expect(e.openSettings).toHaveBeenCalled();
     (options[2]!.click as (item: { checked: boolean }) => void)({ checked: false });
+    expect(e.setSingleInstanceLock).toHaveBeenCalledWith(false);
+    (options[3]!.click as (item: { checked: boolean }) => void)({ checked: false });
     expect(e.setAlwaysOnTop).toHaveBeenCalledWith(false);
   });
 

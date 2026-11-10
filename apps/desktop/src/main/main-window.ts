@@ -1,16 +1,27 @@
 // The YTM window: its options and saved bounds, the user agent per destination,
 // the title, and the page it starts on. Also the channel to its page runtime.
 
-import { app, type BrowserWindowConstructorOptions, BrowserWindow, net, screen, shell } from "electron";
+import { app, type BrowserWindowConstructorOptions, BrowserWindow, dialog, net, screen, shell } from "electron";
 import { STARTING_PAGES, type StartingPage } from "@pear/sdk/core-config";
 import { CHANNEL, type HostEvent } from "@pear/sdk/protocol";
-import { chromeUserAgent, fixedChromeUserAgent, isGoogleAuth, isYtmUrl, YTM_ORIGIN } from "../shared/user-agent.ts";
-import { APP_NAME } from "./app-identity.ts";
+import { chromeUserAgent, isGoogleAuth, isYtmUrl, YTM_ORIGIN } from "../shared/user-agent.ts";
+import { APP_NAME, relaunchOptions } from "./app-identity.ts";
 import type { Settings, WindowState } from "./config.ts";
-import { navigationAction, windowOpenAction } from "./links.ts";
+import { errorPage, loadFailureAction } from "./load-failure.ts";
+import { navigationAction, restrictedRegionRedirect, windowOpenAction } from "./links.ts";
 import type { PluginHost } from "./plugins.ts";
 import { openSettingsWindow, settingsWindowContents } from "./settings-window.ts";
 import { alive, appIcon, focusWindow, secureWebPreferences } from "./windows.ts";
+
+/** macOS: YTM's own nav bar becomes the drag region, with room for the traffic lights. */
+const MAC_TITLE_BAR_CSS = `
+ytmusic-nav-bar { position: relative; }
+ytmusic-nav-bar::before { content: ""; position: absolute; inset: 0; -webkit-user-select: none; app-region: drag; }
+ytmusic-nav-bar > .left-content > *, ytmusic-nav-bar > .center-content > *, ytmusic-nav-bar > .right-content > *,
+iron-icon, ytmusic-pivot-bar-item-renderer, .tab-title, a, tp-yt-iron-dropdown, tp-yt-paper-dialog { app-region: no-drag; }
+ytmusic-app-layout#layout { --ytmusic-nav-bar-offset: 24px; --ytmusic-nav-bar-height: calc(64px + var(--ytmusic-nav-bar-offset)); }
+ytmusic-app-layout#layout ytmusic-nav-bar { padding-top: var(--ytmusic-nav-bar-offset); }
+`;
 
 const MIN_WIDTH = 360;
 const MIN_HEIGHT = 300;
@@ -37,6 +48,7 @@ export class MainWindow {
   /** Whether the page runtime of the current page is up (it can show the in-page settings). */
   #runtimeUp = false;
   #electronUserAgent = "";
+  #pendingStartingPage: string | undefined;
   #ytmUserAgent = "";
 
   constructor(settings: Settings, plugins: PluginHost) {
@@ -49,10 +61,14 @@ export class MainWindow {
     return alive(this.#window);
   }
 
-  /** Once the app is ready: YTM gets a Chrome UA, Google sign-in Electron's (returned). */
+  /**
+   * Once the app is ready: YTM gets Chromium's own user agent unless
+   * advanced.overrideUserAgent is on; Google sign-in always gets Electron's
+   * (returned).
+   */
   useYtmUserAgent(override: boolean) {
     this.#electronUserAgent = app.userAgentFallback;
-    this.#ytmUserAgent = override ? fixedChromeUserAgent(process.platform) : chromeUserAgent(this.#electronUserAgent);
+    this.#ytmUserAgent = override ? chromeUserAgent(this.#electronUserAgent) : this.#electronUserAgent;
     app.userAgentFallback = this.#ytmUserAgent;
     return this.#electronUserAgent;
   }
@@ -87,7 +103,16 @@ export class MainWindow {
 
   /** A page runtime said hello; it can show the in-page settings if it is this window's. */
   runtimeBootstrapped(sender: Electron.WebContents) {
-    if (this.#window && sender === this.#window.webContents) this.#runtimeUp = true;
+    if (!this.#window || sender !== this.#window.webContents) return;
+    this.#runtimeUp = true;
+    // As pear-desktop: the last song loads, and the page then moves to the starting page.
+    const browseId = this.#pendingStartingPage;
+    this.#pendingStartingPage = undefined;
+    if (browseId) {
+      void sender
+        .executeJavaScript(navigateInApp(browseId))
+        .catch((error) => console.warn("[pear] couldn't open the starting page", error));
+    }
   }
 
   create() {
@@ -116,15 +141,24 @@ export class MainWindow {
 
     // YTM asks "leave page?" while playing, which would silently cancel quitting.
     window.webContents.on("will-prevent-unload", (event) => event.preventDefault());
-    window.webContents.on("render-process-gone", () => {
+    window.webContents.on("render-process-gone", (_event, details) => {
       this.#runtimeUp = false;
+      // A clean exit (a quit, or a reload) is not a crash; pear-desktop only asked then.
+      if (details.reason !== "clean-exit") void this.#crashed(window, details);
     });
     this.#followNavigation(window);
     routeLinks(window);
     this.#saveBounds(window);
     this.#reportVisibility(window);
-    openHomeWhenOffline(window);
-    void window.loadURL(net.isOnline() ? startUrl(settings.core("general"), settings.lastPlayback) : `${YTM_ORIGIN}/`);
+    this.#handleLoadFailures(window);
+    // The in-app menu draws its own title bar, with room for the traffic lights.
+    if (process.platform === "darwin" && !settings.plugin("in-app-menu")?.enabled) {
+      window.webContents.on("dom-ready", () => void window.webContents.insertCSS(MAC_TITLE_BAR_CSS));
+    }
+    const general = settings.core("general");
+    const start = net.isOnline() ? startUrl(general, settings.lastPlayback) : `${YTM_ORIGIN}/`;
+    this.#pendingStartingPage = isYtmUrl(start) && new URL(start).pathname === "/watch" ? startingBrowseId(general.startingPage) : undefined;
+    void window.loadURL(start);
     return window;
   }
 
@@ -140,6 +174,7 @@ export class MainWindow {
       title: settings.core("appearance").customWindowTitle || APP_NAME,
       icon: appIcon(settings.core("appearance").useYtmIcons),
       autoHideMenuBar: settings.core("window").hideMenu,
+      ...(process.platform === "darwin" ? { titleBarStyle: "hiddenInset" as const } : {}),
     };
     // …but not geometry, visibility or the security-relevant preferences.
     const enforced: BrowserWindowConstructorOptions = {
@@ -178,6 +213,51 @@ export class MainWindow {
     window.on("hide", report);
     window.on("minimize", report);
     window.on("restore", report);
+  }
+
+  /** A dead or killed renderer asks what to do, as pear-desktop did, instead of leaving a blank window. */
+  async #crashed(window: BrowserWindow, details: Electron.RenderProcessGoneDetails) {
+    const t = this.#plugins.t;
+    console.error(t("main.console.unresponsive.details", "Unresponsive Error!\n{{error}}", { error: JSON.stringify(details, null, "\t") }));
+    const { response } = await dialog.showMessageBox(window, {
+      type: "error",
+      title: t("main.dialog.unresponsive.title", "Window Unresponsive"),
+      message: t("main.dialog.unresponsive.message", "The Application is Unresponsive"),
+      detail: t("main.dialog.unresponsive.detail", "We are sorry for the inconvenience! please choose what to do:"),
+      buttons: [
+        t("main.dialog.unresponsive.buttons.wait", "Wait"),
+        t("main.dialog.unresponsive.buttons.relaunch", "Relaunch"),
+        t("main.dialog.unresponsive.buttons.quit", "Quit"),
+      ],
+      cancelId: 0,
+    });
+    if (response === 1) {
+      app.relaunch(relaunchOptions());
+      app.quit();
+    } else if (response === 2) {
+      app.quit();
+    }
+  }
+
+  /** Offline, the home page (which works offline); otherwise pear-desktop's error page with a Retry. */
+  #handleLoadFailures(window: BrowserWindow) {
+    window.webContents.on("did-fail-load", (_event, errorCode, description, url, isMainFrame) => {
+      if (!isMainFrame) return;
+      const action = loadFailureAction(errorCode, url);
+      if (action === "ignore") return;
+      if (action === "home") {
+        void window.loadURL(`${YTM_ORIGIN}/`);
+        return;
+      }
+      console.warn(`[pear] couldn't load ${url}: ${description} (${errorCode})`);
+      const t = this.#plugins.t;
+      const text = {
+        title: APP_NAME,
+        message: t("main.error-page.message", "Cannot load {{applicationName}}… Internet disconnected?"),
+        retry: t("main.error-page.retry", "Retry"),
+      };
+      void window.loadURL(errorPage(url, text));
+    });
   }
 
   #saveBounds(window: BrowserWindow) {
@@ -224,32 +304,40 @@ function routeLinks(window: BrowserWindow) {
     if (action === "external") void shell.openExternal(url);
   };
   webContents.on("will-navigate", (event) => route(event, event.url));
-  webContents.on("will-redirect", (event) => route(event, event.url));
+  // Regions where YTM is restricted: its redirect to /premium goes to sign-in instead.
+  webContents.on("will-redirect", (event) => {
+    const signin = restrictedRegionRedirect(event.url);
+    if (!signin) {
+      route(event, event.url);
+      return;
+    }
+    event.preventDefault();
+    void webContents.loadURL(signin);
+  });
   // A popup could otherwise navigate its own window anywhere.
   webContents.on("did-create-window", (popup) => routeLinks(popup));
-}
-
-/**
- * Chromium's errors for a page that failed to load for want of a network
- * (net_error_list.h); the site's service worker turns those into ERR_FAILED (-2).
- */
-const OFFLINE_ERRORS = new Set([-2, -21, -105, -106, -109, -118, -137]);
-
-/**
- * Offline, the site's service worker answers for its home page only (from its
- * cached app shell, with the Downloads page a click away); any other page
- * fails to load, so the home page loads instead.
- */
-function openHomeWhenOffline(window: BrowserWindow) {
-  window.webContents.on("did-fail-load", (_event, errorCode, _description, url, isMainFrame) => {
-    if (!isMainFrame || !OFFLINE_ERRORS.has(errorCode) || !isYtmUrl(url) || new URL(url).pathname === "/") return;
-    void window.loadURL(`${YTM_ORIGIN}/`);
-  });
 }
 
 /** The custom window title, or the page's. */
 export function windowTitle(settings: Settings, window: BrowserWindow) {
   return settings.core("appearance").customWindowTitle || window.webContents.getTitle() || APP_NAME;
+}
+
+function startingBrowseId(page: StartingPage) {
+  if (!page) return undefined;
+  return STARTING_PAGES[page]?.replace(/^\/browse\//, "");
+}
+
+/** Page script: YTM's own in-app navigation to a browse page, once its app is up (as pear-desktop). */
+function navigateInApp(browseId: string) {
+  return `(async () => {
+    await customElements.whenDefined("ytmusic-app");
+    for (let i = 0; i < 100; i++) {
+      const app = document.querySelector("ytmusic-app");
+      if (typeof app?.navigate === "function") return void app.navigate(${JSON.stringify(browseId)});
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    }
+  })()`;
 }
 
 /** The last song if the startup toggle is on, otherwise the starting page. */

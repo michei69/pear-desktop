@@ -4,7 +4,7 @@ import { app, session } from "electron";
 import hostPlugins from "virtual:pear/host-plugins";
 import { ApiServer } from "./api/index.ts";
 import { applyConfigPatch } from "./apply-config.ts";
-import { APP_ID, setAppIdentity } from "./app-identity.ts";
+import { APP_ID, registerStartMenuShortcut, relaunchOptions, setAppIdentity } from "./app-identity.ts";
 import { commit, updatesSupported } from "./app-info.ts";
 import { hideOnClose, onActivate } from "./close.ts";
 import { Settings } from "./config.ts";
@@ -62,7 +62,23 @@ function main() {
   const requests = new PageRequests(send);
   const menuItems = new MenuItems();
   // pear-desktop's app protocol: links control playback; plugins hear about them too.
-  const links = new ProtocolLinks((action) => player.control(action));
+  const links = new ProtocolLinks(
+    (action) => player.control(action),
+    (task) => {
+      const window = mainWindow.window;
+      if (task.type === "page") {
+        requests.request("core", task.event, task.payload).catch((error) => console.warn("[pear] protocol link:", error));
+      } else if (task.type === "fullscreen") {
+        window?.setFullScreen(task.fullscreen);
+        requests.request("core", "fullscreen:set", task.fullscreen).catch((error) => console.warn("[pear] protocol link:", error));
+      } else if (window) {
+        // As pear-desktop: YTM's own shortcut for its search box.
+        window.webContents.sendInputEvent({ type: "keyDown", keyCode: "/" });
+        window.webContents.sendInputEvent({ type: "char", keyCode: "/" });
+        window.webContents.sendInputEvent({ type: "keyUp", keyCode: "/" });
+      }
+    },
+  );
   let api: ApiServer | undefined;
   let stopSmtc: (() => void) | undefined;
   let quitting = false;
@@ -77,6 +93,7 @@ function main() {
 
   app.whenReady().then(async () => {
     console.info(`[pear] startup: app ready after ${Math.round(performance.now())}ms`);
+    registerStartMenuShortcut();
     // Before any page loads: YTM and the settings window get only what they need.
     hardenSession(session.defaultSession);
     // Not awaited: a few file stats must not hold the window back.
@@ -151,8 +168,13 @@ function main() {
         void core.set("general", { updateChannel: value }).then(() => refreshMenu());
       },
       settingsPath: settings.path,
+      singleInstanceLock: () => app.hasSingleInstanceLock(),
+      setSingleInstanceLock: (locked) => {
+        if (!locked && app.hasSingleInstanceLock()) app.releaseSingleInstanceLock();
+        else if (locked && !app.hasSingleInstanceLock()) app.requestSingleInstanceLock();
+      },
       restart: () => {
-        app.relaunch();
+        app.relaunch(relaunchOptions());
         app.quit();
       },
     };

@@ -25,6 +25,9 @@ export interface MenuEnvironment {
   pluginItems(): readonly PluginMenuItem[];
   alwaysOnTop(): boolean;
   setAlwaysOnTop(value: boolean): void;
+  /** Whether this instance holds the single-instance lock (another launch then focuses it). */
+  singleInstanceLock(): boolean;
+  setSingleInstanceLock(value: boolean): void;
   /** The open YTM page's language, for Language › Sync; both or the submenu is left out. */
   languageFromYtm?(): Promise<string | null>;
   languageToYtm?(): Promise<void>;
@@ -80,6 +83,13 @@ function optionsMenu(
     submenu: [
       ...(leading.length > 0 ? [...leading, { type: "separator" } as const] : []),
       ...(env.updatesSupported?.() === true ? [updatesItem(env), { type: "separator" } as const] : []),
+      {
+        // As pear-desktop: a second launch focuses this instance only while the lock is held.
+        label: t("main.menu.options.submenu.single-instance-lock", "Single Instance Lock"),
+        type: "checkbox",
+        checked: env.singleInstanceLock(),
+        click: (item) => env.setSingleInstanceLock(item.checked),
+      },
       {
         id: ALWAYS_ON_TOP_ID,
         label: t("main.menu.options.submenu.always-on-top", "Always on top"),
