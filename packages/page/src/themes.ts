@@ -59,7 +59,10 @@ export class ThemesRuntime {
   }
 
   #mount(id: string, source: string, hash: string, palette: ThemePalette) {
-    const hooks = evaluate(source, id) ?? {};
+    const hooks = evaluate(source, id);
+    // A script that failed to evaluate did not mount: leaving the mounted state
+    // unset retries on the next refresh instead of pinning the failure here.
+    if (!hooks) return;
     if (hooks.mount) {
       try {
         const result = hooks.mount({
@@ -73,6 +76,7 @@ export class ThemesRuntime {
         this.#cleanup = typeof result === "function" ? result : null;
       } catch (error) {
         console.error(`[themes] mount for "${id}" threw:`, error);
+        return;
       }
     }
     this.#mounted = { id, hash, hooks };
