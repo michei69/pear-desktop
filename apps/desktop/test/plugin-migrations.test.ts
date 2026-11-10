@@ -215,6 +215,20 @@ describe("pear-desktop plugin options", () => {
     expect(twice("shortcuts", { enabled: true }, { plugins: { "media-controls": { enabled: false } } })).toEqual({ enabled: true });
   });
 
+  test("synced-lyrics: the preferSynced switch becomes the type order", () => {
+    // Off moved plain lyrics ahead of timed ones; word-by-word still wins.
+    expect(twice("synced-lyrics", { preferSynced: false })).toMatchObject({
+      lyricsTypePriority: ["word", "plain", "synced"],
+    });
+    // On is the default order, so it adds nothing; neither does an untouched config.
+    expect(twice("synced-lyrics", { preferSynced: true })).not.toHaveProperty("lyricsTypePriority");
+    expect(twice("synced-lyrics", {})).not.toHaveProperty("lyricsTypePriority");
+    // A stored order is not overwritten.
+    expect(twice("synced-lyrics", { preferSynced: false, lyricsTypePriority: ["word", "synced", "plain"] })).toMatchObject({
+      lyricsTypePriority: ["word", "synced", "plain"],
+    });
+  });
+
   test("skip-ai-slop: keyword and channel objects become the flat lists", () => {
     expect(
       twice("skip-ai-slop", {

@@ -60,12 +60,19 @@ export function lastFmAuthorizer(ctx: Ctx, warn: Warn) {
     window.on("closed", () => {
       ctx.clearTimeout(current.poll);
       if (auth === current) auth = undefined;
-      if (authorized || stopped) return;
+      if (authorized || stopped || current.cancelled) return;
       // Don't reopen the window by itself; toggling Last.fm (or clearing the session) asks again.
       authDeclined = true;
       showDeclined(ctx);
     });
-    void window.loadURL(lastFm.authUrl(ctx.config.lastfmApiKey, token));
+    void window.loadURL(lastFm.authUrl(ctx.config.lastfmApiKey, token)).catch((error: unknown) => {
+      // A window that never loaded is no answer from the user: drop the latch so a retry can open.
+      warn("Last.fm", error);
+      ctx.clearTimeout(current.poll);
+      current.cancelled = true;
+      if (auth === current) auth = undefined;
+      if (!window.isDestroyed()) window.close();
+    });
     poll();
   };
 
@@ -81,6 +88,11 @@ export function lastFmAuthorizer(ctx: Ctx, warn: Warn) {
   let hadSession = !!ctx.config.lastfmSessionKey;
   const reconfigure = () => {
     const { lastfmEnabled, lastfmSessionKey } = ctx.config;
+    if (!lastfmEnabled && auth) {
+      // Turning Last.fm off abandons the window: closing it is not a decline.
+      auth.cancelled = true;
+      if (!auth.window.isDestroyed()) auth.window.close();
+    }
     const askAgain = (lastfmEnabled && !wasEnabled) || (hadSession && !lastfmSessionKey);
     if (askAgain) authDeclined = false;
     wasEnabled = lastfmEnabled;

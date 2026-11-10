@@ -277,6 +277,9 @@ export default definePlugin({
       trackHover(container);
     };
 
+    // Flipping the setting while a track plays paints or clears the bar at once.
+    ctx.onConfigChange(() => renderMarkers());
+
     /** Moves the marker cut-out with the playhead, re-adding the bar if YTM rebuilt its seek track. */
     const syncMarkers = () => {
       const bar = document.querySelector<HTMLElement>(`#${SEGMENTS_BAR_ID}`);

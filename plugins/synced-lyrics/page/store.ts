@@ -13,6 +13,7 @@ import { pickProvider, resolvePriority, resolveTypePriority } from "../priority.
 import { isChineseTarget } from "../translation/language.ts";
 import {
   PROVIDERS,
+  lyricsType,
   resultRank,
   type CustomQuery,
   type LyricLine,
@@ -289,9 +290,12 @@ export class LyricsStore {
     });
   }
 
+  /** Where a provider's result sits in the user's type order; 0 means no lyrics yet. */
   #rank(provider: ProviderId) {
     const state = this.providers[provider];
-    return state.status === "done" ? resultRank(state.result) : 0;
+    if (state.status !== "done") return 0;
+    const type = lyricsType(state.result);
+    return type === null ? 0 : this.#typePriority.length - this.#typePriority.indexOf(type);
   }
 
   async #search(provider: ProviderId, track: Track, generation: number) {

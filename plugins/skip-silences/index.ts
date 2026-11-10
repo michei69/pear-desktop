@@ -88,6 +88,13 @@ export default definePlugin({
       };
       ctx.listen(video, "play", onPlayOrSeek);
       ctx.listen(video, "seeked", onPlayOrSeek);
+      // A new track re-arms beginning-only skipping: the latch is per track, and
+      // only the tracker's own skips had to survive.
+      ctx.player.on("trackChange", () => {
+        audioStarted = false;
+        silent = false;
+        history.fill(0);
+      });
 
       return () => input.disconnect();
     },

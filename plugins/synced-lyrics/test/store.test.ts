@@ -16,6 +16,11 @@ const options: Options = { preferred: "auto", inexact: true, romanize: false, ch
 
 const synced: LyricResult = { title: "Song", artists: ["Artist"], lines: [{ startMs: 0, endMs: 1000, text: "hi" }] };
 const plain: LyricResult = { title: "Song", artists: ["Artist"], plain: "hi\nthere" };
+const word: LyricResult = {
+  title: "Song",
+  artists: ["Artist"],
+  lines: [{ startMs: 0, endMs: 1000, text: "hi", words: [{ startMs: 0, endMs: 500, text: "hi" }] }],
+};
 
 function backend(results: Partial<Record<ProviderId, LyricResult | null | Error>>): Backend {
   return {
@@ -84,6 +89,31 @@ describe("LyricsStore", () => {
     plainFirst.load(track);
     await settle();
     expect(plainFirst.selected).toBe("LyricsGenius");
+  });
+
+  test("a configured type order beats the provider order, with the priority list off", async () => {
+    const api = backend({ YTMusic: word, LRCLib: plain, LyricsGenius: null });
+    // Plain first: LRCLib's plain block wins over YTMusic's word-by-word result.
+    const plainFirst = new LyricsStore(api, {
+      ...options,
+      priority: ["YTMusic", "LRCLib"],
+      typePriority: ["plain", "synced", "word"],
+    });
+    plainFirst.load(track);
+    await settle();
+    expect(plainFirst.selected).toBe("LRCLib");
+    expect(plainFirst.shown?.provider).toBe("LRCLib");
+
+    // The default order picks the word-by-word result from the second provider instead.
+    const wordFirst = new LyricsStore(backend({ YTMusic: word, LRCLib: plain, LyricsGenius: null }), {
+      ...options,
+      priority: ["LRCLib", "YTMusic"],
+      typePriority: ["word", "synced", "plain"],
+    });
+    wordFirst.load(track);
+    await settle();
+    expect(wordFirst.selected).toBe("YTMusic");
+    expect(wordFirst.shown?.provider).toBe("YTMusic");
   });
 
   test("honours the preferred provider and manual picks", async () => {
