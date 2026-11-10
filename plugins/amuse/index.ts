@@ -70,10 +70,10 @@ export default definePlugin({
       step: 1,
       description: "Amuse expects 9863.",
     }),
-    hostname: config.string("0.0.0.0", {
+    hostname: config.string("127.0.0.1", {
       label: "Address to listen on",
-      description: "0.0.0.0 (as pear-desktop) lets widgets on other devices reach it; 127.0.0.1 keeps it to this computer.",
-      placeholder: "0.0.0.0",
+      description: "127.0.0.1 keeps it to this computer. Empty or 0.0.0.0 listens on every address, which is what pear-desktop did.",
+      placeholder: "127.0.0.1",
     }),
   },
   host: {

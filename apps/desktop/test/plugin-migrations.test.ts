@@ -215,6 +215,14 @@ describe("pear-desktop plugin options", () => {
     expect(twice("shortcuts", { enabled: true }, { plugins: { "media-controls": { enabled: false } } })).toEqual({ enabled: true });
   });
 
+  test("amuse: a pear-desktop entry keeps listening on every address", () => {
+    // pear-desktop's server was reachable from the LAN; the rewrite's default is
+    // loopback, so the migration writes the old bind address instead of dropping it.
+    expect(twice("amuse", { enabled: true })).toMatchObject({ hostname: "0.0.0.0" });
+    // An address the user chose is theirs.
+    expect(twice("amuse", { hostname: "127.0.0.1" })).toMatchObject({ hostname: "127.0.0.1" });
+  });
+
   test("synced-lyrics: the preferSynced switch becomes the type order", () => {
     // Off moved plain lyrics ahead of timed ones; word-by-word still wins.
     expect(twice("synced-lyrics", { preferSynced: false })).toMatchObject({

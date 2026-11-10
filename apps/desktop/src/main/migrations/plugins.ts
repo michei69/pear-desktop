@@ -80,6 +80,12 @@ const DOWNLOAD_ON_FINISH: [from: string, to: string, valid: (value: unknown) => 
 export const PLUGIN_MIGRATIONS: Record<string, PluginMigration> = {
   "album-color-theme": (entry) => fractionToPercent(entry, "ratio"),
   "ambient-mode": (entry) => fractionToPercent(entry, "opacity"),
+  amuse: (entry) => {
+    // pear-desktop listened on every address (its default was 0.0.0.0), so an
+    // upgrading user keeps reachability from other devices instead of silently
+    // dropping to loopback; clearing the field still means "every address".
+    if (!("hostname" in entry)) setNew(entry, "hostname", "0.0.0.0");
+  },
   "auth-proxy-adapter": (entry, config) => {
     // The adapter used to forward to the app's proxy option; the plugin has its own address now.
     const proxy = config.options?.proxy;
