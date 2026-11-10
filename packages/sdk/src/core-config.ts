@@ -187,12 +187,6 @@ export const ADVANCED = {
     label: "Clear the cache at startup",
     group: "Performance",
   }),
-  inProcessGpu: config.bool(false, {
-    label: "Run the GPU process in the app process",
-    description: "Experimental: saves a process, but may fall back to software rendering.",
-    group: "Performance",
-    restart: true,
-  }),
 };
 
 /**

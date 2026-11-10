@@ -3352,10 +3352,6 @@
         "label": "Performance mode",
         "description": "Cheaper site flags, no animations or backdrop blur, and lighter visual plugins."
       },
-      "inProcessGpu": {
-        "label": "Run the GPU process in the app process",
-        "description": "Experimental: saves a process, but may fall back to software rendering."
-      },
       "forceSmtc": {
         "label": "Use Windows media controls",
         "description": "Replaces Chromium's media session with the native System Media Transport Controls."

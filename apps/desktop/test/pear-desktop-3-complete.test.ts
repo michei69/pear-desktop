@@ -50,14 +50,13 @@ const APP_SECTION: Record<string, string> = {
   stripSIFromSharedLinks: "general",
   disableHardwareAcceleration: "advanced",
   autoResetAppCache: "advanced",
-  inProcessGpu: "advanced",
   forceSmtc: "window",
   proxy: "advanced",
   overrideUserAgent: "advanced",
 };
 
 /** App options the rewrite has no room for; their keys stay in the file for a downgrade. */
-const APP_GAPS = ["restartOnConfigChanges", "hideMenuWarned"];
+const APP_GAPS = ["restartOnConfigChanges", "hideMenuWarned", "inProcessGpu"];
 
 /** Master options a migration moves elsewhere; the old key stays too. */
 const MIGRATED_OPTIONS = [
@@ -294,6 +293,8 @@ describe("a complete pear-desktop 3.12.4 config.json, migrated to 4.0.0", () => 
     for (const key of [...APP_GAPS, ...MIGRATED_OPTIONS]) {
       expect(options[key], key).toEqual(fixtureOptions[key]);
     }
+    // The retired in-process GPU option is ignored by the schema, not read.
+    expect(settings.core("advanced")).not.toHaveProperty("inProcessGpu");
     // Plugin settings with no rewrite field stay for a downgrade.
     const plugins = file.plugins as Record<string, Json>;
     expect(plugins["precise-volume"]!.savedVolume).toBe(42);

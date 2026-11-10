@@ -89,7 +89,7 @@ Plugins write their logs with a `[pear:<id>]` prefix; the core writes `[pear]` a
 
 The rest of the performance options live where they always did:
 
-- **Advanced ▸ Performance** has **Disable hardware acceleration**, **Clear the cache at startup** and **Run the GPU process in the app process** (experimental; ignored when hardware acceleration is disabled).
+- **Advanced ▸ Performance** has **Disable hardware acceleration** and **Clear the cache at startup**.
 - **Window & Tray ▸ System** has **Use Windows media controls**, which replaces Chromium's media session with the native System Media Transport Controls. If the optional native module cannot load, the app logs a warning and keeps running without native transport controls.
 - **Memory saver** checks Blink's resource usage every minute while the window is hidden and clears the renderer caches when they exceed its threshold (64 MB by default). A clear has a ten-minute cooldown. It never runs while the window is visible.
 - **Performance improvement** replaces page timers and element creation with CY Fung's batching scripts at page start. It cannot be undone live, so it is marked `restartRequired`: enable it and restart.

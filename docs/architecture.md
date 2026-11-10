@@ -20,7 +20,7 @@ Main process (`apps/desktop/src/main/index.ts`):
 1. `setAppIdentity()` pins `userData` (or `PEAR_USER_DATA` for tests), names the app with `APP_ID`, sets the X11 window class and the Windows AppUserModelId, so an existing pear-desktop install keeps its data folder and taskbar entry. The single-instance lock follows.
 2. `new Settings(userData, hostPlugins, app.getVersion())` reads and migrates `config.json` before anything else touches it.
 3. `new PluginHost(...)` filters plugins by platform and creates the plugin registry.
-4. `beforeReady()` in `startup-tasks.ts` applies `advanced.disableHardwareAcceleration` or the opt-in `advanced.inProcessGpu`, registers the privileged `pear` scheme, runs every enabled plugin's `host.beforeReady`, disables Chromium's media session when `window.forceSmtc` is on for Windows, and appends the collected Chromium feature switches.
+4. `beforeReady()` in `startup-tasks.ts` applies `advanced.disableHardwareAcceleration`, registers the privileged `pear` scheme, runs every enabled plugin's `host.beforeReady`, disables Chromium's media session when `window.forceSmtc` is on for Windows, and appends the collected Chromium feature switches.
 5. `whenReady`: `hardenSession()` installs the permission handlers, load i18n with `loadI18n(resolveLanguage(...))` and give it to the plugin host, build the language sync callbacks, install the core `WebRequest` listeners through `setupNet()`, serve the settings window, register `ipcMain` handlers, start the theme engine (`CoreOptions.start()`), build the native menu, seed Google's consent cookie, apply the configured proxy, create the main window, start Windows SMTC when `forceSmtc` is on, create the update manager and the API server, then `plugins.attach()` starts the host parts that are enabled.
 6. After attach: register the `youtubemusic://` protocol handler, apply window options, apply the API server config, open the settings window when `--settings` is on the command line, and schedule the delayed cache clear and update check.
 7. `before-quit` stops SMTC, the update manager, the theme poller, the API server and all host plugin instances, then flushes the config file.
@@ -163,7 +163,7 @@ The `performance` core section holds four restart-only switches (`options.perfor
 
 Other performance work:
 
-- `advanced.inProcessGpu` folds the GPU service into the app process (`in-process-gpu`), and is ignored when hardware acceleration is disabled. `advanced.disableHardwareAcceleration`, `advanced.autoResetAppCache` (clears the session cache 20 seconds after startup) and `general.autoUpdates` are core options.
+- `advanced.disableHardwareAcceleration`, `advanced.autoResetAppCache` (clears the session cache 20 seconds after startup) and `general.autoUpdates` are core options.
 - `plugins/performance-improvement` injects CY Fung's timer and element-reuse scripts at page start. It is `restartRequired`, because replacing page globals cannot be undone live.
 - `plugins/memory-saver` polls Blink's resource usage every minute while the window is hidden and clears the renderer caches above its threshold, with a ten-minute cooldown. It uses `window.pearPerf` from the preload.
 - Visual plugins pause their drawing with `ctx.isWindowVisible()`, because the window keeps rendering while minimized or hidden (`backgroundThrottling: false`).

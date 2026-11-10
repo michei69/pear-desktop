@@ -37,16 +37,7 @@ const BASE_DISABLED_FEATURES = ["FluentScrollbar", "BackForwardCache", "Prerende
 /** Must run before `app.whenReady()`. */
 export function beforeReady(app: App, settings: Settings, plugins: PluginHost) {
   const advanced = settings.core("advanced");
-  // pear-desktop's transparent player needs software compositing on Linux, which
-  // these beforeReady hooks turn on; in-process-gpu would contradict that.
-  const transparentPlayer = process.platform === "linux" && settings.plugin("transparent-player")?.enabled === true;
-  if (advanced.disableHardwareAcceleration) {
-    app.disableHardwareAcceleration();
-  } else if (advanced.inProcessGpu && !transparentPlayer) {
-    // Opt-in experiment, not part of performance mode: folding the GPU service
-    // into the app process saves a process, but can fall back to software rendering.
-    app.commandLine.appendSwitch("in-process-gpu");
-  }
+  if (advanced.disableHardwareAcceleration) app.disableHardwareAcceleration();
   registerSettingsScheme();
   const features = plugins.beforeReady(app);
   const enabled = new Set([...BASE_ENABLED_FEATURES, ...features.enabled]);
