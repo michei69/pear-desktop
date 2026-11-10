@@ -18,6 +18,12 @@ const CATEGORIES = {
 } as const;
 type Category = keyof typeof CATEGORIES;
 
+/** What the segment fetch depends on: a change means the list, not just the painting, is stale. */
+function fetchKey(config: Record<Category, boolean> & { apiURL: string }) {
+  const categories = (Object.keys(CATEGORIES) as Category[]).map((category) => (config[category] ? "1" : "0")).join("");
+  return `${config.apiURL}\u0000${categories}`;
+}
+
 type SponsorBlockConfig = { [K in Category]: boolean } & { apiURL: string; showSegmentsOnProgressBar: boolean };
 
 const SEGMENTS_BAR_ID = "pear-sponsorblock-bar";
@@ -277,8 +283,15 @@ export default definePlugin({
       trackHover(container);
     };
 
-    // Flipping the setting while a track plays paints or clears the bar at once.
-    ctx.onConfigChange(() => renderMarkers());
+    // The bar toggle only repaints; the categories and the API decide what is
+    // fetched, so changing those rebuilds the page part (and refetches) instead
+    // of leaving the previous track's segments in force.
+    let fetchedWith = fetchKey(ctx.config);
+    ctx.onConfigChange((next) => {
+      if (fetchKey(next) !== fetchedWith) return "restart";
+      renderMarkers();
+    });
+    fetchedWith = fetchKey(ctx.config);
 
     /** Moves the marker cut-out with the playhead, re-adding the bar if YTM rebuilt its seek track. */
     const syncMarkers = () => {

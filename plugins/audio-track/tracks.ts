@@ -53,6 +53,16 @@ export function desiredTrack(
   return preferOriginal ? findOriginalTrack(tracks) : undefined;
 }
 
+/**
+ * Which picker button is the current state: 0 for Automatic (also when the
+ * player cannot say which track is playing), otherwise the track's position
+ * plus one. The dialog's default must never fall back to the first track.
+ */
+export function pickerIndex(tracks: readonly YTPlayerAudioTrack[], currentId: string): number {
+  const at = tracks.findIndex((track) => trackId(track) === currentId);
+  return at < 0 ? 0 : at + 1;
+}
+
 /** The video's tracks; a player without the selector answers an empty list. */
 export function readTracks(api: YTPlayerApi): YTPlayerAudioTrack[] {
   try {

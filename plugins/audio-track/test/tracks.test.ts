@@ -2,6 +2,7 @@ import type { YTPlayerApi, YTPlayerAudioTrack } from "@pear/sdk";
 import { describe, expect, it, vi } from "vitest";
 import {
   desiredTrack,
+  pickerIndex,
   findOriginalTrack,
   isAutoDubbed,
   isOriginalTrack,
@@ -77,6 +78,25 @@ describe("chooseTrack", () => {
     expect(desiredTrack(tracks, "ja", false)).toBeUndefined();
     expect(desiredTrack(tracks, "", true)).toBe(original);
     expect(desiredTrack(tracks, "", false)).toBeUndefined();
+  });
+});
+
+describe("picker index", () => {
+  const original = info("en", "English", { isDefault: true });
+  const dub = info("es", "Spanish (auto-dubbed)", { autoDubbed: true });
+  const tracks = [dub, original];
+
+  it("is the track's button position plus one", () => {
+    expect(pickerIndex(tracks, "en")).toBe(2);
+    expect(pickerIndex(tracks, "es")).toBe(1);
+  });
+
+  it("falls back to Automatic, never to the first track", () => {
+    // An unknown id (a pick from another video) and an unknown current track both
+    // mean "no track is selected", so the dialog must not default to the first one.
+    expect(pickerIndex(tracks, "ja")).toBe(0);
+    expect(pickerIndex(tracks, "")).toBe(0);
+    expect(pickerIndex([], "")).toBe(0);
   });
 });
 

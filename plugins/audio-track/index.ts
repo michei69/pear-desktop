@@ -17,12 +17,17 @@ export default definePlugin({
     start(ctx) {
       ctx.addMenuItem({
         label: ctx.t("plugins.audio-track.menu.label", "Audio track…"),
-        click: () => void chooseTrack(ctx),
+        click: () => {
+          // A destroyed window or a failed dialog must not become an unhandled rejection.
+          chooseTrack(ctx).catch((error: unknown) => ctx.log.warn("couldn't open the audio track picker", error));
+        },
       });
     },
+    // The menu item does not depend on the config: a pick must not rebuild it.
+    onConfigChange() {},
   },
   page: {
-    async start(ctx) {
+    start(ctx) {
       return startAudioTrack(ctx);
     },
     onConfigChange() {},

@@ -89,8 +89,11 @@ export default definePlugin({
       ctx.listen(video, "play", onPlayOrSeek);
       ctx.listen(video, "seeked", onPlayOrSeek);
       // A new track re-arms beginning-only skipping: the latch is per track, and
-      // only the tracker's own skips had to survive.
-      ctx.player.on("trackChange", () => {
+      // only the tracker's own skips had to survive. `trackLoading` rather than
+      // `trackChange`: the latter can arrive up to a second and a half into the
+      // new track (the runtime's dataupdated fallback), after its audio was heard,
+      // and resetting then would un-arm the setting mid-track.
+      ctx.player.on("trackLoading", () => {
         audioStarted = false;
         silent = false;
         history.fill(0);
