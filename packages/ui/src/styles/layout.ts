@@ -18,6 +18,10 @@ export const layout = css`
     backdrop-filter: blur(3px);
     animation: scrim-in 0.18s ease both;
   }
+  /* The "remove the settings backdrop blur" option; the scrim alone loses it. */
+  .root--no-blur .scrim {
+    backdrop-filter: none;
+  }
   .dialog {
     position: relative;
     z-index: 1;

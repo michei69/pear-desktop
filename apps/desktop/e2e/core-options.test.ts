@@ -77,7 +77,7 @@ test("the application menu, and hiding its bar", async ({ launch }) => {
 });
 
 test("a custom window title stays put; without one the window follows the page", async ({ launch }) => {
-  const app = await launch({ core: { appearance: { customWindowTitle: "My music" } } });
+  const app = await launch({ core: { window: { customWindowTitle: "My music" } } });
   const page = await mainWindow(app);
   const titles = () =>
     app.evaluate(({ BrowserWindow }) => {
@@ -89,14 +89,14 @@ test("a custom window title stays put; without one the window follows the page",
   await page.waitForFunction(() => window.__pearRuntime);
   await expect.poll(async () => (await titles()).window).toBe("My music");
 
-  await setCore(page, "appearance", { customWindowTitle: "" });
+  await setCore(page, "window", { customWindowTitle: "" });
   await expect
     .poll(async () => {
       const { window, page } = await titles();
       return window === page && window !== "My music";
     })
     .toBe(true);
-  await setCore(page, "appearance", { customWindowTitle: "Other title" });
+  await setCore(page, "window", { customWindowTitle: "Other title" });
   await expect.poll(async () => (await titles()).window).toBe("Other title");
 });
 

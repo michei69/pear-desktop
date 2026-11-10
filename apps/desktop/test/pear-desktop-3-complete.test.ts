@@ -45,14 +45,13 @@ const APP_SECTION: Record<string, string> = {
   hideDislikeButton: "appearance",
   hideVideoCaptions: "appearance",
   usePodcastParticipantAsArtist: "appearance",
-  customWindowTitle: "appearance",
+  customWindowTitle: "window",
   stripMusicFromSharedLinks: "general",
   stripSIFromSharedLinks: "general",
   disableHardwareAcceleration: "advanced",
   autoResetAppCache: "advanced",
-  performanceMode: "advanced",
   inProcessGpu: "advanced",
-  forceSmtc: "advanced",
+  forceSmtc: "window",
   proxy: "advanced",
   overrideUserAgent: "advanced",
 };
@@ -240,6 +239,10 @@ describe("a complete pear-desktop 3.12.4 config.json, migrated to 4.0.0", () => 
       const config = settings.core(section as CoreSection) as unknown as Json;
       expect(config[key], `${section}.${key}`).toEqual(fixtureOptions[key]);
     }
+    // The old performance mode boolean became one switch per part.
+    expect(settings.core("performance")).toEqual({ flags: true, css: true, animations: true, plugins: true });
+    // The settings UI plugin's options are read where it kept them.
+    expect(settings.core("settingsUi")).toEqual({ showButton: false, separateWindow: true, removeBackdropBlur: false });
     // The theme engine's own keys are read with the same names and shapes.
     expect(settings.themeConfig()).toEqual({
       theme: fixtureOptions.theme,

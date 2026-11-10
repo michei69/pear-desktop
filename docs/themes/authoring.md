@@ -32,7 +32,7 @@ The exact manifest rules are in [Theme manifest](./manifest.md). `theme.json` is
 
 There are two practical ways to start:
 
-1. Import an existing CSS file with **Options ▸ Theme ▸ Import custom CSS file** or the corresponding button in **Settings ▸ Appearance ▸ Theme**. The app creates a theme folder with a generated `theme.json` and selects it.
+1. Import an existing CSS file with **Options ▸ Theme ▸ Import custom CSS file** or the corresponding button in **Settings ▸ Appearance ▸ Theme & colors**. The app creates a theme folder with a generated `theme.json` and selects it.
 2. Open **Options ▸ Theme ▸ Open themes folder**, copy the **Basic** theme's `theme.json` and `style.css` into a new folder, then edit the copy.
 
 The palette is only a bag of variables; the recolouring itself is CSS. The quickest recolouring theme is a copy of Basic's two files with your own palette:

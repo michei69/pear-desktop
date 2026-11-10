@@ -4,7 +4,7 @@ This page covers selecting, importing and customising themes. To create or modif
 
 ## Where themes live
 
-The themes directory is `<userData>/themes` (`getThemesDir()` in `apps/desktop/src/main/themes.ts`). Open it from **Options ▸ Theme ▸ Open themes folder**, or from the same button in **Settings ▸ Appearance ▸ Theme**.
+The themes directory is `<userData>/themes` (`getThemesDir()` in `apps/desktop/src/main/themes.ts`). Open it from **Options ▸ Theme ▸ Open themes folder**, or from the same button in **Settings ▸ Appearance ▸ Theme & colors**.
 
 - Only immediate subdirectories are considered. A theme folder's own subdirectories are not searched for manifests.
 - Theme folders are listed in folder-name order.
@@ -16,7 +16,7 @@ The themes directory is `<userData>/themes` (`getThemesDir()` in `apps/desktop/s
 
 There are two ways to switch:
 
-- **Settings ▸ Appearance ▸ Theme** shows a dropdown with **No theme** and every valid theme. When the selected theme supports them, the preset picker and colour editor also appear.
+- **Settings ▸ Appearance ▸ Theme & colors** shows a dropdown with **No theme** and every valid theme. When the selected theme supports them, the preset picker and colour editor also appear.
 - **Options ▸ Theme** shows a radio list of **No theme** and the same themes, plus a Presets submenu for themes that define presets, the import action and the folder button.
 
 The selection is stored in `options.theme` and applies immediately: the previous theme's sheets are removed and its script is unmounted, then the new theme's CSS and palette are applied and its script is mounted when consented. Choosing **No theme** stores an empty id and removes everything the previous theme added.
@@ -30,7 +30,7 @@ The native menu is built from the theme list when the app builds the menu. A han
 If you already have a stylesheet, the app can wrap it in a theme folder:
 
 - **Options ▸ Theme ▸ Import custom CSS file** opens a multi-select dialog.
-- The same action exists as a button in **Settings ▸ Appearance ▸ Theme**, which opens the same picker.
+- The same action exists as a button in **Settings ▸ Appearance ▸ Theme & colors**, which opens the same picker.
 
 Importing writes a new folder under the themes directory and selects it. The theme id is a slug of the first file's name: lowercased, characters outside ASCII `a-z` and `0-9` collapsed to `-`, leading and trailing hyphens removed, with `-2`, `-3` and so on if the id is taken. A name that produces an empty slug falls back to `theme`. Files are copied as follows:
 

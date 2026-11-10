@@ -50,8 +50,8 @@ export class PluginRunner {
   #coreListeners = new Set<(section: CoreSection) => void>();
   #audio: Promise<AudioGraph> | undefined;
   #windowVisible: boolean;
-  /** advanced.performanceMode: visual plugins' page halves stay off. */
-  #performanceMode: boolean;
+  /** performance.plugins: the heavy visual plugins' page halves stay off. */
+  #skipHeavyPlugins: boolean;
   #bridge: Bridge;
   #player: Player;
   /** The active language's strings, from the host. */
@@ -67,7 +67,7 @@ export class PluginRunner {
     for (const plugin of plugins) if (this.#host.plugins.has(plugin.id)) this.#plugins.set(plugin.id, plugin);
     this.t = translator(bridge.bootstrap.strings);
     this.#windowVisible = bridge.bootstrap.windowVisible ?? true;
-    this.#performanceMode = bridge.bootstrap.core.advanced.config.performanceMode === true;
+    this.#skipHeavyPlugins = bridge.bootstrap.core.performance.config.plugins === true;
     this.settings = settingsModel(bridge, this.#host, (id) => this.error(id));
   }
 
@@ -172,7 +172,7 @@ export class PluginRunner {
   async #start(id: string) {
     const plugin = this.#plugins.get(id);
     if (!plugin || this.#instances.has(id)) return;
-    if (isSkippedInPerformanceMode(id, this.#performanceMode)) {
+    if (isSkippedInPerformanceMode(id, this.#skipHeavyPlugins)) {
       console.info(`[pear] plugin ${id} skipped: performance mode`);
       return;
     }

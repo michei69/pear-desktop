@@ -3439,6 +3439,34 @@
       "overrideUserAgent": {
         "label": "Override the user agent",
         "description": "Send a plain Chrome user agent instead of Electron's; some sites behave differently."
+      },
+      "flags": {
+        "label": "Lighter \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 interface",
+        "description": "Turns off \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063's heavier artwork, motion and list-rendering features. Your own flag overrides still win."
+      },
+      "css": {
+        "label": "Disable animations and backdrop blur",
+        "description": "Injects a stylesheet that collapses animations and transitions and turns off backdrop blur across the interface."
+      },
+      "animations": {
+        "label": "Reduce main-thread animation work",
+        "description": "Ends the layout animations \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 runs on the main thread as soon as they start."
+      },
+      "plugins": {
+        "label": "Skip heavy visual plugins",
+        "description": "Does not start the renderer half of Ambient mode, Blur navigation bar and Visualizer. Their settings are kept."
+      },
+      "showButton": {
+        "label": "Show the settings entry in the sidebar",
+        "description": "Turn this off to keep the sidebar clean; Settings is still under Options › Settings… and on Ctrl/Cmd+,."
+      },
+      "separateWindow": {
+        "label": "Always open Settings in a separate window",
+        "description": "Opens the standalone settings window instead of the in-app panel."
+      },
+      "removeBackdropBlur": {
+        "label": "Remove the settings backdrop blur",
+        "description": "Turns off the blur behind the in-app settings panel while it is open. Other blurs in the app keep working."
       }
     },
     "groups": {
@@ -3485,7 +3513,9 @@
       "disco-ball": "Disco ball",
       "shared-links": "Shared links",
       "integration": "Integration",
-      "mcp": "MCP"
+      "mcp": "MCP",
+      "rendering": "Rendering",
+      "theme": "Theme & colors"
     },
     "title": "Settings",
     "search-placeholder": "Search settings",
@@ -3522,7 +3552,8 @@
       "developer": "Developer",
       "site-flags": "Site feature flags",
       "updates": "Updates",
-      "configuration": "Configuration"
+      "configuration": "Configuration",
+      "settings-menu": "Settings menu"
     },
     "toggle-devtools": "Toggle developer tools",
     "sections": {
@@ -3556,6 +3587,9 @@
       },
       "flags": {
         "label": "Flags"
+      },
+      "performance": {
+        "label": "Performance"
       }
     },
     "about": {
@@ -3669,6 +3703,15 @@
       "declined": "The theme's script was not allowed.",
       "author": "by {{author}}",
       "no-variables": "This theme's palette has no variables to edit."
+    },
+    "plugin-categories": {
+      "playback": "Playback",
+      "audio": "Audio",
+      "interface": "Interface",
+      "lyrics": "Lyrics",
+      "integrations": "Integrations",
+      "system": "System",
+      "other": "Other"
     }
   }
 }

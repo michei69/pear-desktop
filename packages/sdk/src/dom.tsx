@@ -420,6 +420,8 @@ export interface SidebarEntry {
   focus(): void;
   /** Marks the entry as the current page's, as YTM marks its own (while its page shows). */
   setSelected(selected: boolean): void;
+  /** Takes the entry out of the sidebar and stops keeping it mounted. */
+  remove(): void;
 }
 
 /** YTM's sidebar entry, which draws itself from the data it is given. */
@@ -445,6 +447,7 @@ const GUIDES = [
  */
 export function sidebarEntry(owner: Pick<PageContext<unknown, {}>, "onCleanup">, options: SidebarEntryOptions): SidebarEntry {
   const elements: GuideEntryRendererElement[] = [];
+  const stops: (() => void)[] = [];
   const entryData = (badge: string): GuideEntryRendererElement["data"] => ({
     isPrimary: true,
     icon: { iconType: options.iconType },
@@ -466,6 +469,7 @@ export function sidebarEntry(owner: Pick<PageContext<unknown, {}>, "onCleanup">,
       const items = document.querySelector(selectors[guide])?.querySelector(selectors["guide.primary_items"]);
       items?.append(entry);
     });
+    stops.push(stop);
     owner.onCleanup(stop);
   }
   return {
@@ -486,6 +490,10 @@ export function sidebarEntry(owner: Pick<PageContext<unknown, {}>, "onCleanup">,
         if (selected) element.setAttribute("aria-current", "page");
         else element.removeAttribute("aria-current");
       }
+    },
+    remove() {
+      for (const stop of stops.splice(0)) stop();
+      for (const element of elements.splice(0)) element.remove();
     },
   };
 }

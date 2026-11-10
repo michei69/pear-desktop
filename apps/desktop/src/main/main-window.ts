@@ -79,10 +79,10 @@ export class MainWindow {
     if (SETTINGS_EVENTS.has(event.type)) settingsWindowContents()?.send(CHANNEL.event, event);
   };
 
-  /** The in-page overlay when YTM is up, otherwise the standalone window. */
+  /** The in-page overlay when YTM is up, otherwise the standalone window; always the window when asked. */
   readonly openSettings = () => {
     const window = this.window;
-    if (!window || !this.#runtimeUp) {
+    if (this.#settings.core("settingsUi").separateWindow || !window || !this.#runtimeUp) {
       openSettingsWindow(this.#settings.core("appearance").useYtmIcons);
       return;
     }
@@ -134,7 +134,7 @@ export class MainWindow {
 
     // The custom title stays put; without one the window follows the page's.
     window.on("page-title-updated", (event) => {
-      if (!settings.core("appearance").customWindowTitle) return;
+      if (!settings.core("window").customWindowTitle) return;
       event.preventDefault();
       window.setTitle(windowTitle(settings, window));
     });
@@ -157,7 +157,8 @@ export class MainWindow {
     }
     const general = settings.core("general");
     const start = net.isOnline() ? startUrl(general, settings.lastPlayback) : `${YTM_ORIGIN}/`;
-    this.#pendingStartingPage = isYtmUrl(start) && new URL(start).pathname === "/watch" ? startingBrowseId(general.startingPage) : undefined;
+    this.#pendingStartingPage =
+      isYtmUrl(start) && new URL(start).pathname === "/watch" ? startingBrowseId(general.startingPage) : undefined;
     void window.loadURL(start);
     return window;
   }
@@ -171,7 +172,7 @@ export class MainWindow {
       minHeight: MIN_HEIGHT,
       backgroundColor: BACKGROUND_COLOR,
       alwaysOnTop: settings.core("window").alwaysOnTop,
-      title: settings.core("appearance").customWindowTitle || APP_NAME,
+      title: settings.core("window").customWindowTitle || APP_NAME,
       icon: appIcon(settings.core("appearance").useYtmIcons),
       autoHideMenuBar: settings.core("window").hideMenu,
       ...(process.platform === "darwin" ? { titleBarStyle: "hiddenInset" as const } : {}),
@@ -320,7 +321,7 @@ function routeLinks(window: BrowserWindow) {
 
 /** The custom window title, or the page's. */
 export function windowTitle(settings: Settings, window: BrowserWindow) {
-  return settings.core("appearance").customWindowTitle || window.webContents.getTitle() || APP_NAME;
+  return settings.core("window").customWindowTitle || window.webContents.getTitle() || APP_NAME;
 }
 
 function startingBrowseId(page: StartingPage) {

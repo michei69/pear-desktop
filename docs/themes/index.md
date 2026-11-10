@@ -15,7 +15,7 @@ Pear Desktop themes are external folders read from `<userData>/themes`, where `<
 
 At most one theme is selected at a time. Selecting a theme applies its CSS and palette; if it has a script and you have allowed that exact script, the script also runs. **No theme** injects nothing, so YTM looks as it does without the app.
 
-Themes are managed from **Options ▸ Theme** and **Settings ▸ Appearance ▸ Theme**. Theme authors work in the same folders with the manifest, stylesheet and optional script described here.
+Themes are managed from **Options ▸ Theme** and **Settings ▸ Appearance ▸ Theme & colors**. Theme authors work in the same folders with the manifest, stylesheet and optional script described here.
 
 ## Documentation map
 

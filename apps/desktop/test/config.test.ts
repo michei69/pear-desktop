@@ -185,6 +185,51 @@ describe("config.json from pear-desktop 3.x", () => {
     expect(load().core("apiServer")).toMatchObject({ hostname: "127.0.0.1" });
   });
 
+  test("the one performance mode toggle becomes four independent switches", () => {
+    const parts = (value: unknown) => migrated312({ options: { performanceMode: value } }).config.options!.performanceMode;
+    const allOn = { flags: true, css: true, animations: true, plugins: true };
+    expect(parts(true)).toEqual(allOn);
+    expect(parts(false)).toEqual({ flags: false, css: false, animations: false, plugins: false });
+    // A file from a pear-desktop that already has the split keeps its parts.
+    const split = { flags: true, css: false, animations: true, plugins: false };
+    expect(parts(split)).toEqual(split);
+
+    const loaded = load({
+      ...from312({ options: { performanceMode: true } }),
+      __internal__: { migrations: { version: "3.12.4" } },
+    });
+    expect(loaded.core("performance")).toEqual(allOn);
+  });
+
+  test("performance switches are stored as the options.performanceMode object", () => {
+    const dir = profile();
+    const settings = new Settings(dir, PLUGINS, "4.0.0");
+    settings.setCore("performance", { css: true });
+    settings.flush();
+    expect(saved(dir).options.performanceMode).toEqual({ flags: false, css: true, animations: false, plugins: false });
+    expect(settings.core("performance")).toEqual({ flags: false, css: true, animations: false, plugins: false });
+  });
+
+  test("a profile from before the split still reads the boolean as all parts on", () => {
+    const loaded = load({ options: { performanceMode: true }, __internal__: { migrations: { version: "4.0.0" } } });
+    expect(loaded.core("performance")).toEqual({ flags: true, css: true, animations: true, plugins: true });
+  });
+
+  test("the settings UI options are read where the settings-ui plugin kept them", () => {
+    const entry = { enabled: false, showButton: false, separateWindow: true, removeBackdropBlur: true, unknownKey: 1 };
+    const dir = profile({
+      ...from312({ plugins: { "settings-ui": entry } }),
+      __internal__: { migrations: { version: "3.12.4" } },
+    });
+    const settings = new Settings(dir, PLUGINS, "4.0.0");
+    expect(settings.core("settingsUi")).toEqual({ showButton: false, separateWindow: true, removeBackdropBlur: true });
+
+    // Writing keeps the plugin's own key and the keys this version doesn't know.
+    settings.setCore("settingsUi", { showButton: true });
+    settings.flush();
+    expect(saved(dir).plugins["settings-ui"]).toEqual({ ...entry, showButton: true });
+  });
+
   test("performance-improvement keeps the state pear-desktop stored (off by default there too)", () => {
     const performance = (plugins: Record<string, unknown>) => migrated312({ plugins }).config.plugins?.["performance-improvement"];
     // pear-desktop's plugin defaults to off; the migration neither turns it on nor creates the entry.

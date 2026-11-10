@@ -121,9 +121,9 @@ Upstream's plugin `name` and `description` were functions returning `t(...)`, an
 ## Things that no longer exist
 
 - The per-process plugin loaders (main, preload, renderer, menu), their loaded-plugin maps and their IPC channels.
-- The `settings-ui` plugin and its modal protocol. Settings are core now.
+- The `settings-ui` plugin and its modal protocol. Settings are core now; the plugin's own options are the `settingsUi` core section, stored at `plugins.settings-ui` and shown in Window & Tray → Settings menu.
 - The `api-server` plugin. The API server is a core section, stored at `plugins.api-server`, with v1 routes and plugin RPC.
-- The `memory-saver` and `performance-improvement` scripts are plugins, not core providers. The old app-level performance mode is not in this tree.
+- The `memory-saver` and `performance-improvement` scripts are plugins, not core providers. The old all-in-one performance mode is the `performance` core section's four independent switches now (stored at `options.performanceMode`).
 - The old app-internal config, provider, theme and type modules as plugin-visible imports. The SDK owns the shared surface.
 - Direct `peard:*` IPC and `electron-store`.
 

@@ -33,7 +33,7 @@ Rules that matter:
 - Keys become part of the property name verbatim. Use lower-case kebab-case such as `scrollbar-width`. The Settings editor displays keys title-cased, splitting on `-`, `_` and whitespace.
 - The palette is emitted after the theme's CSS. A palette key therefore beats the same `--pear-theme-<key>` declared in the stylesheet, which is what lets user edits override the theme's values.
 - Only the selected theme's palette is emitted.
-- Users edit every key under **Settings ▸ Appearance ▸ Theme ▸ Colors**, and they may add keys the manifest never defined. Edits live in config (`options.themeOverrides`), not in the folder, and the palette is rebuilt from them on each apply.
+- Users edit every key under **Settings ▸ Appearance ▸ Theme & colors ▸ Colors**, and they may add keys the manifest never defined. Edits live in config (`options.themeOverrides`), not in the folder, and the palette is rebuilt from them on each apply.
 - The editor shows a short note when the resolved palette contains no variables, as with a CSS-only import or a theme whose manifest declares neither `palette` nor non-empty presets; the add-variable row still lets the user create one.
 
 Palette entries can override the Basic theme's derived variables. A palette key such as `accent-light` produces `--pear-theme-accent-light`, which replaces the value Basic derives in its stylesheet. Basic defines the derived names, not the engine; see [Derived values](./styles.md#derived-values).

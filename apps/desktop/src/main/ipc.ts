@@ -6,7 +6,8 @@ import { isSettingsUrl, isYtmUrl } from "../shared/user-agent.ts";
 import { getAppMeta } from "./app-meta.ts";
 import { buildLabel, channel, commit, copyright } from "./app-info.ts";
 import { flagMetadata } from "./flag-metadata.ts";
-import { relaunchOptions } from "./app-identity.ts";import type { PageRequests } from "./page-requests.ts";
+import { relaunchOptions } from "./app-identity.ts";
+import type { PageRequests } from "./page-requests.ts";
 import type { PlayerMirror } from "./player.ts";
 import type { PluginHost } from "./plugins.ts";
 import type { Themes } from "./themes.ts";
@@ -44,6 +45,8 @@ export interface IpcEnvironment {
   windowVisible(): boolean;
   /** The main window, for dialogs a command opens. */
   window(): BrowserWindow | undefined;
+  /** Opens (or focuses) the standalone settings window. */
+  openSettingsWindow(): void;
   /** The theme engine: its state and the commands that edit it. */
   themes: Themes;
   /** The open YTM page's language, kept in step with the app's. */
@@ -71,6 +74,7 @@ export function setupIpc({
   onRuntimeBootstrap,
   windowVisible,
   window,
+  openSettingsWindow,
   themes,
   language,
   apiPageEvent,
@@ -84,6 +88,7 @@ export function setupIpc({
       app.relaunch(relaunchOptions());
       app.exit(0);
     },
+    "app:open-settings-window": () => openSettingsWindow(),
     "plugin:set-enabled": async (id, enabled) => void (await plugins.setEnabled(String(id), Boolean(enabled))),
     "plugin:set-config": async (id, patch) => {
       assertPatch(patch);

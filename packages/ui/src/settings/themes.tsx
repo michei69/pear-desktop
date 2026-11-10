@@ -27,7 +27,7 @@ export function ThemeCard({ dialog }: { dialog: Dialog }) {
 
   return (
     <div class="group">
-      <div class="group-title">{text("main.menu.options.submenu.visual-tweaks.submenu.theme.label")}</div>
+      <div class="group-title">{text("settings-ui.groups.theme")}</div>
       <div class="card">
         <div class="field">
           <div class="field-text">

@@ -17,13 +17,15 @@ Themes are different: a theme is a folder under the user themes directory and ca
 
 The page overlay is used when YTM's page runtime is up. When it is not, the app opens the standalone `pear://settings` window, which has the same sections and works without YTM. The window can also be opened from a second instance started with `--settings`.
 
-The sidebar has General, Appearance, Window & Tray, Advanced, Developer Tweaks, Plugins and About. The search box filters sections, plugin names and setting labels across all of them.
+The sidebar has General, Appearance, Window & Tray, Performance, Plugins, Advanced, Flags and About. The search box filters sections, plugin names and setting labels across all of them.
 
-**General** holds the language and update settings. **Language** offers **From YouTube** (copy YTM's `hl` language into the app, applied after a restart) and **To YouTube** (point YTM at the app language and reload the page). **Update channel** selects stable or beta; a beta build starts on beta until you choose, and switching a beta build to stable asks first because a downgrade runs no migrations back.
+**General** holds the startup, language and shared-link settings. **Startup** has **Resume the last song** and the starting page. **Language** offers **From YouTube** (copy YTM's `hl` language into the app, applied after a restart) and **To YouTube** (point YTM at the app language and reload the page). **Shared links** has the **Strip 'music.'** and **Strip 'si'** switches. The update settings live under **About**: the update channel selects stable or beta, and a beta build starts on beta until you choose; switching a beta build to stable asks first because a downgrade runs no migrations back.
+
+**Window & Tray** groups the window options, the **Tray** plugin's card, the **Title bar** (in-app menu) plugin's card, a **Settings menu** card for the settings dialog itself, and the system options. The settings menu card can hide the sidebar entry, always open Settings in the standalone window, and remove the backdrop blur behind the in-app panel.
 
 ## The Plugins section
 
-Each plugin is a card with a toggle, its description and, when it has any, expandable settings:
+The plugins are grouped by category — **Playback**, **Audio**, **Interface**, **Lyrics**, **Integrations** and **System** — in the nature of pear-desktop's settings. Each plugin is a card with a toggle, its description and, when it has any, expandable settings:
 
 - The toggle enables or disables it immediately. The page and main-process parts start or stop without an app restart.
 - A plugin with a **restart** pill cannot fully change state live. The host part starts or stops at once, but the page part changes on the next page load or app start.
@@ -78,15 +80,20 @@ Plugins write their logs with a `[pear:<id>]` prefix; the core writes `[pear]` a
 
 ## Performance settings and plugins
 
-**Advanced ▸ Performance mode** trades visual fidelity for cheaper rendering. It is read at page start, so it needs a restart. It forces cheaper YTM feature flags (thumbnail quality, animations, cinematics, queue rendering), removes animations, transitions and backdrop blur, throttles Web Animations that touch layout properties, and skips the page halves of **Ambient mode**, **Blur navigation bar** and **Visualizer**. Their settings and main-process parts stay intact, and turning the mode off restores them.
+**Performance** has four independent switches, each trading some visual fidelity for cheaper rendering. They are read at page start, so each carries a restart pill:
 
-- **Run the GPU process in the app process** is an experimental option that folds the GPU service into the app process. It is ignored when hardware acceleration is disabled.
-- **Use Windows media controls** replaces Chromium's media session with the native System Media Transport Controls on Windows. If the optional native module cannot load, the app logs a warning and keeps running without native transport controls.
+- **Lighter YouTube Music interface** turns off YTM's heavier artwork, motion and list-rendering features through feature-flag overrides. Your own flag overrides still win.
+- **Disable animations and backdrop blur** injects a stylesheet that collapses animations and transitions and removes backdrop blur across the interface.
+- **Reduce main-thread animation work** ends the layout animations YTM runs on the main thread as soon as they start.
+- **Skip heavy visual plugins** does not start the page halves of **Ambient mode**, **Blur navigation bar** and **Visualizer**. Their settings and main-process parts stay intact, and turning the switch off restores them.
+
+The rest of the performance options live where they always did:
+
+- **Advanced ▸ Performance** has **Disable hardware acceleration**, **Clear the cache at startup** and **Run the GPU process in the app process** (experimental; ignored when hardware acceleration is disabled).
+- **Window & Tray ▸ System** has **Use Windows media controls**, which replaces Chromium's media session with the native System Media Transport Controls. If the optional native module cannot load, the app logs a warning and keeps running without native transport controls.
 - **Memory saver** checks Blink's resource usage every minute while the window is hidden and clears the renderer caches when they exceed its threshold (64 MB by default). A clear has a ten-minute cooldown. It never runs while the window is visible.
 - **Performance improvement** replaces page timers and element creation with CY Fung's batching scripts at page start. It cannot be undone live, so it is marked `restartRequired`: enable it and restart.
 - Visual plugins (ambient mode, visualizer, lyrics) stop drawing when the window is hidden or minimized, because the page keeps rendering off screen.
-
-**Appearance** also has **Shared links** switches: **Strip 'music.' from shared links** and **Strip 'si' from shared links** rewrite the share dialog's URL before it is copied, and **Navigation ▸ Copy current URL** applies the same cleaning.
 
 ## The API server
 

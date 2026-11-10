@@ -88,7 +88,7 @@ The `beforeReady` context carries `config`, `app`, `enableFeatures(...names)` an
 | `start(ctx)` | Starts the plugin. May return a cleanup function. |
 | `onConfigChange(config, ctx)` | Handles a config write without a restart. Return `"restart"` to restart anyway. |
 
-A page part is started when its plugin is enabled in the host bootstrap and stopped when the host reports it disabled. With `restartRequired`, a page part starts only if the plugin was enabled when the page loaded and keeps running until the next load; the settings UI shows the restart banner. Without it, enable, disable and config changes apply live. Performance mode skips the page halves of `ambient-mode`, `blur-nav-bar` and `visualizer`; their config and host parts still run.
+A page part is started when its plugin is enabled in the host bootstrap and stopped when the host reports it disabled. With `restartRequired`, a page part starts only if the plugin was enabled when the page loaded and keeps running until the next load; the settings UI shows the restart banner. Without it, enable, disable and config changes apply live. The `performance.plugins` switch skips the page halves of `ambient-mode`, `blur-nav-bar` and `visualizer`; their config and host parts still run.
 
 `runAt: "start"` runs before there is a `<body>`. Use it only to patch page globals before YTM starts, and `ctx.waitFor` for elements later.
 

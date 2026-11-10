@@ -54,14 +54,13 @@ const marker: RuntimeMarker = {
 const bridge = window.__pear;
 if (!bridge) throw new Error("[pear] bridge missing; preload did not expose __pear");
 
-const performanceMode = bridge.bootstrap.core.advanced.config.performanceMode === true;
-if (performanceMode) {
-  adoptSheet(styleSheet(performanceModeCss));
-  installAnimationThrottle();
-}
+// The performance switches are read at page start, so their settings need a restart.
+const performanceSwitches = bridge.bootstrap.core.performance.config;
+if (performanceSwitches.css === true) adoptSheet(styleSheet(performanceModeCss));
+if (performanceSwitches.animations === true) installAnimationThrottle();
 
 // First: YTM's config script runs right after the runtime.
-const siteFlags = overrideSiteFlags(siteOverrides(bridge.bootstrap.core.site.config), performanceMode);
+const siteFlags = overrideSiteFlags(siteOverrides(bridge.bootstrap.core.site.config), performanceSwitches.flags === true);
 
 /** The share dialog's cleaning options, from the General section. */
 function shareUrlOptions(config: Record<string, unknown>) {
@@ -155,6 +154,9 @@ bridge.onEvent((event) => {
       return void runner.request(event.id, event.event, event.payload, event.requestId);
     case "core-state":
       runner.applyCore(event.section, event.state);
+      if (event.section === "settingsUi") {
+        return void settingsReady.then((controller) => controller.applySettingsUi(event.state.config));
+      }
       if (event.section === "general") return applyShareUrlOptions(event.state.config);
       if (event.section !== "appearance") return;
       appearance.apply(event.state);

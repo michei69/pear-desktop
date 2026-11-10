@@ -1,11 +1,11 @@
-// Performance mode: cheaper YTM feature flags, no animations or backdrop
-// blur, and the page halves of the visual plugins left unstarted. Opt-in and
-// restart-only (advanced.performanceMode), so the page decides once at boot.
+// Performance switches: cheaper YTM feature flags, no animations or backdrop
+// blur, and the page halves of the visual plugins left unstarted. Each part is
+// restart-only (performance.*), so the page decides once at boot.
 
 import type { Flags } from "@pear/sdk/core-config";
 
 /**
- * Flags forced while performance mode is on. The page's own
+ * Flags forced while the performance flags switch is on. The page's own
  * `EXPERIMENT_FLAGS` read them; a flag the user overrides wins (see
  * `performanceModeOverrides`).
  */
@@ -36,12 +36,12 @@ export const performanceModeFeatureFlags: Flags = {
   web_enable_card_view_model_hover_effect: false,
 };
 
-/** Performance mode flags first, the user's own flag overrides second, so a deliberate choice always wins. */
+/** Performance flags first, the user's own flag overrides second, so a deliberate choice always wins. */
 export function performanceModeOverrides(userOverrides: Flags, enabled: boolean): Flags {
   return enabled ? { ...performanceModeFeatureFlags, ...userOverrides } : userOverrides;
 }
 
-/** Plugins whose whole purpose is expensive visuals; their page half is not started in performance mode. */
+/** Plugins whose whole purpose is expensive visuals; their page half is not started while the plugins switch is on. */
 const SKIPPED_PLUGINS: Record<string, true> = {
   "ambient-mode": true,
   "blur-nav-bar": true,

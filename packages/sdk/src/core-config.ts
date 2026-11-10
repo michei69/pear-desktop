@@ -37,17 +37,21 @@ const startingPageOptions = Object.keys(STARTING_PAGES).map((value) => ({
   label: value || "Default",
 }));
 
-// The core sections below are views over config.json's `options` (pear-desktop's
-// app options, same names and values); keys are unique across them.
+// The core sections below are views over config.json (pear-desktop's app
+// options, same names and values): `options` for most, `options.performanceMode`
+// for the performance switches and `plugins.settings-ui` for the dialog's own
+// options. Keys are unique across them.
 
 export const GENERAL = {
   resumeOnStart: config.bool(true, {
     label: "Resume the last song",
-    description: "Opens the song you played last when the app starts.",    group: "Startup",
+    description: "Opens the song you played last when the app starts.",
+    group: "Startup",
   }),
   startingPage: config.select("", startingPageOptions, {
     label: "Starting page",
-    description: "The page shown when the app starts, also with the last song resumed.",    group: "Startup",
+    description: "The page shown when the app starts, also with the last song resumed.",
+    group: "Startup",
     variant: "dropdown",
   }),
   language: config.select("", [{ value: "", label: "System default" }, ...languages()], {
@@ -94,10 +98,22 @@ export const WINDOW = {
     group: "Window",
     platforms: ["linux", "win32"],
   }),
+  customWindowTitle: config.string("", {
+    label: "Window title",
+    placeholder: "The page's title",
+    group: "Window",
+  }),
   startAtLogin: config.bool(false, {
     label: "Start at login",
     group: "System",
     platforms: ["win32", "darwin"],
+  }),
+  forceSmtc: config.bool(false, {
+    label: "Use Windows media controls",
+    description: "Replaces Chromium's media session with the native System Media Transport Controls.",
+    group: "System",
+    platforms: ["win32"],
+    restart: true,
   }),
   appVisible: config.bool(true, {
     label: "Show the window at startup",
@@ -113,6 +129,11 @@ const contextMenuFields = Object.fromEntries(
 
 export const APPEARANCE = {
   removeUpgradeButton: config.bool(false, { label: "Remove the Upgrade button", group: "Interface" }),
+  useYtmIcons: config.bool(false, {
+    label: "Use Music's icons",
+    description: "The window, tray and About artwork use YTM's logo instead of Pear Desktop's.",
+    group: "Interface",
+  }),
   likeButtons: config.select(
     "",
     [
@@ -123,11 +144,6 @@ export const APPEARANCE = {
     { label: "Like buttons", group: "Interface" },
   ),
   swapLikeButtonsOrder: config.bool(false, { label: "Swap the like and dislike buttons", group: "Interface" }),
-  useYtmIcons: config.bool(false, {
-    label: "Use Music's icons",
-    description: "The window, tray and About artwork use YTM's logo instead of Pear Desktop's.",
-    group: "Interface",
-  }),
   hideDislikeButton: config.bool(false, {
     label: "Hide the dislike button",
     description: "Only the old player bar has one to hide.",
@@ -143,15 +159,24 @@ export const APPEARANCE = {
     description: "Off: the channel that publishes it, usually the host. Used in notifications and integrations.",
     group: "Interface",
   }),
-  customWindowTitle: config.string("", {
-    label: "Window title",
-    placeholder: "The page's title",
-    group: "Window",
-  }),
   ...contextMenuFields,
 };
 
 export const ADVANCED = {
+  proxy: config.string("", {
+    label: "Proxy",
+    description: "For proxies that need a username and password, use the Proxy plugin.",
+    placeholder: "socks5://127.0.0.1:9999",
+    group: "Network",
+    restart: true,
+  }),
+  overrideUserAgent: config.bool(false, {
+    label: "Override the user agent",
+    description:
+      "Tell \u0059\u006f\u0075\u0054\u0075\u0062\u0065 Music this is Chrome rather than an Electron app. Google sign-in always sees the app as it is.",
+    group: "Network",
+    restart: true,
+  }),
   disableHardwareAcceleration: config.bool(false, {
     label: "Disable hardware acceleration",
     description: "Try this if video or animations flicker or the window stays black.",
@@ -162,36 +187,60 @@ export const ADVANCED = {
     label: "Clear the cache at startup",
     group: "Performance",
   }),
-  performanceMode: config.bool(false, {
-    label: "Performance mode",
-    description: "Cheaper site flags, no animations or backdrop blur, and lighter visual plugins.",
-    group: "Performance",
-    restart: true,
-  }),
   inProcessGpu: config.bool(false, {
     label: "Run the GPU process in the app process",
     description: "Experimental: saves a process, but may fall back to software rendering.",
     group: "Performance",
     restart: true,
   }),
-  forceSmtc: config.bool(false, {
-    label: "Use Windows media controls",
-    description: "Replaces Chromium's media session with the native System Media Transport Controls.",
-    group: "Integration",
-    platforms: ["win32"],
-  }),
-  overrideUserAgent: config.bool(false, {
-    label: "Override the user agent",
-    description: "Tell \u0059\u006f\u0075\u0054\u0075\u0062\u0065 Music this is Chrome rather than an Electron app. Google sign-in always sees the app as it is.",
-    group: "Network",
+};
+
+/**
+ * The performance switches: independent parts that each trade some visual
+ * fidelity for cheaper rendering. Read at page start, so each needs a restart.
+ */
+export const PERFORMANCE = {
+  flags: config.bool(false, {
+    label: "Lighter \u0059\u006f\u0075\u0054\u0075\u0062\u0065 Music interface",
+    description:
+      "Turns off \u0059\u006f\u0075\u0054\u0075\u0062\u0065 Music's heavier artwork, motion and list-rendering features. Your own flag overrides still win.",
+    group: "Rendering",
     restart: true,
   }),
-  proxy: config.string("", {
-    label: "Proxy",
-    description: "For proxies that need a username and password, use the Proxy plugin.",
-    placeholder: "socks5://127.0.0.1:9999",
-    group: "Network",
+  css: config.bool(false, {
+    label: "Disable animations and backdrop blur",
+    description: "Injects a stylesheet that collapses animations and transitions and turns off backdrop blur across the interface.",
+    group: "Rendering",
     restart: true,
+  }),
+  animations: config.bool(false, {
+    label: "Reduce main-thread animation work",
+    description:
+      "Ends the layout animations \u0059\u006f\u0075\u0054\u0075\u0062\u0065 Music runs on the main thread as soon as they start.",
+    group: "Rendering",
+    restart: true,
+  }),
+  plugins: config.bool(false, {
+    label: "Skip heavy visual plugins",
+    description: "Does not start the renderer half of Ambient mode, Blur navigation bar and Visualizer. Their settings are kept.",
+    group: "Rendering",
+    restart: true,
+  }),
+};
+
+/** The settings dialog's own options, stored where pear-desktop's settings-ui plugin kept them. */
+export const SETTINGS_UI = {
+  showButton: config.bool(true, {
+    label: "Show the settings entry in the sidebar",
+    description: "Turn this off to keep the sidebar clean; Settings is still under Options \u203a Settings\u2026 and on Ctrl/Cmd+,.",
+  }),
+  separateWindow: config.bool(false, {
+    label: "Always open Settings in a separate window",
+    description: "Opens the standalone settings window instead of the in-app panel.",
+  }),
+  removeBackdropBlur: config.bool(false, {
+    label: "Remove the settings backdrop blur",
+    description: "Turns off the blur behind the in-app settings panel while it is open. Other blurs in the app keep working.",
   }),
 };
 
@@ -308,6 +357,8 @@ export const CORE_SECTIONS = {
   general: GENERAL,
   window: WINDOW,
   appearance: APPEARANCE,
+  performance: PERFORMANCE,
+  settingsUi: SETTINGS_UI,
   advanced: ADVANCED,
   site: SITE,
   apiServer: API_SERVER,

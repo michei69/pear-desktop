@@ -20,7 +20,7 @@ Main process (`apps/desktop/src/main/index.ts`):
 1. `setAppIdentity()` pins `userData` (or `PEAR_USER_DATA` for tests), names the app with `APP_ID`, sets the X11 window class and the Windows AppUserModelId, so an existing pear-desktop install keeps its data folder and taskbar entry. The single-instance lock follows.
 2. `new Settings(userData, hostPlugins, app.getVersion())` reads and migrates `config.json` before anything else touches it.
 3. `new PluginHost(...)` filters plugins by platform and creates the plugin registry.
-4. `beforeReady()` in `startup-tasks.ts` applies `advanced.disableHardwareAcceleration` or the opt-in `advanced.inProcessGpu`, registers the privileged `pear` scheme, runs every enabled plugin's `host.beforeReady`, disables Chromium's media session when `advanced.forceSmtc` is on for Windows, and appends the collected Chromium feature switches.
+4. `beforeReady()` in `startup-tasks.ts` applies `advanced.disableHardwareAcceleration` or the opt-in `advanced.inProcessGpu`, registers the privileged `pear` scheme, runs every enabled plugin's `host.beforeReady`, disables Chromium's media session when `window.forceSmtc` is on for Windows, and appends the collected Chromium feature switches.
 5. `whenReady`: `hardenSession()` installs the permission handlers, load i18n with `loadI18n(resolveLanguage(...))` and give it to the plugin host, build the language sync callbacks, install the core `WebRequest` listeners through `setupNet()`, serve the settings window, register `ipcMain` handlers, start the theme engine (`CoreOptions.start()`), build the native menu, seed Google's consent cookie, apply the configured proxy, create the main window, start Windows SMTC when `forceSmtc` is on, create the update manager and the API server, then `plugins.attach()` starts the host parts that are enabled.
 6. After attach: register the `youtubemusic://` protocol handler, apply window options, apply the API server config, open the settings window when `--settings` is on the command line, and schedule the delayed cache clear and update check.
 7. `before-quit` stops SMTC, the update manager, the theme poller, the API server and all host plugin instances, then flushes the config file.
@@ -67,6 +67,7 @@ Settings are stored in `<userData>/config.json` by `apps/desktop/src/main/config
 
 - `plugins.<id>` holds `{ enabled, ...config }`. The API server is stored as `plugins.api-server`, where pear-desktop kept it.
 - `options.*` holds the core sections `general`, `window`, `appearance`, `advanced` and `site`, plus the theme keys `theme`, `themePresets`, `themeOverrides`, `themeConsent` and `themesSeeded`, and the legacy `themes` CSS list until it is migrated.
+- `options.performanceMode` holds the performance switches (`flags`, `css`, `animations`, `plugins`); `plugins.settings-ui` holds the settings dialog's own options where pear-desktop's settings-ui plugin kept them (a core section, like the API server).
 - `url`, `window-size`, `window-position` and `window-maximized` hold the last played track (pear-desktop's key, reopened by `general.resumeOnStart`) and the window state.
 - `__internal__.migrations.version` records the version that last wrote the file.
 
@@ -74,7 +75,7 @@ Values are normalized against their schema on load: unknown keys are kept, inval
 
 Core section schemas live in `packages/sdk/src/core-config.ts`, plugin schemas in each plugin. `normalizeConfig()` in `packages/sdk/src/config.ts` enforces types, options and list contents.
 
-Migrations run in `apps/desktop/src/main/migrations/index.ts`. Each entry is a version and a function; it runs when the stored version is older and the app version has reached it, records the new version at once, and never runs twice. The `4.0.0` migration keeps plugin ids and option names, moves the tray app options onto the tray plugin, keeps the pre-3.12.4 API server default (`0.0.0.0`; 3.12.4 files keep its local-only default), keeps `do-not-track` on where it was on, moves the old `options.featureFlags` record into `options.siteFlags` entries (and the old `contextMenuHidden` record into per-entry switches), keeps pear-desktop's downloader defaults, and converts plugin options in `migrations/plugins.ts`. `performance-improvement` keeps its stored on/off state and stays off by default, as in pear-desktop. Unknown keys and old plugin keys stay in the file so a downgrade still finds them. Files a migration creates (for example moved picture-in-picture window bounds) are written next to `config.json` only when missing.
+Migrations run in `apps/desktop/src/main/migrations/index.ts`. Each entry is a version and a function; it runs when the stored version is older and the app version has reached it, records the new version at once, and never runs twice. The `4.0.0` migration keeps plugin ids and option names, moves the tray app options onto the tray plugin, keeps the pre-3.12.4 API server default (`0.0.0.0`; 3.12.4 files keep its local-only default), keeps `do-not-track` on where it was on, moves the old `options.featureFlags` record into `options.siteFlags` entries (and the old `contextMenuHidden` record into per-entry switches), keeps pear-desktop's downloader defaults, converts the old performance-mode boolean into one switch per part, and converts plugin options in `migrations/plugins.ts`. `performance-improvement` keeps its stored on/off state and stays off by default, as in pear-desktop. Unknown keys and old plugin keys stay in the file so a downgrade still finds them. Files a migration creates (for example moved picture-in-picture window bounds) are written next to `config.json` only when missing.
 
 ## Plugin runtime
 
@@ -89,7 +90,7 @@ Migrations run in `apps/desktop/src/main/migrations/index.ts`. Each entry is a v
 Communication crosses the preload bridge as protocol events (`packages/sdk/src/protocol.ts`):
 
 - Main to page: `plugin-state`, `plugin-event`, `plugin-error`, `plugin-status`, `plugin-request`, `core-state`, `themes`, `window-visibility`, `player-control`, `ui`.
-- Page to main: `bridge.invoke()` commands such as `plugin:set-enabled`, `plugin:set-config`, `plugin:invoke`, `plugin:respond`, `core:set-config`, `theme:*`, `app:relaunch`, `app:show-settings-file`, `app:toggle-devtools` and `player:update`.
+- Page to main: `bridge.invoke()` commands such as `plugin:set-enabled`, `plugin:set-config`, `plugin:invoke`, `plugin:respond`, `core:set-config`, `theme:*`, `app:relaunch`, `app:open-settings-window`, `app:show-settings-file`, `app:toggle-devtools` and `player:update`.
 - `ipc.ts` validates the sender frame: only top-level YTM or settings frames may invoke, and `plugin:respond` and `player:update` are accepted only from YTM.
 
 Host and page parts talk to each other through typed host commands (`ctx.host.invoke`), host events (`ctx.emit` / `ctx.host.on`), host requests (`ctx.request` / `ctx.host.handle`) and, for plugins exposed to other apps, API server RPC methods. Details are in [Plugins](./plugins/index.md).
@@ -104,7 +105,7 @@ Host and page parts talk to each other through typed host commands (`ctx.host.in
 
 `packages/ui` is a Preact app shared by the in-page overlay and the standalone window:
 
-- The dialog has a searchable sidebar with General, Appearance, Window & Tray, Advanced, Developer Tweaks, Plugins and About sections, built from `packages/ui/src/settings/sections.ts`.
+- The dialog has a searchable sidebar with General, Appearance, Window & Tray, Performance, Plugins, Advanced, Flags and About sections, built from `packages/ui/src/settings/sections.ts`. The Plugins section groups the cards by category (`plugin-categories.ts`), and Window & Tray embeds the tray, title-bar and settings-dialog cards next to the window and system options.
 - Core sections render from `CORE_SECTIONS` in `packages/sdk/src/core-config.ts`. Plugin cards render from the plugin's config schema and its `actions`.
 - Each field kind has one control in `packages/ui/src/fields.tsx`: switch, slider or stepper, text, chips or dropdown, shortcut recorder, string list and multi-select. Label, description, placeholders, options and group headings come from translation keys generated by `apps/desktop/scripts/i18n.ts`.
 - Plugin cards show host errors, the host's status line (`ctx.setStatus`), action buttons and a restart pill. Pending restarts collect in a banner with "Restart now" and "Later"; the relaunch command is `app:relaunch`.
@@ -153,11 +154,12 @@ Translations are JSON files in `src/i18n/resources/<code>.json`. Each starts wit
 
 ## Performance
 
-`advanced.performanceMode` is a restart-only core option that `packages/page/src/performance.ts` reads once at page start:
+The `performance` core section holds four restart-only switches (`options.performanceMode`), each read once at page start by `packages/page/src/performance.ts`:
 
-- It forces cheaper YTM feature flags (artwork thumbnails, Lottie/Rive animations, watch cinematics, queue and icon rendering); the user's own `site.siteFlags` overrides still win.
-- It injects a stylesheet that collapses animations and transitions, removes backdrop filters and disables layer hints, and installs a Web Animations throttle that collapses animations touching non-composited layout properties.
-- It skips the page halves of `ambient-mode`, `blur-nav-bar` and `visualizer`; their config and host parts are untouched, so turning the mode off restores them.
+- `flags` forces cheaper YTM feature flags (artwork thumbnails, Lottie/Rive animations, watch cinematics, queue and icon rendering); the user's own `site.siteFlags` overrides still win.
+- `css` injects a stylesheet that collapses animations and transitions, removes backdrop filters and disables layer hints.
+- `animations` installs a Web Animations throttle that collapses animations touching non-composited layout properties.
+- `plugins` skips the page halves of `ambient-mode`, `blur-nav-bar` and `visualizer`; their config and host parts are untouched, so turning the switch off restores them.
 
 Other performance work:
 
@@ -166,7 +168,7 @@ Other performance work:
 - `plugins/memory-saver` polls Blink's resource usage every minute while the window is hidden and clears the renderer caches above its threshold, with a ten-minute cooldown. It uses `window.pearPerf` from the preload.
 - Visual plugins pause their drawing with `ctx.isWindowVisible()`, because the window keeps rendering while minimized or hidden (`backgroundThrottling: false`).
 
-On Windows, `advanced.forceSmtc` disables Chromium's media session and starts `smtc.ts`, which drives the native System Media Transport Controls through the optional `@michei69/node-smtc` module. MPRIS on Linux and the Touch Bar plugin remain separate integrations.
+On Windows, `window.forceSmtc` disables Chromium's media session and starts `smtc.ts`, which drives the native System Media Transport Controls through the optional `@michei69/node-smtc` module. MPRIS on Linux and the Touch Bar plugin remain separate integrations.
 
 ## Tests
 

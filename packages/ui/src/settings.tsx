@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from "preact/hooks";
 import type { SettingsModel } from "./model.ts";
 import { SearchResults, SectionBody } from "./settings/body.tsx";
 import { Header, RestartBanner, Sidebar } from "./settings/chrome.tsx";
-import { buildDebugInfo, storedFlagOverrides, useCopyFeedback } from "./settings/debug-info.ts";
+import { buildDebugInfo, performanceParts, storedFlagOverrides, useCopyFeedback } from "./settings/debug-info.ts";
 import { FlagsSection } from "./settings/flags.tsx";
 import { SECTIONS, type SectionId, sectionLabel } from "./settings/sections.ts";
 import { useDialog } from "./settings/state.ts";
@@ -81,6 +81,8 @@ function SettingsDialog({ model, onClose, standalone = false, closing = false }:
   useEffect(() => body.current?.scrollTo(0, 0), [view]);
 
   const section = SECTIONS[active];
+  // A settings UI option, applied live while the in-app panel is open.
+  const noBlur = !standalone && model.core("settingsUi")?.config.removeBackdropBlur === true;
   const title = searching ? text("settings-ui.search-results") : sectionLabel(text, active);
   const sub = searching ? text("settings-ui.search-matching", { query: trimmed }) : undefined;
   const enabled = dialog.plugins.filter((plugin) => model.state(plugin.id)?.enabled).map((plugin) => plugin.name);
@@ -160,15 +162,22 @@ function SettingsDialog({ model, onClose, standalone = false, closing = false }:
     try {
       const meta = await model.appMeta();
       const live = model.siteFlags?.();
-      const performanceMode = model.core("advanced")?.config.performanceMode === true;
-      debug.copy(buildDebugInfo(meta, enabled, live?.served ?? {}, live?.overrides ?? storedFlagOverrides(model), performanceMode));
+      debug.copy(
+        buildDebugInfo(
+          meta,
+          enabled,
+          live?.served ?? {},
+          live?.overrides ?? storedFlagOverrides(model),
+          performanceParts(model.core("performance")?.config),
+        ),
+      );
     } catch (error) {
       console.error("[pear] reading the debug info failed", error);
     }
   };
 
   return (
-    <div class={`root${standalone ? " root--standalone" : ""}${closing ? " root--closing" : ""}`}>
+    <div class={`root${standalone ? " root--standalone" : ""}${closing ? " root--closing" : ""}${noBlur ? " root--no-blur" : ""}`}>
       {!standalone && <div class="scrim" onMouseDown={onClose} />}
       <div class="dialog" role="dialog" aria-modal={!standalone} aria-labelledby="pear-title" ref={modal}>
         <Sidebar

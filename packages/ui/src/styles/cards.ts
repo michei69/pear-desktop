@@ -5,6 +5,9 @@ export const cards = css`
   .group {
     margin-bottom: 22px;
   }
+  .group > .plugin:last-child {
+    margin-bottom: 0;
+  }
   .group-title,
   .plugin-group-title {
     font-size: 12px;

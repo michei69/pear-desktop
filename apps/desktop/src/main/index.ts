@@ -119,6 +119,7 @@ function main() {
       onRuntimeBootstrap: (sender) => mainWindow.runtimeBootstrapped(sender),
       windowVisible: () => mainWindow.visible,
       window: () => mainWindow.window,
+      openSettingsWindow: () => openSettingsWindow(settings.core("appearance").useYtmIcons),
       themes: core.themes,
       language: languageSync,
       apiPageEvent: (name, payload) => api?.pageEvent?.(name, payload),
@@ -187,7 +188,7 @@ function main() {
     const window = mainWindow.create();
     if (process.platform === "darwin") hideOnClose(app, window);
     // The native transport controls own the media keys on Windows; the module is optional.
-    if (process.platform === "win32" && settings.core("advanced").forceSmtc) {
+    if (process.platform === "win32" && settings.core("window").forceSmtc) {
       startSmtc(player, { appMediaId: APP_ID }).then(
         (stop) => {
           if (quitting) stop();

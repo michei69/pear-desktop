@@ -52,7 +52,7 @@ export function beforeReady(app: App, settings: Settings, plugins: PluginHost) {
   const enabled = new Set([...BASE_ENABLED_FEATURES, ...features.enabled]);
   const disabled = new Set([...BASE_DISABLED_FEATURES, ...features.disabled]);
   // node-smtc replaces Chromium's media session on Windows (see index.ts).
-  if (process.platform === "win32" && advanced.forceSmtc) {
+  if (process.platform === "win32" && settings.core("window").forceSmtc) {
     disabled.add("HardwareMediaKeyHandling");
     disabled.add("MediaSessionService");
   }

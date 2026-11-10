@@ -6,16 +6,23 @@ import { useText } from "../strings.ts";
 import { About } from "./about.tsx";
 import { BlockView, CoreCards, coreGroups, PluginCard } from "./cards.tsx";
 import { fieldMatches, groupFields, matches } from "./groups.ts";
+import { groupPluginsByCategory, pluginCategoryLabel } from "./plugin-categories.ts";
 import { type Section, coreSectionLabel } from "./sections.ts";
 import type { Dialog } from "./state.ts";
 
 export function SectionBody({ dialog, section, enabled }: { dialog: Dialog; section: Section; enabled: string[] }) {
+  const text = useText();
   switch (section.id) {
     case "plugins":
       return (
         <>
-          {dialog.plugins.map((plugin) => (
-            <PluginCard key={plugin.id} dialog={dialog} plugin={plugin} />
+          {groupPluginsByCategory(dialog.plugins).map((group) => (
+            <div key={group.id} class="group">
+              <div class="group-title">{text(pluginCategoryLabel(group.id))}</div>
+              {group.plugins.map((plugin) => (
+                <PluginCard key={plugin.id} dialog={dialog} plugin={plugin} />
+              ))}
+            </div>
           ))}
         </>
       );

@@ -74,7 +74,7 @@ test("another section opens at its top, not where the last one was scrolled to",
       return scrollTop();
     })
     .toBeGreaterThan(0);
-  await openSection(page, "Developer Tweaks");
+  await openSection(page, "Advanced");
   await expect.poll(scrollTop).toBe(0);
 });
 

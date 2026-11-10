@@ -154,6 +154,8 @@ export interface CoreCommands {
   ping(message: string): string;
   "app:version"(): string;
   "app:relaunch"(): void;
+  /** Opens (or focuses) the standalone settings window. */
+  "app:open-settings-window"(): void;
   "plugin:set-enabled"(id: string, enabled: boolean): void;
   "plugin:set-config"(id: string, patch: Record<string, unknown>): void;
   "plugin:invoke"(id: string, command: string, args: unknown[]): unknown;

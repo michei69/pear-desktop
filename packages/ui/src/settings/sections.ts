@@ -1,6 +1,7 @@
 // The dialog's sections and what each one shows.
 
 import type { CoreSection } from "@pear/sdk/core-config";
+import { CONTEXT_MENU_ENTRIES } from "@pear/sdk/context-menu";
 import type { IconName } from "../icons.tsx";
 import type { Text, UiKey } from "../strings.ts";
 
@@ -18,7 +19,7 @@ export type Block =
   /** The developer actions (devtools, edit config). */
   | { kind: "configuration" };
 
-export type SectionId = "general" | "appearance" | "window" | "advanced" | "plugins" | "flags" | "about";
+export type SectionId = "general" | "appearance" | "window" | "performance" | "plugins" | "advanced" | "flags" | "about";
 
 export interface Section {
   id: SectionId;
@@ -26,6 +27,12 @@ export interface Section {
   /** What the section shows; "plugins", "flags" and "about" have views of their own. */
   blocks: Block[];
 }
+
+/** The context-menu switches, kept together after the theme card. */
+const CONTEXT_MENU_KEYS = CONTEXT_MENU_ENTRIES.map((entry) => entry.configKey);
+/** The Window & Tray tab's own cards; the tray and title bar cards sit between them. */
+const WINDOW_KEYS = ["alwaysOnTop", "hideMenu", "customWindowTitle"];
+const SYSTEM_KEYS = ["startAtLogin", "forceSmtc", "appVisible"];
 
 /** In the sidebar's order. */
 export const SECTIONS: Record<SectionId, Section> = {
@@ -38,16 +45,27 @@ export const SECTIONS: Record<SectionId, Section> = {
   appearance: {
     id: "appearance",
     icon: "palette",
-    blocks: [{ kind: "core", section: "appearance" }, { kind: "themes" }],
+    blocks: [
+      { kind: "core", section: "appearance", exclude: CONTEXT_MENU_KEYS },
+      { kind: "themes" },
+      { kind: "core-keys", section: "appearance", keys: CONTEXT_MENU_KEYS },
+    ],
   },
   window: {
     id: "window",
     icon: "window",
     blocks: [
-      { kind: "core", section: "window" },
+      { kind: "core-keys", section: "window", keys: WINDOW_KEYS },
       { kind: "plugin", id: "tray", title: "settings-ui.blocks.tray" },
       { kind: "plugin", id: "in-app-menu", title: "settings-ui.blocks.title-bar" },
+      { kind: "core", section: "settingsUi", title: "settings-ui.blocks.settings-menu" },
+      { kind: "core-keys", section: "window", keys: SYSTEM_KEYS },
     ],
+  },
+  performance: {
+    id: "performance",
+    icon: "speed",
+    blocks: [{ kind: "core", section: "performance" }],
   },
   advanced: {
     id: "advanced",
@@ -64,13 +82,23 @@ export const SECTIONS: Record<SectionId, Section> = {
 };
 
 /** The sections in the sidebar (SECTIONS is keyed by id, not ordered for display). */
-export const SECTION_ORDER: readonly SectionId[] = ["general", "appearance", "window", "advanced", "plugins", "flags", "about"];
+export const SECTION_ORDER: readonly SectionId[] = [
+  "general",
+  "appearance",
+  "window",
+  "performance",
+  "plugins",
+  "advanced",
+  "flags",
+  "about",
+];
 
 export const sectionLabel = (text: Text, id: SectionId) => text(`settings-ui.sections.${id}.label`);
 
 /** A core section's title where it is not a sidebar section of its own (search results); the site section has no card. */
 export const coreSectionLabel = (text: Text, section: Exclude<CoreSection, "site">): string => {
   if (section === "apiServer") return text("settings-ui.blocks.api-server");
+  if (section === "settingsUi") return text("settings-ui.blocks.settings-menu");
   return sectionLabel(text, section);
 };
 

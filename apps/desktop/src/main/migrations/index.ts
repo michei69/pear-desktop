@@ -34,9 +34,15 @@ const MIGRATIONS: [version: string, migration: Migration][] = [
     // plugin ids, options and their values were kept on purpose. What moved:
     "4.0.0",
     (config, files) => {
-      const options = config.options ?? {};
+      const options = (config.options ??= {});
       // The file's last writer, before this migration: some 3.x defaults changed over time.
       const previous = typeof config.__internal__?.migrations?.version === "string" ? config.__internal__.migrations.version : "0.0.0";
+      // The one performance mode toggle became a switch per part; a config written
+      // before the split still holds the boolean.
+      if (typeof options.performanceMode === "boolean") {
+        const on = options.performanceMode;
+        options.performanceMode = { flags: on, css: on, animations: on, plugins: on };
+      }
       // The tray was an app option; it is a plugin now.
       if (typeof options.tray === "boolean") ensurePluginEntry(config, "tray").enabled = options.tray;
       // With the tray on, closing the window only hid it; that is an option of its own now.

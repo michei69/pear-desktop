@@ -42,6 +42,8 @@ export interface SettingsModel {
   setConfig(id: string, patch: Record<string, unknown>): Promise<unknown>;
   setCoreConfig(section: CoreSection, patch: Record<string, unknown>): Promise<unknown>;
   relaunch(): Promise<unknown>;
+  /** Opens (or focuses) the standalone settings window. */
+  openSettingsWindow(): Promise<unknown>;
   showSettingsFile(): Promise<unknown>;
   /** Opens config.json in the default editor. */
   editConfig(): Promise<unknown>;
@@ -81,6 +83,7 @@ type SettingsCommands = Pick<
   | "setConfig"
   | "setCoreConfig"
   | "relaunch"
+  | "openSettingsWindow"
   | "showSettingsFile"
   | "editConfig"
   | "toggleDevTools"
@@ -106,6 +109,7 @@ function bridgeCommands(bridge: Bridge): SettingsCommands {
     setConfig: (id, patch) => bridge.invoke("plugin:set-config", id, patch),
     setCoreConfig: (section, patch) => bridge.invoke("core:set-config", section, patch),
     relaunch: () => bridge.invoke("app:relaunch"),
+    openSettingsWindow: () => bridge.invoke("app:open-settings-window"),
     showSettingsFile: () => bridge.invoke("app:show-settings-file"),
     editConfig: () => bridge.invoke("app:edit-config"),
     toggleDevTools: () => bridge.invoke("app:toggle-devtools"),

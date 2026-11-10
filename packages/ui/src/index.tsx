@@ -2,8 +2,7 @@
 // sidebar. Both render into shadow roots so YTM's styles can't leak in and
 // ours can't leak out.
 
-import { containScroll, shadowHost, sidebarEntry } from "@pear/sdk/dom";
-import type { Translate } from "@pear/sdk/i18n";
+import { containScroll, shadowHost, type SidebarEntry, sidebarEntry } from "@pear/sdk/dom";
 import { render } from "preact";
 import { Settings, type SettingsModel } from "./settings.tsx";
 import { UI_STRINGS } from "./strings.ts";
@@ -19,6 +18,8 @@ export interface SettingsController {
   close(): void;
   toggle(): void;
   readonly isOpen: boolean;
+  /** Applies a new settingsUi core config: shows or takes away the sidebar entry. */
+  applySettingsUi(config: Record<string, unknown>): void;
 }
 
 export function mountSettings(model: SettingsModel): SettingsController {
@@ -64,18 +65,45 @@ export function mountSettings(model: SettingsModel): SettingsController {
 
   const toggle = () => (isOpen && !closing ? close() : open());
 
+  // The dialog's own options, as the host last reported them.
+  let uiConfig: Record<string, unknown> = { ...model.core("settingsUi")?.config };
+  let entry: SidebarEntry | undefined;
+  const entryOwner = { onCleanup() {} };
+
+  /** Every entry point funnels through here, so the separate-window option is honoured. */
+  const openSettings = () => {
+    if (uiConfig.separateWindow === true) {
+      void model.openSettingsWindow();
+      return;
+    }
+    open();
+  };
+
+  const mountEntry = () => {
+    if (entry || uiConfig.showButton === false) return;
+    entry = sidebarEntry(entryOwner, {
+      name: "settings",
+      label: model.t("settings-ui.title", UI_STRINGS["settings-ui.title"]),
+      iconType: "SETTINGS_MATERIAL",
+      title: model.t("settings-ui.open-hint", UI_STRINGS["settings-ui.open-hint"]),
+      ariaLabel: model.t("settings-ui.open", UI_STRINGS["settings-ui.open"]),
+      onClick: openSettings,
+    });
+  };
+
   document.addEventListener(
     "keydown",
     (event) => {
       if ((event.ctrlKey || event.metaKey) && event.key === ",") {
         event.preventDefault();
-        toggle();
+        if (uiConfig.separateWindow === true) void model.openSettingsWindow();
+        else toggle();
       }
     },
     true,
   );
 
-  mountSidebarEntries(open, model.t);
+  mountEntry();
   return {
     get isOpen() {
       return isOpen && !closing;
@@ -83,6 +111,15 @@ export function mountSettings(model: SettingsModel): SettingsController {
     open,
     close,
     toggle,
+    applySettingsUi(config) {
+      uiConfig = { ...config };
+      if (uiConfig.showButton === false) {
+        entry?.remove();
+        entry = undefined;
+      } else {
+        mountEntry();
+      }
+    },
   };
 }
 
@@ -97,18 +134,4 @@ function createOverlay() {
   containScroll(host);
   document.body.append(host);
   return container;
-}
-
-/** A "Settings" entry at the end of the sidebar's primary section, in both the full and the mini guide. */
-function mountSidebarEntries(open: () => void, t: Translate) {
-  // The core's entry lives as long as the page.
-  const page = { onCleanup() {} };
-  sidebarEntry(page, {
-    name: "settings",
-    label: t("settings-ui.title", UI_STRINGS["settings-ui.title"]),
-    iconType: "SETTINGS_MATERIAL",
-    title: t("settings-ui.open-hint", UI_STRINGS["settings-ui.open-hint"]),
-    ariaLabel: t("settings-ui.open", UI_STRINGS["settings-ui.open"]),
-    onClick: open,
-  });
 }

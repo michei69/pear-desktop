@@ -71,6 +71,8 @@ export class CoreOptions {
       general: this.state("general"),
       window: this.state("window"),
       appearance: this.state("appearance"),
+      performance: this.state("performance"),
+      settingsUi: this.state("settingsUi"),
       advanced: this.state("advanced"),
       site: this.state("site"),
     };
@@ -128,6 +130,7 @@ export class CoreOptions {
     const window = this.#mainWindow.window;
     if (!window) return;
     window.setAlwaysOnTop(options.alwaysOnTop);
+    window.setTitle(windowTitle(this.#settings, window));
     if (process.platform !== "darwin") {
       applyHideMenu(window, options.hideMenu);
       if (options.hideMenu && !this.#settings.hideMenuWarned) this.#warnHiddenMenu(window);
@@ -153,7 +156,6 @@ export class CoreOptions {
     // swaps the native window/Dock artwork and the tray plugin's icons.
     const icon = appIcon(this.#settings.core("appearance").useYtmIcons);
     const window = this.#mainWindow.window;
-    if (window) window.setTitle(windowTitle(this.#settings, window));
     if (process.platform === "darwin") app.dock?.setIcon(icon);
     else window?.setIcon(icon);
     this.#env.refreshTrayIcons?.();

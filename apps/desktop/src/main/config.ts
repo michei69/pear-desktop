@@ -2,7 +2,10 @@
 // so existing installs keep their settings:
 //
 //   plugins.<id>        { enabled, ...config }      (the API server: plugins.api-server)
-//   options.*           the core sections (general, window, appearance, advanced, site)
+//   options.*           the core sections (general, window, appearance, performance,
+//                       advanced, site); the settings dialog's own options are at
+//                       plugins.settings-ui and the performance switches at
+//                       options.performanceMode
 //   url, window-size, window-position, window-maximized
 //   __internal__.migrations.version                 like electron-store
 //
@@ -46,6 +49,10 @@ type Json = Record<string, unknown>;
 export const CONFIG_FILE = "config.json";
 /** The API server is a core section, stored where pear-desktop's plugin kept it. */
 const API_SERVER_PLUGIN = "api-server";
+/** Core sections whose fields live in a plugin entry instead of `options`. */
+const PLUGIN_SECTIONS: Partial<Record<CoreSection, string>> = { apiServer: API_SERVER_PLUGIN, settingsUi: "settings-ui" };
+/** Core sections stored as a nested `options` object instead of flat options. */
+const NESTED_SECTIONS: Partial<Record<CoreSection, string>> = { performance: "performanceMode" };
 const WRITE_DELAY_MS = 300;
 
 export class Settings {
@@ -140,8 +147,16 @@ export class Settings {
     const shape: ConfigShape = CORE_SECTIONS[section];
     const next = normalizeConfig(shape, { ...this.#core[section], ...patch }) as CoreConfigs[K];
     this.#core[section] = next;
-    if (section === "apiServer") this.#putPlugin(API_SERVER_PLUGIN, next);
-    else {
+    const plugin = PLUGIN_SECTIONS[section];
+    const nested = NESTED_SECTIONS[section];
+    if (plugin) this.#putPlugin(plugin, next);
+    else if (nested) {
+      // Keep the object's keys this version doesn't know, like the flat options.
+      const options = this.#data.options ?? (this.#data.options = {});
+      const current = options[nested];
+      options[nested] = { ...(isRecord(current) ? current : {}), ...next };
+      this.#scheduleWrite();
+    } else {
       this.#data.options = { ...this.#data.options, ...next };
       this.#scheduleWrite();
     }
@@ -183,7 +198,8 @@ export class Settings {
   /** Hears every change of a core section; returns the unsubscribe. */
   onCoreChange(listener: (section: CoreSection) => void) {
     this.#coreListeners.add(listener);
-    return () => void this.#coreListeners.delete(listener);  }
+    return () => void this.#coreListeners.delete(listener);
+  }
 
   get window(): WindowState | undefined {
     const size = this.#data["window-size"];
@@ -236,7 +252,15 @@ export class Settings {
   }
 
   #coreSource(section: CoreSection): unknown {
-    return section === "apiServer" ? this.#data.plugins?.[API_SERVER_PLUGIN] : this.#data.options;
+    const plugin = PLUGIN_SECTIONS[section];
+    if (plugin) return this.#data.plugins?.[plugin];
+    const nested = NESTED_SECTIONS[section];
+    if (nested) {
+      const value = this.#data.options?.[nested];
+      // Existing rewrite profiles stored the one boolean here; read it as all parts on.
+      return typeof value === "boolean" ? { flags: value, css: value, animations: value, plugins: value } : value;
+    }
+    return this.#data.options;
   }
 
   #putPlugin(id: string, values: Json) {
