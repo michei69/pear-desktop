@@ -1106,7 +1106,11 @@
           "description": "Off, downloaded songs stay in the app, where the Downloads page plays them offline, until you export them from the Downloads list. Songs only yt-dlp can get are always saved to the folder."
         },
         "finish-folder": "Folder for finished downloads",
-        "finish-folder-description": "Leave unset to use the download folder above."
+        "finish-folder-description": "Leave unset to use the download folder above.",
+        "showButton": {
+          "label": "Show the Downloads entry in the sidebar",
+          "description": "Turn this off to keep the sidebar clean; Ctrl/Cmd+J and the app menu still open Downloads."
+        }
       },
       "errors": {
         "starting": "the downloader is still starting",

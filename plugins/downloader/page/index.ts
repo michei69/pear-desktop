@@ -41,19 +41,23 @@ export function startPage(ctx: Ctx) {
     startDownload({ videoId: track.videoId }, track.title);
   };
   const button = downloadButton(downloadPlaying);
-  const entry = sidebarEntry(ctx, {
-    name: "downloader",
-    label: t("plugins.downloader.downloads", "Downloads"),
-    // YTM's own "download" icon, as its Downloads page uses.
-    iconType: "DOWNLOAD",
-    onClick: () => openDownloads(),
-  });
+  // Settings can keep the sidebar clean; Ctrl+J and the app menu still open Downloads.
+  const entry =
+    ctx.config.showButton === false
+      ? undefined
+      : sidebarEntry(ctx, {
+          name: "downloader",
+          label: t("plugins.downloader.downloads", "Downloads"),
+          // YTM's own "download" icon, as its Downloads page uses.
+          iconType: "DOWNLOAD",
+          onClick: () => openDownloads(),
+        });
   const page = downloadsPage(ctx, entry);
   const openDownloads = (options?: { expanded?: boolean }) => {
-    preview.close();
+    preview?.close();
     page.open(options);
   };
-  const preview = downloadsPopover(ctx, entry, () => openDownloads({ expanded: true }));
+  const preview = entry && downloadsPopover(ctx, entry, () => openDownloads({ expanded: true }));
   // The app menu, the tray and the settings' button.
   ctx.host.on("open-downloads", () => openDownloads());
   // What the host has to say, e.g. that the app menu's "Download playlist" found none.
@@ -75,7 +79,7 @@ export function startPage(ctx: Ctx) {
     showState(button, state, t);
     // How many downloads are running or waiting.
     const count = (next.active ? 1 : 0) + next.queued;
-    entry.setBadge(count > 0 ? String(count) : "");
+    entry?.setBadge(count > 0 ? String(count) : "");
   };
   ctx.host.on("state", (payload) => apply(payload as DownloaderState));
   ctx.host.on("result", (payload) => showResult(ctx, toast, payload as JobResult, () => openDownloads({ expanded: true })));

@@ -3,6 +3,10 @@ import { DEFAULT_TEMPLATE } from "./ytdlp.ts";
 
 // Option names follow pear-desktop 3.x's where they mean the same (see PLUGIN_MIGRATIONS for the rest).
 export const downloaderConfig = {
+  showButton: config.bool(true, {
+    label: "Show the Downloads entry in the sidebar",
+    description: "Turn this off to keep the sidebar clean; Ctrl/Cmd+J and the app menu still open Downloads.",
+  }),
   downloadFolder: config.string("", {
     label: "Download folder",
     placeholder: "Downloads",

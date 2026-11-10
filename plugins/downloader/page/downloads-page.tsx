@@ -14,7 +14,7 @@ const PAGE_ATTRIBUTE = "pear-dl-downloads-page";
 
 export const onDownloadsPage = () => location.pathname.startsWith(`/browse/${DOWNLOADS_PAGE}`);
 
-export function downloadsPage(ctx: Ctx, entry: SidebarEntry) {
+export function downloadsPage(ctx: Ctx, entry: SidebarEntry | undefined) {
   const section = document.createElement("div");
   section.className = "pear-dl-section";
   let shown = false;
@@ -25,7 +25,7 @@ export function downloadsPage(ctx: Ctx, entry: SidebarEntry) {
   const update = () => {
     const here = onDownloadsPage();
     document.documentElement.toggleAttribute(PAGE_ATTRIBUTE, here);
-    entry.setSelected(here);
+    entry?.setSelected(here);
     if (here === shown) return;
     shown = here;
     if (here) {
@@ -46,7 +46,7 @@ export function downloadsPage(ctx: Ctx, entry: SidebarEntry) {
   ctx.onCleanup(() => {
     render(null, section);
     document.documentElement.removeAttribute(PAGE_ATTRIBUTE);
-    entry.setSelected(false);
+    entry?.setSelected(false);
   });
 
   return {
