@@ -14,6 +14,9 @@ interface AlbumColors {
 
 const cache = new Map<string, Promise<AlbumColors | null>>();
 
+/** Artwork that cannot be sampled tints the theme black. */
+const BLACK: Rgb = [0, 0, 0];
+
 /** Dark YTM palette colors; the current artwork color is mixed into each. */
 const VARIABLE_MAP: Record<string, string> = {
   "--ytmusic-color-black1": "#212121",
@@ -217,7 +220,8 @@ function albumColors(url: string, log: Pick<Logger, "warn">) {
 
   if (cache.size >= CACHE_LIMIT) cache.clear();
   const pending = sampleImage(url)
-    .then((average) => (average ? themeColors(average) : null))
+    // Artwork that can't be sampled tints black, as pear-desktop did, instead of leaving the last track's tint.
+    .then((average) => (average ? themeColors(average) : { color: BLACK, dark: BLACK }))
     .catch((error: unknown) => {
       cache.delete(url);
       log.warn("couldn't sample artwork", error);

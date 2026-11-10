@@ -6,7 +6,7 @@ import { isSettingsUrl, isYtmUrl } from "../shared/user-agent.ts";
 import { getAppMeta } from "./app-meta.ts";
 import { buildLabel, channel, commit, copyright } from "./app-info.ts";
 import { flagMetadata } from "./flag-metadata.ts";
-import type { PageRequests } from "./page-requests.ts";
+import { relaunchOptions } from "./app-identity.ts";import type { PageRequests } from "./page-requests.ts";
 import type { PlayerMirror } from "./player.ts";
 import type { PluginHost } from "./plugins.ts";
 import type { Themes } from "./themes.ts";
@@ -81,7 +81,7 @@ export function setupIpc({
     ping: (message) => `pong: ${message}`,
     "app:version": () => app.getVersion(),
     "app:relaunch": () => {
-      app.relaunch();
+      app.relaunch(relaunchOptions());
       app.exit(0);
     },
     "plugin:set-enabled": async (id, enabled) => void (await plugins.setEnabled(String(id), Boolean(enabled))),

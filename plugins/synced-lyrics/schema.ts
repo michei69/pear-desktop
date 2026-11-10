@@ -73,7 +73,8 @@ export const schema = {
     { label: "Lyrics size", variant: "chips" },
   ),
   gapText: config.select(
-    "dots",
+    // ♪ by default, as pear-desktop. "Nothing" leaves the break blank.
+    "note",
     [
       { value: "dots", label: "Animated dots" },
       { value: "bullets", label: "•••" },

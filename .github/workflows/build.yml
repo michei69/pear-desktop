@@ -6,11 +6,10 @@ on:
   workflow_dispatch:
 
 env:
-  NODE_VERSION: "24.x"
+  NODE_VERSION: "24" # nub resolves a major, not ranges like 24.x
   # Baked into the build and shown in the About window (apps/desktop).
   PEAR_CHANNEL: beta
   PEAR_COMMIT: ${{ github.sha }}
-
 jobs:
   build:
     # Beta builds only produce artifacts, the publish-beta job below owns the release.
@@ -76,7 +75,6 @@ jobs:
           sudo flatpak install -y flathub org.freedesktop.Sdk/aarch64/26.08
           sudo flatpak install -y flathub org.electronjs.Electron2.BaseApp/aarch64/26.08
           nub run beta:linux
-
       - name: Build on Windows
         if: startsWith(matrix.os, 'windows')
         run: nub run beta:win

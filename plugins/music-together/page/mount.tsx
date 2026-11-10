@@ -4,11 +4,13 @@
 import type { PageContextOf, YTPlayerApi } from "@pear/sdk";
 import { isolateKeys, shadowHost } from "@pear/sdk/dom";
 import { render } from "preact";
+import { type AppElement, fetchAccount } from "../account.ts";
 import { Connection } from "../connection.ts";
 import { parseIceServers } from "../ice.ts";
 import type { QueueElement } from "../queue.ts";
 import type { schema } from "../schema.ts";
 import { Together } from "../together.ts";
+import type { Account } from "../types.ts";
 import { launcherStyles, panelStyles } from "./styles.ts";
 import { LauncherButton, Panel } from "./ui.tsx";
 
@@ -23,6 +25,8 @@ const PANEL_GAP = 8;
 
 export function mountTogether(ctx: Ctx) {
   const t = ctx.t;
+  // As pear-desktop: the signed-in account is the user's profile; the name setting is for when signed out.
+  let account: Account | null = null;
   const together = new Together({
     // Read at host/join time, so a changed server list applies to the next session.
     createConnection: () => new Connection(ctx.log, parseIceServers(ctx.config.iceServers)),
@@ -30,6 +34,7 @@ export function mountTogether(ctx: Ctx) {
     player: () => ctx.player.api as YTPlayerApi | null,
     toast: (message) => ctx.toast(message),
     t,
+    account: () => account,
     name: () => ctx.config.displayName,
     defaultPermission: () => ctx.config.defaultPermission,
     log: ctx.log,
@@ -66,6 +71,7 @@ export function mountTogether(ctx: Ctx) {
           <Panel
             together={together}
             t={t}
+            account={account}
             name={ctx.config.displayName}
             setName={(name) => ctx.setConfig({ displayName: name })}
             copy={copy}
@@ -106,6 +112,17 @@ export function mountTogether(ctx: Ctx) {
     else container.prepend(host);
   });
   draw();
+
+  void ctx.player
+    .ready()
+    .then(() => fetchAccount(ctx.$<AppElement>("app")))
+    .then(
+      (found) => {
+        account = found;
+        draw();
+      },
+      (error: unknown) => ctx.log.warn("couldn't read the signed-in account", error),
+    );
 
   ctx.onCleanup(() => {
     stopped = true;

@@ -62,7 +62,12 @@ export default definePlugin({
     sel(player.song_video) .html5-video-container {
       height: 100%;
     }
-    sel(player.container):not([video-mode]):not([player-ui-state='MINIPLAYER']) {
+    sel(player.video_container) {
+      height: 100%;
+    }
+    sel(player.container):not([video-mode]):not([player-ui-state='MINIPLAYER']):not([is-mweb-modernization-enabled]) {
+      width: 100%;
+      margin: 0 auto !important;
       width: 100%;
       margin: 0 auto !important;
       overflow: visible;

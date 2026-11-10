@@ -5,7 +5,7 @@ import { runDiagnostics } from "../diagnostics.ts";
 import type { CheckId, DiagnosticCheck, DiagnosticResult, NatType } from "../diagnostics-analysis.ts";
 import { parseIceServers } from "../ice.ts";
 import type { Together } from "../together.ts";
-import { PERMISSIONS, type Profile } from "../types.ts";
+import { type Account, PERMISSIONS, type Profile } from "../types.ts";
 
 function useTogether(together: Together) {
   const [, setTick] = useState(0);
@@ -35,6 +35,8 @@ export function LauncherButton({ together, open, onClick }: { together: Together
 export interface PanelProps {
   together: Together;
   t: Translate;
+  /** The signed-in account (its name and photo are the user's profile), or `null`. */
+  account: Account | null;
   name: string;
   setName(name: string): void;
   copy(text: string): void;
@@ -71,7 +73,7 @@ export function Panel(props: PanelProps) {
   );
 }
 
-function Start({ together, t, name, setName, copy }: PanelProps) {
+function Start({ together, t, account, name, setName, copy }: PanelProps) {
   const [hostId, setHostId] = useState("");
   return (
     <>
@@ -89,10 +91,17 @@ function Start({ together, t, name, setName, copy }: PanelProps) {
           </p>
         </div>
       </header>
-      <label class="field">
-        <span>{t("plugins.music-together.settings.displayName.label", "Your name")}</span>
-        <input value={name} maxLength={32} onChange={(e) => setName(e.currentTarget.value.trim())} />
-      </label>
+      {account ? (
+        <div class="me">
+          {account.thumbnail && <img class="avatar" src={account.thumbnail} alt="" />}
+          <span class="name">{account.name}</span>
+        </div>
+      ) : (
+        <label class="field">
+          <span>{t("plugins.music-together.settings.displayName.label", "Your name")}</span>
+          <input value={name} maxLength={32} onChange={(e) => setName(e.currentTarget.value.trim())} />
+        </label>
+      )}
       <button
         type="button"
         class="button primary wide"

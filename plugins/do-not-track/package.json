@@ -12,7 +12,6 @@
   },
   "devDependencies": {
     "@types/node": "^24.0.0",
-    "electron": "45.0.0",
-    "vitest": "^5.0.5"
+    "electron": "45.0.0",    "vitest": "^5.0.5"
   }
 }

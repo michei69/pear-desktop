@@ -245,9 +245,8 @@ export default createPlugin({
 4. Run the build command for your OS:
 
 - `nub run dist:win` - Windows
-- `nub run dist:linux` - Linux (amd64)
-- `nub run dist:linux:deb-arm64` - Linux (arm64 for Debian)
-- `nub run dist:linux:rpm-arm64` - Linux (arm64 for Fedora)
+- `nub run dist:linux` - Linux (amd64 and arm64)
+- `nub run dist:linux:armv7l` - Linux (32-bit ARM, on Electron 43)
 - `nub run dist:mac` - macOS (amd64)
 - `nub run dist:mac:arm64` - macOS (arm64)
 

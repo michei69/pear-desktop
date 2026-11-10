@@ -43,13 +43,11 @@ const startingPageOptions = Object.keys(STARTING_PAGES).map((value) => ({
 export const GENERAL = {
   resumeOnStart: config.bool(true, {
     label: "Resume the last song",
-    description: "Plays the track that was playing when the app last closed.",
-    group: "Startup",
+    description: "Opens the song you played last when the app starts.",    group: "Startup",
   }),
   startingPage: config.select("", startingPageOptions, {
     label: "Starting page",
-    description: "Used when the last song isn't resumed.",
-    group: "Startup",
+    description: "The page shown when the app starts, also with the last song resumed.",    group: "Startup",
     variant: "dropdown",
   }),
   language: config.select("", [{ value: "", label: "System default" }, ...languages()], {
@@ -181,7 +179,12 @@ export const ADVANCED = {
     description: "Replaces Chromium's media session with the native System Media Transport Controls.",
     group: "Integration",
     platforms: ["win32"],
-    restart: true,
+  }
+
+  overrideUserAgent: config.bool(false, {
+    label: "Override the user agent",
+    description: "Tell \u0059\u006f\u0075\u0054\u0075\u0062\u0065 Music this is Chrome rather than an Electron app. Google sign-in always sees the app as it is.",
+    group: "Network",    restart: true,
   }),
   proxy: config.string("", {
     label: "Proxy",
@@ -317,6 +320,10 @@ export const CORE_SECTIONS = {
 } as const;
 
 export type CoreSection = keyof typeof CORE_SECTIONS;
+
+/** The core sections plugins may read: all but the API server's (it holds the token secret). */
+export type PluginCoreSection = Exclude<CoreSection, "apiServer">;
+export type CoreConfigOf<S extends CoreSection> = ConfigOf<(typeof CORE_SECTIONS)[S]>;
 
 export function isCoreSection(name: string): name is CoreSection {
   return Object.hasOwn(CORE_SECTIONS, name);

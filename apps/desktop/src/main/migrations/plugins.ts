@@ -190,9 +190,12 @@ export const PLUGIN_MIGRATIONS: Record<string, PluginMigration> = {
     };
     if (Object.keys(bounds).length > 0) files["picture-in-picture.json"] ??= bounds;
   },
-  "precise-volume": (entry) => {
+  "precise-volume": (entry, _config, files) => {
     flattenStrings(entry, entry.globalShortcuts, { volumeUp: "volumeUp", volumeDown: "volumeDown" });
     clampNumber(entry, "steps", 1, 100);
+    // The volume restored on start; the rewrite keeps it in a file of its own.
+    const volume = entry.savedVolume;
+    if (isNumber(volume)) files["precise-volume.json"] ??= { volume: clamp(Math.round(volume), 0, 100) };
   },
   scrobbler: (entry) => {
     const scrobblers: Json = isRecord(entry.scrobblers) ? entry.scrobblers : {};
@@ -233,7 +236,7 @@ export const PLUGIN_MIGRATIONS: Record<string, PluginMigration> = {
   // showLyricsEvenIfInexact keep their names and values.
   "synced-lyrics": (entry) => {
     // defaultTextString: what fills instrumental gaps; ♪ by default in pear-desktop
-    // (which didn't store defaults), animated dots in the rewrite.
+    // (which didn't store defaults) and in the rewrite. " " showed a blank line, as "none" does.
     setNew(entry, "gapText", gapText(entry.defaultTextString));
     const chinese = entry.convertChineseCharacter;
     if (typeof chinese === "string" && Object.hasOwn(CHINESE_CONVERSIONS, chinese)) {

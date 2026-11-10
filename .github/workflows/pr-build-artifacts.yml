@@ -7,7 +7,7 @@ on:
 permissions: {}
 
 env:
-  NODE_VERSION: "24.x"
+  NODE_VERSION: "24" # nub resolves a major, not ranges like 24.x
 
 jobs:
   check-permissions:
@@ -74,8 +74,7 @@ jobs:
           sudo flatpak install -y flathub org.freedesktop.Sdk/aarch64/26.08
           sudo flatpak install -y flathub org.electronjs.Electron2.BaseApp/aarch64/26.08
           nub run dist:linux
-          nub run dist:linux:deb-arm64
-          nub run dist:linux:rpm-arm64
+          nub run dist:linux:armv7l
 
       - name: Build on Windows
         if: startsWith(matrix.os, 'windows')

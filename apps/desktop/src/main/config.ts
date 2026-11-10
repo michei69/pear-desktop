@@ -54,6 +54,7 @@ export class Settings {
   #definitions: Map<string, AnyPlugin>;
   #plugins = new Map<string, PluginState>();
   #core: CoreConfigs;
+  #coreListeners = new Set<(section: CoreSection) => void>();
   #writeTimer: ReturnType<typeof setTimeout> | undefined;
 
   constructor(userData: string, plugins: readonly AnyPlugin[], appVersion: string, platform: string = process.platform) {
@@ -144,6 +145,7 @@ export class Settings {
       this.#data.options = { ...this.#data.options, ...next };
       this.#scheduleWrite();
     }
+    for (const listener of this.#coreListeners) listener(section);
     return next;
   }
 
@@ -178,6 +180,11 @@ export class Settings {
     this.#scheduleWrite();
   }
 
+  /** Hears every change of a core section; returns the unsubscribe. */
+  onCoreChange(listener: (section: CoreSection) => void) {
+    this.#coreListeners.add(listener);
+    return () => void this.#coreListeners.delete(listener);  }
+
   get window(): WindowState | undefined {
     const size = this.#data["window-size"];
     if (!isRecord(size) || typeof size.width !== "number" || typeof size.height !== "number") return undefined;
@@ -208,6 +215,16 @@ export class Settings {
   set lastPlayback(url: string) {
     if (this.#data.url === url) return;
     this.#data.url = url;
+    this.#scheduleWrite();
+  }
+
+  /** Whether the user was told how to bring back the hidden menu bar (pear-desktop's options.hideMenuWarned). */
+  get hideMenuWarned() {
+    return isRecord(this.#data.options) && this.#data.options.hideMenuWarned === true;
+  }
+
+  set hideMenuWarned(warned: boolean) {
+    this.#data.options = { ...this.#data.options, hideMenuWarned: warned };
     this.#scheduleWrite();
   }
 

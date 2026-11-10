@@ -21,8 +21,9 @@ test("runtime is injected before page scripts and the bridge works", async ({ ap
   const meta = await page.evaluate(() => document.querySelector('meta[http-equiv="Content-Security-Policy" i]')?.getAttribute("content"));
   expect(meta ?? null).toBeNull();
 
+  // As pear-desktop: Electron's own UA, unless advanced.overrideUserAgent.
   const ua = await page.evaluate(() => navigator.userAgent);
-  expect(ua).not.toMatch(/Electron|th-ch/);
+  expect(ua).toMatch(/Electron\/\d+/);
 });
 
 test("fresh profile skips the cookie-consent screen with essential-only consent", async ({ app }) => {
