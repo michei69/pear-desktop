@@ -1,14 +1,16 @@
 import type { PageContextOf } from "@pear/sdk";
-import { queueShuffleEnabled, queueStore } from "@pear/sdk";
+import { onQueueChange, queueItems, queueShuffle, queueShuffleEnabled } from "@pear/sdk";
 import { resumeShuffleConfig } from "./config.ts";
-import { isShuffled, RESTORE_TIMEOUT_MS, type ShuffleQueue, shuffleWhenReady } from "./restore.ts";
+import { isShuffled, RESTORE_TIMEOUT_MS, type ShuffleAdapter, shuffleWhenReady } from "./restore.ts";
 
 type Ctx = PageContextOf<typeof resumeShuffleConfig>;
 
-/** The queue as this plugin uses it, or undefined while YTM has not built one. */
-const readQueue = (): ShuffleQueue | undefined => {
-  const queue = queueStore();
-  return queue ? (queue as unknown as ShuffleQueue) : undefined;
+/** The queue, as the restore needs it: item count, shuffle flag and changes. */
+const adapter: ShuffleAdapter = {
+  items: () => queueItems().length,
+  shuffled: queueShuffleEnabled,
+  shuffle: queueShuffle,
+  subscribe: onQueueChange,
 };
 
 export async function startResumeShuffle(ctx: Ctx) {
@@ -26,39 +28,19 @@ export async function startResumeShuffle(ctx: Ctx) {
     if (save) ctx.setConfig({ shuffled: queueShuffleEnabled() });
   };
 
-  const subscribe = (): boolean => {
-    const queue = readQueue();
-    const store = queue?.store.store;
-    if (!store?.subscribe) return false;
-    unsubscribeState = store.subscribe(persist);
-    return true;
-  };
-
-  if (subscribe()) persist();
+  // Safe to register before the app element exists: it waits for it.
+  unsubscribeState = adapter.subscribe(persist);
+  persist();
 
   if (!shouldRestore) return () => unsubscribeState?.();
 
-  let cancel: (() => void) | undefined;
-  const queue = readQueue();
-  if (queue) {
-    cancel = shuffleWhenReady(queue, () => {
-      save = true;
-    });
-  } else {
-    // No queue yet: keep the saved flag, and start saving once one appears.
-    const timer = ctx.setTimeout(() => {
-      save = true;
-      if (subscribe()) persist();
-    }, RESTORE_TIMEOUT_MS);
-    cancel = () => ctx.clearTimeout(timer);
-  }
-
-  ctx.log.info(
-    `resume-shuffle: restoring a shuffled queue (${isShuffled(queue) ? "already shuffled" : "shuffling"})`,
-  );
+  const cancel = shuffleWhenReady(adapter, () => {
+    save = true;
+  });
+  ctx.log.info(`resume-shuffle: restoring a shuffled queue (${isShuffled(adapter) ? "already shuffled" : "shuffling"})`);
 
   return () => {
-    cancel?.();
+    cancel();
     unsubscribeState?.();
   };
 }

@@ -4,20 +4,20 @@
 /** How long a resumed queue may take to fill before the restore gives up. */
 export const RESTORE_TIMEOUT_MS = 10_000;
 
-/** The part of YTM's queue store this plugin needs; a fake satisfies it in tests. */
-export interface ShuffleStore {
-  getState(): { queue: { items: unknown[]; shuffleEnabled?: boolean } };
-  subscribe?(listener: () => void): () => void;
+/** What the restore needs from the player page; a fake satisfies it in tests. */
+export interface ShuffleAdapter {
+  /** How many items the queue has; the resumed queue fills asynchronously. */
+  items(): number;
+  shuffled(): boolean;
+  /** Asks YTM to shuffle (its own button). */
+  shuffle(): boolean;
+  /** Fires on every queue change; returns the unsubscribe. */
+  subscribe(listener: () => void): () => void;
 }
 
-export interface ShuffleQueue {
-  store: { store: ShuffleStore };
-  shuffle?(): Promise<unknown>;
-}
-
-/** Whether the queue is shuffled right now. */
-export function isShuffled(queue: ShuffleQueue | undefined): boolean {
-  return queue?.store.store.getState().queue.shuffleEnabled ?? false;
+/** Whether the queue is shuffled right now, through the adapter. */
+export function isShuffled(adapter: Pick<ShuffleAdapter, "shuffled">): boolean {
+  return adapter.shuffled();
 }
 
 /**
@@ -26,11 +26,10 @@ export function isShuffled(queue: ShuffleQueue | undefined): boolean {
  * plugin or surprise a queue the user starts later.
  */
 export function shuffleWhenReady(
-  queue: ShuffleQueue,
+  adapter: ShuffleAdapter,
   onDone: () => void,
   timeoutMs: number = RESTORE_TIMEOUT_MS,
 ): () => void {
-  const store = queue.store.store;
   let unsubscribe: (() => void) | undefined;
   let finished = false;
   let timeout: ReturnType<typeof setTimeout> | undefined;
@@ -44,15 +43,14 @@ export function shuffleWhenReady(
   };
 
   const shuffle = () => {
-    if (!store.getState().queue.items.length) return;
+    if (adapter.items() === 0) return;
+    const already = adapter.shuffled();
     finish();
     // The queue can report itself shuffled already: then there is nothing to do.
-    if (!isShuffled(queue)) {
-      void queue.shuffle?.().catch((error: unknown) => console.error("[resume-shuffle] couldn't shuffle", error));
-    }
+    if (!already && !adapter.shuffle()) console.warn("[resume-shuffle] couldn't find the shuffle button");
   };
 
-  unsubscribe = store.subscribe?.(shuffle);
+  unsubscribe = adapter.subscribe(shuffle);
   shuffle();
   timeout = setTimeout(finish, timeoutMs);
 

@@ -65,18 +65,67 @@ export function queueDispatch(action: QueueAction) {
   playerQueue()?.dispatch(action);
 }
 
-/** Whether YTM's queue is in shuffle mode (false while there is no queue yet). */
+/** The app element, where YTM's own queue slice lives (the app reads it here too). */
+interface AppQueueElement extends HTMLElement {
+  getState?(): { queue?: { shuffleEnabled?: boolean } } | undefined;
+  ytmusicReduxBehavior?: {
+    store: { store: { getState(): { queue?: { shuffleEnabled?: boolean } }; subscribe?(listener: () => void): unknown } };
+  };
+}
+
+const appQueue = () => document.querySelector<AppQueueElement>(selectors.app);
+
+/** YTM's queue store on the app element, which outlives the queue element's re-renders. */
+export function appQueueStore() {
+  return appQueue()?.ytmusicReduxBehavior?.store?.store;
+}
+
+/**
+ * Whether the queue is shuffled. Read where YTM keeps it: the app element's own
+ * state, then its redux slice, then the player bar's `shuffle-on` attribute (the
+ * fallback the app's player already uses when the field is missing).
+ */
 export function queueShuffleEnabled(): boolean {
-  return queueStore()?.store.store.getState().queue.shuffleEnabled ?? false;
+  const queue = appQueue()?.getState?.()?.queue ?? appQueueStore()?.getState().queue;
+  if (typeof queue?.shuffleEnabled === "boolean") return queue.shuffleEnabled;
+  return document.querySelector(selectors.player_bar)?.hasAttribute("shuffle-on") ?? false;
 }
 
-/** Lets YTM shuffle the queue; nothing happens when there is no queue to shuffle. */
-export function queueShuffle(): Promise<unknown> | undefined {
-  return queueStore()?.shuffle?.();
+/** Shuffles the queue through YTM's own button, which works without a queue element. */
+export function queueShuffle(): boolean {
+  const button = document.querySelector<HTMLElement>("#shuffle-button, [aria-label='Shuffle']");
+  if (!button) return false;
+  button.click();
+  return true;
 }
 
-/** Calls `listener` on every queue change; returns the unsubscribe. */
-export function onQueueStoreChange(listener: () => void): () => void {
-  const unsubscribe = queueStore()?.store.store.subscribe?.(listener);
-  return typeof unsubscribe === "function" ? unsubscribe : () => {};
+/**
+ * Calls `listener` on every queue change; returns the unsubscribe. The app
+ * element can take a moment to exist, so a listener registered early waits for
+ * it (up to `timeoutMs`) instead of silently never firing.
+ */
+export function onQueueChange(listener: () => void, timeoutMs = 10_000): () => void {
+  let unsubscribe: (() => void) | undefined;
+  let cancelled = false;
+  let retry: ReturnType<typeof setTimeout> | undefined;
+  const deadline = Date.now() + timeoutMs;
+
+  const attach = () => {
+    if (cancelled || unsubscribe) return;
+    const store = appQueueStore();
+    const result = store?.subscribe?.(listener);
+    if (typeof result === "function") {
+      unsubscribe = result as () => void;
+      return;
+    }
+    if (Date.now() >= deadline) return;
+    retry = setTimeout(attach, 250);
+  };
+
+  attach();
+  return () => {
+    cancelled = true;
+    if (retry !== undefined) clearTimeout(retry);
+    unsubscribe?.();
+  };
 }
