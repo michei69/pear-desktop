@@ -1,7 +1,8 @@
 import { beforeEach, describe, expect, test } from "vitest";
 import { artistSimilarity, jaroWinkler, titleSimilarity } from "../match.ts";
-import { extractLyrics } from "../providers/genius.ts";
 import { SearchCache } from "../providers/index.ts";
+import { lrchub, pickLrchubLrc } from "../providers/lrchub.ts";
+import { lrcred, linesFromJson } from "../providers/lrcred.ts";
 import { lrclib } from "../providers/lrclib.ts";
 import { megalobiz, pickSheet, sheetToResult } from "../providers/megalobiz.ts";
 import {
@@ -14,6 +15,7 @@ import {
   splitTitle,
 } from "../providers/netease.ts";
 import { isUsableToken, musixmatch, parseMacro, resetMusixmatchToken } from "../providers/musixmatch.ts";
+import { decodeHtmlEntities, pickBestSimpMusicEntry, richSyncToLrc, simpmusic } from "../providers/simpmusic.ts";
 import { ytmusic } from "../providers/ytmusic.ts";
 import type { SearchQuery } from "../types.ts";
 // Recorded from the real APIs (October 2026), lyrics cut to a few lines.
@@ -206,10 +208,199 @@ describe("ytmusic", () => {
   });
 });
 
-describe("genius", () => {
-  test("extracts lyrics from the preloaded state", () => {
-    const page = `<script>window.__PRELOADED_STATE__ = JSON.parse('{\\"body\\":{\\"html\\":\\"<p>[Chorus]<br>\\\\nNever &amp; ever<\\\\/p>\\",\\"children\\":[]}}');</script>`;
-    expect(extractLyrics(page)).toBe("[Chorus]\nNever & ever");
+describe("lrchub", () => {
+  test("posts the track and reads the line-synced LRC", async () => {
+    const fetch = mockFetch([
+      [
+        /lrchub\.coreone\.work\/api\/lyrics/,
+        { track: "APT.", artist: "ROSÉ & Bruno Mars", synced_lyrics: "[00:00.00]아파트 아파트\n[00:02.50]Uh uh huh uh huh" },
+      ],
+    ]);
+    const result = await lrchub(query, fetch);
+
+    expect(fetch.calls[0]).toBe("POST https://lrchub.coreone.work/api/lyrics");
+    expect(JSON.parse(String(fetch.inits[0]?.body))).toMatchObject({
+      track: query.title,
+      artist: query.artist,
+      video_id: query.videoId,
+    });
+    expect(result?.lines?.map((line) => line.text)).toEqual(["아파트 아파트", "Uh uh huh uh huh"]);
+    expect(result?.lines?.[1]?.startMs).toBe(2500);
+    expect(result?.artists).toEqual(["ROSÉ", "Bruno Mars"]);
+  });
+
+  test("keeps the word timings of its word-synced fields", async () => {
+    const fetch = mockFetch([[/api\/lyrics/, { lyrics: "[00:00.00]<00:00.00>아<00:00.25>파트" }]]);
+    const result = await lrchub(query, fetch);
+
+    expect(result?.lines?.[0]?.text).toBe("아파트");
+    expect(result?.lines?.[0]?.words?.[0]).toStrictEqual({ startMs: 0, endMs: 250, text: "아" });
+    expect(pickLrchubLrc({ synced_lyrics: "a", lyrics: "b" })).toBe("a");
+    expect(pickLrchubLrc({ lyrics: "b", dynamic_lrc: "c" })).toBe("b");
+  });
+
+  test("treats the overloaded SERVER_BUSY answer as no lyrics after retrying", async () => {
+    let calls = 0;
+    const fetch = async () => {
+      calls += 1;
+      return new Response(JSON.stringify({ code: "SERVER_BUSY", found: false, ok: false }), { status: 503 });
+    };
+
+    expect(await lrchub(query, fetch)).toBeNull();
+    expect(calls).toBe(3);
+  });
+
+  test("returns null when the server has no record", async () => {
+    expect(await lrchub(query, async () => new Response("{}", { status: 404 }))).toBeNull();
+  });
+});
+
+const simpMusicSong = {
+  type: "success",
+  data: [
+    {
+      songTitle: "APT.",
+      artistName: "ROSÉ & Bruno Mars",
+      richSyncLyrics: "[00:06.677]v1:<00:06.677>아<00:07.066>파트 <00:07.439>\n[00:08.240]v2:<00:08.240>Kissy <00:08.629>face ",
+      vote: 1,
+    },
+  ],
+};
+
+describe("simpmusic", () => {
+  test("sends its client User-Agent and converts rich sync to line LRC", async () => {
+    const fetch = mockFetch([[/api-lyrics\.simpmusic\.org/, simpMusicSong]]);
+    const result = await simpmusic(query, fetch);
+
+    const headers = fetch.inits[0]?.headers as Record<string, string>;
+    expect(fetch.calls[0]).toBe(`GET https://api-lyrics.simpmusic.org/v1/${query.videoId}`);
+    expect(headers["User-Agent"]).toBe("SimpMusicLyrics/1.0");
+
+    const lines = result?.lines?.filter((line) => line.text) ?? [];
+    expect(lines.map((line) => line.text)).toEqual(["아파트", "Kissy face"]);
+    expect(lines[0]?.startMs).toBe(6677);
+    expect(lines[0]?.words?.[0]).toStrictEqual({ startMs: 6677, endMs: 7066, text: "아" });
+  });
+
+  test("prefers rich sync over synced over plain and decodes entities", () => {
+    expect(pickBestSimpMusicEntry([{ plainLyric: "p" }, { syncedLyrics: "s" }])?.syncedLyrics).toBe("s");
+    expect(richSyncToLrc("[00:01.00]v1:<00:01.00>a <00:01.50>b")).toBe("[00:01.00]<00:01.00>a <00:01.50>b");
+    expect(decodeHtmlEntities("a &amp; b &lt;c&gt;")).toBe("a & b <c>");
+    expect(decodeHtmlEntities("&#x27;Cause you&#x27;re")).toBe("'Cause you're");
+  });
+
+  test("returns null when the API has no lyrics for the video", async () => {
+    expect(await simpmusic(query, async () => new Response("{}", { status: 404 }))).toBeNull();
+  });
+});
+
+const LRC_RED_TTML = `<?xml version="1.0" encoding="UTF-8"?>
+<tt xmlns="http://www.w3.org/ns/ttml" xmlns:lrc="http://lrc.red/lyric-ttml-internal" xmlns:ttm="http://www.w3.org/ns/ttml#metadata" xml:lang="en">
+  <head><metadata>
+    <ttm:agent type="person" xml:id="v1"/>
+    <ttm:agent type="person" xml:id="v2"/>
+    <ttm:translation xml:lang="ja"><ttm:text for="L1">こんにちは</ttm:text></ttm:translation>
+  </metadata></head>
+  <body><div lrc:songPart="Verse">
+    <p begin="1.0" end="3.0" lrc:key="L1" ttm:agent="v1"><span begin="1.0" end="1.5">Hello</span> <span begin="1.5" end="2.2">world</span> <span ttm:role="x-bg"><span begin="2.3" end="2.6">(ooh)</span></span></p>
+    <p begin="4.0" end="5.0" ttm:agent="v2">Second line</p>
+  </div></body>
+</tt>`;
+
+describe("lrcred", () => {
+  const song = { isrc: "USAT22409184", title: "APT.", artist: "ROSÉ, Bruno Mars", duration: 178 };
+
+  test("matches a track and turns lrc.red TTML into word-synced lines", async () => {
+    const fetch = mockFetch([
+      [/match\.json/, { hits: [song] }],
+      [/\.song\.json/, { title: "APT.", artist: "ROSÉ, Bruno Mars", source: LRC_RED_TTML, lyrics: { lines: [] } }],
+    ]);
+    const result = await lrcred({ ...query, title: "APT.", artist: "ROSÉ & Bruno Mars", album: "rosie", durationSeconds: 178 }, fetch);
+
+    const match = new URL(fetch.calls[0]!.replace("GET ", ""));
+    expect(match.origin + match.pathname).toBe("https://lrc.red/match.json");
+    expect(Object.fromEntries(match.searchParams)).toEqual({
+      track: "APT.",
+      artist: "ROSÉ & Bruno Mars",
+      album: "rosie",
+      duration: "178",
+    });
+    expect(fetch.calls[1]).toContain("/s/USAT22409184.song.json");
+
+    expect(result?.title).toBe("APT.");
+    expect(result?.artists).toEqual(["ROSÉ", "Bruno Mars"]);
+
+    const [first, second] = result!.lines!;
+    expect(first).toMatchObject({ startMs: 1000, endMs: 3000, text: "Hello world", alignment: "start" });
+    expect(first!.words).toStrictEqual([
+      { startMs: 1000, endMs: 1500, text: "Hello " },
+      { startMs: 1500, endMs: 2200, text: "world " },
+    ]);
+    expect(first!.background).toStrictEqual([{ startMs: 2300, endMs: 2600, text: "(ooh)" }]);
+    expect(second).toMatchObject({ startMs: 4000, endMs: 5000, text: "Second line", alignment: "end" });
+    expect(second!.words).toBeUndefined();
+
+    expect(result?.translation).toMatchObject({
+      language: "ja",
+      provider: "lrc.red",
+      lines: [{ startMs: 1000, endMs: 3000, text: "こんにちは" }],
+    });
+  });
+
+  test("a hit whose duration is another recording is rejected", async () => {
+    const fetch = mockFetch([[/match\.json/, { hits: [{ ...song, duration: 300 }] }]]);
+    expect(await lrcred({ ...query, durationSeconds: 178 }, fetch)).toBeNull();
+    expect(fetch.calls).toHaveLength(1);
+  });
+
+  test("falls back to the JSON lines and their word groups", async () => {
+    const fetch = mockFetch([
+      [/match\.json/, { hits: [song] }],
+      [
+        /\.song\.json/,
+        {
+          title: "APT.",
+          artist: "ROSÉ, Bruno Mars",
+          lyrics: {
+            lines: [
+              {
+                begin: 1,
+                end: 2.5,
+                text: "Say my name",
+                words: [
+                  [{ begin: 1, end: 1.3, text: "Say" }],
+                  [{ begin: 1.3, end: 1.7, text: "my" }],
+                  [{ begin: 1.7, end: 2.5, text: "name" }],
+                ],
+              },
+            ],
+          },
+        },
+      ],
+    ]);
+    const result = await lrcred({ ...query, durationSeconds: 178 }, fetch);
+
+    expect(result?.lines?.[0]).toMatchObject({ startMs: 1000, endMs: 2500, text: "Say my name" });
+    expect(result?.lines?.[0]?.words).toStrictEqual([
+      { startMs: 1000, endMs: 1300, text: "Say " },
+      { startMs: 1300, endMs: 1700, text: "my " },
+      { startMs: 1700, endMs: 2500, text: "name" },
+    ]);
+    expect(result?.plain).toBe("Say my name");
+  });
+
+  test("missing or failing endpoints mean no lyrics, never an error", async () => {
+    expect(await lrcred(query, mockFetch([[/match\.json/, { hits: [] }]]))).toBeNull();
+    expect(await lrcred(query, async () => new Response("", { status: 500 }))).toBeNull();
+    expect(
+      await lrcred(query, async () => {
+        throw new Error("network down");
+      }),
+    ).toBeNull();
+  });
+
+  test("the JSON fallback ignores untimed lines", () => {
+    expect(linesFromJson({ lyrics: { lines: [{ text: "no timing" }] } })).toStrictEqual([]);
   });
 });
 
@@ -223,8 +414,8 @@ describe("SearchCache", () => {
     expect(runs).toBe(1);
 
     const failing = () => (runs++, Promise.reject(new Error("offline")));
-    await expect(cache.get("LyricsGenius", query, failing)).rejects.toThrow();
-    await expect(cache.get("LyricsGenius", query, failing)).rejects.toThrow();
+    await expect(cache.get("LRCHub", query, failing)).rejects.toThrow();
+    await expect(cache.get("LRCHub", query, failing)).rejects.toThrow();
     expect(runs).toBe(3);
   });
 });

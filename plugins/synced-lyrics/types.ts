@@ -1,19 +1,22 @@
 // Shared between the host (providers) and the page (renderer).
 
 // The ids are pear-desktop's provider names, which its `preferredProvider` setting
-// stores, in the order of its lyrics picker (Megalobiz after Musixmatch). NetEase
-// came later, so it is appended to keep stored choices and the picker's order.
-export const PROVIDERS = ["YTMusic", "LRCLib", "MusixMatch", "Megalobiz", "LyricsGenius", "NetEase"] as const;
+// stores. lrc.red comes first: it is the only source with word-synced TTML for most
+// tracks. The rest keep pear-desktop's picker order (Megalobiz after Musixmatch,
+// NetEase last), and providers added after a stored order are appended.
+export const PROVIDERS = ["LrcRed", "YTMusic", "LRCLib", "MusixMatch", "Megalobiz", "NetEase", "LRCHub", "SimpMusic"] as const;
 export type ProviderId = (typeof PROVIDERS)[number];
 
 /** As pear-desktop's picker shows them. */
 export const PROVIDER_NAMES: Record<ProviderId, string> = {
+  LrcRed: "lrc.red",
   YTMusic: "YTMusic",
   LRCLib: "LRCLib",
   MusixMatch: "MusixMatch",
   Megalobiz: "Megalobiz",
-  LyricsGenius: "LyricsGenius",
   NetEase: "NetEase",
+  LRCHub: "LRCHub",
+  SimpMusic: "SimpMusic",
 };
 
 export interface LyricWord {
@@ -30,6 +33,12 @@ export interface LyricLine {
   text: string;
   /** Present when the provider has word-level timing. */
   words?: LyricWord[];
+  /** Timing of background vocals sung over this line (TTML providers). */
+  background?: LyricWord[];
+  /** Duet line alignment: right-aligned when the other singer takes over. */
+  alignment?: "start" | "end";
+  /** Right-to-left line, so the karaoke fill runs right-to-left. */
+  rtl?: boolean;
 }
 
 /** A translation the provider ships with its lyrics (NetEase's `tlyric`). */
@@ -209,3 +218,6 @@ export const TRANSLATION_TARGET_LANGUAGES: readonly TranslationTargetLanguage[] 
 export type OpenAICompatibleApiMode = "responses" | "chat-completions" | "auto";
 export type LocalCliProviderEngine = "claude" | "codex" | "gemini";
 export type LyricsFontSize = "small" | "medium" | "large";
+
+/** Which renderer draws the lyrics: the plugin's own list, or am-lyrics in Apple Music style. */
+export type LyricsStyle = "standard" | "apple-music";

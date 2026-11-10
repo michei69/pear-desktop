@@ -1,12 +1,14 @@
 // Host side: runs providers (no CORS, real User-Agent) and caches results.
 
 import type { LyricResult, ProviderId, SearchQuery } from "../types.ts";
-import { genius } from "./genius.ts";
 import type { Fetch } from "./http.ts";
+import { lrchub } from "./lrchub.ts";
 import { lrclib } from "./lrclib.ts";
+import { lrcred } from "./lrcred.ts";
 import { megalobiz } from "./megalobiz.ts";
 import { musixmatch, type MusixmatchOptions } from "./musixmatch.ts";
 import { netease } from "./netease.ts";
+import { simpmusic } from "./simpmusic.ts";
 import { ytmusic, type YtmusicOptions } from "./ytmusic.ts";
 
 /** Settings and helpers some providers need. */
@@ -18,12 +20,14 @@ export interface ProviderOptions {
 export type Provider = (query: SearchQuery, fetch: Fetch, options: ProviderOptions) => Promise<LyricResult | null>;
 
 export const providers: Record<ProviderId, Provider> = {
-  LRCLib: lrclib,
+  LrcRed: lrcred,
   YTMusic: (query, fetch, options) => ytmusic(query, fetch, options.ytmusic),
+  LRCLib: lrclib,
   MusixMatch: (query, fetch, options) => musixmatch(query, fetch, options.musixmatch),
   Megalobiz: megalobiz,
-  LyricsGenius: genius,
   NetEase: netease,
+  LRCHub: lrchub,
+  SimpMusic: simpmusic,
 };
 
 const CACHE_SIZE = 500;

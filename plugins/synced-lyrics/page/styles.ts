@@ -526,6 +526,42 @@ export const lyricsStyles = css`
     }
   }
 
+  /* Apple Music style: the tab is one fixed pane, and am-lyrics scrolls itself. */
+  .root.apple-music {
+    height: 100%;
+    padding-bottom: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .apple-music {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+  }
+  /* The picker floats over the lyrics; it still slides itself away on scroll. */
+  .apple-music-picker {
+    position: absolute;
+    inset: 0 0 auto;
+    z-index: 3;
+  }
+  .apple-music-picker .picker {
+    margin-bottom: 0;
+  }
+  .apple-music-host {
+    position: relative;
+    height: 100%;
+  }
+  .apple-music-host > am-lyrics {
+    display: block;
+    width: 100%;
+    height: 100%;
+    /* The component pins its own system font stack on :host in its shadow
+       root; inherit the page font so themes keep working in this style. */
+    font-family: inherit !important;
+  }
+
   .source {
     margin-top: 28px;
     color: var(--faint);

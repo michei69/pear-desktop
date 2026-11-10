@@ -34,12 +34,14 @@ export const schema = {
     [
       // pear-desktop's provider names, so its setting carries over.
       { value: "auto", label: "Best available" },
+      { value: "LrcRed", label: "lrc.red" },
       { value: "LRCLib", label: "LRCLIB" },
       { value: "YTMusic", label: "\u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063" },
       { value: "MusixMatch", label: "Musixmatch" },
       { value: "Megalobiz", label: "Megalobiz" },
-      { value: "LyricsGenius", label: "Genius" },
       { value: "NetEase", label: "NetEase" },
+      { value: "LRCHub", label: "LRCHub" },
+      { value: "SimpMusic", label: "SimpMusic" },
     ],
     { label: "Preferred provider", description: "Used whenever it has lyrics; otherwise word-synced beats line-synced beats plain." },
   ),
@@ -81,6 +83,18 @@ export const schema = {
       { value: "large", label: "Large" },
     ],
     { label: "Lyrics size", variant: "chips" },
+  ),
+  lyricsStyle: config.select(
+    "standard",
+    [
+      { value: "standard", label: "Standard" },
+      { value: "apple-music", label: "Apple Music" },
+    ],
+    {
+      label: "Lyrics style",
+      description:
+        "Apple Music draws the lyrics with am-lyrics and its word-by-word karaoke animation. Line effects and lyrics size only apply to the standard style.",
+    },
   ),
   gapText: config.select(
     // ♪ by default, as pear-desktop. "Nothing" leaves the break blank.

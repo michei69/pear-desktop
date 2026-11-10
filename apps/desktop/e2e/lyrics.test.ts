@@ -88,24 +88,21 @@ test("shows synced lyrics in the Lyrics tab, follows playback and seeks on click
 
   // The provider picker (pear-desktop's): the provider shown, with what it found.
   const picker = lyrics(page).locator(".picker");
-  await expect(picker).toHaveAttribute("data-selected", /LRCLib|YTMusic/);
+  await expect(picker).toHaveAttribute("data-selected", /LrcRed|LRCLib|YTMusic/);
   const selected = (await picker.getAttribute("data-selected"))!;
   await expect(picker.locator(`.picker-item[data-provider="${selected}"]`)).toHaveAttribute("data-status", "found");
   await expect(picker.locator(`.picker-item[data-provider="${selected}"] .name`)).toBeInViewport();
-  // Its arrows go through every provider, wrapping around; each shows what it found.
-  const genius = picker.locator('.picker-item[data-provider="LyricsGenius"]');
-  await expect(genius).toHaveAttribute("data-status", /found|none|error/, { timeout: 30_000 });
-  const back = selected === "LRCLib" ? 2 : 1;
-  for (let i = 0; i < back; i++) await picker.locator(".arrow.previous").click();
-  await expect(picker).toHaveAttribute("data-selected", "LyricsGenius");
-  await expect(lyrics(page)).toHaveAttribute(
-    "data-state",
-    { found: "plain", none: "empty", error: "error" }[(await genius.getAttribute("data-status"))!]!,
-  );
-  await screenshot(app, "lyrics-picker");
-  for (let i = 0; i < back; i++) await picker.locator(".arrow.next").click();
+  // Its arrows move through the providers and back again.
+  const providers = (await picker
+    .locator(".picker-item")
+    .evaluateAll((items) => items.map((item) => item.getAttribute("data-provider")!)))!;
+  const nextProvider = providers[(providers.indexOf(selected) + 1) % providers.length]!;
+  await picker.locator(".arrow.next").click();
+  await expect(picker).toHaveAttribute("data-selected", nextProvider);
+  await picker.locator(".arrow.previous").click();
   await expect(picker).toHaveAttribute("data-selected", selected);
   await expect(lyrics(page)).toHaveAttribute("data-state", "synced");
+  await screenshot(app, "lyrics-picker");
   // A dot jumps straight to its provider.
   await picker.locator('.dot[aria-label="MusixMatch"]').click();
   await expect(picker).toHaveAttribute("data-selected", "MusixMatch");
@@ -122,6 +119,29 @@ test("shows synced lyrics in the Lyrics tab, follows playback and seeks on click
   await expect(lyrics(page)).toHaveCount(0);
 });
 
+test("switches to the Apple Music style", async ({ app, page }) => {
+  test.setTimeout(180_000);
+  await openLyricsTab(page);
+  await expect(lyrics(page)).toHaveAttribute("data-state", "synced", { timeout: 30_000 });
+
+  await setConfig(page, "synced-lyrics", { lyricsStyle: "apple-music" });
+  await expect(lyrics(page)).toHaveAttribute("data-style", "apple-music");
+  await expect
+    .poll(() =>
+      page.evaluate(() => {
+        const apple = document.querySelector("pear-synced-lyrics")?.shadowRoot?.querySelector("am-lyrics") as
+          | (HTMLElement & { ttml?: string })
+          | null;
+        return Boolean(apple?.ttml?.includes("<tt"));
+      }),
+    )
+    .toBe(true);
+  await screenshot(app, "lyrics-apple-music");
+
+  await setConfig(page, "synced-lyrics", { lyricsStyle: "standard" });
+  await expect(lyrics(page)).toHaveAttribute("data-style", "standard");
+});
+
 test("highlights word by word when the provider has word timing", async ({ app, page }) => {
   test.setTimeout(180_000);
   await playTestTrack(page);
@@ -134,7 +154,8 @@ test("highlights word by word when the provider has word timing", async ({ app, 
     );
   }, wordSyncedEntry());
   // A search setting change searches again (and misses the cache).
-  await setConfig(page, "synced-lyrics", { showLyricsEvenIfInexact: false });
+  // The stub only serves LRCLib, and lrc.red now precedes it in the default order.
+  await setConfig(page, "synced-lyrics", { preferredProvider: "LRCLib", showLyricsEvenIfInexact: false });
   await page.locator("ytmusic-player-page tp-yt-paper-tab").nth(1).click();
   await expect(lyrics(page).locator(".picker")).toHaveAttribute("data-selected", "LRCLib", { timeout: 30_000 });
   await expect(lyrics(page).locator('.picker-item[data-provider="LRCLib"]')).toHaveAttribute("title", /Word-synced/);

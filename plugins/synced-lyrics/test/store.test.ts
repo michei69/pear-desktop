@@ -58,7 +58,7 @@ describe("LyricsStore", () => {
   });
 
   test("shows the richest result regardless of provider order", async () => {
-    const store = new LyricsStore(backend({ LRCLib: null, YTMusic: synced, LyricsGenius: plain }), options);
+    const store = new LyricsStore(backend({ LRCLib: null, YTMusic: synced, LRCHub: plain }), options);
     store.load(track);
     expect(store.loading).toBe(true);
     await settle();
@@ -67,10 +67,10 @@ describe("LyricsStore", () => {
   });
 
   test("follows the configured provider order when it is enabled", async () => {
-    const api = backend({ YTMusic: null, LRCLib: synced, LyricsGenius: plain });
+    const api = backend({ YTMusic: null, LRCLib: synced, LRCHub: plain });
     const store = new LyricsStore(api, {
       ...options,
-      priority: ["LyricsGenius", "LRCLib", "YTMusic"],
+      priority: ["LRCHub", "LRCLib", "YTMusic"],
       usePriorityList: true,
       typePriority: ["word", "synced", "plain"],
     });
@@ -80,19 +80,19 @@ describe("LyricsStore", () => {
     expect(store.selected).toBe("LRCLib");
     expect(store.shown?.provider).toBe("LRCLib");
 
-    const plainFirst = new LyricsStore(backend({ YTMusic: null, LRCLib: synced, LyricsGenius: plain }), {
+    const plainFirst = new LyricsStore(backend({ YTMusic: null, LRCLib: synced, LRCHub: plain }), {
       ...options,
-      priority: ["LyricsGenius", "LRCLib", "YTMusic"],
+      priority: ["LRCHub", "LRCLib", "YTMusic"],
       usePriorityList: true,
       typePriority: ["word", "plain", "synced"],
     });
     plainFirst.load(track);
     await settle();
-    expect(plainFirst.selected).toBe("LyricsGenius");
+    expect(plainFirst.selected).toBe("LRCHub");
   });
 
   test("a configured type order beats the provider order, with the priority list off", async () => {
-    const api = backend({ YTMusic: word, LRCLib: plain, LyricsGenius: null });
+    const api = backend({ YTMusic: word, LRCLib: plain, LRCHub: null });
     // Plain first: LRCLib's plain block wins over YTMusic's word-by-word result.
     const plainFirst = new LyricsStore(api, {
       ...options,
@@ -105,7 +105,7 @@ describe("LyricsStore", () => {
     expect(plainFirst.shown?.provider).toBe("LRCLib");
 
     // The default order picks the word-by-word result from the second provider instead.
-    const wordFirst = new LyricsStore(backend({ YTMusic: word, LRCLib: plain, LyricsGenius: null }), {
+    const wordFirst = new LyricsStore(backend({ YTMusic: word, LRCLib: plain, LRCHub: null }), {
       ...options,
       priority: ["LRCLib", "YTMusic"],
       typePriority: ["word", "synced", "plain"],
@@ -117,19 +117,19 @@ describe("LyricsStore", () => {
   });
 
   test("honours the preferred provider and manual picks", async () => {
-    const store = new LyricsStore(backend({ LRCLib: synced, LyricsGenius: plain }), { ...options, preferred: "LyricsGenius" });
+    const store = new LyricsStore(backend({ LRCLib: synced, LRCHub: plain }), { ...options, preferred: "LRCHub" });
     store.load(track);
     await settle();
-    expect(store.shown).toMatchObject({ provider: "LyricsGenius", synced: false, texts: ["hi", "there"] });
+    expect(store.shown).toMatchObject({ provider: "LRCHub", synced: false, texts: ["hi", "there"] });
     store.select("LRCLib");
     expect(store.shown?.provider).toBe("LRCLib");
   });
 
   test("follows the best provider until switched by hand, like pear-desktop's picker", async () => {
-    const store = new LyricsStore(backend({ YTMusic: null, LRCLib: synced, LyricsGenius: plain }), options);
+    const store = new LyricsStore(backend({ YTMusic: null, LRCLib: synced, LRCHub: plain }), options);
     store.load(track);
     // Before any results: the first provider.
-    expect(store.selected).toBe("YTMusic");
+    expect(store.selected).toBe("LrcRed");
     expect(store.current.status).toBe("loading");
     await settle();
     expect(store.selected).toBe("LRCLib");
@@ -142,11 +142,15 @@ describe("LyricsStore", () => {
     store.step(-2);
     expect(store.selected).toBe("YTMusic");
     store.step(-1);
-    expect(store.selected).toBe("NetEase");
+    expect(store.selected).toBe("LrcRed");
     expect(store.shown).toBeNull();
     store.step(-1);
-    expect(store.selected).toBe("LyricsGenius");
-    expect(store.shown).toMatchObject({ provider: "LyricsGenius", synced: false });
+    // The picker wraps around.
+    expect(store.selected).toBe("SimpMusic");
+    expect(store.shown).toBeNull();
+    store.step(-1);
+    expect(store.selected).toBe("LRCHub");
+    expect(store.shown).toMatchObject({ provider: "LRCHub", synced: false });
 
     // A new track follows the best provider again.
     store.load({ ...track, videoId: "next" });
@@ -162,21 +166,21 @@ describe("LyricsStore", () => {
       removeItem: (key: string) => void storage.delete(key),
     });
     try {
-      const store = new LyricsStore(backend({ YTMusic: synced, LyricsGenius: plain }), options);
+      const store = new LyricsStore(backend({ YTMusic: synced, LRCHub: plain }), options);
       store.load(track);
       await settle();
       expect(store.selected).toBe("YTMusic");
-      store.select("LyricsGenius");
+      store.select("LRCHub");
       store.toggleStar();
-      expect(storage.get("ytmd-sl-starred-abc")).toBe(JSON.stringify({ provider: "LyricsGenius" }));
+      expect(storage.get("ytmd-sl-starred-abc")).toBe(JSON.stringify({ provider: "LRCHub" }));
 
       store.load({ ...track, videoId: "other" });
       await settle();
       expect(store.selected).toBe("YTMusic");
       store.load(track);
-      expect(store.selected).toBe("LyricsGenius");
+      expect(store.selected).toBe("LRCHub");
       await settle();
-      expect(store.shown?.provider).toBe("LyricsGenius");
+      expect(store.shown?.provider).toBe("LRCHub");
 
       store.toggleStar();
       expect(storage.has("ytmd-sl-starred-abc")).toBe(false);

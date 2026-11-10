@@ -48,6 +48,7 @@ const viewOptions = (config: LyricsConfig): ViewOptions => ({
   offsetMs: config.offsetMs,
   preciseTiming: config.preciseTiming,
   fontSize: config.lyricsFontSize,
+  style: config.lyricsStyle,
   showCustomSearch: config.showCustomSearchButton,
 });
 
@@ -69,13 +70,16 @@ export function mountLyrics(ctx: Ctx) {
 
   let options = viewOptions(ctx.config);
   let open = false;
-  const draw = () =>
+  const draw = () => {
+    // The Apple style fills the tab, so the page stylesheet can size the host.
+    element.dataset.style = options.style;
     render(
       open ? (
         <LyricsView store={store} options={options} now={now} seek={seek} scroller={scroller} openSource={openSource} t={ctx.t} />
       ) : null,
       root,
     );
+  };
 
   const setOpen = (next: boolean) => {
     if (next === open) return;

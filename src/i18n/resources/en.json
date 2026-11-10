@@ -2285,8 +2285,10 @@
             "YTMusic": "\u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063",
             "MusixMatch": "Musixmatch",
             "Megalobiz": "Megalobiz",
-            "LyricsGenius": "Genius",
-            "NetEase": "NetEase"
+            "NetEase": "NetEase",
+            "LrcRed": "lrc.red",
+            "LRCHub": "LRCHub",
+            "SimpMusic": "SimpMusic"
           }
         },
         "lineEffect": {
@@ -2361,8 +2363,10 @@
             "LRCLib": "LRCLib",
             "MusixMatch": "MusixMatch",
             "Megalobiz": "Megalobiz",
-            "LyricsGenius": "LyricsGenius",
-            "NetEase": "NetEase"
+            "NetEase": "NetEase",
+            "LrcRed": "lrc.red",
+            "LRCHub": "LRCHub",
+            "SimpMusic": "SimpMusic"
           }
         },
         "preferSynced": {
@@ -2523,6 +2527,14 @@
             "word": "Word-by-word",
             "synced": "Time-synced",
             "plain": "Plain"
+          }
+        },
+        "lyricsStyle": {
+          "label": "Lyrics style",
+          "description": "Apple Music draws the lyrics with am-lyrics and its word-by-word karaoke animation. Line effects and lyrics size only apply to the standard style.",
+          "options": {
+            "standard": "Standard",
+            "apple-music": "Apple Music"
           }
         }
       },
