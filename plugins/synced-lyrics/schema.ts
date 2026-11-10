@@ -1,6 +1,7 @@
 import { config, type ConfigOf } from "@pear/sdk";
 import {
   LYRICS_TYPES,
+  PROVIDER_NAMES,
   PROVIDERS,
   TRANSLATION_PROVIDERS,
   TRANSLATION_PROVIDER_NAMES,
@@ -18,6 +19,14 @@ const languageOptions: { value: TranslationTargetLanguage; label: string }[] = T
   value,
   label: value === "auto" ? "App language" : value,
 }));
+
+/** Fixed priority lists: the order is a setting, but its entries come from the code. */
+const providerOrder = PROVIDERS.map((value) => ({ value, label: PROVIDER_NAMES[value] }));
+const lyricsTypeOrder = [
+  { value: "word", label: "Word-by-word" },
+  { value: "synced", label: "Time-synced" },
+  { value: "plain", label: "Plain" },
+] as const;
 
 export const schema = {
   preferredProvider: config.select(
@@ -39,17 +48,15 @@ export const schema = {
     description:
       "Use the list below instead of the richest result: the first provider in the order with lyrics wins. Off keeps the preferred provider, then the best result.",
   }),
-  providerPriority: config.list([...PROVIDERS], {
+  providerPriority: config.orderable([...PROVIDERS], providerOrder, {
     label: "Provider order",
     description:
       "Tried from top to bottom when the order is followed, and used to break ties otherwise. Providers missing from the list are tried last.",
-    placeholder: "YTMusic",
   }),
-  lyricsTypePriority: config.list([...LYRICS_TYPES], {
+  lyricsTypePriority: config.orderable([...LYRICS_TYPES], lyricsTypeOrder, {
     label: "Lyrics type order",
     description:
       "Lyrics are picked by type in this order: a word-by-word result wins over a time-synced one over a plain text block. Providers with the same kind of lyrics are picked by the provider order.",
-    placeholder: "word",
   }),
   preciseTiming: config.bool(true, {
     label: "Precise line timing",

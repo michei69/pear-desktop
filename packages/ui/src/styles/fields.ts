@@ -5,6 +5,14 @@ export const fieldRows = css`
   .field {
     padding: 14px 18px;
   }
+  .field--sub {
+    margin-left: 22px;
+    padding-left: 16px;
+    border-left: 2px solid var(--edge);
+  }
+  .field--sub[inert] {
+    opacity: 0.5;
+  }
   .card > .field + .field {
     border-top: 1px solid var(--edge);
   }
@@ -66,6 +74,13 @@ export const fieldRows = css`
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
+  }
+  /* A plugin's buttons sit in one row; tighter so four of them fit. */
+  .plugin-actions .actions {
+    gap: 8px;
+  }
+  .plugin-actions .actions .outlined {
+    padding: 8px 10px;
   }
 `;
 
@@ -270,5 +285,46 @@ export const controls = css`
   }
   .shortcut[data-recording="true"] {
     border-color: var(--primary);
+  }
+  .orderable {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .orderable-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px 8px 14px;
+    border: 1px solid var(--edge);
+    border-radius: 12px;
+    background: var(--surface-low);
+  }
+  .orderable-label {
+    flex: 1;
+    min-width: 0;
+    font-size: 13px;
+    color: var(--on-surface);
+  }
+  .orderable-button {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: 1px solid var(--outline);
+    border-radius: 50%;
+    background: transparent;
+    color: var(--primary);
+    cursor: pointer;
+  }
+  .orderable-button:hover:not(:disabled) {
+    background: var(--surface-highest);
+  }
+  .orderable-button:disabled {
+    opacity: 0.38;
+    cursor: default;
   }
 `;

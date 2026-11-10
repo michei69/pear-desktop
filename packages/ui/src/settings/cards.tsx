@@ -69,6 +69,7 @@ export function CoreCards(props: {
               field={field}
               value={state.config[key]}
               model={dialog.model}
+              parentOn={field.parent ? state.config[field.parent] === true : undefined}
               onChange={(value) => dialog.setCore(section, key, field, value)}
             />
           ))}
@@ -206,6 +207,7 @@ export function PluginCard(props: {
                   field={field}
                   value={state.config[key]}
                   model={model}
+                  parentOn={field.parent ? state.config[field.parent] === true : undefined}
                   onChange={(value) => dialog.setPluginConfig(plugin, key, field, value)}
                 />
               ))}
@@ -234,16 +236,21 @@ function PluginActions(props: { id: string; actions: NonNullable<PluginInfo["act
   };
   return (
     <div class="plugin-group plugin-actions">
-      {props.actions.map((action) => (
-        <div key={action.name} class="field" data-action={action.name}>
-          <div class="field-row">
-            <div class="field-text">{action.description && <div class="field-desc">{action.description}</div>}</div>
-            <button type="button" class="outlined" disabled={busy !== null} onClick={() => void run(action.name)}>
+      <div class="field actions">
+        {props.actions.map((action) => (
+          <div key={action.name} data-action={action.name}>
+            <button
+              type="button"
+              class="outlined"
+              title={action.description}
+              disabled={busy !== null}
+              onClick={() => void run(action.name)}
+            >
               {action.label}
             </button>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
       {failed && <p class="error-text">{failed}</p>}
     </div>
   );

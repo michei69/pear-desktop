@@ -56,6 +56,7 @@ export const downloaderConfig = {
   archive: config.bool(true, {
     label: "…even when their files were renamed",
     description: "Remembers what was downloaded to a folder by song, in a list there (yt-dlp's download archive).",
+    parent: "skipExisting",
   }),
   offline: config.bool(true, {
     label: "Play downloaded songs offline",

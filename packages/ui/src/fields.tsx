@@ -6,8 +6,10 @@ import {
   type Field,
   type ListField,
   type MultiField,
+  normalizeOrder,
   type NumberField,
   numberVariant,
+  type OrderableField,
   type SelectField,
   selectVariant,
   type ShortcutField,
@@ -16,6 +18,7 @@ import {
 import { clamp } from "@pear/sdk/util";
 import { useEffect, useRef, useState } from "preact/hooks";
 import { toAccelerator } from "./accelerator.ts";
+import { Icon } from "./icons.tsx";
 import type { SettingsModel } from "./model.ts";
 import { useText } from "./strings.ts";
 
@@ -26,6 +29,8 @@ interface FieldProps {
   value: unknown;
   /** For commands a field's extra controls run (the language sync buttons). */
   model?: SettingsModel | undefined;
+  /** Whether the field's `parent` switch is on; a sub-field is disabled while it is off. */
+  parentOn?: boolean | undefined;
   onChange(value: unknown): void;
 }
 
@@ -44,13 +49,14 @@ const TEXT_DEBOUNCE_MS = 400;
 /** Controls that sit next to the label instead of below it. */
 const INLINE_KINDS = new Set<Field["kind"]>(["bool", "shortcut"]);
 
-export function SettingsField({ name, field, value, model, onChange }: FieldProps) {
+export function SettingsField({ name, field, value, model, parentOn, onChange }: FieldProps) {
   const id = `field-${name}`;
   const text = useText();
   const control = <Control id={id} field={field} value={value} model={model} onChange={onChange} />;
   const inline = INLINE_KINDS.has(field.kind);
+  const sub = field.parent !== undefined;
   return (
-    <div class="field" data-field={name}>
+    <div class={`field${sub ? " field--sub" : ""}`} data-field={name} inert={sub && parentOn === false}>
       <div class="field-row">
         <div class="field-text">
           <div class="label-line">
@@ -90,6 +96,8 @@ function Control({ id, field, value, model, onChange }: ControlProps<Field, unkn
       return <ListControl id={id} field={field} value={stringList(value)} onChange={onChange} />;
     case "multi":
       return <MultiControl id={id} field={field} value={stringList(value)} onChange={onChange} />;
+    case "orderable":
+      return <OrderableControl id={id} field={field} value={stringList(value)} onChange={onChange} />;
   }
 }
 
@@ -299,6 +307,47 @@ function MultiControl({ id, field, value, onChange }: ControlProps<MultiField, s
           </button>
         );
       })}
+    </div>
+  );
+}
+
+/** Every option once, in the user's order; up/down move an entry one place. */
+function OrderableControl({ id, field, value, onChange }: ControlProps<OrderableField, string[]>) {
+  const text = useText();
+  // Every option, in the stored order (missing entries go last, unknown ones are dropped).
+  const rows = normalizeOrder(value, field.options).map((entry) => field.options.find((option) => option.value === entry)!);
+  const move = (from: number, to: number) => {
+    const next = rows.map((row) => row.value);
+    // Lifted out and inserted, so moving the first entry down puts it second.
+    const [moved] = next.splice(from, 1);
+    next.splice(to, 0, moved!);
+    onChange(next);
+  };
+  return (
+    <div id={id} class="orderable" role="list" aria-labelledby={`${id}-label`}>
+      {rows.map((row, index) => (
+        <div key={row.value} class="orderable-row" role="listitem">
+          <span class="orderable-label">{row.label}</span>
+          <button
+            type="button"
+            class="orderable-button"
+            aria-label={text("settings-ui.move-up")}
+            disabled={index === 0}
+            onClick={() => move(index, index - 1)}
+          >
+            <Icon name="chevronUp" size={18} />
+          </button>
+          <button
+            type="button"
+            class="orderable-button"
+            aria-label={text("settings-ui.move-down")}
+            disabled={index === rows.length - 1}
+            onClick={() => move(index, index + 1)}
+          >
+            <Icon name="chevronDown" size={18} />
+          </button>
+        </div>
+      ))}
     </div>
   );
 }

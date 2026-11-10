@@ -33,6 +33,8 @@ export const UI_STRINGS = {
   "settings-ui.language-sync.label": "Sync language",
   "settings-ui.language-sync.from": "From YT",
   "settings-ui.language-sync.to": "To YT",
+  "settings-ui.move-up": "Move up",
+  "settings-ui.move-down": "Move down",
   "settings-ui.shortcut-recording": "Press keys…",
   "settings-ui.shortcut-unset": "Not set",
   "settings-ui.shortcut-hint": "Click, then press a key combination. Backspace clears, Escape cancels.",

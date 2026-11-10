@@ -155,8 +155,9 @@ Every listener, timer, observer, style, mounted element and audio node registere
 | `config.multi(default, options, meta)` | array of option values |
 | `config.shortcut(default, meta)` | Electron accelerator string |
 | `config.list(default, meta)` | `string[]` |
+| `config.orderable(default, options, meta)` | `string[]`, one entry per option, in the user's order |
 
-Every field takes `label`, and optionally `description`, `group`, `restart` and `platforms`. Numbers default to a slider when bounded with at most 1000 steps and to a stepper otherwise. Selects default to chips for up to eight options and to a dropdown otherwise. `secret` renders a password input.
+Every field takes `label`, and optionally `description`, `group`, `restart`, `platforms` and `parent`. `parent` names a boolean field the field refines: the settings UI indents it and disables it while that switch is off. Orderable lists are reordered in the settings UI; their entries come from the code, so users cannot add, remove or edit them. Numbers default to a slider when bounded with at most 1000 steps and to a stepper otherwise. Selects default to chips for up to eight options and to a dropdown otherwise. `secret` renders a password input.
 
 `ConfigOf<typeof schema>` is the inferred config type. `normalizeConfig()` drops unknown keys and resets values that no longer fit the schema to their defaults, so a removed option cannot crash a plugin.
 

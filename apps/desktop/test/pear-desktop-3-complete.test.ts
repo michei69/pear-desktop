@@ -162,6 +162,8 @@ const CONVERTED_IN_PLACE: Record<string, string[]> = {
   equalizer: ["filters", "userPresets"],
   notifications: ["toastStyle"],
   "skip-ai-slop": ["keywords", "userAllow", "userBlock"],
+  // The orderable list completes a stored partial order with the entries added since.
+  "synced-lyrics": ["providerPriority"],
 };
 
 /** Plugins whose master entry has no rewrite plugin (the settings UI is core now). */
@@ -447,7 +449,7 @@ describe("a complete pear-desktop 3.12.4 config.json, migrated to 4.0.0", () => 
 
     expect(pluginConfig("synced-lyrics")).toMatchObject({
       usePriorityList: true,
-      providerPriority: ["LRCLib", "YTMusic"],
+      providerPriority: ["LRCLib", "YTMusic", "MusixMatch", "Megalobiz", "LyricsGenius", "NetEase"],
       lyricsTypePriority: ["plain", "synced", "word"],
       preciseTiming: false,
       showLyricsEvenIfInexact: false,

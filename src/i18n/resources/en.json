@@ -2355,7 +2355,15 @@
         "providerPriority": {
           "label": "Provider order",
           "description": "Tried from top to bottom when the order is followed, and used to break ties otherwise. Providers missing from the list are tried last.",
-          "placeholder": "YTMusic"
+          "placeholder": "YTMusic",
+          "options": {
+            "YTMusic": "YTMusic",
+            "LRCLib": "LRCLib",
+            "MusixMatch": "MusixMatch",
+            "Megalobiz": "Megalobiz",
+            "LyricsGenius": "LyricsGenius",
+            "NetEase": "NetEase"
+          }
         },
         "preferSynced": {
           "label": "Prefer time-synced lyrics",
@@ -2510,7 +2518,12 @@
         "lyricsTypePriority": {
           "label": "Lyrics type order",
           "description": "Lyrics are picked by type in this order: a word-by-word result wins over a time-synced one over a plain text block. Providers with the same kind of lyrics are picked by the provider order.",
-          "placeholder": "word"
+          "placeholder": "word",
+          "options": {
+            "word": "Word-by-word",
+            "synced": "Time-synced",
+            "plain": "Plain"
+          }
         }
       },
       "musixmatch": {

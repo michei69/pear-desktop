@@ -14,6 +14,11 @@ interface FieldMeta {
   platforms?: readonly Platform[];
   /** Stored state the settings UI leaves out (a plugin's saved position, the current volume). */
   hidden?: boolean;
+  /**
+   * Key of the switch this field refines: the settings UI shows it indented and
+   * disables it while that switch is off. The parent must be a boolean field.
+   */
+  parent?: string;
 }
 
 interface FieldBase<K extends string, T> extends FieldMeta {
@@ -64,7 +69,12 @@ export interface MultiField<T extends string = string> extends FieldBase<"multi"
   options: readonly SelectOption<T>[];
 }
 
-export type Field = BoolField | NumberField | StringField | SelectField | ShortcutField | ListField | MultiField;
+/** A fixed list of options the user can only reorder; its value is one entry per option. */
+export interface OrderableField extends FieldBase<"orderable", string[]> {
+  options: readonly SelectOption<string>[];
+}
+
+export type Field = BoolField | NumberField | StringField | SelectField | ShortcutField | ListField | MultiField | OrderableField;
 
 export type ConfigShape = Record<string, Field>;
 
@@ -100,7 +110,27 @@ export const config = {
     options,
     ...meta,
   }),
+  orderable: <const O extends Options>(defaultValue: ValueOf<O>[], options: O, meta: Meta<OrderableField>): OrderableField => ({
+    kind: "orderable",
+    default: defaultValue,
+    options,
+    ...meta,
+  }),
 };
+
+/**
+ * `stored` first in its own order, then the declared entries it did not name, in
+ * declared order. Unknown, stale and duplicate entries are dropped, so an order
+ * saved before an option existed still shows it, at the end.
+ */
+export function normalizeOrder(stored: unknown, options: readonly SelectOption<string>[]): string[] {
+  const declared = options.map((option) => option.value);
+  const known = new Set(declared);
+  const order = (Array.isArray(stored) ? stored : []).filter((item): item is string => typeof item === "string" && known.has(item));
+  const unique = [...new Set(order)];
+  for (const value of declared) if (!unique.includes(value)) unique.push(value);
+  return unique;
+}
 
 /** A slider for at most this many steps; finer ranges get a stepper. */
 const MAX_SLIDER_STEPS = 1000;
@@ -137,7 +167,7 @@ export function normalizeConfig<S extends ConfigShape>(shape: S, stored: unknown
   const result: Record<string, unknown> = {};
   for (const [key, field] of Object.entries(shape)) {
     const value = input[key];
-    result[key] = isValid(field, value) ? value : field.default;
+    result[key] = field.kind === "orderable" ? normalizeOrder(value, field.options) : isValid(field, value) ? value : field.default;
   }
   return result as ConfigOf<S>;
 }
@@ -162,5 +192,7 @@ function isValid(field: Field, value: unknown): boolean {
       return Array.isArray(value) && value.every((item) => typeof item === "string");
     case "multi":
       return Array.isArray(value) && value.every((item) => field.options.some((option) => option.value === item));
+    case "orderable":
+      return Array.isArray(value) && value.every((item) => typeof item === "string");
   }
 }

@@ -1,5 +1,5 @@
 import { expect, test } from "vitest";
-import { config, numberVariant, onPlatform, selectVariant } from "../src/config.ts";
+import { config, normalizeConfig, normalizeOrder, numberVariant, onPlatform, selectVariant } from "../src/config.ts";
 import { flatten, groupKey } from "../src/i18n.ts";
 
 test("builders keep the kind, default and metadata", () => {
@@ -30,6 +30,21 @@ test("numbers: sliders for bounded ranges of at most 1000 steps", () => {
   expect(numberVariant(config.number(1, { label: "", min: 0, max: 1e6, variant: "slider" }))).toBe("slider");
   // A slider needs both ends.
   expect(numberVariant(config.number(1, { label: "", min: 0, variant: "slider" }))).toBe("stepper");
+});
+
+test("orderable fields complete the stored order without adding or dropping entries", () => {
+  const options = [
+    { value: "a", label: "A" },
+    { value: "b", label: "B" },
+    { value: "c", label: "C" },
+  ] as const;
+  expect(normalizeOrder(undefined, options)).toEqual(["a", "b", "c"]);
+  expect(normalizeOrder(["c", "a"], options)).toEqual(["c", "a", "b"]);
+  // Unknown and repeated entries are dropped.
+  expect(normalizeOrder(["b", "b", "x"], options)).toEqual(["b", "a", "c"]);
+  // The schema normalizes the stored list on read.
+  const shape = { order: config.orderable(["a", "b", "c"], options, { label: "Order" }) };
+  expect(normalizeConfig(shape, { order: ["b"] }).order).toEqual(["b", "a", "c"]);
 });
 
 test("selects: chips for up to 8 options", () => {

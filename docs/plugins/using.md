@@ -45,7 +45,10 @@ Fields come from the plugin's schema and can be:
 - select chips or dropdowns,
 - shortcut recorders,
 - lists of paths, URLs or ids that you add and remove,
+- fixed lists that you can only reorder (up/down arrows; entries cannot be added, removed or edited),
 - multi-select option chips.
+
+A sub-setting appears indented under its parent switch and is disabled while that switch is off.
 
 Changes are written as you make them. A **restart** pill next to a field means the value is only read at startup. Pending restarts collect in a banner at the top of the dialog: **Restart now** restarts the app, **Later** dismisses the banner until another change is flagged. Reopening the dialog in the same window keeps the pending list.
 
