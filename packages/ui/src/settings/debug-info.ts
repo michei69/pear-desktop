@@ -25,19 +25,8 @@ const flagLines = (served: Flags, overrides: Flags): string[] =>
       (name) => `${name}: ${JSON.stringify(name in served ? served[name] : overrides[name])}${name in overrides ? " (overridden)" : ""}`,
     );
 
-/** The performance switches that are on, for the report ("flags", "css", …). */
-export function performanceParts(config: Record<string, unknown> | undefined): string[] {
-  return ["flags", "css", "animations", "plugins"].filter((part) => config?.[part] === true);
-}
-
 /** The copied report: the app's version, the machine, the plugins and the page's flags. */
-export function buildDebugInfo(
-  meta: AppDebugInfo,
-  plugins: string[],
-  served: Flags,
-  overrides: Flags,
-  performance: readonly string[] = [],
-): string {
+export function buildDebugInfo(meta: AppDebugInfo, plugins: string[], served: Flags, overrides: Flags): string {
   const { memory } = meta;
   const total = memory.main + memory.renderers + memory.gpu;
 
@@ -51,7 +40,6 @@ export function buildDebugInfo(
     `Platform: ${meta.platform} (${meta.arch}), ${meta.osVersion}`,
     `Electron: ${meta.versions.electron} · Chromium: ${meta.versions.chrome} · Node: ${meta.versions.node}`,
     `Innertube client version: ${liveFeatureFlags()?.clientVersion() ?? "unknown"}`,
-    `Performance: ${performance.length ? performance.join(", ") : "off"}`,
     `CPU: ${meta.cpu.model} (${meta.cpu.threads} threads)`,
     `GPU: ${meta.gpu.renderer ?? meta.gpu.vendor ?? "unknown"}${driver}`,
     `Memory: ${mb(total)} total (main ${mb(memory.main)}, renderers ${mb(memory.renderers)}, gpu ${mb(memory.gpu)})`,

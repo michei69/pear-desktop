@@ -5,7 +5,7 @@ import type { ComponentChildren } from "preact";
 import { Icon, PearIcon, YtmIcon } from "../icons.tsx";
 import type { SettingsModel } from "../model.ts";
 import { useText } from "../strings.ts";
-import { buildDebugInfo, performanceParts, storedFlagOverrides, useCopyFeedback } from "./debug-info.ts";
+import { buildDebugInfo, storedFlagOverrides, useCopyFeedback } from "./debug-info.ts";
 import { liveFeatureFlags } from "./live-flags.ts";
 
 const REPO = "https://github.com/michei69/pear-desktop";
@@ -62,15 +62,7 @@ export function About({ model, enabled, children }: { model: SettingsModel; enab
     try {
       const meta = await model.appMeta();
       const live = model.siteFlags?.();
-      copy(
-        buildDebugInfo(
-          meta,
-          enabled,
-          live?.served ?? {},
-          live?.overrides ?? storedFlagOverrides(model),
-          performanceParts(model.core("performance")?.config),
-        ),
-      );
+      copy(buildDebugInfo(meta, enabled, live?.served ?? {}, live?.overrides ?? storedFlagOverrides(model)));
     } catch (error) {
       console.error("[pear] reading the debug info failed", error);
     }

@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from "preact/hooks";
 import type { SettingsModel } from "./model.ts";
 import { SearchResults, SectionBody } from "./settings/body.tsx";
 import { Header, RestartBanner, Sidebar } from "./settings/chrome.tsx";
-import { buildDebugInfo, performanceParts, storedFlagOverrides, useCopyFeedback } from "./settings/debug-info.ts";
+import { buildDebugInfo, storedFlagOverrides, useCopyFeedback } from "./settings/debug-info.ts";
 import { FlagsSection } from "./settings/flags.tsx";
 import { SECTIONS, type SectionId, sectionLabel } from "./settings/sections.ts";
 import { useDialog } from "./settings/state.ts";
@@ -162,15 +162,7 @@ function SettingsDialog({ model, onClose, standalone = false, closing = false }:
     try {
       const meta = await model.appMeta();
       const live = model.siteFlags?.();
-      debug.copy(
-        buildDebugInfo(
-          meta,
-          enabled,
-          live?.served ?? {},
-          live?.overrides ?? storedFlagOverrides(model),
-          performanceParts(model.core("performance")?.config),
-        ),
-      );
+      debug.copy(buildDebugInfo(meta, enabled, live?.served ?? {}, live?.overrides ?? storedFlagOverrides(model)));
     } catch (error) {
       console.error("[pear] reading the debug info failed", error);
     }
