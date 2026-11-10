@@ -110,6 +110,40 @@ test("album colors, ambient glow and the video switch on the player page", async
   await expect.poll(background).toBe(YTM_BACKGROUND);
 });
 
+test("the video switch and audio only share the playback mode", async ({ launch }) => {
+  test.setTimeout(180_000);
+  const app = await launch({ plugins: { "audio-only": { enabled: true }, "video-toggle": { enabled: true } } });
+  const page = await mainWindow(app);
+  await playTestTrack(page);
+  await waitForTrackPlaying(page);
+
+  // Both plugins force playback-mode: audio only locks it to ATV and the video
+  // switch wants OMV. Without the switch's ownership marker the two observers
+  // rewrite it against each other forever and the renderer freezes, so every
+  // evaluate below would time out.
+  const player = page.locator("ytmusic-player");
+  const mode = () => page.evaluate(() => document.querySelector("ytmusic-player")!.getAttribute("playback-mode"));
+  const song = page.locator(".pear-video-toggle [role=radio]", { hasText: "Song" });
+  const video = page.locator(".pear-video-toggle [role=radio]", { hasText: "Video" });
+
+  await expect(video).toHaveAttribute("aria-checked", "true");
+  await expect.poll(mode).toBe("OMV_PREFERRED");
+  await expect(player).toHaveAttribute("data-pear-show-video", "1");
+  await expect(page.locator("#song-video")).toBeVisible();
+
+  await song.click();
+  await expect.poll(mode).toBe("ATV_PREFERRED");
+  await expect(player).not.toHaveAttribute("data-pear-show-video", "1");
+  await expect(page.locator("#song-video")).toBeHidden();
+  await expect(page.locator("#song-image")).toBeVisible();
+
+  await video.click();
+  await expect.poll(mode).toBe("OMV_PREFERRED");
+  await expect(player).toHaveAttribute("data-pear-show-video", "1");
+  await expect(page.locator("#song-video")).toBeVisible();
+  await expect.poll(() => page.evaluate(() => document.readyState)).toBe("complete");
+});
+
 test("album actions and unobtrusive playback", async ({ launch }) => {
   test.setTimeout(180_000);
   const app = await launch({

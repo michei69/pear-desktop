@@ -91,11 +91,18 @@ export default definePlugin({
       lock?.disconnect();
       lockedPlayer = player;
       lock = new MutationObserver(() => {
-        if (lockedPlayer?.isConnected && lockedPlayer.getAttribute("playback-mode") !== ATV) {
+        // video-toggle marks the player when its own switch asks for the video.
+        // Re-asserting ATV then would make both observers flip the attribute
+        // forever, so audio-only yields while that marker is present.
+        if (
+          lockedPlayer?.isConnected &&
+          !lockedPlayer.hasAttribute("data-pear-show-video") &&
+          lockedPlayer.getAttribute("playback-mode") !== ATV
+        ) {
           lockedPlayer.setAttribute("playback-mode", ATV);
         }
       });
-      lock.observe(player, { attributes: true, attributeFilter: ["playback-mode"] });
+      lock.observe(player, { attributes: true, attributeFilter: ["playback-mode", "data-pear-show-video"] });
     };
 
     /** YTM re-creates the video inside the player; hide the new one too. */
@@ -111,13 +118,16 @@ export default definePlugin({
       if (stopped) return;
       const player = ctx.$("player.container");
       if (!player) return;
-      setAttribute(player, "playback-mode", ATV);
       setStyle(player, "margin", "auto 0px");
+      // The video toggle's switch owns the mode while it asks for video.
+      if (!player.hasAttribute("data-pear-show-video")) {
+        setAttribute(player, "playback-mode", ATV);
+        setStyle(ctx.$("player.song_video"), "display", "none");
+        setStyle(ctx.$("player.song_image"), "display", "block");
+        setStyle(ctx.$("player.video"), "display", "none");
+      }
       lockPlaybackMode(player);
       watchContent(player);
-      setStyle(ctx.$("player.song_video"), "display", "none");
-      setStyle(ctx.$("player.song_image"), "display", "block");
-      setStyle(ctx.$("player.video"), "display", "none");
       forceThumbnail();
     };
 

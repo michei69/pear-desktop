@@ -195,6 +195,10 @@ function customSwitch(ctx: Ctx, setAttribute: SetAttribute) {
     videoButton.setAttribute("aria-checked", String(shown));
     container.hidden = !hasVideo;
     if (!player || !songVideo || !songImage) return;
+    // Tell audio-only (which locks the player to ATV) that this switch owns the
+    // mode while the video is asked for; otherwise the two observers keep
+    // flipping playback-mode against each other and freeze the page.
+    setAttribute(player, "data-pear-show-video", shown ? "1" : null);
     setAttribute(player, "playback-mode", shown ? OMV : ATV);
     songVideo.style.display = shown ? "block" : "none";
     songImage.style.display = shown ? "none" : "block";
