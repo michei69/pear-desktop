@@ -12,6 +12,7 @@ import {
   type ConnectionEventUnion,
   getDefaultProfile,
   type Permission,
+  type Account,
   type Profile,
   type VideoData,
 } from "./types.ts";
@@ -24,6 +25,8 @@ export interface TogetherEnvironment {
   /** YTM's toast. */
   toast(message: string): void;
   t: Translate;
+  /** The signed-in account, as pear-desktop used for the user's profile; `null` when signed out. */
+  account(): Account | null;
   /** The user's name for others (empty: "Guest 1234"). */
   name(): string;
   defaultPermission(): Permission;
@@ -89,8 +92,11 @@ export class Together {
   }
 
   #profile(id: string): Profile {
-    const name = this.#env.name().trim();
+    // A signed-in user shows their pear-desktop profile; guests get a generated one.
+    const account = this.#env.account();
+    if (account) return { id, ...account };
     if (!this.#me) {
+      const name = this.#env.name().trim();
       const { id: _, ...me } = getDefaultProfile(id, Date.now().toString(), name || undefined);
       this.#me = me;
     }

@@ -2,7 +2,8 @@
 // its own): their state for the settings UI and the page, and the options that
 // take effect live.
 
-import { app, dialog } from "electron";import type { CoreSection } from "@pear/sdk/core-config";
+import { app, dialog, type BrowserWindow } from "electron";
+import type { CoreSection } from "@pear/sdk/core-config";
 import type { Translate } from "@pear/sdk/i18n";
 import type { CoreState } from "@pear/sdk/protocol";
 import type { Settings } from "./config.ts";
