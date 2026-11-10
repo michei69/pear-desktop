@@ -67,7 +67,7 @@ describe("LyricsStore", () => {
       ...options,
       priority: ["LyricsGenius", "LRCLib", "YTMusic"],
       usePriorityList: true,
-      preferSynced: true,
+      typePriority: ["word", "synced", "plain"],
     });
     store.load(track);
     await settle();
@@ -79,7 +79,7 @@ describe("LyricsStore", () => {
       ...options,
       priority: ["LyricsGenius", "LRCLib", "YTMusic"],
       usePriorityList: true,
-      preferSynced: false,
+      typePriority: ["word", "plain", "synced"],
     });
     plainFirst.load(track);
     await settle();

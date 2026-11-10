@@ -9,7 +9,7 @@
 import type { Track } from "@pear/sdk";
 import { remoteErrorMessage } from "@pear/sdk/util";
 import { parseLrc } from "../lrc.ts";
-import { pickProvider, resolvePriority } from "../priority.ts";
+import { pickProvider, resolvePriority, resolveTypePriority } from "../priority.ts";
 import { isChineseTarget } from "../translation/language.ts";
 import {
   PROVIDERS,
@@ -18,6 +18,7 @@ import {
   type LyricLine,
   type LyricResult,
   type LyricTranslation,
+  type LyricsType,
   type ProviderId,
   type SearchQuery,
 } from "../types.ts";
@@ -36,8 +37,9 @@ export interface Options {
   chinese: "off" | "s2t" | "t2s";
   /** The user's provider order; see `resolvePriority`. */
   priority?: readonly string[];
+  /** The user's lyrics type order; see `resolveTypePriority`. */
+  typePriority?: readonly string[];
   usePriorityList?: boolean;
-  preferSynced?: boolean;
   translation?: TranslationOptions;
 }
 
@@ -116,6 +118,7 @@ export class LyricsStore {
   #options: Options;
   #backend: Backend;
   #priority: ProviderId[];
+  #typePriority: LyricsType[];
   #listeners = new Set<() => void>();
   #generation = 0;
   #shownKey = "";
@@ -130,6 +133,7 @@ export class LyricsStore {
     this.#backend = backend;
     this.#options = options;
     this.#priority = resolvePriority(options.priority);
+    this.#typePriority = resolveTypePriority(options.typePriority);
     this.#active = active;
     this.selected = options.preferred === "auto" ? this.#priority[0]! : options.preferred;
   }
@@ -152,6 +156,7 @@ export class LyricsStore {
     const previous = this.#options;
     this.#options = options;
     this.#priority = resolvePriority(options.priority);
+    this.#typePriority = resolveTypePriority(options.typePriority);
     if (previous.inexact !== options.inexact) return void this.load(this.track, true);
     if (
       previous.romanize !== options.romanize ||
@@ -278,7 +283,7 @@ export class LyricsStore {
       priority: this.#priority,
       results,
       usePriorityList: this.#options.usePriorityList ?? false,
-      preferSynced: this.#options.preferSynced ?? true,
+      typePriority: this.#typePriority,
       preferred: this.#options.preferred,
       starred: this.starred,
     });

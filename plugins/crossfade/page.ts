@@ -8,6 +8,10 @@ import { HANDOVER_SECONDS, secondStream } from "./stream.ts";
 
 // Tracks shorter than this play untouched.
 const MIN_TRACK_SECONDS = 30;
+/** How long an auto-transition may stay armed without a navigation: the
+ * next-track control may do nothing (no next button, end of queue), and the
+ * flag must not turn the user's next manual skip into a crossfade. */
+const AUTO_TRANSITION_TIMEOUT_MS = 5000;
 
 interface FadeIn {
   startedAt: number;
@@ -31,6 +35,8 @@ export async function startCrossfade(ctx: Ctx) {
   let pendingFadeIn = false;
   /** The next track is loading because this track handed over, not because the user skipped. */
   let autoTransition = false;
+  /** Clears `autoTransition` if no navigation consumes it in time. */
+  let autoTransitionTimer: ReturnType<typeof setTimeout> | undefined;
   /** A fade-in of the incoming track, so a pause can freeze and resume it. */
   let fadingIn: FadeIn | null = null;
   /** Context time the handover splice of the outgoing track runs until. */
@@ -104,6 +110,19 @@ export async function startCrossfade(ctx: Ctx) {
     fader.ramp(elapsed / fadingIn.duration, 1, remaining);
   };
 
+  /**
+   * Releases an armed auto-transition. Only a navigation to another track
+   * consumes it, so every other way out has to clear it: a teardown, or the
+   * click that never navigated.
+   */
+  const clearAutoTransition = () => {
+    autoTransition = false;
+    if (autoTransitionTimer !== undefined) {
+      ctx.clearTimeout(autoTransitionTimer);
+      autoTransitionTimer = undefined;
+    }
+  };
+
   const skip = () => {
     skipped = true;
     fadingOut = false;
@@ -125,7 +144,11 @@ export async function startCrossfade(ctx: Ctx) {
       fader.hold(0);
       handoverUntil = 0;
     }
+    // Bounded: a click that does not navigate (no next button, end of queue)
+    // must not stay armed for the next track.
+    clearAutoTransition();
     autoTransition = true;
+    autoTransitionTimer = ctx.setTimeout(clearAutoTransition, AUTO_TRANSITION_TIMEOUT_MS);
     pendingFadeIn = true;
     fadingIn = null;
     ctx.player.control({ type: "next" });
@@ -193,7 +216,7 @@ export async function startCrossfade(ctx: Ctx) {
       stream.cancelTransition();
       fader.hold(0);
     }
-    autoTransition = false;
+    clearAutoTransition();
     skipped = false;
     fadingOut = false;
     pendingFadeIn = true;
@@ -233,5 +256,8 @@ export async function startCrossfade(ctx: Ctx) {
   ctx.listen(video, "ratechange", resync);
   // Every option is read when used; re-schedule a fade in progress.
   ctx.onConfigChange(resync);
-  ctx.onCleanup(() => stream.release());
+  ctx.onCleanup(() => {
+    clearAutoTransition();
+    stream.release();
+  });
 }

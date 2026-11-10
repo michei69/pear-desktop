@@ -242,6 +242,9 @@ export const PLUGIN_MIGRATIONS: Record<string, PluginMigration> = {
     if (typeof chinese === "string" && Object.hasOwn(CHINESE_CONVERSIONS, chinese)) {
       setNew(entry, "convertChinese", CHINESE_CONVERSIONS[chinese]);
     }
+    // "Prefer time-synced over plain" was one switch; the rewrite orders the types
+    // instead, so turning it off moves plain ahead of synced and word still wins.
+    if (entry.preferSynced === false) setNew(entry, "lyricsTypePriority", ["word", "plain", "synced"]);
     // Translation was one nested object (one entry per provider); the rewrite's
     // config is a flat record, so every provider's settings became top-level keys.
     // Without this the plugin reads its defaults: translation off, credentials lost.

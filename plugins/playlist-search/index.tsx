@@ -189,12 +189,18 @@ export default definePlugin({
 
     // Reset the dialog's filter when it closes; focus it when it opens.
     let dialogOpen = false;
+    // Visibility is a computed style, not just the inline `display`: YTM also
+    // hides the dialog through a class or attribute.
+    const isShown = (element: Element | null | undefined) => {
+      if (!(element instanceof HTMLElement)) return false;
+      const style = getComputedStyle(element);
+      return style.display !== "none" && style.visibility !== "hidden";
+    };
     const syncDialog = () => {
       const renderer = ctx.$("dialog.add_to_playlist");
       const paper = renderer?.closest("tp-yt-paper-dialog");
-      const hidden =
-        paper instanceof HTMLElement && (paper.hidden || paper.style.display === "none" || paper.getAttribute("aria-hidden") === "true");
-      const open = !!renderer && !hidden;
+      const open =
+        !!renderer && isShown(paper ?? renderer) && paper?.getAttribute("aria-hidden") !== "true";
       if (open === dialogOpen) return;
       dialogOpen = open;
       if (!open) {
@@ -207,7 +213,7 @@ export default definePlugin({
 
     // Rows (and the dialog) are re-rendered by YTM; coalesce bursts into one pass.
     let pending: ReturnType<typeof setTimeout> | undefined;
-    ctx.observe("app", { childList: true, subtree: true }, () => {
+    const schedule = () => {
       if (pending !== undefined) return;
       pending = ctx.setTimeout(() => {
         pending = undefined;
@@ -215,7 +221,24 @@ export default definePlugin({
         sidebar.apply();
         dialog.apply();
       }, 50);
-    });
+    };
+    ctx.observe("app", { childList: true, subtree: true }, schedule);
+
+    // The dialog also opens and closes through attributes, with no childList
+    // change. The page mutates style constantly while the dialog is open, so
+    // only a mutation on the dialog, inside it or on an ancestor of it is worth
+    // a computed visibility read.
+    const isDialogRelated = (target: Node, renderer: Element) =>
+      target instanceof Element &&
+      (target === renderer || renderer.contains(target) || target.contains(renderer));
+    ctx.observe(
+      document.body,
+      { attributes: true, subtree: true, attributeFilter: ["style", "class", "open", "aria-hidden"] },
+      (records) => {
+        const renderer = ctx.$("dialog.add_to_playlist");
+        if (renderer && records.some((record) => isDialogRelated(record.target, renderer))) syncDialog();
+      },
+    );
 
     syncDialog();
 

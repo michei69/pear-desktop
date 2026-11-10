@@ -116,6 +116,16 @@ export default definePlugin({
       timer = ctx.setTimeout(loadTracks, TRACKLIST_DELAY_MS);
     };
     ctx.player.on("trackChange", onTrack);
+    // Both settings used to be read on a track change only, so turning
+    // "disable captions" off left the module unloaded and the button hidden for
+    // the rest of the track. Re-apply the new mode to the current track.
+    // `ctx.config` already holds the new values here, so remember what was applied.
+    let applied = { disableCaptions: ctx.config.disableCaptions, autoload: ctx.config.autoload };
+    ctx.onConfigChange((next) => {
+      if (next.disableCaptions === applied.disableCaptions && next.autoload === applied.autoload) return;
+      applied = { disableCaptions: next.disableCaptions, autoload: next.autoload };
+      onTrack();
+    });
     ctx.onCleanup(() => api.unloadModule("captions"));
     // The tracks can come later than the delay (at startup, for one); the player says when its modules change.
     const onApiChange = () => {

@@ -28,14 +28,16 @@ export function mergeSegments(segments: readonly Segment[]): Segment[] {
   return merged;
 }
 
+/** Submissions worth using for media of `duration` seconds (0 = unknown). */
+export function usableSubmissions(submissions: readonly Submission[], duration: number): Submission[] {
+  return submissions
+    .filter((s) => s.actionType === "skip" && s.segment[1] > s.segment[0])
+    .filter((s) => !duration || !s.videoDuration || Math.abs(s.videoDuration - duration) <= DURATION_TOLERANCE_S);
+}
+
 /** Skippable segments for media of `duration` seconds (0 = unknown). */
 export function usableSegments(submissions: readonly Submission[], duration: number): Segment[] {
-  return mergeSegments(
-    submissions
-      .filter((s) => s.actionType === "skip" && s.segment[1] > s.segment[0])
-      .filter((s) => !duration || !s.videoDuration || Math.abs(s.videoDuration - duration) <= DURATION_TOLERANCE_S)
-      .map((s) => s.segment),
-  );
+  return mergeSegments(usableSubmissions(submissions, duration).map((s) => s.segment));
 }
 
 /** Where to seek to from `time`, or undefined when not inside a segment. */

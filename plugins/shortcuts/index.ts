@@ -9,6 +9,7 @@ const ACTIONS = {
   volumeUp: { label: "Volume up", action: { type: "volume", value: NaN } },
   volumeDown: { label: "Volume down", action: { type: "volume", value: NaN } },
   like: { label: "Like current track", action: { type: "like" } },
+  dislike: { label: "Dislike current track", action: { type: "dislike" } },
   showWindow: { label: "Show window", action: undefined },
 } satisfies Record<string, { label: string; action: PlayerAction | undefined }>;
 
@@ -17,7 +18,13 @@ type ActionName = keyof typeof ACTIONS;
 const VOLUME_STEP = 5;
 
 // pear-desktop's in-window shortcuts (only while the window has focus).
-const LOCAL = { localPlayPause: "playPause", localNext: "next", localPrevious: "previous" } as const;
+const LOCAL = {
+  localPlayPause: "playPause",
+  localNext: "next",
+  localPrevious: "previous",
+  localLike: "like",
+  localDislike: "dislike",
+} as const;
 // pear-desktop's "override media keys": the keyboard's media keys, taken globally.
 const MEDIA_KEYS = { MediaPlayPause: "playPause", MediaNextTrack: "next", MediaPreviousTrack: "previous" } as const;
 
@@ -32,6 +39,7 @@ export default definePlugin({
     volumeUp: config.shortcut("", { label: ACTIONS.volumeUp.label }),
     volumeDown: config.shortcut("", { label: ACTIONS.volumeDown.label }),
     like: config.shortcut("", { label: ACTIONS.like.label }),
+    dislike: config.shortcut("", { label: ACTIONS.dislike.label }),
     showWindow: config.shortcut("", { label: ACTIONS.showWindow.label }),
     overrideMediaKeys: config.bool(false, {
       label: "Take over the media keys",
@@ -40,6 +48,8 @@ export default definePlugin({
     localPlayPause: config.shortcut("", { label: ACTIONS.playPause.label, group: "In the window" }),
     localNext: config.shortcut("", { label: ACTIONS.next.label, group: "In the window" }),
     localPrevious: config.shortcut("", { label: ACTIONS.previous.label, group: "In the window" }),
+    localLike: config.shortcut("", { label: ACTIONS.like.label, group: "In the window" }),
+    localDislike: config.shortcut("", { label: ACTIONS.dislike.label, group: "In the window" }),
   },
   host: {
     start(ctx) {

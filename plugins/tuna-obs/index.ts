@@ -11,6 +11,9 @@ const HEADERS = {
   "Access-Control-Allow-Origin": "*",
 };
 
+/** How long a failed probe suppresses payloads before the real POST is retried. */
+const LITE_RETRY_MS = 30_000;
+
 /** Tuna's song data, in pear-desktop's shape. */
 function songData(state: NowPlaying, track: Track, details: SongDetails | undefined) {
   const extra = details?.videoId === track.videoId ? details : undefined;
@@ -51,6 +54,7 @@ export default definePlugin({
       let sending = false;
       /** Something changed while a request was out: send once more after it. */
       let resend = false;
+      let retryTimer: ReturnType<typeof setTimeout> | undefined;
       let stopped = false;
 
       const send = async () => {
@@ -61,6 +65,8 @@ export default definePlugin({
         try {
           await net.fetch(`http://127.0.0.1:${ctx.config.port}/`, { method: probing ? "OPTIONS" : "POST", headers: HEADERS, ...body });
           if (probing) {
+            ctx.clearTimeout(retryTimer);
+            retryTimer = undefined;
             probing = false;
             resend = true;
             ctx.log.info(`Tuna is reachable on port ${ctx.config.port}`);
@@ -68,6 +74,18 @@ export default definePlugin({
         } catch {
           if (!probing) ctx.log.info(`Tuna isn't reachable on port ${ctx.config.port}; waiting for it`);
           probing = true;
+          // A probe that keeps failing must not latch the plugin in
+          // empty-payload mode forever: retry the real request later, and fall
+          // back to probing if that fails again. The payload is built from the
+          // live state, so nothing needs keeping for the retry.
+          if (!retryTimer) {
+            retryTimer = ctx.setTimeout(() => {
+              retryTimer = undefined;
+              if (stopped) return;
+              probing = false;
+              post();
+            }, LITE_RETRY_MS);
+          }
         }
       };
       // One request at a time; changes meanwhile are coalesced into one more.

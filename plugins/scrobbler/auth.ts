@@ -12,6 +12,8 @@ const AUTH_WINDOW_SIZE = { width: 520, height: 680 };
 interface AuthWindow {
   window: BrowserWindow;
   poll?: ReturnType<typeof setTimeout>;
+  /** Abandoned by the plugin: its close is not a decline. */
+  cancelled: boolean;
 }
 
 export function lastFmAuthorizer(ctx: Ctx, warn: Warn) {
@@ -38,7 +40,7 @@ export function lastFmAuthorizer(ctx: Ctx, warn: Warn) {
       maximizable: false,
       webPreferences: { partition: "persist:pear-lastfm", sandbox: true, contextIsolation: true },
     });
-    const current: AuthWindow = { window };
+    const current: AuthWindow = { window, cancelled: false };
     auth = current;
     let authorized = false;
     // Last.fm has no redirect for desktop apps: poll until the token is approved.

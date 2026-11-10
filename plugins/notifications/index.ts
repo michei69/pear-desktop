@@ -108,7 +108,8 @@ const schema = {
 type Ctx = HostContextOf<typeof schema>;
 
 interface Notifier {
-  show(track: Track, paused: boolean): Promise<void> | undefined;
+  /** Whether a notification was actually started (false while the mini player suppresses it). */
+  show(track: Track, paused: boolean): boolean;
   close(): void;
   readonly showing: boolean;
   dispose(): void;
@@ -130,7 +131,7 @@ export default definePlugin({
       ctx.onProtocol((command) => {
         const track = ctx.player.state.track;
         if (!WINDOWS || !track || !ctx.config.interactive || !ctx.config.refreshOnPlayPause) return;
-        if (command === "pause" || (command === "play" && !ctx.config.unpauseNotification)) void notifier.show(track, command === "pause");
+        if (command === "pause" || (command === "play" && !ctx.config.unpauseNotification)) notifier.show(track, command === "pause");
       });
 
       if (WINDOWS) trayControls(ctx, notifier);
@@ -145,8 +146,10 @@ export default definePlugin({
         if (track && !paused) {
           const newTrack = track.videoId !== lastVideoId;
           const resumed = wasPaused && ctx.config.unpauseNotification;
-          if (newTrack || resumed) void notifier.show(track, false);
-          lastVideoId = track.videoId;
+          // The dedupe key only advances when a notification is actually shown:
+          // a suppressed one would otherwise count the track as announced with
+          // nothing ever displayed for it.
+          if ((newTrack || resumed) && notifier.show(track, false)) lastVideoId = track.videoId;
         }
         wasPaused = paused;
       });
@@ -234,7 +237,7 @@ function createNotifier(ctx: Ctx, suppressed: () => boolean): Notifier {
       ctx.player.control({ type: paused ? "play" : "pause" });
       // A resume shows its own notification when that option is on.
       const resumeNotifies = paused && ctx.config.unpauseNotification;
-      if (ctx.config.refreshOnPlayPause && !resumeNotifies) void show(track, !paused);
+      if (ctx.config.refreshOnPlayPause && !resumeNotifies) show(track, !paused);
     });
     present(notification);
   };
@@ -243,11 +246,12 @@ function createNotifier(ctx: Ctx, suppressed: () => boolean): Notifier {
     // The mini-player is already showing this track in the tray corner.
     if (suppressed()) {
       close();
-      return;
+      return false;
     }
     const id = ++generation;
-    if (WINDOWS && ctx.config.interactive) return showToast(track, paused, id);
-    return showNative(track, paused, id);
+    if (WINDOWS && ctx.config.interactive) void showToast(track, paused, id);
+    else void showNative(track, paused, id);
+    return true;
   };
 
   return {
@@ -321,7 +325,7 @@ function trayControls(ctx: Ctx, notifier: Notifier) {
     claim.claimed = true;
     const track = ctx.player.state.track;
     if (notifier.showing) notifier.close();
-    else if (track) void notifier.show(track, isPaused(ctx.player.state));
+    else if (track) notifier.show(track, isPaused(ctx.player.state));
   });
   ctx.listen(ctx.app, "pear:tray-double-click", (claim: { claimed: boolean }) => {
     if (!enabled()) return;

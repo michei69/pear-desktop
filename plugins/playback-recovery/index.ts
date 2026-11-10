@@ -5,6 +5,11 @@ const WATCHDOG_MS = 3000;
 const SETTLE_MS = 4000;
 /** Extra time after skipping a dead track, before recovery resumes. */
 const NEXT_SETTLE_MS = 5000;
+/**
+ * How long playback has to run without a failure before the retry ladder is
+ * reset: a stream that only stutters forward must keep its failure count.
+ */
+const HEALTHY_PLAYBACK_MS = 10_000;
 
 export default definePlugin({
   id: "playback-recovery",
@@ -35,6 +40,8 @@ export default definePlugin({
     let recoveryTimer: ReturnType<typeof setTimeout> | undefined;
     let consecutiveFailures = 0;
     let lastGoodAt = Date.now();
+    /** When the last recovery attempt started, for the healthy-window reset. */
+    let lastFailureAt = 0;
     let recovering = false;
 
     const log = (message: string) => {
@@ -52,6 +59,9 @@ export default definePlugin({
 
       const maxRetries = ctx.config.maxRetries;
       consecutiveFailures++;
+      // Recorded so a brief timeUpdate after the attempt cannot reset the
+      // ladder before playback has actually stayed healthy.
+      lastFailureAt = Date.now();
 
       if (consecutiveFailures > maxRetries) {
         log(`Max retries (${maxRetries}) exceeded — skipping to next track`);
@@ -75,7 +85,9 @@ export default definePlugin({
         log("Strategy: seek-to-current");
         if (currentTime > 0) ctx.player.control({ type: "seek", seconds: currentTime });
         ctx.player.control({ type: "play" });
-      } else if (consecutiveFailures <= 4) {
+      } else {
+        // Every attempt below the retry cap has a strategy: past the second one
+        // the ladder keeps seeking forward until it skips the track.
         log("Strategy: seek-forward");
         if (currentTime > 0) ctx.player.control({ type: "seek", seconds: currentTime + 1 });
         ctx.player.control({ type: "play" });
@@ -97,13 +109,16 @@ export default definePlugin({
       attemptRecovery("media-error");
     }
 
-    const watchStall = (reason: string, readyState: number) => {
+    // Both events mean playback cannot continue (readyState below 3), so one
+    // timer covers either. A second event must not push the deadline out
+    // again, or a stream that keeps reporting the stall never times out.
+    const watchStall = (reason: string) => {
+      if (stallTimer !== undefined) return;
       log(`${reason} — waiting for recovery...`);
-      ctx.clearTimeout(stallTimer);
       stallTimer = ctx.setTimeout(() => {
         stallTimer = undefined;
         const video = ctx.player.video();
-        if (video && !video.paused && video.readyState < readyState) {
+        if (video && !video.paused && video.readyState < 3) {
           log(`${reason} did not resolve`);
           attemptRecovery(reason);
         }
@@ -111,11 +126,11 @@ export default definePlugin({
     };
 
     function onStalled() {
-      watchStall("stall-timeout", 3);
+      watchStall("stall-timeout");
     }
 
     function onWaiting() {
-      watchStall("buffer-timeout", 2);
+      watchStall("buffer-timeout");
     }
 
     const attach = () => {
@@ -139,8 +154,16 @@ export default definePlugin({
       const video = ctx.player.video();
       if (video && video.currentTime > 0 && !video.paused) {
         lastGoodAt = Date.now();
-        consecutiveFailures = 0;
-        recovering = false;
+        // The stall resolved, so its timer must not fire on a later stall.
+        ctx.clearTimeout(stallTimer);
+        stallTimer = undefined;
+        // A stream that advances a fraction of a second and stalls again ticks
+        // here too: the ladder only resets once playback has stayed healthy
+        // for a sustained window since the last attempt.
+        if (Date.now() - lastFailureAt >= HEALTHY_PLAYBACK_MS) {
+          consecutiveFailures = 0;
+          recovering = false;
+        }
       }
     });
 
@@ -148,8 +171,11 @@ export default definePlugin({
       if (status === "playing") lastGoodAt = Date.now();
     });
 
+    // A new track starts the ladder over: two failures on the previous one must
+    // not make the next one skip earlier than policy.
     ctx.player.on("trackChange", () => {
       consecutiveFailures = 0;
+      lastFailureAt = 0;
       recovering = false;
       lastGoodAt = Date.now();
       ctx.clearTimeout(stallTimer);

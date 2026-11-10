@@ -71,12 +71,24 @@ export interface SearchQuery {
   tags?: string[];
 }
 
+/** How lyrics are timed, best first: the default type order. */
+export const LYRICS_TYPES = ["word", "synced", "plain"] as const;
+export type LyricsType = (typeof LYRICS_TYPES)[number];
+
+/** How a result is timed; null when it has no lyrics at all. */
+export function lyricsType(result: LyricResult | null | undefined): LyricsType | null {
+  if (!result) return null;
+  if (result.lines?.some((line) => line.words?.length)) return "word";
+  if (result.lines?.length) return "synced";
+  return result.plain?.trim() ? "plain" : null;
+}
+
+const TYPE_RANK: Record<LyricsType, number> = { word: 3, synced: 2, plain: 1 };
+
 /** How good a result is: word sync > line sync > plain text > nothing. */
 export function resultRank(result: LyricResult | null | undefined) {
-  if (!result) return 0;
-  if (result.lines?.some((line) => line.words?.length)) return 3;
-  if (result.lines?.length) return 2;
-  return result.plain?.trim() ? 1 : 0;
+  const type = lyricsType(result);
+  return type ? TYPE_RANK[type] : 0;
 }
 
 /** A per-song search the user typed in by hand (the picker's custom search). */

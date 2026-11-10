@@ -1,5 +1,6 @@
 import { config, type ConfigOf } from "@pear/sdk";
 import {
+  LYRICS_TYPES,
   PROVIDERS,
   TRANSLATION_PROVIDERS,
   TRANSLATION_PROVIDER_NAMES,
@@ -44,9 +45,11 @@ export const schema = {
       "Tried from top to bottom when the order is followed, and used to break ties otherwise. Providers missing from the list are tried last.",
     placeholder: "YTMusic",
   }),
-  preferSynced: config.bool(true, {
-    label: "Prefer time-synced lyrics",
-    description: "While walking the provider order, take timed lyrics before plain ones; plain lyrics still win over none.",
+  lyricsTypePriority: config.list([...LYRICS_TYPES], {
+    label: "Lyrics type order",
+    description:
+      "Lyrics are picked by type in this order: a word-by-word result wins over a time-synced one over a plain text block. Providers with the same kind of lyrics are picked by the provider order.",
+    placeholder: "word",
   }),
   preciseTiming: config.bool(true, {
     label: "Precise line timing",

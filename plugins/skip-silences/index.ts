@@ -79,7 +79,11 @@ export default definePlugin({
 
       // Each seek (including our own skips) re-checks, so a long silence is crossed in steps.
       const onPlayOrSeek = () => {
-        audioStarted = false;
+        // A seek does not restart the track: `audioStarted` ("real audio heard
+        // since the track began") must survive it, or any seek, including the
+        // one skip() makes itself, re-arms beginning-only skipping mid-track.
+        // Only the samples from before the jump stop counting.
+        history.fill(0);
         skip();
       };
       ctx.listen(video, "play", onPlayOrSeek);

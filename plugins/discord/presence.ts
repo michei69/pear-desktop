@@ -11,6 +11,11 @@ import type { schema } from "./schema.ts";
 const CLIENT_ID = "1177081335727267940";
 const RETRY_MIN_MS = 5_000;
 const RETRY_MAX_MS = 60_000;
+/**
+ * A client that connects but never becomes ready has no event left to recover
+ * from, so the login path gives it this long before rebuilding it.
+ */
+const READY_TIMEOUT_MS = 15_000;
 // Discord allows 5 activity updates per 20 s.
 const MIN_UPDATE_INTERVAL_MS = 4_000;
 
@@ -28,6 +33,7 @@ export class Presence {
   #retryTimer: ReturnType<typeof setTimeout> | undefined;
   #updateTimer: ReturnType<typeof setTimeout> | undefined;
   #pauseTimer: ReturnType<typeof setTimeout> | undefined;
+  #readyTimer: ReturnType<typeof setTimeout> | undefined;
   #shown: SetActivity | null = null;
   #lastSentAt = 0;
   #details: SongDetails | undefined;
@@ -57,7 +63,12 @@ export class Presence {
 
   /** The "Connect" action: try now instead of at the next retry. */
   connectNow() {
-    if (this.#ready || this.#client) return;
+    if (this.#ready) return;
+    // A client that hasn't become ready can't log in again on the same
+    // transport, so the action rebuilds it instead of doing nothing.
+    const stale = this.#client;
+    this.#client = undefined;
+    if (stale) dispose(stale);
     this.#ctx.clearTimeout(this.#retryTimer);
     this.#retryTimer = undefined;
     this.#retryDelay = RETRY_MIN_MS;
@@ -75,6 +86,8 @@ export class Presence {
 
   stop() {
     this.#stopped = true;
+    this.#ctx.clearTimeout(this.#readyTimer);
+    this.#readyTimer = undefined;
     const current = this.#client;
     this.#client = undefined;
     if (!current) return;
@@ -117,9 +130,27 @@ export class Presence {
       this.#warnUnreachable(error);
       this.#lost(attempt);
     });
+    this.#armReadyTimeout(attempt);
+  }
+
+  /**
+   * The transport can report a connection and then never become ready (a
+   * server CLOSE that leaves the socket open, for example). Nothing would
+   * retry, so a timed-out login drops the client and re-enters the ladder.
+   */
+  #armReadyTimeout(attempt: Client) {
+    this.#ctx.clearTimeout(this.#readyTimer);
+    this.#readyTimer = this.#ctx.setTimeout(() => {
+      this.#readyTimer = undefined;
+      if (this.#client !== attempt || this.#ready) return;
+      this.#ctx.log.info("Discord connected but didn't become ready; retrying");
+      this.#lost(attempt);
+    }, READY_TIMEOUT_MS);
   }
 
   #onReady() {
+    this.#ctx.clearTimeout(this.#readyTimer);
+    this.#readyTimer = undefined;
     this.#ready = true;
     this.#retryDelay = RETRY_MIN_MS;
     this.#warned = false;
@@ -131,6 +162,8 @@ export class Presence {
 
   /** The client disconnected or never connected: drop it and try again later. */
   #lost(attempt: Client) {
+    this.#ctx.clearTimeout(this.#readyTimer);
+    this.#readyTimer = undefined;
     this.#ready = false;
     this.#client = undefined;
     dispose(attempt);

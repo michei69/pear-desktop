@@ -100,6 +100,7 @@ const CONVERTED: Record<string, Record<string, string[]>> = {
   sponsorblock: { categories: ["sponsor", "intro", "outro", "interaction", "selfpromo", "music_offtopic", "preview", "filler"] },
   "synced-lyrics": {
     defaultTextString: ["gapText"],
+    preferSynced: ["lyricsTypePriority"],
     translation: [
       "translationEnabled",
       "translationProvider",
@@ -443,7 +444,7 @@ describe("a complete pear-desktop 3.12.4 config.json, migrated to 4.0.0", () => 
     expect(pluginConfig("synced-lyrics")).toMatchObject({
       usePriorityList: true,
       providerPriority: ["LRCLib", "YTMusic"],
-      preferSynced: false,
+      lyricsTypePriority: ["word", "plain", "synced"],
       preciseTiming: false,
       showLyricsEvenIfInexact: false,
       showTimeCodes: true,

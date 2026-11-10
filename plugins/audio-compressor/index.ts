@@ -155,6 +155,10 @@ export default definePlugin({
       updateGain();
     };
     ctx.observe("player.api", { childList: true, subtree: true }, watchVideo);
+    // The shared graph binds the <video> it was created with, which may have
+    // been swapped while the plugin was off: attach to the live element now
+    // instead of waiting for the next swap to be observed.
+    watchVideo();
 
     ctx.onCleanup(() => {
       ctx.clearTimeout(retry);

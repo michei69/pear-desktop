@@ -6,6 +6,8 @@ const DID_PLAY = "pear-unobtrusive-did-play";
 // YTM can't close the player page during an ad, and the ad should be seen anyway.
 const AD = "pear-unobtrusive-ad";
 const AUTO_CLOSING_MS = 500;
+/** Retries for a toggle YTM ignored while it was still opening the page. */
+const AUTO_CLOSE_RETRIES = 2;
 
 export default definePlugin({
   id: "unobtrusive-player",
@@ -43,16 +45,31 @@ export default definePlugin({
       { capture: true },
     );
 
+    const pageOpen = () => ctx.$("app.layout")?.getAttribute("player-ui-state") === "PLAYER_PAGE_OPEN";
+    let retries = 0;
     const closePlayerPage = () => {
       if (autoClosing || !root.classList.contains(DID_PLAY)) return;
-      if (ctx.$("app.layout")?.getAttribute("player-ui-state") !== "PLAYER_PAGE_OPEN") return;
+      if (!pageOpen()) return;
       autoClosing = true;
       ctx.$("player_bar.toggle_player_page")?.click();
       // Keep the page hidden until YTM's close animation is over, then check
       // again: YTM ignores the toggle while it is still opening the page.
       ctx.setTimeout(() => {
         autoClosing = false;
-        closePlayerPage();
+        if (!pageOpen()) {
+          retries = 0;
+          return;
+        }
+        if (retries < AUTO_CLOSE_RETRIES) {
+          retries += 1;
+          closePlayerPage();
+          return;
+        }
+        // The latch is only useful if the auto-close actually closed the page;
+        // a toggle that never works would otherwise force-close every later
+        // track, so give up until the user starts another one from a list.
+        retries = 0;
+        root.classList.remove(DID_PLAY);
       }, AUTO_CLOSING_MS);
     };
     // YTM opens the page either while navigating to /watch or once the track loads.

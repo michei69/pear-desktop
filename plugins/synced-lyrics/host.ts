@@ -8,7 +8,7 @@ import type { Translate } from "@pear/sdk/i18n";
 import { net } from "electron";
 import { apiCachedTranslation, apiProviderLyrics, type ApiLyrics } from "./api.ts";
 import { CustomQueryStore } from "./custom-query.ts";
-import { pickProvider, resolvePriority } from "./priority.ts";
+import { pickProvider, resolvePriority, resolveTypePriority } from "./priority.ts";
 import { type ProviderOptions, providers, SearchCache } from "./providers/index.ts";
 import { convertChinese, Romanizer } from "./romanize.ts";
 import type { LyricsConfig } from "./schema.ts";
@@ -121,7 +121,7 @@ export class LyricsHost {
       priority,
       results,
       usePriorityList: request.config.usePriorityList,
-      preferSynced: request.config.preferSynced,
+      typePriority: resolveTypePriority(request.config.lyricsTypePriority),
       preferred: request.config.preferredProvider,
     });
 

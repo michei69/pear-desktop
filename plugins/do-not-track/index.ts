@@ -47,7 +47,9 @@ export default definePlugin({
       let blocking = false;
       /** Profile changes apply one after another, so engine loads never race. */
       let queue = Promise.resolve();
-      let currentProfile = profileKey(ctx.config);
+      // Claimed only once a load lands: null means the last one failed (or never
+      // ran), so the next config change retries instead of staying silently off.
+      let currentProfile: string | null = null;
       let currentCache = ctx.config.cache;
       let prompting = false;
       engines.set(ctx, () => engine);
@@ -76,34 +78,42 @@ export default definePlugin({
         });
       };
 
-      /** Loads the config's lists and starts using them; an engine load failure keeps the old one. */
+      /** Loads the config's lists and starts using them; false when they could not be loaded. */
       const apply = async (config: Config, run: number) => {
-        const curated = await curatedFor(config);
-        const next = await sourcesFor(config, curated);
-        if (stopped || generation !== run) return;
-        if (next.length === 0) {
-          engine = undefined;
-          Object.assign(stats, { active: false, lists: 0 });
-          return;
-        }
+        try {
+          const curated = await curatedFor(config);
+          const next = await sourcesFor(config, curated);
+          if (stopped || generation !== run) return false;
+          if (next.length === 0) {
+            engine = undefined;
+            Object.assign(stats, { active: false, lists: 0 });
+            return true;
+          }
 
-        const started = performance.now();
-        const loaded = await loadEngine({ lists: next, cacheDir: cacheDir(config) });
-        if (stopped || generation !== run) return;
-        engine = loaded.engine;
-        if (!blocking) {
-          // One registration for the plugin's lifetime: profile switches swap the
-          // engine it reads, instead of leaving old listeners behind.
-          blocking = true;
-          enableBlocking(
-            ctx.webRequest,
-            () => engine,
-            () => void stats.blocked++,
-          );
+          const started = performance.now();
+          const loaded = await loadEngine({ lists: next, cacheDir: cacheDir(config) });
+          if (stopped || generation !== run) return false;
+          engine = loaded.engine;
+          if (!blocking) {
+            // One registration for the plugin's lifetime: profile switches swap the
+            // engine it reads, instead of leaving old listeners behind.
+            blocking = true;
+            enableBlocking(
+              ctx.webRequest,
+              () => engine,
+              () => void stats.blocked++,
+            );
+          }
+          Object.assign(stats, { active: true, lists: next.length });
+          ctx.log.info(`${next.length} blocklist(s) ready in ${Math.round(performance.now() - started)}ms`);
+          refresh(config, loaded, next, run).catch((error: unknown) => ctx.log.warn("could not refresh the blocklists", error));
+          return true;
+        } catch (error) {
+          // The running engine keeps filtering; the caller leaves the profile
+          // unclaimed so the next config change retries the load.
+          ctx.log.error("could not load the blocklists", error);
+          return false;
         }
-        Object.assign(stats, { active: true, lists: next.length });
-        ctx.log.info(`${next.length} blocklist(s) ready in ${Math.round(performance.now() - started)}ms`);
-        refresh(config, loaded, next, run).catch((error: unknown) => ctx.log.warn("could not refresh the blocklists", error));
       };
 
       /** Picks up a fresher cached engine and newly published curated lists. */
@@ -162,22 +172,27 @@ export default definePlugin({
       // Registered before the first load: a change while it runs applies after it.
       ctx.onConfigChange((config) => {
         const key = profileKey(config);
+        // A null profile means the last load failed (or never landed), so any
+        // config change retries instead of silently staying off.
         const profileChanged = key !== currentProfile;
         const cacheChanged = config.cache !== currentCache;
         if (!profileChanged && !cacheChanged) return;
-        currentProfile = key;
         currentCache = config.cache;
         const nextRun = ++generation;
         queue = queue
           .catch(() => undefined)
           .then(async () => {
             if (stopped || generation !== nextRun) return;
-            if (needsBlocklists(config)) await apply(config, nextRun);
+            let applied = true;
+            if (needsBlocklists(config)) applied = await apply(config, nextRun);
             else {
               engine = undefined;
               Object.assign(stats, { active: false, lists: 0 });
             }
             if (stopped || generation !== nextRun) return;
+            // Claimed only after the load landed; a failure clears it so the
+            // next change tries again.
+            currentProfile = applied ? key : null;
             // Cached engines move with the setting; page filters only with the profile.
             if (profileChanged) void promptReload();
           })
@@ -185,11 +200,13 @@ export default definePlugin({
       });
 
       const run = ++generation;
+      let applied = true;
       if (needsBlocklists(ctx.config)) {
-        await apply(ctx.config, run);
+        applied = await apply(ctx.config, run);
       } else {
         Object.assign(stats, { active: false, lists: 0 });
       }
+      if (generation === run) currentProfile = applied ? profileKey(ctx.config) : null;
 
       return () => {
         stopped = true;

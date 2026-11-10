@@ -37,7 +37,7 @@ const storeOptions = (config: LyricsConfig): Options => ({
   chinese: config.convertChinese,
   priority: config.providerPriority,
   usePriorityList: config.usePriorityList,
-  preferSynced: config.preferSynced,
+  typePriority: config.lyricsTypePriority,
   translation: { enabled: config.translationEnabled, targetLanguage: config.translationTargetLanguage },
 });
 
