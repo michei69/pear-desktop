@@ -14,7 +14,7 @@ export interface QueueItem {
 }
 
 export interface QueueStoreState {
-  queue: { items: QueueItem[]; queueContextParams: unknown; nextQueueItemId: unknown };
+  queue: { items: QueueItem[]; queueContextParams: unknown; nextQueueItemId: unknown; shuffleEnabled?: boolean };
 }
 
 export type QueueAction = { type: string; payload?: unknown };
@@ -25,7 +25,15 @@ export interface QueueElement extends HTMLElement {
     getItems(): QueueItem[];
     autoPlaying?: boolean;
     continuation?: string;
-    store: { store: { dispatch(action: QueueAction): void; getState(): QueueStoreState } };
+    store: {
+      store: {
+        dispatch(action: QueueAction): void;
+        getState(): QueueStoreState;
+        subscribe?(listener: () => void): () => void;
+      };
+    };
+    /** YTM's own shuffle action; the queue fills asynchronously, so it may reject while empty. */
+    shuffle?(): Promise<unknown>;
   };
 }
 
@@ -55,4 +63,20 @@ export function queueSelectedIndex(items: QueueItem[] = queueItems()): number {
 
 export function queueDispatch(action: QueueAction) {
   playerQueue()?.dispatch(action);
+}
+
+/** Whether YTM's queue is in shuffle mode (false while there is no queue yet). */
+export function queueShuffleEnabled(): boolean {
+  return queueStore()?.store.store.getState().queue.shuffleEnabled ?? false;
+}
+
+/** Lets YTM shuffle the queue; nothing happens when there is no queue to shuffle. */
+export function queueShuffle(): Promise<unknown> | undefined {
+  return queueStore()?.shuffle?.();
+}
+
+/** Calls `listener` on every queue change; returns the unsubscribe. */
+export function onQueueStoreChange(listener: () => void): () => void {
+  const unsubscribe = queueStore()?.store.store.subscribe?.(listener);
+  return typeof unsubscribe === "function" ? unsubscribe : () => {};
 }

@@ -96,8 +96,31 @@ export interface YTPlayerApi extends HTMLElement {
   setPlaybackQualityRange(min: string, max?: string): void;
   getVideoData(): { video_id: string; title: string; author: string; list?: string; isLive?: boolean };
   getPlayerResponse(): YTPlayerResponse;
+  /**
+   * The audio tracks the current video offers (languages, original and
+   * auto-dubs); absent on player builds without YTM's track selector.
+   */
+  getAvailableAudioTracks?(): YTPlayerAudioTrack[];
+  /** The audio track playing now. */
+  getAudioTrack?(): YTPlayerAudioTrack | null;
+  /** Switches the audio track; YTM throws when a track cannot be served for this player type. */
+  setAudioTrack?(track: YTPlayerAudioTrack): void;
   addEventListener(type: string, listener: (...args: any[]) => void): void;
   removeEventListener(type: string, listener: (...args: any[]) => void): void;
+}
+
+/** One audio track of the current video: language info, original or auto-dubbed. */
+export interface YTPlayerAudioTrack {
+  id?: string;
+  /** YTM's language-info object; the shapes differ between player builds. */
+  getLanguageInfo?(): {
+    getId?(): string;
+    getName?(): string;
+    getIsDefault?(): boolean;
+    getIsAutoDubbed?(): boolean;
+  } | null;
+  isAutoDubbed?(): boolean;
+  [key: string]: unknown;
 }
 
 export interface YTPlayerResponse {
@@ -112,4 +135,6 @@ export interface YTPlayerResponse {
   };
   microformat?: { microformatDataRenderer?: { urlCanonical?: string; pageOwnerDetails?: { name?: string } } };
   captions?: unknown;
+  /** Present on videos with more than one audio track. */
+  audioTracks?: unknown;
 }
