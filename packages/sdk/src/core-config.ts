@@ -179,23 +179,17 @@ export const ADVANCED = {
     description: "Replaces Chromium's media session with the native System Media Transport Controls.",
     group: "Integration",
     platforms: ["win32"],
-  }
-
+  }),
   overrideUserAgent: config.bool(false, {
     label: "Override the user agent",
     description: "Tell \u0059\u006f\u0075\u0054\u0075\u0062\u0065 Music this is Chrome rather than an Electron app. Google sign-in always sees the app as it is.",
-    group: "Network",    restart: true,
+    group: "Network",
+    restart: true,
   }),
   proxy: config.string("", {
     label: "Proxy",
     description: "For proxies that need a username and password, use the Proxy plugin.",
     placeholder: "socks5://127.0.0.1:9999",
-    group: "Network",
-    restart: true,
-  }),
-  overrideUserAgent: config.bool(false, {
-    label: "Override the user agent",
-    description: "Send a plain Chrome user agent instead of Electron's; some sites behave differently.",
     group: "Network",
     restart: true,
   }),
