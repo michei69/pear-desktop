@@ -444,7 +444,7 @@ describe("a complete pear-desktop 3.12.4 config.json, migrated to 4.0.0", () => 
     expect(pluginConfig("synced-lyrics")).toMatchObject({
       usePriorityList: true,
       providerPriority: ["LRCLib", "YTMusic"],
-      lyricsTypePriority: ["word", "plain", "synced"],
+      lyricsTypePriority: ["plain", "synced", "word"],
       preciseTiming: false,
       showLyricsEvenIfInexact: false,
       showTimeCodes: true,

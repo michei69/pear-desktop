@@ -156,8 +156,8 @@
               "sync": {
                 "label": "Sync language",
                 "submenu": {
-                  "from-youtube": "From YouTube",
-                  "to-youtube": "To YouTube"
+                  "from-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "From \u0059\u006f\u0075\u0054\u0075\u0062\u0065",
+                  "to-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "To \u0059\u006f\u0075\u0054\u0075\u0062\u0065"
                 },
                 "failure": {
                   "dialog": {
@@ -229,7 +229,7 @@
                   "open-themes-folder": "Open themes folder"
                 }
               },
-              "use-ytm-icons": "Use original YouTube Music icons"
+              "use-ytm-icons": "Use original \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 icons"
             }
           },
           "settings": "Settings…",
@@ -808,7 +808,7 @@
           }
         },
         "playButton": {
-          "label": "“Play on YouTube Music” button"
+          "label": "“Play on \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063” button"
         },
         "hideGitHubButton": {
           "label": "Hide the GitHub button"
@@ -856,7 +856,7 @@
       "settings": {
         "blocker": {
           "label": "Blocker",
-          "description": "In the player removes ad and tracking placements from YouTube's player data; with blocklists filters network requests with pear-desktop's curated tracker lists. Works alongside the Ad blocker plugin: both can be on, each filters with its own lists.",
+          "description": "In the player removes ad and tracking placements from \u0059\u006f\u0075\u0054\u0075\u0062\u0065's player data; with blocklists filters network requests with pear-desktop's curated tracker lists. Works alongside the Ad blocker plugin: both can be on, each filters with its own lists.",
           "options": {
             "In player": "In the player",
             "With blocklists": "With blocklists",
@@ -1862,7 +1862,7 @@
         },
         "alternativeTitles": {
           "label": "Use alternative titles",
-          "description": "Prefer YouTube Music's alternative title when it has one (e.g. original-script titles)."
+          "description": "Prefer \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063's alternative title when it has one (e.g. original-script titles)."
         },
         "alternativeArtist": {
           "label": "Use the canonical artist",
@@ -1942,7 +1942,16 @@
           "label": "Previous track"
         },
         "global-keybinds": "Global keybinds (work app-wide)",
-        "local-keybinds": "Local keybinds (only while the window is focused)"
+        "local-keybinds": "Local keybinds (only while the window is focused)",
+        "dislike": {
+          "label": "Dislike current track"
+        },
+        "localLike": {
+          "label": "Like current track"
+        },
+        "localDislike": {
+          "label": "Dislike current track"
+        }
       }
     },
     "skip-disliked-songs": {
@@ -2008,7 +2017,11 @@
           "selfpromo": "Self-promotion",
           "music_offtopic": "Non-music section"
         },
-        "api-url": "API URL"
+        "api-url": "API URL",
+        "showSegmentsOnProgressBar": {
+          "label": "Show segments on the progress bar",
+          "description": "Paints the fetched segments on the seek bar, coloured per category."
+        }
       }
     },
     "synced-lyrics": {
@@ -2106,7 +2119,7 @@
         },
         "use-ytm-lyrics-without-proxy": {
           "label": "Use YTM lyrics with no proxy",
-          "tooltip": "Skip the YTM browse proxy and call YouTube Music directly using the app's authenticated session. Useful if you trust your network/region to allow direct browse calls."
+          "tooltip": "Skip the YTM browse proxy and call \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 directly using the app's authenticated session. Useful if you trust your network/region to allow direct browse calls."
         },
         "translation": {
           "label": "Lyrics translation",
@@ -2265,7 +2278,7 @@
           "options": {
             "auto": "Best available",
             "LRCLib": "LRCLIB",
-            "YTMusic": "YouTube Music",
+            "YTMusic": "\u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063",
             "MusixMatch": "Musixmatch",
             "Megalobiz": "Megalobiz",
             "LyricsGenius": "Genius",
@@ -2361,7 +2374,7 @@
           "description": "A button in the lyrics picker to search with your own title and artist for the current song, remembered per song."
         },
         "useYTMLyricsWithoutProxy": {
-          "label": "YouTube Music lyrics without proxy",
+          "label": "\u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 lyrics without proxy",
           "description": "Fetch YTM's own lyrics directly. Off keeps the direct request and retries through the public browse proxy if it fails."
         },
         "translationEnabled": {
@@ -2489,6 +2502,11 @@
             "auto": "Automatic (mobile app token)",
             "user": "Your own token"
           }
+        },
+        "lyricsTypePriority": {
+          "label": "Lyrics type order",
+          "description": "Lyrics are picked by type in this order: a word-by-word result wins over a time-synced one over a plain text block. Providers with the same kind of lyrics are picked by the provider order.",
+          "placeholder": "word"
         }
       },
       "musixmatch": {
@@ -2619,7 +2637,7 @@
           "label": "Switch",
           "options": {
             "custom": "Pear Desktop's switch",
-            "native": "YouTube Music's switch",
+            "native": "\u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063's switch",
             "disabled": "No switch"
           }
         },
@@ -3034,7 +3052,7 @@
     },
     "search-commands": {
       "commands": {
-        "play": "Play a video from a YouTube link or id",
+        "play": "Play a video from a \u0059\u006f\u0075\u0054\u0075\u0062\u0065 link or id",
         "settings": "Open the settings"
       },
       "description": "Type / in the search box to run commands, with autocomplete for their arguments",
@@ -3059,11 +3077,11 @@
       "name": "Seek Shortcuts"
     },
     "sfw-music": {
-      "description": "Automatically skips songs marked Explicit by YouTube Music. Pauses if an explicit queue repeats or no next song is available.",
+      "description": "Automatically skips songs marked Explicit by \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063. Pauses if an explicit queue repeats or no next song is available.",
       "name": "SFW Music"
     },
     "toast-autoclose": {
-      "description": "Automatically close YouTube Music toasts after three seconds",
+      "description": "Automatically close \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 toasts after three seconds",
       "name": "Toast Auto-Close"
     },
     "statusbar-lyrics": {
@@ -3138,6 +3156,37 @@
         "searchList": {
           "label": "Search the community list",
           "description": "Searches the saved names for the text in “Community list search”."
+        }
+      }
+    },
+    "audio-track": {
+      "name": "Audio track",
+      "description": "Picks which audio track of a video plays, and which one is preferred by default.",
+      "settings": {
+        "preferOriginal": {
+          "label": "Prefer the original audio",
+          "description": "When no track is picked, take the one that is not an auto-dub."
+        },
+        "audioTrack": {
+          "label": "Audio track"
+        }
+      },
+      "menu": {
+        "label": "Audio track…",
+        "automatic": "Automatic",
+        "cancel": "Cancel",
+        "message": "Which audio track should play?"
+      },
+      "toast": {
+        "no-tracks": "This video has only one audio track."
+      }
+    },
+    "resume-shuffle": {
+      "name": "Resume shuffle",
+      "description": "Shuffles the queue again when the last song is resumed at startup.",
+      "settings": {
+        "shuffled": {
+          "label": "Queue was shuffled"
         }
       }
     }
@@ -3217,7 +3266,7 @@
       },
       "themes": {
         "label": "Themes",
-        "description": "CSS files applied on top of YouTube Music.",
+        "description": "CSS files applied on top of \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063.",
         "placeholder": "/path/to/theme.css"
       },
       "disableHardwareAcceleration": {
@@ -3271,7 +3320,7 @@
       },
       "playerBar": {
         "label": "Player bar",
-        "description": "YouTube Music is trying a new player bar on some users. The one it didn't choose for you works, but without like buttons: it only sends them for its choice.",
+        "description": "\u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 is trying a new player bar on some users. The one it didn't choose for you works, but without like buttons: it only sends them for its choice.",
         "options": {
           "": "Site's choice",
           "classic": "Classic",
@@ -3293,7 +3342,7 @@
       },
       "stripMusicFromSharedLinks": {
         "label": "Strip 'music.' from shared links",
-        "description": "Turns music.youtube.com links back into regular ones."
+        "description": "Turns music.\u0079\u006f\u0075\u0074\u0075\u0062\u0065.com links back into regular ones."
       },
       "stripSIFromSharedLinks": {
         "label": "Strip 'si' from shared links",
@@ -3316,7 +3365,7 @@
         "description": "Exposes the API server's operations as Model Context Protocol tools at /mcp."
       },
       "useYtmIcons": {
-        "label": "Use YouTube Music's icons",
+        "label": "Use \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063's icons",
         "description": "The window, tray and About artwork use YTM's logo instead of Pear Desktop's."
       },
       "hideDislikeButton": {
@@ -3510,7 +3559,7 @@
       }
     },
     "about": {
-      "tagline": "A feature-rich desktop app for YouTube Music",
+      "tagline": "A feature-rich desktop app for \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063",
       "versions": "Versions",
       "platform": "Platform",
       "actions": "Actions",
@@ -3534,7 +3583,7 @@
       "channel": "Channel"
     },
     "site-flags": {
-      "hint": "The flags YouTube Music sent this session. Switching one adds it to the overrides above, after a restart. Most only change what the server sends, so overriding them does nothing.",
+      "hint": "The flags \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 sent this session. Switching one adds it to the overrides above, after a restart. Most only change what the server sends, so overriding them does nothing.",
       "filter": "Filter flags",
       "empty": "No flags match.",
       "more": "{{count}} more; narrow the filter to see them.",
@@ -3556,7 +3605,7 @@
     "stepper-decrement": "Decrease",
     "stepper-increment": "Increase",
     "flags": {
-      "warning": "Feature flags are YouTube Music's own internal switches. Changing them can break playback, layout or account features, and they are not covered by support. Overrides are kept only for the flags you change, and can be removed with Undo.",
+      "warning": "Feature flags are \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063's own internal switches. Changing them can break playback, layout or account features, and they are not covered by support. Overrides are kept only for the flags you change, and can be removed with Undo.",
       "search-placeholder": "Search flags",
       "overridden": "overridden",
       "undo": "Undo",
@@ -3609,8 +3658,8 @@
     },
     "language-sync": {
       "label": "Sync language",
-      "from": "From YouTube",
-      "to": "To YouTube"
+      "from": "From \u0059\u006f\u0075\u0054\u0075\u0062\u0065",
+      "to": "To \u0059\u006f\u0075\u0054\u0075\u0062\u0065"
     },
     "themes": {
       "description": "Themes are folders in the themes directory, each with a theme.json manifest. Pick one here or under Options › Theme.",

@@ -226,7 +226,7 @@ describe("pear-desktop plugin options", () => {
   test("synced-lyrics: the preferSynced switch becomes the type order", () => {
     // Off moved plain lyrics ahead of timed ones; word-by-word still wins.
     expect(twice("synced-lyrics", { preferSynced: false })).toMatchObject({
-      lyricsTypePriority: ["word", "plain", "synced"],
+      lyricsTypePriority: ["plain", "synced", "word"],
     });
     // On is the default order, so it adds nothing; neither does an untouched config.
     expect(twice("synced-lyrics", { preferSynced: true })).not.toHaveProperty("lyricsTypePriority");
