@@ -21,8 +21,10 @@
   "type": "module",
   "main": "out/main/index.js",
   "scripts": {
+    "predev": "install-electron",
     "dev": "electron-vite dev",
     "build": "electron-vite build",
+    "prestart": "install-electron",
     "start": "electron-vite preview",
     "clean": "del-cli out ../../pack",
     "typecheck": "tsc -p .",
