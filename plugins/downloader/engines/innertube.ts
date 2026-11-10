@@ -17,6 +17,7 @@ import {
   type YTMusic,
 } from "\u0079\u006f\u0075\u0074\u0075\u0062\u0065i.js";
 import { type BuiltInFormat, type Converter, type Cover, codecOf, outputFor, preferredContainer, type Tags } from "../convert.ts";
+import { cleanupName } from "../names.ts";
 import type { Lyrics, LyricsQuery } from "../lyrics.ts";
 import type { KeepOptions, OfflineList, OfflineSong, OfflineStore } from "../offline.ts";
 import { Archive } from "../archive.ts";
@@ -712,13 +713,13 @@ function chooseAudio(info: YTMusic.TrackInfo | YT.VideoInfo, format: BuiltInForm
 }
 
 /** Song channels are named "<artist> - Topic". */
-const cleanArtist = (name: string | undefined) => name?.replace(/ - Topic$/, "");
-
 function trackTags(info: YTMusic.TrackInfo): Tags {
   const album = info.player_overlays?.browser_media_session?.as(YTNodes.BrowserMediaSession).album?.text;
   return {
-    title: info.basic_info.title ?? info.basic_info.id ?? "",
-    artist: cleanArtist(info.basic_info.author),
+    // The same dressing yt-dlp strips through cleanupArgs, so both engines name
+    // files alike: "(Official Music Video)", "[Lyric Video]", "VEVO", " - Topic"…
+    title: cleanupName(info.basic_info.title ?? "") || info.basic_info.id || "",
+    artist: cleanupName(info.basic_info.author),
     album: album && album !== "N/A" ? album : undefined,
   };
 }
