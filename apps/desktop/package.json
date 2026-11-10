@@ -52,7 +52,7 @@
     "@types/node": "^24.0.0",
     "@types/ws": "^8.18.2",
     "del-cli": "7.0.0",
-    "electron": "45.0.0",    "electron-builder": "26.15.3",
+    "electron": "^45.2.3",    "electron-builder": "26.15.3",
     "electron-vite": "^6.0.0",
     "typescript": "^7.0.2",
     "vite": "8.3.5",
