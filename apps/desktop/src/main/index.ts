@@ -23,7 +23,8 @@ import { hardenSession } from "./permissions.ts";
 import { PlayerMirror } from "./player.ts";
 import { PluginHost } from "./plugins.ts";
 import { findProtocolLink, ProtocolLinks, registerProtocol } from "./protocol.ts";
-import { openSettingsWindow, SETTINGS_FLAG, serveSettings } from "./settings-window.ts";
+import { watchPreloadBundle } from "./dev-reload.ts";
+import { openSettingsWindow, SETTINGS_FLAG, serveSettings, settingsWindowContents } from "./settings-window.ts";
 import { startSmtc } from "./smtc.ts";
 import { applyProxy, beforeReady, clearStaleCodeCaches, PROXY_PLUGIN, scheduleLaterTasks } from "./startup-tasks.ts";
 import { checkForUpdates, UpdateManager } from "./updates.ts";
@@ -186,6 +187,13 @@ function main() {
     await applyProxy(settings);
 
     const window = mainWindow.create();
+    // Dev only: page-side changes produce a new preload bundle; load it in the running windows.
+    watchPreloadBundle(() => {
+      const main = mainWindow.window;
+      if (main && !main.isDestroyed()) main.webContents.reloadIgnoringCache();
+      const standalone = settingsWindowContents();
+      if (standalone && !standalone.isDestroyed()) standalone.reloadIgnoringCache();
+    });
     if (process.platform === "darwin") hideOnClose(app, window);
     // The native transport controls own the media keys on Windows; the module is optional.
     if (process.platform === "win32" && settings.core("window").forceSmtc) {

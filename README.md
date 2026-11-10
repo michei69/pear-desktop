@@ -113,6 +113,8 @@ nub install --frozen-lockfile
 nub run dev
 ```
 
+Dev mode watches the sources: main-process changes restart the app, and page-side changes (the settings UI, plugins' page parts and the page runtime) rebuild the preload bundle and reload YTM.
+
 Instead of installing Nub on your system, you can also use [devcontainers](https://containers.dev/). You can use devcontainers either as a development environment in VS Code, or as a way to easily build the project without installing dependencies on your host system.
 
 Note that this has it's own limitations (for example, GUI doesn't work on, at least some, Linux hosts).
