@@ -1,5 +1,6 @@
 import { definePlugin } from "@pear/sdk";
 import { css } from "@pear/sdk/macros" with { type: "macro" };
+import { isPlayerPageOpen, isShuffleControl } from "./detect.ts";
 
 // Set while playback was started from a list: the player page stays out of the way.
 const DID_PLAY = "pear-unobtrusive-did-play";
@@ -17,6 +18,21 @@ export default definePlugin({
     html.pear-unobtrusive-did-play:not(.pear-unobtrusive-ad) sel(player.page),
     html.pear-unobtrusive-did-play:not(.pear-unobtrusive-ad) sel(player.page) * {
       visibility: hidden !important;
+    }
+    /* The latch hides the player page only: the browse page below stays usable
+       and scrollable during the auto-close window. */
+    html.pear-unobtrusive-did-play:not(.pear-unobtrusive-ad),
+    html.pear-unobtrusive-did-play:not(.pear-unobtrusive-ad) body {
+      overflow: visible !important;
+    }
+    html.pear-unobtrusive-did-play:not(.pear-unobtrusive-ad) sel(app.content) {
+      visibility: visible !important;
+    }
+    html.pear-unobtrusive-did-play sel(app.layout):not(.content-scrolled) sel(nav_bar.background),
+    html.pear-unobtrusive-did-play sel(app.layout):not(.content-scrolled) sel(nav_bar.divider),
+    html.pear-unobtrusive-did-play sel(app.layout)[is-bauhaus-sidenav-enabled][player-page-open]:not(.content-scrolled)
+      sel(guide.mini_background) {
+      opacity: 0 !important;
     }
     html.pear-unobtrusive-did-play sel(player_bar.player_page_arrow) {
       transform: rotate(180deg) !important;
@@ -39,13 +55,16 @@ export default definePlugin({
           return;
         }
         if (target.closest(ctx.sel("player.page"))) return;
-        // Play buttons, track links and "Shuffle"/"Start radio" style menu entries all lead to /watch.
-        if (target.closest(`${ctx.sel("list.play_button")}, a[href*="watch?"]`)) root.classList.add(DID_PLAY);
+        // Play buttons, track links, and the header/menu "Shuffle"/"Start radio"
+        // entries all lead to /watch.
+        if (target.closest(ctx.sel("list.play_button")) || isShuffleControl(target) || target.closest('a[href*="watch?"]')) {
+          root.classList.add(DID_PLAY);
+        }
       },
       { capture: true },
     );
 
-    const pageOpen = () => ctx.$("app.layout")?.getAttribute("player-ui-state") === "PLAYER_PAGE_OPEN";
+    const pageOpen = () => isPlayerPageOpen(ctx.$("app.layout"), ctx.$("player.page"));
     let retries = 0;
     const closePlayerPage = () => {
       if (autoClosing || !root.classList.contains(DID_PLAY)) return;
@@ -80,6 +99,6 @@ export default definePlugin({
     };
     ctx.player.on("adChange", onAd);
     onAd(ctx.player.state.ad);
-    ctx.observe("app.layout", { attributes: true, attributeFilter: ["player-ui-state"] }, closePlayerPage);
+    ctx.observe("app.layout", { attributes: true, attributeFilter: ["player-ui-state", "player-page-open"] }, closePlayerPage);
   },
 });
