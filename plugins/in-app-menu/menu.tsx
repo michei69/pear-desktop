@@ -4,7 +4,7 @@
 
 import { Icon, isolateKeys, shadowHost } from "@pear/sdk/dom";
 import { handlePanelKey, isMenuKey, opensSubmenu } from "./keyboard.ts";
-import { belowTrigger, besideItem, placePanel, type Point } from "./position.ts";
+import { belowTrigger, besideItem, placePanel } from "./position.ts";
 import { shadowStyles } from "./styles.ts";
 import { ICONS, type MenuNode } from "./types.ts";
 import type { Ctx } from "./page.ts";
@@ -30,8 +30,36 @@ const ROLES: Record<MenuNode["kind"], string> = {
 interface Panel {
   element: HTMLElement;
   items: HTMLButtonElement[];
+  /** What the panel was drawn from, to tell whether a refreshed menu still has the same panel. */
+  nodes: MenuNode[];
+  /** Where the panel's nodes sit in the serialized menu (indices from the root), to redraw it in place. */
+  trail: number[];
   /** The item that opened this submenu. */
   owner?: HTMLButtonElement;
+  /** Moves the panel back to its trigger or item (window resize, a scrolled parent). */
+  place(): void;
+}
+
+/** The nodes at `trail` in a serialized menu; the empty trail is the menu itself. */
+function nodesAt(tree: MenuNode[], trail: number[]): MenuNode[] | undefined {
+  let nodes = tree;
+  for (const index of trail) {
+    const node = nodes[index];
+    if (!node?.children) return undefined;
+    nodes = node.children;
+  }
+  return nodes;
+}
+
+/** Whether the same items are still in the same places (a rebuilt menu has new ids, so kind and label stand in). */
+function sameItems(drawn: MenuNode[], fresh: MenuNode[]) {
+  return (
+    drawn.length === fresh.length &&
+    drawn.every((node, index) => {
+      const other = fresh[index];
+      return other !== undefined && node.kind === other.kind && node.label === other.label;
+    })
+  );
 }
 
 export class AppMenu {
@@ -74,6 +102,10 @@ export class AppMenu {
       if (!event.composedPath().includes(this.host)) this.close();
     });
     ctx.listen(window, "blur", () => this.close());
+    // Panels stay anchored to their trigger or item, as floating-ui's autoUpdate did.
+    ctx.listen(window, "resize", () => this.#placeAll());
+    // The menu can be rebuilt under an open panel (a plugin toggled its items, a language change).
+    ctx.host.on("menu-changed", () => void this.#refreshOpen());
     const onKeydown = (event: KeyboardEvent) => {
       if (!isMenuKey(event)) return;
       event.preventDefault();
@@ -90,13 +122,17 @@ export class AppMenu {
 
   async open(focusFirst: boolean) {
     const nodes = await this.#ctx.host.invoke("menu");
-    const { items } = this.#openPanel(nodes, [], 0, belowTrigger(this.#trigger));
+    const { items } = this.#openPanel(nodes, [], 0);
     this.#trigger.setAttribute("aria-expanded", "true");
     if (focusFirst) items.find((item) => !item.disabled)?.focus();
   }
 
   close() {
     this.#closeFrom(0);
+  }
+
+  #placeAll() {
+    for (const panel of this.#panels) panel.place();
   }
 
   /** Closes the panels from `level` in. */
@@ -108,21 +144,38 @@ export class AppMenu {
     if (this.#panels.length === 0) this.#trigger.setAttribute("aria-expanded", "false");
   }
 
-  #openPanel(nodes: MenuNode[], path: number[], level: number, at: Point, owner?: HTMLButtonElement): Panel {
+  #openPanel(nodes: MenuNode[], trail: number[], level: number, owner?: HTMLButtonElement): Panel {
     this.#closeFrom(level);
-    const children = nodes.map((node) => this.#entry(node, [...path, node.index], level));
-    const items = children.filter((child): child is HTMLButtonElement => child instanceof HTMLButtonElement);
-    const element = (
-      <div class="panel" role="menu" aria-label={owner?.dataset.label} onKeydown={(event) => this.#onPanelKey(event, panel, level)}>
-        {children}
-      </div>
-    );
-    const panel: Panel = { element, items };
+    const panel: Panel = {
+      element: (
+        <div class="panel" role="menu" aria-label={owner?.dataset.label} onKeydown={(event) => this.#onPanelKey(event, panel, level)} />
+      ) as HTMLElement,
+      items: [],
+      nodes: [],
+      trail,
+      place: () => {},
+    };
     if (owner) panel.owner = owner;
+    const anchor = () => (panel.owner ? besideItem(panel.owner) : belowTrigger(this.#trigger));
+    panel.place = () => placePanel(panel.element, anchor(), panel.owner);
+    // A panel scrolls now that long menus are capped to the window: submenus follow their item.
+    panel.element.addEventListener("scroll", () => this.#panels[level + 1]?.place(), { passive: true });
     this.#root.append(panel.element);
-    placePanel(panel.element, at, owner);
     this.#panels[level] = panel;
+    this.#fill(panel, nodes, level);
     return panel;
+  }
+
+  /** Draws `nodes` into `panel` (same trail), keeping the item that had focus when it is redrawn. */
+  #fill(panel: Panel, nodes: MenuNode[], level: number) {
+    const focused = this.#root.activeElement;
+    const index = focused ? panel.items.indexOf(focused as HTMLButtonElement) : -1;
+    const children = nodes.map((node, nodeIndex) => this.#entry(node, [...panel.trail, nodeIndex], level));
+    panel.items = children.filter((child): child is HTMLButtonElement => child instanceof HTMLButtonElement);
+    panel.nodes = nodes;
+    panel.element.replaceChildren(...children);
+    panel.place();
+    panel.items[index]?.focus();
   }
 
   #onPanelKey(event: KeyboardEvent, panel: Panel, level: number) {
@@ -165,7 +218,7 @@ export class AppMenu {
     ) as HTMLButtonElement;
     if (node.toolTip) attachTooltip(item, node.toolTip);
     if (node.children) this.#submenuItem(item, node.children, path, level);
-    else this.#commandItem(item, path, level);
+    else this.#commandItem(item, node, level);
     return item;
   }
 
@@ -173,7 +226,7 @@ export class AppMenu {
     item.setAttribute("aria-haspopup", "menu");
     item.setAttribute("aria-expanded", "false");
     const openChild = (focus: boolean) => {
-      this.#openPanel(children, path, level + 1, besideItem(item), item);
+      this.#openPanel(children, path, level + 1, item);
       item.setAttribute("aria-expanded", "true");
       if (focus) this.#panels[level + 1]?.items[0]?.focus();
     };
@@ -189,11 +242,41 @@ export class AppMenu {
     });
   }
 
-  #commandItem(item: HTMLButtonElement, path: number[], level: number) {
+  #commandItem(item: HTMLButtonElement, node: MenuNode, level: number) {
     item.addEventListener("pointerenter", () => this.#closeFrom(level + 1));
-    item.addEventListener("click", () => {
-      this.close();
-      void this.#ctx.host.invoke("clickMenu", path);
-    });
+    item.addEventListener("click", () => void this.#activate(node, level));
+  }
+
+  /**
+   * Runs the item's command. A checkbox or radio stays open with its new mark, as in
+   * pear-desktop; a command closes the menu so the page it opened is in front.
+   */
+  async #activate(node: MenuNode, level: number) {
+    const checkable = node.kind === "checkbox" || node.kind === "radio";
+    if (!checkable) this.close();
+    await this.#ctx.host.invoke("clickMenu", node.commandId);
+    if (!checkable || !this.#panels[level]) return;
+    // Electron flips the mark on the item itself, without rebuilding the menu.
+    this.#refresh(level, await this.#ctx.host.invoke("menu"));
+  }
+
+  /** Redraws the panel at `level` from `tree`; closes it when its part of the menu changed shape. */
+  #refresh(level: number, tree: MenuNode[]) {
+    const panel = this.#panels[level];
+    // A submenu opened from this panel meanwhile would be left under replaced items.
+    if (!panel || this.#panels.length > level + 1) return;
+    const nodes = nodesAt(tree, panel.trail);
+    if (!nodes || !sameItems(panel.nodes, nodes)) {
+      this.#closeFrom(level);
+      return;
+    }
+    this.#fill(panel, nodes, level);
+  }
+
+  /** Redraws the innermost open panel after the menu changed (the outer ones close with it). */
+  async #refreshOpen() {
+    const level = this.#panels.length - 1;
+    if (level < 0) return;
+    this.#refresh(level, await this.#ctx.host.invoke("menu"));
   }
 }

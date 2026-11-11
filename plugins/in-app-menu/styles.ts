@@ -29,6 +29,17 @@ export const pageStyles = css`
   html.pear-caption-buttons sel(nav_bar.right) {
     padding-right: 138px;
   }
+  /* YTM's app-layout scrollbar keeps the theme's width and thumb colour instead of the platform's. */
+  sel(app.layout)::-webkit-scrollbar {
+    width: var(--ytmusic-scrollbar-width);
+  }
+  sel(app.layout)::-webkit-scrollbar-thumb {
+    background-color: rgb(126 126 126);
+  }
+  /* ytm-bugs: see https://github.com/pear-devs/pear-desktop/issues/1737 */
+  html {
+    scrollbar-color: unset;
+  }
 `;
 
 export const shadowStyles = css`
@@ -83,7 +94,12 @@ export const shadowStyles = css`
   .panel {
     position: fixed;
     z-index: 2147483000;
-    min-width: 260px;
+    min-width: min(260px, calc(100vw - 16px));
+    max-width: calc(100vw - 16px);
+    /* placePanel caps it to the room it has; this is the fallback before it runs. */
+    max-height: calc(100vh - 16px);
+    overflow: auto;
+    overscroll-behavior: contain;
     padding: 6px;
     background: #212121;
     border: 1px solid rgb(255 255 255 / 0.08);

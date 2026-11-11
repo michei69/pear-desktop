@@ -11,8 +11,11 @@ export interface WindowState {
 
 /** An item of the application menu, as the page draws it. */
 export interface MenuNode {
-  /** Index among its menu's items (invisible ones included), for clicking it. */
-  index: number;
+  /**
+   * Electron's command id, for clicking it. A rebuilt menu numbers its items afresh,
+   * so an id kept from an older menu clicks nothing instead of the wrong item.
+   */
+  commandId: number;
   kind: "normal" | "checkbox" | "radio" | "submenu" | "separator";
   label: string;
   sublabel: string;
@@ -27,7 +30,7 @@ export interface MenuNode {
 export interface MenuCommands {
   state(): WindowState;
   menu(): MenuNode[];
-  clickMenu(path: number[]): void;
+  clickMenu(commandId: number): void;
   run(action: WindowAction): void;
 }
 
