@@ -3,10 +3,11 @@
 // player request and the queue's rows are rewritten to the song before playback.
 //
 // This runs before YTM's own scripts (runAt: "start") so the first request is
-// already covered. Everything it adds is removed again on stop: the network
-// requests it makes are aborted, its caches are dropped, and `window.fetch` is
-// put back exactly as it was. If any lookup fails, the original music video is
-// left untouched.
+// already covered; enabling it mid-session covers the requests from then on,
+// like master's live toggle. Everything it adds is removed again on stop: the
+// network requests it makes are aborted, its caches are dropped, and
+// `window.fetch` is put back exactly as it was. If any lookup fails, the
+// original music video is left untouched.
 
 import { definePlugin, type PageContext } from "@pear/sdk";
 import {
@@ -34,9 +35,6 @@ export default definePlugin({
   id: "prefer-song",
   name: "Prefer song",
   description: "Plays the album's song instead of the music video when listening to a release.",
-  // It patches window.fetch before YTM's scripts load, so enabling it mid-session
-  // would miss the queue YTM has already fetched (pear-desktop restarted too).
-  restartRequired: true,
   page: {
     // Before YTM's scripts, so no player or queue request slips through.
     runAt: "start",
@@ -44,7 +42,8 @@ export default definePlugin({
   },
 });
 
-function start(ctx: Ctx) {
+/** Exported for the tests: the page part installs and removes the fetch patch live. */
+export function start(ctx: Ctx) {
   // Keep the exact original for restoring, and a bound copy for calling it.
   const originalFetch = window.fetch;
   const callOriginal = originalFetch.bind(window);
