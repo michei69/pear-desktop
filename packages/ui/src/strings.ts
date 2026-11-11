@@ -2,7 +2,7 @@
 // keys pear-desktop's settings UI used). `nub run i18n` copies them into en.json.
 
 import type { Field } from "@pear/sdk";
-import { CORE_FIELD_KEYS } from "@pear/sdk/core-config";
+import { CORE_FIELD_KEYS, type FieldTextKeys } from "@pear/sdk/core-config";
 import { fieldKey, groupKey, type Translate, type Vars } from "@pear/sdk/i18n";
 import { createContext } from "preact";
 import { useContext } from "preact/hooks";
@@ -133,11 +133,81 @@ export function useText(): Text {
   return (key, vars) => t(key, UI_STRINGS[key], vars);
 }
 
+/**
+ * Plugins the rewrite regenerated: pear-desktop's shipped translations live under
+ * its own keys (settings/menu), so keep those instead of English twins. Missing
+ * master keys fall back to the generated plugin.<id>.settings.<field> keys.
+ */
+const PLUGIN_FIELD_KEYS: Readonly<Record<string, Readonly<Record<string, FieldTextKeys>>>> = {
+  discord: {
+    autoReconnect: { label: "plugins.discord.settings.auto-reconnect" },
+    activityTimeoutEnabled: { label: "plugins.discord.settings.activity-timeout-enabled" },
+    activityTimeoutSeconds: { label: "plugins.discord.settings.activity-timeout-time" },
+    playButton: { label: "plugins.discord.menu.play-on-application" },
+    hideGitHubButton: { label: "plugins.discord.settings.hide-github-button" },
+    hideDurationLeft: { label: "plugins.discord.settings.hide-duration-left" },
+    statusDisplayType: {
+      label: "plugins.discord.menu.set-status-display-type.label",
+      options: {
+        name: "plugins.discord.menu.set-status-display-type.submenu.application",
+        state: "plugins.discord.menu.set-status-display-type.submenu.artist",
+        details: "plugins.discord.menu.set-status-display-type.submenu.title",
+      },
+    },
+  },
+  "picture-in-picture": {
+    hotkey: { label: "plugins.picture-in-picture.menu.hotkey.label" },
+    useNativePiP: { label: "plugins.picture-in-picture.menu.use-native-pip" },
+    alwaysOnTop: { label: "plugins.picture-in-picture.menu.always-on-top" },
+    savePosition: { label: "plugins.picture-in-picture.menu.save-window-position" },
+    saveSize: { label: "plugins.picture-in-picture.menu.save-window-size" },
+  },
+  notifications: {
+    unpauseNotification: { label: "plugins.notifications.menu.unpause-notification" },
+    urgency: {
+      label: "plugins.notifications.menu.priority",
+      options: {
+        low: "plugins.notifications.urgency.low",
+        normal: "plugins.notifications.urgency.normal",
+        critical: "plugins.notifications.urgency.high",
+      },
+    },
+    interactive: { label: "plugins.notifications.menu.interactive" },
+    refreshOnPlayPause: { label: "plugins.notifications.menu.interactive-settings.submenu.refresh-on-play-pause" },
+    toastStyle: {
+      label: "plugins.notifications.menu.toast-style",
+      options: {
+        logo: "plugins.notifications.toast-style.logo",
+        banner_centered_top: "plugins.notifications.toast-style.banner-centered-top",
+        hero: "plugins.notifications.toast-style.hero",
+        banner_top_custom: "plugins.notifications.toast-style.banner-top-custom",
+        banner_centered_bottom: "plugins.notifications.toast-style.banner-centered-bottom",
+        banner_bottom: "plugins.notifications.toast-style.banner-bottom",
+        legacy: "plugins.notifications.toast-style.legacy",
+      },
+    },
+    hoverControls: { label: "plugins.notifications.menu.interactive-settings.submenu.hover-controls" },
+    hideButtonText: { label: "plugins.notifications.menu.interactive-settings.submenu.hide-button-text" },
+  },
+  scrobbler: {
+    lastfmApiRoot: { label: "plugins.scrobbler.settings.lastfm-api-root" },
+    alternativeTitles: { label: "plugins.scrobbler.menu.scrobble-alternative-title" },
+    alternativeArtist: { label: "plugins.scrobbler.menu.scrobble-alternative-artist" },
+    scrobbleOtherMedia: { label: "plugins.scrobbler.menu.scrobble-other-media" },
+    customRegexFilters: { label: "plugins.scrobbler.menu.regex-filters" },
+    useMusicBrainz: { label: "plugins.scrobbler.menu.use-musicbrainz" },
+    musicBrainzEmail: {
+      label: "plugins.scrobbler.menu.musicbrainz-email",
+      placeholder: "plugins.scrobbler.settings.musicbrainz-email-placeholder",
+    },
+  },
+};
+
 /** A field with its texts in the active language (labels live next to the code, in English). */
 export function localize(t: Translate, owner: string, name: string, field: Field): Field {
   const key = fieldKey(owner, name);
-  // Core fields pear-desktop already translated under its own keys (mostly the menu's) keep them.
-  const keys = owner === "core" ? CORE_FIELD_KEYS[name] : undefined;
+  // Core/plugin fields pear-desktop already translated under its own keys keep them.
+  const keys = owner === "core" ? CORE_FIELD_KEYS[name] : PLUGIN_FIELD_KEYS[owner]?.[name];
   const vars = keys?.vars
     ? Object.fromEntries(Object.entries(keys.vars).map(([placeholder, translation]) => [placeholder, t(translation, placeholder)]))
     : undefined;
