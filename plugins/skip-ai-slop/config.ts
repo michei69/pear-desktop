@@ -26,6 +26,9 @@ export const schema = {
     group: "Filters",
   }),
   keywords: config.list([], {
+    // pear-desktop had a per-keyword on/off switch; a string list cannot hold
+    // it, and the 4.0.0 migration drops disabled keywords rather than start
+    // filtering what the user had switched off.
     label: "Blocked keywords",
     description: "Skips tracks whose title or channel name contains one of these as a whole word (for example, “AI cover”).",
     placeholder: "AI cover",
@@ -33,19 +36,20 @@ export const schema = {
   }),
   userBlock: config.list([], {
     label: "Blocked channels",
-    description: "Channel ids (UC…) or exact channel names that are always filtered.",
-    placeholder: "UC… or channel name",
+    description: "Channel ids (UC…), track ids or exact channel names that are always filtered.",
+    placeholder: "UC…, track id or channel name",
     group: "Filters",
   }),
   userAllow: config.list([], {
     label: "Allowed channels",
-    description: "Channel ids (UC…) or exact channel names that are never filtered. This always wins over the lists and keywords.",
-    placeholder: "UC… or channel name",
+    description:
+      "Channel ids (UC…), a track id or exact channel names that are never filtered. This always wins over the lists and keywords.",
+    placeholder: "UC…, track id or channel name",
     group: "Filters",
   }),
   listSearch: config.string("", {
     label: "Community list search",
-    description: "A channel or track name or id; the “Search list” button reports matches on the status line.",
+    description: "A channel or track name or id; the search buttons report the matches and can allow the best one.",
     placeholder: "channel or track",
     group: "Community list",
   }),

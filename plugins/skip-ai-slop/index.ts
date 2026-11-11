@@ -1,7 +1,6 @@
 import { definePlugin } from "@pear/sdk";
 import { net } from "electron";
 import { BLACKLIST_URL, schema } from "./config.ts";
-import type { FeedbackRequest } from "./contract.ts";
 import { HIDDEN_CSS } from "./early.ts";
 import { startSkipAiSlop } from "./page.ts";
 
@@ -23,11 +22,23 @@ export default definePlugin({
     },
     showRecent: {
       label: "Show recently filtered",
-      description: "Puts the latest matches on this plugin's status line.",
+      description: "Puts the latest matches, with their ids, on this plugin's status line.",
+    },
+    allowRecent: {
+      label: "Allow the newest recent match",
+      description: "Adds the newest entry of “Show recently filtered” to Allowed channels and forgets it.",
+    },
+    removeRecent: {
+      label: "Forget the newest recent match",
+      description: "Removes the newest entry of “Show recently filtered” without allowing it.",
     },
     searchList: {
       label: "Search the community list",
       description: "Searches the saved names for the text in “Community list search”.",
+    },
+    allowListMatch: {
+      label: "Allow the best list match",
+      description: "Adds the first match for “Community list search” to Allowed channels.",
     },
   },
   host: {
@@ -41,23 +52,8 @@ export default definePlugin({
         if (!response.ok) throw new Error(`the community list answered ${response.status}`);
         return (await response.json()) as unknown;
       },
-      /** "Not interested" for a recommendation card, using the page's InnerTube context. */
-      async feedback(request: FeedbackRequest) {
-        const query = request.key ? `?key=${encodeURIComponent(request.key)}&prettyPrint=false` : "?prettyPrint=false";
-        const response = await this.session.fetch(
-          "https://music.\u0079\u006f\u0075\u0074\u0075\u0062\u0065.com/\u0079\u006f\u0075\u0074\u0075\u0062\u0065i/v1/feedback" + query,
-          {
-            method: "POST",
-            credentials: "include",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ context: request.context, feedbackTokens: [request.token] }),
-            signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
-          },
-        );
-        if (!response.ok) throw new Error(`the feedback request answered ${response.status}`);
-      },
       async refreshList() {
-        this.setStatus("Downloading the community list…");
+        this.setStatus(this.t("plugins.skip-ai-slop.status.downloading", "Downloading…"));
         const message = await this.request<string>("refreshList", undefined, { timeout: 30_000 });
         this.setStatus(message);
         return message;
@@ -72,8 +68,25 @@ export default definePlugin({
         this.setStatus(message);
         return message;
       },
+      // The settings card's buttons cannot carry an argument, so they act on
+      // the newest entry the status line lists.
+      async allowRecent(id?: string) {
+        const message = await this.request<string>("allowRecent", id);
+        this.setStatus(message);
+        return message;
+      },
+      async removeRecent(id?: string) {
+        const message = await this.request<string>("removeRecent", id);
+        this.setStatus(message);
+        return message;
+      },
       async searchList() {
         const message = await this.request<string>("searchList");
+        this.setStatus(message);
+        return message;
+      },
+      async allowListMatch() {
+        const message = await this.request<string>("allowListMatch");
         this.setStatus(message);
         return message;
       },

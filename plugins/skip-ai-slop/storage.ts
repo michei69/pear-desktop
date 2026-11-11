@@ -81,6 +81,12 @@ export const clearRecent = () => {
   }
 };
 
+/** Forgets one match, so a fixed or dismissed false positive drops off the list. */
+export const removeRecent = (id: string) => {
+  recentCache = readRecentFiltered().filter((entry) => entry.id !== id);
+  writeJson(RECENT_KEY, recentCache);
+};
+
 export const NAMES_KEY = "skip-ai-slop:blacklist-names";
 
 /** Saves { id: name } for channels and { id: title } for tracks. */
@@ -119,13 +125,12 @@ export const readBlacklistNames = (): BlacklistName[] => {
 };
 
 /** The community-list entries whose name or id contains `query`, name matches first. */
-export const searchBlacklistNames = (query: string, limit = 10): BlacklistName[] => {
+export const searchBlacklistNames = (query: string, limit = 10) => {
   const needle = query.trim().toLowerCase();
-  if (!needle) return [];
-  return readBlacklistNames()
-    .filter((entry) => entry.lower.includes(needle) || entry.idLower.includes(needle))
-    .sort((a, b) => Number(b.lower.startsWith(needle)) - Number(a.lower.startsWith(needle)) || a.lower.localeCompare(b.lower))
-    .slice(0, limit);
+  if (!needle) return { matches: [] as BlacklistName[], total: 0 };
+  const hits = readBlacklistNames().filter((entry) => entry.lower.includes(needle) || entry.idLower.includes(needle));
+  hits.sort((a, b) => Number(b.lower.startsWith(needle)) - Number(a.lower.startsWith(needle)) || a.lower.localeCompare(b.lower));
+  return { matches: hits.slice(0, limit), total: hits.length };
 };
 
 export const clearBlacklistNames = () => {

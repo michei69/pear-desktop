@@ -84,8 +84,12 @@ export const compileKeywords = (raw: unknown): RegExp[] =>
     .map((entry) => compileKeyword(entry.text))
     .filter((regex): regex is RegExp => !!regex);
 
-/** A channel id, as opposed to a channel name; anything else is matched by name. */
-const looksLikeId = (value: string) => /^UC[\w-]{22}$/.test(value);
+/**
+ * A channel id (`UC…`) allows a whole channel, a track's 11-character video id
+ * allows that one track; anything else is an exact name, matched against the
+ * title and the author.
+ */
+const looksLikeId = (value: string) => /^(UC[\w-]{22}|[\w-]{11})$/.test(value);
 
 /** Turns a settings list into the ids and the exact names it names. */
 const splitUserList = (raw: readonly string[]) => {

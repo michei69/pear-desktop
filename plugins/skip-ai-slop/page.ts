@@ -25,13 +25,16 @@ import {
   slimBlacklist,
 } from "./filter.ts";
 import { type ParsedQueueItem, type Renderer, type SearchInfo, parseQueueItem, rendererPath, searchInfo, textOf } from "./parse.ts";
+import { createSkipLimiter } from "./skip-limit.ts";
 import {
+  type RecentEntry,
   clearPluginStorage,
   hasBlacklistNames,
   loadFeedbackDone,
   readCachedBlacklist,
   readRecentFiltered,
   recordFiltered,
+  removeRecent as forgetRecent,
   saveFeedbackDone,
   searchBlacklistNames,
   writeBlacklistNames,
@@ -61,9 +64,14 @@ interface StoreLike {
   dispatch(action: QueueAction): void;
 }
 
-interface Ytcfg {
-  get(key: string): unknown;
+/** The page's own InnerTube client; it carries the right context, cookies and key. */
+type FetchFn = (url: string, data: unknown) => Promise<unknown>;
+
+interface NetworkManager {
+  fetch: FetchFn;
 }
+
+type AppElement = HTMLElement & { networkManager?: NetworkManager };
 
 type Ctx = PageContextOf<typeof schema, SkipAiSlopCommands>;
 
@@ -76,8 +84,7 @@ export function startSkipAiSlop(ctx: Ctx) {
   let filterVersion = 0;
 
   let lastCheckedId: string | null = null;
-  let recentSkips: number[] = [];
-  const skipped = new Set<string>();
+  const limiter = createSkipLimiter(MAX_SKIPS, SKIP_WINDOW_MS);
 
   let verdicts = new WeakMap<object, { version: number; flagged: boolean }>();
   let searchCache = new WeakMap<object, SearchInfo>();
@@ -87,6 +94,11 @@ export function startSkipAiSlop(ctx: Ctx) {
 
   let hookedStore: StoreLike | null = null;
   let originalDispatch: StoreLike["dispatch"] | null = null;
+
+  let hookedNetwork: NetworkManager | null = null;
+  let originalFetch: FetchFn | null = null;
+  /** "Don't recommend" token -> channel id, so the user's own click can block it too. */
+  const tokenChannel = new Map<string, string>();
 
   let feedbackDone = new Set<string>();
   let feedbackDoneLoaded = false;
@@ -124,8 +136,12 @@ export function startSkipAiSlop(ctx: Ctx) {
   }
 
   function listSummary() {
-    if (!list) return "No community list is loaded.";
-    return `Loaded ${Object.keys(list.channels).length} channels and ${Object.keys(list.tracks).length} tracks.`;
+    if (!list) return ctx.t("plugins.skip-ai-slop.status.none", "No list loaded right now.");
+    return ctx.t("plugins.skip-ai-slop.status.summary", "Loaded: {{channels}} channels, {{tracks}} tracks (list dated {{date}}).", {
+      channels: Object.keys(list.channels).length,
+      tracks: Object.keys(list.tracks).length,
+      date: list.updated_at,
+    });
   }
 
   async function downloadList(): Promise<boolean> {
@@ -204,6 +220,77 @@ export function startSkipAiSlop(ctx: Ctx) {
     filterVersion++;
   }
 
+  /** Allows one id (a channel, or a track's video id), dropping any block entry for it. */
+  function allowId(id: string, name: string) {
+    forgetRecent(id);
+    const userAllow = ctx.config.userAllow.includes(id) ? ctx.config.userAllow : [...ctx.config.userAllow, id];
+    const lowered = name.trim().toLowerCase();
+    // Also drop the block entry with the same name: a channel can have a second
+    // id (the community list's, or the one YTM shows).
+    const userBlock = ctx.config.userBlock.filter((entry) => {
+      const value = entry.trim().toLowerCase();
+      return value !== id.toLowerCase() && value !== lowered;
+    });
+    if (userAllow === ctx.config.userAllow && userBlock.length === ctx.config.userBlock.length) return;
+    ctx.setConfig({ userAllow, userBlock });
+    config = { ...config, userAllow, userBlock };
+    rebuild();
+  }
+
+  // The app's network manager, for the calls YTM itself makes ("Don't
+  // recommend") and for sending our own feedback with the page's context.
+  function hookFetch() {
+    if (hookedNetwork) return;
+    const network = ctx.$<AppElement>("app")?.networkManager;
+    if (!network || typeof network.fetch !== "function") return;
+
+    const original = network.fetch;
+    originalFetch = original;
+    hookedNetwork = network;
+    network.fetch = function (this: unknown, url: string, data: unknown) {
+      try {
+        if (active && typeof url === "string" && url.includes("/feedback")) onUserFeedback(data);
+      } catch (error) {
+        ctx.log.warn("feedback hook failed", error);
+      }
+      return original.call(this, url, data);
+    };
+  }
+
+  function unhookFetch() {
+    if (hookedNetwork && originalFetch) hookedNetwork.fetch = originalFetch;
+    hookedNetwork = null;
+    originalFetch = null;
+  }
+
+  /**
+   * The user clicked YTM's own "Don't recommend": block the channel here too, so
+   * it disappears everywhere, including "Listen again" (which is rebuilt from
+   * listening history and never cleans up).
+   */
+  function onUserFeedback(data: unknown) {
+    const tokens = (data as { feedbackTokens?: unknown } | undefined)?.feedbackTokens;
+    if (!Array.isArray(tokens)) return;
+    loadFeedback();
+    for (const token of tokens) {
+      const channelId = typeof token === "string" ? tokenChannel.get(token) : undefined;
+      if (!channelId || feedbackDone.has(channelId)) continue;
+      feedbackDone.add(channelId);
+      saveFeedbackDone(feedbackDone);
+      addBlocked(channelId);
+      ctx.log.info(`"don't recommend" on ${channelId}: hiding it everywhere`);
+      // Re-judge what is on screen and in the queue once YTM applied the click.
+      ctx.setTimeout(() => {
+        scanPage();
+        scanQueue();
+      }, 300);
+    }
+  }
+
+  function pageNetwork(): NetworkManager | null {
+    return hookedNetwork ?? ctx.$<AppElement>("app")?.networkManager ?? null;
+  }
+
   async function feedbackTick() {
     if (!active || !config.reportFeedback || feedbackBusy) return;
     feedbackBusy = true;
@@ -212,16 +299,17 @@ export function startSkipAiSlop(ctx: Ctx) {
         const next = feedbackQueue.shift();
         if (!next) break;
 
-        const ytcfg = (window as Window & { ytcfg?: Ytcfg }).ytcfg;
-        const context = ytcfg?.get?.("INNERTUBE_CONTEXT");
-        const key = ytcfg?.get?.("INNERTUBE_API_KEY");
-        if (!context || typeof key !== "string") {
-          ctx.log.warn("feedback: the page's InnerTube configuration is not available");
+        const network = pageNetwork();
+        if (!network) {
+          // The page's client is not readable yet: keep the entry for the next tick.
+          feedbackQueue.unshift(next);
           return;
         }
 
         try {
-          await ctx.host.invoke("feedback", { token: next.token, context, key });
+          // The page's own client carries the right context, cookies and key.
+          const original = originalFetch ?? network.fetch;
+          await original.call(network, "/feedback?prettyPrint=false", { feedbackTokens: [next.token] });
           if (!active) return;
           feedbackDone.add(next.key);
           saveFeedbackDone(feedbackDone);
@@ -265,20 +353,13 @@ export function startSkipAiSlop(ctx: Ctx) {
     filterVersion++;
   }
 
-  function canSkipNow() {
-    const now = Date.now();
-    recentSkips = recentSkips.filter((time) => now - time < SKIP_WINDOW_MS);
-    return recentSkips.length < MAX_SKIPS;
-  }
-
   function trySkip(videoId: string, reason: string) {
-    if (skipped.has(videoId)) return;
-    skipped.add(videoId);
-    if (!canSkipNow()) {
-      ctx.log.warn("skip limit reached; not skipping", videoId);
+    // A rate-limited attempt is not recorded, so the queue scans retry it once
+    // the skip window frees (pear-desktop 73617a95).
+    if (!limiter.trySkip(videoId)) {
+      if (!limiter.has(videoId)) ctx.log.warn("skip limit reached; not skipping", videoId);
       return;
     }
-    recentSkips.push(Date.now());
     ctx.log.info(`skipping ${videoId} (${reason})`);
     ctx.player.control({ type: "next" });
   }
@@ -462,6 +543,7 @@ export function startSkipAiSlop(ctx: Ctx) {
   function scanPage() {
     if (!active) return;
     lastPageScan = performance.now();
+    hookFetch();
     if (!config.hideInPages) {
       unhideAll();
       return;
@@ -485,6 +567,10 @@ export function startSkipAiSlop(ctx: Ctx) {
       }
 
       const info = infoOf(data);
+      // Remember which channel a card's "Don't recommend" token belongs to, so
+      // the user's own menu click can block it (see onUserFeedback).
+      if (info.token && info.channelIds[0] && !tokenChannel.has(info.token)) tokenChannel.set(info.token, info.channelIds[0]);
+
       const cached = verdicts.get(data);
       let flagged: boolean;
       if (cached && cached.version === filterVersion) {
@@ -536,7 +622,7 @@ export function startSkipAiSlop(ctx: Ctx) {
     if (!videoId || !title || videoId === lastCheckedId) return; // wait until the new track's data is complete
 
     lastCheckedId = videoId;
-    skipped.delete(videoId);
+    limiter.reset(videoId);
 
     // The queue entry carries the artist channel ids too, which can differ from
     // the uploader's channelId in the player response. A stale response belongs
@@ -569,23 +655,103 @@ export function startSkipAiSlop(ctx: Ctx) {
 
   // ---- settings actions, answered for the host --------------------------------
 
+  /** Recent matches the block/allow lists do not handle yet, newest first. */
+  function pendingRecent(): RecentEntry[] {
+    const handled = new Set([...ctx.config.userBlock, ...ctx.config.userAllow].map((value) => value.trim().toLowerCase()));
+    return readRecentFiltered().filter((entry) => !handled.has(entry.id.toLowerCase()) && !handled.has(entry.name.trim().toLowerCase()));
+  }
+
+  /** The entry an action works on: the id given, or else the newest pending one. */
+  function recentEntry(id: string | undefined): RecentEntry | undefined {
+    return id ? readRecentFiltered().find((entry) => entry.id === id) : pendingRecent()[0];
+  }
+
   function recentSummary(): string {
-    const recent = readRecentFiltered();
-    if (recent.length === 0) return "Nothing has been filtered yet.";
-    return recent
+    const recent = pendingRecent();
+    if (recent.length === 0) return ctx.t("plugins.skip-ai-slop.status.recent-none", "Nothing has been filtered yet.");
+    // The status line is the only place the settings card can show the id, and a
+    // pasted id is what makes "Allow" match a channel for sure.
+    const entries = recent
       .slice(0, 8)
-      .map((entry) => `${entry.name} (${entry.reason})`)
+      .map((entry) => `${entry.name} (${entry.reason}) — ${entry.id}`)
       .join(" · ");
+    return ctx.t("plugins.skip-ai-slop.status.recent", "Recently filtered ({{count}}): {{entries}}", { count: recent.length, entries });
+  }
+
+  function allowRecent(id: string | undefined): string {
+    const entry = recentEntry(id);
+    if (!entry) {
+      return id
+        ? ctx.t("plugins.skip-ai-slop.status.recent-unknown", "“{{id}}” is not in the recently filtered list.", { id })
+        : ctx.t("plugins.skip-ai-slop.status.recent-none", "Nothing has been filtered yet.");
+    }
+    allowId(entry.id, entry.name);
+    ctx.log.info(`allowed ${entry.id} (${entry.name}) from the recently filtered list`);
+    return ctx.t("plugins.skip-ai-slop.status.recent-allowed", "Allowed {{name}} ({{id}}); it will not be filtered again.", {
+      name: entry.name,
+      id: entry.id,
+    });
+  }
+
+  function removeRecentEntry(id: string | undefined): string {
+    const entry = recentEntry(id);
+    if (!entry) {
+      return id
+        ? ctx.t("plugins.skip-ai-slop.status.recent-unknown", "“{{id}}” is not in the recently filtered list.", { id })
+        : ctx.t("plugins.skip-ai-slop.status.recent-none", "Nothing has been filtered yet.");
+    }
+    forgetRecent(entry.id);
+    return ctx.t("plugins.skip-ai-slop.status.recent-removed", "Forgot {{name}} ({{id}}) from the recently filtered list.", {
+      name: entry.name,
+      id: entry.id,
+    });
+  }
+
+  function kindLabel(kind: "channel" | "track") {
+    return kind === "channel"
+      ? ctx.t("plugins.skip-ai-slop.status.channel", "channel")
+      : ctx.t("plugins.skip-ai-slop.status.track", "track");
   }
 
   function listSearchSummary(): string {
     const query = ctx.config.listSearch.trim();
-    if (!query) return "Set “Community list search” in the settings first.";
-    if (!hasBlacklistNames()) return "The list's names are not saved yet; download the list first.";
+    if (!query) return ctx.t("plugins.skip-ai-slop.status.search-no-query", "Set “Community list search” in the settings first.");
+    if (!hasBlacklistNames())
+      return ctx.t("plugins.skip-ai-slop.status.search-no-names", "The list's names are not saved yet; download the list first.");
 
-    const matches = searchBlacklistNames(query);
-    if (matches.length === 0) return `No community-list matches for “${query}”.`;
-    return matches.map((entry) => `${entry.name} (${entry.kind}, ${entry.id})`).join(" · ");
+    const { matches, total } = searchBlacklistNames(query);
+    if (matches.length === 0)
+      return ctx.t("plugins.skip-ai-slop.status.search-none", "No community-list matches for “{{query}}”.", { query });
+    const entries = matches.map((entry) => `${entry.name} (${kindLabel(entry.kind)}, ${entry.id})`).join(" · ");
+    return ctx.t("plugins.skip-ai-slop.status.search-matches", "Matches for “{{query}}” ({{total}}): {{entries}}", {
+      query,
+      total,
+      entries: total > matches.length ? `${entries} …` : entries,
+    });
+  }
+
+  function allowListMatch(): string {
+    const query = ctx.config.listSearch.trim();
+    if (!query) return ctx.t("plugins.skip-ai-slop.status.search-no-query", "Set “Community list search” in the settings first.");
+    if (!hasBlacklistNames())
+      return ctx.t("plugins.skip-ai-slop.status.search-no-names", "The list's names are not saved yet; download the list first.");
+
+    // The name-prefix matches come first, so the best match is the one to allow.
+    const { matches, total } = searchBlacklistNames(query, 1);
+    const entry = matches[0];
+    if (!entry) return ctx.t("plugins.skip-ai-slop.status.search-none", "No community-list matches for “{{query}}”.", { query });
+    allowId(entry.id, entry.name);
+    ctx.log.info(`allowed ${entry.id} (${entry.name}) from the community list`);
+
+    const vars = { name: entry.name, kind: kindLabel(entry.kind), id: entry.id };
+    if (total > 1) {
+      return ctx.t(
+        "plugins.skip-ai-slop.status.search-allowed-more",
+        "Allowed {{name}} ({{kind}}, {{id}}). {{remaining}} other matches remain; narrow the search to pick one.",
+        { ...vars, remaining: total - 1 },
+      );
+    }
+    return ctx.t("plugins.skip-ai-slop.status.search-allowed", "Allowed {{name}} ({{kind}}, {{id}}).", vars);
   }
 
   // ---- start -----------------------------------------------------------------
@@ -600,7 +766,9 @@ export function startSkipAiSlop(ctx: Ctx) {
     ctx.log.info("refreshing the community list");
     const ok = await downloadList();
     if (ok && active) onListChanged();
-    return ok ? `Downloaded. ${listSummary()}` : "Download failed; the old list was kept.";
+    return ok
+      ? ctx.t("plugins.skip-ai-slop.status.downloaded", "Downloaded. {{summary}}", { summary: listSummary() })
+      : ctx.t("plugins.skip-ai-slop.status.download-failed", "Download failed, the old list was kept (details in the console).");
   });
 
   ctx.host.handle("clearCache", () => {
@@ -611,18 +779,25 @@ export function startSkipAiSlop(ctx: Ctx) {
     feedbackQueued.clear();
     feedbackQueue.length = 0;
     session.clear();
-    skipped.clear();
+    limiter.clear();
+    tokenChannel.clear();
     rebuild();
     lastCheckedId = null;
     unhideAll();
     scanPage();
     scanQueue();
     check();
-    return "Cache cleared. The community list stays off until the next download.";
+    return ctx.t(
+      "plugins.skip-ai-slop.status.cache-cleared",
+      'Cache cleared. The community list is off until you press "Download list now" (or restart the app).',
+    );
   });
 
   ctx.host.handle("showRecent", recentSummary);
+  ctx.host.handle("allowRecent", (payload) => allowRecent(typeof payload === "string" ? payload : undefined));
+  ctx.host.handle("removeRecent", (payload) => removeRecentEntry(typeof payload === "string" ? payload : undefined));
   ctx.host.handle("searchList", listSearchSummary);
+  ctx.host.handle("allowListMatch", allowListMatch);
 
   // Pre-paint scan, installed before YTM's scripts (runAt: "start").
   ctx.observe(document, { childList: true, subtree: true, attributes: true, attributeFilter: ["href"] }, (records) => {
@@ -676,10 +851,11 @@ export function startSkipAiSlop(ctx: Ctx) {
     active = false;
     pageScanPending = false;
     unhookStore();
+    unhookFetch();
     unhideAll();
-    skipped.clear();
+    limiter.clear();
     session.clear();
-    recentSkips = [];
+    tokenChannel.clear();
     removingFromQueue = false;
     feedbackBusy = false;
     feedbackQueue.length = 0;
