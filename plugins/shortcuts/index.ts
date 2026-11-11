@@ -67,6 +67,7 @@ export default definePlugin({
         }
       };
 
+      let registered = 0;
       const failed: string[] = [];
       const register = (accelerator: string, name: ActionName) => {
         let ok = false;
@@ -75,8 +76,12 @@ export default definePlugin({
         } catch (error) {
           ctx.log.warn(`invalid accelerator ${accelerator}`, error);
         }
-        if (ok) ctx.onCleanup(() => globalShortcut.unregister(accelerator));
-        else failed.push(accelerator);
+        if (!ok) {
+          failed.push(accelerator);
+          return;
+        }
+        registered++;
+        ctx.onCleanup(() => globalShortcut.unregister(accelerator));
       };
       for (const name of Object.keys(ACTIONS) as ActionName[]) {
         const accelerator = ctx.config[name];
@@ -99,8 +104,26 @@ export default definePlugin({
       };
       ctx.listen(ctx.window.webContents, "before-input-event", onInput);
 
+      // pear-desktop had a keybind prompt in the plugin's menu; the flat menu
+      // has no prompt, so the item opens the settings card that does.
+      ctx.addMenuItem({
+        label: ctx.t("plugins.shortcuts.menu.set-keybinds", "Shortcut settings…"),
+        click: () => ctx.openSettings(),
+      });
+
       if (failed.length > 0) {
-        throw new Error(`couldn't register ${failed.join(", ")} (invalid or used by another app)`);
+        const list = failed.join(", ");
+        const message = `couldn't register ${list} (invalid or used by another app)`;
+        // Desktops commonly own the media keys: one busy accelerator must not
+        // report the whole plugin as failed while the others work (pear-desktop
+        // only warned). The card's status line says what did not register.
+        ctx.setStatus(
+          ctx.t("plugins.shortcuts.status.not-registered", "Could not register {{keys}} (invalid or used by another app)", {
+            keys: list,
+          }),
+        );
+        // Nothing registered at all: the plugin cannot do its global job.
+        if (registered === 0) throw new Error(message);
       }
     },
   },
