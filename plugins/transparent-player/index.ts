@@ -1,19 +1,23 @@
 import { config, definePlugin } from "@pear/sdk";
 import { css } from "@pear/sdk/macros" with { type: "macro" };
-import type { BrowserWindow } from "electron";
-
-const OPAQUE_BACKGROUND = "#030303";
-const WINDOWS_MATERIALS = ["mica", "acrylic", "tabbed"] as const;
-const MACOS_MATERIALS = ["window", "fullscreen-ui", "content", "under-window", "under-page"] as const;
-
-type Material = "none" | (typeof WINDOWS_MATERIALS)[number] | (typeof MACOS_MATERIALS)[number];
+import { applyTransparency, resetTransparency } from "./window.ts";
 
 export default definePlugin({
   id: "transparent-player",
   name: "Transparent player",
   description: "Makes the window see-through, with a blurred material behind it on Windows 11 and macOS.",
+  // pear-desktop's Linux transparency is not supported: it needed global
+  // compositing switches and still broke resizing.
+  platforms: ["win32", "darwin"],
   config: {
-    opacity: config.number(50, { label: "Background opacity", min: 0, max: 100, step: 5, unit: "%" }),
+    opacity: config.number(50, {
+      label: "Background opacity",
+      description: "How much of the desktop shows through the window",
+      min: 10,
+      max: 100,
+      step: 5,
+      unit: "%",
+    }),
     type: config.select(
       "none",
       [
@@ -27,35 +31,22 @@ export default definePlugin({
         { value: "under-window", label: "Under window (macOS)" },
         { value: "under-page", label: "Under page (macOS)" },
       ],
-      {
-        label: "Material",
-        description: "Blurs what's behind the window. Linux compositors only support plain transparency.",
-      },
+      { label: "Material", description: "Blurs what's behind the window on Windows 11 and macOS." },
     ),
   },
   host: {
-    // A transparent window needs software compositing on Linux, and those
-    // switches only apply before the app is ready (pear-desktop's workaround for
-    // https://github.com/electron/electron/issues/15947).
-    beforeReady({ app }) {
-      if (process.platform !== "linux") return;
-      app.disableHardwareAcceleration();
-      app.commandLine.appendSwitch("enable-transparent-visuals");
-      app.commandLine.appendSwitch("enable-unsafe-swiftshader");
-    },
-    // A window can only be made transparent when it is created.
-    windowOptions: () => ({ transparent: true, backgroundColor: "#00000000" }),
     start(ctx) {
-      applyMaterial(ctx.window, ctx.config.type);
-      ctx.window.setBackgroundColor("#00000000");
+      applyTransparency(ctx.window, ctx.config.type, ctx.config.opacity);
+      ctx.addMenuItem({
+        label: ctx.t("plugins.transparent-player.menu.settings", "Transparent player settings…"),
+        click: () => ctx.openSettings(),
+      });
       ctx.onCleanup(() => {
-        if (ctx.window.isDestroyed()) return;
-        applyMaterial(ctx.window, "none");
-        ctx.window.setBackgroundColor(OPAQUE_BACKGROUND);
+        if (!ctx.window.isDestroyed()) resetTransparency(ctx.window);
       });
     },
     onConfigChange(config, ctx) {
-      applyMaterial(ctx.window, config.type);
+      applyTransparency(ctx.window, config.type, config.opacity);
     },
   },
   style: css`
@@ -100,15 +91,12 @@ export default definePlugin({
     runAt: "start",
     start(ctx) {
       // Shared with album-color-theme, which mixes its colors at this opacity.
-      ctx.addStyle(`:root{--pear-transparent-opacity:${ctx.config.opacity / 100}}`);
+      const style = ctx.addStyle(opacityCss(ctx.config.opacity));
+      // The slider only changes a CSS variable: update the sheet instead of
+      // restarting the page part.
+      ctx.onConfigChange((config) => style.update(opacityCss(config.opacity)));
     },
   },
 });
 
-function applyMaterial(window: BrowserWindow, material: Material) {
-  if (process.platform === "win32") {
-    window.setBackgroundMaterial((WINDOWS_MATERIALS as readonly string[]).includes(material) ? (material as "mica") : "none");
-  } else if (process.platform === "darwin") {
-    window.setVibrancy((MACOS_MATERIALS as readonly string[]).includes(material) ? (material as "window") : null);
-  }
-}
+const opacityCss = (opacity: number) => `:root{--pear-transparent-opacity:${opacity / 100}}`;
