@@ -1,6 +1,7 @@
 /** @jsxImportSource @pear/sdk */
 import { definePlugin, type PageContextOf } from "@pear/sdk";
 import { css } from "@pear/sdk/macros" with { type: "macro" };
+import { filterRows, needsApply } from "./filter.ts";
 
 const SIDEBAR = "sidebar";
 const DIALOG = "dialog";
@@ -53,6 +54,10 @@ const style = css`
     padding: 16px;
     font-size: 12px;
   }
+  /* pear-desktop set this inline in the dialog's empty state: keep its spacing. */
+  #pear-pls-dialog-no-results-message {
+    margin-bottom: 4rem;
+  }
   .pear-pls-search-icon {
     position: absolute;
     top: 50%;
@@ -85,6 +90,7 @@ interface SearchOptions {
 
 interface Search {
   readonly input: HTMLInputElement;
+  readonly wrapper: HTMLElement;
   apply(): void;
   reset(): void;
 }
@@ -125,20 +131,19 @@ function createSearch(ctx: Ctx, options: SearchOptions): Search {
     </div>
   );
 
+  // Whether rows are currently filtered: with an empty box and nothing
+  // filtered, a scheduled pass has nothing to restore.
+  let filtering = false;
   const apply = () => {
     const container = options.container();
     const term = input.value.toLowerCase().trim();
-    let visible = 0;
+    if (!needsApply(term, filtering)) return;
 
-    for (const row of container?.querySelectorAll<HTMLElement>(options.rowSelector) ?? []) {
-      const matches = term.length === 0 || options.rowTitle(row).toLowerCase().includes(term);
-      row.style.display = matches ? "" : "none";
-      if (matches) visible++;
-    }
-
+    const visible = filterRows(container?.querySelectorAll<HTMLElement>(options.rowSelector) ?? [], term, options.rowTitle);
     const empty = term.length > 0 && visible === 0;
     noResults.hidden = !empty;
     if (options.hideContainerWhenEmpty && container) container.style.display = empty ? "none" : "";
+    filtering = term.length > 0;
   };
 
   // ctx.mount puts the input back when YTM re-renders the section or the dialog,
@@ -149,6 +154,7 @@ function createSearch(ctx: Ctx, options: SearchOptions): Search {
 
   return {
     input,
+    wrapper,
     apply,
     reset() {
       input.value = "";
@@ -174,6 +180,10 @@ export default definePlugin({
       hideContainerWhenEmpty: false,
     });
 
+    // YTM rebuilds the open dialog's contents; ctx.mount re-places the same
+    // input, which loses focus. Master re-injected (and refocused) on every
+    // observation; this flag lets the scheduled pass refocus once.
+    let dialogRepositioned = false;
     const dialog = createSearch(ctx, {
       id: DIALOG,
       rowSelector: DIALOG_ROW,
@@ -182,7 +192,10 @@ export default definePlugin({
         return title?.getAttribute("title") ?? title?.textContent ?? "";
       },
       container: () => ctx.$("dialog.add_to_playlist_items"),
-      placeInput: (element) => ctx.$("dialog.add_to_playlist_heading")?.after(element),
+      placeInput: (element) => {
+        ctx.$("dialog.add_to_playlist_heading")?.after(element);
+        dialogRepositioned = true;
+      },
       placeNoResults: (element) => ctx.$("dialog.add_to_playlist_items")?.after(element),
       hideContainerWhenEmpty: true,
     });
@@ -199,8 +212,7 @@ export default definePlugin({
     const syncDialog = () => {
       const renderer = ctx.$("dialog.add_to_playlist");
       const paper = renderer?.closest("tp-yt-paper-dialog");
-      const open =
-        !!renderer && isShown(paper ?? renderer) && paper?.getAttribute("aria-hidden") !== "true";
+      const open = !!renderer && isShown(paper ?? renderer) && paper?.getAttribute("aria-hidden") !== "true";
       if (open === dialogOpen) return;
       dialogOpen = open;
       if (!open) {
@@ -220,6 +232,11 @@ export default definePlugin({
         syncDialog();
         sidebar.apply();
         dialog.apply();
+        if (!dialogRepositioned) return;
+        dialogRepositioned = false;
+        // The rebuilt dialog got the input back blurred; refocus it like master
+        // did on re-injection, unless the user moved focus elsewhere meanwhile.
+        if (dialogOpen && !dialog.wrapper.contains(document.activeElement)) dialog.input.focus();
       }, 50);
     };
     ctx.observe("app", { childList: true, subtree: true }, schedule);
@@ -229,8 +246,7 @@ export default definePlugin({
     // only a mutation on the dialog, inside it or on an ancestor of it is worth
     // a computed visibility read.
     const isDialogRelated = (target: Node, renderer: Element) =>
-      target instanceof Element &&
-      (target === renderer || renderer.contains(target) || target.contains(renderer));
+      target instanceof Element && (target === renderer || renderer.contains(target) || target.contains(renderer));
     ctx.observe(
       document.body,
       { attributes: true, subtree: true, attributeFilter: ["style", "class", "open", "aria-hidden"] },
