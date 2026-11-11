@@ -43,12 +43,12 @@ export const schema = {
       { value: "LRCHub", label: "LRCHub" },
       { value: "SimpMusic", label: "SimpMusic" },
     ],
-    { label: "Preferred provider", description: "Used whenever it has lyrics; otherwise word-synced beats line-synced beats plain." },
+    { label: "Preferred provider", description: "Breaks ties between providers with equally rich lyrics; the type order still wins." },
   ),
   usePriorityList: config.bool(false, {
     label: "Follow the provider order",
     description:
-      "Use the list below instead of the richest result: the first provider in the order with lyrics wins. Off keeps the preferred provider, then the best result.",
+      "Use the list below instead of the richest result: the first provider in the order with lyrics wins. Off ranks providers by result quality (word-synced, time-synced, official translations) and the preferred provider breaks ties.",
   }),
   providerPriority: config.orderable([...PROVIDERS], providerOrder, {
     label: "Provider order",
@@ -108,6 +108,11 @@ export const schema = {
     ],
     { label: "Instrumental breaks" },
   ),
+  gapTextCustom: config.string("", {
+    label: "Custom break text",
+    description: "Shown instead of the choice above when a line has no lyrics; leave empty to keep the choice.",
+    placeholder: "♪",
+  }),
   showTimeCodes: config.bool(false, { label: "Show time codes" }),
   offsetMs: config.number(0, {
     label: "Timing offset",
@@ -138,9 +143,10 @@ export const schema = {
     label: "Show custom search",
     description: "A button in the lyrics picker to search with your own title and artist for the current song, remembered per song.",
   }),
-  useYTMLyricsWithoutProxy: config.bool(true, {
+  useYTMLyricsWithoutProxy: config.bool(false, {
     label: "\u0059\u006f\u0075\u0054\u0075\u0062\u0065 Music lyrics without proxy",
-    description: "Fetch YTM's own lyrics directly. Off keeps the direct request and retries through the public browse proxy if it fails.",
+    description:
+      "Fetch \u0059\u006f\u0075\u0054\u0075\u0062\u0065 Music's own lyrics directly instead of through the public browse proxy. Off asks the proxy first and falls back to the direct request.",
   }),
   musixmatchTokenMode: config.select(
     "auto",

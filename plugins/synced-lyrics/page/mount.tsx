@@ -26,6 +26,8 @@ interface Commands {
   customQuery(videoId: string): Promise<CustomQuery | null>;
   setCustomQuery(videoId: string, query: CustomQuery): Promise<unknown>;
   removeCustomQuery(videoId: string): Promise<unknown>;
+  /** The settings action; the page never calls it, but the host commands are one set. */
+  clearTranslationCache(): Promise<number>;
 }
 
 type Ctx = PageContextOf<typeof schema, Commands>;
@@ -44,6 +46,7 @@ const storeOptions = (config: LyricsConfig): Options => ({
 const viewOptions = (config: LyricsConfig): ViewOptions => ({
   effect: config.lineEffect,
   gapText: config.gapText,
+  gapTextCustom: config.gapTextCustom,
   showTimeCodes: config.showTimeCodes,
   offsetMs: config.offsetMs,
   preciseTiming: config.preciseTiming,
@@ -55,6 +58,12 @@ const viewOptions = (config: LyricsConfig): ViewOptions => ({
 export function mountLyrics(ctx: Ctx) {
   const store = createStore(ctx);
   const { host: element, root } = shadowHost("pear-synced-lyrics", lyricsStyles);
+  // The core performance switches are restart-only, so reading them once is
+  // enough. The styles stay inside the shadow root: the core's own sheet is
+  // adopted on the document and never crosses into it.
+  const performance = ctx.core("performance");
+  const performanceMode = performance.css ? "css" : performance.animations ? "animations" : "";
+  if (performanceMode) element.setAttribute("data-performance", performanceMode);
   // Keep YTM's global shortcuts from reacting to keys in here.
   isolateKeys(element, ctx.signal);
 

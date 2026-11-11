@@ -30,23 +30,31 @@ export function jaroWinkler(a: string, b: string) {
   return jaro + prefix * 0.1 * (1 - jaro);
 }
 
-/** Lowercase, without bracketed extras ("(Official Video)", "[Remastered]") and punctuation. */
+/** Lowercase, without accents, bracketed extras ("(Official Video)", "[Remastered]") and punctuation. */
 export function normalize(text: string) {
-  return text
-    .toLowerCase()
-    .normalize("NFKC")
-    .replace(/[([【].*?[)\]】]/g, " ")
-    .replace(/\s[-–—]\s.*$/, " ")
-    .replace(/\b(feat|ft)\.?\s.*$/, " ")
-    .replace(/[^\p{L}\p{N}]+/gu, " ")
-    .trim();
+  return (
+    text
+      .toLowerCase()
+      .normalize("NFKC")
+      // A diacritic difference ("Björk"/"Bjork") must not reject the right match.
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[([【].*?[)\]】]/g, " ")
+      .replace(/\s[-–—]\s.*$/, " ")
+      .replace(/\b(feat|ft)\.?\s.*$/, " ")
+      .replace(/[^\p{L}\p{N}]+/gu, " ")
+      .trim()
+  );
 }
 
 export function splitArtists(artists: string) {
-  return artists
-    .split(/\s*(?:[,&、]|\band\b|\bfeat\.?|\bft\.?|\bx\b|\bwith\b)\s*/i)
-    .map(normalize)
-    .filter(Boolean);
+  return (
+    artists
+      // "y" is Spanish for "and" ("A y B"), as pear-desktop split collaborators.
+      .split(/\s*(?:[,&、]|\band\b|\by\b|\bfeat\.?|\bft\.?|\bx\b|\bwith\b)\s*/i)
+      .map(normalize)
+      .filter(Boolean)
+  );
 }
 
 /** Best similarity between any artist of `a` and any artist of `b`. */

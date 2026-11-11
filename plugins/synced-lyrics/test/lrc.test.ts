@@ -23,9 +23,14 @@ describe("parseLrc", () => {
     ]);
   });
 
-  test("applies [offset:] (positive = earlier)", () => {
+  test("applies [offset:] (positive = later)", () => {
     const lines = parseLrc("[offset:+500]\n[00:01.00]a\n[00:02.00]b");
-    expect(lines.filter((l) => l.text).map((l) => l.startMs)).toEqual([500, 1500]);
+    expect(lines.filter((l) => l.text).map((l) => l.startMs)).toEqual([1500, 2500]);
+  });
+
+  test("clamps a negative [offset:] at the start", () => {
+    const lines = parseLrc("[offset:-1500]\n[00:01.00]a\n[00:03.00]b");
+    expect(lines.filter((l) => l.text).map((l) => l.startMs)).toEqual([0, 1500]);
   });
 
   test("parses enhanced LRC word timing", () => {

@@ -16,6 +16,8 @@ export type GapText = "dots" | "bullets" | "note" | "dash" | "none";
 export interface ViewOptions {
   effect: LineEffect;
   gapText: GapText;
+  /** Shown instead of `gapText` when set (pear-desktop's free-text break). */
+  gapTextCustom: string;
   showTimeCodes: boolean;
   /** Added to the playback position; positive shows lines earlier. */
   offsetMs: number;
@@ -102,7 +104,7 @@ export function LyricsView(props: ViewProps) {
       {body}
       {shown && (
         <footer class="source">
-          Lyrics from{" "}
+          {t("plugins.synced-lyrics.lyrics-from", "Lyrics from")}{" "}
           {shown.result.url ? (
             <a
               href={shown.result.url}
@@ -116,7 +118,7 @@ export function LyricsView(props: ViewProps) {
           ) : (
             PROVIDER_NAMES[shown.provider]
           )}
-          {!shown.synced && " · not time-synced"}
+          {!shown.synced && ` · ${t("plugins.synced-lyrics.not-time-synced", "not time-synced")}`}
         </footer>
       )}
     </div>
@@ -260,7 +262,8 @@ function Picker({
       <button
         type="button"
         class="arrow previous"
-        aria-label={t("plugins.synced-lyrics.previous", "Previous provider")}
+        title={t("plugins.synced-lyrics.menu.previous-provider.tooltip", "Previous provider")}
+        aria-label={t("plugins.synced-lyrics.menu.previous-provider.tooltip", "Previous provider")}
         onClick={() => store.step(-1)}
       >
         <Icon path={ICONS.left} />
@@ -291,6 +294,14 @@ function Picker({
                   class="star"
                   tabIndex={current ? 0 : -1}
                   aria-pressed={current && starred}
+                  title={t(
+                    store.starred === id
+                      ? "plugins.synced-lyrics.menu.unstar-provider.tooltip"
+                      : "plugins.synced-lyrics.menu.star-provider.tooltip",
+                    store.starred === id
+                      ? "Stop pinning this provider to this song."
+                      : "Always use this provider for this song, whatever the priority order says. Falls back to the normal order if it has no lyrics for the song.",
+                  )}
                   aria-label={t("plugins.synced-lyrics.star", "Always use {{provider}} for this song", { provider: PROVIDER_NAMES[id] })}
                   onClick={() => store.toggleStar()}
                 >
@@ -319,13 +330,20 @@ function Picker({
         <button
           type="button"
           class="custom"
+          title={t("plugins.synced-lyrics.menu.custom-search-button.tooltip", "Custom search query")}
           aria-label={t("plugins.synced-lyrics.custom-search.open", "Search with your own title and artist")}
           onClick={openSearch}
         >
           <Icon path={ICONS.search} />
         </button>
       )}
-      <button type="button" class="arrow next" aria-label={t("plugins.synced-lyrics.next", "Next provider")} onClick={() => store.step(1)}>
+      <button
+        type="button"
+        class="arrow next"
+        title={t("plugins.synced-lyrics.menu.next-provider.tooltip", "Next provider")}
+        aria-label={t("plugins.synced-lyrics.menu.next-provider.tooltip", "Next provider")}
+        onClick={() => store.step(1)}
+      >
         <Icon path={ICONS.right} />
       </button>
       {searching && (
@@ -530,7 +548,7 @@ function AppleMusicLyrics({ store, options, now, seek, t }: ViewProps) {
   );
 }
 
-function SyncedLyrics({ store, options, now, seek, scroller }: ViewProps) {
+function SyncedLyrics({ store, options, now, seek, scroller, t }: ViewProps) {
   const shown = store.shown!;
   const lines = shown.lines;
   const [active, setActive] = useState(-1);
@@ -569,8 +587,12 @@ function SyncedLyrics({ store, options, now, seek, scroller }: ViewProps) {
       if (!element || !line) return;
       element.style.setProperty("--p", progress(ms, line.startMs, line.endMs).toFixed(3));
       if (line.words) {
-        const words = element.querySelectorAll<HTMLElement>(".word");
+        const words = element.querySelectorAll<HTMLElement>(".text .word");
         line.words.forEach((word, i) => words[i]?.style.setProperty("--p", progress(ms, word.startMs, word.endMs).toFixed(3)));
+      }
+      if (line.background) {
+        const background = element.querySelectorAll<HTMLElement>(".background-vocals .word");
+        line.background.forEach((word, i) => background[i]?.style.setProperty("--p", progress(ms, word.startMs, word.endMs).toFixed(3)));
       }
     };
     frame = requestAnimationFrame(tick);
@@ -619,6 +641,7 @@ function SyncedLyrics({ store, options, now, seek, scroller }: ViewProps) {
             translation={shown.translation[i] ?? null}
             state={i === active ? "active" : i <= anchor ? "past" : "future"}
             options={options}
+            t={t}
             onSeek={() => {
               seek(line.startMs);
               setFollowing(true);
@@ -628,7 +651,7 @@ function SyncedLyrics({ store, options, now, seek, scroller }: ViewProps) {
       </div>
       {!following && (
         <button type="button" class="resume" onClick={() => setFollowing(true)}>
-          Back to current line
+          {t("plugins.synced-lyrics.resume", "Back to current line")}
         </button>
       )}
     </>
@@ -642,6 +665,7 @@ interface LineProps {
   translation: string | null;
   state: "past" | "active" | "future";
   options: ViewOptions;
+  t: Translate;
   onSeek(): void;
 }
 
@@ -654,13 +678,24 @@ function staggered(text: string) {
   ));
 }
 
-function Line({ line, text, romanized, translation, state, options, onSeek }: LineProps) {
-  const gap = !text;
+function Line({ line, text, romanized, translation, state, options, t, onSeek }: LineProps) {
+  const background = line.background?.length ? line.background : undefined;
+  const gap = !text && !background;
   // Word timing only applies to the original script.
   const words = line.words && text === line.text ? line.words : undefined;
+  const dir = line.rtl ? "rtl" : "auto";
+  const classes = [
+    "line",
+    gap ? "gap" : "",
+    words ? "has-words" : "",
+    line.alignment === "end" ? "singer-right" : "",
+    line.rtl ? "rtl" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
   return (
     <div
-      class={`line${gap ? " gap" : ""}${words ? " has-words" : ""}`}
+      class={classes}
       data-state={state}
       role="button"
       tabIndex={-1}
@@ -670,9 +705,9 @@ function Line({ line, text, romanized, translation, state, options, onSeek }: Li
     >
       {options.showTimeCodes && <span class="time">{formatTime(line.startMs)}</span>}
       {gap ? (
-        <GapMark kind={options.gapText} />
+        <GapMark kind={options.gapText} custom={options.gapTextCustom} t={t} />
       ) : (
-        <span class="text" dir="auto">
+        <span class="text" dir={dir}>
           {words
             ? words.map((word, i) => (
                 <span key={i} class="word w" style={{ "--i": i }}>
@@ -680,6 +715,15 @@ function Line({ line, text, romanized, translation, state, options, onSeek }: Li
                 </span>
               ))
             : staggered(text)}
+        </span>
+      )}
+      {background && (
+        <span class="background-vocals" dir={dir}>
+          {background.map((word, i) => (
+            <span key={i} class="word w" style={{ "--i": i }}>
+              {word.text}
+            </span>
+          ))}
         </span>
       )}
       {romanized && !gap && (
@@ -696,11 +740,13 @@ function Line({ line, text, romanized, translation, state, options, onSeek }: Li
   );
 }
 
-function GapMark({ kind }: { kind: GapText }) {
+function GapMark({ kind, custom, t }: { kind: GapText; custom: string; t: Translate }) {
+  const label = t("plugins.synced-lyrics.instrumental", "Instrumental");
+  if (custom.trim()) return <span class="text">{custom}</span>;
   switch (kind) {
     case "dots":
       return (
-        <span class="text gap-dots" aria-label="Instrumental">
+        <span class="text gap-dots" aria-label={label}>
           <i />
           <i />
           <i />
@@ -709,7 +755,7 @@ function GapMark({ kind }: { kind: GapText }) {
     case "bullets":
       // pear-desktop's "•••": the bullets appear one by one through the break.
       return (
-        <span class="text gap-bullets" aria-label="Instrumental">
+        <span class="text gap-bullets" aria-label={label}>
           <i>•</i>
           <i>•</i>
           <i>•</i>

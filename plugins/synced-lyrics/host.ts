@@ -8,14 +8,16 @@ import type { Translate } from "@pear/sdk/i18n";
 import { net } from "electron";
 import { apiCachedTranslation, apiProviderLyrics, type ApiLyrics } from "./api.ts";
 import { CustomQueryStore } from "./custom-query.ts";
+import { lineTextForTranslation } from "./line-text.ts";
 import { pickProvider, resolvePriority, resolveTypePriority } from "./priority.ts";
 import { type ProviderOptions, providers, SearchCache } from "./providers/index.ts";
+import { nextForVideo, queueTrackFromNext, type VideoInfo } from "./providers/ytmusic.ts";
 import { convertChinese, Romanizer } from "./romanize.ts";
 import type { LyricsConfig } from "./schema.ts";
-import { resolveTargetLanguage } from "./translation/language.ts";
+import { isChineseTarget, resolveTargetLanguage } from "./translation/language.ts";
 import { TranslationService } from "./translation/service.ts";
 import type { TranslationResult } from "./translation/types.ts";
-import type { CustomQuery, LyricResult, ProviderId, SearchQuery } from "./types.ts";
+import { lyricsType, type CustomQuery, type LyricResult, type ProviderId, type SearchQuery } from "./types.ts";
 
 export interface LyricsRequest {
   track: Track | null;
@@ -43,6 +45,8 @@ export class LyricsHost {
   #romanizer: Romanizer;
   #customQueries: CustomQueryStore;
   #translation: TranslationService;
+  /** Watch-next metadata of videos the player is not on, for the API. */
+  #videoInfo = new Map<string, Promise<VideoInfo>>();
 
   constructor(userData: string, locale: string) {
     this.#romanizer = new Romanizer(join(userData, "synced-lyrics", "kuromoji"), (url) => net.fetch(url));
@@ -101,34 +105,26 @@ export class LyricsHost {
     return { videoId, translations: entries.map(apiCachedTranslation) };
   }
 
+  /** Empties the on-disk translation cache; returns how many files were removed. */
+  clearTranslations() {
+    return this.#translation.clear();
+  }
+
   // ---- API RPC ----
 
   /**
-   * Lyrics from every provider for the current track (or `videoId`, when it is
-   * the current one — other videos have no search metadata here), shaped like
-   * pear-desktop's API. No lyrics is an empty provider list, not an error.
+   * Lyrics from every provider for the current track, or for any other video
+   * (resolved through its watch-next queue entry), shaped like pear-desktop's
+   * API. No lyrics is an empty provider list, not an error.
    */
   async lyrics(request: LyricsRequest): Promise<ApiLyrics> {
-    const target = request.videoId ?? request.track?.videoId ?? null;
-    if (!request.track || !target || target !== request.track.videoId) {
-      return { videoId: target, activeProvider: null, providers: [] };
-    }
-
-    const query = await this.#queryFor(request.track, request.details, request.config);
-    const results = await this.#searchAll(query, request.config, request.t);
-    const priority = resolvePriority(request.config.providerPriority);
-    const selected = pickProvider({
-      priority,
-      results,
-      usePriorityList: request.config.usePriorityList,
-      typePriority: resolveTypePriority(request.config.lyricsTypePriority),
-      preferred: request.config.preferredProvider,
-    });
-
+    const collected = await this.#collect(request);
+    const { target, selected, results } = collected;
+    if (!target || !selected) return { videoId: target, activeProvider: null, providers: [] };
     return {
       videoId: target,
       activeProvider: selected,
-      providers: priority.flatMap((provider) => {
+      providers: resolvePriority(request.config.providerPriority).flatMap((provider) => {
         const entry = apiProviderLyrics(provider, results[provider] ?? null);
         return entry ? [entry] : [];
       }),
@@ -137,6 +133,14 @@ export class LyricsHost {
 
   /** Translates the lyrics of the current track (or `videoId`) for the API. */
   async translateLyrics(request: TranslateLyricsRequest): Promise<TranslationResult> {
+    const noLyrics = (): TranslationResult => ({
+      provider: request.config.translationProvider,
+      language: resolveTargetLanguage(request.lang || request.config.translationTargetLanguage, this.#translation.locale),
+      lines: [],
+      error: "no lyrics for this song",
+      reason: "no-lyrics",
+    });
+
     if (!request.config.translationEnabled) {
       return this.#translation.translate(
         {
@@ -150,33 +154,54 @@ export class LyricsHost {
       );
     }
 
-    const lyrics = await this.lyrics(request);
-    const active = lyrics.providers.find((entry) => entry.provider === lyrics.activeProvider) ?? lyrics.providers[0];
-    if (!active || !lyrics.videoId) {
-      return {
-        provider: request.config.translationProvider,
-        language: resolveTargetLanguage(request.lang || request.config.translationTargetLanguage, this.#translation.locale),
-        lines: [],
-        error: "no lyrics for this song",
-        reason: "no-lyrics",
-      };
-    }
+    const { target, selected, results } = await this.#collect(request);
+    if (!target || !selected) return noLyrics();
+    const result =
+      [results[selected], ...resolvePriority(request.config.providerPriority).map((provider) => results[provider])].find(
+        (entry): entry is LyricResult => Boolean(entry && lyricsType(entry)),
+      ) ?? null;
+    if (!result) return noLyrics();
 
-    const lines = active.lines?.length
-      ? active.lines.map((line) => line.text)
-      : (active.lyrics ?? "").split("\n").map((line) => line.trim());
+    const lines = result.lines?.length
+      ? result.lines.map(lineTextForTranslation)
+      : (result.plain ?? "").split("\n").map((line) => line.trim());
 
     return this.#translation.translate(
       {
-        videoId: lyrics.videoId,
-        title: active.title,
-        artists: active.artists,
+        videoId: target,
+        title: result.title,
+        artists: result.artists,
         lines,
         ...(request.lang ? { language: request.lang } : {}),
         ...(request.force ? { force: true } : {}),
       },
       request.config,
     );
+  }
+
+  /** Provider results for the request's video: the playing track, or any other via its watch-next entry. */
+  async #collect(request: LyricsRequest): Promise<{
+    target: string | null;
+    selected: ProviderId | null;
+    results: Partial<Record<ProviderId, LyricResult | null>>;
+  }> {
+    const target = request.videoId ?? request.track?.videoId ?? null;
+    if (!target) return { target, selected: null, results: {} };
+    const query =
+      request.track && target === request.track.videoId
+        ? await this.#queryFor(request.track, request.details, request.config)
+        : await this.#queryForVideo(target, request.config);
+    if (!query) return { target, selected: null, results: {} };
+    const results = await this.#searchAll(query, request.config, request.t);
+    const selected = pickProvider({
+      priority: resolvePriority(request.config.providerPriority),
+      results,
+      usePriorityList: request.config.usePriorityList,
+      typePriority: resolveTypePriority(request.config.lyricsTypePriority),
+      preferred: request.config.preferredProvider,
+      wantsOfficialTranslation: wantsOfficialTranslation(request.config, this.#translation.locale),
+    });
+    return { target, selected, results };
   }
 
   async #queryFor(track: Track, details: SongDetails | null, config: Readonly<LyricsConfig>): Promise<SearchQuery> {
@@ -202,8 +227,44 @@ export class LyricsHost {
   #providerOptions(config: Readonly<LyricsConfig>, t: Translate): ProviderOptions {
     return {
       musixmatch: { tokenMode: config.musixmatchTokenMode, userToken: config.musixmatchToken, t },
-      ytmusic: { useProxyFallback: !config.useYTMLyricsWithoutProxy },
+      ytmusic: { useProxy: !config.useYTMLyricsWithoutProxy },
     };
+  }
+
+  /** The search query for a video the player is not on, from its watch-next queue entry. */
+  async #queryForVideo(videoId: string, config: Readonly<LyricsConfig>): Promise<SearchQuery | null> {
+    const info = await this.#infoForVideo(videoId).catch(() => null);
+    if (!info) return null;
+    const query: SearchQuery = {
+      videoId,
+      title: info.title,
+      artist: info.artist,
+      durationSeconds: info.durationSeconds,
+      inexact: config.showLyricsEvenIfInexact,
+    };
+    if (info.album) query.album = info.album;
+    const custom = await this.#customQueries.get(videoId);
+    if (custom) {
+      query.title = custom.query;
+      query.alternativeTitle = custom.query;
+      query.artist = custom.artist ?? "";
+    }
+    return query;
+  }
+
+  /** The video's watch-next metadata, cached (a failed lookup is not kept, so it can retry). */
+  #infoForVideo(videoId: string): Promise<VideoInfo> {
+    const cached = this.#videoInfo.get(videoId);
+    if (cached) return cached;
+    const pending = nextForVideo((url, init) => net.fetch(url, init), videoId).then((next) => {
+      const info = queueTrackFromNext(next, videoId);
+      if (!info) throw new Error(`no queue entry for ${videoId}`);
+      return info;
+    });
+    this.#videoInfo.set(videoId, pending);
+    pending.catch(() => this.#videoInfo.delete(videoId));
+    while (this.#videoInfo.size > VIDEO_INFO_CACHE_SIZE) this.#videoInfo.delete(this.#videoInfo.keys().next().value!);
+    return pending;
   }
 
   async #searchAll(query: SearchQuery, config: Readonly<LyricsConfig>, t: Translate) {
@@ -222,6 +283,13 @@ export class LyricsHost {
     );
     return results;
   }
+}
+
+const VIDEO_INFO_CACHE_SIZE = 50;
+
+/** pear-desktop prefers a provider that ships the official translation for Chinese targets. */
+function wantsOfficialTranslation(config: Readonly<LyricsConfig>, locale: string) {
+  return Boolean(config.translationEnabled && isChineseTarget(config.translationTargetLanguage, locale));
 }
 
 /** Keyed by the host context, which is also `this` in commands. */

@@ -1,9 +1,16 @@
-import { beforeEach, describe, expect, test } from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 import { artistSimilarity, jaroWinkler, titleSimilarity } from "../match.ts";
 import { SearchCache } from "../providers/index.ts";
 import { lrchub, pickLrchubLrc } from "../providers/lrchub.ts";
 import { lrcred, linesFromJson } from "../providers/lrcred.ts";
-import { lrclib } from "../providers/lrclib.ts";
+import {
+  buildSearchQueries,
+  cleanTrackTitle,
+  isRetryableStatus,
+  lrclib,
+  parseSearchResponse as parseLrclibResponse,
+  retryDecision,
+} from "../providers/lrclib.ts";
 import { megalobiz, pickSheet, sheetToResult } from "../providers/megalobiz.ts";
 import {
   buildQuery,
@@ -16,7 +23,7 @@ import {
 } from "../providers/netease.ts";
 import { isUsableToken, musixmatch, parseMacro, resetMusixmatchToken } from "../providers/musixmatch.ts";
 import { decodeHtmlEntities, pickBestSimpMusicEntry, richSyncToLrc, simpmusic } from "../providers/simpmusic.ts";
-import { ytmusic } from "../providers/ytmusic.ts";
+import { bylineDuration, queueTrackFromNext, ytmusic } from "../providers/ytmusic.ts";
 import type { SearchQuery } from "../types.ts";
 // Recorded from the real APIs (October 2026), lyrics cut to a few lines.
 import megalobizLrc from "./fixtures/megalobiz-lrc.json" with { type: "json" };
@@ -44,6 +51,7 @@ function mockFetch(routes: [RegExp, unknown][]) {
     if (!route) return new Response("not found", { status: 404 });
     const body = route[1];
     const answer = typeof body === "function" ? (body as () => unknown)() : body;
+    if (answer instanceof Response) return answer;
     return new Response(typeof answer === "string" ? answer : JSON.stringify(answer));
   };
   return Object.assign(fetch, { calls, inits });
@@ -99,6 +107,11 @@ describe("match", () => {
     expect(artistSimilarity("Daft Punk & Pharrell Williams", "Pharrell Williams")).toBe(1);
     expect(artistSimilarity("Drake", "Uriah Heep")).toBeLessThan(0.7);
   });
+  test("artists fold diacritics and the Spanish collaborator 'y'", () => {
+    expect(artistSimilarity("Björk", "Bjork")).toBe(1);
+    expect(artistSimilarity("A y B", "B")).toBe(1);
+    expect(artistSimilarity("Vicente García y Residente", "Residente")).toBe(1);
+  });
 });
 
 describe("lrclib", () => {
@@ -117,7 +130,8 @@ describe("lrclib", () => {
     const result = await lrclib(query, fetch);
     expect(result?.lines?.map((l) => l.text)).toEqual(["", "We're no strangers to love", "You know the rules"]);
     expect(result?.plain).toBe("plain");
-    expect(fetch.calls[0]).toContain("track_name=Never+Gonna+Give+You+Up");
+    // The full-text endpoint (FTS) is what LRCLIB asks clients to use now.
+    expect(fetch.calls[0]).toContain("q=Rick+Astley+Never+Gonna+Give+You+Up");
   });
 
   test("returns null for instrumentals and when nothing matches", async () => {
@@ -138,8 +152,72 @@ describe("lrclib", () => {
     ]);
   });
 
-  test("propagates HTTP errors", async () => {
-    await expect(lrclib(query, async () => new Response("", { status: 500 }))).rejects.toThrow(/500/);
+  test("retries a rate-limited search, then answers", async () => {
+    vi.useFakeTimers();
+    try {
+      let calls = 0;
+      const fetch = vi.fn(async () => {
+        calls += 1;
+        return calls === 1 ? new Response("", { status: 503, headers: { "retry-after": "1" } }) : new Response(JSON.stringify([]));
+      });
+      const pending = lrclib(query, fetch);
+      await vi.advanceTimersByTimeAsync(2000);
+      await expect(pending).resolves.toBeNull();
+      // One retry for the artist+title query, then the title-only candidate.
+      expect(calls).toBe(3);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  test("maps an overloaded provider to no lyrics instead of an error", async () => {
+    vi.useFakeTimers();
+    try {
+      const pending = lrclib(query, async () => new Response("", { status: 429 }));
+      await vi.advanceTimersByTimeAsync(10_000);
+      await expect(pending).resolves.toBeNull();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  test("propagates non-retryable HTTP errors", async () => {
+    await expect(lrclib(query, async () => new Response("", { status: 404 }))).rejects.toThrow(/404/);
+  });
+
+  test("cleans video-title noise and builds full-text queries", () => {
+    expect(cleanTrackTitle("Song (Official Video)")).toBe("Song");
+    expect(cleanTrackTitle("Song (Video Oficial)")).toBe("Song");
+    expect(cleanTrackTitle("Song [Audio Oficial]")).toBe("Song");
+    expect(cleanTrackTitle("Song | Remastered")).toBe("Song");
+    expect(cleanTrackTitle("Song")).toBe("Song");
+
+    expect(
+      buildSearchQueries({ title: "Song (Official Video)", alternativeTitle: "Chanson", artist: "Artist", allowInexact: false }),
+    ).toEqual(["Artist Song", "Artist Song (Official Video)"]);
+    expect(
+      buildSearchQueries({ title: "Song (Official Video)", alternativeTitle: "Chanson", artist: "Artist", allowInexact: true }),
+    ).toEqual(["Artist Song", "Artist Song (Official Video)", "Chanson", "Song", "Song (Official Video)"]);
+  });
+
+  test("retries only transient statuses, with bounded backoff", () => {
+    expect(isRetryableStatus(429)).toBe(true);
+    expect(isRetryableStatus(503)).toBe(true);
+    expect(isRetryableStatus(404)).toBe(false);
+    expect(retryDecision({ status: 200, attempt: 1, maxAttempts: 4 })).toEqual({ retry: false });
+    expect(retryDecision({ status: 429, attempt: 1, maxAttempts: 4 })).toEqual({ retry: true, delayMs: 1000 });
+    expect(retryDecision({ status: 503, attempt: 3, maxAttempts: 4 })).toEqual({ retry: true, delayMs: 3000 });
+    expect(retryDecision({ status: 502, attempt: 4, maxAttempts: 4 })).toEqual({ retry: false });
+    expect(retryDecision({ status: 429, attempt: 1, maxAttempts: 4, retryAfterHeader: "3" })).toEqual({ retry: true, delayMs: 3000 });
+    expect(retryDecision({ status: 429, attempt: 1, maxAttempts: 4, retryAfterHeader: "11" })).toEqual({ retry: false });
+  });
+
+  test("reads only JSON arrays and rejects gateway pages", () => {
+    expect(parseLrclibResponse("[]")).toEqual([]);
+    expect(() => parseLrclibResponse("")).toThrow("empty");
+    expect(() => parseLrclibResponse("<html>bad gateway</html>")).toThrow("HTML");
+    expect(() => parseLrclibResponse('{"error":"rate limited"}')).toThrow("array");
+    expect(() => parseLrclibResponse("not json")).toThrow("non-JSON");
   });
 });
 
@@ -205,6 +283,107 @@ describe("ytmusic", () => {
 
   test("returns null without a lyrics tab", async () => {
     expect(await ytmusic(query, mockFetch([[/\/next/, { contents: {} }]]))).toBeNull();
+  });
+
+  test("a description shelf becomes one plain line per run", async () => {
+    const result = await ytmusic(
+      query,
+      mockFetch([
+        [/\/next/, next],
+        [
+          /\/browse/,
+          {
+            contents: {
+              sectionListRenderer: {
+                contents: [
+                  {
+                    musicDescriptionShelfRenderer: {
+                      description: { runs: [{ text: "plain line one" }, { text: "plain line two" }] },
+                    },
+                  },
+                ],
+              },
+            },
+          },
+        ],
+      ]),
+    );
+    expect(result?.plain).toBe("plain line one\nplain line two");
+    expect(result?.lines).toBeUndefined();
+  });
+
+  test("asks the public proxy before the direct browse, then falls back", async () => {
+    const proxied = await ytmusic(
+      query,
+      mockFetch([
+        [/\/next/, next],
+        [/ytmbrowseproxy/, timed([{ lyricLine: "Proxied", cueRange: { startTimeMilliseconds: "100", endTimeMilliseconds: "900" } }])],
+        [/\/browse/, new Response("", { status: 500 })],
+      ]),
+      { useProxy: true },
+    );
+    expect(proxied?.lines?.map((line) => line.text)).toContain("Proxied");
+
+    const calls: string[] = [];
+    const fetch = async (url: string) => {
+      calls.push(url);
+      if (url.includes("/next")) return new Response(JSON.stringify(next));
+      if (url.includes("ytmbrowseproxy")) return new Response("nope", { status: 500 });
+      return new Response(
+        JSON.stringify(timed([{ lyricLine: "Direct", cueRange: { startTimeMilliseconds: "100", endTimeMilliseconds: "900" } }])),
+      );
+    };
+    const direct = await ytmusic(query, fetch, { useProxy: true });
+    expect(direct?.lines?.map((line) => line.text)).toContain("Direct");
+    expect(calls.findIndex((url) => url.includes("ytmbrowseproxy"))).toBeLessThan(
+      calls.findIndex((url) => url.includes("music.\u0079\u006f\u0075\u0074\u0075\u0062\u0065.com") && url.includes("/browse")),
+    );
+  });
+
+  test("a queued video's title, artist and length come from its watch-next entry", () => {
+    const nextPage = {
+      contents: {
+        singleColumnMusicWatchNextResultsRenderer: {
+          tabbedRenderer: {
+            watchNextTabbedResultsRenderer: {
+              tabs: [
+                {
+                  tabRenderer: {
+                    content: {
+                      musicQueueRenderer: {
+                        content: {
+                          playlistPanelRenderer: {
+                            contents: [
+                              {
+                                playlistPanelVideoRenderer: {
+                                  videoId: "dQw4w9WgXcQ",
+                                  title: { runs: [{ text: "Never Gonna Give You Up" }] },
+                                  longBylineText: { runs: [{ text: "Rick Astley • Whenever You Need Somebody • 1987" }] },
+                                  lengthText: { runs: [{ text: "3:33" }] },
+                                },
+                              },
+                            ],
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              ],
+            },
+          },
+        },
+      },
+    };
+    expect(queueTrackFromNext(nextPage, "dQw4w9WgXcQ")).toEqual({
+      title: "Never Gonna Give You Up",
+      artist: "Rick Astley",
+      album: "Whenever You Need Somebody",
+      durationSeconds: 213,
+    });
+    expect(queueTrackFromNext(nextPage, "other")).toBeNull();
+    expect(bylineDuration("1:02:03")).toBe(3723);
+    expect(bylineDuration("bad")).toBe(0);
   });
 });
 

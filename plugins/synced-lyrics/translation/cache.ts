@@ -6,7 +6,9 @@ import { promises as fs } from "node:fs";
 import { join } from "node:path";
 import type { CacheEntry } from "./types.ts";
 
-export const TRANSLATION_STRATEGY_VERSION = "whole-song-v2";
+// Bumped when the translated text of a line changes shape (background vocals are
+// translated with their line now), so cached entries are regenerated.
+export const TRANSLATION_STRATEGY_VERSION = "whole-song-v3";
 
 const DIR_NAME = "synced-lyrics-translations";
 

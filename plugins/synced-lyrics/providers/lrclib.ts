@@ -2,10 +2,14 @@ import { parse as parseYaml } from "yaml";
 import { finishLines, parseLrc } from "../lrc.ts";
 import { queryArtistSimilarity, queryTitleSimilarity } from "../match.ts";
 import type { LyricLine, LyricResult, LyricWord, SearchQuery } from "../types.ts";
-import { getJson, type Fetch } from "./http.ts";
+import { HttpError, request, type Fetch } from "./http.ts";
 
 const BASE = "https://lrclib.net/api";
 const MAX_DURATION_DIFF = 15;
+const CLIENT_ID = "Pear Desktop (synced-lyrics; https://github.com/pear-devs/pear-desktop)";
+export const MAX_SEARCH_ATTEMPTS = 4;
+const MAX_RETRY_AFTER_SECONDS = 10;
+const RETRYABLE_STATUSES = new Set([429, 500, 502, 503, 504]);
 
 interface Entry {
   id: number;
@@ -20,18 +24,126 @@ interface Entry {
   lyricsfile?: string | null;
 }
 
-export async function lrclib(query: SearchQuery, fetch: Fetch): Promise<LyricResult | null> {
-  const search = (params: Record<string, string>) =>
-    getJson<Entry[]>(fetch, `${BASE}/search?${new URLSearchParams(params)}`).then((data) => (Array.isArray(data) ? data : []));
+/** LRCLIB is overloaded or rate limited, not broken: retrying now will not help. */
+export const isRetryableStatus = (status: number) => RETRYABLE_STATUSES.has(status);
 
-  const exact: Record<string, string> = { track_name: query.title, artist_name: query.artist };
-  if (query.album) exact.album_name = query.album;
-  let entries = await search(exact);
-  if (entries.length === 0 && query.album) entries = await search({ track_name: query.title, artist_name: query.artist });
-  if (entries.length === 0 && query.inexact) entries = await search({ q: `${query.title} ${query.artist}` });
-  // As pear-desktop: the title in its original language, then the title alone.
-  if (entries.length === 0 && query.inexact && query.alternativeTitle) entries = await search({ q: query.alternativeTitle });
-  if (entries.length === 0 && query.inexact) entries = await search({ q: query.title });
+const NOISE_TAG_PATTERN =
+  /\s*[([](?:video\s+oficial|v[ií]deo\s+oficial|letra\s+oficial|video\s+musical|audio\s+oficial|lyric\s+video|official\s+[^)\]]*|visualizer)[)\]]/gi;
+
+/** Video-title noise ("Song (Official Video)") confuses the full-text search. */
+export function cleanTrackTitle(rawTitle: string) {
+  const cleaned = (rawTitle.replace(NOISE_TAG_PATTERN, "").split(" | ")[0] ?? "").trim();
+  return cleaned || rawTitle;
+}
+
+/** The full-text searches to try, best first; inexact mode widens them (as pear-desktop). */
+export function buildSearchQueries(input: { title: string; alternativeTitle?: string; artist: string; allowInexact: boolean }) {
+  const cleanedTitle = cleanTrackTitle(input.title);
+  const alternative = input.alternativeTitle ? cleanTrackTitle(input.alternativeTitle) : undefined;
+  const candidates: (string | undefined)[] = input.allowInexact
+    ? [`${input.artist} ${cleanedTitle}`, `${input.artist} ${input.title}`, alternative, cleanedTitle, input.title]
+    : [`${input.artist} ${cleanedTitle}`, `${input.artist} ${input.title}`];
+  return Array.from(new Set(candidates.filter((candidate): candidate is string => Boolean(candidate?.trim()))));
+}
+
+export type RetryDecision = { retry: true; delayMs: number } | { retry: false };
+
+/** Retry only transient statuses, with bounded backoff; a long `Retry-After` gives up. */
+export function retryDecision(options: {
+  status: number;
+  attempt: number;
+  maxAttempts: number;
+  retryAfterHeader?: string | undefined;
+}): RetryDecision {
+  if (!isRetryableStatus(options.status) || options.attempt >= options.maxAttempts) return { retry: false };
+  const retryAfter = options.retryAfterHeader ? Number.parseInt(options.retryAfterHeader, 10) : Number.NaN;
+  if (retryAfter > MAX_RETRY_AFTER_SECONDS) return { retry: false };
+  return {
+    retry: true,
+    delayMs: Number.isFinite(retryAfter) && retryAfter > 0 ? retryAfter * 1000 : 1000 * options.attempt,
+  };
+}
+
+/** LRCLIB answers with JSON arrays; an HTML gateway page is an error, not an empty result. */
+export function parseSearchResponse(body: string): Entry[] {
+  const trimmed = body.trim();
+  if (!trimmed) throw new Error("LRCLIB returned an empty response");
+  if (trimmed.startsWith("<")) throw new Error("LRCLIB returned HTML instead of JSON");
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(trimmed);
+  } catch (error) {
+    throw new Error("LRCLIB returned a non-JSON response", { cause: error });
+  }
+  if (!Array.isArray(parsed)) throw new Error(`Expected an array, instead got ${typeof parsed}`);
+  return parsed as Entry[];
+}
+
+const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
+
+async function fetchSearch(fetch: Fetch, q: string, maxAttempts: number): Promise<Entry[]> {
+  const url = `${BASE}/search?${new URLSearchParams({ q }).toString()}`;
+  let lastError: unknown;
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+    let response: Response;
+    try {
+      response = await request(fetch, url, { headers: { Accept: "application/json", "Lrclib-Client": CLIENT_ID } });
+    } catch (error) {
+      lastError = error;
+      if (error instanceof HttpError) {
+        const decision = retryDecision({
+          status: error.status,
+          attempt,
+          maxAttempts,
+          retryAfterHeader: error.retryAfter,
+        });
+        if (!decision.retry) break;
+        await sleep(decision.delayMs);
+        continue;
+      }
+      // Network failures are worth retrying too.
+      if (attempt === maxAttempts) break;
+      await sleep(1000 * attempt);
+      continue;
+    }
+    return parseSearchResponse(await response.text());
+  }
+
+  throw lastError instanceof Error ? lastError : new Error("LRCLIB search failed");
+}
+
+export async function lrclib(query: SearchQuery, fetch: Fetch): Promise<LyricResult | null> {
+  const candidates = buildSearchQueries({
+    title: query.title,
+    ...(query.alternativeTitle ? { alternativeTitle: query.alternativeTitle } : {}),
+    artist: query.artist,
+    allowInexact: query.inexact,
+  });
+
+  let entries: Entry[] = [];
+  let lastError: Error | undefined;
+  for (const [index, candidate] of candidates.entries()) {
+    const isLast = index === candidates.length - 1;
+    try {
+      const found = await fetchSearch(fetch, candidate, isLast ? MAX_SEARCH_ATTEMPTS : 2);
+      lastError = undefined;
+      if (found.length > 0) {
+        entries = found;
+        break;
+      }
+    } catch (error) {
+      lastError = error instanceof Error ? error : new Error(String(error));
+      const status = error instanceof HttpError ? error.status : undefined;
+      if (isLast || status === 429 || status === 503) break;
+    }
+  }
+
+  if (entries.length === 0 && lastError) {
+    // Overloaded, not broken: no lyrics from this provider right now.
+    if (lastError instanceof HttpError && isRetryableStatus(lastError.status)) return null;
+    throw lastError;
+  }
 
   const best = pick(entries, query);
   if (!best || best.instrumental) return null;

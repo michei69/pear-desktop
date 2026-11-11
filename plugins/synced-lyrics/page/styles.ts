@@ -38,6 +38,8 @@ export const lyricsStyles = css`
     --lyrics-width: 100%;
     --lyrics-padding: 0px;
     --lyrics-animations: none;
+    /* Performance mode swaps in a keyframe the compositor can run (filter). */
+    --lyrics-glow-name: glow;
     --inactive-weight: 400;
     --inactive-opacity: 0.33;
     --inactive-scale: 1;
@@ -52,7 +54,7 @@ export const lyricsStyles = css`
     --lyrics-font-size: 3rem;
     --lyrics-line-height: 1.333;
     --lyrics-padding: 2rem;
-    --lyrics-animations: glow var(--line-duration, 2s) forwards, wobble calc(var(--line-duration, 2s) / 2) forwards;
+    --lyrics-animations: var(--lyrics-glow-name) var(--line-duration, 2s) forwards, wobble calc(var(--line-duration, 2s) / 2) forwards;
     --inactive-weight: 700;
     --inactive-scale: 0.95;
   }
@@ -340,6 +342,9 @@ export const lyricsStyles = css`
     line-height: var(--lyrics-line-height);
     font-weight: var(--inactive-weight);
     cursor: pointer;
+    /* Off-screen lines keep their measured size but skip layout and paint. */
+    content-visibility: auto;
+    contain-intrinsic-size: auto 1.8em;
     transform-origin: 0 50%;
     scale: var(--inactive-scale);
     translate: var(--inactive-offset);
@@ -413,6 +418,29 @@ export const lyricsStyles = css`
     font-size: 0.74em;
     font-weight: 500;
   }
+  /* Duet lines and RTL lines, as pear-desktop's singer-right/rtl-text rules. */
+  .line.singer-right {
+    transform-origin: 100% 50%;
+  }
+  .line.singer-right .text,
+  .line.singer-right .background-vocals,
+  .line.singer-right .romanized,
+  .line.singer-right .translation {
+    text-align: right;
+  }
+  /* Background vocals sit under the main line, smaller and dimmed. */
+  .background-vocals {
+    display: block;
+    margin-top: 0.1em;
+    font-size: 0.65em;
+    font-weight: var(--inactive-weight);
+    line-height: 1.2;
+    color: var(--dim);
+  }
+  .background-vocals .word {
+    display: inline-block;
+    white-space: pre-wrap;
+  }
 
   /* Word sync: each word fills from left to right as it is sung. */
   .line.has-words[data-state="active"] .word {
@@ -420,6 +448,17 @@ export const lyricsStyles = css`
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
+  }
+  /* A line with only background vocals gets the same fill, right to left when RTL. */
+  .line[data-state="active"] .background-vocals .word {
+    background: linear-gradient(90deg, var(--fg) calc(var(--p, 0) * 100% - 4%), var(--dim) calc(var(--p, 0) * 100% + 4%));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .line.has-words[data-state="active"].rtl .word,
+  .line[data-state="active"].rtl .background-vocals .word {
+    background: linear-gradient(270deg, var(--fg) calc(var(--p, 0) * 100% - 4%), var(--dim) calc(var(--p, 0) * 100% + 4%));
   }
 
   .gap {
@@ -595,6 +634,39 @@ export const lyricsStyles = css`
   }
   .message .hint {
     margin-top: 12px;
+  }
+
+  /*
+   * Performance mode. The core's stylesheet is adopted on the document and
+   * never crosses this shadow boundary, so the plugin mirrors it here: the glow
+   * moves to a compositable filter and, with the "Disable animations and
+   * backdrop blur" switch, animations and the picker's blur go away.
+   */
+  :host([data-performance]) .root {
+    --lyrics-glow-name: lyrics-glow-composited;
+  }
+  :host([data-performance="css"]) .root {
+    --lyrics-animations: none;
+  }
+  :host([data-performance="css"]) *,
+  :host([data-performance="css"]) *::before,
+  :host([data-performance="css"]) *::after {
+    animation-duration: 1ms !important;
+    animation-delay: 0s !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    transition-delay: 0s !important;
+  }
+  :host([data-performance="css"]) .picker {
+    backdrop-filter: none;
+  }
+  @keyframes lyrics-glow-composited {
+    from {
+      filter: drop-shadow(0 0 1.5rem var(--glow-color));
+    }
+    to {
+      filter: drop-shadow(0 0 0 var(--glow-color));
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {

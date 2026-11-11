@@ -73,9 +73,9 @@ export function parseLrc(source: string, durationMs?: number): LyricLine[] {
   return finishLines(lines, durationMs, offset);
 }
 
-/** Sorts, applies an offset (positive = earlier, as in LRC), fills in end times and adds the leading gap. */
+/** Sorts, applies an offset (positive = later, as in LRC), fills in end times and adds the leading gap. */
 export function finishLines(lines: LyricLine[], durationMs?: number, offset = 0): LyricLine[] {
-  const shift = (ms: number) => Math.max(0, ms - offset);
+  const shift = (ms: number) => Math.max(0, ms + offset);
   const sorted = lines
     .map((line) => ({
       ...line,

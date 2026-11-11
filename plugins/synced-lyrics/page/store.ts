@@ -8,6 +8,7 @@
 
 import type { Track } from "@pear/sdk";
 import { remoteErrorMessage } from "@pear/sdk/util";
+import { lineTextForTranslation } from "../line-text.ts";
 import { parseLrc } from "../lrc.ts";
 import { pickProvider, resolvePriority, resolveTypePriority } from "../priority.ts";
 import { isChineseTarget } from "../translation/language.ts";
@@ -197,7 +198,7 @@ export class LyricsStore {
     const generation = this.#generation;
 
     if (!this.#backend.customQuery) {
-      for (const id of this.#priority) void this.#search(id, track, generation);
+      void this.#fanOut(track, generation);
       return;
     }
 
@@ -211,8 +212,23 @@ export class LyricsStore {
       if (generation !== this.#generation) return;
       this.customQuery = custom;
       this.#emit();
-      for (const id of this.#priority) void this.#search(id, track, generation);
+      void this.#fanOut(track, generation);
     })();
+  }
+
+  /**
+   * The lead provider (the starred one, else the first in the order) answers
+   * first; the rest only then, as pear-desktop: the picker needs them only as a
+   * fallback, and seven searches held back keep providers off the rate limit.
+   */
+  async #fanOut(track: Track, generation: number) {
+    const lead = this.starred && this.#priority.includes(this.starred) ? this.starred : this.#priority[0]!;
+    await this.#search(lead, track, generation);
+    if (generation !== this.#generation) return;
+    for (const id of this.#priority) {
+      if (id === lead) continue;
+      void this.#search(id, track, generation);
+    }
   }
 
   retry(provider: ProviderId) {
@@ -280,6 +296,8 @@ export class LyricsStore {
       const state = this.providers[id];
       results[id] = state.status === "done" ? state.result : null;
     }
+    const target = pageTargetLanguage(this.#options);
+    const translation = this.#options.translation;
     return pickProvider({
       priority: this.#priority,
       results,
@@ -287,6 +305,7 @@ export class LyricsStore {
       typePriority: this.#typePriority,
       preferred: this.#options.preferred,
       starred: this.starred,
+      wantsOfficialTranslation: Boolean(translation?.enabled && isChineseTarget(translation.targetLanguage, target)),
     });
   }
 
@@ -329,13 +348,7 @@ export class LyricsStore {
 
   #update() {
     if (this.starred && this.#rank(this.starred) > 0) this.selected = this.starred;
-    else if (!this.manual) {
-      const auto = this.choose();
-      // Only move to something better, so the picker doesn't jump between equals.
-      if (auto && (this.#options.usePriorityList || auto === this.#options.preferred || this.#rank(auto) > this.#rank(this.selected))) {
-        this.selected = auto;
-      }
-    }
+    else if (!this.manual) this.selected = this.choose();
     const provider = this.selected;
     const state = this.providers[provider];
     const result = state.status === "done" && resultRank(state.result) > 0 ? state.result : null;
@@ -409,7 +422,7 @@ export class LyricsStore {
         videoId: track.videoId,
         title: result.title || track.title,
         artists: result.artists.length ? result.artists : [track.artist],
-        lines: lines.map((line) => line.text),
+        lines: lines.map(lineTextForTranslation),
         language: target,
       });
       if (run !== this.#run || !this.shown) return;

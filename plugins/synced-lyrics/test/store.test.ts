@@ -116,13 +116,63 @@ describe("LyricsStore", () => {
     expect(wordFirst.shown?.provider).toBe("YTMusic");
   });
 
-  test("honours the preferred provider and manual picks", async () => {
-    const store = new LyricsStore(backend({ LRCLib: synced, LRCHub: plain }), { ...options, preferred: "LRCHub" });
+  test("the type order beats the preferred provider, which only breaks ties", async () => {
+    // The preferred provider's plain lyrics lose to another provider's timed ones.
+    const typed = new LyricsStore(backend({ LRCLib: plain, LRCHub: synced }), { ...options, preferred: "LRCLib" });
+    typed.load(track);
+    await settle();
+    expect(typed.shown).toMatchObject({ provider: "LRCHub", synced: true });
+
+    // With equally rich results, the preferred provider wins.
+    const tied = new LyricsStore(backend({ LRCLib: synced, LRCHub: { ...synced, lines: [{ startMs: 0, endMs: 1000, text: "there" }] } }), {
+      ...options,
+      preferred: "LRCHub",
+    });
+    tied.load(track);
+    await settle();
+    expect(tied.shown?.provider).toBe("LRCHub");
+
+    tied.select("LRCLib");
+    expect(tied.shown?.provider).toBe("LRCLib");
+  });
+
+  test("an official translation breaks ties for Chinese targets, as pear-desktop", async () => {
+    const withTranslation: LyricResult = {
+      ...word,
+      translation: { lines: [{ startMs: 0, endMs: 1000, text: "你好" }] },
+    };
+    const official = new LyricsStore(backend({ LrcRed: word, LRCLib: withTranslation }), {
+      ...options,
+      translation: { enabled: true, targetLanguage: "zh-CN" },
+    });
+    official.load(track);
+    await settle();
+    expect(official.shown?.provider).toBe("LRCLib");
+
+    const plainTarget = new LyricsStore(backend({ LrcRed: word, LRCLib: withTranslation }), {
+      ...options,
+      translation: { enabled: true, targetLanguage: "en" },
+    });
+    plainTarget.load(track);
+    await settle();
+    expect(plainTarget.shown?.provider).toBe("LrcRed");
+  });
+
+  test("starts the leading provider first and fans the rest out after it answers", async () => {
+    let releaseLead: ((result: LyricResult | null) => void) | undefined;
+    const stores = backend({});
+    stores.search = vi.fn(async (provider: ProviderId) => {
+      if (provider === "LrcRed") return new Promise<LyricResult | null>((resolve) => (releaseLead = resolve));
+      return null;
+    });
+    const store = new LyricsStore(stores, options);
     store.load(track);
     await settle();
-    expect(store.shown).toMatchObject({ provider: "LRCHub", synced: false, texts: ["hi", "there"] });
-    store.select("LRCLib");
-    expect(store.shown?.provider).toBe("LRCLib");
+    // Only the lead has been asked; the other seven wait for its answer.
+    expect(stores.search).toHaveBeenCalledTimes(1);
+    releaseLead!(synced);
+    await settle();
+    expect(stores.search).toHaveBeenCalledTimes(PROVIDERS.length);
   });
 
   test("follows the best provider until switched by hand, like pear-desktop's picker", async () => {
@@ -206,9 +256,10 @@ describe("LyricsStore", () => {
     const pending: ((result: LyricResult) => void)[] = [];
     const api = backend({});
     api.search = vi.fn((provider: ProviderId) =>
-      provider === "LRCLib" ? new Promise<LyricResult>((r) => pending.push(r)) : Promise.resolve(null),
+      provider === "LRCLib" ? new Promise<LyricResult | null>((r) => pending.push((result) => r(result))) : Promise.resolve(null),
     );
-    const store = new LyricsStore(api, options);
+    // LRCLib leads, so its search starts synchronously with each load.
+    const store = new LyricsStore(api, { ...options, priority: ["LRCLib"] });
     store.load(track);
     store.load({ ...track, videoId: "other" });
     pending[0]!(synced);

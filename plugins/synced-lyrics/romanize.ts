@@ -57,10 +57,20 @@ interface KuroshiroInstance {
   convert(text: string, options: { to: "romaji"; mode: "spaced" }): Promise<string>;
 }
 
+/** Conversion is pure per line, so repeated lines (choruses, revisits) are paid once. */
+const LINE_CACHE_LIMIT = 1024;
+
+function cacheLine<T>(cache: Map<string, T>, key: string, value: T) {
+  if (cache.size >= LINE_CACHE_LIMIT) cache.delete(cache.keys().next().value!);
+  cache.set(key, value);
+}
+
 export class Romanizer {
   #dictDir: string;
   #fetch: (url: string) => Promise<Response>;
   #kuroshiro: Promise<KuroshiroInstance> | undefined;
+  /** Per line and script: the song's script detection decides how a kanji line reads. */
+  #memo = new Map<string, string | null>();
 
   /** `dictDir` caches the Japanese dictionary (~17 MB, downloaded on first use). */
   constructor(dictDir: string, fetch: (url: string) => Promise<Response>) {
@@ -74,8 +84,13 @@ export class Romanizer {
       lines.map(async (line, i) => {
         const script = scripts[i];
         if (!script) return null;
+        const key = `${script}\n${line}`;
+        const cached = this.#memo.get(key);
+        if (cached !== undefined) return cached;
         const result = tidy(await this.#line(line, script));
-        return result && result.toLowerCase() !== line.trim().toLowerCase() ? result : null;
+        const value = result && result.toLowerCase() !== line.trim().toLowerCase() ? result : null;
+        cacheLine(this.#memo, key, value);
+        return value;
       }),
     );
   }
@@ -158,9 +173,19 @@ async function romanizeIndic(line: string, scheme: "bengali" | "devanagari") {
   }
 }
 
+const chineseCache = new Map<string, string>();
+
 export async function convertChinese(lines: readonly string[], mode: "s2t" | "t2s") {
   const { sify, tify } = await import("chinese-conv");
-  return lines.map((line) => (HAN.test(line) ? (mode === "s2t" ? tify(line) : sify(line)) : line));
+  return lines.map((line) => {
+    if (!HAN.test(line)) return line;
+    const key = `${mode}\n${line}`;
+    const cached = chineseCache.get(key);
+    if (cached !== undefined) return cached;
+    const converted = mode === "s2t" ? tify(line) : sify(line);
+    cacheLine(chineseCache, key, converted);
+    return converted;
+  });
 }
 
 function tidy(text: string) {

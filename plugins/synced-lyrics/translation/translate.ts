@@ -73,21 +73,36 @@ async function translateSection(provider: TranslationProvider, req: TranslationR
   if (req.lines.every((line) => isSkippableLine(line))) return req.lines.slice();
 
   const mismatch = () => new Error(`Translation returned the wrong number of lines; expected ${req.lines.length}`);
+  let translated: string[];
   try {
-    let translated = await callProvider(provider, req, settings, env);
+    translated = await callProvider(provider, req, settings, env);
     if (translated.length !== req.lines.length) translated = await callProvider(provider, req, settings, env);
-    if (translated.length === req.lines.length) return translated;
-    return await translatePerLine(provider, req, settings, env, mismatch());
   } catch (error) {
+    // A hard failure (bad key, offline, 5xx) on a long song must surface at once:
+    // one request per line would burn the provider's quota before it does.
+    if (!shouldFallbackPerLine(error, req.lines.length)) throw error;
     return translatePerLine(provider, req, settings, env, error);
   }
+  if (translated.length === req.lines.length) return translated;
+  return translatePerLine(provider, req, settings, env, mismatch());
+}
+
+/**
+ * Per-line requests only salvage answer-shape problems (a bad JSON/line count)
+ * or small songs; a hard provider error on a long song is rethrown.
+ */
+function shouldFallbackPerLine(error: unknown, lineCount: number) {
+  if (lineCount <= 8) return true;
+  const message = error instanceof Error ? error.message : String(error);
+  return /parse|json|line|length|number of lines/i.test(message);
 }
 
 /**
  * Translates the whole song in one call so the model keeps the song's context.
  * Long songs are split into sections (Google Translate additionally chunks
- * inside each one). When a call fails or returns the wrong line count, the
- * section is retried line by line, so one bad answer never loses the view.
+ * inside each one). A wrong line count is retried line by line (as is any
+ * failure on a short song), so one bad answer never loses the view; a hard
+ * provider error on a long song is thrown instead of firing a request per line.
  */
 export async function runTranslation(
   providerName: TranslationProviderName,

@@ -31,8 +31,20 @@ export default definePlugin({
             userToken: this.config.musixmatchToken,
             t: this.t,
           },
-          ytmusic: { useProxyFallback: !this.config.useYTMLyricsWithoutProxy },
+          ytmusic: { useProxy: !this.config.useYTMLyricsWithoutProxy },
         });
+      },
+      clearTranslationCache() {
+        return hostOf(this)
+          .clearTranslations()
+          .then((removed) => {
+            this.setStatus(
+              this.t("plugins.synced-lyrics.actions.clearTranslationCache.done", "Deleted {{count}} cached translations", {
+                count: removed,
+              }),
+            );
+            return removed;
+          });
       },
       /** Opens a lyrics page at its provider (Megalobiz asks to be linked). */
       openSource(url: string) {
@@ -102,6 +114,13 @@ export default definePlugin({
           });
         },
       },
+    },
+  },
+  // pear-desktop's translation menu entries, as settings buttons.
+  actions: {
+    clearTranslationCache: {
+      label: "Clear translation cache",
+      description: "Delete all cached translations stored on disk.",
     },
   },
   page: mountLyrics,
