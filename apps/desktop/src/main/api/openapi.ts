@@ -12,7 +12,15 @@ const JSON_CONTENT = "application/json";
 
 export function openApiDocument(routes: readonly Route[], title: string, rpc: readonly RpcInfo[] = []) {
   const paths: Record<string, Operations> = {};
-  for (const route of routes) (paths[route.path] ??= {})[route.method.toLowerCase()] = routeOperation(route);
+  for (const route of routes) {
+    // QUERY is the v2 body-carrying spelling of reads that also accept POST.
+    // OpenAPI 3.1 (and Swagger UI) can't render QUERY operations, so document
+    // it as POST unless the route already has one.
+    const method = route.method === "QUERY" ? "post" : route.method.toLowerCase();
+    const operations = (paths[route.path] ??= {});
+    if (route.method === "QUERY" && operations.post) continue;
+    operations[method] = routeOperation(route);
+  }
   for (const method of rpc) paths[rpcPath(method.plugin, method.name)] = { post: rpcOperation(method) };
   for (const path of [`${API}/ws`, `${API_V2}/ws`]) {
     paths[path] = {
@@ -35,7 +43,7 @@ export function openApiDocument(routes: readonly Route[], title: string, rpc: re
     },
   };
   return sanitizeOpenApi({
-    openapi: "3.2.0",
+    openapi: "3.1.0",
     info: {
       version: "2.0.0",
       title,

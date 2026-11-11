@@ -53,8 +53,8 @@ describe("QUERY method", () => {
       expect(preflight.headers.get("access-control-allow-methods")).toContain("QUERY");
 
       const document = await (await fetch(`${base}/doc`)).json();
-      expect(document.openapi).toBe("3.2.0");
-      expect(document.paths["/echo"].query).toMatchObject({ summary: "Echo the text back" });
+      expect(document.openapi).toBe("3.1.0");
+      expect(document.paths["/echo"].post).toMatchObject({ summary: "Echo the text back" });
     } finally {
       close();
     }
