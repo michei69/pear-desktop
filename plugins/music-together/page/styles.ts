@@ -613,6 +613,17 @@ export const panelStyles = css`
     color: var(--faint);
     overflow-wrap: anywhere;
   }
+  /* The click-to-reveal public IP reads as the text it replaces. */
+  .diagnostics-detail .reveal {
+    font: inherit;
+    color: inherit;
+    background: none;
+    border: 0;
+    padding: 0;
+    text-align: left;
+    text-decoration: underline dotted;
+    cursor: pointer;
+  }
   .dot {
     grid-row: 1 / span 2;
     width: 8px;

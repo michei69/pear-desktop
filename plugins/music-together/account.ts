@@ -19,7 +19,11 @@ interface AccountHeader {
 
 const HEADER_KEY = "activeAccountHeaderRenderer";
 
-const text = (runs: Runs | undefined) => runs?.runs?.map((run) => run.text ?? "").join("").trim() || undefined;
+const text = (runs: Runs | undefined) =>
+  runs?.runs
+    ?.map((run) => run.text ?? "")
+    .join("")
+    .trim() || undefined;
 
 /** Finds the account header anywhere in an account menu response. */
 function findHeader(value: unknown, depth = 0): AccountHeader | undefined {

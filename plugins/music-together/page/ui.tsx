@@ -41,6 +41,8 @@ export interface PanelProps {
   setName(name: string): void;
   copy(text: string): void;
   copyDiagnostics(text: string): void;
+  /** A YTM toast, as pear-desktop showed session and diagnostics feedback. */
+  toast(message: string): void;
   iceServerEntries: readonly string[];
   onClose(): void;
 }
@@ -73,7 +75,7 @@ export function Panel(props: PanelProps) {
   );
 }
 
-function Start({ together, t, account, name, setName, copy }: PanelProps) {
+function Start({ together, t, account, name, setName, copy, toast }: PanelProps) {
   const [hostId, setHostId] = useState("");
   return (
     <>
@@ -117,9 +119,9 @@ function Start({ together, t, account, name, setName, copy }: PanelProps) {
       </div>
       <form
         class="row"
-        onSubmit={(e) => {
+        onSubmit={async (e) => {
           e.preventDefault();
-          void together.join(hostId);
+          if (await together.join(hostId)) toast(t("plugins.music-together.toast.joined", "Joined Music Together"));
         }}
       >
         <input
@@ -137,7 +139,7 @@ function Start({ together, t, account, name, setName, copy }: PanelProps) {
   );
 }
 
-function Connected({ together, t, copy }: PanelProps) {
+function Connected({ together, t, copy, toast }: PanelProps) {
   const host = together.mode === "host";
   const users = Object.values(together.profiles);
   return (
@@ -192,7 +194,18 @@ function Connected({ together, t, copy }: PanelProps) {
           </ul>
         )}
       </div>
-      <button type="button" class="button danger wide" onClick={() => together.stop()}>
+      <button
+        type="button"
+        class="button danger wide"
+        onClick={() => {
+          together.stop();
+          toast(
+            host
+              ? t("plugins.music-together.toast.closed", "Music Together closed")
+              : t("plugins.music-together.toast.disconnected", "Music Together disconnected"),
+          );
+        }}
+      >
         {host
           ? t("plugins.music-together.menu.close", "Close Music Together")
           : t("plugins.music-together.menu.disconnect", "Disconnect Music Together")}
@@ -226,7 +239,7 @@ const VERDICT_TEXT: Record<DiagnosticResult["verdict"], string> = {
 };
 
 /** The diagnostics card: runs on open, fills each row as its check resolves. */
-function Diagnostics({ iceServerEntries, copyDiagnostics, t }: PanelProps) {
+function Diagnostics({ iceServerEntries, copyDiagnostics, t, toast }: PanelProps) {
   const [open, setOpen] = useState(false);
   return (
     <section class="diagnostics">
@@ -235,7 +248,7 @@ function Diagnostics({ iceServerEntries, copyDiagnostics, t }: PanelProps) {
           ? t("plugins.music-together.menu.diagnostics.title", "Connection diagnostics")
           : t("plugins.music-together.menu.diagnostics.test", "Test connection")}
       </button>
-      {open && <DiagnosticsRun entries={iceServerEntries} t={t} copyDiagnostics={copyDiagnostics} />}
+      {open && <DiagnosticsRun entries={iceServerEntries} t={t} copyDiagnostics={copyDiagnostics} toast={toast} />}
     </section>
   );
 }
@@ -244,19 +257,23 @@ function DiagnosticsRun({
   entries,
   t,
   copyDiagnostics,
+  toast,
 }: {
   entries: readonly string[];
   t: Translate;
   copyDiagnostics(text: string): void;
+  toast(message: string): void;
 }) {
   const [checks, setChecks] = useState<Partial<Record<CheckId, DiagnosticCheck>>>({});
   const [result, setResult] = useState<DiagnosticResult | null>(null);
   const [failed, setFailed] = useState(false);
+  const [running, setRunning] = useState(false);
   const [attempt, setAttempt] = useState(0);
   const serversKey = entries.join("\n");
 
   useEffect(() => {
     const controller = new AbortController();
+    setRunning(true);
     setChecks({});
     setResult(null);
     setFailed(false);
@@ -268,10 +285,14 @@ function DiagnosticsRun({
       controller.signal,
     ).then(
       (next) => {
-        if (!controller.signal.aborted) setResult(next);
+        if (controller.signal.aborted) return;
+        setResult(next);
+        setRunning(false);
       },
       () => {
-        if (!controller.signal.aborted) setFailed(true);
+        if (controller.signal.aborted) return;
+        setFailed(true);
+        setRunning(false);
       },
     );
     return () => controller.abort();
@@ -301,7 +322,18 @@ function DiagnosticsRun({
         </p>
       ) : null}
       <div class="row">
-        <button type="button" class="button small" onClick={() => setAttempt(attempt + 1)}>
+        <button
+          type="button"
+          class="button small"
+          onClick={() => {
+            // Restarting a check mid-run would abandon the one in flight silently.
+            if (running) {
+              toast(t("plugins.music-together.toast.diagnostics-running", "Wait for the connection test to finish"));
+              return;
+            }
+            setAttempt(attempt + 1);
+          }}
+        >
           {t("plugins.music-together.menu.diagnostics.run-again", "Run again")}
         </button>
         <button type="button" class="button small" disabled={!result} onClick={() => result && copyDiagnostics(result.summary)}>
@@ -325,9 +357,11 @@ function diagnosticsDetail(check: DiagnosticCheck, t: Translate) {
           });
     case "stun":
       if (check.status === "pass") {
-        return check.detail
-          ? t("plugins.music-together.menu.diagnostics.detail.public-ip", "Public address: {{ip}}", { ip: check.detail })
-          : t("plugins.music-together.menu.diagnostics.detail.stun-ok", "Public address found");
+        return check.detail ? (
+          <PublicIp ip={check.detail} t={t} />
+        ) : (
+          t("plugins.music-together.menu.diagnostics.detail.stun-ok", "Public address found")
+        );
       }
       return failure ?? t("plugins.music-together.menu.diagnostics.detail.stun-fail", "No public address (UDP/STUN blocked)");
     case "turn":
@@ -337,6 +371,21 @@ function diagnosticsDetail(check: DiagnosticCheck, t: Translate) {
     case "nat":
       return t(`plugins.music-together.menu.diagnostics.nat.${check.detail}`, NAT_LABEL[(check.detail as NatType) ?? "unknown"]);
   }
+}
+
+/**
+ * The public IP behind a click-to-reveal, so it stays out of casual screenshots
+ * shared for support. A real button, so Enter and Space toggle it natively.
+ */
+function PublicIp({ ip, t }: { ip: string; t: Translate }) {
+  const [revealed, setRevealed] = useState(false);
+  return (
+    <button type="button" class="reveal" aria-pressed={revealed} onClick={() => setRevealed(!revealed)}>
+      {revealed
+        ? t("plugins.music-together.menu.diagnostics.detail.public-ip", "Public address: {{ip}}", { ip })
+        : t("plugins.music-together.menu.diagnostics.detail.public-ip-hidden", "Public address: click to reveal")}
+    </button>
+  );
 }
 
 function User({ user, host }: { user: Profile; host: boolean }) {

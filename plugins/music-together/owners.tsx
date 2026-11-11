@@ -13,7 +13,8 @@ export function decorateOwner(item: HTMLElement, index: number, id: string, prof
   name.textContent = profile?.name ?? unknownName;
   // A guest who never identified gets a generated avatar.
   const shown = profile?.name || profile?.handleId ? profile : getDefaultProfile(profile?.id ?? "");
-  avatar.src = shown.thumbnail;
+  // Re-assigning an unchanged `src` makes the browser decode the image again.
+  if (avatar.src !== shown.thumbnail) avatar.src = shown.thumbnail;
   avatar.title = shown.name;
   avatar.alt = shown.handleId;
   if (!avatar.isConnected) item.append(avatar);

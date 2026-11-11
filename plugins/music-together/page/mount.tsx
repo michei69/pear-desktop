@@ -76,6 +76,7 @@ export function mountTogether(ctx: Ctx) {
             setName={(name) => ctx.setConfig({ displayName: name })}
             copy={copy}
             copyDiagnostics={copyDiagnostics}
+            toast={(message) => ctx.toast(message)}
             iceServerEntries={ctx.config.iceServers}
             onClose={() => setOpen(false)}
           />

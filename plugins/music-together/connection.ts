@@ -23,6 +23,8 @@ export interface ConnectionLike {
   readonly id: string;
   readonly mode: ConnectionMode;
   waitForReady(): Promise<string>;
+  /** Claims the host role: an open socket is not a session (see `markHost`). */
+  markHost(): void;
   connect(id: string): Promise<unknown>;
   disconnect(): void;
   broadcast<Event extends keyof ConnectionEventMap>(
@@ -61,6 +63,7 @@ export class Connection implements ConnectionLike {
   private connections: Record<string, DataConnection> = {};
   private isDestroyed = false;
   private isReconnecting = false;
+  private cleanedUp = false;
   private waitOpen: { promise: Promise<string>; resolve(id: string): void; reject(error: unknown): void };
   private listeners: ConnectionListener[] = [];
   private connectionListeners: ((connection?: DataConnection) => void)[] = [];
@@ -81,11 +84,19 @@ export class Connection implements ConnectionLike {
     this.waitOpen = { promise, resolve, reject };
 
     this.peer.on("open", (id) => {
-      if (this._mode === "disconnected") this._mode = "host";
+      // An open socket is not a session: the mode is claimed by markHost (host) or connect (guest).
       this.waitOpen.resolve(id);
     });
     this.peer.on("connection", async (conn) => {
-      this._mode = "host";
+      // Only a host accepts dial-in peers; a guest's own id must not be relabeled.
+      if (this.isDestroyed || this._mode !== "host") {
+        try {
+          conn.close();
+        } catch {
+          // Already gone.
+        }
+        return;
+      }
       try {
         await this.registerConnection(conn);
       } catch {
@@ -112,12 +123,19 @@ export class Connection implements ConnectionLike {
       }
       this.log.error("fatal peer error", err);
       this.waitOpen.reject(err);
+      // Fatal error must notify once; disconnect() is already announced and must not re-fire.
+      this.notifyClosed();
       this.disconnect();
     });
   }
 
   waitForReady() {
     return this.waitOpen.promise;
+  }
+
+  /** Claims hosting once the session is set up; a guest's peer never becomes a host. */
+  markHost() {
+    if (!this.isDestroyed && this._mode === "disconnected") this._mode = "host";
   }
 
   async connect(id: string) {
@@ -189,13 +207,27 @@ export class Connection implements ConnectionLike {
     this.isReconnecting = false;
   }
 
-  private cleanup() {
-    this._mode = "disconnected";
-    this.connections = {};
+  private notifyClosed() {
     for (const listener of this.listeners) listener({ type: "CONNECTION_CLOSED", payload: null }, null);
     this.listeners = [];
     for (const listener of this.connectionListeners) listener();
     this.connectionListeners = [];
+  }
+
+  private cleanup() {
+    // Peer emits close more than once: notify only the first, and skip explicit disconnects.
+    if (this.cleanedUp) return;
+    this.cleanedUp = true;
+
+    this._mode = "disconnected";
+    this.connections = {};
+
+    if (this.isDestroyed) {
+      this.listeners = [];
+      this.connectionListeners = [];
+    } else {
+      this.notifyClosed();
+    }
   }
 
   private registerConnection(conn: DataConnection) {
@@ -214,13 +246,15 @@ export class Connection implements ConnectionLike {
       });
       const onClose = (err?: PeerError<`${DataConnectionErrorType | BaseConnectionErrorType}`>) => {
         if (conn.open) conn.close();
+        const wasOpen = Object.hasOwn(this.connections, conn.connectionId);
         delete this.connections[conn.connectionId];
-        if (err) {
-          if (err.type === "connection-closed") for (const listener of this.connectionListeners) listener();
-          reject(err);
-        } else {
+        // One guest going away is not the end of the session: only a peer teardown
+        // notifies without a connection (notifyClosed).
+        if (wasOpen && !this.isDestroyed) {
           for (const listener of this.connectionListeners) listener(conn);
         }
+        if (err) reject(err);
+        else if (!wasOpen) reject(new Error("connection closed before opening"));
       };
       conn.on("error", onClose);
       conn.on("close", () => onClose());
