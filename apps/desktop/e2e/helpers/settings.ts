@@ -8,7 +8,8 @@ export const overlay = (page: Page) => page.locator("pear-settings");
 export const pluginRow = (page: Page, id: string) => overlay(page).locator(`[data-plugin="${id}"]`);
 export const searchbox = (page: Page) => overlay(page).getByRole("searchbox");
 export const sectionButton = (page: Page, name: string) => overlay(page).getByRole("navigation").getByRole("button", { name });
-export const restartBanner = (page: Page) => overlay(page).getByRole("status").filter({ hasText: "restart" });
+/** The "some changes need a restart" alert; it stays mounted and collapses when nothing is pending. */
+export const restartBanner = (page: Page) => overlay(page).locator(".restart");
 
 /** Opens the dialog with its shortcut, once the settings UI is up. */
 export async function openSettings(page: Page) {

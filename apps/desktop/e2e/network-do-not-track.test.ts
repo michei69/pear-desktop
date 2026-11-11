@@ -83,8 +83,10 @@ test("with blocklists: blocks requests and caches the engine", async ({ launch, 
   const cache = join(app.userData, "tb_cache");
   expect(existsSync(cache) && readdirSync(cache).some((f) => /^engine-\w+\.bin$/.test(f))).toBe(true);
 
-  // Back to the default mode live: request filtering stops.
-  await setConfig(page, "do-not-track", { blocker: "Lite" });
+  // Back to Lite live: the player is still pruned, but request filtering stops. The
+  // custom lists have to go too, since they keep their engine loaded whatever the profile
+  // (and Balanced is the fresh profile's default, not Lite).
+  await setConfig(page, "do-not-track", { blocker: "Lite", customEnabled: false });
   await expect.poll(async () => (await stats()).active).toBe(false);
   expect(await probe(page, "pear-dnt-probe")).toBe("through");
 });

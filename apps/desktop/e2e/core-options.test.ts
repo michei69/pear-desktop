@@ -41,17 +41,39 @@ test("the application menu, and hiding its bar", async ({ launch }) => {
 
   const initial = await menu();
   if (process.platform === "darwin") {
-    expect(initial.labels.slice(1)).toEqual(["Options", "View", "Navigation", "About"]);
+    expect(initial.labels.slice(1)).toEqual(["Plugins", "Options", "View", "Navigation", "About"]);
   } else {
-    expect(initial.labels).toEqual(["Options", "View", "Navigation", "About"]);
+    expect(initial.labels).toEqual(["Plugins", "Options", "View", "Navigation", "About"]);
     expect(initial.submenus.Options).toEqual([
       "Settings…",
+      "Resume last song when app starts",
+      "Shared links",
+      "Starting page",
+      "Visual Tweaks",
+      "Single Instance Lock",
       "Always on top",
       "Sync language",
+      // Hide Menu is Linux/Windows; Start at login is Windows/macOS.
+      ...(process.platform === "win32" ? ["Hide Menu", "Start at login"] : ["Hide Menu"]),
       "Theme",
+      "Advanced options",
+    ]);
+    // pear-desktop's quick toggles live in the menu, mirroring the settings dialog.
+    expect(initial.submenus["Visual Tweaks"]).toEqual([
+      "Remove upgrade button",
+      "Use original \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u004d\u0075\u0073\u0069\u0063 icons",
+    ]);
+    expect(initial.submenus["Advanced options"]).toEqual([
+      "Override User-Agent",
+      "Disable hardware acceleration",
+      "Restart on config changes",
+      "Reset app cache when app starts",
+      ...(process.platform === "win32" ? ["Force the use of external SMTC"] : []),
       "Toggle DevTools",
       "Edit config.json",
     ]);
+    // The Plugins menu toggles the same stored state the settings cards do.
+    expect(initial.submenus.Plugins).toContain("Tray icon");
     // Hidden; Alt shows it.
     expect(initial).toMatchObject({ autoHide: true, visible: false });
     await setCore(page, "window", { hideMenu: false });

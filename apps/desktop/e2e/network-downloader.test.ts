@@ -478,7 +478,8 @@ test("downloader cancels and retries from the Downloads page's queue, leaving no
   await openQueue(page);
   // Its songs, one downloading with its progress. The album is short and quick, so
   // cancel as soon as a song is under way rather than waiting on the rows.
-  const downloading = async () => (await jobs(page))[0]?.items?.some((item) => item.status === "active" && (item.downloaded ?? 0) > 0) ?? false;
+  const downloading = async () =>
+    (await jobs(page))[0]?.items?.some((item) => item.status === "active" && (item.downloaded ?? 0) > 0) ?? false;
   await expect.poll(downloading, { timeout: 60_000, intervals: [50] }).toBe(true);
   await stripButton(page, "Cancel").click();
   expect(await rows(page).count()).toBeGreaterThan(0);

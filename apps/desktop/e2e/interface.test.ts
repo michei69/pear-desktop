@@ -19,6 +19,8 @@ const ALBUM_URL = ytmUrl("/playlist?list=OLAK5uy_nmDUsWOMoEcz0SsVqUwir0oxu-k1oUy
 
 test("clock and navigation buttons live in the top bar", async ({ launch }) => {
   const app = await launch({
+    // The clock follows the app language; pin it so the AM/PM assertions are deterministic.
+    core: { general: { language: "en" } },
     plugins: { clock: { enabled: true, config: { displaySeconds: true } }, navigation: { enabled: true } },
   });
   const page = await mainWindow(app);
@@ -30,8 +32,10 @@ test("clock and navigation buttons live in the top bar", async ({ launch }) => {
   await setConfig(page, "clock", { displaySeconds: false, hour12: true });
   await expect(clock).toHaveText(/^\d{1,2}:\d{2}\s?[AP]M$/i);
 
-  const back = page.locator("#left-content .pear-navigation button[aria-label='Go to previous page']");
-  const forward = page.locator("#left-content .pear-navigation button[aria-label='Go to next page']");
+  // pear-desktop always put the buttons on the right, before the clock and avatar.
+  await expect(page.locator("#right-content .pear-navigation")).toHaveCount(1);
+  const back = page.locator("#right-content .pear-navigation button[aria-label='Go to previous page']");
+  const forward = page.locator("#right-content .pear-navigation button[aria-label='Go to next page']");
   await expect(back).toBeVisible();
   await expect(forward).toBeDisabled();
   await page.locator("ytmusic-guide-entry-renderer", { hasText: "Explore" }).first().click();

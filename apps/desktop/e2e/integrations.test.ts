@@ -13,9 +13,6 @@ import "./helpers/probes.ts";
 import { mainWindow, playTestTrack, TEST_TRACK } from "./launch.ts";
 
 const LUMIA_PORT = 39231;
-/** Lumia gets the progress every second while playing: a few posts in this long. */
-const PROGRESS_WINDOW_MS = 10_000;
-const PROGRESS_POSTS = 3;
 /** Discord isn't "running" at launch for this long: the plugin must find it once it starts. */
 const DISCORD_LATE_MS = 1000;
 
@@ -45,7 +42,8 @@ test("now-playing services report the playing track and follow pause and disable
       },
       "tuna-obs": { enabled: true, config: { port: tuna.port } },
       lumiastream: { enabled: true },
-      amuse: { enabled: true, config: { port: amusePort } },
+      // The plugin defaults to loopback; this test also checks LAN reachability.
+      amuse: { enabled: true, config: { port: amusePort, hostname: "0.0.0.0" } },
       notifications: { enabled: true },
     },
   });
@@ -100,25 +98,35 @@ test("now-playing services report the playing track and follow pause and disable
 
   const lumiaPosts = () => lumia.requests.filter((r) => r.url === "/api/media").map((r) => r.body);
   await test.step("Lumia Stream", async () => {
+    // One switchSong per track change; no progress posts while the track plays.
     await expect
       .poll(() => lumiaPosts()[0])
       .toMatchObject({ token: expect.any(String), data: { eventType: "switchSong", videoId: TEST_TRACK } });
-    // The view count comes from the page's song details (ctx.player.details()).
-    await expect.poll(() => lumiaPosts().at(-1)?.data.views).toEqual(expect.any(Number));
-    // While playing, progress goes out every second, as pear-desktop did.
-    const progressCount = lumiaPosts().length;
-    await expect.poll(() => lumiaPosts().length, { timeout: PROGRESS_WINDOW_MS }).toBeGreaterThanOrEqual(progressCount + PROGRESS_POSTS);
-    const progress = lumiaPosts()
-      .slice(-PROGRESS_POSTS)
-      .map((post) => post.data.progress as number);
-    expect(progress.at(-1)!).toBeGreaterThan(progress[0]!);
+    const count = lumiaPosts().length;
+    await page.waitForTimeout(2500);
+    expect(lumiaPosts().length).toBe(count);
   });
+
+  // A seek keeps the track and the pause state: it is not a song switch.
+  const beforeSeek = lumiaPosts().length;
+  const beforeSeekTuna = tunaPosts().length;
+  await page.evaluate(() => window.__pearRuntime!.player.control({ type: "seekBy", seconds: 30 }));
+  await page.waitForTimeout(1000);
+  expect(lumiaPosts().length).toBe(beforeSeek);
+  // A buffer stall during the seek is not a pause: whatever Tuna posted still says "playing".
+  expect(
+    tunaPosts()
+      .slice(beforeSeekTuna)
+      .every((post) => post.status === "playing"),
+  ).toBe(true);
 
   await test.step("pausing", async () => {
     await pause(page);
     await expect.poll(async () => (await amuse()).player.isPaused).toBe(true);
     await expect.poll(() => tunaPosts().at(-1)?.status).toBe("stopped");
     await expect.poll(() => lumiaPosts().at(-1)?.data).toMatchObject({ eventType: "playPause", isPaused: true });
+    // Views arrive with the mirrored track (or the details fallback) by the next event.
+    expect(lumiaPosts().at(-1)?.data.views).toEqual(expect.any(Number));
   });
 
   await setEnabled(page, "amuse", false);

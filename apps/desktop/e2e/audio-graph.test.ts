@@ -18,12 +18,21 @@ test("equalizer, compressor and crossfade compose in the shared graph and toggle
   await setEnabled(page, "crossfade", true);
   await setEnabled(page, "audio-compressor", true);
   await setEnabled(page, "equalizer", true);
-  // Ordered by stage order, not by enable order.
-  const expected = ["GainNode", ...Array(10).fill("BiquadFilterNode"), "GainNode", "DynamicsCompressorNode", "GainNode"];
+  // Ordered by stage order, not by enable order: the equalizer's 11 bands and its wet/output
+  // trims, the compressor and its post-compression track gain, then the crossfade fader.
+  const expected = [
+    "GainNode",
+    ...Array(11).fill("BiquadFilterNode"),
+    "GainNode",
+    "GainNode",
+    "DynamicsCompressorNode",
+    "GainNode",
+    "GainNode",
+  ];
   await expect.poll(() => audioChain(page), { timeout: 15_000 }).toEqual(expected);
   await expect.poll(() => outputLevel(page), { timeout: 15_000 }).toBeGreaterThan(0.005);
 
-  // Choosing a preset moves the bands (live, without rebuilding the chain).
+  // Choosing a preset moves the bands to the Ears 11-band profile (live, without rebuilding the chain).
   await setConfig(page, "equalizer", { preset: "bass-booster" });
   const bandGains = () =>
     page.evaluate(() => {
@@ -32,11 +41,13 @@ test("equalizer, compressor and crossfade compose in the shared graph and toggle
         .filter((n): n is BiquadFilterNode => n instanceof BiquadFilterNode)
         .map((n) => Math.round(n.gain.value));
     });
-  await expect.poll(bandGains).toEqual([12, 10, 7, 3, 0, 0, 0, 0, 0, 0]);
-  await expect.poll(async () => (await pluginConfig(page, "equalizer"))?.band32).toBe(12);
+  await expect.poll(bandGains).toEqual([10, 8, 6, 3, 1, 0, 0, 0, 0, 0, 0]);
+  await expect.poll(async () => (await pluginConfig(page, "equalizer"))?.preset).toBe("bass-booster");
 
   // Moving a band switches the preset to custom.
-  await setConfig(page, "equalizer", { band1000: -6 });
+  const bands = JSON.parse(String((await pluginConfig(page, "equalizer"))?.bands)) as { gain: number }[];
+  bands[5]!.gain = -6;
+  await setConfig(page, "equalizer", { bands: JSON.stringify(bands) });
   await expect.poll(async () => (await pluginConfig(page, "equalizer"))?.preset).toBe("custom");
 
   // Extra filters (pear-desktop's format) are added on top of the signal, as pear-desktop
@@ -45,7 +56,10 @@ test("equalizer, compressor and crossfade compose in the shared graph and toggle
   const extraWiring = () =>
     page.evaluate(() => {
       const edges = window.__audioProbe!.edges;
-      const extra = [...edges.keys()].find((n): n is BiquadFilterNode => n instanceof BiquadFilterNode && n.frequency.value === 80);
+      // 80 Hz is also a band frequency: match the filter by its own Q.
+      const extra = [...edges.keys()].find(
+        (n): n is BiquadFilterNode => n instanceof BiquadFilterNode && n.frequency.value === 80 && n.Q.value === 100,
+      );
       if (!extra) return null;
       const feeders = [...edges].filter(([, targets]) => targets.has(extra)).map(([node]) => node);
       const mix = [...(edges.get(extra) ?? [])][0];
@@ -68,8 +82,10 @@ test("equalizer, compressor and crossfade compose in the shared graph and toggle
   await expect.poll(async () => (await compressor())?.threshold).toBe(-20);
 
   await setEnabled(page, "equalizer", false);
-  await expect.poll(() => audioChain(page)).toEqual(["DynamicsCompressorNode", "GainNode"]);
+  // The compressor's own stage is compressor -> track gain; the fader follows.
+  await expect.poll(() => audioChain(page)).toEqual(["DynamicsCompressorNode", "GainNode", "GainNode"]);
   await setEnabled(page, "audio-compressor", false);
+  await expect.poll(() => audioChain(page)).toEqual(["GainNode"]);
   await setEnabled(page, "crossfade", false);
   await expect.poll(() => audioChain(page)).toEqual([]);
   await expect.poll(() => outputLevel(page)).toBeGreaterThan(0.005);
@@ -118,10 +134,13 @@ test("crossfade plays the end of a track over the start of the next, as pear-des
   // Both at once, the outgoing one fading. Checked in one go: the fade is over a
   // second or two after the switch, about when the next track reports playing.
   await expect
-    .poll(async () => {
-      const { outgoing, volume, next } = await overlap();
-      return outgoing && next === "playing" && volume < 1;
-    }, { timeout: 10_000, intervals: [100] })
+    .poll(
+      async () => {
+        const { outgoing, volume, next } = await overlap();
+        return outgoing && next === "playing" && volume < 1;
+      },
+      { timeout: 10_000, intervals: [100] },
+    )
     .toBe(true);
   // The fade-out ends the second stream; the next track is at full volume.
   await expect.poll(async () => (await overlap()).outgoing, { timeout: 10_000 }).toBe(false);

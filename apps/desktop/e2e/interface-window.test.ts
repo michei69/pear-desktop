@@ -69,15 +69,19 @@ test.describe("in-app menu", () => {
     await expectMenuItems(navigation, ["Go back", "Go forward", "Copy current URL", "Restart App", "Exit"]);
     await menuItem(navigation, "Copy current URL").click();
     await expect.poll(() => app.evaluate(({ clipboard }) => clipboard.readText())).toBe(page.url());
-    // Checkboxes show their state and toggle.
-    const onTop = (await openSubmenu(page, trigger, "Options")).getByRole("menuitemcheckbox", { name: /^Always on top/ });
+    // Checkboxes toggle in place: the panel stays open and shows the new mark.
+    const options = await openSubmenu(page, trigger, "Options");
+    const onTop = options.getByRole("menuitemcheckbox", { name: /^Always on top/ });
     await expect(onTop).toHaveAttribute("aria-checked", "false");
     await onTop.click();
     await expect.poll(async () => (await windowInfo(app)).alwaysOnTop).toBe(true);
-    await openSubmenu(page, trigger, "Options");
+    await expect(options).toBeVisible();
     await expect(onTop).toHaveAttribute("aria-checked", "true");
     await onTop.click();
     await expect.poll(async () => (await windowInfo(app)).alwaysOnTop).toBe(false);
+    await expect(onTop).toHaveAttribute("aria-checked", "false");
+    await page.keyboard.press("Escape");
+    await expect(appMenus(page).first()).toBeHidden();
   });
 
   test("works with the keyboard", async ({ page }) => {
@@ -96,6 +100,27 @@ test.describe("in-app menu", () => {
     await expect(menuItem(top, "View")).toBeFocused();
     await page.keyboard.press("Escape");
     await expect(top).toBeHidden();
+  });
+
+  test.describe("with seek shortcuts", () => {
+    test.use({ appOptions: { plugins: { "in-app-menu": { enabled: true }, "seek-shortcuts": { enabled: true } } } });
+
+    test("keeps the arrow keys for the menu", async ({ page }) => {
+      const menus = appMenus(page);
+      const top = menus.first();
+      await menuTrigger(page);
+      await page.keyboard.press("F10");
+      await expect(top).toBeVisible();
+      await page.keyboard.press("ArrowDown");
+      await expect(menuItem(top, "View")).toBeFocused();
+      // seek-shortcuts is on: ArrowRight must still open the submenu, not seek.
+      await page.keyboard.press("ArrowRight");
+      await expect(menuItem(menus.nth(1), "Reload")).toBeFocused();
+      await page.keyboard.press("ArrowLeft");
+      await expect(menuItem(top, "View")).toBeFocused();
+      await page.keyboard.press("Escape");
+      await expect(top).toBeHidden();
+    });
   });
 
   test.describe("with a window manager", () => {
@@ -132,6 +157,9 @@ test.describe("in-app menu", () => {
 });
 
 test("transparent player makes the window see-through", async ({ launch }) => {
+  // Linux transparency was dropped (it needed global compositing switches and still
+  // broke resizing); the plugin only runs on Windows and macOS now.
+  test.skip(process.platform !== "win32" && process.platform !== "darwin", "transparent windows are Windows/macOS only");
   const app = await launch({ plugins: { "transparent-player": { enabled: true, config: { opacity: 40 } } } });
   const page = await mainWindow(app);
   await page.waitForSelector("ytmusic-nav-bar");
@@ -188,6 +216,12 @@ test("picture in picture shrinks the window and restores it", async ({ launch })
   expect(small.alwaysOnTop).toBe(true);
   await expect(page.locator("html.pear-pip")).toHaveCount(1);
   await expect(page.locator("ytmusic-popup-container .pear-pip-item")).toBeHidden();
+  // A settings change applies live: the page part is not restarted, so YTM's full
+  // screen stays and the window keeps its small size (picture-in-picture-03).
+  await setConfig(page, "picture-in-picture", { saveSize: true });
+  await page.waitForTimeout(SETTLE_MS);
+  await expect(page.locator("html.pear-pip")).toHaveCount(1);
+  expect((await windowInfo(app)).bounds.width).toBe(PIP_SIZE.width);
   // YTM's full-screen player fills the small window, not the screen.
   await expect(page.locator("ytmusic-player#player")).toHaveAttribute("player-ui-state", "FULLSCREEN");
   await page.waitForTimeout(SETTLE_MS);

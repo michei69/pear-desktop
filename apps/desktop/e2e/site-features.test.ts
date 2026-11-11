@@ -7,7 +7,7 @@ import type { Page } from "@playwright/test";
 import { expect, test } from "./fixtures.ts";
 import { waitForTrackPlaying } from "./helpers/playback.ts";
 import { barLayout, inBar, sel } from "./helpers/player-bar.ts";
-import { openSection, openSettings, overlay } from "./helpers/settings.ts";
+import { openSection, openSettings, overlay, searchbox } from "./helpers/settings.ts";
 import { mainWindow, playTestTrack } from "./launch.ts";
 
 const PLAYING_TEST_MS = 240_000;
@@ -72,20 +72,17 @@ test("feature flag overrides reach the page, and the flag list edits them", asyn
   expect((await siteFlags(page)).served).not.toHaveProperty("pear_e2e_flag");
 
   await openSettings(page);
-  await openSection(page, "Developer Tweaks");
-  const card = overlay(page).locator('[data-core="site-flags"]');
-  await expect(card).toBeVisible();
-  await card.getByRole("searchbox").fill("pear_e2e");
-  const rows = card.locator(".site-flag");
+  await openSection(page, "Flags");
+  // The Flags section lists the page's served flags plus the overrides; the search box
+  // filters them in place (no separate card).
+  await searchbox(page).fill("pear_e2e");
+  const rows = overlay(page).locator(".flag-row");
   await expect(rows).toHaveCount(2);
 
-  // Switching one on edits the override; removing an override drops it.
-  await card.locator('[data-flag="pear_e2e_switch"]').getByRole("switch").click();
+  // Switching one on edits the override; Undo puts the page's own value back.
   const entries = () => page.evaluate(() => window.__pearRuntime!.plugins.core("site").config.siteFlags);
+  await overlay(page).locator('[data-flag="pear_e2e_switch"]').getByRole("switch").click();
   await expect.poll(entries).toEqual(["pear_e2e_flag=42", "pear_e2e_switch=true"]);
-  await card
-    .locator('[data-flag="pear_e2e_flag"]')
-    .getByRole("button", { name: /Remove the override/ })
-    .click();
+  await overlay(page).locator('[data-flag="pear_e2e_flag"]').getByRole("button", { name: "Undo" }).click();
   await expect.poll(entries).toEqual(["pear_e2e_switch=true"]);
 });

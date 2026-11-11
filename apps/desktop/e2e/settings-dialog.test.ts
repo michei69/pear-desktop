@@ -165,19 +165,33 @@ test("core options apply live, where they belong", async ({ app, page }) => {
   await expect(overlay(page).locator("[data-plugin]")).toHaveCount(0);
 });
 
-test("restart-only core options offer a restart, kept while the dialog is closed", async ({ page }) => {
+test("restart-only core options offer a restart, kept while the dialog is closed", async ({ app, page }) => {
+  // Closing the dialog with pending changes opens the host's native prompt; answer it.
+  await app.evaluate(({ dialog }) => {
+    dialog.showMessageBox = (async (_window: unknown, options: Electron.MessageBoxOptions) => {
+      (globalThis as { restartPrompt?: Electron.MessageBoxOptions }).restartPrompt = options;
+      return { response: 1, checkboxChecked: false };
+    }) as typeof dialog.showMessageBox;
+  });
   await openSettings(page);
   await openSection(page, "Advanced");
   const banner = restartBanner(page);
-  await expect(banner).toHaveCount(0);
+  await expect(banner).not.toBeVisible();
   await overlay(page).getByRole("switch", { name: "Hardware acceleration" }).click();
   await expect(banner).toBeVisible();
   await expect(banner.getByRole("button", { name: "Restart now" })).toBeVisible();
+  // Escape ends the overlay's session; the host now names everything that waits for a restart.
   await page.keyboard.press("Escape");
+  await expect
+    .poll(() => app.evaluate(() => (globalThis as { restartPrompt?: Electron.MessageBoxOptions }).restartPrompt))
+    .toMatchObject({ title: "Restart Required", message: "Some changes require a restart" });
+  const prompt = await app.evaluate(() => (globalThis as { restartPrompt?: Electron.MessageBoxOptions }).restartPrompt);
+  expect(prompt?.detail).toContain("Disable hardware acceleration");
+  // Reopening still lists the change; dismissing it collapses the banner.
   await page.keyboard.press("Control+,");
   await expect(banner).toBeVisible();
   await banner.getByRole("button", { name: "Later" }).click();
-  await expect(banner).toHaveCount(0);
+  await expect(banner).not.toBeVisible();
 });
 
 test.describe(() => {
@@ -216,7 +230,7 @@ test.describe("shortcuts", () => {
   test("records a global shortcut and registers it with the OS", async ({ app, page }) => {
     await openSettings(page);
     await openSection(page, "Plugins");
-    await pluginRow(page, "shortcuts").getByRole("button", { name: "Configure Shortcuts (& MPRIS)" }).click();
+    await pluginRow(page, "shortcuts").getByRole("button", { name: "Configure Global shortcuts" }).click();
     // The global one (the in-window ones follow under their own heading).
     const recorder = pluginRow(page, "shortcuts").getByLabel("Play / pause").first();
     await recorder.click();
@@ -227,7 +241,7 @@ test.describe("shortcuts", () => {
     await expect.poll(() => isRegistered(app, SHORTCUT)).toBe(true);
 
     // Disabling the plugin releases it.
-    await pluginRow(page, "shortcuts").getByRole("switch", { name: "Enable Shortcuts (& MPRIS)" }).click();
+    await pluginRow(page, "shortcuts").getByRole("switch", { name: "Enable Global shortcuts" }).click();
     await expect.poll(() => isRegistered(app, SHORTCUT)).toBe(false);
   });
 

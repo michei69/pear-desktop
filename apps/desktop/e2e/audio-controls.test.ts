@@ -1,12 +1,13 @@
 // Audio plugins with in-page controls: speed, quality, volume, output device.
 
+import type { Page } from "@playwright/test";
+import { ytmUrl } from "@pear/sdk/util";
 import { expect, test } from "./fixtures.ts";
 import { installAudioProbe } from "./helpers/audio.ts";
 import { waitForTrackPlaying } from "./helpers/playback.ts";
 import { pluginConfig, setConfig, setEnabled } from "./helpers/plugins.ts";
 import { recordCalls } from "./helpers/probes.ts";
-import { playTestTrack } from "./launch.ts";
-import type { Page } from "@playwright/test";
+import { mainWindow, playTestTrack, TEST_TRACK } from "./launch.ts";
 import { inBar, sel } from "./helpers/player-bar.ts";
 
 const PLAYING_TEST_MS = 240_000;
@@ -148,6 +149,54 @@ test.describe("volume", () => {
     await expect.poll(element).toEqual({ cubed: true, linear: false, read: true });
     await setEnabled(page, "exponential-volume", false);
     await expect.poll(element).toMatchObject({ linear: true, read: true });
+  });
+
+  test("the saved volume is back when a resumed track starts playing", async ({ launch }) => {
+    test.setTimeout(PLAYING_TEST_MS);
+    const app = await launch({
+      config: {
+        url: ytmUrl(`/watch?v=${TEST_TRACK}`),
+        // A profile that resumes the last track at launch.
+        options: { resumeOnStart: true },
+        plugins: { "precise-volume": { enabled: true, savedVolume: 20 } },
+        "window-size": { width: 1280, height: 800 },
+        __internal__: { migrations: { version: "4.0.0" } },
+      },
+    });
+    const page = await mainWindow(app);
+    // Record the volume at the first playing state; the plugin restores it from a
+    // document-start page part, before YTM can start the resumed track.
+    const slider = sel("player_bar.volume_slider");
+    await page.evaluate((sliderSelector) => {
+      window.__pearFirstPlayingVolume = undefined;
+      document.addEventListener(
+        "playing",
+        () => {
+          if (window.__pearFirstPlayingVolume !== undefined) return;
+          const player = document.querySelector<HTMLElement & { getVolume?(): number }>("#movie_player");
+          window.__pearFirstPlayingVolume = {
+            volume: player?.getVolume?.(),
+            slider: Number(document.querySelector<HTMLElement & { value?: string }>(sliderSelector)?.value),
+          };
+        },
+        true,
+      );
+    }, slider);
+    // CI has no gesture: start the resumed video like waitForTrackPlaying does. The
+    // restore's capture `play` fallback then runs just the same.
+    await page.waitForSelector("video", { timeout: PLAYING_TEST_MS });
+    await page.evaluate(() => {
+      const video = document.querySelector("video");
+      if (video?.paused) void video.play().catch(() => {});
+    });
+    await page.waitForFunction(() => window.__pearFirstPlayingVolume !== undefined, undefined, { timeout: PLAYING_TEST_MS });
+    const first = await page.evaluate(() => window.__pearFirstPlayingVolume);
+    expect(first?.volume).toBe(20);
+    await expect
+      .poll(() =>
+        page.evaluate((sliderSelector) => Number(document.querySelector<HTMLElement & { value?: string }>(sliderSelector)?.value), slider),
+      )
+      .toBe(20);
   });
 });
 

@@ -11,17 +11,16 @@ import { mainWindow, playTestTrack } from "./launch.ts";
 /** Plugin patches settle within this after the page loads. */
 const SETTLE_MS = 2000;
 
-/** rm3 keeps the original createElement; cpu-tamer replaces the native setTimeout. */
+/** cpu-tamer replaces the native setTimeout; that is the whole patch surface. */
 const patched = (page: Page) =>
   page.evaluate(() => ({
-    rm3: typeof Reflect.get(document, "createElement9512") === "function",
     timers: !/\[native code\]/.test(Function.prototype.toString.call(window.setTimeout)),
   }));
 
 test("enabled at launch: tames timers, the track plays, disabling waits for a restart", async ({ launch }) => {
   test.setTimeout(120_000);
   const page = await mainWindow(await launch({ plugins: { "performance-improvement": { enabled: true } } }));
-  await expect.poll(() => patched(page), { timeout: 15_000 }).toEqual({ rm3: true, timers: true });
+  await expect.poll(() => patched(page), { timeout: 15_000 }).toEqual({ timers: true });
 
   await playTestTrack(page);
   await waitForTrackPlaying(page);
@@ -35,12 +34,12 @@ test("enabled at launch: tames timers, the track plays, disabling waits for a re
   await expect(restartBanner(page)).toBeVisible();
   await expect.poll(() => pluginEnabled(page, "performance-improvement")).toBe(false);
   // Still patched until the restart.
-  expect(await patched(page)).toEqual({ rm3: true, timers: true });
+  expect(await patched(page)).toEqual({ timers: true });
 });
 
 test("enabled live: nothing is patched until the next launch", async ({ page }) => {
   await setEnabled(page, "performance-improvement", true);
   await expect.poll(() => pluginEnabled(page, "performance-improvement")).toBe(true);
   await page.waitForTimeout(SETTLE_MS);
-  expect(await patched(page)).toEqual({ rm3: false, timers: false });
+  expect(await patched(page)).toEqual({ timers: false });
 });
