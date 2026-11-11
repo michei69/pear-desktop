@@ -1499,11 +1499,7 @@
         "band-pass": "Band pass",
         "notch": "Notch",
         "all-pass": "All pass",
-        "type": "Type",
-        "separateWindow": {
-          "label": "Open in a separate window",
-          "description": "The equalizer opens in its own window instead of over the player."
-        }
+        "type": "Type"
       },
       "actions": {
         "open": {

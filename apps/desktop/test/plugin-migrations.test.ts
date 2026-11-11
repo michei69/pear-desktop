@@ -424,7 +424,6 @@ const EXPECTED: Record<string, { enabled: boolean; config: Json }> = {
     config: {
       bypass: false,
       outputGainDb: 0,
-      separateWindow: false,
       filters: JSON.stringify([
         { type: "highshelf", frequency: 8000, Q: 1, gain: 4 },
         { type: "lowshelf", frequency: 80, Q: 100, gain: 12 },

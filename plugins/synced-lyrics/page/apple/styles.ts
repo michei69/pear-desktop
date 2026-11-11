@@ -305,7 +305,7 @@ export const appleStyles = css`
       90deg,
       var(--apple-word-on, var(--apple-primary)) 0%,
       var(--apple-word-on, var(--apple-primary)) calc(50% - var(--apple-feather, 0.75em)),
-      var(--apple-word-off, var(--apple-secondary)) calc(50% + var(--apple-feather, 0.75em)),
+      var(--apple-word-off, var(--apple-secondary)) 50%,
       var(--apple-word-off, var(--apple-secondary)) 100%
     );
     background-repeat: no-repeat;
@@ -328,7 +328,7 @@ export const appleStyles = css`
     background-image: linear-gradient(
       90deg,
       var(--apple-word-off, var(--apple-secondary)) 0%,
-      var(--apple-word-off, var(--apple-secondary)) calc(50% - var(--apple-feather, 0.75em)),
+      var(--apple-word-off, var(--apple-secondary)) 50%,
       var(--apple-word-on, var(--apple-primary)) calc(50% + var(--apple-feather, 0.75em)),
       var(--apple-word-on, var(--apple-primary)) 100%
     );

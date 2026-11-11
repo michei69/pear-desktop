@@ -100,7 +100,6 @@ export function createEqualizerPanel(ctx: Ctx) {
   let noticeTimer: ReturnType<typeof setTimeout> | undefined;
   let endDrag: (() => void) | undefined;
   let closingTimer: ReturnType<typeof setTimeout> | undefined;
-  let popup: Window | null = null;
   /** Set when the user preset library changes, so drags don't rewrite it. */
   let presetsDirty = false;
   /** What the name field shows; unrelated curve/gain edits must not overwrite it. */
@@ -386,7 +385,6 @@ export function createEqualizerPanel(ctx: Ctx) {
     notice.textContent = message;
     if (noticeTimer !== undefined) ctx.clearTimeout(noticeTimer);
     if (closingTimer !== undefined) ctx.clearTimeout(closingTimer);
-    if (popup && !popup.closed) popup.close();
     noticeTimer = ctx.setTimeout(() => {
       noticeTimer = undefined;
       notice.textContent = "";
@@ -895,40 +893,6 @@ export function createEqualizerPanel(ctx: Ctx) {
     return { card, legend, type, frequency, q, gain, gainNumber };
   }
 
-  const detach = () => {
-    if (popup && !popup.closed) {
-      popup.focus();
-      return true;
-    }
-    let win: Window | null = null;
-    try {
-      win = window.open("", "pear-equalizer", "popup=yes,width=1040,height=860");
-      if (!win) return false;
-      win.document.title = t("plugins.equalizer.name", "Equalizer");
-      win.document.documentElement.style.cssText = "color-scheme: dark; background: #141218";
-      win.document.body.style.cssText = "margin: 0; min-height: 100vh; overflow: hidden; background: #141218";
-      win.document.body.append(host);
-    } catch {
-      try {
-        win?.close();
-      } catch {}
-      return false;
-    }
-    popup = win;
-    const restore = () => {
-      popup = null;
-      host.hidden = true;
-      delete host.dataset.closing;
-      if (!host.isConnected) document.body.append(host);
-    };
-    win.addEventListener("beforeunload", restore, { once: true });
-    win.document.addEventListener("keydown", (event: KeyboardEvent) => {
-      if (event.key !== "Escape") return;
-      event.preventDefault();
-      close();
-    });
-    return true;
-  };
   const open = () => {
     if (closingTimer !== undefined) {
       ctx.clearTimeout(closingTimer);
@@ -937,7 +901,6 @@ export function createEqualizerPanel(ctx: Ctx) {
     delete host.dataset.closing;
     host.hidden = false;
     opened = true;
-    if (ctx.config.separateWindow) detach();
     renderAll();
     closeButton.focus();
   };
@@ -945,12 +908,6 @@ export function createEqualizerPanel(ctx: Ctx) {
     if (!opened) return;
     endDrag?.();
     opened = false;
-    if (popup && !popup.closed) {
-      host.hidden = true;
-      popup.close();
-      popup = null;
-      return;
-    }
     host.dataset.closing = "";
     closingTimer = ctx.setTimeout(() => {
       closingTimer = undefined;
@@ -1056,7 +1013,6 @@ export function createEqualizerPanel(ctx: Ctx) {
     stopped = true;
     if (noticeTimer !== undefined) ctx.clearTimeout(noticeTimer);
     if (closingTimer !== undefined) ctx.clearTimeout(closingTimer);
-    if (popup && !popup.closed) popup.close();
     if (persistTimer !== undefined) {
       ctx.clearTimeout(persistTimer);
       persistTimer = undefined;

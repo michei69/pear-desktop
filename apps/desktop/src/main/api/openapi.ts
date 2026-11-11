@@ -34,7 +34,7 @@ export function openApiDocument(routes: readonly Route[], title: string, rpc: re
       },
     },
   };
-  return {
+  return sanitizeOpenApi({
     openapi: "3.2.0",
     info: {
       version: "2.0.0",
@@ -44,7 +44,27 @@ export function openApiDocument(routes: readonly Route[], title: string, rpc: re
     components: { securitySchemes: { bearerAuth: { type: "http", scheme: "bearer", bearerFormat: "JWT" } } },
     security: [{ bearerAuth: [] }],
     paths,
-  };
+  });
+}
+
+/**
+ * JSON Schema requires a non-empty `required` array, and regex shorthand in a
+ * `pattern` is a common source of escaped-backslash breakage in Swagger UI.
+ * Neither is useful to API clients here, so drop/normalize them.
+ */
+function sanitizeOpenApi<T>(value: T): T {
+  if (Array.isArray(value)) return value.map((item) => sanitizeOpenApi(item)) as T;
+  if (typeof value !== "object" || value === null) return value;
+  const result: Record<string, unknown> = {};
+  for (const [key, item] of Object.entries(value)) {
+    if (key === "required" && Array.isArray(item) && item.length === 0) continue;
+    if (key === "pattern" && typeof item === "string") {
+      result[key] = item.replaceAll("\\w", "[A-Za-z0-9_]").replaceAll("\\d", "[0-9]");
+      continue;
+    }
+    result[key] = sanitizeOpenApi(item);
+  }
+  return result as T;
 }
 
 function routeOperation(route: Route) {
