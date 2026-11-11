@@ -3,14 +3,14 @@
 
 import { type NowPlaying, type PlayerAction, livePosition } from "@pear/sdk";
 import { isPlaying } from "@pear/sdk/util";
-import { type Flags, flagOverrides, withFlagOverride } from "@pear/sdk/core-config";
+import { type FlagValue, type Flags, flagOverrides, performanceModeOverrides, withFlagOverride } from "@pear/sdk/core-config";
 import type { SongDetails } from "@pear/sdk/song-details";
 import { getAppMeta } from "../app-meta.ts";
 import type { Settings } from "../config.ts";
 import type { PluginHost } from "../plugins.ts";
 import { REPEAT_NAMES, songInfo } from "./song-info.ts";
 import type { PlayerState } from "./player-state.ts";
-import type { QueueResponse, SongInfoV2 } from "./types.ts";
+import type { QueueResponse, SongInfo, SongInfoV2 } from "./types.ts";
 
 export type FailureStatus = 400 | 404 | 502;
 export type Outcome<T = undefined, S extends FailureStatus = FailureStatus> =
@@ -34,7 +34,7 @@ export interface OperationEnvironment {
   state(): NowPlaying;
   details(): SongDetails | undefined;
   control(action: PlayerAction): void;
-  page<T = unknown>(event: string, payload?: unknown): Promise<T>;
+  page<T = unknown>(event: string, payload?: unknown, options?: { timeout?: number }): Promise<T>;
   playerState: PlayerState;
   plugins: PluginHost;
   settings: Settings;
@@ -51,6 +51,25 @@ const messageOf = (error: unknown) => (error instanceof Error ? error.message : 
 
 const LYRICS_DISABLED = "The synced-lyrics plugin is disabled.";
 const DOWNLOADER_DISABLED = "The downloader plugin is disabled.";
+/** The v1 search controller waited this long for YTM, past the page's default. */
+const SEARCH_TIMEOUT_MS = 30_000;
+/** A translation provider (a local CLI included) may take minutes; cap it here too. */
+const RPC_TIMEOUT_MS = 120_000;
+/** How often a cached read asks the page for its playback rate. */
+const SPEED_REFRESH_MS = 1_000;
+
+/** Bounds work that can't be aborted (a plugin RPC takes no signal). */
+async function withTimeout<T>(promise: Promise<T>, ms: number, message: string): Promise<T> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const timeout = new Promise<never>((_, reject) => {
+    timer = setTimeout(() => reject(new Error(message)), ms);
+  });
+  try {
+    return await Promise.race([promise, timeout]);
+  } finally {
+    clearTimeout(timer);
+  }
+}
 
 export type Operations = ReturnType<typeof createOperations>;
 
@@ -60,9 +79,9 @@ export function createOperations(env: OperationEnvironment) {
   const isPluginEnabled = (id: string) => settings.plugin(id)?.enabled === true;
 
   /** A page getter as an outcome; a timeout is a bad gateway, not a 500. */
-  const call = async <T>(event: string, payload?: unknown): Promise<Outcome<T, 502>> => {
+  const call = async <T>(event: string, payload?: unknown, options?: { timeout?: number }): Promise<Outcome<T, 502>> => {
     try {
-      return ok(await env.page<T>(event, payload));
+      return ok(await env.page<T>(event, payload, options));
     } catch (error) {
       return fail(502, messageOf(error));
     }
@@ -81,19 +100,67 @@ export function createOperations(env: OperationEnvironment) {
   const savedFlags = (): Flags => flagOverrides(settings.core("site").siteFlags);
 
   /**
-   * Calls a synced-lyrics RPC method, trying the input shapes the plugin may
-   * declare (object or bare id) until one validates. The plugin owns the
-   * provider implementations and the translation cache.
+   * The title and artist the scrobbler plugin would submit — its alternative-name
+   * switches and regex filters — for the v2 `/video` pair. A scrobbler that is
+   * off (or fails to answer) leaves the track's own names.
    */
-  const lyricsRpc = async <T>(method: string, variants: unknown[]): Promise<Outcome<T, 502>> => {
-    let lastError = `synced-lyrics: ${method} is unavailable`;
-    for (const input of variants) {
-      const result = await plugins.callRpc("synced-lyrics", method, input);
-      if (result.ok) return ok(result.value as T);
-      lastError = result.error;
-      if (result.status !== 400) break;
+  const scrobblerNames = async (info: SongInfo): Promise<{ title: string; artist: string }> => {
+    const plain = { title: info.title, artist: info.artist };
+    try {
+      const result = await plugins.callRpc("scrobbler", "names", {
+        title: info.title,
+        artist: info.artist,
+        ...(info.alternativeTitle ? { alternativeTitle: info.alternativeTitle } : {}),
+        ...(info.tags.length ? { tags: info.tags } : {}),
+      });
+      if (!result.ok) return plain;
+      const names = result.value as { scrobbleTitle?: unknown; scrobbleArtist?: unknown };
+      return {
+        title: typeof names.scrobbleTitle === "string" ? names.scrobbleTitle : info.title,
+        artist: typeof names.scrobbleArtist === "string" ? names.scrobbleArtist : info.artist,
+      };
+    } catch {
+      return plain;
     }
-    return fail(502, lastError);
+  };
+
+  /**
+   * Calls one of the synced-lyrics plugin's RPC methods by name; the plugin owns
+   * the provider implementations and the translation cache. A validation
+   * failure is the plugin's or the caller's bug, so it reports as a bad gateway.
+   */
+  const lyricsRpc = async <T>(method: string, input: unknown): Promise<Outcome<T, 502>> => {
+    try {
+      const result = await withTimeout(
+        plugins.callRpc("synced-lyrics", method, input),
+        RPC_TIMEOUT_MS,
+        `synced-lyrics: ${method} did not answer in time`,
+      );
+      return result.ok ? ok(result.value as T) : fail(502, result.error);
+    } catch (error) {
+      return fail(502, messageOf(error));
+    }
+  };
+
+  let refreshingSpeed = false;
+  let speedRefreshedAt = 0;
+  /**
+   * The page owns the rate and publishes no event for it, so the cached copy is
+   * refreshed opportunistically: a read never waits on (or times out with) the page.
+   */
+  const refreshSpeed = () => {
+    if (refreshingSpeed || Date.now() - speedRefreshedAt < SPEED_REFRESH_MS) return;
+    refreshingSpeed = true;
+    speedRefreshedAt = Date.now();
+    void env
+      .page<number>("speed")
+      .then((speed) => {
+        if (Number.isFinite(speed)) playerState.setSpeed(speed);
+      })
+      .catch(() => undefined)
+      .finally(() => {
+        refreshingSpeed = false;
+      });
   };
 
   return {
@@ -139,10 +206,9 @@ export function createOperations(env: OperationEnvironment) {
 
     // Cached player state
     playing: () => isPlaying(env.state()),
-    /** The page owns the rate; read it live, keeping the cached copy fresh for PLAYER_INFO. */
+    /** Answered from the cached copy, so a poll costs no page round trip. */
     playbackSpeed: async () => {
-      const live = await env.page<number>("speed").catch(() => undefined);
-      if (typeof live === "number" && Number.isFinite(live)) playerState.setSpeed(live);
+      refreshSpeed();
       return playerState.speed ?? 1;
     },
     shuffleState: () => playerState.shuffle,
@@ -155,9 +221,11 @@ export function createOperations(env: OperationEnvironment) {
     async video(): Promise<Outcome<SongInfoV2 | undefined>> {
       const info = songInfo(env.state(), env.details());
       if (!info) return ok(undefined);
-      // The fork's `/video` also carries the scrobbler's config-derived names;
-      // this app has no separate scrobbler names, so the track's own are used.
-      return ok({ ...info, scrobbleTitle: info.title, scrobbleArtist: info.artist });
+      // The fork's `/video` also carries the scrobbler's names, so a client sees
+      // exactly what would be submitted. A disabled scrobbler has no rules to
+      // ask, so the track's own names stand in.
+      const names = await scrobblerNames(info);
+      return ok({ ...info, scrobbleTitle: names.title, scrobbleArtist: names.artist });
     },
     async playbackPosition(percentage: boolean): Promise<Outcome<number>> {
       const state = env.state();
@@ -173,13 +241,19 @@ export function createOperations(env: OperationEnvironment) {
       return result.value ? ok(result.value) : fail(502, "The next autoplay page could not be fetched.");
     },
     search: (args: SearchArgs) =>
-      call<unknown>("search:parsed", { query: args.query, params: args.params, continuation: args.continuation, raw: args.raw ?? false }),
+      call<unknown>(
+        "search:parsed",
+        { query: args.query, params: args.params, continuation: args.continuation, raw: args.raw ?? false },
+        {
+          timeout: SEARCH_TIMEOUT_MS,
+        },
+      ),
     browse: async (args: BrowseArgs): Promise<Outcome<unknown, 502>> => {
-      const result = await call<unknown | null>("browse", {
-        browseId: args.browseId,
-        continuation: args.continuation,
-        raw: args.raw ?? false,
-      });
+      const result = await call<unknown | null>(
+        "browse",
+        { browseId: args.browseId, continuation: args.continuation, raw: args.raw ?? false },
+        { timeout: SEARCH_TIMEOUT_MS },
+      );
       if (!result.ok) return result;
       return result.value ? ok(result.value) : fail(502, "The browse request failed.");
     },
@@ -189,17 +263,14 @@ export function createOperations(env: OperationEnvironment) {
     // its RPC methods by name.
     async lyrics(videoId?: string): Promise<Outcome<unknown, 404 | 502>> {
       if (!isPluginEnabled("synced-lyrics")) return fail(404, LYRICS_DISABLED);
-      const result = await lyricsRpc<unknown | null>("lyrics", videoId ? [{ videoId }, videoId, {}] : [{}, undefined]);
+      const result = await lyricsRpc<unknown | null>("lyrics", videoId ? { videoId } : {});
       if (!result.ok) return result;
       if (result.value && typeof result.value === "object") env.emit("lyrics", result.value);
       return ok(result.value ?? undefined);
     },
     async lyricsTranslations(videoId?: string): Promise<Outcome<{ videoId: string | null; translations: unknown[] }, 404 | 502>> {
       if (!isPluginEnabled("synced-lyrics")) return fail(404, LYRICS_DISABLED);
-      const result = await lyricsRpc<{ videoId?: string | null; translations?: unknown[] }>(
-        "translations",
-        videoId ? [{ videoId }, videoId, {}] : [{}, undefined],
-      );
+      const result = await lyricsRpc<{ videoId?: string | null; translations?: unknown[] }>("translations", videoId ? { videoId } : {});
       if (!result.ok) return result;
       const value = result.value;
       return ok({
@@ -209,17 +280,7 @@ export function createOperations(env: OperationEnvironment) {
     },
     async translateLyrics(lang: string, videoId?: string): Promise<Outcome<Record<string, unknown>, 404 | 502>> {
       if (!isPluginEnabled("synced-lyrics")) return fail(404, LYRICS_DISABLED);
-      // The plugin's declared shapes vary by build: `{ lang, videoId? }`,
-      // `{ language, videoId? }`, or `{ videoId?, force? }` (its configured
-      // target language). First one that validates wins.
-      const variants = [
-        { lang, ...(videoId ? { videoId } : {}) },
-        { language: lang, ...(videoId ? { videoId } : {}) },
-        { lang },
-        { language: lang },
-        { ...(videoId ? { videoId } : {}) },
-      ];
-      const result = await lyricsRpc<unknown>("translateLyrics", variants);
+      const result = await lyricsRpc<unknown>("translateLyrics", { lang, ...(videoId ? { videoId } : {}) });
       if (!result.ok) return result;
 
       const value = result.value;
@@ -231,7 +292,13 @@ export function createOperations(env: OperationEnvironment) {
           typeof translation.error === "string" ? translation.error : `Cannot translate the current lyrics: ${translation.reason}`,
         );
       }
-      env.emit("translation", { language: lang, ...(videoId ? { videoId } : {}), ...translation });
+      // A v2 client needs the song the translation belongs to; it also lets the
+      // socket replay for a client that connects after it was produced.
+      const video =
+        typeof translation.videoId === "string"
+          ? translation.videoId
+          : (videoId ?? playerState.song?.videoId ?? env.state().track?.videoId);
+      env.emit("translation", { language: lang, videoId: video, ...translation });
       return ok(translation);
     },
 
@@ -241,31 +308,39 @@ export function createOperations(env: OperationEnvironment) {
     appMeta: () => getAppMeta(),
     featureFlags: async () => {
       const saved = savedFlags();
-      const names = Object.keys(saved).sort();
+      // What the app actually sets: the performance switch's flags first, then
+      // the user's overrides — the same merge the page applies at boot.
+      const applied = performanceModeOverrides(saved, settings.core("performance").flags);
+      const names = Object.keys(applied).sort();
       if (names.length === 0) return [];
       // The page already carries YTM's own flags; only the ones this app sets
       // can differ, so only those cross the bridge.
-      const live = await env.page<Record<string, unknown>>("flags:list", names).catch((): Record<string, unknown> => ({}));
+      const live = (await env.page<Record<string, unknown>>("flags:list", names).catch(() => undefined)) ?? {};
       return names.map((name) => ({
         name,
-        value: Object.hasOwn(live, name) ? live[name] : saved[name],
-        overridden: true,
+        value: Object.hasOwn(live, name) ? live[name] : applied[name],
+        // Only a saved override is the user's; the performance flags are the app's.
+        overridden: Object.hasOwn(saved, name),
       }));
     },
     patchFeatureFlags: async (patch: Record<string, unknown>) => {
       let flags = settings.core("site").siteFlags;
       for (const [name, value] of Object.entries(patch)) {
-        if (typeof value !== "boolean" && typeof value !== "number" && typeof value !== "string") continue;
-        flags = withFlagOverride(flags, name, value);
+        if (value === undefined) continue;
+        flags = withFlagOverride(flags, name, value as FlagValue);
         await applyFlag(name, value);
       }
       settings.setCore("site", { siteFlags: flags });
     },
     deleteFeatureFlags: async (names: string[]) => {
+      const saved = savedFlags();
       let flags = settings.core("site").siteFlags;
       for (const name of names) {
         flags = withFlagOverride(flags, name, undefined);
-        await removeFlag(name);
+        // Only a saved override needs the page to put its own value back;
+        // removing a name it never applied would drop the page's own flag (the
+        // performance switch's, now that this endpoint reports them).
+        if (Object.hasOwn(saved, name)) await removeFlag(name);
       }
       settings.setCore("site", { siteFlags: flags });
     },

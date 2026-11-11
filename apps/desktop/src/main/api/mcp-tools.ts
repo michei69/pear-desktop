@@ -2,6 +2,7 @@
 // schemas. They call the same operations the HTTP routes call; each tool only
 // maps an outcome to text.
 
+import { v } from "@pear/sdk/rpc";
 import type { Operations, Outcome } from "./operations.ts";
 
 export interface McpToolResult {
@@ -9,13 +10,11 @@ export interface McpToolResult {
   isError?: boolean;
 }
 
-/** A JSON Schema object describing a tool's arguments. */
-export type InputSchema = Record<string, unknown>;
-
 export interface McpTool {
   name: string;
   description: string;
-  input: InputSchema;
+  /** Validates `tools/call` arguments before the tool runs; `tools/list` publishes it as JSON schema. */
+  input: v.GenericSchema;
   readOnly?: boolean;
   run: (args: Record<string, unknown>) => Promise<McpToolResult>;
 }
@@ -37,54 +36,42 @@ function fromOutcome<T>(result: Outcome<T>, empty: string): McpToolResult {
   return ok(result.value === undefined ? empty : result.value);
 }
 
-const object = (properties: Record<string, unknown> = {}, required: string[] = []) => ({
-  type: "object",
-  properties,
-  ...(required.length ? { required } : {}),
-});
+const optional = <S extends v.GenericSchema>(schema: S) => v.optional(schema);
 
-const NO_ARGS = object();
+const NO_ARGS = v.object({});
 
-const string = { type: "string" };
-const number = { type: "number" };
-const boolean = { type: "boolean" };
-const stringArray = { type: "array", items: { type: "string" } };
-const repeatMode = { type: "string", enum: ["NONE", "ALL", "ONE"] };
-const likeState = { type: "string", enum: ["LIKE", "DISLIKE", "INDIFFERENT"] };
+const string = v.string();
+const number = v.number();
+const boolean = v.boolean();
+const stringArray = v.array(v.string());
+const repeatMode = v.picklist(["NONE", "ALL", "ONE"]);
+const likeState = v.picklist(["LIKE", "DISLIKE", "INDIFFERENT"]);
 
-const QUEUE_INDEX = object({ index: { type: "integer", minimum: 0 } }, ["index"]);
-const MOVE_IN_QUEUE = object({ index: { type: "integer", minimum: 0 }, toIndex: { type: "integer", minimum: 0 } }, ["index", "toIndex"]);
-const SEEK = object({ seconds: number }, ["seconds"]);
-const SEARCH = object(
-  {
-    query: string,
-    params: string,
-    continuation: string,
-    raw: { ...boolean, description: "Return the raw response instead of parsed results" },
-  },
-  ["query"],
-);
-const BROWSE = object({ browseId: string, continuation: string, raw: boolean });
-const QUEUE_QUERY = object({
-  raw: { ...boolean, description: "Include each item's raw renderer" },
+/** Flags arrive from the network: an unknown shape must not reach the page. */
+const rawResponse = optional(v.pipe(boolean, v.description("Return the raw response instead of parsed results")));
+const rawRenderer = optional(v.pipe(boolean, v.description("Include each item's raw renderer")));
+
+const index = v.pipe(number, v.integer(), v.minValue(0));
+const QUEUE_INDEX = v.object({ index });
+const MOVE_IN_QUEUE = v.object({ index, toIndex: index });
+const SEEK = v.object({ seconds: number });
+const SEARCH = v.object({ query: string, params: optional(string), continuation: optional(string), raw: rawResponse });
+const BROWSE = v.object({ browseId: optional(string), continuation: optional(string), raw: optional(boolean) });
+const QUEUE_QUERY = v.object({ raw: rawRenderer });
+const AUTOPLAY = v.object({ raw: rawRenderer, continuation: optional(string) });
+const LYRICS = v.object({ videoId: optional(string) });
+const TRANSLATE = v.object({ lang: string, videoId: optional(string) });
+const ADD_TO_QUEUE = v.object({
+  videoIds: optional(stringArray),
+  playlistIds: optional(stringArray),
+  insertPosition: optional(v.picklist(["INSERT_AFTER_CURRENT_VIDEO", "INSERT_AT_END"])),
 });
-const AUTOPLAY = object({
-  raw: { ...boolean, description: "Include each item's raw renderer" },
-  continuation: string,
-});
-const LYRICS = object({ videoId: string });
-const TRANSLATE = object({ lang: string, videoId: string }, ["lang"]);
-const ADD_TO_QUEUE = object({
-  videoIds: stringArray,
-  playlistIds: stringArray,
-  insertPosition: { type: "string", enum: ["INSERT_AFTER_CURRENT_VIDEO", "INSERT_AT_END"] },
-});
-const PLAY_VIDEO = object({ videoId: string }, ["videoId"]);
-const DOWNLOAD = object({ videoId: string });
-const SET_LIKE = object({ state: likeState }, ["state"]);
-const CONFIG = { type: "object", additionalProperties: true };
-const FLAGS = { type: "object", additionalProperties: true };
-const DELETE_FLAGS = object({ flags: stringArray }, ["flags"]);
+const PLAY_VIDEO = v.object({ videoId: string });
+const DOWNLOAD = v.object({ videoId: optional(string) });
+const SET_LIKE = v.object({ state: likeState });
+const CONFIG = v.record(v.string(), v.unknown());
+const FLAGS = v.record(v.string(), v.unknown());
+const DELETE_FLAGS = v.object({ flags: stringArray });
 
 type ToolDefinition = Omit<McpTool, "run"> & {
   run: (operations: Operations, args: Record<string, unknown>) => McpToolResult | Promise<McpToolResult>;
@@ -202,13 +189,13 @@ const TOOLS: ToolDefinition[] = [
   {
     name: "set_playback_speed",
     description: "Set the playback speed, where 1 is normal.",
-    input: object({ speed: number }, ["speed"]),
+    input: v.object({ speed: number }),
     run: (o, args) => (o.setPlaybackSpeed(Number(args.speed)), ok()),
   },
   {
     name: "playback_position",
     description: "Get the playback position in seconds, or a 0..1 fraction.",
-    input: object({ percentage: boolean }),
+    input: v.object({ percentage: optional(boolean) }),
     readOnly: true,
     async run(o, args) {
       return fromOutcome(await o.playbackPosition(args.percentage === true), "No position");
@@ -232,14 +219,14 @@ const TOOLS: ToolDefinition[] = [
   {
     name: "set_shuffle",
     description: "Turn shuffle on or off.",
-    input: object({ enabled: boolean }, ["enabled"]),
+    input: v.object({ enabled: boolean }),
     run: (o, args) => (o.setShuffle(args.enabled === true), ok()),
   },
   { name: "repeat_mode", description: "Get the repeat mode.", input: NO_ARGS, readOnly: true, run: (o) => ok({ mode: o.repeatMode() }) },
   {
     name: "set_repeat",
     description: "Set the repeat mode.",
-    input: object({ mode: repeatMode }, ["mode"]),
+    input: v.object({ mode: repeatMode }),
     run: (o, args) => (o.setRepeat(args.mode as "NONE" | "ALL" | "ONE"), ok()),
   },
   { name: "switch_repeat", description: "Cycle to the next repeat mode.", input: NO_ARGS, run: (o) => (o.switchRepeat(), ok()) },
@@ -249,7 +236,7 @@ const TOOLS: ToolDefinition[] = [
   {
     name: "set_volume",
     description: "Set the volume, 0-100.",
-    input: object({ volume: number }, ["volume"]),
+    input: v.object({ volume: number }),
     run: (o, args) => (o.setVolume(Number(args.volume)), ok()),
   },
   {
@@ -262,7 +249,7 @@ const TOOLS: ToolDefinition[] = [
   {
     name: "set_mute",
     description: "Mute or unmute the player.",
-    input: object({ muted: boolean }, ["muted"]),
+    input: v.object({ muted: boolean }),
     run: (o, args) => (o.setMute(args.muted === true), ok()),
   },
   { name: "unmute", description: "Unmute the player.", input: NO_ARGS, run: (o) => (o.setMute(false), ok()) },

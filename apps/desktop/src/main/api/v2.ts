@@ -52,6 +52,11 @@ function readable(path: string, summary: string, run: (query: URLSearchParams) =
   return { method: "GET", path, summary, handle: ({ query }) => run(query) };
 }
 
+/** A read that takes its arguments in a JSON body: POST and QUERY, so either spelling works. */
+function bodyRead(path: string, summary: string, body: BodySchema | "json", handle: Route["handle"]): Route[] {
+  return (["POST", "QUERY"] as const).map((method) => ({ method, path, summary, body, handle }));
+}
+
 export function createV2Routes(operations: Operations): Route[] {
   const video: Route = {
     method: "GET",
@@ -110,12 +115,11 @@ export function createV2Routes(operations: Operations): Route[] {
       if (!query.get("query")) return { status: 400, body: { error: "query must be a string" } };
       return answer(await search(flag(query, "raw"), query), ok, fail);
     }),
-    {
-      method: "POST",
-      path: `${API_V2}/video/search`,
-      summary: "Search YTM and return its parsed results",
-      body: { query: "string", params: "string?", continuation: "string?", raw: "boolean?" },
-      async handle({ body }: RouteRequest) {
+    ...bodyRead(
+      `${API_V2}/video/search`,
+      "Search YTM and return its parsed results",
+      { query: "string", params: "string?", continuation: "string?", raw: "boolean?" },
+      async ({ body }) => {
         const result = await operations.search({
           query: String(body.query),
           ...(typeof body.params === "string" ? { params: body.params } : {}),
@@ -124,30 +128,24 @@ export function createV2Routes(operations: Operations): Route[] {
         });
         return answer(result, ok, fail);
       },
-    },
+    ),
     readable(`${API_V2}/browse`, "Browse a YTM page by id or continuation", async (query) => {
       if (!query.get("browseId") && !query.get("continuation")) {
         return { status: 400, body: { error: "Provide browseId or continuation" } };
       }
       return answer(await browse(flag(query, "raw"), query), ok, fail);
     }),
-    {
-      method: "POST",
-      path: `${API_V2}/browse`,
-      summary: "Browse a YTM page by id or continuation",
-      body: "json",
-      async handle({ body }: RouteRequest) {
-        if (typeof body.browseId !== "string" && typeof body.continuation !== "string") {
-          return { status: 400, body: { error: "Provide browseId or continuation" } };
-        }
-        const result = await operations.browse({
-          ...(typeof body.browseId === "string" ? { browseId: body.browseId } : {}),
-          ...(typeof body.continuation === "string" ? { continuation: body.continuation } : {}),
-          raw: body.raw === true,
-        });
-        return answer(result, ok, fail);
-      },
-    },
+    ...bodyRead(`${API_V2}/browse`, "Browse a YTM page by id or continuation", "json", async ({ body }) => {
+      if (typeof body.browseId !== "string" && typeof body.continuation !== "string") {
+        return { status: 400, body: { error: "Provide browseId or continuation" } };
+      }
+      const result = await operations.browse({
+        ...(typeof body.browseId === "string" ? { browseId: body.browseId } : {}),
+        ...(typeof body.continuation === "string" ? { continuation: body.continuation } : {}),
+        raw: body.raw === true,
+      });
+      return answer(result, ok, fail);
+    }),
     readable(`${API_V2}/video/lyrics`, "Get lyrics from every provider that found some", async (query) => {
       const result = await operations.lyrics(query.get("videoId") ?? undefined);
       return answer(result, (value) => (value ? ok(value) : NO_CONTENT), fail);

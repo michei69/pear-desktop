@@ -1,4 +1,4 @@
-// An OpenAPI 3.1 document for the route table and the plugins' RPC methods.
+// An OpenAPI 3.2 document for the route table and the plugins' RPC methods.
 
 import { jsonSchema } from "./body-schema.ts";
 import { MCP_PATH } from "./mcp.ts";
@@ -35,7 +35,7 @@ export function openApiDocument(routes: readonly Route[], title: string, rpc: re
     },
   };
   return {
-    openapi: "3.1.0",
+    openapi: "3.2.0",
     info: {
       version: "2.0.0",
       title,

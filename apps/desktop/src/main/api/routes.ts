@@ -3,7 +3,7 @@
 
 import type { LikeStatus, PlayerAction } from "@pear/sdk";
 import { REPEAT_NAMES, songInfo } from "./song-info.ts";
-import type { Backend, BodySchema, Method, QueueItem, QueueResponse, Reply, Route, RouteRequest } from "./types.ts";
+import type { Backend, BodySchema, Method, NextQueueItem, QueueResponse, Reply, Route, RouteRequest } from "./types.ts";
 
 export const API_VERSION = "v1";
 export const API = `/api/${API_VERSION}`;
@@ -15,11 +15,11 @@ const LIKE_STATES: Record<LikeStatus, "LIKE" | "DISLIKE" | "INDIFFERENT"> = { li
 
 const NO_CONTENT: Reply = { status: 204 };
 const ok = (body: unknown): Reply => ({ status: 200, body });
+/** What a v1 page-backed route answers when the page is loading or wedged. */
+const PLAYER_UNAVAILABLE = "The player did not answer";
+const playerUnavailable: Reply = { status: 502, body: { error: PLAYER_UNAVAILABLE } };
 
 export const rpcPath = (plugin: string, method: string) => `${API}/plugins/${plugin}/${method}`;
-
-const renderer = (item: QueueItem | undefined) =>
-  item?.playlistPanelVideoRenderer ?? item?.playlistPanelVideoWrapperRenderer?.primaryRenderer?.playlistPanelVideoRenderer;
 
 /** A deprecated path that answers like `route`. */
 function alias(path: string, route: Route): Route {
@@ -83,8 +83,12 @@ export function createRoutes(backend: Backend): Route[] {
     path: `${API}/queue`,
     summary: "Get the queue",
     async handle() {
-      const current = await queue();
-      return current ? ok(current) : NO_CONTENT;
+      try {
+        const current = await queue();
+        return current ? ok(current) : NO_CONTENT;
+      } catch {
+        return playerUnavailable;
+      }
     },
   };
 
@@ -167,7 +171,13 @@ export function createRoutes(backend: Backend): Route[] {
       method: "GET",
       path: `${API}/fullscreen`,
       summary: "Get the fullscreen state",
-      handle: async () => ok({ state: await backend.page<boolean>("fullscreen") }),
+      async handle() {
+        try {
+          return ok({ state: await backend.page<boolean>("fullscreen") });
+        } catch {
+          return playerUnavailable;
+        }
+      },
     },
     playerControl(`${API}/toggle-mute`, "Toggle mute", { type: "mute" }),
     alias(`${API}/song-info`, song),
@@ -179,16 +189,16 @@ export function createRoutes(backend: Backend): Route[] {
       path: `${API}/queue/next`,
       summary: "Get the next song in the queue",
       async handle() {
-        const items = (await queue())?.items ?? [];
-        const next = renderer(items[items.findIndex((item) => renderer(item)?.selected) + 1]);
-        if (!next) return NO_CONTENT;
-        return ok({
-          title: next.title?.runs?.[0]?.text,
-          videoId: next.videoId,
-          thumbnail: next.thumbnail,
-          lengthText: next.lengthText,
-          shortBylineText: next.shortBylineText,
-        });
+        // The page projects the five fields the original answered with, so the
+        // whole raw queue never crosses the bridge (and a missing selection is
+        // no content, not the first entry).
+        let next: NextQueueItem | null;
+        try {
+          next = await backend.page<NextQueueItem | null>("queue:next");
+        } catch {
+          return playerUnavailable;
+        }
+        return next ? ok(next) : NO_CONTENT;
       },
     },
     pageCommand({
@@ -238,15 +248,23 @@ export function createRoutes(backend: Backend): Route[] {
       path: `${API}/search`,
       summary: "Search \u0059\u006f\u0075\u0054\u0075\u0062\u0065 Music (raw innertube response)",
       body: { query: "string", params: "string?", continuation: "string?" },
-      handle: async ({ body }) => ok(await backend.page("search", body)),
+      async handle({ body }) {
+        try {
+          return ok(await backend.page("search", body));
+        } catch {
+          return playerUnavailable;
+        }
+      },
     },
     {
       method: "POST",
       path: `${API}/loadVideo`,
       summary: "Load a video given its ID",
-      body: { videoId: "string?" },
+      body: { videoId: "string" },
       async handle({ body }) {
-        await backend.page("video:play", typeof body.videoId === "string" ? body.videoId : undefined);
+        const videoId = String(body.videoId);
+        if (!videoId) return { status: 400, body: { error: "videoId must not be empty" } };
+        await backend.page("video:play", videoId);
         return NO_CONTENT;
       },
     },

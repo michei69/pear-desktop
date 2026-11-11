@@ -44,6 +44,11 @@ const ALLOW_BUTTON = 0;
 const DENY_BUTTON = 1;
 /** Of the generated token secret. */
 const SECRET_BYTES = 32;
+/**
+ * A client this far behind on delivery is not worth a frame: a suspended laptop
+ * or a hung remote would otherwise queue every broadcast until the socket dies.
+ */
+const MAX_BUFFERED_BYTES = 1024 * 1024;
 
 const networkKey = (c: ApiServerConfig) =>
   JSON.stringify([c.enabled, c.hostname, c.port, c.useHttps && c.certPath, c.useHttps && c.keyPath]);
@@ -77,7 +82,7 @@ export class ApiServer {
       state: () => env.player.state,
       details: () => this.#details,
       control: (action) => env.player.control(action),
-      page: (event, payload) => env.requests.request("core", event, payload),
+      page: (event, payload, options) => env.requests.request("core", event, payload, options),
       playerState: this.#playerState,
       plugins: env.plugins,
       settings: env.settings,
@@ -115,6 +120,19 @@ export class ApiServer {
     return this.#env.settings.core("apiServer");
   }
 
+  /**
+   * The Token secret field says "Generated when empty", but clearing it from the
+   * settings dialog doesn't change the address, so regenerating only after a
+   * rebind would leave the server signing with "". Replace it before anything
+   * reads it, and publish the value the user then sees.
+   */
+  #withSecret(): ApiServerConfig {
+    const config = this.#config;
+    if (config.secret) return config;
+    this.#env.settings.setCore("apiServer", { secret: randomBytes(SECRET_BYTES).toString("base64url") });
+    return this.#config;
+  }
+
   state(): CoreState {
     return {
       config: this.#config,
@@ -125,13 +143,12 @@ export class ApiServer {
 
   /** Applies the current config: (re)binds only when the address changes; auth applies per request. */
   async apply() {
-    const config = this.#config;
+    const config = this.#withSecret();
     const key = networkKey(config);
     if (key === this.#listeningOn) return this.#publish();
     this.stop();
     this.#listeningOn = key;
     if (!config.enabled) return this.#publish();
-    if (!config.secret) this.#env.settings.setCore("apiServer", { secret: randomBytes(SECRET_BYTES).toString("base64url") });
 
     const generation = ++this.#generation;
     try {
@@ -194,7 +211,9 @@ export class ApiServer {
   #broadcast(sockets: Set<WebSocket>, data: object) {
     if (sockets.size === 0) return;
     const message = JSON.stringify(data);
-    for (const socket of sockets) if (socket.readyState === socket.OPEN) socket.send(message);
+    for (const socket of sockets) {
+      if (socket.readyState === socket.OPEN && socket.bufferedAmount <= MAX_BUFFERED_BYTES) socket.send(message);
+    }
   }
 
   async #fetchDetails(videoId: string) {
@@ -205,15 +224,22 @@ export class ApiServer {
 
   #onPlayerChange(state: NowPlaying, previous: NowPlaying) {
     if (!this.#server) return;
-    // The mirror's changes drive volume, position, modes and rating; the song
-    // (re)publication waits for the page's extras.
+    // The mirror's changes drive volume, position, modes and rating; a new
+    // track is announced here and enriched when the page's extras arrive.
     this.#playerState.update(state, previous);
     if (state.track && state.track.videoId !== previous.track?.videoId) {
       const videoId = state.track.videoId;
+      // Announce the track first, with what the mirror already knows: the
+      // page's extras can take seconds, and until then clients would get
+      // POSITION events for a song they were never told about.
+      this.#playerState.emitVideoChanged(undefined, 0);
       void this.#fetchDetails(videoId).then(() => {
         if (this.#env.player.state.track?.videoId !== videoId) return;
+        const before = JSON.stringify(this.#playerState.song);
         this.#playerState.setDetails(this.#details);
-        this.#playerState.emitVideoChanged(undefined, 0);
+        // Republish only when the details changed the payload: the first event
+        // already carried the song, and a repeat would restart client UIs.
+        if (JSON.stringify(this.#playerState.song) !== before) this.#playerState.emitVideoChanged(undefined, 0);
       });
       // The fork's page-side watcher pushed the new track's lyrics on its own;
       // it did not come over with the port, so the server asks synced-lyrics for
@@ -299,7 +325,8 @@ export class ApiServer {
   /** What the routes act on. */
   #backend(): Backend {
     const { player, requests, window, plugins } = this.#env;
-    const page = <T>(event: string, payload?: unknown) => requests.request<T>("core", event, payload);
+    const page = <T>(event: string, payload?: unknown, options?: { timeout?: number }) =>
+      requests.request<T>("core", event, payload, options);
     return {
       state: () => player.state,
       details: () => this.#details,

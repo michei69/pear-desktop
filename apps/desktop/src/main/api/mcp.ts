@@ -4,6 +4,7 @@
 // are the server's (the same token as the REST API).
 
 import type { IncomingMessage, ServerResponse } from "node:http";
+import { toJsonSchema, v } from "@pear/sdk/rpc";
 import type { McpTool } from "./mcp-tools.ts";
 
 export const MCP_PATH = "/mcp";
@@ -47,17 +48,41 @@ const error = (id: unknown, code: number, message: string): JsonRpcResponse => (
 
 async function handleCall(tools: readonly McpTool[], id: unknown, params: Record<string, unknown>): Promise<JsonRpcResponse> {
   const name = params.name;
-  const args = isObject(params.arguments) ? params.arguments : {};
   const tool = tools.find((entry) => entry.name === name);
   if (!tool) return error(id, -32602, `Unknown tool: ${String(name)}`);
+  // The tool's schema is executable: rejected arguments become a tool error the
+  // client can read, instead of reaching the page as NaN/undefined.
+  const parsed = v.safeParse(tool.input, params.arguments ?? {});
+  if (!parsed.success) {
+    return { jsonrpc: "2.0", id, result: { isError: true, content: [{ type: "text", text: validationMessage(parsed.issues) }] } };
+  }
   try {
-    return { jsonrpc: "2.0", id, result: await tool.run(args) };
+    return { jsonrpc: "2.0", id, result: await tool.run(parsed.output as Record<string, unknown>) };
   } catch (cause) {
     return {
       jsonrpc: "2.0",
       id,
       result: { isError: true, content: [{ type: "text", text: cause instanceof Error ? cause.message : String(cause) }] },
     };
+  }
+}
+
+/** "volume: Invalid type: Expected number", the shape the plugin RPC errors use too. */
+function validationMessage(issues: readonly v.BaseIssue<unknown>[]) {
+  return issues
+    .map((issue) => {
+      const path = v.getDotPath(issue);
+      return path ? `${path}: ${issue.message}` : issue.message;
+    })
+    .join("; ");
+}
+
+/** The input as JSON schema for `tools/list`; parts JSON schema can't express are left out. */
+function inputSchema(input: v.GenericSchema) {
+  try {
+    return toJsonSchema(input, { errorMode: "ignore" });
+  } catch {
+    return { type: "object" };
   }
 }
 
@@ -98,7 +123,7 @@ async function handleMessage(tools: readonly McpTool[], message: JsonRpcRequest)
           tools: tools.map((tool) => ({
             name: tool.name,
             description: tool.description,
-            inputSchema: tool.input,
+            inputSchema: inputSchema(tool.input),
             ...(tool.readOnly ? { annotations: { readOnlyHint: true } } : {}),
           })),
         },

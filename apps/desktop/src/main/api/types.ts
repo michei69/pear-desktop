@@ -3,7 +3,8 @@
 import type { NowPlaying, PlayerAction } from "@pear/sdk";
 import type { SongDetails } from "@pear/sdk/song-details";
 
-export type Method = "GET" | "POST" | "PATCH" | "DELETE";
+/** QUERY is the body-carrying safe method v2 uses for search/browse (OpenAPI 3.2). */
+export type Method = "GET" | "POST" | "PATCH" | "DELETE" | "QUERY";
 export type FieldType = "number" | "integer" | "string" | "boolean";
 /**
  * Field name → type. A trailing "?" marks it optional; an array is an enum of
@@ -63,6 +64,15 @@ export interface QueueResponse {
   items?: QueueItem[];
   autoPlaying?: boolean;
   continuation?: string;
+}
+
+/** The five fields the page projects for v1 `/queue/next` (the original's shape). */
+export interface NextQueueItem {
+  title?: string;
+  videoId?: string;
+  thumbnail?: unknown;
+  lengthText?: unknown;
+  shortBylineText?: unknown;
 }
 
 /** What v2 reports for the current song: the v1 shape plus what only v2 documents. */

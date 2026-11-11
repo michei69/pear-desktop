@@ -42,17 +42,19 @@ const MAX_BODY_BYTES = 1 << 20;
 
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "GET, POST, PATCH, DELETE, OPTIONS",
+  "Access-Control-Allow-Methods": "GET, POST, PATCH, DELETE, QUERY, OPTIONS",
   "Access-Control-Allow-Headers": "Authorization, Content-Type",
   // Lets web remotes on public origins reach a server on the local network.
   "Access-Control-Allow-Private-Network": "true",
 };
 
+// 5.3x understands OpenAPI 3.2 (the document's QUERY operations); the port's
+// pinned 5.17 would refuse the version outright.
 const SWAGGER_HTML = `<!doctype html>
 <html><head><meta charset="utf-8"><title>Pear Desktop API</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.17.14/swagger-ui.css"></head>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.34.1/swagger-ui.css"></head>
 <body><div id="swagger-ui"></div>
-<script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.17.14/swagger-ui-bundle.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.34.1/swagger-ui-bundle.js"></script>
 <script>SwaggerUIBundle({ url: "/doc", dom_id: "#swagger-ui" });</script></body></html>`;
 
 /** The WebSocket close codes the original used. */
