@@ -7,6 +7,10 @@ export const downloaderConfig = {
     label: "Show the Downloads entry in the sidebar",
     description: "Turn this off to keep the sidebar clean; Ctrl/Cmd+J and the app menu still open Downloads.",
   }),
+  showPlayerButton: config.bool(true, {
+    label: "Show the download button in the player bar",
+    description: "Turn this off to hide the button next to the player controls; downloads still work from the app menu.",
+  }),
   downloadFolder: config.string("", {
     label: "Download folder",
     placeholder: "Downloads",

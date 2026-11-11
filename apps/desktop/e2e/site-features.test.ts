@@ -7,6 +7,7 @@ import type { Page } from "@playwright/test";
 import { expect, test } from "./fixtures.ts";
 import { waitForTrackPlaying } from "./helpers/playback.ts";
 import { barLayout, inBar, sel } from "./helpers/player-bar.ts";
+import { setConfig } from "./helpers/plugins.ts";
 import { openSection, openSettings, overlay, searchbox } from "./helpers/settings.ts";
 import { mainWindow, playTestTrack } from "./launch.ts";
 
@@ -60,6 +61,27 @@ for (const layout of ["classic", "new"] as const) {
     await expect.poll(async () => (await playerState(page)).shuffle).toBe(!shuffled);
   });
 }
+
+test("the player-bar download button can be hidden without disabling downloads", async ({ launch }) => {
+  test.setTimeout(PLAYING_TEST_MS);
+  const app = await launch({
+    plugins: { downloader: { enabled: true, config: { showPlayerButton: false } } },
+  });
+  const page = await mainWindow(app);
+  await playTestTrack(page);
+  await waitForTrackPlaying(page);
+
+  await expect(page.locator(inBar(".pear-dl-button"))).toHaveCount(0);
+  // The option only hides the button; the app menu still opens Downloads.
+  const downloadsLabel = await app.evaluate(({ Menu }) => {
+    const options = Menu.getApplicationMenu()?.items.find((item) => item.label === "Options");
+    return options?.submenu?.items.some((item) => item.label === "Downloads");
+  });
+  expect(downloadsLabel).toBe(true);
+  // The setting applies live: the page part restarts and mounts the button.
+  await setConfig(page, "downloader", { showPlayerButton: true });
+  await expect(page.locator(inBar(".pear-dl-button"))).toBeVisible({ timeout: 15_000 });
+});
 
 test("feature flag overrides reach the page, and the flag list edits them", async ({ launch }) => {
   const app = await launch({ core: { site: { siteFlags: ["pear_e2e_flag=42", "pear_e2e_switch=false"] } } });

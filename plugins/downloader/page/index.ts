@@ -40,7 +40,7 @@ export function startPage(ctx: Ctx) {
     if (!track) return toast(t("plugins.downloader.toast.nothing-playing", "Play something to download it"));
     startDownload({ videoId: track.videoId }, track.title);
   };
-  const button = downloadButton(downloadPlaying);
+  const button = ctx.config.showPlayerButton === false ? undefined : downloadButton(downloadPlaying);
   // Settings can keep the sidebar clean; Ctrl+J and the app menu still open Downloads.
   const entry =
     ctx.config.showButton === false
@@ -62,7 +62,7 @@ export function startPage(ctx: Ctx) {
   ctx.host.on("open-downloads", () => openDownloads());
   // What the host has to say, e.g. that the app menu's "Download playlist" found none.
   ctx.host.on("toast", (text) => toast(String(text)));
-  showState(button, state, t);
+  if (button) showState(button, state, t);
 
   const apply = (next: DownloaderState) => {
     const previous = state.setup;
@@ -76,7 +76,7 @@ export function startPage(ctx: Ctx) {
         }),
       );
     }
-    showState(button, state, t);
+    if (button) showState(button, state, t);
     // How many downloads are running or waiting.
     const count = (next.active ? 1 : 0) + next.queued;
     entry?.setBadge(count > 0 ? String(count) : "");
@@ -106,11 +106,13 @@ export function startPage(ctx: Ctx) {
   ctx.onCleanup(() => tokens.dispose());
 
   // Before the volume button; YTM may re-render or replace the player bar while starting up.
-  ctx.mount(button, (element) => {
-    const volume = ctx.$("player_bar.volume_button");
-    if (volume) volume.before(element);
-    else ctx.$("player_bar.right_controls_buttons")?.prepend(element);
-  });
+  if (button) {
+    ctx.mount(button, (element) => {
+      const volume = ctx.$("player_bar.volume_button");
+      if (volume) volume.before(element);
+      else ctx.$("player_bar.right_controls_buttons")?.prepend(element);
+    });
+  }
 }
 
 function showResult(ctx: Ctx, toast: ShowToast, result: JobResult, openDownloads: () => void) {
