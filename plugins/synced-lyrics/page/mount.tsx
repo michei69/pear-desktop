@@ -68,9 +68,11 @@ export function mountLyrics(ctx: Ctx) {
   isolateKeys(element, ctx.signal);
 
   // null pauses the view's per-frame work: during ads, and while the window is off screen.
-  const now = () => {
+  const now = () => (ctx.isWindowVisible() ? position() : null);
+  /** The video's position even while paused (null only during ads); Apple seeks while paused. */
+  const position = () => {
     const video = ctx.player.video();
-    if (!video || ctx.player.state.ad || !ctx.isWindowVisible()) return null;
+    if (!video || ctx.player.state.ad) return null;
     return video.currentTime * 1000;
   };
   const seek = (ms: number) => ctx.player.control({ type: "seek", seconds: ms / 1000 });
@@ -84,7 +86,16 @@ export function mountLyrics(ctx: Ctx) {
     element.dataset.style = options.style;
     render(
       open ? (
-        <LyricsView store={store} options={options} now={now} seek={seek} scroller={scroller} openSource={openSource} t={ctx.t} />
+        <LyricsView
+          store={store}
+          options={options}
+          now={now}
+          position={position}
+          seek={seek}
+          scroller={scroller}
+          openSource={openSource}
+          t={ctx.t}
+        />
       ) : null,
       root,
     );

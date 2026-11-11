@@ -1,7 +1,7 @@
 import { definePlugin } from "@pear/sdk";
+import { shell } from "electron";
 import { v } from "@pear/sdk/rpc";
 import { css } from "@pear/sdk/macros" with { type: "macro" };
-import { shell } from "electron";
 import { hostOf, hosts, LyricsHost } from "./host.ts";
 import { mountLyrics } from "./page/mount.tsx";
 import { schema } from "./schema.ts";

@@ -104,9 +104,9 @@ test("shows synced lyrics in the Lyrics tab, follows playback and seeks on click
   await expect(lyrics(page)).toHaveAttribute("data-state", "synced");
   await screenshot(app, "lyrics-picker");
   // A dot jumps straight to its provider.
-  await picker.locator('.dot[aria-label="MusixMatch"]').click();
+  await picker.locator(".dot").nth(providers.indexOf("MusixMatch")).click();
   await expect(picker).toHaveAttribute("data-selected", "MusixMatch");
-  await picker.locator(`.dot[aria-label="${selected}"]`).click();
+  await picker.locator(".dot").nth(providers.indexOf(selected)).click();
   await expect(lyrics(page)).toHaveAttribute("data-state", "synced");
 
   // It slides away while the lyrics are scrolled, unless the pointer is near it.
@@ -136,6 +136,62 @@ test("switches to the Apple Music style", async ({ app, page }) => {
       }),
     )
     .toBe(true);
+  // Master's Apple style keeps its picker visible over the lyrics; it is only
+  // hidden by scrolling down, never behind am-lyrics' readiness.
+  const applePicker = lyrics(page).locator(".apple-music-picker .picker");
+  await expect(applePicker).toBeVisible();
+  await expect(applePicker).not.toHaveAttribute("data-hidden", "true");
+  // The plugin's source footer belongs to neither renderer (master never had it),
+  // and am-lyrics' own "Source" footer must stay hidden behind the component.
+  // Seeking drives the component too: the current line is the active one.
+  await page.evaluate(() => window.__pearRuntime!.player.control({ type: "seek", seconds: 43 }));
+  await expect
+    .poll(() =>
+      page.evaluate(() => {
+        const lyricsHost = document.querySelector("pear-synced-lyrics")?.shadowRoot;
+        const apple = lyricsHost?.querySelector("am-lyrics");
+        return Boolean(apple?.shadowRoot?.querySelector(".lyrics-line.active")?.textContent?.trim());
+      }),
+    )
+    .toBe(true);
+  await expect(lyrics(page).locator("footer.source")).toHaveCount(0);
+  expect(
+    await page.evaluate(() => {
+      const lyricsHost = document.querySelector("pear-synced-lyrics")?.shadowRoot;
+      const apple = lyricsHost?.querySelector("am-lyrics");
+      const content = apple?.shadowRoot?.querySelector<HTMLElement>(".lyrics-footer .footer-content");
+      return !content || getComputedStyle(content).display === "none";
+    }),
+  ).toBe(true);
+  // Scrolled down it slips away, and comes back when the pointer reaches the top.
+  await expect
+    .poll(() =>
+      page.evaluate(() => {
+        const lyricsHost = document.querySelector("pear-synced-lyrics")?.shadowRoot;
+        return lyricsHost?.querySelector<HTMLElement>(".apple-music-picker")?.style.getPropertyValue("--apple-music-picker-offset");
+      }),
+    )
+    .not.toBe("0px");
+  const lyricsBox = (await lyrics(page).boundingBox())!;
+  await page.mouse.move(lyricsBox.x + lyricsBox.width / 2, lyricsBox.y + 8);
+  await expect
+    .poll(() =>
+      page.evaluate(() => {
+        const lyricsHost = document.querySelector("pear-synced-lyrics")?.shadowRoot;
+        return lyricsHost?.querySelector<HTMLElement>(".apple-music-picker")?.style.getPropertyValue("--apple-music-picker-offset");
+      }),
+    )
+    .toBe("0px");
+  // Its arrows switch providers without losing the component or the picker.
+  const appleProviders = (await applePicker
+    .locator(".picker-item")
+    .evaluateAll((items) => items.map((item) => item.getAttribute("data-provider")!)))!;
+  const appleSelected = (await applePicker.getAttribute("data-selected"))!;
+  const appleNext = appleProviders[(appleProviders.indexOf(appleSelected) + 1) % appleProviders.length]!;
+  await applePicker.locator(".arrow.next").click();
+  await expect(applePicker).toHaveAttribute("data-selected", appleNext);
+  await applePicker.locator(".dot").nth(appleProviders.indexOf(appleSelected)).click();
+  await expect(applePicker).toHaveAttribute("data-selected", appleSelected);
   await screenshot(app, "lyrics-apple-music");
 
   await setConfig(page, "synced-lyrics", { lyricsStyle: "standard" });

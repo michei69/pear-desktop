@@ -569,28 +569,38 @@ export const lyricsStyles = css`
   .root.apple-music {
     height: 100%;
     padding-bottom: 0;
+    overflow: hidden;
+  }
+  /* pear-desktop's AppleMusicStyle layout: the picker floats above the whole
+     component and slides away as a wrapper, leaving the lyrics' scroll alone. */
+  .lyrics-renderer {
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    height: 100%;
   }
-  .apple-music {
+  .apple-music-style {
     position: relative;
-    flex: 1;
-    min-height: 0;
+    height: 100%;
     overflow: hidden;
   }
-  /* The picker floats over the lyrics; it still slides itself away on scroll. */
   .apple-music-picker {
     position: absolute;
     inset: 0 0 auto;
-    z-index: 3;
+    z-index: 100;
+    backdrop-filter: blur(5px);
+    transform: translateY(var(--apple-music-picker-offset, 0));
+    transition: transform 325ms ease-in-out;
   }
+  /* A little tighter than the standard picker: it floats over the lyrics. */
   .apple-music-picker .picker {
+    height: 4em;
     margin-bottom: 0;
+    padding-block: 0.25em;
   }
   .apple-music-host {
     position: relative;
-    height: 100%;
+    flex: 1;
+    min-height: 0;
   }
   .apple-music-host > am-lyrics {
     display: block;
@@ -599,6 +609,13 @@ export const lyricsStyles = css`
     /* The component pins its own system font stack on :host in its shadow
        root; inherit the page font so themes keep working in this style. */
     font-family: inherit !important;
+  }
+  /* Plain-text fallback when the selected provider has no timed lines. */
+  .apple-music-plain {
+    height: 100%;
+    overflow-y: auto;
+    padding: 16px;
+    scrollbar-width: none;
   }
 
   .source {

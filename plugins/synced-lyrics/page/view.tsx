@@ -35,6 +35,8 @@ export interface ViewProps {
   options: ViewOptions;
   /** Playback position in ms, or null while it isn't meaningful (ads). */
   now(): number | null;
+  /** The video's position even while paused; null only during ads. Apple needs it to seek while paused. */
+  position(): number | null;
   seek(ms: number): void;
   /** The element that scrolls the lyrics (YTM's tab panel). */
   scroller(): HTMLElement | null;
@@ -63,17 +65,13 @@ export function LyricsView(props: ViewProps) {
   const track = store.track;
   const current = store.current;
 
-  const apple = Boolean(track && shown?.synced && options.style === "apple-music");
+  const apple = Boolean(track && options.style === "apple-music");
 
   // The selected provider's lyrics, or what it is doing (pear-desktop's kaomoji).
   let body;
   if (!track) body = <Message title={t("plugins.synced-lyrics.nothing-playing", "Nothing playing")} />;
-  else if (shown?.synced)
-    body = apple ? (
-      <AppleMusicLyrics {...props} key={`${track.videoId}:${shown.provider}`} />
-    ) : (
-      <SyncedLyrics {...props} key={`${track.videoId}:${shown.provider}`} />
-    );
+  else if (apple) body = <AppleMusicLyrics {...props} />;
+  else if (shown?.synced) body = <SyncedLyrics {...props} key={`${track.videoId}:${shown.provider}`} />;
   else if (shown) body = <PlainLyrics texts={shown.texts} romanized={shown.romanized} translation={shown.translation} />;
   else if (current.status === "loading") body = <LoadingKaomoji />;
   else if (current.status === "error")
@@ -102,7 +100,7 @@ export function LyricsView(props: ViewProps) {
     >
       {track && !apple && <Picker store={store} scroller={props.scroller} showCustomSearch={options.showCustomSearch} t={t} />}
       {body}
-      {shown && (
+      {!apple && shown && (
         <footer class="source">
           {t("plugins.synced-lyrics.lyrics-from", "Lyrics from")}{" "}
           {shown.result.url ? (
@@ -187,11 +185,14 @@ function Picker({
   scroller,
   showCustomSearch,
   t,
+  autoHide = true,
 }: {
   store: LyricsStore;
   scroller(): HTMLElement | null;
   showCustomSearch: boolean;
   t: Translate;
+  /** Apple Music places the picker itself and slides it with the component; off here. */
+  autoHide?: boolean;
 }) {
   const index = PROVIDERS.indexOf(store.selected);
   const ref = useRef<HTMLDivElement>(null);
@@ -201,6 +202,7 @@ function Picker({
   const [artist, setArtist] = useState("");
 
   useEffect(() => {
+    if (!autoHide) return;
     const container = scroller();
     const picker = ref.current;
     if (!container || !picker) return;
@@ -227,7 +229,7 @@ function Picker({
       container.removeEventListener("pointermove", onPointer);
       container.removeEventListener("pointerleave", onLeave);
     };
-  }, []);
+  }, [autoHide]);
 
   const openSearch = () => {
     setQuery(store.customQuery?.query ?? store.track?.title ?? "");
@@ -251,7 +253,7 @@ function Picker({
     <div
       class="picker"
       ref={ref}
-      data-hidden={hidden || undefined}
+      data-hidden={(autoHide && hidden) || undefined}
       data-selected={store.selected}
       role="group"
       aria-label={t("plugins.synced-lyrics.picker", "Lyrics provider")}
@@ -446,104 +448,201 @@ function hideAmLyricsChrome(element: AmLyricsElement) {
   root.append(style);
 }
 
-/** Apple Music style: am-lyrics renders the TTML synthesized from the shown lyrics. */
-function AppleMusicLyrics({ store, options, now, seek, t }: ViewProps) {
-  const shown = store.shown!;
+/**
+ * Apple Music style, ported line-for-line from pear-desktop's AppleMusicStyle:
+ * the picker floats over am-lyrics and slides away on scroll; the component's
+ * own header/footer/source switcher are hidden; loading, error and plain
+ * lyrics share the same host so changing style never swaps the chrome.
+ */
+function AppleMusicLyrics({ store, options, now, position, seek, t }: ViewProps) {
+  const shown = store.shown;
+  const current = store.current;
+  const rootRef = useRef<HTMLDivElement>(null);
   const hostRef = useRef<HTMLDivElement>(null);
+  const pickerRef = useRef<HTMLDivElement>(null);
   const elementRef = useRef<AmLyricsElement | null>(null);
+  const [element, setElement] = useState<AmLyricsElement | null>(null);
+  /** While the player catches up with a click-seek, keep writing the clicked time. */
   const seekPendingUntil = useRef(0);
   const offset = useRef(options.offsetMs);
   offset.current = options.offsetMs;
-  const [scroller, setScroller] = useState<HTMLElement | null>(null);
-  const [ready, setReady] = useState(false);
+  /** Last position written while paused, so a paused seek still moves the lyrics. */
+  const lastPausedPosition = useRef<number | null>(null);
 
-  const translations = shown.translation;
-  const translationLanguage = shown.result.translation?.language;
-  const hasTranslation = translations.some((text) => Boolean(text?.trim()));
-  const ttml = synthesizeTTML(shown.lines, {
-    translations,
-    ...(translationLanguage ? { translationLanguage } : {}),
-  });
+  const translations = shown?.translation;
+  const translationLanguage = shown?.result.translation?.language;
+  const hasTranslation = Boolean(translations?.some((text) => Boolean(text?.trim())));
+  const ttml =
+    shown?.synced && shown.lines.length > 0
+      ? synthesizeTTML(shown.lines, {
+          ...(translations ? { translations } : {}),
+          ...(translationLanguage ? { translationLanguage } : {}),
+        })
+      : null;
 
-  // One element per mounted view; the parent keys the component by track and
-  // provider. Every property is set before the element connects, so its own
-  // provider stack never runs a second network round-trip.
-  useLayoutEffect(() => {
+  // Picker metrics: measured on mount, resize, pointer entry and when the
+  // component's own scroll container changes. The wrapper (not the picker)
+  // moves, exactly as in pear-desktop's AppleMusicStyle.
+  const picker = useRef({ height: 0, top: 0, scrollTop: 0, shown: undefined as boolean | undefined });
+  const applyPicker = (show: boolean) => {
+    const wrapper = pickerRef.current;
+    if (!wrapper || show === picker.current.shown) return;
+    picker.current.shown = show;
+    wrapper.style.setProperty("--apple-music-picker-offset", show ? "0px" : `-${picker.current.height}px`);
+    // Sliding it out of the tab must not let it eat clicks over the tab header.
+    wrapper.style.pointerEvents = show ? "" : "none";
+  };
+  const syncPicker = (pointerY?: number) => {
+    const nearTop = pointerY !== undefined && pointerY - picker.current.top <= picker.current.height + 8;
+    applyPicker(picker.current.scrollTop <= 8 || nearTop);
+  };
+  const measureTab = () => {
+    picker.current.top = rootRef.current?.getBoundingClientRect().top ?? 0;
+    const inner = pickerRef.current?.querySelector<HTMLElement>(".picker");
+    picker.current.height = inner?.getBoundingClientRect().height ?? picker.current.height;
+    applyPicker(picker.current.shown ?? true);
+  };
+
+  useEffect(() => {
+    measureTab();
+    window.addEventListener("resize", measureTab);
+    return () => window.removeEventListener("resize", measureTab);
+  }, []);
+  // One element per mounted view; all properties are set before it connects so
+  // its own provider stack never runs a second network round-trip.
+  useEffect(() => {
     const host = hostRef.current;
     if (!host) return;
+
+    let currentElement = elementRef.current;
+    if (!ttml) {
+      currentElement?.remove();
+      elementRef.current = null;
+      setElement(null);
+      return;
+    }
+
+    if (!currentElement) {
+      currentElement = document.createElement("am-lyrics") as AmLyricsElement;
+      currentElement.ttml = ttml;
+      currentElement.currentTime = Math.max(0, (position() ?? 0) + offset.current);
+      currentElement.noAutoAlternates = true;
+      currentElement.showTranslation = hasTranslation;
+      currentElement.highlightColor = "var(--ytmusic-text-primary, #ffffff)";
+
+      const created = currentElement;
+      created.addEventListener("line-click", (event) => {
+        const { timestamp } = (event as CustomEvent<{ timestamp?: number }>).detail ?? {};
+        if (typeof timestamp !== "number" || !Number.isFinite(timestamp)) return;
+        // Paint the jump at once; the player's progress tick is a few frames away.
+        created.currentTime = Math.max(0, timestamp + offset.current);
+        seekPendingUntil.current = performance.now() + 400;
+        // +10 ms, as pear-desktop: landing exactly on the boundary can still
+        // resolve to the previous line for one tick.
+        seek(timestamp + 10);
+      });
+      host.append(created);
+      elementRef.current = created;
+      setElement(created);
+      void created.updateComplete.then(() => {
+        if (created.isConnected) hideAmLyricsChrome(created);
+      });
+    } else if (currentElement.ttml !== ttml) {
+      currentElement.ttml = ttml;
+      void currentElement.updateComplete.then(() => hideAmLyricsChrome(currentElement!));
+    }
+
+    currentElement.currentTime = Math.max(0, (position() ?? 0) + offset.current);
+  }, [ttml, hasTranslation]);
+
+  useEffect(() => {
+    const currentElement = element;
+    if (!currentElement) return;
+
+    let container: HTMLElement | null = null;
     let disposed = false;
-    const element = document.createElement("am-lyrics") as AmLyricsElement;
-    element.ttml = ttml;
-    element.currentTime = Math.max(0, now() ?? 0);
-    element.noAutoAlternates = true;
-    element.showTranslation = hasTranslation;
-    element.highlightColor = "var(--ytmusic-text-primary, #ffffff)";
-
-    const onLineClick = (event: Event) => {
-      const timestamp = (event as CustomEvent<{ timestamp?: number }>).detail?.timestamp;
-      if (typeof timestamp !== "number" || !Number.isFinite(timestamp)) return;
-      // Paint the jump at once; the player's progress tick is a few frames away.
-      element.currentTime = Math.max(0, timestamp + offset.current);
-      seekPendingUntil.current = performance.now() + 400;
-      seek(timestamp);
+    const onScroll = () => {
+      picker.current.scrollTop = container?.scrollTop ?? 0;
+      syncPicker();
     };
-    element.addEventListener("line-click", onLineClick);
-    host.append(element);
-    elementRef.current = element;
-
-    void element.updateComplete.then(() => {
+    void currentElement.updateComplete.then(() => {
       if (disposed) return;
-      hideAmLyricsChrome(element);
-      const container = element.shadowRoot?.querySelector<HTMLElement>(".lyrics-container") ?? null;
-      setScroller(container);
-      setReady(true);
+      container = currentElement.shadowRoot?.querySelector<HTMLElement>(".lyrics-container") ?? null;
+      container?.addEventListener("scroll", onScroll, { passive: true });
+      onScroll();
     });
-
     return () => {
       disposed = true;
-      element.removeEventListener("line-click", onLineClick);
-      element.remove();
-      elementRef.current = null;
+      container?.removeEventListener("scroll", onScroll);
     };
-    // The lyrics and props the first render had are enough; later changes are
-    // applied below without recreating the element.
-  }, []);
+  }, [element]);
 
   useEffect(() => {
-    const element = elementRef.current;
-    if (element && element.ttml !== ttml) element.ttml = ttml;
-  }, [ttml]);
-
-  useEffect(() => {
-    const element = elementRef.current;
-    if (!element) return;
-    element.showTranslation = hasTranslation;
+    const currentElement = element;
+    if (!currentElement) return;
+    currentElement.showTranslation = hasTranslation;
     // The component only renders a plain field when a reactive update happens.
-    element.requestUpdate();
+    currentElement.requestUpdate();
   }, [hasTranslation]);
 
-  // The player reports its position through the video element; drive the
-  // component every frame so the word wipes stay smooth.
+  // Advance the component on animation frames between the player's ~4 Hz ticks
+  // so word wipes stay smooth; while paused, follow a paused seek once.
   useEffect(() => {
     let frame = requestAnimationFrame(function tick() {
-      const element = elementRef.current;
-      if (element && performance.now() >= seekPendingUntil.current) {
-        const position = now();
-        if (position !== null) element.currentTime = Math.max(0, position + offset.current);
+      const currentElement = elementRef.current;
+      if (currentElement && performance.now() >= seekPendingUntil.current) {
+        const time = position();
+        if (time !== null) {
+          const playing = now() !== null;
+          if (playing || lastPausedPosition.current === null || Math.abs(time - lastPausedPosition.current) > 1) {
+            lastPausedPosition.current = time;
+            currentElement.currentTime = Math.max(0, time + offset.current);
+          }
+        }
       }
       frame = requestAnimationFrame(tick);
     });
     return () => cancelAnimationFrame(frame);
-  }, [now]);
+  }, [now, position]);
+
+  useEffect(() => () => elementRef.current?.remove(), []);
 
   return (
-    <div class="apple-music">
-      {ready && (
-        <div class="apple-music-picker">
-          <Picker store={store} scroller={() => scroller} showCustomSearch={options.showCustomSearch} t={t} />
-        </div>
-      )}
-      <div class="apple-music-host" ref={hostRef} />
+    <div
+      class="lyrics-renderer apple-music-style"
+      ref={rootRef}
+      onMouseLeave={() => syncPicker()}
+      onMouseMove={(event) => syncPicker(event.clientY)}
+      onPointerEnter={measureTab}
+    >
+      <div class="apple-music-picker" ref={pickerRef}>
+        <section class="apple-music-picker-slot">
+          <Picker store={store} scroller={() => null} showCustomSearch={options.showCustomSearch} t={t} autoHide={false} />
+        </section>
+      </div>
+
+      <div class="apple-music-host" ref={hostRef}>
+        {!ttml &&
+          (current.status === "loading" ? (
+            <LoadingKaomoji />
+          ) : current.status === "error" ? (
+            <div class="error">
+              <pre class="error-title">{t("plugins.synced-lyrics.errors.fetch", "An error occurred while fetching the lyrics.")}</pre>
+              <pre class="error-detail">{current.message}</pre>
+              <button type="button" class="retry" onClick={() => store.retry(store.selected)}>
+                {t("plugins.synced-lyrics.refetch-btn.normal", "Refetch lyrics")}
+              </button>
+            </div>
+          ) : shown && !shown.synced ? (
+            <div class="apple-music-plain">
+              <PlainLyrics texts={shown.texts} romanized={shown.romanized} translation={shown.translation} />
+            </div>
+          ) : (
+            <div class="kaomoji" role="status" aria-label={t("plugins.synced-lyrics.errors.not-found", "No lyrics found for this song.")}>
+              ＼(〇_ｏ)／
+            </div>
+          ))}
+      </div>
     </div>
   );
 }
