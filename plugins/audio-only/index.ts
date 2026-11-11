@@ -5,9 +5,11 @@ const QUALITY = "tiny";
 
 type StyleValue = [value: string, priority: string];
 
-/** The older quality method YTM's player still has. */
+/** The quality methods YTM's player still has beyond the SDK's player interface. */
 interface QualityApi extends YTPlayerApi {
   setPlaybackQuality?(quality: string): void;
+  /** The quality the user picked in YTM's own menu; it survives our forced minimum. */
+  getUserPlaybackQualityPreference?(): string;
 }
 
 export default definePlugin({
@@ -65,10 +67,27 @@ export default definePlugin({
       image.src = url;
     };
 
+    /**
+     * The user's playback-quality preference, read before the first forced
+     * 'tiny' and put back on stop. Undefined until it can be read.
+     */
+    let savedQuality: string | undefined;
+
     // The lowest quality makes YTM take its audio-only path.
     const requestTinyQuality = () => {
       const api = ctx.player.api;
       if (!api) return;
+      // Remember the preference before the first forced write, not the 'tiny' we
+      // are about to force; the current quality is the fallback for players that
+      // do not expose the preference.
+      if (savedQuality === undefined) {
+        try {
+          const quality = (api as QualityApi).getUserPlaybackQualityPreference?.() || api.getPlaybackQuality();
+          if (quality) savedQuality = quality;
+        } catch {
+          // The player cannot say yet; read it again on a later track.
+        }
+      }
       try {
         api.setPlaybackQualityRange(QUALITY);
         // YTM still exposes this older method, which the SDK's player interface omits.
@@ -81,8 +100,6 @@ export default definePlugin({
 
     let lockedPlayer: HTMLElement | null = null;
     let lock: MutationObserver | undefined;
-    let watchedPlayer: HTMLElement | null = null;
-    let content: MutationObserver | undefined;
     let stopped = false;
 
     /** YTM writes the mode back after loading a track; keep it audio-only. */
@@ -105,15 +122,7 @@ export default definePlugin({
       lock.observe(player, { attributes: true, attributeFilter: ["playback-mode", "data-pear-show-video"] });
     };
 
-    /** YTM re-creates the video inside the player; hide the new one too. */
-    const watchContent = (player: HTMLElement) => {
-      if (player === watchedPlayer) return;
-      content?.disconnect();
-      watchedPlayer = player;
-      content = new MutationObserver(apply);
-      content.observe(player, { childList: true, subtree: true });
-    };
-
+    /** Puts the player page currently in the DOM into audio-only mode. */
     const apply = () => {
       if (stopped) return;
       const player = ctx.$("player.container");
@@ -127,11 +136,11 @@ export default definePlugin({
         setStyle(ctx.$("player.video"), "display", "none");
       }
       lockPlaybackMode(player);
-      watchContent(player);
       forceThumbnail();
     };
 
-    // The player is re-created on navigation; the observer is cheap and applies only then.
+    // The player page is re-created on navigation (not on every track), so this
+    // only re-applies then; track loads are the player's own events below.
     ctx.observe("app", { childList: true, subtree: true }, () => {
       if (ctx.$("player.container") !== lockedPlayer) apply();
     });
@@ -147,7 +156,6 @@ export default definePlugin({
     ctx.player.on("trackChange", () => {
       apply();
       requestTinyQuality();
-      forceThumbnail();
       // The new track's video and artwork land a moment after the event.
       ctx.setTimeout(() => {
         apply();
@@ -158,7 +166,20 @@ export default definePlugin({
     ctx.onCleanup(() => {
       stopped = true;
       lock?.disconnect();
-      content?.disconnect();
+      // Only while the player is still on our forced minimum: a quality the user
+      // picked meanwhile must survive the plugin.
+      const api = ctx.player.api;
+      if (savedQuality) {
+        try {
+          if (api?.getPlaybackQuality() === QUALITY) {
+            api.setPlaybackQualityRange(savedQuality);
+            (api as QualityApi).setPlaybackQuality?.(savedQuality);
+          }
+        } catch {
+          // The player may be gone or refuse the quality now.
+        }
+        savedQuality = undefined;
+      }
       for (const [image, { forced, original }] of forcedThumbnails) {
         // The last track's artwork is still ours: put back the placeholder (or the
         // cover art a previous plugin left), so the player goes back to video art.
