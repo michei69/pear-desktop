@@ -13,13 +13,23 @@ export default definePlugin({
     start(ctx) {
       const smallWindow = new SmallWindow(ctx);
       smallWindows.set(ctx, smallWindow);
+      // pear-desktop's plugin menu had the toggles; the app and tray menus are flat
+      // now, so only the entries that need no check state come back here.
+      ctx.addMenuItem({
+        label: ctx.t("plugins.picture-in-picture.templates.button", "Picture-in-picture"),
+        click: () => smallWindow.toggle(),
+      });
+      ctx.addMenuItem({
+        label: ctx.t("plugins.picture-in-picture.menu.save-window-position", "Save window position"),
+        click: () => ctx.setConfig({ savePosition: !ctx.config.savePosition }),
+      });
+      // Settings are read when entering the small window; these apply while it is open.
+      ctx.onConfigChange(() => smallWindow.applyConfig());
       ctx.onCleanup(() => {
         smallWindow.dispose();
         smallWindows.delete(ctx);
       });
     },
-    // Settings are read when entering the small window.
-    onConfigChange() {},
     commands: {
       toggle() {
         const smallWindow = smallWindows.get(this);
@@ -75,7 +85,8 @@ export default definePlugin({
       -webkit-app-region: drag;
     }
   `,
-  page: startPage,
+  // A settings change applies live; restarting the page part would drop YTM's full screen.
+  page: { start: startPage, onConfigChange() {} },
 });
 
 // Commands run with the host context as `this`; this finds its small window.

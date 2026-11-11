@@ -99,6 +99,17 @@ export class SmallWindow {
     else this.enter();
   }
 
+  /**
+   * Applies the settings that matter while the window is already small: enter()
+   * read them once. The rest is read live when the geometry is remembered.
+   */
+  applyConfig() {
+    const { window, config } = this.#ctx;
+    if (!this.#restore || window.isDestroyed()) return;
+    if (config.alwaysOnTop) window.setAlwaysOnTop(true, ON_TOP_LEVEL, ON_TOP_RELATIVE_LEVEL);
+    else window.setAlwaysOnTop(false);
+  }
+
   enter() {
     if (this.#restore) return;
     const { window, config } = this.#ctx;
@@ -112,7 +123,11 @@ export class SmallWindow {
     if (this.#restore.maximized) window.unmaximize();
     window.setMaximizable(false);
     window.setFullScreenable(false);
+    // Electron keeps a window out of other apps' full-screen Spaces unless the
+    // dock is hidden while it joins them (the documented macOS workaround).
+    if (process.platform === "darwin") this.#ctx.app.dock?.hide();
     window.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
+    if (process.platform === "darwin") this.#ctx.app.dock?.show();
     if (config.alwaysOnTop) window.setAlwaysOnTop(true, ON_TOP_LEVEL, ON_TOP_RELATIVE_LEVEL);
 
     const saved = this.#saved.bounds;
