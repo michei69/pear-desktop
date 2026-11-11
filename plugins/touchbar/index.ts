@@ -1,7 +1,8 @@
 import { definePlugin, type NowPlaying, type PlayerAction } from "@pear/sdk";
 import { pearIconBitmap, ytmIconBitmap } from "@pear/sdk/icon";
 import { isPlaying } from "@pear/sdk/util";
-import { nativeImage, net, type NativeImage, TouchBar } from "electron";
+import { nativeImage, type NativeImage, TouchBar } from "electron";
+import { artworkImage } from "./artwork.ts";
 
 const ARTWORK_HEIGHT = 23;
 /** The app icon's bitmap size, shown while there is no artwork. */
@@ -51,8 +52,7 @@ export default definePlugin({
         let icon = fallbackIcon;
         if (url) {
           try {
-            const response = await net.fetch(url);
-            const image = nativeImage.createFromBuffer(Buffer.from(await response.arrayBuffer()));
+            const image = await artworkImage(url);
             if (!image.isEmpty()) icon = image.resize({ height: ARTWORK_HEIGHT });
           } catch (error) {
             ctx.log.warn("couldn't load artwork", error);
@@ -64,7 +64,12 @@ export default definePlugin({
         ctx.window.setTouchBar(touchBar);
       };
 
+      /** What the bar shows; position-only changes must not rewrite native labels (master skipped TimeChanged). */
+      const shown = (state: NowPlaying) =>
+        [state.track?.title, state.track?.artist, state.track?.artworkUrl, isPlaying(state)].join("\u0000");
+
       const update = (state: NowPlaying, previous?: NowPlaying) => {
+        if (previous && shown(state) === shown(previous)) return;
         title.label = state.track ? `${state.track.title} — ${state.track.artist}` : "";
         playPause.label = isPlaying(state) ? "⏸" : "▶️";
         if (state.track?.artworkUrl !== previous?.track?.artworkUrl) void loadArtwork(state.track?.artworkUrl);
