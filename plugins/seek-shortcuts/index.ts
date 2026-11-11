@@ -10,6 +10,9 @@ export default definePlugin({
   page: {
     start(ctx) {
       const onKeydown = (event: KeyboardEvent) => {
+        // Master installed its listener only with the player API: before that the key
+        // must reach the page instead of being consumed without a seek.
+        if (!ctx.player.api) return;
         if (event.defaultPrevented) return;
         if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
         if (event.code !== "ArrowLeft" && event.code !== "ArrowRight") return;
@@ -18,10 +21,11 @@ export default definePlugin({
         if (ctx.$<HTMLElement & { opened?: boolean }>("nav_bar.search_box")?.opened) return;
 
         event.preventDefault();
-        event.stopPropagation();
         ctx.player.control({ type: "seekBy", seconds: event.code === "ArrowLeft" ? -SEEK_SECONDS : SEEK_SECONDS });
       };
-      ctx.listen(window, "keydown", onKeydown, { capture: true });
+      // Bubble phase, and never stop propagation: a deeper handler (the in-app menu's
+      // shadow host, the lyrics picker) must get the arrows first.
+      ctx.listen(window, "keydown", onKeydown);
     },
   },
 });
