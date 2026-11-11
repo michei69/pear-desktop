@@ -1,9 +1,9 @@
 import { config, definePlugin } from "@pear/sdk";
 
-// After the equalizer, before fades and the output. The track gain sits just
-// before the compressor so it lifts quiet songs before dynamics are applied.
+// After the equalizer, before fades and the output. The track gain follows the
+// compressor, as pear-desktop's did: the loudness boost is applied to the
+// compressed output instead of being compressed away by it.
 const ORDER = 20;
-const GAIN_ORDER = ORDER - 1;
 
 /** YT may not have written the loudness yet when a track starts. */
 const LOUDNESS_RETRY_MS = 400;
@@ -38,7 +38,7 @@ export default definePlugin({
     release: config.number(250, { label: "Release", min: 0, max: 1000, step: 5, unit: " ms" }),
     autoTrackGain: config.bool(false, {
       label: "Even out track loudness",
-      description: "Boost quiet songs by the loudness YTM reports for them, before compression.",
+      description: "Boost quiet songs by the loudness YTM reports for them, after compression.",
     }),
     maxTrackGainDb: config.number(12, {
       label: "Maximum boost",
@@ -48,6 +48,16 @@ export default definePlugin({
       step: 3,
       unit: " dB",
     }),
+  },
+  host: {
+    start(ctx) {
+      // pear-desktop's Options toggle. The menu API has no check mark, so the
+      // item's label states what it does; the boost ceiling stays in settings.
+      ctx.addMenuItem({
+        label: ctx.t("plugins.audio-compressor.menu.auto-track-gain", "Auto track gain (boost quiet tracks)"),
+        click: () => ctx.setConfig({ autoTrackGain: !ctx.config.autoTrackGain }),
+      });
+    },
   },
   page: async (ctx) => {
     const graph = await ctx.audio();
@@ -110,8 +120,11 @@ export default definePlugin({
     };
 
     apply();
-    graph.insert(trackGain, trackGain, GAIN_ORDER);
-    graph.insert(compressor, compressor, ORDER);
+    // The sub-chain's own edge; the shared graph connects the source before the
+    // compressor and the track gain to what follows. One stage, so the boost is
+    // applied after compression (pear-desktop's order).
+    compressor.connect(trackGain);
+    graph.insert(compressor, trackGain, ORDER);
     updateGain();
     void ctx.player.ready().then(
       () => updateGain(),
@@ -123,46 +136,10 @@ export default definePlugin({
       updateGain();
     });
 
-    // YT swaps the <video> element on some seeks. The shared graph keeps the old
-    // element's source, so feed the new element into this stage's input as well;
-    // the compressor then keeps processing the audio instead of dropping to the
-    // element's raw output.
-    let watched = graph.video;
-    let rebound: MediaElementAudioSourceNode | undefined;
-    const watchVideo = () => {
-      const video = ctx.player.video();
-      if (!video || video === watched) return;
-      watched = video;
-      let reboundOk = false;
-      try {
-        const source = context.createMediaElementSource(video);
-        source.connect(trackGain);
-        rebound?.disconnect();
-        rebound = source;
-        reboundOk = true;
-      } catch {
-        // The graph already bound this element (or it can no longer be bound).
-      }
-      if (reboundOk) {
-        try {
-          // Drop the old element's edge into this stage; it may not have one when
-          // other plugins sit between the graph's source and the compressor.
-          graph.source.disconnect(trackGain);
-        } catch {
-          // Not connected to this node.
-        }
-      }
-      updateGain();
-    };
-    ctx.observe("player.api", { childList: true, subtree: true }, watchVideo);
-    // The shared graph binds the <video> it was created with, which may have
-    // been swapped while the plugin was off: attach to the live element now
-    // instead of waiting for the next swap to be observed.
-    watchVideo();
-
     ctx.onCleanup(() => {
       ctx.clearTimeout(retry);
-      rebound?.disconnect();
+      compressor.disconnect();
+      trackGain.disconnect();
     });
   },
 });
