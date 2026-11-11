@@ -18,8 +18,9 @@ export default definePlugin({
   description: "Back and forward buttons in the top bar.",
   enabledByDefault: true,
   config: {
+    // pear-desktop always put them on the right, before the clock and avatar.
     placement: config.select(
-      "left",
+      "right",
       [
         { value: "left", label: "Top bar, left" },
         { value: "right", label: "Top bar, right" },
