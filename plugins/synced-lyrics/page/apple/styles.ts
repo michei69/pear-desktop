@@ -25,6 +25,7 @@ export const appleStyles = css`
     --apple-size: 34px;
     --apple-line-height: 1.2;
     --apple-line-spacing: 25px;
+    --apple-inline-padding: 20px;
     --apple-inactive-scale: 0.98;
     --apple-blur: 0.07em;
     --apple-blur-near: 0.035em;
@@ -400,10 +401,17 @@ export const appleStyles = css`
     }
   }
 
+  .apple-music-host > .error,
+  .apple-music-host > .kaomoji {
+    box-sizing: border-box;
+    padding: 60px var(--apple-inline-padding) 56px;
+  }
+
   .apple-music-plain {
     height: 100%;
     overflow-y: auto;
-    padding: 16px;
+    box-sizing: border-box;
+    padding: 60px var(--apple-inline-padding) 56px;
     color: var(--apple-primary);
     scrollbar-width: none;
   }
