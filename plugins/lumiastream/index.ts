@@ -1,4 +1,4 @@
-// Sends song changes, play/pause and progress to Lumia Stream's local media API.
+// Sends song changes and play/pause (each with the current progress) to Lumia Stream's local media API.
 
 import { definePlugin, livePosition, type NowPlaying, type Track } from "@pear/sdk";
 import type { SongDetails } from "@pear/sdk/song-details";
@@ -6,7 +6,6 @@ import { isPlaying } from "@pear/sdk/util";
 import { net } from "electron";
 
 const PORT = 39231;
-const PROGRESS_MS = 1000;
 /** Lumia Stream's public token for this integration. */
 const TOKEN = "lsmedia_ytmsI7812";
 const HEADERS = {
@@ -16,17 +15,21 @@ const HEADERS = {
   "Access-Control-Allow-Origin": "*",
 };
 
-/** A position jump bigger than this (beyond normal playback) is a seek. */
-const SEEK_THRESHOLD_S = 1.5;
-
 const isPaused = (state: NowPlaying) => state.ad || !isPlaying(state);
 
 type EventType = "switchSong" | "playPause";
 
+/**
+ * Views once the page mirrors them on the track (the shared Track type gains the
+ * field with the page change). Older page runtimes answer `details` only.
+ */
+const viewsOf = (track: Track, details: SongDetails | undefined) =>
+  (track as Track & { views?: number }).views ?? (details?.videoId === track.videoId ? details.views : undefined);
+
 /** Lumia's media event, in pear-desktop's shape. */
 function mediaEvent(eventType: EventType, state: NowPlaying, track: Track, details: SongDetails | undefined) {
-  const extra = details?.videoId === track.videoId ? details : undefined;
   const paused = isPaused(state);
+  const views = viewsOf(track, details);
   return {
     origin: "\u0079\u006f\u0075\u0074\u0075\u0062\u0065music",
     eventType,
@@ -43,7 +46,7 @@ function mediaEvent(eventType: EventType, state: NowPlaying, track: Track, detai
     progress: Math.round(livePosition(state) * 1000),
     duration: Math.round(track.durationSeconds * 1000),
     album: track.album ?? null,
-    ...(extra?.views !== undefined ? { views: extra.views } : {}),
+    ...(views !== undefined ? { views } : {}),
   };
 }
 
@@ -69,6 +72,7 @@ export default definePlugin({
           .fetch(`http://127.0.0.1:${PORT}/api/media`, {
             method: "POST",
             headers: HEADERS,
+            keepalive: true,
             body: JSON.stringify({ token: TOKEN, data }),
           })
           .then(() => {
@@ -81,33 +85,26 @@ export default definePlugin({
           });
       };
 
-      // Views come from the page part; resend once they're known.
+      // Only an older page runtime needs this; a mirrored track already carries the views.
       const fetchDetails = (videoId: string) => {
         void ctx.player.details().then((result) => {
           if (result?.videoId !== videoId || ctx.player.state.track?.videoId !== videoId) return;
           details = result;
-          post("switchSong");
         });
       };
 
       ctx.player.on("change", (state, previous) => {
         if (!state.track) return;
-        const seeked = Math.abs(livePosition(previous, state.updatedAt) - state.positionSeconds) > SEEK_THRESHOLD_S;
+        // Master's events: a switch only on a real track change, a toggle only on pause/resume.
         if (state.track.videoId !== previous.track?.videoId) {
           details = undefined;
           post("switchSong");
-          fetchDetails(state.track.videoId);
+          if (viewsOf(state.track, undefined) === undefined) fetchDetails(state.track.videoId);
         } else if (isPaused(state) !== isPaused(previous)) {
           post("playPause");
-        } else if (seeked) {
-          post("switchSong");
         }
       });
       if (ctx.player.state.track) post("switchSong");
-      // Like pear-desktop, keep Lumia's progress current: an update every second while playing.
-      ctx.setInterval(() => {
-        if (!isPaused(ctx.player.state)) post("switchSong");
-      }, PROGRESS_MS);
     },
   },
 });
