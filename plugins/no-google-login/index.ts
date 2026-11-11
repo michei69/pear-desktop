@@ -6,7 +6,8 @@ export default definePlugin({
   name: "Hide sign-in prompts",
   description: "Hides the sign-in link, the sidebar's sign-in promo and the liked-songs tab while signed out.",
   style: css`
-    sel(nav_bar.sign_in_link),
+    /* pear-desktop hid every .sign-in-link, not just the nav bar's. */
+    .sign-in-link,
     sel(guide.signin_promo),
     ytmusic-pivot-bar-renderer[tab-id="FEmusic_liked"] {
       display: none !important;
