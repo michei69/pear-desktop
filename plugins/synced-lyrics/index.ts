@@ -131,7 +131,7 @@ export default definePlugin({
     sel(lyrics.panel):has(> pear-synced-lyrics[open]) {
       scrollbar-width: none;
     }
-    /* The Apple style fills the tab; am-lyrics scrolls inside it. */
+    /* The Apple style fills the tab and scrolls inside it. */
     sel(lyrics.panel):has(> pear-synced-lyrics[open][data-style="apple-music"]) {
       overflow: hidden;
     }

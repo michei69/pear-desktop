@@ -126,43 +126,36 @@ test("switches to the Apple Music style", async ({ app, page }) => {
 
   await setConfig(page, "synced-lyrics", { lyricsStyle: "apple-music" });
   await expect(lyrics(page)).toHaveAttribute("data-style", "apple-music");
-  await expect
-    .poll(() =>
-      page.evaluate(() => {
-        const apple = document.querySelector("pear-synced-lyrics")?.shadowRoot?.querySelector("am-lyrics") as
-          | (HTMLElement & { ttml?: string })
-          | null;
-        return Boolean(apple?.ttml?.includes("<tt"));
-      }),
-    )
-    .toBe(true);
-  // Master's Apple style keeps its picker visible over the lyrics; it is only
-  // hidden by scrolling down, never behind am-lyrics' readiness.
+  const appleRoot = lyrics(page).locator(".apple-music-style");
+  await expect(appleRoot).toBeVisible();
+  await expect(lyrics(page).locator(".apple-line").first()).toBeVisible();
+
+  // The picker is the app's chrome and stays above the lyrics from the start.
   const applePicker = lyrics(page).locator(".apple-music-picker .picker");
   await expect(applePicker).toBeVisible();
   await expect(applePicker).not.toHaveAttribute("data-hidden", "true");
-  // The plugin's source footer belongs to neither renderer (master never had it),
-  // and am-lyrics' own "Source" footer must stay hidden behind the component.
-  // Seeking drives the component too: the current line is the active one.
-  await page.evaluate(() => window.__pearRuntime!.player.control({ type: "seek", seconds: 43 }));
-  await expect
-    .poll(() =>
-      page.evaluate(() => {
-        const lyricsHost = document.querySelector("pear-synced-lyrics")?.shadowRoot;
-        const apple = lyricsHost?.querySelector("am-lyrics");
-        return Boolean(apple?.shadowRoot?.querySelector(".lyrics-line.active")?.textContent?.trim());
-      }),
-    )
-    .toBe(true);
+
+  // No source footer in this style.
   await expect(lyrics(page).locator("footer.source")).toHaveCount(0);
-  expect(
-    await page.evaluate(() => {
-      const lyricsHost = document.querySelector("pear-synced-lyrics")?.shadowRoot;
-      const apple = lyricsHost?.querySelector("am-lyrics");
-      const content = apple?.shadowRoot?.querySelector<HTMLElement>(".lyrics-footer .footer-content");
-      return !content || getComputedStyle(content).display === "none";
-    }),
-  ).toBe(true);
+
+  // Seeking drives the renderer: the active line is the one covering the video.
+  const appleInfo = () =>
+    page.evaluate(() => {
+      const host = document.querySelector("pear-synced-lyrics")?.shadowRoot;
+      const root = host?.querySelector(".apple-music-style");
+      const active = root?.querySelector<HTMLElement>(".apple-line.active");
+      const starts = [...(root?.querySelectorAll<HTMLElement>(".apple-line") ?? [])].map((line) => Number(line.dataset.startTime));
+      const video = (document.querySelector("video")?.currentTime ?? 0) * 1000;
+      const activeStart = active?.dataset.startTime === undefined ? -1 : Number(active.dataset.startTime);
+      const expected = starts.filter((start) => start <= video + 250).at(-1) ?? -1;
+      return { activeStart, expected, video, starts, picks: root?.querySelectorAll(".apple-line").length ?? 0 };
+    });
+
+  await page.evaluate(() => window.__pearRuntime!.player.control({ type: "seek", seconds: 43 }));
+  await expect.poll(async () => (await appleInfo()).activeStart).toBeGreaterThan(0);
+  const seeked = await appleInfo();
+  expect(seeked.activeStart).toBe(seeked.expected);
+
   // Scrolled down it slips away, and comes back when the pointer reaches the top.
   await expect
     .poll(() =>
@@ -182,6 +175,7 @@ test("switches to the Apple Music style", async ({ app, page }) => {
       }),
     )
     .toBe("0px");
+
   // Its arrows switch providers without losing the component or the picker.
   const appleProviders = (await applePicker
     .locator(".picker-item")
@@ -192,30 +186,30 @@ test("switches to the Apple Music style", async ({ app, page }) => {
   await expect(applePicker).toHaveAttribute("data-selected", appleNext);
   await applePicker.locator(".dot").nth(appleProviders.indexOf(appleSelected)).click();
   await expect(applePicker).toHaveAttribute("data-selected", appleSelected);
+  await expect(appleRoot).toBeVisible();
   await screenshot(app, "lyrics-apple-music");
 
-  // A skip must keep the component on the new track's clock. am-lyrics can
-  // throw from inside its time handler; the clock loop has to survive that.
-  const appleClock = () =>
-    page.evaluate(() => {
-      const lyricsHost = document.querySelector("pear-synced-lyrics")?.shadowRoot;
-      const apple = lyricsHost?.querySelector("am-lyrics") as (HTMLElement & { currentTime?: number }) | null;
-      return {
-        apple: typeof apple?.currentTime === "number" ? apple.currentTime : null,
-        video: (document.querySelector("video")?.currentTime ?? 0) * 1000,
-      };
-    });
+  // A skip must keep the component following the new track's clock.
   const skipped = await page.evaluate(() => window.__pearRuntime!.player.state.track?.videoId);
   await page.evaluate(() => window.__pearRuntime!.player.control({ type: "next" }));
   await page.waitForFunction((id) => window.__pearRuntime?.player.state.track?.videoId !== id, skipped, { timeout: 30_000 });
   await expect(lyrics(page)).toHaveAttribute("data-state", "synced", { timeout: 30_000 });
-  await expect.poll(async () => (await appleClock()).apple).not.toBeNull();
+  await expect
+    .poll(() =>
+      page.evaluate(() => {
+        const host = document.querySelector("pear-synced-lyrics")?.shadowRoot;
+        return Boolean(host?.querySelector(".apple-line.active, .apple-gap.active"));
+      }),
+    )
+    .toBe(true);
   await page.waitForTimeout(6_000);
-  const first = await appleClock();
+  const first = await appleInfo();
   await page.waitForTimeout(1_500);
-  const second = await appleClock();
-  expect(second.apple! - first.apple!).toBeGreaterThan(1_000);
-  expect(Math.abs(second.apple! - second.video)).toBeLessThan(1_000);
+  const second = await appleInfo();
+  expect(second.video).toBeGreaterThan(first.video + 1_000);
+  // A sampled moment can fall in an interlude; when a line is active it must be
+  // the one covering the video time.
+  if (second.activeStart >= 0) expect(second.activeStart).toBe(second.expected);
 
   await setConfig(page, "synced-lyrics", { lyricsStyle: "standard" });
   await expect(lyrics(page)).toHaveAttribute("data-style", "standard");

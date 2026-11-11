@@ -219,5 +219,5 @@ export type OpenAICompatibleApiMode = "responses" | "chat-completions" | "auto";
 export type LocalCliProviderEngine = "claude" | "codex" | "gemini";
 export type LyricsFontSize = "small" | "medium" | "large";
 
-/** Which renderer draws the lyrics: the plugin's own list, or am-lyrics in Apple Music style. */
+/** Which renderer draws the lyrics: the plugin's own list, or the app's Apple Music renderer. */
 export type LyricsStyle = "standard" | "apple-music";

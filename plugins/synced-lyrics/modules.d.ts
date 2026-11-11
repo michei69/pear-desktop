@@ -1,6 +1,3 @@
-/** The component registers its `<am-lyrics>` element on import; no exports are used. */
-declare module "@uimaxbai/am-lyrics/am-lyrics.js";
-
 declare module "kuroshiro" {
   export default class Kuroshiro {
     static Util: {

@@ -93,7 +93,7 @@ export const schema = {
     {
       label: "Lyrics style",
       description:
-        "Apple Music draws the lyrics with am-lyrics and its word-by-word karaoke animation. Line effects and lyrics size only apply to the standard style.",
+        "Apple Music draws the lyrics with the app's own word-by-word karaoke renderer. Line effects and lyrics size only apply to the standard style.",
     },
   ),
   gapText: config.select(

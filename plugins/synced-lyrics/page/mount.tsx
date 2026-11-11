@@ -8,6 +8,7 @@ import { render } from "preact";
 import type { LyricsConfig, schema } from "../schema.ts";
 import type { CustomQuery, LyricResult, ProviderId, SearchQuery } from "../types.ts";
 import { LyricsStore, type Options } from "./store.ts";
+import { appleStyles } from "./apple/styles.ts";
 import { lyricsStyles } from "./styles.ts";
 import { LyricsView, viewState, type ViewOptions } from "./view.tsx";
 
@@ -57,7 +58,7 @@ const viewOptions = (config: LyricsConfig): ViewOptions => ({
 
 export function mountLyrics(ctx: Ctx) {
   const store = createStore(ctx);
-  const { host: element, root } = shadowHost("pear-synced-lyrics", lyricsStyles);
+  const { host: element, root } = shadowHost("pear-synced-lyrics", lyricsStyles + appleStyles);
   // The core performance switches are restart-only, so reading them once is
   // enough. The styles stay inside the shadow root: the core's own sheet is
   // adopted on the document and never crosses into it.

@@ -565,57 +565,11 @@ export const lyricsStyles = css`
     }
   }
 
-  /* Apple Music style: the tab is one fixed pane, and am-lyrics scrolls itself. */
+  /* The Apple renderer owns the whole tab and scrolls its own lyrics list. */
   .root.apple-music {
     height: 100%;
     padding-bottom: 0;
     overflow: hidden;
-  }
-  /* pear-desktop's AppleMusicStyle layout: the picker floats above the whole
-     component and slides away as a wrapper, leaving the lyrics' scroll alone. */
-  .lyrics-renderer {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-  }
-  .apple-music-style {
-    position: relative;
-    height: 100%;
-    overflow: hidden;
-  }
-  .apple-music-picker {
-    position: absolute;
-    inset: 0 0 auto;
-    z-index: 100;
-    backdrop-filter: blur(5px);
-    transform: translateY(var(--apple-music-picker-offset, 0));
-    transition: transform 325ms ease-in-out;
-  }
-  /* A little tighter than the standard picker: it floats over the lyrics. */
-  .apple-music-picker .picker {
-    height: 4em;
-    margin-bottom: 0;
-    padding-block: 0.25em;
-  }
-  .apple-music-host {
-    position: relative;
-    flex: 1;
-    min-height: 0;
-  }
-  .apple-music-host > am-lyrics {
-    display: block;
-    width: 100%;
-    height: 100%;
-    /* The component pins its own system font stack on :host in its shadow
-       root; inherit the page font so themes keep working in this style. */
-    font-family: inherit !important;
-  }
-  /* Plain-text fallback when the selected provider has no timed lines. */
-  .apple-music-plain {
-    height: 100%;
-    overflow-y: auto;
-    padding: 16px;
-    scrollbar-width: none;
   }
 
   .source {
