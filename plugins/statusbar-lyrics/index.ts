@@ -16,6 +16,9 @@ const schema = {
   }),
 };
 
+/** Master's one-click title lengths. */
+const MAX_LENGTH_CHOICES = [30, 40, 55, 70, 85, 100, 120];
+
 /** Collapse whitespace and truncate to the configured length. */
 const normalizeTitle = (text: string, maxLength: number) => {
   const cleaned = text.replace(/\s+/g, " ").trim();
@@ -25,8 +28,17 @@ const normalizeTitle = (text: string, maxLength: number) => {
   return `${cleaned.slice(0, limit - 1).trimEnd()}…`;
 };
 
-// One tray per running plugin; the page sends it the current line.
+/** The next of master's presets after `maxLength`, wrapping at the end. */
+const nextMaxLength = (maxLength: number) => MAX_LENGTH_CHOICES.find((length) => length > maxLength) ?? MAX_LENGTH_CHOICES[0]!;
+
+/** How soon a rejected title update is retried; master's send heartbeat interval. */
+const RETRY_MS = 250;
+
+// One tray per running plugin, created with the first line: with nothing
+// playing, no empty status item is reserved for the whole session.
 let tray: Tray | undefined;
+
+const getTray = () => (tray ??= new Tray(nativeImage.createEmpty()));
 
 export default definePlugin({
   id: "statusbar-lyrics",
@@ -36,21 +48,35 @@ export default definePlugin({
   config: schema,
   host: {
     start(ctx) {
-      const created = new Tray(nativeImage.createEmpty());
-      tray = created;
-      ctx.onCleanup(() => {
-        if (tray === created) tray = undefined;
-        if (created.isDestroyed()) return;
-        created.setTitle("");
-        created.destroy();
+      // Master's title-length presets and the pronunciation switch as menu
+      // items: PluginMenuItem has no checked/radio state, so the length item
+      // cycles and the settings card keeps the slider.
+      ctx.addMenuItem({
+        label: ctx.t("plugins.statusbar-lyrics.menu.max-length", "Maximum length"),
+        click: () => ctx.setConfig({ maxLength: nextMaxLength(ctx.config.maxLength) }),
+      });
+      ctx.addMenuItem({
+        label: ctx.t("plugins.statusbar-lyrics.settings.includePronunciation.label", "Include pronunciation"),
+        click: () => ctx.setConfig({ includePronunciation: !ctx.config.includePronunciation }),
       });
       // Both options are read when a line arrives; the tray stays.
       ctx.onConfigChange(() => {});
+      ctx.onCleanup(() => {
+        const created = tray;
+        tray = undefined;
+        if (!created || created.isDestroyed()) return;
+        created.setTitle("");
+        created.destroy();
+      });
     },
     commands: {
       setTitle(text: string) {
-        if (!tray || tray.isDestroyed()) return;
-        tray.setTitle(normalizeTitle(text, this.config.maxLength));
+        const title = normalizeTitle(text, this.config.maxLength);
+        // A cleared title before the first line must not reserve a status item.
+        if (!title && !tray) return;
+        const instance = getTray();
+        if (instance.isDestroyed()) return;
+        instance.setTitle(title);
       },
     },
   },
@@ -58,22 +84,36 @@ export default definePlugin({
     let lastSent: string | undefined;
     let pending: string | undefined;
     let sending = false;
+    let retry: ReturnType<typeof setTimeout> | undefined;
 
     /** Serialized so a slow call can't put an older line back. */
     const flush = async () => {
       if (sending) return;
       sending = true;
+      ctx.clearTimeout(retry);
+      retry = undefined;
       try {
         while (pending !== undefined) {
           const text = pending;
           pending = undefined;
           if (text === lastSent) continue;
-          await ctx.host.invoke("setTitle", text);
+          try {
+            await ctx.host.invoke("setTitle", text);
+          } catch (error) {
+            // The host may be stopping. Keep the line uncommitted and retry
+            // shortly: while paused, no player event would retry it sooner.
+            ctx.log.warn("could not update the menu bar title", error);
+            // A newer line arrived meanwhile: send that instead of this one.
+            if (pending !== undefined) continue;
+            pending = text;
+            retry = ctx.setTimeout(() => {
+              retry = undefined;
+              void flush();
+            }, RETRY_MS);
+            break;
+          }
           lastSent = text;
         }
-      } catch (error) {
-        // The host may be stopping; the next update retries.
-        ctx.log.warn("could not update the menu bar title", error);
       } finally {
         sending = false;
       }
@@ -168,6 +208,8 @@ export default definePlugin({
     ctx.onCleanup(() => {
       lastSent = undefined;
       pending = undefined;
+      ctx.clearTimeout(retry);
+      retry = undefined;
       void ctx.host.invoke("setTitle", "").catch(() => {});
     });
   },
