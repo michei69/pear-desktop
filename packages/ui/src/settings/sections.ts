@@ -71,7 +71,8 @@ export const SECTIONS: Record<SectionId, Section> = {
     id: "advanced",
     icon: "tune",
     blocks: [
-      { kind: "core", section: "advanced" },
+      // The restart-on-change switch belongs with the Configuration actions below.
+      { kind: "core", section: "advanced", exclude: ["restartOnConfigChanges"] },
       { kind: "core", section: "apiServer", title: "settings-ui.blocks.api-server", prefix: true },
       { kind: "configuration" },
     ],

@@ -2,6 +2,7 @@
 // keys pear-desktop's settings UI used). `nub run i18n` copies them into en.json.
 
 import type { Field } from "@pear/sdk";
+import { CORE_FIELD_KEYS } from "@pear/sdk/core-config";
 import { fieldKey, groupKey, type Translate, type Vars } from "@pear/sdk/i18n";
 import { createContext } from "preact";
 import { useContext } from "preact/hooks";
@@ -40,6 +41,9 @@ export const UI_STRINGS = {
   "settings-ui.shortcut-hint": "Click, then press a key combination. Backspace clears, Escape cancels.",
   "settings-ui.open": "Pear Desktop settings",
   "settings-ui.open-hint": "Pear Desktop settings (Ctrl+,)",
+  "settings-ui.boot-failed.title": "Settings failed to load",
+  "settings-ui.boot-failed.message": "The settings window could not start: {{error}}",
+  "settings-ui.boot-failed.reload": "Reload",
   "settings-ui.api-server-status": "Listening on {{address}} · API docs at {{address}}/swagger",
   "settings-ui.blocks.tray": "Tray",
   "settings-ui.blocks.title-bar": "Title bar",
@@ -107,7 +111,7 @@ export const UI_STRINGS = {
   "settings-ui.flags.search-placeholder": "Search flags",
   "settings-ui.flags.add-name": "Flag name",
   "settings-ui.flags.add-value": "Value",
-  "settings-ui.flags.add-value-hint": "true, false, a number, or text; JSON is parsed.",
+  "settings-ui.flags.add-value-hint": "true, false, a number, text, or JSON for objects and lists.",
   "settings-ui.flags.add": "Add",
   "settings-ui.flags.overridden": "overridden",
   "settings-ui.flags.undo": "Undo",
@@ -132,14 +136,22 @@ export function useText(): Text {
 /** A field with its texts in the active language (labels live next to the code, in English). */
 export function localize(t: Translate, owner: string, name: string, field: Field): Field {
   const key = fieldKey(owner, name);
+  // Core fields pear-desktop already translated under its own keys (mostly the menu's) keep them.
+  const keys = owner === "core" ? CORE_FIELD_KEYS[name] : undefined;
+  const vars = keys?.vars
+    ? Object.fromEntries(Object.entries(keys.vars).map(([placeholder, translation]) => [placeholder, t(translation, placeholder)]))
+    : undefined;
   return {
     ...field,
-    label: t(`${key}.label`, field.label),
-    ...(field.description && { description: t(`${key}.description`, field.description) }),
+    label: t(keys?.label ?? `${key}.label`, field.label, vars),
+    ...(field.description && { description: t(keys?.description ?? `${key}.description`, field.description) }),
     ...(field.group && { group: t(groupKey(field.group), field.group) }),
-    ...("placeholder" in field && field.placeholder && { placeholder: t(`${key}.placeholder`, field.placeholder) }),
+    ...("placeholder" in field && field.placeholder && { placeholder: t(keys?.placeholder ?? `${key}.placeholder`, field.placeholder) }),
     ...("options" in field && {
-      options: field.options.map((option) => ({ ...option, label: t(`${key}.options.${option.value}`, option.label) })),
+      options: field.options.map((option) => ({
+        ...option,
+        label: t(keys?.options?.[option.value] ?? `${key}.options.${option.value}`, option.label),
+      })),
     }),
   };
 }

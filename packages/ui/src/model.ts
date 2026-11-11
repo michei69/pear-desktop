@@ -15,13 +15,18 @@ import type {
   PluginInfo,
   PluginMeta,
   PluginState,
+  RestartRequirement,
 } from "@pear/sdk/protocol";
 import type { ThemeState } from "@pear/sdk/themes";
 
-/** The page's flags as YTM served them and the overrides this app applies. */
+/**
+ * The page's flags as YTM served them and the overrides this app applies. The
+ * overrides are a getter when the page can report them as they change (the
+ * in-page overlay's are edited live); the standalone window has none.
+ */
 export interface SiteFlags {
   readonly served: Flags;
-  readonly overrides: Flags;
+  readonly overrides: Flags | (() => Flags);
 }
 
 export interface SettingsModel {
@@ -40,8 +45,15 @@ export interface SettingsModel {
   subscribe(listener: () => void): () => void;
   setEnabled(id: string, enabled: boolean): Promise<unknown>;
   setConfig(id: string, patch: Record<string, unknown>): Promise<unknown>;
-  setCoreConfig(section: CoreSection, patch: Record<string, unknown>): Promise<unknown>;
+  /** Changes a core section's options; false when the host refused the change. */
+  setCoreConfig(section: CoreSection, patch: Record<string, unknown>): Promise<boolean>;
   relaunch(): Promise<unknown>;
+  /** Opens a restart session for this settings surface; the host batches requirements until it closes. */
+  restartSessionOpen(): Promise<unknown>;
+  /** Notes restart requirements as they are flagged, so a window destroyed before closing loses nothing. */
+  restartSessionAdd(requirements: readonly RestartRequirement[]): Promise<unknown>;
+  /** Ends the session, flushing `requirements`; the host prompts once the last session closes. */
+  restartSessionClose(requirements: readonly RestartRequirement[]): Promise<unknown>;
   /** Opens (or focuses) the standalone settings window. */
   openSettingsWindow(): Promise<unknown>;
   showSettingsFile(): Promise<unknown>;
@@ -83,6 +95,9 @@ type SettingsCommands = Pick<
   | "setConfig"
   | "setCoreConfig"
   | "relaunch"
+  | "restartSessionOpen"
+  | "restartSessionAdd"
+  | "restartSessionClose"
   | "openSettingsWindow"
   | "showSettingsFile"
   | "editConfig"
@@ -109,6 +124,9 @@ function bridgeCommands(bridge: Bridge): SettingsCommands {
     setConfig: (id, patch) => bridge.invoke("plugin:set-config", id, patch),
     setCoreConfig: (section, patch) => bridge.invoke("core:set-config", section, patch),
     relaunch: () => bridge.invoke("app:relaunch"),
+    restartSessionOpen: () => bridge.invoke("settings:restart-open"),
+    restartSessionAdd: (requirements) => bridge.invoke("settings:restart-add", requirements),
+    restartSessionClose: (requirements) => bridge.invoke("settings:restart-close", requirements),
     openSettingsWindow: () => bridge.invoke("app:open-settings-window"),
     showSettingsFile: () => bridge.invoke("app:show-settings-file"),
     editConfig: () => bridge.invoke("app:edit-config"),

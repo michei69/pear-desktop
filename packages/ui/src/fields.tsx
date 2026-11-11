@@ -31,7 +31,8 @@ interface FieldProps {
   model?: SettingsModel | undefined;
   /** Whether the field's `parent` switch is on; a sub-field is disabled while it is off. */
   parentOn?: boolean | undefined;
-  onChange(value: unknown): void;
+  /** False resolves when the host refused the write, so the control can reset to `value`. */
+  onChange(value: unknown): void | Promise<unknown>;
 }
 
 interface ControlProps<F extends Field, V> {
@@ -39,12 +40,15 @@ interface ControlProps<F extends Field, V> {
   field: F;
   value: V;
   model?: SettingsModel | undefined;
-  onChange(value: V): void;
+  onChange(value: V): void | Promise<unknown>;
 }
 
 // Commit on a short idle, so dragging a slider or typing doesn't write settings on every change.
 const SLIDER_DEBOUNCE_MS = 200;
 const TEXT_DEBOUNCE_MS = 400;
+/** A held stepper button repeats: a short delay, then a steady rate. */
+const HOLD_DELAY_MS = 400;
+const HOLD_REPEAT_MS = 70;
 
 /** Controls that sit next to the label instead of below it. */
 const INLINE_KINDS = new Set<Field["kind"]>(["bool", "shortcut"]);
@@ -143,7 +147,8 @@ function useDraft<T>(value: T) {
   return [draft, setDraft] as const;
 }
 
-function NumberControl({ id, field, value, onChange }: ControlProps<NumberField, number>) {
+/** A number field's control alone, for surfaces that build fields on the fly (the flag editors). */
+export function NumberControl({ id, field, value, onChange }: ControlProps<NumberField, number>) {
   const [draft, setDraft] = useDraft(value);
   const commit = useDebounced(onChange, SLIDER_DEBOUNCE_MS);
   const update = (next: number, debounce = true) => {
@@ -199,13 +204,44 @@ function Stepper({ id, field, draft, update }: NumberViewProps) {
   const text = useText();
   const step = field.step ?? 1;
   const unit = field.unit ?? "";
+  const holdTimer = useRef<ReturnType<typeof setTimeout>>();
+  const stopHold = () => {
+    clearTimeout(holdTimer.current);
+    holdTimer.current = undefined;
+    window.removeEventListener("pointerup", stopHold);
+    window.removeEventListener("pointercancel", stopHold);
+    window.removeEventListener("blur", stopHold);
+  };
+  // A release anywhere, or focus loss, has to end the repeat; so does closing the card.
+  useEffect(() => stopHold, []);
+  /** Steps once on press, then keeps stepping while the button is held, like the native spinners. */
+  const holdToRepeat = (delta: number) => {
+    stopHold();
+    const min = field.min ?? -Infinity;
+    const max = field.max ?? Infinity;
+    let next = clamp(draft + delta, min, max);
+    update(next, false);
+    // Self-rescheduling rather than an interval, so the delay is the only knob.
+    const bump = () => {
+      next = clamp(next + delta, min, max);
+      update(next, false);
+      holdTimer.current = setTimeout(bump, HOLD_REPEAT_MS);
+    };
+    holdTimer.current = setTimeout(bump, HOLD_DELAY_MS);
+    window.addEventListener("pointerup", stopHold);
+    window.addEventListener("pointercancel", stopHold);
+    window.addEventListener("blur", stopHold);
+  };
   return (
     <div class="stepper">
       <button
         type="button"
         class="stepper-button"
         aria-label={text("settings-ui.decrease", { label: field.label })}
-        onClick={() => update(draft - step, false)}
+        // A held pointer already stepped on pointerdown (its click has detail 1); a
+        // keyboard activation has detail 0 and steps here.
+        onClick={(e) => e.detail === 0 && update(draft - step, false)}
+        onPointerDown={(e) => e.button === 0 && holdToRepeat(-step)}
       >
         −
       </button>
@@ -224,7 +260,8 @@ function Stepper({ id, field, draft, update }: NumberViewProps) {
         type="button"
         class="stepper-button"
         aria-label={text("settings-ui.increase", { label: field.label })}
-        onClick={() => update(draft + step, false)}
+        onClick={(e) => e.detail === 0 && update(draft + step, false)}
+        onPointerDown={(e) => e.button === 0 && holdToRepeat(step)}
       >
         +
       </button>
@@ -261,7 +298,16 @@ function SelectControl({ id, field, value, model, onChange }: ControlProps<Selec
   };
   const select =
     selectVariant(field) === "dropdown" ? (
-      <select id={id} class="dropdown" value={value} onChange={(e) => onChange(e.currentTarget.value)}>
+      <select
+        id={id}
+        class="dropdown"
+        value={value}
+        onChange={async (e) => {
+          const element = e.currentTarget;
+          // A refused write (a declined downgrade) leaves the stored value alone: show it again.
+          if ((await onChange(element.value)) === false) element.value = value;
+        }}
+      >
         {field.options.map((o) => (
           <option key={o.value} value={o.value}>
             {o.label}
@@ -271,7 +317,14 @@ function SelectControl({ id, field, value, model, onChange }: ControlProps<Selec
     ) : (
       <div class="chips" id={id} role="radiogroup" aria-labelledby={`${id}-label`}>
         {field.options.map((o) => (
-          <button key={o.value} type="button" role="radio" class="chip" aria-checked={o.value === value} onClick={() => onChange(o.value)}>
+          <button
+            key={o.value}
+            type="button"
+            role="radio"
+            class="chip"
+            aria-checked={o.value === value}
+            onClick={() => void onChange(o.value)}
+          >
             {o.label}
           </button>
         ))}
@@ -394,7 +447,8 @@ function ListControl({ id, field, value, onChange }: ControlProps<ListField, str
   );
 }
 
-function TextControl({ id, field, value, onChange }: ControlProps<StringField, string>) {
+/** A text field's control alone, for surfaces that build fields on the fly (the flag editors). */
+export function TextControl({ id, field, value, onChange }: ControlProps<StringField, string>) {
   const [draft, setDraft] = useDraft(value);
   const commit = useDebounced(onChange, TEXT_DEBOUNCE_MS);
   return (

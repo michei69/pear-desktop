@@ -5,6 +5,7 @@
 import { containScroll, shadowHost, type SidebarEntry, sidebarEntry } from "@pear/sdk/dom";
 import { render } from "preact";
 import { Settings, type SettingsModel } from "./settings.tsx";
+import { keepFlagOverridesLive } from "./settings/debug-info.ts";
 import { UI_STRINGS } from "./strings.ts";
 import { overlayStyles } from "./styles.ts";
 
@@ -23,6 +24,7 @@ export interface SettingsController {
 }
 
 export function mountSettings(model: SettingsModel): SettingsController {
+  const dialogModel = keepFlagOverridesLive(model);
   let container: HTMLElement | undefined;
   let isOpen = false;
   let closing = false;
@@ -32,7 +34,7 @@ export function mountSettings(model: SettingsModel): SettingsController {
   const renderDialog = (isClosing: boolean) => {
     // Built on first open: nothing to pay for at startup.
     container ??= createOverlay();
-    render(<Settings closing={isClosing} model={model} onClose={close} />, container);
+    render(<Settings closing={isClosing} model={dialogModel} onClose={close} />, container);
   };
 
   /** Plays the exit animation, then unmounts; a click while closing reopens at once. */
@@ -66,14 +68,14 @@ export function mountSettings(model: SettingsModel): SettingsController {
   const toggle = () => (isOpen && !closing ? close() : open());
 
   // The dialog's own options, as the host last reported them.
-  let uiConfig: Record<string, unknown> = { ...model.core("settingsUi")?.config };
+  let uiConfig: Record<string, unknown> = { ...dialogModel.core("settingsUi")?.config };
   let entry: SidebarEntry | undefined;
   const entryOwner = { onCleanup() {} };
 
   /** Every entry point funnels through here, so the separate-window option is honoured. */
   const openSettings = () => {
     if (uiConfig.separateWindow === true) {
-      void model.openSettingsWindow();
+      void dialogModel.openSettingsWindow();
       return;
     }
     open();
@@ -83,10 +85,10 @@ export function mountSettings(model: SettingsModel): SettingsController {
     if (entry || uiConfig.showButton === false) return;
     entry = sidebarEntry(entryOwner, {
       name: "settings",
-      label: model.t("settings-ui.title", UI_STRINGS["settings-ui.title"]),
+      label: dialogModel.t("settings-ui.title", UI_STRINGS["settings-ui.title"]),
       iconType: "SETTINGS_MATERIAL",
-      title: model.t("settings-ui.open-hint", UI_STRINGS["settings-ui.open-hint"]),
-      ariaLabel: model.t("settings-ui.open", UI_STRINGS["settings-ui.open"]),
+      title: dialogModel.t("settings-ui.open-hint", UI_STRINGS["settings-ui.open-hint"]),
+      ariaLabel: dialogModel.t("settings-ui.open", UI_STRINGS["settings-ui.open"]),
       onClick: openSettings,
     });
   };
@@ -96,7 +98,7 @@ export function mountSettings(model: SettingsModel): SettingsController {
     (event) => {
       if ((event.ctrlKey || event.metaKey) && event.key === ",") {
         event.preventDefault();
-        if (uiConfig.separateWindow === true) void model.openSettingsWindow();
+        if (uiConfig.separateWindow === true) void dialogModel.openSettingsWindow();
         else toggle();
       }
     },

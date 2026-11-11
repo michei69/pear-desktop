@@ -3,10 +3,11 @@
 // section's `siteFlags` list (so they persist) and are also applied live through
 // the page runtime (so a change shows without a restart).
 
+import type { NumberField, StringField } from "@pear/sdk";
 import { type FlagValue, type Flags, flagOverrides, withFlagOverride } from "@pear/sdk/core-config";
 import type { FlagMetadataMap } from "@pear/sdk/protocol";
 import { useEffect, useRef, useState } from "preact/hooks";
-import { Switch } from "../fields.tsx";
+import { NumberControl, Switch, TextControl } from "../fields.tsx";
 import { Icon } from "../icons.tsx";
 import { useText } from "../strings.ts";
 import { liveFeatureFlags } from "./live-flags.ts";
@@ -15,13 +16,15 @@ import type { Dialog } from "./state.ts";
 /** A typed value when the text is JSON, the text itself when it is not. */
 const parseValue = (text: string): FlagValue => {
   try {
-    const parsed: unknown = JSON.parse(text);
-    if (typeof parsed === "string" || typeof parsed === "number" || typeof parsed === "boolean") return parsed;
+    return JSON.parse(text) as FlagValue;
   } catch {
-    // Not JSON: the text is the value.
+    return text;
   }
-  return text;
 };
+
+/** Fields for the typed editors the flag rows borrow from the settings fields. */
+const numberField = (name: string): NumberField => ({ kind: "number", label: name, default: 0 });
+const stringField = (name: string): StringField => ({ kind: "string", label: name, default: "" });
 
 export function FlagsSection({ dialog, query }: { dialog: Dialog; query: string }) {
   const text = useText();
@@ -57,7 +60,7 @@ export function FlagsSection({ dialog, query }: { dialog: Dialog; query: string 
     if (value === undefined) live?.remove(name);
     else live?.set(name, value);
     // The page applies it live; only flags the site says need one ask for a restart.
-    if (metadata[name]?.requires_restart) dialog.restarts.flag(`site:${name}`);
+    if (metadata[name]?.requires_restart) dialog.restarts.flag(`core:site.${name}`, name);
   };
 
   const needle = query.trim().toLowerCase();
@@ -142,17 +145,8 @@ function FlagRow(props: {
   onUndo(): void;
 }) {
   const text = useText();
+  // An unknown flag has no served value: offer the switch, as the page's own flags are usually boolean.
   const boolean = typeof props.value === "boolean" || props.value === undefined;
-  const shown = typeof props.value === "boolean" ? String(props.value) : (JSON.stringify(props.value) ?? "null");
-  const [draft, setDraft] = useState(shown);
-  const draftFor = useRef(shown);
-  // Follow values from outside (the page's flag arriving, an undo).
-  useEffect(() => {
-    if (draftFor.current === shown) return;
-    draftFor.current = shown;
-    setDraft(shown);
-  }, [shown]);
-
   return (
     <div class="field flag-row" data-flag={props.name}>
       <div class="field-row">
@@ -184,22 +178,59 @@ function FlagRow(props: {
 
       {!boolean && (
         <div class="field-control">
-          <input
-            class="text"
-            type="text"
-            spellcheck={false}
-            aria-label={props.name}
-            value={draft}
-            onInput={(e) => setDraft(e.currentTarget.value)}
-            onChange={(e) => {
-              const next = e.currentTarget.value;
-              draftFor.current = next;
-              props.onCommit(parseValue(next));
-            }}
-            onBlur={() => setDraft(shown)}
-          />
+          {typeof props.value === "number" ? (
+            // Numbers get the stepper; wider ranges can be typed too.
+            <NumberControl
+              id={`flag-${props.name}`}
+              field={numberField(props.name)}
+              value={props.value}
+              onChange={(next) => props.onCommit(next)}
+            />
+          ) : typeof props.value === "string" ? (
+            <TextControl
+              id={`flag-${props.name}`}
+              field={stringField(props.name)}
+              value={props.value}
+              onChange={(next) => props.onCommit(next)}
+            />
+          ) : (
+            <JsonFlagInput name={props.name} value={props.value} onCommit={props.onCommit} />
+          )}
         </div>
       )}
     </div>
+  );
+}
+
+/** Master's fallback for objects, arrays and null: edit the whole value as JSON. */
+function JsonFlagInput(props: { name: string; value: FlagValue | undefined; onCommit(value: FlagValue): void }) {
+  const shown = JSON.stringify(props.value) ?? "null";
+  const [draft, setDraft] = useState(shown);
+  const draftFor = useRef(shown);
+  // Follow values from outside (the page's flag arriving, an undo).
+  useEffect(() => {
+    if (draftFor.current === shown) return;
+    draftFor.current = shown;
+    setDraft(shown);
+  }, [shown]);
+  return (
+    <input
+      class="text"
+      type="text"
+      spellcheck={false}
+      aria-label={props.name}
+      value={draft}
+      onInput={(e) => {
+        const next = e.currentTarget.value;
+        draftFor.current = next;
+        setDraft(next);
+        try {
+          props.onCommit(JSON.parse(next) as FlagValue);
+        } catch {
+          // Not valid JSON (yet): the stored value stays until it is.
+        }
+      }}
+      onBlur={() => setDraft(shown)}
+    />
   );
 }

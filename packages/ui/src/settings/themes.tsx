@@ -17,11 +17,15 @@ export function ThemeCard({ dialog }: { dialog: Dialog }) {
   const palette = resolvePalette(selected?.palette, (selected && state.overrides[selected.id]) || {});
   const presetNames = Object.keys(selected?.presets ?? {});
   const [failed, setFailed] = useState("");
+  /** Bumped on a refused pick, which rebuilds the native select on the stored selection. */
+  const [attempt, setAttempt] = useState(0);
 
   const choose = (id: string) => {
     setFailed("");
     void model.selectTheme(id).then((allowed) => {
-      if (!allowed) setFailed(text("settings-ui.themes.declined"));
+      if (allowed) return;
+      setFailed(text("settings-ui.themes.declined"));
+      setAttempt((current) => current + 1);
     });
   };
 
@@ -40,7 +44,13 @@ export function ThemeCard({ dialog }: { dialog: Dialog }) {
             <div class="field-desc">{selected?.description ?? text("settings-ui.themes.description")}</div>
           </div>
           <div class="field-control">
-            <select id="field-theme" class="dropdown" value={state.selected} onChange={(e) => choose(e.currentTarget.value)}>
+            <select
+              id="field-theme"
+              class="dropdown"
+              key={`${state.selected}:${attempt}`}
+              value={state.selected}
+              onChange={(e) => choose(e.currentTarget.value)}
+            >
               <option value="">{text("main.menu.options.submenu.visual-tweaks.submenu.theme.submenu.no-theme")}</option>
               {state.themes.map((theme) => (
                 <option key={theme.id} value={theme.id}>

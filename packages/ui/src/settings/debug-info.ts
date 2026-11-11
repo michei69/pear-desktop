@@ -4,7 +4,7 @@
 import { flagOverrides, type Flags } from "@pear/sdk/core-config";
 import type { AppDebugInfo } from "@pear/sdk/protocol";
 import { useEffect, useRef, useState } from "preact/hooks";
-import type { SettingsModel } from "../model.ts";
+import type { SettingsModel, SiteFlags } from "../model.ts";
 import { liveFeatureFlags } from "./live-flags.ts";
 
 /** The overrides saved in the config, for the standalone window where the page isn't there to ask. */
@@ -13,17 +13,32 @@ export const storedFlagOverrides = (model: SettingsModel): Flags => {
   return flagOverrides(Array.isArray(list) ? list.filter((entry): entry is string => typeof entry === "string") : []);
 };
 
+/**
+ * The overrides in effect, read at call time: the page reports them as a getter
+ * when they can change during the session (they do, from the Flags section), and
+ * as the load-time snapshot otherwise. Without a page, the saved list stands in.
+ */
+export const liveFlagOverrides = (model: SettingsModel, page: SiteFlags | undefined): Flags => {
+  if (!page) return storedFlagOverrides(model);
+  return typeof page.overrides === "function" ? page.overrides() : page.overrides;
+};
+
 const COPIED_MS = 1500;
 
 const mb = (kilobytes: number) => `${Math.round(kilobytes / 1024)} MB`;
 
-/** Every flag the page carries plus the ones the user added, sorted so two reports line up. */
+/**
+ * Every flag the page carries plus the ones the user added, sorted so two reports
+ * line up. `served` is the page's own values, so an override wins over it (the
+ * report must show what the page actually runs with).
+ */
 const flagLines = (served: Flags, overrides: Flags): string[] =>
   [...new Set([...Object.keys(served), ...Object.keys(overrides)])]
     .sort((a, b) => a.localeCompare(b))
-    .map(
-      (name) => `${name}: ${JSON.stringify(name in served ? served[name] : overrides[name])}${name in overrides ? " (overridden)" : ""}`,
-    );
+    .map((name) => {
+      const value = name in overrides ? overrides[name] : served[name];
+      return `${name}: ${JSON.stringify(value)}${name in overrides ? " (overridden)" : ""}`;
+    });
 
 /** The copied report: the app's version, the machine, the plugins and the page's flags. */
 export function buildDebugInfo(meta: AppDebugInfo, plugins: string[], served: Flags, overrides: Flags): string {
@@ -76,4 +91,27 @@ export function useCopyFeedback() {
   };
 
   return { copied, copy };
+}
+
+/**
+ * The page hands its flags over as they were at load; the debug report must show
+ * the overrides in effect now, including the ones the Flags section changed during
+ * the session. Performance mode's flags cannot change without a restart, so they
+ * are the load-time overrides minus the user's load-time ones.
+ */
+export function keepFlagOverridesLive(model: SettingsModel): SettingsModel {
+  const pageFlags = model.siteFlags;
+  if (!pageFlags) return model;
+  const initial = storedFlagOverrides(model);
+  return {
+    ...model,
+    siteFlags: () => {
+      const page = pageFlags();
+      // A page that reports live overrides itself needs no reconstruction.
+      if (typeof page.overrides === "function") return { served: page.served, overrides: page.overrides() };
+      const overrides: Flags = { ...page.overrides };
+      for (const name of Object.keys(initial)) delete overrides[name];
+      return { served: page.served, overrides: { ...overrides, ...storedFlagOverrides(model) } };
+    },
+  };
 }

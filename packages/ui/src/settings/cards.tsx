@@ -5,7 +5,7 @@ import { CORE_SECTIONS, type CoreSection } from "@pear/sdk/core-config";
 import type { PluginInfo } from "@pear/sdk/protocol";
 import { remoteErrorMessage } from "@pear/sdk/util";
 import type { ComponentChildren } from "preact";
-import { useState } from "preact/hooks";
+import { useMemo, useState } from "preact/hooks";
 import { SettingsField, Switch } from "../fields.tsx";
 import { Icon } from "../icons.tsx";
 import type { SettingsModel } from "../model.ts";
@@ -119,9 +119,22 @@ export function BlockView({ dialog, block }: { dialog: Dialog; block: Block }) {
       return dialog.model.app.channel === "dev" ? null : (
         <CoreCards dialog={dialog} section="general" groups={coreKeyGroups(dialog, "general", ["autoUpdates", "updateChannel"])} />
       );
-    case "configuration":
+    case "configuration": {
+      // pear-desktop's Configuration card: the restart-on-change switch with the actions.
+      const restartField = CORE_SECTIONS.advanced.restartOnConfigChanges;
+      const field = dialog.localizer("core")("restartOnConfigChanges", restartField);
+      const config = dialog.model.core("advanced")?.config;
       return (
         <CardGroup title={text("settings-ui.blocks.configuration")}>
+          {config && (
+            <SettingsField
+              name="core-advanced-restartOnConfigChanges"
+              field={field}
+              value={config.restartOnConfigChanges}
+              model={dialog.model}
+              onChange={(value) => void dialog.setCore("advanced", "restartOnConfigChanges", field, value)}
+            />
+          )}
           <div class="field actions">
             <button type="button" class="outlined" onClick={() => void dialog.model.toggleDevTools()}>
               {text("settings-ui.toggle-devtools")}
@@ -132,6 +145,7 @@ export function BlockView({ dialog, block }: { dialog: Dialog; block: Block }) {
           </div>
         </CardGroup>
       );
+    }
   }
 }
 
@@ -146,12 +160,17 @@ export function PluginCard(props: {
   const { dialog, plugin } = props;
   const { model } = dialog;
   const text = useText();
-  const open = props.forceOpen ?? dialog.expanded === plugin.id;
+  const open = props.forceOpen ?? dialog.expanded.has(plugin.id);
   const state = model.state(plugin.id);
   const enabled = state?.enabled ?? false;
   const error = model.error(plugin.id);
   const status = model.status(plugin.id);
-  const groups = props.groups ?? groupFields(plugin.config, dialog.platform, dialog.localizer(plugin.id));
+  // A collapsed card shows nothing, so it has nothing to translate or group either.
+  const computedGroups = useMemo(
+    () => (open ? groupFields(plugin.config, dialog.platform, dialog.localizer(plugin.id)) : []),
+    [open, plugin.config, dialog.platform, dialog.localizer, plugin.id],
+  );
+  const groups = props.groups ?? computedGroups;
   const actions = plugin.actions ?? [];
   const configurable = hasFields(plugin.config, dialog.platform) || actions.length > 0;
   const showActions = enabled && actions.length > 0;
