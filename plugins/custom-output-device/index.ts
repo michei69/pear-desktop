@@ -1,6 +1,7 @@
 import { config, definePlugin } from "@pear/sdk";
 import { picker } from "@pear/sdk/dom";
 import { css } from "@pear/sdk/macros" with { type: "macro" };
+import { outputDevices, resolveOutputDevice } from "./devices.ts";
 
 type SinkTarget = { setSinkId(id: string): Promise<void> };
 
@@ -21,6 +22,28 @@ export default definePlugin({
     }),
     showPicker: config.bool(true, { label: "Device picker in the player bar" }),
   },
+  actions: {
+    chooseDevice: {
+      label: "Choose output device…",
+      description: "Opens the device list from the player bar.",
+    },
+  },
+  host: {
+    start(ctx) {
+      ctx.addMenuItem({
+        label: ctx.t("plugins.custom-output-device.menu.device-selector", "Select Device"),
+        click: () => ctx.emit("open-output-picker"),
+      });
+    },
+    // The list is rebuilt each time it opens; a pick must not rebuild the menu.
+    onConfigChange() {},
+    commands: {
+      /** The settings card's button, like pear-desktop's settings dropdown. */
+      chooseDevice() {
+        this.emit("open-output-picker");
+      },
+    },
+  },
   // Only what differs from the shared picker; both classes, since the picker's sheet comes after this one.
   style: css`
     .pear-picker-popover.pear-output-popover {
@@ -29,15 +52,10 @@ export default definePlugin({
     }
   `,
   page: async (ctx) => {
-    const outputs = async () =>
-      (await navigator.mediaDevices.enumerateDevices()).filter((d) => d.kind === "audiooutput" && d.deviceId !== "default");
+    const outputs = async () => outputDevices(await navigator.mediaDevices.enumerateDevices());
 
     // Labels are stable across sessions and readable in settings; ids also work.
-    const resolve = async (wanted: string) => {
-      if (!wanted) return "";
-      const devices = await outputs();
-      return devices.find((d) => d.label === wanted || d.deviceId === wanted)?.deviceId;
-    };
+    const resolve = async (wanted: string) => resolveOutputDevice(wanted, await outputs());
 
     let applied: string | undefined;
     const apply = async () => {
@@ -90,17 +108,31 @@ export default definePlugin({
     });
 
     // The picker doesn't depend on resolving the device, so mount it first.
-    if (showPicker) {
-      const { button } = picker(ctx, {
-        name: "output",
-        label: ctx.t("plugins.custom-output-device.menu.device-selector", "Select Device"),
-        icon: ICON,
-        heading: ctx.t("plugins.custom-output-device.heading", "Play on"),
-        items: choices,
-        width: PICKER_WIDTH,
-      });
-      ctx.mount(button, "player_bar.right_controls_buttons", "prepend");
-    }
+    const { button, popover } = picker(ctx, {
+      name: "output",
+      label: ctx.t("plugins.custom-output-device.menu.device-selector", "Select Device"),
+      icon: ICON,
+      heading: ctx.t("plugins.custom-output-device.prompt.device-selector.title", "Select Output Device"),
+      items: choices,
+      width: PICKER_WIDTH,
+    });
+    // `showPicker` only keeps the button in the player bar; the app menu and the
+    // settings action still open the list, so the picker always exists. A hidden
+    // element has no box to anchor the popover to, so an external request shows
+    // the button while the list is open.
+    const showButton = () => {
+      button.hidden = !showPicker;
+    };
+    showButton();
+    ctx.mount(button, "player_bar.right_controls_buttons", "prepend");
+    ctx.listen(popover, "toggle", (event: ToggleEvent) => {
+      if (event.newState === "closed") showButton();
+    });
+    ctx.host.on("open-output-picker", () => {
+      button.hidden = false;
+      popover.showPopover();
+    });
+
     await ctx.player.ready();
     await apply();
   },
