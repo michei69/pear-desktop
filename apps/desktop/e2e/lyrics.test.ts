@@ -194,6 +194,29 @@ test("switches to the Apple Music style", async ({ app, page }) => {
   await expect(applePicker).toHaveAttribute("data-selected", appleSelected);
   await screenshot(app, "lyrics-apple-music");
 
+  // A skip must keep the component on the new track's clock. am-lyrics can
+  // throw from inside its time handler; the clock loop has to survive that.
+  const appleClock = () =>
+    page.evaluate(() => {
+      const lyricsHost = document.querySelector("pear-synced-lyrics")?.shadowRoot;
+      const apple = lyricsHost?.querySelector("am-lyrics") as (HTMLElement & { currentTime?: number }) | null;
+      return {
+        apple: typeof apple?.currentTime === "number" ? apple.currentTime : null,
+        video: (document.querySelector("video")?.currentTime ?? 0) * 1000,
+      };
+    });
+  const skipped = await page.evaluate(() => window.__pearRuntime!.player.state.track?.videoId);
+  await page.evaluate(() => window.__pearRuntime!.player.control({ type: "next" }));
+  await page.waitForFunction((id) => window.__pearRuntime?.player.state.track?.videoId !== id, skipped, { timeout: 30_000 });
+  await expect(lyrics(page)).toHaveAttribute("data-state", "synced", { timeout: 30_000 });
+  await expect.poll(async () => (await appleClock()).apple).not.toBeNull();
+  await page.waitForTimeout(6_000);
+  const first = await appleClock();
+  await page.waitForTimeout(1_500);
+  const second = await appleClock();
+  expect(second.apple! - first.apple!).toBeGreaterThan(1_000);
+  expect(Math.abs(second.apple! - second.video)).toBeLessThan(1_000);
+
   await setConfig(page, "synced-lyrics", { lyricsStyle: "standard" });
   await expect(lyrics(page)).toHaveAttribute("data-style", "standard");
 });

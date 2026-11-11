@@ -587,21 +587,34 @@ function AppleMusicLyrics({ store, options, now, position, seek, t }: ViewProps)
 
   // Advance the component on animation frames between the player's ~4 Hz ticks
   // so word wipes stay smooth; while paused, follow a paused seek once.
+  //
+  // The next frame is scheduled before writing: am-lyrics can throw from inside
+  // its own time handler (a broken Web Animation in an instrumental gap), and
+  // scheduling last meant one such throw stopped the clock for the whole track.
   useEffect(() => {
-    let frame = requestAnimationFrame(function tick() {
+    let frame = 0;
+    let lastErrorAt = 0;
+    const tick = () => {
+      frame = requestAnimationFrame(tick);
       const currentElement = elementRef.current;
-      if (currentElement && performance.now() >= seekPendingUntil.current) {
+      if (!currentElement || performance.now() < seekPendingUntil.current) return;
+      try {
         const time = position();
-        if (time !== null) {
-          const playing = now() !== null;
-          if (playing || lastPausedPosition.current === null || Math.abs(time - lastPausedPosition.current) > 1) {
-            lastPausedPosition.current = time;
-            currentElement.currentTime = Math.max(0, time + offset.current);
-          }
+        if (time === null) return;
+        const playing = now() !== null;
+        if (playing || lastPausedPosition.current === null || Math.abs(time - lastPausedPosition.current) > 1) {
+          lastPausedPosition.current = time;
+          currentElement.currentTime = Math.max(0, time + offset.current);
+        }
+      } catch (error) {
+        const at = performance.now();
+        if (at - lastErrorAt > 1_000) {
+          lastErrorAt = at;
+          console.warn("[pear:synced-lyrics] am-lyrics rejected a time update; retrying", error);
         }
       }
-      frame = requestAnimationFrame(tick);
-    });
+    };
+    frame = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(frame);
   }, [now, position]);
 
