@@ -1,37 +1,10 @@
 // Feeds OBS's Tuna plugin (its "web server" source) with the current song.
 
-import { config, definePlugin, livePosition, type NowPlaying, type Track } from "@pear/sdk";
+import { config, definePlugin } from "@pear/sdk";
 import type { SongDetails } from "@pear/sdk/song-details";
 import { net } from "electron";
-
-const HEADERS = {
-  "Content-Type": "application/json",
-  Accept: "application/json",
-  "Access-Control-Allow-Headers": "*",
-  "Access-Control-Allow-Origin": "*",
-};
-
-/** How long a failed probe suppresses payloads before the real POST is retried. */
-const LITE_RETRY_MS = 30_000;
-
-/** Tuna's song data, in pear-desktop's shape. */
-function songData(state: NowPlaying, track: Track, details: SongDetails | undefined) {
-  const extra = details?.videoId === track.videoId ? details : undefined;
-  return {
-    album: track.album ?? null,
-    album_url: track.artworkUrl ?? "",
-    artists: [track.artist],
-    cover: track.artworkUrl ?? "",
-    cover_url: track.artworkUrl ?? "",
-    duration: Math.round(track.durationSeconds * 1000),
-    progress: Math.round(livePosition(state) * 1000),
-    status: state.status === "playing" && !state.ad ? "playing" : "stopped",
-    title: track.title,
-    alternativeTitle: extra?.alternativeTitle ?? "",
-    url: track.url,
-    tags: extra?.tags ?? [],
-  };
-}
+import { songData } from "./data.ts";
+import { liteSender } from "./lite.ts";
 
 export default definePlugin({
   id: "tuna-obs",
@@ -49,77 +22,34 @@ export default definePlugin({
   host: {
     start(ctx) {
       let details: SongDetails | undefined;
-      // While Tuna isn't reachable, probe it with cheap OPTIONS requests instead of full posts ("lite mode").
-      let probing = false;
-      let sending = false;
-      /** Something changed while a request was out: send once more after it. */
-      let resend = false;
-      let retryTimer: ReturnType<typeof setTimeout> | undefined;
-      let stopped = false;
-
-      const send = async () => {
-        const state = ctx.player.state;
-        const track = state.track;
-        if (!track) return;
-        const body = probing ? {} : { body: JSON.stringify({ data: songData(state, track, details) }) };
-        try {
-          await net.fetch(`http://127.0.0.1:${ctx.config.port}/`, { method: probing ? "OPTIONS" : "POST", headers: HEADERS, ...body });
-          if (probing) {
-            ctx.clearTimeout(retryTimer);
-            retryTimer = undefined;
-            probing = false;
-            resend = true;
-            ctx.log.info(`Tuna is reachable on port ${ctx.config.port}`);
-          }
-        } catch {
-          if (!probing) ctx.log.info(`Tuna isn't reachable on port ${ctx.config.port}; waiting for it`);
-          probing = true;
-          // A probe that keeps failing must not latch the plugin in
-          // empty-payload mode forever: retry the real request later, and fall
-          // back to probing if that fails again. The payload is built from the
-          // live state, so nothing needs keeping for the retry.
-          if (!retryTimer) {
-            retryTimer = ctx.setTimeout(() => {
-              retryTimer = undefined;
-              if (stopped) return;
-              probing = false;
-              post();
-            }, LITE_RETRY_MS);
-          }
-        }
-      };
-      // One request at a time; changes meanwhile are coalesced into one more.
-      const post = () => {
-        if (stopped) return;
-        if (sending) {
-          resend = true;
-          return;
-        }
-        sending = true;
-        void send().finally(() => {
-          sending = false;
-          if (!resend) return;
-          resend = false;
-          post();
-        });
-      };
-      ctx.onCleanup(() => {
-        stopped = true;
+      const sender = liteSender({
+        port: () => ctx.config.port,
+        body: () => {
+          const state = ctx.player.state;
+          const track = state.track;
+          if (!track) return;
+          return JSON.stringify({ data: songData(state, track, details) });
+        },
+        fetch: (url, request) => net.fetch(url, request),
+        setTimeout: (fn, ms) => ctx.setTimeout(fn, ms),
+        clearTimeout: (timer) => ctx.clearTimeout(timer),
+        log: ctx.log,
       });
+      ctx.onCleanup(() => sender.stop());
 
       const fetchDetails = (videoId: string) => {
         void ctx.player.details().then((result) => {
           if (result?.videoId !== videoId) return;
           details = result;
-          post();
+          sender.post();
         });
       };
 
       ctx.player.on("change", (state, previous) => {
         if (state.track && state.track.videoId !== previous.track?.videoId) fetchDetails(state.track.videoId);
-        post();
+        sender.post();
       });
-      post();
+      sender.post();
     },
     // The port is read for every request.
     onConfigChange() {},
