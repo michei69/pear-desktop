@@ -22,7 +22,8 @@
   "main": "out/main/index.js",
   "scripts": {
     "predev": "install-electron",
-    "dev": "electron-vite dev --watch",
+    "dev": "node ../../scripts/with-env.ts NODE_OPTIONS=--enable-source-maps electron-vite dev --watch",
+    "dev:renderer": "node ../../scripts/with-env.ts NODE_OPTIONS=--enable-source-maps electron-vite dev",
     "build": "electron-vite build",
     "prestart": "install-electron",
     "start": "electron-vite preview",
@@ -57,6 +58,7 @@
     "del-cli": "7.0.0",
     "electron": "^45.2.3",
     "electron-builder": "26.15.3",
+    "electron-updater": "6.8.9",
     "electron-vite": "^6.0.0",
     "typescript": "^7.0.2",
     "vite": "8.3.5",
