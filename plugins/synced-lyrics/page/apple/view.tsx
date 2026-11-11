@@ -34,6 +34,7 @@ const STATE_CLASSES = [
   "prev-3",
   "prev-4",
   "progressive-unblur",
+  "scroll-exiting",
   "gap-collapsing",
   "gap-exiting",
 ];
@@ -136,7 +137,11 @@ export function AppleLyrics({ store, options, position, seek, picker, t }: Apple
       else element.removeAttribute("aria-current");
       const pre = !active && index === state.nextLine && preActive;
       if (pre) element.classList.add("pre-active");
-      if (active) continue;
+      if (active) {
+        const next = state.nextLine >= 0 ? model.rows[state.nextLine] : undefined;
+        if (next?.kind === "line" && next.startMs - time <= PRE_ACTIVE_MS) element.classList.add("scroll-exiting");
+        continue;
+      }
 
       if (activeOrdinal >= 0) {
         if (ordinal < activeOrdinal) {
@@ -247,15 +252,14 @@ export function AppleLyrics({ store, options, position, seek, picker, t }: Apple
 
       // Background vocals only take space while their line is sounding or about
       // to sound; they fade/collapse again after their last timed word.
-      const backgroundRows = new Set([state.activeLine, state.nextLine].filter((index) => index >= 0));
-      for (const index of backgroundRows) {
-        const row = model.rows[index];
-        if (row?.kind !== "line" || row.background.length === 0) continue;
+      for (const [index, row] of model.rows.entries()) {
+        if (row.kind !== "line" || row.background.length === 0) continue;
         const element = rowRefs.current.get(row.key)?.querySelector<HTMLElement>(".apple-bg");
         if (!element) continue;
         const end = row.background.at(-1)?.endMs ?? row.endMs;
-        const near = index === state.activeLine || row.startMs - time <= PRE_ACTIVE_MS;
-        element.classList.toggle("expanded", near && time < end + 450);
+        const sounding = index === state.activeLine;
+        const target = index === state.nextLine && row.startMs - time <= PRE_ACTIVE_MS;
+        element.classList.toggle("expanded", (sounding || target) && time < end + 450);
       }
 
       // Start un-blurring the next line two seconds before it starts.

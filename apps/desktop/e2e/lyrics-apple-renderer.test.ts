@@ -169,6 +169,12 @@ test("the clean-room Apple renderer matches the Apple Music style's behaviour", 
   });
   expect(background.text).toContain("background vocals");
   expect(background.visible).toBe(true);
+  expect(
+    await page.evaluate(() => {
+      const root = document.querySelector("pear-synced-lyrics")?.shadowRoot?.querySelector(".apple-music-style");
+      return root?.querySelector<HTMLElement>(".apple-line.active .apple-bg")?.classList.contains("expanded") ?? false;
+    }),
+  ).toBe(true);
   await screenshot(app, "apple-clean-duet");
 
   // RTL is right-aligned.
@@ -182,6 +188,14 @@ test("the clean-room Apple renderer matches the Apple Music style's behaviour", 
       return line ? getComputedStyle(line).textAlign : "";
     }),
   ).toBe("right");
+  expect(
+    await page.evaluate(() => {
+      const root = document.querySelector("pear-synced-lyrics")?.shadowRoot?.querySelector(".apple-music-style");
+      return [...(root?.querySelectorAll<HTMLElement>(".apple-line") ?? [])]
+        .filter((line) => line.textContent?.includes("background vocals"))
+        .every((line) => !line.querySelector(".apple-bg")?.classList.contains("expanded"));
+    }),
+  ).toBe(true);
 
   // The long break has its own row and the line after it carries the translation.
   await seek(page, 24);
