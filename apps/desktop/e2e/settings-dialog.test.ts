@@ -136,6 +136,30 @@ test("dependent settings indent, disable and hide", async ({ launch }) => {
   await expect(card.getByText("Custom format", { exact: true })).toHaveCount(0);
 });
 
+test("translation provider settings follow the selected provider", async ({ launch }) => {
+  const app = await launch({ plugins: { "synced-lyrics": { enabled: true } } });
+  const page = await mainWindow(app);
+  await openSettings(page);
+  await openSection(page, "Plugins");
+  const card = pluginRow(page, "synced-lyrics");
+  await card.getByRole("button", { name: "Configure Synced lyrics" }).click();
+
+  const openai = card.locator('[data-field="synced-lyrics-openaiApiKey"]');
+  const anthropic = card.locator('[data-field="synced-lyrics-anthropicApiKey"]');
+  await expect(openai).toBeVisible();
+  await expect(anthropic).toHaveCount(0);
+  await expect(card.locator(".plugin-group-title", { hasText: "Anthropic" })).toHaveCount(0);
+
+  await card.getByRole("radio", { name: "Anthropic" }).click();
+  await expect(anthropic).toBeVisible();
+  await expect(openai).toHaveCount(0);
+  await expect(card.locator(".plugin-group-title", { hasText: "OpenAI-compatible" })).toHaveCount(0);
+
+  await card.getByRole("radio", { name: "Google Translate" }).click();
+  await expect(card.locator('[data-field="synced-lyrics-googleTranslateHost"]')).toBeVisible();
+  await expect(anthropic).toHaveCount(0);
+});
+
 test("an edit is kept when the dialog closes right after it", async ({ page }) => {
   await openSettings(page);
   await searchbox(page).fill("blur navigation");

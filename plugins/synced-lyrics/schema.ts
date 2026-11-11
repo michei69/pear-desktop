@@ -186,9 +186,19 @@ export const schema = {
     label: "OpenAI-compatible base URL",
     description: "Any OpenAI-compatible server; /responses and /chat/completions are supported.",
     group: "OpenAI-compatible",
+    visibleWhen: { translationProvider: "openai-compatible" },
   }),
-  openaiApiKey: config.string("", { label: "API key", group: "OpenAI-compatible", secret: true }),
-  openaiModel: config.string("gpt-4o-mini", { label: "Model", group: "OpenAI-compatible" }),
+  openaiApiKey: config.string("", {
+    label: "API key",
+    group: "OpenAI-compatible",
+    secret: true,
+    visibleWhen: { translationProvider: "openai-compatible" },
+  }),
+  openaiModel: config.string("gpt-4o-mini", {
+    label: "Model",
+    group: "OpenAI-compatible",
+    visibleWhen: { translationProvider: "openai-compatible" },
+  }),
   openaiApiMode: config.select(
     "auto",
     [
@@ -196,12 +206,35 @@ export const schema = {
       { value: "responses", label: "Responses API" },
       { value: "chat-completions", label: "Chat completions" },
     ],
-    { label: "API mode", group: "OpenAI-compatible", variant: "chips" },
+    {
+      label: "API mode",
+      group: "OpenAI-compatible",
+      variant: "chips",
+      visibleWhen: { translationProvider: "openai-compatible" },
+    },
   ),
-  anthropicApiKey: config.string("", { label: "Anthropic API key", group: "Anthropic", secret: true }),
-  anthropicModel: config.string("claude-haiku-4-5-20251001", { label: "Anthropic model", group: "Anthropic" }),
-  geminiApiKey: config.string("", { label: "Gemini API key", group: "Gemini", secret: true }),
-  geminiModel: config.string("gemini-2.0-flash", { label: "Gemini model", group: "Gemini" }),
+  anthropicApiKey: config.string("", {
+    label: "Anthropic API key",
+    group: "Anthropic",
+    secret: true,
+    visibleWhen: { translationProvider: "anthropic" },
+  }),
+  anthropicModel: config.string("claude-haiku-4-5-20251001", {
+    label: "Anthropic model",
+    group: "Anthropic",
+    visibleWhen: { translationProvider: "anthropic" },
+  }),
+  geminiApiKey: config.string("", {
+    label: "Gemini API key",
+    group: "Gemini",
+    secret: true,
+    visibleWhen: { translationProvider: "gemini" },
+  }),
+  geminiModel: config.string("gemini-2.0-flash", {
+    label: "Gemini model",
+    group: "Gemini",
+    visibleWhen: { translationProvider: "gemini" },
+  }),
   localCliEngine: config.select(
     "claude",
     [
@@ -209,14 +242,20 @@ export const schema = {
       { value: "codex", label: "Codex" },
       { value: "gemini", label: "Gemini CLI" },
     ],
-    { label: "Local CLI", group: "Local CLI" },
+    { label: "Local CLI", group: "Local CLI", visibleWhen: { translationProvider: "local-cli" } },
   ),
   localCliCommand: config.string("", {
     label: "Command",
     description: "The executable to run (default: the engine's command).",
     group: "Local CLI",
+    visibleWhen: { translationProvider: "local-cli" },
   }),
-  localCliModel: config.string("", { label: "Model", description: "Optional model passed to the CLI.", group: "Local CLI" }),
+  localCliModel: config.string("", {
+    label: "Model",
+    description: "Optional model passed to the CLI.",
+    group: "Local CLI",
+    visibleWhen: { translationProvider: "local-cli" },
+  }),
   localCliTimeoutSeconds: config.number(120, {
     label: "Timeout",
     min: 15,
@@ -224,11 +263,13 @@ export const schema = {
     step: 5,
     unit: "s",
     group: "Local CLI",
+    visibleWhen: { translationProvider: "local-cli" },
   }),
   googleTranslateHost: config.string("translate.google.com", {
     label: "Google Translate host",
     description: "A regional host such as translate.google.co.jp, or your own Google Translate mirror.",
     group: "Google Translate",
+    visibleWhen: { translationProvider: "google-translate" },
   }),
 };
 
