@@ -90,6 +90,8 @@ The `beforeReady` context carries `config`, `app`, `enableFeatures(...names)` an
 
 A page part is started when its plugin is enabled in the host bootstrap and stopped when the host reports it disabled. With `restartRequired`, a page part starts only if the plugin was enabled when the page loaded and keeps running until the next load; the settings UI shows the restart banner. Without it, enable, disable and config changes apply live. The `performance.plugins` switch skips the page halves of `ambient-mode`, `blur-nav-bar` and `visualizer`; their config and host parts still run.
 
+The page runtime registers a pass-through Trusted Types `default` policy before any plugin starts, so `innerHTML`, `outerHTML` and `insertAdjacentHTML` writes keep working when YTM serves a Trusted Types CSP. It also puts the player's `<video>` in CORS mode and owns the shared audio graph (see [Player API](./player-api.md#audio-graph)), so audio plugins insert into that graph instead of capturing the element themselves.
+
 `runAt: "start"` runs before there is a `<body>`. Use it only to patch page globals before YTM starts, and `ctx.waitFor` for elements later.
 
 ## Contexts
@@ -113,7 +115,7 @@ Host context adds:
 | `app`, `window` | Electron's app and the main window. |
 | `session` | The default session, with this plugin's scoped `webRequest`. |
 | `webRequest` | Electron's `WebRequest` API, composed fairly with the core and other plugins. Listeners are removed when the plugin stops. |
-| `player` | Host player mirror: `state`, `on("change" | "trackChange")`, `control(action)`, `details()`. |
+| `player` | Host player mirror: `state`, `on("change" \| "trackChange")`, `control(action)`, `details()`. |
 | `request(event, payload?, { timeout? })` | Asks the page part's `ctx.host.handle` and awaits the answer. |
 | `emit(event, payload?)` | Sends an event to the page part. |
 | `openSettings()`, `focusWindow()` | Opens the settings overlay and focuses the main window. |
@@ -132,9 +134,9 @@ Page context adds:
 | `sel(name)`, `$`, `$$` | Selector registry lookup and element queries. |
 | `waitFor(name, { timeout? })` | Resolves with the first matching element. |
 | `mount(element, place)`, `mount(element, parentName, position?)` | Keeps an element in the page across YTM re-renders. |
-| `observe(target, options, callback)` | A `MutationObserver` disconnected on stop. |
+| `observe(target, options, callback)` | A `MutationObserver` disconnected on stop; plugins watching the same node share one browser observer and each callback only sees its own records. |
 | `listen(target, type, fn, options?)` | `addEventListener` removed on stop. |
-| `audio()` | The shared Web Audio graph. Use it instead of connecting the `<video>` yourself. |
+| `audio()` | The shared Web Audio graph, owned by the page runtime and captured before the media loads when an audio plugin is enabled. Use it instead of connecting the `<video>` yourself. |
 | `addStyle(css)` | Adds a style sheet for the plugin's lifetime; returns `{ update, remove }`. |
 | `toast(message)` | Shows a message in YTM's toast. |
 | `isWindowVisible()` | Whether the window is on screen; visual loops check this to pause. |
@@ -157,11 +159,11 @@ Every listener, timer, observer, style, mounted element and audio node registere
 | `config.list(default, meta)` | `string[]` |
 | `config.orderable(default, options, meta)` | `string[]`, one entry per option, in the user's order |
 
-Every field takes `label`, and optionally `description`, `group`, `restart`, `platforms` and `parent`. `parent` names a boolean field the field refines: the settings UI indents it and disables it while that switch is off. Orderable lists are reordered in the settings UI; their entries come from the code, so users cannot add, remove or edit them. Numbers default to a slider when bounded with at most 1000 steps and to a stepper otherwise. Selects default to chips for up to eight options and to a dropdown otherwise. `secret` renders a password input.
+Every field takes `label`, and optionally `description`, `group`, `restart`, `platforms`, `parent` and `hidden`; text and list fields also take `placeholder`. `parent` names a boolean field the field refines: the settings UI indents it and disables it while that switch is off. `hidden: true` keeps a field out of the settings UI while its value is still stored (a plugin's last volume, a queue's shuffled flag, the chosen audio track). Orderable lists are reordered in the settings UI; their entries come from the code, so users cannot add, remove or edit them, and `normalizeConfig()` puts an option missing from a saved order at the end and drops unknown ones. Numbers default to a slider when bounded with at most 1000 steps and to a stepper otherwise; `variant` forces `slider` or `stepper`. Selects default to chips for up to eight options and to a dropdown otherwise; `variant` forces `chips` or `dropdown`, and `languageSync: true` adds the buttons that copy the language from or to YTM, as the core Language setting has. `secret` renders a password input.
 
 `ConfigOf<typeof schema>` is the inferred config type. `normalizeConfig()` drops unknown keys and resets values that no longer fit the schema to their defaults, so a removed option cannot crash a plugin.
 
-Plugin config is stored as `plugins.<id>` in `<userData>/config.json`, next to the `enabled` flag. `setConfig({ key: value })` writes the changed fields through the host. Arrays are stored as lists and replaced, not merged. A config write is offered to the running part; when the part cannot apply it, the part restarts. `restart: true` on a field only tells the settings UI to show a restart pill; it does not change the plugin lifecycle by itself.
+Plugin config is stored as `plugins.<id>` in `<userData>/config.json`, next to the `enabled` flag. `setConfig({ key: value })` writes the changed fields through the host. Arrays are stored as lists and replaced, not merged. A config write is offered to the running part; when the part cannot apply it, the part restarts. `restart: true` on a field only tells the settings UI to show a restart pill and report the changed setting to the host's restart session (see [Using plugins](./using.md#restarting-and-reloading)); it does not change the plugin lifecycle by itself.
 
 ## Communication
 
@@ -240,7 +242,7 @@ The method becomes `POST /api/v1/plugins/<id>/<method>`. The body is validated a
 
 `ctx.addMenuItem({ label, accelerator?, click })` adds an item under the native Options menu and in the tray menu. The item is removed when the plugin stops. The `tray` plugin draws its own menu from `ctx.pluginMenuItems()` and refreshes on `ctx.onMenuItemsChange`.
 
-There is no per-plugin native submenu and no `menu` half. Complex controls belong in the plugin's settings card or in the page.
+`apps/desktop/src/main/menu.ts` also builds a top-level **Plugins** menu with an enable/disable checkbox per plugin, mirroring the settings cards; `advanced.restartOnConfigChanges` makes those toggles relaunch the app when it is on. There is no per-plugin native submenu and no `menu` half of a plugin. Complex controls belong in the plugin's settings card or in the page.
 
 ## Styles
 

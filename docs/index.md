@@ -23,7 +23,7 @@ The code is the source of truth. Every claim here should be checkable against th
 
 | Page | Covers |
 | --- | --- |
-| [Architecture](./architecture.md) | Process model, boot, build, config, plugins, player, settings, API, links, performance |
+| [Architecture](./architecture.md) | Process model, boot, build and updates, config, plugins, player and media, background playback, settings, API, links, performance |
 | [Conventions](./conventions.md) | Commits, layout, style, translations, tests, releases |
 | [Plugins](./plugins/index.md) | Discovery, definition, lifecycle, contexts, config, communication, RPC |
 | [Creating a plugin](./plugins/creating.md) | Walkthrough from scaffold to tests |
@@ -45,19 +45,21 @@ The code is the source of truth. Every claim here should be checkable against th
 
 | Path | What lives there |
 | --- | --- |
-| `apps/desktop/src/main/` | Main process: boot, window, menu, config, migrations, themes, API server (v1, v2, WebSocket, MCP), plugin host, language sync, links and permissions |
+| `apps/desktop/src/main/` | Main process: boot, window, menus, config, migrations, themes, updater, restart sessions, API server (v1, v2, WebSocket, MCP), plugin host, language sync, links and permissions |
 | `apps/desktop/src/preload/` | Preload bridge and page-runtime injection |
 | `apps/desktop/e2e/` | Playwright tests that drive the built app |
 | `apps/desktop/test/` | Vitest tests for the desktop app |
+| `apps/desktop/scripts/` | The i18n generator and the electron-builder wrapper |
 | `apps/desktop/electron.vite.config.ts` | electron-vite build, build metadata, plugin options |
 | `apps/desktop/electron-builder.yml` | Packaging targets, Flatpak runtime, locale trimming |
 | `packages/sdk/src/` | `definePlugin`, config schemas, player types, selectors, queue helpers, RPC, theming types, macros, DOM helpers |
-| `packages/page/src/` | YTM page runtime: player facade, plugin runner, themes, appearance, performance mode, share-link cleaning, audio graph, API handlers |
+| `packages/page/src/` | YTM page runtime: player facade, plugin runner, themes, appearance, performance mode, CORS media and the audio graph, inactivity keep-alive, share-link cleaning, API handlers |
 | `packages/ui/src/` | Preact settings dialog, fields, theme card, standalone entry |
 | `packages/vite-plugin-pear/src/` | Plugin discovery, host/page splitting, virtual modules, i18n module |
 | `plugins/<id>/` | One workspace package per plugin: `index.ts` or `index.tsx`, optional helper modules, `test/` |
 | `src/i18n/resources/` | Translation JSON files, one per language |
-| `scripts/` | `new-plugin.ts`, `escape-names.ts`, `install-hooks.ts` |
+| `scripts/` | `new-plugin.ts`, `escape-names.ts`, `check-packaging.ts`, `install-hooks.ts`, `with-env.ts` |
+| `.devcontainer/` | The devcontainer definition used for development and container builds |
 | `docs/` | This documentation |
 
 ## Ground rules for these docs
@@ -65,6 +67,6 @@ The code is the source of truth. Every claim here should be checkable against th
 - Describe what the code does today, including the quirks. Do not document a feature because it should exist or existed before the rewrite.
 - Link current paths under `apps/desktop`, `packages` and `plugins`; do not use the removed `src/` layout except for `src/i18n/resources`.
 - Keep examples close to real code. Plugin APIs come from `@pear/sdk`, never from upstream's `@/utils`.
-- Use Nub and the scripts in the root `package.json`; `nub run dev`, `nub run build`, `nub run typecheck`, `nub run test`, `nub run test:e2e`, `nub run dist`.
+- Use Nub and the scripts in the root `package.json`; `nub run dev`, `nub run build`, `nub run typecheck`, `nub run test`, `nub run test:e2e`, `nub run check`, `nub run dist`.
 - The root `README.md` is user-facing and maintained separately. It may lag behind this documentation.
 - User-facing text needs a translation key. The workflow is in [Conventions](./conventions.md#user-facing-text-and-translations).

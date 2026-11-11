@@ -72,14 +72,16 @@ Upstream's `settings` array had types such as `switch`, `select`, `slider`, `tex
 | `text` | `config.string(default, { placeholder, secret })` |
 | `select` | `config.select(default, options, { label })` |
 | `multiselect` | `config.multi(default, options, { label })` |
-| `orderable` | Not supported |
+| `orderable` | `config.orderable(default, options, { label })`; users reorder the fixed entries and cannot add or remove them |
 | `action` buttons | `actions` plus `host.commands` |
 | Custom components | Preact in the plugin's own UI, not in the settings card |
-| `visible` conditions | Not supported; show or hide in page UI instead |
-| `languageSync` | No equivalent |
+| `visible` conditions | Only `parent`: a sub-setting is indented and disabled while its boolean parent is off, never hidden by another value |
+| Per-entry switches inside a list (skip-ai-slop's keywords) | A plain `config.list` of strings, which cannot store a per-entry switch; the `4.0.0` migration drops entries that were switched off instead of filtering them |
+| `languageSync` | `config.select(..., { languageSync: true })`; the control gets pear-desktop's **From YouTube** and **To YouTube** buttons |
+| Stored UI state (last volume, shuffled flag, chosen audio track) | A field with `hidden: true`: stored and normalized like any other, not rendered in the settings card |
 | Dotted setting keys | Fields are a flat schema; nest with `group` headings |
 
-The settings card is generated from `config`, so there is no separate settings editor to port. Field texts are translated through `plugins.<id>.settings.<field>.*`; run `nub run i18n`.
+The settings card is generated from `config`, so there is no separate settings editor to port. Field texts are translated through `plugins.<id>.settings.<field>.*`; run `nub run i18n`. A field's `restart: true` and a plugin's `restartRequired` both report to the host's restart session, which offers one restart for everything pending once the last settings surface closes.
 
 Stored config is still `plugins.<id>` with the old option names where they still mean the same. Upstream stored only values that differed from defaults and deep-merged on read. This tree normalizes the stored object against the schema on read, keeps unknown keys, and never writes defaults into the file. A ported plugin can usually keep its stored options; the `4.0.0` migration in `apps/desktop/src/main/migrations/plugins.ts` already converts the plugins that ship here. A ported third-party plugin needs its own migration only if it renames or reshapes options.
 
@@ -112,7 +114,7 @@ host: {
 },
 ```
 
-Menus that need dynamic radio groups (quality, speed, captions) are now page pickers on the player bar. See `plugins/quality-changer`, `plugins/playback-speed` and `plugins/captions-selector`.
+Menus that need dynamic radio groups (quality, speed, captions) are now page pickers on the player bar. See `plugins/quality-changer`, `plugins/playback-speed` and `plugins/captions-selector`. Upstream's app-wide **Plugins** menu, with an enable/disable entry per plugin, is core here (`apps/desktop/src/main/menu.ts`); a ported plugin does not contribute to it.
 
 ## Translations
 
@@ -124,6 +126,7 @@ Upstream's plugin `name` and `description` were functions returning `t(...)`, an
 - The `settings-ui` plugin and its modal protocol. Settings are core now; the plugin's own options are the `settingsUi` core section, stored at `plugins.settings-ui` and shown in Window & Tray → Settings menu.
 - The `api-server` plugin. The API server is a core section, stored at `plugins.api-server`, with v1 routes and plugin RPC.
 - The `memory-saver` and `performance-improvement` scripts are plugins, not core providers. The old all-in-one performance mode is the `performance` core section's four independent switches now (stored at `options.performanceMode`).
+- Per-entry switches in list settings, such as skip-ai-slop's per-keyword on/off. The list stores plain strings, and the `4.0.0` migration drops the entries that were switched off rather than start filtering them.
 - The old app-internal config, provider, theme and type modules as plugin-visible imports. The SDK owns the shared surface.
 - Direct `peard:*` IPC and `electron-store`.
 

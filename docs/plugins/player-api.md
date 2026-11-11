@@ -8,7 +8,7 @@ Every player event and `ctx.player.state` use the same shape:
 
 | Field | Type | Meaning |
 | --- | --- | --- |
-| `track` | `Track \| null` | The current track, with `videoId`, `title`, `artist`, `album?`, `artworkUrl?`, `durationSeconds`, `url`, `playlistId?` and `mediaType`. |
+| `track` | `Track \| null` | The current track, with `videoId`, `title`, `artist`, `album?`, `artworkUrl?`, `durationSeconds`, `url`, `playlistId?`, `views?` and `mediaType`. |
 | `status` | `"idle" \| "playing" \| "paused" \| "buffering" \| "ended"` | Playback state. |
 | `positionSeconds` | `number` | Position at `updatedAt`. Use `livePosition(state)` for the current position. |
 | `volume` | `number` | 0 to 100. |
@@ -65,7 +65,7 @@ ctx.player.control({ type: "volume", value: 65 });
 | `mute` | `muted?`; omitted toggles |
 | `like`, `dislike`, `shuffle`, `repeat` | none |
 
-The page implementation prefers clicking the player bar's own controls or moving its own sliders, so YTM applies the action exactly as it does for a user. It falls back to the player API methods when a control is not rendered, for example in the new player-bar layout.
+The page implementation prefers clicking the player bar's own controls or moving its own sliders, so YTM applies the action exactly as it does for a user. It falls back to the player API methods when a control is not rendered, for example in the new player-bar layout. Like and dislike use YTM's own `updateLikeStatus` setter when the bar has one, so pressing like twice leaves the rating set instead of clearing it.
 
 ## Host player
 
@@ -134,7 +134,7 @@ The page-side API server handlers use these helpers for queue reads, inserts, mo
 
 ## Audio graph
 
-`ctx.audio()` returns the shared `AudioGraph`:
+`ctx.audio()` returns the shared `AudioGraph`. The page runtime owns the graph and captures it before the media loads when one of the sampling plugins (`audio-compressor`, `crossfade`, `custom-output-device`, `equalizer`, `skip-silences`, `visualizer`) is enabled; a plugin enabled later creates it on its first call. Capturing early matters because creating the source node on an element whose MSE pipeline is already running can freeze playback. Before the source node exists, the graph also puts the `<video>` in CORS mode (the app rewrites media responses' `Access-Control-Allow-Origin`), because Web Audio outputs silence for cross-origin media fetched without CORS.
 
 ```ts
 const graph = await ctx.audio();
@@ -148,9 +148,10 @@ const untap = graph.tap(analyser);
 
 | Member | Purpose |
 | --- | --- |
-| `context`, `source`, `video` | The one `AudioContext`, its source node and the `<video>`. |
+| `context`, `source`, `video` | The one `AudioContext`, its source node and the `<video>`; the last two are getters that follow the live element. |
 | `insert(input, output?, order?)` | Adds a processing stage between the source and the destination. Lower `order` runs earlier. Returns an unsubscribe. |
 | `tap(node)` | Connects the final output to an analyser or recorder as well. Returns an unsubscribe. |
+| `rebind(video)` | Re-cuts the existing stages to a new `<video>` when YTM replaced the element (some seeks). The runtime does this on its own; the member is for code holding its own element. Returns the new source, or `null` when nothing changed. |
 
 Stages and taps are removed when the plugin stops. Never create a second `MediaElementAudioSourceNode` for the same `<video>`, and never call `video.play()` from an audio plugin to compensate; use `ctx.player.control`.
 

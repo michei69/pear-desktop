@@ -19,7 +19,7 @@ The page overlay is used when YTM's page runtime is up. When it is not, the app 
 
 The sidebar has General, Appearance, Window & Tray, Performance, Plugins, Advanced, Flags and About. The search box filters sections, plugin names and setting labels across all of them.
 
-**General** holds the startup, language and shared-link settings. **Startup** has **Resume the last song** and the starting page. **Language** offers **From YouTube** (copy YTM's `hl` language into the app, applied after a restart) and **To YouTube** (point YTM at the app language and reload the page). **Shared links** has the **Strip 'music.'** and **Strip 'si'** switches. The update settings live under **About**: the update channel selects stable or beta, and a beta build starts on beta until you choose; switching a beta build to stable asks first because a downgrade runs no migrations back.
+**General** holds the startup, language and shared-link settings. **Startup** has **Resume the last song** and the starting page. **Language** offers **From YouTube** (copy YTM's `hl` language into the app, applied after a restart) and **To YouTube** (point YTM at the app language and reload the page). **Shared links** has the **Strip 'music.'** and **Strip 'si'** switches. The update settings live under **About**: the update channel selects stable or beta, and a beta build starts on beta until you choose; switching a beta build to stable asks first because a downgrade runs no migrations back. When the app can install an update itself (a Windows installer build or a Linux AppImage), the update dialog offers **Download and Install** and asks to restart when the download is ready; elsewhere it opens the release page.
 
 **Window & Tray** groups the window options, the **Tray** plugin's card, the **Title bar** (in-app menu) plugin's card, a **Settings menu** card for the settings dialog itself, and the system options. The settings menu card can hide the sidebar entry, always open Settings in the standalone window, and remove the backdrop blur behind the in-app panel.
 
@@ -33,7 +33,7 @@ The plugins are grouped by category — **Playback**, **Audio**, **Interface**, 
 - Settings buttons, when present, run the plugin's commands and show their errors under the buttons.
 - A plugin that cannot be configured has no expander and a disabled name row.
 
-Only plugins for the current platform are listed. A plugin enabled by default is on in a fresh profile; you can still turn it off.
+Only plugins for the current platform are listed. A plugin enabled by default is on in a fresh profile; you can still turn it off. The native menu also has a top-level **Plugins** menu with an enable/disable checkbox per plugin.
 
 ## Settings fields
 
@@ -50,7 +50,9 @@ Fields come from the plugin's schema and can be:
 
 A sub-setting appears indented under its parent switch and is disabled while that switch is off.
 
-Changes are written as you make them. A **restart** pill next to a field means the value is only read at startup. Pending restarts collect in a banner at the top of the dialog: **Restart now** restarts the app, **Later** dismisses the banner until another change is flagged. Reopening the dialog in the same window keeps the pending list.
+Changes are written as you make them. A **restart** pill next to a field means the value is only read at startup. Pending restarts collect in a banner at the top of the dialog: **Restart now** restarts the app, **Later** dismisses the banner until another change is flagged. Reopening the dialog in the same window keeps the pending list. The app also keeps one list across the in-page dialog and the standalone settings window: closing the last of them asks once, with the names of the pending changes, whether to restart now or later.
+
+The Flags section writes YTM feature flags in the same `name=value` form stored in the config file. A boolean gets a switch, a number a stepper, text a text input, and an object, array or `null` a JSON input. Feature flags the page says need a restart are reported like a restart-pending setting.
 
 Some plugins apply a config change without restarting; others restart their own host or page part in the background. You do not need to do anything for that.
 
@@ -68,6 +70,7 @@ Settings live in `<userData>/config.json`. Plugin state is under `plugins.<id>`,
 ## Restarting and reloading
 
 - **Navigation ▸ Restart App** restarts the app. The restart banner uses the same path.
+- **Advanced ▸ Configuration ▸ Restart when settings change** relaunches the app after every core settings change, and after enabling or disabling a plugin from its card or the native **Plugins** menu, so restart-only options apply at once. Plugin option changes alone do not restart the app.
 - **View ▸ Reload** reloads the page. It restarts the page parts and reapplies page settings, but not the main-process host parts. A plugin whose host part changed state needs a full restart.
 
 ## Plugin errors

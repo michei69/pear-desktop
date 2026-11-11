@@ -135,7 +135,7 @@ Use the page context instead of raw DOM APIs so cleanup is automatic: `ctx.liste
 
 Visual loops should check `ctx.isWindowVisible()` and `ctx.player.state.ad`, as `plugins/ambient-mode`, `plugins/visualizer` and `plugins/synced-lyrics` do. The window keeps rendering while hidden, so the check is the only way to pause.
 
-Audio plugins must not connect the `<video>` to a new `AudioContext`: a media element can have only one source node. Use `ctx.audio()`, the shared graph, which exposes `insert(input, output?, order?)` to add a processing stage and `tap(node)` to observe the final output. The equalizer, compressor and visualizer are examples.
+Audio plugins must not connect the `<video>` to a new `AudioContext`: a media element can have only one source node. Use `ctx.audio()`, the shared graph, which exposes `insert(input, output?, order?)` to add a processing stage and `tap(node)` to observe the final output. The page runtime owns the graph: it captures it before the media loads when an audio plugin is enabled, puts the `<video>` in CORS mode so cross-origin audio is not silenced, and re-cuts the stages to the live element when YTM swaps it (`rebind(video)`). Never call `createMediaElementSource` yourself. The equalizer, compressor and visualizer are examples.
 
 ## Stored config and migrations
 
@@ -159,7 +159,7 @@ Two different things need a restart:
 - **Plugin-level**: `restartRequired` (or `host.beforeReady` / `host.windowOptions`). Enabling or disabling the plugin only fully applies after an app restart. The page part starts only when the plugin was enabled at page load.
 - **Field-level**: `restart: true`. The value is written normally, but the user should restart for it to take effect.
 
-The settings card shows a pill for the first, each field shows a pill for the second, and the dialog collects both in the restart banner. The banner's "Restart now" calls `app:relaunch`. Do not show your own restart dialog.
+The settings card shows a pill for the first, each field shows a pill for the second, and the dialog collects both in the restart banner. Changes are also reported to the host's restart session, so closing the last settings surface asks once with the full list. The banner's "Restart now" calls `app:relaunch`. Do not show your own restart dialog.
 
 When a part could apply a config change but the hook is not implemented, the host restarts the part automatically. The hook is preferred: `start` may own resources that are expensive to rebuild.
 

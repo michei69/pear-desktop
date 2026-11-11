@@ -20,9 +20,9 @@ Main process (`apps/desktop/src/main/index.ts`):
 1. `setAppIdentity()` pins `userData` (or `PEAR_USER_DATA` for tests), names the app with `APP_ID`, sets the X11 window class and the Windows AppUserModelId, so an existing pear-desktop install keeps its data folder and taskbar entry. The single-instance lock follows.
 2. `new Settings(userData, hostPlugins, app.getVersion())` reads and migrates `config.json` before anything else touches it.
 3. `new PluginHost(...)` filters plugins by platform and creates the plugin registry.
-4. `beforeReady()` in `startup-tasks.ts` applies `advanced.disableHardwareAcceleration`, registers the privileged `pear` scheme, runs every enabled plugin's `host.beforeReady`, disables Chromium's media session when `window.forceSmtc` is on for Windows, and appends the collected Chromium feature switches.
-5. `whenReady`: `hardenSession()` installs the permission handlers, load i18n with `loadI18n(resolveLanguage(...))` and give it to the plugin host, build the language sync callbacks, install the core `WebRequest` listeners through `setupNet()`, serve the settings window, register `ipcMain` handlers, start the theme engine (`CoreOptions.start()`), build the native menu, seed Google's consent cookie, apply the configured proxy, create the main window, start Windows SMTC when `forceSmtc` is on, create the update manager and the API server, then `plugins.attach()` starts the host parts that are enabled.
-6. After attach: register the `youtubemusic://` protocol handler, apply window options, apply the API server config, open the settings window when `--settings` is on the command line, and schedule the delayed cache clear and update check.
+4. `loadSmtc()` in `smtc.ts` resolves the optional Windows native addon before the Chromium feature switches are applied. `beforeReady()` in `startup-tasks.ts` then applies `advanced.disableHardwareAcceleration`, registers the privileged `pear` scheme, runs every enabled plugin's `host.beforeReady`, turns Chromium's own media session off only when that addon loaded (a missing or unbuilt addon leaves Chromium's media keys in place instead of none), and appends the collected Chromium feature switches.
+5. `whenReady`: `hardenSession()` installs the permission handlers, load i18n with `loadI18n(resolveLanguage(...))` and give it to the plugin host, build the language sync callbacks, install the core `WebRequest` listeners through `setupNet()`, serve the settings window, start the feature-flag metadata download, create the settings surfaces' restart sessions (`RestartSessions`), register `ipcMain` handlers, start the theme engine (`CoreOptions.start()`), build the native menu, seed Google's consent cookie, apply the configured proxy, create the main window, start the SMTC mirror when the addon loaded, create the update manager and the API server, then `plugins.attach()` starts the host parts that are enabled.
+6. After attach: register the `youtubemusic://` protocol handler, apply the window and appearance options (the Windows shortcut icons follow `appearance.useYtmIcons`), apply the API server config, open the settings window when `--settings` is on the command line, and schedule the delayed cache clear and update check.
 7. `before-quit` stops SMTC, the update manager, the theme poller, the API server and all host plugin instances, then flushes the config file.
 
 Preload (`apps/desktop/src/preload/index.ts`):
@@ -32,21 +32,23 @@ Preload (`apps/desktop/src/preload/index.ts`):
 
 Page runtime (`packages/page/src/index.ts`) runs before YTM's own scripts:
 
-1. Reads the bridge, applies the `site` overrides by wrapping `ytcfg.set` before YTM reads its experiment flags, and creates the player facade with the page's `appearance` config.
-2. Creates the plugin runner with the host bootstrap, applies appearance tweaks, applies the theme state, and mounts the settings UI after DOM ready.
-3. Subscribes to host events: plugin state, plugin events, errors, status lines, host requests, core state, themes, window visibility, player control and UI actions.
-4. Registers the page side of the API server (queue, search, likes, fullscreen, details) and starts the enabled page parts.
+1. Applies the performance switches (the CSS sheet and the animation throttle here; `flags` feeds the site overrides below, and `plugins` is handled by the plugin runner), registers a pass-through Trusted Types `default` policy when the page offers `trustedTypes` (so YTM's Trusted Types CSP does not break plugin DOM writes), applies the `site` overrides by wrapping `ytcfg.set` before YTM reads its experiment flags, and creates the player facade and the plugin runner with the page's `appearance` config.
+2. Puts YTM's `<video>` in CORS mode once it exists and follows YTM replacing the element on some seeks. When one of the sampling plugins (`audio-compressor`, `crossfade`, `custom-output-device`, `equalizer`, `skip-silences`, `visualizer`) is enabled, it also captures the shared Web Audio graph before the media loads. Installs the inactivity keep-alive for background playback.
+3. Applies the appearance tweaks, the context-menu switches and the theme state, and mounts the settings UI after DOM ready.
+4. Subscribes to host events: plugin state, plugin events, errors, status lines, host requests, core state, themes, window visibility, player control and UI actions.
+5. Registers the page side of the API server (queue, search, likes, fullscreen, details) and starts the enabled page parts.
 
 Standalone settings (`pear://settings`):
 
 - `registerSettingsScheme()` must run before `app.whenReady()`; `serveSettings()` serves a fixed HTML document and the bundled `app.js`.
 - `packages/ui/src/standalone.tsx` renders the dialog over the bridge with `bridgeModel`, so plugins and core settings stay reachable when YTM does not load.
 - The preload exposes the bridge on `SETTINGS_ORIGIN`; no page runtime is injected there.
+- A failed load shows pear-desktop's error page with a **Retry** (`load-failure.ts`) instead of a blank window; the main window falls back to the home page when the error is the network being offline.
 - `--settings` opens it, also from a second instance. `openSettings()` from the menu, `Ctrl/Cmd+,` or the sidebar entry prefers the in-page overlay and falls back to this window when the runtime is not up.
 
 ## Build
 
-`apps/desktop/electron.vite.config.ts` uses `electron-vite` and the `@pear/vite-plugin` plugin. It produces `out/main/index.js`, `out/preload/index.cjs` (CommonJS because sandboxed preloads require it) and the page bundles embedded as strings. `json.namedExports: false` keeps translation dynamic imports working, and `@michei69/node-smtc` stays external because it is a Windows-only optional native module.
+`apps/desktop/electron.vite.config.ts` uses `electron-vite` and the `@pear/vite-plugin` plugin. It produces `out/main/index.js`, `out/preload/index.cjs` (CommonJS because sandboxed preloads require it) and the page bundles embedded as strings. `json.namedExports: false` keeps translation dynamic imports working, and `@michei69/node-smtc` stays external because it is a Windows-only optional native module. Packaged builds minify the main and preload bundles and emit no source maps; dev builds keep inline maps (the dev scripts also set `NODE_OPTIONS=--enable-source-maps`).
 
 The Vite plugin (`packages/vite-plugin-pear/src/index.ts`) generates four virtual modules:
 
@@ -57,7 +59,9 @@ The Vite plugin (`packages/vite-plugin-pear/src/index.ts`) generates four virtua
 
 `packages/vite-plugin-pear/src/split.ts` removes the `page` and `style` properties for the host bundle and the `host` property for the page bundle, then prunes imports and local declarations that are no longer referenced. Both halves therefore live in one file, but `node:`, Electron and native imports never reach the page. `PEAR_ONLY_PLUGINS=a,b` limits discovery for focused tests.
 
-Build metadata is baked into the main bundle by `electron.vite.config.ts`: `__PEAR_CHANNEL__` comes from `PEAR_CHANNEL` (default `dev`) and `__PEAR_COMMIT__` from `PEAR_COMMIT` or the local short commit. `apps/desktop/src/main/app-info.ts` turns those into the About label and copyright block; `general.updateChannel` (`stable` or `beta`) chooses the release line and a beta build starts on `beta` until the user picks one. `UpdateManager` in `updates.ts` checks GitHub shortly after startup and every six hours while `general.autoUpdates` is on, and rechecks when the channel changes. The dialog opens the release page or disables further checks. A beta build switching to stable asks for confirmation first, because downgrading runs no migrations back.
+Build metadata is baked into the main bundle by `electron.vite.config.ts`: `__PEAR_CHANNEL__` comes from `PEAR_CHANNEL` (default `dev`) and `__PEAR_COMMIT__` from `PEAR_COMMIT` or the local short commit. `apps/desktop/src/main/app-info.ts` turns those into the About label and copyright block; `general.updateChannel` (`stable` or `beta`) chooses the release line and a beta build starts on `beta` until the user picks one.
+
+`UpdateManager` in `updates.ts` checks GitHub shortly after startup and every six hours while `general.autoUpdates` is on, and rechecks when the channel changes; a check that never settles gives up after two minutes so the next one can run. Where the installation can replace itself — a Windows installer build, or a Linux AppImage — the update dialog's second button is **Download and Install**: `electron-updater` downloads the release on the selected channel (`beta.yml` for beta, `latest.yml` for stable) in the background, showing progress on the window (the taskbar on Windows, the launcher where the Linux desktop supports it), and an **Update Downloaded** dialog offers to restart into it (`quitAndInstall`). A stall of fifteen minutes or a failed download shows a failure dialog with a **View Release** button instead of leaving the user waiting. Everywhere else — macOS, the Windows portable exe, package-managed Linux — the second button is **View Release** and opens the release page. The third button turns further checks off (the **OK** button just closes the dialog). A beta build switching to stable asks for confirmation first, because downgrading runs no migrations back.
 
 `apps/desktop/electron-builder.yml` packages `out/**` only: the app is self-contained, so no `node_modules` ship. `extraFiles` adds the license, and `extraResources` ships ffmpeg.wasm's core for the downloader. `electronLanguages` trims Chromium's locale packs to the languages present in `src/i18n/resources` plus the regional spellings electron-builder needs. Linux targets are AppImage, Flatpak, deb, rpm, snap, freebsd and tar.gz; Flatpak uses runtime and base `26.08`. Output goes to `pack/` (`directories.output`), and the `dist:*`, `beta:*` and `release:*` scripts pass `-p never`, so CI owns publishing. Release details are in [Conventions](./conventions.md#releases-and-ci).
 
@@ -68,6 +72,8 @@ Settings are stored in `<userData>/config.json` by `apps/desktop/src/main/config
 - `plugins.<id>` holds `{ enabled, ...config }`. The API server is stored as `plugins.api-server`, where pear-desktop kept it.
 - `options.*` holds the core sections `general`, `window`, `appearance`, `advanced` and `site`, plus the theme keys `theme`, `themePresets`, `themeOverrides`, `themeConsent` and `themesSeeded`, and the legacy `themes` CSS list until it is migrated.
 - `options.performanceMode` holds the performance switches (`flags`, `css`, `animations`, `plugins`); `plugins.settings-ui` holds the settings dialog's own options where pear-desktop's settings-ui plugin kept them (a core section, like the API server).
+- `options.advanced.restartOnConfigChanges` relaunches the app after every core option write and after enabling or disabling a plugin when it is on (see [Settings UI](#settings-ui)).
+- `options.site.siteFlags` holds the feature-flag overrides as `name=value` entries; a value is a boolean, a number, text, or a `json:`-prefixed JSON literal (objects, arrays, `null`, and text that would otherwise read as a number or boolean). The Flags section edits the same list with typed controls.
 - `url`, `window-size`, `window-position` and `window-maximized` hold the last played track (pear-desktop's key, reopened by `general.resumeOnStart`) and the window state.
 - `__internal__.migrations.version` records the version that last wrote the file.
 
@@ -84,22 +90,35 @@ Migrations run in `apps/desktop/src/main/migrations/index.ts`. Each entry is a v
 - A plugin is one `definePlugin({...})` object with optional `host` and `page` parts.
 - Enabling starts a part; disabling stops it and runs everything it registered through the context.
 - A config write is offered to a running `onConfigChange` listener, or to the part's `onConfigChange`; when neither exists and the part has `start`, the part is restarted. Host commands stay callable while the host instance exists.
-- `restartRequired` (also implied by `host.beforeReady` or `host.windowOptions`) means the page part starts only when the plugin was enabled at page load and keeps running until the next load. The settings UI shows a restart pill and collects pending restarts in a banner.
+- `restartRequired` (also implied by `host.beforeReady` or `host.windowOptions`) means the page part starts only when the plugin was enabled at page load and keeps running until the next load. The settings UI shows a restart pill and reports the change to the host's restart session (see [Settings UI](#settings-ui)).
+- `advanced.restartOnConfigChanges` makes the app relaunch after enabling or disabling a plugin from the settings surfaces or the native Plugins menu, and after every core option write, so restart-only options apply at once. Plain plugin config edits do not restart.
 - `enabledByDefault`, `platforms` and `supportsPlatform` decide the starting state and visibility. There are no essential plugins in this tree.
 
 Communication crosses the preload bridge as protocol events (`packages/sdk/src/protocol.ts`):
 
 - Main to page: `plugin-state`, `plugin-event`, `plugin-error`, `plugin-status`, `plugin-request`, `core-state`, `themes`, `window-visibility`, `player-control`, `ui`.
-- Page to main: `bridge.invoke()` commands such as `plugin:set-enabled`, `plugin:set-config`, `plugin:invoke`, `plugin:respond`, `core:set-config`, `theme:*`, `app:relaunch`, `app:open-settings-window`, `app:show-settings-file`, `app:toggle-devtools` and `player:update`.
+- Page to main: `bridge.invoke()` commands such as `plugin:set-enabled`, `plugin:set-config`, `plugin:invoke`, `plugin:respond`, `core:set-config`, `theme:*`, `app:relaunch`, `app:open-settings-window`, `app:show-settings-file`, `app:toggle-devtools` and `player:update`; the settings surfaces add the `settings:restart-open`, `settings:restart-add` and `settings:restart-close` session commands.
 - `ipc.ts` validates the sender frame: only top-level YTM or settings frames may invoke, and `plugin:respond` and `player:update` are accepted only from YTM.
 
 Host and page parts talk to each other through typed host commands (`ctx.host.invoke`), host events (`ctx.emit` / `ctx.host.on`), host requests (`ctx.request` / `ctx.host.handle`) and, for plugins exposed to other apps, API server RPC methods. Details are in [Plugins](./plugins/index.md).
 
 ## Player and details
 
-`packages/page/src/player.ts` is the only code that touches YTM's `#movie_player` API and media element. It polls for the API after the element exists, owns `NowPlaying`, maps player actions to the page's own buttons or API calls, and publishes state to the host. Position-only updates are batched to at most one per second; everything else is sent immediately.
+`packages/page/src/player.ts` is the only code that touches YTM's `#movie_player` API and media element. It polls for the API after the element exists, owns `NowPlaying`, maps player actions to the page's own buttons or API calls, and publishes state to the host. Position-only updates are batched to at most one per second; everything else is sent immediately. Like and dislike go through `setLikeStatus` (`packages/page/src/like.ts`), which uses YTM's own `updateLikeStatus` setter when the bar has one, so a repeated like does not clear the rating.
 
 `apps/desktop/src/main/player.ts` mirrors that state for host plugins, the tray, SMTC, MPRIS, notifications and the API server. `HostPlayer.details()` asks the page for extra metadata (`SongDetails`: views, tags, upload date, alternative title, artist URL) through `PageRequests`; a page that is not up yields `null`.
+
+## Media and audio
+
+YTM's `<video>` is the app's only media element, and the page runtime owns how it is sampled:
+
+- `packages/page/src/media.ts` puts the element in CORS mode (`crossOrigin = "anonymous"`, reloading a source that was already fetched without it; blob/MSE sources are same-origin and are not reloaded). That pairs with `net.ts`, which rewrites media responses' `access-control-allow-origin` to `*`. Without both, a `MediaElementAudioSourceNode` outputs silence for cross-origin podcast and RSS audio.
+- `packages/page/src/audio.ts` owns the shared Web Audio graph, the one `MediaElementAudioSourceNode` a media element can have. The runtime captures it at boot only when one of the plugins that sample audio is enabled, because creating the source node on an element whose MSE pipeline is already running can freeze playback; a plugin enabled later creates it on its first `ctx.audio()`. Stages are inserted between the source and the destination, taps hang off the end, and everything is removed when the plugin stops.
+- YTM replaces the `<video>` on some seeks. The player notices the swap and emits `videoChange`; `rebindAudioGraph()` re-cuts the existing stages to the live element, so plugins never bind themselves to a retired element. `ctx.audio()`'s `rebind(video)` is the same operation for a plugin holding its own element.
+
+## Background playback
+
+`packages/page/src/inactivity.ts` keeps YTM from deciding the user left. YTM compares `Date.now()` with `window._lact` and pauses when that stamp looks stale; the runtime defines `_lact` as a configurable getter returning `Date.now()` with an inert setter, so every read is current without a timer (a timer would be throttled in a minimized window). A `MutationObserver` on the body dismisses YTM's "Are you still there?" dialog by clicking its confirm button (or closing it) when playback was active within the last minute, at most once every ten seconds, and resumes a player that the prompt paused.
 
 ## Settings UI
 
@@ -107,8 +126,9 @@ Host and page parts talk to each other through typed host commands (`ctx.host.in
 
 - The dialog has a searchable sidebar with General, Appearance, Window & Tray, Performance, Plugins, Advanced, Flags and About sections, built from `packages/ui/src/settings/sections.ts`. The Plugins section groups the cards by category (`plugin-categories.ts`), and Window & Tray embeds the tray, title-bar and settings-dialog cards next to the window and system options.
 - Core sections render from `CORE_SECTIONS` in `packages/sdk/src/core-config.ts`. Plugin cards render from the plugin's config schema and its `actions`.
-- Each field kind has one control in `packages/ui/src/fields.tsx`: switch, slider or stepper, text, chips or dropdown, shortcut recorder, string list, multi-select and reorderable fixed list. A field with a `parent` renders as an indented sub-setting and is disabled while that switch is off. Label, description, placeholders, options and group headings come from translation keys generated by `apps/desktop/scripts/i18n.ts`.
-- Plugin cards show host errors, the host's status line (`ctx.setStatus`), action buttons and a restart pill. Pending restarts collect in a banner with "Restart now" and "Later"; the relaunch command is `app:relaunch`.
+- Each field kind has one control in `packages/ui/src/fields.tsx`: switch, slider or stepper, text, chips or dropdown, shortcut recorder, string list, multi-select and reorderable fixed list. A field with a `parent` renders as an indented sub-setting and is disabled while that switch is off; a field with `hidden` is stored but not rendered. Label, description, placeholders, options and group headings come from translation keys generated by `apps/desktop/scripts/i18n.ts` (core fields pear-desktop already translated reuse its keys through `CORE_FIELD_KEYS`).
+- Plugin cards show host errors, the host's status line (`ctx.setStatus`), action buttons and a restart pill. The Advanced section's Configuration card holds the restart-on-change switch with **Toggle DevTools** and **Edit config.json**.
+- Restart-pending changes are batched by the host. Each settings surface opens a session with `settings:restart-open`, reports changes with `settings:restart-add` and flushes them on close with `settings:restart-close`; `RestartSessions` in `settings-window.ts` keeps one list across the overlay and the standalone window and, when the last surface closes, shows a **Restart Required** dialog listing every pending change with **Restart Now** and **Later**. The in-page banner shows the same changes while a surface is open and its **Restart now** calls `app:relaunch`.
 - The overlay opens from the sidebar entry, `Ctrl/Cmd+,` or the native menu. It renders into a shadow root and stops page shortcuts while open. The standalone window uses the same components with `standalone`.
 
 ## Themes
@@ -136,8 +156,8 @@ Translations are JSON files in `src/i18n/resources/<code>.json`. Each starts wit
 
 - v1 routes are in `routes.ts`: song and queue reads, playback and seek controls, like/dislike, shuffle, repeat, volume, mute, fullscreen, search, queue add/move/remove/play/clear, and `POST /api/v1/plugins/<id>/<method>` for plugin RPC. `/auth/{id}` issues a token.
 - v2 routes are in `v2.ts`, backed by the shared `operations.ts`: `/api/v2/video` (unified song info), video play/next/prev/search/download, `/api/v2/browse`, lyrics read and translation, playback state/speed/position/play/pause/shuffle/repeat, volume and mute, rating, queue read/add/move/remove/select/clear/autoplay, `/api/v2/pear` (app and hardware info), `/api/v2/pear/config` (GET and PATCH), and feature flag read/patch/delete. A config patch (also the MCP `patch_config` tool) is applied like the same edit in the settings dialog: `apply-config.ts` compares the normalized config and applies changed core sections, starts/stops/restarts plugins through the host and rebinds the API server, so it never waits for a restart.
-- `server.ts` adds CORS, bearer-token checks, JSON body limits, `/doc` (OpenAPI 3.1 with v1, v2 and plugin RPC) and `/swagger`. WebSocket clients connect to `/api/v1/ws?token=...` or `/api/v2/ws?token=...`. v1 receives `PLAYER_INFO`, `VIDEO_CHANGED`, `PLAYER_STATE_CHANGED`, `POSITION_CHANGED`, `VOLUME_CHANGED`, `REPEAT_CHANGED`, `SHUFFLE_CHANGED` and `PLUGIN_EVENT`; v2 adds `RATING_CHANGED`, `LYRICS_CHANGED` and `TRANSLATION_UPDATED` (lyrics events come from the v2 lyrics and translation routes, and the server refetches the next track's lyrics while a v2 client is connected), and accepts v2 commands (`NEXT_VIDEO`, `PREV_VIDEO`, `PLAYBACK` with status/speed/position/shuffle/repeat/volume/mute, and `RATE`).
-- The MCP endpoint is `/mcp`: stateless Streamable HTTP with JSON responses, gated by `mcpEnabled`, authenticated with the same bearer token, and exposing the v2 operations as tools such as `video`, `search`, `browse`, `lyrics`, playback, volume, rating, queue and config tools. `GET` and `DELETE` return 405 because no session is kept; unknown tool calls return a JSON-RPC error. Plugin RPC stays on v1.
+- `server.ts` adds CORS, bearer-token checks, JSON body limits, `/doc` (OpenAPI 3.2 with v1, v2 and plugin RPC, including v2's `QUERY` operations) and `/swagger`. WebSocket clients connect to `/api/v1/ws?token=...` or `/api/v2/ws?token=...`. v1 receives `PLAYER_INFO`, `VIDEO_CHANGED`, `PLAYER_STATE_CHANGED`, `POSITION_CHANGED`, `VOLUME_CHANGED`, `REPEAT_CHANGED`, `SHUFFLE_CHANGED` and `PLUGIN_EVENT`; v2 adds `RATING_CHANGED`, `LYRICS_CHANGED` and `TRANSLATION_UPDATED` (lyrics events come from the v2 lyrics and translation routes, and the server refetches the next track's lyrics while a v2 client is connected), and accepts v2 commands (`NEXT_VIDEO`, `PREV_VIDEO`, `PLAYBACK` with status/speed/position/shuffle/repeat/volume/mute, and `RATE`). The v2 search and browse routes answer `POST` and `QUERY` with the same JSON body.
+- The MCP endpoint is `/mcp`: stateless Streamable HTTP with JSON responses, gated by `mcpEnabled`, authenticated with the same bearer token, and exposing the v2 operations as tools such as `video`, `search`, `browse`, `lyrics`, playback, volume, rating, queue and config tools. `tools/list` reports each tool's input as JSON schema, and `tools/call` validates the arguments against the same valibot schema, answering a tool error instead of passing bad values to the page. `GET` and `DELETE` return 405 because no session is kept; unknown tool calls return a JSON-RPC error. Plugin RPC stays on v1.
 - Tokens are HS256 JWTs signed with the configured `secret`, which is generated when empty. The first client is authorized through a dialog when `authStrategy` is `AUTH_AT_FIRST`; authorized ids are stored in `authorizedClients` and can be removed in settings. `useHttps` with a certificate and key serves HTTPS.
 
 ## Links, protocol and permissions
@@ -145,7 +165,7 @@ Translations are JSON files in `src/i18n/resources/<code>.json`. Each starts wit
 - `apps/desktop/src/main/links.ts` is pure routing policy. YTM, the video site and Google stay in the app, OAuth and help popups open in a child window that follows the same routing, and other web pages open in the browser. `mailto:` and `tel:` go to the system handler; other schemes and non-web URLs are denied. `main-window.ts` applies the policy to `will-navigate`, `will-redirect`, `setWindowOpenHandler` and popup windows. Google sign-in gets Electron's honest user agent, YTM gets a Chrome one.
 - `apps/desktop/src/main/protocol.ts` handles `youtubemusic://` links (playback commands from notification buttons, scripts or other apps), including links passed to a second instance. Playback commands are applied first, then `ctx.onProtocol` listeners hear them. The handler is registered only in packaged builds.
 - `apps/desktop/src/main/permissions.ts` allows only media capture, sanitized clipboard writes, fullscreen and `mediaKeySystem`, denies everything else, and disables spellcheck.
-- `apps/desktop/src/main/net.ts` strips `content-security-policy` and `content-security-policy-report-only` from YTM responses, because YTM's CSP and Trusted Types would block the injected runtime, and sends the Electron user agent to `accounts.google.com`. Plugins compose their listeners through `WebRequestRouter` (`web-request.ts`), which installs one real listener per Electron event so an ad blocker, a proxy and the core do not replace each other.
+- `apps/desktop/src/main/net.ts` strips `content-security-policy` and `content-security-policy-report-only` from YTM responses, because YTM's CSP and Trusted Types would block the injected runtime, and sends the Electron user agent to `accounts.google.com`. It also adds `access-control-allow-origin`: YTM's origin on ordinary responses (so the page can read them) and `*` on media responses (so Web Audio can sample cross-origin audio; see [Media and audio](#media-and-audio)). Plugins compose their listeners through `WebRequestRouter` (`web-request.ts`), which installs one real listener per Electron event so an ad blocker, a proxy and the core do not replace each other.
 - `seedConsent()` writes Google's essential-only `SOCS` cookie when none exists, so the consent interstitial does not block startup.
 
 ## Shared-link cleaning
@@ -154,9 +174,9 @@ Translations are JSON files in `src/i18n/resources/<code>.json`. Each starts wit
 
 ## Performance
 
-The `performance` core section holds four restart-only switches (`options.performanceMode`), each read once at page start by `packages/page/src/performance.ts`:
+The `performance` core section holds four restart-only switches (`options.performanceMode`), each read once at page start:
 
-- `flags` forces cheaper YTM feature flags (artwork thumbnails, Lottie/Rive animations, watch cinematics, queue and icon rendering); the user's own `site.siteFlags` overrides still win.
+- `flags` forces cheaper YTM feature flags (artwork thumbnails, Lottie/Rive animations, watch cinematics, queue and icon rendering); the map is `performanceModeFeatureFlags` in `packages/sdk/src/core-config.ts`, merged under the user's own `site.siteFlags` by `performanceModeOverrides()`, so the page and the API server's feature-flag read report the same applied values.
 - `css` injects a stylesheet that collapses animations and transitions, removes backdrop filters and disables layer hints.
 - `animations` installs a Web Animations throttle that collapses animations touching non-composited layout properties.
 - `plugins` skips the page halves of `ambient-mode`, `blur-nav-bar` and `visualizer`; their config and host parts are untouched, so turning the switch off restores them.
@@ -166,9 +186,10 @@ Other performance work:
 - `advanced.disableHardwareAcceleration`, `advanced.autoResetAppCache` (clears the session cache 20 seconds after startup) and `general.autoUpdates` are core options.
 - `plugins/performance-improvement` injects CY Fung's timer and element-reuse scripts at page start. It is `restartRequired`, because replacing page globals cannot be undone live.
 - `plugins/memory-saver` polls Blink's resource usage every minute while the window is hidden and clears the renderer caches above its threshold, with a ten-minute cooldown. It uses `window.pearPerf` from the preload.
+- A window hidden to the tray hands its renderer caches back after a minute: `main-window.ts` calls `window.pearPerf.clearCache()` once the window has been hidden that long, because decoded images and fonts are re-fetchable. Showing the window again cancels the release, and a merely minimized window keeps its caches.
 - Visual plugins pause their drawing with `ctx.isWindowVisible()`, because the window keeps rendering while minimized or hidden (`backgroundThrottling: false`).
 
-On Windows, `window.forceSmtc` disables Chromium's media session and starts `smtc.ts`, which drives the native System Media Transport Controls through the optional `@michei69/node-smtc` module. MPRIS on Linux and the Touch Bar plugin remain separate integrations.
+On Windows, `window.forceSmtc` replaces Chromium's media session with `smtc.ts`, which drives the native System Media Transport Controls through the optional `@michei69/node-smtc` module. The addon is resolved before the Chromium switches are applied: when it is missing or fails to build, Chromium's own media session stays enabled instead of leaving Windows with no media keys. MPRIS on Linux and the Touch Bar plugin remain separate integrations.
 
 ## Tests
 

@@ -56,7 +56,8 @@ Field metadata:
 
 - `label` is required. `description` adds a second line.
 - `group` puts consecutive fields under a heading.
-- `restart: true` shows a restart pill. The plugin is still restarted normally; the pill only tells the user that the change fully applies after an app restart.
+- `restart: true` shows a restart pill. The plugin is still restarted normally; the pill tells the user that the change fully applies after an app restart, and the change joins the restart banner's pending list.
+- `hidden: true` stores the field but leaves it out of the settings card (saved state such as a last volume).
 - `platforms` hides the field on other systems.
 - Numbers take `min`, `max`, `step`, `unit` and `variant` (`slider` or `stepper`).
 - Strings take `placeholder` and `secret` (a password input).

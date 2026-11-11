@@ -35,13 +35,15 @@ The history follows [Conventional Commits](https://www.conventionalcommits.org/)
 Formatting is oxfmt and linting is oxlint with type-aware rules. Both cover `apps`, `packages`, `plugins`, `src` and `scripts`:
 
 ```bash
-nub run format        # write
-nub run format:check  # verify
-nub run lint          # oxlint --type-aware apps packages plugins src
-nub run typecheck     # tsc in every workspace package that has a typecheck script
+nub run format          # write
+nub run format:check    # verify
+nub run lint            # oxlint --type-aware apps packages plugins src
+nub run typecheck       # tsc in every workspace package that has a typecheck script
+nub run check:packaging # the packaged files list (scripts/check-packaging.ts)
+nub run check           # lint, format:check, typecheck and check:packaging
 ```
 
-There is no combined `check` script; run the three commands. CI runs oxlint through reviewdog and the release workflows run no tests, so run them locally.
+`nub run check` runs the four in order; the individual scripts are there for a quicker loop. CI runs oxlint through reviewdog and the release workflows run no tests, so run them locally.
 
 Other conventions:
 
@@ -60,7 +62,7 @@ Any string a user can see must come from the translation files. A feature that s
 - In plugins, use `ctx.t(key, english, vars)`. The English text is the fallback and the source for `src/i18n/resources/en.json`. Never hardcode visible text.
 - Plugin names, descriptions, config labels, descriptions, placeholders, options and action labels are translated by the settings catalog automatically. They are written as plain strings in the schema; do not call `t` there.
 - The settings dialog's own strings live in `packages/ui/src/strings.ts` and use the `settings-ui.*` namespace.
-- Core settings field keys are `settings-ui.core.<field>.label` and `.description`; plugin field keys are `plugins.<id>.settings.<field>.label`, `.description`, `.placeholder` and `.options.<value>`. Group headings are `settings-ui.groups.<slug>`. The generator is `fieldKey()` and `groupKey()` in `packages/sdk/src/i18n.ts`.
+- Core settings field keys are `settings-ui.core.<field>.label` and `.description`; plugin field keys are `plugins.<id>.settings.<field>.label`, `.description`, `.placeholder` and `.options.<value>`. Group headings are `settings-ui.groups.<slug>`. The generator is `fieldKey()` and `groupKey()` in `packages/sdk/src/i18n.ts`. A core field that carries pear-desktop's own texts reuses its keys through `CORE_FIELD_KEYS` in `packages/sdk/src/core-config.ts` (label, description, placeholder, option names); the generator skips the generated `settings-ui.core.*` twins for those parts.
 - Run `nub run i18n` after adding text. It reads plugin schemas, core sections, `packages/ui/src/strings.ts` and literal `t("key", "English")` calls, and appends missing keys to `src/i18n/resources/en.json`. Existing keys are never changed.
 - `nub run i18n --check` reports missing keys without writing and exits non-zero.
 - Leaf keys are lower-case kebab-case: `show-button`, `smoothness-transition`. Interpolate with `{{name}}` placeholders.
@@ -102,6 +104,7 @@ The unit runner is Vitest; the app-level runner is Playwright.
 ```bash
 nub run test          # vitest in every workspace package with a test script
 nub run test:e2e      # electron-vite build, then playwright test
+nub run test:debug    # the e2e run with Playwright's debug logging
 ```
 
 - Vitest tests live in `test/` beside the code: `packages/sdk/test`, `packages/vite-plugin-pear/test`, `apps/desktop/test`, `plugins/<id>/test`. The desktop include pattern is `test/**/*.test.ts`.
@@ -128,7 +131,7 @@ nub run test:e2e      # electron-vite build, then playwright test
 - `pr-build-artifacts.yml` builds Linux, macOS and Windows installers for same-repository pull requests by users with write access, keeps them for seven days, and comments the run link.
 - Packaging is electron-builder through the `dist:*`, `beta:*` and `release:*` scripts. Every script passes `-p never`, so electron-builder writes to `pack/` and never uploads; the workflows own the GitHub release.
 - Linux packaging uses Flatpak runtime and base `26.08`, and the CI setup installs those runtimes for x86_64 and aarch64 before `nub run beta:linux` or `nub run release:linux`.
-- The baked `__PEAR_CHANNEL__` and `__PEAR_COMMIT__` feed the About window and the update check (`apps/desktop/src/main/app-info.ts`, `updates.ts`). `general.updateChannel` selects stable or beta; a beta build starts on beta until the user chooses. `UpdateManager` asks GitHub shortly after startup and every six hours while **Check for updates** is on, rechecks when the channel changes, and its dialog opens the release page or turns checks off. A beta build switching to stable asks before downgrading.
+- The baked `__PEAR_CHANNEL__` and `__PEAR_COMMIT__` feed the About window and the update check (`apps/desktop/src/main/app-info.ts`, `updates.ts`). `general.updateChannel` selects stable or beta; a beta build starts on beta until the user chooses. `UpdateManager` asks GitHub shortly after startup and every six hours while **Check for updates** is on, rechecks when the channel changes, and offers **Download and Install** where the build can replace itself (Windows installer, Linux AppImage) — otherwise its dialog opens the release page — and can turn checks off. A beta build switching to stable asks before downgrading.
 - Commit subjects are user-visible through the changelog. Write them as release notes.
 
 ## Repository hygiene
