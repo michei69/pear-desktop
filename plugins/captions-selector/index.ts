@@ -1,6 +1,7 @@
 import { config, definePlugin, type YTPlayerApi } from "@pear/sdk";
 import { picker } from "@pear/sdk/dom";
 import { css } from "@pear/sdk/macros" with { type: "macro" };
+import { resumeIfPlaying } from "./resume.ts";
 
 interface CaptionTrack {
   languageCode: string;
@@ -46,6 +47,16 @@ export default definePlugin({
       position-try-fallbacks: flip-block;
     }
   `,
+  host: {
+    start(ctx) {
+      // The two switches live in the settings card; menu items have no checkbox
+      // state, so this shortcut opens them instead of claiming to toggle them.
+      ctx.addMenuItem({
+        label: ctx.t("plugins.captions-selector.menu.settings", "Captions settings"),
+        click: () => ctx.openSettings(),
+      });
+    },
+  },
   page: async (ctx) => {
     const api = (await ctx.player.ready()) as CaptionsApi;
     let tracks: CaptionTrack[] = [];
@@ -54,7 +65,8 @@ export default definePlugin({
 
     // As pear-desktop: the choice is remembered (None forgets it), confirmed in a toast,
     // and playback goes on (the player can stop when the captions track changes).
-    const resume = () => ctx.setTimeout(() => api.playVideo(), 0);
+    // `resumeIfPlaying` keeps a paused video paused.
+    const resume = () => ctx.setTimeout(() => resumeIfPlaying(api), 0);
     const select = (track: CaptionTrack) => {
       ctx.setConfig({ lastCaptionsCode: track.languageCode });
       api.setOption("captions", "track", { languageCode: track.languageCode });
