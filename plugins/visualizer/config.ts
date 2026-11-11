@@ -87,13 +87,16 @@ export const schema = {
   ),
   vudioAccuracy: config.select(
     "128",
+    // Vudio sets fftSize = accuracy * 2, so only powers of two are valid; the
+    // options are pear-desktop's (16 is the rewrite's extra, dropped so a value
+    // saved in pear-desktop can never be reset by normalization).
     [
-      { value: "16", label: "16" },
       { value: "32", label: "32" },
       { value: "64", label: "64" },
       { value: "128", label: "128" },
       { value: "256", label: "256" },
       { value: "512", label: "512" },
+      { value: "1024", label: "1024" },
     ],
     { label: "Accuracy", group: "Vudio" },
   ),
@@ -104,8 +107,12 @@ export const schema = {
   vudioShadowBlur: config.number(2, { label: "Shadow blur", min: 0, max: 50, step: 1, group: "Vudio" }),
   vudioShadowColor: config.string("rgba(244,244,244,.5)", { label: "Shadow color", placeholder: "rgba(244,244,244,.5)", group: "Vudio" }),
   vudioFadeSide: config.bool(true, { label: "Fade the sides", group: "Vudio" }),
-  vudioPrettify: config.bool(false, { label: "Prettify", group: "Vudio" }),
-  vudioDottify: config.bool(true, { label: "Dots", group: "Vudio" }),
+  vudioPrettify: config.bool(false, { label: "Prettify", description: "Taper the bars towards the edges", group: "Vudio" }),
+  vudioDottify: config.bool(true, {
+    label: "Dots",
+    description: "Draw dots instead of a continuous line",
+    group: "Vudio",
+  }),
   vudioHorizontalAlign: config.select(
     "center",
     [
@@ -198,4 +205,12 @@ export interface Renderer {
   resize(width: number, height: number): void;
   /** Draws a frame; leave it out when the library animates itself. */
   render?(): void;
+  /**
+   * Stops a library's own animation loop while the player is hidden or off
+   * screen, as pear-desktop's per-visualizer pause() did. Leave it out when the
+   * plugin's frame loop already drives the drawing.
+   */
+  pause?(): void;
+  /** Restarts the loop paused by `pause()`. */
+  resume?(): void;
 }

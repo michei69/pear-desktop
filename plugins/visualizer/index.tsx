@@ -5,7 +5,7 @@ import butterchurnSource from "butterchurn/dist/butterchurn.min.js?raw";
 import vudioSource from "vudio/umd/vudio.js?raw";
 import waveSource from "@foobar404/wave/dist/bundle.js?raw";
 import presetsSource from "butterchurn-presets/dist/base.min.js?raw";
-import { DEFAULT_PRESET, schema, type Renderer, type Stage, type VisualizerCommands } from "./config.ts";
+import { DEFAULT_PRESET, schema, type Renderer, type Stage } from "./config.ts";
 import { artworkPalette } from "./palette.ts";
 import { barsRenderer } from "./renderers/bars.ts";
 import { butterchurnRenderer } from "./renderers/butterchurn.ts";
@@ -50,6 +50,14 @@ export default definePlugin({
     }
   `,
   host: {
+    start(ctx) {
+      // pear-desktop had a radio submenu of every type here; the app menu holds
+      // one flat item per plugin, so open the settings card where the dropdown is.
+      ctx.addMenuItem({
+        label: ctx.t("plugins.visualizer.menu.settings", "Visualizer settings"),
+        click: () => ctx.openSettings(),
+      });
+    },
     commands: {
       butterchurn() {
         return butterchurnSource;
@@ -100,10 +108,19 @@ export default definePlugin({
     observer.observe(container);
     ctx.onCleanup(() => observer.disconnect());
 
-    const { render } = renderer;
-    if (!render) return;
+    // One frame loop drives every visualizer. It decides whether to draw (the
+    // player page is on screen and the window is visible) and, across those
+    // transitions, pauses the libraries that animate themselves — pear-desktop
+    // paused every type while the window was hidden.
+    let active = true;
     const tick = () => {
-      if (shown && ctx.isWindowVisible()) render();
+      const visible = shown && ctx.isWindowVisible();
+      if (visible !== active) {
+        active = visible;
+        if (visible) renderer.resume?.();
+        else renderer.pause?.();
+      }
+      if (visible) renderer.render?.();
       frame = requestAnimationFrame(tick);
     };
     frame = requestAnimationFrame(tick);

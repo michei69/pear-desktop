@@ -8,7 +8,7 @@ interface ButterchurnVisualizer {
   connectAudio(node: AudioNode): void;
   disconnectAudio(node: AudioNode): void;
   loadPreset(preset: unknown, blendSeconds?: number): Promise<void> | void;
-  setRendererSize(width: number, height: number): void;
+  setRendererSize(width: number, height: number, options?: { pixelRatio?: number }): void;
   render(): void;
   launchSongTitleAnim(text: string): void;
   loseGLContext(): void;
@@ -29,6 +29,8 @@ interface VudioInstance {
   dance(): void;
   pause(): void;
   setOption(option: Record<string, unknown>): void;
+  /** Internal, but its only way to re-size the backing store from the CSS box. */
+  __resizeCanvas(): void;
 }
 type VudioConstructor = new (source: MediaStream, canvas: HTMLCanvasElement, option: Record<string, unknown>) => VudioInstance;
 

@@ -10,7 +10,15 @@ export async function vudioRenderer({ ctx, graph, canvas }: Stage): Promise<Rend
   const vudio = withAudioContext(context, () => new Vudio(new MediaStream(), canvas, vudioOptions(ctx, canvas)));
   vudio.dance();
   ctx.onCleanup(() => vudio.pause());
-  return { resize: (width, height) => vudio.setOption({ width, height }) };
+  return {
+    // Vudio sizes its backing store from the canvas's CSS box, in device pixels;
+    // setOption only changes what it draws. Its own window.onresize hook was put
+    // back by withAudioContext, so the plugin's observer drives the resize.
+    resize: () => vudio.__resizeCanvas(),
+    pause: () => vudio.pause(),
+    // Never suspend the shared context: playback runs through it.
+    resume: () => vudio.dance(),
+  };
 }
 
 function vudioOptions({ config }: Stage["ctx"], canvas: HTMLCanvasElement) {

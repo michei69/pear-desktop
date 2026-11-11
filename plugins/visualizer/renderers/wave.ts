@@ -14,16 +14,33 @@ export async function waveRenderer({ ctx, graph, canvas }: Stage): Promise<Rende
   const { Wave } = await loadUmd<WaveModule>(ctx.host.invoke("wave"));
   if (ctx.signal.aborted) return;
   const wave = new Wave({ context, source: tap }, canvas);
-  for (const animation of parseAnimations(ctx.config.waveAnimations, ctx.log)) {
-    const Animation = wave.animations[animation.type];
-    if (Animation) wave.addAnimation(new Animation(animation.config));
-    else ctx.log.warn(`unknown Wave animation ${animation.type}`);
-  }
+  const animations = parseAnimations(ctx.config.waveAnimations, ctx.log);
+  const addAnimations = () => {
+    for (const animation of animations) {
+      const Animation = wave.animations[animation.type];
+      if (Animation) wave.addAnimation(new Animation(animation.config));
+      else ctx.log.warn(`unknown Wave animation ${animation.type}`);
+    }
+  };
+  addAnimations();
   ctx.onCleanup(() => wave.clearAnimations());
+  let paused = false;
   return {
     resize(width, height) {
       canvas.width = width;
       canvas.height = height;
+    },
+    // Wave's own requestAnimationFrame loop can't be stopped from outside; its
+    // animations can, which is what pear-desktop's pause() did.
+    pause() {
+      if (paused) return;
+      paused = true;
+      wave.clearAnimations();
+    },
+    resume() {
+      if (!paused) return;
+      paused = false;
+      addAnimations();
     },
   };
 }

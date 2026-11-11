@@ -1,8 +1,11 @@
 import type { PageContextOf } from "@pear/sdk";
 
-// The ThemeSong visualizers color themselves from the track's artwork. The fork
-// read the colors album-color-theme published as CSS variables; the rewrite has
-// no such page API, so sample the artwork image itself.
+// The ThemeSong visualizers color themselves from the track. album-color-theme
+// publishes that palette on the document root as the same CSS variables
+// pear-desktop's theme-song palette read, so the visualizers and the rest of the
+// app share colors. While it isn't publishing (plugin off, artwork not colored
+// yet) the artwork image itself is sampled, so the palette still follows the
+// track instead of falling back to a fixed one.
 
 interface Rgb {
   r: number;
@@ -26,12 +29,28 @@ const SAMPLE_SIZE = 32;
 const HUE_BUCKETS = 12;
 const MAX_COLORS = 6;
 
+/** The properties pear-desktop's theme-song palette read; album-color-theme writes the first. */
+const PUBLISHED_PROPERTIES = [
+  "--paper-progress-active-color-1",
+  "--yt-spec-static-brand-red",
+  "--ytmusic-color-white1",
+  "--yt-spec-text-primary",
+] as const;
+
+/** album-color-theme marks the root with this class while its palette is applied. */
+const ALBUM_COLOR_ACTIVE = "pear-album-color";
+
+const COLOR_PATTERN = /^(#|rgb|hsl)/i;
+const HEX_PATTERN = /^#([\da-f]{3}|[\da-f]{6})$/i;
+const RGB_PATTERN = /^rgba?\(\s*([\d.]+)[\s,]+([\d.]+)[\s,]+([\d.]+)/i;
+const HSL_PATTERN = /^hsla?\(\s*(-?[\d.]+)\s*(?:deg)?[\s,]+(-?[\d.]+)%[\s,]+(-?[\d.]+)%(?:\s*\/\s*[-\d.]+%?)?\s*\)$/i;
+
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
 
 /** pear-desktop's vivid fallback, for when there is no artwork (or it can't be read). */
 const FALLBACK = (["#ff006e", "#fb5607", "#ffbe0b", "#3a86ff", "#8338ec", "#06d6a0"] as const).map((hex) => rgbToHsl(hexToRgb(hex)));
 
-function hexToRgb(hex: string): Rgb {
+export function hexToRgb(hex: string): Rgb {
   const normalized = hex.trim().replace(/^#/, "");
   const value =
     normalized.length === 3
@@ -54,17 +73,49 @@ function rgbToHsl({ r, g, b }: Rgb): Hsl {
   const delta = max - min;
   if (delta === 0) return { h: 0, s: 0, l: lightness };
 
-  const saturation = delta / (1 - Math.abs(2 * lightness - 1));
+  const saturation = clamp(delta / (1 - Math.abs(2 * lightness - 1)), 0, 1);
   let hue: number;
   if (max === red) hue = ((green - blue) / delta) % 6;
   else if (max === green) hue = (blue - red) / delta + 2;
   else hue = (red - green) / delta + 4;
 
-  return { h: (hue * 60 + 360) % 360, s: saturation, l: lightness };
+  return { h: (hue * 60 + 360) % 360, s: saturation, l: clamp(lightness, 0, 1) };
 }
 
 export function hslToCss({ h, s, l }: Hsl, alpha = 1): string {
   return `hsla(${h.toFixed(1)} ${clamp(s, 0, 1) * 100}% ${clamp(l, 0, 1) * 100}% / ${alpha})`;
+}
+
+const channel = (value: string | undefined): number => Math.min(255, Math.max(0, Number(value ?? 0)));
+
+/** A CSS color as HSL; null for anything else (a `var()` reference, an empty value). */
+export function parseCssColor(color: string): Hsl | null {
+  const value = color.trim();
+  if (HEX_PATTERN.test(value)) return rgbToHsl(hexToRgb(value));
+  const rgb = RGB_PATTERN.exec(value);
+  if (rgb) return rgbToHsl({ r: channel(rgb[1]), g: channel(rgb[2]), b: channel(rgb[3]) });
+  const hsl = HSL_PATTERN.exec(value);
+  if (!hsl) return null;
+  return {
+    h: Number(hsl[1] ?? 0),
+    s: clamp(Number(hsl[2] ?? 0) / 100, 0, 1),
+    l: clamp(Number(hsl[3] ?? 0) / 100, 0, 1),
+  };
+}
+
+/**
+ * The palette album-color-theme published, padded with the fallback colors so
+ * modulo indexing always has entries; null while it isn't publishing (its root
+ * class is only there while the colors are).
+ */
+export function publishedPalette(): readonly Hsl[] | null {
+  if (typeof document === "undefined" || !document.documentElement.classList.contains(ALBUM_COLOR_ACTIVE)) return null;
+  const style = getComputedStyle(document.documentElement);
+  const parsed = PUBLISHED_PROPERTIES.map((property) => style.getPropertyValue(property).trim())
+    .filter((color) => COLOR_PATTERN.test(color))
+    .map(parseCssColor)
+    .filter((color): color is Hsl => color !== null);
+  return parsed.length > 0 ? [...parsed, ...FALLBACK.slice(parsed.length)] : null;
 }
 
 /** The first palette entry, or the fork's default accent when the palette is empty. */
@@ -72,44 +123,69 @@ export function accentOf(palette: readonly Hsl[]): Hsl {
   return palette[0] ?? FALLBACK[0] ?? { h: 326, s: 1, l: 0.5 };
 }
 
-type PaletteContext = Pick<PageContextOf<{}>, "player" | "log" | "signal">;
+type PaletteContext = Pick<PageContextOf<{}>, "player" | "log" | "signal" | "observe">;
 
 /**
- * A live palette: starts with the artwork that is there, then follows track
- * changes. The renderers read it every frame, so a late sample or a new track
- * recolors the running visualizer without restarting it.
+ * A live palette: the published one while the app theme has it, else sampled
+ * from the artwork. The renderers read it every frame, so a late sample or a new
+ * track recolors the running visualizer without restarting it.
  */
 export function artworkPalette(ctx: PaletteContext): ArtworkPalette {
   let colors: readonly Hsl[] = FALLBACK;
   let accent: Hsl = accentOf(FALLBACK);
+  let published = false;
   let generation = 0;
 
+  const setColors = (next: readonly Hsl[]) => {
+    colors = next;
+    accent = accentOf(next);
+  };
+
+  const usePublished = () => {
+    const palette = publishedPalette();
+    if (!palette) return false;
+    generation += 1; // a sample in flight belongs to a state the theme replaces
+    setColors(palette);
+    published = true;
+    return true;
+  };
+
   const sample = async () => {
+    published = false;
     const current = ++generation;
-    const fallback = () => {
-      colors = FALLBACK;
-      accent = accentOf(FALLBACK);
-    };
     try {
       const url = ctx.player.state.track?.artworkUrl;
       if (!url) {
-        fallback();
+        setColors(FALLBACK);
         return;
       }
       const sampled = await sampleArtwork(url);
       if (current !== generation || ctx.signal.aborted) return;
-      colors = sampled;
-      accent = accentOf(sampled);
+      setColors(sampled);
     } catch (error) {
       if (current !== generation || ctx.signal.aborted) return;
       // Cross-origin images without CORS headers taint the canvas.
-      fallback();
+      setColors(FALLBACK);
       ctx.log.warn("couldn't sample the artwork", error);
     }
   };
 
-  ctx.player.on("trackChange", () => void sample());
-  void sample();
+  const refresh = () => {
+    if (usePublished()) return;
+    void sample();
+  };
+
+  ctx.player.on("trackChange", refresh);
+  // album-color-theme applies its palette asynchronously and rewrites the root's
+  // style on every track without toggling the class, so follow those writes
+  // instead of guessing a delay; a removed class means its palette is gone.
+  ctx.observe(document.documentElement, { attributes: true, attributeFilter: ["style", "class"] }, () => {
+    const wasPublished = published;
+    if (usePublished()) return;
+    if (wasPublished) void sample();
+  });
+  refresh();
+
   return {
     get colors() {
       return colors;
@@ -144,7 +220,7 @@ interface Bucket {
  * identity, so they are skipped; the palette is padded with the fallback colors
  * so every visualizer has enough entries for its modulo indexing.
  */
-function quantize(pixels: Uint8ClampedArray): readonly Hsl[] {
+export function quantize(pixels: Uint8ClampedArray): readonly Hsl[] {
   const buckets: Bucket[] = Array.from({ length: HUE_BUCKETS }, () => ({ weight: 0, saturation: 0, lightness: 0 }));
 
   for (let index = 0; index + 3 < pixels.length; index += 4) {

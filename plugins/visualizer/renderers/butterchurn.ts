@@ -16,7 +16,10 @@ export async function butterchurnRenderer({ ctx, graph, canvas, size }: Stage): 
   input.gain.value = INPUT_GAIN;
   ctx.onCleanup(() => input.disconnect());
   graph.tap(input);
-  const visualizer = module.default.createVisualizer(graph.context, canvas, size());
+  // The canvas is already sized in device pixels, so a pixelRatio as well
+  // multiplies its internal buffers by the DPR again (16× the GPU work on a 2×
+  // display); pear-desktop rendered at a pixelRatio of 1.
+  const visualizer = module.default.createVisualizer(graph.context, canvas, { ...size(), pixelRatio: 1 });
   ctx.onCleanup(() => visualizer.loseGLContext());
   visualizer.connectAudio(input);
   await visualizer.loadPreset(preset, ctx.config.blendTimeInSeconds);
@@ -27,7 +30,7 @@ export async function butterchurnRenderer({ ctx, graph, canvas, size }: Stage): 
     resize(width, height) {
       canvas.width = width;
       canvas.height = height;
-      visualizer.setRendererSize(width, height);
+      visualizer.setRendererSize(width, height, { pixelRatio: 1 });
     },
     render: () => visualizer.render(),
   };
