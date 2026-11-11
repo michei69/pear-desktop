@@ -54,13 +54,35 @@ export function desiredTrack(
 }
 
 /**
- * Which picker button is the current state: 0 for Automatic (also when the
+ * Which picker choice is the current state: 0 for Automatic (also when the
  * player cannot say which track is playing), otherwise the track's position
- * plus one. The dialog's default must never fall back to the first track.
+ * plus one. The picker must never fall back to the first track.
  */
 export function pickerIndex(tracks: readonly YTPlayerAudioTrack[], currentId: string): number {
   const at = tracks.findIndex((track) => trackId(track) === currentId);
   return at < 0 ? 0 : at + 1;
+}
+
+/** A track row of the picker: its choice index (1-based; 0 is Automatic) and whether it plays now. */
+export interface TrackChoice {
+  index: number;
+  label: string;
+  checked: boolean;
+}
+
+/** The picker rows' state, read from the player each time the list opens. */
+export interface PickerChoices {
+  /** Whether no playing track matches the video's tracks, so Automatic is the state. */
+  automatic: boolean;
+  tracks: TrackChoice[];
+}
+
+export function pickerChoices(tracks: readonly YTPlayerAudioTrack[], currentId: string): PickerChoices {
+  const current = pickerIndex(tracks, currentId);
+  return {
+    automatic: current === 0,
+    tracks: tracks.map((track, at) => ({ index: at + 1, label: trackName(track), checked: current === at + 1 })),
+  };
 }
 
 /** The video's tracks; a player without the selector answers an empty list. */

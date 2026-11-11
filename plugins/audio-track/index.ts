@@ -1,29 +1,46 @@
-import { dialog } from "electron";
 import { definePlugin, type HostContextOf } from "@pear/sdk";
 import { audioTrackConfig } from "./config.ts";
 import { startAudioTrack } from "./page.ts";
 
 // pear-desktop's audio-track plugin: pick which audio track (language, original
-// or auto-dub) a video plays, and which one to prefer on every track. The
-// picker is a native dialog in the host part; the page part owns the tracks and
-// the player, so it lists them and applies the choice.
+// or auto-dub) a video plays, and which one to prefer on every track. The page
+// part owns the tracks and the player, so the list lives there; the host only
+// opens it from the app menu and the settings card.
 
 export default definePlugin({
   id: "audio-track",
   name: "Audio track",
   description: "Picks which audio track of a video plays, and which one is preferred by default.",
   config: audioTrackConfig,
+  actions: {
+    selectTrack: {
+      label: "Choose audio track…",
+      description: "Pick the track for the current video, or Automatic.",
+    },
+  },
   host: {
     start(ctx) {
       ctx.addMenuItem({
         label: ctx.t("plugins.audio-track.menu.label", "Audio track…"),
         click: () => {
-          // A destroyed window or a failed dialog must not become an unhandled rejection.
-          chooseTrack(ctx).catch((error: unknown) => ctx.log.warn("couldn't open the audio track picker", error));
+          // A closed or reloading player must become a log line, not an unhandled rejection.
+          openPicker(ctx).catch((error: unknown) => ctx.log.warn("couldn't open the audio track picker", error));
         },
       });
+      // pear-desktop's quick toggle; a flat menu item cannot show the state, the
+      // settings card's switch is the canonical control.
+      ctx.addMenuItem({
+        label: ctx.t("plugins.audio-track.menu.prefer-original", "Prefer the original audio"),
+        click: () => ctx.setConfig({ preferOriginal: !ctx.config.preferOriginal }),
+      });
     },
-    // The menu item does not depend on the config: a pick must not rebuild it.
+    commands: {
+      /** The settings card's button. */
+      selectTrack() {
+        return openPicker(this);
+      },
+    },
+    // The menu items do not depend on the config: a pick must not rebuild them.
     onConfigChange() {},
   },
   page: {
@@ -34,31 +51,9 @@ export default definePlugin({
   },
 });
 
-/** Shows the video's tracks and hands the choice back to the page part. */
-async function chooseTrack(ctx: HostContextOf<typeof audioTrackConfig>) {
-  const choices = await ctx
-    .request<{ labels: string[]; current: number }>("tracks", undefined, { timeout: 3000 })
-    .catch(() => null);
-  if (!choices) return;
-
-  if (choices.labels.length < 2) {
-    ctx.emit("no-tracks");
-    return;
-  }
-
-  const buttons = [ctx.t("plugins.audio-track.menu.automatic", "Automatic"), ...choices.labels];
-  const cancelId = buttons.length;
-  buttons.push(ctx.t("plugins.audio-track.menu.cancel", "Cancel"));
-
-  const { response } = await dialog.showMessageBox(ctx.window, {
-    type: "question",
-    title: ctx.t("plugins.audio-track.menu.label", "Audio track…"),
-    message: ctx.t("plugins.audio-track.menu.message", "Which audio track should play?"),
-    buttons,
-    defaultId: Math.min(choices.current + 1, cancelId - 1),
-    cancelId,
-    noLink: true,
-  });
-  if (response === cancelId) return;
-  ctx.emit("apply", response);
+/** Asks the page to show its track list; the settings card surfaces a failure. */
+async function openPicker(ctx: HostContextOf<typeof audioTrackConfig>) {
+  // The list is in the player page: look at it when the pick comes from settings.
+  ctx.focusWindow();
+  await ctx.request("open", undefined, { timeout: 3000 });
 }

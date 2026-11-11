@@ -2,6 +2,7 @@ import type { YTPlayerApi, YTPlayerAudioTrack } from "@pear/sdk";
 import { describe, expect, it, vi } from "vitest";
 import {
   desiredTrack,
+  pickerChoices,
   pickerIndex,
   findOriginalTrack,
   isAutoDubbed,
@@ -33,7 +34,7 @@ describe("track identity", () => {
     expect(trackId(pb("de", "German"))).toBe("de");
     expect(trackId({ id: "plain" } as YTPlayerAudioTrack)).toBe("plain");
     // Language info beats the protobuf field, which beats the plain id.
-    expect(trackId({ id: "plain", Pb: { id: "pb" }, getLanguageInfo: () => ({ getId: () => "info" } as never) })).toBe("info");
+    expect(trackId({ id: "plain", Pb: { id: "pb" }, getLanguageInfo: () => ({ getId: () => "info" }) as never })).toBe("info");
     expect(trackId({} as YTPlayerAudioTrack)).toBe("");
     expect(trackName(info("en", "English"))).toBe("English");
     expect(trackName(pb("de", "German"))).toBe("German");
@@ -100,12 +101,47 @@ describe("picker index", () => {
   });
 });
 
+describe("picker choices", () => {
+  const first = info("en", "English");
+  const middle = info("es", "Spanish");
+  const last = info("fr", "French");
+  const tracks = [first, middle, last];
+  const checked = (currentId: string) => pickerChoices(tracks, currentId).tracks.filter((choice) => choice.checked);
+
+  it("marks Automatic when the player cannot name a track", () => {
+    expect(pickerChoices(tracks, "").automatic).toBe(true);
+    expect(pickerChoices(tracks, "ja").automatic).toBe(true);
+    expect(checked("")).toEqual([]);
+  });
+
+  it("marks the playing track, at any position", () => {
+    // The list is 1-based (0 is Automatic), so the first track is row 1, not row 0.
+    expect(checked("en").map((choice) => choice.index)).toEqual([1]);
+    expect(checked("es").map((choice) => choice.index)).toEqual([2]);
+    expect(checked("fr").map((choice) => choice.index)).toEqual([3]);
+    expect(pickerChoices(tracks, "es").automatic).toBe(false);
+    expect(checked("es").map((choice) => choice.label)).toEqual(["Spanish"]);
+  });
+});
+
 describe("player reads", () => {
   it("answers an empty list and an empty id instead of throwing", () => {
     expect(readTracks({} as YTPlayerApi)).toEqual([]);
-    expect(readTracks({ getAvailableAudioTracks: () => { throw new Error("no player"); } } as never)).toEqual([]);
+    expect(
+      readTracks({
+        getAvailableAudioTracks: () => {
+          throw new Error("no player");
+        },
+      } as never),
+    ).toEqual([]);
     expect(readCurrentTrackId({} as YTPlayerApi)).toBe("");
-    expect(readCurrentTrackId({ getAudioTrack: () => { throw new Error("no player"); } } as never)).toBe("");
+    expect(
+      readCurrentTrackId({
+        getAudioTrack: () => {
+          throw new Error("no player");
+        },
+      } as never),
+    ).toBe("");
     const track = info("en", "English");
     expect(readCurrentTrackId({ getAudioTrack: () => track } as never)).toBe("en");
   });

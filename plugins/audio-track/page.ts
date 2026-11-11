@@ -1,82 +1,34 @@
 import type { PageContextOf, YTPlayerAudioTrack } from "@pear/sdk";
-import { audioTrackConfig } from "./config.ts";
-import { desiredTrack, pickerIndex, readCurrentTrackId, readTracks, trackId, trackName } from "./tracks.ts";
+import { picker } from "@pear/sdk/dom";
+import { createTrackReapply } from "./apply.ts";
+import type { audioTrackConfig } from "./config.ts";
+import { pickerChoices, readCurrentTrackId, readTracks, trackId } from "./tracks.ts";
 
 type Ctx = PageContextOf<typeof audioTrackConfig>;
 
-/** The player accepts `setAudioTrack` yet can keep the old track and re-emit; cap the retries. */
-const MAX_REAPPLY_ATTEMPTS = 3;
-const REAPPLY_MS = 200;
+/** The player's own audio-change event is the second chance the retry cap exists for. */
 const AUDIO_CHANGE_MS = 100;
 
-/** What the host's picker shows: the track names, and which button is the state now. */
-interface TrackChoices {
-  labels: string[];
-  /** 0 is Automatic, n is the n-th track: a button index, not an array index. */
-  current: number;
-}
-
+/**
+ * Picks which audio track plays, and keeps pear-desktop's preference applied on
+ * every song change. The host part only opens this list, from the app menu and
+ * the settings card; the page owns the tracks, so the list lives here and
+ * scales to videos with many dub tracks (a native message box would not).
+ */
 export function startAudioTrack(ctx: Ctx) {
-  let attempts = 0;
-  let timer: ReturnType<typeof setTimeout> | undefined;
-  /** The list the open picker was built from: the answer applies what it showed. */
-  let shown: YTPlayerAudioTrack[] | undefined;
-
-  const apply = () => {
-    const api = ctx.player.api;
-    if (!api) return;
-    const tracks = readTracks(api);
-    // One track is no choice at all.
-    if (tracks.length < 2) return;
-
-    const desired = desiredTrack(tracks, ctx.config.audioTrack, ctx.config.preferOriginal);
-    if (!desired) return;
-
-    const id = trackId(desired);
-    if (!id || id === readCurrentTrackId(api)) {
-      attempts = 0;
-      return;
-    }
-    if (attempts >= MAX_REAPPLY_ATTEMPTS) return;
-    attempts += 1;
-    try {
-      api.setAudioTrack?.(desired);
-    } catch {
-      // YTM throws when a track cannot be served for the current player type.
-    }
-  };
-
-  const schedule = (delay = REAPPLY_MS) => {
-    ctx.clearTimeout(timer);
-    timer = ctx.setTimeout(apply, delay);
-  };
-
-  // The picker is answered by this side, so its handlers go in before anything
-  // waits for the player: a click on Home must not fall through to nobody.
-  ctx.host.handle("tracks", (): TrackChoices => {
-    const api = ctx.player.api;
-    const tracks = api ? readTracks(api) : [];
-    // Kept, so an answer that lands after the track changed still applies a
-    // track the user was actually shown.
-    shown = tracks;
-    return {
-      labels: tracks.map(trackName),
-      current: pickerIndex(tracks, api ? readCurrentTrackId(api) : ""),
-    };
+  const reapply = createTrackReapply({
+    config: () => ctx.config,
+    api: () => ctx.player.api,
+    setTimeout: (callback, ms) => ctx.setTimeout(callback, ms),
+    clearTimeout: (timer) => ctx.clearTimeout(timer),
   });
 
-  ctx.host.on("apply", (payload) => {
-    const index = payload === null || payload === undefined ? null : Number(payload);
-    if (index === null || Number.isNaN(index)) return;
-
-    const api = ctx.player.api;
-    const tracks = shown ?? (api ? readTracks(api) : []);
-    shown = undefined;
-    attempts = 0;
-
+  /** Persists a picker answer (0 is Automatic) and makes it play. */
+  const select = (index: number, tracks: readonly YTPlayerAudioTrack[]) => {
     if (index <= 0) {
       ctx.setConfig({ audioTrack: "" });
-      apply();
+      // Automatic: the original track while preferOriginal is on, else nothing.
+      reapply.resetNow();
       return;
     }
 
@@ -85,38 +37,85 @@ export function startAudioTrack(ctx: Ctx) {
     if (!track || !id) return;
     ctx.setConfig({ audioTrack: id });
     try {
-      api?.setAudioTrack?.(track);
+      ctx.player.api?.setAudioTrack?.(track);
     } catch {
-      // Same as above: YTM refuses tracks it cannot serve for this player.
+      // YTM refuses tracks it cannot serve for this player; the retries below try again.
     }
+    reapply.reset();
+  };
+
+  const { button, popover } = picker(ctx, {
+    name: "audio-track",
+    label: ctx.t("plugins.audio-track.menu.label", "Audio track…"),
+    // Material's audiotrack icon; without one the player-bar button is an empty circle.
+    icon: "M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z",
+    heading: ctx.t("plugins.audio-track.menu.message", "Which audio track should play?"),
+    width: 240,
+    items: () => {
+      const api = ctx.player.api;
+      const tracks = api ? readTracks(api) : [];
+      const choices = pickerChoices(tracks, api ? readCurrentTrackId(api) : "");
+      return [
+        {
+          label: ctx.t("plugins.audio-track.menu.automatic", "Automatic"),
+          checked: choices.automatic,
+          select: () => select(0, tracks),
+        },
+        ...choices.tracks.map((choice) => ({
+          label: choice.label,
+          checked: choice.checked,
+          select: () => select(choice.index, tracks),
+        })),
+      ];
+    },
   });
 
-  ctx.host.on("no-tracks", () =>
-    ctx.toast(ctx.t("plugins.audio-track.toast.no-tracks", "This video has only one audio track.")),
-  );
+  // One track is no choice at all; the button appears only while there is one to make.
+  button.hidden = true;
+  const updateButton = () => {
+    const api = ctx.player.api;
+    button.hidden = !api || readTracks(api).length < 2;
+  };
+  ctx.mount(button, "player_bar.right_controls_buttons", "prepend");
 
-  ctx.player.on("trackChange", () => {
-    attempts = 0;
-    schedule();
+  // The host's menu item and settings card ask for the list; answering says
+  // whether the page could show it (it cannot before the player exists).
+  ctx.host.handle("open", () => {
+    const api = ctx.player.api;
+    if (!api) return false;
+    if (readTracks(api).length < 2) {
+      ctx.toast(ctx.t("plugins.audio-track.toast.no-tracks", "This video has only one audio track."));
+      return false;
+    }
+    // The same popover a click on the player-bar button opens.
+    popover.showPopover();
+    return true;
   });
+
+  // dataloaded is the early event (the new track's audio is already playing);
+  // trackChange is the fallback when YTM never sends dataupdated.
+  const onTrack = () => {
+    updateButton();
+    reapply.reset();
+  };
+  ctx.player.on("trackLoading", onTrack);
+  ctx.player.on("trackChange", onTrack);
 
   // Settings changes apply to the track that is playing, as pear-desktop did.
-  ctx.onConfigChange(() => {
-    attempts = 0;
-    apply();
-  });
+  ctx.onConfigChange(() => reapply.resetNow());
 
   // The player's own audio-change event is the second chance the cap exists for.
   void ctx.player
     .ready()
     .then((api) => {
       if (ctx.signal.aborted) return;
-      const onChange = () => schedule(AUDIO_CHANGE_MS);
+      const onChange = () => reapply.schedule(AUDIO_CHANGE_MS);
       api.addEventListener("onPlaybackAudioChange", onChange);
       ctx.onCleanup(() => api.removeEventListener("onPlaybackAudioChange", onChange));
-      schedule(0);
+      updateButton();
+      reapply.schedule(0);
     })
     .catch(() => {});
 
-  return () => ctx.clearTimeout(timer);
+  return () => reapply.stop();
 }
