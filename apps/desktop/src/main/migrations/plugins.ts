@@ -6,6 +6,7 @@
 // migrations themselves (index.ts).
 
 import { clamp } from "@pear/sdk/util";
+import { DEFAULT_FILTERS } from "../../../../../plugins/scrobbler/filters.ts";
 import {
   clampNumber,
   copyTyped,
@@ -81,10 +82,10 @@ export const PLUGIN_MIGRATIONS: Record<string, PluginMigration> = {
   "album-color-theme": (entry) => fractionToPercent(entry, "ratio"),
   "ambient-mode": (entry) => fractionToPercent(entry, "opacity"),
   amuse: (entry) => {
-    // pear-desktop listened on every address (its default was 0.0.0.0), so an
-    // upgrading user keeps reachability from other devices instead of silently
-    // dropping to loopback; clearing the field still means "every address".
-    if (!("hostname" in entry)) setNew(entry, "hostname", "0.0.0.0");
+    // pear-desktop listened on every address, so an upgrading user keeps
+    // reachability from other devices instead of silently dropping to loopback.
+    // The empty value binds IPv4 and IPv6 (Node's `::`), as pear-desktop did.
+    if (!("hostname" in entry)) setNew(entry, "hostname", "");
   },
   "auth-proxy-adapter": (entry, config) => {
     // The adapter used to forward to the app's proxy option; the plugin has its own address now.
@@ -184,6 +185,8 @@ export const PLUGIN_MIGRATIONS: Record<string, PluginMigration> = {
   "playback-speed": (entry) => {
     // pear-desktop stored the inverse: "don't preserve the pitch".
     if (isBoolean(entry.noPreservesPitch)) setNew(entry, "preservePitch", !entry.noPreservesPitch);
+    // Since 3.13 it stored the speed as `playbackSpeed`; the rewrite's schema calls it `speed`.
+    if (isNumber(entry.playbackSpeed)) setNew(entry, "speed", clamp(Math.round(entry.playbackSpeed * 100) / 100, 0.07, 16));
   },
   "picture-in-picture": (entry, _config, files) => {
     // The small window's last position and size; the rewrite keeps them in a file of their own.
@@ -215,11 +218,27 @@ export const PLUGIN_MIGRATIONS: Record<string, PluginMigration> = {
     });
     copyTyped(entry, listenbrainz, { enabled: "listenbrainzEnabled" }, isBoolean);
     flattenStrings(entry, listenbrainz, { token: "listenbrainzToken", apiRoot: "listenbrainzApiRoot" });
+    // 3.x stored only the filters the user changed; the defaults were merged in when read,
+    // so put them back for an upgraded config (a stored list replaces the schema's).
+    const filters = entry.customRegexFilters;
+    if (Array.isArray(filters) && filters.every(isString)) entry.customRegexFilters = [...new Set([...DEFAULT_FILTERS, ...filters])];
   },
   shortcuts: (entry, config) => {
     // Global and in-window ("local") shortcuts; overrideMediaKeys keeps its name.
-    flattenStrings(entry, entry.global, { playPause: "playPause", next: "next", previous: "previous" });
-    flattenStrings(entry, entry.local, { playPause: "localPlayPause", next: "localNext", previous: "localPrevious" });
+    flattenStrings(entry, entry.global, {
+      playPause: "playPause",
+      next: "next",
+      previous: "previous",
+      like: "like",
+      dislike: "dislike",
+    });
+    flattenStrings(entry, entry.local, {
+      playPause: "localPlayPause",
+      next: "localNext",
+      previous: "localPrevious",
+      like: "localLike",
+      dislike: "localDislike",
+    });
     // The plugin also ran the Linux MPRIS player, which is the media-controls plugin now.
     if (entry.enabled === true) setNew(ensurePluginEntry(config, "media-controls"), "enabled", true);
   },
@@ -244,6 +263,9 @@ export const PLUGIN_MIGRATIONS: Record<string, PluginMigration> = {
     // defaultTextString: what fills instrumental gaps; ♪ by default in pear-desktop
     // (which didn't store defaults) and in the rewrite. " " showed a blank line, as "none" does.
     setNew(entry, "gapText", gapText(entry.defaultTextString));
+    // A custom filler (not one of pear-desktop's presets) is the rewrite's custom text.
+    const filler = entry.defaultTextString;
+    if (isString(filler) && !GAP_TEXTS.has(filler)) setNew(entry, "gapTextCustom", filler);
     const chinese = entry.convertChineseCharacter;
     if (typeof chinese === "string" && Object.hasOwn(CHINESE_CONVERSIONS, chinese)) {
       setNew(entry, "convertChinese", CHINESE_CONVERSIONS[chinese]);
