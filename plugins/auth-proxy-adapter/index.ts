@@ -1,6 +1,12 @@
 import { config, definePlugin } from "@pear/sdk";
+import { session } from "electron";
 import { type Adapter, startAdapter } from "./adapter.ts";
 import { needsAdapter, parseProxy, proxyRule } from "./proxy.ts";
+
+/** The scrobbler's Last.fm sign-in window has a session of its own (plugins/scrobbler/auth.ts). */
+const LASTFM_PARTITION = "persist:pear-lastfm";
+/** A hung setProxy must not hold the first page load forever. */
+const HOLD_TIMEOUT_MS = 10_000;
 
 export default definePlugin({
   id: "auth-proxy-adapter",
@@ -27,13 +33,28 @@ export default definePlugin({
   },
   host: {
     async start(ctx) {
-      const { config, session } = ctx;
+      const { config } = ctx;
       const proxy = parseProxy(config.url, { username: config.username, password: config.password });
+      // pear-desktop appended --proxy-server, which covered every window; the
+      // Last.fm sign-in window is the one the default session doesn't reach.
+      const sessions = [ctx.session, session.fromPartition(LASTFM_PARTITION)];
+
+      // The SDK has no prompt dialog: both items land in the settings card.
+      ctx.addMenuItem({
+        label: ctx.t("plugins.auth-proxy-adapter.settings.hostname.label", "Adapter address"),
+        click: () => ctx.openSettings(),
+      });
+      ctx.addMenuItem({
+        label: ctx.t("plugins.auth-proxy-adapter.settings.port.label", "Adapter port"),
+        click: () => ctx.openSettings(),
+      });
 
       // Hold requests (incl. the page that is already loading at launch) until the proxy applies.
       let release!: () => void;
       const applied = new Promise<void>((resolve) => (release = resolve));
-      ctx.webRequest.onBeforeRequest((_, callback) => void applied.then(() => callback({})));
+      let deadline!: ReturnType<typeof setTimeout>;
+      const expired = new Promise<void>((resolve) => (deadline = ctx.setTimeout(resolve, HOLD_TIMEOUT_MS)));
+      ctx.webRequest.onBeforeRequest((_, callback) => void Promise.race([applied, expired]).then(() => callback({})));
       ctx.onCleanup(release);
 
       try {
@@ -46,6 +67,7 @@ export default definePlugin({
           );
           ctx.onCleanup(() => adapter.close());
           rules = proxyRule("socks5", adapter.host, adapter.port);
+          // The bound address, which is a free port when the config says 0.
           ctx.log.info(`SOCKS adapter on ${rules} → ${proxy.host}:${proxy.port}`);
         } else if (proxy.username) {
           const onLogin = (
@@ -62,16 +84,19 @@ export default definePlugin({
           ctx.listen(ctx.app, "login", onLogin);
         }
 
-        await session.setProxy({ mode: "fixed_servers", proxyRules: rules, proxyBypassRules: config.bypass });
-        // Connections opened before keep their old route otherwise.
-        await session.closeAllConnections();
+        for (const target of sessions) {
+          await target.setProxy({ mode: "fixed_servers", proxyRules: rules, proxyBypassRules: config.bypass });
+          // Connections opened before keep their old route otherwise.
+          await target.closeAllConnections();
+        }
         // Turned off, the core then re-applies its own proxy option, if one is set.
         ctx.onCleanup(() => {
-          void session.setProxy({ mode: "system" }).then(() => session.closeAllConnections());
+          for (const target of sessions) void target.setProxy({ mode: "system" }).then(() => target.closeAllConnections());
         });
         ctx.log.info(`using proxy ${proxyRule(proxy.scheme, proxy.host, proxy.port)}`);
       } finally {
         release();
+        ctx.clearTimeout(deadline);
         ctx.webRequest.onBeforeRequest(null);
       }
     },

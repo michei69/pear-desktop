@@ -137,3 +137,28 @@ describe("SOCKS adapter", () => {
     socket.destroy();
   });
 });
+
+describe("SOCKS adapter lifetime", () => {
+  test("reports the bound port, also when a free one was asked for", async () => {
+    const adapter = await startAdapter(
+      { host: "127.0.0.1", port: 9, type: 5, username: "", password: "" },
+      { host: "127.0.0.1", port: 0 },
+      log,
+    );
+    servers.push(adapter);
+    expect(adapter.host).toBe("127.0.0.1");
+    expect(adapter.port).toBeGreaterThan(0);
+  });
+
+  test("fails when the port is already taken", async () => {
+    const first = await startAdapter(
+      { host: "127.0.0.1", port: 9, type: 5, username: "", password: "" },
+      { host: "127.0.0.1", port: 0 },
+      log,
+    );
+    servers.push(first);
+    await expect(
+      startAdapter({ host: "127.0.0.1", port: 9, type: 5, username: "", password: "" }, { host: "127.0.0.1", port: first.port }, log),
+    ).rejects.toThrow();
+  });
+});
