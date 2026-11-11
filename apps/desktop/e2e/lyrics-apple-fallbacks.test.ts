@@ -74,6 +74,46 @@ test("renders plain lyrics in the Apple shell", async ({ app, page }) => {
   await screenshot(app, "lyrics-apple-plain");
 });
 
+test("shows the loading fallback in the Apple shell", async ({ app, page }) => {
+  test.setTimeout(120_000);
+  await app.evaluate(({ session, net }) => {
+    const otherProviders = new Set([
+      "lrc.red",
+      "lrchub.coreone.work",
+      "api.megalobiz.com",
+      "apic-appmobile.musixmatch.com",
+      "interface.music.163.com",
+      "api-lyrics.simpmusic.org",
+      "ytmbrowseproxy.zvz.be",
+    ]);
+    session.defaultSession.protocol.handle("https", async (request) => {
+      const host = new URL(request.url).hostname;
+      if (host === "lrclib.net") {
+        await new Promise((resolve) => setTimeout(resolve, 5_000));
+        return Response.json([
+          {
+            id: 1,
+            trackName: "Never Gonna Give You Up",
+            artistName: "Rick Astley",
+            duration: 213,
+            instrumental: false,
+            plainLyrics: "We're no strangers to love\nYou know the rules and so do I",
+            syncedLyrics: null,
+          },
+        ]);
+      }
+      if (otherProviders.has(host)) return new Response("no lyrics", { status: 404 });
+      return net.fetch(request, { bypassCustomProtocolHandlers: true });
+    });
+  });
+
+  await openLyrics(page);
+  await expect(lyrics(page)).toHaveAttribute("data-state", "loading");
+  await expect(lyrics(page).locator(".apple-music-style .kaomoji[aria-busy='true']")).toBeVisible();
+  await screenshot(app, "lyrics-apple-loading");
+  await expect(lyrics(page)).toHaveAttribute("data-state", "plain", { timeout: 30_000 });
+});
+
 test("renders the retryable error in the Apple shell", async ({ app, page }) => {
   test.setTimeout(120_000);
   await app.evaluate(({ session, net }) => {
