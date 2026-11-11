@@ -109,27 +109,33 @@ export function chooseLists(curated: readonly string[], local: readonly FilterSo
   });
 }
 
-/** The local list files in `directory`, minus the disabled ones (readable files only). */
-export async function loadLocalLists(directory: string, disabled: readonly string[]): Promise<FilterSource[]> {
-  const off = new Set(disabled);
+/** The files in the blocklists folder (created first), sorted; unreadable directories give none. */
+export async function listLocalLists(directory: string): Promise<string[]> {
   try {
     await mkdir(directory, { recursive: true });
-    const entries = (await readdir(directory, { withFileTypes: true }))
-      .filter((entry) => entry.isFile() && !off.has(entry.name))
-      .sort((a, b) => a.name.localeCompare(b.name));
-    const lists: FilterSource[] = [];
-    for (const entry of entries) {
-      try {
-        const contents = await readFile(join(directory, entry.name), "utf8");
-        lists.push({ url: `local-blocklist://file/${entry.name}`, contents: normalizeBlockList(contents) });
-      } catch {
-        // Unreadable: skip it rather than lose the other lists.
-      }
-    }
-    return lists;
+    return (await readdir(directory, { withFileTypes: true }))
+      .filter((entry) => entry.isFile())
+      .map((entry) => entry.name)
+      .sort((a, b) => a.localeCompare(b));
   } catch {
     return [];
   }
+}
+
+/** The local list files in `directory` that are not disabled (readable files only). */
+export async function loadLocalLists(directory: string, disabled: readonly string[]): Promise<FilterSource[]> {
+  const off = new Set(disabled);
+  const lists: FilterSource[] = [];
+  for (const name of await listLocalLists(directory)) {
+    if (off.has(name)) continue;
+    try {
+      const contents = await readFile(join(directory, name), "utf8");
+      lists.push({ url: `local-blocklist://file/${name}`, contents: normalizeBlockList(contents) });
+    } catch {
+      // Unreadable: skip it rather than lose the other lists.
+    }
+  }
+  return lists;
 }
 
 /** The curated list URLs: last known ones from the cache directory, else the built-in copy. */

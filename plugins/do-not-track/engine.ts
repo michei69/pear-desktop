@@ -99,7 +99,10 @@ export async function loadEngine(options: EngineOptions): Promise<LoadedEngine> 
   try {
     const [buffer, info] = await Promise.all([readFile(file), stat(file)]);
     const engine = FiltersEngine.deserialize(buffer);
-    const stale = Date.now() - info.mtimeMs > MAX_AGE_MS;
+    // Remote lists change without their URL changing (the cache key only has the
+    // URL): the cached engine blocks at once, and a remote list means it is
+    // rebuilt in the background on every launch, like pear-desktop refetching it.
+    const stale = lists.some((list) => list.contents === undefined) || Date.now() - info.mtimeMs > MAX_AGE_MS;
     const refreshed = stale ? build(lists).then(async (fresh) => (await save(file, fresh), fresh)) : Promise.resolve(undefined);
     return { engine, refreshed };
   } catch {
@@ -129,12 +132,17 @@ export function enableBlocking(webRequest: WebRequest, getEngine: () => FiltersE
     const engine = getEngine();
     if (!engine) return callback({});
     const request = toRequest(details);
-    if (request.isMainFrame()) return callback({});
-    const { redirect, match } = engine.match(request);
-    if (redirect || match) onBlocked();
-    if (redirect) callback({ redirectURL: redirect.dataUrl });
-    else if (match) callback({ cancel: true });
-    else callback({});
+    const { redirect, rewrite, match } = engine.match(request);
+    // pear-desktop applied the engine's $rewrite URLs too: documents that a list
+    // rewrites navigate to the replacement, subresources are redirected.
+    const url = request.isMainFrame() ? rewrite?.url : (redirect?.dataUrl ?? rewrite?.url);
+    if (url) {
+      onBlocked();
+      callback({ redirectURL: url });
+    } else if (match && !request.isMainFrame()) {
+      onBlocked();
+      callback({ cancel: true });
+    } else callback({});
   });
   // $csp filters add policies to documents (merged with what earlier listeners left).
   webRequest.onHeadersReceived({ urls: ["<all_urls>"] }, (details, callback) => {

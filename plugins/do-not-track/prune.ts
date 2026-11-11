@@ -11,7 +11,21 @@ type Json = Record<string, unknown>;
 
 const isObject = (value: unknown): value is Json => typeof value === "object" && value !== null;
 
-/** Deletes the ad keys from a parsed response (and the player responses inside it); returns it. */
+/**
+ * Removes the ad flag from reel/shorts entries (home feeds and their sequence
+ * responses), as pear-desktop's Lite layer did.
+ */
+function pruneReels(entries: unknown) {
+  if (!Array.isArray(entries)) return;
+  for (const entry of entries) {
+    if (!isObject(entry) || !isObject(entry.command)) continue;
+    const endpoint = entry.command.reelWatchEndpoint;
+    if (!isObject(endpoint) || !isObject(endpoint.adClientParams)) continue;
+    delete endpoint.adClientParams.isAd;
+  }
+}
+
+/** Deletes the ad keys from a parsed response (and the player responses and reels inside it); returns it. */
 export function prune<T>(value: T): T {
   if (!isObject(value)) return value;
   for (const key of AD_KEYS) delete value[key];
@@ -19,6 +33,9 @@ export function prune<T>(value: T): T {
     const inner = value[nested];
     if (isObject(inner)) for (const key of AD_KEYS) delete inner[key];
   }
+  pruneReels(value.entries);
+  const sequence = value.reelWatchSequenceResponse;
+  if (isObject(sequence)) pruneReels(sequence.entries);
   return value;
 }
 

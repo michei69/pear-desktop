@@ -7,6 +7,9 @@ export const STRICT = "Strict";
 
 export type Profile = typeof LITE | typeof BALANCED | typeof STRICT;
 
+/** Whether a profile filters requests (Lite prunes the player only, unless custom lists are on). */
+export const needsBlocklists = (config: { blocker: Profile; customEnabled: boolean }) => config.blocker !== LITE || config.customEnabled;
+
 export const schema = {
   // pear-desktop's and the fork's profiles, under the key both stored them in.
   blocker: config.select(

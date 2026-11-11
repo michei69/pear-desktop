@@ -7,6 +7,7 @@ import {
   cachedSources,
   chooseLists,
   fetchSources,
+  listLocalLists,
   loadLocalLists,
   parseSources,
   SOURCES_URL,
@@ -71,12 +72,16 @@ describe("blocklists", () => {
     expect(lists[2]!.contents).toContain("*$removeparam=utm_source");
   });
 
-  test("skips disabled local list files", async () => {
+  test("lists the blocklist folder and skips disabled local list files", async () => {
     const local = join(dir, "blocklists");
     mkdirSync(local, { recursive: true });
-    writeFileSync(join(local, "a.txt"), "||a.example^");
     writeFileSync(join(local, "b.txt"), "||b.example^");
+    writeFileSync(join(local, "a.txt"), "||a.example^");
+    mkdirSync(join(local, "nested"));
+    expect(await listLocalLists(local)).toEqual(["a.txt", "b.txt"]);
     expect((await loadLocalLists(local, ["b.txt"])).map((list) => list.url)).toEqual(["local-blocklist://file/a.txt"]);
+    // A missing folder is created and reads as empty, not an error.
+    expect(await listLocalLists(join(dir, "missing"))).toEqual([]);
   });
 
   test("remembers fetched lists and falls back to the built-in copy", async () => {

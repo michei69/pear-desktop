@@ -5,18 +5,15 @@ import { dialog, net } from "electron";
 import { applyCosmetics } from "./cosmetics.ts";
 import { type CosmeticsRequest, cosmetics, enableBlocking, loadEngine, type LoadedEngine } from "./engine.ts";
 import { cachedSources, chooseLists, fetchSources, loadLocalLists, type FilterSource } from "./lists.ts";
+import { blocklistsDir, showLocalLists, showMenu } from "./menu.ts";
 import { installPruner } from "./prune.ts";
 import { dismissPromos, hidePromoCss } from "./promo.ts";
-import { LITE, schema } from "./schema.ts";
+import { needsBlocklists, schema } from "./schema.ts";
 import { skipAds } from "./skip-ads.ts";
 
 type Config = ConfigOf<typeof schema>;
 
-const LOCAL_LISTS_DIR = "blocklists";
 const stats = { active: false, blocked: 0, lists: 0 };
-
-/** Whether a profile filters requests (Lite only prunes the player unless custom lists are on). */
-const needsBlocklists = (config: Config) => config.blocker !== LITE || config.customEnabled;
 
 /** What the page was built with: a change here needs a reload to fully apply. */
 function profileKey(config: Config) {
@@ -38,7 +35,15 @@ export default definePlugin({
   id: "do-not-track",
   name: "Do Not Track",
   description: "Blocks tracking: strips ad and tracking data from the player, with lite, balanced or strict blocklists.",
+  // pear-desktop blocked out of the box; profiles that turned it off stay off (the 4.0.0 migration keeps their choice).
+  enabledByDefault: true,
   config: schema,
+  actions: {
+    localBlockLists: {
+      label: "Local blocklists…",
+      description: "Pick which files in the blocklists folder are loaded.",
+    },
+  },
   host: {
     async start(ctx) {
       let stopped = false;
@@ -57,7 +62,12 @@ export default definePlugin({
 
       const fetch = (url: string) => net.fetch(url);
       const cacheDir = (config: Config) => (config.cache ? join(ctx.app.getPath("userData"), "tb_cache") : undefined);
-      const localDir = join(ctx.app.getPath("userData"), LOCAL_LISTS_DIR);
+      const localDir = blocklistsDir(ctx);
+      // pear-desktop's app menu: profile radios and the Custom submenu, in a popup.
+      ctx.addMenuItem({
+        label: ctx.t("plugins.do-not-track.menu.title", "Do Not Track…"),
+        click: () => showMenu(ctx),
+      });
 
       /** The curated list URLs, when custom lists want them. */
       const curatedFor = async (config: Config): Promise<readonly string[]> => {
@@ -224,6 +234,10 @@ export default definePlugin({
         const engine = engines.get(this)?.();
         if (!engine || this.config.cosmeticFilters === "off") return null;
         return cosmetics(engine, request, this.config.cosmeticFilters === "all");
+      },
+      /** The settings card's local-blocklist button. */
+      localBlockLists() {
+        showLocalLists(this);
       },
     },
   },

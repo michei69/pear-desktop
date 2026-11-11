@@ -18,6 +18,26 @@ describe("prune", () => {
     expect(prune("adPlacements")).toBe("adPlacements");
     expect(prune([1, 2])).toEqual([1, 2]);
   });
+  test("clears the ad flag of reel entries and reel sequences", () => {
+    const reel = (isAd: boolean) => ({ command: { reelWatchEndpoint: { adClientParams: { isAd, keep: "yes" } } } });
+    const feed = {
+      entries: [reel(true), { command: {} }, { command: { reelWatchEndpoint: {} } }, null],
+      reelWatchSequenceResponse: { entries: [reel(true)] },
+    };
+    expect(prune(feed)).toEqual({
+      entries: [
+        { command: { reelWatchEndpoint: { adClientParams: { keep: "yes" } } } },
+        { command: {} },
+        { command: { reelWatchEndpoint: {} } },
+        null,
+      ],
+      reelWatchSequenceResponse: { entries: [{ command: { reelWatchEndpoint: { adClientParams: { keep: "yes" } } } }] },
+    });
+  });
+  test("ignores responses that are not shaped like feeds", () => {
+    const other = { entries: "nope", reelWatchSequenceResponse: [] };
+    expect(prune(other)).toEqual(other);
+  });
 });
 
 describe("installPruner", () => {
