@@ -397,9 +397,30 @@ export class LyricsStore {
     try {
       let texts = original;
       if (chinese !== "off") {
-        texts = await this.#backend.convertChinese(original, chinese);
+        const converted = await this.#backend.convertChinese(original, chinese);
         if (run !== this.#run || !this.shown) return;
-        this.shown = { ...this.shown, texts };
+        texts = converted;
+        // Convert the timed words too, not just the display line: the standard
+        // renderer keeps word highlighting only while text matches line.text,
+        // and the Apple renderer builds its rows from words.
+        const words = this.shown.lines.flatMap((line) => [...(line.words ?? []), ...(line.background ?? [])]);
+        const convertedWords = words.length
+          ? await this.#backend.convertChinese(
+              words.map((word) => word.text),
+              chinese,
+            )
+          : [];
+        if (run !== this.#run || !this.shown) return;
+        let word = 0;
+        const lines = this.shown.lines.map((line, i) => ({
+          ...line,
+          text: texts[i] ?? line.text,
+          ...(line.words ? { words: line.words.map((entry) => ({ ...entry, text: convertedWords[word++] ?? entry.text })) } : {}),
+          ...(line.background
+            ? { background: line.background.map((entry) => ({ ...entry, text: convertedWords[word++] ?? entry.text })) }
+            : {}),
+        }));
+        this.shown = { ...this.shown, texts, lines };
         this.#emit();
       }
       if (scripts.length > 0) {

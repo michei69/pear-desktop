@@ -84,6 +84,11 @@ describe("the Apple Music timeline model", () => {
     expect(buildAppleLyrics([line(0, 1000, "Left"), line(1000, 2000, "Right", { alignment: "end" })]).hasDuet).toBe(true);
   });
 
+  test("uses the converted display text when given", () => {
+    const lyrics = buildAppleLyrics([line(0, 1000, "国")], [], ["國"]);
+    expect(lyrics.rows.find((row) => row.kind === "line")?.text).toBe("國");
+  });
+
   test("the last line retires shortly after its end", () => {
     const lyrics = buildAppleLyrics([line(0, 1000, "Only")]);
     expect(timelineAt(lyrics, 1100).activeLine).toBe(0);

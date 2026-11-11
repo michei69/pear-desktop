@@ -286,6 +286,34 @@ describe("LyricsStore", () => {
 });
 
 describe("romanization", () => {
+  test("Chinese conversion keeps word timings and converts the timed words", async () => {
+    const api = backend({
+      LRCLib: {
+        ...synced,
+        lines: [
+          {
+            startMs: 0,
+            endMs: 1000,
+            text: "国 家",
+            words: [
+              { startMs: 0, endMs: 400, text: "国 " },
+              { startMs: 400, endMs: 1000, text: "家" },
+            ],
+          },
+        ],
+      },
+    });
+    api.convertChinese = vi.fn(async (lines: string[]) => lines.map((line) => line.replaceAll("国", "國")));
+    const store = new LyricsStore(api, { ...options, chinese: "s2t" });
+    store.load(track);
+    await vi.waitFor(() => expect(store.shown?.lines[0]?.text).toBe("國 家"));
+    expect(store.shown?.texts).toEqual(["國 家"]);
+    expect(store.shown?.lines[0]?.words).toEqual([
+      { startMs: 0, endMs: 400, text: "國 " },
+      { startMs: 400, endMs: 1000, text: "家" },
+    ]);
+  });
+
   test("only enabled scripts are sent to the romanizer", async () => {
     const api = backend({ LRCLib: { ...synced, lines: [{ startMs: 0, endMs: 1, text: "사랑해" }] } });
     const korean = { ...noRomanization, ko: true };

@@ -61,7 +61,7 @@ export function AppleLyrics({ store, options, position, seek, picker, t }: Apple
   const shown = store.shown;
   const current = store.current;
   const lyrics = useMemo(
-    () => (shown?.synced && shown.lines.length > 0 ? buildAppleLyrics(shown.lines, shown.translation) : null),
+    () => (shown?.synced && shown.lines.length > 0 ? buildAppleLyrics(shown.lines, shown.translation, shown.texts) : null),
     [shown],
   );
   const hasLyrics = Boolean(lyrics?.rows.some((row) => row.kind === "line"));

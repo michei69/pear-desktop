@@ -129,7 +129,11 @@ function highlightEnd(line: RenderableLine, next: RenderableLine | undefined): n
  * become instrumental gaps instead of empty rows. Any real break >= 7 s between
  * rendered lines also gets the dots, including the intro before the first line.
  */
-export function buildAppleLyrics(raw: readonly LyricLine[], translations: readonly (string | null | undefined)[] = []): AppleLyrics {
+export function buildAppleLyrics(
+  raw: readonly LyricLine[],
+  translations: readonly (string | null | undefined)[] = [],
+  texts: readonly (string | null | undefined)[] = [],
+): AppleLyrics {
   const rendered: RenderableLine[] = [];
 
   raw.forEach((line, sourceIndex) => {
@@ -137,7 +141,7 @@ export function buildAppleLyrics(raw: readonly LyricLine[], translations: readon
     const startMs = Math.max(0, line.startMs);
     const words = (line.words ?? []).map(cleanWord).filter((word): word is AppleWord => word !== null);
     const background = (line.background ?? []).map(cleanWord).filter((word): word is AppleWord => word !== null);
-    const text = (line.text || words.map((word) => word.text).join("")).trim();
+    const text = (texts[sourceIndex] || line.text || words.map((word) => word.text).join("")).trim();
     if (!text && words.length === 0 && background.length === 0) return;
 
     const translationText = translations[sourceIndex]?.trim() || null;
