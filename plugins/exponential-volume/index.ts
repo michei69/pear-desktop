@@ -5,37 +5,51 @@ import { definePlugin } from "@pear/sdk";
 // https://gist.github.com/Barteks2x/a4e189a36a10c159bb1644ffca21c02a
 const EXPONENT = 3;
 
+/** Every media element the curve reaches: YTM may replace its <video>. */
+const MEDIA = "video, audio";
+
 export default definePlugin({
   id: "exponential-volume",
   name: "Exponential volume",
   description: "Makes the volume slider follow loudness perception, giving finer control at low volumes.",
   page: async (ctx) => {
-    const video = await ctx.player.videoReady();
-    const native = Object.getOwnPropertyDescriptor(HTMLMediaElement.prototype, "volume")!;
+    await ctx.player.videoReady();
+    const native = Object.getOwnPropertyDescriptor(HTMLMediaElement.prototype, "volume");
+    if (!native?.get || !native?.set) return;
+
     // Reads return what was set, not the cube root of the real value, which
     // would drift by rounding (YTM compares volumes it wrote).
-    let written: number | undefined;
-    const current = native.get!.call(video) as number;
+    const written = new WeakMap<HTMLMediaElement, number>();
+    const linear = native.get;
+    const setLinear = native.set;
 
-    // Shadow the prototype's accessor on this element only.
-    Object.defineProperty(video, "volume", {
+    // The prototype, like pear-desktop: a replaced <video> and any other media
+    // element (the crossfade's second stream) follow the curve too.
+    Object.defineProperty(HTMLMediaElement.prototype, "volume", {
       configurable: true,
       get(this: HTMLMediaElement) {
-        const linear = (native.get!.call(this) as number) ** (1 / EXPONENT);
-        return written !== undefined && Math.abs(written - linear) < 0.01 ? written : linear;
+        const perceived = (linear.call(this) as number) ** (1 / EXPONENT);
+        const stored = written.get(this);
+        return stored !== undefined && Math.abs(stored - perceived) < 0.01 ? stored : perceived;
       },
       set(this: HTMLMediaElement, volume: number) {
-        written = volume;
-        native.set!.call(this, volume ** EXPONENT);
+        written.set(this, volume);
+        setLinear.call(this, volume ** EXPONENT);
       },
     });
-    // Re-apply the current volume through the new curve.
-    video.volume = current;
+
+    // Re-map whatever is already playing through the curve (the plugin can be enabled mid-track).
+    for (const element of document.querySelectorAll<HTMLMediaElement>(MEDIA)) {
+      element.volume = linear.call(element) as number;
+    }
 
     return () => {
-      const perceived = video.volume;
-      delete (video as { volume?: number }).volume;
-      video.volume = perceived;
+      // Undo the scaled-down media volume before the native accessor returns,
+      // so disabling does not leave the sound quieter than the slider says.
+      for (const element of document.querySelectorAll<HTMLMediaElement>(MEDIA)) {
+        setLinear.call(element, (linear.call(element) as number) ** (1 / EXPONENT));
+      }
+      Object.defineProperty(HTMLMediaElement.prototype, "volume", native);
     };
   },
 });
