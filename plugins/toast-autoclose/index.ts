@@ -1,4 +1,5 @@
 import { definePlugin } from "@pear/sdk";
+import { OPEN_CLASS, toastsClosedDuringBatch, type ToastClassChange } from "./batch.ts";
 
 const AUTO_CLOSE_MS = 3_000;
 
@@ -37,7 +38,7 @@ export default definePlugin({
 
       const closeToast = (toast: Toast) => {
         timers.delete(toast);
-        if (!toast.isConnected || !toast.classList.contains("paper-toast-open")) return;
+        if (!toast.isConnected || !toast.classList.contains(OPEN_CLASS)) return;
         if (fired.has(toast)) return;
         fired.add(toast);
 
@@ -48,7 +49,7 @@ export default definePlugin({
 
       const arm = (toast: Toast) => {
         if (timers.has(toast) || fired.has(toast)) return;
-        if (!toast.classList.contains("paper-toast-open")) return;
+        if (!toast.classList.contains(OPEN_CLASS)) return;
         timers.set(
           toast,
           ctx.setTimeout(() => closeToast(toast), AUTO_CLOSE_MS),
@@ -57,7 +58,7 @@ export default definePlugin({
 
       const scan = () => {
         for (const toast of [...timers.keys()]) {
-          if (!toast.isConnected || !toast.classList.contains("paper-toast-open")) {
+          if (!toast.isConnected || !toast.classList.contains(OPEN_CLASS)) {
             stopTimer(toast);
             fired.delete(toast);
           }
@@ -80,24 +81,38 @@ export default definePlugin({
         return node.closest("tp-yt-paper-toast") !== null || node.querySelector("tp-yt-paper-toast") !== null;
       };
 
-      scan();
-      ctx.observe(root, { childList: true, subtree: true, attributes: true, attributeFilter: ["class"] }, (mutations) => {
-        let relevant = false;
+      const toastOf = (node: Node): Toast | null => {
+        if (!(node instanceof Element)) return null;
+        if (node.localName === "tp-yt-paper-toast") return node as Toast;
+        return node.closest<Toast>("tp-yt-paper-toast");
+      };
+
+      /** Forgets every toast that closed in this batch, so a reused element is re-armed by the scan. */
+      const forgetClosed = (mutations: MutationRecord[]) => {
+        const changes: ToastClassChange<Toast>[] = [];
         for (const mutation of mutations) {
-          // A class change on a toast that is no longer open: it can be armed again next time.
-          if (
-            mutation.type === "attributes" &&
-            mutation.target instanceof Element &&
-            mutation.target.localName === "tp-yt-paper-toast" &&
-            !mutation.target.classList.contains("paper-toast-open")
-          ) {
-            forget(mutation.target);
-          }
-          for (const node of mutation.removedNodes) if (node instanceof Element) forget(node);
-          if (!relevant && (isToastRelated(mutation.target) || [...mutation.addedNodes].some(isToastRelated))) relevant = true;
+          if (mutation.type !== "attributes" || mutation.attributeName !== "class") continue;
+          const toast = toastOf(mutation.target);
+          if (toast) changes.push({ toast, oldValue: mutation.oldValue });
         }
-        if (relevant) schedule();
-      });
+        for (const toast of toastsClosedDuringBatch(changes, (toast) => toast.classList.contains(OPEN_CLASS))) forget(toast);
+      };
+
+      scan();
+      // attributeOldValue: a close+reopen inside one batch must not keep the old message's deadline.
+      ctx.observe(
+        root,
+        { childList: true, subtree: true, attributes: true, attributeOldValue: true, attributeFilter: ["class"] },
+        (mutations) => {
+          forgetClosed(mutations);
+          let relevant = false;
+          for (const mutation of mutations) {
+            for (const node of mutation.removedNodes) if (node instanceof Element) forget(node);
+            if (!relevant && (isToastRelated(mutation.target) || [...mutation.addedNodes].some(isToastRelated))) relevant = true;
+          }
+          if (relevant) schedule();
+        },
+      );
 
       ctx.onCleanup(() => {
         if (frame !== undefined) cancelAnimationFrame(frame);
