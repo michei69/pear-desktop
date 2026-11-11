@@ -91,6 +91,9 @@ export interface HostPlayer {
   details(options?: { timeout?: number }): Promise<SongDetails | null>;
 }
 
+/** The result of calling another plugin's RPC method (validated by the host). */
+export type PluginCallResult<T = unknown> = { ok: true; value: T } | { ok: false; status: number; error: string };
+
 export interface HostContext<C> extends CommonContext<C> {
   readonly app: App;
   readonly window: BrowserWindow;
@@ -109,6 +112,12 @@ export interface HostContext<C> extends CommonContext<C> {
   readonly player: HostPlayer;
   /** Asks this plugin's page part (`ctx.host.handle`) and resolves with its answer. */
   request<T = unknown>(event: string, payload?: unknown, options?: { timeout?: number }): Promise<T>;
+  /**
+   * Calls another running plugin's RPC method, with the same input validation
+   * as the API server. A disabled plugin or unknown method resolves with an
+   * `ok: false` result instead of throwing.
+   */
+  callPlugin<T = unknown>(id: string, method: string, body?: unknown): Promise<PluginCallResult<T>>;
   /** Opens the in-page settings overlay (focusing the window). */
   openSettings(): void;
   /** Shows the main window and brings it to the front (restoring it if minimized). */

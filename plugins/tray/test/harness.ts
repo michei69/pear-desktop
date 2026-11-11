@@ -10,6 +10,8 @@ export const defaultConfig = {
   closeToTray: false,
   clickToToggle: true,
   clickPlayPause: false,
+  clickAction: "toggle",
+  showAtStartup: true,
   moveToCurrentDesktop: false,
   forceWhiteIcons: false,
 };
@@ -95,6 +97,8 @@ export function fakeContext(options: ContextOptions = {}) {
   const window = options.window ?? new FakeWindow();
   const app = options.app ?? new FakeApp();
   const config: TrayConfig = { ...defaultConfig, ...options.config };
+  // The real app copies the old core startup switch onto the tray once.
+  if (options.config?.showAtStartup === undefined && options.core?.appVisible !== undefined) config.showAtStartup = options.core.appVisible;
   const core = {
     appearance: { useYtmIcons: options.core?.useYtmIcons ?? false },
     window: { appVisible: options.core?.appVisible ?? true },

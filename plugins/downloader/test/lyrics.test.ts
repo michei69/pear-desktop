@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { findLyrics, type LrclibEntry, pickLyrics, unsynced } from "../lyrics.ts";
+import { findLyrics, lyricsFromSyncedLyrics, type LrclibEntry, pickLyrics, unsynced } from "../lyrics.ts";
 
 const entry = (patch: Partial<LrclibEntry>): LrclibEntry => ({
   trackName: "Never Gonna Give You Up",
@@ -36,6 +36,25 @@ describe("lyrics", () => {
     const lyrics = await findLyrics(query, fetch, new AbortController().signal);
     expect(asked).toEqual(["/api/get", "/api/search"]);
     expect(lyrics).toEqual({ plain: "We're no strangers to love", synced: "[00:18.00] We're no strangers to love" });
+  });
+
+  test("converts synced-lyrics' selected provider into plain and LRC", () => {
+    expect(
+      lyricsFromSyncedLyrics({
+        activeProvider: "LRCLib",
+        providers: [
+          { provider: "Megalobiz", lyrics: "first" },
+          {
+            provider: "LRCLib",
+            lines: [
+              { timeInMs: 18_000, text: "We're no strangers" },
+              { timeInMs: 21_000, text: "to love" },
+            ],
+          },
+        ],
+      }),
+    ).toEqual({ plain: "We're no strangers\nto love", synced: "[00:18.00]We're no strangers\n[00:21.00]to love" });
+    expect(lyricsFromSyncedLyrics({ activeProvider: null, providers: [] })).toBeUndefined();
   });
 
   test("nothing for instrumentals", async () => {

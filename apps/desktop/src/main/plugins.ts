@@ -3,7 +3,7 @@
 
 import type { App, BrowserWindow, BrowserWindowConstructorOptions, Session } from "electron";
 import { interpolate, type Translate } from "@pear/sdk/i18n";
-import { type AnyPlugin, type HostContext, type HostPlayer, type RpcMethod, supportsPlatform } from "@pear/sdk";
+import { type AnyPlugin, type HostContext, type HostPlayer, type PluginCallResult, type RpcMethod, supportsPlatform } from "@pear/sdk";
 import type { MenuItems } from "./menu-items.ts";
 import { CleanupStack, createLogger, errorMessage, timerSet } from "@pear/sdk/util";
 import { v } from "@pear/sdk/rpc";
@@ -304,6 +304,8 @@ export class PluginHost {
       session: env.router.scopedSession(id, active),
       webRequest: env.router.scoped(id, active),
       request: (event, payload, options) => env.requests.request(id, event, payload, options),
+      callPlugin: async <T>(target: string, name: string, body?: unknown) =>
+        (await this.callRpc(target, name, body)) as PluginCallResult<T>,
       player: scopedPlayer(env, cleanups),
       openSettings: () => env.openSettings(),
       focusWindow: () => env.focusWindow(),

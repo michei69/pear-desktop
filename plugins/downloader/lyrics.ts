@@ -7,6 +7,8 @@ const MAX_DURATION_DIFF = 15;
 const HTTP_NOT_FOUND = 404;
 
 export interface LyricsQuery {
+  /** The video, when the built-in engine has one (lets synced-lyrics use its settings). */
+  videoId?: string | undefined;
   title: string;
   artist: string;
   album?: string | undefined;
@@ -63,6 +65,39 @@ export const unsynced = (lrc: string) =>
     .filter((line, index, lines) => line !== "" || (index > 0 && lines[index - 1] !== ""))
     .join("\n")
     .trim();
+
+/** The subset of the synced-lyrics API's provider payload the downloader reads. */
+export interface SyncedLyricsResponse {
+  activeProvider?: string | null;
+  providers?: {
+    provider?: string;
+    lyrics?: string;
+    lines?: { timeInMs?: number; text?: string }[];
+  }[];
+}
+
+const lrcTime = (ms: number) => {
+  const centiseconds = Math.max(0, Math.round(ms / 10));
+  const minutes = Math.floor(centiseconds / 6000);
+  const seconds = Math.floor(centiseconds / 100) % 60;
+  return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}.${String(centiseconds % 100).padStart(2, "0")}`;
+};
+
+/** Converts the API's provider list into the downloader's plain/LRC pair, preferring the selected provider. */
+export function lyricsFromSyncedLyrics(value: unknown): Lyrics | undefined {
+  if (typeof value !== "object" || value === null) return undefined;
+  const response = value as SyncedLyricsResponse;
+  const providers = Array.isArray(response.providers) ? response.providers : [];
+  const entry = providers.find((candidate) => candidate.provider === response.activeProvider) ?? providers[0];
+  if (!entry) return undefined;
+  const lines = (entry.lines ?? []).filter(
+    (line): line is { timeInMs: number; text: string } =>
+      typeof line.timeInMs === "number" && typeof line.text === "string" && line.text.trim() !== "",
+  );
+  const synced = lines.length ? lines.map((line) => `[${lrcTime(line.timeInMs)}]${line.text}`).join("\n") : undefined;
+  const plain = entry.lyrics?.trim() || (synced ? unsynced(synced) : "");
+  return plain ? { plain, ...(synced ? { synced } : {}) } : undefined;
+}
 
 /** The song's lyrics, or undefined when LRCLib has none (or only knows it's instrumental). */
 export async function findLyrics(query: LyricsQuery, fetch: Fetch, signal: AbortSignal): Promise<Lyrics | undefined> {

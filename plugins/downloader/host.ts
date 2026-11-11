@@ -19,7 +19,7 @@ import type { Engine } from "./engines/types.ts";
 import { YtDlpEngine } from "./engines/ytdlp.ts";
 import { resolveDownloadFolder } from "./folder.ts";
 import { Installer } from "./install.ts";
-import { findLyrics } from "./lyrics.ts";
+import { findLyrics, lyricsFromSyncedLyrics } from "./lyrics.ts";
 import { OfflineStore } from "./offline.ts";
 import { ffmpegCoreDir } from "./macros.ts" with { type: "macro" };
 import { expandHome, type SetupState, type ToolSource, Tools } from "./tools.ts";
@@ -303,7 +303,22 @@ function createBuiltInEngine(ctx: Ctx, tools: Tools, autoJobs: Set<number>, offl
     converter: (): Converter => chooseConverter(tools.ffmpegProgram, () => wasm),
     cover: (url, square, signal) => fetchCover(ctx, url, square, signal),
     fetch: (url, init) => ctx.session.fetch(url, init),
-    lyrics: (query, signal) => findLyrics(query, (url, init) => ctx.session.fetch(url, init), signal),
+    lyrics: async (query, signal) => {
+      // Prefer the user's synced-lyrics provider order/favourites; fall back to
+      // LRCLib when that plugin is off or finds nothing.
+      if (query.videoId) {
+        try {
+          const result = await ctx.callPlugin("synced-lyrics", "lyrics", { videoId: query.videoId });
+          if (result.ok) {
+            const lyrics = lyricsFromSyncedLyrics(result.value);
+            if (lyrics) return lyrics;
+          }
+        } catch (error) {
+          ctx.log.warn("synced-lyrics lookup failed; using LRCLib", error);
+        }
+      }
+      return findLyrics(query, (url, init) => ctx.session.fetch(url, init), signal);
+    },
     store: offline,
     keep: async (song, stream, options) => {
       await offline.save(song, stream, options);

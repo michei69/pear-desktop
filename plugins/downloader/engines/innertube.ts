@@ -325,7 +325,8 @@ export class InnertubeEngine implements Engine {
       }
       // Saved to the folder (also when the store can't keep it).
       await mkdir(dirname(file), { recursive: true });
-      const lyrics = options.lyrics || options.lyricsFile ? await this.#lyrics(tags, info.basic_info.duration ?? 0, signal) : undefined;
+      const lyrics =
+        options.lyrics || options.lyricsFile ? await this.#lyrics(tags, info.basic_info.duration ?? 0, signal, entry.videoId) : undefined;
       if (options.lyrics && lyrics) tags.lyrics = lyrics.plain;
       // The stream the store keeps: the part, unless a missing ffmpeg already moved it into place.
       let streamFile = partial;
@@ -388,7 +389,7 @@ export class InnertubeEngine implements Engine {
       const converted = join(dirname(file), `${stemOf(relative)}.${randomBytes(4).toString("hex")}.temp.${ext}`);
       const tags = { ...info.tags };
       const duration = fields.duration ?? 0;
-      const lyrics = options.lyrics || options.lyricsFile ? await this.#lyrics(tags, duration, signal) : undefined;
+      const lyrics = options.lyrics || options.lyricsFile ? await this.#lyrics(tags, duration, signal, videoId) : undefined;
       if (options.lyrics && lyrics) tags.lyrics = lyrics.plain;
       try {
         const input = {
@@ -473,10 +474,13 @@ export class InnertubeEngine implements Engine {
     }
   }
 
-  async #lyrics(tags: Tags, durationSeconds: number, signal: AbortSignal) {
+  async #lyrics(tags: Tags, durationSeconds: number, signal: AbortSignal, videoId?: string) {
     if (!tags.artist) return undefined;
     try {
-      return await this.#options.lyrics({ title: tags.title, artist: tags.artist, album: tags.album, durationSeconds }, signal);
+      return await this.#options.lyrics(
+        { title: tags.title, artist: tags.artist, album: tags.album, durationSeconds, ...(videoId ? { videoId } : {}) },
+        signal,
+      );
     } catch (error) {
       if (signal.aborted) throw error;
       this.#options.log.warn("no lyrics:", errorMessage(error));
