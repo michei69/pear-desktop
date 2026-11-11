@@ -1,22 +1,13 @@
 /** @jsxImportSource @pear/sdk */
-import { config, definePlugin, type PageContextOf } from "@pear/sdk";
+import { definePlugin, type PageContextOf } from "@pear/sdk";
 import { css } from "@pear/sdk/macros" with { type: "macro" };
 import { clamp, debounce } from "@pear/sdk/util";
-import { globalShortcut } from "electron";
+import { isVolume, schema } from "./config.ts";
+import { startHost } from "./host.ts";
+import { VolumeTitles } from "./tooltips.ts";
 
 const HUD_MS = 1500;
 const SLIDER_MS = 2500;
-
-const schema = {
-  steps: config.number(1, { label: "Step", min: 1, max: 100, step: 1, unit: "%" }),
-  wheel: config.bool(true, { label: "Scroll over the player to change volume" }),
-  arrowsShortcut: config.bool(true, { label: "Arrow up / down change volume" }),
-  showHud: config.bool(true, { label: "Show the volume while changing it" }),
-  volumeUp: config.shortcut("", { label: "Global shortcut: volume up" }),
-  volumeDown: config.shortcut("", { label: "Global shortcut: volume down" }),
-  /** The last volume, restored on the next launch (pear-desktop's savedVolume). -1 until one is saved. */
-  savedVolume: config.number(-1, { label: "Saved volume", hidden: true }),
-};
 
 type Ctx = PageContextOf<typeof schema>;
 
@@ -29,64 +20,74 @@ export default definePlugin({
   config: schema,
   style: css`
     .pear-volume-hud {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 2200;
+      font: 600 32px Roboto, sans-serif;
+      text-shadow: rgb(0 0 0 / 0.5) 0 0 12px;
+      -webkit-text-stroke: 1px black;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+    /* The audio-only layout has no video panel: pear-desktop drew it on the nav bar. */
+    .pear-volume-hud[data-spot="nav"] {
+      top: 18px;
+      right: 60px;
+      left: auto;
+      font-size: 24px;
+      -webkit-text-stroke: 0;
+    }
+    /* Neither spot is there (YTM changed its markup): the fixed pill the rewrite had. */
+    .pear-volume-hud:not([data-spot]) {
       position: fixed;
       top: 80px;
       left: 50%;
-      z-index: 2200;
       translate: -50%;
       padding: 8px 18px;
       border-radius: 20px;
       background: rgb(0 0 0 / 0.65);
       color: #fff;
-      font: 600 28px Roboto, sans-serif;
-      pointer-events: none;
-      opacity: 0;
-      transition: opacity 0.4s;
+      font-size: 28px;
+      -webkit-text-stroke: 0;
     }
     .pear-volume-hud[data-visible] {
       opacity: 1;
       transition-duration: 0.1s;
     }
+    /* The miniplayer draws the video under the bar: keep the readout at its top. */
+    ytmusic-player[player-ui-state_='MINIPLAYER'] .pear-volume-hud {
+      top: 0 !important;
+    }
     sel(player_bar.volume_popup).pear-volume-reveal {
       display: flex !important;
     }
   `,
-  host: {
-    start(ctx) {
-      const failed: string[] = [];
-      for (const [key, direction] of [
-        ["volumeUp", 1],
-        ["volumeDown", -1],
-      ] as const) {
-        const accelerator = ctx.config[key];
-        if (!accelerator) continue;
-        let ok = false;
-        try {
-          ok = globalShortcut.register(accelerator, () => ctx.emit("step", direction));
-        } catch (error) {
-          ctx.log.warn(`invalid accelerator ${accelerator}`, error);
-        }
-        if (ok) ctx.onCleanup(() => globalShortcut.unregister(accelerator));
-        else failed.push(accelerator);
-      }
-      if (failed.length > 0) throw new Error(`couldn't register ${failed.join(", ")} (invalid or used by another app)`);
-    },
-  },
+  host: { start: startHost },
   page: {
+    // Runs before YTM's scripts. pear-desktop restored the volume from a preload
+    // because YTM can resume playback at its own (often full) volume before its
+    // UI is built; the restore below is what remains before the DOM setup.
+    runAt: "start",
     async start(ctx) {
+      const restoreVolume = savedVolumeRestore(ctx);
       const api = await ctx.player.ready();
+      restoreVolume();
+
       const showHud = volumeHud(ctx);
       const showSlider = sliderReveal(ctx);
 
-      // pear-desktop restored the volume it saved between sessions.
-      const saved = ctx.config.savedVolume;
-      if (saved >= 0 && saved <= 100) ctx.player.control({ type: "volume", value: saved });
-
+      // YTM's own tooltips go away with the plugin; keep them to put back, and
+      // capture the new elements whenever YTM replaces the bar.
+      const titles = new VolumeTitles();
       const setTooltips = (volume: number) => {
         for (const name of TOOLTIP_TARGETS) {
-          for (const element of ctx.$$(name)) element.title = `${volume}%`;
+          for (const element of ctx.$$(name)) titles.set(element, volume);
         }
       };
+      ctx.onCleanup(() => titles.restore());
+
       // The slider position is the volume users see; YTM may map it onto a
       // different player volume (a loudness curve), so steps follow the slider.
       const position = () => {
@@ -115,27 +116,107 @@ export default definePlugin({
       });
       ctx.onCleanup(() => saveVolume.cancel());
       setTooltips(position());
+      // The bar can be built after the player facade; title its elements then.
+      void ctx.waitFor("player_bar").then(() => setTooltips(position()));
     },
     // Every option is read when used.
     onConfigChange() {},
   },
 });
 
+/** A player element YTM has upgraded with its API methods, or one about to be. */
+interface VolumeElement extends Element {
+  setVolume?(volume: number): void;
+}
+
+/** <ytmusic-app>: its dispatch is how pear-desktop updated the bar's own volume state. */
+interface YtmAppElement extends HTMLElement {
+  dispatch?(action: { type: string; payload?: unknown }): void;
+}
+
+/** Applies `volume` through the player, and syncs YTM's player-bar state; false while there is no player. */
+function applyVolume(ctx: Ctx, volume: number): boolean {
+  const api = ctx.player.api;
+  if (api) ctx.player.control({ type: "volume", value: volume });
+  else {
+    const player = ctx.$<VolumeElement>("player.api");
+    if (typeof player?.setVolume !== "function") return false;
+    player.setVolume(volume);
+  }
+  // `setVolume` leaves the bar's redux volume on its startup value (master's
+  // preload dispatched the same action for that reason).
+  ctx.$<YtmAppElement>("app")?.dispatch?.({ type: "SET_VOLUME", payload: volume });
+  return true;
+}
+
+/**
+ * Restores the volume saved last session as soon as the player can take it;
+ * returns a retry for when it could not yet. A capture `play` listener covers
+ * a YTM that starts playing before its player API is up, like master's preload.
+ */
+function savedVolumeRestore(ctx: Ctx) {
+  const saved = ctx.config.savedVolume;
+  let restored = !isVolume(saved);
+  const restore = () => {
+    if (restored) return true;
+    if (!applyVolume(ctx, saved)) return false;
+    restored = true;
+    return true;
+  };
+  if (!restore()) {
+    // Media events don't bubble: catch `play` in the capture phase.
+    const onPlay = () => {
+      if (!restore()) return;
+      document.removeEventListener("play", onPlay, true);
+    };
+    document.addEventListener("play", onPlay, true);
+    ctx.onCleanup(() => document.removeEventListener("play", onPlay, true));
+  }
+  return restore;
+}
+
 /** The big "42%" readout; returns a function showing a volume for a moment. */
 function volumeHud(ctx: Ctx) {
   const hud = <div class="pear-volume-hud" aria-live="polite" />;
-  document.body.append(hud);
+  // pear-desktop drew it over the video, or on the nav bar in the audio-only
+  // layout; `mount` puts it back when YTM re-renders, with a fixed fallback.
+  ctx.mount(hud, (element) => placeHud(ctx, element));
   const hide = debounce(() => hud.removeAttribute("data-visible"), HUD_MS);
-  ctx.onCleanup(() => {
-    hide.cancel();
-    hud.remove();
-  });
+  ctx.onCleanup(hide.cancel);
   return (volume: number) => {
     if (!ctx.config.showHud) return;
     hud.textContent = `${volume}%`;
     hud.toggleAttribute("data-visible", true);
     hide();
   };
+}
+
+/** Where the readout goes, as pear-desktop placed it. */
+function placeHud(ctx: Ctx, hud: Element) {
+  const video = ctx.$("player.song_video");
+  if (video && !isAudioOnly(ctx)) {
+    hud.setAttribute("data-spot", "video");
+    video.insertAdjacentElement("afterend", hud);
+    return;
+  }
+  const nav = ctx.$("nav_bar.center") ?? ctx.$("nav_bar");
+  if (nav) {
+    hud.setAttribute("data-spot", "nav");
+    nav.append(hud);
+    return;
+  }
+  hud.removeAttribute("data-spot");
+  document.body?.append(hud);
+}
+
+/** pear-desktop's check for the audio-only layout: the player page hides its video panel. */
+function isAudioOnly(ctx: Ctx) {
+  const panel = ctx.$("player.main_panel");
+  try {
+    return (panel?.computedStyleMap().get("display") as CSSKeywordValue | undefined)?.value === "none";
+  } catch {
+    return false;
+  }
 }
 
 // YTM shows the slider only while hovered; keep it out while scrolling. The
