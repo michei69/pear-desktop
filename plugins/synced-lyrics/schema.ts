@@ -124,7 +124,7 @@ export const schema = {
   }),
   romanization: config.bool(true, {
     label: "Romanize lyrics",
-    description: "Japanese, Korean and Chinese. The Japanese dictionary (about 17 MB) downloads on first use.",
+    description: "Japanese, Korean, Chinese, Thai, Bengali and Hindi. The Japanese dictionary (about 17 MB) downloads on first use.",
   }),
   convertChinese: config.select(
     "off",

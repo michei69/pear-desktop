@@ -2456,7 +2456,7 @@
         },
         "romanization": {
           "label": "Romanize lyrics",
-          "description": "Japanese, Korean and Chinese. The Japanese dictionary (about 17 MB) downloads on first use."
+          "description": "Japanese, Korean, Chinese, Thai, Bengali and Hindi. The Japanese dictionary (about 17 MB) downloads on first use."
         },
         "convertChinese": {
           "label": "Chinese characters",
