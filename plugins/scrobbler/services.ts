@@ -48,11 +48,14 @@ export async function lastFmCall<T>(
   credentials: LastFmCredentials,
   params: Record<string, string>,
   method: "GET" | "POST" = "GET",
+  signal?: AbortSignal,
 ): Promise<T> {
   const signed = { ...params, api_key: credentials.apiKey };
   const body = new URLSearchParams({ ...signed, api_sig: lastFmSignature(signed, credentials.secret), format: "json" });
   const response =
-    method === "GET" ? await fetch(`${credentials.apiRoot}?${body}`) : await fetch(credentials.apiRoot, { method: "POST", body });
+    method === "GET"
+      ? await fetch(`${credentials.apiRoot}?${body}`, signal ? { signal } : undefined)
+      : await fetch(credentials.apiRoot, { method: "POST", body, ...(signal ? { signal } : {}) });
   const json = (await response.json().catch(() => ({}))) as { error?: number; message?: string };
   if (json.error) throw new LastFmError(json.error, json.message ?? `Last.fm error ${json.error}`);
   if (!response.ok) throw new LastFmError(0, `Last.fm responded ${response.status}`);
@@ -69,10 +72,12 @@ export function lastFmTrackParams(listen: Listen): Record<string, string> {
 }
 
 export const lastFm = {
-  getToken: (fetch: Fetch, c: LastFmCredentials) =>
-    lastFmCall<{ token: string }>(fetch, c, { method: "auth.getToken" }).then((r) => r.token),
-  getSession: (fetch: Fetch, c: LastFmCredentials, token: string) =>
-    lastFmCall<{ session: { key: string; name: string } }>(fetch, c, { method: "auth.getSession", token }).then((r) => r.session),
+  getToken: (fetch: Fetch, c: LastFmCredentials, signal?: AbortSignal) =>
+    lastFmCall<{ token: string }>(fetch, c, { method: "auth.getToken" }, "GET", signal).then((r) => r.token),
+  getSession: (fetch: Fetch, c: LastFmCredentials, token: string, signal?: AbortSignal) =>
+    lastFmCall<{ session: { key: string; name: string } }>(fetch, c, { method: "auth.getSession", token }, "GET", signal).then(
+      (r) => r.session,
+    ),
   updateNowPlaying: (fetch: Fetch, c: LastFmCredentials, sessionKey: string, listen: Listen) =>
     lastFmCall(fetch, c, { method: "track.updateNowPlaying", sk: sessionKey, ...lastFmTrackParams(listen) }, "POST"),
   scrobble: (fetch: Fetch, c: LastFmCredentials, sessionKey: string, listen: Listen) =>

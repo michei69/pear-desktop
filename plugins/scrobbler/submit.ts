@@ -3,7 +3,7 @@
 import type { Track } from "@pear/sdk";
 import type { SongDetails } from "@pear/sdk/song-details";
 import { credentials, netFetch, type Warn } from "./common.ts";
-import { applyFilters } from "./filters.ts";
+import { scrobbleNames } from "./filters.ts";
 import { fetchMusicBrainzCorrection } from "./musicbrainz.ts";
 import type { Ctx } from "./schema.ts";
 import { LASTFM_REAUTH_CODES, LastFmError, lastFm, type Listen, listenBrainzSubmit } from "./services.ts";
@@ -38,14 +38,22 @@ export function submitter(ctx: Ctx, warn: Warn) {
   const toListen = async (track: Track, startedAt: number): Promise<Listen | null> => {
     const extra = await detailsFor(track.videoId);
     if (!ctx.config.scrobbleOtherMedia && !isSong(track, extra)) return null;
-    const baseTitle = (ctx.config.alternativeTitles && extra?.alternativeTitle) || track.title;
-    const baseArtist = (ctx.config.alternativeArtist && extra?.tags[0]) || track.artist;
-    // pear-desktop's title/artist filters, including the user's own regexes.
-    let { scrobbleTitle: title, scrobbleArtist: artist } = applyFilters(baseTitle, baseArtist, ctx.config.customRegexFilters);
+    // pear-desktop's title/artist preferences and filters, including the user's own regexes.
+    let { scrobbleTitle: title, scrobbleArtist: artist } = scrobbleNames(
+      { title: track.title, artist: track.artist, alternativeTitle: extra?.alternativeTitle, tags: extra?.tags },
+      ctx.config,
+    );
 
     if (ctx.config.useMusicBrainz && ctx.config.musicBrainzEmail) {
       const isCancelled = () => stopped || !current || current.videoId !== track.videoId || current.startedAt !== startedAt;
-      const correction = fetchMusicBrainzCorrection(title, artist, ctx.config.musicBrainzEmail, netFetch, isCancelled);
+      const correction = fetchMusicBrainzCorrection(
+        title,
+        artist,
+        ctx.config.musicBrainzEmail,
+        ctx.app.getVersion(),
+        netFetch,
+        isCancelled,
+      );
       const corrected = await within(correction, MUSICBRAINZ_WAIT_MS);
       // The scrobble itself still goes out; only the correction is skipped.
       if (corrected && !isCancelled()) {

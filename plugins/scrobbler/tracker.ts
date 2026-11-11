@@ -31,15 +31,28 @@ interface Current extends Play {
   lastPosition: number;
 }
 
+/**
+ * The last submitted video id. It lives outside the tracker so that disabling
+ * and re-enabling the plugin on the same track does not submit the play again;
+ * a different track (or a detected replay) releases it, as pear-desktop does.
+ */
+export interface ScrobbleMemory {
+  videoId: string | undefined;
+}
+
 export class ScrobbleTracker {
   #events: TrackerEvents;
+  #memory: ScrobbleMemory;
   #current: Current | undefined;
   #playing = false;
   #ended = false;
   #last: NowPlaying | undefined;
+  /** Whether any state was seen; a restarted tracker's first state may still be the idle mirror. */
+  #seen = false;
 
-  constructor(events: TrackerEvents) {
+  constructor(events: TrackerEvents, memory: ScrobbleMemory = { videoId: undefined }) {
     this.#events = events;
+    this.#memory = memory;
   }
 
   /** The current play's position (seconds), or 0 without one. */
@@ -58,10 +71,14 @@ export class ScrobbleTracker {
   }
 
   update(state: NowPlaying, now = Date.now()) {
+    const first = !this.#seen;
+    this.#seen = true;
     this.#last = state;
     const current = this.#current;
     const track = state.track;
     if (!track) {
+      // No play left to protect: a later play of the same track is a new listen.
+      if (!first) this.#memory.videoId = undefined;
       this.#current = undefined;
       this.#playing = false;
       return;
@@ -83,6 +100,8 @@ export class ScrobbleTracker {
     } else {
       play.track = track;
     }
+    // The submitted latch suppresses only the same track; a new one (or a replay) releases it.
+    if (replay || (current && current.track.videoId !== track.videoId)) this.#memory.videoId = undefined;
     if (!state.ad) play.lastPosition = position;
     if (state.status === "ended") this.#ended = true;
     else if (playing) this.#ended = false;
@@ -107,9 +126,15 @@ export class ScrobbleTracker {
   #check(now: number) {
     const current = this.#current;
     if (!current || current.scrobbled || !this.#playing) return;
+    if (this.#memory.videoId === current.track.videoId) {
+      // Submitted before a stop/start of the plugin: this play must not go out twice.
+      current.scrobbled = true;
+      return;
+    }
     const threshold = scrobbleThreshold(current.track.durationSeconds);
     if (threshold === null || this.position(now) < threshold) return;
     current.scrobbled = true;
+    this.#memory.videoId = current.track.videoId;
     this.#events.scrobble({ track: current.track, startedAt: current.startedAt });
   }
 }

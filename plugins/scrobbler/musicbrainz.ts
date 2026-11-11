@@ -48,7 +48,7 @@ function enqueue<T>(task: () => Promise<T>): Promise<T> {
   return run;
 }
 
-async function request(url: string, email: string, fetch: Fetch): Promise<Response | null> {
+async function request(url: string, userAgent: string, email: string, fetch: Fetch): Promise<Response | null> {
   return enqueue(async () => {
     const wait = MIN_INTERVAL_MS - (Date.now() - lastRequestAt);
     if (wait > 0) await sleep(wait);
@@ -56,8 +56,8 @@ async function request(url: string, email: string, fetch: Fetch): Promise<Respon
     try {
       return await fetch(url, {
         headers: {
-          // MusicBrainz asks for a descriptive User-Agent with contact info.
-          "User-Agent": `pear-desktop ( ${email} )`,
+          // MusicBrainz asks for a descriptive User-Agent with contact info, version included.
+          "User-Agent": userAgent,
           Accept: "application/json",
           From: email,
         },
@@ -70,11 +70,11 @@ async function request(url: string, email: string, fetch: Fetch): Promise<Respon
   });
 }
 
-async function fetchWithRetry(url: string, email: string, fetch: Fetch, isCancelled: () => boolean) {
+async function fetchWithRetry(url: string, userAgent: string, email: string, fetch: Fetch, isCancelled: () => boolean) {
   let response: Response | null = null;
   for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
     if (isCancelled()) return null;
-    response = await request(url, email, fetch);
+    response = await request(url, userAgent, email, fetch);
     if (isCancelled()) return null;
     // A 4xx means we asked wrong and will again; only server failures are retried.
     const isSuccess = response !== null && response.status < 500;
@@ -118,7 +118,14 @@ export function isDifferentVersion(originalTitle: string, parsedTitle: string | 
 const isBad = (body: ResponseBody | null) => !body?.recordings?.length || body.recordings[0]!.score < MIN_SCORE;
 
 /** Asks MusicBrainz; `isCancelled` stops work for a play the user has left. */
-async function lookup(title: string, artist: string, email: string, fetch: Fetch, isCancelled: () => boolean): Promise<Correction | null> {
+async function lookup(
+  title: string,
+  artist: string,
+  userAgent: string,
+  email: string,
+  fetch: Fetch,
+  isCancelled: () => boolean,
+): Promise<Correction | null> {
   const parsed = parseArtistTitle(title);
   const query = async (recording: string, artistName?: string): Promise<ResponseBody | null> => {
     if (isCancelled()) return null;
@@ -126,6 +133,7 @@ async function lookup(title: string, artist: string, email: string, fetch: Fetch
     const search = artistName ? `recording:"${escape(recording)}" AND artist:"${escape(artistName)}"` : escape(recording);
     const response = await fetchWithRetry(
       `https://musicbrainz.org/ws/2/recording/?query=${encodeURIComponent(search)}&fmt=json&limit=1`,
+      userAgent,
       email,
       fetch,
       isCancelled,
@@ -176,6 +184,7 @@ export async function fetchMusicBrainzCorrection(
   title: string,
   artist: string,
   email: string,
+  version: string,
   fetch: Fetch,
   isCancelled: () => boolean = () => false,
 ): Promise<Correction | null> {
@@ -187,7 +196,7 @@ export async function fetchMusicBrainzCorrection(
 
   let correction: Correction | null;
   try {
-    correction = await lookup(title, artist, email, fetch, isCancelled);
+    correction = await lookup(title, artist, `pear-desktop/${version} ( ${email} )`, email, fetch, isCancelled);
   } catch (error) {
     console.error("Failed to fetch from MusicBrainz:", error);
     correction = parseArtistTitle(title);

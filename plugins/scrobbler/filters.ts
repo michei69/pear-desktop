@@ -94,3 +94,13 @@ export function applyFilters(title: string, artist: string, filters: readonly st
   }
   return { scrobbleTitle, scrobbleArtist };
 }
+
+/** The title and artist the scrobbler sends: the preferred names, then the filters. */
+export function scrobbleNames(
+  source: { title: string; artist: string; alternativeTitle?: string | undefined; tags?: readonly string[] | undefined },
+  options: { alternativeTitles: boolean; alternativeArtist: boolean; customRegexFilters: readonly string[] },
+) {
+  const baseTitle = (options.alternativeTitles && source.alternativeTitle) || source.title;
+  const baseArtist = (options.alternativeArtist && source.tags?.[0]) || source.artist;
+  return applyFilters(baseTitle, baseArtist, options.customRegexFilters);
+}

@@ -63,6 +63,13 @@ describe("Last.fm", () => {
     expect(calls[0]!.url).toContain("method=auth.getSession");
     expect(calls[0]!.url).toContain("token=TOKEN");
   });
+
+  it("forwards an abort signal to the authorization requests", async () => {
+    const { fetch, calls } = fakeFetch({ token: "TOKEN" });
+    const controller = new AbortController();
+    expect(await lastFm.getToken(fetch, credentials, controller.signal)).toBe("TOKEN");
+    expect(calls[0]!.init!.signal).toBe(controller.signal);
+  });
 });
 
 describe("ListenBrainz", () => {

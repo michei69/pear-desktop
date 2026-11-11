@@ -1,6 +1,6 @@
 import { IDLE, type NowPlaying, type Track } from "@pear/sdk";
 import { describe, expect, it } from "vitest";
-import { type Play, ScrobbleTracker, scrobbleThreshold } from "../tracker.ts";
+import { type Play, ScrobbleTracker, type ScrobbleMemory, scrobbleThreshold } from "../tracker.ts";
 
 const track = (videoId: string, durationSeconds: number): Track => ({
   videoId,
@@ -11,10 +11,10 @@ const track = (videoId: string, durationSeconds: number): Track => ({
   mediaType: "audio",
 });
 
-function setup() {
+function setup(memory?: ScrobbleMemory) {
   const nowPlaying: Play[] = [];
   const scrobbles: Play[] = [];
-  const tracker = new ScrobbleTracker({ nowPlaying: (p) => nowPlaying.push(p), scrobble: (p) => scrobbles.push(p) });
+  const tracker = new ScrobbleTracker({ nowPlaying: (p) => nowPlaying.push(p), scrobble: (p) => scrobbles.push(p) }, memory);
   let now = 1_000_000;
   let state: NowPlaying = { ...IDLE };
   const set = (patch: Partial<NowPlaying>) => {
@@ -164,6 +164,56 @@ describe("ScrobbleTracker", () => {
     expect(t.tracker.timeUntilScrobble(t.now() + 5_000)).toBe(65_000);
     t.set({ status: "paused" });
     expect(t.tracker.timeUntilScrobble(t.now())).toBeNull();
+  });
+
+  it("does not resubmit a play that went out before the plugin was restarted", () => {
+    const memory: ScrobbleMemory = { videoId: undefined };
+    const first = setup(memory);
+    first.set({ track: track("a", 4), status: "playing" });
+    first.set({ positionSeconds: 2 });
+    expect(first.scrobbles).toHaveLength(1);
+    expect(memory.videoId).toBe("a");
+
+    // The host part was rebuilt while the same play kept going, already past half its length.
+    const second = setup(memory);
+    second.set({ track: track("a", 4), status: "playing", positionSeconds: 3 });
+    expect(second.scrobbles).toHaveLength(0);
+
+    // A different track is a new play and still scrobbles.
+    second.set({ track: track("b", 4), positionSeconds: 2 });
+    expect(second.scrobbles.map((play) => play.track.videoId)).toEqual(["b"]);
+  });
+
+  it("releases the submitted memory for another track, so coming back can scrobble", () => {
+    const memory: ScrobbleMemory = { videoId: undefined };
+    const t = setup(memory);
+    t.set({ track: track("a", 4), status: "playing" });
+    t.set({ positionSeconds: 2 });
+    expect(t.scrobbles).toHaveLength(1);
+
+    t.set({ track: track("b", 4), positionSeconds: 0 });
+    t.set({ track: track("a", 4), positionSeconds: 2.5 });
+    expect(t.scrobbles.map((play) => play.track.videoId)).toEqual(["a", "a"]);
+  });
+
+  it("keeps the submitted memory when a restarted tracker first sees the idle mirror", () => {
+    const memory: ScrobbleMemory = { videoId: "a" };
+    const tracker = setup(memory);
+    tracker.set({ track: null, status: "idle" });
+    tracker.set({ track: track("a", 4), status: "playing", positionSeconds: 3 });
+    expect(tracker.scrobbles).toHaveLength(0);
+  });
+
+  it("counts the track as a new play after the player went idle", () => {
+    const memory: ScrobbleMemory = { videoId: undefined };
+    const t = setup(memory);
+    t.set({ track: track("a", 4), status: "playing" });
+    t.set({ positionSeconds: 2 });
+    expect(t.scrobbles).toHaveLength(1);
+
+    t.set({ track: null, status: "idle" });
+    t.set({ track: track("a", 4), status: "playing", positionSeconds: 2.5 });
+    expect(t.scrobbles).toHaveLength(2);
   });
 
   it("forgets the play when the player goes idle", () => {
