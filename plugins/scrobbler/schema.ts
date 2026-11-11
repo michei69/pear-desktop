@@ -49,15 +49,18 @@ export const schema = {
   scrobbleOtherMedia: config.bool(true, {
     label: "Scrobble other videos",
     description: "Also scrobble podcasts and user uploads, not only songs and official music videos.",
+    group: "Scrobbling",
   }),
   alternativeTitles: config.bool(true, {
     label: "Use alternative titles",
     description:
       "Prefer \u0059\u006f\u0075\u0054\u0075\u0062\u0065 Music's alternative title when it has one (e.g. original-script titles).",
+    group: "Scrobbling",
   }),
   alternativeArtist: config.bool(true, {
     label: "Use the canonical artist",
     description: "Prefer the track's first tag as the artist (e.g. “DECO*27” instead of “DECO*27 & marasy”).",
+    group: "Scrobbling",
   }),
   useMusicBrainz: config.bool(false, {
     label: "Verify with MusicBrainz",

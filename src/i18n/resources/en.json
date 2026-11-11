@@ -1499,7 +1499,11 @@
         "band-pass": "Band pass",
         "notch": "Notch",
         "all-pass": "All pass",
-        "type": "Type"
+        "type": "Type",
+        "separateWindow": {
+          "label": "Open in a separate window",
+          "description": "The equalizer opens in its own window instead of over the player."
+        }
       },
       "actions": {
         "open": {
@@ -2444,7 +2448,8 @@
             "note": "♪",
             "dash": "———",
             "none": "Nothing",
-            "bullets": "•••"
+            "bullets": "•••",
+            "custom": "Custom"
           }
         },
         "showTimeCodes": {
@@ -3875,7 +3880,8 @@
       "romanization": "Romanization",
       "last-fm": "Last.fm",
       "listenbrainz": "ListenBrainz",
-      "musicbrainz": "MusicBrainz"
+      "musicbrainz": "MusicBrainz",
+      "scrobbling": "Scrobbling"
     },
     "title": "Settings",
     "search-placeholder": "Search settings",

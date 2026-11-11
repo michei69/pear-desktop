@@ -68,15 +68,17 @@ export const schema = {
     description:
       "End a line at its own end time. Off keeps it highlighted until the next line starts, which smooths providers with clipped timings.",
   }),
-  lineEffect: config.select(
-    "fancy",
+  lyricsStyle: config.select(
+    "standard",
     [
-      { value: "fancy", label: "Fancy (glow)" },
-      { value: "scale", label: "Scale" },
-      { value: "offset", label: "Offset" },
-      { value: "focus", label: "Focus (blur others)" },
+      { value: "standard", label: "Standard" },
+      { value: "apple-music", label: "Apple Music" },
     ],
-    { label: "Current line effect" },
+    {
+      label: "Lyrics style",
+      description:
+        "Apple Music draws the lyrics with the app's own word-by-word karaoke renderer. Lyrics size applies to both styles; line effects and instrumental breaks apply to Standard.",
+    },
   ),
   lyricsFontSize: config.select(
     "small",
@@ -87,17 +89,15 @@ export const schema = {
     ],
     { label: "Lyrics size", variant: "chips" },
   ),
-  lyricsStyle: config.select(
-    "standard",
+  lineEffect: config.select(
+    "fancy",
     [
-      { value: "standard", label: "Standard" },
-      { value: "apple-music", label: "Apple Music" },
+      { value: "fancy", label: "Fancy (glow)" },
+      { value: "scale", label: "Scale" },
+      { value: "offset", label: "Offset" },
+      { value: "focus", label: "Focus (blur others)" },
     ],
-    {
-      label: "Lyrics style",
-      description:
-        "Apple Music draws the lyrics with the app's own word-by-word karaoke renderer. Line effects and lyrics size only apply to the standard style.",
-    },
+    { label: "Current line effect", visibleWhen: { lyricsStyle: "standard" } },
   ),
   gapText: config.select(
     // ♪ by default, as pear-desktop. "Nothing" leaves the break blank.
@@ -108,13 +108,15 @@ export const schema = {
       { value: "note", label: "♪" },
       { value: "dash", label: "———" },
       { value: "none", label: "Nothing" },
+      { value: "custom", label: "Custom" },
     ],
-    { label: "Instrumental breaks" },
+    { label: "Instrumental breaks", visibleWhen: { lyricsStyle: "standard" } },
   ),
   gapTextCustom: config.string("", {
     label: "Custom break text",
-    description: "Shown instead of the choice above when a line has no lyrics; leave empty to keep the choice.",
+    description: "Shown when the break choice is Custom.",
     placeholder: "♪",
+    visibleWhen: { lyricsStyle: "standard", gapText: "custom" },
   }),
   showTimeCodes: config.bool(false, { label: "Show time codes" }),
   offsetMs: config.number(0, {
@@ -192,7 +194,7 @@ export const schema = {
     label: "Show custom search",
     description: "A button in the lyrics picker to search with your own title and artist for the current song, remembered per song.",
   }),
-  useYTMLyricsWithoutProxy: config.bool(false, {
+  useYTMLyricsWithoutProxy: config.bool(true, {
     label: "\u0059\u006f\u0075\u0054\u0075\u0062\u0065 Music lyrics without proxy",
     description:
       "Fetch \u0059\u006f\u0075\u0054\u0075\u0062\u0065 Music's own lyrics directly instead of through the public browse proxy. Off asks the proxy first and falls back to the direct request.",
@@ -213,6 +215,7 @@ export const schema = {
     label: "Musixmatch user token",
     description: "The usertoken of your own signed-in Musixmatch app, sent when the token source above is your own token.",
     secret: true,
+    visibleWhen: { musixmatchTokenMode: "user" },
   }),
 
   // ---- Translation (flat keys, because a plugin's config is one record) ----

@@ -102,6 +102,11 @@ export const schema = {
     unit: " dB",
     group: "Equalizer",
   }),
+  separateWindow: config.bool(false, {
+    label: "Open in a separate window",
+    description: "The equalizer opens in its own window instead of over the player.",
+    group: "Equalizer",
+  }),
   filters: config.string("", {
     label: "Extra filters (advanced)",
     description:

@@ -9,7 +9,7 @@ import type { Translate } from "@pear/sdk/i18n";
 import { clamp } from "@pear/sdk/util";
 
 export type LineEffect = "fancy" | "scale" | "offset" | "focus";
-export type GapText = "dots" | "bullets" | "note" | "dash" | "none";
+export type GapText = "dots" | "bullets" | "note" | "dash" | "none" | "custom";
 
 export interface ViewOptions {
   effect: LineEffect;
@@ -576,7 +576,7 @@ function Line({ line, text, romanized, translation, state, options, t, onSeek }:
 
 function GapMark({ kind, custom, t }: { kind: GapText; custom: string; t: Translate }) {
   const label = t("plugins.synced-lyrics.instrumental", "Instrumental");
-  if (custom.trim()) return <span class="text">{custom}</span>;
+  if (kind === "custom") return <span class="text">{custom.trim() || "♪"}</span>;
   switch (kind) {
     case "dots":
       return (

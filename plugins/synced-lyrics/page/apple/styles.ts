@@ -23,6 +23,7 @@ export const appleStyles = css`
     --apple-primary: var(--ytmusic-text-primary, #ffffff);
     --apple-secondary: color-mix(in srgb, var(--apple-primary), transparent 45%);
     --apple-size: 34px;
+    --apple-font-scale: 1;
     --apple-line-height: 1.2;
     --apple-line-spacing: 25px;
     --apple-inline-padding: 20px;
@@ -34,6 +35,13 @@ export const appleStyles = css`
     --apple-dot-size: 0.4em;
     --apple-dot-margin: 0.08em;
   }
+  .root[data-font-size="small"] .lyrics-renderer.apple-music-style {
+    --apple-font-scale: 0.82;
+  }
+  .root[data-font-size="large"] .lyrics-renderer.apple-music-style {
+    --apple-font-scale: 1.22;
+  }
+
   @container (max-width: 519px) {
     .apple-music-lines {
       --apple-size: 28px;
@@ -99,17 +107,17 @@ export const appleStyles = css`
   .apple-music-lines {
     position: relative;
     width: 100%;
-    font-size: var(--apple-size);
+    font-size: calc(var(--apple-size) * var(--apple-font-scale, 1));
     --apple-line-height: 1.2;
     --apple-bg-size: 0.65em;
   }
 
   .apple-line {
     position: relative;
-    margin: 0 0 var(--apple-line-spacing);
+    margin: 0 0 calc(var(--apple-line-spacing) * var(--apple-font-scale, 1));
     padding: 0 10px;
     color: var(--apple-secondary);
-    font-size: var(--apple-size);
+    font-size: calc(var(--apple-size) * var(--apple-font-scale, 1));
     line-height: var(--apple-line-height);
     text-rendering: optimizeLegibility;
     opacity: 0.8;
@@ -334,7 +342,7 @@ export const appleStyles = css`
     margin: 0;
     padding: 0 10px;
     overflow: visible;
-    font-size: var(--apple-size);
+    font-size: calc(var(--apple-size) * var(--apple-font-scale, 1));
   }
   .apple-gap.active {
     height: calc(var(--apple-gap-height) + var(--apple-gap-spacing));

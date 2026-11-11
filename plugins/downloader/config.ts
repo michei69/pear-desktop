@@ -77,7 +77,7 @@ export const downloaderConfig = {
   }),
   lyrics: config.bool(false, {
     label: "Add lyrics to the files",
-    description: "Looked up on LRCLib, as synced-lyrics does. Only the built-in downloader adds them.",
+    description: "Looked up on LRCLib. Only the built-in downloader adds them.",
     group: "Lyrics",
   }),
   lyricsFile: config.bool(false, { label: "Also save synced lyrics as an .lrc file next to the song", group: "Lyrics" }),

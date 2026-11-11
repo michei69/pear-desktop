@@ -176,6 +176,24 @@ test("romanization has its own section with a language multi-select", async ({ l
   await screenshot(app, "settings-romanization");
 });
 
+test("lyrics style controls which lyric settings are shown", async ({ launch }) => {
+  const app = await launch({ plugins: { "synced-lyrics": { enabled: true } } });
+  const page = await mainWindow(app);
+  await openSettings(page);
+  await openSection(page, "Plugins");
+  const card = pluginRow(page, "synced-lyrics");
+  await card.getByRole("button", { name: "Configure Synced lyrics" }).click();
+  await expect(card.locator('[data-field="synced-lyrics-lineEffect"]')).toBeVisible();
+  await expect(card.locator('[data-field="synced-lyrics-gapText"]')).toBeVisible();
+  await card.getByRole("radio", { name: "Apple Music" }).click();
+  await expect(card.locator('[data-field="synced-lyrics-lineEffect"]')).toHaveCount(0);
+  await expect(card.locator('[data-field="synced-lyrics-gapText"]')).toHaveCount(0);
+  await expect(card.locator('[data-field="synced-lyrics-lyricsFontSize"]')).toBeVisible();
+  await card.getByRole("radio", { name: "Standard" }).click();
+  await card.locator('[data-field="synced-lyrics-gapText"]').getByRole("radio", { name: "Custom" }).click();
+  await expect(card.locator('[data-field="synced-lyrics-gapTextCustom"]')).toBeVisible();
+});
+
 test("the old Romanize lyrics switch becomes the language list", async ({ launch }) => {
   const app = await launch({
     plugins: { "synced-lyrics": { enabled: true, config: { romanization: false } } },
@@ -289,7 +307,13 @@ test("scrobbler settings are grouped by service", async ({ launch }) => {
   await openSection(page, "Plugins");
   const card = pluginRow(page, "scrobbler");
   await card.getByRole("button", { name: "Configure Scrobbler" }).click();
-  expect(await card.locator(".plugin-group-title").allTextContents()).toEqual(["Last.fm", "ListenBrainz", "MusicBrainz", "Filters"]);
+  expect(await card.locator(".plugin-group-title").allTextContents()).toEqual([
+    "Last.fm",
+    "ListenBrainz",
+    "Scrobbling",
+    "MusicBrainz",
+    "Filters",
+  ]);
   await expect(card.locator('[data-field="scrobbler-lastfmSessionKey"]')).toHaveCount(0);
   await expect(card.locator('[data-field="scrobbler-listenbrainzToken"]')).toHaveCount(0);
   await expect(card.locator('[data-field="scrobbler-musicBrainzEmail"]')).toHaveCount(0);
