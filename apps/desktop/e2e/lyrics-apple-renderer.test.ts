@@ -156,6 +156,7 @@ test("the clean-room Apple renderer matches the Apple Music style's behaviour", 
   expect(timed[1]).toBeGreaterThan(0.3);
   expect(timed[1]).toBeLessThan(0.75);
   expect(timed[2]).toBeLessThan(0.1);
+  await screenshot(app, "apple-clean-words");
 
   // Duet side and background vocals.
   await seek(page, 13.5);
@@ -188,6 +189,7 @@ test("the clean-room Apple renderer matches the Apple Music style's behaviour", 
       return line ? getComputedStyle(line).textAlign : "";
     }),
   ).toBe("right");
+  await screenshot(app, "apple-clean-rtl");
   expect(
     await page.evaluate(() => {
       const root = document.querySelector("pear-synced-lyrics")?.shadowRoot?.querySelector(".apple-music-style");

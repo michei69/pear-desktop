@@ -283,12 +283,15 @@ export const appleStyles = css`
     color: transparent;
     -webkit-text-fill-color: transparent;
     background-image: linear-gradient(
-      var(--apple-word-angle, 90deg),
+      90deg,
       var(--apple-word-on, var(--apple-primary)) 0%,
-      var(--apple-word-on, var(--apple-primary)) calc(var(--p, 0) * 100% - var(--apple-feather, 0.75em)),
-      var(--apple-word-off, var(--apple-secondary)) calc(var(--p, 0) * 100% + var(--apple-feather, 0.75em)),
+      var(--apple-word-on, var(--apple-primary)) calc(50% - var(--apple-feather, 0.75em)),
+      var(--apple-word-off, var(--apple-secondary)) calc(50% + var(--apple-feather, 0.75em)),
       var(--apple-word-off, var(--apple-secondary)) 100%
     );
+    background-repeat: no-repeat;
+    background-size: 200% 100%;
+    background-position-x: calc((1 - var(--p, 0)) * 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-box-decoration-break: clone;
@@ -299,8 +302,18 @@ export const appleStyles = css`
     --apple-word-on: color-mix(in srgb, var(--apple-primary) 55%, #888888);
     --apple-word-off: color-mix(in srgb, var(--apple-secondary) 50%, #888888);
   }
-  .apple-line.rtl .apple-word {
-    --apple-word-angle: 270deg;
+  .apple-line.rtl.active.word-synced .apple-main .apple-word,
+  .apple-line.rtl.active.word-synced .apple-bg .apple-word,
+  .apple-line.rtl.pre-active.word-synced .apple-main .apple-word,
+  .apple-line.rtl.pre-active.word-synced .apple-bg .apple-word {
+    background-image: linear-gradient(
+      90deg,
+      var(--apple-word-off, var(--apple-secondary)) 0%,
+      var(--apple-word-off, var(--apple-secondary)) calc(50% - var(--apple-feather, 0.75em)),
+      var(--apple-word-on, var(--apple-primary)) calc(50% + var(--apple-feather, 0.75em)),
+      var(--apple-word-on, var(--apple-primary)) 100%
+    );
+    background-position-x: calc(var(--p, 0) * 100%);
   }
 
   /* Instrumental breaks: three dots, each owning a third of the gap. */

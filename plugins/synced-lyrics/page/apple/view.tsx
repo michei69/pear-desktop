@@ -490,7 +490,7 @@ function PlainLyrics({ texts, romanized, translation }: { texts: string[]; roman
 }
 
 const CJK = /[\u3040-\u30ff\u3400-\u9fff\uac00-\ud7af]/;
-/** One soft edge per word; long words get a wider feather, CJK a narrower one. */
+/** The wipe's soft edge: 0.75em, wider on long words and narrower for CJK. */
 function feather(word: AppleWord) {
   const text = word.text.trim();
   if (CJK.test(text)) return "0.3em";
