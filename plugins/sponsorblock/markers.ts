@@ -24,14 +24,19 @@ export const CATEGORY_COLORS = {
 /** Unknown categories (new ones the server starts sending) get the sponsor green. */
 const FALLBACK_COLOR = CATEGORY_COLORS.sponsor;
 
-const colorOf = (category: string): string =>
-  (CATEGORY_COLORS as Record<string, string | undefined>)[category] ?? FALLBACK_COLOR;
+const colorOf = (category: string): string => (CATEGORY_COLORS as Record<string, string | undefined>)[category] ?? FALLBACK_COLOR;
 
 const clamp01 = (value: number) => Math.min(1, Math.max(0, value));
 
-/** Segments to draw for media of `duration` seconds (0 = unknown), with their categories. */
+/** Segments to draw for media of `duration` seconds (0 = unknown), sorted by start. */
 export function usableMarkers(submissions: readonly Submission[], duration: number): Marker[] {
-  return usableSubmissions(submissions, duration).map(({ segment, category }) => ({ segment, category }));
+  return (
+    usableSubmissions(submissions, duration)
+      .map(({ segment, category }) => ({ segment, category }))
+      // The topmost paint is the one drawn last, so a start-ordered list keeps
+      // `markerAt` a plain scan without sorting it again on every pointer move.
+      .sort((a, b) => a.segment[0] - b.segment[0])
+  );
 }
 
 /**
@@ -63,8 +68,19 @@ export function buildSegmentsGradient(markers: readonly Marker[], duration: numb
 /** The marker painted topmost at `time`, if any (drawn later wins). */
 export function markerAt(markers: readonly Marker[], time: number): Marker | undefined {
   let found: Marker | undefined;
-  for (const marker of [...markers].sort((a, b) => a.segment[0] - b.segment[0])) {
+  for (const marker of markers) {
     if (time >= marker.segment[0] && time < marker.segment[1]) found = marker;
   }
   return found;
+}
+
+export type Translate = (key: string, fallback?: string) => string;
+
+/**
+ * A category's name for the hover label. The generated settings key is the one
+ * translations are moving to; the legacy key still holds master's translations
+ * for the six original categories until the resource pass renames them.
+ */
+export function categoryLabel(t: Translate, category: string, fallback: string): string {
+  return t(`plugins.sponsorblock.settings.${category}.label`, t(`plugins.sponsorblock.settings.category.${category}`, fallback));
 }

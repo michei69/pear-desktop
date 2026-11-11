@@ -3,8 +3,8 @@ import { config, definePlugin, type HostContext } from "@pear/sdk";
 import { css } from "@pear/sdk/macros" with { type: "macro" };
 import { v } from "@pear/sdk/rpc";
 import { net } from "electron";
-import { buildSegmentsGradient, markerAt, type Marker, usableMarkers } from "./markers.ts";
-import { skipTarget, type Submission, usableSegments } from "./segments.ts";
+import { buildSegmentsGradient, categoryLabel, markerAt, type Marker, usableMarkers } from "./markers.ts";
+import { mergeSegments, skipTarget, type Segment, type Submission } from "./segments.ts";
 
 const CATEGORIES = {
   music_offtopic: { label: "Non-music sections", description: "Talking, skits and intros in music videos.", on: true },
@@ -38,10 +38,7 @@ const HOVER_TIME_SELECTOR = "#hover-time-info, .ytMusicMiniPlayerHoverTimeInfo";
  * registry names the progress area rather than the track, and the overlay has
  * to be the track's own height.
  */
-const SEEK_TRACKS = [
-  "#progress-bar>#sliderContainer>div>#sliderBar>#progressContainer",
-  ".ytMusicMiniPlayerProgressBarWrapper",
-];
+const SEEK_TRACKS = ["#progress-bar>#sliderContainer>div>#sliderBar>#progressContainer", ".ytMusicMiniPlayerProgressBarWrapper"];
 
 /** The page's in-flight segment request per running host part. */
 const inflight = new WeakMap<object, AbortController>();
@@ -140,6 +137,9 @@ export default definePlugin({
   page: async (ctx) => {
     let videoId: string | undefined;
     let submissions: Submission[] = [];
+    /** The current track's usable segments and markers, precomputed once per fetch or duration. */
+    let segments: Segment[] = [];
+    let markers: Marker[] = [];
     let generation = 0;
     /** The segment under the pointer, and where the pointer is. */
     let hovered: { category: string; pointerX: number; trackTop: number } | undefined;
@@ -147,9 +147,20 @@ export default definePlugin({
 
     const api = await ctx.player.ready();
 
-    /** The category's name, as the settings UI shows it. */
-    const categoryLabel = (category: string) =>
-      ctx.t(`plugins.sponsorblock.settings.category.${category}`, CATEGORIES[category as Category]?.label ?? category);
+    /** The duration the caches were built for; a change means the stale-cut filter must run again. */
+    let builtFor = Number.NaN;
+
+    /** Rebuilds the skip ranges and the painted markers from the submissions. */
+    const rebuild = () => {
+      builtFor = api.getDuration();
+      markers = usableMarkers(submissions, builtFor);
+      segments = mergeSegments(markers.map(({ segment }) => segment));
+    };
+
+    /** Rebuilds the caches when the duration arrived or changed without a `durationchange`. */
+    const refresh = () => {
+      if (!Object.is(builtFor, api.getDuration())) rebuild();
+    };
 
     /** Where the playhead sits on the track, or undefined while the duration is unknown. */
     const playhead = () => {
@@ -157,9 +168,6 @@ export default definePlugin({
       if (!Number.isFinite(duration) || duration <= 0) return undefined;
       return `${(api.getCurrentTime() / duration) * 100}%`;
     };
-
-    /** Segments of the current track, as the seek bar paints them. */
-    const markers = (): Marker[] => usableMarkers(submissions, api.getDuration());
 
     const hideHoverLabel = () => {
       hovered = undefined;
@@ -195,7 +203,7 @@ export default definePlugin({
         document.body.append(label);
       }
 
-      const text = categoryLabel(category);
+      const text = categoryLabel(ctx.t, category, CATEGORIES[category as Category]?.label ?? category);
       if (label.textContent !== text) label.textContent = text;
       label.style.display = "block";
 
@@ -212,17 +220,15 @@ export default definePlugin({
 
       // The classic bar's slider covers the track; the new bar's input is the
       // hover target YTM shows its own timestamp for.
-      const host =
-        container.closest<HTMLElement>("#progress-bar") ??
-        container.querySelector<HTMLElement>("input") ??
-        container;
+      const host = container.closest<HTMLElement>("#progress-bar") ?? container.querySelector<HTMLElement>("input") ?? container;
 
       const onMove = (event: MouseEvent) => {
+        refresh();
         const duration = api.getDuration();
         const rect = container.getBoundingClientRect();
         if (
           !ctx.config.showSegmentsOnProgressBar ||
-          submissions.length === 0 ||
+          markers.length === 0 ||
           !Number.isFinite(duration) ||
           duration <= 0 ||
           rect.width <= 0
@@ -231,7 +237,7 @@ export default definePlugin({
           return;
         }
 
-        const marker = markerAt(markers(), ((event.clientX - rect.left) / rect.width) * duration);
+        const marker = markerAt(markers, ((event.clientX - rect.left) / rect.width) * duration);
         if (!marker) {
           hideHoverLabel();
           return;
@@ -253,7 +259,8 @@ export default definePlugin({
 
     /** Paints the segments' colours over the seek track, or clears them. */
     const renderMarkers = () => {
-      const gradient = ctx.config.showSegmentsOnProgressBar ? buildSegmentsGradient(markers(), api.getDuration()) : "";
+      refresh();
+      const gradient = ctx.config.showSegmentsOnProgressBar ? buildSegmentsGradient(markers, api.getDuration()) : "";
 
       const existing = document.querySelector<HTMLElement>(`#${SEGMENTS_BAR_ID}`);
       if (!gradient) {
@@ -286,12 +293,11 @@ export default definePlugin({
     // The bar toggle only repaints; the categories and the API decide what is
     // fetched, so changing those rebuilds the page part (and refetches) instead
     // of leaving the previous track's segments in force.
-    let fetchedWith = fetchKey(ctx.config);
+    const fetchedWith = fetchKey(ctx.config);
     ctx.onConfigChange((next) => {
       if (fetchKey(next) !== fetchedWith) return "restart";
       renderMarkers();
     });
-    fetchedWith = fetchKey(ctx.config);
 
     /** Moves the marker cut-out with the playhead, re-adding the bar if YTM rebuilt its seek track. */
     const syncMarkers = () => {
@@ -307,14 +313,18 @@ export default definePlugin({
     /** Drops the segment set and everything drawn from it. */
     const resetSegments = () => {
       submissions = [];
+      segments = [];
+      markers = [];
+      builtFor = Number.NaN;
       document.querySelector(`#${SEGMENTS_BAR_ID}`)?.remove();
       hideHoverLabel();
     };
 
     /** Jumps past the segment the player is inside, if any. */
     const applySegments = () => {
-      if (submissions.length === 0 || ctx.player.state.ad || api.getVideoData().video_id !== videoId) return;
-      const target = skipTarget(usableSegments(submissions, api.getDuration()), api.getCurrentTime());
+      refresh();
+      if (segments.length === 0 || ctx.player.state.ad || api.getVideoData().video_id !== videoId) return;
+      const target = skipTarget(segments, api.getCurrentTime());
       if (target === undefined) return;
       ctx.log.info(`skipping to ${target.toFixed(1)}s`);
       ctx.player.control({ type: "seek", seconds: target });
@@ -343,6 +353,7 @@ export default definePlugin({
 
       // Segments can arrive mid-track: skip the one already in progress and
       // paint the bar now, instead of waiting for the next timeupdate.
+      rebuild();
       applySegments();
       renderMarkers();
     };
@@ -361,7 +372,8 @@ export default definePlugin({
       applySegments();
       syncMarkers();
     });
-    // Duration is unknown when the plugin starts; the bar waits for it.
+    // Duration is unknown when the plugin starts; the bar waits for it, and the
+    // stale-cut filter depends on it.
     ctx.listen(video, "durationchange", renderMarkers);
 
     return () => {

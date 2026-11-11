@@ -86,4 +86,10 @@ describe("skipTarget", () => {
     expect(skipTarget(segments, 100)).toBeUndefined();
     expect(skipTarget([], 5)).toBeUndefined();
   });
+  test("finds the segment in a long sorted list", () => {
+    const many: Segment[] = Array.from({ length: 100 }, (_, i) => [i * 10, i * 10 + 5]);
+    expect(skipTarget(many, 573)).toBe(575);
+    expect(skipTarget(many, 569.9)).toBeUndefined();
+    expect(skipTarget(many, 999)).toBeUndefined();
+  });
 });

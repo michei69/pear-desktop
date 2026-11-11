@@ -40,10 +40,26 @@ export function usableSegments(submissions: readonly Submission[], duration: num
   return mergeSegments(usableSubmissions(submissions, duration).map((s) => s.segment));
 }
 
-/** Where to seek to from `time`, or undefined when not inside a segment. */
+/**
+ * Where to seek to from `time`, or undefined when not inside a segment.
+ * `segments` are sorted and disjoint, as `mergeSegments` returns them, so the
+ * per-tick lookup is a binary search instead of a scan.
+ */
 export function skipTarget(segments: readonly Segment[], time: number): number | undefined {
-  for (const [start, end] of segments) {
-    if (time >= start && time < end - MIN_SKIP_S) return end;
+  // The last segment starting at or before `time`.
+  let lo = 0;
+  let hi = segments.length - 1;
+  let found = -1;
+  while (lo <= hi) {
+    const mid = (lo + hi) >>> 1;
+    if (segments[mid]![0] <= time) {
+      found = mid;
+      lo = mid + 1;
+    } else {
+      hi = mid - 1;
+    }
   }
-  return undefined;
+  if (found === -1) return undefined;
+  const [start, end] = segments[found]!;
+  return time >= start && time < end - MIN_SKIP_S ? end : undefined;
 }
