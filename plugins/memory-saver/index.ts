@@ -1,29 +1,9 @@
 import { config, definePlugin } from "@pear/sdk";
+import { DEFAULT_THRESHOLD_MB, liveBytes, thresholdBytesFor } from "./usage.ts";
 
 const CHECK_INTERVAL_MS = 60_000;
 /** Don't clear twice in a row while the caches stay above the threshold. */
 const CLEAR_COOLDOWN_MS = 10 * 60_000;
-const DEFAULT_THRESHOLD_MB = 64;
-const MB = 1024 * 1024;
-
-/** Blink reports one `MemoryUsageDetails` bucket per cache kind. */
-type BlinkUsage = Record<string, { liveSize?: number } | undefined>;
-
-/** Sum of the live bytes in Blink's caches; `0` when the renderer returned nothing usable. */
-const liveBytes = (usage: unknown) => {
-  if (!usage || typeof usage !== "object") return 0;
-  let total = 0;
-  for (const details of Object.values(usage as BlinkUsage)) {
-    if (typeof details?.liveSize === "number") total += details.liveSize;
-  }
-  return total;
-};
-
-/** A stored value that is not a positive number falls back to the default. */
-const thresholdBytesFor = (thresholdMB: unknown) => {
-  const value = Number(thresholdMB);
-  return (Number.isFinite(value) && value > 0 ? value : DEFAULT_THRESHOLD_MB) * MB;
-};
 
 const USAGE = "window.pearPerf?.getResourceUsage()";
 const CLEAR = "window.pearPerf?.clearCache()";
@@ -34,6 +14,9 @@ export default definePlugin({
   description: "Drops the renderer's caches while the window is hidden, once they grow past a threshold.",
   config: {
     thresholdMB: config.number(DEFAULT_THRESHOLD_MB, {
+      // pear-desktop's texts live under settings.threshold(.label/-description);
+      // this field's key is thresholdMB, so the translation files need the
+      // values copied onto plugins.memory-saver.settings.thresholdMB.*.
       label: "Threshold",
       description: "Clear the renderer cache while the window is hidden once the live resource usage exceeds this.",
       min: 8,
@@ -45,6 +28,8 @@ export default definePlugin({
   host: {
     start(ctx) {
       let thresholdBytes = thresholdBytesFor(ctx.config.thresholdMB);
+      // The cooldown lives in this `start` closure, so a re-enable (a fresh
+      // plugin instance) starts with lastClearAt = 0 and can clear at once.
       let lastClearAt = 0;
       let stopped = false;
 
