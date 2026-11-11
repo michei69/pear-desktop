@@ -314,7 +314,15 @@
         },
         "enable-seekbar": "सिकबार थिमिङ सक्षम गर्नुहोस्"
       },
-      "name": "एल्बम रङ विषयवस्तु"
+      "name": "एल्बम रङ विषयवस्तु",
+      "settings": {
+        "ratio": {
+          "label": "रङ मिश्रण अनुपात"
+        },
+        "enableSeekbar": {
+          "label": "सिकबार थिमिङ सक्षम गर्नुहोस्"
+        }
+      }
     },
     "ambient-mode": {
       "description": "तपाईँको स्क्रिनको पृष्ठभूमिमा भिडियोबाट कोमल रङहरू कास्ट गरेर प्रकाश प्रभाव लागू गर्दछ",
@@ -497,6 +505,14 @@
         "caption-changed": "क्याप्सन {{language}} मा परिवर्तन भयो",
         "caption-disabled": "क्याप्सन उपलब्ध छैन",
         "no-captions": "यो गीतको लागि कुनै क्याप्सन उपलब्ध छैन।"
+      },
+      "settings": {
+        "autoload": {
+          "label": "स्वचालित रूपमा अन्तिम प्रयोग गरिएको क्याप्सन चयन गर्नुहोस्"
+        },
+        "disableCaptions": {
+          "label": "पूर्वनिर्धारित रूपमा कुनै क्याप्सनहरू छैनन्"
+        }
       }
     },
     "compact-sidebar": {
@@ -542,7 +558,12 @@
       "menu": {
         "apply-once": "स्टार्टअपमा मात्र लागु हुन्छ"
       },
-      "name": "स्वतः खेल निष्क्रिय गर्नुहोस्"
+      "name": "स्वतः खेल निष्क्रिय गर्नुहोस्",
+      "settings": {
+        "applyOnce": {
+          "label": "स्टार्टअपमा मात्र लागु हुन्छ"
+        }
+      }
     },
     "discord": {
       "backend": {
@@ -582,7 +603,38 @@
         "activity-timeout-enabled": "पज गर्दा उपस्थिति हटाउनुहोस्",
         "activity-timeout-time": "यति पछि हटाउनुहोस्",
         "hide-github-button": "“GitHub मा हेर्नुहोस्” बटन लुकाउनुहोस्",
-        "hide-duration-left": "बाँकी समय लुकाउनुहोस्"
+        "hide-duration-left": "बाँकी समय लुकाउनुहोस्",
+        "autoReconnect": {
+          "label": "स्वतः पुनः जडान"
+        },
+        "activityTimeoutEnabled": {
+          "label": "पज गर्दा उपस्थिति हटाउनुहोस्"
+        },
+        "activityTimeoutSeconds": {
+          "label": "यति पछि हटाउनुहोस्"
+        },
+        "playButton": {
+          "label": "{{applicationName}} मा बजाउ"
+        },
+        "hideGitHubButton": {
+          "label": "“GitHub मा हेर्नुहोस्” बटन लुकाउनुहोस्"
+        },
+        "hideDurationLeft": {
+          "label": "बाँकी समय लुकाउनुहोस्"
+        },
+        "statusDisplayType": {
+          "label": "स्थिति पाठ",
+          "options": {
+            "name": "{{applicationName}} सुन्दै",
+            "state": "{artist} सुन्दै",
+            "details": "{song title} सुन्दै"
+          }
+        }
+      },
+      "actions": {
+        "clearActivity": {
+          "label": "एकटिभिटी क्लियर गर"
+        }
       }
     },
     "downloader": {
@@ -854,6 +906,23 @@
       "name": "पिक्चर-इन-पिक्चर",
       "templates": {
         "button": "पिक्चर-इन-पिक्चर"
+      },
+      "settings": {
+        "hotkey": {
+          "label": "हटकी"
+        },
+        "useNativePiP": {
+          "label": "ब्राउजरको नेटिभ PiP प्रयोग गर्नुहोस्"
+        },
+        "alwaysOnTop": {
+          "label": "सधैँ शीर्षमा"
+        },
+        "savePosition": {
+          "label": "windowको स्थान सेव गर्नुहोस्"
+        },
+        "saveSize": {
+          "label": "windowको आकार सेव गर्नुहोस्"
+        }
       }
     },
     "playback-speed": {
@@ -889,10 +958,21 @@
         }
       },
       "settings": {
-        "steps": "भोल्युम स्टेप",
+        "steps": {
+          "label": "भोल्युम स्टेप"
+        },
         "arrows-shortcut": "एरो कुञ्जी सर्टकटहरू",
         "shortcut-up": "ग्लोबल सर्टकट: भोल्युम बढाउनुहोस्",
-        "shortcut-down": "ग्लोबल सर्टकट: भोल्युम घटाउनुहोस्"
+        "shortcut-down": "ग्लोबल सर्टकट: भोल्युम घटाउनुहोस्",
+        "arrowsShortcut": {
+          "label": "एरो कुञ्जी सर्टकटहरू"
+        },
+        "volumeUp": {
+          "label": "ग्लोबल सर्टकट: भोल्युम बढाउनुहोस्"
+        },
+        "volumeDown": {
+          "label": "ग्लोबल सर्टकट: भोल्युम घटाउनुहोस्"
+        }
       }
     },
     "quality-changer": {
@@ -991,7 +1071,28 @@
       },
       "settings": {
         "global-keybinds": "ग्लोबल कुञ्जीबाइन्डहरू (सम्पूर्ण एपमा काम गर्छन्)",
-        "local-keybinds": "स्थानीय कुञ्जीबाइन्डहरू (विन्डो फोकसमा हुँदा मात्र)"
+        "local-keybinds": "स्थानीय कुञ्जीबाइन्डहरू (विन्डो फोकसमा हुँदा मात्र)",
+        "playPause": {
+          "label": "खेल्नुहोस् / रोक्नुहोस्"
+        },
+        "localPlayPause": {
+          "label": "खेल्नुहोस् / रोक्नुहोस्"
+        },
+        "next": {
+          "label": "अर्को"
+        },
+        "localNext": {
+          "label": "अर्को"
+        },
+        "previous": {
+          "label": "अघिल्ला"
+        },
+        "localPrevious": {
+          "label": "अघिल्ला"
+        },
+        "overrideMediaKeys": {
+          "label": "मिडिया कुञ्जीहरूलाई ओभरराइड गर्नुहोस्"
+        }
       }
     },
     "skip-disliked-songs": {
@@ -1002,7 +1103,10 @@
       "description": "गीतहरूमा मौन खण्डहरू स्वचालित रूपमा स्किप गर्नुहोस्",
       "name": "मौन छोड्नुहोस्",
       "settings": {
-        "only-skip-beginning": "ट्र्याकको सुरुमा मात्र मौनता स्किप गर्नुहोस्"
+        "only-skip-beginning": "ट्र्याकको सुरुमा मात्र मौनता स्किप गर्नुहोस्",
+        "onlySkipBeginning": {
+          "label": "ट्र्याकको सुरुमा मात्र मौनता स्किप गर्नुहोस्"
+        }
       }
     },
     "sponsorblock": {
@@ -1018,7 +1122,28 @@
           "selfpromo": "स्वयं-प्रचार",
           "music_offtopic": "गैर-संगीत खण्ड"
         },
-        "api-url": "API URL"
+        "api-url": "API URL",
+        "sponsor": {
+          "label": "प्रायोजक"
+        },
+        "intro": {
+          "label": "परिचय"
+        },
+        "outro": {
+          "label": "अन्त्य"
+        },
+        "interaction": {
+          "label": "अन्तरक्रिया सम्झना"
+        },
+        "selfpromo": {
+          "label": "स्वयं-प्रचार"
+        },
+        "music_offtopic": {
+          "label": "गैर-संगीत खण्ड"
+        },
+        "apiURL": {
+          "label": "API URL"
+        }
       }
     },
     "synced-lyrics": {
@@ -1326,6 +1451,27 @@
       "templates": {
         "button-song": "गीत",
         "button-video": "भिडियो"
+      },
+      "settings": {
+        "mode": {
+          "label": "मोड",
+          "options": {
+            "custom": "कस्टम टगल",
+            "native": "नेटिभ टगल",
+            "disabled": "अक्षम"
+          }
+        },
+        "align": {
+          "label": "संरेखण",
+          "options": {
+            "left": "बायाँ",
+            "middle": "बिचमा",
+            "right": "दायाँ"
+          }
+        },
+        "forceHide": {
+          "label": "बलपूर्वक भिडियो ट्याब हटाउनुहोस्"
+        }
       }
     },
     "visualizer": {
@@ -1335,7 +1481,9 @@
       },
       "name": "भिजुअलाइजर",
       "settings": {
-        "preset": "प्रिसेट",
+        "preset": {
+          "label": "प्रिसेट"
+        },
         "blend-time": "ब्लेन्ड समय",
         "effect": "प्रभाव",
         "accuracy": "शुद्धता",
@@ -1351,7 +1499,45 @@
         "dottify": "थोप्ला बनाउनुहोस्",
         "dottify-description": "निरन्तर लाइनको सट्टा थोप्लाहरू कोर्नुहोस्",
         "horizontal-align": "तेर्सो संरेखण",
-        "vertical-align": "ठाडो संरेखण"
+        "vertical-align": "ठाडो संरेखण",
+        "blendTimeInSeconds": {
+          "label": "ब्लेन्ड समय"
+        },
+        "vudioMaxHeight": {
+          "label": "अधिकतम उचाइ"
+        },
+        "vudioMaxSize": {
+          "label": "अधिकतम आकार"
+        },
+        "vudioLineWidth": {
+          "label": "लाइन चौडाइ"
+        },
+        "vudioColor": {
+          "label": "रङ"
+        },
+        "vudioShadowBlur": {
+          "label": "छाया ब्लर"
+        },
+        "vudioShadowColor": {
+          "label": "छाया रङ"
+        },
+        "vudioFadeSide": {
+          "label": "किनाराहरू फेड गर्नुहोस्"
+        },
+        "vudioPrettify": {
+          "label": "सुन्दर बनाउनुहोस्",
+          "description": "किनारातर्फ बारहरू साँघुरो बनाउनुहोस्"
+        },
+        "vudioDottify": {
+          "label": "थोप्ला बनाउनुहोस्",
+          "description": "निरन्तर लाइनको सट्टा थोप्लाहरू कोर्नुहोस्"
+        },
+        "vudioHorizontalAlign": {
+          "label": "तेर्सो संरेखण"
+        },
+        "vudioVerticalAlign": {
+          "label": "ठाडो संरेखण"
+        }
       }
     },
     "clock": {
@@ -1365,7 +1551,13 @@
       },
       "name": "घडी",
       "settings": {
-        "hour-12": "12-घण्टा ढाँचा प्रयोग गर्नुहोस्"
+        "hour-12": "12-घण्टा ढाँचा प्रयोग गर्नुहोस्",
+        "displaySeconds": {
+          "label": "सेकेन्ड देखाउनुहोस्"
+        },
+        "hour12": {
+          "label": "12-घण्टा ढाँचा प्रयोग गर्नुहोस्"
+        }
       }
     },
     "custom-output-device": {
@@ -1407,7 +1599,25 @@
       },
       "name": "पारदर्शी प्लेयर",
       "settings": {
-        "type-description": "विन्डो पारदर्शिताका लागि प्रयोग हुने पृष्ठभूमि सामग्री"
+        "type-description": "विन्डो पारदर्शिताका लागि प्रयोग हुने पृष्ठभूमि सामग्री",
+        "opacity": {
+          "label": "अपारदर्शिता"
+        },
+        "type": {
+          "label": "प्रकार",
+          "description": "विन्डो पारदर्शिताका लागि प्रयोग हुने पृष्ठभूमि सामग्री",
+          "options": {
+            "acrylic": "एक्रिलिक",
+            "content": "सामग्री",
+            "fullscreen-ui": "फुलस्क्रिन UI",
+            "mica": "माइका",
+            "tabbed": "ट्याब्ड",
+            "under-page": "पृष्ठको मुनि",
+            "under-window": "विन्डोको मुनि",
+            "window": "विन्डो",
+            "none": "कुनै पनि छैन"
+          }
+        }
       }
     },
     "audio-only": {
@@ -1477,7 +1687,15 @@
         "open-keybind": "खोल्ने सर्टकट",
         "open-keybind-description": "Electron-शैलीको एक्सेलेरेटर, जस्तै CmdOrCtrl+/ वा Alt+Space",
         "open-shortcut": "जहाँबाट पनि खोज बक्स खोल्नुहोस्",
-        "open-shortcut-description": "Spotlight जस्तै खोज बक्सलाई पहिल्यै कमाण्ड मोडमा खोल्छ। फेरि थिच्दा बन्द हुन्छ।"
+        "open-shortcut-description": "Spotlight जस्तै खोज बक्सलाई पहिल्यै कमाण्ड मोडमा खोल्छ। फेरि थिच्दा बन्द हुन्छ।",
+        "openShortcut": {
+          "label": "जहाँबाट पनि खोज बक्स खोल्नुहोस्",
+          "description": "Spotlight जस्तै खोज बक्सलाई पहिल्यै कमाण्ड मोडमा खोल्छ। फेरि थिच्दा बन्द हुन्छ।"
+        },
+        "openKeybind": {
+          "label": "खोल्ने सर्टकट",
+          "description": "Electron-शैलीको एक्सेलेरेटर, जस्तै CmdOrCtrl+/ वा Alt+Space"
+        }
       }
     },
     "seek-shortcuts": {
@@ -1494,7 +1712,10 @@
     },
     "statusbar-lyrics": {
       "settings": {
-        "include-pronunciation": "उच्चारण समावेश गर्नुहोस्"
+        "include-pronunciation": "उच्चारण समावेश गर्नुहोस्",
+        "includePronunciation": {
+          "label": "उच्चारण समावेश गर्नुहोस्"
+        }
       }
     },
     "dismiss-multidevice-popup": {
@@ -1506,7 +1727,11 @@
       "name": "मेमोरी सेभर",
       "settings": {
         "threshold": "क्यास थ्रेसहोल्ड",
-        "threshold-description": "झ्याल लुकाइएको बेला क्यासहरूको प्रत्यक्ष मेमोरी यो भन्दा बढी भएपछि तिनीहरूलाई खाली गर्नुहोस्"
+        "threshold-description": "झ्याल लुकाइएको बेला क्यासहरूको प्रत्यक्ष मेमोरी यो भन्दा बढी भएपछि तिनीहरूलाई खाली गर्नुहोस्",
+        "thresholdMB": {
+          "label": "क्यास थ्रेसहोल्ड",
+          "description": "झ्याल लुकाइएको बेला क्यासहरूको प्रत्यक्ष मेमोरी यो भन्दा बढी भएपछि तिनीहरूलाई खाली गर्नुहोस्"
+        }
       }
     }
   },

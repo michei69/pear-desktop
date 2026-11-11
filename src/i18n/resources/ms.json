@@ -314,7 +314,15 @@
         },
         "enable-seekbar": "Benarkan penyesuaian tema bar carian"
       },
-      "name": "Tema Warna Album"
+      "name": "Tema Warna Album",
+      "settings": {
+        "ratio": {
+          "label": "Nisbah campuran warna"
+        },
+        "enableSeekbar": {
+          "label": "Benarkan penyesuaian tema bar carian"
+        }
+      }
     },
     "ambient-mode": {
       "description": "Menggunakan kesan pencahayaan dengan menghantar warna lembut daripada video, ke latar belakang skrin anda",
@@ -497,6 +505,14 @@
         "caption-changed": "Sarikata berubah kepada {{language}}",
         "caption-disabled": "Sarikata dimatikan",
         "no-captions": "Tiada sarikata untuk lagu ini"
+      },
+      "settings": {
+        "autoload": {
+          "label": "Pilih kapsyen terakhir diguna secara automatik"
+        },
+        "disableCaptions": {
+          "label": "Tiada kapsyen secara lalai"
+        }
       }
     },
     "clock": {
@@ -510,7 +526,13 @@
       },
       "name": "Jam",
       "settings": {
-        "hour-12": "Guna format 12 jam"
+        "hour-12": "Guna format 12 jam",
+        "displaySeconds": {
+          "label": "Paparkan saat"
+        },
+        "hour12": {
+          "label": "Guna format 12 jam"
+        }
       }
     },
     "compact-sidebar": {
@@ -569,7 +591,12 @@
       "menu": {
         "apply-once": "Terpakai hanya pada permulaan"
       },
-      "name": "Matikan automain"
+      "name": "Matikan automain",
+      "settings": {
+        "applyOnce": {
+          "label": "Terpakai hanya pada permulaan"
+        }
+      }
     },
     "discord": {
       "backend": {
@@ -609,7 +636,38 @@
         "activity-timeout-enabled": "Kosongkan kehadiran apabila dijeda",
         "activity-timeout-time": "Kosongkan selepas",
         "hide-github-button": "Sembunyikan butang “Lihat di GitHub”",
-        "hide-duration-left": "Sembunyikan masa berbaki"
+        "hide-duration-left": "Sembunyikan masa berbaki",
+        "autoReconnect": {
+          "label": "Sambung semula automatik"
+        },
+        "activityTimeoutEnabled": {
+          "label": "Kosongkan kehadiran apabila dijeda"
+        },
+        "activityTimeoutSeconds": {
+          "label": "Kosongkan selepas"
+        },
+        "playButton": {
+          "label": "Main di {{applicationName}}"
+        },
+        "hideGitHubButton": {
+          "label": "Sembunyikan butang “Lihat di GitHub”"
+        },
+        "hideDurationLeft": {
+          "label": "Sembunyikan masa berbaki"
+        },
+        "statusDisplayType": {
+          "label": "Teks status",
+          "options": {
+            "name": "Mendengar {{applicationName}}",
+            "state": "Sedang mendengar {artist}",
+            "details": "Sedang mendengar {tajuk lagu}"
+          }
+        }
+      },
+      "actions": {
+        "clearActivity": {
+          "label": "Padamkan aktiviti"
+        }
       }
     },
     "do-not-track": {
@@ -1215,7 +1273,28 @@
         "button-video": "Video"
       },
       "description": "Menambah butang untuk menukar antara mod Video/Lagu. boleh juga mengalih keluar keseluruhan tab video",
-      "name": "Togol Video"
+      "name": "Togol Video",
+      "settings": {
+        "mode": {
+          "label": "Mod",
+          "options": {
+            "custom": "Togol tersuai",
+            "native": "Togol asli",
+            "disabled": "Tidak Aktif"
+          }
+        },
+        "align": {
+          "label": "Penjajaran",
+          "options": {
+            "left": "Kiri",
+            "middle": "Tengah",
+            "right": "Kanan"
+          }
+        },
+        "forceHide": {
+          "label": "Alih Keluar Tab Video"
+        }
+      }
     },
     "no-google-login": {
       "description": "Alih keluar butang dan pautan log masuk Google dari antara muka",
@@ -1253,6 +1332,23 @@
       "name": "Gambar-dalam-gambar",
       "templates": {
         "button": "Gambar-dalam-gambar"
+      },
+      "settings": {
+        "hotkey": {
+          "label": "Kekunci Pantas"
+        },
+        "useNativePiP": {
+          "label": "Guna PiP asli pelayar"
+        },
+        "alwaysOnTop": {
+          "label": "Sentiasa di atas"
+        },
+        "savePosition": {
+          "label": "Simpan kedudukan tetingkap"
+        },
+        "saveSize": {
+          "label": "Simpan saiz tetingkap"
+        }
       }
     },
     "playback-speed": {
@@ -1288,10 +1384,21 @@
         }
       },
       "settings": {
-        "steps": "Langkah volum",
+        "steps": {
+          "label": "Langkah volum"
+        },
         "arrows-shortcut": "Pintasan kekunci anak panah",
         "shortcut-up": "Pintasan global: naikkan volum",
-        "shortcut-down": "Pintasan global: turunkan volum"
+        "shortcut-down": "Pintasan global: turunkan volum",
+        "arrowsShortcut": {
+          "label": "Pintasan kekunci anak panah"
+        },
+        "volumeUp": {
+          "label": "Pintasan global: naikkan volum"
+        },
+        "volumeDown": {
+          "label": "Pintasan global: turunkan volum"
+        }
       }
     },
     "quality-changer": {
@@ -1332,14 +1439,38 @@
       },
       "settings": {
         "global-keybinds": "Ikatan kekunci global (berfungsi seluruh aplikasi)",
-        "local-keybinds": "Ikatan kekunci setempat (hanya semasa tetingkap difokus)"
+        "local-keybinds": "Ikatan kekunci setempat (hanya semasa tetingkap difokus)",
+        "playPause": {
+          "label": "Main / Jeda"
+        },
+        "localPlayPause": {
+          "label": "Main / Jeda"
+        },
+        "next": {
+          "label": "Seterusnya"
+        },
+        "localNext": {
+          "label": "Seterusnya"
+        },
+        "previous": {
+          "label": "Sebelumnya"
+        },
+        "localPrevious": {
+          "label": "Sebelumnya"
+        },
+        "overrideMediaKeys": {
+          "label": "Mengatasi Kekunci Media"
+        }
       }
     },
     "skip-silences": {
       "description": "Langkau bahagian senyap dalam lagu secara automatik",
       "name": "Langkau Senyap",
       "settings": {
-        "only-skip-beginning": "Hanya langkau senyap pada permulaan trek"
+        "only-skip-beginning": "Hanya langkau senyap pada permulaan trek",
+        "onlySkipBeginning": {
+          "label": "Hanya langkau senyap pada permulaan trek"
+        }
       }
     },
     "sponsorblock": {
@@ -1355,7 +1486,28 @@
           "selfpromo": "Promosi kendiri",
           "music_offtopic": "Bahagian bukan muzik"
         },
-        "api-url": "URL API"
+        "api-url": "URL API",
+        "sponsor": {
+          "label": "Penaja"
+        },
+        "intro": {
+          "label": "Pengenalan"
+        },
+        "outro": {
+          "label": "Penutup"
+        },
+        "interaction": {
+          "label": "Peringatan interaksi"
+        },
+        "selfpromo": {
+          "label": "Promosi kendiri"
+        },
+        "music_offtopic": {
+          "label": "Bahagian bukan muzik"
+        },
+        "apiURL": {
+          "label": "URL API"
+        }
       }
     },
     "touchbar": {
@@ -1388,7 +1540,25 @@
       },
       "name": "Pemain Lutsinar",
       "settings": {
-        "type-description": "Bahan latar belakang yang digunakan untuk ketelusan tetingkap"
+        "type-description": "Bahan latar belakang yang digunakan untuk ketelusan tetingkap",
+        "opacity": {
+          "label": "Kelegapan"
+        },
+        "type": {
+          "label": "Jenis",
+          "description": "Bahan latar belakang yang digunakan untuk ketelusan tetingkap",
+          "options": {
+            "acrylic": "Akrilik",
+            "content": "Kandungan",
+            "fullscreen-ui": "UI Skrin Penuh",
+            "mica": "Mika",
+            "tabbed": "Bertab",
+            "under-page": "Di Bawah Halaman",
+            "under-window": "Di Bawah Tetingkap",
+            "window": "Tetingkap",
+            "none": "Tiada"
+          }
+        }
       }
     },
     "tuna-obs": {
@@ -1406,7 +1576,9 @@
       },
       "name": "Visualizer",
       "settings": {
-        "preset": "Pratetap",
+        "preset": {
+          "label": "Pratetap"
+        },
         "blend-time": "Masa gabungan",
         "effect": "Kesan",
         "accuracy": "Ketepatan",
@@ -1422,7 +1594,45 @@
         "dottify": "Titikkan",
         "dottify-description": "Lukis titik dan bukan garisan berterusan",
         "horizontal-align": "Penjajaran mendatar",
-        "vertical-align": "Penjajaran menegak"
+        "vertical-align": "Penjajaran menegak",
+        "blendTimeInSeconds": {
+          "label": "Masa gabungan"
+        },
+        "vudioMaxHeight": {
+          "label": "Tinggi maksimum"
+        },
+        "vudioMaxSize": {
+          "label": "Saiz maksimum"
+        },
+        "vudioLineWidth": {
+          "label": "Lebar garisan"
+        },
+        "vudioColor": {
+          "label": "Warna"
+        },
+        "vudioShadowBlur": {
+          "label": "Kabur bayang"
+        },
+        "vudioShadowColor": {
+          "label": "Warna bayang"
+        },
+        "vudioFadeSide": {
+          "label": "Sisi pudar"
+        },
+        "vudioPrettify": {
+          "label": "Cantikkan",
+          "description": "Meniruskan bar ke arah tepi"
+        },
+        "vudioDottify": {
+          "label": "Titikkan",
+          "description": "Lukis titik dan bukan garisan berterusan"
+        },
+        "vudioHorizontalAlign": {
+          "label": "Penjajaran mendatar"
+        },
+        "vudioVerticalAlign": {
+          "label": "Penjajaran menegak"
+        }
       }
     },
     "audio-only": {
@@ -1473,7 +1683,15 @@
         "open-keybind": "Pintasan buka",
         "open-keybind-description": "Pemecut gaya Electron, cth. CmdOrCtrl+/ atau Alt+Space",
         "open-shortcut": "Buka kotak carian dari mana-mana",
-        "open-shortcut-description": "Memanggil kotak carian yang sudah dalam mod arahan, seperti Spotlight. Menekannya sekali lagi akan menutupnya."
+        "open-shortcut-description": "Memanggil kotak carian yang sudah dalam mod arahan, seperti Spotlight. Menekannya sekali lagi akan menutupnya.",
+        "openShortcut": {
+          "label": "Buka kotak carian dari mana-mana",
+          "description": "Memanggil kotak carian yang sudah dalam mod arahan, seperti Spotlight. Menekannya sekali lagi akan menutupnya."
+        },
+        "openKeybind": {
+          "label": "Pintasan buka",
+          "description": "Pemecut gaya Electron, cth. CmdOrCtrl+/ atau Alt+Space"
+        }
       }
     },
     "seek-shortcuts": {
@@ -1490,7 +1708,10 @@
     },
     "statusbar-lyrics": {
       "settings": {
-        "include-pronunciation": "Sertakan sebutan"
+        "include-pronunciation": "Sertakan sebutan",
+        "includePronunciation": {
+          "label": "Sertakan sebutan"
+        }
       }
     },
     "dismiss-multidevice-popup": {
@@ -1502,7 +1723,11 @@
       "name": "Penjimat Memori",
       "settings": {
         "threshold": "Ambang cache",
-        "threshold-description": "Kosongkan cache apabila memori langsungnya melebihi nilai ini semasa tetingkap tersembunyi"
+        "threshold-description": "Kosongkan cache apabila memori langsungnya melebihi nilai ini semasa tetingkap tersembunyi",
+        "thresholdMB": {
+          "label": "Ambang cache",
+          "description": "Kosongkan cache apabila memori langsungnya melebihi nilai ini semasa tetingkap tersembunyi"
+        }
       }
     }
   },

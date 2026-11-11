@@ -305,7 +305,15 @@
         },
         "enable-seekbar": "چالاککردنی ڕووکاری شریتی پێشکەوتن"
       },
-      "name": "ڕووکاری ڕەنگی ئەلبوم"
+      "name": "ڕووکاری ڕەنگی ئەلبوم",
+      "settings": {
+        "ratio": {
+          "label": "ڕێژەی تێکەڵکردنی ڕەنگ"
+        },
+        "enableSeekbar": {
+          "label": "چالاککردنی ڕووکاری شریتی پێشکەوتن"
+        }
+      }
     },
     "audio-only": {
       "description": "دۆخی تەنها دەنگ زۆرەملێ دەکات — هەموو شێوەکانی ڤیدیۆ لە ئاستی تۆڕ و لێدەرەکەدا دەستگیر دەکات بۆ پاشەکەوتکردنی RAM و پانی باند",
@@ -496,6 +504,14 @@
         "caption-changed": "ژێرنووس گۆڕدرا بۆ {{language}}",
         "caption-disabled": "ژێرنووس ناچالاک کرا",
         "no-captions": "هیچ ژێرنووسێک بۆ ئەم گۆرانییە بەردەست نییە"
+      },
+      "settings": {
+        "autoload": {
+          "label": "بە شێوەی خۆکار ئەو ژێرنووسە هەڵبژێرە کە دوایین جار بەکارهاتووە"
+        },
+        "disableCaptions": {
+          "label": "بە شێوەی بنەڕەتی هیچ ژێرنووسێک نییە"
+        }
       }
     },
     "clock": {
@@ -509,7 +525,13 @@
         }
       },
       "settings": {
-        "hour-12": "شێوازی ١٢ کاتژمێری بەکاربهێنە"
+        "hour-12": "شێوازی ١٢ کاتژمێری بەکاربهێنە",
+        "displaySeconds": {
+          "label": "پیشاندانی چرکەکان"
+        },
+        "hour12": {
+          "label": "شێوازی ١٢ کاتژمێری بەکاربهێنە"
+        }
       }
     },
     "compact-sidebar": {
@@ -568,7 +590,12 @@
       "menu": {
         "apply-once": "تەنها لە دەستپێکردندا جێبەجێ دەبێت"
       },
-      "name": "ناچالاککردنی لێدانی خۆکار"
+      "name": "ناچالاککردنی لێدانی خۆکار",
+      "settings": {
+        "applyOnce": {
+          "label": "تەنها لە دەستپێکردندا جێبەجێ دەبێت"
+        }
+      }
     },
     "discord": {
       "backend": {
@@ -608,7 +635,38 @@
         "activity-timeout-enabled": "سڕینەوەی ئامادەبوون کاتێک وەستاوە",
         "activity-timeout-time": "سڕینەوە دوای",
         "hide-github-button": "شاردنەوەی دوگمەی «بینین لە GitHub»",
-        "hide-duration-left": "شاردنەوەی کاتی ماوە"
+        "hide-duration-left": "شاردنەوەی کاتی ماوە",
+        "autoReconnect": {
+          "label": "پەیوەندیکردنی خۆکار"
+        },
+        "activityTimeoutEnabled": {
+          "label": "سڕینەوەی ئامادەبوون کاتێک وەستاوە"
+        },
+        "activityTimeoutSeconds": {
+          "label": "سڕینەوە دوای"
+        },
+        "playButton": {
+          "label": "لێدان لە {{applicationName}}"
+        },
+        "hideGitHubButton": {
+          "label": "شاردنەوەی دوگمەی «بینین لە GitHub»"
+        },
+        "hideDurationLeft": {
+          "label": "شاردنەوەی کاتی ماوە"
+        },
+        "statusDisplayType": {
+          "label": "دەقی دۆخ",
+          "options": {
+            "name": "گوێگرتن لە {{applicationName}}",
+            "state": "گوێگرتن لە {artist}",
+            "details": "گوێگرتن لە {song title}"
+          }
+        }
+      },
+      "actions": {
+        "clearActivity": {
+          "label": "سڕینەوەی چالاکی"
+        }
       }
     },
     "do-not-track": {
@@ -915,6 +973,23 @@
       "name": "وێنە-لە-وێنە",
       "templates": {
         "button": "وێنە-لە-وێنە"
+      },
+      "settings": {
+        "hotkey": {
+          "label": "کلیلی خێرا"
+        },
+        "useNativePiP": {
+          "label": "وێنە-لە-وێنەی ڕەسەنی وێبگەڕ بەکاربەرە"
+        },
+        "alwaysOnTop": {
+          "label": "هەمیشە لە سەرەوە"
+        },
+        "savePosition": {
+          "label": "شوێنی پەنجەرە پاشەکەوت بکە"
+        },
+        "saveSize": {
+          "label": "قەبارەی پەنجەرە پاشەکەوت بکە"
+        }
       }
     },
     "playback-speed": {
@@ -958,10 +1033,21 @@
         }
       },
       "settings": {
-        "steps": "هەنگاوی دەنگ",
+        "steps": {
+          "label": "هەنگاوی دەنگ"
+        },
         "arrows-shortcut": "کورتەکلیلەکانی کلیلی ئاراستە",
         "shortcut-up": "کورتەکلیلی گشتی: دەنگ بەرزکردنەوە",
-        "shortcut-down": "کورتەکلیلی گشتی: دەنگ نزمکردنەوە"
+        "shortcut-down": "کورتەکلیلی گشتی: دەنگ نزمکردنەوە",
+        "arrowsShortcut": {
+          "label": "کورتەکلیلەکانی کلیلی ئاراستە"
+        },
+        "volumeUp": {
+          "label": "کورتەکلیلی گشتی: دەنگ بەرزکردنەوە"
+        },
+        "volumeDown": {
+          "label": "کورتەکلیلی گشتی: دەنگ نزمکردنەوە"
+        }
       }
     },
     "prefer-song": {
@@ -1055,7 +1141,15 @@
         "open-keybind": "کورتەبڕی کردنەوە",
         "open-keybind-description": "خێراکەر بە شێوازی Electron، وەک CmdOrCtrl+/ یان Alt+Space",
         "open-shortcut": "سندوقی گەڕان لە هەر شوێنێک بکەرەوە",
-        "open-shortcut-description": "سندوقی گەڕان بە شێوەی سەرەتا لە دۆخی فەرمان بانگ دەکات، وەک Spotlight. دووبارە لێدانی دەیکاتەوە."
+        "open-shortcut-description": "سندوقی گەڕان بە شێوەی سەرەتا لە دۆخی فەرمان بانگ دەکات، وەک Spotlight. دووبارە لێدانی دەیکاتەوە.",
+        "openShortcut": {
+          "label": "سندوقی گەڕان لە هەر شوێنێک بکەرەوە",
+          "description": "سندوقی گەڕان بە شێوەی سەرەتا لە دۆخی فەرمان بانگ دەکات، وەک Spotlight. دووبارە لێدانی دەیکاتەوە."
+        },
+        "openKeybind": {
+          "label": "کورتەبڕی کردنەوە",
+          "description": "خێراکەر بە شێوازی Electron، وەک CmdOrCtrl+/ یان Alt+Space"
+        }
       }
     },
     "seek-shortcuts": {
@@ -1086,14 +1180,38 @@
       },
       "settings": {
         "global-keybinds": "کورتەبڕەکانی گشتی (لە هەموو ئەپەکە کاردەکەن)",
-        "local-keybinds": "کورتەبڕەکانی ناوخۆیی (تەنها کاتێک پەنجەرە فۆکەسە)"
+        "local-keybinds": "کورتەبڕەکانی ناوخۆیی (تەنها کاتێک پەنجەرە فۆکەسە)",
+        "playPause": {
+          "label": "لێدان / وەستان"
+        },
+        "localPlayPause": {
+          "label": "لێدان / وەستان"
+        },
+        "next": {
+          "label": "داهاتوو"
+        },
+        "localNext": {
+          "label": "داهاتوو"
+        },
+        "previous": {
+          "label": "پێشوو"
+        },
+        "localPrevious": {
+          "label": "پێشوو"
+        },
+        "overrideMediaKeys": {
+          "label": "بەسەرگرتنی کلیلەکانی میدیا"
+        }
       }
     },
     "skip-silences": {
       "description": "خۆکارانە بەشەکانی بێدەنگی لە گۆرانییەکان تێدەپەڕێنێت",
       "name": "تێپەڕاندنی بێدەنگی",
       "settings": {
-        "only-skip-beginning": "تەنها بێدەنگی لە سەرەتای تراکەکە تێپەڕێنە"
+        "only-skip-beginning": "تەنها بێدەنگی لە سەرەتای تراکەکە تێپەڕێنە",
+        "onlySkipBeginning": {
+          "label": "تەنها بێدەنگی لە سەرەتای تراکەکە تێپەڕێنە"
+        }
       }
     },
     "sponsorblock": {
@@ -1109,7 +1227,28 @@
           "selfpromo": "خۆبەرزکردنەوە",
           "music_offtopic": "بەشی غەیرە مۆسیقا"
         },
-        "api-url": "URL ی API"
+        "api-url": "URL ی API",
+        "sponsor": {
+          "label": "سپۆنسەر"
+        },
+        "intro": {
+          "label": "سەرەتا"
+        },
+        "outro": {
+          "label": "کۆتایی"
+        },
+        "interaction": {
+          "label": "بیرخستنەوەی کارلێک"
+        },
+        "selfpromo": {
+          "label": "خۆبەرزکردنەوە"
+        },
+        "music_offtopic": {
+          "label": "بەشی غەیرە مۆسیقا"
+        },
+        "apiURL": {
+          "label": "URL ی API"
+        }
       }
     },
     "synced-lyrics": {
@@ -1359,7 +1498,25 @@
         }
       },
       "settings": {
-        "type-description": "مادەی پاشبنەما کە بۆ شەفافیی پەنجەرە بەکاردەهێنرێت"
+        "type-description": "مادەی پاشبنەما کە بۆ شەفافیی پەنجەرە بەکاردەهێنرێت",
+        "opacity": {
+          "label": "ناشەفافی"
+        },
+        "type": {
+          "label": "جۆر",
+          "description": "مادەی پاشبنەما کە بۆ شەفافیی پەنجەرە بەکاردەهێنرێت",
+          "options": {
+            "acrylic": "ئاکریلیک",
+            "content": "ناوەڕۆک",
+            "fullscreen-ui": "ڕووکاری پڕشاشە",
+            "mica": "مایکا",
+            "tabbed": "تابدار",
+            "under-page": "ژێر پەڕە",
+            "under-window": "ژێر پەنجەرە",
+            "window": "پەنجەرە",
+            "none": "هیچ"
+          }
+        }
       }
     },
     "tuna-obs": {
@@ -1395,6 +1552,27 @@
       "templates": {
         "button-song": "گۆرانی",
         "button-video": "ڤیدیۆ"
+      },
+      "settings": {
+        "mode": {
+          "label": "دۆخ",
+          "options": {
+            "custom": "گۆڕینەوەی تایبەت",
+            "native": "گۆڕینەوەی ڕەسەن",
+            "disabled": "ناچالاک"
+          }
+        },
+        "align": {
+          "label": "ڕێکخستن",
+          "options": {
+            "left": "چەپ",
+            "middle": "ناوەڕاست",
+            "right": "ڕاست"
+          }
+        },
+        "forceHide": {
+          "label": "بە زۆر تابەکەی ڤیدیۆ لابەرە"
+        }
       }
     },
     "visualizer": {
@@ -1404,7 +1582,9 @@
       },
       "name": "ڤیژوالایزەر",
       "settings": {
-        "preset": "پرێسێت",
+        "preset": {
+          "label": "پرێسێت"
+        },
         "blend-time": "کاتی تێکەڵکردن",
         "effect": "کاریگەری",
         "accuracy": "وردی",
@@ -1420,12 +1600,53 @@
         "dottify": "خاڵخاڵکردن",
         "dottify-description": "لە جیاتی هێڵێکی بەردەوام خاڵەکان بکێشە",
         "horizontal-align": "ڕێکخستنی ئاسۆیی",
-        "vertical-align": "ڕێکخستنی ستوونی"
+        "vertical-align": "ڕێکخستنی ستوونی",
+        "blendTimeInSeconds": {
+          "label": "کاتی تێکەڵکردن"
+        },
+        "vudioMaxHeight": {
+          "label": "زۆرترین بەرزی"
+        },
+        "vudioMaxSize": {
+          "label": "زۆرترین قەبارە"
+        },
+        "vudioLineWidth": {
+          "label": "پانی هێڵ"
+        },
+        "vudioColor": {
+          "label": "ڕەنگ"
+        },
+        "vudioShadowBlur": {
+          "label": "لێڵی سێبەر"
+        },
+        "vudioShadowColor": {
+          "label": "ڕەنگی سێبەر"
+        },
+        "vudioFadeSide": {
+          "label": "لایەنەکانی لێڵبوون"
+        },
+        "vudioPrettify": {
+          "label": "جوانکردن",
+          "description": "بارەکان بەرەو لایەنەکان تەنک بکە"
+        },
+        "vudioDottify": {
+          "label": "خاڵخاڵکردن",
+          "description": "لە جیاتی هێڵێکی بەردەوام خاڵەکان بکێشە"
+        },
+        "vudioHorizontalAlign": {
+          "label": "ڕێکخستنی ئاسۆیی"
+        },
+        "vudioVerticalAlign": {
+          "label": "ڕێکخستنی ستوونی"
+        }
       }
     },
     "statusbar-lyrics": {
       "settings": {
-        "include-pronunciation": "لەخۆگرتنی دەربڕین"
+        "include-pronunciation": "لەخۆگرتنی دەربڕین",
+        "includePronunciation": {
+          "label": "لەخۆگرتنی دەربڕین"
+        }
       }
     },
     "dismiss-multidevice-popup": {
@@ -1437,7 +1658,11 @@
       "name": "پارێزەری بیرگە",
       "settings": {
         "threshold": "سنووری کاش",
-        "threshold-description": "کاشەکان پاک بکەرەوە ھەر کە بیرگەی زیندوویان لەم سنوورە تێپەڕی لە کاتێکدا پەنجەرەکە شاراوەیە."
+        "threshold-description": "کاشەکان پاک بکەرەوە ھەر کە بیرگەی زیندوویان لەم سنوورە تێپەڕی لە کاتێکدا پەنجەرەکە شاراوەیە.",
+        "thresholdMB": {
+          "label": "سنووری کاش",
+          "description": "کاشەکان پاک بکەرەوە ھەر کە بیرگەی زیندوویان لەم سنوورە تێپەڕی لە کاتێکدا پەنجەرەکە شاراوەیە."
+        }
       }
     }
   },

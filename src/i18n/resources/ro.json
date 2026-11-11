@@ -314,7 +314,15 @@
         },
         "enable-seekbar": "Activează tematica barei de căutare"
       },
-      "name": "Tema de culori a albumului"
+      "name": "Tema de culori a albumului",
+      "settings": {
+        "ratio": {
+          "label": "Raportul amestecului de culori"
+        },
+        "enableSeekbar": {
+          "label": "Activează tematica barei de căutare"
+        }
+      }
     },
     "ambient-mode": {
       "description": "Aplica un efect de iluminare, aplicand culori preluate din video pe fundalul ecranului",
@@ -497,6 +505,14 @@
         "caption-changed": "Subtitrare schimbata in {{language}}",
         "caption-disabled": "Subtitrari dezactivate",
         "no-captions": "Nu exista subtitrari disponibile pentru aceasta piesa"
+      },
+      "settings": {
+        "autoload": {
+          "label": "Selectează automat ultima subtitrare folosită"
+        },
+        "disableCaptions": {
+          "label": "Fără subtitrări în mod implicit"
+        }
       }
     },
     "clock": {
@@ -510,7 +526,13 @@
       "name": "Ceas",
       "description": "Adaugă un ceas în bara de navigare",
       "settings": {
-        "hour-12": "Folosește formatul de 12 ore"
+        "hour-12": "Folosește formatul de 12 ore",
+        "displaySeconds": {
+          "label": "Afișează secundele"
+        },
+        "hour12": {
+          "label": "Folosește formatul de 12 ore"
+        }
       }
     },
     "compact-sidebar": {
@@ -569,7 +591,12 @@
       "menu": {
         "apply-once": "Se aplică doar la pornirea aplicației"
       },
-      "name": "Dezactivează redarea automată"
+      "name": "Dezactivează redarea automată",
+      "settings": {
+        "applyOnce": {
+          "label": "Se aplică doar la pornirea aplicației"
+        }
+      }
     },
     "discord": {
       "backend": {
@@ -609,7 +636,38 @@
         "activity-timeout-enabled": "Șterge prezența la pauză",
         "activity-timeout-time": "Șterge după",
         "hide-github-button": "Ascunde butonul „Vezi pe GitHub”",
-        "hide-duration-left": "Ascunde timpul rămas"
+        "hide-duration-left": "Ascunde timpul rămas",
+        "autoReconnect": {
+          "label": "Reconectare automată"
+        },
+        "activityTimeoutEnabled": {
+          "label": "Șterge prezența la pauză"
+        },
+        "activityTimeoutSeconds": {
+          "label": "Șterge după"
+        },
+        "playButton": {
+          "label": "Redă pe {{applicationName}}"
+        },
+        "hideGitHubButton": {
+          "label": "Ascunde butonul „Vezi pe GitHub”"
+        },
+        "hideDurationLeft": {
+          "label": "Ascunde timpul rămas"
+        },
+        "statusDisplayType": {
+          "label": "Text stare",
+          "options": {
+            "name": "Ascultând {{applicationName}}",
+            "state": "Ascultând {artist}",
+            "details": "Ascultând {song title}"
+          }
+        }
+      },
+      "actions": {
+        "clearActivity": {
+          "label": "Șterge activitatea"
+        }
       }
     },
     "downloader": {
@@ -881,6 +939,23 @@
       "name": "Picture-in-picture",
       "templates": {
         "button": "Picture-in-picture"
+      },
+      "settings": {
+        "hotkey": {
+          "label": "Scurtături pe tastatură"
+        },
+        "useNativePiP": {
+          "label": "Folosește PiP-ul nativ pentru broswer"
+        },
+        "alwaysOnTop": {
+          "label": "Mereu deasupra"
+        },
+        "savePosition": {
+          "label": "Salvează poziția ferestrei"
+        },
+        "saveSize": {
+          "label": "Salvează mărimea ferestrei"
+        }
       }
     },
     "playback-speed": {
@@ -916,10 +991,21 @@
         }
       },
       "settings": {
-        "steps": "Pas de volum",
+        "steps": {
+          "label": "Pas de volum"
+        },
         "arrows-shortcut": "Scurtături cu tastele săgeți",
         "shortcut-up": "Scurtătură globală: volumul sus",
-        "shortcut-down": "Scurtătură globală: volumul jos"
+        "shortcut-down": "Scurtătură globală: volumul jos",
+        "arrowsShortcut": {
+          "label": "Scurtături cu tastele săgeți"
+        },
+        "volumeUp": {
+          "label": "Scurtătură globală: volumul sus"
+        },
+        "volumeDown": {
+          "label": "Scurtătură globală: volumul jos"
+        }
       }
     },
     "quality-changer": {
@@ -1018,7 +1104,28 @@
       },
       "settings": {
         "global-keybinds": "Scurtături globale (funcționează în toată aplicația)",
-        "local-keybinds": "Scurtături locale (doar când fereastra este activă)"
+        "local-keybinds": "Scurtături locale (doar când fereastra este activă)",
+        "playPause": {
+          "label": "Redă / Pauză"
+        },
+        "localPlayPause": {
+          "label": "Redă / Pauză"
+        },
+        "next": {
+          "label": "Următorul"
+        },
+        "localNext": {
+          "label": "Următorul"
+        },
+        "previous": {
+          "label": "Anteriorul"
+        },
+        "localPrevious": {
+          "label": "Anteriorul"
+        },
+        "overrideMediaKeys": {
+          "label": "Suprascrie tastele media"
+        }
       }
     },
     "skip-disliked-songs": {
@@ -1029,7 +1136,10 @@
       "description": "Treci automat peste secțiunile de liniște din melodii",
       "name": "Treci peste liniște",
       "settings": {
-        "only-skip-beginning": "Omite tăcerile doar la începutul unei piese"
+        "only-skip-beginning": "Omite tăcerile doar la începutul unei piese",
+        "onlySkipBeginning": {
+          "label": "Omite tăcerile doar la începutul unei piese"
+        }
       }
     },
     "sponsorblock": {
@@ -1045,7 +1155,28 @@
           "selfpromo": "Autopromovare",
           "music_offtopic": "Secțiune non-muzicală"
         },
-        "api-url": "URL API"
+        "api-url": "URL API",
+        "sponsor": {
+          "label": "Sponsor"
+        },
+        "intro": {
+          "label": "Intro"
+        },
+        "outro": {
+          "label": "Outro"
+        },
+        "interaction": {
+          "label": "Memento de interacțiune"
+        },
+        "selfpromo": {
+          "label": "Autopromovare"
+        },
+        "music_offtopic": {
+          "label": "Secțiune non-muzicală"
+        },
+        "apiURL": {
+          "label": "URL API"
+        }
       }
     },
     "synced-lyrics": {
@@ -1346,7 +1477,25 @@
       },
       "name": "Player transparent",
       "settings": {
-        "type-description": "Material de fundal folosit pentru transparența ferestrei"
+        "type-description": "Material de fundal folosit pentru transparența ferestrei",
+        "opacity": {
+          "label": "Opacitate"
+        },
+        "type": {
+          "label": "Tip",
+          "description": "Material de fundal folosit pentru transparența ferestrei",
+          "options": {
+            "acrylic": "Acrilic",
+            "content": "Conținut",
+            "fullscreen-ui": "Interfață ecran complet",
+            "mica": "Efect mica",
+            "tabbed": "Cu file",
+            "under-page": "Sub pagină",
+            "under-window": "Sub fereastră",
+            "window": "Fereastră",
+            "none": "Niciunul"
+          }
+        }
       }
     },
     "tuna-obs": {
@@ -1382,6 +1531,27 @@
       "templates": {
         "button-song": "Melodie",
         "button-video": "Video"
+      },
+      "settings": {
+        "mode": {
+          "label": "Mod",
+          "options": {
+            "custom": "Comutatoare personalizate",
+            "native": "Comutatoare native",
+            "disabled": "Dezactivat"
+          }
+        },
+        "align": {
+          "label": "Aliniere",
+          "options": {
+            "left": "Stânga",
+            "middle": "Mijloc",
+            "right": "Dreapta"
+          }
+        },
+        "forceHide": {
+          "label": "Forțează eliminarea filei video"
+        }
       }
     },
     "visualizer": {
@@ -1391,7 +1561,9 @@
       },
       "name": "Vizualizator",
       "settings": {
-        "preset": "Presetare",
+        "preset": {
+          "label": "Presetare"
+        },
         "blend-time": "Timp de îmbinare",
         "effect": "Efect",
         "accuracy": "Precizie",
@@ -1407,7 +1579,45 @@
         "dottify": "Transformă în puncte",
         "dottify-description": "Desenează puncte în loc de o linie continuă",
         "horizontal-align": "Aliniere orizontală",
-        "vertical-align": "Aliniere verticală"
+        "vertical-align": "Aliniere verticală",
+        "blendTimeInSeconds": {
+          "label": "Timp de îmbinare"
+        },
+        "vudioMaxHeight": {
+          "label": "Înălțime maximă"
+        },
+        "vudioMaxSize": {
+          "label": "Dimensiune maximă"
+        },
+        "vudioLineWidth": {
+          "label": "Lățimea liniei"
+        },
+        "vudioColor": {
+          "label": "Culoare"
+        },
+        "vudioShadowBlur": {
+          "label": "Estomparea umbrei"
+        },
+        "vudioShadowColor": {
+          "label": "Culoarea umbrei"
+        },
+        "vudioFadeSide": {
+          "label": "Laturi estompate"
+        },
+        "vudioPrettify": {
+          "label": "Înfrumusețează",
+          "description": "Îngustează barele spre margini"
+        },
+        "vudioDottify": {
+          "label": "Transformă în puncte",
+          "description": "Desenează puncte în loc de o linie continuă"
+        },
+        "vudioHorizontalAlign": {
+          "label": "Aliniere orizontală"
+        },
+        "vudioVerticalAlign": {
+          "label": "Aliniere verticală"
+        }
       }
     },
     "audio-only": {
@@ -1477,7 +1687,15 @@
         "open-keybind": "Scurtătură de deschidere",
         "open-keybind-description": "Accelerator în stil Electron, de ex. CmdOrCtrl+/ sau Alt+Space",
         "open-shortcut": "Deschide caseta de căutare de oriunde",
-        "open-shortcut-description": "Afișează caseta de căutare deja în modul comenzi, ca Spotlight. Apăsarea din nou o închide."
+        "open-shortcut-description": "Afișează caseta de căutare deja în modul comenzi, ca Spotlight. Apăsarea din nou o închide.",
+        "openShortcut": {
+          "label": "Deschide caseta de căutare de oriunde",
+          "description": "Afișează caseta de căutare deja în modul comenzi, ca Spotlight. Apăsarea din nou o închide."
+        },
+        "openKeybind": {
+          "label": "Scurtătură de deschidere",
+          "description": "Accelerator în stil Electron, de ex. CmdOrCtrl+/ sau Alt+Space"
+        }
       }
     },
     "seek-shortcuts": {
@@ -1494,7 +1712,10 @@
     },
     "statusbar-lyrics": {
       "settings": {
-        "include-pronunciation": "Include pronunția"
+        "include-pronunciation": "Include pronunția",
+        "includePronunciation": {
+          "label": "Include pronunția"
+        }
       }
     },
     "dismiss-multidevice-popup": {
@@ -1506,7 +1727,11 @@
       "name": "Economizor de memorie",
       "settings": {
         "threshold": "Pragul cache-ului",
-        "threshold-description": "Golește cache-urile când memoria lor activă depășește această valoare cât timp fereastra este ascunsă"
+        "threshold-description": "Golește cache-urile când memoria lor activă depășește această valoare cât timp fereastra este ascunsă",
+        "thresholdMB": {
+          "label": "Pragul cache-ului",
+          "description": "Golește cache-urile când memoria lor activă depășește această valoare cât timp fereastra este ascunsă"
+        }
       }
     }
   },

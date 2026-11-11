@@ -314,7 +314,15 @@
         },
         "enable-seekbar": "Aktivera temaanpassning av uppspelningsreglaget"
       },
-      "name": "Albumfärgtema"
+      "name": "Albumfärgtema",
+      "settings": {
+        "ratio": {
+          "label": "Färgblandningsförhållande"
+        },
+        "enableSeekbar": {
+          "label": "Aktivera temaanpassning av uppspelningsreglaget"
+        }
+      }
     },
     "ambient-mode": {
       "description": "Skapar en ljuseffekt genom att låta videons färger spridas mjukt över skärmens bakgrund",
@@ -497,6 +505,14 @@
         "caption-changed": "Undertextspråket ändrades till {{language}}",
         "caption-disabled": "Undertexter inaktiverade",
         "no-captions": "Det finns inga undertexter för den här låten"
+      },
+      "settings": {
+        "autoload": {
+          "label": "Välj automatiskt de senast använda undertexterna"
+        },
+        "disableCaptions": {
+          "label": "Inga undertexter som standard"
+        }
       }
     },
     "clock": {
@@ -510,7 +526,13 @@
       },
       "name": "Klocka",
       "settings": {
-        "hour-12": "Använd 12-timmarsformat"
+        "hour-12": "Använd 12-timmarsformat",
+        "displaySeconds": {
+          "label": "Visa sekunder"
+        },
+        "hour12": {
+          "label": "Använd 12-timmarsformat"
+        }
       }
     },
     "compact-sidebar": {
@@ -569,7 +591,12 @@
       "menu": {
         "apply-once": "Gäller endast vid uppstart"
       },
-      "name": "Inaktivera automatisk uppspelning"
+      "name": "Inaktivera automatisk uppspelning",
+      "settings": {
+        "applyOnce": {
+          "label": "Gäller endast vid uppstart"
+        }
+      }
     },
     "discord": {
       "backend": {
@@ -609,7 +636,38 @@
         "activity-timeout-enabled": "Rensa närvaron vid paus",
         "activity-timeout-time": "Rensa efter",
         "hide-github-button": "Dölj knappen ”Visa på GitHub”",
-        "hide-duration-left": "Dölj återstående tid"
+        "hide-duration-left": "Dölj återstående tid",
+        "autoReconnect": {
+          "label": "Återanslut automatiskt"
+        },
+        "activityTimeoutEnabled": {
+          "label": "Rensa närvaron vid paus"
+        },
+        "activityTimeoutSeconds": {
+          "label": "Rensa efter"
+        },
+        "playButton": {
+          "label": "Spela på {{applicationName}}"
+        },
+        "hideGitHubButton": {
+          "label": "Dölj knappen ”Visa på GitHub”"
+        },
+        "hideDurationLeft": {
+          "label": "Dölj återstående tid"
+        },
+        "statusDisplayType": {
+          "label": "Statustext",
+          "options": {
+            "name": "Lyssnar på {{applicationName}}",
+            "state": "Lyssnar på {artist}",
+            "details": "Lyssnar på {song title}"
+          }
+        }
+      },
+      "actions": {
+        "clearActivity": {
+          "label": "Rensa aktivitet"
+        }
       }
     },
     "do-not-track": {
@@ -900,6 +958,23 @@
       "name": "Bild-i-bild",
       "templates": {
         "button": "Bild-i-bild"
+      },
+      "settings": {
+        "hotkey": {
+          "label": "Snabbkommando"
+        },
+        "useNativePiP": {
+          "label": "Använd webbläsarens inbyggda bild-i-bild"
+        },
+        "alwaysOnTop": {
+          "label": "Alltid överst"
+        },
+        "savePosition": {
+          "label": "Spara fönsterposition"
+        },
+        "saveSize": {
+          "label": "Spara fönsterstorlek"
+        }
       }
     },
     "playback-speed": {
@@ -935,10 +1010,21 @@
         }
       },
       "settings": {
-        "steps": "Volymsteg",
+        "steps": {
+          "label": "Volymsteg"
+        },
         "arrows-shortcut": "Genvägar med piltangenter",
         "shortcut-up": "Global genväg: höj volymen",
-        "shortcut-down": "Global genväg: sänk volymen"
+        "shortcut-down": "Global genväg: sänk volymen",
+        "arrowsShortcut": {
+          "label": "Genvägar med piltangenter"
+        },
+        "volumeUp": {
+          "label": "Global genväg: höj volymen"
+        },
+        "volumeDown": {
+          "label": "Global genväg: sänk volymen"
+        }
       }
     },
     "quality-changer": {
@@ -1037,7 +1123,28 @@
       },
       "settings": {
         "global-keybinds": "Globala tangentbordsgenvägar (fungerar i hela appen)",
-        "local-keybinds": "Lokala tangentbordsgenvägar (endast när fönstret är i fokus)"
+        "local-keybinds": "Lokala tangentbordsgenvägar (endast när fönstret är i fokus)",
+        "playPause": {
+          "label": "Spela / Pausa"
+        },
+        "localPlayPause": {
+          "label": "Spela / Pausa"
+        },
+        "next": {
+          "label": "Nästa"
+        },
+        "localNext": {
+          "label": "Nästa"
+        },
+        "previous": {
+          "label": "Föregående"
+        },
+        "localPrevious": {
+          "label": "Föregående"
+        },
+        "overrideMediaKeys": {
+          "label": "Åsidosätt medietangenter"
+        }
       }
     },
     "skip-disliked-songs": {
@@ -1048,7 +1155,10 @@
       "description": "Hoppa automatiskt över tysta partier i låtar",
       "name": "Hoppa över tysta partier",
       "settings": {
-        "only-skip-beginning": "Hoppa bara över tystnad i början av ett spår"
+        "only-skip-beginning": "Hoppa bara över tystnad i början av ett spår",
+        "onlySkipBeginning": {
+          "label": "Hoppa bara över tystnad i början av ett spår"
+        }
       }
     },
     "sponsorblock": {
@@ -1064,7 +1174,28 @@
           "selfpromo": "Egenreklam",
           "music_offtopic": "Icke-musikavsnitt"
         },
-        "api-url": "API-URL"
+        "api-url": "API-URL",
+        "sponsor": {
+          "label": "Sponsor"
+        },
+        "intro": {
+          "label": "Intro"
+        },
+        "outro": {
+          "label": "Outro"
+        },
+        "interaction": {
+          "label": "Interaktionspåminnelse"
+        },
+        "selfpromo": {
+          "label": "Egenreklam"
+        },
+        "music_offtopic": {
+          "label": "Icke-musikavsnitt"
+        },
+        "apiURL": {
+          "label": "API-URL"
+        }
       }
     },
     "synced-lyrics": {
@@ -1365,7 +1496,25 @@
       },
       "name": "Genomskinlig spelare",
       "settings": {
-        "type-description": "Bakgrundsmaterial som används för fönstrets transparens"
+        "type-description": "Bakgrundsmaterial som används för fönstrets transparens",
+        "opacity": {
+          "label": "Opacitet"
+        },
+        "type": {
+          "label": "Typ",
+          "description": "Bakgrundsmaterial som används för fönstrets transparens",
+          "options": {
+            "acrylic": "Akryl",
+            "content": "Innehåll",
+            "fullscreen-ui": "Helskärmsgränssnitt",
+            "mica": "Mica",
+            "tabbed": "Flikad",
+            "under-page": "Under sidan",
+            "under-window": "Under fönstret",
+            "window": "Fönster",
+            "none": "Ingen"
+          }
+        }
       }
     },
     "tuna-obs": {
@@ -1401,6 +1550,27 @@
       "templates": {
         "button-song": "Låt",
         "button-video": "Video"
+      },
+      "settings": {
+        "mode": {
+          "label": "Läge",
+          "options": {
+            "custom": "Anpassad växlingsknapp",
+            "native": "Inbyggd växlingsknapp",
+            "disabled": "Inaktiverad"
+          }
+        },
+        "align": {
+          "label": "Justering",
+          "options": {
+            "left": "Vänster",
+            "middle": "Mitten",
+            "right": "Höger"
+          }
+        },
+        "forceHide": {
+          "label": "Ta alltid bort videofliken"
+        }
       }
     },
     "visualizer": {
@@ -1410,7 +1580,9 @@
       },
       "name": "Visualiserare",
       "settings": {
-        "preset": "Förinställning",
+        "preset": {
+          "label": "Förinställning"
+        },
         "blend-time": "Blandningstid",
         "effect": "Effekt",
         "accuracy": "Noggrannhet",
@@ -1426,7 +1598,45 @@
         "dottify": "Pricka",
         "dottify-description": "Rita punkter i stället för en sammanhängande linje",
         "horizontal-align": "Horisontell justering",
-        "vertical-align": "Vertikal justering"
+        "vertical-align": "Vertikal justering",
+        "blendTimeInSeconds": {
+          "label": "Blandningstid"
+        },
+        "vudioMaxHeight": {
+          "label": "Maxhöjd"
+        },
+        "vudioMaxSize": {
+          "label": "Maxstorlek"
+        },
+        "vudioLineWidth": {
+          "label": "Linjebredd"
+        },
+        "vudioColor": {
+          "label": "Färg"
+        },
+        "vudioShadowBlur": {
+          "label": "Skuggans oskärpa"
+        },
+        "vudioShadowColor": {
+          "label": "Skuggfärg"
+        },
+        "vudioFadeSide": {
+          "label": "Tona kanter"
+        },
+        "vudioPrettify": {
+          "label": "Snygga till",
+          "description": "Avsmalna staplarna mot kanterna"
+        },
+        "vudioDottify": {
+          "label": "Pricka",
+          "description": "Rita punkter i stället för en sammanhängande linje"
+        },
+        "vudioHorizontalAlign": {
+          "label": "Horisontell justering"
+        },
+        "vudioVerticalAlign": {
+          "label": "Vertikal justering"
+        }
       }
     },
     "audio-only": {
@@ -1477,7 +1687,15 @@
         "open-keybind": "Genväg för att öppna",
         "open-keybind-description": "Accelerator i Electron-stil, t.ex. CmdOrCtrl+/ eller Alt+Space",
         "open-shortcut": "Öppna sökrutan varifrån som helst",
-        "open-shortcut-description": "Tar fram sökrutan redan i kommandoläge, som Spotlight. Trycker man igen stängs den."
+        "open-shortcut-description": "Tar fram sökrutan redan i kommandoläge, som Spotlight. Trycker man igen stängs den.",
+        "openShortcut": {
+          "label": "Öppna sökrutan varifrån som helst",
+          "description": "Tar fram sökrutan redan i kommandoläge, som Spotlight. Trycker man igen stängs den."
+        },
+        "openKeybind": {
+          "label": "Genväg för att öppna",
+          "description": "Accelerator i Electron-stil, t.ex. CmdOrCtrl+/ eller Alt+Space"
+        }
       }
     },
     "seek-shortcuts": {
@@ -1494,7 +1712,10 @@
     },
     "statusbar-lyrics": {
       "settings": {
-        "include-pronunciation": "Inkludera uttal"
+        "include-pronunciation": "Inkludera uttal",
+        "includePronunciation": {
+          "label": "Inkludera uttal"
+        }
       }
     },
     "dismiss-multidevice-popup": {
@@ -1506,7 +1727,11 @@
       "name": "Minnesbespararen",
       "settings": {
         "threshold": "Tröskelvärde för cache",
-        "threshold-description": "Rensa cacharna när deras aktiva minne överstiger detta medan fönstret är dolt"
+        "threshold-description": "Rensa cacharna när deras aktiva minne överstiger detta medan fönstret är dolt",
+        "thresholdMB": {
+          "label": "Tröskelvärde för cache",
+          "description": "Rensa cacharna när deras aktiva minne överstiger detta medan fönstret är dolt"
+        }
       }
     }
   },

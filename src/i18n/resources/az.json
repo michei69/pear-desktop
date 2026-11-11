@@ -425,7 +425,15 @@
         },
         "enable-seekbar": "Axtarış çubuğu temini aktiv et"
       },
-      "name": "Albom Rəng Teması"
+      "name": "Albom Rəng Teması",
+      "settings": {
+        "ratio": {
+          "label": "Rəng qarışdırma nisbəti"
+        },
+        "enableSeekbar": {
+          "label": "Axtarış çubuğu temini aktiv et"
+        }
+      }
     },
     "audio-only": {
       "description": "Yalnız audio rejimini məcbur edir — RAM və bant genişliyinə qənaət etmək üçün şəbəkə və pleyer səviyyəsində bütün video axınlarını bloklayır",
@@ -501,6 +509,14 @@
         "caption-changed": "Başlıq {{language}} dilinə dəyişdirildi",
         "caption-disabled": "Başlıqlar deaktiv edildi",
         "no-captions": "Bu mahnı üçün başlıq mövcud deyil"
+      },
+      "settings": {
+        "autoload": {
+          "label": "Son istifadə olunan başlığı avtomatik seç"
+        },
+        "disableCaptions": {
+          "label": "Susmaya görə başlıq yoxdur"
+        }
       }
     },
     "clock": {
@@ -514,7 +530,13 @@
       },
       "name": "Saat",
       "settings": {
-        "hour-12": "12 saatlıq formatdan istifadə et"
+        "hour-12": "12 saatlıq formatdan istifadə et",
+        "displaySeconds": {
+          "label": "Saniyələri göstər"
+        },
+        "hour12": {
+          "label": "12 saatlıq formatdan istifadə et"
+        }
       }
     },
     "compact-sidebar": {
@@ -573,7 +595,12 @@
       "menu": {
         "apply-once": "Yalnız başlanğıcda tətbiq edilir"
       },
-      "name": "Avtomatik Oynatmanı Deaktiv Et"
+      "name": "Avtomatik Oynatmanı Deaktiv Et",
+      "settings": {
+        "applyOnce": {
+          "label": "Yalnız başlanğıcda tətbiq edilir"
+        }
+      }
     },
     "discord": {
       "backend": {
@@ -613,7 +640,38 @@
         "activity-timeout-enabled": "Fasilə verildikdə statusu təmizlə",
         "activity-timeout-time": "Bu müddətdən sonra təmizlə",
         "hide-github-button": "“GitHub-da bax” düyməsini gizlət",
-        "hide-duration-left": "Qalan vaxtı gizlət"
+        "hide-duration-left": "Qalan vaxtı gizlət",
+        "autoReconnect": {
+          "label": "Avtomatik yenidən qoşul"
+        },
+        "activityTimeoutEnabled": {
+          "label": "Fasilə verildikdə statusu təmizlə"
+        },
+        "activityTimeoutSeconds": {
+          "label": "Bu müddətdən sonra təmizlə"
+        },
+        "playButton": {
+          "label": "{{applicationName}}-da oynat"
+        },
+        "hideGitHubButton": {
+          "label": "“GitHub-da bax” düyməsini gizlət"
+        },
+        "hideDurationLeft": {
+          "label": "Qalan vaxtı gizlət"
+        },
+        "statusDisplayType": {
+          "label": "Status mətni",
+          "options": {
+            "name": "{{applicationName}} dinlənilir",
+            "state": "{artist} dinlənilir",
+            "details": "{song title} dinlənilir"
+          }
+        }
+      },
+      "actions": {
+        "clearActivity": {
+          "label": "Fəaliyyəti təmizlə"
+        }
       }
     },
     "downloader": {
@@ -898,6 +956,23 @@
       "name": "Şəkil-şəkildə",
       "templates": {
         "button": "Şəkil-şəkildə"
+      },
+      "settings": {
+        "hotkey": {
+          "label": "Qısayol"
+        },
+        "useNativePiP": {
+          "label": "Brauzerin yerli PiP funksiyasından istifadə et"
+        },
+        "alwaysOnTop": {
+          "label": "Həmişə üstdə"
+        },
+        "savePosition": {
+          "label": "Pəncərə mövqeyini yadda saxla"
+        },
+        "saveSize": {
+          "label": "Pəncərə ölçüsünü yadda saxla"
+        }
       }
     },
     "playback-speed": {
@@ -933,10 +1008,21 @@
         }
       },
       "settings": {
-        "steps": "Səs addımı",
+        "steps": {
+          "label": "Səs addımı"
+        },
         "arrows-shortcut": "Ox düyməsi qısayolları",
         "shortcut-up": "Qlobal qısayol: səsi artır",
-        "shortcut-down": "Qlobal qısayol: səsi azalt"
+        "shortcut-down": "Qlobal qısayol: səsi azalt",
+        "arrowsShortcut": {
+          "label": "Ox düyməsi qısayolları"
+        },
+        "volumeUp": {
+          "label": "Qlobal qısayol: səsi artır"
+        },
+        "volumeDown": {
+          "label": "Qlobal qısayol: səsi azalt"
+        }
       }
     },
     "quality-changer": {
@@ -1035,14 +1121,38 @@
       },
       "settings": {
         "global-keybinds": "Qlobal qısayollar (bütün tətbiqdə işləyir)",
-        "local-keybinds": "Lokal qısayollar (yalnız pəncərə fokusda olduqda)"
+        "local-keybinds": "Lokal qısayollar (yalnız pəncərə fokusda olduqda)",
+        "playPause": {
+          "label": "Oynat / Dayandır"
+        },
+        "localPlayPause": {
+          "label": "Oynat / Dayandır"
+        },
+        "next": {
+          "label": "Növbəti"
+        },
+        "localNext": {
+          "label": "Növbəti"
+        },
+        "previous": {
+          "label": "Əvvəlki"
+        },
+        "localPrevious": {
+          "label": "Əvvəlki"
+        },
+        "overrideMediaKeys": {
+          "label": "Media Düymələrini Ləğv Et"
+        }
       }
     },
     "skip-silences": {
       "description": "Mahnılardakı səssiz hissələri avtomatik keçir",
       "name": "Səssizlikləri Keç",
       "settings": {
-        "only-skip-beginning": "Yalnız trekin əvvəlindəki sükutu keç"
+        "only-skip-beginning": "Yalnız trekin əvvəlindəki sükutu keç",
+        "onlySkipBeginning": {
+          "label": "Yalnız trekin əvvəlindəki sükutu keç"
+        }
       }
     },
     "sponsorblock": {
@@ -1058,7 +1168,28 @@
           "selfpromo": "Özünü təbliğ",
           "music_offtopic": "Musiqi olmayan bölmə"
         },
-        "api-url": "API URL-i"
+        "api-url": "API URL-i",
+        "sponsor": {
+          "label": "Sponsor"
+        },
+        "intro": {
+          "label": "Giriş"
+        },
+        "outro": {
+          "label": "Sonluq"
+        },
+        "interaction": {
+          "label": "Qarşılıqlı əlaqə xatırlatması"
+        },
+        "selfpromo": {
+          "label": "Özünü təbliğ"
+        },
+        "music_offtopic": {
+          "label": "Musiqi olmayan bölmə"
+        },
+        "apiURL": {
+          "label": "API URL-i"
+        }
       }
     },
     "synced-lyrics": {
@@ -1359,7 +1490,25 @@
       },
       "name": "Şəffaf Pleyer",
       "settings": {
-        "type-description": "Pəncərə şəffaflığı üçün istifadə olunan fon materialı"
+        "type-description": "Pəncərə şəffaflığı üçün istifadə olunan fon materialı",
+        "opacity": {
+          "label": "Qeyri-şəffaflıq"
+        },
+        "type": {
+          "label": "Növ",
+          "description": "Pəncərə şəffaflığı üçün istifadə olunan fon materialı",
+          "options": {
+            "acrylic": "Akril",
+            "content": "Məzmun",
+            "fullscreen-ui": "Tam ekran interfeysi",
+            "mica": "Mika",
+            "tabbed": "Sekmeli",
+            "under-page": "Səhifənin altında",
+            "under-window": "Pəncərənin altında",
+            "window": "Pəncərə",
+            "none": "Heç biri"
+          }
+        }
       }
     },
     "tuna-obs": {
@@ -1395,6 +1544,27 @@
       "templates": {
         "button-song": "Mahnı",
         "button-video": "Video"
+      },
+      "settings": {
+        "mode": {
+          "label": "Rejim",
+          "options": {
+            "custom": "Fərdi keçid",
+            "native": "Yerli keçid",
+            "disabled": "Deaktiv"
+          }
+        },
+        "align": {
+          "label": "Düzləndirmə",
+          "options": {
+            "left": "Sol",
+            "middle": "Orta",
+            "right": "Sağ"
+          }
+        },
+        "forceHide": {
+          "label": "Video sekmesini məcburi sil"
+        }
       }
     },
     "visualizer": {
@@ -1404,7 +1574,9 @@
       },
       "name": "Vizuallaşdırıcı",
       "settings": {
-        "preset": "Hazır ayar",
+        "preset": {
+          "label": "Hazır ayar"
+        },
         "blend-time": "Qarışma vaxtı",
         "effect": "Effekt",
         "accuracy": "Dəqiqlik",
@@ -1420,7 +1592,45 @@
         "dottify": "Nöqtələşdir",
         "dottify-description": "Davamlı xətt əvəzinə nöqtələr çək",
         "horizontal-align": "Üfüqi düzləndirmə",
-        "vertical-align": "Şaquli düzləndirmə"
+        "vertical-align": "Şaquli düzləndirmə",
+        "blendTimeInSeconds": {
+          "label": "Qarışma vaxtı"
+        },
+        "vudioMaxHeight": {
+          "label": "Maksimum hündürlük"
+        },
+        "vudioMaxSize": {
+          "label": "Maksimum ölçü"
+        },
+        "vudioLineWidth": {
+          "label": "Xətt eni"
+        },
+        "vudioColor": {
+          "label": "Rəng"
+        },
+        "vudioShadowBlur": {
+          "label": "Kölgə bulanıqlığı"
+        },
+        "vudioShadowColor": {
+          "label": "Kölgə rəngi"
+        },
+        "vudioFadeSide": {
+          "label": "Kənarları solğunlaşdır"
+        },
+        "vudioPrettify": {
+          "label": "Gözəlləşdir",
+          "description": "Zolaqları kənarlara doğru daralt"
+        },
+        "vudioDottify": {
+          "label": "Nöqtələşdir",
+          "description": "Davamlı xətt əvəzinə nöqtələr çək"
+        },
+        "vudioHorizontalAlign": {
+          "label": "Üfüqi düzləndirmə"
+        },
+        "vudioVerticalAlign": {
+          "label": "Şaquli düzləndirmə"
+        }
       }
     },
     "playlist-search": {
@@ -1473,7 +1683,15 @@
         "open-keybind": "Açma qısayolu",
         "open-keybind-description": "Electron üslubunda qısayol, məsələn CmdOrCtrl+/ və ya Alt+Space",
         "open-shortcut": "Axtarış qutusunu istənilən yerdən aç",
-        "open-shortcut-description": "Spotlight kimi axtarış qutusunu artıq əmr rejimində çağırır. Yenidən basdıqda bağlanır."
+        "open-shortcut-description": "Spotlight kimi axtarış qutusunu artıq əmr rejimində çağırır. Yenidən basdıqda bağlanır.",
+        "openShortcut": {
+          "label": "Axtarış qutusunu istənilən yerdən aç",
+          "description": "Spotlight kimi axtarış qutusunu artıq əmr rejimində çağırır. Yenidən basdıqda bağlanır."
+        },
+        "openKeybind": {
+          "label": "Açma qısayolu",
+          "description": "Electron üslubunda qısayol, məsələn CmdOrCtrl+/ və ya Alt+Space"
+        }
       }
     },
     "seek-shortcuts": {
@@ -1490,7 +1708,10 @@
     },
     "statusbar-lyrics": {
       "settings": {
-        "include-pronunciation": "Tələffüzü daxil et"
+        "include-pronunciation": "Tələffüzü daxil et",
+        "includePronunciation": {
+          "label": "Tələffüzü daxil et"
+        }
       }
     },
     "dismiss-multidevice-popup": {
@@ -1502,7 +1723,11 @@
       "name": "Yaddaş Qənaətçisi",
       "settings": {
         "threshold": "Keş həddi",
-        "threshold-description": "Pəncərə gizli ikən keşlərin canlı yaddaşı bu dəyəri aşdıqda onları təmizlə"
+        "threshold-description": "Pəncərə gizli ikən keşlərin canlı yaddaşı bu dəyəri aşdıqda onları təmizlə",
+        "thresholdMB": {
+          "label": "Keş həddi",
+          "description": "Pəncərə gizli ikən keşlərin canlı yaddaşı bu dəyəri aşdıqda onları təmizlə"
+        }
       }
     }
   },

@@ -314,7 +314,15 @@
         },
         "enable-seekbar": "Ota käyttöön hakupalkin teemoitus"
       },
-      "name": "Albumin Värinen Teema"
+      "name": "Albumin Värinen Teema",
+      "settings": {
+        "ratio": {
+          "label": "Värien sekoitussuhde"
+        },
+        "enableSeekbar": {
+          "label": "Ota käyttöön hakupalkin teemoitus"
+        }
+      }
     },
     "ambient-mode": {
       "description": "Antaa valaistustehosteen heittämällä videosta lempeitä värejä näytön taustalle",
@@ -497,6 +505,14 @@
         "caption-changed": "Tekstitys vaihdettu kieleksi {{language}}",
         "caption-disabled": "Tekstitykset pois päältä",
         "no-captions": "Tekstityksiä ei ole saatavilla tälle kappaleelle"
+      },
+      "settings": {
+        "autoload": {
+          "label": "Valitse automaattisesti viimeksi käytetty tekstitys"
+        },
+        "disableCaptions": {
+          "label": "Tekstitys ei oletusarvoisesti käytössä"
+        }
       }
     },
     "compact-sidebar": {
@@ -542,7 +558,12 @@
       "menu": {
         "apply-once": "Käytetään vain käynnistäessä"
       },
-      "name": "Poista automaattinen toisto käytöstä"
+      "name": "Poista automaattinen toisto käytöstä",
+      "settings": {
+        "applyOnce": {
+          "label": "Käytetään vain käynnistäessä"
+        }
+      }
     },
     "discord": {
       "backend": {
@@ -582,7 +603,38 @@
         "activity-timeout-enabled": "Tyhjennä tilatieto, kun toisto on keskeytetty",
         "activity-timeout-time": "Tyhjennä jälkeen",
         "hide-github-button": "Piilota “View on GitHub” -painike",
-        "hide-duration-left": "Piilota jäljellä oleva aika"
+        "hide-duration-left": "Piilota jäljellä oleva aika",
+        "autoReconnect": {
+          "label": "Yhdistä automaattisesti uudelleen"
+        },
+        "activityTimeoutEnabled": {
+          "label": "Tyhjennä tilatieto, kun toisto on keskeytetty"
+        },
+        "activityTimeoutSeconds": {
+          "label": "Tyhjennä jälkeen"
+        },
+        "playButton": {
+          "label": "Kuuntele palvelussa {{applicationName}}"
+        },
+        "hideGitHubButton": {
+          "label": "Piilota “View on GitHub” -painike"
+        },
+        "hideDurationLeft": {
+          "label": "Piilota jäljellä oleva aika"
+        },
+        "statusDisplayType": {
+          "label": "Tilan teksti",
+          "options": {
+            "name": "Kuuntelee: {{applicationName}}",
+            "state": "Kuuntelee: {artist}",
+            "details": "Kuuntelee: {song title}"
+          }
+        }
+      },
+      "actions": {
+        "clearActivity": {
+          "label": "Nollaa toiminta"
+        }
       }
     },
     "downloader": {
@@ -854,6 +906,23 @@
       "name": "Kuva kuvassa",
       "templates": {
         "button": "Kuva kuvassa"
+      },
+      "settings": {
+        "hotkey": {
+          "label": "Pikanäppäin"
+        },
+        "useNativePiP": {
+          "label": "Käytä selaimen natiivia \"Kuva kuvassa\" -tilaa"
+        },
+        "alwaysOnTop": {
+          "label": "Aina päällimmäisenä"
+        },
+        "savePosition": {
+          "label": "Tallenna ikkunan sijainti"
+        },
+        "saveSize": {
+          "label": "Tallenna ikkunan koko"
+        }
       }
     },
     "playback-speed": {
@@ -889,10 +958,21 @@
         }
       },
       "settings": {
-        "steps": "Äänenvoimakkuuden askel",
+        "steps": {
+          "label": "Äänenvoimakkuuden askel"
+        },
         "arrows-shortcut": "Nuolinäppäinoikotiet",
         "shortcut-up": "Yleispikanäppäin: äänenvoimakkuus ylös",
-        "shortcut-down": "Yleispikanäppäin: äänenvoimakkuus alas"
+        "shortcut-down": "Yleispikanäppäin: äänenvoimakkuus alas",
+        "arrowsShortcut": {
+          "label": "Nuolinäppäinoikotiet"
+        },
+        "volumeUp": {
+          "label": "Yleispikanäppäin: äänenvoimakkuus ylös"
+        },
+        "volumeDown": {
+          "label": "Yleispikanäppäin: äänenvoimakkuus alas"
+        }
       }
     },
     "quality-changer": {
@@ -991,7 +1071,28 @@
       "name": "Pikanäppäimet (& MPRIS)",
       "settings": {
         "global-keybinds": "Globaalit pikanäppäimet (toimivat koko sovelluksessa)",
-        "local-keybinds": "Paikalliset pikanäppäimet (vain ikkunan ollessa kohdistettuna)"
+        "local-keybinds": "Paikalliset pikanäppäimet (vain ikkunan ollessa kohdistettuna)",
+        "playPause": {
+          "label": "Toisto / Tauko"
+        },
+        "localPlayPause": {
+          "label": "Toisto / Tauko"
+        },
+        "next": {
+          "label": "Seuraava"
+        },
+        "localNext": {
+          "label": "Seuraava"
+        },
+        "previous": {
+          "label": "Edellinen"
+        },
+        "localPrevious": {
+          "label": "Edellinen"
+        },
+        "overrideMediaKeys": {
+          "label": "Ohita medianäppäimet"
+        }
       }
     },
     "tuna-obs": {
@@ -1023,6 +1124,27 @@
       "templates": {
         "button-song": "Kappale",
         "button-video": "Video"
+      },
+      "settings": {
+        "mode": {
+          "label": "Tila",
+          "options": {
+            "custom": "Mukautettu vaihto",
+            "native": "Natiivi vaihto",
+            "disabled": "Pois käytöstä"
+          }
+        },
+        "align": {
+          "label": "Tasaus",
+          "options": {
+            "left": "Vasen",
+            "middle": "Keskellä",
+            "right": "Oikea"
+          }
+        },
+        "forceHide": {
+          "label": "Pakota videovälilehden poisto"
+        }
       }
     },
     "audio-only": {
@@ -1040,7 +1162,13 @@
         }
       },
       "settings": {
-        "hour-12": "Käytä 12 tunnin muotoa"
+        "hour-12": "Käytä 12 tunnin muotoa",
+        "displaySeconds": {
+          "label": "Näytä sekunnit"
+        },
+        "hour12": {
+          "label": "Käytä 12 tunnin muotoa"
+        }
       }
     },
     "custom-output-device": {
@@ -1073,7 +1201,10 @@
       "description": "Ohita automaattisesti kappaleiden hiljaiset kohdat",
       "name": "Ohita Hiljaisuudet",
       "settings": {
-        "only-skip-beginning": "Ohita hiljaisuus vain kappaleen alussa"
+        "only-skip-beginning": "Ohita hiljaisuus vain kappaleen alussa",
+        "onlySkipBeginning": {
+          "label": "Ohita hiljaisuus vain kappaleen alussa"
+        }
       }
     },
     "sponsorblock": {
@@ -1089,7 +1220,28 @@
           "selfpromo": "Oman sisällön mainostus",
           "music_offtopic": "Ei-musiikkiosio"
         },
-        "api-url": "API-osoite"
+        "api-url": "API-osoite",
+        "sponsor": {
+          "label": "Sponsori"
+        },
+        "intro": {
+          "label": "Intro"
+        },
+        "outro": {
+          "label": "Outro"
+        },
+        "interaction": {
+          "label": "Vuorovaikutusmuistutus"
+        },
+        "selfpromo": {
+          "label": "Oman sisällön mainostus"
+        },
+        "music_offtopic": {
+          "label": "Ei-musiikkiosio"
+        },
+        "apiURL": {
+          "label": "API-osoite"
+        }
       }
     },
     "synced-lyrics": {
@@ -1390,7 +1542,25 @@
         }
       },
       "settings": {
-        "type-description": "Ikkunan läpinäkyvyyteen käytettävä taustamateriaali"
+        "type-description": "Ikkunan läpinäkyvyyteen käytettävä taustamateriaali",
+        "opacity": {
+          "label": "Läpinäkyvyys"
+        },
+        "type": {
+          "label": "Tyyppi",
+          "description": "Ikkunan läpinäkyvyyteen käytettävä taustamateriaali",
+          "options": {
+            "acrylic": "Akryyli",
+            "content": "Sisältö",
+            "fullscreen-ui": "Koko näytön käyttöliittymä",
+            "mica": "Mica",
+            "tabbed": "Välilehdillä",
+            "under-page": "Sivun alla",
+            "under-window": "Ikkunan alla",
+            "window": "Ikkuna",
+            "none": "Ei mitään"
+          }
+        }
       }
     },
     "unobtrusive-player": {
@@ -1404,7 +1574,9 @@
       },
       "name": "Visualisoija",
       "settings": {
-        "preset": "Esiasetus",
+        "preset": {
+          "label": "Esiasetus"
+        },
         "blend-time": "Sekoitusaika",
         "effect": "Tehoste",
         "accuracy": "Tarkkuus",
@@ -1420,7 +1592,45 @@
         "dottify": "Pisteytä",
         "dottify-description": "Piirrä pisteitä jatkuvan viivan sijaan",
         "horizontal-align": "Vaakasuuntainen tasaus",
-        "vertical-align": "Pystysuuntainen tasaus"
+        "vertical-align": "Pystysuuntainen tasaus",
+        "blendTimeInSeconds": {
+          "label": "Sekoitusaika"
+        },
+        "vudioMaxHeight": {
+          "label": "Enimmäiskorkeus"
+        },
+        "vudioMaxSize": {
+          "label": "Enimmäiskoko"
+        },
+        "vudioLineWidth": {
+          "label": "Viivan leveys"
+        },
+        "vudioColor": {
+          "label": "Väri"
+        },
+        "vudioShadowBlur": {
+          "label": "Varjon sumennus"
+        },
+        "vudioShadowColor": {
+          "label": "Varjon väri"
+        },
+        "vudioFadeSide": {
+          "label": "Häivytyssivut"
+        },
+        "vudioPrettify": {
+          "label": "Kaunista",
+          "description": "Kapenevat palkit reunoja kohti"
+        },
+        "vudioDottify": {
+          "label": "Pisteytä",
+          "description": "Piirrä pisteitä jatkuvan viivan sijaan"
+        },
+        "vudioHorizontalAlign": {
+          "label": "Vaakasuuntainen tasaus"
+        },
+        "vudioVerticalAlign": {
+          "label": "Pystysuuntainen tasaus"
+        }
       }
     },
     "playlist-search": {
@@ -1473,7 +1683,15 @@
         "open-keybind": "Avaamisen pikanäppäin",
         "open-keybind-description": "Electron-tyylinen kiihdytin, esim. CmdOrCtrl+/ tai Alt+Space",
         "open-shortcut": "Avaa hakukenttä mistä tahansa",
-        "open-shortcut-description": "Kutsuu hakukentän esiin valmiiksi komentotilassa, kuten Spotlight. Uudelleen painaminen sulkee sen."
+        "open-shortcut-description": "Kutsuu hakukentän esiin valmiiksi komentotilassa, kuten Spotlight. Uudelleen painaminen sulkee sen.",
+        "openShortcut": {
+          "label": "Avaa hakukenttä mistä tahansa",
+          "description": "Kutsuu hakukentän esiin valmiiksi komentotilassa, kuten Spotlight. Uudelleen painaminen sulkee sen."
+        },
+        "openKeybind": {
+          "label": "Avaamisen pikanäppäin",
+          "description": "Electron-tyylinen kiihdytin, esim. CmdOrCtrl+/ tai Alt+Space"
+        }
       }
     },
     "seek-shortcuts": {
@@ -1490,7 +1708,10 @@
     },
     "statusbar-lyrics": {
       "settings": {
-        "include-pronunciation": "Sisällytä ääntäminen"
+        "include-pronunciation": "Sisällytä ääntäminen",
+        "includePronunciation": {
+          "label": "Sisällytä ääntäminen"
+        }
       }
     },
     "dismiss-multidevice-popup": {
@@ -1502,7 +1723,11 @@
       "name": "Muistinsäästäjä",
       "settings": {
         "threshold": "Välimuistin raja-arvo",
-        "threshold-description": "Tyhjennä välimuistit, kun niiden käytössä oleva muisti ylittää tämän arvon ikkunan ollessa piilotettuna"
+        "threshold-description": "Tyhjennä välimuistit, kun niiden käytössä oleva muisti ylittää tämän arvon ikkunan ollessa piilotettuna",
+        "thresholdMB": {
+          "label": "Välimuistin raja-arvo",
+          "description": "Tyhjennä välimuistit, kun niiden käytössä oleva muisti ylittää tämän arvon ikkunan ollessa piilotettuna"
+        }
       }
     }
   },

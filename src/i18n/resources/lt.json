@@ -314,7 +314,15 @@
         },
         "enable-seekbar": "Įjungti paieškos juostos temavimą"
       },
-      "name": "Albumo Spalvų Tema"
+      "name": "Albumo Spalvų Tema",
+      "settings": {
+        "ratio": {
+          "label": "Spalvų maišymo santykis"
+        },
+        "enableSeekbar": {
+          "label": "Įjungti paieškos juostos temavimą"
+        }
+      }
     },
     "ambient-mode": {
       "description": "Pritaiko apšvietimo efektą, perteikdamas švelnias vaizdo įrašo spalvas į ekrano foną",
@@ -497,6 +505,14 @@
         "caption-changed": "Antraštės pakeistos į {{language}}",
         "caption-disabled": "Antraštės išjungtos",
         "no-captions": "Šiai dainai antraštė nepasiekiama"
+      },
+      "settings": {
+        "autoload": {
+          "label": "Automatiškai pasirinkti paskutinę naudotą antraštę"
+        },
+        "disableCaptions": {
+          "label": "Antraštės išjungtos pagal numatytuosius nustatymus"
+        }
       }
     },
     "clock": {
@@ -510,7 +526,13 @@
       },
       "name": "Laikrodis",
       "settings": {
-        "hour-12": "Naudoti 12 valandų formatą"
+        "hour-12": "Naudoti 12 valandų formatą",
+        "displaySeconds": {
+          "label": "Rodyti Sekundes"
+        },
+        "hour12": {
+          "label": "Naudoti 12 valandų formatą"
+        }
       }
     },
     "compact-sidebar": {
@@ -569,7 +591,12 @@
       "menu": {
         "apply-once": "Pritaiko tik per programos paleidimą"
       },
-      "name": "Išjungti automatinį leidimą"
+      "name": "Išjungti automatinį leidimą",
+      "settings": {
+        "applyOnce": {
+          "label": "Pritaiko tik per programos paleidimą"
+        }
+      }
     },
     "discord": {
       "backend": {
@@ -609,7 +636,38 @@
         "activity-timeout-enabled": "Išvalyti būseną, kai pristabdyta",
         "activity-timeout-time": "Išvalyti po",
         "hide-github-button": "Slėpti mygtuką „Peržiūrėti GitHub“",
-        "hide-duration-left": "Slėpti likusį laiką"
+        "hide-duration-left": "Slėpti likusį laiką",
+        "autoReconnect": {
+          "label": "Automatiškai prisijungti iš naujo"
+        },
+        "activityTimeoutEnabled": {
+          "label": "Išvalyti būseną, kai pristabdyta"
+        },
+        "activityTimeoutSeconds": {
+          "label": "Išvalyti po"
+        },
+        "playButton": {
+          "label": "Leisti naudojant „{{applicationName}}“"
+        },
+        "hideGitHubButton": {
+          "label": "Slėpti mygtuką „Peržiūrėti GitHub“"
+        },
+        "hideDurationLeft": {
+          "label": "Slėpti likusį laiką"
+        },
+        "statusDisplayType": {
+          "label": "Būsenos tekstas",
+          "options": {
+            "name": "Klausosi {{applicationName}}",
+            "state": "Klausosi {artist]",
+            "details": "Klausosi {song title}"
+          }
+        }
+      },
+      "actions": {
+        "clearActivity": {
+          "label": "Išvalyti veiklą"
+        }
       }
     },
     "downloader": {
@@ -881,6 +939,23 @@
       "name": "Nuotrauka-nuotraukoje",
       "templates": {
         "button": "Nuotrauka-nuotraukoje"
+      },
+      "settings": {
+        "hotkey": {
+          "label": "Spartusis klavišas"
+        },
+        "useNativePiP": {
+          "label": "Naudoti naršyklės savąjį „PiP“"
+        },
+        "alwaysOnTop": {
+          "label": "Visada ant viršaus"
+        },
+        "savePosition": {
+          "label": "Išsaugoti lango poziciją"
+        },
+        "saveSize": {
+          "label": "Išsaugoti lango dydį"
+        }
       }
     },
     "playback-speed": {
@@ -916,10 +991,21 @@
         }
       },
       "settings": {
-        "steps": "Garsumo žingsnis",
+        "steps": {
+          "label": "Garsumo žingsnis"
+        },
         "arrows-shortcut": "Rodyklių klavišų spartieji klavišai",
         "shortcut-up": "Visuotinis spartusis klavišas: garsiau",
-        "shortcut-down": "Visuotinis spartusis klavišas: tyliau"
+        "shortcut-down": "Visuotinis spartusis klavišas: tyliau",
+        "arrowsShortcut": {
+          "label": "Rodyklių klavišų spartieji klavišai"
+        },
+        "volumeUp": {
+          "label": "Visuotinis spartusis klavišas: garsiau"
+        },
+        "volumeDown": {
+          "label": "Visuotinis spartusis klavišas: tyliau"
+        }
       }
     },
     "quality-changer": {
@@ -1018,7 +1104,28 @@
       },
       "settings": {
         "global-keybinds": "Visuotiniai spartieji klavišai (veikia visoje programoje)",
-        "local-keybinds": "Vietiniai spartieji klavišai (tik kai langas aktyvus)"
+        "local-keybinds": "Vietiniai spartieji klavišai (tik kai langas aktyvus)",
+        "playPause": {
+          "label": "Paleisti / Pristabdyti"
+        },
+        "localPlayPause": {
+          "label": "Paleisti / Pristabdyti"
+        },
+        "next": {
+          "label": "Kitas"
+        },
+        "localNext": {
+          "label": "Kitas"
+        },
+        "previous": {
+          "label": "Ankstesnis"
+        },
+        "localPrevious": {
+          "label": "Ankstesnis"
+        },
+        "overrideMediaKeys": {
+          "label": "Perrašyti Medijos klavišus"
+        }
       }
     },
     "skip-disliked-songs": {
@@ -1029,7 +1136,10 @@
       "description": "Automatiškai praleisti tylos dalis dainose",
       "name": "Praleisti Tylumas",
       "settings": {
-        "only-skip-beginning": "Praleisti tylą tik kūrinio pradžioje"
+        "only-skip-beginning": "Praleisti tylą tik kūrinio pradžioje",
+        "onlySkipBeginning": {
+          "label": "Praleisti tylą tik kūrinio pradžioje"
+        }
       }
     },
     "sponsorblock": {
@@ -1045,7 +1155,28 @@
           "selfpromo": "Savireklama",
           "music_offtopic": "Ne muzikos dalis"
         },
-        "api-url": "API URL"
+        "api-url": "API URL",
+        "sponsor": {
+          "label": "Rėmėjas"
+        },
+        "intro": {
+          "label": "Įžanga"
+        },
+        "outro": {
+          "label": "Pabaiga"
+        },
+        "interaction": {
+          "label": "Sąveikos priminimas"
+        },
+        "selfpromo": {
+          "label": "Savireklama"
+        },
+        "music_offtopic": {
+          "label": "Ne muzikos dalis"
+        },
+        "apiURL": {
+          "label": "API URL"
+        }
       }
     },
     "synced-lyrics": {
@@ -1346,7 +1477,25 @@
       },
       "name": "Skaidrus Grotuvas",
       "settings": {
-        "type-description": "Fono medžiaga, naudojama lango permatomumui"
+        "type-description": "Fono medžiaga, naudojama lango permatomumui",
+        "opacity": {
+          "label": "Skaidrumas"
+        },
+        "type": {
+          "label": "Tipas",
+          "description": "Fono medžiaga, naudojama lango permatomumui",
+          "options": {
+            "acrylic": "Akrilas",
+            "content": "Turinys",
+            "fullscreen-ui": "Viso ekrano sąsaja",
+            "mica": "Žėrutis",
+            "tabbed": "Atskirtas",
+            "under-page": "Po puslapiu",
+            "under-window": "Po langu",
+            "window": "Langas",
+            "none": "Joks"
+          }
+        }
       }
     },
     "tuna-obs": {
@@ -1382,6 +1531,27 @@
       "templates": {
         "button-song": "Daina",
         "button-video": "Vaizdo įrašas"
+      },
+      "settings": {
+        "mode": {
+          "label": "Rėžimas",
+          "options": {
+            "custom": "Pasirinktinis perjungimas",
+            "native": "Vietinis perjungimas",
+            "disabled": "Išjungta"
+          }
+        },
+        "align": {
+          "label": "Lygiavimas",
+          "options": {
+            "left": "Kairė",
+            "middle": "Vidurys",
+            "right": "Dešinė"
+          }
+        },
+        "forceHide": {
+          "label": "Priverstinai pašalinti vaizdo įrašo skirtuką"
+        }
       }
     },
     "visualizer": {
@@ -1391,7 +1561,9 @@
       },
       "name": "Vizualizatorius",
       "settings": {
-        "preset": "Išankstinis nustatymas",
+        "preset": {
+          "label": "Išankstinis nustatymas"
+        },
         "blend-time": "Maišymo laikas",
         "effect": "Efektas",
         "accuracy": "Tikslumas",
@@ -1407,7 +1579,45 @@
         "dottify": "Taškuoti",
         "dottify-description": "Brėžti taškus, o ne ištisinę liniją",
         "horizontal-align": "Horizontalus lygiavimas",
-        "vertical-align": "Vertikalus lygiavimas"
+        "vertical-align": "Vertikalus lygiavimas",
+        "blendTimeInSeconds": {
+          "label": "Maišymo laikas"
+        },
+        "vudioMaxHeight": {
+          "label": "Didžiausias aukštis"
+        },
+        "vudioMaxSize": {
+          "label": "Didžiausias dydis"
+        },
+        "vudioLineWidth": {
+          "label": "Linijos storis"
+        },
+        "vudioColor": {
+          "label": "Spalva"
+        },
+        "vudioShadowBlur": {
+          "label": "Šešėlio suliejimas"
+        },
+        "vudioShadowColor": {
+          "label": "Šešėlio spalva"
+        },
+        "vudioFadeSide": {
+          "label": "Šonų išblukimas"
+        },
+        "vudioPrettify": {
+          "label": "Pagrąžinti",
+          "description": "Siaurinti stulpelius link kraštų"
+        },
+        "vudioDottify": {
+          "label": "Taškuoti",
+          "description": "Brėžti taškus, o ne ištisinę liniją"
+        },
+        "vudioHorizontalAlign": {
+          "label": "Horizontalus lygiavimas"
+        },
+        "vudioVerticalAlign": {
+          "label": "Vertikalus lygiavimas"
+        }
       }
     },
     "audio-only": {
@@ -1477,7 +1687,15 @@
         "open-keybind": "Atidarymo spartusis klavišas",
         "open-keybind-description": "Electron stiliaus sparčioji kombinacija, pvz., CmdOrCtrl+/ arba Alt+Space",
         "open-shortcut": "Atidaryti paieškos lauką iš bet kur",
-        "open-shortcut-description": "Iškvieskite paieškos lauką jau komandų režime, kaip Spotlight. Paspaudus dar kartą, jis uždaromas."
+        "open-shortcut-description": "Iškvieskite paieškos lauką jau komandų režime, kaip Spotlight. Paspaudus dar kartą, jis uždaromas.",
+        "openShortcut": {
+          "label": "Atidaryti paieškos lauką iš bet kur",
+          "description": "Iškvieskite paieškos lauką jau komandų režime, kaip Spotlight. Paspaudus dar kartą, jis uždaromas."
+        },
+        "openKeybind": {
+          "label": "Atidarymo spartusis klavišas",
+          "description": "Electron stiliaus sparčioji kombinacija, pvz., CmdOrCtrl+/ arba Alt+Space"
+        }
       }
     },
     "seek-shortcuts": {
@@ -1494,7 +1712,10 @@
     },
     "statusbar-lyrics": {
       "settings": {
-        "include-pronunciation": "Įtraukti tarimą"
+        "include-pronunciation": "Įtraukti tarimą",
+        "includePronunciation": {
+          "label": "Įtraukti tarimą"
+        }
       }
     },
     "dismiss-multidevice-popup": {
@@ -1506,7 +1727,11 @@
       "name": "Atminties taupytojas",
       "settings": {
         "threshold": "Talpyklos riba",
-        "threshold-description": "Išvalyti talpyklas, kai jų naudojama atmintis viršija šią ribą, o langas paslėptas"
+        "threshold-description": "Išvalyti talpyklas, kai jų naudojama atmintis viršija šią ribą, o langas paslėptas",
+        "thresholdMB": {
+          "label": "Talpyklos riba",
+          "description": "Išvalyti talpyklas, kai jų naudojama atmintis viršija šią ribą, o langas paslėptas"
+        }
       }
     }
   },

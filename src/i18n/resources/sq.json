@@ -314,7 +314,15 @@
         },
         "enable-seekbar": "Aktivizo tematizimin e shiritit"
       },
-      "name": "Tema e ngjyrave të albumit"
+      "name": "Tema e ngjyrave të albumit",
+      "settings": {
+        "ratio": {
+          "label": "Raporti i përzierjes së ngjyrave"
+        },
+        "enableSeekbar": {
+          "label": "Aktivizo tematizimin e shiritit"
+        }
+      }
     },
     "ambient-mode": {
       "description": "Aplikon një efekt ndriçimi duke hedhur ngjyra të buta nga videoja, në sfondin e ekranit tuaj",
@@ -504,6 +512,14 @@
         "caption-changed": "Titrat u ndryshuan në {{language}}",
         "caption-disabled": "Titrat u çaktivizuan",
         "no-captions": "Nuk ka titra të disponueshëm për këtë këngë"
+      },
+      "settings": {
+        "autoload": {
+          "label": "Zgjidh automatikisht titrat e fundit të përdorur"
+        },
+        "disableCaptions": {
+          "label": "Pa titra si parazgjedhje"
+        }
       }
     },
     "clock": {
@@ -517,7 +533,13 @@
       },
       "name": "Ora",
       "settings": {
-        "hour-12": "Përdor formatin 12-orësh"
+        "hour-12": "Përdor formatin 12-orësh",
+        "displaySeconds": {
+          "label": "Shfaq Sekondat"
+        },
+        "hour12": {
+          "label": "Përdor formatin 12-orësh"
+        }
       }
     },
     "compact-sidebar": {
@@ -576,7 +598,12 @@
       "menu": {
         "apply-once": "Zbatohet vetëm në nisje"
       },
-      "name": "Çaktivizo Luajtjen Automatike"
+      "name": "Çaktivizo Luajtjen Automatike",
+      "settings": {
+        "applyOnce": {
+          "label": "Zbatohet vetëm në nisje"
+        }
+      }
     },
     "discord": {
       "backend": {
@@ -616,7 +643,38 @@
         "activity-timeout-enabled": "Pastro praninë kur pauzohet",
         "activity-timeout-time": "Pastro pas",
         "hide-github-button": "Fshih butonin “Shiko në GitHub”",
-        "hide-duration-left": "Fshih kohën e mbetur"
+        "hide-duration-left": "Fshih kohën e mbetur",
+        "autoReconnect": {
+          "label": "Rilidhje automatike"
+        },
+        "activityTimeoutEnabled": {
+          "label": "Pastro praninë kur pauzohet"
+        },
+        "activityTimeoutSeconds": {
+          "label": "Pastro pas"
+        },
+        "playButton": {
+          "label": "Luaj në {{applicationName}}"
+        },
+        "hideGitHubButton": {
+          "label": "Fshih butonin “Shiko në GitHub”"
+        },
+        "hideDurationLeft": {
+          "label": "Fshih kohën e mbetur"
+        },
+        "statusDisplayType": {
+          "label": "Teksti i statusit",
+          "options": {
+            "name": "Duke dëgjuar {{applicationName}}",
+            "state": "Duke dëgjuar {artist}",
+            "details": "Duke dëgjuar {song title}"
+          }
+        }
+      },
+      "actions": {
+        "clearActivity": {
+          "label": "Pastro aktivitetin"
+        }
       }
     },
     "downloader": {
@@ -888,6 +946,23 @@
       "name": "Fotografi-në-fotografi",
       "templates": {
         "button": "Fotografi-në-fotografi"
+      },
+      "settings": {
+        "hotkey": {
+          "label": "Shkurtore"
+        },
+        "useNativePiP": {
+          "label": "Përdor PiP-në vendase të shfletuesit"
+        },
+        "alwaysOnTop": {
+          "label": "Gjithmonë mbi të tjerat"
+        },
+        "savePosition": {
+          "label": "Ruaj pozicionin e dritares"
+        },
+        "saveSize": {
+          "label": "Ruaj madhësinë e dritares"
+        }
       }
     },
     "playback-speed": {
@@ -923,10 +998,21 @@
         }
       },
       "settings": {
-        "steps": "Hapi i volumit",
+        "steps": {
+          "label": "Hapi i volumit"
+        },
         "arrows-shortcut": "Shkurtoret e tasteve të shigjetave",
         "shortcut-up": "Shkurtore globale: rrit volumin",
-        "shortcut-down": "Shkurtore globale: ul volumin"
+        "shortcut-down": "Shkurtore globale: ul volumin",
+        "arrowsShortcut": {
+          "label": "Shkurtoret e tasteve të shigjetave"
+        },
+        "volumeUp": {
+          "label": "Shkurtore globale: rrit volumin"
+        },
+        "volumeDown": {
+          "label": "Shkurtore globale: ul volumin"
+        }
       }
     },
     "quality-changer": {
@@ -1025,14 +1111,38 @@
       },
       "settings": {
         "global-keybinds": "Shkurtoret globale (funksionojnë në të gjithë aplikacionin)",
-        "local-keybinds": "Shkurtoret lokale (vetëm kur dritarja është në fokus)"
+        "local-keybinds": "Shkurtoret lokale (vetëm kur dritarja është në fokus)",
+        "playPause": {
+          "label": "Luaj / Pauzo"
+        },
+        "localPlayPause": {
+          "label": "Luaj / Pauzo"
+        },
+        "next": {
+          "label": "Tjetra"
+        },
+        "localNext": {
+          "label": "Tjetra"
+        },
+        "previous": {
+          "label": "E Mëparshmja"
+        },
+        "localPrevious": {
+          "label": "E Mëparshmja"
+        },
+        "overrideMediaKeys": {
+          "label": "Mbishkruaj Tastet Mediatike"
+        }
       }
     },
     "skip-silences": {
       "description": "Kalo automatikisht pjesët e heshtura në këngë",
       "name": "Kalo Heshtjet",
       "settings": {
-        "only-skip-beginning": "Kap vetëm heshtjen në fillim të këngës"
+        "only-skip-beginning": "Kap vetëm heshtjen në fillim të këngës",
+        "onlySkipBeginning": {
+          "label": "Kap vetëm heshtjen në fillim të këngës"
+        }
       }
     },
     "sponsorblock": {
@@ -1048,7 +1158,28 @@
           "selfpromo": "Vetëpromovim",
           "music_offtopic": "Seksion jo-muzikor"
         },
-        "api-url": "URL e API-së"
+        "api-url": "URL e API-së",
+        "sponsor": {
+          "label": "Sponsor"
+        },
+        "intro": {
+          "label": "Hyrje"
+        },
+        "outro": {
+          "label": "Dalje"
+        },
+        "interaction": {
+          "label": "Kujtesë interaksioni"
+        },
+        "selfpromo": {
+          "label": "Vetëpromovim"
+        },
+        "music_offtopic": {
+          "label": "Seksion jo-muzikor"
+        },
+        "apiURL": {
+          "label": "URL e API-së"
+        }
       }
     },
     "synced-lyrics": {
@@ -1349,7 +1480,25 @@
       },
       "name": "Luajtësi Transparent",
       "settings": {
-        "type-description": "Materiali i sfondit i përdorur për transparencën e dritares"
+        "type-description": "Materiali i sfondit i përdorur për transparencën e dritares",
+        "opacity": {
+          "label": "Opaciteti"
+        },
+        "type": {
+          "label": "Lloji",
+          "description": "Materiali i sfondit i përdorur për transparencën e dritares",
+          "options": {
+            "acrylic": "Akrilik",
+            "content": "Përmbajtja",
+            "fullscreen-ui": "Ndërfaqja e ekranit të plotë",
+            "mica": "Mika",
+            "tabbed": "Me skeda",
+            "under-page": "Nën faqe",
+            "under-window": "Nën dritare",
+            "window": "Dritare",
+            "none": "Asnjë"
+          }
+        }
       }
     },
     "tuna-obs": {
@@ -1385,6 +1534,27 @@
       "templates": {
         "button-song": "Këngë",
         "button-video": "Video"
+      },
+      "settings": {
+        "mode": {
+          "label": "Modaliteti",
+          "options": {
+            "custom": "Ndryshim i personalizuar",
+            "native": "Ndryshim vendor",
+            "disabled": "Çaktivizuar"
+          }
+        },
+        "align": {
+          "label": "Rreshtimi",
+          "options": {
+            "left": "Majtas",
+            "middle": "Mes",
+            "right": "Djathtas"
+          }
+        },
+        "forceHide": {
+          "label": "Hiq me forcë skedën e videos"
+        }
       }
     },
     "visualizer": {
@@ -1394,7 +1564,9 @@
       },
       "name": "Vizualizuesi",
       "settings": {
-        "preset": "Paracaktim",
+        "preset": {
+          "label": "Paracaktim"
+        },
         "blend-time": "Koha e përzierjes",
         "effect": "Efekt",
         "accuracy": "Saktësi",
@@ -1410,7 +1582,45 @@
         "dottify": "Dottify",
         "dottify-description": "Vizato pika në vend të një vije të vazhdueshme",
         "horizontal-align": "Rreshtim horizontal",
-        "vertical-align": "Rreshtim vertikal"
+        "vertical-align": "Rreshtim vertikal",
+        "blendTimeInSeconds": {
+          "label": "Koha e përzierjes"
+        },
+        "vudioMaxHeight": {
+          "label": "Lartësia maksimale"
+        },
+        "vudioMaxSize": {
+          "label": "Madhësia maksimale"
+        },
+        "vudioLineWidth": {
+          "label": "Gjerësia e vijës"
+        },
+        "vudioColor": {
+          "label": "Ngjyra"
+        },
+        "vudioShadowBlur": {
+          "label": "Turbullimi i hijes"
+        },
+        "vudioShadowColor": {
+          "label": "Ngjyra e hijes"
+        },
+        "vudioFadeSide": {
+          "label": "Anët e zbehjes"
+        },
+        "vudioPrettify": {
+          "label": "Zbukuro",
+          "description": "Zvogëlo shiritat drejt skajeve"
+        },
+        "vudioDottify": {
+          "label": "Dottify",
+          "description": "Vizato pika në vend të një vije të vazhdueshme"
+        },
+        "vudioHorizontalAlign": {
+          "label": "Rreshtim horizontal"
+        },
+        "vudioVerticalAlign": {
+          "label": "Rreshtim vertikal"
+        }
       }
     },
     "audio-only": {
@@ -1480,7 +1690,15 @@
         "open-keybind": "Shkurtore për hapje",
         "open-keybind-description": "Shkurtore në stil Electron, p.sh. CmdOrCtrl+/ ose Alt+Space",
         "open-shortcut": "Hap kutinë e kërkimit nga kudo",
-        "open-shortcut-description": "Thirr kutinë e kërkimit tashmë në modalitetin e komandave, si Spotlight. Shtypja përsëri e mbyll atë."
+        "open-shortcut-description": "Thirr kutinë e kërkimit tashmë në modalitetin e komandave, si Spotlight. Shtypja përsëri e mbyll atë.",
+        "openShortcut": {
+          "label": "Hap kutinë e kërkimit nga kudo",
+          "description": "Thirr kutinë e kërkimit tashmë në modalitetin e komandave, si Spotlight. Shtypja përsëri e mbyll atë."
+        },
+        "openKeybind": {
+          "label": "Shkurtore për hapje",
+          "description": "Shkurtore në stil Electron, p.sh. CmdOrCtrl+/ ose Alt+Space"
+        }
       }
     },
     "seek-shortcuts": {
@@ -1497,7 +1715,10 @@
     },
     "statusbar-lyrics": {
       "settings": {
-        "include-pronunciation": "Përfshi shqiptimin"
+        "include-pronunciation": "Përfshi shqiptimin",
+        "includePronunciation": {
+          "label": "Përfshi shqiptimin"
+        }
       }
     },
     "dismiss-multidevice-popup": {
@@ -1509,7 +1730,11 @@
       "name": "Kursyesi i memories",
       "settings": {
         "threshold": "Pragu i cache-s",
-        "threshold-description": "Pastro cache-t sapo memoria e tyre aktive e kalon këtë prag ndërsa dritarja është e fshehur"
+        "threshold-description": "Pastro cache-t sapo memoria e tyre aktive e kalon këtë prag ndërsa dritarja është e fshehur",
+        "thresholdMB": {
+          "label": "Pragu i cache-s",
+          "description": "Pastro cache-t sapo memoria e tyre aktive e kalon këtë prag ndërsa dritarja është e fshehur"
+        }
       }
     }
   },

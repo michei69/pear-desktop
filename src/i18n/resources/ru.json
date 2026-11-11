@@ -314,7 +314,15 @@
         },
         "enable-seekbar": "Включить тематическое оформление полосы прокрутки"
       },
-      "name": "Цветовая тема альбома"
+      "name": "Цветовая тема альбома",
+      "settings": {
+        "ratio": {
+          "label": "Соотношение цветов"
+        },
+        "enableSeekbar": {
+          "label": "Включить тематическое оформление полосы прокрутки"
+        }
+      }
     },
     "ambient-mode": {
       "description": "Применяет световой эффект, отбрасывая мягкие цвета из видео на задний фон вашего экрана",
@@ -497,6 +505,14 @@
         "caption-changed": "Субтитры изменены на {{language}}",
         "caption-disabled": "Субтитры отключены",
         "no-captions": "Нет доступных субтитров для этой песни"
+      },
+      "settings": {
+        "autoload": {
+          "label": "Автоматически выбирать последние использованные субтитры"
+        },
+        "disableCaptions": {
+          "label": "Без субтитров по умолчанию"
+        }
       }
     },
     "clock": {
@@ -510,7 +526,13 @@
       },
       "name": "Часы",
       "settings": {
-        "hour-12": "Использовать 12-часовой формат"
+        "hour-12": "Использовать 12-часовой формат",
+        "displaySeconds": {
+          "label": "Показывать секунды"
+        },
+        "hour12": {
+          "label": "Использовать 12-часовой формат"
+        }
       }
     },
     "compact-sidebar": {
@@ -569,7 +591,12 @@
       "menu": {
         "apply-once": "Применимо только при запуске"
       },
-      "name": "Отключить Автопроигрыш"
+      "name": "Отключить Автопроигрыш",
+      "settings": {
+        "applyOnce": {
+          "label": "Применимо только при запуске"
+        }
+      }
     },
     "discord": {
       "backend": {
@@ -609,7 +636,38 @@
         "activity-timeout-enabled": "Очищать статус при паузе",
         "activity-timeout-time": "Очищать через",
         "hide-github-button": "Скрыть кнопку «Посмотреть на GitHub»",
-        "hide-duration-left": "Скрыть оставшееся время"
+        "hide-duration-left": "Скрыть оставшееся время",
+        "autoReconnect": {
+          "label": "Автопереподключение"
+        },
+        "activityTimeoutEnabled": {
+          "label": "Очищать статус при паузе"
+        },
+        "activityTimeoutSeconds": {
+          "label": "Очищать через"
+        },
+        "playButton": {
+          "label": "Воспроизвести на {{applicationName}}"
+        },
+        "hideGitHubButton": {
+          "label": "Скрыть кнопку «Посмотреть на GitHub»"
+        },
+        "hideDurationLeft": {
+          "label": "Скрыть оставшееся время"
+        },
+        "statusDisplayType": {
+          "label": "Текст статуса",
+          "options": {
+            "name": "Слушает {{applicationName}}",
+            "state": "Слушает {исполнитель}",
+            "details": "Слушает {название трека}"
+          }
+        }
+      },
+      "actions": {
+        "clearActivity": {
+          "label": "Очистить активность"
+        }
       }
     },
     "do-not-track": {
@@ -900,6 +958,23 @@
       "name": "Картинка в картинке",
       "templates": {
         "button": "Картинка в картинке"
+      },
+      "settings": {
+        "hotkey": {
+          "label": "Горячая клавиша"
+        },
+        "useNativePiP": {
+          "label": "Использовать нативный PiP браузера"
+        },
+        "alwaysOnTop": {
+          "label": "Всегда наверху"
+        },
+        "savePosition": {
+          "label": "Сохранить положение окна"
+        },
+        "saveSize": {
+          "label": "Сохранить размер окна"
+        }
       }
     },
     "playback-speed": {
@@ -935,10 +1010,21 @@
         }
       },
       "settings": {
-        "steps": "Шаг громкости",
+        "steps": {
+          "label": "Шаг громкости"
+        },
         "arrows-shortcut": "Сочетания клавиш со стрелками",
         "shortcut-up": "Глобальное сочетание клавиш: громче",
-        "shortcut-down": "Глобальное сочетание клавиш: тише"
+        "shortcut-down": "Глобальное сочетание клавиш: тише",
+        "arrowsShortcut": {
+          "label": "Сочетания клавиш со стрелками"
+        },
+        "volumeUp": {
+          "label": "Глобальное сочетание клавиш: громче"
+        },
+        "volumeDown": {
+          "label": "Глобальное сочетание клавиш: тише"
+        }
       }
     },
     "quality-changer": {
@@ -1037,7 +1123,28 @@
       },
       "settings": {
         "global-keybinds": "Глобальные сочетания клавиш (работают во всём приложении)",
-        "local-keybinds": "Локальные сочетания клавиш (только когда окно в фокусе)"
+        "local-keybinds": "Локальные сочетания клавиш (только когда окно в фокусе)",
+        "playPause": {
+          "label": "Воспроизведение / Пауза"
+        },
+        "localPlayPause": {
+          "label": "Воспроизведение / Пауза"
+        },
+        "next": {
+          "label": "Следующая"
+        },
+        "localNext": {
+          "label": "Следующая"
+        },
+        "previous": {
+          "label": "Предыдущая"
+        },
+        "localPrevious": {
+          "label": "Предыдущая"
+        },
+        "overrideMediaKeys": {
+          "label": "Переопределение мультимедийных клавиш"
+        }
       }
     },
     "skip-disliked-songs": {
@@ -1048,7 +1155,10 @@
       "description": "Автоматически пропускает тихие моменты в песнях",
       "name": "Пропустить тишину",
       "settings": {
-        "only-skip-beginning": "Пропускать тишину только в начале трека"
+        "only-skip-beginning": "Пропускать тишину только в начале трека",
+        "onlySkipBeginning": {
+          "label": "Пропускать тишину только в начале трека"
+        }
       }
     },
     "sponsorblock": {
@@ -1064,7 +1174,28 @@
           "selfpromo": "Самореклама",
           "music_offtopic": "Немузыкальная часть"
         },
-        "api-url": "URL API"
+        "api-url": "URL API",
+        "sponsor": {
+          "label": "Спонсор"
+        },
+        "intro": {
+          "label": "Вступление"
+        },
+        "outro": {
+          "label": "Концовка"
+        },
+        "interaction": {
+          "label": "Напоминание о взаимодействии"
+        },
+        "selfpromo": {
+          "label": "Самореклама"
+        },
+        "music_offtopic": {
+          "label": "Немузыкальная часть"
+        },
+        "apiURL": {
+          "label": "URL API"
+        }
       }
     },
     "synced-lyrics": {
@@ -1365,7 +1496,25 @@
       },
       "name": "Прозрачный плеер",
       "settings": {
-        "type-description": "Фоновый материал, используемый для прозрачности окна"
+        "type-description": "Фоновый материал, используемый для прозрачности окна",
+        "opacity": {
+          "label": "Непрозрачность"
+        },
+        "type": {
+          "label": "Тип",
+          "description": "Фоновый материал, используемый для прозрачности окна",
+          "options": {
+            "acrylic": "Акриловый",
+            "content": "Контент",
+            "fullscreen-ui": "Полноэкранный интерфейс",
+            "mica": "Слюдяной",
+            "tabbed": "Страничный",
+            "under-page": "Под страницей",
+            "under-window": "Под окном",
+            "window": "Окно",
+            "none": "Отключено"
+          }
+        }
       }
     },
     "tuna-obs": {
@@ -1401,6 +1550,27 @@
       "templates": {
         "button-song": "Песня",
         "button-video": "Видео"
+      },
+      "settings": {
+        "mode": {
+          "label": "Режим",
+          "options": {
+            "custom": "Кастомный переключатель",
+            "native": "Стандартный переключатель",
+            "disabled": "Отключен"
+          }
+        },
+        "align": {
+          "label": "Выравнивание",
+          "options": {
+            "left": "Слева",
+            "middle": "По центру",
+            "right": "Справа"
+          }
+        },
+        "forceHide": {
+          "label": "Принудительное скрыть видео"
+        }
       }
     },
     "visualizer": {
@@ -1410,7 +1580,9 @@
       },
       "name": "Визуализатор",
       "settings": {
-        "preset": "Пресет",
+        "preset": {
+          "label": "Пресет"
+        },
         "blend-time": "Время смешивания",
         "effect": "Эффект",
         "accuracy": "Точность",
@@ -1426,7 +1598,45 @@
         "dottify": "Точки",
         "dottify-description": "Рисовать точки вместо непрерывной линии",
         "horizontal-align": "Горизонтальное выравнивание",
-        "vertical-align": "Вертикальное выравнивание"
+        "vertical-align": "Вертикальное выравнивание",
+        "blendTimeInSeconds": {
+          "label": "Время смешивания"
+        },
+        "vudioMaxHeight": {
+          "label": "Макс. высота"
+        },
+        "vudioMaxSize": {
+          "label": "Макс. размер"
+        },
+        "vudioLineWidth": {
+          "label": "Толщина линии"
+        },
+        "vudioColor": {
+          "label": "Цвет"
+        },
+        "vudioShadowBlur": {
+          "label": "Размытие тени"
+        },
+        "vudioShadowColor": {
+          "label": "Цвет тени"
+        },
+        "vudioFadeSide": {
+          "label": "Затухание по краям"
+        },
+        "vudioPrettify": {
+          "label": "Приукрасить",
+          "description": "Сужать столбики к краям"
+        },
+        "vudioDottify": {
+          "label": "Точки",
+          "description": "Рисовать точки вместо непрерывной линии"
+        },
+        "vudioHorizontalAlign": {
+          "label": "Горизонтальное выравнивание"
+        },
+        "vudioVerticalAlign": {
+          "label": "Вертикальное выравнивание"
+        }
       }
     },
     "audio-only": {
@@ -1477,7 +1687,15 @@
         "open-keybind": "Сочетание клавиш открытия",
         "open-keybind-description": "Ускоритель в стиле Electron, например CmdOrCtrl+/ или Alt+Space",
         "open-shortcut": "Открывать поле поиска из любого места",
-        "open-shortcut-description": "Вызывает поле поиска уже в режиме команд, как Spotlight. Повторное нажатие закрывает его."
+        "open-shortcut-description": "Вызывает поле поиска уже в режиме команд, как Spotlight. Повторное нажатие закрывает его.",
+        "openShortcut": {
+          "label": "Открывать поле поиска из любого места",
+          "description": "Вызывает поле поиска уже в режиме команд, как Spotlight. Повторное нажатие закрывает его."
+        },
+        "openKeybind": {
+          "label": "Сочетание клавиш открытия",
+          "description": "Ускоритель в стиле Electron, например CmdOrCtrl+/ или Alt+Space"
+        }
       }
     },
     "seek-shortcuts": {
@@ -1494,7 +1712,10 @@
     },
     "statusbar-lyrics": {
       "settings": {
-        "include-pronunciation": "Включать произношение"
+        "include-pronunciation": "Включать произношение",
+        "includePronunciation": {
+          "label": "Включать произношение"
+        }
       }
     },
     "dismiss-multidevice-popup": {
@@ -1506,7 +1727,11 @@
       "name": "Экономия памяти",
       "settings": {
         "threshold": "Порог кеша",
-        "threshold-description": "Очищать кеши, когда их занятая память превышает это значение, пока окно скрыто"
+        "threshold-description": "Очищать кеши, когда их занятая память превышает это значение, пока окно скрыто",
+        "thresholdMB": {
+          "label": "Порог кеша",
+          "description": "Очищать кеши, когда их занятая память превышает это значение, пока окно скрыто"
+        }
       }
     }
   },

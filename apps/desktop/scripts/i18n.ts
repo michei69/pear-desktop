@@ -19,6 +19,7 @@ import { join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import pear from "@pear/vite-plugin";
 import { type AnyPlugin, type ConfigShape, pluginActions } from "@pear/sdk";
+import type { FieldTextKeys } from "@pear/sdk/core-config";
 import { createServer } from "vite";
 import { escapeNames } from "../../../scripts/escape-names.ts";
 
@@ -80,17 +81,20 @@ async function loadModules() {
   });
   try {
     const plugins = (await server.ssrLoadModule("virtual:pear/host-plugins")).default as AnyPlugin[];
-    const { CORE_SECTIONS } = (await server.ssrLoadModule("@pear/sdk/core-config")) as { CORE_SECTIONS: Record<string, ConfigShape> };
+    const { CORE_FIELD_KEYS, CORE_SECTIONS } = (await server.ssrLoadModule("@pear/sdk/core-config")) as {
+      CORE_FIELD_KEYS: Readonly<Record<string, FieldTextKeys>>;
+      CORE_SECTIONS: Record<string, ConfigShape>;
+    };
     const { UI_STRINGS } = (await server.ssrLoadModule(join(repo, "packages/ui/src/strings.ts"))) as { UI_STRINGS: Record<string, string> };
     const i18n = (await server.ssrLoadModule("@pear/sdk/i18n")) as typeof import("@pear/sdk/i18n");
-    return { plugins, CORE_SECTIONS, UI_STRINGS, i18n };
+    return { plugins, CORE_FIELD_KEYS, CORE_SECTIONS, UI_STRINGS, i18n };
   } finally {
     await server.close();
   }
 }
 
 /** Every key the code has an English text for, with that text. */
-function wantedStrings({ plugins, CORE_SECTIONS, UI_STRINGS, i18n }: Modules) {
+function wantedStrings({ plugins, CORE_FIELD_KEYS, CORE_SECTIONS, UI_STRINGS, i18n }: Modules) {
   const wanted = new Map<string, string>();
   for (const plugin of plugins) {
     wanted.set(`plugins.${plugin.id}.name`, plugin.name);
@@ -101,22 +105,34 @@ function wantedStrings({ plugins, CORE_SECTIONS, UI_STRINGS, i18n }: Modules) {
       if (action.description) wanted.set(`plugins.${plugin.id}.actions.${name}.description`, action.description);
     }
   }
-  for (const shape of Object.values(CORE_SECTIONS)) fieldStrings("core", shape, i18n, wanted);
+  for (const shape of Object.values(CORE_SECTIONS)) fieldStrings("core", shape, i18n, wanted, CORE_FIELD_KEYS);
   for (const [key, english] of Object.entries(UI_STRINGS)) wanted.set(key, english);
   sourceStrings(wanted);
   return wanted;
 }
 
-function fieldStrings(owner: string, shape: ConfigShape, i18n: typeof import("@pear/sdk/i18n"), out: Map<string, string>) {
+/**
+ * A shape's field texts. Core fields pear-desktop already translated under its
+ * own keys keep those at runtime, so the generated `settings-ui.core.*` twins are
+ * skipped (`CORE_FIELD_KEYS` overrides them part by part: label, description…).
+ */
+function fieldStrings(
+  owner: string,
+  shape: ConfigShape,
+  i18n: typeof import("@pear/sdk/i18n"),
+  out: Map<string, string>,
+  overrides: Readonly<Record<string, FieldTextKeys>> = {},
+) {
   for (const [name, field] of Object.entries(shape)) {
     const key = i18n.fieldKey(owner, name);
-    out.set(`${key}.label`, field.label);
-    if (field.description) out.set(`${key}.description`, field.description);
-    if ("placeholder" in field && field.placeholder) out.set(`${key}.placeholder`, field.placeholder);
+    const keys = overrides[name];
+    if (!keys?.label) out.set(`${key}.label`, field.label);
+    if (field.description && !keys?.description) out.set(`${key}.description`, field.description);
+    if ("placeholder" in field && field.placeholder && !keys?.placeholder) out.set(`${key}.placeholder`, field.placeholder);
     if (field.group) out.set(i18n.groupKey(field.group), field.group);
     // Language names are written in their own language; nothing to translate.
     if ("options" in field && !(owner === "core" && name === "language")) {
-      for (const option of field.options) out.set(`${key}.options.${option.value}`, option.label);
+      for (const option of field.options) if (!keys?.options?.[option.value]) out.set(`${key}.options.${option.value}`, option.label);
     }
   }
 }

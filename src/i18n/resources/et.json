@@ -314,7 +314,15 @@
         },
         "enable-seekbar": "Luba kerimisriba kujundamine"
       },
-      "name": "Albumi värviteema"
+      "name": "Albumi värviteema",
+      "settings": {
+        "ratio": {
+          "label": "Värvide segamissuhe"
+        },
+        "enableSeekbar": {
+          "label": "Luba kerimisriba kujundamine"
+        }
+      }
     },
     "ambient-mode": {
       "description": "Rakendab valgusefekti, projitseerides videost õrnad värvid ekraani taustale",
@@ -497,7 +505,15 @@
         "caption-disabled": "Subtiitrid on välja lülitatud",
         "no-captions": "Selle loo jaoks pole subtiitreid saadaval"
       },
-      "description": "Pealdiste valija {{applicationName}} heliradade jaoks"
+      "description": "Pealdiste valija {{applicationName}} heliradade jaoks",
+      "settings": {
+        "autoload": {
+          "label": "Vali automaatselt viimati kasutatud subtiitrid"
+        },
+        "disableCaptions": {
+          "label": "Vaikimisi subtiitreid pole"
+        }
+      }
     },
     "clock": {
       "description": "Lisa navigeerimissibale kell",
@@ -510,7 +526,13 @@
       },
       "name": "Kell",
       "settings": {
-        "hour-12": "Kasuta 12-tunnist vormingut"
+        "hour-12": "Kasuta 12-tunnist vormingut",
+        "displaySeconds": {
+          "label": "Näita sekundeid"
+        },
+        "hour12": {
+          "label": "Kasuta 12-tunnist vormingut"
+        }
       }
     },
     "compact-sidebar": {
@@ -569,7 +591,12 @@
         "apply-once": "Rakendatakse ainult käivitamisel"
       },
       "name": "Keela automaatne esitamine",
-      "description": "Paneb loo algama \"pausil\" režiimis"
+      "description": "Paneb loo algama \"pausil\" režiimis",
+      "settings": {
+        "applyOnce": {
+          "label": "Rakendatakse ainult käivitamisel"
+        }
+      }
     },
     "discord": {
       "backend": {
@@ -609,7 +636,38 @@
         "activity-timeout-enabled": "Tühjenda kohalolu pausil",
         "activity-timeout-time": "Tühjenda pärast",
         "hide-github-button": "Peida nupp „Vaata GitHubis“",
-        "hide-duration-left": "Peida järelejäänud aeg"
+        "hide-duration-left": "Peida järelejäänud aeg",
+        "autoReconnect": {
+          "label": "Automaatne taasühendamine"
+        },
+        "activityTimeoutEnabled": {
+          "label": "Tühjenda kohalolu pausil"
+        },
+        "activityTimeoutSeconds": {
+          "label": "Tühjenda pärast"
+        },
+        "playButton": {
+          "label": "Esita rakenduses {{applicationName}}"
+        },
+        "hideGitHubButton": {
+          "label": "Peida nupp „Vaata GitHubis“"
+        },
+        "hideDurationLeft": {
+          "label": "Peida järelejäänud aeg"
+        },
+        "statusDisplayType": {
+          "label": "Staatuse tekst",
+          "options": {
+            "name": "Kuulan rakendust {{applicationName}}",
+            "state": "Kuulan artisti {artist}",
+            "details": "Kuulan lugu {song title}"
+          }
+        }
+      },
+      "actions": {
+        "clearActivity": {
+          "label": "Tühjenda tegevused"
+        }
       }
     },
     "do-not-track": {
@@ -888,7 +946,24 @@
       "templates": {
         "button": "Pilt pildis"
       },
-      "description": "Võimaldab lülitada rakendust pilt-pildis režiimi"
+      "description": "Võimaldab lülitada rakendust pilt-pildis režiimi",
+      "settings": {
+        "hotkey": {
+          "label": "Kiirklahv"
+        },
+        "useNativePiP": {
+          "label": "Kasuta veebisirvija pilt pildis"
+        },
+        "alwaysOnTop": {
+          "label": "Alati kõige peal"
+        },
+        "savePosition": {
+          "label": "Salvesta akna asukoht"
+        },
+        "saveSize": {
+          "label": "Salvesta akna suurus"
+        }
+      }
     },
     "playback-speed": {
       "name": "Esitamise kiirus",
@@ -923,10 +998,21 @@
       },
       "description": "Juhi helitugevust täpselt hiireratta/kiirklahvidega, kohandatud HUD-i ja seadistatavate helitugevuse sammudega",
       "settings": {
-        "steps": "Helitugevuse samm",
+        "steps": {
+          "label": "Helitugevuse samm"
+        },
         "arrows-shortcut": "Noolklahvide otseteed",
         "shortcut-up": "Globaalne otsetee: helitugevus üles",
-        "shortcut-down": "Globaalne otsetee: helitugevus alla"
+        "shortcut-down": "Globaalne otsetee: helitugevus alla",
+        "arrowsShortcut": {
+          "label": "Noolklahvide otseteed"
+        },
+        "volumeUp": {
+          "label": "Globaalne otsetee: helitugevus üles"
+        },
+        "volumeDown": {
+          "label": "Globaalne otsetee: helitugevus alla"
+        }
       }
     },
     "quality-changer": {
@@ -1025,7 +1111,28 @@
       },
       "settings": {
         "global-keybinds": "Globaalsed kiirklahvid (toimivad kogu rakenduses)",
-        "local-keybinds": "Kohalikud kiirklahvid (ainult akna fookuses olles)"
+        "local-keybinds": "Kohalikud kiirklahvid (ainult akna fookuses olles)",
+        "playPause": {
+          "label": "Esita / Peata"
+        },
+        "localPlayPause": {
+          "label": "Esita / Peata"
+        },
+        "next": {
+          "label": "Järgmine"
+        },
+        "localNext": {
+          "label": "Järgmine"
+        },
+        "previous": {
+          "label": "Eelmine"
+        },
+        "localPrevious": {
+          "label": "Eelmine"
+        },
+        "overrideMediaKeys": {
+          "label": "Kirjuta Meediaklahvid Üle"
+        }
       }
     },
     "skip-disliked-songs": {
@@ -1036,7 +1143,10 @@
       "description": "Jätab lugudes automaatselt tühjad kohad vahele",
       "name": "Jäta vaikus vahele",
       "settings": {
-        "only-skip-beginning": "Jäta vahele ainult loo alguses olev vaikus"
+        "only-skip-beginning": "Jäta vahele ainult loo alguses olev vaikus",
+        "onlySkipBeginning": {
+          "label": "Jäta vahele ainult loo alguses olev vaikus"
+        }
       }
     },
     "sponsorblock": {
@@ -1052,7 +1162,28 @@
           "selfpromo": "Enesereklaam",
           "music_offtopic": "Mittemuusikaline osa"
         },
-        "api-url": "API URL"
+        "api-url": "API URL",
+        "sponsor": {
+          "label": "Sponsor"
+        },
+        "intro": {
+          "label": "Sissejuhatus"
+        },
+        "outro": {
+          "label": "Lõpp"
+        },
+        "interaction": {
+          "label": "Interaktsiooni meeldetuletus"
+        },
+        "selfpromo": {
+          "label": "Enesereklaam"
+        },
+        "music_offtopic": {
+          "label": "Mittemuusikaline osa"
+        },
+        "apiURL": {
+          "label": "API URL"
+        }
       }
     },
     "synced-lyrics": {
@@ -1345,7 +1476,25 @@
       },
       "name": "Läbipaistev pleier",
       "settings": {
-        "type-description": "Akna läbipaistvuse jaoks kasutatav taustamaterjal"
+        "type-description": "Akna läbipaistvuse jaoks kasutatav taustamaterjal",
+        "opacity": {
+          "label": "Läbipaistmatus"
+        },
+        "type": {
+          "label": "Liik",
+          "description": "Akna läbipaistvuse jaoks kasutatav taustamaterjal",
+          "options": {
+            "acrylic": "Akrüül",
+            "content": "Sisu",
+            "fullscreen-ui": "Täisekraani kasutajaliides",
+            "mica": "Mica",
+            "tabbed": "Vahekaartidega",
+            "under-page": "Lehe all",
+            "under-window": "Akna all",
+            "window": "Aken",
+            "none": "Pole"
+          }
+        }
       }
     },
     "tuna-obs": {
@@ -1377,7 +1526,28 @@
         "button-song": "Lugu",
         "button-video": "Video"
       },
-      "description": "Lisab nupu Video/Loo režiimi vahel vahetamiseks. Võib valikuliselt eemaldada ka terve video vahekaardi"
+      "description": "Lisab nupu Video/Loo režiimi vahel vahetamiseks. Võib valikuliselt eemaldada ka terve video vahekaardi",
+      "settings": {
+        "mode": {
+          "label": "Režiim",
+          "options": {
+            "custom": "Kohandatud lüliti",
+            "native": "Omamaine lüliti",
+            "disabled": "Välja lülitatud"
+          }
+        },
+        "align": {
+          "label": "Joondus",
+          "options": {
+            "left": "Vasakule",
+            "middle": "Keskele",
+            "right": "Paremale"
+          }
+        },
+        "forceHide": {
+          "label": "Sunni video vahekaardi eemaldamine"
+        }
+      }
     },
     "visualizer": {
       "description": "Lisab pleierile visualiseerija",
@@ -1386,7 +1556,9 @@
       },
       "name": "Visualiseerija",
       "settings": {
-        "preset": "Eelseade",
+        "preset": {
+          "label": "Eelseade"
+        },
         "blend-time": "Sulandumisaeg",
         "effect": "Efekt",
         "accuracy": "Täpsus",
@@ -1402,7 +1574,45 @@
         "dottify": "Täpista",
         "dottify-description": "Joonista pideva joone asemel täpid",
         "horizontal-align": "Horisontaalne joondus",
-        "vertical-align": "Vertikaalne joondus"
+        "vertical-align": "Vertikaalne joondus",
+        "blendTimeInSeconds": {
+          "label": "Sulandumisaeg"
+        },
+        "vudioMaxHeight": {
+          "label": "Maksimaalne kõrgus"
+        },
+        "vudioMaxSize": {
+          "label": "Maksimaalne suurus"
+        },
+        "vudioLineWidth": {
+          "label": "Joone laius"
+        },
+        "vudioColor": {
+          "label": "Värv"
+        },
+        "vudioShadowBlur": {
+          "label": "Varju hägusus"
+        },
+        "vudioShadowColor": {
+          "label": "Varju värv"
+        },
+        "vudioFadeSide": {
+          "label": "Külgede hajutamine"
+        },
+        "vudioPrettify": {
+          "label": "Ilusta",
+          "description": "Ahenda tulbad servade suunas"
+        },
+        "vudioDottify": {
+          "label": "Täpista",
+          "description": "Joonista pideva joone asemel täpid"
+        },
+        "vudioHorizontalAlign": {
+          "label": "Horisontaalne joondus"
+        },
+        "vudioVerticalAlign": {
+          "label": "Vertikaalne joondus"
+        }
       }
     },
     "audio-only": {
@@ -1477,7 +1687,15 @@
         "open-keybind": "Avamise otsetee",
         "open-keybind-description": "Electroni stiilis kiirendi, nt CmdOrCtrl+/ või Alt+Space",
         "open-shortcut": "Ava otsingukast kõikjalt",
-        "open-shortcut-description": "Avab otsingukasti juba käsurežiimis, nagu Spotlight. Uuesti vajutamine sulgeb selle."
+        "open-shortcut-description": "Avab otsingukasti juba käsurežiimis, nagu Spotlight. Uuesti vajutamine sulgeb selle.",
+        "openShortcut": {
+          "label": "Ava otsingukast kõikjalt",
+          "description": "Avab otsingukasti juba käsurežiimis, nagu Spotlight. Uuesti vajutamine sulgeb selle."
+        },
+        "openKeybind": {
+          "label": "Avamise otsetee",
+          "description": "Electroni stiilis kiirendi, nt CmdOrCtrl+/ või Alt+Space"
+        }
       }
     },
     "seek-shortcuts": {
@@ -1494,7 +1712,10 @@
     },
     "statusbar-lyrics": {
       "settings": {
-        "include-pronunciation": "Kaasa hääldus"
+        "include-pronunciation": "Kaasa hääldus",
+        "includePronunciation": {
+          "label": "Kaasa hääldus"
+        }
       }
     },
     "dismiss-multidevice-popup": {
@@ -1506,7 +1727,11 @@
       "name": "Mälusäästja",
       "settings": {
         "threshold": "Vahemälu lävend",
-        "threshold-description": "Tühjenda vahemälud, kui nende aktiivne mälu ületab selle väärtuse, kui aken on peidetud"
+        "threshold-description": "Tühjenda vahemälud, kui nende aktiivne mälu ületab selle väärtuse, kui aken on peidetud",
+        "thresholdMB": {
+          "label": "Vahemälu lävend",
+          "description": "Tühjenda vahemälud, kui nende aktiivne mälu ületab selle väärtuse, kui aken on peidetud"
+        }
       }
     }
   },

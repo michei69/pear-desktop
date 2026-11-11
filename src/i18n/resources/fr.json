@@ -314,7 +314,15 @@
         },
         "enable-seekbar": "Activer le thème sur la barre de progression"
       },
-      "name": "Thème de couleur d'album"
+      "name": "Thème de couleur d'album",
+      "settings": {
+        "ratio": {
+          "label": "Ratio de mélange des couleurs"
+        },
+        "enableSeekbar": {
+          "label": "Activer le thème sur la barre de progression"
+        }
+      }
     },
     "ambient-mode": {
       "description": "Applique un effet d'éclairage en jetant des couleurs douces de la vidéo, dans le fond de votre écran",
@@ -497,6 +505,14 @@
         "caption-changed": "Sous-titres changés en {{language}}",
         "caption-disabled": "Sous-titres désactivés",
         "no-captions": "Aucun sous-titres disponibles pour cette chanson"
+      },
+      "settings": {
+        "autoload": {
+          "label": "Sélectionner automatiquement la dernière légende utilisée"
+        },
+        "disableCaptions": {
+          "label": "Pas de sous-titres par défaut"
+        }
       }
     },
     "clock": {
@@ -510,7 +526,13 @@
       },
       "name": "Horloge",
       "settings": {
-        "hour-12": "Utiliser le format 12 heures"
+        "hour-12": "Utiliser le format 12 heures",
+        "displaySeconds": {
+          "label": "Afficher les secondes"
+        },
+        "hour12": {
+          "label": "Utiliser le format 12 heures"
+        }
       }
     },
     "compact-sidebar": {
@@ -569,7 +591,12 @@
       "menu": {
         "apply-once": "S'applique seulement au démarrage"
       },
-      "name": "Désactiver la lecture automatique"
+      "name": "Désactiver la lecture automatique",
+      "settings": {
+        "applyOnce": {
+          "label": "S'applique seulement au démarrage"
+        }
+      }
     },
     "discord": {
       "backend": {
@@ -609,7 +636,38 @@
         "activity-timeout-enabled": "Effacer la présence en pause",
         "activity-timeout-time": "Effacer après",
         "hide-github-button": "Masquer le bouton “Voir sur GitHub”",
-        "hide-duration-left": "Masquer le temps restant"
+        "hide-duration-left": "Masquer le temps restant",
+        "autoReconnect": {
+          "label": "Reconnexion automatique"
+        },
+        "activityTimeoutEnabled": {
+          "label": "Effacer la présence en pause"
+        },
+        "activityTimeoutSeconds": {
+          "label": "Effacer après"
+        },
+        "playButton": {
+          "label": "Jouer sur {{applicationName}}"
+        },
+        "hideGitHubButton": {
+          "label": "Masquer le bouton “Voir sur GitHub”"
+        },
+        "hideDurationLeft": {
+          "label": "Masquer le temps restant"
+        },
+        "statusDisplayType": {
+          "label": "Texte d'état",
+          "options": {
+            "name": "Écoute {{applicationName}}",
+            "state": "Écoute {artiste}",
+            "details": "Écoute {titre de la chanson}"
+          }
+        }
+      },
+      "actions": {
+        "clearActivity": {
+          "label": "Effacer l'activité"
+        }
       }
     },
     "do-not-track": {
@@ -900,6 +958,23 @@
       "name": "Picture-in-picture",
       "templates": {
         "button": "Picture-in-picture"
+      },
+      "settings": {
+        "hotkey": {
+          "label": "Raccourci clavier"
+        },
+        "useNativePiP": {
+          "label": "Utiliser le mode PiP natif du navigateur"
+        },
+        "alwaysOnTop": {
+          "label": "Toujours au dessus"
+        },
+        "savePosition": {
+          "label": "Enregistrer la position de la fenêtre"
+        },
+        "saveSize": {
+          "label": "Enregistrer la taille de la fenêtre"
+        }
       }
     },
     "playback-speed": {
@@ -935,10 +1010,21 @@
         }
       },
       "settings": {
-        "steps": "Incrément de volume",
+        "steps": {
+          "label": "Incrément de volume"
+        },
         "arrows-shortcut": "Raccourcis avec les touches fléchées",
         "shortcut-up": "Raccourci global : augmenter le volume",
-        "shortcut-down": "Raccourci global : baisser le volume"
+        "shortcut-down": "Raccourci global : baisser le volume",
+        "arrowsShortcut": {
+          "label": "Raccourcis avec les touches fléchées"
+        },
+        "volumeUp": {
+          "label": "Raccourci global : augmenter le volume"
+        },
+        "volumeDown": {
+          "label": "Raccourci global : baisser le volume"
+        }
       }
     },
     "quality-changer": {
@@ -1037,7 +1123,28 @@
       },
       "settings": {
         "global-keybinds": "Raccourcis globaux (fonctionnent dans toute l'application)",
-        "local-keybinds": "Raccourcis locaux (uniquement lorsque la fenêtre est active)"
+        "local-keybinds": "Raccourcis locaux (uniquement lorsque la fenêtre est active)",
+        "playPause": {
+          "label": "Lecture / Pause"
+        },
+        "localPlayPause": {
+          "label": "Lecture / Pause"
+        },
+        "next": {
+          "label": "Suivant"
+        },
+        "localNext": {
+          "label": "Suivant"
+        },
+        "previous": {
+          "label": "Précédent"
+        },
+        "localPrevious": {
+          "label": "Précédent"
+        },
+        "overrideMediaKeys": {
+          "label": "Remplacer les touches multimédias"
+        }
       }
     },
     "skip-disliked-songs": {
@@ -1048,7 +1155,10 @@
       "description": "Ignorer automatiquement les sections de silence dans les chansons",
       "name": "Passer les silences",
       "settings": {
-        "only-skip-beginning": "Ne sauter le silence qu'au début d'une piste"
+        "only-skip-beginning": "Ne sauter le silence qu'au début d'une piste",
+        "onlySkipBeginning": {
+          "label": "Ne sauter le silence qu'au début d'une piste"
+        }
       }
     },
     "sponsorblock": {
@@ -1064,7 +1174,28 @@
           "selfpromo": "Autopromotion",
           "music_offtopic": "Section non musicale"
         },
-        "api-url": "URL de l'API"
+        "api-url": "URL de l'API",
+        "sponsor": {
+          "label": "Sponsor"
+        },
+        "intro": {
+          "label": "Intro"
+        },
+        "outro": {
+          "label": "Outro"
+        },
+        "interaction": {
+          "label": "Rappel d'interaction"
+        },
+        "selfpromo": {
+          "label": "Autopromotion"
+        },
+        "music_offtopic": {
+          "label": "Section non musicale"
+        },
+        "apiURL": {
+          "label": "URL de l'API"
+        }
       }
     },
     "synced-lyrics": {
@@ -1365,7 +1496,25 @@
       },
       "name": "Lecteur transparent",
       "settings": {
-        "type-description": "Matériau d'arrière-plan utilisé pour la transparence de la fenêtre"
+        "type-description": "Matériau d'arrière-plan utilisé pour la transparence de la fenêtre",
+        "opacity": {
+          "label": "Opacité"
+        },
+        "type": {
+          "label": "Type",
+          "description": "Matériau d'arrière-plan utilisé pour la transparence de la fenêtre",
+          "options": {
+            "acrylic": "Acrylique",
+            "content": "Contenu",
+            "fullscreen-ui": "Interface plein écran",
+            "mica": "Mica",
+            "tabbed": "À onglets",
+            "under-page": "Sous la page",
+            "under-window": "Sous la fenêtre",
+            "window": "Fenêtre",
+            "none": "Aucun"
+          }
+        }
       }
     },
     "tuna-obs": {
@@ -1401,6 +1550,27 @@
       "templates": {
         "button-song": "Musique",
         "button-video": "Vidéo"
+      },
+      "settings": {
+        "mode": {
+          "label": "Mode",
+          "options": {
+            "custom": "Bascule personnalisée",
+            "native": "Bascule native",
+            "disabled": "Désactivé"
+          }
+        },
+        "align": {
+          "label": "Alignement",
+          "options": {
+            "left": "Gauche",
+            "middle": "Milieu",
+            "right": "Droite"
+          }
+        },
+        "forceHide": {
+          "label": "Forcer la suppression de l'onglet vidéo"
+        }
       }
     },
     "visualizer": {
@@ -1410,7 +1580,9 @@
       },
       "name": "Visualiseur",
       "settings": {
-        "preset": "Préréglage",
+        "preset": {
+          "label": "Préréglage"
+        },
         "blend-time": "Temps de fondu",
         "effect": "Effet",
         "accuracy": "Précision",
@@ -1426,7 +1598,45 @@
         "dottify": "Affichage en points",
         "dottify-description": "Dessiner des points au lieu d'une ligne continue",
         "horizontal-align": "Alignement horizontal",
-        "vertical-align": "Alignement vertical"
+        "vertical-align": "Alignement vertical",
+        "blendTimeInSeconds": {
+          "label": "Temps de fondu"
+        },
+        "vudioMaxHeight": {
+          "label": "Hauteur maximale"
+        },
+        "vudioMaxSize": {
+          "label": "Taille maximale"
+        },
+        "vudioLineWidth": {
+          "label": "Épaisseur de ligne"
+        },
+        "vudioColor": {
+          "label": "Couleur"
+        },
+        "vudioShadowBlur": {
+          "label": "Flou de l'ombre"
+        },
+        "vudioShadowColor": {
+          "label": "Couleur de l'ombre"
+        },
+        "vudioFadeSide": {
+          "label": "Côtés en fondu"
+        },
+        "vudioPrettify": {
+          "label": "Embellir",
+          "description": "Rétrécir les barres vers les bords"
+        },
+        "vudioDottify": {
+          "label": "Affichage en points",
+          "description": "Dessiner des points au lieu d'une ligne continue"
+        },
+        "vudioHorizontalAlign": {
+          "label": "Alignement horizontal"
+        },
+        "vudioVerticalAlign": {
+          "label": "Alignement vertical"
+        }
       }
     },
     "audio-only": {
@@ -1477,7 +1687,15 @@
         "open-keybind": "Raccourci d'ouverture",
         "open-keybind-description": "Accélérateur de style Electron, par ex. CmdOrCtrl+/ ou Alt+Space",
         "open-shortcut": "Ouvrir la zone de recherche depuis n'importe où",
-        "open-shortcut-description": "Ouvre la zone de recherche directement en mode commande, comme Spotlight. Appuyer à nouveau dessus la ferme."
+        "open-shortcut-description": "Ouvre la zone de recherche directement en mode commande, comme Spotlight. Appuyer à nouveau dessus la ferme.",
+        "openShortcut": {
+          "label": "Ouvrir la zone de recherche depuis n'importe où",
+          "description": "Ouvre la zone de recherche directement en mode commande, comme Spotlight. Appuyer à nouveau dessus la ferme."
+        },
+        "openKeybind": {
+          "label": "Raccourci d'ouverture",
+          "description": "Accélérateur de style Electron, par ex. CmdOrCtrl+/ ou Alt+Space"
+        }
       }
     },
     "seek-shortcuts": {
@@ -1494,7 +1712,10 @@
     },
     "statusbar-lyrics": {
       "settings": {
-        "include-pronunciation": "Inclure la prononciation"
+        "include-pronunciation": "Inclure la prononciation",
+        "includePronunciation": {
+          "label": "Inclure la prononciation"
+        }
       }
     },
     "dismiss-multidevice-popup": {
@@ -1506,7 +1727,11 @@
       "name": "Économiseur de mémoire",
       "settings": {
         "threshold": "Seuil du cache",
-        "threshold-description": "Vider les caches lorsque leur mémoire active dépasse cette valeur pendant que la fenêtre est masquée"
+        "threshold-description": "Vider les caches lorsque leur mémoire active dépasse cette valeur pendant que la fenêtre est masquée",
+        "thresholdMB": {
+          "label": "Seuil du cache",
+          "description": "Vider les caches lorsque leur mémoire active dépasse cette valeur pendant que la fenêtre est masquée"
+        }
       }
     }
   },

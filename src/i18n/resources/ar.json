@@ -314,7 +314,15 @@
         },
         "enable-seekbar": "تفعيل تخصيص لون شريط التمرير"
       },
-      "name": "سمة ألوان الألبوم"
+      "name": "سمة ألوان الألبوم",
+      "settings": {
+        "ratio": {
+          "label": "‬نسبة قوة مزيج الألوان"
+        },
+        "enableSeekbar": {
+          "label": "تفعيل تخصيص لون شريط التمرير"
+        }
+      }
     },
     "ambient-mode": {
       "description": "يطبق تأثير إضاءة عن طريق إسقاط ألوان ناعمة من الفيديو على خلفية شاشتك",
@@ -497,6 +505,14 @@
         "caption-changed": "تم تغيير الترجمة الى {{language}}",
         "caption-disabled": "الترجمة غير مفعلة",
         "no-captions": "الترجمة لهاته الأغنية غير متاحة"
+      },
+      "settings": {
+        "autoload": {
+          "label": "اختار اخر ترجمة مستخدمة تلقائيا"
+        },
+        "disableCaptions": {
+          "label": "لا توجد ترجمات بشكل افتراضي"
+        }
       }
     },
     "clock": {
@@ -510,7 +526,13 @@
       },
       "name": "ساعة",
       "settings": {
-        "hour-12": "استخدام تنسيق 12 ساعة"
+        "hour-12": "استخدام تنسيق 12 ساعة",
+        "displaySeconds": {
+          "label": "عرض الثواني"
+        },
+        "hour12": {
+          "label": "استخدام تنسيق 12 ساعة"
+        }
       }
     },
     "compact-sidebar": {
@@ -569,7 +591,12 @@
       "menu": {
         "apply-once": "ينطبق فقط عند بدء التشغيل"
       },
-      "name": "تعطيل التشغيل التلقائي"
+      "name": "تعطيل التشغيل التلقائي",
+      "settings": {
+        "applyOnce": {
+          "label": "ينطبق فقط عند بدء التشغيل"
+        }
+      }
     },
     "discord": {
       "backend": {
@@ -609,7 +636,38 @@
         "activity-timeout-enabled": "مسح الحالة عند الإيقاف المؤقت",
         "activity-timeout-time": "المسح بعد",
         "hide-github-button": "إخفاء زر “عرض على GitHub”",
-        "hide-duration-left": "إخفاء الوقت المتبقي"
+        "hide-duration-left": "إخفاء الوقت المتبقي",
+        "autoReconnect": {
+          "label": "إعادة الاتصال تلقائيًا"
+        },
+        "activityTimeoutEnabled": {
+          "label": "مسح الحالة عند الإيقاف المؤقت"
+        },
+        "activityTimeoutSeconds": {
+          "label": "المسح بعد"
+        },
+        "playButton": {
+          "label": "شغل في {{applicationName}}"
+        },
+        "hideGitHubButton": {
+          "label": "إخفاء زر “عرض على GitHub”"
+        },
+        "hideDurationLeft": {
+          "label": "إخفاء الوقت المتبقي"
+        },
+        "statusDisplayType": {
+          "label": "نص الحالة",
+          "options": {
+            "name": "جار السمع ل{{applicationName}}",
+            "state": "جار السمع ل{artist}",
+            "details": "جار السمع ل{song title}"
+          }
+        }
+      },
+      "actions": {
+        "clearActivity": {
+          "label": "مسح النشاط"
+        }
       }
     },
     "do-not-track": {
@@ -900,6 +958,23 @@
       "name": "وضع الصورة داخل الصورة",
       "templates": {
         "button": "وضع الصورة داخل الصورة"
+      },
+      "settings": {
+        "hotkey": {
+          "label": "مفتاح اختصار"
+        },
+        "useNativePiP": {
+          "label": "استخدام وضع الصورة داخل الصورة الأصلي للمتصفح"
+        },
+        "alwaysOnTop": {
+          "label": "دائمًا في المقدمة"
+        },
+        "savePosition": {
+          "label": "حفظ موقع النافذة"
+        },
+        "saveSize": {
+          "label": "حفظ حجم النافذة"
+        }
       }
     },
     "playback-speed": {
@@ -935,10 +1010,21 @@
         }
       },
       "settings": {
-        "steps": "خطوة مستوى الصوت",
+        "steps": {
+          "label": "خطوة مستوى الصوت"
+        },
         "arrows-shortcut": "اختصارات مفاتيح الأسهم",
         "shortcut-up": "اختصار عام: رفع مستوى الصوت",
-        "shortcut-down": "اختصار عام: خفض مستوى الصوت"
+        "shortcut-down": "اختصار عام: خفض مستوى الصوت",
+        "arrowsShortcut": {
+          "label": "اختصارات مفاتيح الأسهم"
+        },
+        "volumeUp": {
+          "label": "اختصار عام: رفع مستوى الصوت"
+        },
+        "volumeDown": {
+          "label": "اختصار عام: خفض مستوى الصوت"
+        }
       }
     },
     "quality-changer": {
@@ -1037,7 +1123,28 @@
       },
       "settings": {
         "global-keybinds": "اختصارات المفاتيح العامة (تعمل على مستوى التطبيق)",
-        "local-keybinds": "اختصارات المفاتيح المحلية (فقط أثناء تركيز النافذة)"
+        "local-keybinds": "اختصارات المفاتيح المحلية (فقط أثناء تركيز النافذة)",
+        "playPause": {
+          "label": "تشغيل/ إيقاف"
+        },
+        "localPlayPause": {
+          "label": "تشغيل/ إيقاف"
+        },
+        "next": {
+          "label": "التالي"
+        },
+        "localNext": {
+          "label": "التالي"
+        },
+        "previous": {
+          "label": "السابق"
+        },
+        "localPrevious": {
+          "label": "السابق"
+        },
+        "overrideMediaKeys": {
+          "label": "تجاوز مفاتيح الوسائط"
+        }
       }
     },
     "skip-disliked-songs": {
@@ -1048,7 +1155,10 @@
       "description": "تخطي أقسام التي ليس لها صوت تلقائيًا في الأغاني",
       "name": "تخطي الفترات التي ليس لها صوت",
       "settings": {
-        "only-skip-beginning": "تخطي الصمت في بداية المقطع فقط"
+        "only-skip-beginning": "تخطي الصمت في بداية المقطع فقط",
+        "onlySkipBeginning": {
+          "label": "تخطي الصمت في بداية المقطع فقط"
+        }
       }
     },
     "sponsorblock": {
@@ -1064,7 +1174,28 @@
           "selfpromo": "ترويج ذاتي",
           "music_offtopic": "قسم غير موسيقي"
         },
-        "api-url": "عنوان URL للواجهة"
+        "api-url": "عنوان URL للواجهة",
+        "sponsor": {
+          "label": "الراعي"
+        },
+        "intro": {
+          "label": "مقدمة"
+        },
+        "outro": {
+          "label": "خاتمة"
+        },
+        "interaction": {
+          "label": "تذكير بالتفاعل"
+        },
+        "selfpromo": {
+          "label": "ترويج ذاتي"
+        },
+        "music_offtopic": {
+          "label": "قسم غير موسيقي"
+        },
+        "apiURL": {
+          "label": "عنوان URL للواجهة"
+        }
       }
     },
     "synced-lyrics": {
@@ -1365,7 +1496,25 @@
       },
       "name": "مشغل شفاف",
       "settings": {
-        "type-description": "المواد الخلفية المستخدمة لشفافية النافذة"
+        "type-description": "المواد الخلفية المستخدمة لشفافية النافذة",
+        "opacity": {
+          "label": "الشفافية"
+        },
+        "type": {
+          "label": "النوع",
+          "description": "المواد الخلفية المستخدمة لشفافية النافذة",
+          "options": {
+            "acrylic": "أكريليك",
+            "content": "محتوي",
+            "fullscreen-ui": "واجهة ملء الشاشة",
+            "mica": "ميكا",
+            "tabbed": "بديل ميكا",
+            "under-page": "أسفل الصفحة",
+            "under-window": "أسفل النافذة",
+            "window": "نافذة",
+            "none": "لاشيء"
+          }
+        }
       }
     },
     "tuna-obs": {
@@ -1401,6 +1550,27 @@
       "templates": {
         "button-song": "أغنية",
         "button-video": "فيديو"
+      },
+      "settings": {
+        "mode": {
+          "label": "وضع",
+          "options": {
+            "custom": "زر مخصص",
+            "native": "زر طبيعي",
+            "disabled": "غير مفعل"
+          }
+        },
+        "align": {
+          "label": "المحاذاة",
+          "options": {
+            "left": "يسار",
+            "middle": "المنتصف",
+            "right": "يمين"
+          }
+        },
+        "forceHide": {
+          "label": "إزالة علامة تبويب الفيديو"
+        }
       }
     },
     "visualizer": {
@@ -1410,7 +1580,9 @@
       },
       "name": "معاين بصري",
       "settings": {
-        "preset": "إعداد مسبق",
+        "preset": {
+          "label": "إعداد مسبق"
+        },
         "blend-time": "زمن الدمج",
         "effect": "التأثير",
         "accuracy": "الدقة",
@@ -1426,7 +1598,45 @@
         "dottify": "تنقيط",
         "dottify-description": "رسم نقاط بدلًا من خط متصل",
         "horizontal-align": "محاذاة أفقية",
-        "vertical-align": "محاذاة عمودية"
+        "vertical-align": "محاذاة عمودية",
+        "blendTimeInSeconds": {
+          "label": "زمن الدمج"
+        },
+        "vudioMaxHeight": {
+          "label": "الحد الأقصى للارتفاع"
+        },
+        "vudioMaxSize": {
+          "label": "الحد الأقصى للحجم"
+        },
+        "vudioLineWidth": {
+          "label": "عرض الخط"
+        },
+        "vudioColor": {
+          "label": "اللون"
+        },
+        "vudioShadowBlur": {
+          "label": "تمويه الظل"
+        },
+        "vudioShadowColor": {
+          "label": "لون الظل"
+        },
+        "vudioFadeSide": {
+          "label": "جوانب التلاشي"
+        },
+        "vudioPrettify": {
+          "label": "تجميل",
+          "description": "تدريج الأعمدة نحو الحواف"
+        },
+        "vudioDottify": {
+          "label": "تنقيط",
+          "description": "رسم نقاط بدلًا من خط متصل"
+        },
+        "vudioHorizontalAlign": {
+          "label": "محاذاة أفقية"
+        },
+        "vudioVerticalAlign": {
+          "label": "محاذاة عمودية"
+        }
       }
     },
     "audio-only": {
@@ -1477,7 +1687,15 @@
         "open-keybind": "اختصار الفتح",
         "open-keybind-description": "مسرّع بأسلوب Electron، مثل CmdOrCtrl+/ أو Alt+Space",
         "open-shortcut": "فتح مربع البحث من أي مكان",
-        "open-shortcut-description": "يستدعي مربع البحث في وضع الأوامر مباشرة، مثل Spotlight. الضغط عليه مجددًا يغلقه."
+        "open-shortcut-description": "يستدعي مربع البحث في وضع الأوامر مباشرة، مثل Spotlight. الضغط عليه مجددًا يغلقه.",
+        "openShortcut": {
+          "label": "فتح مربع البحث من أي مكان",
+          "description": "يستدعي مربع البحث في وضع الأوامر مباشرة، مثل Spotlight. الضغط عليه مجددًا يغلقه."
+        },
+        "openKeybind": {
+          "label": "اختصار الفتح",
+          "description": "مسرّع بأسلوب Electron، مثل CmdOrCtrl+/ أو Alt+Space"
+        }
       }
     },
     "seek-shortcuts": {
@@ -1494,7 +1712,10 @@
     },
     "statusbar-lyrics": {
       "settings": {
-        "include-pronunciation": "تضمين النطق"
+        "include-pronunciation": "تضمين النطق",
+        "includePronunciation": {
+          "label": "تضمين النطق"
+        }
       }
     },
     "dismiss-multidevice-popup": {
@@ -1506,7 +1727,11 @@
       "name": "موفّر الذاكرة",
       "settings": {
         "threshold": "حدّ التخزين المؤقت",
-        "threshold-description": "امسح ذاكرات التخزين المؤقت بعد أن تتجاوز ذاكرتها الحيّة هذا الحد أثناء إخفاء النافذة"
+        "threshold-description": "امسح ذاكرات التخزين المؤقت بعد أن تتجاوز ذاكرتها الحيّة هذا الحد أثناء إخفاء النافذة",
+        "thresholdMB": {
+          "label": "حدّ التخزين المؤقت",
+          "description": "امسح ذاكرات التخزين المؤقت بعد أن تتجاوز ذاكرتها الحيّة هذا الحد أثناء إخفاء النافذة"
+        }
       }
     }
   },

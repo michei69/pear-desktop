@@ -314,7 +314,15 @@
         },
         "enable-seekbar": "ჩართე მართვის ზოლის თემა"
       },
-      "name": "ალბომის ფერის თემა"
+      "name": "ალბომის ფერის თემა",
+      "settings": {
+        "ratio": {
+          "label": "ფერის შერევის შეფარდება"
+        },
+        "enableSeekbar": {
+          "label": "ჩართე მართვის ზოლის თემა"
+        }
+      }
     },
     "ambient-mode": {
       "description": "ვიდეოს ფერებით უკანა ფონზე განათების ეფექტს ამატებს",
@@ -497,6 +505,14 @@
       "menu": {
         "autoload": "ბოლოს გამოყენებული სუბტიტრის ავტომატურად არჩევა",
         "disable-captions": "სუბტიტრების გარეშე ნაგულისხმევად"
+      },
+      "settings": {
+        "autoload": {
+          "label": "ბოლოს გამოყენებული სუბტიტრის ავტომატურად არჩევა"
+        },
+        "disableCaptions": {
+          "label": "სუბტიტრების გარეშე ნაგულისხმევად"
+        }
       }
     },
     "clock": {
@@ -518,7 +534,13 @@
         "no-captions": "ამ სიმღერისთვის სუბტიტრები მიუწვდომელია"
       },
       "settings": {
-        "hour-12": "12-საათიანი ფორმატის გამოყენება"
+        "hour-12": "12-საათიანი ფორმატის გამოყენება",
+        "displaySeconds": {
+          "label": "წამების ჩვენება"
+        },
+        "hour12": {
+          "label": "12-საათიანი ფორმატის გამოყენება"
+        }
       }
     },
     "compact-sidebar": {
@@ -577,6 +599,11 @@
       "name": "ავტომატური დაკვრის გამორთვა",
       "menu": {
         "apply-once": "მხოლოდ გაშვებისას მოქმედებს"
+      },
+      "settings": {
+        "applyOnce": {
+          "label": "მხოლოდ გაშვებისას მოქმედებს"
+        }
       }
     },
     "discord": {
@@ -617,7 +644,38 @@
         "activity-timeout-enabled": "პაუზისას presence-ის გასუფთავება",
         "activity-timeout-time": "გასუფთავება შემდეგ",
         "hide-github-button": "„GitHub-ზე ნახვის“ ღილაკის დამალვა",
-        "hide-duration-left": "დარჩენილი დროის დამალვა"
+        "hide-duration-left": "დარჩენილი დროის დამალვა",
+        "autoReconnect": {
+          "label": "ავტომატური ხელახლა დაკავშირება"
+        },
+        "activityTimeoutEnabled": {
+          "label": "პაუზისას presence-ის გასუფთავება"
+        },
+        "activityTimeoutSeconds": {
+          "label": "გასუფთავება შემდეგ"
+        },
+        "playButton": {
+          "label": "დაკვრა {{applicationName}}-ზე"
+        },
+        "hideGitHubButton": {
+          "label": "„GitHub-ზე ნახვის“ ღილაკის დამალვა"
+        },
+        "hideDurationLeft": {
+          "label": "დარჩენილი დროის დამალვა"
+        },
+        "statusDisplayType": {
+          "label": "სტატუსის ტექსტი",
+          "options": {
+            "name": "{{applicationName}}-ის მოსმენა",
+            "state": "{{artist}}-ის მოსმენა",
+            "details": "{{song title}}-ის მოსმენა"
+          }
+        }
+      },
+      "actions": {
+        "clearActivity": {
+          "label": "აქტივობის გასუფთავება"
+        }
       }
     },
     "do-not-track": {
@@ -904,6 +962,23 @@
       "name": "სურათი სურათში",
       "templates": {
         "button": "სურათი სურათში"
+      },
+      "settings": {
+        "hotkey": {
+          "label": "მალსახმობი კლავიში"
+        },
+        "useNativePiP": {
+          "label": "ბრაუზერის ჩაშენებული PiP-ის გამოყენება"
+        },
+        "alwaysOnTop": {
+          "label": "ყოველთვის ზევით"
+        },
+        "savePosition": {
+          "label": "ფანჯრის პოზიციის შენახვა"
+        },
+        "saveSize": {
+          "label": "ფანჯრის ზომის შენახვა"
+        }
       }
     },
     "playback-speed": {
@@ -939,10 +1014,21 @@
       },
       "description": "ხმის ზუსტი კონტროლი მაუსის ბორბლით/ცხელი კლავიშებით, მორგებული HUD-ითა და კონფიგურირებადი ხმის ნაბიჯებით",
       "settings": {
-        "steps": "ხმის საფეხური",
+        "steps": {
+          "label": "ხმის საფეხური"
+        },
         "arrows-shortcut": "ისრის კლავიშების მალსახმობები",
         "shortcut-up": "გლობალური მალსახმობა: ხმის გაზრდა",
-        "shortcut-down": "გლობალური მალსახმობა: ხმის შემცირება"
+        "shortcut-down": "გლობალური მალსახმობა: ხმის შემცირება",
+        "arrowsShortcut": {
+          "label": "ისრის კლავიშების მალსახმობები"
+        },
+        "volumeUp": {
+          "label": "გლობალური მალსახმობა: ხმის გაზრდა"
+        },
+        "volumeDown": {
+          "label": "გლობალური მალსახმობა: ხმის შემცირება"
+        }
       }
     },
     "quality-changer": {
@@ -1041,7 +1127,28 @@
       },
       "settings": {
         "global-keybinds": "გლობალური კლავიშთა მიბმები (მუშაობს მთელ აპში)",
-        "local-keybinds": "ლოკალური კლავიშთა მიბმები (მხოლოდ ფანჯრის ფოკუსში ყოფნისას)"
+        "local-keybinds": "ლოკალური კლავიშთა მიბმები (მხოლოდ ფანჯრის ფოკუსში ყოფნისას)",
+        "playPause": {
+          "label": "დაკვრა/პაუზა"
+        },
+        "localPlayPause": {
+          "label": "დაკვრა/პაუზა"
+        },
+        "next": {
+          "label": "შემდეგი"
+        },
+        "localNext": {
+          "label": "შემდეგი"
+        },
+        "previous": {
+          "label": "წინა"
+        },
+        "localPrevious": {
+          "label": "წინა"
+        },
+        "overrideMediaKeys": {
+          "label": "მედია კლავიშების გადაფარვა"
+        }
       }
     },
     "skip-disliked-songs": {
@@ -1052,7 +1159,10 @@
       "description": "სიმღერებში ჩუმი მონაკვეთების ავტომატური გამოტოვება",
       "name": "ჩუმი მონაკვეთების გამოტოვება",
       "settings": {
-        "only-skip-beginning": "გამოტოვეთ სიჩუმე მხოლოდ ტრეკის დასაწყისში"
+        "only-skip-beginning": "გამოტოვეთ სიჩუმე მხოლოდ ტრეკის დასაწყისში",
+        "onlySkipBeginning": {
+          "label": "გამოტოვეთ სიჩუმე მხოლოდ ტრეკის დასაწყისში"
+        }
       }
     },
     "sponsorblock": {
@@ -1068,7 +1178,28 @@
           "selfpromo": "თვითრეკლამა",
           "music_offtopic": "არამუსიკალური სექცია"
         },
-        "api-url": "API URL"
+        "api-url": "API URL",
+        "sponsor": {
+          "label": "სპონსორი"
+        },
+        "intro": {
+          "label": "შესავალი"
+        },
+        "outro": {
+          "label": "დასასრული"
+        },
+        "interaction": {
+          "label": "ინტერაქციის შეხსენება"
+        },
+        "selfpromo": {
+          "label": "თვითრეკლამა"
+        },
+        "music_offtopic": {
+          "label": "არამუსიკალური სექცია"
+        },
+        "apiURL": {
+          "label": "API URL"
+        }
       }
     },
     "synced-lyrics": {
@@ -1392,7 +1523,25 @@
         "instrumental": "⚠️ - ეს არის ინსტრუმენტული სიმღერა"
       },
       "settings": {
-        "type-description": "ფანჯრის გამჭვირვალობისთვის გამოყენებული ფონური მასალა"
+        "type-description": "ფანჯრის გამჭვირვალობისთვის გამოყენებული ფონური მასალა",
+        "opacity": {
+          "label": "გამჭვირვალობა"
+        },
+        "type": {
+          "label": "ტიპი",
+          "description": "ფანჯრის გამჭვირვალობისთვის გამოყენებული ფონური მასალა",
+          "options": {
+            "acrylic": "აკრილი",
+            "content": "კონტენტი",
+            "fullscreen-ui": "სრულეკრანიანი ინტერფეისი",
+            "mica": "მიკა",
+            "tabbed": "ჩანართებიანი",
+            "under-page": "გვერდის ქვეშ",
+            "under-window": "ფანჯრის ქვეშ",
+            "window": "ფანჯარა",
+            "none": "არცერთი"
+          }
+        }
       }
     },
     "tuna-obs": {
@@ -1424,6 +1573,27 @@
       "templates": {
         "button-song": "სიმღერა",
         "button-video": "ვიდეო"
+      },
+      "settings": {
+        "mode": {
+          "label": "რეჟიმი",
+          "options": {
+            "custom": "მორგებული გადამრთველი",
+            "native": "ადგილობრივი გადართვა",
+            "disabled": "გამორთულია"
+          }
+        },
+        "align": {
+          "label": "გასწორება",
+          "options": {
+            "left": "მარცხენა",
+            "middle": "შუა",
+            "right": "მარჯვენა"
+          }
+        },
+        "forceHide": {
+          "label": "ვიდეოს ჩანართის ძალით წაშლა"
+        }
       }
     },
     "visualizer": {
@@ -1433,7 +1603,9 @@
       },
       "name": "ვიზუალიზატორი",
       "settings": {
-        "preset": "პრესეტი",
+        "preset": {
+          "label": "პრესეტი"
+        },
         "blend-time": "შერევის დრო",
         "effect": "ეფექტი",
         "accuracy": "სიზუსტე",
@@ -1449,7 +1621,45 @@
         "dottify": "წერტილებად გადაქცევა",
         "dottify-description": "წერტილების დახატვა უწყვეტი ხაზის ნაცვლად",
         "horizontal-align": "ჰორიზონტალური გასწორება",
-        "vertical-align": "ვერტიკალური გასწორება"
+        "vertical-align": "ვერტიკალური გასწორება",
+        "blendTimeInSeconds": {
+          "label": "შერევის დრო"
+        },
+        "vudioMaxHeight": {
+          "label": "მაქსიმალური სიმაღლე"
+        },
+        "vudioMaxSize": {
+          "label": "მაქსიმალური ზომა"
+        },
+        "vudioLineWidth": {
+          "label": "ხაზის სისქე"
+        },
+        "vudioColor": {
+          "label": "ფერი"
+        },
+        "vudioShadowBlur": {
+          "label": "ჩრდილის დაბინდვა"
+        },
+        "vudioShadowColor": {
+          "label": "ჩრდილის ფერი"
+        },
+        "vudioFadeSide": {
+          "label": "გვერდების გაქრობა"
+        },
+        "vudioPrettify": {
+          "label": "გალამაზება",
+          "description": "ზოლების შევიწროება კიდეებისკენ"
+        },
+        "vudioDottify": {
+          "label": "წერტილებად გადაქცევა",
+          "description": "წერტილების დახატვა უწყვეტი ხაზის ნაცვლად"
+        },
+        "vudioHorizontalAlign": {
+          "label": "ჰორიზონტალური გასწორება"
+        },
+        "vudioVerticalAlign": {
+          "label": "ვერტიკალური გასწორება"
+        }
       }
     },
     "audio-only": {
@@ -1512,7 +1722,15 @@
         "open-keybind": "გახსნის მალსახმობა",
         "open-keybind-description": "Electron-ის სტილის აჩქარებითი კლავიში, მაგ. CmdOrCtrl+/ ან Alt+Space",
         "open-shortcut": "საძიებო ველის გახსნა ნებისმიერი ადგილიდან",
-        "open-shortcut-description": "იძახებს საძიებო ველს უკვე ბრძანების რეჟიმში, Spotlight-ის მსგავსად. ხელახლა დაჭერით იხურება."
+        "open-shortcut-description": "იძახებს საძიებო ველს უკვე ბრძანების რეჟიმში, Spotlight-ის მსგავსად. ხელახლა დაჭერით იხურება.",
+        "openShortcut": {
+          "label": "საძიებო ველის გახსნა ნებისმიერი ადგილიდან",
+          "description": "იძახებს საძიებო ველს უკვე ბრძანების რეჟიმში, Spotlight-ის მსგავსად. ხელახლა დაჭერით იხურება."
+        },
+        "openKeybind": {
+          "label": "გახსნის მალსახმობა",
+          "description": "Electron-ის სტილის აჩქარებითი კლავიში, მაგ. CmdOrCtrl+/ ან Alt+Space"
+        }
       }
     },
     "seek-shortcuts": {
@@ -1529,7 +1747,10 @@
     },
     "statusbar-lyrics": {
       "settings": {
-        "include-pronunciation": "გამოთქმის ჩართვა"
+        "include-pronunciation": "გამოთქმის ჩართვა",
+        "includePronunciation": {
+          "label": "გამოთქმის ჩართვა"
+        }
       }
     },
     "dismiss-multidevice-popup": {
@@ -1541,7 +1762,11 @@
       "name": "მეხსიერების დამზოგი",
       "settings": {
         "threshold": "ქეშის ზღვარი",
-        "threshold-description": "ქეშების გასუფთავება, როცა მათი აქტიური მეხსიერება ამ მნიშვნელობას გადააჭარბებს ფანჯრის დამალვისას"
+        "threshold-description": "ქეშების გასუფთავება, როცა მათი აქტიური მეხსიერება ამ მნიშვნელობას გადააჭარბებს ფანჯრის დამალვისას",
+        "thresholdMB": {
+          "label": "ქეშის ზღვარი",
+          "description": "ქეშების გასუფთავება, როცა მათი აქტიური მეხსიერება ამ მნიშვნელობას გადააჭარბებს ფანჯრის დამალვისას"
+        }
       }
     }
   },

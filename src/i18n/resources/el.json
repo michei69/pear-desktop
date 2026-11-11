@@ -314,7 +314,15 @@
         },
         "enable-seekbar": "Ενεργοποίηση θέματος γραμμής αναζήτησης"
       },
-      "name": "Θέμα χρωμάτων άλμπουμ"
+      "name": "Θέμα χρωμάτων άλμπουμ",
+      "settings": {
+        "ratio": {
+          "label": "Αναλογία ανάμειξης χρωμάτων"
+        },
+        "enableSeekbar": {
+          "label": "Ενεργοποίηση θέματος γραμμής αναζήτησης"
+        }
+      }
     },
     "ambient-mode": {
       "description": "Εφαρμόζει ένα εφέ φωτισμού ρίχνοντας απαλά χρώματα από το βίντεο στο φόντο της οθόνης σας",
@@ -497,6 +505,14 @@
         "caption-changed": "Λεζάντα άλλαξε σε {{language}}",
         "caption-disabled": "Λεζάντες απενεργοποιήθηκαν",
         "no-captions": "Λεζάντες μη διαθέσιμες για αυτό το τραγούδι"
+      },
+      "settings": {
+        "autoload": {
+          "label": "Αυτόματη επιλογή της τελευταίας χρησιμοποιούμενης λεζάντας"
+        },
+        "disableCaptions": {
+          "label": "Χωρίς λεζάντες από προεπιλογή"
+        }
       }
     },
     "compact-sidebar": {
@@ -542,7 +558,12 @@
       "menu": {
         "apply-once": "Εφαρμόζεται μόνο στο πρώτο τραγούδι"
       },
-      "name": "Απενεργοποίηση αυτόματης αναπαραγωγής"
+      "name": "Απενεργοποίηση αυτόματης αναπαραγωγής",
+      "settings": {
+        "applyOnce": {
+          "label": "Εφαρμόζεται μόνο στο πρώτο τραγούδι"
+        }
+      }
     },
     "discord": {
       "backend": {
@@ -582,7 +603,38 @@
         "activity-timeout-enabled": "Εκκαθάριση παρουσίας όταν γίνεται παύση",
         "activity-timeout-time": "Εκκαθάριση μετά από",
         "hide-github-button": "Απόκρυψη κουμπιού «Προβολή στο GitHub»",
-        "hide-duration-left": "Απόκρυψη χρόνου που απομένει"
+        "hide-duration-left": "Απόκρυψη χρόνου που απομένει",
+        "autoReconnect": {
+          "label": "Αυτόματη επανασύνδεση"
+        },
+        "activityTimeoutEnabled": {
+          "label": "Εκκαθάριση παρουσίας όταν γίνεται παύση"
+        },
+        "activityTimeoutSeconds": {
+          "label": "Εκκαθάριση μετά από"
+        },
+        "playButton": {
+          "label": "Αναπαραγωγή στο {{applicationName}}"
+        },
+        "hideGitHubButton": {
+          "label": "Απόκρυψη κουμπιού «Προβολή στο GitHub»"
+        },
+        "hideDurationLeft": {
+          "label": "Απόκρυψη χρόνου που απομένει"
+        },
+        "statusDisplayType": {
+          "label": "Κείμενο κατάστασης",
+          "options": {
+            "name": "Ακούει {{applicationName}}",
+            "state": "Ακούει {artist}",
+            "details": "Ακούει {song title}"
+          }
+        }
+      },
+      "actions": {
+        "clearActivity": {
+          "label": "Εκκαθάριση δραστηριότητας"
+        }
       }
     },
     "downloader": {
@@ -854,6 +906,23 @@
       "name": "Εικόνα-στην-εικόνα",
       "templates": {
         "button": "Εικόνα-στην-εικόνα"
+      },
+      "settings": {
+        "hotkey": {
+          "label": "Πλήκτρο πρόσβασης"
+        },
+        "useNativePiP": {
+          "label": "Χρήση εγγενούς PiP του προγράμματος περιήγησης"
+        },
+        "alwaysOnTop": {
+          "label": "Πάντα σε πρώτο πλάνο"
+        },
+        "savePosition": {
+          "label": "Αποθήκευση θέσης παραθύρου"
+        },
+        "saveSize": {
+          "label": "Αποθήκευση μεγέθους παραθύρου"
+        }
       }
     },
     "playback-speed": {
@@ -889,10 +958,21 @@
         }
       },
       "settings": {
-        "steps": "Βήμα έντασης",
+        "steps": {
+          "label": "Βήμα έντασης"
+        },
         "arrows-shortcut": "Συντομεύσεις βελών",
         "shortcut-up": "Γενική συντόμευση: αύξηση έντασης",
-        "shortcut-down": "Γενική συντόμευση: μείωση έντασης"
+        "shortcut-down": "Γενική συντόμευση: μείωση έντασης",
+        "arrowsShortcut": {
+          "label": "Συντομεύσεις βελών"
+        },
+        "volumeUp": {
+          "label": "Γενική συντόμευση: αύξηση έντασης"
+        },
+        "volumeDown": {
+          "label": "Γενική συντόμευση: μείωση έντασης"
+        }
       }
     },
     "quality-changer": {
@@ -991,7 +1071,28 @@
       },
       "settings": {
         "global-keybinds": "Γενικές συντομεύσεις πλήκτρων (λειτουργούν σε όλη την εφαρμογή)",
-        "local-keybinds": "Τοπικές συντομεύσεις πλήκτρων (μόνο όταν το παράθυρο έχει εστίαση)"
+        "local-keybinds": "Τοπικές συντομεύσεις πλήκτρων (μόνο όταν το παράθυρο έχει εστίαση)",
+        "playPause": {
+          "label": "Αναπαραγωγή / Παύση"
+        },
+        "localPlayPause": {
+          "label": "Αναπαραγωγή / Παύση"
+        },
+        "next": {
+          "label": "Επόμενο"
+        },
+        "localNext": {
+          "label": "Επόμενο"
+        },
+        "previous": {
+          "label": "Προηγούμενο"
+        },
+        "localPrevious": {
+          "label": "Προηγούμενο"
+        },
+        "overrideMediaKeys": {
+          "label": "Παράκαμψη κλειδιών πολυμέσων"
+        }
       }
     },
     "skip-disliked-songs": {
@@ -1002,7 +1103,10 @@
       "description": "Αυτόματη παράλειψη τμημάτων σιωπής σε τραγούδια",
       "name": "Παραλείψτε τις σιωπές",
       "settings": {
-        "only-skip-beginning": "Παράλειψη σιωπής μόνο στην αρχή του κομματιού"
+        "only-skip-beginning": "Παράλειψη σιωπής μόνο στην αρχή του κομματιού",
+        "onlySkipBeginning": {
+          "label": "Παράλειψη σιωπής μόνο στην αρχή του κομματιού"
+        }
       }
     },
     "sponsorblock": {
@@ -1018,7 +1122,28 @@
           "selfpromo": "Αυτοπροώθηση",
           "music_offtopic": "Μη μουσικό τμήμα"
         },
-        "api-url": "URL API"
+        "api-url": "URL API",
+        "sponsor": {
+          "label": "Χορηγός"
+        },
+        "intro": {
+          "label": "Εισαγωγή"
+        },
+        "outro": {
+          "label": "Τέλος"
+        },
+        "interaction": {
+          "label": "Υπενθύμιση αλληλεπίδρασης"
+        },
+        "selfpromo": {
+          "label": "Αυτοπροώθηση"
+        },
+        "music_offtopic": {
+          "label": "Μη μουσικό τμήμα"
+        },
+        "apiURL": {
+          "label": "URL API"
+        }
       }
     },
     "synced-lyrics": {
@@ -1326,6 +1451,27 @@
       "templates": {
         "button-song": "Τραγούδι",
         "button-video": "Βίντεο"
+      },
+      "settings": {
+        "mode": {
+          "label": "Mode",
+          "options": {
+            "custom": "Προσαρμοσμένη εναλλαγή",
+            "native": "Γηγενής εναλλαγή",
+            "disabled": "Απενεργοποιημένο"
+          }
+        },
+        "align": {
+          "label": "Στοίχιση",
+          "options": {
+            "left": "Αριστερά",
+            "middle": "Middle",
+            "right": "Δεξιά"
+          }
+        },
+        "forceHide": {
+          "label": "Αναγκαστική αφαίρεση καρτέλας βίντεο"
+        }
       }
     },
     "visualizer": {
@@ -1335,7 +1481,9 @@
       },
       "name": "Απεικονιστής",
       "settings": {
-        "preset": "Προεπιλογή",
+        "preset": {
+          "label": "Προεπιλογή"
+        },
         "blend-time": "Χρόνος ανάμειξης",
         "effect": "Εφέ",
         "accuracy": "Ακρίβεια",
@@ -1351,7 +1499,45 @@
         "dottify": "Μετατροπή σε κουκκίδες",
         "dottify-description": "Σχεδίαση κουκκίδων αντί για συνεχή γραμμή",
         "horizontal-align": "Οριζόντια στοίχιση",
-        "vertical-align": "Κατακόρυφη στοίχιση"
+        "vertical-align": "Κατακόρυφη στοίχιση",
+        "blendTimeInSeconds": {
+          "label": "Χρόνος ανάμειξης"
+        },
+        "vudioMaxHeight": {
+          "label": "Μέγιστο ύψος"
+        },
+        "vudioMaxSize": {
+          "label": "Μέγιστο μέγεθος"
+        },
+        "vudioLineWidth": {
+          "label": "Πάχος γραμμής"
+        },
+        "vudioColor": {
+          "label": "Χρώμα"
+        },
+        "vudioShadowBlur": {
+          "label": "Θόλωση σκιάς"
+        },
+        "vudioShadowColor": {
+          "label": "Χρώμα σκιάς"
+        },
+        "vudioFadeSide": {
+          "label": "Πλευρές εξασθένησης"
+        },
+        "vudioPrettify": {
+          "label": "Ομορφοποίηση",
+          "description": "Σταδιακή μείωση των ράβδων προς τις άκρες"
+        },
+        "vudioDottify": {
+          "label": "Μετατροπή σε κουκκίδες",
+          "description": "Σχεδίαση κουκκίδων αντί για συνεχή γραμμή"
+        },
+        "vudioHorizontalAlign": {
+          "label": "Οριζόντια στοίχιση"
+        },
+        "vudioVerticalAlign": {
+          "label": "Κατακόρυφη στοίχιση"
+        }
       }
     },
     "clock": {
@@ -1365,7 +1551,13 @@
       },
       "name": "Ρολόι",
       "settings": {
-        "hour-12": "Χρήση μορφής 12 ωρών"
+        "hour-12": "Χρήση μορφής 12 ωρών",
+        "displaySeconds": {
+          "label": "Εμφάνιση δευτερολέπτων"
+        },
+        "hour12": {
+          "label": "Χρήση μορφής 12 ωρών"
+        }
       }
     },
     "custom-output-device": {
@@ -1407,7 +1599,25 @@
       },
       "name": "Διαφανής αναπαραγωγή",
       "settings": {
-        "type-description": "Υλικό φόντου που χρησιμοποιείται για τη διαφάνεια του παραθύρου"
+        "type-description": "Υλικό φόντου που χρησιμοποιείται για τη διαφάνεια του παραθύρου",
+        "opacity": {
+          "label": "Αδιαφάνεια"
+        },
+        "type": {
+          "label": "Τύπος",
+          "description": "Υλικό φόντου που χρησιμοποιείται για τη διαφάνεια του παραθύρου",
+          "options": {
+            "acrylic": "Ακρυλικό",
+            "content": "Περιεχόμενο",
+            "fullscreen-ui": "Διεπαφή πλήρους οθόνης",
+            "mica": "Μίκα",
+            "tabbed": "Με καρτέλες",
+            "under-page": "Κάτω από τη σελίδα",
+            "under-window": "Κάτω από το παράθυρο",
+            "window": "Παράθυρο",
+            "none": "Κανένα"
+          }
+        }
       }
     },
     "audio-only": {
@@ -1477,7 +1687,15 @@
         "open-keybind": "Συντόμευση ανοίγματος",
         "open-keybind-description": "Επιταχυντής τύπου Electron, π.χ. CmdOrCtrl+/ ή Alt+Space",
         "open-shortcut": "Άνοιγμα του πλαισίου αναζήτησης από οπουδήποτε",
-        "open-shortcut-description": "Εμφανίζει το πλαίσιο αναζήτησης ήδη σε λειτουργία εντολών, όπως το Spotlight. Αν το πατήσετε ξανά, κλείνει."
+        "open-shortcut-description": "Εμφανίζει το πλαίσιο αναζήτησης ήδη σε λειτουργία εντολών, όπως το Spotlight. Αν το πατήσετε ξανά, κλείνει.",
+        "openShortcut": {
+          "label": "Άνοιγμα του πλαισίου αναζήτησης από οπουδήποτε",
+          "description": "Εμφανίζει το πλαίσιο αναζήτησης ήδη σε λειτουργία εντολών, όπως το Spotlight. Αν το πατήσετε ξανά, κλείνει."
+        },
+        "openKeybind": {
+          "label": "Συντόμευση ανοίγματος",
+          "description": "Επιταχυντής τύπου Electron, π.χ. CmdOrCtrl+/ ή Alt+Space"
+        }
       }
     },
     "seek-shortcuts": {
@@ -1494,7 +1712,10 @@
     },
     "statusbar-lyrics": {
       "settings": {
-        "include-pronunciation": "Συμπερίληψη προφοράς"
+        "include-pronunciation": "Συμπερίληψη προφοράς",
+        "includePronunciation": {
+          "label": "Συμπερίληψη προφοράς"
+        }
       }
     },
     "dismiss-multidevice-popup": {
@@ -1506,7 +1727,11 @@
       "name": "Εξοικονόμηση μνήμης",
       "settings": {
         "threshold": "Όριο προσωρινής μνήμης",
-        "threshold-description": "Καθαρίζει τις προσωρινές μνήμες όταν η ενεργή μνήμη τους υπερβεί αυτό το όριο ενώ το παράθυρο είναι κρυφό"
+        "threshold-description": "Καθαρίζει τις προσωρινές μνήμες όταν η ενεργή μνήμη τους υπερβεί αυτό το όριο ενώ το παράθυρο είναι κρυφό",
+        "thresholdMB": {
+          "label": "Όριο προσωρινής μνήμης",
+          "description": "Καθαρίζει τις προσωρινές μνήμες όταν η ενεργή μνήμη τους υπερβεί αυτό το όριο ενώ το παράθυρο είναι κρυφό"
+        }
       }
     }
   },

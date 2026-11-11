@@ -314,7 +314,15 @@
         },
         "enable-seekbar": "Suchleisten-Design aktivieren"
       },
-      "name": "Thema aus Albumfarbe"
+      "name": "Thema aus Albumfarbe",
+      "settings": {
+        "ratio": {
+          "label": "Farbmischungsverhältnis"
+        },
+        "enableSeekbar": {
+          "label": "Suchleisten-Design aktivieren"
+        }
+      }
     },
     "ambient-mode": {
       "description": "Fügt einen Lichteffekt durch sanftes Abstreifen der Farben des Videos in deinen Bildschirmhintergrund hinzu",
@@ -497,6 +505,14 @@
         "caption-changed": "Untertitel gewechselt zu {{language}}",
         "caption-disabled": "Untertitel deaktiviert",
         "no-captions": "Keine Untertitel für dieses Lied verfügbar"
+      },
+      "settings": {
+        "autoload": {
+          "label": "Wähle automatisch den zuletzt verwendeten Untertitel"
+        },
+        "disableCaptions": {
+          "label": "Standardmäßig keine Untertitel"
+        }
       }
     },
     "clock": {
@@ -510,7 +526,13 @@
       },
       "name": "Uhr",
       "settings": {
-        "hour-12": "12-Stunden-Format verwenden"
+        "hour-12": "12-Stunden-Format verwenden",
+        "displaySeconds": {
+          "label": "Sekunden anzeigen"
+        },
+        "hour12": {
+          "label": "12-Stunden-Format verwenden"
+        }
       }
     },
     "compact-sidebar": {
@@ -569,7 +591,12 @@
       "menu": {
         "apply-once": "Nur beim Start der Anwendung anwenden"
       },
-      "name": "Deaktiviere automatisches Abspielen"
+      "name": "Deaktiviere automatisches Abspielen",
+      "settings": {
+        "applyOnce": {
+          "label": "Nur beim Start der Anwendung anwenden"
+        }
+      }
     },
     "discord": {
       "backend": {
@@ -609,7 +636,38 @@
         "activity-timeout-enabled": "Präsenz beim Pausieren löschen",
         "activity-timeout-time": "Löschen nach",
         "hide-github-button": "Schaltfläche „Auf GitHub ansehen“ ausblenden",
-        "hide-duration-left": "Verbleibende Zeit ausblenden"
+        "hide-duration-left": "Verbleibende Zeit ausblenden",
+        "autoReconnect": {
+          "label": "Automatisch neu verbinden"
+        },
+        "activityTimeoutEnabled": {
+          "label": "Präsenz beim Pausieren löschen"
+        },
+        "activityTimeoutSeconds": {
+          "label": "Löschen nach"
+        },
+        "playButton": {
+          "label": "Auf {{applicationName}} abspielen"
+        },
+        "hideGitHubButton": {
+          "label": "Schaltfläche „Auf GitHub ansehen“ ausblenden"
+        },
+        "hideDurationLeft": {
+          "label": "Verbleibende Zeit ausblenden"
+        },
+        "statusDisplayType": {
+          "label": "Status Text",
+          "options": {
+            "name": "Hört {{applicationName}}",
+            "state": "Hört {artist} zu",
+            "details": "Du hörst {song title}"
+          }
+        }
+      },
+      "actions": {
+        "clearActivity": {
+          "label": "Aktivität leeren"
+        }
       }
     },
     "do-not-track": {
@@ -900,6 +958,23 @@
       "name": "Bild-im-Bild",
       "templates": {
         "button": "Bild-im-Bild"
+      },
+      "settings": {
+        "hotkey": {
+          "label": "Tastenkürzel"
+        },
+        "useNativePiP": {
+          "label": "Browsereigenes PiP verwenden"
+        },
+        "alwaysOnTop": {
+          "label": "Immer im Vordergrund"
+        },
+        "savePosition": {
+          "label": "Fensterposition speichern"
+        },
+        "saveSize": {
+          "label": "Fenstergröße speichern"
+        }
       }
     },
     "playback-speed": {
@@ -935,10 +1010,21 @@
         }
       },
       "settings": {
-        "steps": "Lautstärkeschritt",
+        "steps": {
+          "label": "Lautstärkeschritt"
+        },
         "arrows-shortcut": "Pfeiltasten-Kürzel",
         "shortcut-up": "Globales Tastenkürzel: Lautstärke erhöhen",
-        "shortcut-down": "Globales Tastenkürzel: Lautstärke verringern"
+        "shortcut-down": "Globales Tastenkürzel: Lautstärke verringern",
+        "arrowsShortcut": {
+          "label": "Pfeiltasten-Kürzel"
+        },
+        "volumeUp": {
+          "label": "Globales Tastenkürzel: Lautstärke erhöhen"
+        },
+        "volumeDown": {
+          "label": "Globales Tastenkürzel: Lautstärke verringern"
+        }
       }
     },
     "quality-changer": {
@@ -1037,7 +1123,28 @@
       },
       "settings": {
         "global-keybinds": "Globale Tastenkürzel (gelten appweit)",
-        "local-keybinds": "Lokale Tastenkürzel (nur bei fokussiertem Fenster)"
+        "local-keybinds": "Lokale Tastenkürzel (nur bei fokussiertem Fenster)",
+        "playPause": {
+          "label": "Weiter / Pause"
+        },
+        "localPlayPause": {
+          "label": "Weiter / Pause"
+        },
+        "next": {
+          "label": "Nächstes"
+        },
+        "localNext": {
+          "label": "Nächstes"
+        },
+        "previous": {
+          "label": "Vorheriges"
+        },
+        "localPrevious": {
+          "label": "Vorheriges"
+        },
+        "overrideMediaKeys": {
+          "label": "Medientasten überschreiben"
+        }
       }
     },
     "skip-disliked-songs": {
@@ -1048,7 +1155,10 @@
       "description": "Automatisch stille Abschnitte in Liedern überspringen",
       "name": "Stille überspringen",
       "settings": {
-        "only-skip-beginning": "Stille nur am Anfang eines Titels überspringen"
+        "only-skip-beginning": "Stille nur am Anfang eines Titels überspringen",
+        "onlySkipBeginning": {
+          "label": "Stille nur am Anfang eines Titels überspringen"
+        }
       }
     },
     "sponsorblock": {
@@ -1064,7 +1174,28 @@
           "selfpromo": "Eigenwerbung",
           "music_offtopic": "Nicht-Musik-Abschnitt"
         },
-        "api-url": "API-URL"
+        "api-url": "API-URL",
+        "sponsor": {
+          "label": "Sponsor"
+        },
+        "intro": {
+          "label": "Intro"
+        },
+        "outro": {
+          "label": "Outro"
+        },
+        "interaction": {
+          "label": "Interaktionserinnerung"
+        },
+        "selfpromo": {
+          "label": "Eigenwerbung"
+        },
+        "music_offtopic": {
+          "label": "Nicht-Musik-Abschnitt"
+        },
+        "apiURL": {
+          "label": "API-URL"
+        }
       }
     },
     "synced-lyrics": {
@@ -1365,7 +1496,25 @@
       },
       "name": "Transparenter Player",
       "settings": {
-        "type-description": "Hintergrundmaterial für Fenstertransparenz"
+        "type-description": "Hintergrundmaterial für Fenstertransparenz",
+        "opacity": {
+          "label": "Hintergrund-Sichtbarkeit"
+        },
+        "type": {
+          "label": "Typ",
+          "description": "Hintergrundmaterial für Fenstertransparenz",
+          "options": {
+            "acrylic": "Acryl",
+            "content": "Inhalt",
+            "fullscreen-ui": "Vollbild-Oberfläche",
+            "mica": "Mica",
+            "tabbed": "Mit Registerkarten",
+            "under-page": "Unter Seite",
+            "under-window": "Unter Fenster",
+            "window": "Fenster",
+            "none": "Nichts"
+          }
+        }
       }
     },
     "tuna-obs": {
@@ -1401,6 +1550,27 @@
       "templates": {
         "button-song": "Lied",
         "button-video": "Video"
+      },
+      "settings": {
+        "mode": {
+          "label": "Modus",
+          "options": {
+            "custom": "Angepasster Schalter",
+            "native": "Eingebauter Schalter",
+            "disabled": "Deaktiviert"
+          }
+        },
+        "align": {
+          "label": "Ausrichtung",
+          "options": {
+            "left": "Links",
+            "middle": "Mitte",
+            "right": "Rechts"
+          }
+        },
+        "forceHide": {
+          "label": "Entfernen des Videoabschnitts erzwingen"
+        }
       }
     },
     "visualizer": {
@@ -1410,7 +1580,9 @@
       },
       "name": "Visualisierer",
       "settings": {
-        "preset": "Voreinstellung",
+        "preset": {
+          "label": "Voreinstellung"
+        },
         "blend-time": "Überblendzeit",
         "effect": "Effekt",
         "accuracy": "Genauigkeit",
@@ -1426,7 +1598,45 @@
         "dottify": "Punktieren",
         "dottify-description": "Punkte statt einer durchgehenden Linie zeichnen",
         "horizontal-align": "Horizontale Ausrichtung",
-        "vertical-align": "Vertikale Ausrichtung"
+        "vertical-align": "Vertikale Ausrichtung",
+        "blendTimeInSeconds": {
+          "label": "Überblendzeit"
+        },
+        "vudioMaxHeight": {
+          "label": "Max. Höhe"
+        },
+        "vudioMaxSize": {
+          "label": "Max. Größe"
+        },
+        "vudioLineWidth": {
+          "label": "Linienbreite"
+        },
+        "vudioColor": {
+          "label": "Farbe"
+        },
+        "vudioShadowBlur": {
+          "label": "Schattenunschärfe"
+        },
+        "vudioShadowColor": {
+          "label": "Schattenfarbe"
+        },
+        "vudioFadeSide": {
+          "label": "Seiten ausblenden"
+        },
+        "vudioPrettify": {
+          "label": "Verschönern",
+          "description": "Die Balken zu den Rändern hin verjüngen"
+        },
+        "vudioDottify": {
+          "label": "Punktieren",
+          "description": "Punkte statt einer durchgehenden Linie zeichnen"
+        },
+        "vudioHorizontalAlign": {
+          "label": "Horizontale Ausrichtung"
+        },
+        "vudioVerticalAlign": {
+          "label": "Vertikale Ausrichtung"
+        }
       }
     },
     "audio-only": {
@@ -1477,7 +1687,15 @@
         "open-keybind": "Tastenkürzel zum Öffnen",
         "open-keybind-description": "Tastenkürzel im Electron-Stil, z. B. CmdOrCtrl+/ oder Alt+Space",
         "open-shortcut": "Das Suchfeld von überall öffnen",
-        "open-shortcut-description": "Ruft das Suchfeld bereits im Befehlsmodus auf, ähnlich wie Spotlight. Erneutes Drücken schließt es."
+        "open-shortcut-description": "Ruft das Suchfeld bereits im Befehlsmodus auf, ähnlich wie Spotlight. Erneutes Drücken schließt es.",
+        "openShortcut": {
+          "label": "Das Suchfeld von überall öffnen",
+          "description": "Ruft das Suchfeld bereits im Befehlsmodus auf, ähnlich wie Spotlight. Erneutes Drücken schließt es."
+        },
+        "openKeybind": {
+          "label": "Tastenkürzel zum Öffnen",
+          "description": "Tastenkürzel im Electron-Stil, z. B. CmdOrCtrl+/ oder Alt+Space"
+        }
       }
     },
     "seek-shortcuts": {
@@ -1494,7 +1712,10 @@
     },
     "statusbar-lyrics": {
       "settings": {
-        "include-pronunciation": "Aussprache einschließen"
+        "include-pronunciation": "Aussprache einschließen",
+        "includePronunciation": {
+          "label": "Aussprache einschließen"
+        }
       }
     },
     "dismiss-multidevice-popup": {
@@ -1506,7 +1727,11 @@
       "name": "Speichersparer",
       "settings": {
         "threshold": "Cache-Schwellenwert",
-        "threshold-description": "Leert die Caches, sobald ihr belegter Speicher diesen Wert überschreitet, während das Fenster ausgeblendet ist"
+        "threshold-description": "Leert die Caches, sobald ihr belegter Speicher diesen Wert überschreitet, während das Fenster ausgeblendet ist",
+        "thresholdMB": {
+          "label": "Cache-Schwellenwert",
+          "description": "Leert die Caches, sobald ihr belegter Speicher diesen Wert überschreitet, während das Fenster ausgeblendet ist"
+        }
       }
     }
   },

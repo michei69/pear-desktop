@@ -321,7 +321,15 @@
         },
         "enable-seekbar": "Уключыць тэматызацыю паласы перамоткі"
       },
-      "name": "Каляровая тэма альбома"
+      "name": "Каляровая тэма альбома",
+      "settings": {
+        "ratio": {
+          "label": "Суадносіны змешвання колераў"
+        },
+        "enableSeekbar": {
+          "label": "Уключыць тэматызацыю паласы перамоткі"
+        }
+      }
     },
     "audio-only": {
       "description": "Прымусовы рэжым толькі аўдыё — блакуе ўсе відэапатокі на ўзроўні сеткі і прайгравальніка для эканоміі АЗП і трафіку",
@@ -508,6 +516,14 @@
         "caption-changed": "Субтытры зменены на {{language}}",
         "caption-disabled": "Субтытры адключаны",
         "no-captions": "Для гэтай песні няма субтытраў"
+      },
+      "settings": {
+        "autoload": {
+          "label": "Аўтаматычна выбіраць апошнія выкарыстаныя субтытры"
+        },
+        "disableCaptions": {
+          "label": "Па змаўчанні без субтытраў"
+        }
       }
     },
     "clock": {
@@ -521,7 +537,13 @@
       },
       "name": "Гадзіннік",
       "settings": {
-        "hour-12": "Выкарыстоўваць 12-гадзінны фармат"
+        "hour-12": "Выкарыстоўваць 12-гадзінны фармат",
+        "displaySeconds": {
+          "label": "Паказваць секунды"
+        },
+        "hour12": {
+          "label": "Выкарыстоўваць 12-гадзінны фармат"
+        }
       }
     },
     "compact-sidebar": {
@@ -580,7 +602,12 @@
       "menu": {
         "apply-once": "Прымяняць толькі пры запуску"
       },
-      "name": "Адключыць аўтапрайграванне"
+      "name": "Адключыць аўтапрайграванне",
+      "settings": {
+        "applyOnce": {
+          "label": "Прымяняць толькі пры запуску"
+        }
+      }
     },
     "discord": {
       "backend": {
@@ -620,7 +647,38 @@
         "activity-timeout-enabled": "Ачышчаць статус пры паўзе",
         "activity-timeout-time": "Ачышчаць праз",
         "hide-github-button": "Схаваць кнопку «Паказаць на GitHub»",
-        "hide-duration-left": "Схаваць час, што застаўся"
+        "hide-duration-left": "Схаваць час, што застаўся",
+        "autoReconnect": {
+          "label": "Аўтаматычнае перападключэнне"
+        },
+        "activityTimeoutEnabled": {
+          "label": "Ачышчаць статус пры паўзе"
+        },
+        "activityTimeoutSeconds": {
+          "label": "Ачышчаць праз"
+        },
+        "playButton": {
+          "label": "Гуляць у {{applicationName}}"
+        },
+        "hideGitHubButton": {
+          "label": "Схаваць кнопку «Паказаць на GitHub»"
+        },
+        "hideDurationLeft": {
+          "label": "Схаваць час, што застаўся"
+        },
+        "statusDisplayType": {
+          "label": "Тэкст статусу",
+          "options": {
+            "name": "Слухае {{applicationName}}",
+            "state": "Слухае {artist}",
+            "details": "Слухае {song title}"
+          }
+        }
+      },
+      "actions": {
+        "clearActivity": {
+          "label": "Ачысціць актыўнасць"
+        }
       }
     },
     "downloader": {
@@ -905,6 +963,23 @@
       "name": "Карцінка ў карцінцы",
       "templates": {
         "button": "Карцінка ў карцінцы"
+      },
+      "settings": {
+        "hotkey": {
+          "label": "Гарачая клавіша"
+        },
+        "useNativePiP": {
+          "label": "Выкарыстоўваць убудаваны PiP браўзера"
+        },
+        "alwaysOnTop": {
+          "label": "Заўсёды зверху"
+        },
+        "savePosition": {
+          "label": "Захоўваць пазіцыю акна"
+        },
+        "saveSize": {
+          "label": "Захоўваць памер акна"
+        }
       }
     },
     "playback-speed": {
@@ -940,10 +1015,21 @@
         }
       },
       "settings": {
-        "steps": "Крок гучнасці",
+        "steps": {
+          "label": "Крок гучнасці"
+        },
         "arrows-shortcut": "Спалучэнні клавіш са стрэлкамі",
         "shortcut-up": "Глабальнае спалучэнне: гучнасць вышэй",
-        "shortcut-down": "Глабальнае спалучэнне: гучнасць ніжэй"
+        "shortcut-down": "Глабальнае спалучэнне: гучнасць ніжэй",
+        "arrowsShortcut": {
+          "label": "Спалучэнні клавіш са стрэлкамі"
+        },
+        "volumeUp": {
+          "label": "Глабальнае спалучэнне: гучнасць вышэй"
+        },
+        "volumeDown": {
+          "label": "Глабальнае спалучэнне: гучнасць ніжэй"
+        }
       }
     },
     "quality-changer": {
@@ -1042,14 +1128,38 @@
       },
       "settings": {
         "global-keybinds": "Глабальныя спалучэнні клавіш (працуюць ва ўсім праграме)",
-        "local-keybinds": "Лакальныя спалучэнні клавіш (толькі калі акно ў фокусе)"
+        "local-keybinds": "Лакальныя спалучэнні клавіш (толькі калі акно ў фокусе)",
+        "playPause": {
+          "label": "Прайграванне / Паўза"
+        },
+        "localPlayPause": {
+          "label": "Прайграванне / Паўза"
+        },
+        "next": {
+          "label": "Наступны"
+        },
+        "localNext": {
+          "label": "Наступны"
+        },
+        "previous": {
+          "label": "Папярэдні"
+        },
+        "localPrevious": {
+          "label": "Папярэдні"
+        },
+        "overrideMediaKeys": {
+          "label": "Пераазначыць медыя-клавішы"
+        }
       }
     },
     "skip-silences": {
       "description": "Аўтаматычна прапускае цішыню ў песнях",
       "name": "Пропуск цішыні",
       "settings": {
-        "only-skip-beginning": "Прапускаць цішыню толькі ў пачатку трэка"
+        "only-skip-beginning": "Прапускаць цішыню толькі ў пачатку трэка",
+        "onlySkipBeginning": {
+          "label": "Прапускаць цішыню толькі ў пачатку трэка"
+        }
       }
     },
     "sponsorblock": {
@@ -1065,7 +1175,28 @@
           "selfpromo": "Самарэклама",
           "music_offtopic": "Не музычны раздзел"
         },
-        "api-url": "URL API"
+        "api-url": "URL API",
+        "sponsor": {
+          "label": "Спонсар"
+        },
+        "intro": {
+          "label": "Уступ"
+        },
+        "outro": {
+          "label": "Завяршэнне"
+        },
+        "interaction": {
+          "label": "Напамін пра ўзаемадзеянне"
+        },
+        "selfpromo": {
+          "label": "Самарэклама"
+        },
+        "music_offtopic": {
+          "label": "Не музычны раздзел"
+        },
+        "apiURL": {
+          "label": "URL API"
+        }
       }
     },
     "synced-lyrics": {
@@ -1366,7 +1497,25 @@
       },
       "name": "Празрысты прайгравальнік",
       "settings": {
-        "type-description": "Фонавы матэрыял для празрыстасці акна"
+        "type-description": "Фонавы матэрыял для празрыстасці акна",
+        "opacity": {
+          "label": "Непразрыстасць"
+        },
+        "type": {
+          "label": "Тып",
+          "description": "Фонавы матэрыял для празрыстасці акна",
+          "options": {
+            "acrylic": "Акрыл",
+            "content": "Змест",
+            "fullscreen-ui": "Поўнаэкранны інтэрфейс",
+            "mica": "Слюда",
+            "tabbed": "З укладкамі",
+            "under-page": "Пад старонкай",
+            "under-window": "Пад акном",
+            "window": "Акно",
+            "none": "Няма"
+          }
+        }
       }
     },
     "tuna-obs": {
@@ -1402,6 +1551,27 @@
       "templates": {
         "button-song": "Песня",
         "button-video": "Відэа"
+      },
+      "settings": {
+        "mode": {
+          "label": "Рэжым",
+          "options": {
+            "custom": "Карыстальніцкае пераключэнне",
+            "native": "Стандартнае пераключэнне",
+            "disabled": "Адключана"
+          }
+        },
+        "align": {
+          "label": "Выраўноўванне",
+          "options": {
+            "left": "Злева",
+            "middle": "Пасярэдзіне",
+            "right": "Справа"
+          }
+        },
+        "forceHide": {
+          "label": "Прымусова выдаліць укладку відэа"
+        }
       }
     },
     "visualizer": {
@@ -1411,7 +1581,9 @@
       },
       "name": "Візуалізатар",
       "settings": {
-        "preset": "Прадустаноўка",
+        "preset": {
+          "label": "Прадустаноўка"
+        },
         "blend-time": "Час змешвання",
         "effect": "Эфект",
         "accuracy": "Дакладнасць",
@@ -1427,7 +1599,45 @@
         "dottify": "Кропкаванне",
         "dottify-description": "Маляваць кропкі замест бесперапыннай лініі",
         "horizontal-align": "Гарызантальнае выраўноўванне",
-        "vertical-align": "Вертыкальнае выраўноўванне"
+        "vertical-align": "Вертыкальнае выраўноўванне",
+        "blendTimeInSeconds": {
+          "label": "Час змешвання"
+        },
+        "vudioMaxHeight": {
+          "label": "Макс. вышыня"
+        },
+        "vudioMaxSize": {
+          "label": "Макс. памер"
+        },
+        "vudioLineWidth": {
+          "label": "Шырыня лініі"
+        },
+        "vudioColor": {
+          "label": "Колер"
+        },
+        "vudioShadowBlur": {
+          "label": "Размыццё ценю"
+        },
+        "vudioShadowColor": {
+          "label": "Колер ценю"
+        },
+        "vudioFadeSide": {
+          "label": "Згасанне па баках"
+        },
+        "vudioPrettify": {
+          "label": "Аздабленне",
+          "description": "Звужаць слупкі да краёў"
+        },
+        "vudioDottify": {
+          "label": "Кропкаванне",
+          "description": "Маляваць кропкі замест бесперапыннай лініі"
+        },
+        "vudioHorizontalAlign": {
+          "label": "Гарызантальнае выраўноўванне"
+        },
+        "vudioVerticalAlign": {
+          "label": "Вертыкальнае выраўноўванне"
+        }
       }
     },
     "playlist-search": {
@@ -1480,7 +1690,15 @@
         "open-keybind": "Спалучэнне клавіш для адкрыцця",
         "open-keybind-description": "Спалучэнне ў стылі Electron, напр. CmdOrCtrl+/ або Alt+Space",
         "open-shortcut": "Адкрываць поле пошуку з любога месца",
-        "open-shortcut-description": "Выклікае поле пошуку ўжо ў рэжыме каманд, як Spotlight. Паўторнае націсканне закрывае яго."
+        "open-shortcut-description": "Выклікае поле пошуку ўжо ў рэжыме каманд, як Spotlight. Паўторнае націсканне закрывае яго.",
+        "openShortcut": {
+          "label": "Адкрываць поле пошуку з любога месца",
+          "description": "Выклікае поле пошуку ўжо ў рэжыме каманд, як Spotlight. Паўторнае націсканне закрывае яго."
+        },
+        "openKeybind": {
+          "label": "Спалучэнне клавіш для адкрыцця",
+          "description": "Спалучэнне ў стылі Electron, напр. CmdOrCtrl+/ або Alt+Space"
+        }
       }
     },
     "seek-shortcuts": {
@@ -1497,7 +1715,10 @@
     },
     "statusbar-lyrics": {
       "settings": {
-        "include-pronunciation": "Уключаць вымаўленне"
+        "include-pronunciation": "Уключаць вымаўленне",
+        "includePronunciation": {
+          "label": "Уключаць вымаўленне"
+        }
       }
     },
     "dismiss-multidevice-popup": {
@@ -1509,7 +1730,11 @@
       "name": "Эканомія памяці",
       "settings": {
         "threshold": "Парог кэша",
-        "threshold-description": "Ачышчаць кэшы, калі іх актыўная памяць перавышае гэты парог, пакуль акно схавана"
+        "threshold-description": "Ачышчаць кэшы, калі іх актыўная памяць перавышае гэты парог, пакуль акно схавана",
+        "thresholdMB": {
+          "label": "Парог кэша",
+          "description": "Ачышчаць кэшы, калі іх актыўная памяць перавышае гэты парог, пакуль акно схавана"
+        }
       }
     }
   },

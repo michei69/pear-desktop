@@ -314,7 +314,15 @@
         },
         "enable-seekbar": "Habilitar temas a la barra de búsqueda"
       },
-      "name": "Tema de color del álbum"
+      "name": "Tema de color del álbum",
+      "settings": {
+        "ratio": {
+          "label": "Proporción de la mezcla de colores"
+        },
+        "enableSeekbar": {
+          "label": "Habilitar temas a la barra de búsqueda"
+        }
+      }
     },
     "ambient-mode": {
       "description": "Aplica un efecto de iluminación mediante la proyección de colores suaves extraídos del vídeo sobre el fondo de pantalla",
@@ -497,6 +505,14 @@
         "caption-changed": "Subtítulos cambiados a {{language}}",
         "caption-disabled": "Subtítulos desactivados",
         "no-captions": "Sin subtítulos para ésta canción"
+      },
+      "settings": {
+        "autoload": {
+          "label": "Seleccionar automáticamente el último subtítulo utilizado"
+        },
+        "disableCaptions": {
+          "label": "Sin subtítulos por defecto"
+        }
       }
     },
     "clock": {
@@ -510,7 +526,13 @@
       },
       "name": "Reloj",
       "settings": {
-        "hour-12": "Usar formato de 12 horas"
+        "hour-12": "Usar formato de 12 horas",
+        "displaySeconds": {
+          "label": "Mostrar segundos"
+        },
+        "hour12": {
+          "label": "Usar formato de 12 horas"
+        }
       }
     },
     "compact-sidebar": {
@@ -569,7 +591,12 @@
       "menu": {
         "apply-once": "Sólo se aplica al inicio"
       },
-      "name": "Desactivar reproducción automática"
+      "name": "Desactivar reproducción automática",
+      "settings": {
+        "applyOnce": {
+          "label": "Sólo se aplica al inicio"
+        }
+      }
     },
     "discord": {
       "backend": {
@@ -609,7 +636,38 @@
         "activity-timeout-enabled": "Borrar la presencia al pausar",
         "activity-timeout-time": "Borrar después de",
         "hide-github-button": "Ocultar el botón “Ver en GitHub”",
-        "hide-duration-left": "Ocultar el tiempo restante"
+        "hide-duration-left": "Ocultar el tiempo restante",
+        "autoReconnect": {
+          "label": "Reconexión automática"
+        },
+        "activityTimeoutEnabled": {
+          "label": "Borrar la presencia al pausar"
+        },
+        "activityTimeoutSeconds": {
+          "label": "Borrar después de"
+        },
+        "playButton": {
+          "label": "Reproducir en {{applicationName}}"
+        },
+        "hideGitHubButton": {
+          "label": "Ocultar el botón “Ver en GitHub”"
+        },
+        "hideDurationLeft": {
+          "label": "Ocultar el tiempo restante"
+        },
+        "statusDisplayType": {
+          "label": "Texto de estado",
+          "options": {
+            "name": "Escuchando {{applicationName}}",
+            "state": "Escuchando a {artist}",
+            "details": "Escuchando {song title}"
+          }
+        }
+      },
+      "actions": {
+        "clearActivity": {
+          "label": "Borrar actividad"
+        }
       }
     },
     "do-not-track": {
@@ -900,6 +958,23 @@
       "name": "Picture-in-picture",
       "templates": {
         "button": "Picture-in-picture"
+      },
+      "settings": {
+        "hotkey": {
+          "label": "Tecla de acceso rápido"
+        },
+        "useNativePiP": {
+          "label": "Utilizar PiP nativo del navegador"
+        },
+        "alwaysOnTop": {
+          "label": "Siempre encima"
+        },
+        "savePosition": {
+          "label": "Guardar la posición de la ventana"
+        },
+        "saveSize": {
+          "label": "Guardar tamaño de la ventana"
+        }
       }
     },
     "playback-speed": {
@@ -935,10 +1010,21 @@
         }
       },
       "settings": {
-        "steps": "Paso de volumen",
+        "steps": {
+          "label": "Paso de volumen"
+        },
         "arrows-shortcut": "Atajos de teclas de flecha",
         "shortcut-up": "Atajo global: subir volumen",
-        "shortcut-down": "Atajo global: bajar volumen"
+        "shortcut-down": "Atajo global: bajar volumen",
+        "arrowsShortcut": {
+          "label": "Atajos de teclas de flecha"
+        },
+        "volumeUp": {
+          "label": "Atajo global: subir volumen"
+        },
+        "volumeDown": {
+          "label": "Atajo global: bajar volumen"
+        }
       }
     },
     "quality-changer": {
@@ -1037,7 +1123,28 @@
       },
       "settings": {
         "global-keybinds": "Atajos globales (funcionan en toda la aplicación)",
-        "local-keybinds": "Atajos locales (solo mientras la ventana tiene el foco)"
+        "local-keybinds": "Atajos locales (solo mientras la ventana tiene el foco)",
+        "playPause": {
+          "label": "Reproducir / Pausa"
+        },
+        "localPlayPause": {
+          "label": "Reproducir / Pausa"
+        },
+        "next": {
+          "label": "Siguiente"
+        },
+        "localNext": {
+          "label": "Siguiente"
+        },
+        "previous": {
+          "label": "Anterior"
+        },
+        "localPrevious": {
+          "label": "Anterior"
+        },
+        "overrideMediaKeys": {
+          "label": "Anular teclas de medios"
+        }
       }
     },
     "skip-disliked-songs": {
@@ -1048,7 +1155,10 @@
       "description": "Salta automáticamente las secciones silenciosas de las canciones",
       "name": "Saltar silencios",
       "settings": {
-        "only-skip-beginning": "Omitir solo el silencio al principio de una pista"
+        "only-skip-beginning": "Omitir solo el silencio al principio de una pista",
+        "onlySkipBeginning": {
+          "label": "Omitir solo el silencio al principio de una pista"
+        }
       }
     },
     "sponsorblock": {
@@ -1064,7 +1174,28 @@
           "selfpromo": "Autopromoción",
           "music_offtopic": "Sección no musical"
         },
-        "api-url": "URL de la API"
+        "api-url": "URL de la API",
+        "sponsor": {
+          "label": "Patrocinio"
+        },
+        "intro": {
+          "label": "Introducción"
+        },
+        "outro": {
+          "label": "Cierre"
+        },
+        "interaction": {
+          "label": "Recordatorio de interacción"
+        },
+        "selfpromo": {
+          "label": "Autopromoción"
+        },
+        "music_offtopic": {
+          "label": "Sección no musical"
+        },
+        "apiURL": {
+          "label": "URL de la API"
+        }
       }
     },
     "synced-lyrics": {
@@ -1365,7 +1496,25 @@
       },
       "name": "Reproductor transparente",
       "settings": {
-        "type-description": "Material de fondo usado para la transparencia de la ventana"
+        "type-description": "Material de fondo usado para la transparencia de la ventana",
+        "opacity": {
+          "label": "Opacidad"
+        },
+        "type": {
+          "label": "Tipo",
+          "description": "Material de fondo usado para la transparencia de la ventana",
+          "options": {
+            "acrylic": "Acrílico",
+            "content": "Contenido",
+            "fullscreen-ui": "Interfaz en pantalla completa",
+            "mica": "Mica",
+            "tabbed": "Con pestañas",
+            "under-page": "Pié de pagina",
+            "under-window": "Debajo de ventana",
+            "window": "Ventana",
+            "none": "Ninguno"
+          }
+        }
       }
     },
     "tuna-obs": {
@@ -1401,6 +1550,27 @@
       "templates": {
         "button-song": "Canción",
         "button-video": "Vídeo"
+      },
+      "settings": {
+        "mode": {
+          "label": "Modo",
+          "options": {
+            "custom": "Alternador personalizado",
+            "native": "Alternador nativo",
+            "disabled": "Desactivado"
+          }
+        },
+        "align": {
+          "label": "Alineación",
+          "options": {
+            "left": "Izquierda",
+            "middle": "Centro",
+            "right": "Derecha"
+          }
+        },
+        "forceHide": {
+          "label": "Forzar eliminación de la pestaña de vídeo"
+        }
       }
     },
     "visualizer": {
@@ -1410,7 +1580,9 @@
       },
       "name": "Visualizador",
       "settings": {
-        "preset": "Preajuste",
+        "preset": {
+          "label": "Preajuste"
+        },
         "blend-time": "Tiempo de mezcla",
         "effect": "Efecto",
         "accuracy": "Precisión",
@@ -1426,7 +1598,45 @@
         "dottify": "Convertir en puntos",
         "dottify-description": "Dibuja puntos en lugar de una línea continua",
         "horizontal-align": "Alineación horizontal",
-        "vertical-align": "Alineación vertical"
+        "vertical-align": "Alineación vertical",
+        "blendTimeInSeconds": {
+          "label": "Tiempo de mezcla"
+        },
+        "vudioMaxHeight": {
+          "label": "Altura máxima"
+        },
+        "vudioMaxSize": {
+          "label": "Tamaño máximo"
+        },
+        "vudioLineWidth": {
+          "label": "Ancho de línea"
+        },
+        "vudioColor": {
+          "label": "Color"
+        },
+        "vudioShadowBlur": {
+          "label": "Desenfoque de sombra"
+        },
+        "vudioShadowColor": {
+          "label": "Color de sombra"
+        },
+        "vudioFadeSide": {
+          "label": "Desvanecer los lados"
+        },
+        "vudioPrettify": {
+          "label": "Embellecer",
+          "description": "Estrecha las barras hacia los bordes"
+        },
+        "vudioDottify": {
+          "label": "Convertir en puntos",
+          "description": "Dibuja puntos en lugar de una línea continua"
+        },
+        "vudioHorizontalAlign": {
+          "label": "Alineación horizontal"
+        },
+        "vudioVerticalAlign": {
+          "label": "Alineación vertical"
+        }
       }
     },
     "audio-only": {
@@ -1477,7 +1687,15 @@
         "open-keybind": "Atajo para abrir",
         "open-keybind-description": "Acelerador al estilo de Electron, p. ej. CmdOrCtrl+/ o Alt+Space",
         "open-shortcut": "Abrir el cuadro de búsqueda desde cualquier lugar",
-        "open-shortcut-description": "Abre el cuadro de búsqueda ya en modo comando, como Spotlight. Si lo pulsas de nuevo, se cierra."
+        "open-shortcut-description": "Abre el cuadro de búsqueda ya en modo comando, como Spotlight. Si lo pulsas de nuevo, se cierra.",
+        "openShortcut": {
+          "label": "Abrir el cuadro de búsqueda desde cualquier lugar",
+          "description": "Abre el cuadro de búsqueda ya en modo comando, como Spotlight. Si lo pulsas de nuevo, se cierra."
+        },
+        "openKeybind": {
+          "label": "Atajo para abrir",
+          "description": "Acelerador al estilo de Electron, p. ej. CmdOrCtrl+/ o Alt+Space"
+        }
       }
     },
     "seek-shortcuts": {
@@ -1494,7 +1712,10 @@
     },
     "statusbar-lyrics": {
       "settings": {
-        "include-pronunciation": "Incluir pronunciación"
+        "include-pronunciation": "Incluir pronunciación",
+        "includePronunciation": {
+          "label": "Incluir pronunciación"
+        }
       }
     },
     "dismiss-multidevice-popup": {
@@ -1506,7 +1727,11 @@
       "name": "Ahorro de memoria",
       "settings": {
         "threshold": "Umbral de caché",
-        "threshold-description": "Limpia las cachés cuando su memoria activa supere este valor mientras la ventana está oculta"
+        "threshold-description": "Limpia las cachés cuando su memoria activa supere este valor mientras la ventana está oculta",
+        "thresholdMB": {
+          "label": "Umbral de caché",
+          "description": "Limpia las cachés cuando su memoria activa supere este valor mientras la ventana está oculta"
+        }
       }
     }
   },

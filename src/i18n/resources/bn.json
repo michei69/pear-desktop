@@ -314,7 +314,15 @@
         },
         "enable-seekbar": "সিকবার এর রঙ সক্রিয় করো"
       },
-      "name": "এলবাম এর কালার থিম"
+      "name": "এলবাম এর কালার থিম",
+      "settings": {
+        "ratio": {
+          "label": "কালার মিক্স রেশিও"
+        },
+        "enableSeekbar": {
+          "label": "সিকবার এর রঙ সক্রিয় করো"
+        }
+      }
     },
     "ambient-mode": {
       "description": "ভিডিও থেকে নরম আলো ছড়িয়ে আপনার স্ক্রিনের ব্যাকগ্রাউন্ডে লাইটিং ইফেক্ট প্রয়োগ করে",
@@ -497,6 +505,14 @@
         "caption-changed": "ক্যাপশন {{language}} ভাষায় পরিবর্তিত হয়েছে",
         "caption-disabled": "ক্যাপশন বন্ধ করা হয়েছে",
         "no-captions": "এই গানটির জন্য কোনো ক্যাপশন উপলব্ধ নেই"
+      },
+      "settings": {
+        "autoload": {
+          "label": "সর্বশেষ ব্যবহৃত ক্যাপশন স্বয়ংক্রিয়ভাবে নির্বাচন করুন"
+        },
+        "disableCaptions": {
+          "label": "ডিফল্টভাবে কোন ক্যাপশন নেই"
+        }
       }
     },
     "clock": {
@@ -510,7 +526,13 @@
       },
       "name": "ঘড়ি",
       "settings": {
-        "hour-12": "12-ঘণ্টা ফরম্যাট ব্যবহার করুন"
+        "hour-12": "12-ঘণ্টা ফরম্যাট ব্যবহার করুন",
+        "displaySeconds": {
+          "label": "সেকেন্ডে দেখাও"
+        },
+        "hour12": {
+          "label": "12-ঘণ্টা ফরম্যাট ব্যবহার করুন"
+        }
       }
     },
     "compact-sidebar": {
@@ -569,7 +591,12 @@
       "menu": {
         "apply-once": "শুধুমাত্র স্টার্টআপে প্রয়োগ হয়"
       },
-      "name": "অটোপ্লে বন্ধ করুন"
+      "name": "অটোপ্লে বন্ধ করুন",
+      "settings": {
+        "applyOnce": {
+          "label": "শুধুমাত্র স্টার্টআপে প্রয়োগ হয়"
+        }
+      }
     },
     "discord": {
       "backend": {
@@ -609,7 +636,38 @@
         "activity-timeout-enabled": "বিরত থাকলে প্রেজেন্স মুছুন",
         "activity-timeout-time": "কতক্ষণ পরে মুছবে",
         "hide-github-button": "“GitHub-এ দেখুন” বোতাম লুকান",
-        "hide-duration-left": "অবশিষ্ট সময় লুকান"
+        "hide-duration-left": "অবশিষ্ট সময় লুকান",
+        "autoReconnect": {
+          "label": "স্বয়ংক্রিয় পুনঃসংযোগ"
+        },
+        "activityTimeoutEnabled": {
+          "label": "বিরত থাকলে প্রেজেন্স মুছুন"
+        },
+        "activityTimeoutSeconds": {
+          "label": "কতক্ষণ পরে মুছবে"
+        },
+        "playButton": {
+          "label": "ইউটিউব মিউজিকে চালান"
+        },
+        "hideGitHubButton": {
+          "label": "“GitHub-এ দেখুন” বোতাম লুকান"
+        },
+        "hideDurationLeft": {
+          "label": "অবশিষ্ট সময় লুকান"
+        },
+        "statusDisplayType": {
+          "label": "স্ট্যাটাস টেক্সট",
+          "options": {
+            "name": "{{applicationName}} শুনছেন",
+            "state": "{artist} শুনছেন",
+            "details": "{গানের শিরোনাম} শুনছেন"
+          }
+        }
+      },
+      "actions": {
+        "clearActivity": {
+          "label": "কার্যকলাপ মুছুন"
+        }
       }
     },
     "downloader": {
@@ -881,6 +939,23 @@
       "name": "পিকচার-ইন-পিকচার",
       "templates": {
         "button": "পিকচার-ইন-পিকচার"
+      },
+      "settings": {
+        "hotkey": {
+          "label": "হটকি"
+        },
+        "useNativePiP": {
+          "label": "ব্রাউজারের নেটিভ PiP ব্যবহার করুন"
+        },
+        "alwaysOnTop": {
+          "label": "সবসময় উপরে"
+        },
+        "savePosition": {
+          "label": "উইন্ডো অবস্থান সংরক্ষণ করুন"
+        },
+        "saveSize": {
+          "label": "উইন্ডো আকার সংরক্ষণ করুন"
+        }
       }
     },
     "playback-speed": {
@@ -916,10 +991,21 @@
         }
       },
       "settings": {
-        "steps": "ভলিউম ধাপ",
+        "steps": {
+          "label": "ভলিউম ধাপ"
+        },
         "arrows-shortcut": "তীর কী শর্টকাট",
         "shortcut-up": "গ্লোবাল শর্টকাট: ভলিউম বাড়ান",
-        "shortcut-down": "গ্লোবাল শর্টকাট: ভলিউম কমান"
+        "shortcut-down": "গ্লোবাল শর্টকাট: ভলিউম কমান",
+        "arrowsShortcut": {
+          "label": "তীর কী শর্টকাট"
+        },
+        "volumeUp": {
+          "label": "গ্লোবাল শর্টকাট: ভলিউম বাড়ান"
+        },
+        "volumeDown": {
+          "label": "গ্লোবাল শর্টকাট: ভলিউম কমান"
+        }
       }
     },
     "quality-changer": {
@@ -1018,7 +1104,28 @@
       },
       "settings": {
         "global-keybinds": "গ্লোবাল কীবাইন্ড (অ্যাপজুড়ে কাজ করে)",
-        "local-keybinds": "লোকাল কীবাইন্ড (শুধু উইন্ডো ফোকাসে থাকলে)"
+        "local-keybinds": "লোকাল কীবাইন্ড (শুধু উইন্ডো ফোকাসে থাকলে)",
+        "playPause": {
+          "label": "চালান / বিরতি"
+        },
+        "localPlayPause": {
+          "label": "চালান / বিরতি"
+        },
+        "next": {
+          "label": "পরবর্তী"
+        },
+        "localNext": {
+          "label": "পরবর্তী"
+        },
+        "previous": {
+          "label": "পূর্ববর্তী"
+        },
+        "localPrevious": {
+          "label": "পূর্ববর্তী"
+        },
+        "overrideMediaKeys": {
+          "label": "মিডিয়া কী ওভাররাইড করুন"
+        }
       }
     },
     "skip-disliked-songs": {
@@ -1029,7 +1136,10 @@
       "description": "স্বয়ংক্রিয়ভাবে গানের নীরব অংশগুলো এড়িয়ে যান",
       "name": "নীরবতা এড়িয়ে যান",
       "settings": {
-        "only-skip-beginning": "শুধু ট্র্যাকের শুরুতে নীরবতা এড়িয়ে যান"
+        "only-skip-beginning": "শুধু ট্র্যাকের শুরুতে নীরবতা এড়িয়ে যান",
+        "onlySkipBeginning": {
+          "label": "শুধু ট্র্যাকের শুরুতে নীরবতা এড়িয়ে যান"
+        }
       }
     },
     "sponsorblock": {
@@ -1045,7 +1155,28 @@
           "selfpromo": "স্ব-প্রচার",
           "music_offtopic": "অ-সংগীত অংশ"
         },
-        "api-url": "API URL"
+        "api-url": "API URL",
+        "sponsor": {
+          "label": "স্পনসর"
+        },
+        "intro": {
+          "label": "ইন্ট্রো"
+        },
+        "outro": {
+          "label": "আউট্রো"
+        },
+        "interaction": {
+          "label": "ইন্টারঅ্যাকশন রিমাইন্ডার"
+        },
+        "selfpromo": {
+          "label": "স্ব-প্রচার"
+        },
+        "music_offtopic": {
+          "label": "অ-সংগীত অংশ"
+        },
+        "apiURL": {
+          "label": "API URL"
+        }
       }
     },
     "synced-lyrics": {
@@ -1346,7 +1477,25 @@
       },
       "name": "স্বচ্ছ প্লেয়ার",
       "settings": {
-        "type-description": "উইন্ডো স্বচ্ছতার জন্য ব্যবহৃত ব্যাকগ্রাউন্ড মেটেরিয়াল"
+        "type-description": "উইন্ডো স্বচ্ছতার জন্য ব্যবহৃত ব্যাকগ্রাউন্ড মেটেরিয়াল",
+        "opacity": {
+          "label": "স্বচ্ছতা"
+        },
+        "type": {
+          "label": "ধরণ",
+          "description": "উইন্ডো স্বচ্ছতার জন্য ব্যবহৃত ব্যাকগ্রাউন্ড মেটেরিয়াল",
+          "options": {
+            "acrylic": "অ্যাক্রিলিক",
+            "content": "কনটেন্ট",
+            "fullscreen-ui": "ফুলস্ক্রিন UI",
+            "mica": "মিকা",
+            "tabbed": "ট্যাবকৃত",
+            "under-page": "পেজের নিচে",
+            "under-window": "উইন্ডোর নিচে",
+            "window": "উইন্ডো",
+            "none": "কোনটি নয়"
+          }
+        }
       }
     },
     "tuna-obs": {
@@ -1382,6 +1531,27 @@
       "templates": {
         "button-song": "গান",
         "button-video": "ভিডিও"
+      },
+      "settings": {
+        "mode": {
+          "label": "মোড",
+          "options": {
+            "custom": "কাস্টম টগল",
+            "native": "নেটিভ টগল",
+            "disabled": "নিষ্ক্রিয়"
+          }
+        },
+        "align": {
+          "label": "সারিবদ্ধকরণ",
+          "options": {
+            "left": "বাম",
+            "middle": "মাঝখানে",
+            "right": "ডান"
+          }
+        },
+        "forceHide": {
+          "label": "জোর করে ভিডিও ট্যাব সরান"
+        }
       }
     },
     "visualizer": {
@@ -1391,7 +1561,9 @@
       },
       "name": "ভিজ্যুয়ালাইজার",
       "settings": {
-        "preset": "প্রিসেট",
+        "preset": {
+          "label": "প্রিসেট"
+        },
         "blend-time": "ব্লেন্ড সময়",
         "effect": "ইফেক্ট",
         "accuracy": "নির্ভুলতা",
@@ -1407,7 +1579,45 @@
         "dottify": "বিন্দুযুক্ত করুন",
         "dottify-description": "একটানা লাইনের বদলে বিন্দু আঁকুন",
         "horizontal-align": "অনুভূমিক সারিবদ্ধকরণ",
-        "vertical-align": "উল্লম্ব সারিবদ্ধকরণ"
+        "vertical-align": "উল্লম্ব সারিবদ্ধকরণ",
+        "blendTimeInSeconds": {
+          "label": "ব্লেন্ড সময়"
+        },
+        "vudioMaxHeight": {
+          "label": "সর্বোচ্চ উচ্চতা"
+        },
+        "vudioMaxSize": {
+          "label": "সর্বোচ্চ আকার"
+        },
+        "vudioLineWidth": {
+          "label": "লাইনের প্রস্থ"
+        },
+        "vudioColor": {
+          "label": "রং"
+        },
+        "vudioShadowBlur": {
+          "label": "ছায়া ব্লার"
+        },
+        "vudioShadowColor": {
+          "label": "ছায়ার রং"
+        },
+        "vudioFadeSide": {
+          "label": "পাশগুলো ফেড করুন"
+        },
+        "vudioPrettify": {
+          "label": "সুন্দর করুন",
+          "description": "প্রান্তের দিকে বারগুলো সরু করুন"
+        },
+        "vudioDottify": {
+          "label": "বিন্দুযুক্ত করুন",
+          "description": "একটানা লাইনের বদলে বিন্দু আঁকুন"
+        },
+        "vudioHorizontalAlign": {
+          "label": "অনুভূমিক সারিবদ্ধকরণ"
+        },
+        "vudioVerticalAlign": {
+          "label": "উল্লম্ব সারিবদ্ধকরণ"
+        }
       }
     },
     "audio-only": {
@@ -1477,7 +1687,15 @@
         "open-keybind": "খোলার শর্টকাট",
         "open-keybind-description": "Electron-শৈলীর অ্যাক্সিলারেটর, যেমন CmdOrCtrl+/ বা Alt+Space",
         "open-shortcut": "যেকোনো জায়গা থেকে সার্চ বক্স খুলুন",
-        "open-shortcut-description": "সার্চ বক্সকে ইতিমধ্যে কমান্ড মোডে ডেকে আনে, Spotlight-এর মতো। আবার চাপলে এটি বন্ধ হয়।"
+        "open-shortcut-description": "সার্চ বক্সকে ইতিমধ্যে কমান্ড মোডে ডেকে আনে, Spotlight-এর মতো। আবার চাপলে এটি বন্ধ হয়।",
+        "openShortcut": {
+          "label": "যেকোনো জায়গা থেকে সার্চ বক্স খুলুন",
+          "description": "সার্চ বক্সকে ইতিমধ্যে কমান্ড মোডে ডেকে আনে, Spotlight-এর মতো। আবার চাপলে এটি বন্ধ হয়।"
+        },
+        "openKeybind": {
+          "label": "খোলার শর্টকাট",
+          "description": "Electron-শৈলীর অ্যাক্সিলারেটর, যেমন CmdOrCtrl+/ বা Alt+Space"
+        }
       }
     },
     "seek-shortcuts": {
@@ -1494,7 +1712,10 @@
     },
     "statusbar-lyrics": {
       "settings": {
-        "include-pronunciation": "উচ্চারণ অন্তর্ভুক্ত করুন"
+        "include-pronunciation": "উচ্চারণ অন্তর্ভুক্ত করুন",
+        "includePronunciation": {
+          "label": "উচ্চারণ অন্তর্ভুক্ত করুন"
+        }
       }
     },
     "dismiss-multidevice-popup": {
@@ -1506,7 +1727,11 @@
       "name": "মেমরি সেভার",
       "settings": {
         "threshold": "ক্যাশ থ্রেশহোল্ড",
-        "threshold-description": "উইন্ডো লুকানো থাকা অবস্থায় ক্যাশগুলির লাইভ মেমরি এই সীমা ছাড়িয়ে গেলে সেগুলি সাফ করুন"
+        "threshold-description": "উইন্ডো লুকানো থাকা অবস্থায় ক্যাশগুলির লাইভ মেমরি এই সীমা ছাড়িয়ে গেলে সেগুলি সাফ করুন",
+        "thresholdMB": {
+          "label": "ক্যাশ থ্রেশহোল্ড",
+          "description": "উইন্ডো লুকানো থাকা অবস্থায় ক্যাশগুলির লাইভ মেমরি এই সীমা ছাড়িয়ে গেলে সেগুলি সাফ করুন"
+        }
       }
     }
   },

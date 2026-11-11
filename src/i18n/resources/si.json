@@ -314,7 +314,15 @@
         },
         "enable-seekbar": "seekbar තේමාකරණය සක්‍රීය කරන්න"
       },
-      "name": "ඇල්බම වර්ණ තේමාව"
+      "name": "ඇල්බම වර්ණ තේමාව",
+      "settings": {
+        "ratio": {
+          "label": "වර්ණ මිශ්‍රණ අනුපාතය"
+        },
+        "enableSeekbar": {
+          "label": "seekbar තේමාකරණය සක්‍රීය කරන්න"
+        }
+      }
     },
     "audio-only": {
       "description": "ශ්‍රව්‍ය-පමණක් ප්‍රකාරයට බල කරයි — RAM සහ කලාප පළල ඉතිරි කිරීමට ජාලය සහ වාදක මට්ටමේදී සියලු වීඩියෝ ප්‍රවාහ අවහිර කරයි",
@@ -505,6 +513,14 @@
         "caption-changed": "උපසිරැසිය {{language}} බවට වෙනස් විය",
         "caption-disabled": "උපසිරැසි අක්‍රීය කර ඇත",
         "no-captions": "මෙම ගීතයට උපසිරැසි නොමැත"
+      },
+      "settings": {
+        "autoload": {
+          "label": "අවසන් වරට භාවිත කළ උපසිරැසිය ස්වයංක්‍රීයව තෝරන්න"
+        },
+        "disableCaptions": {
+          "label": "පෙරනිමියෙන් උපසිරැසි නැත"
+        }
       }
     },
     "clock": {
@@ -518,7 +534,13 @@
         }
       },
       "settings": {
-        "hour-12": "12-පැය ආකෘතිය භාවිත කරන්න"
+        "hour-12": "12-පැය ආකෘතිය භාවිත කරන්න",
+        "displaySeconds": {
+          "label": "තත්පර පෙන්වන්න"
+        },
+        "hour12": {
+          "label": "12-පැය ආකෘතිය භාවිත කරන්න"
+        }
       }
     },
     "compact-sidebar": {
@@ -577,7 +599,12 @@
       "menu": {
         "apply-once": "ආරම්භයේදී පමණක් යෙදේ"
       },
-      "name": "ස්වයංක්‍රීය වාදනය අක්‍රීය කරන්න"
+      "name": "ස්වයංක්‍රීය වාදනය අක්‍රීය කරන්න",
+      "settings": {
+        "applyOnce": {
+          "label": "ආරම්භයේදී පමණක් යෙදේ"
+        }
+      }
     },
     "discord": {
       "backend": {
@@ -617,7 +644,38 @@
         "activity-timeout-enabled": "විරාමිත විට පැවැත්ම ඉවත් කරන්න",
         "activity-timeout-time": "පසු ඉවත් කරන්න",
         "hide-github-button": "“GitHub හි බලන්න” බොත්තම සඟවන්න",
-        "hide-duration-left": "ඉතිරි වන කාලය සඟවන්න"
+        "hide-duration-left": "ඉතිරි වන කාලය සඟවන්න",
+        "autoReconnect": {
+          "label": "ස්වයංක්‍රීයව නැවත සම්බන්ධ වන්න"
+        },
+        "activityTimeoutEnabled": {
+          "label": "විරාමිත විට පැවැත්ම ඉවත් කරන්න"
+        },
+        "activityTimeoutSeconds": {
+          "label": "පසු ඉවත් කරන්න"
+        },
+        "playButton": {
+          "label": "{{applicationName}} මත වාදනය කරන්න"
+        },
+        "hideGitHubButton": {
+          "label": "“GitHub හි බලන්න” බොත්තම සඟවන්න"
+        },
+        "hideDurationLeft": {
+          "label": "ඉතිරි වන කාලය සඟවන්න"
+        },
+        "statusDisplayType": {
+          "label": "තත්ත්ව පෙළ",
+          "options": {
+            "name": "{{applicationName}} සවන් දෙමින්",
+            "state": "{artist} සවන් දෙමින්",
+            "details": "{song title} සවන් දෙමින්"
+          }
+        }
+      },
+      "actions": {
+        "clearActivity": {
+          "label": "ක්‍රියාකාරකම ඉවත් කරන්න"
+        }
       }
     },
     "do-not-track": {
@@ -924,6 +982,23 @@
       "name": "රූපය තුළ රූපය",
       "templates": {
         "button": "රූපය තුළ රූපය"
+      },
+      "settings": {
+        "hotkey": {
+          "label": "කෙටි යතුර"
+        },
+        "useNativePiP": {
+          "label": "බ්‍රව්සරයේ මුල් PiP භාවිත කරන්න"
+        },
+        "alwaysOnTop": {
+          "label": "සැමවිටම ඉහළින්"
+        },
+        "savePosition": {
+          "label": "කවුළු පිහිටීම සුරකින්න"
+        },
+        "saveSize": {
+          "label": "කවුළු ප්‍රමාණය සුරකින්න"
+        }
       }
     },
     "playback-speed": {
@@ -967,10 +1042,21 @@
         }
       },
       "settings": {
-        "steps": "ශබ්ද පරිමා පියවර",
+        "steps": {
+          "label": "ශබ්ද පරිමා පියවර"
+        },
         "arrows-shortcut": "ඊතල යතුරු කෙටිමං",
         "shortcut-up": "ගෝලීය කෙටිමඟ: ශබ්ද පරිමාව වැඩි කිරීම",
-        "shortcut-down": "ගෝලීය කෙටිමඟ: ශබ්ද පරිමාව අඩු කිරීම"
+        "shortcut-down": "ගෝලීය කෙටිමඟ: ශබ්ද පරිමාව අඩු කිරීම",
+        "arrowsShortcut": {
+          "label": "ඊතල යතුරු කෙටිමං"
+        },
+        "volumeUp": {
+          "label": "ගෝලීය කෙටිමඟ: ශබ්ද පරිමාව වැඩි කිරීම"
+        },
+        "volumeDown": {
+          "label": "ගෝලීය කෙටිමඟ: ශබ්ද පරිමාව අඩු කිරීම"
+        }
       }
     },
     "prefer-song": {
@@ -1064,7 +1150,15 @@
         "open-keybind": "විවෘත කිරීමේ කෙටිමඟ",
         "open-keybind-description": "Electron-වර්ගයේ accelerator, උදා: CmdOrCtrl+/ හෝ Alt+Space",
         "open-shortcut": "සෑම තැනකින්ම සෙවුම් කොටුව විවෘත කරන්න",
-        "open-shortcut-description": "Spotlight වැනිව දැනටමත් විධාන මාදිලියේ ඇති සෙවුම් කොටුව කැඳවයි. නැවත එබීමෙන් එය වැසේ."
+        "open-shortcut-description": "Spotlight වැනිව දැනටමත් විධාන මාදිලියේ ඇති සෙවුම් කොටුව කැඳවයි. නැවත එබීමෙන් එය වැසේ.",
+        "openShortcut": {
+          "label": "සෑම තැනකින්ම සෙවුම් කොටුව විවෘත කරන්න",
+          "description": "Spotlight වැනිව දැනටමත් විධාන මාදිලියේ ඇති සෙවුම් කොටුව කැඳවයි. නැවත එබීමෙන් එය වැසේ."
+        },
+        "openKeybind": {
+          "label": "විවෘත කිරීමේ කෙටිමඟ",
+          "description": "Electron-වර්ගයේ accelerator, උදා: CmdOrCtrl+/ හෝ Alt+Space"
+        }
       }
     },
     "seek-shortcuts": {
@@ -1095,14 +1189,38 @@
       },
       "settings": {
         "global-keybinds": "ගෝලීය keybinds (යෙදුම පුරා ක්‍රියා කරයි)",
-        "local-keybinds": "දේශීය keybinds (කවුළුවට අවධානය යොමු වී ඇති විට පමණි)"
+        "local-keybinds": "දේශීය keybinds (කවුළුවට අවධානය යොමු වී ඇති විට පමණි)",
+        "playPause": {
+          "label": "වාදනය / විරාමය"
+        },
+        "localPlayPause": {
+          "label": "වාදනය / විරාමය"
+        },
+        "next": {
+          "label": "ඊළඟ"
+        },
+        "localNext": {
+          "label": "ඊළඟ"
+        },
+        "previous": {
+          "label": "පෙර"
+        },
+        "localPrevious": {
+          "label": "පෙර"
+        },
+        "overrideMediaKeys": {
+          "label": "මාධ්‍ය යතුරු override කරන්න"
+        }
       }
     },
     "skip-silences": {
       "description": "ගීතවල නිශ්ශබ්ද කොටස් ස්වයංක්‍රීයව මඟ හරියි",
       "name": "නිශ්ශබ්ද මඟ හරින්න",
       "settings": {
-        "only-skip-beginning": "පථයක ආරම්භයේ ඇති නිශ්ශබ්දතාව පමණක් මඟ හරින්න"
+        "only-skip-beginning": "පථයක ආරම්භයේ ඇති නිශ්ශබ්දතාව පමණක් මඟ හරින්න",
+        "onlySkipBeginning": {
+          "label": "පථයක ආරම්භයේ ඇති නිශ්ශබ්දතාව පමණක් මඟ හරින්න"
+        }
       }
     },
     "sponsorblock": {
@@ -1118,7 +1236,28 @@
           "selfpromo": "ස්වයං ප්‍රවර්ධනය",
           "music_offtopic": "සංගීතය නොවන කොටස"
         },
-        "api-url": "API URL"
+        "api-url": "API URL",
+        "sponsor": {
+          "label": "අනුග්‍රාහක"
+        },
+        "intro": {
+          "label": "ආරම්භය"
+        },
+        "outro": {
+          "label": "අවසානය"
+        },
+        "interaction": {
+          "label": "අන්තර්ක්‍රියා සිහිකැඳවීම"
+        },
+        "selfpromo": {
+          "label": "ස්වයං ප්‍රවර්ධනය"
+        },
+        "music_offtopic": {
+          "label": "සංගීතය නොවන කොටස"
+        },
+        "apiURL": {
+          "label": "API URL"
+        }
       }
     },
     "synced-lyrics": {
@@ -1368,7 +1507,25 @@
         }
       },
       "settings": {
-        "type-description": "කවුළු විනිවිදභාවය සඳහා භාවිත කරන පසුබිම් ද්‍රව්‍යය"
+        "type-description": "කවුළු විනිවිදභාවය සඳහා භාවිත කරන පසුබිම් ද්‍රව්‍යය",
+        "opacity": {
+          "label": "අපාරදර්ශීතාව"
+        },
+        "type": {
+          "label": "වර්ගය",
+          "description": "කවුළු විනිවිදභාවය සඳහා භාවිත කරන පසුබිම් ද්‍රව්‍යය",
+          "options": {
+            "acrylic": "ඇක්‍රිලික්",
+            "content": "අන්තර්ගතය",
+            "fullscreen-ui": "පූර්ණ තිර UI",
+            "mica": "මයිකා",
+            "tabbed": "ටැබ් සහිත",
+            "under-page": "පිටුව යටින්",
+            "under-window": "කවුළුව යටින්",
+            "window": "කවුළුව",
+            "none": "කිසිවක් නැත"
+          }
+        }
       }
     },
     "tuna-obs": {
@@ -1404,6 +1561,27 @@
       "templates": {
         "button-song": "ගීතය",
         "button-video": "වීඩියෝව"
+      },
+      "settings": {
+        "mode": {
+          "label": "මාදිලිය",
+          "options": {
+            "custom": "අභිරුචි මාරුව",
+            "native": "ස්වදේශීය ටොගලය",
+            "disabled": "අක්‍රීයයි"
+          }
+        },
+        "align": {
+          "label": "පෙළගැස්ම",
+          "options": {
+            "left": "වම",
+            "middle": "මැද",
+            "right": "දකුණ"
+          }
+        },
+        "forceHide": {
+          "label": "video ටැබය බලෙන් ඉවත් කරන්න"
+        }
       }
     },
     "visualizer": {
@@ -1413,7 +1591,9 @@
       },
       "name": "දෘශ්‍යකරණය",
       "settings": {
-        "preset": "පෙර සැකසුම",
+        "preset": {
+          "label": "පෙර සැකසුම"
+        },
         "blend-time": "මිශ්‍ර කාලය",
         "effect": "බලපෑම",
         "accuracy": "නිරවද්‍යතාව",
@@ -1429,12 +1609,53 @@
         "dottify": "තිත් කරන්න",
         "dottify-description": "අඛණ්ඩ රේඛාවක් වෙනුවට තිත් අඳින්න",
         "horizontal-align": "තිරස් පෙළගැස්ම",
-        "vertical-align": "සිරස් පෙළගැස්ම"
+        "vertical-align": "සිරස් පෙළගැස්ම",
+        "blendTimeInSeconds": {
+          "label": "මිශ්‍ර කාලය"
+        },
+        "vudioMaxHeight": {
+          "label": "උපරිම උස"
+        },
+        "vudioMaxSize": {
+          "label": "උපරිම ප්‍රමාණය"
+        },
+        "vudioLineWidth": {
+          "label": "රේඛා පළල"
+        },
+        "vudioColor": {
+          "label": "වර්ණය"
+        },
+        "vudioShadowBlur": {
+          "label": "සෙවනැලි බොඳවීම"
+        },
+        "vudioShadowColor": {
+          "label": "සෙවනැලි වර්ණය"
+        },
+        "vudioFadeSide": {
+          "label": "පැති මැකීම"
+        },
+        "vudioPrettify": {
+          "label": "අලංකාර කරන්න",
+          "description": "තීරු දාර දෙසට අඩු කරන්න"
+        },
+        "vudioDottify": {
+          "label": "තිත් කරන්න",
+          "description": "අඛණ්ඩ රේඛාවක් වෙනුවට තිත් අඳින්න"
+        },
+        "vudioHorizontalAlign": {
+          "label": "තිරස් පෙළගැස්ම"
+        },
+        "vudioVerticalAlign": {
+          "label": "සිරස් පෙළගැස්ම"
+        }
       }
     },
     "statusbar-lyrics": {
       "settings": {
-        "include-pronunciation": "උච්චාරණය ඇතුළත් කරන්න"
+        "include-pronunciation": "උච්චාරණය ඇතුළත් කරන්න",
+        "includePronunciation": {
+          "label": "උච්චාරණය ඇතුළත් කරන්න"
+        }
       }
     },
     "dismiss-multidevice-popup": {
@@ -1446,7 +1667,11 @@
       "name": "මතක සුරකිනය",
       "settings": {
         "threshold": "හැඹිලි සීමාව",
-        "threshold-description": "කවුළුව සැඟවී ඇති විට ඒවායේ සජීවී මතකය මෙය ඉක්මවන විට හැඹිලි ඉවත් කරන්න"
+        "threshold-description": "කවුළුව සැඟවී ඇති විට ඒවායේ සජීවී මතකය මෙය ඉක්මවන විට හැඹිලි ඉවත් කරන්න",
+        "thresholdMB": {
+          "label": "හැඹිලි සීමාව",
+          "description": "කවුළුව සැඟවී ඇති විට ඒවායේ සජීවී මතකය මෙය ඉක්මවන විට හැඹිලි ඉවත් කරන්න"
+        }
       }
     }
   },

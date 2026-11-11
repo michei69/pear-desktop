@@ -314,7 +314,15 @@
         },
         "enable-seekbar": "Activar el tema en la barra de progrés"
       },
-      "name": "Tema de color de l'àlbum"
+      "name": "Tema de color de l'àlbum",
+      "settings": {
+        "ratio": {
+          "label": "Proporció de la barreja de colors"
+        },
+        "enableSeekbar": {
+          "label": "Activar el tema en la barra de progrés"
+        }
+      }
     },
     "ambient-mode": {
       "description": "Aplica un efecte d'il·luminació que projecta colors difusos del vídeo al fons de la pantalla",
@@ -497,6 +505,14 @@
         "caption-changed": "Subtítols canviats a {{language}}",
         "caption-disabled": "Subtítols desactivats",
         "no-captions": "Subtítols no disponibles per aquesta cançó"
+      },
+      "settings": {
+        "autoload": {
+          "label": "Selecciona automàticament l'últim subtítol emprat"
+        },
+        "disableCaptions": {
+          "label": "Sense subtítols per defecte"
+        }
       }
     },
     "clock": {
@@ -510,7 +526,13 @@
       },
       "name": "Rellotge",
       "settings": {
-        "hour-12": "Utilitza el format de 12 hores"
+        "hour-12": "Utilitza el format de 12 hores",
+        "displaySeconds": {
+          "label": "Mostra els segons"
+        },
+        "hour12": {
+          "label": "Utilitza el format de 12 hores"
+        }
       }
     },
     "compact-sidebar": {
@@ -569,7 +591,12 @@
       "menu": {
         "apply-once": "Tan sols s'aplica a l'inici"
       },
-      "name": "Deshabilita la reproducció automàtica"
+      "name": "Deshabilita la reproducció automàtica",
+      "settings": {
+        "applyOnce": {
+          "label": "Tan sols s'aplica a l'inici"
+        }
+      }
     },
     "discord": {
       "backend": {
@@ -609,7 +636,38 @@
         "activity-timeout-enabled": "Esborra la presència en pausar",
         "activity-timeout-time": "Esborra després de",
         "hide-github-button": "Amaga el botó «Mostra a GitHub»",
-        "hide-duration-left": "Amaga el temps restant"
+        "hide-duration-left": "Amaga el temps restant",
+        "autoReconnect": {
+          "label": "Reconnexió automàtica"
+        },
+        "activityTimeoutEnabled": {
+          "label": "Esborra la presència en pausar"
+        },
+        "activityTimeoutSeconds": {
+          "label": "Esborra després de"
+        },
+        "playButton": {
+          "label": "Reprodueix a {{applicationName}}"
+        },
+        "hideGitHubButton": {
+          "label": "Amaga el botó «Mostra a GitHub»"
+        },
+        "hideDurationLeft": {
+          "label": "Amaga el temps restant"
+        },
+        "statusDisplayType": {
+          "label": "Text d'estat",
+          "options": {
+            "name": "Escoltant {{applicationName}}",
+            "state": "Escoltant {artist}",
+            "details": "Escoltant {song title}"
+          }
+        }
+      },
+      "actions": {
+        "clearActivity": {
+          "label": "Esborra l'activitat"
+        }
       }
     },
     "do-not-track": {
@@ -900,6 +958,23 @@
       "name": "Imatge en imatge (PiP)",
       "templates": {
         "button": "Imatge en imatge (PiP)"
+      },
+      "settings": {
+        "hotkey": {
+          "label": "Drecera del teclat"
+        },
+        "useNativePiP": {
+          "label": "Utilitza l'imatge en imatge (PiP) nativa del navegador"
+        },
+        "alwaysOnTop": {
+          "label": "Mostra sempre a sobre"
+        },
+        "savePosition": {
+          "label": "Desa la posició de la finestra"
+        },
+        "saveSize": {
+          "label": "Desa la mida de la finestra"
+        }
       }
     },
     "playback-speed": {
@@ -935,10 +1010,21 @@
         }
       },
       "settings": {
-        "steps": "Pas de volum",
+        "steps": {
+          "label": "Pas de volum"
+        },
         "arrows-shortcut": "Dreceres de les tecles de fletxa",
         "shortcut-up": "Drecera global: puja el volum",
-        "shortcut-down": "Drecera global: baixa el volum"
+        "shortcut-down": "Drecera global: baixa el volum",
+        "arrowsShortcut": {
+          "label": "Dreceres de les tecles de fletxa"
+        },
+        "volumeUp": {
+          "label": "Drecera global: puja el volum"
+        },
+        "volumeDown": {
+          "label": "Drecera global: baixa el volum"
+        }
       }
     },
     "quality-changer": {
@@ -1037,7 +1123,28 @@
       },
       "settings": {
         "global-keybinds": "Dreceres globals (funcionen a tota l'aplicació)",
-        "local-keybinds": "Dreceres locals (només mentre la finestra té el focus)"
+        "local-keybinds": "Dreceres locals (només mentre la finestra té el focus)",
+        "playPause": {
+          "label": "Reproduir / Pausar"
+        },
+        "localPlayPause": {
+          "label": "Reproduir / Pausar"
+        },
+        "next": {
+          "label": "Següent"
+        },
+        "localNext": {
+          "label": "Següent"
+        },
+        "previous": {
+          "label": "Anterior"
+        },
+        "localPrevious": {
+          "label": "Anterior"
+        },
+        "overrideMediaKeys": {
+          "label": "Sobreescriu les tecles de control multimèdia"
+        }
       }
     },
     "skip-disliked-songs": {
@@ -1048,7 +1155,10 @@
       "description": "Omet automàticament les seccions amb silenci a les cançons",
       "name": "Omet els silencis",
       "settings": {
-        "only-skip-beginning": "Omet només el silenci al començament d'una pista"
+        "only-skip-beginning": "Omet només el silenci al començament d'una pista",
+        "onlySkipBeginning": {
+          "label": "Omet només el silenci al començament d'una pista"
+        }
       }
     },
     "sponsorblock": {
@@ -1064,7 +1174,28 @@
           "selfpromo": "Autopromoció",
           "music_offtopic": "Secció no musical"
         },
-        "api-url": "URL de l'API"
+        "api-url": "URL de l'API",
+        "sponsor": {
+          "label": "Patrocinador"
+        },
+        "intro": {
+          "label": "Introducció"
+        },
+        "outro": {
+          "label": "Comiat"
+        },
+        "interaction": {
+          "label": "Recordatori d'interacció"
+        },
+        "selfpromo": {
+          "label": "Autopromoció"
+        },
+        "music_offtopic": {
+          "label": "Secció no musical"
+        },
+        "apiURL": {
+          "label": "URL de l'API"
+        }
       }
     },
     "synced-lyrics": {
@@ -1365,7 +1496,25 @@
       },
       "name": "Reproductor Transparent",
       "settings": {
-        "type-description": "Material de fons utilitzat per a la transparència de la finestra"
+        "type-description": "Material de fons utilitzat per a la transparència de la finestra",
+        "opacity": {
+          "label": "Opacitat"
+        },
+        "type": {
+          "label": "Tipus",
+          "description": "Material de fons utilitzat per a la transparència de la finestra",
+          "options": {
+            "acrylic": "Acrílic",
+            "content": "Contingut",
+            "fullscreen-ui": "Interfície a pantalla completa",
+            "mica": "Mica",
+            "tabbed": "En pestanyes",
+            "under-page": "Sota la pàgina",
+            "under-window": "Sota la finestra",
+            "window": "Finestra",
+            "none": "Cap"
+          }
+        }
       }
     },
     "tuna-obs": {
@@ -1401,6 +1550,27 @@
       "templates": {
         "button-song": "Cançó",
         "button-video": "Vídeo"
+      },
+      "settings": {
+        "mode": {
+          "label": "Mode",
+          "options": {
+            "custom": "Commutador personalitzat",
+            "native": "Commutador nadiu",
+            "disabled": "Deshabilitat"
+          }
+        },
+        "align": {
+          "label": "Alineament",
+          "options": {
+            "left": "Esquerra",
+            "middle": "Mig",
+            "right": "Dreta"
+          }
+        },
+        "forceHide": {
+          "label": "Força amagar la pestanya de vídeo"
+        }
       }
     },
     "visualizer": {
@@ -1410,7 +1580,9 @@
       },
       "name": "Visualitzador",
       "settings": {
-        "preset": "Predefinit",
+        "preset": {
+          "label": "Predefinit"
+        },
         "blend-time": "Temps de barreja",
         "effect": "Efecte",
         "accuracy": "Precisió",
@@ -1426,7 +1598,45 @@
         "dottify": "Mostra punts",
         "dottify-description": "Dibuixa punts en lloc d'una línia contínua",
         "horizontal-align": "Alineació horitzontal",
-        "vertical-align": "Alineació vertical"
+        "vertical-align": "Alineació vertical",
+        "blendTimeInSeconds": {
+          "label": "Temps de barreja"
+        },
+        "vudioMaxHeight": {
+          "label": "Alçada màxima"
+        },
+        "vudioMaxSize": {
+          "label": "Mida màxima"
+        },
+        "vudioLineWidth": {
+          "label": "Amplada de línia"
+        },
+        "vudioColor": {
+          "label": "Color"
+        },
+        "vudioShadowBlur": {
+          "label": "Desenfocament de l'ombra"
+        },
+        "vudioShadowColor": {
+          "label": "Color de l'ombra"
+        },
+        "vudioFadeSide": {
+          "label": "Costats de difuminat"
+        },
+        "vudioPrettify": {
+          "label": "Millora l'aspecte",
+          "description": "Fa que les barres s'estrenyin cap a les vores"
+        },
+        "vudioDottify": {
+          "label": "Mostra punts",
+          "description": "Dibuixa punts en lloc d'una línia contínua"
+        },
+        "vudioHorizontalAlign": {
+          "label": "Alineació horitzontal"
+        },
+        "vudioVerticalAlign": {
+          "label": "Alineació vertical"
+        }
       }
     },
     "audio-only": {
@@ -1477,7 +1687,15 @@
         "open-keybind": "Drecera d'obertura",
         "open-keybind-description": "Accelerador a l'estil d'Electron, p. ex. CmdOrCtrl+/ o Alt+Espai",
         "open-shortcut": "Obre el quadre de cerca des de qualsevol lloc",
-        "open-shortcut-description": "Invoca el quadre de cerca ja en mode d'ordres, com Spotlight. Si el tornes a prémer, es tanca."
+        "open-shortcut-description": "Invoca el quadre de cerca ja en mode d'ordres, com Spotlight. Si el tornes a prémer, es tanca.",
+        "openShortcut": {
+          "label": "Obre el quadre de cerca des de qualsevol lloc",
+          "description": "Invoca el quadre de cerca ja en mode d'ordres, com Spotlight. Si el tornes a prémer, es tanca."
+        },
+        "openKeybind": {
+          "label": "Drecera d'obertura",
+          "description": "Accelerador a l'estil d'Electron, p. ex. CmdOrCtrl+/ o Alt+Espai"
+        }
       }
     },
     "seek-shortcuts": {
@@ -1494,7 +1712,10 @@
     },
     "statusbar-lyrics": {
       "settings": {
-        "include-pronunciation": "Inclou la pronunciació"
+        "include-pronunciation": "Inclou la pronunciació",
+        "includePronunciation": {
+          "label": "Inclou la pronunciació"
+        }
       }
     },
     "dismiss-multidevice-popup": {
@@ -1506,7 +1727,11 @@
       "name": "Estalvi de memòria",
       "settings": {
         "threshold": "Llindar de la memòria cau",
-        "threshold-description": "Neteja les memòries cau quan la seva memòria en ús superi aquest valor mentre la finestra està oculta"
+        "threshold-description": "Neteja les memòries cau quan la seva memòria en ús superi aquest valor mentre la finestra està oculta",
+        "thresholdMB": {
+          "label": "Llindar de la memòria cau",
+          "description": "Neteja les memòries cau quan la seva memòria en ús superi aquest valor mentre la finestra està oculta"
+        }
       }
     }
   },

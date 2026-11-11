@@ -314,7 +314,15 @@
         },
         "enable-seekbar": "シークバーのテーマを有効にする"
       },
-      "name": "アルバムカラーベースのテーマ"
+      "name": "アルバムカラーベースのテーマ",
+      "settings": {
+        "ratio": {
+          "label": "カラー混合比率"
+        },
+        "enableSeekbar": {
+          "label": "シークバーのテーマを有効にする"
+        }
+      }
     },
     "ambient-mode": {
       "description": "動画の内容に合った淡い色に画面の背景を変化させるライティング効果を適応します",
@@ -497,6 +505,14 @@
         "caption-changed": "字幕を{{language}}に変更しました",
         "caption-disabled": "字幕を無効にしました",
         "no-captions": "この曲には字幕がありません"
+      },
+      "settings": {
+        "autoload": {
+          "label": "最後の字幕を自動に選択"
+        },
+        "disableCaptions": {
+          "label": "デフォルトで字幕を無効化"
+        }
       }
     },
     "clock": {
@@ -510,7 +526,13 @@
       },
       "name": "時計",
       "settings": {
-        "hour-12": "12時間形式を使用"
+        "hour-12": "12時間形式を使用",
+        "displaySeconds": {
+          "label": "秒を表示"
+        },
+        "hour12": {
+          "label": "12時間形式を使用"
+        }
       }
     },
     "compact-sidebar": {
@@ -569,7 +591,12 @@
       "menu": {
         "apply-once": "起動時のみ適用"
       },
-      "name": "自動再生を無効化"
+      "name": "自動再生を無効化",
+      "settings": {
+        "applyOnce": {
+          "label": "起動時のみ適用"
+        }
+      }
     },
     "discord": {
       "backend": {
@@ -609,7 +636,38 @@
         "activity-timeout-enabled": "一時停止時にプレゼンスをクリア",
         "activity-timeout-time": "クリアするまでの時間",
         "hide-github-button": "「GitHubで表示」ボタンを隠す",
-        "hide-duration-left": "残り時間を隠す"
+        "hide-duration-left": "残り時間を隠す",
+        "autoReconnect": {
+          "label": "自動再接続"
+        },
+        "activityTimeoutEnabled": {
+          "label": "一時停止時にプレゼンスをクリア"
+        },
+        "activityTimeoutSeconds": {
+          "label": "クリアするまでの時間"
+        },
+        "playButton": {
+          "label": "{{applicationName}}で再生"
+        },
+        "hideGitHubButton": {
+          "label": "「GitHubで表示」ボタンを隠す"
+        },
+        "hideDurationLeft": {
+          "label": "残り時間を隠す"
+        },
+        "statusDisplayType": {
+          "label": "ステータステキスト",
+          "options": {
+            "name": "{{applicationName}}を聴く",
+            "state": "{artist}を聴いている",
+            "details": "{曲名}を聴いている"
+          }
+        }
+      },
+      "actions": {
+        "clearActivity": {
+          "label": "アクティビティの削除"
+        }
       }
     },
     "do-not-track": {
@@ -900,6 +958,23 @@
       "name": "ピクチャインピクチャ",
       "templates": {
         "button": "ピクチャインピクチャ"
+      },
+      "settings": {
+        "hotkey": {
+          "label": "ホットキー"
+        },
+        "useNativePiP": {
+          "label": "ブラウザ標準のPiPを使用"
+        },
+        "alwaysOnTop": {
+          "label": "常に最前面に表示"
+        },
+        "savePosition": {
+          "label": "ウィンドウの位置を保存"
+        },
+        "saveSize": {
+          "label": "ウィンドウのサイズを保存"
+        }
       }
     },
     "playback-speed": {
@@ -935,10 +1010,21 @@
         }
       },
       "settings": {
-        "steps": "音量ステップ",
+        "steps": {
+          "label": "音量ステップ"
+        },
         "arrows-shortcut": "矢印キーのショートカット",
         "shortcut-up": "グローバルショートカット: 音量を上げる",
-        "shortcut-down": "グローバルショートカット: 音量を下げる"
+        "shortcut-down": "グローバルショートカット: 音量を下げる",
+        "arrowsShortcut": {
+          "label": "矢印キーのショートカット"
+        },
+        "volumeUp": {
+          "label": "グローバルショートカット: 音量を上げる"
+        },
+        "volumeDown": {
+          "label": "グローバルショートカット: 音量を下げる"
+        }
       }
     },
     "quality-changer": {
@@ -1037,7 +1123,28 @@
       },
       "settings": {
         "global-keybinds": "グローバルキーバインド（アプリ全体で有効）",
-        "local-keybinds": "ローカルキーバインド（ウィンドウがフォーカスされている間のみ）"
+        "local-keybinds": "ローカルキーバインド（ウィンドウがフォーカスされている間のみ）",
+        "playPause": {
+          "label": "再生/一時停止"
+        },
+        "localPlayPause": {
+          "label": "再生/一時停止"
+        },
+        "next": {
+          "label": "次"
+        },
+        "localNext": {
+          "label": "次"
+        },
+        "previous": {
+          "label": "前の"
+        },
+        "localPrevious": {
+          "label": "前の"
+        },
+        "overrideMediaKeys": {
+          "label": "メディアキーを上書き"
+        }
       }
     },
     "skip-disliked-songs": {
@@ -1048,7 +1155,10 @@
       "description": "曲の無音区間を自動でスキップ",
       "name": "無音区間をスキップ",
       "settings": {
-        "only-skip-beginning": "トラックの先頭の無音のみスキップする"
+        "only-skip-beginning": "トラックの先頭の無音のみスキップする",
+        "onlySkipBeginning": {
+          "label": "トラックの先頭の無音のみスキップする"
+        }
       }
     },
     "sponsorblock": {
@@ -1064,7 +1174,28 @@
           "selfpromo": "自己宣伝",
           "music_offtopic": "音楽以外のセクション"
         },
-        "api-url": "API URL"
+        "api-url": "API URL",
+        "sponsor": {
+          "label": "スポンサー"
+        },
+        "intro": {
+          "label": "イントロ"
+        },
+        "outro": {
+          "label": "アウトロ"
+        },
+        "interaction": {
+          "label": "インタラクションのリマインダー"
+        },
+        "selfpromo": {
+          "label": "自己宣伝"
+        },
+        "music_offtopic": {
+          "label": "音楽以外のセクション"
+        },
+        "apiURL": {
+          "label": "API URL"
+        }
       }
     },
     "synced-lyrics": {
@@ -1365,7 +1496,25 @@
       },
       "name": "透明プレイヤー",
       "settings": {
-        "type-description": "ウィンドウの透明度に使用する背景マテリアル"
+        "type-description": "ウィンドウの透明度に使用する背景マテリアル",
+        "opacity": {
+          "label": "不透明度"
+        },
+        "type": {
+          "label": "タイプ",
+          "description": "ウィンドウの透明度に使用する背景マテリアル",
+          "options": {
+            "acrylic": "アクリル",
+            "content": "コンテンツ",
+            "fullscreen-ui": "全画面表示の UI",
+            "mica": "マイカ(Mica)",
+            "tabbed": "タブ付き",
+            "under-page": "ページ下部",
+            "under-window": "ウィンドウ下部",
+            "window": "ウィンドウ",
+            "none": "なし"
+          }
+        }
       }
     },
     "tuna-obs": {
@@ -1401,6 +1550,27 @@
       "templates": {
         "button-song": "曲",
         "button-video": "動画"
+      },
+      "settings": {
+        "mode": {
+          "label": "モード",
+          "options": {
+            "custom": "カスタム切り替え",
+            "native": "標準の切り替え",
+            "disabled": "無効"
+          }
+        },
+        "align": {
+          "label": "位置",
+          "options": {
+            "left": "左",
+            "middle": "中央",
+            "right": "右"
+          }
+        },
+        "forceHide": {
+          "label": "強制的にビデオタブを削除"
+        }
       }
     },
     "visualizer": {
@@ -1410,7 +1580,9 @@
       },
       "name": "視覚効果",
       "settings": {
-        "preset": "プリセット",
+        "preset": {
+          "label": "プリセット"
+        },
         "blend-time": "ブレンド時間",
         "effect": "エフェクト",
         "accuracy": "精度",
@@ -1426,7 +1598,45 @@
         "dottify": "ドット化",
         "dottify-description": "連続した線ではなくドットで描画する",
         "horizontal-align": "水平方向の配置",
-        "vertical-align": "垂直方向の配置"
+        "vertical-align": "垂直方向の配置",
+        "blendTimeInSeconds": {
+          "label": "ブレンド時間"
+        },
+        "vudioMaxHeight": {
+          "label": "最大高さ"
+        },
+        "vudioMaxSize": {
+          "label": "最大サイズ"
+        },
+        "vudioLineWidth": {
+          "label": "線の幅"
+        },
+        "vudioColor": {
+          "label": "色"
+        },
+        "vudioShadowBlur": {
+          "label": "影のぼかし"
+        },
+        "vudioShadowColor": {
+          "label": "影の色"
+        },
+        "vudioFadeSide": {
+          "label": "端のフェード"
+        },
+        "vudioPrettify": {
+          "label": "整形",
+          "description": "バーを端に向かって細くする"
+        },
+        "vudioDottify": {
+          "label": "ドット化",
+          "description": "連続した線ではなくドットで描画する"
+        },
+        "vudioHorizontalAlign": {
+          "label": "水平方向の配置"
+        },
+        "vudioVerticalAlign": {
+          "label": "垂直方向の配置"
+        }
       }
     },
     "audio-only": {
@@ -1477,7 +1687,15 @@
         "open-keybind": "開くショートカット",
         "open-keybind-description": "Electron 形式のアクセラレーター（例: CmdOrCtrl+/ または Alt+Space）",
         "open-shortcut": "どこからでも検索ボックスを開く",
-        "open-shortcut-description": "Spotlight のように、検索ボックスをコマンドモードで呼び出します。もう一度押すと閉じます。"
+        "open-shortcut-description": "Spotlight のように、検索ボックスをコマンドモードで呼び出します。もう一度押すと閉じます。",
+        "openShortcut": {
+          "label": "どこからでも検索ボックスを開く",
+          "description": "Spotlight のように、検索ボックスをコマンドモードで呼び出します。もう一度押すと閉じます。"
+        },
+        "openKeybind": {
+          "label": "開くショートカット",
+          "description": "Electron 形式のアクセラレーター（例: CmdOrCtrl+/ または Alt+Space）"
+        }
       }
     },
     "seek-shortcuts": {
@@ -1494,7 +1712,10 @@
     },
     "statusbar-lyrics": {
       "settings": {
-        "include-pronunciation": "発音を表示"
+        "include-pronunciation": "発音を表示",
+        "includePronunciation": {
+          "label": "発音を表示"
+        }
       }
     },
     "dismiss-multidevice-popup": {
@@ -1506,7 +1727,11 @@
       "name": "メモリセーバー",
       "settings": {
         "threshold": "キャッシュのしきい値",
-        "threshold-description": "ウィンドウが非表示の間、キャッシュの実際のメモリ使用量がこの値を超えたらキャッシュをクリアします"
+        "threshold-description": "ウィンドウが非表示の間、キャッシュの実際のメモリ使用量がこの値を超えたらキャッシュをクリアします",
+        "thresholdMB": {
+          "label": "キャッシュのしきい値",
+          "description": "ウィンドウが非表示の間、キャッシュの実際のメモリ使用量がこの値を超えたらキャッシュをクリアします"
+        }
       }
     }
   },

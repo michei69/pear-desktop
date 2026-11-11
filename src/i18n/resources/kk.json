@@ -302,7 +302,15 @@
         },
         "enable-seekbar": "Іздеу жолағын тақырыптауды қосу"
       },
-      "name": "Альбом түс тақырыбы"
+      "name": "Альбом түс тақырыбы",
+      "settings": {
+        "ratio": {
+          "label": "Түстерді араластыру қатынасы"
+        },
+        "enableSeekbar": {
+          "label": "Іздеу жолағын тақырыптауды қосу"
+        }
+      }
     },
     "audio-only": {
       "description": "Тек аудио режимін мәжбүрлейді — RAM мен трафикті үнемдеу үшін желі және ойнатқыш деңгейінде барлық бейне ағындарын блоктайды",
@@ -493,6 +501,14 @@
         "caption-changed": "Субтитр {{language}} тіліне өзгертілді",
         "caption-disabled": "Субтитрлер өшірілді",
         "no-captions": "Бұл ән үшін субтитрлер қолжетімсіз"
+      },
+      "settings": {
+        "autoload": {
+          "label": "Соңғы пайдаланылған субтитрді автоматты түрде таңдау"
+        },
+        "disableCaptions": {
+          "label": "Әдепкі бойынша субтитрлер жоқ"
+        }
       }
     },
     "clock": {
@@ -506,7 +522,13 @@
         }
       },
       "settings": {
-        "hour-12": "12 сағаттық пішімді пайдалану"
+        "hour-12": "12 сағаттық пішімді пайдалану",
+        "displaySeconds": {
+          "label": "Секундтарды көрсету"
+        },
+        "hour12": {
+          "label": "12 сағаттық пішімді пайдалану"
+        }
       }
     },
     "compact-sidebar": {
@@ -565,7 +587,12 @@
       "menu": {
         "apply-once": "Тек іске қосылу кезінде қолданылады"
       },
-      "name": "Автоматты ойнатуды өшіру"
+      "name": "Автоматты ойнатуды өшіру",
+      "settings": {
+        "applyOnce": {
+          "label": "Тек іске қосылу кезінде қолданылады"
+        }
+      }
     },
     "discord": {
       "backend": {
@@ -605,7 +632,38 @@
         "activity-timeout-enabled": "Кідіртілгенде қатысуды тазалау",
         "activity-timeout-time": "Мына уақыттан кейін тазалау",
         "hide-github-button": "«GitHub-та көру» түймесін жасыру",
-        "hide-duration-left": "Қалған уақытты жасыру"
+        "hide-duration-left": "Қалған уақытты жасыру",
+        "autoReconnect": {
+          "label": "Автоматты қайта қосылу"
+        },
+        "activityTimeoutEnabled": {
+          "label": "Кідіртілгенде қатысуды тазалау"
+        },
+        "activityTimeoutSeconds": {
+          "label": "Мына уақыттан кейін тазалау"
+        },
+        "playButton": {
+          "label": "{{applicationName}} қолданбасында ойнату"
+        },
+        "hideGitHubButton": {
+          "label": "«GitHub-та көру» түймесін жасыру"
+        },
+        "hideDurationLeft": {
+          "label": "Қалған уақытты жасыру"
+        },
+        "statusDisplayType": {
+          "label": "Мәртебе мәтіні",
+          "options": {
+            "name": "{{applicationName}} тыңдап жатыр",
+            "state": "{artist} тыңдап жатыр",
+            "details": "{song title} тыңдап жатыр"
+          }
+        }
+      },
+      "actions": {
+        "clearActivity": {
+          "label": "Белсенділікті тазалау"
+        }
       }
     },
     "do-not-track": {
@@ -912,6 +970,23 @@
       "name": "Сурет ішінде сурет",
       "templates": {
         "button": "Сурет ішінде сурет"
+      },
+      "settings": {
+        "hotkey": {
+          "label": "Ыстық перне"
+        },
+        "useNativePiP": {
+          "label": "Браузердің кіріктірілген PiP режимін пайдалану"
+        },
+        "alwaysOnTop": {
+          "label": "Әрқашан үстінде"
+        },
+        "savePosition": {
+          "label": "Терезе орнын сақтау"
+        },
+        "saveSize": {
+          "label": "Терезе өлшемін сақтау"
+        }
       }
     },
     "playback-speed": {
@@ -955,10 +1030,21 @@
         }
       },
       "settings": {
-        "steps": "Дыбыс қадамы",
+        "steps": {
+          "label": "Дыбыс қадамы"
+        },
         "arrows-shortcut": "Бағыт пернелерінің тіркесімдері",
         "shortcut-up": "Ғаламдық тіркесім: дыбысты жоғарылату",
-        "shortcut-down": "Ғаламдық тіркесім: дыбысты төмендету"
+        "shortcut-down": "Ғаламдық тіркесім: дыбысты төмендету",
+        "arrowsShortcut": {
+          "label": "Бағыт пернелерінің тіркесімдері"
+        },
+        "volumeUp": {
+          "label": "Ғаламдық тіркесім: дыбысты жоғарылату"
+        },
+        "volumeDown": {
+          "label": "Ғаламдық тіркесім: дыбысты төмендету"
+        }
       }
     },
     "prefer-song": {
@@ -1052,7 +1138,15 @@
         "open-keybind": "Ашу пернесі",
         "open-keybind-description": "Electron стиліндегі үдеткіш, мыс. CmdOrCtrl+/ немесе Alt+Space",
         "open-shortcut": "Іздеу өрісін кез келген жерден ашу",
-        "open-shortcut-description": "Spotlight сияқты іздеу өрісін бірден команда режимінде шақырады. Қайта басу оны жабады."
+        "open-shortcut-description": "Spotlight сияқты іздеу өрісін бірден команда режимінде шақырады. Қайта басу оны жабады.",
+        "openShortcut": {
+          "label": "Іздеу өрісін кез келген жерден ашу",
+          "description": "Spotlight сияқты іздеу өрісін бірден команда режимінде шақырады. Қайта басу оны жабады."
+        },
+        "openKeybind": {
+          "label": "Ашу пернесі",
+          "description": "Electron стиліндегі үдеткіш, мыс. CmdOrCtrl+/ немесе Alt+Space"
+        }
       }
     },
     "seek-shortcuts": {
@@ -1083,14 +1177,38 @@
       },
       "settings": {
         "global-keybinds": "Ғаламдық пернелер (бүкіл қолданбада жұмыс істейді)",
-        "local-keybinds": "Жергілікті пернелер (тек терезе белсенді кезде)"
+        "local-keybinds": "Жергілікті пернелер (тек терезе белсенді кезде)",
+        "playPause": {
+          "label": "Ойнату / Кідірту"
+        },
+        "localPlayPause": {
+          "label": "Ойнату / Кідірту"
+        },
+        "next": {
+          "label": "Келесі"
+        },
+        "localNext": {
+          "label": "Келесі"
+        },
+        "previous": {
+          "label": "Алдыңғы"
+        },
+        "localPrevious": {
+          "label": "Алдыңғы"
+        },
+        "overrideMediaKeys": {
+          "label": "Медиа пернелерді қайта анықтау"
+        }
       }
     },
     "skip-silences": {
       "description": "Әндердегі үнсіздік бөліктерін автоматты түрде өткізіп жіберу",
       "name": "Үнсіздіктерді өткізіп жіберу",
       "settings": {
-        "only-skip-beginning": "Тек тректің басындағы үнсіздікті өткізіп жіберу"
+        "only-skip-beginning": "Тек тректің басындағы үнсіздікті өткізіп жіберу",
+        "onlySkipBeginning": {
+          "label": "Тек тректің басындағы үнсіздікті өткізіп жіберу"
+        }
       }
     },
     "sponsorblock": {
@@ -1106,7 +1224,28 @@
           "selfpromo": "Өзін-өзі жарнамалау",
           "music_offtopic": "Музыка емес бөлім"
         },
-        "api-url": "API URL"
+        "api-url": "API URL",
+        "sponsor": {
+          "label": "Спонсор"
+        },
+        "intro": {
+          "label": "Интро"
+        },
+        "outro": {
+          "label": "Аутро"
+        },
+        "interaction": {
+          "label": "Өзара әрекеттесу туралы еске салу"
+        },
+        "selfpromo": {
+          "label": "Өзін-өзі жарнамалау"
+        },
+        "music_offtopic": {
+          "label": "Музыка емес бөлім"
+        },
+        "apiURL": {
+          "label": "API URL"
+        }
       }
     },
     "synced-lyrics": {
@@ -1356,7 +1495,25 @@
         }
       },
       "settings": {
-        "type-description": "Терезе мөлдірлігі үшін пайдаланылатын фондық материал"
+        "type-description": "Терезе мөлдірлігі үшін пайдаланылатын фондық материал",
+        "opacity": {
+          "label": "Мөлдірлік"
+        },
+        "type": {
+          "label": "Түрі",
+          "description": "Терезе мөлдірлігі үшін пайдаланылатын фондық материал",
+          "options": {
+            "acrylic": "Акрил",
+            "content": "Мазмұн",
+            "fullscreen-ui": "Толық экрандық интерфейс",
+            "mica": "Mica",
+            "tabbed": "Қойындылы",
+            "under-page": "Беттің астында",
+            "under-window": "Терезенің астында",
+            "window": "Терезе",
+            "none": "Жоқ"
+          }
+        }
       }
     },
     "tuna-obs": {
@@ -1392,6 +1549,27 @@
       "templates": {
         "button-song": "Ән",
         "button-video": "Бейне"
+      },
+      "settings": {
+        "mode": {
+          "label": "Режим",
+          "options": {
+            "custom": "Теңшелетін ауыстырғыш",
+            "native": "Стандартты ауыстырғыш",
+            "disabled": "Өшірілген"
+          }
+        },
+        "align": {
+          "label": "Туралау",
+          "options": {
+            "left": "Сол жақ",
+            "middle": "Орта",
+            "right": "Оң жақ"
+          }
+        },
+        "forceHide": {
+          "label": "Видео қойындысын мәжбүрлеп жою"
+        }
       }
     },
     "visualizer": {
@@ -1401,7 +1579,9 @@
       },
       "name": "Визуализатор",
       "settings": {
-        "preset": "Пресет",
+        "preset": {
+          "label": "Пресет"
+        },
         "blend-time": "Араласу уақыты",
         "effect": "Әсер",
         "accuracy": "Дәлдік",
@@ -1417,12 +1597,53 @@
         "dottify": "Нүктелеу",
         "dottify-description": "Үздіксіз сызықтың орнына нүктелер салу",
         "horizontal-align": "Көлденең туралау",
-        "vertical-align": "Тік туралау"
+        "vertical-align": "Тік туралау",
+        "blendTimeInSeconds": {
+          "label": "Араласу уақыты"
+        },
+        "vudioMaxHeight": {
+          "label": "Макс. биіктік"
+        },
+        "vudioMaxSize": {
+          "label": "Макс. өлшем"
+        },
+        "vudioLineWidth": {
+          "label": "Сызық ені"
+        },
+        "vudioColor": {
+          "label": "Түс"
+        },
+        "vudioShadowBlur": {
+          "label": "Көлеңке бұлыңғырлығы"
+        },
+        "vudioShadowColor": {
+          "label": "Көлеңке түсі"
+        },
+        "vudioFadeSide": {
+          "label": "Шеттерді біртіндеп өшіру"
+        },
+        "vudioPrettify": {
+          "label": "Әдемілеу",
+          "description": "Бағандарды шеттерге қарай жіңішкерту"
+        },
+        "vudioDottify": {
+          "label": "Нүктелеу",
+          "description": "Үздіксіз сызықтың орнына нүктелер салу"
+        },
+        "vudioHorizontalAlign": {
+          "label": "Көлденең туралау"
+        },
+        "vudioVerticalAlign": {
+          "label": "Тік туралау"
+        }
       }
     },
     "statusbar-lyrics": {
       "settings": {
-        "include-pronunciation": "Айтылымды қосу"
+        "include-pronunciation": "Айтылымды қосу",
+        "includePronunciation": {
+          "label": "Айтылымды қосу"
+        }
       }
     },
     "dismiss-multidevice-popup": {
@@ -1434,7 +1655,11 @@
       "name": "Жады үнемдегіші",
       "settings": {
         "threshold": "Кэш шегі",
-        "threshold-description": "Терезе жасырылған кезде кэштердің ағымдағы жадысы осы мәннен асқан соң оларды тазалайды"
+        "threshold-description": "Терезе жасырылған кезде кэштердің ағымдағы жадысы осы мәннен асқан соң оларды тазалайды",
+        "thresholdMB": {
+          "label": "Кэш шегі",
+          "description": "Терезе жасырылған кезде кэштердің ағымдағы жадысы осы мәннен асқан соң оларды тазалайды"
+        }
       }
     }
   },

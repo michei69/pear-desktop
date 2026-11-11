@@ -314,7 +314,15 @@
         },
         "enable-seekbar": "Iespējot meklēšanas joslas tematiskošanu"
       },
-      "name": "Albuma krāsu tēma"
+      "name": "Albuma krāsu tēma",
+      "settings": {
+        "ratio": {
+          "label": "Krāsu attiecība"
+        },
+        "enableSeekbar": {
+          "label": "Iespējot meklēšanas joslas tematiskošanu"
+        }
+      }
     },
     "ambient-mode": {
       "description": "Pielieto apgaismojuma efektu, kas maigā krāsā atstaro video attēlu uz ekrāna fona",
@@ -497,6 +505,14 @@
         "caption-changed": "Subtitri pamainīti uz {{language}}",
         "caption-disabled": "Subtitri izslēgti",
         "no-captions": "Subtitri nav pieejami priekš šīs dziesmas"
+      },
+      "settings": {
+        "autoload": {
+          "label": "Automātiski izvēlēties pēdējo izmantotos subtitrus"
+        },
+        "disableCaptions": {
+          "label": "Bez subtitriem pēc noklusējuma"
+        }
       }
     },
     "compact-sidebar": {
@@ -555,7 +571,12 @@
       "menu": {
         "apply-once": "Iedarbojas tikai palaišanas brīdī"
       },
-      "name": "Atspējot automātisku atskaņošanu"
+      "name": "Atspējot automātisku atskaņošanu",
+      "settings": {
+        "applyOnce": {
+          "label": "Iedarbojas tikai palaišanas brīdī"
+        }
+      }
     },
     "discord": {
       "backend": {
@@ -595,7 +616,38 @@
         "activity-timeout-enabled": "Notīrīt statusu, kad pauzēts",
         "activity-timeout-time": "Notīrīt pēc",
         "hide-github-button": "Paslēpt pogu “Skatīt GitHub”",
-        "hide-duration-left": "Paslēpt atlikušo laiku"
+        "hide-duration-left": "Paslēpt atlikušo laiku",
+        "autoReconnect": {
+          "label": "Automātiski atkārtoti pievienoties"
+        },
+        "activityTimeoutEnabled": {
+          "label": "Notīrīt statusu, kad pauzēts"
+        },
+        "activityTimeoutSeconds": {
+          "label": "Notīrīt pēc"
+        },
+        "playButton": {
+          "label": "Atskaņot uz {{applicationName}}"
+        },
+        "hideGitHubButton": {
+          "label": "Paslēpt pogu “Skatīt GitHub”"
+        },
+        "hideDurationLeft": {
+          "label": "Paslēpt atlikušo laiku"
+        },
+        "statusDisplayType": {
+          "label": "Statusa teksts",
+          "options": {
+            "name": "Klausās {{applicationName}}",
+            "state": "Klausos {mākslinieku}",
+            "details": "Klausos {dziesmas nosaukums}"
+          }
+        }
+      },
+      "actions": {
+        "clearActivity": {
+          "label": "Attīrīt aktivitāti"
+        }
       }
     },
     "downloader": {
@@ -815,7 +867,13 @@
       },
       "name": "Pulkstenis",
       "settings": {
-        "hour-12": "Izmantot 12 stundu formātu"
+        "hour-12": "Izmantot 12 stundu formātu",
+        "displaySeconds": {
+          "label": "Rādīt Sekundes"
+        },
+        "hour12": {
+          "label": "Izmantot 12 stundu formātu"
+        }
       }
     },
     "navigation": {
@@ -898,6 +956,23 @@
       "name": "Attēls-Attēlā",
       "templates": {
         "button": "Attēls-Attēlā"
+      },
+      "settings": {
+        "hotkey": {
+          "label": "Karstais taustiņš"
+        },
+        "useNativePiP": {
+          "label": "Izmantot pārlūka dabisko PiP"
+        },
+        "alwaysOnTop": {
+          "label": "Vienmēr virspusē"
+        },
+        "savePosition": {
+          "label": "Saglabāt loga pozīciju"
+        },
+        "saveSize": {
+          "label": "Saglabāt loga izmēru"
+        }
       }
     },
     "playback-speed": {
@@ -933,10 +1008,21 @@
         }
       },
       "settings": {
-        "steps": "Skaļuma solis",
+        "steps": {
+          "label": "Skaļuma solis"
+        },
         "arrows-shortcut": "Bultiņu taustiņu saīsnes",
         "shortcut-up": "Globālā saīsne: skaļuma palielināšana",
-        "shortcut-down": "Globālā saīsne: skaļuma samazināšana"
+        "shortcut-down": "Globālā saīsne: skaļuma samazināšana",
+        "arrowsShortcut": {
+          "label": "Bultiņu taustiņu saīsnes"
+        },
+        "volumeUp": {
+          "label": "Globālā saīsne: skaļuma palielināšana"
+        },
+        "volumeDown": {
+          "label": "Globālā saīsne: skaļuma samazināšana"
+        }
       }
     },
     "quality-changer": {
@@ -1035,14 +1121,38 @@
       },
       "settings": {
         "global-keybinds": "Globālās taustiņu saites (darbojas visā lietotnē)",
-        "local-keybinds": "Vietējās taustiņu saites (tikai kamēr logs ir fokusā)"
+        "local-keybinds": "Vietējās taustiņu saites (tikai kamēr logs ir fokusā)",
+        "playPause": {
+          "label": "Atskaņot / Pauzēt"
+        },
+        "localPlayPause": {
+          "label": "Atskaņot / Pauzēt"
+        },
+        "next": {
+          "label": "Nākamais"
+        },
+        "localNext": {
+          "label": "Nākamais"
+        },
+        "previous": {
+          "label": "Iepriekšējais"
+        },
+        "localPrevious": {
+          "label": "Iepriekšējais"
+        },
+        "overrideMediaKeys": {
+          "label": "Pārrakstīt Mediju Taustiņus"
+        }
       }
     },
     "skip-silences": {
       "description": "Automātiski izlaist klusuma daļas dziesmās",
       "name": "Izlaist Klusumus",
       "settings": {
-        "only-skip-beginning": "Izlaist klusumu tikai ieraksta sākumā"
+        "only-skip-beginning": "Izlaist klusumu tikai ieraksta sākumā",
+        "onlySkipBeginning": {
+          "label": "Izlaist klusumu tikai ieraksta sākumā"
+        }
       }
     },
     "sponsorblock": {
@@ -1058,7 +1168,28 @@
           "selfpromo": "Pašreklāma",
           "music_offtopic": "Sadaļa bez mūzikas"
         },
-        "api-url": "API URL"
+        "api-url": "API URL",
+        "sponsor": {
+          "label": "Sponsors"
+        },
+        "intro": {
+          "label": "Ievads"
+        },
+        "outro": {
+          "label": "Nobeigums"
+        },
+        "interaction": {
+          "label": "Mijiedarbības atgādinājums"
+        },
+        "selfpromo": {
+          "label": "Pašreklāma"
+        },
+        "music_offtopic": {
+          "label": "Sadaļa bez mūzikas"
+        },
+        "apiURL": {
+          "label": "API URL"
+        }
       }
     },
     "synced-lyrics": {
@@ -1359,7 +1490,25 @@
       },
       "name": "Caurspīdīgs Atskaņotājs",
       "settings": {
-        "type-description": "Loga caurspīdībai izmantotais fona materiāls"
+        "type-description": "Loga caurspīdībai izmantotais fona materiāls",
+        "opacity": {
+          "label": "Caurspīdīgums"
+        },
+        "type": {
+          "label": "Tips",
+          "description": "Loga caurspīdībai izmantotais fona materiāls",
+          "options": {
+            "acrylic": "Akrils",
+            "content": "Saturs",
+            "fullscreen-ui": "Pilnekrāna saskarne",
+            "mica": "Vizla",
+            "tabbed": "Cilnes",
+            "under-page": "Zem lapas",
+            "under-window": "Zem loga",
+            "window": "Logs",
+            "none": "Neviens"
+          }
+        }
       }
     },
     "tuna-obs": {
@@ -1395,6 +1544,27 @@
       "templates": {
         "button-song": "Dziesma",
         "button-video": "Video"
+      },
+      "settings": {
+        "mode": {
+          "label": "Režīms",
+          "options": {
+            "custom": "Pielāgota pārslēgšana",
+            "native": "Dabiskā pārslēgšana",
+            "disabled": "Atspējots"
+          }
+        },
+        "align": {
+          "label": "Izlīdzināšana",
+          "options": {
+            "left": "Pa kreisi",
+            "middle": "Pa vidu",
+            "right": "Pa labi"
+          }
+        },
+        "forceHide": {
+          "label": "Piespiedu kārtā noņemt video cilni"
+        }
       }
     },
     "visualizer": {
@@ -1404,7 +1574,9 @@
       },
       "name": "Vizualizētājs",
       "settings": {
-        "preset": "Priekšiestatījums",
+        "preset": {
+          "label": "Priekšiestatījums"
+        },
         "blend-time": "Saplūšanas laiks",
         "effect": "Efekts",
         "accuracy": "Precizitāte",
@@ -1420,7 +1592,45 @@
         "dottify": "Punktot",
         "dottify-description": "Zīmēt punktus, nevis nepārtrauktu līniju",
         "horizontal-align": "Horizontālā līdzināšana",
-        "vertical-align": "Vertikālā līdzināšana"
+        "vertical-align": "Vertikālā līdzināšana",
+        "blendTimeInSeconds": {
+          "label": "Saplūšanas laiks"
+        },
+        "vudioMaxHeight": {
+          "label": "Maksimālais augstums"
+        },
+        "vudioMaxSize": {
+          "label": "Maksimālais izmērs"
+        },
+        "vudioLineWidth": {
+          "label": "Līnijas platums"
+        },
+        "vudioColor": {
+          "label": "Krāsa"
+        },
+        "vudioShadowBlur": {
+          "label": "Ēnas izplūdums"
+        },
+        "vudioShadowColor": {
+          "label": "Ēnas krāsa"
+        },
+        "vudioFadeSide": {
+          "label": "Izbalēšanas malas"
+        },
+        "vudioPrettify": {
+          "label": "Uzskaistināt",
+          "description": "Sašaurināt stabiņus pret malām"
+        },
+        "vudioDottify": {
+          "label": "Punktot",
+          "description": "Zīmēt punktus, nevis nepārtrauktu līniju"
+        },
+        "vudioHorizontalAlign": {
+          "label": "Horizontālā līdzināšana"
+        },
+        "vudioVerticalAlign": {
+          "label": "Vertikālā līdzināšana"
+        }
       }
     },
     "playlist-search": {
@@ -1473,7 +1683,15 @@
         "open-keybind": "Atvēršanas saīsne",
         "open-keybind-description": "Electron stila paātrinātājs, piem., CmdOrCtrl+/ vai Alt+Space",
         "open-shortcut": "Atvērt meklēšanas lodziņu no jebkurienes",
-        "open-shortcut-description": "Atver meklēšanas lodziņu jau komandu režīmā, līdzīgi Spotlight. Nospiežot vēlreiz, tas aizveras."
+        "open-shortcut-description": "Atver meklēšanas lodziņu jau komandu režīmā, līdzīgi Spotlight. Nospiežot vēlreiz, tas aizveras.",
+        "openShortcut": {
+          "label": "Atvērt meklēšanas lodziņu no jebkurienes",
+          "description": "Atver meklēšanas lodziņu jau komandu režīmā, līdzīgi Spotlight. Nospiežot vēlreiz, tas aizveras."
+        },
+        "openKeybind": {
+          "label": "Atvēršanas saīsne",
+          "description": "Electron stila paātrinātājs, piem., CmdOrCtrl+/ vai Alt+Space"
+        }
       }
     },
     "seek-shortcuts": {
@@ -1490,7 +1708,10 @@
     },
     "statusbar-lyrics": {
       "settings": {
-        "include-pronunciation": "Iekļaut izrunu"
+        "include-pronunciation": "Iekļaut izrunu",
+        "includePronunciation": {
+          "label": "Iekļaut izrunu"
+        }
       }
     },
     "dismiss-multidevice-popup": {
@@ -1502,7 +1723,11 @@
       "name": "Atmiņas taupītājs",
       "settings": {
         "threshold": "Kešatmiņas slieksnis",
-        "threshold-description": "Notīrīt kešatmiņas, tiklīdz to aktīvā atmiņa pārsniedz šo, kamēr logs ir paslēpts"
+        "threshold-description": "Notīrīt kešatmiņas, tiklīdz to aktīvā atmiņa pārsniedz šo, kamēr logs ir paslēpts",
+        "thresholdMB": {
+          "label": "Kešatmiņas slieksnis",
+          "description": "Notīrīt kešatmiņas, tiklīdz to aktīvā atmiņa pārsniedz šo, kamēr logs ir paslēpts"
+        }
       }
     }
   },

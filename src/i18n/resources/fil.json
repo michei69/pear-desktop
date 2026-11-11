@@ -314,7 +314,15 @@
         },
         "enable-seekbar": "Paganahin ang seekbar theming"
       },
-      "name": "Tema ng Kulay ng Album"
+      "name": "Tema ng Kulay ng Album",
+      "settings": {
+        "ratio": {
+          "label": "Ratio ng paghahalo ng kulay"
+        },
+        "enableSeekbar": {
+          "label": "Paganahin ang seekbar theming"
+        }
+      }
     },
     "ambient-mode": {
       "description": "Naglalapat ng lighting effect sa pamamagitan ng pag-cast ng mga magiliw na kulay mula sa video, sa background ng iyong screen",
@@ -497,6 +505,14 @@
         "caption-changed": "Binago ang caption sa {{language}}",
         "caption-disabled": "Di-napagana ang mga caption",
         "no-captions": "Walang captions ay available para sa kantang ito"
+      },
+      "settings": {
+        "autoload": {
+          "label": "Awtomatikong piliin ang huling ginamit na caption"
+        },
+        "disableCaptions": {
+          "label": "Walang mga caption bilang default"
+        }
       }
     },
     "clock": {
@@ -510,7 +526,13 @@
       },
       "name": "Orasan",
       "settings": {
-        "hour-12": "Gumamit ng 12-oras na format"
+        "hour-12": "Gumamit ng 12-oras na format",
+        "displaySeconds": {
+          "label": "Ipakita ang Segundo"
+        },
+        "hour12": {
+          "label": "Gumamit ng 12-oras na format"
+        }
       }
     },
     "compact-sidebar": {
@@ -569,7 +591,12 @@
       "menu": {
         "apply-once": "Nalalapat lamang sa startup"
       },
-      "name": "Di-paganahin ang Autoplay"
+      "name": "Di-paganahin ang Autoplay",
+      "settings": {
+        "applyOnce": {
+          "label": "Nalalapat lamang sa startup"
+        }
+      }
     },
     "discord": {
       "backend": {
@@ -609,7 +636,38 @@
         "activity-timeout-enabled": "I-clear ang presence kapag naka-pause",
         "activity-timeout-time": "I-clear pagkatapos ng",
         "hide-github-button": "Itago ang “View on GitHub” na button",
-        "hide-duration-left": "Itago ang natitirang oras"
+        "hide-duration-left": "Itago ang natitirang oras",
+        "autoReconnect": {
+          "label": "Auto-reconnect"
+        },
+        "activityTimeoutEnabled": {
+          "label": "I-clear ang presence kapag naka-pause"
+        },
+        "activityTimeoutSeconds": {
+          "label": "I-clear pagkatapos ng"
+        },
+        "playButton": {
+          "label": "Patugtugin sa {{applicationName}}"
+        },
+        "hideGitHubButton": {
+          "label": "Itago ang “View on GitHub” na button"
+        },
+        "hideDurationLeft": {
+          "label": "Itago ang natitirang oras"
+        },
+        "statusDisplayType": {
+          "label": "Teksto ng estado",
+          "options": {
+            "name": "Kumikinig sa {{applicationName}}",
+            "state": "Nakikinig sa {artist}",
+            "details": "Nakikinig sa {song title}"
+          }
+        }
+      },
+      "actions": {
+        "clearActivity": {
+          "label": "I-clear ang aktibidad"
+        }
       }
     },
     "do-not-track": {
@@ -900,6 +958,23 @@
       "name": "Picture-na-picture",
       "templates": {
         "button": "Picture-na-picture"
+      },
+      "settings": {
+        "hotkey": {
+          "label": "Hotkey"
+        },
+        "useNativePiP": {
+          "label": "Gamitin ang browser native na PiP"
+        },
+        "alwaysOnTop": {
+          "label": "Laging sa itaas"
+        },
+        "savePosition": {
+          "label": "I-save ang posisyon ng window"
+        },
+        "saveSize": {
+          "label": "I-save ang laki ng window"
+        }
       }
     },
     "playback-speed": {
@@ -935,10 +1010,21 @@
         }
       },
       "settings": {
-        "steps": "Hakbang ng volume",
+        "steps": {
+          "label": "Hakbang ng volume"
+        },
         "arrows-shortcut": "Mga shortcut sa arrow key",
         "shortcut-up": "Global shortcut: lakasan ang volume",
-        "shortcut-down": "Global shortcut: hinaan ang volume"
+        "shortcut-down": "Global shortcut: hinaan ang volume",
+        "arrowsShortcut": {
+          "label": "Mga shortcut sa arrow key"
+        },
+        "volumeUp": {
+          "label": "Global shortcut: lakasan ang volume"
+        },
+        "volumeDown": {
+          "label": "Global shortcut: hinaan ang volume"
+        }
       }
     },
     "quality-changer": {
@@ -1037,7 +1123,28 @@
       },
       "settings": {
         "global-keybinds": "Mga global keybind (gumagana sa buong app)",
-        "local-keybinds": "Mga lokal na keybind (habang naka-focus lang ang window)"
+        "local-keybinds": "Mga lokal na keybind (habang naka-focus lang ang window)",
+        "playPause": {
+          "label": "Mag-play / Mag-pause"
+        },
+        "localPlayPause": {
+          "label": "Mag-play / Mag-pause"
+        },
+        "next": {
+          "label": "Susunod"
+        },
+        "localNext": {
+          "label": "Susunod"
+        },
+        "previous": {
+          "label": "Nakaraan"
+        },
+        "localPrevious": {
+          "label": "Nakaraan"
+        },
+        "overrideMediaKeys": {
+          "label": "I-override ang mga Media Key"
+        }
       }
     },
     "skip-disliked-songs": {
@@ -1048,7 +1155,10 @@
       "description": "Automatikong laktawan ang mga tahimik na mga seksyon sa kanta",
       "name": "I-skip ang mga Katahimikan",
       "settings": {
-        "only-skip-beginning": "Laktawan lamang ang katahimikan sa simula ng track"
+        "only-skip-beginning": "Laktawan lamang ang katahimikan sa simula ng track",
+        "onlySkipBeginning": {
+          "label": "Laktawan lamang ang katahimikan sa simula ng track"
+        }
       }
     },
     "sponsorblock": {
@@ -1064,7 +1174,28 @@
           "selfpromo": "Sariling promosyon",
           "music_offtopic": "Seksyong walang musika"
         },
-        "api-url": "URL ng API"
+        "api-url": "URL ng API",
+        "sponsor": {
+          "label": "Sponsor"
+        },
+        "intro": {
+          "label": "Intro"
+        },
+        "outro": {
+          "label": "Outro"
+        },
+        "interaction": {
+          "label": "Paalala sa interaksyon"
+        },
+        "selfpromo": {
+          "label": "Sariling promosyon"
+        },
+        "music_offtopic": {
+          "label": "Seksyong walang musika"
+        },
+        "apiURL": {
+          "label": "URL ng API"
+        }
       }
     },
     "synced-lyrics": {
@@ -1365,7 +1496,25 @@
       },
       "name": "Transparent na Player",
       "settings": {
-        "type-description": "Materyal sa background na ginagamit para sa transparency ng window"
+        "type-description": "Materyal sa background na ginagamit para sa transparency ng window",
+        "opacity": {
+          "label": "Kalabuan (Opacity)"
+        },
+        "type": {
+          "label": "Uri",
+          "description": "Materyal sa background na ginagamit para sa transparency ng window",
+          "options": {
+            "acrylic": "Akriliko",
+            "content": "Nilalaman",
+            "fullscreen-ui": "Fullscreen na UI",
+            "mica": "Mika",
+            "tabbed": "Naka-tab",
+            "under-page": "Sa Ilalim ng Pahina",
+            "under-window": "Sa Ilalim ng Window",
+            "window": "Window",
+            "none": "Wala"
+          }
+        }
       }
     },
     "tuna-obs": {
@@ -1401,6 +1550,27 @@
       "templates": {
         "button-song": "Kanta",
         "button-video": "Video"
+      },
+      "settings": {
+        "mode": {
+          "label": "Mode",
+          "options": {
+            "custom": "Custom na toggle",
+            "native": "Native na toggle",
+            "disabled": "Di-napagana"
+          }
+        },
+        "align": {
+          "label": "Pag-align",
+          "options": {
+            "left": "Kaliwa",
+            "middle": "Gitna",
+            "right": "Kanan"
+          }
+        },
+        "forceHide": {
+          "label": "Piliting tanggalin ang video tab"
+        }
       }
     },
     "visualizer": {
@@ -1410,7 +1580,9 @@
       },
       "name": "Taga-visualize",
       "settings": {
-        "preset": "Preset",
+        "preset": {
+          "label": "Preset"
+        },
         "blend-time": "Oras ng pag-blend",
         "effect": "Epekto",
         "accuracy": "Katumpakan",
@@ -1426,7 +1598,45 @@
         "dottify": "Gawing tuldok",
         "dottify-description": "Gumuhit ng mga tuldok sa halip na tuloy-tuloy na linya",
         "horizontal-align": "Pahalang na pagkakahanay",
-        "vertical-align": "Patayong pagkakahanay"
+        "vertical-align": "Patayong pagkakahanay",
+        "blendTimeInSeconds": {
+          "label": "Oras ng pag-blend"
+        },
+        "vudioMaxHeight": {
+          "label": "Pinakamataas na taas"
+        },
+        "vudioMaxSize": {
+          "label": "Pinakamalaking sukat"
+        },
+        "vudioLineWidth": {
+          "label": "Lapad ng linya"
+        },
+        "vudioColor": {
+          "label": "Kulay"
+        },
+        "vudioShadowBlur": {
+          "label": "Blur ng anino"
+        },
+        "vudioShadowColor": {
+          "label": "Kulay ng anino"
+        },
+        "vudioFadeSide": {
+          "label": "Mga gilid ng fade"
+        },
+        "vudioPrettify": {
+          "label": "Pagandahin",
+          "description": "Papanipisin ang mga bar patungo sa mga gilid"
+        },
+        "vudioDottify": {
+          "label": "Gawing tuldok",
+          "description": "Gumuhit ng mga tuldok sa halip na tuloy-tuloy na linya"
+        },
+        "vudioHorizontalAlign": {
+          "label": "Pahalang na pagkakahanay"
+        },
+        "vudioVerticalAlign": {
+          "label": "Patayong pagkakahanay"
+        }
       }
     },
     "audio-only": {
@@ -1477,7 +1687,15 @@
         "open-keybind": "Shortcut sa pagbukas",
         "open-keybind-description": "Accelerator na Electron-style, hal. CmdOrCtrl+/ o Alt+Space",
         "open-shortcut": "Buksan ang search box mula saanman",
-        "open-shortcut-description": "Tinatawag ang search box na nasa command mode na, tulad ng Spotlight. Isara ito kapag pinindot muli."
+        "open-shortcut-description": "Tinatawag ang search box na nasa command mode na, tulad ng Spotlight. Isara ito kapag pinindot muli.",
+        "openShortcut": {
+          "label": "Buksan ang search box mula saanman",
+          "description": "Tinatawag ang search box na nasa command mode na, tulad ng Spotlight. Isara ito kapag pinindot muli."
+        },
+        "openKeybind": {
+          "label": "Shortcut sa pagbukas",
+          "description": "Accelerator na Electron-style, hal. CmdOrCtrl+/ o Alt+Space"
+        }
       }
     },
     "seek-shortcuts": {
@@ -1494,7 +1712,10 @@
     },
     "statusbar-lyrics": {
       "settings": {
-        "include-pronunciation": "Isama ang pagbigkas"
+        "include-pronunciation": "Isama ang pagbigkas",
+        "includePronunciation": {
+          "label": "Isama ang pagbigkas"
+        }
       }
     },
     "dismiss-multidevice-popup": {
@@ -1506,7 +1727,11 @@
       "name": "Memory Saver",
       "settings": {
         "threshold": "Hangganan ng cache",
-        "threshold-description": "Linisin ang mga cache kapag lumampas ang live memory ng mga ito sa halagang ito habang nakatago ang window"
+        "threshold-description": "Linisin ang mga cache kapag lumampas ang live memory ng mga ito sa halagang ito habang nakatago ang window",
+        "thresholdMB": {
+          "label": "Hangganan ng cache",
+          "description": "Linisin ang mga cache kapag lumampas ang live memory ng mga ito sa halagang ito habang nakatago ang window"
+        }
       }
     }
   },

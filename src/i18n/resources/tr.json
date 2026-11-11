@@ -314,7 +314,15 @@
         },
         "enable-seekbar": "Arama çubuğu temalarını etkinleştir"
       },
-      "name": "Albüm Renk Teması"
+      "name": "Albüm Renk Teması",
+      "settings": {
+        "ratio": {
+          "label": "Renk karışım oranı"
+        },
+        "enableSeekbar": {
+          "label": "Arama çubuğu temalarını etkinleştir"
+        }
+      }
     },
     "ambient-mode": {
       "description": "Videodaki yumuşak renkleri ekranınızın arka planına yansıtarak bir ışık efekti uygular",
@@ -497,6 +505,14 @@
         "caption-changed": "Başlık {{language}} olarak değiştirildi",
         "caption-disabled": "Altyazılar devre dışı",
         "no-captions": "Bu şarkı için altyazı mevcut değil"
+      },
+      "settings": {
+        "autoload": {
+          "label": "Son kullanılan altyazıyı otomatik olarak seç"
+        },
+        "disableCaptions": {
+          "label": "Varsayılan olarak altyazı yok"
+        }
       }
     },
     "clock": {
@@ -510,7 +526,13 @@
       },
       "name": "Saat",
       "settings": {
-        "hour-12": "12 saatlik biçim kullan"
+        "hour-12": "12 saatlik biçim kullan",
+        "displaySeconds": {
+          "label": "Saniyeleri Göster"
+        },
+        "hour12": {
+          "label": "12 saatlik biçim kullan"
+        }
       }
     },
     "compact-sidebar": {
@@ -569,7 +591,12 @@
       "menu": {
         "apply-once": "Yalnızca ilk şarkı için geçerlidir"
       },
-      "name": "Otomatik oynatmayı devre dışı bırak"
+      "name": "Otomatik oynatmayı devre dışı bırak",
+      "settings": {
+        "applyOnce": {
+          "label": "Yalnızca ilk şarkı için geçerlidir"
+        }
+      }
     },
     "discord": {
       "backend": {
@@ -609,7 +636,38 @@
         "activity-timeout-enabled": "Duraklatıldığında durumu temizle",
         "activity-timeout-time": "Şu süreden sonra temizle",
         "hide-github-button": "“GitHub'da Görüntüle” düğmesini gizle",
-        "hide-duration-left": "Kalan süreyi gizle"
+        "hide-duration-left": "Kalan süreyi gizle",
+        "autoReconnect": {
+          "label": "Otomatik yeniden bağlan"
+        },
+        "activityTimeoutEnabled": {
+          "label": "Duraklatıldığında durumu temizle"
+        },
+        "activityTimeoutSeconds": {
+          "label": "Şu süreden sonra temizle"
+        },
+        "playButton": {
+          "label": "{{applicationName}} de oynat"
+        },
+        "hideGitHubButton": {
+          "label": "“GitHub'da Görüntüle” düğmesini gizle"
+        },
+        "hideDurationLeft": {
+          "label": "Kalan süreyi gizle"
+        },
+        "statusDisplayType": {
+          "label": "Durum metni",
+          "options": {
+            "name": "{{applicationName}} Dinleniyor",
+            "state": "{artist} Dinleniyor",
+            "details": "{song title} Dinleniyor"
+          }
+        }
+      },
+      "actions": {
+        "clearActivity": {
+          "label": "Etkinliği temizle"
+        }
       }
     },
     "do-not-track": {
@@ -900,6 +958,23 @@
       "name": "Resim-içinde-resim",
       "templates": {
         "button": "Resim-içinde-resim"
+      },
+      "settings": {
+        "hotkey": {
+          "label": "Kısayol"
+        },
+        "useNativePiP": {
+          "label": "Tarayıcı yerel PiP'sini kullan"
+        },
+        "alwaysOnTop": {
+          "label": "Her zaman üstte"
+        },
+        "savePosition": {
+          "label": "Pencere konumunu kaydet"
+        },
+        "saveSize": {
+          "label": "Pencere boyutunu kaydet"
+        }
       }
     },
     "playback-speed": {
@@ -935,10 +1010,21 @@
         }
       },
       "settings": {
-        "steps": "Ses adımı",
+        "steps": {
+          "label": "Ses adımı"
+        },
         "arrows-shortcut": "Ok tuşu kısayolları",
         "shortcut-up": "Genel kısayol: sesi artır",
-        "shortcut-down": "Genel kısayol: sesi azalt"
+        "shortcut-down": "Genel kısayol: sesi azalt",
+        "arrowsShortcut": {
+          "label": "Ok tuşu kısayolları"
+        },
+        "volumeUp": {
+          "label": "Genel kısayol: sesi artır"
+        },
+        "volumeDown": {
+          "label": "Genel kısayol: sesi azalt"
+        }
       }
     },
     "quality-changer": {
@@ -1037,7 +1123,28 @@
       },
       "settings": {
         "global-keybinds": "Genel tuş bağlamaları (uygulama genelinde çalışır)",
-        "local-keybinds": "Yerel tuş bağlamaları (yalnızca pencere odaktayken)"
+        "local-keybinds": "Yerel tuş bağlamaları (yalnızca pencere odaktayken)",
+        "playPause": {
+          "label": "Oynat / Durdur"
+        },
+        "localPlayPause": {
+          "label": "Oynat / Durdur"
+        },
+        "next": {
+          "label": "İler"
+        },
+        "localNext": {
+          "label": "İler"
+        },
+        "previous": {
+          "label": "Önceki"
+        },
+        "localPrevious": {
+          "label": "Önceki"
+        },
+        "overrideMediaKeys": {
+          "label": "Medya Tuşlarını Geçersiz Kıl"
+        }
       }
     },
     "skip-disliked-songs": {
@@ -1048,7 +1155,10 @@
       "description": "Şarkılardaki sessiz bölümleri otomatik olarak atlar",
       "name": "Sessizlikleri Atla",
       "settings": {
-        "only-skip-beginning": "Yalnızca parçanın başlangıcındaki sessizliği atla"
+        "only-skip-beginning": "Yalnızca parçanın başlangıcındaki sessizliği atla",
+        "onlySkipBeginning": {
+          "label": "Yalnızca parçanın başlangıcındaki sessizliği atla"
+        }
       }
     },
     "sponsorblock": {
@@ -1064,7 +1174,28 @@
           "selfpromo": "Kendini tanıtma",
           "music_offtopic": "Müzik dışı bölüm"
         },
-        "api-url": "API URL'si"
+        "api-url": "API URL'si",
+        "sponsor": {
+          "label": "Sponsor"
+        },
+        "intro": {
+          "label": "Giriş"
+        },
+        "outro": {
+          "label": "Çıkış"
+        },
+        "interaction": {
+          "label": "Etkileşim hatırlatması"
+        },
+        "selfpromo": {
+          "label": "Kendini tanıtma"
+        },
+        "music_offtopic": {
+          "label": "Müzik dışı bölüm"
+        },
+        "apiURL": {
+          "label": "API URL'si"
+        }
       }
     },
     "synced-lyrics": {
@@ -1365,7 +1496,25 @@
       },
       "name": "Şeffaf Oynatıcı",
       "settings": {
-        "type-description": "Pencere saydamlığı için kullanılan arka plan malzemesi"
+        "type-description": "Pencere saydamlığı için kullanılan arka plan malzemesi",
+        "opacity": {
+          "label": "Opaklık"
+        },
+        "type": {
+          "label": "Tür",
+          "description": "Pencere saydamlığı için kullanılan arka plan malzemesi",
+          "options": {
+            "acrylic": "Akrilik",
+            "content": "İçerik",
+            "fullscreen-ui": "Tam Ekran Kullanıcı Arayüzü",
+            "mica": "Mika",
+            "tabbed": "Sekmeli",
+            "under-page": "Sayfanın alt kısmı",
+            "under-window": "Pencerenin alt kısmı",
+            "window": "Pencere",
+            "none": "Hiçbiri"
+          }
+        }
       }
     },
     "tuna-obs": {
@@ -1401,6 +1550,27 @@
       "templates": {
         "button-song": "Şarkı",
         "button-video": "Video"
+      },
+      "settings": {
+        "mode": {
+          "label": "Mod",
+          "options": {
+            "custom": "Özel Ayar",
+            "native": "Yerel geçiş",
+            "disabled": "Devre dışı"
+          }
+        },
+        "align": {
+          "label": "Hizalama",
+          "options": {
+            "left": "Sol",
+            "middle": "Orta",
+            "right": "Sağ"
+          }
+        },
+        "forceHide": {
+          "label": "Video sekmesini kaldırmaya zorla"
+        }
       }
     },
     "visualizer": {
@@ -1410,7 +1580,9 @@
       },
       "name": "Görselleştirici",
       "settings": {
-        "preset": "Ön ayar",
+        "preset": {
+          "label": "Ön ayar"
+        },
         "blend-time": "Karışım süresi",
         "effect": "Efekt",
         "accuracy": "Doğruluk",
@@ -1426,7 +1598,45 @@
         "dottify": "Noktalı yap",
         "dottify-description": "Sürekli çizgi yerine noktalar çiz",
         "horizontal-align": "Yatay hizalama",
-        "vertical-align": "Dikey hizalama"
+        "vertical-align": "Dikey hizalama",
+        "blendTimeInSeconds": {
+          "label": "Karışım süresi"
+        },
+        "vudioMaxHeight": {
+          "label": "Maksimum yükseklik"
+        },
+        "vudioMaxSize": {
+          "label": "Maksimum boyut"
+        },
+        "vudioLineWidth": {
+          "label": "Çizgi genişliği"
+        },
+        "vudioColor": {
+          "label": "Renk"
+        },
+        "vudioShadowBlur": {
+          "label": "Gölge bulanıklığı"
+        },
+        "vudioShadowColor": {
+          "label": "Gölge rengi"
+        },
+        "vudioFadeSide": {
+          "label": "Kenarları soluklaştır"
+        },
+        "vudioPrettify": {
+          "label": "Güzelleştir",
+          "description": "Çubukları kenarlara doğru incelt"
+        },
+        "vudioDottify": {
+          "label": "Noktalı yap",
+          "description": "Sürekli çizgi yerine noktalar çiz"
+        },
+        "vudioHorizontalAlign": {
+          "label": "Yatay hizalama"
+        },
+        "vudioVerticalAlign": {
+          "label": "Dikey hizalama"
+        }
       }
     },
     "audio-only": {
@@ -1477,7 +1687,15 @@
         "open-keybind": "Açma kısayolu",
         "open-keybind-description": "Electron tarzı hızlandırıcı, örn. CmdOrCtrl+/ veya Alt+Space",
         "open-shortcut": "Arama kutusunu her yerden aç",
-        "open-shortcut-description": "Spotlight gibi, arama kutusunu doğrudan komut modunda açar. Tekrar basıldığında kapanır."
+        "open-shortcut-description": "Spotlight gibi, arama kutusunu doğrudan komut modunda açar. Tekrar basıldığında kapanır.",
+        "openShortcut": {
+          "label": "Arama kutusunu her yerden aç",
+          "description": "Spotlight gibi, arama kutusunu doğrudan komut modunda açar. Tekrar basıldığında kapanır."
+        },
+        "openKeybind": {
+          "label": "Açma kısayolu",
+          "description": "Electron tarzı hızlandırıcı, örn. CmdOrCtrl+/ veya Alt+Space"
+        }
       }
     },
     "seek-shortcuts": {
@@ -1494,7 +1712,10 @@
     },
     "statusbar-lyrics": {
       "settings": {
-        "include-pronunciation": "Telaffuzu dahil et"
+        "include-pronunciation": "Telaffuzu dahil et",
+        "includePronunciation": {
+          "label": "Telaffuzu dahil et"
+        }
       }
     },
     "dismiss-multidevice-popup": {
@@ -1506,7 +1727,11 @@
       "name": "Bellek Tasarrufu",
       "settings": {
         "threshold": "Önbellek eşiği",
-        "threshold-description": "Pencere gizliyken canlı bellek kullanımı bunu aştığında önbellekleri temizle"
+        "threshold-description": "Pencere gizliyken canlı bellek kullanımı bunu aştığında önbellekleri temizle",
+        "thresholdMB": {
+          "label": "Önbellek eşiği",
+          "description": "Pencere gizliyken canlı bellek kullanımı bunu aştığında önbellekleri temizle"
+        }
       }
     }
   },

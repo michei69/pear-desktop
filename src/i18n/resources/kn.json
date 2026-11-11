@@ -321,7 +321,15 @@
         },
         "enable-seekbar": "ಸೀಕ್‌ಬಾರ್ ಥೀಮಿಂಗ್ ಸಕ್ರಿಯಗೊಳಿಸಿ"
       },
-      "name": "ಆಲ್ಬಮ್ ಬಣ್ಣ ಥೀಮ್"
+      "name": "ಆಲ್ಬಮ್ ಬಣ್ಣ ಥೀಮ್",
+      "settings": {
+        "ratio": {
+          "label": "ಬಣ್ಣ ಮಿಶ್ರಣ ಅನುಪಾತ"
+        },
+        "enableSeekbar": {
+          "label": "ಸೀಕ್‌ಬಾರ್ ಥೀಮಿಂಗ್ ಸಕ್ರಿಯಗೊಳಿಸಿ"
+        }
+      }
     },
     "audio-only": {
       "description": "ಕೇವಲ-ಆಡಿಯೋ ಮೋಡ್ ಅನ್ನು ಒತ್ತಾಯಿಸುತ್ತದೆ — RAM ಮತ್ತು ಬ್ಯಾಂಡ್‌ವಿಡ್ತ್ ಉಳಿಸಲು ನೆಟ್‌ವರ್ಕ್ ಮತ್ತು ಪ್ಲೇಯರ್ ಮಟ್ಟದಲ್ಲಿ ಎಲ್ಲಾ ವೀಡಿಯೊ ಸ್ಟ್ರೀಮ್‌ಗಳನ್ನು ನಿರ್ಬಂಧಿಸುತ್ತದೆ",
@@ -508,6 +516,14 @@
         "caption-changed": "ಶೀರ್ಷಿಕೆ {{language}} ಗೆ ಬದಲಾಗಿದೆ",
         "caption-disabled": "ಶೀರ್ಷಿಕೆಗಳು ನಿಷ್ಕ್ರಿಯಗೊಂಡಿವೆ",
         "no-captions": "ಈ ಹಾಡಿಗೆ ಯಾವುದೇ ಶೀರ್ಷಿಕೆಗಳು ಲಭ್ಯವಿಲ್ಲ"
+      },
+      "settings": {
+        "autoload": {
+          "label": "ಕೊನೆಯದಾಗಿ ಬಳಸಿದ ಶೀರ್ಷಿಕೆಯನ್ನು ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಆಯ್ಕೆಮಾಡಿ"
+        },
+        "disableCaptions": {
+          "label": "ಪೂರ್ವನಿಯೋಜಿತವಾಗಿ ಶೀರ್ಷಿಕೆಗಳಿಲ್ಲ"
+        }
       }
     },
     "clock": {
@@ -521,7 +537,13 @@
         }
       },
       "settings": {
-        "hour-12": "12-ಗಂಟೆ ಸ್ವರೂಪ ಬಳಸಿ"
+        "hour-12": "12-ಗಂಟೆ ಸ್ವರೂಪ ಬಳಸಿ",
+        "displaySeconds": {
+          "label": "ಸೆಕೆಂಡುಗಳನ್ನು ತೋರಿಸಿ"
+        },
+        "hour12": {
+          "label": "12-ಗಂಟೆ ಸ್ವರೂಪ ಬಳಸಿ"
+        }
       }
     },
     "compact-sidebar": {
@@ -580,7 +602,12 @@
       "menu": {
         "apply-once": "ಪ್ರಾರಂಭದಲ್ಲಿ ಮಾತ್ರ ಅನ್ವಯಿಸುತ್ತದೆ"
       },
-      "name": "ಸ್ವಯಂಪ್ಲೇ ನಿಷ್ಕ್ರಿಯಗೊಳಿಸಿ"
+      "name": "ಸ್ವಯಂಪ್ಲೇ ನಿಷ್ಕ್ರಿಯಗೊಳಿಸಿ",
+      "settings": {
+        "applyOnce": {
+          "label": "ಪ್ರಾರಂಭದಲ್ಲಿ ಮಾತ್ರ ಅನ್ವಯಿಸುತ್ತದೆ"
+        }
+      }
     },
     "discord": {
       "backend": {
@@ -620,7 +647,38 @@
         "activity-timeout-enabled": "ವಿರಾಮಗೊಳಿಸಿದಾಗ ಪ್ರೆಸೆನ್ಸ್ ತೆರವುಗೊಳಿಸಿ",
         "activity-timeout-time": "ಇದರ ನಂತರ ತೆರವುಗೊಳಿಸಿ",
         "hide-github-button": "“GitHub ನಲ್ಲಿ ವೀಕ್ಷಿಸಿ” ಬಟನ್ ಮರೆಮಾಡಿ",
-        "hide-duration-left": "ಉಳಿದ ಸಮಯ ಮರೆಮಾಡಿ"
+        "hide-duration-left": "ಉಳಿದ ಸಮಯ ಮರೆಮಾಡಿ",
+        "autoReconnect": {
+          "label": "ಸ್ವಯಂ-ಮರುಸಂಪರ್ಕ"
+        },
+        "activityTimeoutEnabled": {
+          "label": "ವಿರಾಮಗೊಳಿಸಿದಾಗ ಪ್ರೆಸೆನ್ಸ್ ತೆರವುಗೊಳಿಸಿ"
+        },
+        "activityTimeoutSeconds": {
+          "label": "ಇದರ ನಂತರ ತೆರವುಗೊಳಿಸಿ"
+        },
+        "playButton": {
+          "label": "{{applicationName}} ನಲ್ಲಿ ಪ್ಲೇ ಮಾಡಿ"
+        },
+        "hideGitHubButton": {
+          "label": "“GitHub ನಲ್ಲಿ ವೀಕ್ಷಿಸಿ” ಬಟನ್ ಮರೆಮಾಡಿ"
+        },
+        "hideDurationLeft": {
+          "label": "ಉಳಿದ ಸಮಯ ಮರೆಮಾಡಿ"
+        },
+        "statusDisplayType": {
+          "label": "ಸ್ಥಿತಿ ಪಠ್ಯ",
+          "options": {
+            "name": "{{applicationName}} ಕೇಳುತ್ತಿದ್ದಾರೆ",
+            "state": "{{artist}} ಕೇಳುತ್ತಿದ್ದಾರೆ",
+            "details": "{{song title}} ಕೇಳುತ್ತಿದ್ದಾರೆ"
+          }
+        }
+      },
+      "actions": {
+        "clearActivity": {
+          "label": "ಚಟುವಟಿಕೆ ತೆರವುಗೊಳಿಸಿ"
+        }
       }
     },
     "downloader": {
@@ -905,6 +963,23 @@
       "name": "ಪಿಕ್ಚರ್-ಇನ್-ಪಿಕ್ಚರ್",
       "templates": {
         "button": "ಪಿಕ್ಚರ್-ಇನ್-ಪಿಕ್ಚರ್"
+      },
+      "settings": {
+        "hotkey": {
+          "label": "ಹಾಟ್‌ಕೀ"
+        },
+        "useNativePiP": {
+          "label": "ಬ್ರೌಸರ್ ನೇಟಿವ್ PiP ಬಳಸಿ"
+        },
+        "alwaysOnTop": {
+          "label": "ಯಾವಾಗಲೂ ಮೇಲಿರಲಿ"
+        },
+        "savePosition": {
+          "label": "ವಿಂಡೋ ಸ್ಥಾನ ಉಳಿಸಿ"
+        },
+        "saveSize": {
+          "label": "ವಿಂಡೋ ಗಾತ್ರ ಉಳಿಸಿ"
+        }
       }
     },
     "playback-speed": {
@@ -940,10 +1015,21 @@
         }
       },
       "settings": {
-        "steps": "ಧ್ವನಿ ಮಟ್ಟದ ಹೆಜ್ಜೆ",
+        "steps": {
+          "label": "ಧ್ವನಿ ಮಟ್ಟದ ಹೆಜ್ಜೆ"
+        },
         "arrows-shortcut": "ಅರೋ ಕೀ ಶಾರ್ಟ್ಕಟ್ಗಳು",
         "shortcut-up": "ಜಾಗತಿಕ ಶಾರ್ಟ್ಕಟ್: ಧ್ವನಿ ಹೆಚ್ಚಿಸಿ",
-        "shortcut-down": "ಜಾಗತಿಕ ಶಾರ್ಟ್ಕಟ್: ಧ್ವನಿ ಕಡಿಮೆ ಮಾಡಿ"
+        "shortcut-down": "ಜಾಗತಿಕ ಶಾರ್ಟ್ಕಟ್: ಧ್ವನಿ ಕಡಿಮೆ ಮಾಡಿ",
+        "arrowsShortcut": {
+          "label": "ಅರೋ ಕೀ ಶಾರ್ಟ್ಕಟ್ಗಳು"
+        },
+        "volumeUp": {
+          "label": "ಜಾಗತಿಕ ಶಾರ್ಟ್ಕಟ್: ಧ್ವನಿ ಹೆಚ್ಚಿಸಿ"
+        },
+        "volumeDown": {
+          "label": "ಜಾಗತಿಕ ಶಾರ್ಟ್ಕಟ್: ಧ್ವನಿ ಕಡಿಮೆ ಮಾಡಿ"
+        }
       }
     },
     "quality-changer": {
@@ -1042,14 +1128,38 @@
       },
       "settings": {
         "global-keybinds": "ಜಾಗತಿಕ ಕೀಬೈಂಡ್ಗಳು (ಆ್ಯಪ್ ವ್ಯಾಪ್ತಿಯಲ್ಲಿ ಕೆಲಸ ಮಾಡುತ್ತವೆ)",
-        "local-keybinds": "ಸ್ಥಳೀಯ ಕೀಬೈಂಡ್ಗಳು (ಕಿಟಕಿ ಕೇಂದ್ರೀಕೃತವಾಗಿರುವಾಗ ಮಾತ್ರ)"
+        "local-keybinds": "ಸ್ಥಳೀಯ ಕೀಬೈಂಡ್ಗಳು (ಕಿಟಕಿ ಕೇಂದ್ರೀಕೃತವಾಗಿರುವಾಗ ಮಾತ್ರ)",
+        "playPause": {
+          "label": "ಪ್ಲೇ / ವಿರಾಮ"
+        },
+        "localPlayPause": {
+          "label": "ಪ್ಲೇ / ವಿರಾಮ"
+        },
+        "next": {
+          "label": "ಮುಂದಿನ"
+        },
+        "localNext": {
+          "label": "ಮುಂದಿನ"
+        },
+        "previous": {
+          "label": "ಹಿಂದಿನ"
+        },
+        "localPrevious": {
+          "label": "ಹಿಂದಿನ"
+        },
+        "overrideMediaKeys": {
+          "label": "ಮೀಡಿಯಾ ಕೀಗಳನ್ನು ಅತಿಕ್ರಮಿಸಿ"
+        }
       }
     },
     "skip-silences": {
       "description": "ಹಾಡುಗಳಲ್ಲಿನ ಮೌನ ವಿಭಾಗಗಳನ್ನು ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಬಿಟ್ಟುಬಿಡಿ",
       "name": "ಮೌನಗಳನ್ನು ಬಿಟ್ಟುಬಿಡಿ",
       "settings": {
-        "only-skip-beginning": "ಟ್ರ್ಯಾಕ್ನ ಆರಂಭದಲ್ಲಿ ಮಾತ್ರ ಮೌನವನ್ನು ಬಿಟ್ಟುಬಿಡಿ"
+        "only-skip-beginning": "ಟ್ರ್ಯಾಕ್ನ ಆರಂಭದಲ್ಲಿ ಮಾತ್ರ ಮೌನವನ್ನು ಬಿಟ್ಟುಬಿಡಿ",
+        "onlySkipBeginning": {
+          "label": "ಟ್ರ್ಯಾಕ್ನ ಆರಂಭದಲ್ಲಿ ಮಾತ್ರ ಮೌನವನ್ನು ಬಿಟ್ಟುಬಿಡಿ"
+        }
       }
     },
     "sponsorblock": {
@@ -1065,7 +1175,28 @@
           "selfpromo": "ಸ್ವಯಂ ಪ್ರಚಾರ",
           "music_offtopic": "ಸಂಗೀತವಲ್ಲದ ವಿಭಾಗ"
         },
-        "api-url": "API URL"
+        "api-url": "API URL",
+        "sponsor": {
+          "label": "ಪ್ರಾಯೋಜಕ"
+        },
+        "intro": {
+          "label": "ಪರಿಚಯ"
+        },
+        "outro": {
+          "label": "ಅಂತ್ಯ"
+        },
+        "interaction": {
+          "label": "ಸಂವಾದ ಜ್ಞಾಪನೆ"
+        },
+        "selfpromo": {
+          "label": "ಸ್ವಯಂ ಪ್ರಚಾರ"
+        },
+        "music_offtopic": {
+          "label": "ಸಂಗೀತವಲ್ಲದ ವಿಭಾಗ"
+        },
+        "apiURL": {
+          "label": "API URL"
+        }
       }
     },
     "synced-lyrics": {
@@ -1366,7 +1497,25 @@
         }
       },
       "settings": {
-        "type-description": "ಕಿಟಕಿ ಪಾರದರ್ಶಕತೆಗೆ ಬಳಸುವ ಹಿನ್ನೆಲೆ ವಸ್ತು"
+        "type-description": "ಕಿಟಕಿ ಪಾರದರ್ಶಕತೆಗೆ ಬಳಸುವ ಹಿನ್ನೆಲೆ ವಸ್ತು",
+        "opacity": {
+          "label": "ಅಪಾರದರ್ಶಕತೆ"
+        },
+        "type": {
+          "label": "ಪ್ರಕಾರ",
+          "description": "ಕಿಟಕಿ ಪಾರದರ್ಶಕತೆಗೆ ಬಳಸುವ ಹಿನ್ನೆಲೆ ವಸ್ತು",
+          "options": {
+            "acrylic": "ಅಕ್ರಿಲಿಕ್",
+            "content": "ವಿಷಯ",
+            "fullscreen-ui": "ಪೂರ್ಣಪರದೆ UI",
+            "mica": "ಮೈಕಾ",
+            "tabbed": "ಟ್ಯಾಬ್ಡ್",
+            "under-page": "ಪುಟದ ಕೆಳಗೆ",
+            "under-window": "ಕಿಟಕಿಯ ಕೆಳಗೆ",
+            "window": "ಕಿಟಕಿ",
+            "none": "ಯಾವುದೂ ಇಲ್ಲ"
+          }
+        }
       }
     },
     "tuna-obs": {
@@ -1402,6 +1551,27 @@
       "templates": {
         "button-song": "ಹಾಡು",
         "button-video": "ವೀಡಿಯೊ"
+      },
+      "settings": {
+        "mode": {
+          "label": "ಮೋಡ್",
+          "options": {
+            "custom": "ಕಸ್ಟಮ್ ಟಾಗಲ್",
+            "native": "ನೇಟಿವ್ ಟಾಗಲ್",
+            "disabled": "ನಿಷ್ಕ್ರಿಯಗೊಳಿಸಲಾಗಿದೆ"
+          }
+        },
+        "align": {
+          "label": "ಜೋಡಣೆ",
+          "options": {
+            "left": "ಎಡ",
+            "middle": "ಮಧ್ಯ",
+            "right": "ಬಲ"
+          }
+        },
+        "forceHide": {
+          "label": "ವೀಡಿಯೊ ಟ್ಯಾಬ್ ಅನ್ನು ಬಲವಂತವಾಗಿ ತೆಗೆದುಹಾಕಿ"
+        }
       }
     },
     "visualizer": {
@@ -1411,7 +1581,9 @@
       },
       "name": "ವಿಷುವಲೈಜರ್",
       "settings": {
-        "preset": "ಪ್ರೀಸೆಟ್",
+        "preset": {
+          "label": "ಪ್ರೀಸೆಟ್"
+        },
         "blend-time": "ಮಿಶ್ರಣ ಸಮಯ",
         "effect": "ಪರಿಣಾಮ",
         "accuracy": "ನಿಖರತೆ",
@@ -1427,7 +1599,45 @@
         "dottify": "ಚುಕ್ಕೆಗಳಾಗಿಸಿ",
         "dottify-description": "ನಿರಂತರ ರೇಖೆಯ ಬದಲು ಚುಕ್ಕೆಗಳನ್ನು ಎಳೆಯಿರಿ",
         "horizontal-align": "ಅಡ್ಡಸಾಲಿನ ಜೋಡಣೆ",
-        "vertical-align": "ಲಂಬ ಜೋಡಣೆ"
+        "vertical-align": "ಲಂಬ ಜೋಡಣೆ",
+        "blendTimeInSeconds": {
+          "label": "ಮಿಶ್ರಣ ಸಮಯ"
+        },
+        "vudioMaxHeight": {
+          "label": "ಗರಿಷ್ಠ ಎತ್ತರ"
+        },
+        "vudioMaxSize": {
+          "label": "ಗರಿಷ್ಠ ಗಾತ್ರ"
+        },
+        "vudioLineWidth": {
+          "label": "ಸಾಲಿನ ಅಗಲ"
+        },
+        "vudioColor": {
+          "label": "ಬಣ್ಣ"
+        },
+        "vudioShadowBlur": {
+          "label": "ನೆರಳಿನ ಮಸುಕು"
+        },
+        "vudioShadowColor": {
+          "label": "ನೆರಳಿನ ಬಣ್ಣ"
+        },
+        "vudioFadeSide": {
+          "label": "ಬದಿಗಳಲ್ಲಿ ಮಸುಕಾಗಿಸಿ"
+        },
+        "vudioPrettify": {
+          "label": "ಸುಂದರಗೊಳಿಸಿ",
+          "description": "ಬಾರ್ಗಳನ್ನು ಅಂಚುಗಳ ಕಡೆಗೆ ತೆಳುವಾಗಿಸಿ"
+        },
+        "vudioDottify": {
+          "label": "ಚುಕ್ಕೆಗಳಾಗಿಸಿ",
+          "description": "ನಿರಂತರ ರೇಖೆಯ ಬದಲು ಚುಕ್ಕೆಗಳನ್ನು ಎಳೆಯಿರಿ"
+        },
+        "vudioHorizontalAlign": {
+          "label": "ಅಡ್ಡಸಾಲಿನ ಜೋಡಣೆ"
+        },
+        "vudioVerticalAlign": {
+          "label": "ಲಂಬ ಜೋಡಣೆ"
+        }
       }
     },
     "playlist-search": {
@@ -1480,7 +1690,15 @@
         "open-keybind": "ತೆರೆಯುವ ಶಾರ್ಟ್ಕಟ್",
         "open-keybind-description": "Electron-ಶೈಲಿಯ ಆಕ್ಸೆಲರೇಟರ್, ಉದಾ. CmdOrCtrl+/ ಅಥವಾ Alt+Space",
         "open-shortcut": "ಎಲ್ಲಿಂದಲಾದರೂ ಹುಡುಕಾಟ ಪೆಟ್ಟಿಗೆಯನ್ನು ತೆರೆಯಿರಿ",
-        "open-shortcut-description": "Spotlight ನಂತೆ ಹುಡುಕಾಟ ಪೆಟ್ಟಿಗೆಯನ್ನು ಈಗಾಗಲೇ ಆಜ್ಞೆ ಮೋಡ್ನಲ್ಲಿ ಕರೆತರುತ್ತದೆ. ಮತ್ತೆ ಒತ್ತಿದರೆ ಅದು ಮುಚ್ಚುತ್ತದೆ."
+        "open-shortcut-description": "Spotlight ನಂತೆ ಹುಡುಕಾಟ ಪೆಟ್ಟಿಗೆಯನ್ನು ಈಗಾಗಲೇ ಆಜ್ಞೆ ಮೋಡ್ನಲ್ಲಿ ಕರೆತರುತ್ತದೆ. ಮತ್ತೆ ಒತ್ತಿದರೆ ಅದು ಮುಚ್ಚುತ್ತದೆ.",
+        "openShortcut": {
+          "label": "ಎಲ್ಲಿಂದಲಾದರೂ ಹುಡುಕಾಟ ಪೆಟ್ಟಿಗೆಯನ್ನು ತೆರೆಯಿರಿ",
+          "description": "Spotlight ನಂತೆ ಹುಡುಕಾಟ ಪೆಟ್ಟಿಗೆಯನ್ನು ಈಗಾಗಲೇ ಆಜ್ಞೆ ಮೋಡ್ನಲ್ಲಿ ಕರೆತರುತ್ತದೆ. ಮತ್ತೆ ಒತ್ತಿದರೆ ಅದು ಮುಚ್ಚುತ್ತದೆ."
+        },
+        "openKeybind": {
+          "label": "ತೆರೆಯುವ ಶಾರ್ಟ್ಕಟ್",
+          "description": "Electron-ಶೈಲಿಯ ಆಕ್ಸೆಲರೇಟರ್, ಉದಾ. CmdOrCtrl+/ ಅಥವಾ Alt+Space"
+        }
       }
     },
     "seek-shortcuts": {
@@ -1497,7 +1715,10 @@
     },
     "statusbar-lyrics": {
       "settings": {
-        "include-pronunciation": "ಉಚ್ಚಾರಣೆಯನ್ನು ಸೇರಿಸಿ"
+        "include-pronunciation": "ಉಚ್ಚಾರಣೆಯನ್ನು ಸೇರಿಸಿ",
+        "includePronunciation": {
+          "label": "ಉಚ್ಚಾರಣೆಯನ್ನು ಸೇರಿಸಿ"
+        }
       }
     },
     "dismiss-multidevice-popup": {
@@ -1509,7 +1730,11 @@
       "name": "ಮೆಮೊರಿ ಸೇವರ್",
       "settings": {
         "threshold": "ಕ್ಯಾಶ್ ಮಿತಿ",
-        "threshold-description": "ವಿಂಡೋ ಮರೆಮಾಡಿದಾಗ ಕ್ಯಾಶ್‌ಗಳ ಪ್ರಸ್ತುತ ಮೆಮೊರಿ ಇದನ್ನು ಮೀರಿದ ನಂತರ ಅವನ್ನು ತೆರವುಗೊಳಿಸಿ"
+        "threshold-description": "ವಿಂಡೋ ಮರೆಮಾಡಿದಾಗ ಕ್ಯಾಶ್‌ಗಳ ಪ್ರಸ್ತುತ ಮೆಮೊರಿ ಇದನ್ನು ಮೀರಿದ ನಂತರ ಅವನ್ನು ತೆರವುಗೊಳಿಸಿ",
+        "thresholdMB": {
+          "label": "ಕ್ಯಾಶ್ ಮಿತಿ",
+          "description": "ವಿಂಡೋ ಮರೆಮಾಡಿದಾಗ ಕ್ಯಾಶ್‌ಗಳ ಪ್ರಸ್ತುತ ಮೆಮೊರಿ ಇದನ್ನು ಮೀರಿದ ನಂತರ ಅವನ್ನು ತೆರವುಗೊಳಿಸಿ"
+        }
       }
     }
   },

@@ -302,7 +302,15 @@
         },
         "enable-seekbar": "Uklučyć aformlennie pasku peramotki"
       },
-      "name": "Tema koleraŭ alboma"
+      "name": "Tema koleraŭ alboma",
+      "settings": {
+        "ratio": {
+          "label": "Praporcyja zmiašannia koleraŭ"
+        },
+        "enableSeekbar": {
+          "label": "Uklučyć aformlennie pasku peramotki"
+        }
+      }
     },
     "audio-only": {
       "description": "Prymusova ŭklučaje režym «tolki audio» — blakuje ŭsie videa-potoki na ŭzroŭni sietki i plejera, kab zberahčy RAM i šyryniu kanala.",
@@ -493,6 +501,14 @@
         "caption-changed": "Subtytr zmienieny na {{language}}",
         "caption-disabled": "Subtytry adklučany",
         "no-captions": "Dla hetaj pieśni niama subtytraŭ"
+      },
+      "settings": {
+        "autoload": {
+          "label": "Aŭtamatyčna vybirać apošni vykarystany subtytr"
+        },
+        "disableCaptions": {
+          "label": "Praz zmaučannie biez subtytraŭ"
+        }
       }
     },
     "clock": {
@@ -506,7 +522,13 @@
         }
       },
       "settings": {
-        "hour-12": "Vykarystavać 12-hadzinny farmat"
+        "hour-12": "Vykarystavać 12-hadzinny farmat",
+        "displaySeconds": {
+          "label": "Pakazvać sekundy"
+        },
+        "hour12": {
+          "label": "Vykarystavać 12-hadzinny farmat"
+        }
       }
     },
     "compact-sidebar": {
@@ -565,7 +587,12 @@
       "menu": {
         "apply-once": "Prymianajecca tolki pry zapusku"
       },
-      "name": "Adklučyć aŭtapraihranne"
+      "name": "Adklučyć aŭtapraihranne",
+      "settings": {
+        "applyOnce": {
+          "label": "Prymianajecca tolki pry zapusku"
+        }
+      }
     },
     "discord": {
       "backend": {
@@ -605,7 +632,38 @@
         "activity-timeout-enabled": "Ačyščać status pry pauzie",
         "activity-timeout-time": "Ačyščać praz",
         "hide-github-button": "Chavać knopku “Pahladzieć na GitHub”",
-        "hide-duration-left": "Chavać astatak času"
+        "hide-duration-left": "Chavać astatak času",
+        "autoReconnect": {
+          "label": "Aŭtapierapadłučenne"
+        },
+        "activityTimeoutEnabled": {
+          "label": "Ačyščać status pry pauzie"
+        },
+        "activityTimeoutSeconds": {
+          "label": "Ačyščać praz"
+        },
+        "playButton": {
+          "label": "Prahrać u {{applicationName}}"
+        },
+        "hideGitHubButton": {
+          "label": "Chavać knopku “Pahladzieć na GitHub”"
+        },
+        "hideDurationLeft": {
+          "label": "Chavać astatak času"
+        },
+        "statusDisplayType": {
+          "label": "Tekst statusu",
+          "options": {
+            "name": "Słuchaju {{applicationName}}",
+            "state": "Słuchaju {artist}",
+            "details": "Słuchaju {song title}"
+          }
+        }
+      },
+      "actions": {
+        "clearActivity": {
+          "label": "Ačyścić aktyŭnaść"
+        }
       }
     },
     "do-not-track": {
@@ -912,6 +970,23 @@
       "name": "Kartinka ŭ kartincy",
       "templates": {
         "button": "Kartinka ŭ kartincy"
+      },
+      "settings": {
+        "hotkey": {
+          "label": "Haračaja klaviša"
+        },
+        "useNativePiP": {
+          "label": "Vykarystoŭvać ułasny PiP braŭzera"
+        },
+        "alwaysOnTop": {
+          "label": "Zaŭsiody zverchu"
+        },
+        "savePosition": {
+          "label": "Zachavać pałożanńie akna"
+        },
+        "saveSize": {
+          "label": "Zachavać pamier akna"
+        }
       }
     },
     "playback-speed": {
@@ -955,10 +1030,21 @@
         }
       },
       "settings": {
-        "steps": "Krok huchnaści",
+        "steps": {
+          "label": "Krok huchnaści"
+        },
         "arrows-shortcut": "Haračyja klavišy-strełki",
         "shortcut-up": "Hlabalnaja haračaja klaviša: huchnaść uvierch",
-        "shortcut-down": "Hlabalnaja haračaja klaviša: huchnaść uniz"
+        "shortcut-down": "Hlabalnaja haračaja klaviša: huchnaść uniz",
+        "arrowsShortcut": {
+          "label": "Haračyja klavišy-strełki"
+        },
+        "volumeUp": {
+          "label": "Hlabalnaja haračaja klaviša: huchnaść uvierch"
+        },
+        "volumeDown": {
+          "label": "Hlabalnaja haračaja klaviša: huchnaść uniz"
+        }
       }
     },
     "prefer-song": {
@@ -1052,7 +1138,15 @@
         "open-keybind": "Klaviša adkryccia",
         "open-keybind-description": "Aksełeratar u stylu Electron, napr. CmdOrCtrl+/ abo Alt+Space",
         "open-shortcut": "Adkryć pole poshuku z luboha mesca",
-        "open-shortcut-description": "Vyklykae pole poshuku adrazu u režyme kamand, jak Spotlight. Paŭtornaje naciaskannie zakryvaje jaho."
+        "open-shortcut-description": "Vyklykae pole poshuku adrazu u režyme kamand, jak Spotlight. Paŭtornaje naciaskannie zakryvaje jaho.",
+        "openShortcut": {
+          "label": "Adkryć pole poshuku z luboha mesca",
+          "description": "Vyklykae pole poshuku adrazu u režyme kamand, jak Spotlight. Paŭtornaje naciaskannie zakryvaje jaho."
+        },
+        "openKeybind": {
+          "label": "Klaviša adkryccia",
+          "description": "Aksełeratar u stylu Electron, napr. CmdOrCtrl+/ abo Alt+Space"
+        }
       }
     },
     "seek-shortcuts": {
@@ -1083,14 +1177,38 @@
       },
       "settings": {
         "global-keybinds": "Hlabalnyja klavišy (pracujuć uva ŭsim pryładdzi)",
-        "local-keybinds": "Lakalnyja klavišy (tolki kali akno ŭ fokusie)"
+        "local-keybinds": "Lakalnyja klavišy (tolki kali akno ŭ fokusie)",
+        "playPause": {
+          "label": "Prahranie / Pauza"
+        },
+        "localPlayPause": {
+          "label": "Prahranie / Pauza"
+        },
+        "next": {
+          "label": "Dalej"
+        },
+        "localNext": {
+          "label": "Dalej"
+        },
+        "previous": {
+          "label": "Nazad"
+        },
+        "localPrevious": {
+          "label": "Nazad"
+        },
+        "overrideMediaKeys": {
+          "label": "Pierachoplivac media klavišy"
+        }
       }
     },
     "skip-silences": {
       "description": "Aŭtamatyčna praskakać častki cišyni ŭ pieśniach",
       "name": "Praskakanne cišyni",
       "settings": {
-        "only-skip-beginning": "Praskakać cišyniu tolki ŭ pačatku treka"
+        "only-skip-beginning": "Praskakać cišyniu tolki ŭ pačatku treka",
+        "onlySkipBeginning": {
+          "label": "Praskakać cišyniu tolki ŭ pačatku treka"
+        }
       }
     },
     "sponsorblock": {
@@ -1106,7 +1224,28 @@
           "selfpromo": "Sama-promacyja",
           "music_offtopic": "Niemuzyčnaia sekcyja"
         },
-        "api-url": "URL API"
+        "api-url": "URL API",
+        "sponsor": {
+          "label": "Sponsar"
+        },
+        "intro": {
+          "label": "Uvod"
+        },
+        "outro": {
+          "label": "Kancoŭka"
+        },
+        "interaction": {
+          "label": "Nahadka pra ŭzajemadziejannie"
+        },
+        "selfpromo": {
+          "label": "Sama-promacyja"
+        },
+        "music_offtopic": {
+          "label": "Niemuzyčnaia sekcyja"
+        },
+        "apiURL": {
+          "label": "URL API"
+        }
       }
     },
     "synced-lyrics": {
@@ -1356,7 +1495,25 @@
         }
       },
       "settings": {
-        "type-description": "Fonavy mataryjal, vykarystany dlia prazrystasci akna"
+        "type-description": "Fonavy mataryjal, vykarystany dlia prazrystasci akna",
+        "opacity": {
+          "label": "Neprazrystasć"
+        },
+        "type": {
+          "label": "Typ",
+          "description": "Fonavy mataryjal, vykarystany dlia prazrystasci akna",
+          "options": {
+            "acrylic": "Akryl",
+            "content": "Zmiest",
+            "fullscreen-ui": "Interfejs na ŭsiu ekran",
+            "mica": "Mika",
+            "tabbed": "Z zakladkami",
+            "under-page": "Pad staronaj",
+            "under-window": "Pad aknom",
+            "window": "Akno",
+            "none": "Niama"
+          }
+        }
       }
     },
     "tuna-obs": {
@@ -1392,6 +1549,27 @@
       "templates": {
         "button-song": "Pieśnia",
         "button-video": "Videa"
+      },
+      "settings": {
+        "mode": {
+          "label": "Režym",
+          "options": {
+            "custom": "Ulasny pieraklučalnik",
+            "native": "Natyŭny pieraklučalnik",
+            "disabled": "Vyklučana"
+          }
+        },
+        "align": {
+          "label": "Vyraŭnannie",
+          "options": {
+            "left": "Zleba",
+            "middle": "Pa siaredzinie",
+            "right": "Sprava"
+          }
+        },
+        "forceHide": {
+          "label": "Prymusova vydalić zakladku videa"
+        }
       }
     },
     "visualizer": {
@@ -1401,7 +1579,9 @@
       },
       "name": "Vizualizatar",
       "settings": {
-        "preset": "Pradvyznačany",
+        "preset": {
+          "label": "Pradvyznačany"
+        },
         "blend-time": "Čas zmiašvannia",
         "effect": "Efekt",
         "accuracy": "Dakladnasć",
@@ -1417,12 +1597,53 @@
         "dottify": "Punktavać",
         "dottify-description": "Maluje punktki zamiest niepierryŭnaj linii",
         "horizontal-align": "Haryzantalnaje vyraŭnavannie",
-        "vertical-align": "Vertykalnaje vyraŭnavannie"
+        "vertical-align": "Vertykalnaje vyraŭnavannie",
+        "blendTimeInSeconds": {
+          "label": "Čas zmiašvannia"
+        },
+        "vudioMaxHeight": {
+          "label": "Maks. vysynia"
+        },
+        "vudioMaxSize": {
+          "label": "Maks. pamier"
+        },
+        "vudioLineWidth": {
+          "label": "Taŭščynia linii"
+        },
+        "vudioColor": {
+          "label": "Koler"
+        },
+        "vudioShadowBlur": {
+          "label": "Razmyvannie cieni"
+        },
+        "vudioShadowColor": {
+          "label": "Koler cieni"
+        },
+        "vudioFadeSide": {
+          "label": "Zatušavannie bakoŭ"
+        },
+        "vudioPrettify": {
+          "label": "Pryhažańnie",
+          "description": "Zvužvaje słupki da krajoŭ"
+        },
+        "vudioDottify": {
+          "label": "Punktavać",
+          "description": "Maluje punktki zamiest niepierryŭnaj linii"
+        },
+        "vudioHorizontalAlign": {
+          "label": "Haryzantalnaje vyraŭnavannie"
+        },
+        "vudioVerticalAlign": {
+          "label": "Vertykalnaje vyraŭnavannie"
+        }
       }
     },
     "statusbar-lyrics": {
       "settings": {
-        "include-pronunciation": "Uklučyć vymovu"
+        "include-pronunciation": "Uklučyć vymovu",
+        "includePronunciation": {
+          "label": "Uklučyć vymovu"
+        }
       }
     },
     "dismiss-multidevice-popup": {
@@ -1434,7 +1655,11 @@
       "name": "Ekanomija pamaci",
       "settings": {
         "threshold": "Paroh keša",
-        "threshold-description": "Ačyščajcie kešy, kali ich žyva pamiać pieravysić hety paroh, pakul vakno schavanaje"
+        "threshold-description": "Ačyščajcie kešy, kali ich žyva pamiać pieravysić hety paroh, pakul vakno schavanaje",
+        "thresholdMB": {
+          "label": "Paroh keša",
+          "description": "Ačyščajcie kešy, kali ich žyva pamiać pieravysić hety paroh, pakul vakno schavanaje"
+        }
       }
     }
   },

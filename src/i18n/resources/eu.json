@@ -321,7 +321,15 @@
         },
         "enable-seekbar": "Gaitu bilaketa-barraren gaikuntza"
       },
-      "name": "Albumaren kolore gaia"
+      "name": "Albumaren kolore gaia",
+      "settings": {
+        "ratio": {
+          "label": "Kolore nahaste ratioa"
+        },
+        "enableSeekbar": {
+          "label": "Gaitu bilaketa-barraren gaikuntza"
+        }
+      }
     },
     "audio-only": {
       "description": "Audio soilik modua behartzen du — bideo korronte guztiak blokeatzen ditu sare eta erreproduzitzaile mailan RAM eta banda-zabalera aurrezteko",
@@ -508,6 +516,14 @@
         "caption-changed": "Azpitituluak {{language}}(e)ra aldatu dira",
         "caption-disabled": "Azpitituluak desgaituta",
         "no-captions": "Ez dago azpititulurik eskuragarri abesti honetarako"
+      },
+      "settings": {
+        "autoload": {
+          "label": "Automatikoki hautatu azken erabilitako azpititulua"
+        },
+        "disableCaptions": {
+          "label": "Azpititulurik gabe lehenetsita"
+        }
       }
     },
     "clock": {
@@ -521,7 +537,13 @@
       },
       "name": "Erlojua",
       "settings": {
-        "hour-12": "Erabili 12 orduko formatua"
+        "hour-12": "Erabili 12 orduko formatua",
+        "displaySeconds": {
+          "label": "Erakutsi segundoak"
+        },
+        "hour12": {
+          "label": "Erabili 12 orduko formatua"
+        }
       }
     },
     "compact-sidebar": {
@@ -580,7 +602,12 @@
       "menu": {
         "apply-once": "Abiaraztean bakarrik aplikatzen da"
       },
-      "name": "Desgaitu erreprodukzio automatikoa"
+      "name": "Desgaitu erreprodukzio automatikoa",
+      "settings": {
+        "applyOnce": {
+          "label": "Abiaraztean bakarrik aplikatzen da"
+        }
+      }
     },
     "discord": {
       "backend": {
@@ -620,7 +647,38 @@
         "activity-timeout-enabled": "Garbitu presentzia pausatzean",
         "activity-timeout-time": "Garbitu denbora honen ondoren",
         "hide-github-button": "Ezkutatu “Ikusi GitHub-en” botoia",
-        "hide-duration-left": "Ezkutatu falta den denbora"
+        "hide-duration-left": "Ezkutatu falta den denbora",
+        "autoReconnect": {
+          "label": "Berriz konektatu automatikoki"
+        },
+        "activityTimeoutEnabled": {
+          "label": "Garbitu presentzia pausatzean"
+        },
+        "activityTimeoutSeconds": {
+          "label": "Garbitu denbora honen ondoren"
+        },
+        "playButton": {
+          "label": "Erreproduzitu {{applicationName}}(e)n"
+        },
+        "hideGitHubButton": {
+          "label": "Ezkutatu “Ikusi GitHub-en” botoia"
+        },
+        "hideDurationLeft": {
+          "label": "Ezkutatu falta den denbora"
+        },
+        "statusDisplayType": {
+          "label": "Egoera testua",
+          "options": {
+            "name": "{{applicationName}} entzuten",
+            "state": "{artist} entzuten",
+            "details": "{song title} entzuten"
+          }
+        }
+      },
+      "actions": {
+        "clearActivity": {
+          "label": "Garbitu jarduera"
+        }
       }
     },
     "downloader": {
@@ -905,6 +963,23 @@
       "name": "Irudi-irudian",
       "templates": {
         "button": "Irudi-irudian"
+      },
+      "settings": {
+        "hotkey": {
+          "label": "Laster-tekla"
+        },
+        "useNativePiP": {
+          "label": "Erabili nabigatzailearen jatorrizko PiP-a"
+        },
+        "alwaysOnTop": {
+          "label": "Beti gainean"
+        },
+        "savePosition": {
+          "label": "Gorde leihoaren posizioa"
+        },
+        "saveSize": {
+          "label": "Gorde leihoaren tamaina"
+        }
       }
     },
     "playback-speed": {
@@ -940,10 +1015,21 @@
         }
       },
       "settings": {
-        "steps": "Bolumen-urratsa",
+        "steps": {
+          "label": "Bolumen-urratsa"
+        },
         "arrows-shortcut": "Gezi-teklen lasterbideak",
         "shortcut-up": "Lasterbide globala: bolumena igotzea",
-        "shortcut-down": "Lasterbide globala: bolumena jaistea"
+        "shortcut-down": "Lasterbide globala: bolumena jaistea",
+        "arrowsShortcut": {
+          "label": "Gezi-teklen lasterbideak"
+        },
+        "volumeUp": {
+          "label": "Lasterbide globala: bolumena igotzea"
+        },
+        "volumeDown": {
+          "label": "Lasterbide globala: bolumena jaistea"
+        }
       }
     },
     "quality-changer": {
@@ -1042,14 +1128,38 @@
       },
       "settings": {
         "global-keybinds": "Lasterbide globalak (aplikazio osoan eragiten dute)",
-        "local-keybinds": "Lasterbide lokalak (leihoa fokatuta dagoenean soilik)"
+        "local-keybinds": "Lasterbide lokalak (leihoa fokatuta dagoenean soilik)",
+        "playPause": {
+          "label": "Erreproduzitu / Pausatu"
+        },
+        "localPlayPause": {
+          "label": "Erreproduzitu / Pausatu"
+        },
+        "next": {
+          "label": "Hurrengoa"
+        },
+        "localNext": {
+          "label": "Hurrengoa"
+        },
+        "previous": {
+          "label": "Aurrekoa"
+        },
+        "localPrevious": {
+          "label": "Aurrekoa"
+        },
+        "overrideMediaKeys": {
+          "label": "Gainidatzi multimedia teklak"
+        }
       }
     },
     "skip-silences": {
       "description": "Automatikoki saltatu isilune atalak abestietan",
       "name": "Saltatu isiluneak",
       "settings": {
-        "only-skip-beginning": "Saltatu isiltasuna pista hasieran soilik"
+        "only-skip-beginning": "Saltatu isiltasuna pista hasieran soilik",
+        "onlySkipBeginning": {
+          "label": "Saltatu isiltasuna pista hasieran soilik"
+        }
       }
     },
     "sponsorblock": {
@@ -1065,7 +1175,28 @@
           "selfpromo": "Autopromozioa",
           "music_offtopic": "Musikarik gabeko atala"
         },
-        "api-url": "API URLa"
+        "api-url": "API URLa",
+        "sponsor": {
+          "label": "Babeslea"
+        },
+        "intro": {
+          "label": "Sarrera"
+        },
+        "outro": {
+          "label": "Amaiera"
+        },
+        "interaction": {
+          "label": "Interakzio-oharra"
+        },
+        "selfpromo": {
+          "label": "Autopromozioa"
+        },
+        "music_offtopic": {
+          "label": "Musikarik gabeko atala"
+        },
+        "apiURL": {
+          "label": "API URLa"
+        }
       }
     },
     "synced-lyrics": {
@@ -1366,7 +1497,25 @@
       },
       "name": "Erreproduzitzaile gardena",
       "settings": {
-        "type-description": "Leihoaren gardentasunerako erabiltzen den atzeko materiala"
+        "type-description": "Leihoaren gardentasunerako erabiltzen den atzeko materiala",
+        "opacity": {
+          "label": "Opakotasuna"
+        },
+        "type": {
+          "label": "Mota",
+          "description": "Leihoaren gardentasunerako erabiltzen den atzeko materiala",
+          "options": {
+            "acrylic": "Akrilikoa",
+            "content": "Edukia",
+            "fullscreen-ui": "Pantaila osoko interfazea",
+            "mica": "Mika",
+            "tabbed": "Fitxaduna",
+            "under-page": "Orriaren azpian",
+            "under-window": "Leihoaren azpian",
+            "window": "Leihoa",
+            "none": "Bat ere ez"
+          }
+        }
       }
     },
     "tuna-obs": {
@@ -1402,6 +1551,27 @@
       "templates": {
         "button-song": "Abestia",
         "button-video": "Bideoa"
+      },
+      "settings": {
+        "mode": {
+          "label": "Modua",
+          "options": {
+            "custom": "Txandakatze pertsonalizatua",
+            "native": "Jatorrizko txandakatzea",
+            "disabled": "Desgaituta"
+          }
+        },
+        "align": {
+          "label": "Lerrokatzea",
+          "options": {
+            "left": "Ezkerra",
+            "middle": "Erdia",
+            "right": "Eskuina"
+          }
+        },
+        "forceHide": {
+          "label": "Behartu bideo fitxaren kentzea"
+        }
       }
     },
     "visualizer": {
@@ -1411,7 +1581,9 @@
       },
       "name": "Bisualizatzailea",
       "settings": {
-        "preset": "Aurrezarpena",
+        "preset": {
+          "label": "Aurrezarpena"
+        },
         "blend-time": "Nahaste-denbora",
         "effect": "Efektua",
         "accuracy": "Zehaztasuna",
@@ -1427,7 +1599,45 @@
         "dottify": "Puntuz egin",
         "dottify-description": "Marraztu puntuak etengabeko lerroaren ordez",
         "horizontal-align": "Lerrokatze horizontala",
-        "vertical-align": "Lerrokatze bertikala"
+        "vertical-align": "Lerrokatze bertikala",
+        "blendTimeInSeconds": {
+          "label": "Nahaste-denbora"
+        },
+        "vudioMaxHeight": {
+          "label": "Gehienezko altuera"
+        },
+        "vudioMaxSize": {
+          "label": "Gehienezko tamaina"
+        },
+        "vudioLineWidth": {
+          "label": "Lerroaren zabalera"
+        },
+        "vudioColor": {
+          "label": "Kolorea"
+        },
+        "vudioShadowBlur": {
+          "label": "Itzalaren lausotzea"
+        },
+        "vudioShadowColor": {
+          "label": "Itzalaren kolorea"
+        },
+        "vudioFadeSide": {
+          "label": "Alboko lausotzea"
+        },
+        "vudioPrettify": {
+          "label": "Edertu",
+          "description": "Estutu barrak ertzetarantz"
+        },
+        "vudioDottify": {
+          "label": "Puntuz egin",
+          "description": "Marraztu puntuak etengabeko lerroaren ordez"
+        },
+        "vudioHorizontalAlign": {
+          "label": "Lerrokatze horizontala"
+        },
+        "vudioVerticalAlign": {
+          "label": "Lerrokatze bertikala"
+        }
       }
     },
     "playlist-search": {
@@ -1480,7 +1690,15 @@
         "open-keybind": "Ireki lasterbidea",
         "open-keybind-description": "Electron estiloko azeleragailua, adib. CmdOrCtrl+/ edo Alt+Space",
         "open-shortcut": "Ireki bilaketa-koadroa edozein lekutatik",
-        "open-shortcut-description": "Bilaketa-koadroa komando moduan irekitzen du, Spotlight bezala. Berriro sakatzean ixten da."
+        "open-shortcut-description": "Bilaketa-koadroa komando moduan irekitzen du, Spotlight bezala. Berriro sakatzean ixten da.",
+        "openShortcut": {
+          "label": "Ireki bilaketa-koadroa edozein lekutatik",
+          "description": "Bilaketa-koadroa komando moduan irekitzen du, Spotlight bezala. Berriro sakatzean ixten da."
+        },
+        "openKeybind": {
+          "label": "Ireki lasterbidea",
+          "description": "Electron estiloko azeleragailua, adib. CmdOrCtrl+/ edo Alt+Space"
+        }
       }
     },
     "seek-shortcuts": {
@@ -1497,7 +1715,10 @@
     },
     "statusbar-lyrics": {
       "settings": {
-        "include-pronunciation": "Sartu ahoskera"
+        "include-pronunciation": "Sartu ahoskera",
+        "includePronunciation": {
+          "label": "Sartu ahoskera"
+        }
       }
     },
     "dismiss-multidevice-popup": {
@@ -1509,7 +1730,11 @@
       "name": "Memoria aurrezlea",
       "settings": {
         "threshold": "Cachearen atalasea",
-        "threshold-description": "Garbitu cacheak haien uneko memoria atalase hau gainditzen duenean, leihoa ezkutatuta dagoela"
+        "threshold-description": "Garbitu cacheak haien uneko memoria atalase hau gainditzen duenean, leihoa ezkutatuta dagoela",
+        "thresholdMB": {
+          "label": "Cachearen atalasea",
+          "description": "Garbitu cacheak haien uneko memoria atalase hau gainditzen duenean, leihoa ezkutatuta dagoela"
+        }
       }
     }
   },

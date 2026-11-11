@@ -314,7 +314,15 @@
         },
         "enable-seekbar": "Povolit motivování posuvníku"
       },
-      "name": "Motiv podle barvy Alba"
+      "name": "Motiv podle barvy Alba",
+      "settings": {
+        "ratio": {
+          "label": "Poměr míchání barev"
+        },
+        "enableSeekbar": {
+          "label": "Povolit motivování posuvníku"
+        }
+      }
     },
     "ambient-mode": {
       "description": "Aplikuje světelné efekty pomocí vrhání jemných barev z videa, do vašeho pozadí obrazovky",
@@ -497,6 +505,14 @@
         "caption-changed": "Titulky změněny na {{language}}",
         "caption-disabled": "Titulky vypnuty",
         "no-captions": "K této skladbě nejsou titulky dostupné"
+      },
+      "settings": {
+        "autoload": {
+          "label": "Automaticky vybrat naposledy použité titulky"
+        },
+        "disableCaptions": {
+          "label": "Žádné titulky ve vychozím nastavení"
+        }
       }
     },
     "compact-sidebar": {
@@ -555,7 +571,12 @@
       "menu": {
         "apply-once": "Applies jenom na spuštění aplikace"
       },
-      "name": "Vypnout automatické přehrávání"
+      "name": "Vypnout automatické přehrávání",
+      "settings": {
+        "applyOnce": {
+          "label": "Applies jenom na spuštění aplikace"
+        }
+      }
     },
     "discord": {
       "backend": {
@@ -595,7 +616,38 @@
         "activity-timeout-enabled": "Vymazat přítomnost při pozastavení",
         "activity-timeout-time": "Vymazat po",
         "hide-github-button": "Skrýt tlačítko “Zobrazit na GitHubu”",
-        "hide-duration-left": "Skrýt zbývající čas"
+        "hide-duration-left": "Skrýt zbývající čas",
+        "autoReconnect": {
+          "label": "Automatické opětovné připojení"
+        },
+        "activityTimeoutEnabled": {
+          "label": "Vymazat přítomnost při pozastavení"
+        },
+        "activityTimeoutSeconds": {
+          "label": "Vymazat po"
+        },
+        "playButton": {
+          "label": "Hrát na {{applicationName}}"
+        },
+        "hideGitHubButton": {
+          "label": "Skrýt tlačítko “Zobrazit na GitHubu”"
+        },
+        "hideDurationLeft": {
+          "label": "Skrýt zbývající čas"
+        },
+        "statusDisplayType": {
+          "label": "Text statusu",
+          "options": {
+            "name": "Poslouchám {{applicationName}}",
+            "state": "Poslouchám: {artist}",
+            "details": "Poslouchám {song title}"
+          }
+        }
+      },
+      "actions": {
+        "clearActivity": {
+          "label": "Vymazat aktivitu"
+        }
       }
     },
     "downloader": {
@@ -867,6 +919,23 @@
       "name": "Obrázek v obrázku",
       "templates": {
         "button": "Obrázek v obrázku"
+      },
+      "settings": {
+        "hotkey": {
+          "label": "Klávesová zkratka"
+        },
+        "useNativePiP": {
+          "label": "Použít browser native PiP"
+        },
+        "alwaysOnTop": {
+          "label": "Vždy na vrchu"
+        },
+        "savePosition": {
+          "label": "Uložit pozici okna"
+        },
+        "saveSize": {
+          "label": "Uložit velikost okna"
+        }
       }
     },
     "playback-speed": {
@@ -902,10 +971,21 @@
         }
       },
       "settings": {
-        "steps": "Krok hlasitosti",
+        "steps": {
+          "label": "Krok hlasitosti"
+        },
         "arrows-shortcut": "Zkratky šipek",
         "shortcut-up": "Globální zkratka: zvýšit hlasitost",
-        "shortcut-down": "Globální zkratka: snížit hlasitost"
+        "shortcut-down": "Globální zkratka: snížit hlasitost",
+        "arrowsShortcut": {
+          "label": "Zkratky šipek"
+        },
+        "volumeUp": {
+          "label": "Globální zkratka: zvýšit hlasitost"
+        },
+        "volumeDown": {
+          "label": "Globální zkratka: snížit hlasitost"
+        }
       }
     },
     "quality-changer": {
@@ -1004,7 +1084,28 @@
       },
       "settings": {
         "global-keybinds": "Globální klávesové zkratky (fungují v celé aplikaci)",
-        "local-keybinds": "Místní klávesové zkratky (pouze když je okno aktivní)"
+        "local-keybinds": "Místní klávesové zkratky (pouze když je okno aktivní)",
+        "playPause": {
+          "label": "Přehrát / Pozastavit"
+        },
+        "localPlayPause": {
+          "label": "Přehrát / Pozastavit"
+        },
+        "next": {
+          "label": "Další"
+        },
+        "localNext": {
+          "label": "Další"
+        },
+        "previous": {
+          "label": "Předchozí"
+        },
+        "localPrevious": {
+          "label": "Předchozí"
+        },
+        "overrideMediaKeys": {
+          "label": "Přepsat media klíče"
+        }
       }
     },
     "skip-disliked-songs": {
@@ -1015,7 +1116,10 @@
       "description": "Automaticky přeskakovat tichá místa v písničkách",
       "name": "Přeskakovat Tichá místa",
       "settings": {
-        "only-skip-beginning": "Přeskakovat ticho pouze na začátku skladby"
+        "only-skip-beginning": "Přeskakovat ticho pouze na začátku skladby",
+        "onlySkipBeginning": {
+          "label": "Přeskakovat ticho pouze na začátku skladby"
+        }
       }
     },
     "sponsorblock": {
@@ -1031,7 +1135,28 @@
           "selfpromo": "Sebepropagace",
           "music_offtopic": "Nezhudební část"
         },
-        "api-url": "URL API"
+        "api-url": "URL API",
+        "sponsor": {
+          "label": "Sponzor"
+        },
+        "intro": {
+          "label": "Úvod"
+        },
+        "outro": {
+          "label": "Závěr"
+        },
+        "interaction": {
+          "label": "Připomenutí interakce"
+        },
+        "selfpromo": {
+          "label": "Sebepropagace"
+        },
+        "music_offtopic": {
+          "label": "Nezhudební část"
+        },
+        "apiURL": {
+          "label": "URL API"
+        }
       }
     },
     "synced-lyrics": {
@@ -1332,7 +1457,25 @@
       },
       "name": "Průhledný přehrávač",
       "settings": {
-        "type-description": "Materiál pozadí použitý pro průhlednost okna"
+        "type-description": "Materiál pozadí použitý pro průhlednost okna",
+        "opacity": {
+          "label": "Průhlednost"
+        },
+        "type": {
+          "label": "Typ",
+          "description": "Materiál pozadí použitý pro průhlednost okna",
+          "options": {
+            "acrylic": "Akryl",
+            "content": "Obsah",
+            "fullscreen-ui": "Rozhraní na celou obrazovku",
+            "mica": "Mica",
+            "tabbed": "Záložkovaný",
+            "under-page": "Pod stránkou",
+            "under-window": "Pod oknem",
+            "window": "Okno",
+            "none": "Žádné"
+          }
+        }
       }
     },
     "tuna-obs": {
@@ -1368,6 +1511,27 @@
       "templates": {
         "button-song": "Skladba",
         "button-video": "Video"
+      },
+      "settings": {
+        "mode": {
+          "label": "Režim",
+          "options": {
+            "custom": "Vlastní přepínač",
+            "native": "Původní přepínač",
+            "disabled": "Vypnuto"
+          }
+        },
+        "align": {
+          "label": "Zarovnání",
+          "options": {
+            "left": "Vlevo",
+            "middle": "Uprostřed",
+            "right": "Pravo"
+          }
+        },
+        "forceHide": {
+          "label": "Vynutit odstranění karty videa"
+        }
       }
     },
     "visualizer": {
@@ -1377,7 +1541,9 @@
       },
       "name": "Vizualizér",
       "settings": {
-        "preset": "Předvolba",
+        "preset": {
+          "label": "Předvolba"
+        },
         "blend-time": "Doba prolínání",
         "effect": "Efekt",
         "accuracy": "Přesnost",
@@ -1393,7 +1559,45 @@
         "dottify": "Zobrazit jako tečky",
         "dottify-description": "Kreslit tečky místo souvislé čáry",
         "horizontal-align": "Horizontální zarovnání",
-        "vertical-align": "Vertikální zarovnání"
+        "vertical-align": "Vertikální zarovnání",
+        "blendTimeInSeconds": {
+          "label": "Doba prolínání"
+        },
+        "vudioMaxHeight": {
+          "label": "Maximální výška"
+        },
+        "vudioMaxSize": {
+          "label": "Maximální velikost"
+        },
+        "vudioLineWidth": {
+          "label": "Šířka čáry"
+        },
+        "vudioColor": {
+          "label": "Barva"
+        },
+        "vudioShadowBlur": {
+          "label": "Rozostření stínu"
+        },
+        "vudioShadowColor": {
+          "label": "Barva stínu"
+        },
+        "vudioFadeSide": {
+          "label": "Strany prolnutí"
+        },
+        "vudioPrettify": {
+          "label": "Zkrášlit",
+          "description": "Zúžit pruhy směrem k okrajům"
+        },
+        "vudioDottify": {
+          "label": "Zobrazit jako tečky",
+          "description": "Kreslit tečky místo souvislé čáry"
+        },
+        "vudioHorizontalAlign": {
+          "label": "Horizontální zarovnání"
+        },
+        "vudioVerticalAlign": {
+          "label": "Vertikální zarovnání"
+        }
       }
     },
     "clock": {
@@ -1407,7 +1611,13 @@
       },
       "name": "Hodiny",
       "settings": {
-        "hour-12": "Používat 12hodinový formát"
+        "hour-12": "Používat 12hodinový formát",
+        "displaySeconds": {
+          "label": "Zobrazovat sekundy"
+        },
+        "hour12": {
+          "label": "Používat 12hodinový formát"
+        }
       }
     },
     "audio-only": {
@@ -1477,7 +1687,15 @@
         "open-keybind": "Zkratka pro otevření",
         "open-keybind-description": "Akcelerátor ve stylu Electronu, např. CmdOrCtrl+/ nebo Alt+Space",
         "open-shortcut": "Otevřít vyhledávací pole odkudkoli",
-        "open-shortcut-description": "Přivolá vyhledávací pole už v režimu příkazů, podobně jako Spotlight. Opětovné stisknutí jej zavře."
+        "open-shortcut-description": "Přivolá vyhledávací pole už v režimu příkazů, podobně jako Spotlight. Opětovné stisknutí jej zavře.",
+        "openShortcut": {
+          "label": "Otevřít vyhledávací pole odkudkoli",
+          "description": "Přivolá vyhledávací pole už v režimu příkazů, podobně jako Spotlight. Opětovné stisknutí jej zavře."
+        },
+        "openKeybind": {
+          "label": "Zkratka pro otevření",
+          "description": "Akcelerátor ve stylu Electronu, např. CmdOrCtrl+/ nebo Alt+Space"
+        }
       }
     },
     "seek-shortcuts": {
@@ -1494,7 +1712,10 @@
     },
     "statusbar-lyrics": {
       "settings": {
-        "include-pronunciation": "Zahrnout výslovnost"
+        "include-pronunciation": "Zahrnout výslovnost",
+        "includePronunciation": {
+          "label": "Zahrnout výslovnost"
+        }
       }
     },
     "dismiss-multidevice-popup": {
@@ -1506,7 +1727,11 @@
       "name": "Šetřič paměti",
       "settings": {
         "threshold": "Prahová hodnota mezipaměti",
-        "threshold-description": "Když je okno skryté, vymaže mezipaměti, jakmile jejich aktuální paměť překročí tuto hodnotu"
+        "threshold-description": "Když je okno skryté, vymaže mezipaměti, jakmile jejich aktuální paměť překročí tuto hodnotu",
+        "thresholdMB": {
+          "label": "Prahová hodnota mezipaměti",
+          "description": "Když je okno skryté, vymaže mezipaměti, jakmile jejich aktuální paměť překročí tuto hodnotu"
+        }
       }
     }
   },

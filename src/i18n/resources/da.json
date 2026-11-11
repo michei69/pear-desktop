@@ -310,7 +310,15 @@
         "enable-seekbar": "Aktivér tematisering af seekbar"
       },
       "name": "Albummets farve tema",
-      "description": "Anvender et dynamisk tema og visuelle effekter baseret på albummets farvepalet"
+      "description": "Anvender et dynamisk tema og visuelle effekter baseret på albummets farvepalet",
+      "settings": {
+        "ratio": {
+          "label": "Farveblandingsforhold"
+        },
+        "enableSeekbar": {
+          "label": "Aktivér tematisering af seekbar"
+        }
+      }
     },
     "ambient-mode": {
       "menu": {
@@ -458,6 +466,14 @@
         "caption-changed": "Undertekst ændret til {{language}}",
         "caption-disabled": "Undertekster deaktiveret",
         "no-captions": "Ingen undertekster tilgængelige for denne sang"
+      },
+      "settings": {
+        "autoload": {
+          "label": "Vælg automatisk den senest brugte undertekst"
+        },
+        "disableCaptions": {
+          "label": "Ingen undertekster som standard"
+        }
       }
     },
     "crossfade": {
@@ -552,7 +568,13 @@
         }
       },
       "settings": {
-        "hour-12": "Brug 12-timersformat"
+        "hour-12": "Brug 12-timersformat",
+        "displaySeconds": {
+          "label": "Vis sekunder"
+        },
+        "hour12": {
+          "label": "Brug 12-timersformat"
+        }
       }
     },
     "compact-sidebar": {
@@ -577,7 +599,12 @@
       "menu": {
         "apply-once": "Anvendes kun ved opstart"
       },
-      "name": "Deaktiver autoplay"
+      "name": "Deaktiver autoplay",
+      "settings": {
+        "applyOnce": {
+          "label": "Anvendes kun ved opstart"
+        }
+      }
     },
     "discord": {
       "backend": {
@@ -617,7 +644,38 @@
         "activity-timeout-enabled": "Ryd tilstedeværelse ved pause",
         "activity-timeout-time": "Ryd efter",
         "hide-github-button": "Skjul knappen “Se på GitHub”",
-        "hide-duration-left": "Skjul resterende tid"
+        "hide-duration-left": "Skjul resterende tid",
+        "autoReconnect": {
+          "label": "Automatisk genopret forbindelse"
+        },
+        "activityTimeoutEnabled": {
+          "label": "Ryd tilstedeværelse ved pause"
+        },
+        "activityTimeoutSeconds": {
+          "label": "Ryd efter"
+        },
+        "playButton": {
+          "label": "Afspil på {{applicationName}}"
+        },
+        "hideGitHubButton": {
+          "label": "Skjul knappen “Se på GitHub”"
+        },
+        "hideDurationLeft": {
+          "label": "Skjul resterende tid"
+        },
+        "statusDisplayType": {
+          "label": "Statustekst",
+          "options": {
+            "name": "Lytter til {{applicationName}}",
+            "state": "Lytter til {artist}",
+            "details": "Lytter til {song title}"
+          }
+        }
+      },
+      "actions": {
+        "clearActivity": {
+          "label": "Ryd aktivitet"
+        }
       }
     },
     "do-not-track": {
@@ -924,6 +982,23 @@
       "name": "Billede-i-billede",
       "templates": {
         "button": "Billede-i-billede"
+      },
+      "settings": {
+        "hotkey": {
+          "label": "Hurtigtast"
+        },
+        "useNativePiP": {
+          "label": "Brug browserens indbyggede PiP"
+        },
+        "alwaysOnTop": {
+          "label": "Altid øverst"
+        },
+        "savePosition": {
+          "label": "Gem vinduesposition"
+        },
+        "saveSize": {
+          "label": "Gem vinduesstørrelse"
+        }
       }
     },
     "playback-speed": {
@@ -967,10 +1042,21 @@
         }
       },
       "settings": {
-        "steps": "Lydstyrketrin",
+        "steps": {
+          "label": "Lydstyrketrin"
+        },
         "arrows-shortcut": "Piletastgenveje",
         "shortcut-up": "Global genvej: lydstyrke op",
-        "shortcut-down": "Global genvej: lydstyrke ned"
+        "shortcut-down": "Global genvej: lydstyrke ned",
+        "arrowsShortcut": {
+          "label": "Piletastgenveje"
+        },
+        "volumeUp": {
+          "label": "Global genvej: lydstyrke op"
+        },
+        "volumeDown": {
+          "label": "Global genvej: lydstyrke ned"
+        }
       }
     },
     "prefer-song": {
@@ -1064,7 +1150,15 @@
         "open-keybind": "Åbn genvej",
         "open-keybind-description": "Accelerator i Electron-stil, f.eks. CmdOrCtrl+/ eller Alt+Space",
         "open-shortcut": "Åbn søgefeltet fra hvor som helst",
-        "open-shortcut-description": "Fremkalder søgefeltet allerede i kommandotilstand, ligesom Spotlight. Når du trykker på den igen, lukkes det."
+        "open-shortcut-description": "Fremkalder søgefeltet allerede i kommandotilstand, ligesom Spotlight. Når du trykker på den igen, lukkes det.",
+        "openShortcut": {
+          "label": "Åbn søgefeltet fra hvor som helst",
+          "description": "Fremkalder søgefeltet allerede i kommandotilstand, ligesom Spotlight. Når du trykker på den igen, lukkes det."
+        },
+        "openKeybind": {
+          "label": "Åbn genvej",
+          "description": "Accelerator i Electron-stil, f.eks. CmdOrCtrl+/ eller Alt+Space"
+        }
       }
     },
     "seek-shortcuts": {
@@ -1095,14 +1189,38 @@
       },
       "settings": {
         "global-keybinds": "Globale tastaturgenveje (virker i hele appen)",
-        "local-keybinds": "Lokale tastaturgenveje (kun når vinduet er i fokus)"
+        "local-keybinds": "Lokale tastaturgenveje (kun når vinduet er i fokus)",
+        "playPause": {
+          "label": "Afspil / pause"
+        },
+        "localPlayPause": {
+          "label": "Afspil / pause"
+        },
+        "next": {
+          "label": "Næste"
+        },
+        "localNext": {
+          "label": "Næste"
+        },
+        "previous": {
+          "label": "Forrige"
+        },
+        "localPrevious": {
+          "label": "Forrige"
+        },
+        "overrideMediaKeys": {
+          "label": "Tilsidesæt medietaster"
+        }
       }
     },
     "skip-silences": {
       "description": "Spring automatisk stille sektioner over i sange",
       "name": "Spring stilhed over",
       "settings": {
-        "only-skip-beginning": "Spring kun stilhed over i begyndelsen af et nummer"
+        "only-skip-beginning": "Spring kun stilhed over i begyndelsen af et nummer",
+        "onlySkipBeginning": {
+          "label": "Spring kun stilhed over i begyndelsen af et nummer"
+        }
       }
     },
     "sponsorblock": {
@@ -1118,7 +1236,28 @@
           "selfpromo": "Egenreklame",
           "music_offtopic": "Ikke-musikafsnit"
         },
-        "api-url": "API-URL"
+        "api-url": "API-URL",
+        "sponsor": {
+          "label": "Sponsor"
+        },
+        "intro": {
+          "label": "Intro"
+        },
+        "outro": {
+          "label": "Outro"
+        },
+        "interaction": {
+          "label": "Påmindelse om interaktion"
+        },
+        "selfpromo": {
+          "label": "Egenreklame"
+        },
+        "music_offtopic": {
+          "label": "Ikke-musikafsnit"
+        },
+        "apiURL": {
+          "label": "API-URL"
+        }
       }
     },
     "synced-lyrics": {
@@ -1368,7 +1507,25 @@
         }
       },
       "settings": {
-        "type-description": "Baggrundsmateriale brugt til vinduesgennemsigtighed"
+        "type-description": "Baggrundsmateriale brugt til vinduesgennemsigtighed",
+        "opacity": {
+          "label": "Uigennemsigtighed"
+        },
+        "type": {
+          "label": "Type",
+          "description": "Baggrundsmateriale brugt til vinduesgennemsigtighed",
+          "options": {
+            "acrylic": "Akryl",
+            "content": "Indhold",
+            "fullscreen-ui": "Fuldskærms-UI",
+            "mica": "Mica",
+            "tabbed": "Faneblade",
+            "under-page": "Under side",
+            "under-window": "Under vindue",
+            "window": "Vindue",
+            "none": "Ingen"
+          }
+        }
       }
     },
     "tuna-obs": {
@@ -1404,6 +1561,27 @@
       "templates": {
         "button-song": "Sang",
         "button-video": "Video"
+      },
+      "settings": {
+        "mode": {
+          "label": "Tilstand",
+          "options": {
+            "custom": "Brugerdefineret skift",
+            "native": "Indbygget skift",
+            "disabled": "Deaktiveret"
+          }
+        },
+        "align": {
+          "label": "Justering",
+          "options": {
+            "left": "Venstre",
+            "middle": "Midt",
+            "right": "Højre"
+          }
+        },
+        "forceHide": {
+          "label": "Tving fjernelse af videofanen"
+        }
       }
     },
     "visualizer": {
@@ -1413,7 +1591,9 @@
       },
       "name": "Visualisering",
       "settings": {
-        "preset": "Forudindstilling",
+        "preset": {
+          "label": "Forudindstilling"
+        },
         "blend-time": "Blandingstid",
         "effect": "Effekt",
         "accuracy": "Nøjagtighed",
@@ -1429,12 +1609,53 @@
         "dottify": "Prikdannelse",
         "dottify-description": "Tegn prikker i stedet for en sammenhængende linje",
         "horizontal-align": "Vandret justering",
-        "vertical-align": "Lodret justering"
+        "vertical-align": "Lodret justering",
+        "blendTimeInSeconds": {
+          "label": "Blandingstid"
+        },
+        "vudioMaxHeight": {
+          "label": "Maks. højde"
+        },
+        "vudioMaxSize": {
+          "label": "Maks. størrelse"
+        },
+        "vudioLineWidth": {
+          "label": "Linjebredde"
+        },
+        "vudioColor": {
+          "label": "Farve"
+        },
+        "vudioShadowBlur": {
+          "label": "Skyggesløring"
+        },
+        "vudioShadowColor": {
+          "label": "Skyggefarve"
+        },
+        "vudioFadeSide": {
+          "label": "Udtone sider"
+        },
+        "vudioPrettify": {
+          "label": "Forskønnelse",
+          "description": "Gør søjlerne smallere mod kanterne"
+        },
+        "vudioDottify": {
+          "label": "Prikdannelse",
+          "description": "Tegn prikker i stedet for en sammenhængende linje"
+        },
+        "vudioHorizontalAlign": {
+          "label": "Vandret justering"
+        },
+        "vudioVerticalAlign": {
+          "label": "Lodret justering"
+        }
       }
     },
     "statusbar-lyrics": {
       "settings": {
-        "include-pronunciation": "Medtag udtale"
+        "include-pronunciation": "Medtag udtale",
+        "includePronunciation": {
+          "label": "Medtag udtale"
+        }
       }
     },
     "dismiss-multidevice-popup": {
@@ -1446,7 +1667,11 @@
       "name": "Hukommelsesbesparelse",
       "settings": {
         "threshold": "Cachetærskel",
-        "threshold-description": "Ryd caches, når deres aktive hukommelse overstiger denne værdi, mens vinduet er skjult"
+        "threshold-description": "Ryd caches, når deres aktive hukommelse overstiger denne værdi, mens vinduet er skjult",
+        "thresholdMB": {
+          "label": "Cachetærskel",
+          "description": "Ryd caches, når deres aktive hukommelse overstiger denne værdi, mens vinduet er skjult"
+        }
       }
     }
   },

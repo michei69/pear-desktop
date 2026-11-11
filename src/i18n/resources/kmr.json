@@ -321,7 +321,15 @@
         },
         "enable-seekbar": "Rengkirina şopa lêgerînê çalak bike"
       },
-      "name": "Rengê Albûmê"
+      "name": "Rengê Albûmê",
+      "settings": {
+        "ratio": {
+          "label": "Rêjeya tevlihevkirina rengan"
+        },
+        "enableSeekbar": {
+          "label": "Rengkirina şopa lêgerînê çalak bike"
+        }
+      }
     },
     "audio-only": {
       "description": "Moda tenê-dengî bi zorê dike - hemû pêlên vîdyoyê di asta torê û lêderê de asteng dike da ku RAM û bandfirehiyê teserûf bike",
@@ -508,6 +516,14 @@
         "caption-changed": "Jêrnivîs wekî {{language}} hat guhertin",
         "caption-disabled": "Jêrnivîs hatin rawestandin",
         "no-captions": "Ji bo vê stranê jêrnivîs tune ye"
+      },
+      "settings": {
+        "autoload": {
+          "label": "Jêrnivîsa dawî ya hatî bikaranîn bixweber hilbijêre"
+        },
+        "disableCaptions": {
+          "label": "Bê jêrnivîs wekî standard"
+        }
       }
     },
     "clock": {
@@ -521,7 +537,13 @@
         }
       },
       "settings": {
-        "hour-12": "Formata 12 saetan bikar bîne"
+        "hour-12": "Formata 12 saetan bikar bîne",
+        "displaySeconds": {
+          "label": "Çirkeyan Nîşan Bide"
+        },
+        "hour12": {
+          "label": "Formata 12 saetan bikar bîne"
+        }
       }
     },
     "compact-sidebar": {
@@ -580,7 +602,12 @@
       "menu": {
         "apply-once": "Tenê di dema destpêkirinê de tê sepandin"
       },
-      "name": "Lêdana Xweber Bide Rawestandin"
+      "name": "Lêdana Xweber Bide Rawestandin",
+      "settings": {
+        "applyOnce": {
+          "label": "Tenê di dema destpêkirinê de tê sepandin"
+        }
+      }
     },
     "discord": {
       "backend": {
@@ -620,7 +647,38 @@
         "activity-timeout-enabled": "Dema rawestandî rewşê paqij bike",
         "activity-timeout-time": "Paqij bike piştî",
         "hide-github-button": "Bişêre bişkoka \"Li GitHub bibîne\"",
-        "hide-duration-left": "Dema mayî veşêre"
+        "hide-duration-left": "Dema mayî veşêre",
+        "autoReconnect": {
+          "label": "Ji nû ve otomatîk girêbide"
+        },
+        "activityTimeoutEnabled": {
+          "label": "Dema rawestandî rewşê paqij bike"
+        },
+        "activityTimeoutSeconds": {
+          "label": "Paqij bike piştî"
+        },
+        "playButton": {
+          "label": "Li ser {{applicationName}} lêxe"
+        },
+        "hideGitHubButton": {
+          "label": "Bişêre bişkoka \"Li GitHub bibîne\""
+        },
+        "hideDurationLeft": {
+          "label": "Dema mayî veşêre"
+        },
+        "statusDisplayType": {
+          "label": "Nivîsa rewşê",
+          "options": {
+            "name": "Guhdariya {{applicationName}}",
+            "state": "Guhdariya {{artist}}",
+            "details": "Guhdariya {{song title}}"
+          }
+        }
+      },
+      "actions": {
+        "clearActivity": {
+          "label": "Çalakiyê paqij bike"
+        }
       }
     },
     "downloader": {
@@ -905,6 +963,23 @@
       "name": "Wêne-di-Wêneyî",
       "templates": {
         "button": "Wêne-di-Wêneyî"
+      },
+      "settings": {
+        "hotkey": {
+          "label": "Bişkoka Kurt"
+        },
+        "useNativePiP": {
+          "label": "PiP-a xwemalî ya gerokê bikar bîne"
+        },
+        "alwaysOnTop": {
+          "label": "Her tim li ser"
+        },
+        "savePosition": {
+          "label": "Cihê pencereyê hilîne"
+        },
+        "saveSize": {
+          "label": "Mezinahiya pencereyê hilîne"
+        }
       }
     },
     "playback-speed": {
@@ -940,10 +1015,21 @@
         }
       },
       "settings": {
-        "steps": "Gava deng",
+        "steps": {
+          "label": "Gava deng"
+        },
         "arrows-shortcut": "Kurtebirên bişkojka tîran",
         "shortcut-up": "Kurtebira gerdûnî: deng zêde bike",
-        "shortcut-down": "Kurtebira gerdûnî: deng kêm bike"
+        "shortcut-down": "Kurtebira gerdûnî: deng kêm bike",
+        "arrowsShortcut": {
+          "label": "Kurtebirên bişkojka tîran"
+        },
+        "volumeUp": {
+          "label": "Kurtebira gerdûnî: deng zêde bike"
+        },
+        "volumeDown": {
+          "label": "Kurtebira gerdûnî: deng kêm bike"
+        }
       }
     },
     "quality-changer": {
@@ -1042,14 +1128,38 @@
       },
       "settings": {
         "global-keybinds": "Bişkokên gerdûnî (li tevahiya sepanê dixebitin)",
-        "local-keybinds": "Bişkokên herêmî (tenê dema pencere fokusê ye)"
+        "local-keybinds": "Bişkokên herêmî (tenê dema pencere fokusê ye)",
+        "playPause": {
+          "label": "Lêxe / Rawestîne"
+        },
+        "localPlayPause": {
+          "label": "Lêxe / Rawestîne"
+        },
+        "next": {
+          "label": "Pêş"
+        },
+        "localNext": {
+          "label": "Pêş"
+        },
+        "previous": {
+          "label": "Berê"
+        },
+        "localPrevious": {
+          "label": "Berê"
+        },
+        "overrideMediaKeys": {
+          "label": "Bişkokên Medyayê Bigire"
+        }
       }
     },
     "skip-silences": {
       "description": "Bixweber beşên bêdengiyê di stranan de derbas dike",
       "name": "Bêdengiyan Derbas Bike",
       "settings": {
-        "only-skip-beginning": "Tenê di destpêka stranê de bêdengiyê derbas bike"
+        "only-skip-beginning": "Tenê di destpêka stranê de bêdengiyê derbas bike",
+        "onlySkipBeginning": {
+          "label": "Tenê di destpêka stranê de bêdengiyê derbas bike"
+        }
       }
     },
     "sponsorblock": {
@@ -1065,7 +1175,28 @@
           "selfpromo": "Xwe-pêşxistin",
           "music_offtopic": "Beşa ne-muzîkê"
         },
-        "api-url": "URL ya APIyê"
+        "api-url": "URL ya APIyê",
+        "sponsor": {
+          "label": "Sponsor"
+        },
+        "intro": {
+          "label": "Destpêk"
+        },
+        "outro": {
+          "label": "Dawî"
+        },
+        "interaction": {
+          "label": "Bîrxistina înteraksiyonê"
+        },
+        "selfpromo": {
+          "label": "Xwe-pêşxistin"
+        },
+        "music_offtopic": {
+          "label": "Beşa ne-muzîkê"
+        },
+        "apiURL": {
+          "label": "URL ya APIyê"
+        }
       }
     },
     "synced-lyrics": {
@@ -1366,7 +1497,25 @@
         }
       },
       "settings": {
-        "type-description": "Materyalê paşnavê ku ji bo şefafiya pencereyê tê bikar anîn"
+        "type-description": "Materyalê paşnavê ku ji bo şefafiya pencereyê tê bikar anîn",
+        "opacity": {
+          "label": "Zelalbûn"
+        },
+        "type": {
+          "label": "Cure",
+          "description": "Materyalê paşnavê ku ji bo şefafiya pencereyê tê bikar anîn",
+          "options": {
+            "acrylic": "Akrîlîk",
+            "content": "Naverok",
+            "fullscreen-ui": "Navrûya Ekrana Tevahî",
+            "mica": "Mica",
+            "tabbed": "Tabkirî",
+            "under-page": "Bin Rûpelê",
+            "under-window": "Bin Pencereyê",
+            "window": "Pencere",
+            "none": "Tune"
+          }
+        }
       }
     },
     "tuna-obs": {
@@ -1402,6 +1551,27 @@
       "templates": {
         "button-song": "Stran",
         "button-video": "Vîdyo"
+      },
+      "settings": {
+        "mode": {
+          "label": "Mod",
+          "options": {
+            "custom": "Guhertina xwerû",
+            "native": "Guhertina xwemalî",
+            "disabled": "Neçalak"
+          }
+        },
+        "align": {
+          "label": "Hevrêzkirin",
+          "options": {
+            "left": "Çep",
+            "middle": "Navîn",
+            "right": "Rast"
+          }
+        },
+        "forceHide": {
+          "label": "Tabloya vîdyoyê bi zorê rake"
+        }
       }
     },
     "visualizer": {
@@ -1411,7 +1581,9 @@
       },
       "name": "Vîzûalîzer",
       "settings": {
-        "preset": "Pêşmîheng",
+        "preset": {
+          "label": "Pêşmîheng"
+        },
         "blend-time": "Dema tevlihevkirinê",
         "effect": "Bandor",
         "accuracy": "Rastbûn",
@@ -1427,7 +1599,45 @@
         "dottify": "Xalkirin",
         "dottify-description": "Li şûna xêzek berdewam xalan xêz bike",
         "horizontal-align": "Hevrêzkirina asoyî",
-        "vertical-align": "Hevrêzkirina stûnî"
+        "vertical-align": "Hevrêzkirina stûnî",
+        "blendTimeInSeconds": {
+          "label": "Dema tevlihevkirinê"
+        },
+        "vudioMaxHeight": {
+          "label": "Herî zêde bilindahî"
+        },
+        "vudioMaxSize": {
+          "label": "Herî zêde mezinahî"
+        },
+        "vudioLineWidth": {
+          "label": "Firehiya rêzê"
+        },
+        "vudioColor": {
+          "label": "Reng"
+        },
+        "vudioShadowBlur": {
+          "label": "Blura sîberê"
+        },
+        "vudioShadowColor": {
+          "label": "Rengê sîberê"
+        },
+        "vudioFadeSide": {
+          "label": "Aliyên windabûnê"
+        },
+        "vudioPrettify": {
+          "label": "Xemilandin",
+          "description": "Baran ber bi qeraxan ve teng bike"
+        },
+        "vudioDottify": {
+          "label": "Xalkirin",
+          "description": "Li şûna xêzek berdewam xalan xêz bike"
+        },
+        "vudioHorizontalAlign": {
+          "label": "Hevrêzkirina asoyî"
+        },
+        "vudioVerticalAlign": {
+          "label": "Hevrêzkirina stûnî"
+        }
       }
     },
     "playlist-search": {
@@ -1480,7 +1690,15 @@
         "open-keybind": "Kurtebira vekirinê",
         "open-keybind-description": "Lezkerê bi şêwaza Electron, bo nimûne CmdOrCtrl+/ an Alt+Space",
         "open-shortcut": "Qutiya lêgerînê ji her derê veke",
-        "open-shortcut-description": "Qutiya lêgerînê di moda fermanê de vedike, mîna Spotlight. Dubare pê lêdanê wê digire."
+        "open-shortcut-description": "Qutiya lêgerînê di moda fermanê de vedike, mîna Spotlight. Dubare pê lêdanê wê digire.",
+        "openShortcut": {
+          "label": "Qutiya lêgerînê ji her derê veke",
+          "description": "Qutiya lêgerînê di moda fermanê de vedike, mîna Spotlight. Dubare pê lêdanê wê digire."
+        },
+        "openKeybind": {
+          "label": "Kurtebira vekirinê",
+          "description": "Lezkerê bi şêwaza Electron, bo nimûne CmdOrCtrl+/ an Alt+Space"
+        }
       }
     },
     "seek-shortcuts": {
@@ -1497,7 +1715,10 @@
     },
     "statusbar-lyrics": {
       "settings": {
-        "include-pronunciation": "Bilêvkirinê jî têxe"
+        "include-pronunciation": "Bilêvkirinê jî têxe",
+        "includePronunciation": {
+          "label": "Bilêvkirinê jî têxe"
+        }
       }
     },
     "dismiss-multidevice-popup": {
@@ -1509,7 +1730,11 @@
       "name": "Parêzgera Bîrê",
       "settings": {
         "threshold": "Sînorê cacheyê",
-        "threshold-description": "Dema pencere veşartî be, gava bîra zindî ya cacheyan ji vê derbas bibe, cacheyan paqij bike."
+        "threshold-description": "Dema pencere veşartî be, gava bîra zindî ya cacheyan ji vê derbas bibe, cacheyan paqij bike.",
+        "thresholdMB": {
+          "label": "Sînorê cacheyê",
+          "description": "Dema pencere veşartî be, gava bîra zindî ya cacheyan ji vê derbas bibe, cacheyan paqij bike."
+        }
       }
     }
   },

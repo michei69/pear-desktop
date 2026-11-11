@@ -314,7 +314,15 @@
         },
         "enable-seekbar": "Активиране на тематизиране на лентата за търсене"
       },
-      "name": "Цветова тема на албума"
+      "name": "Цветова тема на албума",
+      "settings": {
+        "ratio": {
+          "label": "Съотношение на смесване на цветовете"
+        },
+        "enableSeekbar": {
+          "label": "Активиране на тематизиране на лентата за търсене"
+        }
+      }
     },
     "ambient-mode": {
       "description": "Прилага светлинен ефект, като проектира нежни цветове от видеото върху фона на екрана",
@@ -497,6 +505,14 @@
         "caption-changed": "Надписите са сменени на {{language}}",
         "caption-disabled": "Надписите са деактивирани",
         "no-captions": "Няма налични надписи за тази песен"
+      },
+      "settings": {
+        "autoload": {
+          "label": "Автоматично избиране на последно използвания надпис"
+        },
+        "disableCaptions": {
+          "label": "Без надписи по подразбиране"
+        }
       }
     },
     "compact-sidebar": {
@@ -555,7 +571,12 @@
       "menu": {
         "apply-once": "Важи само на стартиране"
       },
-      "name": "Изключи автоматичното пускане"
+      "name": "Изключи автоматичното пускане",
+      "settings": {
+        "applyOnce": {
+          "label": "Важи само на стартиране"
+        }
+      }
     },
     "discord": {
       "backend": {
@@ -595,7 +616,38 @@
         "activity-timeout-enabled": "Изчиствай присъствието при пауза",
         "activity-timeout-time": "Изчисти след",
         "hide-github-button": "Скрий бутона „Виж в GitHub“",
-        "hide-duration-left": "Скрий оставащото време"
+        "hide-duration-left": "Скрий оставащото време",
+        "autoReconnect": {
+          "label": "Автоматично свързване отново"
+        },
+        "activityTimeoutEnabled": {
+          "label": "Изчиствай присъствието при пауза"
+        },
+        "activityTimeoutSeconds": {
+          "label": "Изчисти след"
+        },
+        "playButton": {
+          "label": "Възпроизведи в {{applicationName}}"
+        },
+        "hideGitHubButton": {
+          "label": "Скрий бутона „Виж в GitHub“"
+        },
+        "hideDurationLeft": {
+          "label": "Скрий оставащото време"
+        },
+        "statusDisplayType": {
+          "label": "Статус текст",
+          "options": {
+            "name": "Слушам {{applicationName}}",
+            "state": "Слушам {artist}",
+            "details": "Слушам {song title}"
+          }
+        }
+      },
+      "actions": {
+        "clearActivity": {
+          "label": "Изчистване на активността"
+        }
       }
     },
     "downloader": {
@@ -867,6 +919,23 @@
       "name": "Картинка във картинка",
       "templates": {
         "button": "Картинка във картинка"
+      },
+      "settings": {
+        "hotkey": {
+          "label": "Клавишна комбинация"
+        },
+        "useNativePiP": {
+          "label": "Използвайте вградения картинка във картинка на браузера"
+        },
+        "alwaysOnTop": {
+          "label": "Винаги на преден план"
+        },
+        "savePosition": {
+          "label": "Запомняне на позицията на прозореца"
+        },
+        "saveSize": {
+          "label": "Запомняне на размера на прозореца"
+        }
       }
     },
     "playback-speed": {
@@ -902,10 +971,21 @@
         }
       },
       "settings": {
-        "steps": "Стъпка на звука",
+        "steps": {
+          "label": "Стъпка на звука"
+        },
         "arrows-shortcut": "Клавишни комбинации със стрелки",
         "shortcut-up": "Глобална клавишна комбинация: увеличаване на звука",
-        "shortcut-down": "Глобална клавишна комбинация: намаляване на звука"
+        "shortcut-down": "Глобална клавишна комбинация: намаляване на звука",
+        "arrowsShortcut": {
+          "label": "Клавишни комбинации със стрелки"
+        },
+        "volumeUp": {
+          "label": "Глобална клавишна комбинация: увеличаване на звука"
+        },
+        "volumeDown": {
+          "label": "Глобална клавишна комбинация: намаляване на звука"
+        }
       }
     },
     "quality-changer": {
@@ -1004,7 +1084,28 @@
       },
       "settings": {
         "global-keybinds": "Глобални клавишни комбинации (работят в цялото приложение)",
-        "local-keybinds": "Локални клавишни комбинации (само когато прозорецът е на фокус)"
+        "local-keybinds": "Локални клавишни комбинации (само когато прозорецът е на фокус)",
+        "playPause": {
+          "label": "Пусни / Пауза"
+        },
+        "localPlayPause": {
+          "label": "Пусни / Пауза"
+        },
+        "next": {
+          "label": "Следваща"
+        },
+        "localNext": {
+          "label": "Следваща"
+        },
+        "previous": {
+          "label": "Предишна"
+        },
+        "localPrevious": {
+          "label": "Предишна"
+        },
+        "overrideMediaKeys": {
+          "label": "Презаписване на медийни клавиши"
+        }
       }
     },
     "skip-disliked-songs": {
@@ -1015,7 +1116,10 @@
       "description": "Автоматично прескачане на тихи участъци в песните",
       "name": "Прескачане на тишини",
       "settings": {
-        "only-skip-beginning": "Пропускане на тишината само в началото на песен"
+        "only-skip-beginning": "Пропускане на тишината само в началото на песен",
+        "onlySkipBeginning": {
+          "label": "Пропускане на тишината само в началото на песен"
+        }
       }
     },
     "sponsorblock": {
@@ -1031,7 +1135,28 @@
           "selfpromo": "Самопромоция",
           "music_offtopic": "Немузикален раздел"
         },
-        "api-url": "URL на API"
+        "api-url": "URL на API",
+        "sponsor": {
+          "label": "Спонсор"
+        },
+        "intro": {
+          "label": "Въведение"
+        },
+        "outro": {
+          "label": "Аутро"
+        },
+        "interaction": {
+          "label": "Напомняне за взаимодействие"
+        },
+        "selfpromo": {
+          "label": "Самопромоция"
+        },
+        "music_offtopic": {
+          "label": "Немузикален раздел"
+        },
+        "apiURL": {
+          "label": "URL на API"
+        }
       }
     },
     "synced-lyrics": {
@@ -1332,7 +1457,25 @@
       },
       "name": "Прозрачен плейър",
       "settings": {
-        "type-description": "Фонов материал, използван за прозрачност на прозореца"
+        "type-description": "Фонов материал, използван за прозрачност на прозореца",
+        "opacity": {
+          "label": "Прозрачност"
+        },
+        "type": {
+          "label": "Тип",
+          "description": "Фонов материал, използван за прозрачност на прозореца",
+          "options": {
+            "acrylic": "Акрил",
+            "content": "Съдържание",
+            "fullscreen-ui": "Потребителски интерфейс на цял екран",
+            "mica": "Слюда",
+            "tabbed": "С раздели",
+            "under-page": "Под страницата",
+            "under-window": "Под прозореца",
+            "window": "Прозорец",
+            "none": "Празно"
+          }
+        }
       }
     },
     "tuna-obs": {
@@ -1368,6 +1511,27 @@
       "templates": {
         "button-song": "Песен",
         "button-video": "Видео"
+      },
+      "settings": {
+        "mode": {
+          "label": "Режим",
+          "options": {
+            "custom": "Персонализиран превключвател",
+            "native": "Вграден превключвател",
+            "disabled": "Изключено"
+          }
+        },
+        "align": {
+          "label": "Подравняване",
+          "options": {
+            "left": "Ляво",
+            "middle": "В средата",
+            "right": "Дясно"
+          }
+        },
+        "forceHide": {
+          "label": "Принудително премахване на раздела за видео"
+        }
       }
     },
     "visualizer": {
@@ -1377,7 +1541,9 @@
       },
       "name": "Визуализатор",
       "settings": {
-        "preset": "Предварителна настройка",
+        "preset": {
+          "label": "Предварителна настройка"
+        },
         "blend-time": "Време за смесване",
         "effect": "Ефект",
         "accuracy": "Точност",
@@ -1393,7 +1559,45 @@
         "dottify": "Показване като точки",
         "dottify-description": "Рисуване на точки вместо непрекъсната линия",
         "horizontal-align": "Хоризонтално подравняване",
-        "vertical-align": "Вертикално подравняване"
+        "vertical-align": "Вертикално подравняване",
+        "blendTimeInSeconds": {
+          "label": "Време за смесване"
+        },
+        "vudioMaxHeight": {
+          "label": "Максимална височина"
+        },
+        "vudioMaxSize": {
+          "label": "Максимален размер"
+        },
+        "vudioLineWidth": {
+          "label": "Ширина на линията"
+        },
+        "vudioColor": {
+          "label": "Цвят"
+        },
+        "vudioShadowBlur": {
+          "label": "Замъгляване на сянката"
+        },
+        "vudioShadowColor": {
+          "label": "Цвят на сянката"
+        },
+        "vudioFadeSide": {
+          "label": "Страни за избледняване"
+        },
+        "vudioPrettify": {
+          "label": "Разкрасяване",
+          "description": "Стесняване на стълбовете към краищата"
+        },
+        "vudioDottify": {
+          "label": "Показване като точки",
+          "description": "Рисуване на точки вместо непрекъсната линия"
+        },
+        "vudioHorizontalAlign": {
+          "label": "Хоризонтално подравняване"
+        },
+        "vudioVerticalAlign": {
+          "label": "Вертикално подравняване"
+        }
       }
     },
     "clock": {
@@ -1407,7 +1611,13 @@
       },
       "name": "Часовник",
       "settings": {
-        "hour-12": "Използвай 12-часов формат"
+        "hour-12": "Използвай 12-часов формат",
+        "displaySeconds": {
+          "label": "Показване на секундите"
+        },
+        "hour12": {
+          "label": "Използвай 12-часов формат"
+        }
       }
     },
     "audio-only": {
@@ -1477,7 +1687,15 @@
         "open-keybind": "Клавишна комбинация за отваряне",
         "open-keybind-description": "Ускорител в стил Electron, напр. CmdOrCtrl+/ или Alt+Space",
         "open-shortcut": "Отваряне на полето за търсене отвсякъде",
-        "open-shortcut-description": "Отваря полето за търсене вече в режим на команди, като Spotlight. Повторното натискане го затваря."
+        "open-shortcut-description": "Отваря полето за търсене вече в режим на команди, като Spotlight. Повторното натискане го затваря.",
+        "openShortcut": {
+          "label": "Отваряне на полето за търсене отвсякъде",
+          "description": "Отваря полето за търсене вече в режим на команди, като Spotlight. Повторното натискане го затваря."
+        },
+        "openKeybind": {
+          "label": "Клавишна комбинация за отваряне",
+          "description": "Ускорител в стил Electron, напр. CmdOrCtrl+/ или Alt+Space"
+        }
       }
     },
     "seek-shortcuts": {
@@ -1494,7 +1712,10 @@
     },
     "statusbar-lyrics": {
       "settings": {
-        "include-pronunciation": "Включване на произношението"
+        "include-pronunciation": "Включване на произношението",
+        "includePronunciation": {
+          "label": "Включване на произношението"
+        }
       }
     },
     "dismiss-multidevice-popup": {
@@ -1506,7 +1727,11 @@
       "name": "Икономия на памет",
       "settings": {
         "threshold": "Праг на кеша",
-        "threshold-description": "Изчиства кешовете, когато заеманата от тях памет надхвърли тази стойност, докато прозорецът е скрит"
+        "threshold-description": "Изчиства кешовете, когато заеманата от тях памет надхвърли тази стойност, докато прозорецът е скрит",
+        "thresholdMB": {
+          "label": "Праг на кеша",
+          "description": "Изчиства кешовете, когато заеманата от тях памет надхвърли тази стойност, докато прозорецът е скрит"
+        }
       }
     }
   },

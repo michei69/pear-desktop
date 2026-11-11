@@ -314,7 +314,15 @@
         },
         "enable-seekbar": "ใช้ธีมบนแถบกรอ"
       },
-      "name": "ธีมสีของอัลบั้ม"
+      "name": "ธีมสีของอัลบั้ม",
+      "settings": {
+        "ratio": {
+          "label": "สัดส่วนการผสมสี"
+        },
+        "enableSeekbar": {
+          "label": "ใช้ธีมบนแถบกรอ"
+        }
+      }
     },
     "ambient-mode": {
       "description": "เอฟเฟกต์แสงที่ดึงสีอ่อนๆจากวีดิโอมาบนพื้นหลังแอป",
@@ -497,6 +505,14 @@
         "caption-changed": "เปลี่ยนคำบรรยายเป็นภาษา {{language}}",
         "caption-disabled": "คำบรรยายถูกปิดใช้งาน",
         "no-captions": "ไม่มีคำบรรยายสำหรับเพลงนี้"
+      },
+      "settings": {
+        "autoload": {
+          "label": "เลือกคำบรรยายที่ใช้ครั้งล่าสุดโดยอัตโนมัติ"
+        },
+        "disableCaptions": {
+          "label": "ไม่มีคำบรรยายเป็นค่าเริ่มต้น"
+        }
       }
     },
     "clock": {
@@ -510,7 +526,13 @@
       },
       "name": "นาฬิกา",
       "settings": {
-        "hour-12": "ใช้รูปแบบ 12 ชั่วโมง"
+        "hour-12": "ใช้รูปแบบ 12 ชั่วโมง",
+        "displaySeconds": {
+          "label": "แสดงวินาที"
+        },
+        "hour12": {
+          "label": "ใช้รูปแบบ 12 ชั่วโมง"
+        }
       }
     },
     "compact-sidebar": {
@@ -569,7 +591,12 @@
       "menu": {
         "apply-once": "ใช้เฉพาะเมื่อเริ่มต้นแอป"
       },
-      "name": "ปิดใช้งานการเล่นอัตโนมัติ"
+      "name": "ปิดใช้งานการเล่นอัตโนมัติ",
+      "settings": {
+        "applyOnce": {
+          "label": "ใช้เฉพาะเมื่อเริ่มต้นแอป"
+        }
+      }
     },
     "discord": {
       "backend": {
@@ -609,7 +636,38 @@
         "activity-timeout-enabled": "ล้างสถานะเมื่อหยุดชั่วคราว",
         "activity-timeout-time": "ล้างหลังจาก",
         "hide-github-button": "ซ่อนปุ่ม “ดูบน GitHub”",
-        "hide-duration-left": "ซ่อนเวลาที่เหลือ"
+        "hide-duration-left": "ซ่อนเวลาที่เหลือ",
+        "autoReconnect": {
+          "label": "เชื่อมต่อใหม่โดยอัตโนมัติ"
+        },
+        "activityTimeoutEnabled": {
+          "label": "ล้างสถานะเมื่อหยุดชั่วคราว"
+        },
+        "activityTimeoutSeconds": {
+          "label": "ล้างหลังจาก"
+        },
+        "playButton": {
+          "label": "เล่นบน {{applicationName}}"
+        },
+        "hideGitHubButton": {
+          "label": "ซ่อนปุ่ม “ดูบน GitHub”"
+        },
+        "hideDurationLeft": {
+          "label": "ซ่อนเวลาที่เหลือ"
+        },
+        "statusDisplayType": {
+          "label": "ข้อความสถานะ",
+          "options": {
+            "name": "กำลังฟัง {{applicationName}}",
+            "state": "กำลังฟัง {ชื่อนักร้อง}",
+            "details": "กำลังฟัง {ชื่อเพลง}"
+          }
+        }
+      },
+      "actions": {
+        "clearActivity": {
+          "label": "ล้างกิจกรรม"
+        }
       }
     },
     "do-not-track": {
@@ -900,6 +958,23 @@
       "name": "โหมดภาพซ้อนภาพ",
       "templates": {
         "button": "เปิดโหมดภาพซ้อนภาพ"
+      },
+      "settings": {
+        "hotkey": {
+          "label": "ปุ่มลัด"
+        },
+        "useNativePiP": {
+          "label": "ใช้โหมดภาพซ้อนภาพของเบราเซอร์"
+        },
+        "alwaysOnTop": {
+          "label": "อยู่ด้านบนเสมอ"
+        },
+        "savePosition": {
+          "label": "บันทึกตำแหน่งหน้าต่าง"
+        },
+        "saveSize": {
+          "label": "บันทึกขนาดหน้าต่าง"
+        }
       }
     },
     "playback-speed": {
@@ -935,10 +1010,21 @@
         }
       },
       "settings": {
-        "steps": "ขั้นการปรับเสียง",
+        "steps": {
+          "label": "ขั้นการปรับเสียง"
+        },
         "arrows-shortcut": "ปุ่มลัดลูกศร",
         "shortcut-up": "ปุ่มลัดทั่วระบบ: เพิ่มเสียง",
-        "shortcut-down": "ปุ่มลัดทั่วระบบ: ลดเสียง"
+        "shortcut-down": "ปุ่มลัดทั่วระบบ: ลดเสียง",
+        "arrowsShortcut": {
+          "label": "ปุ่มลัดลูกศร"
+        },
+        "volumeUp": {
+          "label": "ปุ่มลัดทั่วระบบ: เพิ่มเสียง"
+        },
+        "volumeDown": {
+          "label": "ปุ่มลัดทั่วระบบ: ลดเสียง"
+        }
       }
     },
     "quality-changer": {
@@ -1037,7 +1123,28 @@
       },
       "settings": {
         "global-keybinds": "ปุ่มลัดทั่วระบบ (ใช้ได้ทั้งแอป)",
-        "local-keybinds": "ปุ่มลัดเฉพาะหน้า (ใช้เมื่อหน้าต่างอยู่ในโฟกัสเท่านั้น)"
+        "local-keybinds": "ปุ่มลัดเฉพาะหน้า (ใช้เมื่อหน้าต่างอยู่ในโฟกัสเท่านั้น)",
+        "playPause": {
+          "label": "เล่น/หยุดชั่วคราว"
+        },
+        "localPlayPause": {
+          "label": "เล่น/หยุดชั่วคราว"
+        },
+        "next": {
+          "label": "เพลงถัดไป"
+        },
+        "localNext": {
+          "label": "เพลงถัดไป"
+        },
+        "previous": {
+          "label": "เพลงก่อนหน้า"
+        },
+        "localPrevious": {
+          "label": "เพลงก่อนหน้า"
+        },
+        "overrideMediaKeys": {
+          "label": "เปลี่ยนการทำงานของปุ่มควบคุมสื่อ"
+        }
       }
     },
     "skip-disliked-songs": {
@@ -1048,7 +1155,10 @@
       "description": "ข้ามช่วงที่เงียบในเพลงโดยอัตโนมัติ",
       "name": "ข้ามช่วงเงียบ",
       "settings": {
-        "only-skip-beginning": "ข้ามความเงียบเฉพาะช่วงต้นแทร็ก"
+        "only-skip-beginning": "ข้ามความเงียบเฉพาะช่วงต้นแทร็ก",
+        "onlySkipBeginning": {
+          "label": "ข้ามความเงียบเฉพาะช่วงต้นแทร็ก"
+        }
       }
     },
     "sponsorblock": {
@@ -1064,7 +1174,28 @@
           "selfpromo": "โปรโมตตัวเอง",
           "music_offtopic": "ช่วงที่ไม่ใช่เพลง"
         },
-        "api-url": "URL API"
+        "api-url": "URL API",
+        "sponsor": {
+          "label": "สปอนเซอร์"
+        },
+        "intro": {
+          "label": "ช่วงเกริ่น"
+        },
+        "outro": {
+          "label": "ช่วงท้าย"
+        },
+        "interaction": {
+          "label": "เตือนการมีปฏิสัมพันธ์"
+        },
+        "selfpromo": {
+          "label": "โปรโมตตัวเอง"
+        },
+        "music_offtopic": {
+          "label": "ช่วงที่ไม่ใช่เพลง"
+        },
+        "apiURL": {
+          "label": "URL API"
+        }
       }
     },
     "synced-lyrics": {
@@ -1365,7 +1496,25 @@
       },
       "name": "ที่เล่นเพลงโปร่งใส",
       "settings": {
-        "type-description": "วัสดุพื้นหลังที่ใช้สำหรับความโปร่งใสของหน้าต่าง"
+        "type-description": "วัสดุพื้นหลังที่ใช้สำหรับความโปร่งใสของหน้าต่าง",
+        "opacity": {
+          "label": "ความทึบแสง"
+        },
+        "type": {
+          "label": "ประเภท",
+          "description": "วัสดุพื้นหลังที่ใช้สำหรับความโปร่งใสของหน้าต่าง",
+          "options": {
+            "acrylic": "อะคริลิก",
+            "content": "เนื้อหา",
+            "fullscreen-ui": "หน้าต่างเต็มหน้าจอ",
+            "mica": "ไมกา (Mica)",
+            "tabbed": "แบบแท็บ (Tabbed)",
+            "under-page": "ใต้หน้า",
+            "under-window": "ใต้หน้าต่าง",
+            "window": "หน้าต่างปกติ",
+            "none": "ไม่มี"
+          }
+        }
       }
     },
     "tuna-obs": {
@@ -1401,6 +1550,27 @@
       "templates": {
         "button-song": "เพลง",
         "button-video": "วิดีโอ"
+      },
+      "settings": {
+        "mode": {
+          "label": "โหมด",
+          "options": {
+            "custom": "ปุ่มกำหนดเอง",
+            "native": "ปุ่มเริ่มต้น",
+            "disabled": "ปิด"
+          }
+        },
+        "align": {
+          "label": "ตำแหน่งปุ่ม",
+          "options": {
+            "left": "ซ้าย",
+            "middle": "กลาง",
+            "right": "ขวา"
+          }
+        },
+        "forceHide": {
+          "label": "บังคับลบแถบวิดีโอ"
+        }
       }
     },
     "visualizer": {
@@ -1410,7 +1580,9 @@
       },
       "name": "วิชวลไลเซอร์",
       "settings": {
-        "preset": "พรีเซ็ต",
+        "preset": {
+          "label": "พรีเซ็ต"
+        },
         "blend-time": "เวลาผสม",
         "effect": "เอฟเฟกต์",
         "accuracy": "ความแม่นยำ",
@@ -1426,7 +1598,45 @@
         "dottify": "แสดงเป็นจุด",
         "dottify-description": "วาดจุดแทนเส้นต่อเนื่อง",
         "horizontal-align": "การจัดแนวนอน",
-        "vertical-align": "การจัดแนวตั้ง"
+        "vertical-align": "การจัดแนวตั้ง",
+        "blendTimeInSeconds": {
+          "label": "เวลาผสม"
+        },
+        "vudioMaxHeight": {
+          "label": "ความสูงสูงสุด"
+        },
+        "vudioMaxSize": {
+          "label": "ขนาดสูงสุด"
+        },
+        "vudioLineWidth": {
+          "label": "ความกว้างเส้น"
+        },
+        "vudioColor": {
+          "label": "สี"
+        },
+        "vudioShadowBlur": {
+          "label": "ความเบลอเงา"
+        },
+        "vudioShadowColor": {
+          "label": "สีเงา"
+        },
+        "vudioFadeSide": {
+          "label": "ด้านที่จางหาย"
+        },
+        "vudioPrettify": {
+          "label": "ทำให้สวยงาม",
+          "description": "ลดความสูงแท่งกราฟลงเมื่อเข้าใกล้ขอบ"
+        },
+        "vudioDottify": {
+          "label": "แสดงเป็นจุด",
+          "description": "วาดจุดแทนเส้นต่อเนื่อง"
+        },
+        "vudioHorizontalAlign": {
+          "label": "การจัดแนวนอน"
+        },
+        "vudioVerticalAlign": {
+          "label": "การจัดแนวตั้ง"
+        }
       }
     },
     "audio-only": {
@@ -1477,7 +1687,15 @@
         "open-keybind": "ปุ่มลัดเปิด",
         "open-keybind-description": "ตัวเร่งแบบ Electron เช่น CmdOrCtrl+/ หรือ Alt+Space",
         "open-shortcut": "เปิดช่องค้นหาจากทุกที่",
-        "open-shortcut-description": "เรียกช่องค้นหาในโหมดคำสั่งทันที คล้าย Spotlight กดอีกครั้งเพื่อปิด"
+        "open-shortcut-description": "เรียกช่องค้นหาในโหมดคำสั่งทันที คล้าย Spotlight กดอีกครั้งเพื่อปิด",
+        "openShortcut": {
+          "label": "เปิดช่องค้นหาจากทุกที่",
+          "description": "เรียกช่องค้นหาในโหมดคำสั่งทันที คล้าย Spotlight กดอีกครั้งเพื่อปิด"
+        },
+        "openKeybind": {
+          "label": "ปุ่มลัดเปิด",
+          "description": "ตัวเร่งแบบ Electron เช่น CmdOrCtrl+/ หรือ Alt+Space"
+        }
       }
     },
     "seek-shortcuts": {
@@ -1494,7 +1712,10 @@
     },
     "statusbar-lyrics": {
       "settings": {
-        "include-pronunciation": "รวมการออกเสียง"
+        "include-pronunciation": "รวมการออกเสียง",
+        "includePronunciation": {
+          "label": "รวมการออกเสียง"
+        }
       }
     },
     "dismiss-multidevice-popup": {
@@ -1506,7 +1727,11 @@
       "name": "ตัวประหยัดหน่วยความจำ",
       "settings": {
         "threshold": "เกณฑ์แคช",
-        "threshold-description": "ล้างแคชเมื่อหน่วยความจำที่ใช้งานจริงเกินค่านี้ขณะที่หน้าต่างถูกซ่อน"
+        "threshold-description": "ล้างแคชเมื่อหน่วยความจำที่ใช้งานจริงเกินค่านี้ขณะที่หน้าต่างถูกซ่อน",
+        "thresholdMB": {
+          "label": "เกณฑ์แคช",
+          "description": "ล้างแคชเมื่อหน่วยความจำที่ใช้งานจริงเกินค่านี้ขณะที่หน้าต่างถูกซ่อน"
+        }
       }
     }
   },

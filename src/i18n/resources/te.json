@@ -321,7 +321,15 @@
         },
         "enable-seekbar": "సీక్‌బార్ థీమింగ్‌ని ఎనేబుల్ చేయండి"
       },
-      "name": "ఆల్బమ్ రంగు థీమ్"
+      "name": "ఆల్బమ్ రంగు థీమ్",
+      "settings": {
+        "ratio": {
+          "label": "రంగుల మిశ్రమ నిష్పత్తి"
+        },
+        "enableSeekbar": {
+          "label": "సీక్‌బార్ థీమింగ్‌ని ఎనేబుల్ చేయండి"
+        }
+      }
     },
     "ambient-mode": {
       "description": "వీడియో నుండి సున్నితమైన రంగులను మీ స్క్రీన్ నేపథ్యంలోకి ప్రసరింపజేయడం ద్వారా లైటింగ్ ప్రభావాన్ని వర్తింపజేస్తుంది",
@@ -504,6 +512,14 @@
         "caption-changed": "క్యాప్షన్ {{language}}కి మార్చబడింది",
         "caption-disabled": "క్యాప్షన్‌లు నిలిపివేయబడ్డాయి",
         "no-captions": "ఈ పాటకు క్యాప్షన్‌లు అందుబాటులో లేవు"
+      },
+      "settings": {
+        "autoload": {
+          "label": "చివరిగా ఉపయోగించిన క్యాప్షన్‌ని స్వయంచాలకంగా ఎంచుకోండి"
+        },
+        "disableCaptions": {
+          "label": "డిఫాల్ట్‌గా క్యాప్షన్‌లు లేవు"
+        }
       }
     },
     "clock": {
@@ -517,7 +533,13 @@
       },
       "name": "గడియారం",
       "settings": {
-        "hour-12": "12-గంటల ఫార్మాట్ను ఉపయోగించండి"
+        "hour-12": "12-గంటల ఫార్మాట్ను ఉపయోగించండి",
+        "displaySeconds": {
+          "label": "సెకన్లను చూపించు"
+        },
+        "hour12": {
+          "label": "12-గంటల ఫార్మాట్ను ఉపయోగించండి"
+        }
       }
     },
     "compact-sidebar": {
@@ -576,7 +598,12 @@
       "menu": {
         "apply-once": "ప్రారంభంలో మాత్రమే వర్తిస్తుంది"
       },
-      "name": "ఆటోప్లే నిలిపివేయి"
+      "name": "ఆటోప్లే నిలిపివేయి",
+      "settings": {
+        "applyOnce": {
+          "label": "ప్రారంభంలో మాత్రమే వర్తిస్తుంది"
+        }
+      }
     },
     "discord": {
       "backend": {
@@ -616,7 +643,38 @@
         "activity-timeout-enabled": "పాజ్ చేసినప్పుడు ప్రెజెన్స్ను క్లియర్ చేయండి",
         "activity-timeout-time": "తర్వాత క్లియర్ చేయండి",
         "hide-github-button": "“GitHubలో చూడండి” బటన్ను దాచండి",
-        "hide-duration-left": "మిగిలిన సమయాన్ని దాచండి"
+        "hide-duration-left": "మిగిలిన సమయాన్ని దాచండి",
+        "autoReconnect": {
+          "label": "ఆటో-రీకనెక్ట్"
+        },
+        "activityTimeoutEnabled": {
+          "label": "పాజ్ చేసినప్పుడు ప్రెజెన్స్ను క్లియర్ చేయండి"
+        },
+        "activityTimeoutSeconds": {
+          "label": "తర్వాత క్లియర్ చేయండి"
+        },
+        "playButton": {
+          "label": "{{applicationName}}లో ప్లే చేయండి"
+        },
+        "hideGitHubButton": {
+          "label": "“GitHubలో చూడండి” బటన్ను దాచండి"
+        },
+        "hideDurationLeft": {
+          "label": "మిగిలిన సమయాన్ని దాచండి"
+        },
+        "statusDisplayType": {
+          "label": "స్థితి టెక్స్ట్",
+          "options": {
+            "name": "{{applicationName}} వింటున్నారు",
+            "state": "{artist} వింటున్నారు",
+            "details": "{song title} వింటున్నారు"
+          }
+        }
+      },
+      "actions": {
+        "clearActivity": {
+          "label": "యాక్టివిటీ క్లియర్ చేయండి"
+        }
       }
     },
     "downloader": {
@@ -888,6 +946,23 @@
       "name": "పిక్చర్-ఇన్-పిక్చర్",
       "templates": {
         "button": "పిక్చర్-ఇన్-పిక్చర్"
+      },
+      "settings": {
+        "hotkey": {
+          "label": "హాట్‌కీ"
+        },
+        "useNativePiP": {
+          "label": "బ్రౌజర్ స్థానిక PiPని ఉపయోగించండి"
+        },
+        "alwaysOnTop": {
+          "label": "ఎప్పుడూ పైన"
+        },
+        "savePosition": {
+          "label": "విండో స్థానాన్ని సేవ్ చేయండి"
+        },
+        "saveSize": {
+          "label": "విండో పరిమాణాన్ని సేవ్ చేయండి"
+        }
       }
     },
     "playback-speed": {
@@ -923,10 +998,21 @@
         }
       },
       "settings": {
-        "steps": "వాల్యూమ్ స్టెప్",
+        "steps": {
+          "label": "వాల్యూమ్ స్టెప్"
+        },
         "arrows-shortcut": "ఆరో కీ షార్ట్కట్లు",
         "shortcut-up": "గ్లోబల్ షార్ట్కట్: వాల్యూమ్ పెంచు",
-        "shortcut-down": "గ్లోబల్ షార్ట్కట్: వాల్యూమ్ తగ్గించు"
+        "shortcut-down": "గ్లోబల్ షార్ట్కట్: వాల్యూమ్ తగ్గించు",
+        "arrowsShortcut": {
+          "label": "ఆరో కీ షార్ట్కట్లు"
+        },
+        "volumeUp": {
+          "label": "గ్లోబల్ షార్ట్కట్: వాల్యూమ్ పెంచు"
+        },
+        "volumeDown": {
+          "label": "గ్లోబల్ షార్ట్కట్: వాల్యూమ్ తగ్గించు"
+        }
       }
     },
     "quality-changer": {
@@ -1025,14 +1111,38 @@
       },
       "settings": {
         "global-keybinds": "గ్లోబల్ కీబైండ్లు (యాప్ అంతటా పనిచేస్తాయి)",
-        "local-keybinds": "లోకల్ కీబైండ్లు (విండో ఫోకస్లో ఉన్నప్పుడు మాత్రమే)"
+        "local-keybinds": "లోకల్ కీబైండ్లు (విండో ఫోకస్లో ఉన్నప్పుడు మాత్రమే)",
+        "playPause": {
+          "label": "ప్లే / పాజ్"
+        },
+        "localPlayPause": {
+          "label": "ప్లే / పాజ్"
+        },
+        "next": {
+          "label": "తదుపరి"
+        },
+        "localNext": {
+          "label": "తదుపరి"
+        },
+        "previous": {
+          "label": "మునుపటి"
+        },
+        "localPrevious": {
+          "label": "మునుపటి"
+        },
+        "overrideMediaKeys": {
+          "label": "మీడియా కీలను ఓవర్‌రైడ్ చేయండి"
+        }
       }
     },
     "skip-silences": {
       "description": "పాటల్లో నిశ్శబ్ద విభాగాలను స్వయంచాలకంగా దాటవేయండి",
       "name": "నిశ్శబ్దాలను దాటవేయి",
       "settings": {
-        "only-skip-beginning": "ట్రాక్ ప్రారంభంలో ఉన్న నిశ్శబ్దాన్ని మాత్రమే దాటవేయండి"
+        "only-skip-beginning": "ట్రాక్ ప్రారంభంలో ఉన్న నిశ్శబ్దాన్ని మాత్రమే దాటవేయండి",
+        "onlySkipBeginning": {
+          "label": "ట్రాక్ ప్రారంభంలో ఉన్న నిశ్శబ్దాన్ని మాత్రమే దాటవేయండి"
+        }
       }
     },
     "sponsorblock": {
@@ -1048,7 +1158,28 @@
           "selfpromo": "స్వీయ ప్రచారం",
           "music_offtopic": "సంగీతం కాని విభాగం"
         },
-        "api-url": "API URL"
+        "api-url": "API URL",
+        "sponsor": {
+          "label": "స్పాన్సర్"
+        },
+        "intro": {
+          "label": "ఇంట్రో"
+        },
+        "outro": {
+          "label": "ఔట్రో"
+        },
+        "interaction": {
+          "label": "ఇంటరాక్షన్ రిమైండర్"
+        },
+        "selfpromo": {
+          "label": "స్వీయ ప్రచారం"
+        },
+        "music_offtopic": {
+          "label": "సంగీతం కాని విభాగం"
+        },
+        "apiURL": {
+          "label": "API URL"
+        }
       }
     },
     "synced-lyrics": {
@@ -1349,7 +1480,25 @@
       },
       "name": "పారదర్శక ప్లేయర్",
       "settings": {
-        "type-description": "విండో పారదర్శకత కోసం ఉపయోగించే నేపథ్య మెటీరియల్"
+        "type-description": "విండో పారదర్శకత కోసం ఉపయోగించే నేపథ్య మెటీరియల్",
+        "opacity": {
+          "label": "అపారదర్శకత"
+        },
+        "type": {
+          "label": "రకం",
+          "description": "విండో పారదర్శకత కోసం ఉపయోగించే నేపథ్య మెటీరియల్",
+          "options": {
+            "acrylic": "యాక్రిలిక్",
+            "content": "కంటెంట్",
+            "fullscreen-ui": "ఫుల్స్క్రీన్ UI",
+            "mica": "మైకా",
+            "tabbed": "ట్యాబ్డ్",
+            "under-page": "పేజీ కింద",
+            "under-window": "విండో కింద",
+            "window": "విండో",
+            "none": "ఏదీ లేదు"
+          }
+        }
       }
     },
     "tuna-obs": {
@@ -1385,6 +1534,27 @@
       "templates": {
         "button-song": "పాట",
         "button-video": "వీడియో"
+      },
+      "settings": {
+        "mode": {
+          "label": "మోడ్",
+          "options": {
+            "custom": "కస్టమ్ టోగుల్",
+            "native": "స్థానిక టోగుల్",
+            "disabled": "నిలిపివేయబడింది"
+          }
+        },
+        "align": {
+          "label": "అమరిక",
+          "options": {
+            "left": "ఎడమ",
+            "middle": "మధ్య",
+            "right": "కుడి"
+          }
+        },
+        "forceHide": {
+          "label": "వీడియో ట్యాబ్‌ని బలవంతంగా తొలగించు"
+        }
       }
     },
     "visualizer": {
@@ -1394,7 +1564,9 @@
       },
       "name": "విజువలైజర్",
       "settings": {
-        "preset": "ప్రీసెట్",
+        "preset": {
+          "label": "ప్రీసెట్"
+        },
         "blend-time": "బ్లెండ్ సమయం",
         "effect": "ఎఫెక్ట్",
         "accuracy": "ఖచ్చితత్వం",
@@ -1410,7 +1582,45 @@
         "dottify": "డాటిఫై",
         "dottify-description": "నిరంతర రేఖకు బదులు చుక్కలను గీయండి",
         "horizontal-align": "క్షితిజ సమాంతర అమరిక",
-        "vertical-align": "నిలువు అమరిక"
+        "vertical-align": "నిలువు అమరిక",
+        "blendTimeInSeconds": {
+          "label": "బ్లెండ్ సమయం"
+        },
+        "vudioMaxHeight": {
+          "label": "గరిష్ఠ ఎత్తు"
+        },
+        "vudioMaxSize": {
+          "label": "గరిష్ఠ పరిమాణం"
+        },
+        "vudioLineWidth": {
+          "label": "లైన్ వెడల్పు"
+        },
+        "vudioColor": {
+          "label": "రంగు"
+        },
+        "vudioShadowBlur": {
+          "label": "నీడ బ్లర్"
+        },
+        "vudioShadowColor": {
+          "label": "నీడ రంగు"
+        },
+        "vudioFadeSide": {
+          "label": "ఫేడ్ వైపులు"
+        },
+        "vudioPrettify": {
+          "label": "ప్రెటిఫై",
+          "description": "బార్లను అంచుల వైపు సన్నగా చేయండి"
+        },
+        "vudioDottify": {
+          "label": "డాటిఫై",
+          "description": "నిరంతర రేఖకు బదులు చుక్కలను గీయండి"
+        },
+        "vudioHorizontalAlign": {
+          "label": "క్షితిజ సమాంతర అమరిక"
+        },
+        "vudioVerticalAlign": {
+          "label": "నిలువు అమరిక"
+        }
       }
     },
     "audio-only": {
@@ -1480,7 +1690,15 @@
         "open-keybind": "తెరిచే షార్ట్కట్",
         "open-keybind-description": "Electron-శైలి యాక్సిలరేటర్, ఉదా. CmdOrCtrl+/ లేదా Alt+Space",
         "open-shortcut": "ఎక్కడి నుండైనా సెర్చ్ బాక్స్ను తెరవండి",
-        "open-shortcut-description": "Spotlight లాగా సెర్చ్ బాక్స్ను నేరుగా కమాండ్ మోడ్లో తెస్తుంది. మళ్లీ నొక్కితే మూసివేస్తుంది."
+        "open-shortcut-description": "Spotlight లాగా సెర్చ్ బాక్స్ను నేరుగా కమాండ్ మోడ్లో తెస్తుంది. మళ్లీ నొక్కితే మూసివేస్తుంది.",
+        "openShortcut": {
+          "label": "ఎక్కడి నుండైనా సెర్చ్ బాక్స్ను తెరవండి",
+          "description": "Spotlight లాగా సెర్చ్ బాక్స్ను నేరుగా కమాండ్ మోడ్లో తెస్తుంది. మళ్లీ నొక్కితే మూసివేస్తుంది."
+        },
+        "openKeybind": {
+          "label": "తెరిచే షార్ట్కట్",
+          "description": "Electron-శైలి యాక్సిలరేటర్, ఉదా. CmdOrCtrl+/ లేదా Alt+Space"
+        }
       }
     },
     "seek-shortcuts": {
@@ -1497,7 +1715,10 @@
     },
     "statusbar-lyrics": {
       "settings": {
-        "include-pronunciation": "ఉచ్చారణను చేర్చండి"
+        "include-pronunciation": "ఉచ్చారణను చేర్చండి",
+        "includePronunciation": {
+          "label": "ఉచ్చారణను చేర్చండి"
+        }
       }
     },
     "dismiss-multidevice-popup": {
@@ -1509,7 +1730,11 @@
       "name": "మెమరీ సేవర్",
       "settings": {
         "threshold": "క్యాష్ థ్రెషోల్డ్",
-        "threshold-description": "విండో దాచబడినప్పుడు క్యాష్‌ల ప్రస్తుత మెమరీ దీన్ని మించిన తర్వాత క్యాష్‌లను క్లియర్ చేయండి"
+        "threshold-description": "విండో దాచబడినప్పుడు క్యాష్‌ల ప్రస్తుత మెమరీ దీన్ని మించిన తర్వాత క్యాష్‌లను క్లియర్ చేయండి",
+        "thresholdMB": {
+          "label": "క్యాష్ థ్రెషోల్డ్",
+          "description": "విండో దాచబడినప్పుడు క్యాష్‌ల ప్రస్తుత మెమరీ దీన్ని మించిన తర్వాత క్యాష్‌లను క్లియర్ చేయండి"
+        }
       }
     }
   },

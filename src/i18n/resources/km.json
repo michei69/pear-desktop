@@ -321,7 +321,15 @@
         },
         "enable-seekbar": "បើកការតុបតែងរបារស្វែងរក"
       },
-      "name": "ស្បែកពណ៌អាល់ប៊ុម"
+      "name": "ស្បែកពណ៌អាល់ប៊ុម",
+      "settings": {
+        "ratio": {
+          "label": "សមាមាត្រលាយពណ៌"
+        },
+        "enableSeekbar": {
+          "label": "បើកការតុបតែងរបារស្វែងរក"
+        }
+      }
     },
     "audio-only": {
       "description": "បង្ខំរបៀបសំឡេងតែប៉ុណ្ណោះ — ទប់ស្កាត់ស្ទ្រីមវីដេអូទាំងអស់នៅកម្រិតបណ្តាញ និងកម្មវិធីចាក់ ដើម្បីសន្សំ RAM និងកម្រិតបញ្ជូនទិន្នន័យ",
@@ -508,6 +516,14 @@
         "caption-changed": "ចំណងជើងរងបានផ្លាស់ប្តូរទៅ {{language}}",
         "caption-disabled": "ចំណងជើងរងត្រូវបានបិទ",
         "no-captions": "គ្មានចំណងជើងរងសម្រាប់ចម្រៀងនេះទេ"
+      },
+      "settings": {
+        "autoload": {
+          "label": "ជ្រើសរើសចំណងជើងរងដែលបានប្រើចុងក្រោយដោយស្វ័យប្រវត្តិ"
+        },
+        "disableCaptions": {
+          "label": "គ្មានចំណងជើងរងតាមលំនាំដើម"
+        }
       }
     },
     "clock": {
@@ -521,7 +537,13 @@
         }
       },
       "settings": {
-        "hour-12": "ប្រើទម្រង់ 12 ម៉ោង"
+        "hour-12": "ប្រើទម្រង់ 12 ម៉ោង",
+        "displaySeconds": {
+          "label": "បង្ហាញវិនាទី"
+        },
+        "hour12": {
+          "label": "ប្រើទម្រង់ 12 ម៉ោង"
+        }
       }
     },
     "compact-sidebar": {
@@ -580,7 +602,12 @@
       "menu": {
         "apply-once": "អនុវត្តតែពេលចាប់ផ្តើមប៉ុណ្ណោះ"
       },
-      "name": "បិទការចាក់ស្វ័យប្រវត្តិ"
+      "name": "បិទការចាក់ស្វ័យប្រវត្តិ",
+      "settings": {
+        "applyOnce": {
+          "label": "អនុវត្តតែពេលចាប់ផ្តើមប៉ុណ្ណោះ"
+        }
+      }
     },
     "discord": {
       "backend": {
@@ -620,7 +647,38 @@
         "activity-timeout-enabled": "សម្អាតវត្តមាននៅពេលផ្អាក",
         "activity-timeout-time": "សម្អាតបន្ទាប់ពី",
         "hide-github-button": "លាក់ប៊ូតុង “មើលនៅ GitHub”",
-        "hide-duration-left": "លាក់ពេលវេលាដែលនៅសល់"
+        "hide-duration-left": "លាក់ពេលវេលាដែលនៅសល់",
+        "autoReconnect": {
+          "label": "ភ្ជាប់ឡើងវិញស្វ័យប្រវត្តិ"
+        },
+        "activityTimeoutEnabled": {
+          "label": "សម្អាតវត្តមាននៅពេលផ្អាក"
+        },
+        "activityTimeoutSeconds": {
+          "label": "សម្អាតបន្ទាប់ពី"
+        },
+        "playButton": {
+          "label": "ចាក់លើ {{applicationName}}"
+        },
+        "hideGitHubButton": {
+          "label": "លាក់ប៊ូតុង “មើលនៅ GitHub”"
+        },
+        "hideDurationLeft": {
+          "label": "លាក់ពេលវេលាដែលនៅសល់"
+        },
+        "statusDisplayType": {
+          "label": "អត្ថបទស្ថានភាព",
+          "options": {
+            "name": "កំពុងស្តាប់ {{applicationName}}",
+            "state": "កំពុងស្តាប់ {{artist}}",
+            "details": "កំពុងស្តាប់ {{song title}}"
+          }
+        }
+      },
+      "actions": {
+        "clearActivity": {
+          "label": "សម្អាតសកម្មភាព"
+        }
       }
     },
     "downloader": {
@@ -905,6 +963,23 @@
       "name": "រូបភាពក្នុងរូបភាព",
       "templates": {
         "button": "រូបភាពក្នុងរូបភាព"
+      },
+      "settings": {
+        "hotkey": {
+          "label": "គ្រាប់ចុចរហ័ស"
+        },
+        "useNativePiP": {
+          "label": "ប្រើ PiP ដើមរបស់កម្មវិធីរុករក"
+        },
+        "alwaysOnTop": {
+          "label": "នៅពីលើជានិច្ច"
+        },
+        "savePosition": {
+          "label": "រក្សាទុកទីតាំងវីនដូ"
+        },
+        "saveSize": {
+          "label": "រក្សាទុកទំហំវីនដូ"
+        }
       }
     },
     "playback-speed": {
@@ -940,10 +1015,21 @@
         }
       },
       "settings": {
-        "steps": "ជំហានកម្រិតសំឡេង",
+        "steps": {
+          "label": "ជំហានកម្រិតសំឡេង"
+        },
         "arrows-shortcut": "គ្រាប់ចុចខ្លីព្រួញ",
         "shortcut-up": "គ្រាប់ចុចខ្លីសកល: បង្កើនសំឡេង",
-        "shortcut-down": "គ្រាប់ចុចខ្លីសកល: បន្ថយសំឡេង"
+        "shortcut-down": "គ្រាប់ចុចខ្លីសកល: បន្ថយសំឡេង",
+        "arrowsShortcut": {
+          "label": "គ្រាប់ចុចខ្លីព្រួញ"
+        },
+        "volumeUp": {
+          "label": "គ្រាប់ចុចខ្លីសកល: បង្កើនសំឡេង"
+        },
+        "volumeDown": {
+          "label": "គ្រាប់ចុចខ្លីសកល: បន្ថយសំឡេង"
+        }
       }
     },
     "quality-changer": {
@@ -1042,14 +1128,38 @@
       },
       "settings": {
         "global-keybinds": "គ្រាប់ចុចខ្លីសកល (ដំណើរការទូទាំងកម្មវិធី)",
-        "local-keybinds": "គ្រាប់ចុចខ្លីក្នុងតំបន់ (តែពេលបង្អួចកំពុងទទួលផ្តោត)"
+        "local-keybinds": "គ្រាប់ចុចខ្លីក្នុងតំបន់ (តែពេលបង្អួចកំពុងទទួលផ្តោត)",
+        "playPause": {
+          "label": "ចាក់ / ផ្អាក"
+        },
+        "localPlayPause": {
+          "label": "ចាក់ / ផ្អាក"
+        },
+        "next": {
+          "label": "បន្ទាប់"
+        },
+        "localNext": {
+          "label": "បន្ទាប់"
+        },
+        "previous": {
+          "label": "មុន"
+        },
+        "localPrevious": {
+          "label": "មុន"
+        },
+        "overrideMediaKeys": {
+          "label": "ជាន់លើគ្រាប់ចុចមេឌៀ"
+        }
       }
     },
     "skip-silences": {
       "description": "រំលងផ្នែកស្ងាត់ក្នុងចម្រៀងដោយស្វ័យប្រវត្តិ",
       "name": "រំលងភាពស្ងាត់",
       "settings": {
-        "only-skip-beginning": "រំលងភាពស្ងប់ស្ងាត់តែនៅដើមបទ"
+        "only-skip-beginning": "រំលងភាពស្ងប់ស្ងាត់តែនៅដើមបទ",
+        "onlySkipBeginning": {
+          "label": "រំលងភាពស្ងប់ស្ងាត់តែនៅដើមបទ"
+        }
       }
     },
     "sponsorblock": {
@@ -1065,7 +1175,28 @@
           "selfpromo": "ការផ្សព្វផ្សាយខ្លួនឯង",
           "music_offtopic": "ផ្នែកមិនមែនតន្ត្រី"
         },
-        "api-url": "URL API"
+        "api-url": "URL API",
+        "sponsor": {
+          "label": "អ្នកឧបត្ថម្ភ"
+        },
+        "intro": {
+          "label": "ការណែនាំ"
+        },
+        "outro": {
+          "label": "ផ្នែកបញ្ចប់"
+        },
+        "interaction": {
+          "label": "ការរំលឹកឱ្យធ្វើអន្តរកម្ម"
+        },
+        "selfpromo": {
+          "label": "ការផ្សព្វផ្សាយខ្លួនឯង"
+        },
+        "music_offtopic": {
+          "label": "ផ្នែកមិនមែនតន្ត្រី"
+        },
+        "apiURL": {
+          "label": "URL API"
+        }
       }
     },
     "synced-lyrics": {
@@ -1366,7 +1497,25 @@
         }
       },
       "settings": {
-        "type-description": "សម្ភារៈផ្ទៃខាងក្រោយដែលប្រើសម្រាប់ភាពថ្លានៃបង្អួច"
+        "type-description": "សម្ភារៈផ្ទៃខាងក្រោយដែលប្រើសម្រាប់ភាពថ្លានៃបង្អួច",
+        "opacity": {
+          "label": "ភាពស្រអាប់"
+        },
+        "type": {
+          "label": "ប្រភេទ",
+          "description": "សម្ភារៈផ្ទៃខាងក្រោយដែលប្រើសម្រាប់ភាពថ្លានៃបង្អួច",
+          "options": {
+            "acrylic": "អាគ្រីលីក",
+            "content": "ខ្លឹមសារ",
+            "fullscreen-ui": "ចំណុចប្រទាក់ពេញអេក្រង់",
+            "mica": "មីកា",
+            "tabbed": "មានផ្ទាំង",
+            "under-page": "ក្រោមទំព័រ",
+            "under-window": "ក្រោមបង្អួច",
+            "window": "បង្អួច",
+            "none": "គ្មាន"
+          }
+        }
       }
     },
     "tuna-obs": {
@@ -1402,6 +1551,27 @@
       "templates": {
         "button-song": "ចម្រៀង",
         "button-video": "វីដេអូ"
+      },
+      "settings": {
+        "mode": {
+          "label": "របៀប",
+          "options": {
+            "custom": "ការប្តូរផ្ទាល់ខ្លួន",
+            "native": "ការប្តូរដើម",
+            "disabled": "បានបិទ"
+          }
+        },
+        "align": {
+          "label": "តម្រឹម",
+          "options": {
+            "left": "ឆ្វេង",
+            "middle": "កណ្តាល",
+            "right": "ស្តាំ"
+          }
+        },
+        "forceHide": {
+          "label": "បង្ខំលុបផ្ទាំងវីដេអូ"
+        }
       }
     },
     "visualizer": {
@@ -1411,7 +1581,9 @@
       },
       "name": "ឧបករណ៍មើលឃើញ",
       "settings": {
-        "preset": "កំណត់ជាមុន",
+        "preset": {
+          "label": "កំណត់ជាមុន"
+        },
         "blend-time": "ពេលវេលាលាយបញ្ចូល",
         "effect": "បែបផែន",
         "accuracy": "ភាពត្រឹមត្រូវ",
@@ -1427,7 +1599,45 @@
         "dottify": "ធ្វើជាចំណុច",
         "dottify-description": "គូរចំណុចជំនួសឱ្យបន្ទាត់បន្ត",
         "horizontal-align": "ការតម្រឹមផ្ដេក",
-        "vertical-align": "ការតម្រឹមបញ្ឈរ"
+        "vertical-align": "ការតម្រឹមបញ្ឈរ",
+        "blendTimeInSeconds": {
+          "label": "ពេលវេលាលាយបញ្ចូល"
+        },
+        "vudioMaxHeight": {
+          "label": "កម្ពស់អតិបរមា"
+        },
+        "vudioMaxSize": {
+          "label": "ទំហំអតិបរមា"
+        },
+        "vudioLineWidth": {
+          "label": "ទទឹងបន្ទាត់"
+        },
+        "vudioColor": {
+          "label": "ពណ៌"
+        },
+        "vudioShadowBlur": {
+          "label": "ភាពព្រិលស្រមោល"
+        },
+        "vudioShadowColor": {
+          "label": "ពណ៌ស្រមោល"
+        },
+        "vudioFadeSide": {
+          "label": "ផ្នែកសាបរលាប"
+        },
+        "vudioPrettify": {
+          "label": "ធ្វើឱ្យស្អាត",
+          "description": "ធ្វើឱ្យរបារតូចចុះឆ្ពោះទៅគែម"
+        },
+        "vudioDottify": {
+          "label": "ធ្វើជាចំណុច",
+          "description": "គូរចំណុចជំនួសឱ្យបន្ទាត់បន្ត"
+        },
+        "vudioHorizontalAlign": {
+          "label": "ការតម្រឹមផ្ដេក"
+        },
+        "vudioVerticalAlign": {
+          "label": "ការតម្រឹមបញ្ឈរ"
+        }
       }
     },
     "playlist-search": {
@@ -1480,7 +1690,15 @@
         "open-keybind": "គ្រាប់ចុចខ្លីបើក",
         "open-keybind-description": "គ្រាប់ចុចបែប Electron ឧ. CmdOrCtrl+/ ឬ Alt+Space",
         "open-shortcut": "បើកប្រអប់ស្វែងរកពីគ្រប់ទីកន្លែង",
-        "open-shortcut-description": "ហៅប្រអប់ស្វែងរកឱ្យបើកក្នុងរបៀបពាក្យបញ្ជារួចហើយ ដូច Spotlight។ ចុចម្ដងទៀតដើម្បីបិទ។"
+        "open-shortcut-description": "ហៅប្រអប់ស្វែងរកឱ្យបើកក្នុងរបៀបពាក្យបញ្ជារួចហើយ ដូច Spotlight។ ចុចម្ដងទៀតដើម្បីបិទ។",
+        "openShortcut": {
+          "label": "បើកប្រអប់ស្វែងរកពីគ្រប់ទីកន្លែង",
+          "description": "ហៅប្រអប់ស្វែងរកឱ្យបើកក្នុងរបៀបពាក្យបញ្ជារួចហើយ ដូច Spotlight។ ចុចម្ដងទៀតដើម្បីបិទ។"
+        },
+        "openKeybind": {
+          "label": "គ្រាប់ចុចខ្លីបើក",
+          "description": "គ្រាប់ចុចបែប Electron ឧ. CmdOrCtrl+/ ឬ Alt+Space"
+        }
       }
     },
     "seek-shortcuts": {
@@ -1497,7 +1715,10 @@
     },
     "statusbar-lyrics": {
       "settings": {
-        "include-pronunciation": "រួមបញ្ចូលការបញ្ចេញសំឡេង"
+        "include-pronunciation": "រួមបញ្ចូលការបញ្ចេញសំឡេង",
+        "includePronunciation": {
+          "label": "រួមបញ្ចូលការបញ្ចេញសំឡេង"
+        }
       }
     },
     "dismiss-multidevice-popup": {
@@ -1509,7 +1730,11 @@
       "name": "អ្នកសន្សំសំចៃអង្គចងចាំ",
       "settings": {
         "threshold": "កម្រិតកំណត់ឃ្លាំងសម្ងាត់",
-        "threshold-description": "សម្អាតឃ្លាំងសម្ងាត់ នៅពេលអង្គចងចាំបច្ចុប្បន្នរបស់ពួកវាលើសពីតម្លៃនេះ ខណៈបង្អួចត្រូវបានលាក់"
+        "threshold-description": "សម្អាតឃ្លាំងសម្ងាត់ នៅពេលអង្គចងចាំបច្ចុប្បន្នរបស់ពួកវាលើសពីតម្លៃនេះ ខណៈបង្អួចត្រូវបានលាក់",
+        "thresholdMB": {
+          "label": "កម្រិតកំណត់ឃ្លាំងសម្ងាត់",
+          "description": "សម្អាតឃ្លាំងសម្ងាត់ នៅពេលអង្គចងចាំបច្ចុប្បន្នរបស់ពួកវាលើសពីតម្លៃនេះ ខណៈបង្អួចត្រូវបានលាក់"
+        }
       }
     }
   },

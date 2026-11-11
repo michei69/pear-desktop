@@ -314,7 +314,15 @@
         },
         "enable-seekbar": "سیک بار تھیمنگ فعال کریں"
       },
-      "name": "البم کلر تھیم"
+      "name": "البم کلر تھیم",
+      "settings": {
+        "ratio": {
+          "label": "رنگوں کے ملاپ کا تناسب"
+        },
+        "enableSeekbar": {
+          "label": "سیک بار تھیمنگ فعال کریں"
+        }
+      }
     },
     "audio-only": {
       "description": "صرف آڈیو موڈ پر مجبور کرتا ہے — ریم اور بینڈوڈتھ بچانے کے لیے نیٹ ورک اور پلیئر سطح پر تمام ویڈیو اسٹریمز کو بلاک کرتا ہے",
@@ -505,6 +513,14 @@
         "caption-changed": "کیپشن {{language}} میں تبدیل ہو گیا",
         "caption-disabled": "کیپشن غیر فعال",
         "no-captions": "اس گانے کے لیے کوئی کیپشن دستیاب نہیں"
+      },
+      "settings": {
+        "autoload": {
+          "label": "آخری استعمال شدہ کیپشن خودکار منتخب کریں"
+        },
+        "disableCaptions": {
+          "label": "بطور ڈیفالٹ کیپشن نہیں"
+        }
       }
     },
     "clock": {
@@ -518,7 +534,13 @@
         }
       },
       "settings": {
-        "hour-12": "12 گھنٹے فارمیٹ استعمال کریں"
+        "hour-12": "12 گھنٹے فارمیٹ استعمال کریں",
+        "displaySeconds": {
+          "label": "سیکنڈ دکھائیں"
+        },
+        "hour12": {
+          "label": "12 گھنٹے فارمیٹ استعمال کریں"
+        }
       }
     },
     "compact-sidebar": {
@@ -577,7 +599,12 @@
       "menu": {
         "apply-once": "صرف آغاز پر لاگو ہوتا ہے"
       },
-      "name": "خودکار پلے غیر فعال کریں"
+      "name": "خودکار پلے غیر فعال کریں",
+      "settings": {
+        "applyOnce": {
+          "label": "صرف آغاز پر لاگو ہوتا ہے"
+        }
+      }
     },
     "discord": {
       "backend": {
@@ -617,7 +644,38 @@
         "activity-timeout-enabled": "موقوف ہونے پر پریزننس صاف کریں",
         "activity-timeout-time": "کے بعد صاف کریں",
         "hide-github-button": "“GitHub پر دیکھیں” بٹن چھپائیں",
-        "hide-duration-left": "باقی وقت چھپائیں"
+        "hide-duration-left": "باقی وقت چھپائیں",
+        "autoReconnect": {
+          "label": "خودکار دوبارہ جڑیں"
+        },
+        "activityTimeoutEnabled": {
+          "label": "موقوف ہونے پر پریزننس صاف کریں"
+        },
+        "activityTimeoutSeconds": {
+          "label": "کے بعد صاف کریں"
+        },
+        "playButton": {
+          "label": "{{applicationName}} پر چلائیں"
+        },
+        "hideGitHubButton": {
+          "label": "“GitHub پر دیکھیں” بٹن چھپائیں"
+        },
+        "hideDurationLeft": {
+          "label": "باقی وقت چھپائیں"
+        },
+        "statusDisplayType": {
+          "label": "اسٹیٹس متن",
+          "options": {
+            "name": "{{applicationName}} سن رہے ہیں",
+            "state": "{artist} سن رہے ہیں",
+            "details": "{song title} سن رہے ہیں"
+          }
+        }
+      },
+      "actions": {
+        "clearActivity": {
+          "label": "سرگرمی صاف کریں"
+        }
       }
     },
     "do-not-track": {
@@ -924,6 +982,23 @@
       "name": "پکچر-ان-پکچر",
       "templates": {
         "button": "پکچر-ان-پکچر"
+      },
+      "settings": {
+        "hotkey": {
+          "label": "ہاٹ کی"
+        },
+        "useNativePiP": {
+          "label": "براؤزر کا مقامی PiP استعمال کریں"
+        },
+        "alwaysOnTop": {
+          "label": "ہمیشہ اوپر"
+        },
+        "savePosition": {
+          "label": "ونڈو کی پوزیشن محفوظ کریں"
+        },
+        "saveSize": {
+          "label": "ونڈو کا سائز محفوظ کریں"
+        }
       }
     },
     "playback-speed": {
@@ -967,10 +1042,21 @@
         }
       },
       "settings": {
-        "steps": "والیوم اسٹیپ",
+        "steps": {
+          "label": "والیوم اسٹیپ"
+        },
         "arrows-shortcut": "ایرو کی شارٹ کٹس",
         "shortcut-up": "عالمی شارٹ کٹ: والیوم اوپر",
-        "shortcut-down": "عالمی شارٹ کٹ: والیوم نیچے"
+        "shortcut-down": "عالمی شارٹ کٹ: والیوم نیچے",
+        "arrowsShortcut": {
+          "label": "ایرو کی شارٹ کٹس"
+        },
+        "volumeUp": {
+          "label": "عالمی شارٹ کٹ: والیوم اوپر"
+        },
+        "volumeDown": {
+          "label": "عالمی شارٹ کٹ: والیوم نیچے"
+        }
       }
     },
     "prefer-song": {
@@ -1064,7 +1150,15 @@
         "open-keybind": "کھولنے کا شارٹ کٹ",
         "open-keybind-description": "Electron طرز کا ایکسلریٹر، مثلاً CmdOrCtrl+/ یا Alt+Space",
         "open-shortcut": "کہیں سے بھی سرچ باکس کھولیں",
-        "open-shortcut-description": "سرچ باکس کو پہلے ہی کمانڈ موڈ میں کھولتا ہے، Spotlight کی طرح۔ دوبارہ دبانے سے بند ہو جاتا ہے۔"
+        "open-shortcut-description": "سرچ باکس کو پہلے ہی کمانڈ موڈ میں کھولتا ہے، Spotlight کی طرح۔ دوبارہ دبانے سے بند ہو جاتا ہے۔",
+        "openShortcut": {
+          "label": "کہیں سے بھی سرچ باکس کھولیں",
+          "description": "سرچ باکس کو پہلے ہی کمانڈ موڈ میں کھولتا ہے، Spotlight کی طرح۔ دوبارہ دبانے سے بند ہو جاتا ہے۔"
+        },
+        "openKeybind": {
+          "label": "کھولنے کا شارٹ کٹ",
+          "description": "Electron طرز کا ایکسلریٹر، مثلاً CmdOrCtrl+/ یا Alt+Space"
+        }
       }
     },
     "seek-shortcuts": {
@@ -1095,14 +1189,38 @@
       },
       "settings": {
         "global-keybinds": "گلوبل کی بائنڈز (پوری ایپ میں کام کرتی ہیں)",
-        "local-keybinds": "لوکل کی بائنڈز (صرف جب ونڈو فوکس میں ہو)"
+        "local-keybinds": "لوکل کی بائنڈز (صرف جب ونڈو فوکس میں ہو)",
+        "playPause": {
+          "label": "چلائیں / روکیں"
+        },
+        "localPlayPause": {
+          "label": "چلائیں / روکیں"
+        },
+        "next": {
+          "label": "اگلا"
+        },
+        "localNext": {
+          "label": "اگلا"
+        },
+        "previous": {
+          "label": "پچھلا"
+        },
+        "localPrevious": {
+          "label": "پچھلا"
+        },
+        "overrideMediaKeys": {
+          "label": "میڈیا کیز اوور رائیڈ کریں"
+        }
       }
     },
     "skip-silences": {
       "description": "گانوں میں خاموش حصوں کو خودکار طور پر چھوڑ دیں",
       "name": "خاموشیاں چھوڑیں",
       "settings": {
-        "only-skip-beginning": "ٹریک کے صرف شروع میں خاموشی چھوڑیں"
+        "only-skip-beginning": "ٹریک کے صرف شروع میں خاموشی چھوڑیں",
+        "onlySkipBeginning": {
+          "label": "ٹریک کے صرف شروع میں خاموشی چھوڑیں"
+        }
       }
     },
     "sponsorblock": {
@@ -1118,7 +1236,28 @@
           "selfpromo": "خود کی تشہیر",
           "music_offtopic": "غیر موسیقی حصہ"
         },
-        "api-url": "API یو آر ایل"
+        "api-url": "API یو آر ایل",
+        "sponsor": {
+          "label": "اسپانسر"
+        },
+        "intro": {
+          "label": "انٹرو"
+        },
+        "outro": {
+          "label": "آؤٹرو"
+        },
+        "interaction": {
+          "label": "تعامل کی یاد دہانی"
+        },
+        "selfpromo": {
+          "label": "خود کی تشہیر"
+        },
+        "music_offtopic": {
+          "label": "غیر موسیقی حصہ"
+        },
+        "apiURL": {
+          "label": "API یو آر ایل"
+        }
       }
     },
     "synced-lyrics": {
@@ -1368,7 +1507,25 @@
         }
       },
       "settings": {
-        "type-description": "ونڈو کی شفافیت کے لیے استعمال ہونے والا پس منظر مواد"
+        "type-description": "ونڈو کی شفافیت کے لیے استعمال ہونے والا پس منظر مواد",
+        "opacity": {
+          "label": "دھندلاپن"
+        },
+        "type": {
+          "label": "قسم",
+          "description": "ونڈو کی شفافیت کے لیے استعمال ہونے والا پس منظر مواد",
+          "options": {
+            "acrylic": "ایکریلک",
+            "content": "مواد",
+            "fullscreen-ui": "فل اسکرین UI",
+            "mica": "مائیکا",
+            "tabbed": "ٹیب شدہ",
+            "under-page": "صفحے کے نیچے",
+            "under-window": "ونڈو کے نیچے",
+            "window": "ونڈو",
+            "none": "کوئی نہیں"
+          }
+        }
       }
     },
     "tuna-obs": {
@@ -1404,6 +1561,27 @@
       "templates": {
         "button-song": "گیت",
         "button-video": "ویڈیو"
+      },
+      "settings": {
+        "mode": {
+          "label": "موڈ",
+          "options": {
+            "custom": "حسب ضرورت ٹوگل",
+            "native": "نیٹو ٹوگل",
+            "disabled": "غیر فعال"
+          }
+        },
+        "align": {
+          "label": "سیدھ",
+          "options": {
+            "left": "بائیں",
+            "middle": "درمیان",
+            "right": "دائیں"
+          }
+        },
+        "forceHide": {
+          "label": "ویڈیو ٹیب زبردستی ہٹائیں"
+        }
       }
     },
     "visualizer": {
@@ -1413,7 +1591,9 @@
       },
       "name": "ویژولائزر",
       "settings": {
-        "preset": "پریسیٹ",
+        "preset": {
+          "label": "پریسیٹ"
+        },
         "blend-time": "بلینڈ وقت",
         "effect": "اثر",
         "accuracy": "درستگی",
@@ -1429,12 +1609,53 @@
         "dottify": "نقطے بنائیں",
         "dottify-description": "مسلسل لکیر کے بجائے نقطے بنائیں",
         "horizontal-align": "افقی سیدھ",
-        "vertical-align": "عمودی سیدھ"
+        "vertical-align": "عمودی سیدھ",
+        "blendTimeInSeconds": {
+          "label": "بلینڈ وقت"
+        },
+        "vudioMaxHeight": {
+          "label": "زیادہ سے زیادہ اونچائی"
+        },
+        "vudioMaxSize": {
+          "label": "زیادہ سے زیادہ سائز"
+        },
+        "vudioLineWidth": {
+          "label": "لائن کی چوڑائی"
+        },
+        "vudioColor": {
+          "label": "رنگ"
+        },
+        "vudioShadowBlur": {
+          "label": "سائے کی دھندلاہٹ"
+        },
+        "vudioShadowColor": {
+          "label": "سائے کا رنگ"
+        },
+        "vudioFadeSide": {
+          "label": "کناروں کو دھندلا کریں"
+        },
+        "vudioPrettify": {
+          "label": "خوبصورت بنائیں",
+          "description": "بارز کو کناروں کی طرف پتلا کریں"
+        },
+        "vudioDottify": {
+          "label": "نقطے بنائیں",
+          "description": "مسلسل لکیر کے بجائے نقطے بنائیں"
+        },
+        "vudioHorizontalAlign": {
+          "label": "افقی سیدھ"
+        },
+        "vudioVerticalAlign": {
+          "label": "عمودی سیدھ"
+        }
       }
     },
     "statusbar-lyrics": {
       "settings": {
-        "include-pronunciation": "تلفظ شامل کریں"
+        "include-pronunciation": "تلفظ شامل کریں",
+        "includePronunciation": {
+          "label": "تلفظ شامل کریں"
+        }
       }
     },
     "dismiss-multidevice-popup": {
@@ -1446,7 +1667,11 @@
       "name": "میموری سیور",
       "settings": {
         "threshold": "کیشے کی حد",
-        "threshold-description": "ونڈو چھپے ہونے پر جب ان کی لائیو میموری اس حد سے بڑھ جائے تو کیشے صاف کریں"
+        "threshold-description": "ونڈو چھپے ہونے پر جب ان کی لائیو میموری اس حد سے بڑھ جائے تو کیشے صاف کریں",
+        "thresholdMB": {
+          "label": "کیشے کی حد",
+          "description": "ونڈو چھپے ہونے پر جب ان کی لائیو میموری اس حد سے بڑھ جائے تو کیشے صاف کریں"
+        }
       }
     }
   },

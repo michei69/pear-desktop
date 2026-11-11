@@ -314,7 +314,15 @@
         },
         "enable-seekbar": "Omogući postavljanje teme \"seekbar\"-a"
       },
-      "name": "Paleta boja albuma"
+      "name": "Paleta boja albuma",
+      "settings": {
+        "ratio": {
+          "label": "Odnos mešavine boja"
+        },
+        "enableSeekbar": {
+          "label": "Omogući postavljanje teme \"seekbar\"-a"
+        }
+      }
     },
     "ambient-mode": {
       "description": "Primenjuje svetlosne efekte na pozadini ekrana upotrebom blagih boja iz video snimka",
@@ -497,6 +505,14 @@
         "caption-changed": "Prevod promenjen u {{language}}",
         "caption-disabled": "Prevod onemogućen",
         "no-captions": "Za ovu pesmu nisu dostupni prevodi"
+      },
+      "settings": {
+        "autoload": {
+          "label": "Automatski odaberi prethodno odabrani prevod"
+        },
+        "disableCaptions": {
+          "label": "Podrazumevano bez prevoda"
+        }
       }
     },
     "compact-sidebar": {
@@ -555,7 +571,12 @@
       "menu": {
         "apply-once": "Primenjuje se samo pri pokretanju"
       },
-      "name": "Onemogući automatsko reprodukovanje"
+      "name": "Onemogući automatsko reprodukovanje",
+      "settings": {
+        "applyOnce": {
+          "label": "Primenjuje se samo pri pokretanju"
+        }
+      }
     },
     "discord": {
       "backend": {
@@ -595,7 +616,38 @@
         "activity-timeout-enabled": "Обриши присуство када је паузирано",
         "activity-timeout-time": "Обриши након",
         "hide-github-button": "Сакриј дугме „Прикажи на GitHub-у“",
-        "hide-duration-left": "Сакриј преостало време"
+        "hide-duration-left": "Сакриј преостало време",
+        "autoReconnect": {
+          "label": "Аутоматско поновно повезивање"
+        },
+        "activityTimeoutEnabled": {
+          "label": "Обриши присуство када је паузирано"
+        },
+        "activityTimeoutSeconds": {
+          "label": "Обриши након"
+        },
+        "playButton": {
+          "label": "Reprodukuj na {{applicationName}}"
+        },
+        "hideGitHubButton": {
+          "label": "Сакриј дугме „Прикажи на GitHub-у“"
+        },
+        "hideDurationLeft": {
+          "label": "Сакриј преостало време"
+        },
+        "statusDisplayType": {
+          "label": "Tekst statusa",
+          "options": {
+            "name": "Slušanje {{applicationName}}",
+            "state": "Slušanje {artist}",
+            "details": "Slušanje {song title}"
+          }
+        }
+      },
+      "actions": {
+        "clearActivity": {
+          "label": "Očisti aktivnosti"
+        }
       }
     },
     "downloader": {
@@ -867,6 +919,23 @@
       "name": "Slika-u-slici",
       "templates": {
         "button": "Slika-u-slici"
+      },
+      "settings": {
+        "hotkey": {
+          "label": "Prečica"
+        },
+        "useNativePiP": {
+          "label": "Koristi izvorni režim slike-u-slici za pregledače"
+        },
+        "alwaysOnTop": {
+          "label": "Uvek na vrhu"
+        },
+        "savePosition": {
+          "label": "Sačuvaj poziciju prozora"
+        },
+        "saveSize": {
+          "label": "Sačuvaj veličinu prozora"
+        }
       }
     },
     "playback-speed": {
@@ -902,10 +971,21 @@
         }
       },
       "settings": {
-        "steps": "Корак јачине звука",
+        "steps": {
+          "label": "Корак јачине звука"
+        },
         "arrows-shortcut": "Пречице на тастере стрелица",
         "shortcut-up": "Глобална пречица: појачај звук",
-        "shortcut-down": "Глобална пречица: смањи звук"
+        "shortcut-down": "Глобална пречица: смањи звук",
+        "arrowsShortcut": {
+          "label": "Пречице на тастере стрелица"
+        },
+        "volumeUp": {
+          "label": "Глобална пречица: појачај звук"
+        },
+        "volumeDown": {
+          "label": "Глобална пречица: смањи звук"
+        }
       }
     },
     "quality-changer": {
@@ -1004,7 +1084,28 @@
       },
       "settings": {
         "global-keybinds": "Глобалне пречице (раде у целој апликацији)",
-        "local-keybinds": "Локалне пречице (само док је прозор у фокусу)"
+        "local-keybinds": "Локалне пречице (само док је прозор у фокусу)",
+        "playPause": {
+          "label": "Pusti / Pauziraj"
+        },
+        "localPlayPause": {
+          "label": "Pusti / Pauziraj"
+        },
+        "next": {
+          "label": "Sledeće"
+        },
+        "localNext": {
+          "label": "Sledeće"
+        },
+        "previous": {
+          "label": "Prethodno"
+        },
+        "localPrevious": {
+          "label": "Prethodno"
+        },
+        "overrideMediaKeys": {
+          "label": "Prepiši medija tastere"
+        }
       }
     },
     "skip-disliked-songs": {
@@ -1015,7 +1116,10 @@
       "description": "Automatski preskočite delove pesama gde nema zvuka",
       "name": "Preskoči tišine",
       "settings": {
-        "only-skip-beginning": "Прескачи тишину само на почетку нумере"
+        "only-skip-beginning": "Прескачи тишину само на почетку нумере",
+        "onlySkipBeginning": {
+          "label": "Прескачи тишину само на почетку нумере"
+        }
       }
     },
     "sponsorblock": {
@@ -1031,7 +1135,28 @@
           "selfpromo": "Самопромоција",
           "music_offtopic": "Не-музички део"
         },
-        "api-url": "URL адреса API-ја"
+        "api-url": "URL адреса API-ја",
+        "sponsor": {
+          "label": "Спонзор"
+        },
+        "intro": {
+          "label": "Увод"
+        },
+        "outro": {
+          "label": "Одјава"
+        },
+        "interaction": {
+          "label": "Подсетник за интеракцију"
+        },
+        "selfpromo": {
+          "label": "Самопромоција"
+        },
+        "music_offtopic": {
+          "label": "Не-музички део"
+        },
+        "apiURL": {
+          "label": "URL адреса API-ја"
+        }
       }
     },
     "synced-lyrics": {
@@ -1332,7 +1457,25 @@
       },
       "name": "Transparentni plejer",
       "settings": {
-        "type-description": "Позадински материјал који се користи за провидност прозора"
+        "type-description": "Позадински материјал који се користи за провидност прозора",
+        "opacity": {
+          "label": "Neprozirnost"
+        },
+        "type": {
+          "label": "Tip",
+          "description": "Позадински материјал који се користи за провидност прозора",
+          "options": {
+            "acrylic": "Akrilan",
+            "content": "Садржај",
+            "fullscreen-ui": "Кориснички интерфејс преко целог екрана",
+            "mica": "Mika",
+            "tabbed": "Kartice",
+            "under-page": "Испод странице",
+            "under-window": "Испод прозора",
+            "window": "Прозор",
+            "none": "Nijedan"
+          }
+        }
       }
     },
     "tuna-obs": {
@@ -1368,6 +1511,27 @@
       "templates": {
         "button-song": "Pesma",
         "button-video": "Video"
+      },
+      "settings": {
+        "mode": {
+          "label": "Režim",
+          "options": {
+            "custom": "Prilagođeno prebacivanje",
+            "native": "Izvorno prebacivanje",
+            "disabled": "Onemogućeno"
+          }
+        },
+        "align": {
+          "label": "Poravnanje",
+          "options": {
+            "left": "Levo",
+            "middle": "Sredina",
+            "right": "Desno"
+          }
+        },
+        "forceHide": {
+          "label": "Nasilno ukloni karticu sa videom"
+        }
       }
     },
     "visualizer": {
@@ -1377,7 +1541,9 @@
       },
       "name": "Vizualizacija",
       "settings": {
-        "preset": "Пресет",
+        "preset": {
+          "label": "Пресет"
+        },
         "blend-time": "Време стапања",
         "effect": "Ефекат",
         "accuracy": "Прецизност",
@@ -1393,7 +1559,45 @@
         "dottify": "Тачкасто",
         "dottify-description": "Цртај тачке уместо непрекинуте линије",
         "horizontal-align": "Хоризонтално поравнање",
-        "vertical-align": "Вертикално поравнање"
+        "vertical-align": "Вертикално поравнање",
+        "blendTimeInSeconds": {
+          "label": "Време стапања"
+        },
+        "vudioMaxHeight": {
+          "label": "Макс. висина"
+        },
+        "vudioMaxSize": {
+          "label": "Макс. величина"
+        },
+        "vudioLineWidth": {
+          "label": "Ширина линије"
+        },
+        "vudioColor": {
+          "label": "Боја"
+        },
+        "vudioShadowBlur": {
+          "label": "Замућење сенке"
+        },
+        "vudioShadowColor": {
+          "label": "Боја сенке"
+        },
+        "vudioFadeSide": {
+          "label": "Стране са изблеђивањем"
+        },
+        "vudioPrettify": {
+          "label": "Улепшај",
+          "description": "Сужавај траке ка ивицама"
+        },
+        "vudioDottify": {
+          "label": "Тачкасто",
+          "description": "Цртај тачке уместо непрекинуте линије"
+        },
+        "vudioHorizontalAlign": {
+          "label": "Хоризонтално поравнање"
+        },
+        "vudioVerticalAlign": {
+          "label": "Вертикално поравнање"
+        }
       }
     },
     "clock": {
@@ -1407,7 +1611,13 @@
       },
       "name": "Sat",
       "settings": {
-        "hour-12": "Користи 12-часовни формат"
+        "hour-12": "Користи 12-часовни формат",
+        "displaySeconds": {
+          "label": "Prikaži sekunde"
+        },
+        "hour12": {
+          "label": "Користи 12-часовни формат"
+        }
       }
     },
     "audio-only": {
@@ -1477,7 +1687,15 @@
         "open-keybind": "Пречица за отварање",
         "open-keybind-description": "Пречица у Electron стилу, нпр. CmdOrCtrl+/ или Alt+Space",
         "open-shortcut": "Отвори поље за претрагу са било ког места",
-        "open-shortcut-description": "Призива поље за претрагу већ у режиму команди, као Spotlight. Поновни притисак га затвара."
+        "open-shortcut-description": "Призива поље за претрагу већ у режиму команди, као Spotlight. Поновни притисак га затвара.",
+        "openShortcut": {
+          "label": "Отвори поље за претрагу са било ког места",
+          "description": "Призива поље за претрагу већ у режиму команди, као Spotlight. Поновни притисак га затвара."
+        },
+        "openKeybind": {
+          "label": "Пречица за отварање",
+          "description": "Пречица у Electron стилу, нпр. CmdOrCtrl+/ или Alt+Space"
+        }
       }
     },
     "seek-shortcuts": {
@@ -1494,7 +1712,10 @@
     },
     "statusbar-lyrics": {
       "settings": {
-        "include-pronunciation": "Укључи изговор"
+        "include-pronunciation": "Укључи изговор",
+        "includePronunciation": {
+          "label": "Укључи изговор"
+        }
       }
     },
     "dismiss-multidevice-popup": {
@@ -1506,7 +1727,11 @@
       "name": "Чувар меморије",
       "settings": {
         "threshold": "Праг кеша",
-        "threshold-description": "Очисти кешове када њихова тренутна меморија пређе ову вредност док је прозор скривен"
+        "threshold-description": "Очисти кешове када њихова тренутна меморија пређе ову вредност док је прозор скривен",
+        "thresholdMB": {
+          "label": "Праг кеша",
+          "description": "Очисти кешове када њихова тренутна меморија пређе ову вредност док је прозор скривен"
+        }
       }
     }
   },

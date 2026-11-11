@@ -321,7 +321,28 @@
         "button-song": "ഗാനം"
       },
       "description": "വീഡിയോ/ഗാന മോഡ് മാറ്റാൻ ബട്ടൺ ചേർക്കുന്നു. വീഡിയോ ടാബ് മുഴുവനായും നീക്കം ചെയ്യാനുള്ള ഓപ്ഷനും",
-      "name": "വീഡിയോ ടോഗിൾ"
+      "name": "വീഡിയോ ടോഗിൾ",
+      "settings": {
+        "mode": {
+          "label": "മോഡ്",
+          "options": {
+            "custom": "ഇഷ്ടാനുസൃത ടോഗിൾ",
+            "native": "നേറ്റീവ് ടോഗിൾ",
+            "disabled": "പ്രവർത്തനരഹിതം"
+          }
+        },
+        "align": {
+          "label": "ക്രമപ്പെടുത്തൽ",
+          "options": {
+            "left": "ഇടത്",
+            "middle": "മധ്യഭാഗം",
+            "right": "വലത്"
+          }
+        },
+        "forceHide": {
+          "label": "വീഡിയോ ടാബ് നിർബന്ധിതമായി നീക്കം ചെയ്യുക"
+        }
+      }
     },
     "ad-speedup": {
       "description": "ഒരു പരസ്യം പ്ലേ ചെയ്യുമ്പോൾ ഓഡിയോ മ്യൂട്ട് ചെയ്ത് പ്ലേബാക്ക് വേഗത 16x ആക്കുന്നു",
@@ -349,7 +370,15 @@
         },
         "enable-seekbar": "സീക്ക്ബാർ തീമിംഗ് പ്രവർത്തനക്ഷമമാക്കുക"
       },
-      "name": "ആൽബം കളർ തീം"
+      "name": "ആൽബം കളർ തീം",
+      "settings": {
+        "ratio": {
+          "label": "കളർ മിക്സ് അനുപാതം"
+        },
+        "enableSeekbar": {
+          "label": "സീക്ക്ബാർ തീമിംഗ് പ്രവർത്തനക്ഷമമാക്കുക"
+        }
+      }
     },
     "ambient-mode": {
       "description": "വീഡിയോയിൽ നിന്ന് സ്ക്രീനിന്റെ പശ്ചാത്തലത്തിലേക്ക് മൃദുവായ നിറങ്ങൾ പ്രക്ഷേപിച്ച് ഒരു ലൈറ്റിംഗ് ഇഫക്റ്റ് പ്രയോഗിക്കുന്നു",
@@ -532,6 +561,14 @@
         "caption-changed": "ക്യാപ്ഷൻ {{language}} ലേക്ക് മാറ്റി",
         "caption-disabled": "ക്യാപ്ഷനുകൾ പ്രവർത്തനരഹിതമാക്കി",
         "no-captions": "ഈ ഗാനത്തിന് ക്യാപ്ഷനുകൾ ലഭ്യമല്ല"
+      },
+      "settings": {
+        "autoload": {
+          "label": "അവസാനം ഉപയോഗിച്ച ക്യാപ്ഷൻ സ്വയമേവ തിരഞ്ഞെടുക്കുക"
+        },
+        "disableCaptions": {
+          "label": "ഡിഫോൾട്ടായി ക്യാപ്ഷനുകൾ ഇല്ല"
+        }
       }
     },
     "clock": {
@@ -545,7 +582,13 @@
       },
       "name": "ക്ലോക്ക്",
       "settings": {
-        "hour-12": "12-മണിക്കൂർ ഫോർമാറ്റ് ഉപയോഗിക്കുക"
+        "hour-12": "12-മണിക്കൂർ ഫോർമാറ്റ് ഉപയോഗിക്കുക",
+        "displaySeconds": {
+          "label": "സെക്കൻഡുകൾ പ്രദർശിപ്പിക്കുക"
+        },
+        "hour12": {
+          "label": "12-മണിക്കൂർ ഫോർമാറ്റ് ഉപയോഗിക്കുക"
+        }
       }
     },
     "compact-sidebar": {
@@ -604,7 +647,12 @@
       "menu": {
         "apply-once": "സ്റ്റാർട്ടപ്പിൽ മാത്രം ബാധകമാണ്"
       },
-      "name": "ഓട്ടോപ്ലേ പ്രവർത്തനരഹിതമാക്കുക"
+      "name": "ഓട്ടോപ്ലേ പ്രവർത്തനരഹിതമാക്കുക",
+      "settings": {
+        "applyOnce": {
+          "label": "സ്റ്റാർട്ടപ്പിൽ മാത്രം ബാധകമാണ്"
+        }
+      }
     },
     "discord": {
       "backend": {
@@ -644,7 +692,38 @@
         "activity-timeout-enabled": "താൽക്കാലികമായി നിർത്തുമ്പോൾ സാന്നിധ്യം മായ്ക്കുക",
         "activity-timeout-time": "ഇതിന് ശേഷം മായ്ക്കുക",
         "hide-github-button": "“GitHub-ൽ കാണുക” ബട്ടൺ മറയ്ക്കുക",
-        "hide-duration-left": "ശേഷിക്കുന്ന സമയം മറയ്ക്കുക"
+        "hide-duration-left": "ശേഷിക്കുന്ന സമയം മറയ്ക്കുക",
+        "autoReconnect": {
+          "label": "സ്വയമേവ വീണ്ടും കണക്ട് ചെയ്യുക"
+        },
+        "activityTimeoutEnabled": {
+          "label": "താൽക്കാലികമായി നിർത്തുമ്പോൾ സാന്നിധ്യം മായ്ക്കുക"
+        },
+        "activityTimeoutSeconds": {
+          "label": "ഇതിന് ശേഷം മായ്ക്കുക"
+        },
+        "playButton": {
+          "label": "{{applicationName}} ൽ പ്ലേ ചെയ്യുക"
+        },
+        "hideGitHubButton": {
+          "label": "“GitHub-ൽ കാണുക” ബട്ടൺ മറയ്ക്കുക"
+        },
+        "hideDurationLeft": {
+          "label": "ശേഷിക്കുന്ന സമയം മറയ്ക്കുക"
+        },
+        "statusDisplayType": {
+          "label": "സ്റ്റാറ്റസ് ടെക്സ്റ്റ്",
+          "options": {
+            "name": "{{applicationName}} കേൾക്കുന്നു",
+            "state": "{artist} കേൾക്കുന്നു",
+            "details": "{song title} കേൾക്കുന്നു"
+          }
+        }
+      },
+      "actions": {
+        "clearActivity": {
+          "label": "ആക്ടിവിറ്റി ക്ലിയർ ചെയ്യുക"
+        }
       }
     },
     "downloader": {
@@ -916,6 +995,23 @@
       "name": "പിക്ചർ-ഇൻ-പിക്ചർ",
       "templates": {
         "button": "പിക്ചർ-ഇൻ-പിക്ചർ"
+      },
+      "settings": {
+        "hotkey": {
+          "label": "ഹോട്ട്കീ"
+        },
+        "useNativePiP": {
+          "label": "ബ്രൗസർ നേറ്റീവ് PiP ഉപയോഗിക്കുക"
+        },
+        "alwaysOnTop": {
+          "label": "എപ്പോഴും മുകളിൽ"
+        },
+        "savePosition": {
+          "label": "വിൻഡോ സ്ഥാനം സേവ് ചെയ്യുക"
+        },
+        "saveSize": {
+          "label": "വിൻഡോ വലുപ്പം സേവ് ചെയ്യുക"
+        }
       }
     },
     "playback-speed": {
@@ -951,10 +1047,21 @@
         }
       },
       "settings": {
-        "steps": "വോളിയം ഘട്ടം",
+        "steps": {
+          "label": "വോളിയം ഘട്ടം"
+        },
         "arrows-shortcut": "ആരോ കീ കുറുക്കുവഴികൾ",
         "shortcut-up": "ആഗോള കുറുക്കുവഴി: വോളിയം കൂട്ടുക",
-        "shortcut-down": "ആഗോള കുറുക്കുവഴി: വോളിയം കുറയ്ക്കുക"
+        "shortcut-down": "ആഗോള കുറുക്കുവഴി: വോളിയം കുറയ്ക്കുക",
+        "arrowsShortcut": {
+          "label": "ആരോ കീ കുറുക്കുവഴികൾ"
+        },
+        "volumeUp": {
+          "label": "ആഗോള കുറുക്കുവഴി: വോളിയം കൂട്ടുക"
+        },
+        "volumeDown": {
+          "label": "ആഗോള കുറുക്കുവഴി: വോളിയം കുറയ്ക്കുക"
+        }
       }
     },
     "quality-changer": {
@@ -1053,14 +1160,38 @@
       },
       "settings": {
         "global-keybinds": "ആഗോള കീബൈൻഡുകൾ (ആപ്പിലാകെ പ്രവർത്തിക്കും)",
-        "local-keybinds": "ലോക്കൽ കീബൈൻഡുകൾ (വിൻഡോ ഫോക്കസിലുള്ളപ്പോൾ മാത്രം)"
+        "local-keybinds": "ലോക്കൽ കീബൈൻഡുകൾ (വിൻഡോ ഫോക്കസിലുള്ളപ്പോൾ മാത്രം)",
+        "playPause": {
+          "label": "പ്ലേ / പോസ്"
+        },
+        "localPlayPause": {
+          "label": "പ്ലേ / പോസ്"
+        },
+        "next": {
+          "label": "അടുത്തത്"
+        },
+        "localNext": {
+          "label": "അടുത്തത്"
+        },
+        "previous": {
+          "label": "മുമ്പത്തേത്"
+        },
+        "localPrevious": {
+          "label": "മുമ്പത്തേത്"
+        },
+        "overrideMediaKeys": {
+          "label": "മീഡിയ കീകൾ ഓവർറൈഡ് ചെയ്യുക"
+        }
       }
     },
     "skip-silences": {
       "description": "ഗാനങ്ങളിലെ നിശബ്ദ ഭാഗങ്ങൾ സ്വയമേവ ഒഴിവാക്കുക",
       "name": "നിശബ്ദത ഒഴിവാക്കുക",
       "settings": {
-        "only-skip-beginning": "ട്രാക്കിന്റെ തുടക്കത്തിലെ നിശ്ശബ്ദത മാത്രം ഒഴിവാക്കുക"
+        "only-skip-beginning": "ട്രാക്കിന്റെ തുടക്കത്തിലെ നിശ്ശബ്ദത മാത്രം ഒഴിവാക്കുക",
+        "onlySkipBeginning": {
+          "label": "ട്രാക്കിന്റെ തുടക്കത്തിലെ നിശ്ശബ്ദത മാത്രം ഒഴിവാക്കുക"
+        }
       }
     },
     "sponsorblock": {
@@ -1076,7 +1207,28 @@
           "selfpromo": "സ്വയം പ്രചാരണം",
           "music_offtopic": "സംഗീതേതര ഭാഗം"
         },
-        "api-url": "API URL"
+        "api-url": "API URL",
+        "sponsor": {
+          "label": "സ്പോൺസർ"
+        },
+        "intro": {
+          "label": "ആമുഖം"
+        },
+        "outro": {
+          "label": "അവസാന ഭാഗം"
+        },
+        "interaction": {
+          "label": "ഇന്ററാക്ഷൻ ഓർമ്മപ്പെടുത്തൽ"
+        },
+        "selfpromo": {
+          "label": "സ്വയം പ്രചാരണം"
+        },
+        "music_offtopic": {
+          "label": "സംഗീതേതര ഭാഗം"
+        },
+        "apiURL": {
+          "label": "API URL"
+        }
       }
     },
     "synced-lyrics": {
@@ -1377,7 +1529,25 @@
       },
       "name": "സുതാര്യ പ്ലേയർ",
       "settings": {
-        "type-description": "വിൻഡോ സുതാര്യതയ്ക്ക് ഉപയോഗിക്കുന്ന പശ്ചാത്തല മെറ്റീരിയൽ"
+        "type-description": "വിൻഡോ സുതാര്യതയ്ക്ക് ഉപയോഗിക്കുന്ന പശ്ചാത്തല മെറ്റീരിയൽ",
+        "opacity": {
+          "label": "അതാര്യത"
+        },
+        "type": {
+          "label": "തരം",
+          "description": "വിൻഡോ സുതാര്യതയ്ക്ക് ഉപയോഗിക്കുന്ന പശ്ചാത്തല മെറ്റീരിയൽ",
+          "options": {
+            "acrylic": "അക്രിലിക്",
+            "content": "ഉള്ളടക്കം",
+            "fullscreen-ui": "ഫുൾസ്ക്രീൻ UI",
+            "mica": "മൈക്ക",
+            "tabbed": "ടാബ്ഡ്",
+            "under-page": "പേജിന് താഴെ",
+            "under-window": "വിൻഡോയ്ക്ക് താഴെ",
+            "window": "വിൻഡോ",
+            "none": "ഒന്നുമില്ല"
+          }
+        }
       }
     },
     "tuna-obs": {
@@ -1395,7 +1565,9 @@
       },
       "name": "വിഷ്വലൈസർ",
       "settings": {
-        "preset": "പ്രീസെറ്റ്",
+        "preset": {
+          "label": "പ്രീസെറ്റ്"
+        },
         "blend-time": "ബ്ലെൻഡ് സമയം",
         "effect": "ഇഫക്ട്",
         "accuracy": "കൃത്യത",
@@ -1411,7 +1583,45 @@
         "dottify": "ഡോട്ടുകളാക്കുക",
         "dottify-description": "തുടർച്ചയായ വരയ്ക്ക് പകരം ഡോട്ടുകൾ വരയ്ക്കുക",
         "horizontal-align": "തിരശ്ചീന വിന്യാസം",
-        "vertical-align": "ലംബ വിന്യാസം"
+        "vertical-align": "ലംബ വിന്യാസം",
+        "blendTimeInSeconds": {
+          "label": "ബ്ലെൻഡ് സമയം"
+        },
+        "vudioMaxHeight": {
+          "label": "പരമാവധി ഉയരം"
+        },
+        "vudioMaxSize": {
+          "label": "പരമാവധി വലുപ്പം"
+        },
+        "vudioLineWidth": {
+          "label": "വരി വീതി"
+        },
+        "vudioColor": {
+          "label": "നിറം"
+        },
+        "vudioShadowBlur": {
+          "label": "നിഴൽ മങ്ങൽ"
+        },
+        "vudioShadowColor": {
+          "label": "നിഴൽ നിറം"
+        },
+        "vudioFadeSide": {
+          "label": "വശങ്ങൾ മായ്ക്കുക"
+        },
+        "vudioPrettify": {
+          "label": "മനോഹരമാക്കുക",
+          "description": "ബാറുകൾ അരികുകളിലേക്ക് ചുരുക്കുക"
+        },
+        "vudioDottify": {
+          "label": "ഡോട്ടുകളാക്കുക",
+          "description": "തുടർച്ചയായ വരയ്ക്ക് പകരം ഡോട്ടുകൾ വരയ്ക്കുക"
+        },
+        "vudioHorizontalAlign": {
+          "label": "തിരശ്ചീന വിന്യാസം"
+        },
+        "vudioVerticalAlign": {
+          "label": "ലംബ വിന്യാസം"
+        }
       }
     },
     "audio-only": {
@@ -1481,7 +1691,15 @@
         "open-keybind": "തുറക്കാനുള്ള കുറുക്കുവഴി",
         "open-keybind-description": "Electron-ശൈലിയിലുള്ള ആക്സിലറേറ്റർ, ഉദാ. CmdOrCtrl+/ അല്ലെങ്കിൽ Alt+Space",
         "open-shortcut": "എവിടെനിന്നും തിരയൽ ബോക്സ് തുറക്കുക",
-        "open-shortcut-description": "Spotlight പോലെ കമാൻഡ് മോഡിലുള്ള തിരയൽ ബോക്സ് വിളിച്ചുകൊണ്ടുവരുന്നു. വീണ്ടും അമർത്തിയാൽ അത് അടയ്ക്കും."
+        "open-shortcut-description": "Spotlight പോലെ കമാൻഡ് മോഡിലുള്ള തിരയൽ ബോക്സ് വിളിച്ചുകൊണ്ടുവരുന്നു. വീണ്ടും അമർത്തിയാൽ അത് അടയ്ക്കും.",
+        "openShortcut": {
+          "label": "എവിടെനിന്നും തിരയൽ ബോക്സ് തുറക്കുക",
+          "description": "Spotlight പോലെ കമാൻഡ് മോഡിലുള്ള തിരയൽ ബോക്സ് വിളിച്ചുകൊണ്ടുവരുന്നു. വീണ്ടും അമർത്തിയാൽ അത് അടയ്ക്കും."
+        },
+        "openKeybind": {
+          "label": "തുറക്കാനുള്ള കുറുക്കുവഴി",
+          "description": "Electron-ശൈലിയിലുള്ള ആക്സിലറേറ്റർ, ഉദാ. CmdOrCtrl+/ അല്ലെങ്കിൽ Alt+Space"
+        }
       }
     },
     "seek-shortcuts": {
@@ -1498,7 +1716,10 @@
     },
     "statusbar-lyrics": {
       "settings": {
-        "include-pronunciation": "ഉച്ചാരണം ഉൾപ്പെടുത്തുക"
+        "include-pronunciation": "ഉച്ചാരണം ഉൾപ്പെടുത്തുക",
+        "includePronunciation": {
+          "label": "ഉച്ചാരണം ഉൾപ്പെടുത്തുക"
+        }
       }
     },
     "dismiss-multidevice-popup": {
@@ -1510,7 +1731,11 @@
       "name": "മെമ്മറി സേവർ",
       "settings": {
         "threshold": "കാഷ് പരിധി",
-        "threshold-description": "വിൻഡോ മറഞ്ഞിരിക്കുമ്പോൾ കാഷുകളുടെ ലൈവ് മെമ്മറി ഇത് കവിഞ്ഞാൽ അവ മായ്ക്കുക"
+        "threshold-description": "വിൻഡോ മറഞ്ഞിരിക്കുമ്പോൾ കാഷുകളുടെ ലൈവ് മെമ്മറി ഇത് കവിഞ്ഞാൽ അവ മായ്ക്കുക",
+        "thresholdMB": {
+          "label": "കാഷ് പരിധി",
+          "description": "വിൻഡോ മറഞ്ഞിരിക്കുമ്പോൾ കാഷുകളുടെ ലൈവ് മെമ്മറി ഇത് കവിഞ്ഞാൽ അവ മായ്ക്കുക"
+        }
       }
     }
   },

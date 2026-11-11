@@ -314,7 +314,15 @@
         },
         "enable-seekbar": "Zezwól stylowanie paska wyszukiwań"
       },
-      "name": "Motyw kolorów albumu"
+      "name": "Motyw kolorów albumu",
+      "settings": {
+        "ratio": {
+          "label": "Intensywność koloru"
+        },
+        "enableSeekbar": {
+          "label": "Zezwól stylowanie paska wyszukiwań"
+        }
+      }
     },
     "ambient-mode": {
       "description": "Stosuje efekt świetlny, rzucając delikatne kolory z wideo na tło ekranu",
@@ -497,6 +505,14 @@
         "caption-changed": "Zmieniono napisy na {{language}}",
         "caption-disabled": "Napisy zostały wyłączone",
         "no-captions": "Nie znaleziono napisów dla tego utworu"
+      },
+      "settings": {
+        "autoload": {
+          "label": "Automatycznie wybierz ostatnio używanych napisów"
+        },
+        "disableCaptions": {
+          "label": "Domyślnie, brak napisów"
+        }
       }
     },
     "clock": {
@@ -510,7 +526,13 @@
       },
       "name": "Zegar",
       "settings": {
-        "hour-12": "Używaj formatu 12-godzinnego"
+        "hour-12": "Używaj formatu 12-godzinnego",
+        "displaySeconds": {
+          "label": "Wyświetl sekundy"
+        },
+        "hour12": {
+          "label": "Używaj formatu 12-godzinnego"
+        }
       }
     },
     "compact-sidebar": {
@@ -569,7 +591,12 @@
       "menu": {
         "apply-once": "Tylko przy uruchomieniu aplikacji"
       },
-      "name": "Wyłącz automatyczne odtwarzanie"
+      "name": "Wyłącz automatyczne odtwarzanie",
+      "settings": {
+        "applyOnce": {
+          "label": "Tylko przy uruchomieniu aplikacji"
+        }
+      }
     },
     "discord": {
       "backend": {
@@ -609,7 +636,38 @@
         "activity-timeout-enabled": "Wyczyść status po wstrzymaniu",
         "activity-timeout-time": "Wyczyść po",
         "hide-github-button": "Ukryj przycisk “Zobacz na GitHubie”",
-        "hide-duration-left": "Ukryj pozostały czas"
+        "hide-duration-left": "Ukryj pozostały czas",
+        "autoReconnect": {
+          "label": "Automatyczne ponowne łączenie"
+        },
+        "activityTimeoutEnabled": {
+          "label": "Wyczyść status po wstrzymaniu"
+        },
+        "activityTimeoutSeconds": {
+          "label": "Wyczyść po"
+        },
+        "playButton": {
+          "label": "Odtwórz w {{applicationName}}"
+        },
+        "hideGitHubButton": {
+          "label": "Ukryj przycisk “Zobacz na GitHubie”"
+        },
+        "hideDurationLeft": {
+          "label": "Ukryj pozostały czas"
+        },
+        "statusDisplayType": {
+          "label": "Opis statusu",
+          "options": {
+            "name": "Słucha {{applicationName}}",
+            "state": "Słucha {artist}",
+            "details": "Słucha {song title}"
+          }
+        }
+      },
+      "actions": {
+        "clearActivity": {
+          "label": "Wyczyść aktywność"
+        }
       }
     },
     "do-not-track": {
@@ -900,6 +958,23 @@
       "name": "Obraz w obrazie",
       "templates": {
         "button": "Obraz w obrazie"
+      },
+      "settings": {
+        "hotkey": {
+          "label": "Klawisz skrótu"
+        },
+        "useNativePiP": {
+          "label": "Użyj natywnego PiP dla przeglądarki"
+        },
+        "alwaysOnTop": {
+          "label": "Zawsze na wierzchu"
+        },
+        "savePosition": {
+          "label": "Zapisz pozycję okna"
+        },
+        "saveSize": {
+          "label": "Zapisz rozmiar okna"
+        }
       }
     },
     "playback-speed": {
@@ -935,10 +1010,21 @@
         }
       },
       "settings": {
-        "steps": "Krok głośności",
+        "steps": {
+          "label": "Krok głośności"
+        },
         "arrows-shortcut": "Skróty klawiszy strzałek",
         "shortcut-up": "Skrót globalny: głośniej",
-        "shortcut-down": "Skrót globalny: ciszej"
+        "shortcut-down": "Skrót globalny: ciszej",
+        "arrowsShortcut": {
+          "label": "Skróty klawiszy strzałek"
+        },
+        "volumeUp": {
+          "label": "Skrót globalny: głośniej"
+        },
+        "volumeDown": {
+          "label": "Skrót globalny: ciszej"
+        }
       }
     },
     "quality-changer": {
@@ -1037,7 +1123,28 @@
       },
       "settings": {
         "global-keybinds": "Skróty globalne (działają w całej aplikacji)",
-        "local-keybinds": "Skróty lokalne (tylko gdy okno jest aktywne)"
+        "local-keybinds": "Skróty lokalne (tylko gdy okno jest aktywne)",
+        "playPause": {
+          "label": "Odtwarzanie / Pauza"
+        },
+        "localPlayPause": {
+          "label": "Odtwarzanie / Pauza"
+        },
+        "next": {
+          "label": "Następny"
+        },
+        "localNext": {
+          "label": "Następny"
+        },
+        "previous": {
+          "label": "Poprzedni"
+        },
+        "localPrevious": {
+          "label": "Poprzedni"
+        },
+        "overrideMediaKeys": {
+          "label": "Zastąp klawisze multimediów"
+        }
       }
     },
     "skip-disliked-songs": {
@@ -1048,7 +1155,10 @@
       "description": "Automatycznie pomijaj sekcje bez dźwięku w utworach",
       "name": "Pomiń ciszę",
       "settings": {
-        "only-skip-beginning": "Pomijaj ciszę tylko na początku utworu"
+        "only-skip-beginning": "Pomijaj ciszę tylko na początku utworu",
+        "onlySkipBeginning": {
+          "label": "Pomijaj ciszę tylko na początku utworu"
+        }
       }
     },
     "sponsorblock": {
@@ -1064,7 +1174,28 @@
           "selfpromo": "Autopromocja",
           "music_offtopic": "Fragment niezawierający muzyki"
         },
-        "api-url": "Adres URL API"
+        "api-url": "Adres URL API",
+        "sponsor": {
+          "label": "Sponsor"
+        },
+        "intro": {
+          "label": "Intro"
+        },
+        "outro": {
+          "label": "Outro"
+        },
+        "interaction": {
+          "label": "Przypomnienie o interakcji"
+        },
+        "selfpromo": {
+          "label": "Autopromocja"
+        },
+        "music_offtopic": {
+          "label": "Fragment niezawierający muzyki"
+        },
+        "apiURL": {
+          "label": "Adres URL API"
+        }
       }
     },
     "synced-lyrics": {
@@ -1365,7 +1496,25 @@
       },
       "name": "Przeźroczysty odtwarzacz",
       "settings": {
-        "type-description": "Materiał tła używany do przezroczystości okna"
+        "type-description": "Materiał tła używany do przezroczystości okna",
+        "opacity": {
+          "label": "Nieprzezroczystość"
+        },
+        "type": {
+          "label": "Typ",
+          "description": "Materiał tła używany do przezroczystości okna",
+          "options": {
+            "acrylic": "Akryl",
+            "content": "Treść",
+            "fullscreen-ui": "Interfejs użytkownika w trybie pełnoekranowym",
+            "mica": "Mika",
+            "tabbed": "Zakładkowy",
+            "under-page": "Podstrona",
+            "under-window": "Pod oknem",
+            "window": "Okno",
+            "none": "Brak"
+          }
+        }
       }
     },
     "tuna-obs": {
@@ -1401,6 +1550,27 @@
       "templates": {
         "button-song": "Utwór",
         "button-video": "Wideo"
+      },
+      "settings": {
+        "mode": {
+          "label": "Tryb",
+          "options": {
+            "custom": "Niestandardowy przełącznik",
+            "native": "Natywny przełącznik",
+            "disabled": "Wyłączony"
+          }
+        },
+        "align": {
+          "label": "Wyrównanie",
+          "options": {
+            "left": "Lewo",
+            "middle": "Środek",
+            "right": "Prawo"
+          }
+        },
+        "forceHide": {
+          "label": "Wymuś usunięcie zakładki wideo"
+        }
       }
     },
     "visualizer": {
@@ -1410,7 +1580,9 @@
       },
       "name": "Wizualizator",
       "settings": {
-        "preset": "Ustawienie wstępne",
+        "preset": {
+          "label": "Ustawienie wstępne"
+        },
         "blend-time": "Czas mieszania",
         "effect": "Efekt",
         "accuracy": "Dokładność",
@@ -1426,7 +1598,45 @@
         "dottify": "Zamień na kropki",
         "dottify-description": "Rysuj kropki zamiast ciągłej linii",
         "horizontal-align": "Wyrównanie poziome",
-        "vertical-align": "Wyrównanie pionowe"
+        "vertical-align": "Wyrównanie pionowe",
+        "blendTimeInSeconds": {
+          "label": "Czas mieszania"
+        },
+        "vudioMaxHeight": {
+          "label": "Maks. wysokość"
+        },
+        "vudioMaxSize": {
+          "label": "Maks. rozmiar"
+        },
+        "vudioLineWidth": {
+          "label": "Szerokość linii"
+        },
+        "vudioColor": {
+          "label": "Kolor"
+        },
+        "vudioShadowBlur": {
+          "label": "Rozmycie cienia"
+        },
+        "vudioShadowColor": {
+          "label": "Kolor cienia"
+        },
+        "vudioFadeSide": {
+          "label": "Zanikanie boków"
+        },
+        "vudioPrettify": {
+          "label": "Upiększ",
+          "description": "Zwężaj słupki ku krawędziom"
+        },
+        "vudioDottify": {
+          "label": "Zamień na kropki",
+          "description": "Rysuj kropki zamiast ciągłej linii"
+        },
+        "vudioHorizontalAlign": {
+          "label": "Wyrównanie poziome"
+        },
+        "vudioVerticalAlign": {
+          "label": "Wyrównanie pionowe"
+        }
       }
     },
     "audio-only": {
@@ -1477,7 +1687,15 @@
         "open-keybind": "Skrót otwierania",
         "open-keybind-description": "Skrót w stylu Electron, np. CmdOrCtrl+/ lub Alt+Space",
         "open-shortcut": "Otwórz pole wyszukiwania z dowolnego miejsca",
-        "open-shortcut-description": "Przywołuje pole wyszukiwania już w trybie poleceń, jak Spotlight. Ponowne naciśnięcie je zamyka."
+        "open-shortcut-description": "Przywołuje pole wyszukiwania już w trybie poleceń, jak Spotlight. Ponowne naciśnięcie je zamyka.",
+        "openShortcut": {
+          "label": "Otwórz pole wyszukiwania z dowolnego miejsca",
+          "description": "Przywołuje pole wyszukiwania już w trybie poleceń, jak Spotlight. Ponowne naciśnięcie je zamyka."
+        },
+        "openKeybind": {
+          "label": "Skrót otwierania",
+          "description": "Skrót w stylu Electron, np. CmdOrCtrl+/ lub Alt+Space"
+        }
       }
     },
     "seek-shortcuts": {
@@ -1494,7 +1712,10 @@
     },
     "statusbar-lyrics": {
       "settings": {
-        "include-pronunciation": "Uwzględnij wymowę"
+        "include-pronunciation": "Uwzględnij wymowę",
+        "includePronunciation": {
+          "label": "Uwzględnij wymowę"
+        }
       }
     },
     "dismiss-multidevice-popup": {
@@ -1506,7 +1727,11 @@
       "name": "Oszczędzanie pamięci",
       "settings": {
         "threshold": "Próg pamięci podręcznej",
-        "threshold-description": "Czyść pamięć podręczną, gdy jej bieżące zużycie pamięci przekroczy tę wartość, a okno jest ukryte"
+        "threshold-description": "Czyść pamięć podręczną, gdy jej bieżące zużycie pamięci przekroczy tę wartość, a okno jest ukryte",
+        "thresholdMB": {
+          "label": "Próg pamięci podręcznej",
+          "description": "Czyść pamięć podręczną, gdy jej bieżące zużycie pamięci przekroczy tę wartość, a okno jest ukryte"
+        }
       }
     }
   },

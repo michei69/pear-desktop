@@ -314,7 +314,15 @@
         },
         "enable-seekbar": "Virkja leitarstikuþema"
       },
-      "name": "Albúmlitaþema"
+      "name": "Albúmlitaþema",
+      "settings": {
+        "ratio": {
+          "label": "Litablöndunarhlutfall"
+        },
+        "enableSeekbar": {
+          "label": "Virkja leitarstikuþema"
+        }
+      }
     },
     "ambient-mode": {
       "description": "Beitir lýsingaráhrifum með því að varpa mildum litum úr myndbandinu í bakgrunn skjásins",
@@ -466,6 +474,14 @@
         "caption-changed": "Skjátexti breytt í {{language}}",
         "caption-disabled": "Skjátextar óvirkir",
         "no-captions": "Engir skjátextar fáanlegir fyrir þetta lag"
+      },
+      "settings": {
+        "autoload": {
+          "label": "Veldu sjálfkrafa síðast notaða myndatexta"
+        },
+        "disableCaptions": {
+          "label": "Engir skjátextar sjálfgefið"
+        }
       }
     },
     "compact-sidebar": {
@@ -511,7 +527,12 @@
       "menu": {
         "apply-once": "Á aðeins við ræsingu"
       },
-      "name": "Slökkva á sjálfvirkri spilun"
+      "name": "Slökkva á sjálfvirkri spilun",
+      "settings": {
+        "applyOnce": {
+          "label": "Á aðeins við ræsingu"
+        }
+      }
     },
     "discord": {
       "backend": {
@@ -551,7 +572,38 @@
         "activity-timeout-enabled": "Hreinsa viðveru þegar pásað er",
         "activity-timeout-time": "Hreinsa eftir",
         "hide-github-button": "Fela hnappinn „Skoða á GitHub“",
-        "hide-duration-left": "Fela tímann sem eftir er"
+        "hide-duration-left": "Fela tímann sem eftir er",
+        "autoReconnect": {
+          "label": "Sjálfvirk endurtenging"
+        },
+        "activityTimeoutEnabled": {
+          "label": "Hreinsa viðveru þegar pásað er"
+        },
+        "activityTimeoutSeconds": {
+          "label": "Hreinsa eftir"
+        },
+        "playButton": {
+          "label": "Spilaðu á {{applicationName}}"
+        },
+        "hideGitHubButton": {
+          "label": "Fela hnappinn „Skoða á GitHub“"
+        },
+        "hideDurationLeft": {
+          "label": "Fela tímann sem eftir er"
+        },
+        "statusDisplayType": {
+          "label": "Stöðutexti",
+          "options": {
+            "name": "Hlustar á {{applicationName}}",
+            "state": "Hlustar á {artist}",
+            "details": "Hlustar á {song title}"
+          }
+        }
+      },
+      "actions": {
+        "clearActivity": {
+          "label": "Hreinsa virkni"
+        }
       }
     },
     "downloader": {
@@ -807,6 +859,23 @@
       "name": "Mynd-í-mynd",
       "templates": {
         "button": "Mynd-í-mynd"
+      },
+      "settings": {
+        "hotkey": {
+          "label": "Flýtilykil"
+        },
+        "useNativePiP": {
+          "label": "Notaðu innbyggða PiP í vafra"
+        },
+        "alwaysOnTop": {
+          "label": "Alltaf á toppnum"
+        },
+        "savePosition": {
+          "label": "Vista gluggastöðu"
+        },
+        "saveSize": {
+          "label": "Vista gluggastærð"
+        }
       }
     },
     "playback-speed": {
@@ -842,10 +911,21 @@
         }
       },
       "settings": {
-        "steps": "Skref hljóðstyrks",
+        "steps": {
+          "label": "Skref hljóðstyrks"
+        },
         "arrows-shortcut": "Flýtileiðir á örvatökkum",
         "shortcut-up": "Altæk flýtileið: hækka hljóð",
-        "shortcut-down": "Altæk flýtileið: lækka hljóð"
+        "shortcut-down": "Altæk flýtileið: lækka hljóð",
+        "arrowsShortcut": {
+          "label": "Flýtileiðir á örvatökkum"
+        },
+        "volumeUp": {
+          "label": "Altæk flýtileið: hækka hljóð"
+        },
+        "volumeDown": {
+          "label": "Altæk flýtileið: lækka hljóð"
+        }
       }
     },
     "quality-changer": {
@@ -944,7 +1024,28 @@
       },
       "settings": {
         "global-keybinds": "Altækir flýtilyklar (virkja í öllu forritinu)",
-        "local-keybinds": "Staðbundnir flýtilyklar (aðeins þegar glugginn hefur fókus)"
+        "local-keybinds": "Staðbundnir flýtilyklar (aðeins þegar glugginn hefur fókus)",
+        "playPause": {
+          "label": "Spila / Hlé"
+        },
+        "localPlayPause": {
+          "label": "Spila / Hlé"
+        },
+        "next": {
+          "label": "Næst"
+        },
+        "localNext": {
+          "label": "Næst"
+        },
+        "previous": {
+          "label": "Fyrri"
+        },
+        "localPrevious": {
+          "label": "Fyrri"
+        },
+        "overrideMediaKeys": {
+          "label": "Hneka Fjölmiðlalykla"
+        }
       }
     },
     "skip-disliked-songs": {
@@ -955,7 +1056,10 @@
       "description": "Slepptu sjálfkrafa þagnarköflum í lögum",
       "name": "Slepptu Þögnum",
       "settings": {
-        "only-skip-beginning": "Sleppa aðeins þögn í byrjun lags"
+        "only-skip-beginning": "Sleppa aðeins þögn í byrjun lags",
+        "onlySkipBeginning": {
+          "label": "Sleppa aðeins þögn í byrjun lags"
+        }
       }
     },
     "sponsorblock": {
@@ -971,7 +1075,28 @@
           "selfpromo": "Sjálfsauglýsing",
           "music_offtopic": "Hluti án tónlistar"
         },
-        "api-url": "API-slóð"
+        "api-url": "API-slóð",
+        "sponsor": {
+          "label": "Styrktaraðili"
+        },
+        "intro": {
+          "label": "Inngangur"
+        },
+        "outro": {
+          "label": "Útgangur"
+        },
+        "interaction": {
+          "label": "Áminning um þátttöku"
+        },
+        "selfpromo": {
+          "label": "Sjálfsauglýsing"
+        },
+        "music_offtopic": {
+          "label": "Hluti án tónlistar"
+        },
+        "apiURL": {
+          "label": "API-slóð"
+        }
       }
     },
     "synced-lyrics": {
@@ -1275,6 +1400,27 @@
       "templates": {
         "button-song": "Lag",
         "button-video": "Myndband"
+      },
+      "settings": {
+        "mode": {
+          "label": "Hamur",
+          "options": {
+            "custom": "Sérsniðinn rofi",
+            "native": "Innfæddsrofi",
+            "disabled": "Fötluð"
+          }
+        },
+        "align": {
+          "label": "Jöfnun",
+          "options": {
+            "left": "Vinstri",
+            "middle": "Miðja",
+            "right": "Rétt"
+          }
+        },
+        "forceHide": {
+          "label": "Þvingaðu fjarlægja myndbandsflipann"
+        }
       }
     },
     "visualizer": {
@@ -1284,7 +1430,9 @@
       },
       "name": "Sýndarstýringar",
       "settings": {
-        "preset": "Forstilling",
+        "preset": {
+          "label": "Forstilling"
+        },
         "blend-time": "Blendingartími",
         "effect": "Áhrif",
         "accuracy": "Nákvæmni",
@@ -1300,7 +1448,45 @@
         "dottify": "Punktgera",
         "dottify-description": "Teikna punkta í stað samfelldrar línu",
         "horizontal-align": "Lárétt jöfnun",
-        "vertical-align": "Lóðrétt jöfnun"
+        "vertical-align": "Lóðrétt jöfnun",
+        "blendTimeInSeconds": {
+          "label": "Blendingartími"
+        },
+        "vudioMaxHeight": {
+          "label": "Hámarkshæð"
+        },
+        "vudioMaxSize": {
+          "label": "Hámarksstærð"
+        },
+        "vudioLineWidth": {
+          "label": "Línubreidd"
+        },
+        "vudioColor": {
+          "label": "Litur"
+        },
+        "vudioShadowBlur": {
+          "label": "Skuggadreifing"
+        },
+        "vudioShadowColor": {
+          "label": "Skuggalitur"
+        },
+        "vudioFadeSide": {
+          "label": "Daufar hliðar"
+        },
+        "vudioPrettify": {
+          "label": "Fegra",
+          "description": "Gera súlurnar mjóari út að jaðrinum"
+        },
+        "vudioDottify": {
+          "label": "Punktgera",
+          "description": "Teikna punkta í stað samfelldrar línu"
+        },
+        "vudioHorizontalAlign": {
+          "label": "Lárétt jöfnun"
+        },
+        "vudioVerticalAlign": {
+          "label": "Lóðrétt jöfnun"
+        }
       }
     },
     "amuse": {
@@ -1345,7 +1531,13 @@
         }
       },
       "settings": {
-        "hour-12": "Nota 12 klukkustunda snið"
+        "hour-12": "Nota 12 klukkustunda snið",
+        "displaySeconds": {
+          "label": "Sýna sekúndur"
+        },
+        "hour12": {
+          "label": "Nota 12 klukkustunda snið"
+        }
       }
     },
     "custom-output-device": {
@@ -1403,7 +1595,25 @@
         }
       },
       "settings": {
-        "type-description": "Bakgrunnsefni sem notað er fyrir gegnsæi glugga"
+        "type-description": "Bakgrunnsefni sem notað er fyrir gegnsæi glugga",
+        "opacity": {
+          "label": "Ógegnsæi"
+        },
+        "type": {
+          "label": "Tegund",
+          "description": "Bakgrunnsefni sem notað er fyrir gegnsæi glugga",
+          "options": {
+            "acrylic": "Akryl",
+            "content": "Efni",
+            "fullscreen-ui": "Skjáfyllt viðmót",
+            "mica": "Míka",
+            "tabbed": "Flipar",
+            "under-page": "Undir síðu",
+            "under-window": "Undir glugga",
+            "window": "Gluggi",
+            "none": "Enginn"
+          }
+        }
       }
     },
     "unobtrusive-player": {
@@ -1477,7 +1687,15 @@
         "open-keybind": "Flýtileið til að opna",
         "open-keybind-description": "Hröðunarlykill í Electron-stíl, t.d. CmdOrCtrl+/ eða Alt+Space",
         "open-shortcut": "Opna leitarreitinn hvaðan sem er",
-        "open-shortcut-description": "Kallar fram leitarreitinn í skipanamhami, eins og Spotlight. Ýting á hann aftur lokar honum."
+        "open-shortcut-description": "Kallar fram leitarreitinn í skipanamhami, eins og Spotlight. Ýting á hann aftur lokar honum.",
+        "openShortcut": {
+          "label": "Opna leitarreitinn hvaðan sem er",
+          "description": "Kallar fram leitarreitinn í skipanamhami, eins og Spotlight. Ýting á hann aftur lokar honum."
+        },
+        "openKeybind": {
+          "label": "Flýtileið til að opna",
+          "description": "Hröðunarlykill í Electron-stíl, t.d. CmdOrCtrl+/ eða Alt+Space"
+        }
       }
     },
     "seek-shortcuts": {
@@ -1494,7 +1712,10 @@
     },
     "statusbar-lyrics": {
       "settings": {
-        "include-pronunciation": "Hafa framburð með"
+        "include-pronunciation": "Hafa framburð með",
+        "includePronunciation": {
+          "label": "Hafa framburð með"
+        }
       }
     },
     "dismiss-multidevice-popup": {
@@ -1506,7 +1727,11 @@
       "name": "Minnisvari",
       "settings": {
         "threshold": "Viðmiðunarmörk skyndiminnis",
-        "threshold-description": "Hreinsa skyndiminnin þegar raunminni þeirra fer yfir þessi mörk meðan glugginn er falinn"
+        "threshold-description": "Hreinsa skyndiminnin þegar raunminni þeirra fer yfir þessi mörk meðan glugginn er falinn",
+        "thresholdMB": {
+          "label": "Viðmiðunarmörk skyndiminnis",
+          "description": "Hreinsa skyndiminnin þegar raunminni þeirra fer yfir þessi mörk meðan glugginn er falinn"
+        }
       }
     }
   },

@@ -314,7 +314,15 @@
         },
         "enable-seekbar": "Увімкнути стилізацію (тему) повзунка прогресу"
       },
-      "name": "Кольорова тема альбому"
+      "name": "Кольорова тема альбому",
+      "settings": {
+        "ratio": {
+          "label": "Співвідношення змішування кольорів"
+        },
+        "enableSeekbar": {
+          "label": "Увімкнути стилізацію (тему) повзунка прогресу"
+        }
+      }
     },
     "ambient-mode": {
       "description": "Застосовує ефект освітлення, накладаючи ніжні кольори з відео на фон екрана",
@@ -497,6 +505,14 @@
         "caption-changed": "Субтитри змінені на {{language}}",
         "caption-disabled": "Субтитри вимкнені",
         "no-captions": "Немає доступних субтитрів для цієї пісні"
+      },
+      "settings": {
+        "autoload": {
+          "label": "Автоматичний вибір останніх використаних субтитрів"
+        },
+        "disableCaptions": {
+          "label": "За замовчуванням субтитри відсутні"
+        }
       }
     },
     "clock": {
@@ -510,7 +526,13 @@
       },
       "name": "Годинник",
       "settings": {
-        "hour-12": "Використовувати 12-годинний формат"
+        "hour-12": "Використовувати 12-годинний формат",
+        "displaySeconds": {
+          "label": "Відображати секунди"
+        },
+        "hour12": {
+          "label": "Використовувати 12-годинний формат"
+        }
       }
     },
     "compact-sidebar": {
@@ -569,7 +591,12 @@
       "menu": {
         "apply-once": "Застосовується тільки при запуску"
       },
-      "name": "Вимкнути автовідтворення"
+      "name": "Вимкнути автовідтворення",
+      "settings": {
+        "applyOnce": {
+          "label": "Застосовується тільки при запуску"
+        }
+      }
     },
     "discord": {
       "backend": {
@@ -609,7 +636,38 @@
         "activity-timeout-enabled": "Очищати присутність під час паузи",
         "activity-timeout-time": "Очищати через",
         "hide-github-button": "Приховати кнопку «Переглянути на GitHub»",
-        "hide-duration-left": "Приховати час, що залишився"
+        "hide-duration-left": "Приховати час, що залишився",
+        "autoReconnect": {
+          "label": "Автоматичне повторне підключення"
+        },
+        "activityTimeoutEnabled": {
+          "label": "Очищати присутність під час паузи"
+        },
+        "activityTimeoutSeconds": {
+          "label": "Очищати через"
+        },
+        "playButton": {
+          "label": "Слухати на {{applicationName}}"
+        },
+        "hideGitHubButton": {
+          "label": "Приховати кнопку «Переглянути на GitHub»"
+        },
+        "hideDurationLeft": {
+          "label": "Приховати час, що залишився"
+        },
+        "statusDisplayType": {
+          "label": "Статус",
+          "options": {
+            "name": "Відтворення з {{applicationName}}",
+            "state": "Ви слухаєте {artist}",
+            "details": "Ви слухаєте {song title}"
+          }
+        }
+      },
+      "actions": {
+        "clearActivity": {
+          "label": "Очистити активність"
+        }
       }
     },
     "do-not-track": {
@@ -900,6 +958,23 @@
       "name": "Картинка-у-картинці",
       "templates": {
         "button": "Картинка-у-картинці"
+      },
+      "settings": {
+        "hotkey": {
+          "label": "Гаряча клавіша"
+        },
+        "useNativePiP": {
+          "label": "Використовувати вбудований режим \"картинка-у-картинці\" браузера"
+        },
+        "alwaysOnTop": {
+          "label": "Завжди наверху"
+        },
+        "savePosition": {
+          "label": "Зберегти положення вікна"
+        },
+        "saveSize": {
+          "label": "Зберегти розмір вікна"
+        }
       }
     },
     "playback-speed": {
@@ -935,10 +1010,21 @@
         }
       },
       "settings": {
-        "steps": "Крок гучності",
+        "steps": {
+          "label": "Крок гучності"
+        },
         "arrows-shortcut": "Сполучення клавіш зі стрілками",
         "shortcut-up": "Глобальне сполучення клавіш: збільшення гучності",
-        "shortcut-down": "Глобальне сполучення клавіш: зменшення гучності"
+        "shortcut-down": "Глобальне сполучення клавіш: зменшення гучності",
+        "arrowsShortcut": {
+          "label": "Сполучення клавіш зі стрілками"
+        },
+        "volumeUp": {
+          "label": "Глобальне сполучення клавіш: збільшення гучності"
+        },
+        "volumeDown": {
+          "label": "Глобальне сполучення клавіш: зменшення гучності"
+        }
       }
     },
     "quality-changer": {
@@ -1037,7 +1123,28 @@
       },
       "settings": {
         "global-keybinds": "Глобальні гарячі клавіші (працюють у всьому застосунку)",
-        "local-keybinds": "Локальні гарячі клавіші (лише коли вікно у фокусі)"
+        "local-keybinds": "Локальні гарячі клавіші (лише коли вікно у фокусі)",
+        "playPause": {
+          "label": "Відтворення / Пауза"
+        },
+        "localPlayPause": {
+          "label": "Відтворення / Пауза"
+        },
+        "next": {
+          "label": "Наступний"
+        },
+        "localNext": {
+          "label": "Наступний"
+        },
+        "previous": {
+          "label": "Попередній"
+        },
+        "localPrevious": {
+          "label": "Попередній"
+        },
+        "overrideMediaKeys": {
+          "label": "Перевизначити мультимедійні клавіші"
+        }
       }
     },
     "skip-disliked-songs": {
@@ -1048,7 +1155,10 @@
       "description": "Автоматично пропускати тишу в піснях",
       "name": "Пропуск тиші",
       "settings": {
-        "only-skip-beginning": "Пропускати тишу лише на початку треку"
+        "only-skip-beginning": "Пропускати тишу лише на початку треку",
+        "onlySkipBeginning": {
+          "label": "Пропускати тишу лише на початку треку"
+        }
       }
     },
     "sponsorblock": {
@@ -1064,7 +1174,28 @@
           "selfpromo": "Самореклама",
           "music_offtopic": "Немузична частина"
         },
-        "api-url": "URL API"
+        "api-url": "URL API",
+        "sponsor": {
+          "label": "Спонсор"
+        },
+        "intro": {
+          "label": "Вступ"
+        },
+        "outro": {
+          "label": "Завершення"
+        },
+        "interaction": {
+          "label": "Нагадування про взаємодію"
+        },
+        "selfpromo": {
+          "label": "Самореклама"
+        },
+        "music_offtopic": {
+          "label": "Немузична частина"
+        },
+        "apiURL": {
+          "label": "URL API"
+        }
       }
     },
     "synced-lyrics": {
@@ -1365,7 +1496,25 @@
       },
       "name": "Прозорий Плеєр",
       "settings": {
-        "type-description": "Фоновий матеріал, що використовується для прозорості вікна"
+        "type-description": "Фоновий матеріал, що використовується для прозорості вікна",
+        "opacity": {
+          "label": "Прозорість"
+        },
+        "type": {
+          "label": "Тип",
+          "description": "Фоновий матеріал, що використовується для прозорості вікна",
+          "options": {
+            "acrylic": "Акриловий",
+            "content": "Вміст",
+            "fullscreen-ui": "Повноекранний інтерфейс",
+            "mica": "Міка",
+            "tabbed": "З роздільниками",
+            "under-page": "Під сторінкою",
+            "under-window": "Під вікном",
+            "window": "Вікно",
+            "none": "Жоден"
+          }
+        }
       }
     },
     "tuna-obs": {
@@ -1401,6 +1550,27 @@
       "templates": {
         "button-song": "Пісня",
         "button-video": "Відео"
+      },
+      "settings": {
+        "mode": {
+          "label": "Режим",
+          "options": {
+            "custom": "Власний перемикач",
+            "native": "Вбудований перемикач",
+            "disabled": "Вимкнено"
+          }
+        },
+        "align": {
+          "label": "Вирівнювання",
+          "options": {
+            "left": "Зліва",
+            "middle": "По центру",
+            "right": "Справа"
+          }
+        },
+        "forceHide": {
+          "label": "Примусово видалити вкладку відео"
+        }
       }
     },
     "visualizer": {
@@ -1410,7 +1580,9 @@
       },
       "name": "Візуалізація",
       "settings": {
-        "preset": "Передустановка",
+        "preset": {
+          "label": "Передустановка"
+        },
         "blend-time": "Час змішування",
         "effect": "Ефект",
         "accuracy": "Точність",
@@ -1426,7 +1598,45 @@
         "dottify": "Точковий стиль",
         "dottify-description": "Малювати точки замість безперервної лінії",
         "horizontal-align": "Горизонтальне вирівнювання",
-        "vertical-align": "Вертикальне вирівнювання"
+        "vertical-align": "Вертикальне вирівнювання",
+        "blendTimeInSeconds": {
+          "label": "Час змішування"
+        },
+        "vudioMaxHeight": {
+          "label": "Макс. висота"
+        },
+        "vudioMaxSize": {
+          "label": "Макс. розмір"
+        },
+        "vudioLineWidth": {
+          "label": "Ширина лінії"
+        },
+        "vudioColor": {
+          "label": "Колір"
+        },
+        "vudioShadowBlur": {
+          "label": "Розмиття тіні"
+        },
+        "vudioShadowColor": {
+          "label": "Колір тіні"
+        },
+        "vudioFadeSide": {
+          "label": "Затухання з боків"
+        },
+        "vudioPrettify": {
+          "label": "Покращення вигляду",
+          "description": "Звужувати смуги до країв"
+        },
+        "vudioDottify": {
+          "label": "Точковий стиль",
+          "description": "Малювати точки замість безперервної лінії"
+        },
+        "vudioHorizontalAlign": {
+          "label": "Горизонтальне вирівнювання"
+        },
+        "vudioVerticalAlign": {
+          "label": "Вертикальне вирівнювання"
+        }
       }
     },
     "audio-only": {
@@ -1477,7 +1687,15 @@
         "open-keybind": "Сполучення клавіш відкриття",
         "open-keybind-description": "Сполучення клавіш у стилі Electron, наприклад CmdOrCtrl+/ або Alt+Space",
         "open-shortcut": "Відкривати поле пошуку звідусіль",
-        "open-shortcut-description": "Викликає поле пошуку вже в режимі команд, як Spotlight. Повторне натискання закриває його."
+        "open-shortcut-description": "Викликає поле пошуку вже в режимі команд, як Spotlight. Повторне натискання закриває його.",
+        "openShortcut": {
+          "label": "Відкривати поле пошуку звідусіль",
+          "description": "Викликає поле пошуку вже в режимі команд, як Spotlight. Повторне натискання закриває його."
+        },
+        "openKeybind": {
+          "label": "Сполучення клавіш відкриття",
+          "description": "Сполучення клавіш у стилі Electron, наприклад CmdOrCtrl+/ або Alt+Space"
+        }
       }
     },
     "seek-shortcuts": {
@@ -1494,7 +1712,10 @@
     },
     "statusbar-lyrics": {
       "settings": {
-        "include-pronunciation": "Включати вимову"
+        "include-pronunciation": "Включати вимову",
+        "includePronunciation": {
+          "label": "Включати вимову"
+        }
       }
     },
     "dismiss-multidevice-popup": {
@@ -1506,7 +1727,11 @@
       "name": "Економія пам’яті",
       "settings": {
         "threshold": "Поріг кешу",
-        "threshold-description": "Очищати кеші, коли їхня активна пам’ять перевищує це значення, поки вікно приховане"
+        "threshold-description": "Очищати кеші, коли їхня активна пам’ять перевищує це значення, поки вікно приховане",
+        "thresholdMB": {
+          "label": "Поріг кешу",
+          "description": "Очищати кеші, коли їхня активна пам’ять перевищує це значення, поки вікно приховане"
+        }
       }
     }
   },

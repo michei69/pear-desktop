@@ -314,7 +314,15 @@
         },
         "enable-seekbar": "启用进度条主题"
       },
-      "name": "专辑配色主题"
+      "name": "专辑配色主题",
+      "settings": {
+        "ratio": {
+          "label": "颜色混合比例"
+        },
+        "enableSeekbar": {
+          "label": "启用进度条主题"
+        }
+      }
     },
     "ambient-mode": {
       "description": "将视频中的浅配色作为光效投射到背景中，以增加沉浸感",
@@ -497,6 +505,14 @@
         "caption-changed": "字幕语言更改为 {{language}}",
         "caption-disabled": "停用了字幕",
         "no-captions": "这首歌没有字幕"
+      },
+      "settings": {
+        "autoload": {
+          "label": "自动选择上次使用的字幕"
+        },
+        "disableCaptions": {
+          "label": "默认无字幕"
+        }
       }
     },
     "clock": {
@@ -510,7 +526,13 @@
       },
       "name": "时钟",
       "settings": {
-        "hour-12": "使用 12 小时制"
+        "hour-12": "使用 12 小时制",
+        "displaySeconds": {
+          "label": "显示秒数"
+        },
+        "hour12": {
+          "label": "使用 12 小时制"
+        }
       }
     },
     "compact-sidebar": {
@@ -569,7 +591,12 @@
       "menu": {
         "apply-once": "仅在程序启动时应用"
       },
-      "name": "禁用自动播放"
+      "name": "禁用自动播放",
+      "settings": {
+        "applyOnce": {
+          "label": "仅在程序启动时应用"
+        }
+      }
     },
     "discord": {
       "backend": {
@@ -609,7 +636,38 @@
         "activity-timeout-enabled": "暂停时清除状态",
         "activity-timeout-time": "清除延迟",
         "hide-github-button": "隐藏“在 GitHub 上查看”按钮",
-        "hide-duration-left": "隐藏剩余时间"
+        "hide-duration-left": "隐藏剩余时间",
+        "autoReconnect": {
+          "label": "自动重连"
+        },
+        "activityTimeoutEnabled": {
+          "label": "暂停时清除状态"
+        },
+        "activityTimeoutSeconds": {
+          "label": "清除延迟"
+        },
+        "playButton": {
+          "label": "转至 {{applicationName}} 播放"
+        },
+        "hideGitHubButton": {
+          "label": "隐藏“在 GitHub 上查看”按钮"
+        },
+        "hideDurationLeft": {
+          "label": "隐藏剩余时间"
+        },
+        "statusDisplayType": {
+          "label": "状态文本",
+          "options": {
+            "name": "在听 {{applicationName}}",
+            "state": "在听 {artist}",
+            "details": "在听 {song title}"
+          }
+        }
+      },
+      "actions": {
+        "clearActivity": {
+          "label": "清除状态"
+        }
       }
     },
     "do-not-track": {
@@ -900,6 +958,23 @@
       "name": "画中画",
       "templates": {
         "button": "画中画"
+      },
+      "settings": {
+        "hotkey": {
+          "label": "热键"
+        },
+        "useNativePiP": {
+          "label": "使用浏览器原生画中画功能"
+        },
+        "alwaysOnTop": {
+          "label": "保持置顶"
+        },
+        "savePosition": {
+          "label": "记住窗口位置"
+        },
+        "saveSize": {
+          "label": "记住窗口尺寸"
+        }
       }
     },
     "playback-speed": {
@@ -935,10 +1010,21 @@
         }
       },
       "settings": {
-        "steps": "音量步长",
+        "steps": {
+          "label": "音量步长"
+        },
         "arrows-shortcut": "方向键快捷键",
         "shortcut-up": "全局快捷键：增大音量",
-        "shortcut-down": "全局快捷键：减小音量"
+        "shortcut-down": "全局快捷键：减小音量",
+        "arrowsShortcut": {
+          "label": "方向键快捷键"
+        },
+        "volumeUp": {
+          "label": "全局快捷键：增大音量"
+        },
+        "volumeDown": {
+          "label": "全局快捷键：减小音量"
+        }
       }
     },
     "quality-changer": {
@@ -1037,7 +1123,28 @@
       },
       "settings": {
         "global-keybinds": "全局快捷键（在整个应用中生效）",
-        "local-keybinds": "本地快捷键（仅在窗口聚焦时生效）"
+        "local-keybinds": "本地快捷键（仅在窗口聚焦时生效）",
+        "playPause": {
+          "label": "播放/暂停"
+        },
+        "localPlayPause": {
+          "label": "播放/暂停"
+        },
+        "next": {
+          "label": "下一曲"
+        },
+        "localNext": {
+          "label": "下一曲"
+        },
+        "previous": {
+          "label": "上一曲"
+        },
+        "localPrevious": {
+          "label": "上一曲"
+        },
+        "overrideMediaKeys": {
+          "label": "覆盖物理媒体热键"
+        }
       }
     },
     "skip-disliked-songs": {
@@ -1048,7 +1155,10 @@
       "description": "自动跳过音乐中的无声片段",
       "name": "跳过无声片段",
       "settings": {
-        "only-skip-beginning": "仅跳过曲目开头的静音"
+        "only-skip-beginning": "仅跳过曲目开头的静音",
+        "onlySkipBeginning": {
+          "label": "仅跳过曲目开头的静音"
+        }
       }
     },
     "sponsorblock": {
@@ -1064,7 +1174,28 @@
           "selfpromo": "自我推广",
           "music_offtopic": "非音乐部分"
         },
-        "api-url": "API 地址"
+        "api-url": "API 地址",
+        "sponsor": {
+          "label": "赞助商"
+        },
+        "intro": {
+          "label": "片头"
+        },
+        "outro": {
+          "label": "片尾"
+        },
+        "interaction": {
+          "label": "互动提醒"
+        },
+        "selfpromo": {
+          "label": "自我推广"
+        },
+        "music_offtopic": {
+          "label": "非音乐部分"
+        },
+        "apiURL": {
+          "label": "API 地址"
+        }
       }
     },
     "synced-lyrics": {
@@ -1318,7 +1449,25 @@
       },
       "name": "透明播放器",
       "settings": {
-        "type-description": "用于窗口透明度的背景材质"
+        "type-description": "用于窗口透明度的背景材质",
+        "opacity": {
+          "label": "不透明"
+        },
+        "type": {
+          "label": "类型",
+          "description": "用于窗口透明度的背景材质",
+          "options": {
+            "acrylic": "亚克力",
+            "content": "内容",
+            "fullscreen-ui": "全屏用户界面",
+            "mica": "云母",
+            "tabbed": "标签",
+            "under-page": "页面下",
+            "under-window": "窗口下",
+            "window": "窗口",
+            "none": "无"
+          }
+        }
       }
     },
     "tuna-obs": {
@@ -1354,6 +1503,27 @@
       "templates": {
         "button-song": "歌曲",
         "button-video": "视频"
+      },
+      "settings": {
+        "mode": {
+          "label": "模式",
+          "options": {
+            "custom": "自定义开关样式",
+            "native": "原生开关样式",
+            "disabled": "禁用"
+          }
+        },
+        "align": {
+          "label": "位置对齐",
+          "options": {
+            "left": "左对齐",
+            "middle": "居中",
+            "right": "右对齐"
+          }
+        },
+        "forceHide": {
+          "label": "强制移除视频页"
+        }
       }
     },
     "visualizer": {
@@ -1363,7 +1533,9 @@
       },
       "name": "可视化效果",
       "settings": {
-        "preset": "预设",
+        "preset": {
+          "label": "预设"
+        },
         "blend-time": "混合时间",
         "effect": "效果",
         "accuracy": "精度",
@@ -1379,7 +1551,45 @@
         "dottify": "点状化",
         "dottify-description": "绘制点而不是连续线",
         "horizontal-align": "水平对齐",
-        "vertical-align": "垂直对齐"
+        "vertical-align": "垂直对齐",
+        "blendTimeInSeconds": {
+          "label": "混合时间"
+        },
+        "vudioMaxHeight": {
+          "label": "最大高度"
+        },
+        "vudioMaxSize": {
+          "label": "最大尺寸"
+        },
+        "vudioLineWidth": {
+          "label": "线宽"
+        },
+        "vudioColor": {
+          "label": "颜色"
+        },
+        "vudioShadowBlur": {
+          "label": "阴影模糊"
+        },
+        "vudioShadowColor": {
+          "label": "阴影颜色"
+        },
+        "vudioFadeSide": {
+          "label": "边缘淡出"
+        },
+        "vudioPrettify": {
+          "label": "美化",
+          "description": "让条形向边缘逐渐变细"
+        },
+        "vudioDottify": {
+          "label": "点状化",
+          "description": "绘制点而不是连续线"
+        },
+        "vudioHorizontalAlign": {
+          "label": "水平对齐"
+        },
+        "vudioVerticalAlign": {
+          "label": "垂直对齐"
+        }
       }
     },
     "audio-only": {
@@ -1430,7 +1640,15 @@
         "open-keybind": "打开快捷键",
         "open-keybind-description": "Electron 风格快捷键，例如 CmdOrCtrl+/ 或 Alt+Space",
         "open-shortcut": "从任意位置打开搜索框",
-        "open-shortcut-description": "唤起已处于命令模式的搜索框，类似 Spotlight。再次按下会关闭。"
+        "open-shortcut-description": "唤起已处于命令模式的搜索框，类似 Spotlight。再次按下会关闭。",
+        "openShortcut": {
+          "label": "从任意位置打开搜索框",
+          "description": "唤起已处于命令模式的搜索框，类似 Spotlight。再次按下会关闭。"
+        },
+        "openKeybind": {
+          "label": "打开快捷键",
+          "description": "Electron 风格快捷键，例如 CmdOrCtrl+/ 或 Alt+Space"
+        }
       }
     },
     "seek-shortcuts": {
@@ -1447,7 +1665,10 @@
     },
     "statusbar-lyrics": {
       "settings": {
-        "include-pronunciation": "包含发音"
+        "include-pronunciation": "包含发音",
+        "includePronunciation": {
+          "label": "包含发音"
+        }
       }
     },
     "dismiss-multidevice-popup": {
@@ -1459,7 +1680,11 @@
       "name": "内存节省",
       "settings": {
         "threshold": "缓存阈值",
-        "threshold-description": "当窗口隐藏时，一旦缓存的实时内存占用超过此值便清除缓存"
+        "threshold-description": "当窗口隐藏时，一旦缓存的实时内存占用超过此值便清除缓存",
+        "thresholdMB": {
+          "label": "缓存阈值",
+          "description": "当窗口隐藏时，一旦缓存的实时内存占用超过此值便清除缓存"
+        }
       }
     }
   },

@@ -314,7 +314,15 @@
         },
         "enable-seekbar": "啟用進度條主題樣式"
       },
-      "name": "隨歌曲色調變更主題"
+      "name": "隨歌曲色調變更主題",
+      "settings": {
+        "ratio": {
+          "label": "顏色混合程度"
+        },
+        "enableSeekbar": {
+          "label": "啟用進度條主題樣式"
+        }
+      }
     },
     "ambient-mode": {
       "description": "影片周圍背景根據影片內容改變顏色，讓觀眾在觀賞影片時更有臨場感",
@@ -497,6 +505,14 @@
         "caption-changed": "字幕語言已更改至 {{language}}",
         "caption-disabled": "字幕已停用",
         "no-captions": "這首歌曲沒有可用的字幕"
+      },
+      "settings": {
+        "autoload": {
+          "label": "自動選擇上次使用的字幕"
+        },
+        "disableCaptions": {
+          "label": "預設無字幕"
+        }
       }
     },
     "clock": {
@@ -510,7 +526,13 @@
       },
       "name": "時鐘",
       "settings": {
-        "hour-12": "使用 12 小時制"
+        "hour-12": "使用 12 小時制",
+        "displaySeconds": {
+          "label": "顯示秒數"
+        },
+        "hour12": {
+          "label": "使用 12 小時制"
+        }
       }
     },
     "compact-sidebar": {
@@ -569,7 +591,12 @@
       "menu": {
         "apply-once": "只在啟動程式時套用"
       },
-      "name": "停用自動播放"
+      "name": "停用自動播放",
+      "settings": {
+        "applyOnce": {
+          "label": "只在啟動程式時套用"
+        }
+      }
     },
     "discord": {
       "backend": {
@@ -609,7 +636,38 @@
         "activity-timeout-enabled": "暫停時清除線上狀態",
         "activity-timeout-time": "之後清除",
         "hide-github-button": "隱藏「在 GitHub 上檢視」按鈕",
-        "hide-duration-left": "隱藏剩餘時間"
+        "hide-duration-left": "隱藏剩餘時間",
+        "autoReconnect": {
+          "label": "自動重新連線"
+        },
+        "activityTimeoutEnabled": {
+          "label": "暫停時清除線上狀態"
+        },
+        "activityTimeoutSeconds": {
+          "label": "之後清除"
+        },
+        "playButton": {
+          "label": "顯示 Play on {{applicationName}} 按鈕"
+        },
+        "hideGitHubButton": {
+          "label": "隱藏「在 GitHub 上檢視」按鈕"
+        },
+        "hideDurationLeft": {
+          "label": "隱藏剩餘時間"
+        },
+        "statusDisplayType": {
+          "label": "狀態樣式",
+          "options": {
+            "name": "正在聆聽 {{applicationName}}",
+            "state": "正在聆聽 {artist} 的歌曲",
+            "details": "正在聆聽 {song title}"
+          }
+        }
+      },
+      "actions": {
+        "clearActivity": {
+          "label": "清除狀態"
+        }
       }
     },
     "do-not-track": {
@@ -900,6 +958,23 @@
       "name": "子母畫面",
       "templates": {
         "button": "子母畫面"
+      },
+      "settings": {
+        "hotkey": {
+          "label": "快捷鍵"
+        },
+        "useNativePiP": {
+          "label": "使用瀏覽器原生子母畫面模式"
+        },
+        "alwaysOnTop": {
+          "label": "最上層顯示"
+        },
+        "savePosition": {
+          "label": "記住視窗位置"
+        },
+        "saveSize": {
+          "label": "記住視窗大小"
+        }
       }
     },
     "playback-speed": {
@@ -935,10 +1010,21 @@
         }
       },
       "settings": {
-        "steps": "音量調整幅度",
+        "steps": {
+          "label": "音量調整幅度"
+        },
         "arrows-shortcut": "方向鍵快速鍵",
         "shortcut-up": "全域快速鍵：提高音量",
-        "shortcut-down": "全域快速鍵：降低音量"
+        "shortcut-down": "全域快速鍵：降低音量",
+        "arrowsShortcut": {
+          "label": "方向鍵快速鍵"
+        },
+        "volumeUp": {
+          "label": "全域快速鍵：提高音量"
+        },
+        "volumeDown": {
+          "label": "全域快速鍵：降低音量"
+        }
       }
     },
     "quality-changer": {
@@ -1037,7 +1123,28 @@
       },
       "settings": {
         "global-keybinds": "全域按鍵綁定（整個應用程式皆有效）",
-        "local-keybinds": "本機按鍵綁定（僅在視窗取得焦點時有效）"
+        "local-keybinds": "本機按鍵綁定（僅在視窗取得焦點時有效）",
+        "playPause": {
+          "label": "播放／暫停"
+        },
+        "localPlayPause": {
+          "label": "播放／暫停"
+        },
+        "next": {
+          "label": "下一首"
+        },
+        "localNext": {
+          "label": "下一首"
+        },
+        "previous": {
+          "label": "上一首"
+        },
+        "localPrevious": {
+          "label": "上一首"
+        },
+        "overrideMediaKeys": {
+          "label": "覆寫媒體快捷鍵"
+        }
       }
     },
     "skip-disliked-songs": {
@@ -1048,7 +1155,10 @@
       "description": "自動跳過音樂無聲片段",
       "name": "自動跳過無聲片段",
       "settings": {
-        "only-skip-beginning": "僅略過曲目開頭的靜音"
+        "only-skip-beginning": "僅略過曲目開頭的靜音",
+        "onlySkipBeginning": {
+          "label": "僅略過曲目開頭的靜音"
+        }
       }
     },
     "sponsorblock": {
@@ -1064,7 +1174,28 @@
           "selfpromo": "自我宣傳",
           "music_offtopic": "非音樂片段"
         },
-        "api-url": "API URL"
+        "api-url": "API URL",
+        "sponsor": {
+          "label": "贊助"
+        },
+        "intro": {
+          "label": "片頭"
+        },
+        "outro": {
+          "label": "片尾"
+        },
+        "interaction": {
+          "label": "互動提醒"
+        },
+        "selfpromo": {
+          "label": "自我宣傳"
+        },
+        "music_offtopic": {
+          "label": "非音樂片段"
+        },
+        "apiURL": {
+          "label": "API URL"
+        }
       }
     },
     "synced-lyrics": {
@@ -1365,7 +1496,25 @@
       },
       "name": "透明糢糊效果",
       "settings": {
-        "type-description": "用於視窗透明效果的背景材質"
+        "type-description": "用於視窗透明效果的背景材質",
+        "opacity": {
+          "label": "不透明度"
+        },
+        "type": {
+          "label": "樣式",
+          "description": "用於視窗透明效果的背景材質",
+          "options": {
+            "acrylic": "壓克力(Acrylic)",
+            "content": "內容",
+            "fullscreen-ui": "全螢幕界面",
+            "mica": "雲母(Mica)",
+            "tabbed": "分頁式(Tabbed)",
+            "under-page": "在頁面底下",
+            "under-window": "在視窗底下",
+            "window": "視窗",
+            "none": "無"
+          }
+        }
       }
     },
     "tuna-obs": {
@@ -1401,6 +1550,27 @@
       "templates": {
         "button-song": "歌曲",
         "button-video": "影片"
+      },
+      "settings": {
+        "mode": {
+          "label": "模式",
+          "options": {
+            "custom": "自訂樣式",
+            "native": "原生樣式",
+            "disabled": "停用"
+          }
+        },
+        "align": {
+          "label": "按鈕位置",
+          "options": {
+            "left": "靠左",
+            "middle": "中間",
+            "right": "靠右"
+          }
+        },
+        "forceHide": {
+          "label": "強制移除整個影片頁面"
+        }
       }
     },
     "visualizer": {
@@ -1410,7 +1580,9 @@
       },
       "name": "視覺化效果",
       "settings": {
-        "preset": "預設集",
+        "preset": {
+          "label": "預設集"
+        },
         "blend-time": "混合時間",
         "effect": "效果",
         "accuracy": "準確度",
@@ -1426,7 +1598,45 @@
         "dottify": "點狀化",
         "dottify-description": "繪製圓點而非連續線條",
         "horizontal-align": "水平對齊",
-        "vertical-align": "垂直對齊"
+        "vertical-align": "垂直對齊",
+        "blendTimeInSeconds": {
+          "label": "混合時間"
+        },
+        "vudioMaxHeight": {
+          "label": "最大高度"
+        },
+        "vudioMaxSize": {
+          "label": "最大尺寸"
+        },
+        "vudioLineWidth": {
+          "label": "線條寬度"
+        },
+        "vudioColor": {
+          "label": "顏色"
+        },
+        "vudioShadowBlur": {
+          "label": "陰影模糊"
+        },
+        "vudioShadowColor": {
+          "label": "陰影顏色"
+        },
+        "vudioFadeSide": {
+          "label": "淡化側邊"
+        },
+        "vudioPrettify": {
+          "label": "美化",
+          "description": "讓長條朝邊緣逐漸變細"
+        },
+        "vudioDottify": {
+          "label": "點狀化",
+          "description": "繪製圓點而非連續線條"
+        },
+        "vudioHorizontalAlign": {
+          "label": "水平對齊"
+        },
+        "vudioVerticalAlign": {
+          "label": "垂直對齊"
+        }
       }
     },
     "audio-only": {
@@ -1477,7 +1687,15 @@
         "open-keybind": "開啟快速鍵",
         "open-keybind-description": "Electron 樣式的快速鍵，例如 CmdOrCtrl+/ 或 Alt+Space",
         "open-shortcut": "從任何地方開啟搜尋框",
-        "open-shortcut-description": "叫出已處於命令模式的搜尋框，類似 Spotlight。再按一次即可關閉。"
+        "open-shortcut-description": "叫出已處於命令模式的搜尋框，類似 Spotlight。再按一次即可關閉。",
+        "openShortcut": {
+          "label": "從任何地方開啟搜尋框",
+          "description": "叫出已處於命令模式的搜尋框，類似 Spotlight。再按一次即可關閉。"
+        },
+        "openKeybind": {
+          "label": "開啟快速鍵",
+          "description": "Electron 樣式的快速鍵，例如 CmdOrCtrl+/ 或 Alt+Space"
+        }
       }
     },
     "seek-shortcuts": {
@@ -1494,7 +1712,10 @@
     },
     "statusbar-lyrics": {
       "settings": {
-        "include-pronunciation": "包含發音"
+        "include-pronunciation": "包含發音",
+        "includePronunciation": {
+          "label": "包含發音"
+        }
       }
     },
     "dismiss-multidevice-popup": {
@@ -1506,7 +1727,11 @@
       "name": "記憶體節省",
       "settings": {
         "threshold": "快取閾值",
-        "threshold-description": "當視窗隱藏時，若快取的即時記憶體用量超過此值，便清除快取"
+        "threshold-description": "當視窗隱藏時，若快取的即時記憶體用量超過此值，便清除快取",
+        "thresholdMB": {
+          "label": "快取閾值",
+          "description": "當視窗隱藏時，若快取的即時記憶體用量超過此值，便清除快取"
+        }
       }
     }
   },

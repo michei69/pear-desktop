@@ -321,7 +321,15 @@
         },
         "enable-seekbar": "Seekbar тиэмэлээһинин холбоо"
       },
-      "name": "Альбом Өҥүн Тиэмэтэ"
+      "name": "Альбом Өҥүн Тиэмэтэ",
+      "settings": {
+        "ratio": {
+          "label": "Өҥ холбуутун кээмэйэ"
+        },
+        "enableSeekbar": {
+          "label": "Seekbar тиэмэлээһинин холбоо"
+        }
+      }
     },
     "ambient-mode": {
       "description": "Видеоттан сымнаҕас өҥнөрү экран кэтэҕэр түһэрэн, сырдатыы эффектын туруорар",
@@ -504,6 +512,14 @@
         "caption-changed": "Тиитр {{language}}-ка уларыйда",
         "caption-disabled": "Тиитрдэр араарылыннылар",
         "no-captions": "Бу ырыаҕа тиитрдэр суохтар"
+      },
+      "settings": {
+        "autoload": {
+          "label": "Бүтэһик туттуллубут тиитри бэйэтинэн тал"
+        },
+        "disableCaptions": {
+          "label": "Көннөрүтүнэн тиитрэ суох"
+        }
       }
     },
     "clock": {
@@ -517,7 +533,13 @@
       },
       "name": "Чаһы",
       "settings": {
-        "hour-12": "12 чаастаах формааты туһан"
+        "hour-12": "12 чаастаах формааты туһан",
+        "displaySeconds": {
+          "label": "Сөкүүндэлэри көрдөр"
+        },
+        "hour12": {
+          "label": "12 чаастаах формааты туһан"
+        }
       }
     },
     "compact-sidebar": {
@@ -576,7 +598,12 @@
       "menu": {
         "apply-once": "Саҕаланыыга эрэ үлэлиир"
       },
-      "name": "Бэйэтинэн Оонньоону Араар"
+      "name": "Бэйэтинэн Оонньоону Араар",
+      "settings": {
+        "applyOnce": {
+          "label": "Саҕаланыыга эрэ үлэлиир"
+        }
+      }
     },
     "discord": {
       "backend": {
@@ -616,7 +643,38 @@
         "activity-timeout-enabled": "Паузаҕа статусу ыраастаа",
         "activity-timeout-time": "Ыраастаа иннинэ",
         "hide-github-button": "“View on GitHub” тимэҕи кистээ",
-        "hide-duration-left": "Хаалбыт кэми кистээ"
+        "hide-duration-left": "Хаалбыт кэми кистээ",
+        "autoReconnect": {
+          "label": "Аптамааттык холбон"
+        },
+        "activityTimeoutEnabled": {
+          "label": "Паузаҕа статусу ыраастаа"
+        },
+        "activityTimeoutSeconds": {
+          "label": "Ыраастаа иннинэ"
+        },
+        "playButton": {
+          "label": "{{applicationName}}-ка оонньоо"
+        },
+        "hideGitHubButton": {
+          "label": "“View on GitHub” тимэҕи кистээ"
+        },
+        "hideDurationLeft": {
+          "label": "Хаалбыт кэми кистээ"
+        },
+        "statusDisplayType": {
+          "label": "Статус текста",
+          "options": {
+            "name": "{{applicationName}} истэр",
+            "state": "{artist} истэр",
+            "details": "{song title} истэр"
+          }
+        }
+      },
+      "actions": {
+        "clearActivity": {
+          "label": "Дьайыыны ыраастаа"
+        }
       }
     },
     "downloader": {
@@ -888,6 +946,23 @@
       "name": "Ойуу иһигэр ойуу",
       "templates": {
         "button": "Ойуу иһигэр ойуу"
+      },
+      "settings": {
+        "hotkey": {
+          "label": "Түргэн кнопка"
+        },
+        "useNativePiP": {
+          "label": "Браузер төрүт PiP-ын тут"
+        },
+        "alwaysOnTop": {
+          "label": "Куруук Үрдүгэр"
+        },
+        "savePosition": {
+          "label": "Түннүк миэстэтин бигэргэт"
+        },
+        "saveSize": {
+          "label": "Түннүк кээмэйин бигэргэт"
+        }
       }
     },
     "playback-speed": {
@@ -923,10 +998,21 @@
         }
       },
       "settings": {
-        "steps": "Тыас кээмэйин хардыыта",
+        "steps": {
+          "label": "Тыас кээмэйин хардыыта"
+        },
         "arrows-shortcut": "Стрелка кнопкалар кылгас суоллара",
         "shortcut-up": "Глобальнай кылгас суол: тыаһы үрдэтии",
-        "shortcut-down": "Глобальнай кылгас суол: тыаһы намтатыы"
+        "shortcut-down": "Глобальнай кылгас суол: тыаһы намтатыы",
+        "arrowsShortcut": {
+          "label": "Стрелка кнопкалар кылгас суоллара"
+        },
+        "volumeUp": {
+          "label": "Глобальнай кылгас суол: тыаһы үрдэтии"
+        },
+        "volumeDown": {
+          "label": "Глобальнай кылгас суол: тыаһы намтатыы"
+        }
       }
     },
     "quality-changer": {
@@ -1025,14 +1111,38 @@
       },
       "settings": {
         "global-keybinds": "Глобальнай клавишалар (бүтүн программаҕа үлэлииллэр)",
-        "local-keybinds": "Локальнай клавишалар (түннүк фокустаах эрэ кэмигэр)"
+        "local-keybinds": "Локальнай клавишалар (түннүк фокустаах эрэ кэмигэр)",
+        "playPause": {
+          "label": "Оонньоо / Тохтоо"
+        },
+        "localPlayPause": {
+          "label": "Оонньоо / Тохтоо"
+        },
+        "next": {
+          "label": "Аныгыскы"
+        },
+        "localNext": {
+          "label": "Аныгыскы"
+        },
+        "previous": {
+          "label": "Иннинээҕи"
+        },
+        "localPrevious": {
+          "label": "Иннинээҕи"
+        },
+        "overrideMediaKeys": {
+          "label": "Медиа Кнопкаларын Уларыт"
+        }
       }
     },
     "skip-silences": {
       "description": "Ырыаларга уу-чуумпу чаастарын бэйэтинэн көтүтэр",
       "name": "Уу-чуумпуну Көтүт",
       "settings": {
-        "only-skip-beginning": "Ырыа саҕаланыытыгар эрэ саҥата суоҕу көтүт"
+        "only-skip-beginning": "Ырыа саҕаланыытыгар эрэ саҥата суоҕу көтүт",
+        "onlySkipBeginning": {
+          "label": "Ырыа саҕаланыытыгар эрэ саҥата суоҕу көтүт"
+        }
       }
     },
     "sponsorblock": {
@@ -1048,7 +1158,28 @@
           "selfpromo": "Бэйэни рекламалааһын",
           "music_offtopic": "Музыкаҕа сыһыана суох түһүмэх"
         },
-        "api-url": "API URL"
+        "api-url": "API URL",
+        "sponsor": {
+          "label": "Спонсор"
+        },
+        "intro": {
+          "label": "Киирии"
+        },
+        "outro": {
+          "label": "Түмүк"
+        },
+        "interaction": {
+          "label": "Хардалта өйдөтүүтэ"
+        },
+        "selfpromo": {
+          "label": "Бэйэни рекламалааһын"
+        },
+        "music_offtopic": {
+          "label": "Музыкаҕа сыһыана суох түһүмэх"
+        },
+        "apiURL": {
+          "label": "API URL"
+        }
       }
     },
     "synced-lyrics": {
@@ -1349,7 +1480,25 @@
       },
       "name": "Көстүмтүө Оонньооччу",
       "settings": {
-        "type-description": "Түннүк көстүүтүгэр туттуллар фон материал"
+        "type-description": "Түннүк көстүүтүгэр туттуллар фон материал",
+        "opacity": {
+          "label": "Сырдыга-хараҥата"
+        },
+        "type": {
+          "label": "Көрүҥэ",
+          "description": "Түннүк көстүүтүгэр туттуллар фон материал",
+          "options": {
+            "acrylic": "Акрил",
+            "content": "Контент",
+            "fullscreen-ui": "Толору экран UI",
+            "mica": "Mica",
+            "tabbed": "Вкладкалаах",
+            "under-page": "Сирэй аннына",
+            "under-window": "Түннүк аннына",
+            "window": "Түннүк",
+            "none": "Суох"
+          }
+        }
       }
     },
     "tuna-obs": {
@@ -1385,6 +1534,27 @@
       "templates": {
         "button-song": "Ырыа",
         "button-video": "Видео"
+      },
+      "settings": {
+        "mode": {
+          "label": "Режим",
+          "options": {
+            "custom": "Анал тумблер",
+            "native": "Төрүт тумблер",
+            "disabled": "Араарыллыбыт"
+          }
+        },
+        "align": {
+          "label": "Тэҥнээһин",
+          "options": {
+            "left": "Хаҥас",
+            "middle": "Орто",
+            "right": "Уҥа"
+          }
+        },
+        "forceHide": {
+          "label": "Видео вкладкатын күүстээн сот"
+        }
       }
     },
     "visualizer": {
@@ -1394,7 +1564,9 @@
       },
       "name": "Визуализатор",
       "settings": {
-        "preset": "Пресет",
+        "preset": {
+          "label": "Пресет"
+        },
         "blend-time": "Булуһуу кэмэ",
         "effect": "Эффект",
         "accuracy": "Чопчулуу",
@@ -1410,7 +1582,45 @@
         "dottify": "Чуоскалаа",
         "dottify-description": "Салҕаһан турар строка оннугар чуоскалары оҥор",
         "horizontal-align": "Көнөтүк тэҥнээһин",
-        "vertical-align": "Вертикальнай тэҥнээһин"
+        "vertical-align": "Вертикальнай тэҥнээһин",
+        "blendTimeInSeconds": {
+          "label": "Булуһуу кэмэ"
+        },
+        "vudioMaxHeight": {
+          "label": "Үрдүк муҥа"
+        },
+        "vudioMaxSize": {
+          "label": "Кээмэй муҥа"
+        },
+        "vudioLineWidth": {
+          "label": "Строка кэҥээһинэ"
+        },
+        "vudioColor": {
+          "label": "Өҥ"
+        },
+        "vudioShadowBlur": {
+          "label": "Күлүк сымнааһына"
+        },
+        "vudioShadowColor": {
+          "label": "Күлүк өҥө"
+        },
+        "vudioFadeSide": {
+          "label": "Кырыйдарын сымнатыы"
+        },
+        "vudioPrettify": {
+          "label": "Кэрэттэн",
+          "description": "Баардар кырыйдар диэки синньииллэр"
+        },
+        "vudioDottify": {
+          "label": "Чуоскалаа",
+          "description": "Салҕаһан турар строка оннугар чуоскалары оҥор"
+        },
+        "vudioHorizontalAlign": {
+          "label": "Көнөтүк тэҥнээһин"
+        },
+        "vudioVerticalAlign": {
+          "label": "Вертикальнай тэҥнээһин"
+        }
       }
     },
     "audio-only": {
@@ -1484,7 +1694,15 @@
         "open-keybind": "Аһар кылгас суол",
         "open-keybind-description": "Electron стилин accelerator, холобур CmdOrCtrl+/ эбэтэр Alt+Space",
         "open-shortcut": "Ханнык баҕарар сиртэн булуу түннүгүн аһын",
-        "open-shortcut-description": "Spotlight курдук, булуу түннүгүн команда режимигэр аһар. Хатылаан баттахха сабыллар."
+        "open-shortcut-description": "Spotlight курдук, булуу түннүгүн команда режимигэр аһар. Хатылаан баттахха сабыллар.",
+        "openShortcut": {
+          "label": "Ханнык баҕарар сиртэн булуу түннүгүн аһын",
+          "description": "Spotlight курдук, булуу түннүгүн команда режимигэр аһар. Хатылаан баттахха сабыллар."
+        },
+        "openKeybind": {
+          "label": "Аһар кылгас суол",
+          "description": "Electron стилин accelerator, холобур CmdOrCtrl+/ эбэтэр Alt+Space"
+        }
       }
     },
     "seek-shortcuts": {
@@ -1501,7 +1719,10 @@
     },
     "statusbar-lyrics": {
       "settings": {
-        "include-pronunciation": "Саҥарыыны киллэр"
+        "include-pronunciation": "Саҥарыыны киллэр",
+        "includePronunciation": {
+          "label": "Саҥарыыны киллэр"
+        }
       }
     },
     "dismiss-multidevice-popup": {
@@ -1513,7 +1734,11 @@
       "name": "Өйү харыстааччы",
       "settings": {
         "threshold": "Кэш таһыма",
-        "threshold-description": "Түннүк көстүбэт буоллаҕына, кээштэр олохтуур өйдөрө бу таһымтан аһардаҕына, кинилэри ыраастаа"
+        "threshold-description": "Түннүк көстүбэт буоллаҕына, кээштэр олохтуур өйдөрө бу таһымтан аһардаҕына, кинилэри ыраастаа",
+        "thresholdMB": {
+          "label": "Кэш таһыма",
+          "description": "Түннүк көстүбэт буоллаҕына, кээштэр олохтуур өйдөрө бу таһымтан аһардаҕына, кинилэри ыраастаа"
+        }
       }
     }
   },

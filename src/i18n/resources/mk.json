@@ -320,7 +320,28 @@
         "button-video": "Видео"
       },
       "description": "Додава копче за префрлање помеѓу Видео/Песна режим. Може опционално да го отстрани целото видео јазиче",
-      "name": "Видео Префрлач"
+      "name": "Видео Префрлач",
+      "settings": {
+        "mode": {
+          "label": "Режим",
+          "options": {
+            "custom": "Прилагодено префрлање",
+            "native": "Вградено префрлање",
+            "disabled": "Оневозможено"
+          }
+        },
+        "align": {
+          "label": "Порамнување",
+          "options": {
+            "left": "Лево",
+            "middle": "Средина",
+            "right": "Десно"
+          }
+        },
+        "forceHide": {
+          "label": "Присилно отстрани видео јазиче"
+        }
+      }
     },
     "ad-speedup": {
       "description": "Ако се пушта реклама, го исклучува звукот и ја поставува брзината на репродукција на 16x",
@@ -348,7 +369,15 @@
         },
         "enable-seekbar": "Овозможи тематизирање на лентата за пребарување"
       },
-      "name": "Тема на Бои на Албум"
+      "name": "Тема на Бои на Албум",
+      "settings": {
+        "ratio": {
+          "label": "Однос на мешање на бои"
+        },
+        "enableSeekbar": {
+          "label": "Овозможи тематизирање на лентата за пребарување"
+        }
+      }
     },
     "audio-only": {
       "description": "Присилува режим само за аудио — ги блокира сите видео стримови на мрежно и плејерско ниво за заштеда на RAM и пропусен опсег",
@@ -535,6 +564,14 @@
         "caption-changed": "Титлите се променети на {{language}}",
         "caption-disabled": "Титлите се оневозможени",
         "no-captions": "Нема достапни титли за оваа песна"
+      },
+      "settings": {
+        "autoload": {
+          "label": "Автоматски изберете последно користен превод"
+        },
+        "disableCaptions": {
+          "label": "Без титли по стандардно"
+        }
       }
     },
     "clock": {
@@ -548,7 +585,13 @@
       },
       "name": "Часовник",
       "settings": {
-        "hour-12": "Користи 12-часовен формат"
+        "hour-12": "Користи 12-часовен формат",
+        "displaySeconds": {
+          "label": "Прикажи Секунди"
+        },
+        "hour12": {
+          "label": "Користи 12-часовен формат"
+        }
       }
     },
     "compact-sidebar": {
@@ -607,7 +650,12 @@
       "menu": {
         "apply-once": "Се применува само при стартување"
       },
-      "name": "Оневозможи Автоматска Репродукција"
+      "name": "Оневозможи Автоматска Репродукција",
+      "settings": {
+        "applyOnce": {
+          "label": "Се применува само при стартување"
+        }
+      }
     },
     "discord": {
       "backend": {
@@ -647,7 +695,38 @@
         "activity-timeout-enabled": "Исчисти присуство кога е паузирано",
         "activity-timeout-time": "Исчисти по",
         "hide-github-button": "Скриј го копчето „Види на GitHub“",
-        "hide-duration-left": "Скриј го преостанатото време"
+        "hide-duration-left": "Скриј го преостанатото време",
+        "autoReconnect": {
+          "label": "Автоматско повторно поврзување"
+        },
+        "activityTimeoutEnabled": {
+          "label": "Исчисти присуство кога е паузирано"
+        },
+        "activityTimeoutSeconds": {
+          "label": "Исчисти по"
+        },
+        "playButton": {
+          "label": "Пушти на {{applicationName}}"
+        },
+        "hideGitHubButton": {
+          "label": "Скриј го копчето „Види на GitHub“"
+        },
+        "hideDurationLeft": {
+          "label": "Скриј го преостанатото време"
+        },
+        "statusDisplayType": {
+          "label": "Текст на статус",
+          "options": {
+            "name": "Слушање на {{applicationName}}",
+            "state": "Слушање на {artist}",
+            "details": "Слушање на {song title}"
+          }
+        }
+      },
+      "actions": {
+        "clearActivity": {
+          "label": "Исчисти активност"
+        }
       }
     },
     "downloader": {
@@ -932,6 +1011,23 @@
       "name": "Слика-во-Слика",
       "templates": {
         "button": "Слика-во-Слика"
+      },
+      "settings": {
+        "hotkey": {
+          "label": "Топло копче"
+        },
+        "useNativePiP": {
+          "label": "Користи вграден PiP на прелистувачот"
+        },
+        "alwaysOnTop": {
+          "label": "Секогаш на врв"
+        },
+        "savePosition": {
+          "label": "Зачувај позиција на прозорец"
+        },
+        "saveSize": {
+          "label": "Зачувај големина на прозорец"
+        }
       }
     },
     "playback-speed": {
@@ -967,10 +1063,21 @@
         }
       },
       "settings": {
-        "steps": "Чекор на јачината",
+        "steps": {
+          "label": "Чекор на јачината"
+        },
         "arrows-shortcut": "Кратенки со стрелки",
         "shortcut-up": "Глобална кратенка: зголемување на јачината",
-        "shortcut-down": "Глобална кратенка: намалување на јачината"
+        "shortcut-down": "Глобална кратенка: намалување на јачината",
+        "arrowsShortcut": {
+          "label": "Кратенки со стрелки"
+        },
+        "volumeUp": {
+          "label": "Глобална кратенка: зголемување на јачината"
+        },
+        "volumeDown": {
+          "label": "Глобална кратенка: намалување на јачината"
+        }
       }
     },
     "quality-changer": {
@@ -1069,14 +1176,38 @@
       },
       "settings": {
         "global-keybinds": "Глобални кратенки (работат во целата апликација)",
-        "local-keybinds": "Локални кратенки (само додека прозорецот е фокусиран)"
+        "local-keybinds": "Локални кратенки (само додека прозорецот е фокусиран)",
+        "playPause": {
+          "label": "Пушти / Паузирај"
+        },
+        "localPlayPause": {
+          "label": "Пушти / Паузирај"
+        },
+        "next": {
+          "label": "Следно"
+        },
+        "localNext": {
+          "label": "Следно"
+        },
+        "previous": {
+          "label": "Претходно"
+        },
+        "localPrevious": {
+          "label": "Претходно"
+        },
+        "overrideMediaKeys": {
+          "label": "Презапиши Медиумски Копчиња"
+        }
       }
     },
     "skip-silences": {
       "description": "Автоматски прескокнувај ги деловите со тишина во песните",
       "name": "Прескокни Тишини",
       "settings": {
-        "only-skip-beginning": "Прескокнувај тишина само на почетокот на песната"
+        "only-skip-beginning": "Прескокнувај тишина само на почетокот на песната",
+        "onlySkipBeginning": {
+          "label": "Прескокнувај тишина само на почетокот на песната"
+        }
       }
     },
     "sponsorblock": {
@@ -1092,7 +1223,28 @@
           "selfpromo": "Самопромоција",
           "music_offtopic": "Не-музички дел"
         },
-        "api-url": "API URL"
+        "api-url": "API URL",
+        "sponsor": {
+          "label": "Спонзор"
+        },
+        "intro": {
+          "label": "Вовед"
+        },
+        "outro": {
+          "label": "Завршница"
+        },
+        "interaction": {
+          "label": "Потсетник за интеракција"
+        },
+        "selfpromo": {
+          "label": "Самопромоција"
+        },
+        "music_offtopic": {
+          "label": "Не-музички дел"
+        },
+        "apiURL": {
+          "label": "API URL"
+        }
       }
     },
     "synced-lyrics": {
@@ -1393,7 +1545,25 @@
       },
       "name": "Транспарентен Плејер",
       "settings": {
-        "type-description": "Материјал за позадина што се користи за проѕирност на прозорецот"
+        "type-description": "Материјал за позадина што се користи за проѕирност на прозорецот",
+        "opacity": {
+          "label": "Непроѕирност"
+        },
+        "type": {
+          "label": "Тип",
+          "description": "Материјал за позадина што се користи за проѕирност на прозорецот",
+          "options": {
+            "acrylic": "Акрил",
+            "content": "Содржина",
+            "fullscreen-ui": "Интерфејс на цел екран",
+            "mica": "Мика",
+            "tabbed": "Табови",
+            "under-page": "Под страница",
+            "under-window": "Под прозорец",
+            "window": "Прозорец",
+            "none": "Ништо"
+          }
+        }
       }
     },
     "tuna-obs": {
@@ -1411,7 +1581,9 @@
       },
       "name": "Визуелизатор",
       "settings": {
-        "preset": "Пресет",
+        "preset": {
+          "label": "Пресет"
+        },
         "blend-time": "Време на мешање",
         "effect": "Ефект",
         "accuracy": "Прецизност",
@@ -1427,7 +1599,45 @@
         "dottify": "Точкирање",
         "dottify-description": "Цртај точки наместо непрекината линија",
         "horizontal-align": "Хоризонтално порамнување",
-        "vertical-align": "Вертикално порамнување"
+        "vertical-align": "Вертикално порамнување",
+        "blendTimeInSeconds": {
+          "label": "Време на мешање"
+        },
+        "vudioMaxHeight": {
+          "label": "Максимална височина"
+        },
+        "vudioMaxSize": {
+          "label": "Максимална големина"
+        },
+        "vudioLineWidth": {
+          "label": "Ширина на линија"
+        },
+        "vudioColor": {
+          "label": "Боја"
+        },
+        "vudioShadowBlur": {
+          "label": "Заматување на сенка"
+        },
+        "vudioShadowColor": {
+          "label": "Боја на сенка"
+        },
+        "vudioFadeSide": {
+          "label": "Избледување на страните"
+        },
+        "vudioPrettify": {
+          "label": "Убавување",
+          "description": "Стеснувај ги лентите кон рабовите"
+        },
+        "vudioDottify": {
+          "label": "Точкирање",
+          "description": "Цртај точки наместо непрекината линија"
+        },
+        "vudioHorizontalAlign": {
+          "label": "Хоризонтално порамнување"
+        },
+        "vudioVerticalAlign": {
+          "label": "Вертикално порамнување"
+        }
       }
     },
     "playlist-search": {
@@ -1480,7 +1690,15 @@
         "open-keybind": "Кратенка за отворање",
         "open-keybind-description": "Забрзувач во стил на Electron, на пр. CmdOrCtrl+/ или Alt+Space",
         "open-shortcut": "Отвори го полето за пребарување од каде било",
-        "open-shortcut-description": "Го повикува полето за пребарување веќе во режим на команди, како Spotlight. Повторното притискање го затвора."
+        "open-shortcut-description": "Го повикува полето за пребарување веќе во режим на команди, како Spotlight. Повторното притискање го затвора.",
+        "openShortcut": {
+          "label": "Отвори го полето за пребарување од каде било",
+          "description": "Го повикува полето за пребарување веќе во режим на команди, како Spotlight. Повторното притискање го затвора."
+        },
+        "openKeybind": {
+          "label": "Кратенка за отворање",
+          "description": "Забрзувач во стил на Electron, на пр. CmdOrCtrl+/ или Alt+Space"
+        }
       }
     },
     "seek-shortcuts": {
@@ -1497,7 +1715,10 @@
     },
     "statusbar-lyrics": {
       "settings": {
-        "include-pronunciation": "Вклучи изговор"
+        "include-pronunciation": "Вклучи изговор",
+        "includePronunciation": {
+          "label": "Вклучи изговор"
+        }
       }
     },
     "dismiss-multidevice-popup": {
@@ -1509,7 +1730,11 @@
       "name": "Заштеда на меморија",
       "settings": {
         "threshold": "Праг на кешот",
-        "threshold-description": "Исчисти ги кешовите кога нивната активна меморија ќе го надмине овој праг додека прозорецот е скриен"
+        "threshold-description": "Исчисти ги кешовите кога нивната активна меморија ќе го надмине овој праг додека прозорецот е скриен",
+        "thresholdMB": {
+          "label": "Праг на кешот",
+          "description": "Исчисти ги кешовите кога нивната активна меморија ќе го надмине овој праг додека прозорецот е скриен"
+        }
       }
     }
   },
