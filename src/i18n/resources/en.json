@@ -2708,6 +2708,72 @@
         },
         "romanizationMigrated": {
           "label": "Romanization settings migrated"
+        },
+        "romanizeTamil": {
+          "label": "Tamil"
+        },
+        "romanizeTelugu": {
+          "label": "Telugu"
+        },
+        "romanizeKannada": {
+          "label": "Kannada"
+        },
+        "romanizeMalayalam": {
+          "label": "Malayalam"
+        },
+        "romanizeGujarati": {
+          "label": "Gujarati"
+        },
+        "romanizePunjabi": {
+          "label": "Punjabi"
+        },
+        "romanizeOdia": {
+          "label": "Odia"
+        },
+        "romanizePersian": {
+          "label": "Persian"
+        },
+        "romanizeUrdu": {
+          "label": "Urdu"
+        },
+        "romanizeGreek": {
+          "label": "Greek"
+        },
+        "romanizeArmenian": {
+          "label": "Armenian"
+        },
+        "romanizeGeorgian": {
+          "label": "Georgian"
+        },
+        "romanizationScripts": {
+          "label": "Languages",
+          "description": "Lyrics written in these scripts get a romanized line under the original.",
+          "options": {
+            "ja": "Japanese",
+            "ko": "Korean",
+            "zh": "Chinese",
+            "th": "Thai",
+            "bn": "Bengali",
+            "hi": "Hindi",
+            "ta": "Tamil",
+            "te": "Telugu",
+            "kn": "Kannada",
+            "ml": "Malayalam",
+            "gu": "Gujarati",
+            "pa": "Punjabi",
+            "or": "Odia",
+            "ar": "Arabic",
+            "fa": "Persian",
+            "ur": "Urdu",
+            "he": "Hebrew",
+            "el": "Greek",
+            "hy": "Armenian",
+            "ka": "Georgian",
+            "ru": "Cyrillic"
+          }
+        },
+        "romanizationScriptsMigrated": {
+          "label": "Romanization languages migrated"
         }
       },
       "musixmatch": {

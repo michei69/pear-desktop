@@ -5,7 +5,7 @@ import type { PageContextOf } from "@pear/sdk";
 import { isolateKeys, shadowHost } from "@pear/sdk/dom";
 import { readSongDetails } from "@pear/sdk/song-details";
 import { render } from "preact";
-import { ROMANIZATION_KEYS, type LyricsConfig, type schema } from "../schema.ts";
+import type { LyricsConfig, schema } from "../schema.ts";
 import {
   ROMANIZATION_SCRIPTS,
   type CustomQuery,
@@ -44,7 +44,7 @@ const storeOptions = (config: LyricsConfig): Options => ({
   preferred: config.preferredProvider,
   inexact: config.showLyricsEvenIfInexact,
   romanization: Object.fromEntries(
-    ROMANIZATION_SCRIPTS.map((script) => [script, config[ROMANIZATION_KEYS[script]]]),
+    ROMANIZATION_SCRIPTS.map((script) => [script, config.romanizationScripts.includes(script)]),
   ) as RomanizationSettings,
   chinese: config.convertChinese,
   priority: config.providerPriority,

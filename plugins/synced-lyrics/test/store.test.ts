@@ -308,7 +308,9 @@ describe("romanization", () => {
     expect(detectScripts(["Hello", "사랑해", "我爱你"])).toEqual([null, "ko", "zh"]);
     // A kanji-only line in a song with kana is Japanese.
     expect(detectScripts(["愛してる", "永遠", "hello"])).toEqual(["ja", "ja", null]);
-    expect(detectScripts(["مرحبا", "שלום", "Привет", "hello"])).toEqual(["ar", "he", "ru", null]);
+    expect(detectScripts(["مرحبا", "پارسی", "ٹماٹر", "שלום", "Привет", "hello"])).toEqual(["ar", "fa", "ur", "he", "ru", null]);
+    expect(detectScripts(["Γειά", "Բարեւ", "გამარჯობა"])).toEqual(["el", "hy", "ka"]);
+    expect(detectScripts(["தமிழ்", "తెలుగు", "ಕನ್ನಡ", "മലയാളം", "ગુજરાતી", "ਪੰਜਾਬੀ", "ଓଡ଼ିଆ"])).toEqual(["ta", "te", "kn", "ml", "gu", "pa", "or"]);
   });
 
   test("Thai, Bengali and Hindi, per line, as pear-desktop", async () => {
@@ -320,14 +322,37 @@ describe("romanization", () => {
     expect(hi).toBe("pyara");
   });
 
-  test("romanizes Arabic, Hebrew and Cyrillic without network", async () => {
+  test("romanizes Arabic, Hebrew, Greek, Armenian, Georgian and Cyrillic without network", async () => {
     const romanizer = new Romanizer("/nonexistent", () => Promise.reject(new Error("no network in tests")));
-    const [ar, he, ru, off] = await romanizer.romanize(["مرحبا", "שלום", "Привет", "hello"], ["ar", "he", "ru"]);
+    const [ar, fa, ur, he, el, hy, ka, ru, off] = await romanizer.romanize(
+      ["مرحبا", "پارسی", "ٹماٹر", "שלום", "Γειά", "Բարեւ", "გამარჯობა", "Привет", "hello"],
+      ["ar", "fa", "ur", "he", "el", "hy", "ka", "ru"],
+    );
     expect(ar).toBe("mrhb");
+    expect(fa).toBe("prsy");
+    expect(ur).toBe("tmtr");
     expect(he).toBe("slvm");
+    expect(el).toBe("Geia");
+    expect(hy).toBe("Barew");
+    expect(ka).toBe("gamarjoba");
     expect(ru).toBe("Privet");
     expect(off).toBeNull();
     expect(await romanizer.romanize(["Привет"], ["ar"])).toEqual([null]);
+  });
+
+  test("romanizes the Indic scripts through Sanscript without network", async () => {
+    const romanizer = new Romanizer("/nonexistent", () => Promise.reject(new Error("no network in tests")));
+    const [ta, te, kn, ml, gu, pa, or] = await romanizer.romanize(
+      ["தமிழ்", "తెలుగు", "ಕನ್ನಡ", "മലയാളം", "ગુજરાતી", "ਪੰਜਾਬੀ", "ଓଡ଼ିଆ"],
+      ["ta", "te", "kn", "ml", "gu", "pa", "or"],
+    );
+    expect(ta).toBe("dhamil");
+    expect(te).toBe("telugu");
+    expect(kn).toBe("kannada");
+    expect(ml).toBe("malayalam");
+    expect(gu).toBe("gujarati");
+    expect(pa).toBe("pamjabi");
+    expect(or).toBe("odaia");
   });
 
   test("romanizes Korean and Chinese without network", async () => {

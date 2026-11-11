@@ -24,14 +24,16 @@ export default definePlugin({
   config: schema,
   host: {
     start(ctx) {
-      // Older configs had one master Romanize lyrics switch. Copy it onto every
-      // language once, so upgrading keeps the same lines romanized.
-      if (!ctx.config.romanizationMigrated) {
-        const on = ctx.config.romanization !== false;
-        ctx.setConfig({
-          ...Object.fromEntries(ROMANIZATION_SCRIPTS.map((script) => [ROMANIZATION_KEYS[script], on])),
-          romanizationMigrated: true,
-        });
+      // Older configs had one master switch, then one switch per script. Turn
+      // either into the language list once, so upgrading keeps the same lines
+      // romanized.
+      if (!ctx.config.romanizationScriptsMigrated) {
+        const scripts = ctx.config.romanizationMigrated
+          ? ROMANIZATION_SCRIPTS.filter((script) => ctx.config[ROMANIZATION_KEYS[script]])
+          : ctx.config.romanization === false
+            ? []
+            : [...ROMANIZATION_SCRIPTS];
+        ctx.setConfig({ romanizationScripts: scripts, romanizationMigrated: true, romanizationScriptsMigrated: true });
       }
       hosts.set(ctx, new LyricsHost(ctx.app.getPath("userData"), ctx.app.getLocale()));
       return () => void hosts.delete(ctx);

@@ -17,16 +17,27 @@ const THAI = /[\u0E00-\u0E7F]/;
 const BENGALI = /[\u0980-\u09FF]/;
 const DEVANAGARI = /[\u0900-\u097F]/;
 const ARABIC = /\p{Script=Arabic}/u;
+const PERSIAN = /[پچژگک]/;
+const URDU = /[ٹڈڑںھہےۓ]/;
 const HEBREW = /\p{Script=Hebrew}/u;
+const GREEK = /\p{Script=Greek}/u;
+const ARMENIAN = /\p{Script=Armenian}/u;
+const GEORGIAN = /\p{Script=Georgian}/u;
 const CYRILLIC = /\p{Script=Cyrillic}/u;
+const TAMIL = /\p{Script=Tamil}/u;
+const TELUGU = /\p{Script=Telugu}/u;
+const KANNADA = /\p{Script=Kannada}/u;
+const MALAYALAM = /\p{Script=Malayalam}/u;
+const GUJARATI = /\p{Script=Gujarati}/u;
+const GURMUKHI = /\p{Script=Gurmukhi}/u;
+const ORIYA = /\p{Script=Oriya}/u;
 
 export type Script = RomanizationScript;
 
 /**
  * Per line, except for kanji: decided per song, since a kanji-only line in a
  * Japanese song is Japanese, not Chinese (per-line guessing is how
- * romanization regressed upstream). Thai, Bengali and Devanagari (Hindi) are
- * unambiguous per line, as pear-desktop romanized them.
+ * romanization regressed upstream). Unequal scripts are unambiguous per line.
  */
 export function detectScripts(lines: readonly string[]): (Script | null)[] {
   const japanese = lines.some((line) => KANA.test(line));
@@ -34,12 +45,22 @@ export function detectScripts(lines: readonly string[]): (Script | null)[] {
     if (HANGUL.test(line)) return "ko";
     if (KANA.test(line) || (japanese && HAN.test(line))) return "ja";
     if (HAN.test(line)) return "zh";
-    if (ARABIC.test(line)) return "ar";
+    if (ARABIC.test(line)) return URDU.test(line) ? "ur" : PERSIAN.test(line) ? "fa" : "ar";
     if (HEBREW.test(line)) return "he";
+    if (GREEK.test(line)) return "el";
+    if (ARMENIAN.test(line)) return "hy";
+    if (GEORGIAN.test(line)) return "ka";
     if (CYRILLIC.test(line)) return "ru";
     if (THAI.test(line)) return "th";
     if (BENGALI.test(line)) return "bn";
     if (DEVANAGARI.test(line)) return "hi";
+    if (TAMIL.test(line)) return "ta";
+    if (TELUGU.test(line)) return "te";
+    if (KANNADA.test(line)) return "kn";
+    if (MALAYALAM.test(line)) return "ml";
+    if (GUJARATI.test(line)) return "gu";
+    if (GURMUKHI.test(line)) return "pa";
+    if (ORIYA.test(line)) return "or";
     return null;
   });
 }
@@ -136,7 +157,12 @@ export class Romanizer {
         return romanizeJapaneseLine(line, engine);
       }
       case "ar":
+      case "fa":
+      case "ur":
       case "he":
+      case "el":
+      case "hy":
+      case "ka":
       case "ru": {
         const anyAscii = defaultExport(await import("any-ascii"));
         return anyAscii(line);
@@ -147,6 +173,20 @@ export class Romanizer {
         return romanizeIndic(line, "bengali");
       case "hi":
         return romanizeIndic(line, "devanagari");
+      case "ta":
+        return romanizeIndic(line, "tamil");
+      case "te":
+        return romanizeIndic(line, "telugu");
+      case "kn":
+        return romanizeIndic(line, "kannada");
+      case "ml":
+        return romanizeIndic(line, "malayalam");
+      case "gu":
+        return romanizeIndic(line, "gujarati");
+      case "pa":
+        return romanizeIndic(line, "gurmukhi");
+      case "or":
+        return romanizeIndic(line, "oriya");
     }
   }
 
@@ -243,7 +283,10 @@ async function romanizeThai(line: string) {
 }
 
 /** pear-desktop's Bengali and Hindi romanization: IAST through Sanscript, without the accents. */
-async function romanizeIndic(line: string, scheme: "bengali" | "devanagari") {
+async function romanizeIndic(
+  line: string,
+  scheme: "bengali" | "devanagari" | "tamil" | "telugu" | "kannada" | "malayalam" | "gujarati" | "gurmukhi" | "oriya",
+) {
   const Sanscript = defaultExport(await import("@indic-transliteration/sanscript")) as {
     t(text: string, from: string, to: string): string;
   };
@@ -251,7 +294,7 @@ async function romanizeIndic(line: string, scheme: "bengali" | "devanagari") {
     const out = Sanscript.t(line, scheme, "iast")
       .normalize("NFD")
       .replace(/[\u0300-\u036f]/g, "");
-    return scheme === "bengali" ? out.replace(/[\u09BC\u09BE-\u09CD]/g, "").toLowerCase() : out.replace(/[^a-zA-Z\s]/g, "") || line;
+    return out.replace(/[^a-zA-Z\s]/g, "").toLowerCase() || line;
   } catch {
     return line;
   }

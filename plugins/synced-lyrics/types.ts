@@ -121,9 +121,55 @@ export const TRANSLATION_PROVIDER_NAMES: Record<TranslationProviderName, string>
 };
 
 /** Scripts the lyric tab can romanize. */
-export const ROMANIZATION_SCRIPTS = ["ja", "ko", "zh", "th", "bn", "hi", "ar", "he", "ru"] as const;
+export const ROMANIZATION_SCRIPTS = [
+  "ja",
+  "ko",
+  "zh",
+  "th",
+  "bn",
+  "hi",
+  "ta",
+  "te",
+  "kn",
+  "ml",
+  "gu",
+  "pa",
+  "or",
+  "ar",
+  "fa",
+  "ur",
+  "he",
+  "el",
+  "hy",
+  "ka",
+  "ru",
+] as const;
 export type RomanizationScript = (typeof ROMANIZATION_SCRIPTS)[number];
 export type RomanizationSettings = Record<RomanizationScript, boolean>;
+
+export const ROMANIZATION_SCRIPT_NAMES: Record<RomanizationScript, string> = {
+  ja: "Japanese",
+  ko: "Korean",
+  zh: "Chinese",
+  th: "Thai",
+  bn: "Bengali",
+  hi: "Hindi",
+  ta: "Tamil",
+  te: "Telugu",
+  kn: "Kannada",
+  ml: "Malayalam",
+  gu: "Gujarati",
+  pa: "Punjabi",
+  or: "Odia",
+  ar: "Arabic",
+  fa: "Persian",
+  ur: "Urdu",
+  he: "Hebrew",
+  el: "Greek",
+  hy: "Armenian",
+  ka: "Georgian",
+  ru: "Cyrillic",
+};
 
 export type TranslationTargetLanguage =
   | "auto"

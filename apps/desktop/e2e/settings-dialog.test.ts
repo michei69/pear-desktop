@@ -136,7 +136,7 @@ test("dependent settings indent, disable and hide", async ({ launch }) => {
   await expect(card.getByText("Custom format", { exact: true })).toHaveCount(0);
 });
 
-test("romanization has its own section with one switch per script", async ({ launch }) => {
+test("romanization has its own section with a language multi-select", async ({ launch }) => {
   const app = await launch({ plugins: { "synced-lyrics": { enabled: true } } });
   const page = await mainWindow(app);
   await openSettings(page);
@@ -144,35 +144,82 @@ test("romanization has its own section with one switch per script", async ({ lau
   const card = pluginRow(page, "synced-lyrics");
   await card.getByRole("button", { name: "Configure Synced lyrics" }).click();
   await expect(card.locator(".plugin-group-title", { hasText: "Romanization" })).toBeVisible();
-  for (const label of ["Japanese", "Korean", "Chinese", "Thai", "Bengali", "Hindi", "Arabic", "Hebrew", "Cyrillic"]) {
-    await expect(card.getByRole("switch", { name: label })).toBeVisible();
+  await expect(card.getByRole("checkbox")).toHaveCount(21);
+  for (const label of [
+    "Japanese",
+    "Korean",
+    "Chinese",
+    "Thai",
+    "Bengali",
+    "Hindi",
+    "Tamil",
+    "Telugu",
+    "Kannada",
+    "Malayalam",
+    "Gujarati",
+    "Punjabi",
+    "Odia",
+    "Arabic",
+    "Persian",
+    "Urdu",
+    "Hebrew",
+    "Greek",
+    "Armenian",
+    "Georgian",
+    "Cyrillic",
+  ]) {
+    await expect(card.getByRole("checkbox", { name: label })).toHaveAttribute("aria-checked", "true");
   }
   await expect(card.getByRole("switch", { name: "Romanize lyrics" })).toHaveCount(0);
   await card.getByText("Romanization", { exact: true }).scrollIntoViewIfNeeded();
   await screenshot(app, "settings-romanization");
 });
 
-test("the old Romanize lyrics switch fans out to every language", async ({ launch }) => {
+test("the old Romanize lyrics switch becomes the language list", async ({ launch }) => {
   const app = await launch({
     plugins: { "synced-lyrics": { enabled: true, config: { romanization: false } } },
   });
   const page = await mainWindow(app);
-  await expect.poll(async () => (await pluginConfig(page, "synced-lyrics"))?.romanizeJapanese).toBe(false);
-  const config = (await pluginConfig(page, "synced-lyrics")) as Record<string, unknown>;
-  for (const key of [
-    "romanizeJapanese",
-    "romanizeKorean",
-    "romanizeChinese",
-    "romanizeThai",
-    "romanizeBengali",
-    "romanizeHindi",
-    "romanizeArabic",
-    "romanizeHebrew",
-    "romanizeCyrillic",
-  ]) {
-    expect(config[key]).toBe(false);
-  }
-  expect(config.romanizationMigrated).toBe(true);
+  await expect.poll(async () => (await pluginConfig(page, "synced-lyrics"))?.romanizationScripts).toEqual([]);
+  expect((await pluginConfig(page, "synced-lyrics"))?.romanizationScriptsMigrated).toBe(true);
+});
+
+test("the previous granular switches become the language list", async ({ launch }) => {
+  const switches = Object.fromEntries(
+    [
+      "Japanese",
+      "Korean",
+      "Chinese",
+      "Thai",
+      "Bengali",
+      "Hindi",
+      "Tamil",
+      "Telugu",
+      "Kannada",
+      "Malayalam",
+      "Gujarati",
+      "Punjabi",
+      "Odia",
+      "Arabic",
+      "Persian",
+      "Urdu",
+      "Hebrew",
+      "Greek",
+      "Armenian",
+      "Georgian",
+      "Cyrillic",
+    ].map((label) => [`romanize${label}`, false]),
+  );
+  const app = await launch({
+    plugins: {
+      "synced-lyrics": {
+        enabled: true,
+        config: { ...switches, romanizationMigrated: true, romanization: false, romanizeJapanese: true },
+      },
+    },
+  });
+  const page = await mainWindow(app);
+  await expect.poll(async () => (await pluginConfig(page, "synced-lyrics"))?.romanizationScripts).toEqual(["ja"]);
 });
 
 test("translation provider settings follow the selected provider", async ({ launch }) => {
