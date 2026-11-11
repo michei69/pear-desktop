@@ -38,9 +38,9 @@ export async function applyConfigPatch(env: ConfigApplyEnvironment, patch: Recor
   for (const section of APP_SECTIONS) {
     const previous = coreBefore[section];
     const next = env.settings.core(section);
-    if (JSON.stringify(previous) !== JSON.stringify(next)) env.applyCore(section, previous, next);
+    if (!deepEqual(previous, next)) env.applyCore(section, previous, next);
   }
-  if (JSON.stringify(coreBefore.apiServer) !== JSON.stringify(env.settings.core("apiServer"))) await env.applyApiServer();
+  if (!deepEqual(coreBefore.apiServer, env.settings.core("apiServer"))) await env.applyApiServer();
 
   for (const id of env.pluginIds) {
     const previous = pluginsBefore.get(id);
@@ -49,6 +49,21 @@ export async function applyConfigPatch(env: ConfigApplyEnvironment, patch: Recor
     if (next.enabled !== previous?.enabled) await env.plugins.setEnabled(id, next.enabled);
     // Only when the enabled flag did not change: setEnabled already starts the
     // part with the config the patch left in the file.
-    else if (JSON.stringify(next.config) !== JSON.stringify(previous?.config)) await env.plugins.setConfig(id, next.config);
+    else if (!deepEqual(next.config, previous?.config)) await env.plugins.setConfig(id, next.config);
   }
+}
+
+/** Structural equality for the JSON values config.json holds (no serialization pass). */
+function deepEqual(a: unknown, b: unknown): boolean {
+  if (Object.is(a, b)) return true;
+  if (typeof a !== "object" || typeof b !== "object" || a === null || b === null) return false;
+  if (Array.isArray(a) !== Array.isArray(b)) return false;
+  if (Array.isArray(a) && Array.isArray(b)) {
+    return a.length === b.length && a.every((value, index) => deepEqual(value, b[index]));
+  }
+  const left = a as Record<string, unknown>;
+  const right = b as Record<string, unknown>;
+  const keys = Object.keys(left);
+  if (keys.length !== Object.keys(right).length) return false;
+  return keys.every((key) => Object.hasOwn(right, key) && deepEqual(left[key], right[key]));
 }
