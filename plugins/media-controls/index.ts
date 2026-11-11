@@ -4,17 +4,21 @@
 // plugin is Linux-only.
 
 import MprisPlayer, { type LoopStatus, type Position } from "@jellybrick/mpris-service";
-import { definePlugin, livePosition, type HostContext, type NowPlaying, type RepeatMode, type Track } from "@pear/sdk";
+import {
+  definePlugin,
+  type HostContext,
+  livePosition,
+  type NowPlaying,
+  onQueueChange,
+  playerQueue,
+  queueSelectedIndex,
+  type QueueItem,
+  type RepeatMode,
+  type Track,
+} from "@pear/sdk";
 import { debounce, isPlaying, YTM_NAME } from "@pear/sdk/util";
+import { capabilities, pageNav, type PageNav } from "./nav.ts";
 import { openableUrl } from "./open.ts";
-
-/** What only the page knows: YTM's full-screen player and where the queue is at. */
-interface PageNav {
-  fullscreen: boolean;
-  /** Tracks before and after the playing one (autoplay's included). */
-  before: number;
-  after: number;
-}
 
 /** The title and artwork the page can publish before the track's full state. */
 interface TrackPreview {
@@ -28,6 +32,22 @@ interface TrackPreview {
 interface Commands {
   nav(next: PageNav): void;
   preview(track: TrackPreview): void;
+}
+
+/** The queue slice of YTM's app-level redux store. */
+interface QueueState {
+  items?: QueueItem[];
+  selectedItemIndex?: number;
+  autoplay?: boolean;
+  isInfinite?: boolean;
+}
+
+/** YTM's app element: its own state is the authoritative queue (the rendered rows lag it). */
+interface QueueAppElement extends HTMLElement {
+  getState?(): { queue?: QueueState };
+  ytmusicReduxBehavior?: { store: { store: { getState(): { queue?: QueueState } } } };
+  /** More queue pages to load after the rendered items. */
+  queue?: { continuation?: string };
 }
 
 const secToMicro = (seconds: number) => Math.round(seconds * 1e6);
@@ -71,10 +91,9 @@ export default definePlugin<{}, Commands>({
       let pending: TrackPreview | undefined;
       // pear-desktop's rules: previous unless at the queue's start; next while
       // tracks follow (autoplay adds them) or the queue repeats.
-      let nav: PageNav = { fullscreen: false, before: 0, after: 1 };
+      let nav: PageNav = { fullscreen: false, before: 0, after: 1, more: false };
       const applyNav = () => {
-        const canGoPrevious = nav.before > 0;
-        const canGoNext = nav.after > 0 || state.repeat === "all";
+        const { canGoPrevious, canGoNext } = capabilities(nav, state.repeat);
         if (mpris.canGoPrevious !== canGoPrevious) mpris.canGoPrevious = canGoPrevious;
         if (mpris.canGoNext !== canGoNext) mpris.canGoNext = canGoNext;
         if (mpris.fullscreen !== nav.fullscreen) mpris.fullscreen = nav.fullscreen;
@@ -144,13 +163,15 @@ export default definePlugin<{}, Commands>({
   page(ctx) {
     let last = "";
     const report = () => {
-      const items = ctx.$$("queue.item");
-      const index = items.findIndex((item) => item.hasAttribute("selected"));
-      const nav: PageNav = {
+      const app = ctx.$<QueueAppElement>("app");
+      const queue = app?.getState?.()?.queue ?? app?.ytmusicReduxBehavior?.store?.store?.getState?.()?.queue;
+      const nav = pageNav({
         fullscreen: !!ctx.$("integrations.fullscreen"),
-        before: Math.max(0, index),
-        after: index < 0 ? items.length : items.length - index - 1,
-      };
+        itemCount: queue?.items?.length ?? 0,
+        selectedIndex: queue?.selectedItemIndex ?? queueSelectedIndex(queue?.items ?? []),
+        autoplay: queue?.autoplay === true || queue?.isInfinite === true,
+        continuation: !!(app?.queue?.continuation ?? playerQueue()?.queue?.continuation),
+      });
       const key = JSON.stringify(nav);
       if (key === last) return;
       last = key;
@@ -167,7 +188,9 @@ export default definePlugin<{}, Commands>({
       else void document.exitFullscreen().catch(() => {});
     });
     ctx.observe("app.layout", { attributes: true, attributeFilter: ["player-fullscreened"] }, () => schedule());
-    ctx.observe("queue", { childList: true, subtree: true, attributes: true, attributeFilter: ["selected"] }, () => schedule());
+    // One authoritative store read per queue change instead of rescanning the
+    // rendered rows with a MutationObserver.
+    ctx.onCleanup(onQueueChange(schedule));
     // Publish the title and artwork as soon as YTM starts loading: MPRIS clients
     // can fetch the artwork in parallel with the page building its full state.
     ctx.player.on("trackLoading", (id) => {
@@ -279,8 +302,21 @@ function repeatPresses(current: RepeatMode, status: LoopStatus) {
   return (steps + REPEAT_CYCLE.length) % REPEAT_CYCLE.length;
 }
 
+/**
+ * The metadata MPRIS publishes changes for same-video corrections too (a late
+ * artist, album or duration, or a podcast-participant swap), not just a new
+ * video/title/artwork.
+ */
 function metadataChanged(old: Track | null | undefined, track: Track | null | undefined) {
-  return track?.videoId !== old?.videoId || track?.title !== old?.title || track?.artworkUrl !== old?.artworkUrl;
+  return (
+    track?.videoId !== old?.videoId ||
+    track?.title !== old?.title ||
+    track?.artist !== old?.artist ||
+    track?.album !== old?.album ||
+    track?.durationSeconds !== old?.durationSeconds ||
+    track?.url !== old?.url ||
+    track?.artworkUrl !== old?.artworkUrl
+  );
 }
 
 /** `mpris:length` for a known length; live streams and unknown durations have none. */
