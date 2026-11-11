@@ -4,8 +4,8 @@
 
 import type { App, BrowserWindow, BrowserWindowConstructorOptions, Session, WebRequest } from "electron";
 import { type ConfigOf, type ConfigShape, onPlatform } from "./config.ts";
-import type { CORE_SECTIONS, CoreSection } from "./core-config.ts";
-import type { CoreConfigOf, PluginCoreSection } from "./core-config.ts";import type { NowPlaying, PlayerAction, Track, PlaybackStatus, Unsubscribe, YTPlayerApi } from "./player.ts";
+import type { CORE_SECTIONS, CoreConfigOf, CoreSection, PluginCoreSection } from "./core-config.ts";
+import type { NowPlaying, PlayerAction, Track, PlaybackStatus, Unsubscribe, YTPlayerApi } from "./player.ts";
 import type { RpcMethods, RpcSchemas } from "./rpc.ts";
 import type { SelectorName } from "./selectors.ts";
 import type { SongDetails } from "./song-details.ts";
@@ -195,6 +195,8 @@ export interface PagePlayer {
   on(event: "timeUpdate", listener: (seconds: number) => void): Unsubscribe;
   on(event: "adChange", listener: (ad: boolean) => void): Unsubscribe;
   on(event: "volumeChange", listener: (volume: number, muted: boolean) => void): Unsubscribe;
+  /** YTM replaced the <video>; media listeners must move to the new element. */
+  on(event: "videoChange", listener: (video: HTMLVideoElement) => void): Unsubscribe;
   on(event: "change", listener: (state: NowPlaying) => void): Unsubscribe;
   control(action: PlayerAction): void;
 }
@@ -209,11 +211,20 @@ export interface HostClient<Cmds extends AnyCommands> {
 /**
  * The shared Web Audio graph: YTM's <video> → [inserted nodes by order] → speakers.
  * A media element can only have one source node, so every audio plugin goes through this.
+ * The page runtime owns the one graph per media element: it captures it before
+ * the media loads and re-cuts it when YTM swaps the `<video>`.
  */
 export interface AudioGraph {
   readonly context: AudioContext;
   readonly source: MediaElementAudioSourceNode;
   readonly video: HTMLVideoElement;
+  /**
+   * Re-cuts the graph to `video` when YTM swapped the element (some seeks
+   * replace it, and the old source node stays bound to the retired element).
+   * The runtime does this on its own; this is for consumers that hold their
+   * own element. Returns the new source, or null when nothing changed.
+   */
+  rebind(video: HTMLVideoElement): MediaElementAudioSourceNode | null;
   /**
    * Inserts a processing stage. `output` defaults to `input` (a single node).
    * Lower `order` runs earlier. Removed automatically when the plugin stops.
@@ -250,7 +261,7 @@ export interface PageContext<C, Cmds extends AnyCommands> extends CommonContext<
   observe(target: Node | SelectorName, options: MutationObserverInit, callback: MutationCallback): void;
   /** addEventListener that is removed automatically when the plugin stops. */
   listen<T extends EventTarget>(target: T, type: string, listener: (event: any) => void, options?: AddEventListenerOptions): void;
-  /** The shared audio graph, created on first use. */
+  /** The shared audio graph, captured by the runtime before the media loads. */
   audio(): Promise<AudioGraph>;
   /** Adds a stylesheet for the plugin's lifetime. Works at document start. */
   addStyle(css: string): StyleHandle;

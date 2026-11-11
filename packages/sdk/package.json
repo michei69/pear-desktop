@@ -20,7 +20,10 @@
     "./jsx-runtime": "./src/jsx-runtime.ts",
     "./jsx-dev-runtime": "./src/jsx-dev-runtime.ts",
     "./dom": "./src/dom.tsx",
-    "./stylesheets": "./src/stylesheets.ts"
+    "./stylesheets": "./src/stylesheets.ts",
+    "./artwork": "./src/artwork.ts",
+    "./innertube": "./src/innertube.ts",
+    "./potoken": "./src/potoken.ts"
   },
   "scripts": {
     "typecheck": "tsc -p .",
@@ -28,8 +31,10 @@
   },
   "dependencies": {
     "@valibot/to-json-schema": "^1.8.0",
+    "bgutils-js": "3.2.0",
     "lightningcss": "^1.33.0",
-    "valibot": "^1.5.0"
+    "valibot": "^1.5.0",
+    "\u0079\u006f\u0075\u0074\u0075\u0062\u0065i.js": "18.1.0"
   },
   "devDependencies": {
     "@types/node": "^24.0.0",

@@ -88,8 +88,14 @@ export function scopedPlayer(player: Player, track: Track): PagePlayer {
 export function scopedAudio(graph: AudioGraph, track: Track): AudioGraphApi {
   return {
     context: graph.context,
-    source: graph.source,
-    video: graph.video,
+    // Getters: the runtime re-cuts the graph to YTM's live <video> on some seeks.
+    get source() {
+      return graph.source;
+    },
+    get video() {
+      return graph.video;
+    },
+    rebind: (video) => graph.rebind(video),
     insert: (input, output, order) => track(graph.insert(input, output, order)),
     tap: (node) => track(graph.tap(node)),
   };

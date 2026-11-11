@@ -3,15 +3,16 @@
 // details, loading a video or playlist). Registered once; costs nothing while
 // the server is off.
 
-import { type LikeStatus, queueRenderer } from "@pear/sdk";
+import { queueRenderer } from "@pear/sdk";
 import type { FlagValue } from "@pear/sdk/core-config";
 import { selectors, type SelectorName } from "@pear/sdk/selectors";
 import { readSongDetails } from "@pear/sdk/song-details";
 import { YTM_NAME } from "@pear/sdk/util";
 import { browseContent, type BrowseReply } from "./browse.ts";
+import { setLikeStatus } from "./like.ts";
 import type { Player } from "./player.ts";
 import type { PluginRunner } from "./plugins.ts";
-import { continuationToken, queueItems, type AutoplayReply, type QueueReply, type QueueRenderer } from "./queue.ts";
+import { continuationToken, queueItems, type AutoplayReply, type QueueItemResult, type QueueReply, type QueueRenderer } from "./queue.ts";
 import { searchResults, type SearchResult } from "./search.ts";
 
 interface QueueStoreState {
@@ -54,9 +55,6 @@ interface AppElement extends HTMLElement {
   ytmusicReduxBehavior?: { store: { store: { getState(): { queue?: ReduxQueue } } } };
   networkManager?: NetworkManagerApp["networkManager"];
 }
-interface LikeButtons extends HTMLElement {
-  updateLikeStatus?(status: string): void;
-}
 interface SearchBox extends HTMLElement {
   getSearchboxStats?(): unknown;
 }
@@ -83,17 +81,43 @@ const appElement = () => $<AppElement>("app");
 // Answers go over IPC: drop anything that isn't plain JSON.
 const plain = <T>(value: T): T => (value === undefined ? value : JSON.parse(JSON.stringify(value)));
 
+/** The <video> element the player API drives; the rate's source of truth. */
+type VideoRate = Pick<Player, "api" | "video">;
+
+/** The playback rate the player is actually running at. */
+function playbackRate(player: VideoRate) {
+  return player.video()?.playbackRate ?? player.api?.getPlaybackRate() ?? 1;
+}
+
+/**
+ * YTM attaches `setPlaybackRate` only once its speed UI module has loaded, and
+ * the media element's rate can be left behind; forcing both makes the API's
+ * answer true, as pear-desktop did.
+ */
+export function applyPlaybackSpeed(player: VideoRate, value: number) {
+  if (!Number.isFinite(value)) return;
+  try {
+    player.api?.setPlaybackRate(value);
+  } catch {
+    // Not attached yet: the media element below carries the change.
+  }
+  const video = player.video();
+  if (!video || video.playbackRate === value) return;
+  video.preservesPitch = true;
+  video.playbackRate = value;
+}
+
 export function registerApiHandlers(runner: PluginRunner, player: Player) {
   const handle: Handle = (event, handler) => runner.handleCore(event, handler);
   handle("details", () => (player.api ? readSongDetails(player.api) : null));
-  handle("like", (status) => setLikeStatus(player, status as string));
+  handle("like", (status) => setLikeStatus(player.state.like, String(status)));
   registerFullscreen(handle);
   registerQueue(handle);
   handle("search", search);
   handle("search:parsed", searchParsed);
   handle("browse", browse);
-  handle("speed", () => player.api?.getPlaybackRate() ?? 1);
-  handle("speed:set", (speed) => player.api?.setPlaybackRate(Number(speed)));
+  handle("speed", () => playbackRate(player));
+  handle("speed:set", (speed) => applyPlaybackSpeed(player, Number(speed)));
   handle("repeat:set", (mode) => {
     appElement()?.dispatch({ type: "SET_REPEAT", payload: String(mode) });
   });
@@ -138,25 +162,6 @@ function listFlags(names: string[]): Record<string, unknown> {
   return Object.fromEntries(names.filter((name) => name in flags).map((name) => [name, flags[name]]));
 }
 
-/** "LIKE", "DISLIKE" or "INDIFFERENT": sets it, like the buttons do (pressing an active one again would clear it). */
-function setLikeStatus(player: Player, status: string) {
-  const classic = $<LikeButtons>("player_bar.like_buttons");
-  if (classic?.updateLikeStatus) return classic.updateLikeStatus(status);
-  if (status === "INDIFFERENT") {
-    const current = player.state.like;
-    if (current === "like") $("player_bar.like")?.click();
-    else if (current === "dislike") $("player_bar.dislike")?.click();
-    return;
-  }
-  const wanted = LIKE_BUTTONS[status];
-  if (wanted && player.state.like !== wanted.status) $(wanted.button)?.click();
-}
-
-const LIKE_BUTTONS: Record<string, { status: LikeStatus; button: SelectorName }> = {
-  LIKE: { status: "like", button: "player_bar.like" },
-  DISLIKE: { status: "dislike", button: "player_bar.dislike" },
-};
-
 function registerFullscreen(handle: Handle) {
   const isFullscreen = () => !!$("integrations.fullscreen");
   handle("fullscreen", isFullscreen);
@@ -176,6 +181,24 @@ function reduxQueue(): ReduxQueue | undefined {
 }
 
 function registerQueue(handle: Handle) {
+  /** The last mapping and the queue version it belongs to. */
+  let queueCache: { items: QueueItem[]; selected: number | undefined; raw: boolean; mapped: QueueItemResult[] | undefined } | undefined;
+
+  /**
+   * Mapping the whole queue is the expensive part of a queue read. The store
+   * hands back the same items array until the queue changes, so one mapping
+   * serves every read of that version (the selected index is part of the key
+   * because YTM flips it in place).
+   */
+  const mappedQueue = (items: QueueItem[], selected: number | undefined, raw: boolean) => {
+    if (queueCache && queueCache.items === items && queueCache.selected === selected && queueCache.raw === raw) {
+      return queueCache.mapped;
+    }
+    const mapped = queueItems(items, raw);
+    queueCache = { items, selected, raw, mapped };
+    return mapped;
+  };
+
   // v1's raw reply: the same object it has always answered with.
   handle("queue", () => {
     const api = queueElement()?.queue;
@@ -188,7 +211,7 @@ function registerQueue(handle: Handle) {
     if (!api) return null;
     const raw = (payload as { raw?: boolean } | undefined)?.raw === true;
     const data = reduxQueue();
-    const items = queueItems(api.getItems(), raw);
+    const items = mappedQueue(api.getItems(), data?.selectedItemIndex, raw);
     const continuation = api.continuation ?? appElement()?.queue?.continuation;
     const reply: QueueReply = {
       ...(data?.autoplay !== undefined ? { autoplay: data.autoplay } : {}),
@@ -207,7 +230,9 @@ function registerQueue(handle: Handle) {
   handle("queue:next", () => {
     const items = queueElement()?.queue?.getItems() ?? [];
     const currentIndex = items.findIndex((item) => queueRenderer(item)?.selected === true);
-    const renderer = queueRenderer(items[currentIndex + 1]) as QueueRenderer | undefined;
+    // Nothing selected yet (before playback starts, or a limbo queue): the
+    // first entry is not the "next" one.
+    const renderer = currentIndex < 0 ? undefined : (queueRenderer(items[currentIndex + 1]) as QueueRenderer | undefined);
     if (!renderer) return null;
     return plain({
       title: renderer.title?.runs?.[0]?.text,

@@ -2,44 +2,11 @@
 // blur, and the page halves of the visual plugins left unstarted. Each part is
 // restart-only (performance.*), so the page decides once at boot.
 
-import type { Flags } from "@pear/sdk/core-config";
+import { performanceModeFeatureFlags, performanceModeOverrides } from "@pear/sdk/core-config";
 
-/**
- * Flags forced while the performance flags switch is on. The page's own
- * `EXPERIMENT_FLAGS` read them; a flag the user overrides wins (see
- * `performanceModeOverrides`).
- */
-export const performanceModeFeatureFlags: Flags = {
-  // Artwork: fixed 1x thumbnail factor instead of the device pixel ratio, no
-  // forced max quality, no placeholder background, no oversized search art.
-  kevlar_tuner_should_use_thumbnail_factor: true,
-  kevlar_tuner_thumbnail_factor: 1,
-  kevlar_tuner_max_thumbnail_quality: false,
-  kevlar_thumbnail_bg: false,
-  enable_desktop_search_bigger_thumbs: false,
-  yt_img_shadow_trigger_show_on_visible: true,
-  // Motion: Lottie/Rive/WASM animations and the watch-page cinematics are the
-  // expensive half of the UI; they are all optional.
-  web_animated_actions: false,
-  web_animated_actions_v2: false,
-  web_enable_voting_animation: false,
-  enable_music_web_cairo_voting_animation: false,
-  enable_player_bar_slide_up_animation: false,
-  web_enable_rive_animated_like_icon: false,
-  music_web_enable_album_art_zoom: false,
-  web_watch_cinematics_disabled_by_default: true,
-  web_watch_cinematics_preferred_reduced_motion_default_disabled: true,
-  // Cheaper list and icon rendering.
-  music_web_optimize_queue_rendering: true,
-  wil_icon_render_when_idle: true,
-  always_render_thumbnail_overlay: false,
-  web_enable_card_view_model_hover_effect: false,
-};
-
-/** Performance flags first, the user's own flag overrides second, so a deliberate choice always wins. */
-export function performanceModeOverrides(userOverrides: Flags, enabled: boolean): Flags {
-  return enabled ? { ...performanceModeFeatureFlags, ...userOverrides } : userOverrides;
-}
+// The flags live in the shared config module: the main process reports what the
+// app sets through the API server, with the same merge the page applies.
+export { performanceModeFeatureFlags, performanceModeOverrides };
 
 /** Plugins whose whole purpose is expensive visuals; their page half is not started while the plugins switch is on. */
 const SKIPPED_PLUGINS: Record<string, true> = {
@@ -158,4 +125,37 @@ export function installAnimationThrottle() {
 
   Object.defineProperty(throttled, "__pearAnimationThrottle", { value: true });
   Element.prototype.animate = throttled as typeof Element.prototype.animate;
+}
+
+/**
+ * YTM may serve a Trusted Types CSP, which turns plugin DOM writes through
+ * innerHTML/insertAdjacentHTML into exceptions. A pass-through `default`
+ * policy keeps them working, like pear-desktop's renderer registers at boot.
+ *
+ * The page runtime calls this at boot (from packages/page/src/index.ts),
+ * before it builds the player or starts plugins, so the policy is in place
+ * before any plugin DOM write.
+ */
+interface TrustedTypesFactory {
+  createPolicy(
+    name: string,
+    rules: { createHTML(input: string): string; createScript(input: string): string; createScriptURL(input: string): string },
+  ): unknown;
+}
+
+export function installTrustedTypesPolicy(
+  factory = (globalThis as unknown as { trustedTypes?: TrustedTypesFactory }).trustedTypes,
+): boolean {
+  if (!factory?.createPolicy) return false;
+  try {
+    factory.createPolicy("default", {
+      createHTML: (input) => input,
+      createScript: (input) => input,
+      createScriptURL: (input) => input,
+    });
+    return true;
+  } catch {
+    // Another runtime already registered a `default` policy.
+    return false;
+  }
 }

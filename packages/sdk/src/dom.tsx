@@ -67,11 +67,127 @@ export function keepMounted(element: Element, place: (element: Element) => void)
   };
 }
 
-/** A MutationObserver; returns its disconnect. */
+interface Watch {
+  options: MutationObserverInit;
+  callback: MutationCallback;
+}
+
+interface ObservedRoot {
+  target: Node;
+  observer: MutationObserver;
+  watches: Set<Watch>;
+  /** The observation in force, so adding a watch with covered options keeps the queued records. */
+  key?: string;
+}
+
+/** One observer per watched node, however many plugins watch it (pear-desktop's player-page observer). */
+const observedRoots = new WeakMap<Node, ObservedRoot>();
+
+/** `attributes: true`, `attributeFilter` or `attributeOldValue` all imply attribute mutations. */
+const wantsAttributes = (options: MutationObserverInit) =>
+  options.attributes === true || options.attributeFilter !== undefined || options.attributeOldValue === true;
+
+/** Same for `characterData`: the old-value flag implies it too. */
+const wantsCharacterData = (options: MutationObserverInit) => options.characterData === true || options.characterDataOldValue === true;
+
+/** Whether a lone observer with these options would have reported this record. */
+function matches(options: MutationObserverInit, target: Node, record: MutationRecord) {
+  if (options.subtree !== true && record.target !== target) return false;
+  switch (record.type) {
+    case "attributes":
+      if (!wantsAttributes(options)) return false;
+      return !options.attributeFilter || options.attributeFilter.includes(record.attributeName ?? "");
+    case "characterData":
+      return wantsCharacterData(options);
+    default:
+      return options.childList === true;
+  }
+}
+
+/** The union of what the node's watches need: one browser-level observation for all of them. */
+function observation(watches: Set<Watch>): MutationObserverInit {
+  const config: MutationObserverInit = {};
+  let allAttributes = false;
+  const attributeFilters = new Set<string>();
+  for (const watch of watches) {
+    const options = watch.options;
+    config.childList ||= options.childList === true;
+    config.subtree ||= options.subtree === true;
+    if (wantsAttributes(options)) {
+      config.attributes = true;
+      if (options.attributeFilter) for (const name of options.attributeFilter) attributeFilters.add(name);
+      else allAttributes = true;
+      config.attributeOldValue ||= options.attributeOldValue === true;
+    }
+    if (wantsCharacterData(options)) {
+      config.characterData = true;
+      config.characterDataOldValue ||= options.characterDataOldValue === true;
+    }
+  }
+  if (config.attributes === true && !allAttributes && attributeFilters.size > 0) {
+    config.attributeFilter = [...attributeFilters];
+  }
+  return config;
+}
+
+const observationKey = (config: MutationObserverInit) =>
+  JSON.stringify([
+    config.childList === true,
+    config.attributes === true,
+    config.characterData === true,
+    config.subtree === true,
+    config.attributeOldValue === true,
+    config.characterDataOldValue === true,
+    config.attributeFilter ?? null,
+  ]);
+
+function applyObservation(root: ObservedRoot) {
+  const config = observation(root.watches);
+  const key = observationKey(config);
+  if (root.key === key) return;
+  root.observer.disconnect();
+  root.observer.observe(root.target, config);
+  root.key = key;
+}
+
+function createRoot(target: Node): ObservedRoot {
+  const watches = new Set<Watch>();
+  const observer = new MutationObserver((records) => {
+    for (const watch of watches) {
+      // Only the records this watch would have got from its own observer.
+      const relevant = records.filter((record) => matches(watch.options, target, record));
+      if (relevant.length === 0) continue;
+      try {
+        watch.callback(relevant, observer);
+      } catch (error) {
+        // One plugin's failing callback must not starve the others in the batch.
+        console.error("[pear] mutation observer callback failed", error);
+      }
+    }
+  });
+  return { target, watches, observer };
+}
+
+/**
+ * Watches `target` through a shared MutationObserver and returns its disconnect.
+ * Several watches on the same node cost one observer and one mutation batch;
+ * each callback still only sees the records its own options would report.
+ */
 export function observe(target: Node, options: MutationObserverInit, callback: MutationCallback): () => void {
-  const observer = new MutationObserver(callback);
-  observer.observe(target, options);
-  return () => observer.disconnect();
+  const root = observedRoots.get(target) ?? createRoot(target);
+  observedRoots.set(target, root);
+  const watch: Watch = { options, callback };
+  root.watches.add(watch);
+  applyObservation(root);
+  return () => {
+    if (!root.watches.delete(watch)) return;
+    if (root.watches.size > 0) {
+      applyObservation(root);
+      return;
+    }
+    root.observer.disconnect();
+    if (observedRoots.get(target) === root) observedRoots.delete(target);
+  };
 }
 
 // ---------------------------------------------------------------- player-bar picker

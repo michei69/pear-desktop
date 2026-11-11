@@ -91,9 +91,11 @@ export function overrideSiteFlags(overrides: Flags, performanceMode: boolean): S
     for (const [name, value] of Object.entries(flags)) if (!(name in served)) served[name] = value;
   };
 
+  const overlay = (flags: Flags) => Object.assign(flags, merged());
+
   const apply = (flags: Flags) => {
     capture(flags);
-    Object.assign(flags, merged());
+    overlay(flags);
   };
 
   const patch = (cfg: Ytcfg) => {
@@ -125,7 +127,9 @@ export function overrideSiteFlags(overrides: Flags, performanceMode: boolean): S
     const cfg = current;
     if (!cfg) return;
     const flags = flagsOf(cfg);
-    apply(flags);
+    // Nothing new to capture here: this payload is ours, not the page's. Capturing
+    // it would record live overrides as served values and remove() would restore them.
+    overlay(flags);
     syncing = true;
     try {
       cfg.set?.("EXPERIMENT_FLAGS", flags);

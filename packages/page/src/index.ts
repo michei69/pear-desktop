@@ -11,9 +11,12 @@ import { mountSettings, type SettingsController } from "@pear/ui";
 import plugins from "virtual:pear/page-plugins";
 import { registerApiHandlers } from "./api.ts";
 import { Appearance } from "./appearance.ts";
+import { captureAudioGraph, rebindAudioGraph } from "./audio.ts";
 import { ContextMenuCustomizer } from "./context-menu.ts";
 import { domReady } from "./dom.ts";
-import { installAnimationThrottle, performanceModeCss } from "./performance.ts";
+import { installInactivityKeepAlive } from "./inactivity.ts";
+import { ensureCORSMedia } from "./media.ts";
+import { installAnimationThrottle, installTrustedTypesPolicy, performanceModeCss } from "./performance.ts";
 import { Player, type StatePublisher } from "./player.ts";
 import { PluginRunner } from "./plugins.ts";
 import { overrideSiteFlags, type SiteFlags, siteOverrides } from "./site-flags.ts";
@@ -58,6 +61,8 @@ if (!bridge) throw new Error("[pear] bridge missing; preload did not expose __pe
 const performanceSwitches = bridge.bootstrap.core.performance.config;
 if (performanceSwitches.css === true) adoptSheet(styleSheet(performanceModeCss));
 if (performanceSwitches.animations === true) installAnimationThrottle();
+// Register the pass-through Trusted Types policy before YTM or a plugin writes HTML.
+installTrustedTypesPolicy();
 
 // First: YTM's config script runs right after the runtime.
 const siteFlags = overrideSiteFlags(siteOverrides(bridge.bootstrap.core.site.config), performanceSwitches.flags === true);
@@ -127,6 +132,26 @@ const UI_ACTIONS: Record<UiAction, (settings: SettingsController) => void> = {
 
 const player = new Player(hostPublisher(bridge), bridge.bootstrap.core.appearance.config);
 const runner = new PluginRunner(plugins, bridge, player);
+
+/** The plugins that route YTM's media through the shared Web Audio graph. */
+const AUDIO_GRAPH_PLUGINS = ["audio-compressor", "crossfade", "custom-output-device", "equalizer", "skip-silences", "visualizer"];
+
+// Web Audio silences cross-origin media that was not fetched in CORS mode
+// (podcast/RSS audio), so the element is put in CORS mode as soon as it exists,
+// before any plugin can sample it.
+// The graph is captured at boot only when an enabled plugin will use it: a
+// createMediaElementSource on an element whose MSE pipeline is already running
+// can freeze playback, while plugins enabled later still create it on their
+// first ctx.audio(). Either way the owner re-cuts the graph when YTM swaps the
+// <video> (some seeks do), so plugins never capture the element themselves.
+const warmsAudioGraph = AUDIO_GRAPH_PLUGINS.some((id) => runner.state(id)?.enabled === true);
+void player.videoReady().then((video) => {
+  ensureCORSMedia(video);
+  if (warmsAudioGraph) captureAudioGraph(video);
+});
+player.on("videoChange", (video) => rebindAudioGraph(video));
+installInactivityKeepAlive(player);
+
 const appearance = new Appearance();
 appearance.apply(runner.core("appearance"));
 const contextMenu = new ContextMenuCustomizer();

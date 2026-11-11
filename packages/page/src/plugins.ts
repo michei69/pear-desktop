@@ -9,7 +9,7 @@ import { adoptSheet, styleSheet } from "@pear/sdk/stylesheets";
 import type { ThemeState } from "@pear/sdk/themes";
 import { createLogger, errorMessage } from "@pear/sdk/util";
 import { HostState, type SettingsModel, setMessage, settingsModel } from "@pear/ui";
-import { AudioGraph } from "./audio.ts";
+import { captureAudioGraph, type AudioGraph } from "./audio.ts";
 import {
   type AnyCommands,
   type AnyConfig,
@@ -229,7 +229,10 @@ export class PluginRunner {
   }
 
   #audioGraph() {
-    this.#audio ??= this.#player.videoReady().then((video) => new AudioGraph(video));
+    // The page runtime owns the graph; this resolves to it, capturing it now
+    // when no sampling plugin was enabled at boot. The live element (not the
+    // initial `videoReady()` result) matters: YTM may have swapped it meanwhile.
+    this.#audio ??= this.#player.videoReady().then((initial) => captureAudioGraph(this.#player.video() ?? initial));
     return this.#audio;
   }
 

@@ -133,6 +133,14 @@ export interface Bootstrap {
 
 export type UiAction = "toggle-settings" | "open-settings" | "close-settings";
 
+/** A change that only applies after a restart, as a settings surface reports it. */
+export interface RestartRequirement {
+  /** Identity of the change, e.g. `core:advanced.disableHardwareAcceleration` or `plugin:in-app-menu`; duplicates collapse. */
+  key: string;
+  /** The changed setting's name, translated, for the restart summary. */
+  label: string;
+}
+
 export type HostEvent =
   | { type: "plugin-state"; id: string; state: PluginState }
   | { type: "plugin-event"; id: string; event: string; payload: unknown }
@@ -160,7 +168,8 @@ export interface CoreCommands {
   "plugin:set-config"(id: string, patch: Record<string, unknown>): void;
   "plugin:invoke"(id: string, command: string, args: unknown[]): unknown;
   "plugin:respond"(requestId: number, ok: boolean, value: unknown): void;
-  "core:set-config"(section: CoreSection, patch: Record<string, unknown>): void;
+  /** Changes a core section's options; false when the host refused the change (a declined beta→stable switch). */
+  "core:set-config"(section: CoreSection, patch: Record<string, unknown>): Promise<boolean>;
   /** Selects a theme ('' for none), asking for consent to its script first; false when declined. */
   "theme:select"(id: string): Promise<boolean>;
   /** Allows the theme's current script, asking for consent; false when declined. */
@@ -195,9 +204,28 @@ export interface CoreCommands {
 
 export type CoreCommandName = keyof CoreCommands;
 
+/**
+ * Commands the settings surfaces report restart requirements with. Kept apart
+ * from `CoreCommands` so the host can wire them without the page runtime's set.
+ * The host batches requirements across the overlay and the standalone window and,
+ * once the last session closes, offers a restart for everything flagged.
+ */
+export interface RestartCommands {
+  /** Opens this surface's session; the first session starts a fresh batch. */
+  "settings:restart-open"(): void;
+  /** Notes changes as they are flagged, so a window destroyed before closing loses nothing. */
+  "settings:restart-add"(requirements: readonly RestartRequirement[]): void;
+  /** Ends the session, flushing `requirements`; the last one closed shows the restart summary. */
+  "settings:restart-close"(requirements: readonly RestartRequirement[]): void;
+}
+
+/** Everything the bridge can invoke on the host. */
+export type HostCommands = CoreCommands & RestartCommands;
+export type HostCommandName = keyof HostCommands;
+
 /** What the preload exposes on `window.__pear` in YTM's main world. */
 export interface Bridge {
   readonly bootstrap: Bootstrap;
-  invoke<K extends CoreCommandName>(name: K, ...args: Parameters<CoreCommands[K]>): Promise<Awaited<ReturnType<CoreCommands[K]>>>;
+  invoke<K extends HostCommandName>(name: K, ...args: Parameters<HostCommands[K]>): Promise<Awaited<ReturnType<HostCommands[K]>>>;
   onEvent(listener: (event: HostEvent) => void): void;
 }

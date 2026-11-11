@@ -13,6 +13,8 @@ export interface Track {
   durationSeconds: number;
   url: string;
   playlistId?: string;
+  /** View count as YTM reports it, when the player response carries one. */
+  views?: number;
   mediaType: MediaType;
 }
 
@@ -61,6 +63,10 @@ export type PlayerAction =
   | { type: "mute"; muted?: boolean }
   | { type: "like" }
   | { type: "dislike" }
+  /** Toggles the like off when it is set, otherwise likes the track. */
+  | { type: "unlike" }
+  /** Toggles the dislike off when it is set, otherwise dislikes the track. */
+  | { type: "undislike" }
   | { type: "shuffle" }
   | { type: "repeat" };
 
@@ -68,7 +74,7 @@ export type PlayerAction =
 export function livePosition(state: NowPlaying, now = Date.now()) {
   if (state.status !== "playing" || state.ad) return state.positionSeconds;
   const position = state.positionSeconds + (now - state.updatedAt) / 1000;
-  return state.track ? Math.min(position, state.track.durationSeconds) : position;
+  return state.track && state.track.durationSeconds > 0 ? Math.min(position, state.track.durationSeconds) : position;
 }
 
 export type Unsubscribe = () => void;
@@ -77,6 +83,8 @@ export type Unsubscribe = () => void;
 export interface YTPlayerApi extends HTMLElement {
   playVideo(): void;
   pauseVideo(): void;
+  /** Some YTM builds expose the ad state only through the player API. */
+  getAdState?(): number;
   nextVideo(): void;
   previousVideo(): void;
   seekTo(seconds: number, allowSeekAhead?: boolean): void;
@@ -129,6 +137,7 @@ export interface YTPlayerResponse {
     title: string;
     author: string;
     lengthSeconds: string;
+    viewCount?: string;
     musicVideoType?: string;
     isLiveContent?: boolean;
     thumbnail?: { thumbnails: { url: string; width: number; height: number }[] };

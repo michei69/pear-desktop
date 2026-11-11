@@ -20,6 +20,8 @@ import { selectors, type SelectorName } from "@pear/sdk/selectors";
 import { clamp, isPlaying, sleep, ytmUrl } from "@pear/sdk/util";
 import { waitForSelector } from "./dom.ts";
 import { Emitter } from "./emitter.ts";
+import { ensureCORSMedia } from "./media.ts";
+import { setLikeStatus } from "./like.ts";
 
 export type PlayerEvents = {
   trackLoading: (videoId: string) => void;
@@ -29,6 +31,8 @@ export type PlayerEvents = {
   adChange: (ad: boolean) => void;
   volumeChange: (volume: number, muted: boolean) => void;
   change: (state: NowPlaying) => void;
+  /** YTM replaced the <video> element (some seeks create a new one). */
+  videoChange: (video: HTMLVideoElement) => void;
 };
 
 // YTM sometimes never fires "dataupdated" after "dataloaded".
@@ -71,6 +75,8 @@ export class Player implements PagePlayer {
   #videoReady: Promise<HTMLVideoElement>;
   #state: NowPlaying = { ...IDLE };
   #publisher: StatePublisher;
+  /** Removes the media listeners attached to the current <video>. */
+  #videoCleanup: (() => void) | undefined;
   /** The core's appearance section (usePodcastParticipantAsArtist). */
   #options: Record<string, unknown>;
 
@@ -133,9 +139,13 @@ export class Player implements PagePlayer {
       case "mute":
         return (action.muted ?? !api.isMuted()) ? api.mute() : api.unMute();
       case "like":
-        return clickOr("player_bar.like");
+        return setLikeStatus(this.#state.like, "LIKE");
       case "dislike":
-        return clickOr("player_bar.dislike");
+        return setLikeStatus(this.#state.like, "DISLIKE");
+      case "unlike":
+        return setLikeStatus(this.#state.like, this.#state.like === "like" ? "INDIFFERENT" : "LIKE");
+      case "undislike":
+        return setLikeStatus(this.#state.like, this.#state.like === "dislike" ? "INDIFFERENT" : "DISLIKE");
       case "shuffle":
         return clickOr("player_bar.shuffle");
       case "repeat":
@@ -204,31 +214,45 @@ export class Player implements PagePlayer {
 
     void this.#videoReady.then((video) => {
       this.#attachVideo(video);
-      // A track already loaded before the player was found.
-      if (!Number.isNaN(video.duration)) loadTrack();
+      // A track already loaded before the player was found. Announce it like a
+      // dataloaded so page plugins can apply per-track preferences early.
+      if (!Number.isNaN(video.duration)) {
+        this.#emitter.emit("trackLoading", api.getVideoData().video_id);
+        loadTrack();
+      }
     });
 
+    this.#observeVideoSwaps(api);
     this.#observeControls();
     this.#observeAds(api);
     this.#publishNow({ volume: this.#readVolume(), muted: api.isMuted() });
   }
 
   #attachVideo(video: HTMLVideoElement) {
+    // YTM sometimes replaces the <video>; the retired element must not keep listeners.
+    this.#videoCleanup?.();
+    // Web Audio silences a cross-origin element that is not in CORS mode.
+    ensureCORSMedia(video);
+    const listeners: [string, EventListener][] = [];
+    const on = (type: string, listener: EventListener) => {
+      video.addEventListener(type, listener);
+      listeners.push([type, listener]);
+    };
     const status = (next: PlaybackStatus) => () => {
       if (this.#state.status === next) return;
       // During ads the video's position is the ad's.
       this.#publishNow(this.#state.ad ? { status: next } : { status: next, positionSeconds: video.currentTime });
       this.#emitter.emit("statusChange", next);
     };
-    video.addEventListener("playing", status("playing"));
-    video.addEventListener("pause", status("paused"));
-    video.addEventListener("waiting", status("buffering"));
-    video.addEventListener("ended", status("ended"));
-    video.addEventListener("seeked", () => {
+    on("playing", status("playing"));
+    on("pause", status("paused"));
+    on("waiting", status("buffering"));
+    on("ended", status("ended"));
+    on("seeked", () => {
       if (!this.#state.ad) this.#publishNow({ positionSeconds: video.currentTime });
     });
     let lastSecond = -1;
-    video.addEventListener("timeupdate", () => {
+    on("timeupdate", () => {
       if (this.#state.ad) return;
       const second = Math.floor(video.currentTime);
       if (second === lastSecond) return;
@@ -236,13 +260,33 @@ export class Player implements PagePlayer {
       this.#publishLater({ positionSeconds: video.currentTime });
       this.#emitter.emit("timeUpdate", video.currentTime);
     });
-    video.addEventListener("volumechange", () => {
+    on("volumechange", () => {
       const volume = this.#readVolume();
       const muted = this.#api?.isMuted() ?? video.muted;
       this.#publishNow({ volume, muted });
       this.#emitter.emit("volumeChange", volume, muted);
     });
+    this.#videoCleanup = () => {
+      for (const [type, listener] of listeners) video.removeEventListener(type, listener);
+      this.#videoCleanup = undefined;
+    };
     if (!video.paused) status("playing")();
+  }
+
+  /** YTM replaces the <video> on some seeks; the audio graph follows the live element. */
+  #observeVideoSwaps(api: YTPlayerApi) {
+    let current = this.video();
+    new MutationObserver(() => {
+      const video = this.video();
+      if (!video || video === current) return;
+      const replaced = current !== null;
+      current = video;
+      ensureCORSMedia(video);
+      // Re-attach the player's media listeners to the live element before
+      // telling plugins, which rebind their own streams from this point.
+      this.#attachVideo(video);
+      if (replaced) this.#emitter.emit("videoChange", video);
+    }).observe(api, { childList: true, subtree: true });
   }
 
   /** The volume as YTM's slider shows it (before its perceptual curve). */
@@ -257,7 +301,14 @@ export class Player implements PagePlayer {
   /** YTM plays ads in the same <video>; the player gets an `ad-showing` class meanwhile. */
   #observeAds(api: YTPlayerApi) {
     const read = () => {
-      const ad = api.classList.contains("ad-showing") || api.classList.contains("ad-interrupting");
+      let ad = api.classList.contains("ad-showing") || api.classList.contains("ad-interrupting");
+      if (!ad) {
+        try {
+          ad = api.getAdState?.() === 1;
+        } catch {
+          // A player build without a working getAdState still reports via the class.
+        }
+      }
       if (ad === this.#state.ad) return;
       this.#publishNow({ ad });
       this.#emitter.emit("adChange", ad);
@@ -306,6 +357,8 @@ export class Player implements PagePlayer {
     if (session?.album) track.album = session.album;
     if (artworkUrl) track.artworkUrl = artworkUrl;
     if (data.list) track.playlistId = data.list;
+    const views = Number(details?.viewCount);
+    if (Number.isFinite(views)) track.views = views;
     return track;
   }
 

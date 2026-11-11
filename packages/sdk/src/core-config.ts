@@ -47,12 +47,14 @@ export const GENERAL = {
     label: "Resume the last song",
     description: "Opens the song you played last when the app starts.",
     group: "Startup",
+    restart: true,
   }),
   startingPage: config.select("", startingPageOptions, {
     label: "Starting page",
     description: "The page shown when the app starts, also with the last song resumed.",
     group: "Startup",
     variant: "dropdown",
+    restart: true,
   }),
   language: config.select("", [{ value: "", label: "System default" }, ...languages()], {
     label: "Language",
@@ -186,6 +188,12 @@ export const ADVANCED = {
   autoResetAppCache: config.bool(false, {
     label: "Clear the cache at startup",
     group: "Performance",
+    restart: true,
+  }),
+  restartOnConfigChanges: config.bool(false, {
+    label: "Restart when settings change",
+    description: "Applies every settings change at once by restarting the app instead of waiting for you to.",
+    group: "Configuration",
   }),
 };
 
@@ -260,17 +268,22 @@ export const SITE = {
   ),
   siteFlags: config.list([], {
     label: "Feature flag overrides",
-    description: "One flag per entry, as name=value (true, false, a number or text). Unknown names do nothing.",
+    description:
+      "One flag per entry, as name=value. Values keep their type: true or false, a number, text, or JSON for objects and lists. Unknown names do nothing.",
     placeholder: "flag_name=false",
     group: "Site features",
     restart: true,
   }),
 };
 
-export type FlagValue = boolean | number | string;
+/** A JSON value as the page's flags can hold one (objects and arrays included). */
+export type JsonValue = boolean | number | string | null | JsonValue[] | { [key: string]: JsonValue };
+export type FlagValue = JsonValue;
 export type Flags = Record<string, FlagValue>;
 
 const FLAG_NAME = /^[\w.-]+$/;
+/** Prefix of an entry whose value is any JSON literal, verbatim (objects, arrays, null, a "true"-looking string…). */
+const JSON_VALUE = "json:";
 
 /** A `siteFlags` entry, "name=value", as [name, value] with true/false and numbers typed like YTM's. */
 export function parseFlagOverride(entry: string): [string, FlagValue] | undefined {
@@ -280,9 +293,40 @@ export function parseFlagOverride(entry: string): [string, FlagValue] | undefine
   // A bare name turns the flag on.
   if (separator === -1) return [name, true];
   const raw = entry.slice(separator + 1).trim();
+  if (raw.startsWith(JSON_VALUE)) {
+    const value = parseJson(raw.slice(JSON_VALUE.length));
+    if (value !== undefined) return [name, value];
+  }
   if (raw === "true" || raw === "false") return [name, raw === "true"];
   if (raw !== "" && Number.isFinite(Number(raw))) return [name, Number(raw)];
+  // The migration of pear-desktop's flag record writes objects and arrays as
+  // their JSON text (no prefix), so read those back typed too.
+  if (raw.startsWith("{") || raw.startsWith("[")) {
+    const value = parseJson(raw);
+    if (value !== undefined) return [name, value];
+  }
   return [name, raw];
+}
+
+/** A JSON literal's value; undefined when the text isn't JSON (it is then kept as text). */
+function parseJson(text: string): FlagValue | undefined {
+  try {
+    return JSON.parse(text) as FlagValue;
+  } catch {
+    return undefined;
+  }
+}
+
+/** `name=value` for booleans and numbers; text and other JSON values keep their type through `json:`. */
+function encodeFlagValue(value: FlagValue): string {
+  if (typeof value === "boolean") return String(value);
+  if (typeof value === "number") return Number.isFinite(value) ? String(value) : `${JSON_VALUE}${JSON.stringify(String(value))}`;
+  if (typeof value === "string") {
+    // Text that reads back as itself stays plain, like pear-desktop's list did.
+    const plain = parseFlagOverride(`flag=${value}`);
+    return plain?.[1] === value ? value : `${JSON_VALUE}${JSON.stringify(value)}`;
+  }
+  return `${JSON_VALUE}${JSON.stringify(value)}`;
 }
 
 /** The overrides a `siteFlags` list asks for; later entries win. */
@@ -298,7 +342,45 @@ export function flagOverrides(entries: readonly string[]): Flags {
 /** `siteFlags` with `name` set to `value`, or without it when `value` is undefined. */
 export function withFlagOverride(entries: readonly string[], name: string, value: FlagValue | undefined): string[] {
   const others = entries.filter((entry) => parseFlagOverride(entry)?.[0] !== name);
-  return value === undefined ? others : [...others, `${name}=${value}`];
+  return value === undefined ? others : [...others, `${name}=${encodeFlagValue(value)}`];
+}
+
+/**
+ * Flags forced while the performance flags switch is on. The page's own
+ * `EXPERIMENT_FLAGS` read them; a flag the user overrides wins (see
+ * `performanceModeOverrides`). Shared by the page (which applies them) and the
+ * main process (the API server reports what the app actually sets).
+ */
+export const performanceModeFeatureFlags: Flags = {
+  // Artwork: fixed 1x thumbnail factor instead of the device pixel ratio, no
+  // forced max quality, no placeholder background, no oversized search art.
+  kevlar_tuner_should_use_thumbnail_factor: true,
+  kevlar_tuner_thumbnail_factor: 1,
+  kevlar_tuner_max_thumbnail_quality: false,
+  kevlar_thumbnail_bg: false,
+  enable_desktop_search_bigger_thumbs: false,
+  yt_img_shadow_trigger_show_on_visible: true,
+  // Motion: Lottie/Rive/WASM animations and the watch-page cinematics are the
+  // expensive half of the UI; they are all optional.
+  web_animated_actions: false,
+  web_animated_actions_v2: false,
+  web_enable_voting_animation: false,
+  enable_music_web_cairo_voting_animation: false,
+  enable_player_bar_slide_up_animation: false,
+  web_enable_rive_animated_like_icon: false,
+  music_web_enable_album_art_zoom: false,
+  web_watch_cinematics_disabled_by_default: true,
+  web_watch_cinematics_preferred_reduced_motion_default_disabled: true,
+  // Cheaper list and icon rendering.
+  music_web_optimize_queue_rendering: true,
+  wil_icon_render_when_idle: true,
+  always_render_thumbnail_overlay: false,
+  web_enable_card_view_model_hover_effect: false,
+};
+
+/** Performance flags first, the user's own flag overrides second, so a deliberate choice always wins. */
+export function performanceModeOverrides(userOverrides: Flags, enabled: boolean): Flags {
+  return enabled ? { ...performanceModeFeatureFlags, ...userOverrides } : userOverrides;
 }
 
 /** pear-desktop's API server port, which companion apps expect by default. */
@@ -346,6 +428,102 @@ export const API_SERVER = {
 };
 
 export type ApiServerConfig = ConfigOf<typeof API_SERVER>;
+
+/** Translation keys for one field, where pear-desktop already translated its texts under other keys. */
+export interface FieldTextKeys {
+  label?: string;
+  description?: string;
+  placeholder?: string;
+  /** Translation key per option value. */
+  options?: Readonly<Record<string, string>>;
+  /** Translation keys for the label's `{{placeholders}}`, translated before they are filled in. */
+  vars?: Readonly<Record<string, string>>;
+}
+
+const menu = (path: string) => `main.menu.options.submenu.${path}`;
+
+/**
+ * The texts pear-desktop already had translated, under its own keys (mostly the
+ * Options menu's). Only fields whose label, description or option names carry
+ * over from master are listed; the rest keep the generated `settings-ui.core.*`
+ * keys and fall back to English until they are translated.
+ */
+export const CORE_FIELD_KEYS: Readonly<Record<string, FieldTextKeys>> = {
+  // General
+  resumeOnStart: { label: menu("resume-on-start") },
+  startingPage: { label: menu("starting-page.label"), options: { "": menu("starting-page.unset") } },
+  language: { label: menu("language.label") },
+  autoUpdates: { label: menu("updates.auto-update") },
+  updateChannel: {
+    label: menu("updates.channel.label"),
+    options: { stable: menu("updates.channel.stable"), beta: menu("updates.channel.beta") },
+  },
+  stripMusicFromSharedLinks: { label: menu("shared-links.submenu.strip-music") },
+  stripSIFromSharedLinks: { label: menu("shared-links.submenu.strip-si") },
+  // Window & Tray
+  alwaysOnTop: { label: menu("always-on-top") },
+  hideMenu: { label: menu("hide-menu.label") },
+  customWindowTitle: {
+    label: menu("visual-tweaks.submenu.custom-window-title.label"),
+    placeholder: menu("visual-tweaks.submenu.custom-window-title.prompt.placeholder"),
+  },
+  startAtLogin: { label: menu("start-at-login") },
+  forceSmtc: { label: menu("advanced-options.submenu.force-smtc") },
+  // Appearance
+  removeUpgradeButton: { label: menu("visual-tweaks.submenu.remove-upgrade-button") },
+  useYtmIcons: { label: menu("visual-tweaks.submenu.use-ytm-icons") },
+  likeButtons: {
+    label: menu("visual-tweaks.submenu.like-buttons.label"),
+    options: {
+      "": menu("visual-tweaks.submenu.like-buttons.default"),
+      force: menu("visual-tweaks.submenu.like-buttons.force-show"),
+      hide: menu("visual-tweaks.submenu.like-buttons.hide"),
+    },
+  },
+  swapLikeButtonsOrder: { label: menu("visual-tweaks.submenu.like-buttons.swap") },
+  hideDislikeButton: { label: "settings-ui.fields.hide-dislike-button" },
+  hideVideoCaptions: { label: "settings-ui.fields.hide-video-captions" },
+  usePodcastParticipantAsArtist: {
+    label: "settings-ui.fields.podcast-artist",
+    description: "settings-ui.fields.podcast-artist-desc",
+  },
+  // Advanced
+  proxy: {
+    label: menu("advanced-options.submenu.set-proxy.label"),
+    placeholder: menu("advanced-options.submenu.set-proxy.prompt.placeholder"),
+  },
+  overrideUserAgent: { label: menu("advanced-options.submenu.override-user-agent") },
+  disableHardwareAcceleration: { label: menu("advanced-options.submenu.disable-hardware-acceleration") },
+  autoResetAppCache: { label: menu("advanced-options.submenu.auto-reset-app-cache") },
+  restartOnConfigChanges: { label: menu("advanced-options.submenu.restart-on-config-changes") },
+  // The settings dialog's own options (labels only: master's descriptions name a menu path the rewrite moved)
+  showButton: { label: "settings-ui.settings.show-button" },
+  separateWindow: { label: "settings-ui.settings.separate-window" },
+  // The API server's (pear-desktop's plugin strings)
+  hostname: { label: "plugins.api-server.menu.hostname.label" },
+  port: { label: "plugins.api-server.menu.port.label" },
+  authStrategy: {
+    label: "plugins.api-server.menu.auth-strategy.label",
+    options: {
+      AUTH_AT_FIRST: "plugins.api-server.menu.auth-strategy.submenu.auth-at-first.label",
+      NONE: "plugins.api-server.menu.auth-strategy.submenu.none.label",
+    },
+  },
+  useHttps: { label: "plugins.api-server.menu.https.submenu.enable-https.label" },
+  certPath: { label: "plugins.api-server.menu.https.submenu.cert.label" },
+  keyPath: { label: "plugins.api-server.menu.https.submenu.key.label" },
+  mcpEnabled: { label: "plugins.api-server.menu.mcp.label", description: "plugins.api-server.menu.mcp.description" },
+  // The context-menu switches: one shared label with the entry's own name in it.
+  ...Object.fromEntries(
+    CONTEXT_MENU_ENTRIES.map((entry) => [
+      entry.configKey,
+      {
+        label: "settings-ui.fields.context-menu.hide-entry",
+        vars: { entry: `settings-ui.fields.context-menu.entries.${entry.key}` },
+      },
+    ]),
+  ),
+};
 
 export const CORE_SECTIONS = {
   general: GENERAL,
