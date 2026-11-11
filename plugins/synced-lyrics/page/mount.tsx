@@ -24,6 +24,7 @@ interface Commands {
   search(provider: ProviderId, query: SearchQuery): Promise<LyricResult | null>;
   romanize(lines: string[], scripts: readonly RomanizationScript[]): Promise<(string | null)[]>;
   convertChinese(lines: string[], mode: "s2t" | "t2s"): Promise<string[]>;
+  convertJapanese(lines: string[], mode: "hiragana" | "katakana"): Promise<string[]>;
   translate(request: {
     videoId: string;
     title: string;
@@ -47,6 +48,7 @@ const storeOptions = (config: LyricsConfig): Options => ({
     ROMANIZATION_SCRIPTS.map((script) => [script, config.romanizationScripts.includes(script)]),
   ) as RomanizationSettings,
   chinese: config.convertChinese,
+  japanese: config.convertJapanese,
   priority: config.providerPriority,
   usePriorityList: config.usePriorityList,
   typePriority: config.lyricsTypePriority,
@@ -134,6 +136,7 @@ function createStore(ctx: Ctx) {
       search: (provider, query) => ctx.host.invoke("search", provider, query),
       romanize: (lines, scripts) => ctx.host.invoke("romanize", lines, scripts),
       convertChinese: (lines, mode) => ctx.host.invoke("convertChinese", lines, mode),
+      convertJapanese: (lines, mode) => ctx.host.invoke("convertJapanese", lines, mode),
       translate: (request) => ctx.host.invoke("translate", request),
       customQuery: (videoId) => ctx.host.invoke("customQuery", videoId),
       setCustomQuery: (videoId, query) => ctx.host.invoke("setCustomQuery", videoId, query),

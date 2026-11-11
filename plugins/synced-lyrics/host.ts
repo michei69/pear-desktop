@@ -68,6 +68,10 @@ export class LyricsHost {
     return convertChinese(lines, mode);
   }
 
+  convertJapanese(lines: string[], mode: "hiragana" | "katakana") {
+    return this.#romanizer.convertJapanese(lines, mode);
+  }
+
   // ---- custom searches ----
 
   customQuery(videoId: string) {

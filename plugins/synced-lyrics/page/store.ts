@@ -40,6 +40,7 @@ export interface Options {
   inexact: boolean;
   romanization: RomanizationSettings;
   chinese: "off" | "s2t" | "t2s";
+  japanese: "off" | "hiragana" | "katakana";
   /** The user's provider order; see `resolvePriority`. */
   priority?: readonly string[];
   /** The user's lyrics type order; see `resolveTypePriority`. */
@@ -69,6 +70,7 @@ export interface Backend {
   details?(videoId: string): { alternativeTitle?: string; tags: string[] } | null;
   romanize(lines: string[], scripts: readonly RomanizationScript[]): Promise<(string | null)[]>;
   convertChinese(lines: string[], mode: "s2t" | "t2s"): Promise<string[]>;
+  convertJapanese(lines: string[], mode: "hiragana" | "katakana"): Promise<string[]>;
   translate?(request: TranslateRequest): Promise<TranslateResponse>;
   customQuery?(videoId: string): Promise<CustomQuery | null>;
   setCustomQuery?(videoId: string, query: CustomQuery): Promise<unknown>;
@@ -170,6 +172,7 @@ export class LyricsStore {
     if (
       romanizationKey(previous) !== romanizationKey(options) ||
       previous.chinese !== options.chinese ||
+      previous.japanese !== options.japanese ||
       translationKey(previous) !== translationKey(options)
     ) {
       this.#shownKey = "";
@@ -392,35 +395,34 @@ export class LyricsStore {
   }
 
   async #transform(run: number, result: LyricResult, original: string[]) {
-    const { chinese, romanization } = this.#options;
+    const { chinese, japanese, romanization } = this.#options;
     const scripts = enabledScripts(romanization);
     try {
       let texts = original;
-      if (chinese !== "off") {
-        const converted = await this.#backend.convertChinese(original, chinese);
-        if (run !== this.#run || !this.shown) return;
-        texts = converted;
+      let lines = this.shown?.lines ?? [];
+      const converters: ((input: string[]) => Promise<string[]>)[] = [];
+      if (chinese !== "off") converters.push((input) => this.#backend.convertChinese(input, chinese));
+      if (japanese !== "off") converters.push((input) => this.#backend.convertJapanese(input, japanese));
+      if (converters.length > 0) {
         // Convert the timed words too, not just the display line: the standard
         // renderer keeps word highlighting only while text matches line.text,
         // and the Apple renderer builds its rows from words.
-        const words = this.shown.lines.flatMap((line) => [...(line.words ?? []), ...(line.background ?? [])]);
-        const convertedWords = words.length
-          ? await this.#backend.convertChinese(
-              words.map((word) => word.text),
-              chinese,
-            )
-          : [];
-        if (run !== this.#run || !this.shown) return;
+        let wordTexts = lines.flatMap((line) => [...(line.words ?? []), ...(line.background ?? [])].map((word) => word.text));
+        for (const convert of converters) {
+          texts = await convert(texts);
+          wordTexts = wordTexts.length ? await convert(wordTexts) : wordTexts;
+          if (run !== this.#run || !this.shown) return;
+        }
+        const current = this.shown;
+        if (!current) return;
         let word = 0;
-        const lines = this.shown.lines.map((line, i) => ({
+        lines = current.lines.map((line, i) => ({
           ...line,
           text: texts[i] ?? line.text,
-          ...(line.words ? { words: line.words.map((entry) => ({ ...entry, text: convertedWords[word++] ?? entry.text })) } : {}),
-          ...(line.background
-            ? { background: line.background.map((entry) => ({ ...entry, text: convertedWords[word++] ?? entry.text })) }
-            : {}),
+          ...(line.words ? { words: line.words.map((entry) => ({ ...entry, text: wordTexts[word++] ?? entry.text })) } : {}),
+          ...(line.background ? { background: line.background.map((entry) => ({ ...entry, text: wordTexts[word++] ?? entry.text })) } : {}),
         }));
-        this.shown = { ...this.shown, texts, lines };
+        this.shown = { ...current, texts, lines };
         this.#emit();
       }
       if (scripts.length > 0) {

@@ -171,6 +171,7 @@ test("romanization has its own section with a language multi-select", async ({ l
     await expect(card.getByRole("checkbox", { name: label })).toHaveAttribute("aria-checked", "true");
   }
   await expect(card.getByRole("switch", { name: "Romanize lyrics" })).toHaveCount(0);
+  await expect(card.getByText("Japanese characters", { exact: true })).toBeVisible();
   await card.getByText("Romanization", { exact: true }).scrollIntoViewIfNeeded();
   await screenshot(app, "settings-romanization");
 });

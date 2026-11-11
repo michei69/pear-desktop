@@ -143,6 +143,20 @@ export const schema = {
     ],
     { label: "Chinese characters", group: "Romanization" },
   ),
+  convertJapanese: config.select(
+    "off",
+    [
+      { value: "off", label: "Keep as is" },
+      { value: "hiragana", label: "Kanji → Hiragana" },
+      { value: "katakana", label: "Kanji → Katakana" },
+    ],
+    {
+      label: "Japanese characters",
+      description:
+        "Kuroshiro replaces kanji with dictionary readings. Names and ambiguous words can be misread; the Japanese dictionary (about 17 MB) downloads on first use.",
+      group: "Romanization",
+    },
+  ),
   // Legacy switches, read once by the host when upgrading a granular config.
   romanizeJapanese: config.bool(true, { label: "Japanese", hidden: true }),
   romanizeKorean: config.bool(true, { label: "Korean", hidden: true }),

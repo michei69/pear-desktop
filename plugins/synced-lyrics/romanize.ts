@@ -82,7 +82,7 @@ const DICT_FILES = [
 ];
 
 interface KuroshiroInstance {
-  convert(text: string, options: { to: "romaji"; mode: "spaced" }): Promise<string>;
+  convert(text: string, options: { to: "romaji" | "hiragana" | "katakana"; mode?: "normal" | "spaced" }): Promise<string>;
 }
 
 interface JapaneseToken {
@@ -113,6 +113,8 @@ export class Romanizer {
   #japanese: Promise<JapaneseEngine> | undefined;
   /** Per line and script: the song's script detection decides how a kanji line reads. */
   #memo = new Map<string, string | null>();
+  /** Per line and kana target: Japanese script conversion. */
+  #kana = new Map<string, string>();
 
   /** `dictDir` caches the Japanese dictionary (~17 MB, downloaded on first use). */
   constructor(dictDir: string, fetch: (url: string) => Promise<Response>) {
@@ -134,6 +136,25 @@ export class Romanizer {
         const value = result && result.toLowerCase() !== line.trim().toLowerCase() ? result : null;
         cacheLine(this.#memo, key, value);
         return value;
+      }),
+    );
+  }
+
+  /** Replaces kanji with Kuroshiro's reading; timings are the caller's business. */
+  async convertJapanese(lines: readonly string[], mode: "hiragana" | "katakana"): Promise<string[]> {
+    const engine = await (this.#japanese ??= this.#loadKuroshiro().catch((error: unknown) => {
+      this.#japanese = undefined;
+      throw error;
+    }));
+    return Promise.all(
+      lines.map(async (line) => {
+        if (!line) return line;
+        const key = `${mode}\n${line}`;
+        const cached = this.#kana.get(key);
+        if (cached !== undefined) return cached;
+        const converted = await engine.kuroshiro.convert(line, { to: mode, mode: "normal" });
+        cacheLine(this.#kana, key, converted);
+        return converted;
       }),
     );
   }

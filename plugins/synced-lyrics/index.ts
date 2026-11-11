@@ -69,6 +69,9 @@ export default definePlugin({
       convertChinese(lines: string[], mode: "s2t" | "t2s") {
         return hostOf(this).convertChinese(lines, mode);
       },
+      convertJapanese(lines: string[], mode: "hiragana" | "katakana") {
+        return hostOf(this).convertJapanese(lines, mode);
+      },
       translate(request: { videoId: string; title: string; artists: string[]; lines: string[]; language?: string }) {
         return hostOf(this).translate(request, this.config);
       },

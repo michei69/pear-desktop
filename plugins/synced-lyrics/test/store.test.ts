@@ -14,7 +14,7 @@ const track: Track = {
 };
 const noRomanization = Object.fromEntries(ROMANIZATION_SCRIPTS.map((script) => [script, false])) as RomanizationSettings;
 const allRomanization = Object.fromEntries(ROMANIZATION_SCRIPTS.map((script) => [script, true])) as RomanizationSettings;
-const options: Options = { preferred: "auto", inexact: true, romanization: noRomanization, chinese: "off" };
+const options: Options = { preferred: "auto", inexact: true, romanization: noRomanization, chinese: "off", japanese: "off" };
 
 const synced: LyricResult = { title: "Song", artists: ["Artist"], lines: [{ startMs: 0, endMs: 1000, text: "hi" }] };
 const plain: LyricResult = { title: "Song", artists: ["Artist"], plain: "hi\nthere" };
@@ -33,6 +33,7 @@ function backend(results: Partial<Record<ProviderId, LyricResult | null | Error>
     }),
     romanize: vi.fn(async (lines: string[]) => lines.map((line) => (line ? `r:${line}` : null))),
     convertChinese: vi.fn(async (lines: string[]) => lines),
+    convertJapanese: vi.fn(async (lines: string[]) => lines),
   };
 }
 
@@ -311,6 +312,34 @@ describe("romanization", () => {
     expect(store.shown?.lines[0]?.words).toEqual([
       { startMs: 0, endMs: 400, text: "國 " },
       { startMs: 400, endMs: 1000, text: "家" },
+    ]);
+  });
+
+  test("Japanese kana conversion keeps word timings", async () => {
+    const api = backend({
+      LRCLib: {
+        ...synced,
+        lines: [
+          {
+            startMs: 0,
+            endMs: 1000,
+            text: "東京 に",
+            words: [
+              { startMs: 0, endMs: 600, text: "東京 " },
+              { startMs: 600, endMs: 1000, text: "に" },
+            ],
+          },
+        ],
+      },
+    });
+    api.convertJapanese = vi.fn(async (lines: string[]) => lines.map((line) => line.replaceAll("東京", "とうきょう")));
+    const store = new LyricsStore(api, { ...options, japanese: "hiragana" });
+    store.load(track);
+    await vi.waitFor(() => expect(store.shown?.lines[0]?.text).toBe("とうきょう に"));
+    expect(store.shown?.texts).toEqual(["とうきょう に"]);
+    expect(store.shown?.lines[0]?.words).toEqual([
+      { startMs: 0, endMs: 600, text: "とうきょう " },
+      { startMs: 600, endMs: 1000, text: "に" },
     ]);
   });
 
