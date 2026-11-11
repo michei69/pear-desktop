@@ -1,4 +1,13 @@
-import { definePlugin, playerQueue, queueDispatch, queueItems, queueSelectedIndex, type QueueItem } from "@pear/sdk";
+import {
+  appQueueStore,
+  definePlugin,
+  onQueueChange,
+  playerQueue,
+  queueDispatch,
+  queueItems,
+  queueSelectedIndex,
+  type QueueItem,
+} from "@pear/sdk";
 
 const EXPLICIT_BADGE = "MUSIC_EXPLICIT_BADGE";
 const ROW_SELECTOR =
@@ -56,11 +65,16 @@ const itemKeysOf = (items: QueueItem[]) =>
       .join("/"),
   );
 
+/**
+ * The queue state, from the `#queue` store, with the app element's own queue
+ * slice as a fallback (the slice outlives the queue element, and exists on UIs
+ * that don't expose one). The player bar's legacy `getState().queue` is gone.
+ */
 const queueState = (): QueueState | undefined => {
-  const store = playerQueue()?.queue?.store?.store;
-  // getState() is typed with the SDK's minimal queue; the store keeps these fields beside it.
-  const state = store?.getState() as unknown as { queue?: QueueState } | undefined;
-  return state?.queue;
+  // getState() is typed with the SDK's minimal queue; the stores keep these fields beside it.
+  const stored = playerQueue()?.queue?.store?.store?.getState()?.queue as QueueState | undefined;
+  if (stored?.items?.length) return stored;
+  return (appQueueStore()?.getState().queue as unknown as QueueState | undefined) ?? stored;
 };
 
 export default definePlugin({
@@ -90,7 +104,8 @@ export default definePlugin({
         ctx.player.control({ type: "pause" });
       }
 
-      const items = queueItems();
+      const state = queueState();
+      const items = state?.items ?? queueItems();
       if (items !== lastItems) {
         const keys = itemKeysOf(items);
         // A radio continuation appends to the queue; only a replaced queue clears the loop guard.
@@ -104,7 +119,6 @@ export default definePlugin({
       }
 
       const matches = (item?: QueueItem) => videosOf(item).some((video) => video?.videoId === videoId);
-      const state = queueState();
       // A direct selection can leave the queue index on a different song.
       let index = state?.selectedItemIndex ?? queueSelectedIndex(items);
       if (!matches(items[index])) index = items.findIndex(matches);
@@ -127,8 +141,9 @@ export default definePlugin({
       blockedVideoId = videoId;
       ctx.player.control({ type: "pause" });
 
-      // Pause, rather than skip forever, when every entry is Explicit.
-      if (items.length > 0 && items.every((item) => videosOf(item).some(isExplicitVideo))) return;
+      // Master's per-entry loop guard: an explicit entry that was already skipped
+      // is not advanced again, so an all-explicit queue settles paused instead of
+      // skipping forever. A replaced queue or a clean song clears the guard.
       if (skipped.has(entryKey)) return;
       skipped.add(entryKey);
 
@@ -163,8 +178,9 @@ export default definePlugin({
     ctx.player.on("trackChange", schedule);
     ctx.player.on("trackLoading", schedule);
     ctx.player.on("statusChange", schedule);
-    // Queue metadata and rows can arrive without another player event.
-    ctx.observe("app", { childList: true, subtree: true }, schedule);
+    // Queue metadata and rows can arrive without another player event. The app
+    // store survives the queue element being re-created, so no re-hooking is needed.
+    const offQueue = onQueueChange(schedule);
     ctx.listen(document, "click", blockExplicitSelection, { capture: true });
     ctx.listen(document, "tap", blockExplicitSelection, { capture: true });
 
@@ -172,6 +188,7 @@ export default definePlugin({
 
     ctx.onCleanup(() => {
       stopped = true;
+      offQueue();
       ctx.clearTimeout(pending);
       pending = undefined;
       skipped.clear();
