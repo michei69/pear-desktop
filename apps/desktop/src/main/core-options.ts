@@ -6,6 +6,7 @@ import { app, dialog, type BrowserWindow } from "electron";
 import type { CoreSection } from "@pear/sdk/core-config";
 import type { Translate } from "@pear/sdk/i18n";
 import type { CoreState } from "@pear/sdk/protocol";
+import { syncShortcutIcons } from "./app-identity.ts";
 import type { Settings } from "./config.ts";
 import { type MainWindow, windowTitle } from "./main-window.ts";
 import { applyHideMenu, syncMenu } from "./menu.ts";
@@ -22,6 +23,8 @@ export interface CoreOptionsEnvironment {
   refreshMenu?(): void;
   /** Rebuilds artwork that plugins draw from core settings (the tray). */
   refreshTrayIcons?(): void;
+  /** Restarts the app, for pear-desktop's "restart on config changes" option. */
+  restart?(): void;
 }
 
 export class CoreOptions {
@@ -30,6 +33,8 @@ export class CoreOptions {
   #mainWindow: MainWindow;
   #t: Translate;
   #env: CoreOptionsEnvironment;
+  /** The last "Use Music's icons" value the shortcuts were synced to. */
+  #shortcutIcons: boolean | undefined;
 
   constructor(
     settings: Settings,
@@ -84,22 +89,31 @@ export class CoreOptions {
     else if (section === "appearance") this.#applyAppearance();
   }
 
-  /** Changes options like the settings UI does (and tells it); a declined beta→stable switch changes nothing. */
-  async set(section: AppSection, patch: Record<string, unknown>) {
+  /**
+   * Changes options like the settings UI does (and tells it); false when a
+   * refused beta→stable switch changed nothing, so the control can reset itself.
+   */
+  async set(section: AppSection, patch: Record<string, unknown>): Promise<boolean> {
     if (section === "general" && patch.updateChannel === "stable") {
       const current = this.#settings.core("general").updateChannel;
-      if (current !== "stable" && isBetaVersion(app.getVersion()) && !(await this.#confirmDowngrade())) return;
+      if (current !== "stable" && isBetaVersion(app.getVersion()) && !(await this.#confirmDowngrade())) return false;
     }
     const previous = section === "general" ? this.#settings.core("general") : undefined;
     this.#settings.setCore(section, patch);
     this.apply(section);
     this.#mainWindow.send({ type: "core-state", section, state: this.state(section) });
-    if (!previous) return;
-    const next = this.#settings.core("general");
-    if (previous.updateChannel === next.updateChannel && previous.autoUpdates === next.autoUpdates) return;
-    // The update manager checks on the new channel right away; the menu mirrors the new values.
-    this.#env.updates?.channelChanged();
-    this.#env.refreshMenu?.();
+    if (previous) {
+      const next = this.#settings.core("general");
+      if (previous.updateChannel !== next.updateChannel || previous.autoUpdates !== next.autoUpdates) {
+        // The update manager checks on the new channel right away; the menu mirrors the new values.
+        this.#env.updates?.channelChanged();
+        this.#env.refreshMenu?.();
+      }
+    }
+    // pear-desktop's options.restartOnConfigChanges: applied every change by relaunching. Read
+    // after the write, so the change that turns the option off does not restart.
+    if (this.#settings.core("advanced").restartOnConfigChanges) this.#env.restart?.();
+    return true;
   }
 
   /** Warns before a beta build switches to stable: a downgrade runs no migrations back. */
@@ -154,10 +168,17 @@ export class CoreOptions {
   #applyAppearance() {
     // The page applies the rest itself (core-state events); the icon option also
     // swaps the native window/Dock artwork and the tray plugin's icons.
-    const icon = appIcon(this.#settings.core("appearance").useYtmIcons);
+    const useYtmIcons = this.#settings.core("appearance").useYtmIcons;
+    const icon = appIcon(useYtmIcons);
     const window = this.#mainWindow.window;
     if (process.platform === "darwin") app.dock?.setIcon(icon);
     else window?.setIcon(icon);
     this.#env.refreshTrayIcons?.();
+    // Windows shortcuts carry their own icon; they follow the option (and are
+    // synced once at launch, after the Start Menu shortcut exists).
+    if (useYtmIcons !== this.#shortcutIcons) {
+      this.#shortcutIcons = useYtmIcons;
+      void syncShortcutIcons(useYtmIcons).catch((error) => console.warn("[pear] couldn't sync the shortcut icons:", error));
+    }
   }
 }

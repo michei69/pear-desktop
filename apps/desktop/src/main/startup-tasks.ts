@@ -35,7 +35,7 @@ const BASE_ENABLED_FEATURES = [
 const BASE_DISABLED_FEATURES = ["FluentScrollbar", "BackForwardCache", "Prerender2"];
 
 /** Must run before `app.whenReady()`. */
-export function beforeReady(app: App, settings: Settings, plugins: PluginHost) {
+export function beforeReady(app: App, settings: Settings, plugins: PluginHost, smtcLoaded = false) {
   const advanced = settings.core("advanced");
   if (advanced.disableHardwareAcceleration) app.disableHardwareAcceleration();
   registerSettingsScheme();
@@ -43,14 +43,20 @@ export function beforeReady(app: App, settings: Settings, plugins: PluginHost) {
   const enabled = new Set([...BASE_ENABLED_FEATURES, ...features.enabled]);
   const disabled = new Set([...BASE_DISABLED_FEATURES, ...features.disabled]);
   // node-smtc replaces Chromium's media session on Windows (see index.ts).
-  if (process.platform === "win32" && settings.core("window").forceSmtc) {
-    disabled.add("HardwareMediaKeyHandling");
-    disabled.add("MediaSessionService");
-  }
+  for (const feature of smtcDisabledFeatures(smtcLoaded)) disabled.add(feature);
   // One switch per list: a second appendSwitch silences the first.
   app.commandLine.appendSwitch("enable-features", [...enabled].join(","));
   app.commandLine.appendSwitch("disable-features", [...disabled].join(","));
   console.info(`[pear] chromium features: +${[...enabled].join(",")} -${[...disabled].join(",")}`);
+}
+
+/**
+ * Chromium's own media session is the fallback when the optional node-smtc
+ * addon is missing or fails to build; disabling it without a working
+ * replacement would leave Windows with no media keys at all.
+ */
+export function smtcDisabledFeatures(addonLoaded: boolean) {
+  return addonLoaded ? ["HardwareMediaKeyHandling", "MediaSessionService"] : [];
 }
 
 /** The Proxy plugin: while on, it owns the session's proxy. */

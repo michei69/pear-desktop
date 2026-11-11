@@ -364,11 +364,16 @@ export const PEAR_DESKTOP_3_PLUGIN_DEFAULTS: Record<string, Record<string, unkno
       "previous": "",
       "playPause": "",
       "next": "",
+      // Added with the 3.13 keybinds (master 4ad0d0c0).
+      "like": "",
+      "dislike": "",
     },
     "local": {
       "previous": "",
       "playPause": "",
       "next": "",
+      "like": "",
+      "dislike": "",
     },
   },
   "skip-ai-slop": {

@@ -1,4 +1,5 @@
 import { createServer, type Server } from "node:http";
+import { v } from "@pear/sdk/rpc";
 import { afterEach, describe, expect, it } from "vitest";
 import { handleMcpRequest } from "../src/main/api/mcp.ts";
 import type { McpTool } from "../src/main/api/mcp-tools.ts";
@@ -6,14 +7,14 @@ import type { McpTool } from "../src/main/api/mcp-tools.ts";
 const text = (value: string) => ({ content: [{ type: "text" as const, text: value }] });
 
 const tools: McpTool[] = [
-  { name: "ping", description: "Answer pong.", input: { type: "object" }, readOnly: true, run: async () => text("pong") },
+  { name: "ping", description: "Answer pong.", input: v.object({}), readOnly: true, run: async () => text("pong") },
   {
     name: "echo",
     description: "Echo the text back.",
-    input: { type: "object", properties: { text: { type: "string" } }, required: ["text"] },
+    input: v.object({ text: v.string() }),
     run: async (args) => text(String(args.text)),
   },
-  { name: "fail", description: "Fail on purpose.", input: { type: "object" }, run: async () => ({ ...text("nope"), isError: true }) },
+  { name: "fail", description: "Fail on purpose.", input: v.object({}), run: async () => ({ ...text("nope"), isError: true }) },
 ];
 
 const servers: Server[] = [];
@@ -55,6 +56,8 @@ describe("MCP endpoint", () => {
     const list = await (await rpc(url, { jsonrpc: "2.0", id: 2, method: "tools/list" })).json();
     expect(list.result.tools.map((tool: { name: string }) => tool.name)).toEqual(["ping", "echo", "fail"]);
     expect(list.result.tools[0].annotations).toEqual({ readOnlyHint: true });
+    // The executable schema is published as JSON schema.
+    expect(list.result.tools[1].inputSchema).toMatchObject({ type: "object", required: ["text"] });
 
     const call = await (
       await rpc(url, { jsonrpc: "2.0", id: 3, method: "tools/call", params: { name: "echo", arguments: { text: "hi" } } })
@@ -62,12 +65,26 @@ describe("MCP endpoint", () => {
     expect(call.result).toEqual(text("hi"));
   });
 
+  it("rejects arguments the input schema rejects before the tool runs", async () => {
+    const url = await start();
+    // `echo` requires `text`; the tool would otherwise have answered "undefined".
+    const missing = await (await rpc(url, { jsonrpc: "2.0", id: 4, method: "tools/call", params: { name: "echo" } })).json();
+    expect(missing.result.isError).toBe(true);
+    expect(missing.result.content[0].text).toContain("text");
+
+    const wrongType = await (
+      await rpc(url, { jsonrpc: "2.0", id: 5, method: "tools/call", params: { name: "echo", arguments: { text: 42 } } })
+    ).json();
+    expect(wrongType.result.isError).toBe(true);
+    expect(wrongType.result.content[0].text).toContain("text: Invalid type: Expected string");
+  });
+
   it("reports tool failures as results and unknown methods as errors", async () => {
     const url = await start();
-    const failed = await (await rpc(url, { jsonrpc: "2.0", id: 4, method: "tools/call", params: { name: "fail" } })).json();
+    const failed = await (await rpc(url, { jsonrpc: "2.0", id: 6, method: "tools/call", params: { name: "fail" } })).json();
     expect(failed.result).toMatchObject({ isError: true, content: [{ type: "text", text: "nope" }] });
 
-    const unknown = await (await rpc(url, { jsonrpc: "2.0", id: 5, method: "nope" })).json();
+    const unknown = await (await rpc(url, { jsonrpc: "2.0", id: 7, method: "nope" })).json();
     expect(unknown.error.code).toBe(-32601);
   });
 

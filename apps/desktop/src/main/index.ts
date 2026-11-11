@@ -24,8 +24,15 @@ import { PlayerMirror } from "./player.ts";
 import { PluginHost } from "./plugins.ts";
 import { findProtocolLink, ProtocolLinks, registerProtocol } from "./protocol.ts";
 import { watchPreloadBundle } from "./dev-reload.ts";
-import { openSettingsWindow, SETTINGS_FLAG, serveSettings, settingsWindowContents } from "./settings-window.ts";
-import { startSmtc } from "./smtc.ts";
+import {
+  openSettingsWindow,
+  RestartSessions,
+  SETTINGS_FLAG,
+  serveSettings,
+  setSettingsTranslate,
+  settingsWindowContents,
+} from "./settings-window.ts";
+import { loadSmtc, startSmtc } from "./smtc.ts";
 import { applyProxy, beforeReady, clearStaleCodeCaches, PROXY_PLUGIN, scheduleLaterTasks } from "./startup-tasks.ts";
 import { checkForUpdates, UpdateManager } from "./updates.ts";
 import { WebRequestRouter } from "./web-request.ts";
@@ -33,15 +40,23 @@ import { focusWindow } from "./windows.ts";
 
 setAppIdentity();
 if (!app.requestSingleInstanceLock()) app.quit();
-else main();
+else void main();
 
-function main() {
+async function main() {
   const settings = new Settings(app.getPath("userData"), hostPlugins, app.getVersion());
   const plugins = new PluginHost(hostPlugins, settings, process.platform);
-  beforeReady(app, settings, plugins);
+  // The optional SMTC addon has to be resolved before the Chromium feature
+  // switches are applied: when it is missing or fails to build, Chromium's own
+  // media session must stay enabled as the fallback (see startup-tasks).
+  const smtc = process.platform === "win32" && settings.core("window").forceSmtc ? await loadSmtc() : null;
+  beforeReady(app, settings, plugins, smtc !== null);
 
   const mainWindow = new MainWindow(settings, plugins);
   const { send, openSettings } = mainWindow;
+  const restart = () => {
+    app.relaunch(relaunchOptions());
+    app.quit();
+  };
   // Replaced once the menu exists; importing a theme adds it to the menu.
   let refreshMenu = () => {};
   let updates: UpdateManager | undefined;
@@ -50,6 +65,7 @@ function main() {
     refreshMenu: () => refreshMenu(),
     // The tray plugin draws its own artwork; a no-op while it is disabled.
     refreshTrayIcons: () => void plugins.invoke("tray", "refreshIcons", []).catch(() => {}),
+    restart,
   });
   const player = new PlayerMirror((action) => send({ type: "player-control", action }));
   // pear-desktop's `url` key held the playing track; the startup toggle reopens it.
@@ -68,7 +84,10 @@ function main() {
     (task) => {
       const window = mainWindow.window;
       if (task.type === "page") {
-        requests.request("core", task.event, task.payload).catch((error) => console.warn("[pear] protocol link:", error));
+        requests.request("core", task.event, task.payload).catch((error) => {
+          // The state requests have no reply channel in the protocol; their answer is unused.
+          if (!task.ignoreResult) console.warn("[pear] protocol link:", error);
+        });
       } else if (task.type === "fullscreen") {
         window?.setFullScreen(task.fullscreen);
         requests.request("core", "fullscreen:set", task.fullscreen).catch((error) => console.warn("[pear] protocol link:", error));
@@ -89,7 +108,7 @@ function main() {
     const link = findProtocolLink(argv);
     if (link) links.run(link);
     else if (argv.includes(SETTINGS_FLAG)) openSettingsWindow(settings.core("appearance").useYtmIcons);
-    else mainWindow.focus();
+    else void plugins.invoke("tray", "showWindow", []).catch(() => mainWindow.focus());
   });
 
   app.whenReady().then(async () => {
@@ -101,6 +120,8 @@ function main() {
     void clearStaleCodeCaches(app);
     const language = resolveLanguage(settings.core("general").language, app.getLocale());
     plugins.setI18n(await loadI18n(language));
+    // The settings window's own error page (shown when pear://settings fails to load).
+    setSettingsTranslate(plugins.t);
     const activeLanguage = plugins.i18n?.language ?? language;
     const languageSync = {
       fromYtm: async () => (await languageFromYtm(session.defaultSession)) ?? null,
@@ -112,6 +133,12 @@ function main() {
     serveSettings();
     // Started here, not when the Flags section opens: the download takes a while.
     void loadFlagMetadata();
+    // The settings surfaces' restart-pending changes, batched until the last one closes.
+    const restarts = new RestartSessions({
+      t: plugins.t,
+      window: () => mainWindow.window,
+      restart,
+    });
     setupIpc({
       plugins,
       player,
@@ -121,6 +148,7 @@ function main() {
       windowVisible: () => mainWindow.visible,
       window: () => mainWindow.window,
       openSettingsWindow: () => openSettingsWindow(settings.core("appearance").useYtmIcons),
+      restarts,
       themes: core.themes,
       language: languageSync,
       apiPageEvent: (name, payload) => api?.pageEvent?.(name, payload),
@@ -131,8 +159,11 @@ function main() {
           if (section !== "apiServer") return core.set(section, patch);
           settings.setCore(section, patch);
           await api?.apply();
+          return true;
         },
       },
+      restartOnConfigChanges: () => settings.core("advanced").restartOnConfigChanges,
+      restart,
     });
     core.start();
     const checkUpdatesNow = () => {
@@ -151,6 +182,39 @@ function main() {
       openSettings,
       themes: core.themes,
       pluginItems: () => menuItems.items,
+      // The API server's own menu (pear-desktop's plugin submenu).
+      apiServer: () => ({
+        config: settings.core("apiServer"),
+        set: (patch) => {
+          settings.setCore("apiServer", patch);
+          void api?.apply();
+        },
+      }),
+      // pear-desktop's Plugins menu: the same stored state the settings cards toggle.
+      pluginCatalog: () =>
+        plugins.plugins.map((plugin) => ({
+          id: plugin.id,
+          name: plugins.t(`plugins.${plugin.id}.name`, plugin.name),
+          enabled: settings.plugin(plugin.id)?.enabled === true,
+        })),
+      setPluginEnabled: (id, enabled) => {
+        void plugins
+          .setEnabled(id, enabled)
+          .then(() => {
+            refreshMenu();
+            // pear-desktop's Plugins menu went through setMenuOptions: it restarts with the option on too.
+            if (settings.core("advanced").restartOnConfigChanges) restart();
+          })
+          .catch((error) => console.warn("[pear] couldn't change a plugin:", error));
+      },
+      // The Options menu's quick toggles write through the settings path.
+      coreOption: (section, key) => (settings.core(section) as Record<string, unknown>)[key],
+      setCoreOption: (section, patch) => {
+        if (section !== "apiServer") void core.set(section, patch);
+      },
+      restartOnConfigChanges: () => settings.core("advanced").restartOnConfigChanges,
+      // Turning it on restarts on the spot, as master's setMenuOption did.
+      setRestartOnConfigChanges: (value) => void core.set("advanced", { restartOnConfigChanges: value }),
       alwaysOnTop: () => settings.core("window").alwaysOnTop,
       setAlwaysOnTop: (alwaysOnTop) => void core.set("window", { alwaysOnTop }),
       languageFromYtm: languageSync.fromYtm,
@@ -175,10 +239,7 @@ function main() {
         if (!locked && app.hasSingleInstanceLock()) app.releaseSingleInstanceLock();
         else if (locked && !app.hasSingleInstanceLock()) app.requestSingleInstanceLock();
       },
-      restart: () => {
-        app.relaunch(relaunchOptions());
-        app.quit();
-      },
+      restart,
     };
     setApplicationMenu(menu);
     refreshMenu = () => setApplicationMenu(menu);
@@ -196,14 +257,14 @@ function main() {
     });
     if (process.platform === "darwin") hideOnClose(app, window);
     // The native transport controls own the media keys on Windows; the module is optional.
-    if (process.platform === "win32" && settings.core("window").forceSmtc) {
-      startSmtc(player, { appMediaId: APP_ID }).then(
-        (stop) => {
-          if (quitting) stop();
-          else stopSmtc = stop;
-        },
-        (error) => console.warn("[pear] SMTC unavailable:", error),
-      );
+    if (smtc) {
+      try {
+        const stop = startSmtc(smtc, player, { appMediaId: APP_ID });
+        if (quitting) stop();
+        else stopSmtc = stop;
+      } catch (error) {
+        console.warn("[pear] SMTC unavailable:", error);
+      }
     }
     updates = new UpdateManager({
       currentVersion: app.getVersion(),
@@ -290,5 +351,10 @@ function main() {
     if (process.platform !== "darwin") app.quit();
   });
 
-  app.on("activate", () => onActivate(mainWindow.window, () => void mainWindow.create()));
+  // `started` is false until whenReady builds the first window: creating one
+  // here during startup would race it (and duplicate its per-window setup).
+  app.on("activate", () => {
+    if (!mainWindow.started) return;
+    onActivate(mainWindow.window, () => void mainWindow.create());
+  });
 }

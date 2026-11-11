@@ -241,11 +241,25 @@ export const PEAR_DESKTOP_3_COMPLETE = from3124({
     "seek-shortcuts": { enabled: true },
     "settings-ui": { enabled: false, showButton: false, separateWindow: true },
     "sfw-music": { enabled: true },
+    // 3.13 nightly builds added like/dislike to the defaults (master 4ad0d0c0): a
+    // migrated config that holds them must keep the bindings.
     shortcuts: {
       enabled: true,
       overrideMediaKeys: true,
-      global: { previous: "Ctrl+Shift+Left", playPause: "Ctrl+Shift+Space", next: "Ctrl+Shift+Right" },
-      local: { previous: "Ctrl+Alt+Left", playPause: "Ctrl+Alt+Space", next: "Ctrl+Alt+Right" },
+      global: {
+        previous: "Ctrl+Shift+Left",
+        playPause: "Ctrl+Shift+Space",
+        next: "Ctrl+Shift+Right",
+        like: "Ctrl+Shift+L",
+        dislike: "Ctrl+Shift+D",
+      },
+      local: {
+        previous: "Ctrl+Alt+Left",
+        playPause: "Ctrl+Alt+Space",
+        next: "Ctrl+Alt+Right",
+        like: "Ctrl+Alt+L",
+        dislike: "Ctrl+Alt+D",
+      },
     },
     "skip-ai-slop": {
       enabled: true,

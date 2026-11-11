@@ -7,6 +7,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import hostPlugins from "virtual:pear/host-plugins";
 import { afterAll, describe, expect, test, vi } from "vitest";
+import { DEFAULT_FILTERS } from "../../../plugins/scrobbler/filters.ts";
 import { Settings } from "../src/main/config.ts";
 import { migrate, PLUGIN_MIGRATIONS, type StoredConfig } from "../src/main/migrations/index.ts";
 import { from312, PEAR_DESKTOP_3, PLAY_BUTTON } from "./pear-desktop-3.ts";
@@ -114,6 +115,12 @@ describe("pear-desktop plugin options", () => {
       enabled: true,
       noPreservesPitch: "yes",
     });
+    // pear-desktop 3.13+ stored the speed under `playbackSpeed`; the schema would drop it.
+    // The old key is kept (going back to 3.x still finds it).
+    expect(twice("playback-speed", { playbackSpeed: 1.239 })).toEqual({ playbackSpeed: 1.239, speed: 1.24 });
+    expect(twice("playback-speed", { playbackSpeed: 100 })).toEqual({ playbackSpeed: 100, speed: 16 });
+    expect(twice("playback-speed", { speed: 1.5, playbackSpeed: 2 })).toEqual({ speed: 1.5, playbackSpeed: 2 });
+    expect(twice("playback-speed", { playbackSpeed: "fast" })).toEqual({ playbackSpeed: "fast" });
   });
 
   test("notifications: the numbered toast style becomes its name", () => {
@@ -203,12 +210,43 @@ describe("pear-desktop plugin options", () => {
     });
   });
 
+  test("scrobbler: a stored filter list extends the defaults", () => {
+    // pear-desktop stored only what the user changed and merged the defaults in when reading
+    // (song-info-data.ts:272-287), so an upgraded 3.x delta must get them back.
+    const entry = twice("scrobbler", { customRegexFilters: ["my-own-filter"] });
+    const filters = entry.customRegexFilters as string[];
+    expect(filters.at(-1)).toBe("my-own-filter");
+    expect(filters).toContain("\\s[([]Explicit[)\\]]");
+    expect(filters).toContain("Live\\s\\/\\sRemastered");
+    expect(new Set(filters).size).toBe(filters.length);
+    // The list the 3.x menu wrote already holds the merged defaults; nothing is repeated.
+    expect(twice("scrobbler", { customRegexFilters: [...DEFAULT_FILTERS, "my-own-filter"] }).customRegexFilters).toEqual([
+      ...DEFAULT_FILTERS,
+      "my-own-filter",
+    ]);
+  });
+
   test("shortcuts: global and in-window shortcuts are top-level options; MPRIS stays on", () => {
     const plugins = migrated({
-      shortcuts: { enabled: true, overrideMediaKeys: true, global: { playPause: "Ctrl+F1", next: "", previous: 5 }, local: { next: "N" } },
+      shortcuts: {
+        enabled: true,
+        overrideMediaKeys: true,
+        global: { playPause: "Ctrl+F1", next: "", previous: 5, like: "Ctrl+F2", dislike: 7 },
+        local: { next: "N", like: "Ctrl+F3" },
+      },
     });
-    expect(plugins.shortcuts).toMatchObject({ enabled: true, overrideMediaKeys: true, playPause: "Ctrl+F1", next: "", localNext: "N" });
+    expect(plugins.shortcuts).toMatchObject({
+      enabled: true,
+      overrideMediaKeys: true,
+      playPause: "Ctrl+F1",
+      next: "",
+      like: "Ctrl+F2",
+      localNext: "N",
+      localLike: "Ctrl+F3",
+    });
     expect(plugins.shortcuts).not.toHaveProperty("previous");
+    // Not a string: a broken binding is left for the user to re-enter.
+    expect(plugins.shortcuts).not.toHaveProperty("dislike");
     expect(plugins["media-controls"]).toEqual({ enabled: true });
     // Not enabled: media-controls keeps its own default.
     expect(migrated({ shortcuts: { enabled: false } })).not.toHaveProperty("media-controls");
@@ -218,7 +256,7 @@ describe("pear-desktop plugin options", () => {
   test("amuse: a pear-desktop entry keeps listening on every address", () => {
     // pear-desktop's server was reachable from the LAN; the rewrite's default is
     // loopback, so the migration writes the old bind address instead of dropping it.
-    expect(twice("amuse", { enabled: true })).toMatchObject({ hostname: "0.0.0.0" });
+    expect(twice("amuse", { enabled: true })).toMatchObject({ hostname: "" });
     // An address the user chose is theirs.
     expect(twice("amuse", { hostname: "127.0.0.1" })).toMatchObject({ hostname: "127.0.0.1" });
   });
@@ -327,6 +365,7 @@ const EXPECTED: Record<string, { enabled: boolean; config: Json }> = {
   "ambient-mode": {
     enabled: true,
     config: {
+      style: "standard",
       interpolationTime: 3000,
       quality: 1000,
       size: 125,
@@ -335,9 +374,20 @@ const EXPECTED: Record<string, { enabled: boolean; config: Json }> = {
       blur: 25,
       extendSidebar: false,
       fullscreen: true,
+      barDetection: true,
+      brightness: 100,
+      contrast: 100,
+      saturation: 100,
+      theme: "auto",
+      dimming: 0,
+      fadeStart: 100,
+      fadeCurve: 50,
+      fadeIn: 0,
+      sync: "video",
+      energySaver: false,
     },
   },
-  amuse: { enabled: true, config: { port: 9863, hostname: "0.0.0.0" } },
+  amuse: { enabled: true, config: { port: 9863, hostname: "" } },
   "audio-compressor": {
     enabled: true,
     config: { threshold: -50, ratio: 12, knee: 40, attack: 0, release: 250, autoTrackGain: false, maxTrackGainDb: 12 },
@@ -398,7 +448,7 @@ const EXPECTED: Record<string, { enabled: boolean; config: Json }> = {
       iceServers: expect.arrayContaining(["stun:stun.l.google.com:19302"]),
     },
   },
-  navigation: { enabled: false, config: { placement: "left" } },
+  navigation: { enabled: false, config: { placement: "right" } },
   notifications: {
     enabled: true,
     config: {
@@ -581,11 +631,12 @@ describe("synced-lyrics", () => {
       convertChinese: "off",
     });
     expect(twice("synced-lyrics", { defaultTextString: " " })).toMatchObject({ gapText: "none" });
-    // Same names and values: nothing to convert.
+    // The single preferred provider became a priority list in 3.12.3.
     const kept = migrated({ "synced-lyrics": { enabled: true, preferredProvider: "LRCLib", lineEffect: "focus", romanization: false } })[
       "synced-lyrics"
     ];
-    expect(kept).toMatchObject({ preferredProvider: "LRCLib", lineEffect: "focus", romanization: false });
+    expect(kept).toMatchObject({ providerPriority: ["LRCLib"], usePriorityList: true, lineEffect: "focus", romanization: false });
+    expect(kept).not.toHaveProperty("preferredProvider");
   });
 
   test("the nested translation settings become flat keys, keeping the credentials", () => {

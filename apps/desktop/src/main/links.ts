@@ -77,7 +77,8 @@ export function navigationAction(url: string): NavigationAction {
 export function restrictedRegionRedirect(url: string): string | undefined {
   const parsed = URL.parse(url);
   // YTM's own /premium (its upgrade page) is a page of its own, not the restriction.
-  const videoSite = parsed && parsed.origin !== YTM_ORIGIN && (parsed.hostname === VIDEO_SITE || parsed.hostname.endsWith(`.${VIDEO_SITE}`));
+  const videoSite =
+    parsed && parsed.origin !== YTM_ORIGIN && (parsed.hostname === VIDEO_SITE || parsed.hostname.endsWith(`.${VIDEO_SITE}`));
   if (!parsed || !videoSite || parsed.pathname !== "/premium") return undefined;
   const signin = new URL("/signin", VIDEO_SITE_ORIGIN);
   signin.searchParams.set("action_handle_signin", "true");

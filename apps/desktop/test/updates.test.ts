@@ -80,9 +80,20 @@ describe("newerRelease", () => {
 
   test("stable ignores prereleases, drafts and older releases", async () => {
     expect(await newerRelease("4.0.0", github({ tag_name: "v4.0.0" }))).toBeUndefined();
+    expect(await newerRelease("4.0.0", github({ tag_name: "v3.9.0" }))).toBeUndefined();
     expect(await newerRelease("4.0.0", github({ tag_name: "v4.1.0", prerelease: true }))).toBeUndefined();
     expect(await newerRelease("4.0.0", github({ tag_name: "v4.1.0", draft: true }))).toBeUndefined();
     expect(await newerRelease("4.0.0", github({ message: "Not Found" }))).toBeUndefined();
+  });
+
+  test("both channel requests give up instead of hanging", async () => {
+    const stable = github({ tag_name: "v4.2.0" });
+    await newerRelease("4.0.0", stable);
+    expect(stable.mock.calls[0]![1]?.signal).toBeInstanceOf(AbortSignal);
+
+    const beta = github([]);
+    await newerRelease("4.0.0", beta, "beta");
+    expect(beta.mock.calls[0]![1]?.signal).toBeInstanceOf(AbortSignal);
   });
 
   test("the beta channel picks the newest release, prerelease or not", async () => {

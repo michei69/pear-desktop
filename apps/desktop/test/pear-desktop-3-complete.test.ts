@@ -8,6 +8,7 @@ import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { flagOverrides, type CoreSection } from "@pear/sdk/core-config";
+import { DEFAULT_FILTERS } from "../../../plugins/scrobbler/filters.ts";
 import hostPlugins from "virtual:pear/host-plugins";
 import { afterAll, describe, expect, test, vi } from "vitest";
 import { Settings } from "../src/main/config.ts";
@@ -50,13 +51,14 @@ const APP_SECTION: Record<string, string> = {
   stripSIFromSharedLinks: "general",
   disableHardwareAcceleration: "advanced",
   autoResetAppCache: "advanced",
+  restartOnConfigChanges: "advanced",
   forceSmtc: "window",
   proxy: "advanced",
   overrideUserAgent: "advanced",
 };
 
 /** App options the rewrite has no room for; their keys stay in the file for a downgrade. */
-const APP_GAPS = ["restartOnConfigChanges", "hideMenuWarned", "inProcessGpu"];
+const APP_GAPS = ["hideMenuWarned", "inProcessGpu"];
 
 /** Master options a migration moves elsewhere; the old key stays too. */
 const MIGRATED_OPTIONS = [
@@ -94,7 +96,10 @@ const CONVERTED: Record<string, Record<string, string[]>> = {
       "listenbrainzApiRoot",
     ],
   },
-  shortcuts: { global: ["playPause", "next", "previous"], local: ["localPlayPause", "localNext", "localPrevious"] },
+  shortcuts: {
+    global: ["playPause", "next", "previous", "like", "dislike"],
+    local: ["localPlayPause", "localNext", "localPrevious", "localLike", "localDislike"],
+  },
   sponsorblock: { categories: ["sponsor", "intro", "outro", "interaction", "selfpromo", "music_offtopic", "preview", "filler"] },
   "synced-lyrics": {
     defaultTextString: ["gapText"],
@@ -331,6 +336,11 @@ describe("a complete pear-desktop 3.12.4 config.json, migrated to 4.0.0", () => 
       // Same-named options keep pear-desktop's values.
       for (const [key, value] of Object.entries(fixturePlugins[id]!)) {
         if (key === "enabled" || !schema.has(key) || CONVERTED_IN_PLACE[id]?.includes(key)) continue;
+        if (id === "scrobbler" && key === "customRegexFilters") {
+          // 3.x stored only the filters the user changed; the migration restores the defaults.
+          expect(config[key]).toEqual([...new Set([...DEFAULT_FILTERS, ...(value as string[])])]);
+          continue;
+        }
         expect(config[key], `${id}.${key}`).toEqual(value);
       }
     }
@@ -420,9 +430,13 @@ describe("a complete pear-desktop 3.12.4 config.json, migrated to 4.0.0", () => 
       playPause: "Ctrl+Shift+Space",
       next: "Ctrl+Shift+Right",
       previous: "Ctrl+Shift+Left",
+      like: "Ctrl+Shift+L",
+      dislike: "Ctrl+Shift+D",
       localPlayPause: "Ctrl+Alt+Space",
       localNext: "Ctrl+Alt+Right",
       localPrevious: "Ctrl+Alt+Left",
+      localLike: "Ctrl+Alt+L",
+      localDislike: "Ctrl+Alt+D",
       overrideMediaKeys: true,
     });
 

@@ -1,7 +1,15 @@
 import { app, BrowserWindow, ipcMain, type IpcMainEvent, type IpcMainInvokeEvent, shell } from "electron";
 import { pluginActions } from "@pear/sdk";
 import { isCoreSection, type CoreSection } from "@pear/sdk/core-config";
-import { type Bootstrap, CHANNEL, type CoreCommandName, type CoreCommands, type CoreState, type PluginInfo } from "@pear/sdk/protocol";
+import {
+  type Bootstrap,
+  CHANNEL,
+  type CoreCommandName,
+  type CoreCommands,
+  type CoreState,
+  type PluginInfo,
+  type RestartRequirement,
+} from "@pear/sdk/protocol";
 import { isSettingsUrl, isYtmUrl } from "../shared/user-agent.ts";
 import { getAppMeta } from "./app-meta.ts";
 import { buildLabel, channel, commit, copyright } from "./app-info.ts";
@@ -10,6 +18,7 @@ import { relaunchOptions } from "./app-identity.ts";
 import type { PageRequests } from "./page-requests.ts";
 import type { PlayerMirror } from "./player.ts";
 import type { PluginHost } from "./plugins.ts";
+import type { RestartSessions } from "./settings-window.ts";
 import type { Themes } from "./themes.ts";
 
 /** YTM (with the page runtime) and the standalone settings window. */
@@ -47,6 +56,8 @@ export interface IpcEnvironment {
   window(): BrowserWindow | undefined;
   /** Opens (or focuses) the standalone settings window. */
   openSettingsWindow(): void;
+  /** Batches restart requirements from the settings surfaces (the standalone window's too). */
+  restarts: RestartSessions;
   /** The theme engine: its state and the commands that edit it. */
   themes: Themes;
   /** The open YTM page's language, kept in step with the app's. */
@@ -62,8 +73,12 @@ export interface IpcEnvironment {
   checkUpdates?(): void;
   core: {
     states(): Record<CoreSection, CoreState>;
-    setConfig(section: CoreSection, patch: Record<string, unknown>): void | Promise<void>;
+    /** False when the core refused the change (a declined beta→stable switch). */
+    setConfig(section: CoreSection, patch: Record<string, unknown>): boolean | Promise<boolean>;
   };
+  /** pear-desktop's "restart on config changes": what a settings change from the surfaces restarts. */
+  restartOnConfigChanges(): boolean;
+  restart(): void;
 }
 
 export function setupIpc({
@@ -75,12 +90,17 @@ export function setupIpc({
   windowVisible,
   window,
   openSettingsWindow,
+  restarts,
   themes,
   language,
   apiPageEvent,
   checkUpdates,
   core,
+  restartOnConfigChanges,
+  restart,
 }: IpcEnvironment) {
+  /** The `destroyed` cleanup of each open restart session, removed when it closes normally. */
+  const restartDestroyed = new Map<number, () => void>();
   const handlers: Handlers = {
     ping: (message) => `pong: ${message}`,
     "app:version": () => app.getVersion(),
@@ -89,7 +109,12 @@ export function setupIpc({
       app.exit(0);
     },
     "app:open-settings-window": () => openSettingsWindow(),
-    "plugin:set-enabled": async (id, enabled) => void (await plugins.setEnabled(String(id), Boolean(enabled))),
+    "plugin:set-enabled": async (id, enabled) => {
+      await plugins.setEnabled(String(id), Boolean(enabled));
+      // pear-desktop's setMenuOption: enabling or disabling restarts when the option is on.
+      // Plain config edits do not (pear-desktop's settings UI sent those elsewhere).
+      if (restartOnConfigChanges()) restart();
+    },
     "plugin:set-config": async (id, patch) => {
       assertPatch(patch);
       await plugins.setConfig(String(id), patch);
@@ -102,7 +127,8 @@ export function setupIpc({
     "core:set-config": async (section, patch) => {
       if (!isCoreSection(String(section))) throw new Error(`[pear] unknown settings section: ${String(section)}`);
       assertPatch(patch);
-      await core.setConfig(section, patch);
+      // The outcome: false leaves the control on the real value when the core refuses the change.
+      return core.setConfig(section, patch);
     },
     "theme:select": (id) => themes.select(String(id), window()),
     "theme:allow-script": (id) => themes.allowScript(String(id), window()),
@@ -138,10 +164,39 @@ export function setupIpc({
     if (PAGE_RUNTIME_COMMANDS.has(name) && !isPageRuntime(event)) {
       throw new Error(`[pear] ${String(name)} is for the page runtime`);
     }
-    if (typeof name !== "string" || !Object.hasOwn(handlers, name)) {
+    if (typeof name !== "string") throw new Error(`[pear] unknown command: ${String(name)}`);
+    if (!Array.isArray(args)) throw new Error("[pear] invoke args must be an array");
+    // The restart sessions are not in CoreCommands: only the settings surfaces send them.
+    if (name === "settings:restart-open" || name === "settings:restart-add" || name === "settings:restart-close") {
+      const requirements = Array.isArray(args[0]) ? (args[0] as RestartRequirement[]) : [];
+      const session = event.sender.id;
+      switch (name) {
+        case "settings:restart-open": {
+          restarts.open(session);
+          // A window can go away without closing its session (crash, app-quit path).
+          const destroyed = () => {
+            restartDestroyed.delete(session);
+            restarts.close(session);
+          };
+          restartDestroyed.set(session, destroyed);
+          event.sender.once("destroyed", destroyed);
+          return;
+        }
+        case "settings:restart-add":
+          return restarts.add(session, requirements);
+        default: {
+          const destroyed = restartDestroyed.get(session);
+          if (destroyed) {
+            event.sender.off("destroyed", destroyed);
+            restartDestroyed.delete(session);
+          }
+          return restarts.close(session, requirements);
+        }
+      }
+    }
+    if (!Object.hasOwn(handlers, name)) {
       throw new Error(`[pear] unknown command: ${String(name)}`);
     }
-    if (!Array.isArray(args)) throw new Error("[pear] invoke args must be an array");
     return (handlers[name as CoreCommandName] as (...a: unknown[]) => unknown)(...args);
   });
 

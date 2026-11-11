@@ -2,6 +2,7 @@
 // buttons, scripts or other apps) controls playback. A second instance started
 // with such a link hands it to the running one.
 
+import { resolve } from "node:path";
 import type { App } from "electron";
 import type { PlayerAction } from "@pear/sdk";
 
@@ -86,9 +87,10 @@ export function protocolActions({ command, args }: ProtocolCommand): PlayerActio
   }
 }
 
-/** pear-desktop's commands beyond the player's controls: the queue, full screen and search box. */
+/** pear-desktop's commands beyond the player's controls: loading media, the queue, full screen and search box. */
 export type ProtocolTask =
-  | { type: "page"; event: string; payload?: unknown }
+  /** A page-side handler; `ignoreResult` for the state requests, whose answer has nowhere to go. */
+  | { type: "page"; event: string; payload?: unknown; ignoreResult?: boolean }
   | { type: "fullscreen"; fullscreen: boolean }
   | { type: "open-search" };
 
@@ -101,6 +103,23 @@ const index = (value: string | undefined) => {
 /** The commands that act on the page or window (the API server's queue requests do the same). */
 export function protocolTasks({ command, args }: ProtocolCommand): ProtocolTask[] {
   switch (command) {
+    // Media loading: the page runtime's API-server requests navigate YTM.
+    case "loadVideo": {
+      const videoId = args[0];
+      return videoId ? [{ type: "page", event: "video:play", payload: videoId }] : [];
+    }
+    case "loadPlaylist": {
+      const playlistId = args[0];
+      return playlistId ? [{ type: "page", event: "video:playlist", payload: playlistId }] : [];
+    }
+    // pear-desktop's state requests made the renderer re-send its state; the
+    // rewrite streams state already, so these only refresh the page-side answer
+    // (the queue reply also carries shuffle).
+    case "requestShuffleInformation":
+    case "requestQueueInformation":
+      return [{ type: "page", event: "queue:parsed", ignoreResult: true }];
+    case "requestFullscreenInformation":
+      return [{ type: "page", event: "fullscreen", ignoreResult: true }];
     case "addSongToQueue": {
       const [videoId, position = "INSERT_AT_END"] = args;
       if (!videoId || !QUEUE_POSITIONS.has(position)) return [];
@@ -109,7 +128,9 @@ export function protocolTasks({ command, args }: ProtocolCommand): ProtocolTask[
     case "moveSongInQueue": {
       const fromIndex = index(args[0]);
       const toIndex = index(args[1]);
-      return fromIndex === undefined || toIndex === undefined ? [] : [{ type: "page", event: "queue:move", payload: { fromIndex, toIndex } }];
+      return fromIndex === undefined || toIndex === undefined
+        ? []
+        : [{ type: "page", event: "queue:move", payload: { fromIndex, toIndex } }];
     }
     case "removeSongFromQueue": {
       const at = index(args[0]);
@@ -169,10 +190,14 @@ export class ProtocolLinks {
 }
 
 /**
- * Makes this app the handler for the protocol, as pear-desktop did. Only when
- * packaged: development runs (and tests) shouldn't take over the system's handler.
+ * Makes this app the handler for the protocol, as pear-desktop did: packaged
+ * builds register themselves, a development run points the protocol at the
+ * Electron binary and this app's entry file.
  */
 export function registerProtocol(app: App) {
-  if (!app.isPackaged) return;
-  app.setAsDefaultProtocolClient(APP_PROTOCOL);
+  if (process.defaultApp && process.argv.length >= 2) {
+    app.setAsDefaultProtocolClient(APP_PROTOCOL, process.execPath, [resolve(process.argv[1]!)]);
+  } else {
+    app.setAsDefaultProtocolClient(APP_PROTOCOL);
+  }
 }

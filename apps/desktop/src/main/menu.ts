@@ -4,6 +4,7 @@
 
 import { app, type BrowserWindow, clipboard, dialog, Menu, type MenuItemConstructorOptions, shell } from "electron";
 import { type PluginMenuItem, stripMusicSubdomain, stripSIParam } from "@pear/sdk";
+import { type ApiServerConfig, type CoreSection, STARTING_PAGES } from "@pear/sdk/core-config";
 import type { Translate } from "@pear/sdk/i18n";
 import { CUSTOM_PRESET, defaultPreset, keyLabel } from "@pear/sdk/themes";
 import type { Themes } from "./themes.ts";
@@ -12,6 +13,19 @@ import { alive } from "./windows.ts";
 
 /** What the menu needs from the theme engine; tests pass a fake. */
 export type MenuThemes = Pick<Themes, "all" | "selected" | "presets" | "select" | "setPreset" | "import" | "openFolder">;
+
+/** The API server's options, and the write path that applies them (it rebinds itself). */
+export interface ApiServerMenu {
+  config: ApiServerConfig;
+  set(patch: Partial<ApiServerConfig>): void;
+}
+
+/** A plugin as the Plugins menu lists it. */
+export interface MenuPlugin {
+  id: string;
+  name: string;
+  enabled: boolean;
+}
 
 export interface MenuEnvironment {
   platform: NodeJS.Platform;
@@ -23,6 +37,17 @@ export interface MenuEnvironment {
   themes: MenuThemes;
   /** Plugins' items (`ctx.addMenuItem`), below Settings. */
   pluginItems(): readonly PluginMenuItem[];
+  /** The plugins the Plugins menu toggles; without it (or an empty catalog) the menu is left out. */
+  pluginCatalog?(): readonly MenuPlugin[];
+  setPluginEnabled?(id: string, enabled: boolean): void;
+  /** The API server's menu (pear-desktop's plugin submenu); left out while the host doesn't expose it. */
+  apiServer?(): ApiServerMenu | undefined;
+  /** A core option the Options menu mirrors (the settings window writes the same key). */
+  coreOption?(section: CoreSection, key: string): unknown;
+  setCoreOption?(section: CoreSection, patch: Record<string, unknown>): void;
+  /** pear-desktop's "restart on config changes": every settings change relaunches the app. */
+  restartOnConfigChanges?(): boolean;
+  setRestartOnConfigChanges?(value: boolean): void;
   alwaysOnTop(): boolean;
   setAlwaysOnTop(value: boolean): void;
   /** Whether this instance holds the single-instance lock (another launch then focuses it). */
@@ -55,7 +80,14 @@ export function menuTemplate(env: MenuEnvironment): MenuItemConstructorOptions[]
   const isMac = env.platform === "darwin";
   const contents = () => alive(env.window())?.webContents;
   const settings = settingsItem(env);
-  const template = [optionsMenu(env, contents, isMac ? undefined : settings), viewMenu(env), navigationMenu(env, contents), aboutMenu(env)];
+  const plugins = pluginsMenu(env);
+  const template = [
+    ...(plugins ? [plugins] : []),
+    optionsMenu(env, contents, isMac ? undefined : settings),
+    viewMenu(env),
+    navigationMenu(env, contents),
+    aboutMenu(env),
+  ];
   return isMac ? [macAppMenu(settings), ...template] : template;
 }
 
@@ -70,6 +102,248 @@ function settingsItem(env: MenuEnvironment): MenuItemConstructorOptions {
   };
 }
 
+/** A checkbox for a boolean core option; omitted while the host doesn't expose the option. */
+function coreCheckbox(
+  env: MenuEnvironment,
+  section: CoreSection,
+  key: string,
+  labelKey: string,
+  label: string,
+): MenuItemConstructorOptions | undefined {
+  const value = env.coreOption?.(section, key);
+  if (value === undefined) return undefined;
+  return {
+    label: env.t(labelKey, label),
+    type: "checkbox",
+    checked: value === true,
+    click: (item) => env.setCoreOption?.(section, { [key]: item.checked }),
+  };
+}
+
+/** Drops the entries the environment doesn't expose, and separators left doubled. */
+function entries(...items: (MenuItemConstructorOptions | undefined)[]): MenuItemConstructorOptions[] {
+  const visible: MenuItemConstructorOptions[] = [];
+  for (const item of items) {
+    if (!item) continue;
+    if (item.type === "separator" && visible.at(-1)?.type === "separator") continue;
+    visible.push(item);
+  }
+  return visible;
+}
+
+/** pear-desktop's Plugins menu: one enable/disable checkbox per plugin, like the settings cards. */
+function pluginsMenu(env: MenuEnvironment): MenuItemConstructorOptions | undefined {
+  const catalog = env.pluginCatalog?.();
+  if (!catalog || catalog.length === 0 || !env.setPluginEnabled) return undefined;
+  return {
+    label: env.t("main.menu.plugins.label", "Plugins"),
+    submenu: [...catalog]
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .map((plugin) => ({
+        label: plugin.name,
+        type: "checkbox" as const,
+        checked: plugin.enabled,
+        click: (item: Electron.MenuItem) => env.setPluginEnabled?.(plugin.id, item.checked),
+      })),
+  };
+}
+
+/** The browser's copy-current-URL cleaning, as pear-desktop's Shared links submenu. */
+function sharedLinksItem(env: MenuEnvironment): MenuItemConstructorOptions | undefined {
+  const items = entries(
+    coreCheckbox(
+      env,
+      "general",
+      "stripMusicFromSharedLinks",
+      "main.menu.options.submenu.shared-links.submenu.strip-music",
+      "Strip 'music.'",
+    ),
+    coreCheckbox(env, "general", "stripSIFromSharedLinks", "main.menu.options.submenu.shared-links.submenu.strip-si", "Strip '&si='"),
+  );
+  if (items.length === 0) return undefined;
+  return { label: env.t("main.menu.options.submenu.shared-links.label", "Shared links"), submenu: items };
+}
+
+/** pear-desktop's Starting page radios, from the same registry the settings use. */
+function startingPageItem(env: MenuEnvironment): MenuItemConstructorOptions | undefined {
+  const current = env.coreOption?.("general", "startingPage");
+  if (typeof current !== "string" || !env.setCoreOption) return undefined;
+  const { t } = env;
+  return {
+    label: t("main.menu.options.submenu.starting-page.label", "Starting page"),
+    submenu: Object.keys(STARTING_PAGES).map((page) => ({
+      label: page || t("main.menu.options.submenu.starting-page.unset", "Unset"),
+      type: "radio" as const,
+      checked: current === page,
+      click: () => env.setCoreOption?.("general", { startingPage: page }),
+    })),
+  };
+}
+
+/** pear-desktop's Visual tweaks checkbox shortcuts; the theme submenu stays its own item. */
+function visualTweaksItem(env: MenuEnvironment): MenuItemConstructorOptions | undefined {
+  const items = entries(
+    coreCheckbox(
+      env,
+      "appearance",
+      "removeUpgradeButton",
+      "main.menu.options.submenu.visual-tweaks.submenu.remove-upgrade-button",
+      "Remove the Upgrade button",
+    ),
+    coreCheckbox(
+      env,
+      "appearance",
+      "useYtmIcons",
+      "main.menu.options.submenu.visual-tweaks.submenu.use-ytm-icons",
+      "Use original \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u004d\u0075\u0073\u0069\u0063 icons",
+    ),
+  );
+  if (items.length === 0) return undefined;
+  return { label: env.t("main.menu.options.submenu.visual-tweaks.label", "Visual tweaks"), submenu: items };
+}
+
+/** pear-desktop's API server submenu: natural spelling of the settings, with file pickers for the HTTPS files. */
+function apiServerItem(env: MenuEnvironment): MenuItemConstructorOptions | undefined {
+  const api = env.apiServer?.();
+  if (!api) return undefined;
+  const { t } = env;
+  const { config } = api;
+  const pick = async (key: "certPath" | "keyPath", titleKey: string, title: string, filters: Electron.FileFilter[]) => {
+    const options: Electron.OpenDialogOptions = { title: t(titleKey, title), filters, properties: ["openFile"] };
+    const window = alive(env.window());
+    const { canceled, filePaths } = window ? await dialog.showOpenDialog(window, options) : await dialog.showOpenDialog(options);
+    const path = filePaths[0];
+    if (canceled || !path) return;
+    api.set(key === "certPath" ? { certPath: path } : { keyPath: path });
+  };
+  return {
+    label: t("plugins.api-server.name", "API Server"),
+    submenu: entries(
+      {
+        label: t("plugins.api-server.menu.enabled", "Enable the API server"),
+        type: "checkbox",
+        checked: config.enabled,
+        click: (item) => api.set({ enabled: item.checked }),
+      },
+      // Only the server's own address can't be a menu control without a text prompt;
+      // the item takes the user to the same fields in Settings.
+      {
+        label: `${t("plugins.api-server.menu.hostname.label", "Hostname")}: ${config.hostname}   ${t("plugins.api-server.menu.port.label", "Port")}: ${config.port}`,
+        click: () => env.openSettings(),
+      },
+      {
+        label: t("plugins.api-server.menu.mcp.label", "MCP server"),
+        type: "checkbox",
+        checked: config.mcpEnabled,
+        click: (item) => api.set({ mcpEnabled: item.checked }),
+      },
+      {
+        label: t("plugins.api-server.menu.auth-strategy.label", "Authorization strategy"),
+        submenu: [
+          {
+            label: t("plugins.api-server.menu.auth-strategy.submenu.auth-at-first.label", "Authorize at first request"),
+            type: "radio",
+            checked: config.authStrategy === "AUTH_AT_FIRST",
+            click: () => api.set({ authStrategy: "AUTH_AT_FIRST" }),
+          },
+          {
+            label: t("plugins.api-server.menu.auth-strategy.submenu.none.label", "No authorization"),
+            type: "radio",
+            checked: config.authStrategy === "NONE",
+            click: () => api.set({ authStrategy: "NONE" }),
+          },
+        ],
+      },
+      {
+        label: t("plugins.api-server.menu.https.label", "HTTPS & Certificates"),
+        submenu: [
+          {
+            label: t("plugins.api-server.menu.https.submenu.enable-https.label", "Enable HTTPS"),
+            type: "checkbox",
+            checked: config.useHttps,
+            click: (item) => api.set({ useHttps: item.checked }),
+          },
+          {
+            label: t("plugins.api-server.menu.https.submenu.cert.label", "Certificate file (.crt/.pem)"),
+            click: () =>
+              void pick("certPath", "plugins.api-server.menu.https.submenu.cert.dialogTitle", "Select HTTPS certificate file", [
+                { name: "Certificate", extensions: ["crt", "pem"] },
+              ]),
+          },
+          {
+            label: t("plugins.api-server.menu.https.submenu.key.label", "Private key file (.key/.pem)"),
+            click: () =>
+              void pick("keyPath", "plugins.api-server.menu.https.submenu.key.dialogTitle", "Select HTTPS private key file", [
+                { name: "Private Key", extensions: ["key", "pem"] },
+              ]),
+          },
+        ],
+      },
+      { type: "separator" },
+      {
+        label: t("plugins.api-server.menu.settings", "API server settings…"),
+        click: () => env.openSettings(),
+      },
+    ),
+  };
+}
+
+/** pear-desktop's Advanced options submenu: the advanced switches plus DevTools and config.json. */
+function advancedOptionsItem(env: MenuEnvironment, contents: Contents): MenuItemConstructorOptions {
+  const { t } = env;
+  return {
+    label: t("main.menu.options.submenu.advanced-options.label", "Advanced options"),
+    submenu: entries(
+      coreCheckbox(
+        env,
+        "advanced",
+        "overrideUserAgent",
+        "main.menu.options.submenu.advanced-options.submenu.override-user-agent",
+        "Override the user agent",
+      ),
+      coreCheckbox(
+        env,
+        "advanced",
+        "disableHardwareAcceleration",
+        "main.menu.options.submenu.advanced-options.submenu.disable-hardware-acceleration",
+        "Disable hardware acceleration",
+      ),
+      {
+        label: t("main.menu.options.submenu.advanced-options.submenu.restart-on-config-changes", "Restart on config changes"),
+        type: "checkbox",
+        checked: env.restartOnConfigChanges?.() === true,
+        click: (item) => env.setRestartOnConfigChanges?.(item.checked),
+      },
+      coreCheckbox(
+        env,
+        "advanced",
+        "autoResetAppCache",
+        "main.menu.options.submenu.advanced-options.submenu.auto-reset-app-cache",
+        "Clear the app cache on startup",
+      ),
+      env.platform === "win32"
+        ? coreCheckbox(
+            env,
+            "window",
+            "forceSmtc",
+            "main.menu.options.submenu.advanced-options.submenu.force-smtc",
+            "Force the use of external SMTC",
+          )
+        : undefined,
+      { type: "separator" },
+      {
+        label: t("main.menu.options.submenu.advanced-options.submenu.toggle-dev-tools", "Toggle DevTools"),
+        accelerator: env.platform === "darwin" ? "Alt+Cmd+I" : "Ctrl+Shift+I",
+        click: () => contents()?.toggleDevTools(),
+      },
+      {
+        label: t("main.menu.options.submenu.advanced-options.submenu.edit-config-json", "Edit config.json"),
+        click: () => void shell.openPath(env.settingsPath),
+      },
+    ),
+  };
+}
+
 /** `settings` leads the menu, except on macOS where it is in the app menu; plugins' items follow. */
 function optionsMenu(
   env: MenuEnvironment,
@@ -80,9 +354,15 @@ function optionsMenu(
   const leading = [...(settings ? [settings] : []), ...env.pluginItems().map(pluginItem)];
   return {
     label: t("main.menu.options.label", "Options"),
-    submenu: [
+    submenu: entries(
       ...(leading.length > 0 ? [...leading, { type: "separator" } as const] : []),
       ...(env.updatesSupported?.() === true ? [updatesItem(env), { type: "separator" } as const] : []),
+      // pear-desktop's quick toggles, all through the same core settings the dialog writes.
+      coreCheckbox(env, "general", "resumeOnStart", "main.menu.options.submenu.resume-on-start", "Resume the last song"),
+      sharedLinksItem(env),
+      startingPageItem(env),
+      visualTweaksItem(env),
+      { type: "separator" },
       {
         // As pear-desktop: a second launch focuses this instance only while the lock is held.
         label: t("main.menu.options.submenu.single-instance-lock", "Single Instance Lock"),
@@ -98,22 +378,22 @@ function optionsMenu(
         click: (item) => env.setAlwaysOnTop(item.checked),
       },
       ...(env.languageFromYtm && env.languageToYtm ? [languageSyncItem(env)] : []),
+      ...(env.platform === "linux" || env.platform === "win32"
+        ? [coreCheckbox(env, "window", "hideMenu", "main.menu.options.submenu.hide-menu.label", "Hide the menu bar")]
+        : []),
+      ...(env.platform === "win32" || env.platform === "darwin"
+        ? [coreCheckbox(env, "window", "startAtLogin", "main.menu.options.submenu.start-at-login", "Start at login")]
+        : []),
       { type: "separator" },
       {
         label: t("main.menu.options.submenu.visual-tweaks.submenu.theme.label", "Theme"),
         submenu: themeItems(env),
       },
       { type: "separator" },
-      {
-        label: t("main.menu.options.submenu.advanced-options.submenu.toggle-dev-tools", "Toggle DevTools"),
-        accelerator: env.platform === "darwin" ? "Alt+Cmd+I" : "Ctrl+Shift+I",
-        click: () => contents()?.toggleDevTools(),
-      },
-      {
-        label: t("main.menu.options.submenu.advanced-options.submenu.edit-config-json", "Edit config.json"),
-        click: () => void shell.openPath(env.settingsPath),
-      },
-    ],
+      apiServerItem(env),
+      { type: "separator" },
+      advancedOptionsItem(env, contents),
+    ),
   };
 }
 

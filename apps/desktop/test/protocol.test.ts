@@ -22,7 +22,9 @@ describe("app protocol", () => {
 
   test("maps pear-desktop's queue, full screen and search box commands", () => {
     const tasks = (command: string, ...args: string[]) => protocolTasks({ command, args });
-    expect(tasks("addSongToQueue", "abc")).toEqual([{ type: "page", event: "queue:add", payload: { videoId: "abc", insertPosition: "INSERT_AT_END" } }]);
+    expect(tasks("addSongToQueue", "abc")).toEqual([
+      { type: "page", event: "queue:add", payload: { videoId: "abc", insertPosition: "INSERT_AT_END" } },
+    ]);
     expect(tasks("addSongToQueue", "abc", "INSERT_AFTER_CURRENT_VIDEO")).toEqual([
       { type: "page", event: "queue:add", payload: { videoId: "abc", insertPosition: "INSERT_AFTER_CURRENT_VIDEO" } },
     ]);
@@ -37,5 +39,21 @@ describe("app protocol", () => {
     expect(tasks("setFullscreen", "maybe")).toEqual([]);
     expect(tasks("openSearchBox")).toEqual([{ type: "open-search" }]);
     expect(tasks("playPause")).toEqual([]);
+  });
+
+  test("loads media through the same page requests the API server uses", () => {
+    const tasks = (command: string, ...args: string[]) => protocolTasks({ command, args });
+    expect(tasks("loadVideo", "dQw4w9WgXcQ")).toEqual([{ type: "page", event: "video:play", payload: "dQw4w9WgXcQ" }]);
+    expect(tasks("loadVideo")).toEqual([]);
+    expect(tasks("loadPlaylist", "PL123")).toEqual([{ type: "page", event: "video:playlist", payload: "PL123" }]);
+    expect(tasks("loadPlaylist")).toEqual([]);
+  });
+
+  test("the state requests are ignored-result page requests", () => {
+    const tasks = (command: string) => protocolTasks({ command, args: [] });
+    // pear-desktop's state requests: the rewrite streams state, so only the page-side answer is refreshed.
+    expect(tasks("requestShuffleInformation")).toEqual([{ type: "page", event: "queue:parsed", ignoreResult: true }]);
+    expect(tasks("requestQueueInformation")).toEqual([{ type: "page", event: "queue:parsed", ignoreResult: true }]);
+    expect(tasks("requestFullscreenInformation")).toEqual([{ type: "page", event: "fullscreen", ignoreResult: true }]);
   });
 });

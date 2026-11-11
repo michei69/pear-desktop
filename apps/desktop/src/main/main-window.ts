@@ -9,9 +9,11 @@ import { APP_NAME, relaunchOptions } from "./app-identity.ts";
 import type { Settings, WindowState } from "./config.ts";
 import { errorPage, loadFailureAction } from "./load-failure.ts";
 import { navigationAction, restrictedRegionRedirect, windowOpenAction } from "./links.ts";
+import { PLAYER_PAGE_CSS } from "./player-page.ts";
 import type { PluginHost } from "./plugins.ts";
 import { openSettingsWindow, settingsWindowContents } from "./settings-window.ts";
 import { alive, appIcon, focusWindow, secureWebPreferences } from "./windows.ts";
+import { DEFAULT_WINDOW_SIZE, MIN_HEIGHT, MIN_WIDTH } from "./window-size.ts";
 
 /** macOS: YTM's own nav bar becomes the drag region, with room for the traffic lights. */
 const MAC_TITLE_BAR_CSS = `
@@ -23,13 +25,12 @@ ytmusic-app-layout#layout { --ytmusic-nav-bar-offset: 24px; --ytmusic-nav-bar-he
 ytmusic-app-layout#layout ytmusic-nav-bar { padding-top: var(--ytmusic-nav-bar-offset); }
 `;
 
-const MIN_WIDTH = 360;
-const MIN_HEIGHT = 300;
 /** 'ready-to-show' waits for the remote page's first paint, which takes seconds on a cold start. */
 const EARLY_SHOW_DELAY_MS = 500;
 /** YTM's own background, so the window doesn't flash white while loading. */
 const BACKGROUND_COLOR = "#030303";
-const DEFAULT_SIZE = { width: 1280, height: 800 };
+/** A minute hidden before Blink's re-fetchable resource caches are dropped (pear-desktop's rule). */
+const HIDDEN_CACHE_RELEASE_MS = 60_000;
 
 /** The standalone settings window only follows state, not page-runtime traffic. */
 const SETTINGS_EVENTS = new Set<HostEvent["type"]>(["plugin-state", "plugin-error", "plugin-status", "core-state", "themes"]);
@@ -47,6 +48,8 @@ export class MainWindow {
   #window: BrowserWindow | undefined;
   /** Whether the page runtime of the current page is up (it can show the in-page settings). */
   #runtimeUp = false;
+  /** Whether create() has run: a macOS activate before that must not race the first window. */
+  #started = false;
   #electronUserAgent = "";
   #pendingStartingPage: string | undefined;
   #ytmUserAgent = "";
@@ -59,6 +62,11 @@ export class MainWindow {
   /** The window, unless there is none (yet, or any more). */
   get window() {
     return alive(this.#window);
+  }
+
+  /** True once the first window has been created (or is being created). */
+  get started() {
+    return this.#started;
   }
 
   /**
@@ -117,6 +125,11 @@ export class MainWindow {
 
   create() {
     const settings = this.#settings;
+    // Idempotent: callers (the macOS activate handler) may ask while the
+    // window is up, or before the first one was built.
+    const existing = this.window;
+    if (existing) return existing;
+    this.#started = true;
     const window = new BrowserWindow(this.#options());
     this.#window = window;
     if (settings.window?.maximized) window.maximize();
@@ -151,10 +164,14 @@ export class MainWindow {
     this.#saveBounds(window);
     this.#reportVisibility(window);
     this.#handleLoadFailures(window);
-    // The in-app menu draws its own title bar, with room for the traffic lights.
-    if (process.platform === "darwin" && !settings.plugin("in-app-menu")?.enabled) {
-      window.webContents.on("dom-ready", () => void window.webContents.insertCSS(MAC_TITLE_BAR_CSS));
-    }
+    window.webContents.on("dom-ready", () => {
+      // pear-desktop injected its player-page rules into every window; the
+      // macOS title-bar fix is skipped while the in-app menu draws its own.
+      void window.webContents.insertCSS(PLAYER_PAGE_CSS);
+      if (process.platform === "darwin" && !settings.plugin("in-app-menu")?.enabled) {
+        void window.webContents.insertCSS(MAC_TITLE_BAR_CSS);
+      }
+    });
     const general = settings.core("general");
     const start = net.isOnline() ? startUrl(general, settings.lastPlayback) : `${YTM_ORIGIN}/`;
     this.#pendingStartingPage =
@@ -204,6 +221,22 @@ export class MainWindow {
   /** The page keeps rendering while the window is off screen (no background throttling); tell it, so visual plugins can pause. */
   #reportVisibility(window: BrowserWindow) {
     let reported = this.visible;
+    let hiddenCacheTimer: ReturnType<typeof setTimeout> | undefined;
+    const cancelHiddenCacheRelease = () => {
+      clearTimeout(hiddenCacheTimer);
+      hiddenCacheTimer = undefined;
+    };
+    /** Hidden to tray: decoded images and fonts are re-fetchable, so hand the caches back after a while. */
+    const scheduleHiddenCacheRelease = () => {
+      cancelHiddenCacheRelease();
+      hiddenCacheTimer = setTimeout(() => {
+        hiddenCacheTimer = undefined;
+        if (this.visible || window.isDestroyed()) return;
+        void window.webContents.executeJavaScript("window.pearPerf?.clearCache()").catch(() => {
+          // The page may be mid-navigation; the next hide tries again.
+        });
+      }, HIDDEN_CACHE_RELEASE_MS);
+    };
     const report = () => {
       const visible = this.visible;
       if (visible === reported) return;
@@ -214,6 +247,11 @@ export class MainWindow {
     window.on("hide", report);
     window.on("minimize", report);
     window.on("restore", report);
+    // Only a hidden-to-tray window (not a minimized one) gives its caches back;
+    // showing it again before the minute is up cancels the release.
+    window.on("hide", scheduleHiddenCacheRelease);
+    window.on("show", cancelHiddenCacheRelease);
+    window.on("closed", cancelHiddenCacheRelease);
   }
 
   /** A dead or killed renderer asks what to do, as pear-desktop did, instead of leaving a blank window. */
@@ -350,7 +388,7 @@ function startUrl(general: { resumeOnStart: boolean; startingPage: StartingPage 
 }
 
 function windowBounds(saved: WindowState | undefined): Partial<Rect> {
-  if (!saved) return { ...DEFAULT_SIZE };
+  if (!saved) return { ...DEFAULT_WINDOW_SIZE };
   const { x, y, width, height } = saved;
   const size = { width, height };
   if (x === undefined || y === undefined) return size;

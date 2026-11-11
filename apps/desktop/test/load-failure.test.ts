@@ -24,7 +24,9 @@ describe("loadFailureAction", () => {
 test("the error page retries the page that failed, with its text escaped", () => {
   const url = `${YTM_ORIGIN}/search?q=a&b="<x>`;
   const page = decodeURIComponent(errorPage(url, { title: "T", message: "Can't <load>", retry: "Retry" }).split(",").slice(1).join(","));
-  expect(page).toContain(`href="${url.replaceAll("&", "&#38;").replaceAll('"', "&#34;").replaceAll("<", "&#60;").replaceAll(">", "&#62;")}"`);
+  expect(page).toContain(
+    `href="${url.replaceAll("&", "&#38;").replaceAll('"', "&#34;").replaceAll("<", "&#60;").replaceAll(">", "&#62;")}"`,
+  );
   expect(page).toContain("Can&#39;t &#60;load&#62;");
   expect(page).toContain(">Retry</a>");
 });

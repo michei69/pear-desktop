@@ -33,10 +33,7 @@ export function setupNet(webRequest: WebRequest, { electronUserAgent }: NetOptio
  * Media is readable by everyone: crossfade, the equalizer and the compressor pull buffered audio
  * through Web Audio, which stays silent without a wildcard origin.
  */
-export function rewriteResponseHeaders(
-  headers: Record<string, string[]>,
-  resourceType?: string,
-): Record<string, string[]> {
+export function rewriteResponseHeaders(headers: Record<string, string[]>, resourceType?: string): Record<string, string[]> {
   const rewritten: Record<string, string[]> = {};
   for (const [name, value] of Object.entries(headers)) {
     if (!STRIPPED_RESPONSE_HEADERS.has(name.toLowerCase())) rewritten[name] = value;
