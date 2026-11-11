@@ -2,6 +2,7 @@
 // the next one, and fade it in. Without a second stream (its audio didn't arrive,
 // or wasn't playable), the track fades out before the next one fades in.
 
+import { type PoTokenRequest, poTokens } from "@pear/sdk/potoken";
 import { createFader } from "./fade.ts";
 import type { Ctx } from "./schema.ts";
 import { HANDOVER_SECONDS, secondStream } from "./stream.ts";
@@ -12,6 +13,8 @@ const MIN_TRACK_SECONDS = 30;
  * next-track control may do nothing (no next button, end of queue), and the
  * flag must not turn the user's next manual skip into a crossfade. */
 const AUTO_TRANSITION_TIMEOUT_MS = 5000;
+/** Short ramp back to full level after a next-track click that didn't navigate. */
+const RESTORE_SECONDS = 0.05;
 
 interface FadeIn {
   startedAt: number;
@@ -22,8 +25,16 @@ interface FadeIn {
 }
 
 export async function startCrossfade(ctx: Ctx) {
+  // The host's InnerTube session asks the page for PO tokens: BotGuard needs a
+  // real DOM, so it mints here, as it does for the downloader.
+  const tokens = poTokens();
+  ctx.host.handle("poToken", (request) => tokens.answer(request as PoTokenRequest));
+  ctx.onCleanup(() => tokens.dispose());
+
   const graph = await ctx.audio();
-  const { video, context } = graph;
+  const { context } = graph;
+  // YTM may replace the <video> on a seek; always work on the live element.
+  let video = graph.video;
   const fader = createFader(ctx, graph);
   const stream = secondStream(ctx, graph);
 
@@ -123,6 +134,22 @@ export async function startCrossfade(ctx: Ctx) {
     }
   };
 
+  /**
+   * The armed transition never navigated (last item of a queue, no next
+   * button): give the still-playing track its audio back. `skipped` stays set,
+   * so the same track does not ask for a next one again; a real navigation
+   * resets it.
+   */
+  const restoreAfterFailedTransition = () => {
+    stream.cancelTransition();
+    fader.splice(1, RESTORE_SECONDS);
+    handoverUntil = 0;
+    pendingFadeIn = false;
+    fadingIn = null;
+    fadingOut = false;
+    clearAutoTransition();
+  };
+
   const skip = () => {
     skipped = true;
     fadingOut = false;
@@ -145,10 +172,10 @@ export async function startCrossfade(ctx: Ctx) {
       handoverUntil = 0;
     }
     // Bounded: a click that does not navigate (no next button, end of queue)
-    // must not stay armed for the next track.
+    // must not stay armed for the next track, and must not leave this one silent.
     clearAutoTransition();
     autoTransition = true;
-    autoTransitionTimer = ctx.setTimeout(clearAutoTransition, AUTO_TRANSITION_TIMEOUT_MS);
+    autoTransitionTimer = ctx.setTimeout(restoreAfterFailedTransition, AUTO_TRANSITION_TIMEOUT_MS);
     pendingFadeIn = true;
     fadingIn = null;
     ctx.player.control({ type: "next" });
@@ -169,7 +196,7 @@ export async function startCrossfade(ctx: Ctx) {
       fader.splice(1, 0.05);
       fadingOut = false;
     }
-    if (!fadingOut && !fadingIn && position >= fade.start && !stream.ready()) {
+    if (!fadingOut && !fadingIn && !skipped && position >= fade.start && !stream.ready()) {
       scheduleFadeOut();
     }
   };
@@ -205,6 +232,9 @@ export async function startCrossfade(ctx: Ctx) {
       fadingOut = false;
       return;
     }
+    // A next-track click already failed for this track: leave its restored level
+    // alone instead of fading the tail out again.
+    if (skipped) return;
     scheduleFadeOut();
   };
 
@@ -224,13 +254,42 @@ export async function startCrossfade(ctx: Ctx) {
     stream.prepare(videoId);
   });
 
-  ctx.player.on("trackChange", (track) => stream.prepare(track.videoId));
+  ctx.player.on("trackChange", (track) => {
+    // A navigation that arrives without `trackLoading` consumes the latch too;
+    // otherwise its timeout would restore over the incoming track's fade-in.
+    clearAutoTransition();
+    stream.prepare(track.videoId);
+  });
   const initialTrack = ctx.player.state.track;
   if (initialTrack) stream.prepare(initialTrack.videoId);
 
-  ctx.listen(video, "playing", () => {
+  const onVideoPlaying = () => {
     if (pendingFadeIn && !ctx.player.state.ad) startFadeIn();
     else resync();
+  };
+  let unbindVideo: (() => void)[] = [];
+  const bindVideo = (next: HTMLVideoElement) => {
+    for (const off of unbindVideo) off();
+    video = next;
+    stream.rebind(next);
+    const target = video;
+    const listen = (type: string, listener: EventListener) => {
+      target.addEventListener(type, listener);
+      return () => target.removeEventListener(type, listener);
+    };
+    unbindVideo = [
+      listen("playing", onVideoPlaying),
+      listen("timeupdate", onTime),
+      listen("pause", resync),
+      listen("seeked", resync),
+      listen("ratechange", resync),
+    ];
+    if (!video.paused) resync();
+  };
+  bindVideo(video);
+  ctx.player.on("videoChange", bindVideo);
+  ctx.onCleanup(() => {
+    for (const off of unbindVideo) off();
   });
 
   ctx.player.on("adChange", (ad) => {
@@ -250,10 +309,6 @@ export async function startCrossfade(ctx: Ctx) {
     }
   });
 
-  ctx.listen(video, "timeupdate", onTime);
-  ctx.listen(video, "pause", resync);
-  ctx.listen(video, "seeked", resync);
-  ctx.listen(video, "ratechange", resync);
   // Every option is read when used; re-schedule a fade in progress.
   ctx.onConfigChange(resync);
   ctx.onCleanup(() => {

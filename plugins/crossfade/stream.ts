@@ -64,7 +64,9 @@ interface Stream {
 }
 
 export function secondStream(ctx: Ctx, graph: AudioGraph) {
-  const { context, video } = graph;
+  const { context } = graph;
+  // YTM may replace the <video>; the stream follows the live element.
+  let video = graph.video;
   /** The track just loaded, playing silently alongside the video. */
   let current: Stream | null = null;
   /** The previous track, heard while it fades out after a handover. */
@@ -331,29 +333,45 @@ export function secondStream(ctx: Ctx, graph: AudioGraph) {
   // The silent copy follows the video's own clock: stopped while it is parked or
   // seeking, started again on the clock when it runs, and re-anchored by `follow`
   // after a seek the alignment would only chase.
-  ctx.listen(video, "playing", () => {
-    follow();
-    resumeOutgoing();
-  });
-  ctx.listen(video, "pause", pause);
-  ctx.listen(video, "seeking", () => {
-    if (current) {
-      current.starting = false;
-      current.audio.pause();
-    }
-  });
-  ctx.listen(video, "seeked", follow);
-  ctx.listen(video, "waiting", () => {
-    if (current) {
-      current.starting = false;
-      current.audio.pause();
-    }
-  });
-  ctx.listen(video, "ratechange", () => {
-    // Match the new base rate right away; the alignment then closes any drift it left.
-    if (current && !current.audio.paused) current.audio.playbackRate = video.playbackRate;
-    follow();
-    if (outgoing) outgoing.audio.playbackRate = video.playbackRate;
+  let unbindVideo: (() => void)[] = [];
+  const bindVideo = (next: HTMLVideoElement) => {
+    for (const off of unbindVideo) off();
+    video = next;
+    const target = video;
+    const listen = (type: string, listener: EventListener) => {
+      target.addEventListener(type, listener);
+      return () => target.removeEventListener(type, listener);
+    };
+    unbindVideo = [
+      listen("playing", () => {
+        follow();
+        resumeOutgoing();
+      }),
+      listen("pause", pause),
+      listen("seeking", () => {
+        if (current) {
+          current.starting = false;
+          current.audio.pause();
+        }
+      }),
+      listen("seeked", follow),
+      listen("waiting", () => {
+        if (current) {
+          current.starting = false;
+          current.audio.pause();
+        }
+      }),
+      listen("ratechange", () => {
+        // Match the new base rate right away; the alignment then closes any drift it left.
+        if (current && !current.audio.paused) current.audio.playbackRate = video.playbackRate;
+        follow();
+        if (outgoing) outgoing.audio.playbackRate = video.playbackRate;
+      }),
+    ];
+  };
+  bindVideo(video);
+  ctx.onCleanup(() => {
+    for (const off of unbindVideo) off();
   });
 
   return {
@@ -432,6 +450,10 @@ export function secondStream(ctx: Ctx, graph: AudioGraph) {
       dispose(stream);
     },
 
+    /** Follows a <video> YTM swapped. */
+    rebind(next: HTMLVideoElement) {
+      bindVideo(next);
+    },
     /** Stops both streams, for a pause or an ad. */
     pause,
     /** Runs them again, with the outgoing fade where it was left. */

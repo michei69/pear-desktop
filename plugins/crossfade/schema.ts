@@ -1,7 +1,7 @@
 import { config, type PageContextOf } from "@pear/sdk";
 
 export const schema = {
-  fadeInDuration: config.number(1500, { label: "Fade-in", min: 0, max: 10000, step: 100, unit: " ms" }),
+  fadeInDuration: config.number(5000, { label: "Fade-in", min: 0, max: 10000, step: 100, unit: " ms" }),
   fadeOutDuration: config.number(5000, { label: "Fade-out", min: 0, max: 20000, step: 100, unit: " ms" }),
   secondsBeforeEnd: config.number(10, {
     label: "Skip to the next track",
