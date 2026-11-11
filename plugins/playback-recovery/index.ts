@@ -33,6 +33,16 @@ export default definePlugin({
     }),
     logToConsole: config.bool(true, { label: "Log to the console" }),
   },
+  host: {
+    start(ctx) {
+      // pear-desktop's checkbox cannot show its state in the flat menu, so the
+      // item toggles; the settings card's switch stays the canonical control.
+      ctx.addMenuItem({
+        label: ctx.t("plugins.playback-recovery.menu.log-to-console", "Log recovery events to console"),
+        click: () => ctx.setConfig({ logToConsole: !ctx.config.logToConsole }),
+      });
+    },
+  },
   page: (ctx) => {
     let hooks: AbortController | undefined;
     let hooked: HTMLVideoElement | null = null;
@@ -80,7 +90,8 @@ export default definePlugin({
       log(`Recovery attempt ${consecutiveFailures}/${maxRetries} — reason: ${reason}`);
       recovering = true;
 
-      const currentTime = ctx.player.video()?.currentTime ?? ctx.player.state.positionSeconds;
+      const video = ctx.player.video();
+      const currentTime = video?.currentTime ?? ctx.player.state.positionSeconds;
       if (consecutiveFailures <= 2) {
         log("Strategy: seek-to-current");
         if (currentTime > 0) ctx.player.control({ type: "seek", seconds: currentTime });
@@ -89,7 +100,11 @@ export default definePlugin({
         // Every attempt below the retry cap has a strategy: past the second one
         // the ladder keeps seeking forward until it skips the track.
         log("Strategy: seek-forward");
-        if (currentTime > 0) ctx.player.control({ type: "seek", seconds: currentTime + 1 });
+        const duration = video?.duration ?? 0;
+        // A stall in the last second must not seek past the end: YTM would fire
+        // `ended` and advance, skipping the rest of the track before the ladder does.
+        const target = Number.isFinite(duration) && duration > 0 ? Math.min(currentTime + 1, duration - 0.5) : currentTime + 1;
+        if (currentTime > 0) ctx.player.control({ type: "seek", seconds: target });
         ctx.player.control({ type: "play" });
       }
 
@@ -146,8 +161,17 @@ export default definePlugin({
       video.addEventListener("waiting", onWaiting, { signal });
     };
 
-    // A re-created <video> (navigation, ads) needs the listeners again.
-    ctx.observe("app", { childList: true, subtree: true }, attach);
+    /** Whether a mutation batch added a <video> (the only reason to re-attach). */
+    const addedVideo = (mutation: MutationRecord) =>
+      [...mutation.addedNodes].some(
+        (node) => node instanceof HTMLVideoElement || (node instanceof Element && node.querySelector("video") !== null),
+      );
+    // A re-created <video> (navigation, ads) needs the listeners again. Watch the
+    // player, not the whole app subtree, and look up a video only when a mutation
+    // added one: the queue and browse pages mutate all session long.
+    ctx.observe("player.container", { childList: true, subtree: true }, (mutations) => {
+      if (mutations.some(addedVideo)) attach();
+    });
     attach();
 
     ctx.player.on("timeUpdate", () => {
@@ -173,7 +197,7 @@ export default definePlugin({
 
     // A new track starts the ladder over: two failures on the previous one must
     // not make the next one skip earlier than policy.
-    ctx.player.on("trackChange", () => {
+    const resetLadder = () => {
       consecutiveFailures = 0;
       lastFailureAt = 0;
       recovering = false;
@@ -182,6 +206,17 @@ export default definePlugin({
       stallTimer = undefined;
       ctx.clearTimeout(recoveryTimer);
       recoveryTimer = undefined;
+    };
+    // Reset at the media load itself too: YTM's dataupdated, and so trackChange,
+    // can come up to 1.5 s later, and a failure in that window would otherwise
+    // count against the previous track.
+    ctx.player.on("trackLoading", () => {
+      resetLadder();
+      attach();
+    });
+    // trackChange is the authoritative reset: it also covers YTM's fallback path.
+    ctx.player.on("trackChange", () => {
+      resetLadder();
       attach();
     });
 
@@ -189,7 +224,10 @@ export default definePlugin({
     ctx.setInterval(() => {
       if (recovering) return;
       const { status, ad } = ctx.player.state;
-      if (status !== "playing" || ad) return;
+      if (status !== "playing") return;
+      // Never seek inside an ad: it is not the user's track and YTM owns its
+      // recovery. The media-event listeners still cover hard ad failures.
+      if (ad) return;
 
       const video = ctx.player.video();
       if (!video) return;
