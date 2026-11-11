@@ -10,7 +10,9 @@ import type { schema } from "./schema.ts";
 /** The Rich Presence application registered by the pear-desktop team. */
 const CLIENT_ID = "1177081335727267940";
 const RETRY_MIN_MS = 5_000;
-const RETRY_MAX_MS = 60_000;
+// pear-desktop's cap: retrying every minute means ~60 failed connects an hour
+// while Discord stays closed; an impatient user has the Connect action.
+const RETRY_MAX_MS = 5 * 60_000;
 /**
  * A client that connects but never becomes ready has no event left to recover
  * from, so the login path gives it this long before rebuilding it.
@@ -21,9 +23,13 @@ const MIN_UPDATE_INTERVAL_MS = 4_000;
 
 type Ctx = HostContextOf<typeof schema>;
 
+/** Builds the client for one connection attempt (tests pass fakes). */
+export type ClientFactory = (clientId: string) => Client;
+
 // The timers are re-armed all the time (every position tick), so they're kept by hand.
 export class Presence {
   #ctx: Ctx;
+  readonly #createClient: ClientFactory;
   #client: Client | undefined;
   #ready = false;
   #stopped = false;
@@ -34,14 +40,16 @@ export class Presence {
   #updateTimer: ReturnType<typeof setTimeout> | undefined;
   #pauseTimer: ReturnType<typeof setTimeout> | undefined;
   #readyTimer: ReturnType<typeof setTimeout> | undefined;
-  #shown: SetActivity | null = null;
+  /** The last payload sent, or undefined when the last send failed (retry it). */
+  #shown: SetActivity | null | undefined = undefined;
   #lastSentAt = 0;
   #details: SongDetails | undefined;
   // Cleared after a long pause: stays hidden until playback resumes.
   #idle = false;
 
-  constructor(ctx: Ctx) {
+  constructor(ctx: Ctx, createClient: ClientFactory = (clientId) => new Client({ clientId })) {
     this.#ctx = ctx;
+    this.#createClient = createClient;
     ctx.player.on("change", (state, previous) => {
       if (state.track && state.track.videoId !== previous.track?.videoId) void this.#fetchDetails(state.track.videoId);
       if (isPaused(state) !== isPaused(previous) || state.track !== previous.track) this.#armPauseTimeout();
@@ -86,6 +94,12 @@ export class Presence {
 
   stop() {
     this.#stopped = true;
+    this.#ctx.clearTimeout(this.#retryTimer);
+    this.#retryTimer = undefined;
+    this.#ctx.clearTimeout(this.#updateTimer);
+    this.#updateTimer = undefined;
+    this.#ctx.clearTimeout(this.#pauseTimer);
+    this.#pauseTimer = undefined;
     this.#ctx.clearTimeout(this.#readyTimer);
     this.#readyTimer = undefined;
     const current = this.#client;
@@ -115,7 +129,7 @@ export class Presence {
 
   #connect() {
     // The library leaves listeners behind after a failed login: use a fresh client per attempt.
-    const attempt = new Client({ clientId: CLIENT_ID });
+    const attempt = this.#createClient(CLIENT_ID);
     this.#client = attempt;
     attempt.on("ready", () => {
       if (this.#client === attempt) this.#onReady();
@@ -188,7 +202,13 @@ export class Presence {
     this.#shown = next;
     this.#lastSentAt = Date.now();
     const request = next ? user.setActivity(next) : user.clearActivity();
-    request.catch((error: unknown) => this.#ctx.log.warn("couldn't update the activity", error));
+    request.catch((error: unknown) => {
+      this.#ctx.log.warn("couldn't update the activity", error);
+      // Discord never got the payload: forget the latch and send again once the
+      // rate-limit window has passed. #lastSentAt stays, so bursts stay coalesced.
+      this.#shown = undefined;
+      this.#updateTimer = this.#ctx.setTimeout(() => this.#send(), MIN_UPDATE_INTERVAL_MS);
+    });
   }
 
   /** Sends now, or as soon as Discord's rate limit allows (coalescing bursts). */

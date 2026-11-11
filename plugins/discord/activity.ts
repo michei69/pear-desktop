@@ -18,7 +18,8 @@ export interface ActivityOptions {
   hideWhenPaused: boolean;
 }
 
-const GITHUB_URL = "https://github.com/pear-devs/pear-desktop";
+// This fork is the app that ships here (package.json's repository), as pear-desktop's button had it.
+const GITHUB_URL = "https://github.com/michei69/pear-desktop";
 // Discord rejects fields shorter than 2 characters; pad with an invisible Hangul filler.
 const FILLER = "ㅤ";
 const MIN_FIELD = 2;
@@ -80,7 +81,7 @@ export function buildActivity(
  * drift by less than a couple of seconds aren't worth an update: Discord
  * renders the progress itself.
  */
-export function needsUpdate(previous: SetActivity | null, next: SetActivity | null) {
+export function needsUpdate(previous: SetActivity | null | undefined, next: SetActivity | null) {
   if (!previous || !next) return previous !== next;
   const { startTimestamp: a, endTimestamp: b, ...restPrevious } = previous;
   const { startTimestamp: c, endTimestamp: d, ...restNext } = next;

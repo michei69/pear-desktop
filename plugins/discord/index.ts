@@ -22,6 +22,15 @@ export default definePlugin({
     start(ctx) {
       const presence = new Presence(ctx);
       presences.set(ctx, presence);
+      // pear-desktop's Discord menu, as flat items: the switches stay in the settings card.
+      ctx.addMenuItem({
+        label: ctx.t("plugins.discord.actions.connect.label", "Connect"),
+        click: () => presence.connectNow(),
+      });
+      ctx.addMenuItem({
+        label: ctx.t("plugins.discord.menu.clear-activity", "Clear activity"),
+        click: () => presence.clear(),
+      });
       // Options are read when the activity is built; no need to reconnect.
       ctx.onConfigChange(() => presence.refresh());
       return () => {

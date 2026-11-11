@@ -52,7 +52,7 @@ describe("buildActivity", () => {
           label: "Play on \u0059\u006f\u0075\u0054\u0075\u0062\u0065 Music",
           url: "https://music.\u0079\u006f\u0075\u0074\u0075\u0062\u0065.com/watch?v=abc",
         },
-        { label: "View App On GitHub", url: "https://github.com/pear-devs/pear-desktop" },
+        { label: "View App On GitHub", url: "https://github.com/michei69/pear-desktop" },
       ],
       startTimestamp: Math.floor((now - 50_000) / 1000),
       endTimestamp: Math.floor((now + 150_000) / 1000),
