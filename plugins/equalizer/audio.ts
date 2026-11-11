@@ -1,7 +1,9 @@
 // The equalizer's serial insert in the shared audio graph. One stage owns:
 // input → 11 bands → parallel extra filters → wet/dry bypass mix → output trim.
 // Parameters are changed in place with a short target ramp, so dragging a
-// slider or toggling bypass never clicks or rebuilds the graph.
+// slider or toggling bypass never clicks or rebuilds the graph. The graph owns
+// the <video> source: it re-cuts itself when YTM swaps the element, so this
+// stage never creates a MediaElementAudioSourceNode of its own.
 
 import type { AudioGraph, Logger, Unsubscribe } from "@pear/sdk";
 import { clamp } from "@pear/sdk/util";
@@ -58,17 +60,10 @@ export class EqualizerChain {
   #extras: BiquadFilterNode[] = [];
   #extrasJson = "";
   readonly #remove: Unsubscribe;
-  readonly #graphSource: MediaElementAudioSourceNode;
-  readonly #graphVideo: HTMLVideoElement;
-  #video: HTMLVideoElement;
-  #rebound: MediaElementAudioSourceNode | undefined;
   #disposed = false;
 
   constructor(graph: AudioGraph) {
     this.#context = graph.context;
-    this.#graphSource = graph.source;
-    this.#graphVideo = graph.video;
-    this.#video = graph.video;
     const context = this.#context;
     this.#input = context.createGain();
     this.#dry = context.createGain();
@@ -122,50 +117,15 @@ export class EqualizerChain {
       smooth(filter.gain, state.bypass ? 0 : band.gain);
     });
 
-    smooth(this.#output.gain, dbToLinear(state.outputGainDb));
+    // Bypass is unity on the output stage too: a trim must not quieten the mix,
+    // so A/B-ing the equalizer keeps the same level (pear-desktop 934d0afc).
+    smooth(this.#output.gain, state.bypass ? 1 : dbToLinear(state.outputGainDb));
     smooth(this.#dry.gain, state.bypass ? 1 : 0);
     smooth(this.#wet.gain, state.bypass ? 0 : 1);
 
     if (this.#extrasJson !== extraFiltersJson) {
       this.#extrasJson = extraFiltersJson;
       this.#rewireExtras(parseExtraFilters(extraFiltersJson, log));
-    }
-  }
-
-  /**
-   * YT Music swaps the `<video>` element on some seeks; the shared graph keeps
-   * the old element's source. Feed the new element into this stage as well, so
-   * the equalizer keeps processing instead of dropping to the raw output. The
-   * compressor does the same for its later stage.
-   */
-  rebind(video: HTMLVideoElement) {
-    if (this.#disposed || video === this.#video) return;
-    if (video === this.#graphVideo) {
-      // Back to the element the shared graph owns; its source still exists.
-      this.#rebound?.disconnect();
-      this.#rebound = undefined;
-      try {
-        this.#graphSource.disconnect(this.#input);
-      } catch {
-        // Not connected.
-      }
-      this.#graphSource.connect(this.#input);
-      this.#video = video;
-      return;
-    }
-    try {
-      const source = this.#context.createMediaElementSource(video);
-      this.#rebound?.disconnect();
-      this.#rebound = source;
-      source.connect(this.#input);
-      try {
-        this.#graphSource.disconnect(this.#input);
-      } catch {
-        // The graph's source was not connected to this stage.
-      }
-      this.#video = video;
-    } catch {
-      // The graph already bound this element, or it can no longer be bound.
     }
   }
 
@@ -202,8 +162,6 @@ export class EqualizerChain {
     if (this.#disposed) return;
     this.#disposed = true;
     this.#remove();
-    this.#rebound?.disconnect();
-    this.#rebound = undefined;
     for (const node of [this.#input, this.#dry, this.#wet, this.#output, ...this.#bands, ...this.#extras]) {
       try {
         node.disconnect();

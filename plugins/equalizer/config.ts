@@ -243,6 +243,9 @@ export function matchingPresetId(state: Pick<EqualizerState, "bands" | "outputGa
 
 const normalizePresetName = (value: unknown) => (typeof value === "string" ? value.trim().slice(0, 80) : "");
 
+/** Built-in ids; a stored/imported user preset with one of these can never be applied. */
+const RESERVED_PRESET_IDS = new Set(["flat", "bass-booster", "custom"]);
+
 /** Ears writes `q`, BiquadFilterNode writes `Q`; accept either. */
 const bandEntries = (value: unknown) => {
   if (!Array.isArray(value)) return value;
@@ -258,7 +261,10 @@ function normalizeUserPreset(value: unknown, index: number, seen: Set<string>): 
   const item = value as Record<string, unknown>;
   const name = normalizePresetName(item.name);
   if (!name) return;
-  let id = typeof item.id === "string" && item.id ? item.id : `preset-${index}`;
+  // A crafted import can claim a built-in id, which would add a selectable
+  // duplicate that applies the built-in curve instead of the preset's bands.
+  const candidateId = typeof item.id === "string" && item.id && !RESERVED_PRESET_IDS.has(item.id) ? item.id : "";
+  let id = candidateId || `preset-${index}`;
   while (seen.has(id)) id = `${id}-${index}`;
   seen.add(id);
   const bands = Array.isArray(item.bands) ? item.bands : item.filters;

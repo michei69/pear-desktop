@@ -93,6 +93,7 @@ type BandControl = {
 export function createEqualizerPanel(ctx: Ctx) {
   const { host, root } = shadowHost("pear-equalizer-panel", PANEL_CSS);
   host.hidden = true;
+  const t = ctx.t;
 
   let state: EqualizerState = readConfig(ctx.config);
   let persistTimer: ReturnType<typeof setTimeout> | undefined;
@@ -100,6 +101,8 @@ export function createEqualizerPanel(ctx: Ctx) {
   let endDrag: (() => void) | undefined;
   /** Set when the user preset library changes, so drags don't rewrite it. */
   let presetsDirty = false;
+  /** What the name field shows; unrelated curve/gain edits must not overwrite it. */
+  let nameDraft = "";
   let stopped = false;
 
   const writeConfig = () => {
@@ -136,7 +139,13 @@ export function createEqualizerPanel(ctx: Ctx) {
   // ---------------------------------------------------------------- toolbar
   const bypassInput = (<input type="checkbox" />) as HTMLInputElement;
   const gainRange = (
-    <input type="range" min={String(MIN_OUTPUT_GAIN_DB)} max={String(MAX_OUTPUT_GAIN_DB)} step="0.1" aria-label="Output gain" />
+    <input
+      type="range"
+      min={String(MIN_OUTPUT_GAIN_DB)}
+      max={String(MAX_OUTPUT_GAIN_DB)}
+      step="0.1"
+      aria-label={t("plugins.equalizer.settings.output-gain", "Output gain")}
+    />
   ) as HTMLInputElement;
   const gainNumber = (
     <input
@@ -144,7 +153,7 @@ export function createEqualizerPanel(ctx: Ctx) {
       min={String(MIN_OUTPUT_GAIN_DB)}
       max={String(MAX_OUTPUT_GAIN_DB)}
       step="0.1"
-      aria-label="Output gain in decibels"
+      aria-label={t("plugins.equalizer.settings.output-gain-number", "Output gain in decibels")}
     />
   ) as HTMLInputElement;
   const gainValue = (<output />) as HTMLOutputElement;
@@ -152,10 +161,10 @@ export function createEqualizerPanel(ctx: Ctx) {
     <div class="peq-toolbar">
       <label class="peq-toggle">
         {bypassInput}
-        Bypass
+        {t("plugins.equalizer.settings.bypass.label", "Bypass")}
       </label>
       <label class="peq-gain">
-        <span>Output gain</span>
+        <span>{t("plugins.equalizer.settings.output-gain", "Output gain")}</span>
         {gainRange}
         {gainNumber}
         {gainValue}
@@ -164,11 +173,13 @@ export function createEqualizerPanel(ctx: Ctx) {
   );
 
   // ---------------------------------------------------------------- curve
+  const curveHelp = t("plugins.equalizer.settings.curve-help", "Drag: frequency / gain · Shift-drag: Q · Double-click: reset band");
   const svg = svgNode("svg", {
     class: "peq-svg",
     viewBox: `0 0 ${WIDTH} ${HEIGHT}`,
     role: "img",
-    "aria-label": "Equalizer response curve",
+    "aria-label": t("plugins.equalizer.settings.curve-label", "Equalizer curve preview"),
+    "aria-description": curveHelp,
   });
   svg.append(
     svgNode("rect", {
@@ -220,7 +231,6 @@ export function createEqualizerPanel(ctx: Ctx) {
       class: "peq-dot",
       r: "7",
       tabindex: "0",
-      "aria-label": `Band ${index + 1}`,
     });
     const title = svgNode("title", {});
     dotTitles[index] = title;
@@ -231,63 +241,85 @@ export function createEqualizerPanel(ctx: Ctx) {
     svg.append(dot);
     return dot;
   });
-  const graph = <div class="peq-graph">{svg}</div>;
+  const resetGainsButton = (
+    <button class="peq-button" type="button">
+      {t("plugins.equalizer.settings.reset-gains", "Reset gains")}
+    </button>
+  ) as HTMLButtonElement;
+  // pear-desktop's curve legend: the two hidden gestures stay discoverable.
+  const curveLegend = (
+    <div class="peq-legend">
+      <span>{curveHelp}</span>
+      {resetGainsButton}
+    </div>
+  ) as HTMLDivElement;
+  const graph = (<div class="peq-graph">{svg}</div>) as HTMLDivElement;
 
   // ---------------------------------------------------------------- bands
   const controls = state.bands.map((_, index) => createBandCard(index));
   const bands = <div class="peq-bands">{controls.map((control) => control.card)}</div>;
 
   // ---------------------------------------------------------------- presets
-  const presetSelect = (<select class="peq-select" aria-label="Preset" />) as HTMLSelectElement;
+  const presetSelect = (
+    <select class="peq-select" aria-label={t("plugins.equalizer.settings.preset.label", "Preset")} />
+  ) as HTMLSelectElement;
   const nameInput = (
-    <input class="peq-text" type="text" maxLength={80} placeholder="Name this preset" aria-label="Preset name" />
+    <input
+      class="peq-text"
+      type="text"
+      maxLength={80}
+      placeholder={t("plugins.equalizer.settings.preset-name-placeholder", "e.g. My headphones")}
+      aria-label={t("plugins.equalizer.settings.preset-name", "Preset name")}
+    />
   ) as HTMLInputElement;
   const saveButton = (
     <button class="peq-button peq-button--primary" type="button">
-      Save
+      {t("plugins.equalizer.settings.save-current", "Save current")}
     </button>
   ) as HTMLButtonElement;
   const renameButton = (
     <button class="peq-button" type="button">
-      Rename
+      {t("plugins.equalizer.settings.rename", "Rename")}
     </button>
   ) as HTMLButtonElement;
   const deleteButton = (
     <button class="peq-button" type="button">
-      Delete
+      {t("plugins.equalizer.settings.delete", "Delete preset")}
     </button>
   ) as HTMLButtonElement;
   const resetButton = (
     <button class="peq-button" type="button">
-      Reset
+      {t("plugins.equalizer.settings.reset-eq", "Reset EQ")}
     </button>
   ) as HTMLButtonElement;
   const exportButton = (
     <button class="peq-button" type="button">
-      Export
+      {t("plugins.equalizer.settings.export", "Export")}
     </button>
   ) as HTMLButtonElement;
-  const fileInput = (<input type="file" accept="application/json,.json" aria-label="Import presets" />) as HTMLInputElement;
+  const fileInput = (
+    <input type="file" accept="application/json,.json" aria-label={t("plugins.equalizer.settings.import", "Import presets")} />
+  ) as HTMLInputElement;
   const importButton = (
     <label class="peq-button peq-import">
-      Import
+      {t("plugins.equalizer.settings.import", "Import")}
       {fileInput}
     </label>
   ) as HTMLLabelElement;
   const flatButton = (
     <button class="peq-button" type="button">
-      Flat
+      {t("plugins.equalizer.settings.flat", "Flat")}
     </button>
   ) as HTMLButtonElement;
   const bassButton = (
     <button class="peq-button" type="button">
-      Bass booster
+      {t("plugins.equalizer.menu.presets.list.bass-booster", "Bass booster")}
     </button>
   ) as HTMLButtonElement;
   const recentChips = (<div class="peq-chips" />) as HTMLDivElement;
   const recentRow = (
     <div class="peq-recent">
-      <span>Recent</span>
+      <span>{t("plugins.equalizer.settings.recent", "Recent")}</span>
       {recentChips}
     </div>
   ) as HTMLDivElement;
@@ -297,11 +329,11 @@ export function createEqualizerPanel(ctx: Ctx) {
     <section class="peq-presets">
       <div class="peq-preset-row">
         <label class="peq-field">
-          <span>Preset</span>
+          <span>{t("plugins.equalizer.settings.preset.label", "Preset")}</span>
           {presetSelect}
         </label>
         <label class="peq-field peq-field--name">
-          <span>Name</span>
+          <span>{t("plugins.equalizer.settings.preset-name", "Preset name")}</span>
           {nameInput}
         </label>
       </div>
@@ -321,7 +353,7 @@ export function createEqualizerPanel(ctx: Ctx) {
   );
 
   const closeButton = (
-    <button class="peq-close" type="button" aria-label="Close equalizer">
+    <button class="peq-close" type="button" aria-label={t("plugins.equalizer.settings.close", "Close equalizer")}>
       ×
     </button>
   ) as HTMLButtonElement;
@@ -329,12 +361,13 @@ export function createEqualizerPanel(ctx: Ctx) {
     <section class="peq-panel" role="dialog" aria-modal="true" aria-labelledby="peq-title" tabIndex={-1}>
       <header class="peq-header">
         <h2 class="peq-title" id="peq-title">
-          Equalizer
+          {t("plugins.equalizer.name", "Equalizer")}
         </h2>
         {closeButton}
       </header>
       <div class="peq-content">
         {toolbar}
+        {curveLegend}
         {graph}
         {bands}
         {presetsSection}
@@ -401,9 +434,9 @@ export function createEqualizerPanel(ctx: Ctx) {
   }
 
   function presetLabel(id: string) {
-    if (id === "flat") return "Flat";
-    if (id === "bass-booster") return "Bass booster";
-    if (id === "custom") return "Custom";
+    if (id === "flat") return t("plugins.equalizer.settings.flat", "Flat");
+    if (id === "bass-booster") return t("plugins.equalizer.menu.presets.list.bass-booster", "Bass booster");
+    if (id === "custom") return t("plugins.equalizer.settings.custom", "Custom");
     return state.userPresets.find((preset) => preset.id === id)?.name ?? id;
   }
 
@@ -413,7 +446,8 @@ export function createEqualizerPanel(ctx: Ctx) {
     if (hasOption && presetSelect.value !== state.activePreset) presetSelect.value = state.activePreset;
     renameButton.disabled = !user;
     deleteButton.disabled = !user;
-    if (root.activeElement !== nameInput) nameInput.value = user?.name ?? "";
+    // The name field follows preset actions (renderPresets), not every band or
+    // output-gain edit, so a half-typed name survives a curve nudge.
     for (const chip of recentChips.children) {
       if (!(chip instanceof HTMLElement)) continue;
       const id = chip.dataset.id;
@@ -423,9 +457,9 @@ export function createEqualizerPanel(ctx: Ctx) {
 
   function renderPresets() {
     const options = [
-      { id: "custom", label: "Custom" },
-      { id: "flat", label: "Flat" },
-      { id: "bass-booster", label: "Bass booster" },
+      { id: "custom", label: presetLabel("custom") },
+      { id: "flat", label: presetLabel("flat") },
+      { id: "bass-booster", label: presetLabel("bass-booster") },
       ...state.userPresets.map((preset) => ({ id: preset.id, label: preset.name })),
     ];
     presetSelect.replaceChildren(
@@ -452,6 +486,8 @@ export function createEqualizerPanel(ctx: Ctx) {
       chip.addEventListener("click", () => applyPreset(id));
       recentChips.append(chip);
     }
+    nameDraft = state.userPresets.find((preset) => preset.id === state.activePreset)?.name ?? "";
+    nameInput.value = nameDraft;
     syncPresetControls();
   }
 
@@ -494,6 +530,15 @@ export function createEqualizerPanel(ctx: Ctx) {
     persistSoon();
   }
 
+  /** Zero every band's gain but keep its frequency, type and Q (pear-desktop's Reset gains). */
+  function resetGains() {
+    state.bands = state.bands.map((band) => ({ ...band, gain: 0 }));
+    state.activePreset = matchingPresetId(state) ?? "custom";
+    renderAll();
+    flushConfig();
+    showNotice(t("plugins.equalizer.settings.gains-reset", "All band gains reset."));
+  }
+
   function applyPreset(id: string) {
     const profile = presetProfile(id, state.userPresets);
     if (!profile) return;
@@ -506,25 +551,27 @@ export function createEqualizerPanel(ctx: Ctx) {
     state.recentPresets = remember(id);
     renderAll();
     flushConfig();
-    showNotice(`Applied ${presetLabel(id)}.`);
+    showNotice(`${t("plugins.equalizer.settings.applied", "Applied")} ${presetLabel(id)}.`);
   }
 
   function savePreset() {
     const name = nameInput.value.trim().slice(0, 80);
     if (!name) {
-      showNotice("Give the preset a name first.");
+      showNotice(t("plugins.equalizer.settings.name-required", "Enter a preset name."));
       return;
     }
     if (Object.hasOwn(RESERVED_NAMES, name.toLowerCase())) {
-      showNotice("That name is reserved for a built-in preset.");
+      showNotice(t("plugins.equalizer.settings.reserved-name", "That name is reserved for a built-in preset."));
       return;
     }
     const existing = state.userPresets.find((preset) => preset.name.toLowerCase() === name.toLowerCase());
     if (!existing && state.userPresets.length >= MAX_USER_PRESETS) {
-      showNotice(`You can keep up to ${MAX_USER_PRESETS} presets.`);
+      showNotice(t("plugins.equalizer.settings.presets-full", "You can keep up to {{max}} presets.", { max: MAX_USER_PRESETS }));
       return;
     }
-    if (existing && !window.confirm(`Replace “${existing.name}”?`)) return;
+    if (existing && !window.confirm(t("plugins.equalizer.settings.confirm-replace", "A preset with this name exists. Replace it?"))) {
+      return;
+    }
     const preset: UserPreset = {
       id: existing?.id ?? crypto.randomUUID(),
       name,
@@ -539,54 +586,54 @@ export function createEqualizerPanel(ctx: Ctx) {
     presetsDirty = true;
     renderAll();
     flushConfig();
-    showNotice(`Saved “${name}”.`);
+    showNotice(`${t("plugins.equalizer.settings.saved", "Saved preset:")} ${name}`);
   }
 
   function renamePreset() {
     const selected = state.userPresets.find((preset) => preset.id === state.activePreset);
     if (!selected) {
-      showNotice("Select one of your presets first.");
+      showNotice(t("plugins.equalizer.settings.select-user-preset", "Select one of your saved presets first."));
       return;
     }
     const name = nameInput.value.trim().slice(0, 80);
     if (!name) {
-      showNotice("Give the preset a name first.");
+      showNotice(t("plugins.equalizer.settings.name-required", "Enter a preset name."));
       return;
     }
     if (Object.hasOwn(RESERVED_NAMES, name.toLowerCase())) {
-      showNotice("That name is reserved for a built-in preset.");
+      showNotice(t("plugins.equalizer.settings.reserved-name", "That name is reserved for a built-in preset."));
       return;
     }
     if (state.userPresets.some((preset) => preset.id !== selected.id && preset.name.toLowerCase() === name.toLowerCase())) {
-      showNotice("Another preset already has that name.");
+      showNotice(t("plugins.equalizer.settings.name-exists", "A preset with that name already exists."));
       return;
     }
     state.userPresets = state.userPresets.map((preset) => (preset.id === selected.id ? { ...preset, name } : preset));
     presetsDirty = true;
     renderAll();
     flushConfig();
-    showNotice(`Renamed to “${name}”.`);
+    showNotice(`${t("plugins.equalizer.settings.renamed", "Renamed preset:")} ${name}`);
   }
 
   function deletePreset() {
     const selected = state.userPresets.find((preset) => preset.id === state.activePreset);
     if (!selected) {
-      showNotice("Select one of your presets first.");
+      showNotice(t("plugins.equalizer.settings.select-user-preset", "Select one of your saved presets first."));
       return;
     }
-    if (!window.confirm(`Delete “${selected.name}”?`)) return;
+    if (!window.confirm(t("plugins.equalizer.settings.confirm-delete", "Delete this preset?"))) return;
     state.userPresets = state.userPresets.filter((preset) => preset.id !== selected.id);
     state.recentPresets = state.recentPresets.filter((id) => id !== selected.id);
     if (state.activePreset === selected.id) state.activePreset = "custom";
     presetsDirty = true;
     renderAll();
     flushConfig();
-    showNotice(`Deleted “${selected.name}”.`);
+    showNotice(`${t("plugins.equalizer.settings.deleted", "Deleted preset:")} ${selected.name}`);
   }
 
   function exportPresets() {
     if (state.userPresets.length === 0) {
-      showNotice("There are no presets to export yet.");
+      showNotice(t("plugins.equalizer.settings.export-empty", "There are no presets to export yet."));
       return;
     }
     const file = new Blob([JSON.stringify({ version: 2, presets: state.userPresets }, null, 2)], {
@@ -598,7 +645,7 @@ export function createEqualizerPanel(ctx: Ctx) {
     anchor.download = "pear-equalizer-presets.json";
     anchor.click();
     ctx.setTimeout(() => URL.revokeObjectURL(url), 0);
-    showNotice(`Exported ${state.userPresets.length} preset${state.userPresets.length === 1 ? "" : "s"}.`);
+    showNotice(t("plugins.equalizer.settings.exported", "Presets exported."));
   }
 
   async function importPresets(file: File | undefined) {
@@ -606,7 +653,7 @@ export function createEqualizerPanel(ctx: Ctx) {
     try {
       const imported = parsePresetImport(await file.text());
       if (imported.length === 0) {
-        showNotice("That file has no presets in a format this equalizer understands.");
+        showNotice(t("plugins.equalizer.settings.import-empty", "The file did not contain any valid presets."));
         return;
       }
       const next = [...state.userPresets];
@@ -627,9 +674,13 @@ export function createEqualizerPanel(ctx: Ctx) {
       presetsDirty = true;
       renderAll();
       flushConfig();
-      showNotice(added > 0 ? `Imported ${added} preset${added === 1 ? "" : "s"}.` : "No room for more presets.");
+      showNotice(
+        added > 0
+          ? `${t("plugins.equalizer.settings.imported", "Imported presets:")} ${added}`
+          : t("plugins.equalizer.settings.import-full", "No room for more presets."),
+      );
     } catch {
-      showNotice("That file isn't a valid preset export.");
+      showNotice(t("plugins.equalizer.settings.import-error", "Could not read that preset file."));
     }
   }
 
@@ -708,14 +759,35 @@ export function createEqualizerPanel(ctx: Ctx) {
     flushConfig();
   }
 
+  function filterTypeLabel(value: BiquadFilterType) {
+    switch (value) {
+      case "lowshelf":
+        return t("plugins.equalizer.settings.low-shelf", "Low shelf");
+      case "highshelf":
+        return t("plugins.equalizer.settings.high-shelf", "High shelf");
+      case "lowpass":
+        return t("plugins.equalizer.settings.low-pass", "Low pass");
+      case "highpass":
+        return t("plugins.equalizer.settings.high-pass", "High pass");
+      case "bandpass":
+        return t("plugins.equalizer.settings.band-pass", "Band pass");
+      case "notch":
+        return t("plugins.equalizer.settings.notch", "Notch");
+      case "allpass":
+        return t("plugins.equalizer.settings.all-pass", "All pass");
+      default:
+        return t("plugins.equalizer.settings.peaking", "Peaking");
+    }
+  }
+
   function createBandCard(index: number): BandControl {
     const legend = (<legend />) as HTMLLegendElement;
-    const type = (<select class="peq-select" aria-label={`Band ${index + 1} type`} />) as HTMLSelectElement;
+    const bandType = t("plugins.equalizer.settings.type", "Type");
+    const type = (<select class="peq-select" aria-label={`${index + 1} ${bandType}`} />) as HTMLSelectElement;
     for (const value of FILTER_TYPES) {
       const option = document.createElement("option");
       option.value = value;
-      option.textContent =
-        value === "lowshelf" ? "Low shelf" : value === "highshelf" ? "High shelf" : value[0]!.toUpperCase() + value.slice(1);
+      option.textContent = filterTypeLabel(value);
       type.append(option);
     }
     const frequency = (
@@ -725,11 +797,18 @@ export function createEqualizerPanel(ctx: Ctx) {
         min={String(MIN_FREQUENCY)}
         max={String(MAX_FREQUENCY)}
         step="0.1"
-        aria-label={`Band ${index + 1} frequency`}
+        aria-label={`${index + 1} ${t("plugins.equalizer.settings.frequency", "Frequency")}`}
       />
     ) as HTMLInputElement;
     const q = (
-      <input class="peq-number" type="number" min="0.1" max="30" step="0.01" aria-label={`Band ${index + 1} Q`} />
+      <input
+        class="peq-number"
+        type="number"
+        min="0.1"
+        max="30"
+        step="0.01"
+        aria-label={`${index + 1} ${t("plugins.equalizer.settings.q", "Q / bandwidth")}`}
+      />
     ) as HTMLInputElement;
     const gain = (
       <input
@@ -738,7 +817,7 @@ export function createEqualizerPanel(ctx: Ctx) {
         min={String(MIN_GAIN_DB)}
         max={String(MAX_GAIN_DB)}
         step="0.1"
-        aria-label={`Band ${index + 1} gain`}
+        aria-label={`${index + 1} ${t("plugins.equalizer.settings.gain", "Gain")}`}
       />
     ) as HTMLInputElement;
     const gainNumber = (
@@ -748,7 +827,7 @@ export function createEqualizerPanel(ctx: Ctx) {
         min={String(MIN_GAIN_DB)}
         max={String(MAX_GAIN_DB)}
         step="0.1"
-        aria-label={`Band ${index + 1} gain in decibels`}
+        aria-label={`${index + 1} ${t("plugins.equalizer.settings.gain-number", "Gain value")}`}
       />
     ) as HTMLInputElement;
 
@@ -781,31 +860,31 @@ export function createEqualizerPanel(ctx: Ctx) {
       <fieldset class="peq-band">
         {legend}
         <label class="peq-control">
-          <span>Type</span>
+          <span>{bandType}</span>
           {type}
         </label>
         <label class="peq-control">
-          <span>Frequency</span>
+          <span>{t("plugins.equalizer.settings.frequency", "Frequency")}</span>
           {frequency}
         </label>
         <div class="peq-control">
-          <span>Gain</span>
+          <span>{t("plugins.equalizer.settings.gain", "Gain")}</span>
           {gain}
           {gainNumber}
         </div>
         <label class="peq-control">
-          <span>Q</span>
+          <span>{t("plugins.equalizer.settings.q", "Q / bandwidth")}</span>
           {q}
         </label>
         <button
           type="button"
-          aria-label={`Reset band ${index + 1}`}
+          aria-label={`${t("plugins.equalizer.settings.reset-band", "Reset band")} ${index + 1}`}
           onClick={() => {
             resetBand(index);
-            showNotice(`Band ${index + 1} reset.`);
+            showNotice(`${t("plugins.equalizer.settings.band-reset", "Band reset:")} ${index + 1}`);
           }}
         >
-          Reset
+          {t("plugins.equalizer.settings.reset-band", "Reset band")}
         </button>
       </fieldset>
     ) as HTMLFieldSetElement;
@@ -850,15 +929,19 @@ export function createEqualizerPanel(ctx: Ctx) {
   saveButton.addEventListener("click", savePreset);
   renameButton.addEventListener("click", renamePreset);
   deleteButton.addEventListener("click", deletePreset);
+  resetGainsButton.addEventListener("click", resetGains);
   resetButton.addEventListener("click", () => {
     applyPreset("flat");
-    showNotice("Equalizer reset to flat.");
+    showNotice(t("plugins.equalizer.settings.reset-done", "Equalizer reset to Flat."));
   });
   exportButton.addEventListener("click", exportPresets);
   fileInput.addEventListener("change", () => {
     const file = fileInput.files?.[0];
     fileInput.value = "";
     void importPresets(file);
+  });
+  nameInput.addEventListener("input", () => {
+    nameDraft = nameInput.value;
   });
   nameInput.addEventListener("keydown", (event) => {
     if (event.key !== "Enter") return;

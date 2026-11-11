@@ -24,6 +24,25 @@ export default definePlugin({
     },
   },
   host: {
+    // The app and tray menus are flat, so presets stay behind the panel's
+    // "Open equalizer"; these restore the quick actions pear-desktop's menu had.
+    start(ctx) {
+      ctx.addMenuItem({
+        label: ctx.t("plugins.equalizer.actions.open.label", "Open equalizer"),
+        click: () => {
+          ctx.focusWindow();
+          ctx.emit("open");
+        },
+      });
+      ctx.addMenuItem({
+        label: ctx.t("plugins.equalizer.menu.bypass", "Bypass equalizer"),
+        click: () => ctx.setConfig({ bypass: !ctx.config.bypass }),
+      });
+      ctx.addMenuItem({
+        label: ctx.t("plugins.equalizer.settings.reset-eq", "Reset EQ"),
+        click: () => ctx.setConfig({ preset: "flat" }),
+      });
+    },
     commands: {
       open() {
         this.focusWindow();
@@ -87,17 +106,10 @@ export default definePlugin({
 
     const graph = await ctx.audio();
     if (ctx.signal.aborted) return;
+    // The graph re-cuts itself to YTM's live <video>; this stage just inserts
+    // and stays in the re-wired chain.
     chain = new EqualizerChain(graph);
     apply();
-
-    // YTM replaces the <video> element on some seeks; follow it into our stage.
-    const watchVideo = () => {
-      const video = ctx.player.video();
-      if (video) chain?.rebind(video);
-    };
-    ctx.observe("player.api", { childList: true, subtree: true }, watchVideo);
-    ctx.player.on("trackChange", () => watchVideo());
-    watchVideo();
 
     ctx.onCleanup(() => chain?.dispose());
   },
