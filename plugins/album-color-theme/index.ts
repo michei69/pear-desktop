@@ -1,21 +1,9 @@
-import { config, definePlugin, type Logger } from "@pear/sdk";
+import { config, definePlugin } from "@pear/sdk";
 import { css } from "@pear/sdk/macros" with { type: "macro" };
-import { averageColor, mixColor, type Rgb, themeColors } from "./color.ts";
+import { albumColors } from "./artwork.ts";
+import { mixColor } from "./color.ts";
 
 const ACTIVE = "pear-album-color";
-const SAMPLE_SIZE = 32;
-/** Thumbnails are re-requested for the same track (seek, repeat, page re-entry). */
-const CACHE_LIMIT = 100;
-
-interface AlbumColors {
-  color: Rgb;
-  dark: Rgb;
-}
-
-const cache = new Map<string, Promise<AlbumColors | null>>();
-
-/** Artwork that cannot be sampled tints the theme black. */
-const BLACK: Rgb = [0, 0, 0];
 
 /** Dark YTM palette colors; the current artwork color is mixed into each. */
 const VARIABLE_MAP: Record<string, string> = {
@@ -87,9 +75,12 @@ const THEME = css`
   sel(nav_bar.background),
   sel(player_bar.background),
   sel(guide.background),
-  sel(guide.mini_background),
+  sel(guide.mini_background) {
+    transition: opacity 200ms, background-color 300ms cubic-bezier(0.2, 0, 0.6, 1) !important;
+  }
+  /* The player page slides and fades as it opens. */
   sel(player.page) {
-    transition: background-color 300ms cubic-bezier(0.2, 0, 0.6, 1) !important;
+    transition: transform 300ms, background-color 300ms cubic-bezier(0.2, 0, 0.6, 1) !important;
   }
   /* pear-desktop's fixes for the tinted theme. */
   html.pear-album-color yt-page-navigation-progress {
@@ -171,12 +162,22 @@ export default definePlugin({
     enableSeekbar: config.bool(true, { label: "Color the progress bar" }),
   },
   style: (config) => `${THEME}${config.enableSeekbar ? SEEKBAR : ""}`,
+  host: {
+    start(ctx) {
+      // pear-desktop's radio submenu cannot show its state in the flat menu; the
+      // settings card keeps both controls, this restores quick access to it.
+      ctx.addMenuItem({
+        label: ctx.t("plugins.album-color-theme.menu.open", "Album color theme…"),
+        click: () => ctx.openSettings(),
+      });
+    },
+  },
   page: (ctx) => {
     const root = document.documentElement;
     const clear = () => {
       root.classList.remove(ACTIVE);
-      // The tinted values are inline; without this, a missing artwork or a
-      // disabled plugin keeps the last tint.
+      // The tinted values are inline, so disabling the plugin has to remove
+      // them; a track without artwork keeps the last tint on purpose.
       for (const variable of Object.keys(VARIABLE_MAP)) root.style.removeProperty(variable);
     };
     ctx.onCleanup(clear);
@@ -186,12 +187,10 @@ export default definePlugin({
       const current = ++generation;
       const url =
         thumbnailUrl(ctx.player.api?.getPlayerResponse()?.videoDetails?.thumbnail?.thumbnails) ?? ctx.player.state.track?.artworkUrl;
-      const colors = url ? await albumColors(url, ctx.log) : null;
+      // pear-desktop kept the previous track's tint when it had no artwork.
+      if (!url) return;
+      const colors = await albumColors(url, ctx.log);
       if (current !== generation || ctx.signal.aborted) return;
-      if (!colors) {
-        clear();
-        return;
-      }
 
       const opacity = Number.parseFloat(getComputedStyle(root).getPropertyValue("--pear-transparent-opacity"));
       const alpha = Number.isFinite(opacity) ? Math.min(1, Math.max(0, opacity)) : 1;
@@ -211,35 +210,4 @@ export default definePlugin({
 /** The smallest thumbnail is plenty for an average and loads fastest. */
 function thumbnailUrl(thumbnails: { url: string; width: number }[] | undefined) {
   return thumbnails?.toSorted((a, b) => a.width - b.width)[0]?.url;
-}
-
-/** The artwork's colors, sampled once per thumbnail URL. */
-function albumColors(url: string, log: Pick<Logger, "warn">) {
-  const cached = cache.get(url);
-  if (cached) return cached;
-
-  if (cache.size >= CACHE_LIMIT) cache.clear();
-  const pending = sampleImage(url)
-    // Artwork that can't be sampled tints black, as pear-desktop did, instead of leaving the last track's tint.
-    .then((average) => (average ? themeColors(average) : { color: BLACK, dark: BLACK }))
-    .catch((error: unknown) => {
-      cache.delete(url);
-      log.warn("couldn't sample artwork", error);
-      return null;
-    });
-  cache.set(url, pending);
-  return pending;
-}
-
-async function sampleImage(url: string) {
-  const image = new Image();
-  image.crossOrigin = "anonymous";
-  image.src = url;
-  await image.decode();
-  const canvas = document.createElement("canvas");
-  canvas.width = SAMPLE_SIZE;
-  canvas.height = SAMPLE_SIZE;
-  const context = canvas.getContext("2d", { willReadFrequently: true })!;
-  context.drawImage(image, 0, 0, SAMPLE_SIZE, SAMPLE_SIZE);
-  return averageColor(context.getImageData(0, 0, SAMPLE_SIZE, SAMPLE_SIZE).data);
 }
