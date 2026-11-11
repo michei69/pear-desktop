@@ -15,7 +15,7 @@ import {
   searchbox,
   sectionButton,
 } from "./helpers/settings.ts";
-import { isAlwaysOnTop } from "./helpers/window.ts";
+import { isAlwaysOnTop, screenshot } from "./helpers/window.ts";
 import { mainWindow, playTestTrack } from "./launch.ts";
 import type { Page } from "@playwright/test";
 
@@ -98,6 +98,42 @@ test("toggles and configures plugins live, persisting to config.json", async ({ 
   await expect
     .poll(() => savedSettings(app.userData).plugins?.["blur-nav-bar"], { timeout: SAVE_TIMEOUT_MS })
     .toMatchObject({ enabled: true, blur: 12 });
+});
+
+test("dependent settings indent, disable and hide", async ({ launch }) => {
+  const app = await launch({ plugins: { downloader: { enabled: true } } });
+  const page = await mainWindow(app);
+  await openSettings(page);
+  await openSection(page, "Plugins");
+  const card = pluginRow(page, "downloader");
+  await card.getByRole("button", { name: "Configure Downloader" }).click();
+
+  // Custom format is a conditional section: absent until the format is Custom.
+  await expect(card.locator('[data-field="downloader-customArgs"]')).toHaveCount(0);
+  await expect(card.locator('[data-field="downloader-customExtension"]')).toHaveCount(0);
+  await expect(card.getByText("Custom format", { exact: true })).toHaveCount(0);
+
+  // Ellipsis-prefixed options are the margined kind, without the old vertical rule.
+  const seconds = card.locator('[data-field="downloader-autoDownloadSeconds"]');
+  const percent = card.locator('[data-field="downloader-autoDownloadPercent"]');
+  await expect(seconds).toHaveClass(/field--sub/);
+  await expect(percent).toHaveClass(/field--sub/);
+  expect(await seconds.evaluate((element) => getComputedStyle(element).borderLeftWidth)).toBe("0px");
+  await expect(seconds).toHaveAttribute("inert", "");
+  await seconds.scrollIntoViewIfNeeded();
+  await screenshot(app, "settings-dependent");
+
+  // The parent switch enables the sub-fields; Custom adds its group back.
+  await card.getByRole("switch", { name: "Download everything I listen to" }).click();
+  await expect(seconds).not.toHaveAttribute("inert", "");
+  await card.getByRole("radio", { name: "Custom" }).click();
+  await expect(card.locator('[data-field="downloader-customArgs"]')).toBeVisible();
+  await expect(card.locator('[data-field="downloader-customExtension"]')).toBeVisible();
+  await expect(card.getByText("Custom format", { exact: true })).toBeVisible();
+  await screenshot(app, "settings-custom-format");
+  await card.getByRole("radio", { name: "MP3 (most compatible)" }).click();
+  await expect(card.locator('[data-field="downloader-customArgs"]')).toHaveCount(0);
+  await expect(card.getByText("Custom format", { exact: true })).toHaveCount(0);
 });
 
 test("an edit is kept when the dialog closes right after it", async ({ page }) => {

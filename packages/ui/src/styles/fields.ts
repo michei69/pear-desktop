@@ -8,7 +8,6 @@ export const fieldRows = css`
   .field--sub {
     margin-left: 22px;
     padding-left: 16px;
-    border-left: 2px solid var(--edge);
   }
   .field--sub[inert] {
     opacity: 0.5;

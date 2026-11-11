@@ -19,6 +19,12 @@ interface FieldMeta {
    * disables it while that switch is off. The parent must be a boolean field.
    */
   parent?: string;
+  /**
+   * Other fields' values that must match before this field is shown, e.g.
+   * `{ format: "custom" }`. Keys are fields in the same config, values compare
+   * strictly. A group with every field hidden is left out too.
+   */
+  visibleWhen?: Readonly<Record<string, unknown>>;
 }
 
 interface FieldBase<K extends string, T> extends FieldMeta {

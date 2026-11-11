@@ -58,7 +58,9 @@ export function SettingsField({ name, field, value, model, parentOn, onChange }:
   const text = useText();
   const control = <Control id={id} field={field} value={value} model={model} onChange={onChange} />;
   const inline = INLINE_KINDS.has(field.kind);
-  const sub = field.parent !== undefined;
+  // A leading ellipsis is the established way to describe a setting that
+  // refines the one above it; the parent metadata remains the explicit form.
+  const sub = field.parent !== undefined || field.label.startsWith("…") || field.label.startsWith("...");
   return (
     <div class={`field${sub ? " field--sub" : ""}`} data-field={name} inert={sub && parentOn === false}>
       <div class="field-row">

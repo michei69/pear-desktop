@@ -25,6 +25,11 @@ export function groupFields(shape: ConfigShape, platform: string, localized: Loc
   return groups;
 }
 
+/** Whether this field's `visibleWhen` conditions match the current config. */
+export function fieldVisible(field: Field, config: Record<string, unknown>) {
+  return !field.visibleWhen || Object.entries(field.visibleWhen).every(([key, value]) => config[key] === value);
+}
+
 /** Whether the schema has anything to show on this platform. */
 export function hasFields(shape: ConfigShape, platform: string) {
   return Object.values(shape).some((field) => !field.hidden && onPlatform(field.platforms, platform));

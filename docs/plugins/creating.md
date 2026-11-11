@@ -63,7 +63,8 @@ Field metadata:
 - Strings take `placeholder` and `secret` (a password input).
 - Selects take an options array and `variant` (`chips` or `dropdown`).
 - `config.multi` stores an array of option values. `config.list` stores free strings. `config.orderable` stores the same option values, but as a fixed list the settings UI only lets the user reorder. `config.shortcut` stores an Electron accelerator.
-- `parent: "<bool key>"` makes the field a sub-setting: the settings UI indents it and disables it while that switch is off.
+- `parent: "<bool key>"` makes the field a sub-setting: the settings UI indents it and disables it while that switch is off. A label starting with `…` is indented the same way.
+- `visibleWhen: { "<field>": value }` hides the field unless every listed field has that value, e.g. `visibleWhen: { format: "custom" }`. A group whose fields are all hidden is left out too.
 
 Every text is a plain string here; the settings catalog translates it through `plugins.<id>.settings.<field>.*` keys. Run `nub run i18n` after adding or renaming fields.
 

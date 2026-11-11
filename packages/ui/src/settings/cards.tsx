@@ -10,7 +10,7 @@ import { SettingsField, Switch } from "../fields.tsx";
 import { Icon } from "../icons.tsx";
 import type { SettingsModel } from "../model.ts";
 import { useText } from "../strings.ts";
-import { type FieldFilter, type Group, groupFields, hasFields } from "./groups.ts";
+import { type FieldFilter, type Group, fieldVisible, groupFields, hasFields } from "./groups.ts";
 import { type Block, joinTitles } from "./sections.ts";
 import type { Dialog } from "./state.ts";
 import { ThemeCard } from "./themes.tsx";
@@ -54,9 +54,12 @@ export function CoreCards(props: {
   const state = dialog.model.core(section);
   if (!state) return null;
   const status = state.error ?? text("settings-ui.api-server-status", { address: state.status });
+  const groups = props.groups
+    .map((group) => ({ ...group, fields: group.fields.filter(([, field]) => fieldVisible(field, state.config)) }))
+    .filter((group) => group.fields.length > 0);
   return (
     <>
-      {props.groups.map((group, index) => (
+      {groups.map((group, index) => (
         <CardGroup
           key={`${section}-${index}`}
           title={props.joinTitle ? joinTitles(props.title, group.title) : (group.title ?? props.title)}
@@ -170,7 +173,12 @@ export function PluginCard(props: {
     () => (open ? groupFields(plugin.config, dialog.platform, dialog.localizer(plugin.id)) : []),
     [open, plugin.config, dialog.platform, dialog.localizer, plugin.id],
   );
-  const groups = props.groups ?? computedGroups;
+  const groups = (props.groups ?? computedGroups)
+    .map((group) => ({
+      ...group,
+      fields: group.fields.filter(([, field]) => fieldVisible(field, state?.config ?? {})),
+    }))
+    .filter((group) => group.fields.length > 0);
   const actions = plugin.actions ?? [];
   const configurable = hasFields(plugin.config, dialog.platform) || actions.length > 0;
   const showActions = enabled && actions.length > 0;

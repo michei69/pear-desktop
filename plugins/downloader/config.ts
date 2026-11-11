@@ -38,12 +38,14 @@ export const downloaderConfig = {
     placeholder: "-b:a 320k",
     description: "Passed to ffmpeg when converting, e.g. -b:a 320k.",
     group: "Custom format",
+    visibleWhen: { format: "custom" },
   }),
   customExtension: config.string("", {
     label: "Extension",
     placeholder: "mp3",
     description: "aac, alac, flac, m4a, mp3, opus, vorbis or wav; empty keeps the streamed format.",
     group: "Custom format",
+    visibleWhen: { format: "custom" },
   }),
   useSession: config.bool(true, {
     label: "Download with my account",
@@ -93,13 +95,21 @@ export const downloaderConfig = {
     ],
     { label: "When", group: "Automatic downloads" },
   ),
-  autoDownloadSeconds: config.number(20, { label: "…this long before the end", min: 1, max: 600, unit: "s", group: "Automatic downloads" }),
+  autoDownloadSeconds: config.number(20, {
+    label: "…this long before the end",
+    min: 1,
+    max: 600,
+    unit: "s",
+    group: "Automatic downloads",
+    parent: "autoDownload",
+  }),
   autoDownloadPercent: config.number(10, {
     label: "…once this much has played",
     min: 1,
     max: 100,
     unit: "%",
     group: "Automatic downloads",
+    parent: "autoDownload",
   }),
   autoDownloadFolder: config.string("", {
     label: "Folder for these",
