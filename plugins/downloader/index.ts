@@ -2,13 +2,13 @@ import { definePlugin } from "@pear/sdk";
 import { css } from "@pear/sdk/macros" with { type: "macro" };
 import { v } from "@pear/sdk/rpc";
 import { mkdir } from "node:fs/promises";
-import { shell } from "electron";
+import { dialog, shell, type BrowserWindow } from "electron";
 import { downloaderConfig } from "./config.ts";
 import { type DownloaderState, downloadFolder, downloaderOf, openDownloads, startHost, stateOf, toolsInfo } from "./host.ts";
 import type { Job } from "./jobs.ts";
 import type { OfflineData, OfflineList, OfflineTrack } from "./offline.ts";
 import { startPage } from "./page/index.ts";
-import type { DownloadTarget } from "./ytdlp.ts";
+import { type DownloadTarget, withPlaylist } from "./ytdlp.ts";
 
 export default definePlugin({
   id: "downloader",
@@ -17,6 +17,11 @@ export default definePlugin({
   config: downloaderConfig,
   actions: {
     openFolder: { label: "Open the download folder" },
+    chooseFolder: { label: "Choose the download folder", description: "Asks for a folder instead of typing its path." },
+    chooseFinishFolder: {
+      label: "Choose the folder for automatic downloads",
+      description: "Asks for the folder automatic downloads are saved to instead of typing its path.",
+    },
     openDownloads: { label: "Show downloads" },
     updateYtDlp: { label: "Update yt-dlp", description: "Checks for a newer yt-dlp now (when the downloader downloaded it)." },
     cancel: { label: "Cancel all downloads" },
@@ -28,7 +33,7 @@ export default definePlugin({
       download(target?: DownloadTarget, label?: string) {
         const { queue } = downloaderOf(this);
         const track = this.player.state.track;
-        const resolved = target ?? (track ? { videoId: track.videoId } : undefined);
+        const resolved = target ? withPlaylist(target) : track ? { videoId: track.videoId } : undefined;
         if (!resolved?.videoId && !resolved?.playlistId)
           throw new Error(this.t("plugins.downloader.errors.nothing-playing", "nothing is playing"));
         return queue.add(resolved, label ?? (track?.videoId === resolved.videoId ? track.title : resolved.videoId));
@@ -80,6 +85,17 @@ export default definePlugin({
         await mkdir(folder, { recursive: true });
         const error = await shell.openPath(folder);
         if (error) throw new Error(error);
+      },
+      /** Asks for the download folder, as pear-desktop's native dialog did. */
+      async chooseFolder() {
+        const folder = await chooseDirectory(this.window, downloadFolder(this, false));
+        if (folder) this.setConfig({ downloadFolder: folder });
+      },
+      /** Asks for the folder automatic downloads go to (empty means the download folder). */
+      async chooseFinishFolder() {
+        const current = this.config.autoDownloadFolder.trim() || downloadFolder(this, false);
+        const folder = await chooseDirectory(this.window, current);
+        if (folder) this.setConfig({ autoDownloadFolder: folder });
       },
       updateYtDlp() {
         return downloaderOf(this).tools.updateNow();
@@ -670,7 +686,14 @@ export default definePlugin({
 /** The RPC's video or playlist, if it named one. */
 function requestedTarget(videoId: string | undefined, playlistId: string | undefined): DownloadTarget | undefined {
   if (!videoId && !playlistId) return undefined;
-  const target: DownloadTarget = { videoId: videoId ?? "" };
-  if (playlistId) target.playlistId = playlistId;
-  return target;
+  return withPlaylist({ videoId: videoId ?? "", ...(playlistId ? { playlistId } : {}) });
+}
+
+/** A folder the user picked in the native dialog; undefined when they cancelled. */
+async function chooseDirectory(window: BrowserWindow, defaultPath: string) {
+  const options: Electron.OpenDialogOptions = { properties: ["openDirectory", "createDirectory"], defaultPath };
+  const { canceled, filePaths } = window.isDestroyed()
+    ? await dialog.showOpenDialog(options)
+    : await dialog.showOpenDialog(window, options);
+  return canceled ? undefined : filePaths[0];
 }

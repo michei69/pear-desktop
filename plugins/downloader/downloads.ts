@@ -3,8 +3,10 @@
 // bytes. Jobs can be paused and resumed (host only).
 
 import { rm } from "node:fs/promises";
+import type { Translate } from "@pear/sdk/i18n";
 import { errorMessage } from "@pear/sdk/util";
 import {
+  EngineFailure,
   type Engine,
   type EngineJob,
   type EngineResult,
@@ -57,6 +59,8 @@ export interface SavedJobs {
 export interface QueueOptions {
   /** The engines for a job, tried in order; read per job, so config changes apply to the next download. */
   engines(jobId: number): Engine[];
+  /** Engine failures as people read them, in the app's language (the host's `t`). */
+  t?: Translate;
   onState(state: QueueState): void;
   onResult(result: JobResult): void;
   /** The finished or the paused jobs changed. */
@@ -286,7 +290,7 @@ export class DownloadQueue {
       result = await this.#run(running);
     } catch (error) {
       failed = true;
-      result = { id: job.id, label: job.label, files: [], error: errorMessage(error) };
+      result = { id: job.id, label: job.label, files: [], error: this.#message(error) };
     }
     this.#running = undefined;
     if (!this.#disposed) this.#ended(running, result, failed);
@@ -334,7 +338,10 @@ export class DownloadQueue {
     for (const [index, engine] of engines.entries()) {
       try {
         const result = await engine.download({ id: job.id, label: job.label, target }, progress, signal);
-        return { ...resultOf(job, [...saved, ...result.files], [...kept, ...(result.kept ?? [])], result), engine: engine.name };
+        return {
+          ...resultOf(job, [...saved, ...result.files], [...kept, ...(result.kept ?? [])], result, (error) => this.#message(error)),
+          engine: engine.name,
+        };
       } catch (error) {
         const next = engines[index + 1];
         if (!next || !isRecoverable(error) || signal.aborted) throw error;
@@ -394,7 +401,9 @@ export class DownloadQueue {
       song: (update) => {
         let meter = meters.get(update.index);
         if (!meter) meters.set(update.index, (meter = new RateMeter()));
-        const changed = applySong(itemOf(job, update.index), update, meter);
+        // An engine failure is shown in the app's language; anything else as it came.
+        const translated: SongUpdate = update.error instanceof EngineFailure ? { ...update, error: this.#message(update.error) } : update;
+        const changed = applySong(itemOf(job, translated.index), translated, meter);
         sumTransfer(job);
         emit(changed);
       },
@@ -402,6 +411,15 @@ export class DownloadQueue {
         job.partials = [...new Set([...(job.partials ?? []), file])];
       },
     };
+  }
+
+  /** What people read for a failure: an engine failure in their language, anything else as it came. */
+  #message(error: unknown) {
+    if (error instanceof EngineFailure) {
+      const translate = this.#options.t;
+      return translate ? error.describe(translate) : error.message;
+    }
+    return errorMessage(error);
   }
 }
 
@@ -427,7 +445,7 @@ function applySong(item: JobItem, update: SongUpdate, meter: RateMeter) {
   if (update.videoId) item.videoId = update.videoId;
   if (update.title) item.title = update.title;
   if (update.file) item.file = update.file;
-  if (update.error) item.error = update.error;
+  if (typeof update.error === "string") item.error = update.error;
   if (update.total) item.size = update.total;
   if (update.bytes !== undefined) {
     item.downloaded = update.bytes;
@@ -498,10 +516,10 @@ function remainingTarget(job: Job): DownloadTarget {
   return { ...job.target, items: wanted ? left.filter((index) => wanted.includes(index)) : left };
 }
 
-function resultOf(job: EngineJob, files: string[], kept: string[], result: EngineResult): JobResult {
+function resultOf(job: EngineJob, files: string[], kept: string[], result: EngineResult, message: (error: unknown) => string): JobResult {
   const jobResult: JobResult = { id: job.id, label: job.label, files, kept: [...new Set(kept)] };
   // Some items failing is still a success while others were saved.
-  if (result.error && files.length === 0 && kept.length === 0) jobResult.error = result.error;
+  if (result.error && files.length === 0 && kept.length === 0) jobResult.error = message(result.error);
   return jobResult;
 }
 

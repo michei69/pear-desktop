@@ -1,11 +1,18 @@
-import { describe, expect, test } from "vitest";
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { afterEach, describe, expect, test } from "vitest";
 import {
   chooseConverter,
   type Converter,
+  type ConvertJob,
   codecOf,
   containerOf,
+  type Extension,
+  FFMPEG_MISSING,
   ffmetadata,
   ffmpegArgs,
+  isFfmpegMissing,
   loudnessTags,
   metadataOf,
   outputFor,
@@ -13,7 +20,10 @@ import {
   parseProgressLine,
   pictureBlock,
   preferredContainer,
+  sameContainer,
   sourceOf,
+  WasmConverter,
+  type WasmFFmpeg,
 } from "../convert.ts";
 
 const after = (args: string[], flag: string) => args.filter((_, i) => args[i - 1] === flag);
@@ -170,5 +180,121 @@ describe("chooseConverter", () => {
       onProgress: () => {},
     });
     expect(used).toBe(true);
+  });
+});
+
+describe("sameContainer", () => {
+  test("a file of the stream's own container needs no remuxing", () => {
+    expect(sameContainer("webm", 'audio/webm; codecs="opus"')).toBe(true);
+    expect(sameContainer("m4a", 'audio/mp4; codecs="mp4a.40.2"')).toBe(true);
+    expect(sameContainer("mp4", 'video/mp4; codecs="avc1.42001E, mp4a.40.2"')).toBe(true);
+    expect(sameContainer("mp3", 'audio/webm; codecs="opus"')).toBe(false);
+    expect(sameContainer("webm", "audio/ogg")).toBe(false);
+  });
+});
+
+/** A fake ffmpeg.wasm core: run() writes three bytes to its output (the last argument). */
+function fakeWasm(run?: () => Promise<void>) {
+  const files = new Map<string, Uint8Array>();
+  const state = { loads: 0, exits: 0 };
+  const ffmpeg: WasmFFmpeg = {
+    load: async () => void state.loads++,
+    isLoaded: () => state.loads > 0,
+    run: async (...args: string[]) => {
+      if (run) await run();
+      files.set(args.at(-1)!, new Uint8Array([1, 2, 3]));
+    },
+    FS: ((method: string, name: string, data?: Uint8Array) => {
+      if (method === "writeFile") files.set(name, data!);
+      else if (method === "unlink") files.delete(name);
+      else {
+        const file = files.get(name);
+        if (!file) throw new Error("no such file");
+        return file;
+      }
+    }) as WasmFFmpeg["FS"],
+    setProgress: () => {},
+    setLogger: () => {},
+    exit: () => void state.exits++,
+  };
+  return { ffmpeg, files, state };
+}
+
+describe("ffmpeg.wasm", () => {
+  let dir = "";
+  afterEach(() => {
+    if (dir) rmSync(dir, { recursive: true, force: true });
+    dir = "";
+  });
+
+  const song = (ext: Extension = "webm"): ConvertJob => {
+    dir = mkdtempSync(join(tmpdir(), "pear-wasm-"));
+    writeFileSync(join(dir, "input"), "stream");
+    return {
+      input: join(dir, "input"),
+      output: join(dir, "output"),
+      ext,
+      codecArgs: ["-c:a", "copy"],
+      tags: { title: "Song" },
+      duration: 1,
+      signal: new AbortController().signal,
+      onProgress: () => {},
+    };
+  };
+
+  test("a job converts through the core", async () => {
+    const { ffmpeg } = fakeWasm();
+    const converter = new WasmConverter({ create: async () => ffmpeg, idleMs: 0 });
+    const job = song();
+    await converter.convert(job);
+    expect([...readFileSync(job.output)]).toEqual([1, 2, 3]);
+  });
+
+  test("a core that won't load is the missing-ffmpeg failure", async () => {
+    const converter = new WasmConverter({
+      create: async () => {
+        throw new Error("the core is missing");
+      },
+    });
+    await expect(converter.convert(song())).rejects.toThrow(FFMPEG_MISSING);
+    expect(isFfmpegMissing(await converter.convert(song()).catch((error: unknown) => error))).toBe(true);
+  });
+
+  test("gives the core back after it sits idle, and loads a new one for the next job", async () => {
+    const created: ReturnType<typeof fakeWasm>[] = [];
+    const converter = new WasmConverter({
+      create: async () => {
+        const fake = fakeWasm();
+        created.push(fake);
+        return fake.ffmpeg;
+      },
+      idleMs: 20,
+    });
+    const job = song();
+    await converter.convert(job);
+    expect(created).toHaveLength(1);
+    await new Promise((resolve) => setTimeout(resolve, 60));
+    expect(created[0]!.state.exits).toBe(1);
+    // The next job loads a new core (the fake's files don't cross instances).
+    await converter.convert({ ...job, output: join(dir, "again") });
+    expect(created).toHaveLength(2);
+    await converter.dispose();
+  });
+
+  test("keeps it while jobs are queued", async () => {
+    let release: () => void = () => {};
+    const gate = new Promise<void>((resolve) => (release = resolve));
+    const created = fakeWasm(() => gate);
+    const converter = new WasmConverter({ create: async () => created.ffmpeg, idleMs: 20 });
+    const job = song();
+    const first = converter.convert(job);
+    const second = converter.convert({ ...job, output: join(dir, "second") });
+    await new Promise((resolve) => setTimeout(resolve, 60));
+    expect(created.state.exits).toBe(0);
+    release();
+    await Promise.all([first, second]);
+    await new Promise((resolve) => setTimeout(resolve, 60));
+    expect(created.state.exits).toBe(1);
+    await converter.dispose();
   });
 });

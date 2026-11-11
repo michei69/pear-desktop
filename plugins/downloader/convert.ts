@@ -93,6 +93,12 @@ export function containerOf(mimeType: string): SourceStream["container"] {
   return undefined;
 }
 
+/** Whether a file of that extension already is the stream's container (m4a and mp4 are one). */
+export function sameContainer(ext: Extension, mimeType: string) {
+  const container = containerOf(mimeType);
+  return container !== undefined && (container === "m4a" ? "mp4" : container) === (ext === "m4a" ? "mp4" : ext);
+}
+
 /** What a stream of that MIME type holds. */
 export const sourceOf = (mimeType: string): SourceStream => ({ codec: codecOf(mimeType), container: containerOf(mimeType) });
 
@@ -246,6 +252,9 @@ export function parseProgressLine(line: string): number | undefined {
 /** pear-desktop's copy when the program is gone (or was never on PATH). */
 export const FFMPEG_MISSING = "FFmpeg was not found. Install FFmpeg and make sure `ffmpeg` is on your PATH to download in this format.";
 
+/** No converter at all: native ffmpeg is gone and the wasm core wouldn't load. */
+export const isFfmpegMissing = (error: unknown) => error instanceof Error && error.message === FFMPEG_MISSING;
+
 /** Converts with an ffmpeg program. */
 export class NativeConverter implements Converter {
   readonly kind = "native";
@@ -327,7 +336,16 @@ export interface WasmFFmpeg {
 export interface WasmOptions {
   /** Creates an instance (`createFFmpeg` with the core's path). */
   create(): Promise<WasmFFmpeg>;
+  /** How long an unused core stays loaded; default 10 minutes, as pear-desktop's worker. */
+  idleMs?: number;
 }
+
+/**
+ * pear-desktop shut its ffmpeg worker down after ten idle minutes: the loaded
+ * core and its MEMFS hold tens of megabytes, which the app gives back when no
+ * download converts for a while.
+ */
+const IDLE_SHUTDOWN_MS = 10 * 60_000;
 
 const lyricsFrame = (text: string) => ({ language: "eng", text });
 
@@ -360,21 +378,57 @@ export async function tagMp3(file: Buffer, tags: Tags, cover: Cover | undefined,
   return tagged;
 }
 
-/** Converts with ffmpeg.wasm, one job at a time; its files live in memory. */
+/** Converts with ffmpeg.wasm, one job at a time; its files live in memory, and it goes after it sits idle. */
 export class WasmConverter implements Converter {
   readonly kind = "wasm";
   readonly #options: WasmOptions;
   #instance: Promise<WasmFFmpeg> | undefined;
   #queue: Promise<unknown> = Promise.resolve();
+  #idleTimer: ReturnType<typeof setTimeout> | undefined;
+  /** Jobs queued but not finished; the idle timer only runs once this is 0. */
+  #converting = 0;
 
   constructor(options: WasmOptions) {
     this.#options = options;
   }
 
   convert(job: ConvertJob) {
-    const run = this.#queue.then(() => this.#convert(job));
+    this.#converting++;
+    this.#stopIdle();
+    const run = this.#queue
+      .then(() => this.#convert(job))
+      .finally(() => {
+        this.#converting--;
+        if (this.#converting === 0) this.#scheduleIdle();
+      });
     this.#queue = run.catch(() => {});
     return run;
+  }
+
+  /** Releases the core now: stopping the plugin needn't wait for the idle timer. */
+  async dispose() {
+    this.#stopIdle();
+    const instance = this.#instance;
+    this.#instance = undefined;
+    if (!instance) return;
+    try {
+      (await instance).exit();
+    } catch {
+      // It never loaded.
+    }
+  }
+
+  #stopIdle() {
+    clearTimeout(this.#idleTimer);
+    this.#idleTimer = undefined;
+  }
+
+  #scheduleIdle() {
+    const idleMs = this.#options.idleMs ?? IDLE_SHUTDOWN_MS;
+    if (idleMs <= 0) return;
+    this.#stopIdle();
+    this.#idleTimer = setTimeout(() => void this.dispose(), idleMs);
+    this.#idleTimer.unref?.();
   }
 
   async #convert(job: ConvertJob) {
@@ -444,10 +498,17 @@ export class WasmConverter implements Converter {
   }
 
   #ffmpeg() {
-    this.#instance ??= this.#options.create().then(async (ffmpeg) => {
-      if (!ffmpeg.isLoaded()) await ffmpeg.load();
-      return ffmpeg;
-    });
+    this.#instance ??= (async () => {
+      try {
+        const ffmpeg = await this.#options.create();
+        if (!ffmpeg.isLoaded()) await ffmpeg.load();
+        return ffmpeg;
+      } catch (error) {
+        // As pear-desktop: a core that won't load means there is no usable ffmpeg,
+        // which the install guidance names (rather than the raw wasm error).
+        throw Object.assign(new Error(FFMPEG_MISSING, { cause: error }), { code: "ENOENT" });
+      }
+    })();
     const instance = this.#instance;
     instance.catch(() => {
       if (this.#instance === instance) this.#instance = undefined;

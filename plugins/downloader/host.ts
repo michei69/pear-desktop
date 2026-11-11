@@ -4,6 +4,8 @@
 import { mkdir, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { type HostContextOf, livePosition, type NowPlaying, type Track } from "@pear/sdk";
+import { InnertubeSession, type PoTokenAnswer } from "@pear/sdk/innertube";
+import type { PoTokenRequest } from "@pear/sdk/potoken";
 import { YTM_ORIGIN } from "@pear/sdk/util";
 import { Notification, nativeImage, net } from "electron";
 import { archivePath } from "./archive.ts";
@@ -12,7 +14,7 @@ import { chooseConverter, type Converter, type Cover, WasmConverter, type WasmFF
 import { isSiteCookie, toNetscape } from "./cookies.ts";
 import { DownloadQueue, type JobResult, type QueueState } from "./downloads.ts";
 import { DownloadHistory, HISTORY_LIMIT } from "./history.ts";
-import { type BuiltInJobOptions, InnertubeEngine, InnertubeSession, type PoTokenAnswer } from "./engines/innertube.ts";
+import { type BuiltInJobOptions, InnertubeEngine } from "./engines/innertube.ts";
 import type { Engine } from "./engines/types.ts";
 import { YtDlpEngine } from "./engines/ytdlp.ts";
 import { resolveDownloadFolder } from "./folder.ts";
@@ -20,9 +22,8 @@ import { Installer } from "./install.ts";
 import { findLyrics } from "./lyrics.ts";
 import { OfflineStore } from "./offline.ts";
 import { ffmpegCoreDir } from "./macros.ts" with { type: "macro" };
-import type { PoTokenRequest } from "./potoken.ts";
 import { expandHome, type SetupState, type ToolSource, Tools } from "./tools.ts";
-import { type Capabilities, canEmbedCover } from "./ytdlp.ts";
+import { type Capabilities, canEmbedCover, isAlbum, isDownloadablePlaylist, normalizePlaylistId } from "./ytdlp.ts";
 
 export type Ctx = HostContextOf<typeof downloaderConfig>;
 type Config = Ctx["config"];
@@ -75,6 +76,8 @@ export function stateOf({ queue, tools }: Downloader): DownloaderState {
 }
 
 export async function startHost(ctx: Ctx) {
+  // A crash can leave yt-dlp's cookie files behind; they hold the site's session.
+  await clearSessionCookies(ctx.app.getPath("userData"));
   const tools = createTools(ctx, () => publisher.publish());
   const publisher = new Publisher(ctx, tools);
   await tools.init();
@@ -107,6 +110,10 @@ export async function startHost(ctx: Ctx) {
     label: ctx.t("plugins.downloader.downloads", "Downloads"),
     accelerator: DOWNLOADS_SHORTCUT,
     click: () => openDownloads(ctx),
+  });
+  ctx.addMenuItem({
+    label: ctx.t("plugins.downloader.menu.download-playlist", "Download playlist"),
+    click: () => downloadShownPlaylist(ctx, queue),
   });
   downloadWhileListening(ctx, (track) => autoJobs.add(queue.add({ videoId: track.videoId }, track.title)));
 }
@@ -220,6 +227,7 @@ function createQueue(
   const ytDlp = createYtDlpEngine(ctx, tools, autoJobs);
   return new DownloadQueue({
     engines: () => enginesFor(ctx.config, builtIn, ytDlp),
+    t: ctx.t,
     saved: history.load(),
     keepFinished: HISTORY_LIMIT,
     onSaved: (saved) => history.save(saved),
@@ -282,9 +290,13 @@ function createBuiltInEngine(ctx: Ctx, tools: Tools, autoJobs: Set<number>, offl
     fetch: (input, init) => ctx.session.fetch(input, init),
     cookie: () => accountCookie(ctx),
     poToken: (request: PoTokenRequest) => ctx.request<PoTokenAnswer>("poToken", request, { timeout: PO_TOKEN_TIMEOUT_MS }),
+    // YTM's offline player plays a kept song with the player response its download got.
+    keepPlayerResponses: true,
     log: ctx.log,
   });
   const wasm = new WasmConverter({ create: () => createWasmFFmpeg(ctx) });
+  // Its idle release gives the wasm heap back after a while; stopping the plugin does the same.
+  ctx.onCleanup(() => void wasm.dispose());
   return new InnertubeEngine({
     session,
     jobOptions: (id) => builtInJobOptions(ctx, autoJobs.has(id)),
@@ -394,6 +406,28 @@ export function openDownloads(ctx: Pick<Ctx, "focusWindow" | "emit">) {
   ctx.emit("open-downloads");
 }
 
+/**
+ * pear-desktop's "Download playlist": the list the window shows (a song's page
+ * played from a list too), else the one the song playing is from.
+ */
+function downloadShownPlaylist(ctx: Ctx, queue: DownloadQueue) {
+  const playlistId = shownPlaylist(ctx);
+  if (!playlistId) {
+    ctx.emit("toast", ctx.t("plugins.downloader.toast.no-playlist", "There's no playlist here to download"));
+    return;
+  }
+  const label = isAlbum(playlistId)
+    ? ctx.t("plugins.downloader.labels.album", "album")
+    : ctx.t("plugins.downloader.labels.playlist", "playlist");
+  queue.add({ videoId: "", playlistId }, label);
+}
+
+function shownPlaylist(ctx: Ctx) {
+  const page = ctx.window.isDestroyed() ? undefined : URL.parse(ctx.window.webContents.getURL());
+  const candidates = [page?.searchParams.get("list"), page?.searchParams.get("playlist"), ctx.player.state.track?.playlistId];
+  return candidates.map(normalizePlaylistId).find(isDownloadablePlaylist);
+}
+
 /** Automatic downloads go to their own folder when one is set. */
 export function downloadFolder(ctx: Pick<Ctx, "config" | "app">, auto: boolean) {
   const autoFolder = auto ? ctx.config.autoDownloadFolder.trim() : "";
@@ -403,9 +437,15 @@ export function downloadFolder(ctx: Pick<Ctx, "config" | "app">, auto: boolean) 
   return resolveDownloadFolder(folder, ctx.app.getPath("downloads"));
 }
 
+/** Where yt-dlp's per-job cookie files go. */
+const sessionCookieDir = (userData: string) => join(userData, "downloader");
+
+/** A crash can leave a job's cookie file behind; starting up removes the whole folder (the site's session). */
+export const clearSessionCookies = (userData: string) => rm(sessionCookieDir(userData), { recursive: true, force: true });
+
 /** The window's session, as pear-desktop downloaded with it; only the site's cookies, private to this user. */
 function sessionCookies(ctx: Ctx) {
-  const dir = join(ctx.app.getPath("userData"), "downloader");
+  const dir = sessionCookieDir(ctx.app.getPath("userData"));
   let files = 0;
   return async () => {
     if (!ctx.config.useSession) return undefined;
@@ -422,7 +462,7 @@ function sessionCookies(ctx: Ctx) {
 // ---------------------------------------------------------------- automatic downloads
 
 /** "Download everything I listen to": each track once, near its end or once partly played. */
-function downloadWhileListening(ctx: Ctx, download: (track: Track) => void) {
+export function downloadWhileListening(ctx: Ctx, download: (track: Track) => void) {
   const downloaded = new Set<string>();
   ctx.player.on("change", (state) => {
     const track = state.track;
@@ -435,7 +475,9 @@ function downloadWhileListening(ctx: Ctx, download: (track: Track) => void) {
 
 const isListening = (state: NowPlaying) => !state.ad && state.status === "playing";
 
-function isDue(config: Config, track: Track, position: number) {
+/** Near its end (or far enough in), and only for a song whose length is known: a live stream never is due. */
+export function isDue(config: Config, track: Track, position: number) {
+  if (track.durationSeconds <= 0) return false;
   if (config.autoDownloadMode === "percent") return position >= track.durationSeconds * (config.autoDownloadPercent / 100);
   return track.durationSeconds - position <= config.autoDownloadSeconds;
 }

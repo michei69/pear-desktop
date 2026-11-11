@@ -24,6 +24,10 @@ export interface DownloaderCommands {
   info(): ToolsInfo;
   reveal(file: string): void;
   openFolder(): Promise<void>;
+  /** Asks for the download folder in the native dialog. */
+  chooseFolder(): Promise<void>;
+  /** Asks for the folder automatic downloads go to. */
+  chooseFinishFolder(): Promise<void>;
   /** Shows the Downloads popover in the page, pinned open. */
   openDownloads(): void;
   updateYtDlp(): Promise<void>;

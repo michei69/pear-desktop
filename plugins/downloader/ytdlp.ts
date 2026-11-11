@@ -79,6 +79,14 @@ export function normalizePlaylistId(playlistId: string | null | undefined): stri
 export const isDownloadablePlaylist = (playlistId: string | undefined): playlistId is string =>
   !!playlistId && (!playlistId.startsWith("RD") || playlistId.startsWith("RDCLAK"));
 
+/** A playlist's radio ("RDAMPL…") downloads the playlist itself, as pear-desktop did. */
+export function withPlaylist(target: DownloadTarget): DownloadTarget {
+  const playlistId = normalizePlaylistId(target.playlistId);
+  if (target.playlistId === undefined || playlistId === target.playlistId) return target;
+  const { playlistId: _radio, ...rest } = target;
+  return playlistId ? { ...rest, playlistId } : rest;
+}
+
 export const isAlbum = (playlistId: string | undefined) => !!playlistId?.startsWith("OLAK5uy_");
 
 /** yt-dlp writes cover art into opus/ogg (and reliably into m4a) only through mutagen or AtomicParsley. */

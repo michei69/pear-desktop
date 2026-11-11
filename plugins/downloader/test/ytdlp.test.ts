@@ -11,6 +11,7 @@ import {
   overallProgress,
   parseLine,
   parseProbe,
+  withPlaylist,
 } from "../ytdlp.ts";
 
 const caps: Capabilities = { version: "2026.08.19", ffmpeg: true, mutagen: false, atomicParsley: false };
@@ -102,7 +103,9 @@ describe("buildArgs", () => {
 
   test("playlist folders as pear-desktop named them, and the list's title for the label", () => {
     const args = buildArgs(options({ target: { videoId: "", playlistId: "PL1" } }));
-    const folder = args.flatMap((arg, i) => (arg === "--replace-in-metadata" && args[i + 1] === "playlist_title" ? [args.slice(i + 2, i + 4)] : []));
+    const folder = args.flatMap((arg, i) =>
+      arg === "--replace-in-metadata" && args[i + 1] === "playlist_title" ? [args.slice(i + 2, i + 4)] : [],
+    );
     expect(folder[0]).toEqual([String.raw`[<>:"/\\|?*\x00-\x1f]+`, " "]);
     expect(folder).toContainEqual([" {2,}", " "]);
     expect(args).toContain("before_dl:pear-list %(playlist_title|)s");
@@ -260,5 +263,19 @@ describe("pear-desktop's Custom preset, session and menus", () => {
     expect(menuTarget(menu, ["playlist?list=PLpodcast", "watch?v=episode0001"])).toEqual({ videoId: "", playlistId: "PLpodcast" });
     // An album's "Shuffle play" stays the album, whatever the row.
     expect(menuTarget(["watch?playlist=OLAK5uy_album"], ["watch?v=abcdefghijk"])).toEqual({ videoId: "", playlistId: "OLAK5uy_album" });
+  });
+});
+
+describe("withPlaylist", () => {
+  test("a playlist's radio downloads the playlist itself", () => {
+    expect(withPlaylist({ videoId: "", playlistId: "RDAMPLPLabc" })).toEqual({ videoId: "", playlistId: "PLabc" });
+    expect(withPlaylist({ videoId: "abcdefghijk", playlistId: "RDAMPLOLAK5uy_x" })).toEqual({
+      videoId: "abcdefghijk",
+      playlistId: "OLAK5uy_x",
+    });
+    // A real playlist, a radio that isn't one, and no playlist at all stay as they are.
+    expect(withPlaylist({ videoId: "", playlistId: "PLabc" })).toEqual({ videoId: "", playlistId: "PLabc" });
+    expect(withPlaylist({ videoId: "", playlistId: "RDAMVMabc" })).toEqual({ videoId: "", playlistId: "RDAMVMabc" });
+    expect(withPlaylist({ videoId: "abcdefghijk" })).toEqual({ videoId: "abcdefghijk" });
   });
 });

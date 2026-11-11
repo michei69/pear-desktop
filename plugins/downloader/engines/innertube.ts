@@ -3,27 +3,43 @@
 // temporary file next to the result and converts that into place (convert.ts).
 // Anything the site refuses it is a RecoverableError, which yt-dlp gets next.
 
+import { randomBytes } from "node:crypto";
 import { existsSync } from "node:fs";
 import { mkdir, open, rename, rm, stat, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
+import type { InnertubeSession } from "@pear/sdk/innertube";
 import { errorMessage } from "@pear/sdk/util";
+import { type Innertube, type Types, type YT, YTNodes, type YTMusic } from "\u0079\u006f\u0075\u0074\u0075\u0062\u0065i.js";
 import {
-  Innertube,
-  Platform,
-  type Types,
-  UniversalCache,
-  type YT,
-  YTNodes,
-  type YTMusic,
-} from "\u0079\u006f\u0075\u0074\u0075\u0062\u0065i.js";
-import { type BuiltInFormat, type Converter, type Cover, codecOf, outputFor, preferredContainer, type Tags } from "../convert.ts";
+  type BuiltInFormat,
+  type Converter,
+  type Cover,
+  FFMPEG_MISSING,
+  isFfmpegMissing,
+  outputFor,
+  preferredContainer,
+  sameContainer,
+  sourceOf,
+  type Tags,
+} from "../convert.ts";
 import { cleanupName } from "../names.ts";
 import type { Lyrics, LyricsQuery } from "../lyrics.ts";
 import type { KeepOptions, OfflineList, OfflineSong, OfflineStore } from "../offline.ts";
 import { Archive } from "../archive.ts";
 import { playlistFolder, renderTemplate, type TemplateFields } from "../template.ts";
 import { isAlbum } from "../ytdlp.ts";
-import { type Engine, type EngineJob, type EngineResult, isPause, type Progress, RecoverableError, type SongUpdate } from "./types.ts";
+import {
+  type Engine,
+  EngineFailure,
+  type EngineJob,
+  type EngineResult,
+  emptyPlaylist,
+  folderExists,
+  isPause,
+  type Progress,
+  RecoverableError,
+  type SongUpdate,
+} from "./types.ts";
 
 /** The stream is fetched in parts of this size, as the site's player does; one request for all of it is refused. */
 const CHUNK_BYTES = 10 * 1024 * 1024;
@@ -32,8 +48,8 @@ const DOWNLOAD_SHARE = 0.7;
 const HTTP_FORBIDDEN = 403;
 /** Songs of a playlist downloaded at the same time. */
 const PLAYLIST_CONCURRENCY = 2;
-/** The site's player responses remembered for offline playback, the latest songs'. */
-const PLAYER_RESPONSES_KEPT = 50;
+/** The temp files' prefix; pear-desktop's random base was `.pear-…` too. */
+const TEMP_PREFIX = ".pear-";
 
 export interface BuiltInJobOptions {
   folder: string;
@@ -55,117 +71,6 @@ export interface BuiltInJobOptions {
   offline: boolean;
   /** Save songs to `folder`; otherwise they are kept in the store until exported (`export`). */
   exportFiles: boolean;
-}
-
-// ---------------------------------------------------------------- session
-
-/** What the page answers for a PO token (potoken.ts). */
-export interface PoTokenAnswer {
-  poToken: string;
-  /** The page's visitor, which the token is minted for when signed out. */
-  visitorData: string | undefined;
-}
-
-export interface SessionOptions {
-  /** The window's session's fetch. */
-  fetch(input: string | Request, init?: RequestInit): Promise<Response>;
-  /** The signed-in session's cookies, when downloads use the account. */
-  cookie(): Promise<string | undefined>;
-  /** A PO token from the page, which runs BotGuard in a real DOM; for a song when the site binds them to songs. */
-  poToken(request: { signedIn: boolean; refresh: boolean; videoId?: string }): Promise<PoTokenAnswer>;
-  log: { warn(...args: unknown[]): void };
-}
-
-/**
- * The InnerTube library (13 and later) leaves deciphering stream URLs to the app: run the
- * player's script it extracted, as pear-desktop did.
- */
-function evaluate(data: Types.BuildScriptResult, env: Record<string, Types.VMPrimative>) {
-  const properties: string[] = [];
-  if (env.n) properties.push(`n: exportedVars.nFunction(${JSON.stringify(env.n)})`);
-  if (env.sig) properties.push(`sig: exportedVars.sigFunction(${JSON.stringify(env.sig)})`);
-  // oxlint-disable-next-line typescript/no-implied-eval
-  return new Function(`${data.output}\nreturn { ${properties.join(", ")} }`)() as Record<string, Types.VMPrimative>;
-}
-
-/** One InnerTube client for the plugin's lifetime, created again when the account changes. */
-export class InnertubeSession {
-  #options: SessionOptions;
-  #current: Promise<{ yt: Innertube; cookie: string | undefined }> | undefined;
-  /** Playable player responses by video id, as the site sent them (JSON). */
-  readonly #playerResponses = new Map<string, string>();
-
-  constructor(options: SessionOptions) {
-    this.#options = options;
-  }
-
-  async get(): Promise<Innertube> {
-    const cookie = await this.#options.cookie();
-    const current = await this.#current?.catch(() => undefined);
-    if (current && current.cookie === cookie) return current.yt;
-    const created = this.#create(cookie);
-    this.#current = created;
-    created.catch(() => {
-      if (this.#current === created) this.#current = undefined;
-    });
-    return (await created).yt;
-  }
-
-  /**
-   * The site's player response for a song this session looked up, as it sent
-   * it (JSON); undefined when it wasn't playable. YTM's offline player plays the
-   * song with it; asking again without the song's PO token isn't answered.
-   */
-  playerResponse(videoId: string) {
-    return this.#playerResponses.get(videoId);
-  }
-
-  /** Remembers a playable player response the library got. */
-  async #remember(response: Response) {
-    try {
-      const json = await response.text();
-      const parsed = JSON.parse(json) as { videoDetails?: { videoId?: string }; playabilityStatus?: { status?: string } };
-      const videoId = parsed.videoDetails?.videoId;
-      if (!videoId || parsed.playabilityStatus?.status !== "OK" || this.#playerResponses.has(videoId)) return;
-      this.#playerResponses.set(videoId, json);
-      if (this.#playerResponses.size > PLAYER_RESPONSES_KEPT) this.#playerResponses.delete(this.#playerResponses.keys().next().value!);
-    } catch {}
-  }
-
-  /** A PO token for a song's streams; `refresh` after a stream refused the last one. Undefined when the page has none. */
-  async poToken(yt: Innertube, videoId: string, refresh = false): Promise<string | undefined> {
-    try {
-      const answer = await this.#options.poToken({ signedIn: yt.session.logged_in, refresh, videoId });
-      return answer.poToken;
-    } catch (error) {
-      this.#options.log.warn("no PO token from the page:", errorMessage(error));
-      return undefined;
-    }
-  }
-
-  async #create(cookie: string | undefined) {
-    Platform.shim.eval = evaluate;
-    const { fetch } = this.#options;
-    const yt = await Innertube.create({
-      // The cookies go in as the library's header (it signs requests with them), not again from the session's jar.
-      fetch: async (input, init) => {
-        const response = await fetch(input as string | Request, { ...init, credentials: "omit" });
-        const url = typeof input === "string" ? input : input instanceof URL ? input.href : input.url;
-        if (new URL(url).pathname.endsWith("/player")) void this.#remember(response.clone());
-        return response;
-      },
-      generate_session_locally: true,
-      cache: new UniversalCache(false),
-      ...(cookie ? { cookie } : {}),
-    });
-    // Signed out, tokens are bound to the page's visitor; requests must come from the same one.
-    const visitorData = await this.#options
-      .poToken({ signedIn: yt.session.logged_in, refresh: false })
-      .then((answer) => answer.visitorData)
-      .catch(() => undefined);
-    if (visitorData && !yt.session.logged_in) yt.session.context.client.visitorData = visitorData;
-    return { yt, cookie };
-  }
 }
 
 // ---------------------------------------------------------------- engine
@@ -216,6 +121,8 @@ interface AlbumInfo {
 
 /** Progress of one song: looked up, downloading (in bytes), converting, then saved or skipped. */
 interface SongProgress {
+  /** The job's name, once the engine knows it (a single song's title). */
+  named?(label: string): void;
   started(): void;
   download(bytes: number, total: number): void;
   convert(fraction: number): void;
@@ -255,11 +162,19 @@ export class InnertubeEngine implements Engine {
     signal: AbortSignal,
   ): Promise<EngineResult> {
     const { list, entries } = await recoverable(() => this.#list(yt, playlistId, options.playlistLimit), signal);
+    // The queue names the job after the list, as pear-desktop's dialog and progress did.
+    progress.named(list.title);
     const wanted = only ? entries.filter((entry) => only.includes(entry.index)) : entries;
+    // As pear-desktop: a whole list isn't merged into a folder that is there already, unless skipping existing files.
+    // A resumed list has its folder (its own songs are done already) and may continue.
+    if (!only?.length && (options.exportFiles || !this.#options.store) && options.playlistFolders && !options.skipExisting) {
+      const folder = join(options.folder, playlistFolder({ playlist_title: list.title, playlist_id: list.id }));
+      if (existsSync(folder)) throw folderExists(folder);
+    }
     progress.songs(entries.map(({ index, videoId, title }) => ({ index, videoId, title })));
     const saved: SongOutcome[] = [];
     const retry: number[] = [];
-    const errors: string[] = [];
+    const errors: (string | EngineFailure)[] = [];
     const songs = listProgress(progress, wanted);
     let next = 0;
     // A few songs at a time: most of a song's time is waiting for the site, not the disk.
@@ -274,9 +189,10 @@ export class InnertubeEngine implements Engine {
         } catch (error) {
           if (signal.aborted) throw error;
           this.#options.log.warn(`${entry.title} (${entry.videoId}):`, errorMessage(error));
-          progress.song({ index: entry.index, status: "failed", error: errorMessage(error) });
+          const failure = error instanceof EngineFailure ? error : errorMessage(error);
+          progress.song({ index: entry.index, status: "failed", error: failure });
           if (error instanceof RecoverableError) retry.push(entry.index);
-          else errors.push(errorMessage(error));
+          else errors.push(failure);
         }
         songs.done(position);
       }
@@ -290,7 +206,7 @@ export class InnertubeEngine implements Engine {
     const kept = saved.flatMap((outcome) => (outcome?.kept ? [outcome.kept] : []));
     retry.sort((a, b) => a - b);
     if (retry.length > 0) throw new RecoverableError(`${retry.length} of ${wanted.length} songs failed`, { files, kept, items: retry });
-    if (wanted.length === 0) return { files, kept, error: "the playlist is empty" };
+    if (wanted.length === 0) return { files, kept, error: emptyPlaylist() };
     return errors.length > 0 ? { files, kept, error: errors.at(-1)! } : { files, kept };
   }
 
@@ -369,12 +285,16 @@ export class InnertubeEngine implements Engine {
     let poToken = await session.poToken(yt, entry.videoId);
     const { info, tags } = await recoverable(() => this.#lookup(yt, entry.videoId, poToken), signal);
     if (list?.album) Object.assign(tags, albumTags(list.album, entry.index, list.count));
+    // A single song's job is named after the song, as pear-desktop's was; a list keeps its own name.
+    if (!list) progress.named?.(tags.title);
     const format = await recoverable(async () => chooseAudio(info, options.format), signal);
-    const { ext, codecArgs } = outputFor(options.format, { codec: codecOf(format.mime_type) });
+    // The stream's container decides what "As streamed" writes (WebM for Opus, M4A/MP4 for AAC).
+    const { ext, codecArgs } = outputFor(options.format, sourceOf(format.mime_type));
 
     const fields = templateFields(entry, tags, ext, list, info.basic_info.duration);
-    const relative = renderTemplate(options.template, fields);
     const folder = list && options.playlistFolders ? join(options.folder, playlistFolder(fields)) : options.folder;
+    // pear-desktop budgeted the name against the folder: Windows paths stop at 260 characters.
+    const relative = renderTemplate(options.template, fields, process.platform, { maxLength: Math.max(32, 255 - folder.length) });
     const file = join(folder, relative);
     if (exporting && options.skipExisting && existsSync(file)) {
       await archive?.add(entry.videoId);
@@ -384,20 +304,20 @@ export class InnertubeEngine implements Engine {
 
     // Kept, the stream is downloaded into the store; named by the stream, so a paused download only continues from the same one.
     const keepOnly = !exporting && keepable(format);
-    const partial = keepOnly ? await store.stagingFile(entry.videoId, format.itag) : `${file}.f${format.itag}.part`;
+    // The video id keeps a paused or failed download's part for this song; the converted file gets a
+    // random name, so two entries with one title can't interleave their bytes (pear-desktop's random base).
+    const partial = keepOnly
+      ? await store.stagingFile(entry.videoId, format.itag)
+      : join(dirname(file), `${TEMP_PREFIX}${entry.videoId}-${format.itag}.part`);
     if (!keepOnly) await mkdir(dirname(file), { recursive: true });
-    const converted = join(
-      dirname(file),
-      `${relative
-        .split("/")
-        .at(-1)!
-        .replace(/\.[^.]+$/, "")}.temp.${ext}`,
-    );
+    const converted = join(dirname(file), `${stemOf(relative)}.${randomBytes(4).toString("hex")}.temp.${ext}`);
     const { ext: _ext, ...exportFields } = fields;
     const exportInfo = { tags, fields: exportFields, inList: list !== undefined };
+    let downloaded = false;
     try {
       const refresh = async () => (poToken = await session.poToken(yt, entry.videoId, true));
       await this.#stream({ yt, format, poToken: () => poToken, refresh }, partial, progress, signal);
+      downloaded = true;
       const cover = await this.#cover(list?.album?.cover ?? thumbnailOf(info), options.squareCover, signal);
       if (keepOnly && (await this.#keep(entry.videoId, format, tags, partial, { move: true, cover, exportInfo }))) {
         progress.kept();
@@ -407,29 +327,44 @@ export class InnertubeEngine implements Engine {
       await mkdir(dirname(file), { recursive: true });
       const lyrics = options.lyrics || options.lyricsFile ? await this.#lyrics(tags, info.basic_info.duration ?? 0, signal) : undefined;
       if (options.lyrics && lyrics) tags.lyrics = lyrics.plain;
-      await this.#options.converter().convert({
-        input: partial,
-        output: converted,
-        ext,
-        codecArgs,
-        tags,
-        cover,
-        replayGain: options.replayGain,
-        duration: info.basic_info.duration ?? 0,
-        signal,
-        onProgress: (fraction) => progress.convert(fraction),
-      });
-      await rename(converted, file);
+      // The stream the store keeps: the part, unless a missing ffmpeg already moved it into place.
+      let streamFile = partial;
+      try {
+        await this.#options.converter().convert({
+          input: partial,
+          output: converted,
+          ext,
+          codecArgs,
+          tags,
+          cover,
+          replayGain: options.replayGain,
+          duration: info.basic_info.duration ?? 0,
+          signal,
+          onProgress: (fraction) => progress.convert(fraction),
+        });
+        await rename(converted, file);
+      } catch (error) {
+        // As pear-desktop: no usable ffmpeg, but the stream already is the wanted container: keep it, unconverted.
+        if (!isFfmpegMissing(error)) throw error;
+        if (!sameContainer(ext, format.mime_type))
+          throw new EngineFailure(FFMPEG_MISSING, (t) => t("plugins.downloader.backend.feedback.ffmpeg-missing", FFMPEG_MISSING));
+        this.#options.log.warn(`${tags.title} (${entry.videoId}): no usable ffmpeg; keeping the streamed ${ext} file`);
+        await rm(file, { force: true });
+        await rename(partial, file);
+        streamFile = file;
+      }
       // Once saved: a song paused or cancelled while converting isn't kept.
-      if (options.offline) await this.#keep(entry.videoId, format, tags, partial, { cover, exportInfo, exported: file });
+      if (options.offline) await this.#keep(entry.videoId, format, tags, streamFile, { cover, exportInfo, exported: file });
       if (options.lyricsFile && lyrics?.synced) await writeFile(file.replace(/\.[^./\\]+$/, ".lrc"), lyrics.synced);
       await archive?.add(entry.videoId);
       progress.saved(file);
       return { file };
     } finally {
-      // A paused song continues its download later.
+      // A paused song continues its download later; a failed finish keeps the whole stream for the retry.
       if (isPause(signal) && existsSync(partial)) progress.keep(partial);
-      else await rm(partial, { force: true });
+      else if (downloaded && !signal.aborted && !existsSync(file) && existsSync(partial)) {
+        this.#options.log.warn(`Download kept for retry: ${partial}`);
+      } else await rm(partial, { force: true });
       await rm(converted, { force: true });
     }
   }
@@ -442,21 +377,15 @@ export class InnertubeEngine implements Engine {
     const kept = await this.#options.store?.kept(videoId);
     const info = kept?.track.export;
     if (!kept || !info) throw new Error(`${videoId} isn't in the downloads, or was kept before it could be exported`);
-    const { ext, codecArgs } = outputFor(options.format, { codec: codecOf(kept.track.format.mimeType) });
+    const { ext, codecArgs } = outputFor(options.format, sourceOf(kept.track.format.mimeType));
     const fields: TemplateFields = { ...info.fields, ext };
-    const relative = renderTemplate(options.template, fields);
     const folder = info.inList && options.playlistFolders ? join(options.folder, playlistFolder(fields)) : options.folder;
+    const relative = renderTemplate(options.template, fields, process.platform, { maxLength: Math.max(32, 255 - folder.length) });
     const file = join(folder, relative);
     const archive = options.archive ? new Archive(options.folder) : undefined;
     if (!existsSync(file)) {
       await mkdir(dirname(file), { recursive: true });
-      const converted = join(
-        dirname(file),
-        `${relative
-          .split("/")
-          .at(-1)!
-          .replace(/\.[^.]+$/, "")}.temp.${ext}`,
-      );
+      const converted = join(dirname(file), `${stemOf(relative)}.${randomBytes(4).toString("hex")}.temp.${ext}`);
       const tags = { ...info.tags };
       const duration = fields.duration ?? 0;
       const lyrics = options.lyrics || options.lyricsFile ? await this.#lyrics(tags, duration, signal) : undefined;
@@ -755,6 +684,13 @@ const yearOf = (text: string) => {
   return year ? Number(year) : undefined;
 };
 
+/** The last segment of a rendered name without its extension, for a temp file beside it. */
+const stemOf = (relative: string) =>
+  relative
+    .split("/")
+    .at(-1)!
+    .replace(/\.[^.]+$/, "");
+
 /** Album art on the site's image server can be asked for in any size. */
 const ART_SIZE = /=w\d+-h\d+/;
 const LARGE_ART = "=w1200-h1200";
@@ -791,6 +727,7 @@ function songProgress(progress: Progress, entry: Entry, position: number, count:
   const song = songUpdates(progress, entry);
   return {
     ...song,
+    named: (label) => progress.named(label),
     download: (bytes, total) => {
       song.bytes(bytes, total);
       if (total) progress.download(overall((bytes / total) * DOWNLOAD_SHARE));

@@ -7,7 +7,7 @@ import { basename, dirname, resolve } from "node:path";
 import { createInterface } from "node:readline";
 import type { ReadyTools } from "../tools.ts";
 import { type ArgsOptions, buildArgs, overallProgress, parseDestination, parseLine } from "../ytdlp.ts";
-import { type Engine, type EngineJob, type EngineResult, folderExists, isPause, type Progress } from "./types.ts";
+import { type Engine, type EngineFailure, type EngineJob, type EngineResult, folderExists, isPause, type Progress } from "./types.ts";
 
 export interface YtDlpOptions {
   /** The tools for the next job; may download them first. */
@@ -48,7 +48,7 @@ export class YtDlpEngine implements Engine {
     // As pear-desktop: a whole list isn't downloaded into a folder that is there already, unless skipping existing files.
     const refuseExisting = playlist && !target.items?.length && options.playlistFolders && !options.skipExisting;
     const existing = refuseExisting ? new Set(await readdir(options.folder).catch(() => [])) : undefined;
-    let refused: string | undefined;
+    let refused: EngineFailure | undefined;
     // Its own process group, so cancelling also stops the ffmpeg it runs.
     const child = spawn(tools.ytDlp, buildArgs(options), { stdio: ["ignore", "pipe", "pipe"], windowsHide: true, detached: !WINDOWS });
     const kill = () => killTree(child);

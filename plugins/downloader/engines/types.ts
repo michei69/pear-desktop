@@ -1,8 +1,23 @@
 // What the download queue needs from an engine (host only). The queue runs the
 // built-in engine first and hands what it couldn't do to yt-dlp.
 
+import type { Translate } from "@pear/sdk/i18n";
 import type { SongStatus } from "../jobs.ts";
 import type { DownloadTarget } from "../ytdlp.ts";
+
+/**
+ * A failure people should read: the host translates it with the app's language
+ * where it shows it (engines run in the host, so the text never crosses IPC).
+ */
+export class EngineFailure extends Error {
+  readonly describe: (t: Translate) => string;
+
+  constructor(message: string, describe: (t: Translate) => string) {
+    super(message);
+    this.name = "EngineFailure";
+    this.describe = describe;
+  }
+}
 
 export interface EngineJob {
   id: number;
@@ -21,7 +36,8 @@ export interface SongUpdate {
   bytes?: number;
   total?: number;
   file?: string;
-  error?: string;
+  /** Why the song failed: an untranslated `EngineFailure`, or a message for anything else. */
+  error?: string | EngineFailure;
 }
 
 /** How a job is going, as `JobState` shows it. */
@@ -56,7 +72,7 @@ export interface EngineResult {
   /** Songs kept in the downloader's store instead of saved to the folder (by video id). */
   kept?: string[];
   /** Why some items of a playlist failed, when others were saved. */
-  error?: string;
+  error?: string | EngineFailure;
 }
 
 export interface Engine {
@@ -84,6 +100,15 @@ export class RecoverableError extends Error {
 }
 
 /** pear-desktop's error for a playlist's folder that is there already (when not skipping existing files). */
-export const folderExists = (folder: string) => `The folder ${folder} already exists`;
+export const folderExists = (folder: string) =>
+  new EngineFailure(`The folder ${folder} already exists`, (t) =>
+    t("plugins.downloader.backend.feedback.folder-already-exists", "The folder {{playlistFolder}} already exists", {
+      playlistFolder: folder,
+    }),
+  );
+
+/** A list with nothing to download. */
+export const emptyPlaylist = () =>
+  new EngineFailure("the playlist is empty", (t) => t("plugins.downloader.backend.feedback.playlist-is-empty", "Playlist is empty"));
 
 export const isRecoverable = (error: unknown): error is RecoverableError => error instanceof RecoverableError;

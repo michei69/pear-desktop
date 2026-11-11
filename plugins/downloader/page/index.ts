@@ -3,10 +3,10 @@
 // page, the toasts, and the entry in YTM's menus.
 
 import { sidebarEntry } from "@pear/sdk/dom";
+import { type PoTokenRequest, poTokens } from "@pear/sdk/potoken";
 import { remoteErrorMessage } from "@pear/sdk/util";
 import type { JobResult } from "../downloads.ts";
 import type { DownloaderState } from "../host.ts";
-import { type PoTokenRequest, poTokens } from "../potoken.ts";
 import { visibleSetup } from "../progress.ts";
 import type { DownloadTarget } from "../ytdlp.ts";
 import { downloadButton, showState } from "./button.tsx";

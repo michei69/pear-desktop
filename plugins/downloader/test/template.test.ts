@@ -43,3 +43,18 @@ describe("renderTemplate", () => {
     expect(playlistFolder({ playlist_id: "PL1" }, "linux")).toBe("PL1");
   });
 });
+
+describe("the folder's budget", () => {
+  test("a rendered name fits beside the folder it goes in, as pear-desktop sized it", () => {
+    const long = { ...song, title: "x".repeat(300) };
+    const budget = Math.max(32, 255 - 60);
+    const name = renderTemplate("%(artist)s - %(title)s.%(ext)s", long, "linux", { maxLength: budget });
+    expect(name.length).toBeLessThanOrEqual(budget);
+    expect(name.endsWith(".mp3")).toBe(true);
+    // Every segment, not only the last: a template folder too.
+    const nested = renderTemplate("%(album)s/%(title)s.%(ext)s", { ...song, album: "y".repeat(300), title: "z".repeat(300) }, "linux", {
+      maxLength: budget,
+    });
+    for (const segment of nested.split("/")) expect(segment.length).toBeLessThanOrEqual(budget);
+  });
+});

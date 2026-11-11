@@ -72,8 +72,14 @@ interface SegmentOptions {
 }
 
 /** A whole path segment, as filenamify made it: no reserved names, no trailing dots or spaces, not too long. */
-export function cleanSegment(segment: string, platform = process.platform, { replacement = REPLACEMENT, maxLength = MAX_NAME_LENGTH }: SegmentOptions = {}) {
-  let name = cleanValue(segment, replacement).trim().replace(/[. ]+$/, "");
+export function cleanSegment(
+  segment: string,
+  platform = process.platform,
+  { replacement = REPLACEMENT, maxLength = MAX_NAME_LENGTH }: SegmentOptions = {},
+) {
+  let name = cleanValue(segment, replacement)
+    .trim()
+    .replace(/[. ]+$/, "");
   // filenamify leaves no runs of its replacement (a space: no double spaces).
   if (replacement === FOLDER_REPLACEMENT) name = name.replace(/ {2,}/g, " ");
   if (name === "" || name === "." || name === "..") name = REPLACEMENT;
@@ -88,7 +94,12 @@ export function cleanSegment(segment: string, platform = process.platform, { rep
 }
 
 /** Renders a yt-dlp output template into a relative path (segments joined with "/"). */
-export function renderTemplate(template: string, fields: TemplateFields, platform = process.platform): string {
+export function renderTemplate(
+  template: string,
+  fields: TemplateFields,
+  platform = process.platform,
+  options: SegmentOptions = {},
+): string {
   const values = aliases(fields);
   const source = (template.trim() || DEFAULT_TEMPLATE).replace(/^[/\\]+/, "");
   const rendered = source.replace(FIELD, (whole, percent: string, ...rest) => {
@@ -102,11 +113,14 @@ export function renderTemplate(template: string, fields: TemplateFields, platfor
   return rendered
     .split(/[/\\]+/)
     .filter((segment) => segment !== "")
-    .map((segment) => cleanSegment(segment, platform))
+    .map((segment) => cleanSegment(segment, platform, options))
     .join("/");
 }
 
 /** The playlist's own folder (`%(playlist_title,playlist_id)s`), as pear-desktop named it: reserved characters as spaces. */
 export function playlistFolder(fields: Pick<TemplateFields, "playlist_title" | "playlist_id">, platform = process.platform) {
-  return cleanSegment(fields.playlist_title || fields.playlist_id || MISSING, platform, { replacement: FOLDER_REPLACEMENT, maxLength: MAX_FOLDER_LENGTH });
+  return cleanSegment(fields.playlist_title || fields.playlist_id || MISSING, platform, {
+    replacement: FOLDER_REPLACEMENT,
+    maxLength: MAX_FOLDER_LENGTH,
+  });
 }
