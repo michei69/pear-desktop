@@ -106,6 +106,16 @@ export default definePlugin({
   description: "Switch between a track's music video and its cover art, or hide the video entirely.",
   config: schema,
   style,
+  host: {
+    start(ctx) {
+      // A flat item cannot carry master's radio/checkbox state; it opens the
+      // authoritative settings card instead.
+      ctx.addMenuItem({
+        label: ctx.t("plugins.video-toggle.menu.open", "Video toggle settings…"),
+        click: () => ctx.openSettings(),
+      });
+    },
+  },
   page(ctx) {
     if (ctx.config.forceHide) return;
     const setAttribute = attributeRestorer(ctx);
@@ -142,6 +152,35 @@ function writeAttribute(element: Element, name: string, value: string | null) {
   else element.setAttribute(name, value);
 }
 
+/** Sets inline styles, remembering the previous value for cleanup/undo. */
+function styleRestorer(ctx: Ctx) {
+  const saved = new Map<HTMLElement, Map<string, [string, string]>>();
+  ctx.onCleanup(() => {
+    for (const [element, properties] of saved) {
+      for (const [name, [value, priority]] of properties) element.style.setProperty(name, value, priority);
+    }
+  });
+  return {
+    set(element: HTMLElement | null, property: string, value: string) {
+      if (!element || element.style.getPropertyValue(property) === value) return;
+      let properties = saved.get(element);
+      if (!properties) saved.set(element, (properties = new Map()));
+      if (!properties.has(property)) {
+        properties.set(property, [element.style.getPropertyValue(property), element.style.getPropertyPriority(property)]);
+      }
+      element.style.setProperty(property, value);
+    },
+    clear(element: HTMLElement | null, property: string) {
+      if (!element) return;
+      const properties = saved.get(element);
+      const previous = properties?.get(property);
+      if (!properties || !previous) return;
+      element.style.setProperty(property, previous[0], previous[1]);
+      properties.delete(property);
+    },
+  };
+}
+
 /** Enables or disables YTM's own song/video switch. */
 function nativeSwitch(ctx: Ctx, setAttribute: SetAttribute) {
   const enable = ctx.config.mode === "native";
@@ -163,6 +202,7 @@ function nativeSwitch(ctx: Ctx, setAttribute: SetAttribute) {
 
 /** Pear's own Song / Video switch over the player. */
 function customSwitch(ctx: Ctx, setAttribute: SetAttribute) {
+  const setStyle = styleRestorer(ctx);
   let showVideo = !ctx.config.hideVideo;
   let hasVideo = true;
   const visible = () => showVideo && hasVideo;
@@ -202,7 +242,11 @@ function customSwitch(ctx: Ctx, setAttribute: SetAttribute) {
     setAttribute(player, "playback-mode", shown ? OMV : ATV);
     songVideo.style.display = shown ? "block" : "none";
     songImage.style.display = shown ? "none" : "block";
-    if (!shown) forceThumbnail(ctx);
+    // pear-desktop's 3.x workaround: the player needs a horizontal auto margin
+    // while the video is hidden, the cover art fills the panel.
+    if (!shown) setStyle.set(player, "margin", "auto 0px");
+    else setStyle.clear(player, "margin");
+    if (!shown) forceThumbnail(ctx, hasVideo);
   };
   ctx.onCleanup(() => {
     for (const name of ["player.song_video", "player.song_image"] as const) {
@@ -226,7 +270,7 @@ function customSwitch(ctx: Ctx, setAttribute: SetAttribute) {
       const keepChoice = () => {
         const wanted = visible() ? OMV : ATV;
         if (player.getAttribute("playback-mode") !== wanted) apply();
-        if (!visible()) forceThumbnail(ctx);
+        if (!visible()) forceThumbnail(ctx, hasVideo);
       };
       ctx.observe(player, { attributes: true, attributeFilter: ["playback-mode"] }, keepChoice);
       const image = ctx.$("player.song_image_img");
@@ -243,13 +287,16 @@ function customSwitch(ctx: Ctx, setAttribute: SetAttribute) {
   });
 }
 
-// For video tracks YTM leaves a placeholder in the cover-art slot; use the video's thumbnail.
-function forceThumbnail(ctx: Ctx) {
+// Video tracks get the video's largest thumbnail as cover art; audio tracks only
+// replace YTM's data: placeholder (pear-desktop's 317cecbf / original behaviour).
+function forceThumbnail(ctx: Ctx, hasVideo: boolean) {
   const image = ctx.$<HTMLImageElement>("player.song_image_img");
   const thumbnails = ctx.player.api?.getPlayerResponse()?.videoDetails?.thumbnail?.thumbnails ?? [];
   const best = thumbnails.toSorted((a, b) => b.width * b.height - a.width * a.height)[0];
-  if (!image || !best || !image.src.startsWith("data:")) return;
-  image.src = best.url.split("?")[0]!;
+  if (!image || !best) return;
+  if (!hasVideo && !image.src.startsWith("data:")) return;
+  const url = best.url.split("?")[0]!;
+  if (image.src !== url) image.src = url;
 }
 
 /** The settings that need a restart: all but hideVideo. */
