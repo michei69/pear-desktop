@@ -3,8 +3,15 @@ import { v } from "@pear/sdk/rpc";
 import { css } from "@pear/sdk/macros" with { type: "macro" };
 import { hostOf, hosts, LyricsHost } from "./host.ts";
 import { mountLyrics } from "./page/mount.tsx";
-import { schema } from "./schema.ts";
-import type { CustomQuery, LyricResult, ProviderId, SearchQuery } from "./types.ts";
+import { ROMANIZATION_KEYS, schema } from "./schema.ts";
+import {
+  ROMANIZATION_SCRIPTS,
+  type CustomQuery,
+  type LyricResult,
+  type ProviderId,
+  type RomanizationScript,
+  type SearchQuery,
+} from "./types.ts";
 
 const videoId = v.pipe(v.string(), v.regex(/^[\w-]{11}$/, "not a video id"));
 const videoInput = v.optional(v.object({ videoId: v.optional(videoId) }), {});
@@ -17,6 +24,15 @@ export default definePlugin({
   config: schema,
   host: {
     start(ctx) {
+      // Older configs had one master Romanize lyrics switch. Copy it onto every
+      // language once, so upgrading keeps the same lines romanized.
+      if (!ctx.config.romanizationMigrated) {
+        const on = ctx.config.romanization !== false;
+        ctx.setConfig({
+          ...Object.fromEntries(ROMANIZATION_SCRIPTS.map((script) => [ROMANIZATION_KEYS[script], on])),
+          romanizationMigrated: true,
+        });
+      }
       hosts.set(ctx, new LyricsHost(ctx.app.getPath("userData"), ctx.app.getLocale()));
       return () => void hosts.delete(ctx);
     },
@@ -45,8 +61,8 @@ export default definePlugin({
             return removed;
           });
       },
-      romanize(lines: string[]) {
-        return hostOf(this).romanize(lines);
+      romanize(lines: string[], scripts: readonly RomanizationScript[]) {
+        return hostOf(this).romanize(lines, scripts);
       },
       convertChinese(lines: string[], mode: "s2t" | "t2s") {
         return hostOf(this).convertChinese(lines, mode);

@@ -136,6 +136,45 @@ test("dependent settings indent, disable and hide", async ({ launch }) => {
   await expect(card.getByText("Custom format", { exact: true })).toHaveCount(0);
 });
 
+test("romanization has its own section with one switch per script", async ({ launch }) => {
+  const app = await launch({ plugins: { "synced-lyrics": { enabled: true } } });
+  const page = await mainWindow(app);
+  await openSettings(page);
+  await openSection(page, "Plugins");
+  const card = pluginRow(page, "synced-lyrics");
+  await card.getByRole("button", { name: "Configure Synced lyrics" }).click();
+  await expect(card.locator(".plugin-group-title", { hasText: "Romanization" })).toBeVisible();
+  for (const label of ["Japanese", "Korean", "Chinese", "Thai", "Bengali", "Hindi", "Arabic", "Hebrew", "Cyrillic"]) {
+    await expect(card.getByRole("switch", { name: label })).toBeVisible();
+  }
+  await expect(card.getByRole("switch", { name: "Romanize lyrics" })).toHaveCount(0);
+  await card.getByText("Romanization", { exact: true }).scrollIntoViewIfNeeded();
+  await screenshot(app, "settings-romanization");
+});
+
+test("the old Romanize lyrics switch fans out to every language", async ({ launch }) => {
+  const app = await launch({
+    plugins: { "synced-lyrics": { enabled: true, config: { romanization: false } } },
+  });
+  const page = await mainWindow(app);
+  await expect.poll(async () => (await pluginConfig(page, "synced-lyrics"))?.romanizeJapanese).toBe(false);
+  const config = (await pluginConfig(page, "synced-lyrics")) as Record<string, unknown>;
+  for (const key of [
+    "romanizeJapanese",
+    "romanizeKorean",
+    "romanizeChinese",
+    "romanizeThai",
+    "romanizeBengali",
+    "romanizeHindi",
+    "romanizeArabic",
+    "romanizeHebrew",
+    "romanizeCyrillic",
+  ]) {
+    expect(config[key]).toBe(false);
+  }
+  expect(config.romanizationMigrated).toBe(true);
+});
+
 test("translation provider settings follow the selected provider", async ({ launch }) => {
   const app = await launch({ plugins: { "synced-lyrics": { enabled: true } } });
   const page = await mainWindow(app);

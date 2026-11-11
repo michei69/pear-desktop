@@ -120,6 +120,11 @@ export const TRANSLATION_PROVIDER_NAMES: Record<TranslationProviderName, string>
   "google-translate": "Google Translate",
 };
 
+/** Scripts the lyric tab can romanize. */
+export const ROMANIZATION_SCRIPTS = ["ja", "ko", "zh", "th", "bn", "hi", "ar", "he", "ru"] as const;
+export type RomanizationScript = (typeof ROMANIZATION_SCRIPTS)[number];
+export type RomanizationSettings = Record<RomanizationScript, boolean>;
+
 export type TranslationTargetLanguage =
   | "auto"
   | "zh-CN"

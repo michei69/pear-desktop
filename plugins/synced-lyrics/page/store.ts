@@ -14,6 +14,7 @@ import { pickProvider, resolvePriority, resolveTypePriority } from "../priority.
 import { isChineseTarget } from "../translation/language.ts";
 import {
   PROVIDERS,
+  ROMANIZATION_SCRIPTS,
   lyricsType,
   resultRank,
   type CustomQuery,
@@ -22,6 +23,8 @@ import {
   type LyricTranslation,
   type LyricsType,
   type ProviderId,
+  type RomanizationScript,
+  type RomanizationSettings,
   type SearchQuery,
 } from "../types.ts";
 
@@ -35,7 +38,7 @@ export interface TranslationOptions {
 export interface Options {
   preferred: ProviderId | "auto";
   inexact: boolean;
-  romanize: boolean;
+  romanization: RomanizationSettings;
   chinese: "off" | "s2t" | "t2s";
   /** The user's provider order; see `resolvePriority`. */
   priority?: readonly string[];
@@ -64,7 +67,7 @@ export interface Backend {
   search(provider: ProviderId, query: SearchQuery): Promise<LyricResult | null>;
   /** The playing track's original-language title and tags, when the page knows them. */
   details?(videoId: string): { alternativeTitle?: string; tags: string[] } | null;
-  romanize(lines: string[]): Promise<(string | null)[]>;
+  romanize(lines: string[], scripts: readonly RomanizationScript[]): Promise<(string | null)[]>;
   convertChinese(lines: string[], mode: "s2t" | "t2s"): Promise<string[]>;
   translate?(request: TranslateRequest): Promise<TranslateResponse>;
   customQuery?(videoId: string): Promise<CustomQuery | null>;
@@ -93,6 +96,10 @@ const NON_LATIN = /[^\p{Script=Latin}\p{P}\p{N}\s]/u;
 
 const translationKey = (options: Options) =>
   options.translation ? `${options.translation.enabled}:${options.translation.targetLanguage}` : "off";
+
+const romanizationKey = (options: Options) => ROMANIZATION_SCRIPTS.filter((script) => options.romanization[script]).join(",");
+
+const enabledScripts = (settings: RomanizationSettings) => ROMANIZATION_SCRIPTS.filter((script) => settings[script]);
 
 /** The target language as the page sees it (the API resolves `auto` on the host). */
 function pageTargetLanguage(options: Options) {
@@ -161,7 +168,7 @@ export class LyricsStore {
     this.#typePriority = resolveTypePriority(options.typePriority);
     if (previous.inexact !== options.inexact) return void this.load(this.track, true);
     if (
-      previous.romanize !== options.romanize ||
+      romanizationKey(previous) !== romanizationKey(options) ||
       previous.chinese !== options.chinese ||
       translationKey(previous) !== translationKey(options)
     ) {
@@ -385,7 +392,8 @@ export class LyricsStore {
   }
 
   async #transform(run: number, result: LyricResult, original: string[]) {
-    const { chinese, romanize } = this.#options;
+    const { chinese, romanization } = this.#options;
+    const scripts = enabledScripts(romanization);
     try {
       let texts = original;
       if (chinese !== "off") {
@@ -394,12 +402,12 @@ export class LyricsStore {
         this.shown = { ...this.shown, texts };
         this.#emit();
       }
-      if (romanize) {
+      if (scripts.length > 0) {
         const official = result.romanization?.length === texts.length ? result.romanization : null;
         const romanized: (string | null)[] = official ? [...official] : texts.map(() => null);
         const missing = texts.map((text, i) => (romanized[i] ? "" : text));
         if (missing.some((text) => NON_LATIN.test(text))) {
-          const filled = await this.#backend.romanize(missing);
+          const filled = await this.#backend.romanize(missing, scripts);
           missing.forEach((text, i) => {
             if (text && filled[i]) romanized[i] = filled[i]!;
           });

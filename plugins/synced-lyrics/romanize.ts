@@ -5,6 +5,7 @@
 import { existsSync } from "node:fs";
 import { mkdir, rename, writeFile } from "node:fs/promises";
 import { join } from "node:path";
+import { ROMANIZATION_SCRIPTS, type RomanizationScript } from "./types.ts";
 
 const KANA = /[぀-ヿㇰ-ㇿｦ-ﾟ]/;
 const HANGUL = /[ᄀ-ᇿ㄰-㆏가-힯]/;
@@ -15,8 +16,11 @@ const HAN_RUN = /[㐀-䶿一-鿿豈-﫿]+/g;
 const THAI = /[\u0E00-\u0E7F]/;
 const BENGALI = /[\u0980-\u09FF]/;
 const DEVANAGARI = /[\u0900-\u097F]/;
+const ARABIC = /\p{Script=Arabic}/u;
+const HEBREW = /\p{Script=Hebrew}/u;
+const CYRILLIC = /\p{Script=Cyrillic}/u;
 
-export type Script = "ja" | "ko" | "zh" | "th" | "bn" | "hi";
+export type Script = RomanizationScript;
 
 /**
  * Per line, except for kanji: decided per song, since a kanji-only line in a
@@ -30,6 +34,9 @@ export function detectScripts(lines: readonly string[]): (Script | null)[] {
     if (HANGUL.test(line)) return "ko";
     if (KANA.test(line) || (japanese && HAN.test(line))) return "ja";
     if (HAN.test(line)) return "zh";
+    if (ARABIC.test(line)) return "ar";
+    if (HEBREW.test(line)) return "he";
+    if (CYRILLIC.test(line)) return "ru";
     if (THAI.test(line)) return "th";
     if (BENGALI.test(line)) return "bn";
     if (DEVANAGARI.test(line)) return "hi";
@@ -92,12 +99,13 @@ export class Romanizer {
     this.#fetch = fetch;
   }
 
-  async romanize(lines: readonly string[]): Promise<(string | null)[]> {
+  async romanize(lines: readonly string[], enabled: readonly RomanizationScript[] = ROMANIZATION_SCRIPTS): Promise<(string | null)[]> {
+    const allowed = new Set(enabled);
     const scripts = detectScripts(lines);
     return Promise.all(
       lines.map(async (line, i) => {
         const script = scripts[i];
-        if (!script) return null;
+        if (!script || !allowed.has(script)) return null;
         const key = `${script}\n${line}`;
         const cached = this.#memo.get(key);
         if (cached !== undefined) return cached;
@@ -126,6 +134,12 @@ export class Romanizer {
           throw error;
         }));
         return romanizeJapaneseLine(line, engine);
+      }
+      case "ar":
+      case "he":
+      case "ru": {
+        const anyAscii = defaultExport(await import("any-ascii"));
+        return anyAscii(line);
       }
       case "th":
         return romanizeThai(line);

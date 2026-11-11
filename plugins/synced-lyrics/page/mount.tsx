@@ -5,8 +5,16 @@ import type { PageContextOf } from "@pear/sdk";
 import { isolateKeys, shadowHost } from "@pear/sdk/dom";
 import { readSongDetails } from "@pear/sdk/song-details";
 import { render } from "preact";
-import type { LyricsConfig, schema } from "../schema.ts";
-import type { CustomQuery, LyricResult, ProviderId, SearchQuery } from "../types.ts";
+import { ROMANIZATION_KEYS, type LyricsConfig, type schema } from "../schema.ts";
+import {
+  ROMANIZATION_SCRIPTS,
+  type CustomQuery,
+  type LyricResult,
+  type ProviderId,
+  type RomanizationScript,
+  type RomanizationSettings,
+  type SearchQuery,
+} from "../types.ts";
 import { LyricsStore, type Options } from "./store.ts";
 import { appleStyles } from "./apple/styles.ts";
 import { lyricsStyles } from "./styles.ts";
@@ -14,7 +22,7 @@ import { LyricsView, viewState, type ViewOptions } from "./view.tsx";
 
 interface Commands {
   search(provider: ProviderId, query: SearchQuery): Promise<LyricResult | null>;
-  romanize(lines: string[]): Promise<(string | null)[]>;
+  romanize(lines: string[], scripts: readonly RomanizationScript[]): Promise<(string | null)[]>;
   convertChinese(lines: string[], mode: "s2t" | "t2s"): Promise<string[]>;
   translate(request: {
     videoId: string;
@@ -35,7 +43,9 @@ type Ctx = PageContextOf<typeof schema, Commands>;
 const storeOptions = (config: LyricsConfig): Options => ({
   preferred: config.preferredProvider,
   inexact: config.showLyricsEvenIfInexact,
-  romanize: config.romanization,
+  romanization: Object.fromEntries(
+    ROMANIZATION_SCRIPTS.map((script) => [script, config[ROMANIZATION_KEYS[script]]]),
+  ) as RomanizationSettings,
   chinese: config.convertChinese,
   priority: config.providerPriority,
   usePriorityList: config.usePriorityList,
@@ -122,7 +132,7 @@ function createStore(ctx: Ctx) {
   return new LyricsStore(
     {
       search: (provider, query) => ctx.host.invoke("search", provider, query),
-      romanize: (lines) => ctx.host.invoke("romanize", lines),
+      romanize: (lines, scripts) => ctx.host.invoke("romanize", lines, scripts),
       convertChinese: (lines, mode) => ctx.host.invoke("convertChinese", lines, mode),
       translate: (request) => ctx.host.invoke("translate", request),
       customQuery: (videoId) => ctx.host.invoke("customQuery", videoId),

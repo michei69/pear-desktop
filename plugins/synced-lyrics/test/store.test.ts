@@ -2,7 +2,7 @@ import type { Track } from "@pear/sdk";
 import { describe, expect, test, vi } from "vitest";
 import { detectScripts, Romanizer } from "../romanize.ts";
 import { LyricsStore, type Backend, type Options } from "../page/store.ts";
-import { PROVIDERS, type LyricResult, type ProviderId } from "../types.ts";
+import { PROVIDERS, ROMANIZATION_SCRIPTS, type LyricResult, type ProviderId, type RomanizationSettings } from "../types.ts";
 
 const track: Track = {
   videoId: "abc",
@@ -12,7 +12,9 @@ const track: Track = {
   url: "https://music.\u0079\u006f\u0075\u0074\u0075\u0062\u0065.com/watch?v=abc",
   mediaType: "audio",
 };
-const options: Options = { preferred: "auto", inexact: true, romanize: false, chinese: "off" };
+const noRomanization = Object.fromEntries(ROMANIZATION_SCRIPTS.map((script) => [script, false])) as RomanizationSettings;
+const allRomanization = Object.fromEntries(ROMANIZATION_SCRIPTS.map((script) => [script, true])) as RomanizationSettings;
+const options: Options = { preferred: "auto", inexact: true, romanization: noRomanization, chinese: "off" };
 
 const synced: LyricResult = { title: "Song", artists: ["Artist"], lines: [{ startMs: 0, endMs: 1000, text: "hi" }] };
 const plain: LyricResult = { title: "Song", artists: ["Artist"], plain: "hi\nthere" };
@@ -269,14 +271,14 @@ describe("LyricsStore", () => {
 
   test("romanizes non-Latin lyrics only", async () => {
     const api = backend({ LRCLib: { ...synced, lines: [{ startMs: 0, endMs: 1, text: "사랑해" }] } });
-    const store = new LyricsStore(api, { ...options, romanize: true });
+    const store = new LyricsStore(api, { ...options, romanization: allRomanization });
     store.load(track);
     await settle();
     await settle();
     expect(store.shown?.romanized).toEqual(["r:사랑해"]);
 
     const latin = backend({ LRCLib: synced });
-    const other = new LyricsStore(latin, { ...options, romanize: true });
+    const other = new LyricsStore(latin, { ...options, romanization: allRomanization });
     other.load(track);
     await settle();
     expect(latin.romanize).not.toHaveBeenCalled();
@@ -284,10 +286,29 @@ describe("LyricsStore", () => {
 });
 
 describe("romanization", () => {
+  test("only enabled scripts are sent to the romanizer", async () => {
+    const api = backend({ LRCLib: { ...synced, lines: [{ startMs: 0, endMs: 1, text: "사랑해" }] } });
+    const korean = { ...noRomanization, ko: true };
+    const store = new LyricsStore(api, { ...options, romanization: korean });
+    store.load(track);
+    await settle();
+    await settle();
+    expect(store.shown?.romanized).toEqual(["r:사랑해"]);
+    expect(api.romanize).toHaveBeenCalledWith(["사랑해"], ["ko"]);
+
+    const disabled = backend({ LRCLib: { ...synced, lines: [{ startMs: 0, endMs: 1, text: "사랑해" }] } });
+    const off = new LyricsStore(disabled, options);
+    off.load(track);
+    await settle();
+    await settle();
+    expect(disabled.romanize).not.toHaveBeenCalled();
+  });
+
   test("detects scripts per song", () => {
     expect(detectScripts(["Hello", "사랑해", "我爱你"])).toEqual([null, "ko", "zh"]);
     // A kanji-only line in a song with kana is Japanese.
     expect(detectScripts(["愛してる", "永遠", "hello"])).toEqual(["ja", "ja", null]);
+    expect(detectScripts(["مرحبا", "שלום", "Привет", "hello"])).toEqual(["ar", "he", "ru", null]);
   });
 
   test("Thai, Bengali and Hindi, per line, as pear-desktop", async () => {
@@ -297,6 +318,16 @@ describe("romanization", () => {
     expect(th).toMatch(/^[a-z ]+$/);
     expect(bn).toBe("ami");
     expect(hi).toBe("pyara");
+  });
+
+  test("romanizes Arabic, Hebrew and Cyrillic without network", async () => {
+    const romanizer = new Romanizer("/nonexistent", () => Promise.reject(new Error("no network in tests")));
+    const [ar, he, ru, off] = await romanizer.romanize(["مرحبا", "שלום", "Привет", "hello"], ["ar", "he", "ru"]);
+    expect(ar).toBe("mrhb");
+    expect(he).toBe("slvm");
+    expect(ru).toBe("Privet");
+    expect(off).toBeNull();
+    expect(await romanizer.romanize(["Привет"], ["ar"])).toEqual([null]);
   });
 
   test("romanizes Korean and Chinese without network", async () => {

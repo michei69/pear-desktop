@@ -17,7 +17,7 @@ import type { LyricsConfig } from "./schema.ts";
 import { isChineseTarget, resolveTargetLanguage } from "./translation/language.ts";
 import { TranslationService } from "./translation/service.ts";
 import type { TranslationResult } from "./translation/types.ts";
-import { lyricsType, type CustomQuery, type LyricResult, type ProviderId, type SearchQuery } from "./types.ts";
+import { lyricsType, type CustomQuery, type LyricResult, type ProviderId, type RomanizationScript, type SearchQuery } from "./types.ts";
 
 export interface LyricsRequest {
   track: Track | null;
@@ -60,8 +60,8 @@ export class LyricsHost {
     return this.#cache.get(provider, query, () => run(query, (url, init) => net.fetch(url, init), options));
   }
 
-  romanize(lines: string[]) {
-    return this.#romanizer.romanize(lines);
+  romanize(lines: string[], scripts: readonly RomanizationScript[]) {
+    return this.#romanizer.romanize(lines, scripts);
   }
 
   convertChinese(lines: string[], mode: "s2t" | "t2s") {

@@ -6,6 +6,7 @@ import {
   TRANSLATION_PROVIDERS,
   TRANSLATION_PROVIDER_NAMES,
   TRANSLATION_TARGET_LANGUAGES,
+  type RomanizationScript,
   type TranslationProviderName,
   type TranslationTargetLanguage,
 } from "./types.ts";
@@ -122,10 +123,15 @@ export const schema = {
     step: 50,
     unit: "ms",
   }),
-  romanization: config.bool(true, {
-    label: "Romanize lyrics",
-    description: "Japanese, Korean, Chinese, Thai, Bengali and Hindi. The Japanese dictionary (about 17 MB) downloads on first use.",
-  }),
+  romanizeJapanese: config.bool(true, { label: "Japanese", group: "Romanization" }),
+  romanizeKorean: config.bool(true, { label: "Korean", group: "Romanization" }),
+  romanizeChinese: config.bool(true, { label: "Chinese", group: "Romanization" }),
+  romanizeThai: config.bool(true, { label: "Thai", group: "Romanization" }),
+  romanizeBengali: config.bool(true, { label: "Bengali", group: "Romanization" }),
+  romanizeHindi: config.bool(true, { label: "Hindi", group: "Romanization" }),
+  romanizeArabic: config.bool(true, { label: "Arabic", group: "Romanization" }),
+  romanizeHebrew: config.bool(true, { label: "Hebrew", group: "Romanization" }),
+  romanizeCyrillic: config.bool(true, { label: "Cyrillic", group: "Romanization" }),
   convertChinese: config.select(
     "off",
     [
@@ -133,8 +139,12 @@ export const schema = {
       { value: "s2t", label: "Simplified → Traditional" },
       { value: "t2s", label: "Traditional → Simplified" },
     ],
-    { label: "Chinese characters" },
+    { label: "Chinese characters", group: "Romanization" },
   ),
+  // Legacy master switch; the host copies it onto every language once, then the
+  // individual switches take over.
+  romanization: config.bool(true, { label: "Romanize lyrics", hidden: true }),
+  romanizationMigrated: config.bool(false, { label: "Romanization settings migrated", hidden: true }),
   showLyricsEvenIfInexact: config.bool(true, {
     label: "Show lyrics even if inexact",
     description: "Also try looser searches; may occasionally match a different version of the song.",
@@ -274,3 +284,16 @@ export const schema = {
 };
 
 export type LyricsConfig = ConfigOf<typeof schema>;
+
+/** Config key for each romanizable script, in the settings order. */
+export const ROMANIZATION_KEYS = {
+  ja: "romanizeJapanese",
+  ko: "romanizeKorean",
+  zh: "romanizeChinese",
+  th: "romanizeThai",
+  bn: "romanizeBengali",
+  hi: "romanizeHindi",
+  ar: "romanizeArabic",
+  he: "romanizeHebrew",
+  ru: "romanizeCyrillic",
+} as const satisfies Record<RomanizationScript, keyof LyricsConfig>;

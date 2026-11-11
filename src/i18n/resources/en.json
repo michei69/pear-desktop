@@ -2678,6 +2678,36 @@
           "label": "Custom break text",
           "description": "Shown instead of the choice above when a line has no lyrics; leave empty to keep the choice.",
           "placeholder": "♪"
+        },
+        "romanizeJapanese": {
+          "label": "Japanese"
+        },
+        "romanizeKorean": {
+          "label": "Korean"
+        },
+        "romanizeChinese": {
+          "label": "Chinese"
+        },
+        "romanizeThai": {
+          "label": "Thai"
+        },
+        "romanizeBengali": {
+          "label": "Bengali"
+        },
+        "romanizeHindi": {
+          "label": "Hindi"
+        },
+        "romanizeArabic": {
+          "label": "Arabic"
+        },
+        "romanizeHebrew": {
+          "label": "Hebrew"
+        },
+        "romanizeCyrillic": {
+          "label": "Cyrillic"
+        },
+        "romanizationMigrated": {
+          "label": "Romanization settings migrated"
         }
       },
       "musixmatch": {
@@ -3748,7 +3778,8 @@
       "rendering": "Rendering",
       "theme": "Theme & colors",
       "general": "General",
-      "ambilight": "Ambilight"
+      "ambilight": "Ambilight",
+      "romanization": "Romanization"
     },
     "title": "Settings",
     "search-placeholder": "Search settings",
