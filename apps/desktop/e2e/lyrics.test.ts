@@ -69,6 +69,7 @@ test("shows synced lyrics in the Lyrics tab, follows playback and seeks on click
   const lines = lyrics(page).locator(".lines .line");
   expect(await lines.count()).toBeGreaterThan(20);
   await expect(lines.filter({ hasText: "We're no strangers to love" }).first()).toBeVisible();
+  await expect(lyrics(page).locator("footer.source")).toHaveCount(0);
   // YTM's own (unsynced) lyrics are hidden behind ours.
   await expect(page.locator("ytmusic-player-page #tab-renderer > ytmusic-section-list-renderer")).toBeHidden();
 

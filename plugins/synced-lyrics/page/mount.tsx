@@ -16,7 +16,6 @@ interface Commands {
   search(provider: ProviderId, query: SearchQuery): Promise<LyricResult | null>;
   romanize(lines: string[]): Promise<(string | null)[]>;
   convertChinese(lines: string[], mode: "s2t" | "t2s"): Promise<string[]>;
-  openSource(url: string): Promise<void>;
   translate(request: {
     videoId: string;
     title: string;
@@ -78,7 +77,6 @@ export function mountLyrics(ctx: Ctx) {
   };
   const seek = (ms: number) => ctx.player.control({ type: "seek", seconds: ms / 1000 });
   const scroller = () => element.parentElement;
-  const openSource = (url: string) => void ctx.host.invoke("openSource", url).catch((error) => ctx.log.warn("could not open", url, error));
 
   let options = viewOptions(ctx.config);
   let open = false;
@@ -86,18 +84,7 @@ export function mountLyrics(ctx: Ctx) {
     // The Apple style fills the tab, so the page stylesheet can size the host.
     element.dataset.style = options.style;
     render(
-      open ? (
-        <LyricsView
-          store={store}
-          options={options}
-          now={now}
-          position={position}
-          seek={seek}
-          scroller={scroller}
-          openSource={openSource}
-          t={ctx.t}
-        />
-      ) : null,
+      open ? <LyricsView store={store} options={options} now={now} position={position} seek={seek} scroller={scroller} t={ctx.t} /> : null,
       root,
     );
   };

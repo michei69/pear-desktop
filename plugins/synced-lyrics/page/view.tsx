@@ -38,8 +38,6 @@ export interface ViewProps {
   seek(ms: number): void;
   /** The element that scrolls the lyrics (YTM's tab panel). */
   scroller(): HTMLElement | null;
-  /** Opens the lyrics' page at the provider in the browser. */
-  openSource(url: string): void;
   t: Translate;
 }
 
@@ -104,25 +102,6 @@ export function LyricsView(props: ViewProps) {
     >
       {track && !apple && <Picker store={store} scroller={props.scroller} showCustomSearch={options.showCustomSearch} t={t} />}
       {body}
-      {!apple && shown && (
-        <footer class="source">
-          {t("plugins.synced-lyrics.lyrics-from", "Lyrics from")}{" "}
-          {shown.result.url ? (
-            <a
-              href={shown.result.url}
-              onClick={(event) => {
-                event.preventDefault();
-                props.openSource(shown.result.url!);
-              }}
-            >
-              {PROVIDER_NAMES[shown.provider]}
-            </a>
-          ) : (
-            PROVIDER_NAMES[shown.provider]
-          )}
-          {!shown.synced && ` · ${t("plugins.synced-lyrics.not-time-synced", "not time-synced")}`}
-        </footer>
-      )}
     </div>
   );
 }

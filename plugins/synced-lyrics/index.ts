@@ -1,5 +1,4 @@
 import { definePlugin } from "@pear/sdk";
-import { shell } from "electron";
 import { v } from "@pear/sdk/rpc";
 import { css } from "@pear/sdk/macros" with { type: "macro" };
 import { hostOf, hosts, LyricsHost } from "./host.ts";
@@ -45,11 +44,6 @@ export default definePlugin({
             );
             return removed;
           });
-      },
-      /** Opens a lyrics page at its provider (Megalobiz asks to be linked). */
-      openSource(url: string) {
-        if (!/^https:\/\/(www\.)?megalobiz\.com\//.test(url)) throw new Error("not a lyrics page");
-        return shell.openExternal(url);
       },
       romanize(lines: string[]) {
         return hostOf(this).romanize(lines);

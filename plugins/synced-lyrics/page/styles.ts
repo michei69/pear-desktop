@@ -572,16 +572,6 @@ export const lyricsStyles = css`
     overflow: hidden;
   }
 
-  .source {
-    margin-top: 28px;
-    color: var(--faint);
-    font-size: 12px;
-  }
-  .source a {
-    color: inherit;
-    text-decoration: underline;
-  }
-
   .message {
     padding: 48px 8px;
     text-align: center;
