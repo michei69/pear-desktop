@@ -168,7 +168,20 @@ export function AppleLyrics({ store, options, position, seek, picker, t }: Apple
     if (!element) return;
     const words = element.querySelectorAll<HTMLElement>(".apple-main .apple-word");
     row.words.forEach((word, index) => {
-      words[index]?.style.setProperty("--p", progressAt(time, word.startMs, word.endMs).toFixed(4));
+      const node = words[index];
+      if (!node) return;
+      node.style.setProperty("--p", progressAt(time, word.startMs, word.endMs).toFixed(4));
+
+      // The current word gets a short emphasis pop. It is sampled from the
+      // playhead (not a free-running CSS animation), so pausing freezes it and
+      // seeking into a word picks up at the right point.
+      const text = word.text.trim();
+      const duration = word.endMs - word.startMs;
+      const highlighted = time >= word.startMs && time < word.endMs;
+      const emphasis = highlighted && !CJK.test(text) && duration >= 1_000 && text.length <= 7;
+      const envelope = emphasis ? Math.sin(Math.PI * clamp((time - word.startMs) / 600, 0, 1)) : 0;
+      node.style.setProperty("--apple-pop-scale", (1 + 0.1 * envelope).toFixed(4));
+      node.style.setProperty("--apple-pop-glow", (0.45 * envelope).toFixed(4));
     });
     const background = element.querySelectorAll<HTMLElement>(".apple-bg .apple-word");
     row.background.forEach((word, index) => {

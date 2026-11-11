@@ -207,6 +207,34 @@ test("the clean-room Apple renderer matches the Apple Music style's behaviour", 
   await expect.poll(async () => (await active(page)).start).toBe(28000);
   await expect(lyrics(page).locator(".apple-line.active .apple-translation")).toHaveText("第4行");
 
+  // The current long-enough word pops up briefly; words that are not highlighted
+  // keep no glow and no scale.
+  await seek(page, 28.3);
+  await expect.poll(async () => (await active(page)).start).toBe(28000);
+  await expect
+    .poll(() =>
+      page.evaluate(() => {
+        const root = document.querySelector("pear-synced-lyrics")?.shadowRoot?.querySelector(".apple-music-style");
+        const word = root?.querySelector<HTMLElement>(".apple-line.active .apple-main .apple-word");
+        return Number(word?.style.getPropertyValue("--apple-pop-scale") ?? 0);
+      }),
+    )
+    .toBeGreaterThan(1.05);
+  const pop = await page.evaluate(() => {
+    const root = document.querySelector("pear-synced-lyrics")?.shadowRoot?.querySelector(".apple-music-style");
+    const words = [...(root?.querySelectorAll<HTMLElement>(".apple-line.active .apple-main .apple-word") ?? [])];
+    return words.map((word) => ({
+      text: word.textContent,
+      scale: Number(word.style.getPropertyValue("--apple-pop-scale")),
+      glow: Number(word.style.getPropertyValue("--apple-pop-glow")),
+    }));
+  });
+  expect(pop[0]!.scale).toBeGreaterThan(1.05);
+  expect(pop[0]!.glow).toBeGreaterThan(0.2);
+  expect(pop[1]!.scale).toBe(1);
+  expect(pop[1]!.glow).toBe(0);
+  await screenshot(app, "apple-clean-pop");
+
   // A long list scrolls the active line into view and centers it.
   await seek(page, 60);
   await expect.poll(async () => (await active(page)).start).toBeGreaterThanOrEqual(36000);

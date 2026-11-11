@@ -272,9 +272,20 @@ export const appleStyles = css`
 
   /* Karaoke words: the gradient stop is the word's own progress. */
   .apple-word {
-    display: inline;
+    display: inline-block;
     white-space: inherit;
     color: var(--apple-secondary);
+    text-shadow: 0 0 0.3em rgb(255 255 255 / 0);
+  }
+  /* The pop belongs to the sounding line only. Scoping it here also means a
+     stale --apple-pop-* value from a previous line cannot keep glowing. */
+  .apple-line.active .apple-word {
+    text-shadow: 0 0 0.3em rgb(255 255 255 / var(--apple-pop-glow, 0));
+    transform: scale(var(--apple-pop-scale, 1));
+    transform-origin: 50% 80%;
+    transition:
+      transform 120ms ease-out,
+      text-shadow 120ms ease-out;
   }
   .apple-line.active.word-synced .apple-main .apple-word,
   .apple-line.active.word-synced .apple-bg .apple-word,
