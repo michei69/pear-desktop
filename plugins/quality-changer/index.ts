@@ -58,6 +58,25 @@ export default definePlugin({
       width: 160,
       isolateClicks: true,
     });
-    ctx.mount(button, "player.top_row_buttons", "prepend");
+
+    // The player UI is rebuilt at runtime and may take the button with it.
+    const place = (element: Element) => {
+      const topRow = ctx.$("player.top_row_buttons");
+      if (topRow && element.parentElement !== topRow) topRow.prepend(element);
+    };
+    ctx.mount(button, place);
+    // keepMounted only re-places detached elements; YTM can also move the row's children.
+    let frame: number | undefined;
+    const reattach = () => {
+      if (frame !== undefined) return;
+      frame = requestAnimationFrame(() => {
+        frame = undefined;
+        place(button);
+      });
+    };
+    ctx.observe("player.container", { childList: true, subtree: true }, reattach);
+    ctx.onCleanup(() => {
+      if (frame !== undefined) cancelAnimationFrame(frame);
+    });
   },
 });
