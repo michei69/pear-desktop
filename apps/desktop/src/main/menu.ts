@@ -93,7 +93,7 @@ export function menuTemplate(env: MenuEnvironment): MenuItemConstructorOptions[]
 function settingsItem(env: MenuEnvironment): MenuItemConstructorOptions {
   return {
     id: "settings",
-    label: env.t("main.menu.options.submenu.settings", "Settings…"),
+    label: env.t("main.menu.options.submenu.settings", "Settings"),
     accelerator: "CmdOrCtrl+,",
     // The page handles the shortcut itself (it toggles the dialog).
     registerAccelerator: false,

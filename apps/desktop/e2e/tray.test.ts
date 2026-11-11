@@ -55,13 +55,13 @@ test("tray menu has plugins' items above Settings, while they run", async ({ app
   });
   await setEnabled(page, "tray", true);
   const menu = async () => (await app.evaluate(() => globalThis.__trayProbe!)).menu;
-  await expect.poll(menu).toContain("Settings…");
+  await expect.poll(menu).toContain("Settings");
   expect(await menu()).not.toContain("Downloads");
 
   await setEnabled(page, "downloader", true);
   await expect
-    .poll(async () => (await menu()).filter((label) => label === "Downloads" || label === "Settings…"))
-    .toEqual(["Downloads", "Settings…"]);
+    .poll(async () => (await menu()).filter((label) => label === "Downloads" || label === "Settings"))
+    .toEqual(["Downloads", "Settings"]);
   await setEnabled(page, "downloader", false);
   await expect.poll(menu).not.toContain("Downloads");
 });

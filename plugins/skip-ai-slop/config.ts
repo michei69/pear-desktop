@@ -49,7 +49,7 @@ export const schema = {
   }),
   listSearch: config.string("", {
     label: "Community list search",
-    description: "A channel or track name or id; the search buttons report the matches and can allow the best one.",
+    description: "Type a channel or track name or id here, then use the community-list actions to search or allow the best match.",
     placeholder: "channel or track",
     group: "Community list",
   }),

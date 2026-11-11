@@ -20,7 +20,14 @@ export const schema = {
     ],
     { label: "Fade curve" },
   ),
-  dynamicRange: config.number(60, { label: "Logarithmic range", min: 10, max: 120, step: 5, unit: " dB" }),
+  dynamicRange: config.number(60, {
+    label: "Logarithmic range",
+    min: 10,
+    max: 120,
+    step: 5,
+    unit: " dB",
+    visibleWhen: { fadeScaling: "logarithmic" },
+  }),
 };
 
 /** A track's audio as bytes, which a Blob turns into something the page can decode. */

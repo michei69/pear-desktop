@@ -223,6 +223,102 @@ test("the previous granular switches become the language list", async ({ launch 
   await expect.poll(async () => (await pluginConfig(page, "synced-lyrics"))?.romanizationScripts).toEqual(["ja"]);
 });
 
+test("plugin settings follow their selected style or mode", async ({ launch }) => {
+  const app = await launch({
+    plugins: {
+      tray: { enabled: true },
+      crossfade: { enabled: true },
+      downloader: { enabled: true },
+      "ambient-mode": { enabled: true },
+      visualizer: { enabled: true },
+      "custom-output-device": { enabled: true },
+      equalizer: { enabled: true },
+    },
+  });
+  const page = await mainWindow(app);
+  await openSettings(page);
+  await openSection(page, "Plugins");
+
+  const tray = pluginRow(page, "tray");
+  await tray.getByRole("button", { name: "Configure Tray icon" }).click();
+  await expect(tray.getByText("Click action", { exact: true })).toBeVisible();
+  await expect(tray.getByText("Show the window at startup", { exact: true })).toBeVisible();
+
+  const crossfade = pluginRow(page, "crossfade");
+  await crossfade.getByRole("button", { name: "Configure Crossfade" }).click();
+  await expect(crossfade.locator('[data-field="crossfade-dynamicRange"]')).toHaveCount(0);
+  await crossfade.getByRole("radio", { name: "Logarithmic (sounds even)" }).click();
+  await expect(crossfade.locator('[data-field="crossfade-dynamicRange"]')).toBeVisible();
+
+  const downloader = pluginRow(page, "downloader");
+  await downloader.getByRole("button", { name: "Configure Downloader" }).click();
+  await expect(downloader.locator('[data-field="downloader-autoDownloadPercent"]')).toHaveCount(0);
+  await downloader.getByRole("radio", { name: "Once partly played" }).click();
+  await expect(downloader.locator('[data-field="downloader-autoDownloadPercent"]')).toBeVisible();
+  await expect(downloader.locator('[data-field="downloader-autoDownloadSeconds"]')).toHaveCount(0);
+
+  const ambient = pluginRow(page, "ambient-mode");
+  await ambient.getByRole("button", { name: "Configure Ambient mode" }).click();
+  await expect(ambient.locator('[data-field="ambient-mode-brightness"]')).toHaveCount(0);
+  await ambient.getByRole("radio", { name: "Ambilight" }).click();
+  await expect(ambient.locator('[data-field="ambient-mode-brightness"]')).toBeVisible();
+  await expect(ambient.locator('[data-field="ambient-mode-fullscreen"]')).toHaveCount(0);
+
+  const visualizer = pluginRow(page, "visualizer");
+  await visualizer.getByRole("button", { name: "Configure Visualizer" }).click();
+  await expect(visualizer.locator('[data-field="visualizer-preset"]')).toBeVisible();
+  await visualizer.locator('[data-field="visualizer-type"] select').selectOption("vudio");
+  await expect(visualizer.locator('[data-field="visualizer-vudioEffect"]')).toBeVisible();
+  await expect(visualizer.locator('[data-field="visualizer-preset"]')).toHaveCount(0);
+
+  const output = pluginRow(page, "custom-output-device");
+  await output.getByRole("button", { name: "Configure Custom output device" }).click();
+  await expect(output.locator('[data-field="custom-output-device-output"] select')).toBeVisible();
+  await expect(output.getByRole("button", { name: "Refresh devices" })).toBeVisible();
+
+  const equalizer = pluginRow(page, "equalizer");
+  await equalizer.getByRole("button", { name: "Configure Equalizer" }).click();
+  await expect(equalizer.getByText("Extra filters (advanced)")).toHaveCount(0);
+  await expect(equalizer.getByRole("button", { name: "Open equalizer" })).toBeVisible();
+});
+
+test("scrobbler settings are grouped by service", async ({ launch }) => {
+  const app = await launch({ plugins: { scrobbler: { enabled: true } } });
+  const page = await mainWindow(app);
+  await openSettings(page);
+  await openSection(page, "Plugins");
+  const card = pluginRow(page, "scrobbler");
+  await card.getByRole("button", { name: "Configure Scrobbler" }).click();
+  expect(await card.locator(".plugin-group-title").allTextContents()).toEqual(["Last.fm", "ListenBrainz", "MusicBrainz", "Filters"]);
+  await expect(card.locator('[data-field="scrobbler-lastfmSessionKey"]')).toHaveCount(0);
+  await expect(card.locator('[data-field="scrobbler-listenbrainzToken"]')).toHaveCount(0);
+  await expect(card.locator('[data-field="scrobbler-musicBrainzEmail"]')).toHaveCount(0);
+  await card.getByRole("switch", { name: /MusicBrainz/ }).click();
+  await expect(card.locator('[data-field="scrobbler-musicBrainzEmail"]')).toBeVisible();
+});
+
+test("tray click and startup settings migrate", async ({ launch }) => {
+  const app = await launch({
+    core: { window: { appVisible: false } },
+    plugins: { tray: { enabled: false, config: { clickPlayPause: true } } },
+  });
+  const page = await mainWindow(app);
+  await expect.poll(async () => (await pluginConfig(page, "tray"))?.clickAction).toBe("play-pause");
+  await expect.poll(async () => (await pluginConfig(page, "tray"))?.showAtStartup).toBe(false);
+});
+
+test("hardware acceleration and cache reset live under Performance", async ({ launch }) => {
+  const app = await launch();
+  const page = await mainWindow(app);
+  await openSettings(page);
+  await openSection(page, "Performance");
+  await expect(page.locator('[data-field="core-advanced-disableHardwareAcceleration"]')).toBeVisible();
+  await expect(page.locator('[data-field="core-advanced-autoResetAppCache"]')).toBeVisible();
+  await openSection(page, "Advanced");
+  await expect(page.locator('[data-field="core-advanced-disableHardwareAcceleration"]')).toHaveCount(0);
+  await expect(page.locator('[data-field="core-advanced-autoResetAppCache"]')).toHaveCount(0);
+});
+
 test("translation provider settings follow the selected provider", async ({ launch }) => {
   const app = await launch({ plugins: { "synced-lyrics": { enabled: true } } });
   const page = await mainWindow(app);

@@ -48,7 +48,7 @@ test("the application menu, and hiding its bar", async ({ launch }) => {
   } else {
     expect(initial.labels).toEqual(["Plugins", "Options", "View", "Navigation", "About"]);
     expect(initial.submenus.Options).toEqual([
-      "Settings…",
+      "Settings",
       "Resume last song when app starts",
       "Keep shuffle",
       "Single Instance Lock",
@@ -84,7 +84,7 @@ test("the application menu, and hiding its bar", async ({ launch }) => {
   await setCore(page, "window", { alwaysOnTop: false });
   await expect.poll(async () => (await menu()).alwaysOnTop).toBe(false);
 
-  // Settings… opens the in-page dialog.
+  // Settings opens the in-page dialog.
   await page.waitForFunction(() => window.__pearRuntime?.settings);
   await clickItem("settings");
   await expect(overlay(page).getByRole("dialog")).toBeVisible();

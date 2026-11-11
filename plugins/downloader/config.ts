@@ -102,6 +102,7 @@ export const downloaderConfig = {
     unit: "s",
     group: "Automatic downloads",
     parent: "autoDownload",
+    visibleWhen: { autoDownloadMode: "seconds" },
   }),
   autoDownloadPercent: config.number(10, {
     label: "…once this much has played",
@@ -110,6 +111,7 @@ export const downloaderConfig = {
     unit: "%",
     group: "Automatic downloads",
     parent: "autoDownload",
+    visibleWhen: { autoDownloadMode: "percent" },
   }),
   autoDownloadFolder: config.string("", {
     label: "Folder for these",

@@ -65,14 +65,17 @@ export const SECTIONS: Record<SectionId, Section> = {
   performance: {
     id: "performance",
     icon: "speed",
-    blocks: [{ kind: "core", section: "performance" }],
+    blocks: [
+      { kind: "core", section: "performance" },
+      { kind: "core-keys", section: "advanced", keys: ["disableHardwareAcceleration", "autoResetAppCache"] },
+    ],
   },
   advanced: {
     id: "advanced",
     icon: "tune",
     blocks: [
       // The restart-on-change switch belongs with the Configuration actions below.
-      { kind: "core", section: "advanced", exclude: ["restartOnConfigChanges"] },
+      { kind: "core", section: "advanced", exclude: ["restartOnConfigChanges", "disableHardwareAcceleration", "autoResetAppCache"] },
       { kind: "core", section: "apiServer", title: "settings-ui.blocks.api-server", prefix: true },
       { kind: "configuration" },
     ],

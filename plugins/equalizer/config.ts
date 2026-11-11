@@ -108,6 +108,7 @@ export const schema = {
       'A JSON list of biquad filters added in parallel to the bands, as pear-desktop did, e.g. [{"type":"lowshelf","frequency":80,"Q":100,"gain":12}].',
     placeholder: "[]",
     group: "Advanced",
+    hidden: true,
   }),
   // The panel's active preset id (built-in, user preset, or "custom"). A string
   // rather than a select: user preset ids are only known at runtime.

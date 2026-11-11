@@ -118,6 +118,9 @@ export const UI_STRINGS = {
   "settings-ui.flags.undo-hint": "Put the page's own value back",
   "settings-ui.flags.no-match": "No flags match “{{query}}”.",
   "settings-ui.flags.empty": "No flags yet. Add one above, or open YT Music so the page reports its flags.",
+  "settings-ui.audio-device.system-default": "System default",
+  "settings-ui.audio-device.unnamed": "Output {{number}}",
+  "settings-ui.audio-device.refresh": "Refresh devices",
 } as const;
 
 export type UiKey = keyof typeof UI_STRINGS;

@@ -95,7 +95,11 @@ function Control({ id, field, value, model, onChange }: ControlProps<Field, unkn
     case "number":
       return <NumberControl id={id} field={field} value={Number(value)} onChange={onChange} />;
     case "string":
-      return <TextControl id={id} field={field} value={String(value ?? "")} onChange={onChange} />;
+      return field.variant === "audio-device" ? (
+        <AudioDeviceControl id={id} value={String(value ?? "")} onChange={onChange} />
+      ) : (
+        <TextControl id={id} field={field} value={String(value ?? "")} onChange={onChange} />
+      );
     case "select":
       return <SelectControl id={id} field={field} value={String(value)} model={model} onChange={onChange} />;
     case "list":
@@ -450,6 +454,51 @@ function ListControl({ id, field, value, onChange }: ControlProps<ListField, str
 }
 
 /** A text field's control alone, for surfaces that build fields on the fly (the flag editors). */
+function AudioDeviceControl({ id, value, onChange }: { id: string; value: string; onChange(value: unknown): void | Promise<unknown> }) {
+  const text = useText();
+  const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
+  const [busy, setBusy] = useState(false);
+  const load = async () => {
+    setBusy(true);
+    try {
+      const all = (await navigator.mediaDevices?.enumerateDevices()) ?? [];
+      setDevices(all.filter((device) => device.kind === "audiooutput"));
+    } catch (error) {
+      console.warn("[pear] listing audio outputs failed", error);
+    } finally {
+      setBusy(false);
+    }
+  };
+  useEffect(() => {
+    void load();
+    const media = navigator.mediaDevices;
+    if (!media) return;
+    const changed = () => void load();
+    media.addEventListener("devicechange", changed);
+    return () => media.removeEventListener("devicechange", changed);
+  }, []);
+  const known = devices.some((device) => device.label === value || device.deviceId === value);
+  return (
+    <div class="control-actions">
+      <select id={id} class="dropdown" value={value} onChange={(event) => void onChange(event.currentTarget.value)}>
+        <option value="">{text("settings-ui.audio-device.system-default")}</option>
+        {!known && value && <option value={value}>{value}</option>}
+        {devices.map((device, index) => {
+          const label = device.label || text("settings-ui.audio-device.unnamed", { number: index + 1 });
+          return (
+            <option key={device.deviceId || index} value={device.label || device.deviceId}>
+              {label}
+            </option>
+          );
+        })}
+      </select>
+      <button type="button" class="outlined" disabled={busy} onClick={() => void load()}>
+        {text("settings-ui.audio-device.refresh")}
+      </button>
+    </div>
+  );
+}
+
 export function TextControl({ id, field, value, onChange }: ControlProps<StringField, string>) {
   const [draft, setDraft] = useDraft(value);
   const commit = useDebounced(onChange, TEXT_DEBOUNCE_MS);

@@ -45,6 +45,23 @@ else void main();
 async function main() {
   const settings = new Settings(app.getPath("userData"), hostPlugins, app.getVersion());
   const plugins = new PluginHost(hostPlugins, settings, process.platform);
+  // The tray's click pair and the core startup switch became single settings;
+  // carry them over once, before the window's start-hidden decision. This also
+  // runs while the tray plugin is disabled.
+  const trayState = settings.plugin("tray");
+  const trayPlugin = hostPlugins.find((plugin) => plugin.id === "tray");
+  if (trayState && trayPlugin) {
+    const patch: Record<string, unknown> = {};
+    if (!trayState.config.startupMigrated) {
+      patch.showAtStartup = settings.core("window").appVisible;
+      patch.startupMigrated = true;
+    }
+    if (!trayState.config.clickActionMigrated) {
+      patch.clickAction = trayState.config.clickPlayPause ? "play-pause" : "toggle";
+      patch.clickActionMigrated = true;
+    }
+    if (Object.keys(patch).length > 0) settings.setPlugin(trayPlugin, { config: patch });
+  }
   // The optional SMTC addon has to be resolved before the Chromium feature
   // switches are applied: when it is missing or fails to build, Chromium's own
   // media session must stay enabled as the fallback (see startup-tasks).

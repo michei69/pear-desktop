@@ -115,7 +115,7 @@ describe("the tray icon", () => {
 
 describe("tray clicks", () => {
   test("double-click runs the click action too (Windows reports rapid clicks as double-click)", () => {
-    const { tray, player, stop } = start({ config: { clickPlayPause: true } });
+    const { tray, player, stop } = start({ config: { clickAction: "play-pause" } });
     tray.emit("double-click");
     expect(player.control).toHaveBeenCalledWith({ type: "toggle" });
     tray.emit("click");

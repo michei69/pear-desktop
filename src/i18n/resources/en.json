@@ -253,7 +253,7 @@
               "use-ytm-icons": "Use original \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 icons"
             }
           },
-          "settings": "Settings…",
+          "settings": "Settings",
           "updates": {
             "label": "Updates",
             "check": "Check for updates",
@@ -302,7 +302,7 @@
         "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
       },
       "hide": "Hide window",
-      "settings": "Settings…",
+      "settings": "Settings",
       "like": "Like",
       "dislike": "Dislike",
       "unlike": "Unlike",
@@ -3281,6 +3281,24 @@
         },
         "forceWhiteIcons": {
           "label": "Force white tray icons"
+        },
+        "clickAction": {
+          "label": "Click action",
+          "description": "What clicking the tray icon does.",
+          "options": {
+            "toggle": "Toggle the window",
+            "play-pause": "Play or pause"
+          }
+        },
+        "clickActionMigrated": {
+          "label": "Click action migrated"
+        },
+        "showAtStartup": {
+          "label": "Show the window at startup",
+          "description": "Off: start hidden in the tray (needs the Tray icon plugin; otherwise the window shows as usual)."
+        },
+        "startupMigrated": {
+          "label": "Startup setting migrated"
         }
       }
     },
@@ -3791,7 +3809,7 @@
       },
       "showButton": {
         "label": "Show the settings entry in the sidebar",
-        "description": "Turn this off to keep the sidebar clean; Settings is still under Options › Settings… and on Ctrl/Cmd+,."
+        "description": "Turn this off to keep the sidebar clean; Settings is still under Options › Settings and on Ctrl/Cmd+,."
       },
       "separateWindow": {
         "label": "Always open Settings in a separate window",
@@ -3854,7 +3872,10 @@
       "theme": "Theme & colors",
       "general": "General",
       "ambilight": "Ambilight",
-      "romanization": "Romanization"
+      "romanization": "Romanization",
+      "last-fm": "Last.fm",
+      "listenbrainz": "ListenBrainz",
+      "musicbrainz": "MusicBrainz"
     },
     "title": "Settings",
     "search-placeholder": "Search settings",
@@ -4056,6 +4077,11 @@
       "title": "Settings failed to load",
       "message": "The settings window could not start: {{error}}",
       "reload": "Reload"
+    },
+    "audio-device": {
+      "system-default": "System default",
+      "unnamed": "Output {{number}}",
+      "refresh": "Refresh devices"
     }
   }
 }

@@ -47,6 +47,8 @@ export interface StringField extends FieldBase<"string", string> {
   placeholder?: string;
   /** Rendered as a password input; never logged. */
   secret?: boolean;
+  /** "audio-device" renders a speaker list with a refresh button instead of a text box. */
+  variant?: "audio-device";
 }
 
 export interface SelectOption<T extends string> {

@@ -17,8 +17,9 @@ export default definePlugin({
   config: {
     output: config.string("", {
       label: "Output device",
-      description: "The device's name; pick one from the speaker button in the player bar. Empty uses the system default.",
+      description: "Pick a device here or from the speaker button in the player bar. Empty uses the system default.",
       placeholder: "System default",
+      variant: "audio-device",
     }),
     showPicker: config.bool(true, { label: "Device picker in the player bar" }),
   },

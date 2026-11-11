@@ -27,10 +27,12 @@ export const schema = {
   interactive: config.bool(true, {
     label: "Playback buttons",
     description: "Windows and macOS: previous, play/pause and next buttons in the notification.",
+    platforms: ["win32", "darwin"],
   }),
   refreshOnPlayPause: config.bool(false, {
     label: "Update after play/pause from the notification",
     description: "Show it again with the opposite button after using its play/pause button.",
+    platforms: ["win32", "darwin"],
   }),
   toastStyle: config.select(
     "logo",

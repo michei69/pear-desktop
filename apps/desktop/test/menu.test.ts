@@ -87,11 +87,11 @@ describe("menuTemplate", () => {
     const template = menuTemplate(env("linux"));
     expect(labels(template)).toEqual(["Options", "View", "Navigation", "About"]);
     const options = submenu(template[0]);
-    expect(labels(options)).toEqual(["Settings…", "separator", "Single Instance Lock", "Always on top", "separator", "Advanced options"]);
+    expect(labels(options)).toEqual(["Settings", "separator", "Single Instance Lock", "Always on top", "separator", "Advanced options"]);
     expect(find(options, "Single Instance Lock")).toMatchObject({ type: "checkbox", checked: true });
     expect(find(options, "Always on top")).toMatchObject({ type: "checkbox", checked: true });
     // The page handles Ctrl+, itself (it toggles the dialog).
-    expect(find(options, "Settings…")).toMatchObject({ accelerator: "CmdOrCtrl+,", registerAccelerator: false });
+    expect(find(options, "Settings")).toMatchObject({ accelerator: "CmdOrCtrl+,", registerAccelerator: false });
     // Without the host's core accessors the quick toggles are left out, not broken.
     expect(find(options, "Resume the last song")).toBeUndefined();
     expect(find(options, "Hide the menu bar")).toBeUndefined();
@@ -113,7 +113,7 @@ describe("menuTemplate", () => {
     const template = menuTemplate(e);
     const options = submenu(find(template, "Options"));
     expect(labels(options)).toEqual([
-      "Settings…",
+      "Settings",
       "Downloads",
       "separator",
       "Resume the last song",
@@ -134,14 +134,14 @@ describe("menuTemplate", () => {
   test("macOS gets the app menu, with Settings in it", () => {
     const template = menuTemplate(env("darwin"));
     expect(labels(template)).toEqual(["App", "Options", "View", "Navigation", "About"]);
-    expect(labels(submenu(template[0])).slice(0, 3)).toEqual(["about", "separator", "Settings…"]);
-    expect(labels(submenu(template[1]))).not.toContain("Settings…");
+    expect(labels(submenu(template[0])).slice(0, 3)).toEqual(["about", "separator", "Settings"]);
+    expect(labels(submenu(template[1]))).not.toContain("Settings");
   });
 
   test("menu items call back into the core", () => {
     const e = env("win32");
     const options = submenu(menuTemplate(e)[0]);
-    (find(options, "Settings…")!.click as () => void)();
+    (find(options, "Settings")!.click as () => void)();
     expect(e.openSettings).toHaveBeenCalled();
     toggle(find(options, "Single Instance Lock"), false);
     expect(e.setSingleInstanceLock).toHaveBeenCalledWith(false);
@@ -228,7 +228,7 @@ describe("menuTemplate", () => {
     expect(changes).toHaveBeenCalledOnce();
 
     const options = submenu(menuTemplate(env("linux", { pluginItems: items.items }))[0]);
-    expect(labels(options).slice(0, 3)).toEqual(["Settings…", "Downloads", "separator"]);
+    expect(labels(options).slice(0, 3)).toEqual(["Settings", "Downloads", "separator"]);
     expect(options[1]).toMatchObject({ accelerator: "CmdOrCtrl+J" });
     (options[1]!.click as () => void)();
     expect(click).toHaveBeenCalled();

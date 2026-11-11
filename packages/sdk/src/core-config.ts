@@ -121,6 +121,7 @@ export const WINDOW = {
     label: "Show the window at startup",
     description: "Off: start hidden in the tray (needs the Tray icon plugin; otherwise the window shows as usual).",
     group: "System",
+    hidden: true,
   }),
 };
 

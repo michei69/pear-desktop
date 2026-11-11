@@ -15,11 +15,23 @@ const schema = {
     label: "Close to tray",
     description: "Closing the window keeps music playing in the background.",
   }),
-  clickToToggle: config.bool(true, { label: "Click toggles the window" }),
-  clickPlayPause: config.bool(false, {
-    label: "Click plays and pauses",
-    description: "Instead of toggling the window.",
+  clickAction: config.select(
+    "toggle",
+    [
+      { value: "toggle", label: "Toggle the window" },
+      { value: "play-pause", label: "Play or pause" },
+    ],
+    { label: "Click action", description: "What clicking the tray icon does." },
+  ),
+  // Legacy pair; the host turns it into clickAction once.
+  clickToToggle: config.bool(true, { label: "Click toggles the window", hidden: true }),
+  clickPlayPause: config.bool(false, { label: "Click plays and pauses", hidden: true }),
+  clickActionMigrated: config.bool(false, { label: "Click action migrated", hidden: true }),
+  showAtStartup: config.bool(true, {
+    label: "Show the window at startup",
+    description: "Off: start hidden in the tray (needs the Tray icon plugin; otherwise the window shows as usual).",
   }),
+  startupMigrated: config.bool(false, { label: "Startup setting migrated", hidden: true }),
   moveToCurrentDesktop: config.bool(false, { label: "Show the window on the current desktop" }),
   forceWhiteIcons: config.bool(false, { label: "Force white tray icons" }),
 };
@@ -51,7 +63,8 @@ export default definePlugin({
       const { window, app } = ctx;
       // Starting hidden leaves only the menu bar; pear-desktop hid the Dock too,
       // and the tray plugin being up is the guard that there is a way back.
-      if (isMac && !ctx.core("window").appVisible && !window.isVisible()) app.dock?.hide();
+      const showAtStartup = ctx.config.showAtStartup ?? ctx.core("window").appVisible;
+      if (isMac && !showAtStartup && !window.isVisible()) app.dock?.hide();
       // The artwork follows the icon options: the app calls `refreshIcons` after
       // an appearance change, the plugin rebuilds it on a config change. Other
       // tray options leave it alone, so the PNGs are only decoded when it changes.
@@ -132,8 +145,8 @@ export default definePlugin({
         return claim.claimed;
       };
       const trayAction = () => {
-        if (ctx.config.clickPlayPause) ctx.player.control({ type: "toggle" });
-        else if (ctx.config.clickToToggle) toggleWindow();
+        if (ctx.config.clickAction === "play-pause") ctx.player.control({ type: "toggle" });
+        else toggleWindow();
       };
       tray.on("click", () => {
         if (!claimed("pear:tray-click")) trayAction();

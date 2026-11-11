@@ -205,7 +205,8 @@ export class MainWindow {
 
   /** Hidden starts only make sense with a tray icon to bring the window back. */
   #startsHidden() {
-    return !this.#settings.core("window").appVisible && Boolean(this.#settings.plugin("tray")?.enabled);
+    const tray = this.#settings.plugin("tray");
+    return !(tray?.config.showAtStartup ?? this.#settings.core("window").appVisible) && Boolean(tray?.enabled);
   }
 
   #followNavigation(window: BrowserWindow) {
