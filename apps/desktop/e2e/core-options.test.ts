@@ -25,8 +25,11 @@ test("the application menu, and hiding its bar", async ({ launch }) => {
     app.evaluate(({ BrowserWindow, Menu }) => {
       const window = BrowserWindow.getAllWindows()[0]!;
       const items = Menu.getApplicationMenu()?.items ?? [];
+      const options = items.find((item) => item.label === "Options");
+      const advanced = options?.submenu?.items.find((item) => item.label === "Advanced options");
       return {
         labels: items.map((item) => item.label),
+        advanced: advanced?.submenu?.items.filter((i) => i.visible && i.type !== "separator").map((i) => i.label) ?? [],
         submenus: Object.fromEntries(
           items.map((item) => [
             item.label,
@@ -47,23 +50,12 @@ test("the application menu, and hiding its bar", async ({ launch }) => {
     expect(initial.submenus.Options).toEqual([
       "Settings…",
       "Resume last song when app starts",
-      "Shared links",
-      "Starting page",
-      "Visual Tweaks",
+      "Keep shuffle",
       "Single Instance Lock",
       "Always on top",
-      "Sync language",
-      // Hide Menu is Linux/Windows; Start at login is Windows/macOS.
-      ...(process.platform === "win32" ? ["Hide Menu", "Start at login"] : ["Hide Menu"]),
-      "Theme",
       "Advanced options",
     ]);
-    // pear-desktop's quick toggles live in the menu, mirroring the settings dialog.
-    expect(initial.submenus["Visual Tweaks"]).toEqual([
-      "Remove upgrade button",
-      "Use original \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u004d\u0075\u0073\u0069\u0063 icons",
-    ]);
-    expect(initial.submenus["Advanced options"]).toEqual([
+    expect(initial.advanced).toEqual([
       "Override User-Agent",
       "Disable hardware acceleration",
       "Restart on config changes",
@@ -221,15 +213,6 @@ test("themes apply on top of \u0059\u006f\u0075\u0054\u0075\u0062\u0065 Music, f
   await expect.poll(() => paletteValue("accent")).toBe("#ff0000");
   await page.keyboard.press("Escape");
 
-  // The menu lists the folders, plus the ways to add one.
-  const themeMenu = () =>
-    app.evaluate(({ Menu }) => {
-      const options = Menu.getApplicationMenu()?.items.find((item) => item.label === "Options");
-      const theme = options?.submenu?.items.find((item) => item.label === "Theme");
-      return (theme?.submenu?.items ?? []).filter((item) => item.type !== "separator").map((item) => item.label);
-    });
-  expect(await themeMenu()).toEqual(["No theme", "Test theme", "Presets", "Import custom CSS file", "Open themes folder"]);
-
   // Editing a file reaches the page without a reload.
   writeFileSync(join(themeDir, "style.css"), "ytmusic-nav-bar { outline: 3px solid rgb(7, 8, 9) !important; }");
   await expect.poll(() => outline("ytmusic-nav-bar"), { timeout: THEME_RELOAD_MS }).toBe("rgb(7, 8, 9)");
@@ -242,14 +225,13 @@ test("themes apply on top of \u0059\u006f\u0075\u0054\u0075\u0062\u0065 Music, f
   await page.evaluate(() => window.__pear!.invoke("theme:reset-palette", "test-theme"));
   await expect.poll(() => paletteValue("accent")).toBe("#ff0000");
 
-  // Importing CSS creates and selects a folder theme, and the menu picks it up.
+  // Importing CSS creates and selects a folder theme.
   const imports = tempDir("pear-import-");
   const imported = join(imports, "imported.css");
   writeFileSync(imported, "ytmusic-app-layout { outline: 2px solid rgb(4, 5, 6) !important; }");
   const id = await page.evaluate((path) => window.__pear!.invoke("theme:import", [path]), imported);
   expect(id).toBe("imported");
   await expect.poll(() => outline("ytmusic-app-layout")).toBe("rgb(4, 5, 6)");
-  await expect.poll(themeMenu).toContain("imported");
 
   // A reload (no live events) gets the theme from the bootstrap.
   await page.reload();

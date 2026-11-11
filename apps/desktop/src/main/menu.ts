@@ -1,12 +1,11 @@
-// The native application menu, like pear-desktop's (src/menu.ts) without its
-// Plugins and Options submenus: the settings dialog replaced those. The
-// in-app-menu plugin draws this same menu in the page.
+// The native application menu, like pear-desktop's (src/menu.ts), with a
+// focused Options submenu. The in-app-menu plugin draws this same menu in the
+// page.
 
-import { app, type BrowserWindow, clipboard, dialog, Menu, type MenuItemConstructorOptions, shell } from "electron";
+import { app, type BrowserWindow, clipboard, Menu, type MenuItemConstructorOptions, shell } from "electron";
 import { type PluginMenuItem, stripMusicSubdomain, stripSIParam } from "@pear/sdk";
-import { type ApiServerConfig, type CoreSection, STARTING_PAGES } from "@pear/sdk/core-config";
+import { type ApiServerConfig, type CoreSection } from "@pear/sdk/core-config";
 import type { Translate } from "@pear/sdk/i18n";
-import { CUSTOM_PRESET, defaultPreset, keyLabel } from "@pear/sdk/themes";
 import type { Themes } from "./themes.ts";
 import type { UpdateChannel } from "./updates.ts";
 import { alive } from "./windows.ts";
@@ -148,146 +147,6 @@ function pluginsMenu(env: MenuEnvironment): MenuItemConstructorOptions | undefin
   };
 }
 
-/** The browser's copy-current-URL cleaning, as pear-desktop's Shared links submenu. */
-function sharedLinksItem(env: MenuEnvironment): MenuItemConstructorOptions | undefined {
-  const items = entries(
-    coreCheckbox(
-      env,
-      "general",
-      "stripMusicFromSharedLinks",
-      "main.menu.options.submenu.shared-links.submenu.strip-music",
-      "Strip 'music.'",
-    ),
-    coreCheckbox(env, "general", "stripSIFromSharedLinks", "main.menu.options.submenu.shared-links.submenu.strip-si", "Strip '&si='"),
-  );
-  if (items.length === 0) return undefined;
-  return { label: env.t("main.menu.options.submenu.shared-links.label", "Shared links"), submenu: items };
-}
-
-/** pear-desktop's Starting page radios, from the same registry the settings use. */
-function startingPageItem(env: MenuEnvironment): MenuItemConstructorOptions | undefined {
-  const current = env.coreOption?.("general", "startingPage");
-  if (typeof current !== "string" || !env.setCoreOption) return undefined;
-  const { t } = env;
-  return {
-    label: t("main.menu.options.submenu.starting-page.label", "Starting page"),
-    submenu: Object.keys(STARTING_PAGES).map((page) => ({
-      label: page || t("main.menu.options.submenu.starting-page.unset", "Unset"),
-      type: "radio" as const,
-      checked: current === page,
-      click: () => env.setCoreOption?.("general", { startingPage: page }),
-    })),
-  };
-}
-
-/** pear-desktop's Visual tweaks checkbox shortcuts; the theme submenu stays its own item. */
-function visualTweaksItem(env: MenuEnvironment): MenuItemConstructorOptions | undefined {
-  const items = entries(
-    coreCheckbox(
-      env,
-      "appearance",
-      "removeUpgradeButton",
-      "main.menu.options.submenu.visual-tweaks.submenu.remove-upgrade-button",
-      "Remove the Upgrade button",
-    ),
-    coreCheckbox(
-      env,
-      "appearance",
-      "useYtmIcons",
-      "main.menu.options.submenu.visual-tweaks.submenu.use-ytm-icons",
-      "Use original \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u004d\u0075\u0073\u0069\u0063 icons",
-    ),
-  );
-  if (items.length === 0) return undefined;
-  return { label: env.t("main.menu.options.submenu.visual-tweaks.label", "Visual tweaks"), submenu: items };
-}
-
-/** pear-desktop's API server submenu: natural spelling of the settings, with file pickers for the HTTPS files. */
-function apiServerItem(env: MenuEnvironment): MenuItemConstructorOptions | undefined {
-  const api = env.apiServer?.();
-  if (!api) return undefined;
-  const { t } = env;
-  const { config } = api;
-  const pick = async (key: "certPath" | "keyPath", titleKey: string, title: string, filters: Electron.FileFilter[]) => {
-    const options: Electron.OpenDialogOptions = { title: t(titleKey, title), filters, properties: ["openFile"] };
-    const window = alive(env.window());
-    const { canceled, filePaths } = window ? await dialog.showOpenDialog(window, options) : await dialog.showOpenDialog(options);
-    const path = filePaths[0];
-    if (canceled || !path) return;
-    api.set(key === "certPath" ? { certPath: path } : { keyPath: path });
-  };
-  return {
-    label: t("plugins.api-server.name", "API Server"),
-    submenu: entries(
-      {
-        label: t("plugins.api-server.menu.enabled", "Enable the API server"),
-        type: "checkbox",
-        checked: config.enabled,
-        click: (item) => api.set({ enabled: item.checked }),
-      },
-      // Only the server's own address can't be a menu control without a text prompt;
-      // the item takes the user to the same fields in Settings.
-      {
-        label: `${t("plugins.api-server.menu.hostname.label", "Hostname")}: ${config.hostname}   ${t("plugins.api-server.menu.port.label", "Port")}: ${config.port}`,
-        click: () => env.openSettings(),
-      },
-      {
-        label: t("plugins.api-server.menu.mcp.label", "MCP server"),
-        type: "checkbox",
-        checked: config.mcpEnabled,
-        click: (item) => api.set({ mcpEnabled: item.checked }),
-      },
-      {
-        label: t("plugins.api-server.menu.auth-strategy.label", "Authorization strategy"),
-        submenu: [
-          {
-            label: t("plugins.api-server.menu.auth-strategy.submenu.auth-at-first.label", "Authorize at first request"),
-            type: "radio",
-            checked: config.authStrategy === "AUTH_AT_FIRST",
-            click: () => api.set({ authStrategy: "AUTH_AT_FIRST" }),
-          },
-          {
-            label: t("plugins.api-server.menu.auth-strategy.submenu.none.label", "No authorization"),
-            type: "radio",
-            checked: config.authStrategy === "NONE",
-            click: () => api.set({ authStrategy: "NONE" }),
-          },
-        ],
-      },
-      {
-        label: t("plugins.api-server.menu.https.label", "HTTPS & Certificates"),
-        submenu: [
-          {
-            label: t("plugins.api-server.menu.https.submenu.enable-https.label", "Enable HTTPS"),
-            type: "checkbox",
-            checked: config.useHttps,
-            click: (item) => api.set({ useHttps: item.checked }),
-          },
-          {
-            label: t("plugins.api-server.menu.https.submenu.cert.label", "Certificate file (.crt/.pem)"),
-            click: () =>
-              void pick("certPath", "plugins.api-server.menu.https.submenu.cert.dialogTitle", "Select HTTPS certificate file", [
-                { name: "Certificate", extensions: ["crt", "pem"] },
-              ]),
-          },
-          {
-            label: t("plugins.api-server.menu.https.submenu.key.label", "Private key file (.key/.pem)"),
-            click: () =>
-              void pick("keyPath", "plugins.api-server.menu.https.submenu.key.dialogTitle", "Select HTTPS private key file", [
-                { name: "Private Key", extensions: ["key", "pem"] },
-              ]),
-          },
-        ],
-      },
-      { type: "separator" },
-      {
-        label: t("plugins.api-server.menu.settings", "API server settings…"),
-        click: () => env.openSettings(),
-      },
-    ),
-  };
-}
-
 /** pear-desktop's Advanced options submenu: the advanced switches plus DevTools and config.json. */
 function advancedOptionsItem(env: MenuEnvironment, contents: Contents): MenuItemConstructorOptions {
   const { t } = env;
@@ -344,25 +203,48 @@ function advancedOptionsItem(env: MenuEnvironment, contents: Contents): MenuItem
   };
 }
 
-/** `settings` leads the menu, except on macOS where it is in the app menu; plugins' items follow. */
+/** The only plugin item Options keeps; plugins keep their settings cards. */
+function downloadsItem(env: MenuEnvironment): MenuItemConstructorOptions | undefined {
+  const label = env.t("plugins.downloader.downloads", "Downloads");
+  const item = env.pluginItems().find((candidate) => candidate.label === label);
+  return item ? pluginItem(item) : undefined;
+}
+
+/**
+ * The resume-shuffle plugin's switch, shown under Options as "Keep shuffle".
+ * It is a plugin toggle rather than a core setting, so it goes through the
+ * same enable/disable path as the Plugins menu and the settings cards.
+ */
+function keepShuffleItem(env: MenuEnvironment): MenuItemConstructorOptions | undefined {
+  const plugin = env.pluginCatalog?.().find((candidate) => candidate.id === "resume-shuffle");
+  if (!plugin || !env.setPluginEnabled) return undefined;
+  return {
+    label: env.t("main.menu.options.submenu.keep-shuffle", "Keep shuffle"),
+    type: "checkbox",
+    checked: plugin.enabled,
+    click: (item) => env.setPluginEnabled?.("resume-shuffle", item.checked),
+  };
+}
+
+/** `settings` leads the menu, except on macOS where it is in the app menu. */
 function optionsMenu(
   env: MenuEnvironment,
   contents: Contents,
   settings: MenuItemConstructorOptions | undefined,
 ): MenuItemConstructorOptions {
   const { t } = env;
-  const leading = [...(settings ? [settings] : []), ...env.pluginItems().map(pluginItem)];
+  const leading = entries(settings, downloadsItem(env));
+  const quick = entries(
+    coreCheckbox(env, "general", "resumeOnStart", "main.menu.options.submenu.resume-on-start", "Resume the last song"),
+    keepShuffleItem(env),
+  );
   return {
     label: t("main.menu.options.label", "Options"),
     submenu: entries(
-      ...(leading.length > 0 ? [...leading, { type: "separator" } as const] : []),
-      ...(env.updatesSupported?.() === true ? [updatesItem(env), { type: "separator" } as const] : []),
-      // pear-desktop's quick toggles, all through the same core settings the dialog writes.
-      coreCheckbox(env, "general", "resumeOnStart", "main.menu.options.submenu.resume-on-start", "Resume the last song"),
-      sharedLinksItem(env),
-      startingPageItem(env),
-      visualTweaksItem(env),
-      { type: "separator" },
+      ...leading,
+      ...(leading.length > 0 ? [{ type: "separator" } as const] : []),
+      ...quick,
+      ...(quick.length > 0 ? [{ type: "separator" } as const] : []),
       {
         // As pear-desktop: a second launch focuses this instance only while the lock is held.
         label: t("main.menu.options.submenu.single-instance-lock", "Single Instance Lock"),
@@ -377,188 +259,14 @@ function optionsMenu(
         checked: env.alwaysOnTop(),
         click: (item) => env.setAlwaysOnTop(item.checked),
       },
-      ...(env.languageFromYtm && env.languageToYtm ? [languageSyncItem(env)] : []),
-      ...(env.platform === "linux" || env.platform === "win32"
-        ? [coreCheckbox(env, "window", "hideMenu", "main.menu.options.submenu.hide-menu.label", "Hide the menu bar")]
-        : []),
-      ...(env.platform === "win32" || env.platform === "darwin"
-        ? [coreCheckbox(env, "window", "startAtLogin", "main.menu.options.submenu.start-at-login", "Start at login")]
-        : []),
-      { type: "separator" },
-      {
-        label: t("main.menu.options.submenu.visual-tweaks.submenu.theme.label", "Theme"),
-        submenu: themeItems(env),
-      },
-      { type: "separator" },
-      apiServerItem(env),
       { type: "separator" },
       advancedOptionsItem(env, contents),
     ),
   };
 }
 
-/** Updates: a manual check, automatic checks, and the release channel (stable/beta). */
-function updatesItem(env: MenuEnvironment): MenuItemConstructorOptions {
-  const { t } = env;
-  return {
-    label: t("main.menu.options.submenu.updates.label", "Updates"),
-    submenu: [
-      {
-        label: t("main.menu.options.submenu.updates.check", "Check for updates"),
-        click: () => env.checkForUpdates?.(),
-      },
-      { type: "separator" },
-      {
-        label: t("main.menu.options.submenu.updates.auto-update", "Automatically check for updates"),
-        type: "checkbox",
-        checked: env.autoUpdates?.() === true,
-        click: (item) => env.setAutoUpdates?.(item.checked),
-      },
-      { type: "separator" },
-      {
-        label: t("main.menu.options.submenu.updates.channel.label", "Update channel"),
-        submenu: (["stable", "beta"] as const).map((value): MenuItemConstructorOptions => ({
-          label: t(`main.menu.options.submenu.updates.channel.${value}`, value === "stable" ? "Stable" : "Beta"),
-          type: "radio",
-          checked: env.updateChannel?.() === value,
-          // The core confirms a downgrade from a beta build; a declined switch leaves the store alone.
-          click: () => env.setUpdateChannel?.(value),
-        })),
-      },
-    ],
-  };
-}
-
-/** Language › Sync: read YTM's language into the app, or point YTM at the app's. */
-function languageSyncItem(env: MenuEnvironment): MenuItemConstructorOptions {
-  const { t } = env;
-  const fromYtm = env.languageFromYtm;
-  const toYtm = env.languageToYtm;
-  const showDialog = async (options: Electron.MessageBoxOptions) => {
-    const window = alive(env.window());
-    return window ? dialog.showMessageBox(window, options) : dialog.showMessageBox(options);
-  };
-  return {
-    label: t("main.menu.options.submenu.language.submenu.sync.label", "Sync language"),
-    submenu: [
-      {
-        label: t(
-          "main.menu.options.submenu.language.submenu.sync.submenu.from-\u0079outube",
-          "From \u0059\u006f\u0075\u0054\u0075\u0062\u0065",
-        ),
-        click: async () => {
-          if (!fromYtm) return;
-          const language = await fromYtm();
-          if (!language) {
-            const failure: Electron.MessageBoxOptions = {
-              type: "warning",
-              title: t("main.menu.options.submenu.language.submenu.sync.failure.dialog.title", "Language Not Changed"),
-              message: t(
-                "main.menu.options.submenu.language.submenu.sync.failure.dialog.message",
-                "Language or locale does not exist in app yet.",
-              ),
-            };
-            const window = alive(env.window());
-            if (window) dialog.showMessageBoxSync(window, failure);
-            else dialog.showMessageBoxSync(failure);
-            return;
-          }
-          env.setLanguage?.(language);
-          await showDialog({
-            title: t("main.menu.options.submenu.language.dialog.title", "Language Changed"),
-            message: t("main.menu.options.submenu.language.dialog.message", "Language will be changed after restart"),
-          });
-        },
-      },
-      {
-        label: t(
-          "main.menu.options.submenu.language.submenu.sync.submenu.to-\u0079outube",
-          "To \u0059\u006f\u0075\u0054\u0075\u0062\u0065",
-        ),
-        click: () => void toYtm?.(),
-      },
-    ],
-  };
-}
-
 function pluginItem({ label, accelerator, click }: PluginMenuItem): MenuItemConstructorOptions {
   return { label, ...(accelerator ? { accelerator } : {}), click: () => click() };
-}
-
-const themeError = (error: unknown) => console.error("Failed to change theme:", error);
-
-/** Selecting a theme does not rebuild this menu; its radios update themselves, and presets are per theme. */
-function themeItems(env: MenuEnvironment): MenuItemConstructorOptions[] {
-  const { t, themes } = env;
-  const all = themes.all;
-  const selected = themes.selected;
-  const presets = themes.presets;
-
-  const presetMenus: MenuItemConstructorOptions[] = all
-    .filter((theme) => Object.keys(theme.presets ?? {}).length > 0)
-    .map((theme) => {
-      const chosen = defaultPreset(theme.palette, theme.presets, presets[theme.id]);
-      const pick = (preset: string) => themes.setPreset(theme.id, preset);
-      return {
-        label: theme.name,
-        submenu: [
-          // Even an empty `palette` gives a Default to offer; without one the first preset stands in.
-          ...(theme.palette !== undefined
-            ? [
-                {
-                  label: t("main.menu.options.submenu.visual-tweaks.submenu.theme.submenu.presets.default", "Default"),
-                  type: "radio" as const,
-                  checked: chosen === "",
-                  click: () => pick(""),
-                },
-              ]
-            : []),
-          ...Object.keys(theme.presets ?? {}).map((preset) => ({
-            label: keyLabel(preset),
-            type: "radio" as const,
-            checked: chosen === preset,
-            click: () => pick(preset),
-          })),
-          {
-            label: t("main.menu.options.submenu.visual-tweaks.submenu.theme.submenu.presets.custom", "Custom"),
-            type: "radio" as const,
-            checked: chosen === CUSTOM_PRESET,
-            click: () => pick(CUSTOM_PRESET),
-          },
-        ],
-      };
-    });
-
-  return [
-    {
-      label: t("main.menu.options.submenu.visual-tweaks.submenu.theme.submenu.no-theme", "No theme"),
-      type: "radio" as const,
-      checked: selected === "",
-      click: () => void themes.select("", env.window()).catch(themeError),
-    },
-    ...all.map((theme) => ({
-      label: theme.name,
-      ...(theme.description ? { toolTip: theme.description } : {}),
-      type: "radio" as const,
-      checked: selected === theme.id,
-      click: () => void themes.select(theme.id, env.window()).catch(themeError),
-    })),
-    { type: "separator" },
-    {
-      label: t("main.menu.options.submenu.visual-tweaks.submenu.theme.submenu.presets.label", "Presets"),
-      enabled: presetMenus.length > 0,
-      submenu: presetMenus,
-    },
-    { type: "separator" },
-    {
-      label: t("main.menu.options.submenu.visual-tweaks.submenu.theme.submenu.import-css-file", "Import custom CSS file"),
-      click: () => void themes.import(undefined, env.window()).catch(themeError),
-    },
-    {
-      label: t("main.menu.options.submenu.visual-tweaks.submenu.theme.submenu.open-themes-folder", "Open themes folder"),
-      click: () => void themes.openFolder().catch(themeError),
-    },
-  ];
 }
 
 function viewMenu({ t }: MenuEnvironment): MenuItemConstructorOptions {

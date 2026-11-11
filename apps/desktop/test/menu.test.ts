@@ -87,16 +87,7 @@ describe("menuTemplate", () => {
     const template = menuTemplate(env("linux"));
     expect(labels(template)).toEqual(["Options", "View", "Navigation", "About"]);
     const options = submenu(template[0]);
-    expect(labels(options)).toEqual([
-      "Settings…",
-      "separator",
-      "Single Instance Lock",
-      "Always on top",
-      "separator",
-      "Theme",
-      "separator",
-      "Advanced options",
-    ]);
+    expect(labels(options)).toEqual(["Settings…", "separator", "Single Instance Lock", "Always on top", "separator", "Advanced options"]);
     expect(find(options, "Single Instance Lock")).toMatchObject({ type: "checkbox", checked: true });
     expect(find(options, "Always on top")).toMatchObject({ type: "checkbox", checked: true });
     // The page handles Ctrl+, itself (it toggles the dialog).
@@ -104,6 +95,40 @@ describe("menuTemplate", () => {
     // Without the host's core accessors the quick toggles are left out, not broken.
     expect(find(options, "Resume the last song")).toBeUndefined();
     expect(find(options, "Hide the menu bar")).toBeUndefined();
+  });
+
+  test("Options keeps only the requested items", () => {
+    const e = env("linux", {
+      pluginItems: [
+        { label: "Downloads", accelerator: "CmdOrCtrl+J", click: vi.fn() },
+        { label: "Download playlist", click: vi.fn() },
+        { label: "Album color theme…", click: vi.fn() },
+      ],
+      plugins: [
+        { id: "resume-shuffle", name: "Resume shuffle", enabled: true },
+        { id: "downloader", name: "Downloader", enabled: true },
+      ],
+      core: { "general.resumeOnStart": true },
+    });
+    const template = menuTemplate(e);
+    const options = submenu(find(template, "Options"));
+    expect(labels(options)).toEqual([
+      "Settings…",
+      "Downloads",
+      "separator",
+      "Resume the last song",
+      "Keep shuffle",
+      "separator",
+      "Single Instance Lock",
+      "Always on top",
+      "separator",
+      "Advanced options",
+    ]);
+    expect(find(options, "Download playlist")).toBeUndefined();
+    expect(find(options, "Album color theme…")).toBeUndefined();
+    expect(find(options, "Keep shuffle")).toMatchObject({ type: "checkbox", checked: true });
+    toggle(find(options, "Keep shuffle"), false);
+    expect(e.setPluginEnabled).toHaveBeenCalledWith("resume-shuffle", false);
   });
 
   test("macOS gets the app menu, with Settings in it", () => {
@@ -168,26 +193,6 @@ describe("menuTemplate", () => {
     toggle(resume, false);
     expect(e.setCoreOption).toHaveBeenCalledWith("general", { resumeOnStart: false });
 
-    const shared = submenu(find(options, "Shared links"));
-    expect(shared[0]).toMatchObject({ type: "checkbox", checked: false });
-    expect(shared[1]).toMatchObject({ type: "checkbox", checked: true });
-    toggle(shared[1], false);
-    expect(e.setCoreOption).toHaveBeenCalledWith("general", { stripSIFromSharedLinks: false });
-
-    const pages = submenu(find(options, "Starting page"));
-    expect(labels(pages)[0]).toBe("Unset");
-    expect(pages.find((item) => item.label === "Home")).toMatchObject({ type: "radio", checked: true });
-    (pages.find((item) => item.label === "Explore")!.click as () => void)();
-    expect(e.setCoreOption).toHaveBeenCalledWith("general", { startingPage: "Explore" });
-
-    const visual = submenu(find(options, "Visual tweaks"));
-    expect(find(visual, "Remove the Upgrade button")).toMatchObject({ type: "checkbox", checked: true });
-    toggle(find(visual, "Use original \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u004d\u0075\u0073\u0069\u0063 icons"), true);
-    expect(e.setCoreOption).toHaveBeenCalledWith("appearance", { useYtmIcons: true });
-
-    expect(find(options, "Hide the menu bar")).toMatchObject({ type: "checkbox", checked: true });
-    expect(find(options, "Start at login")).toMatchObject({ type: "checkbox", checked: false });
-
     const advanced = submenu(find(options, "Advanced options"));
     expect(labels(advanced)).toEqual([
       "Override the user agent",
@@ -214,16 +219,6 @@ describe("menuTemplate", () => {
     expect(e.setRestartOnConfigChanges).toHaveBeenCalledWith(false);
   });
 
-  test("platform-only toggles stay off the wrong platforms", () => {
-    const core = { "window.hideMenu": false, "window.startAtLogin": false };
-    const darwin = submenu(menuTemplate(env("darwin", { core }))[1]);
-    expect(find(darwin, "Hide the menu bar")).toBeUndefined();
-    expect(find(darwin, "Start at login")).toBeDefined();
-    const linux = submenu(menuTemplate(env("linux", { core }))[0]);
-    expect(find(linux, "Hide the menu bar")).toBeDefined();
-    expect(find(linux, "Start at login")).toBeUndefined();
-  });
-
   test("plugins' items follow Settings, and come and go", () => {
     const items = new MenuItems();
     const changes = vi.fn();
@@ -243,55 +238,5 @@ describe("menuTemplate", () => {
     remove();
     expect(changes).toHaveBeenCalledTimes(2);
     expect(items.items).toEqual([]);
-  });
-
-  test("the API server submenu mirrors its config and picks the HTTPS files", async () => {
-    const e = env("linux", { apiServer: { enabled: true, mcpEnabled: false, useHttps: true } });
-    const api = e.apiServer()!;
-    const options = submenu(menuTemplate(e)[0]);
-    const server = submenu(find(options, "API Server"));
-    expect(labels(server)).toEqual([
-      "Enable the API server",
-      "Hostname: 127.0.0.1   Port: 26538",
-      "MCP server",
-      "Authorization strategy",
-      "HTTPS & Certificates",
-      "separator",
-      "API server settings…",
-    ]);
-
-    expect(find(server, "Enable the API server")).toMatchObject({ type: "checkbox", checked: true });
-    toggle(find(server, "MCP server"), true);
-    expect(api.set).toHaveBeenCalledWith({ mcpEnabled: true });
-    expect(submenu(find(server, "Authorization strategy"))[0]).toMatchObject({ type: "radio", checked: true });
-
-    const https = submenu(find(server, "HTTPS & Certificates"));
-    toggle(find(https, "Enable HTTPS"), false);
-    expect(api.set).toHaveBeenCalledWith({ useHttps: false });
-
-    vi.mocked(dialog.showOpenDialog).mockResolvedValue({ canceled: false, filePaths: ["/tmp/cert.pem"] } as never);
-    void (find(https, "Certificate file (.crt/.pem)")!.click as () => void)();
-    await vi.waitFor(() => expect(api.set).toHaveBeenCalledWith({ certPath: "/tmp/cert.pem" }));
-    expect(vi.mocked(dialog.showOpenDialog)).toHaveBeenCalledWith(
-      expect.objectContaining({ filters: [{ name: "Certificate", extensions: ["crt", "pem"] }] }),
-    );
-
-    vi.mocked(dialog.showOpenDialog).mockResolvedValue({ canceled: false, filePaths: ["/tmp/key.pem"] } as never);
-    void (find(https, "Private key file (.key/.pem)")!.click as () => void)();
-    await vi.waitFor(() => expect(api.set).toHaveBeenCalledWith({ keyPath: "/tmp/key.pem" }));
-
-    // A cancelled picker writes nothing.
-    vi.mocked(dialog.showOpenDialog).mockResolvedValue({ canceled: true, filePaths: [] } as never);
-    void (find(https, "Certificate file (.crt/.pem)")!.click as () => void)();
-    await new Promise((resolve) => setTimeout(resolve, 0));
-    expect(api.set).toHaveBeenCalledTimes(4);
-
-    (find(server, "API server settings…")!.click as () => void)();
-    expect(e.openSettings).toHaveBeenCalled();
-  });
-
-  test("the API server submenu is left out without the host's hook", () => {
-    const options = submenu(menuTemplate(env("linux"))[0]);
-    expect(find(options, "API Server")).toBeUndefined();
   });
 });

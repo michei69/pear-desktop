@@ -188,6 +188,7 @@
               }
             }
           },
+          "keep-shuffle": "Keep shuffle",
           "resume-on-start": "Resume last song when app starts",
           "single-instance-lock": "Single Instance Lock",
           "start-at-login": "Start at login",
