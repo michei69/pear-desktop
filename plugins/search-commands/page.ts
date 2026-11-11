@@ -3,6 +3,7 @@ import { isTypingTarget } from "@pear/sdk/util";
 import { type CommandContext, type CommandRow, getCommand, isCommandLine, matchCommands, registerCommand, tokenize } from "./commands.ts";
 import { type schema, type SearchCommands } from "./config.ts";
 import { type Keybind, matchesKeybind, parseKeybind } from "./keybind.ts";
+import { playInPlace } from "./play.ts";
 import { parseVideoId } from "./video-id.ts";
 
 /** The parts of YTM's `ytmusic-search-box` this plugin drives. */
@@ -64,9 +65,18 @@ export function startSearchCommands(ctx: Ctx) {
       name: "play",
       description: ctx.t("plugins.search-commands.commands.play", "Play a video from a link or id"),
       args: [{ name: "url" }],
-      run: (args) => {
+      run: async (args) => {
         const videoId = parseVideoId(args[0] ?? "");
         if (!videoId) return;
+
+        // In place like pear-desktop: no watch-page navigation, so the current
+        // page and its scroll position stay. Fall back to a navigation when the
+        // player page is not up yet (master silently did nothing there).
+        const played = await playInPlace(videoId).catch((error: unknown) => {
+          ctx.log.warn("could not load the video in place", error);
+          return false;
+        });
+        if (played) return;
 
         const app = document.querySelector<HTMLElement>(ctx.sel("app"));
         if (!app) {
