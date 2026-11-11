@@ -1,17 +1,9 @@
 import { config, definePlugin } from "@pear/sdk";
+import { afterSeek, createLatch, FIRST_BIN, INTERVAL_MS, resetLatch, sample, shouldSkip, THRESHOLD_DB } from "./latch.ts";
 
-// Voice-activity detection in the style of hark (https://github.com/otalk/hark).
-const THRESHOLD_DB = -100; // -100 is absolute silence, 0 the loudest
-const INTERVAL_MS = 5;
-const HISTORY = 10;
 const SKIP_SECONDS = 0.2;
 const FFT_SIZE = 512;
 const SMOOTHING = 0.1;
-// The lowest bins (DC and rumble) don't count as sound.
-const FIRST_BIN = 4;
-// Sound again once 2 of the last 3 checks were loud.
-const RECENT = 3;
-const RECENT_LOUD = 2;
 // First in the shared graph, so the analysis sees the track before any fades or effects.
 const ORDER = -100;
 
@@ -25,7 +17,9 @@ export default definePlugin({
   page: {
     async start(ctx) {
       const graph = await ctx.audio();
-      const { context, video } = graph;
+      const { context } = graph;
+      // YTM may replace the <video>; keep the reference and the listeners on the live one.
+      let video = graph.video;
       // `input` feeds both the chain (through `output`) and the analyser; the
       // graph only rewires the stage's output, so the analyser stays connected.
       const input = context.createGain();
@@ -38,9 +32,7 @@ export default definePlugin({
       graph.insert(input, output, ORDER);
 
       const bins = new Float32Array(analyser.frequencyBinCount);
-      const history: number[] = Array.from({ length: HISTORY }, () => 0);
-      let silent = false;
-      let audioStarted = false;
+      const latch = createLatch();
 
       const loudness = () => {
         analyser.getFloatFrequencyData(bins);
@@ -51,31 +43,36 @@ export default definePlugin({
         return max;
       };
       const skip = () => {
-        if (ctx.config.onlySkipBeginning && audioStarted) return;
-        if (silent && !video.paused && !ctx.player.state.ad) video.currentTime += SKIP_SECONDS;
+        const onlySkipBeginning = ctx.config.onlySkipBeginning;
+        if (shouldSkip(latch, { onlySkipBeginning, paused: video.paused, ad: ctx.player.state.ad })) {
+          video.currentTime += SKIP_SECONDS;
+        }
+      };
+
+      // The loop exists only while playing, as in pear-desktop: a paused player
+      // has nothing to sample, and a timer for the plugin's whole lifetime keeps
+      // the page waking for nothing. `ctx.setInterval` is cleared on stop, too.
+      let timer: ReturnType<typeof setInterval> | undefined;
+      const stopLoop = () => {
+        if (timer === undefined) return;
+        ctx.clearInterval(timer);
+        timer = undefined;
       };
       const tick = () => {
-        if (video.paused || ctx.player.state.ad) return;
-        const volume = loudness();
-        const loud = volume > THRESHOLD_DB;
-        if (loud) {
-          // Trigger quickly on a short history.
-          const recentLoud = history.slice(-RECENT).reduce((a, b) => a + b, 0);
-          if (recentLoud >= RECENT_LOUD) {
-            silent = false;
-            audioStarted = true;
-          }
-        } else if (!silent) {
-          const muted = video.seeking || video.ended || video.muted || video.volume === 0;
-          if (history.every((h) => h === 0) && !muted) {
-            silent = true;
-            skip();
-          }
+        // A pause may arrive between two ticks (or a seek while paused); the
+        // event handler stops the loop, but never sample a paused element.
+        if (video.paused) {
+          stopLoop();
+          return;
         }
-        history.shift();
-        history.push(Number(loud));
+        if (ctx.player.state.ad) return;
+        const loud = loudness() > THRESHOLD_DB;
+        const muted = video.seeking || video.ended || video.muted || video.volume === 0;
+        if (sample(latch, { loud, muted })) skip();
       };
-      ctx.setInterval(tick, INTERVAL_MS);
+      const startLoop = () => {
+        timer ??= ctx.setInterval(tick, INTERVAL_MS);
+      };
 
       // Each seek (including our own skips) re-checks, so a long silence is crossed in steps.
       const onPlayOrSeek = () => {
@@ -83,21 +80,52 @@ export default definePlugin({
         // since the track began") must survive it, or any seek, including the
         // one skip() makes itself, re-arms beginning-only skipping mid-track.
         // Only the samples from before the jump stop counting.
-        history.fill(0);
+        afterSeek(latch);
         skip();
+        // Seeking a paused player must not start the loop.
+        if (video.paused) stopLoop();
+        else startLoop();
       };
-      ctx.listen(video, "play", onPlayOrSeek);
-      ctx.listen(video, "seeked", onPlayOrSeek);
+      const onPauseOrEnded = () => stopLoop();
+      let unbindVideo: (() => void)[] = [];
+      const bindVideo = () => {
+        for (const off of unbindVideo) off();
+        const target = video;
+        const listen = (type: string, listener: EventListener) => {
+          target.addEventListener(type, listener);
+          return () => target.removeEventListener(type, listener);
+        };
+        unbindVideo = [
+          listen("play", onPlayOrSeek),
+          listen("seeked", onPlayOrSeek),
+          listen("pause", onPauseOrEnded),
+          listen("ended", onPauseOrEnded),
+        ];
+        if (video.paused) stopLoop();
+        else startLoop();
+      };
+      bindVideo();
+      ctx.player.on("videoChange", (next) => {
+        video = next;
+        bindVideo();
+      });
+      ctx.onCleanup(() => {
+        for (const off of unbindVideo) off();
+      });
       // A new track re-arms beginning-only skipping: the latch is per track, and
       // only the tracker's own skips had to survive. `trackLoading` rather than
       // `trackChange`: the latter can arrive up to a second and a half into the
       // new track (the runtime's dataupdated fallback), after its audio was heard,
       // and resetting then would un-arm the setting mid-track.
       ctx.player.on("trackLoading", () => {
-        audioStarted = false;
-        silent = false;
-        history.fill(0);
+        resetLatch(latch);
+        // Gapless autoplay may never fire `play` again; keep sampling if it plays.
+        if (video.paused) stopLoop();
+        else startLoop();
       });
+
+      // Do not sample while the media is already paused (plugin enabled mid-session).
+      if (!video.paused) startLoop();
 
       return () => input.disconnect();
     },
