@@ -27,17 +27,35 @@ export default definePlugin({
       user-select: none;
     }
   `,
+  host: {
+    start(ctx) {
+      // Quick access only: the flat app/tray menu has no checkmarks, so the
+      // settings card stays the canonical place where the state is visible.
+      ctx.addMenuItem({
+        label: ctx.t("plugins.clock.menu.toggle-display-seconds", "Toggle seconds"),
+        click: () => ctx.setConfig({ displaySeconds: !ctx.config.displaySeconds }),
+      });
+      ctx.addMenuItem({
+        label: ctx.t("plugins.clock.menu.toggle-24-hour-format", "Toggle 24-hour format"),
+        click: () => ctx.setConfig({ hour12: !ctx.config.hour12 }),
+      });
+    },
+  },
   page: (ctx) => {
     const clock = (<time class="pear-clock" />) as HTMLTimeElement;
 
-    // Config changes restart the page part, which rebuilds the format.
-    // pear-desktop's format: English, whatever the system locale.
-    const format = new Intl.DateTimeFormat("en", {
-      hour12: ctx.config.hour12,
-      hour: "numeric",
-      minute: "numeric",
-      second: ctx.config.displaySeconds ? "numeric" : undefined,
-    });
+    // Master formats with the app language (its menu wrote the same option);
+    // an empty setting means the runtime locale, as it did there.
+    const locale = () => ctx.core("general").language || navigator.language;
+    const makeFormat = (hour12: boolean, displaySeconds: boolean) =>
+      new Intl.DateTimeFormat(locale(), {
+        hour12,
+        hour: "numeric",
+        minute: "numeric",
+        ...(displaySeconds && { second: "numeric" }),
+      });
+    let format = makeFormat(ctx.config.hour12, ctx.config.displaySeconds);
+
     const tick = () => {
       const now = new Date();
       clock.textContent = format.format(now);
@@ -55,6 +73,17 @@ export default definePlugin({
       );
     };
     schedule();
+
+    // Config changes apply in place instead of restarting the page part.
+    ctx.onConfigChange((next) => {
+      format = makeFormat(next.hour12, next.displaySeconds);
+      tick();
+    });
+    // A language change formats with the new language immediately.
+    ctx.onCoreChange("general", () => {
+      format = makeFormat(ctx.config.hour12, ctx.config.displaySeconds);
+      tick();
+    });
 
     // YTM re-renders the nav bar on some navigations.
     ctx.mount(clock, "nav_bar.right", "prepend");
