@@ -28,6 +28,8 @@ type Ctx = HostContextOf<typeof schema>;
 
 /** Rebuilds the running tray's artwork; set while the tray is up. */
 let rebuildTrayIcons: (() => void) | undefined;
+/** Shows the window as a tray click would; set while the tray is up. */
+let showMainWindow: (() => void) | undefined;
 
 export default definePlugin({
   id: "tray",
@@ -38,15 +40,27 @@ export default definePlugin({
   host: {
     start(ctx) {
       // pear-desktop's icons: a paused variant while a track is paused.
-      const icons = { playing: trayImage(false, trayIconStyle(ctx)), paused: trayImage(true, trayIconStyle(ctx)) };
+      let iconStyle = trayIconStyle(ctx);
+      const icons = { playing: trayImage(false, iconStyle), paused: trayImage(true, iconStyle) };
       const tray = new Tray(icons.playing);
+      // Windows reports a rapid second click inside the system double-click time
+      // as 'double-click', so macOS keeps every click separate and Windows gets
+      // the same action from both events (pear-desktop routed both to one handler).
+      if (isMac) tray.setIgnoreDoubleClickEvents(true);
       let shownIcon: keyof typeof icons = "playing";
       const { window, app } = ctx;
+      // Starting hidden leaves only the menu bar; pear-desktop hid the Dock too,
+      // and the tray plugin being up is the guard that there is a way back.
+      if (isMac && !ctx.core("window").appVisible && !window.isVisible()) app.dock?.hide();
       // The artwork follows the icon options: the app calls `refreshIcons` after
-      // an appearance change, the plugin rebuilds it on a config change.
+      // an appearance change, the plugin rebuilds it on a config change. Other
+      // tray options leave it alone, so the PNGs are only decoded when it changes.
       const showIcons = () => {
-        icons.playing = trayImage(false, trayIconStyle(ctx));
-        icons.paused = trayImage(true, trayIconStyle(ctx));
+        const style = trayIconStyle(ctx);
+        if (style === iconStyle) return;
+        iconStyle = style;
+        icons.playing = trayImage(false, style);
+        icons.paused = trayImage(true, style);
         tray.setImage(icons[shownIcon]);
       };
       // The app doubles as the cross-plugin event bus (Electron's App is an
@@ -67,24 +81,44 @@ export default definePlugin({
         else showWindow();
       };
 
+      // The hover mini-player draws where the shell pops the tooltip up: blank it
+      // while it is visible instead of leaving it over the strip (pear-desktop's
+      // setTrayTooltipSuppressed). The latest text is kept for when it hides.
+      let tooltipText = "";
+      let tooltipSuppressed = false;
+      const applyTooltip = () => tray.setToolTip(tooltipSuppressed ? "" : tooltipText);
+
       const update = (state: NowPlaying) => {
         const icon = state.track && state.status === "paused" ? "paused" : "playing";
         if (icon !== shownIcon) {
           tray.setImage(icons[icon]);
           shownIcon = icon;
         }
-        tray.setToolTip(tooltip(ctx, state));
+        tooltipText = tooltip(ctx, state);
+        applyTooltip();
         tray.setContextMenu(Menu.buildFromTemplate(menu(ctx, state, toggleWindow)));
       };
       update(ctx.player.state);
       rebuildTrayIcons = showIcons;
+      const showNow = () => {
+        if (!window.isDestroyed()) showWindow();
+      };
+      showMainWindow = showNow;
       ctx.onCleanup(() => {
         if (rebuildTrayIcons === showIcons) rebuildTrayIcons = undefined;
+        if (showMainWindow === showNow) showMainWindow = undefined;
       });
       ctx.onConfigChange(showIcons);
+      // The core's second-instance handler and another plugin's mini-player ask
+      // for a tray-style show, so moveToCurrentDesktop applies on those paths too.
+      ctx.listen(bus, "pear:show-window", showNow);
+      ctx.listen(bus, "pear:tray-tooltip", (suppressed: boolean | { suppressed?: boolean }) => {
+        tooltipSuppressed = (typeof suppressed === "boolean" ? suppressed : suppressed?.suppressed) === true;
+        applyTooltip();
+      });
       // Rebuild the menu only when something it shows changes.
       ctx.player.on("change", (state, previous) => {
-        if (state.track !== previous.track || state.status !== previous.status) update(state);
+        if (state.track !== previous.track || state.status !== previous.status || state.like !== previous.like) update(state);
       });
       const refresh = () => update(ctx.player.state);
       ctx.listen(window, "show", refresh);
@@ -97,12 +131,16 @@ export default definePlugin({
         bus.emit(event, claim);
         return claim.claimed;
       };
-      tray.on("click", () => {
-        if (claimed("pear:tray-click")) return;
+      const trayAction = () => {
         if (ctx.config.clickPlayPause) ctx.player.control({ type: "toggle" });
         else if (ctx.config.clickToToggle) toggleWindow();
+      };
+      tray.on("click", () => {
+        if (!claimed("pear:tray-click")) trayAction();
       });
-      tray.on("double-click", () => void claimed("pear:tray-double-click"));
+      tray.on("double-click", () => {
+        if (!claimed("pear:tray-double-click")) trayAction();
+      });
 
       // Where the icon is, for plugins that draw next to it (notifications'
       // hover mini-player). Bounds are in DIP screen coordinates; emitted as a
@@ -132,6 +170,10 @@ export default definePlugin({
       /** Rebuilds the tray artwork from the current core and plugin settings. */
       refreshIcons() {
         rebuildTrayIcons?.();
+      },
+      /** Shows the main window as a tray click would (the second-instance handler calls this). */
+      showWindow() {
+        showMainWindow?.();
       },
     },
   },
@@ -188,6 +230,15 @@ function menu(ctx: Ctx, state: NowPlaying, toggleWindow: () => void): MenuItemCo
     { label: ctx.t("main.tray.play-pause", playPause), click: () => ctx.player.control({ type: "toggle" }) },
     { label: ctx.t("main.tray.next", "Next"), click: () => ctx.player.control({ type: "next" }) },
     { label: ctx.t("main.tray.previous", "Previous"), click: () => ctx.player.control({ type: "previous" }) },
+    // The labels follow the current rating; unlike/undislike clear it.
+    {
+      label: state.like === "like" ? ctx.t("main.tray.unlike", "Unlike") : ctx.t("main.tray.like", "Like"),
+      click: () => ctx.player.control({ type: "unlike" }),
+    },
+    {
+      label: state.like === "dislike" ? ctx.t("main.tray.undislike", "Undislike") : ctx.t("main.tray.dislike", "Dislike"),
+      click: () => ctx.player.control({ type: "undislike" }),
+    },
     { type: "separator" },
     {
       label: window.isVisible() ? ctx.t("main.tray.hide", "Hide window") : ctx.t("main.tray.show", "Show window"),
@@ -195,7 +246,8 @@ function menu(ctx: Ctx, state: NowPlaying, toggleWindow: () => void): MenuItemCo
     },
     // Other plugins' items (`ctx.addMenuItem`), e.g. the downloader's Downloads.
     ...ctx.pluginMenuItems().map(({ label, click }): MenuItemConstructorOptions => ({ label, click: () => click() })),
-    { label: ctx.t("main.tray.settings", "Settings…"), click: () => ctx.openSettings() },
+    // pear-desktop used the settings dialog's title for this entry, translated everywhere.
+    { label: ctx.t("settings-ui.title", "Settings"), click: () => ctx.openSettings() },
     { type: "separator" },
     {
       label: ctx.t("main.tray.restart", "Restart App"),
