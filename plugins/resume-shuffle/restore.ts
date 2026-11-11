@@ -9,7 +9,7 @@ export interface ShuffleAdapter {
   /** How many items the queue has; the resumed queue fills asynchronously. */
   items(): number;
   shuffled(): boolean;
-  /** Asks YTM to shuffle (its own button). */
+  /** Asks YTM to shuffle (its own queue action, or its button). */
   shuffle(): boolean;
   /** Fires on every queue change; returns the unsubscribe. */
   subscribe(listener: () => void): () => void;
@@ -25,11 +25,7 @@ export function isShuffled(adapter: Pick<ShuffleAdapter, "shuffled">): boolean {
  * asynchronously. Returns the canceller, so a pending shuffle cannot outlive the
  * plugin or surprise a queue the user starts later.
  */
-export function shuffleWhenReady(
-  adapter: ShuffleAdapter,
-  onDone: () => void,
-  timeoutMs: number = RESTORE_TIMEOUT_MS,
-): () => void {
+export function shuffleWhenReady(adapter: ShuffleAdapter, onDone: () => void, timeoutMs: number = RESTORE_TIMEOUT_MS): () => void {
   let unsubscribe: (() => void) | undefined;
   let finished = false;
   let timeout: ReturnType<typeof setTimeout> | undefined;
