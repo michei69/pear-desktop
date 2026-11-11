@@ -10,6 +10,10 @@ export const SLIDER_STEP = 0.05;
 /** One wheel notch. */
 export const WHEEL_STEP = 0.01;
 
-/** Rounded to hundredths and kept within MIN_SPEED–MAX_SPEED. */
-export const normalize = (speed: number) => clamp(Math.round(speed * 100) / 100, MIN_SPEED, MAX_SPEED);
+/** Rounded to hundredths and kept within MIN_SPEED–MAX_SPEED; an unusable rate is normal playback. */
+export const normalize = (speed: number) => {
+  // A non-finite or non-positive rate would throw when assigned to video.playbackRate.
+  const usable = Number.isFinite(speed) && speed > 0 ? speed : 1;
+  return clamp(Math.round(usable * 100) / 100, MIN_SPEED, MAX_SPEED);
+};
 export const format = (speed: number) => `${speed.toFixed(2).replace(/\.?0+$/, "")}×`;

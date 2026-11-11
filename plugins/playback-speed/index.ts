@@ -12,8 +12,29 @@ export default definePlugin({
   name: "Playback speed",
   description: "Adds a speed control to the player bar (scroll over it for fine steps).",
   config: {
-    speed: config.number(1, { label: "Speed", min: MIN_SPEED, max: MAX_SPEED, step: 0.01, unit: "×" }),
+    speed: config.number(1, {
+      label: "Speed",
+      min: MIN_SPEED,
+      max: MAX_SPEED,
+      step: 0.01,
+      unit: "×",
+      // 1593 steps would pick the stepper by the default heuristic; pear-desktop
+      // showed the saved speed as a slider, and it is the useful control here.
+      variant: "slider",
+    }),
     preservePitch: config.bool(true, { label: "Preserve pitch", description: "Off: faster sounds higher, like a record." }),
+  },
+  host: {
+    start(ctx) {
+      // pear-desktop's menu checkbox; a flat item cannot show its state, so the
+      // settings card's switch remains the canonical control.
+      ctx.addMenuItem({
+        label: ctx.t("plugins.playback-speed.menu.no-preserves-pitch", "Disable pitch preservation"),
+        click: () => ctx.setConfig({ preservePitch: !ctx.config.preservePitch }),
+      });
+    },
+    // The menu item does not depend on the config: a toggle must not rebuild it.
+    onConfigChange() {},
   },
   // What differs from the shared picker: a text button and a panel instead of a list.
   // Both classes, since the picker's sheet comes after this one.
@@ -78,9 +99,19 @@ export default definePlugin({
     const panel = speedPanel(title, (next) => setSpeed(next));
     popover.append(...panel.body);
 
+    // YTM re-creates the <video> on some seeks, ad reloads and player rebuilds,
+    // taking the old element's listeners with it; keep one listener set per
+    // element and hook the replacement as it arrives.
+    const videos = new Set<HTMLVideoElement>();
     const enforce = () => {
       const video = ctx.player.video();
       if (!video) return;
+      if (!videos.has(video)) {
+        videos.add(video);
+        // YTM resets the rate when it loads a track.
+        ctx.listen(video, "ratechange", enforce);
+        ctx.listen(video, "loadeddata", enforce);
+      }
       if (video.playbackRate !== speed) video.playbackRate = speed;
       if (video.preservesPitch !== ctx.config.preservePitch) video.preservesPitch = ctx.config.preservePitch;
     };
@@ -110,8 +141,8 @@ export default definePlugin({
     });
     ctx.onCleanup(() => {
       save.cancel();
-      const video = ctx.player.video();
-      if (video) {
+      // The plugin was the only speed setter: hand every element it touched back at 1x.
+      for (const video of videos) {
         video.playbackRate = 1;
         video.preservesPitch = true;
       }
@@ -120,10 +151,13 @@ export default definePlugin({
     render();
     ctx.mount(button, "player_bar.right_controls_buttons", "prepend");
 
-    const video = await ctx.player.videoReady();
-    // YTM resets the rate when it loads a track.
-    ctx.listen(video, "ratechange", enforce);
-    ctx.listen(video, "loadeddata", enforce);
+    await ctx.player.videoReady();
+    // Re-apply on new tracks and player DOM changes; the observer catches a
+    // replacement <video> that appeared inside the player, which no event of
+    // the retired element would report.
+    ctx.player.on("trackChange", enforce);
+    ctx.player.on("statusChange", enforce);
+    ctx.observe("player.api", { childList: true, subtree: true }, enforce);
     enforce();
   },
 });
