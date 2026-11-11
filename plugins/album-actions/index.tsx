@@ -3,17 +3,13 @@ import { definePlugin, type SelectorName } from "@pear/sdk";
 import { Icon } from "@pear/sdk/dom";
 import type { Translate } from "@pear/sdk/i18n";
 import { css } from "@pear/sdk/macros" with { type: "macro" };
-import { sleep } from "@pear/sdk/util";
+import { type BatchSource, donePercent, isOutOfView, loadBatches } from "./bulk.ts";
 
 const THUMB_UP =
   "M3 11h3v10H3V11zm15.77 0h-4.23l1.52-4.94C16.38 5.03 15.54 4 14.38 4c-.58 0-1.14.24-1.52.65L7 11v10h10.43c1.06 0 1.98-.67 2.19-1.61l1.34-6C21.23 12.15 20.18 11 18.77 11z";
 const THUMB_DOWN =
   "M18 4h3v10h-3V4zM5.23 14h4.23l-1.52 4.94C7.62 19.97 8.46 21 9.62 21c.58 0 1.14-.24 1.52-.65L17 14V4H6.57c-1.06 0-1.98.67-2.19 1.61l-1.34 6C2.77 12.85 3.82 14 5.23 14z";
 const STRIKE = "M3.3 2 2 3.3 20.7 22l1.3-1.3z";
-
-// Loading a long playlist's remaining rows: wait this long per batch, give up after this many.
-const CONTINUATION_WAIT_MS = 1500;
-const MAX_CONTINUATIONS = 100;
 
 interface Action {
   id: string;
@@ -69,13 +65,14 @@ export default definePlugin({
       padding: 0;
       border: 0;
       border-radius: 50%;
-      background: rgb(255 255 255 / 0.1);
-      color: #fff;
+      /* YTM's theme tokens, so the buttons stay visible in the light theme too. */
+      background: var(--yt-spec-10-percent-layer, color-mix(in srgb, currentColor 10%, transparent));
+      color: var(--yt-spec-text-primary, currentColor);
       cursor: pointer;
       transition: background-color 120ms;
     }
     .pear-album-actions button:hover {
-      background: rgb(255 255 255 / 0.2);
+      background: var(--yt-spec-20-percent-layer, color-mix(in srgb, currentColor 20%, transparent));
     }
     .pear-album-actions button[hidden] {
       display: none;
@@ -88,10 +85,11 @@ export default definePlugin({
       grid-area: 1 / 1;
       width: 22px;
       height: 22px;
-      fill: rgb(255 255 255 / 0.45);
+      fill: currentColor;
+      opacity: 0.45;
     }
     .pear-album-actions svg + svg {
-      fill: #fff;
+      opacity: 1;
       clip-path: inset(calc(100% - var(--pear-done, 0%)) 0 0 0);
     }
   `,
@@ -124,7 +122,17 @@ export default definePlugin({
     };
     const matching = (action: Action) =>
       rows(action).filter((button) => (button.getAttribute("aria-pressed") === "true") === action.pressed);
-    const loader = () => ctx.$("browse.continuations")?.firstElementChild;
+    const loader = () => ctx.$("browse.continuations")?.firstElementChild ?? null;
+    const loaded = () => rows(ACTIONS[0]!).length;
+
+    // A wait that also ends when the plugin stops, so a disable cannot leave a
+    // pending batch to click the rows afterwards.
+    let release: (() => void) | undefined;
+    const stopped = new Promise<void>((resolve) => {
+      release = () => resolve();
+    });
+    ctx.onCleanup(() => release?.());
+    const wait = (ms: number) => Promise.race([new Promise<void>((resolve) => void ctx.setTimeout(resolve, ms)), stopped]);
 
     const label = (action: Action, complete: boolean, pending: number, total: number) => {
       if (!complete) return action.label(ctx.t);
@@ -134,6 +142,8 @@ export default definePlugin({
         total,
       });
     };
+
+    const loading = () => ctx.t("plugins.album-actions.loading", "Loading the full list… ({{loaded}} tracks)", { loaded: loaded() });
 
     const update = () => {
       const header = ctx.$("browse.action_buttons");
@@ -145,6 +155,9 @@ export default definePlugin({
       // Until a long list has loaded completely the counts are partial: like
       // pear-desktop, offer every action, half filled.
       const complete = !loader();
+      // While a run pulls in the remaining batches the titles are the progress.
+      const progress = running ? loading() : "";
+      bar.title = progress;
       for (const [action, button] of buttons) {
         const total = rows(action).length;
         const pending = matching(action).length;
@@ -153,34 +166,46 @@ export default definePlugin({
         // The icon fills up with the share of tracks that are liked (or disliked).
         const pressed = action.pressed ? pending : total - pending;
         button.style.setProperty("--pear-done", `${donePercent(complete, pressed, total)}%`);
-        const text = label(action, complete, pending, total);
+        const text = progress || label(action, complete, pending, total);
         button.title = text;
         button.setAttribute("aria-label", text);
       }
+    };
+
+    // Long playlists load in batches as you scroll; pull them all in before acting.
+    const loadRows = () => {
+      const source: BatchSource = {
+        loader,
+        rows: loaded,
+        reveal: (element) => {
+          const rect = element.getBoundingClientRect();
+          if (isOutOfView(rect, window.innerHeight)) element.scrollIntoView({ block: "end" });
+        },
+        wait,
+        stopped: () => ctx.signal.aborted,
+      };
+      return loadBatches(source, { progress: update });
     };
 
     const run = async (action: Action) => {
       running = true;
       update();
       try {
-        await loadAllRows();
-        for (const button of matching(action)) button.click();
+        const outcome = await loadRows();
+        // The plugin was stopped while loading: nothing may click after that.
+        if (ctx.signal.aborted) return;
+        // A partial list would act on a silent subset, so say so instead of clicking.
+        if (outcome === "capped") {
+          ctx.toast(ctx.t("plugins.album-actions.too-long", "The list is too long to load completely. Scroll to the end and try again."));
+          return;
+        }
+        for (const button of matching(action)) {
+          if (ctx.signal.aborted) return;
+          button.click();
+        }
       } finally {
         running = false;
-        update();
-      }
-    };
-
-    // Long playlists load in batches as you scroll; pull them all in before acting.
-    const loadAllRows = async () => {
-      for (let i = 0; i < MAX_CONTINUATIONS; i++) {
-        const current = loader();
-        if (!current || ctx.signal.aborted) return;
-        current.scrollIntoView({ block: "end" });
-        const before = rows(ACTIONS[0]!).length;
-        await sleep(CONTINUATION_WAIT_MS);
-        const stalled = rows(ACTIONS[0]!).length === before && loader() === current;
-        if (stalled) return;
+        if (!ctx.signal.aborted) update();
       }
     };
 
@@ -197,10 +222,3 @@ export default definePlugin({
     void ctx.waitFor("browse.page").then(update, () => {});
   },
 });
-
-/** How full an action's icon is: half while the list is still loading. */
-function donePercent(complete: boolean, pressed: number, total: number) {
-  if (!complete) return 50;
-  if (total === 0) return 0;
-  return Math.round((pressed / total) * 100);
-}
