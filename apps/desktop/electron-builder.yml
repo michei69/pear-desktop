@@ -138,7 +138,13 @@ mac:
   compression: maximum
 win:
   icon: ../../assets/generated/icons/win/icon.ico
-  # No ia32: Electron dropped 32-bit Windows builds after 43.  target:
+  # Nothing else from node_modules ships (electron-vite bundles the app), but the
+  # Windows-only SMTC addon is imported dynamically, so it must be in the package
+  # for the asarUnpack rule above to unpack it.
+  files:
+    - node_modules/@michei69/node-smtc/**
+  # No ia32: Electron dropped 32-bit Windows builds after 43.
+  target:
     - target: nsis-web
       arch:
         - x64
@@ -159,8 +165,7 @@ linux:
   desktop:
     entry:
       StartupWMClass: "com.github.th-ch.\u0079\u006f\u0075\u0074\u0075\u0062\u0065\u002d\u006d\u0075\u0073\u0069\u0063"
-  # No armv7l here: Electron dropped 32-bit ARM Linux builds after 43. dist:linux:armv7l
-  # (and release:linux:armv7l) package the same bundle with Electron 43 instead.
+  # No armv7l: Electron dropped 32-bit ARM Linux builds after 43.
   target:
     - target: AppImage
       arch:

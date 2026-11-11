@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 env:
-  NODE_VERSION: "24.x"
+  NODE_VERSION: "24" # nub resolves a major, not ranges like 24.x
   # Baked into the build and shown in the About window (apps/desktop).
   PEAR_CHANNEL: stable
   PEAR_COMMIT: ${{ github.sha }}
@@ -32,8 +32,20 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
 
+      # Catches an invalid electron-builder.yml or a workflow calling a dropped
+      # script before the long platform builds run.
+      - name: Check packaging config
+        if: startsWith(matrix.os, 'ubuntu')
+        run: nub run check:packaging
+
       - name: Install dependencies
         run: nub install --frozen-lockfile
+
+      # Generated settings/action strings are only added to en.json by
+      # `nub run i18n`; fail before building if a source added one and forgot.
+      - name: Check i18n resources
+        if: startsWith(matrix.os, 'ubuntu')
+        run: nub run i18n --check
 
       # The release:* scripts pass `-p never`: electron-builder writes the
       # installers and the latest*.yml updater metadata into pack/ but uploads
@@ -46,6 +58,11 @@ jobs:
 
       - name: Build on Linux
         if: startsWith(matrix.os, 'ubuntu')
+        # flatpak-bundler only reports flatpak-builder's exit status on failure;
+        # its debug logger is what streams the builder's own output. Without it a
+        # failed flatpak step leaves no log to diagnose.
+        env:
+          DEBUG: "@malept/flatpak-bundler"
         run: |
           sudo snap install snapcraft --classic
           sudo apt update

@@ -1,0 +1,9 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/typescript-node
+{
+  "name": "Pear Desktop - Dev Container",
+  // Keep in sync with .github/workflows/build.yml
+  "image": "mcr.microsoft.com/devcontainers/typescript-node:24",
+  // Nub is the repo's toolchain; the image only provides Node.
+  "postCreateCommand": "npm install -g @nubjs/nub@^0.9.7 && nub install --frozen-lockfile"
+}

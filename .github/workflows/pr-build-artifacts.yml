@@ -44,8 +44,20 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
 
+      # Catches an invalid electron-builder.yml or a workflow calling a dropped
+      # script before the long platform builds run.
+      - name: Check packaging config
+        if: startsWith(matrix.os, 'ubuntu')
+        run: nub run check:packaging
+
       - name: Install dependencies
         run: nub install --frozen-lockfile
+
+      # Generated settings/action strings are only added to en.json by
+      # `nub run i18n`; fail before building if a source added one and forgot.
+      - name: Check i18n resources
+        if: startsWith(matrix.os, 'ubuntu')
+        run: nub run i18n --check
 
       # Only vite build without release if it is a fork, or it is a pull-request
       - name: Vite Build
@@ -62,6 +74,11 @@ jobs:
 
       - name: Build on Linux
         if: startsWith(matrix.os, 'ubuntu')
+        # flatpak-bundler only reports flatpak-builder's exit status on failure;
+        # its debug logger is what streams the builder's own output. Without it a
+        # failed flatpak step leaves no log to diagnose.
+        env:
+          DEBUG: "@malept/flatpak-bundler"
         run: |
           sudo snap install snapcraft --classic
           sudo apt update
@@ -74,7 +91,6 @@ jobs:
           sudo flatpak install -y flathub org.freedesktop.Sdk/aarch64/26.08
           sudo flatpak install -y flathub org.electronjs.Electron2.BaseApp/aarch64/26.08
           nub run dist:linux
-          nub run dist:linux:armv7l
 
       - name: Build on Windows
         if: startsWith(matrix.os, 'windows')

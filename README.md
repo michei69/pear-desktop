@@ -36,7 +36,6 @@
 
 ## Content
 
-- [Features](#features)
 - [Translation](#translation)
 - [Download](#download)
   - [Linux](#linux)
@@ -115,9 +114,11 @@ nub run dev
 
 Dev mode watches the sources: main-process changes restart the app, and page-side changes (the settings UI, plugins' page parts and the page runtime) rebuild the preload bundle and reload YTM.
 
-Instead of installing Nub on your system, you can also use [devcontainers](https://containers.dev/). You can use devcontainers either as a development environment in VS Code, or as a way to easily build the project without installing dependencies on your host system.
+Run `nub run check` before pushing: it runs lint, format check, typecheck and the packaging check.
 
-Note that this has it's own limitations (for example, GUI doesn't work on, at least some, Linux hosts).
+Instead of installing Nub on your system, you can also use [devcontainers](https://containers.dev/). The repository ships one in `.devcontainer/`: it installs Nub and the workspace dependencies, and you can use it either as a development environment in VS Code, or as a way to easily build the project without installing dependencies on your host system.
+
+Note that this has its own limitations (for example, GUI doesn't work on, at least some, Linux hosts).
 
 ## Build your own plugins
 
@@ -248,7 +249,6 @@ export default createPlugin({
 
 - `nub run dist:win` - Windows
 - `nub run dist:linux` - Linux (amd64 and arm64)
-- `nub run dist:linux:armv7l` - Linux (32-bit ARM, on Electron 43)
 - `nub run dist:mac` - macOS (amd64)
 - `nub run dist:mac:arm64` - macOS (arm64)
 
@@ -259,9 +259,9 @@ using [electron-builder](https://github.com/electron-userland/electron-builder).
 
 1. Clone the repo;
 2. Open the folder in VS Code;
-3. Reopen in container when prompted;
+3. Reopen in container when prompted (this uses `.devcontainer/devcontainer.json`);
 4. Run `nub run dist:<target>` as above (choosing the desired target);
-5. Collect the built files from the `dist` folder.
+5. Collect the built files from the `pack` folder.
 
 Since devcontainer uses a mount for the workspace, the built files will be available on the host system as well.
 
@@ -277,7 +277,13 @@ nub run start
 nub run test
 ```
 
-Uses [Playwright](https://playwright.dev/) to test the app.
+Unit tests run on [Vitest](https://vitest.dev/). The end-to-end tests drive the real app with [Playwright](https://playwright.dev/):
+
+```bash
+nub run test:e2e
+```
+
+`nub run test:debug` runs the end-to-end tests with Playwright's debug logging.
 
 ## License
 
@@ -288,8 +294,7 @@ MIT © [michei69](https://github.com/michei69/pear-desktop)
 
 ### Why apps menu isn't showing up?
 
-If `Hide Menu` option is on - you can show the menu with the <kbd>alt</kbd> key (or <kbd>\`</kbd> [backtick] if using
-the in-app-menu plugin)
+If `Hide Menu` option is on - you can show the menu with the <kbd>alt</kbd> key (or the <kbd>F10</kbd> key, or <kbd>`</kbd> [backtick], when using the in-app-menu plugin)
 
 ### Why does YTM skip the cookie consent screen?
 
