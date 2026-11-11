@@ -57,6 +57,20 @@ interface KuroshiroInstance {
   convert(text: string, options: { to: "romaji"; mode: "spaced" }): Promise<string>;
 }
 
+interface JapaneseToken {
+  surface_form: string;
+  verbose?: { word_type?: string };
+}
+
+interface KuromojiAnalyzer {
+  parse(text: string): Promise<JapaneseToken[]>;
+}
+
+interface JapaneseEngine {
+  kuroshiro: KuroshiroInstance;
+  analyzer: KuromojiAnalyzer;
+}
+
 /** Conversion is pure per line, so repeated lines (choruses, revisits) are paid once. */
 const LINE_CACHE_LIMIT = 1024;
 
@@ -68,7 +82,7 @@ function cacheLine<T>(cache: Map<string, T>, key: string, value: T) {
 export class Romanizer {
   #dictDir: string;
   #fetch: (url: string) => Promise<Response>;
-  #kuroshiro: Promise<KuroshiroInstance> | undefined;
+  #japanese: Promise<JapaneseEngine> | undefined;
   /** Per line and script: the song's script detection decides how a kanji line reads. */
   #memo = new Map<string, string | null>();
 
@@ -107,11 +121,11 @@ export class Romanizer {
         return line.replace(HAN_RUN, (run) => ` ${pinyin(run, { separator: " " })} `);
       }
       case "ja": {
-        const kuroshiro = await (this.#kuroshiro ??= this.#loadKuroshiro().catch((error: unknown) => {
-          this.#kuroshiro = undefined;
+        const engine = await (this.#japanese ??= this.#loadKuroshiro().catch((error: unknown) => {
+          this.#japanese = undefined;
           throw error;
         }));
-        return kuroshiro.convert(line, { to: "romaji", mode: "spaced" });
+        return romanizeJapaneseLine(line, engine);
       }
       case "th":
         return romanizeThai(line);
@@ -122,14 +136,15 @@ export class Romanizer {
     }
   }
 
-  async #loadKuroshiro(): Promise<KuroshiroInstance> {
+  async #loadKuroshiro(): Promise<JapaneseEngine> {
     await this.#ensureDictionary();
     const [kuroshiroModule, analyzerModule] = await Promise.all([import("kuroshiro"), import("kuroshiro-analyzer-kuromoji")]);
     const Kuroshiro = defaultExport(kuroshiroModule);
     const Analyzer = defaultExport(analyzerModule);
+    const analyzer = new Analyzer({ dictPath: `${this.#dictDir}/` });
     const kuroshiro = new Kuroshiro();
-    await kuroshiro.init(new Analyzer({ dictPath: `${this.#dictDir}/` }));
-    return kuroshiro;
+    await kuroshiro.init(analyzer);
+    return { kuroshiro, analyzer };
   }
 
   async #ensureDictionary() {
@@ -146,6 +161,61 @@ export class Romanizer {
       }),
     );
   }
+}
+
+/**
+ * Kuromoji knows Japanese kanji, not Chinese variants such as 夺 (the Japanese
+ * form is 奪). Replace only tokens the analyzer marks UNKNOWN before the full
+ * line is converted, so the surrounding words still provide context. The
+ * simplified-to-traditional table is the same one the Chinese converter uses.
+ */
+export async function prepareJapaneseLine(line: string, analyzer: KuromojiAnalyzer, tify: (text: string) => string): Promise<string> {
+  if (!HAN.test(line)) return line;
+  const tokens = await analyzer.parse(line);
+  if (!tokens.some((token) => HAN.test(token.surface_form) && token.verbose?.word_type === "UNKNOWN")) return line;
+  return tokens
+    .map((token) =>
+      HAN.test(token.surface_form) && token.verbose?.word_type === "UNKNOWN" ? tify(token.surface_form) : token.surface_form,
+    )
+    .join("");
+}
+
+/**
+ * Kuroshiro leaves glyphs with no dictionary reading in the output. Try their
+ * traditional/Japanese form first; a glyph that is still unknown falls back to
+ * pinyin, so a Japanese line never keeps an unreadable Han character.
+ */
+export async function fillUnknownJapanese(
+  text: string,
+  convert: (text: string) => Promise<string>,
+  tify: (text: string) => string,
+  pinyin: (text: string) => string,
+): Promise<string> {
+  if (!HAN.test(text)) return text;
+  const runs = [...text.matchAll(HAN_RUN)].map((match) => match[0]);
+  const replacements = await Promise.all(
+    runs.map(async (run) => {
+      const traditional = tify(run);
+      if (traditional !== run) {
+        const converted = await convert(traditional);
+        if (!HAN.test(converted)) return converted;
+      }
+      const latin = pinyin(run);
+      return HAN.test(latin) ? run : latin;
+    }),
+  );
+  let index = 0;
+  return text.replace(HAN_RUN, () => replacements[index++] ?? "");
+}
+
+async function romanizeJapaneseLine(line: string, engine: JapaneseEngine) {
+  const convert = (text: string) => engine.kuroshiro.convert(text, { to: "romaji", mode: "spaced" });
+  const { tify } = await import("chinese-conv");
+  const prepared = await prepareJapaneseLine(line, engine.analyzer, tify);
+  const romanized = await convert(prepared);
+  if (!HAN.test(romanized)) return romanized;
+  const { pinyin } = await import("pinyin-pro");
+  return fillUnknownJapanese(romanized, convert, tify, (run) => pinyin(run, { separator: " ", toneType: "none" }));
 }
 
 /** pear-desktop's Thai romanization: word by word where the platform can segment Thai. */
