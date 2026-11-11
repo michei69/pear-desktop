@@ -4,15 +4,18 @@
 
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { config, definePlugin, livePosition, type HostContextOf, type NowPlaying, type Track } from "@pear/sdk";
+import { definePlugin, livePosition, type NowPlaying, type Track } from "@pear/sdk";
 import { pearIconBitmap } from "@pear/sdk/icon";
 import { embed } from "@pear/sdk/macros" with { type: "macro" };
 import { isPlaying } from "@pear/sdk/util";
-import { type NativeImage, nativeImage, net, Notification } from "electron";
-import { TOAST_STYLES, type ToastStyle, toastXml, usesLogo } from "./toast.ts";
+import { type NativeImage, nativeImage, Notification } from "electron";
+import { artwork, ICON_SIZE } from "./artwork.ts";
+import { showMenu } from "./menu.ts";
+import { schema, type Ctx } from "./schema.ts";
+import { toastXml, usesLogo } from "./toast.ts";
+import { setupTrayControls } from "./tray-controls.ts";
 import { setupHoverPopup } from "./hover-popup.ts";
 
-const ICON_SIZE = 256;
 // pear-desktop's Windows workaround: toasts otherwise linger in the corner.
 const TOAST_CLOSE_MS = 5000;
 /** pear-desktop's app protocol (see the core's protocol.ts). */
@@ -23,15 +26,6 @@ const BUTTON_ICONS = {
   play: embed("media-icons-black/play.png"),
   pause: embed("media-icons-black/pause.png"),
   next: embed("media-icons-black/next.png"),
-};
-const STYLE_LABELS: Record<ToastStyle, string> = {
-  logo: "Logo",
-  banner_centered_top: "Banner centered top",
-  hero: "Hero",
-  banner_top_custom: "Banner top custom",
-  banner_centered_bottom: "Banner centered bottom",
-  banner_bottom: "Banner bottom",
-  legacy: "Legacy",
 };
 
 const isPaused = (state: NowPlaying) => !isPlaying(state);
@@ -45,67 +39,6 @@ type ButtonIcon = keyof typeof BUTTON_ICONS;
 
 /** The app's icon, shown instead of missing artwork as pear-desktop did. */
 const appIcon = () => nativeImage.createFromBitmap(pearIconBitmap(ICON_SIZE), { width: ICON_SIZE, height: ICON_SIZE });
-
-/** The artwork: a centered square like the original's "logo" style, or as is (banners). */
-async function artwork(url: string | undefined, square = true): Promise<NativeImage | undefined> {
-  if (!url) return;
-  try {
-    const response = await net.fetch(url);
-    if (!response.ok) return;
-    const image = nativeImage.createFromBuffer(Buffer.from(await response.arrayBuffer()));
-    if (image.isEmpty()) return;
-    if (!square) return image;
-    const { width, height } = image.getSize();
-    const side = Math.min(width, height);
-    const cropped = image.crop({ x: Math.round((width - side) / 2), y: Math.round((height - side) / 2), width: side, height: side });
-    return cropped.resize({ width: ICON_SIZE, height: ICON_SIZE, quality: "best" });
-  } catch {
-    return;
-  }
-}
-
-const schema = {
-  unpauseNotification: config.bool(false, { label: "Also notify when resuming" }),
-  urgency: config.select(
-    "normal",
-    [
-      { value: "low", label: "Low" },
-      { value: "normal", label: "Normal" },
-      { value: "critical", label: "High" },
-    ],
-    { label: "Priority", description: "Linux only: how prominently the desktop shows it." },
-  ),
-  interactive: config.bool(true, {
-    label: "Playback buttons",
-    description: "Windows and macOS: previous, play/pause and next buttons in the notification.",
-  }),
-  refreshOnPlayPause: config.bool(false, {
-    label: "Update after play/pause from the notification",
-    description: "Show it again with the opposite button after using its play/pause button.",
-  }),
-  toastStyle: config.select(
-    "logo",
-    TOAST_STYLES.map((value) => ({ value, label: STYLE_LABELS[value] })),
-    { label: "Toast style", description: "How the notification with buttons looks.", platforms: ["win32"], variant: "dropdown" },
-  ),
-  trayControls: config.bool(true, {
-    label: "Open and close it from the tray",
-    description: "Clicking the tray icon shows or hides the notification; double-clicking shows or hides the window.",
-    platforms: ["win32"],
-  }),
-  hoverControls: config.bool(true, {
-    label: "Mini player on tray hover",
-    description: "Hover the tray icon to see the artwork and the previous, play/pause and next controls.",
-    platforms: ["win32"],
-  }),
-  hideButtonText: config.bool(true, {
-    label: "Hide button text",
-    description: "Windows: show only the icons on the notification's buttons.",
-    platforms: ["win32"],
-  }),
-};
-
-type Ctx = HostContextOf<typeof schema>;
 
 interface Notifier {
   /** Whether a notification was actually started (false while the mini player suppresses it). */
@@ -126,6 +59,11 @@ export default definePlugin({
       const hover = WINDOWS ? setupHoverPopup(ctx) : undefined;
       const notifier = createNotifier(ctx, () => hover?.visible === true);
       ctx.onConfigChange((next) => hover?.setEnabled(next.hoverControls));
+      // pear-desktop's Notifications menu, as one popup: the app/tray menus are flat.
+      ctx.addMenuItem({
+        label: ctx.t("plugins.notifications.menu.title", "Notifications…"),
+        click: () => showMenu(ctx),
+      });
 
       // The toast's buttons arrive through the app protocol (the core already acted on them).
       ctx.onProtocol((command) => {
@@ -134,7 +72,7 @@ export default definePlugin({
         if (command === "pause" || (command === "play" && !ctx.config.unpauseNotification)) notifier.show(track, command === "pause");
       });
 
-      if (WINDOWS) trayControls(ctx, notifier);
+      if (WINDOWS) setupTrayControls(ctx, notifier);
 
       let lastVideoId: string | undefined;
       let wasPaused = true;
@@ -168,11 +106,15 @@ export default definePlugin({
 function createNotifier(ctx: Ctx, suppressed: () => boolean): Notifier {
   let current: Notification | undefined;
   let closeTimer: ReturnType<typeof setTimeout> | undefined;
+  let presentTimer: ReturnType<typeof setTimeout> | undefined;
   let generation = 0;
   const files = notificationFiles(ctx);
 
   const close = () => {
     ctx.clearTimeout(closeTimer);
+    // A shown-again notification still waiting out the Windows delay is stale.
+    ctx.clearTimeout(presentTimer);
+    presentTimer = undefined;
     current?.close();
     current = undefined;
   };
@@ -210,6 +152,8 @@ function createNotifier(ctx: Ctx, suppressed: () => boolean): Notifier {
         hideButtonText: ctx.config.hideButtonText,
       }),
     });
+    // macOS activates itself when the toast is clicked; Windows does not.
+    notification.on("click", () => ctx.focusWindow());
     present(notification);
     closeTimer = ctx.setTimeout(() => {
       if (current === notification) close();
@@ -239,7 +183,17 @@ function createNotifier(ctx: Ctx, suppressed: () => boolean): Notifier {
       const resumeNotifies = paused && ctx.config.unpauseNotification;
       if (ctx.config.refreshOnPlayPause && !resumeNotifies) show(track, !paused);
     });
-    present(notification);
+    if (!WINDOWS) {
+      present(notification);
+      return;
+    }
+    // pear-desktop's 10 ms delay: closing a toast and showing the next one in
+    // the same instant makes Windows update the old toast instead of showing
+    // the new one.
+    presentTimer = ctx.setTimeout(() => {
+      presentTimer = undefined;
+      if (id === generation) present(notification);
+    }, 10);
   };
 
   const show = (track: Track, paused: boolean) => {
@@ -315,22 +269,4 @@ function notificationFiles(ctx: Ctx) {
       return path;
     },
   };
-}
-
-// pear-desktop's tray controls (Windows): the tray plugin hands its clicks over.
-function trayControls(ctx: Ctx, notifier: Notifier) {
-  const enabled = () => ctx.config.trayControls && ctx.config.interactive;
-  ctx.listen(ctx.app, "pear:tray-click", (claim: { claimed: boolean }) => {
-    if (!enabled()) return;
-    claim.claimed = true;
-    const track = ctx.player.state.track;
-    if (notifier.showing) notifier.close();
-    else if (track) notifier.show(track, isPaused(ctx.player.state));
-  });
-  ctx.listen(ctx.app, "pear:tray-double-click", (claim: { claimed: boolean }) => {
-    if (!enabled()) return;
-    claim.claimed = true;
-    if (ctx.window.isVisible()) ctx.window.hide();
-    else ctx.window.show();
-  });
 }

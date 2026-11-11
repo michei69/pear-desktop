@@ -6,7 +6,8 @@
 // pear-desktop does: the two draw in the same corner.
 //
 // The tray plugin owns the icon, so it forwards its mouse events and the
-// icon's bounds on the app emitter ("pear:tray-hover", "pear:tray-leave").
+// icon's bounds on the app emitter ("pear:tray-hover", "pear:tray-leave"), and
+// it blanks its tooltip while the strip is up (both draw in the same corner).
 
 import type { HostContext } from "@pear/sdk";
 import { embed } from "@pear/sdk/macros" with { type: "macro" };
@@ -58,6 +59,7 @@ export function setupHoverPopup<C extends HoverConfig>(ctx: HostContext<C>): Hov
   /** The last song info sent to the page, to skip identical executions. */
   let lastPushed = "";
   let pageVisible = false;
+  let tooltipSuppressed = false;
 
   const isOver = (bounds: Rectangle | undefined) => {
     if (!bounds) return false;
@@ -66,6 +68,14 @@ export function setupHoverPopup<C extends HoverConfig>(ctx: HostContext<C>): Hov
   };
   const overPopup = () => (popup && !popup.isDestroyed() ? isOver(popup.getBounds()) : false);
   const overTray = () => isOver(trayBounds);
+
+  // The tooltip would pop up over the strip: the tray plugin blanks it while
+  // the strip is up (the events travel on the app emitter, like the hover ones).
+  const suppressTooltip = (suppressed: boolean) => {
+    if (suppressed === tooltipSuppressed) return;
+    tooltipSuppressed = suppressed;
+    ctx.app.emit("pear:tray-tooltip", suppressed);
+  };
 
   const startFlyoutWatch = () => {
     stopFlyoutWatch ??= watchTrayFlyout((rect) => {
@@ -201,7 +211,8 @@ export function setupHoverPopup<C extends HoverConfig>(ctx: HostContext<C>): Hov
           break;
         case "show":
           hide();
-          ctx.focusWindow();
+          // The tray plugin knows whether to move the window to this desktop.
+          ctx.app.emit("pear:show-window");
           break;
       }
     });
@@ -225,6 +236,7 @@ export function setupHoverPopup<C extends HoverConfig>(ctx: HostContext<C>): Hov
       shown = false;
       stopCursorTracking();
       stopFlyoutWatching();
+      suppressTooltip(false);
     });
   };
 
@@ -266,6 +278,7 @@ export function setupHoverPopup<C extends HoverConfig>(ctx: HostContext<C>): Hov
       popup.showInactive();
       shown = true;
       startCursorTracking();
+      suppressTooltip(true);
     }
     // showInactive() does not raise an already-visible strip by itself.
     raise();
@@ -291,6 +304,7 @@ export function setupHoverPopup<C extends HoverConfig>(ctx: HostContext<C>): Hov
       shown = false;
       stopCursorTracking();
       stopFlyoutWatching();
+      suppressTooltip(false);
     }, FADE_OUT_MS);
   }
 
@@ -307,6 +321,7 @@ export function setupHoverPopup<C extends HoverConfig>(ctx: HostContext<C>): Hov
   });
 
   const closePopup = () => {
+    suppressTooltip(false);
     ctx.clearTimeout(hideTimer);
     ctx.clearTimeout(raiseTimer);
     hideTimer = undefined;
