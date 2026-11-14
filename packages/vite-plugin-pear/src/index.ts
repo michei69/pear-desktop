@@ -12,7 +12,7 @@
 // - Build-time macros (`with { type: "macro" }`) run in both bundles.
 
 import { existsSync, readdirSync, readFileSync } from "node:fs";
-import { join, resolve } from "node:path";
+import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { build, type Plugin as RolldownPlugin } from "rolldown";
 import Macros from "unplugin-macros/vite";
@@ -65,11 +65,16 @@ function registryModule(files: readonly string[], target: SplitTarget) {
   return `${imports.join("\n")}\nexport default [${files.map((_, i) => `p${i}`).join(", ")}];\n`;
 }
 
-function splitTransform(code: string, id: string) {
+function splitFile(id: string) {
   const match = SPLIT_QUERY.exec(id);
-  if (!match) return;
-  const file = id.replace(SPLIT_QUERY, "");
-  return { code: splitPlugin(code, file, match[1] as SplitTarget), map: null };
+  if (!match) return undefined;
+  return { file: id.replace(SPLIT_QUERY, ""), target: match[1] as SplitTarget };
+}
+
+function splitTransform(code: string, id: string) {
+  const split = splitFile(id);
+  if (!split) return;
+  return { code: splitPlugin(code, split.file, split.target), map: null };
 }
 
 /**
@@ -140,9 +145,7 @@ export default function pear(options: PearPluginOptions): Plugin[] {
         });
       }
     },
-    transform(code, id) {
-      return splitTransform(code, id);
-    },
+    transform: splitTransform,
   };
 
   return [plugin, Macros(MACRO_OPTIONS) as Plugin];
@@ -156,14 +159,10 @@ function pagePluginsPlugin(options: PearPluginOptions): RolldownPlugin {
     },
     load(id) {
       if (id === `\0${PAGE_PLUGINS_ID}`) return registryModule(discoverPlugins(options), "page");
-      if (SPLIT_QUERY.test(id)) {
-        const file = id.replace(SPLIT_QUERY, "");
-        return { code: readFileSync(file, "utf8"), moduleType: extensionOf(file) };
-      }
+      const split = splitFile(id);
+      if (split) return { code: readFileSync(split.file, "utf8"), moduleType: extensionOf(split.file) };
     },
-    transform(code, id) {
-      return splitTransform(code, id);
-    },
+    transform: splitTransform,
   };
 }
 
@@ -183,6 +182,6 @@ export async function bundlePage(entry: string, options: PearPluginOptions) {
   }
   const watchFiles = Object.keys(chunk.modules)
     .filter((id) => !id.startsWith("\0"))
-    .map((id) => id.replace(SPLIT_QUERY, ""));
+    .map((id) => splitFile(id)?.file ?? id);
   return { code: chunk.code, watchFiles: [...watchFiles, options.pluginsDir] };
 }
