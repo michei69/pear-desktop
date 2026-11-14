@@ -5,11 +5,10 @@
 
 import type { Page } from "@playwright/test";
 import { expect, test } from "./fixtures.ts";
-import { waitForTrackPlaying } from "./helpers/playback.ts";
-import { barLayout, inBar, sel } from "./helpers/player-bar.ts";
+import { barLayout, inBar, sliderVolume } from "./helpers/player-bar.ts";
 import { setConfig } from "./helpers/plugins.ts";
 import { openSection, openSettings, overlay, searchbox } from "./helpers/settings.ts";
-import { mainWindow, playTestTrack } from "./launch.ts";
+import { launchPlaying, mainWindow } from "./launch.ts";
 
 const PLAYING_TEST_MS = 240_000;
 const VOLUME = 37;
@@ -27,13 +26,10 @@ declare global {
 for (const layout of ["classic", "new"] as const) {
   test(`the ${layout} player bar: picked by the setting, with the plugins' buttons and the player's controls`, async ({ launch }) => {
     test.setTimeout(PLAYING_TEST_MS);
-    const app = await launch({
+    const { page } = await launchPlaying(launch, {
       core: { site: { playerBar: layout } },
       plugins: { "playback-speed": { enabled: true }, downloader: { enabled: true }, "do-not-track": { enabled: true } },
     });
-    const page = await mainWindow(app);
-    await playTestTrack(page);
-    await waitForTrackPlaying(page);
 
     expect(await barLayout(page)).toBe(layout);
     expect((await siteFlags(page)).overrides).toMatchObject({ music_web_enable_wiz_miniplayer: layout === "new" });
@@ -45,14 +41,7 @@ for (const layout of ["classic", "new"] as const) {
 
     // The facade sets the volume through the bar's slider and reads it back.
     await page.evaluate((value) => window.__pearRuntime!.player.control({ type: "volume", value }), VOLUME);
-    await expect
-      .poll(() =>
-        page.evaluate(
-          (slider) => Number(document.querySelector<HTMLElement & { value: number | string }>(slider)!.value),
-          sel("player_bar.volume_slider"),
-        ),
-      )
-      .toBe(VOLUME);
+    await expect.poll(() => sliderVolume(page)).toBe(VOLUME);
     await expect.poll(async () => (await playerState(page)).volume).toBe(VOLUME);
 
     // Shuffle goes through the bar's button and comes back as state.
@@ -64,12 +53,7 @@ for (const layout of ["classic", "new"] as const) {
 
 test("the player-bar download button can be hidden without disabling downloads", async ({ launch }) => {
   test.setTimeout(PLAYING_TEST_MS);
-  const app = await launch({
-    plugins: { downloader: { enabled: true, config: { showPlayerButton: false } } },
-  });
-  const page = await mainWindow(app);
-  await playTestTrack(page);
-  await waitForTrackPlaying(page);
+  const { app, page } = await launchPlaying(launch, { plugins: { downloader: { enabled: true, config: { showPlayerButton: false } } } });
 
   await expect(page.locator(inBar(".pear-dl-button"))).toHaveCount(0);
   // The option only hides the button; the app menu still opens Downloads.

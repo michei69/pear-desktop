@@ -2,13 +2,13 @@
 // pear runtime. Never submits the form: automated sign-in attempts trip
 // Google's abuse detection (captchas) for the whole IP.
 
-import { YTM_ORIGIN, ytmUrl } from "@pear/sdk/util";
+import { ytmUrl } from "@pear/sdk/util";
 import { expect, test } from "./fixtures.ts";
+import { mainWindow } from "./launch.ts";
 
 test("accounts.google.com sees the honest Electron UA, also when YTM gets Chrome's", async ({ launch }) => {
   const app = await launch({ core: { advanced: { overrideUserAgent: true } } });
-  const page = await app.firstWindow();
-  await page.waitForURL((url) => url.origin === YTM_ORIGIN);
+  const page = await mainWindow(app);
   const ytmUserAgent = await page.evaluate(() => navigator.userAgent);
   expect(ytmUserAgent).not.toMatch(/Electron/);
 
@@ -31,8 +31,7 @@ test("accounts.google.com sees the honest Electron UA, also when YTM gets Chrome
 });
 
 test("YTM's sign-in link opens Google sign-in in the window", async ({ app }) => {
-  const page = await app.firstWindow();
-  await page.waitForURL((url) => url.origin === YTM_ORIGIN);
+  const page = await mainWindow(app);
   // Page-initiated, so it goes through will-navigate (unlike page.goto above).
   await page.locator('a[href^="https://accounts.google.com/"]').first().click();
   await page.waitForURL((url) => url.origin === "https://accounts.google.com");

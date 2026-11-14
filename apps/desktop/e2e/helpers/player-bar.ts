@@ -14,14 +14,8 @@ export const inBar = (css: string) => `:is(${selectors.player_bar}) ${css}`;
 export const barLayout = (page: Page) =>
   page.evaluate((newBar) => (document.querySelector(newBar) ? "new" : "classic"), selectors["player_bar.new"]);
 
-/** Makes YTM show a like status on the player bar, as it does after a click on its buttons. */
-export async function showLikeStatus(page: Page, status: "LIKE" | "DISLIKE") {
-  await page.evaluate(
-    ([status, classic, like, dislike]) => {
-      const buttons = document.querySelector(classic);
-      if (buttons?.hasAttribute("like-status")) return buttons.setAttribute("like-status", status);
-      document.querySelector(status === "LIKE" ? like : dislike)?.setAttribute("aria-pressed", "true");
-    },
-    [status, selectors["player_bar.like_buttons"], selectors["player_bar.like"], selectors["player_bar.dislike"]] as const,
+export const sliderVolume = (page: Page) =>
+  page.evaluate(
+    (slider) => Number(document.querySelector<HTMLElement & { value: number | string }>(slider)!.value),
+    selectors["player_bar.volume_slider"],
   );
-}

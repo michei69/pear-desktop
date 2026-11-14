@@ -2,19 +2,13 @@
 
 import type { Page } from "@playwright/test";
 import { expect, test } from "./fixtures.ts";
+import { lyrics, openLyricsTab } from "./helpers/lyrics.ts";
 import { pause, waitForTrackPlaying } from "./helpers/playback.ts";
 import { setConfig, setEnabled } from "./helpers/plugins.ts";
 import { screenshot } from "./helpers/window.ts";
 import { mainWindow, playTestTrack } from "./launch.ts";
 
 test.use({ appOptions: { plugins: { "synced-lyrics": { enabled: true } } } });
-
-/** Plays the test track and opens the player page's Lyrics tab. */
-async function openLyricsTab(page: Page) {
-  await playTestTrack(page);
-  await waitForTrackPlaying(page);
-  await page.locator("ytmusic-player-page tp-yt-paper-tab").nth(1).click();
-}
 
 /**
  * An LRCLIB entry for the test track with word timing (LRCLIB rarely has it):
@@ -54,7 +48,6 @@ function wordSyncedEntry() {
   };
 }
 
-const lyrics = (page: Page) => page.locator("pear-synced-lyrics");
 const activeIndex = (page: Page) =>
   page.evaluate(() => {
     const lines = [...(document.querySelector("pear-synced-lyrics")?.shadowRoot?.querySelectorAll(".lines .line") ?? [])];
@@ -158,24 +151,15 @@ test("switches to the Apple Music style", async ({ app, page }) => {
   expect(seeked.activeStart).toBe(seeked.expected);
 
   // Scrolled down it slips away, and comes back when the pointer reaches the top.
-  await expect
-    .poll(() =>
-      page.evaluate(() => {
-        const lyricsHost = document.querySelector("pear-synced-lyrics")?.shadowRoot;
-        return lyricsHost?.querySelector<HTMLElement>(".apple-music-picker")?.style.getPropertyValue("--apple-music-picker-offset");
-      }),
-    )
-    .not.toBe("0px");
+  const pickerOffset = () =>
+    page.evaluate(() => {
+      const lyricsHost = document.querySelector("pear-synced-lyrics")?.shadowRoot;
+      return lyricsHost?.querySelector<HTMLElement>(".apple-music-picker")?.style.getPropertyValue("--apple-music-picker-offset");
+    });
+  await expect.poll(pickerOffset).not.toBe("0px");
   const lyricsBox = (await lyrics(page).boundingBox())!;
   await page.mouse.move(lyricsBox.x + lyricsBox.width / 2, lyricsBox.y + 8);
-  await expect
-    .poll(() =>
-      page.evaluate(() => {
-        const lyricsHost = document.querySelector("pear-synced-lyrics")?.shadowRoot;
-        return lyricsHost?.querySelector<HTMLElement>(".apple-music-picker")?.style.getPropertyValue("--apple-music-picker-offset");
-      }),
-    )
-    .toBe("0px");
+  await expect.poll(pickerOffset).toBe("0px");
 
   // Its arrows switch providers without losing the component or the picker.
   const appleProviders = (await applePicker

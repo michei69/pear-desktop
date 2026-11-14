@@ -3,13 +3,13 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { expect, test } from "./fixtures.ts";
-import { openSettings, pluginRow, searchbox } from "./helpers/settings.ts";
+import { openSettings, pluginRow, searchbox, waitForSettings } from "./helpers/settings.ts";
 
 test.use({ appOptions: { core: { general: { language: "de" } } } });
 
 test("follows the chosen language, with English for untranslated texts", async ({ page }) => {
   const de = JSON.parse(readFileSync(join(import.meta.dirname, "../../../src/i18n/resources/de.json"), "utf8"));
-  await page.waitForFunction(() => window.__pearRuntime?.settings);
+  await waitForSettings(page);
   // pear-desktop's translated plugin names.
   const name = await page.evaluate(() => window.__pearRuntime!.plugins.plugins.find((p) => p.id === "clock")!.name);
   expect(name).toBe(de.plugins.clock.name);

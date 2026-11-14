@@ -1,7 +1,7 @@
 // The settings dialog (in-page overlay and standalone window) drives plugins
 // and core options live and persists them to disk.
 
-import { expect, test } from "./fixtures.ts";
+import { expect, type Launch, test } from "./fixtures.ts";
 import { randomPort } from "./helpers/network.ts";
 import { playerStatus } from "./helpers/playback.ts";
 import { pluginConfig, pluginEnabled } from "./helpers/plugins.ts";
@@ -23,6 +23,40 @@ import type { Page } from "@playwright/test";
 const SAVE_TIMEOUT_MS = 5000;
 
 const navBarBlur = (page: Page) => page.evaluate(() => getComputedStyle(document.querySelector("#nav-bar-background")!).backdropFilter);
+
+const ROMANIZATION_LANGUAGES = [
+  "Japanese",
+  "Korean",
+  "Chinese",
+  "Thai",
+  "Bengali",
+  "Hindi",
+  "Tamil",
+  "Telugu",
+  "Kannada",
+  "Malayalam",
+  "Gujarati",
+  "Punjabi",
+  "Odia",
+  "Arabic",
+  "Persian",
+  "Urdu",
+  "Hebrew",
+  "Greek",
+  "Armenian",
+  "Georgian",
+  "Cyrillic",
+];
+
+async function openSyncedLyrics(launch: Launch) {
+  const app = await launch({ plugins: { "synced-lyrics": { enabled: true } } });
+  const page = await mainWindow(app);
+  await openSettings(page);
+  await openSection(page, "Plugins");
+  const card = pluginRow(page, "synced-lyrics");
+  await card.getByRole("button", { name: "Configure Synced lyrics" }).click();
+  return { app, card };
+}
 
 test("opens from the shortcut and the sidebar entry, closes with Escape", async ({ page }) => {
   const dialog = overlay(page).getByRole("dialog");
@@ -137,37 +171,10 @@ test("dependent settings indent, disable and hide", async ({ launch }) => {
 });
 
 test("romanization has its own section with a language multi-select", async ({ launch }) => {
-  const app = await launch({ plugins: { "synced-lyrics": { enabled: true } } });
-  const page = await mainWindow(app);
-  await openSettings(page);
-  await openSection(page, "Plugins");
-  const card = pluginRow(page, "synced-lyrics");
-  await card.getByRole("button", { name: "Configure Synced lyrics" }).click();
+  const { app, card } = await openSyncedLyrics(launch);
   await expect(card.locator(".plugin-group-title", { hasText: "Romanization" })).toBeVisible();
   await expect(card.getByRole("checkbox")).toHaveCount(21);
-  for (const label of [
-    "Japanese",
-    "Korean",
-    "Chinese",
-    "Thai",
-    "Bengali",
-    "Hindi",
-    "Tamil",
-    "Telugu",
-    "Kannada",
-    "Malayalam",
-    "Gujarati",
-    "Punjabi",
-    "Odia",
-    "Arabic",
-    "Persian",
-    "Urdu",
-    "Hebrew",
-    "Greek",
-    "Armenian",
-    "Georgian",
-    "Cyrillic",
-  ]) {
+  for (const label of ROMANIZATION_LANGUAGES) {
     await expect(card.getByRole("checkbox", { name: label })).toHaveAttribute("aria-checked", "true");
   }
   await expect(card.getByRole("switch", { name: "Romanize lyrics" })).toHaveCount(0);
@@ -177,12 +184,7 @@ test("romanization has its own section with a language multi-select", async ({ l
 });
 
 test("lyrics style controls which lyric settings are shown", async ({ launch }) => {
-  const app = await launch({ plugins: { "synced-lyrics": { enabled: true } } });
-  const page = await mainWindow(app);
-  await openSettings(page);
-  await openSection(page, "Plugins");
-  const card = pluginRow(page, "synced-lyrics");
-  await card.getByRole("button", { name: "Configure Synced lyrics" }).click();
+  const { card } = await openSyncedLyrics(launch);
   await expect(card.locator('[data-field="synced-lyrics-lineEffect"]')).toBeVisible();
   await expect(card.locator('[data-field="synced-lyrics-gapText"]')).toBeVisible();
   await card.getByRole("radio", { name: "Apple Music" }).click();
@@ -204,31 +206,7 @@ test("the old Romanize lyrics switch becomes the language list", async ({ launch
 });
 
 test("the previous granular switches become the language list", async ({ launch }) => {
-  const switches = Object.fromEntries(
-    [
-      "Japanese",
-      "Korean",
-      "Chinese",
-      "Thai",
-      "Bengali",
-      "Hindi",
-      "Tamil",
-      "Telugu",
-      "Kannada",
-      "Malayalam",
-      "Gujarati",
-      "Punjabi",
-      "Odia",
-      "Arabic",
-      "Persian",
-      "Urdu",
-      "Hebrew",
-      "Greek",
-      "Armenian",
-      "Georgian",
-      "Cyrillic",
-    ].map((label) => [`romanize${label}`, false]),
-  );
+  const switches = Object.fromEntries(ROMANIZATION_LANGUAGES.map((label) => [`romanize${label}`, false]));
   const app = await launch({
     plugins: {
       "synced-lyrics": {
@@ -344,12 +322,7 @@ test("hardware acceleration and cache reset live under Performance", async ({ la
 });
 
 test("translation provider settings follow the selected provider", async ({ launch }) => {
-  const app = await launch({ plugins: { "synced-lyrics": { enabled: true } } });
-  const page = await mainWindow(app);
-  await openSettings(page);
-  await openSection(page, "Plugins");
-  const card = pluginRow(page, "synced-lyrics");
-  await card.getByRole("button", { name: "Configure Synced lyrics" }).click();
+  const { card } = await openSyncedLyrics(launch);
 
   const openai = card.locator('[data-field="synced-lyrics-openaiApiKey"]');
   const anthropic = card.locator('[data-field="synced-lyrics-anthropicApiKey"]');

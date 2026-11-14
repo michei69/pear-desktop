@@ -1,6 +1,6 @@
 // Probes the tests install in the page or the main process, and their globals.
 
-import type { Page } from "@playwright/test";
+import type { ElectronApplication, Page } from "@playwright/test";
 
 declare global {
   interface Window {
@@ -41,4 +41,28 @@ export async function recordCalls(page: Page, selector: string, methods: readonl
     [selector, methods, key] as const,
   );
   return () => page.evaluate((key) => window.__pearCalls?.[key] ?? [], key);
+}
+
+export function recordTray(app: ElectronApplication, { images = false } = {}) {
+  return app.evaluate(
+    ({ Tray }, { images }) => {
+      const probe: NonNullable<typeof globalThis.__trayProbe> = { images: [], menu: [] };
+      globalThis.__trayProbe = probe;
+      if (images) {
+        const setImage = Tray.prototype.setImage;
+        Tray.prototype.setImage = function (this: Electron.Tray, image: Electron.NativeImage | string) {
+          // The icons differ in their pixels; a checksum tells them apart.
+          const bitmap = typeof image === "string" ? Buffer.alloc(0) : image.toBitmap();
+          probe.images.push(bitmap.reduce((sum, byte) => (sum + byte) % 1_000_003, 0));
+          return setImage.call(this, image);
+        };
+      }
+      const setContextMenu = Tray.prototype.setContextMenu;
+      Tray.prototype.setContextMenu = function (this: Electron.Tray, menu: Electron.Menu | null) {
+        probe.menu = menu?.items.map((item) => item.label) ?? [];
+        return setContextMenu.call(this, menu);
+      };
+    },
+    { images },
+  );
 }

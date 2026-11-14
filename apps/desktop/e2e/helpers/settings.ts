@@ -11,9 +11,11 @@ export const sectionButton = (page: Page, name: string) => overlay(page).getByRo
 /** The "some changes need a restart" alert; it stays mounted and collapses when nothing is pending. */
 export const restartBanner = (page: Page) => overlay(page).locator(".restart");
 
+export const waitForSettings = (page: Page) => page.waitForFunction(() => window.__pearRuntime?.settings);
+
 /** Opens the dialog with its shortcut, once the settings UI is up. */
 export async function openSettings(page: Page) {
-  await page.waitForFunction(() => window.__pearRuntime?.settings);
+  await waitForSettings(page);
   await page.keyboard.press("Control+,");
 }
 

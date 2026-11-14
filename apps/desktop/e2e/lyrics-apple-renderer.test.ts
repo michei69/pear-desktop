@@ -1,10 +1,10 @@
 // The clean-room Apple Music renderer against a controlled lrc.red TTML payload:
 // gaps, word timing, duet sides, background vocals, RTL, translations, scrolling.
 
+import type { Page } from "@playwright/test";
 import { expect, test } from "./fixtures.ts";
-import { waitForTrackPlaying } from "./helpers/playback.ts";
+import { lyrics, openLyricsTab } from "./helpers/lyrics.ts";
 import { screenshot } from "./helpers/window.ts";
-import { type mainWindow, playTestTrack } from "./launch.ts";
 
 const pad = (value: number, size = 2) => String(value).padStart(size, "0");
 const seconds = (value: number) => {
@@ -83,9 +83,7 @@ test.use({
   },
 });
 
-const lyrics = (page: Awaited<ReturnType<typeof mainWindow>>) => page.locator("pear-synced-lyrics");
-
-async function seek(page: Awaited<ReturnType<typeof mainWindow>>, at: number) {
+async function seek(page: Page, at: number) {
   await page.evaluate((seconds) => {
     window.__pearRuntime!.player.control({ type: "seek", seconds });
     window.__pearRuntime!.player.control({ type: "pause" });
@@ -95,7 +93,7 @@ async function seek(page: Awaited<ReturnType<typeof mainWindow>>, at: number) {
     .toBeGreaterThanOrEqual(Math.floor(at) - 1);
 }
 
-async function active(page: Awaited<ReturnType<typeof mainWindow>>) {
+async function active(page: Page) {
   return page.evaluate(() => {
     const root = document.querySelector("pear-synced-lyrics")?.shadowRoot?.querySelector(".apple-music-style");
     const line = root?.querySelector<HTMLElement>(".apple-line.active");
@@ -129,9 +127,7 @@ test("the clean-room Apple renderer matches the Apple Music style's behaviour", 
     });
   }, buildTTML());
 
-  await playTestTrack(page);
-  await waitForTrackPlaying(page);
-  await page.locator("ytmusic-player-page tp-yt-paper-tab").nth(1).click();
+  await openLyricsTab(page);
   await expect(lyrics(page)).toHaveAttribute("data-state", "synced", { timeout: 30_000 });
   await expect(lyrics(page)).toHaveAttribute("data-style", "apple-music");
   await expect(lyrics(page).locator("footer.source")).toHaveCount(0);

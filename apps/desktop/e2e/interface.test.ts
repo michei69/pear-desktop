@@ -6,7 +6,7 @@ import { waitForTrackPlaying } from "./helpers/playback.ts";
 import { pluginConfig, setConfig, setEnabled } from "./helpers/plugins.ts";
 import "./helpers/probes.ts";
 import { screenshot } from "./helpers/window.ts";
-import { mainWindow, playTestTrack } from "./launch.ts";
+import { launchPlaying, mainWindow } from "./launch.ts";
 import { sel } from "./helpers/player-bar.ts";
 
 /** YTM's own page background, without the album color. */
@@ -55,16 +55,13 @@ test("clock and navigation buttons live in the top bar", async ({ launch }) => {
 
 test("album colors, ambient glow and the video switch on the player page", async ({ launch }) => {
   test.setTimeout(180_000);
-  const app = await launch({
+  const { app, page } = await launchPlaying(launch, {
     plugins: {
       "album-color-theme": { enabled: true },
       "ambient-mode": { enabled: true, config: { blur: 60 } },
       "video-toggle": { enabled: true },
     },
   });
-  const page = await mainWindow(app);
-  await playTestTrack(page);
-  await waitForTrackPlaying(page);
 
   // The artwork's average color is mixed into YTM's palette.
   await expect.poll(() => page.evaluate(() => document.documentElement.classList.contains("pear-album-color"))).toBe(true);
@@ -116,10 +113,7 @@ test("album colors, ambient glow and the video switch on the player page", async
 
 test("the video switch and audio only share the playback mode", async ({ launch }) => {
   test.setTimeout(180_000);
-  const app = await launch({ plugins: { "audio-only": { enabled: true }, "video-toggle": { enabled: true } } });
-  const page = await mainWindow(app);
-  await playTestTrack(page);
-  await waitForTrackPlaying(page);
+  const { page } = await launchPlaying(launch, { plugins: { "audio-only": { enabled: true }, "video-toggle": { enabled: true } } });
 
   // Both plugins force playback-mode: audio only locks it to ATV and the video
   // switch wants OMV. Without the switch's ownership marker the two observers

@@ -8,7 +8,7 @@ import { waitForTrackPlaying } from "./helpers/playback.ts";
 import { pluginConfig, setConfig, setEnabled } from "./helpers/plugins.ts";
 import { recordCalls } from "./helpers/probes.ts";
 import { mainWindow, playTestTrack, TEST_TRACK } from "./launch.ts";
-import { inBar, sel } from "./helpers/player-bar.ts";
+import { inBar, sel, sliderVolume } from "./helpers/player-bar.ts";
 
 const PLAYING_TEST_MS = 240_000;
 
@@ -69,13 +69,6 @@ test.describe("pickers", () => {
     await expect(qualityButton).toHaveCount(0);
   });
 });
-
-// The slider position: YTM may map it through a loudness curve onto the player volume.
-const sliderVolume = (page: Page) =>
-  page.evaluate(
-    (slider) => Number(document.querySelector<HTMLElement & { value: number | string }>(slider)!.value),
-    sel("player_bar.volume_slider"),
-  );
 
 /** A wheel turn over YTM's own volume slider. */
 const wheel = (page: Page, deltaY: number) =>

@@ -2,11 +2,10 @@
 
 import type { Locator, Page } from "@playwright/test";
 import { expect, test } from "./fixtures.ts";
-import { waitForTrackPlaying } from "./helpers/playback.ts";
 import { setConfig, setEnabled } from "./helpers/plugins.ts";
 import { overlay } from "./helpers/settings.ts";
 import { screenshot, windowInfo } from "./helpers/window.ts";
-import { mainWindow, NO_WINDOW_MANAGER, playTestTrack } from "./launch.ts";
+import { launchPlaying, mainWindow, NO_WINDOW_MANAGER } from "./launch.ts";
 import { inBar, sel } from "./helpers/player-bar.ts";
 
 /** picture-in-picture's small window. */
@@ -179,13 +178,10 @@ test("transparent player makes the window see-through", async ({ launch }) => {
 });
 
 test("leaving picture in picture keeps the core always-on-top option", async ({ launch }) => {
-  const app = await launch({
+  const { app, page } = await launchPlaying(launch, {
     core: { window: { alwaysOnTop: true } },
     plugins: { "picture-in-picture": { enabled: true, config: { useNativePiP: false } } },
   });
-  const page = await mainWindow(app);
-  await playTestTrack(page);
-  await waitForTrackPlaying(page);
   expect((await windowInfo(app)).alwaysOnTop).toBe(true);
   const before = await windowInfo(app);
 
@@ -199,10 +195,9 @@ test("leaving picture in picture keeps the core always-on-top option", async ({ 
 
 test("picture in picture shrinks the window and restores it", async ({ launch }) => {
   test.setTimeout(180_000);
-  const app = await launch({ plugins: { "picture-in-picture": { enabled: true, config: { useNativePiP: false } } } });
-  const page = await mainWindow(app);
-  await playTestTrack(page);
-  await waitForTrackPlaying(page);
+  const { app, page } = await launchPlaying(launch, {
+    plugins: { "picture-in-picture": { enabled: true, config: { useNativePiP: false } } },
+  });
   const before = await windowInfo(app);
 
   // From the track's menu…

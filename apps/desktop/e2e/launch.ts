@@ -4,6 +4,7 @@ import { join } from "node:path";
 import { _electron as electron, type ElectronApplication, type Page } from "@playwright/test";
 import { ytmUrl } from "@pear/sdk/util";
 import { E2E_DISPLAY } from "./global-setup.ts";
+import { waitForTrackPlaying } from "./helpers/playback.ts";
 
 export interface LaunchOptions {
   /** Initial plugin states, written to config.json before launch. */
@@ -88,4 +89,12 @@ export async function mainWindow(app: ElectronApplication) {
   const page = await app.firstWindow();
   await page.waitForFunction(() => window.__pearRuntime, undefined, { timeout: LOAD_TIMEOUT_MS });
   return page;
+}
+
+export async function launchPlaying(launch: (options?: LaunchOptions) => Promise<App>, options: LaunchOptions = {}) {
+  const app = await launch(options);
+  const page = await mainWindow(app);
+  await playTestTrack(page);
+  await waitForTrackPlaying(page);
+  return { app, page };
 }

@@ -9,7 +9,7 @@ import { startConnectProxy, YTM_HOST } from "./helpers/network.ts";
 import { waitForTrackPlaying } from "./helpers/playback.ts";
 import { setCore } from "./helpers/plugins.ts";
 import { sel } from "./helpers/player-bar.ts";
-import { openSection, openSettings, overlay } from "./helpers/settings.ts";
+import { openSection, openSettings, overlay, waitForSettings } from "./helpers/settings.ts";
 import { isAlwaysOnTop } from "./helpers/window.ts";
 import { mainWindow, playTestTrack } from "./launch.ts";
 
@@ -85,7 +85,7 @@ test("the application menu, and hiding its bar", async ({ launch }) => {
   await expect.poll(async () => (await menu()).alwaysOnTop).toBe(false);
 
   // Settings opens the in-page dialog.
-  await page.waitForFunction(() => window.__pearRuntime?.settings);
+  await waitForSettings(page);
   await clickItem("settings");
   await expect(overlay(page).getByRole("dialog")).toBeVisible();
 });

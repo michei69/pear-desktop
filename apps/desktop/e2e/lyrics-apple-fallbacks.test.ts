@@ -2,11 +2,20 @@
 // provider errors share the same shell, picker and no source footer.
 
 import { expect, test } from "./fixtures.ts";
-import { waitForTrackPlaying } from "./helpers/playback.ts";
+import { lyrics, openLyricsTab, stubLyricsProviders } from "./helpers/lyrics.ts";
 import { screenshot } from "./helpers/window.ts";
-import { type mainWindow, playTestTrack } from "./launch.ts";
 
-const lyrics = (page: Awaited<ReturnType<typeof mainWindow>>) => page.locator("pear-synced-lyrics");
+const PLAIN_LYRICS = [
+  {
+    id: 1,
+    trackName: "Never Gonna Give You Up",
+    artistName: "Rick Astley",
+    duration: 213,
+    instrumental: false,
+    plainLyrics: "We're no strangers to love\nYou know the rules and so do I",
+    syncedLyrics: null,
+  },
+];
 
 test.use({
   appOptions: {
@@ -24,45 +33,11 @@ test.use({
   },
 });
 
-async function openLyrics(page: Awaited<ReturnType<typeof mainWindow>>) {
-  await playTestTrack(page);
-  await waitForTrackPlaying(page);
-  await page.locator("ytmusic-player-page tp-yt-paper-tab").nth(1).click();
-}
-
 test("renders plain lyrics in the Apple shell", async ({ app, page }) => {
   test.setTimeout(120_000);
-  await app.evaluate(({ session, net }) => {
-    const otherProviders = new Set([
-      "lrc.red",
-      "lrchub.coreone.work",
-      "api.megalobiz.com",
-      "apic-appmobile.musixmatch.com",
-      "interface.music.163.com",
-      "api-lyrics.simpmusic.org",
-      "ytmbrowseproxy.zvz.be",
-    ]);
-    session.defaultSession.protocol.handle("https", (request) => {
-      const host = new URL(request.url).hostname;
-      if (host === "lrclib.net") {
-        return Response.json([
-          {
-            id: 1,
-            trackName: "Never Gonna Give You Up",
-            artistName: "Rick Astley",
-            duration: 213,
-            instrumental: false,
-            plainLyrics: "We're no strangers to love\nYou know the rules and so do I",
-            syncedLyrics: null,
-          },
-        ]);
-      }
-      if (otherProviders.has(host)) return new Response("no lyrics", { status: 404 });
-      return net.fetch(request, { bypassCustomProtocolHandlers: true });
-    });
-  });
+  await stubLyricsProviders(app, { body: PLAIN_LYRICS });
 
-  await openLyrics(page);
+  await openLyricsTab(page);
   await expect(lyrics(page)).toHaveAttribute("data-state", "plain", { timeout: 30_000 });
   await expect(lyrics(page)).toHaveAttribute("data-style", "apple-music");
   await expect(lyrics(page).locator(".apple-music-plain .lines.plain .line")).toHaveCount(2);
@@ -76,38 +51,9 @@ test("renders plain lyrics in the Apple shell", async ({ app, page }) => {
 
 test("shows the loading fallback in the Apple shell", async ({ app, page }) => {
   test.setTimeout(120_000);
-  await app.evaluate(({ session, net }) => {
-    const otherProviders = new Set([
-      "lrc.red",
-      "lrchub.coreone.work",
-      "api.megalobiz.com",
-      "apic-appmobile.musixmatch.com",
-      "interface.music.163.com",
-      "api-lyrics.simpmusic.org",
-      "ytmbrowseproxy.zvz.be",
-    ]);
-    session.defaultSession.protocol.handle("https", async (request) => {
-      const host = new URL(request.url).hostname;
-      if (host === "lrclib.net") {
-        await new Promise((resolve) => setTimeout(resolve, 5_000));
-        return Response.json([
-          {
-            id: 1,
-            trackName: "Never Gonna Give You Up",
-            artistName: "Rick Astley",
-            duration: 213,
-            instrumental: false,
-            plainLyrics: "We're no strangers to love\nYou know the rules and so do I",
-            syncedLyrics: null,
-          },
-        ]);
-      }
-      if (otherProviders.has(host)) return new Response("no lyrics", { status: 404 });
-      return net.fetch(request, { bypassCustomProtocolHandlers: true });
-    });
-  });
+  await stubLyricsProviders(app, { body: PLAIN_LYRICS, delayMs: 5_000 });
 
-  await openLyrics(page);
+  await openLyricsTab(page);
   await expect(lyrics(page)).toHaveAttribute("data-state", "loading");
   await expect(lyrics(page).locator(".apple-music-style .kaomoji[aria-busy='true']")).toBeVisible();
   await screenshot(app, "lyrics-apple-loading");
@@ -116,25 +62,9 @@ test("shows the loading fallback in the Apple shell", async ({ app, page }) => {
 
 test("renders the retryable error in the Apple shell", async ({ app, page }) => {
   test.setTimeout(120_000);
-  await app.evaluate(({ session, net }) => {
-    const otherProviders = new Set([
-      "lrc.red",
-      "lrchub.coreone.work",
-      "api.megalobiz.com",
-      "apic-appmobile.musixmatch.com",
-      "interface.music.163.com",
-      "api-lyrics.simpmusic.org",
-      "ytmbrowseproxy.zvz.be",
-    ]);
-    session.defaultSession.protocol.handle("https", (request) => {
-      const host = new URL(request.url).hostname;
-      if (host === "lrclib.net") return new Response("provider unavailable", { status: 400 });
-      if (otherProviders.has(host)) return new Response("no lyrics", { status: 404 });
-      return net.fetch(request, { bypassCustomProtocolHandlers: true });
-    });
-  });
+  await stubLyricsProviders(app, { status: 400, body: "provider unavailable" });
 
-  await openLyrics(page);
+  await openLyricsTab(page);
   await expect(lyrics(page)).toHaveAttribute("data-state", "error", { timeout: 30_000 });
   await expect(lyrics(page)).toHaveAttribute("data-style", "apple-music");
   // Other providers keep searching after the lead errors; pin the picker to
