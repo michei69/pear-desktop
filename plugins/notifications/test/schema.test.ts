@@ -28,8 +28,7 @@ describe("notifications settings", () => {
       expect(onPlatform(field.platforms, "linux")).toBe(false);
       expect(onPlatform(field.platforms, "darwin")).toBe(false);
     }
-    // Playback buttons work wherever the OS shows notification actions.
-    expect(schema.interactive.platforms).toBeUndefined();
+    expect(schema.interactive.platforms).toEqual(["win32", "darwin"]);
     expect(schema.unpauseNotification.platforms).toBeUndefined();
   });
 
