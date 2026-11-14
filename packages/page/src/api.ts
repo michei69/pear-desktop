@@ -3,7 +3,20 @@
 // details, loading a video or playlist). Registered once; costs nothing while
 // the server is off.
 
-import { queueRenderer } from "@pear/sdk";
+import {
+  hydrateQueue,
+  nextQueueItems,
+  playerQueue,
+  queueRenderer,
+  queueSelectedIndex,
+  queueItems as sdkQueueItems,
+  type AppQueueState,
+  type NextQueueData,
+  type NextQueueItem,
+  type QueueAction,
+  type QueueElement,
+  type QueueItem,
+} from "@pear/sdk";
 import type { FlagValue } from "@pear/sdk/core-config";
 import { selectors, type SelectorName } from "@pear/sdk/selectors";
 import { readSongDetails } from "@pear/sdk/song-details";
@@ -15,35 +28,6 @@ import type { PluginRunner } from "./plugins.ts";
 import { continuationToken, queueItems, type AutoplayReply, type QueueItemResult, type QueueReply, type QueueRenderer } from "./queue.ts";
 import { searchResults, type SearchResult } from "./search.ts";
 
-interface QueueStoreState {
-  queue: { items: QueueItem[]; queueContextParams: unknown; nextQueueItemId: unknown };
-}
-interface QueueItem {
-  playlistPanelVideoRenderer?: { selected?: boolean; videoId?: string };
-  playlistPanelVideoWrapperRenderer?: { primaryRenderer?: { playlistPanelVideoRenderer?: { selected?: boolean; videoId?: string } } };
-  [key: string]: unknown;
-}
-type QueueAction = { type: string; payload?: unknown };
-interface QueueElement extends HTMLElement {
-  dispatch(action: QueueAction): void;
-  queue?: {
-    getItems(): QueueItem[];
-    autoPlaying?: boolean;
-    continuation?: string;
-    store: { store: { dispatch(action: QueueAction): void; getState(): QueueStoreState } };
-  };
-}
-interface ReduxQueue {
-  items?: QueueItem[];
-  automixItems?: QueueItem[];
-  selectedItemIndex?: number;
-  nextQueueItemId?: unknown;
-  playbackContentMode?: string;
-  repeatMode?: string;
-  shuffleEnabled?: boolean;
-  autoplay?: boolean;
-  isInfinite?: boolean;
-}
 interface NetworkManagerApp extends HTMLElement {
   networkManager: {
     fetch<T = unknown>(path: string, body?: unknown): Promise<T>;
@@ -52,30 +36,16 @@ interface NetworkManagerApp extends HTMLElement {
 interface AppElement extends HTMLElement {
   queue?: { continuation?: string };
   dispatch(action: QueueAction): void;
-  ytmusicReduxBehavior?: { store: { store: { getState(): { queue?: ReduxQueue } } } };
+  ytmusicReduxBehavior?: { store: { store: { getState(): { queue?: AppQueueState } } } };
   networkManager?: NetworkManagerApp["networkManager"];
 }
 interface SearchBox extends HTMLElement {
   getSearchboxStats?(): unknown;
 }
-interface NextData {
-  queueContextParams?: unknown;
-  playerOverlays?: unknown;
-  contents?: {
-    singleColumnMusicWatchNextResultsRenderer?: {
-      tabbedRenderer?: {
-        watchNextTabbedResultsRenderer?: {
-          tabs?: unknown[];
-        };
-      };
-    };
-  };
-}
 
 type Handle = (event: string, handler: (payload: unknown) => unknown) => void;
 
 const $ = <E extends Element = HTMLElement>(name: SelectorName) => document.querySelector<E>(selectors[name]);
-const queueElement = () => $<QueueElement>("queue");
 const appElement = () => $<AppElement>("app");
 
 // Answers go over IPC: drop anything that isn't plain JSON.
@@ -94,7 +64,7 @@ function playbackRate(player: VideoRate) {
  * the media element's rate can be left behind; forcing both makes the API's
  * answer true, as pear-desktop did.
  */
-export function applyPlaybackSpeed(player: VideoRate, value: number) {
+function applyPlaybackSpeed(player: VideoRate, value: number) {
   if (!Number.isFinite(value)) return;
   try {
     player.api?.setPlaybackRate(value);
@@ -176,7 +146,7 @@ function registerFullscreen(handle: Handle) {
 }
 
 /** The queue's redux state, where autoplay entries and the modes live. */
-function reduxQueue(): ReduxQueue | undefined {
+function reduxQueue(): AppQueueState | undefined {
   return appElement()?.ytmusicReduxBehavior?.store.store.getState().queue;
 }
 
@@ -201,13 +171,13 @@ function registerQueue(handle: Handle) {
 
   // v1's raw reply: the same object it has always answered with.
   handle("queue", () => {
-    const api = queueElement()?.queue;
+    const api = playerQueue()?.queue;
     if (!api) return null;
     return plain({ items: api.getItems(), autoPlaying: api.autoPlaying, continuation: api.continuation });
   });
 
   handle("queue:parsed", (payload) => {
-    const api = queueElement()?.queue;
+    const api = playerQueue()?.queue;
     if (!api) return null;
     const raw = (payload as { raw?: boolean } | undefined)?.raw === true;
     const data = reduxQueue();
@@ -228,7 +198,7 @@ function registerQueue(handle: Handle) {
   });
 
   handle("queue:next", () => {
-    const items = queueElement()?.queue?.getItems() ?? [];
+    const items = sdkQueueItems();
     const currentIndex = items.findIndex((item) => queueRenderer(item)?.selected === true);
     // Nothing selected yet (before playback starts, or a limbo queue): the
     // first entry is not the "next" one.
@@ -247,11 +217,11 @@ function registerQueue(handle: Handle) {
   handle("queue:add-items", (payload) => addItems(payload as { videoIds: string[]; playlistIds: string[]; insertPosition: string }));
   // v1's single-video add, unchanged.
   handle("queue:add", (payload) => addToQueue(payload as { videoId: string; insertPosition: string }));
-  handle("queue:move", (payload) => queueElement()?.dispatch({ type: "MOVE_ITEM", payload }));
-  handle("queue:remove", (index) => queueElement()?.dispatch({ type: "REMOVE_ITEM", payload: index }));
-  handle("queue:set-index", (index) => queueElement()?.dispatch({ type: "SET_INDEX", payload: index }));
+  handle("queue:move", (payload) => playerQueue()?.dispatch({ type: "MOVE_ITEM", payload }));
+  handle("queue:remove", (index) => playerQueue()?.dispatch({ type: "REMOVE_ITEM", payload: index }));
+  handle("queue:set-index", (index) => playerQueue()?.dispatch({ type: "SET_INDEX", payload: index }));
   handle("queue:clear", () => {
-    const element = queueElement();
+    const element = playerQueue();
     element?.queue?.store.store.dispatch({ type: "SET_PLAYER_PAGE_INFO", payload: { open: false } });
     element?.dispatch({ type: "CLEAR" });
   });
@@ -290,7 +260,7 @@ async function getAutoplay({ raw = false, continuation }: { raw?: boolean; conti
 
 /** Right after the playing item; the end when none is playing. */
 function indexAfterSelected(items: QueueItem[]) {
-  const selected = items.findIndex((item) => queueRenderer(item)?.selected);
+  const selected = queueSelectedIndex(items);
   return selected === -1 ? items.length : selected + 1;
 }
 
@@ -313,7 +283,7 @@ function addQueueContents(element: QueueElement, contents: unknown[], insertPosi
 }
 
 async function addToQueue({ videoId, insertPosition }: { videoId: string; insertPosition: string }) {
-  const element = queueElement();
+  const element = playerQueue();
   const store = element?.queue?.store.store;
   const app = $<NetworkManagerApp>("app");
   if (!element || !store || !app) throw new Error("queue unavailable");
@@ -336,7 +306,7 @@ async function addItems({
   playlistIds: string[];
   insertPosition: string;
 }) {
-  const element = queueElement();
+  const element = playerQueue();
   const state = element?.queue?.store.store.getState();
   const app = appElement();
   if (!element || !state || !app?.networkManager) throw new Error("queue unavailable");
@@ -359,38 +329,23 @@ async function addItems({
 
 /** v1's raw innertube search response. */
 async function search(payload: unknown) {
-  const { query, params, continuation } = payload as { query: string; params?: string; continuation?: string };
-  const app = $<NetworkManagerApp>("app");
-  const searchBox = $<SearchBox>("nav_bar.search_box");
-  if (!app) throw new Error(`${YTM_NAME} isn't ready`);
-  const suggestStats = searchBox?.getSearchboxStats?.();
-  return plain(await app.networkManager.fetch("/search", { query, params, continuation, suggestStats }));
+  return plain(await searchRequest(payload));
 }
 
 /** v2's parsed results, or the raw response with `raw`. */
 async function searchParsed(payload: unknown) {
-  const {
-    query,
-    params,
-    continuation,
-    raw = false,
-  } = payload as {
-    query: string;
-    params?: string;
-    continuation?: string;
-    raw?: boolean;
-  };
+  const { query, raw = false } = payload as { query: string; raw?: boolean };
+  const result = await searchRequest(payload);
+  const parsed: { query: string; results: SearchResult[] } | unknown = raw ? result : { query, results: searchResults(result) };
+  return plain(parsed);
+}
+
+async function searchRequest(payload: unknown) {
+  const { query, params, continuation } = payload as { query: string; params?: string; continuation?: string };
   const app = $<NetworkManagerApp>("app");
   const searchBox = $<SearchBox>("nav_bar.search_box");
   if (!app) throw new Error(`${YTM_NAME} isn't ready`);
-  const result = await app.networkManager.fetch<unknown>("/search", {
-    query,
-    params,
-    continuation,
-    suggestStats: searchBox?.getSearchboxStats?.(),
-  });
-  const parsed: { query: string; results: SearchResult[] } | unknown = raw ? result : { query, results: searchResults(result) };
-  return plain(parsed);
+  return app.networkManager.fetch("/search", { query, params, continuation, suggestStats: searchBox?.getSearchboxStats?.() });
 }
 
 /** Curated info for a browse page, or its raw response with `raw`. */
@@ -415,58 +370,25 @@ async function browse(payload: unknown): Promise<BrowseReply | unknown | null> {
   }
 }
 
-/** Hydrates the queue from a `/next` response, like the app's own navigation does. */
-function hydrateQueue(element: QueueElement, data: NextData, items: unknown[]) {
-  element.dispatch({ type: "CLEAR" });
-  element.dispatch({ type: "SET_QUEUE_CONTEXT_PARAMS", payload: data.queueContextParams });
-  element.dispatch({ type: "SET_PLAYER_PAGE_WATCH_NEXT_RESPONSE", payload: data });
-  element.dispatch({ type: "SET_PLAYER_OVERLAY", payload: data.playerOverlays });
-  element.dispatch({
-    type: "SET_PLAYER_PAGE_TABS",
-    payload: data.contents?.singleColumnMusicWatchNextResultsRenderer?.tabbedRenderer?.watchNextTabbedResultsRenderer?.tabs,
-  });
-  element.dispatch({ type: "SET_PLAYER_PAGE_TABS_CONTENT", payload: {} });
-  element.dispatch({
-    type: "ADD_ITEMS",
-    payload: { index: 0, items, nextQueueItemId: 0, shouldAssignIds: true },
-  });
-}
-
-async function playVideo(videoId?: string) {
+async function playNext(
+  request: { videoId?: string | undefined; playlistId?: string | undefined },
+  items: (data: NextQueueData) => NextQueueItem[],
+) {
   const api = playerApi();
   const app = appElement();
-  const element = queueElement();
-  if (!videoId || !api || !app?.networkManager || !element) return;
+  const element = playerQueue();
+  if ((!request.videoId && !request.playlistId) || !api || !app?.networkManager || !element) return;
   api.stopVideo?.();
-  const data = await app.networkManager.fetch<NextData>("/next?prettyPrint=false", { videoId });
-  const contents = queueContents(data);
-  hydrateQueue(
-    element,
-    data,
-    contents.filter((item) => item.playlistPanelVideoRenderer),
-  );
+  const data = await app.networkManager.fetch<NextQueueData>("/next?prettyPrint=false", request);
+  hydrateQueue(element, data, items(data));
 }
 
-async function playPlaylist(playlistId?: string) {
-  const api = playerApi();
-  const app = appElement();
-  const element = queueElement();
-  if (!playlistId || !api || !app?.networkManager || !element) return;
-  api.stopVideo?.();
-  const data = await app.networkManager.fetch<NextData>("/next?prettyPrint=false", { playlistId });
-  hydrateQueue(element, data, queueContents(data));
+function playVideo(videoId?: string) {
+  return playNext({ videoId }, (data) => nextQueueItems(data).filter((item) => item.playlistPanelVideoRenderer));
 }
 
-/** The playlist panel contents of a `/next` response. */
-function queueContents(data: NextData): { playlistPanelVideoRenderer?: unknown }[] {
-  const tabs = data.contents?.singleColumnMusicWatchNextResultsRenderer?.tabbedRenderer?.watchNextTabbedResultsRenderer?.tabs;
-  const tab = (
-    tabs as
-      | { tabRenderer?: { content?: { musicQueueRenderer?: { content?: { playlistPanelRenderer?: { contents?: unknown } } } } } }[]
-      | undefined
-  )?.[0];
-  const contents = tab?.tabRenderer?.content?.musicQueueRenderer?.content?.playlistPanelRenderer?.contents;
-  return Array.isArray(contents) ? (contents as { playlistPanelVideoRenderer?: unknown }[]) : [];
+function playPlaylist(playlistId?: string) {
+  return playNext({ playlistId }, nextQueueItems);
 }
 
 /** The movie player, with the optional calls this module needs. */

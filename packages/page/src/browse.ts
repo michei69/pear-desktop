@@ -1,31 +1,16 @@
 // Flattens YTM's raw browse response into the API's curated page shape.
 
-import { thumbnailSizes, thumbnailUrl, type Thumbnail } from "./queue.ts";
+import { continuationToken, thumbnailSizes, thumbnailUrl, type Thumbnail } from "./queue.ts";
 import {
-  bylineArtists,
   cardResult,
   rowResult,
-  searchResultIds,
+  subtitleResult,
+  type BrowseText,
+  type BylineRun,
   type MusicCardShelfRenderer,
   type MusicResponsiveListItemRenderer,
   type SearchResult,
 } from "./search.ts";
-
-interface BrowseText {
-  runs?: { text?: string }[];
-  simpleText?: string;
-}
-
-interface BylineRun {
-  text: string;
-  navigationEndpoint?: {
-    browseEndpoint?: {
-      browseEndpointContextSupportedConfigs?: {
-        browseEndpointContextMusicConfig?: { pageType?: string };
-      };
-    };
-  };
-}
 
 interface BrowseHeaderRenderer {
   title?: BrowseText;
@@ -89,36 +74,13 @@ function browseHeader(node: JsonObject): Pick<BrowseReply, "title" | "subtitle" 
 
 /** A two-row item (album, playlist or artist card) as one search-shaped result. */
 function twoRowResult(item: MusicTwoRowItemRenderer): SearchResult {
-  const subtitle = item.subtitle?.runs ?? [];
-  const labelled = subtitle.length > 1 && !subtitle[0]?.navigationEndpoint;
-  const thumbnails = thumbnailSizes(item.thumbnailRenderer?.musicThumbnailRenderer?.thumbnail);
-  const thumbnail = thumbnailUrl(thumbnails);
-  const videoId = item.navigationEndpoint?.watchEndpoint?.videoId;
-  const browseId = item.navigationEndpoint?.browseEndpoint?.browseId;
-  const title = browseText(item.title);
-  const artist = bylineArtists(subtitle.slice(labelled ? 1 : 0));
-  const type = labelled ? subtitle[0]?.text : undefined;
-
-  return {
-    ...(title ? { title } : {}),
-    ...(type ? { type } : {}),
-    ...(artist ? { artist } : {}),
-    ...(thumbnail ? { thumbnail } : {}),
-    ...(thumbnails ? { thumbnails } : {}),
-    ...searchResultIds(videoId, videoId ? undefined : browseId),
-  };
-}
-
-/** The next page token a continuations array carries, if any. */
-function continuationToken(continuations?: unknown) {
-  const list = continuations as
-    | { nextRadioContinuationData?: { continuation?: string }; nextContinuationData?: { continuation?: string } }[]
-    | undefined;
-  for (const entry of list ?? []) {
-    const token = entry.nextRadioContinuationData?.continuation ?? entry.nextContinuationData?.continuation;
-    if (token) return token;
-  }
-  return undefined;
+  return subtitleResult(
+    browseText(item.title),
+    item.subtitle?.runs ?? [],
+    thumbnailSizes(item.thumbnailRenderer?.musicThumbnailRenderer?.thumbnail),
+    item.navigationEndpoint?.watchEndpoint?.videoId,
+    item.navigationEndpoint?.browseEndpoint?.browseId,
+  );
 }
 
 /** Visits every object in a JSON tree, depth first, in response order. */

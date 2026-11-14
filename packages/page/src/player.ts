@@ -16,6 +16,7 @@ import {
   type YTPlayerApi,
   type YTPlayerResponse,
 } from "@pear/sdk";
+import { listenAll } from "@pear/sdk/dom";
 import { selectors, type SelectorName } from "@pear/sdk/selectors";
 import { clamp, isPlaying, sleep, ytmUrl } from "@pear/sdk/util";
 import { waitForSelector } from "./dom.ts";
@@ -233,43 +234,36 @@ export class Player implements PagePlayer {
     this.#videoCleanup?.();
     // Web Audio silences a cross-origin element that is not in CORS mode.
     ensureCORSMedia(video);
-    const listeners: [string, EventListener][] = [];
-    const on = (type: string, listener: EventListener) => {
-      video.addEventListener(type, listener);
-      listeners.push([type, listener]);
-    };
     const status = (next: PlaybackStatus) => () => {
       if (this.#state.status === next) return;
       // During ads the video's position is the ad's.
       this.#publishNow(this.#state.ad ? { status: next } : { status: next, positionSeconds: video.currentTime });
       this.#emitter.emit("statusChange", next);
     };
-    on("playing", status("playing"));
-    on("pause", status("paused"));
-    on("waiting", status("buffering"));
-    on("ended", status("ended"));
-    on("seeked", () => {
-      if (!this.#state.ad) this.#publishNow({ positionSeconds: video.currentTime });
-    });
     let lastSecond = -1;
-    on("timeupdate", () => {
-      if (this.#state.ad) return;
-      const second = Math.floor(video.currentTime);
-      if (second === lastSecond) return;
-      lastSecond = second;
-      this.#publishLater({ positionSeconds: video.currentTime });
-      this.#emitter.emit("timeUpdate", video.currentTime);
+    this.#videoCleanup = listenAll(video, {
+      playing: status("playing"),
+      pause: status("paused"),
+      waiting: status("buffering"),
+      ended: status("ended"),
+      seeked: () => {
+        if (!this.#state.ad) this.#publishNow({ positionSeconds: video.currentTime });
+      },
+      timeupdate: () => {
+        if (this.#state.ad) return;
+        const second = Math.floor(video.currentTime);
+        if (second === lastSecond) return;
+        lastSecond = second;
+        this.#publishLater({ positionSeconds: video.currentTime });
+        this.#emitter.emit("timeUpdate", video.currentTime);
+      },
+      volumechange: () => {
+        const volume = this.#readVolume();
+        const muted = this.#api?.isMuted() ?? video.muted;
+        this.#publishNow({ volume, muted });
+        this.#emitter.emit("volumeChange", volume, muted);
+      },
     });
-    on("volumechange", () => {
-      const volume = this.#readVolume();
-      const muted = this.#api?.isMuted() ?? video.muted;
-      this.#publishNow({ volume, muted });
-      this.#emitter.emit("volumeChange", volume, muted);
-    });
-    this.#videoCleanup = () => {
-      for (const [type, listener] of listeners) video.removeEventListener(type, listener);
-      this.#videoCleanup = undefined;
-    };
     if (!video.paused) status("playing")();
   }
 

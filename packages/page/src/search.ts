@@ -16,7 +16,7 @@ export interface SearchResult {
   url?: string;
 }
 
-interface BrowseText {
+export interface BrowseText {
   runs?: { text?: string }[];
   simpleText?: string;
 }
@@ -25,7 +25,7 @@ interface TextRuns {
   runs?: BylineRun[];
 }
 
-interface BylineRun {
+export interface BylineRun {
   text: string;
   navigationEndpoint?: {
     browseEndpoint?: {
@@ -135,6 +135,38 @@ export function bylineArtists(runs: BylineRun[]) {
   );
 }
 
+interface ResultFields {
+  title?: string | undefined;
+  type?: string | undefined;
+  artist?: string | undefined;
+  thumbnails?: Thumbnail[] | undefined;
+}
+
+function resultWithIds(fields: ResultFields, videoId?: string, browseId?: string): SearchResult {
+  const thumbnail = thumbnailUrl(fields.thumbnails);
+  return {
+    ...(fields.title ? { title: fields.title } : {}),
+    ...(fields.type ? { type: fields.type } : {}),
+    ...(fields.artist ? { artist: fields.artist } : {}),
+    ...(thumbnail ? { thumbnail } : {}),
+    ...(fields.thumbnails ? { thumbnails: fields.thumbnails } : {}),
+    ...searchResultIds(videoId, browseId),
+  };
+}
+
+export function subtitleResult(
+  title: string | undefined,
+  subtitle: BylineRun[],
+  thumbnails: Thumbnail[] | undefined,
+  videoId?: string,
+  browseId?: string,
+): SearchResult {
+  const labelled = subtitle.length > 1 && !subtitle[0]?.navigationEndpoint;
+  const artist = bylineArtists(subtitle.slice(labelled ? 1 : 0));
+  const type = labelled ? subtitle[0]?.text : undefined;
+  return resultWithIds({ title, type, artist, thumbnails }, videoId, browseId);
+}
+
 /** A row's id: playable rows carry `playlistItemData`, page rows a navigation endpoint. */
 export function rowResult(row: MusicResponsiveListItemRenderer): SearchResult {
   const columns = row.flexColumns?.map((column) => column.musicResponsiveListItemFlexColumnRenderer?.text?.runs ?? []);
@@ -149,37 +181,21 @@ export function rowResult(row: MusicResponsiveListItemRenderer): SearchResult {
     (browseId?.startsWith(EPISODE_BROWSE_PREFIX) ? browseId.slice(EPISODE_BROWSE_PREFIX.length) : undefined);
 
   const thumbnails = thumbnailSizes(row.thumbnail?.musicThumbnailRenderer?.thumbnail);
-  const thumbnail = thumbnailUrl(thumbnails);
   const artist = bylineArtists(byline.slice(labelled ? 1 : 0));
   const title = columns?.[0]?.[0]?.text;
   const type = labelled ? byline[0]?.text : undefined;
-  return {
-    ...(title ? { title } : {}),
-    ...(type ? { type } : {}),
-    ...(artist ? { artist } : {}),
-    ...(thumbnail ? { thumbnail } : {}),
-    ...(thumbnails ? { thumbnails } : {}),
-    ...searchResultIds(videoId, videoId ? undefined : browseId),
-  };
+  return resultWithIds({ title, type, artist, thumbnails }, videoId, browseId);
 }
 
 /** The top-result card: the same fields, with its id on `onTap`. */
 export function cardResult(card: MusicCardShelfRenderer): SearchResult {
-  const subtitle = card.subtitle?.runs ?? [];
-  const labelled = subtitle.length > 1 && !subtitle[0]?.navigationEndpoint;
-  const thumbnails = thumbnailSizes(card.thumbnail?.musicThumbnailRenderer?.thumbnail);
-  const thumbnail = thumbnailUrl(thumbnails);
-  const artist = bylineArtists(subtitle.slice(labelled ? 1 : 0));
-  const title = card.title?.runs?.[0]?.text;
-  const type = labelled ? subtitle[0]?.text : undefined;
-  return {
-    ...(title ? { title } : {}),
-    ...(type ? { type } : {}),
-    ...(artist ? { artist } : {}),
-    ...(thumbnail ? { thumbnail } : {}),
-    ...(thumbnails ? { thumbnails } : {}),
-    ...searchResultIds(card.onTap?.watchEndpoint?.videoId, card.onTap?.browseEndpoint?.browseId),
-  };
+  return subtitleResult(
+    card.title?.runs?.[0]?.text,
+    card.subtitle?.runs ?? [],
+    thumbnailSizes(card.thumbnail?.musicThumbnailRenderer?.thumbnail),
+    card.onTap?.watchEndpoint?.videoId,
+    card.onTap?.browseEndpoint?.browseId,
+  );
 }
 
 /** The rows a card's contents, a shelf or an item section carry. */

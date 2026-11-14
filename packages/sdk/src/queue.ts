@@ -65,11 +65,23 @@ export function queueDispatch(action: QueueAction) {
   playerQueue()?.dispatch(action);
 }
 
+export interface AppQueueState {
+  items?: QueueItem[];
+  automixItems?: QueueItem[];
+  selectedItemIndex?: number;
+  nextQueueItemId?: unknown;
+  playbackContentMode?: string;
+  repeatMode?: string;
+  shuffleEnabled?: boolean;
+  autoplay?: boolean;
+  isInfinite?: boolean;
+}
+
 /** The app element, where YTM's own queue slice lives (the app reads it here too). */
 interface AppQueueElement extends HTMLElement {
-  getState?(): { queue?: { shuffleEnabled?: boolean } } | undefined;
+  getState?(): { queue?: AppQueueState } | undefined;
   ytmusicReduxBehavior?: {
-    store: { store: { getState(): { queue?: { shuffleEnabled?: boolean } }; subscribe?(listener: () => void): unknown } };
+    store: { store: { getState(): { queue?: AppQueueState }; subscribe?(listener: () => void): unknown } };
   };
 }
 
@@ -128,4 +140,43 @@ export function onQueueChange(listener: () => void, timeoutMs = 10_000): () => v
     if (retry !== undefined) clearTimeout(retry);
     unsubscribe?.();
   };
+}
+
+export interface NextQueueData {
+  queueContextParams?: unknown;
+  playerOverlays?: unknown;
+  contents?: {
+    singleColumnMusicWatchNextResultsRenderer?: {
+      tabbedRenderer?: { watchNextTabbedResultsRenderer?: { tabs?: unknown[] } };
+    };
+  };
+}
+
+export interface NextQueueItem {
+  playlistPanelVideoRenderer?: unknown;
+  [key: string]: unknown;
+}
+
+export function nextQueueItems(data: NextQueueData): NextQueueItem[] {
+  const tabs = data.contents?.singleColumnMusicWatchNextResultsRenderer?.tabbedRenderer?.watchNextTabbedResultsRenderer?.tabs;
+  const tab = (
+    tabs as
+      | { tabRenderer?: { content?: { musicQueueRenderer?: { content?: { playlistPanelRenderer?: { contents?: unknown } } } } } }[]
+      | undefined
+  )?.[0];
+  const contents = tab?.tabRenderer?.content?.musicQueueRenderer?.content?.playlistPanelRenderer?.contents;
+  return Array.isArray(contents) ? (contents as NextQueueItem[]) : [];
+}
+
+export function hydrateQueue(queue: QueueElement, data: NextQueueData, items: readonly unknown[]): void {
+  queue.dispatch({ type: "CLEAR" });
+  queue.dispatch({ type: "SET_QUEUE_CONTEXT_PARAMS", payload: data.queueContextParams });
+  queue.dispatch({ type: "SET_PLAYER_PAGE_WATCH_NEXT_RESPONSE", payload: data });
+  queue.dispatch({ type: "SET_PLAYER_OVERLAY", payload: data.playerOverlays });
+  queue.dispatch({
+    type: "SET_PLAYER_PAGE_TABS",
+    payload: data.contents?.singleColumnMusicWatchNextResultsRenderer?.tabbedRenderer?.watchNextTabbedResultsRenderer?.tabs,
+  });
+  queue.dispatch({ type: "SET_PLAYER_PAGE_TABS_CONTENT", payload: {} });
+  queue.dispatch({ type: "ADD_ITEMS", payload: { index: 0, items, nextQueueItemId: 0, shouldAssignIds: true } });
 }

@@ -4,8 +4,6 @@
 import { queueRenderer, type QueueItem } from "@pear/sdk";
 import { YTM_ORIGIN } from "@pear/sdk/util";
 
-export { queueRenderer };
-
 export interface Thumbnail {
   url: string;
   width?: number;

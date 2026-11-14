@@ -63,6 +63,12 @@ export function isPlaying(state: Pick<NowPlaying, "status">) {
   return state.status === "playing" || state.status === "buffering";
 }
 
+export function isPaused(state: Pick<NowPlaying, "status" | "ad">) {
+  return state.ad || !isPlaying(state);
+}
+
+export const dbToLinear = (db: number) => 10 ** (db / 20);
+
 type Timer = ReturnType<typeof setTimeout>;
 
 /**

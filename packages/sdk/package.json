@@ -20,6 +20,7 @@
     "./jsx-runtime": "./src/jsx-runtime.ts",
     "./jsx-dev-runtime": "./src/jsx-dev-runtime.ts",
     "./dom": "./src/dom.tsx",
+    "./image": "./src/image.ts",
     "./stylesheets": "./src/stylesheets.ts",
     "./artwork": "./src/artwork.ts",
     "./innertube": "./src/innertube.ts",

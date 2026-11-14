@@ -619,3 +619,73 @@ export function openBrowsePage(browseId: string) {
   const detail = { endpoint: { browseEndpoint: { browseId } } };
   document.querySelector(selectors.app)?.dispatchEvent(new CustomEvent("yt-navigate", { bubbles: true, composed: true, detail }));
 }
+
+export function listenAll(
+  target: EventTarget,
+  handlers: Readonly<Record<string, EventListener>>,
+  options?: AddEventListenerOptions,
+): () => void {
+  const entries = Object.entries(handlers);
+  for (const [type, listener] of entries) target.addEventListener(type, listener, options);
+  return () => {
+    for (const [type, listener] of entries) target.removeEventListener(type, listener, options);
+  };
+}
+
+export interface ElementState {
+  attribute(element: Element | null, name: string, value: string | null): void;
+  style(element: HTMLElement | null, property: string, value: string): void;
+  restoreStyle(element: HTMLElement | null, property: string): void;
+  restore(): void;
+}
+
+export function elementRestorer(): ElementState {
+  const attributes = new Map<Element, Map<string, string | null>>();
+  const styles = new Map<HTMLElement, Map<string, [string, string]>>();
+
+  function restore() {
+    for (const [element, values] of attributes) {
+      for (const [name, value] of values) {
+        if (value === null) element.removeAttribute(name);
+        else element.setAttribute(name, value);
+      }
+    }
+    attributes.clear();
+    for (const [element, properties] of styles) {
+      for (const [property, [value, priority]] of properties) {
+        if (value) element.style.setProperty(property, value, priority);
+        else element.style.removeProperty(property);
+      }
+    }
+    styles.clear();
+  }
+
+  return {
+    attribute(element, name, value) {
+      if (!element || element.getAttribute(name) === value) return;
+      let saved = attributes.get(element);
+      if (!saved) attributes.set(element, (saved = new Map()));
+      if (!saved.has(name)) saved.set(name, element.getAttribute(name));
+      if (value === null) element.removeAttribute(name);
+      else element.setAttribute(name, value);
+    },
+    style(element, property, value) {
+      if (!element || element.style.getPropertyValue(property) === value) return;
+      let properties = styles.get(element);
+      if (!properties) styles.set(element, (properties = new Map()));
+      if (!properties.has(property)) {
+        properties.set(property, [element.style.getPropertyValue(property), element.style.getPropertyPriority(property)]);
+      }
+      element.style.setProperty(property, value);
+    },
+    restoreStyle(element, property) {
+      if (!element) return;
+      const properties = styles.get(element);
+      const previous = properties?.get(property);
+      if (!properties || !previous) return;
+      element.style.setProperty(property, previous[0], previous[1]);
+      properties.delete(property);
+    },
+    restore,
+  };
+}
