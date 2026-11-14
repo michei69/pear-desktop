@@ -4,13 +4,14 @@
 // are the server's (the same token as the REST API).
 
 import type { IncomingMessage, ServerResponse } from "node:http";
-import { toJsonSchema, v } from "@pear/sdk/rpc";
+import { v } from "@pear/sdk/rpc";
+import { validationMessage } from "../validation.ts";
+import { inputJsonSchema, isJsonObject, readBody } from "./body-schema.ts";
 import type { McpTool } from "./mcp-tools.ts";
 
 export const MCP_PATH = "/mcp";
 /** Shown by MCP clients in their server list. */
 const SERVER_INFO = { name: "pear-desktop", version: "2.1.0" };
-const MAX_BODY_BYTES = 1 << 20;
 const FALLBACK_PROTOCOL = "2024-11-05";
 
 interface JsonRpcRequest {
@@ -21,24 +22,6 @@ interface JsonRpcRequest {
 }
 
 type JsonRpcResponse = { jsonrpc: "2.0"; id: unknown; result?: unknown; error?: { code: number; message: string } };
-
-function readBody(req: IncomingMessage) {
-  const { promise, resolve, reject } = Promise.withResolvers<string>();
-  const chunks: Buffer[] = [];
-  let size = 0;
-  req.on("data", (chunk: Buffer) => {
-    size += chunk.length;
-    if (size > MAX_BODY_BYTES) {
-      reject(new Error("body too large"));
-      req.destroy();
-    } else chunks.push(chunk);
-  });
-  req.on("end", () => resolve(Buffer.concat(chunks).toString("utf8")));
-  req.on("error", reject);
-  return promise;
-}
-
-const isObject = (value: unknown): value is Record<string, unknown> => typeof value === "object" && value !== null && !Array.isArray(value);
 
 const error = (id: unknown, code: number, message: string): JsonRpcResponse => ({
   jsonrpc: "2.0",
@@ -67,29 +50,10 @@ async function handleCall(tools: readonly McpTool[], id: unknown, params: Record
   }
 }
 
-/** "volume: Invalid type: Expected number", the shape the plugin RPC errors use too. */
-function validationMessage(issues: readonly v.BaseIssue<unknown>[]) {
-  return issues
-    .map((issue) => {
-      const path = v.getDotPath(issue);
-      return path ? `${path}: ${issue.message}` : issue.message;
-    })
-    .join("; ");
-}
-
-/** The input as JSON schema for `tools/list`; parts JSON schema can't express are left out. */
-function inputSchema(input: v.GenericSchema) {
-  try {
-    return toJsonSchema(input, { errorMode: "ignore" });
-  } catch {
-    return { type: "object" };
-  }
-}
-
 async function handleMessage(tools: readonly McpTool[], message: JsonRpcRequest) {
   const { id, method, params } = message;
   const notification = id === undefined || id === null;
-  const settings = isObject(params) ? params : {};
+  const settings = isJsonObject(params) ? params : {};
 
   if (typeof method !== "string") {
     return notification ? undefined : error(id, -32600, "Invalid Request");
@@ -123,7 +87,7 @@ async function handleMessage(tools: readonly McpTool[], message: JsonRpcRequest)
           tools: tools.map((tool) => ({
             name: tool.name,
             description: tool.description,
-            inputSchema: inputSchema(tool.input),
+            inputSchema: inputJsonSchema(tool.input) ?? { type: "object" },
             ...(tool.readOnly ? { annotations: { readOnlyHint: true } } : {}),
           })),
         },
@@ -159,14 +123,14 @@ export async function handleMcpRequest(req: IncomingMessage, res: ServerResponse
   }
 
   if (Array.isArray(parsed)) {
-    const responses = (await Promise.all(parsed.filter(isObject).map((message) => handleMessage(tools, message as JsonRpcRequest)))).filter(
-      (response): response is JsonRpcResponse => response !== undefined,
-    );
+    const responses = (
+      await Promise.all(parsed.filter(isJsonObject).map((message) => handleMessage(tools, message as JsonRpcRequest)))
+    ).filter((response): response is JsonRpcResponse => response !== undefined);
     send(res, responses.length ? 200 : 202, responses.length ? responses : undefined);
     return;
   }
 
-  if (!isObject(parsed)) {
+  if (!isJsonObject(parsed)) {
     send(res, 400, error(null, -32600, "Invalid Request"));
     return;
   }

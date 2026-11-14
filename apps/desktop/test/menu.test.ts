@@ -1,9 +1,10 @@
 import type { PluginMenuItem } from "@pear/sdk";
 import type { ApiServerConfig, CoreSection } from "@pear/sdk/core-config";
-import { dialog, type MenuItemConstructorOptions } from "electron";
+import type { MenuItemConstructorOptions } from "electron";
 import { describe, expect, test, vi } from "vitest";
 import { MenuItems } from "../src/main/menu-items.ts";
 import { type ApiServerMenu, menuTemplate } from "../src/main/menu.ts";
+import { API_SERVER_CONFIG } from "./api-server-config.ts";
 
 vi.mock("electron", () => ({ app: { name: "App" }, dialog: { showOpenDialog: vi.fn() } }));
 
@@ -12,19 +13,6 @@ interface PluginToggle {
   name: string;
   enabled: boolean;
 }
-
-const API_SERVER: ApiServerConfig = {
-  enabled: false,
-  hostname: "127.0.0.1",
-  port: 26538,
-  authStrategy: "AUTH_AT_FIRST",
-  authorizedClients: [],
-  secret: "",
-  mcpEnabled: false,
-  useHttps: false,
-  certPath: "",
-  keyPath: "",
-};
 
 describe("menuTemplate", () => {
   const env = (
@@ -42,7 +30,7 @@ describe("menuTemplate", () => {
   ) => {
     const core = options.core ?? {};
     const api: ApiServerMenu = {
-      config: { ...API_SERVER, ...options.apiServer },
+      config: { ...API_SERVER_CONFIG, ...options.apiServer },
       set: vi.fn(),
     };
     return {

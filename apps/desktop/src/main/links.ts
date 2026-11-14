@@ -45,29 +45,32 @@ function isInApp(hostname: string) {
   return IN_APP_DOMAINS.some((domain) => hostname === domain || hostname.endsWith(`.${domain}`));
 }
 
+function linkTarget(parsed: URL): "external" | "in-app" | "blank" | "deny" {
+  if (EXTERNAL_SCHEMES.has(parsed.protocol)) return "external";
+  // OAuth popups start blank and navigate to the sign-in flow.
+  if (parsed.protocol === "about:" && parsed.pathname === "blank") return "blank";
+  if (!isWeb(parsed)) return "deny";
+  // Keep the video site and Google in the app, but never downgrade them to http.
+  return parsed.protocol === "https:" && isInApp(parsed.hostname) ? "in-app" : "external";
+}
+
 /** A new window the page asked for (target=_blank, middle or Ctrl+click, window.open). */
 export function windowOpenAction(url: string): WindowOpenAction {
   const parsed = URL.parse(url);
   if (!parsed) return "deny";
-  if (EXTERNAL_SCHEMES.has(parsed.protocol)) return "external";
-  // OAuth popups start blank and navigate to the sign-in flow.
-  if (parsed.protocol === "about:" && parsed.pathname === "blank") return "popup";
-  if (!isWeb(parsed)) return "deny";
   if (parsed.origin === YTM_ORIGIN) return "load";
-  if (parsed.protocol === "https:" && isInApp(parsed.hostname)) return "popup";
-  return "external";
+  const target = linkTarget(parsed);
+  if (target === "in-app" || target === "blank") return "popup";
+  return target;
 }
 
 /** A navigation the main window's page started (links, location changes, form posts). */
 export function navigationAction(url: string): NavigationAction {
   const parsed = URL.parse(url);
   if (!parsed) return "deny";
-  if (EXTERNAL_SCHEMES.has(parsed.protocol)) return "external";
-  if (!isWeb(parsed)) return "deny";
   if (parsed.origin === YTM_ORIGIN || isAuthFlow(parsed)) return "allow";
-  // Keep the video site and Google in the app, but never downgrade them to http.
-  if (parsed.protocol === "https:" && isInApp(parsed.hostname)) return "allow";
-  return "external";
+  const target = linkTarget(parsed);
+  return target === "in-app" ? "allow" : target === "blank" ? "deny" : target;
 }
 
 /**

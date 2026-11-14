@@ -5,9 +5,9 @@ import { join } from "node:path";
 import { definePlugin, type HostContext } from "@pear/sdk";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { Settings } from "../src/main/config.ts";
-import { MenuItems } from "../src/main/menu-items.ts";
 import { PluginHost } from "../src/main/plugins.ts";
 import { WebRequestRouter } from "../src/main/web-request.ts";
+import { fakeHostEnvironment } from "./plugin-host.ts";
 
 vi.mock("electron", () => ({}));
 
@@ -40,21 +40,7 @@ function setup(plugin: ReturnType<typeof slowPlugin>["plugin"]) {
     webRequest: new Proxy({}, { get: (_, event: string) => (listener: unknown) => void (webRequestListeners[event] = listener) }),
   };
   const router = new WebRequestRouter(session as never);
-  host.attach({
-    app: {} as never,
-    window: {} as never,
-    session: session as never,
-    router,
-    player: player as never,
-    requests: {} as never,
-    send() {},
-    openSettings() {},
-    focusWindow() {},
-    menuItems: new MenuItems(),
-    broadcast() {},
-    onProtocol: () => () => {},
-    onDisabled() {},
-  });
+  host.attach(fakeHostEnvironment({ session: session as never, router, player: player as never }));
   const fire = (event: string, details: object) => (webRequestListeners[event] as (d: object) => void)(details);
   return { host, off, fire };
 }

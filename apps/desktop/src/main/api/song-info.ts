@@ -1,6 +1,7 @@
 // The player state in the original API's terms (SongInfo, repeat mode names).
 
-import { livePosition, type NowPlaying, type RepeatMode } from "@pear/sdk";
+import { livePosition, type LikeStatus, type NowPlaying, type RepeatMode } from "@pear/sdk";
+import { isPlaying } from "@pear/sdk/util";
 import type { SongDetails } from "@pear/sdk/song-details";
 import type { MediaTypeName, SongInfo } from "./types.ts";
 
@@ -13,9 +14,14 @@ const MUSIC_VIDEO_TYPES: Record<string, MediaTypeName> = {
 const MEDIA_TYPES: Record<string, MediaTypeName> = { audio: "AUDIO", video: "ORIGINAL_MUSIC_VIDEO", podcast: "PODCAST_EPISODE" };
 
 export const REPEAT_NAMES: Record<RepeatMode, "NONE" | "ALL" | "ONE"> = { none: "NONE", all: "ALL", one: "ONE" };
+export const RATING_NAMES: Record<LikeStatus, "LIKE" | "DISLIKE" | "INDIFFERENT"> = {
+  like: "LIKE",
+  dislike: "DISLIKE",
+  none: "INDIFFERENT",
+};
 
 export function isPaused(state: NowPlaying) {
-  return state.ad || (state.status !== "playing" && state.status !== "buffering");
+  return state.ad || !isPlaying(state);
 }
 
 export function songInfo(state: NowPlaying, details: SongDetails | undefined): SongInfo | null {

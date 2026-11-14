@@ -7,12 +7,7 @@
 // Values are valid for pear-desktop and its plugins: in-range numbers, real
 // select options, the nested shapes 3.12.4 stored.
 
-import { PLAY_BUTTON } from "./pear-desktop-3.ts";
-
-/** The stored config, last written by pear-desktop 3.12.4. */
-export function from3124<T extends object>(stored: T) {
-  return { ...stored, __internal__: { migrations: { version: "3.12.4" } } };
-}
+import { fromVersion, PLAY_BUTTON } from "./pear-desktop-3.ts";
 
 /** pear-desktop's 11-band equalizer curve, as 3.12.4 stored it (with band ids). */
 const EQ_BANDS = [20, 40, 80, 160, 320, 640, 1280, 2560, 5120, 10240, 20480].map((frequency, index) => ({
@@ -33,7 +28,8 @@ const EQ_USER_PRESET = {
 
 const WAVE_ANIMATIONS = [{ type: "Cubes", config: { bottom: true, count: 3, cubeHeight: 5 } }];
 
-export const PEAR_DESKTOP_3_COMPLETE = from3124({
+/** The stored config, last written by pear-desktop 3.12.4. */
+export const PEAR_DESKTOP_3_COMPLETE = fromVersion("3.12.4", {
   "window-size": { width: 1280, height: 720 },
   "window-maximized": true,
   "window-position": { x: 40, y: 60 },

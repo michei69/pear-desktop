@@ -5,9 +5,13 @@
 // Built from parts: the app's name isn't spelled out in the sources.
 export const PLAY_BUTTON = `playOn${["You", "Tube", "Music"].join("")}`;
 
+export function fromVersion<T extends object>(version: string, stored: T) {
+  return { ...stored, __internal__: { migrations: { version } } };
+}
+
 /** A stored config as pear-desktop 3.12 last wrote it. */
 export function from312<T extends object>(stored: T) {
-  return { ...stored, __internal__: { migrations: { version: "3.12.0" } } };
+  return fromVersion("3.12.0", stored);
 }
 
 export const PEAR_DESKTOP_3 = from312({

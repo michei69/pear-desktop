@@ -8,6 +8,7 @@ import { join } from "node:path";
 import { app } from "electron";
 import { livePosition } from "@pear/sdk";
 import { artworkImage } from "@pear/sdk/artwork";
+import { isPlaying } from "@pear/sdk/util";
 import type SMTCPlayer from "@michei69/node-smtc";
 import type { PlayerMirror } from "./player.ts";
 
@@ -75,8 +76,7 @@ export function startSmtc(Addon: SmtcConstructor, player: PlayerMirror, options:
     smtc.setPosition(livePosition(state) * 1000);
     smtc.setShuffle(state.shuffle);
     smtc.setAutoRepeat(REPEAT[state.repeat]);
-    const status =
-      state.status === "playing" || state.status === "buffering" ? "playing" : state.status === "paused" ? "paused" : "stopped";
+    const status = isPlaying(state) ? "playing" : state.status === "paused" ? "paused" : "stopped";
     if (status !== currentStatus) {
       currentStatus = status;
       smtc.setPlaybackStatus(status);

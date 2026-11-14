@@ -38,6 +38,8 @@ function fromOutcome<T>(result: Outcome<T>, empty: string): McpToolResult {
 
 const optional = <S extends v.GenericSchema>(schema: S) => v.optional(schema);
 
+const stringArg = (value: unknown) => (typeof value === "string" ? value : undefined);
+
 const NO_ARGS = v.object({});
 
 const string = v.string();
@@ -101,7 +103,7 @@ const TOOLS: ToolDefinition[] = [
     description: "Download a video, or the current track, with the downloader plugin.",
     input: DOWNLOAD,
     async run(o, args) {
-      return fromOutcome(await o.downloadVideo(typeof args.videoId === "string" ? args.videoId : undefined), "Success");
+      return fromOutcome(await o.downloadVideo(stringArg(args.videoId)), "Success");
     },
   },
   {
@@ -142,7 +144,7 @@ const TOOLS: ToolDefinition[] = [
     input: LYRICS,
     readOnly: true,
     async run(o, args) {
-      return fromOutcome(await o.lyrics(typeof args.videoId === "string" ? args.videoId : undefined), "No lyrics available");
+      return fromOutcome(await o.lyrics(stringArg(args.videoId)), "No lyrics available");
     },
   },
   {
@@ -151,7 +153,7 @@ const TOOLS: ToolDefinition[] = [
     input: LYRICS,
     readOnly: true,
     async run(o, args) {
-      return fromOutcome(await o.lyricsTranslations(typeof args.videoId === "string" ? args.videoId : undefined), "No entries");
+      return fromOutcome(await o.lyricsTranslations(stringArg(args.videoId)), "No entries");
     },
   },
   {
@@ -159,10 +161,7 @@ const TOOLS: ToolDefinition[] = [
     description: "Translate the lyrics into a language and cache the result.",
     input: TRANSLATE,
     async run(o, args) {
-      return fromOutcome(
-        await o.translateLyrics(String(args.lang), typeof args.videoId === "string" ? args.videoId : undefined),
-        "No lines",
-      );
+      return fromOutcome(await o.translateLyrics(String(args.lang), stringArg(args.videoId)), "No lines");
     },
   },
 
@@ -318,10 +317,7 @@ const TOOLS: ToolDefinition[] = [
     input: AUTOPLAY,
     readOnly: true,
     async run(o, args) {
-      return fromOutcome(
-        await o.autoplay(args.raw === true, typeof args.continuation === "string" ? args.continuation : undefined),
-        "No autoplay entries",
-      );
+      return fromOutcome(await o.autoplay(args.raw === true, stringArg(args.continuation)), "No autoplay entries");
     },
   },
   { name: "clear_queue", description: "Clear the queue.", input: NO_ARGS, run: (o) => (o.clearQueue(), ok()) },

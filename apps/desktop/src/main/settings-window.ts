@@ -9,7 +9,7 @@ import { type RestartRequirement, SETTINGS_ORIGIN } from "@pear/sdk/protocol";
 import settingsApp from "virtual:pear/settings-app";
 import { isSettingsUrl } from "../shared/user-agent.ts";
 import { errorPage } from "./load-failure.ts";
-import { alive, appIcon, focusWindow, secureWebPreferences } from "./windows.ts";
+import { alive, appIcon, focusWindow, secureWebPreferences, showWhenReady } from "./windows.ts";
 
 const PAGE = `<!doctype html>
 <html lang="en">
@@ -105,15 +105,8 @@ export function openSettingsWindow(useYtmIcons: boolean) {
   settingsWindow = window;
   // The window paints its own background; show it once the page has painted or
   // after a short timer, whichever comes first (the main window's rule).
-  const show = () => {
-    if (window.isDestroyed() || window.isVisible()) return;
-    window.show();
-  };
-  const fallback = setTimeout(show, SHOW_FALLBACK_DELAY_MS);
-  window.once("show", () => clearTimeout(fallback));
-  window.once("ready-to-show", show);
+  const show = showWhenReady(window, SHOW_FALLBACK_DELAY_MS);
   window.on("closed", () => {
-    clearTimeout(fallback);
     if (settingsWindow === window) settingsWindow = undefined;
   });
   window.webContents.on("did-fail-load", (_event, errorCode, description, url, isMainFrame) => {

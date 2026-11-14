@@ -2,7 +2,7 @@
 // call these, so behavior and error messages can't drift between surfaces.
 
 import { type NowPlaying, type PlayerAction, livePosition } from "@pear/sdk";
-import { isPlaying } from "@pear/sdk/util";
+import { errorMessage, isPlaying } from "@pear/sdk/util";
 import { type FlagValue, type Flags, flagOverrides, performanceModeOverrides, withFlagOverride } from "@pear/sdk/core-config";
 import type { SongDetails } from "@pear/sdk/song-details";
 import { getAppMeta } from "../app-meta.ts";
@@ -47,7 +47,6 @@ export interface OperationEnvironment {
 const ok = <T>(value: T): Outcome<T, never> => ({ ok: true, value });
 const done = (): Outcome<undefined, never> => ({ ok: true, value: undefined });
 const fail = <S extends FailureStatus>(status: S, error: string): Outcome<never, S> => ({ ok: false, status, error });
-const messageOf = (error: unknown) => (error instanceof Error ? error.message : String(error));
 
 const LYRICS_DISABLED = "The synced-lyrics plugin is disabled.";
 const DOWNLOADER_DISABLED = "The downloader plugin is disabled.";
@@ -83,7 +82,7 @@ export function createOperations(env: OperationEnvironment) {
     try {
       return ok(await env.page<T>(event, payload, options));
     } catch (error) {
-      return fail(502, messageOf(error));
+      return fail(502, errorMessage(error));
     }
   };
 
@@ -138,7 +137,7 @@ export function createOperations(env: OperationEnvironment) {
       );
       return result.ok ? ok(result.value as T) : fail(502, result.error);
     } catch (error) {
-      return fail(502, messageOf(error));
+      return fail(502, errorMessage(error));
     }
   };
 

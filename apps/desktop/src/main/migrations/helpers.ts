@@ -84,6 +84,10 @@ export function fractionToPercent(entry: Json, key: string) {
 
 /** Keeps a number the rewrite would reject as out of range (and reset to its default) within the range. */
 export function clampNumber(entry: Json, key: string, min: number, max: number) {
-  const value = entry[key];
-  if (isNumber(value)) entry[key] = clamp(value, min, max);
+  const value = clampedValue(entry[key], min, max);
+  if (value !== undefined) entry[key] = value;
+}
+
+export function clampedValue(value: unknown, min: number, max: number) {
+  return isNumber(value) ? clamp(value, min, max) : undefined;
 }

@@ -12,6 +12,7 @@ import type { Settings } from "./config.ts";
 import type { I18n } from "./i18n.ts";
 import type { PageRequests } from "./page-requests.ts";
 import type { PlayerMirror } from "./player.ts";
+import { validationMessage } from "./validation.ts";
 import type { WebRequestRouter } from "./web-request.ts";
 
 type AnyConfig = Record<string, unknown>;
@@ -232,15 +233,7 @@ export class PluginHost {
     const instance = this.#instances.get(id);
     if (!instance) return { ok: false, status: 503, error: `plugin "${id}" is disabled` };
     const parsed = v.safeParse(method.input, body);
-    if (!parsed.success) {
-      const error = parsed.issues
-        .map((issue) => {
-          const path = v.getDotPath(issue);
-          return path ? `${path}: ${issue.message}` : issue.message;
-        })
-        .join("; ");
-      return { ok: false, status: 400, error };
-    }
+    if (!parsed.success) return { ok: false, status: 400, error: validationMessage(parsed.issues) };
     return { ok: true, value: await method.run.call(instance.ctx, parsed.output) };
   }
 

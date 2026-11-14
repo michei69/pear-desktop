@@ -9,6 +9,7 @@ import { clamp } from "@pear/sdk/util";
 import { DEFAULT_FILTERS } from "../../../../../plugins/scrobbler/filters.ts";
 import {
   clampNumber,
+  clampedValue,
   copyTyped,
   ensurePluginEntry,
   flattenStrings,
@@ -309,22 +310,17 @@ export const PLUGIN_MIGRATIONS: Record<string, PluginMigration> = {
       copyTyped(entry, vudio.lighting, VUDIO_OPTIONS, (value) => value !== undefined);
     }
     if (isRecord(wave) && Array.isArray(wave.animations)) setNew(entry, "waveAnimations", JSON.stringify(wave.animations));
-    if (isRecord(wavy)) clampNew(entry, "wavyLineWidth", wavy.lineWidth, 1, 20);
+    if (isRecord(wavy)) setNew(entry, "wavyLineWidth", clampedValue(wavy.lineWidth, 1, 20));
     if (isRecord(bars)) {
       copyTyped(entry, bars, { variant: "barsVariant" }, isString);
-      clampNew(entry, "barsBarWidth", bars.barWidth, 5, 80);
-      clampNew(entry, "barsGap", bars.gap, 0, 20);
+      setNew(entry, "barsBarWidth", clampedValue(bars.barWidth, 5, 80));
+      setNew(entry, "barsGap", clampedValue(bars.gap, 0, 20));
     }
     if (isRecord(circles)) copyTyped(entry, circles, { variant: "circlesVariant" }, isString);
     if (isRecord(experimental)) copyTyped(entry, experimental, { variant: "experimentalVariant" }, isString);
-    if (isRecord(discoBall)) clampNew(entry, "discoBallSensitivity", discoBall.sensitivity, 0.25, 3);
+    if (isRecord(discoBall)) setNew(entry, "discoBallSensitivity", clampedValue(discoBall.sensitivity, 0.25, 3));
   },
 };
-
-/** Sets a numeric key, clamped into the range the rewrite accepts, unless it is already set. */
-function clampNew(entry: Json, key: string, value: unknown, min: number, max: number) {
-  if (isNumber(value)) setNew(entry, key, clamp(value, min, max));
-}
 
 /** pear-desktop's 11-band equalizer curve -> the rewrite's `bands` JSON (positional, no ids). */
 function earsBands(filters: readonly Json[]) {

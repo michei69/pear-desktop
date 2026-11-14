@@ -6,7 +6,6 @@ import { randomBytes } from "node:crypto";
 import { type NowPlaying } from "@pear/sdk";
 import type { ApiServerConfig } from "@pear/sdk/core-config";
 import type { CoreState } from "@pear/sdk/protocol";
-import { toJsonSchema } from "@pear/sdk/rpc";
 import { errorMessage } from "@pear/sdk/util";
 import type { SongDetails } from "@pear/sdk/song-details";
 import { type BrowserWindow, dialog } from "electron";
@@ -15,6 +14,7 @@ import type { Settings } from "../config.ts";
 import type { PageRequests } from "../page-requests.ts";
 import type { PlayerMirror } from "../player.ts";
 import type { PluginHost } from "../plugins.ts";
+import { inputJsonSchema } from "./body-schema.ts";
 import { signToken } from "./jwt.ts";
 import { createMcpTools } from "./mcp-tools.ts";
 import { createOperations, type Operations } from "./operations.ts";
@@ -254,7 +254,7 @@ export class ApiServer {
       plugin,
       name,
       ...(method.summary ? { summary: method.summary } : {}),
-      input: inputSchema(method.input),
+      input: inputJsonSchema(method.input),
     }));
   }
 
@@ -382,14 +382,5 @@ export class ApiServer {
     const clients = settings.core("apiServer").authorizedClients;
     if (!clients.includes(id)) settings.setCore("apiServer", { authorizedClients: [...clients, id] });
     this.#publish();
-  }
-}
-
-/** The input's JSON schema for the OpenAPI document; parts JSON schema can't express are left out. */
-function inputSchema(input: Parameters<typeof toJsonSchema>[0]) {
-  try {
-    return toJsonSchema(input, { errorMode: "ignore" });
-  } catch {
-    return undefined;
   }
 }

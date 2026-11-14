@@ -4,7 +4,7 @@
 import { app, type BrowserWindowConstructorOptions, BrowserWindow, dialog, net, screen, shell } from "electron";
 import { STARTING_PAGES, type StartingPage } from "@pear/sdk/core-config";
 import { CHANNEL, type HostEvent } from "@pear/sdk/protocol";
-import { chromeUserAgent, fixedChromeUserAgent, isGoogleAuth, isYtmUrl, YTM_ORIGIN } from "../shared/user-agent.ts";
+import { fixedChromeUserAgent, isGoogleAuth, isYtmUrl, YTM_ORIGIN } from "../shared/user-agent.ts";
 import { APP_NAME, relaunchOptions } from "./app-identity.ts";
 import type { Settings, WindowState } from "./config.ts";
 import { errorPage, loadFailureAction } from "./load-failure.ts";
@@ -12,7 +12,7 @@ import { navigationAction, restrictedRegionRedirect, windowOpenAction } from "./
 import { PLAYER_PAGE_CSS } from "./player-page.ts";
 import type { PluginHost } from "./plugins.ts";
 import { openSettingsWindow, settingsWindowContents } from "./settings-window.ts";
-import { alive, appIcon, focusWindow, secureWebPreferences } from "./windows.ts";
+import { alive, appIcon, focusWindow, secureWebPreferences, showWhenReady } from "./windows.ts";
 import { DEFAULT_WINDOW_SIZE, MIN_HEIGHT, MIN_WIDTH } from "./window-size.ts";
 
 /** macOS: YTM's own nav bar becomes the drag region, with room for the traffic lights. */
@@ -135,15 +135,12 @@ export class MainWindow {
     if (settings.window?.maximized) window.maximize();
     // The window paints its own background colour, so show it once the page has
     // painted or after a short timer, whichever comes first (pear-desktop's rule).
-    const show = () => {
-      if (window.isDestroyed() || window.isVisible() || this.#startsHidden()) return;
-      window.show();
-      console.info(`[pear] startup: window shown after ${Math.round(performance.now())}ms`);
-    };
-    window.once("ready-to-show", show);
-    const earlyShow = setTimeout(show, EARLY_SHOW_DELAY_MS);
-    window.once("show", () => clearTimeout(earlyShow));
-    window.once("closed", () => clearTimeout(earlyShow));
+    showWhenReady(
+      window,
+      EARLY_SHOW_DELAY_MS,
+      () => !this.#startsHidden(),
+      () => console.info(`[pear] startup: window shown after ${Math.round(performance.now())}ms`),
+    );
 
     // The custom title stays put; without one the window follows the page's.
     window.on("page-title-updated", (event) => {

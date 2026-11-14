@@ -16,6 +16,19 @@ export function focusWindow(window: BrowserWindow) {
   window.focus();
 }
 
+export function showWhenReady(window: BrowserWindow, delayMs: number, canShow: () => boolean = () => true, onShow?: () => void) {
+  const show = () => {
+    if (window.isDestroyed() || window.isVisible() || !canShow()) return;
+    window.show();
+    onShow?.();
+  };
+  const fallback = setTimeout(show, delayMs);
+  window.once("ready-to-show", show);
+  window.once("show", () => clearTimeout(fallback));
+  window.once("closed", () => clearTimeout(fallback));
+  return show;
+}
+
 /** The icon of the app's windows: pear's, or Music's with `appearance.useYtmIcons`. */
 export function appIcon(useYtmIcons: boolean) {
   const pixels = useYtmIcons ? ytmIconBitmap(ICON_SIZE) : pearIconBitmap(ICON_SIZE);

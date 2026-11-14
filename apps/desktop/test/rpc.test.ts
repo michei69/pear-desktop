@@ -6,8 +6,8 @@ import { toJsonSchema, v } from "@pear/sdk/rpc";
 import { describe, expect, test, vi } from "vitest";
 import { openApiDocument } from "../src/main/api/openapi.ts";
 import { Settings } from "../src/main/config.ts";
-import { MenuItems } from "../src/main/menu-items.ts";
 import { PluginHost } from "../src/main/plugins.ts";
+import { fakeHostEnvironment } from "./plugin-host.ts";
 
 vi.mock("electron", () => ({}));
 
@@ -33,21 +33,7 @@ async function setup(enabled = true) {
   const settings = new Settings(userData, [greeter], "4.0.0");
   const host = new PluginHost([greeter], settings, "linux");
   const broadcast = vi.fn();
-  host.attach({
-    app: {} as never,
-    window: {} as never,
-    session: {} as never,
-    router: { scoped: () => ({}), scopedSession: () => ({}), release() {} } as never,
-    player: { state: {}, on: () => () => {}, control() {} } as never,
-    requests: {} as never,
-    send() {},
-    openSettings() {},
-    focusWindow() {},
-    menuItems: new MenuItems(),
-    broadcast,
-    onProtocol: () => () => {},
-    onDisabled() {},
-  });
+  host.attach(fakeHostEnvironment({ broadcast }));
   if (enabled) await host.setEnabled("greeter", true);
   return { host, broadcast };
 }

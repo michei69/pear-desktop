@@ -6,6 +6,7 @@ import { ApiServer } from "../src/main/api/index.ts";
 import type { PageRequests } from "../src/main/page-requests.ts";
 import { PlayerMirror } from "../src/main/player.ts";
 import type { PluginHost } from "../src/main/plugins.ts";
+import { API_SERVER_CONFIG } from "./api-server-config.ts";
 
 // The server's Electron surface: only the authorization dialog and app info are reached.
 vi.mock("electron", () => ({
@@ -13,18 +14,7 @@ vi.mock("electron", () => ({
   dialog: { showMessageBox: async () => ({ response: 1 }) },
 }));
 
-const storedConfig = () => ({
-  enabled: false,
-  hostname: "127.0.0.1",
-  port: 26538,
-  authStrategy: "AUTH_AT_FIRST",
-  authorizedClients: [],
-  secret: "",
-  mcpEnabled: false,
-  useHttps: false,
-  certPath: "",
-  keyPath: "",
-});
+const storedConfig = () => ({ ...API_SERVER_CONFIG });
 
 function apiServer() {
   const config = storedConfig();

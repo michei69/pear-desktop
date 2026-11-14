@@ -1,7 +1,11 @@
 // The routes' body schemas: checking a request body, and as JSON schema for the
 // OpenAPI document.
 
+import type { IncomingMessage } from "node:http";
+import { toJsonSchema } from "@pear/sdk/rpc";
 import type { BodySchema, FieldSpec, FieldType } from "./types.ts";
+
+const MAX_BODY_BYTES = 1 << 20;
 
 const VALID: Record<FieldType, (value: unknown) => boolean> = {
   integer: (value) => typeof value === "number" && Number.isInteger(value) && value >= 0,
@@ -81,4 +85,32 @@ export function jsonSchema(schema: BodySchema) {
     properties[key] = { type: base };
   }
   return { type: "object", properties, required };
+}
+
+export function readBody(req: IncomingMessage) {
+  const { promise, resolve, reject } = Promise.withResolvers<string>();
+  const chunks: Buffer[] = [];
+  let size = 0;
+  req.on("data", (chunk: Buffer) => {
+    size += chunk.length;
+    if (size > MAX_BODY_BYTES) {
+      reject(new Error("body too large"));
+      req.destroy();
+    } else chunks.push(chunk);
+  });
+  req.on("end", () => resolve(Buffer.concat(chunks).toString("utf8")));
+  req.on("error", reject);
+  return promise;
+}
+
+export const isJsonObject = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null && !Array.isArray(value);
+
+/** The input's JSON schema for the OpenAPI document and MCP; parts JSON schema can't express are left out. */
+export function inputJsonSchema(input: Parameters<typeof toJsonSchema>[0]) {
+  try {
+    return toJsonSchema(input, { errorMode: "ignore" });
+  } catch {
+    return undefined;
+  }
 }

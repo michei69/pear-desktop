@@ -5,9 +5,9 @@
 // page can report the same change twice, e.g. a fallback racing the real
 // update), then fanned out to the per-version socket registries.
 
-import { livePosition, type LikeStatus, type NowPlaying } from "@pear/sdk";
+import { livePosition, type NowPlaying } from "@pear/sdk";
 import type { SongDetails } from "@pear/sdk/song-details";
-import { isPaused, REPEAT_NAMES, songInfo } from "./song-info.ts";
+import { isPaused, RATING_NAMES, REPEAT_NAMES, songInfo } from "./song-info.ts";
 import type { SongInfo } from "./types.ts";
 
 /** The song shape the WebSocket publishes (the v1 SongInfo, without scrobbler extras). */
@@ -36,8 +36,6 @@ export interface PlayerSnapshot {
   repeat: WireRepeatMode;
   shuffle: boolean;
 }
-
-const RATINGS: Record<LikeStatus, WireRating> = { like: "LIKE", dislike: "DISLIKE", none: "INDIFFERENT" };
 
 /** A renderer reporting the same change twice is noise: drop repeats within this window. */
 const DUPLICATE_EVENT_WINDOW_MS = 1_000;
@@ -88,7 +86,7 @@ export class PlayerState {
 
   /** The current song's like state. */
   get rating(): WireRating {
-    return RATINGS[this.#state().like];
+    return RATING_NAMES[this.#state().like];
   }
 
   setSpeed(speed: number) {
@@ -130,7 +128,7 @@ export class PlayerState {
     }
     if (state.repeat !== previous.repeat) this.#emit({ type: "REPEAT_CHANGED", repeat: REPEAT_NAMES[state.repeat] });
     if (state.shuffle !== previous.shuffle) this.#emit({ type: "SHUFFLE_CHANGED", shuffle: state.shuffle });
-    if (state.like !== previous.like) this.#emit({ type: "RATING_CHANGED", rating: RATINGS[state.like] });
+    if (state.like !== previous.like) this.#emit({ type: "RATING_CHANGED", rating: RATING_NAMES[state.like] });
     if (isPaused(state) !== isPaused(previous)) {
       this.#emit({ type: "PLAYER_STATE_CHANGED", isPlaying: !isPaused(state), position });
     }

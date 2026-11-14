@@ -1,6 +1,7 @@
 // The v2 REST routes, on the same hand-rolled table as v1 so dispatch, auth,
 // body checking and the OpenAPI document stay one mechanism.
 
+import { isJsonObject } from "./body-schema.ts";
 import type { Operations, Outcome } from "./operations.ts";
 import type { BodySchema, Method, Reply, Route, RouteRequest } from "./types.ts";
 
@@ -354,9 +355,7 @@ export function createV2Routes(operations: Operations): Route[] {
         summary: path.endsWith("settings") ? "Alias of `PATCH /pear/config`" : "Deep-merge a partial config into the stored one",
         body: "json",
         async handle({ body }: RouteRequest) {
-          if (typeof body !== "object" || body === null || Array.isArray(body)) {
-            return { status: 400, body: { error: "expected a JSON object" } };
-          }
+          if (!isJsonObject(body)) return { status: 400, body: { error: "expected a JSON object" } };
           await operations.patchConfig(body as Record<string, unknown>);
           return NO_CONTENT;
         },
@@ -387,9 +386,7 @@ export function createV2Routes(operations: Operations): Route[] {
       summary: "Apply the given flags as overrides, live where the page allows it (otherwise restart-required)",
       body: "json",
       async handle({ body }: RouteRequest) {
-        if (typeof body !== "object" || body === null || Array.isArray(body)) {
-          return { status: 400, body: { error: "expected a JSON object" } };
-        }
+        if (!isJsonObject(body)) return { status: 400, body: { error: "expected a JSON object" } };
         await operations.patchFeatureFlags(body);
         return NO_CONTENT;
       },

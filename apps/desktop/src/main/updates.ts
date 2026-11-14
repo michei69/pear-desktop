@@ -240,6 +240,17 @@ function setupUpdater() {
   autoUpdater.on("update-downloaded", (update) => showDownloadedUpdate(update.version));
 }
 
+function openUpdateDialog(options: Electron.MessageBoxOptions, onResponse: (response: number) => void, failure: string) {
+  dialogOpen = true;
+  void ask(options)
+    .then(({ response }) => onResponse(response))
+    .catch((error) => console.warn(failure, errorMessage(error)))
+    .finally(() => {
+      dialogOpen = false;
+      showPendingDownloadedUpdate();
+    });
+}
+
 /** Offers the restart once the download is ready, or defers it until the open dialog closes. */
 function showDownloadedUpdate(version: string) {
   if (downloadReadyHandled) return;
@@ -253,26 +264,26 @@ function showDownloadedUpdate(version: string) {
 
   pendingDownloadedVersion = undefined;
   downloadReadyHandled = true;
-  dialogOpen = true;
-  void ask({
-    type: "info",
-    buttons: [t("main.dialog.update-downloaded.buttons.restart", "Restart Now"), t("main.dialog.update-downloaded.buttons.later", "Later")],
-    title: t("main.dialog.update-downloaded.title", "Update Downloaded"),
-    message: t("main.dialog.update-downloaded.message", "Version {{version}} has been downloaded.", { version }),
-    detail: t("main.dialog.update-downloaded.detail", "Restart the application to install the update."),
-    defaultId: 0,
-    cancelId: 1,
-  })
-    .then(({ response }) => {
+  openUpdateDialog(
+    {
+      type: "info",
+      buttons: [
+        t("main.dialog.update-downloaded.buttons.restart", "Restart Now"),
+        t("main.dialog.update-downloaded.buttons.later", "Later"),
+      ],
+      title: t("main.dialog.update-downloaded.title", "Update Downloaded"),
+      message: t("main.dialog.update-downloaded.message", "Version {{version}} has been downloaded.", { version }),
+      detail: t("main.dialog.update-downloaded.detail", "Restart the application to install the update."),
+      defaultId: 0,
+      cancelId: 1,
+    },
+    (response) => {
       // Portable Windows builds are excluded from in-app installs, so the
       // installer's own relaunch needs no extra relaunch options here.
       if (response === 0) autoUpdater.quitAndInstall();
-    })
-    .catch((error) => console.warn("[pear] couldn't offer the update restart:", errorMessage(error)))
-    .finally(() => {
-      dialogOpen = false;
-      showPendingDownloadedUpdate();
-    });
+    },
+    "[pear] couldn't offer the update restart:",
+  );
 }
 
 function showPendingDownloadedUpdate() {
@@ -287,27 +298,24 @@ function showPendingDownloadedUpdate() {
 function showDownloadFailure(releaseUrl: string) {
   if (dialogOpen) return;
 
-  dialogOpen = true;
-  void ask({
-    type: "warning",
-    buttons: [
-      t("main.dialog.update-download-failed.buttons.ok", "OK"),
-      t("main.dialog.update-download-failed.buttons.release", "View Release"),
-    ],
-    title: t("main.dialog.update-download-failed.title", "Update Download Failed"),
-    message: t("main.dialog.update-download-failed.message", "The update could not be downloaded."),
-    detail: t("main.dialog.update-download-failed.detail", "You can download the update manually from the GitHub release page."),
-    defaultId: 0,
-    cancelId: 0,
-  })
-    .then(({ response }) => {
+  openUpdateDialog(
+    {
+      type: "warning",
+      buttons: [
+        t("main.dialog.update-download-failed.buttons.ok", "OK"),
+        t("main.dialog.update-download-failed.buttons.release", "View Release"),
+      ],
+      title: t("main.dialog.update-download-failed.title", "Update Download Failed"),
+      message: t("main.dialog.update-download-failed.message", "The update could not be downloaded."),
+      detail: t("main.dialog.update-download-failed.detail", "You can download the update manually from the GitHub release page."),
+      defaultId: 0,
+      cancelId: 0,
+    },
+    (response) => {
       if (response === 1) void shell.openExternal(releaseUrl);
-    })
-    .catch((error) => console.warn("[pear] couldn't show the update download failure:", errorMessage(error)))
-    .finally(() => {
-      dialogOpen = false;
-      showPendingDownloadedUpdate();
-    });
+    },
+    "[pear] couldn't show the update download failure:",
+  );
 }
 
 /** Downloads the release the check found, keeping the taskbar progress in step. */

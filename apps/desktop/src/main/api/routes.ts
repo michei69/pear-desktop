@@ -1,8 +1,8 @@
 // The REST routes of the original pear-desktop API server (v1), as a table
 // that drives both request dispatch and the OpenAPI document.
 
-import type { LikeStatus, PlayerAction } from "@pear/sdk";
-import { REPEAT_NAMES, songInfo } from "./song-info.ts";
+import type { PlayerAction } from "@pear/sdk";
+import { RATING_NAMES, REPEAT_NAMES, songInfo } from "./song-info.ts";
 import type { Backend, BodySchema, Method, NextQueueItem, QueueResponse, Reply, Route, RouteRequest } from "./types.ts";
 
 export const API_VERSION = "v1";
@@ -10,8 +10,6 @@ export const API = `/api/${API_VERSION}`;
 
 /** How many repeat modes `switch-repeat` cycles through (NONE → ALL → ONE). */
 const REPEAT_MODES = 3;
-
-const LIKE_STATES: Record<LikeStatus, "LIKE" | "DISLIKE" | "INDIFFERENT"> = { like: "LIKE", dislike: "DISLIKE", none: "INDIFFERENT" };
 
 const NO_CONTENT: Reply = { status: 204 };
 const ok = (body: unknown): Reply => ({ status: 200, body });
@@ -115,7 +113,7 @@ export function createRoutes(backend: Backend): Route[] {
       summary: "Get the like state",
       handle() {
         const { track, like } = backend.state();
-        return ok({ state: track ? LIKE_STATES[like] : null });
+        return ok({ state: track ? RATING_NAMES[like] : null });
       },
     },
     pageCommand({ method: "POST", path: `${API}/like`, summary: "Like the song", run: () => backend.page("like", "LIKE") }),

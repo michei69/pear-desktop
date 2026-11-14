@@ -8,7 +8,7 @@ import type { Duplex } from "node:stream";
 import { errorMessage } from "@pear/sdk/util";
 import { type WebSocket, WebSocketServer } from "ws";
 import { verifyToken } from "./jwt.ts";
-import { validateBody } from "./body-schema.ts";
+import { readBody, validateBody } from "./body-schema.ts";
 import { handleMcpRequest, MCP_PATH } from "./mcp.ts";
 import type { McpTool } from "./mcp-tools.ts";
 import { openApiDocument } from "./openapi.ts";
@@ -38,7 +38,6 @@ export interface ServerOptions {
 }
 
 const WS_PATHS = [`${API}/ws`, `${API_V2}/ws`] as const;
-const MAX_BODY_BYTES = 1 << 20;
 
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
@@ -231,21 +230,5 @@ function listen(server: Server, options: ServerOptions) {
       server.on("error", options.onError);
       resolve();
     });
-  });
-}
-
-function readBody(req: IncomingMessage) {
-  return new Promise<string>((resolve, reject) => {
-    const chunks: Buffer[] = [];
-    let size = 0;
-    req.on("data", (chunk: Buffer) => {
-      size += chunk.length;
-      if (size > MAX_BODY_BYTES) {
-        reject(new Error("body too large"));
-        req.destroy();
-      } else chunks.push(chunk);
-    });
-    req.on("end", () => resolve(Buffer.concat(chunks).toString("utf8")));
-    req.on("error", reject);
   });
 }
