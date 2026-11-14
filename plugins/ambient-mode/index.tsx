@@ -1,5 +1,6 @@
 /** @jsxImportSource @pear/sdk */
 import { config, definePlugin, type PageContextOf } from "@pear/sdk";
+import { listenAll } from "@pear/sdk/dom";
 import { css } from "@pear/sdk/macros" with { type: "macro" };
 import { mountAmbientLight, type AmbientLightConfig } from "./ambient-light.ts";
 
@@ -470,11 +471,7 @@ function mountVideo(ctx: Ctx, wanted: { kind: GlowKind; source: string }): Glow 
   draw();
   run();
   // This glow's listeners go with it; the plugin stopping removes it too.
-  const removed = new AbortController();
-  video.addEventListener("play", run, { signal: removed.signal });
-  video.addEventListener("pause", run, { signal: removed.signal });
-  video.addEventListener("ended", run, { signal: removed.signal });
-  video.addEventListener("loadedmetadata", update, { signal: removed.signal });
+  const stopListening = listenAll(video, { play: run, pause: run, ended: run, loadedmetadata: update });
   wrapper.prepend(canvas);
   return {
     kind: wanted.kind,
@@ -482,7 +479,7 @@ function mountVideo(ctx: Ctx, wanted: { kind: GlowKind; source: string }): Glow 
     update,
     remove() {
       ctx.clearInterval(timer);
-      removed.abort();
+      stopListening();
       canvas.remove();
     },
   };

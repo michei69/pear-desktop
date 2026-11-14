@@ -1,4 +1,5 @@
 import { type ConfigOf, type PageContextOf } from "@pear/sdk";
+import { elementRestorer } from "@pear/sdk/dom";
 import { isTypingTarget } from "@pear/sdk/util";
 import { type CommandContext, type CommandRow, getCommand, isCommandLine, matchCommands, registerCommand, tokenize } from "./commands.ts";
 import { type schema, type SearchCommands } from "./config.ts";
@@ -23,14 +24,6 @@ interface Watched {
   onBlur: () => void;
 }
 
-interface Lifted {
-  el: HTMLElement;
-  /** We had to give it `position: relative` for `z-index` to apply. */
-  positioned: boolean;
-  zIndex: string;
-  zPriority: string;
-}
-
 /** Width of the floating field, and how far down the viewport it sits. */
 const SPOTLIGHT_WIDTH = 680;
 const SPOTLIGHT_TOP = 0.22;
@@ -48,7 +41,7 @@ export function startSearchCommands(ctx: Ctx) {
   let scrim: HTMLElement | undefined;
   let spotlightEl: SearchBox | undefined;
   let containingBlock: HTMLElement | undefined;
-  let lifted: Lifted[] = [];
+  const lifted = elementRestorer();
 
   const log = (...args: unknown[]) => ctx.log.info(...args);
 
@@ -357,23 +350,16 @@ export function startSearchCommands(ctx: Ctx) {
    * nested inside would paint below it. Raise each on the way out; the walk stops
    * at the first ancestor that is not a context, where the z-index lands in root.
    */
-  function liftAboveScrim(el: SearchBox): Lifted[] {
-    const raised: Lifted[] = [];
+  function liftAboveScrim(el: SearchBox) {
     for (let node = el.parentElement; node && node !== document.body; node = node.parentElement) {
       const style = getComputedStyle(node);
       if (!isStackingContext(style)) break;
 
-      raised.push({
-        el: node,
-        positioned: style.position === "static",
-        zIndex: node.style.zIndex,
-        zPriority: node.style.getPropertyPriority("z-index"),
-      });
-
-      if (style.position === "static") node.style.setProperty("position", "relative");
+      // We had to give it `position: relative` for `z-index` to apply.
+      if (style.position === "static") lifted.style(node, "position", "relative");
+      lifted.style(node, "z-index", String(SCRIM_Z + 1));
       node.style.setProperty("z-index", String(SCRIM_Z + 1), "important");
     }
-    return raised;
   }
 
   function placeSpotlight(el: SearchBox) {
@@ -403,12 +389,7 @@ export function startSearchCommands(ctx: Ctx) {
     el.style.removeProperty("--pear-spotlight-width");
     spotlightEl = undefined;
 
-    for (const entry of lifted) {
-      if (entry.positioned) entry.el.style.removeProperty("position");
-      entry.el.style.removeProperty("z-index");
-      if (entry.zIndex) entry.el.style.setProperty("z-index", entry.zIndex, entry.zPriority);
-    }
-    lifted = [];
+    lifted.restore();
     containingBlock = undefined;
 
     scrim?.removeAttribute("data-open");
@@ -433,7 +414,7 @@ export function startSearchCommands(ctx: Ctx) {
     }
 
     containingBlock = fixedContainingBlock(el);
-    lifted = liftAboveScrim(el);
+    liftAboveScrim(el);
     placeSpotlight(el);
 
     el.classList.add("pear-spotlight");

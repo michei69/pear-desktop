@@ -1,3 +1,4 @@
+import { clamp } from "@pear/sdk/util";
 import type { Renderer, Stage } from "../config.ts";
 import { hslToCss } from "../palette.ts";
 import { ThemeSongRenderer } from "./theme-song.ts";
@@ -27,10 +28,6 @@ type ResetMode = "clamp" | "random";
 
 function cloneCircle(spec: CircleSpec): CircleState {
   return { ...spec, radius: 0 };
-}
-
-function clamp01(value: number): number {
-  return Math.min(1, Math.max(0, value));
 }
 
 /** Bouncing rings whose radii follow single frequency bins. */
@@ -415,7 +412,7 @@ class CirclesRenderer extends ThemeSongRenderer {
     const palette = this.palette.colors;
     this.circles.forEach((circle, index) => {
       const base = palette[index % palette.length] ?? this.palette.accent;
-      const lightness = clamp01(shorterCanvasSide / (circle.radius / 2.5) / 100 + 0.4);
+      const lightness = clamp(shorterCanvasSide / (circle.radius / 2.5) / 100 + 0.4, 0, 1);
       this.drawSolidCircle(ctx, circle, hslToCss({ h: base.h, s: base.s, l: lightness }, 0.95), circle.lineWidth);
     });
   }

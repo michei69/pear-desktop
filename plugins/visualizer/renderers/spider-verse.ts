@@ -57,22 +57,17 @@ class SpiderVerseRenderer extends ThemeSongRenderer {
   }
 
   private drawBlocks(context: CanvasRenderingContext2D, width: number, height: number): void {
-    const data = this.frequencyData;
-    const barCount = Math.max(1, Math.ceil(width / (BAR_WIDTH + BAR_GAP)));
     const blockHeight = BAR_WIDTH - 4;
-
-    for (let bar = 0; bar < barCount; bar += 1) {
-      const frequencyIndex = Math.min(data.length - 1, Math.floor((bar / barCount) * Math.min(data.length, 1024)));
-      const barHeight = Math.min(height, Math.max((data[frequencyIndex] ?? 0) * 3, 220));
-      const x = bar * (BAR_WIDTH + BAR_GAP);
-
-      for (let offset = 0; offset < barHeight; offset += BLOCK_STEP) {
-        const y = height - blockHeight - offset;
-        if (y + blockHeight < 0) break;
+    this.forEachSpectrumBlock(
+      context,
+      width,
+      height,
+      { barWidth: BAR_WIDTH, gap: BAR_GAP, blockHeight, blockStep: BLOCK_STEP, scale: 3, minHeight: 220 },
+      (context, x, y, offset, barHeight) => {
         context.fillStyle = blockColor(offset, barHeight, height);
         context.fillRect(x, y, BAR_WIDTH, blockHeight);
-      }
-    }
+      },
+    );
   }
 
   private drawDotField(context: CanvasRenderingContext2D, width: number, height: number): void {

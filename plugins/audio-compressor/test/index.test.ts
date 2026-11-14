@@ -1,6 +1,7 @@
 import type { AudioGraph, PageContextOf, PluginMenuItem, YTPlayerApi } from "@pear/sdk";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import plugin, { dbToLinear, trackGainDb } from "../index.ts";
+import { dbToLinear } from "@pear/sdk/util";
+import plugin, { trackGainDb } from "../index.ts";
 
 type Ctx = PageContextOf<NonNullable<typeof plugin.config>>;
 type Config = Ctx["config"];

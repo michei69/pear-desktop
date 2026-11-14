@@ -34,7 +34,6 @@ class RetroBarsRenderer extends ThemeSongRenderer {
     context.fillRect(0, 0, width, height);
 
     const barCount = Math.max(1, Math.ceil(width / (BAR_WIDTH + BAR_GAP)));
-    const data = this.frequencyData;
     const blockHeight = Math.max(4, BAR_WIDTH - 20);
     const staticHeight = Math.min(height, STATIC_HEIGHT);
 
@@ -49,17 +48,15 @@ class RetroBarsRenderer extends ThemeSongRenderer {
     }
 
     // Front layer: the same geometry, with a full-height spectrum reading.
-    for (let bar = 0; bar < barCount; bar += 1) {
-      const frequencyIndex = Math.min(data.length - 1, Math.floor((bar / barCount) * Math.min(data.length, 1024)));
-      const barHeight = Math.min(height, Math.max((data[frequencyIndex] ?? 0) * 2, 50));
-      const x = bar * (BAR_WIDTH + BAR_GAP);
-
-      for (let offset = 0; offset < barHeight; offset += BLOCK_STEP) {
-        const y = height - blockHeight - offset;
-        if (y + blockHeight < 0) break;
+    this.forEachSpectrumBlock(
+      context,
+      width,
+      height,
+      { barWidth: BAR_WIDTH, gap: BAR_GAP, blockHeight, blockStep: BLOCK_STEP, scale: 2, minHeight: 50 },
+      (context, x, y) => {
         context.fillStyle = hueForY(y, 50);
         drawBlock(context, x, y, blockHeight);
-      }
-    }
+      },
+    );
   }
 }

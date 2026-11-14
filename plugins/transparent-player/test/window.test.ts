@@ -1,15 +1,6 @@
-import { describe, expect, test, vi } from "vitest";
+import { describe, expect, test } from "vitest";
 import { applyMaterial, applyTransparency, OPAQUE_BACKGROUND, resetTransparency } from "../window.ts";
-
-function fakeWindow() {
-  const calls: string[] = [];
-  return {
-    calls,
-    setBackgroundMaterial: vi.fn((material: string) => void calls.push(`material:${material}`)),
-    setVibrancy: vi.fn((vibrancy: string | null) => void calls.push(`vibrancy:${vibrancy}`)),
-    setBackgroundColor: vi.fn((color: string) => void calls.push(`background:${color}`)),
-  };
-}
+import { fakeWindow } from "./fake-window.ts";
 
 describe("window materials", () => {
   test("applies the Windows materials and the opacity tint", () => {

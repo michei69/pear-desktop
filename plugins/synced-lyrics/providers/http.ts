@@ -29,3 +29,11 @@ export async function request(fetch: Fetch, url: string, init: RequestInit = {})
 export async function getJson<T>(fetch: Fetch, url: string, init?: RequestInit): Promise<T> {
   return (await request(fetch, url, init)).json() as Promise<T>;
 }
+
+export function parseJson<T>(text: string): T | null {
+  try {
+    return JSON.parse(text) as T;
+  } catch {
+    return null;
+  }
+}

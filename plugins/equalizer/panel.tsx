@@ -556,7 +556,13 @@ export function createEqualizerPanel(ctx: Ctx) {
     showNotice(`${t("plugins.equalizer.settings.applied", "Applied")} ${presetLabel(id)}.`);
   }
 
-  function savePreset() {
+  function selectedUserPreset() {
+    const selected = state.userPresets.find((preset) => preset.id === state.activePreset);
+    if (!selected) showNotice(t("plugins.equalizer.settings.select-user-preset", "Select one of your saved presets first."));
+    return selected;
+  }
+
+  function presetName() {
     const name = nameInput.value.trim().slice(0, 80);
     if (!name) {
       showNotice(t("plugins.equalizer.settings.name-required", "Enter a preset name."));
@@ -566,6 +572,12 @@ export function createEqualizerPanel(ctx: Ctx) {
       showNotice(t("plugins.equalizer.settings.reserved-name", "That name is reserved for a built-in preset."));
       return;
     }
+    return name;
+  }
+
+  function savePreset() {
+    const name = presetName();
+    if (!name) return;
     const existing = state.userPresets.find((preset) => preset.name.toLowerCase() === name.toLowerCase());
     if (!existing && state.userPresets.length >= MAX_USER_PRESETS) {
       showNotice(t("plugins.equalizer.settings.presets-full", "You can keep up to {{max}} presets.", { max: MAX_USER_PRESETS }));
@@ -592,20 +604,10 @@ export function createEqualizerPanel(ctx: Ctx) {
   }
 
   function renamePreset() {
-    const selected = state.userPresets.find((preset) => preset.id === state.activePreset);
-    if (!selected) {
-      showNotice(t("plugins.equalizer.settings.select-user-preset", "Select one of your saved presets first."));
-      return;
-    }
-    const name = nameInput.value.trim().slice(0, 80);
-    if (!name) {
-      showNotice(t("plugins.equalizer.settings.name-required", "Enter a preset name."));
-      return;
-    }
-    if (Object.hasOwn(RESERVED_NAMES, name.toLowerCase())) {
-      showNotice(t("plugins.equalizer.settings.reserved-name", "That name is reserved for a built-in preset."));
-      return;
-    }
+    const selected = selectedUserPreset();
+    if (!selected) return;
+    const name = presetName();
+    if (!name) return;
     if (state.userPresets.some((preset) => preset.id !== selected.id && preset.name.toLowerCase() === name.toLowerCase())) {
       showNotice(t("plugins.equalizer.settings.name-exists", "A preset with that name already exists."));
       return;
@@ -618,11 +620,8 @@ export function createEqualizerPanel(ctx: Ctx) {
   }
 
   function deletePreset() {
-    const selected = state.userPresets.find((preset) => preset.id === state.activePreset);
-    if (!selected) {
-      showNotice(t("plugins.equalizer.settings.select-user-preset", "Select one of your saved presets first."));
-      return;
-    }
+    const selected = selectedUserPreset();
+    if (!selected) return;
     if (!window.confirm(t("plugins.equalizer.settings.confirm-delete", "Delete this preset?"))) return;
     state.userPresets = state.userPresets.filter((preset) => preset.id !== selected.id);
     state.recentPresets = state.recentPresets.filter((id) => id !== selected.id);

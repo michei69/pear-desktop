@@ -1,15 +1,6 @@
 import { afterEach, expect, test, vi } from "vitest";
 
-vi.mock("electron", () => ({
-  nativeImage: { createEmpty: () => ({}) },
-  Tray: class {
-    setTitle() {}
-    isDestroyed() {
-      return false;
-    }
-    destroy() {}
-  },
-}));
+vi.mock("electron", () => import("./fake-electron.ts"));
 
 const { default: plugin } = await import("../index.ts");
 
@@ -72,7 +63,7 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 
-test("retries a rejected send instead of recording it as delivered", async () => {
+function pageOnceFailing() {
   const sent: string[] = [];
   let failures = 1;
   const page = makePage({
@@ -82,6 +73,11 @@ test("retries a rejected send instead of recording it as delivered", async () =>
       return Promise.resolve();
     },
   });
+  return { sent, page };
+}
+
+test("retries a rejected send instead of recording it as delivered", async () => {
+  const { sent, page } = pageOnceFailing();
 
   // The first send failed; no player event fires, only the 250 ms retry.
   await expect.poll(() => sent.length, { timeout: 1000 }).toBeGreaterThan(1);
@@ -120,15 +116,7 @@ test("sends an unchanged line once", async () => {
 });
 
 test("a newer line wins over the failed one", async () => {
-  const sent: string[] = [];
-  let failures = 1;
-  const page = makePage({
-    invoke: (_command, text) => {
-      sent.push(text);
-      if (failures-- > 0) return Promise.reject(new Error("backend down"));
-      return Promise.resolve();
-    },
-  });
+  const { sent, page } = pageOnceFailing();
 
   // Replace the line before the retry: the retry must carry the newer text.
   page.setText("World");

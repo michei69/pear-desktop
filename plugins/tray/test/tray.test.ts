@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import trayPlugin from "../index.ts";
-import { FakeTray, menuTemplates, trays } from "./fake-electron.ts";
+import { menuTemplates, trays } from "./fake-electron.ts";
 import { trayIconBitmap, ytmTrayIconBitmap } from "./fake-icons.ts";
-import { type ContextOptions, fakeContext, FakeWindow, nowPlaying, track } from "./harness.ts";
+import { type ContextOptions, FakeWindow, nowPlaying, startTray, track } from "./harness.ts";
 
 vi.mock("electron", () => import("./fake-electron.ts"));
 vi.mock("@pear/sdk/icon", () => import("./fake-icons.ts"));
@@ -28,20 +28,7 @@ function item(label: string) {
 
 const hasItem = (label: string) => menu().some((entry) => entry.label === label);
 
-function start(options: ContextOptions = {}) {
-  const harness = fakeContext(options);
-  const returned = trayPlugin.host!.start!(harness.ctx as never);
-  const cleanup = returned as unknown as () => void;
-  const tray = FakeTray.last()!;
-  return {
-    ...harness,
-    tray,
-    stop: () => {
-      cleanup();
-      harness.stop();
-    },
-  };
-}
+const start = (options: ContextOptions = {}) => startTray(trayPlugin.host!.start!, options);
 
 beforeEach(() => {
   trays.length = 0;

@@ -13,6 +13,7 @@ import { parseLrc } from "../lrc.ts";
 import { pickProvider, resolvePriority, resolveTypePriority } from "../priority.ts";
 import { isChineseTarget } from "../translation/language.ts";
 import {
+  buildSearchQuery,
   PROVIDERS,
   ROMANIZATION_SCRIPTS,
   lyricsType,
@@ -329,21 +330,16 @@ export class LyricsStore {
 
   async #search(provider: ProviderId, track: Track, generation: number) {
     const custom = this.customQuery;
-    const query: SearchQuery = {
+    const query = buildSearchQuery({
       videoId: track.videoId,
-      title: custom?.query ?? track.title,
-      artist: custom ? (custom.artist ?? "") : track.artist,
+      title: track.title,
+      artist: track.artist,
+      album: track.album,
       durationSeconds: track.durationSeconds,
       inexact: this.#options.inexact,
-    };
-    if (track.album) query.album = track.album;
-    if (custom) {
-      query.alternativeTitle = custom.query;
-    } else {
-      const details = this.#backend.details?.(track.videoId);
-      if (details?.alternativeTitle && details.alternativeTitle !== track.title) query.alternativeTitle = details.alternativeTitle;
-      if (details?.tags.length) query.tags = details.tags;
-    }
+      custom,
+      details: custom ? null : (this.#backend.details?.(track.videoId) ?? null),
+    });
     let state: ProviderState;
     try {
       state = { status: "done", result: await this.#backend.search(provider, query) };

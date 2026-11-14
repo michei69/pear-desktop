@@ -1,6 +1,7 @@
 import { IDLE, type NowPlaying } from "@pear/sdk";
 import { describe, expect, it } from "vitest";
 import { type ActivityOptions, buildActivity, needsUpdate, sanitize } from "../activity.ts";
+import { track } from "./harness.ts";
 
 const options: ActivityOptions = {
   activityType: "listening",
@@ -11,22 +12,7 @@ const options: ActivityOptions = {
   hideWhenPaused: false,
 };
 const now = 1_700_000_000_000;
-const playing: NowPlaying = {
-  ...IDLE,
-  track: {
-    videoId: "abc",
-    title: "Song",
-    artist: "Artist",
-    album: "Album",
-    artworkUrl: "https://img.test/a.jpg",
-    durationSeconds: 200,
-    url: "https://music.\u0079\u006f\u0075\u0074\u0075\u0062\u0065.com/watch?v=abc",
-    mediaType: "audio",
-  },
-  status: "playing",
-  positionSeconds: 50,
-  updatedAt: now,
-};
+const playing: NowPlaying = { ...IDLE, track, status: "playing", positionSeconds: 50, updatedAt: now };
 
 describe("sanitize", () => {
   it("pads short and truncates long text", () => {

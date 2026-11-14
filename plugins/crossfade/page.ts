@@ -2,6 +2,7 @@
 // the next one, and fade it in. Without a second stream (its audio didn't arrive,
 // or wasn't playable), the track fades out before the next one fades in.
 
+import { listenAll } from "@pear/sdk/dom";
 import { type PoTokenRequest, poTokens } from "@pear/sdk/potoken";
 import { createFader } from "./fade.ts";
 import type { Ctx } from "./schema.ts";
@@ -267,30 +268,23 @@ export async function startCrossfade(ctx: Ctx) {
     if (pendingFadeIn && !ctx.player.state.ad) startFadeIn();
     else resync();
   };
-  let unbindVideo: (() => void)[] = [];
+  let unbindVideo: (() => void) | undefined;
   const bindVideo = (next: HTMLVideoElement) => {
-    for (const off of unbindVideo) off();
+    unbindVideo?.();
     video = next;
     stream.rebind(next);
-    const target = video;
-    const listen = (type: string, listener: EventListener) => {
-      target.addEventListener(type, listener);
-      return () => target.removeEventListener(type, listener);
-    };
-    unbindVideo = [
-      listen("playing", onVideoPlaying),
-      listen("timeupdate", onTime),
-      listen("pause", resync),
-      listen("seeked", resync),
-      listen("ratechange", resync),
-    ];
+    unbindVideo = listenAll(video, {
+      playing: onVideoPlaying,
+      timeupdate: onTime,
+      pause: resync,
+      seeked: resync,
+      ratechange: resync,
+    });
     if (!video.paused) resync();
   };
   bindVideo(video);
   ctx.player.on("videoChange", bindVideo);
-  ctx.onCleanup(() => {
-    for (const off of unbindVideo) off();
-  });
+  ctx.onCleanup(() => unbindVideo?.());
 
   ctx.player.on("adChange", (ad) => {
     if (ad) {

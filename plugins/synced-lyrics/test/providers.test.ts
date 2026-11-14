@@ -5,7 +5,6 @@ import { lrchub, pickLrchubLrc } from "../providers/lrchub.ts";
 import { lrcred, linesFromJson } from "../providers/lrcred.ts";
 import {
   buildSearchQueries,
-  cleanTrackTitle,
   isRetryableStatus,
   lrclib,
   parseSearchResponse as parseLrclibResponse,
@@ -22,6 +21,7 @@ import {
   splitTitle,
 } from "../providers/netease.ts";
 import { isUsableToken, musixmatch, parseMacro, resetMusixmatchToken } from "../providers/musixmatch.ts";
+import { cleanTrackTitle } from "../providers/shared.ts";
 import { decodeHtmlEntities, pickBestSimpMusicEntry, richSyncToLrc, simpmusic } from "../providers/simpmusic.ts";
 import { bylineDuration, queueTrackFromNext, ytmusic } from "../providers/ytmusic.ts";
 import type { SearchQuery } from "../types.ts";

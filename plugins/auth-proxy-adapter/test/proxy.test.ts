@@ -1,8 +1,8 @@
-import { once } from "node:events";
-import { type AddressInfo, connect, createServer, type Server, type Socket } from "node:net";
+import { connect, createServer } from "node:net";
 import { afterEach, describe, expect, test } from "vitest";
 import { startAdapter } from "../adapter.ts";
 import { needsAdapter, parseProxy, proxyRule } from "../proxy.ts";
+import { closeServers, listen, log, readable, servers } from "./harness.ts";
 
 describe("parseProxy", () => {
   test("parses schemes, ports and credentials", () => {
@@ -35,30 +35,7 @@ describe("parseProxy", () => {
   });
 });
 
-const log = { info() {}, warn() {}, error() {} };
-const servers: { close(): void }[] = [];
-afterEach(() => {
-  for (const server of servers.splice(0)) server.close();
-});
-
-async function listen(server: Server) {
-  servers.push(server);
-  server.listen(0, "127.0.0.1");
-  await once(server, "listening");
-  return (server.address() as AddressInfo).port;
-}
-
-/** Reads from a socket until `n` bytes are available. */
-function readable(socket: Socket) {
-  let buffer = Buffer.alloc(0);
-  socket.on("data", (chunk: Buffer) => (buffer = Buffer.concat([buffer, chunk])));
-  return async (n: number) => {
-    while (buffer.length < n) await once(socket, "data");
-    const out = buffer.subarray(0, n);
-    buffer = buffer.subarray(n);
-    return out;
-  };
-}
+afterEach(closeServers);
 
 /** A minimal SOCKS5 server requiring username/password auth (RFC 1929). */
 async function authenticatedSocks(username: string, password: string) {

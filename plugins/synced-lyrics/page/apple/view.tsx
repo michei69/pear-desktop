@@ -2,9 +2,11 @@
 // LyricLine data directly: no network, no TTML, no third-party component.
 
 import type { ComponentChildren } from "preact";
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "preact/hooks";
+import { useEffect, useLayoutEffect, useMemo, useRef } from "preact/hooks";
 import type { Translate } from "@pear/sdk/i18n";
+import { listenAll } from "@pear/sdk/dom";
 import { clamp } from "@pear/sdk/util";
+import { FetchError, LoadingKaomoji, NoLyrics, PlainLyrics } from "../shared.tsx";
 import type { LyricsStore } from "../store.ts";
 import type { ViewOptions } from "../view.tsx";
 import {
@@ -329,11 +331,9 @@ export function AppleLyrics({ store, options, position, seek, picker, t }: Apple
         last.current.scrollRow = -2;
       }, USER_SCROLL_RESUME_MS);
     };
-    scroll.addEventListener("wheel", onUserScroll, { passive: true });
-    scroll.addEventListener("touchmove", onUserScroll, { passive: true });
+    const unbind = listenAll(scroll, { wheel: onUserScroll, touchmove: onUserScroll }, { passive: true });
     return () => {
-      scroll.removeEventListener("wheel", onUserScroll);
-      scroll.removeEventListener("touchmove", onUserScroll);
+      unbind();
       cancelAnimationFrame(scrollFrame.current);
       if (resumeTimer.current) clearTimeout(resumeTimer.current);
     };
@@ -433,17 +433,7 @@ function Fallback({
   t: Translate;
 }) {
   if (current.status === "loading") return <LoadingKaomoji />;
-  if (current.status === "error") {
-    return (
-      <div class="error">
-        <pre class="error-title">{t("plugins.synced-lyrics.errors.fetch", "An error occurred while fetching the lyrics.")}</pre>
-        <pre class="error-detail">{current.message}</pre>
-        <button type="button" class="retry" onClick={() => store.retry(store.selected)}>
-          {t("plugins.synced-lyrics.refetch-btn.normal", "Refetch lyrics")}
-        </button>
-      </div>
-    );
-  }
+  if (current.status === "error") return <FetchError message={current.message} onRetry={() => store.retry(store.selected)} t={t} />;
   if (shown && !shown.synced) {
     return (
       <div class="apple-music-plain">
@@ -451,55 +441,7 @@ function Fallback({
       </div>
     );
   }
-  return (
-    <div class="kaomoji" role="status" aria-label={t("plugins.synced-lyrics.errors.not-found", "No lyrics found for this song.")}>
-      ＼(〇_ｏ)／
-    </div>
-  );
-}
-
-const LOADING_FRAMES = ["(>_<)", "{ (>_<) }", "{{ (>_<) }}", "{{{ (>_<) }}}", "{{ (>_<) }}", "{ (>_<) }"];
-
-function LoadingKaomoji() {
-  const [frame, setFrame] = useState(0);
-  useEffect(() => {
-    const timer = setInterval(() => setFrame((n) => n + 1), 500);
-    return () => clearInterval(timer);
-  }, []);
-  return (
-    <div class="kaomoji" role="status" aria-busy="true">
-      {LOADING_FRAMES[frame % LOADING_FRAMES.length]}
-    </div>
-  );
-}
-
-function PlainLyrics({ texts, romanized, translation }: { texts: string[]; romanized: (string | null)[]; translation: (string | null)[] }) {
-  return (
-    <div class="lines plain">
-      {texts.map((text, index) => {
-        const translated = translation[index];
-        return text ? (
-          <div key={index} class={`line${/^\[.*\]$/.test(text) ? " section" : ""}`}>
-            <span class="text" dir="auto">
-              {text}
-            </span>
-            {romanized[index] && (
-              <span class="romanized" dir="auto">
-                {romanized[index]}
-              </span>
-            )}
-            {translated && translated !== text && (
-              <span class="translation" dir="auto">
-                {translated}
-              </span>
-            )}
-          </div>
-        ) : (
-          <div key={index} class="spacer" />
-        );
-      })}
-    </div>
-  );
+  return <NoLyrics t={t} />;
 }
 
 const CJK = /[\u3040-\u30ff\u3400-\u9fff\uac00-\ud7af]/;

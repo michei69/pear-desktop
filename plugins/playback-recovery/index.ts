@@ -64,6 +64,15 @@ export default definePlugin({
       hooked = null;
     };
 
+    const settleAfter = (ms: number) => {
+      ctx.clearTimeout(recoveryTimer);
+      recoveryTimer = ctx.setTimeout(() => {
+        recoveryTimer = undefined;
+        recovering = false;
+        lastGoodAt = Date.now();
+      }, ms);
+    };
+
     const attemptRecovery = (reason: string) => {
       if (recovering) return;
 
@@ -78,12 +87,7 @@ export default definePlugin({
         recovering = true;
         consecutiveFailures = 0;
         ctx.player.control({ type: "next" });
-        ctx.clearTimeout(recoveryTimer);
-        recoveryTimer = ctx.setTimeout(() => {
-          recoveryTimer = undefined;
-          recovering = false;
-          lastGoodAt = Date.now();
-        }, NEXT_SETTLE_MS);
+        settleAfter(NEXT_SETTLE_MS);
         return;
       }
 
@@ -109,12 +113,7 @@ export default definePlugin({
       }
 
       // Give the seek time to reload the stream.
-      ctx.clearTimeout(recoveryTimer);
-      recoveryTimer = ctx.setTimeout(() => {
-        recoveryTimer = undefined;
-        recovering = false;
-        lastGoodAt = Date.now();
-      }, SETTLE_MS);
+      settleAfter(SETTLE_MS);
     };
 
     function onError() {

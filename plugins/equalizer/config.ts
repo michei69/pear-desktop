@@ -87,6 +87,8 @@ export type EqualizerState = {
   userPresets: UserPreset[];
 };
 
+const legacyGain = (label: string) => config.number(0, { label, min: -12, max: 12, step: 0.5, unit: " dB", platforms: [] });
+
 export const schema = {
   bypass: config.bool(false, {
     label: "Bypass",
@@ -118,22 +120,22 @@ export const schema = {
   recentPresets: config.list([], { label: "Recent presets", platforms: [] }),
   userPresets: config.string("", { label: "User presets", platforms: [] }),
   // The previous rewrite's settings, read once while `bands` is empty.
-  preamp: config.number(0, { label: "Preamp (legacy)", min: -12, max: 12, step: 0.5, unit: " dB", platforms: [] }),
-  band32: config.number(0, { label: "32 Hz (legacy)", min: -12, max: 12, step: 0.5, unit: " dB", platforms: [] }),
-  band64: config.number(0, { label: "64 Hz (legacy)", min: -12, max: 12, step: 0.5, unit: " dB", platforms: [] }),
-  band125: config.number(0, { label: "125 Hz (legacy)", min: -12, max: 12, step: 0.5, unit: " dB", platforms: [] }),
-  band250: config.number(0, { label: "250 Hz (legacy)", min: -12, max: 12, step: 0.5, unit: " dB", platforms: [] }),
-  band500: config.number(0, { label: "500 Hz (legacy)", min: -12, max: 12, step: 0.5, unit: " dB", platforms: [] }),
-  band1000: config.number(0, { label: "1 kHz (legacy)", min: -12, max: 12, step: 0.5, unit: " dB", platforms: [] }),
-  band2000: config.number(0, { label: "2 kHz (legacy)", min: -12, max: 12, step: 0.5, unit: " dB", platforms: [] }),
-  band4000: config.number(0, { label: "4 kHz (legacy)", min: -12, max: 12, step: 0.5, unit: " dB", platforms: [] }),
-  band8000: config.number(0, { label: "8 kHz (legacy)", min: -12, max: 12, step: 0.5, unit: " dB", platforms: [] }),
-  band16000: config.number(0, { label: "16 kHz (legacy)", min: -12, max: 12, step: 0.5, unit: " dB", platforms: [] }),
+  preamp: legacyGain("Preamp (legacy)"),
+  band32: legacyGain("32 Hz (legacy)"),
+  band64: legacyGain("64 Hz (legacy)"),
+  band125: legacyGain("125 Hz (legacy)"),
+  band250: legacyGain("250 Hz (legacy)"),
+  band500: legacyGain("500 Hz (legacy)"),
+  band1000: legacyGain("1 kHz (legacy)"),
+  band2000: legacyGain("2 kHz (legacy)"),
+  band4000: legacyGain("4 kHz (legacy)"),
+  band8000: legacyGain("8 kHz (legacy)"),
+  band16000: legacyGain("16 kHz (legacy)"),
 };
 
 export type EqualizerConfig = ConfigOf<typeof schema>;
 
-const finite = (value: unknown, fallback: number) => (typeof value === "number" && Number.isFinite(value) ? value : fallback);
+export const finite = (value: unknown, fallback: number) => (typeof value === "number" && Number.isFinite(value) ? value : fallback);
 
 export const isFilterType = (value: unknown): value is BiquadFilterType => FILTER_TYPES.includes(value as BiquadFilterType);
 

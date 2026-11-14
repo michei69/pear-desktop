@@ -1,5 +1,6 @@
 import {
   appQueueStore,
+  type AppQueueState,
   definePlugin,
   onQueueChange,
   playerQueue,
@@ -30,12 +31,6 @@ type QueueRenderer = { playlistPanelVideoRenderer?: QueueVideo };
 interface QueueWrapper {
   primaryRenderer?: QueueRenderer;
   counterpart?: { counterpartRenderer?: QueueRenderer }[];
-}
-
-interface QueueState {
-  items?: QueueItem[];
-  selectedItemIndex?: number;
-  repeatMode?: string;
 }
 
 /** Every video a queue row can play: its own, or a wrapper's primary and counterparts. */
@@ -70,11 +65,10 @@ const itemKeysOf = (items: QueueItem[]) =>
  * slice as a fallback (the slice outlives the queue element, and exists on UIs
  * that don't expose one). The player bar's legacy `getState().queue` is gone.
  */
-const queueState = (): QueueState | undefined => {
-  // getState() is typed with the SDK's minimal queue; the stores keep these fields beside it.
-  const stored = playerQueue()?.queue?.store?.store?.getState()?.queue as QueueState | undefined;
+const queueState = (): AppQueueState | undefined => {
+  const stored = playerQueue()?.queue?.store?.store?.getState()?.queue;
   if (stored?.items?.length) return stored;
-  return (appQueueStore()?.getState().queue as unknown as QueueState | undefined) ?? stored;
+  return appQueueStore()?.getState().queue ?? stored;
 };
 
 export default definePlugin({

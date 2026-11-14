@@ -4,6 +4,7 @@
 // the handover a splice instead of a switch: the two copies are the same signal.
 
 import type { AudioGraph } from "@pear/sdk";
+import { listenAll } from "@pear/sdk/dom";
 import { fadeCurve } from "./fade.ts";
 import type { Ctx } from "./schema.ts";
 
@@ -313,11 +314,14 @@ export function secondStream(ctx: Ctx, graph: AudioGraph) {
     });
   };
 
+  const pauseCurrent = () => {
+    if (!current) return;
+    current.starting = false;
+    current.audio.pause();
+  };
+
   const pause = () => {
-    if (current) {
-      current.starting = false;
-      current.audio.pause();
-    }
+    pauseCurrent();
     pauseOutgoing();
   };
 
@@ -333,46 +337,29 @@ export function secondStream(ctx: Ctx, graph: AudioGraph) {
   // The silent copy follows the video's own clock: stopped while it is parked or
   // seeking, started again on the clock when it runs, and re-anchored by `follow`
   // after a seek the alignment would only chase.
-  let unbindVideo: (() => void)[] = [];
+  let unbindVideo: (() => void) | undefined;
   const bindVideo = (next: HTMLVideoElement) => {
-    for (const off of unbindVideo) off();
+    unbindVideo?.();
     video = next;
-    const target = video;
-    const listen = (type: string, listener: EventListener) => {
-      target.addEventListener(type, listener);
-      return () => target.removeEventListener(type, listener);
-    };
-    unbindVideo = [
-      listen("playing", () => {
+    unbindVideo = listenAll(video, {
+      playing: () => {
         follow();
         resumeOutgoing();
-      }),
-      listen("pause", pause),
-      listen("seeking", () => {
-        if (current) {
-          current.starting = false;
-          current.audio.pause();
-        }
-      }),
-      listen("seeked", follow),
-      listen("waiting", () => {
-        if (current) {
-          current.starting = false;
-          current.audio.pause();
-        }
-      }),
-      listen("ratechange", () => {
+      },
+      pause,
+      seeking: pauseCurrent,
+      seeked: follow,
+      waiting: pauseCurrent,
+      ratechange: () => {
         // Match the new base rate right away; the alignment then closes any drift it left.
         if (current && !current.audio.paused) current.audio.playbackRate = video.playbackRate;
         follow();
         if (outgoing) outgoing.audio.playbackRate = video.playbackRate;
-      }),
-    ];
+      },
+    });
   };
   bindVideo(video);
-  ctx.onCleanup(() => {
-    for (const off of unbindVideo) off();
-  });
+  ctx.onCleanup(() => unbindVideo?.());
 
   return {
     /** Fetches the stream of the track that just started. */

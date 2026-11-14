@@ -2,9 +2,9 @@
 
 import type { HostContextOf } from "@pear/sdk";
 import type { SongDetails } from "@pear/sdk/song-details";
-import { errorMessage } from "@pear/sdk/util";
+import { errorMessage, isPaused } from "@pear/sdk/util";
 import { Client, type SetActivity } from "@xhayper/discord-rpc";
-import { buildActivity, isPaused, needsUpdate } from "./activity.ts";
+import { buildActivity, needsUpdate } from "./activity.ts";
 import type { schema } from "./schema.ts";
 
 /** The Rich Presence application registered by the pear-desktop team. */

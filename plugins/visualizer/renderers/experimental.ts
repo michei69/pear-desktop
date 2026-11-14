@@ -268,8 +268,7 @@ class ExperimentalRenderer extends ThemeSongRenderer {
     const points: Array<{ x: number; y: number; colour: string }> = [];
     const angleIncrement = (Math.PI * 2) / RING_POINTS;
     for (let index = 0; index < RING_POINTS; index += 1) {
-      const frequencyIndex = Math.floor((index / RING_POINTS) * Math.min(data.length, 1024));
-      const value = data[frequencyIndex] ?? 0;
+      const value = this.frequencyAt(index / RING_POINTS);
       const distance = options.radius + (value / options.frequencyDivisor) * options.radius;
       points.push({
         x: Math.cos(index * angleIncrement) * distance,

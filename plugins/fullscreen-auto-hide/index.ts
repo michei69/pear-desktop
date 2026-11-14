@@ -127,12 +127,7 @@ export default definePlugin({
         clearTimer();
         if (recheck !== undefined) ctx.clearTimeout(recheck);
         document.body.classList.remove(ACTIVE_CLASS, IDLE_CLASS);
-        if (!hidden) return;
-        hidden = false;
-        const bar = ctx.$<HTMLElement>("player_bar");
-        if (!bar) return;
-        bar.style.removeProperty("opacity");
-        bar.style.removeProperty("pointer-events");
+        show();
       });
     },
   },

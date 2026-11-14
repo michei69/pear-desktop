@@ -1,40 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
-import { isShuffled, shuffleWhenReady, type ShuffleAdapter } from "../restore.ts";
-
-/** A queue whose item count and shuffle flag the test moves, and whose shuffle is a spy. */
-function fakeQueue(options: { items?: number; shuffled?: boolean; button?: boolean } = {}) {
-  let items = options.items ?? 0;
-  let shuffled = options.shuffled ?? false;
-  let notify: (() => void) | undefined;
-  const shuffle = vi.fn(() => {
-    // A page without YTM's shuffle button cannot shuffle.
-    if (options.button === false) return false;
-    shuffled = true;
-    return true;
-  });
-  const adapter: ShuffleAdapter = {
-    items: () => items,
-    shuffled: () => shuffled,
-    shuffle,
-    subscribe: (listener) => {
-      notify = listener;
-      return () => {
-        notify = undefined;
-      };
-    },
-  };
-  return {
-    adapter,
-    shuffle,
-    fill(count: number) {
-      items = count;
-      notify?.();
-    },
-    get subscribed() {
-      return notify !== undefined;
-    },
-  };
-}
+import { isShuffled, shuffleWhenReady } from "../restore.ts";
+import { fakeQueue } from "./fake-queue.ts";
 
 describe("shuffleWhenReady", () => {
   it("waits for the queue to fill, then shuffles once", () => {

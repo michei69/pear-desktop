@@ -79,6 +79,15 @@ export function entityKey(id: string, type: EntityType): string {
 export const songKey = (videoId: string, type: EntityType) => entityKey(videoId, type);
 export const libraryKey = () => entityKey(LIBRARY_ID, "musicDownloadsLibraryEntity");
 
+export function libraryEntity(library: Record<string, unknown>, changes: Record<string, unknown>): EntityRecord {
+  return {
+    key: libraryKey(),
+    entityType: "musicDownloadsLibraryEntity",
+    data: { ...library, id: libraryKey(), ...changes },
+    version: 0,
+  };
+}
+
 /** The media store's keys: the stream's entry, the video slot's, and each part's. */
 export const indexKey = (videoId: string, slot: "a" | "v") => `${videoId}|${slot}`;
 export const chunkKey = (videoId: string, format: Pick<OfflineFormat, "itag" | "lastModified">, part: number) =>

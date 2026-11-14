@@ -678,13 +678,15 @@ export function startSkipAiSlop(ctx: Ctx) {
     return ctx.t("plugins.skip-ai-slop.status.recent", "Recently filtered ({{count}}): {{entries}}", { count: recent.length, entries });
   }
 
+  function missingRecent(id: string | undefined) {
+    return id
+      ? ctx.t("plugins.skip-ai-slop.status.recent-unknown", "“{{id}}” is not in the recently filtered list.", { id })
+      : ctx.t("plugins.skip-ai-slop.status.recent-none", "Nothing has been filtered yet.");
+  }
+
   function allowRecent(id: string | undefined): string {
     const entry = recentEntry(id);
-    if (!entry) {
-      return id
-        ? ctx.t("plugins.skip-ai-slop.status.recent-unknown", "“{{id}}” is not in the recently filtered list.", { id })
-        : ctx.t("plugins.skip-ai-slop.status.recent-none", "Nothing has been filtered yet.");
-    }
+    if (!entry) return missingRecent(id);
     allowId(entry.id, entry.name);
     ctx.log.info(`allowed ${entry.id} (${entry.name}) from the recently filtered list`);
     return ctx.t("plugins.skip-ai-slop.status.recent-allowed", "Allowed {{name}} ({{id}}); it will not be filtered again.", {
@@ -695,11 +697,7 @@ export function startSkipAiSlop(ctx: Ctx) {
 
   function removeRecentEntry(id: string | undefined): string {
     const entry = recentEntry(id);
-    if (!entry) {
-      return id
-        ? ctx.t("plugins.skip-ai-slop.status.recent-unknown", "“{{id}}” is not in the recently filtered list.", { id })
-        : ctx.t("plugins.skip-ai-slop.status.recent-none", "Nothing has been filtered yet.");
-    }
+    if (!entry) return missingRecent(id);
     forgetRecent(entry.id);
     return ctx.t("plugins.skip-ai-slop.status.recent-removed", "Forgot {{name}} ({{id}}) from the recently filtered list.", {
       name: entry.name,
@@ -713,11 +711,21 @@ export function startSkipAiSlop(ctx: Ctx) {
       : ctx.t("plugins.skip-ai-slop.status.track", "track");
   }
 
-  function listSearchSummary(): string {
+  function listSearchInput(): { query: string } | { error: string } {
     const query = ctx.config.listSearch.trim();
-    if (!query) return ctx.t("plugins.skip-ai-slop.status.search-no-query", "Set “Community list search” in the settings first.");
+    if (!query)
+      return { error: ctx.t("plugins.skip-ai-slop.status.search-no-query", "Set “Community list search” in the settings first.") };
     if (!hasBlacklistNames())
-      return ctx.t("plugins.skip-ai-slop.status.search-no-names", "The list's names are not saved yet; download the list first.");
+      return {
+        error: ctx.t("plugins.skip-ai-slop.status.search-no-names", "The list's names are not saved yet; download the list first."),
+      };
+    return { query };
+  }
+
+  function listSearchSummary(): string {
+    const input = listSearchInput();
+    if ("error" in input) return input.error;
+    const { query } = input;
 
     const { matches, total } = searchBlacklistNames(query);
     if (matches.length === 0)
@@ -731,10 +739,9 @@ export function startSkipAiSlop(ctx: Ctx) {
   }
 
   function allowListMatch(): string {
-    const query = ctx.config.listSearch.trim();
-    if (!query) return ctx.t("plugins.skip-ai-slop.status.search-no-query", "Set “Community list search” in the settings first.");
-    if (!hasBlacklistNames())
-      return ctx.t("plugins.skip-ai-slop.status.search-no-names", "The list's names are not saved yet; download the list first.");
+    const input = listSearchInput();
+    if ("error" in input) return input.error;
+    const { query } = input;
 
     // The name-prefix matches come first, so the best match is the one to allow.
     const { matches, total } = searchBlacklistNames(query, 1);

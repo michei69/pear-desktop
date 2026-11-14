@@ -17,7 +17,15 @@ import type { LyricsConfig } from "./schema.ts";
 import { isChineseTarget, resolveTargetLanguage } from "./translation/language.ts";
 import { TranslationService } from "./translation/service.ts";
 import type { TranslationResult } from "./translation/types.ts";
-import { lyricsType, type CustomQuery, type LyricResult, type ProviderId, type RomanizationScript, type SearchQuery } from "./types.ts";
+import {
+  buildSearchQuery,
+  lyricsType,
+  type CustomQuery,
+  type LyricResult,
+  type ProviderId,
+  type RomanizationScript,
+  type SearchQuery,
+} from "./types.ts";
 
 export interface LyricsRequest {
   track: Track | null;
@@ -210,22 +218,16 @@ export class LyricsHost {
 
   async #queryFor(track: Track, details: SongDetails | null, config: Readonly<LyricsConfig>): Promise<SearchQuery> {
     const custom = await this.#customQueries.get(track.videoId);
-    const query: SearchQuery = {
+    return buildSearchQuery({
       videoId: track.videoId,
-      title: custom?.query ?? track.title,
-      artist: custom ? (custom.artist ?? "") : track.artist,
+      title: track.title,
+      artist: track.artist,
+      album: track.album,
       durationSeconds: track.durationSeconds,
       inexact: config.showLyricsEvenIfInexact,
-    };
-    if (track.album) query.album = track.album;
-    if (details?.alternativeTitle && details.alternativeTitle !== track.title) query.alternativeTitle = details.alternativeTitle;
-    if (details?.tags.length) query.tags = details.tags;
-    if (custom) {
-      query.title = custom.query;
-      query.alternativeTitle = custom.query;
-      query.artist = custom.artist ?? "";
-    }
-    return query;
+      custom,
+      details,
+    });
   }
 
   #providerOptions(config: Readonly<LyricsConfig>, t: Translate): ProviderOptions {
@@ -239,21 +241,16 @@ export class LyricsHost {
   async #queryForVideo(videoId: string, config: Readonly<LyricsConfig>): Promise<SearchQuery | null> {
     const info = await this.#infoForVideo(videoId).catch(() => null);
     if (!info) return null;
-    const query: SearchQuery = {
+    const custom = await this.#customQueries.get(videoId);
+    return buildSearchQuery({
       videoId,
       title: info.title,
       artist: info.artist,
+      album: info.album,
       durationSeconds: info.durationSeconds,
       inexact: config.showLyricsEvenIfInexact,
-    };
-    if (info.album) query.album = info.album;
-    const custom = await this.#customQueries.get(videoId);
-    if (custom) {
-      query.title = custom.query;
-      query.alternativeTitle = custom.query;
-      query.artist = custom.artist ?? "";
-    }
-    return query;
+      custom,
+    });
   }
 
   /** The video's watch-next metadata, cached (a failed lookup is not kept, so it can retry). */

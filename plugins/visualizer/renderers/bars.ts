@@ -1,3 +1,4 @@
+import { clamp } from "@pear/sdk/util";
 import type { Renderer, Stage } from "../config.ts";
 import { hslToCss, type Hsl } from "../palette.ts";
 import { ThemeSongRenderer } from "./theme-song.ts";
@@ -5,8 +6,6 @@ import { ThemeSongRenderer } from "./theme-song.ts";
 const DESIGN_WIDTH = 2400;
 const DESIGN_HEIGHT = 520;
 const BARS_HEIGHT_RATIO = 0.4;
-
-const clamp01 = (value: number) => Math.min(1, Math.max(0, value));
 
 /** A spectrum of rounded bars in the artwork's colors. */
 export function barsRenderer(stage: Stage): Renderer {
@@ -38,15 +37,15 @@ class BarsRenderer extends ThemeSongRenderer {
       case "rgb":
         return hslToCss({ h: amplitude * 2, s: 1, l: 0.7 });
       case "accent":
-        return hslToCss({ h: accent.h, s: accent.s, l: clamp01(amplitude / 500 + 0.3) });
+        return hslToCss({ h: accent.h, s: accent.s, l: clamp(amplitude / 500 + 0.3, 0, 1) });
       case "palette": {
         const palette = this.palette.colors;
         const swatch = palette[index % palette.length] ?? accent;
-        return hslToCss({ h: swatch.h, s: swatch.s, l: clamp01(amplitude / 500 + 0.3) });
+        return hslToCss({ h: swatch.h, s: swatch.s, l: clamp(amplitude / 500 + 0.3, 0, 1) });
       }
       case "dancing-palette": {
         const swatch = this.dancingSwatch(amplitude);
-        return hslToCss({ h: swatch.h, s: swatch.s, l: clamp01(swatch.l - (swatch.l - 0.7) / 2) });
+        return hslToCss({ h: swatch.h, s: swatch.s, l: clamp(swatch.l - (swatch.l - 0.7) / 2, 0, 1) });
       }
     }
   }

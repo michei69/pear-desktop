@@ -1,15 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { fetchMusicBrainzCorrection } from "../musicbrainz.ts";
-import type { Fetch } from "../services.ts";
-
-function fakeFetch(reply: unknown) {
-  const calls: { url: string; headers: Record<string, string> }[] = [];
-  const fetch: Fetch = async (url, init) => {
-    calls.push({ url, headers: (init?.headers ?? {}) as Record<string, string> });
-    return new Response(JSON.stringify(reply), { status: 200 });
-  };
-  return { fetch, calls };
-}
+import { fakeFetch } from "./fake-fetch.ts";
 
 describe("fetchMusicBrainzCorrection", () => {
   it("identifies the app with its version and the contact email, as MusicBrainz asks", async () => {
@@ -18,7 +9,8 @@ describe("fetchMusicBrainzCorrection", () => {
     });
     const correction = await fetchMusicBrainzCorrection("Unversioned Request", "Artist", "me@example.com", "4.0.0", fetch);
     expect(correction).toEqual({ title: "Corrected Title", artist: "Corrected Artist" });
-    expect(calls[0]!.headers["User-Agent"]).toBe("pear-desktop/4.0.0 ( me@example.com )");
-    expect(calls[0]!.headers.From).toBe("me@example.com");
+    const headers = calls[0]!.init!.headers as Record<string, string>;
+    expect(headers["User-Agent"]).toBe("pear-desktop/4.0.0 ( me@example.com )");
+    expect(headers.From).toBe("me@example.com");
   });
 });

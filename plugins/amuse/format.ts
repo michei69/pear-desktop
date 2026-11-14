@@ -2,7 +2,7 @@
 // clients treat a missing key as a malformed provider.
 
 import { livePosition, type MediaType, type NowPlaying } from "@pear/sdk";
-import { isPlaying } from "@pear/sdk/util";
+import { formatDuration, isPaused } from "@pear/sdk/util";
 
 const CORS = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "*" };
 
@@ -18,11 +18,6 @@ const VIDEO_TYPES: Record<string, string> = {
 };
 const LIKE_STATUS = { like: "LIKE", dislike: "DISLIKE", none: "INDIFFERENT" } as const;
 const REPEAT_TYPE = { none: "NONE", all: "ALL", one: "ONE" } as const;
-
-export function toHumanTime(seconds: number) {
-  const safe = Math.max(0, Math.floor(seconds));
-  return `${Math.floor(safe / 60)}:${(safe % 60).toString().padStart(2, "0")}`;
-}
 
 /** The raw YTM media type when the page knows it, else the coarse fallback. */
 export function wireMediaType(mediaType: MediaType, musicVideoType: string | undefined) {
@@ -43,10 +38,10 @@ export function songInfo(state: NowPlaying, musicVideoType?: string) {
     apiVersion: 2,
     player: {
       hasSong: !!(track?.title && track.artist),
-      isPaused: state.ad || !isPlaying(state),
+      isPaused: isPaused(state),
       volumePercent: state.volume,
       seekbarCurrentPosition: position,
-      seekbarCurrentPositionHuman: toHumanTime(position),
+      seekbarCurrentPositionHuman: formatDuration(position),
       statePercent: duration > 0 ? Math.round((position / duration) * 100) : 0,
       likeStatus: LIKE_STATUS[state.like],
       repeatType: REPEAT_TYPE[state.repeat],
@@ -59,7 +54,7 @@ export function songInfo(state: NowPlaying, musicVideoType?: string) {
       album: track?.album ?? "",
       cover: track?.artworkUrl ?? "",
       duration,
-      durationHuman: toHumanTime(duration),
+      durationHuman: formatDuration(duration),
       url: track?.url ?? "",
       id: track?.videoId ?? "",
       isVideo: isVideoType(mediaType),

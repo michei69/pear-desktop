@@ -49,6 +49,31 @@ export abstract class ThemeSongRenderer implements Renderer {
     if (this.canvas.height !== this.height) this.canvas.height = this.height;
   }
 
+  protected frequencyAt(fraction: number): number {
+    const data = this.frequencyData;
+    return data[Math.min(data.length - 1, Math.floor(fraction * Math.min(data.length, 1024)))] ?? 0;
+  }
+
+  protected forEachSpectrumBlock(
+    context: CanvasRenderingContext2D,
+    width: number,
+    height: number,
+    block: { barWidth: number; gap: number; blockHeight: number; blockStep: number; scale: number; minHeight: number },
+    draw: (context: CanvasRenderingContext2D, x: number, y: number, offset: number, barHeight: number) => void,
+  ): void {
+    const { barWidth, gap, blockHeight, blockStep, scale, minHeight } = block;
+    const barCount = Math.max(1, Math.ceil(width / (barWidth + gap)));
+    for (let bar = 0; bar < barCount; bar += 1) {
+      const barHeight = Math.min(height, Math.max(this.frequencyAt(bar / barCount) * scale, minHeight));
+      const x = bar * (barWidth + gap);
+      for (let offset = 0; offset < barHeight; offset += blockStep) {
+        const y = height - blockHeight - offset;
+        if (y + blockHeight < 0) break;
+        draw(context, x, y, offset, barHeight);
+      }
+    }
+  }
+
   // An arrow so the plugin's loop can call a detached `render`.
   render = (): void => {
     // pear-desktop froze these while the track was paused: the snow stops falling,

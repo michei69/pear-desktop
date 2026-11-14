@@ -4,7 +4,8 @@
 
 import { parseLrc } from "../lrc.ts";
 import type { LyricResult, SearchQuery } from "../types.ts";
-import type { Fetch } from "./http.ts";
+import { parseJson, type Fetch } from "./http.ts";
+import { splitArtists, textOf } from "./shared.ts";
 
 const BASE = "https://lrchub.coreone.work";
 const ATTEMPTS = 3;
@@ -21,17 +22,9 @@ interface LrchubRecord {
   plain_lyrics?: unknown;
 }
 
-const textOf = (value: unknown) => (typeof value === "string" ? value.trim() : "");
-
 /** The LRC LRCHub has for a record, best first; word-synced tags are kept. */
 export const pickLrchubLrc = (record: LrchubRecord): string =>
   textOf(record.synced_lyrics) || textOf(record.lyrics) || textOf(record.dynamic_lrc);
-
-const splitArtists = (artists: string) =>
-  artists
-    .split(/[&,]|\s+(?:feat\.?|ft\.?)\s+/i)
-    .map((artist) => artist.trim())
-    .filter(Boolean);
 
 /**
  * LRCHub answers a flat 503 `SERVER_BUSY` when overloaded, asking the client to
@@ -70,12 +63,7 @@ export async function lrchub(query: SearchQuery, fetch: Fetch): Promise<LyricRes
   if (RETRYABLE_STATUSES.has(status)) return null;
   if (status < 200 || status >= 300) throw new Error(`${new URL(BASE).host} responded ${status}`);
 
-  let parsed: (LrchubRecord & { record?: LrchubRecord }) | null;
-  try {
-    parsed = JSON.parse(text) as (LrchubRecord & { record?: LrchubRecord }) | null;
-  } catch {
-    return null;
-  }
+  const parsed = parseJson<LrchubRecord & { record?: LrchubRecord }>(text);
   if (!parsed || typeof parsed !== "object") return null;
 
   const record = parsed.record && typeof parsed.record === "object" ? parsed.record : parsed;

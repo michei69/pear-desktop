@@ -50,6 +50,14 @@ const writeJson = (key: string, value: unknown) => {
   }
 };
 
+const removeKey = (key: string) => {
+  try {
+    localStorage.removeItem(key);
+  } catch {
+    // ignore
+  }
+};
+
 export const readRecentFiltered = (): RecentEntry[] => {
   if (recentCache) return recentCache;
   const raw = readJson(RECENT_KEY);
@@ -74,11 +82,7 @@ export const recordFiltered = (entry: RecentEntry) => {
 
 export const clearRecent = () => {
   recentCache = [];
-  try {
-    localStorage.removeItem(RECENT_KEY);
-  } catch {
-    // ignore
-  }
+  removeKey(RECENT_KEY);
 };
 
 /** Forgets one match, so a fixed or dismissed false positive drops off the list. */
@@ -135,11 +139,7 @@ export const searchBlacklistNames = (query: string, limit = 10) => {
 
 export const clearBlacklistNames = () => {
   namesCache = null;
-  try {
-    localStorage.removeItem(NAMES_KEY);
-  } catch {
-    // ignore
-  }
+  removeKey(NAMES_KEY);
 };
 
 export interface CachedBlacklist {
@@ -165,11 +165,7 @@ export const writeCachedBlacklist = (data: Blacklist) => {
 };
 
 export const clearCachedBlacklist = () => {
-  try {
-    localStorage.removeItem(CACHE_KEY);
-  } catch {
-    // ignore
-  }
+  removeKey(CACHE_KEY);
 };
 
 const FEEDBACK_KEY = "skip-ai-slop:feedback-done";
@@ -184,11 +180,7 @@ export const saveFeedbackDone = (done: ReadonlySet<string>) => {
 };
 
 export const clearFeedbackDone = () => {
-  try {
-    localStorage.removeItem(FEEDBACK_KEY);
-  } catch {
-    // ignore
-  }
+  removeKey(FEEDBACK_KEY);
 };
 
 /** "Clear cache" in the settings: the matching cache, names, matches and feedback history. */

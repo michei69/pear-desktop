@@ -1,20 +1,10 @@
 import { describe, expect, test, vi } from "vitest";
 import plugin from "../index.ts";
+import { fakeWindow } from "./fake-window.ts";
 
 interface TestConfig {
   opacity: number;
   type: "none" | "mica" | "window";
-}
-
-function fakeWindow() {
-  const calls: string[] = [];
-  return {
-    calls,
-    isDestroyed: () => false,
-    setBackgroundMaterial: vi.fn((material: string) => void calls.push(`material:${material}`)),
-    setVibrancy: vi.fn((vibrancy: string | null) => void calls.push(`vibrancy:${vibrancy}`)),
-    setBackgroundColor: vi.fn((color: string) => void calls.push(`background:${color}`)),
-  };
 }
 
 function makeContext(config: TestConfig) {

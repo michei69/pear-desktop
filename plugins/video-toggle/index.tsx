@@ -1,5 +1,7 @@
 /** @jsxImportSource @pear/sdk */
 import { config, definePlugin, type ConfigOf, type PageContextOf } from "@pear/sdk";
+import { elementRestorer, type ElementState } from "@pear/sdk/dom";
+import { largestThumbnailUrl } from "@pear/sdk/image";
 import { css } from "@pear/sdk/macros" with { type: "macro" };
 
 const CUSTOM = css`
@@ -95,7 +97,6 @@ const schema = {
 
 type Config = ConfigOf<typeof schema>;
 type Ctx = PageContextOf<typeof schema>;
-type SetAttribute = (element: Element | null, name: string, value: string | null) => void;
 
 const OMV = "OMV_PREFERRED";
 const ATV = "ATV_PREFERRED";
@@ -118,9 +119,10 @@ export default definePlugin({
   },
   page(ctx) {
     if (ctx.config.forceHide) return;
-    const setAttribute = attributeRestorer(ctx);
-    if (ctx.config.mode === "custom") customSwitch(ctx, setAttribute);
-    else nativeSwitch(ctx, setAttribute);
+    const restorer = elementRestorer();
+    ctx.onCleanup(restorer.restore);
+    if (ctx.config.mode === "custom") customSwitch(ctx, restorer);
+    else nativeSwitch(ctx, restorer);
   },
 });
 
@@ -130,65 +132,14 @@ function style(config: Config) {
   return `${CUSTOM}:root{--pear-video-toggle-align:${ALIGN[config.align]}}`;
 }
 
-/** Sets attributes like `setAttribute`, putting the original values back on cleanup. */
-function attributeRestorer(ctx: Ctx): SetAttribute {
-  const restore = new Map<Element, [string, string | null][]>();
-  ctx.onCleanup(() => {
-    for (const [element, saved] of restore) {
-      for (const [name, value] of saved) writeAttribute(element, name, value);
-    }
-  });
-  return (element, name, value) => {
-    if (!element || element.getAttribute(name) === value) return;
-    const saved = restore.get(element) ?? [];
-    if (!saved.some(([n]) => n === name)) saved.push([name, element.getAttribute(name)]);
-    restore.set(element, saved);
-    writeAttribute(element, name, value);
-  };
-}
-
-function writeAttribute(element: Element, name: string, value: string | null) {
-  if (value === null) element.removeAttribute(name);
-  else element.setAttribute(name, value);
-}
-
-/** Sets inline styles, remembering the previous value for cleanup/undo. */
-function styleRestorer(ctx: Ctx) {
-  const saved = new Map<HTMLElement, Map<string, [string, string]>>();
-  ctx.onCleanup(() => {
-    for (const [element, properties] of saved) {
-      for (const [name, [value, priority]] of properties) element.style.setProperty(name, value, priority);
-    }
-  });
-  return {
-    set(element: HTMLElement | null, property: string, value: string) {
-      if (!element || element.style.getPropertyValue(property) === value) return;
-      let properties = saved.get(element);
-      if (!properties) saved.set(element, (properties = new Map()));
-      if (!properties.has(property)) {
-        properties.set(property, [element.style.getPropertyValue(property), element.style.getPropertyPriority(property)]);
-      }
-      element.style.setProperty(property, value);
-    },
-    clear(element: HTMLElement | null, property: string) {
-      if (!element) return;
-      const properties = saved.get(element);
-      const previous = properties?.get(property);
-      if (!properties || !previous) return;
-      element.style.setProperty(property, previous[0], previous[1]);
-      properties.delete(property);
-    },
-  };
-}
-
 /** Enables or disables YTM's own song/video switch. */
-function nativeSwitch(ctx: Ctx, setAttribute: SetAttribute) {
+function nativeSwitch(ctx: Ctx, restorer: ElementState) {
   const enable = ctx.config.mode === "native";
   const apply = () => {
     const hasSwitcher = enable ? "" : null;
-    setAttribute(ctx.$("player.page"), "has-av-switcher", hasSwitcher);
-    setAttribute(ctx.$("player.container"), "has-av-switcher", hasSwitcher);
-    setAttribute(ctx.$("player.av_toggle"), "toggle-disabled", enable ? null : "");
+    restorer.attribute(ctx.$("player.page"), "has-av-switcher", hasSwitcher);
+    restorer.attribute(ctx.$("player.container"), "has-av-switcher", hasSwitcher);
+    restorer.attribute(ctx.$("player.av_toggle"), "toggle-disabled", enable ? null : "");
   };
   void ctx.waitFor("player.av_toggle").then(
     () => {
@@ -201,8 +152,7 @@ function nativeSwitch(ctx: Ctx, setAttribute: SetAttribute) {
 }
 
 /** Pear's own Song / Video switch over the player. */
-function customSwitch(ctx: Ctx, setAttribute: SetAttribute) {
-  const setStyle = styleRestorer(ctx);
+function customSwitch(ctx: Ctx, restorer: ElementState) {
   let showVideo = !ctx.config.hideVideo;
   let hasVideo = true;
   const visible = () => showVideo && hasVideo;
@@ -238,14 +188,14 @@ function customSwitch(ctx: Ctx, setAttribute: SetAttribute) {
     // Tell audio-only (which locks the player to ATV) that this switch owns the
     // mode while the video is asked for; otherwise the two observers keep
     // flipping playback-mode against each other and freeze the page.
-    setAttribute(player, "data-pear-show-video", shown ? "1" : null);
-    setAttribute(player, "playback-mode", shown ? OMV : ATV);
+    restorer.attribute(player, "data-pear-show-video", shown ? "1" : null);
+    restorer.attribute(player, "playback-mode", shown ? OMV : ATV);
     songVideo.style.display = shown ? "block" : "none";
     songImage.style.display = shown ? "none" : "block";
     // pear-desktop's 3.x workaround: the player needs a horizontal auto margin
     // while the video is hidden, the cover art fills the panel.
-    if (!shown) setStyle.set(player, "margin", "auto 0px");
-    else setStyle.clear(player, "margin");
+    if (!shown) restorer.style(player, "margin", "auto 0px");
+    else restorer.restoreStyle(player, "margin");
     if (!shown) forceThumbnail(ctx, hasVideo);
   };
   ctx.onCleanup(() => {
@@ -292,10 +242,10 @@ function customSwitch(ctx: Ctx, setAttribute: SetAttribute) {
 function forceThumbnail(ctx: Ctx, hasVideo: boolean) {
   const image = ctx.$<HTMLImageElement>("player.song_image_img");
   const thumbnails = ctx.player.api?.getPlayerResponse()?.videoDetails?.thumbnail?.thumbnails ?? [];
-  const best = thumbnails.toSorted((a, b) => b.width * b.height - a.width * a.height)[0];
-  if (!image || !best) return;
+  if (!image) return;
   if (!hasVideo && !image.src.startsWith("data:")) return;
-  const url = best.url.split("?")[0]!;
+  const url = largestThumbnailUrl(thumbnails);
+  if (url === undefined) return;
   if (image.src !== url) image.src = url;
 }
 

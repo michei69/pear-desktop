@@ -1,3 +1,4 @@
+import { clamp } from "@pear/sdk/util";
 import type { Renderer, Stage } from "../config.ts";
 import { ThemeSongRenderer } from "./theme-song.ts";
 
@@ -61,8 +62,6 @@ type RenderedSparkle = ProjectedPoint & {
 };
 
 const TAU = Math.PI * 2;
-
-const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
 
 const rgba = (color: Rgb, alpha: number) => `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${clamp(alpha, 0, 1).toFixed(3)})`;
 

@@ -380,13 +380,7 @@ export const PANEL_CSS = css`
   }
 
   .peq-actions,
-  .peq-recent {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    align-items: center;
-  }
-
+  .peq-recent,
   .peq-chips {
     display: flex;
     flex-wrap: wrap;

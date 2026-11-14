@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
 import { describe, expect, it } from "vitest";
-import { type Fetch, LastFmError, lastFm, lastFmSignature, type Listen, listenBrainzBody, listenBrainzSubmit } from "../services.ts";
+import { LastFmError, lastFm, lastFmSignature, type Listen, listenBrainzBody, listenBrainzSubmit } from "../services.ts";
+import { fakeFetch } from "./fake-fetch.ts";
 
 const md5 = (text: string) => createHash("md5").update(text).digest("hex");
 const credentials = { apiRoot: "https://lastfm.test/2.0/", apiKey: "KEY", secret: "SECRET" };
@@ -12,15 +13,6 @@ const listen: Listen = {
   url: "https://music.\u0079\u006f\u0075\u0074\u0075\u0062\u0065.com/watch?v=abc",
   startedAt: 1_700_000_000_500,
 };
-
-function fakeFetch(reply: unknown, status = 200) {
-  const calls: { url: string; init?: RequestInit }[] = [];
-  const fetch: Fetch = async (url, init) => {
-    calls.push({ url, ...(init ? { init } : {}) });
-    return new Response(JSON.stringify(reply), { status });
-  };
-  return { fetch, calls };
-}
 
 describe("Last.fm", () => {
   it("signs sorted parameters without format", () => {

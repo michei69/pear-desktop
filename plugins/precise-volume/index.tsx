@@ -1,7 +1,7 @@
 /** @jsxImportSource @pear/sdk */
 import { definePlugin, type PageContextOf } from "@pear/sdk";
 import { css } from "@pear/sdk/macros" with { type: "macro" };
-import { clamp, debounce } from "@pear/sdk/util";
+import { clamp, debounce, isTypingTarget } from "@pear/sdk/util";
 import { isVolume, schema } from "./config.ts";
 import { startHost } from "./host.ts";
 import { VolumeTitles } from "./tooltips.ts";
@@ -261,14 +261,5 @@ function listenForArrows(ctx: Ctx, change: (direction: number) => void) {
 /** Arrow keys in a text field or the open search box move the caret, not the volume. */
 function isTyping(ctx: Ctx, event: KeyboardEvent) {
   const searchOpen = ctx.$<HTMLElement & { opened?: boolean }>("nav_bar.search_box")?.opened;
-  return isEditable(event.composedPath()[0]) || !!searchOpen;
-}
-function isEditable(target: EventTarget | undefined) {
-  if (!(target instanceof HTMLElement)) return false;
-  return (
-    target.isContentEditable ||
-    target instanceof HTMLInputElement ||
-    target instanceof HTMLTextAreaElement ||
-    target instanceof HTMLSelectElement
-  );
+  return isTypingTarget(event.composedPath()[0] ?? null) || !!searchOpen;
 }

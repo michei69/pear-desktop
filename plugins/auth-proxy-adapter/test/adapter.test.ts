@@ -1,36 +1,15 @@
-import { once } from "node:events";
-import { connect, type Socket } from "node:net";
 import { afterEach, expect, test, vi } from "vitest";
 import { startAdapter } from "../adapter.ts";
+import { closeServers, connectTo, log, servers } from "./harness.ts";
 
 const socks = vi.hoisted(() => ({ createConnection: vi.fn() }));
 
 vi.mock("socks", () => ({ SocksClient: { createConnection: socks.createConnection } }));
 
-const log = { info() {}, warn() {}, error() {} };
-const servers: { close(): void }[] = [];
-
 afterEach(() => {
-  for (const server of servers.splice(0)) server.close();
+  closeServers();
   socks.createConnection.mockReset();
 });
-
-/** Speaks SOCKS5 to the adapter and buffers what comes back. */
-async function connectTo(port: number) {
-  const socket: Socket = connect(port, "127.0.0.1");
-  let buffer = Buffer.alloc(0);
-  socket.on("data", (chunk: Buffer) => (buffer = Buffer.concat([buffer, chunk])));
-  await once(socket, "connect");
-  return {
-    socket,
-    read: async (n: number) => {
-      while (buffer.length < n) await once(socket, "data");
-      const out = buffer.subarray(0, n);
-      buffer = buffer.subarray(n);
-      return out;
-    },
-  };
-}
 
 test("bounds the upstream connect and reports the failure to the client", async () => {
   let failUpstream!: (error: Error) => void;

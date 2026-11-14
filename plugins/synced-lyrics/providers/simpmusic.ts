@@ -4,7 +4,8 @@
 
 import { parseLrc } from "../lrc.ts";
 import type { LyricResult, SearchQuery } from "../types.ts";
-import type { Fetch } from "./http.ts";
+import { parseJson, type Fetch } from "./http.ts";
+import { splitArtists, textOf } from "./shared.ts";
 
 const BASE = "https://api-lyrics.simpmusic.org";
 /** The API only answers clients that identify themselves as SimpMusic. */
@@ -18,8 +19,6 @@ interface SimpMusicEntry {
   richSyncLyrics?: unknown;
   vote?: unknown;
 }
-
-const textOf = (value: unknown) => (typeof value === "string" ? value.trim() : "");
 
 const NAMED_ENTITIES: Record<string, string> = {
   "amp": "&",
@@ -97,12 +96,6 @@ export function pickBestSimpMusicEntry(entries: SimpMusicEntry[]): SimpMusicEntr
   return best;
 }
 
-const splitArtists = (artists: string) =>
-  artists
-    .split(/[&,]|\s+(?:feat\.?|ft\.?)\s+/i)
-    .map((artist) => artist.trim())
-    .filter(Boolean);
-
 async function fetchEntry(fetch: Fetch, videoId: string): Promise<[number, string]> {
   const response = await fetch(`${BASE}/v1/${encodeURIComponent(videoId)}`, {
     headers: { "Accept": "application/json", "User-Agent": CLIENT_USER_AGENT },
@@ -119,12 +112,7 @@ export async function simpmusic(query: SearchQuery, fetch: Fetch): Promise<Lyric
   if (status === 404) return null;
   if (status < 200 || status >= 300) throw new Error(`${new URL(BASE).host} responded ${status}`);
 
-  let parsed: { type?: unknown; data?: unknown } | null;
-  try {
-    parsed = JSON.parse(text) as { type?: unknown; data?: unknown } | null;
-  } catch {
-    return null;
-  }
+  const parsed = parseJson<{ type?: unknown; data?: unknown }>(text);
   if (!parsed || parsed.type !== "success" || !Array.isArray(parsed.data)) return null;
 
   const entry = pickBestSimpMusicEntry(parsed.data as SimpMusicEntry[]);

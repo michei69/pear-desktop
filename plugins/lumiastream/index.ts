@@ -2,7 +2,7 @@
 
 import { definePlugin, livePosition, type NowPlaying, type Track } from "@pear/sdk";
 import type { SongDetails } from "@pear/sdk/song-details";
-import { isPlaying } from "@pear/sdk/util";
+import { isPaused } from "@pear/sdk/util";
 import { net } from "electron";
 
 const PORT = 39231;
@@ -14,8 +14,6 @@ const HEADERS = {
   "Access-Control-Allow-Headers": "*",
   "Access-Control-Allow-Origin": "*",
 };
-
-const isPaused = (state: NowPlaying) => state.ad || !isPlaying(state);
 
 type EventType = "switchSong" | "playPause";
 

@@ -1,26 +1,7 @@
 import { afterEach, expect, test, vi } from "vitest";
+import { trays } from "./fake-electron.ts";
 
-const { trays } = vi.hoisted(() => ({ trays: [] as { titles: string[]; destroyed: boolean }[] }));
-
-vi.mock("electron", () => ({
-  nativeImage: { createEmpty: () => ({}) },
-  Tray: class {
-    titles: string[] = [];
-    destroyed = false;
-    constructor() {
-      trays.push(this);
-    }
-    setTitle(title: string) {
-      this.titles.push(title);
-    }
-    isDestroyed() {
-      return this.destroyed;
-    }
-    destroy() {
-      this.destroyed = true;
-    }
-  },
-}));
+vi.mock("electron", () => import("./fake-electron.ts"));
 
 const { default: plugin } = await import("../index.ts");
 

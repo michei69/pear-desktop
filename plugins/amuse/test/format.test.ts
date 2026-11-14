@@ -1,6 +1,6 @@
 import { IDLE, type NowPlaying } from "@pear/sdk";
 import { describe, expect, test } from "vitest";
-import { isVideoType, songInfo, toHumanTime, wireMediaType } from "../format.ts";
+import { isVideoType, songInfo, wireMediaType } from "../format.ts";
 
 const playing = (patch: Partial<NowPlaying> = {}): NowPlaying => ({
   ...IDLE,
@@ -68,8 +68,9 @@ describe("Amuse query shape", () => {
   });
 
   test("position and human time follow the live player state", () => {
-    expect(toHumanTime(0)).toBe("0:00");
-    expect(toHumanTime(125.9)).toBe("2:05");
-    expect(songInfo(playing({ ad: true })).player.isPaused).toBe(true);
+    const info = songInfo(playing({ ad: true }));
+    expect(info.player.isPaused).toBe(true);
+    expect(info.player.seekbarCurrentPositionHuman).toBe("0:30");
+    expect(info.track.durationHuman).toBe("2:00");
   });
 });

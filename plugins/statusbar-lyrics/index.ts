@@ -19,9 +19,11 @@ const schema = {
 /** Master's one-click title lengths. */
 const MAX_LENGTH_CHOICES = [30, 40, 55, 70, 85, 100, 120];
 
+const collapseWhitespace = (text: string) => text.replace(/\s+/g, " ").trim();
+
 /** Collapse whitespace and truncate to the configured length. */
 const normalizeTitle = (text: string, maxLength: number) => {
-  const cleaned = text.replace(/\s+/g, " ").trim();
+  const cleaned = collapseWhitespace(text);
   const limit = Number.isFinite(maxLength) ? Math.floor(maxLength) : 0;
   if (limit <= 0) return "";
   if (cleaned.length <= limit) return cleaned;
@@ -130,7 +132,7 @@ export default definePlugin({
       if (!element) return "";
       const words = element.querySelectorAll(".word");
       const raw = words.length > 0 ? [...words].map((word) => word.textContent ?? "").join(" ") : (element.textContent ?? "");
-      return raw.replace(/\s+/g, " ").trim();
+      return collapseWhitespace(raw);
     };
 
     // The rewrite's Synced lyrics view lives in a shadow root inside the tab panel.

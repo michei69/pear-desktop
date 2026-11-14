@@ -2,6 +2,7 @@ import type { AudioGraph, PageContextOf } from "@pear/sdk";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { startCrossfade } from "../page.ts";
 import type { CrossfadeCommands, schema } from "../schema.ts";
+import { FakeGain } from "./fakes.ts";
 
 type Ctx = PageContextOf<typeof schema, CrossfadeCommands>;
 type Config = Ctx["config"];
@@ -61,50 +62,6 @@ const DEFAULT_CONFIG: Config = {
   fadeScaling: "equalPower",
   dynamicRange: 60,
 };
-
-class FakeParam {
-  value = 1;
-  curves: { curve: Float32Array; start: number; duration: number }[] = [];
-  calls: string[] = [];
-
-  cancelScheduledValues() {
-    this.calls.push("cancelScheduledValues");
-    return this;
-  }
-
-  cancelAndHoldAtTime() {
-    this.calls.push("cancelAndHoldAtTime");
-    return this;
-  }
-
-  setValueAtTime(value: number) {
-    this.value = value;
-    this.calls.push("setValueAtTime");
-    return this;
-  }
-
-  setValueCurveAtTime(curve: Float32Array, start: number, duration: number) {
-    this.curves.push({ curve, start, duration });
-    this.value = curve.at(-1)!;
-    return this;
-  }
-
-  linearRampToValueAtTime(value: number) {
-    this.value = value;
-    this.calls.push("linearRampToValueAtTime");
-    return this;
-  }
-}
-
-class FakeGain {
-  readonly gain = new FakeParam();
-
-  connect() {
-    return this;
-  }
-
-  disconnect() {}
-}
 
 /**
  * The page context the crossfade uses: the shared graph, the player's events

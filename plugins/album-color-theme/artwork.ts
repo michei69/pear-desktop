@@ -3,6 +3,7 @@
 // a page DOM.
 
 import type { Logger } from "@pear/sdk";
+import { sampleImagePixels } from "@pear/sdk/image";
 import { averageColor, type Rgb, themeColors } from "./color.ts";
 
 /** Artwork that cannot be sampled tints the theme black, as pear-desktop did. */
@@ -57,14 +58,5 @@ function black(): AlbumColors {
 }
 
 async function sampleImage(url: string): Promise<Rgb | undefined> {
-  const image = new Image();
-  image.crossOrigin = "anonymous";
-  image.src = url;
-  await image.decode();
-  const canvas = document.createElement("canvas");
-  canvas.width = SAMPLE_SIZE;
-  canvas.height = SAMPLE_SIZE;
-  const context = canvas.getContext("2d", { willReadFrequently: true })!;
-  context.drawImage(image, 0, 0, SAMPLE_SIZE, SAMPLE_SIZE);
-  return averageColor(context.getImageData(0, 0, SAMPLE_SIZE, SAMPLE_SIZE).data);
+  return averageColor(await sampleImagePixels(url, SAMPLE_SIZE));
 }

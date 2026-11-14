@@ -6,22 +6,18 @@
 // stage never creates a MediaElementAudioSourceNode of its own.
 
 import type { AudioGraph, Logger, Unsubscribe } from "@pear/sdk";
-import { clamp } from "@pear/sdk/util";
-import { isFilterType, MAX_FREQUENCY, MIN_FREQUENCY, normalizeBand, type Band, type EqualizerState } from "./config.ts";
+import { clamp, dbToLinear } from "@pear/sdk/util";
+import { finite, isFilterType, MAX_FREQUENCY, MIN_FREQUENCY, normalizeBand, type Band, type EqualizerState } from "./config.ts";
 
 /** After analysis taps, before the compressor (and the fades/output). */
 const ORDER = 10;
 /** Time constant of a parameter ramp; long enough to hide a jump, short enough to feel live. */
 const SMOOTHING_S = 0.01;
 
-const dbToLinear = (db: number) => 10 ** (db / 20);
-
 type ExtraFilter = Band;
 
 /** `cancelAndHoldAtTime` is newer than some DOM typings; feature-detect it anyway. */
 type HoldableAudioParam = AudioParam & { cancelAndHoldAtTime?: (time: number) => AudioParam };
-
-const finiteOr = (value: unknown, fallback: number) => (typeof value === "number" && Number.isFinite(value) ? value : fallback);
 
 /** pear-desktop's `filters` option: biquads mixed in parallel with the bands. */
 function parseExtraFilters(json: string, log: Logger): ExtraFilter[] {
@@ -39,8 +35,8 @@ function parseExtraFilters(json: string, log: Logger): ExtraFilter[] {
       filters.push({
         type,
         frequency: Math.max(0, frequency),
-        Q: Math.max(0.0001, finiteOr(entry.Q, 1)),
-        gain: finiteOr(entry.gain, 0),
+        Q: Math.max(0.0001, finite(entry.Q, 1)),
+        gain: finite(entry.gain, 0),
       });
     }
     return filters;

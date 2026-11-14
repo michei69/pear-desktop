@@ -1,7 +1,7 @@
 // Builds the Rich Presence payload from the player state (pure, unit-tested).
 
 import { livePosition, type NowPlaying } from "@pear/sdk";
-import { isPlaying } from "@pear/sdk/util";
+import { isPaused } from "@pear/sdk/util";
 import type { SongDetails } from "@pear/sdk/song-details";
 import type { SetActivity } from "@xhayper/discord-rpc";
 
@@ -30,10 +30,6 @@ export function sanitize(input: string | undefined, fallback = "Unknown") {
   let text = input?.trim() || fallback;
   if (text.length > MAX_FIELD) text = `${text.slice(0, MAX_FIELD - 3)}...`;
   return text.length < MIN_FIELD ? text.padEnd(MIN_FIELD, FILLER) : text;
-}
-
-export function isPaused(state: NowPlaying) {
-  return state.ad || !isPlaying(state);
 }
 
 /** The activity to show, or null to clear it. */

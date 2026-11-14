@@ -1,4 +1,5 @@
 import { config, definePlugin } from "@pear/sdk";
+import { dbToLinear } from "@pear/sdk/util";
 
 // After the equalizer, before fades and the output. The track gain follows the
 // compressor, as pear-desktop's did: the loudness boost is applied to the
@@ -23,8 +24,6 @@ export function trackGainDb(loudnessDb: number, ceilingDb: number) {
   const compensation = loudnessDb < 0 ? -loudnessDb : 0;
   return Math.min(compensation, Math.max(0, ceilingDb));
 }
-
-export const dbToLinear = (db: number) => 10 ** (db / 20);
 
 export default definePlugin({
   id: "audio-compressor",

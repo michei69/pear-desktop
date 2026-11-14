@@ -1,7 +1,8 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { selectors } from "@pear/sdk/selectors";
 import { shuffleQueue, startResumeShuffle } from "../page.ts";
-import { RESTORE_TIMEOUT_MS, type ShuffleAdapter } from "../restore.ts";
+import { RESTORE_TIMEOUT_MS } from "../restore.ts";
+import { fakeQueue } from "./fake-queue.ts";
 
 interface FakeConfig {
   shuffled: boolean;
@@ -31,46 +32,6 @@ function fakeContext(options: { shuffled?: boolean; resumeOnStart?: boolean; pat
   return { ctx: ctx as unknown as Ctx, writes, setConfig, log };
 }
 
-/** A queue whose item count and shuffle flag the test moves, with every subscriber recorded. */
-function fakeAdapter(options: { items?: number; shuffled?: boolean } = {}) {
-  let items = options.items ?? 0;
-  let shuffled = options.shuffled ?? false;
-  const listeners = new Set<() => void>();
-  const shuffle = vi.fn(() => {
-    shuffled = true;
-    return true;
-  });
-  const adapter: ShuffleAdapter = {
-    items: () => items,
-    shuffled: () => shuffled,
-    shuffle,
-    subscribe: (listener) => {
-      listeners.add(listener);
-      return () => {
-        listeners.delete(listener);
-      };
-    },
-  };
-  const notify = () => {
-    for (const listener of [...listeners]) listener();
-  };
-  return {
-    adapter,
-    shuffle,
-    notify,
-    fill(count: number) {
-      items = count;
-      notify();
-    },
-    setShuffled(value: boolean) {
-      shuffled = value;
-    },
-    get subscriberCount() {
-      return listeners.size;
-    },
-  };
-}
-
 afterEach(() => {
   vi.useRealTimers();
   vi.unstubAllGlobals();
@@ -80,7 +41,7 @@ afterEach(() => {
 describe("startResumeShuffle", () => {
   it("does not save while a restore is pending, then saves once the restore lands", async () => {
     const app = fakeContext({ shuffled: true });
-    const queue = fakeAdapter();
+    const queue = fakeQueue();
 
     await startResumeShuffle(app.ctx, queue.adapter);
     expect(app.writes).toEqual([]);
@@ -96,7 +57,7 @@ describe("startResumeShuffle", () => {
   it("starts saving after the timeout even when the queue never fills", async () => {
     vi.useFakeTimers();
     const app = fakeContext({ shuffled: true });
-    const queue = fakeAdapter();
+    const queue = fakeQueue();
 
     await startResumeShuffle(app.ctx, queue.adapter);
     vi.advanceTimersByTime(RESTORE_TIMEOUT_MS);
@@ -110,7 +71,7 @@ describe("startResumeShuffle", () => {
 
   it("leaves no write and no shuffle behind when cancelled", async () => {
     const app = fakeContext({ shuffled: true });
-    const queue = fakeAdapter();
+    const queue = fakeQueue();
 
     const stop = await startResumeShuffle(app.ctx, queue.adapter);
     stop();
@@ -123,7 +84,7 @@ describe("startResumeShuffle", () => {
 
   it("saves immediately when no restore is wanted", async () => {
     const app = fakeContext({ shuffled: false });
-    const queue = fakeAdapter();
+    const queue = fakeQueue();
 
     await startResumeShuffle(app.ctx, queue.adapter);
     expect(app.writes).toEqual([{ shuffled: false }]);
@@ -137,7 +98,7 @@ describe("startResumeShuffle", () => {
   it("does not restore outside /watch or with resumeOnStart off", async () => {
     for (const options of [{ pathname: "/" }, { resumeOnStart: false }]) {
       const app = fakeContext({ shuffled: true, ...options });
-      const queue = fakeAdapter();
+      const queue = fakeQueue();
       await startResumeShuffle(app.ctx, queue.adapter);
 
       // Saves from the first moment; the restore itself never starts.

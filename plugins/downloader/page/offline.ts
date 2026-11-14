@@ -18,6 +18,7 @@ import {
   indexEntry,
   indexKey,
   LIST_ENTITIES,
+  libraryEntity,
   libraryKey,
   listEntities,
   policyRecord,
@@ -259,12 +260,7 @@ class OfflineSite {
     const tracks = (Array.isArray(library.downloadedTracks) ? (library.downloadedTracks as string[]) : []).filter(
       (key) => key !== trackKey,
     );
-    const libraryRecord: EntityRecord = {
-      key: libraryKey(),
-      entityType: "musicDownloadsLibraryEntity",
-      data: { ...library, id: libraryKey(), downloadedTracks: [trackKey, ...tracks] },
-      version: 0,
-    };
+    const libraryRecord = libraryEntity(library, { downloadedTracks: [trackKey, ...tracks] });
 
     await this.#media("readwrite", ({ index, media }) => {
       index.put(indexEntry(videoId, format), indexKey(videoId, "a"));
@@ -294,12 +290,7 @@ class OfflineSite {
     const library = await this.#library();
     const trackKey = songKey(videoId, "musicTrack");
     const tracks = Array.isArray(library.downloadedTracks) ? (library.downloadedTracks as string[]) : [];
-    const libraryRecord: EntityRecord = {
-      key: libraryKey(),
-      entityType: "musicDownloadsLibraryEntity",
-      data: { ...library, id: libraryKey(), downloadedTracks: tracks.filter((key) => key !== trackKey) },
-      version: 0,
-    };
+    const libraryRecord = libraryEntity(library, { downloadedTracks: tracks.filter((key) => key !== trackKey) });
     await this.#entities("readwrite", ({ entities, associations }) => {
       for (const key of keys) {
         entities.delete(key);
@@ -330,16 +321,9 @@ class OfflineSite {
       (key) => !ours.has(key),
     );
     const written = lists.map((list) => listEntities(list));
-    const libraryRecord: EntityRecord = {
-      key: libraryKey(),
-      entityType: "musicDownloadsLibraryEntity",
-      data: {
-        ...library,
-        id: libraryKey(),
-        downloadedPlaylists: [...lists.map((list) => entityKey(list.playlistId, "musicPlaylist")), ...theirs],
-      },
-      version: 0,
-    };
+    const libraryRecord = libraryEntity(library, {
+      downloadedPlaylists: [...lists.map((list) => entityKey(list.playlistId, "musicPlaylist")), ...theirs],
+    });
     const deleted = gone.flatMap((playlistId) =>
       LIST_ENTITIES.map((entityType) => ({ key: entityKey(playlistId, entityType), entityType })),
     );

@@ -2,8 +2,8 @@
 // double-click events are ignored in favour of individual clicks.
 
 import { afterAll, beforeEach, describe, expect, test, vi } from "vitest";
-import { FakeTray, images, menuTemplates, trays } from "./fake-electron.ts";
-import { fakeContext, FakeWindow } from "./harness.ts";
+import { images, menuTemplates, trays } from "./fake-electron.ts";
+import { type ContextOptions, FakeWindow, startTray } from "./harness.ts";
 
 vi.mock("electron", () => import("./fake-electron.ts"));
 vi.mock("@pear/sdk/icon", () => import("./fake-icons.ts"));
@@ -15,19 +15,7 @@ afterAll(() => Object.defineProperty(process, "platform", platform));
 
 const trayPlugin = (await import("../index.ts")).default;
 
-function start(options: Parameters<typeof fakeContext>[0] = {}) {
-  const harness = fakeContext(options);
-  const returned = trayPlugin.host!.start!(harness.ctx as never);
-  const cleanup = returned as unknown as () => void;
-  return {
-    ...harness,
-    tray: FakeTray.last()!,
-    stop: () => {
-      cleanup();
-      harness.stop();
-    },
-  };
-}
+const start = (options: ContextOptions = {}) => startTray(trayPlugin.host!.start!, options);
 
 beforeEach(() => {
   trays.length = 0;

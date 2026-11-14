@@ -75,17 +75,10 @@ export default definePlugin({
         });
       };
 
-      const isToastRelated = (node: Node) => {
-        if (!(node instanceof Element)) return false;
-        if (node.localName === "tp-yt-paper-toast") return true;
-        return node.closest("tp-yt-paper-toast") !== null || node.querySelector("tp-yt-paper-toast") !== null;
-      };
+      const toastOf = (node: Node): Toast | null => (node instanceof Element ? node.closest<Toast>("tp-yt-paper-toast") : null);
 
-      const toastOf = (node: Node): Toast | null => {
-        if (!(node instanceof Element)) return null;
-        if (node.localName === "tp-yt-paper-toast") return node as Toast;
-        return node.closest<Toast>("tp-yt-paper-toast");
-      };
+      const isToastRelated = (node: Node) =>
+        toastOf(node) !== null || (node instanceof Element && node.querySelector("tp-yt-paper-toast") !== null);
 
       /** Forgets every toast that closed in this batch, so a reused element is re-armed by the scan. */
       const forgetClosed = (mutations: MutationRecord[]) => {

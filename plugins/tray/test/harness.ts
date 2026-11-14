@@ -2,7 +2,7 @@
 // its window and app calls need.
 
 import { EventEmitter } from "node:events";
-import type { NowPlaying, Track } from "@pear/sdk";
+import { IDLE, type NowPlaying, type Track } from "@pear/sdk";
 import { vi } from "vitest";
 import { FakeTray } from "./fake-electron.ts";
 
@@ -65,19 +65,7 @@ export interface ContextOptions {
 }
 
 export function nowPlaying(overrides: Partial<NowPlaying> = {}): NowPlaying {
-  return {
-    track: track(),
-    status: "paused",
-    positionSeconds: 0,
-    volume: 100,
-    muted: false,
-    repeat: "none",
-    shuffle: false,
-    like: "none",
-    ad: false,
-    updatedAt: Date.now(),
-    ...overrides,
-  };
+  return { ...IDLE, track: track(), status: "paused", updatedAt: Date.now(), ...overrides };
 }
 
 export function track(overrides: Partial<Track> = {}): Track {
@@ -155,4 +143,19 @@ export function runningTray(): FakeTray {
   const tray = FakeTray.last();
   if (!tray) throw new Error("the tray plugin did not create a Tray");
   return tray;
+}
+
+type Start = (ctx: never) => unknown;
+
+export function startTray(start: Start, options: ContextOptions = {}) {
+  const harness = fakeContext(options);
+  const cleanup = start(harness.ctx as never) as unknown as () => void;
+  return {
+    ...harness,
+    tray: runningTray(),
+    stop: () => {
+      cleanup();
+      harness.stop();
+    },
+  };
 }

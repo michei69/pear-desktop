@@ -1,5 +1,6 @@
 import { config, definePlugin } from "@pear/sdk";
 import { css } from "@pear/sdk/macros" with { type: "macro" };
+import { clamp } from "@pear/sdk/util";
 import { albumColors } from "./artwork.ts";
 import { mixColor } from "./color.ts";
 
@@ -193,7 +194,7 @@ export default definePlugin({
       if (current !== generation || ctx.signal.aborted) return;
 
       const opacity = Number.parseFloat(getComputedStyle(root).getPropertyValue("--pear-transparent-opacity"));
-      const alpha = Number.isFinite(opacity) ? Math.min(1, Math.max(0, opacity)) : 1;
+      const alpha = Number.isFinite(opacity) ? clamp(opacity, 0, 1) : 1;
       const ratio = ctx.config.ratio / 100;
       for (const [variable, base] of Object.entries(VARIABLE_MAP)) {
         const tint = DARK_KEYED[variable] ? colors.dark : colors.color;

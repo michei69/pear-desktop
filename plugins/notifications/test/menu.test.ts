@@ -1,10 +1,11 @@
+import { defaultsOf } from "@pear/sdk";
 import { describe, expect, test, vi } from "vitest";
 import { menuTemplate } from "../menu.ts";
 import { schema, type Ctx } from "../schema.ts";
 
 vi.mock("electron", () => ({ Menu: { buildFromTemplate: vi.fn(() => ({ popup: vi.fn() })) } }));
 
-const defaults = Object.fromEntries(Object.entries(schema).map(([key, field]) => [key, field.default]));
+const defaults = defaultsOf(schema);
 
 function fakeContext(overrides: Partial<typeof defaults> = {}) {
   const ctx = {

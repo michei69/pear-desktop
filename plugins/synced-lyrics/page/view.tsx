@@ -3,9 +3,11 @@ import { useEffect, useLayoutEffect, useRef, useState } from "preact/hooks";
 import { lineAt } from "../lrc.ts";
 import { PROVIDER_NAMES, PROVIDERS, resultRank, type LyricLine, type LyricsStyle } from "../types.ts";
 import { AppleLyrics } from "./apple/view.tsx";
+import { FetchError, LoadingKaomoji, NoLyrics, PlainLyrics } from "./shared.tsx";
 import type { LyricsStore, ProviderState } from "./store.ts";
 
 import type { Translate } from "@pear/sdk/i18n";
+import { listenAll } from "@pear/sdk/dom";
 import { clamp } from "@pear/sdk/util";
 
 export type LineEffect = "fancy" | "scale" | "offset" | "focus";
@@ -45,7 +47,6 @@ export interface ViewProps {
 const USER_SCROLL_GRACE_MS = 4000;
 /** The followed line is kept this far down the panel (a share of its height). */
 const FOLLOW_AT = 0.38;
-const KAOMOJI_FRAME_MS = 500;
 /** The current line's glow and wobble last at least this long, in seconds. */
 const MIN_LINE_EFFECT_S = 0.2;
 
@@ -76,22 +77,8 @@ export function LyricsView(props: ViewProps) {
   else if (shown?.synced) body = <SyncedLyrics {...props} key={`${track.videoId}:${shown.provider}`} />;
   else if (shown) body = <PlainLyrics texts={shown.texts} romanized={shown.romanized} translation={shown.translation} />;
   else if (current.status === "loading") body = <LoadingKaomoji />;
-  else if (current.status === "error")
-    body = (
-      <div class="error">
-        <pre class="error-title">{t("plugins.synced-lyrics.errors.fetch", "An error occurred while fetching the lyrics.")}</pre>
-        <pre class="error-detail">{current.message}</pre>
-        <button type="button" class="retry" onClick={() => store.retry(store.selected)}>
-          {t("plugins.synced-lyrics.refetch-btn.normal", "Refetch lyrics")}
-        </button>
-      </div>
-    );
-  else
-    body = (
-      <div class="kaomoji" role="status" aria-label={t("plugins.synced-lyrics.errors.not-found", "No lyrics found for this song.")}>
-        ＼(〇_ｏ)／
-      </div>
-    );
+  else if (current.status === "error") body = <FetchError message={current.message} onRetry={() => store.retry(store.selected)} t={t} />;
+  else body = <NoLyrics t={t} />;
 
   return (
     <div
@@ -367,21 +354,6 @@ function Picker({
   );
 }
 
-const LOADING_FRAMES = ["(>_<)", "{ (>_<) }", "{{ (>_<) }}", "{{{ (>_<) }}}", "{{ (>_<) }}", "{ (>_<) }"];
-
-function LoadingKaomoji() {
-  const [frame, setFrame] = useState(0);
-  useEffect(() => {
-    const timer = setInterval(() => setFrame((n) => n + 1), KAOMOJI_FRAME_MS);
-    return () => clearInterval(timer);
-  }, []);
-  return (
-    <div class="kaomoji" role="status" aria-busy="true">
-      {LOADING_FRAMES[frame % LOADING_FRAMES.length]}
-    </div>
-  );
-}
-
 function SyncedLyrics({ store, options, now, seek, scroller, t }: ViewProps) {
   const shown = store.shown!;
   const lines = shown.lines;
@@ -454,12 +426,10 @@ function SyncedLyrics({ store, options, now, seek, scroller, t }: ViewProps) {
       clearTimeout(timer);
       timer = setTimeout(() => setFollowing(true), USER_SCROLL_GRACE_MS);
     };
-    container.addEventListener("wheel", onUser, { passive: true });
-    container.addEventListener("touchmove", onUser, { passive: true });
+    const unbind = listenAll(container, { wheel: onUser, touchmove: onUser }, { passive: true });
     return () => {
       clearTimeout(timer);
-      container.removeEventListener("wheel", onUser);
-      container.removeEventListener("touchmove", onUser);
+      unbind();
     };
   }, []);
 
@@ -602,35 +572,6 @@ function GapMark({ kind, custom, t }: { kind: GapText; custom: string; t: Transl
     case "none":
       return <span class="text" />;
   }
-}
-
-function PlainLyrics({ texts, romanized, translation }: { texts: string[]; romanized: (string | null)[]; translation: (string | null)[] }) {
-  return (
-    <div class="lines plain">
-      {texts.map((text, i) => {
-        const translated = translation[i];
-        return text ? (
-          <div key={i} class={`line${/^\[.*\]$/.test(text) ? " section" : ""}`}>
-            <span class="text" dir="auto">
-              {text}
-            </span>
-            {romanized[i] && (
-              <span class="romanized" dir="auto">
-                {romanized[i]}
-              </span>
-            )}
-            {translated && translated !== text && (
-              <span class="translation" dir="auto">
-                {translated}
-              </span>
-            )}
-          </div>
-        ) : (
-          <div key={i} class="spacer" />
-        );
-      })}
-    </div>
-  );
 }
 
 function Message({ title, detail, children }: { title: string; detail?: string; children?: ComponentChildren }) {

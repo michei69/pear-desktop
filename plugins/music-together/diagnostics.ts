@@ -25,13 +25,22 @@ const SIGNALING_TIMEOUT = 8_000;
 const STUN_TIMEOUT = 8_000;
 const TURN_TIMEOUT = 10_000;
 
+function finishOnce(cleanup: () => void) {
+  let settled = false;
+  return () => {
+    if (settled) return false;
+    settled = true;
+    cleanup();
+    return true;
+  };
+}
+
 function testSignaling(iceServers: RTCIceServer[], signal: AbortSignal): Promise<SignalingResult> {
   const { promise, resolve } = Promise.withResolvers<SignalingResult>();
   if (signal.aborted) {
     resolve({ ok: false, error: "cancelled" });
     return promise;
   }
-  let settled = false;
   let peer: Peer;
   try {
     peer = new Peer(createPeerOptions(iceServers));
@@ -40,9 +49,7 @@ function testSignaling(iceServers: RTCIceServer[], signal: AbortSignal): Promise
     return promise;
   }
 
-  const finish = (result: SignalingResult) => {
-    if (settled) return;
-    settled = true;
+  const settle = finishOnce(() => {
     clearTimeout(timer);
     signal.removeEventListener("abort", onAbort);
     try {
@@ -50,7 +57,9 @@ function testSignaling(iceServers: RTCIceServer[], signal: AbortSignal): Promise
     } catch {
       // Already gone.
     }
-    resolve(result);
+  });
+  const finish = (result: SignalingResult) => {
+    if (settle()) resolve(result);
   };
   const timer = setTimeout(() => finish({ ok: false, error: "timeout" }), SIGNALING_TIMEOUT);
   const onAbort = () => finish({ ok: false, error: "cancelled" });
@@ -88,10 +97,7 @@ function gatherCandidates(
     return promise;
   }
 
-  let settled = false;
-  const finish = () => {
-    if (settled) return;
-    settled = true;
+  const settle = finishOnce(() => {
     clearTimeout(timer);
     signal.removeEventListener("abort", onAbort);
     try {
@@ -99,7 +105,9 @@ function gatherCandidates(
     } catch {
       // Already closed.
     }
-    resolve(result);
+  });
+  const finish = () => {
+    if (settle()) resolve(result);
   };
   const timer = setTimeout(finish, timeout);
   const onAbort = () => {

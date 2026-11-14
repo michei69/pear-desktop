@@ -1,46 +1,8 @@
 import { IDLE, defaultsOf, type HostContextOf } from "@pear/sdk";
 import { describe, expect, it, vi } from "vitest";
+import { FakeClient } from "./harness.ts";
 
-const mock = vi.hoisted(() => {
-  const clients: FakeClient[] = [];
-  class FakeClient {
-    readonly handlers = new Map<string, Set<(...args: unknown[]) => void>>();
-    readonly user = {
-      setActivity: vi.fn(() => Promise.resolve()),
-      clearActivity: vi.fn(() => Promise.resolve()),
-    };
-    readonly login = vi.fn(() => Promise.resolve());
-    destroyed = false;
-
-    constructor() {
-      clients.push(this);
-    }
-
-    on(event: string, listener: (...args: unknown[]) => void) {
-      const listeners = this.handlers.get(event) ?? new Set();
-      listeners.add(listener);
-      this.handlers.set(event, listeners);
-      return this;
-    }
-
-    emit(event: string) {
-      for (const listener of this.handlers.get(event) ?? []) listener();
-    }
-
-    removeAllListeners() {
-      this.handlers.clear();
-      return this;
-    }
-
-    destroy() {
-      this.destroyed = true;
-      return Promise.resolve();
-    }
-  }
-  return { FakeClient, clients };
-});
-
-vi.mock("@xhayper/discord-rpc", () => ({ Client: mock.FakeClient }));
+vi.mock("@xhayper/discord-rpc", async () => ({ Client: (await import("./harness.ts")).FakeClient }));
 
 const { default: discord } = await import("../index.ts");
 const { schema } = await import("../schema.ts");
@@ -50,6 +12,7 @@ type Ctx = HostContextOf<typeof schema>;
 /** Starts the host part with fake Discord clients and no real timers. */
 function start() {
   vi.useFakeTimers();
+  FakeClient.instances.length = 0;
   const items: { label: string; click(): void }[] = [];
   const cleanups: (() => void)[] = [];
   const ctx = {
@@ -65,7 +28,7 @@ function start() {
     onCleanup: (fn: () => void) => cleanups.push(fn),
   } as unknown as Ctx;
   discord.host!.start!(ctx);
-  return { ctx, items, clients: mock.clients, stop: () => cleanups.forEach((fn) => fn()) };
+  return { ctx, items, clients: FakeClient.instances, stop: () => cleanups.forEach((fn) => fn()) };
 }
 
 describe("the Discord menu items", () => {

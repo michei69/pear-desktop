@@ -4,6 +4,7 @@
 
 import type { PageContextOf } from "@pear/sdk";
 import { matchesAccelerator } from "@pear/sdk/accelerator";
+import { isTypingTarget } from "@pear/sdk/util";
 import type { PipCommands, pipConfig } from "./config.ts";
 import { trackMenuEntry } from "./menu.ts";
 
@@ -120,16 +121,10 @@ function fullScreenMode(ctx: Ctx) {
   return mode;
 }
 
-function isEditable(target: EventTarget | null) {
-  if (!(target instanceof Element)) return false;
-  const editable = target instanceof HTMLElement && target.isContentEditable;
-  return editable || !!target.closest("input, textarea, select");
-}
-
 function handleKeys(ctx: Ctx, mode: { readonly active: boolean }, toggle: () => void) {
   const isMac = navigator.platform.startsWith("Mac");
   const onKeydown = (event: KeyboardEvent) => {
-    if (isEditable(event.target)) return;
+    if (isTypingTarget(event.target)) return;
     if (mode.active && event.key === "Escape") {
       // Not YTM's own Escape too: it would leave its full screen while the window is still
       // small, which breaks the new player bar's layout. The host leaves it after resizing.

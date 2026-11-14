@@ -106,6 +106,37 @@ export interface CustomQuery {
   artist?: string;
 }
 
+export interface SearchDetails {
+  alternativeTitle?: string;
+  tags: string[];
+}
+
+export function buildSearchQuery(input: {
+  videoId: string;
+  title: string;
+  artist: string;
+  album?: string | undefined;
+  durationSeconds: number;
+  inexact: boolean;
+  custom: CustomQuery | null;
+  details?: SearchDetails | null;
+}): SearchQuery {
+  const { custom } = input;
+  const query: SearchQuery = {
+    videoId: input.videoId,
+    title: custom?.query ?? input.title,
+    artist: custom ? (custom.artist ?? "") : input.artist,
+    durationSeconds: input.durationSeconds,
+    inexact: input.inexact,
+  };
+  if (input.album) query.album = input.album;
+  if (custom) query.alternativeTitle = custom.query;
+  else if (input.details?.alternativeTitle && input.details.alternativeTitle !== input.title)
+    query.alternativeTitle = input.details.alternativeTitle;
+  if (input.details?.tags.length) query.tags = input.details.tags;
+  return query;
+}
+
 // ---- translation settings (flat in the config schema, grouped by the host) ----
 
 export type TranslationProviderName = "openai-compatible" | "anthropic" | "gemini" | "local-cli" | "google-translate";

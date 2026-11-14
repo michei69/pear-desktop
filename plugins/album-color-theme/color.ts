@@ -1,6 +1,8 @@
 // Just enough color math for the theme: averaging artwork pixels and darkening
 // the result until it is dark enough to sit behind white text.
 
+import { clamp } from "@pear/sdk/util";
+
 export type Rgb = readonly [r: number, g: number, b: number];
 
 /**
@@ -97,9 +99,9 @@ export function mixColor(base: string, tint: Rgb, alpha: number, ratio: number):
   const underneath = parseColor(base);
   if (!underneath) return base;
 
-  const tintWeight = Math.min(Math.max(ratio, 0), 1);
+  const tintWeight = clamp(ratio, 0, 1);
   const baseWeight = 1 - tintWeight;
-  const tintAlpha = Math.min(Math.max(alpha, 0), 1);
+  const tintAlpha = clamp(alpha, 0, 1);
   const outAlpha = underneath.a * baseWeight + tintAlpha * tintWeight;
   if (outAlpha <= 0) return "rgba(0, 0, 0, 0)";
 

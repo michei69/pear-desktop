@@ -1,4 +1,6 @@
 import type { PageContextOf } from "@pear/sdk";
+import { sampleImagePixels } from "@pear/sdk/image";
+import { clamp } from "@pear/sdk/util";
 
 // The ThemeSong visualizers color themselves from the track. album-color-theme
 // publishes that palette on the document root as the same CSS variables
@@ -45,8 +47,6 @@ const HEX_PATTERN = /^#([\da-f]{3}|[\da-f]{6})$/i;
 const RGB_PATTERN = /^rgba?\(\s*([\d.]+)[\s,]+([\d.]+)[\s,]+([\d.]+)/i;
 const HSL_PATTERN = /^hsla?\(\s*(-?[\d.]+)\s*(?:deg)?[\s,]+(-?[\d.]+)%[\s,]+(-?[\d.]+)%(?:\s*\/\s*[-\d.]+%?)?\s*\)$/i;
 
-const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
-
 /** pear-desktop's vivid fallback, for when there is no artwork (or it can't be read). */
 const FALLBACK = (["#ff006e", "#fb5607", "#ffbe0b", "#3a86ff", "#8338ec", "#06d6a0"] as const).map((hex) => rgbToHsl(hexToRgb(hex)));
 
@@ -86,7 +86,7 @@ export function hslToCss({ h, s, l }: Hsl, alpha = 1): string {
   return `hsla(${h.toFixed(1)} ${clamp(s, 0, 1) * 100}% ${clamp(l, 0, 1) * 100}% / ${alpha})`;
 }
 
-const channel = (value: string | undefined): number => Math.min(255, Math.max(0, Number(value ?? 0)));
+const channel = (value: string | undefined): number => clamp(Number(value ?? 0), 0, 255);
 
 /** A CSS color as HSL; null for anything else (a `var()` reference, an empty value). */
 export function parseCssColor(color: string): Hsl | null {
@@ -197,16 +197,7 @@ export function artworkPalette(ctx: PaletteContext): ArtworkPalette {
 }
 
 async function sampleArtwork(url: string): Promise<readonly Hsl[]> {
-  const image = new Image();
-  image.crossOrigin = "anonymous";
-  image.src = url;
-  await image.decode();
-  const canvas = document.createElement("canvas");
-  canvas.width = SAMPLE_SIZE;
-  canvas.height = SAMPLE_SIZE;
-  const context = canvas.getContext("2d", { willReadFrequently: true })!;
-  context.drawImage(image, 0, 0, SAMPLE_SIZE, SAMPLE_SIZE);
-  return quantize(context.getImageData(0, 0, SAMPLE_SIZE, SAMPLE_SIZE).data);
+  return quantize(await sampleImagePixels(url, SAMPLE_SIZE));
 }
 
 interface Bucket {

@@ -33,37 +33,27 @@ export const detectBlackBars = (
 ): AmbientBars => {
   const allowedLit = Math.max(0, Math.min(1, allowedLitPixels));
 
-  const rowIsBar = (y: number) => {
+  const isBar = (start: number, length: number, stride: number) => {
     let lit = 0;
-    for (let x = 0; x < width; x++) {
-      const offset = (y * width + x) * 4;
+    for (let index = 0; index < length; index++) {
+      const offset = (start + index * stride) * 4;
       const value = luminance(pixels[offset]!, pixels[offset + 1]!, pixels[offset + 2]!);
       if (value > threshold) lit++;
     }
-    return lit / width <= allowedLit;
-  };
-
-  const columnIsBar = (x: number) => {
-    let lit = 0;
-    for (let y = 0; y < height; y++) {
-      const offset = (y * width + x) * 4;
-      const value = luminance(pixels[offset]!, pixels[offset + 1]!, pixels[offset + 2]!);
-      if (value > threshold) lit++;
-    }
-    return lit / height <= allowedLit;
+    return lit / length <= allowedLit;
   };
 
   let top = 0;
-  while (top < height / 2 && rowIsBar(top)) top++;
+  while (top < height / 2 && isBar(top * width, width, 1)) top++;
 
   let bottom = 0;
-  while (bottom < height / 2 && rowIsBar(height - 1 - bottom)) bottom++;
+  while (bottom < height / 2 && isBar((height - 1 - bottom) * width, width, 1)) bottom++;
 
   let left = 0;
-  while (left < width / 2 && columnIsBar(left)) left++;
+  while (left < width / 2 && isBar(left, height, width)) left++;
 
   let right = 0;
-  while (right < width / 2 && columnIsBar(width - 1 - right)) right++;
+  while (right < width / 2 && isBar(width - 1 - right, height, width)) right++;
 
   return {
     top: top / height,

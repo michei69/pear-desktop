@@ -1,3 +1,5 @@
+import { listenAll } from "@pear/sdk/dom";
+import { clamp } from "@pear/sdk/util";
 import { AMBIENT_LAYER_COUNT, ambientLayerRects } from "./ambient-layers.ts";
 import { type AmbientBars, detectBlackBars, NO_BARS } from "./black-bars.ts";
 
@@ -68,8 +70,6 @@ const SIGNATURE_WIDTH = 16;
 const SIGNATURE_HEIGHT = 9;
 /** Mean per-channel difference (0-255) below which a frame is "unchanged". */
 const SIGNATURE_THRESHOLD = 1;
-
-const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
 
 /** The app's own page background, used as the fill colour of the `auto` theme. */
 const pageFillColor = (page: Element | null) => {
@@ -425,14 +425,11 @@ export const mountAmbientLight = (
   const onResize = () => redraw(true);
   const onImageLoad = () => redraw(true);
 
-  window.addEventListener("resize", onResize);
-
+  const stopListening = [listenAll(window, { resize: onResize })];
   if (isVideo) {
-    source.addEventListener("play", start);
-    source.addEventListener("pause", stop);
-    source.addEventListener("ended", stop);
+    stopListening.push(listenAll(source, { play: start, pause: stop, ended: stop }));
   } else if (!(source.complete && source.naturalWidth > 0)) {
-    source.addEventListener("load", onImageLoad, { once: true });
+    stopListening.push(listenAll(source, { load: onImageLoad }, { once: true }));
   }
 
   // The fade-in animation starts on insertion, so the duration has to be set
@@ -455,11 +452,7 @@ export const mountAmbientLight = (
     refresh,
     unregister() {
       stop();
-      window.removeEventListener("resize", onResize);
-      source.removeEventListener("play", start);
-      source.removeEventListener("pause", stop);
-      source.removeEventListener("ended", stop);
-      source.removeEventListener("load", onImageLoad);
+      for (const stopListeners of stopListening) stopListeners();
       canvas.remove();
       scrim.remove();
       document.body.classList.remove(AMBIENT_LIGHT_BODY_CLASS);

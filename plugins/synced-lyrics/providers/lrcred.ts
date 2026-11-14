@@ -6,17 +6,11 @@
 import { parseTTML, type TTMLParsedLine } from "../ttml.ts";
 import type { LyricResult, LyricTranslation, LyricWord, SearchQuery } from "../types.ts";
 import type { Fetch } from "./http.ts";
+import { cleanTrackTitle, splitArtists } from "./shared.ts";
 
 const BASE = "https://lrc.red";
 const REQUEST_TIMEOUT_MS = 10_000;
 const DURATION_TOLERANCE_SECONDS = 15;
-
-/** Artist names as displayed, e.g. `ROSÉ, Bruno Mars` -> two artists. */
-const splitArtists = (artists: string) =>
-  artists
-    .split(/[&,]|\s+(?:feat\.?|ft\.?)\s+/i)
-    .map((artist) => artist.trim())
-    .filter(Boolean);
 
 /** Payload strings are untrusted, so only real strings are kept. */
 const textOf = (value: unknown) => (typeof value === "string" ? value : "");
@@ -25,15 +19,6 @@ const toSeconds = (value: unknown, fallback: number) => {
   const seconds = Number(value);
   return Number.isFinite(seconds) ? Math.round(seconds * 1000) : fallback;
 };
-
-const NOISE_TAG_PATTERN =
-  /\s*[([](?:video\s+oficial|v[ií]deo\s+oficial|letra\s+oficial|video\s+musical|audio\s+oficial|lyric\s+video|official\s+[^)\]]*|visualizer)[)\]]/gi;
-
-/** The title without music-video noise tags; lrc.red matches better on it. */
-function cleanTrackTitle(rawTitle: string): string {
-  const cleaned = rawTitle.replace(NOISE_TAG_PATTERN, "").split(" | ")[0]!.trim();
-  return cleaned || rawTitle;
-}
 
 interface LrcRedHit {
   isrc?: string;

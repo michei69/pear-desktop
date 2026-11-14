@@ -1,4 +1,5 @@
 import { config, definePlugin } from "@pear/sdk";
+import { listenAll } from "@pear/sdk/dom";
 import { afterSeek, createLatch, FIRST_BIN, INTERVAL_MS, resetLatch, sample, shouldSkip, THRESHOLD_DB } from "./latch.ts";
 
 const SKIP_SECONDS = 0.2;
@@ -87,20 +88,15 @@ export default definePlugin({
         else startLoop();
       };
       const onPauseOrEnded = () => stopLoop();
-      let unbindVideo: (() => void)[] = [];
+      let unbindVideo: (() => void) | undefined;
       const bindVideo = () => {
-        for (const off of unbindVideo) off();
-        const target = video;
-        const listen = (type: string, listener: EventListener) => {
-          target.addEventListener(type, listener);
-          return () => target.removeEventListener(type, listener);
-        };
-        unbindVideo = [
-          listen("play", onPlayOrSeek),
-          listen("seeked", onPlayOrSeek),
-          listen("pause", onPauseOrEnded),
-          listen("ended", onPauseOrEnded),
-        ];
+        unbindVideo?.();
+        unbindVideo = listenAll(video, {
+          play: onPlayOrSeek,
+          seeked: onPlayOrSeek,
+          pause: onPauseOrEnded,
+          ended: onPauseOrEnded,
+        });
         if (video.paused) stopLoop();
         else startLoop();
       };
@@ -109,9 +105,7 @@ export default definePlugin({
         video = next;
         bindVideo();
       });
-      ctx.onCleanup(() => {
-        for (const off of unbindVideo) off();
-      });
+      ctx.onCleanup(() => unbindVideo?.());
       // A new track re-arms beginning-only skipping: the latch is per track, and
       // only the tracker's own skips had to survive. `trackLoading` rather than
       // `trackChange`: the latter can arrive up to a second and a half into the

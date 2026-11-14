@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, test, vi } from "vitest";
-import type { NowPlaying, Track } from "@pear/sdk";
+import { IDLE, type NowPlaying, type Track } from "@pear/sdk";
 import mediaControls from "../index.ts";
 
 const mocks = vi.hoisted(() => {
@@ -74,19 +74,7 @@ function track(overrides: Partial<Track> = {}): Track {
 }
 
 function nowPlaying(overrides: Partial<NowPlaying> = {}): NowPlaying {
-  return {
-    track: track(),
-    status: "paused",
-    positionSeconds: 0,
-    volume: 100,
-    muted: false,
-    repeat: "none",
-    shuffle: false,
-    like: "none",
-    ad: false,
-    updatedAt: Date.now(),
-    ...overrides,
-  };
+  return { ...IDLE, track: track(), status: "paused", updatedAt: Date.now(), ...overrides };
 }
 
 function fakeContext(initial: NowPlaying) {

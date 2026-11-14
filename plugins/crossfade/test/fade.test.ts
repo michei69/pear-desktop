@@ -2,6 +2,7 @@ import type { AudioGraph } from "@pear/sdk";
 import { describe, expect, it } from "vitest";
 import { createFader, fadeCurve } from "../fade.ts";
 import type { Ctx } from "../schema.ts";
+import { FakeGain } from "./fakes.ts";
 
 type FadeScaling = Ctx["config"]["fadeScaling"];
 
@@ -9,51 +10,6 @@ type FadeScaling = Ctx["config"]["fadeScaling"];
 const ctxOf = (fadeScaling: FadeScaling = "equalPower", dynamicRange = 60) => ({ config: { fadeScaling, dynamicRange } }) as unknown as Ctx;
 
 const peakOf = (curve: Float32Array) => Math.max(...curve);
-
-/** An AudioParam that keeps the curve it was handed. */
-class FakeParam {
-  value = 1;
-  curves: { curve: Float32Array; start: number; duration: number }[] = [];
-  calls: string[] = [];
-
-  cancelScheduledValues() {
-    this.calls.push("cancelScheduledValues");
-    return this;
-  }
-
-  cancelAndHoldAtTime() {
-    this.calls.push("cancelAndHoldAtTime");
-    return this;
-  }
-
-  setValueAtTime(value: number) {
-    this.value = value;
-    this.calls.push("setValueAtTime");
-    return this;
-  }
-
-  setValueCurveAtTime(curve: Float32Array, start: number, duration: number) {
-    this.curves.push({ curve, start, duration });
-    this.value = curve.at(-1)!;
-    return this;
-  }
-
-  linearRampToValueAtTime(value: number) {
-    this.value = value;
-    this.calls.push("linearRampToValueAtTime");
-    return this;
-  }
-}
-
-class FakeGain {
-  readonly gain = new FakeParam();
-
-  connect() {
-    return this;
-  }
-
-  disconnect() {}
-}
 
 function faderOf(fadeScaling: FadeScaling = "equalPower", dynamicRange = 60) {
   const context = { currentTime: 2, createGain: () => new FakeGain() } as unknown as AudioContext;

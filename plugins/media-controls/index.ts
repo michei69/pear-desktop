@@ -324,6 +324,15 @@ function lengthMetadata(seconds: number) {
   return Number.isFinite(seconds) && seconds > 0 ? { "mpris:length": secToMicro(seconds) } : {};
 }
 
+function trackMetadata(mpris: MprisPlayer, track: Pick<Track, "videoId" | "durationSeconds" | "title" | "artist">) {
+  return {
+    "mpris:trackid": trackId(mpris, track.videoId),
+    ...lengthMetadata(track.durationSeconds),
+    "xesam:title": track.title,
+    "xesam:artist": [track.artist],
+  };
+}
+
 /**
  * The track's metadata, taking the artwork from the page's early preview while
  * the full state has none. A preview for another video is never used: that
@@ -334,10 +343,7 @@ function metadata(mpris: MprisPlayer, track: Track | null | undefined, preview?:
   const earlyArtwork = preview?.videoId === track.videoId ? preview.artworkUrl : undefined;
   const artworkUrl = track.artworkUrl ?? earlyArtwork;
   return {
-    "mpris:trackid": trackId(mpris, track.videoId),
-    ...lengthMetadata(track.durationSeconds),
-    "xesam:title": track.title,
-    "xesam:artist": [track.artist],
+    ...trackMetadata(mpris, track),
     "xesam:url": track.url,
     ...(track.album ? { "xesam:album": track.album } : {}),
     ...(artworkUrl ? { "mpris:artUrl": artworkUrl } : {}),
@@ -347,10 +353,7 @@ function metadata(mpris: MprisPlayer, track: Track | null | undefined, preview?:
 /** What the page knows as soon as a track starts loading, before its artwork decodes. */
 function previewMetadata(mpris: MprisPlayer, track: TrackPreview) {
   return {
-    "mpris:trackid": trackId(mpris, track.videoId),
-    ...lengthMetadata(track.durationSeconds),
-    "xesam:title": track.title,
-    "xesam:artist": [track.artist],
+    ...trackMetadata(mpris, track),
     ...(track.artworkUrl ? { "mpris:artUrl": track.artworkUrl } : {}),
   };
 }

@@ -6,38 +6,16 @@ import { isolateKeys, shadowHost } from "@pear/sdk/dom";
 import { readSongDetails } from "@pear/sdk/song-details";
 import { render } from "preact";
 import type { LyricsConfig, schema } from "../schema.ts";
-import {
-  ROMANIZATION_SCRIPTS,
-  type CustomQuery,
-  type LyricResult,
-  type ProviderId,
-  type RomanizationScript,
-  type RomanizationSettings,
-  type SearchQuery,
-} from "../types.ts";
-import { LyricsStore, type Options } from "./store.ts";
+import { ROMANIZATION_SCRIPTS, type RomanizationSettings } from "../types.ts";
+import { LyricsStore, type Backend, type Options } from "./store.ts";
 import { appleStyles } from "./apple/styles.ts";
 import { lyricsStyles } from "./styles.ts";
 import { LyricsView, viewState, type ViewOptions } from "./view.tsx";
 
-interface Commands {
-  search(provider: ProviderId, query: SearchQuery): Promise<LyricResult | null>;
-  romanize(lines: string[], scripts: readonly RomanizationScript[]): Promise<(string | null)[]>;
-  convertChinese(lines: string[], mode: "s2t" | "t2s"): Promise<string[]>;
-  convertJapanese(lines: string[], mode: "hiragana" | "katakana"): Promise<string[]>;
-  translate(request: {
-    videoId: string;
-    title: string;
-    artists: string[];
-    lines: string[];
-    language?: string;
-  }): Promise<{ lines: string[]; fromCache?: boolean; sameLanguage?: boolean; error?: string }>;
-  customQuery(videoId: string): Promise<CustomQuery | null>;
-  setCustomQuery(videoId: string, query: CustomQuery): Promise<unknown>;
-  removeCustomQuery(videoId: string): Promise<unknown>;
+type Commands = Required<Omit<Backend, "details">> & {
   /** The settings action; the page never calls it, but the host commands are one set. */
   clearTranslationCache(): Promise<number>;
-}
+};
 
 type Ctx = PageContextOf<typeof schema, Commands>;
 

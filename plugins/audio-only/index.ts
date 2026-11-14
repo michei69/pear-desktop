@@ -1,9 +1,9 @@
 import { definePlugin, type YTPlayerApi } from "@pear/sdk";
+import { elementRestorer } from "@pear/sdk/dom";
+import { largestThumbnailUrl } from "@pear/sdk/image";
 
 const ATV = "ATV_PREFERRED";
 const QUALITY = "tiny";
-
-type StyleValue = [value: string, priority: string];
 
 /** The quality methods YTM's player still has beyond the SDK's player interface. */
 interface QualityApi extends YTPlayerApi {
@@ -17,35 +17,7 @@ export default definePlugin({
   name: "Audio only",
   description: "Plays music without its video, showing the cover art instead.",
   page: (ctx) => {
-    // Original values, put back when the plugin stops: another plugin (video-toggle)
-    // may have set the same attributes and styles.
-    const attributes = new Map<Element, Map<string, string | null>>();
-    const styles = new Map<HTMLElement, Map<string, StyleValue>>();
-
-    const setAttribute = (element: Element | null, name: string, value: string | null) => {
-      if (!element || element.getAttribute(name) === value) return;
-      let saved = attributes.get(element);
-      if (!saved) {
-        saved = new Map();
-        attributes.set(element, saved);
-      }
-      if (!saved.has(name)) saved.set(name, element.getAttribute(name));
-      if (value === null) element.removeAttribute(name);
-      else element.setAttribute(name, value);
-    };
-
-    const setStyle = (element: HTMLElement | null, property: string, value: string) => {
-      if (!element || element.style.getPropertyValue(property) === value) return;
-      let saved = styles.get(element);
-      if (!saved) {
-        saved = new Map();
-        styles.set(element, saved);
-      }
-      if (!saved.has(property)) {
-        saved.set(property, [element.style.getPropertyValue(property), element.style.getPropertyPriority(property)]);
-      }
-      element.style.setProperty(property, value);
-    };
+    const restorer = elementRestorer();
 
     /**
      * The cover art this plugin forced onto the shared image element, and what
@@ -57,10 +29,10 @@ export default definePlugin({
     const forceThumbnail = () => {
       const image = ctx.$<HTMLImageElement>("player.song_image_img");
       const thumbnails = ctx.player.api?.getPlayerResponse()?.videoDetails?.thumbnail?.thumbnails ?? [];
-      const best = thumbnails.toSorted((a, b) => b.width * b.height - a.width * a.height)[0];
       // YTM leaves a data: placeholder in the cover-art slot for video tracks.
-      if (!image || !best || !image.src.startsWith("data:")) return;
-      const url = best.url.split("?")[0]!;
+      if (!image || !image.src.startsWith("data:")) return;
+      const url = largestThumbnailUrl(thumbnails);
+      if (url === undefined) return;
       const saved = forcedThumbnails.get(image);
       if (saved) saved.forced = url;
       else forcedThumbnails.set(image, { forced: url, original: image.getAttribute("src") });
@@ -127,13 +99,13 @@ export default definePlugin({
       if (stopped) return;
       const player = ctx.$("player.container");
       if (!player) return;
-      setStyle(player, "margin", "auto 0px");
+      restorer.style(player, "margin", "auto 0px");
       // The video toggle's switch owns the mode while it asks for video.
       if (!player.hasAttribute("data-pear-show-video")) {
-        setAttribute(player, "playback-mode", ATV);
-        setStyle(ctx.$("player.song_video"), "display", "none");
-        setStyle(ctx.$("player.song_image"), "display", "block");
-        setStyle(ctx.$("player.video"), "display", "none");
+        restorer.attribute(player, "playback-mode", ATV);
+        restorer.style(ctx.$("player.song_video"), "display", "none");
+        restorer.style(ctx.$("player.song_image"), "display", "block");
+        restorer.style(ctx.$("player.video"), "display", "none");
       }
       lockPlaybackMode(player);
       forceThumbnail();
@@ -187,19 +159,7 @@ export default definePlugin({
         if (original === null) image.removeAttribute("src");
         else image.setAttribute("src", original);
       }
-      for (const [element, saved] of attributes) {
-        for (const [name, value] of saved) {
-          if (value === null) element.removeAttribute(name);
-          else element.setAttribute(name, value);
-        }
-      }
-      for (const [element, saved] of styles) {
-        for (const [property, entry] of saved) {
-          const [value, priority] = entry;
-          if (value) element.style.setProperty(property, value, priority);
-          else element.style.removeProperty(property);
-        }
-      }
+      restorer.restore();
     });
   },
 });

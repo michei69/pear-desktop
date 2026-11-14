@@ -3,6 +3,7 @@ import { finishLines, parseLrc } from "../lrc.ts";
 import { queryArtistSimilarity, queryTitleSimilarity } from "../match.ts";
 import type { LyricLine, LyricResult, LyricWord, SearchQuery } from "../types.ts";
 import { HttpError, request, type Fetch } from "./http.ts";
+import { cleanTrackTitle } from "./shared.ts";
 
 const BASE = "https://lrclib.net/api";
 const MAX_DURATION_DIFF = 15;
@@ -26,15 +27,6 @@ interface Entry {
 
 /** LRCLIB is overloaded or rate limited, not broken: retrying now will not help. */
 export const isRetryableStatus = (status: number) => RETRYABLE_STATUSES.has(status);
-
-const NOISE_TAG_PATTERN =
-  /\s*[([](?:video\s+oficial|v[ií]deo\s+oficial|letra\s+oficial|video\s+musical|audio\s+oficial|lyric\s+video|official\s+[^)\]]*|visualizer)[)\]]/gi;
-
-/** Video-title noise ("Song (Official Video)") confuses the full-text search. */
-export function cleanTrackTitle(rawTitle: string) {
-  const cleaned = (rawTitle.replace(NOISE_TAG_PATTERN, "").split(" | ")[0] ?? "").trim();
-  return cleaned || rawTitle;
-}
 
 /** The full-text searches to try, best first; inexact mode widens them (as pear-desktop). */
 export function buildSearchQueries(input: { title: string; alternativeTitle?: string; artist: string; allowInexact: boolean }) {
