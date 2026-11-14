@@ -2,11 +2,12 @@
 // section's cards. Shared by the in-page overlay and the standalone settings
 // window.
 
+import { clamp } from "@pear/sdk/util";
 import { useEffect, useRef, useState } from "preact/hooks";
 import type { SettingsModel } from "./model.ts";
 import { SearchResults, SectionBody } from "./settings/body.tsx";
 import { Header, RestartBanner, Sidebar } from "./settings/chrome.tsx";
-import { buildDebugInfo, liveFlagOverrides, useCopyFeedback } from "./settings/debug-info.ts";
+import { copyDebugInfo, useCopyFeedback } from "./settings/debug-info.ts";
 import { FlagsSection } from "./settings/flags.tsx";
 import { SECTIONS, type SectionId, sectionLabel } from "./settings/sections.ts";
 import { useDialog } from "./settings/state.ts";
@@ -38,8 +39,6 @@ const MODAL_MIN_HEIGHT = 360;
 const MODAL_MARGIN = 40;
 const SIDEBAR_MIN_WIDTH = 180;
 const SIDEBAR_MAX_WIDTH = 420;
-
-const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
 
 export function Settings(props: SettingsProps) {
   return (
@@ -158,16 +157,6 @@ function SettingsDialog({ model, onClose, standalone = false, closing = false }:
     });
   };
 
-  const copyDebug = async () => {
-    try {
-      const meta = await model.appMeta();
-      const live = model.siteFlags?.();
-      debug.copy(buildDebugInfo(meta, enabled, live?.served ?? {}, liveFlagOverrides(model, live)));
-    } catch (error) {
-      console.error("[pear] reading the debug info failed", error);
-    }
-  };
-
   return (
     <div class={`root${standalone ? " root--standalone" : ""}${closing ? " root--closing" : ""}${noBlur ? " root--no-blur" : ""}`}>
       {!standalone && <div class="scrim" onMouseDown={onClose} />}
@@ -182,7 +171,7 @@ function SettingsDialog({ model, onClose, standalone = false, closing = false }:
           searchRef={search}
           sidebarRef={sidebar}
           onResizeStart={startSidebarDrag}
-          onVersionClick={() => void copyDebug()}
+          onVersionClick={() => void copyDebugInfo(model, enabled, debug.copy)}
           copied={debug.copied}
         />
         <section class="main">

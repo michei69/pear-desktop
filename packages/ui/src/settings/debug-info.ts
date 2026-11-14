@@ -5,13 +5,15 @@ import { flagOverrides, type Flags } from "@pear/sdk/core-config";
 import type { AppDebugInfo } from "@pear/sdk/protocol";
 import { useEffect, useRef, useState } from "preact/hooks";
 import type { SettingsModel, SiteFlags } from "../model.ts";
-import { liveFeatureFlags } from "./live-flags.ts";
+import { clientVersion } from "./live-flags.ts";
+
+export const storedFlagList = (model: SettingsModel): string[] => {
+  const list = model.core("site")?.config.siteFlags;
+  return Array.isArray(list) ? list.filter((entry): entry is string => typeof entry === "string") : [];
+};
 
 /** The overrides saved in the config, for the standalone window where the page isn't there to ask. */
-export const storedFlagOverrides = (model: SettingsModel): Flags => {
-  const list = model.core("site")?.config.siteFlags;
-  return flagOverrides(Array.isArray(list) ? list.filter((entry): entry is string => typeof entry === "string") : []);
-};
+export const storedFlagOverrides = (model: SettingsModel): Flags => flagOverrides(storedFlagList(model));
 
 /**
  * The overrides in effect, read at call time: the page reports them as a getter
@@ -32,13 +34,14 @@ const mb = (kilobytes: number) => `${Math.round(kilobytes / 1024)} MB`;
  * line up. `served` is the page's own values, so an override wins over it (the
  * report must show what the page actually runs with).
  */
+export const flagNames = (served: Flags, overrides: Flags): string[] =>
+  [...new Set([...Object.keys(served), ...Object.keys(overrides)])].sort((a, b) => a.localeCompare(b));
+
 const flagLines = (served: Flags, overrides: Flags): string[] =>
-  [...new Set([...Object.keys(served), ...Object.keys(overrides)])]
-    .sort((a, b) => a.localeCompare(b))
-    .map((name) => {
-      const value = name in overrides ? overrides[name] : served[name];
-      return `${name}: ${JSON.stringify(value)}${name in overrides ? " (overridden)" : ""}`;
-    });
+  flagNames(served, overrides).map((name) => {
+    const value = name in overrides ? overrides[name] : served[name];
+    return `${name}: ${JSON.stringify(value)}${name in overrides ? " (overridden)" : ""}`;
+  });
 
 /** The copied report: the app's version, the machine, the plugins and the page's flags. */
 export function buildDebugInfo(meta: AppDebugInfo, plugins: string[], served: Flags, overrides: Flags): string {
@@ -54,7 +57,7 @@ export function buildDebugInfo(meta: AppDebugInfo, plugins: string[], served: Fl
     `${meta.name} v${meta.version} (${meta.build})`,
     `Platform: ${meta.platform} (${meta.arch}), ${meta.osVersion}`,
     `Electron: ${meta.versions.electron} · Chromium: ${meta.versions.chrome} · Node: ${meta.versions.node}`,
-    `Innertube client version: ${liveFeatureFlags()?.clientVersion() ?? "unknown"}`,
+    `Innertube client version: ${clientVersion()}`,
     `CPU: ${meta.cpu.model} (${meta.cpu.threads} threads)`,
     `GPU: ${meta.gpu.renderer ?? meta.gpu.vendor ?? "unknown"}${driver}`,
     `Memory: ${mb(total)} total (main ${mb(memory.main)}, renderers ${mb(memory.renderers)}, gpu ${mb(memory.gpu)})`,
@@ -70,6 +73,16 @@ export function buildDebugInfo(meta: AppDebugInfo, plugins: string[], served: Fl
   }
 
   return lines.join("\n");
+}
+
+export async function copyDebugInfo(model: SettingsModel, plugins: string[], copy: (text: string) => void) {
+  try {
+    const meta = await model.appMeta();
+    const live = model.siteFlags?.();
+    copy(buildDebugInfo(meta, plugins, live?.served ?? {}, liveFlagOverrides(model, live)));
+  } catch (error) {
+    console.error("[pear] reading the debug info failed", error);
+  }
 }
 
 /** Clipboard copy with a short-lived flag, for the buttons that use it. */

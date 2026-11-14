@@ -5,8 +5,8 @@ import type { ComponentChildren } from "preact";
 import { Icon, PearIcon, YtmIcon } from "../icons.tsx";
 import type { SettingsModel } from "../model.ts";
 import { useText } from "../strings.ts";
-import { buildDebugInfo, liveFlagOverrides, useCopyFeedback } from "./debug-info.ts";
-import { liveFeatureFlags } from "./live-flags.ts";
+import { copyDebugInfo, useCopyFeedback } from "./debug-info.ts";
+import { clientVersion } from "./live-flags.ts";
 
 const REPO = "https://github.com/michei69/pear-desktop";
 
@@ -37,7 +37,7 @@ export function About({ model, enabled, children }: { model: SettingsModel; enab
     { label: text("settings-ui.about.version-chromium"), value: app.chrome },
     { label: text("settings-ui.about.version-node"), value: app.node },
     { label: text("settings-ui.about.version-platform"), value: `${app.platform} (${app.arch})` },
-    { label: text("settings-ui.about.version-innertube"), value: liveFeatureFlags()?.clientVersion() ?? "unknown" },
+    { label: text("settings-ui.about.version-innertube"), value: clientVersion() },
   ];
 
   const reportIssueUrl = () => {
@@ -57,16 +57,6 @@ export function About({ model, enabled, children }: { model: SettingsModel; enab
     { icon: "external" as const, label: text("settings-ui.about.link-releases"), url: `${REPO}/releases` },
     { icon: "external" as const, label: text("settings-ui.about.link-license"), url: `${REPO}/blob/master/license` },
   ];
-
-  const copyDebugInfo = async () => {
-    try {
-      const meta = await model.appMeta();
-      const live = model.siteFlags?.();
-      copy(buildDebugInfo(meta, enabled, live?.served ?? {}, liveFlagOverrides(model, live)));
-    } catch (error) {
-      console.error("[pear] reading the debug info failed", error);
-    }
-  };
 
   return (
     <div class="about">
@@ -113,7 +103,7 @@ export function About({ model, enabled, children }: { model: SettingsModel; enab
           >
             {text("settings-ui.about.check-updates")}
           </button>
-          <button type="button" class="outlined" onClick={() => void copyDebugInfo()}>
+          <button type="button" class="outlined" onClick={() => void copyDebugInfo(model, enabled, copy)}>
             {copied ? text("settings-ui.about.copied") : text("settings-ui.about.copy-debug")}
           </button>
         </div>

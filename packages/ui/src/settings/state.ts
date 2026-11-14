@@ -3,7 +3,7 @@
 
 import type { Field } from "@pear/sdk";
 import type { CoreSection } from "@pear/sdk/core-config";
-import type { PluginInfo, RestartRequirement } from "@pear/sdk/protocol";
+import type { PluginInfo } from "@pear/sdk/protocol";
 import { useEffect, useMemo, useRef, useState } from "preact/hooks";
 import type { SettingsModel } from "../model.ts";
 import { localize } from "../strings.ts";

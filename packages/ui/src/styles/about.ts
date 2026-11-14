@@ -39,7 +39,8 @@ export const about = css`
   .about .card + .card {
     margin-top: 0;
   }
-  .about-section-title {
+  .about-section-title,
+  .about > .group .group-title {
     margin-bottom: 12px;
     font-size: 12px;
     font-weight: 600;
@@ -104,10 +105,5 @@ export const about = css`
   }
   .about > .group .group-title {
     margin: 0 0 12px;
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    color: var(--on-surface-variant);
   }
 `;

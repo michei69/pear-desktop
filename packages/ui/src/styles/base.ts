@@ -60,7 +60,6 @@ export const base = css`
 
   /* buttons without a frame, and outlined ones */
   .nav-item,
-  .link,
   .link-button,
   .sidebar-version,
   .icon-button,

@@ -128,9 +128,6 @@ export const layout = css`
     border-radius: 50%;
     color: var(--on-surface-variant);
   }
-  .icon-button:hover {
-    background: var(--surface-highest);
-  }
   .icon {
     flex-shrink: 0;
   }

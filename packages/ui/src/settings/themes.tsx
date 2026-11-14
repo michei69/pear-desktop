@@ -3,7 +3,8 @@
 // made there show up without a restart.
 
 import { CUSTOM_PRESET, defaultPreset, keyLabel, resolvePalette, type ThemePalette } from "@pear/sdk/themes";
-import { useEffect, useState } from "preact/hooks";
+import { useState } from "preact/hooks";
+import { useDraft } from "../fields.tsx";
 import type { SettingsModel } from "../model.ts";
 import { useText } from "../strings.ts";
 import type { Dialog } from "./state.ts";
@@ -189,8 +190,7 @@ function PaletteEditor(props: { model: SettingsModel; themeId: string; palette: 
 }
 
 function PaletteValue(props: { value: string; onCommit(value: string): void }) {
-  const [draft, setDraft] = useState(props.value);
-  useEffect(() => setDraft(props.value), [props.value]);
+  const [draft, setDraft] = useDraft(props.value);
   const commit = () => {
     if (draft !== props.value) props.onCommit(draft);
   };

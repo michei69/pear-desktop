@@ -6,11 +6,11 @@ import type { PluginInfo } from "@pear/sdk/protocol";
 import { remoteErrorMessage } from "@pear/sdk/util";
 import type { ComponentChildren } from "preact";
 import { useMemo, useState } from "preact/hooks";
-import { SettingsField, Switch } from "../fields.tsx";
+import { RestartPill, SettingsField, Switch } from "../fields.tsx";
 import { Icon } from "../icons.tsx";
 import type { SettingsModel } from "../model.ts";
 import { useText } from "../strings.ts";
-import { type FieldFilter, type Group, fieldVisible, groupFields, hasFields } from "./groups.ts";
+import { type FieldFilter, type Group, groupFields, hasFields, visibleGroups } from "./groups.ts";
 import { type Block, joinTitles } from "./sections.ts";
 import type { Dialog } from "./state.ts";
 import { ThemeCard } from "./themes.tsx";
@@ -54,9 +54,7 @@ export function CoreCards(props: {
   const state = dialog.model.core(section);
   if (!state) return null;
   const status = state.error ?? text("settings-ui.api-server-status", { address: state.status });
-  const groups = props.groups
-    .map((group) => ({ ...group, fields: group.fields.filter(([, field]) => fieldVisible(field, state.config)) }))
-    .filter((group) => group.fields.length > 0);
+  const groups = visibleGroups(props.groups, state.config);
   return (
     <>
       {groups.map((group, index) => (
@@ -173,12 +171,7 @@ export function PluginCard(props: {
     () => (open ? groupFields(plugin.config, dialog.platform, dialog.localizer(plugin.id)) : []),
     [open, plugin.config, dialog.platform, dialog.localizer, plugin.id],
   );
-  const groups = (props.groups ?? computedGroups)
-    .map((group) => ({
-      ...group,
-      fields: group.fields.filter(([, field]) => fieldVisible(field, state?.config ?? {})),
-    }))
-    .filter((group) => group.fields.length > 0);
+  const groups = visibleGroups(props.groups ?? computedGroups, state?.config ?? {});
   const actions = plugin.actions ?? [];
   const configurable = hasFields(plugin.config, dialog.platform) || actions.length > 0;
   const showActions = enabled && actions.length > 0;
@@ -198,11 +191,7 @@ export function PluginCard(props: {
           <span class="field-text">
             <span class="label-line">
               <span class="field-label">{plugin.name}</span>
-              {model.meta(plugin.id)?.restartRequired && (
-                <span class="pill" title={text("settings-ui.restart-plugin-hint")}>
-                  {text("settings-ui.restart-pill")}
-                </span>
-              )}
+              {model.meta(plugin.id)?.restartRequired && <RestartPill hint="settings-ui.restart-plugin-hint" />}
               {error && enabled && <span class="pill error">{text("settings-ui.error-pill")}</span>}
             </span>
             {plugin.description && <span class="field-desc">{plugin.description}</span>}

@@ -20,7 +20,7 @@ import { useEffect, useRef, useState } from "preact/hooks";
 import { toAccelerator } from "./accelerator.ts";
 import { Icon } from "./icons.tsx";
 import type { SettingsModel } from "./model.ts";
-import { useText } from "./strings.ts";
+import { type UiKey, useText } from "./strings.ts";
 
 interface FieldProps {
   /** Unique within the dialog; used for ids. */
@@ -55,7 +55,6 @@ const INLINE_KINDS = new Set<Field["kind"]>(["bool", "shortcut"]);
 
 export function SettingsField({ name, field, value, model, parentOn, onChange }: FieldProps) {
   const id = `field-${name}`;
-  const text = useText();
   const control = <Control id={id} field={field} value={value} model={model} onChange={onChange} />;
   const inline = INLINE_KINDS.has(field.kind);
   // A leading ellipsis is the established way to describe a setting that
@@ -69,11 +68,7 @@ export function SettingsField({ name, field, value, model, parentOn, onChange }:
             <label class="field-label" for={id} id={`${id}-label`}>
               {field.label}
             </label>
-            {field.restart && (
-              <span class="pill" title={text("settings-ui.restart-pill-hint")}>
-                {text("settings-ui.restart-pill")}
-              </span>
-            )}
+            {field.restart && <RestartPill />}
           </div>
           {field.description && <div class="field-desc">{field.description}</div>}
         </div>
@@ -81,6 +76,15 @@ export function SettingsField({ name, field, value, model, parentOn, onChange }:
       </div>
       {!inline && <div class="field-control">{control}</div>}
     </div>
+  );
+}
+
+export function RestartPill({ hint = "settings-ui.restart-pill-hint" }: { hint?: UiKey }) {
+  const text = useText();
+  return (
+    <span class="pill" title={text(hint)}>
+      {text("settings-ui.restart-pill")}
+    </span>
   );
 }
 
@@ -147,7 +151,7 @@ function useDebounced<V>(onChange: (value: V) => void, delay: number) {
 }
 
 /** Local state that follows `value` when it changes from outside. */
-function useDraft<T>(value: T) {
+export function useDraft<T>(value: T) {
   const [draft, setDraft] = useState(value);
   useEffect(() => setDraft(value), [value]);
   return [draft, setDraft] as const;
@@ -278,30 +282,24 @@ function Stepper({ id, field, draft, update }: NumberViewProps) {
 function SelectControl({ id, field, value, model, onChange }: ControlProps<SelectField, string>) {
   const text = useText();
   const [busy, setBusy] = useState(false);
+  const runLanguageSync = async (failure: string, action: (settings: SettingsModel) => Promise<void>) => {
+    if (!model) return;
+    setBusy(true);
+    try {
+      await action(model);
+    } catch (error) {
+      console.error(failure, error);
+    } finally {
+      setBusy(false);
+    }
+  };
   // Same commands as the menu's Language › Sync entries; the change path persists and flags the restart.
-  const syncFrom = async () => {
-    if (!model) return;
-    setBusy(true);
-    try {
-      const language = await model.languageFromYtm();
+  const syncFrom = () =>
+    runLanguageSync("[pear] reading YTM's language failed", async (settings) => {
+      const language = await settings.languageFromYtm();
       if (language) onChange(language);
-    } catch (error) {
-      console.error("[pear] reading YTM's language failed", error);
-    } finally {
-      setBusy(false);
-    }
-  };
-  const syncTo = async () => {
-    if (!model) return;
-    setBusy(true);
-    try {
-      await model.languageToYtm();
-    } catch (error) {
-      console.error("[pear] setting YTM's language failed", error);
-    } finally {
-      setBusy(false);
-    }
-  };
+    });
+  const syncTo = () => runLanguageSync("[pear] setting YTM's language failed", (settings) => settings.languageToYtm());
   const select =
     selectVariant(field) === "dropdown" ? (
       <select

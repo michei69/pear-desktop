@@ -7,9 +7,10 @@ import type { NumberField, StringField } from "@pear/sdk";
 import { type FlagValue, type Flags, flagOverrides, withFlagOverride } from "@pear/sdk/core-config";
 import type { FlagMetadataMap } from "@pear/sdk/protocol";
 import { useEffect, useRef, useState } from "preact/hooks";
-import { NumberControl, Switch, TextControl } from "../fields.tsx";
+import { NumberControl, RestartPill, Switch, TextControl } from "../fields.tsx";
 import { Icon } from "../icons.tsx";
 import { useText } from "../strings.ts";
+import { flagNames, storedFlagList } from "./debug-info.ts";
 import { liveFeatureFlags } from "./live-flags.ts";
 import type { Dialog } from "./state.ts";
 
@@ -46,16 +47,12 @@ export function FlagsSection({ dialog, query }: { dialog: Dialog; query: string 
     };
   }, [model]);
 
-  const stored = (): string[] => {
-    const list = model.core("site")?.config.siteFlags;
-    return Array.isArray(list) ? list.filter((entry): entry is string => typeof entry === "string") : [];
-  };
-  const overrides = (): Flags => flagOverrides(stored());
+  const overrides = (): Flags => flagOverrides(storedFlagList(model));
   const served = (): Flags => model.siteFlags?.()?.served ?? {};
   const valueOf = (name: string): FlagValue | undefined => (Object.hasOwn(overrides(), name) ? overrides()[name] : served()[name]);
 
   const commit = (name: string, value: FlagValue | undefined) => {
-    void model.setCoreConfig("site", { siteFlags: withFlagOverride(stored(), name, value) });
+    void model.setCoreConfig("site", { siteFlags: withFlagOverride(storedFlagList(model), name, value) });
     const live = liveFeatureFlags();
     if (value === undefined) live?.remove(name);
     else live?.set(name, value);
@@ -64,7 +61,7 @@ export function FlagsSection({ dialog, query }: { dialog: Dialog; query: string 
   };
 
   const needle = query.trim().toLowerCase();
-  const allNames = [...new Set([...Object.keys(served()), ...Object.keys(overrides())])].sort((a, b) => a.localeCompare(b));
+  const allNames = flagNames(served(), overrides());
   const names = needle ? allNames.filter((name) => name.toLowerCase().includes(needle)) : allNames;
   const canAdd = () => newName.trim().length > 0 && !allNames.includes(newName.trim());
 
@@ -154,11 +151,7 @@ function FlagRow(props: {
           <div class="label-line">
             <span class="field-label flags-name">{props.name}</span>
             {props.metadata?.family && <span class="pill flags-family">{props.metadata.family}</span>}
-            {props.metadata?.requires_restart && (
-              <span class="pill" title={text("settings-ui.restart-pill-hint")}>
-                {text("settings-ui.restart-pill")}
-              </span>
-            )}
+            {props.metadata?.requires_restart && <RestartPill />}
             {props.overridden && <span class="pill">{text("settings-ui.flags.overridden")}</span>}
           </div>
           {props.metadata?.description && <div class="field-desc">{props.metadata.description}</div>}

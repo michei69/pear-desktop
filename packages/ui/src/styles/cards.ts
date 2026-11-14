@@ -92,19 +92,4 @@ export const pluginCards = css`
   .status-text {
     color: var(--on-surface-variant);
   }
-
-  /* The site's feature flags: many short rows. */
-  .site-flag {
-    padding: 6px 18px;
-  }
-  .site-flag .field-label {
-    font:
-      400 12px/1.4 ui-monospace,
-      monospace;
-    overflow-wrap: anywhere;
-  }
-  .site-flag button.pill {
-    border: 0;
-    cursor: pointer;
-  }
 `;

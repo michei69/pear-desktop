@@ -30,6 +30,12 @@ export function fieldVisible(field: Field, config: Record<string, unknown>) {
   return !field.visibleWhen || Object.entries(field.visibleWhen).every(([key, value]) => config[key] === value);
 }
 
+export function visibleGroups(groups: readonly Group[], config: Record<string, unknown>): Group[] {
+  return groups
+    .map((group) => ({ ...group, fields: group.fields.filter(([, field]) => fieldVisible(field, config)) }))
+    .filter((group) => group.fields.length > 0);
+}
+
 /** Whether the schema has anything to show on this platform. */
 export function hasFields(shape: ConfigShape, platform: string) {
   return Object.values(shape).some((field) => !field.hidden && onPlatform(field.platforms, platform));

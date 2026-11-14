@@ -12,6 +12,7 @@ import type { Dialog } from "./state.ts";
 
 export function SectionBody({ dialog, section, enabled }: { dialog: Dialog; section: Section; enabled: string[] }) {
   const text = useText();
+  const blocks = section.blocks.map((block, index) => <BlockView key={index} dialog={dialog} block={block} />);
   switch (section.id) {
     case "plugins":
       return (
@@ -30,22 +31,14 @@ export function SectionBody({ dialog, section, enabled }: { dialog: Dialog; sect
       // About owns its cards; the update options are drawn under its actions.
       return (
         <About model={dialog.model} enabled={enabled}>
-          {section.blocks.map((block, index) => (
-            <BlockView key={index} dialog={dialog} block={block} />
-          ))}
+          {blocks}
         </About>
       );
     case "flags":
       // Rendered by the dialog itself, which owns the search box while it is open.
       return null;
     default:
-      return (
-        <>
-          {section.blocks.map((block, index) => (
-            <BlockView key={index} dialog={dialog} block={block} />
-          ))}
-        </>
-      );
+      return <>{blocks}</>;
   }
 }
 

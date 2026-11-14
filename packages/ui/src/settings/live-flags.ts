@@ -7,3 +7,5 @@ import type { LiveFeatureFlags } from "@pear/sdk/protocol";
 type FlagWindow = Window & { __pearFeatureFlags?: LiveFeatureFlags };
 
 export const liveFeatureFlags = (): LiveFeatureFlags | undefined => (window as FlagWindow).__pearFeatureFlags;
+
+export const clientVersion = () => liveFeatureFlags()?.clientVersion() ?? "unknown";
