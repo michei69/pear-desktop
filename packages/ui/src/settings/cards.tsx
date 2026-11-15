@@ -167,7 +167,7 @@ export function PluginCard(props: {
   const blockedBy = state?.blockedBy;
   // Native tooltip on the whole row: the switch itself is disabled, and
   // Chromium still shows the row's title while hovering it.
-  const blockedTitle = blockedBy ? `${blockedBy.name}: ${blockedBy.reason}` : undefined;
+  const blockedTitle = blockedBy ? `Disabled by ${blockedBy.name}: ${blockedBy.reason}` : undefined;
   const error = model.error(plugin.id);
   const status = model.status(plugin.id);
   // A collapsed card shows nothing, so it has nothing to translate or group either.

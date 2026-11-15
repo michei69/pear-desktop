@@ -55,9 +55,6 @@ export const pluginCards = css`
   .plugin[data-blocked] .plugin-head {
     opacity: 0.6;
   }
-  .plugin[data-blocked] .plugin-head:hover {
-    opacity: 1;
-  }
   .plugin-toggle {
     flex: 1;
     min-width: 0;
