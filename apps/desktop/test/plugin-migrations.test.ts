@@ -448,7 +448,7 @@ const EXPECTED: Record<string, { enabled: boolean; config: Json }> = {
       iceServers: expect.arrayContaining(["stun:stun.l.google.com:19302"]),
     },
   },
-  navigation: { enabled: false, config: {} },
+  navigation: { enabled: false, config: { placement: "right" } },
   notifications: {
     enabled: true,
     config: {
