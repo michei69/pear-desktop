@@ -68,11 +68,21 @@ describe("the tray menu", () => {
     stop();
   });
 
-  test("lists other plugins' menu items", () => {
+  test("keeps only the downloader's Downloads item from plugin menus", () => {
     const click = vi.fn();
-    const { stop } = start({ pluginItems: [{ label: "Downloads", click }] });
-    item("Downloads").click!();
+    const { stop } = start({
+      pluginItems: [
+        { label: "plugins.album-color-theme.menu.open", click: vi.fn() },
+        { label: "plugins.downloader.downloads", click },
+        { label: "plugins.downloader.menu.download-playlist", click: vi.fn() },
+        { label: "plugins.video-toggle.menu.open", click: vi.fn() },
+      ],
+    });
+    item("plugins.downloader.downloads").click!();
     expect(click).toHaveBeenCalledOnce();
+    expect(hasItem("plugins.album-color-theme.menu.open")).toBe(false);
+    expect(hasItem("plugins.downloader.menu.download-playlist")).toBe(false);
+    expect(hasItem("plugins.video-toggle.menu.open")).toBe(false);
     stop();
   });
 });

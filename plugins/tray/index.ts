@@ -257,8 +257,12 @@ function menu(ctx: Ctx, state: NowPlaying, toggleWindow: () => void): MenuItemCo
       label: window.isVisible() ? ctx.t("main.tray.hide", "Hide window") : ctx.t("main.tray.show", "Show window"),
       click: toggleWindow,
     },
-    // Other plugins' items (`ctx.addMenuItem`), e.g. the downloader's Downloads.
-    ...ctx.pluginMenuItems().map(({ label, click }): MenuItemConstructorOptions => ({ label, click: () => click() })),
+    // pear-desktop kept the tray to playback, Downloads and Settings: plugin menu
+    // items feed the app menu, but the tray only shows the downloader's entry.
+    ...ctx
+      .pluginMenuItems()
+      .filter(({ label }) => label === ctx.t("plugins.downloader.downloads", "Downloads"))
+      .map(({ label, click }): MenuItemConstructorOptions => ({ label, click: () => click() })),
     // pear-desktop used the settings dialog's title for this entry, translated everywhere.
     { label: ctx.t("settings-ui.title", "Settings"), click: () => ctx.openSettings() },
     { type: "separator" },

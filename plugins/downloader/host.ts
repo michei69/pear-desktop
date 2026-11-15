@@ -23,7 +23,7 @@ import { findLyrics, lyricsFromSyncedLyrics } from "./lyrics.ts";
 import { OfflineStore } from "./offline.ts";
 import { ffmpegCoreDir } from "./macros.ts" with { type: "macro" };
 import { expandHome, type SetupState, type ToolSource, Tools } from "./tools.ts";
-import { type Capabilities, canEmbedCover, isAlbum, isDownloadablePlaylist, normalizePlaylistId } from "./ytdlp.ts";
+import { type Capabilities, canEmbedCover } from "./ytdlp.ts";
 
 export type Ctx = HostContextOf<typeof downloaderConfig>;
 type Config = Ctx["config"];
@@ -110,10 +110,6 @@ export async function startHost(ctx: Ctx) {
     label: ctx.t("plugins.downloader.downloads", "Downloads"),
     accelerator: DOWNLOADS_SHORTCUT,
     click: () => openDownloads(ctx),
-  });
-  ctx.addMenuItem({
-    label: ctx.t("plugins.downloader.menu.download-playlist", "Download playlist"),
-    click: () => downloadShownPlaylist(ctx, queue),
   });
   downloadWhileListening(ctx, (track) => autoJobs.add(queue.add({ videoId: track.videoId }, track.title)));
 }
@@ -419,28 +415,6 @@ function resultMessage({ t }: Ctx, result: JobResult) {
 export function openDownloads(ctx: Pick<Ctx, "focusWindow" | "emit">) {
   ctx.focusWindow();
   ctx.emit("open-downloads");
-}
-
-/**
- * pear-desktop's "Download playlist": the list the window shows (a song's page
- * played from a list too), else the one the song playing is from.
- */
-function downloadShownPlaylist(ctx: Ctx, queue: DownloadQueue) {
-  const playlistId = shownPlaylist(ctx);
-  if (!playlistId) {
-    ctx.emit("toast", ctx.t("plugins.downloader.toast.no-playlist", "There's no playlist here to download"));
-    return;
-  }
-  const label = isAlbum(playlistId)
-    ? ctx.t("plugins.downloader.labels.album", "album")
-    : ctx.t("plugins.downloader.labels.playlist", "playlist");
-  queue.add({ videoId: "", playlistId }, label);
-}
-
-function shownPlaylist(ctx: Ctx) {
-  const page = ctx.window.isDestroyed() ? undefined : URL.parse(ctx.window.webContents.getURL());
-  const candidates = [page?.searchParams.get("list"), page?.searchParams.get("playlist"), ctx.player.state.track?.playlistId];
-  return candidates.map(normalizePlaylistId).find(isDownloadablePlaylist);
 }
 
 /** Automatic downloads go to their own folder when one is set. */
