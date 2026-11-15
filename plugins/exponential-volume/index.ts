@@ -8,6 +8,15 @@ const EXPONENT = 3;
 /** Every media element the curve reaches: YTM may replace its <video>. */
 const MEDIA = "video, audio";
 
+/**
+ * Crossfade's second streams are detached `<audio>` elements, so the re-map of
+ * the document's media cannot reach them. Announced after the accessor is
+ * installed and after it is restored, so they re-read their level; the same
+ * event name lives in plugins/crossfade/stream.ts.
+ */
+const VOLUME_MAP_EVENT = "pear:volume-map";
+const announceVolumeMap = () => document.dispatchEvent(new Event(VOLUME_MAP_EVENT));
+
 export default definePlugin({
   id: "exponential-volume",
   name: "Exponential volume",
@@ -42,6 +51,7 @@ export default definePlugin({
     for (const element of document.querySelectorAll<HTMLMediaElement>(MEDIA)) {
       element.volume = linear.call(element) as number;
     }
+    announceVolumeMap();
 
     return () => {
       // Undo the scaled-down media volume before the native accessor returns,
@@ -50,6 +60,7 @@ export default definePlugin({
         setLinear.call(element, (linear.call(element) as number) ** (1 / EXPONENT));
       }
       Object.defineProperty(HTMLMediaElement.prototype, "volume", native);
+      announceVolumeMap();
     };
   },
 });

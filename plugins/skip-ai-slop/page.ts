@@ -1,4 +1,5 @@
 import { type PageContextOf, type QueueAction, queueDispatch, queueItems, queueStore } from "@pear/sdk";
+import { patchMethod } from "@pear/sdk/util";
 import { MAX_SKIPS, REFRESH_INTERVAL_MS, SKIP_WINDOW_MS, type SkipAiSlopConfig, type schema } from "./config.ts";
 import type { SkipAiSlopCommands } from "./contract.ts";
 import {
@@ -93,7 +94,7 @@ export function startSkipAiSlop(ctx: Ctx) {
   let removingFromQueue = false;
 
   let hookedStore: StoreLike | null = null;
-  let originalDispatch: StoreLike["dispatch"] | null = null;
+  let unhookDispatch: (() => void) | undefined;
 
   let hookedNetwork: NetworkManager | null = null;
   let originalFetch: FetchFn | null = null;
@@ -509,27 +510,30 @@ export function startSkipAiSlop(ctx: Ctx) {
   function hookStore() {
     const store = queueStore()?.store?.store;
     if (!store || typeof store.dispatch !== "function" || hookedStore === (store as StoreLike)) return;
-    if (hookedStore) unhookStore();
+    unhookStore();
 
-    const dispatch = store.dispatch;
-    originalDispatch = dispatch;
-    hookedStore = store;
-    store.dispatch = function (this: unknown, action: QueueAction) {
-      if (active && typeof action?.type === "string" && action.type.includes("AUTOMIX")) {
-        try {
-          action = { ...action, payload: filterAutomixPayload(action.payload) };
-        } catch (error) {
-          ctx.log.warn("automix filter failed", error);
-        }
-      }
-      dispatch.call(this, action);
-    };
+    hookedStore = store as StoreLike;
+    unhookDispatch = patchMethod(
+      store,
+      "dispatch",
+      (dispatch) =>
+        function (this: unknown, action: QueueAction) {
+          if (active && typeof action?.type === "string" && action.type.includes("AUTOMIX")) {
+            try {
+              action = { ...action, payload: filterAutomixPayload(action.payload) };
+            } catch (error) {
+              ctx.log.warn("automix filter failed", error);
+            }
+          }
+          dispatch.call(this, action);
+        },
+    );
   }
 
   function unhookStore() {
-    if (hookedStore && originalDispatch) hookedStore.dispatch = originalDispatch;
+    unhookDispatch?.();
+    unhookDispatch = undefined;
     hookedStore = null;
-    originalDispatch = null;
   }
 
   // ---- page cards ------------------------------------------------------------

@@ -26,6 +26,24 @@ export default definePlugin({
       // Bubble phase, and never stop propagation: a deeper handler (the in-app menu's
       // shadow host, the lyrics picker) must get the arrows first.
       ctx.listen(window, "keydown", onKeydown);
+
+      // Synced lyrics' view stops keys from leaving its shadow host, so after a click
+      // inside the panel the window listener never sees them. Its host only stops
+      // propagation: a listener on that same host still runs, after the inner handlers
+      // (the provider picker marks the keys it uses as handled). YTM builds the player
+      // page lazily and the view restarts with its plugin, so re-find the host.
+      let listenedOn: HTMLElement | null = null;
+      const attach = () => {
+        // The view is stable while synced-lyrics runs: one query per player-page
+        // mutation batch is enough until it goes away (its plugin restarted).
+        if (listenedOn?.isConnected) return;
+        const host = ctx.$<HTMLElement>("lyrics.view");
+        if (!host) return;
+        listenedOn = host;
+        ctx.listen(host, "keydown", onKeydown);
+      };
+      ctx.observe("player.page", { childList: true, subtree: true }, attach);
+      void ctx.waitFor("player.page").then(attach, () => {});
     },
   },
 });

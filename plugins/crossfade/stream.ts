@@ -3,7 +3,7 @@
 // the next track. Keeping it on the video's clock from the start is what makes
 // the handover a splice instead of a switch: the two copies are the same signal.
 
-import type { AudioGraph } from "@pear/sdk";
+import type { AudioGraph, Unsubscribe, YTPlayerApi } from "@pear/sdk";
 import { listenAll } from "@pear/sdk/dom";
 import { fadeCurve } from "./fade.ts";
 import type { Ctx } from "./schema.ts";
@@ -36,6 +36,8 @@ const ALIGN_INTERVAL_MS = 50;
 export const HANDOVER_SECONDS = 0.02;
 /** Freed a moment after the fade's last sample, so the curve is not cut short. */
 const RELEASE_SLACK_MS = 100;
+/** exponential-volume's volume accessor was installed or restored (see its index.ts). */
+const VOLUME_MAP_EVENT = "pear:volume-map";
 
 /** Where a track's audio came from: its bytes, or its stream URL as a fallback. */
 type Source = { kind: "bytes"; bytes: Uint8Array; mimeType: string } | { kind: "url"; url: string };
@@ -55,6 +57,8 @@ interface Stream {
   audio: HTMLAudioElement;
   source: MediaElementAudioSourceNode;
   gain: GainNode;
+  /** Removes the gain from the shared graph's externals. */
+  external: Unsubscribe;
   objectUrl: string | undefined;
   /** Between `play()` and the `playing` event that measures what the start cost. */
   starting: boolean;
@@ -62,6 +66,31 @@ interface Stream {
   gone: boolean;
   alignment: ReturnType<typeof setInterval> | undefined;
   fade: Fade | undefined;
+}
+
+/**
+ * The player is on the video's original audio track. The second stream can only
+ * be fetched for that one: InnerTube's formats are chosen by the host without an
+ * audio-track parameter (the library filters a language only for the adaptive
+ * audio-only branch, ignores it for the muxed fallback, and a miss would silently
+ * serve any track). A dub or a picked language must therefore fall back to the
+ * plain fade, never be spliced in as the wrong one.
+ */
+export function isOriginalAudioTrack(api: YTPlayerApi | null | undefined) {
+  try {
+    // One track is no choice: nothing can be selected, so it is the original.
+    if ((api?.getAvailableAudioTracks?.() ?? []).length < 2) return true;
+    const track = api?.getAudioTrack?.();
+    if (!track) return true;
+    const info = track.getLanguageInfo?.();
+    const raw = track as { Pb?: { isDefault?: boolean; isAutoDubbed?: boolean } };
+    const isDefault = info?.getIsDefault?.() ?? raw.Pb?.isDefault ?? false;
+    const autoDubbed = info?.getIsAutoDubbed?.() ?? raw.Pb?.isAutoDubbed ?? false;
+    return isDefault && !autoDubbed;
+  } catch {
+    // A player without the selector plays its only track.
+    return true;
+  }
 }
 
 export function secondStream(ctx: Ctx, graph: AudioGraph) {
@@ -110,6 +139,8 @@ export function secondStream(ctx: Ctx, graph: AudioGraph) {
     stream.audio.pause();
     stream.audio.removeAttribute("src");
     stream.audio.load();
+    // Out of the graph first, then the nodes' own edges.
+    stream.external();
     stream.gain.disconnect();
     stream.source.disconnect();
     if (stream.objectUrl) URL.revokeObjectURL(stream.objectUrl);
@@ -201,13 +232,18 @@ export function secondStream(ctx: Ctx, graph: AudioGraph) {
     const gain = context.createGain();
     gain.gain.value = 0;
     node.connect(gain);
-    gain.connect(context.destination);
+    // In the shared graph, injected after the pre-chain stages (crossfade's own
+    // fader, skip-silences) and before the equalizer and compressor, so the
+    // effects process the fade tail; the visualizer's tap sees it too. Removed
+    // from the graph on dispose.
+    const external = graph.connectExternal(gain, 0);
 
     const stream: Stream = {
       videoId,
       audio,
       source: node,
       gain,
+      external,
       objectUrl,
       starting: false,
       gone: false,
@@ -328,11 +364,16 @@ export function secondStream(ctx: Ctx, graph: AudioGraph) {
   // The stream is the same track as the video, so it plays at the video's level.
   // The player's volume is its slider's (before YTM's perceptual curve), so the
   // element's own level is read instead.
-  ctx.player.on("volumeChange", () => {
+  const syncVolume = () => {
     const level = volumeNow();
     if (current) current.audio.volume = level;
     if (outgoing) outgoing.audio.volume = level;
-  });
+  };
+  ctx.player.on("volumeChange", syncVolume);
+  // The elements are detached, so exponential-volume's re-map of the document's
+  // media misses them; it announces its accessor change and they re-read the
+  // video's level through it (removed with the plugin's listeners).
+  ctx.listen(document, VOLUME_MAP_EVENT, syncVolume);
 
   // The silent copy follows the video's own clock: stopped while it is parked or
   // seeking, started again on the clock when it runs, and re-anchored by `follow`
@@ -373,11 +414,19 @@ export function secondStream(ctx: Ctx, graph: AudioGraph) {
 
       const fetch = ++generation;
       pendingVideoId = videoId;
+      // A dub or a picked language would hand over to the original track's audio;
+      // those tracks keep the fallback fade instead. Checked again when the fetch
+      // resolves and before the handover, because audio-track applies after load.
+      if (!isOriginalAudioTrack(ctx.player.api)) {
+        pendingVideoId = undefined;
+        ctx.log.info(`no second stream for ${videoId}: its audio track isn't the original`);
+        return;
+      }
       void fetchAudio(videoId, () => fetch !== generation)
         .then((source) => {
           if (fetch !== generation) return;
           pendingVideoId = undefined;
-          if (!source || ctx.signal.aborted) return;
+          if (!source || ctx.signal.aborted || !isOriginalAudioTrack(ctx.player.api)) return;
           const stream = create(videoId, source);
           current = stream;
           stream.alignment = ctx.setInterval(() => align(stream), ALIGN_INTERVAL_MS);
@@ -393,6 +442,7 @@ export function secondStream(ctx: Ctx, graph: AudioGraph) {
     ready() {
       const stream = current;
       return (
+        isOriginalAudioTrack(ctx.player.api) &&
         !!stream &&
         !stream.gone &&
         stream.videoId === ctx.player.state.track?.videoId &&
@@ -409,6 +459,8 @@ export function secondStream(ctx: Ctx, graph: AudioGraph) {
     handover(fadeSeconds: number): boolean {
       const stream = current;
       if (!stream || stream.gone || stream.starting || fadeSeconds <= 0) return false;
+      // The fetched copy is the original track; another one must not be spliced in.
+      if (!isOriginalAudioTrack(ctx.player.api)) return false;
       if (stream.videoId !== ctx.player.state.track?.videoId) return false;
       if (stream.audio.paused || stream.audio.readyState < HTMLMediaElement.HAVE_FUTURE_DATA) return false;
 

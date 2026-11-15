@@ -457,7 +457,7 @@ export function startSearchCommands(ctx: Ctx) {
     const key = event as KeyboardEvent;
     if (!openBind || key.repeat || !matchesKeybind(openBind, key)) return;
     // A plain-typed binding must never steal normal typing.
-    if (isTypingTarget(key.target) && !key.ctrlKey && !key.metaKey && !key.altKey) return;
+    if (isTypingTarget(key) && !key.ctrlKey && !key.metaKey && !key.altKey) return;
 
     key.preventDefault();
     key.stopImmediatePropagation();

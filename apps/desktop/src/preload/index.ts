@@ -26,10 +26,9 @@ if (isYtm || location.origin === SETTINGS_ORIGIN) {
     contextBridge.exposeInMainWorld("__pear", bridge);
   }
   if (isYtm) {
-    // The page has no Electron APIs; these are the webFrame calls the memory
-    // saver reads and clears caches with.
+    // The page has no Electron APIs; this is the webFrame call the main window
+    // uses to release the renderer's caches while hidden.
     contextBridge.exposeInMainWorld("pearPerf", {
-      getResourceUsage: () => webFrame.getResourceUsage(),
       clearCache: () => webFrame.clearCache(),
     });
   }

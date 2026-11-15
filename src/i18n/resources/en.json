@@ -1662,16 +1662,6 @@
     "navigation": {
       "description": "Next/Back navigation arrows directly integrated in the interface, like in your favorite browser",
       "name": "Navigation",
-      "settings": {
-        "placement": {
-          "label": "Placement",
-          "description": "Where the back and forward buttons sit. pear-desktop put them on the right of the top bar.",
-          "options": {
-            "left": "Top bar, left",
-            "right": "Top bar, right"
-          }
-        }
-      },
       "templates": {
         "back": {
           "title": "Go to previous page"
@@ -3314,18 +3304,6 @@
     "fullscreen-auto-hide": {
       "description": "Automatically hide the player controls and mouse cursor after a few seconds of inactivity while in fullscreen",
       "name": "Fullscreen Auto-hide"
-    },
-    "memory-saver": {
-      "description": "Clears the renderer's resource caches while the window is hidden once they grow past a threshold",
-      "name": "Memory Saver",
-      "settings": {
-        "threshold": "Cache threshold",
-        "threshold-description": "Clear the caches once their live memory exceeds this while the window is hidden",
-        "thresholdMB": {
-          "label": "Threshold",
-          "description": "Clear the renderer cache while the window is hidden once the live resource usage exceeds this."
-        }
-      }
     },
     "playback-recovery": {
       "description": "Automatically recovers from stuck, stalled, or dead playback states",

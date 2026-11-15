@@ -196,10 +196,6 @@ export const PEAR_DESKTOP_3_PLUGIN_DEFAULTS: Record<string, Record<string, unkno
   "lumiastream": {
     "enabled": false,
   },
-  "memory-saver": {
-    "enabled": false,
-    "thresholdMB": 64,
-  },
   "music-together": {
     "enabled": false,
   },

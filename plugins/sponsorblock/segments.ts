@@ -41,11 +41,11 @@ export function usableSegments(submissions: readonly Submission[], duration: num
 }
 
 /**
- * Where to seek to from `time`, or undefined when not inside a segment.
+ * The segment containing `time`, or undefined outside every segment.
  * `segments` are sorted and disjoint, as `mergeSegments` returns them, so the
  * per-tick lookup is a binary search instead of a scan.
  */
-export function skipTarget(segments: readonly Segment[], time: number): number | undefined {
+export function segmentAt(segments: readonly Segment[], time: number): Segment | undefined {
   // The last segment starting at or before `time`.
   let lo = 0;
   let hi = segments.length - 1;
@@ -60,6 +60,12 @@ export function skipTarget(segments: readonly Segment[], time: number): number |
     }
   }
   if (found === -1) return undefined;
-  const [start, end] = segments[found]!;
-  return time >= start && time < end - MIN_SKIP_S ? end : undefined;
+  const segment = segments[found]!;
+  return time >= segment[0] && time < segment[1] ? segment : undefined;
+}
+
+/** Where to seek to from `time`, or undefined when not inside a segment. */
+export function skipTarget(segments: readonly Segment[], time: number): number | undefined {
+  const segment = segmentAt(segments, time);
+  return segment && time < segment[1] - MIN_SKIP_S ? segment[1] : undefined;
 }

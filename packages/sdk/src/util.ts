@@ -23,11 +23,17 @@ export function clamp(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value));
 }
 
-/** Whether a key event belongs to a text field, so shortcuts must leave it alone. */
-export function isTypingTarget(target: EventTarget | null): boolean {
-  if (!(target instanceof HTMLElement)) return false;
-  if (target.isContentEditable) return true;
-  return target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.tagName === "SELECT";
+/**
+ * Whether a key event belongs to a text field, so shortcuts must leave it alone.
+ * Pass the event as well as the target: when the focused field lives in a
+ * plugin's shadow root, `event.target` is retargeted to the host, while the
+ * event's path still starts at the field.
+ */
+export function isTypingTarget(target: EventTarget | Event | null): boolean {
+  const element = target instanceof Event ? (target.composedPath()[0] ?? target.target) : target;
+  if (!(element instanceof HTMLElement)) return false;
+  if (element.isContentEditable) return true;
+  return element.tagName === "INPUT" || element.tagName === "TEXTAREA" || element.tagName === "SELECT";
 }
 
 export function sleep(ms: number) {
@@ -48,6 +54,58 @@ export function debounce<A extends unknown[]>(fn: (...args: A) => void, ms: numb
     timer = setTimeout(() => fn(...args), ms);
   };
   return Object.assign(debounced, { cancel: () => clearTimeout(timer) });
+}
+
+type MethodWrapper = (original: unknown) => unknown;
+interface MethodPatch {
+  original: unknown;
+  wrappers: MethodWrapper[];
+}
+
+/** One stack per method, so plugins patch a shared method without undoing each other. */
+const methodPatches = new WeakMap<object, Map<PropertyKey, MethodPatch>>();
+
+/**
+ * Stacks `wrapper` on `object[key]`. The wrapper gets the method as the
+ * previous wrappers left it, so several plugins can patch the same method:
+ * each one keeps working when another is removed. The returned unpatcher
+ * removes only its own wrapper and restores the original once the stack is
+ * empty; calling it twice is a no-op.
+ */
+export function patchMethod<T extends object, K extends keyof T>(object: T, key: K, wrapper: (original: T[K]) => T[K]): () => void {
+  let patches = methodPatches.get(object);
+  if (!patches) {
+    patches = new Map();
+    methodPatches.set(object, patches);
+  }
+  let patch = patches.get(key);
+  if (!patch) {
+    patch = { original: object[key], wrappers: [] };
+    patches.set(key, patch);
+  }
+  const applied = wrapper as unknown as MethodWrapper;
+  patch.wrappers.push(applied);
+
+  const install = () => {
+    let method = patch.original;
+    for (const wrap of patch.wrappers) method = wrap(method);
+    object[key] = method as T[K];
+  };
+  install();
+
+  let removed = false;
+  return () => {
+    if (removed) return;
+    removed = true;
+    patch.wrappers = patch.wrappers.filter((wrap) => wrap !== applied);
+    if (patch.wrappers.length > 0) {
+      install();
+      return;
+    }
+    object[key] = patch.original as T[K];
+    patches.delete(key);
+    if (patches.size === 0) methodPatches.delete(object);
+  };
 }
 
 /** `m:ss`, e.g. 83 → "1:23". */

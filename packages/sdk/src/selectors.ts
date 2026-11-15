@@ -189,6 +189,8 @@ export const selectors = {
   "lyrics.panel": "ytmusic-player-page #tab-renderer",
   "lyrics.tab": "ytmusic-player-page tp-yt-paper-tab:nth-of-type(2)",
   "lyrics.container": "ytmusic-description-shelf-renderer",
+  /** Synced lyrics' view host, inside the panel while that plugin runs (it isolates keys in its shadow root). */
+  "lyrics.view": "pear-synced-lyrics",
 
   // ---- popups and dialogs
   "popup.container": "ytmusic-popup-container",

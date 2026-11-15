@@ -175,7 +175,6 @@ export const PEAR_DESKTOP_3_COMPLETE = fromVersion("3.12.4", {
     "fullscreen-auto-hide": { enabled: true },
     "in-app-menu": { enabled: true, hideDOMWindowControls: true },
     lumiastream: { enabled: true },
-    "memory-saver": { enabled: true, thresholdMB: 128 },
     "music-together": { enabled: true },
     navigation: { enabled: false },
     "no-google-login": { enabled: true },

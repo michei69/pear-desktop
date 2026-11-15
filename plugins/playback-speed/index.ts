@@ -3,7 +3,7 @@ import { picker } from "@pear/sdk/dom";
 import { css } from "@pear/sdk/macros" with { type: "macro" };
 import { debounce } from "@pear/sdk/util";
 import { speedPanel } from "./panel.tsx";
-import { format, MAX_SPEED, MIN_SPEED, normalize, WHEEL_STEP } from "./speed.ts";
+import { applyRate, format, MAX_SPEED, MIN_SPEED, normalize, WHEEL_STEP } from "./speed.ts";
 
 const SAVE_DELAY_MS = 500;
 
@@ -112,8 +112,8 @@ export default definePlugin({
         ctx.listen(video, "ratechange", enforce);
         ctx.listen(video, "loadeddata", enforce);
       }
-      if (video.playbackRate !== speed) video.playbackRate = speed;
-      if (video.preservesPitch !== ctx.config.preservePitch) video.preservesPitch = ctx.config.preservePitch;
+      // do-not-track owns the rate while an ad plays; adChange re-applies ours.
+      applyRate(video, speed, ctx.config.preservePitch, ctx.player.state.ad);
     };
     const render = () => {
       button.textContent = format(speed);
@@ -138,6 +138,11 @@ export default definePlugin({
       speed = normalize(config.speed);
       render();
       enforce();
+    });
+    // The ad's own fast-forward rate is not ours to override; the track gets its
+    // speed back as soon as the ad ends (do-not-track restores its saved rate too).
+    ctx.player.on("adChange", (ad) => {
+      if (!ad) enforce();
     });
     ctx.onCleanup(() => {
       save.cancel();

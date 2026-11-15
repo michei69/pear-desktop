@@ -1,7 +1,8 @@
 import type { ComponentChildren } from "preact";
 import { useEffect, useLayoutEffect, useRef, useState } from "preact/hooks";
 import { lineAt } from "../lrc.ts";
-import { PROVIDER_NAMES, PROVIDERS, resultRank, type LyricLine, type LyricsStyle } from "../types.ts";
+import { PROVIDER_NAMES, PROVIDERS, resultRank, type ActiveLyricLine, type LyricLine, type LyricsStyle } from "../types.ts";
+import { activeLineAt } from "./active-line.ts";
 import { AppleLyrics } from "./apple/view.tsx";
 import { FetchError, LoadingKaomoji, NoLyrics, PlainLyrics } from "./shared.tsx";
 import type { LyricsStore, ProviderState } from "./store.ts";
@@ -41,6 +42,8 @@ export interface ViewProps {
   /** The element that scrolls the lyrics (YTM's tab panel). */
   scroller(): HTMLElement | null;
   t: Translate;
+  /** The line the view moved to (null when there is none), for the host's menu-bar title. */
+  onActiveLine(line: ActiveLyricLine | null): void;
 }
 
 /** While the user scrolls the lyrics themselves, stop following the current line. */
@@ -228,7 +231,11 @@ function Picker({
       role="group"
       aria-label={t("plugins.synced-lyrics.picker", "Lyrics provider")}
       onKeyDown={(event) => {
-        if (event.key === "ArrowLeft" || event.key === "ArrowRight") store.step(event.key === "ArrowLeft" ? -1 : 1);
+        if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+        // The arrows switch provider here, so outside shortcut handlers (seek-shortcuts
+        // listens on the view's host) must leave them alone.
+        event.preventDefault();
+        store.step(event.key === "ArrowLeft" ? -1 : 1);
       }}
     >
       <button
@@ -354,7 +361,7 @@ function Picker({
   );
 }
 
-function SyncedLyrics({ store, options, now, seek, scroller, t }: ViewProps) {
+function SyncedLyrics({ store, options, now, seek, scroller, t, onActiveLine }: ViewProps) {
   const shown = store.shown!;
   const lines = shown.lines;
   const [active, setActive] = useState(-1);
@@ -364,6 +371,13 @@ function SyncedLyrics({ store, options, now, seek, scroller, t }: ViewProps) {
   const listRef = useRef<HTMLDivElement>(null);
   const activeRef = useRef(active);
   const anchorRef = useRef(anchor);
+
+  // The menu bar follows the current line, and its romanization once it arrives.
+  useEffect(() => {
+    onActiveLine(activeLineAt(shown, active));
+  }, [active, shown, onActiveLine]);
+  // Never leave a line behind when the tab closes or the track changes.
+  useEffect(() => () => onActiveLine(null), [onActiveLine]);
 
   // Per-frame: find the current line; animate word fill and gap dots directly on the DOM.
   useEffect(() => {

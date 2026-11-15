@@ -46,6 +46,9 @@ export default definePlugin({
       const skip = () => {
         const onlySkipBeginning = ctx.config.onlySkipBeginning;
         if (shouldSkip(latch, { onlySkipBeginning, paused: video.paused, ad: ctx.player.state.ad })) {
+          // A media-element seek, not `player.control({ type: "seekBy" })`: the
+          // 0.2 s steps (and their `seeked` re-check) must not go through YTM's
+          // seek pipeline, which is asynchronous and may buffer or ignore them.
           video.currentTime += SKIP_SECONDS;
         }
       };

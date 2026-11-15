@@ -98,6 +98,7 @@ export function scopedAudio(graph: AudioGraph, track: Track): AudioGraphApi {
     rebind: (video) => graph.rebind(video),
     insert: (input, output, order) => track(graph.insert(input, output, order)),
     tap: (node) => track(graph.tap(node)),
+    connectExternal: (node, order) => track(graph.connectExternal(node, order)),
   };
 }
 

@@ -17,3 +17,14 @@ export const normalize = (speed: number) => {
   return clamp(Math.round(usable * 100) / 100, MIN_SPEED, MAX_SPEED);
 };
 export const format = (speed: number) => `${speed.toFixed(2).replace(/\.?0+$/, "")}×`;
+
+/**
+ * Puts the plugin's rate and pitch on an element. During an ad the rate is
+ * not ours: do-not-track fast-forwards it and restores it when the ad ends,
+ * so re-applying here would undo the skip.
+ */
+export function applyRate(video: HTMLVideoElement, speed: number, preservePitch: boolean, ad: boolean) {
+  if (ad) return;
+  if (video.playbackRate !== speed) video.playbackRate = speed;
+  if (video.preservesPitch !== preservePitch) video.preservesPitch = preservePitch;
+}

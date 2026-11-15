@@ -67,7 +67,6 @@ const CATEGORY_BY_PLUGIN: Record<string, PluginCategoryId> = {
   "auth-proxy-adapter": "system",
   "do-not-track": "system",
   "media-controls": "system",
-  "memory-saver": "system",
   "notifications": "system",
   "performance-improvement": "system",
   "taskbar-mediacontrol": "system",

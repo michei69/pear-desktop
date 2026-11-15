@@ -4,6 +4,7 @@
 // are dispatched into it; each item shows who added it.
 
 import type { Translate } from "@pear/sdk/i18n";
+import { patchMethod } from "@pear/sdk/util";
 import { decorateOwner } from "./owners.tsx";
 import type { ConnectionEventUnion, Profile, VideoData } from "./types.ts";
 
@@ -178,7 +179,7 @@ export interface QueueOptions {
 
 export class Queue {
   private readonly queue: QueueElement;
-  private originalDispatch: Store["dispatch"] | undefined;
+  private unpatchDispatch: (() => void) | undefined;
   /** Depth of this class's own dispatches, which mustn't loop back to the session. */
   private internalDispatch = 0;
   /** YTM cleared the queue: the next ADD_ITEMS is a whole new queue (something new is playing). */
@@ -414,21 +415,19 @@ export class Queue {
     // Don't let a swallowed CLEAR's latch survive a restart on this same instance.
     this.replacingQueue = false;
 
-    if (this.originalDispatch) this.store.dispatch = this.originalDispatch;
-    this.originalDispatch = undefined;
+    this.unpatchDispatch?.();
+    this.unpatchDispatch = undefined;
   }
 
   /** Routes YTM's own queue changes to the session (see the file comment). */
   injection() {
     // Re-wrapping the already-wrapped dispatch would broadcast every edit twice.
-    if (this.originalDispatch) return;
+    if (this.unpatchDispatch) return;
     const store = this.store;
-    const original = store.dispatch;
-    this.originalDispatch = original;
-    store.dispatch = (event) => {
+    this.unpatchDispatch = patchMethod(store, "dispatch", (dispatch) => (event) => {
       const passOn = !this.owner || this.internalDispatch > 0 || this.onYtmChange(event);
-      if (passOn) original.call(store, event);
-    };
+      if (passOn) dispatch.call(store, event);
+    });
   }
 
   /** A change YTM made itself; whether it should still reach YTM's store (possibly rewritten). */
@@ -619,7 +618,7 @@ export class Queue {
   private refresh() {
     setTimeout(() => {
       // Stopped while the queue work was pending: it no longer belongs to a session.
-      if (!this.originalDispatch) return;
+      if (!this.unpatchDispatch) return;
       this.initQueue();
       this.syncQueueOwner();
     }, 0);

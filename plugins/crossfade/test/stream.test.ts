@@ -1,6 +1,6 @@
-import type { AudioGraph, Logger } from "@pear/sdk";
+import type { AudioGraph, Logger, YTPlayerApi } from "@pear/sdk";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { secondStream } from "../stream.ts";
+import { isOriginalAudioTrack, secondStream } from "../stream.ts";
 import type { Ctx } from "../schema.ts";
 
 /** The browser's media element surface the second stream drives. */
@@ -85,6 +85,8 @@ describe("the second stream", () => {
       },
     );
     vi.stubGlobal("HTMLMediaElement", FakeMedia);
+    // exponential-volume's accessor-change announcement lands on the document.
+    vi.stubGlobal("document", new EventTarget());
   });
 
   afterEach(() => {
@@ -93,7 +95,7 @@ describe("the second stream", () => {
     audios.length = 0;
   });
 
-  function harness(invoke: (command: string, videoId: string) => Promise<unknown>) {
+  function harness(invoke: (command: string, videoId: string) => Promise<unknown>, api?: unknown) {
     const video = new FakeMedia();
     video.paused = false;
     const context = {
@@ -101,6 +103,7 @@ describe("the second stream", () => {
       createGain: () => new FakeGain(),
       destination: {},
     } as unknown as AudioContext;
+    const externals = new Map<FakeNode, number | undefined>();
     const graph = {
       context,
       video,
@@ -108,14 +111,21 @@ describe("the second stream", () => {
       rebind: () => null,
       insert: () => () => {},
       tap: () => () => {},
+      connectExternal(node: FakeNode, order?: number) {
+        externals.set(node, order);
+        return () => externals.delete(node);
+      },
     } as unknown as AudioGraph;
     const state = { track: { videoId: "a" }, ad: false, muted: false, repeat: "none" };
     const log = { info: vi.fn(), warn: vi.fn(), error: vi.fn() } as unknown as Logger;
     const ctx = {
       config: {},
-      player: { state, on: () => () => {} },
+      player: { state, api: api ?? null, on: () => () => {} },
       host: { invoke: vi.fn(invoke) },
-      listen: () => {},
+      listen(target: EventTarget, type: string, listener: (event: Event) => void) {
+        target.addEventListener(type, listener);
+        return () => target.removeEventListener(type, listener);
+      },
       setTimeout: (fn: () => void, ms: number) => setTimeout(fn, ms),
       clearTimeout: (timer: ReturnType<typeof setTimeout> | undefined) => clearTimeout(timer),
       setInterval: (fn: () => void, ms: number) => setInterval(fn, ms),
@@ -125,7 +135,7 @@ describe("the second stream", () => {
       signal: new AbortController().signal,
     } as unknown as Ctx;
     const stream = secondStream(ctx, graph);
-    return { stream, ctx, log, audio: () => audios.at(-1) };
+    return { stream, ctx, log, video, audio: () => audios.at(-1), externals: () => externals };
   }
 
   /** Three failed byte fetches, then the URL fallback. */
@@ -144,6 +154,8 @@ describe("the second stream", () => {
     expect(app.ctx.host.invoke).toHaveBeenCalledWith("audioBytes", "a");
     expect(app.audio()?.src).toMatch(/^blob:/);
     expect(app.stream.ready()).toBe(true);
+    // The stream's gain is in the shared graph, injected after the pre-chain stages.
+    expect([...app.externals().values()]).toEqual([0]);
   });
 
   it("falls back to the track's stream URL when the bytes do not arrive", async () => {
@@ -183,6 +195,70 @@ describe("the second stream", () => {
     expect(revoke).toHaveBeenCalled();
     expect(audio.src).toBe("");
     expect(audio.paused).toBe(true);
+    // The tail's gain left the shared graph with it.
+    expect(app.externals().size).toBe(0);
     revoke.mockRestore();
+  });
+
+  it("re-reads the video's level when exponential-volume reassigns the accessor", async () => {
+    const app = harness(async () => ({ bytes: new Uint8Array([1]), mimeType: "audio/webm" }));
+    app.stream.prepare("a");
+    await flushFetches();
+    const audio = app.audio()!;
+    expect(audio.volume).toBe(1);
+
+    // The video's element level changed with the plugin's re-map; the detached
+    // stream is not in the document, so the announced event is what reaches it.
+    app.video.volume = 0.2;
+    document.dispatchEvent(new Event("pear:volume-map"));
+    expect(audio.volume).toBe(0.2);
+  });
+
+  it("leaves a non-original audio track to the fallback fade", async () => {
+    const dub = {
+      getLanguageInfo: () => ({ getId: () => "es", getIsDefault: () => false, getIsAutoDubbed: () => true }),
+    };
+    const original = {
+      getLanguageInfo: () => ({ getId: () => "en", getIsDefault: () => true, getIsAutoDubbed: () => false }),
+    };
+    const api = {
+      getAvailableAudioTracks: () => [original, dub],
+      getAudioTrack: () => dub,
+    };
+    const app = harness(async () => ({ bytes: new Uint8Array([1]), mimeType: "audio/webm" }), api);
+    app.stream.prepare("a");
+    await flushFetches();
+    // The host would serve the original track, so no stream is fetched at all.
+    expect(app.ctx.host.invoke).not.toHaveBeenCalled();
+    expect(app.stream.ready()).toBe(false);
+    expect(app.stream.handover(5)).toBe(false);
+    expect(app.log.info).toHaveBeenCalled();
+  });
+});
+
+describe("the original audio track", () => {
+  const track = (options: { id?: string; isDefault?: boolean; autoDubbed?: boolean } = {}) => ({
+    getLanguageInfo: () => ({
+      getId: () => options.id ?? "en",
+      getIsDefault: () => options.isDefault ?? false,
+      getIsAutoDubbed: () => options.autoDubbed ?? false,
+    }),
+  });
+  const api = (tracks: unknown[], current: unknown) =>
+    ({ getAvailableAudioTracks: () => tracks, getAudioTrack: () => current }) as unknown as YTPlayerApi;
+
+  it("treats a player without a track choice as the original", () => {
+    expect(isOriginalAudioTrack(null)).toBe(true);
+    expect(isOriginalAudioTrack(api([track({ isDefault: true })], track({ isDefault: true })))).toBe(true);
+  });
+
+  it("accepts the default non-dubbed track and rejects a dub", () => {
+    const original = track({ id: "en", isDefault: true });
+    const dub = track({ id: "es", autoDubbed: true });
+    expect(isOriginalAudioTrack(api([original, dub], original))).toBe(true);
+    expect(isOriginalAudioTrack(api([original, dub], dub))).toBe(false);
+    // The protobuf shape carries the same flags.
+    const pbDub = { Pb: { id: "es", isDefault: false, isAutoDubbed: true } };
+    expect(isOriginalAudioTrack(api([original, pbDub], pbDub))).toBe(false);
   });
 });

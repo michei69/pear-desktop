@@ -18,9 +18,11 @@ test("equalizer, compressor and crossfade compose in the shared graph and toggle
   await setEnabled(page, "crossfade", true);
   await setEnabled(page, "audio-compressor", true);
   await setEnabled(page, "equalizer", true);
-  // Ordered by stage order, not by enable order: the equalizer's 11 bands and its wet/output
-  // trims, the compressor and its post-compression track gain, then the crossfade fader.
+  // Ordered by stage order, not by enable order: the crossfade's video fader first,
+  // then the equalizer's 11 bands with their wet/output trims, the compressor with
+  // its post-compression track gain, and the graph's output bus.
   const expected = [
+    "GainNode",
     "GainNode",
     ...Array(11).fill("BiquadFilterNode"),
     "GainNode",
@@ -82,12 +84,13 @@ test("equalizer, compressor and crossfade compose in the shared graph and toggle
   await expect.poll(async () => (await compressor())?.threshold).toBe(-20);
 
   await setEnabled(page, "equalizer", false);
-  // The compressor's own stage is compressor -> track gain; the fader follows.
-  await expect.poll(() => audioChain(page)).toEqual(["DynamicsCompressorNode", "GainNode", "GainNode"]);
+  // The crossfade's fader leads, then the compressor's own stage and its track
+  // gain, then the output bus.
+  await expect.poll(() => audioChain(page)).toEqual(["GainNode", "DynamicsCompressorNode", "GainNode", "GainNode"]);
   await setEnabled(page, "audio-compressor", false);
-  await expect.poll(() => audioChain(page)).toEqual(["GainNode"]);
+  await expect.poll(() => audioChain(page)).toEqual(["GainNode", "GainNode"]);
   await setEnabled(page, "crossfade", false);
-  await expect.poll(() => audioChain(page)).toEqual([]);
+  await expect.poll(() => audioChain(page)).toEqual(["GainNode"]);
   await expect.poll(() => outputLevel(page)).toBeGreaterThan(0.005);
 });
 
@@ -180,7 +183,8 @@ test("skip-silences jumps over silence and visualizer draws from a graph tap", a
   await expect.poll(() => page.evaluate(() => document.querySelectorAll("canvas.pear-visualizer").length)).toBe(0);
 
   await setEnabled(page, "skip-silences", true);
-  await expect.poll(() => audioChain(page)).toEqual(["GainNode", "GainNode"]);
+  // The plugin's input/output gains, then the graph's output bus.
+  await expect.poll(() => audioChain(page)).toEqual(["GainNode", "GainNode", "GainNode"]);
   // Near-silent playback: the plugin keeps stepping forward faster than real time.
   const start = await page.evaluate(() => {
     const video = document.querySelector("video")!;
@@ -192,5 +196,5 @@ test("skip-silences jumps over silence and visualizer draws from a graph tap", a
   expect(advanced).toBeGreaterThan(6);
 
   await setEnabled(page, "skip-silences", false);
-  await expect.poll(() => audioChain(page)).toEqual([]);
+  await expect.poll(() => audioChain(page)).toEqual(["GainNode"]);
 });

@@ -104,14 +104,10 @@ export function mountTogether(ctx: Ctx) {
   });
   ctx.listen(window, "resize", () => open && draw());
 
-  // YTM re-renders its nav bar on some navigations; put the button back (left of the settings button).
-  ctx.mount(launcher.host, (host) => {
-    const container = ctx.$("nav_bar.right");
-    if (!container) return;
-    const settings = container.querySelector("pear-launcher");
-    if (settings) settings.before(host);
-    else container.prepend(host);
-  });
+  // YTM re-renders its nav bar on some navigations; put the button back at the
+  // right end of it. pear-desktop anchored on a `pear-launcher` button that
+  // doesn't exist here; appending is one spot whatever the start order.
+  ctx.mount(launcher.host, "nav_bar.right");
   draw();
 
   void ctx.player

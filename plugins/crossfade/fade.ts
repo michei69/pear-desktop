@@ -4,8 +4,11 @@
 import type { AudioGraph } from "@pear/sdk";
 import type { Ctx } from "./schema.ts";
 
-// Late in the shared graph: fades apply after effects, before visualizer taps.
-const ORDER = 50;
+// The video's own fader, after skip-silences (-100) so that plugin still sees
+// the track before fades, and before the order-0 boundary where the second
+// stream joins (see stream.ts): the fader ramps the video only while the tail
+// is carried by the stream.
+const ORDER = -50;
 const CURVE_POINTS = 256;
 /** Ramps shorter than this jump straight to their end. */
 const MIN_RAMP_S = 0.01;

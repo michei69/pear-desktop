@@ -51,6 +51,13 @@ export interface LyricTranslation {
   provider?: string;
 }
 
+/** The line the renderer is on, as pushed to the host for statusbar-lyrics. */
+export interface ActiveLyricLine {
+  text: string;
+  /** The line's romanization, when the view has one. */
+  romanized: string | null;
+}
+
 export interface LyricResult {
   title: string;
   artists: string[];

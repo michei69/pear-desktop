@@ -54,12 +54,14 @@ export interface AppleLyricsProps {
   /** The app's own picker, rendered over the lyrics as in pear-desktop. */
   picker: ComponentChildren;
   t: Translate;
+  /** The line the view moved to (null when there is none), for the host's menu-bar title. */
+  onActiveLine(line: { text: string; romanized: string | null } | null): void;
 }
 
 /** The three rows outside the current one are enough for the blur falloff. */
 const distanceClass = (side: "next" | "prev", distance: number) => (distance >= 1 && distance <= 4 ? `${side}-${distance}` : "");
 
-export function AppleLyrics({ store, options, position, seek, picker, t }: AppleLyricsProps) {
+export function AppleLyrics({ store, options, position, seek, picker, t, onActiveLine }: AppleLyricsProps) {
   const shown = store.shown;
   const current = store.current;
   const lyrics = useMemo(
@@ -74,6 +76,8 @@ export function AppleLyrics({ store, options, position, seek, picker, t }: Apple
   const rowRefs = useRef(new Map<string, HTMLElement>());
   const modelRef = useRef<AppleLyrics | null>(lyrics);
   modelRef.current = lyrics;
+  const shownRef = useRef(shown);
+  shownRef.current = shown;
   const offsetRef = useRef(options.offsetMs);
   offsetRef.current = options.offsetMs;
   const paintRef = useRef<(time: number) => void>(() => {});
@@ -82,6 +86,14 @@ export function AppleLyrics({ store, options, position, seek, picker, t }: Apple
   const pendingSeek = useRef<{ until: number; time: number } | null>(null);
   const last = useRef({ activeRow: -2, preActive: false, scrollRow: -2, time: 0 });
   const scrollFrame = useRef(0);
+  // The line the menu bar last got; the model rebuilds it when the romanization
+  // arrives, so a new row object means a line worth reporting again.
+  const reportedLine = useRef<AppleText | null | undefined>(undefined);
+  const reportLine = (line: AppleText | null) => {
+    if (reportedLine.current === line) return;
+    reportedLine.current = line;
+    onActiveLine(line ? { text: line.text, romanized: shownRef.current?.romanized[line.sourceIndex] ?? null } : null);
+  };
 
   // Picker placement and slide-away, exactly the master AppleMusicStyle shell:
   // measured on mount/resize/pointer entry, hidden when the lyrics are scrolled.
@@ -248,9 +260,14 @@ export function AppleLyrics({ store, options, position, seek, picker, t }: Apple
     const paint = (time: number) => {
       const model = modelRef.current;
       const scroll = scrollRef.current;
-      if (!model || !scroll) return;
+      if (!model || !scroll) {
+        reportLine(null);
+        return;
+      }
       const previousTime = last.current.time;
       const state = applyClasses(model, time);
+      const activeRow = state.activeLine >= 0 ? model.rows[state.activeLine] : undefined;
+      reportLine(activeRow?.kind === "line" ? activeRow : null);
       if (state.activeLine >= 0) {
         const row = model.rows[state.activeLine];
         if (row?.kind === "line") paintWords(row, time);
@@ -340,6 +357,9 @@ export function AppleLyrics({ store, options, position, seek, picker, t }: Apple
   }, [hasLyrics]);
 
   useEffect(() => () => cancelAnimationFrame(scrollFrame.current), []);
+
+  // The tab closed or the style switched: do not leave its last line in the menu bar.
+  useEffect(() => () => onActiveLine(null), [onActiveLine]);
 
   useEffect(() => {
     const scroll = scrollRef.current;

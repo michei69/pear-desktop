@@ -6,7 +6,7 @@ import { isolateKeys, shadowHost } from "@pear/sdk/dom";
 import { readSongDetails } from "@pear/sdk/song-details";
 import { render } from "preact";
 import type { LyricsConfig, schema } from "../schema.ts";
-import { ROMANIZATION_SCRIPTS, type RomanizationSettings } from "../types.ts";
+import { ROMANIZATION_SCRIPTS, type ActiveLyricLine, type RomanizationSettings } from "../types.ts";
 import { LyricsStore, type Backend, type Options } from "./store.ts";
 import { appleStyles } from "./apple/styles.ts";
 import { lyricsStyles } from "./styles.ts";
@@ -15,6 +15,8 @@ import { LyricsView, viewState, type ViewOptions } from "./view.tsx";
 type Commands = Required<Omit<Backend, "details">> & {
   /** The settings action; the page never calls it, but the host commands are one set. */
   clearTranslationCache(): Promise<number>;
+  /** The active line, for statusbar-lyrics; the host relays it on the app emitter. */
+  activeLine(line: ActiveLyricLine | null): void;
 };
 
 type Ctx = PageContextOf<typeof schema, Commands>;
@@ -70,11 +72,34 @@ export function mountLyrics(ctx: Ctx) {
 
   let options = viewOptions(ctx.config);
   let open = false;
+  // The line the view last reported, serialized: the renderers report their
+  // active line whenever it or its romanization changes, and the store re-renders
+  // them for unrelated updates (a translation arrives, the picker moves).
+  let reportedLine: string | undefined;
+  const reportLine = (line: ActiveLyricLine | null) => {
+    const key = line ? `${line.text}\u0000${line.romanized ?? ""}` : "";
+    if (key === reportedLine) return;
+    reportedLine = key;
+    // The host relays it to statusbar-lyrics. A failure is not worth a retry (the
+    // next line replaces it) and the host may already be stopping.
+    void ctx.host.invoke("activeLine", line).catch(() => {});
+  };
   const draw = () => {
     // The Apple style fills the tab, so the page stylesheet can size the host.
     element.dataset.style = options.style;
     render(
-      open ? <LyricsView store={store} options={options} now={now} position={position} seek={seek} scroller={scroller} t={ctx.t} /> : null,
+      open ? (
+        <LyricsView
+          store={store}
+          options={options}
+          now={now}
+          position={position}
+          seek={seek}
+          scroller={scroller}
+          t={ctx.t}
+          onActiveLine={reportLine}
+        />
+      ) : null,
       root,
     );
   };

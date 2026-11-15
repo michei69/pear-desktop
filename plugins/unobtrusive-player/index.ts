@@ -9,6 +9,11 @@ const AD = "pear-unobtrusive-ad";
 const AUTO_CLOSING_MS = 500;
 /** Retries for a toggle YTM ignored while it was still opening the page. */
 const AUTO_CLOSE_RETRIES = 2;
+// Set while the content is scrolled: YTM shows the nav bar's background then, so
+// the latch must not hide it. Tracked here instead of reading in-app-menu's
+// `content-scrolled` class, which doesn't exist when that plugin is off.
+const SCROLLED = "pear-unobtrusive-scrolled";
+const SCROLLED_AFTER_PX = 20;
 
 export default definePlugin({
   id: "unobtrusive-player",
@@ -28,9 +33,9 @@ export default definePlugin({
     html.pear-unobtrusive-did-play:not(.pear-unobtrusive-ad) sel(app.content) {
       visibility: visible !important;
     }
-    html.pear-unobtrusive-did-play sel(app.layout):not(.content-scrolled) sel(nav_bar.background),
-    html.pear-unobtrusive-did-play sel(app.layout):not(.content-scrolled) sel(nav_bar.divider),
-    html.pear-unobtrusive-did-play sel(app.layout)[is-bauhaus-sidenav-enabled][player-page-open]:not(.content-scrolled)
+    html.pear-unobtrusive-did-play:not(.pear-unobtrusive-scrolled) sel(app.layout) sel(nav_bar.background),
+    html.pear-unobtrusive-did-play:not(.pear-unobtrusive-scrolled) sel(app.layout) sel(nav_bar.divider),
+    html.pear-unobtrusive-did-play:not(.pear-unobtrusive-scrolled) sel(app.layout)[is-bauhaus-sidenav-enabled][player-page-open]
       sel(guide.mini_background) {
       opacity: 0 !important;
     }
@@ -40,8 +45,32 @@ export default definePlugin({
   `,
   page: (ctx) => {
     const root = document.documentElement;
-    ctx.onCleanup(() => root.classList.remove(DID_PLAY, AD));
+    ctx.onCleanup(() => root.classList.remove(DID_PLAY, AD, SCROLLED));
     let autoClosing = false;
+
+    // YTM shows the nav bar's background once the content is scrolled; without
+    // this, the latch below would keep hiding it after a scroll even when
+    // in-app-menu (which used to maintain the class) is off.
+    const layout = ctx.$("app.layout");
+    let scrollFrame: number | undefined;
+    const updateScrolled = () => {
+      scrollFrame = undefined;
+      root.classList.toggle(SCROLLED, (layout?.scrollTop ?? 0) > SCROLLED_AFTER_PX);
+    };
+    updateScrolled();
+    if (layout) {
+      ctx.listen(
+        layout,
+        "scroll",
+        () => {
+          if (scrollFrame === undefined) scrollFrame = requestAnimationFrame(updateScrolled);
+        },
+        { passive: true },
+      );
+    }
+    ctx.onCleanup(() => {
+      if (scrollFrame !== undefined) cancelAnimationFrame(scrollFrame);
+    });
 
     ctx.listen(
       document,

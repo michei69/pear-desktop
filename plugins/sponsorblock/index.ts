@@ -4,7 +4,7 @@ import { css } from "@pear/sdk/macros" with { type: "macro" };
 import { v } from "@pear/sdk/rpc";
 import { net } from "electron";
 import { buildSegmentsGradient, categoryLabel, markerAt, type Marker, usableMarkers } from "./markers.ts";
-import { mergeSegments, skipTarget, type Segment, type Submission } from "./segments.ts";
+import { mergeSegments, segmentAt, skipTarget, type Segment, type Submission } from "./segments.ts";
 
 const CATEGORIES = {
   music_offtopic: { label: "Non-music sections", description: "Talking, skits and intros in music videos.", on: true },
@@ -39,6 +39,8 @@ const HOVER_TIME_SELECTOR = "#hover-time-info, .ytMusicMiniPlayerHoverTimeInfo";
  * to be the track's own height.
  */
 const SEEK_TRACKS = ["#progress-bar>#sliderContainer>div>#sliderBar>#progressContainer", ".ytMusicMiniPlayerProgressBarWrapper"];
+/** A `seeked` this close to the skip we issued is that skip, not a user seek. */
+const OWN_SEEK_TOLERANCE_S = 1;
 
 /** The page's in-flight segment request per running host part. */
 const inflight = new WeakMap<object, AbortController>();
@@ -141,11 +143,17 @@ export default definePlugin({
     let segments: Segment[] = [];
     let markers: Marker[] = [];
     let generation = 0;
+    /** The user deliberately seeked into a segment: play through it, until they leave it. */
+    let userInsideSegment = false;
+    /** The target of the skip we issued; its `seeked` event is not a user seek. */
+    let ownSeekTarget: number | undefined;
     /** The segment under the pointer, and where the pointer is. */
     let hovered: { category: string; pointerX: number; trackTop: number } | undefined;
     let stopHover: (() => void) | undefined;
 
     const api = await ctx.player.ready();
+    // Filled once YTM's element exists; `applySegments` runs from `load` before that.
+    let video: HTMLVideoElement | undefined;
 
     /** The duration the caches were built for; a change means the stale-cut filter must run again. */
     let builtFor = Number.NaN;
@@ -316,6 +324,9 @@ export default definePlugin({
       segments = [];
       markers = [];
       builtFor = Number.NaN;
+      // A new track may show a user's old position; never keep a suppression.
+      userInsideSegment = false;
+      ownSeekTarget = undefined;
       document.querySelector(`#${SEGMENTS_BAR_ID}`)?.remove();
       hideHoverLabel();
     };
@@ -324,9 +335,18 @@ export default definePlugin({
     const applySegments = () => {
       refresh();
       if (segments.length === 0 || ctx.player.state.ad || api.getVideoData().video_id !== videoId) return;
-      const target = skipTarget(segments, api.getCurrentTime());
+      // A seek in flight reports positions on the way to its target.
+      if (video?.seeking) return;
+      const time = api.getCurrentTime();
+      if (userInsideSegment) {
+        // The user chose this spot: let the segment play until playback leaves it.
+        if (segmentAt(segments, time)) return;
+        userInsideSegment = false;
+      }
+      const target = skipTarget(segments, time);
       if (target === undefined) return;
       ctx.log.info(`skipping to ${target.toFixed(1)}s`);
+      ownSeekTarget = target;
       ctx.player.control({ type: "seek", seconds: target });
     };
 
@@ -367,10 +387,23 @@ export default definePlugin({
     const initial = api.getVideoData().video_id;
     if (initial) void load(initial);
 
-    const video = await ctx.player.videoReady();
+    video = await ctx.player.videoReady();
     ctx.listen(video, "timeupdate", () => {
       applySegments();
       syncMarkers();
+    });
+    // A deliberate seek into a segment (seek-shortcuts, click-to-seek) must not be
+    // undone by the next timeupdate. Our own skips fire `seeked` too: the target
+    // tells them apart from the user's.
+    ctx.listen(video, "seeked", () => {
+      // Seeks inside an ad belong to the ad, not to the track's segments.
+      if (ctx.player.state.ad) return;
+      const seekedTo = api.getCurrentTime();
+      const own = ownSeekTarget !== undefined && Math.abs(seekedTo - ownSeekTarget) < OWN_SEEK_TOLERANCE_S;
+      ownSeekTarget = undefined;
+      if (own) return;
+      userInsideSegment = segmentAt(segments, seekedTo) !== undefined;
+      if (userInsideSegment) ctx.log.info("not skipping: the user seeked into the segment");
     });
     // Duration is unknown when the plugin starts; the bar waits for it, and the
     // stale-cut filter depends on it.

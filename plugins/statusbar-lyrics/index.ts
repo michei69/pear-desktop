@@ -19,6 +19,14 @@ const schema = {
 /** Master's one-click title lengths. */
 const MAX_LENGTH_CHOICES = [30, 40, 55, 70, 85, 100, 120];
 
+/** The line synced-lyrics' view pushes while it runs. */
+const ACTIVE_LINE_EVENT = "pear:synced-lyrics-line";
+
+interface ActiveLyricLine {
+  text: string;
+  romanized: string | null;
+}
+
 const collapseWhitespace = (text: string) => text.replace(/\s+/g, " ").trim();
 
 /** Collapse whitespace and truncate to the configured length. */
@@ -33,8 +41,11 @@ const normalizeTitle = (text: string, maxLength: number) => {
 /** The next of master's presets after `maxLength`, wrapping at the end. */
 const nextMaxLength = (maxLength: number) => MAX_LENGTH_CHOICES.find((length) => length > maxLength) ?? MAX_LENGTH_CHOICES[0]!;
 
-/** How soon a rejected title update is retried; master's send heartbeat interval. */
-const RETRY_MS = 250;
+function isActiveLine(value: unknown): value is ActiveLyricLine {
+  if (!value || typeof value !== "object") return false;
+  const line = value as Partial<ActiveLyricLine>;
+  return typeof line.text === "string" && (line.romanized === null || typeof line.romanized === "string");
+}
 
 // One tray per running plugin, created with the first line: with nothing
 // playing, no empty status item is reserved for the whole session.
@@ -61,8 +72,28 @@ export default definePlugin({
         label: ctx.t("plugins.statusbar-lyrics.settings.includePronunciation.label", "Include pronunciation"),
         click: () => ctx.setConfig({ includePronunciation: !ctx.config.includePronunciation }),
       });
-      // Both options are read when a line arrives; the tray stays.
-      ctx.onConfigChange(() => {});
+
+      let line: ActiveLyricLine | null = null;
+
+      /** The menu-bar title for the current line, with the options applied here. */
+      const apply = () => {
+        const text = line ? (ctx.config.includePronunciation ? line.romanized || line.text : line.text) : "";
+        const title = normalizeTitle(text, ctx.config.maxLength);
+        // A cleared title before the first line must not reserve a status item.
+        if (!title && !tray) return;
+        const instance = getTray();
+        if (instance.isDestroyed()) return;
+        instance.setTitle(title);
+      };
+
+      // Synced lyrics owns the view and its timing; this plugin only draws the
+      // line it reports, so it does not read another plugin's shadow DOM.
+      ctx.listen(ctx.app, ACTIVE_LINE_EVENT, (payload: unknown) => {
+        line = isActiveLine(payload) ? payload : null;
+        apply();
+      });
+      // The length and pronunciation settings apply to the line already shown.
+      ctx.onConfigChange(apply);
       ctx.onCleanup(() => {
         const created = tray;
         tray = undefined;
@@ -71,148 +102,5 @@ export default definePlugin({
         created.destroy();
       });
     },
-    commands: {
-      setTitle(text: string) {
-        const title = normalizeTitle(text, this.config.maxLength);
-        // A cleared title before the first line must not reserve a status item.
-        if (!title && !tray) return;
-        const instance = getTray();
-        if (instance.isDestroyed()) return;
-        instance.setTitle(title);
-      },
-    },
-  },
-  page: (ctx) => {
-    let lastSent: string | undefined;
-    let pending: string | undefined;
-    let sending = false;
-    let retry: ReturnType<typeof setTimeout> | undefined;
-
-    /** Serialized so a slow call can't put an older line back. */
-    const flush = async () => {
-      if (sending) return;
-      sending = true;
-      ctx.clearTimeout(retry);
-      retry = undefined;
-      try {
-        while (pending !== undefined) {
-          const text = pending;
-          pending = undefined;
-          if (text === lastSent) continue;
-          try {
-            await ctx.host.invoke("setTitle", text);
-          } catch (error) {
-            // The host may be stopping. Keep the line uncommitted and retry
-            // shortly: while paused, no player event would retry it sooner.
-            ctx.log.warn("could not update the menu bar title", error);
-            // A newer line arrived meanwhile: send that instead of this one.
-            if (pending !== undefined) continue;
-            pending = text;
-            retry = ctx.setTimeout(() => {
-              retry = undefined;
-              void flush();
-            }, RETRY_MS);
-            break;
-          }
-          lastSent = text;
-        }
-      } finally {
-        sending = false;
-      }
-    };
-
-    const send = (text: string) => {
-      if (text === pending || (text === lastSent && pending === undefined)) return;
-      pending = text;
-      void flush();
-    };
-
-    /** A line's text; word-synced lyrics split it into spans without separating spaces. */
-    const textOf = (element: Element | null) => {
-      if (!element) return "";
-      const words = element.querySelectorAll(".word");
-      const raw = words.length > 0 ? [...words].map((word) => word.textContent ?? "").join(" ") : (element.textContent ?? "");
-      return collapseWhitespace(raw);
-    };
-
-    // The rewrite's Synced lyrics view lives in a shadow root inside the tab panel.
-    const activeLine = () => {
-      const panel = ctx.$("lyrics.panel");
-      if (!panel) return null;
-      const root = panel.querySelector("pear-synced-lyrics")?.shadowRoot;
-      return (
-        root?.querySelector<HTMLElement>('.lines .line[data-state="active"]') ??
-        panel.querySelector<HTMLElement>('.lines .line[data-state="active"]')
-      );
-    };
-
-    const readText = () => {
-      const line = activeLine();
-      if (!line) return "";
-      const romanized = line.querySelector(".romanized");
-      if (ctx.config.includePronunciation && romanized) {
-        const text = textOf(romanized);
-        if (text) return text;
-      }
-      return textOf(line.querySelector(".text"));
-    };
-
-    const update = () => send(readText());
-
-    // YTM builds the player page lazily and the lyrics view creates its shadow root
-    // later, so both are found and observed again.
-    const observed = new WeakSet<Node>();
-    const attach = () => {
-      let added = false;
-      const panel = ctx.$("lyrics.panel");
-      if (panel && !observed.has(panel)) {
-        observed.add(panel);
-        added = true;
-        ctx.observe(
-          panel,
-          { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ["data-state"] },
-          () => {
-            attach();
-            update();
-          },
-        );
-      }
-      const root = panel?.querySelector("pear-synced-lyrics")?.shadowRoot;
-      if (root && !observed.has(root)) {
-        observed.add(root);
-        added = true;
-        ctx.observe(
-          root,
-          { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ["data-state"] },
-          update,
-        );
-      }
-      if (added) update();
-    };
-
-    ctx.observe("lyrics.panel", { childList: true, subtree: true }, attach);
-    ctx.observe("app", { childList: true, subtree: true }, attach);
-
-    ctx.player.on("timeUpdate", update);
-    ctx.player.on("statusChange", update);
-    ctx.player.on("trackChange", update);
-    ctx.player.on("adChange", update);
-
-    ctx.onConfigChange(() => {
-      // The same line must be sent again when the length or pronunciation option changes.
-      lastSent = undefined;
-      update();
-    });
-
-    attach();
-    update();
-
-    ctx.onCleanup(() => {
-      lastSent = undefined;
-      pending = undefined;
-      ctx.clearTimeout(retry);
-      retry = undefined;
-      void ctx.host.invoke("setTitle", "").catch(() => {});
-    });
   },
 });

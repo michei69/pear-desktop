@@ -6,6 +6,7 @@ import { mountLyrics } from "./page/mount.tsx";
 import { ROMANIZATION_KEYS, schema } from "./schema.ts";
 import {
   ROMANIZATION_SCRIPTS,
+  type ActiveLyricLine,
   type CustomQuery,
   type LyricResult,
   type ProviderId,
@@ -15,6 +16,8 @@ import {
 
 const videoId = v.pipe(v.string(), v.regex(/^[\w-]{11}$/, "not a video id"));
 const videoInput = v.optional(v.object({ videoId: v.optional(videoId) }), {});
+/** The line the Lyrics tab is on, on the app emitter for statusbar-lyrics. */
+const ACTIVE_LINE_EVENT = "pear:synced-lyrics-line";
 
 export default definePlugin({
   id: "synced-lyrics",
@@ -36,11 +39,19 @@ export default definePlugin({
         ctx.setConfig({ romanizationScripts: scripts, romanizationMigrated: true, romanizationScriptsMigrated: true });
       }
       hosts.set(ctx, new LyricsHost(ctx.app.getPath("userData"), ctx.app.getLocale()));
-      return () => void hosts.delete(ctx);
+      return () => {
+        hosts.delete(ctx);
+        // statusbar-lyrics draws the title from this event: clear it with the view.
+        ctx.app.emit(ACTIVE_LINE_EVENT, null);
+      };
     },
     // Keep the cache; config only matters to the page and to each call.
     onConfigChange() {},
     commands: {
+      /** The Lyrics tab's active line, relayed to statusbar-lyrics (and any other listener). */
+      activeLine(line: ActiveLyricLine | null) {
+        this.app.emit(ACTIVE_LINE_EVENT, line);
+      },
       search(provider: ProviderId, query: SearchQuery): Promise<LyricResult | null> {
         return hostOf(this).search(provider, query, {
           musixmatch: {

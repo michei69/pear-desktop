@@ -73,9 +73,10 @@ describe("the fade curve", () => {
 });
 
 describe("the fader", () => {
-  it("inserts its gain late in the shared graph and schedules a curve", () => {
+  it("inserts its gain before the shared effects and schedules a curve", () => {
     const { fader, gain, stage } = faderOf();
-    expect(stage()?.order).toBe(50);
+    // Pre-chain: the second stream joins after it, so the fader fades the video only.
+    expect(stage()?.order).toBe(-50);
     fader.ramp(0, 1, 2);
     const { curve, start, duration } = gain().curves[0]!;
     expect(curve[0]).toBe(0);

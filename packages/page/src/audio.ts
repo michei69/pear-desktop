@@ -23,11 +23,18 @@ export class AudioGraph implements AudioGraphApi {
   #watched = new WeakSet<HTMLVideoElement>();
   #stages: Stage[] = [];
   #taps = new Set<AudioNode>();
+  /** Second streams (crossfade) and the stage order they join the chain at (see connectExternal). */
+  #externals = new Map<AudioNode, number>();
+  /** Boundary mixers of the last rewire; disconnected when the chain is rebuilt. */
+  #mixes: GainNode[] = [];
+  /** The one output node: the stages meet here before destination/taps. */
+  #bus: GainNode;
   #seq = 0;
 
   constructor(video: HTMLVideoElement) {
     this.#video = video;
     this.context = new AudioContext({ latencyHint: "playback" });
+    this.#bus = this.context.createGain();
     // Before the source node exists: Web Audio silences cross-origin media
     // that was not fetched in CORS mode (podcast/RSS audio).
     ensureCORSMedia(video);
@@ -88,6 +95,23 @@ export class AudioGraph implements AudioGraphApi {
     };
   }
 
+  /**
+   * Feeds an external source (a plugin's second stream) into the chain at a
+   * boundary: after the stages with `order` <= `order`, before the higher-order
+   * ones. A boundary mix node sums the chain and its sources there, so stages
+   * ordered above it (the equalizer, the compressor) process the source too,
+   * while lower ones (crossfade's own video fader) keep it out.
+   */
+  connectExternal(source: AudioNode, order = 0): Unsubscribe {
+    this.#externals.set(source, order);
+    this.#rewire();
+    return () => {
+      this.#externals.delete(source);
+      safeDisconnect(source);
+      this.#rewire();
+    };
+  }
+
   #watchPlayback(video: HTMLVideoElement) {
     if (this.#watched.has(video)) return;
     this.#watched.add(video);
@@ -99,14 +123,43 @@ export class AudioGraph implements AudioGraphApi {
   #rewire() {
     safeDisconnect(this.#source);
     for (const stage of this.#stages) safeDisconnect(stage.output);
+    for (const source of this.#externals.keys()) safeDisconnect(source);
+    for (const mix of this.#mixes) safeDisconnect(mix);
+    this.#mixes = [];
+    safeDisconnect(this.#bus);
     const ordered = [...this.#stages].sort((a, b) => a.order - b.order || a.seq - b.seq);
-    let last: AudioNode = this.#source;
-    for (const stage of ordered) {
-      last.connect(stage.input);
-      last = stage.output;
+    // Each external joins at its boundary: after the stages with order <= its
+    // order, before the higher ones. A mix at that point sums the chain and the
+    // sources joining there; the chain itself runs on through the later stages.
+    const boundaries = new Map<number, { mix: GainNode; sources: AudioNode[] }>();
+    for (const [source, order] of this.#externals) {
+      const first = ordered.findIndex((stage) => stage.order > order);
+      const at = first < 0 ? ordered.length : first;
+      let boundary = boundaries.get(at);
+      if (!boundary) {
+        boundary = { mix: this.context.createGain(), sources: [] };
+        boundaries.set(at, boundary);
+      }
+      boundary.sources.push(source);
     }
-    last.connect(this.context.destination);
-    for (const tap of this.#taps) last.connect(tap);
+    this.#mixes = [...boundaries.values()].map((boundary) => boundary.mix);
+
+    let previous: AudioNode = this.#source;
+    for (let index = 0; index <= ordered.length; index += 1) {
+      const boundary = boundaries.get(index);
+      if (boundary) {
+        previous.connect(boundary.mix);
+        for (const source of boundary.sources) source.connect(boundary.mix);
+        previous = boundary.mix;
+      }
+      if (index < ordered.length) {
+        previous.connect(ordered[index]!.input);
+        previous = ordered[index]!.output;
+      }
+    }
+    previous.connect(this.#bus);
+    this.#bus.connect(this.context.destination);
+    for (const tap of this.#taps) this.#bus.connect(tap);
   }
 }
 
