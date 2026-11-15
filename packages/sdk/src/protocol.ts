@@ -16,13 +16,26 @@ export const CHANNEL = {
 } as const;
 
 export interface PluginState {
+  /** Effective: the stored switch is off while `blockedBy` is set. */
   enabled: boolean;
   config: Record<string, unknown>;
+  /** An enabled plugin this one conflicts with; settings disables the switch and explains why. */
+  blockedBy?: PluginBlock;
+}
+
+/** The enabled plugin that keeps a conflicting plugin from running. */
+export interface PluginBlock {
+  id: string;
+  /** Its name in the active language. */
+  name: string;
+  reason: string;
 }
 
 export interface PluginMeta {
   /** `restartRequired` or a beforeReady/windowOptions hook: enabling/disabling only fully applies after a restart. */
   restartRequired: boolean;
+  /** Whether the host half was running when the app launched, for restart-required page parts. */
+  runningAtLaunch: boolean;
 }
 
 /** The debug info the settings window's About section shows, and `GET /api/v2/pear` (getAppMeta). */

@@ -15,6 +15,12 @@ export default definePlugin({
   id: "quality-changer",
   name: "Video quality changer",
   description: "Adds a quality picker to the top of the video player.",
+  conflicts: [
+    {
+      id: "audio-only",
+      reason: "Audio only forces the lowest video quality, so this picker's choice would be overridden on every track.",
+    },
+  ],
   // White like the video's other buttons. Both classes, since the picker's sheet comes after this one.
   style: css`
     .pear-picker-button.pear-quality-button {

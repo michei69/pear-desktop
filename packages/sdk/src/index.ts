@@ -241,6 +241,14 @@ export interface AudioGraph {
   insert(input: AudioNode, output?: AudioNode, order?: number): Unsubscribe;
   /** Connects the graph's final output to `node` as well (analysers, recorders). */
   tap(node: AudioNode): Unsubscribe;
+  /**
+   * Feeds an external source (a plugin's second stream) into the same stage
+   * chain: it joins after the stages with `order` <= `order`, before the
+   * higher-order ones (default 0). Crossfade's second stream joins at 0, so the
+   * equalizer and compressor process the tail while the crossfade's own
+   * pre-chain video fader does not. Taps see the source too.
+   */
+  connectExternal(source: AudioNode, order?: number): Unsubscribe;
 }
 
 export interface WaitForOptions {
@@ -308,6 +316,19 @@ export interface PluginAction {
   description?: string;
 }
 
+/** Another plugin this one can't run beside. */
+export interface PluginConflict {
+  /** The plugin that takes the setting. */
+  id: string;
+  /** Shown in the disabled plugin's tooltip. */
+  reason: string;
+  /**
+   * Both directions: enabling either blocks the other. Default: only this
+   * plugin yields while `id` runs.
+   */
+  mutual?: boolean;
+}
+
 export interface PluginDef<S extends ConfigShape, Cmds extends AnyCommands, Rpc extends RpcSchemas = {}> {
   id: string;
   name: string;
@@ -328,6 +349,8 @@ export interface PluginDef<S extends ConfigShape, Cmds extends AnyCommands, Rpc 
   config?: S;
   /** Buttons shown in settings while the plugin is enabled; each runs `host.commands[name]`. */
   actions?: { readonly [K in keyof Cmds & string]?: PluginAction };
+  /** Plugins that disable this one while they are enabled; shown in settings with the reason. */
+  conflicts?: readonly PluginConflict[];
   host?: HostPart<ConfigOf<S>, Cmds, Rpc>;
   page?: PagePart<ConfigOf<S>, Cmds>;
   /** CSS applied while enabled; usually the result of the `css` macro. */

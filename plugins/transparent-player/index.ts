@@ -9,6 +9,18 @@ export default definePlugin({
   // pear-desktop's Linux transparency is not supported: it needed global
   // compositing switches and still broke resizing.
   platforms: ["win32", "darwin"],
+  conflicts: [
+    {
+      id: "album-color-theme",
+      mutual: true,
+      reason: "Both paint the window background; only one can own the transparency.",
+    },
+    {
+      id: "blur-nav-bar",
+      mutual: true,
+      reason: "Both style the nav bar background with !important; only one can win.",
+    },
+  ],
   config: {
     opacity: config.number(50, {
       label: "Background opacity",

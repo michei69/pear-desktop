@@ -115,7 +115,14 @@ function Control({ id, field, value, model, onChange }: ControlProps<Field, unkn
   }
 }
 
-export function Switch(props: { id?: string; checked: boolean; label: string; onChange(checked: boolean): void }) {
+export function Switch(props: {
+  id?: string;
+  checked: boolean;
+  label: string;
+  disabled?: boolean;
+  title?: string | undefined;
+  onChange(checked: boolean): void;
+}) {
   return (
     <button
       id={props.id}
@@ -124,6 +131,9 @@ export function Switch(props: { id?: string; checked: boolean; label: string; on
       class="switch"
       aria-checked={props.checked}
       aria-label={props.label}
+      aria-disabled={props.disabled || undefined}
+      disabled={props.disabled}
+      title={props.title}
       onClick={() => props.onChange(!props.checked)}
     >
       <span class="switch-thumb" />

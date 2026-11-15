@@ -51,6 +51,13 @@ export const pluginCards = css`
     gap: 14px;
     padding: 14px 18px;
   }
+  /* A plugin another enabled plugin blocks: visibly off, but the reason stays readable on hover. */
+  .plugin[data-blocked] .plugin-head {
+    opacity: 0.6;
+  }
+  .plugin[data-blocked] .plugin-head:hover {
+    opacity: 1;
+  }
   .plugin-toggle {
     flex: 1;
     min-width: 0;

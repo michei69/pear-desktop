@@ -99,6 +99,10 @@ export const controls = css`
       background 0.15s,
       border-color 0.15s;
   }
+  .switch:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
   .switch-thumb {
     position: absolute;
     top: 50%;

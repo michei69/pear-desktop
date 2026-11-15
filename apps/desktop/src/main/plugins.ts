@@ -12,6 +12,7 @@ import type { Settings } from "./config.ts";
 import type { I18n } from "./i18n.ts";
 import type { PageRequests } from "./page-requests.ts";
 import type { PlayerMirror } from "./player.ts";
+import { resolvePluginConflicts } from "./plugin-conflicts.ts";
 import { validationMessage } from "./validation.ts";
 import type { WebRequestRouter } from "./web-request.ts";
 
@@ -67,6 +68,8 @@ export class PluginHost {
   #byId: Map<string, AnyPlugin>;
   #settings: Settings;
   #instances = new Map<string, Instance>();
+  /** Host halves running at app launch, for page reloads of restart-required plugins. */
+  #launchRunning = new Map<string, boolean>();
   #errors = new Map<string, string>();
   #statuses = new Map<string, string>();
   #env: HostEnvironment | undefined;
@@ -85,23 +88,54 @@ export class PluginHost {
   }
 
   states(): Record<string, PluginState> {
-    const all = this.#settings.allPlugins();
-    return Object.fromEntries(this.plugins.map((p) => [p.id, all[p.id]!]));
+    const stored = this.#settings.allPlugins();
+    const enabled = new Set(this.plugins.filter((plugin) => stored[plugin.id]?.enabled).map((plugin) => plugin.id));
+    const blocked = resolvePluginConflicts(this.plugins, enabled);
+    return Object.fromEntries(
+      this.plugins.map((plugin) => {
+        const state = stored[plugin.id] ?? { enabled: false, config: {} };
+        const blocker = blocked.get(plugin.id);
+        const blockerPlugin = blocker && this.#byId.get(blocker.id);
+        return [
+          plugin.id,
+          {
+            enabled: state.enabled && !blocker,
+            config: state.config,
+            ...(blocker && blockerPlugin
+              ? {
+                  blockedBy: {
+                    id: blockerPlugin.id,
+                    name: this.t(`plugins.${blockerPlugin.id}.name`, blockerPlugin.name),
+                    reason: blocker.reason,
+                  },
+                }
+              : {}),
+          },
+        ];
+      }),
+    );
   }
 
   /** What the settings UI needs to know per plugin: whether changes take a restart. */
   meta(): Record<string, PluginMeta> {
     return Object.fromEntries(
-      this.plugins.map((p) => [p.id, { restartRequired: Boolean(p.restartRequired || p.host?.beforeReady || p.host?.windowOptions) }]),
+      this.plugins.map((p) => [
+        p.id,
+        {
+          restartRequired: Boolean(p.restartRequired || p.host?.beforeReady || p.host?.windowOptions),
+          runningAtLaunch: this.#launchRunning.get(p.id) === true,
+        },
+      ]),
     );
   }
 
   /** Main-window options contributed by plugins enabled at launch. */
   windowOptions(): BrowserWindowConstructorOptions {
     let merged: BrowserWindowConstructorOptions = {};
+    const states = this.states();
     for (const plugin of this.plugins) {
       const state = this.#settings.plugin(plugin.id);
-      if (!state?.enabled || !plugin.host?.windowOptions) continue;
+      if (!state || !states[plugin.id]?.enabled || !plugin.host?.windowOptions) continue;
       try {
         const options = plugin.host.windowOptions(state.config);
         merged = { ...merged, ...options, webPreferences: { ...merged.webPreferences, ...options.webPreferences } };
@@ -142,9 +176,10 @@ export class PluginHost {
   beforeReady(app: App) {
     const enabled = new Set<string>();
     const disabled = new Set<string>();
+    const states = this.states();
     for (const plugin of this.plugins) {
       const state = this.#settings.plugin(plugin.id);
-      if (!state?.enabled || !plugin.host?.beforeReady) continue;
+      if (!state || !states[plugin.id]?.enabled || !plugin.host?.beforeReady) continue;
       try {
         plugin.host.beforeReady({
           config: state.config,
@@ -173,21 +208,38 @@ export class PluginHost {
 
   attach(env: HostEnvironment) {
     this.#env = env;
+    const states = this.states();
     for (const plugin of this.plugins) {
-      if (this.#settings.plugin(plugin.id)?.enabled) void this.#start(plugin);
+      if (states[plugin.id]?.enabled) void this.#start(plugin);
     }
+    // Restart-required page halves follow the launch state, including page-only
+    // plugins that never create a host instance.
+    this.#launchRunning = new Map(this.plugins.map((plugin) => [plugin.id, states[plugin.id]?.enabled === true]));
   }
 
   async setEnabled(id: string, enabled: boolean) {
     const plugin = this.#require(id);
-    const state = this.#settings.setPlugin(plugin, { enabled });
-    if (enabled) await this.#start(plugin);
-    else {
-      this.#stop(id);
-      this.#env?.onDisabled(id);
+    // A blocked plugin's switch is disabled in settings; an API/menu call must
+    // not sneak it on behind the blocker's back.
+    if (enabled && this.states()[id]?.blockedBy) return this.states()[id]!;
+
+    this.#settings.setPlugin(plugin, { enabled });
+    const states = this.states();
+    const meta = this.meta();
+    const restart = meta[id]?.restartRequired === true;
+    // A beforeReady/windowOptions plugin applies at the next launch. Keeping
+    // its current instance (and not starting one) makes the switch truthful.
+    for (const other of this.plugins) {
+      // Restart-required plugins (including a sibling this toggle would block)
+      // keep their launch state until the next launch.
+      if (meta[other.id]?.restartRequired) continue;
+      const running = this.#instances.has(other.id);
+      if (states[other.id]?.enabled && !running) await this.#start(other);
+      else if (!states[other.id]?.enabled && running) this.#stop(other.id);
     }
-    this.#broadcast(id, state);
-    return state;
+    if (!enabled && !restart) this.#env?.onDisabled(id);
+    this.#broadcastStates(states);
+    return states[id]!;
   }
 
   async setConfig(id: string, patch: Record<string, unknown>) {
@@ -201,7 +253,7 @@ export class PluginHost {
       this.#stop(id);
       await this.#start(plugin);
     }
-    this.#broadcast(id, state);
+    this.#broadcastStates(this.states());
     return state;
   }
 
@@ -251,9 +303,14 @@ export class PluginHost {
     this.#env?.send({ type: "plugin-state", id, state });
   }
 
+  /** States change in pairs, not one at a time: a block also stops another plugin. */
+  #broadcastStates(states: Record<string, PluginState>) {
+    for (const [id, state] of Object.entries(states)) this.#broadcast(id, state);
+  }
+
   async #start(plugin: AnyPlugin) {
     const env = this.#env;
-    if (!env || !plugin.host || this.#instances.has(plugin.id)) return;
+    if (!env || !plugin.host || this.#instances.has(plugin.id) || !this.states()[plugin.id]?.enabled) return;
     const instance = this.#createInstance(plugin, env);
     this.#instances.set(plugin.id, instance);
     this.#clearError(plugin.id);

@@ -164,6 +164,10 @@ export function PluginCard(props: {
   const open = props.forceOpen ?? dialog.expanded.has(plugin.id);
   const state = model.state(plugin.id);
   const enabled = state?.enabled ?? false;
+  const blockedBy = state?.blockedBy;
+  // Native tooltip on the whole row: the switch itself is disabled, and
+  // Chromium still shows the row's title while hovering it.
+  const blockedTitle = blockedBy ? `${blockedBy.name}: ${blockedBy.reason}` : undefined;
   const error = model.error(plugin.id);
   const status = model.status(plugin.id);
   // A collapsed card shows nothing, so it has nothing to translate or group either.
@@ -178,8 +182,8 @@ export function PluginCard(props: {
   const hasBody = open && state && (groups.length > 0 || showActions);
 
   return (
-    <section class="card plugin" data-plugin={plugin.id} data-open={open}>
-      <div class="plugin-head">
+    <section class="card plugin" data-plugin={plugin.id} data-open={open} data-blocked={blockedBy ? "" : undefined}>
+      <div class="plugin-head" title={blockedTitle}>
         <button
           type="button"
           class="plugin-toggle"
@@ -201,6 +205,8 @@ export function PluginCard(props: {
         <Switch
           checked={enabled}
           label={text("settings-ui.enable", { name: plugin.name })}
+          disabled={blockedBy !== undefined}
+          title={blockedTitle}
           onChange={(on) => dialog.setPluginEnabled(plugin, on)}
         />
       </div>

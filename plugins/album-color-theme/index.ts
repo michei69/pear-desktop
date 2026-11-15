@@ -158,6 +158,13 @@ export default definePlugin({
   id: "album-color-theme",
   name: "Album color theme",
   description: "Tints the interface with the colors of the current track's artwork.",
+  conflicts: [
+    {
+      id: "ambient-mode",
+      mutual: true,
+      reason: "Both paint the player page and guide backgrounds; only one can own those tints.",
+    },
+  ],
   config: {
     ratio: config.number(50, { label: "Color strength", min: 0, max: 100, step: 5, unit: "%" }),
     enableSeekbar: config.bool(true, { label: "Color the progress bar" }),

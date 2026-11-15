@@ -4,7 +4,7 @@
 import type { AnyPlugin, PagePartObject } from "@pear/sdk";
 import type { CoreSection } from "@pear/sdk/core-config";
 import { type Translate, translator } from "@pear/sdk/i18n";
-import type { Bridge, CoreState, PluginState } from "@pear/sdk/protocol";
+import type { Bridge, CoreState, PluginMeta, PluginState } from "@pear/sdk/protocol";
 import { adoptSheet, styleSheet } from "@pear/sdk/stylesheets";
 import type { ThemeState } from "@pear/sdk/themes";
 import { createLogger, errorMessage } from "@pear/sdk/util";
@@ -48,6 +48,8 @@ export class PluginRunner {
   #handlers = new Map<string, Map<string, RequestHandler>>();
   /** `ctx.onCoreChange` listeners of the running plugins. */
   #coreListeners = new Set<(section: CoreSection) => void>();
+  /** Host-derived restart requirements (also covers beforeReady/windowOptions). */
+  readonly #meta: Readonly<Record<string, PluginMeta>>;
   #audio: Promise<AudioGraph> | undefined;
   #windowVisible: boolean;
   /** performance.plugins: the heavy visual plugins' page halves stay off. */
@@ -63,6 +65,7 @@ export class PluginRunner {
     this.#bridge = bridge;
     this.#player = player;
     this.#host = new HostState(bridge.bootstrap);
+    this.#meta = bridge.bootstrap.meta;
     // Plugins the host doesn't run on this platform are not offered at all.
     for (const plugin of plugins) if (this.#host.plugins.has(plugin.id)) this.#plugins.set(plugin.id, plugin);
     this.t = translator(bridge.bootstrap.strings);
@@ -128,7 +131,15 @@ export class PluginRunner {
   }
 
   startEnabled() {
-    for (const [id, state] of this.#host.plugins) if (state.enabled) void this.#start(id);
+    for (const [id, state] of this.#host.plugins) {
+      // A restart-required plugin starts for good at app launch; live enabling
+      // it must not start only the page half on a reload.
+      const meta = this.#meta[id];
+      // Restart-required page parts follow the host halves that were running at
+      // launch, not the live switch: they start/stop with the app either way.
+      if (meta?.restartRequired ? !meta.runningAtLaunch : !state.enabled) continue;
+      void this.#start(id);
+    }
   }
 
   /** Applies a state pushed by the host (enable/disable or config change). */
@@ -139,7 +150,8 @@ export class PluginRunner {
     if (!plugin) return;
     const instance = this.#instances.get(id);
     // Started (or not) for good when the page loaded; the restart banner covers the rest.
-    const settledAtLoad = plugin.restartRequired && (!instance || !next.enabled);
+    const restartRequired = this.#meta[id]?.restartRequired ?? plugin.restartRequired === true;
+    const settledAtLoad = restartRequired && (!instance || !next.enabled);
     if (settledAtLoad) return;
     if (!next.enabled) return this.#stop(id);
     if (!instance) return void this.#start(id);

@@ -207,13 +207,15 @@ async function main() {
           void api?.apply();
         },
       }),
-      // pear-desktop's Plugins menu: the same stored state the settings cards toggle.
-      pluginCatalog: () =>
-        plugins.plugins.map((plugin) => ({
+      // pear-desktop's Plugins menu: the same effective state the settings cards show.
+      pluginCatalog: () => {
+        const states = plugins.states();
+        return plugins.plugins.map((plugin) => ({
           id: plugin.id,
           name: plugins.t(`plugins.${plugin.id}.name`, plugin.name),
-          enabled: settings.plugin(plugin.id)?.enabled === true,
-        })),
+          enabled: states[plugin.id]?.enabled === true,
+        }));
+      },
       setPluginEnabled: (id, enabled) => {
         void plugins
           .setEnabled(id, enabled)
