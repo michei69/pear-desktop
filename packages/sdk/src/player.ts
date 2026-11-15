@@ -103,7 +103,7 @@ export interface YTPlayerApi extends HTMLElement {
   getAvailableQualityLevels(): string[];
   setPlaybackQualityRange(min: string, max?: string): void;
   getVideoData(): { video_id: string; title: string; author: string; list?: string; isLive?: boolean };
-  getPlayerResponse(): YTPlayerResponse;
+  getPlayerResponse(): YTPlayerResponse | null;
   /**
    * The audio tracks the current video offers (languages, original and
    * auto-dubs); absent on player builds without YTM's track selector.

@@ -36,7 +36,8 @@ export default definePlugin({
     html.pear-unobtrusive-did-play:not(.pear-unobtrusive-scrolled) sel(app.layout) sel(nav_bar.background),
     html.pear-unobtrusive-did-play:not(.pear-unobtrusive-scrolled) sel(app.layout) sel(nav_bar.divider),
     html.pear-unobtrusive-did-play:not(.pear-unobtrusive-scrolled) sel(app.layout)[is-bauhaus-sidenav-enabled][player-page-open]
-      sel(guide.mini_background) {
+      sel(guide.mini_background),
+    html.pear-unobtrusive-did-play:not(.pear-unobtrusive-scrolled) sel(app.layout)[player-page-open] sel(guide.mini_background) {
       opacity: 0 !important;
     }
     html.pear-unobtrusive-did-play sel(player_bar.player_page_arrow) {

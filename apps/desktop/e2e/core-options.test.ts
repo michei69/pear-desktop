@@ -292,8 +292,8 @@ test("podcast episodes show their host as the artist, or the listed participant"
       return {
         artist: player.state.track?.artist,
         mediaType: player.state.track?.mediaType,
-        show: response.videoDetails?.author,
-        host: response.microformat?.microformatDataRenderer?.pageOwnerDetails?.name,
+        show: response?.videoDetails?.author,
+        host: response?.microformat?.microformatDataRenderer?.pageOwnerDetails?.name,
       };
     });
   const before = await artists();

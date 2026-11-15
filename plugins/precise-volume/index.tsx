@@ -57,7 +57,7 @@ export default definePlugin({
       transition-duration: 0.1s;
     }
     /* The miniplayer draws the video under the bar: keep the readout at its top. */
-    ytmusic-player[player-ui-state_='MINIPLAYER'] .pear-volume-hud {
+    ytmusic-player[player-ui-state='MINIPLAYER'] .pear-volume-hud {
       top: 0 !important;
     }
     sel(player_bar.volume_popup).pear-volume-reveal {

@@ -360,7 +360,7 @@ export class Player implements PagePlayer {
    * Episodes name the show as their author; like pear-desktop, their artist is the
    * channel owner (usually the host, a person) unless the option asks for the listed participant.
    */
-  #artist(mediaType: MediaType, listed: string, response: YTPlayerResponse | undefined) {
+  #artist(mediaType: MediaType, listed: string, response: YTPlayerResponse | null) {
     const host = response?.microformat?.microformatDataRenderer?.pageOwnerDetails?.name;
     if (mediaType !== "podcast" || !host) return listed;
     return this.#options.usePodcastParticipantAsArtist === true ? listed : host;
@@ -416,7 +416,7 @@ function sessionArtwork(metadata: MediaMetadata | undefined) {
   return largest(metadata?.artwork.map((a) => ({ url: a.src, size: parseSize(a.sizes) })) ?? []);
 }
 
-function largestThumbnail(response: YTPlayerResponse | undefined) {
+function largestThumbnail(response: YTPlayerResponse | null) {
   const thumbnails = response?.videoDetails?.thumbnail?.thumbnails ?? [];
   return largest(thumbnails.map((t) => ({ url: t.url, size: t.width * t.height })));
 }

@@ -505,9 +505,9 @@ const MENU_ITEM_CSS = `
     outline: none;
   }
   .pear-menu-item svg {
-    width: 24px;
-    height: 24px;
-    fill: rgb(255 255 255 / 0.7);
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
   }
 `;
 

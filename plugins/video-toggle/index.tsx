@@ -62,10 +62,6 @@ const FORCE_HIDE = css`
 
 const ALIGN = { left: "flex-start", middle: "center", right: "flex-end" } as const;
 
-interface PlayerElement extends HTMLElement {
-  videoMode_?: boolean;
-}
-
 const schema = {
   mode: config.select(
     "custom",
@@ -177,7 +173,7 @@ function customSwitch(ctx: Ctx, restorer: ElementState) {
   ctx.onCleanup(() => container.remove());
 
   const apply = () => {
-    const player = ctx.$<PlayerElement>("player.container");
+    const player = ctx.$<HTMLElement>("player.container");
     const songVideo = ctx.$("player.song_video");
     const songImage = ctx.$("player.song_image");
     const shown = visible();

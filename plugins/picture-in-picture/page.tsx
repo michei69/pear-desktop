@@ -9,7 +9,36 @@ import type { PipCommands, pipConfig } from "./config.ts";
 import { trackMenuEntry } from "./menu.ts";
 
 type Ctx = PageContextOf<typeof pipConfig, PipCommands>;
-type Player = HTMLElement & { onDoubleClick_?: (() => void) | undefined };
+
+/** YTM's full-screen toggle on the player, as a method of its Polymer controller. */
+interface PlayerController {
+  onDoubleClick?: (() => void) | undefined;
+}
+
+interface PlayerElement extends HTMLElement {
+  polymerController?: object;
+  /** Older YTM builds kept the handler on the player element itself. */
+  onDoubleClick_?: (() => void) | undefined;
+}
+
+/**
+ * Stops the player's double-click from leaving YTM's full screen. The handler
+ * is the Polymer controller prototype's method (replacing the element's own
+ * `onDoubleClick`, a proxy wrapper, does nothing); older builds had it on the
+ * element. Returns the undo.
+ */
+export function takeDoubleClick(player: PlayerElement | null | undefined) {
+  if (!player) return;
+  const prototype = player.polymerController ? Object.getPrototypeOf(player.polymerController) : undefined;
+  const target = (prototype ?? player) as PlayerElement & PlayerController;
+  const key = typeof target.onDoubleClick === "function" ? "onDoubleClick" : "onDoubleClick_";
+  const handler = target[key];
+  if (typeof handler !== "function") return;
+  target[key] = () => {};
+  return () => {
+    target[key] = handler;
+  };
+}
 
 // YTM's own clean-up after its full screen happens within this.
 const SETTLE_MS = 500;
@@ -69,7 +98,7 @@ function fullScreenMode(ctx: Ctx) {
   const dragStrip = <div class="pear-pip-drag" />;
   // As pear-desktop: double-clicking the video doesn't leave full screen (and so the small
   // window), and the expanding menu closes once the pointer leaves it.
-  let doubleClick: { player: Player; original: (() => void) | undefined } | undefined;
+  let restoreDoubleClick: (() => void) | undefined;
   const closeMenu = () => ctx.$("player_bar.middle_controls")?.click();
 
   const enter = () => {
@@ -78,19 +107,13 @@ function fullScreenMode(ctx: Ctx) {
     if (!ctx.$("player.page_open")) ctx.$("player_bar.toggle_player_page")?.click();
     if (!fullscreen) ctx.$("player.fullscreen_button")?.click();
     document.body.append(dragStrip);
-    const player = ctx.$<Player>("player.container");
-    if (player && !doubleClick) {
-      doubleClick = { player, original: player.onDoubleClick_ };
-      player.onDoubleClick_ = () => {};
-    }
+    restoreDoubleClick ??= takeDoubleClick(ctx.$<PlayerElement>("player.container"));
     ctx.$("player_bar.expanding_menu")?.addEventListener("mouseleave", closeMenu);
   };
   const leave = () => {
     dragStrip.remove();
-    if (doubleClick) {
-      doubleClick.player.onDoubleClick_ = doubleClick.original;
-      doubleClick = undefined;
-    }
+    restoreDoubleClick?.();
+    restoreDoubleClick = undefined;
     ctx.$("player_bar.expanding_menu")?.removeEventListener("mouseleave", closeMenu);
     if (document.fullscreenElement) void document.exitFullscreen();
     ctx.setTimeout(revealBars, SETTLE_MS);
