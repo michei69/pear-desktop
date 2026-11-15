@@ -15,12 +15,16 @@ asarUnpack:
 # Electron unchanged. Rebuilding it here would try to compile the Windows-only
 # addon on Linux and macOS too.
 npmRebuild: false
-extraFiles:
+# The licence ships as a resource, not as an extra file: `extraFiles` drops its files in
+# the .app's Contents/ root, and codesign refuses the bundle over them ("code object is
+# not signed at all / In subcomponent: .../Contents/license", electron-builder#3169,
+# #8616). Contents/Resources is the place for payload like this, and a package's arrays
+# are merged not replaced, so this rides along with the others per platform.
+extraResources:
   - from: ../../license
     to: license
 # ffmpeg.wasm's core (the downloader converts with it when there is no ffmpeg) is
 # loaded from its files at runtime, so it ships next to the bundle.
-extraResources:
   - from: ../../plugins/downloader/node_modules/@ffmpeg.wasm/core-mt/dist
     to: ffmpeg-core
 # Chromium ships 55 locale packs; the app's i18n directory has no translations
