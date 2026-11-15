@@ -1,0 +1,30 @@
+import { clamp } from "@pear/sdk/util";
+
+export const MIN_SPEED = 0.07;
+export const MAX_SPEED = 16;
+export const PRESETS = [0.5, 0.75, 1, 1.25, 1.5, 2];
+// The slider covers the useful range; settings and the wheel reach MIN_SPEED–MAX_SPEED.
+export const SLIDER_MIN = 0.25;
+export const SLIDER_MAX = 2;
+export const SLIDER_STEP = 0.05;
+/** One wheel notch. */
+export const WHEEL_STEP = 0.01;
+
+/** Rounded to hundredths and kept within MIN_SPEED–MAX_SPEED; an unusable rate is normal playback. */
+export const normalize = (speed: number) => {
+  // A non-finite or non-positive rate would throw when assigned to video.playbackRate.
+  const usable = Number.isFinite(speed) && speed > 0 ? speed : 1;
+  return clamp(Math.round(usable * 100) / 100, MIN_SPEED, MAX_SPEED);
+};
+export const format = (speed: number) => `${speed.toFixed(2).replace(/\.?0+$/, "")}×`;
+
+/**
+ * Puts the plugin's rate and pitch on an element. During an ad the rate is
+ * not ours: do-not-track fast-forwards it and restores it when the ad ends,
+ * so re-applying here would undo the skip.
+ */
+export function applyRate(video: HTMLVideoElement, speed: number, preservePitch: boolean, ad: boolean) {
+  if (ad) return;
+  if (video.playbackRate !== speed) video.playbackRate = speed;
+  if (video.preservesPitch !== preservePitch) video.preservesPitch = preservePitch;
+}

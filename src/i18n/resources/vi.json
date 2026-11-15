@@ -156,8 +156,8 @@
               "sync": {
                 "label": "Đồng bộ ngôn ngữ",
                 "submenu": {
-                  "from-youtube": "Từ YouTube",
-                  "to-youtube": "Sang YouTube"
+                  "from-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "Từ \u0059\u006f\u0075\u0054\u0075\u0062\u0065",
+                  "to-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "Sang \u0059\u006f\u0075\u0054\u0075\u0062\u0065"
                 },
                 "failure": {
                   "dialog": {
@@ -181,27 +181,27 @@
               "disabled": "Vô hiệu hóa",
               "enabled-and-hide-app": "Đã bật và ẩn ứng dụng",
               "enabled-and-show-app": "Đã bật và hiển thị ứng dụng",
-              "move-to-current-desktop": "Di chuyển đến màn hình ảo hiện tại khi hiển thị",
               "play-pause-on-click": "Phát/Tạm dừng khi nhấp chuột",
+              "move-to-current-desktop": "Di chuyển đến màn hình ảo hiện tại khi hiển thị",
               "force-white-icons": "Buộc sử dụng biểu tượng màu trắng"
             }
           },
           "visual-tweaks": {
             "label": "Tinh chỉnh hình ảnh",
             "submenu": {
-              "like-buttons": {
-                "default": "Mặc định",
-                "force-show": "Tập trung hiển thị",
-                "hide": "Ẩn",
-                "swap": "Hoán đổi thứ tự nút Thích",
-                "label": "Nút thích"
-              },
               "custom-window-title": {
                 "label": "Tiêu đề cửa sổ tùy chỉnh",
                 "prompt": {
                   "label": "Nhập tiêu đề cửa sổ tùy chỉnh: (để trống để vô hiệu hóa)",
                   "placeholder": "Ví dụ: {{applicationName}}"
                 }
+              },
+              "like-buttons": {
+                "default": "Mặc định",
+                "force-show": "Tập trung hiển thị",
+                "hide": "Ẩn",
+                "label": "Nút thích",
+                "swap": "Hoán đổi thứ tự nút Thích"
               },
               "remove-upgrade-button": "Xóa nút nâng cấp",
               "theme": {
@@ -229,7 +229,7 @@
                   "open-themes-folder": "Mở thư mục chủ đề"
                 }
               },
-              "use-ytm-icons": "Dùng biểu tượng gốc của YouTube Music"
+              "use-ytm-icons": "Dùng biểu tượng gốc của \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063"
             }
           },
           "updates": {
@@ -314,11 +314,15 @@
         },
         "enable-seekbar": "Bật tùy chỉnh giao diện cho thanh trượt"
       },
-      "name": "Màu nền album"
-    },
-    "audio-only": {
-      "description": "Buộc chế độ chỉ phát âm thanh — chặn tất cả luồng video ở cấp mạng và trình phát để tiết kiệm RAM và băng thông",
-      "name": "Chỉ âm thanh"
+      "name": "Màu nền album",
+      "settings": {
+        "ratio": {
+          "label": "Tỉ lệ trộn màu"
+        },
+        "enableSeekbar": {
+          "label": "Bật tùy chỉnh giao diện cho thanh trượt"
+        }
+      }
     },
     "ambient-mode": {
       "description": "Áp dụng hiệu ứng ánh sáng bằng cách truyền các màu nhẹ từ video vào nền màn hình của bạn",
@@ -399,24 +403,24 @@
         "hostname": {
           "label": "Tên máy chủ"
         },
-        "port": {
-          "label": "Cổng"
-        },
         "https": {
           "label": "HTTPS & Chứng chỉ",
           "submenu": {
+            "cert": {
+              "dialogTitle": "Chọn tệp chứng chỉ HTTPS",
+              "label": "Tệp chứng chỉ (.crt/.pem)"
+            },
             "enable-https": {
               "label": "Bật HTTPS"
             },
-            "cert": {
-              "label": "Tệp chứng chỉ (.crt/.pem)",
-              "dialogTitle": "Chọn tệp chứng chỉ HTTPS"
-            },
             "key": {
-              "label": "Tệp khóa riêng (.key/.pem)",
-              "dialogTitle": "Chọn tệp khóa riêng HTTPS"
+              "dialogTitle": "Chọn tệp khóa riêng HTTPS",
+              "label": "Tệp khóa riêng (.key/.pem)"
             }
           }
+        },
+        "port": {
+          "label": "Cổng"
         },
         "mcp": {
           "label": "Máy chủ MCP",
@@ -463,12 +467,12 @@
       "name": "Bộ chuyển đổi xác minh máy chủ Proxy",
       "prompt": {
         "hostname": {
-          "title": "Tên máy chủ Proxy",
-          "label": "Nhập tên của máy chủ proxy lân cận (yêu cầu khởi động lại ứng dụng):"
+          "label": "Nhập tên của máy chủ proxy lân cận (yêu cầu khởi động lại ứng dụng):",
+          "title": "Tên máy chủ Proxy"
         },
         "port": {
-          "title": "Cổng máy chủ Proxy",
-          "label": "Nhập cổng của máy chủ proxy lận cận (bắt buộc khởi động lại ứng dụng):"
+          "label": "Nhập cổng của máy chủ proxy lận cận (bắt buộc khởi động lại ứng dụng):",
+          "title": "Cổng máy chủ Proxy"
         }
       }
     },
@@ -501,20 +505,34 @@
         "caption-changed": "Phụ đề đã chuyển sang {{language}}",
         "caption-disabled": "Tắt phụ đề",
         "no-captions": "Không có phụ đề nào cho bài hát này"
+      },
+      "settings": {
+        "autoload": {
+          "label": "Tự động chọn phụ đề vừa sử dụng"
+        },
+        "disableCaptions": {
+          "label": "Không có phụ đề làm mặc định"
+        }
       }
     },
     "clock": {
       "description": "Thêm đồng hồ vào thanh điều hướng",
-      "name": "Đồng hồ",
       "menu": {
         "format": {
-          "label": "Định dạng",
+          "24-hour-format": "Định dạng 24h",
           "display-seconds": "Hiển thị giây",
-          "24-hour-format": "Định dạng 24h"
+          "label": "Định dạng"
         }
       },
+      "name": "Đồng hồ",
       "settings": {
-        "hour-12": "Dùng định dạng 12 giờ"
+        "hour-12": "Dùng định dạng 12 giờ",
+        "displaySeconds": {
+          "label": "Hiển thị giây"
+        },
+        "hour12": {
+          "label": "Dùng định dạng 12 giờ"
+        }
       }
     },
     "compact-sidebar": {
@@ -573,7 +591,12 @@
       "menu": {
         "apply-once": "Chỉ áp dụng khi khởi động"
       },
-      "name": "Tắt tự động phát"
+      "name": "Tắt tự động phát",
+      "settings": {
+        "applyOnce": {
+          "label": "Chỉ áp dụng khi khởi động"
+        }
+      }
     },
     "discord": {
       "backend": {
@@ -596,8 +619,8 @@
           "label": "Văn bản trạng thái",
           "submenu": {
             "application": "Đang nghe {{applicationName}}",
-            "artist": "Đang nghe nhạc của {{artist}}",
-            "title": "Đang nghe nhạc {{songTitle}}"
+            "artist": "Đang nghe nhạc của {artist}",
+            "title": "Đang nghe nhạc {song title}"
           }
         }
       },
@@ -613,7 +636,38 @@
         "activity-timeout-enabled": "Xóa trạng thái khi tạm dừng",
         "activity-timeout-time": "Xóa sau",
         "hide-github-button": "Ẩn nút “Xem trên GitHub”",
-        "hide-duration-left": "Ẩn thời gian còn lại"
+        "hide-duration-left": "Ẩn thời gian còn lại",
+        "autoReconnect": {
+          "label": "Tự động kết nối lại"
+        },
+        "activityTimeoutEnabled": {
+          "label": "Xóa trạng thái khi tạm dừng"
+        },
+        "activityTimeoutSeconds": {
+          "label": "Xóa sau"
+        },
+        "playButton": {
+          "label": "Phát trong {{applicationName}}"
+        },
+        "hideGitHubButton": {
+          "label": "Ẩn nút “Xem trên GitHub”"
+        },
+        "hideDurationLeft": {
+          "label": "Ẩn thời gian còn lại"
+        },
+        "statusDisplayType": {
+          "label": "Văn bản trạng thái",
+          "options": {
+            "name": "Đang nghe {{applicationName}}",
+            "state": "Đang nghe nhạc của {artist}",
+            "details": "Đang nghe nhạc {song title}"
+          }
+        }
+      },
+      "actions": {
+        "clearActivity": {
+          "label": "Xoá hoạt động"
+        }
       }
     },
     "do-not-track": {
@@ -861,9 +915,9 @@
           "label": "Cài đặt tương tác",
           "submenu": {
             "hide-button-text": "Ẩn tên nút",
-            "hover-controls": "Hiển thị trình phát nhỏ khi di chuột qua khay",
             "refresh-on-play-pause": "Làm mới khi Phát/Tạm dừng",
-            "tray-controls": "Mở/Đóng khi nhấp vào khay"
+            "tray-controls": "Mở/Đóng khi nhấp vào khay",
+            "hover-controls": "Hiển thị trình phát nhỏ khi di chuột qua khay"
           }
         },
         "priority": "Ưu tiên thông báo",
@@ -875,19 +929,6 @@
     "performance-improvement": {
       "description": "Cải thiện hiệu suất thông qua kích hoạt scripts thử nghiệm",
       "name": "Cải thiện hiệu năng [Thử nghiệm]"
-    },
-    "playback-recovery": {
-      "description": "Tự động khôi phục từ trạng thái phát bị treo, đơ hoặc chết",
-      "menu": {
-        "log-to-console": "Ghi nhật ký sự kiện khôi phục vào bảng điều khiển"
-      },
-      "name": "Khôi phục phát lại",
-      "settings": {
-        "stall-timeout": "Thời gian chờ khi phát bị kẹt",
-        "stall-timeout-description": "Thời gian tối đa phát không có tiến triển trước khi thực hiện khôi phục",
-        "max-retries": "Số lần thử lại tối đa",
-        "max-retries-description": "Số lần thử khôi phục trước khi chuyển sang bài tiếp theo"
-      }
     },
     "picture-in-picture": {
       "description": "Cho phép chuyển ứng dụng sang chế độ ảnh trong ảnh",
@@ -917,6 +958,23 @@
       "name": "Ảnh trong ảnh",
       "templates": {
         "button": "Ảnh trong ảnh"
+      },
+      "settings": {
+        "hotkey": {
+          "label": "Phím tắt"
+        },
+        "useNativePiP": {
+          "label": "Sử dụng PiP gốc của trình duyệt"
+        },
+        "alwaysOnTop": {
+          "label": "Luôn ở trên cùng"
+        },
+        "savePosition": {
+          "label": "Lưu vị trí cửa sổ"
+        },
+        "saveSize": {
+          "label": "Lưu kích thước cửa sổ"
+        }
       }
     },
     "playback-speed": {
@@ -952,10 +1010,21 @@
         }
       },
       "settings": {
-        "steps": "Bước âm lượng",
+        "steps": {
+          "label": "Bước âm lượng"
+        },
         "arrows-shortcut": "Phím tắt bằng phím mũi tên",
         "shortcut-up": "Phím tắt toàn cục: tăng âm lượng",
-        "shortcut-down": "Phím tắt toàn cục: giảm âm lượng"
+        "shortcut-down": "Phím tắt toàn cục: giảm âm lượng",
+        "arrowsShortcut": {
+          "label": "Phím tắt bằng phím mũi tên"
+        },
+        "volumeUp": {
+          "label": "Phím tắt toàn cục: tăng âm lượng"
+        },
+        "volumeDown": {
+          "label": "Phím tắt toàn cục: giảm âm lượng"
+        }
       }
     },
     "quality-changer": {
@@ -998,8 +1067,8 @@
           "token": "Nhập mã người dùng ListenBrainz",
           "api-root": "URL API ListenBrainz"
         },
-        "scrobble-alternative-title": "Dùng tiêu đề thay thế",
         "scrobble-alternative-artist": "Dùng nghệ sĩ thay thế",
+        "scrobble-alternative-title": "Dùng tiêu đề thay thế",
         "scrobble-other-media": "Scrobber nội dung khác",
         "regex-filters": "Bộ lọc biểu thức chính quy",
         "use-musicbrainz": "Dùng MusicBrainz để chỉnh sửa siêu dữ liệu",
@@ -1054,14 +1123,42 @@
       },
       "settings": {
         "global-keybinds": "Phím tắt toàn cục (hoạt động trong toàn ứng dụng)",
-        "local-keybinds": "Phím tắt cục bộ (chỉ khi cửa sổ đang hoạt động)"
+        "local-keybinds": "Phím tắt cục bộ (chỉ khi cửa sổ đang hoạt động)",
+        "playPause": {
+          "label": "Phát / Tạm dừng"
+        },
+        "localPlayPause": {
+          "label": "Phát / Tạm dừng"
+        },
+        "next": {
+          "label": "Tiếp theo"
+        },
+        "localNext": {
+          "label": "Tiếp theo"
+        },
+        "previous": {
+          "label": "Trước đó"
+        },
+        "localPrevious": {
+          "label": "Trước đó"
+        },
+        "overrideMediaKeys": {
+          "label": "Ghi đè khóa phương tiện"
+        }
       }
+    },
+    "skip-disliked-songs": {
+      "description": "Tự động bỏ qua những bài hát bạn nhấn không thích",
+      "name": "Bỏ qua bài hát không thích"
     },
     "skip-silences": {
       "description": "Tự động bỏ qua các đoạn im lặng trong bài hát",
       "name": "Bỏ qua đoạn im lặng",
       "settings": {
-        "only-skip-beginning": "Chỉ bỏ qua khoảng lặng ở đầu bài hát"
+        "only-skip-beginning": "Chỉ bỏ qua khoảng lặng ở đầu bài hát",
+        "onlySkipBeginning": {
+          "label": "Chỉ bỏ qua khoảng lặng ở đầu bài hát"
+        }
       }
     },
     "sponsorblock": {
@@ -1077,7 +1174,28 @@
           "selfpromo": "Tự quảng bá",
           "music_offtopic": "Phần không phải nhạc"
         },
-        "api-url": "URL API"
+        "api-url": "URL API",
+        "sponsor": {
+          "label": "Tài trợ"
+        },
+        "intro": {
+          "label": "Mở đầu"
+        },
+        "outro": {
+          "label": "Kết thúc"
+        },
+        "interaction": {
+          "label": "Nhắc tương tác"
+        },
+        "selfpromo": {
+          "label": "Tự quảng bá"
+        },
+        "music_offtopic": {
+          "label": "Phần không phải nhạc"
+        },
+        "apiURL": {
+          "label": "URL API"
+        }
       }
     },
     "synced-lyrics": {
@@ -1087,13 +1205,23 @@
         "not-found": "⚠️ Không tìm thấy lời cho bài hát này."
       },
       "menu": {
-        "preferred-provider": {
-          "label": "Nhà cung cấp ưa thích",
-          "tooltip": "Chọn nhà cung cấp lời bài hát mặc định để sử dụng",
-          "none": {
-            "label": "Không có",
-            "tooltip": "Không có nhà cung cấp ưu thích"
-          }
+        "convert-chinese-character": {
+          "label": "Chuyển đổi kí tự tiếng Trung",
+          "submenu": {
+            "disabled": {
+              "label": "Vô hiệu hóa",
+              "tooltip": "Vô hiệu hóa chuyển đổi kí tự tiếng Trung"
+            },
+            "simplified-to-traditional": {
+              "label": "Giản thể sang Phồn thể",
+              "tooltip": "Chuyển đổi tiếng Trung Giản thể sang tiếng Trung Phồn thể"
+            },
+            "traditional-to-simplified": {
+              "label": "Phồn thể sang Giản thể",
+              "tooltip": "Chuyển đổi tiếng Trung Phồn thể sang tiếng Trung Giản thể"
+            }
+          },
+          "tooltip": "Chuyển đổi kí tự tiếng Trung sang Phồn thể hoặc Giản thể"
         },
         "default-text-string": {
           "label": "Kí tự giữa các lời bài hát",
@@ -1121,6 +1249,30 @@
           },
           "tooltip": "Chọn kiểu để áp dụng cho dòng hiện tại"
         },
+        "precise-timing": {
+          "label": "Làm cho lời bài hát được đồng bộ hoàn hảo",
+          "tooltip": "Tính toán chính xác đến mili giây thời gian hiển thị dòng tiếp theo (có thể có tác động nhỏ đến hiệu suất)"
+        },
+        "preferred-provider": {
+          "label": "Nhà cung cấp ưa thích",
+          "none": {
+            "label": "Không có",
+            "tooltip": "Không có nhà cung cấp ưu thích"
+          },
+          "tooltip": "Chọn nhà cung cấp lời bài hát mặc định để sử dụng"
+        },
+        "romanization": {
+          "label": "Chuyển lời bài hát sang chữ Latin",
+          "tooltip": "Nếu lời bài hát đang ở ngôn ngữ khác, thử hiển thị phiên bản bảng chữ cái La-tinh."
+        },
+        "show-lyrics-even-if-inexact": {
+          "label": "Hiển thị lời bài hát ngay cả khi không chính xác",
+          "tooltip": "Nếu không tìm thấy bài hát, plugin sẽ thử lại bằng truy vấn tìm kiếm khác.\nKết quả từ lần thử thứ hai có thể không chính xác."
+        },
+        "show-time-codes": {
+          "label": "Hiện mốc thời gian",
+          "tooltip": "Hiện mốc thời gian bên cạnh lời bài hát"
+        },
         "lyrics-font-size": {
           "label": "Cỡ chữ lời bài hát",
           "submenu": {
@@ -1138,40 +1290,6 @@
             }
           },
           "tooltip": "Chọn kích thước chữ lời bài hát"
-        },
-        "precise-timing": {
-          "label": "Làm cho lời bài hát được đồng bộ hoàn hảo",
-          "tooltip": "Tính toán chính xác đến mili giây thời gian hiển thị dòng tiếp theo (có thể có tác động nhỏ đến hiệu suất)"
-        },
-        "romanization": {
-          "label": "Chuyển lời bài hát sang chữ Latin",
-          "tooltip": "Nếu lời bài hát đang ở ngôn ngữ khác, thử hiển thị phiên bản bảng chữ cái La-tinh."
-        },
-        "show-lyrics-even-if-inexact": {
-          "label": "Hiển thị lời bài hát ngay cả khi không chính xác",
-          "tooltip": "Nếu không tìm thấy bài hát, plugin sẽ thử lại bằng truy vấn tìm kiếm khác.\nKết quả từ lần thử thứ hai có thể không chính xác."
-        },
-        "show-time-codes": {
-          "label": "Hiện mốc thời gian",
-          "tooltip": "Hiện mốc thời gian bên cạnh lời bài hát"
-        },
-        "convert-chinese-character": {
-          "label": "Chuyển đổi kí tự tiếng Trung",
-          "submenu": {
-            "disabled": {
-              "label": "Vô hiệu hóa",
-              "tooltip": "Vô hiệu hóa chuyển đổi kí tự tiếng Trung"
-            },
-            "simplified-to-traditional": {
-              "label": "Giản thể sang Phồn thể",
-              "tooltip": "Chuyển đổi tiếng Trung Giản thể sang tiếng Trung Phồn thể"
-            },
-            "traditional-to-simplified": {
-              "label": "Phồn thể sang Giản thể",
-              "tooltip": "Chuyển đổi tiếng Trung Phồn thể sang tiếng Trung Giản thể"
-            }
-          },
-          "tooltip": "Chuyển đổi kí tự tiếng Trung sang Phồn thể hoặc Giản thể"
         },
         "translation": {
           "label": "Dịch lời bài hát",
@@ -1286,7 +1404,7 @@
         },
         "use-ytm-lyrics-without-proxy": {
           "label": "Sử dụng lời bài hát YTM mà không cần proxy",
-          "tooltip": "Bỏ qua proxy duyệt YTM và gọi trực tiếp YouTube Music bằng phiên đã xác thực của ứng dụng. Hữu ích nếu bạn tin tưởng mạng/khu vực của mình cho phép các cuộc gọi duyệt trực tiếp."
+          "tooltip": "Bỏ qua proxy duyệt YTM và gọi trực tiếp \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 bằng phiên đã xác thực của ứng dụng. Hữu ích nếu bạn tin tưởng mạng/khu vực của mình cho phép các cuộc gọi duyệt trực tiếp."
         },
         "show-custom-search-button": {
           "label": "Hiển thị nút tìm kiếm tùy chỉnh",
@@ -1354,7 +1472,6 @@
     },
     "transparent-player": {
       "description": "Làm cho cửa sổ ứng dụng có hiệu ứng trong suốt",
-      "name": "Trình phát trong suốt",
       "menu": {
         "opacity": {
           "label": "Độ mờ",
@@ -1370,15 +1487,34 @@
             "fullscreen-ui": "Giao diện toàn màn hình",
             "mica": "Mica",
             "none": "Không có",
-            "tabbed": "Dạng tab",
+            "tabbed": "Tabbed",
             "under-page": "Phía dưới trang",
             "under-window": "Ở dưới cửa sổ",
             "window": "Cửa sổ"
           }
         }
       },
+      "name": "Trình phát trong suốt",
       "settings": {
-        "type-description": "Chất liệu nền dùng cho độ trong suốt của cửa sổ"
+        "type-description": "Chất liệu nền dùng cho độ trong suốt của cửa sổ",
+        "opacity": {
+          "label": "Độ mờ"
+        },
+        "type": {
+          "label": "Kiểu nền",
+          "description": "Chất liệu nền dùng cho độ trong suốt của cửa sổ",
+          "options": {
+            "acrylic": "Acrylic",
+            "content": "Nội dung",
+            "fullscreen-ui": "Giao diện toàn màn hình",
+            "mica": "Mica",
+            "tabbed": "Tabbed",
+            "under-page": "Phía dưới trang",
+            "under-window": "Ở dưới cửa sổ",
+            "window": "Cửa sổ",
+            "none": "Không có"
+          }
+        }
       }
     },
     "tuna-obs": {
@@ -1414,6 +1550,27 @@
       "templates": {
         "button-song": "Bài hát",
         "button-video": "Video"
+      },
+      "settings": {
+        "mode": {
+          "label": "Chế độ",
+          "options": {
+            "custom": "Tùy chỉnh",
+            "native": "Gốc",
+            "disabled": "Vô hiệu hoá"
+          }
+        },
+        "align": {
+          "label": "Căn chỉnh",
+          "options": {
+            "left": "Trái",
+            "middle": "Giữa",
+            "right": "Phải"
+          }
+        },
+        "forceHide": {
+          "label": "Buộc ẩn video"
+        }
       }
     },
     "visualizer": {
@@ -1423,7 +1580,9 @@
       },
       "name": "Sóng nhạc",
       "settings": {
-        "preset": "Cài đặt sẵn",
+        "preset": {
+          "label": "Cài đặt sẵn"
+        },
         "blend-time": "Thời gian hòa trộn",
         "effect": "Hiệu ứng",
         "accuracy": "Độ chính xác",
@@ -1439,7 +1598,62 @@
         "dottify": "Dạng chấm",
         "dottify-description": "Vẽ các chấm thay vì một đường liên tục",
         "horizontal-align": "Căn ngang",
-        "vertical-align": "Căn dọc"
+        "vertical-align": "Căn dọc",
+        "blendTimeInSeconds": {
+          "label": "Thời gian hòa trộn"
+        },
+        "vudioMaxHeight": {
+          "label": "Chiều cao tối đa"
+        },
+        "vudioMaxSize": {
+          "label": "Kích thước tối đa"
+        },
+        "vudioLineWidth": {
+          "label": "Độ rộng đường"
+        },
+        "vudioColor": {
+          "label": "Màu sắc"
+        },
+        "vudioShadowBlur": {
+          "label": "Độ mờ bóng"
+        },
+        "vudioShadowColor": {
+          "label": "Màu bóng"
+        },
+        "vudioFadeSide": {
+          "label": "Làm mờ các cạnh"
+        },
+        "vudioPrettify": {
+          "label": "Làm đẹp",
+          "description": "Thu nhỏ dần các thanh về phía các cạnh"
+        },
+        "vudioDottify": {
+          "label": "Dạng chấm",
+          "description": "Vẽ các chấm thay vì một đường liên tục"
+        },
+        "vudioHorizontalAlign": {
+          "label": "Căn ngang"
+        },
+        "vudioVerticalAlign": {
+          "label": "Căn dọc"
+        }
+      }
+    },
+    "audio-only": {
+      "description": "Buộc chế độ chỉ phát âm thanh — chặn tất cả luồng video ở cấp mạng và trình phát để tiết kiệm RAM và băng thông",
+      "name": "Chỉ âm thanh"
+    },
+    "playback-recovery": {
+      "description": "Tự động khôi phục từ trạng thái phát bị treo, đơ hoặc chết",
+      "menu": {
+        "log-to-console": "Ghi nhật ký sự kiện khôi phục vào bảng điều khiển"
+      },
+      "name": "Khôi phục phát lại",
+      "settings": {
+        "stall-timeout": "Thời gian chờ khi phát bị kẹt",
+        "stall-timeout-description": "Thời gian tối đa phát không có tiến triển trước khi thực hiện khôi phục",
+        "max-retries": "Số lần thử lại tối đa",
+        "max-retries-description": "Số lần thử khôi phục trước khi chuyển sang bài tiếp theo"
       }
     },
     "playlist-search": {
@@ -1464,7 +1678,7 @@
     },
     "search-commands": {
       "commands": {
-        "play": "Phát video từ liên kết hoặc ID YouTube",
+        "play": "Phát video từ liên kết hoặc ID \u0059\u006f\u0075\u0054\u0075\u0062\u0065",
         "settings": "Mở cài đặt"
       },
       "description": "Nhập / vào ô tìm kiếm để chạy lệnh, có tự động hoàn thành đối số",
@@ -1473,7 +1687,15 @@
         "open-keybind": "Phím tắt mở",
         "open-keybind-description": "Tổ hợp phím kiểu Electron, ví dụ CmdOrCtrl+/ hoặc Alt+Space",
         "open-shortcut": "Mở ô tìm kiếm từ bất kỳ đâu",
-        "open-shortcut-description": "Gọi ô tìm kiếm đã ở chế độ lệnh, giống Spotlight. Nhấn lại để đóng."
+        "open-shortcut-description": "Gọi ô tìm kiếm đã ở chế độ lệnh, giống Spotlight. Nhấn lại để đóng.",
+        "openShortcut": {
+          "label": "Mở ô tìm kiếm từ bất kỳ đâu",
+          "description": "Gọi ô tìm kiếm đã ở chế độ lệnh, giống Spotlight. Nhấn lại để đóng."
+        },
+        "openKeybind": {
+          "label": "Phím tắt mở",
+          "description": "Tổ hợp phím kiểu Electron, ví dụ CmdOrCtrl+/ hoặc Alt+Space"
+        }
       }
     },
     "seek-shortcuts": {
@@ -1481,16 +1703,19 @@
       "name": "Phím tắt tua"
     },
     "sfw-music": {
-      "description": "Tự động bỏ qua các bài hát được YouTube Music đánh dấu là Explicit. Tạm dừng nếu hàng đợi toàn nội dung Explicit bị lặp lại hoặc không có bài tiếp theo.",
+      "description": "Tự động bỏ qua các bài hát được \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 đánh dấu là Explicit. Tạm dừng nếu hàng đợi toàn nội dung Explicit bị lặp lại hoặc không có bài tiếp theo.",
       "name": "Nhạc SFW"
     },
     "toast-autoclose": {
-      "description": "Tự động đóng thông báo nổi của YouTube Music sau ba giây",
+      "description": "Tự động đóng thông báo nổi của \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 sau ba giây",
       "name": "Tự đóng thông báo nổi"
     },
     "statusbar-lyrics": {
       "settings": {
-        "include-pronunciation": "Bao gồm cách phát âm"
+        "include-pronunciation": "Bao gồm cách phát âm",
+        "includePronunciation": {
+          "label": "Bao gồm cách phát âm"
+        }
       }
     },
     "dismiss-multidevice-popup": {
@@ -1502,7 +1727,11 @@
       "name": "Tiết kiệm bộ nhớ",
       "settings": {
         "threshold": "Ngưỡng bộ nhớ đệm",
-        "threshold-description": "Xóa bộ nhớ đệm khi bộ nhớ đang dùng vượt quá ngưỡng này trong lúc cửa sổ bị ẩn"
+        "threshold-description": "Xóa bộ nhớ đệm khi bộ nhớ đang dùng vượt quá ngưỡng này trong lúc cửa sổ bị ẩn",
+        "thresholdMB": {
+          "label": "Ngưỡng bộ nhớ đệm",
+          "description": "Xóa bộ nhớ đệm khi bộ nhớ đang dùng vượt quá ngưỡng này trong lúc cửa sổ bị ẩn"
+        }
       }
     }
   },
@@ -1531,7 +1760,7 @@
     "move-up": "Di chuyển lên",
     "move-down": "Di chuyển xuống",
     "about": {
-      "tagline": "Ứng dụng máy tính giàu tính năng cho YouTube Music",
+      "tagline": "Ứng dụng máy tính giàu tính năng cho \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063",
       "versions": "Phiên bản",
       "version-app": "Ứng dụng",
       "version-build": "Bản dựng",
@@ -1589,7 +1818,7 @@
     "stepper-decrement": "Giảm",
     "stepper-increment": "Tăng",
     "flags": {
-      "warning": "Cờ tính năng là các công tắc nội bộ của chính YouTube Music. Thay đổi chúng có thể làm hỏng tính năng phát lại, bố cục hoặc tài khoản, và chúng không được hỗ trợ. Các ghi đè chỉ được giữ cho những cờ bạn thay đổi và có thể xóa bằng Hoàn tác.",
+      "warning": "Cờ tính năng là các công tắc nội bộ của chính \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063. Thay đổi chúng có thể làm hỏng tính năng phát lại, bố cục hoặc tài khoản, và chúng không được hỗ trợ. Các ghi đè chỉ được giữ cho những cờ bạn thay đổi và có thể xóa bằng Hoàn tác.",
       "search-placeholder": "Tìm kiếm cờ",
       "overridden": "đã ghi đè",
       "undo": "Hoàn tác",
@@ -1634,7 +1863,11 @@
       "theme-preset": "Mẫu",
       "theme-variable-name": "Biến",
       "theme-variable-value": "Giá trị",
-      "theme-variable-add": "Thêm biến"
+      "theme-variable-add": "Thêm biến",
+      "performance-mode": "Chế độ hiệu năng",
+      "performance-mode-desc": "Đánh đổi một phần độ sắc nét hình ảnh để có hiệu suất kết xuất tốt hơn.",
+      "in-process-gpu": "Hợp nhất tiến trình GPU vào tiến trình ứng dụng",
+      "in-process-gpu-desc": "Thử nghiệm: tiết kiệm một tiến trình, nhưng chuyển bộ nhớ GPU vào tiến trình chính và có thể chuyển sang kết xuất bằng phần mềm."
     }
   }
 }

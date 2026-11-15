@@ -1,28 +1,30 @@
 # Styles and recolouring
 
-A theme's CSS does the visible work. The palette only exposes variables; the stylesheet decides which YouTube Music elements and custom properties consume them.
+A theme's CSS does the visible work. The palette only exposes variables; the stylesheet decides which YTM elements and custom properties consume them.
 
 ## Declaring stylesheets
 
-`css` may name one file or several. They are concatenated and injected in the declared order while the theme is selected, and removed when the user switches away.
+`css` may name one file or several. They are concatenated in the declared order into one constructed style sheet while the theme is selected, and removed when the user switches away.
 
 ```json
 { "name": "My Theme", "css": ["reset.css", "layout.css"] }
 ```
 
-Because the result is injected as a plain `<style>` element, `@import` and `url()` work as usual. Relative URLs are resolved against the page rather than the theme folder, so prefer absolute URLs or embed the needed data.
+The CSS is adopted through `document.adoptedStyleSheets`, after plugin sheets and before the palette and theme-script sheets (`packages/sdk/src/stylesheets.ts`). The cascade therefore lets the palette and a theme script override the theme's own rules, while plugins stay underneath.
 
-Target YouTube Music elements directly, for example `ytmusic-app-layout`, `ytmusic-player-bar` and `ytmusic-guide-renderer`. The palette variables are available as described in [Palettes and presets](./palettes.md), and recolouring YouTube Music is your stylesheet's job.
+`@import` and `url()` work as usual in a constructed style sheet, but relative URLs resolve against the page, not the theme folder. Use absolute URLs or embed the needed data.
 
-Multiple files are concatenated with a newline and applied together. A missing or unreadable declared file is dropped with a `[themes] could not read <path>, skipping` warning; the remaining files still load. See [Validation and loading](./manifest.md#validation-and-loading).
+Target YTM elements directly, for example `ytmusic-app-layout`, `ytmusic-player-bar` and `ytmusic-guide-renderer`. Recolouring YTM is your stylesheet's job; the palette variables are described in [Palettes and presets](./palettes.md).
 
-## Recolouring YouTube Music
+A missing or unreadable declared file is dropped with a `[themes] could not read <path>, skipping` warning; the remaining files still load. See [Validation and loading](./manifest.md#validation-and-loading).
 
-The engine does not recolour anything for you. The Basic theme ships the recolour as an ordinary `style.css`, and that file is the recipe to copy. Open **Options ▸ Visual Tweaks ▸ Theme ▸ Open themes folder**, copy `basic/style.css` into your theme folder and edit it, or declare your own rules.
+## Recolouring YTM
 
-Basic maps YouTube Music's CSS variables onto its four roles:
+The engine does not recolour anything for you. The Basic theme ships the recolour as an ordinary `style.css`, and that file is the recipe to copy. Open **Options ▸ Theme ▸ Open themes folder**, copy `basic/style.css` into your theme folder and edit it, or write your own rules.
 
-| Role | YouTube Music variable |
+Basic maps YTM's CSS variables onto its four roles:
+
+| Role | YTM variable |
 | --- | --- |
 | `background` | `--ytmusic-color-black3` |
 | `background` | `--ytmusic-color-black4` |
@@ -52,18 +54,18 @@ Basic maps YouTube Music's CSS variables onto its four roles:
 | `text` | `--ytmusic-text-primary` |
 | `text` | `--yt-sys-color-baseline--text-primary` |
 | `text` | `--ytmusic-overlay-text-secondary` (text at 70% opacity) |
-| `text` | `--ytmusic-icon-inactive` (via `--pear-theme-text-dim`) |
+| `text` | `--ytmusic-icon-inactive` (through `--pear-theme-text-dim`) |
 | `accent` | `--paper-progress-active-color` |
 | `accent` | `--yt-sys-color-baseline--call-to-action` |
 | `accent` | `--icon-color` |
-| `accent` | `--paper-toggle-button-checked-bar-color` (via `--pear-theme-accent-light`) |
+| `accent` | `--paper-toggle-button-checked-bar-color` (through `--pear-theme-accent-light`) |
 | `accent` | `--primary-color` |
 | `accent` | `--paper-progress-active-color-1` |
 | `accent` | `--paper-progress-active-color-2` |
 | `accent` | `--paper-slider-knob-color` |
 | `accent` | `--paper-slider-knob-start-color` |
 
-It also styles a few elements and their descendants directly:
+It also styles a few elements directly:
 
 | Selector | Property | Value |
 | --- | --- | --- |
@@ -75,23 +77,23 @@ It also styles a few elements and their descendants directly:
 | `.background-gradient.style-scope`, `ytmusic-app-layout[is-bauhaus-sidenav-enabled] #mini-guide-background.ytmusic-app-layout` | `background` | `--ytmusic-background` |
 | `#progress-bar.ytmusic-player-bar`, `.seekbar-theme #progress-bar.ytmusic-player-bar` | `--paper-progress-active-color-1`, `--paper-progress-active-color-2`, `--paper-slider-knob-color`, `--paper-slider-knob-start-color` | `--pear-theme-accent` |
 
-The declarations that repoint YouTube Music's variables, and the element rules, use `!important` because YouTube Music sets the same properties itself. The list is what Basic covers, not every variable YouTube Music exposes. Add your own rules for surfaces it misses and target the page's elements directly.
+The declarations that repoint YTM's variables and the element rules use `!important` because YTM sets the same properties itself. This list is what Basic covers, not every variable YTM exposes. Add rules for surfaces it misses and target the page's elements directly.
 
 ## Derived values
 
-Where YouTube Music wants a shade that the four roles do not carry, Basic derives one. These are ordinary custom properties readable from your own CSS, but they are **not emitted by the engine**. They are declared in Basic's stylesheet, so a theme with its own `style.css` has to define them, or copy Basic's rules, if it wants them:
+Where YTM wants a shade the four roles do not carry, Basic derives one. These are ordinary custom properties readable from your CSS, but they are not emitted by the engine. They are declared in Basic's `style.css`, so a theme with its own stylesheet must define them or copy Basic's rules if it wants them:
 
 | Variable | Definition | Used for |
 | --- | --- | --- |
 | `--pear-theme-accent-light` | `color-mix(in srgb, var(--pear-theme-accent) 65%, white)` | checked toggle bar |
 | `--pear-theme-text-dim` | `color-mix(in srgb, var(--pear-theme-text) 70%, black)` | inactive icons, player time, settings summary |
 
-`--ytmusic-overlay-text-secondary` is text at 70% opacity, `--paper-toggle-button-checked-bar-color` uses the lightened accent and `--ytmusic-icon-inactive` uses the darkened text. Palette keys are prefixed with `--pear-theme-`, so a palette entry named `accent-light` or `text-dim` produces `--pear-theme-accent-light` or `--pear-theme-text-dim` and overrides the stylesheet's derived value because the palette is injected after the theme CSS.
+A palette key named `accent-light` or `text-dim` produces the same property name and overrides the stylesheet's derived value, because the palette is emitted after the theme CSS.
 
-## Styling tips
+## Style tips
 
-- Use palette variables in your own rules rather than repeating colour literals.
-- Prefer YouTube Music's existing custom properties where possible so the theme follows the page's own layout.
-- Include `!important` when YouTube Music sets the same property itself, as Basic does for its variable mapping.
-- Remember that a palette change does not remount a theme script. DOM state created by `mount` survives a recolour, but stylesheet rules still apply immediately.
-- Use the browser console and the `[themes]` warnings described in [Testing and debugging](./debugging.md) when a rule or file is not taking effect.
+- Use palette variables in your rules rather than repeating colour literals.
+- Prefer YTM's existing custom properties so the theme follows the page's layout.
+- Include `!important` when YTM sets the same property itself, as Basic does for its variable mapping.
+- A palette change does not remount a theme script. DOM state created by `mount` survives a recolour, while stylesheet rules still apply immediately.
+- Use the browser console and the `[themes]` warnings described in [Testing and debugging](./debugging.md) when a rule or file has no effect.

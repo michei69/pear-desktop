@@ -156,8 +156,8 @@
               "sync": {
                 "label": "همگام‌سازی زبان",
                 "submenu": {
-                  "from-youtube": "از YouTube",
-                  "to-youtube": "به YouTube"
+                  "from-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "از \u0059\u006f\u0075\u0054\u0075\u0062\u0065",
+                  "to-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "به \u0059\u006f\u0075\u0054\u0075\u0062\u0065"
                 },
                 "failure": {
                   "dialog": {
@@ -229,7 +229,7 @@
                   "open-themes-folder": "باز کردن پوشهٔ پوسته‌ها"
                 }
               },
-              "use-ytm-icons": "استفاده از آیکون‌های اصلی YouTube Music"
+              "use-ytm-icons": "استفاده از آیکون‌های اصلی \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063"
             }
           },
           "updates": {
@@ -314,7 +314,15 @@
         },
         "enable-seekbar": "فعال‌سازی پوسته‌پذیری نوار پیمایش"
       },
-      "name": "تم رنگ آلبوم"
+      "name": "تم رنگ آلبوم",
+      "settings": {
+        "ratio": {
+          "label": "نسبت ترکیب رنگ"
+        },
+        "enableSeekbar": {
+          "label": "فعال‌سازی پوسته‌پذیری نوار پیمایش"
+        }
+      }
     },
     "ambient-mode": {
       "description": "اعمال یک اثر نوری با پخش رنگ‌های ملایم از ویدئو به پس‌زمینه صفحه نمایش شما",
@@ -497,6 +505,14 @@
         "caption-changed": "زیرنویس تغییر کرد به {{language}}",
         "caption-disabled": "زیرنویس غیرفعال شده",
         "no-captions": "برای این آهنگ زیرنویسی موجود نیست"
+      },
+      "settings": {
+        "autoload": {
+          "label": "به طور خودکار انتخاب آخرین زیرنویس استفاده شده"
+        },
+        "disableCaptions": {
+          "label": "بدون زیرنویس به صورت پیش‌فرض"
+        }
       }
     },
     "compact-sidebar": {
@@ -555,7 +571,12 @@
       "menu": {
         "apply-once": "فقط در شروع اعمال می‌شود"
       },
-      "name": "غیرفعال کردن پخش خودکار"
+      "name": "غیرفعال کردن پخش خودکار",
+      "settings": {
+        "applyOnce": {
+          "label": "فقط در شروع اعمال می‌شود"
+        }
+      }
     },
     "discord": {
       "backend": {
@@ -578,8 +599,8 @@
           "label": "متن وضعىت",
           "submenu": {
             "application": "به پىر دسکتاپ گوش مىکند",
-            "artist": "به {{artist}} گوش مىکند",
-            "title": "به {{songTitle}} گوش مىکند"
+            "artist": "به {artist} گوش مىکند",
+            "title": "به {song title} گوش مىکند"
           }
         }
       },
@@ -595,7 +616,38 @@
         "activity-timeout-enabled": "پاک کردن وضعیت حضور هنگام مکث",
         "activity-timeout-time": "پاک کردن پس از",
         "hide-github-button": "پنهان کردن دکمهٔ «مشاهده در GitHub»",
-        "hide-duration-left": "پنهان کردن زمان باقی‌مانده"
+        "hide-duration-left": "پنهان کردن زمان باقی‌مانده",
+        "autoReconnect": {
+          "label": "اتصال مجدد خودکار"
+        },
+        "activityTimeoutEnabled": {
+          "label": "پاک کردن وضعیت حضور هنگام مکث"
+        },
+        "activityTimeoutSeconds": {
+          "label": "پاک کردن پس از"
+        },
+        "playButton": {
+          "label": "پخش در یوتیوب موزیک"
+        },
+        "hideGitHubButton": {
+          "label": "پنهان کردن دکمهٔ «مشاهده در GitHub»"
+        },
+        "hideDurationLeft": {
+          "label": "پنهان کردن زمان باقی‌مانده"
+        },
+        "statusDisplayType": {
+          "label": "متن وضعىت",
+          "options": {
+            "name": "به پىر دسکتاپ گوش مىکند",
+            "state": "به {artist} گوش مىکند",
+            "details": "به {song title} گوش مىکند"
+          }
+        }
+      },
+      "actions": {
+        "clearActivity": {
+          "label": "پاک کردن فعالیت"
+        }
       }
     },
     "downloader": {
@@ -867,6 +919,23 @@
       "name": "تصویر در تصویر",
       "templates": {
         "button": "تصویر در تصویر"
+      },
+      "settings": {
+        "hotkey": {
+          "label": "کلید میانبر"
+        },
+        "useNativePiP": {
+          "label": "استفاده از حالت تصویر در تصویر اصلی مرورگر"
+        },
+        "alwaysOnTop": {
+          "label": "همیشه در بالا"
+        },
+        "savePosition": {
+          "label": "ذخیره موقعیت پنجره"
+        },
+        "saveSize": {
+          "label": "ذخیره اندازه پنجره"
+        }
       }
     },
     "playback-speed": {
@@ -902,10 +971,21 @@
         }
       },
       "settings": {
-        "steps": "گام صدا",
+        "steps": {
+          "label": "گام صدا"
+        },
         "arrows-shortcut": "میانبرهای کلیدهای جهت",
         "shortcut-up": "میانبر سراسری: افزایش صدا",
-        "shortcut-down": "میانبر سراسری: کاهش صدا"
+        "shortcut-down": "میانبر سراسری: کاهش صدا",
+        "arrowsShortcut": {
+          "label": "میانبرهای کلیدهای جهت"
+        },
+        "volumeUp": {
+          "label": "میانبر سراسری: افزایش صدا"
+        },
+        "volumeDown": {
+          "label": "میانبر سراسری: کاهش صدا"
+        }
       }
     },
     "quality-changer": {
@@ -1004,14 +1084,42 @@
       },
       "settings": {
         "global-keybinds": "میانبرهای سراسری (در کل برنامه کار می‌کنند)",
-        "local-keybinds": "میانبرهای محلی (فقط وقتی پنجره فعال است)"
+        "local-keybinds": "میانبرهای محلی (فقط وقتی پنجره فعال است)",
+        "playPause": {
+          "label": "پخش / توقف"
+        },
+        "localPlayPause": {
+          "label": "پخش / توقف"
+        },
+        "next": {
+          "label": "بعدی"
+        },
+        "localNext": {
+          "label": "بعدی"
+        },
+        "previous": {
+          "label": "قبلی"
+        },
+        "localPrevious": {
+          "label": "قبلی"
+        },
+        "overrideMediaKeys": {
+          "label": "تغییر عملکرد کلیدهای رسانه‌"
+        }
       }
+    },
+    "skip-disliked-songs": {
+      "description": "خودکار آهنگ های غیر موردعلاقه رد میشن",
+      "name": "رد آهنگ‌های غیر مورد علاقه"
     },
     "skip-silences": {
       "description": "رد خودکار بخش‌های بی صدا آهنگ ها",
       "name": "رد بخش‌های بی‌صدا",
       "settings": {
-        "only-skip-beginning": "فقط سکوت ابتدای آهنگ را رد کن"
+        "only-skip-beginning": "فقط سکوت ابتدای آهنگ را رد کن",
+        "onlySkipBeginning": {
+          "label": "فقط سکوت ابتدای آهنگ را رد کن"
+        }
       }
     },
     "sponsorblock": {
@@ -1027,7 +1135,28 @@
           "selfpromo": "خودتبلیغی",
           "music_offtopic": "بخش غیرموسیقی"
         },
-        "api-url": "نشانی API"
+        "api-url": "نشانی API",
+        "sponsor": {
+          "label": "حامی"
+        },
+        "intro": {
+          "label": "مقدمه"
+        },
+        "outro": {
+          "label": "پایان"
+        },
+        "interaction": {
+          "label": "یادآوری تعامل"
+        },
+        "selfpromo": {
+          "label": "خودتبلیغی"
+        },
+        "music_offtopic": {
+          "label": "بخش غیرموسیقی"
+        },
+        "apiURL": {
+          "label": "نشانی API"
+        }
       }
     },
     "synced-lyrics": {
@@ -1107,7 +1236,7 @@
         },
         "use-ytm-lyrics-without-proxy": {
           "label": "استفاده از ترانه‌های YTM بدون پروکسی",
-          "tooltip": "از پروکسی مرور YTM رد شوید و با استفاده از نشست احراز هویت‌شده برنامه، مستقیماً YouTube Music را فراخوانی کنید. اگر به شبکه/منطقه خود برای اجازه دادن به فراخوانی‌های مستقیم مرور اعتماد دارید، مفید است."
+          "tooltip": "از پروکسی مرور YTM رد شوید و با استفاده از نشست احراز هویت‌شده برنامه، مستقیماً \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 را فراخوانی کنید. اگر به شبکه/منطقه خود برای اجازه دادن به فراخوانی‌های مستقیم مرور اعتماد دارید، مفید است."
         },
         "convert-chinese-character": {
           "label": "تبدیل نویسه چینی",
@@ -1281,7 +1410,25 @@
       },
       "name": "پلىر شفاف",
       "settings": {
-        "type-description": "ماده پس‌زمینه استفاده‌شده برای شفافیت پنجره"
+        "type-description": "ماده پس‌زمینه استفاده‌شده برای شفافیت پنجره",
+        "opacity": {
+          "label": "تارى"
+        },
+        "type": {
+          "label": "نوع",
+          "description": "ماده پس‌زمینه استفاده‌شده برای شفافیت پنجره",
+          "options": {
+            "acrylic": "اکرىلىک",
+            "content": "محتوا",
+            "fullscreen-ui": "رابط کاربری تمام‌صفحه",
+            "mica": "مىکا",
+            "tabbed": "نوار دار",
+            "under-page": "زیر صفحه",
+            "under-window": "زیر پنجره",
+            "window": "پنجره",
+            "none": "هىچکدام"
+          }
+        }
       }
     },
     "tuna-obs": {
@@ -1317,6 +1464,27 @@
       "templates": {
         "button-song": "ترانه",
         "button-video": "ویدیو"
+      },
+      "settings": {
+        "mode": {
+          "label": "حالت",
+          "options": {
+            "custom": "حالت شخصی‌سازی شده",
+            "native": "حالت پیشفرض",
+            "disabled": "غیرفعال"
+          }
+        },
+        "align": {
+          "label": "چینش",
+          "options": {
+            "left": "چپ",
+            "middle": "میانه",
+            "right": "راست"
+          }
+        },
+        "forceHide": {
+          "label": "حذف اجباری تب ویدیو"
+        }
       }
     },
     "visualizer": {
@@ -1326,7 +1494,9 @@
       },
       "name": "نمایش‌دهنده تصویری",
       "settings": {
-        "preset": "پیش‌تنظیم",
+        "preset": {
+          "label": "پیش‌تنظیم"
+        },
         "blend-time": "زمان ترکیب",
         "effect": "جلوه",
         "accuracy": "دقت",
@@ -1342,7 +1512,45 @@
         "dottify": "نقطه‌سازی",
         "dottify-description": "به‌جای خط پیوسته، نقطه رسم می‌کند",
         "horizontal-align": "تراز افقی",
-        "vertical-align": "تراز عمودی"
+        "vertical-align": "تراز عمودی",
+        "blendTimeInSeconds": {
+          "label": "زمان ترکیب"
+        },
+        "vudioMaxHeight": {
+          "label": "حداکثر ارتفاع"
+        },
+        "vudioMaxSize": {
+          "label": "حداکثر اندازه"
+        },
+        "vudioLineWidth": {
+          "label": "عرض خط"
+        },
+        "vudioColor": {
+          "label": "رنگ"
+        },
+        "vudioShadowBlur": {
+          "label": "محو سایه"
+        },
+        "vudioShadowColor": {
+          "label": "رنگ سایه"
+        },
+        "vudioFadeSide": {
+          "label": "محو شدن کناره‌ها"
+        },
+        "vudioPrettify": {
+          "label": "زیباسازی",
+          "description": "میله‌ها را به سمت لبه‌ها باریک می‌کند"
+        },
+        "vudioDottify": {
+          "label": "نقطه‌سازی",
+          "description": "به‌جای خط پیوسته، نقطه رسم می‌کند"
+        },
+        "vudioHorizontalAlign": {
+          "label": "تراز افقی"
+        },
+        "vudioVerticalAlign": {
+          "label": "تراز عمودی"
+        }
       }
     },
     "audio-only": {
@@ -1364,7 +1572,13 @@
         }
       },
       "settings": {
-        "hour-12": "استفاده از قالب ۱۲ ساعته"
+        "hour-12": "استفاده از قالب ۱۲ ساعته",
+        "displaySeconds": {
+          "label": "نمایش ثانیه‌ها"
+        },
+        "hour12": {
+          "label": "استفاده از قالب ۱۲ ساعته"
+        }
       }
     },
     "do-not-track": {
@@ -1417,7 +1631,7 @@
     },
     "search-commands": {
       "commands": {
-        "play": "پخش ویدئو از پیوند یا شناسه YouTube",
+        "play": "پخش ویدئو از پیوند یا شناسه \u0059\u006f\u0075\u0054\u0075\u0062\u0065",
         "settings": "باز کردن تنظیمات"
       },
       "description": "در جعبه جستجو / را تایپ کنید تا فرمان‌ها اجرا شوند، با تکمیل خودکار برای آرگومان‌هایشان",
@@ -1426,7 +1640,15 @@
         "open-keybind": "میانبر باز کردن",
         "open-keybind-description": "کلید ترکیبی به سبک Electron، مثلاً CmdOrCtrl+/ یا Alt+Space",
         "open-shortcut": "باز کردن جعبه جستجو از هر جا",
-        "open-shortcut-description": "جعبه جستجو را مستقیماً در حالت فرمان فرا می‌خواند، مانند Spotlight. فشردن دوباره آن را می‌بندد."
+        "open-shortcut-description": "جعبه جستجو را مستقیماً در حالت فرمان فرا می‌خواند، مانند Spotlight. فشردن دوباره آن را می‌بندد.",
+        "openShortcut": {
+          "label": "باز کردن جعبه جستجو از هر جا",
+          "description": "جعبه جستجو را مستقیماً در حالت فرمان فرا می‌خواند، مانند Spotlight. فشردن دوباره آن را می‌بندد."
+        },
+        "openKeybind": {
+          "label": "میانبر باز کردن",
+          "description": "کلید ترکیبی به سبک Electron، مثلاً CmdOrCtrl+/ یا Alt+Space"
+        }
       }
     },
     "seek-shortcuts": {
@@ -1434,16 +1656,19 @@
       "name": "میانبرهای جابه‌جایی"
     },
     "sfw-music": {
-      "description": "به‌طور خودکار از آهنگ‌هایی که YouTube Music آن‌ها را Explicit علامت زده رد می‌شود. اگر صف آهنگ‌های Explicit تکرار شود یا آهنگ بعدی موجود نباشد، مکث می‌کند.",
+      "description": "به‌طور خودکار از آهنگ‌هایی که \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 آن‌ها را Explicit علامت زده رد می‌شود. اگر صف آهنگ‌های Explicit تکرار شود یا آهنگ بعدی موجود نباشد، مکث می‌کند.",
       "name": "موسیقی SFW"
     },
     "toast-autoclose": {
-      "description": "بستن خودکار اعلان‌های YouTube Music پس از سه ثانیه",
+      "description": "بستن خودکار اعلان‌های \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 پس از سه ثانیه",
       "name": "بستن خودکار اعلان"
     },
     "statusbar-lyrics": {
       "settings": {
-        "include-pronunciation": "شامل تلفظ"
+        "include-pronunciation": "شامل تلفظ",
+        "includePronunciation": {
+          "label": "شامل تلفظ"
+        }
       }
     },
     "dismiss-multidevice-popup": {
@@ -1455,7 +1680,11 @@
       "name": "صرفه‌جوی حافظه",
       "settings": {
         "threshold": "آستانه حافظه نهان",
-        "threshold-description": "وقتی پنجره پنهان است، هرگاه حافظه زنده حافظه‌های نهان از این مقدار بیشتر شد، آن‌ها را پاک کنید."
+        "threshold-description": "وقتی پنجره پنهان است، هرگاه حافظه زنده حافظه‌های نهان از این مقدار بیشتر شد، آن‌ها را پاک کنید.",
+        "thresholdMB": {
+          "label": "آستانه حافظه نهان",
+          "description": "وقتی پنجره پنهان است، هرگاه حافظه زنده حافظه‌های نهان از این مقدار بیشتر شد، آن‌ها را پاک کنید."
+        }
       }
     }
   },
@@ -1587,7 +1816,11 @@
       "theme-preset": "پیش‌تنظیم",
       "theme-variable-name": "متغیر",
       "theme-variable-value": "مقدار",
-      "theme-variable-add": "افزودن متغیر"
+      "theme-variable-add": "افزودن متغیر",
+      "performance-mode": "حالت کارایی",
+      "performance-mode-desc": "کمی از کیفیت بصری را برای رندر سبک‌تر فدا کنید.",
+      "in-process-gpu": "ادغام فرایند GPU در فرایند برنامه",
+      "in-process-gpu-desc": "آزمایشی: یک فرایند را ذخیره می‌کند، اما حافظه GPU را به فرایند اصلی منتقل می‌کند و ممکن است به رندر نرم‌افزاری بازگردد."
     }
   }
 }

@@ -156,8 +156,8 @@
               "sync": {
                 "label": "Dili eşitle",
                 "submenu": {
-                  "from-youtube": "YouTube'dan",
-                  "to-youtube": "YouTube'a"
+                  "from-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "\u0059\u006f\u0075\u0054\u0075\u0062\u0065'dan",
+                  "to-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "\u0059\u006f\u0075\u0054\u0075\u0062\u0065'a"
                 },
                 "failure": {
                   "dialog": {
@@ -229,7 +229,7 @@
                   "open-themes-folder": "Tema klasörünü aç"
                 }
               },
-              "use-ytm-icons": "Orijinal YouTube Music simgelerini kullan"
+              "use-ytm-icons": "Orijinal \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 simgelerini kullan"
             }
           },
           "updates": {
@@ -314,7 +314,15 @@
         },
         "enable-seekbar": "Arama çubuğu temalarını etkinleştir"
       },
-      "name": "Albüm Renk Teması"
+      "name": "Albüm Renk Teması",
+      "settings": {
+        "ratio": {
+          "label": "Renk karışım oranı"
+        },
+        "enableSeekbar": {
+          "label": "Arama çubuğu temalarını etkinleştir"
+        }
+      }
     },
     "ambient-mode": {
       "description": "Videodaki yumuşak renkleri ekranınızın arka planına yansıtarak bir ışık efekti uygular",
@@ -412,7 +420,7 @@
           }
         },
         "port": {
-          "label": "Bağlantı Noktası"
+          "label": "Port"
         },
         "mcp": {
           "label": "MCP sunucusu",
@@ -453,7 +461,7 @@
           "label": "Ana makine adı"
         },
         "port": {
-          "label": "Bağlantı Noktası"
+          "label": "Port"
         }
       },
       "name": "Ara Sunucu Doğrulama Bağdaştırıcısı",
@@ -497,6 +505,14 @@
         "caption-changed": "Başlık {{language}} olarak değiştirildi",
         "caption-disabled": "Altyazılar devre dışı",
         "no-captions": "Bu şarkı için altyazı mevcut değil"
+      },
+      "settings": {
+        "autoload": {
+          "label": "Son kullanılan altyazıyı otomatik olarak seç"
+        },
+        "disableCaptions": {
+          "label": "Varsayılan olarak altyazı yok"
+        }
       }
     },
     "clock": {
@@ -505,12 +521,18 @@
         "format": {
           "24-hour-format": "24-Saat Formatı",
           "display-seconds": "Saniyeleri Göster",
-          "label": "Biçim"
+          "label": "Format"
         }
       },
       "name": "Saat",
       "settings": {
-        "hour-12": "12 saatlik biçim kullan"
+        "hour-12": "12 saatlik biçim kullan",
+        "displaySeconds": {
+          "label": "Saniyeleri Göster"
+        },
+        "hour12": {
+          "label": "12 saatlik biçim kullan"
+        }
       }
     },
     "compact-sidebar": {
@@ -569,7 +591,12 @@
       "menu": {
         "apply-once": "Yalnızca ilk şarkı için geçerlidir"
       },
-      "name": "Otomatik oynatmayı devre dışı bırak"
+      "name": "Otomatik oynatmayı devre dışı bırak",
+      "settings": {
+        "applyOnce": {
+          "label": "Yalnızca ilk şarkı için geçerlidir"
+        }
+      }
     },
     "discord": {
       "backend": {
@@ -592,8 +619,8 @@
           "label": "Durum metni",
           "submenu": {
             "application": "{{applicationName}} Dinleniyor",
-            "artist": "{{artist}} Dinleniyor",
-            "title": "{{songTitle}} Dinleniyor"
+            "artist": "{artist} Dinleniyor",
+            "title": "{song title} Dinleniyor"
           }
         }
       },
@@ -609,7 +636,38 @@
         "activity-timeout-enabled": "Duraklatıldığında durumu temizle",
         "activity-timeout-time": "Şu süreden sonra temizle",
         "hide-github-button": "“GitHub'da Görüntüle” düğmesini gizle",
-        "hide-duration-left": "Kalan süreyi gizle"
+        "hide-duration-left": "Kalan süreyi gizle",
+        "autoReconnect": {
+          "label": "Otomatik yeniden bağlan"
+        },
+        "activityTimeoutEnabled": {
+          "label": "Duraklatıldığında durumu temizle"
+        },
+        "activityTimeoutSeconds": {
+          "label": "Şu süreden sonra temizle"
+        },
+        "playButton": {
+          "label": "{{applicationName}} de oynat"
+        },
+        "hideGitHubButton": {
+          "label": "“GitHub'da Görüntüle” düğmesini gizle"
+        },
+        "hideDurationLeft": {
+          "label": "Kalan süreyi gizle"
+        },
+        "statusDisplayType": {
+          "label": "Durum metni",
+          "options": {
+            "name": "{{applicationName}} Dinleniyor",
+            "state": "{artist} Dinleniyor",
+            "details": "{song title} Dinleniyor"
+          }
+        }
+      },
+      "actions": {
+        "clearActivity": {
+          "label": "Etkinliği temizle"
+        }
       }
     },
     "do-not-track": {
@@ -900,6 +958,23 @@
       "name": "Resim-içinde-resim",
       "templates": {
         "button": "Resim-içinde-resim"
+      },
+      "settings": {
+        "hotkey": {
+          "label": "Kısayol"
+        },
+        "useNativePiP": {
+          "label": "Tarayıcı yerel PiP'sini kullan"
+        },
+        "alwaysOnTop": {
+          "label": "Her zaman üstte"
+        },
+        "savePosition": {
+          "label": "Pencere konumunu kaydet"
+        },
+        "saveSize": {
+          "label": "Pencere boyutunu kaydet"
+        }
       }
     },
     "playback-speed": {
@@ -935,10 +1010,21 @@
         }
       },
       "settings": {
-        "steps": "Ses adımı",
+        "steps": {
+          "label": "Ses adımı"
+        },
         "arrows-shortcut": "Ok tuşu kısayolları",
         "shortcut-up": "Genel kısayol: sesi artır",
-        "shortcut-down": "Genel kısayol: sesi azalt"
+        "shortcut-down": "Genel kısayol: sesi azalt",
+        "arrowsShortcut": {
+          "label": "Ok tuşu kısayolları"
+        },
+        "volumeUp": {
+          "label": "Genel kısayol: sesi artır"
+        },
+        "volumeDown": {
+          "label": "Genel kısayol: sesi azalt"
+        }
       }
     },
     "quality-changer": {
@@ -1037,14 +1123,42 @@
       },
       "settings": {
         "global-keybinds": "Genel tuş bağlamaları (uygulama genelinde çalışır)",
-        "local-keybinds": "Yerel tuş bağlamaları (yalnızca pencere odaktayken)"
+        "local-keybinds": "Yerel tuş bağlamaları (yalnızca pencere odaktayken)",
+        "playPause": {
+          "label": "Oynat / Durdur"
+        },
+        "localPlayPause": {
+          "label": "Oynat / Durdur"
+        },
+        "next": {
+          "label": "İler"
+        },
+        "localNext": {
+          "label": "İler"
+        },
+        "previous": {
+          "label": "Önceki"
+        },
+        "localPrevious": {
+          "label": "Önceki"
+        },
+        "overrideMediaKeys": {
+          "label": "Medya Tuşlarını Geçersiz Kıl"
+        }
       }
+    },
+    "skip-disliked-songs": {
+      "description": "Beğenmediğin şarkıları atlar",
+      "name": "Beğenmediklerini Atla"
     },
     "skip-silences": {
       "description": "Şarkılardaki sessiz bölümleri otomatik olarak atlar",
       "name": "Sessizlikleri Atla",
       "settings": {
-        "only-skip-beginning": "Yalnızca parçanın başlangıcındaki sessizliği atla"
+        "only-skip-beginning": "Yalnızca parçanın başlangıcındaki sessizliği atla",
+        "onlySkipBeginning": {
+          "label": "Yalnızca parçanın başlangıcındaki sessizliği atla"
+        }
       }
     },
     "sponsorblock": {
@@ -1060,7 +1174,28 @@
           "selfpromo": "Kendini tanıtma",
           "music_offtopic": "Müzik dışı bölüm"
         },
-        "api-url": "API URL'si"
+        "api-url": "API URL'si",
+        "sponsor": {
+          "label": "Sponsor"
+        },
+        "intro": {
+          "label": "Giriş"
+        },
+        "outro": {
+          "label": "Çıkış"
+        },
+        "interaction": {
+          "label": "Etkileşim hatırlatması"
+        },
+        "selfpromo": {
+          "label": "Kendini tanıtma"
+        },
+        "music_offtopic": {
+          "label": "Müzik dışı bölüm"
+        },
+        "apiURL": {
+          "label": "API URL'si"
+        }
       }
     },
     "synced-lyrics": {
@@ -1114,24 +1249,6 @@
           },
           "tooltip": "Geçerli satıra uygulanacak efekti seçin"
         },
-        "lyrics-font-size": {
-          "label": "Şarkı sözü yazı tipi boyutu",
-          "submenu": {
-            "large": {
-              "label": "Büyük",
-              "tooltip": "Orijinal daha büyük şarkı sözü boyutunu kullan"
-            },
-            "medium": {
-              "label": "Orta",
-              "tooltip": "Dengeli bir şarkı sözü boyutu kullan"
-            },
-            "small": {
-              "label": "Küçük",
-              "tooltip": "Daha kompakt bir şarkı sözü boyutu kullan"
-            }
-          },
-          "tooltip": "Şarkı sözü metninin ne kadar büyük olacağını seçin"
-        },
         "precise-timing": {
           "label": "Şarkı sözlerini mükemmel şekilde senkronize edin",
           "tooltip": "Bir sonraki satırın görüntülenmesini milisaniyesine kadar hesaplayın (performans üzerinde küçük bir etkisi olabilir)"
@@ -1155,6 +1272,24 @@
         "show-time-codes": {
           "label": "Zaman kodlarını göster",
           "tooltip": "Şarkı sözlerinin yanında zaman kodlarını gösterin"
+        },
+        "lyrics-font-size": {
+          "label": "Şarkı sözü yazı tipi boyutu",
+          "submenu": {
+            "large": {
+              "label": "Büyük",
+              "tooltip": "Orijinal daha büyük şarkı sözü boyutunu kullan"
+            },
+            "medium": {
+              "label": "Orta",
+              "tooltip": "Dengeli bir şarkı sözü boyutu kullan"
+            },
+            "small": {
+              "label": "Küçük",
+              "tooltip": "Daha kompakt bir şarkı sözü boyutu kullan"
+            }
+          },
+          "tooltip": "Şarkı sözü metninin ne kadar büyük olacağını seçin"
         },
         "translation": {
           "clear-cache": {
@@ -1269,7 +1404,7 @@
         },
         "use-ytm-lyrics-without-proxy": {
           "label": "YTM şarkı sözlerini proxy olmadan kullan",
-          "tooltip": "YTM tarama proxy'sini atla ve uygulamanın kimliği doğrulanmış oturumunu kullanarak doğrudan YouTube Music'i çağır. Ağınıza/bölgenize güveniyorsanız ve doğrudan tarama çağrılarına izin veriyorsanız kullanışlıdır."
+          "tooltip": "YTM tarama proxy'sini atla ve uygulamanın kimliği doğrulanmış oturumunu kullanarak doğrudan \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063'i çağır. Ağınıza/bölgenize güveniyorsanız ve doğrudan tarama çağrılarına izin veriyorsanız kullanışlıdır."
         },
         "show-custom-search-button": {
           "label": "Özel arama düğmesini göster",
@@ -1361,7 +1496,25 @@
       },
       "name": "Şeffaf Oynatıcı",
       "settings": {
-        "type-description": "Pencere saydamlığı için kullanılan arka plan malzemesi"
+        "type-description": "Pencere saydamlığı için kullanılan arka plan malzemesi",
+        "opacity": {
+          "label": "Opaklık"
+        },
+        "type": {
+          "label": "Tür",
+          "description": "Pencere saydamlığı için kullanılan arka plan malzemesi",
+          "options": {
+            "acrylic": "Akrilik",
+            "content": "İçerik",
+            "fullscreen-ui": "Tam Ekran Kullanıcı Arayüzü",
+            "mica": "Mika",
+            "tabbed": "Sekmeli",
+            "under-page": "Sayfanın alt kısmı",
+            "under-window": "Pencerenin alt kısmı",
+            "window": "Pencere",
+            "none": "Hiçbiri"
+          }
+        }
       }
     },
     "tuna-obs": {
@@ -1397,6 +1550,27 @@
       "templates": {
         "button-song": "Şarkı",
         "button-video": "Video"
+      },
+      "settings": {
+        "mode": {
+          "label": "Mod",
+          "options": {
+            "custom": "Özel Ayar",
+            "native": "Yerel geçiş",
+            "disabled": "Devre dışı"
+          }
+        },
+        "align": {
+          "label": "Hizalama",
+          "options": {
+            "left": "Sol",
+            "middle": "Orta",
+            "right": "Sağ"
+          }
+        },
+        "forceHide": {
+          "label": "Video sekmesini kaldırmaya zorla"
+        }
       }
     },
     "visualizer": {
@@ -1406,7 +1580,9 @@
       },
       "name": "Görselleştirici",
       "settings": {
-        "preset": "Ön ayar",
+        "preset": {
+          "label": "Ön ayar"
+        },
         "blend-time": "Karışım süresi",
         "effect": "Efekt",
         "accuracy": "Doğruluk",
@@ -1422,7 +1598,45 @@
         "dottify": "Noktalı yap",
         "dottify-description": "Sürekli çizgi yerine noktalar çiz",
         "horizontal-align": "Yatay hizalama",
-        "vertical-align": "Dikey hizalama"
+        "vertical-align": "Dikey hizalama",
+        "blendTimeInSeconds": {
+          "label": "Karışım süresi"
+        },
+        "vudioMaxHeight": {
+          "label": "Maksimum yükseklik"
+        },
+        "vudioMaxSize": {
+          "label": "Maksimum boyut"
+        },
+        "vudioLineWidth": {
+          "label": "Çizgi genişliği"
+        },
+        "vudioColor": {
+          "label": "Renk"
+        },
+        "vudioShadowBlur": {
+          "label": "Gölge bulanıklığı"
+        },
+        "vudioShadowColor": {
+          "label": "Gölge rengi"
+        },
+        "vudioFadeSide": {
+          "label": "Kenarları soluklaştır"
+        },
+        "vudioPrettify": {
+          "label": "Güzelleştir",
+          "description": "Çubukları kenarlara doğru incelt"
+        },
+        "vudioDottify": {
+          "label": "Noktalı yap",
+          "description": "Sürekli çizgi yerine noktalar çiz"
+        },
+        "vudioHorizontalAlign": {
+          "label": "Yatay hizalama"
+        },
+        "vudioVerticalAlign": {
+          "label": "Dikey hizalama"
+        }
       }
     },
     "audio-only": {
@@ -1464,7 +1678,7 @@
     },
     "search-commands": {
       "commands": {
-        "play": "Bir YouTube bağlantısından veya kimliğinden video oynat",
+        "play": "Bir \u0059\u006f\u0075\u0054\u0075\u0062\u0065 bağlantısından veya kimliğinden video oynat",
         "settings": "Ayarları aç"
       },
       "description": "Komutları çalıştırmak için arama kutusuna / yazın; bağımsız değişkenleri için otomatik tamamlama vardır",
@@ -1473,7 +1687,15 @@
         "open-keybind": "Açma kısayolu",
         "open-keybind-description": "Electron tarzı hızlandırıcı, örn. CmdOrCtrl+/ veya Alt+Space",
         "open-shortcut": "Arama kutusunu her yerden aç",
-        "open-shortcut-description": "Spotlight gibi, arama kutusunu doğrudan komut modunda açar. Tekrar basıldığında kapanır."
+        "open-shortcut-description": "Spotlight gibi, arama kutusunu doğrudan komut modunda açar. Tekrar basıldığında kapanır.",
+        "openShortcut": {
+          "label": "Arama kutusunu her yerden aç",
+          "description": "Spotlight gibi, arama kutusunu doğrudan komut modunda açar. Tekrar basıldığında kapanır."
+        },
+        "openKeybind": {
+          "label": "Açma kısayolu",
+          "description": "Electron tarzı hızlandırıcı, örn. CmdOrCtrl+/ veya Alt+Space"
+        }
       }
     },
     "seek-shortcuts": {
@@ -1481,16 +1703,19 @@
       "name": "Sarma Kısayolları"
     },
     "sfw-music": {
-      "description": "YouTube Music tarafından Müstehcen olarak işaretlenen şarkıları otomatik olarak atlar. Müstehcen bir kuyruk tekrarlanırsa veya sonraki şarkı yoksa duraklatır.",
+      "description": "\u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 tarafından Müstehcen olarak işaretlenen şarkıları otomatik olarak atlar. Müstehcen bir kuyruk tekrarlanırsa veya sonraki şarkı yoksa duraklatır.",
       "name": "SFW Müzik"
     },
     "toast-autoclose": {
-      "description": "YouTube Music bildirimlerini üç saniye sonra otomatik olarak kapat",
+      "description": "\u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 bildirimlerini üç saniye sonra otomatik olarak kapat",
       "name": "Bildirim Otomatik Kapanması"
     },
     "statusbar-lyrics": {
       "settings": {
-        "include-pronunciation": "Telaffuzu dahil et"
+        "include-pronunciation": "Telaffuzu dahil et",
+        "includePronunciation": {
+          "label": "Telaffuzu dahil et"
+        }
       }
     },
     "dismiss-multidevice-popup": {
@@ -1502,7 +1727,11 @@
       "name": "Bellek Tasarrufu",
       "settings": {
         "threshold": "Önbellek eşiği",
-        "threshold-description": "Pencere gizliyken canlı bellek kullanımı bunu aştığında önbellekleri temizle"
+        "threshold-description": "Pencere gizliyken canlı bellek kullanımı bunu aştığında önbellekleri temizle",
+        "thresholdMB": {
+          "label": "Önbellek eşiği",
+          "description": "Pencere gizliyken canlı bellek kullanımı bunu aştığında önbellekleri temizle"
+        }
       }
     }
   },
@@ -1531,7 +1760,7 @@
     "move-up": "Yukarı taşı",
     "move-down": "Aşağı taşı",
     "about": {
-      "tagline": "YouTube Music için özelliklerle dolu bir masaüstü uygulaması",
+      "tagline": "\u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 için özelliklerle dolu bir masaüstü uygulaması",
       "versions": "Sürümler",
       "version-app": "Uygulama",
       "version-build": "Derleme",
@@ -1589,7 +1818,7 @@
     "stepper-decrement": "Azalt",
     "stepper-increment": "Artır",
     "flags": {
-      "warning": "Özellik bayrakları YouTube Music'in kendi dahili anahtarlarıdır. Bunları değiştirmek oynatmayı, düzeni veya hesap özelliklerini bozabilir ve destek kapsamında değildir. Geçersiz kılmalar yalnızca değiştirdiğiniz bayraklar için saklanır ve Geri Al ile kaldırılabilir.",
+      "warning": "Özellik bayrakları \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063'in kendi dahili anahtarlarıdır. Bunları değiştirmek oynatmayı, düzeni veya hesap özelliklerini bozabilir ve destek kapsamında değildir. Geçersiz kılmalar yalnızca değiştirdiğiniz bayraklar için saklanır ve Geri Al ile kaldırılabilir.",
       "search-placeholder": "Bayraklarda ara",
       "overridden": "geçersiz kılındı",
       "undo": "Geri al",
@@ -1634,7 +1863,11 @@
       "theme-preset": "Ön ayar",
       "theme-variable-name": "Değişken",
       "theme-variable-value": "Değer",
-      "theme-variable-add": "Değişken ekle"
+      "theme-variable-add": "Değişken ekle",
+      "performance-mode": "Performans modu",
+      "performance-mode-desc": "Daha düşük işleme maliyeti karşılığında görsel kaliteden biraz ödün verin.",
+      "in-process-gpu": "GPU sürecini uygulama süreciyle birleştir",
+      "in-process-gpu-desc": "Deneysel: bir süreçten tasarruf sağlar, ancak GPU belleğini ana sürece taşır ve yazılım tabanlı işlemeye geri dönebilir."
     }
   }
 }

@@ -156,8 +156,8 @@
               "sync": {
                 "label": "Sinkronkan bahasa",
                 "submenu": {
-                  "from-youtube": "Dari YouTube",
-                  "to-youtube": "Ke YouTube"
+                  "from-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "Dari \u0059\u006f\u0075\u0054\u0075\u0062\u0065",
+                  "to-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "Ke \u0059\u006f\u0075\u0054\u0075\u0062\u0065"
                 },
                 "failure": {
                   "dialog": {
@@ -181,27 +181,27 @@
               "disabled": "Dinonaktifkan",
               "enabled-and-hide-app": "Mengaktifkan dan menyembunyikan aplikasi",
               "enabled-and-show-app": "Mengaktifkan dan menampilkan aplikasi",
-              "move-to-current-desktop": "Pindah ke desktop virtual saat ini saat ditampilkan",
               "play-pause-on-click": "Putar/Jeda dengan klik",
+              "move-to-current-desktop": "Pindah ke desktop virtual saat ini saat ditampilkan",
               "force-white-icons": "Paksa penggunaan ikon putih"
             }
           },
           "visual-tweaks": {
             "label": "Penyesuaian Visual",
             "submenu": {
-              "like-buttons": {
-                "default": "Standar",
-                "force-show": "Pertunjukan paksa",
-                "hide": "Sembunyikan",
-                "swap": "Tukar urutan tombol suka",
-                "label": "Tombol suka"
-              },
               "custom-window-title": {
                 "label": "Judul jendela kustom",
                 "prompt": {
                   "label": "Masukkan judul jendela kustom (kosongkan untuk menonaktifkan)",
                   "placeholder": "Contoh: {{applicationName}}"
                 }
+              },
+              "like-buttons": {
+                "default": "Standar",
+                "force-show": "Pertunjukan paksa",
+                "hide": "Sembunyikan",
+                "label": "Tombol suka",
+                "swap": "Tukar urutan tombol suka"
               },
               "remove-upgrade-button": "Hapus tombol peningkatan",
               "theme": {
@@ -229,7 +229,7 @@
                   "open-themes-folder": "Buka folder tema"
                 }
               },
-              "use-ytm-icons": "Gunakan ikon YouTube Music asli"
+              "use-ytm-icons": "Gunakan ikon \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 asli"
             }
           },
           "updates": {
@@ -314,7 +314,15 @@
         },
         "enable-seekbar": "Aktifkan tema seekbar"
       },
-      "name": "Tema Warna Album"
+      "name": "Tema Warna Album",
+      "settings": {
+        "ratio": {
+          "label": "Rasio campuran warna"
+        },
+        "enableSeekbar": {
+          "label": "Aktifkan tema seekbar"
+        }
+      }
     },
     "ambient-mode": {
       "description": "Menerapkan efek pencahayaan dengan memancarkan warna-warna lembut dari video, ke dalam latar belakang layar Anda",
@@ -395,31 +403,31 @@
         "hostname": {
           "label": "Nama host"
         },
-        "port": {
-          "label": "Port"
-        },
         "https": {
           "label": "HTTPS & Sertifikat",
           "submenu": {
+            "cert": {
+              "dialogTitle": "Pilih berkas sertifikat HTTPS",
+              "label": "Berkas sertifikat (.crt/.pem)"
+            },
             "enable-https": {
               "label": "Aktifkan HTTPS"
             },
-            "cert": {
-              "label": "Berkas sertifikat (.crt/.pem)",
-              "dialogTitle": "Pilih berkas sertifikat HTTPS"
-            },
             "key": {
-              "label": "Berkas kunci privat (.key/.pem)",
-              "dialogTitle": "Pilih berkas kunci privat HTTPS"
+              "dialogTitle": "Pilih berkas kunci privat HTTPS",
+              "label": "Berkas kunci privat (.key/.pem)"
             }
           }
+        },
+        "port": {
+          "label": "Port"
         },
         "mcp": {
           "label": "Server MCP",
           "description": "Sajikan API v2 sebagai alat MCP di /mcp. Menggunakan otorisasi yang sama dengan API lainnya."
         }
       },
-      "name": "Server API [Beta]",
+      "name": "API Server [Beta]",
       "prompt": {
         "hostname": {
           "label": "Masukkan nama host (seperti 0.0.0.0) untuk server API:",
@@ -459,12 +467,12 @@
       "name": "Adapter Proxy Autentikasi",
       "prompt": {
         "hostname": {
-          "title": "Proxy Nama host",
-          "label": "Masukkan nama host untuk server proxy lokal (memerlukan restart):"
+          "label": "Masukkan nama host untuk server proxy lokal (memerlukan restart):",
+          "title": "Proxy Nama host"
         },
         "port": {
-          "title": "Port Proxy",
-          "label": "Masukkan port untuk server proxy lokal (memerlukan restart):"
+          "label": "Masukkan port untuk server proxy lokal (memerlukan restart):",
+          "title": "Port Proxy"
         }
       }
     },
@@ -497,20 +505,34 @@
         "caption-changed": "caption diganti ke bahasa {{language}}",
         "caption-disabled": "Caption dinonaktifkan",
         "no-captions": "tidak tersedia caption untuk lagu ini"
+      },
+      "settings": {
+        "autoload": {
+          "label": "Pilih caption terakhir secara otomatis"
+        },
+        "disableCaptions": {
+          "label": "Tidak ada caption secara default"
+        }
       }
     },
     "clock": {
       "description": "Tambahkan jam ke bilah navigasi",
-      "name": "Jam",
       "menu": {
         "format": {
-          "label": "Format",
+          "24-hour-format": "Format 24 jam",
           "display-seconds": "Tampilkan detik",
-          "24-hour-format": "Format 24 jam"
+          "label": "Format"
         }
       },
+      "name": "Jam",
       "settings": {
-        "hour-12": "Gunakan format 12 jam"
+        "hour-12": "Gunakan format 12 jam",
+        "displaySeconds": {
+          "label": "Tampilkan detik"
+        },
+        "hour12": {
+          "label": "Gunakan format 12 jam"
+        }
       }
     },
     "compact-sidebar": {
@@ -569,7 +591,12 @@
       "menu": {
         "apply-once": "Hanya terapkan pada saat startup"
       },
-      "name": "Matikan Autoplay"
+      "name": "Matikan Autoplay",
+      "settings": {
+        "applyOnce": {
+          "label": "Hanya terapkan pada saat startup"
+        }
+      }
     },
     "discord": {
       "backend": {
@@ -592,8 +619,8 @@
           "label": "Teks status",
           "submenu": {
             "application": "Sedang mendengarkan {{applicationName}}",
-            "artist": "Sedang mendengarkan {{artist}}",
-            "title": "Sedang mendengarkan {{songTitle}}"
+            "artist": "Sedang mendengarkan {artist}",
+            "title": "Sedang mendengarkan {song title}"
           }
         }
       },
@@ -609,7 +636,38 @@
         "activity-timeout-enabled": "Hapus presence saat dijeda",
         "activity-timeout-time": "Hapus setelah",
         "hide-github-button": "Sembunyikan tombol “Lihat di GitHub”",
-        "hide-duration-left": "Sembunyikan sisa waktu"
+        "hide-duration-left": "Sembunyikan sisa waktu",
+        "autoReconnect": {
+          "label": "Sambung ulang otomatis"
+        },
+        "activityTimeoutEnabled": {
+          "label": "Hapus presence saat dijeda"
+        },
+        "activityTimeoutSeconds": {
+          "label": "Hapus setelah"
+        },
+        "playButton": {
+          "label": "Mainkan di {{applicationName}}"
+        },
+        "hideGitHubButton": {
+          "label": "Sembunyikan tombol “Lihat di GitHub”"
+        },
+        "hideDurationLeft": {
+          "label": "Sembunyikan sisa waktu"
+        },
+        "statusDisplayType": {
+          "label": "Teks status",
+          "options": {
+            "name": "Sedang mendengarkan {{applicationName}}",
+            "state": "Sedang mendengarkan {artist}",
+            "details": "Sedang mendengarkan {song title}"
+          }
+        }
+      },
+      "actions": {
+        "clearActivity": {
+          "label": "Hapus riwayat aktifitas"
+        }
       }
     },
     "do-not-track": {
@@ -857,9 +915,9 @@
           "label": "Pengaturan Interaktif",
           "submenu": {
             "hide-button-text": "Sembunyikan teks tombol",
-            "hover-controls": "Tampilkan mini-player saat mengarahkan kursor ke baki",
             "refresh-on-play-pause": "Segarkan saat Putar/Jeda",
-            "tray-controls": "Buka/Tutup saat baki ditekan"
+            "tray-controls": "Buka/Tutup saat baki ditekan",
+            "hover-controls": "Tampilkan mini-player saat mengarahkan kursor ke baki"
           }
         },
         "priority": "Prioritas Pemberitahuan",
@@ -900,6 +958,23 @@
       "name": "Gambar-dalam-gambar",
       "templates": {
         "button": "Gambar-dalam-gambar"
+      },
+      "settings": {
+        "hotkey": {
+          "label": "Pintasan"
+        },
+        "useNativePiP": {
+          "label": "Gunakan PiP bawaan peramban"
+        },
+        "alwaysOnTop": {
+          "label": "Selalu di atas"
+        },
+        "savePosition": {
+          "label": "Simpan posisi jendela"
+        },
+        "saveSize": {
+          "label": "Simpan ukuran jendela"
+        }
       }
     },
     "playback-speed": {
@@ -935,10 +1010,21 @@
         }
       },
       "settings": {
-        "steps": "Langkah volume",
+        "steps": {
+          "label": "Langkah volume"
+        },
         "arrows-shortcut": "Pintasan tombol panah",
         "shortcut-up": "Pintasan global: naikkan volume",
-        "shortcut-down": "Pintasan global: turunkan volume"
+        "shortcut-down": "Pintasan global: turunkan volume",
+        "arrowsShortcut": {
+          "label": "Pintasan tombol panah"
+        },
+        "volumeUp": {
+          "label": "Pintasan global: naikkan volume"
+        },
+        "volumeDown": {
+          "label": "Pintasan global: turunkan volume"
+        }
       }
     },
     "quality-changer": {
@@ -981,8 +1067,8 @@
           "token": "Masukkan token pengguna ListenBrainz",
           "api-root": "URL API ListenBrainz"
         },
-        "scrobble-alternative-title": "Gunakan judul alternatif",
         "scrobble-alternative-artist": "Pindah ke artis lain",
+        "scrobble-alternative-title": "Gunakan judul alternatif",
         "scrobble-other-media": "Scrobble media lain",
         "regex-filters": "Filter ekspresi reguler",
         "use-musicbrainz": "Gunakan MusicBrainz untuk mengoreksi metadata",
@@ -1037,14 +1123,42 @@
       },
       "settings": {
         "global-keybinds": "Pintasan global (berfungsi di seluruh aplikasi)",
-        "local-keybinds": "Pintasan lokal (hanya saat jendela difokuskan)"
+        "local-keybinds": "Pintasan lokal (hanya saat jendela difokuskan)",
+        "playPause": {
+          "label": "Main / Jeda"
+        },
+        "localPlayPause": {
+          "label": "Main / Jeda"
+        },
+        "next": {
+          "label": "Selanjutnya"
+        },
+        "localNext": {
+          "label": "Selanjutnya"
+        },
+        "previous": {
+          "label": "Sebelumnya"
+        },
+        "localPrevious": {
+          "label": "Sebelumnya"
+        },
+        "overrideMediaKeys": {
+          "label": "Timpa Tombol Media"
+        }
       }
+    },
+    "skip-disliked-songs": {
+      "description": "Lewati lagu yang tidak disukai",
+      "name": "Lewati Lagu yang Tidak Disukai"
     },
     "skip-silences": {
       "description": "Otomatis lewati bagian hening dari lagu",
       "name": "Lewati Keheningan",
       "settings": {
-        "only-skip-beginning": "Hanya lewati keheningan di awal trek"
+        "only-skip-beginning": "Hanya lewati keheningan di awal trek",
+        "onlySkipBeginning": {
+          "label": "Hanya lewati keheningan di awal trek"
+        }
       }
     },
     "sponsorblock": {
@@ -1060,7 +1174,28 @@
           "selfpromo": "Promosi diri",
           "music_offtopic": "Bagian non-musik"
         },
-        "api-url": "URL API"
+        "api-url": "URL API",
+        "sponsor": {
+          "label": "Sponsor"
+        },
+        "intro": {
+          "label": "Intro"
+        },
+        "outro": {
+          "label": "Outro"
+        },
+        "interaction": {
+          "label": "Pengingat interaksi"
+        },
+        "selfpromo": {
+          "label": "Promosi diri"
+        },
+        "music_offtopic": {
+          "label": "Bagian non-musik"
+        },
+        "apiURL": {
+          "label": "URL API"
+        }
       }
     },
     "synced-lyrics": {
@@ -1070,13 +1205,23 @@
         "not-found": "⚠️ Tidak ada lirik yang ditemukan untuk lagu ini."
       },
       "menu": {
-        "preferred-provider": {
-          "label": "Penyedia Pilihan",
-          "tooltip": "Pilih penyedia bawaan untuk dipakai",
-          "none": {
-            "label": "Tidak ada",
-            "tooltip": "Tidak ada penyedia pilihan"
-          }
+        "convert-chinese-character": {
+          "label": "Konversi karakter Tionghoa",
+          "submenu": {
+            "disabled": {
+              "label": "Dinonaktifkan",
+              "tooltip": "Nonaktifkan konversi karakter Tionghoa"
+            },
+            "simplified-to-traditional": {
+              "label": "Sederhana ke Tradisional",
+              "tooltip": "Konversi Tionghoa Sederhana ke Tionghoa Tradisional"
+            },
+            "traditional-to-simplified": {
+              "label": "Tradisional ke Sederhana",
+              "tooltip": "Konversi Tionghoa Tradisional ke Tionghoa Sederhana"
+            }
+          },
+          "tooltip": "Konversi karakter Tionghoa ke Tradisional atau Sederhana"
         },
         "default-text-string": {
           "label": "Karakter default antara lirik",
@@ -1104,6 +1249,30 @@
           },
           "tooltip": "Pilih efek yang akan diterapkan ke baris saat ini"
         },
+        "precise-timing": {
+          "label": "Buat liriknya tersinkronisasi dengan sempurna",
+          "tooltip": "Hitung hingga milidetik tampilan baris berikutnya (dapat berdampak kecil pada kinerja)"
+        },
+        "preferred-provider": {
+          "label": "Penyedia Pilihan",
+          "none": {
+            "label": "Tidak ada",
+            "tooltip": "Tidak ada penyedia pilihan"
+          },
+          "tooltip": "Pilih penyedia bawaan untuk dipakai"
+        },
+        "romanization": {
+          "label": "Romanize Liriknya",
+          "tooltip": "Apabila lirik berada dalam bahasa berbeda, cobalah untuk menampilkan versi latinnya."
+        },
+        "show-lyrics-even-if-inexact": {
+          "label": "Tampilkan lirik meskipun tidak tepat",
+          "tooltip": "Jika lagu tidak ditemukan, plugin akan mencoba lagi dengan kueri pencarian yang berbeda.\nHasil dari percobaan kedua mungkin tidak tepat."
+        },
+        "show-time-codes": {
+          "label": "Tampilkan kode waktu",
+          "tooltip": "Tampilkan kode waktu di samping lirik"
+        },
         "lyrics-font-size": {
           "label": "Ukuran font lirik",
           "submenu": {
@@ -1121,40 +1290,6 @@
             }
           },
           "tooltip": "Pilih seberapa besar teks lirik"
-        },
-        "precise-timing": {
-          "label": "Buat liriknya tersinkronisasi dengan sempurna",
-          "tooltip": "Hitung hingga milidetik tampilan baris berikutnya (dapat berdampak kecil pada kinerja)"
-        },
-        "romanization": {
-          "label": "Romanize Liriknya",
-          "tooltip": "Apabila lirik berada dalam bahasa berbeda, cobalah untuk menampilkan versi latinnya."
-        },
-        "show-lyrics-even-if-inexact": {
-          "label": "Tampilkan lirik meskipun tidak tepat",
-          "tooltip": "Jika lagu tidak ditemukan, plugin akan mencoba lagi dengan kueri pencarian yang berbeda.\nHasil dari percobaan kedua mungkin tidak tepat."
-        },
-        "show-time-codes": {
-          "label": "Tampilkan kode waktu",
-          "tooltip": "Tampilkan kode waktu di samping lirik"
-        },
-        "convert-chinese-character": {
-          "label": "Konversi karakter Tionghoa",
-          "submenu": {
-            "disabled": {
-              "label": "Dinonaktifkan",
-              "tooltip": "Nonaktifkan konversi karakter Tionghoa"
-            },
-            "simplified-to-traditional": {
-              "label": "Sederhana ke Tradisional",
-              "tooltip": "Konversi Tionghoa Sederhana ke Tionghoa Tradisional"
-            },
-            "traditional-to-simplified": {
-              "label": "Tradisional ke Sederhana",
-              "tooltip": "Konversi Tionghoa Tradisional ke Tionghoa Sederhana"
-            }
-          },
-          "tooltip": "Konversi karakter Tionghoa ke Tradisional atau Sederhana"
         },
         "translation": {
           "label": "Terjemahan lirik",
@@ -1269,7 +1404,7 @@
         },
         "use-ytm-lyrics-without-proxy": {
           "label": "Gunakan lirik YTM tanpa proxy",
-          "tooltip": "Lewati proxy YTM dan panggil YouTube Music langsung menggunakan sesi terautentikasi aplikasi. Berguna jika Anda percaya jaringan/wilayah Anda mengizinkan panggilan langsung."
+          "tooltip": "Lewati proxy YTM dan panggil \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 langsung menggunakan sesi terautentikasi aplikasi. Berguna jika Anda percaya jaringan/wilayah Anda mengizinkan panggilan langsung."
         },
         "show-custom-search-button": {
           "label": "Tampilkan tombol pencarian kustom",
@@ -1337,7 +1472,6 @@
     },
     "transparent-player": {
       "description": "Buat jendela aplikasi transparan",
-      "name": "Pemutar Transparan",
       "menu": {
         "opacity": {
           "label": "Opasitas",
@@ -1360,8 +1494,27 @@
           }
         }
       },
+      "name": "Pemutar Transparan",
       "settings": {
-        "type-description": "Material latar belakang yang digunakan untuk transparansi jendela"
+        "type-description": "Material latar belakang yang digunakan untuk transparansi jendela",
+        "opacity": {
+          "label": "Opasitas"
+        },
+        "type": {
+          "label": "Tipe",
+          "description": "Material latar belakang yang digunakan untuk transparansi jendela",
+          "options": {
+            "acrylic": "Akrilik",
+            "content": "Konten",
+            "fullscreen-ui": "Tampilan UI Layar Penuh",
+            "mica": "Mika",
+            "tabbed": "Tabulasi",
+            "under-page": "Dibawah Halaman",
+            "under-window": "Dibawah Jendela",
+            "window": "Layar",
+            "none": "TIdak ada"
+          }
+        }
       }
     },
     "tuna-obs": {
@@ -1397,6 +1550,27 @@
       "templates": {
         "button-song": "Lagu",
         "button-video": "video"
+      },
+      "settings": {
+        "mode": {
+          "label": "Mode",
+          "options": {
+            "custom": "Peralih kustom",
+            "native": "Peralih bawaan",
+            "disabled": "Mati"
+          }
+        },
+        "align": {
+          "label": "Perataan",
+          "options": {
+            "left": "Kiri",
+            "middle": "Tengah",
+            "right": "Kanan"
+          }
+        },
+        "forceHide": {
+          "label": "Paksa hapus tab video"
+        }
       }
     },
     "visualizer": {
@@ -1406,7 +1580,9 @@
       },
       "name": "Visualisator",
       "settings": {
-        "preset": "Preset",
+        "preset": {
+          "label": "Preset"
+        },
         "blend-time": "Waktu campuran",
         "effect": "Efek",
         "accuracy": "Akurasi",
@@ -1422,7 +1598,45 @@
         "dottify": "Titikkan",
         "dottify-description": "Gambar titik, bukan garis bersambung",
         "horizontal-align": "Perataan horizontal",
-        "vertical-align": "Perataan vertikal"
+        "vertical-align": "Perataan vertikal",
+        "blendTimeInSeconds": {
+          "label": "Waktu campuran"
+        },
+        "vudioMaxHeight": {
+          "label": "Tinggi maksimum"
+        },
+        "vudioMaxSize": {
+          "label": "Ukuran maksimum"
+        },
+        "vudioLineWidth": {
+          "label": "Lebar garis"
+        },
+        "vudioColor": {
+          "label": "Warna"
+        },
+        "vudioShadowBlur": {
+          "label": "Blur bayangan"
+        },
+        "vudioShadowColor": {
+          "label": "Warna bayangan"
+        },
+        "vudioFadeSide": {
+          "label": "Sisi pudar"
+        },
+        "vudioPrettify": {
+          "label": "Percantik",
+          "description": "Meruncingkan batang ke arah tepi"
+        },
+        "vudioDottify": {
+          "label": "Titikkan",
+          "description": "Gambar titik, bukan garis bersambung"
+        },
+        "vudioHorizontalAlign": {
+          "label": "Perataan horizontal"
+        },
+        "vudioVerticalAlign": {
+          "label": "Perataan vertikal"
+        }
       }
     },
     "audio-only": {
@@ -1464,7 +1678,7 @@
     },
     "search-commands": {
       "commands": {
-        "play": "Putar video dari tautan atau id YouTube",
+        "play": "Putar video dari tautan atau id \u0059\u006f\u0075\u0054\u0075\u0062\u0065",
         "settings": "Buka pengaturan"
       },
       "description": "Ketik / di kotak pencarian untuk menjalankan perintah, dengan pelengkapan otomatis untuk argumennya",
@@ -1473,7 +1687,15 @@
         "open-keybind": "Pintasan buka",
         "open-keybind-description": "Akselerator gaya Electron, mis. CmdOrCtrl+/ atau Alt+Space",
         "open-shortcut": "Buka kotak pencarian dari mana saja",
-        "open-shortcut-description": "Memunculkan kotak pencarian yang sudah dalam mode perintah, seperti Spotlight. Menekannya lagi akan menutupnya."
+        "open-shortcut-description": "Memunculkan kotak pencarian yang sudah dalam mode perintah, seperti Spotlight. Menekannya lagi akan menutupnya.",
+        "openShortcut": {
+          "label": "Buka kotak pencarian dari mana saja",
+          "description": "Memunculkan kotak pencarian yang sudah dalam mode perintah, seperti Spotlight. Menekannya lagi akan menutupnya."
+        },
+        "openKeybind": {
+          "label": "Pintasan buka",
+          "description": "Akselerator gaya Electron, mis. CmdOrCtrl+/ atau Alt+Space"
+        }
       }
     },
     "seek-shortcuts": {
@@ -1481,16 +1703,19 @@
       "name": "Pintasan Lompat"
     },
     "sfw-music": {
-      "description": "Otomatis melewati lagu yang ditandai Eksplisit oleh YouTube Music. Menjeda jika antrean eksplisit berulang atau tidak ada lagu berikutnya yang tersedia.",
+      "description": "Otomatis melewati lagu yang ditandai Eksplisit oleh \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063. Menjeda jika antrean eksplisit berulang atau tidak ada lagu berikutnya yang tersedia.",
       "name": "Musik SFW"
     },
     "toast-autoclose": {
-      "description": "Otomatis tutup notifikasi YouTube Music setelah tiga detik",
+      "description": "Otomatis tutup notifikasi \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 setelah tiga detik",
       "name": "Tutup Otomatis Toast"
     },
     "statusbar-lyrics": {
       "settings": {
-        "include-pronunciation": "Sertakan pelafalan"
+        "include-pronunciation": "Sertakan pelafalan",
+        "includePronunciation": {
+          "label": "Sertakan pelafalan"
+        }
       }
     },
     "dismiss-multidevice-popup": {
@@ -1502,7 +1727,11 @@
       "name": "Penghemat Memori",
       "settings": {
         "threshold": "Ambang batas cache",
-        "threshold-description": "Hapus cache setelah memori aktifnya melebihi nilai ini saat jendela tersembunyi"
+        "threshold-description": "Hapus cache setelah memori aktifnya melebihi nilai ini saat jendela tersembunyi",
+        "thresholdMB": {
+          "label": "Ambang batas cache",
+          "description": "Hapus cache setelah memori aktifnya melebihi nilai ini saat jendela tersembunyi"
+        }
       }
     }
   },
@@ -1531,7 +1760,7 @@
     "move-up": "Naikkan",
     "move-down": "Turunkan",
     "about": {
-      "tagline": "Aplikasi desktop kaya fitur untuk YouTube Music",
+      "tagline": "Aplikasi desktop kaya fitur untuk \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063",
       "versions": "Versi",
       "version-app": "Aplikasi",
       "version-build": "Build",
@@ -1589,7 +1818,7 @@
     "stepper-decrement": "Kurangi",
     "stepper-increment": "Tambah",
     "flags": {
-      "warning": "Feature flag adalah sakelar internal YouTube Music. Mengubahnya dapat merusak pemutaran, tata letak, atau fitur akun, dan tidak tercakup dukungan. Penimpaan hanya disimpan untuk flag yang Anda ubah, dan dapat dihapus dengan Urungkan.",
+      "warning": "Feature flag adalah sakelar internal \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063. Mengubahnya dapat merusak pemutaran, tata letak, atau fitur akun, dan tidak tercakup dukungan. Penimpaan hanya disimpan untuk flag yang Anda ubah, dan dapat dihapus dengan Urungkan.",
       "search-placeholder": "Cari flag",
       "overridden": "ditimpa",
       "undo": "Urungkan",
@@ -1634,7 +1863,11 @@
       "theme-preset": "Preset",
       "theme-variable-name": "Variabel",
       "theme-variable-value": "Nilai",
-      "theme-variable-add": "Tambah variabel"
+      "theme-variable-add": "Tambah variabel",
+      "performance-mode": "Mode performa",
+      "performance-mode-desc": "Tukar sebagian ketajaman visual dengan rendering yang lebih ringan.",
+      "in-process-gpu": "Gabungkan proses GPU ke dalam proses aplikasi",
+      "in-process-gpu-desc": "Eksperimental: menghemat satu proses, tetapi memindahkan memori GPU ke proses utama dan dapat beralih ke rendering perangkat lunak."
     }
   }
 }

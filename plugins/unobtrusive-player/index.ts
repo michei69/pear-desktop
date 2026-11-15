@@ -1,0 +1,134 @@
+import { definePlugin } from "@pear/sdk";
+import { css } from "@pear/sdk/macros" with { type: "macro" };
+import { isPlayerPageOpen, isShuffleControl } from "./detect.ts";
+
+// Set while playback was started from a list: the player page stays out of the way.
+const DID_PLAY = "pear-unobtrusive-did-play";
+// YTM can't close the player page during an ad, and the ad should be seen anyway.
+const AD = "pear-unobtrusive-ad";
+const AUTO_CLOSING_MS = 500;
+/** Retries for a toggle YTM ignored while it was still opening the page. */
+const AUTO_CLOSE_RETRIES = 2;
+// Set while the content is scrolled: YTM shows the nav bar's background then, so
+// the latch must not hide it. Tracked here instead of reading in-app-menu's
+// `content-scrolled` class, which doesn't exist when that plugin is off.
+const SCROLLED = "pear-unobtrusive-scrolled";
+const SCROLLED_AFTER_PX = 20;
+
+export default definePlugin({
+  id: "unobtrusive-player",
+  name: "Unobtrusive player",
+  description: "Starting a song from a list keeps you where you are instead of opening the full player.",
+  style: css`
+    html.pear-unobtrusive-did-play:not(.pear-unobtrusive-ad) sel(player.page),
+    html.pear-unobtrusive-did-play:not(.pear-unobtrusive-ad) sel(player.page) * {
+      visibility: hidden !important;
+    }
+    /* The latch hides the player page only: the browse page below stays usable
+       and scrollable during the auto-close window. */
+    html.pear-unobtrusive-did-play:not(.pear-unobtrusive-ad),
+    html.pear-unobtrusive-did-play:not(.pear-unobtrusive-ad) body {
+      overflow: visible !important;
+    }
+    html.pear-unobtrusive-did-play:not(.pear-unobtrusive-ad) sel(app.content) {
+      visibility: visible !important;
+    }
+    html.pear-unobtrusive-did-play:not(.pear-unobtrusive-scrolled) sel(app.layout) sel(nav_bar.background),
+    html.pear-unobtrusive-did-play:not(.pear-unobtrusive-scrolled) sel(app.layout) sel(nav_bar.divider),
+    html.pear-unobtrusive-did-play:not(.pear-unobtrusive-scrolled) sel(app.layout)[is-bauhaus-sidenav-enabled][player-page-open]
+      sel(guide.mini_background),
+    html.pear-unobtrusive-did-play:not(.pear-unobtrusive-scrolled) sel(app.layout)[player-page-open] sel(guide.mini_background) {
+      opacity: 0 !important;
+    }
+    html.pear-unobtrusive-did-play sel(player_bar.player_page_arrow) {
+      transform: rotate(180deg) !important;
+    }
+  `,
+  page: (ctx) => {
+    const root = document.documentElement;
+    ctx.onCleanup(() => root.classList.remove(DID_PLAY, AD, SCROLLED));
+    let autoClosing = false;
+
+    // YTM shows the nav bar's background once the content is scrolled; without
+    // this, the latch below would keep hiding it after a scroll even when
+    // in-app-menu (which used to maintain the class) is off.
+    const layout = ctx.$("app.layout");
+    let scrollFrame: number | undefined;
+    const updateScrolled = () => {
+      scrollFrame = undefined;
+      root.classList.toggle(SCROLLED, (layout?.scrollTop ?? 0) > SCROLLED_AFTER_PX);
+    };
+    updateScrolled();
+    if (layout) {
+      ctx.listen(
+        layout,
+        "scroll",
+        () => {
+          if (scrollFrame === undefined) scrollFrame = requestAnimationFrame(updateScrolled);
+        },
+        { passive: true },
+      );
+    }
+    ctx.onCleanup(() => {
+      if (scrollFrame !== undefined) cancelAnimationFrame(scrollFrame);
+    });
+
+    ctx.listen(
+      document,
+      "click",
+      (event: MouseEvent) => {
+        const target = event.target;
+        if (!(target instanceof Element)) return;
+        if (target.closest(ctx.sel("player_bar"))) {
+          // The user is driving the player now (e.g. opening the page); stop hiding it.
+          if (!autoClosing) root.classList.remove(DID_PLAY);
+          return;
+        }
+        if (target.closest(ctx.sel("player.page"))) return;
+        // Play buttons, track links, and the header/menu "Shuffle"/"Start radio"
+        // entries all lead to /watch.
+        if (target.closest(ctx.sel("list.play_button")) || isShuffleControl(target) || target.closest('a[href*="watch?"]')) {
+          root.classList.add(DID_PLAY);
+        }
+      },
+      { capture: true },
+    );
+
+    const pageOpen = () => isPlayerPageOpen(ctx.$("app.layout"), ctx.$("player.page"));
+    let retries = 0;
+    const closePlayerPage = () => {
+      if (autoClosing || !root.classList.contains(DID_PLAY)) return;
+      if (!pageOpen()) return;
+      autoClosing = true;
+      ctx.$("player_bar.toggle_player_page")?.click();
+      // Keep the page hidden until YTM's close animation is over, then check
+      // again: YTM ignores the toggle while it is still opening the page.
+      ctx.setTimeout(() => {
+        autoClosing = false;
+        if (!pageOpen()) {
+          retries = 0;
+          return;
+        }
+        if (retries < AUTO_CLOSE_RETRIES) {
+          retries += 1;
+          closePlayerPage();
+          return;
+        }
+        // The latch is only useful if the auto-close actually closed the page;
+        // a toggle that never works would otherwise force-close every later
+        // track, so give up until the user starts another one from a list.
+        retries = 0;
+        root.classList.remove(DID_PLAY);
+      }, AUTO_CLOSING_MS);
+    };
+    // YTM opens the page either while navigating to /watch or once the track loads.
+    ctx.player.on("trackLoading", closePlayerPage);
+    const onAd = (ad: boolean) => {
+      root.classList.toggle(AD, ad);
+      if (!ad) closePlayerPage();
+    };
+    ctx.player.on("adChange", onAd);
+    onAd(ctx.player.state.ad);
+    ctx.observe("app.layout", { attributes: true, attributeFilter: ["player-ui-state", "player-page-open"] }, closePlayerPage);
+  },
+});

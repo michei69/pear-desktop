@@ -1,0 +1,272 @@
+import { config, definePlugin } from "@pear/sdk";
+
+const WATCHDOG_MS = 3000;
+/** Time a recovery gets to settle before the watchdog looks again. */
+const SETTLE_MS = 4000;
+/** Extra time after skipping a dead track, before recovery resumes. */
+const NEXT_SETTLE_MS = 5000;
+/**
+ * How long playback has to run without a failure before the retry ladder is
+ * reset: a stream that only stutters forward must keep its failure count.
+ */
+const HEALTHY_PLAYBACK_MS = 10_000;
+
+export default definePlugin({
+  id: "playback-recovery",
+  name: "Playback recovery",
+  description: "Recovers playback that stalls, freezes or errors, skipping the track after repeated failures.",
+  config: {
+    stallTimeoutMs: config.number(8000, {
+      label: "Stall timeout",
+      description: "How long playback may make no progress before it is restarted.",
+      min: 1000,
+      max: 30000,
+      step: 500,
+      unit: "ms",
+    }),
+    maxRetries: config.number(5, {
+      label: "Retries before skipping",
+      description: "After this many recovery attempts the track is skipped; a clean second of playback resets the count.",
+      min: 1,
+      max: 20,
+      step: 1,
+    }),
+    logToConsole: config.bool(true, { label: "Log to the console" }),
+  },
+  host: {
+    start(ctx) {
+      // pear-desktop's checkbox cannot show its state in the flat menu, so the
+      // item toggles; the settings card's switch stays the canonical control.
+      ctx.addMenuItem({
+        label: ctx.t("plugins.playback-recovery.menu.log-to-console", "Log recovery events to console"),
+        click: () => ctx.setConfig({ logToConsole: !ctx.config.logToConsole }),
+      });
+    },
+  },
+  page: (ctx) => {
+    let hooks: AbortController | undefined;
+    let hooked: HTMLVideoElement | null = null;
+    let stallTimer: ReturnType<typeof setTimeout> | undefined;
+    let recoveryTimer: ReturnType<typeof setTimeout> | undefined;
+    let consecutiveFailures = 0;
+    let lastGoodAt = Date.now();
+    /** When the last recovery attempt started, for the healthy-window reset. */
+    let lastFailureAt = 0;
+    let recovering = false;
+
+    const log = (message: string) => {
+      if (ctx.config.logToConsole) ctx.log.info(message);
+    };
+
+    const detach = () => {
+      hooks?.abort();
+      hooks = undefined;
+      hooked = null;
+    };
+
+    const settleAfter = (ms: number) => {
+      ctx.clearTimeout(recoveryTimer);
+      recoveryTimer = ctx.setTimeout(() => {
+        recoveryTimer = undefined;
+        recovering = false;
+        lastGoodAt = Date.now();
+      }, ms);
+    };
+
+    const attemptRecovery = (reason: string) => {
+      if (recovering) return;
+
+      const maxRetries = ctx.config.maxRetries;
+      consecutiveFailures++;
+      // Recorded so a brief timeUpdate after the attempt cannot reset the
+      // ladder before playback has actually stayed healthy.
+      lastFailureAt = Date.now();
+
+      if (consecutiveFailures > maxRetries) {
+        log(`Max retries (${maxRetries}) exceeded — skipping to next track`);
+        recovering = true;
+        consecutiveFailures = 0;
+        ctx.player.control({ type: "next" });
+        settleAfter(NEXT_SETTLE_MS);
+        return;
+      }
+
+      log(`Recovery attempt ${consecutiveFailures}/${maxRetries} — reason: ${reason}`);
+      recovering = true;
+
+      const video = ctx.player.video();
+      const currentTime = video?.currentTime ?? ctx.player.state.positionSeconds;
+      if (consecutiveFailures <= 2) {
+        log("Strategy: seek-to-current");
+        if (currentTime > 0) ctx.player.control({ type: "seek", seconds: currentTime });
+        ctx.player.control({ type: "play" });
+      } else {
+        // Every attempt below the retry cap has a strategy: past the second one
+        // the ladder keeps seeking forward until it skips the track.
+        log("Strategy: seek-forward");
+        const duration = video?.duration ?? 0;
+        // A stall in the last second must not seek past the end: YTM would fire
+        // `ended` and advance, skipping the rest of the track before the ladder does.
+        const target = Number.isFinite(duration) && duration > 0 ? Math.min(currentTime + 1, duration - 0.5) : currentTime + 1;
+        if (currentTime > 0) ctx.player.control({ type: "seek", seconds: target });
+        ctx.player.control({ type: "play" });
+      }
+
+      // Give the seek time to reload the stream.
+      settleAfter(SETTLE_MS);
+    };
+
+    function onError() {
+      const code = hooked?.error?.code ?? 0;
+      const message = hooked?.error?.message ?? "";
+      log(`Media error: code=${code} msg="${message}"`);
+      attemptRecovery("media-error");
+    }
+
+    // Both events mean playback cannot continue (readyState below 3), so one
+    // timer covers either. A second event must not push the deadline out
+    // again, or a stream that keeps reporting the stall never times out.
+    const watchStall = (reason: string) => {
+      if (stallTimer !== undefined) return;
+      log(`${reason} — waiting for recovery...`);
+      stallTimer = ctx.setTimeout(() => {
+        stallTimer = undefined;
+        const video = ctx.player.video();
+        if (video && !video.paused && video.readyState < 3) {
+          log(`${reason} did not resolve`);
+          attemptRecovery(reason);
+        }
+      }, ctx.config.stallTimeoutMs);
+    };
+
+    function onStalled() {
+      watchStall("stall-timeout");
+    }
+
+    function onWaiting() {
+      watchStall("buffer-timeout");
+    }
+
+    const attach = () => {
+      const video = ctx.player.video();
+      if (!video || video === hooked) return;
+      detach();
+      const controller = new AbortController();
+      hooks = controller;
+      hooked = video;
+      const { signal } = controller;
+      video.addEventListener("error", onError, { signal });
+      video.addEventListener("stalled", onStalled, { signal });
+      video.addEventListener("waiting", onWaiting, { signal });
+    };
+
+    /** Whether a mutation batch added a <video> (the only reason to re-attach). */
+    const addedVideo = (mutation: MutationRecord) =>
+      [...mutation.addedNodes].some(
+        (node) => node instanceof HTMLVideoElement || (node instanceof Element && node.querySelector("video") !== null),
+      );
+    // A re-created <video> (navigation, ads) needs the listeners again. Watch the
+    // player, not the whole app subtree, and look up a video only when a mutation
+    // added one: the queue and browse pages mutate all session long.
+    ctx.observe("player.container", { childList: true, subtree: true }, (mutations) => {
+      if (mutations.some(addedVideo)) attach();
+    });
+    attach();
+
+    ctx.player.on("timeUpdate", () => {
+      const video = ctx.player.video();
+      if (video && video.currentTime > 0 && !video.paused) {
+        lastGoodAt = Date.now();
+        // The stall resolved, so its timer must not fire on a later stall.
+        ctx.clearTimeout(stallTimer);
+        stallTimer = undefined;
+        // A stream that advances a fraction of a second and stalls again ticks
+        // here too: the ladder only resets once playback has stayed healthy
+        // for a sustained window since the last attempt.
+        if (Date.now() - lastFailureAt >= HEALTHY_PLAYBACK_MS) {
+          consecutiveFailures = 0;
+          recovering = false;
+        }
+      }
+    });
+
+    ctx.player.on("statusChange", (status) => {
+      if (status === "playing") lastGoodAt = Date.now();
+    });
+
+    // A new track starts the ladder over: two failures on the previous one must
+    // not make the next one skip earlier than policy.
+    const resetLadder = () => {
+      consecutiveFailures = 0;
+      lastFailureAt = 0;
+      recovering = false;
+      lastGoodAt = Date.now();
+      ctx.clearTimeout(stallTimer);
+      stallTimer = undefined;
+      ctx.clearTimeout(recoveryTimer);
+      recoveryTimer = undefined;
+    };
+    // Reset at the media load itself too: YTM's dataupdated, and so trackChange,
+    // can come up to 1.5 s later, and a failure in that window would otherwise
+    // count against the previous track.
+    ctx.player.on("trackLoading", () => {
+      resetLadder();
+      attach();
+    });
+    // trackChange is the authoritative reset: it also covers YTM's fallback path.
+    ctx.player.on("trackChange", () => {
+      resetLadder();
+      attach();
+    });
+
+    // The watchdog covers stalls no media event reports.
+    ctx.setInterval(() => {
+      if (recovering) return;
+      const { status, ad } = ctx.player.state;
+      if (status !== "playing") return;
+      // Never seek inside an ad: it is not the user's track and YTM owns its
+      // recovery. The media-event listeners still cover hard ad failures.
+      if (ad) return;
+
+      const video = ctx.player.video();
+      if (!video) return;
+      if (video !== hooked) attach();
+
+      const now = Date.now();
+
+      if (video.readyState === 0 && !video.paused) {
+        const elapsed = now - lastGoodAt;
+        if (elapsed > ctx.config.stallTimeoutMs) {
+          log(`Dead playback: readyState=0, no progress for ${elapsed}ms`);
+          attemptRecovery("dead-playback");
+          return;
+        }
+      }
+
+      if (!video.paused && video.currentTime > 0) {
+        const idle = now - lastGoodAt;
+        if (idle > ctx.config.stallTimeoutMs) {
+          log(`Playback frozen: currentTime=${video.currentTime.toFixed(1)}, no progress for ${idle}ms`);
+          attemptRecovery("frozen-playback");
+          return;
+        }
+      }
+
+      if (!video.paused && video.buffered.length > 0) {
+        const bufferEnd = video.buffered.end(video.buffered.length - 1);
+        if (bufferEnd - video.currentTime <= 0 && video.readyState < 3) {
+          log(`Buffer exhausted: readyState=${video.readyState}`);
+          attemptRecovery("buffer-exhausted");
+        }
+      }
+    }, WATCHDOG_MS);
+
+    ctx.onCleanup(() => {
+      detach();
+      ctx.clearTimeout(stallTimer);
+      stallTimer = undefined;
+      ctx.clearTimeout(recoveryTimer);
+      recoveryTimer = undefined;
+    });
+  },
+});

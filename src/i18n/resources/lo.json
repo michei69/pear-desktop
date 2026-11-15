@@ -16,7 +16,7 @@
   "language": {
     "code": "lo",
     "local-name": "ລາວ",
-    "name": "Lao"
+    "name": "ພາສາລາວ"
   },
   "main": {
     "console": {
@@ -156,8 +156,8 @@
               "sync": {
                 "label": "ຊິງພາສາ",
                 "submenu": {
-                  "from-youtube": "ຈາກ YouTube",
-                  "to-youtube": "ໄປຍັງ YouTube"
+                  "from-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "ຈາກ \u0059\u006f\u0075\u0054\u0075\u0062\u0065",
+                  "to-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "ໄປຍັງ \u0059\u006f\u0075\u0054\u0075\u0062\u0065"
                 },
                 "failure": {
                   "dialog": {
@@ -229,7 +229,7 @@
                   "open-themes-folder": "ເປີດໂຟນເດີທີມ"
                 }
               },
-              "use-ytm-icons": "ໃຊ້ໄອຄອນ YouTube Music ແບບເດີມ"
+              "use-ytm-icons": "ໃຊ້ໄອຄອນ \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 ແບບເດີມ"
             }
           },
           "updates": {
@@ -314,7 +314,15 @@
         },
         "enable-seekbar": "ເປີດໃຊ້ຮູບແບບສີສັນສຳລັບແຖບຄົ້ນຫາ (seekbar)"
       },
-      "name": "ຮູບແບບສີສັນຕາມສີອັລບັ້ມ"
+      "name": "ຮູບແບບສີສັນຕາມສີອັລບັ້ມ",
+      "settings": {
+        "ratio": {
+          "label": "ອັດຕາສ່ວນການປະສົມສີ"
+        },
+        "enableSeekbar": {
+          "label": "ເປີດໃຊ້ຮູບແບບສີສັນສຳລັບແຖບຄົ້ນຫາ (seekbar)"
+        }
+      }
     },
     "ambient-mode": {
       "description": "ໃຊ້ເອັບເຟັກແສງສີໂດຍການປ່ອຍສີທີ່ອ່ອນໂຍນຈາກວິດີໂອ ລົງໄປໃນພື້ນຫຼັງຂອງໜ້າຈໍທ່ານ",
@@ -393,7 +401,7 @@
           }
         },
         "hostname": {
-          "label": "ຊື່ໂຮສ"
+          "label": "Hostname"
         },
         "https": {
           "label": "HTTPS & ໃບຢັ້ງຢືນ",
@@ -412,7 +420,7 @@
           }
         },
         "port": {
-          "label": "ພອດ"
+          "label": "Port"
         },
         "mcp": {
           "label": "ເຊີບເວີ MCP",
@@ -423,11 +431,11 @@
       "prompt": {
         "hostname": {
           "label": "ປ້ອນ hostname (ເຊັ່ນ 0.0.0.0) ສຳລັບເຊີເວີ API:",
-          "title": "ຊື່ໂຮສ"
+          "title": "Hostname"
         },
         "port": {
           "label": "ປ້ອນ port ສຳລັບເຊີເວີ API:",
-          "title": "ພອດ"
+          "title": "Port"
         }
       },
       "settings": {
@@ -450,21 +458,21 @@
         "disable": "ປິດໃຊ້ງານຕົວປັບພຣັອກຊີ",
         "enable": "ເປີດໃຊ້ງານຕົວປັບພຣັອກຊີ",
         "hostname": {
-          "label": "ຊື່ໂຮສ"
+          "label": "Hostname"
         },
         "port": {
-          "label": "ພອດ"
+          "label": "Port"
         }
       },
       "name": "ຕົວປັບພຣັອກຊີການຢືນຢັນຕົວຕົນ",
       "prompt": {
         "hostname": {
           "label": "ປ້ອນ hostname ສຳລັບເຊີເວີພຣັອກຊີທ້ອງຖິ່ນ (ຕ້ອງໄດ້ເລີ່ມລະບົບໃໝ່):",
-          "title": "ຊື່ໂຮສພຣັອກຊີ"
+          "title": "Proxy Hostname"
         },
         "port": {
           "label": "ປ້ອນ port ສຳລັບເຊີເວີພຣັອກຊີທ້ອງຖິ່ນ (ຕ້ອງໄດ້ເລີ່ມລະບົບໃໝ່):",
-          "title": "ພອດພຣັອກຊີ"
+          "title": "Proxy Port"
         }
       }
     },
@@ -497,6 +505,14 @@
         "caption-changed": "ປ່ຽນຄຳບັນຍາຍເປັນ {{language}} ແລ້ວ",
         "caption-disabled": "ປິດການໃຊ້ງານຄຳບັນຍາຍແລ້ວ",
         "no-captions": "ບໍ່ມີຄຳບັນຍາຍສຳລັບເພງນີ້"
+      },
+      "settings": {
+        "autoload": {
+          "label": "ເລືອກຄຳບັນຍາຍຫຼ້າສຸດທີ່ໃຊ້ໂດຍອັດຕະໂນມັດ"
+        },
+        "disableCaptions": {
+          "label": "ບໍ່ມີຄຳບັນຍາຍເປັນຄ່າເລີ່ມຕົ້ນ"
+        }
       }
     },
     "clock": {
@@ -510,7 +526,13 @@
       },
       "name": "ໂມງ",
       "settings": {
-        "hour-12": "ໃຊ້ຮູບແບບ 12 ຊົ່ວໂມງ"
+        "hour-12": "ໃຊ້ຮູບແບບ 12 ຊົ່ວໂມງ",
+        "displaySeconds": {
+          "label": "ສະແດງວິນາທີ"
+        },
+        "hour12": {
+          "label": "ໃຊ້ຮູບແບບ 12 ຊົ່ວໂມງ"
+        }
       }
     },
     "compact-sidebar": {
@@ -569,7 +591,12 @@
       "menu": {
         "apply-once": "ໃຊ້ສະເພາະຕອນເລີ່ມຕົ້ນເທົ່ານັ້ນ"
       },
-      "name": "ປິດການຫຼິ້ນອັດຕະໂນມັດ"
+      "name": "ປິດການຫຼິ້ນອັດຕະໂນມັດ",
+      "settings": {
+        "applyOnce": {
+          "label": "ໃຊ້ສະເພາະຕອນເລີ່ມຕົ້ນເທົ່ານັ້ນ"
+        }
+      }
     },
     "discord": {
       "backend": {
@@ -592,8 +619,8 @@
           "label": "ຂໍ້ຄວາມສະຖານະ",
           "submenu": {
             "application": "ກຳລັງຟັງ {{applicationName}}",
-            "artist": "ກຳລັງຟັງ {{artist}}",
-            "title": "ກຳລັງຟັງ {{songTitle}}"
+            "artist": "ກຳລັງຟັງ {artist}",
+            "title": "ກຳລັງຟັງ {song title}"
           }
         }
       },
@@ -609,7 +636,38 @@
         "activity-timeout-enabled": "ລຶບສະຖານະການສະແດງຜົນເມື່ອພັກ",
         "activity-timeout-time": "ລຶບຫຼັງຈາກ",
         "hide-github-button": "ເຊື່ອງປຸ່ມ “ເບິ່ງໃນ GitHub”",
-        "hide-duration-left": "ເຊື່ອງເວລາທີ່ເຫຼືອ"
+        "hide-duration-left": "ເຊື່ອງເວລາທີ່ເຫຼືອ",
+        "autoReconnect": {
+          "label": "ເຊື່ອມຕໍ່ຄືນອັດຕະໂນມັດ"
+        },
+        "activityTimeoutEnabled": {
+          "label": "ລຶບສະຖານະການສະແດງຜົນເມື່ອພັກ"
+        },
+        "activityTimeoutSeconds": {
+          "label": "ລຶບຫຼັງຈາກ"
+        },
+        "playButton": {
+          "label": "ຫຼິ້ນໃນ {{applicationName}}"
+        },
+        "hideGitHubButton": {
+          "label": "ເຊື່ອງປຸ່ມ “ເບິ່ງໃນ GitHub”"
+        },
+        "hideDurationLeft": {
+          "label": "ເຊື່ອງເວລາທີ່ເຫຼືອ"
+        },
+        "statusDisplayType": {
+          "label": "ຂໍ້ຄວາມສະຖານະ",
+          "options": {
+            "name": "ກຳລັງຟັງ {{applicationName}}",
+            "state": "ກຳລັງຟັງ {artist}",
+            "details": "ກຳລັງຟັງ {song title}"
+          }
+        }
+      },
+      "actions": {
+        "clearActivity": {
+          "label": "ລ້າງກິດຈະກຳ"
+        }
       }
     },
     "do-not-track": {
@@ -900,6 +958,23 @@
       "name": "ຮູບຊ້ອນຮູບ (PiP)",
       "templates": {
         "button": "ຮູບຊ້ອນຮູບ (PiP)"
+      },
+      "settings": {
+        "hotkey": {
+          "label": "ຄີລັດ"
+        },
+        "useNativePiP": {
+          "label": "ໃຊ້ PiP ມາດຕະຖານຂອງບຣາວເຊີ"
+        },
+        "alwaysOnTop": {
+          "label": "ຢູ່ເທິງສຸດສະເໝີ"
+        },
+        "savePosition": {
+          "label": "ບັນທຶກຕຳແໜ່ງໜ້າຕ່າງ"
+        },
+        "saveSize": {
+          "label": "ບັນທຶກຂະໜາດໜ້າຕ່າງ"
+        }
       }
     },
     "playback-speed": {
@@ -935,10 +1010,21 @@
         }
       },
       "settings": {
-        "steps": "ຂັ້ນຕອນລະດັບສຽງ",
+        "steps": {
+          "label": "ຂັ້ນຕອນລະດັບສຽງ"
+        },
         "arrows-shortcut": "ປຸ່ມລັດລູກສອນ",
         "shortcut-up": "ປຸ່ມລັດທົ່ວໄປ: ເພີ່ມສຽງ",
-        "shortcut-down": "ປຸ່ມລັດທົ່ວໄປ: ຫຼຸດສຽງ"
+        "shortcut-down": "ປຸ່ມລັດທົ່ວໄປ: ຫຼຸດສຽງ",
+        "arrowsShortcut": {
+          "label": "ປຸ່ມລັດລູກສອນ"
+        },
+        "volumeUp": {
+          "label": "ປຸ່ມລັດທົ່ວໄປ: ເພີ່ມສຽງ"
+        },
+        "volumeDown": {
+          "label": "ປຸ່ມລັດທົ່ວໄປ: ຫຼຸດສຽງ"
+        }
       }
     },
     "quality-changer": {
@@ -991,13 +1077,13 @@
       "name": "ຕົວບັນທຶກປະຫວັດການຟັງ (Scrobbler)",
       "prompt": {
         "lastfm": {
-          "api-key": "ຄີ API ຂອງ Last.fm",
-          "api-secret": "ຄວາມລັບ API ຂອງ Last.fm"
+          "api-key": "Last.fm API key",
+          "api-secret": "Last.fm API secret"
         },
         "listenbrainz": {
           "token": {
             "label": "ປ້ອນໂທເຄັນຜູ້ໃຊ້ ListenBrainz ຂອງທ່ານ:",
-            "title": "ໂທເຄັນ ListenBrainz"
+            "title": "ListenBrainz token"
           },
           "api-root": {
             "label": "ໃສ່ URL ພື້ນຖານຂອງ API:",
@@ -1037,14 +1123,42 @@
       },
       "settings": {
         "global-keybinds": "ປຸ່ມລັດທົ່ວໄປ (ໃຊ້ໄດ້ທົ່ວແອັບ)",
-        "local-keybinds": "ປຸ່ມລັດພາຍໃນ (ໃຊ້ໄດ້ສະເພາະເມື່ອໜ້າຕ່າງຢູ່ໃນໂຟກັສ)"
+        "local-keybinds": "ປຸ່ມລັດພາຍໃນ (ໃຊ້ໄດ້ສະເພາະເມື່ອໜ້າຕ່າງຢູ່ໃນໂຟກັສ)",
+        "playPause": {
+          "label": "ຫຼິ້ນ / ຢຸດຊົ່ວຄາວ"
+        },
+        "localPlayPause": {
+          "label": "ຫຼິ້ນ / ຢຸດຊົ່ວຄາວ"
+        },
+        "next": {
+          "label": "ຕໍ່ໄປ"
+        },
+        "localNext": {
+          "label": "ຕໍ່ໄປ"
+        },
+        "previous": {
+          "label": "ກ່ອນໜ້າ"
+        },
+        "localPrevious": {
+          "label": "ກ່ອນໜ້າ"
+        },
+        "overrideMediaKeys": {
+          "label": "ຂຽນທັບປຸ່ມສື່"
+        }
       }
+    },
+    "skip-disliked-songs": {
+      "description": "ຂ້າມເພງທີ່ບໍ່ຖືກໃຈ",
+      "name": "ຂ້າມເພງທີ່ບໍ່ຖືກໃຈ"
     },
     "skip-silences": {
       "description": "ຂ້າມຊ່ວງທີ່ບໍ່ມີສຽງໃນເພງໂດຍອັດຕະໂນມັດ",
       "name": "ຂ້າມຊ່ວງທີ່ບໍ່ມີສຽງ",
       "settings": {
-        "only-skip-beginning": "ຂ້າມຄວາມງຽບສະເພາະຕອນເລີ່ມຕົ້ນເພງ"
+        "only-skip-beginning": "ຂ້າມຄວາມງຽບສະເພາະຕອນເລີ່ມຕົ້ນເພງ",
+        "onlySkipBeginning": {
+          "label": "ຂ້າມຄວາມງຽບສະເພາະຕອນເລີ່ມຕົ້ນເພງ"
+        }
       }
     },
     "sponsorblock": {
@@ -1060,7 +1174,28 @@
           "selfpromo": "ໂຄສະນາຕົນເອງ",
           "music_offtopic": "ສ່ວນທີ່ບໍ່ແມ່ນເພງ"
         },
-        "api-url": "URL API"
+        "api-url": "URL API",
+        "sponsor": {
+          "label": "ສະປອນເຊີ"
+        },
+        "intro": {
+          "label": "ຕອນເລີ່ມ"
+        },
+        "outro": {
+          "label": "ຕອນຈົບ"
+        },
+        "interaction": {
+          "label": "ເຕືອນໃຫ້ປະຕິສຳພັນ"
+        },
+        "selfpromo": {
+          "label": "ໂຄສະນາຕົນເອງ"
+        },
+        "music_offtopic": {
+          "label": "ສ່ວນທີ່ບໍ່ແມ່ນເພງ"
+        },
+        "apiURL": {
+          "label": "URL API"
+        }
       }
     },
     "synced-lyrics": {
@@ -1158,7 +1293,7 @@
         },
         "use-ytm-lyrics-without-proxy": {
           "label": "ໃຊ້ເນື້ອເພງ YTM ໂດຍບໍ່ຜ່ານ proxy",
-          "tooltip": "ຂ້າມ proxy ການທ່ອງ YTM ແລະ ເອີ້ນ YouTube Music ໂດຍກົງໂດຍໃຊ້ເຊສຊັນທີ່ຢືນຢັນແລ້ວຂອງແອັບ. ເປັນປະໂຫຍດຖ້າທ່ານໄວ້ໃຈເຄືອຂ່າຍ/ພາກພື້ນຂອງທ່ານທີ່ອະນຸຍາດໃຫ້ເອີ້ນທ່ອງໂດຍກົງ."
+          "tooltip": "ຂ້າມ proxy ການທ່ອງ YTM ແລະ ເອີ້ນ \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 ໂດຍກົງໂດຍໃຊ້ເຊສຊັນທີ່ຢືນຢັນແລ້ວຂອງແອັບ. ເປັນປະໂຫຍດຖ້າທ່ານໄວ້ໃຈເຄືອຂ່າຍ/ພາກພື້ນຂອງທ່ານທີ່ອະນຸຍາດໃຫ້ເອີ້ນທ່ອງໂດຍກົງ."
         },
         "translation": {
           "label": "ການແປເນື້ອເພງ",
@@ -1300,10 +1435,10 @@
         "type": {
           "label": "ປະເພດ",
           "submenu": {
-            "acrylic": "ອະຄຣີລິກ",
+            "acrylic": "Acrylic",
             "content": "ເນື້ອຫາ",
-            "fullscreen-ui": "ອິນເຕີເຟສເຕັມຈໍ",
-            "mica": "ໄມຄາ",
+            "fullscreen-ui": "Fullscreen UI",
+            "mica": "Mica",
             "none": "ບໍ່ມີ",
             "tabbed": "ແຖບ",
             "under-page": "ໃຕ້ໜ້າ",
@@ -1314,7 +1449,25 @@
       },
       "name": "ເຄື່ອງຫຼິ້ນແບບໂປ່ງໃສ",
       "settings": {
-        "type-description": "ວັດສະດຸພື້ນຫຼັງທີ່ໃຊ້ສຳລັບຄວາມໂປ່ງໃສຂອງໜ້າຕ່າງ"
+        "type-description": "ວັດສະດຸພື້ນຫຼັງທີ່ໃຊ້ສຳລັບຄວາມໂປ່ງໃສຂອງໜ້າຕ່າງ",
+        "opacity": {
+          "label": "ຄວາມໂປ່ງແສງ"
+        },
+        "type": {
+          "label": "ປະເພດ",
+          "description": "ວັດສະດຸພື້ນຫຼັງທີ່ໃຊ້ສຳລັບຄວາມໂປ່ງໃສຂອງໜ້າຕ່າງ",
+          "options": {
+            "acrylic": "Acrylic",
+            "content": "ເນື້ອຫາ",
+            "fullscreen-ui": "Fullscreen UI",
+            "mica": "Mica",
+            "tabbed": "ແຖບ",
+            "under-page": "ໃຕ້ໜ້າ",
+            "under-window": "ໃຕ້ໜ້າຕ່າງ",
+            "window": "ໜ້າຕ່າງ",
+            "none": "ບໍ່ມີ"
+          }
+        }
       }
     },
     "tuna-obs": {
@@ -1350,6 +1503,27 @@
       "templates": {
         "button-song": "ເພງ",
         "button-video": "ວິດີໂອ"
+      },
+      "settings": {
+        "mode": {
+          "label": "ໂໝດ",
+          "options": {
+            "custom": "ປຸ່ມສະລັບແບບກຳນົດເອງ",
+            "native": "ປຸ່ມສະລັບມາດຕະຖານ",
+            "disabled": "ປິດໃຊ້ງານ"
+          }
+        },
+        "align": {
+          "label": "ການຈັດວາງ",
+          "options": {
+            "left": "ຊ້າຍ",
+            "middle": "ກາງ",
+            "right": "ຂວາ"
+          }
+        },
+        "forceHide": {
+          "label": "ບັງຄັບເອົາແຖບວິດີໂອອກ"
+        }
       }
     },
     "visualizer": {
@@ -1359,7 +1533,9 @@
       },
       "name": "ເຄື່ອງສະແດງຄື້ນສຽງ (Visualizer)",
       "settings": {
-        "preset": "ພຣີເຊັດ",
+        "preset": {
+          "label": "ພຣີເຊັດ"
+        },
         "blend-time": "ເວລາປະສົມ",
         "effect": "ຜົນກະທົບ",
         "accuracy": "ຄວາມແມ່ນຍຳ",
@@ -1375,7 +1551,45 @@
         "dottify": "ເຮັດເປັນຈຸດ",
         "dottify-description": "ແຕ້ມເປັນຈຸດແທນເສັ້ນຕໍ່ເນື່ອງ",
         "horizontal-align": "ການຈັດລຽງແນວນອນ",
-        "vertical-align": "ການຈັດລຽງແນວຕັ້ງ"
+        "vertical-align": "ການຈັດລຽງແນວຕັ້ງ",
+        "blendTimeInSeconds": {
+          "label": "ເວລາປະສົມ"
+        },
+        "vudioMaxHeight": {
+          "label": "ຄວາມສູງສູງສຸດ"
+        },
+        "vudioMaxSize": {
+          "label": "ຂະໜາດສູງສຸດ"
+        },
+        "vudioLineWidth": {
+          "label": "ຄວາມກວ້າງເສັ້ນ"
+        },
+        "vudioColor": {
+          "label": "ສີ"
+        },
+        "vudioShadowBlur": {
+          "label": "ຄວາມມົວຂອງເງົາ"
+        },
+        "vudioShadowColor": {
+          "label": "ສີເງົາ"
+        },
+        "vudioFadeSide": {
+          "label": "ດ້ານທີ່ຈາງລົງ"
+        },
+        "vudioPrettify": {
+          "label": "ເຮັດໃຫ້ສວຍງາມ",
+          "description": "ເຮັດໃຫ້ແທ່ງສຽງຮຽວລົງໄປທາງຂອບ"
+        },
+        "vudioDottify": {
+          "label": "ເຮັດເປັນຈຸດ",
+          "description": "ແຕ້ມເປັນຈຸດແທນເສັ້ນຕໍ່ເນື່ອງ"
+        },
+        "vudioHorizontalAlign": {
+          "label": "ການຈັດລຽງແນວນອນ"
+        },
+        "vudioVerticalAlign": {
+          "label": "ການຈັດລຽງແນວຕັ້ງ"
+        }
       }
     },
     "audio-only": {
@@ -1417,7 +1631,7 @@
     },
     "search-commands": {
       "commands": {
-        "play": "ຫຼິ້ນວິດີໂອຈາກລິ້ງ ຫຼື id ຂອງ YouTube",
+        "play": "ຫຼິ້ນວິດີໂອຈາກລິ້ງ ຫຼື id ຂອງ \u0059\u006f\u0075\u0054\u0075\u0062\u0065",
         "settings": "ເປີດການຕັ້ງຄ່າ"
       },
       "description": "ພິມ / ໃນຊ່ອງຄົ້ນຫາເພື່ອຮັນຄຳສັ່ງ, ພ້ອມການເຕີມຄຳອັດຕະໂນມັດສຳລັບອາກິວເມັນ",
@@ -1426,7 +1640,15 @@
         "open-keybind": "ປຸ່ມລັດເປີດ",
         "open-keybind-description": "accelerator ແບບ Electron, ເຊັ່ນ CmdOrCtrl+/ ຫຼື Alt+Space",
         "open-shortcut": "ເປີດຊ່ອງຄົ້ນຫາຈາກທຸກບ່ອນ",
-        "open-shortcut-description": "ເອີ້ນຊ່ອງຄົ້ນຫາໃຫ້ຢູ່ໃນໂໝດຄຳສັ່ງແລ້ວ, ຄືກັບ Spotlight. ກົດອີກຄັ້ງເພື່ອປິດ."
+        "open-shortcut-description": "ເອີ້ນຊ່ອງຄົ້ນຫາໃຫ້ຢູ່ໃນໂໝດຄຳສັ່ງແລ້ວ, ຄືກັບ Spotlight. ກົດອີກຄັ້ງເພື່ອປິດ.",
+        "openShortcut": {
+          "label": "ເປີດຊ່ອງຄົ້ນຫາຈາກທຸກບ່ອນ",
+          "description": "ເອີ້ນຊ່ອງຄົ້ນຫາໃຫ້ຢູ່ໃນໂໝດຄຳສັ່ງແລ້ວ, ຄືກັບ Spotlight. ກົດອີກຄັ້ງເພື່ອປິດ."
+        },
+        "openKeybind": {
+          "label": "ປຸ່ມລັດເປີດ",
+          "description": "accelerator ແບບ Electron, ເຊັ່ນ CmdOrCtrl+/ ຫຼື Alt+Space"
+        }
       }
     },
     "seek-shortcuts": {
@@ -1434,16 +1656,19 @@
       "name": "ປຸ່ມລັດເລື່ອນ"
     },
     "sfw-music": {
-      "description": "ຂ້າມເພງທີ່ YouTube Music ໝາຍວ່າ Explicit ໂດຍອັດຕະໂນມັດ. ຢຸດຊົ່ວຄາວຖ້າຄິວ explicit ຊ້ຳ ຫຼື ບໍ່ມີເພງຕໍ່ໄປ.",
+      "description": "ຂ້າມເພງທີ່ \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 ໝາຍວ່າ Explicit ໂດຍອັດຕະໂນມັດ. ຢຸດຊົ່ວຄາວຖ້າຄິວ explicit ຊ້ຳ ຫຼື ບໍ່ມີເພງຕໍ່ໄປ.",
       "name": "ເພງ SFW"
     },
     "toast-autoclose": {
-      "description": "ປິດການແຈ້ງເຕືອນຂອງ YouTube Music ອັດຕະໂນມັດຫຼັງຈາກສາມວິນາທີ",
+      "description": "ປິດການແຈ້ງເຕືອນຂອງ \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 ອັດຕະໂນມັດຫຼັງຈາກສາມວິນາທີ",
       "name": "ປິດ Toast ອັດຕະໂນມັດ"
     },
     "statusbar-lyrics": {
       "settings": {
-        "include-pronunciation": "ລວມການອອກສຽງ"
+        "include-pronunciation": "ລວມການອອກສຽງ",
+        "includePronunciation": {
+          "label": "ລວມການອອກສຽງ"
+        }
       }
     },
     "dismiss-multidevice-popup": {
@@ -1455,7 +1680,11 @@
       "name": "ຕົວປະຢັດຄວາມຈຳ",
       "settings": {
         "threshold": "ຄ່າກຳນົດແຄຊ",
-        "threshold-description": "ລຶບແຄຊເມື່ອຫນ່ວຍຄວາມຈຳທີ່ໃຊ້ງານຂອງພວກມັນເກີນຄ່ານີ້ ໃນຂະນະທີ່ໜ້າຕ່າງຖືກເຊື່ອງ"
+        "threshold-description": "ລຶບແຄຊເມື່ອຫນ່ວຍຄວາມຈຳທີ່ໃຊ້ງານຂອງພວກມັນເກີນຄ່ານີ້ ໃນຂະນະທີ່ໜ້າຕ່າງຖືກເຊື່ອງ",
+        "thresholdMB": {
+          "label": "ຄ່າກຳນົດແຄຊ",
+          "description": "ລຶບແຄຊເມື່ອຫນ່ວຍຄວາມຈຳທີ່ໃຊ້ງານຂອງພວກມັນເກີນຄ່ານີ້ ໃນຂະນະທີ່ໜ້າຕ່າງຖືກເຊື່ອງ"
+        }
       }
     }
   },
@@ -1484,7 +1713,7 @@
     "move-up": "ຍ້າຍຂຶ້ນ",
     "move-down": "ຍ້າຍລົງ",
     "about": {
-      "tagline": "ແອັບເດສະທັອບທີ່ມີຟັງຊັນຄົບຄົວສຳລັບ YouTube Music",
+      "tagline": "ແອັບເດສະທັອບທີ່ມີຟັງຊັນຄົບຄົວສຳລັບ \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063",
       "versions": "ເວີຊັນ",
       "version-app": "ແອັບ",
       "version-build": "ບິວ",
@@ -1542,7 +1771,7 @@
     "stepper-decrement": "ຫຼຸດລົງ",
     "stepper-increment": "ເພີ່ມຂຶ້ນ",
     "flags": {
-      "warning": "ທຸງຄຸນສົມບັດແມ່ນສະວິດພາຍໃນຂອງ YouTube Music ເອງ. ການປ່ຽນແປງອາດເຮັດໃຫ້ການຫຼິ້ນ, ການຈັດວາງ ຫຼື ຄຸນສົມບັດບັນຊີເສຍຫາຍ ແລະ ບໍ່ໄດ້ຮັບການສະໜັບສະໜູນ. ການກຳນົດທັບຈະຖືກເກັບໄວ້ສະເພາະທຸງທີ່ທ່ານປ່ຽນ ແລະ ສາມາດລຶບອອກໄດ້ດ້ວຍ ຍົກເລີກ.",
+      "warning": "ທຸງຄຸນສົມບັດແມ່ນສະວິດພາຍໃນຂອງ \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 ເອງ. ການປ່ຽນແປງອາດເຮັດໃຫ້ການຫຼິ້ນ, ການຈັດວາງ ຫຼື ຄຸນສົມບັດບັນຊີເສຍຫາຍ ແລະ ບໍ່ໄດ້ຮັບການສະໜັບສະໜູນ. ການກຳນົດທັບຈະຖືກເກັບໄວ້ສະເພາະທຸງທີ່ທ່ານປ່ຽນ ແລະ ສາມາດລຶບອອກໄດ້ດ້ວຍ ຍົກເລີກ.",
       "search-placeholder": "ຄົ້ນຫາທຸງ",
       "overridden": "ຖືກກຳນົດທັບ",
       "undo": "ຍົກເລີກ",
@@ -1587,7 +1816,11 @@
       "theme-preset": "ຄ່າຕັ້ງສຳເລັດ",
       "theme-variable-name": "ຕົວແປ",
       "theme-variable-value": "ຄ່າ",
-      "theme-variable-add": "ເພີ່ມຕົວແປ"
+      "theme-variable-add": "ເພີ່ມຕົວແປ",
+      "performance-mode": "ໂໝດປະສິດທິພາບ",
+      "performance-mode-desc": "ສະຫຼະຄວາມຄົມຊັດທາງພາບບາງສ່ວນ ເພື່ອໃຫ້ການສະແດງຜົນປະຫຍັດກວ່າ.",
+      "in-process-gpu": "ລວມຂະບວນການ GPU ເຂົ້າກັບຂະບວນການຂອງແອັບ",
+      "in-process-gpu-desc": "ທົດລອງ: ປະຫຍັດໜຶ່ງຂະບວນການ ແຕ່ຍ້າຍຫນ່ວຍຄວາມຈຳ GPU ໄປຍັງຂະບວນການຫຼັກ ແລະອາດຈະກັບໄປໃຊ້ການສະແດງຜົນແບບຊອບແວ."
     }
   }
 }

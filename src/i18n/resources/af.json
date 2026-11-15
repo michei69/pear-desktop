@@ -6,17 +6,17 @@
         "executed-at-ms": "Inprop {{pluginName}}::{{contextName}} uitgevoer teen {{ms}}ms",
         "initialize-failed": "Kon nie invoegtoepassing \"{{pluginName}}\" inisialiseer nie",
         "load-all": "Laai tans alle inproppe",
-        "load-failed": "Kon nie inprop \"{{pluginName}}\" laai nie",
         "loaded": "Inprop \"{{pluginName}}\" gelaai",
+        "load-failed": "Kon nie inprop \"{{pluginName}}\" laai nie",
         "unload-failed": "Kon nie inprop \"{{pluginName}}\" ontlaai nie",
         "unloaded": "Inprop \"{{pluginName}}\" ontlaai"
       }
     }
   },
   "language": {
-    "code": "af",
-    "local-name": "Afrikaans",
-    "name": "Afrikaans"
+    "local-name": "Die plaaslike naam van die taal.\n\ne.g. 日本語, 한국어, English, Русский",
+    "name": "Engelse naam van die taal.\n\ne.g. Japanese, Korean, English, Russian",
+    "code": "af"
   },
   "main": {
     "console": {
@@ -26,12 +26,6 @@
       "i18n": {
         "loaded": "i18n gelaai"
       },
-      "second-instance": {
-        "receive-command": "Opdrag ontvang via protokol: \"{{command}}\""
-      },
-      "theme": {
-        "css-file-not-found": "CSS-lêer \"{{cssFile}}\" bestaan nie, ignoreer"
-      },
       "unresponsive": {
         "details": "Onreagerende fout\n{{error}}"
       },
@@ -40,6 +34,12 @@
       },
       "window": {
         "tried-to-render-offscreen": "Venster het probeer om die beeld van die skerm af te vertoon, vensterGrootte={{windowSize}}, skermGrootte={{displaySize}}, posisie={{position}}"
+      },
+      "second-instance": {
+        "receive-command": "Opdrag ontvang via protokol: \"{{command}}\""
+      },
+      "theme": {
+        "css-file-not-found": "CSS-lêer \"{{cssFile}}\" bestaan nie, ignoreer"
       }
     },
     "dialog": {
@@ -136,6 +136,52 @@
               "force-smtc": "Dwing die gebruik van eksterne SMTC af"
             }
           },
+          "visual-tweaks": {
+            "submenu": {
+              "theme": {
+                "dialog": {
+                  "button": {
+                    "cancel": "Kanselleer",
+                    "remove": "Verwyder"
+                  },
+                  "remove-theme": "Is jy seker jy wil die aangepaste tema verwyder?",
+                  "remove-theme-message": "Dit sal die aangepaste tema verwyder"
+                },
+                "label": "Tema",
+                "submenu": {
+                  "import-css-file": "Importeer aangepaste CSS-lêer",
+                  "no-theme": "Geen tema",
+                  "colors": {
+                    "label": "Kleure"
+                  },
+                  "presets": {
+                    "label": "Voorafinstellings",
+                    "default": "Verstek",
+                    "custom": "Pasgemaak"
+                  },
+                  "reset-colors": "Herstel kleure",
+                  "open-themes-folder": "Open temas-lêergids"
+                }
+              },
+              "like-buttons": {
+                "default": "Verstek",
+                "force-show": "Dwing wys",
+                "hide": "Versteek",
+                "swap": "Ruil laaik-knoppies volgorde om",
+                "label": "Laaik-knoppies"
+              },
+              "custom-window-title": {
+                "label": "Aangepaste venstertitel",
+                "prompt": {
+                  "label": "Voer aangepaste venstertitel in: (los leeg om te deaktiveer)",
+                  "placeholder": "Voorbeeld: {{applicationName}}"
+                }
+              },
+              "remove-upgrade-button": "Verwyder opgraderingsknoppie",
+              "use-ytm-icons": "Gebruik oorspronklike \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063-ikone"
+            },
+            "label": "Visuele Aanpassings"
+          },
           "always-on-top": "Altyd bo-op",
           "auto-update": "Outomatiese Opdatering",
           "hide-menu": {
@@ -156,8 +202,8 @@
               "sync": {
                 "label": "Sinkroniseer taal",
                 "submenu": {
-                  "from-youtube": "Vanaf YouTube",
-                  "to-youtube": "Na YouTube"
+                  "from-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "Vanaf \u0059\u006f\u0075\u0054\u0075\u0062\u0065",
+                  "to-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "Na \u0059\u006f\u0075\u0054\u0075\u0062\u0065"
                 },
                 "failure": {
                   "dialog": {
@@ -184,52 +230,6 @@
               "play-pause-on-click": "Speel/Onderbreek by klik",
               "move-to-current-desktop": "Skuif na huidige virtuele lessenaar wanneer gewys",
               "force-white-icons": "Dwing die gebruik van wit ikone af"
-            }
-          },
-          "visual-tweaks": {
-            "label": "Visuele Aanpassings",
-            "submenu": {
-              "like-buttons": {
-                "default": "Verstek",
-                "force-show": "Dwing wys",
-                "hide": "Versteek",
-                "swap": "Ruil laaik-knoppies volgorde om",
-                "label": "Laaik-knoppies"
-              },
-              "custom-window-title": {
-                "label": "Aangepaste venstertitel",
-                "prompt": {
-                  "label": "Voer aangepaste venstertitel in: (los leeg om te deaktiveer)",
-                  "placeholder": "Voorbeeld: {{applicationName}}"
-                }
-              },
-              "remove-upgrade-button": "Verwyder opgraderingsknoppie",
-              "theme": {
-                "dialog": {
-                  "button": {
-                    "cancel": "Kanselleer",
-                    "remove": "Verwyder"
-                  },
-                  "remove-theme": "Is jy seker jy wil die aangepaste tema verwyder?",
-                  "remove-theme-message": "Dit sal die aangepaste tema verwyder"
-                },
-                "label": "Tema",
-                "submenu": {
-                  "import-css-file": "Importeer aangepaste CSS-lêer",
-                  "no-theme": "Geen tema",
-                  "colors": {
-                    "label": "Kleure"
-                  },
-                  "presets": {
-                    "label": "Voorafinstellings",
-                    "default": "Verstek",
-                    "custom": "Pasgemaak"
-                  },
-                  "reset-colors": "Herstel kleure",
-                  "open-themes-folder": "Open temas-lêergids"
-                }
-              },
-              "use-ytm-icons": "Gebruik oorspronklike YouTube Music-ikone"
             }
           },
           "updates": {
@@ -321,7 +321,15 @@
         },
         "enable-seekbar": "Aktiveer soekbalk tematisering"
       },
-      "name": "Album Kleurtema"
+      "name": "Album Kleurtema",
+      "settings": {
+        "ratio": {
+          "label": "Kleur mengverhouding"
+        },
+        "enableSeekbar": {
+          "label": "Aktiveer soekbalk tematisering"
+        }
+      }
     },
     "audio-only": {
       "description": "Dwing klank-alleen-modus af — blokkeer alle videostrome op netwerk- en spelervlak om RAM en bandwydte te bespaar",
@@ -508,6 +516,14 @@
         "caption-changed": "Onderskrif verander na {{language}}",
         "caption-disabled": "Onderskrifte gedeaktiveer",
         "no-captions": "Geen onderskrifte beskikbaar vir hierdie liedjie nie"
+      },
+      "settings": {
+        "autoload": {
+          "label": "Kies outomaties laasgebruikte onderskrif"
+        },
+        "disableCaptions": {
+          "label": "Geen onderskrifte by verstek nie"
+        }
       }
     },
     "clock": {
@@ -521,7 +537,13 @@
         }
       },
       "settings": {
-        "hour-12": "Gebruik 12-uur formaat"
+        "hour-12": "Gebruik 12-uur formaat",
+        "displaySeconds": {
+          "label": "Wys Sekondes"
+        },
+        "hour12": {
+          "label": "Gebruik 12-uur formaat"
+        }
       }
     },
     "compact-sidebar": {
@@ -580,7 +602,12 @@
       "menu": {
         "apply-once": "Pas slegs by opstart toe"
       },
-      "name": "Deaktiveer Outomatiese Spel"
+      "name": "Deaktiveer Outomatiese Spel",
+      "settings": {
+        "applyOnce": {
+          "label": "Pas slegs by opstart toe"
+        }
+      }
     },
     "discord": {
       "backend": {
@@ -603,8 +630,8 @@
           "label": "Statusteks",
           "submenu": {
             "application": "Luister na {{applicationName}}",
-            "artist": "Luister na {{artist}}",
-            "title": "Luister na {{songTitle}}"
+            "artist": "Luister na {artist}",
+            "title": "Luister na {liedjie titel}"
           }
         }
       },
@@ -620,7 +647,38 @@
         "activity-timeout-enabled": "Vee teenwoordigheid uit wanneer onderbreek",
         "activity-timeout-time": "Vee uit na",
         "hide-github-button": "Versteek “Bekyk op GitHub”-knoppie",
-        "hide-duration-left": "Versteek tyd oor"
+        "hide-duration-left": "Versteek tyd oor",
+        "autoReconnect": {
+          "label": "Outomaties herverbind"
+        },
+        "activityTimeoutEnabled": {
+          "label": "Vee teenwoordigheid uit wanneer onderbreek"
+        },
+        "activityTimeoutSeconds": {
+          "label": "Vee uit na"
+        },
+        "playButton": {
+          "label": "Speel op {{applicationName}}"
+        },
+        "hideGitHubButton": {
+          "label": "Versteek “Bekyk op GitHub”-knoppie"
+        },
+        "hideDurationLeft": {
+          "label": "Versteek tyd oor"
+        },
+        "statusDisplayType": {
+          "label": "Statusteks",
+          "options": {
+            "name": "Luister na {{applicationName}}",
+            "state": "Luister na {artist}",
+            "details": "Luister na {liedjie titel}"
+          }
+        }
+      },
+      "actions": {
+        "clearActivity": {
+          "label": "Maak aktiwiteit skoon"
+        }
       }
     },
     "downloader": {
@@ -905,6 +963,23 @@
       "name": "Beeld-in-beeld",
       "templates": {
         "button": "Beeld-in-beeld"
+      },
+      "settings": {
+        "hotkey": {
+          "label": "Sneltoets"
+        },
+        "useNativePiP": {
+          "label": "Gebruik blaaier se natuurlike BiB"
+        },
+        "alwaysOnTop": {
+          "label": "Altyd bo-op"
+        },
+        "savePosition": {
+          "label": "Stoor vensterposisie"
+        },
+        "saveSize": {
+          "label": "Stoor venstergrootte"
+        }
       }
     },
     "playback-speed": {
@@ -940,10 +1015,21 @@
         }
       },
       "settings": {
-        "steps": "Volumestap",
+        "steps": {
+          "label": "Volumestap"
+        },
         "arrows-shortcut": "Pyltjie-snelloetse",
         "shortcut-up": "Globale snelloets: volume op",
-        "shortcut-down": "Globale snelloets: volume af"
+        "shortcut-down": "Globale snelloets: volume af",
+        "arrowsShortcut": {
+          "label": "Pyltjie-snelloetse"
+        },
+        "volumeUp": {
+          "label": "Globale snelloets: volume op"
+        },
+        "volumeDown": {
+          "label": "Globale snelloets: volume af"
+        }
       }
     },
     "quality-changer": {
@@ -1042,14 +1128,38 @@
       },
       "settings": {
         "global-keybinds": "Globale sleutelbindings (werk regdeur die app)",
-        "local-keybinds": "Plaaslike sleutelbindings (net terwyl die venster gefokus is)"
+        "local-keybinds": "Plaaslike sleutelbindings (net terwyl die venster gefokus is)",
+        "playPause": {
+          "label": "Speel / Onderbreek"
+        },
+        "localPlayPause": {
+          "label": "Speel / Onderbreek"
+        },
+        "next": {
+          "label": "Volgende"
+        },
+        "localNext": {
+          "label": "Volgende"
+        },
+        "previous": {
+          "label": "Vorige"
+        },
+        "localPrevious": {
+          "label": "Vorige"
+        },
+        "overrideMediaKeys": {
+          "label": "Oorskryf Mediasleutels"
+        }
       }
     },
     "skip-silences": {
       "description": "Slaan outomaties stilte-gedeeltes in liedjies oor",
       "name": "Slaan Stiltes Oor",
       "settings": {
-        "only-skip-beginning": "Slaan slegs stilte aan die begin van 'n snit oor"
+        "only-skip-beginning": "Slaan slegs stilte aan die begin van 'n snit oor",
+        "onlySkipBeginning": {
+          "label": "Slaan slegs stilte aan die begin van 'n snit oor"
+        }
       }
     },
     "sponsorblock": {
@@ -1065,7 +1175,28 @@
           "selfpromo": "Selfpromosie",
           "music_offtopic": "Nie-musiekafdeling"
         },
-        "api-url": "API-URL"
+        "api-url": "API-URL",
+        "sponsor": {
+          "label": "Borg"
+        },
+        "intro": {
+          "label": "Inleiding"
+        },
+        "outro": {
+          "label": "Uitleiding"
+        },
+        "interaction": {
+          "label": "Interaksie-herinnering"
+        },
+        "selfpromo": {
+          "label": "Selfpromosie"
+        },
+        "music_offtopic": {
+          "label": "Nie-musiekafdeling"
+        },
+        "apiURL": {
+          "label": "API-URL"
+        }
       }
     },
     "synced-lyrics": {
@@ -1274,7 +1405,7 @@
         },
         "use-ytm-lyrics-without-proxy": {
           "label": "Gebruik YTM-lirieke sonder 'n instaanbediener",
-          "tooltip": "Slaan die YTM-blaaiproxie oor en roep YouTube Music direk aan deur die toepassing se geverifieerde sessie te gebruik. Nuttig as jy jou netwerk/streek vertrou om direkte blaai-oproepe toe te laat."
+          "tooltip": "Slaan die YTM-blaaiproxie oor en roep \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 direk aan deur die toepassing se geverifieerde sessie te gebruik. Nuttig as jy jou netwerk/streek vertrou om direkte blaai-oproepe toe te laat."
         },
         "show-custom-search-button": {
           "label": "Wys pasgemaakte soekknoppie",
@@ -1366,7 +1497,25 @@
         }
       },
       "settings": {
-        "type-description": "Agtergrondmateriaal wat vir venstertransparansie gebruik word"
+        "type-description": "Agtergrondmateriaal wat vir venstertransparansie gebruik word",
+        "opacity": {
+          "label": "Deursigtigheid"
+        },
+        "type": {
+          "label": "Tipe",
+          "description": "Agtergrondmateriaal wat vir venstertransparansie gebruik word",
+          "options": {
+            "acrylic": "Akriel",
+            "content": "Inhoud",
+            "fullscreen-ui": "Volskerm-UI",
+            "mica": "Mika",
+            "tabbed": "Geluide",
+            "under-page": "Onder bladsy",
+            "under-window": "Onder venster",
+            "window": "Venster",
+            "none": "Geen"
+          }
+        }
       }
     },
     "tuna-obs": {
@@ -1402,6 +1551,27 @@
       "templates": {
         "button-song": "Liedjie",
         "button-video": "Video"
+      },
+      "settings": {
+        "mode": {
+          "label": "Modus",
+          "options": {
+            "custom": "Aangepaste skakeling",
+            "native": "Natuurlike skakeling",
+            "disabled": "Gedeaktiveer"
+          }
+        },
+        "align": {
+          "label": "Belyning",
+          "options": {
+            "left": "Links",
+            "middle": "Middel",
+            "right": "Regs"
+          }
+        },
+        "forceHide": {
+          "label": "Dwing verwydering van video-oortjie"
+        }
       }
     },
     "visualizer": {
@@ -1411,7 +1581,9 @@
       },
       "name": "Visualiseerder",
       "settings": {
-        "preset": "Voorafinstelling",
+        "preset": {
+          "label": "Voorafinstelling"
+        },
         "blend-time": "Vermengtyd",
         "effect": "Effek",
         "accuracy": "Akkuraatheid",
@@ -1427,7 +1599,45 @@
         "dottify": "Stippel",
         "dottify-description": "Teken kolletjies in plaas van 'n deurlopende lyn",
         "horizontal-align": "Horisontale belyning",
-        "vertical-align": "Vertikale belyning"
+        "vertical-align": "Vertikale belyning",
+        "blendTimeInSeconds": {
+          "label": "Vermengtyd"
+        },
+        "vudioMaxHeight": {
+          "label": "Maksimum hoogte"
+        },
+        "vudioMaxSize": {
+          "label": "Maksimum grootte"
+        },
+        "vudioLineWidth": {
+          "label": "Lynwydte"
+        },
+        "vudioColor": {
+          "label": "Kleur"
+        },
+        "vudioShadowBlur": {
+          "label": "Skadu-vervaging"
+        },
+        "vudioShadowColor": {
+          "label": "Skadukleur"
+        },
+        "vudioFadeSide": {
+          "label": "Vervaag sykante"
+        },
+        "vudioPrettify": {
+          "label": "Verfraai",
+          "description": "Laat die stawe na die rande toe taps"
+        },
+        "vudioDottify": {
+          "label": "Stippel",
+          "description": "Teken kolletjies in plaas van 'n deurlopende lyn"
+        },
+        "vudioHorizontalAlign": {
+          "label": "Horisontale belyning"
+        },
+        "vudioVerticalAlign": {
+          "label": "Vertikale belyning"
+        }
       }
     },
     "playlist-search": {
@@ -1471,7 +1681,7 @@
     },
     "search-commands": {
       "commands": {
-        "play": "Speel 'n video vanaf 'n YouTube-skakel of -ID",
+        "play": "Speel 'n video vanaf 'n \u0059\u006f\u0075\u0054\u0075\u0062\u0065-skakel of -ID",
         "settings": "Open die instellings"
       },
       "description": "Tik / in die soekveld om opdragte uit te voer, met outovoltooiing vir hul argumente",
@@ -1480,7 +1690,15 @@
         "open-keybind": "Oopmaak-snelloets",
         "open-keybind-description": "Electron-styl versneller, bv. CmdOrCtrl+/ of Alt+Space",
         "open-shortcut": "Maak die soekveld van enige plek oop",
-        "open-shortcut-description": "Roep die soekveld op wat reeds in opdragmodus is, soos Spotlight. As jy dit weer druk, sluit dit."
+        "open-shortcut-description": "Roep die soekveld op wat reeds in opdragmodus is, soos Spotlight. As jy dit weer druk, sluit dit.",
+        "openShortcut": {
+          "label": "Maak die soekveld van enige plek oop",
+          "description": "Roep die soekveld op wat reeds in opdragmodus is, soos Spotlight. As jy dit weer druk, sluit dit."
+        },
+        "openKeybind": {
+          "label": "Oopmaak-snelloets",
+          "description": "Electron-styl versneller, bv. CmdOrCtrl+/ of Alt+Space"
+        }
       }
     },
     "seek-shortcuts": {
@@ -1488,16 +1706,19 @@
       "name": "Spring-snelloetse"
     },
     "sfw-music": {
-      "description": "Slaan liedjies wat deur YouTube Music as Eksplisiet gemerk is, outomaties oor. Wag as 'n eksplisiete waglys herhaal of geen volgende liedjie beskikbaar is nie.",
+      "description": "Slaan liedjies wat deur \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 as Eksplisiet gemerk is, outomaties oor. Wag as 'n eksplisiete waglys herhaal of geen volgende liedjie beskikbaar is nie.",
       "name": "SFW-musiek"
     },
     "toast-autoclose": {
-      "description": "Sluit YouTube Music-kennisgewings outomaties ná drie sekondes",
+      "description": "Sluit \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063-kennisgewings outomaties ná drie sekondes",
       "name": "Kennisgewing-outosluiting"
     },
     "statusbar-lyrics": {
       "settings": {
-        "include-pronunciation": "Sluit uitspraak in"
+        "include-pronunciation": "Sluit uitspraak in",
+        "includePronunciation": {
+          "label": "Sluit uitspraak in"
+        }
       }
     },
     "dismiss-multidevice-popup": {
@@ -1509,7 +1730,11 @@
       "name": "Geheuebespaarder",
       "settings": {
         "threshold": "Kasgeheuedrempel",
-        "threshold-description": "Maak die kasgeheues skoon sodra hul lewende geheue dit oorskry terwyl die venster verborge is"
+        "threshold-description": "Maak die kasgeheues skoon sodra hul lewende geheue dit oorskry terwyl die venster verborge is",
+        "thresholdMB": {
+          "label": "Kasgeheuedrempel",
+          "description": "Maak die kasgeheues skoon sodra hul lewende geheue dit oorskry terwyl die venster verborge is"
+        }
       }
     }
   },
@@ -1538,7 +1763,7 @@
     "move-up": "Skuif op",
     "move-down": "Skuif af",
     "about": {
-      "tagline": "'n Kenmerkryke lessenaartoepassing vir YouTube Music",
+      "tagline": "'n Kenmerkryke lessenaartoepassing vir \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063",
       "versions": "Weergawes",
       "version-app": "Toepassing",
       "version-build": "Bou",
@@ -1596,7 +1821,7 @@
     "stepper-decrement": "Verlaag",
     "stepper-increment": "Verhoog",
     "flags": {
-      "warning": "Kenmerkvlae is YouTube Music se eie interne skakelaars. Om dit te verander kan afspeling, uitleg of rekeningfunksies breek, en dit word nie deur ondersteuning gedek nie. Oorheersings word slegs vir die vlae wat jy verander, behou en kan met Ontdoen verwyder word.",
+      "warning": "Kenmerkvlae is \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 se eie interne skakelaars. Om dit te verander kan afspeling, uitleg of rekeningfunksies breek, en dit word nie deur ondersteuning gedek nie. Oorheersings word slegs vir die vlae wat jy verander, behou en kan met Ontdoen verwyder word.",
       "search-placeholder": "Soek vlae",
       "overridden": "oorheers",
       "undo": "Ontdoen",
@@ -1641,7 +1866,11 @@
       "theme-preset": "Voorafinstelling",
       "theme-variable-name": "Veranderlike",
       "theme-variable-value": "Waarde",
-      "theme-variable-add": "Voeg veranderlike by"
+      "theme-variable-add": "Voeg veranderlike by",
+      "performance-mode": "Prestasiemodus",
+      "performance-mode-desc": "Ruil 'n bietjie visuele getrouheid in vir goedkoper weergee.",
+      "in-process-gpu": "Voeg die GPU-proses by die app-proses in",
+      "in-process-gpu-desc": "Eksperimenteel: bespaar een proses, maar skuif GPU-geheue na die hoofproses en kan terugval na sagteware-weergee."
     }
   }
 }

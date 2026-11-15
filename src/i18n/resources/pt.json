@@ -156,8 +156,8 @@
               "sync": {
                 "label": "Sincronizar idioma",
                 "submenu": {
-                  "from-youtube": "Do YouTube",
-                  "to-youtube": "Para o YouTube"
+                  "from-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "Do \u0059\u006f\u0075\u0054\u0075\u0062\u0065",
+                  "to-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "Para o \u0059\u006f\u0075\u0054\u0075\u0062\u0065"
                 },
                 "failure": {
                   "dialog": {
@@ -229,7 +229,7 @@
                   "open-themes-folder": "Abrir pasta de temas"
                 }
               },
-              "use-ytm-icons": "Usar os ícones originais do YouTube Music"
+              "use-ytm-icons": "Usar os ícones originais do \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063"
             }
           },
           "updates": {
@@ -314,7 +314,15 @@
         },
         "enable-seekbar": "Ativar temas na barra de reprodução"
       },
-      "name": "Tema de cores do álbum"
+      "name": "Tema de cores do álbum",
+      "settings": {
+        "ratio": {
+          "label": "Rácio de mistura de cores"
+        },
+        "enableSeekbar": {
+          "label": "Ativar temas na barra de reprodução"
+        }
+      }
     },
     "ambient-mode": {
       "description": "Aplica um efeito de iluminação, projetando cores suaves do vídeo para o fundo do ecrã",
@@ -497,6 +505,14 @@
         "caption-changed": "Legenda alterada para {{language}}",
         "caption-disabled": "Legendas desativadas",
         "no-captions": "Não existem legendas para esta faixa"
+      },
+      "settings": {
+        "autoload": {
+          "label": "Selecionar automaticamente a última legenda utilizada"
+        },
+        "disableCaptions": {
+          "label": "Sem legendas por omissão"
+        }
       }
     },
     "clock": {
@@ -510,7 +526,13 @@
       },
       "name": "Relógio",
       "settings": {
-        "hour-12": "Usar formato de 12 horas"
+        "hour-12": "Usar formato de 12 horas",
+        "displaySeconds": {
+          "label": "Mostrar segundos"
+        },
+        "hour12": {
+          "label": "Usar formato de 12 horas"
+        }
       }
     },
     "compact-sidebar": {
@@ -569,7 +591,12 @@
       "menu": {
         "apply-once": "Aplicar apenas ao iniciar"
       },
-      "name": "Desativar reprodução automática"
+      "name": "Desativar reprodução automática",
+      "settings": {
+        "applyOnce": {
+          "label": "Aplicar apenas ao iniciar"
+        }
+      }
     },
     "discord": {
       "backend": {
@@ -592,8 +619,8 @@
           "label": "Texto de estado",
           "submenu": {
             "application": "A reproduzir {{applicationName}}",
-            "artist": "A ouvir {{artist}}",
-            "title": "A ouvir {{songTitle}}"
+            "artist": "A ouvir {artist}",
+            "title": "A ouvir {song title}"
           }
         }
       },
@@ -609,7 +636,57 @@
         "activity-timeout-enabled": "Limpar presença quando pausado",
         "activity-timeout-time": "Limpar após",
         "hide-github-button": "Ocultar botão “Ver no GitHub”",
-        "hide-duration-left": "Ocultar tempo restante"
+        "hide-duration-left": "Ocultar tempo restante",
+        "autoReconnect": {
+          "label": "Reconectar automaticamente"
+        },
+        "activityTimeoutEnabled": {
+          "label": "Limpar presença quando pausado"
+        },
+        "activityTimeoutSeconds": {
+          "label": "Limpar após"
+        },
+        "playButton": {
+          "label": "Reproduzir em {{applicationName}}"
+        },
+        "hideGitHubButton": {
+          "label": "Ocultar botão “Ver no GitHub”"
+        },
+        "hideDurationLeft": {
+          "label": "Ocultar tempo restante"
+        },
+        "statusDisplayType": {
+          "label": "Texto de estado",
+          "options": {
+            "name": "A reproduzir {{applicationName}}",
+            "state": "A ouvir {artist}",
+            "details": "A ouvir {song title}"
+          }
+        }
+      },
+      "actions": {
+        "clearActivity": {
+          "label": "Limpar atividade"
+        }
+      }
+    },
+    "do-not-track": {
+      "description": "Começar a bloquear a monitorização",
+      "menu": {
+        "blocker": "Bloqueador"
+      },
+      "name": "Não rastrear",
+      "settings": {
+        "cache": "Armazenar listas de bloqueio em cache",
+        "disable-default-lists": "Desativar listas de bloqueio padrão"
+      },
+      "dialog": {
+        "reload": {
+          "title": "Recarregar página",
+          "message": "As configurações de Não Rastrear foram alteradas.",
+          "detail": "As regras de rede são atualizadas sem reiniciar o aplicativo. Recarregue a página para aplicar totalmente as alterações aos filtros de página. A reprodução pode ser interrompida. Você pode recarregar mais tarde.",
+          "reload-now": "Recarregar página agora"
+        }
       }
     },
     "downloader": {
@@ -878,9 +955,26 @@
           }
         }
       },
-      "name": "Imagem em imagem",
+      "name": "Picture-in-picture",
       "templates": {
-        "button": "Imagem em imagem"
+        "button": "Picture-in-picture"
+      },
+      "settings": {
+        "hotkey": {
+          "label": "Tecla de atalho"
+        },
+        "useNativePiP": {
+          "label": "Utilizar PiP nativo do navegador"
+        },
+        "alwaysOnTop": {
+          "label": "Sempre na frente"
+        },
+        "savePosition": {
+          "label": "Guardar posição da janela"
+        },
+        "saveSize": {
+          "label": "Guardar tamanho da janela"
+        }
       }
     },
     "playback-speed": {
@@ -916,10 +1010,21 @@
         }
       },
       "settings": {
-        "steps": "Passo do volume",
+        "steps": {
+          "label": "Passo do volume"
+        },
         "arrows-shortcut": "Atalhos das teclas de seta",
         "shortcut-up": "Atalho global: aumentar volume",
-        "shortcut-down": "Atalho global: diminuir volume"
+        "shortcut-down": "Atalho global: diminuir volume",
+        "arrowsShortcut": {
+          "label": "Atalhos das teclas de seta"
+        },
+        "volumeUp": {
+          "label": "Atalho global: aumentar volume"
+        },
+        "volumeDown": {
+          "label": "Atalho global: diminuir volume"
+        }
       }
     },
     "quality-changer": {
@@ -1018,14 +1123,42 @@
       },
       "settings": {
         "global-keybinds": "Atalhos globais (funcionam em todo o app)",
-        "local-keybinds": "Atalhos locais (somente enquanto a janela estiver em foco)"
+        "local-keybinds": "Atalhos locais (somente enquanto a janela estiver em foco)",
+        "playPause": {
+          "label": "Reproduzir/Pausa"
+        },
+        "localPlayPause": {
+          "label": "Reproduzir/Pausa"
+        },
+        "next": {
+          "label": "Seguinte"
+        },
+        "localNext": {
+          "label": "Seguinte"
+        },
+        "previous": {
+          "label": "Anterior"
+        },
+        "localPrevious": {
+          "label": "Anterior"
+        },
+        "overrideMediaKeys": {
+          "label": "Substituir teclas multimédia"
+        }
       }
+    },
+    "skip-disliked-songs": {
+      "description": "Ignorar músicas de que não gostei",
+      "name": "Ignorar músicas não gostadas"
     },
     "skip-silences": {
       "description": "Ignorar automaticamente as partes silenciosas das músicas",
       "name": "Ignorar silêncio",
       "settings": {
-        "only-skip-beginning": "Pular o silêncio somente no início da faixa"
+        "only-skip-beginning": "Pular o silêncio somente no início da faixa",
+        "onlySkipBeginning": {
+          "label": "Pular o silêncio somente no início da faixa"
+        }
       }
     },
     "sponsorblock": {
@@ -1041,7 +1174,28 @@
           "selfpromo": "Autopromoção",
           "music_offtopic": "Seção sem música"
         },
-        "api-url": "URL da API"
+        "api-url": "URL da API",
+        "sponsor": {
+          "label": "Patrocinador"
+        },
+        "intro": {
+          "label": "Introdução"
+        },
+        "outro": {
+          "label": "Encerramento"
+        },
+        "interaction": {
+          "label": "Lembrete de interação"
+        },
+        "selfpromo": {
+          "label": "Autopromoção"
+        },
+        "music_offtopic": {
+          "label": "Seção sem música"
+        },
+        "apiURL": {
+          "label": "URL da API"
+        }
       }
     },
     "synced-lyrics": {
@@ -1095,24 +1249,6 @@
           },
           "tooltip": "Escolha o efeito para aplicar à linha atual"
         },
-        "lyrics-font-size": {
-          "label": "Tamanho da fonte das letras",
-          "submenu": {
-            "large": {
-              "label": "Grande",
-              "tooltip": "Utilizar o tamanho de letra maior original"
-            },
-            "medium": {
-              "label": "Médio",
-              "tooltip": "Utilizar um tamanho de letra equilibrado"
-            },
-            "small": {
-              "label": "Pequeno",
-              "tooltip": "Utilizar um tamanho de letra mais compacto"
-            }
-          },
-          "tooltip": "Escolha o tamanho do texto das letras"
-        },
         "precise-timing": {
           "label": "Sincronização perfeita da entre letra e música",
           "tooltip": "Calcular, ao milissegundo, a exibição da linha seguinte (pode ter um pequeno impacto no desempenho)"
@@ -1136,6 +1272,24 @@
         "show-time-codes": {
           "label": "Mostrar códigos temporais",
           "tooltip": "Mostrar códigos temporais ao lado das letras"
+        },
+        "lyrics-font-size": {
+          "label": "Tamanho da fonte das letras",
+          "submenu": {
+            "large": {
+              "label": "Grande",
+              "tooltip": "Utilizar o tamanho de letra maior original"
+            },
+            "medium": {
+              "label": "Médio",
+              "tooltip": "Utilizar um tamanho de letra equilibrado"
+            },
+            "small": {
+              "label": "Pequeno",
+              "tooltip": "Utilizar um tamanho de letra mais compacto"
+            }
+          },
+          "tooltip": "Escolha o tamanho do texto das letras"
         },
         "translation": {
           "clear-cache": {
@@ -1250,7 +1404,7 @@
         },
         "use-ytm-lyrics-without-proxy": {
           "label": "Usar letras do YTM sem proxy",
-          "tooltip": "Ignorar o proxy de navegação do YTM e chamar o YouTube Music diretamente usando a sessão autenticada do aplicativo. Útil se você confiar na sua rede/região para permitir chamadas de navegação diretas."
+          "tooltip": "Ignorar o proxy de navegação do YTM e chamar o \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 diretamente usando a sessão autenticada do aplicativo. Útil se você confiar na sua rede/região para permitir chamadas de navegação diretas."
         },
         "show-custom-search-button": {
           "label": "Mostrar botão de pesquisa personalizado",
@@ -1342,7 +1496,25 @@
       },
       "name": "Reprodutor transparente",
       "settings": {
-        "type-description": "Material de fundo usado para a transparência da janela"
+        "type-description": "Material de fundo usado para a transparência da janela",
+        "opacity": {
+          "label": "Opacidade"
+        },
+        "type": {
+          "label": "Tipo",
+          "description": "Material de fundo usado para a transparência da janela",
+          "options": {
+            "acrylic": "Acrílico",
+            "content": "Conteúdo",
+            "fullscreen-ui": "Interface em tela cheia",
+            "mica": "Mica",
+            "tabbed": "Separadores",
+            "under-page": "Sub Página",
+            "under-window": "Sub Janela",
+            "window": "Janela",
+            "none": "Nada"
+          }
+        }
       }
     },
     "tuna-obs": {
@@ -1378,6 +1550,27 @@
       "templates": {
         "button-song": "Música",
         "button-video": "Vídeo"
+      },
+      "settings": {
+        "mode": {
+          "label": "Modo",
+          "options": {
+            "custom": "Ativar modo personalizado",
+            "native": "Ativar modo nativo",
+            "disabled": "Desativado"
+          }
+        },
+        "align": {
+          "label": "Alinhamento",
+          "options": {
+            "left": "Esquerda",
+            "middle": "Centro",
+            "right": "Direita"
+          }
+        },
+        "forceHide": {
+          "label": "Remover separador de vídeo"
+        }
       }
     },
     "visualizer": {
@@ -1387,7 +1580,9 @@
       },
       "name": "Visualizador",
       "settings": {
-        "preset": "Predefinição",
+        "preset": {
+          "label": "Predefinição"
+        },
         "blend-time": "Tempo de transição",
         "effect": "Efeito",
         "accuracy": "Precisão",
@@ -1403,7 +1598,45 @@
         "dottify": "Pontilhar",
         "dottify-description": "Desenhar pontos em vez de uma linha contínua",
         "horizontal-align": "Alinhamento horizontal",
-        "vertical-align": "Alinhamento vertical"
+        "vertical-align": "Alinhamento vertical",
+        "blendTimeInSeconds": {
+          "label": "Tempo de transição"
+        },
+        "vudioMaxHeight": {
+          "label": "Altura máxima"
+        },
+        "vudioMaxSize": {
+          "label": "Tamanho máximo"
+        },
+        "vudioLineWidth": {
+          "label": "Largura da linha"
+        },
+        "vudioColor": {
+          "label": "Cor"
+        },
+        "vudioShadowBlur": {
+          "label": "Desfoque da sombra"
+        },
+        "vudioShadowColor": {
+          "label": "Cor da sombra"
+        },
+        "vudioFadeSide": {
+          "label": "Lados com esmaecimento"
+        },
+        "vudioPrettify": {
+          "label": "Embelezar",
+          "description": "Afinar as barras em direção às bordas"
+        },
+        "vudioDottify": {
+          "label": "Pontilhar",
+          "description": "Desenhar pontos em vez de uma linha contínua"
+        },
+        "vudioHorizontalAlign": {
+          "label": "Alinhamento horizontal"
+        },
+        "vudioVerticalAlign": {
+          "label": "Alinhamento vertical"
+        }
       }
     },
     "audio-only": {
@@ -1435,25 +1668,6 @@
       "name": "Mostrar sempre o controle de volume",
       "description": "Mantém o controle de volume visível e arrastável, em vez de mostrá-lo apenas ao passar o cursor."
     },
-    "do-not-track": {
-      "description": "Bloquear todo o rastreamento por padrão",
-      "menu": {
-        "blocker": "Bloqueador"
-      },
-      "name": "Não rastrear",
-      "settings": {
-        "cache": "Armazenar listas de bloqueio em cache",
-        "disable-default-lists": "Desativar listas de bloqueio padrão"
-      },
-      "dialog": {
-        "reload": {
-          "title": "Recarregar página",
-          "message": "As configurações de Não Rastrear foram alteradas.",
-          "detail": "As regras de rede são atualizadas sem reiniciar o aplicativo. Recarregue a página para aplicar totalmente as alterações aos filtros de página. A reprodução pode ser interrompida. Você pode recarregar mais tarde.",
-          "reload-now": "Recarregar página agora"
-        }
-      }
-    },
     "fullscreen-auto-hide": {
       "description": "Ocultar automaticamente os controles do player e o cursor do mouse após alguns segundos de inatividade no modo tela cheia",
       "name": "Ocultação automática em tela cheia"
@@ -1464,7 +1678,7 @@
     },
     "search-commands": {
       "commands": {
-        "play": "Reproduzir um vídeo a partir de um link ou ID do YouTube",
+        "play": "Reproduzir um vídeo a partir de um link ou ID do \u0059\u006f\u0075\u0054\u0075\u0062\u0065",
         "settings": "Abrir as configurações"
       },
       "description": "Digite / na caixa de pesquisa para executar comandos, com preenchimento automático para os argumentos",
@@ -1473,7 +1687,15 @@
         "open-keybind": "Atalho de abertura",
         "open-keybind-description": "Acelerador no estilo Electron, por exemplo CmdOrCtrl+/ ou Alt+Space",
         "open-shortcut": "Abrir a caixa de pesquisa de qualquer lugar",
-        "open-shortcut-description": "Chama a caixa de pesquisa já no modo de comando, como o Spotlight. Pressionar novamente fecha."
+        "open-shortcut-description": "Chama a caixa de pesquisa já no modo de comando, como o Spotlight. Pressionar novamente fecha.",
+        "openShortcut": {
+          "label": "Abrir a caixa de pesquisa de qualquer lugar",
+          "description": "Chama a caixa de pesquisa já no modo de comando, como o Spotlight. Pressionar novamente fecha."
+        },
+        "openKeybind": {
+          "label": "Atalho de abertura",
+          "description": "Acelerador no estilo Electron, por exemplo CmdOrCtrl+/ ou Alt+Space"
+        }
       }
     },
     "seek-shortcuts": {
@@ -1481,16 +1703,19 @@
       "name": "Atalhos de Avanço"
     },
     "sfw-music": {
-      "description": "Pula automaticamente as músicas marcadas como Explícitas pelo YouTube Music. Pausa se uma fila explícita se repetir ou se não houver próxima música disponível.",
+      "description": "Pula automaticamente as músicas marcadas como Explícitas pelo \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063. Pausa se uma fila explícita se repetir ou se não houver próxima música disponível.",
       "name": "Música SFW"
     },
     "toast-autoclose": {
-      "description": "Fecha automaticamente os avisos do YouTube Music após três segundos",
+      "description": "Fecha automaticamente os avisos do \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 após três segundos",
       "name": "Fechamento Automático de Avisos"
     },
     "statusbar-lyrics": {
       "settings": {
-        "include-pronunciation": "Incluir pronúncia"
+        "include-pronunciation": "Incluir pronúncia",
+        "includePronunciation": {
+          "label": "Incluir pronúncia"
+        }
       }
     },
     "dismiss-multidevice-popup": {
@@ -1502,7 +1727,11 @@
       "name": "Economia de memória",
       "settings": {
         "threshold": "Limite do cache",
-        "threshold-description": "Limpar os caches quando a memória ativa exceder este valor enquanto a janela estiver oculta"
+        "threshold-description": "Limpar os caches quando a memória ativa exceder este valor enquanto a janela estiver oculta",
+        "thresholdMB": {
+          "label": "Limite do cache",
+          "description": "Limpar os caches quando a memória ativa exceder este valor enquanto a janela estiver oculta"
+        }
       }
     }
   },
@@ -1531,7 +1760,7 @@
     "move-up": "Mover para cima",
     "move-down": "Mover para baixo",
     "about": {
-      "tagline": "Um aplicativo de desktop rico em recursos para o YouTube Music",
+      "tagline": "Um aplicativo de desktop rico em recursos para o \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063",
       "versions": "Versões",
       "version-app": "Aplicativo",
       "version-build": "Compilação",
@@ -1589,7 +1818,7 @@
     "stepper-decrement": "Diminuir",
     "stepper-increment": "Aumentar",
     "flags": {
-      "warning": "Os sinalizadores de recursos são comutadores internos do próprio YouTube Music. Alterá-los pode quebrar a reprodução, o layout ou recursos da conta, e eles não são cobertos pelo suporte. As substituições são mantidas apenas para os sinalizadores que você alterar e podem ser removidas com Desfazer.",
+      "warning": "Os sinalizadores de recursos são comutadores internos do próprio \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063. Alterá-los pode quebrar a reprodução, o layout ou recursos da conta, e eles não são cobertos pelo suporte. As substituições são mantidas apenas para os sinalizadores que você alterar e podem ser removidas com Desfazer.",
       "search-placeholder": "Pesquisar sinalizadores",
       "overridden": "substituído",
       "undo": "Desfazer",
@@ -1634,7 +1863,11 @@
       "theme-preset": "Predefinição",
       "theme-variable-name": "Variável",
       "theme-variable-value": "Valor",
-      "theme-variable-add": "Adicionar variável"
+      "theme-variable-add": "Adicionar variável",
+      "performance-mode": "Modo de desempenho",
+      "performance-mode-desc": "Troque um pouco de fidelidade visual por uma renderização mais leve.",
+      "in-process-gpu": "Mesclar o processo da GPU ao processo do aplicativo",
+      "in-process-gpu-desc": "Experimental: economiza um processo, mas move a memória da GPU para o processo principal e pode recorrer à renderização por software."
     }
   }
 }

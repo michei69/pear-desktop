@@ -156,8 +156,8 @@
               "sync": {
                 "label": "Synkroniser sprog",
                 "submenu": {
-                  "from-youtube": "Fra YouTube",
-                  "to-youtube": "Til YouTube"
+                  "from-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "Fra \u0059\u006f\u0075\u0054\u0075\u0062\u0065",
+                  "to-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "Til \u0059\u006f\u0075\u0054\u0075\u0062\u0065"
                 },
                 "failure": {
                   "dialog": {
@@ -229,7 +229,7 @@
                   "open-themes-folder": "Åbn temamappen"
                 }
               },
-              "use-ytm-icons": "Brug originale YouTube Music-ikoner"
+              "use-ytm-icons": "Brug originale \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063-ikoner"
             }
           },
           "updates": {
@@ -310,7 +310,15 @@
         "enable-seekbar": "Aktivér tematisering af seekbar"
       },
       "name": "Albummets farve tema",
-      "description": "Anvender et dynamisk tema og visuelle effekter baseret på albummets farvepalet"
+      "description": "Anvender et dynamisk tema og visuelle effekter baseret på albummets farvepalet",
+      "settings": {
+        "ratio": {
+          "label": "Farveblandingsforhold"
+        },
+        "enableSeekbar": {
+          "label": "Aktivér tematisering af seekbar"
+        }
+      }
     },
     "ambient-mode": {
       "menu": {
@@ -381,7 +389,7 @@
           }
         },
         "hostname": {
-          "label": "Værtsnavn"
+          "label": "Hostname"
         },
         "port": {
           "label": "Port"
@@ -407,11 +415,11 @@
           }
         }
       },
-      "name": "API-server [Beta]",
+      "name": "API Server [Beta]",
       "prompt": {
         "hostname": {
           "label": "Skriv API serverens hostname (f. eks. 0.0.0.0):",
-          "title": "Værtsnavn"
+          "title": "Hostname"
         },
         "port": {
           "label": "Skriv API serverens port:",
@@ -458,6 +466,14 @@
         "caption-changed": "Undertekst ændret til {{language}}",
         "caption-disabled": "Undertekster deaktiveret",
         "no-captions": "Ingen undertekster tilgængelige for denne sang"
+      },
+      "settings": {
+        "autoload": {
+          "label": "Vælg automatisk den senest brugte undertekst"
+        },
+        "disableCaptions": {
+          "label": "Ingen undertekster som standard"
+        }
       }
     },
     "crossfade": {
@@ -552,7 +568,13 @@
         }
       },
       "settings": {
-        "hour-12": "Brug 12-timersformat"
+        "hour-12": "Brug 12-timersformat",
+        "displaySeconds": {
+          "label": "Vis sekunder"
+        },
+        "hour12": {
+          "label": "Brug 12-timersformat"
+        }
       }
     },
     "compact-sidebar": {
@@ -577,7 +599,12 @@
       "menu": {
         "apply-once": "Anvendes kun ved opstart"
       },
-      "name": "Deaktiver autoplay"
+      "name": "Deaktiver autoplay",
+      "settings": {
+        "applyOnce": {
+          "label": "Anvendes kun ved opstart"
+        }
+      }
     },
     "discord": {
       "backend": {
@@ -600,8 +627,8 @@
           "label": "Statustekst",
           "submenu": {
             "application": "Lytter til {{applicationName}}",
-            "artist": "Lytter til {{artist}}",
-            "title": "Lytter til {{songTitle}}"
+            "artist": "Lytter til {artist}",
+            "title": "Lytter til {song title}"
           }
         }
       },
@@ -617,7 +644,38 @@
         "activity-timeout-enabled": "Ryd tilstedeværelse ved pause",
         "activity-timeout-time": "Ryd efter",
         "hide-github-button": "Skjul knappen “Se på GitHub”",
-        "hide-duration-left": "Skjul resterende tid"
+        "hide-duration-left": "Skjul resterende tid",
+        "autoReconnect": {
+          "label": "Automatisk genopret forbindelse"
+        },
+        "activityTimeoutEnabled": {
+          "label": "Ryd tilstedeværelse ved pause"
+        },
+        "activityTimeoutSeconds": {
+          "label": "Ryd efter"
+        },
+        "playButton": {
+          "label": "Afspil på {{applicationName}}"
+        },
+        "hideGitHubButton": {
+          "label": "Skjul knappen “Se på GitHub”"
+        },
+        "hideDurationLeft": {
+          "label": "Skjul resterende tid"
+        },
+        "statusDisplayType": {
+          "label": "Statustekst",
+          "options": {
+            "name": "Lytter til {{applicationName}}",
+            "state": "Lytter til {artist}",
+            "details": "Lytter til {song title}"
+          }
+        }
+      },
+      "actions": {
+        "clearActivity": {
+          "label": "Ryd aktivitet"
+        }
       }
     },
     "do-not-track": {
@@ -924,6 +982,23 @@
       "name": "Billede-i-billede",
       "templates": {
         "button": "Billede-i-billede"
+      },
+      "settings": {
+        "hotkey": {
+          "label": "Hurtigtast"
+        },
+        "useNativePiP": {
+          "label": "Brug browserens indbyggede PiP"
+        },
+        "alwaysOnTop": {
+          "label": "Altid øverst"
+        },
+        "savePosition": {
+          "label": "Gem vinduesposition"
+        },
+        "saveSize": {
+          "label": "Gem vinduesstørrelse"
+        }
       }
     },
     "playback-speed": {
@@ -967,10 +1042,21 @@
         }
       },
       "settings": {
-        "steps": "Lydstyrketrin",
+        "steps": {
+          "label": "Lydstyrketrin"
+        },
         "arrows-shortcut": "Piletastgenveje",
         "shortcut-up": "Global genvej: lydstyrke op",
-        "shortcut-down": "Global genvej: lydstyrke ned"
+        "shortcut-down": "Global genvej: lydstyrke ned",
+        "arrowsShortcut": {
+          "label": "Piletastgenveje"
+        },
+        "volumeUp": {
+          "label": "Global genvej: lydstyrke op"
+        },
+        "volumeDown": {
+          "label": "Global genvej: lydstyrke ned"
+        }
       }
     },
     "prefer-song": {
@@ -1055,7 +1141,7 @@
     },
     "search-commands": {
       "commands": {
-        "play": "Afspil en video fra et YouTube-link eller -id",
+        "play": "Afspil en video fra et \u0059\u006f\u0075\u0054\u0075\u0062\u0065-link eller -id",
         "settings": "Åbn indstillingerne"
       },
       "description": "Skriv / i søgefeltet for at køre kommandoer, med autofuldførelse af deres argumenter",
@@ -1064,7 +1150,15 @@
         "open-keybind": "Åbn genvej",
         "open-keybind-description": "Accelerator i Electron-stil, f.eks. CmdOrCtrl+/ eller Alt+Space",
         "open-shortcut": "Åbn søgefeltet fra hvor som helst",
-        "open-shortcut-description": "Fremkalder søgefeltet allerede i kommandotilstand, ligesom Spotlight. Når du trykker på den igen, lukkes det."
+        "open-shortcut-description": "Fremkalder søgefeltet allerede i kommandotilstand, ligesom Spotlight. Når du trykker på den igen, lukkes det.",
+        "openShortcut": {
+          "label": "Åbn søgefeltet fra hvor som helst",
+          "description": "Fremkalder søgefeltet allerede i kommandotilstand, ligesom Spotlight. Når du trykker på den igen, lukkes det."
+        },
+        "openKeybind": {
+          "label": "Åbn genvej",
+          "description": "Accelerator i Electron-stil, f.eks. CmdOrCtrl+/ eller Alt+Space"
+        }
       }
     },
     "seek-shortcuts": {
@@ -1072,7 +1166,7 @@
       "name": "Spolingsgenveje"
     },
     "sfw-music": {
-      "description": "Springer automatisk sange over, der er markeret som Eksplicit af YouTube Music. Sættes på pause, hvis en eksplicit kø gentages, eller der ikke er en næste sang.",
+      "description": "Springer automatisk sange over, der er markeret som Eksplicit af \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063. Sættes på pause, hvis en eksplicit kø gentages, eller der ikke er en næste sang.",
       "name": "SFW-musik"
     },
     "shortcuts": {
@@ -1095,14 +1189,38 @@
       },
       "settings": {
         "global-keybinds": "Globale tastaturgenveje (virker i hele appen)",
-        "local-keybinds": "Lokale tastaturgenveje (kun når vinduet er i fokus)"
+        "local-keybinds": "Lokale tastaturgenveje (kun når vinduet er i fokus)",
+        "playPause": {
+          "label": "Afspil / pause"
+        },
+        "localPlayPause": {
+          "label": "Afspil / pause"
+        },
+        "next": {
+          "label": "Næste"
+        },
+        "localNext": {
+          "label": "Næste"
+        },
+        "previous": {
+          "label": "Forrige"
+        },
+        "localPrevious": {
+          "label": "Forrige"
+        },
+        "overrideMediaKeys": {
+          "label": "Tilsidesæt medietaster"
+        }
       }
     },
     "skip-silences": {
       "description": "Spring automatisk stille sektioner over i sange",
       "name": "Spring stilhed over",
       "settings": {
-        "only-skip-beginning": "Spring kun stilhed over i begyndelsen af et nummer"
+        "only-skip-beginning": "Spring kun stilhed over i begyndelsen af et nummer",
+        "onlySkipBeginning": {
+          "label": "Spring kun stilhed over i begyndelsen af et nummer"
+        }
       }
     },
     "sponsorblock": {
@@ -1118,7 +1236,28 @@
           "selfpromo": "Egenreklame",
           "music_offtopic": "Ikke-musikafsnit"
         },
-        "api-url": "API-URL"
+        "api-url": "API-URL",
+        "sponsor": {
+          "label": "Sponsor"
+        },
+        "intro": {
+          "label": "Intro"
+        },
+        "outro": {
+          "label": "Outro"
+        },
+        "interaction": {
+          "label": "Påmindelse om interaktion"
+        },
+        "selfpromo": {
+          "label": "Egenreklame"
+        },
+        "music_offtopic": {
+          "label": "Ikke-musikafsnit"
+        },
+        "apiURL": {
+          "label": "API-URL"
+        }
       }
     },
     "synced-lyrics": {
@@ -1190,7 +1329,7 @@
         },
         "use-ytm-lyrics-without-proxy": {
           "label": "Brug YTM-sangtekster uden proxy",
-          "tooltip": "Spring YTM-browse-proxyen over, og kald YouTube Music direkte ved hjælp af appens godkendte session. Nyttigt, hvis du stoler på, at dit netværk/din region tillader direkte browse-kald."
+          "tooltip": "Spring YTM-browse-proxyen over, og kald \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 direkte ved hjælp af appens godkendte session. Nyttigt, hvis du stoler på, at dit netværk/din region tillader direkte browse-kald."
         },
         "convert-chinese-character": {
           "label": "Konvertér kinesiske tegn",
@@ -1335,7 +1474,7 @@
       "name": "Mediekontrol i proceslinjen"
     },
     "toast-autoclose": {
-      "description": "Luk automatisk YouTube Music-toasts efter tre sekunder",
+      "description": "Luk automatisk \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063-toasts efter tre sekunder",
       "name": "Automatisk lukning af toasts"
     },
     "touchbar": {
@@ -1368,7 +1507,25 @@
         }
       },
       "settings": {
-        "type-description": "Baggrundsmateriale brugt til vinduesgennemsigtighed"
+        "type-description": "Baggrundsmateriale brugt til vinduesgennemsigtighed",
+        "opacity": {
+          "label": "Uigennemsigtighed"
+        },
+        "type": {
+          "label": "Type",
+          "description": "Baggrundsmateriale brugt til vinduesgennemsigtighed",
+          "options": {
+            "acrylic": "Akryl",
+            "content": "Indhold",
+            "fullscreen-ui": "Fuldskærms-UI",
+            "mica": "Mica",
+            "tabbed": "Faneblade",
+            "under-page": "Under side",
+            "under-window": "Under vindue",
+            "window": "Vindue",
+            "none": "Ingen"
+          }
+        }
       }
     },
     "tuna-obs": {
@@ -1404,6 +1561,27 @@
       "templates": {
         "button-song": "Sang",
         "button-video": "Video"
+      },
+      "settings": {
+        "mode": {
+          "label": "Tilstand",
+          "options": {
+            "custom": "Brugerdefineret skift",
+            "native": "Indbygget skift",
+            "disabled": "Deaktiveret"
+          }
+        },
+        "align": {
+          "label": "Justering",
+          "options": {
+            "left": "Venstre",
+            "middle": "Midt",
+            "right": "Højre"
+          }
+        },
+        "forceHide": {
+          "label": "Tving fjernelse af videofanen"
+        }
       }
     },
     "visualizer": {
@@ -1413,7 +1591,9 @@
       },
       "name": "Visualisering",
       "settings": {
-        "preset": "Forudindstilling",
+        "preset": {
+          "label": "Forudindstilling"
+        },
         "blend-time": "Blandingstid",
         "effect": "Effekt",
         "accuracy": "Nøjagtighed",
@@ -1429,12 +1609,53 @@
         "dottify": "Prikdannelse",
         "dottify-description": "Tegn prikker i stedet for en sammenhængende linje",
         "horizontal-align": "Vandret justering",
-        "vertical-align": "Lodret justering"
+        "vertical-align": "Lodret justering",
+        "blendTimeInSeconds": {
+          "label": "Blandingstid"
+        },
+        "vudioMaxHeight": {
+          "label": "Maks. højde"
+        },
+        "vudioMaxSize": {
+          "label": "Maks. størrelse"
+        },
+        "vudioLineWidth": {
+          "label": "Linjebredde"
+        },
+        "vudioColor": {
+          "label": "Farve"
+        },
+        "vudioShadowBlur": {
+          "label": "Skyggesløring"
+        },
+        "vudioShadowColor": {
+          "label": "Skyggefarve"
+        },
+        "vudioFadeSide": {
+          "label": "Udtone sider"
+        },
+        "vudioPrettify": {
+          "label": "Forskønnelse",
+          "description": "Gør søjlerne smallere mod kanterne"
+        },
+        "vudioDottify": {
+          "label": "Prikdannelse",
+          "description": "Tegn prikker i stedet for en sammenhængende linje"
+        },
+        "vudioHorizontalAlign": {
+          "label": "Vandret justering"
+        },
+        "vudioVerticalAlign": {
+          "label": "Lodret justering"
+        }
       }
     },
     "statusbar-lyrics": {
       "settings": {
-        "include-pronunciation": "Medtag udtale"
+        "include-pronunciation": "Medtag udtale",
+        "includePronunciation": {
+          "label": "Medtag udtale"
+        }
       }
     },
     "dismiss-multidevice-popup": {
@@ -1446,7 +1667,11 @@
       "name": "Hukommelsesbesparelse",
       "settings": {
         "threshold": "Cachetærskel",
-        "threshold-description": "Ryd caches, når deres aktive hukommelse overstiger denne værdi, mens vinduet er skjult"
+        "threshold-description": "Ryd caches, når deres aktive hukommelse overstiger denne værdi, mens vinduet er skjult",
+        "thresholdMB": {
+          "label": "Cachetærskel",
+          "description": "Ryd caches, når deres aktive hukommelse overstiger denne værdi, mens vinduet er skjult"
+        }
       }
     }
   },
@@ -1475,7 +1700,7 @@
     "move-up": "Flyt op",
     "move-down": "Flyt ned",
     "about": {
-      "tagline": "En funktionsrig skrivebordsapp til YouTube Music",
+      "tagline": "En funktionsrig skrivebordsapp til \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063",
       "versions": "Versioner",
       "version-app": "App",
       "version-build": "Build",
@@ -1533,7 +1758,7 @@
     "stepper-decrement": "Formindsk",
     "stepper-increment": "Forøg",
     "flags": {
-      "warning": "Funktionsflag er YouTube Musics egne interne omskiftere. Ændring af dem kan ødelægge afspilning, layout eller kontofunktioner, og de er ikke dækket af support. Overstyringer gemmes kun for de flag, du ændrer, og kan fjernes med Fortryd.",
+      "warning": "Funktionsflag er \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063s egne interne omskiftere. Ændring af dem kan ødelægge afspilning, layout eller kontofunktioner, og de er ikke dækket af support. Overstyringer gemmes kun for de flag, du ændrer, og kan fjernes med Fortryd.",
       "search-placeholder": "Søg i flag",
       "overridden": "tilsidesat",
       "undo": "Fortryd",
@@ -1578,7 +1803,11 @@
       "theme-preset": "Forudindstilling",
       "theme-variable-name": "Variabel",
       "theme-variable-value": "Værdi",
-      "theme-variable-add": "Tilføj variabel"
+      "theme-variable-add": "Tilføj variabel",
+      "performance-mode": "Ydelsestilstand",
+      "performance-mode-desc": "Udskift noget visuel kvalitet med billigere rendering.",
+      "in-process-gpu": "Flet GPU-processen ind i appprocessen",
+      "in-process-gpu-desc": "Eksperimentel: sparer en proces, men flytter GPU-hukommelse ind i hovedprocessen og kan falde tilbage til software-rendering."
     }
   }
 }

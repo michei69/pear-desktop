@@ -72,7 +72,7 @@
         "buttons": {
           "disable": "Izslēgt atjauninājumus",
           "download": "Lejupielādēt",
-          "ok": "Labi"
+          "ok": "OK"
         },
         "detail": "Jauna versija ir pieejama, un var tikt lejupielādēta šeit {{downloadLink}}",
         "message": "Pieejama jauna versija",
@@ -156,8 +156,8 @@
               "sync": {
                 "label": "Sinhronizēt valodu",
                 "submenu": {
-                  "from-youtube": "No YouTube",
-                  "to-youtube": "Uz YouTube"
+                  "from-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "No \u0059\u006f\u0075\u0054\u0075\u0062\u0065",
+                  "to-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "Uz \u0059\u006f\u0075\u0054\u0075\u0062\u0065"
                 },
                 "failure": {
                   "dialog": {
@@ -181,8 +181,8 @@
               "disabled": "Izslēgts",
               "enabled-and-hide-app": "Teknīte ieslēgta, paslēpt lietotnes logu",
               "enabled-and-show-app": "Ielsēgts un rādīt lietotni",
-              "move-to-current-desktop": "Rādot pārvietot uz pašreizējo virtuālo darbvirsmu",
               "play-pause-on-click": "Atskaņot/Pauzēt piespiežot",
+              "move-to-current-desktop": "Rādot pārvietot uz pašreizējo virtuālo darbvirsmu",
               "force-white-icons": "Piespiediet baltu ikonu lietošanu"
             }
           },
@@ -193,7 +193,7 @@
                 "label": "Pielāgots loga nosaukums",
                 "prompt": {
                   "label": "Ievadiet pielāgotu loga nosaukumu: (atstājiet tukšu, lai atspējotu)",
-                  "placeholder": "Piemērs: {{applicationName}}"
+                  "placeholder": "Piemērs: Pear mūzika"
                 }
               },
               "like-buttons": {
@@ -229,7 +229,7 @@
                   "open-themes-folder": "Atvērt tēmu mapi"
                 }
               },
-              "use-ytm-icons": "Izmantot oriģinālās YouTube Music ikonas"
+              "use-ytm-icons": "Izmantot oriģinālās \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 ikonas"
             }
           },
           "updates": {
@@ -314,11 +314,15 @@
         },
         "enable-seekbar": "Iespējot meklēšanas joslas tematiskošanu"
       },
-      "name": "Albuma krāsu tēma"
-    },
-    "audio-only": {
-      "description": "Piespiedu tikai audio režīms — bloķē visus video straumes tīkla un atskaņotāja līmenī, lai ietaupītu RAM un joslas platumu",
-      "name": "Tikai Audio"
+      "name": "Albuma krāsu tēma",
+      "settings": {
+        "ratio": {
+          "label": "Krāsu attiecība"
+        },
+        "enableSeekbar": {
+          "label": "Iespējot meklēšanas joslas tematiskošanu"
+        }
+      }
     },
     "ambient-mode": {
       "description": "Pielieto apgaismojuma efektu, kas maigā krāsā atstaro video attēlu uz ekrāna fona",
@@ -399,6 +403,9 @@
         "hostname": {
           "label": "Hosta nosaukums"
         },
+        "port": {
+          "label": "Ports"
+        },
         "https": {
           "label": "HTTPS un Sertifikāti",
           "submenu": {
@@ -414,9 +421,6 @@
               "label": "Privātās atslēgas fails (.key/.pem)"
             }
           }
-        },
-        "port": {
-          "label": "Ports"
         },
         "mcp": {
           "label": "MCP serveris",
@@ -501,20 +505,14 @@
         "caption-changed": "Subtitri pamainīti uz {{language}}",
         "caption-disabled": "Subtitri izslēgti",
         "no-captions": "Subtitri nav pieejami priekš šīs dziesmas"
-      }
-    },
-    "clock": {
-      "description": "Pievieno pulksteni navigācijas joslai",
-      "menu": {
-        "format": {
-          "24-hour-format": "24 Stundu Formāts",
-          "display-seconds": "Rādīt Sekundes",
-          "label": "Formāts"
-        }
       },
-      "name": "Pulkstenis",
       "settings": {
-        "hour-12": "Izmantot 12 stundu formātu"
+        "autoload": {
+          "label": "Automātiski izvēlēties pēdējo izmantotos subtitrus"
+        },
+        "disableCaptions": {
+          "label": "Bez subtitriem pēc noklusējuma"
+        }
       }
     },
     "compact-sidebar": {
@@ -573,7 +571,12 @@
       "menu": {
         "apply-once": "Iedarbojas tikai palaišanas brīdī"
       },
-      "name": "Atspējot automātisku atskaņošanu"
+      "name": "Atspējot automātisku atskaņošanu",
+      "settings": {
+        "applyOnce": {
+          "label": "Iedarbojas tikai palaišanas brīdī"
+        }
+      }
     },
     "discord": {
       "backend": {
@@ -595,9 +598,9 @@
         "set-status-display-type": {
           "label": "Statusa teksts",
           "submenu": {
-            "application": "Klausās {{applicationName}}",
-            "artist": "Klausos {{artist}}",
-            "title": "Klausos {{songTitle}}"
+            "artist": "Klausos {mākslinieku}",
+            "title": "Klausos {dziesmas nosaukums}",
+            "application": "Klausās {{applicationName}}"
           }
         }
       },
@@ -613,7 +616,38 @@
         "activity-timeout-enabled": "Notīrīt statusu, kad pauzēts",
         "activity-timeout-time": "Notīrīt pēc",
         "hide-github-button": "Paslēpt pogu “Skatīt GitHub”",
-        "hide-duration-left": "Paslēpt atlikušo laiku"
+        "hide-duration-left": "Paslēpt atlikušo laiku",
+        "autoReconnect": {
+          "label": "Automātiski atkārtoti pievienoties"
+        },
+        "activityTimeoutEnabled": {
+          "label": "Notīrīt statusu, kad pauzēts"
+        },
+        "activityTimeoutSeconds": {
+          "label": "Notīrīt pēc"
+        },
+        "playButton": {
+          "label": "Atskaņot uz {{applicationName}}"
+        },
+        "hideGitHubButton": {
+          "label": "Paslēpt pogu “Skatīt GitHub”"
+        },
+        "hideDurationLeft": {
+          "label": "Paslēpt atlikušo laiku"
+        },
+        "statusDisplayType": {
+          "label": "Statusa teksts",
+          "options": {
+            "name": "Klausās {{applicationName}}",
+            "state": "Klausos {mākslinieku}",
+            "details": "Klausos {dziesmas nosaukums}"
+          }
+        }
+      },
+      "actions": {
+        "clearActivity": {
+          "label": "Attīrīt aktivitāti"
+        }
       }
     },
     "downloader": {
@@ -621,14 +655,14 @@
         "dialog": {
           "error": {
             "buttons": {
-              "ok": "Labi"
+              "ok": "OK"
             },
             "message": "Atvainojamies, lejupielāde neizdevās…",
             "title": "Lejupielādes kļūda!"
           },
           "start-download-playlist": {
             "buttons": {
-              "ok": "Labi"
+              "ok": "OK"
             },
             "detail": "({{playlistSize}}Dziesmas)",
             "message": "Lejupielādē atskaņošanas sarakstu {{playlistTitle}}",
@@ -818,6 +852,30 @@
         "diagnostics-running": "Nogaidiet, līdz savienojuma tests būs pabeigts"
       }
     },
+    "audio-only": {
+      "description": "Piespiedu tikai audio režīms — bloķē visus video straumes tīkla un atskaņotāja līmenī, lai ietaupītu RAM un joslas platumu",
+      "name": "Tikai Audio"
+    },
+    "clock": {
+      "description": "Pievieno pulksteni navigācijas joslai",
+      "menu": {
+        "format": {
+          "24-hour-format": "24 Stundu Formāts",
+          "display-seconds": "Rādīt Sekundes",
+          "label": "Formāts"
+        }
+      },
+      "name": "Pulkstenis",
+      "settings": {
+        "hour-12": "Izmantot 12 stundu formātu",
+        "displaySeconds": {
+          "label": "Rādīt Sekundes"
+        },
+        "hour12": {
+          "label": "Izmantot 12 stundu formātu"
+        }
+      }
+    },
     "navigation": {
       "description": "Nākamās/Atpakaļ navigācijas bultiņas tieši integrētas saskarnē, tāpat kā jūsu iecienītajā pārlūkā",
       "name": "Navigācija",
@@ -898,6 +956,23 @@
       "name": "Attēls-Attēlā",
       "templates": {
         "button": "Attēls-Attēlā"
+      },
+      "settings": {
+        "hotkey": {
+          "label": "Karstais taustiņš"
+        },
+        "useNativePiP": {
+          "label": "Izmantot pārlūka dabisko PiP"
+        },
+        "alwaysOnTop": {
+          "label": "Vienmēr virspusē"
+        },
+        "savePosition": {
+          "label": "Saglabāt loga pozīciju"
+        },
+        "saveSize": {
+          "label": "Saglabāt loga izmēru"
+        }
       }
     },
     "playback-speed": {
@@ -933,10 +1008,21 @@
         }
       },
       "settings": {
-        "steps": "Skaļuma solis",
+        "steps": {
+          "label": "Skaļuma solis"
+        },
         "arrows-shortcut": "Bultiņu taustiņu saīsnes",
         "shortcut-up": "Globālā saīsne: skaļuma palielināšana",
-        "shortcut-down": "Globālā saīsne: skaļuma samazināšana"
+        "shortcut-down": "Globālā saīsne: skaļuma samazināšana",
+        "arrowsShortcut": {
+          "label": "Bultiņu taustiņu saīsnes"
+        },
+        "volumeUp": {
+          "label": "Globālā saīsne: skaļuma palielināšana"
+        },
+        "volumeDown": {
+          "label": "Globālā saīsne: skaļuma samazināšana"
+        }
       }
     },
     "quality-changer": {
@@ -1035,14 +1121,38 @@
       },
       "settings": {
         "global-keybinds": "Globālās taustiņu saites (darbojas visā lietotnē)",
-        "local-keybinds": "Vietējās taustiņu saites (tikai kamēr logs ir fokusā)"
+        "local-keybinds": "Vietējās taustiņu saites (tikai kamēr logs ir fokusā)",
+        "playPause": {
+          "label": "Atskaņot / Pauzēt"
+        },
+        "localPlayPause": {
+          "label": "Atskaņot / Pauzēt"
+        },
+        "next": {
+          "label": "Nākamais"
+        },
+        "localNext": {
+          "label": "Nākamais"
+        },
+        "previous": {
+          "label": "Iepriekšējais"
+        },
+        "localPrevious": {
+          "label": "Iepriekšējais"
+        },
+        "overrideMediaKeys": {
+          "label": "Pārrakstīt Mediju Taustiņus"
+        }
       }
     },
     "skip-silences": {
       "description": "Automātiski izlaist klusuma daļas dziesmās",
       "name": "Izlaist Klusumus",
       "settings": {
-        "only-skip-beginning": "Izlaist klusumu tikai ieraksta sākumā"
+        "only-skip-beginning": "Izlaist klusumu tikai ieraksta sākumā",
+        "onlySkipBeginning": {
+          "label": "Izlaist klusumu tikai ieraksta sākumā"
+        }
       }
     },
     "sponsorblock": {
@@ -1058,7 +1168,28 @@
           "selfpromo": "Pašreklāma",
           "music_offtopic": "Sadaļa bez mūzikas"
         },
-        "api-url": "API URL"
+        "api-url": "API URL",
+        "sponsor": {
+          "label": "Sponsors"
+        },
+        "intro": {
+          "label": "Ievads"
+        },
+        "outro": {
+          "label": "Nobeigums"
+        },
+        "interaction": {
+          "label": "Mijiedarbības atgādinājums"
+        },
+        "selfpromo": {
+          "label": "Pašreklāma"
+        },
+        "music_offtopic": {
+          "label": "Sadaļa bez mūzikas"
+        },
+        "apiURL": {
+          "label": "API URL"
+        }
       }
     },
     "synced-lyrics": {
@@ -1267,7 +1398,7 @@
         },
         "use-ytm-lyrics-without-proxy": {
           "label": "Izmantot YTM dziesmu vārdus bez starpniekservera",
-          "tooltip": "Izlaist YTM pārlūkošanas starpniekserveri un izsaukt YouTube Music tieši, izmantojot lietotnes autentificēto sesiju. Noderīgi, ja uzticaties savam tīklam/reģionam, lai atļautu tiešus pārlūkošanas zvanus."
+          "tooltip": "Izlaist YTM pārlūkošanas starpniekserveri un izsaukt \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 tieši, izmantojot lietotnes autentificēto sesiju. Noderīgi, ja uzticaties savam tīklam/reģionam, lai atļautu tiešus pārlūkošanas zvanus."
         },
         "show-custom-search-button": {
           "label": "Rādīt pielāgoto meklēšanas pogu",
@@ -1359,7 +1490,25 @@
       },
       "name": "Caurspīdīgs Atskaņotājs",
       "settings": {
-        "type-description": "Loga caurspīdībai izmantotais fona materiāls"
+        "type-description": "Loga caurspīdībai izmantotais fona materiāls",
+        "opacity": {
+          "label": "Caurspīdīgums"
+        },
+        "type": {
+          "label": "Tips",
+          "description": "Loga caurspīdībai izmantotais fona materiāls",
+          "options": {
+            "acrylic": "Akrils",
+            "content": "Saturs",
+            "fullscreen-ui": "Pilnekrāna saskarne",
+            "mica": "Vizla",
+            "tabbed": "Cilnes",
+            "under-page": "Zem lapas",
+            "under-window": "Zem loga",
+            "window": "Logs",
+            "none": "Neviens"
+          }
+        }
       }
     },
     "tuna-obs": {
@@ -1395,6 +1544,27 @@
       "templates": {
         "button-song": "Dziesma",
         "button-video": "Video"
+      },
+      "settings": {
+        "mode": {
+          "label": "Režīms",
+          "options": {
+            "custom": "Pielāgota pārslēgšana",
+            "native": "Dabiskā pārslēgšana",
+            "disabled": "Atspējots"
+          }
+        },
+        "align": {
+          "label": "Izlīdzināšana",
+          "options": {
+            "left": "Pa kreisi",
+            "middle": "Pa vidu",
+            "right": "Pa labi"
+          }
+        },
+        "forceHide": {
+          "label": "Piespiedu kārtā noņemt video cilni"
+        }
       }
     },
     "visualizer": {
@@ -1404,7 +1574,9 @@
       },
       "name": "Vizualizētājs",
       "settings": {
-        "preset": "Priekšiestatījums",
+        "preset": {
+          "label": "Priekšiestatījums"
+        },
         "blend-time": "Saplūšanas laiks",
         "effect": "Efekts",
         "accuracy": "Precizitāte",
@@ -1420,7 +1592,45 @@
         "dottify": "Punktot",
         "dottify-description": "Zīmēt punktus, nevis nepārtrauktu līniju",
         "horizontal-align": "Horizontālā līdzināšana",
-        "vertical-align": "Vertikālā līdzināšana"
+        "vertical-align": "Vertikālā līdzināšana",
+        "blendTimeInSeconds": {
+          "label": "Saplūšanas laiks"
+        },
+        "vudioMaxHeight": {
+          "label": "Maksimālais augstums"
+        },
+        "vudioMaxSize": {
+          "label": "Maksimālais izmērs"
+        },
+        "vudioLineWidth": {
+          "label": "Līnijas platums"
+        },
+        "vudioColor": {
+          "label": "Krāsa"
+        },
+        "vudioShadowBlur": {
+          "label": "Ēnas izplūdums"
+        },
+        "vudioShadowColor": {
+          "label": "Ēnas krāsa"
+        },
+        "vudioFadeSide": {
+          "label": "Izbalēšanas malas"
+        },
+        "vudioPrettify": {
+          "label": "Uzskaistināt",
+          "description": "Sašaurināt stabiņus pret malām"
+        },
+        "vudioDottify": {
+          "label": "Punktot",
+          "description": "Zīmēt punktus, nevis nepārtrauktu līniju"
+        },
+        "vudioHorizontalAlign": {
+          "label": "Horizontālā līdzināšana"
+        },
+        "vudioVerticalAlign": {
+          "label": "Vertikālā līdzināšana"
+        }
       }
     },
     "playlist-search": {
@@ -1464,7 +1674,7 @@
     },
     "search-commands": {
       "commands": {
-        "play": "Atskaņot video no YouTube saites vai ID",
+        "play": "Atskaņot video no \u0059\u006f\u0075\u0054\u0075\u0062\u0065 saites vai ID",
         "settings": "Atvērt iestatījumus"
       },
       "description": "Ievadiet / meklēšanas lodziņā, lai izpildītu komandas, ar automātisko pabeigšanu to argumentiem",
@@ -1473,7 +1683,15 @@
         "open-keybind": "Atvēršanas saīsne",
         "open-keybind-description": "Electron stila paātrinātājs, piem., CmdOrCtrl+/ vai Alt+Space",
         "open-shortcut": "Atvērt meklēšanas lodziņu no jebkurienes",
-        "open-shortcut-description": "Atver meklēšanas lodziņu jau komandu režīmā, līdzīgi Spotlight. Nospiežot vēlreiz, tas aizveras."
+        "open-shortcut-description": "Atver meklēšanas lodziņu jau komandu režīmā, līdzīgi Spotlight. Nospiežot vēlreiz, tas aizveras.",
+        "openShortcut": {
+          "label": "Atvērt meklēšanas lodziņu no jebkurienes",
+          "description": "Atver meklēšanas lodziņu jau komandu režīmā, līdzīgi Spotlight. Nospiežot vēlreiz, tas aizveras."
+        },
+        "openKeybind": {
+          "label": "Atvēršanas saīsne",
+          "description": "Electron stila paātrinātājs, piem., CmdOrCtrl+/ vai Alt+Space"
+        }
       }
     },
     "seek-shortcuts": {
@@ -1481,16 +1699,19 @@
       "name": "Pārbīdes saīsnes"
     },
     "sfw-music": {
-      "description": "Automātiski izlaiž dziesmas, kuras YouTube Music atzīmējis kā Explicit. Aptur, ja atkārtojas explicit rinda vai nav pieejama nākamā dziesma.",
+      "description": "Automātiski izlaiž dziesmas, kuras \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 atzīmējis kā Explicit. Aptur, ja atkārtojas explicit rinda vai nav pieejama nākamā dziesma.",
       "name": "SFW mūzika"
     },
     "toast-autoclose": {
-      "description": "Automātiski aizvērt YouTube Music paziņojumus pēc trim sekundēm",
+      "description": "Automātiski aizvērt \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 paziņojumus pēc trim sekundēm",
       "name": "Paziņojumu automātiska aizvēršana"
     },
     "statusbar-lyrics": {
       "settings": {
-        "include-pronunciation": "Iekļaut izrunu"
+        "include-pronunciation": "Iekļaut izrunu",
+        "includePronunciation": {
+          "label": "Iekļaut izrunu"
+        }
       }
     },
     "dismiss-multidevice-popup": {
@@ -1502,7 +1723,11 @@
       "name": "Atmiņas taupītājs",
       "settings": {
         "threshold": "Kešatmiņas slieksnis",
-        "threshold-description": "Notīrīt kešatmiņas, tiklīdz to aktīvā atmiņa pārsniedz šo, kamēr logs ir paslēpts"
+        "threshold-description": "Notīrīt kešatmiņas, tiklīdz to aktīvā atmiņa pārsniedz šo, kamēr logs ir paslēpts",
+        "thresholdMB": {
+          "label": "Kešatmiņas slieksnis",
+          "description": "Notīrīt kešatmiņas, tiklīdz to aktīvā atmiņa pārsniedz šo, kamēr logs ir paslēpts"
+        }
       }
     }
   },
@@ -1531,7 +1756,7 @@
     "move-up": "Pārvietot uz augšu",
     "move-down": "Pārvietot uz leju",
     "about": {
-      "tagline": "Ar funkcijām bagāta YouTube Music darbvirsmas lietotne",
+      "tagline": "Ar funkcijām bagāta \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 darbvirsmas lietotne",
       "versions": "Versijas",
       "version-app": "Lietotne",
       "version-build": "Būvējums",
@@ -1589,7 +1814,7 @@
     "stepper-decrement": "Samazināt",
     "stepper-increment": "Palielināt",
     "flags": {
-      "warning": "Funkciju karodziņi ir YouTube Music iekšējie slēdži. To maiņa var sabojāt atskaņošanu, izkārtojumu vai konta funkcijas, un atbalsts tos neaptver. Pārrakstījumi tiek glabāti tikai tiem karodziņiem, kurus maināt, un tos var noņemt ar Atsaukt.",
+      "warning": "Funkciju karodziņi ir \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 iekšējie slēdži. To maiņa var sabojāt atskaņošanu, izkārtojumu vai konta funkcijas, un atbalsts tos neaptver. Pārrakstījumi tiek glabāti tikai tiem karodziņiem, kurus maināt, un tos var noņemt ar Atsaukt.",
       "search-placeholder": "Meklēt karodziņus",
       "overridden": "pārrakstīts",
       "undo": "Atsaukt",
@@ -1634,7 +1859,11 @@
       "theme-preset": "Priekšiestatījums",
       "theme-variable-name": "Mainīgais",
       "theme-variable-value": "Vērtība",
-      "theme-variable-add": "Pievienot mainīgo"
+      "theme-variable-add": "Pievienot mainīgo",
+      "performance-mode": "Veiktspējas režīms",
+      "performance-mode-desc": "Apmainīt daļu vizuālās kvalitātes pret lētāku renderēšanu.",
+      "in-process-gpu": "Apvienot GPU procesu ar lietotnes procesu",
+      "in-process-gpu-desc": "Eksperimentāli: ietaupa vienu procesu, bet pārvieto GPU atmiņu uz galveno procesu un var pāriet uz programmatūras renderēšanu."
     }
   }
 }

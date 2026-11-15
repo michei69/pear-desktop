@@ -36,7 +36,6 @@
 
 ## Content
 
-- [Features](#features)
 - [Translation](#translation)
 - [Download](#download)
   - [Linux](#linux)
@@ -109,13 +108,17 @@ Want to get started with building themes? [Click here for the documentation](./d
 ```bash
 git clone https://github.com/michei69/pear-desktop
 cd pear-desktop
-pnpm install --frozen-lockfile
-pnpm dev
+nub install --frozen-lockfile
+nub run dev
 ```
 
-Instead of installing pnpm on your system, you can also use [devcontainers](https://containers.dev/). You can use devcontainers either as a development environment in VS Code, or as a way to easily build the project without installing dependencies on your host system.
+Dev mode watches the sources: main-process changes restart the app, and page-side changes (the settings UI, plugins' page parts and the page runtime) rebuild the preload bundle and reload YTM.
 
-Note that this has it's own limitations (for example, GUI doesn't work on, at least some, Linux hosts).
+Run `nub run check` before pushing: it runs lint, format check, typecheck and the packaging check.
+
+Instead of installing Nub on your system, you can also use [devcontainers](https://containers.dev/). The repository ships one in `.devcontainer/`: it installs Nub and the workspace dependencies, and you can use it either as a development environment in VS Code, or as a way to easily build the project without installing dependencies on your host system.
+
+Note that this has its own limitations (for example, GUI doesn't work on, at least some, Linux hosts).
 
 ## Build your own plugins
 
@@ -240,16 +243,14 @@ export default createPlugin({
 ## Build
 
 1. Clone the repo
-2. Follow [this guide](https://pnpm.io/installation) to install `pnpm`
-3. Run `pnpm install --frozen-lockfile` to install dependencies
-4. Run `pnpm build:OS`
+2. Install [Nub](https://nubjs.com)
+3. Run `nub install --frozen-lockfile` to install dependencies
+4. Run the build command for your OS:
 
-- `pnpm dist:win` - Windows
-- `pnpm dist:linux` - Linux (amd64)
-- `pnpm dist:linux:deb-arm64` - Linux (arm64 for Debian)
-- `pnpm dist:linux:rpm-arm64` - Linux (arm64 for Fedora)
-- `pnpm dist:mac` - macOS (amd64)
-- `pnpm dist:mac:arm64` - macOS (arm64)
+- `nub run dist:win` - Windows
+- `nub run dist:linux` - Linux (amd64 and arm64)
+- `nub run dist:mac` - macOS (amd64)
+- `nub run dist:mac:arm64` - macOS (arm64)
 
 Builds the app for macOS, Linux, and Windows,
 using [electron-builder](https://github.com/electron-userland/electron-builder).
@@ -258,25 +259,31 @@ using [electron-builder](https://github.com/electron-userland/electron-builder).
 
 1. Clone the repo;
 2. Open the folder in VS Code;
-3. Reopen in container when prompted;
-4. Run `pnpm build` as above (choosing the desired target);
-5. Collect the built files from the `dist` folder.
+3. Reopen in container when prompted (this uses `.devcontainer/devcontainer.json`);
+4. Run `nub run dist:<target>` as above (choosing the desired target);
+5. Collect the built files from the `pack` folder.
 
 Since devcontainer uses a mount for the workspace, the built files will be available on the host system as well.
 
 ## Production Preview
 
 ```bash
-pnpm start
+nub run start
 ```
 
 ## Tests
 
 ```bash
-pnpm test
+nub run test
 ```
 
-Uses [Playwright](https://playwright.dev/) to test the app.
+Unit tests run on [Vitest](https://vitest.dev/). The end-to-end tests drive the real app with [Playwright](https://playwright.dev/):
+
+```bash
+nub run test:e2e
+```
+
+`nub run test:debug` runs the end-to-end tests with Playwright's debug logging.
 
 ## License
 
@@ -287,5 +294,14 @@ MIT © [michei69](https://github.com/michei69/pear-desktop)
 
 ### Why apps menu isn't showing up?
 
-If `Hide Menu` option is on - you can show the menu with the <kbd>alt</kbd> key (or <kbd>\`</kbd> [backtick] if using
-the in-app-menu plugin)
+If `Hide Menu` option is on - you can show the menu with the <kbd>alt</kbd> key (or the <kbd>F10</kbd> key, or <kbd>`</kbd> [backtick], when using the in-app-menu plugin)
+
+### Why does YTM skip the cookie consent screen?
+
+The app answers it with "only essential cookies" (`SOCS=CAI`), unless you've chosen otherwise on YTM.
+
+### Musixmatch lyrics are wrong or missing?
+
+Musixmatch (synced-lyrics) asks for a token automatically by default (the mobile app's, renewed every minute). If it
+reports that it needs a token, switch its token source to "Your own token" and paste the usertoken from your signed-in
+Musixmatch app.

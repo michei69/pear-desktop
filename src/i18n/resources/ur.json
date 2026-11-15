@@ -156,8 +156,8 @@
               "sync": {
                 "label": "زبان ہم آہنگ کریں",
                 "submenu": {
-                  "from-youtube": "YouTube سے",
-                  "to-youtube": "YouTube میں"
+                  "from-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "\u0059\u006f\u0075\u0054\u0075\u0062\u0065 سے",
+                  "to-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "\u0059\u006f\u0075\u0054\u0075\u0062\u0065 میں"
                 },
                 "failure": {
                   "dialog": {
@@ -229,7 +229,7 @@
                   "open-themes-folder": "تھیمز فولڈر کھولیں"
                 }
               },
-              "use-ytm-icons": "اصل YouTube Music آئیکنز استعمال کریں"
+              "use-ytm-icons": "اصل \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 آئیکنز استعمال کریں"
             }
           },
           "updates": {
@@ -314,7 +314,15 @@
         },
         "enable-seekbar": "سیک بار تھیمنگ فعال کریں"
       },
-      "name": "البم کلر تھیم"
+      "name": "البم کلر تھیم",
+      "settings": {
+        "ratio": {
+          "label": "رنگوں کے ملاپ کا تناسب"
+        },
+        "enableSeekbar": {
+          "label": "سیک بار تھیمنگ فعال کریں"
+        }
+      }
     },
     "audio-only": {
       "description": "صرف آڈیو موڈ پر مجبور کرتا ہے — ریم اور بینڈوڈتھ بچانے کے لیے نیٹ ورک اور پلیئر سطح پر تمام ویڈیو اسٹریمز کو بلاک کرتا ہے",
@@ -505,6 +513,14 @@
         "caption-changed": "کیپشن {{language}} میں تبدیل ہو گیا",
         "caption-disabled": "کیپشن غیر فعال",
         "no-captions": "اس گانے کے لیے کوئی کیپشن دستیاب نہیں"
+      },
+      "settings": {
+        "autoload": {
+          "label": "آخری استعمال شدہ کیپشن خودکار منتخب کریں"
+        },
+        "disableCaptions": {
+          "label": "بطور ڈیفالٹ کیپشن نہیں"
+        }
       }
     },
     "clock": {
@@ -518,7 +534,13 @@
         }
       },
       "settings": {
-        "hour-12": "12 گھنٹے فارمیٹ استعمال کریں"
+        "hour-12": "12 گھنٹے فارمیٹ استعمال کریں",
+        "displaySeconds": {
+          "label": "سیکنڈ دکھائیں"
+        },
+        "hour12": {
+          "label": "12 گھنٹے فارمیٹ استعمال کریں"
+        }
       }
     },
     "compact-sidebar": {
@@ -577,7 +599,12 @@
       "menu": {
         "apply-once": "صرف آغاز پر لاگو ہوتا ہے"
       },
-      "name": "خودکار پلے غیر فعال کریں"
+      "name": "خودکار پلے غیر فعال کریں",
+      "settings": {
+        "applyOnce": {
+          "label": "صرف آغاز پر لاگو ہوتا ہے"
+        }
+      }
     },
     "discord": {
       "backend": {
@@ -600,8 +627,8 @@
           "label": "اسٹیٹس متن",
           "submenu": {
             "application": "{{applicationName}} سن رہے ہیں",
-            "artist": "{{artist}} سن رہے ہیں",
-            "title": "{{songTitle}} سن رہے ہیں"
+            "artist": "{artist} سن رہے ہیں",
+            "title": "{song title} سن رہے ہیں"
           }
         }
       },
@@ -617,7 +644,38 @@
         "activity-timeout-enabled": "موقوف ہونے پر پریزننس صاف کریں",
         "activity-timeout-time": "کے بعد صاف کریں",
         "hide-github-button": "“GitHub پر دیکھیں” بٹن چھپائیں",
-        "hide-duration-left": "باقی وقت چھپائیں"
+        "hide-duration-left": "باقی وقت چھپائیں",
+        "autoReconnect": {
+          "label": "خودکار دوبارہ جڑیں"
+        },
+        "activityTimeoutEnabled": {
+          "label": "موقوف ہونے پر پریزننس صاف کریں"
+        },
+        "activityTimeoutSeconds": {
+          "label": "کے بعد صاف کریں"
+        },
+        "playButton": {
+          "label": "{{applicationName}} پر چلائیں"
+        },
+        "hideGitHubButton": {
+          "label": "“GitHub پر دیکھیں” بٹن چھپائیں"
+        },
+        "hideDurationLeft": {
+          "label": "باقی وقت چھپائیں"
+        },
+        "statusDisplayType": {
+          "label": "اسٹیٹس متن",
+          "options": {
+            "name": "{{applicationName}} سن رہے ہیں",
+            "state": "{artist} سن رہے ہیں",
+            "details": "{song title} سن رہے ہیں"
+          }
+        }
+      },
+      "actions": {
+        "clearActivity": {
+          "label": "سرگرمی صاف کریں"
+        }
       }
     },
     "do-not-track": {
@@ -924,6 +982,23 @@
       "name": "پکچر-ان-پکچر",
       "templates": {
         "button": "پکچر-ان-پکچر"
+      },
+      "settings": {
+        "hotkey": {
+          "label": "ہاٹ کی"
+        },
+        "useNativePiP": {
+          "label": "براؤزر کا مقامی PiP استعمال کریں"
+        },
+        "alwaysOnTop": {
+          "label": "ہمیشہ اوپر"
+        },
+        "savePosition": {
+          "label": "ونڈو کی پوزیشن محفوظ کریں"
+        },
+        "saveSize": {
+          "label": "ونڈو کا سائز محفوظ کریں"
+        }
       }
     },
     "playback-speed": {
@@ -967,10 +1042,21 @@
         }
       },
       "settings": {
-        "steps": "والیوم اسٹیپ",
+        "steps": {
+          "label": "والیوم اسٹیپ"
+        },
         "arrows-shortcut": "ایرو کی شارٹ کٹس",
         "shortcut-up": "عالمی شارٹ کٹ: والیوم اوپر",
-        "shortcut-down": "عالمی شارٹ کٹ: والیوم نیچے"
+        "shortcut-down": "عالمی شارٹ کٹ: والیوم نیچے",
+        "arrowsShortcut": {
+          "label": "ایرو کی شارٹ کٹس"
+        },
+        "volumeUp": {
+          "label": "عالمی شارٹ کٹ: والیوم اوپر"
+        },
+        "volumeDown": {
+          "label": "عالمی شارٹ کٹ: والیوم نیچے"
+        }
       }
     },
     "prefer-song": {
@@ -1055,7 +1141,7 @@
     },
     "search-commands": {
       "commands": {
-        "play": "YouTube لنک یا آئی ڈی سے ویڈیو چلائیں",
+        "play": "\u0059\u006f\u0075\u0054\u0075\u0062\u0065 لنک یا آئی ڈی سے ویڈیو چلائیں",
         "settings": "ترتیبات کھولیں"
       },
       "description": "کمانڈز چلانے کے لیے سرچ باکس میں / ٹائپ کریں، ان کے آرگیومنٹس کے لیے آٹو کمپلیٹ کے ساتھ",
@@ -1064,7 +1150,15 @@
         "open-keybind": "کھولنے کا شارٹ کٹ",
         "open-keybind-description": "Electron طرز کا ایکسلریٹر، مثلاً CmdOrCtrl+/ یا Alt+Space",
         "open-shortcut": "کہیں سے بھی سرچ باکس کھولیں",
-        "open-shortcut-description": "سرچ باکس کو پہلے ہی کمانڈ موڈ میں کھولتا ہے، Spotlight کی طرح۔ دوبارہ دبانے سے بند ہو جاتا ہے۔"
+        "open-shortcut-description": "سرچ باکس کو پہلے ہی کمانڈ موڈ میں کھولتا ہے، Spotlight کی طرح۔ دوبارہ دبانے سے بند ہو جاتا ہے۔",
+        "openShortcut": {
+          "label": "کہیں سے بھی سرچ باکس کھولیں",
+          "description": "سرچ باکس کو پہلے ہی کمانڈ موڈ میں کھولتا ہے، Spotlight کی طرح۔ دوبارہ دبانے سے بند ہو جاتا ہے۔"
+        },
+        "openKeybind": {
+          "label": "کھولنے کا شارٹ کٹ",
+          "description": "Electron طرز کا ایکسلریٹر، مثلاً CmdOrCtrl+/ یا Alt+Space"
+        }
       }
     },
     "seek-shortcuts": {
@@ -1072,7 +1166,7 @@
       "name": "سیک شارٹ کٹس"
     },
     "sfw-music": {
-      "description": "YouTube Music کی طرف سے Explicit کے طور پر نشان زد گانے خودکار طور پر چھوڑ دیتا ہے۔ اگر explicit قطار دہرائی جائے یا اگلا گانا دستیاب نہ ہو تو روک دیتا ہے۔",
+      "description": "\u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 کی طرف سے Explicit کے طور پر نشان زد گانے خودکار طور پر چھوڑ دیتا ہے۔ اگر explicit قطار دہرائی جائے یا اگلا گانا دستیاب نہ ہو تو روک دیتا ہے۔",
       "name": "SFW میوزک"
     },
     "shortcuts": {
@@ -1095,14 +1189,38 @@
       },
       "settings": {
         "global-keybinds": "گلوبل کی بائنڈز (پوری ایپ میں کام کرتی ہیں)",
-        "local-keybinds": "لوکل کی بائنڈز (صرف جب ونڈو فوکس میں ہو)"
+        "local-keybinds": "لوکل کی بائنڈز (صرف جب ونڈو فوکس میں ہو)",
+        "playPause": {
+          "label": "چلائیں / روکیں"
+        },
+        "localPlayPause": {
+          "label": "چلائیں / روکیں"
+        },
+        "next": {
+          "label": "اگلا"
+        },
+        "localNext": {
+          "label": "اگلا"
+        },
+        "previous": {
+          "label": "پچھلا"
+        },
+        "localPrevious": {
+          "label": "پچھلا"
+        },
+        "overrideMediaKeys": {
+          "label": "میڈیا کیز اوور رائیڈ کریں"
+        }
       }
     },
     "skip-silences": {
       "description": "گانوں میں خاموش حصوں کو خودکار طور پر چھوڑ دیں",
       "name": "خاموشیاں چھوڑیں",
       "settings": {
-        "only-skip-beginning": "ٹریک کے صرف شروع میں خاموشی چھوڑیں"
+        "only-skip-beginning": "ٹریک کے صرف شروع میں خاموشی چھوڑیں",
+        "onlySkipBeginning": {
+          "label": "ٹریک کے صرف شروع میں خاموشی چھوڑیں"
+        }
       }
     },
     "sponsorblock": {
@@ -1118,7 +1236,28 @@
           "selfpromo": "خود کی تشہیر",
           "music_offtopic": "غیر موسیقی حصہ"
         },
-        "api-url": "API یو آر ایل"
+        "api-url": "API یو آر ایل",
+        "sponsor": {
+          "label": "اسپانسر"
+        },
+        "intro": {
+          "label": "انٹرو"
+        },
+        "outro": {
+          "label": "آؤٹرو"
+        },
+        "interaction": {
+          "label": "تعامل کی یاد دہانی"
+        },
+        "selfpromo": {
+          "label": "خود کی تشہیر"
+        },
+        "music_offtopic": {
+          "label": "غیر موسیقی حصہ"
+        },
+        "apiURL": {
+          "label": "API یو آر ایل"
+        }
       }
     },
     "synced-lyrics": {
@@ -1190,7 +1329,7 @@
         },
         "use-ytm-lyrics-without-proxy": {
           "label": "بغیر پراکسی YTM بولیاں استعمال کریں",
-          "tooltip": "YTM براؤز پراکسی کو چھوڑیں اور ایپ کے تصدیق شدہ سیشن کا استعمال کرتے ہوئے YouTube Music کو براہ راست کال کریں۔ مفید ہے اگر آپ کو اپنے نیٹ ورک/علاقے پر بھروسہ ہو کہ براہ راست براؤز کالز کی اجازت دے گا۔"
+          "tooltip": "YTM براؤز پراکسی کو چھوڑیں اور ایپ کے تصدیق شدہ سیشن کا استعمال کرتے ہوئے \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 کو براہ راست کال کریں۔ مفید ہے اگر آپ کو اپنے نیٹ ورک/علاقے پر بھروسہ ہو کہ براہ راست براؤز کالز کی اجازت دے گا۔"
         },
         "convert-chinese-character": {
           "label": "چینی حرف تبدیل کریں",
@@ -1335,7 +1474,7 @@
       "name": "ٹاسک بار میڈیا کنٹرول"
     },
     "toast-autoclose": {
-      "description": "YouTube Music ٹوسٹس کو تین سیکنڈ بعد خودکار بند کریں",
+      "description": "\u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 ٹوسٹس کو تین سیکنڈ بعد خودکار بند کریں",
       "name": "ٹوسٹ آٹو کلوز"
     },
     "touchbar": {
@@ -1368,7 +1507,25 @@
         }
       },
       "settings": {
-        "type-description": "ونڈو کی شفافیت کے لیے استعمال ہونے والا پس منظر مواد"
+        "type-description": "ونڈو کی شفافیت کے لیے استعمال ہونے والا پس منظر مواد",
+        "opacity": {
+          "label": "دھندلاپن"
+        },
+        "type": {
+          "label": "قسم",
+          "description": "ونڈو کی شفافیت کے لیے استعمال ہونے والا پس منظر مواد",
+          "options": {
+            "acrylic": "ایکریلک",
+            "content": "مواد",
+            "fullscreen-ui": "فل اسکرین UI",
+            "mica": "مائیکا",
+            "tabbed": "ٹیب شدہ",
+            "under-page": "صفحے کے نیچے",
+            "under-window": "ونڈو کے نیچے",
+            "window": "ونڈو",
+            "none": "کوئی نہیں"
+          }
+        }
       }
     },
     "tuna-obs": {
@@ -1404,6 +1561,27 @@
       "templates": {
         "button-song": "گیت",
         "button-video": "ویڈیو"
+      },
+      "settings": {
+        "mode": {
+          "label": "موڈ",
+          "options": {
+            "custom": "حسب ضرورت ٹوگل",
+            "native": "نیٹو ٹوگل",
+            "disabled": "غیر فعال"
+          }
+        },
+        "align": {
+          "label": "سیدھ",
+          "options": {
+            "left": "بائیں",
+            "middle": "درمیان",
+            "right": "دائیں"
+          }
+        },
+        "forceHide": {
+          "label": "ویڈیو ٹیب زبردستی ہٹائیں"
+        }
       }
     },
     "visualizer": {
@@ -1413,7 +1591,9 @@
       },
       "name": "ویژولائزر",
       "settings": {
-        "preset": "پریسیٹ",
+        "preset": {
+          "label": "پریسیٹ"
+        },
         "blend-time": "بلینڈ وقت",
         "effect": "اثر",
         "accuracy": "درستگی",
@@ -1429,12 +1609,53 @@
         "dottify": "نقطے بنائیں",
         "dottify-description": "مسلسل لکیر کے بجائے نقطے بنائیں",
         "horizontal-align": "افقی سیدھ",
-        "vertical-align": "عمودی سیدھ"
+        "vertical-align": "عمودی سیدھ",
+        "blendTimeInSeconds": {
+          "label": "بلینڈ وقت"
+        },
+        "vudioMaxHeight": {
+          "label": "زیادہ سے زیادہ اونچائی"
+        },
+        "vudioMaxSize": {
+          "label": "زیادہ سے زیادہ سائز"
+        },
+        "vudioLineWidth": {
+          "label": "لائن کی چوڑائی"
+        },
+        "vudioColor": {
+          "label": "رنگ"
+        },
+        "vudioShadowBlur": {
+          "label": "سائے کی دھندلاہٹ"
+        },
+        "vudioShadowColor": {
+          "label": "سائے کا رنگ"
+        },
+        "vudioFadeSide": {
+          "label": "کناروں کو دھندلا کریں"
+        },
+        "vudioPrettify": {
+          "label": "خوبصورت بنائیں",
+          "description": "بارز کو کناروں کی طرف پتلا کریں"
+        },
+        "vudioDottify": {
+          "label": "نقطے بنائیں",
+          "description": "مسلسل لکیر کے بجائے نقطے بنائیں"
+        },
+        "vudioHorizontalAlign": {
+          "label": "افقی سیدھ"
+        },
+        "vudioVerticalAlign": {
+          "label": "عمودی سیدھ"
+        }
       }
     },
     "statusbar-lyrics": {
       "settings": {
-        "include-pronunciation": "تلفظ شامل کریں"
+        "include-pronunciation": "تلفظ شامل کریں",
+        "includePronunciation": {
+          "label": "تلفظ شامل کریں"
+        }
       }
     },
     "dismiss-multidevice-popup": {
@@ -1446,7 +1667,11 @@
       "name": "میموری سیور",
       "settings": {
         "threshold": "کیشے کی حد",
-        "threshold-description": "ونڈو چھپے ہونے پر جب ان کی لائیو میموری اس حد سے بڑھ جائے تو کیشے صاف کریں"
+        "threshold-description": "ونڈو چھپے ہونے پر جب ان کی لائیو میموری اس حد سے بڑھ جائے تو کیشے صاف کریں",
+        "thresholdMB": {
+          "label": "کیشے کی حد",
+          "description": "ونڈو چھپے ہونے پر جب ان کی لائیو میموری اس حد سے بڑھ جائے تو کیشے صاف کریں"
+        }
       }
     }
   },
@@ -1475,7 +1700,7 @@
     "move-up": "اوپر لے جائیں",
     "move-down": "نیچے لے جائیں",
     "about": {
-      "tagline": "YouTube Music کے لیے خصوصیات سے بھرپور ڈیسک ٹاپ ایپ",
+      "tagline": "\u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 کے لیے خصوصیات سے بھرپور ڈیسک ٹاپ ایپ",
       "versions": "ورژنز",
       "version-app": "ایپ",
       "version-build": "بلڈ",
@@ -1533,7 +1758,7 @@
     "stepper-decrement": "کم کریں",
     "stepper-increment": "زیادہ کریں",
     "flags": {
-      "warning": "فیچر فلیگز YouTube Music کے اپنے اندرونی سوئچز ہیں۔ انہیں تبدیل کرنے سے پلے بیک، لے آؤٹ یا اکاؤنٹ کی خصوصیات خراب ہو سکتی ہیں، اور ان کی سپورٹ شامل نہیں ہے۔ اوور رائیڈز صرف انہی فلیگز کے لیے محفوظ رکھی جاتی ہیں جنہیں آپ تبدیل کرتے ہیں، اور انہیں Undo سے ہٹایا جا سکتا ہے۔",
+      "warning": "فیچر فلیگز \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 کے اپنے اندرونی سوئچز ہیں۔ انہیں تبدیل کرنے سے پلے بیک، لے آؤٹ یا اکاؤنٹ کی خصوصیات خراب ہو سکتی ہیں، اور ان کی سپورٹ شامل نہیں ہے۔ اوور رائیڈز صرف انہی فلیگز کے لیے محفوظ رکھی جاتی ہیں جنہیں آپ تبدیل کرتے ہیں، اور انہیں Undo سے ہٹایا جا سکتا ہے۔",
       "search-placeholder": "فلیگز تلاش کریں",
       "overridden": "اوور رائیڈ شدہ",
       "undo": "انڈو",
@@ -1578,7 +1803,11 @@
       "theme-preset": "پری سیٹ",
       "theme-variable-name": "متغیر",
       "theme-variable-value": "قدر",
-      "theme-variable-add": "متغیر شامل کریں"
+      "theme-variable-add": "متغیر شامل کریں",
+      "performance-mode": "کارکردگی موڈ",
+      "performance-mode-desc": "کچھ بصری وفاداری کی قربانی دے کر کم خرچ رینڈرنگ حاصل کریں۔",
+      "in-process-gpu": "GPU پروسیس کو ایپ پروسیس میں ضم کریں",
+      "in-process-gpu-desc": "تجرباتی: ایک پروسیس بچاتا ہے، لیکن GPU میموری کو مرکزی پروسیس میں منتقل کرتا ہے اور سافٹ ویئر رینڈرنگ پر واپس جا سکتا ہے۔"
     }
   }
 }

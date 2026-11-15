@@ -156,8 +156,8 @@
               "sync": {
                 "label": "Sprache synchronisieren",
                 "submenu": {
-                  "from-youtube": "Von YouTube",
-                  "to-youtube": "Zu YouTube"
+                  "from-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "Von \u0059\u006f\u0075\u0054\u0075\u0062\u0065",
+                  "to-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "Zu \u0059\u006f\u0075\u0054\u0075\u0062\u0065"
                 },
                 "failure": {
                   "dialog": {
@@ -201,7 +201,7 @@
                 "force-show": "Zeigen erzwungen",
                 "hide": "Versteckt",
                 "label": "Gefällt mir-Knopf",
-                "swap": "Reihenfolge der Like-Buttons tauschen"
+                "swap": "Gefällt mir-Knopf Reihenfolge ändern"
               },
               "remove-upgrade-button": "Upgrade-Schaltfläche entfernen",
               "theme": {
@@ -210,8 +210,8 @@
                     "cancel": "Abbrechen",
                     "remove": "Entfernen"
                   },
-                  "remove-theme": "Sind Sie sicher, dass Sie das benutzerdefinierte Design entfernen möchten?",
-                  "remove-theme-message": "Dies entfernt das benutzerdefinierte Design"
+                  "remove-theme": "Sind Sie sich sicher, dass Sie das benutzerdefinierte Aussehen ändern wollen?",
+                  "remove-theme-message": "Dies wird das benutzerdefinierte Aussehen löschen"
                 },
                 "label": "Thema",
                 "submenu": {
@@ -229,7 +229,7 @@
                   "open-themes-folder": "Themes-Ordner öffnen"
                 }
               },
-              "use-ytm-icons": "Originale YouTube Music-Symbole verwenden"
+              "use-ytm-icons": "Originale \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063-Symbole verwenden"
             }
           },
           "updates": {
@@ -309,12 +309,20 @@
         "color-mix-ratio": {
           "label": "Farbmischungsverhältnis",
           "submenu": {
-            "percent": "{{ratio}} %"
+            "percent": "{{ratio}}%"
           }
         },
         "enable-seekbar": "Suchleisten-Design aktivieren"
       },
-      "name": "Thema aus Albumfarbe"
+      "name": "Thema aus Albumfarbe",
+      "settings": {
+        "ratio": {
+          "label": "Farbmischungsverhältnis"
+        },
+        "enableSeekbar": {
+          "label": "Suchleisten-Design aktivieren"
+        }
+      }
     },
     "ambient-mode": {
       "description": "Fügt einen Lichteffekt durch sanftes Abstreifen der Farben des Videos in deinen Bildschirmhintergrund hinzu",
@@ -334,7 +342,7 @@
         "opacity": {
           "label": "Transparenz",
           "submenu": {
-            "percent": "{{opacity}} %"
+            "percent": "{{opacity}}%"
           }
         },
         "quality": {
@@ -346,7 +354,7 @@
         "size": {
           "label": "Größe",
           "submenu": {
-            "percent": "{{size}} %"
+            "percent": "{{size}}%"
           }
         },
         "smoothness-transition": {
@@ -460,11 +468,11 @@
       "prompt": {
         "hostname": {
           "label": "Hostnamen eingeben für lokalen Proxy-Server (Neustart erforderlich):",
-          "title": "Proxy-Hostname"
+          "title": "Proxy Hostname"
         },
         "port": {
           "label": "Geben Sie den Port für den lokalen Proxyserver ein (Neustart erforderlich):",
-          "title": "Proxy-Port"
+          "title": "Proxy Port"
         }
       }
     },
@@ -497,10 +505,18 @@
         "caption-changed": "Untertitel gewechselt zu {{language}}",
         "caption-disabled": "Untertitel deaktiviert",
         "no-captions": "Keine Untertitel für dieses Lied verfügbar"
+      },
+      "settings": {
+        "autoload": {
+          "label": "Wähle automatisch den zuletzt verwendeten Untertitel"
+        },
+        "disableCaptions": {
+          "label": "Standardmäßig keine Untertitel"
+        }
       }
     },
     "clock": {
-      "description": "Füge eine Uhr zur Navigationsleiste hinzu",
+      "description": "Füge eine Uhr der Navigationsleiste hinzu",
       "menu": {
         "format": {
           "24-hour-format": "24-Stunden Format",
@@ -510,7 +526,13 @@
       },
       "name": "Uhr",
       "settings": {
-        "hour-12": "12-Stunden-Format verwenden"
+        "hour-12": "12-Stunden-Format verwenden",
+        "displaySeconds": {
+          "label": "Sekunden anzeigen"
+        },
+        "hour12": {
+          "label": "12-Stunden-Format verwenden"
+        }
       }
     },
     "compact-sidebar": {
@@ -559,7 +581,7 @@
       "name": "Benutzerdefiniertes Ausgabegerät",
       "prompt": {
         "device-selector": {
-          "label": "Wähle das Ausgabegerät, das genutzt werden soll",
+          "label": "Wähle das Ausgabegerät, welches benutzt werden soll",
           "title": "Wähle ein Ausgabegerät"
         }
       }
@@ -569,7 +591,12 @@
       "menu": {
         "apply-once": "Nur beim Start der Anwendung anwenden"
       },
-      "name": "Deaktiviere automatisches Abspielen"
+      "name": "Deaktiviere automatisches Abspielen",
+      "settings": {
+        "applyOnce": {
+          "label": "Nur beim Start der Anwendung anwenden"
+        }
+      }
     },
     "discord": {
       "backend": {
@@ -592,8 +619,8 @@
           "label": "Status Text",
           "submenu": {
             "application": "Hört {{applicationName}}",
-            "artist": "Hört {{artist}} zu",
-            "title": "Du hörst {{songTitle}}"
+            "artist": "Hört {artist} zu",
+            "title": "Du hörst {song title}"
           }
         }
       },
@@ -609,7 +636,38 @@
         "activity-timeout-enabled": "Präsenz beim Pausieren löschen",
         "activity-timeout-time": "Löschen nach",
         "hide-github-button": "Schaltfläche „Auf GitHub ansehen“ ausblenden",
-        "hide-duration-left": "Verbleibende Zeit ausblenden"
+        "hide-duration-left": "Verbleibende Zeit ausblenden",
+        "autoReconnect": {
+          "label": "Automatisch neu verbinden"
+        },
+        "activityTimeoutEnabled": {
+          "label": "Präsenz beim Pausieren löschen"
+        },
+        "activityTimeoutSeconds": {
+          "label": "Löschen nach"
+        },
+        "playButton": {
+          "label": "Auf {{applicationName}} abspielen"
+        },
+        "hideGitHubButton": {
+          "label": "Schaltfläche „Auf GitHub ansehen“ ausblenden"
+        },
+        "hideDurationLeft": {
+          "label": "Verbleibende Zeit ausblenden"
+        },
+        "statusDisplayType": {
+          "label": "Status Text",
+          "options": {
+            "name": "Hört {{applicationName}}",
+            "state": "Hört {artist} zu",
+            "details": "Du hörst {song title}"
+          }
+        }
+      },
+      "actions": {
+        "clearActivity": {
+          "label": "Aktivität leeren"
+        }
       }
     },
     "do-not-track": {
@@ -900,6 +958,23 @@
       "name": "Bild-im-Bild",
       "templates": {
         "button": "Bild-im-Bild"
+      },
+      "settings": {
+        "hotkey": {
+          "label": "Tastenkürzel"
+        },
+        "useNativePiP": {
+          "label": "Browsereigenes PiP verwenden"
+        },
+        "alwaysOnTop": {
+          "label": "Immer im Vordergrund"
+        },
+        "savePosition": {
+          "label": "Fensterposition speichern"
+        },
+        "saveSize": {
+          "label": "Fenstergröße speichern"
+        }
       }
     },
     "playback-speed": {
@@ -935,10 +1010,21 @@
         }
       },
       "settings": {
-        "steps": "Lautstärkeschritt",
+        "steps": {
+          "label": "Lautstärkeschritt"
+        },
         "arrows-shortcut": "Pfeiltasten-Kürzel",
         "shortcut-up": "Globales Tastenkürzel: Lautstärke erhöhen",
-        "shortcut-down": "Globales Tastenkürzel: Lautstärke verringern"
+        "shortcut-down": "Globales Tastenkürzel: Lautstärke verringern",
+        "arrowsShortcut": {
+          "label": "Pfeiltasten-Kürzel"
+        },
+        "volumeUp": {
+          "label": "Globales Tastenkürzel: Lautstärke erhöhen"
+        },
+        "volumeDown": {
+          "label": "Globales Tastenkürzel: Lautstärke verringern"
+        }
       }
     },
     "quality-changer": {
@@ -981,8 +1067,8 @@
           "token": "ListenBrainz-Benutzer-Token eintragen",
           "api-root": "ListenBrainz-API-URL"
         },
-        "scrobble-alternative-artist": "Alternative Künstler verwenden",
-        "scrobble-alternative-title": "Alternative Titel verwenden",
+        "scrobble-alternative-artist": "Benutze Alternative Künstler",
+        "scrobble-alternative-title": "Nutze alternative Titel",
         "scrobble-other-media": "Andere Medien scrobbeln",
         "regex-filters": "Filter für reguläre Ausdrücke",
         "use-musicbrainz": "MusicBrainz zur Korrektur von Metadaten verwenden",
@@ -1037,14 +1123,42 @@
       },
       "settings": {
         "global-keybinds": "Globale Tastenkürzel (gelten appweit)",
-        "local-keybinds": "Lokale Tastenkürzel (nur bei fokussiertem Fenster)"
+        "local-keybinds": "Lokale Tastenkürzel (nur bei fokussiertem Fenster)",
+        "playPause": {
+          "label": "Weiter / Pause"
+        },
+        "localPlayPause": {
+          "label": "Weiter / Pause"
+        },
+        "next": {
+          "label": "Nächstes"
+        },
+        "localNext": {
+          "label": "Nächstes"
+        },
+        "previous": {
+          "label": "Vorheriges"
+        },
+        "localPrevious": {
+          "label": "Vorheriges"
+        },
+        "overrideMediaKeys": {
+          "label": "Medientasten überschreiben"
+        }
       }
+    },
+    "skip-disliked-songs": {
+      "description": "Überspringt Lieder, die ihnen nicht gefallen",
+      "name": "Überspring Lieder, die ihnen nicht gefallen"
     },
     "skip-silences": {
       "description": "Automatisch stille Abschnitte in Liedern überspringen",
       "name": "Stille überspringen",
       "settings": {
-        "only-skip-beginning": "Stille nur am Anfang eines Titels überspringen"
+        "only-skip-beginning": "Stille nur am Anfang eines Titels überspringen",
+        "onlySkipBeginning": {
+          "label": "Stille nur am Anfang eines Titels überspringen"
+        }
       }
     },
     "sponsorblock": {
@@ -1060,13 +1174,34 @@
           "selfpromo": "Eigenwerbung",
           "music_offtopic": "Nicht-Musik-Abschnitt"
         },
-        "api-url": "API-URL"
+        "api-url": "API-URL",
+        "sponsor": {
+          "label": "Sponsor"
+        },
+        "intro": {
+          "label": "Intro"
+        },
+        "outro": {
+          "label": "Outro"
+        },
+        "interaction": {
+          "label": "Interaktionserinnerung"
+        },
+        "selfpromo": {
+          "label": "Eigenwerbung"
+        },
+        "music_offtopic": {
+          "label": "Nicht-Musik-Abschnitt"
+        },
+        "apiURL": {
+          "label": "API-URL"
+        }
       }
     },
     "synced-lyrics": {
       "description": "Bietet synchronisierte Liedtexte zu Songs, verwendet Anbieter wie LRClib.",
       "errors": {
-        "fetch": "⚠️ \tBeim Abrufen des Liedtexts ist ein Fehler aufgetreten.\n\tBitte versuchen Sie es später erneut.",
+        "fetch": "⚠️ - \tBeim Abrufen des Liedtexts ist ein Fehler aufgetreten. \n\tBitte versuchen Sie es später nochmal.",
         "not-found": "⚠️ Kein Text für diesen Song gefunden."
       },
       "menu": {
@@ -1114,6 +1249,30 @@
           },
           "tooltip": "Effekt für aktive Zeile auswählen"
         },
+        "precise-timing": {
+          "label": "Den Songtext perfekt synchronisieren",
+          "tooltip": "Auf die Millisekunde genau berechnen, wann die nächste Zeile angezeigt werden soll (Kann Einfluss auf die Leistung haben)"
+        },
+        "preferred-provider": {
+          "label": "bevorzugter Anbieter",
+          "none": {
+            "label": "Nichts",
+            "tooltip": "Kein bevorzugter Anbieter"
+          },
+          "tooltip": "Standardanbieter auswählen"
+        },
+        "romanization": {
+          "label": "Lateinische Umschrift anzeigen",
+          "tooltip": "Wenn der Liedtext in einer anderen Schrift ist, zeige nach Möglichkeit eine Version in lateinischer Schrift an."
+        },
+        "show-lyrics-even-if-inexact": {
+          "label": "Songtext anzeigen, auch wenn er ungenau ist",
+          "tooltip": "Die Erweiterung sucht mit anderen Suchparameter nochmals, wenn der Song nicht gefunden wurde.\nEs kann sein, dass das Ergebnis von der zweiten Anfrage nicht genau ist."
+        },
+        "show-time-codes": {
+          "label": "Zeitkodierungen anzeigen",
+          "tooltip": "Zeitkodierungen neben Songtext anzeigen"
+        },
         "lyrics-font-size": {
           "label": "Schriftgröße der Texte",
           "submenu": {
@@ -1131,30 +1290,6 @@
             }
           },
           "tooltip": "Wählen Sie, wie groß der Liedtext sein soll"
-        },
-        "precise-timing": {
-          "label": "Den Songtext perfekt synchronisieren",
-          "tooltip": "Auf die Millisekunde genau berechnen, wann die nächste Zeile angezeigt werden soll (Kann Einfluss auf die Leistung haben)"
-        },
-        "preferred-provider": {
-          "label": "Bevorzugter Anbieter",
-          "none": {
-            "label": "Keiner",
-            "tooltip": "Kein bevorzugter Anbieter"
-          },
-          "tooltip": "Standardanbieter auswählen"
-        },
-        "romanization": {
-          "label": "Lateinische Umschrift anzeigen",
-          "tooltip": "Wenn der Liedtext in einer anderen Schrift ist, zeige nach Möglichkeit eine Version in lateinischer Schrift an."
-        },
-        "show-lyrics-even-if-inexact": {
-          "label": "Songtext anzeigen, auch wenn er ungenau ist",
-          "tooltip": "Wenn das Lied nicht gefunden wird, versucht das Plugin es erneut mit anderen Suchparametern.\nEs kann sein, dass die Ergebnisse des zweiten Versuchs ungenau sind."
-        },
-        "show-time-codes": {
-          "label": "Zeitkodierungen anzeigen",
-          "tooltip": "Zeitkodierungen neben Songtext anzeigen"
         },
         "translation": {
           "clear-cache": {
@@ -1269,7 +1404,7 @@
         },
         "use-ytm-lyrics-without-proxy": {
           "label": "YTM-Lyrics ohne Proxy verwenden",
-          "tooltip": "YTM-Browse-Proxy überspringen und YouTube Music direkt über die authentifizierte Sitzung der App aufrufen. Nützlich, wenn Sie Ihrem Netzwerk/Ihrer Region vertrauen, direkte Browse-Aufrufe zuzulassen."
+          "tooltip": "YTM-Browse-Proxy überspringen und \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 direkt über die authentifizierte Sitzung der App aufrufen. Nützlich, wenn Sie Ihrem Netzwerk/Ihrer Region vertrauen, direkte Browse-Aufrufe zuzulassen."
         },
         "show-custom-search-button": {
           "label": "Benutzerdefinierte Suchschaltfläche anzeigen",
@@ -1306,7 +1441,7 @@
         "normal": "Songtext neu laden"
       },
       "warnings": {
-        "duration-mismatch": "⚠️ - Der Songtext ist möglicherweise nicht synchron, weil die Dauer nicht übereinstimmt.",
+        "duration-mismatch": "⚠️ - Es kann sein, dass die Synchronization nicht stimmt, da die Songdauer nicht übereinstimmt.",
         "inexact": "⚠️ - Es ist möglich, dass der Songtext für diesen Song nicht übereinstimmt.",
         "instrumental": "⚠️ - Das ist ein instrumentales Lied"
       },
@@ -1341,7 +1476,7 @@
         "opacity": {
           "label": "Hintergrund-Sichtbarkeit",
           "submenu": {
-            "percent": "{{opacity}} %"
+            "percent": "{{opacity}}%"
           }
         },
         "type": {
@@ -1361,7 +1496,25 @@
       },
       "name": "Transparenter Player",
       "settings": {
-        "type-description": "Hintergrundmaterial für Fenstertransparenz"
+        "type-description": "Hintergrundmaterial für Fenstertransparenz",
+        "opacity": {
+          "label": "Hintergrund-Sichtbarkeit"
+        },
+        "type": {
+          "label": "Typ",
+          "description": "Hintergrundmaterial für Fenstertransparenz",
+          "options": {
+            "acrylic": "Acryl",
+            "content": "Inhalt",
+            "fullscreen-ui": "Vollbild-Oberfläche",
+            "mica": "Mica",
+            "tabbed": "Mit Registerkarten",
+            "under-page": "Unter Seite",
+            "under-window": "Unter Fenster",
+            "window": "Fenster",
+            "none": "Nichts"
+          }
+        }
       }
     },
     "tuna-obs": {
@@ -1369,7 +1522,7 @@
       "name": "Tuna OBS"
     },
     "unobtrusive-player": {
-      "description": "Verhindert, dass der Player beim Abspielen eines Songs in den Vordergrund springt",
+      "description": "Verhindert das Aufpoppen des Spielers während ein Song gespielt wird",
       "name": "Unauffälliger Player"
     },
     "video-toggle": {
@@ -1397,6 +1550,27 @@
       "templates": {
         "button-song": "Lied",
         "button-video": "Video"
+      },
+      "settings": {
+        "mode": {
+          "label": "Modus",
+          "options": {
+            "custom": "Angepasster Schalter",
+            "native": "Eingebauter Schalter",
+            "disabled": "Deaktiviert"
+          }
+        },
+        "align": {
+          "label": "Ausrichtung",
+          "options": {
+            "left": "Links",
+            "middle": "Mitte",
+            "right": "Rechts"
+          }
+        },
+        "forceHide": {
+          "label": "Entfernen des Videoabschnitts erzwingen"
+        }
       }
     },
     "visualizer": {
@@ -1406,7 +1580,9 @@
       },
       "name": "Visualisierer",
       "settings": {
-        "preset": "Voreinstellung",
+        "preset": {
+          "label": "Voreinstellung"
+        },
         "blend-time": "Überblendzeit",
         "effect": "Effekt",
         "accuracy": "Genauigkeit",
@@ -1422,7 +1598,45 @@
         "dottify": "Punktieren",
         "dottify-description": "Punkte statt einer durchgehenden Linie zeichnen",
         "horizontal-align": "Horizontale Ausrichtung",
-        "vertical-align": "Vertikale Ausrichtung"
+        "vertical-align": "Vertikale Ausrichtung",
+        "blendTimeInSeconds": {
+          "label": "Überblendzeit"
+        },
+        "vudioMaxHeight": {
+          "label": "Max. Höhe"
+        },
+        "vudioMaxSize": {
+          "label": "Max. Größe"
+        },
+        "vudioLineWidth": {
+          "label": "Linienbreite"
+        },
+        "vudioColor": {
+          "label": "Farbe"
+        },
+        "vudioShadowBlur": {
+          "label": "Schattenunschärfe"
+        },
+        "vudioShadowColor": {
+          "label": "Schattenfarbe"
+        },
+        "vudioFadeSide": {
+          "label": "Seiten ausblenden"
+        },
+        "vudioPrettify": {
+          "label": "Verschönern",
+          "description": "Die Balken zu den Rändern hin verjüngen"
+        },
+        "vudioDottify": {
+          "label": "Punktieren",
+          "description": "Punkte statt einer durchgehenden Linie zeichnen"
+        },
+        "vudioHorizontalAlign": {
+          "label": "Horizontale Ausrichtung"
+        },
+        "vudioVerticalAlign": {
+          "label": "Vertikale Ausrichtung"
+        }
       }
     },
     "audio-only": {
@@ -1464,7 +1678,7 @@
     },
     "search-commands": {
       "commands": {
-        "play": "Ein Video über einen YouTube-Link oder eine -ID abspielen",
+        "play": "Ein Video über einen \u0059\u006f\u0075\u0054\u0075\u0062\u0065-Link oder eine -ID abspielen",
         "settings": "Einstellungen öffnen"
       },
       "description": "Gib / in das Suchfeld ein, um Befehle auszuführen, mit Autovervollständigung für ihre Argumente",
@@ -1473,7 +1687,15 @@
         "open-keybind": "Tastenkürzel zum Öffnen",
         "open-keybind-description": "Tastenkürzel im Electron-Stil, z. B. CmdOrCtrl+/ oder Alt+Space",
         "open-shortcut": "Das Suchfeld von überall öffnen",
-        "open-shortcut-description": "Ruft das Suchfeld bereits im Befehlsmodus auf, ähnlich wie Spotlight. Erneutes Drücken schließt es."
+        "open-shortcut-description": "Ruft das Suchfeld bereits im Befehlsmodus auf, ähnlich wie Spotlight. Erneutes Drücken schließt es.",
+        "openShortcut": {
+          "label": "Das Suchfeld von überall öffnen",
+          "description": "Ruft das Suchfeld bereits im Befehlsmodus auf, ähnlich wie Spotlight. Erneutes Drücken schließt es."
+        },
+        "openKeybind": {
+          "label": "Tastenkürzel zum Öffnen",
+          "description": "Tastenkürzel im Electron-Stil, z. B. CmdOrCtrl+/ oder Alt+Space"
+        }
       }
     },
     "seek-shortcuts": {
@@ -1481,16 +1703,19 @@
       "name": "Spul-Tastenkürzel"
     },
     "sfw-music": {
-      "description": "Überspringt automatisch Songs, die von YouTube Music als explizit markiert sind. Pausiert, wenn sich eine explizite Warteschlange wiederholt oder kein nächster Song verfügbar ist.",
+      "description": "Überspringt automatisch Songs, die von \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 als explizit markiert sind. Pausiert, wenn sich eine explizite Warteschlange wiederholt oder kein nächster Song verfügbar ist.",
       "name": "SFW-Musik"
     },
     "toast-autoclose": {
-      "description": "YouTube-Music-Toasts nach drei Sekunden automatisch schließen",
+      "description": "\u0059\u006f\u0075\u0054\u0075\u0062\u0065\u002d\u004d\u0075\u0073\u0069\u0063-Toasts nach drei Sekunden automatisch schließen",
       "name": "Toast automatisch schließen"
     },
     "statusbar-lyrics": {
       "settings": {
-        "include-pronunciation": "Aussprache einschließen"
+        "include-pronunciation": "Aussprache einschließen",
+        "includePronunciation": {
+          "label": "Aussprache einschließen"
+        }
       }
     },
     "dismiss-multidevice-popup": {
@@ -1502,7 +1727,11 @@
       "name": "Speichersparer",
       "settings": {
         "threshold": "Cache-Schwellenwert",
-        "threshold-description": "Leert die Caches, sobald ihr belegter Speicher diesen Wert überschreitet, während das Fenster ausgeblendet ist"
+        "threshold-description": "Leert die Caches, sobald ihr belegter Speicher diesen Wert überschreitet, während das Fenster ausgeblendet ist",
+        "thresholdMB": {
+          "label": "Cache-Schwellenwert",
+          "description": "Leert die Caches, sobald ihr belegter Speicher diesen Wert überschreitet, während das Fenster ausgeblendet ist"
+        }
       }
     }
   },
@@ -1531,7 +1760,7 @@
     "move-up": "Nach oben",
     "move-down": "Nach unten",
     "about": {
-      "tagline": "Eine funktionsreiche Desktop-App für YouTube Music",
+      "tagline": "Eine funktionsreiche Desktop-App für \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063",
       "versions": "Versionen",
       "version-app": "App",
       "version-build": "Build",
@@ -1589,7 +1818,7 @@
     "stepper-decrement": "Verringern",
     "stepper-increment": "Erhöhen",
     "flags": {
-      "warning": "Feature-Flags sind interne Schalter von YouTube Music. Änderungen daran können Wiedergabe, Layout oder Kontofunktionen beeinträchtigen, und sie sind nicht vom Support abgedeckt. Überschreibungen werden nur für die Flags gespeichert, die du änderst, und können mit „Rückgängig“ entfernt werden.",
+      "warning": "Feature-Flags sind interne Schalter von \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063. Änderungen daran können Wiedergabe, Layout oder Kontofunktionen beeinträchtigen, und sie sind nicht vom Support abgedeckt. Überschreibungen werden nur für die Flags gespeichert, die du änderst, und können mit „Rückgängig“ entfernt werden.",
       "search-placeholder": "Flags durchsuchen",
       "overridden": "überschrieben",
       "undo": "Rückgängig",
@@ -1634,7 +1863,11 @@
       "theme-preset": "Voreinstellung",
       "theme-variable-name": "Variable",
       "theme-variable-value": "Wert",
-      "theme-variable-add": "Variable hinzufügen"
+      "theme-variable-add": "Variable hinzufügen",
+      "performance-mode": "Leistungsmodus",
+      "performance-mode-desc": "Tauscht etwas visuelle Wiedergabetreue gegen günstigeres Rendering.",
+      "in-process-gpu": "GPU-Prozess in den App-Prozess integrieren",
+      "in-process-gpu-desc": "Experimentell: spart einen Prozess, verlagert aber den GPU-Speicher in den Hauptprozess und kann auf Software-Rendering zurückfallen."
     }
   }
 }

@@ -16,7 +16,7 @@
   "language": {
     "code": "sq",
     "local-name": "Shqip",
-    "name": "Albanian"
+    "name": "Emri i gjuhës në anglisht. p.sh. japonisht, koreanisht, anglisht, rusisht"
   },
   "main": {
     "console": {
@@ -156,8 +156,8 @@
               "sync": {
                 "label": "Sinkronizo gjuhën",
                 "submenu": {
-                  "from-youtube": "Nga YouTube",
-                  "to-youtube": "Në YouTube"
+                  "from-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "Nga \u0059\u006f\u0075\u0054\u0075\u0062\u0065",
+                  "to-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "Në \u0059\u006f\u0075\u0054\u0075\u0062\u0065"
                 },
                 "failure": {
                   "dialog": {
@@ -229,7 +229,7 @@
                   "open-themes-folder": "Hap dosjen e temave"
                 }
               },
-              "use-ytm-icons": "Përdor ikonat origjinale të YouTube Music"
+              "use-ytm-icons": "Përdor ikonat origjinale të \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063"
             }
           },
           "updates": {
@@ -253,7 +253,7 @@
       },
       "plugins": {
         "enabled": "Aktivizuar",
-        "label": "Shtojcat",
+        "label": "Plugins",
         "new": "E RE"
       },
       "view": {
@@ -299,13 +299,6 @@
       "description": "Nëse luan një reklamë, e hesht zërin dhe e vendos shpejtësinë e luajtjes në 16x",
       "name": "Përshpejtimi i reklamave"
     },
-    "adblocker": {
-      "description": "Blloko të gjitha reklamat dhe gjurmimin menjëherë",
-      "menu": {
-        "blocker": "Bllokuesi"
-      },
-      "name": "Bllokuesi i Reklamave"
-    },
     "album-actions": {
       "description": "Shton butonat \"Nuk më pëlqen\", \"Nuk e pëlqej\", \"Pëlqej\" dhe \"E pëlqej\" për t'i zbatuar këto në të gjitha këngët në një playlist ose album",
       "name": "Veprimet e albumit"
@@ -321,7 +314,15 @@
         },
         "enable-seekbar": "Aktivizo tematizimin e shiritit"
       },
-      "name": "Tema e ngjyrave të albumit"
+      "name": "Tema e ngjyrave të albumit",
+      "settings": {
+        "ratio": {
+          "label": "Raporti i përzierjes së ngjyrave"
+        },
+        "enableSeekbar": {
+          "label": "Aktivizo tematizimin e shiritit"
+        }
+      }
     },
     "ambient-mode": {
       "description": "Aplikon një efekt ndriçimi duke hedhur ngjyra të buta nga videoja, në sfondin e ekranit tuaj",
@@ -441,6 +442,13 @@
         "choose-file": "Zgjidh skedar…"
       }
     },
+    "adblocker": {
+      "description": "Blloko të gjitha reklamat dhe gjurmimin menjëherë",
+      "menu": {
+        "blocker": "Bllokuesi"
+      },
+      "name": "Bllokuesi i Reklamave"
+    },
     "audio-compressor": {
       "description": "Apliko kompresim në audio (ul volumin e pjesëve më të larta të sinjalit dhe rrit volumin e pjesëve më të ulëta)",
       "name": "Kompresori i Audios",
@@ -504,6 +512,14 @@
         "caption-changed": "Titrat u ndryshuan në {{language}}",
         "caption-disabled": "Titrat u çaktivizuan",
         "no-captions": "Nuk ka titra të disponueshëm për këtë këngë"
+      },
+      "settings": {
+        "autoload": {
+          "label": "Zgjidh automatikisht titrat e fundit të përdorur"
+        },
+        "disableCaptions": {
+          "label": "Pa titra si parazgjedhje"
+        }
       }
     },
     "clock": {
@@ -517,7 +533,13 @@
       },
       "name": "Ora",
       "settings": {
-        "hour-12": "Përdor formatin 12-orësh"
+        "hour-12": "Përdor formatin 12-orësh",
+        "displaySeconds": {
+          "label": "Shfaq Sekondat"
+        },
+        "hour12": {
+          "label": "Përdor formatin 12-orësh"
+        }
       }
     },
     "compact-sidebar": {
@@ -576,7 +598,12 @@
       "menu": {
         "apply-once": "Zbatohet vetëm në nisje"
       },
-      "name": "Çaktivizo Luajtjen Automatike"
+      "name": "Çaktivizo Luajtjen Automatike",
+      "settings": {
+        "applyOnce": {
+          "label": "Zbatohet vetëm në nisje"
+        }
+      }
     },
     "discord": {
       "backend": {
@@ -599,8 +626,8 @@
           "label": "Teksti i statusit",
           "submenu": {
             "application": "Duke dëgjuar {{applicationName}}",
-            "artist": "Duke dëgjuar {{artist}}",
-            "title": "Duke dëgjuar {{songTitle}}"
+            "artist": "Duke dëgjuar {artist}",
+            "title": "Duke dëgjuar {song title}"
           }
         }
       },
@@ -616,7 +643,38 @@
         "activity-timeout-enabled": "Pastro praninë kur pauzohet",
         "activity-timeout-time": "Pastro pas",
         "hide-github-button": "Fshih butonin “Shiko në GitHub”",
-        "hide-duration-left": "Fshih kohën e mbetur"
+        "hide-duration-left": "Fshih kohën e mbetur",
+        "autoReconnect": {
+          "label": "Rilidhje automatike"
+        },
+        "activityTimeoutEnabled": {
+          "label": "Pastro praninë kur pauzohet"
+        },
+        "activityTimeoutSeconds": {
+          "label": "Pastro pas"
+        },
+        "playButton": {
+          "label": "Luaj në {{applicationName}}"
+        },
+        "hideGitHubButton": {
+          "label": "Fshih butonin “Shiko në GitHub”"
+        },
+        "hideDurationLeft": {
+          "label": "Fshih kohën e mbetur"
+        },
+        "statusDisplayType": {
+          "label": "Teksti i statusit",
+          "options": {
+            "name": "Duke dëgjuar {{applicationName}}",
+            "state": "Duke dëgjuar {artist}",
+            "details": "Duke dëgjuar {song title}"
+          }
+        }
+      },
+      "actions": {
+        "clearActivity": {
+          "label": "Pastro aktivitetin"
+        }
       }
     },
     "downloader": {
@@ -888,6 +946,23 @@
       "name": "Fotografi-në-fotografi",
       "templates": {
         "button": "Fotografi-në-fotografi"
+      },
+      "settings": {
+        "hotkey": {
+          "label": "Shkurtore"
+        },
+        "useNativePiP": {
+          "label": "Përdor PiP-në vendase të shfletuesit"
+        },
+        "alwaysOnTop": {
+          "label": "Gjithmonë mbi të tjerat"
+        },
+        "savePosition": {
+          "label": "Ruaj pozicionin e dritares"
+        },
+        "saveSize": {
+          "label": "Ruaj madhësinë e dritares"
+        }
       }
     },
     "playback-speed": {
@@ -923,10 +998,21 @@
         }
       },
       "settings": {
-        "steps": "Hapi i volumit",
+        "steps": {
+          "label": "Hapi i volumit"
+        },
         "arrows-shortcut": "Shkurtoret e tasteve të shigjetave",
         "shortcut-up": "Shkurtore globale: rrit volumin",
-        "shortcut-down": "Shkurtore globale: ul volumin"
+        "shortcut-down": "Shkurtore globale: ul volumin",
+        "arrowsShortcut": {
+          "label": "Shkurtoret e tasteve të shigjetave"
+        },
+        "volumeUp": {
+          "label": "Shkurtore globale: rrit volumin"
+        },
+        "volumeDown": {
+          "label": "Shkurtore globale: ul volumin"
+        }
       }
     },
     "quality-changer": {
@@ -1025,14 +1111,38 @@
       },
       "settings": {
         "global-keybinds": "Shkurtoret globale (funksionojnë në të gjithë aplikacionin)",
-        "local-keybinds": "Shkurtoret lokale (vetëm kur dritarja është në fokus)"
+        "local-keybinds": "Shkurtoret lokale (vetëm kur dritarja është në fokus)",
+        "playPause": {
+          "label": "Luaj / Pauzo"
+        },
+        "localPlayPause": {
+          "label": "Luaj / Pauzo"
+        },
+        "next": {
+          "label": "Tjetra"
+        },
+        "localNext": {
+          "label": "Tjetra"
+        },
+        "previous": {
+          "label": "E Mëparshmja"
+        },
+        "localPrevious": {
+          "label": "E Mëparshmja"
+        },
+        "overrideMediaKeys": {
+          "label": "Mbishkruaj Tastet Mediatike"
+        }
       }
     },
     "skip-silences": {
       "description": "Kalo automatikisht pjesët e heshtura në këngë",
       "name": "Kalo Heshtjet",
       "settings": {
-        "only-skip-beginning": "Kap vetëm heshtjen në fillim të këngës"
+        "only-skip-beginning": "Kap vetëm heshtjen në fillim të këngës",
+        "onlySkipBeginning": {
+          "label": "Kap vetëm heshtjen në fillim të këngës"
+        }
       }
     },
     "sponsorblock": {
@@ -1048,7 +1158,28 @@
           "selfpromo": "Vetëpromovim",
           "music_offtopic": "Seksion jo-muzikor"
         },
-        "api-url": "URL e API-së"
+        "api-url": "URL e API-së",
+        "sponsor": {
+          "label": "Sponsor"
+        },
+        "intro": {
+          "label": "Hyrje"
+        },
+        "outro": {
+          "label": "Dalje"
+        },
+        "interaction": {
+          "label": "Kujtesë interaksioni"
+        },
+        "selfpromo": {
+          "label": "Vetëpromovim"
+        },
+        "music_offtopic": {
+          "label": "Seksion jo-muzikor"
+        },
+        "apiURL": {
+          "label": "URL e API-së"
+        }
       }
     },
     "synced-lyrics": {
@@ -1257,7 +1388,7 @@
         },
         "use-ytm-lyrics-without-proxy": {
           "label": "Përdor tekstet e YTM pa proxy",
-          "tooltip": "Anasho përfaqësuesin e shfletimit YTM dhe thirr YouTube Music direkt duke përdorur sesionin e autentikuar të aplikacionit. E dobishme nëse i besoni rrjetit/rajonit tuaj për të lejuar thirrje të drejtpërdrejta shfletimi."
+          "tooltip": "Anasho përfaqësuesin e shfletimit YTM dhe thirr \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 direkt duke përdorur sesionin e autentikuar të aplikacionit. E dobishme nëse i besoni rrjetit/rajonit tuaj për të lejuar thirrje të drejtpërdrejta shfletimi."
         },
         "show-custom-search-button": {
           "label": "Trego butonin e personalizuar të kërkimit",
@@ -1349,7 +1480,25 @@
       },
       "name": "Luajtësi Transparent",
       "settings": {
-        "type-description": "Materiali i sfondit i përdorur për transparencën e dritares"
+        "type-description": "Materiali i sfondit i përdorur për transparencën e dritares",
+        "opacity": {
+          "label": "Opaciteti"
+        },
+        "type": {
+          "label": "Lloji",
+          "description": "Materiali i sfondit i përdorur për transparencën e dritares",
+          "options": {
+            "acrylic": "Akrilik",
+            "content": "Përmbajtja",
+            "fullscreen-ui": "Ndërfaqja e ekranit të plotë",
+            "mica": "Mika",
+            "tabbed": "Me skeda",
+            "under-page": "Nën faqe",
+            "under-window": "Nën dritare",
+            "window": "Dritare",
+            "none": "Asnjë"
+          }
+        }
       }
     },
     "tuna-obs": {
@@ -1385,6 +1534,27 @@
       "templates": {
         "button-song": "Këngë",
         "button-video": "Video"
+      },
+      "settings": {
+        "mode": {
+          "label": "Modaliteti",
+          "options": {
+            "custom": "Ndryshim i personalizuar",
+            "native": "Ndryshim vendor",
+            "disabled": "Çaktivizuar"
+          }
+        },
+        "align": {
+          "label": "Rreshtimi",
+          "options": {
+            "left": "Majtas",
+            "middle": "Mes",
+            "right": "Djathtas"
+          }
+        },
+        "forceHide": {
+          "label": "Hiq me forcë skedën e videos"
+        }
       }
     },
     "visualizer": {
@@ -1394,7 +1564,9 @@
       },
       "name": "Vizualizuesi",
       "settings": {
-        "preset": "Paracaktim",
+        "preset": {
+          "label": "Paracaktim"
+        },
         "blend-time": "Koha e përzierjes",
         "effect": "Efekt",
         "accuracy": "Saktësi",
@@ -1410,7 +1582,45 @@
         "dottify": "Dottify",
         "dottify-description": "Vizato pika në vend të një vije të vazhdueshme",
         "horizontal-align": "Rreshtim horizontal",
-        "vertical-align": "Rreshtim vertikal"
+        "vertical-align": "Rreshtim vertikal",
+        "blendTimeInSeconds": {
+          "label": "Koha e përzierjes"
+        },
+        "vudioMaxHeight": {
+          "label": "Lartësia maksimale"
+        },
+        "vudioMaxSize": {
+          "label": "Madhësia maksimale"
+        },
+        "vudioLineWidth": {
+          "label": "Gjerësia e vijës"
+        },
+        "vudioColor": {
+          "label": "Ngjyra"
+        },
+        "vudioShadowBlur": {
+          "label": "Turbullimi i hijes"
+        },
+        "vudioShadowColor": {
+          "label": "Ngjyra e hijes"
+        },
+        "vudioFadeSide": {
+          "label": "Anët e zbehjes"
+        },
+        "vudioPrettify": {
+          "label": "Zbukuro",
+          "description": "Zvogëlo shiritat drejt skajeve"
+        },
+        "vudioDottify": {
+          "label": "Dottify",
+          "description": "Vizato pika në vend të një vije të vazhdueshme"
+        },
+        "vudioHorizontalAlign": {
+          "label": "Rreshtim horizontal"
+        },
+        "vudioVerticalAlign": {
+          "label": "Rreshtim vertikal"
+        }
       }
     },
     "audio-only": {
@@ -1471,7 +1681,7 @@
     },
     "search-commands": {
       "commands": {
-        "play": "Luaj një video nga një lidhje ose ID YouTube",
+        "play": "Luaj një video nga një lidhje ose ID \u0059\u006f\u0075\u0054\u0075\u0062\u0065",
         "settings": "Hap cilësimet"
       },
       "description": "Shkruani / në kutinë e kërkimit për të ekzekutuar komanda, me autocomplete për argumentet e tyre",
@@ -1480,7 +1690,15 @@
         "open-keybind": "Shkurtore për hapje",
         "open-keybind-description": "Shkurtore në stil Electron, p.sh. CmdOrCtrl+/ ose Alt+Space",
         "open-shortcut": "Hap kutinë e kërkimit nga kudo",
-        "open-shortcut-description": "Thirr kutinë e kërkimit tashmë në modalitetin e komandave, si Spotlight. Shtypja përsëri e mbyll atë."
+        "open-shortcut-description": "Thirr kutinë e kërkimit tashmë në modalitetin e komandave, si Spotlight. Shtypja përsëri e mbyll atë.",
+        "openShortcut": {
+          "label": "Hap kutinë e kërkimit nga kudo",
+          "description": "Thirr kutinë e kërkimit tashmë në modalitetin e komandave, si Spotlight. Shtypja përsëri e mbyll atë."
+        },
+        "openKeybind": {
+          "label": "Shkurtore për hapje",
+          "description": "Shkurtore në stil Electron, p.sh. CmdOrCtrl+/ ose Alt+Space"
+        }
       }
     },
     "seek-shortcuts": {
@@ -1488,16 +1706,19 @@
       "name": "Shkurtoret e Lëvizjes"
     },
     "sfw-music": {
-      "description": "Kap automatikisht këngët e shënuara si Eksplicite nga YouTube Music. Bëhet pauzë nëse një radhë eksplicite përsëritet ose nuk ka këngë tjetër të disponueshme.",
+      "description": "Kap automatikisht këngët e shënuara si Eksplicite nga \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063. Bëhet pauzë nëse një radhë eksplicite përsëritet ose nuk ka këngë tjetër të disponueshme.",
       "name": "Muzikë SFW"
     },
     "toast-autoclose": {
-      "description": "Mbyll automatikisht njoftimet e YouTube Music pas tre sekondash",
+      "description": "Mbyll automatikisht njoftimet e \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 pas tre sekondash",
       "name": "Mbyllja automatike e njoftimeve"
     },
     "statusbar-lyrics": {
       "settings": {
-        "include-pronunciation": "Përfshi shqiptimin"
+        "include-pronunciation": "Përfshi shqiptimin",
+        "includePronunciation": {
+          "label": "Përfshi shqiptimin"
+        }
       }
     },
     "dismiss-multidevice-popup": {
@@ -1509,7 +1730,11 @@
       "name": "Kursyesi i memories",
       "settings": {
         "threshold": "Pragu i cache-s",
-        "threshold-description": "Pastro cache-t sapo memoria e tyre aktive e kalon këtë prag ndërsa dritarja është e fshehur"
+        "threshold-description": "Pastro cache-t sapo memoria e tyre aktive e kalon këtë prag ndërsa dritarja është e fshehur",
+        "thresholdMB": {
+          "label": "Pragu i cache-s",
+          "description": "Pastro cache-t sapo memoria e tyre aktive e kalon këtë prag ndërsa dritarja është e fshehur"
+        }
       }
     }
   },
@@ -1538,7 +1763,7 @@
     "move-up": "Lëviz lart",
     "move-down": "Lëviz poshtë",
     "about": {
-      "tagline": "Një aplikacion desktop i pasur me funksione për YouTube Music",
+      "tagline": "Një aplikacion desktop i pasur me funksione për \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063",
       "versions": "Versionet",
       "version-app": "Aplikacioni",
       "version-build": "Ndërtimi",
@@ -1596,7 +1821,7 @@
     "stepper-decrement": "Zvogëlo",
     "stepper-increment": "Rrit",
     "flags": {
-      "warning": "Flamujt e veçorive janë çelësat e brendshëm të YouTube Music. Ndryshimi i tyre mund të prishë riprodhimin, paraqitjen ose veçoritë e llogarisë, dhe nuk mbulohen nga mbështetja. Anashkalimet mbahen vetëm për flamujt që ndryshoni dhe mund të hiqen me Zhbëj.",
+      "warning": "Flamujt e veçorive janë çelësat e brendshëm të \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063. Ndryshimi i tyre mund të prishë riprodhimin, paraqitjen ose veçoritë e llogarisë, dhe nuk mbulohen nga mbështetja. Anashkalimet mbahen vetëm për flamujt që ndryshoni dhe mund të hiqen me Zhbëj.",
       "search-placeholder": "Kërko flamuj",
       "overridden": "anashkaluar",
       "undo": "Zhbëj",
@@ -1641,7 +1866,11 @@
       "theme-preset": "Paraprake",
       "theme-variable-name": "Variabli",
       "theme-variable-value": "Vlera",
-      "theme-variable-add": "Shto variabël"
+      "theme-variable-add": "Shto variabël",
+      "performance-mode": "Modaliteti i performancës",
+      "performance-mode-desc": "Shkëmbe një pjesë të besnikërisë vizuale për një rendering më efikas.",
+      "in-process-gpu": "Bashko procesin GPU me procesin e aplikacionit",
+      "in-process-gpu-desc": "Eksperimentale: kursen një proces, por zhvendos memorien e GPU-së në procesin kryesor dhe mund të bjerë në rendering me softuer."
     }
   }
 }

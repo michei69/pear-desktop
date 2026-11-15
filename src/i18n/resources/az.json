@@ -156,8 +156,8 @@
               "sync": {
                 "label": "Dili sinxronlaşdır",
                 "submenu": {
-                  "from-youtube": "YouTube-dan",
-                  "to-youtube": "YouTube-a"
+                  "from-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "\u0059\u006f\u0075\u0054\u0075\u0062\u0065-dan",
+                  "to-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "\u0059\u006f\u0075\u0054\u0075\u0062\u0065-a"
                 },
                 "failure": {
                   "dialog": {
@@ -176,30 +176,30 @@
             "unset": "Təyin edilməyib"
           },
           "tray": {
-            "label": "Tepsilik",
             "submenu": {
               "disabled": "Deaktiv edilib",
+              "play-pause-on-click": "Kliklədikdə Başlat/Dayan",
               "enabled-and-hide-app": "Aktivdir və tətbiqi gizlət",
               "enabled-and-show-app": "Aktivdir və tətbiqi göstər",
-              "play-pause-on-click": "Kliklədikdə Başlat/Dayan",
               "move-to-current-desktop": "Göstərildikdə cari virtual iş masasına keç",
               "force-white-icons": "Ağ ikonaların istifadəsini məcbur et"
-            }
+            },
+            "label": "Tepsilik"
           },
           "visual-tweaks": {
             "label": "Vizual düzəlişlər",
             "submenu": {
               "custom-window-title": {
-                "label": "Fərdi pəncərə başlığı",
                 "prompt": {
-                  "label": "Fərdi pəncərə başlığı daxil edin: (deaktiv etmək üçün boş buraxın)",
-                  "placeholder": "Nümunə: {{applicationName}}"
-                }
+                  "placeholder": "Nümunə: {{applicationName}}",
+                  "label": "Fərdi pəncərə başlığı daxil edin: (deaktiv etmək üçün boş buraxın)"
+                },
+                "label": "Fərdi pəncərə başlığı"
               },
               "like-buttons": {
                 "default": "Standart",
-                "force-show": "Məcburi göstər",
                 "hide": "Gizlət",
+                "force-show": "Məcburi göstər",
                 "label": "Bəyənmə düymələri",
                 "swap": "Bəyənmə düymələrinin sırasını dəyiş"
               },
@@ -229,7 +229,7 @@
                   "open-themes-folder": "Temalar qovluğunu aç"
                 }
               },
-              "use-ytm-icons": "Orijinal YouTube Music ikonlarından istifadə et"
+              "use-ytm-icons": "Orijinal \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 ikonlarından istifadə et"
             }
           },
           "updates": {
@@ -251,21 +251,21 @@
           }
         }
       },
+      "view": {
+        "submenu": {
+          "reset-zoom": "Həqiqi Ölçü",
+          "toggle-fullscreen": "Bütün Ekranı Aktivləşdir",
+          "zoom-in": "Yaxınlaşdır",
+          "zoom-out": "Uzaqlaşdır",
+          "force-reload": "Məcburi Yenidən Yüklə",
+          "reload": "Yenidən Yüklə"
+        },
+        "label": "Görünüş"
+      },
       "plugins": {
         "enabled": "Aktiv",
         "label": "Pluginlər",
         "new": "YENİ"
-      },
-      "view": {
-        "label": "Görünüş",
-        "submenu": {
-          "force-reload": "Məcburi Yenidən Yüklə",
-          "reload": "Yenidən Yüklə",
-          "reset-zoom": "Həqiqi Ölçü",
-          "toggle-fullscreen": "Bütün Ekranı Aktivləşdir",
-          "zoom-in": "Yaxınlaşdır",
-          "zoom-out": "Uzaqlaşdır"
-        }
       }
     },
     "tray": {
@@ -303,26 +303,11 @@
       "description": "Bəyənməməni geri alma, Bəyənməmə, Bəyənmə və Bəyənməni geri alma düymələrini bütün mahnı və albumlara tətbiq etməyi əlavə et",
       "name": "Albom Düymələri"
     },
-    "album-color-theme": {
-      "description": "Albom rəng palitrasına əsasən dinamik tema və vizual effektlər tətbiq edir",
-      "menu": {
-        "color-mix-ratio": {
-          "label": "Rəng qarışdırma nisbəti",
-          "submenu": {
-            "percent": "{{ratio}}%"
-          }
-        },
-        "enable-seekbar": "Axtarış çubuğu temini aktiv et"
-      },
-      "name": "Albom Rəng Teması"
-    },
-    "audio-only": {
-      "description": "Yalnız audio rejimini məcbur edir — RAM və bant genişliyinə qənaət etmək üçün şəbəkə və pleyer səviyyəsində bütün video axınlarını bloklayır",
-      "name": "Yalnız Audio"
-    },
     "ambient-mode": {
-      "description": "Videodan yumşaq rəngləri ekranınızın fonuna yayaraq işıq effekti tətbiq edir",
       "menu": {
+        "use-fullscreen": {
+          "label": "Bütün Ekran modunu istifadə et"
+        },
         "blur-amount": {
           "label": "Bulanıqlıq miqdarı",
           "submenu": {
@@ -358,35 +343,14 @@
           "submenu": {
             "during": "{{interpolationTime}} s ərzində"
           }
-        },
-        "use-fullscreen": {
-          "label": "Bütün Ekran modunu istifadə et"
         }
       },
+      "description": "Videodan yumşaq rəngləri ekranınızın fonuna yayaraq işıq effekti tətbiq edir",
       "name": "Ambient Rejim"
     },
-    "amuse": {
-      "description": "6K Labs tərəfindən Amuse indi oxuyan vidjeti üçün {{applicationName}} dəstəyi əlavə edir",
-      "name": "Əylən",
-      "response": {
-        "query": "Amuse API serveri işləyir. Mahnı məlumatı üçün GET /query."
-      }
-    },
     "api-server": {
-      "description": "Pleyeri idarə etmək üçün API serveri əlavə edir",
-      "dialog": {
-        "request": {
-          "buttons": {
-            "allow": "İcazə ver",
-            "deny": "Rədd et"
-          },
-          "message": "{{ID}} ({{origin}}) API-ə daxil ola bilər?",
-          "title": "API icazə sorğusu"
-        }
-      },
       "menu": {
         "auth-strategy": {
-          "label": "İcazə strategiyası",
           "submenu": {
             "auth-at-first": {
               "label": "İlk istəkdə səlahiyyətləndir"
@@ -394,7 +358,8 @@
             "none": {
               "label": "Səlahiyyətləndirmə yoxdur"
             }
-          }
+          },
+          "label": "İcazə strategiyası"
         },
         "hostname": {
           "label": "Sahib adı"
@@ -423,6 +388,17 @@
           "description": "v2 API-ni /mcp ünvanında MCP alətləri kimi təqdim edir. API-nin qalan hissəsi ilə eyni avtorizasiyadan istifadə edir."
         }
       },
+      "description": "Pleyeri idarə etmək üçün API serveri əlavə edir",
+      "dialog": {
+        "request": {
+          "buttons": {
+            "allow": "İcazə ver",
+            "deny": "Rədd et"
+          },
+          "message": "{{ID}} ({{origin}}) API-ə daxil ola bilər?",
+          "title": "API icazə sorğusu"
+        }
+      },
       "name": "API Serveri [Beta]",
       "prompt": {
         "hostname": {
@@ -436,6 +412,38 @@
       },
       "settings": {
         "choose-file": "Fayl seç…"
+      }
+    },
+    "album-color-theme": {
+      "description": "Albom rəng palitrasına əsasən dinamik tema və vizual effektlər tətbiq edir",
+      "menu": {
+        "color-mix-ratio": {
+          "label": "Rəng qarışdırma nisbəti",
+          "submenu": {
+            "percent": "{{ratio}}%"
+          }
+        },
+        "enable-seekbar": "Axtarış çubuğu temini aktiv et"
+      },
+      "name": "Albom Rəng Teması",
+      "settings": {
+        "ratio": {
+          "label": "Rəng qarışdırma nisbəti"
+        },
+        "enableSeekbar": {
+          "label": "Axtarış çubuğu temini aktiv et"
+        }
+      }
+    },
+    "audio-only": {
+      "description": "Yalnız audio rejimini məcbur edir — RAM və bant genişliyinə qənaət etmək üçün şəbəkə və pleyer səviyyəsində bütün video axınlarını bloklayır",
+      "name": "Yalnız Audio"
+    },
+    "amuse": {
+      "description": "6K Labs tərəfindən Amuse indi oxuyan vidjeti üçün {{applicationName}} dəstəyi əlavə edir",
+      "name": "Əylən",
+      "response": {
+        "query": "Amuse API serveri işləyir. Mahnı məlumatı üçün GET /query."
       }
     },
     "audio-compressor": {
@@ -501,6 +509,14 @@
         "caption-changed": "Başlıq {{language}} dilinə dəyişdirildi",
         "caption-disabled": "Başlıqlar deaktiv edildi",
         "no-captions": "Bu mahnı üçün başlıq mövcud deyil"
+      },
+      "settings": {
+        "autoload": {
+          "label": "Son istifadə olunan başlığı avtomatik seç"
+        },
+        "disableCaptions": {
+          "label": "Susmaya görə başlıq yoxdur"
+        }
       }
     },
     "clock": {
@@ -514,7 +530,13 @@
       },
       "name": "Saat",
       "settings": {
-        "hour-12": "12 saatlıq formatdan istifadə et"
+        "hour-12": "12 saatlıq formatdan istifadə et",
+        "displaySeconds": {
+          "label": "Saniyələri göstər"
+        },
+        "hour12": {
+          "label": "12 saatlıq formatdan istifadə et"
+        }
       }
     },
     "compact-sidebar": {
@@ -573,7 +595,12 @@
       "menu": {
         "apply-once": "Yalnız başlanğıcda tətbiq edilir"
       },
-      "name": "Avtomatik Oynatmanı Deaktiv Et"
+      "name": "Avtomatik Oynatmanı Deaktiv Et",
+      "settings": {
+        "applyOnce": {
+          "label": "Yalnız başlanğıcda tətbiq edilir"
+        }
+      }
     },
     "discord": {
       "backend": {
@@ -596,8 +623,8 @@
           "label": "Status mətni",
           "submenu": {
             "application": "{{applicationName}} dinlənilir",
-            "artist": "{{artist}} dinlənilir",
-            "title": "{{songTitle}} dinlənilir"
+            "artist": "{artist} dinlənilir",
+            "title": "{song title} dinlənilir"
           }
         }
       },
@@ -613,7 +640,38 @@
         "activity-timeout-enabled": "Fasilə verildikdə statusu təmizlə",
         "activity-timeout-time": "Bu müddətdən sonra təmizlə",
         "hide-github-button": "“GitHub-da bax” düyməsini gizlət",
-        "hide-duration-left": "Qalan vaxtı gizlət"
+        "hide-duration-left": "Qalan vaxtı gizlət",
+        "autoReconnect": {
+          "label": "Avtomatik yenidən qoşul"
+        },
+        "activityTimeoutEnabled": {
+          "label": "Fasilə verildikdə statusu təmizlə"
+        },
+        "activityTimeoutSeconds": {
+          "label": "Bu müddətdən sonra təmizlə"
+        },
+        "playButton": {
+          "label": "{{applicationName}}-da oynat"
+        },
+        "hideGitHubButton": {
+          "label": "“GitHub-da bax” düyməsini gizlət"
+        },
+        "hideDurationLeft": {
+          "label": "Qalan vaxtı gizlət"
+        },
+        "statusDisplayType": {
+          "label": "Status mətni",
+          "options": {
+            "name": "{{applicationName}} dinlənilir",
+            "state": "{artist} dinlənilir",
+            "details": "{song title} dinlənilir"
+          }
+        }
+      },
+      "actions": {
+        "clearActivity": {
+          "label": "Fəaliyyəti təmizlə"
+        }
       }
     },
     "downloader": {
@@ -898,6 +956,23 @@
       "name": "Şəkil-şəkildə",
       "templates": {
         "button": "Şəkil-şəkildə"
+      },
+      "settings": {
+        "hotkey": {
+          "label": "Qısayol"
+        },
+        "useNativePiP": {
+          "label": "Brauzerin yerli PiP funksiyasından istifadə et"
+        },
+        "alwaysOnTop": {
+          "label": "Həmişə üstdə"
+        },
+        "savePosition": {
+          "label": "Pəncərə mövqeyini yadda saxla"
+        },
+        "saveSize": {
+          "label": "Pəncərə ölçüsünü yadda saxla"
+        }
       }
     },
     "playback-speed": {
@@ -933,10 +1008,21 @@
         }
       },
       "settings": {
-        "steps": "Səs addımı",
+        "steps": {
+          "label": "Səs addımı"
+        },
         "arrows-shortcut": "Ox düyməsi qısayolları",
         "shortcut-up": "Qlobal qısayol: səsi artır",
-        "shortcut-down": "Qlobal qısayol: səsi azalt"
+        "shortcut-down": "Qlobal qısayol: səsi azalt",
+        "arrowsShortcut": {
+          "label": "Ox düyməsi qısayolları"
+        },
+        "volumeUp": {
+          "label": "Qlobal qısayol: səsi artır"
+        },
+        "volumeDown": {
+          "label": "Qlobal qısayol: səsi azalt"
+        }
       }
     },
     "quality-changer": {
@@ -1035,14 +1121,38 @@
       },
       "settings": {
         "global-keybinds": "Qlobal qısayollar (bütün tətbiqdə işləyir)",
-        "local-keybinds": "Lokal qısayollar (yalnız pəncərə fokusda olduqda)"
+        "local-keybinds": "Lokal qısayollar (yalnız pəncərə fokusda olduqda)",
+        "playPause": {
+          "label": "Oynat / Dayandır"
+        },
+        "localPlayPause": {
+          "label": "Oynat / Dayandır"
+        },
+        "next": {
+          "label": "Növbəti"
+        },
+        "localNext": {
+          "label": "Növbəti"
+        },
+        "previous": {
+          "label": "Əvvəlki"
+        },
+        "localPrevious": {
+          "label": "Əvvəlki"
+        },
+        "overrideMediaKeys": {
+          "label": "Media Düymələrini Ləğv Et"
+        }
       }
     },
     "skip-silences": {
       "description": "Mahnılardakı səssiz hissələri avtomatik keçir",
       "name": "Səssizlikləri Keç",
       "settings": {
-        "only-skip-beginning": "Yalnız trekin əvvəlindəki sükutu keç"
+        "only-skip-beginning": "Yalnız trekin əvvəlindəki sükutu keç",
+        "onlySkipBeginning": {
+          "label": "Yalnız trekin əvvəlindəki sükutu keç"
+        }
       }
     },
     "sponsorblock": {
@@ -1058,7 +1168,28 @@
           "selfpromo": "Özünü təbliğ",
           "music_offtopic": "Musiqi olmayan bölmə"
         },
-        "api-url": "API URL-i"
+        "api-url": "API URL-i",
+        "sponsor": {
+          "label": "Sponsor"
+        },
+        "intro": {
+          "label": "Giriş"
+        },
+        "outro": {
+          "label": "Sonluq"
+        },
+        "interaction": {
+          "label": "Qarşılıqlı əlaqə xatırlatması"
+        },
+        "selfpromo": {
+          "label": "Özünü təbliğ"
+        },
+        "music_offtopic": {
+          "label": "Musiqi olmayan bölmə"
+        },
+        "apiURL": {
+          "label": "API URL-i"
+        }
       }
     },
     "synced-lyrics": {
@@ -1267,7 +1398,7 @@
         },
         "use-ytm-lyrics-without-proxy": {
           "label": "YTM sözlərini proxy olmadan istifadə edin",
-          "tooltip": "YTM brauzer proksisini keçin və birbaşa YouTube Music-ə tətbiqin autentifikasiya edilmiş sessiyası ilə zəng edin. Şəbəkənizə/regionunuza etibar edirsinizsə, birbaşa brauzer zənglərinə icazə vermək üçün faydalıdır."
+          "tooltip": "YTM brauzer proksisini keçin və birbaşa \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063-ə tətbiqin autentifikasiya edilmiş sessiyası ilə zəng edin. Şəbəkənizə/regionunuza etibar edirsinizsə, birbaşa brauzer zənglərinə icazə vermək üçün faydalıdır."
         },
         "show-custom-search-button": {
           "label": "Xüsusi axtarış düyməsini göstər",
@@ -1359,7 +1490,25 @@
       },
       "name": "Şəffaf Pleyer",
       "settings": {
-        "type-description": "Pəncərə şəffaflığı üçün istifadə olunan fon materialı"
+        "type-description": "Pəncərə şəffaflığı üçün istifadə olunan fon materialı",
+        "opacity": {
+          "label": "Qeyri-şəffaflıq"
+        },
+        "type": {
+          "label": "Növ",
+          "description": "Pəncərə şəffaflığı üçün istifadə olunan fon materialı",
+          "options": {
+            "acrylic": "Akril",
+            "content": "Məzmun",
+            "fullscreen-ui": "Tam ekran interfeysi",
+            "mica": "Mika",
+            "tabbed": "Sekmeli",
+            "under-page": "Səhifənin altında",
+            "under-window": "Pəncərənin altında",
+            "window": "Pəncərə",
+            "none": "Heç biri"
+          }
+        }
       }
     },
     "tuna-obs": {
@@ -1395,6 +1544,27 @@
       "templates": {
         "button-song": "Mahnı",
         "button-video": "Video"
+      },
+      "settings": {
+        "mode": {
+          "label": "Rejim",
+          "options": {
+            "custom": "Fərdi keçid",
+            "native": "Yerli keçid",
+            "disabled": "Deaktiv"
+          }
+        },
+        "align": {
+          "label": "Düzləndirmə",
+          "options": {
+            "left": "Sol",
+            "middle": "Orta",
+            "right": "Sağ"
+          }
+        },
+        "forceHide": {
+          "label": "Video sekmesini məcburi sil"
+        }
       }
     },
     "visualizer": {
@@ -1404,7 +1574,9 @@
       },
       "name": "Vizuallaşdırıcı",
       "settings": {
-        "preset": "Hazır ayar",
+        "preset": {
+          "label": "Hazır ayar"
+        },
         "blend-time": "Qarışma vaxtı",
         "effect": "Effekt",
         "accuracy": "Dəqiqlik",
@@ -1420,7 +1592,45 @@
         "dottify": "Nöqtələşdir",
         "dottify-description": "Davamlı xətt əvəzinə nöqtələr çək",
         "horizontal-align": "Üfüqi düzləndirmə",
-        "vertical-align": "Şaquli düzləndirmə"
+        "vertical-align": "Şaquli düzləndirmə",
+        "blendTimeInSeconds": {
+          "label": "Qarışma vaxtı"
+        },
+        "vudioMaxHeight": {
+          "label": "Maksimum hündürlük"
+        },
+        "vudioMaxSize": {
+          "label": "Maksimum ölçü"
+        },
+        "vudioLineWidth": {
+          "label": "Xətt eni"
+        },
+        "vudioColor": {
+          "label": "Rəng"
+        },
+        "vudioShadowBlur": {
+          "label": "Kölgə bulanıqlığı"
+        },
+        "vudioShadowColor": {
+          "label": "Kölgə rəngi"
+        },
+        "vudioFadeSide": {
+          "label": "Kənarları solğunlaşdır"
+        },
+        "vudioPrettify": {
+          "label": "Gözəlləşdir",
+          "description": "Zolaqları kənarlara doğru daralt"
+        },
+        "vudioDottify": {
+          "label": "Nöqtələşdir",
+          "description": "Davamlı xətt əvəzinə nöqtələr çək"
+        },
+        "vudioHorizontalAlign": {
+          "label": "Üfüqi düzləndirmə"
+        },
+        "vudioVerticalAlign": {
+          "label": "Şaquli düzləndirmə"
+        }
       }
     },
     "playlist-search": {
@@ -1464,7 +1674,7 @@
     },
     "search-commands": {
       "commands": {
-        "play": "YouTube linki və ya ID-si ilə video oxut",
+        "play": "\u0059\u006f\u0075\u0054\u0075\u0062\u0065 linki və ya ID-si ilə video oxut",
         "settings": "Tənzimləmələri aç"
       },
       "description": "Əmrləri işə salmaq üçün axtarış qutusuna / yazın; arqumentlər üçün avtomatik tamamlama mövcuddur",
@@ -1473,7 +1683,15 @@
         "open-keybind": "Açma qısayolu",
         "open-keybind-description": "Electron üslubunda qısayol, məsələn CmdOrCtrl+/ və ya Alt+Space",
         "open-shortcut": "Axtarış qutusunu istənilən yerdən aç",
-        "open-shortcut-description": "Spotlight kimi axtarış qutusunu artıq əmr rejimində çağırır. Yenidən basdıqda bağlanır."
+        "open-shortcut-description": "Spotlight kimi axtarış qutusunu artıq əmr rejimində çağırır. Yenidən basdıqda bağlanır.",
+        "openShortcut": {
+          "label": "Axtarış qutusunu istənilən yerdən aç",
+          "description": "Spotlight kimi axtarış qutusunu artıq əmr rejimində çağırır. Yenidən basdıqda bağlanır."
+        },
+        "openKeybind": {
+          "label": "Açma qısayolu",
+          "description": "Electron üslubunda qısayol, məsələn CmdOrCtrl+/ və ya Alt+Space"
+        }
       }
     },
     "seek-shortcuts": {
@@ -1481,16 +1699,19 @@
       "name": "Keçid Qısayolları"
     },
     "sfw-music": {
-      "description": "YouTube Music tərəfindən Explicit kimi işarələnmiş mahnıları avtomatik ötür. Explicit növbə təkrarlanarsa və ya növbəti mahnı mövcud deyilsə, dayandırır.",
+      "description": "\u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 tərəfindən Explicit kimi işarələnmiş mahnıları avtomatik ötür. Explicit növbə təkrarlanarsa və ya növbəti mahnı mövcud deyilsə, dayandırır.",
       "name": "SFW Musiqi"
     },
     "toast-autoclose": {
-      "description": "YouTube Music bildirişlərini üç saniyədən sonra avtomatik bağla",
+      "description": "\u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 bildirişlərini üç saniyədən sonra avtomatik bağla",
       "name": "Bildirişlərin Avtomatik Bağlanması"
     },
     "statusbar-lyrics": {
       "settings": {
-        "include-pronunciation": "Tələffüzü daxil et"
+        "include-pronunciation": "Tələffüzü daxil et",
+        "includePronunciation": {
+          "label": "Tələffüzü daxil et"
+        }
       }
     },
     "dismiss-multidevice-popup": {
@@ -1502,7 +1723,11 @@
       "name": "Yaddaş Qənaətçisi",
       "settings": {
         "threshold": "Keş həddi",
-        "threshold-description": "Pəncərə gizli ikən keşlərin canlı yaddaşı bu dəyəri aşdıqda onları təmizlə"
+        "threshold-description": "Pəncərə gizli ikən keşlərin canlı yaddaşı bu dəyəri aşdıqda onları təmizlə",
+        "thresholdMB": {
+          "label": "Keş həddi",
+          "description": "Pəncərə gizli ikən keşlərin canlı yaddaşı bu dəyəri aşdıqda onları təmizlə"
+        }
       }
     }
   },
@@ -1531,7 +1756,7 @@
     "move-up": "Yuxarı köçür",
     "move-down": "Aşağı köçür",
     "about": {
-      "tagline": "YouTube Music üçün funksiyalarla zəngin masaüstü tətbiqi",
+      "tagline": "\u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 üçün funksiyalarla zəngin masaüstü tətbiqi",
       "versions": "Versiyalar",
       "version-app": "Tətbiq",
       "version-build": "Build",
@@ -1589,7 +1814,7 @@
     "stepper-decrement": "Azalt",
     "stepper-increment": "Artır",
     "flags": {
-      "warning": "Funksiya bayraqları YouTube Music-in öz daxili açarlarıdır. Onları dəyişmək oxutmanı, düzülüşü və ya hesab funksiyalarını poza bilər və onlar texniki dəstəklə əhatə olunmur. Əvəzləmələr yalnız dəyişdiyiniz bayraqlar üçün saxlanılır və Geri qaytar ilə silinə bilər.",
+      "warning": "Funksiya bayraqları \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063-in öz daxili açarlarıdır. Onları dəyişmək oxutmanı, düzülüşü və ya hesab funksiyalarını poza bilər və onlar texniki dəstəklə əhatə olunmur. Əvəzləmələr yalnız dəyişdiyiniz bayraqlar üçün saxlanılır və Geri qaytar ilə silinə bilər.",
       "search-placeholder": "Bayraqlarda axtar",
       "overridden": "əvəzlənib",
       "undo": "Geri qaytar",
@@ -1634,7 +1859,11 @@
       "theme-preset": "Hazır parametr",
       "theme-variable-name": "Dəyişən",
       "theme-variable-value": "Dəyər",
-      "theme-variable-add": "Dəyişən əlavə et"
+      "theme-variable-add": "Dəyişən əlavə et",
+      "performance-mode": "Performans rejimi",
+      "performance-mode-desc": "Daha qənaətli render müqabilində bir qədər vizual keyfiyyətdən güzəştə gedin.",
+      "in-process-gpu": "GPU prosesini tətbiq prosesinə birləşdir",
+      "in-process-gpu-desc": "Eksperimental: bir prosesə qənaət edir, lakin GPU yaddaşını əsas prosesə keçirir və proqram vasitəsilə renderə keçə bilər."
     }
   }
 }

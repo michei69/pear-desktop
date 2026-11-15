@@ -162,8 +162,8 @@
               "sync": {
                 "label": "Sinhranizavać movu",
                 "submenu": {
-                  "from-youtube": "Z YouTube",
-                  "to-youtube": "U YouTube"
+                  "from-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "Z \u0059\u006f\u0075\u0054\u0075\u0062\u0065",
+                  "to-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "U \u0059\u006f\u0075\u0054\u0075\u0062\u0065"
                 },
                 "failure": {
                   "dialog": {
@@ -217,7 +217,7 @@
                 }
               },
               "remove-upgrade-button": "Prybrać knopku abnaŭlennia",
-              "use-ytm-icons": "Vykarystoŭvać aryhinalnyja ikony YouTube Music",
+              "use-ytm-icons": "Vykarystoŭvać aryhinalnyja ikony \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063",
               "theme": {
                 "label": "Tema",
                 "submenu": {
@@ -302,7 +302,15 @@
         },
         "enable-seekbar": "Uklučyć aformlennie pasku peramotki"
       },
-      "name": "Tema koleraŭ alboma"
+      "name": "Tema koleraŭ alboma",
+      "settings": {
+        "ratio": {
+          "label": "Praporcyja zmiašannia koleraŭ"
+        },
+        "enableSeekbar": {
+          "label": "Uklučyć aformlennie pasku peramotki"
+        }
+      }
     },
     "audio-only": {
       "description": "Prymusova ŭklučaje režym «tolki audio» — blakuje ŭsie videa-potoki na ŭzroŭni sietki i plejera, kab zberahčy RAM i šyryniu kanala.",
@@ -493,6 +501,14 @@
         "caption-changed": "Subtytr zmienieny na {{language}}",
         "caption-disabled": "Subtytry adklučany",
         "no-captions": "Dla hetaj pieśni niama subtytraŭ"
+      },
+      "settings": {
+        "autoload": {
+          "label": "Aŭtamatyčna vybirać apošni vykarystany subtytr"
+        },
+        "disableCaptions": {
+          "label": "Praz zmaučannie biez subtytraŭ"
+        }
       }
     },
     "clock": {
@@ -506,7 +522,13 @@
         }
       },
       "settings": {
-        "hour-12": "Vykarystavać 12-hadzinny farmat"
+        "hour-12": "Vykarystavać 12-hadzinny farmat",
+        "displaySeconds": {
+          "label": "Pakazvać sekundy"
+        },
+        "hour12": {
+          "label": "Vykarystavać 12-hadzinny farmat"
+        }
       }
     },
     "compact-sidebar": {
@@ -565,7 +587,12 @@
       "menu": {
         "apply-once": "Prymianajecca tolki pry zapusku"
       },
-      "name": "Adklučyć aŭtapraihranne"
+      "name": "Adklučyć aŭtapraihranne",
+      "settings": {
+        "applyOnce": {
+          "label": "Prymianajecca tolki pry zapusku"
+        }
+      }
     },
     "discord": {
       "backend": {
@@ -588,8 +615,8 @@
           "label": "Tekst statusu",
           "submenu": {
             "application": "Słuchaju {{applicationName}}",
-            "artist": "Słuchaju {{artist}}",
-            "title": "Słuchaju {{songTitle}}"
+            "artist": "Słuchaju {artist}",
+            "title": "Słuchaju {song title}"
           }
         }
       },
@@ -605,7 +632,38 @@
         "activity-timeout-enabled": "Ačyščać status pry pauzie",
         "activity-timeout-time": "Ačyščać praz",
         "hide-github-button": "Chavać knopku “Pahladzieć na GitHub”",
-        "hide-duration-left": "Chavać astatak času"
+        "hide-duration-left": "Chavać astatak času",
+        "autoReconnect": {
+          "label": "Aŭtapierapadłučenne"
+        },
+        "activityTimeoutEnabled": {
+          "label": "Ačyščać status pry pauzie"
+        },
+        "activityTimeoutSeconds": {
+          "label": "Ačyščać praz"
+        },
+        "playButton": {
+          "label": "Prahrać u {{applicationName}}"
+        },
+        "hideGitHubButton": {
+          "label": "Chavać knopku “Pahladzieć na GitHub”"
+        },
+        "hideDurationLeft": {
+          "label": "Chavać astatak času"
+        },
+        "statusDisplayType": {
+          "label": "Tekst statusu",
+          "options": {
+            "name": "Słuchaju {{applicationName}}",
+            "state": "Słuchaju {artist}",
+            "details": "Słuchaju {song title}"
+          }
+        }
+      },
+      "actions": {
+        "clearActivity": {
+          "label": "Ačyścić aktyŭnaść"
+        }
       }
     },
     "do-not-track": {
@@ -912,6 +970,23 @@
       "name": "Kartinka ŭ kartincy",
       "templates": {
         "button": "Kartinka ŭ kartincy"
+      },
+      "settings": {
+        "hotkey": {
+          "label": "Haračaja klaviša"
+        },
+        "useNativePiP": {
+          "label": "Vykarystoŭvać ułasny PiP braŭzera"
+        },
+        "alwaysOnTop": {
+          "label": "Zaŭsiody zverchu"
+        },
+        "savePosition": {
+          "label": "Zachavać pałożanńie akna"
+        },
+        "saveSize": {
+          "label": "Zachavać pamier akna"
+        }
       }
     },
     "playback-speed": {
@@ -955,10 +1030,21 @@
         }
       },
       "settings": {
-        "steps": "Krok huchnaści",
+        "steps": {
+          "label": "Krok huchnaści"
+        },
         "arrows-shortcut": "Haračyja klavišy-strełki",
         "shortcut-up": "Hlabalnaja haračaja klaviša: huchnaść uvierch",
-        "shortcut-down": "Hlabalnaja haračaja klaviša: huchnaść uniz"
+        "shortcut-down": "Hlabalnaja haračaja klaviša: huchnaść uniz",
+        "arrowsShortcut": {
+          "label": "Haračyja klavišy-strełki"
+        },
+        "volumeUp": {
+          "label": "Hlabalnaja haračaja klaviša: huchnaść uvierch"
+        },
+        "volumeDown": {
+          "label": "Hlabalnaja haračaja klaviša: huchnaść uniz"
+        }
       }
     },
     "prefer-song": {
@@ -1043,7 +1129,7 @@
     },
     "search-commands": {
       "commands": {
-        "play": "Prahrać videa pa spasyłce YouTube abo id",
+        "play": "Prahrać videa pa spasyłce \u0059\u006f\u0075\u0054\u0075\u0062\u0065 abo id",
         "settings": "Adkryć nalady"
       },
       "description": "Napisycie / u poli poshuku, kab vykonavac kamandy, z aŭtapaŭnieniem ich arhumentaŭ",
@@ -1052,7 +1138,15 @@
         "open-keybind": "Klaviša adkryccia",
         "open-keybind-description": "Aksełeratar u stylu Electron, napr. CmdOrCtrl+/ abo Alt+Space",
         "open-shortcut": "Adkryć pole poshuku z luboha mesca",
-        "open-shortcut-description": "Vyklykae pole poshuku adrazu u režyme kamand, jak Spotlight. Paŭtornaje naciaskannie zakryvaje jaho."
+        "open-shortcut-description": "Vyklykae pole poshuku adrazu u režyme kamand, jak Spotlight. Paŭtornaje naciaskannie zakryvaje jaho.",
+        "openShortcut": {
+          "label": "Adkryć pole poshuku z luboha mesca",
+          "description": "Vyklykae pole poshuku adrazu u režyme kamand, jak Spotlight. Paŭtornaje naciaskannie zakryvaje jaho."
+        },
+        "openKeybind": {
+          "label": "Klaviša adkryccia",
+          "description": "Aksełeratar u stylu Electron, napr. CmdOrCtrl+/ abo Alt+Space"
+        }
       }
     },
     "seek-shortcuts": {
@@ -1060,7 +1154,7 @@
       "name": "Spasyłki pieraskoku"
     },
     "sfw-music": {
-      "description": "Aŭtamatyčna praskakae pieśni, paznačanyja jak Explicit u YouTube Music. Prypyniajecca, kali čarha z Explicit paŭtaraecca abo niama nastupnaj pieśni.",
+      "description": "Aŭtamatyčna praskakae pieśni, paznačanyja jak Explicit u \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063. Prypyniajecca, kali čarha z Explicit paŭtaraecca abo niama nastupnaj pieśni.",
       "name": "SFW muzyka"
     },
     "shortcuts": {
@@ -1083,14 +1177,38 @@
       },
       "settings": {
         "global-keybinds": "Hlabalnyja klavišy (pracujuć uva ŭsim pryładdzi)",
-        "local-keybinds": "Lakalnyja klavišy (tolki kali akno ŭ fokusie)"
+        "local-keybinds": "Lakalnyja klavišy (tolki kali akno ŭ fokusie)",
+        "playPause": {
+          "label": "Prahranie / Pauza"
+        },
+        "localPlayPause": {
+          "label": "Prahranie / Pauza"
+        },
+        "next": {
+          "label": "Dalej"
+        },
+        "localNext": {
+          "label": "Dalej"
+        },
+        "previous": {
+          "label": "Nazad"
+        },
+        "localPrevious": {
+          "label": "Nazad"
+        },
+        "overrideMediaKeys": {
+          "label": "Pierachoplivac media klavišy"
+        }
       }
     },
     "skip-silences": {
       "description": "Aŭtamatyčna praskakać častki cišyni ŭ pieśniach",
       "name": "Praskakanne cišyni",
       "settings": {
-        "only-skip-beginning": "Praskakać cišyniu tolki ŭ pačatku treka"
+        "only-skip-beginning": "Praskakać cišyniu tolki ŭ pačatku treka",
+        "onlySkipBeginning": {
+          "label": "Praskakać cišyniu tolki ŭ pačatku treka"
+        }
       }
     },
     "sponsorblock": {
@@ -1106,7 +1224,28 @@
           "selfpromo": "Sama-promacyja",
           "music_offtopic": "Niemuzyčnaia sekcyja"
         },
-        "api-url": "URL API"
+        "api-url": "URL API",
+        "sponsor": {
+          "label": "Sponsar"
+        },
+        "intro": {
+          "label": "Uvod"
+        },
+        "outro": {
+          "label": "Kancoŭka"
+        },
+        "interaction": {
+          "label": "Nahadka pra ŭzajemadziejannie"
+        },
+        "selfpromo": {
+          "label": "Sama-promacyja"
+        },
+        "music_offtopic": {
+          "label": "Niemuzyčnaia sekcyja"
+        },
+        "apiURL": {
+          "label": "URL API"
+        }
       }
     },
     "synced-lyrics": {
@@ -1178,7 +1317,7 @@
         },
         "use-ytm-lyrics-without-proxy": {
           "label": "Vykarystovacʹ tekst YTM biez proxy",
-          "tooltip": "Praskakać proxy YTM browse i vyklykać YouTube Music napramu, vykarystovajučy autentyfikavanuju sesiju dadatku. Karysna, kali vy daviaraecie svajoj sietcy/regionu, što jany dazvalajucʹ napramyja vykliki browse."
+          "tooltip": "Praskakać proxy YTM browse i vyklykać \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 napramu, vykarystovajučy autentyfikavanuju sesiju dadatku. Karysna, kali vy daviaraecie svajoj sietcy/regionu, što jany dazvalajucʹ napramyja vykliki browse."
         },
         "convert-chinese-character": {
           "label": "Kanvertavacʹ kitajskija ierohłyfy",
@@ -1323,7 +1462,7 @@
       "name": "Kiravannie medyja na paneli zadač"
     },
     "toast-autoclose": {
-      "description": "Aŭtamatyčna zakryvać paviedamleni YouTube Music praz try sekundy",
+      "description": "Aŭtamatyčna zakryvać paviedamleni \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 praz try sekundy",
       "name": "Aŭtamatyčnae zakryvannie paviedamlenniaŭ"
     },
     "touchbar": {
@@ -1356,7 +1495,25 @@
         }
       },
       "settings": {
-        "type-description": "Fonavy mataryjal, vykarystany dlia prazrystasci akna"
+        "type-description": "Fonavy mataryjal, vykarystany dlia prazrystasci akna",
+        "opacity": {
+          "label": "Neprazrystasć"
+        },
+        "type": {
+          "label": "Typ",
+          "description": "Fonavy mataryjal, vykarystany dlia prazrystasci akna",
+          "options": {
+            "acrylic": "Akryl",
+            "content": "Zmiest",
+            "fullscreen-ui": "Interfejs na ŭsiu ekran",
+            "mica": "Mika",
+            "tabbed": "Z zakladkami",
+            "under-page": "Pad staronaj",
+            "under-window": "Pad aknom",
+            "window": "Akno",
+            "none": "Niama"
+          }
+        }
       }
     },
     "tuna-obs": {
@@ -1392,6 +1549,27 @@
       "templates": {
         "button-song": "Pieśnia",
         "button-video": "Videa"
+      },
+      "settings": {
+        "mode": {
+          "label": "Režym",
+          "options": {
+            "custom": "Ulasny pieraklučalnik",
+            "native": "Natyŭny pieraklučalnik",
+            "disabled": "Vyklučana"
+          }
+        },
+        "align": {
+          "label": "Vyraŭnannie",
+          "options": {
+            "left": "Zleba",
+            "middle": "Pa siaredzinie",
+            "right": "Sprava"
+          }
+        },
+        "forceHide": {
+          "label": "Prymusova vydalić zakladku videa"
+        }
       }
     },
     "visualizer": {
@@ -1401,7 +1579,9 @@
       },
       "name": "Vizualizatar",
       "settings": {
-        "preset": "Pradvyznačany",
+        "preset": {
+          "label": "Pradvyznačany"
+        },
         "blend-time": "Čas zmiašvannia",
         "effect": "Efekt",
         "accuracy": "Dakladnasć",
@@ -1417,12 +1597,53 @@
         "dottify": "Punktavać",
         "dottify-description": "Maluje punktki zamiest niepierryŭnaj linii",
         "horizontal-align": "Haryzantalnaje vyraŭnavannie",
-        "vertical-align": "Vertykalnaje vyraŭnavannie"
+        "vertical-align": "Vertykalnaje vyraŭnavannie",
+        "blendTimeInSeconds": {
+          "label": "Čas zmiašvannia"
+        },
+        "vudioMaxHeight": {
+          "label": "Maks. vysynia"
+        },
+        "vudioMaxSize": {
+          "label": "Maks. pamier"
+        },
+        "vudioLineWidth": {
+          "label": "Taŭščynia linii"
+        },
+        "vudioColor": {
+          "label": "Koler"
+        },
+        "vudioShadowBlur": {
+          "label": "Razmyvannie cieni"
+        },
+        "vudioShadowColor": {
+          "label": "Koler cieni"
+        },
+        "vudioFadeSide": {
+          "label": "Zatušavannie bakoŭ"
+        },
+        "vudioPrettify": {
+          "label": "Pryhažańnie",
+          "description": "Zvužvaje słupki da krajoŭ"
+        },
+        "vudioDottify": {
+          "label": "Punktavać",
+          "description": "Maluje punktki zamiest niepierryŭnaj linii"
+        },
+        "vudioHorizontalAlign": {
+          "label": "Haryzantalnaje vyraŭnavannie"
+        },
+        "vudioVerticalAlign": {
+          "label": "Vertykalnaje vyraŭnavannie"
+        }
       }
     },
     "statusbar-lyrics": {
       "settings": {
-        "include-pronunciation": "Uklučyć vymovu"
+        "include-pronunciation": "Uklučyć vymovu",
+        "includePronunciation": {
+          "label": "Uklučyć vymovu"
+        }
       }
     },
     "dismiss-multidevice-popup": {
@@ -1434,7 +1655,11 @@
       "name": "Ekanomija pamaci",
       "settings": {
         "threshold": "Paroh keša",
-        "threshold-description": "Ačyščajcie kešy, kali ich žyva pamiać pieravysić hety paroh, pakul vakno schavanaje"
+        "threshold-description": "Ačyščajcie kešy, kali ich žyva pamiać pieravysić hety paroh, pakul vakno schavanaje",
+        "thresholdMB": {
+          "label": "Paroh keša",
+          "description": "Ačyščajcie kešy, kali ich žyva pamiać pieravysić hety paroh, pakul vakno schavanaje"
+        }
       }
     }
   },
@@ -1463,7 +1688,7 @@
     "move-up": "Pieramiascić uvierch",
     "move-down": "Pieramiascić uniz",
     "about": {
-      "tagline": "Bahatofunkcyjanaja desktop-prahrama dla YouTube Music",
+      "tagline": "Bahatofunkcyjanaja desktop-prahrama dla \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063",
       "versions": "Versii",
       "version-app": "Dadatak",
       "version-build": "Zborka",
@@ -1521,7 +1746,7 @@
     "stepper-decrement": "Pamienšyć",
     "stepper-increment": "Pavialičyć",
     "flags": {
-      "warning": "Flahi funkcyj — heta ŭłasnyja ŭnutranyja pieraklučalniki YouTube Music. Ich zmina moža złamać prajhranie, vyhlad albo funkcyi akounty, i jany nie padtrymlivajucca padtrymkaj. Pierakryvańni zachoŭvajucca tolki dla flahaŭ, jakija vy zmianiali, i ich možna vydalić praz „Admianić”.",
+      "warning": "Flahi funkcyj — heta ŭłasnyja ŭnutranyja pieraklučalniki \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063. Ich zmina moža złamać prajhranie, vyhlad albo funkcyi akounty, i jany nie padtrymlivajucca padtrymkaj. Pierakryvańni zachoŭvajucca tolki dla flahaŭ, jakija vy zmianiali, i ich možna vydalić praz „Admianić”.",
       "search-placeholder": "Pošuk flahaŭ",
       "overridden": "pierakryta",
       "undo": "Admianić",
@@ -1566,7 +1791,11 @@
       "theme-preset": "Pradvyznačany",
       "theme-variable-name": "Zmiennaja",
       "theme-variable-value": "Značeńnie",
-      "theme-variable-add": "Dadać zmiennuju"
+      "theme-variable-add": "Dadać zmiennuju",
+      "performance-mode": "Režym pradukcyjnasci",
+      "performance-mode-desc": "Abmianiajcie niekatoruju vizualnuju dakładnasć na bolš ekanomny rendering.",
+      "in-process-gpu": "Abjadnajcie praces GPU z pracesam dadatku",
+      "in-process-gpu-desc": "Eksperymentalna: ekanomić adzin praces, ale pieranosic pamiać GPU u hałoŭny praces i moža viarnucca da prahramnaha renderingu."
     }
   }
 }

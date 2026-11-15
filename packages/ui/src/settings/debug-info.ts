@@ -1,0 +1,130 @@
+// The text both Copy debug info actions produce: app, machine, plugins and
+// feature flags, the same environment pear-desktop's report carried.
+
+import { flagOverrides, type Flags } from "@pear/sdk/core-config";
+import type { AppDebugInfo } from "@pear/sdk/protocol";
+import { useEffect, useRef, useState } from "preact/hooks";
+import type { SettingsModel, SiteFlags } from "../model.ts";
+import { clientVersion } from "./live-flags.ts";
+
+export const storedFlagList = (model: SettingsModel): string[] => {
+  const list = model.core("site")?.config.siteFlags;
+  return Array.isArray(list) ? list.filter((entry): entry is string => typeof entry === "string") : [];
+};
+
+/** The overrides saved in the config, for the standalone window where the page isn't there to ask. */
+export const storedFlagOverrides = (model: SettingsModel): Flags => flagOverrides(storedFlagList(model));
+
+/**
+ * The overrides in effect, read at call time: the page reports them as a getter
+ * when they can change during the session (they do, from the Flags section), and
+ * as the load-time snapshot otherwise. Without a page, the saved list stands in.
+ */
+export const liveFlagOverrides = (model: SettingsModel, page: SiteFlags | undefined): Flags => {
+  if (!page) return storedFlagOverrides(model);
+  return typeof page.overrides === "function" ? page.overrides() : page.overrides;
+};
+
+const COPIED_MS = 1500;
+
+const mb = (kilobytes: number) => `${Math.round(kilobytes / 1024)} MB`;
+
+/**
+ * Every flag the page carries plus the ones the user added, sorted so two reports
+ * line up. `served` is the page's own values, so an override wins over it (the
+ * report must show what the page actually runs with).
+ */
+export const flagNames = (served: Flags, overrides: Flags): string[] =>
+  [...new Set([...Object.keys(served), ...Object.keys(overrides)])].sort((a, b) => a.localeCompare(b));
+
+const flagLines = (served: Flags, overrides: Flags): string[] =>
+  flagNames(served, overrides).map((name) => {
+    const value = name in overrides ? overrides[name] : served[name];
+    return `${name}: ${JSON.stringify(value)}${name in overrides ? " (overridden)" : ""}`;
+  });
+
+/** The copied report: the app's version, the machine, the plugins and the page's flags. */
+export function buildDebugInfo(meta: AppDebugInfo, plugins: string[], served: Flags, overrides: Flags): string {
+  const { memory } = meta;
+  const total = memory.main + memory.renderers + memory.gpu;
+
+  const gpuFeatures = Object.entries(meta.gpu.features)
+    .map(([key, value]) => `${key}: ${value}`)
+    .join(", ");
+  const driver = meta.gpu.driver ? ` (driver ${meta.gpu.driver})` : "";
+
+  const lines = [
+    `${meta.name} v${meta.version} (${meta.build})`,
+    `Platform: ${meta.platform} (${meta.arch}), ${meta.osVersion}`,
+    `Electron: ${meta.versions.electron} · Chromium: ${meta.versions.chrome} · Node: ${meta.versions.node}`,
+    `Innertube client version: ${clientVersion()}`,
+    `CPU: ${meta.cpu.model} (${meta.cpu.threads} threads)`,
+    `GPU: ${meta.gpu.renderer ?? meta.gpu.vendor ?? "unknown"}${driver}`,
+    `Memory: ${mb(total)} total (main ${mb(memory.main)}, renderers ${mb(memory.renderers)}, gpu ${mb(memory.gpu)})`,
+  ];
+
+  if (gpuFeatures) lines.push(`GPU features: ${gpuFeatures}`);
+  if (plugins.length) lines.push(`Plugins (${plugins.length}): ${plugins.join(", ")}`);
+
+  const flags = flagLines(served, overrides);
+  if (flags.length) {
+    const count = Object.keys(overrides).length;
+    lines.push(`Feature flags (${flags.length}${count ? `, ${count} overridden` : ""}):`, ...flags);
+  }
+
+  return lines.join("\n");
+}
+
+export async function copyDebugInfo(model: SettingsModel, plugins: string[], copy: (text: string) => void) {
+  try {
+    const meta = await model.appMeta();
+    const live = model.siteFlags?.();
+    copy(buildDebugInfo(meta, plugins, live?.served ?? {}, liveFlagOverrides(model, live)));
+  } catch (error) {
+    console.error("[pear] reading the debug info failed", error);
+  }
+}
+
+/** Clipboard copy with a short-lived flag, for the buttons that use it. */
+export function useCopyFeedback() {
+  const [copied, setCopied] = useState(false);
+  const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  useEffect(() => () => clearTimeout(timer.current), []);
+
+  // Deliberately not async: callers are click handlers with nothing to await.
+  const copy = (text: string) => {
+    navigator.clipboard
+      .writeText(text)
+      .then(() => {
+        setCopied(true);
+        clearTimeout(timer.current);
+        timer.current = setTimeout(() => setCopied(false), COPIED_MS);
+      })
+      .catch(() => {});
+  };
+
+  return { copied, copy };
+}
+
+/**
+ * The page hands its flags over as they were at load; the debug report must show
+ * the overrides in effect now, including the ones the Flags section changed during
+ * the session. Performance mode's flags cannot change without a restart, so they
+ * are the load-time overrides minus the user's load-time ones.
+ */
+export function keepFlagOverridesLive(model: SettingsModel): SettingsModel {
+  const pageFlags = model.siteFlags;
+  if (!pageFlags) return model;
+  const initial = storedFlagOverrides(model);
+  return {
+    ...model,
+    siteFlags: () => {
+      const page = pageFlags();
+      // A page that reports live overrides itself needs no reconstruction.
+      if (typeof page.overrides === "function") return { served: page.served, overrides: page.overrides() };
+      const overrides: Flags = { ...page.overrides };
+      for (const name of Object.keys(initial)) delete overrides[name];
+      return { served: page.served, overrides: { ...overrides, ...storedFlagOverrides(model) } };
+    },
+  };
+}

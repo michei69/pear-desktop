@@ -156,8 +156,8 @@
               "sync": {
                 "label": "Synchronizovať jazyk",
                 "submenu": {
-                  "from-youtube": "Z YouTube",
-                  "to-youtube": "Do YouTube"
+                  "from-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "Z \u0059\u006f\u0075\u0054\u0075\u0062\u0065",
+                  "to-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "Do \u0059\u006f\u0075\u0054\u0075\u0062\u0065"
                 },
                 "failure": {
                   "dialog": {
@@ -229,7 +229,7 @@
                   "open-themes-folder": "Otvoriť priečinok s témami"
                 }
               },
-              "use-ytm-icons": "Používať pôvodné ikony YouTube Music"
+              "use-ytm-icons": "Používať pôvodné ikony \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063"
             }
           },
           "updates": {
@@ -314,7 +314,15 @@
         },
         "enable-seekbar": "Povoliť farebnú tému aj v seekbare"
       },
-      "name": "Farebná téma albumu"
+      "name": "Farebná téma albumu",
+      "settings": {
+        "ratio": {
+          "label": "Pomer miešania farieb"
+        },
+        "enableSeekbar": {
+          "label": "Povoliť farebnú tému aj v seekbare"
+        }
+      }
     },
     "ambient-mode": {
       "description": "Aplikuje svetelné efekty pomocou vrhania jemných farieb z videa, do vášho pozadia obrazovky",
@@ -393,7 +401,7 @@
           }
         },
         "hostname": {
-          "label": "Názov hostiteľa"
+          "label": "Hostname"
         },
         "https": {
           "label": "HTTPS a Certifikáty",
@@ -419,11 +427,11 @@
           "description": "Poskytuje API v2 ako nástroje MCP na /mcp. Používa rovnakú autorizáciu ako zvyšok API."
         }
       },
-      "name": "API server [Beta]",
+      "name": "API Server [Beta]",
       "prompt": {
         "hostname": {
           "label": "Zadajte názov hostname(napr. 0.0.0.0) pre server API:",
-          "title": "Názov hostiteľa"
+          "title": "Hostname"
         },
         "port": {
           "label": "Zadajte port pre server API:",
@@ -450,7 +458,7 @@
         "disable": "Vypnúť Proxy Adaptér",
         "enable": "Zapnúť Proxy Adaptér",
         "hostname": {
-          "label": "Názov hostiteľa"
+          "label": "Hostname"
         },
         "port": {
           "label": "Port"
@@ -460,11 +468,11 @@
       "prompt": {
         "hostname": {
           "label": "Zadajte hostname pre lokálny proxy server (vyžaduje reštart):",
-          "title": "Názov hostiteľa proxy"
+          "title": "Proxy Hostname"
         },
         "port": {
           "label": "Zadajte port pre lokálny proxy server (vyžaduje reštart):",
-          "title": "Port proxy"
+          "title": "Proxy Port"
         }
       }
     },
@@ -497,6 +505,14 @@
         "caption-changed": "Titulky zmenené na {{language}}",
         "caption-disabled": "Deaktivované titulky",
         "no-captions": "Pre túto skladbu nie sú dostupné žiadne titulky"
+      },
+      "settings": {
+        "autoload": {
+          "label": "Automatický výber naposledy použitých titulkov"
+        },
+        "disableCaptions": {
+          "label": "Žiadne titulky"
+        }
       }
     },
     "clock": {
@@ -510,7 +526,13 @@
       },
       "name": "Hodiny",
       "settings": {
-        "hour-12": "Používať 12-hodinový formát"
+        "hour-12": "Používať 12-hodinový formát",
+        "displaySeconds": {
+          "label": "Zobraz sekundy"
+        },
+        "hour12": {
+          "label": "Používať 12-hodinový formát"
+        }
       }
     },
     "compact-sidebar": {
@@ -569,7 +591,12 @@
       "menu": {
         "apply-once": "Platí len pri spustení"
       },
-      "name": "Zakázať automatické prehrávanie"
+      "name": "Zakázať automatické prehrávanie",
+      "settings": {
+        "applyOnce": {
+          "label": "Platí len pri spustení"
+        }
+      }
     },
     "discord": {
       "backend": {
@@ -592,8 +619,8 @@
           "label": "Text stavu",
           "submenu": {
             "application": "Počúvať {{applicationName}}",
-            "artist": "Práve počúvate {{artist}}",
-            "title": "Práve počúvate {{songTitle}}"
+            "artist": "Práve počúvate {artist}",
+            "title": "Práve počúvate {song title}"
           }
         }
       },
@@ -609,7 +636,38 @@
         "activity-timeout-enabled": "Vymazať prítomnosť pri pozastavení",
         "activity-timeout-time": "Vymazať po",
         "hide-github-button": "Skryť tlačidlo „Zobraziť na GitHube“",
-        "hide-duration-left": "Skryť zostávajúci čas"
+        "hide-duration-left": "Skryť zostávajúci čas",
+        "autoReconnect": {
+          "label": "Automatické opätovné pripojenie"
+        },
+        "activityTimeoutEnabled": {
+          "label": "Vymazať prítomnosť pri pozastavení"
+        },
+        "activityTimeoutSeconds": {
+          "label": "Vymazať po"
+        },
+        "playButton": {
+          "label": "Spustiť na {{applicationName}}"
+        },
+        "hideGitHubButton": {
+          "label": "Skryť tlačidlo „Zobraziť na GitHube“"
+        },
+        "hideDurationLeft": {
+          "label": "Skryť zostávajúci čas"
+        },
+        "statusDisplayType": {
+          "label": "Text stavu",
+          "options": {
+            "name": "Počúvať {{applicationName}}",
+            "state": "Práve počúvate {artist}",
+            "details": "Práve počúvate {song title}"
+          }
+        }
+      },
+      "actions": {
+        "clearActivity": {
+          "label": "Zmazať aktivitu"
+        }
       }
     },
     "do-not-track": {
@@ -689,7 +747,7 @@
             "advanced": "Rozšírené",
             "enabled": "Povolené",
             "mode": "Časový režim",
-            "percent": "Percento",
+            "percent": "Percent",
             "seconds": "Sekundy"
           }
         },
@@ -900,6 +958,23 @@
       "name": "Obraz v obraze",
       "templates": {
         "button": "Obraz v obraze"
+      },
+      "settings": {
+        "hotkey": {
+          "label": "Klávesová skratka"
+        },
+        "useNativePiP": {
+          "label": "Použiť natívne PiP prehliadača"
+        },
+        "alwaysOnTop": {
+          "label": "Vždy na vrchu"
+        },
+        "savePosition": {
+          "label": "Uložiť pozíciu okna"
+        },
+        "saveSize": {
+          "label": "Uložiť veľkosť okna"
+        }
       }
     },
     "playback-speed": {
@@ -935,10 +1010,21 @@
         }
       },
       "settings": {
-        "steps": "Krok hlasitosti",
+        "steps": {
+          "label": "Krok hlasitosti"
+        },
         "arrows-shortcut": "Klávesové skratky so šípkami",
         "shortcut-up": "Globálna skratka: zvýšiť hlasitosť",
-        "shortcut-down": "Globálna skratka: znížiť hlasitosť"
+        "shortcut-down": "Globálna skratka: znížiť hlasitosť",
+        "arrowsShortcut": {
+          "label": "Klávesové skratky so šípkami"
+        },
+        "volumeUp": {
+          "label": "Globálna skratka: zvýšiť hlasitosť"
+        },
+        "volumeDown": {
+          "label": "Globálna skratka: znížiť hlasitosť"
+        }
       }
     },
     "quality-changer": {
@@ -997,7 +1083,7 @@
         "listenbrainz": {
           "token": {
             "label": "Vlož svoj ListenBrainz používateľský token:",
-            "title": "Token ListenBrainz"
+            "title": "ListenBrainz token"
           },
           "api-root": {
             "label": "Zadajte základnú URL API:",
@@ -1037,14 +1123,42 @@
       },
       "settings": {
         "global-keybinds": "Globálne klávesové skratky (fungujú v celej aplikácii)",
-        "local-keybinds": "Lokálne klávesové skratky (len keď je okno aktívne)"
+        "local-keybinds": "Lokálne klávesové skratky (len keď je okno aktívne)",
+        "playPause": {
+          "label": "Prehrať / Pauza"
+        },
+        "localPlayPause": {
+          "label": "Prehrať / Pauza"
+        },
+        "next": {
+          "label": "Ďalšia"
+        },
+        "localNext": {
+          "label": "Ďalšia"
+        },
+        "previous": {
+          "label": "Predošlá"
+        },
+        "localPrevious": {
+          "label": "Predošlá"
+        },
+        "overrideMediaKeys": {
+          "label": "Prepísať Media Kľúče"
+        }
       }
+    },
+    "skip-disliked-songs": {
+      "description": "Preskakuje skladby označené Nepáči sa",
+      "name": "Preskakovať skladby označené Nepáči sa"
     },
     "skip-silences": {
       "description": "Automaticky preskakovať tiché časti v hudbe",
       "name": "Preskakuj tiché časti",
       "settings": {
-        "only-skip-beginning": "Preskakovať ticho len na začiatku skladby"
+        "only-skip-beginning": "Preskakovať ticho len na začiatku skladby",
+        "onlySkipBeginning": {
+          "label": "Preskakovať ticho len na začiatku skladby"
+        }
       }
     },
     "sponsorblock": {
@@ -1060,7 +1174,28 @@
           "selfpromo": "Vlastná propagácia",
           "music_offtopic": "Časť bez hudby"
         },
-        "api-url": "URL API"
+        "api-url": "URL API",
+        "sponsor": {
+          "label": "Sponzor"
+        },
+        "intro": {
+          "label": "Úvod"
+        },
+        "outro": {
+          "label": "Záver"
+        },
+        "interaction": {
+          "label": "Pripomienka interakcie"
+        },
+        "selfpromo": {
+          "label": "Vlastná propagácia"
+        },
+        "music_offtopic": {
+          "label": "Časť bez hudby"
+        },
+        "apiURL": {
+          "label": "URL API"
+        }
       }
     },
     "synced-lyrics": {
@@ -1104,7 +1239,7 @@
               "tooltip": "Urob len aktuálny riadok biely"
             },
             "offset": {
-              "label": "Posun",
+              "label": "Offset",
               "tooltip": "Offset na pravej strane aktuálneho riadku"
             },
             "scale": {
@@ -1113,24 +1248,6 @@
             }
           },
           "tooltip": "Vyber efekt pre aktuálny riadok"
-        },
-        "lyrics-font-size": {
-          "label": "Veľkosť písma textov",
-          "submenu": {
-            "large": {
-              "label": "Veľké",
-              "tooltip": "Použiť pôvodnú väčšiu veľkosť textov"
-            },
-            "medium": {
-              "label": "Stredné",
-              "tooltip": "Použiť vyváženú veľkosť textov"
-            },
-            "small": {
-              "label": "Malé",
-              "tooltip": "Použiť kompaktnejšiu veľkosť textov"
-            }
-          },
-          "tooltip": "Vyberte, aké veľké majú byť texty piesní"
         },
         "precise-timing": {
           "label": "Dokonale synchronizovať text piesne",
@@ -1155,6 +1272,24 @@
         "show-time-codes": {
           "label": "Zobraziť časové značky",
           "tooltip": "Zobraziť časové kódy vedľa textov"
+        },
+        "lyrics-font-size": {
+          "label": "Veľkosť písma textov",
+          "submenu": {
+            "large": {
+              "label": "Veľké",
+              "tooltip": "Použiť pôvodnú väčšiu veľkosť textov"
+            },
+            "medium": {
+              "label": "Stredné",
+              "tooltip": "Použiť vyváženú veľkosť textov"
+            },
+            "small": {
+              "label": "Malé",
+              "tooltip": "Použiť kompaktnejšiu veľkosť textov"
+            }
+          },
+          "tooltip": "Vyberte, aké veľké majú byť texty piesní"
         },
         "translation": {
           "clear-cache": {
@@ -1269,7 +1404,7 @@
         },
         "use-ytm-lyrics-without-proxy": {
           "label": "Použiť texty YTM bez proxy",
-          "tooltip": "Preskočiť YTM proxy prehliadania a volať YouTube Music priamo pomocou overenej relácie aplikácie. Užitočné, ak dôverujete svojej sieti/regiónu, že umožní priame volania prehliadania."
+          "tooltip": "Preskočiť YTM proxy prehliadania a volať \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 priamo pomocou overenej relácie aplikácie. Užitočné, ak dôverujete svojej sieti/regiónu, že umožní priame volania prehliadania."
         },
         "show-custom-search-button": {
           "label": "Zobraziť vlastné tlačidlo vyhľadávania",
@@ -1361,7 +1496,25 @@
       },
       "name": "Transparentný prehrávač",
       "settings": {
-        "type-description": "Materiál pozadia použitý na priehľadnosť okna"
+        "type-description": "Materiál pozadia použitý na priehľadnosť okna",
+        "opacity": {
+          "label": "Priehľadnosť"
+        },
+        "type": {
+          "label": "Typ",
+          "description": "Materiál pozadia použitý na priehľadnosť okna",
+          "options": {
+            "acrylic": "Acrylické",
+            "content": "Kontent",
+            "fullscreen-ui": "UI na celú obrazovku",
+            "mica": "Mica",
+            "tabbed": "Tabnutý",
+            "under-page": "Pod stránkou",
+            "under-window": "Pod oknom",
+            "window": "Okno",
+            "none": "Žiadne/y"
+          }
+        }
       }
     },
     "tuna-obs": {
@@ -1397,6 +1550,27 @@
       "templates": {
         "button-song": "Skladba",
         "button-video": "Video"
+      },
+      "settings": {
+        "mode": {
+          "label": "Mód",
+          "options": {
+            "custom": "Vlastný prepínač",
+            "native": "Natívny prepínač",
+            "disabled": "Vypnuté"
+          }
+        },
+        "align": {
+          "label": "Zarovnanie",
+          "options": {
+            "left": "Vľavo",
+            "middle": "Stred",
+            "right": "Vpravo"
+          }
+        },
+        "forceHide": {
+          "label": "Nasilu odstrániť video kartu"
+        }
       }
     },
     "visualizer": {
@@ -1406,7 +1580,9 @@
       },
       "name": "Vizualizér",
       "settings": {
-        "preset": "Predvoľba",
+        "preset": {
+          "label": "Predvoľba"
+        },
         "blend-time": "Čas prelínania",
         "effect": "Efekt",
         "accuracy": "Presnosť",
@@ -1422,7 +1598,45 @@
         "dottify": "Bodkovanie",
         "dottify-description": "Kresliť bodky namiesto súvislej čiary",
         "horizontal-align": "Horizontálne zarovnanie",
-        "vertical-align": "Vertikálne zarovnanie"
+        "vertical-align": "Vertikálne zarovnanie",
+        "blendTimeInSeconds": {
+          "label": "Čas prelínania"
+        },
+        "vudioMaxHeight": {
+          "label": "Maximálna výška"
+        },
+        "vudioMaxSize": {
+          "label": "Maximálna veľkosť"
+        },
+        "vudioLineWidth": {
+          "label": "Šírka čiary"
+        },
+        "vudioColor": {
+          "label": "Farba"
+        },
+        "vudioShadowBlur": {
+          "label": "Rozmazanie tieňa"
+        },
+        "vudioShadowColor": {
+          "label": "Farba tieňa"
+        },
+        "vudioFadeSide": {
+          "label": "Prelínanie strán"
+        },
+        "vudioPrettify": {
+          "label": "Skrášlenie",
+          "description": "Zúžiť stĺpce smerom k okrajom"
+        },
+        "vudioDottify": {
+          "label": "Bodkovanie",
+          "description": "Kresliť bodky namiesto súvislej čiary"
+        },
+        "vudioHorizontalAlign": {
+          "label": "Horizontálne zarovnanie"
+        },
+        "vudioVerticalAlign": {
+          "label": "Vertikálne zarovnanie"
+        }
       }
     },
     "audio-only": {
@@ -1464,7 +1678,7 @@
     },
     "search-commands": {
       "commands": {
-        "play": "Prehrať video z odkazu alebo ID YouTube",
+        "play": "Prehrať video z odkazu alebo ID \u0059\u006f\u0075\u0054\u0075\u0062\u0065",
         "settings": "Otvoriť nastavenia"
       },
       "description": "Zadaním / do vyhľadávacieho poľa spustíte príkazy s automatickým dopĺňaním ich argumentov",
@@ -1473,7 +1687,15 @@
         "open-keybind": "Skratka na otvorenie",
         "open-keybind-description": "Akcelerátor v štýle Electron, napr. CmdOrCtrl+/ alebo Alt+Space",
         "open-shortcut": "Otvoriť vyhľadávacie pole odkiaľkoľvek",
-        "open-shortcut-description": "Vyvolá vyhľadávacie pole už v režime príkazov, podobne ako Spotlight. Opätovným stlačením sa zavrie."
+        "open-shortcut-description": "Vyvolá vyhľadávacie pole už v režime príkazov, podobne ako Spotlight. Opätovným stlačením sa zavrie.",
+        "openShortcut": {
+          "label": "Otvoriť vyhľadávacie pole odkiaľkoľvek",
+          "description": "Vyvolá vyhľadávacie pole už v režime príkazov, podobne ako Spotlight. Opätovným stlačením sa zavrie."
+        },
+        "openKeybind": {
+          "label": "Skratka na otvorenie",
+          "description": "Akcelerátor v štýle Electron, napr. CmdOrCtrl+/ alebo Alt+Space"
+        }
       }
     },
     "seek-shortcuts": {
@@ -1481,16 +1703,19 @@
       "name": "Skratky posunu"
     },
     "sfw-music": {
-      "description": "Automaticky preskakuje skladby označené YouTube Music ako Explicit. Pozastaví prehrávanie, ak sa explicitný front opakuje alebo nie je k dispozícii žiadna ďalšia skladba.",
+      "description": "Automaticky preskakuje skladby označené \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 ako Explicit. Pozastaví prehrávanie, ak sa explicitný front opakuje alebo nie je k dispozícii žiadna ďalšia skladba.",
       "name": "SFW hudba"
     },
     "toast-autoclose": {
-      "description": "Automaticky zatvárať oznámenia YouTube Music po troch sekundách",
+      "description": "Automaticky zatvárať oznámenia \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 po troch sekundách",
       "name": "Automatické zatváranie oznámení"
     },
     "statusbar-lyrics": {
       "settings": {
-        "include-pronunciation": "Zahrnúť výslovnosť"
+        "include-pronunciation": "Zahrnúť výslovnosť",
+        "includePronunciation": {
+          "label": "Zahrnúť výslovnosť"
+        }
       }
     },
     "dismiss-multidevice-popup": {
@@ -1502,7 +1727,11 @@
       "name": "Šetrič pamäte",
       "settings": {
         "threshold": "Prahová hodnota vyrovnávacej pamäte",
-        "threshold-description": "Vyčistiť vyrovnávacie pamäte, keď ich aktívna pamäť prekročí túto hodnotu, kým je okno skryté"
+        "threshold-description": "Vyčistiť vyrovnávacie pamäte, keď ich aktívna pamäť prekročí túto hodnotu, kým je okno skryté",
+        "thresholdMB": {
+          "label": "Prahová hodnota vyrovnávacej pamäte",
+          "description": "Vyčistiť vyrovnávacie pamäte, keď ich aktívna pamäť prekročí túto hodnotu, kým je okno skryté"
+        }
       }
     }
   },
@@ -1531,7 +1760,7 @@
     "move-up": "Presunúť nahor",
     "move-down": "Presunúť nadol",
     "about": {
-      "tagline": "Desktopová aplikácia pre YouTube Music s množstvom funkcií",
+      "tagline": "Desktopová aplikácia pre \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 s množstvom funkcií",
       "versions": "Verzie",
       "version-app": "Aplikácia",
       "version-build": "Zostava",
@@ -1589,7 +1818,7 @@
     "stepper-decrement": "Znížiť",
     "stepper-increment": "Zvýšiť",
     "flags": {
-      "warning": "Funkčné príznaky sú interné prepínače YouTube Music. Ich zmena môže narušiť prehrávanie, rozloženie alebo funkcie účtu a nie sú pokryté podporou. Prepísania sa uchovávajú len pre príznaky, ktoré zmeníte, a možno ich odstrániť pomocou Vrátiť späť.",
+      "warning": "Funkčné príznaky sú interné prepínače \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063. Ich zmena môže narušiť prehrávanie, rozloženie alebo funkcie účtu a nie sú pokryté podporou. Prepísania sa uchovávajú len pre príznaky, ktoré zmeníte, a možno ich odstrániť pomocou Vrátiť späť.",
       "search-placeholder": "Hľadať príznaky",
       "overridden": "prepísané",
       "undo": "Vrátiť späť",
@@ -1634,7 +1863,11 @@
       "theme-preset": "Predvoľba",
       "theme-variable-name": "Premenná",
       "theme-variable-value": "Hodnota",
-      "theme-variable-add": "Pridať premennú"
+      "theme-variable-add": "Pridať premennú",
+      "performance-mode": "Režim výkonu",
+      "performance-mode-desc": "Vymeňte časť vizuálnej vernosti za menej náročné vykresľovanie.",
+      "in-process-gpu": "Zlúčiť proces GPU s procesom aplikácie",
+      "in-process-gpu-desc": "Experimentálne: ušetrí jeden proces, ale presunie pamäť GPU do hlavného procesu a môže sa prepnúť na softvérové vykresľovanie."
     }
   }
 }

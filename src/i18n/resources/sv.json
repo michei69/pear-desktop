@@ -156,8 +156,8 @@
               "sync": {
                 "label": "Synkronisera språk",
                 "submenu": {
-                  "from-youtube": "Från YouTube",
-                  "to-youtube": "Till YouTube"
+                  "from-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "Från \u0059\u006f\u0075\u0054\u0075\u0062\u0065",
+                  "to-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "Till \u0059\u006f\u0075\u0054\u0075\u0062\u0065"
                 },
                 "failure": {
                   "dialog": {
@@ -229,7 +229,7 @@
                   "open-themes-folder": "Öppna temamappen"
                 }
               },
-              "use-ytm-icons": "Använd YouTube Musics originalikoner"
+              "use-ytm-icons": "Använd \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063s originalikoner"
             }
           },
           "updates": {
@@ -314,7 +314,15 @@
         },
         "enable-seekbar": "Aktivera temaanpassning av uppspelningsreglaget"
       },
-      "name": "Albumfärgtema"
+      "name": "Albumfärgtema",
+      "settings": {
+        "ratio": {
+          "label": "Färgblandningsförhållande"
+        },
+        "enableSeekbar": {
+          "label": "Aktivera temaanpassning av uppspelningsreglaget"
+        }
+      }
     },
     "ambient-mode": {
       "description": "Skapar en ljuseffekt genom att låta videons färger spridas mjukt över skärmens bakgrund",
@@ -334,7 +342,7 @@
         "opacity": {
           "label": "Opacitet",
           "submenu": {
-            "percent": "{{opacity}} %"
+            "percent": "{{opacity}}%"
           }
         },
         "quality": {
@@ -346,7 +354,7 @@
         "size": {
           "label": "Storlek",
           "submenu": {
-            "percent": "{{size}} %"
+            "percent": "{{size}}%"
           }
         },
         "smoothness-transition": {
@@ -497,6 +505,14 @@
         "caption-changed": "Undertextspråket ändrades till {{language}}",
         "caption-disabled": "Undertexter inaktiverade",
         "no-captions": "Det finns inga undertexter för den här låten"
+      },
+      "settings": {
+        "autoload": {
+          "label": "Välj automatiskt de senast använda undertexterna"
+        },
+        "disableCaptions": {
+          "label": "Inga undertexter som standard"
+        }
       }
     },
     "clock": {
@@ -510,7 +526,13 @@
       },
       "name": "Klocka",
       "settings": {
-        "hour-12": "Använd 12-timmarsformat"
+        "hour-12": "Använd 12-timmarsformat",
+        "displaySeconds": {
+          "label": "Visa sekunder"
+        },
+        "hour12": {
+          "label": "Använd 12-timmarsformat"
+        }
       }
     },
     "compact-sidebar": {
@@ -569,7 +591,12 @@
       "menu": {
         "apply-once": "Gäller endast vid uppstart"
       },
-      "name": "Inaktivera automatisk uppspelning"
+      "name": "Inaktivera automatisk uppspelning",
+      "settings": {
+        "applyOnce": {
+          "label": "Gäller endast vid uppstart"
+        }
+      }
     },
     "discord": {
       "backend": {
@@ -592,8 +619,8 @@
           "label": "Statustext",
           "submenu": {
             "application": "Lyssnar på {{applicationName}}",
-            "artist": "Lyssnar på {{artist}}",
-            "title": "Lyssnar på {{songTitle}}"
+            "artist": "Lyssnar på {artist}",
+            "title": "Lyssnar på {song title}"
           }
         }
       },
@@ -609,7 +636,38 @@
         "activity-timeout-enabled": "Rensa närvaron vid paus",
         "activity-timeout-time": "Rensa efter",
         "hide-github-button": "Dölj knappen ”Visa på GitHub”",
-        "hide-duration-left": "Dölj återstående tid"
+        "hide-duration-left": "Dölj återstående tid",
+        "autoReconnect": {
+          "label": "Återanslut automatiskt"
+        },
+        "activityTimeoutEnabled": {
+          "label": "Rensa närvaron vid paus"
+        },
+        "activityTimeoutSeconds": {
+          "label": "Rensa efter"
+        },
+        "playButton": {
+          "label": "Spela på {{applicationName}}"
+        },
+        "hideGitHubButton": {
+          "label": "Dölj knappen ”Visa på GitHub”"
+        },
+        "hideDurationLeft": {
+          "label": "Dölj återstående tid"
+        },
+        "statusDisplayType": {
+          "label": "Statustext",
+          "options": {
+            "name": "Lyssnar på {{applicationName}}",
+            "state": "Lyssnar på {artist}",
+            "details": "Lyssnar på {song title}"
+          }
+        }
+      },
+      "actions": {
+        "clearActivity": {
+          "label": "Rensa aktivitet"
+        }
       }
     },
     "do-not-track": {
@@ -900,6 +958,23 @@
       "name": "Bild-i-bild",
       "templates": {
         "button": "Bild-i-bild"
+      },
+      "settings": {
+        "hotkey": {
+          "label": "Snabbkommando"
+        },
+        "useNativePiP": {
+          "label": "Använd webbläsarens inbyggda bild-i-bild"
+        },
+        "alwaysOnTop": {
+          "label": "Alltid överst"
+        },
+        "savePosition": {
+          "label": "Spara fönsterposition"
+        },
+        "saveSize": {
+          "label": "Spara fönsterstorlek"
+        }
       }
     },
     "playback-speed": {
@@ -935,10 +1010,21 @@
         }
       },
       "settings": {
-        "steps": "Volymsteg",
+        "steps": {
+          "label": "Volymsteg"
+        },
         "arrows-shortcut": "Genvägar med piltangenter",
         "shortcut-up": "Global genväg: höj volymen",
-        "shortcut-down": "Global genväg: sänk volymen"
+        "shortcut-down": "Global genväg: sänk volymen",
+        "arrowsShortcut": {
+          "label": "Genvägar med piltangenter"
+        },
+        "volumeUp": {
+          "label": "Global genväg: höj volymen"
+        },
+        "volumeDown": {
+          "label": "Global genväg: sänk volymen"
+        }
       }
     },
     "quality-changer": {
@@ -1037,14 +1123,42 @@
       },
       "settings": {
         "global-keybinds": "Globala tangentbordsgenvägar (fungerar i hela appen)",
-        "local-keybinds": "Lokala tangentbordsgenvägar (endast när fönstret är i fokus)"
+        "local-keybinds": "Lokala tangentbordsgenvägar (endast när fönstret är i fokus)",
+        "playPause": {
+          "label": "Spela / Pausa"
+        },
+        "localPlayPause": {
+          "label": "Spela / Pausa"
+        },
+        "next": {
+          "label": "Nästa"
+        },
+        "localNext": {
+          "label": "Nästa"
+        },
+        "previous": {
+          "label": "Föregående"
+        },
+        "localPrevious": {
+          "label": "Föregående"
+        },
+        "overrideMediaKeys": {
+          "label": "Åsidosätt medietangenter"
+        }
       }
+    },
+    "skip-disliked-songs": {
+      "description": "Hoppar över låtar du inte gillar",
+      "name": "Hoppa över låtar du inte gillar"
     },
     "skip-silences": {
       "description": "Hoppa automatiskt över tysta partier i låtar",
       "name": "Hoppa över tysta partier",
       "settings": {
-        "only-skip-beginning": "Hoppa bara över tystnad i början av ett spår"
+        "only-skip-beginning": "Hoppa bara över tystnad i början av ett spår",
+        "onlySkipBeginning": {
+          "label": "Hoppa bara över tystnad i början av ett spår"
+        }
       }
     },
     "sponsorblock": {
@@ -1060,7 +1174,28 @@
           "selfpromo": "Egenreklam",
           "music_offtopic": "Icke-musikavsnitt"
         },
-        "api-url": "API-URL"
+        "api-url": "API-URL",
+        "sponsor": {
+          "label": "Sponsor"
+        },
+        "intro": {
+          "label": "Intro"
+        },
+        "outro": {
+          "label": "Outro"
+        },
+        "interaction": {
+          "label": "Interaktionspåminnelse"
+        },
+        "selfpromo": {
+          "label": "Egenreklam"
+        },
+        "music_offtopic": {
+          "label": "Icke-musikavsnitt"
+        },
+        "apiURL": {
+          "label": "API-URL"
+        }
       }
     },
     "synced-lyrics": {
@@ -1114,24 +1249,6 @@
           },
           "tooltip": "Välj effekten som ska användas på den aktuella raden"
         },
-        "lyrics-font-size": {
-          "label": "Textstorlek för sångtexter",
-          "submenu": {
-            "large": {
-              "label": "Stor",
-              "tooltip": "Använd den ursprungliga större textstorleken"
-            },
-            "medium": {
-              "label": "Mellan",
-              "tooltip": "Använd en balanserad textstorlek"
-            },
-            "small": {
-              "label": "Liten",
-              "tooltip": "Använd en mer kompakt textstorlek"
-            }
-          },
-          "tooltip": "Välj hur stor sångtexten ska vara"
-        },
         "precise-timing": {
           "label": "Synkronisera låttexterna exakt",
           "tooltip": "Beräkna till millisekunden när nästa rad ska visas (kan ha en liten inverkan på prestanda)"
@@ -1155,6 +1272,24 @@
         "show-time-codes": {
           "label": "Visa tidskoder",
           "tooltip": "Visa tidskoderna bredvid låttexterna"
+        },
+        "lyrics-font-size": {
+          "label": "Textstorlek för sångtexter",
+          "submenu": {
+            "large": {
+              "label": "Stor",
+              "tooltip": "Använd den ursprungliga större textstorleken"
+            },
+            "medium": {
+              "label": "Mellan",
+              "tooltip": "Använd en balanserad textstorlek"
+            },
+            "small": {
+              "label": "Liten",
+              "tooltip": "Använd en mer kompakt textstorlek"
+            }
+          },
+          "tooltip": "Välj hur stor sångtexten ska vara"
         },
         "translation": {
           "clear-cache": {
@@ -1269,7 +1404,7 @@
         },
         "use-ytm-lyrics-without-proxy": {
           "label": "Använd YTM-text utan proxy",
-          "tooltip": "Hoppa över YTM-webbläsarproxy och anropa YouTube Music direkt med appens autentiserade session. Användbart om du litar på att ditt nätverk/region tillåter direkta anrop."
+          "tooltip": "Hoppa över YTM-webbläsarproxy och anropa \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 direkt med appens autentiserade session. Användbart om du litar på att ditt nätverk/region tillåter direkta anrop."
         },
         "show-custom-search-button": {
           "label": "Visa anpassad sökknapp",
@@ -1341,7 +1476,7 @@
         "opacity": {
           "label": "Opacitet",
           "submenu": {
-            "percent": "{{opacity}} %"
+            "percent": "{{opacity}}%"
           }
         },
         "type": {
@@ -1361,7 +1496,25 @@
       },
       "name": "Genomskinlig spelare",
       "settings": {
-        "type-description": "Bakgrundsmaterial som används för fönstrets transparens"
+        "type-description": "Bakgrundsmaterial som används för fönstrets transparens",
+        "opacity": {
+          "label": "Opacitet"
+        },
+        "type": {
+          "label": "Typ",
+          "description": "Bakgrundsmaterial som används för fönstrets transparens",
+          "options": {
+            "acrylic": "Akryl",
+            "content": "Innehåll",
+            "fullscreen-ui": "Helskärmsgränssnitt",
+            "mica": "Mica",
+            "tabbed": "Flikad",
+            "under-page": "Under sidan",
+            "under-window": "Under fönstret",
+            "window": "Fönster",
+            "none": "Ingen"
+          }
+        }
       }
     },
     "tuna-obs": {
@@ -1397,6 +1550,27 @@
       "templates": {
         "button-song": "Låt",
         "button-video": "Video"
+      },
+      "settings": {
+        "mode": {
+          "label": "Läge",
+          "options": {
+            "custom": "Anpassad växlingsknapp",
+            "native": "Inbyggd växlingsknapp",
+            "disabled": "Inaktiverad"
+          }
+        },
+        "align": {
+          "label": "Justering",
+          "options": {
+            "left": "Vänster",
+            "middle": "Mitten",
+            "right": "Höger"
+          }
+        },
+        "forceHide": {
+          "label": "Ta alltid bort videofliken"
+        }
       }
     },
     "visualizer": {
@@ -1406,7 +1580,9 @@
       },
       "name": "Visualiserare",
       "settings": {
-        "preset": "Förinställning",
+        "preset": {
+          "label": "Förinställning"
+        },
         "blend-time": "Blandningstid",
         "effect": "Effekt",
         "accuracy": "Noggrannhet",
@@ -1422,7 +1598,45 @@
         "dottify": "Pricka",
         "dottify-description": "Rita punkter i stället för en sammanhängande linje",
         "horizontal-align": "Horisontell justering",
-        "vertical-align": "Vertikal justering"
+        "vertical-align": "Vertikal justering",
+        "blendTimeInSeconds": {
+          "label": "Blandningstid"
+        },
+        "vudioMaxHeight": {
+          "label": "Maxhöjd"
+        },
+        "vudioMaxSize": {
+          "label": "Maxstorlek"
+        },
+        "vudioLineWidth": {
+          "label": "Linjebredd"
+        },
+        "vudioColor": {
+          "label": "Färg"
+        },
+        "vudioShadowBlur": {
+          "label": "Skuggans oskärpa"
+        },
+        "vudioShadowColor": {
+          "label": "Skuggfärg"
+        },
+        "vudioFadeSide": {
+          "label": "Tona kanter"
+        },
+        "vudioPrettify": {
+          "label": "Snygga till",
+          "description": "Avsmalna staplarna mot kanterna"
+        },
+        "vudioDottify": {
+          "label": "Pricka",
+          "description": "Rita punkter i stället för en sammanhängande linje"
+        },
+        "vudioHorizontalAlign": {
+          "label": "Horisontell justering"
+        },
+        "vudioVerticalAlign": {
+          "label": "Vertikal justering"
+        }
       }
     },
     "audio-only": {
@@ -1464,7 +1678,7 @@
     },
     "search-commands": {
       "commands": {
-        "play": "Spela en video från en YouTube-länk eller ett id",
+        "play": "Spela en video från en \u0059\u006f\u0075\u0054\u0075\u0062\u0065-länk eller ett id",
         "settings": "Öppna inställningarna"
       },
       "description": "Skriv / i sökrutan för att köra kommandon, med autokomplettering för deras argument",
@@ -1473,7 +1687,15 @@
         "open-keybind": "Genväg för att öppna",
         "open-keybind-description": "Accelerator i Electron-stil, t.ex. CmdOrCtrl+/ eller Alt+Space",
         "open-shortcut": "Öppna sökrutan varifrån som helst",
-        "open-shortcut-description": "Tar fram sökrutan redan i kommandoläge, som Spotlight. Trycker man igen stängs den."
+        "open-shortcut-description": "Tar fram sökrutan redan i kommandoläge, som Spotlight. Trycker man igen stängs den.",
+        "openShortcut": {
+          "label": "Öppna sökrutan varifrån som helst",
+          "description": "Tar fram sökrutan redan i kommandoläge, som Spotlight. Trycker man igen stängs den."
+        },
+        "openKeybind": {
+          "label": "Genväg för att öppna",
+          "description": "Accelerator i Electron-stil, t.ex. CmdOrCtrl+/ eller Alt+Space"
+        }
       }
     },
     "seek-shortcuts": {
@@ -1481,16 +1703,19 @@
       "name": "Spolgenvägar"
     },
     "sfw-music": {
-      "description": "Hoppar automatiskt över låtar som YouTube Music markerat som Explicit. Pausar om en explicit kö upprepas eller ingen nästa låt finns.",
+      "description": "Hoppar automatiskt över låtar som \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 markerat som Explicit. Pausar om en explicit kö upprepas eller ingen nästa låt finns.",
       "name": "SFW-musik"
     },
     "toast-autoclose": {
-      "description": "Stäng YouTube Music-toastmeddelanden automatiskt efter tre sekunder",
+      "description": "Stäng \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063-toastmeddelanden automatiskt efter tre sekunder",
       "name": "Autostäng toastmeddelanden"
     },
     "statusbar-lyrics": {
       "settings": {
-        "include-pronunciation": "Inkludera uttal"
+        "include-pronunciation": "Inkludera uttal",
+        "includePronunciation": {
+          "label": "Inkludera uttal"
+        }
       }
     },
     "dismiss-multidevice-popup": {
@@ -1502,7 +1727,11 @@
       "name": "Minnesbespararen",
       "settings": {
         "threshold": "Tröskelvärde för cache",
-        "threshold-description": "Rensa cacharna när deras aktiva minne överstiger detta medan fönstret är dolt"
+        "threshold-description": "Rensa cacharna när deras aktiva minne överstiger detta medan fönstret är dolt",
+        "thresholdMB": {
+          "label": "Tröskelvärde för cache",
+          "description": "Rensa cacharna när deras aktiva minne överstiger detta medan fönstret är dolt"
+        }
       }
     }
   },
@@ -1531,7 +1760,7 @@
     "move-up": "Flytta upp",
     "move-down": "Flytta ned",
     "about": {
-      "tagline": "En funktionsrik skrivbordsapp för YouTube Music",
+      "tagline": "En funktionsrik skrivbordsapp för \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063",
       "versions": "Versioner",
       "version-app": "App",
       "version-build": "Bygge",
@@ -1589,7 +1818,7 @@
     "stepper-decrement": "Minska",
     "stepper-increment": "Öka",
     "flags": {
-      "warning": "Funktionsflaggor är YouTube Musics egna interna växlar. Att ändra dem kan förstöra uppspelning, layout eller kontofunktioner, och de omfattas inte av supporten. Åsidosättningar sparas endast för de flaggor du ändrar och kan tas bort med Ångra.",
+      "warning": "Funktionsflaggor är \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063s egna interna växlar. Att ändra dem kan förstöra uppspelning, layout eller kontofunktioner, och de omfattas inte av supporten. Åsidosättningar sparas endast för de flaggor du ändrar och kan tas bort med Ångra.",
       "search-placeholder": "Sök flaggor",
       "overridden": "åsidosatt",
       "undo": "Ångra",
@@ -1634,7 +1863,11 @@
       "theme-preset": "Förinställning",
       "theme-variable-name": "Variabel",
       "theme-variable-value": "Värde",
-      "theme-variable-add": "Lägg till variabel"
+      "theme-variable-add": "Lägg till variabel",
+      "performance-mode": "Prestandaläge",
+      "performance-mode-desc": "Byt bort en del visuell kvalitet mot billigare rendering.",
+      "in-process-gpu": "Slå samman GPU-processen med appens process",
+      "in-process-gpu-desc": "Experimentellt: sparar en process, men flyttar GPU-minnet till huvudprocessen och kan falla tillbaka på mjukvarurendering."
     }
   }
 }

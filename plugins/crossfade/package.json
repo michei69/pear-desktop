@@ -1,0 +1,18 @@
+{
+  "name": "@pear/plugin-crossfade",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc -p .",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@pear/sdk": "workspace:*",
+    "\u0079\u006f\u0075\u0074\u0075\u0062\u0065i.js": "18.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "electron": "^45.2.3",
+    "vitest": "^5.0.5"
+  }
+}

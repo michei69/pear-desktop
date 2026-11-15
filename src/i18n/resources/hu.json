@@ -156,8 +156,8 @@
               "sync": {
                 "label": "Nyelv szinkronizálása",
                 "submenu": {
-                  "from-youtube": "YouTube-ról",
-                  "to-youtube": "YouTube-ra"
+                  "from-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "\u0059\u006f\u0075\u0054\u0075\u0062\u0065-ról",
+                  "to-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "\u0059\u006f\u0075\u0054\u0075\u0062\u0065-ra"
                 },
                 "failure": {
                   "dialog": {
@@ -229,7 +229,7 @@
                   "open-themes-folder": "Témák mappájának megnyitása"
                 }
               },
-              "use-ytm-icons": "Eredeti YouTube Music ikonok használata"
+              "use-ytm-icons": "Eredeti \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 ikonok használata"
             }
           },
           "updates": {
@@ -314,7 +314,15 @@
         },
         "enable-seekbar": "Keresősáv színezésének engedélyezése"
       },
-      "name": "Album színtéma"
+      "name": "Album színtéma",
+      "settings": {
+        "ratio": {
+          "label": "Színkeverés mértéke"
+        },
+        "enableSeekbar": {
+          "label": "Keresősáv színezésének engedélyezése"
+        }
+      }
     },
     "ambient-mode": {
       "description": "Fényhatás effektust alkalmaz, amely a videóból származó lágy színeket vetíti a képernyő hátterére",
@@ -456,7 +464,7 @@
           "label": "Port"
         }
       },
-      "name": "Hitelesítési proxy adapter",
+      "name": "Auth Proxy Adapter",
       "prompt": {
         "hostname": {
           "label": "Adjon meg egy hosztnevet a lokális proxy szerverhez (újraindítást igényel):",
@@ -464,7 +472,7 @@
         },
         "port": {
           "label": "Adjon meg egy portot a lokális proxy szerverhez (újraindátást igényel):",
-          "title": "Proxy port"
+          "title": "Proxy Port"
         }
       }
     },
@@ -497,6 +505,14 @@
         "caption-changed": "Felirat {{language}} nyelvűre állítva",
         "caption-disabled": "Feliratok kikapcsolva",
         "no-captions": "Nincsenek elérhető feliratok ehhez a dalhoz"
+      },
+      "settings": {
+        "autoload": {
+          "label": "Automatikusan kiválasztja az utoljára használt feliratot"
+        },
+        "disableCaptions": {
+          "label": "Alapértelmezetten nincsenek feliratok"
+        }
       }
     },
     "clock": {
@@ -510,7 +526,13 @@
       },
       "name": "Óra",
       "settings": {
-        "hour-12": "12 órás formátum használata"
+        "hour-12": "12 órás formátum használata",
+        "displaySeconds": {
+          "label": "Másodpercek megjelenítése"
+        },
+        "hour12": {
+          "label": "12 órás formátum használata"
+        }
       }
     },
     "compact-sidebar": {
@@ -569,7 +591,12 @@
       "menu": {
         "apply-once": "Csak induláskor alkalmazza"
       },
-      "name": "Automatikus lejátszás letiltása"
+      "name": "Automatikus lejátszás letiltása",
+      "settings": {
+        "applyOnce": {
+          "label": "Csak induláskor alkalmazza"
+        }
+      }
     },
     "discord": {
       "backend": {
@@ -592,8 +619,8 @@
           "label": "Tevékenység szöveg",
           "submenu": {
             "application": "Hallgatja: {{applicationName}}",
-            "artist": "Hallgatja: {{artist}}",
-            "title": "Hallgatja: {{songTitle}}"
+            "artist": "Hallgatja: {artist}",
+            "title": "Hallgatja: {song title}"
           }
         }
       },
@@ -609,7 +636,38 @@
         "activity-timeout-enabled": "Jelenlét törlése szüneteltetéskor",
         "activity-timeout-time": "Törlés ennyi idő után",
         "hide-github-button": "„View on GitHub” gomb elrejtése",
-        "hide-duration-left": "Hátralévő idő elrejtése"
+        "hide-duration-left": "Hátralévő idő elrejtése",
+        "autoReconnect": {
+          "label": "Automatikus újracsatlakozás"
+        },
+        "activityTimeoutEnabled": {
+          "label": "Jelenlét törlése szüneteltetéskor"
+        },
+        "activityTimeoutSeconds": {
+          "label": "Törlés ennyi idő után"
+        },
+        "playButton": {
+          "label": "Lejátszás a {{applicationName}}-on"
+        },
+        "hideGitHubButton": {
+          "label": "„View on GitHub” gomb elrejtése"
+        },
+        "hideDurationLeft": {
+          "label": "Hátralévő idő elrejtése"
+        },
+        "statusDisplayType": {
+          "label": "Tevékenység szöveg",
+          "options": {
+            "name": "Hallgatja: {{applicationName}}",
+            "state": "Hallgatja: {artist}",
+            "details": "Hallgatja: {song title}"
+          }
+        }
+      },
+      "actions": {
+        "clearActivity": {
+          "label": "Tevékenység törlése"
+        }
       }
     },
     "do-not-track": {
@@ -900,6 +958,23 @@
       "name": "Kép a képben",
       "templates": {
         "button": "Kép a képben"
+      },
+      "settings": {
+        "hotkey": {
+          "label": "Gyorsbillentyű"
+        },
+        "useNativePiP": {
+          "label": "A böngésző natív PiP(Kép a képben) használata"
+        },
+        "alwaysOnTop": {
+          "label": "Mindig látható"
+        },
+        "savePosition": {
+          "label": "Ablakpozíciójának mentése"
+        },
+        "saveSize": {
+          "label": "Ablakméretének mentése"
+        }
       }
     },
     "playback-speed": {
@@ -935,10 +1010,21 @@
         }
       },
       "settings": {
-        "steps": "Hangerőlépés",
+        "steps": {
+          "label": "Hangerőlépés"
+        },
         "arrows-shortcut": "Nyílbillentyű-gyorsparancsok",
         "shortcut-up": "Globális gyorsparancs: hangerő fel",
-        "shortcut-down": "Globális gyorsparancs: hangerő le"
+        "shortcut-down": "Globális gyorsparancs: hangerő le",
+        "arrowsShortcut": {
+          "label": "Nyílbillentyű-gyorsparancsok"
+        },
+        "volumeUp": {
+          "label": "Globális gyorsparancs: hangerő fel"
+        },
+        "volumeDown": {
+          "label": "Globális gyorsparancs: hangerő le"
+        }
       }
     },
     "quality-changer": {
@@ -1037,14 +1123,42 @@
       },
       "settings": {
         "global-keybinds": "Globális gyorsbillentyűk (az egész alkalmazásban működnek)",
-        "local-keybinds": "Helyi gyorsbillentyűk (csak amíg az ablak fókuszban van)"
+        "local-keybinds": "Helyi gyorsbillentyűk (csak amíg az ablak fókuszban van)",
+        "playPause": {
+          "label": "Lejátszás / Szünet"
+        },
+        "localPlayPause": {
+          "label": "Lejátszás / Szünet"
+        },
+        "next": {
+          "label": "Következő"
+        },
+        "localNext": {
+          "label": "Következő"
+        },
+        "previous": {
+          "label": "Előző"
+        },
+        "localPrevious": {
+          "label": "Előző"
+        },
+        "overrideMediaKeys": {
+          "label": "Médiagombok felülírása"
+        }
       }
+    },
+    "skip-disliked-songs": {
+      "description": "Kihagyja a nem kedvelt dalokat",
+      "name": "Nem kedvelt dal kihagyása"
     },
     "skip-silences": {
       "description": "Automatikusan kihagyja a csendes részeket a dalokban",
       "name": "Csend kihagyása",
       "settings": {
-        "only-skip-beginning": "Csak a szám elején lévő csend kihagyása"
+        "only-skip-beginning": "Csak a szám elején lévő csend kihagyása",
+        "onlySkipBeginning": {
+          "label": "Csak a szám elején lévő csend kihagyása"
+        }
       }
     },
     "sponsorblock": {
@@ -1060,7 +1174,28 @@
           "selfpromo": "Önreklám",
           "music_offtopic": "Nem zenei szakasz"
         },
-        "api-url": "API URL"
+        "api-url": "API URL",
+        "sponsor": {
+          "label": "Szponzor"
+        },
+        "intro": {
+          "label": "Bevezető"
+        },
+        "outro": {
+          "label": "Outro"
+        },
+        "interaction": {
+          "label": "Interakcióra emlékeztetés"
+        },
+        "selfpromo": {
+          "label": "Önreklám"
+        },
+        "music_offtopic": {
+          "label": "Nem zenei szakasz"
+        },
+        "apiURL": {
+          "label": "API URL"
+        }
       }
     },
     "synced-lyrics": {
@@ -1114,24 +1249,6 @@
           },
           "tooltip": "Válassza ki az aktuális sorra alkalmazandó effektust"
         },
-        "lyrics-font-size": {
-          "label": "Dalszöveg betűméret",
-          "submenu": {
-            "large": {
-              "label": "Nagy",
-              "tooltip": "Az eredeti nagyobb dalszöveg méret használata"
-            },
-            "medium": {
-              "label": "Közepes",
-              "tooltip": "Kiegyensúlyozott dalszöveg méret használata"
-            },
-            "small": {
-              "label": "Kicsi",
-              "tooltip": "Kompaktabb dalszöveg méret használata"
-            }
-          },
-          "tooltip": "Válaszd ki, milyen nagy legyen a dalszöveg"
-        },
         "precise-timing": {
           "label": "Dalszöveg tökéletes szinkronizálása",
           "tooltip": "Számítsa ki az aktuális sor megjelenítésének idejét ezredmásodperc pontossággal (ez kis mértékben befolyásolhatja a teljesítményt)"
@@ -1155,6 +1272,24 @@
         "show-time-codes": {
           "label": "Időkódok megjelenítése",
           "tooltip": "Az időkódok megjelenítése a dalszövegek mellett"
+        },
+        "lyrics-font-size": {
+          "label": "Dalszöveg betűméret",
+          "submenu": {
+            "large": {
+              "label": "Nagy",
+              "tooltip": "Az eredeti nagyobb dalszöveg méret használata"
+            },
+            "medium": {
+              "label": "Közepes",
+              "tooltip": "Kiegyensúlyozott dalszöveg méret használata"
+            },
+            "small": {
+              "label": "Kicsi",
+              "tooltip": "Kompaktabb dalszöveg méret használata"
+            }
+          },
+          "tooltip": "Válaszd ki, milyen nagy legyen a dalszöveg"
         },
         "translation": {
           "clear-cache": {
@@ -1269,7 +1404,7 @@
         },
         "use-ytm-lyrics-without-proxy": {
           "label": "Használj YTM dalszövegeket proxy nélkül",
-          "tooltip": "Hagyja ki az YTM böngésző proxyt, és hívja közvetlenül a YouTube Musicot az alkalmazás hitelesített munkamenetével. Hasznos, ha megbízik a hálózatában/régiójában, hogy engedélyezi a közvetlen böngészési hívásokat."
+          "tooltip": "Hagyja ki az YTM böngésző proxyt, és hívja közvetlenül a \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063ot az alkalmazás hitelesített munkamenetével. Hasznos, ha megbízik a hálózatában/régiójában, hogy engedélyezi a közvetlen böngészési hívásokat."
         },
         "show-custom-search-button": {
           "label": "Egyedi keresés gomb megjelenítése",
@@ -1352,7 +1487,7 @@
             "fullscreen-ui": "Teljes képernyős felület",
             "mica": "Mica",
             "none": "Nincs",
-            "tabbed": "Füles",
+            "tabbed": "Tabbed",
             "under-page": "Oldal alatt",
             "under-window": "Ablak alatt",
             "window": "Ablak"
@@ -1361,7 +1496,25 @@
       },
       "name": "Áttetsző lejátszó",
       "settings": {
-        "type-description": "Az ablak átlátszóságához használt háttéranyag"
+        "type-description": "Az ablak átlátszóságához használt háttéranyag",
+        "opacity": {
+          "label": "Átlátszóság"
+        },
+        "type": {
+          "label": "Típus",
+          "description": "Az ablak átlátszóságához használt háttéranyag",
+          "options": {
+            "acrylic": "Akril",
+            "content": "Tartalom",
+            "fullscreen-ui": "Teljes képernyős felület",
+            "mica": "Mica",
+            "tabbed": "Tabbed",
+            "under-page": "Oldal alatt",
+            "under-window": "Ablak alatt",
+            "window": "Ablak",
+            "none": "Nincs"
+          }
+        }
       }
     },
     "tuna-obs": {
@@ -1397,6 +1550,27 @@
       "templates": {
         "button-song": "Zeneszám",
         "button-video": "Videó"
+      },
+      "settings": {
+        "mode": {
+          "label": "Mód",
+          "options": {
+            "custom": "Egyedi kapcsoló",
+            "native": "Natív kapcsoló",
+            "disabled": "Letiltva"
+          }
+        },
+        "align": {
+          "label": "Igazítás",
+          "options": {
+            "left": "Balra",
+            "middle": "Középre",
+            "right": "Jobbra"
+          }
+        },
+        "forceHide": {
+          "label": "Videó fül kényszeritett eltávolítása"
+        }
       }
     },
     "visualizer": {
@@ -1406,7 +1580,9 @@
       },
       "name": "Vizualizáció",
       "settings": {
-        "preset": "Előbeállítás",
+        "preset": {
+          "label": "Előbeállítás"
+        },
         "blend-time": "Keverési idő",
         "effect": "Effektus",
         "accuracy": "Pontosság",
@@ -1422,7 +1598,45 @@
         "dottify": "Pontokká alakítás",
         "dottify-description": "Pontok rajzolása folytonos vonal helyett",
         "horizontal-align": "Vízszintes igazítás",
-        "vertical-align": "Függőleges igazítás"
+        "vertical-align": "Függőleges igazítás",
+        "blendTimeInSeconds": {
+          "label": "Keverési idő"
+        },
+        "vudioMaxHeight": {
+          "label": "Max. magasság"
+        },
+        "vudioMaxSize": {
+          "label": "Max. méret"
+        },
+        "vudioLineWidth": {
+          "label": "Vonalvastagság"
+        },
+        "vudioColor": {
+          "label": "Szín"
+        },
+        "vudioShadowBlur": {
+          "label": "Árnyék elmosása"
+        },
+        "vudioShadowColor": {
+          "label": "Árnyék színe"
+        },
+        "vudioFadeSide": {
+          "label": "Oldalak elhalványítása"
+        },
+        "vudioPrettify": {
+          "label": "Szépítés",
+          "description": "A sávok elvékonyítása a szélek felé"
+        },
+        "vudioDottify": {
+          "label": "Pontokká alakítás",
+          "description": "Pontok rajzolása folytonos vonal helyett"
+        },
+        "vudioHorizontalAlign": {
+          "label": "Vízszintes igazítás"
+        },
+        "vudioVerticalAlign": {
+          "label": "Függőleges igazítás"
+        }
       }
     },
     "audio-only": {
@@ -1464,7 +1678,7 @@
     },
     "search-commands": {
       "commands": {
-        "play": "Videó lejátszása YouTube-hivatkozásból vagy -azonosítóból",
+        "play": "Videó lejátszása \u0059\u006f\u0075\u0054\u0075\u0062\u0065-hivatkozásból vagy -azonosítóból",
         "settings": "Beállítások megnyitása"
       },
       "description": "Írjon / jelet a keresőmezőbe parancsok futtatásához, az argumentumok automatikus kiegészítésével",
@@ -1473,7 +1687,15 @@
         "open-keybind": "Megnyitási gyorsparancs",
         "open-keybind-description": "Electron-stílusú gyorsító, pl. CmdOrCtrl+/ vagy Alt+Space",
         "open-shortcut": "A keresőmező megnyitása bárhonnan",
-        "open-shortcut-description": "Előhívja a keresőmezőt már parancsmódban, a Spotlighthoz hasonlóan. Újbóli megnyomása bezárja."
+        "open-shortcut-description": "Előhívja a keresőmezőt már parancsmódban, a Spotlighthoz hasonlóan. Újbóli megnyomása bezárja.",
+        "openShortcut": {
+          "label": "A keresőmező megnyitása bárhonnan",
+          "description": "Előhívja a keresőmezőt már parancsmódban, a Spotlighthoz hasonlóan. Újbóli megnyomása bezárja."
+        },
+        "openKeybind": {
+          "label": "Megnyitási gyorsparancs",
+          "description": "Electron-stílusú gyorsító, pl. CmdOrCtrl+/ vagy Alt+Space"
+        }
       }
     },
     "seek-shortcuts": {
@@ -1481,16 +1703,19 @@
       "name": "Ugrási gyorsparancsok"
     },
     "sfw-music": {
-      "description": "Automatikusan kihagyja a YouTube Music által Explicitként megjelölt dalokat. Szüneteltet, ha egy explicit várólista ismétlődik, vagy nincs elérhető következő dal.",
+      "description": "Automatikusan kihagyja a \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 által Explicitként megjelölt dalokat. Szüneteltet, ha egy explicit várólista ismétlődik, vagy nincs elérhető következő dal.",
       "name": "SFW zene"
     },
     "toast-autoclose": {
-      "description": "A YouTube Music értesítéseinek automatikus bezárása három másodperc után",
+      "description": "A \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 értesítéseinek automatikus bezárása három másodperc után",
       "name": "Értesítések automatikus bezárása"
     },
     "statusbar-lyrics": {
       "settings": {
-        "include-pronunciation": "Kiejtés megjelenítése"
+        "include-pronunciation": "Kiejtés megjelenítése",
+        "includePronunciation": {
+          "label": "Kiejtés megjelenítése"
+        }
       }
     },
     "dismiss-multidevice-popup": {
@@ -1502,7 +1727,11 @@
       "name": "Memória-kímélő",
       "settings": {
         "threshold": "Gyorsítótár küszöbértéke",
-        "threshold-description": "Törli a gyorsítótárakat, amikor azok élő memóriája ezt meghaladja, miközben az ablak rejtett"
+        "threshold-description": "Törli a gyorsítótárakat, amikor azok élő memóriája ezt meghaladja, miközben az ablak rejtett",
+        "thresholdMB": {
+          "label": "Gyorsítótár küszöbértéke",
+          "description": "Törli a gyorsítótárakat, amikor azok élő memóriája ezt meghaladja, miközben az ablak rejtett"
+        }
       }
     }
   },
@@ -1531,7 +1760,7 @@
     "move-up": "Mozgatás feljebb",
     "move-down": "Mozgatás lejjebb",
     "about": {
-      "tagline": "Funkciógazdag asztali alkalmazás a YouTube Musichoz",
+      "tagline": "Funkciógazdag asztali alkalmazás a \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063hoz",
       "versions": "Verziók",
       "version-app": "Alkalmazás",
       "version-build": "Build",
@@ -1589,7 +1818,7 @@
     "stepper-decrement": "Csökkentés",
     "stepper-increment": "Növelés",
     "flags": {
-      "warning": "A funkciókapcsolók a YouTube Music saját belső kapcsolói. Módosításuk tönkreteheti a lejátszást, az elrendezést vagy a fiókfunkciókat, és nem tartoznak a támogatás hatálya alá. A felülbírálások csak a módosított kapcsolókra maradnak meg, és a Visszavonás gombbal távolíthatók el.",
+      "warning": "A funkciókapcsolók a \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 saját belső kapcsolói. Módosításuk tönkreteheti a lejátszást, az elrendezést vagy a fiókfunkciókat, és nem tartoznak a támogatás hatálya alá. A felülbírálások csak a módosított kapcsolókra maradnak meg, és a Visszavonás gombbal távolíthatók el.",
       "search-placeholder": "Kapcsolók keresése",
       "overridden": "felülbírálva",
       "undo": "Visszavonás",
@@ -1634,7 +1863,11 @@
       "theme-preset": "Előbeállítás",
       "theme-variable-name": "Változó",
       "theme-variable-value": "Érték",
-      "theme-variable-add": "Változó hozzáadása"
+      "theme-variable-add": "Változó hozzáadása",
+      "performance-mode": "Teljesítmény mód",
+      "performance-mode-desc": "Némileg feláldozza a vizuális hűséget az olcsóbb renderelésért.",
+      "in-process-gpu": "A GPU-folyamat egyesítése az alkalmazásfolyamattal",
+      "in-process-gpu-desc": "Kísérleti: egy folyamatot takarít meg, de a GPU-memóriát a fő folyamatba helyezi át, és visszaeshet szoftveres renderelésre."
     }
   }
 }

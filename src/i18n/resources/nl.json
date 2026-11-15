@@ -16,7 +16,7 @@
   "language": {
     "code": "nl",
     "local-name": "Nederlands",
-    "name": "Dutch"
+    "name": "Nederlands"
   },
   "main": {
     "console": {
@@ -156,8 +156,8 @@
               "sync": {
                 "label": "Taal synchroniseren",
                 "submenu": {
-                  "from-youtube": "Van YouTube",
-                  "to-youtube": "Naar YouTube"
+                  "from-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "Van \u0059\u006f\u0075\u0054\u0075\u0062\u0065",
+                  "to-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "Naar \u0059\u006f\u0075\u0054\u0075\u0062\u0065"
                 },
                 "failure": {
                   "dialog": {
@@ -229,7 +229,7 @@
                   "open-themes-folder": "Themamap openen"
                 }
               },
-              "use-ytm-icons": "Originele YouTube Music-pictogrammen gebruiken"
+              "use-ytm-icons": "Originele \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063-pictogrammen gebruiken"
             }
           },
           "updates": {
@@ -314,7 +314,15 @@
         },
         "enable-seekbar": "Schakel thema's voor de schuifbalk in"
       },
-      "name": "Albumkleurthema"
+      "name": "Albumkleurthema",
+      "settings": {
+        "ratio": {
+          "label": "Kleurmixverhouding"
+        },
+        "enableSeekbar": {
+          "label": "Schakel thema's voor de schuifbalk in"
+        }
+      }
     },
     "ambient-mode": {
       "description": "Past een verlichtingseffect toe door zachte kleuren van de video op het achtergrondscherm te werpen",
@@ -419,7 +427,7 @@
           "description": "Biedt de v2-API aan als MCP-tools op /mcp. Gebruikt dezelfde autorisatie als de rest van de API."
         }
       },
-      "name": "API-server [bèta]",
+      "name": "API Server [Beta]",
       "prompt": {
         "hostname": {
           "label": "Voeg de hostnaam (bv. 0.0.0.0) voor de API server in:",
@@ -497,6 +505,14 @@
         "caption-changed": "Ondertitel veranderd naar {{language}}",
         "caption-disabled": "Ondertitels uitgeschakeld",
         "no-captions": "Geen ondertitels beschikbaar voor dit lied"
+      },
+      "settings": {
+        "autoload": {
+          "label": "Automatisch de laatst gebruikte ondertitel selecteren"
+        },
+        "disableCaptions": {
+          "label": "Standaard geen ondertitels"
+        }
       }
     },
     "clock": {
@@ -510,7 +526,13 @@
       },
       "name": "Klok",
       "settings": {
-        "hour-12": "12-uursnotatie gebruiken"
+        "hour-12": "12-uursnotatie gebruiken",
+        "displaySeconds": {
+          "label": "Toon Seconden"
+        },
+        "hour12": {
+          "label": "12-uursnotatie gebruiken"
+        }
       }
     },
     "compact-sidebar": {
@@ -522,7 +544,7 @@
       "menu": {
         "advanced": "Geavanceerd"
       },
-      "name": "Crossfade [bèta]",
+      "name": "Crossfade [Beta]",
       "prompt": {
         "options": {
           "multi-input": {
@@ -569,7 +591,12 @@
       "menu": {
         "apply-once": "Alleen toepassen bij opstarten"
       },
-      "name": "Automatisch afspelen uitschakelen"
+      "name": "Automatisch afspelen uitschakelen",
+      "settings": {
+        "applyOnce": {
+          "label": "Alleen toepassen bij opstarten"
+        }
+      }
     },
     "discord": {
       "backend": {
@@ -592,8 +619,8 @@
           "label": "Status tekst",
           "submenu": {
             "application": "Naar {{applicationName}} aan het luisteren",
-            "artist": "Naar {{artist}} aan het luisteren",
-            "title": "Naar {{songTitle}} aan het luisteren"
+            "artist": "Naar {artist} aan het luisteren",
+            "title": "Naar {song title} aan het luisteren"
           }
         }
       },
@@ -609,7 +636,38 @@
         "activity-timeout-enabled": "Aanwezigheid wissen bij pauzeren",
         "activity-timeout-time": "Wissen na",
         "hide-github-button": "Knop “Bekijken op GitHub” verbergen",
-        "hide-duration-left": "Resterende tijd verbergen"
+        "hide-duration-left": "Resterende tijd verbergen",
+        "autoReconnect": {
+          "label": "Automatisch opnieuw verbinden"
+        },
+        "activityTimeoutEnabled": {
+          "label": "Aanwezigheid wissen bij pauzeren"
+        },
+        "activityTimeoutSeconds": {
+          "label": "Wissen na"
+        },
+        "playButton": {
+          "label": "Afspelen op {{applicationName}}"
+        },
+        "hideGitHubButton": {
+          "label": "Knop “Bekijken op GitHub” verbergen"
+        },
+        "hideDurationLeft": {
+          "label": "Resterende tijd verbergen"
+        },
+        "statusDisplayType": {
+          "label": "Status tekst",
+          "options": {
+            "name": "Naar {{applicationName}} aan het luisteren",
+            "state": "Naar {artist} aan het luisteren",
+            "details": "Naar {song title} aan het luisteren"
+          }
+        }
+      },
+      "actions": {
+        "clearActivity": {
+          "label": "Activiteit wissen"
+        }
       }
     },
     "do-not-track": {
@@ -702,7 +760,7 @@
         "can-not-update-progress": "Kan de voortgang niet bijwerken"
       },
       "templates": {
-        "button": "Downloaden"
+        "button": "Download"
       },
       "settings": {
         "finish-folder": "Map voor voltooide downloads",
@@ -730,11 +788,11 @@
       "menu": {
         "hide-dom-window-controls": "Verberg DOM-vensterbedieningselementen"
       },
-      "name": "In-appmenu"
+      "name": "In-App Menu"
     },
     "lumiastream": {
       "description": "Voegt ondersteuning voor Lumia Stream toe",
-      "name": "Lumia Stream [bèta]"
+      "name": "Lumia Stream [Beta]"
     },
     "lyrics-genius": {
       "description": "Voegt songtekstondersteuning toe voor de meeste nummers",
@@ -897,9 +955,26 @@
           }
         }
       },
-      "name": "Beeld-in-beeld",
+      "name": "Picture-in-picture",
       "templates": {
-        "button": "Beeld-in-beeld"
+        "button": "Picture-in-picture"
+      },
+      "settings": {
+        "hotkey": {
+          "label": "Sneltoets"
+        },
+        "useNativePiP": {
+          "label": "Gebruik browser ingebouwde PiP"
+        },
+        "alwaysOnTop": {
+          "label": "Altijd bovenaan"
+        },
+        "savePosition": {
+          "label": "Sla schermpositie op"
+        },
+        "saveSize": {
+          "label": "Sla schermgrootte op"
+        }
       }
     },
     "playback-speed": {
@@ -935,10 +1010,21 @@
         }
       },
       "settings": {
-        "steps": "Volumestap",
+        "steps": {
+          "label": "Volumestap"
+        },
         "arrows-shortcut": "Sneltoetsen met pijltjestoetsen",
         "shortcut-up": "Globale sneltoets: volume omhoog",
-        "shortcut-down": "Globale sneltoets: volume omlaag"
+        "shortcut-down": "Globale sneltoets: volume omlaag",
+        "arrowsShortcut": {
+          "label": "Sneltoetsen met pijltjestoetsen"
+        },
+        "volumeUp": {
+          "label": "Globale sneltoets: volume omhoog"
+        },
+        "volumeDown": {
+          "label": "Globale sneltoets: volume omlaag"
+        }
       }
     },
     "quality-changer": {
@@ -997,7 +1083,7 @@
         "listenbrainz": {
           "token": {
             "label": "Voer uw ListenBrainz-gebruikerstoken in:",
-            "title": "ListenBrainz-token"
+            "title": "ListenBrainz token"
           },
           "api-root": {
             "label": "Voer de basis-API-URL in:",
@@ -1037,14 +1123,42 @@
       },
       "settings": {
         "global-keybinds": "Globale sneltoetsen (werken in de hele app)",
-        "local-keybinds": "Lokale sneltoetsen (alleen terwijl het venster focus heeft)"
+        "local-keybinds": "Lokale sneltoetsen (alleen terwijl het venster focus heeft)",
+        "playPause": {
+          "label": "Afspelen / Pauzeren"
+        },
+        "localPlayPause": {
+          "label": "Afspelen / Pauzeren"
+        },
+        "next": {
+          "label": "Volgende"
+        },
+        "localNext": {
+          "label": "Volgende"
+        },
+        "previous": {
+          "label": "Vorige"
+        },
+        "localPrevious": {
+          "label": "Vorige"
+        },
+        "overrideMediaKeys": {
+          "label": "Media toetsen overschrijven"
+        }
       }
+    },
+    "skip-disliked-songs": {
+      "description": "Slaat disliked nummers over",
+      "name": "Sla disliked nummers over"
     },
     "skip-silences": {
       "description": "Sla automatisch stiltesecties in nummers over",
       "name": "Stiltes overslaan",
       "settings": {
-        "only-skip-beginning": "Sla stilte alleen aan het begin van een nummer over"
+        "only-skip-beginning": "Sla stilte alleen aan het begin van een nummer over",
+        "onlySkipBeginning": {
+          "label": "Sla stilte alleen aan het begin van een nummer over"
+        }
       }
     },
     "sponsorblock": {
@@ -1060,7 +1174,28 @@
           "selfpromo": "Zelfpromotie",
           "music_offtopic": "Niet-muzieksectie"
         },
-        "api-url": "API-URL"
+        "api-url": "API-URL",
+        "sponsor": {
+          "label": "Sponsor"
+        },
+        "intro": {
+          "label": "Intro"
+        },
+        "outro": {
+          "label": "Outro"
+        },
+        "interaction": {
+          "label": "Interactieherinnering"
+        },
+        "selfpromo": {
+          "label": "Zelfpromotie"
+        },
+        "music_offtopic": {
+          "label": "Niet-muzieksectie"
+        },
+        "apiURL": {
+          "label": "API-URL"
+        }
       }
     },
     "synced-lyrics": {
@@ -1114,24 +1249,6 @@
           },
           "tooltip": "Kies het effect dat u op de huidige regel wilt toepassen"
         },
-        "lyrics-font-size": {
-          "label": "Lettergrootte songtekst",
-          "submenu": {
-            "large": {
-              "label": "Groot",
-              "tooltip": "Gebruik de originele grotere songtekstgrootte"
-            },
-            "medium": {
-              "label": "Middel",
-              "tooltip": "Gebruik een gebalanceerde songtekstgrootte"
-            },
-            "small": {
-              "label": "Klein",
-              "tooltip": "Gebruik een compactere songtekstgrootte"
-            }
-          },
-          "tooltip": "Kies hoe groot de songtekst moet zijn"
-        },
         "precise-timing": {
           "label": "Zorg ervoor dat de songteksten perfect gesynchroniseerd zijn",
           "tooltip": "Bereken tot op de milliseconde de weergave van de volgende regel (kan een kleine impact hebben op de prestaties)"
@@ -1155,6 +1272,24 @@
         "show-time-codes": {
           "label": "Toon tijdcodes",
           "tooltip": "Toon de tijdcodes naast de songtekst"
+        },
+        "lyrics-font-size": {
+          "label": "Lettergrootte songtekst",
+          "submenu": {
+            "large": {
+              "label": "Groot",
+              "tooltip": "Gebruik de originele grotere songtekstgrootte"
+            },
+            "medium": {
+              "label": "Middel",
+              "tooltip": "Gebruik een gebalanceerde songtekstgrootte"
+            },
+            "small": {
+              "label": "Klein",
+              "tooltip": "Gebruik een compactere songtekstgrootte"
+            }
+          },
+          "tooltip": "Kies hoe groot de songtekst moet zijn"
         },
         "translation": {
           "clear-cache": {
@@ -1269,7 +1404,7 @@
         },
         "use-ytm-lyrics-without-proxy": {
           "label": "Gebruik YTM-teksten zonder proxy",
-          "tooltip": "Sla de YTM-browseproxy over en bel YouTube Music rechtstreeks via de geverifieerde sessie van de app. Nuttig als u uw netwerk/regio vertrouwt om directe browse-oproepen toe te staan."
+          "tooltip": "Sla de YTM-browseproxy over en bel \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 rechtstreeks via de geverifieerde sessie van de app. Nuttig als u uw netwerk/regio vertrouwt om directe browse-oproepen toe te staan."
         },
         "show-custom-search-button": {
           "label": "Toon aangepaste zoekknop",
@@ -1347,10 +1482,10 @@
         "type": {
           "label": "Soort",
           "submenu": {
-            "acrylic": "Acryl",
+            "acrylic": "Acrylic",
             "mica": "Mica",
             "none": "Geen",
-            "tabbed": "Tabbladen",
+            "tabbed": "Tabbed",
             "content": "Inhoud",
             "fullscreen-ui": "Volledig scherm-UI",
             "under-page": "Onder pagina",
@@ -1361,7 +1496,25 @@
       },
       "name": "Doorzichtige muziek speler",
       "settings": {
-        "type-description": "Achtergrondmateriaal dat wordt gebruikt voor venstertransparantie"
+        "type-description": "Achtergrondmateriaal dat wordt gebruikt voor venstertransparantie",
+        "opacity": {
+          "label": "Dekking"
+        },
+        "type": {
+          "label": "Soort",
+          "description": "Achtergrondmateriaal dat wordt gebruikt voor venstertransparantie",
+          "options": {
+            "acrylic": "Acrylic",
+            "content": "Inhoud",
+            "fullscreen-ui": "Volledig scherm-UI",
+            "mica": "Mica",
+            "tabbed": "Tabbed",
+            "under-page": "Onder pagina",
+            "under-window": "Onder venster",
+            "window": "Venster",
+            "none": "Geen"
+          }
+        }
       }
     },
     "tuna-obs": {
@@ -1397,6 +1550,27 @@
       "templates": {
         "button-song": "Nummer",
         "button-video": "Video"
+      },
+      "settings": {
+        "mode": {
+          "label": "Modus",
+          "options": {
+            "custom": "Aangepaste schakelaar",
+            "native": "Native schakelaar",
+            "disabled": "Uitgeschakeld"
+          }
+        },
+        "align": {
+          "label": "Uitlijning",
+          "options": {
+            "left": "Links",
+            "middle": "Midden",
+            "right": "Rechts"
+          }
+        },
+        "forceHide": {
+          "label": "Forceer het verwijderen van het videotabblad"
+        }
       }
     },
     "visualizer": {
@@ -1406,7 +1580,9 @@
       },
       "name": "Visualisator",
       "settings": {
-        "preset": "Voorinstelling",
+        "preset": {
+          "label": "Voorinstelling"
+        },
         "blend-time": "Mengtijd",
         "effect": "Effect",
         "accuracy": "Nauwkeurigheid",
@@ -1422,7 +1598,45 @@
         "dottify": "Puntjes",
         "dottify-description": "Teken stippen in plaats van een doorlopende lijn",
         "horizontal-align": "Horizontale uitlijning",
-        "vertical-align": "Verticale uitlijning"
+        "vertical-align": "Verticale uitlijning",
+        "blendTimeInSeconds": {
+          "label": "Mengtijd"
+        },
+        "vudioMaxHeight": {
+          "label": "Max. hoogte"
+        },
+        "vudioMaxSize": {
+          "label": "Max. grootte"
+        },
+        "vudioLineWidth": {
+          "label": "Lijndikte"
+        },
+        "vudioColor": {
+          "label": "Kleur"
+        },
+        "vudioShadowBlur": {
+          "label": "Schaduwvervaging"
+        },
+        "vudioShadowColor": {
+          "label": "Schaduwkleur"
+        },
+        "vudioFadeSide": {
+          "label": "Zijden vervagen"
+        },
+        "vudioPrettify": {
+          "label": "Verfraaien",
+          "description": "Laat de balken naar de randen toe smaller worden"
+        },
+        "vudioDottify": {
+          "label": "Puntjes",
+          "description": "Teken stippen in plaats van een doorlopende lijn"
+        },
+        "vudioHorizontalAlign": {
+          "label": "Horizontale uitlijning"
+        },
+        "vudioVerticalAlign": {
+          "label": "Verticale uitlijning"
+        }
       }
     },
     "audio-only": {
@@ -1464,7 +1678,7 @@
     },
     "search-commands": {
       "commands": {
-        "play": "Speel een video af via een YouTube-link of -id",
+        "play": "Speel een video af via een \u0059\u006f\u0075\u0054\u0075\u0062\u0065-link of -id",
         "settings": "Open de instellingen"
       },
       "description": "Typ / in het zoekvak om opdrachten uit te voeren, met automatische aanvulling voor hun argumenten",
@@ -1473,7 +1687,15 @@
         "open-keybind": "Sneltoets openen",
         "open-keybind-description": "Opdrachttoetsaanduiding in Electron-stijl, bijv. CmdOrCtrl+/ of Alt+Space",
         "open-shortcut": "Het zoekvak overal vandaan openen",
-        "open-shortcut-description": "Opent het zoekvak al in opdrachtmodus, zoals Spotlight. Nogmaals indrukken sluit het."
+        "open-shortcut-description": "Opent het zoekvak al in opdrachtmodus, zoals Spotlight. Nogmaals indrukken sluit het.",
+        "openShortcut": {
+          "label": "Het zoekvak overal vandaan openen",
+          "description": "Opent het zoekvak al in opdrachtmodus, zoals Spotlight. Nogmaals indrukken sluit het."
+        },
+        "openKeybind": {
+          "label": "Sneltoets openen",
+          "description": "Opdrachttoetsaanduiding in Electron-stijl, bijv. CmdOrCtrl+/ of Alt+Space"
+        }
       }
     },
     "seek-shortcuts": {
@@ -1481,16 +1703,19 @@
       "name": "Spoelsneltoetsen"
     },
     "sfw-music": {
-      "description": "Slaat automatisch nummers over die door YouTube Music als Expliciet zijn gemarkeerd. Pauzeert als een expliciete wachtrij zich herhaalt of er geen volgend nummer beschikbaar is.",
+      "description": "Slaat automatisch nummers over die door \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 als Expliciet zijn gemarkeerd. Pauzeert als een expliciete wachtrij zich herhaalt of er geen volgend nummer beschikbaar is.",
       "name": "SFW-muziek"
     },
     "toast-autoclose": {
-      "description": "Sluit YouTube Music-meldingen automatisch na drie seconden",
+      "description": "Sluit \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063-meldingen automatisch na drie seconden",
       "name": "Meldingen automatisch sluiten"
     },
     "statusbar-lyrics": {
       "settings": {
-        "include-pronunciation": "Uitspraak opnemen"
+        "include-pronunciation": "Uitspraak opnemen",
+        "includePronunciation": {
+          "label": "Uitspraak opnemen"
+        }
       }
     },
     "dismiss-multidevice-popup": {
@@ -1502,7 +1727,11 @@
       "name": "Geheugenbespaarder",
       "settings": {
         "threshold": "Cache-drempelwaarde",
-        "threshold-description": "Leeg de caches zodra hun actuele geheugengebruik deze waarde overschrijdt terwijl het venster verborgen is"
+        "threshold-description": "Leeg de caches zodra hun actuele geheugengebruik deze waarde overschrijdt terwijl het venster verborgen is",
+        "thresholdMB": {
+          "label": "Cache-drempelwaarde",
+          "description": "Leeg de caches zodra hun actuele geheugengebruik deze waarde overschrijdt terwijl het venster verborgen is"
+        }
       }
     }
   },
@@ -1531,7 +1760,7 @@
     "move-up": "Omhoog verplaatsen",
     "move-down": "Omlaag verplaatsen",
     "about": {
-      "tagline": "Een uitgebreide desktopapp voor YouTube Music",
+      "tagline": "Een uitgebreide desktopapp voor \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063",
       "versions": "Versies",
       "version-app": "App",
       "version-build": "Build",
@@ -1589,7 +1818,7 @@
     "stepper-decrement": "Verlagen",
     "stepper-increment": "Verhogen",
     "flags": {
-      "warning": "Functievlaggen zijn interne schakelaars van YouTube Music zelf. Als je ze wijzigt, kunnen afspelen, lay-out of accountfuncties kapotgaan, en ze vallen niet onder ondersteuning. Overschrijvingen worden alleen bewaard voor de vlaggen die je wijzigt, en kunnen met Ongedaan maken worden verwijderd.",
+      "warning": "Functievlaggen zijn interne schakelaars van \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 zelf. Als je ze wijzigt, kunnen afspelen, lay-out of accountfuncties kapotgaan, en ze vallen niet onder ondersteuning. Overschrijvingen worden alleen bewaard voor de vlaggen die je wijzigt, en kunnen met Ongedaan maken worden verwijderd.",
       "search-placeholder": "Functievlaggen zoeken",
       "overridden": "overschreven",
       "undo": "Ongedaan maken",
@@ -1634,7 +1863,11 @@
       "theme-preset": "Voorinstelling",
       "theme-variable-name": "Variabele",
       "theme-variable-value": "Waarde",
-      "theme-variable-add": "Variabele toevoegen"
+      "theme-variable-add": "Variabele toevoegen",
+      "performance-mode": "Prestatiemodus",
+      "performance-mode-desc": "Ruil wat visuele kwaliteit in voor zuinigere rendering.",
+      "in-process-gpu": "Voeg het GPU-proces samen met het app-proces",
+      "in-process-gpu-desc": "Experimenteel: bespaart één proces, maar verplaatst GPU-geheugen naar het hoofdproces en kan terugvallen op softwarerendering."
     }
   }
 }

@@ -1,0 +1,133 @@
+// The nav-bar button and the popover panel, each in its own shadow root: the
+// button lives in YTM's nav bar, the panel floats over the page.
+
+import type { PageContextOf, YTPlayerApi } from "@pear/sdk";
+import { isolateKeys, shadowHost } from "@pear/sdk/dom";
+import { render } from "preact";
+import { type AppElement, fetchAccount } from "../account.ts";
+import { Connection } from "../connection.ts";
+import { parseIceServers } from "../ice.ts";
+import type { QueueElement } from "../queue.ts";
+import type { schema } from "../schema.ts";
+import { Together } from "../together.ts";
+import type { Account } from "../types.ts";
+import { launcherStyles, panelStyles } from "./styles.ts";
+import { LauncherButton, Panel } from "./ui.tsx";
+
+export interface TogetherCommands {
+  copy(text: string): void;
+}
+
+export type Ctx = PageContextOf<typeof schema, TogetherCommands>;
+
+/** The panel's offset from the button and from the window's edge, in px. */
+const PANEL_GAP = 8;
+
+export function mountTogether(ctx: Ctx) {
+  const t = ctx.t;
+  // As pear-desktop: the signed-in account is the user's profile; the name setting is for when signed out.
+  let account: Account | null = null;
+  const together = new Together({
+    // Read at host/join time, so a changed server list applies to the next session.
+    createConnection: () => new Connection(ctx.log, parseIceServers(ctx.config.iceServers)),
+    queueElement: () => ctx.$<QueueElement>("queue"),
+    player: () => ctx.player.api as YTPlayerApi | null,
+    toast: (message) => ctx.toast(message),
+    t,
+    account: () => account,
+    name: () => ctx.config.displayName,
+    defaultPermission: () => ctx.config.defaultPermission,
+    log: ctx.log,
+  });
+  const launcher = shadowHost("pear-together-button", launcherStyles);
+  const overlay = shadowHost("pear-together", panelStyles);
+  document.body.append(overlay.host);
+
+  let open = false;
+  let stopped = false;
+  const copy = (text: string) => {
+    void ctx.host.invoke("copy", text).then(
+      () => ctx.toast(t("plugins.music-together.toast.id-copied", "Host ID copied to clipboard")),
+      () => ctx.toast(t("plugins.music-together.toast.id-copy-failed", "Failed to copy Host ID to clipboard")),
+    );
+  };
+  const copyDiagnostics = (text: string) => {
+    void ctx.host.invoke("copy", text).then(
+      () => ctx.toast(t("plugins.music-together.toast.diagnostics-copied", "Diagnostics summary copied to clipboard")),
+      () => ctx.toast(t("plugins.music-together.toast.diagnostics-copy-failed", "Failed to copy diagnostics summary")),
+    );
+  };
+
+  const draw = () => {
+    if (stopped) return;
+    render(<LauncherButton together={together} open={open} onClick={() => setOpen(!open)} />, launcher.root);
+    const anchor = launcher.host.getBoundingClientRect();
+    render(
+      open ? (
+        <div
+          class="anchor"
+          style={{ top: `${anchor.bottom + PANEL_GAP}px`, right: `${Math.max(PANEL_GAP, innerWidth - anchor.right - PANEL_GAP)}px` }}
+        >
+          <Panel
+            together={together}
+            t={t}
+            account={account}
+            name={ctx.config.displayName}
+            setName={(name) => ctx.setConfig({ displayName: name })}
+            copy={copy}
+            copyDiagnostics={copyDiagnostics}
+            toast={(message) => ctx.toast(message)}
+            iceServerEntries={ctx.config.iceServers}
+            onClose={() => setOpen(false)}
+          />
+        </div>
+      ) : null,
+      overlay.root,
+    );
+  };
+  const setOpen = (next: boolean) => {
+    open = next;
+    draw();
+  };
+  ctx.onCleanup(together.subscribe(draw));
+  // Name, permission and servers may have changed in the settings.
+  ctx.onConfigChange(() => draw());
+
+  // Keep YTM's shortcuts (space, j/k, …) away from our inputs; Escape closes.
+  isolateKeys(overlay.host, ctx.signal);
+  ctx.listen(overlay.host, "keydown", (event: KeyboardEvent) => {
+    if (event.key === "Escape") setOpen(false);
+  });
+  ctx.listen(document, "pointerdown", (event: PointerEvent) => {
+    const path = event.composedPath();
+    if (open && !path.includes(overlay.host) && !path.includes(launcher.host)) setOpen(false);
+  });
+  ctx.listen(window, "resize", () => open && draw());
+
+  // YTM re-renders its nav bar on some navigations; put the button back at the
+  // right end of it. pear-desktop anchored on a `pear-launcher` button that
+  // doesn't exist here; appending is one spot whatever the start order.
+  ctx.mount(launcher.host, "nav_bar.right");
+  draw();
+
+  void ctx.player
+    .ready()
+    .then(() => fetchAccount(ctx.$<AppElement>("app")))
+    .then(
+      (found) => {
+        account = found;
+        draw();
+      },
+      (error: unknown) => ctx.log.warn("couldn't read the signed-in account", error),
+    );
+
+  ctx.onCleanup(() => {
+    stopped = true;
+    together.stop();
+    render(null, launcher.root);
+    render(null, overlay.root);
+    launcher.host.remove();
+    overlay.host.remove();
+  });
+  return together;
+}

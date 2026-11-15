@@ -156,8 +156,8 @@
               "sync": {
                 "label": "同步語言",
                 "submenu": {
-                  "from-youtube": "從 YouTube",
-                  "to-youtube": "至 YouTube"
+                  "from-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "從 \u0059\u006f\u0075\u0054\u0075\u0062\u0065",
+                  "to-\u0079\u006f\u0075\u0074\u0075\u0062\u0065": "至 \u0059\u006f\u0075\u0054\u0075\u0062\u0065"
                 },
                 "failure": {
                   "dialog": {
@@ -181,27 +181,27 @@
               "disabled": "已停用",
               "enabled-and-hide-app": "啟用並最小化應用程式",
               "enabled-and-show-app": "啟用並顯示應用程式",
-              "move-to-current-desktop": "顯示時移動到目前虛擬桌面",
               "play-pause-on-click": "點選時播放／暫停",
+              "move-to-current-desktop": "顯示時移動到目前虛擬桌面",
               "force-white-icons": "強制使用白色圖示"
             }
           },
           "visual-tweaks": {
             "label": "介面設定",
             "submenu": {
-              "like-buttons": {
-                "default": "預設",
-                "force-show": "強制顯示",
-                "hide": "隱藏",
-                "swap": "交換讚及倒讚的按鈕位置",
-                "label": "按讚按鈕"
-              },
               "custom-window-title": {
                 "label": "自訂窗口標題",
                 "prompt": {
                   "label": "輸入自訂視窗標題：（留空將其停用）",
                   "placeholder": "範例：{{applicationName}}"
                 }
+              },
+              "like-buttons": {
+                "default": "預設",
+                "force-show": "強制顯示",
+                "hide": "隱藏",
+                "label": "按讚按鈕",
+                "swap": "交換讚及倒讚的按鈕位置"
               },
               "remove-upgrade-button": "移除升級按鈕",
               "theme": {
@@ -229,7 +229,7 @@
                   "open-themes-folder": "開啟主題資料夾"
                 }
               },
-              "use-ytm-icons": "使用原始 YouTube Music 圖示"
+              "use-ytm-icons": "使用原始 \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 圖示"
             }
           },
           "updates": {
@@ -277,7 +277,7 @@
       "show": "顯示視窗",
       "tooltip": {
         "default": "{{applicationName}}",
-        "with-song-info": "{{applicationName}}：{{artist}} - {{title}}"
+        "with-song-info": "{{applicationName}}: {{artist}} - {{title}}"
       },
       "like": "喜歡",
       "dislike": "不喜歡",
@@ -314,11 +314,15 @@
         },
         "enable-seekbar": "啟用進度條主題樣式"
       },
-      "name": "隨歌曲色調變更主題"
-    },
-    "audio-only": {
-      "description": "強制僅音訊模式——在網路和播放器層級阻擋所有影片串流以節省記憶體和頻寬",
-      "name": "僅音訊"
+      "name": "隨歌曲色調變更主題",
+      "settings": {
+        "ratio": {
+          "label": "顏色混合程度"
+        },
+        "enableSeekbar": {
+          "label": "啟用進度條主題樣式"
+        }
+      }
     },
     "ambient-mode": {
       "description": "影片周圍背景根據影片內容改變顏色，讓觀眾在觀賞影片時更有臨場感",
@@ -399,24 +403,24 @@
         "hostname": {
           "label": "主機名稱"
         },
-        "port": {
-          "label": "連接埠"
-        },
         "https": {
           "label": "HTTPS 及憑證",
           "submenu": {
+            "cert": {
+              "dialogTitle": "選擇憑證檔案",
+              "label": "憑證檔案（.crt/.pem）"
+            },
             "enable-https": {
               "label": "啟用 HTTPS"
             },
-            "cert": {
-              "label": "憑證檔案（.crt/.pem）",
-              "dialogTitle": "選擇憑證檔案"
-            },
             "key": {
-              "label": "私人金鑰檔案（.key/.pem）",
-              "dialogTitle": "選擇私人金鑰檔案"
+              "dialogTitle": "選擇私人金鑰檔案",
+              "label": "私人金鑰檔案（.key/.pem）"
             }
           }
+        },
+        "port": {
+          "label": "連接埠"
         },
         "mcp": {
           "label": "MCP 伺服器",
@@ -463,8 +467,8 @@
       "name": "Proxy 連線驗證",
       "prompt": {
         "hostname": {
-          "title": "Proxy 主機名稱",
-          "label": "本地 Proxy 伺服器主機名稱（需要重啟應用）："
+          "label": "本地 Proxy 伺服器主機名稱（需要重啟應用）：",
+          "title": "Proxy 主機名稱"
         },
         "port": {
           "label": "本地 Proxy 伺服器連接埠（需要重新啟動應用程式）：",
@@ -501,20 +505,34 @@
         "caption-changed": "字幕語言已更改至 {{language}}",
         "caption-disabled": "字幕已停用",
         "no-captions": "這首歌曲沒有可用的字幕"
+      },
+      "settings": {
+        "autoload": {
+          "label": "自動選擇上次使用的字幕"
+        },
+        "disableCaptions": {
+          "label": "預設無字幕"
+        }
       }
     },
     "clock": {
       "description": "新增時鐘至應用程式上方",
-      "name": "時鐘",
       "menu": {
         "format": {
-          "label": "時間格式",
+          "24-hour-format": "24 小時制",
           "display-seconds": "顯示秒數",
-          "24-hour-format": "24 小時制"
+          "label": "時間格式"
         }
       },
+      "name": "時鐘",
       "settings": {
-        "hour-12": "使用 12 小時制"
+        "hour-12": "使用 12 小時制",
+        "displaySeconds": {
+          "label": "顯示秒數"
+        },
+        "hour12": {
+          "label": "使用 12 小時制"
+        }
       }
     },
     "compact-sidebar": {
@@ -573,7 +591,12 @@
       "menu": {
         "apply-once": "只在啟動程式時套用"
       },
-      "name": "停用自動播放"
+      "name": "停用自動播放",
+      "settings": {
+        "applyOnce": {
+          "label": "只在啟動程式時套用"
+        }
+      }
     },
     "discord": {
       "backend": {
@@ -596,8 +619,8 @@
           "label": "狀態樣式",
           "submenu": {
             "application": "正在聆聽 {{applicationName}}",
-            "artist": "正在聆聽 {{artist}} 的歌曲",
-            "title": "正在聆聽 {{songTitle}}"
+            "artist": "正在聆聽 {artist} 的歌曲",
+            "title": "正在聆聽 {song title}"
           }
         }
       },
@@ -613,7 +636,38 @@
         "activity-timeout-enabled": "暫停時清除線上狀態",
         "activity-timeout-time": "之後清除",
         "hide-github-button": "隱藏「在 GitHub 上檢視」按鈕",
-        "hide-duration-left": "隱藏剩餘時間"
+        "hide-duration-left": "隱藏剩餘時間",
+        "autoReconnect": {
+          "label": "自動重新連線"
+        },
+        "activityTimeoutEnabled": {
+          "label": "暫停時清除線上狀態"
+        },
+        "activityTimeoutSeconds": {
+          "label": "之後清除"
+        },
+        "playButton": {
+          "label": "顯示 Play on {{applicationName}} 按鈕"
+        },
+        "hideGitHubButton": {
+          "label": "隱藏「在 GitHub 上檢視」按鈕"
+        },
+        "hideDurationLeft": {
+          "label": "隱藏剩餘時間"
+        },
+        "statusDisplayType": {
+          "label": "狀態樣式",
+          "options": {
+            "name": "正在聆聽 {{applicationName}}",
+            "state": "正在聆聽 {artist} 的歌曲",
+            "details": "正在聆聽 {song title}"
+          }
+        }
+      },
+      "actions": {
+        "clearActivity": {
+          "label": "清除狀態"
+        }
       }
     },
     "do-not-track": {
@@ -861,9 +915,9 @@
           "label": "通知互動設定",
           "submenu": {
             "hide-button-text": "隱藏按鈕文字",
-            "hover-controls": "懸停系統匣時顯示迷你播放器",
             "refresh-on-play-pause": "在播放／暫停時重新整理",
-            "tray-controls": "點選系統閘圖示時開啟／關閉"
+            "tray-controls": "點選系統閘圖示時開啟／關閉",
+            "hover-controls": "懸停系統匣時顯示迷你播放器"
           }
         },
         "priority": "通知優先權",
@@ -875,19 +929,6 @@
     "performance-improvement": {
       "description": "使用實驗性的腳本以優化效能",
       "name": "效能優化 [Beta]"
-    },
-    "playback-recovery": {
-      "description": "自動從卡住、停溯或死當的播放狀態中復原",
-      "menu": {
-        "log-to-console": "將復原事件記錄到主控台"
-      },
-      "name": "播放復原",
-      "settings": {
-        "stall-timeout": "停滯逾時",
-        "stall-timeout-description": "播放停滯多久後才嘗試復原",
-        "max-retries": "最大重試次數",
-        "max-retries-description": "在跳到下一首前嘗試復原的次數"
-      }
     },
     "picture-in-picture": {
       "description": "允許應用程式切換至子母畫面模式",
@@ -917,6 +958,23 @@
       "name": "子母畫面",
       "templates": {
         "button": "子母畫面"
+      },
+      "settings": {
+        "hotkey": {
+          "label": "快捷鍵"
+        },
+        "useNativePiP": {
+          "label": "使用瀏覽器原生子母畫面模式"
+        },
+        "alwaysOnTop": {
+          "label": "最上層顯示"
+        },
+        "savePosition": {
+          "label": "記住視窗位置"
+        },
+        "saveSize": {
+          "label": "記住視窗大小"
+        }
       }
     },
     "playback-speed": {
@@ -952,10 +1010,21 @@
         }
       },
       "settings": {
-        "steps": "音量調整幅度",
+        "steps": {
+          "label": "音量調整幅度"
+        },
         "arrows-shortcut": "方向鍵快速鍵",
         "shortcut-up": "全域快速鍵：提高音量",
-        "shortcut-down": "全域快速鍵：降低音量"
+        "shortcut-down": "全域快速鍵：降低音量",
+        "arrowsShortcut": {
+          "label": "方向鍵快速鍵"
+        },
+        "volumeUp": {
+          "label": "全域快速鍵：提高音量"
+        },
+        "volumeDown": {
+          "label": "全域快速鍵：降低音量"
+        }
       }
     },
     "quality-changer": {
@@ -998,8 +1067,8 @@
           "token": "輸入 ListenBrainz 使用者憑證",
           "api-root": "ListenBrainz API URL"
         },
-        "scrobble-alternative-title": "使用替代歌曲標題",
         "scrobble-alternative-artist": "使用替代的藝人",
+        "scrobble-alternative-title": "使用替代歌曲標題",
         "scrobble-other-media": "紀錄其他媒體檔案",
         "regex-filters": "正規表示式篩選條件",
         "use-musicbrainz": "使用 MusicBrainz 修正中繼資料",
@@ -1054,14 +1123,42 @@
       },
       "settings": {
         "global-keybinds": "全域按鍵綁定（整個應用程式皆有效）",
-        "local-keybinds": "本機按鍵綁定（僅在視窗取得焦點時有效）"
+        "local-keybinds": "本機按鍵綁定（僅在視窗取得焦點時有效）",
+        "playPause": {
+          "label": "播放／暫停"
+        },
+        "localPlayPause": {
+          "label": "播放／暫停"
+        },
+        "next": {
+          "label": "下一首"
+        },
+        "localNext": {
+          "label": "下一首"
+        },
+        "previous": {
+          "label": "上一首"
+        },
+        "localPrevious": {
+          "label": "上一首"
+        },
+        "overrideMediaKeys": {
+          "label": "覆寫媒體快捷鍵"
+        }
       }
+    },
+    "skip-disliked-songs": {
+      "description": "自動跳過不喜歡的歌曲",
+      "name": "自動跳過不喜歡的歌曲"
     },
     "skip-silences": {
       "description": "自動跳過音樂無聲片段",
       "name": "自動跳過無聲片段",
       "settings": {
-        "only-skip-beginning": "僅略過曲目開頭的靜音"
+        "only-skip-beginning": "僅略過曲目開頭的靜音",
+        "onlySkipBeginning": {
+          "label": "僅略過曲目開頭的靜音"
+        }
       }
     },
     "sponsorblock": {
@@ -1077,7 +1174,28 @@
           "selfpromo": "自我宣傳",
           "music_offtopic": "非音樂片段"
         },
-        "api-url": "API URL"
+        "api-url": "API URL",
+        "sponsor": {
+          "label": "贊助"
+        },
+        "intro": {
+          "label": "片頭"
+        },
+        "outro": {
+          "label": "片尾"
+        },
+        "interaction": {
+          "label": "互動提醒"
+        },
+        "selfpromo": {
+          "label": "自我宣傳"
+        },
+        "music_offtopic": {
+          "label": "非音樂片段"
+        },
+        "apiURL": {
+          "label": "API URL"
+        }
       }
     },
     "synced-lyrics": {
@@ -1087,13 +1205,23 @@
         "not-found": "⚠️未找到該首歌曲的歌詞。"
       },
       "menu": {
-        "preferred-provider": {
-          "label": "偏好提供者",
-          "tooltip": "選擇預設的歌詞提供者",
-          "none": {
-            "label": "無",
-            "tooltip": "沒有偏好的提供者"
-          }
+        "convert-chinese-character": {
+          "label": "繁簡轉換",
+          "submenu": {
+            "disabled": {
+              "label": "已停用",
+              "tooltip": "停用繁簡轉換"
+            },
+            "simplified-to-traditional": {
+              "label": "簡體轉繁體",
+              "tooltip": "轉換簡體中文至繁體中文"
+            },
+            "traditional-to-simplified": {
+              "label": "繁體轉簡體",
+              "tooltip": "轉換繁體中文至簡體中文"
+            }
+          },
+          "tooltip": "轉換中文字符至繁體或簡體"
         },
         "default-text-string": {
           "label": "預設歌詞中間隔的符號",
@@ -1121,6 +1249,30 @@
           },
           "tooltip": "選擇要使用的歌詞顯示效果"
         },
+        "precise-timing": {
+          "label": "使歌詞完美同步",
+          "tooltip": "更精確的計算下一行歌詞的顯示 (將會降低些許效能)"
+        },
+        "preferred-provider": {
+          "label": "偏好提供者",
+          "none": {
+            "label": "無",
+            "tooltip": "沒有偏好的提供者"
+          },
+          "tooltip": "選擇預設的歌詞提供者"
+        },
+        "romanization": {
+          "label": "羅馬拼音化歌詞",
+          "tooltip": "如果歌詞使用不同語言，嘗試使用拉丁文顯示。"
+        },
+        "show-lyrics-even-if-inexact": {
+          "label": "即使不精確依然強制顯示歌詞",
+          "tooltip": "當找不到符合該歌曲的歌詞時，該功能會嘗試不同的搜尋方式。\n使用不同的搜尋方式會導致不精確的結果。"
+        },
+        "show-time-codes": {
+          "label": "顯示時間線",
+          "tooltip": "在歌詞旁顯示時間線"
+        },
         "lyrics-font-size": {
           "label": "歌詞字體大小",
           "submenu": {
@@ -1138,40 +1290,6 @@
             }
           },
           "tooltip": "選擇歌詞文字的大小"
-        },
-        "precise-timing": {
-          "label": "使歌詞完美同步",
-          "tooltip": "更精確的計算下一行歌詞的顯示 (將會降低些許效能)"
-        },
-        "romanization": {
-          "label": "羅馬拼音化歌詞",
-          "tooltip": "如果歌詞使用不同語言，嘗試使用拉丁文顯示。"
-        },
-        "show-lyrics-even-if-inexact": {
-          "label": "即使不精確依然強制顯示歌詞",
-          "tooltip": "當找不到符合該歌曲的歌詞時，該功能會嘗試不同的搜尋方式。\n使用不同的搜尋方式會導致不精確的結果。"
-        },
-        "show-time-codes": {
-          "label": "顯示時間線",
-          "tooltip": "在歌詞旁顯示時間線"
-        },
-        "convert-chinese-character": {
-          "label": "繁簡轉換",
-          "submenu": {
-            "disabled": {
-              "label": "已停用",
-              "tooltip": "停用繁簡轉換"
-            },
-            "simplified-to-traditional": {
-              "label": "簡體轉繁體",
-              "tooltip": "轉換簡體中文至繁體中文"
-            },
-            "traditional-to-simplified": {
-              "label": "繁體轉簡體",
-              "tooltip": "轉換繁體中文至簡體中文"
-            }
-          },
-          "tooltip": "轉換中文字符至繁體或簡體"
         },
         "translation": {
           "label": "歌詞翻譯",
@@ -1286,7 +1404,7 @@
         },
         "use-ytm-lyrics-without-proxy": {
           "label": "使用YTM歌詞，無需代理",
-          "tooltip": "跳過YTM瀏覽代理，直接使用應用程式的已驗證會話呼叫YouTube Music。若您信任您的網路/地區允許直接瀏覽呼叫，此功能將很有用。"
+          "tooltip": "跳過YTM瀏覽代理，直接使用應用程式的已驗證會話呼叫\u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063。若您信任您的網路/地區允許直接瀏覽呼叫，此功能將很有用。"
         },
         "show-custom-search-button": {
           "label": "顯示自訂搜尋按鈕",
@@ -1354,7 +1472,6 @@
     },
     "transparent-player": {
       "description": "讓視窗背景變為透明糢糊",
-      "name": "透明糢糊效果",
       "menu": {
         "opacity": {
           "label": "不透明度",
@@ -1377,8 +1494,27 @@
           }
         }
       },
+      "name": "透明糢糊效果",
       "settings": {
-        "type-description": "用於視窗透明效果的背景材質"
+        "type-description": "用於視窗透明效果的背景材質",
+        "opacity": {
+          "label": "不透明度"
+        },
+        "type": {
+          "label": "樣式",
+          "description": "用於視窗透明效果的背景材質",
+          "options": {
+            "acrylic": "壓克力(Acrylic)",
+            "content": "內容",
+            "fullscreen-ui": "全螢幕界面",
+            "mica": "雲母(Mica)",
+            "tabbed": "分頁式(Tabbed)",
+            "under-page": "在頁面底下",
+            "under-window": "在視窗底下",
+            "window": "視窗",
+            "none": "無"
+          }
+        }
       }
     },
     "tuna-obs": {
@@ -1414,6 +1550,27 @@
       "templates": {
         "button-song": "歌曲",
         "button-video": "影片"
+      },
+      "settings": {
+        "mode": {
+          "label": "模式",
+          "options": {
+            "custom": "自訂樣式",
+            "native": "原生樣式",
+            "disabled": "停用"
+          }
+        },
+        "align": {
+          "label": "按鈕位置",
+          "options": {
+            "left": "靠左",
+            "middle": "中間",
+            "right": "靠右"
+          }
+        },
+        "forceHide": {
+          "label": "強制移除整個影片頁面"
+        }
       }
     },
     "visualizer": {
@@ -1423,7 +1580,9 @@
       },
       "name": "視覺化效果",
       "settings": {
-        "preset": "預設集",
+        "preset": {
+          "label": "預設集"
+        },
         "blend-time": "混合時間",
         "effect": "效果",
         "accuracy": "準確度",
@@ -1439,7 +1598,62 @@
         "dottify": "點狀化",
         "dottify-description": "繪製圓點而非連續線條",
         "horizontal-align": "水平對齊",
-        "vertical-align": "垂直對齊"
+        "vertical-align": "垂直對齊",
+        "blendTimeInSeconds": {
+          "label": "混合時間"
+        },
+        "vudioMaxHeight": {
+          "label": "最大高度"
+        },
+        "vudioMaxSize": {
+          "label": "最大尺寸"
+        },
+        "vudioLineWidth": {
+          "label": "線條寬度"
+        },
+        "vudioColor": {
+          "label": "顏色"
+        },
+        "vudioShadowBlur": {
+          "label": "陰影模糊"
+        },
+        "vudioShadowColor": {
+          "label": "陰影顏色"
+        },
+        "vudioFadeSide": {
+          "label": "淡化側邊"
+        },
+        "vudioPrettify": {
+          "label": "美化",
+          "description": "讓長條朝邊緣逐漸變細"
+        },
+        "vudioDottify": {
+          "label": "點狀化",
+          "description": "繪製圓點而非連續線條"
+        },
+        "vudioHorizontalAlign": {
+          "label": "水平對齊"
+        },
+        "vudioVerticalAlign": {
+          "label": "垂直對齊"
+        }
+      }
+    },
+    "audio-only": {
+      "description": "強制僅音訊模式——在網路和播放器層級阻擋所有影片串流以節省記憶體和頻寬",
+      "name": "僅音訊"
+    },
+    "playback-recovery": {
+      "description": "自動從卡住、停溯或死當的播放狀態中復原",
+      "menu": {
+        "log-to-console": "將復原事件記錄到主控台"
+      },
+      "name": "播放復原",
+      "settings": {
+        "stall-timeout": "停滯逾時",
+        "stall-timeout-description": "播放停滯多久後才嘗試復原",
+        "max-retries": "最大重試次數",
+        "max-retries-description": "在跳到下一首前嘗試復原的次數"
       }
     },
     "playlist-search": {
@@ -1464,7 +1678,7 @@
     },
     "search-commands": {
       "commands": {
-        "play": "從 YouTube 連結或 ID 播放影片",
+        "play": "從 \u0059\u006f\u0075\u0054\u0075\u0062\u0065 連結或 ID 播放影片",
         "settings": "開啟設定"
       },
       "description": "在搜尋框中輸入 / 來執行命令，並可自動完成其引數",
@@ -1473,7 +1687,15 @@
         "open-keybind": "開啟快速鍵",
         "open-keybind-description": "Electron 樣式的快速鍵，例如 CmdOrCtrl+/ 或 Alt+Space",
         "open-shortcut": "從任何地方開啟搜尋框",
-        "open-shortcut-description": "叫出已處於命令模式的搜尋框，類似 Spotlight。再按一次即可關閉。"
+        "open-shortcut-description": "叫出已處於命令模式的搜尋框，類似 Spotlight。再按一次即可關閉。",
+        "openShortcut": {
+          "label": "從任何地方開啟搜尋框",
+          "description": "叫出已處於命令模式的搜尋框，類似 Spotlight。再按一次即可關閉。"
+        },
+        "openKeybind": {
+          "label": "開啟快速鍵",
+          "description": "Electron 樣式的快速鍵，例如 CmdOrCtrl+/ 或 Alt+Space"
+        }
       }
     },
     "seek-shortcuts": {
@@ -1481,16 +1703,19 @@
       "name": "跳轉快速鍵"
     },
     "sfw-music": {
-      "description": "自動略過 YouTube Music 標示為 Explicit 的歌曲。若明確內容佇列重複或沒有下一首歌曲可用，則暫停播放。",
+      "description": "自動略過 \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 標示為 Explicit 的歌曲。若明確內容佇列重複或沒有下一首歌曲可用，則暫停播放。",
       "name": "SFW 音樂"
     },
     "toast-autoclose": {
-      "description": "自動在三秒後關閉 YouTube Music 提示訊息",
+      "description": "自動在三秒後關閉 \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 提示訊息",
       "name": "提示訊息自動關閉"
     },
     "statusbar-lyrics": {
       "settings": {
-        "include-pronunciation": "包含發音"
+        "include-pronunciation": "包含發音",
+        "includePronunciation": {
+          "label": "包含發音"
+        }
       }
     },
     "dismiss-multidevice-popup": {
@@ -1502,7 +1727,11 @@
       "name": "記憶體節省",
       "settings": {
         "threshold": "快取閾值",
-        "threshold-description": "當視窗隱藏時，若快取的即時記憶體用量超過此值，便清除快取"
+        "threshold-description": "當視窗隱藏時，若快取的即時記憶體用量超過此值，便清除快取",
+        "thresholdMB": {
+          "label": "快取閾值",
+          "description": "當視窗隱藏時，若快取的即時記憶體用量超過此值，便清除快取"
+        }
       }
     }
   },
@@ -1531,7 +1760,7 @@
     "move-up": "上移",
     "move-down": "下移",
     "about": {
-      "tagline": "功能豐富的 YouTube Music 桌面應用程式",
+      "tagline": "功能豐富的 \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 桌面應用程式",
       "versions": "版本",
       "version-app": "應用程式",
       "version-build": "建置",
@@ -1589,7 +1818,7 @@
     "stepper-decrement": "減少",
     "stepper-increment": "增加",
     "flags": {
-      "warning": "功能旗標是 YouTube Music 內部的開關. 變更它們可能導致播放, 版面或帳戶功能故障, 且不受支援服務涵蓋. 覆寫設定只會保留您變更的旗標, 並可用復原移除.",
+      "warning": "功能旗標是 \u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063 內部的開關. 變更它們可能導致播放, 版面或帳戶功能故障, 且不受支援服務涵蓋. 覆寫設定只會保留您變更的旗標, 並可用復原移除.",
       "search-placeholder": "搜尋旗標",
       "overridden": "已覆寫",
       "undo": "復原",
@@ -1634,7 +1863,11 @@
       "theme-preset": "預設集",
       "theme-variable-name": "變數",
       "theme-variable-value": "值",
-      "theme-variable-add": "新增變數"
+      "theme-variable-add": "新增變數",
+      "performance-mode": "效能模式",
+      "performance-mode-desc": "犧牲部分視覺精緻度，換取更低的渲染成本。",
+      "in-process-gpu": "將 GPU 程序合併至應用程式程序",
+      "in-process-gpu-desc": "實驗性：可節省一個程序，但會把 GPU 記憶體移入主程序，且可能退回軟體渲染。"
     }
   }
 }

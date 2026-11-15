@@ -69,6 +69,25 @@ const camelcase = {
       }
     };
 
+    const reportFunction = (node) => {
+      if (node.id) report(node.id);
+      node.params.forEach(reportPattern);
+    };
+
+    const reportClass = (node) => {
+      if (node.id) report(node.id);
+    };
+
+    const reportImport = (node) => {
+      if (ignoreImports) return;
+      report(node.local);
+    };
+
+    const reportKey = (node) => {
+      if (!checkProps || node.computed) return;
+      report(node.key);
+    };
+
     return {
       VariableDeclarator(node) {
         if (node.id.type === 'Identifier') report(node.id);
@@ -87,51 +106,26 @@ const camelcase = {
           report(node.left.property);
         }
       },
-      FunctionDeclaration(node) {
-        if (node.id) report(node.id);
-        node.params.forEach(reportPattern);
-      },
-      FunctionExpression(node) {
-        if (node.id) report(node.id);
-        node.params.forEach(reportPattern);
-      },
+      FunctionDeclaration: reportFunction,
+      FunctionExpression: reportFunction,
       ArrowFunctionExpression(node) {
         node.params.forEach(reportPattern);
       },
       CatchClause(node) {
         if (node.param) reportPattern(node.param);
       },
-      ClassDeclaration(node) {
-        if (node.id) report(node.id);
-      },
-      ClassExpression(node) {
-        if (node.id) report(node.id);
-      },
-      ImportSpecifier(node) {
-        if (ignoreImports) return;
-        report(node.local);
-      },
-      ImportDefaultSpecifier(node) {
-        if (ignoreImports) return;
-        report(node.local);
-      },
-      ImportNamespaceSpecifier(node) {
-        if (ignoreImports) return;
-        report(node.local);
-      },
+      ClassDeclaration: reportClass,
+      ClassExpression: reportClass,
+      ImportSpecifier: reportImport,
+      ImportDefaultSpecifier: reportImport,
+      ImportNamespaceSpecifier: reportImport,
       Property(node) {
         if (!checkProps || node.computed) return;
         if (node.parent && node.parent.type === 'ObjectPattern') return;
         report(node.key);
       },
-      MethodDefinition(node) {
-        if (!checkProps || node.computed) return;
-        report(node.key);
-      },
-      PropertyDefinition(node) {
-        if (!checkProps || node.computed) return;
-        report(node.key);
-      },
+      MethodDefinition: reportKey,
+      PropertyDefinition: reportKey,
     };
   },
 };

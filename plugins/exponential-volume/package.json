@@ -1,0 +1,14 @@
+{
+  "name": "@pear/plugin-exponential-volume",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc -p ."
+  },
+  "dependencies": {
+    "@pear/sdk": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "electron": "^45.2.3"  }
+}

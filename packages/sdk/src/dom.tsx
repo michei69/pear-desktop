@@ -1,0 +1,691 @@
+/** @jsxImportSource @pear/sdk */
+// Page-side building blocks plugins share: icons, shadow hosts, the player-bar
+// picker and entries in YTM's popup menus. Written with the DOM JSX runtime.
+
+import type { PageContext, SelectorName } from "./index.ts";
+import type { Child } from "./jsx-runtime.ts";
+import { selectors } from "./selectors.ts";
+import { styleSheet } from "./stylesheets.ts";
+
+type Ctx = Pick<PageContext<unknown, {}>, "addStyle" | "onCleanup" | "listen" | "observe" | "$">;
+
+/** A 24×24 Material-style icon from one or more SVG paths. */
+export function Icon({ path }: { path: string | readonly string[] }) {
+  const paths = typeof path === "string" ? [path] : path;
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      {paths.map((d) => (
+        <path d={d} />
+      ))}
+    </svg>
+  );
+}
+
+/** A custom element with an open shadow root styled by `css`, for UIs YTM's styles mustn't reach. */
+export function shadowHost(tag: string, css: string) {
+  const host = document.createElement(tag);
+  const root = host.attachShadow({ mode: "open" });
+  root.adoptedStyleSheets = [styleSheet(css)];
+  return { host, root };
+}
+
+/** Keeps key presses inside `element` from reaching YTM's keyboard shortcuts. */
+export function isolateKeys(element: EventTarget, signal: AbortSignal) {
+  const stop = (event: Event) => event.stopPropagation();
+  for (const type of ["keydown", "keyup", "keypress"]) element.addEventListener(type, stop, { signal });
+}
+
+/** Elements kept in the page, with where each one goes; one document observer serves them all. */
+const mounted = new Map<Element, (element: Element) => void>();
+let stopWatching: (() => void) | undefined;
+
+function placeDetached() {
+  for (const [element, place] of mounted) {
+    if (element.isConnected) continue;
+    // One plugin's failing placement mustn't keep the others out.
+    try {
+      place(element);
+    } catch (error) {
+      console.error("[pear] placing an element failed", error);
+    }
+  }
+}
+
+/** Calls `place` whenever `element` is detached (now, and on any later DOM change). Returns a stop function. */
+export function keepMounted(element: Element, place: (element: Element) => void): () => void {
+  mounted.set(element, place);
+  if (!element.isConnected) place(element);
+  // YTM may re-render or replace whole parts of the page, so watch the document.
+  stopWatching ??= observe(document, { childList: true, subtree: true }, placeDetached);
+  return () => {
+    if (mounted.get(element) === place) mounted.delete(element);
+    if (mounted.size === 0) {
+      stopWatching?.();
+      stopWatching = undefined;
+    }
+    element.remove();
+  };
+}
+
+interface Watch {
+  options: MutationObserverInit;
+  callback: MutationCallback;
+}
+
+interface ObservedRoot {
+  target: Node;
+  observer: MutationObserver;
+  watches: Set<Watch>;
+  /** The observation in force, so adding a watch with covered options keeps the queued records. */
+  key?: string;
+}
+
+/** One observer per watched node, however many plugins watch it (pear-desktop's player-page observer). */
+const observedRoots = new WeakMap<Node, ObservedRoot>();
+
+/** `attributes: true`, `attributeFilter` or `attributeOldValue` all imply attribute mutations. */
+const wantsAttributes = (options: MutationObserverInit) =>
+  options.attributes === true || options.attributeFilter !== undefined || options.attributeOldValue === true;
+
+/** Same for `characterData`: the old-value flag implies it too. */
+const wantsCharacterData = (options: MutationObserverInit) => options.characterData === true || options.characterDataOldValue === true;
+
+/** Whether a lone observer with these options would have reported this record. */
+function matches(options: MutationObserverInit, target: Node, record: MutationRecord) {
+  if (options.subtree !== true && record.target !== target) return false;
+  switch (record.type) {
+    case "attributes":
+      if (!wantsAttributes(options)) return false;
+      return !options.attributeFilter || options.attributeFilter.includes(record.attributeName ?? "");
+    case "characterData":
+      return wantsCharacterData(options);
+    default:
+      return options.childList === true;
+  }
+}
+
+/** The union of what the node's watches need: one browser-level observation for all of them. */
+function observation(watches: Set<Watch>): MutationObserverInit {
+  const config: MutationObserverInit = {};
+  let allAttributes = false;
+  const attributeFilters = new Set<string>();
+  for (const watch of watches) {
+    const options = watch.options;
+    config.childList ||= options.childList === true;
+    config.subtree ||= options.subtree === true;
+    if (wantsAttributes(options)) {
+      config.attributes = true;
+      if (options.attributeFilter) for (const name of options.attributeFilter) attributeFilters.add(name);
+      else allAttributes = true;
+      config.attributeOldValue ||= options.attributeOldValue === true;
+    }
+    if (wantsCharacterData(options)) {
+      config.characterData = true;
+      config.characterDataOldValue ||= options.characterDataOldValue === true;
+    }
+  }
+  if (config.attributes === true && !allAttributes && attributeFilters.size > 0) {
+    config.attributeFilter = [...attributeFilters];
+  }
+  return config;
+}
+
+const observationKey = (config: MutationObserverInit) =>
+  JSON.stringify([
+    config.childList === true,
+    config.attributes === true,
+    config.characterData === true,
+    config.subtree === true,
+    config.attributeOldValue === true,
+    config.characterDataOldValue === true,
+    config.attributeFilter ?? null,
+  ]);
+
+function applyObservation(root: ObservedRoot) {
+  const config = observation(root.watches);
+  const key = observationKey(config);
+  if (root.key === key) return;
+  root.observer.disconnect();
+  root.observer.observe(root.target, config);
+  root.key = key;
+}
+
+function createRoot(target: Node): ObservedRoot {
+  const watches = new Set<Watch>();
+  const observer = new MutationObserver((records) => {
+    for (const watch of watches) {
+      // Only the records this watch would have got from its own observer.
+      const relevant = records.filter((record) => matches(watch.options, target, record));
+      if (relevant.length === 0) continue;
+      try {
+        watch.callback(relevant, observer);
+      } catch (error) {
+        // One plugin's failing callback must not starve the others in the batch.
+        console.error("[pear] mutation observer callback failed", error);
+      }
+    }
+  });
+  return { target, watches, observer };
+}
+
+/**
+ * Watches `target` through a shared MutationObserver and returns its disconnect.
+ * Several watches on the same node cost one observer and one mutation batch;
+ * each callback still only sees the records its own options would report.
+ */
+export function observe(target: Node, options: MutationObserverInit, callback: MutationCallback): () => void {
+  const root = observedRoots.get(target) ?? createRoot(target);
+  observedRoots.set(target, root);
+  const watch: Watch = { options, callback };
+  root.watches.add(watch);
+  applyObservation(root);
+  return () => {
+    if (!root.watches.delete(watch)) return;
+    if (root.watches.size > 0) {
+      applyObservation(root);
+      return;
+    }
+    root.observer.disconnect();
+    if (observedRoots.get(target) === root) observedRoots.delete(target);
+  };
+}
+
+// ---------------------------------------------------------------- player-bar picker
+
+export interface PickerItem {
+  label: string;
+  checked: boolean;
+  select(): void;
+  /** Extra attributes for the item (e.g. `data-quality`). */
+  attributes?: Record<string, string>;
+}
+
+export interface PickerOptions {
+  /** Class prefix: `pear-<name>-button` and `pear-<name>-popover`. */
+  name: string;
+  /** The button's tooltip and accessible name. */
+  label: string;
+  /** The button's icon (an SVG path); leave it out to give the button text yourself. */
+  icon?: string;
+  heading?: string;
+  /** The choices, read each time the picker opens; leave it out to fill `popover` yourself. */
+  items?(): PickerItem[] | Promise<PickerItem[]>;
+  /** Shown instead of the list when there are no choices. */
+  empty?: string;
+  /** CSS `position-area` of the popover; default "top span-left" (above, growing left). */
+  position?: string;
+  /** Minimum popover width in px; default 180. */
+  width?: number;
+  /** Stops clicks reaching YTM: needed inside the video, which treats clicks as play/pause. */
+  isolateClicks?: boolean;
+}
+
+/**
+ * A button that opens a menu of choices in a popover, like YTM's own pickers.
+ * The popover lives in <body> (so YTM's overflow can't clip it); mount `button` where it belongs.
+ * Its shared sheet is added after the plugin's `style`, so overrides name both classes:
+ * `.pear-picker-popover.pear-<name>-popover { … }`.
+ */
+export function picker(ctx: Ctx, options: PickerOptions) {
+  ctx.addStyle(PICKER_CSS);
+  const anchor = `--pear-${options.name}`;
+  const popover = popoverElement(options.name, "auto", "menu");
+  Object.assign(popover.style, {
+    positionAnchor: anchor,
+    positionArea: options.position ?? "top span-left",
+    minWidth: `${options.width ?? 180}px`,
+  });
+  const button = (
+    <button
+      class={`pear-picker-button pear-${options.name}-button`}
+      title={options.label}
+      aria-label={options.label}
+      aria-expanded="false"
+      popoverTargetElement={popover}
+      style={{ "anchor-name": anchor }}
+      onClick={(event) => options.isolateClicks && event.stopPropagation()}
+    >
+      {options.icon && <Icon path={options.icon} />}
+    </button>
+  );
+
+  const close = () => popover.hidePopover();
+  const render = async () => {
+    const items = (await options.items?.()) ?? [];
+    const heading = options.heading && <h2>{options.heading}</h2>;
+    const empty = items.length === 0 && options.empty && <p>{options.empty}</p>;
+    const entries = items.map((item) => (
+      <button
+        role="menuitemradio"
+        aria-checked={item.checked}
+        {...item.attributes}
+        onClick={() => {
+          item.select();
+          close();
+        }}
+      >
+        {item.label}
+      </button>
+    ));
+    popover.replaceChildren(...[heading, empty, ...entries].filter((node): node is HTMLElement => !!node));
+  };
+  ctx.listen(popover, "beforetoggle", (event: ToggleEvent) => {
+    const open = event.newState === "open";
+    if (open && options.items) void render();
+    button.setAttribute("aria-expanded", String(open));
+  });
+
+  document.body.append(popover);
+  ctx.onCleanup(() => {
+    button.remove();
+    popover.remove();
+  });
+  return { button, popover, close };
+}
+
+/** The popover of a picker or an anchored popover, in YTM's menu look (PICKER_CSS). */
+function popoverElement(name: string, type: "auto" | "manual", role: string) {
+  return <div class={`pear-picker-popover pear-${name}-popover`} popover={type} role={role} />;
+}
+
+export interface AnchoredPopoverOptions {
+  /** Class prefix: `pear-<name>-popover`, next to `pear-picker-popover`. */
+  name: string;
+  /** Its accessible name. */
+  label: string;
+}
+
+/**
+ * An empty popover in the pickers' look, to fill yourself, shown next to any
+ * element. It is "manual": it stays until `hide`, so the plugin decides when
+ * it closes (hover, Escape, a click outside…). It lives in <body>.
+ */
+export function anchoredPopover(ctx: Ctx, options: AnchoredPopoverOptions) {
+  ctx.addStyle(PICKER_CSS);
+  const popover = popoverElement(options.name, "manual", "dialog");
+  popover.setAttribute("aria-label", options.label);
+  const anchorName = `--pear-${options.name}-anchor`;
+  let anchor: HTMLElement | undefined;
+  document.body.append(popover);
+  ctx.onCleanup(() => {
+    anchor?.style.removeProperty("anchor-name");
+    popover.remove();
+  });
+  return {
+    popover,
+    get isOpen() {
+      return popover.matches(":popover-open");
+    },
+    /**
+     * Shows it at `position` (a CSS `position-area`) of `next`, e.g. "right span-bottom";
+     * without an element, where the plugin's CSS puts it.
+     */
+    show(next?: HTMLElement, position = "") {
+      // One element at a time carries the anchor name.
+      if (anchor !== next) anchor?.style.removeProperty("anchor-name");
+      anchor = next;
+      anchor?.style.setProperty("anchor-name", anchorName);
+      Object.assign(popover.style, { positionAnchor: anchor ? anchorName : "", positionArea: anchor ? position : "" });
+      if (!popover.matches(":popover-open")) popover.showPopover();
+    },
+    hide() {
+      if (popover.matches(":popover-open")) popover.hidePopover();
+    },
+  };
+}
+
+/**
+ * Keeps the wheel inside `element`: scrolling over it scrolls what is under the
+ * pointer, never the page behind it, even past the end.
+ */
+export function containScroll(element: HTMLElement, signal?: AbortSignal) {
+  const onWheel = (event: WheelEvent) => {
+    event.stopPropagation();
+    if (!scrollsInside(event, element)) event.preventDefault();
+  };
+  element.addEventListener("wheel", onWheel, { passive: false, ...(signal ? { signal } : {}) });
+}
+
+/** Whether something in `boundary` under the pointer can still scroll the way the wheel turns. */
+function scrollsInside(event: WheelEvent, boundary: Element) {
+  const vertical = Math.abs(event.deltaY) >= Math.abs(event.deltaX);
+  const delta = vertical ? event.deltaY : event.deltaX;
+  for (const target of event.composedPath()) {
+    if (!(target instanceof HTMLElement)) break;
+    const style = getComputedStyle(target);
+    if (/auto|scroll/.test(vertical ? style.overflowY : style.overflowX)) {
+      const position = vertical ? target.scrollTop : target.scrollLeft;
+      const room = vertical ? target.scrollHeight - target.clientHeight : target.scrollWidth - target.clientWidth;
+      if (delta < 0 ? position > 0 : position < room - 1) return true;
+    }
+    if (target === boundary) break;
+  }
+  return false;
+}
+
+const PICKER_CSS = `
+  .pear-picker-button {
+    width: 40px;
+    height: 40px;
+    padding: 8px;
+    border: 0;
+    border-radius: 50%;
+    background: none;
+    color: var(--ytmusic-text-secondary, #aaa);
+    cursor: pointer;
+  }
+  .pear-picker-button[hidden] {
+    display: none;
+  }
+  .pear-picker-button:hover,
+  .pear-picker-button[aria-expanded="true"] {
+    background: rgb(255 255 255 / 0.1);
+    color: #fff;
+  }
+  .pear-picker-button svg {
+    display: block;
+    width: 24px;
+    height: 24px;
+    fill: currentColor;
+  }
+  .pear-picker-popover {
+    position-try-fallbacks: flip-block, flip-inline;
+    inset: auto;
+    margin: 8px 0;
+    max-height: 50vh;
+    overflow-y: auto;
+    padding: 8px 0;
+    border: 0;
+    border-radius: 8px;
+    background: #212121;
+    color: #fff;
+    font: 400 14px Roboto, sans-serif;
+    box-shadow: 0 4px 16px rgb(0 0 0 / 0.5);
+  }
+  .pear-picker-popover h2 {
+    margin: 0;
+    padding: 4px 16px 8px;
+    color: #aaa;
+    font: inherit;
+    font-size: 12px;
+  }
+  .pear-picker-popover p {
+    margin: 0;
+    padding: 4px 16px;
+    color: #aaa;
+  }
+  .pear-picker-popover [role="menuitemradio"] {
+    position: relative;
+    display: block;
+    width: 100%;
+    padding: 8px 16px 8px 36px;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+  }
+  .pear-picker-popover [role="menuitemradio"]:hover {
+    background: rgb(255 255 255 / 0.1);
+  }
+  .pear-picker-popover [aria-checked="true"]::before {
+    content: "✓";
+    position: absolute;
+    left: 14px;
+  }
+`;
+
+// ---------------------------------------------------------------- popup-menu entry
+
+export interface MenuItemOptions {
+  /** Class of the entry (tests and plugin CSS find it by this). */
+  class: string;
+  icon: string;
+  label: Child;
+  /** Whether the entry belongs in the menu that just opened (its listbox). */
+  when(listbox: HTMLElement): boolean;
+  onClick(): void;
+  /** Also re-check `when` when these attributes change (e.g. "href" as YTM fills the menu in). */
+  attributes?: string[];
+}
+
+/** An entry at the top of YTM's popup menus (a track's ⋮ menu, album and playlist menus…). */
+export function popupMenuItem(ctx: Ctx, options: MenuItemOptions) {
+  ctx.addStyle(MENU_ITEM_CSS);
+  const item = (
+    <div
+      class={`pear-menu-item ${options.class}`}
+      role="option"
+      tabIndex={-1}
+      onClick={(event) => {
+        event.stopPropagation();
+        closePopup(item);
+        options.onClick();
+      }}
+    >
+      <Icon path={options.icon} />
+      {options.label}
+    </div>
+  );
+  const place = () => {
+    const listbox = ctx.$("popup.listbox");
+    if (!listbox) return;
+    const wanted = options.when(listbox);
+    if (wanted && item.parentElement !== listbox) listbox.prepend(item);
+    else if (!wanted) item.remove();
+  };
+  const watch: MutationObserverInit = { childList: true, subtree: true };
+  if (options.attributes) Object.assign(watch, { attributes: true, attributeFilter: options.attributes });
+  ctx.observe("popup.container" satisfies SelectorName, watch, place);
+  ctx.onCleanup(() => item.remove());
+  return item;
+}
+
+/** Closes the YTM menu `element` sits in, the way YTM closes it itself. */
+function closePopup(element: HTMLElement) {
+  document.body.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", code: "Escape", bubbles: true }));
+  element.closest<HTMLElement & { close?(): void }>("tp-yt-iron-dropdown")?.close?.();
+}
+
+const MENU_ITEM_CSS = `
+  .pear-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    height: 48px;
+    padding: 0 16px;
+    color: var(--ytmusic-text-primary, #fff);
+    font: 400 14px Roboto, "Noto Naskh Arabic UI", Arial, sans-serif;
+    cursor: pointer;
+  }
+  .pear-menu-item:hover,
+  .pear-menu-item:focus-visible {
+    background: rgb(255 255 255 / 0.1);
+    outline: none;
+  }
+  .pear-menu-item svg {
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
+  }
+`;
+
+// ---------------------------------------------------------------- sidebar entries
+
+export interface SidebarEntryOptions {
+  /** Names the entry's element class, `pear-<name>-entry`. */
+  name: string;
+  /** The text under or next to the icon. */
+  label: string;
+  /** YTM's icon id, e.g. "SETTINGS_MATERIAL" or "DOWNLOAD". */
+  iconType: string;
+  /** The tooltip; default `label`. */
+  title?: string;
+  /** The accessible name; default `label`. */
+  ariaLabel?: string;
+  onClick(): void;
+}
+
+export interface SidebarEntry {
+  /** A small count or word next to the label ("" hides it). */
+  setBadge(text: string): void;
+  /** The entry's elements, in the full and the collapsed sidebar (only one shows at a time). */
+  readonly elements: readonly HTMLElement[];
+  /** Focuses the entry that shows. */
+  focus(): void;
+  /** Marks the entry as the current page's, as YTM marks its own (while its page shows). */
+  setSelected(selected: boolean): void;
+  /** Takes the entry out of the sidebar and stops keeping it mounted. */
+  remove(): void;
+}
+
+/** YTM's sidebar entry, which draws itself from the data it is given. */
+interface GuideEntryRendererElement extends HTMLElement {
+  isCollapsed: boolean;
+  data: {
+    isPrimary: boolean;
+    icon: { iconType: string };
+    formattedTitle: { runs: { text: string }[] };
+  };
+}
+
+/** The sidebar's two layouts: the full guide and the collapsed ("mini") one. */
+const GUIDES = [
+  ["guide.full", false],
+  ["guide.mini", true],
+] as const;
+
+/**
+ * An entry at the end of YTM's sidebar's main section, like its own Home and
+ * Library, in both the full and the collapsed sidebar. `owner` removes it when it
+ * stops (a plugin's `ctx`).
+ */
+export function sidebarEntry(owner: Pick<PageContext<unknown, {}>, "onCleanup">, options: SidebarEntryOptions): SidebarEntry {
+  const elements: GuideEntryRendererElement[] = [];
+  const stops: (() => void)[] = [];
+  const entryData = (badge: string): GuideEntryRendererElement["data"] => ({
+    isPrimary: true,
+    icon: { iconType: options.iconType },
+    formattedTitle: { runs: badge ? [{ text: options.label }, { text: ` (${badge})` }] : [{ text: options.label }] },
+  });
+  for (const [guide, mini] of GUIDES) {
+    const element = document.createElement("ytmusic-guide-entry-renderer") as GuideEntryRendererElement;
+    element.classList.add(`pear-${options.name}-entry`);
+    // The mini guide shows icons only; YTM's entry lays itself out from this flag.
+    element.isCollapsed = mini;
+    element.data = entryData("");
+    element.title = options.title ?? options.label;
+    element.setAttribute("aria-label", options.ariaLabel ?? options.label);
+    // Without a navigation endpoint YTM's own tap handler does nothing, so ours is the click.
+    element.addEventListener("tap", () => options.onClick());
+    elements.push(element);
+    // YTM renders the sidebar late and again on some navigations; the entry stays in place.
+    const stop = keepMounted(element, (entry) => {
+      const items = document.querySelector(selectors[guide])?.querySelector(selectors["guide.primary_items"]);
+      items?.append(entry);
+    });
+    stops.push(stop);
+    owner.onCleanup(stop);
+  }
+  return {
+    setBadge(text) {
+      for (const element of elements) element.data = entryData(text);
+    },
+    elements,
+    focus() {
+      const shown = elements.find((element) => element.getClientRects().length > 0);
+      // YTM's entry keeps the focusable item in its shadow root, or as its own child.
+      const item =
+        shown?.shadowRoot?.querySelector<HTMLElement>("tp-yt-paper-item") ?? shown?.querySelector<HTMLElement>("tp-yt-paper-item");
+      (item ?? shown)?.focus();
+    },
+    setSelected(selected) {
+      for (const element of elements) {
+        element.toggleAttribute("active", selected);
+        if (selected) element.setAttribute("aria-current", "page");
+        else element.removeAttribute("aria-current");
+      }
+    },
+    remove() {
+      for (const stop of stops.splice(0)) stop();
+      for (const element of elements.splice(0)) element.remove();
+    },
+  };
+}
+
+/** Opens one of YTM's pages in place, as its own links do; `browseId` names it, e.g. "FEmusic_offline". */
+export function openBrowsePage(browseId: string) {
+  const detail = { endpoint: { browseEndpoint: { browseId } } };
+  document.querySelector(selectors.app)?.dispatchEvent(new CustomEvent("yt-navigate", { bubbles: true, composed: true, detail }));
+}
+
+export function listenAll(
+  target: EventTarget,
+  handlers: Readonly<Record<string, EventListener>>,
+  options?: AddEventListenerOptions,
+): () => void {
+  const entries = Object.entries(handlers);
+  for (const [type, listener] of entries) target.addEventListener(type, listener, options);
+  return () => {
+    for (const [type, listener] of entries) target.removeEventListener(type, listener, options);
+  };
+}
+
+export interface ElementState {
+  attribute(element: Element | null, name: string, value: string | null): void;
+  style(element: HTMLElement | null, property: string, value: string): void;
+  restoreStyle(element: HTMLElement | null, property: string): void;
+  restore(): void;
+}
+
+export function elementRestorer(): ElementState {
+  const attributes = new Map<Element, Map<string, string | null>>();
+  const styles = new Map<HTMLElement, Map<string, [string, string]>>();
+
+  function restore() {
+    for (const [element, values] of attributes) {
+      for (const [name, value] of values) {
+        if (value === null) element.removeAttribute(name);
+        else element.setAttribute(name, value);
+      }
+    }
+    attributes.clear();
+    for (const [element, properties] of styles) {
+      for (const [property, [value, priority]] of properties) {
+        if (value) element.style.setProperty(property, value, priority);
+        else element.style.removeProperty(property);
+      }
+    }
+    styles.clear();
+  }
+
+  return {
+    attribute(element, name, value) {
+      if (!element || element.getAttribute(name) === value) return;
+      let saved = attributes.get(element);
+      if (!saved) attributes.set(element, (saved = new Map()));
+      if (!saved.has(name)) saved.set(name, element.getAttribute(name));
+      if (value === null) element.removeAttribute(name);
+      else element.setAttribute(name, value);
+    },
+    style(element, property, value) {
+      if (!element || element.style.getPropertyValue(property) === value) return;
+      let properties = styles.get(element);
+      if (!properties) styles.set(element, (properties = new Map()));
+      if (!properties.has(property)) {
+        properties.set(property, [element.style.getPropertyValue(property), element.style.getPropertyPriority(property)]);
+      }
+      element.style.setProperty(property, value);
+    },
+    restoreStyle(element, property) {
+      if (!element) return;
+      const properties = styles.get(element);
+      const previous = properties?.get(property);
+      if (!properties || !previous) return;
+      element.style.setProperty(property, previous[0], previous[1]);
+      properties.delete(property);
+    },
+    restore,
+  };
+}

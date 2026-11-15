@@ -1,0 +1,560 @@
+// One settings row per config field (Material 3 controls): switches inline,
+// everything else below the label. The control is picked from the field kind
+// and its `variant`.
+
+import {
+  type Field,
+  type ListField,
+  type MultiField,
+  normalizeOrder,
+  type NumberField,
+  numberVariant,
+  type OrderableField,
+  type SelectField,
+  selectVariant,
+  type ShortcutField,
+  type StringField,
+} from "@pear/sdk";
+import { clamp } from "@pear/sdk/util";
+import { useEffect, useRef, useState } from "preact/hooks";
+import { toAccelerator } from "./accelerator.ts";
+import { Icon } from "./icons.tsx";
+import type { SettingsModel } from "./model.ts";
+import { type UiKey, useText } from "./strings.ts";
+
+interface FieldProps {
+  /** Unique within the dialog; used for ids. */
+  name: string;
+  field: Field;
+  value: unknown;
+  /** For commands a field's extra controls run (the language sync buttons). */
+  model?: SettingsModel | undefined;
+  /** Whether the field's `parent` switch is on; a sub-field is disabled while it is off. */
+  parentOn?: boolean | undefined;
+  /** False resolves when the host refused the write, so the control can reset to `value`. */
+  onChange(value: unknown): void | Promise<unknown>;
+}
+
+interface ControlProps<F extends Field, V> {
+  id: string;
+  field: F;
+  value: V;
+  model?: SettingsModel | undefined;
+  onChange(value: V): void | Promise<unknown>;
+}
+
+// Commit on a short idle, so dragging a slider or typing doesn't write settings on every change.
+const SLIDER_DEBOUNCE_MS = 200;
+const TEXT_DEBOUNCE_MS = 400;
+/** A held stepper button repeats: a short delay, then a steady rate. */
+const HOLD_DELAY_MS = 400;
+const HOLD_REPEAT_MS = 70;
+
+/** Controls that sit next to the label instead of below it. */
+const INLINE_KINDS = new Set<Field["kind"]>(["bool", "shortcut"]);
+
+export function SettingsField({ name, field, value, model, parentOn, onChange }: FieldProps) {
+  const id = `field-${name}`;
+  const control = <Control id={id} field={field} value={value} model={model} onChange={onChange} />;
+  const inline = INLINE_KINDS.has(field.kind);
+  // A leading ellipsis is the established way to describe a setting that
+  // refines the one above it; the parent metadata remains the explicit form.
+  const sub = field.parent !== undefined || field.label.startsWith("…") || field.label.startsWith("...");
+  return (
+    <div class={`field${sub ? " field--sub" : ""}`} data-field={name} inert={sub && parentOn === false}>
+      <div class="field-row">
+        <div class="field-text">
+          <div class="label-line">
+            <label class="field-label" for={id} id={`${id}-label`}>
+              {field.label}
+            </label>
+            {field.restart && <RestartPill />}
+          </div>
+          {field.description && <div class="field-desc">{field.description}</div>}
+        </div>
+        {inline && control}
+      </div>
+      {!inline && <div class="field-control">{control}</div>}
+    </div>
+  );
+}
+
+export function RestartPill({ hint = "settings-ui.restart-pill-hint" }: { hint?: UiKey }) {
+  const text = useText();
+  return (
+    <span class="pill" title={text(hint)}>
+      {text("settings-ui.restart-pill")}
+    </span>
+  );
+}
+
+const stringList = (value: unknown): string[] => (Array.isArray(value) ? value : []);
+
+function Control({ id, field, value, model, onChange }: ControlProps<Field, unknown>) {
+  switch (field.kind) {
+    case "bool":
+      return <Switch id={id} checked={value === true} label={field.label} onChange={onChange} />;
+    case "shortcut":
+      return <ShortcutRecorder id={id} field={field} value={String(value ?? "")} onChange={onChange} />;
+    case "number":
+      return <NumberControl id={id} field={field} value={Number(value)} onChange={onChange} />;
+    case "string":
+      return field.variant === "audio-device" ? (
+        <AudioDeviceControl id={id} value={String(value ?? "")} onChange={onChange} />
+      ) : (
+        <TextControl id={id} field={field} value={String(value ?? "")} onChange={onChange} />
+      );
+    case "select":
+      return <SelectControl id={id} field={field} value={String(value)} model={model} onChange={onChange} />;
+    case "list":
+      return <ListControl id={id} field={field} value={stringList(value)} onChange={onChange} />;
+    case "multi":
+      return <MultiControl id={id} field={field} value={stringList(value)} onChange={onChange} />;
+    case "orderable":
+      return <OrderableControl id={id} field={field} value={stringList(value)} onChange={onChange} />;
+  }
+}
+
+export function Switch(props: {
+  id?: string;
+  checked: boolean;
+  label: string;
+  disabled?: boolean;
+  title?: string | undefined;
+  onChange(checked: boolean): void;
+}) {
+  return (
+    <button
+      id={props.id}
+      type="button"
+      role="switch"
+      class="switch"
+      aria-checked={props.checked}
+      aria-label={props.label}
+      aria-disabled={props.disabled || undefined}
+      disabled={props.disabled}
+      title={props.title}
+      onClick={() => props.onChange(!props.checked)}
+    >
+      <span class="switch-thumb" />
+    </button>
+  );
+}
+
+/** `onChange`, called once calls stop coming for `delay`, or on unmount if still pending. */
+function useDebounced<V>(onChange: (value: V) => void, delay: number) {
+  const timer = useRef<ReturnType<typeof setTimeout>>();
+  const pending = useRef<() => void>();
+  const flush = () => {
+    clearTimeout(timer.current);
+    const call = pending.current;
+    pending.current = undefined;
+    call?.();
+  };
+  // Closing the dialog or collapsing the card right after an edit still saves it.
+  useEffect(() => flush, []);
+  return (value: V) => {
+    clearTimeout(timer.current);
+    pending.current = () => onChange(value);
+    timer.current = setTimeout(flush, delay);
+  };
+}
+
+/** Local state that follows `value` when it changes from outside. */
+export function useDraft<T>(value: T) {
+  const [draft, setDraft] = useState(value);
+  useEffect(() => setDraft(value), [value]);
+  return [draft, setDraft] as const;
+}
+
+/** A number field's control alone, for surfaces that build fields on the fly (the flag editors). */
+export function NumberControl({ id, field, value, onChange }: ControlProps<NumberField, number>) {
+  const [draft, setDraft] = useDraft(value);
+  const commit = useDebounced(onChange, SLIDER_DEBOUNCE_MS);
+  const update = (next: number, debounce = true) => {
+    if (!Number.isFinite(next)) return;
+    const clamped = clamp(next, field.min ?? -Infinity, field.max ?? Infinity);
+    setDraft(clamped);
+    if (debounce) commit(clamped);
+    else onChange(clamped);
+  };
+  const { min, max } = field;
+  // numberVariant only picks a slider for bounded fields; the checks tell TypeScript so.
+  if (numberVariant(field) === "slider" && min !== undefined && max !== undefined) {
+    return <Slider id={id} field={field} min={min} max={max} draft={draft} update={update} />;
+  }
+  return <Stepper id={id} field={field} draft={draft} update={update} />;
+}
+
+interface NumberViewProps {
+  id: string;
+  field: NumberField;
+  draft: number;
+  /** Clamps and stores `next`; `debounce: false` commits right away. */
+  update(next: number, debounce?: boolean): void;
+}
+
+function Slider({ id, field, min, max, draft, update }: NumberViewProps & { min: number; max: number }) {
+  const unit = field.unit ?? "";
+  const progress = ((draft - min) / (max - min)) * 100;
+  return (
+    <div class="slider-row">
+      <div class="slider-track" style={{ "--progress": `${progress}%` }}>
+        <input
+          id={id}
+          class="slider"
+          type="range"
+          min={min}
+          max={max}
+          step={field.step ?? 1}
+          value={draft}
+          aria-valuetext={`${draft}${unit}`}
+          onInput={(e) => update(e.currentTarget.valueAsNumber)}
+        />
+      </div>
+      <output class="slider-value" for={id}>
+        {draft}
+        {unit && ` ${unit}`}
+      </output>
+    </div>
+  );
+}
+
+function Stepper({ id, field, draft, update }: NumberViewProps) {
+  const text = useText();
+  const step = field.step ?? 1;
+  const unit = field.unit ?? "";
+  const holdTimer = useRef<ReturnType<typeof setTimeout>>();
+  const stopHold = () => {
+    clearTimeout(holdTimer.current);
+    holdTimer.current = undefined;
+    window.removeEventListener("pointerup", stopHold);
+    window.removeEventListener("pointercancel", stopHold);
+    window.removeEventListener("blur", stopHold);
+  };
+  // A release anywhere, or focus loss, has to end the repeat; so does closing the card.
+  useEffect(() => stopHold, []);
+  /** Steps once on press, then keeps stepping while the button is held, like the native spinners. */
+  const holdToRepeat = (delta: number) => {
+    stopHold();
+    const min = field.min ?? -Infinity;
+    const max = field.max ?? Infinity;
+    let next = clamp(draft + delta, min, max);
+    update(next, false);
+    // Self-rescheduling rather than an interval, so the delay is the only knob.
+    const bump = () => {
+      next = clamp(next + delta, min, max);
+      update(next, false);
+      holdTimer.current = setTimeout(bump, HOLD_REPEAT_MS);
+    };
+    holdTimer.current = setTimeout(bump, HOLD_DELAY_MS);
+    window.addEventListener("pointerup", stopHold);
+    window.addEventListener("pointercancel", stopHold);
+    window.addEventListener("blur", stopHold);
+  };
+  return (
+    <div class="stepper">
+      <button
+        type="button"
+        class="stepper-button"
+        aria-label={text("settings-ui.decrease", { label: field.label })}
+        // A held pointer already stepped on pointerdown (its click has detail 1); a
+        // keyboard activation has detail 0 and steps here.
+        onClick={(e) => e.detail === 0 && update(draft - step, false)}
+        onPointerDown={(e) => e.button === 0 && holdToRepeat(-step)}
+      >
+        −
+      </button>
+      <input
+        id={id}
+        class="stepper-input"
+        type="number"
+        value={draft}
+        min={field.min}
+        max={field.max}
+        step={step}
+        onInput={(e) => update(e.currentTarget.valueAsNumber)}
+      />
+      {unit && <span class="stepper-unit">{unit}</span>}
+      <button
+        type="button"
+        class="stepper-button"
+        aria-label={text("settings-ui.increase", { label: field.label })}
+        onClick={(e) => e.detail === 0 && update(draft + step, false)}
+        onPointerDown={(e) => e.button === 0 && holdToRepeat(step)}
+      >
+        +
+      </button>
+    </div>
+  );
+}
+
+function SelectControl({ id, field, value, model, onChange }: ControlProps<SelectField, string>) {
+  const text = useText();
+  const [busy, setBusy] = useState(false);
+  const runLanguageSync = async (failure: string, action: (settings: SettingsModel) => Promise<void>) => {
+    if (!model) return;
+    setBusy(true);
+    try {
+      await action(model);
+    } catch (error) {
+      console.error(failure, error);
+    } finally {
+      setBusy(false);
+    }
+  };
+  // Same commands as the menu's Language › Sync entries; the change path persists and flags the restart.
+  const syncFrom = () =>
+    runLanguageSync("[pear] reading YTM's language failed", async (settings) => {
+      const language = await settings.languageFromYtm();
+      if (language) onChange(language);
+    });
+  const syncTo = () => runLanguageSync("[pear] setting YTM's language failed", (settings) => settings.languageToYtm());
+  const select =
+    selectVariant(field) === "dropdown" ? (
+      <select
+        id={id}
+        class="dropdown"
+        value={value}
+        onChange={async (e) => {
+          const element = e.currentTarget;
+          // A refused write (a declined downgrade) leaves the stored value alone: show it again.
+          if ((await onChange(element.value)) === false) element.value = value;
+        }}
+      >
+        {field.options.map((o) => (
+          <option key={o.value} value={o.value}>
+            {o.label}
+          </option>
+        ))}
+      </select>
+    ) : (
+      <div class="chips" id={id} role="radiogroup" aria-labelledby={`${id}-label`}>
+        {field.options.map((o) => (
+          <button
+            key={o.value}
+            type="button"
+            role="radio"
+            class="chip"
+            aria-checked={o.value === value}
+            onClick={() => void onChange(o.value)}
+          >
+            {o.label}
+          </button>
+        ))}
+      </div>
+    );
+  return (
+    <>
+      {select}
+      {field.languageSync && model && (
+        <div class="control-actions">
+          <span class="control-actions-label">{text("settings-ui.language-sync.label")}</span>
+          <button type="button" class="outlined" disabled={busy} onClick={() => void syncFrom()}>
+            {text("settings-ui.language-sync.from")}
+          </button>
+          <button type="button" class="outlined" disabled={busy} onClick={() => void syncTo()}>
+            {text("settings-ui.language-sync.to")}
+          </button>
+        </div>
+      )}
+    </>
+  );
+}
+
+function MultiControl({ id, field, value, onChange }: ControlProps<MultiField, string[]>) {
+  const toggle = (option: string, checked: boolean) => onChange(checked ? value.filter((v) => v !== option) : [...value, option]);
+  return (
+    <div class="chips" id={id} role="group" aria-labelledby={`${id}-label`}>
+      {field.options.map((o) => {
+        const checked = value.includes(o.value);
+        return (
+          <button key={o.value} type="button" role="checkbox" class="chip" aria-checked={checked} onClick={() => toggle(o.value, checked)}>
+            {o.label}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+/** Every option once, in the user's order; up/down move an entry one place. */
+function OrderableControl({ id, field, value, onChange }: ControlProps<OrderableField, string[]>) {
+  const text = useText();
+  // Every option, in the stored order (missing entries go last, unknown ones are dropped).
+  const rows = normalizeOrder(value, field.options).map((entry) => field.options.find((option) => option.value === entry)!);
+  const move = (from: number, to: number) => {
+    const next = rows.map((row) => row.value);
+    // Lifted out and inserted, so moving the first entry down puts it second.
+    const [moved] = next.splice(from, 1);
+    next.splice(to, 0, moved!);
+    onChange(next);
+  };
+  return (
+    <div id={id} class="orderable" role="list" aria-labelledby={`${id}-label`}>
+      {rows.map((row, index) => (
+        <div key={row.value} class="orderable-row" role="listitem">
+          <span class="orderable-label">{row.label}</span>
+          <button
+            type="button"
+            class="orderable-button"
+            aria-label={text("settings-ui.move-up")}
+            disabled={index === 0}
+            onClick={() => move(index, index - 1)}
+          >
+            <Icon name="chevronUp" size={18} />
+          </button>
+          <button
+            type="button"
+            class="orderable-button"
+            aria-label={text("settings-ui.move-down")}
+            disabled={index === rows.length - 1}
+            onClick={() => move(index, index + 1)}
+          >
+            <Icon name="chevronDown" size={18} />
+          </button>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/** One row per entry; empty entries are dropped when saved. */
+function ListControl({ id, field, value, onChange }: ControlProps<ListField, string[]>) {
+  const text = useText();
+  const [rows, setRows] = useDraft(value);
+  const commit = useDebounced((next: string[]) => onChange(next.map((v) => v.trim()).filter(Boolean)), TEXT_DEBOUNCE_MS);
+  const update = (next: string[]) => {
+    setRows(next);
+    commit(next);
+  };
+  const setRow = (index: number, row: string) => update(rows.map((v, i) => (i === index ? row : v)));
+  const removeRow = (index: number) => update(rows.filter((_, i) => i !== index));
+  const rowName = (row: string, index: number) => row || text("settings-ui.entry", { number: index + 1 });
+  return (
+    <div class="list" id={id} role="group" aria-labelledby={`${id}-label`}>
+      {rows.map((row, index) => (
+        <div class="list-row" key={index}>
+          <input
+            class="text"
+            type="text"
+            spellcheck={false}
+            placeholder={field.placeholder}
+            aria-label={`${field.label} ${index + 1}`}
+            value={row}
+            onInput={(e) => setRow(index, e.currentTarget.value)}
+          />
+          <button
+            type="button"
+            class="icon-button"
+            aria-label={text("settings-ui.remove", { item: rowName(row, index) })}
+            onClick={() => removeRow(index)}
+          >
+            ×
+          </button>
+        </div>
+      ))}
+      <button type="button" class="outlined" onClick={() => setRows([...rows, ""])}>
+        {text("settings-ui.add")}
+      </button>
+    </div>
+  );
+}
+
+/** A text field's control alone, for surfaces that build fields on the fly (the flag editors). */
+function AudioDeviceControl({ id, value, onChange }: { id: string; value: string; onChange(value: unknown): void | Promise<unknown> }) {
+  const text = useText();
+  const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
+  const [busy, setBusy] = useState(false);
+  const load = async () => {
+    setBusy(true);
+    try {
+      const all = (await navigator.mediaDevices?.enumerateDevices()) ?? [];
+      setDevices(all.filter((device) => device.kind === "audiooutput"));
+    } catch (error) {
+      console.warn("[pear] listing audio outputs failed", error);
+    } finally {
+      setBusy(false);
+    }
+  };
+  useEffect(() => {
+    void load();
+    const media = navigator.mediaDevices;
+    if (!media) return;
+    const changed = () => void load();
+    media.addEventListener("devicechange", changed);
+    return () => media.removeEventListener("devicechange", changed);
+  }, []);
+  const known = devices.some((device) => device.label === value || device.deviceId === value);
+  return (
+    <div class="control-actions">
+      <select id={id} class="dropdown" value={value} onChange={(event) => void onChange(event.currentTarget.value)}>
+        <option value="">{text("settings-ui.audio-device.system-default")}</option>
+        {!known && value && <option value={value}>{value}</option>}
+        {devices.map((device, index) => {
+          const label = device.label || text("settings-ui.audio-device.unnamed", { number: index + 1 });
+          return (
+            <option key={device.deviceId || index} value={device.label || device.deviceId}>
+              {label}
+            </option>
+          );
+        })}
+      </select>
+      <button type="button" class="outlined" disabled={busy} onClick={() => void load()}>
+        {text("settings-ui.audio-device.refresh")}
+      </button>
+    </div>
+  );
+}
+
+export function TextControl({ id, field, value, onChange }: ControlProps<StringField, string>) {
+  const [draft, setDraft] = useDraft(value);
+  const commit = useDebounced(onChange, TEXT_DEBOUNCE_MS);
+  return (
+    <input
+      id={id}
+      class="text"
+      type={field.secret ? "password" : "text"}
+      autocomplete="off"
+      spellcheck={false}
+      placeholder={field.placeholder}
+      value={draft}
+      onInput={(e) => {
+        setDraft(e.currentTarget.value);
+        commit(e.currentTarget.value);
+      }}
+    />
+  );
+}
+
+function ShortcutRecorder({ id, value, onChange }: ControlProps<ShortcutField, string>) {
+  const [recording, setRecording] = useState(false);
+  const text = useText();
+  const onKeyDown = (event: KeyboardEvent) => {
+    if (!recording) return;
+    event.preventDefault();
+    if (event.key === "Escape") return setRecording(false);
+    if (event.key === "Backspace" || event.key === "Delete") {
+      setRecording(false);
+      return onChange("");
+    }
+    const accelerator = toAccelerator(event);
+    if (!accelerator) return;
+    setRecording(false);
+    onChange(accelerator);
+  };
+  return (
+    <button
+      id={id}
+      type="button"
+      class="outlined shortcut"
+      data-recording={recording}
+      title={text("settings-ui.shortcut-hint")}
+      onClick={() => setRecording(true)}
+      onBlur={() => setRecording(false)}
+      onKeyDown={onKeyDown}
+    >
+      {recording ? text("settings-ui.shortcut-recording") : value || text("settings-ui.shortcut-unset")}
+    </button>
+  );
+}
