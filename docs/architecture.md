@@ -28,7 +28,7 @@ Main process (`apps/desktop/src/main/index.ts`):
 Preload (`apps/desktop/src/preload/index.ts`):
 
 1. On YTM and on `pear://settings` it requests a bootstrap synchronously with `ipcRenderer.sendSync(CHANNEL.bootstrap)` and exposes `window.__pear` with the bootstrap, `invoke(name, ...args)` and `onEvent(listener)`.
-2. On YTM it also exposes `window.pearPerf` (`getResourceUsage`, `clearCache`) for the memory saver, and executes the page runtime string in the main world with `contextBridge.executeInMainWorld`. Other origins, including Google sign-in, are left untouched.
+2. On YTM it also exposes `window.pearPerf` (`clearCache`), which the main window uses to hand renderer caches back after a long hide, and executes the page runtime string in the main world with `contextBridge.executeInMainWorld`. Other origins, including Google sign-in, are left untouched.
 
 Page runtime (`packages/page/src/index.ts`) runs before YTM's own scripts:
 
@@ -185,7 +185,6 @@ Other performance work:
 
 - `advanced.disableHardwareAcceleration`, `advanced.autoResetAppCache` (clears the session cache 20 seconds after startup) and `general.autoUpdates` are core options.
 - `plugins/performance-improvement` injects CY Fung's timer and element-reuse scripts at page start. It is `restartRequired`, because replacing page globals cannot be undone live.
-- `plugins/memory-saver` polls Blink's resource usage every minute while the window is hidden and clears the renderer caches above its threshold, with a ten-minute cooldown. It uses `window.pearPerf` from the preload.
 - A window hidden to the tray hands its renderer caches back after a minute: `main-window.ts` calls `window.pearPerf.clearCache()` once the window has been hidden that long, because decoded images and fonts are re-fetchable. Showing the window again cancels the release, and a merely minimized window keeps its caches.
 - Visual plugins pause their drawing with `ctx.isWindowVisible()`, because the window keeps rendering while minimized or hidden (`backgroundThrottling: false`).
 

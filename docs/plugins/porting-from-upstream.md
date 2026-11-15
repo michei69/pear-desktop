@@ -125,7 +125,7 @@ Upstream's plugin `name` and `description` were functions returning `t(...)`, an
 - The per-process plugin loaders (main, preload, renderer, menu), their loaded-plugin maps and their IPC channels.
 - The `settings-ui` plugin and its modal protocol. Settings are core now; the plugin's own options are the `settingsUi` core section, stored at `plugins.settings-ui` and shown in Window & Tray → Settings menu.
 - The `api-server` plugin. The API server is a core section, stored at `plugins.api-server`, with v1 routes and plugin RPC.
-- The `memory-saver` and `performance-improvement` scripts are plugins, not core providers. The old all-in-one performance mode is the `performance` core section's four independent switches now (stored at `options.performanceMode`).
+- The `memory-saver` and `performance-improvement` scripts are plugins, not core providers. `memory-saver` is no longer shipped: the main window hands the renderer's caches back itself after it has been hidden to the tray for a minute. The old all-in-one performance mode is the `performance` core section's four independent switches now (stored at `options.performanceMode`).
 - Per-entry switches in list settings, such as skip-ai-slop's per-keyword on/off. The list stores plain strings, and the `4.0.0` migration drops the entries that were switched off rather than start filtering them.
 - The old app-internal config, provider, theme and type modules as plugin-visible imports. The SDK owns the shared surface.
 - Direct `peard:*` IPC and `electron-store`.

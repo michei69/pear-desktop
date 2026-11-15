@@ -51,6 +51,7 @@ export default definePlugin({
 | `platforms` | `Platform[]` | `linux`, `win32`, `darwin`. Default: all. Other platforms neither list nor run the plugin. |
 | `enabledByDefault` | `boolean \| Platform[]` | Fresh-profile state. Default: off. |
 | `restartRequired` | `boolean` | Enabling or disabling applies on the next app start. Also implied by `host.beforeReady` and `host.windowOptions`. |
+| `conflicts` | `PluginConflict[]` | Plugins this one can't run beside; its card shows the blocker and why it is off. |
 | `config` | `ConfigShape` | Settings schema, defaults and UI metadata. |
 | `actions` | `Record<string, { label, description? }>` | Buttons in the plugin's settings card. Each runs the host command of the same name. |
 | `style` | `string \| (config) => string` | CSS applied while the plugin runs. Usually the result of the `css` macro. |
@@ -58,6 +59,37 @@ export default definePlugin({
 | `page` | `PagePart` | YTM main-world half. |
 
 Id, name, description, config texts and action labels are translated by the settings catalog using `plugins.<id>.*` keys, with the strings in the definition as English fallbacks. Run `nub run i18n` to add them to `en.json`.
+
+## Conflicts
+
+`conflicts` names plugins the host must not run beside this one. The settings cards then explain the clash instead of letting both plugins fight over the same CSS, player state or window option:
+
+```ts
+export default definePlugin({
+  id: "quality-changer",
+  // …
+  conflicts: [
+    {
+      id: "audio-only",
+      reason: "Audio only forces the lowest video quality, so this picker's choice would be overridden on every track.",
+    },
+  ],
+});
+```
+
+| Key | Meaning |
+| --- | --- |
+| `id` | The conflicting plugin. Must be another plugin's id. |
+| `reason` | One sentence shown after the blocker's name in the disabled card's tooltip. It stays English; the blocker's name is translated. |
+| `mutual` | The two exclude each other. Default: only the declaring plugin yields. |
+
+A directional conflict means "this plugin yields while `id` runs", whichever one is enabled first: enabling `id` stops this plugin, and this plugin's switch stays off (disabled) until `id` is disabled. A mutual conflict works both ways: the one enabled first keeps the other off.
+
+The host resolves conflicts from the stored switches every time it publishes state; it does not rewrite the stored switch. Enabling a blocked plugin is refused (the settings switch is disabled and a Plugins-menu click is ignored); a config or API patch that stores it as enabled is overridden while the blocker runs. When both are stored on — an older config, or a patch that set both in one write — catalog order (the plugin folders, alphabetically) decides, so the same side wins on every launch; the loser's stored switch still says on, and it runs again once the winner is disabled.
+
+A blocked plugin's card shows the switch off and disabled with the tooltip `<blocker name>: <reason>`; its config stays editable, and `PluginHost.states()` reports `enabled: false` with `blockedBy: { id, name, reason }`. The blocked plugin does not start: `beforeReady`, `windowOptions`, the host part and the page part all see the effective state. Enabling its blocker stops its host part and page part too, except a restart-required plugin, whose host and page halves keep the state they launched with until the next launch.
+
+Conflicts only apply between plugins shipped for the current platform; an entry naming a plugin that is not available there is inert. The shipped declarations: `quality-changer` yields to `audio-only`; `transparent-player` (Windows and macOS) excludes `album-color-theme` and `blur-nav-bar` mutually; `album-color-theme` excludes `ambient-mode` mutually.
 
 ## Host part
 
@@ -88,7 +120,7 @@ The `beforeReady` context carries `config`, `app`, `enableFeatures(...names)` an
 | `start(ctx)` | Starts the plugin. May return a cleanup function. |
 | `onConfigChange(config, ctx)` | Handles a config write without a restart. Return `"restart"` to restart anyway. |
 
-A page part is started when its plugin is enabled in the host bootstrap and stopped when the host reports it disabled. With `restartRequired`, a page part starts only if the plugin was enabled when the page loaded and keeps running until the next load; the settings UI shows the restart banner. Without it, enable, disable and config changes apply live. The `performance.plugins` switch skips the page halves of `ambient-mode`, `blur-nav-bar` and `visualizer`; their config and host parts still run.
+A page part is started when its plugin is enabled in the host bootstrap and stopped when the host reports it disabled. With `restartRequired`, a page part starts only if the plugin was enabled at launch and keeps the launch state until the next launch; the settings UI shows the restart banner. Without it, enable, disable and config changes apply live. The `performance.plugins` switch skips the page halves of `ambient-mode`, `blur-nav-bar` and `visualizer`; their config and host parts still run.
 
 The page runtime registers a pass-through Trusted Types `default` policy before any plugin starts, so `innerHTML`, `outerHTML` and `insertAdjacentHTML` writes keep working when YTM serves a Trusted Types CSP. It also puts the player's `<video>` in CORS mode and owns the shared audio graph (see [Player API](./player-api.md#audio-graph)), so audio plugins insert into that graph instead of capturing the element themselves.
 
@@ -279,7 +311,7 @@ Consequences:
 
 ## Shipped plugins
 
-The tree ships the upstream plugin set plus the fork's additions. The fork-specific plugins are `always-show-volume-slider`, `audio-only`, `dismiss-multidevice-popup`, `fullscreen-auto-hide`, `memory-saver`, `no-google-login`, `playback-recovery`, `playlist-search`, `prefer-song`, `search-commands`, `seek-shortcuts`, `sfw-music`, `skip-ai-slop`, `statusbar-lyrics` and `toast-autoclose`. Larger examples to read: `plugins/downloader` (host commands, page UI, RPC), `plugins/equalizer` (shared audio graph), `plugins/visualizer` (audio taps and performance-mode skipping) and `plugins/synced-lyrics` (Preact UI, RPC and translation).
+The tree ships the upstream plugin set plus the fork's additions. The fork-specific plugins are `always-show-volume-slider`, `audio-only`, `dismiss-multidevice-popup`, `fullscreen-auto-hide`, `no-google-login`, `playback-recovery`, `playlist-search`, `prefer-song`, `search-commands`, `seek-shortcuts`, `sfw-music`, `skip-ai-slop`, `statusbar-lyrics` and `toast-autoclose`. Larger examples to read: `plugins/downloader` (host commands, page UI, RPC), `plugins/equalizer` (shared audio graph), `plugins/visualizer` (audio taps and performance-mode skipping) and `plugins/synced-lyrics` (Preact UI, RPC and translation).
 
 ## Tests
 
