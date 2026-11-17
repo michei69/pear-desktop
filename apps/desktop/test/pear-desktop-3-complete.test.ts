@@ -353,6 +353,7 @@ describe("a complete pear-desktop 3.12.4 config.json, migrated to 4.0.0", () => 
     expect(pluginConfig("notifications")).toMatchObject({ toastStyle: "banner_top_custom" });
 
     expect(pluginConfig("crossfade")).toEqual({
+      streamUrlOnly: false,
       fadeInDuration: 2000,
       fadeOutDuration: 8000,
       secondsBeforeEnd: 12,

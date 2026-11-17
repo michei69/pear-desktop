@@ -39,7 +39,7 @@ const RELEASE_SLACK_MS = 100;
 /** exponential-volume's volume accessor was installed or restored (see its index.ts). */
 const VOLUME_MAP_EVENT = "pear:volume-map";
 
-/** Where a track's audio came from: its bytes, or its stream URL as a fallback. */
+/** Where a track's audio came from: buffered bytes, or a stream URL the browser plays directly. */
 type Source = { kind: "bytes"; bytes: Uint8Array; mimeType: string } | { kind: "url"; url: string };
 
 interface Fade {
@@ -274,26 +274,41 @@ export function secondStream(ctx: Ctx, graph: AudioGraph) {
   };
 
   const fetchAudio = async (videoId: string, stale: () => boolean): Promise<Source | undefined> => {
-    for (let attempt = 1; attempt <= AUDIO_FETCH_ATTEMPTS; attempt += 1) {
-      if (stale() || ctx.signal.aborted) return undefined;
-      try {
-        const bytes = await ctx.host.invoke("audioBytes", videoId);
-        if (bytes?.bytes.byteLength) return { kind: "bytes", bytes: bytes.bytes, mimeType: bytes.mimeType };
-      } catch (error) {
-        ctx.log.warn(`the audio of ${videoId} didn't arrive (attempt ${attempt}/${AUDIO_FETCH_ATTEMPTS})`, error);
-      }
-      if (attempt < AUDIO_FETCH_ATTEMPTS) {
-        const delay = Promise.withResolvers<void>();
-        ctx.setTimeout(() => delay.resolve(), AUDIO_FETCH_RETRY_MS);
-        await delay.promise;
+    let declined = false;
+    // With URL-only mode on, skip the byte download entirely: the browser streams
+    // the track with a bounded buffer instead of building a full Blob in memory.
+    if (!ctx.config.streamUrlOnly) {
+      for (let attempt = 1; attempt <= AUDIO_FETCH_ATTEMPTS; attempt += 1) {
+        if (stale() || ctx.signal.aborted) return undefined;
+        try {
+          const bytes = await ctx.host.invoke("audioBytes", videoId);
+          // No bytes at all means the host declined to buffer this track (too long,
+          // or over the byte budget). Don't retry a download that was refused: go
+          // straight to the URL, which the browser streams a piece of at a time.
+          if (bytes === undefined) {
+            declined = true;
+            break;
+          }
+          if (bytes.bytes.byteLength) return { kind: "bytes", bytes: bytes.bytes, mimeType: bytes.mimeType };
+        } catch (error) {
+          ctx.log.warn(`the audio of ${videoId} didn't arrive (attempt ${attempt}/${AUDIO_FETCH_ATTEMPTS})`, error);
+        }
+        if (attempt < AUDIO_FETCH_ATTEMPTS) {
+          const delay = Promise.withResolvers<void>();
+          ctx.setTimeout(() => delay.resolve(), AUDIO_FETCH_RETRY_MS);
+          await delay.promise;
+        }
       }
     }
 
-    // The bytes didn't arrive: fall back to the track's own stream URL, which the
-    // element can still play silently with the video.
+    // Either the bytes failed, the host sent a long track here, or the user chose
+    // URL-only mode: the element plays the stream URL alongside the video.
     if (stale() || ctx.signal.aborted) return undefined;
     try {
-      return { kind: "url", url: await ctx.host.invoke("audioUrl", videoId) };
+      const url = await ctx.host.invoke("audioUrl", videoId);
+      const reason = ctx.config.streamUrlOnly ? " (URL-only mode)" : declined ? " (whole-track download skipped)" : "";
+      ctx.log.info(`using the stream URL for ${videoId}${reason}`);
+      return { kind: "url", url };
     } catch (error) {
       ctx.log.warn(`no second stream for ${videoId}; the track plays without a crossfade`, error);
       return undefined;

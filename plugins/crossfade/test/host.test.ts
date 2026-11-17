@@ -43,10 +43,11 @@ vi.mock("@pear/sdk/innertube", () => ({
 const YTM_ORIGIN = "https://music.\u0079\u006f\u0075\u0074\u0075\u0062\u0065.com";
 
 /** What a player response answers: a muxed stream the download reads. */
-function trackInfo() {
+function trackInfo(lengthSeconds?: string) {
   const format = { itag: 140, mime_type: "audio/mp4", decipher: vi.fn(async () => "https://stream.example/audio") };
   const info = {
     playability_status: { status: "OK" },
+    video_details: lengthSeconds === undefined ? undefined : { lengthSeconds },
     chooseFormat: vi.fn(() => format),
     download: vi.fn(async () =>
       (async function* () {
@@ -75,7 +76,7 @@ function harness() {
     addMenuItem: vi.fn(),
     openSettings: vi.fn(),
   } as unknown as HostCtx;
-  return { ctx, fetch, cookies, request };
+  return { ctx, fetch, cookies, request, log: ctx.log };
 }
 
 beforeEach(() => {
@@ -112,6 +113,17 @@ describe("the crossfade's second stream", () => {
     const url = await commands.audioUrl.call(ctx, "track");
     expect(url).toBe("https://stream.example/audio");
     expect(session.created).toHaveLength(1);
+  });
+
+  it("declines to buffer a track that is too long to download whole", async () => {
+    const { ctx, log } = harness();
+    const { info } = trackInfo("43200");
+    session.client = { session: { player: {} }, music: { getInfo: vi.fn(async () => info) } };
+    const commands = plugin.host!.commands as HostCommands;
+    const audio = await commands.audioBytes.call(ctx, "long");
+    expect(audio).toBeUndefined();
+    expect(info.download).not.toHaveBeenCalled();
+    expect(log.info).toHaveBeenCalledWith(expect.stringContaining("too long"));
   });
 
   it("asks for the bytes without a token when the page can't mint one", async () => {

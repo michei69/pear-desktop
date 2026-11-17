@@ -56,6 +56,7 @@ vi.mock("@pear/sdk/potoken", () => ({
 }));
 
 const DEFAULT_CONFIG: Config = {
+  streamUrlOnly: false,
   fadeInDuration: 5000,
   fadeOutDuration: 5000,
   secondsBeforeEnd: 10,

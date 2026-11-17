@@ -401,7 +401,14 @@ const EXPECTED: Record<string, { enabled: boolean; config: Json }> = {
   clock: { enabled: true, config: { displaySeconds: true, hour12: true } },
   crossfade: {
     enabled: true,
-    config: { fadeInDuration: 2000, fadeOutDuration: 8000, secondsBeforeEnd: 12, fadeScaling: "logarithmic", dynamicRange: 30 },
+    config: {
+      streamUrlOnly: false,
+      fadeInDuration: 2000,
+      fadeOutDuration: 8000,
+      secondsBeforeEnd: 12,
+      fadeScaling: "logarithmic",
+      dynamicRange: 30,
+    },
   },
   "custom-output-device": { enabled: true, config: { output: "Speakers (USB)", showPicker: true } },
   "disable-autoplay": { enabled: true, config: { applyOnce: true } },

@@ -95,7 +95,7 @@ describe("the second stream", () => {
     audios.length = 0;
   });
 
-  function harness(invoke: (command: string, videoId: string) => Promise<unknown>, api?: unknown) {
+  function harness(invoke: (command: string, videoId: string) => Promise<unknown>, api?: unknown, config: Record<string, unknown> = {}) {
     const video = new FakeMedia();
     video.paused = false;
     const context = {
@@ -119,7 +119,7 @@ describe("the second stream", () => {
     const state = { track: { videoId: "a" }, ad: false, muted: false, repeat: "none" };
     const log = { info: vi.fn(), warn: vi.fn(), error: vi.fn() } as unknown as Logger;
     const ctx = {
-      config: {},
+      config,
       player: { state, api: api ?? null, on: () => () => {} },
       host: { invoke: vi.fn(invoke) },
       listen(target: EventTarget, type: string, listener: (event: Event) => void) {
@@ -171,6 +171,39 @@ describe("the second stream", () => {
     expect(commands.at(-1)).toBe("audioUrl");
     expect(app.audio()?.src).toBe("https://stream.example/a");
     expect(app.audio()?.crossOrigin).toBe("anonymous");
+    expect(app.stream.ready()).toBe(true);
+  });
+
+  it("goes straight to the URL when the host declines to buffer a long track", async () => {
+    const app = harness(async (command) => {
+      if (command === "audioBytes") return undefined;
+      if (command === "audioUrl") return "https://stream.example/long";
+      throw new Error(`unexpected ${command}`);
+    });
+    app.stream.prepare("a");
+    await flushFetches();
+    const commands = (app.ctx.host.invoke as unknown as { mock: { calls: string[][] } }).mock.calls.map(([command]) => command);
+    // One refusal, no retries: the browser streams the tail instead of buffering hours.
+    expect(commands).toEqual(["audioBytes", "audioUrl"]);
+    expect(app.audio()?.src).toBe("https://stream.example/long");
+    expect(app.audio()?.crossOrigin).toBe("anonymous");
+    expect(app.stream.ready()).toBe(true);
+  });
+
+  it("uses only the stream URL when RAM buffering is turned off", async () => {
+    const app = harness(
+      async (command) => {
+        if (command === "audioUrl") return "https://stream.example/only";
+        throw new Error(`unexpected ${command}`);
+      },
+      undefined,
+      { streamUrlOnly: true },
+    );
+    app.stream.prepare("a");
+    await flushFetches();
+    const commands = (app.ctx.host.invoke as unknown as { mock: { calls: string[][] } }).mock.calls.map(([command]) => command);
+    expect(commands).toEqual(["audioUrl"]);
+    expect(app.audio()?.src).toBe("https://stream.example/only");
     expect(app.stream.ready()).toBe(true);
   });
 

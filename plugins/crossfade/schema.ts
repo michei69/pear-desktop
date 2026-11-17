@@ -1,6 +1,10 @@
 import { config, type PageContextOf } from "@pear/sdk";
 
 export const schema = {
+  streamUrlOnly: config.bool(false, {
+    label: "Always use the stream URL",
+    description: "Never download a whole track into memory. The browser streams it instead. Applies to newly loaded tracks.",
+  }),
   fadeInDuration: config.number(5000, { label: "Fade-in", min: 0, max: 10000, step: 100, unit: " ms" }),
   fadeOutDuration: config.number(5000, { label: "Fade-out", min: 0, max: 20000, step: 100, unit: " ms" }),
   secondsBeforeEnd: config.number(10, {

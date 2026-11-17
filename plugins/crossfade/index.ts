@@ -3,7 +3,7 @@ import { InnertubeSession, type PoTokenAnswer } from "@pear/sdk/innertube";
 import type { PoTokenRequest } from "@pear/sdk/potoken";
 import { startCrossfade } from "./page.ts";
 import { schema } from "./schema.ts";
-import { chooseAudioFormat, downloadAudio, playableInfo } from "./source.ts";
+import { chooseAudioFormat, downloadAudio, lengthSecondsOf, MAX_FULL_DOWNLOAD_SECONDS, playableInfo } from "./source.ts";
 
 const YTM_ORIGIN = "https://music.\u0079\u006f\u0075\u0074\u0075\u0062\u0065.com";
 /** An account rarely changes premium status mid-session; master cached it this long too. */
@@ -41,11 +41,17 @@ export default definePlugin({
       /**
        * A track's audio as bytes. A media element can't play the site's own stream
        * URLs reliably (the raw URL is refused once a renderer streams it), so the
-       * crossfade decodes a Blob instead.
+       * crossfade decodes a Blob instead. Tracks too long to buffer return no
+       * bytes, and the page streams their URL directly instead.
        */
       async audioBytes(videoId: string) {
         const { yt, poToken } = await streamSession(this, videoId);
         const info = await playableInfo(yt, videoId, poToken);
+        const duration = lengthSecondsOf(info);
+        if (duration !== undefined && duration > MAX_FULL_DOWNLOAD_SECONDS) {
+          this.log.info(`not buffering ${videoId}: ${Math.round(duration)}s is too long; using its stream URL`);
+          return undefined;
+        }
         return await downloadAudio(info, await isPremium(this));
       },
     },

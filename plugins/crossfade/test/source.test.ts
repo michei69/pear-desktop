@@ -1,6 +1,15 @@
 import type { Innertube } from "\u0079\u006f\u0075\u0074\u0075\u0062\u0065i.js";
 import { describe, expect, it, vi } from "vitest";
-import { chooseAudioFormat, downloadAttempts, downloadAudio, mimeTypeOf, playableInfo, sniffAudioMime, type TrackInfo } from "../source.ts";
+import {
+  chooseAudioFormat,
+  downloadAttempts,
+  downloadAudio,
+  lengthSecondsOf,
+  mimeTypeOf,
+  playableInfo,
+  sniffAudioMime,
+  type TrackInfo,
+} from "../source.ts";
 
 const WEBM = new Uint8Array([0x1a, 0x45, 0xdf, 0xa3, 0x01, 0x02]);
 const MP4 = new Uint8Array([0x00, 0x00, 0x00, 0x18, 0x66, 0x74]);
@@ -78,7 +87,26 @@ describe("a playable player response", () => {
   });
 });
 
+describe("the track's length", () => {
+  it("reads it from the player response when it carries one", () => {
+    const info = { video_details: { lengthSeconds: "43200" } } as unknown as TrackInfo;
+    expect(lengthSecondsOf(info)).toBe(43200);
+  });
+
+  it("leaves it unknown when the response has none", () => {
+    expect(lengthSecondsOf(response())).toBeUndefined();
+    expect(lengthSecondsOf({ video_details: { lengthSeconds: "0" } } as unknown as TrackInfo)).toBeUndefined();
+    expect(lengthSecondsOf({ video_details: { lengthSeconds: "soon" } } as unknown as TrackInfo)).toBeUndefined();
+  });
+});
+
 describe("the audio bytes", () => {
+  const bytesOf = async (info: TrackInfo, premium = false) => {
+    const audio = await downloadAudio(info, premium);
+    if (!audio) throw new Error("no audio bytes");
+    return audio;
+  };
+
   /** A response whose format streams `chunks`; `download` counts the attempts. */
   function downloadOf(chunks: Uint8Array[], mime = "audio/webm; codecs=opus") {
     const download = vi.fn(async () =>
@@ -94,7 +122,7 @@ describe("the audio bytes", () => {
 
   it("skips an audio-only attempt a non-premium account cannot stream", async () => {
     const { info, download, chooseFormat } = downloadOf([WEBM]);
-    const audio = await downloadAudio(info, false);
+    const audio = await bytesOf(info);
     expect(audio.mimeType).toBe("audio/webm; codecs=opus");
     expect([...audio.bytes]).toEqual([...WEBM]);
     expect(chooseFormat).toHaveBeenCalledWith({ type: "video+audio", format: "mp4", quality: "best" });
@@ -103,7 +131,7 @@ describe("the audio bytes", () => {
 
   it("asks a premium account for audio-only first", async () => {
     const { info, chooseFormat } = downloadOf([WEBM]);
-    await downloadAudio(info, true);
+    await bytesOf(info, true);
     expect(chooseFormat).toHaveBeenNthCalledWith(1, { type: "audio", format: "any", quality: "best" });
   });
 
@@ -119,6 +147,13 @@ describe("the audio bytes", () => {
     const { info, download } = downloadOf([]);
     await expect(downloadAudio(info, false)).rejects.toThrow("the audio stream was empty");
     expect(download).toHaveBeenCalledTimes(2);
+  });
+
+  it("stops downloading once the stream passes the byte budget", async () => {
+    const { info, download } = downloadOf([new Uint8Array(6), new Uint8Array(6)]);
+    await expect(downloadAudio(info, false, 8)).resolves.toBeUndefined();
+    // No second format is tried after a refusal: the caller uses the URL path.
+    expect(download).toHaveBeenCalledTimes(1);
   });
 
   it("chooses the first format the account may play", () => {

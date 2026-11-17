@@ -16,6 +16,22 @@ export interface DownloadAttempt {
 export type TrackInfo = YTMusic.TrackInfo | YT.VideoInfo;
 
 /**
+ * Past this length a track is never buffered into a Blob. The crossfade only
+ * needs a few seconds at the end, and a full download of a hours-long video is
+ * what drives the app out of memory. Such tracks use their stream URL instead.
+ */
+export const MAX_FULL_DOWNLOAD_SECONDS = 60 * 60;
+/** Hard ceiling on one audio download, for tracks whose length isn't reported. */
+export const MAX_AUDIO_BYTES = 256 * 1024 * 1024;
+
+/** A player response's length, when it carries one. */
+export function lengthSecondsOf(info: TrackInfo): number | undefined {
+  const raw = (info as { video_details?: { lengthSeconds?: string } }).video_details?.lengthSeconds;
+  const seconds = Number(raw);
+  return Number.isFinite(seconds) && seconds > 0 ? seconds : undefined;
+}
+
+/**
  * pear-desktop's choice from the account's premium state: premium accounts may
  * stream audio-only (smaller); for everyone else the CDN refuses those, so the
  * muxed format goes first and no track pays for a refused request.
@@ -82,13 +98,15 @@ export function chooseAudioFormat(info: TrackInfo, premium: boolean) {
  * own stream URLs reliably (a raw URL is refused once a renderer streams it),
  * so the crossfade hands the element MP4/WebM bytes instead.
  */
-export async function downloadAudio(info: TrackInfo, premium: boolean): Promise<AudioBytes> {
+export async function downloadAudio(info: TrackInfo, premium: boolean, maxBytes = MAX_AUDIO_BYTES): Promise<AudioBytes | undefined> {
   let lastError: unknown;
   for (const attempt of downloadAttempts(premium)) {
     try {
       const format = info.chooseFormat({ ...attempt, quality: "best" });
       const stream = await info.download({ ...attempt, quality: "best" });
-      const bytes = await readStream(stream);
+      const bytes = await readStream(stream, maxBytes);
+      // The stream grew past the budget: leave it to the caller's URL fallback.
+      if (!bytes) return undefined;
       if (bytes.byteLength === 0) throw new Error("the audio stream was empty");
       return { bytes, mimeType: mimeTypeOf(format, bytes) };
     } catch (error) {
@@ -98,12 +116,14 @@ export async function downloadAudio(info: TrackInfo, premium: boolean): Promise<
   throw lastError;
 }
 
-async function readStream(stream: unknown) {
+async function readStream(stream: unknown, maxBytes: number) {
   const chunks: Uint8Array[] = [];
   let total = 0;
   for await (const chunk of stream as AsyncIterable<Uint8Array>) {
-    chunks.push(chunk);
     total += chunk.byteLength;
+    // Returning from a `for await` closes the iterator, stopping the download.
+    if (total > maxBytes) return undefined;
+    chunks.push(chunk);
   }
   const bytes = new Uint8Array(total);
   let offset = 0;
