@@ -803,7 +803,11 @@
           "linear": "Linear",
           "logarithmic": "Logarithmic"
         },
-        "seconds-before-end-description": "Seconds before the end of a track at which the crossfade to the next one starts"
+        "seconds-before-end-description": "Seconds before the end of a track at which the crossfade to the next one starts",
+        "streamUrlOnly": {
+          "label": "Always use the stream URL",
+          "description": "Never download a whole track into memory. The browser streams it instead. Applies to newly loaded tracks."
+        }
       }
     },
     "custom-output-device": {
