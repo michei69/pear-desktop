@@ -35,8 +35,7 @@ export default definePlugin({
     async start(ctx) {
       const { config } = ctx;
       const proxy = parseProxy(config.url, { username: config.username, password: config.password });
-      // pear-desktop appended --proxy-server, which covered every window; the
-      // Last.fm sign-in window is the one the default session doesn't reach.
+      // The Last.fm sign-in window has its own session, which the default session doesn't reach.
       const sessions = [ctx.session, session.fromPartition(LASTFM_PARTITION)];
 
       // The SDK has no prompt dialog: both items land in the settings card.

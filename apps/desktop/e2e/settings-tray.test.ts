@@ -1,4 +1,4 @@
-// Close-to-tray, set in the tray plugin or carried over from pear-desktop's options.
+// Close-to-tray, set in the tray plugin or carried over from 3.x options.
 
 import { expect, test } from "./fixtures.ts";
 import { setEnabled } from "./helpers/plugins.ts";

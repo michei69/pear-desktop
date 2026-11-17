@@ -1,12 +1,12 @@
-// pear-desktop's app protocol: "<name>music://playPause" (from notification
-// buttons, scripts or other apps) controls playback. A second instance started
-// with such a link hands it to the running one.
+// The app protocol: "<name>music://playPause" (from notification buttons, scripts
+// or other apps) controls playback. A second instance started with such a link
+// hands it to the running one.
 
 import { resolve } from "node:path";
 import type { App } from "electron";
 import type { PlayerAction } from "@pear/sdk";
 
-/** pear-desktop's scheme, so links and scripts made for it keep working. */
+/** The legacy scheme, so links and scripts made for it keep working. */
 export const APP_PROTOCOL = "\u0079\u006f\u0075\u0074\u0075\u0062\u0065music";
 
 export interface ProtocolCommand {
@@ -14,7 +14,7 @@ export interface ProtocolCommand {
   args: string[];
 }
 
-/** The command in a protocol link, as pear-desktop parsed it ("cmd arg arg", URI-encoded). */
+/** The command in a protocol link: "cmd arg arg", URI-encoded. */
 export function parseProtocolLink(link: string): ProtocolCommand | null {
   const prefix = `${APP_PROTOCOL}://`;
   if (!link.startsWith(prefix)) return null;
@@ -43,7 +43,7 @@ const number = (value: string | undefined) => {
   return Number.isFinite(parsed) ? parsed : undefined;
 };
 
-/** pear-desktop's song controls that map onto player actions. */
+/** The song controls that map onto player actions. */
 export function protocolActions({ command, args }: ProtocolCommand): PlayerAction[] {
   switch (command) {
     case "previous":
@@ -87,7 +87,7 @@ export function protocolActions({ command, args }: ProtocolCommand): PlayerActio
   }
 }
 
-/** pear-desktop's commands beyond the player's controls: loading media, the queue, full screen and search box. */
+/** Commands beyond the player's controls: loading media, the queue, full screen and search box. */
 export type ProtocolTask =
   /** A page-side handler; `ignoreResult` for the state requests, whose answer has nowhere to go. */
   | { type: "page"; event: string; payload?: unknown; ignoreResult?: boolean }
@@ -112,9 +112,8 @@ export function protocolTasks({ command, args }: ProtocolCommand): ProtocolTask[
       const playlistId = args[0];
       return playlistId ? [{ type: "page", event: "video:playlist", payload: playlistId }] : [];
     }
-    // pear-desktop's state requests made the renderer re-send its state; the
-    // rewrite streams state already, so these only refresh the page-side answer
-    // (the queue reply also carries shuffle).
+    // State is streamed, so these only refresh the page-side answer (the queue
+    // reply also carries shuffle).
     case "requestShuffleInformation":
     case "requestQueueInformation":
       return [{ type: "page", event: "queue:parsed", ignoreResult: true }];
@@ -190,9 +189,9 @@ export class ProtocolLinks {
 }
 
 /**
- * Makes this app the handler for the protocol, as pear-desktop did: packaged
- * builds register themselves, a development run points the protocol at the
- * Electron binary and this app's entry file.
+ * Makes this app the handler for the protocol: packaged builds register
+ * themselves, a development run points the protocol at the Electron binary and
+ * this app's entry file.
  */
 export function registerProtocol(app: App) {
   if (process.defaultApp && process.argv.length >= 2) {

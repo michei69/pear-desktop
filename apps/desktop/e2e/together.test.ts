@@ -68,7 +68,7 @@ test("pear-desktop's Music Together: a guest joins by host id and shares YTM's q
   await playTestTrack(host);
   await expect.poll(async () => (await stateAfterAds(host)).videoId, { timeout: 60_000 }).toBe(TEST_TRACK);
 
-  // Hosting gives pear-desktop's host id (the raw PeerJS id).
+  // Hosting gives the host id (the raw PeerJS id).
   await openPanel(host);
   await panel(host).getByRole("button", { name: "Music Together Host" }).click();
   const hostId = panel(host).locator("code.host-id");

@@ -142,7 +142,7 @@ export default definePlugin({
       },
     },
   },
-  // pear-desktop's translation menu entries, as settings buttons.
+  // Translation menu entries, as settings buttons.
   actions: {
     clearTranslationCache: {
       label: "Clear translation cache",

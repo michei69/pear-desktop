@@ -1,5 +1,5 @@
 // The About section: the app's identity, versions, links and actions, with the
-// update settings drawn under the actions. Ported from pear-desktop's.
+// update settings drawn under the actions.
 
 import type { ComponentChildren } from "preact";
 import { Icon, PearIcon, YtmIcon } from "../icons.tsx";

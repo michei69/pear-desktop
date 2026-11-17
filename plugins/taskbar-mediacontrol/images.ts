@@ -9,8 +9,8 @@ import { nativeImage, nativeTheme, type NativeImage } from "electron";
 export type Icon = "play" | "pause" | "next" | "previous" | "like" | "dislike" | "likeHollow" | "dislikeHollow";
 export type Icons = Record<Icon, NativeImage>;
 
-// pear-desktop's icons, embedded at build time (base64) in both taskbar colors,
-// so the thumbar matches the fork exactly without ?asset imports.
+// Icons embedded at build time (base64) in both taskbar colors, so the thumbar
+// needs no ?asset imports.
 const ICON_FILES: Record<Icon, { black: string; white: string }> = {
   play: {
     black: embed("media-icons-black/play.png"),

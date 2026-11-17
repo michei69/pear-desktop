@@ -2,10 +2,10 @@ import { definePlugin, type HostContextOf } from "@pear/sdk";
 import { audioTrackConfig } from "./config.ts";
 import { startAudioTrack } from "./page.ts";
 
-// pear-desktop's audio-track plugin: pick which audio track (language, original
-// or auto-dub) a video plays, and which one to prefer on every track. The page
-// part owns the tracks and the player, so the list lives there; the host only
-// opens it from the app menu and the settings card.
+// Pick which audio track (language, original or auto-dub) a video plays, and
+// which one to prefer on every track. The page part owns the tracks and the
+// player, so the list lives there; the host only opens it from the app menu and
+// the settings card.
 
 export default definePlugin({
   id: "audio-track",
@@ -27,8 +27,7 @@ export default definePlugin({
           openPicker(ctx).catch((error: unknown) => ctx.log.warn("couldn't open the audio track picker", error));
         },
       });
-      // pear-desktop's quick toggle; a flat menu item cannot show the state, the
-      // settings card's switch is the canonical control.
+      // A flat menu item cannot show the toggle's state; the settings card's switch is the canonical control.
       ctx.addMenuItem({
         label: ctx.t("plugins.audio-track.menu.prefer-original", "Prefer the original audio"),
         click: () => ctx.setConfig({ preferOriginal: !ctx.config.preferOriginal }),

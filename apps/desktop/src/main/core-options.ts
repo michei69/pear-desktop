@@ -23,7 +23,7 @@ export interface CoreOptionsEnvironment {
   refreshMenu?(): void;
   /** Rebuilds artwork that plugins draw from core settings (the tray). */
   refreshTrayIcons?(): void;
-  /** Restarts the app, for pear-desktop's "restart on config changes" option. */
+  /** Restarts the app, for the "restart on config changes" option. */
   restart?(): void;
 }
 
@@ -110,7 +110,7 @@ export class CoreOptions {
         this.#env.refreshMenu?.();
       }
     }
-    // pear-desktop's options.restartOnConfigChanges: applied every change by relaunching. Read
+    // options.restartOnConfigChanges: applied every change by relaunching. Read
     // after the write, so the change that turns the option off does not restart.
     if (this.#settings.core("advanced").restartOnConfigChanges) this.#env.restart?.();
     return true;
@@ -154,7 +154,7 @@ export class CoreOptions {
     }
   }
 
-  /** Once, as pear-desktop: how to show the menu bar again. */
+  /** Once: how to show the menu bar again. */
   #warnHiddenMenu(window: BrowserWindow) {
     this.#settings.hideMenuWarned = true;
     void dialog.showMessageBox(window, {

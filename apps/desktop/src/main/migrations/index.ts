@@ -1,7 +1,6 @@
-// config.json migrations, with electron-store's semantics (pear-desktop's
-// store): each runs once, when the file was last written by a version older
-// than the migration's, and the file then records the running version in
-// `__internal__.migrations.version`.
+// config.json migrations, with electron-store's semantics: each runs once, when
+// the file was last written by a version older than the migration's, and the file
+// then records the running version in `__internal__.migrations.version`.
 //
 // Add a migration for every change to what config.json means; never edit a
 // released one.
@@ -26,8 +25,8 @@ export { PLUGIN_MIGRATIONS } from "./plugins.ts";
 type Migration = (config: StoredConfig, files: MigratedFiles) => void;
 
 const MIGRATIONS: [version: string, migration: Migration][] = [
-  // pear-desktop migrations from before 3.12: old configs are upgraded through
-  // the same chain, oldest first, exactly as pear-desktop ran them.
+  // Migrations from before 3.12: old configs are upgraded through the same chain,
+  // oldest first.
   [
     "1.7.0",
     (config) => {
@@ -79,7 +78,7 @@ const MIGRATIONS: [version: string, migration: Migration][] = [
   [
     "1.17.0",
     (config) => {
-      // The plugin's defaults changed; pear-desktop dropped the stored entry.
+      // The plugin's defaults changed, so drop the stored entry.
       if (config.plugins) delete config.plugins["picture-in-picture"];
       setNew(ensurePluginEntry(config, "video-toggle"), "mode", "custom");
     },
@@ -194,11 +193,11 @@ const MIGRATIONS: [version: string, migration: Migration][] = [
     },
   ],
   [
-    // pear-desktop's own: its ad blocker became do-not-track (for files from before 3.12).
+    // The ad blocker became do-not-track (for files from before 3.12).
     "3.12.0",
     (config) => {
       const blocker = config.plugins?.adblocker;
-      // Exactly as pear-desktop released it (arrays included), like every released migration.
+      // Exactly as released (arrays included), like every released migration.
       if (!blocker || typeof blocker !== "object") return;
       if (blocker.blocker !== "In player" && blocker.blocker !== "With blocklists") blocker.blocker = "In player";
       config.plugins!["do-not-track"] = blocker;
@@ -206,8 +205,8 @@ const MIGRATIONS: [version: string, migration: Migration][] = [
     },
   ],
   [
-    // pear-desktop 3.x -> the rewrite. Most of the file already means the same:
-    // plugin ids, options and their values were kept on purpose. What moved:
+    // Most of the file already means the same: plugin ids, options and their
+    // values were kept. What moved:
     "4.0.0",
     (config, files) => {
       const options = (config.options ??= {});
@@ -232,15 +231,15 @@ const MIGRATIONS: [version: string, migration: Migration][] = [
         if (typeof options[option] === "boolean") setNew(ensurePluginEntry(config, "tray"), key, options[option]);
       }
       // The API server listened on every interface (phone remotes) until 3.12.4 changed that
-      // default to this machine only; pear-desktop didn't store defaults, so files from before
+      // default to this machine only; defaults weren't stored, so files from before
       // 3.12.4 get the old default set for them. 3.12.4 files keep its local-only default.
       const apiServer = config.plugins?.["api-server"];
       if (isRecord(apiServer) && compareVersions(previous, "3.12.4") < 0) setNew(apiServer, "hostname", "0.0.0.0");
-      // On by default in pear-desktop (off in the rewrite): keep it for everyone who didn't turn it off.
+      // On by default in the old format (off now): keep it for everyone who didn't turn it off.
       const doNotTrack = ensurePluginEntry(config, "do-not-track");
       if (doNotTrack.enabled !== false) doNotTrack.enabled = true;
-      // Appearance -> Context menu kept the hidden entry keys in one record; the rewrite has a
-      // flat switch per entry (`contextMenu<Entry>`). The record stays for a downgrade.
+      // Appearance -> Context menu kept the hidden entry keys in one record; now there's
+      // a flat switch per entry (`contextMenu<Entry>`). The record stays for a downgrade.
       const hiddenMenuEntries = options.contextMenuHidden;
       if (isRecord(hiddenMenuEntries)) {
         for (const entry of CONTEXT_MENU_ENTRIES) {
@@ -252,17 +251,17 @@ const MIGRATIONS: [version: string, migration: Migration][] = [
         const flags = siteFlagEntries(options.featureFlags);
         if (flags.length > 0) setNew(options, "siteFlags", flags);
       }
-      // Created before the plugin conversions: they set pear-desktop's defaults (skipExisting) on it too.
+      // Created before the plugin conversions: they set the old defaults (skipExisting) on it too.
       const downloader = ensurePluginEntry(config, "downloader");
       migratePlugins(config, files);
-      // pear-desktop saved every download to the download folder; the rewrite keeps them in the app
-      // unless asked (exportFiles). Everyone upgrading keeps getting the files.
+      // Downloads used to go to the download folder; now they stay in the app unless
+      // asked (exportFiles). Everyone upgrading keeps getting the files.
       setNew(downloader, "exportFiles", true);
     },
   ],
 ];
 
-/** Plugin options renamed or reshaped by the rewrite (see plugins.ts). */
+/** Plugin options renamed or reshaped in the new format (see plugins.ts). */
 function migratePlugins(config: StoredConfig, files: MigratedFiles) {
   const entries = config.plugins ?? {};
   for (const [id, migrate] of Object.entries(PLUGIN_MIGRATIONS)) {

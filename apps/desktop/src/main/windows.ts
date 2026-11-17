@@ -41,7 +41,7 @@ export function secureWebPreferences(): WebPreferences {
     preload: join(import.meta.dirname, "../preload/index.cjs"),
     contextIsolation: true,
     sandbox: true,
-    // The session-wide spellchecker is off; the window-level flag matches pear-desktop.
+    // The session-wide spellchecker is off; the window-level flag matches it.
     spellcheck: false,
   };
 }

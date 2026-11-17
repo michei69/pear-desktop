@@ -51,7 +51,7 @@ export interface AppleLyricsProps {
   /** The video's position even while paused; null only during ads. */
   position(): number | null;
   seek(ms: number): void;
-  /** The app's own picker, rendered over the lyrics as in pear-desktop. */
+  /** The app's own picker, rendered over the lyrics. */
   picker: ComponentChildren;
   t: Translate;
   /** The line the view moved to (null when there is none), for the host's menu-bar title. */
@@ -95,7 +95,7 @@ export function AppleLyrics({ store, options, position, seek, picker, t, onActiv
     onActiveLine(line ? { text: line.text, romanized: shownRef.current?.romanized[line.sourceIndex] ?? null } : null);
   };
 
-  // Picker placement and slide-away, exactly the master AppleMusicStyle shell:
+  // Picker placement and slide-away, matching the Apple Music shell:
   // measured on mount/resize/pointer entry, hidden when the lyrics are scrolled.
   const pickerMetrics = useRef({ height: 0, top: 0, scrollTop: 0, shown: undefined as boolean | undefined });
   const applyPicker = (show: boolean) => {
@@ -332,8 +332,8 @@ export function AppleLyrics({ store, options, position, seek, picker, t, onActiv
     }
   }, [lyrics]);
 
-  // Wheel/touch scrolling pauses following; it resumes after the same delay as
-  // pear-desktop, and a click on a line resumes it at once.
+  // Wheel/touch scrolling pauses following; it resumes after a delay, and a
+  // click on a line resumes it at once.
   useEffect(() => {
     const scroll = scrollRef.current;
     if (!scroll) return;

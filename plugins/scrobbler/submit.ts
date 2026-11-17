@@ -38,7 +38,7 @@ export function submitter(ctx: Ctx, warn: Warn) {
   const toListen = async (track: Track, startedAt: number): Promise<Listen | null> => {
     const extra = await detailsFor(track.videoId);
     if (!ctx.config.scrobbleOtherMedia && !isSong(track, extra)) return null;
-    // pear-desktop's title/artist preferences and filters, including the user's own regexes.
+    // Apply the title/artist preferences and filters, including the user's own regexes.
     let { scrobbleTitle: title, scrobbleArtist: artist } = scrobbleNames(
       { title: track.title, artist: track.artist, alternativeTitle: extra?.alternativeTitle, tags: extra?.tags },
       ctx.config,

@@ -5,7 +5,7 @@ const style = () => plugin.style as string;
 
 describe("Hide sign-in prompts", () => {
   test("hides every sign-in link, not just the nav bar's", () => {
-    // A bare rule like pear-desktop's, not the narrowed .sign-in-link.ytmusic-nav-bar.
+    // A bare rule, not the narrowed .sign-in-link.ytmusic-nav-bar.
     expect(style()).toMatch(/(^|[,}])\.sign-in-link[,{]/);
     expect(style()).not.toContain(".sign-in-link.ytmusic-nav-bar");
   });

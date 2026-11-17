@@ -247,7 +247,7 @@ export function createEqualizerPanel(ctx: Ctx) {
       {t("plugins.equalizer.settings.reset-gains", "Reset gains")}
     </button>
   ) as HTMLButtonElement;
-  // pear-desktop's curve legend: the two hidden gestures stay discoverable.
+  // The curve legend keeps the two hidden gestures discoverable.
   const curveLegend = (
     <div class="peq-legend">
       <span>{curveHelp}</span>
@@ -532,7 +532,7 @@ export function createEqualizerPanel(ctx: Ctx) {
     persistSoon();
   }
 
-  /** Zero every band's gain but keep its frequency, type and Q (pear-desktop's Reset gains). */
+  /** Zero every band's gain but keep its frequency, type and Q. */
   function resetGains() {
     state.bands = state.bands.map((band) => ({ ...band, gain: 0 }));
     state.activePreset = matchingPresetId(state) ?? "custom";

@@ -121,9 +121,9 @@ const seedBasicTheme = () => {
 };
 
 /**
- * Installs seeded before the recolour moved into the theme have a palette but no
- * CSS, so give them the stylesheet, keeping the rest of the manifest. A Basic
- * theme with its own CSS is left alone, and a deleted one is not re-created.
+ * Some installed themes have a palette but no CSS; give them the stylesheet,
+ * keeping the rest of the manifest. A Basic theme with its own CSS is left alone,
+ * and a deleted one is not re-created.
  */
 const upgradeBasicTheme = () => {
   const folder = join(getThemesDir(), BASIC_THEME_ID);

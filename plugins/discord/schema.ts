@@ -27,7 +27,6 @@ export const schema = {
     label: "Clear after a long pause",
     description: "Remove the activity when playback stays paused.",
   }),
-  // Seconds, as pear-desktop's prompt asked for them.
   activityTimeoutSeconds: config.number(600, { label: "Pause timeout", min: 1, max: 14_400, step: 1, unit: "s", variant: "stepper" }),
   autoReconnect: config.bool(true, {
     label: "Keep trying to connect",

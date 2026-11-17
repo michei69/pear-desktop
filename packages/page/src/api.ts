@@ -62,7 +62,7 @@ function playbackRate(player: VideoRate) {
 /**
  * YTM attaches `setPlaybackRate` only once its speed UI module has loaded, and
  * the media element's rate can be left behind; forcing both makes the API's
- * answer true, as pear-desktop did.
+ * answer true.
  */
 function applyPlaybackSpeed(player: VideoRate, value: number) {
   if (!Number.isFinite(value)) return;

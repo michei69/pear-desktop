@@ -10,7 +10,7 @@ export default definePlugin({
   description: "Share a playlist with others. When the host plays a song, everyone else will hear the same song.",
   config: schema,
   style: css`
-    /* Who added each queue item, as pear-desktop showed it. */
+    /* Who added each queue item, shown on the queue row. */
     .music-together-owner {
       width: 24px;
       height: 24px;

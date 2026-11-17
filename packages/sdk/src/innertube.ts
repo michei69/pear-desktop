@@ -33,7 +33,7 @@ const PLAYER_RESPONSES_KEPT = 50;
 
 /**
  * The InnerTube library (13 and later) leaves deciphering stream URLs to the app: run the
- * player's script it extracted, as pear-desktop did.
+ * player's script it extracted.
  */
 function evaluate(data: Types.BuildScriptResult, env: Record<string, Types.VMPrimative>) {
   const properties: string[] = [];

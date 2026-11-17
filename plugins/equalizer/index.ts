@@ -25,7 +25,7 @@ export default definePlugin({
   },
   host: {
     // The app and tray menus are flat, so presets stay behind the panel's
-    // "Open equalizer"; these restore the quick actions pear-desktop's menu had.
+    // "Open equalizer" while these quick actions remain top-level items.
     start(ctx) {
       ctx.addMenuItem({
         label: ctx.t("plugins.equalizer.actions.open.label", "Open equalizer"),
@@ -59,9 +59,8 @@ export default definePlugin({
     const apply = () => {
       const config = ctx.config;
       const state = readConfig(config);
-      // The previous rewrite treated a changed `preset` as "move the bands to
-      // it". The panel writes matching bands and output together, so this only
-      // fills in an inconsistent preset patch (and never fights a band edit).
+      // The panel writes matching bands and output together, so this only fills
+      // in an inconsistent preset patch (and never fights a band edit).
       if (config.preset !== lastPreset && config.preset !== "custom") {
         const profile = presetProfile(config.preset, state.userPresets);
         if (profile && !profilesMatch(state, profile)) {
@@ -80,7 +79,7 @@ export default definePlugin({
           return;
         }
       }
-      // As before, moving a band away from the active preset makes it Custom.
+      // Moving a band away from the active preset makes it Custom.
       if (config.bands !== lastBands && config.preset !== "custom" && state.activePreset === "custom") {
         lastPreset = "custom";
         lastBands = config.bands;
@@ -93,8 +92,8 @@ export default definePlugin({
       chain?.apply(state, config.filters, ctx.log);
     };
     ctx.onConfigChange(apply);
-    // The previous rewrite's preamp/bands are read once, then stored under the
-    // new keys so later config changes never re-apply them.
+    // Legacy preamp/bands are read once, then stored under the new keys so later
+    // config changes never re-apply them.
     const patch = migrationPatch(ctx.config);
     if (patch) ctx.setConfig(patch);
     lastPreset = ctx.config.preset;

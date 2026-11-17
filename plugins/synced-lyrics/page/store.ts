@@ -4,7 +4,7 @@
 //
 // Selection follows the configured provider order (or the preferred provider
 // when the order is off) until the user switches by hand for this track, and a
-// starred provider is always shown for its track, as in pear-desktop.
+// starred provider is always shown for its track.
 
 import type { Track } from "@pear/sdk";
 import { remoteErrorMessage } from "@pear/sdk/util";
@@ -92,7 +92,7 @@ export interface Shown {
   translation: (string | null)[];
 }
 
-// pear-desktop's key and format, so stars carry over.
+// Keep the legacy key and format so existing stars are preserved.
 const starKey = (videoId: string) => `ytmd-sl-starred-${videoId}`;
 
 const NON_LATIN = /[^\p{Script=Latin}\p{P}\p{N}\s]/u;
@@ -229,8 +229,8 @@ export class LyricsStore {
 
   /**
    * The lead provider (the starred one, else the first in the order) answers
-   * first; the rest only then, as pear-desktop: the picker needs them only as a
-   * fallback, and seven searches held back keep providers off the rate limit.
+   * first; the rest only then. The picker needs them only as a fallback, and
+   * seven searches held back keep providers off the rate limit.
    */
   async #fanOut(track: Track, generation: number) {
     const lead = this.starred && this.#priority.includes(this.starred) ? this.starred : this.#priority[0]!;

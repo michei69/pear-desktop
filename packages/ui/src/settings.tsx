@@ -30,7 +30,7 @@ interface Layout {
   sidebarWidth?: number;
 }
 
-/** Sizes survive closing and reopening the dialog in this session, like pear-desktop's. */
+/** Sizes survive closing and reopening the dialog in this session. */
 let rememberedLayout: Layout = {};
 
 /** Resize bounds; the dialog's sit inside the stylesheet's 100vw - 40px cap. */

@@ -12,7 +12,7 @@ const HANGUL = /[ᄀ-ᇿ㄰-㆏가-힯]/;
 const HAN = /[㐀-䶿一-鿿豈-﫿]/;
 const HAN_RUN = /[㐀-䶿一-鿿豈-﫿]+/g;
 
-// pear-desktop's other scripts (Unicode blocks).
+// Other scripts (Unicode blocks).
 const THAI = /[\u0E00-\u0E7F]/;
 const BENGALI = /[\u0980-\u09FF]/;
 const DEVANAGARI = /[\u0900-\u097F]/;
@@ -36,8 +36,8 @@ export type Script = RomanizationScript;
 
 /**
  * Per line, except for kanji: decided per song, since a kanji-only line in a
- * Japanese song is Japanese, not Chinese (per-line guessing is how
- * romanization regressed upstream). Unequal scripts are unambiguous per line.
+ * Japanese song is Japanese, not Chinese, and per-line guessing gets that wrong.
+ * Unequal scripts are unambiguous per line.
  */
 export function detectScripts(lines: readonly string[]): (Script | null)[] {
   const japanese = lines.some((line) => KANA.test(line));
@@ -293,7 +293,7 @@ async function romanizeJapaneseLine(line: string, engine: JapaneseEngine) {
   return fillUnknownJapanese(romanized, convert, tify, (run) => pinyin(run, { separator: " ", toneType: "none" }));
 }
 
-/** pear-desktop's Thai romanization: word by word where the platform can segment Thai. */
+/** Thai romanization: word by word where the platform can segment Thai. */
 async function romanizeThai(line: string) {
   const { romanize } = await import("@dehoist/romanize-thai");
   const segmenter = Intl.Segmenter.supportedLocalesOf("th").includes("th") ? new Intl.Segmenter("th", { granularity: "word" }) : null;
@@ -303,7 +303,7 @@ async function romanizeThai(line: string) {
     .trim();
 }
 
-/** pear-desktop's Bengali and Hindi romanization: IAST through Sanscript, without the accents. */
+/** Bengali and Hindi romanization: IAST through Sanscript, without the accents. */
 async function romanizeIndic(
   line: string,
   scheme: "bengali" | "devanagari" | "tamil" | "telugu" | "kannada" | "malayalam" | "gujarati" | "gurmukhi" | "oriya",

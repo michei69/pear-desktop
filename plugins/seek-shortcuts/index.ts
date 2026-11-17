@@ -10,8 +10,8 @@ export default definePlugin({
   page: {
     start(ctx) {
       const onKeydown = (event: KeyboardEvent) => {
-        // Master installed its listener only with the player API: before that the key
-        // must reach the page instead of being consumed without a seek.
+        // Wait for the player API: before it exists the key must reach the page
+        // instead of being consumed without a seek.
         if (!ctx.player.api) return;
         if (event.defaultPrevented) return;
         if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;

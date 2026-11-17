@@ -1,5 +1,5 @@
 // The text both Copy debug info actions produce: app, machine, plugins and
-// feature flags, the same environment pear-desktop's report carried.
+// feature flags.
 
 import { flagOverrides, type Flags } from "@pear/sdk/core-config";
 import type { AppDebugInfo } from "@pear/sdk/protocol";

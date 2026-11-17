@@ -57,7 +57,7 @@ const doNotTrack = definePlugin({
 /** Not in PEAR_DESKTOP_3. */
 const genius = definePlugin({ id: "lyrics-genius", name: "Genius lyrics", enabledByDefault: false });
 const menu = definePlugin({ id: "in-app-menu", name: "In-app menu", enabledByDefault: ["win32"] });
-/** The downloader's options that pear-desktop 3.x had (or has a migration for). */
+/** The downloader's options that 3.x had (or has a migration for). */
 const downloader = definePlugin({
   id: "downloader",
   name: "Downloader",
@@ -108,7 +108,7 @@ const saved = (dir: string) => JSON.parse(readFileSync(join(dir, "config.json"),
 
 /** Settings loaded from a new profile with this config.json (none: a fresh profile). */
 const load = (stored?: unknown, platform?: string) => new Settings(profile(stored), PLUGINS, "4.0.0", platform);
-/** The 4.0.0 migration's result for a file pear-desktop 3.12 wrote. */
+/** The 4.0.0 migration's result for a 3.12 file. */
 const migrated312 = (stored: object) => migrate(from312(stored) as never, "4.0.0");
 
 describe("config.json from pear-desktop 3.x", () => {
@@ -132,7 +132,7 @@ describe("config.json from pear-desktop 3.x", () => {
   });
 
   test("moves the tray option onto the tray plugin", () => {
-    // With the tray on, pear-desktop hid the window when it was closed.
+    // With the tray on, closing the window hid it.
     expect(settings.plugin("tray")).toMatchObject({ enabled: true, config: { closeToTray: true, clickPlayPause: true } });
     const off = (options: Record<string, unknown>) => migrated312({ options }).config.plugins?.tray;
     expect(off({ tray: false })).toEqual({ enabled: false });
@@ -172,7 +172,7 @@ describe("config.json from pear-desktop 3.x", () => {
     expect(from3124({ enabled: true, authorizedClients: ["phone"] })).toMatchObject({ enabled: true, hostname: "127.0.0.1" });
     expect(from3124({ enabled: true, hostname: "0.0.0.0" })).toMatchObject({ hostname: "0.0.0.0" });
 
-    // Before 3.12.4, pear-desktop listened on every interface; those users keep the old default.
+    // Before 3.12.4 the server listened on every interface; those users keep the old default.
     const from3123 = (entry?: Record<string, unknown>) =>
       load({
         ...from312({ options: {}, plugins: entry ? { "api-server": entry } : {} }),
@@ -190,7 +190,7 @@ describe("config.json from pear-desktop 3.x", () => {
     const allOn = { flags: true, css: true, animations: true, plugins: true };
     expect(parts(true)).toEqual(allOn);
     expect(parts(false)).toEqual({ flags: false, css: false, animations: false, plugins: false });
-    // A file from a pear-desktop that already has the split keeps its parts.
+    // A file that already has the split keeps its parts.
     const split = { flags: true, css: false, animations: true, plugins: false };
     expect(parts(split)).toEqual(split);
 
@@ -232,7 +232,7 @@ describe("config.json from pear-desktop 3.x", () => {
 
   test("performance-improvement keeps the state pear-desktop stored (off by default there too)", () => {
     const performance = (plugins: Record<string, unknown>) => migrated312({ plugins }).config.plugins?.["performance-improvement"];
-    // pear-desktop's plugin defaults to off; the migration neither turns it on nor creates the entry.
+    // The plugin defaults to off; the migration neither turns it on nor creates the entry.
     expect(performance({})).toBeUndefined();
     expect(performance({ "performance-improvement": { enabled: true } })).toEqual({ enabled: true });
     expect(performance({ "performance-improvement": { enabled: false } })).toEqual({ enabled: false });
@@ -242,7 +242,7 @@ describe("config.json from pear-desktop 3.x", () => {
   test("pear-desktop's on-by-default do-not-track stays on unless it was turned off", () => {
     const doNotTrack = (plugins: Record<string, unknown>) => migrated312({ plugins }).config.plugins?.["do-not-track"];
     expect(doNotTrack({})).toEqual({ enabled: true, blocker: "Lite" });
-    // Turned off in pear-desktop: stays off.
+    // Turned off in 3.x: stays off.
     expect(doNotTrack({ "do-not-track": { enabled: false } })).toEqual({ enabled: false, blocker: "Lite" });
     // A chosen profile is kept.
     expect(doNotTrack({ "do-not-track": { blocker: "Strict", cache: false } })).toMatchObject({
@@ -250,7 +250,7 @@ describe("config.json from pear-desktop 3.x", () => {
       blocker: "Strict",
       cache: false,
     });
-    // A new rewrite profile: off, the rewrite's default.
+    // A new profile: off, the default.
     expect(load().plugin("do-not-track")?.enabled).toBe(false);
   });
 
@@ -285,7 +285,7 @@ describe("config.json from pear-desktop 3.x", () => {
     const record = { ...hidden, "not-an-entry": true };
     const options = migrated312({ options: { contextMenuHidden: record } }).config.options!;
     for (const entry of CONTEXT_MENU_ENTRIES) expect(options[entry.configKey], entry.key).toBe(true);
-    // Entries YTM grew that pear-desktop did not know have no switch; they stay in the record.
+    // Entries YTM grew that 3.x did not know have no switch; they stay in the record.
     expect(options.contextMenuNotAnEntry).toBeUndefined();
     // The old record stays for a downgrade.
     expect(options.contextMenuHidden).toEqual(record);
@@ -353,7 +353,7 @@ describe("config.json from pear-desktop 3.x", () => {
   });
 
   test("everyone upgrading keeps the downloader saving files to the folder; new profiles keep songs in the app", () => {
-    // pear-desktop also overwrote an existing file by default; the rewrite skips it.
+    // Upgraded profiles keep overwriting by default; new profiles skip existing files.
     expect(migrated312({}).config.plugins?.downloader).toEqual({ exportFiles: true, skipExisting: false });
     expect(migrated312({ plugins: { downloader: { exportFiles: false, skipExisting: true } } }).config.plugins?.downloader).toMatchObject({
       exportFiles: false,
@@ -378,7 +378,7 @@ describe("config.json from pear-desktop 3.x", () => {
         autoDownloadFolder: "/home/me/Music/Auto",
       },
     });
-    // The old keys stay for pear-desktop 3.x.
+    // The old keys stay for 3.x.
     expect(saved(dir).plugins.downloader).toMatchObject({ selectedPreset: "Source", downloadOnFinish: { enabled: true } });
   });
 
@@ -487,7 +487,7 @@ describe("migrations", () => {
     });
     expect(migrated312(old({ "pip-position": "broken", "pip-size": [0, 0] })).files).toEqual({});
 
-    // Written next to config.json, unless the rewrite already saved bounds there.
+    // Written next to config.json, unless bounds were already saved there.
     const dir = profile(old({ enabled: true, "pip-position": [5, 6] }));
     new Settings(dir, PLUGINS, "4.0.0");
     expect(JSON.parse(readFileSync(join(dir, "picture-in-picture.json"), "utf8"))).toEqual({ x: 5, y: 6 });
@@ -502,7 +502,7 @@ describe("migrations", () => {
     expect(enabled("win32")).toBe(true);
     expect(enabled("linux")).toBe(false);
     expect(enabled("darwin")).toBe(false);
-    // pear-desktop's Windows users who never turned it off keep it; a stored choice wins.
+    // Windows users who never turned it off keep it; a stored choice wins.
     expect(enabled("win32", from312({ plugins: {} }))).toBe(true);
     expect(enabled("win32", from312({ plugins: { "in-app-menu": { enabled: false } } }))).toBe(false);
     expect(enabled("linux", from312({ plugins: { "in-app-menu": { enabled: true } } }))).toBe(true);

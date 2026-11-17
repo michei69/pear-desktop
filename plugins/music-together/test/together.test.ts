@@ -160,7 +160,7 @@ const settle = async () => {
 const releaseGate = () => new Promise((resolve) => setTimeout(resolve, 25));
 
 describe("the user's profile", () => {
-  // The header of YTM's /account/account_menu answer, as pear-desktop read it from the open menu.
+  // The header of YTM's /account/account_menu answer.
   const menu = (header: unknown) => ({
     actions: [{ openPopupAction: { popup: { multiPageMenuRenderer: { header: { activeAccountHeaderRenderer: header } } } } }],
   });
@@ -172,7 +172,7 @@ describe("the user's profile", () => {
       accountPhoto: { thumbnails: [{ url: "https://lh3.example/ada=s48", width: 48, height: 48 }] },
     };
     expect(accountFromMenu(menu(header))).toEqual({ handleId: "@ada", name: "Ada Lovelace", thumbnail: "https://lh3.example/ada=s48" });
-    // No channel: the name stands in for the handle, as in pear-desktop.
+    // No channel: the name stands in for the handle.
     expect(accountFromMenu(menu({ accountName: { runs: [{ text: "Ada" }] } }))).toEqual({ handleId: "Ada", name: "Ada", thumbnail: "" });
     expect(accountFromMenu({ actions: [] })).toBeNull();
     expect(accountFromMenu(undefined)).toBeNull();

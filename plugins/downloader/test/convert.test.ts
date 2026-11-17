@@ -30,7 +30,7 @@ const after = (args: string[], flag: string) => args.filter((_, i) => args[i - 1
 
 describe("formats", () => {
   test("streams are copied when the format keeps their codec", () => {
-    // pear-desktop's "mp3 (256kbps)".
+    // "mp3 (256kbps)".
     expect(outputFor("mp3", { codec: "opus" })).toEqual({ ext: "mp3", codecArgs: ["-c:a", "libmp3lame", "-b:a", "256k"] });
     expect(outputFor("m4a", { codec: "aac" })).toEqual({ ext: "m4a", codecArgs: ["-c:a", "copy"] });
     expect(outputFor("m4a", { codec: "opus" }).codecArgs).toContain("aac");

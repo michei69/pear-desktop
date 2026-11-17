@@ -1,5 +1,4 @@
-// pear-desktop's Music Together wire types, kept as they are so its clients and
-// this one can share a session.
+// Music Together wire types, kept unchanged so old and new clients can share a session.
 
 export type Profile = {
   id: string;

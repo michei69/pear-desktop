@@ -38,7 +38,7 @@ describe("track identity", () => {
     expect(trackId({} as YTPlayerAudioTrack)).toBe("");
     expect(trackName(info("en", "English"))).toBe("English");
     expect(trackName(pb("de", "German"))).toBe("German");
-    // The id is the last resort, as pear-desktop did.
+    // The id is the last resort.
     expect(trackName({ id: "plain" } as YTPlayerAudioTrack)).toBe("plain");
   });
 

@@ -1,6 +1,5 @@
-// pear-desktop 3.x plugin options -> the rewrite's (the 4.0.0 migration),
-// one conversion at a time, then a whole 3.12 config.json through Settings
-// with the real plugins' schemas.
+// pear-desktop 3.x plugin options -> 4.0.0 (the migration), one conversion at a
+// time, then a whole 3.12 config.json through Settings with the real plugins' schemas.
 
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -16,7 +15,7 @@ vi.mock("electron", () => ({}));
 
 type Json = Record<string, unknown>;
 
-/** Runs the 4.0.0 migration over a pear-desktop 3.12 file with these plugin entries. */
+/** Runs the 4.0.0 migration over a 3.12 file with these plugin entries. */
 function migrated(plugins: Record<string, Json>, options: Json = {}) {
   const { config } = migrate(from312({ options, plugins }), "4.0.0");
   return config.plugins!;
@@ -57,11 +56,11 @@ describe("pear-desktop plugin options", () => {
 
   test("crossfade: a numeric fade scaling is a logarithmic range in dB", () => {
     expect(twice("crossfade", { fadeScaling: 40 })).toEqual({ fadeScaling: "logarithmic", dynamicRange: 40 });
-    // pear-desktop's prompt could store it as text, and beyond the rewrite's range.
+    // 3.x's prompt could store it as text, and beyond the current range.
     expect(twice("crossfade", { fadeScaling: "200" })).toEqual({ fadeScaling: "logarithmic", dynamicRange: 120 });
     expect(twice("crossfade", { fadeScaling: 0 })).toEqual({ fadeScaling: "linear" });
     expect(twice("crossfade", { fadeScaling: "logarithmic" })).toEqual({ fadeScaling: "logarithmic" });
-    // Durations pear-desktop allowed beyond the sliders' ranges are kept at the ends.
+    // Durations 3.x allowed beyond the sliders' ranges are kept at the ends.
     expect(twice("crossfade", { fadeInDuration: 15_000, fadeOutDuration: -5, secondsBeforeEnd: 45 })).toEqual({
       fadeInDuration: 10_000,
       fadeOutDuration: 0,
@@ -99,11 +98,11 @@ describe("pear-desktop plugin options", () => {
     expect(twice("discord", { statusDisplayType: 0 })).toMatchObject({ statusDisplayType: "name" });
     expect(twice("discord", { statusDisplayType: 2 })).toMatchObject({ statusDisplayType: "details" });
     expect(twice("discord", { statusDisplayType: 7 })).toMatchObject({ statusDisplayType: 7 });
-    // pear-desktop never armed a zero timeout: the activity stayed while paused.
+    // 3.x never armed a zero timeout: the activity stayed while paused.
     expect(twice("discord", { activityTimeoutTime: 0 })).toEqual({ activityTimeoutTime: 0, activityTimeoutEnabled: false });
     expect(twice("discord", { activityTimeoutTime: 0, activityTimeoutEnabled: true })).not.toHaveProperty("hideWhenPaused");
     expect(twice("discord", { activityTimeoutTime: 999 * 60_000 })).toMatchObject({ activityTimeoutSeconds: 14_400 });
-    // Sub-minute timeouts, which pear-desktop's prompt allowed, are kept.
+    // Sub-minute timeouts, which 3.x's prompt allowed, are kept.
     expect(twice("discord", { activityTimeoutTime: 30_000 })).toMatchObject({ activityTimeoutSeconds: 30 });
     expect(twice("discord", { activityTimeoutTime: 1000 })).toMatchObject({ activityTimeoutSeconds: 1 });
   });
@@ -115,7 +114,7 @@ describe("pear-desktop plugin options", () => {
       enabled: true,
       noPreservesPitch: "yes",
     });
-    // pear-desktop 3.13+ stored the speed under `playbackSpeed`; the schema would drop it.
+    // 3.13+ stored the speed under `playbackSpeed`; the schema would drop it.
     // The old key is kept (going back to 3.x still finds it).
     expect(twice("playback-speed", { playbackSpeed: 1.239 })).toEqual({ playbackSpeed: 1.239, speed: 1.24 });
     expect(twice("playback-speed", { playbackSpeed: 100 })).toEqual({ playbackSpeed: 100, speed: 16 });
@@ -204,15 +203,15 @@ describe("pear-desktop plugin options", () => {
       listenbrainzToken: "lb",
       listenbrainzApiRoot: "https://lb/",
     });
-    // Partial entries (pear-desktop stored only what changed) and junk.
+    // Partial entries (3.x stored only what changed) and junk.
     expect(twice("scrobbler", { scrobblers: { lastfm: { sessionKey: null }, listenbrainz: "x" } })).toEqual({
       scrobblers: { lastfm: { sessionKey: null }, listenbrainz: "x" },
     });
   });
 
   test("scrobbler: a stored filter list extends the defaults", () => {
-    // pear-desktop stored only what the user changed and merged the defaults in when reading
-    // (song-info-data.ts:272-287), so an upgraded 3.x delta must get them back.
+    // 3.x stored only what the user changed and merged the defaults in when reading
+    // (song-info-data.ts:272-287), so an upgraded delta must get them back.
     const entry = twice("scrobbler", { customRegexFilters: ["my-own-filter"] });
     const filters = entry.customRegexFilters as string[];
     expect(filters.at(-1)).toBe("my-own-filter");
@@ -254,8 +253,8 @@ describe("pear-desktop plugin options", () => {
   });
 
   test("amuse: a pear-desktop entry keeps listening on every address", () => {
-    // pear-desktop's server was reachable from the LAN; the rewrite's default is
-    // loopback, so the migration writes the old bind address instead of dropping it.
+    // The old server was reachable from the LAN; the default is now loopback, so
+    // the migration writes the old bind address instead of dropping it.
     expect(twice("amuse", { enabled: true })).toMatchObject({ hostname: "" });
     // An address the user chose is theirs.
     expect(twice("amuse", { hostname: "127.0.0.1" })).toMatchObject({ hostname: "127.0.0.1" });
@@ -327,7 +326,7 @@ describe("pear-desktop plugin options", () => {
       waveAnimations: JSON.stringify(animations),
     });
     expect(twice("visualizer", { type: "wave" })).toEqual({ type: "wave" });
-    // The other per-visualizer objects are flat too, clamped into the rewrite's ranges.
+    // The other per-visualizer objects are flat too, clamped into the new ranges.
     expect(
       twice("visualizer", {
         wavy: { lineWidth: 3 },
@@ -349,8 +348,8 @@ describe("pear-desktop plugin options", () => {
 
   test("runs on the stored entry only, never on a missing or broken one", () => {
     expect(migrated({ visualizer: "broken" as unknown as Json }).visualizer).toBe("broken");
-    // pear-desktop's on-by-default do-not-track and its file-saving downloader get entries;
-    // performance-improvement is off by default there, so nothing forces it on.
+    // On-by-default do-not-track and the file-saving downloader get entries;
+    // performance-improvement is off by default, so nothing forces it on.
     expect(migrated({})).toEqual({
       "do-not-track": { enabled: true, blocker: "Lite" },
       downloader: { exportFiles: true, skipExisting: false },
@@ -631,7 +630,7 @@ describe("synced-lyrics", () => {
       convertChinese: "t2s",
     });
     expect(twice("synced-lyrics", { defaultTextString: [".", "..", "..."] })).toMatchObject({ gapText: "dots" });
-    // Not stored: pear-desktop's default, ♪ (the rewrite's own default is dots).
+    // Not stored: the old default was ♪ (the current default is dots).
     expect(twice("synced-lyrics", { enabled: true })).toMatchObject({ gapText: "note" });
     expect(twice("synced-lyrics", { defaultTextString: "♪", convertChineseCharacter: "disabled" })).toMatchObject({
       gapText: "note",

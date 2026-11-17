@@ -1,4 +1,4 @@
-// pear-desktop's Windows tray controls for notifications: a click toggles the
+// Windows tray controls for notifications: a click toggles the
 // toast, a double-click the window. The tray plugin first offers each click as
 // a claimable event, so without a claim its own window toggle runs as before.
 

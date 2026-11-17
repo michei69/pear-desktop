@@ -10,7 +10,7 @@ import type { schema } from "./schema.ts";
 /** The Rich Presence application registered by the pear-desktop team. */
 const CLIENT_ID = "1177081335727267940";
 const RETRY_MIN_MS = 5_000;
-// pear-desktop's cap: retrying every minute means ~60 failed connects an hour
+// Cap the backoff: retrying every minute means ~60 failed connects an hour
 // while Discord stays closed; an impatient user has the Connect action.
 const RETRY_MAX_MS = 5 * 60_000;
 /**
@@ -118,7 +118,7 @@ export class Presence {
     this.#retryDelay = Math.min(this.#retryDelay * 2, RETRY_MAX_MS);
   }
 
-  // pear-desktop's connected / disconnected indicator, on the settings card.
+  // The connected / disconnected indicator, on the settings card.
   #showConnection() {
     const { t } = this.#ctx;
     const status = this.#ready

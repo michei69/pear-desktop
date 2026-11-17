@@ -89,8 +89,8 @@ export default definePlugin<{}, Commands>({
       // only one known until the full state lands, so keep it until the next
       // track starts; a late update for a previous track must not use it.
       let pending: TrackPreview | undefined;
-      // pear-desktop's rules: previous unless at the queue's start; next while
-      // tracks follow (autoplay adds them) or the queue repeats.
+      // Previous unless at the queue's start; next while tracks follow (autoplay
+      // adds them) or the queue repeats.
       let nav: PageNav = { fullscreen: false, before: 0, after: 1, more: false };
       const applyNav = () => {
         const { canGoPrevious, canGoNext } = capabilities(nav, state.repeat);

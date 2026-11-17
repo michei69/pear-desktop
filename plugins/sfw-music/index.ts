@@ -135,7 +135,7 @@ export default definePlugin({
       blockedVideoId = videoId;
       ctx.player.control({ type: "pause" });
 
-      // Master's per-entry loop guard: an explicit entry that was already skipped
+      // A per-entry loop guard: an explicit entry that was already skipped
       // is not advanced again, so an all-explicit queue settles paused instead of
       // skipping forever. A replaced queue or a clean song clears the guard.
       if (skipped.has(entryKey)) return;

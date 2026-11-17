@@ -1,18 +1,18 @@
 // Decoded artwork shared by the host-side OS integrations (notifications, the
-// Touch Bar, the Windows media control): pear-desktop's small LRU of decoded
-// images plus its workaround for `.jpg` URLs that actually serve a webp.
+// Touch Bar, the Windows media control): a small LRU of decoded images plus a
+// workaround for `.jpg` URLs that actually serve a webp.
 // Host only: it imports Electron, so it is a subpath and never part of the page bundle.
 
 import { type NativeImage, nativeImage, net } from "electron";
 
-/** How many covers stay decoded, as pear-desktop's image cache. */
+/** How many decoded covers the image cache keeps. */
 const IMAGE_CACHE_LIMIT = 10;
-/** pear-desktop's bound on the hidden-webp retry. */
+/** Bound on the hidden-webp retry. */
 const MAX_RETRIES = 3;
 
 const cache = new Map<string, Promise<NativeImage>>();
 
-/** YTM thumbnails carry a `?sqp=` query; pear-desktop dropped it from `imageSrc`, so one cache entry covers every variant. */
+/** YTM thumbnails carry a `?sqp=` query; drop it so one cache entry covers every variant. */
 function withoutQuery(url: string): string {
   const end = url.indexOf("?");
   return end === -1 ? url : url.slice(0, end);
@@ -20,9 +20,8 @@ function withoutQuery(url: string): string {
 
 /**
  * Fetches and decodes one URL. A `.jpg` URL that serves a webp decodes empty;
- * pear-desktop retried with the URL truncated at the last `.jpg`
- * (pear-desktop#315). Resolves empty when the retry is empty too; rejects only
- * when the fetch does.
+ * retry with the URL truncated at the last `.jpg`. Resolves empty when the
+ * retry is empty too; rejects only when the fetch does.
  */
 async function fetchImage(url: string, depth = 0): Promise<NativeImage> {
   if (depth > MAX_RETRIES) return nativeImage.createEmpty();

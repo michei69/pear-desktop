@@ -130,7 +130,7 @@ export function installAnimationThrottle() {
 /**
  * YTM may serve a Trusted Types CSP, which turns plugin DOM writes through
  * innerHTML/insertAdjacentHTML into exceptions. A pass-through `default`
- * policy keeps them working, like pear-desktop's renderer registers at boot.
+ * policy keeps them working.
  *
  * The page runtime calls this at boot (from packages/page/src/index.ts),
  * before it builds the player or starts plugins, so the policy is in place

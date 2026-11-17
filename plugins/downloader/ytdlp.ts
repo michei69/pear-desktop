@@ -6,7 +6,7 @@ import { cleanupArgs } from "./names.ts";
 
 /**
  * "source": the audio as streamed (usually Opus), without re-encoding.
- * "custom": pear-desktop's Custom preset, with its own ffmpeg arguments and extension.
+ * "custom": the Custom preset, with its own ffmpeg arguments and extension.
  */
 export type AudioFormat = "opus" | "m4a" | "mp3" | "source" | "custom";
 
@@ -66,7 +66,7 @@ const FORMAT_SELECTORS: Record<AudioFormat, string> = {
   custom: "bestaudio/best",
 };
 
-/** A playlist's radio ("RDAMPL<id>") stands for the playlist itself, as pear-desktop downloaded it. */
+/** A playlist's radio ("RDAMPL<id>") stands for the playlist itself. */
 const PLAYLIST_RADIO = "RDAMPL";
 
 /** The playlist an id is about: a playlist's radio is that playlist. */
@@ -79,7 +79,7 @@ export function normalizePlaylistId(playlistId: string | null | undefined): stri
 export const isDownloadablePlaylist = (playlistId: string | undefined): playlistId is string =>
   !!playlistId && (!playlistId.startsWith("RD") || playlistId.startsWith("RDCLAK"));
 
-/** A playlist's radio ("RDAMPL…") downloads the playlist itself, as pear-desktop did. */
+/** A playlist's radio ("RDAMPL…") downloads the playlist itself. */
 export function withPlaylist(target: DownloadTarget): DownloadTarget {
   const playlistId = normalizePlaylistId(target.playlistId);
   if (target.playlistId === undefined || playlistId === target.playlistId) return target;
@@ -96,7 +96,7 @@ export function canEmbedCover(format: AudioFormat, capabilities: Capabilities, c
     return ext === "mp3" || ext === "flac" ? capabilities.ffmpeg : capabilities.mutagen;
   }
   if (format === "mp3") return capabilities.ffmpeg;
-  // The stream as it came (WebM, usually), which yt-dlp can't put a cover in; pear-desktop didn't either.
+  // The stream as it came (WebM, usually), which yt-dlp can't put a cover in.
   if (format === "source") return false;
   if (format === "m4a") return capabilities.mutagen || capabilities.atomicParsley;
   return capabilities.mutagen;
@@ -108,7 +108,7 @@ export function buildArgs(options: ArgsOptions): string[] {
   const template = (options.template.trim() || DEFAULT_TEMPLATE).replace(/^[/\\]+/, "");
   const folders = playlist && options.playlistFolders;
   const output = folders ? `%(playlist_title,playlist_id)s/${template}` : template;
-  // "Source" keeps the downloaded file as it is, named by its container (.webm, .m4a), as pear-desktop did.
+  // "Source" keeps the downloaded file as it is, named by its container (.webm, .m4a).
   const extract = options.format !== "source";
 
   const args = [
@@ -131,7 +131,7 @@ export function buildArgs(options: ArgsOptions): string[] {
     FORMAT_SELECTORS[options.format],
     ...(extract ? ["--extract-audio", "--audio-format", audioFormatArg(options), "--audio-quality", audioQuality(options.format)] : []),
     "--embed-metadata",
-    // Titles and artists without "(Official Video)", "VEVO", " - Topic"…, as pear-desktop named and tagged them.
+    // Titles and artists without "(Official Video)", "VEVO", " - Topic"…
     ...cleanupArgs(),
     "--paths",
     options.folder,
@@ -142,9 +142,9 @@ export function buildArgs(options: ArgsOptions): string[] {
   ];
   // The list's title, for the download's label.
   if (playlist) args.push("--print", "before_dl:pear-list %(playlist_title|)s");
-  // The list's folder as pear-desktop named it: reserved characters become spaces.
+  // The list's folder: reserved characters become spaces.
   if (folders) args.push(...PLAYLIST_FOLDER_ARGS);
-  // pear-desktop's Custom preset: its ffmpeg arguments for the conversion.
+  // The Custom preset's ffmpeg arguments for the conversion.
   if (options.format === "custom" && options.customArgs?.trim())
     args.push("--postprocessor-args", `ExtractAudio+ffmpeg_o:${options.customArgs.trim()}`);
   if (options.cookiesFile) args.push("--cookies", options.cookiesFile);
@@ -164,7 +164,7 @@ export function buildArgs(options: ArgsOptions): string[] {
   return args;
 }
 
-/** pear-desktop's "mp3 (256kbps)": constant 256 kbps; the best quality otherwise. */
+/** "mp3 (256kbps)": constant 256 kbps; the best quality otherwise. */
 const audioQuality = (format: AudioFormat) => (format === "mp3" ? "256K" : "0");
 
 /** filenamify(title, { replacement: " " }): reserved characters as one space, no runs of spaces, nothing around. */

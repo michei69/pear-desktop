@@ -31,7 +31,7 @@ export const lyricsStyles = css`
     overflow-x: clip;
     overflow-clip-margin: 10px;
   }
-  /* pear-desktop's line effects (its renderer set these variables per effect). */
+  /* Line-effects variables, set per effect by the renderer. */
   .root {
     --lyrics-font-size: clamp(1.4rem, 1.1vmax, 3rem);
     --lyrics-line-height: 1.4;
@@ -66,8 +66,8 @@ export const lyricsStyles = css`
     --active-offset: 5%;
   }
 
-  /* User-selected lyrics size; overrides the effect's default. pear-desktop's px
-     map: every effect and the plain lyrics use the same size, matching its panel. */
+  /* User-selected lyrics size; overrides the effect's default. The px map is
+     shared: every effect and plain lyrics use the same size, matching the panel. */
   .root[data-font-size="small"] {
     --lyrics-font-size: 28px;
     --size: 28px;
@@ -80,7 +80,7 @@ export const lyricsStyles = css`
     --lyrics-font-size: 48px;
     --size: 48px;
   }
-  /* The glow effect pads the line by the same notch (pear-desktop's --lyrics-padding). */
+  /* The glow effect pads the line by the same notch (--lyrics-padding). */
   .root[data-font-size="small"].effect-fancy {
     --lyrics-padding: 12px;
   }
@@ -91,7 +91,7 @@ export const lyricsStyles = css`
     --lyrics-padding: 18px;
   }
 
-  /* pear-desktop's lyrics picker. */
+  /* Lyrics picker. */
   .picker {
     position: sticky;
     top: 0;
@@ -102,7 +102,7 @@ export const lyricsStyles = css`
     height: 5em;
     margin-bottom: 8px;
     font-size: 14px;
-    /* No color of its own, as pear-desktop: themes, album colors and ambient glows show through. */
+    /* No color of its own: themes, album colors and ambient glows show through. */
     backdrop-filter: blur(5px);
     border-bottom: 1px solid rgb(255 255 255 / 0.1);
     transition: transform 325ms ease-in-out;
@@ -418,7 +418,7 @@ export const lyricsStyles = css`
     font-size: 0.74em;
     font-weight: 500;
   }
-  /* Duet lines and RTL lines, as pear-desktop's singer-right/rtl-text rules. */
+  /* Duet lines and RTL lines (singer-right/rtl-text rules). */
   .line.singer-right {
     transform-origin: 100% 50%;
   }

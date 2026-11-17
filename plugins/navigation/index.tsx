@@ -18,7 +18,7 @@ export default definePlugin({
   description: "Back and forward buttons in the top bar.",
   enabledByDefault: true,
   config: {
-    // pear-desktop always put them on the right, before the clock and avatar.
+    // On the right they sit before the clock and avatar.
     placement: config.select(
       "right",
       [
@@ -75,7 +75,6 @@ export default definePlugin({
     }
   `,
   page: (ctx) => {
-    // pear-desktop's texts and translations.
     const back = navButton(ctx.t("plugins.navigation.templates.back.title", "Go to previous page"), CHEVRON_LEFT, () => history.back());
     const forward = navButton(ctx.t("plugins.navigation.templates.forward.title", "Go to next page"), CHEVRON_RIGHT, () =>
       history.forward(),
@@ -96,8 +95,8 @@ export default definePlugin({
     update();
     if (navigation) ctx.listen(navigation, "currententrychange", update);
 
-    // YTM re-renders the nav bar on some navigations. "right" is pear-desktop's
-    // spot: prepended before the clock and avatar instead of after the left content.
+    // YTM re-renders the nav bar on some navigations. "right" is prepended before
+    // the clock and avatar instead of after the left content.
     if (ctx.config.placement === "right") ctx.mount(container, "nav_bar.right", "prepend");
     else ctx.mount(container, "nav_bar.left", "append");
   },

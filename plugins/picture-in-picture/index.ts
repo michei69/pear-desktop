@@ -13,8 +13,8 @@ export default definePlugin({
     start(ctx) {
       const smallWindow = new SmallWindow(ctx);
       smallWindows.set(ctx, smallWindow);
-      // pear-desktop's plugin menu had the toggles; the app and tray menus are flat
-      // now, so only the entries that need no check state come back here.
+      // The app and tray menus are flat, so only the entries that need no check
+      // state come back here.
       ctx.addMenuItem({
         label: ctx.t("plugins.picture-in-picture.templates.button", "Picture-in-picture"),
         click: () => smallWindow.toggle(),
@@ -45,7 +45,7 @@ export default definePlugin({
     },
   },
   style: css`
-    /* pear-desktop's small-window styling of YTM's full-screen player. */
+    /* Small-window styling of YTM's full-screen player. */
     /* Newer YTM draws its full-screen controls with ytmusic-player-controls. */
     html.pear-pip sel(player_bar) svg,
     html.pear-pip sel(player_bar.time),

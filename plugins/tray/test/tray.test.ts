@@ -143,7 +143,7 @@ describe("tray clicks", () => {
     expect(window.hide).toHaveBeenCalledOnce();
     expect(app.dock.hide).toHaveBeenCalledOnce();
 
-    // Rewrite-ahead: a visible but unfocused window is raised, not hidden.
+    // A visible but unfocused window is raised, not hidden.
     window.visible = true;
     window.focused = false;
     tray.emit("click");

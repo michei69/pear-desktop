@@ -1,4 +1,4 @@
-// The built-in engine: pear-desktop's downloader on InnerTube (host only). It
+// The built-in engine: downloads through InnerTube (host only). It
 // looks songs up with the app's own signed-in session, streams them into a
 // temporary file next to the result and converts that into place (convert.ts).
 // Anything the site refuses it is a RecoverableError, which yt-dlp gets next.
@@ -48,7 +48,7 @@ const DOWNLOAD_SHARE = 0.7;
 const HTTP_FORBIDDEN = 403;
 /** Songs of a playlist downloaded at the same time. */
 const PLAYLIST_CONCURRENCY = 2;
-/** The temp files' prefix; pear-desktop's random base was `.pear-…` too. */
+/** The temp files' prefix. */
 const TEMP_PREFIX = ".pear-";
 
 export interface BuiltInJobOptions {
@@ -162,10 +162,10 @@ export class InnertubeEngine implements Engine {
     signal: AbortSignal,
   ): Promise<EngineResult> {
     const { list, entries } = await recoverable(() => this.#list(yt, playlistId, options.playlistLimit), signal);
-    // The queue names the job after the list, as pear-desktop's dialog and progress did.
+    // The queue names the job after the list.
     progress.named(list.title);
     const wanted = only ? entries.filter((entry) => only.includes(entry.index)) : entries;
-    // As pear-desktop: a whole list isn't merged into a folder that is there already, unless skipping existing files.
+    // A whole list isn't merged into a folder that is there already, unless skipping existing files.
     // A resumed list has its folder (its own songs are done already) and may continue.
     if (!only?.length && (options.exportFiles || !this.#options.store) && options.playlistFolders && !options.skipExisting) {
       const folder = join(options.folder, playlistFolder({ playlist_title: list.title, playlist_id: list.id }));
@@ -285,7 +285,7 @@ export class InnertubeEngine implements Engine {
     let poToken = await session.poToken(yt, entry.videoId);
     const { info, tags } = await recoverable(() => this.#lookup(yt, entry.videoId, poToken), signal);
     if (list?.album) Object.assign(tags, albumTags(list.album, entry.index, list.count));
-    // A single song's job is named after the song, as pear-desktop's was; a list keeps its own name.
+    // A single song's job is named after the song; a list keeps its own name.
     if (!list) progress.named?.(tags.title);
     const format = await recoverable(async () => chooseAudio(info, options.format), signal);
     // The stream's container decides what "As streamed" writes (WebM for Opus, M4A/MP4 for AAC).
@@ -293,7 +293,7 @@ export class InnertubeEngine implements Engine {
 
     const fields = templateFields(entry, tags, ext, list, info.basic_info.duration);
     const folder = list && options.playlistFolders ? join(options.folder, playlistFolder(fields)) : options.folder;
-    // pear-desktop budgeted the name against the folder: Windows paths stop at 260 characters.
+    // Budget the name against the folder: Windows paths stop at 260 characters.
     const relative = renderTemplate(options.template, fields, process.platform, { maxLength: Math.max(32, 255 - folder.length) });
     const file = join(folder, relative);
     if (exporting && options.skipExisting && existsSync(file)) {
@@ -305,7 +305,7 @@ export class InnertubeEngine implements Engine {
     // Kept, the stream is downloaded into the store; named by the stream, so a paused download only continues from the same one.
     const keepOnly = !exporting && keepable(format);
     // The video id keeps a paused or failed download's part for this song; the converted file gets a
-    // random name, so two entries with one title can't interleave their bytes (pear-desktop's random base).
+    // random name, so two entries with one title can't interleave their bytes.
     const partial = keepOnly
       ? await store.stagingFile(entry.videoId, format.itag)
       : join(dirname(file), `${TEMP_PREFIX}${entry.videoId}-${format.itag}.part`);
@@ -345,7 +345,7 @@ export class InnertubeEngine implements Engine {
         });
         await rename(converted, file);
       } catch (error) {
-        // As pear-desktop: no usable ffmpeg, but the stream already is the wanted container: keep it, unconverted.
+        // No usable ffmpeg, but the stream already is the wanted container: keep it, unconverted.
         if (!isFfmpegMissing(error)) throw error;
         if (!sameContainer(ext, format.mime_type))
           throw new EngineFailure(FFMPEG_MISSING, (t) => t("plugins.downloader.backend.feedback.ffmpeg-missing", FFMPEG_MISSING));
@@ -415,7 +415,7 @@ export class InnertubeEngine implements Engine {
     return file;
   }
 
-  /** The song's streams and tags; songs that need signing in are tried with the TV client, as pear-desktop did. */
+  /** The song's streams and tags; songs that need signing in are tried with the TV client. */
   async #lookup(
     yt: Innertube,
     videoId: string,
@@ -627,7 +627,7 @@ async function recoverable<T>(step: () => Promise<T>, signal: AbortSignal): Prom
   }
 }
 
-/** The best audio-only stream, in the codec the format keeps if there is one; else audio with video, as pear-desktop fell back to. */
+/** The best audio-only stream, in the codec the format keeps if there is one; else audio with video. */
 function chooseAudio(info: YTMusic.TrackInfo | YT.VideoInfo, format: BuiltInFormat): FormatLike {
   const attempts: Types.FormatOptions[] = [
     { type: "audio", quality: "best", format: preferredContainer(format) },

@@ -55,7 +55,7 @@ export function createTrackReapply(ctx: TrackReapplyContext) {
   return {
     apply,
     schedule,
-    /** A new track starts with a fresh retry budget; apply shortly, like pear-desktop. */
+    /** A new track starts with a fresh retry budget; apply shortly. */
     reset() {
       attempts = 0;
       schedule();

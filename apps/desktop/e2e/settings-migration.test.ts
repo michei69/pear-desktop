@@ -1,4 +1,4 @@
-// pear-desktop 3.x settings carry over: config.json is migrated in place.
+// 3.x settings carry over: config.json is migrated in place.
 
 import { readFileSync } from "node:fs";
 import { join } from "node:path";

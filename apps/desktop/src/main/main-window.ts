@@ -29,7 +29,7 @@ ytmusic-app-layout#layout ytmusic-nav-bar { padding-top: var(--ytmusic-nav-bar-o
 const EARLY_SHOW_DELAY_MS = 500;
 /** YTM's own background, so the window doesn't flash white while loading. */
 const BACKGROUND_COLOR = "#030303";
-/** A minute hidden before Blink's re-fetchable resource caches are dropped (pear-desktop's rule). */
+/** A minute hidden before Blink's re-fetchable resource caches are dropped. */
 const HIDDEN_CACHE_RELEASE_MS = 60_000;
 
 /** The standalone settings window only follows state, not page-runtime traffic. */
@@ -71,8 +71,8 @@ export class MainWindow {
 
   /**
    * Once the app is ready: YTM gets Chromium's own user agent unless
-   * advanced.overrideUserAgent is on, which sends pear-desktop's fixed Chrome
-   * one; Google sign-in always gets Electron's (returned).
+   * advanced.overrideUserAgent is on, which sends the fixed Chrome one; Google
+   * sign-in always gets Electron's (returned).
    */
   useYtmUserAgent(override: boolean) {
     this.#electronUserAgent = app.userAgentFallback;
@@ -113,7 +113,7 @@ export class MainWindow {
   runtimeBootstrapped(sender: Electron.WebContents) {
     if (!this.#window || sender !== this.#window.webContents) return;
     this.#runtimeUp = true;
-    // As pear-desktop: the last song loads, and the page then moves to the starting page.
+    // The last song loads, and the page then moves to the starting page.
     const browseId = this.#pendingStartingPage;
     this.#pendingStartingPage = undefined;
     if (browseId) {
@@ -134,7 +134,7 @@ export class MainWindow {
     this.#window = window;
     if (settings.window?.maximized) window.maximize();
     // The window paints its own background colour, so show it once the page has
-    // painted or after a short timer, whichever comes first (pear-desktop's rule).
+    // painted or after a short timer, whichever comes first.
     showWhenReady(
       window,
       EARLY_SHOW_DELAY_MS,
@@ -153,7 +153,7 @@ export class MainWindow {
     window.webContents.on("will-prevent-unload", (event) => event.preventDefault());
     window.webContents.on("render-process-gone", (_event, details) => {
       this.#runtimeUp = false;
-      // A clean exit (a quit, or a reload) is not a crash; pear-desktop only asked then.
+      // A clean exit (a quit, or a reload) is not a crash.
       if (details.reason !== "clean-exit") void this.#crashed(window, details);
     });
     this.#followNavigation(window);
@@ -162,8 +162,8 @@ export class MainWindow {
     this.#reportVisibility(window);
     this.#handleLoadFailures(window);
     window.webContents.on("dom-ready", () => {
-      // pear-desktop injected its player-page rules into every window; the
-      // macOS title-bar fix is skipped while the in-app menu draws its own.
+      // Player-page rules go into every window; the macOS title-bar fix is
+      // skipped while the in-app menu draws its own.
       void window.webContents.insertCSS(PLAYER_PAGE_CSS);
       if (process.platform === "darwin" && !settings.plugin("in-app-menu")?.enabled) {
         void window.webContents.insertCSS(MAC_TITLE_BAR_CSS);
@@ -252,7 +252,7 @@ export class MainWindow {
     window.on("closed", cancelHiddenCacheRelease);
   }
 
-  /** A dead or killed renderer asks what to do, as pear-desktop did, instead of leaving a blank window. */
+  /** A dead or killed renderer asks what to do, instead of leaving a blank window. */
   async #crashed(window: BrowserWindow, details: Electron.RenderProcessGoneDetails) {
     const t = this.#plugins.t;
     console.error(t("main.console.unresponsive.details", "Unresponsive Error!\n{{error}}", { error: JSON.stringify(details, null, "\t") }));
@@ -276,7 +276,7 @@ export class MainWindow {
     }
   }
 
-  /** Offline, the home page (which works offline); otherwise pear-desktop's error page with a Retry. */
+  /** Offline, the home page (which works offline); otherwise an error page with a Retry. */
   #handleLoadFailures(window: BrowserWindow) {
     window.webContents.on("did-fail-load", (_event, errorCode, description, url, isMainFrame) => {
       if (!isMainFrame) return;
@@ -365,7 +365,7 @@ function startingBrowseId(page: StartingPage) {
   return STARTING_PAGES[page]?.replace(/^\/browse\//, "");
 }
 
-/** Page script: YTM's own in-app navigation to a browse page, once its app is up (as pear-desktop). */
+/** Page script: YTM's own in-app navigation to a browse page, once its app is up. */
 function navigateInApp(browseId: string) {
   return `(async () => {
     await customElements.whenDefined("ytmusic-app");

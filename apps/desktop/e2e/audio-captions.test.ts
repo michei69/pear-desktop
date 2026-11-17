@@ -45,7 +45,7 @@ test("captions-selector lists caption tracks and switches them through the playe
   await items.nth(2).click();
   expect(await calls()).toContainEqual(["setOption", "captions", "track", { languageCode: "de" }]);
   await expect.poll(async () => (await pluginConfig(page, "captions-selector"))?.lastCaptionsCode).toBe("de");
-  // Confirmed in YTM's own toast, as pear-desktop does.
+  // Confirmed in YTM's own toast.
   await expect(page.getByText("Caption changed to German")).toBeVisible();
   // Still paused: picking a language must not start the video.
   await expect.poll(() => playerStatus(page)).toBe("paused");

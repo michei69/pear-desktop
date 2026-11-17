@@ -6,7 +6,7 @@ import { schema } from "./schema.ts";
 import { chooseAudioFormat, downloadAudio, lengthSecondsOf, MAX_FULL_DOWNLOAD_SECONDS, playableInfo } from "./source.ts";
 
 const YTM_ORIGIN = "https://music.\u0079\u006f\u0075\u0074\u0075\u0062\u0065.com";
-/** An account rarely changes premium status mid-session; master cached it this long too. */
+/** An account rarely changes premium status mid-session. */
 const PREMIUM_CACHE_TTL_MS = 5 * 60 * 1000;
 /** BotGuard runs in the page; a page that hangs must not hold the track's second stream. */
 const PO_TOKEN_TIMEOUT_MS = 15_000;
@@ -28,9 +28,8 @@ export default definePlugin({
     },
     commands: {
       /**
-       * A direct audio stream of a track, as pear-desktop fetched one to play the
-       * end of the track while the next one starts. The page falls back to it when
-       * the track's bytes don't arrive.
+       * A direct audio stream of a track, used to play the end while the next one
+       * starts. The page falls back to it when the track's bytes don't arrive.
        */
       async audioUrl(videoId: string) {
         const { yt, poToken } = await streamSession(this, videoId);
@@ -79,7 +78,7 @@ function sessionOf(ctx: Host) {
 /**
  * The client and the track's PO token. The library's player keeps the token it
  * was created with, so the session's gets this track's: that is what puts `pot`
- * on the stream URLs it deciphers, as pear-desktop's session token did.
+ * on the stream URLs it deciphers.
  */
 async function streamSession(ctx: Host, videoId: string) {
   const session = sessionOf(ctx);
@@ -112,7 +111,7 @@ async function isPremium(ctx: Host) {
   }
 }
 
-/** pear-desktop's check: a premium account has no upgrade button in the guide. */
+/** A premium account has no upgrade button in the guide. */
 async function queryPremium(ctx: Host) {
   const run = (code: string) => ctx.window.webContents.executeJavaScript(code) as Promise<unknown>;
   const signedIn = (await run("!!yt.config_.LOGGED_IN")) as boolean;

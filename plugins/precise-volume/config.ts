@@ -10,7 +10,7 @@ export const schema = {
   showHud: config.bool(true, { label: "Show the volume while changing it" }),
   volumeUp: config.shortcut("", { label: "Global shortcut: volume up" }),
   volumeDown: config.shortcut("", { label: "Global shortcut: volume down" }),
-  /** The last volume, restored on the next launch (pear-desktop's savedVolume). -1 until one is saved. */
+  /** The last volume, restored on the next launch. -1 until one is saved. */
   savedVolume: config.number(-1, { label: "Saved volume", hidden: true }),
 };
 

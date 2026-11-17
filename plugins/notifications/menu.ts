@@ -1,7 +1,6 @@
-// pear-desktop's Notifications menu: priority radios on Linux, the interactive
-// switches and toast styles on Windows, and the resume-notification switch
-// everywhere. The rewrite's app and tray menu items are flat, so this opens as
-// one native popup (like Do Not Track's menu).
+// Notifications menu: priority radios on Linux, the interactive switches and
+// toast styles on Windows, and the resume-notification switch everywhere. The
+// app and tray menu items are flat, so this opens as one native popup.
 
 import { Menu, type MenuItemConstructorOptions } from "electron";
 import { STYLE_LABELS, schema, type Ctx } from "./schema.ts";
@@ -13,7 +12,7 @@ export function showMenu(ctx: Ctx) {
   Menu.buildFromTemplate(menuTemplate(ctx, process.platform)).popup(ctx.window.isVisible() ? { window: ctx.window } : {});
 }
 
-/** The menu pear-desktop built, with its per-platform sections. */
+/** The menu, with its per-platform sections. */
 export function menuTemplate(ctx: Ctx, platform: string): MenuItemConstructorOptions[] {
   const items: MenuItemConstructorOptions[] = [];
   if (platform === "linux") {

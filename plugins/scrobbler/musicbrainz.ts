@@ -23,7 +23,7 @@ interface ResponseBody {
   recordings?: Recording[];
 }
 
-/** A result scoring below this is treated as "not this song" (pear-desktop's cut-off). */
+/** A result scoring below this is treated as "not this song". */
 const MIN_SCORE = 85;
 const MAX_ATTEMPTS = 3;
 const MIN_INTERVAL_MS = 1050;

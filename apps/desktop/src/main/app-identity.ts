@@ -1,5 +1,5 @@
-// Same identity as pear-desktop, so existing installs keep their data folder,
-// window class and taskbar entry.
+// Keep the existing identity so installs keep their data folder, window class
+// and taskbar entry.
 
 import { readdirSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
@@ -18,7 +18,7 @@ export function setAppIdentity() {
   app.setPath("userData", app.getPath("userData"));
   app.setName(APP_ID);
   app.commandLine.appendSwitch("class", APP_ID);
-  // Wayland when the session has it (pear-desktop's hint); X11 otherwise.
+  // Wayland when the session has it; X11 otherwise.
   app.commandLine.appendSwitch("ozone-platform-hint", "auto");
   if (process.platform === "win32") app.setAppUserModelId(APP_ID);
   // Without this the About panel shows the raw app id; the channel and commit
@@ -41,9 +41,9 @@ export function relaunchOptions(): Electron.RelaunchOptions {
 
 /**
  * Windows: a Start Menu shortcut with the app's id, created or repaired at each
- * start, as pear-desktop did. Windows shows notifications (toasts) only for apps
- * with one, and groups the taskbar by its id. Not in development, nor for a
- * portable build, which runs from a temporary folder.
+ * start. Windows shows notifications (toasts) only for apps with one, and groups
+ * the taskbar by its id. Not in development, nor for a portable build, which runs
+ * from a temporary folder.
  */
 export function registerStartMenuShortcut() {
   if (process.platform !== "win32" || !app.isPackaged) return;
@@ -119,9 +119,8 @@ export function nextShortcutIcon(current: string, target: string, ours: string, 
 
 /**
  * Keeps the app's own Windows shortcuts on the icon matching the "Use Music's
- * icons" option, as pear-desktop's shortcut-icons provider did: the exe's icon
- * is baked at build time, so a .lnk's own icon is the only way the option
- * reaches outside the app.
+ * icons" option: the exe's icon is baked at build time, so a .lnk's own icon is
+ * the only way the option reaches outside the app.
  */
 export async function syncShortcutIcons(useYtmIcons: boolean) {
   // A portable build runs from a temporary copy; its shortcuts are not stable.

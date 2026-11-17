@@ -108,7 +108,7 @@ describe("core field texts", () => {
   test("its own texts (and the English fallbacks) still come from the generated keys", () => {
     const t = translator({ "settings-ui.core.flags.label": "Leichtgewichtige Oberfläche" });
     expect(localize(t, "core", "flags", CORE_SECTIONS.performance.flags).label).toBe("Leichtgewichtige Oberfläche");
-    // A field pear-desktop translated reads its own key (from the schema's map).
+    // A field 3.x translated reads its own key (from the schema's map).
     const master = translator({
       "main.menu.options.submenu.advanced-options.submenu.auto-reset-app-cache": "Anwendungscache beim Start der Anwendung zurücksetzen",
     });

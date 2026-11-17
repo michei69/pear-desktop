@@ -6,7 +6,7 @@ import type { Logger } from "@pear/sdk";
 import { sampleImagePixels } from "@pear/sdk/image";
 import { averageColor, type Rgb, themeColors } from "./color.ts";
 
-/** Artwork that cannot be sampled tints the theme black, as pear-desktop did. */
+/** Artwork that cannot be sampled tints the theme black. */
 const BLACK: Rgb = [0, 0, 0];
 
 const SAMPLE_SIZE = 32;

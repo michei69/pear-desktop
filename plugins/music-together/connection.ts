@@ -1,4 +1,4 @@
-// pear-desktop's PeerJS connection: the host's id is its raw PeerJS id, and
+// The PeerJS connection: the host's id is its raw PeerJS id, and
 // events travel as { type, payload, after }.
 
 import {
@@ -262,7 +262,7 @@ export class Connection implements ConnectionLike {
   }
 }
 
-/** A `{ type, payload }` message; its payload is trusted as pear-desktop's. */
+/** A `{ type, payload }` message; its payload is trusted as sent by a peer. */
 function isEvent(data: unknown): data is ConnectionEventUnion {
   return !!data && typeof data === "object" && "type" in data && "payload" in data && !!data.type;
 }

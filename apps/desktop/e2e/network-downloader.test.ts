@@ -483,7 +483,7 @@ test("downloader cancels and retries from the Downloads page's queue, leaving no
   await expect.poll(downloading, { timeout: 60_000, intervals: [50] }).toBe(true);
   await stripButton(page, "Cancel").click();
   expect(await rows(page).count()).toBeGreaterThan(0);
-  // Named after the album once it's known, as pear-desktop.
+  // Named after the album once it's known.
   const album = row(page, ALBUM_TITLE);
   await expect(album.locator(".row-state")).toHaveText("Cancelled");
   await expect(queue(page).locator(".strip-title")).toHaveText("Download cancelled");
@@ -634,7 +634,7 @@ test("downloader adds Download to the menus of songs and albums, as pear-desktop
   await expect(item).toBeVisible();
   await item.click();
   await expect(item).toBeHidden();
-  // Named after the track, as pear-desktop, not after its id.
+  // Named after the track, not after its id.
   await expect
     .poll(async () => ((await invoke(page, "downloader", "state")) as { active?: { label: string } }).active?.label, { timeout: 10_000 })
     .toBe("Never Gonna Give You Up");

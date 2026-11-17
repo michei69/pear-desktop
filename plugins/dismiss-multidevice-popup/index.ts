@@ -14,7 +14,7 @@ export default definePlugin({
     start(ctx) {
       /** Handled dialogs, so a re-render of the same prompt is not handled twice. */
       const handled = new WeakSet<Element>();
-      // pear-desktop's gates: only shortly after playback was active, and at most once per cooldown.
+      // Only handle the prompt shortly after playback was active, and at most once per cooldown.
       let lastActivityAt = isPlaying(ctx.player.state) ? Date.now() : 0;
       /** When playback last paused: only the prompt's own pause may be resumed. */
       let pausedAt = ctx.player.state.status === "paused" ? Date.now() : 0;
@@ -36,7 +36,7 @@ export default definePlugin({
           if (!dialog || handled.has(dialog)) continue;
           handled.add(dialog);
           lastHandledAt = Date.now();
-          // A confirmation, not a bare close: that is what pear-desktop clicked.
+          // Click a confirmation button rather than a bare close: that dismisses the prompt.
           const confirm = dialog.querySelector<HTMLElement>("[dialog-confirm], yt-button-renderer, tp-yt-paper-button, button");
           if (confirm) confirm.click();
           else if (typeof dialog.close === "function") dialog.close();

@@ -78,7 +78,7 @@ export type Translate = (key: string, fallback?: string) => string;
 
 /**
  * A category's name for the hover label. The generated settings key is the one
- * translations are moving to; the legacy key still holds master's translations
+ * translations are moving to; the legacy key still holds translations
  * for the six original categories until the resource pass renames them.
  */
 export function categoryLabel(t: Translate, category: string, fallback: string): string {

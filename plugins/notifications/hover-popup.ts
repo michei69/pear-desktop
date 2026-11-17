@@ -2,8 +2,8 @@
 // small always-on-top strip shows the artwork, title and artist and offers
 // previous / play-pause / next. It never takes focus (showInactive and a
 // non-focusable window), and it goes when the cursor leaves both the icon and
-// the strip. While it is up, notifications are suppressed (see index.ts), as
-// pear-desktop does: the two draw in the same corner.
+// the strip. While it is up, notifications are suppressed (see index.ts): the
+// two draw in the same corner.
 //
 // The tray plugin owns the icon, so it forwards its mouse events and the
 // icon's bounds on the app emitter ("pear:tray-hover", "pear:tray-leave"), and

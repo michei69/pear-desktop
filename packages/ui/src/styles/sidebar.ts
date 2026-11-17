@@ -89,7 +89,7 @@ export const sidebar = css`
     font-size: 11px;
     color: var(--on-surface-variant);
   }
-  /* The version doubles as a "copy debug info" button, like pear-desktop's. */
+  /* The version doubles as a "copy debug info" button. */
   .sidebar-version {
     padding: 0;
     color: inherit;

@@ -24,7 +24,6 @@ export function windowControls(ctx: Ctx) {
   );
   ctx.onCleanup(() => host.remove());
 
-  /** Maximize turns into Restore while the window is maximized. */
   const showMaximized = (maximized: boolean) => {
     const label = maximized
       ? ctx.t("plugins.in-app-menu.window.restore", "Restore")

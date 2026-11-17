@@ -112,8 +112,8 @@ function wantedStrings({ plugins, CORE_FIELD_KEYS, CORE_SECTIONS, UI_STRINGS, i1
 }
 
 /**
- * A shape's field texts. Core fields pear-desktop already translated under its
- * own keys keep those at runtime, so the generated `settings-ui.core.*` twins are
+ * A shape's field texts. Core fields already translated under their own keys
+ * keep those at runtime, so the generated `settings-ui.core.*` twins are
  * skipped (`CORE_FIELD_KEYS` overrides them part by part: label, description…).
  */
 function fieldStrings(

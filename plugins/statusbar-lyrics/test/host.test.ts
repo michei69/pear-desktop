@@ -64,7 +64,7 @@ test("offers the title-length presets and the pronunciation switch in the menu",
   const host = makeHost();
   expect(host.menuItems.map((item) => item.label)).toEqual(["Maximum length", "Include pronunciation"]);
 
-  // The presets cycle through master's choices, wrapping after the last one.
+  // The presets cycle through the choices, wrapping after the last one.
   host.menuItems[0]!.click();
   expect(host.config.maxLength).toBe(70);
   host.config.maxLength = 120;

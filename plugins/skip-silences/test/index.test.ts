@@ -159,7 +159,7 @@ describe("the silence loop", () => {
     app.setLevel(-20);
     app.tick(3); // real audio heard, so the latch is primed with loud samples
     app.setLevel(-100);
-    app.tick(10); // 250 ms: master's history is not full of quiet yet
+    app.tick(10); // 250 ms: the history is not full of quiet yet
     expect(app.video.currentTime).toBe(0);
     app.tick(1);
     expect(app.video.currentTime).toBeCloseTo(0.2);

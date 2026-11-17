@@ -18,16 +18,16 @@ export default definePlugin({
       max: MAX_SPEED,
       step: 0.01,
       unit: "×",
-      // 1593 steps would pick the stepper by the default heuristic; pear-desktop
-      // showed the saved speed as a slider, and it is the useful control here.
+      // 1593 steps would pick the stepper by the default heuristic; the saved
+      // speed is better shown as a slider, the useful control here.
       variant: "slider",
     }),
     preservePitch: config.bool(true, { label: "Preserve pitch", description: "Off: faster sounds higher, like a record." }),
   },
   host: {
     start(ctx) {
-      // pear-desktop's menu checkbox; a flat item cannot show its state, so the
-      // settings card's switch remains the canonical control.
+      // A flat item cannot show a checkbox's state, so the settings card's switch
+      // remains the canonical control.
       ctx.addMenuItem({
         label: ctx.t("plugins.playback-speed.menu.no-preserves-pitch", "Disable pitch preservation"),
         click: () => ctx.setConfig({ preservePitch: !ctx.config.preservePitch }),

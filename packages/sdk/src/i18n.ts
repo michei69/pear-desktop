@@ -1,4 +1,4 @@
-// Translations: pear-desktop's Weblate files (src/i18n/resources/<code>.json),
+// Translations: the app's Weblate files (src/i18n/resources/<code>.json),
 // flattened to dotted keys. English defaults live next to the code that shows
 // them and are passed as the fallback; `nub run i18n` copies new ones into
 // en.json so translators see them.
@@ -17,7 +17,7 @@ export function interpolate(text: string, vars: Vars | undefined): string {
   return text.replace(/\{\{\s*([\w.-]+)\s*\}\}/g, (match, name: string) => (name in vars ? String(vars[name]) : match));
 }
 
-/** Placeholders pear-desktop's strings use without the code passing them. */
+/** Placeholders the app's strings use without the code passing them. */
 const COMMON_VARS: Vars = { applicationName: YTM_NAME };
 
 export function translator(strings: Strings): Translate {

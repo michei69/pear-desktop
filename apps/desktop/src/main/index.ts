@@ -45,9 +45,8 @@ else void main();
 async function main() {
   const settings = new Settings(app.getPath("userData"), hostPlugins, app.getVersion());
   const plugins = new PluginHost(hostPlugins, settings, process.platform);
-  // The tray's click pair and the core startup switch became single settings;
-  // carry them over once, before the window's start-hidden decision. This also
-  // runs while the tray plugin is disabled.
+  // One-time carry-over of the tray's click and startup settings, before the
+  // window's start-hidden decision. Also runs while the tray plugin is disabled.
   const trayState = settings.plugin("tray");
   const trayPlugin = hostPlugins.find((plugin) => plugin.id === "tray");
   if (trayState && trayPlugin) {
@@ -85,7 +84,7 @@ async function main() {
     restart,
   });
   const player = new PlayerMirror((action) => send({ type: "player-control", action }));
-  // pear-desktop's `url` key held the playing track; the startup toggle reopens it.
+  // The `url` key holds the playing track; the startup toggle reopens it.
   player.on("trackChange", (track) => {
     if (!track) return;
     const url = new URL(track.url);
@@ -95,7 +94,7 @@ async function main() {
   });
   const requests = new PageRequests(send);
   const menuItems = new MenuItems();
-  // pear-desktop's app protocol: links control playback; plugins hear about them too.
+  // The app protocol: links control playback; plugins hear about them too.
   const links = new ProtocolLinks(
     (action) => player.control(action),
     (task) => {
@@ -109,7 +108,7 @@ async function main() {
         window?.setFullScreen(task.fullscreen);
         requests.request("core", "fullscreen:set", task.fullscreen).catch((error) => console.warn("[pear] protocol link:", error));
       } else if (window) {
-        // As pear-desktop: YTM's own shortcut for its search box.
+        // YTM's own shortcut for its search box.
         window.webContents.sendInputEvent({ type: "keyDown", keyCode: "/" });
         window.webContents.sendInputEvent({ type: "char", keyCode: "/" });
         window.webContents.sendInputEvent({ type: "keyUp", keyCode: "/" });
@@ -199,7 +198,7 @@ async function main() {
       openSettings,
       themes: core.themes,
       pluginItems: () => menuItems.items,
-      // The API server's own menu (pear-desktop's plugin submenu).
+      // The API server's own menu (the plugin submenu).
       apiServer: () => ({
         config: settings.core("apiServer"),
         set: (patch) => {
@@ -207,7 +206,7 @@ async function main() {
           void api?.apply();
         },
       }),
-      // pear-desktop's Plugins menu: the same effective state the settings cards show.
+      // The Plugins menu: the same effective state the settings cards show.
       pluginCatalog: () => {
         const states = plugins.states();
         return plugins.plugins.map((plugin) => ({
@@ -221,7 +220,7 @@ async function main() {
           .setEnabled(id, enabled)
           .then(() => {
             refreshMenu();
-            // pear-desktop's Plugins menu went through setMenuOptions: it restarts with the option on too.
+            // As with the Plugins menu, toggling a plugin restarts when the option is on.
             if (settings.core("advanced").restartOnConfigChanges) restart();
           })
           .catch((error) => console.warn("[pear] couldn't change a plugin:", error));
@@ -232,7 +231,7 @@ async function main() {
         if (section !== "apiServer") void core.set(section, patch);
       },
       restartOnConfigChanges: () => settings.core("advanced").restartOnConfigChanges,
-      // Turning it on restarts on the spot, as master's setMenuOption did.
+      // Turning it on restarts on the spot.
       setRestartOnConfigChanges: (value) => void core.set("advanced", { restartOnConfigChanges: value }),
       alwaysOnTop: () => settings.core("window").alwaysOnTop,
       setAlwaysOnTop: (alwaysOnTop) => void core.set("window", { alwaysOnTop }),

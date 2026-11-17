@@ -47,7 +47,7 @@ test.describe("in-app menu", () => {
       "no-drag",
     );
 
-    // The whole application menu, as pear-desktop drew it: its menus cascade from the trigger.
+    // The whole application menu: its menus cascade from the trigger.
     await trigger.click();
     const menus = appMenus(page);
     const top = menus.first();
@@ -128,7 +128,7 @@ test.describe("in-app menu", () => {
 
     test("opens the settings, has window controls, and goes away when disabled", async ({ app, page }) => {
       const trigger = await menuTrigger(page);
-      // Settings opens Pear Desktop's overlay.
+      // Settings opens the overlay.
       await menuItem(await openSubmenu(page, trigger, "Options"), "Settings").click();
       await expect(overlay(page).getByRole("dialog")).toBeVisible();
       await overlay(page).getByRole("button", { name: "Close settings" }).click();
@@ -221,7 +221,7 @@ test("picture in picture shrinks the window and restores it", async ({ launch })
   await expect(page.locator("ytmusic-player#player")).toHaveAttribute("player-ui-state", "FULLSCREEN");
   await page.waitForTimeout(SETTLE_MS);
   expect((await windowInfo(app)).bounds.width).toBe(PIP_SIZE.width);
-  // pear-desktop's small-window styling: no track info or menu in the bar.
+  // The small-window styling: no track info or menu in the bar.
   for (const info of await page.locator(`${inBar(".content-info-wrapper")}, ytmusic-player-controls .content-info-wrapper`).all()) {
     await expect(info).toBeHidden();
   }

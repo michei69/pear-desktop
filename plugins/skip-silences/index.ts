@@ -53,8 +53,8 @@ export default definePlugin({
         }
       };
 
-      // The loop exists only while playing, as in pear-desktop: a paused player
-      // has nothing to sample, and a timer for the plugin's whole lifetime keeps
+      // The loop exists only while playing: a paused player has nothing to
+      // sample, and a timer for the plugin's whole lifetime keeps
       // the page waking for nothing. `ctx.setInterval` is cleared on stop, too.
       let timer: ReturnType<typeof setInterval> | undefined;
       const stopLoop = () => {

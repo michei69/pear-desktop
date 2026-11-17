@@ -6,8 +6,8 @@ export default definePlugin({
   id: "transparent-player",
   name: "Transparent player",
   description: "Makes the window see-through, with a blurred material behind it on Windows 11 and macOS.",
-  // pear-desktop's Linux transparency is not supported: it needed global
-  // compositing switches and still broke resizing.
+  // Linux is excluded: transparency needs global compositing switches and still
+  // breaks window resizing.
   platforms: ["win32", "darwin"],
   conflicts: [
     {

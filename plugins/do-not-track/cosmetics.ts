@@ -10,7 +10,7 @@ const BATCH_MS = 200;
  * Applies the lists' cosmetic filters to the page, as Ghostery's preload does:
  * the page's base and hostname rules, then the rules for the classes, ids and
  * links that appear later. Only the elements a mutation added or changed are
- * inspected, like pear-desktop's preload, so a busy page costs no whole-DOM walks.
+ * inspected, so a busy page costs no whole-DOM walks.
  */
 export function applyCosmetics(ctx: Ctx) {
   const style = ctx.addStyle("");

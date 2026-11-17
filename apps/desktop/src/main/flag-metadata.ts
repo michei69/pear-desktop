@@ -7,7 +7,7 @@ import path from "node:path";
 import { app, net } from "electron";
 import type { FlagMetadata, FlagMetadataMap } from "@pear/sdk/protocol";
 
-/** The published metadata, maintained by the fork's datamining repo. */
+/** The published metadata, maintained in a community datamining repo. */
 const FLAG_METADATA_URL = "https://raw.githubusercontent.com/michei69/ytm-datamining/refs/heads/main/flags.json";
 
 /** A slow GitHub must not hold the settings UI open any longer than this. */

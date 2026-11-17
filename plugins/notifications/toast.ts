@@ -1,5 +1,5 @@
-// pear-desktop's Windows toast layouts (custom toast XML), with playback buttons
-// that open its app protocol. See
+// Windows toast layouts (custom toast XML), with playback buttons that open the
+// app protocol. See
 // https://learn.microsoft.com/en-us/windows/apps/design/shell/tiles-and-notifications/toast-schema
 
 import { formatDuration } from "@pear/sdk/util";
@@ -15,7 +15,7 @@ export const TOAST_STYLES = [
 ] as const;
 export type ToastStyle = (typeof TOAST_STYLES)[number];
 
-/** pear-desktop stored the style as a number (1-based, in this order). */
+/** The style is stored as a number (1-based, in this order). */
 export const toastStyleFromNumber = (value: number): ToastStyle | undefined => TOAST_STYLES[value - 1];
 
 /** Styles that show the artwork as a small square logo (the rest show it as a banner). */
@@ -23,7 +23,7 @@ export const usesLogo = (style: ToastStyle) => style === "logo" || style === "le
 
 type Button = "previous" | "play" | "pause" | "next";
 
-// The legacy style's text buttons (pear-desktop's media glyphs).
+// The legacy style's text buttons (media glyphs).
 const GLYPHS: Record<Button, string> = {
   play: String.fromCodePoint(0x1405),
   pause: String.fromCodePoint(0x2016),

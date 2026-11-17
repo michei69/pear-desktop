@@ -1,8 +1,8 @@
-// The update check (general.autoUpdates), like pear-desktop's: packaged builds
-// ask GitHub for the release on the chosen channel shortly after startup, then
-// every six hours, and say so when it is newer. Where the app can install an
-// update itself (Windows installs, Linux AppImages) it downloads it in the
-// background and offers a restart; elsewhere "View Release" opens the page.
+// The update check (general.autoUpdates): packaged builds ask GitHub for the
+// release on the chosen channel shortly after startup, then every six hours, and
+// say so when it is newer. Where the app can install an update itself (Windows
+// installs, Linux AppImages) it downloads it in the background and offers a
+// restart; elsewhere "View Release" opens the page.
 
 import { type BrowserWindow, dialog, net, shell } from "electron";
 import { autoUpdater } from "electron-updater";
@@ -213,7 +213,7 @@ const resetDownloadState = () => {
   setProgress(-1);
 };
 
-/** Pins the updater to a channel, the way pear-desktop did before checking or downloading. */
+/** Pins the updater to a channel before checking or downloading. */
 function applyChannel(channel: UpdateChannel) {
   const flags = channelFlags(channel);
   autoUpdater.allowPrerelease = flags.allowPrerelease;
@@ -363,7 +363,7 @@ export interface UpdateCheckOptions {
   disable(): void;
 }
 
-/** Checks once and shows pear-desktop's dialog when a newer release is out. */
+/** Checks once and shows the update dialog when a newer release is out. */
 export async function checkForUpdates({ currentVersion, channel, window, t: translate, disable }: UpdateCheckOptions) {
   dialogs = { window, t: translate };
   // One dialog at a time: a check while one is open (or a download runs) would stack dialogs.
@@ -420,7 +420,7 @@ export interface DevCheckOptions {
 
 /**
  * A dev build has no feed, so the only thing to report is whether its commit is
- * still the tip of master. Runs once after startup, like pear-desktop's check.
+ * still the tip of master. Runs once after startup.
  */
 export async function checkForDevCommit({ commit, window, t }: DevCheckOptions) {
   if (!commit) return;
@@ -479,7 +479,7 @@ export class UpdateManager {
   start() {
     this.stop();
     // A dev build has no feed to poll: it only asks once whether its commit is
-    // still master's tip, even with the auto-update option off (as the fork did).
+    // still master's tip, even with the auto-update option off.
     if (!this.#options.packaged) {
       const commit = this.#options.commit;
       if (!commit) return;

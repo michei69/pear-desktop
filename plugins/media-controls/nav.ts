@@ -25,7 +25,7 @@ export interface QueueSnapshot {
   continuation: boolean;
 }
 
-/** pear-desktop's rules: previous unless at the queue's start; next while tracks follow (autoplay adds them) or the queue repeats. */
+/** Previous unless at the queue's start; next while tracks follow (autoplay adds them) or the queue repeats. */
 export function capabilities(nav: PageNav, repeat: RepeatMode) {
   return {
     canGoPrevious: nav.before > 0,

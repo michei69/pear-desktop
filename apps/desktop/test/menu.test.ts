@@ -22,7 +22,7 @@ describe("menuTemplate", () => {
       plugins?: readonly PluginToggle[];
       /** Core options by `section.key`, as the host exposes them. */
       core?: Record<string, unknown>;
-      /** pear-desktop's restart-on-config-changes switch, as the host exposes it. */
+      /** The restart-on-config-changes switch, as the host exposes it. */
       restartOnConfigChanges?: boolean;
       /** The API server's menu, when the host exposes it. */
       apiServer?: Partial<ApiServerConfig>;

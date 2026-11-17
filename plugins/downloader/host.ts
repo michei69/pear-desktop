@@ -201,7 +201,7 @@ class Publisher {
     this.#ctx.api.broadcast("progress", state);
   }
 
-  // As pear-desktop: progress on the taskbar / dock icon, and how many downloads are left.
+  // Progress on the taskbar / dock icon, and how many downloads are left.
   #showProgress({ active, queued }: QueueState) {
     const { window, app } = this.#ctx;
     if (window.isDestroyed()) return;
@@ -432,7 +432,7 @@ const sessionCookieDir = (userData: string) => join(userData, "downloader");
 /** A crash can leave a job's cookie file behind; starting up removes the whole folder (the site's session). */
 export const clearSessionCookies = (userData: string) => rm(sessionCookieDir(userData), { recursive: true, force: true });
 
-/** The window's session, as pear-desktop downloaded with it; only the site's cookies, private to this user. */
+/** The window's session; only the site's cookies, private to this user. */
 function sessionCookies(ctx: Ctx) {
   const dir = sessionCookieDir(ctx.app.getPath("userData"));
   let files = 0;

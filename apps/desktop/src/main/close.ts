@@ -16,7 +16,7 @@ export function hideOnClose(app: Pick<App, "on">, window: Pick<BrowserWindow, "o
   });
 }
 
-/** The dock icon: shows the hidden window, or opens one if there is none (pear-desktop's `activate`). */
+/** The dock icon: shows the hidden window, or opens one if there is none. */
 export function onActivate(window: Pick<BrowserWindow, "isDestroyed" | "isVisible" | "show"> | undefined, create: () => void) {
   if (!window || window.isDestroyed()) create();
   else if (!window.isVisible()) window.show();

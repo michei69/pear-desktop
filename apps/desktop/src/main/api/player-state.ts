@@ -171,7 +171,7 @@ export function playerInfoV2(state: PlayerState) {
   };
 }
 
-/** v1's connect payload, unchanged from the original server. */
+/** v1's connect payload, kept stable for existing clients. */
 export function playerInfoV1(state: PlayerState) {
   return { type: "PLAYER_INFO", ...state.snapshot() };
 }

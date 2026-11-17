@@ -14,7 +14,7 @@ export type Block =
   | { kind: "plugin"; id: string; title: UiKey }
   /** The folder themes: selection, presets, palette, import. */
   | { kind: "themes" }
-  /** The update options, under About's action buttons like pear-desktop's. */
+  /** The update options, under About's action buttons. */
   | { kind: "updates" }
   /** The developer actions (devtools, edit config). */
   | { kind: "configuration" };
@@ -39,7 +39,7 @@ export const SECTIONS: Record<SectionId, Section> = {
   general: {
     id: "general",
     icon: "settings",
-    // The update settings live in About, like pear-desktop's.
+    // The update settings live in About.
     blocks: [{ kind: "core", section: "general", exclude: ["autoUpdates", "updateChannel"] }],
   },
   appearance: {

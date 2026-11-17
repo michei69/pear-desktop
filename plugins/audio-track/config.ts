@@ -7,6 +7,6 @@ export const audioTrackConfig = {
     label: "Prefer the original audio",
     description: "When no track is picked, take the one that is not an auto-dub.",
   }),
-  /** The chosen track's id, written by the picker (pear-desktop's audioTrack). */
+  /** The chosen track's id, written by the picker. */
   audioTrack: config.string("", { label: "Audio track", hidden: true }),
 };

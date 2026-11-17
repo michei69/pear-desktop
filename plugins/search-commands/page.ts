@@ -48,7 +48,7 @@ export function startSearchCommands(ctx: Ctx) {
   const unregister = [
     registerCommand({
       name: "settings",
-      // pear-desktop's translation keys for the command list; they still describe it.
+      // Translation keys for the command list; they still describe it.
       description: ctx.t("plugins.search-commands.commands.settings", "Open the settings"),
       run: () => {
         void ctx.host.invoke("openSettings").catch((error: unknown) => ctx.log.warn("could not open the settings", error));
@@ -62,9 +62,8 @@ export function startSearchCommands(ctx: Ctx) {
         const videoId = parseVideoId(args[0] ?? "");
         if (!videoId) return;
 
-        // In place like pear-desktop: no watch-page navigation, so the current
-        // page and its scroll position stay. Fall back to a navigation when the
-        // player page is not up yet (master silently did nothing there).
+        // In place: no watch-page navigation, so the current page and its scroll
+        // position stay. Fall back to a navigation when the player page is not up yet.
         const played = await playInPlace(videoId).catch((error: unknown) => {
           ctx.log.warn("could not load the video in place", error);
           return false;

@@ -11,7 +11,7 @@ export type Profile = typeof LITE | typeof BALANCED | typeof STRICT;
 export const needsBlocklists = (config: { blocker: Profile; customEnabled: boolean }) => config.blocker !== LITE || config.customEnabled;
 
 export const schema = {
-  // pear-desktop's and the fork's profiles, under the key both stored them in.
+  // The profiles, kept under the key older configs stored them in.
   blocker: config.select(
     BALANCED,
     [
@@ -63,7 +63,7 @@ export const schema = {
     description: "Names of files in the blocklists folder that are not loaded.",
     group: "Blocklists",
   }),
-  // pear-desktop applied the lists' cosmetic filters too; their scriptlets for the video
+  // The lists' cosmetic filters are applied too; their scriptlets for the video
   // site can desync playback, so those are opt-in.
   cosmeticFilters: config.select(
     "styles",

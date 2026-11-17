@@ -40,7 +40,7 @@ export interface Route {
 
 export type MediaTypeName = "AUDIO" | "ORIGINAL_MUSIC_VIDEO" | "USER_GENERATED_CONTENT" | "PODCAST_EPISODE" | "OTHER_VIDEO";
 
-/** The original's SongInfo shape, which existing API clients parse. */
+/** The SongInfo shape existing API clients parse. */
 export interface SongInfo {
   title: string;
   alternativeTitle?: string;
@@ -66,7 +66,7 @@ export interface QueueResponse {
   continuation?: string;
 }
 
-/** The five fields the page projects for v1 `/queue/next` (the original's shape). */
+/** The five fields the page projects for v1 `/queue/next`. */
 export interface NextQueueItem {
   title?: string;
   videoId?: string;

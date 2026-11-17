@@ -1,7 +1,7 @@
 import type { YTPlayerApi, YTPlayerAudioTrack } from "@pear/sdk";
 
 // The player's track objects are protobuf-backed and their accessors differ
-// between builds, so every read tries the three shapes pear-desktop did.
+// between builds, so every read tries the three known shapes.
 
 type RawAudioTrack = YTPlayerAudioTrack & {
   Pb?: { id?: string; name?: string; isDefault?: boolean; isAutoDubbed?: boolean };

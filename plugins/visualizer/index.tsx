@@ -51,8 +51,8 @@ export default definePlugin({
   `,
   host: {
     start(ctx) {
-      // pear-desktop had a radio submenu of every type here; the app menu holds
-      // one flat item per plugin, so open the settings card where the dropdown is.
+      // The app menu holds one flat item per plugin, so open the settings card
+      // where the dropdown is.
       ctx.addMenuItem({
         label: ctx.t("plugins.visualizer.menu.settings", "Visualizer settings"),
         click: () => ctx.openSettings(),
@@ -110,8 +110,7 @@ export default definePlugin({
 
     // One frame loop drives every visualizer. It decides whether to draw (the
     // player page is on screen and the window is visible) and, across those
-    // transitions, pauses the libraries that animate themselves — pear-desktop
-    // paused every type while the window was hidden.
+    // transitions, pauses the libraries that animate themselves while hidden.
     let active = true;
     const tick = () => {
       const visible = shown && ctx.isWindowVisible();

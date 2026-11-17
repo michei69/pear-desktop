@@ -39,7 +39,7 @@ interface Restore {
   alwaysOnTop: boolean;
 }
 
-/** The small window's position and size, remembered in userData as pear-desktop did. */
+/** The small window's position and size, remembered in userData. */
 class SavedBounds {
   readonly #file: string;
   #bounds: Rectangle;

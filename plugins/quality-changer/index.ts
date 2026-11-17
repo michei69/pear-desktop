@@ -54,7 +54,6 @@ export default definePlugin({
 
     const { button } = picker(ctx, {
       name: "quality",
-      // pear-desktop's text and translations.
       label: ctx.t("plugins.quality-changer.renderer.quality-settings-button.label", "Open player quality changer"),
       icon: ICON,
       heading: ctx.t("plugins.quality-changer.popover.heading", "Quality"),

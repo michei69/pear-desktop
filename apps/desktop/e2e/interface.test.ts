@@ -32,7 +32,7 @@ test("clock and navigation buttons live in the top bar", async ({ launch }) => {
   await setConfig(page, "clock", { displaySeconds: false, hour12: true });
   await expect(clock).toHaveText(/^\d{1,2}:\d{2}\s?[AP]M$/i);
 
-  // pear-desktop always put the buttons on the right, before the clock and avatar.
+  // The navigation buttons sit on the right, before the clock and avatar.
   await expect(page.locator("#right-content .pear-navigation")).toHaveCount(1);
   const back = page.locator("#right-content .pear-navigation button[aria-label='Go to previous page']");
   const forward = page.locator("#right-content .pear-navigation button[aria-label='Go to next page']");
@@ -67,7 +67,7 @@ test("album colors, ambient glow and the video switch on the player page", async
   await expect.poll(() => page.evaluate(() => document.documentElement.classList.contains("pear-album-color"))).toBe(true);
   const background = () => page.evaluate(() => getComputedStyle(document.body).backgroundColor);
   expect(await background()).not.toBe(YTM_BACKGROUND);
-  // pear-desktop's fixes: secondary texts stay half white on any tint.
+  // Secondary texts stay half white on any tint.
   await expect(page.locator(sel("player_bar.time"))).toHaveCSS("color", "rgba(255, 255, 255, 0.5)");
 
   // The music video gets a glow canvas behind it that follows the video.
@@ -83,7 +83,7 @@ test("album colors, ambient glow and the video switch on the player page", async
     )
     .toBe(true);
 
-  // Pear Desktop's song/video switch replaces YTM's and is remembered.
+  // The song/video switch replaces YTM's and is remembered.
   const song = page.locator(".pear-video-toggle [role=radio]", { hasText: "Song" });
   await expect(song).toBeVisible();
   await expect(page.locator("#av-id")).toBeHidden();

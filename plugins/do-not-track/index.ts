@@ -35,7 +35,7 @@ export default definePlugin({
   id: "do-not-track",
   name: "Do Not Track",
   description: "Blocks tracking: strips ad and tracking data from the player, with lite, balanced or strict blocklists.",
-  // pear-desktop blocked out of the box; profiles that turned it off stay off (the 4.0.0 migration keeps their choice).
+  // On by default; profiles that turned it off stay off (the 4.0.0 migration keeps their choice).
   enabledByDefault: true,
   config: schema,
   actions: {
@@ -63,7 +63,7 @@ export default definePlugin({
       const fetch = (url: string) => net.fetch(url);
       const cacheDir = (config: Config) => (config.cache ? join(ctx.app.getPath("userData"), "tb_cache") : undefined);
       const localDir = blocklistsDir(ctx);
-      // pear-desktop's app menu: profile radios and the Custom submenu, in a popup.
+      // Profile radios and the Custom submenu, in a popup.
       ctx.addMenuItem({
         label: ctx.t("plugins.do-not-track.menu.title", "Do Not Track…"),
         click: () => showMenu(ctx),
@@ -245,8 +245,7 @@ export default definePlugin({
     // Before YTM's scripts, so the player response inlined in the page is pruned too.
     runAt: "start",
     start(ctx) {
-      // The player-data layer is part of every profile: the bundled lists assume
-      // it (pear-desktop's Lite blocker) and add to it.
+      // The player-data layer is part of every profile: the bundled lists assume it and add to it.
       ctx.onCleanup(installPruner());
       if (needsBlocklists(ctx.config) && ctx.config.cosmeticFilters !== "off") applyCosmetics(ctx);
 

@@ -152,8 +152,7 @@ export default definePlugin({
         return;
       }
       if (bar.previousElementSibling !== header) header.after(bar);
-      // Until a long list has loaded completely the counts are partial: like
-      // pear-desktop, offer every action, half filled.
+      // Until a long list has loaded completely the counts are partial: offer every action, half filled.
       const complete = !loader();
       // While a run pulls in the remaining batches the titles are the progress.
       const progress = running ? loading() : "";

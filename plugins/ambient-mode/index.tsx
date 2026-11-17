@@ -275,7 +275,7 @@ export default definePlugin({
   `,
   host: {
     start(ctx) {
-      // Master's radio submenus can't be rebuilt in the flat menu; a shortcut to the card can.
+      // Radio submenus can't be rebuilt in the flat menu; a shortcut to the card can.
       ctx.addMenuItem({
         label: ctx.t("plugins.ambient-mode.menu.open-settings", "Ambient mode settings"),
         click: () => ctx.openSettings(),
@@ -309,10 +309,9 @@ export default definePlugin({
             : mountImage(ctx, wanted);
     };
 
-    // These are the only inputs that change what should be drawn: re-injecting
-    // on each is what used to need a 1 s poll. Only the roots are watched -
-    // never a subtree holding the injected elements - so the styles this
-    // plugin writes cannot feed back into the observers.
+    // Only the roots that change what should be drawn are watched, never a
+    // subtree holding injected elements, so the styles this plugin writes
+    // cannot feed back into the observers.
     ctx.observe("app.layout", { attributes: true, attributeFilter: ["player-page-open"] }, sync);
     ctx.observe("player.page", { attributes: true, attributeFilter: ["style"] }, sync);
     ctx.observe("player.song_video", { attributes: true, attributeFilter: ["style"] }, sync);
@@ -379,7 +378,7 @@ const ambientConfig = (config: Ctx["config"]): AmbientLightConfig => ({
   fps: config.buffer,
   interpolationTime: config.interpolationTime,
   blur: config.blur,
-  // The settings card keeps master's percent, the renderer master's fraction.
+  // The settings card uses a percent; the renderer takes a fraction.
   opacity: config.opacity / 100,
   barDetection: config.barDetection,
   brightness: config.brightness,
@@ -394,7 +393,7 @@ const ambientConfig = (config: Ctx["config"]): AmbientLightConfig => ({
   energySaver: config.energySaver,
 });
 
-/** Master's ambilight: the frame's edge colours stretched over the whole page. */
+/** Ambilight: the frame's edge colours stretched over the whole page. */
 function mountAmbilight(ctx: Ctx, wanted: { kind: GlowKind; source: string }): Glow | null {
   const source = wanted.kind === "video" ? ctx.player.video() : ctx.$<HTMLImageElement>("player.song_image_img");
   if (!source) return null;

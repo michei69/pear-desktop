@@ -52,8 +52,8 @@ test("equalizer, compressor and crossfade compose in the shared graph and toggle
   await setConfig(page, "equalizer", { bands: JSON.stringify(bands) });
   await expect.poll(async () => (await pluginConfig(page, "equalizer"))?.preset).toBe("custom");
 
-  // Extra filters (pear-desktop's format) are added on top of the signal, as pear-desktop
-  // mixed them: the bands feed both the mix and each filter, which feeds the mix too.
+  // Extra filters (the old format) are added on top of the signal: the bands feed
+  // both the mix and each filter, which feeds the mix too.
   await setConfig(page, "equalizer", { filters: '[{"type":"lowshelf","frequency":80,"Q":100,"gain":12}]' });
   const extraWiring = () =>
     page.evaluate(() => {
@@ -160,7 +160,7 @@ test("skip-silences jumps over silence and visualizer draws from a graph tap", a
 
   await setEnabled(page, "visualizer", true);
   const painted = () => litPixels(page, "alpha");
-  // pear-desktop's Vudio, then Wave with its default animations.
+  // Vudio, then Wave with its default animations.
   await expect.poll(painted, { timeout: 15_000 }).toBeGreaterThan(PAINTED);
   await setConfig(page, "visualizer", { type: "wave" });
   await expect.poll(painted, { timeout: 15_000 }).toBeGreaterThan(PAINTED);

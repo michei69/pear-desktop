@@ -64,7 +64,7 @@ export default definePlugin({
         ctx.window.setTouchBar(touchBar);
       };
 
-      /** What the bar shows; position-only changes must not rewrite native labels (master skipped TimeChanged). */
+      /** What the bar shows; position-only changes must not rewrite native labels. */
       const shown = (state: NowPlaying) =>
         [state.track?.title, state.track?.artist, state.track?.artworkUrl, isPlaying(state)].join("\u0000");
 

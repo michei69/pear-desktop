@@ -2,7 +2,7 @@ import { definePlugin } from "@pear/sdk";
 import { injectCpuTamerByAnimationFrame } from "./scripts/cpu-tamer-by-animationframe.js";
 import { injectCpuTamerByDomMutation } from "./scripts/cpu-tamer-by-dom-mutation.js";
 
-/** Whether WebGL works, i.e. animation frames are cheap (from pear-desktop). */
+/** Whether WebGL works, i.e. animation frames are cheap. */
 function hasGpuAcceleration() {
   try {
     const canvas = document.createElement("canvas");
@@ -24,8 +24,8 @@ export default definePlugin({
     runAt: "start",
     start(ctx) {
       const gpu = hasGpuAcceleration();
-      // pear-desktop's (older, known-good) script takes the GPU answer; the DOM
-      // fallback is this tree's, for machines where animation frames are slow.
+      // The animation-frame script takes the GPU answer; the DOM fallback is for
+      // machines where animation frames are slow.
       if (gpu) injectCpuTamerByAnimationFrame(null, true);
       else injectCpuTamerByDomMutation(null);
       ctx.log.info(`timers tamed by ${gpu ? "animation frames" : "DOM mutations"}`);

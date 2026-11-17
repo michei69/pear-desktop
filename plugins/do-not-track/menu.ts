@@ -1,6 +1,6 @@
-// pear-desktop's Do Not Track menu: a radio per profile and a checkbox per local
-// blocklist file. The rewrite's app-menu items are flat, so this is one native
-// popup, opened from a menu item and the settings card's action button.
+// A radio per profile and a checkbox per local blocklist file. App-menu items
+// are flat, so this is one native popup, opened from a menu item and the
+// settings card's action button.
 
 import { join } from "node:path";
 import type { HostContextOf } from "@pear/sdk";
@@ -46,7 +46,7 @@ async function popup(ctx: Context, profiles: boolean) {
       checked: customEnabled,
       click: (item) => ctx.setConfig({ customEnabled: item.checked }),
     },
-    // Like pear-desktop's Custom submenu: the files only apply in custom mode.
+    // The files only apply in custom mode.
     ...names.map((name): MenuItemConstructorOptions => ({
       label: name,
       type: "checkbox",

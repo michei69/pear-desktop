@@ -1,9 +1,8 @@
-// pear-desktop 3.x plugin options -> the rewrite's (part of the 4.0.0
-// migration). Each entry converts one plugin's stored entry in place. Old keys
-// stay in the file (unknown keys are kept), so going back to 3.x still finds
-// them. Plugins not listed kept every option under the same key and value
-// format; tray, api-server and performance-improvement are handled by the
-// migrations themselves (index.ts).
+// Old plugin options -> the new format (part of the 4.0.0 migration). Each entry
+// converts one plugin's stored entry in place. Old keys stay in the file (unknown
+// keys are kept), so going back still finds them. Plugins not listed kept every
+// option under the same key and value format; tray, api-server and
+// performance-improvement are handled by the migrations themselves (index.ts).
 
 import { clamp } from "@pear/sdk/util";
 import { DEFAULT_FILTERS } from "../../../../../plugins/scrobbler/filters.ts";
@@ -27,13 +26,13 @@ import {
 
 export type PluginMigration = (entry: Json, config: StoredConfig, files: MigratedFiles) => void;
 
-/** discord's "Play on <app>" button option: the app's name, kept escaped like pear-desktop does. */
+/** discord's "Play on <app>" button option: the app's name, kept escaped. */
 const DISCORD_PLAY_BUTTON = "playOn\u0059\u006f\u0075\u0054\u0075\u0062\u0065\u004d\u0075\u0073\u0069\u0063";
-/** discord-api-types' StatusDisplayType, which pear-desktop stored as a number. */
+/** discord-api-types' StatusDisplayType, stored as a number in old configs. */
 const DISCORD_STATUS_DISPLAY = ["name", "state", "details"] as const;
-/** pear-desktop's only equalizer preset, as the filter it applied. */
+/** The old bass-booster preset, as the filter it applied. */
 const BASS_BOOSTER = { type: "lowshelf", frequency: 80, Q: 100, gain: 12 };
-/** pear-desktop's vudio.lighting options and the visualizer's flat names for them. */
+/** The old vudio.lighting options and the visualizer's flat names for them. */
 const VUDIO_OPTIONS: Record<string, string> = {
   maxHeight: "vudioMaxHeight",
   maxSize: "vudioMaxSize",
@@ -47,7 +46,7 @@ const VUDIO_OPTIONS: Record<string, string> = {
   horizontalAlign: "vudioHorizontalAlign",
   verticalAlign: "vudioVerticalAlign",
 };
-/** The Ears-style equalizer's fixed layout, which pear-desktop's 3.12.4 betas stored in `filters`. */
+/** The Ears-style equalizer's fixed layout, stored in `filters` by 3.12.4 betas. */
 const EQ_FREQUENCIES = [20, 40, 80, 160, 320, 640, 1280, 2560, 5120, 10240, 20480];
 const EQ_FILTER_TYPES = ["peaking", "lowshelf", "highshelf", "lowpass", "highpass", "bandpass", "notch", "allpass"];
 const EQ_DEFAULT_Q = Math.SQRT1_2;
@@ -58,10 +57,10 @@ const OPENAI_OPTIONS: Record<string, string> = {
   model: "openaiModel",
   apiMode: "openaiApiMode",
 };
-/** pear-desktop's notification toast styles, in the order of their numbers. */
+/** The old notification toast styles, in the order of their numbers. */
 const TOAST_STYLES = ["logo", "banner_centered_top", "hero", "banner_top_custom", "banner_centered_bottom", "banner_bottom", "legacy"];
 const SPONSORBLOCK_CATEGORIES = ["sponsor", "intro", "outro", "interaction", "selfpromo", "music_offtopic", "preview", "filler"];
-/** synced-lyrics' text for instrumental gaps -> the rewrite's choice. */
+/** synced-lyrics' text for instrumental gaps -> the new choice. */
 const GAP_TEXTS = new Map([
   ["♪", "note"],
   ["———", "dash"],
@@ -83,9 +82,9 @@ export const PLUGIN_MIGRATIONS: Record<string, PluginMigration> = {
   "album-color-theme": (entry) => fractionToPercent(entry, "ratio"),
   "ambient-mode": (entry) => fractionToPercent(entry, "opacity"),
   amuse: (entry) => {
-    // pear-desktop listened on every address, so an upgrading user keeps
-    // reachability from other devices instead of silently dropping to loopback.
-    // The empty value binds IPv4 and IPv6 (Node's `::`), as pear-desktop did.
+    // Listened on every address before, so an upgrading user keeps reachability
+    // from other devices instead of silently dropping to loopback. The empty value
+    // binds IPv4 and IPv6 (Node's `::`).
     if (!("hostname" in entry)) setNew(entry, "hostname", "");
   },
   "auth-proxy-adapter": (entry, config) => {
@@ -105,7 +104,7 @@ export const PLUGIN_MIGRATIONS: Record<string, PluginMigration> = {
     clampNumber(entry, "secondsBeforeEnd", 0, 30);
   },
   "custom-output-device": (entry) => {
-    // A device id, or "default"; the rewrite prefers the device's name (ids work too).
+    // A device id, or "default"; the device's name is preferred (ids work too).
     const output = entry.output;
     if (output === "default") {
       entry.output = "";
@@ -118,7 +117,7 @@ export const PLUGIN_MIGRATIONS: Record<string, PluginMigration> = {
     if (isBoolean(entry[DISCORD_PLAY_BUTTON])) setNew(entry, "playButton", entry[DISCORD_PLAY_BUTTON]);
     const timeout = entry.activityTimeoutTime;
     if (isNumber(timeout)) {
-      // Milliseconds; pear-desktop only armed the timeout for values above 0, so 0 never cleared it.
+      // Milliseconds; only values above 0 armed the timeout, so 0 never cleared it.
       if (timeout > 0) setNew(entry, "activityTimeoutSeconds", clamp(Math.round(timeout / 1000), 1, 14_400));
       else entry.activityTimeoutEnabled = false;
     }
@@ -126,10 +125,9 @@ export const PLUGIN_MIGRATIONS: Record<string, PluginMigration> = {
     if (isNumber(status) && DISCORD_STATUS_DISPLAY[status]) entry.statusDisplayType = DISCORD_STATUS_DISPLAY[status];
   },
   "do-not-track": (entry) => {
-    // pear-desktop's two blockers were the player-data layer alone and the
-    // player layer plus the curated lists; the fork calls those Lite and
-    // Balanced and made the extra lists custom ones. "With blocklists" always
-    // loaded them, so its users keep them.
+    // The two old blockers were the player-data layer alone and the player layer
+    // plus the curated lists; those are now Lite and Balanced, with the extra lists
+    // made custom ones. "With blocklists" always loaded them, so its users keep them.
     const blocker = entry.blocker;
     if (blocker === "Custom") {
       entry.blocker = "Lite";
@@ -144,13 +142,13 @@ export const PLUGIN_MIGRATIONS: Record<string, PluginMigration> = {
   },
   downloader: (entry) => {
     // Same names: downloadFolder, skipExisting, playlistMaxItems.
-    // Off by default in pear-desktop (on in the rewrite, for new profiles).
+    // Off by default in old configs (on for new profiles).
     setNew(entry, "skipExisting", false);
     if (entry.format === undefined && typeof entry.selectedPreset === "string") presetToFormat(entry, entry.selectedPreset);
     // { enabled, mode, seconds, percent, folder } -> flat options.
     const onFinish = entry.downloadOnFinish;
     if (entry.autoDownload === undefined && isRecord(onFinish)) {
-      // Set outright, not with setNew: autoDownload being unset says these are all pear-desktop's.
+      // Set outright, not with setNew: autoDownload being unset says these are all old values.
       for (const [from, to, valid] of DOWNLOAD_ON_FINISH) {
         if (valid(onFinish[from])) entry[to] = onFinish[from];
       }
@@ -159,10 +157,10 @@ export const PLUGIN_MIGRATIONS: Record<string, PluginMigration> = {
   equalizer: (entry) => {
     if (typeof entry.filters === "string") return;
     const filters = Array.isArray(entry.filters) ? entry.filters.filter(isRecord) : [];
-    // pear-desktop's Ears rewrite made the equalizer 11 fixed bands and stored that
-    // curve in `filters`, with `activePreset`/`userPresets` beside it. Those are
-    // the bands, not the extra biquads the rewrite calls `filters`: treating them
-    // as extras moves the curve out of the 11-band UI and applies it in parallel.
+    // The old Ears equalizer made 11 fixed bands and stored that curve in `filters`,
+    // with `activePreset`/`userPresets` beside it. Those are the bands, not the extra
+    // biquads `filters` now means: treating them as extras moves the curve out of the
+    // 11-band UI and applies it in parallel.
     const earsCurve = filters.some((filter) => isString(filter.id) && /^band\d+$/.test(filter.id));
     if (earsCurve || isString(entry.activePreset) || Array.isArray(entry.userPresets)) {
       setNew(entry, "bands", JSON.stringify(earsBands(filters)));
@@ -172,7 +170,7 @@ export const PLUGIN_MIGRATIONS: Record<string, PluginMigration> = {
       entry.filters = "";
       return;
     }
-    // pear-desktop 3.12 and earlier: a list of biquad filters (plus the bass booster preset) -> the extra filters, as JSON.
+    // Old configs (3.12 and earlier): a list of biquad filters (plus the bass booster preset) -> the extra filters, as JSON.
     if (isRecord(entry.presets) && entry.presets["bass-booster"] === true) filters.push(BASS_BOOSTER);
     entry.filters = filters.length > 0 ? JSON.stringify(filters) : "";
   },
@@ -184,13 +182,13 @@ export const PLUGIN_MIGRATIONS: Record<string, PluginMigration> = {
     if (isNumber(entry.toastStyle) && TOAST_STYLES[entry.toastStyle - 1]) entry.toastStyle = TOAST_STYLES[entry.toastStyle - 1];
   },
   "playback-speed": (entry) => {
-    // pear-desktop stored the inverse: "don't preserve the pitch".
+    // Old configs stored the inverse: "don't preserve the pitch".
     if (isBoolean(entry.noPreservesPitch)) setNew(entry, "preservePitch", !entry.noPreservesPitch);
-    // Since 3.13 it stored the speed as `playbackSpeed`; the rewrite's schema calls it `speed`.
+    // Since 3.13 the speed was stored as `playbackSpeed`; the schema now calls it `speed`.
     if (isNumber(entry.playbackSpeed)) setNew(entry, "speed", clamp(Math.round(entry.playbackSpeed * 100) / 100, 0.07, 16));
   },
   "picture-in-picture": (entry, _config, files) => {
-    // The small window's last position and size; the rewrite keeps them in a file of their own.
+    // The small window's last position and size, now kept in a file of their own.
     const position = entry["pip-position"];
     const size = entry["pip-size"];
     const hasSize = isPair(size) && size[0] > 0 && size[1] > 0;
@@ -203,7 +201,7 @@ export const PLUGIN_MIGRATIONS: Record<string, PluginMigration> = {
   "precise-volume": (entry, _config, files) => {
     flattenStrings(entry, entry.globalShortcuts, { volumeUp: "volumeUp", volumeDown: "volumeDown" });
     clampNumber(entry, "steps", 1, 100);
-    // The volume restored on start; the rewrite keeps it in a file of its own.
+    // The volume restored on start, now kept in a file of its own.
     const volume = entry.savedVolume;
     if (isNumber(volume)) files["precise-volume.json"] ??= { volume: clamp(Math.round(volume), 0, 100) };
   },
@@ -244,10 +242,10 @@ export const PLUGIN_MIGRATIONS: Record<string, PluginMigration> = {
     if (entry.enabled === true) setNew(ensurePluginEntry(config, "media-controls"), "enabled", true);
   },
   "skip-ai-slop": (entry) => {
-    // Keywords were { text, enabled } and channels { id, name }; the rewrite stores
-    // plain string lists. Disabled keywords are dropped on purpose: there is no
-    // per-keyword switch any more, so keeping them would start filtering entries
-    // the user had turned off.
+    // Keywords were { text, enabled } and channels { id, name }; now they're plain
+    // string lists. Disabled keywords are dropped on purpose: there is no per-keyword
+    // switch any more, so keeping them would start filtering entries the user had
+    // turned off.
     entry.keywords = keywordList(entry.keywords) ?? entry.keywords;
     entry.userAllow = channelList(entry.userAllow) ?? entry.userAllow;
     entry.userBlock = channelList(entry.userBlock) ?? entry.userBlock;
@@ -261,25 +259,24 @@ export const PLUGIN_MIGRATIONS: Record<string, PluginMigration> = {
   // preferredProvider, lineEffect, showTimeCodes, romanization and
   // showLyricsEvenIfInexact keep their names and values.
   "synced-lyrics": (entry) => {
-    // defaultTextString: what fills instrumental gaps; ♪ by default in pear-desktop
-    // (which didn't store defaults) and in the rewrite. " " showed a blank line, as "none" does.
+    // defaultTextString: what fills instrumental gaps; ♪ by default (defaults weren't
+    // stored). " " showed a blank line, as "none" does.
     setNew(entry, "gapText", gapText(entry.defaultTextString));
-    // A custom filler (not one of pear-desktop's presets) is the rewrite's custom text.
+    // A custom filler (not one of the presets) becomes the custom text.
     const filler = entry.defaultTextString;
     if (isString(filler) && !GAP_TEXTS.has(filler)) setNew(entry, "gapTextCustom", filler);
     const chinese = entry.convertChineseCharacter;
     if (typeof chinese === "string" && Object.hasOwn(CHINESE_CONVERSIONS, chinese)) {
       setNew(entry, "convertChinese", CHINESE_CONVERSIONS[chinese]);
     }
-    // "Prefer time-synced lyrics" was one switch; the rewrite orders the types
-    // instead. Switched off meant a plain block was as good as timed lyrics, so
-    // plain goes first and the two timed kinds keep their relative order. (3.x
-    // really took the first provider with any lyrics at all, which the rewrite's
-    // always-applied type order cannot express.)
+    // "Prefer time-synced lyrics" was one switch; now the types are ordered. Switched
+    // off meant a plain block was as good as timed lyrics, so plain goes first and the
+    // two timed kinds keep their relative order. (3.x took the first provider with any
+    // lyrics at all, which the always-applied type order cannot express.)
     if (entry.preferSynced === false) setNew(entry, "lyricsTypePriority", ["plain", "synced", "word"]);
-    // Translation was one nested object (one entry per provider); the rewrite's
-    // config is a flat record, so every provider's settings became top-level keys.
-    // Without this the plugin reads its defaults: translation off, credentials lost.
+    // Translation was one nested object (one entry per provider); the config is now a
+    // flat record, so every provider's settings became top-level keys. Without this the
+    // plugin reads its defaults: translation off, credentials lost.
     const translation = entry.translation;
     if (!isRecord(translation)) return;
     copyTyped(entry, translation, { enabled: "translationEnabled" }, isBoolean);
@@ -322,7 +319,7 @@ export const PLUGIN_MIGRATIONS: Record<string, PluginMigration> = {
   },
 };
 
-/** pear-desktop's 11-band equalizer curve -> the rewrite's `bands` JSON (positional, no ids). */
+/** The old 11-band equalizer curve -> the `bands` JSON (positional, no ids). */
 function earsBands(filters: readonly Json[]) {
   return EQ_FREQUENCIES.map((frequency, index) => {
     const filter = filters[index] ?? {};
@@ -344,7 +341,7 @@ function earsBands(filters: readonly Json[]) {
   });
 }
 
-/** Old keyword entries ({ text, enabled }) or plain strings -> the rewrite's string list. */
+/** Old keyword entries ({ text, enabled }) or plain strings -> the string list. */
 function keywordList(value: unknown): string[] | undefined {
   if (!Array.isArray(value)) return;
   const texts: string[] = [];
@@ -375,7 +372,7 @@ function channelList(value: unknown): string[] | undefined {
   return ids;
 }
 
-/** A device id's name from pear-desktop's stored list: a record, or the [id, name] pairs 3.12 writes. */
+/** A device id's name from the stored list: a record, or the [id, name] pairs 3.12 writes. */
 function deviceName(devices: unknown, id: string): string | undefined {
   if (isRecord(devices)) {
     const name = devices[id];

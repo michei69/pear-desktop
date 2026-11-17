@@ -8,7 +8,7 @@ import type { NativeImage } from "electron";
 /** The size notifications and the mini-player show the artwork at. */
 export const ICON_SIZE = 256;
 
-/** The artwork: a centered square like pear-desktop's "logo" style, or as is (banners). */
+/** The artwork: a centered square for the "logo" styles, or as is (banners). */
 export async function artwork(url: string | undefined, square = true): Promise<NativeImage | undefined> {
   if (!url) return;
   try {

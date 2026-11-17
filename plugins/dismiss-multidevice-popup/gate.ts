@@ -1,6 +1,5 @@
-// pear-desktop handled the "are you there?" prompt from its core page script,
-// but only when playback had been active recently and never more than once per
-// cooldown, so it never fought a user who had deliberately paused.
+// Handle the "are you there?" prompt only when playback was active recently and
+// never more than once per cooldown, so a user who deliberately paused is left alone.
 
 /** Only handle the prompt while playback was active this recently. */
 export const RESUME_WINDOW_MS = 60_000;

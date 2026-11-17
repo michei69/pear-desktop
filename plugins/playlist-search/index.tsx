@@ -54,7 +54,7 @@ const style = css`
     padding: 16px;
     font-size: 12px;
   }
-  /* pear-desktop set this inline in the dialog's empty state: keep its spacing. */
+  /* Matches the spacing the dialog's empty state used inline. */
   #pear-pls-dialog-no-results-message {
     margin-bottom: 4rem;
   }
@@ -181,8 +181,7 @@ export default definePlugin({
     });
 
     // YTM rebuilds the open dialog's contents; ctx.mount re-places the same
-    // input, which loses focus. Master re-injected (and refocused) on every
-    // observation; this flag lets the scheduled pass refocus once.
+    // input, which loses focus; this flag lets the scheduled pass refocus once.
     let dialogRepositioned = false;
     const dialog = createSearch(ctx, {
       id: DIALOG,
@@ -234,8 +233,8 @@ export default definePlugin({
         dialog.apply();
         if (!dialogRepositioned) return;
         dialogRepositioned = false;
-        // The rebuilt dialog got the input back blurred; refocus it like master
-        // did on re-injection, unless the user moved focus elsewhere meanwhile.
+        // The rebuilt dialog comes back with the input blurred; refocus it unless
+        // the user moved focus elsewhere meanwhile.
         if (dialogOpen && !dialog.wrapper.contains(document.activeElement)) dialog.input.focus();
       }, 50);
     };

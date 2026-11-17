@@ -1,5 +1,4 @@
-// The signed-in session's cookies for yt-dlp (pear-desktop downloaded with the
-// window's session), written as a Netscape cookies file. Never logged.
+// The signed-in session's cookies for yt-dlp, written as a Netscape cookies file. Never logged.
 
 export interface CookieLike {
   domain?: string;

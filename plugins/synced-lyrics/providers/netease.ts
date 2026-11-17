@@ -1,7 +1,6 @@
 // NetEase Cloud Music lyrics, through its desktop EAPI.
 //
-// Adapted from a greasyfork userscript (MIT), which in turn follows
-// pear-desktop's provider. The EAPI request is
+// Adapted from a greasyfork userscript (MIT). The EAPI request is
 // signed the same way, with node:crypto instead of crypto-js: MD5 for the
 // signature, AES-128-ECB for the payload. NetEase answers with a lot of songs
 // that merely share a word with the query, so candidates are scored by title and

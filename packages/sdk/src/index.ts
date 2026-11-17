@@ -146,7 +146,7 @@ export interface HostContext<C> extends CommonContext<C> {
     broadcast(event: string, data?: unknown): void;
   };
   /**
-   * Commands arriving through the app protocol (pear-desktop's "…music://playPause"
+   * Commands arriving through the app protocol ("…music://playPause"
    * links, e.g. from Windows notification buttons), after the core applied them.
    */
   onProtocol(listener: (command: string, args: string[]) => void): void;
@@ -282,7 +282,7 @@ export interface PageContext<C, Cmds extends AnyCommands> extends CommonContext<
   audio(): Promise<AudioGraph>;
   /** Adds a stylesheet for the plugin's lifetime. Works at document start. */
   addStyle(css: string): StyleHandle;
-  /** Shows a message in YTM's own toast (bottom left), as pear-desktop's plugins do. */
+  /** Shows a message in YTM's own toast (bottom left). */
   toast(message: string): void;
   /**
    * Whether the window is on screen. The page itself can't tell: it keeps rendering,

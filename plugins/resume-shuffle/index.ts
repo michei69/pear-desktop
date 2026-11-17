@@ -2,8 +2,8 @@ import { definePlugin } from "@pear/sdk";
 import { resumeShuffleConfig } from "./config.ts";
 import { startResumeShuffle } from "./page.ts";
 
-// pear-desktop's resume-shuffle: remember whether the queue was shuffled, and
-// shuffle the resumed queue again on the next launch (with resumeOnStart).
+// Remember whether the queue was shuffled, and shuffle the resumed queue again
+// on the next launch (with resumeOnStart).
 
 export default definePlugin({
   id: "resume-shuffle",

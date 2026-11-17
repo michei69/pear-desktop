@@ -1,9 +1,9 @@
 // User agents per destination. YTM gets Chromium's own UA by default (Electron's,
-// with its tokens), pear-desktop's fixed Chrome one while advanced.overrideUserAgent
-// is on, and a Chrome UA without the Electron/app tokens for the cases that only
-// need those gone. Google sign-in always gets Electron's own UA: claiming to be
-// Chrome (or Firefox) from Chromium is detectable and gets sign-in rejected as an
-// insecure browser, while the honest Electron UA is accepted.
+// with its tokens), the fixed Chrome one while advanced.overrideUserAgent is on,
+// and a Chrome UA without the Electron/app tokens for the cases that only need
+// those gone. Google sign-in always gets Electron's own UA: claiming to be Chrome
+// (or Firefox) from Chromium is detectable and gets sign-in rejected as an insecure
+// browser, while the honest Electron UA is accepted.
 
 /** Electron's default UA advertises Electron and the app name; strip them. */
 export function chromeUserAgent(electronUserAgent: string) {
@@ -11,8 +11,8 @@ export function chromeUserAgent(electronUserAgent: string) {
 }
 
 /**
- * pear-desktop's fixed Chrome 130 user agents, sent verbatim when
- * `advanced.overrideUserAgent` is on, for sites that treat Electron's UA differently.
+ * Fixed Chrome 130 user agents, sent verbatim when `advanced.overrideUserAgent`
+ * is on, for sites that treat Electron's UA differently.
  */
 export function fixedChromeUserAgent(platform: string) {
   const chrome = "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.6723.152 Safari/537.36";

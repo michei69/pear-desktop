@@ -19,7 +19,7 @@ type ExtraFilter = Band;
 /** `cancelAndHoldAtTime` is newer than some DOM typings; feature-detect it anyway. */
 type HoldableAudioParam = AudioParam & { cancelAndHoldAtTime?: (time: number) => AudioParam };
 
-/** pear-desktop's `filters` option: biquads mixed in parallel with the bands. */
+/** The `filters` option: biquads mixed in parallel with the bands. */
 function parseExtraFilters(json: string, log: Logger): ExtraFilter[] {
   if (!json.trim()) return [];
   try {
@@ -108,13 +108,13 @@ export class EqualizerChain {
       filter.type = band.type;
       smooth(filter.frequency, clamp(band.frequency, MIN_FREQUENCY, maxFrequency));
       smooth(filter.Q, band.Q);
-      // The fork flattens the bands while bypassed; the dry/wet path also keeps
-      // non-gain filter types and the extra filters from coloring the sound.
+      // Flatten the bands while bypassed; the dry/wet path also keeps non-gain
+      // filter types and the extra filters from coloring the sound.
       smooth(filter.gain, state.bypass ? 0 : band.gain);
     });
 
     // Bypass is unity on the output stage too: a trim must not quieten the mix,
-    // so A/B-ing the equalizer keeps the same level (pear-desktop 934d0afc).
+    // so A/B-ing the equalizer keeps the same level.
     smooth(this.#output.gain, state.bypass ? 1 : dbToLinear(state.outputGainDb));
     smooth(this.#dry.gain, state.bypass ? 1 : 0);
     smooth(this.#wet.gain, state.bypass ? 0 : 1);
@@ -125,7 +125,7 @@ export class EqualizerChain {
     }
   }
 
-  /** The bands feed both the next band and every extra filter, as pear-desktop mixed them. */
+  /** The bands feed both the next band and every extra filter. */
   #rewireExtras(filters: readonly ExtraFilter[]) {
     for (const node of this.#extras) {
       try {

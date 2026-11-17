@@ -50,7 +50,7 @@ export function normalize(text: string) {
 export function splitArtists(artists: string) {
   return (
     artists
-      // "y" is Spanish for "and" ("A y B"), as pear-desktop split collaborators.
+      // "y" is Spanish for "and" ("A y B"), so it splits collaborators too.
       .split(/\s*(?:[,&、]|\band\b|\by\b|\bfeat\.?|\bft\.?|\bx\b|\bwith\b)\s*/i)
       .map(normalize)
       .filter(Boolean)
@@ -66,7 +66,7 @@ export function artistSimilarity(a: string, b: string) {
   return best;
 }
 
-/** Like pear-desktop: the track's artist, or one of its tags (often the artist's canonical name). */
+/** The track's artist, or one of its tags (often the artist's canonical name). */
 export function queryArtistSimilarity(name: string, query: { artist: string; tags?: readonly string[] }) {
   let best = artistSimilarity(name, query.artist);
   for (const tag of query.tags ?? []) if (best < 1) best = Math.max(best, artistSimilarity(name, tag));

@@ -59,8 +59,8 @@ export function startPage(ctx: Ctx) {
 }
 
 /**
- * As pear-desktop: the player page's mini-player button opens picture-in-picture
- * instead. In the small window, leaving YTM's full screen (its exit button)
+ * The player page's mini-player button opens picture-in-picture instead.
+ * In the small window, leaving YTM's full screen (its exit button)
  * leaves it, see `startPage`.
  */
 function minimizeButton(ctx: Ctx, mode: { readonly active: boolean }, toggle: () => void) {
@@ -96,7 +96,7 @@ async function togglePip(ctx: Ctx) {
 function fullScreenMode(ctx: Ctx) {
   const root = document.documentElement;
   const dragStrip = <div class="pear-pip-drag" />;
-  // As pear-desktop: double-clicking the video doesn't leave full screen (and so the small
+  // Double-clicking the video doesn't leave full screen (and so the small
   // window), and the expanding menu closes once the pointer leaves it.
   let restoreDoubleClick: (() => void) | undefined;
   const closeMenu = () => ctx.$("player_bar.middle_controls")?.click();

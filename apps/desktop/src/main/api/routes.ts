@@ -1,5 +1,5 @@
-// The REST routes of the original pear-desktop API server (v1), as a table
-// that drives both request dispatch and the OpenAPI document.
+// The v1 REST routes, as a table that drives both request dispatch and the
+// OpenAPI document.
 
 import type { PlayerAction } from "@pear/sdk";
 import { RATING_NAMES, REPEAT_NAMES, songInfo } from "./song-info.ts";
@@ -93,7 +93,7 @@ export function createRoutes(backend: Backend): Route[] {
   return [
     {
       method: "POST",
-      // Outside /api, like the original.
+      // Kept outside /api for client compatibility.
       path: "/auth/{id}",
       summary: "Request an access token (asks the user to allow the client the first time)",
       public: true,
@@ -187,9 +187,9 @@ export function createRoutes(backend: Backend): Route[] {
       path: `${API}/queue/next`,
       summary: "Get the next song in the queue",
       async handle() {
-        // The page projects the five fields the original answered with, so the
-        // whole raw queue never crosses the bridge (and a missing selection is
-        // no content, not the first entry).
+        // The page projects the five fields this endpoint returns, so the whole
+        // raw queue never crosses the bridge (and a missing selection is no
+        // content, not the first entry).
         let next: NextQueueItem | null;
         try {
           next = await backend.page<NextQueueItem | null>("queue:next");

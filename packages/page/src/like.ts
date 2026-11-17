@@ -1,6 +1,6 @@
-// YTM's like buttons toggle: pressing an active one clears the rating. pear-desktop's
-// like/dislike actions set the status instead, so the player actions and the API
-// handlers share this guarded setter rather than clicking blindly.
+// YTM's like buttons toggle: pressing an active one clears the rating. The player
+// actions and the API handlers need to set the status directly, so they share this
+// guarded setter rather than clicking blindly.
 
 import type { LikeStatus } from "@pear/sdk";
 import { selectors, type SelectorName } from "@pear/sdk/selectors";

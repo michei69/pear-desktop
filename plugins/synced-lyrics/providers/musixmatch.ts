@@ -1,5 +1,5 @@
-// Musixmatch, through the API of its mobile app, like pear-desktop did (after
-// Strvm/musicxmatch-api): `token.get` for a token, then one
+// Musixmatch, through the API of its mobile app (after Strvm/musicxmatch-api):
+// `token.get` for a token, then one
 // `macro.subtitles.get` call for the matched track, its lyrics and its LRC.
 //
 // The mobile API hands its token to anonymous clients, which the desktop API
@@ -30,7 +30,7 @@ const HEADERS = {
 };
 /** The mobile app's token is good for a minute. */
 const TOKEN_TTL_MS = 60_000;
-/** The matcher's fallback when it finds nothing (pear-desktop's note: "Coldplay - Paradise"). */
+/** The matcher's fallback when it finds nothing (e.g. "Coldplay - Paradise"). */
 const FALLBACK_TRACK_ID = 115264642;
 /** Appended to lyrics served to API clients. */
 const DISCLAIMER = /\n*\*{3,}[^*]*\*{3,}\s*(\(\d+\))?\s*$/;
@@ -101,7 +101,7 @@ function macroUrl(query: SearchQuery, token: string) {
     app_id: APP_ID,
     format: "json",
     usertoken: token,
-    // pear-desktop asked for the title in its original language when YTM has one.
+    // Ask for the title in its original language when YTM has one.
     q_track: query.alternativeTitle || query.title,
     q_artist: query.artist,
     q_duration: String(Math.round(query.durationSeconds)),

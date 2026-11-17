@@ -17,7 +17,7 @@ export type GapText = "dots" | "bullets" | "note" | "dash" | "none" | "custom";
 export interface ViewOptions {
   effect: LineEffect;
   gapText: GapText;
-  /** Shown instead of `gapText` when set (pear-desktop's free-text break). */
+  /** Shown instead of `gapText` when set (free-text break). */
   gapTextCustom: string;
   showTimeCodes: boolean;
   /** Added to the playback position; positive shows lines earlier. */
@@ -67,7 +67,7 @@ export function LyricsView(props: ViewProps) {
 
   const apple = Boolean(track && options.style === "apple-music");
 
-  // The selected provider's lyrics, or what it is doing (pear-desktop's kaomoji).
+  // The selected provider's lyrics, or what it is doing (kaomoji).
   let body;
   if (!track) body = <Message title={t("plugins.synced-lyrics.nothing-playing", "Nothing playing")} />;
   else if (apple)
@@ -102,7 +102,7 @@ export function viewState(store: LyricsStore) {
   return { loading: "loading", error: "error", done: "empty" }[store.current.status];
 }
 
-// Material icons, as pear-desktop's picker uses.
+// Material icons for the picker.
 const ICONS = {
   left: "M15.41 7.41 14 6l-6 6 6 6 1.41-1.41L10.83 12z",
   right: "M10 6 8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z",
@@ -148,7 +148,7 @@ function describe(state: ProviderState, t: Translate) {
 }
 
 /**
- * pear-desktop's lyrics picker: arrows either side of the provider's name (with
+ * Lyrics picker: arrows either side of the provider's name (with
  * what it found, sliding from one to the next), a star to always show that
  * provider for this track, and a dot per provider. Slides away while the
  * lyrics are scrolled, and back when the pointer comes near.
@@ -390,7 +390,7 @@ function SyncedLyrics({ store, options, now, seek, scroller, t, onActiveLine }: 
       if (position === null || position === last) return;
       last = position;
       const ms = position + options.offsetMs;
-      // As pear-desktop: a line is current for its duration, then becomes past even if
+      // A line is current for its duration, then becomes past even if
       // the next one hasn't started (lines with their own end time).
       const started = lineAt(lines, ms);
       const index = !options.preciseTiming ? started : started >= 0 && ms < lines[started]!.endMs ? started : -1;
@@ -487,7 +487,7 @@ interface LineProps {
   onSeek(): void;
 }
 
-/** Words as separate spans, staggered like pear-desktop's (each gets its index as --i). */
+/** Words as separate spans, staggered (each gets its index as --i). */
 function staggered(text: string) {
   return text.split(" ").map((word, i) => (
     <span key={i} class="w" style={{ "--i": i }}>
@@ -517,7 +517,7 @@ function Line({ line, text, romanized, translation, state, options, t, onSeek }:
       data-state={state}
       role="button"
       tabIndex={-1}
-      // The glow and wobble last as long as the line, as in pear-desktop.
+      // The glow and wobble last as long as the line.
       style={{ "--line-duration": `${Math.max(MIN_LINE_EFFECT_S, (line.endMs - line.startMs) / 1000)}s` }}
       onClick={onSeek}
     >
@@ -571,7 +571,7 @@ function GapMark({ kind, custom, t }: { kind: GapText; custom: string; t: Transl
         </span>
       );
     case "bullets":
-      // pear-desktop's "•••": the bullets appear one by one through the break.
+      // The bullets appear one by one through the break.
       return (
         <span class="text gap-bullets" aria-label={label}>
           <i>•</i>
@@ -606,7 +606,7 @@ function progress(ms: number, start: number, end: number) {
   return clamp((ms - start) / (end - start), 0, 1);
 }
 
-/** pear-desktop's LRC-style time code, "[01:23.45]". */
+/** LRC-style time code, "[01:23.45]". */
 function formatTime(ms: number) {
   const centiseconds = Math.floor(ms / 10);
   const minutes = Math.floor(centiseconds / 6000);

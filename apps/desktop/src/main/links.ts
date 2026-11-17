@@ -74,8 +74,8 @@ export function navigationAction(url: string): NavigationAction {
 }
 
 /**
- * Where YTM is restricted, it redirects to the video site's /premium page;
- * pear-desktop sent those to Google sign-in instead, which leads back to YTM.
+ * Where YTM is restricted, it redirects to the video site's /premium page; send
+ * those to Google sign-in instead, which leads back to YTM.
  */
 export function restrictedRegionRedirect(url: string): string | undefined {
   const parsed = URL.parse(url);

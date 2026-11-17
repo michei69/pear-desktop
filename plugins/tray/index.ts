@@ -5,7 +5,7 @@ import { Menu, nativeImage, Tray, type MenuItemConstructorOptions } from "electr
 
 /** The tray icon's size in px; drawn at twice that for high-DPI screens. */
 const ICON_SIZE = 32;
-/** macOS menu bar icons are 16 points, as pear-desktop's. */
+/** macOS menu bar icons are 16 points. */
 const MAC_ICON_SIZE = 16;
 const isMac = process.platform === "darwin";
 const LINUX = process.platform === "linux";
@@ -51,18 +51,18 @@ export default definePlugin({
   config: schema,
   host: {
     start(ctx) {
-      // pear-desktop's icons: a paused variant while a track is paused.
+      // Tray icons include a paused variant while a track is paused.
       let iconStyle = trayIconStyle(ctx);
       const icons = { playing: trayImage(false, iconStyle), paused: trayImage(true, iconStyle) };
       const tray = new Tray(icons.playing);
       // Windows reports a rapid second click inside the system double-click time
       // as 'double-click', so macOS keeps every click separate and Windows gets
-      // the same action from both events (pear-desktop routed both to one handler).
+      // the same action from both events.
       if (isMac) tray.setIgnoreDoubleClickEvents(true);
       let shownIcon: keyof typeof icons = "playing";
       const { window, app } = ctx;
-      // Starting hidden leaves only the menu bar; pear-desktop hid the Dock too,
-      // and the tray plugin being up is the guard that there is a way back.
+      // Starting hidden leaves only the menu bar; the Dock is hidden too, and
+      // the tray plugin being up is the guard that there is a way back.
       const showAtStartup = ctx.config.showAtStartup ?? ctx.core("window").appVisible;
       if (isMac && !showAtStartup && !window.isVisible()) app.dock?.hide();
       // The artwork follows the icon options: the app calls `refreshIcons` after
@@ -84,7 +84,7 @@ export default definePlugin({
         else ctx.focusWindow();
         app.dock?.show();
       };
-      // As pear-desktop: on macOS a window hidden to the tray leaves the Dock too.
+      // On macOS a window hidden to the tray leaves the Dock too.
       const hideWindow = () => {
         window.hide();
         app.dock?.hide();
@@ -95,8 +95,8 @@ export default definePlugin({
       };
 
       // The hover mini-player draws where the shell pops the tooltip up: blank it
-      // while it is visible instead of leaving it over the strip (pear-desktop's
-      // setTrayTooltipSuppressed). The latest text is kept for when it hides.
+      // while it is visible instead of leaving it over the strip. The latest text
+      // is kept for when it hides.
       let tooltipText = "";
       let tooltipSuppressed = false;
       const applyTooltip = () => tray.setToolTip(tooltipSuppressed ? "" : tooltipText);
@@ -138,7 +138,7 @@ export default definePlugin({
       ctx.listen(window, "hide", refresh);
       ctx.onMenuItemsChange(refresh);
 
-      // Another plugin may claim clicks (notifications' tray controls on Windows, as in pear-desktop).
+      // Another plugin may claim clicks (notifications' tray controls on Windows).
       const claimed = (event: string) => {
         const claim = { claimed: false };
         bus.emit(event, claim);
@@ -194,7 +194,7 @@ export default definePlugin({
 
 type TrayIconStyle = "default" | "white" | "ytm";
 
-/** pear-desktop's order: YT Music's logo when asked for, white on macOS or when forced, otherwise pear's colors. */
+/** YT Music's logo when asked for, white on macOS or when forced, otherwise pear's colors. */
 function trayIconStyle(ctx: Ctx): TrayIconStyle {
   if (ctx.core("appearance").useYtmIcons) return "ytm";
   return isMac || ctx.config.forceWhiteIcons ? "white" : "default";
@@ -221,7 +221,7 @@ function showOnCurrentDesktop(window: Electron.BrowserWindow) {
   window.setVisibleOnAllWorkspaces(false);
 }
 
-// pear-desktop's tray texts and translations (main.tray.*).
+// Tray texts and translations (main.tray.*).
 function tooltip(ctx: Ctx, { track }: NowPlaying) {
   if (!track) return ctx.t("main.tray.tooltip.default", "{{applicationName}}", { applicationName: YTM_NAME });
   return ctx.t("main.tray.tooltip.with-song-info", "{{applicationName}}: {{artist}} - {{title}}", {
@@ -257,13 +257,13 @@ function menu(ctx: Ctx, state: NowPlaying, toggleWindow: () => void): MenuItemCo
       label: window.isVisible() ? ctx.t("main.tray.hide", "Hide window") : ctx.t("main.tray.show", "Show window"),
       click: toggleWindow,
     },
-    // pear-desktop kept the tray to playback, Downloads and Settings: plugin menu
-    // items feed the app menu, but the tray only shows the downloader's entry.
+    // The tray is kept to playback, Downloads and Settings: plugin menu items
+    // feed the app menu, but the tray only shows the downloader's entry.
     ...ctx
       .pluginMenuItems()
       .filter(({ label }) => label === ctx.t("plugins.downloader.downloads", "Downloads"))
       .map(({ label, click }): MenuItemConstructorOptions => ({ label, click: () => click() })),
-    // pear-desktop used the settings dialog's title for this entry, translated everywhere.
+    // The settings dialog's title is used for this entry, translated everywhere.
     { label: ctx.t("settings-ui.title", "Settings"), click: () => ctx.openSettings() },
     { type: "separator" },
     {

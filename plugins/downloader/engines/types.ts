@@ -99,7 +99,7 @@ export class RecoverableError extends Error {
   }
 }
 
-/** pear-desktop's error for a playlist's folder that is there already (when not skipping existing files). */
+/** The error for a playlist's folder that is there already (when not skipping existing files). */
 export const folderExists = (folder: string) =>
   new EngineFailure(`The folder ${folder} already exists`, (t) =>
     t("plugins.downloader.backend.feedback.folder-already-exists", "The folder {{playlistFolder}} already exists", {

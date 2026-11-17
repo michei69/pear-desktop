@@ -6,7 +6,7 @@
 // user's lyrics type order and is applied first: a word-by-word result wins over
 // a time-synced one over a plain text block, whatever the provider order says.
 // Within a type, the order decides -- or, when the priority list is off, the
-// result quality (pear-desktop's bias), with the preferred provider breaking ties.
+// result quality, with the preferred provider breaking ties.
 
 import { LYRICS_TYPES, lyricsType, PROVIDERS, type LyricResult, type LyricsType, type ProviderId } from "./types.ts";
 
@@ -40,7 +40,7 @@ export interface PickOptions {
   results: Partial<Record<ProviderId, LyricResult | null>>;
   /** Follow `priority` strictly. */
   usePriorityList: boolean;
-  /** pear-desktop's `preferredProvider`, kept for stored settings. */
+  /** The `preferredProvider`, kept for stored settings. */
   preferred?: ProviderId | "auto";
   /** A provider pinned to this song; shown whenever it has lyrics. */
   starred?: ProviderId | null;
@@ -48,7 +48,7 @@ export interface PickOptions {
   wantsOfficialTranslation?: boolean;
 }
 
-/** pear-desktop's quality bias: richer results (and an official translation) first. */
+/** Quality bias: richer results (and an official translation) first. */
 function orderByBias(priority: readonly ProviderId[], results: PickOptions["results"], wantsOfficialTranslation: boolean): ProviderId[] {
   const bias = (provider: ProviderId) => {
     const result = results[provider] ?? null;

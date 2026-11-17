@@ -19,7 +19,7 @@ function answer<T>(result: Outcome<T>, onOk: OkHandler<T>, onError: FailureHandl
   return result.ok ? onOk(result.value) : onError(result.status, result.error);
 }
 
-/** Reads a boolean query flag; fork clients send `true`/`false`, absent means off. */
+/** Reads a boolean query flag; "true" means on, anything else off. */
 const flag = (query: URLSearchParams, name: string) => query.get(name) === "true";
 
 /** A route that acts on the player and answers 204. */

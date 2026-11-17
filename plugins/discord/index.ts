@@ -13,7 +13,7 @@ export default definePlugin({
   name: "Discord Rich Presence",
   description: "Show your friends what you're listening to in your Discord status.",
   config: schema,
-  // pear-desktop's menu items, as settings buttons.
+  // The actions, exposed as settings buttons and flat menu items.
   actions: {
     connect: { label: "Connect", description: "Connect to Discord now instead of waiting for the next retry." },
     clearActivity: { label: "Clear activity", description: "Remove the activity until the next track or until playback resumes." },
@@ -22,7 +22,7 @@ export default definePlugin({
     start(ctx) {
       const presence = new Presence(ctx);
       presences.set(ctx, presence);
-      // pear-desktop's Discord menu, as flat items: the switches stay in the settings card.
+      // Flat items for the two actions; the switches stay in the settings card.
       ctx.addMenuItem({
         label: ctx.t("plugins.discord.actions.connect.label", "Connect"),
         click: () => presence.connectNow(),

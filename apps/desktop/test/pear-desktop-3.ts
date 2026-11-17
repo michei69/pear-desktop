@@ -9,7 +9,7 @@ export function fromVersion<T extends object>(version: string, stored: T) {
   return { ...stored, __internal__: { migrations: { version } } };
 }
 
-/** A stored config as pear-desktop 3.12 last wrote it. */
+/** A stored config as 3.12 last wrote it. */
 export function from312<T extends object>(stored: T) {
   return fromVersion("3.12.0", stored);
 }

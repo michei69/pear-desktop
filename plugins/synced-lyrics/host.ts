@@ -126,8 +126,8 @@ export class LyricsHost {
 
   /**
    * Lyrics from every provider for the current track, or for any other video
-   * (resolved through its watch-next queue entry), shaped like pear-desktop's
-   * API. No lyrics is an empty provider list, not an error.
+   * (resolved through its watch-next queue entry), shaped like the app's API.
+   * No lyrics is an empty provider list, not an error.
    */
   async lyrics(request: LyricsRequest): Promise<ApiLyrics> {
     const collected = await this.#collect(request);
@@ -288,7 +288,7 @@ export class LyricsHost {
 
 const VIDEO_INFO_CACHE_SIZE = 50;
 
-/** pear-desktop prefers a provider that ships the official translation for Chinese targets. */
+/** Prefer a provider that ships the official translation for Chinese targets. */
 function wantsOfficialTranslation(config: Readonly<LyricsConfig>, locale: string) {
   return Boolean(config.translationEnabled && isChineseTarget(config.translationTargetLanguage, locale));
 }

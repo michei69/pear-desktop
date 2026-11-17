@@ -668,7 +668,7 @@ describe("musixmatch", () => {
     expect(result?.lines?.map((l) => l.text)).toEqual(["", "Look at the stars", "Look how they shine"]);
     expect(tokenCalls(fetch)).toHaveLength(1);
     expect(fetch.calls[0]).toContain("https://apic-appmobile.musixmatch.com/ws/1.1/token.get?app_id=mac-ios-v2.0");
-    // The mobile app's headers, as pear-desktop sent them.
+    // The mobile app's headers.
     expect(fetch.inits[0]?.headers).toMatchObject({
       "x-mxm-app-version": "10.1.1",
       "X-User-Agent": expect.stringContaining("Musixmatch/"),

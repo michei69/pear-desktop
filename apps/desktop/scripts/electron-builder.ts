@@ -1,5 +1,5 @@
-// Runs electron-builder as the package scripts used to, with one change: it is
-// told the package manager is npm.
+// Runs electron-builder with one change: it tells the tool the package manager
+// is npm.
 //
 // electron-builder lists the app's production dependencies with the project's
 // package manager, which it guesses from npm_config_user_agent. nub reports

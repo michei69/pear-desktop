@@ -11,7 +11,7 @@ export interface LaunchOptions {
   plugins?: Record<string, { enabled: boolean; config?: Record<string, unknown> }>;
   /** Initial core settings sections, e.g. `{ apiServer: { enabled: true } }`. */
   core?: Record<string, Record<string, unknown>>;
-  /** A config.json to start from verbatim (e.g. one pear-desktop 3.x wrote). */
+  /** A config.json to start from verbatim (e.g. one from 3.x). */
   config?: Record<string, unknown>;
   /** Extra environment variables for the app. */
   env?: Record<string, string>;
@@ -19,7 +19,7 @@ export interface LaunchOptions {
   userData?: string;
 }
 
-/** The window the tests are written for (the app's default is pear-desktop's smaller 1100×550). */
+/** The window the tests are written for (the app's default is smaller, 1100×550). */
 const TEST_WINDOW_SIZE = { width: 1280, height: 800 };
 
 /** How long the page runtime and the test track get to load. */

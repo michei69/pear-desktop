@@ -86,7 +86,7 @@ export default definePlugin({
         const error = await shell.openPath(folder);
         if (error) throw new Error(error);
       },
-      /** Asks for the download folder, as pear-desktop's native dialog did. */
+      /** Asks for the download folder. */
       async chooseFolder() {
         const folder = await chooseDirectory(this.window, downloadFolder(this, false));
         if (folder) this.setConfig({ downloadFolder: folder });

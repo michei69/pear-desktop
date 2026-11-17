@@ -8,7 +8,7 @@ const CORS = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers
 
 /** The coarse SDK type, used when the raw YTM type is not known yet. */
 const MEDIA_TYPES: Record<MediaType, string> = { audio: "AUDIO", video: "VIDEO", podcast: "PODCAST", other: "OTHER" };
-/** pear-desktop's five wire values (`MediaType` in its song-info types). */
+/** The five wire values (`MediaType` in the song-info types). */
 const VIDEO_TYPES: Record<string, string> = {
   MUSIC_VIDEO_TYPE_ATV: "AUDIO",
   MUSIC_VIDEO_TYPE_OMV: "ORIGINAL_MUSIC_VIDEO",
@@ -24,7 +24,7 @@ export function wireMediaType(mediaType: MediaType, musicVideoType: string | und
   return (musicVideoType && VIDEO_TYPES[musicVideoType]) || MEDIA_TYPES[mediaType];
 }
 
-/** An OMV is a music video, but pear-desktop reported it as `isVideo: false`. */
+/** An OMV is a music video, but it is reported as `isVideo: false` here. */
 export function isVideoType(wireType: string) {
   return wireType !== "AUDIO" && wireType !== "ORIGINAL_MUSIC_VIDEO";
 }

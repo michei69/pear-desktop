@@ -62,7 +62,7 @@ const VARIABLE_MAP: Record<string, string> = {
   "--ytmusic-detail-header": "rgba(3, 3, 3)",
 };
 
-/** The properties that tint with the darker palette color, as in pear-desktop. */
+/** The properties that tint with the darker palette color. */
 const DARK_KEYED: Record<string, true> = {
   "--ytmusic-background": true,
   "--ytmusic-detail-header": true,
@@ -99,7 +99,7 @@ const THEME = css`
   sel(player.page) {
     transition: transform 300ms, background-color 300ms cubic-bezier(0.2, 0, 0.6, 1) !important;
   }
-  /* pear-desktop's fixes for the tinted theme. */
+  /* Fixes for the tinted theme. */
   html.pear-album-color yt-page-navigation-progress {
     --yt-page-navigation-container-color: #00000046 !important;
     --yt-page-navigation-progress-color: white !important;
@@ -185,8 +185,8 @@ export default definePlugin({
   style: (config) => `${THEME}${config.enableSeekbar ? SEEKBAR : ""}`,
   host: {
     start(ctx) {
-      // pear-desktop's radio submenu cannot show its state in the flat menu; the
-      // settings card keeps both controls, this restores quick access to it.
+      // A radio submenu cannot show its state in the flat menu; the settings card
+      // keeps both controls, this restores quick access to it.
       ctx.addMenuItem({
         label: ctx.t("plugins.album-color-theme.menu.open", "Album color theme…"),
         click: () => ctx.openSettings(),
@@ -208,7 +208,6 @@ export default definePlugin({
       const current = ++generation;
       const url =
         thumbnailUrl(ctx.player.api?.getPlayerResponse()?.videoDetails?.thumbnail?.thumbnails) ?? ctx.player.state.track?.artworkUrl;
-      // pear-desktop kept the previous track's tint when it had no artwork.
       if (!url) return;
       const colors = await albumColors(url, ctx.log);
       if (current !== generation || ctx.signal.aborted) return;

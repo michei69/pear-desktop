@@ -24,7 +24,7 @@ type EventType = "switchSong" | "playPause";
 const viewsOf = (track: Track, details: SongDetails | undefined) =>
   (track as Track & { views?: number }).views ?? (details?.videoId === track.videoId ? details.views : undefined);
 
-/** Lumia's media event, in pear-desktop's shape. */
+/** Lumia's media event. */
 function mediaEvent(eventType: EventType, state: NowPlaying, track: Track, details: SongDetails | undefined) {
   const paused = isPaused(state);
   const views = viewsOf(track, details);
@@ -93,7 +93,7 @@ export default definePlugin({
 
       ctx.player.on("change", (state, previous) => {
         if (!state.track) return;
-        // Master's events: a switch only on a real track change, a toggle only on pause/resume.
+        // A switch only on a real track change; a toggle only on pause/resume.
         if (state.track.videoId !== previous.track?.videoId) {
           details = undefined;
           post("switchSong");

@@ -16,7 +16,7 @@ describe("cleanupName", () => {
     expect(cleanupName("Song [HD Audio]")).toBe("Song");
     expect(cleanupName("Song (Live)")).toBe("Song");
     expect(cleanupName("Song (4K Upgrade)")).toBe("Song");
-    // Only at the end where pear-desktop anchored it.
+    // Only at the end (the pattern is anchored).
     expect(cleanupName("Live (Live) Forever")).toBe("Live (Live) Forever");
     expect(cleanupName("Song (Remix)")).toBe("Song (Remix)");
     expect(cleanupName("")).toBe("");

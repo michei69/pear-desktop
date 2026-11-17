@@ -1,7 +1,7 @@
 // The page-side flag installer: it patches ytcfg before YTM's own script runs,
 // re-applies the overrides after a later EXPERIMENT_FLAGS payload, and puts the
-// page's values back when an override is removed. pear-desktop locked these with
-// tests; they are the subtle half of the Flags section.
+// page's values back when an override is removed. These tests cover the subtle
+// half of the Flags section.
 
 import { describe, expect, test } from "vitest";
 import { overrideSiteFlags } from "../../../packages/page/src/site-flags.ts";

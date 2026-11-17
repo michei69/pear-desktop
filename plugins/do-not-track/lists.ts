@@ -55,7 +55,7 @@ const UTM_PARAMETERS = [
 
 /**
  * Ghostery doesn't support regex $removeparam filters, and needs a URL pattern
- * before a bare $removeparam: expand and prefix them like pear-desktop does.
+ * before a bare $removeparam: expand and prefix them.
  */
 function normalizeBlockList(contents: string) {
   return contents

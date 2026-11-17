@@ -1,4 +1,4 @@
-// pear-desktop's icons (assets/), embedded at build time so nothing depends on
+// The app's icons (assets/), embedded at build time so nothing depends on
 // where the assets end up at runtime.
 
 import { nativeImage } from "electron";

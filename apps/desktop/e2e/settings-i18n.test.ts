@@ -1,4 +1,4 @@
-// The app follows the chosen language, with pear-desktop's translations.
+// The app follows the chosen language, with the 3.x translations.
 
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
@@ -10,7 +10,7 @@ test.use({ appOptions: { core: { general: { language: "de" } } } });
 test("follows the chosen language, with English for untranslated texts", async ({ page }) => {
   const de = JSON.parse(readFileSync(join(import.meta.dirname, "../../../src/i18n/resources/de.json"), "utf8"));
   await waitForSettings(page);
-  // pear-desktop's translated plugin names.
+  // The translated plugin names.
   const name = await page.evaluate(() => window.__pearRuntime!.plugins.plugins.find((p) => p.id === "clock")!.name);
   expect(name).toBe(de.plugins.clock.name);
   await openSettings(page);

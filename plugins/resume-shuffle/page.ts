@@ -21,9 +21,9 @@ function onQueueSliceChange(listener: () => void): () => void {
 }
 
 /**
- * Shuffles the queue through YTM's own action: like master's `queue.shuffle()`, it
- * does not depend on the player bar's markup or on the UI language. The bar's
- * control is the fallback for builds that do not expose the action.
+ * Shuffles the queue through YTM's own action, so it does not depend on the
+ * player bar's markup or on the UI language. The bar's control is the fallback
+ * for builds that do not expose the action.
  */
 export function shuffleQueue(): boolean {
   const queue = playerQueue()?.queue;

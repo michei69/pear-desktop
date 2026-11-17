@@ -102,7 +102,7 @@ export class AppMenu {
       if (!event.composedPath().includes(this.host)) this.close();
     });
     ctx.listen(window, "blur", () => this.close());
-    // Panels stay anchored to their trigger or item, as floating-ui's autoUpdate did.
+    // Re-anchor panels to their trigger or item when the window resizes.
     ctx.listen(window, "resize", () => this.#placeAll());
     // The menu can be rebuilt under an open panel (a plugin toggled its items, a language change).
     ctx.host.on("menu-changed", () => void this.#refreshOpen());
@@ -248,8 +248,8 @@ export class AppMenu {
   }
 
   /**
-   * Runs the item's command. A checkbox or radio stays open with its new mark, as in
-   * pear-desktop; a command closes the menu so the page it opened is in front.
+   * Runs the item's command. A checkbox or radio stays open with its new mark;
+   * a command closes the menu so the page it opened is in front.
    */
   async #activate(node: MenuNode, level: number) {
     const checkable = node.kind === "checkbox" || node.kind === "radio";

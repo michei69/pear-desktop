@@ -5,7 +5,7 @@ const open = (name: string) => ({ name, isOpen: true });
 const isOpen = (toast: { isOpen: boolean }) => toast.isOpen;
 
 describe("toast batch disarm", () => {
-  // pear-desktop d0e31b13's ordering tests, on the pure walk they guard.
+  // Ordering tests, on the pure walk they guard.
 
   test("a toast that closes and reopens in one batch counts as closed", () => {
     // remove the open class (was open), then add it back (was closed).

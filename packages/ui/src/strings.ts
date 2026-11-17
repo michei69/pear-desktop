@@ -1,5 +1,5 @@
-// The settings dialog's own texts: English defaults by translation key (the
-// keys pear-desktop's settings UI used). `nub run i18n` copies them into en.json.
+// The settings dialog's own texts: English defaults by translation key.
+// `nub run i18n` copies them into en.json.
 
 import type { Field } from "@pear/sdk";
 import { CORE_FIELD_KEYS, type FieldTextKeys } from "@pear/sdk/core-config";
@@ -137,9 +137,9 @@ export function useText(): Text {
 }
 
 /**
- * Plugins the rewrite regenerated: pear-desktop's shipped translations live under
- * its own keys (settings/menu), so keep those instead of English twins. Missing
- * master keys fall back to the generated plugin.<id>.settings.<field> keys.
+ * Plugins with shipped translations under their own keys (settings/menu): keep
+ * those instead of English twins. Missing keys fall back to the generated
+ * plugin.<id>.settings.<field> keys.
  */
 const PLUGIN_FIELD_KEYS: Readonly<Record<string, Readonly<Record<string, FieldTextKeys>>>> = {
   discord: {
@@ -209,7 +209,7 @@ const PLUGIN_FIELD_KEYS: Readonly<Record<string, Readonly<Record<string, FieldTe
 /** A field with its texts in the active language (labels live next to the code, in English). */
 export function localize(t: Translate, owner: string, name: string, field: Field): Field {
   const key = fieldKey(owner, name);
-  // Core/plugin fields pear-desktop already translated under its own keys keep them.
+  // Core/plugin fields with translations under their own keys keep them.
   const keys = owner === "core" ? CORE_FIELD_KEYS[name] : PLUGIN_FIELD_KEYS[owner]?.[name];
   const vars = keys?.vars
     ? Object.fromEntries(Object.entries(keys.vars).map(([placeholder, translation]) => [placeholder, t(translation, placeholder)]))

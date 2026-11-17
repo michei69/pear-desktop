@@ -17,7 +17,7 @@ type ActionName = keyof typeof ACTIONS;
 
 const VOLUME_STEP = 5;
 
-// pear-desktop's in-window shortcuts (only while the window has focus).
+// In-window shortcuts (only while the window has focus).
 const LOCAL = {
   localPlayPause: "playPause",
   localNext: "next",
@@ -25,7 +25,7 @@ const LOCAL = {
   localLike: "like",
   localDislike: "dislike",
 } as const;
-// pear-desktop's "override media keys": the keyboard's media keys, taken globally.
+// "Override media keys": the keyboard's media keys, taken globally.
 const MEDIA_KEYS = { MediaPlayPause: "playPause", MediaNextTrack: "next", MediaPreviousTrack: "previous" } as const;
 
 export default definePlugin({
@@ -104,8 +104,7 @@ export default definePlugin({
       };
       ctx.listen(ctx.window.webContents, "before-input-event", onInput);
 
-      // pear-desktop had a keybind prompt in the plugin's menu; the flat menu
-      // has no prompt, so the item opens the settings card that does.
+      // The flat menu has no prompt, so the item opens the settings card that does.
       ctx.addMenuItem({
         label: ctx.t("plugins.shortcuts.menu.set-keybinds", "Shortcut settings…"),
         click: () => ctx.openSettings(),
@@ -115,8 +114,8 @@ export default definePlugin({
         const list = failed.join(", ");
         const message = `couldn't register ${list} (invalid or used by another app)`;
         // Desktops commonly own the media keys: one busy accelerator must not
-        // report the whole plugin as failed while the others work (pear-desktop
-        // only warned). The card's status line says what did not register.
+        // report the whole plugin as failed while the others work. The card's
+        // status line says what did not register.
         ctx.setStatus(
           ctx.t("plugins.shortcuts.status.not-registered", "Could not register {{keys}} (invalid or used by another app)", {
             keys: list,

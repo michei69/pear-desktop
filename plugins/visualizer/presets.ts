@@ -1,4 +1,4 @@
-// butterchurn-presets' base pack (pear-desktop's list), in the pack's order. Generated from
+// butterchurn-presets' base pack, in the pack's order. Generated from
 // butterchurn-presets/dist/base.min.js; regenerate when updating the package.
 export const PRESETS = [
   "_Aderrasi - Wanderer in Curved Space - mash0000 - faclempt kibitzing meshuggana schmaltz (Geiss color mix)",

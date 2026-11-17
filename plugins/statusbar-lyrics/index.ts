@@ -16,7 +16,7 @@ const schema = {
   }),
 };
 
-/** Master's one-click title lengths. */
+/** One-click title lengths. */
 const MAX_LENGTH_CHOICES = [30, 40, 55, 70, 85, 100, 120];
 
 /** The line synced-lyrics' view pushes while it runs. */
@@ -38,7 +38,7 @@ const normalizeTitle = (text: string, maxLength: number) => {
   return `${cleaned.slice(0, limit - 1).trimEnd()}…`;
 };
 
-/** The next of master's presets after `maxLength`, wrapping at the end. */
+/** The next preset after `maxLength`, wrapping at the end. */
 const nextMaxLength = (maxLength: number) => MAX_LENGTH_CHOICES.find((length) => length > maxLength) ?? MAX_LENGTH_CHOICES[0]!;
 
 function isActiveLine(value: unknown): value is ActiveLyricLine {
@@ -61,8 +61,8 @@ export default definePlugin({
   config: schema,
   host: {
     start(ctx) {
-      // Master's title-length presets and the pronunciation switch as menu
-      // items: PluginMenuItem has no checked/radio state, so the length item
+      // Title-length presets and the pronunciation switch as menu items:
+      // PluginMenuItem has no checked/radio state, so the length item
       // cycles and the settings card keeps the slider.
       ctx.addMenuItem({
         label: ctx.t("plugins.statusbar-lyrics.menu.max-length", "Maximum length"),

@@ -1,4 +1,4 @@
-// MPRIS OpenUri, as pear-desktop: the link is opened in the window.
+// MPRIS OpenUri: the link is opened in the window.
 
 const NAV_HOST = /^(music|www|m)\.\u0079\u006f\u0075\u0074\u0075\u0062\u0065\.com$/;
 

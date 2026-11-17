@@ -22,7 +22,6 @@ export default definePlugin({
   id: "in-app-menu",
   name: "In-app menu",
   description: "Replaces the system title bar: the top bar moves the window and holds the app menu.",
-  // As in pear-desktop.
   enabledByDefault: ["win32"],
   config: inAppMenuConfig,
   host: {
@@ -46,7 +45,7 @@ export default definePlugin({
       state() {
         return windowState(this.window);
       },
-      /** The application menu (pear-desktop drew the whole of it in the page). */
+      /** The application menu, serialized for the page to draw. */
       menu(): MenuNode[] {
         return menuTree();
       },

@@ -18,7 +18,7 @@ export interface ActivityOptions {
   hideWhenPaused: boolean;
 }
 
-// This fork is the app that ships here (package.json's repository), as pear-desktop's button had it.
+// The app's repository (see package.json).
 const GITHUB_URL = "https://github.com/michei69/pear-desktop";
 // Discord rejects fields shorter than 2 characters; pad with an invisible Hangul filler.
 const FILLER = "ㅤ";

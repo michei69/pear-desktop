@@ -64,7 +64,7 @@ test("opens from the shortcut and the sidebar entry, closes with Escape", async 
   await openSettings(page);
   await expect(dialog).toBeVisible();
   await expect(searchbox(page)).toBeFocused();
-  // Opens on General, like pear-desktop's settings.
+  // Opens on General.
   await expect(sectionButton(page, "General")).toHaveAttribute("aria-current", "page");
   await page.keyboard.press("Escape");
   await expect(dialog).toBeHidden();

@@ -23,7 +23,7 @@ const PAGE = `<!doctype html>
 <body><script src="app.js"></script></body>
 </html>`;
 
-/** pear-desktop's privileges for the web: CSP bypassed, CORS, fetch, service workers and streaming. */
+/** The web privileges: CSP bypassed, CORS, fetch, service workers and streaming. */
 const WEB_PRIVILEGES = {
   standard: true,
   bypassCSP: true,

@@ -15,9 +15,9 @@ export interface NetOptions {
 }
 
 export function setupNet(webRequest: WebRequest, { electronUserAgent }: NetOptions) {
-  // As pear-desktop, on every https response: no CSP (YTM's, incl. Trusted Types,
-  // would block the page runtime and plugin code; others would block what plugins
-  // load or embed), and YTM may read it (plugins fetch from other sites in the page).
+  // On every https response: no CSP (YTM's, incl. Trusted Types, would block the
+  // page runtime and plugin code; others would block what plugins load or embed),
+  // and YTM may read it (plugins fetch from other sites in the page).
   webRequest.onHeadersReceived({ urls: ["https://*/*"] }, (details, callback) => {
     callback({ responseHeaders: rewriteResponseHeaders(details.responseHeaders ?? {}, details.resourceType) });
   });

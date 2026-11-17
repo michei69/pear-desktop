@@ -31,7 +31,7 @@ export default definePlugin({
       opacity: 0;
       transition: opacity 0.4s;
     }
-    /* The audio-only layout has no video panel: pear-desktop drew it on the nav bar. */
+    /* The audio-only layout has no video panel: draw it on the nav bar instead. */
     .pear-volume-hud[data-spot="nav"] {
       top: 18px;
       right: 60px;
@@ -39,7 +39,7 @@ export default definePlugin({
       font-size: 24px;
       -webkit-text-stroke: 0;
     }
-    /* Neither spot is there (YTM changed its markup): the fixed pill the rewrite had. */
+    /* Fallback when neither anchor exists (YTM changed its markup): a fixed pill. */
     .pear-volume-hud:not([data-spot]) {
       position: fixed;
       top: 80px;
@@ -66,9 +66,8 @@ export default definePlugin({
   `,
   host: { start: startHost },
   page: {
-    // Runs before YTM's scripts. pear-desktop restored the volume from a preload
-    // because YTM can resume playback at its own (often full) volume before its
-    // UI is built; the restore below is what remains before the DOM setup.
+    // Runs before YTM's scripts: YTM can resume at its own (often full) volume
+    // before its UI is built, so the saved volume is restored before DOM setup.
     runAt: "start",
     async start(ctx) {
       const restoreVolume = savedVolumeRestore(ctx);
@@ -129,7 +128,7 @@ interface VolumeElement extends Element {
   setVolume?(volume: number): void;
 }
 
-/** <ytmusic-app>: its dispatch is how pear-desktop updated the bar's own volume state. */
+/** <ytmusic-app>: its dispatch syncs the bar's own volume state. */
 interface YtmAppElement extends HTMLElement {
   dispatch?(action: { type: string; payload?: unknown }): void;
 }
@@ -143,8 +142,7 @@ function applyVolume(ctx: Ctx, volume: number): boolean {
     if (typeof player?.setVolume !== "function") return false;
     player.setVolume(volume);
   }
-  // `setVolume` leaves the bar's redux volume on its startup value (master's
-  // preload dispatched the same action for that reason).
+  // `setVolume` leaves the bar's redux volume on its startup value; dispatch it manually.
   ctx.$<YtmAppElement>("app")?.dispatch?.({ type: "SET_VOLUME", payload: volume });
   return true;
 }
@@ -152,7 +150,7 @@ function applyVolume(ctx: Ctx, volume: number): boolean {
 /**
  * Restores the volume saved last session as soon as the player can take it;
  * returns a retry for when it could not yet. A capture `play` listener covers
- * a YTM that starts playing before its player API is up, like master's preload.
+ * a YTM that starts playing before its player API is up.
  */
 function savedVolumeRestore(ctx: Ctx) {
   const saved = ctx.config.savedVolume;
@@ -178,8 +176,8 @@ function savedVolumeRestore(ctx: Ctx) {
 /** The big "42%" readout; returns a function showing a volume for a moment. */
 function volumeHud(ctx: Ctx) {
   const hud = <div class="pear-volume-hud" aria-live="polite" />;
-  // pear-desktop drew it over the video, or on the nav bar in the audio-only
-  // layout; `mount` puts it back when YTM re-renders, with a fixed fallback.
+  // It goes over the video, or on the nav bar in the audio-only layout;
+  // `mount` puts it back when YTM re-renders, with a fixed fallback.
   ctx.mount(hud, (element) => placeHud(ctx, element));
   const hide = debounce(() => hud.removeAttribute("data-visible"), HUD_MS);
   ctx.onCleanup(hide.cancel);
@@ -191,7 +189,7 @@ function volumeHud(ctx: Ctx) {
   };
 }
 
-/** Where the readout goes, as pear-desktop placed it. */
+/** Where the readout goes. */
 function placeHud(ctx: Ctx, hud: Element) {
   const video = ctx.$("player.song_video");
   if (video && !isAudioOnly(ctx)) {
@@ -209,7 +207,7 @@ function placeHud(ctx: Ctx, hud: Element) {
   document.body?.append(hud);
 }
 
-/** pear-desktop's check for the audio-only layout: the player page hides its video panel. */
+/** Check for the audio-only layout: the player page hides its video panel. */
 function isAudioOnly(ctx: Ctx) {
   const panel = ctx.$("player.main_panel");
   try {

@@ -1,9 +1,6 @@
-// Applying a config.json patch that did not come from the settings dialog: the
-// API server's PATCH /pear/config and its MCP patch_config tool. Settings.patch
-// only writes the file, so without this the patch is inert until a restart —
-// plugin toggles would not start or stop, core options would not apply, and the
-// settings UI would keep showing the old state. The settings dialog does the
-// same work one field at a time in ipc.ts.
+// Applies a config.json patch that didn't come from the settings dialog (the API's
+// PATCH /pear/config and MCP patch_config tool). Settings.patch only writes the
+// file, so without this the patch is inert until a restart.
 
 import { CORE_SECTIONS, type CoreSection } from "@pear/sdk/core-config";
 import type { Settings } from "./config.ts";

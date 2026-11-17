@@ -32,7 +32,7 @@ export default definePlugin({
     const linear = native.get;
     const setLinear = native.set;
 
-    // The prototype, like pear-desktop: a replaced <video> and any other media
+    // Patching the prototype makes a replaced <video> and any other media
     // element (the crossfade's second stream) follow the curve too.
     Object.defineProperty(HTMLMediaElement.prototype, "volume", {
       configurable: true,

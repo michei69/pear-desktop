@@ -26,9 +26,9 @@ export const schema = {
     group: "Filters",
   }),
   keywords: config.list([], {
-    // pear-desktop had a per-keyword on/off switch; a string list cannot hold
-    // it, and the 4.0.0 migration drops disabled keywords rather than start
-    // filtering what the user had switched off.
+    // A string list cannot hold a per-keyword on/off switch, so the 4.0.0
+    // migration drops disabled keywords rather than start filtering what the
+    // user had switched off.
     label: "Blocked keywords",
     description: "Skips tracks whose title or channel name contains one of these as a whole word (for example, “AI cover”).",
     placeholder: "AI cover",

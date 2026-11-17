@@ -35,8 +35,8 @@ export default definePlugin({
   },
   host: {
     start(ctx) {
-      // pear-desktop's checkbox cannot show its state in the flat menu, so the
-      // item toggles; the settings card's switch stays the canonical control.
+      // A checkbox cannot show its state in the flat menu, so the item toggles;
+      // the settings card's switch stays the canonical control.
       ctx.addMenuItem({
         label: ctx.t("plugins.playback-recovery.menu.log-to-console", "Log recovery events to console"),
         click: () => ctx.setConfig({ logToConsole: !ctx.config.logToConsole }),

@@ -39,7 +39,7 @@ export default definePlugin({
     // The list is rebuilt each time it opens; a pick must not rebuild the menu.
     onConfigChange() {},
     commands: {
-      /** The settings card's button, like pear-desktop's settings dropdown. */
+      /** The settings card's button, which opens the device list. */
       chooseDevice() {
         this.emit("open-output-picker");
       },

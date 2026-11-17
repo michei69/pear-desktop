@@ -355,8 +355,7 @@ export const mountAmbientLight = (
   };
 
   const drawNow = () => {
-    // Skipping the blit while the window is off screen: the rewrite has always
-    // done this for the standard glow and it is kept for the ambilight too.
+    // Skip the blit while the window is off screen, for the ambilight as for the standard glow.
     if (!isVisible()) return;
     const { fps, interpolationTime } = getConfig();
     lastDraw = performance.now();

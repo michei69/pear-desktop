@@ -3,7 +3,7 @@ import type { Renderer, Stage } from "../config.ts";
 import type { ArtworkPalette } from "../palette.ts";
 
 /**
- * Shared analyser and clock for the 2D visualizers ported from ThemeSong.
+ * Shared analyser and clock for the 2D visualizers.
  *
  * The player already routes its audio through the shared graph; these renderers
  * tap it with a private analyser and never connect to the destination, so they
@@ -76,7 +76,7 @@ export abstract class ThemeSongRenderer implements Renderer {
 
   // An arrow so the plugin's loop can call a detached `render`.
   render = (): void => {
-    // pear-desktop froze these while the track was paused: the snow stops falling,
+    // These freeze while the track is paused: the snow stops falling,
     // the disco ball stops spinning, and the clock doesn't run ahead of the audio.
     // The video element is read live: YTM swaps it on some seeks.
     if (this.graph.video.paused) {

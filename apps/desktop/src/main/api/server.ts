@@ -47,8 +47,8 @@ const CORS_HEADERS = {
   "Access-Control-Allow-Private-Network": "true",
 };
 
-// 5.3x understands OpenAPI 3.2 (the document's QUERY operations); the port's
-// pinned 5.17 would refuse the version outright.
+// 5.3x understands the document's QUERY operations; older pinned versions
+// would refuse the version outright.
 const SWAGGER_HTML = `<!doctype html>
 <html><head><meta charset="utf-8"><title>Pear Desktop API</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.34.1/swagger-ui.css"></head>
@@ -56,7 +56,7 @@ const SWAGGER_HTML = `<!doctype html>
 <script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.34.1/swagger-ui-bundle.js"></script>
 <script>SwaggerUIBundle({ url: "/doc", dom_id: "#swagger-ui" });</script></body></html>`;
 
-/** The WebSocket close codes the original used. */
+/** WebSocket close codes kept stable for existing clients. */
 const WS_POLICY_VIOLATION = 1008;
 const WS_GOING_AWAY = 1001;
 
@@ -211,7 +211,7 @@ function attachWebSocket(server: Server, options: ServerOptions) {
       return;
     }
     wss.handleUpgrade(req, socket, head, (ws) => {
-      // Like the original: accept, then close with a policy violation, so clients see why.
+      // Accept, then close with a policy violation, so clients see why.
       if (!isAuthorized(options.auth(), url.searchParams.get("token"), false)) {
         ws.close(WS_POLICY_VIOLATION, "Unauthorized");
         return;

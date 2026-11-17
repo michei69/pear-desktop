@@ -1,8 +1,8 @@
-// pear-desktop's default title/artist filters, and the safe application of the
+// Default title/artist filters, and the safe application of the
 // user's own regexes. A filter that does not compile is skipped: the list is
 // edited by hand, so one typo must not stop every scrobble.
 
-/** Bracket tags, versions and YTM noise; pear-desktop's list, in order. */
+/** Bracket tags, versions and YTM noise, in order. */
 export const DEFAULT_FILTERS: readonly string[] = [
   // (Explicit) or [Explicit] or Clean
   "\\s[([]Explicit[)\\]]",
@@ -70,7 +70,7 @@ export const DEFAULT_FILTERS: readonly string[] = [
   "\\s\\(En\\svivo\\)",
 ];
 
-/** pear-desktop stops filtering once a name is longer than this. */
+/** Filtering stops once a name is longer than this. */
 const MAX_LENGTH = 256;
 
 /** Applies one filter, keeping the name unchanged when the expression is invalid. */

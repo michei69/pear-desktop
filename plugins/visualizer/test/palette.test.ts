@@ -41,7 +41,7 @@ describe("publishedPalette", () => {
     expect(palette).toHaveLength(6);
     for (const color of palette ?? []) expectValidEntry(color);
 
-    // One published color, then pear-desktop's vivid fallbacks after it.
+    // One published color, then the vivid fallbacks after it.
     expect(palette?.[1]).toEqual(parseCssColor("#fb5607"));
     expect(palette?.[5]).toEqual(parseCssColor("#06d6a0"));
   });

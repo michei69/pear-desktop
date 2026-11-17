@@ -195,7 +195,7 @@ function FlagRow(props: {
   );
 }
 
-/** Master's fallback for objects, arrays and null: edit the whole value as JSON. */
+/** Fallback for objects, arrays and null: edit the whole value as JSON. */
 function JsonFlagInput(props: { name: string; value: FlagValue | undefined; onCommit(value: FlagValue): void }) {
   const shown = JSON.stringify(props.value) ?? "null";
   const [draft, setDraft] = useState(shown);

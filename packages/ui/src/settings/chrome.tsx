@@ -18,7 +18,7 @@ export function Sidebar(props: {
   sidebarRef: Ref<HTMLElement>;
   /** Drag the divider to resize the sidebar. */
   onResizeStart(event: PointerEvent): void;
-  /** Copies the debug info, like the version button pear-desktop had. */
+  /** Copies the debug info. */
   onVersionClick(): void;
   copied: boolean;
 }) {

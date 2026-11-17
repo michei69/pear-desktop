@@ -55,7 +55,7 @@ export default definePlugin({
       tracker.update(ctx.player.state);
       schedule();
 
-      // pear-desktop's native scrobbler menu entries, as quick actions; the rest is in the settings card.
+      // Native scrobbler menu entries, as quick actions; the rest is in the settings card.
       ctx.addMenuItem({
         label: ctx.t("plugins.scrobbler.menu.toggle-lastfm", "Toggle Last.fm"),
         click: () => ctx.setConfig({ lastfmEnabled: !ctx.config.lastfmEnabled }),

@@ -1,8 +1,7 @@
-// The player-data layer every profile runs (pear-desktop's "In player",
-// the fork's Lite): strips the ad and tracking placements out of YT's player
-// responses before the player reads them, like pear-desktop's injector (itself
-// after uBlock Origin's json-prune and set-constant scriptlets). Every patch is
-// undone on cleanup, so the mode can be switched live.
+// The player-data layer every profile runs: strips the ad and tracking
+// placements out of YT's player responses before the player reads them (after
+// uBlock Origin's json-prune and set-constant scriptlets). Every patch is undone
+// on cleanup, so the mode can be switched live.
 
 const AD_KEYS = ["playerAds", "adPlacements", "adSlots"] as const;
 const NESTED = ["playerResponse", "ytInitialPlayerResponse"] as const;
@@ -13,7 +12,7 @@ const isObject = (value: unknown): value is Json => typeof value === "object" &&
 
 /**
  * Removes the ad flag from reel/shorts entries (home feeds and their sequence
- * responses), as pear-desktop's Lite layer did.
+ * responses).
  */
 function pruneReels(entries: unknown) {
   if (!Array.isArray(entries)) return;

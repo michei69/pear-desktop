@@ -51,7 +51,7 @@ describe("app protocol", () => {
 
   test("the state requests are ignored-result page requests", () => {
     const tasks = (command: string) => protocolTasks({ command, args: [] });
-    // pear-desktop's state requests: the rewrite streams state, so only the page-side answer is refreshed.
+    // State requests only refresh the page-side answer; the result is ignored because state streams.
     expect(tasks("requestShuffleInformation")).toEqual([{ type: "page", event: "queue:parsed", ignoreResult: true }]);
     expect(tasks("requestQueueInformation")).toEqual([{ type: "page", event: "queue:parsed", ignoreResult: true }]);
     expect(tasks("requestFullscreenInformation")).toEqual([{ type: "page", event: "fullscreen", ignoreResult: true }]);

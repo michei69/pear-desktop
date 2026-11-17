@@ -12,8 +12,7 @@ export default definePlugin({
   },
   host: {
     start(ctx) {
-      // pear-desktop's menu checkbox; a flat item cannot show its state, so the
-      // settings card's switch remains the canonical control.
+      // A flat menu item cannot show the checkbox's state, so the settings card's switch remains the canonical control.
       ctx.addMenuItem({
         label: ctx.t("plugins.disable-autoplay.menu.apply-once", "Applies only on startup"),
         click: () => ctx.setConfig({ applyOnce: !ctx.config.applyOnce }),
@@ -42,9 +41,8 @@ export default definePlugin({
       ctx.player.control({ type: "pause" });
     });
     // A track loaded before this page part started (the plugin was enabled
-    // mid-track, or a session was restored) never emits trackLoading: replay
-    // pear-desktop's synthetic dataloaded here, spending the one-shot only when
-    // there is a track to pause.
+    // mid-track, or a session was restored) never emits trackLoading: synthesize
+    // a dataloaded here, spending the one-shot only when there is a track to pause.
     if (ctx.player.state.track) pauseLoadedTrack();
     // Turning applyOnce off re-arms a spent one-shot without restarting the page
     // part (a restart would also pause the track that is playing now).

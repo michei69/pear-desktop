@@ -50,7 +50,7 @@ const fail = <S extends FailureStatus>(status: S, error: string): Outcome<never,
 
 const LYRICS_DISABLED = "The synced-lyrics plugin is disabled.";
 const DOWNLOADER_DISABLED = "The downloader plugin is disabled.";
-/** The v1 search controller waited this long for YTM, past the page's default. */
+/** YTM search can be slow, so this outlasts the page's default timeout. */
 const SEARCH_TIMEOUT_MS = 30_000;
 /** A translation provider (a local CLI included) may take minutes; cap it here too. */
 const RPC_TIMEOUT_MS = 120_000;
@@ -220,9 +220,9 @@ export function createOperations(env: OperationEnvironment) {
     async video(): Promise<Outcome<SongInfoV2 | undefined>> {
       const info = songInfo(env.state(), env.details());
       if (!info) return ok(undefined);
-      // The fork's `/video` also carries the scrobbler's names, so a client sees
-      // exactly what would be submitted. A disabled scrobbler has no rules to
-      // ask, so the track's own names stand in.
+      // `/video` carries the scrobbler's names, so a client sees exactly what
+      // would be submitted. A disabled scrobbler has no rules to ask, so the
+      // track's own names stand in.
       const names = await scrobblerNames(info);
       return ok({ ...info, scrobbleTitle: names.title, scrobbleArtist: names.artist });
     },

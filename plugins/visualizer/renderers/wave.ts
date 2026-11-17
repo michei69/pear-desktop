@@ -31,7 +31,7 @@ export async function waveRenderer({ ctx, graph, canvas }: Stage): Promise<Rende
       canvas.height = height;
     },
     // Wave's own requestAnimationFrame loop can't be stopped from outside; its
-    // animations can, which is what pear-desktop's pause() did.
+    // animations can, which is what pause() does here.
     pause() {
       if (paused) return;
       paused = true;

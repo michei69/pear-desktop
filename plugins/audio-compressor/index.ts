@@ -2,8 +2,8 @@ import { config, definePlugin } from "@pear/sdk";
 import { dbToLinear } from "@pear/sdk/util";
 
 // After the equalizer, before fades and the output. The track gain follows the
-// compressor, as pear-desktop's did: the loudness boost is applied to the
-// compressed output instead of being compressed away by it.
+// compressor: the loudness boost is applied to the compressed output instead of
+// being compressed away by it.
 const ORDER = 20;
 
 /** YT may not have written the loudness yet when a track starts. */
@@ -50,8 +50,8 @@ export default definePlugin({
   },
   host: {
     start(ctx) {
-      // pear-desktop's Options toggle. The menu API has no check mark, so the
-      // item's label states what it does; the boost ceiling stays in settings.
+      // The menu API has no check mark, so the item's label states what it does;
+      // the boost ceiling stays in settings.
       ctx.addMenuItem({
         label: ctx.t("plugins.audio-compressor.menu.auto-track-gain", "Auto track gain (boost quiet tracks)"),
         click: () => ctx.setConfig({ autoTrackGain: !ctx.config.autoTrackGain }),
@@ -121,7 +121,7 @@ export default definePlugin({
     apply();
     // The sub-chain's own edge; the shared graph connects the source before the
     // compressor and the track gain to what follows. One stage, so the boost is
-    // applied after compression (pear-desktop's order).
+    // applied after compression.
     compressor.connect(trackGain);
     graph.insert(compressor, trackGain, ORDER);
     updateGain();

@@ -7,7 +7,7 @@ export const schema = {
     placeholder: "Guest 1234",
     description: "Shown to others in a session when you're not signed in; signed in, it's your account's name.",
   }),
-  // pear-desktop's permissions (it started every session at "playlist").
+  // Sessions start at "playlist" so guests can change the queue by default.
   defaultPermission: config.select(
     "playlist",
     [

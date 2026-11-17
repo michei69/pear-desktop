@@ -1,4 +1,4 @@
-// Minimal HS256 JWTs, compatible with the tokens the original API server issued.
+// Minimal HS256 JWTs; the token format is kept stable for client compatibility.
 
 import { createHmac, timingSafeEqual } from "node:crypto";
 

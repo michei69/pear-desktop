@@ -1,8 +1,8 @@
 // Converting a downloaded stream into the file people keep, with its tags and
 // cover (host only). Native ffmpeg when there is one (set in the settings,
 // installed on the computer, or the copy this plugin downloads for yt-dlp);
-// otherwise ffmpeg.wasm, loaded the first time it is needed, as pear-desktop
-// converted. The argument building is pure and unit-tested.
+// otherwise ffmpeg.wasm, loaded the first time it is needed. The argument
+// building is pure and unit-tested.
 
 import { spawn } from "node:child_process";
 import { readFile, rm, writeFile } from "node:fs/promises";
@@ -12,13 +12,13 @@ import type { AudioFormat } from "./ytdlp.ts";
 
 /** The formats the built-in engine writes (the Custom preset stays with yt-dlp). */
 export type BuiltInFormat = Exclude<AudioFormat, "custom">;
-/** "webm" and "mp4": the Source format keeps the stream's own container, as pear-desktop named it. */
+/** "webm" and "mp4": the Source format keeps the stream's own container. */
 export type Extension = "mp3" | "m4a" | "opus" | "webm" | "mp4";
 
 /** What a stream holds, from its MIME type. */
 export interface SourceStream {
   codec: "opus" | "aac" | "other";
-  /** Its container, as pear-desktop's table of streams named it (audio-only MP4 is "m4a"). */
+  /** Its container (audio-only MP4 is "m4a"). */
   container?: "webm" | "m4a" | "mp4" | undefined;
 }
 
@@ -72,14 +72,14 @@ export function outputFor(format: BuiltInFormat, source: SourceStream): { ext: E
   const copy = ["-c:a", "copy"];
   switch (format) {
     case "mp3":
-      // pear-desktop's "mp3 (256kbps)": constant 256 kbps.
+      // "mp3 (256kbps)": constant 256 kbps.
       return { ext: "mp3", codecArgs: ["-c:a", "libmp3lame", "-b:a", "256k"] };
     case "m4a":
       return { ext: "m4a", codecArgs: source.codec === "aac" ? copy : ["-c:a", "aac", "-b:a", "256k"] };
     case "opus":
       return { ext: "opus", codecArgs: source.codec === "opus" ? copy : ["-c:a", "libopus", "-b:a", "160k"] };
     case "source":
-      // The stream as it came, in its container (.webm for Opus), so pear-desktop's files are found again.
+      // The stream as it came, in its container (.webm for Opus), so already-downloaded files are found again.
       if (source.container) return { ext: source.container, codecArgs: copy };
       return source.codec === "aac" ? { ext: "m4a", codecArgs: copy } : { ext: "opus", codecArgs: copy };
   }
@@ -249,7 +249,7 @@ export function parseProgressLine(line: string): number | undefined {
 
 // ---------------------------------------------------------------- native
 
-/** pear-desktop's copy when the program is gone (or was never on PATH). */
+/** The copy downloaded for yt-dlp when the program is gone (or was never on PATH). */
 export const FFMPEG_MISSING = "FFmpeg was not found. Install FFmpeg and make sure `ffmpeg` is on your PATH to download in this format.";
 
 /** No converter at all: native ffmpeg is gone and the wasm core wouldn't load. */
@@ -336,14 +336,14 @@ export interface WasmFFmpeg {
 export interface WasmOptions {
   /** Creates an instance (`createFFmpeg` with the core's path). */
   create(): Promise<WasmFFmpeg>;
-  /** How long an unused core stays loaded; default 10 minutes, as pear-desktop's worker. */
+  /** How long an unused core stays loaded; default 10 minutes. */
   idleMs?: number;
 }
 
 /**
- * pear-desktop shut its ffmpeg worker down after ten idle minutes: the loaded
- * core and its MEMFS hold tens of megabytes, which the app gives back when no
- * download converts for a while.
+ * Shut the worker down after ten idle minutes: the loaded core and its MEMFS
+ * hold tens of megabytes, which the app gives back when no download converts
+ * for a while.
  */
 const IDLE_SHUTDOWN_MS = 10 * 60_000;
 
@@ -357,7 +357,7 @@ export async function addMp3Lyrics(file: Buffer, lyrics: string): Promise<Buffer
   return tagged;
 }
 
-/** MP3 tags as pear-desktop wrote them after ffmpeg.wasm: with node-id3. */
+/** MP3 tags, written with node-id3. */
 export async function tagMp3(file: Buffer, tags: Tags, cover: Cover | undefined, extra: Record<string, string> = {}): Promise<Buffer> {
   const { default: NodeID3 } = await import("node-id3");
   const id3: Id3Tags = { title: tags.title };
@@ -504,8 +504,8 @@ export class WasmConverter implements Converter {
         if (!ffmpeg.isLoaded()) await ffmpeg.load();
         return ffmpeg;
       } catch (error) {
-        // As pear-desktop: a core that won't load means there is no usable ffmpeg,
-        // which the install guidance names (rather than the raw wasm error).
+        // A core that won't load means there is no usable ffmpeg, which the
+        // install guidance names (rather than the raw wasm error).
         throw Object.assign(new Error(FFMPEG_MISSING, { cause: error }), { code: "ENOENT" });
       }
     })();

@@ -356,7 +356,7 @@ export function startSkipAiSlop(ctx: Ctx) {
 
   function trySkip(videoId: string, reason: string) {
     // A rate-limited attempt is not recorded, so the queue scans retry it once
-    // the skip window frees (pear-desktop 73617a95).
+    // the skip window frees.
     if (!limiter.trySkip(videoId)) {
       if (!limiter.has(videoId)) ctx.log.warn("skip limit reached; not skipping", videoId);
       return;

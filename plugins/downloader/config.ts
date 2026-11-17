@@ -1,7 +1,7 @@
 import { config } from "@pear/sdk";
 import { DEFAULT_TEMPLATE } from "./ytdlp.ts";
 
-// Option names follow pear-desktop 3.x's where they mean the same (see PLUGIN_MIGRATIONS for the rest).
+// Option names follow the older config where they mean the same (see PLUGIN_MIGRATIONS for the rest).
 export const downloaderConfig = {
   showButton: config.bool(true, {
     label: "Show the Downloads entry in the sidebar",
@@ -32,7 +32,7 @@ export const downloaderConfig = {
     ],
     { label: "Format" },
   ),
-  // pear-desktop's Custom preset.
+  // The Custom preset.
   customArgs: config.string("", {
     label: "ffmpeg arguments",
     placeholder: "-b:a 320k",

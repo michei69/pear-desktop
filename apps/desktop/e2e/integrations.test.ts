@@ -66,7 +66,7 @@ test("now-playing services report the playing track and follow pause and disable
 
   await test.step("Amuse", async () => {
     await expect.poll(async () => (await amuse()).track).toMatchObject({ id: TEST_TRACK, title: track.title, author: track.artist });
-    // Like pear-desktop, it listens on every interface, so widgets on other devices reach it.
+    // It listens on every interface, so widgets on other devices reach it.
     const lan = Object.values(networkInterfaces())
       .flat()
       .find((address) => address && address.family === "IPv4" && !address.internal);

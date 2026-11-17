@@ -1,8 +1,7 @@
 // A COMPLETE pear-desktop 3.12.4 config.json through the real plugins: every
-// app option and plugin option at a non-default value must reach its rewrite
-// equivalent with the same effective value, and every master key must be
-// accounted for (same name, a migration, or a reported gap). The defaults come
-// from master's sources, so a new master option cannot go unnoticed here.
+// app and plugin option at a non-default value must reach its 4.0.0 equivalent
+// with the same effective value, and every old key must be accounted for (same
+// name, a migration, or a reported gap).
 
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -28,7 +27,7 @@ type Json = Record<string, unknown>;
 const fixtureOptions = PEAR_DESKTOP_3_COMPLETE.options as Json;
 const fixturePlugins = PEAR_DESKTOP_3_COMPLETE.plugins as Record<string, Json>;
 
-/** pear-desktop's app options and where the rewrite keeps them (same names and values). */
+/** The app options and the section each maps to (same names and values). */
 const APP_SECTION: Record<string, string> = {
   resumeOnStart: "general",
   startingPage: "general",
@@ -57,10 +56,10 @@ const APP_SECTION: Record<string, string> = {
   overrideUserAgent: "advanced",
 };
 
-/** App options the rewrite has no room for; their keys stay in the file for a downgrade. */
+/** App options with no current equivalent; their keys stay in the file for a downgrade. */
 const APP_GAPS = ["hideMenuWarned", "inProcessGpu"];
 
-/** Master options a migration moves elsewhere; the old key stays too. */
+/** Options a migration moves elsewhere; the old key stays too. */
 const MIGRATED_OPTIONS = [
   "tray",
   "trayClickPlayPause",
@@ -70,7 +69,7 @@ const MIGRATED_OPTIONS = [
   "featureFlags",
 ];
 
-/** Master plugin keys with no same-named rewrite field: the new keys their migration fills (empty: none). */
+/** Plugin keys with no same-named current field: the new keys their migration fills (empty: none). */
 const CONVERTED: Record<string, Record<string, string[]>> = {
   "custom-output-device": { devices: [] },
   discord: { [PLAY_BUTTON]: ["playButton"], activityTimeoutTime: ["activityTimeoutSeconds"] },
@@ -149,14 +148,14 @@ const CONVERTED: Record<string, Record<string, string[]>> = {
   },
 };
 
-/** Master plugin keys with no rewrite field at all (reported gaps; the key stays in the file). */
+/** Plugin keys with no current field at all (reported gaps; the key stays in the file). */
 const GAPS: Record<string, string[]> = {
   "custom-output-device": ["devices"], // a cache of the devices, re-read from the system
   "picture-in-picture": ["isInPiP"], // runtime state, not a setting
-  "precise-volume": ["savedVolume"], // a value only a volume-restore setting has, if the rewrite adds one
+  "precise-volume": ["savedVolume"], // a value only a volume-restore setting would hold
 };
 
-/** Master plugin keys whose same-named rewrite field holds a converted value. */
+/** Plugin keys whose same-named current field holds a converted value. */
 const CONVERTED_IN_PLACE: Record<string, string[]> = {
   "album-color-theme": ["ratio"],
   "ambient-mode": ["opacity"],
@@ -171,7 +170,7 @@ const CONVERTED_IN_PLACE: Record<string, string[]> = {
   "synced-lyrics": ["providerPriority"],
 };
 
-/** Plugins whose master entry has no rewrite plugin (the settings UI is core now). */
+/** Plugins with no current plugin (the settings UI is core now). */
 const NO_REWRITE_PLUGIN = ["settings-ui"];
 
 /** Every leaf default: an empty object and every array are leaves too. */
@@ -218,7 +217,7 @@ describe("the 3.12.4 fixture", () => {
     for (const [path, value] of defaults) {
       const stored = byPath(fixtureOptions, path);
       expect(stored, path).not.toBeUndefined();
-      // null: pear-desktop had no default for it, so any value will do.
+      // null: 3.12.4 had no default for it, so any value will do.
       if (value === null) expect(stored, path).not.toBeNull();
       else expect(stored, path).not.toEqual(value);
     }
@@ -302,12 +301,12 @@ describe("a complete pear-desktop 3.12.4 config.json, migrated to 4.0.0", () => 
     }
     // The retired in-process GPU option is ignored by the schema, not read.
     expect(settings.core("advanced")).not.toHaveProperty("inProcessGpu");
-    // Plugin settings with no rewrite field stay for a downgrade.
+    // Plugin settings with no current field stay for a downgrade.
     const plugins = file.plugins as Record<string, Json>;
     expect(plugins["precise-volume"]!.savedVolume).toBe(42);
     expect(plugins["picture-in-picture"]!.isInPiP).toBe(true);
     expect(plugins["custom-output-device"]!.devices).toEqual(fixturePlugins["custom-output-device"]!.devices);
-    // pear-desktop's settings-ui plugin is core now; its entry is kept untouched.
+    // The settings-ui plugin is core now; its entry is kept untouched.
     expect(pluginIds.has("settings-ui")).toBe(false);
     expect(plugins["settings-ui"]).toEqual(fixturePlugins["settings-ui"]);
   });
@@ -333,7 +332,7 @@ describe("a complete pear-desktop 3.12.4 config.json, migrated to 4.0.0", () => 
         if (schema.has(key)) continue; // same-named value checked below
         expect(GAPS[id] ?? [], `${id}.${key} has no rewrite equivalent and no migration`).toContain(key);
       }
-      // Same-named options keep pear-desktop's values.
+      // Same-named options keep their stored values.
       for (const [key, value] of Object.entries(fixturePlugins[id]!)) {
         if (key === "enabled" || !schema.has(key) || CONVERTED_IN_PLACE[id]?.includes(key)) continue;
         if (id === "scrobbler" && key === "customRegexFilters") {
@@ -384,7 +383,7 @@ describe("a complete pear-desktop 3.12.4 config.json, migrated to 4.0.0", () => 
       autoDownloadFolder: "/home/me/Music/Auto",
     });
 
-    // The 11-band curve, its preset and user presets move to the rewrite's fields.
+    // The 11-band curve, its preset and user presets move to their new fields.
     const equalizer = pluginConfig("equalizer");
     expect(equalizer).toMatchObject({ bypass: true, outputGainDb: 3, filters: "", preset: "custom", recentPresets: ["flat"] });
     const bands = JSON.parse(equalizer.bands as string) as Json[];

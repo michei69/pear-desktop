@@ -1,4 +1,4 @@
-// Old pear-desktop configs (before 3.12) still go through the whole migration
+// Configs from before 3.12 still go through the whole migration
 // chain: plugin list, shortcut arrays, renamed plugins and priority lists.
 
 import { describe, expect, test } from "vitest";

@@ -357,7 +357,7 @@ export class Player implements PagePlayer {
   }
 
   /**
-   * Episodes name the show as their author; like pear-desktop, their artist is the
+   * Episodes name the show as their author; their artist is the
    * channel owner (usually the host, a person) unless the option asks for the listed participant.
    */
   #artist(mediaType: MediaType, listed: string, response: YTPlayerResponse | null) {

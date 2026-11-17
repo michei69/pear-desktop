@@ -1,5 +1,5 @@
-// Keeps the trademarked app name out of the sources, the way pear-desktop
-// always has: in JSON (package.json, en.json, test data) it is written as
+// Keeps the trademarked app name out of the sources: in JSON (package.json,
+// en.json, test data) it is written as
 // unicode escapes, which this fixes automatically; in code and docs it must be
 // escaped in strings or left out of prose ("YTM"), which this reports. Package
 // managers and JSON writers un-escape JSON, so the pre-commit hook runs this on

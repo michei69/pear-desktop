@@ -1,6 +1,5 @@
-// Channel parity, ported from pear-desktop's update-channel tests: the flags
-// `applyChannel` sets must mean what electron-updater's GitHub provider says,
-// and a beta build starts on the beta channel until the user picks one.
+// Channel parity: the flags `applyChannel` sets must mean what electron-updater's
+// GitHub provider says, and a beta build starts on the beta channel until the user picks one.
 import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -83,7 +82,7 @@ test("the platform decides the channel file suffix", async () => {
 });
 
 test("a beta feed without beta.yml falls back to an older release, so the download reports a failure", async () => {
-  // Upstream's provider retries the default channel file when beta.yml is
+  // The GitHub provider retries the default channel file when beta.yml is
   // missing, which resolves to the running version. The download flow treats
   // "no newer release" as a failed download and offers the release page.
   const { requests, info } = await runProvider("beta", { missingBetaFile: true });
@@ -109,7 +108,7 @@ test("a beta user picks up the next beta from the rolling release", async () => 
   expect(info.version).toBe(nextBeta);
 });
 
-/** The channel a beta build starts on is pear-desktop's 3.12.4 migration's job here. */
+/** The channel a beta build starts on is seeded by the 3.12.4 migration. */
 const tempStore = () => mkdtempSync(join(tmpdir(), "pear-update-channel-"));
 const useBetaBuild = () => {
   vi.resetModules();

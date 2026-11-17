@@ -1,6 +1,5 @@
-// The native application menu, like pear-desktop's (src/menu.ts), with a
-// focused Options submenu. The in-app-menu plugin draws this same menu in the
-// page.
+// The native application menu, with a focused Options submenu. The in-app-menu
+// plugin draws this same menu in the page.
 
 import { app, type BrowserWindow, clipboard, Menu, type MenuItemConstructorOptions, shell } from "electron";
 import { type PluginMenuItem, stripMusicSubdomain, stripSIParam } from "@pear/sdk";
@@ -39,12 +38,12 @@ export interface MenuEnvironment {
   /** The plugins the Plugins menu toggles; without it (or an empty catalog) the menu is left out. */
   pluginCatalog?(): readonly MenuPlugin[];
   setPluginEnabled?(id: string, enabled: boolean): void;
-  /** The API server's menu (pear-desktop's plugin submenu); left out while the host doesn't expose it. */
+  /** The API server's menu (the plugin submenu); left out while the host doesn't expose it. */
   apiServer?(): ApiServerMenu | undefined;
   /** A core option the Options menu mirrors (the settings window writes the same key). */
   coreOption?(section: CoreSection, key: string): unknown;
   setCoreOption?(section: CoreSection, patch: Record<string, unknown>): void;
-  /** pear-desktop's "restart on config changes": every settings change relaunches the app. */
+  /** The "restart on config changes" option: every settings change relaunches the app. */
   restartOnConfigChanges?(): boolean;
   setRestartOnConfigChanges?(value: boolean): void;
   alwaysOnTop(): boolean;
@@ -130,7 +129,7 @@ function entries(...items: (MenuItemConstructorOptions | undefined)[]): MenuItem
   return visible;
 }
 
-/** pear-desktop's Plugins menu: one enable/disable checkbox per plugin, like the settings cards. */
+/** The Plugins menu: one enable/disable checkbox per plugin, like the settings cards. */
 function pluginsMenu(env: MenuEnvironment): MenuItemConstructorOptions | undefined {
   const catalog = env.pluginCatalog?.();
   if (!catalog || catalog.length === 0 || !env.setPluginEnabled) return undefined;
@@ -147,7 +146,7 @@ function pluginsMenu(env: MenuEnvironment): MenuItemConstructorOptions | undefin
   };
 }
 
-/** pear-desktop's Advanced options submenu: the advanced switches plus DevTools and config.json. */
+/** The Advanced options submenu: the advanced switches plus DevTools and config.json. */
 function advancedOptionsItem(env: MenuEnvironment, contents: Contents): MenuItemConstructorOptions {
   const { t } = env;
   return {
@@ -246,7 +245,7 @@ function optionsMenu(
       ...quick,
       ...(quick.length > 0 ? [{ type: "separator" } as const] : []),
       {
-        // As pear-desktop: a second launch focuses this instance only while the lock is held.
+        // A second launch focuses this instance only while the lock is held.
         label: t("main.menu.options.submenu.single-instance-lock", "Single Instance Lock"),
         type: "checkbox",
         checked: env.singleInstanceLock(),
@@ -277,7 +276,7 @@ function viewMenu({ t }: MenuEnvironment): MenuItemConstructorOptions {
       { label: t("main.menu.view.submenu.force-reload", "Force Reload"), role: "forceReload" },
       { type: "separator" },
       // An item takes one accelerator; hidden twins make zooming work with or without
-      // Shift held (Ctrl+= and Ctrl+Plus, Ctrl+- and Ctrl+Shift+-), as in pear-desktop.
+      // Shift held (Ctrl+= and Ctrl+Plus, Ctrl+- and Ctrl+Shift+-).
       { label: t("main.menu.view.submenu.zoom-in", "Zoom In"), role: "zoomIn", accelerator: "CmdOrCtrl+=", visible: false },
       { label: t("main.menu.view.submenu.zoom-in", "Zoom In"), role: "zoomIn", accelerator: "CmdOrCtrl+Plus" },
       { label: t("main.menu.view.submenu.zoom-out", "Zoom Out"), role: "zoomOut", accelerator: "CmdOrCtrl+-" },

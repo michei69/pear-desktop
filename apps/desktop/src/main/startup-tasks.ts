@@ -9,13 +9,13 @@ import type { Settings } from "./config.ts";
 import type { PluginHost } from "./plugins.ts";
 import { registerSettingsScheme } from "./settings-window.ts";
 
-/** Like pear-desktop: clear the cache once the page has settled. */
+/** Clear the cache once the page has settled. */
 const CLEAR_CACHE_DELAY_MS = 20_000;
 
 /**
- * Chromium features the app asks for on every platform (pear-desktop's list):
- * SharedArrayBuffer for the downloader's wasm, overlay scrollbars, native
- * Wayland windows, and the memory features that hand memory back under pressure.
+ * Chromium features the app asks for on every platform: SharedArrayBuffer for
+ * the downloader's wasm, overlay scrollbars, native Wayland windows, and the
+ * memory features that hand memory back under pressure.
  */
 const BASE_ENABLED_FEATURES = [
   "SharedArrayBuffer",
@@ -64,8 +64,8 @@ export const PROXY_PLUGIN = "auth-proxy-adapter";
 
 /**
  * advanced.proxy, from the first request on (and again when the Proxy plugin is
- * turned off). The Proxy plugin (which also handles credentials) takes
- * precedence when it's enabled, as in pear-desktop.
+ * turned off). The Proxy plugin (which also handles credentials) takes precedence
+ * when it's enabled.
  */
 export async function applyProxy(settings: Settings) {
   const proxy = settings.core("advanced").proxy;
@@ -73,7 +73,7 @@ export async function applyProxy(settings: Settings) {
   if (!proxy.trim() || pluginEnabled) return;
   try {
     // Plugin windows with their own partition (the scrobbler's Last.fm sign-in)
-    // need it too; pear-desktop's --proxy-server was process-wide.
+    // need it too; the --proxy-server switch was process-wide.
     for (const targetSession of [session.defaultSession, session.fromPartition("persist:pear-lastfm")]) {
       await targetSession.setProxy({ mode: "fixed_servers", proxyRules: proxy.trim() });
       // Connections opened before keep their old route otherwise (after the Proxy plugin was turned off).
@@ -87,8 +87,7 @@ export async function applyProxy(settings: Settings) {
 
 /**
  * Code caches are keyed to the built renderer bundle, so after an app update the
- * old blobs are dead weight; drop them once per version (pear-desktop's
- * cache-version marker).
+ * old blobs are dead weight; drop them once per version (a cache-version marker).
  */
 export async function clearStaleCodeCaches(app: App) {
   const marker = join(app.getPath("userData"), "cache-version");

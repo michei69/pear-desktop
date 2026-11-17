@@ -1,5 +1,5 @@
-// pear-desktop's "Download" entry in YTM's menus of songs, episodes, albums and
-// playlists (anywhere, without playing them).
+// The "Download" entry in YTM's menus of songs, episodes, albums and playlists
+// (anywhere, without playing them).
 
 import { popupMenuItem } from "@pear/sdk/dom";
 import { selectors } from "@pear/sdk/selectors";
@@ -56,7 +56,7 @@ export function popupEntry(ctx: Ctx, start: StartDownload) {
         label = rowTitle(row);
         return true;
       }
-      // As pear-desktop: nothing in the menu to download, so the song playing.
+      // Nothing in the menu to download, so the song playing.
       target = track ? { videoId: track.videoId } : undefined;
       return target !== undefined;
     },

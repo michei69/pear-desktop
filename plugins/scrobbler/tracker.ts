@@ -1,6 +1,6 @@
-// Decides when to send "now playing" and when a play counts as a scrobble,
-// with pear-desktop's rule: once the playback position passes half the
-// duration or 4 minutes, whichever comes first, for tracks of any length.
+// Decides when to send "now playing" and when a play counts as a scrobble:
+// once the playback position passes half the duration or 4 minutes, whichever
+// comes first, for tracks of any length.
 
 import { livePosition, type NowPlaying, type Track } from "@pear/sdk";
 
@@ -19,7 +19,7 @@ const MAX_THRESHOLD_S = 240;
 // A jump from the end back to the start of the same track is a replay (repeat one).
 const REPLAY_TAIL_S = 5;
 
-/** The position (seconds) past which a track is scrobbled, or null if it never is (unknown duration, as pear-desktop). */
+/** The position (seconds) past which a track is scrobbled, or null if it never is (unknown duration). */
 export function scrobbleThreshold(durationSeconds: number) {
   if (!(durationSeconds > 0)) return null;
   return Math.min(Math.ceil(durationSeconds / 2), MAX_THRESHOLD_S);
@@ -34,7 +34,7 @@ interface Current extends Play {
 /**
  * The last submitted video id. It lives outside the tracker so that disabling
  * and re-enabling the plugin on the same track does not submit the play again;
- * a different track (or a detected replay) releases it, as pear-desktop does.
+ * a different track (or a detected replay) releases it.
  */
 export interface ScrobbleMemory {
   videoId: string | undefined;

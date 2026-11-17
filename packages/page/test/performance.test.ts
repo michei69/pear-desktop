@@ -1,5 +1,4 @@
-// The performance switches' page-side invariants, ported from pear-desktop's
-// tests/performance-mode.test.ts and tests/performance-mode-animations.test.ts.
+// The performance switches' page-side invariants.
 
 import { expect, test } from "vitest";
 import {

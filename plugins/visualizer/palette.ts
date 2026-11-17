@@ -4,7 +4,7 @@ import { clamp } from "@pear/sdk/util";
 
 // The ThemeSong visualizers color themselves from the track. album-color-theme
 // publishes that palette on the document root as the same CSS variables
-// pear-desktop's theme-song palette read, so the visualizers and the rest of the
+// the theme-song palette reads, so the visualizers and the rest of the
 // app share colors. While it isn't publishing (plugin off, artwork not colored
 // yet) the artwork image itself is sampled, so the palette still follows the
 // track instead of falling back to a fixed one.
@@ -31,7 +31,7 @@ const SAMPLE_SIZE = 32;
 const HUE_BUCKETS = 12;
 const MAX_COLORS = 6;
 
-/** The properties pear-desktop's theme-song palette read; album-color-theme writes the first. */
+/** The properties the theme-song palette reads; album-color-theme writes the first. */
 const PUBLISHED_PROPERTIES = [
   "--paper-progress-active-color-1",
   "--yt-spec-static-brand-red",
@@ -47,7 +47,7 @@ const HEX_PATTERN = /^#([\da-f]{3}|[\da-f]{6})$/i;
 const RGB_PATTERN = /^rgba?\(\s*([\d.]+)[\s,]+([\d.]+)[\s,]+([\d.]+)/i;
 const HSL_PATTERN = /^hsla?\(\s*(-?[\d.]+)\s*(?:deg)?[\s,]+(-?[\d.]+)%[\s,]+(-?[\d.]+)%(?:\s*\/\s*[-\d.]+%?)?\s*\)$/i;
 
-/** pear-desktop's vivid fallback, for when there is no artwork (or it can't be read). */
+/** Vivid fallback, for when there is no artwork (or it can't be read). */
 const FALLBACK = (["#ff006e", "#fb5607", "#ffbe0b", "#3a86ff", "#8338ec", "#06d6a0"] as const).map((hex) => rgbToHsl(hexToRgb(hex)));
 
 export function hexToRgb(hex: string): Rgb {
@@ -118,7 +118,7 @@ export function publishedPalette(): readonly Hsl[] | null {
   return parsed.length > 0 ? [...parsed, ...FALLBACK.slice(parsed.length)] : null;
 }
 
-/** The first palette entry, or the fork's default accent when the palette is empty. */
+/** The first palette entry, or the default accent when the palette is empty. */
 export function accentOf(palette: readonly Hsl[]): Hsl {
   return palette[0] ?? FALLBACK[0] ?? { h: 326, s: 1, l: 0.5 };
 }

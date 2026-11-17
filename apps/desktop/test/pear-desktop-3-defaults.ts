@@ -5,12 +5,12 @@
 // sets every one of them to a non-default value, and that the 4.0.0 migration
 // accounts for each stored key.
 //
-// `null` stands for a key pear-desktop had no default for (undefined): the API
+// `null` stands for a key 3.12.4 had no default for (undefined): the API
 // server's generated secret, the downloader's optional paths, the scrobbler
 // tokens, the precise-volume's saved volume, the optional app options, and
 // in-app-menu's platform-dependent `enabled`.
 
-/** The window state and last page, pear-desktop's other stored keys. */
+/** The window state and last page: the other stored keys. */
 export const PEAR_DESKTOP_3_WINDOW_DEFAULTS: Record<string, unknown> = {
   "window-size": { width: 1100, height: 550 },
   "window-maximized": false,
@@ -18,7 +18,7 @@ export const PEAR_DESKTOP_3_WINDOW_DEFAULTS: Record<string, unknown> = {
   url: "https://music.\u0079\u006f\u0075\u0074\u0075\u0062\u0065.com",
 };
 
-/** App options: pear-desktop's defaults object. */
+/** App options: the 3.12.4 defaults object. */
 export const PEAR_DESKTOP_3_OPTION_DEFAULTS: Record<string, unknown> = {
   "language": null,
   "tray": false,
@@ -360,7 +360,7 @@ export const PEAR_DESKTOP_3_PLUGIN_DEFAULTS: Record<string, Record<string, unkno
       "previous": "",
       "playPause": "",
       "next": "",
-      // Added with the 3.13 keybinds (master 4ad0d0c0).
+      // Added with the 3.13 keybinds.
       "like": "",
       "dislike": "",
     },

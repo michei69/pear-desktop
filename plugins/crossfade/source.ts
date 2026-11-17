@@ -32,9 +32,9 @@ export function lengthSecondsOf(info: TrackInfo): number | undefined {
 }
 
 /**
- * pear-desktop's choice from the account's premium state: premium accounts may
- * stream audio-only (smaller); for everyone else the CDN refuses those, so the
- * muxed format goes first and no track pays for a refused request.
+ * Based on the account's premium state: premium accounts may stream audio-only
+ * (smaller); for everyone else the CDN refuses those, so the muxed format goes
+ * first and no track pays for a refused request.
  */
 export function downloadAttempts(premium: boolean): readonly DownloadAttempt[] {
   const muxed: DownloadAttempt[] = [

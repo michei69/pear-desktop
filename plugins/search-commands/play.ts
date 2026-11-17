@@ -1,7 +1,6 @@
 // `/play` starts the video in place, the way the app itself starts one: one
-// `/next` request and a queue hydrate. Master's `peard:load-video` path did the
-// same through the main process, so the current page, its scroll position and
-// the history stay untouched.
+// `/next` request and a queue hydrate, so the current page, its scroll position
+// and the history stay untouched.
 
 import { hydrateQueue, nextQueueItems, playerQueue, type NextQueueData } from "@pear/sdk";
 import { selectors } from "@pear/sdk/selectors";

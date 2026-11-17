@@ -132,7 +132,7 @@ describe("the update-available dialog", () => {
     expect(first.buttons).toEqual(["OK", "Download and Install", "Disable Updates"]);
     expect(mocks.openExternal).not.toHaveBeenCalled();
 
-    // The updater is pinned to the rewrite's channel before it downloads.
+    // The updater is pinned to the configured channel before it downloads.
     expect(mocks.autoUpdater.setFeedURL).toHaveBeenCalledWith(updates.feedOptions("stable"));
     expect(mocks.autoUpdater.allowPrerelease).toBe(false);
     expect(mocks.autoUpdater.channel).toBe("latest");

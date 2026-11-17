@@ -1,5 +1,5 @@
 /** @jsxImportSource @pear/sdk */
-// Who added each queue item, as pear-desktop showed it.
+// Who added each queue item, shown on the queue row.
 
 import { getDefaultProfile, type Profile } from "./types.ts";
 

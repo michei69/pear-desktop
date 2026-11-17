@@ -1,7 +1,6 @@
-// Building blocks of the migrations. pear-desktop only stored what differed
-// from its defaults (deep-merged on read), so any key may be missing: old
-// values are type-checked, and keys the rewrite already has are never
-// overwritten, so running a migration twice changes nothing.
+// Building blocks of the migrations. Old config stored only non-defaults
+// (deep-merged on read), so any key may be missing: values are type-checked and
+// existing keys are never overwritten, so running a migration twice changes nothing.
 
 import { clamp } from "@pear/sdk/util";
 
@@ -55,11 +54,11 @@ export function flattenStrings(entry: Json, from: unknown, mapping: Readonly<Rec
 const FLAG_NAME = /^[\w.-]+$/;
 
 /**
- * pear-desktop's feature-flag overrides record -> the rewrite's "name=value"
- * `siteFlags` entries. A boolean or finite number reads back as itself; a
- * string is raw text (the list has no quoting, so text that looks like a number
- * or boolean reads back as one); other values become their JSON text. A name
- * that would not parse back is left out; the old record stays in the file.
+ * A feature-flag overrides record -> "name=value" `siteFlags` entries. A boolean
+ * or finite number reads back as itself; a string is raw text (the list has no
+ * quoting, so text that looks like a number or boolean reads back as one); other
+ * values become their JSON text. A name that would not parse back is left out; the
+ * old record stays in the file.
  */
 export function siteFlagEntries(flags: Json): string[] {
   const entries: string[] = [];
@@ -76,13 +75,13 @@ function flagText(value: unknown): string {
   return JSON.stringify(value) ?? String(value);
 }
 
-/** pear-desktop stored fractions (0.5) where the rewrite shows percentages (50). */
+/** Old fractions (0.5) -> percentages (50). */
 export function fractionToPercent(entry: Json, key: string) {
   const value = entry[key];
   if (isNumber(value) && value >= 0 && value <= 1) entry[key] = Math.round(value * 100);
 }
 
-/** Keeps a number the rewrite would reject as out of range (and reset to its default) within the range. */
+/** Keeps an out-of-range number within the range (it would otherwise reset to its default). */
 export function clampNumber(entry: Json, key: string, min: number, max: number) {
   const value = clampedValue(entry[key], min, max);
   if (value !== undefined) entry[key] = value;

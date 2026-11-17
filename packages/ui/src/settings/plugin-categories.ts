@@ -1,5 +1,5 @@
-// The Plugins tab's headings: what kind of job each plugin does, like
-// pear-desktop's Playback/Audio/Interface/Lyrics/Integrations/System groups.
+// The Plugins tab's headings: what kind of job each plugin does
+// (Playback/Audio/Interface/Lyrics/Integrations/System).
 
 import type { PluginInfo } from "@pear/sdk/protocol";
 import type { UiKey } from "../strings.ts";

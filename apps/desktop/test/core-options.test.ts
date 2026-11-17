@@ -1,6 +1,6 @@
 // CoreOptions.set: the settings dialog's write path, which reports a refused
-// beta→stable switch instead of dropping it, and applies pear-desktop's
-// "restart on config changes" option after every change.
+// beta→stable switch instead of dropping it, and applies the "restart on config
+// changes" option after every change.
 
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";

@@ -10,7 +10,7 @@ type Ctx = PageContextOf<typeof audioTrackConfig>;
 const AUDIO_CHANGE_MS = 100;
 
 /**
- * Picks which audio track plays, and keeps pear-desktop's preference applied on
+ * Picks which audio track plays, and keeps the chosen preference applied on
  * every song change. The host part only opens this list, from the app menu and
  * the settings card; the page owns the tracks, so the list lives here and
  * scales to videos with many dub tracks (a native message box would not).
@@ -101,7 +101,7 @@ export function startAudioTrack(ctx: Ctx) {
   ctx.player.on("trackLoading", onTrack);
   ctx.player.on("trackChange", onTrack);
 
-  // Settings changes apply to the track that is playing, as pear-desktop did.
+  // Settings changes apply to the track that is playing.
   ctx.onConfigChange(() => reapply.resetNow());
 
   // The player's own audio-change event is the second chance the cap exists for.

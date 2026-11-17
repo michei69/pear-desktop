@@ -1,15 +1,15 @@
 // A COMPLETE pear-desktop 3.12.4 config.json: every app option and every plugin
-// config key set to a value other than pear-desktop's default, plus the window
+// config key set to a value other than its 3.12.4 default, plus the window
 // state, the last page and the retired theme list. Built from
-// ./pear-desktop-3-defaults.ts (master's sources), so the migration tests can
-// check that nothing in a real 3.12.4 file is lost in 4.0.0.
+// ./pear-desktop-3-defaults.ts, so the migration tests can check that nothing
+// in a real 3.12.4 file is lost in 4.0.0.
 //
-// Values are valid for pear-desktop and its plugins: in-range numbers, real
+// Values are valid for 3.12.4 and its plugins: in-range numbers, real
 // select options, the nested shapes 3.12.4 stored.
 
 import { fromVersion, PLAY_BUTTON } from "./pear-desktop-3.ts";
 
-/** pear-desktop's 11-band equalizer curve, as 3.12.4 stored it (with band ids). */
+/** The 11-band equalizer curve, as 3.12.4 stored it (with band ids). */
 const EQ_BANDS = [20, 40, 80, 160, 320, 640, 1280, 2560, 5120, 10240, 20480].map((frequency, index) => ({
   id: `band${index}`,
   type: index === 0 ? "lowshelf" : index === 10 ? "highshelf" : "peaking",
@@ -28,7 +28,7 @@ const EQ_USER_PRESET = {
 
 const WAVE_ANIMATIONS = [{ type: "Cubes", config: { bottom: true, count: 3, cubeHeight: 5 } }];
 
-/** The stored config, last written by pear-desktop 3.12.4. */
+/** The stored config, last written by 3.12.4. */
 export const PEAR_DESKTOP_3_COMPLETE = fromVersion("3.12.4", {
   "window-size": { width: 1280, height: 720 },
   "window-maximized": true,
@@ -119,7 +119,7 @@ export const PEAR_DESKTOP_3_COMPLETE = fromVersion("3.12.4", {
       fadeInDuration: 2000,
       fadeOutDuration: 8000,
       secondsBeforeEnd: 12,
-      // 3.12.4 could store a positive number of dB; the rewrite splits it into a scaling and a range.
+      // 3.12.4 could store a positive number of dB; the value now splits into a scaling and a range.
       fadeScaling: 45,
     },
     "custom-output-device": {
@@ -236,7 +236,7 @@ export const PEAR_DESKTOP_3_COMPLETE = fromVersion("3.12.4", {
     "seek-shortcuts": { enabled: true },
     "settings-ui": { enabled: false, showButton: false, separateWindow: true },
     "sfw-music": { enabled: true },
-    // 3.13 nightly builds added like/dislike to the defaults (master 4ad0d0c0): a
+    // 3.13 nightly builds added like/dislike to the defaults: a
     // migrated config that holds them must keep the bindings.
     shortcuts: {
       enabled: true,

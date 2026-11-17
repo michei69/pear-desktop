@@ -11,9 +11,8 @@ export const appleStyles = css`
     flex-direction: column;
     height: 100%;
     overflow: hidden;
-    /* The plugin shell inherits YTM's UI font, as the old
-       previous component host did by inheriting; its own system stack
-       was never used in this app and is noticeably narrower. */
+    /* The plugin shell inherits YTM's UI font: a system font stack is
+       noticeably narrower and was never used here. */
     font-family: inherit;
     font-weight: bold;
     color: var(--apple-primary);

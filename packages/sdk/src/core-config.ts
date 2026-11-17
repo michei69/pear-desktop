@@ -6,7 +6,7 @@ import { CONTEXT_MENU_ENTRIES } from "./context-menu.ts";
 import { languages } from "./macros.ts" with { type: "macro" };
 
 /**
- * Where YTM opens: pear-desktop's page names (stored as is) and the
+ * Where YTM opens: the app's page names (stored as is) and the
  * page each one opens. "" is YTM's own default.
  */
 export const STARTING_PAGES = {
@@ -37,8 +37,8 @@ const startingPageOptions = Object.keys(STARTING_PAGES).map((value) => ({
   label: value || "Default",
 }));
 
-// The core sections below are views over config.json (pear-desktop's app
-// options, same names and values): `options` for most, `options.performanceMode`
+// The core sections below are views over config.json (the app's own options,
+// same names and values): `options` for most, `options.performanceMode`
 // for the performance switches and `plugins.settings-ui` for the dialog's own
 // options. Keys are unique across them.
 
@@ -231,7 +231,7 @@ export const PERFORMANCE = {
   }),
 };
 
-/** The settings dialog's own options, stored where pear-desktop's settings-ui plugin kept them. */
+/** The settings dialog's own options, stored under `plugins.settings-ui`. */
 export const SETTINGS_UI = {
   showButton: config.bool(true, {
     label: "Show the settings entry in the sidebar",
@@ -300,8 +300,8 @@ export function parseFlagOverride(entry: string): [string, FlagValue] | undefine
   }
   if (raw === "true" || raw === "false") return [name, raw === "true"];
   if (raw !== "" && Number.isFinite(Number(raw))) return [name, Number(raw)];
-  // The migration of pear-desktop's flag record writes objects and arrays as
-  // their JSON text (no prefix), so read those back typed too.
+  // A migration writes objects and arrays as their JSON text (no prefix), so
+  // read those back typed too.
   if (raw.startsWith("{") || raw.startsWith("[")) {
     const value = parseJson(raw);
     if (value !== undefined) return [name, value];
@@ -323,7 +323,7 @@ function encodeFlagValue(value: FlagValue): string {
   if (typeof value === "boolean") return String(value);
   if (typeof value === "number") return Number.isFinite(value) ? String(value) : `${JSON_VALUE}${JSON.stringify(String(value))}`;
   if (typeof value === "string") {
-    // Text that reads back as itself stays plain, like pear-desktop's list did.
+    // Text that reads back as itself stays plain.
     const plain = parseFlagOverride(`flag=${value}`);
     return plain?.[1] === value ? value : `${JSON_VALUE}${JSON.stringify(value)}`;
   }
@@ -384,7 +384,7 @@ export function performanceModeOverrides(userOverrides: Flags, enabled: boolean)
   return enabled ? { ...performanceModeFeatureFlags, ...userOverrides } : userOverrides;
 }
 
-/** pear-desktop's API server port, which companion apps expect by default. */
+/** The API server port, which companion apps expect by default. */
 export const DEFAULT_API_PORT = 26538;
 const MAX_PORT = 65535;
 
@@ -430,7 +430,7 @@ export const API_SERVER = {
 
 export type ApiServerConfig = ConfigOf<typeof API_SERVER>;
 
-/** Translation keys for one field, where pear-desktop already translated its texts under other keys. */
+/** Translation keys for one field that has existing translations under other keys. */
 export interface FieldTextKeys {
   label?: string;
   description?: string;
@@ -444,10 +444,9 @@ export interface FieldTextKeys {
 const menu = (path: string) => `main.menu.options.submenu.${path}`;
 
 /**
- * The texts pear-desktop already had translated, under its own keys (mostly the
- * Options menu's). Only fields whose label, description or option names carry
- * over from master are listed; the rest keep the generated `settings-ui.core.*`
- * keys and fall back to English until they are translated.
+ * Fields that reuse existing translated keys (mostly the Options menu's) instead
+ * of generated ones. The rest keep the generated `settings-ui.core.*` keys and
+ * fall back to English until they are translated.
  */
 export const CORE_FIELD_KEYS: Readonly<Record<string, FieldTextKeys>> = {
   // General
@@ -497,10 +496,10 @@ export const CORE_FIELD_KEYS: Readonly<Record<string, FieldTextKeys>> = {
   disableHardwareAcceleration: { label: menu("advanced-options.submenu.disable-hardware-acceleration") },
   autoResetAppCache: { label: menu("advanced-options.submenu.auto-reset-app-cache") },
   restartOnConfigChanges: { label: menu("advanced-options.submenu.restart-on-config-changes") },
-  // The settings dialog's own options (labels only: master's descriptions name a menu path the rewrite moved)
+  // The settings dialog's own options (labels only)
   showButton: { label: "settings-ui.settings.show-button" },
   separateWindow: { label: "settings-ui.settings.separate-window" },
-  // The API server's (pear-desktop's plugin strings)
+  // The API server's (plugin strings)
   hostname: { label: "plugins.api-server.menu.hostname.label" },
   port: { label: "plugins.api-server.menu.port.label" },
   authStrategy: {

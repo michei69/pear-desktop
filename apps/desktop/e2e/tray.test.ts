@@ -1,4 +1,4 @@
-// tray: pear-desktop's tray icon, menu and paused icon. Electron's Tray is
+// tray: the tray icon, menu and paused icon. Electron's Tray is
 // observed by wrapping its prototype before the plugin starts.
 
 import { expect, test } from "./fixtures.ts";

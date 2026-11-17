@@ -1,5 +1,5 @@
 // JSON shapes the app's API server expects from the plugin's RPC methods.
-// They match what pear-desktop's API answered with, so clients need no changes.
+// They match the existing API, so clients need no changes.
 
 import type { CacheEntry } from "./translation/types.ts";
 import type { LyricLine, LyricResult, LyricTranslation, ProviderId } from "./types.ts";
@@ -44,7 +44,7 @@ export interface ApiCachedTranslation {
   lines: string[];
 }
 
-/** pear-desktop's line time: "mm:ss:cc". */
+/** Line time: "mm:ss:cc". */
 function apiTime(ms: number) {
   const centiseconds = Math.max(0, Math.floor(ms / 10));
   const minutes = Math.floor(centiseconds / 6000);

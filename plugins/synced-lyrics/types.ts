@@ -1,13 +1,13 @@
 // Shared between the host (providers) and the page (renderer).
 
-// The ids are pear-desktop's provider names, which its `preferredProvider` setting
-// stores. lrc.red comes first: it is the only source with word-synced TTML for most
-// tracks. The rest keep pear-desktop's picker order (Megalobiz after Musixmatch,
-// NetEase last), and providers added after a stored order are appended.
+// The ids are the provider names stored in `preferredProvider`. lrc.red comes
+// first: it is the only source with word-synced TTML for most tracks. The rest
+// keep the picker order (Megalobiz after Musixmatch, NetEase last), and providers
+// added after a stored order are appended.
 export const PROVIDERS = ["LrcRed", "YTMusic", "LRCLib", "MusixMatch", "Megalobiz", "NetEase", "LRCHub", "SimpMusic"] as const;
 export type ProviderId = (typeof PROVIDERS)[number];
 
-/** As pear-desktop's picker shows them. */
+/** Display names for the picker. */
 export const PROVIDER_NAMES: Record<ProviderId, string> = {
   LrcRed: "lrc.red",
   YTMusic: "YTMusic",
@@ -81,7 +81,7 @@ export interface SearchQuery {
   durationSeconds: number;
   /** Accept looser matches (title-only search). */
   inexact: boolean;
-  /** The title in its original language, which YTM offers for some tracks (pear-desktop searched it too). */
+  /** The title in its original language, which YTM offers for some tracks (also searched). */
   alternativeTitle?: string;
   /** The video's tags; the first is often the canonical artist name. */
   tags?: string[];

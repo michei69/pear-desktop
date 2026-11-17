@@ -76,7 +76,7 @@ export interface IpcEnvironment {
     /** False when the core refused the change (a declined beta→stable switch). */
     setConfig(section: CoreSection, patch: Record<string, unknown>): boolean | Promise<boolean>;
   };
-  /** pear-desktop's "restart on config changes": what a settings change from the surfaces restarts. */
+  /** The "restart on config changes" option: what a settings change from the surfaces restarts. */
   restartOnConfigChanges(): boolean;
   restart(): void;
 }
@@ -111,8 +111,7 @@ export function setupIpc({
     "app:open-settings-window": () => openSettingsWindow(),
     "plugin:set-enabled": async (id, enabled) => {
       await plugins.setEnabled(String(id), Boolean(enabled));
-      // pear-desktop's setMenuOption: enabling or disabling restarts when the option is on.
-      // Plain config edits do not (pear-desktop's settings UI sent those elsewhere).
+      // Enabling or disabling restarts when the option is on; plain config edits do not.
       if (restartOnConfigChanges()) restart();
     },
     "plugin:set-config": async (id, patch) => {
@@ -239,7 +238,7 @@ function bootstrapPayload(plugins: PluginHost, themes: Themes, core: IpcEnvironm
   };
 }
 
-/** Plugins in settings-UI form, with pear-desktop's translated names and descriptions where they exist. */
+/** Plugins in settings-UI form, with translated names and descriptions where they exist. */
 function pluginCatalog({ plugins, t }: PluginHost): PluginInfo[] {
   return plugins.map((plugin) => {
     const description = plugin.description ? t(`plugins.${plugin.id}.description`, plugin.description) : undefined;

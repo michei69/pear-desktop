@@ -56,28 +56,6 @@ export const injectCpuTamerByDomMutation = (__CONTEXT__) => {
     };
   })();
 
-  // for future use
-  /*
-  const timeupdateDT = (() => {
-
-    window.__j6YiAc__ = 1;
-
-    document.addEventListener('timeupdate', () => {
-      window.__j6YiAc__ = Date.now();
-    }, true);
-
-    let kz = -1;
-    try {
-      kz = top.__j6YiAc__;
-    } catch (e) {
-
-    }
-
-    return kz >= 1 ? () => top.__j6YiAc__ : () => window.__j6YiAc__;
-
-  })();
-  */
-
   const cleanContext = async (win) => {
     const waitFn = requestAnimationFrame; // shall have been binded to window
     try {
@@ -153,11 +131,6 @@ export const injectCpuTamerByDomMutation = (__CONTEXT__) => {
     if (!__CONTEXT__) return null;
 
     const { setTimeout, setInterval, clearTimeout, clearInterval } = __CONTEXT__;
-
-    /*
-    /-** @type {Function|null} *-/
-    // let afInterupter = null;
-    */
 
     const getDMHelper = () => {
       let _dm = document.getElementById("d-m");
@@ -272,16 +245,5 @@ export const injectCpuTamerByDomMutation = (__CONTEXT__) => {
         console.warn(e);
       }
     })();
-
-    /*
-        let mInterupter = null;
-        setInterval(() => {
-        if (mInterupter === afInterupter) {
-            if (mInterupter !== null) afInterupter = mInterupter = (mInterupter(), null);
-        } else {
-            mInterupter = afInterupter;
-        }
-        }, 125);
-    */
   });
 };

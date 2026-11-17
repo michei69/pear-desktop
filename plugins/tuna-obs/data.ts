@@ -1,4 +1,4 @@
-// Tuna's song payload, in pear-desktop's shape. Kept separate so the mapping is
+// Tuna's song payload, in the expected shape. Kept separate so the mapping is
 // testable without Electron's fetch.
 
 import { type NowPlaying, type Track, livePosition } from "@pear/sdk";

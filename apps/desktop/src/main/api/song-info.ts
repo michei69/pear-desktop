@@ -1,4 +1,4 @@
-// The player state in the original API's terms (SongInfo, repeat mode names).
+// The player state mapped to the API's SongInfo shape and mode names.
 
 import { livePosition, type LikeStatus, type NowPlaying, type RepeatMode } from "@pear/sdk";
 import { isPlaying } from "@pear/sdk/util";

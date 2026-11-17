@@ -13,7 +13,7 @@ import type { Player } from "./player.ts";
 const YOU_THERE = selectors["dialog.you_there"];
 const PAPER_DIALOG = selectors["dialog.paper"];
 const CONFIRM = "[dialog-confirm], yt-button-renderer, tp-yt-paper-button, button";
-/** Only resume when the prompt interrupted recent playback (master's window). */
+/** Only resume when the prompt interrupted recent playback. */
 const RESUME_WINDOW_MS = 60_000;
 /** At most one prompt handled per this many milliseconds. */
 const HANDLE_COOLDOWN_MS = 10_000;

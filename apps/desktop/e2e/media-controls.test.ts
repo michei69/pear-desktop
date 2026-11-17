@@ -74,7 +74,7 @@ test("MPRIS reflects the track and controls playback", async ({ app, page, defer
   await player.Play();
   await expect.poll(status, { timeout: 60_000 }).toMatch(/playing|buffering/);
 
-  // Like pear-desktop: no "previous" at the start of the queue, "next" while tracks follow.
+  // No "previous" at the start of the queue, "next" while tracks follow.
   await expect.poll(() => get("CanGoPrevious")).toBe(false);
   await expect.poll(() => get("CanGoNext")).toBe(true);
 

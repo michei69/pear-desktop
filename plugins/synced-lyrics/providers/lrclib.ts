@@ -28,7 +28,7 @@ interface Entry {
 /** LRCLIB is overloaded or rate limited, not broken: retrying now will not help. */
 export const isRetryableStatus = (status: number) => RETRYABLE_STATUSES.has(status);
 
-/** The full-text searches to try, best first; inexact mode widens them (as pear-desktop). */
+/** The full-text searches to try, best first; inexact mode widens them. */
 export function buildSearchQueries(input: { title: string; alternativeTitle?: string; artist: string; allowInexact: boolean }) {
   const cleanedTitle = cleanTrackTitle(input.title);
   const alternative = input.alternativeTitle ? cleanTrackTitle(input.alternativeTitle) : undefined;

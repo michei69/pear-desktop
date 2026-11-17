@@ -30,7 +30,7 @@ describe("the 250 ms silence window", () => {
   it("does not latch a short gap after audio", () => {
     const latch = createLatch();
     for (let index = 0; index < 3; index++) sample(latch, loud);
-    // 4 samples = 100 ms of a breath; master's 10-sample history ignores it.
+    // 4 samples = 100 ms of a breath; the 10-sample history ignores it.
     for (let index = 0; index < 4; index++) expect(sample(latch, quiet)).toBe(false);
     expect(latch.silent).toBe(false);
   });
@@ -41,7 +41,7 @@ describe("the 250 ms silence window", () => {
     for (let index = 0; index < 10; index++) expect(sample(latch, quiet)).toBe(false);
     expect(latch.silent).toBe(false);
     // The tenth quiet slot is checked before the sample is shifted in, so the
-    // latch waits for 11 quiet samples (~275 ms): master behaves identically.
+    // latch waits for 11 quiet samples (~275 ms).
     expect(sample(latch, quiet)).toBe(true);
     expect(latch.silent).toBe(true);
   });

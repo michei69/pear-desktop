@@ -6,9 +6,8 @@ const OPEN_SUBMENU_KEYS = new Set(["ArrowRight", "Enter", " "]);
 export const opensSubmenu = (event: KeyboardEvent) => OPEN_SUBMENU_KEYS.has(event.key);
 
 /**
- * F10 alone, or the backtick caught from pear-desktop's docs, toggles the menu — but
- * not while typing: pear-desktop's window-wide backtick shortcut also fired on a
- * backtick typed into the search box.
+ * F10 alone, or a backtick, toggles the menu — but not while typing, since a
+ * window-wide backtick shortcut would otherwise fire when typing into search.
  */
 export function isMenuKey(event: KeyboardEvent) {
   const hasModifier = event.ctrlKey || event.altKey || event.metaKey || event.shiftKey;

@@ -101,7 +101,7 @@ export async function loadEngine(options: EngineOptions): Promise<LoadedEngine> 
     const engine = FiltersEngine.deserialize(buffer);
     // Remote lists change without their URL changing (the cache key only has the
     // URL): the cached engine blocks at once, and a remote list means it is
-    // rebuilt in the background on every launch, like pear-desktop refetching it.
+    // rebuilt in the background on every launch.
     const stale = lists.some((list) => list.contents === undefined) || Date.now() - info.mtimeMs > MAX_AGE_MS;
     const refreshed = stale ? build(lists).then(async (fresh) => (await save(file, fresh), fresh)) : Promise.resolve(undefined);
     return { engine, refreshed };
@@ -133,8 +133,8 @@ export function enableBlocking(webRequest: WebRequest, getEngine: () => FiltersE
     if (!engine) return callback({});
     const request = toRequest(details);
     const { redirect, rewrite, match } = engine.match(request);
-    // pear-desktop applied the engine's $rewrite URLs too: documents that a list
-    // rewrites navigate to the replacement, subresources are redirected.
+    // The engine's $rewrite URLs apply too: documents that a list rewrites
+    // navigate to the replacement, subresources are redirected.
     const url = request.isMainFrame() ? rewrite?.url : (redirect?.dataUrl ?? rewrite?.url);
     if (url) {
       onBlocked();

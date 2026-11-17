@@ -56,13 +56,13 @@ export function useDialog(model: SettingsModel): Dialog {
     localizer,
     setCore(section, key, field, value) {
       const applied = model.setCoreConfig(section, { [key]: value });
-      // Flagged as it is changed, before the write lands, like pear-desktop's session.
+      // Flagged as it is changed, before the write lands.
       if (field.restart) restarts.flag(`core:${section}.${key}`, field.label);
       return applied;
     },
     setPluginConfig(plugin, key, field, value) {
       void model.setConfig(plugin.id, { [key]: value });
-      // A plugin's restart requirement is about the plugin, as pear-desktop's was.
+      // A plugin's restart requirement is about the plugin.
       if (field.restart) restarts.flag(`plugin:${plugin.id}`, plugin.name);
     },
     setPluginEnabled(plugin, enabled) {

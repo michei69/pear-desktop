@@ -35,7 +35,7 @@ export const schema = {
   preferredProvider: config.select(
     "auto",
     [
-      // pear-desktop's provider names, so its setting carries over.
+      // Keep the provider names so stored settings carry over.
       { value: "auto", label: "Best available" },
       { value: "LrcRed", label: "lrc.red" },
       { value: "LRCLib", label: "LRCLIB" },
@@ -100,7 +100,7 @@ export const schema = {
     { label: "Current line effect", visibleWhen: { lyricsStyle: "standard" } },
   ),
   gapText: config.select(
-    // ♪ by default, as pear-desktop. "Nothing" leaves the break blank.
+    // ♪ by default. "Nothing" leaves the break blank.
     "note",
     [
       { value: "dots", label: "Animated dots" },

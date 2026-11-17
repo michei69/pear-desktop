@@ -1,5 +1,5 @@
-// The host half of precise-volume: pear-desktop's global volume shortcuts and
-// the app-menu quick actions. Apart from the entry file so it can be tested
+// The host half of precise-volume: global volume shortcuts and app-menu quick
+// actions. Apart from the entry file so it can be tested
 // without the page's style macro.
 
 import type { HostContextOf } from "@pear/sdk";
@@ -36,9 +36,8 @@ export function startHost(ctx: Ctx) {
     ctx.onCleanup(() => globalShortcut.unregister(accelerator));
   }
 
-  // pear-desktop's menu had the arrows checkbox and a volume-steps prompt. The
-  // app menu is flat (no checked state, no prompt), so the toggle switches the
-  // option and the settings card stays the place for values.
+  // The app menu is flat (no checked state, no prompt), so the toggle switches
+  // the option and the settings card stays the place for values.
   ctx.addMenuItem({
     label: ctx.t("plugins.precise-volume.menu.arrows-shortcuts", "Arrow keys change volume"),
     click: () => ctx.setConfig({ arrowsShortcut: !ctx.config.arrowsShortcut }),

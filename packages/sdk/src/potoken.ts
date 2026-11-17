@@ -1,12 +1,12 @@
 // The page side of the host's InnerTube session (innertube.ts): PO tokens, which
 // the site's streams need past their first megabyte. BotGuard needs a real DOM, so
-// it runs here (pear-desktop faked one with happy-dom in the main process). It
+// it runs here. It
 // refuses to mint inside an iframe, so its VM lives on the window for as long as
 // it loads, and whatever YTM had under that name is put back afterwards.
 
 import { BG, type BgConfig, buildURL, getHeaders, type WebPoSignalOutput } from "bgutils-js";
 
-/** The site's web client's key for BotGuard's challenge (pear-desktop's and yt-dlp's). */
+/** The site's web client's key for BotGuard's challenge (also used by yt-dlp). */
 const REQUEST_KEY = "O43z0dpjhgX20SCx4KAo";
 /** Mint again a little before the integrity token expires. */
 const EXPIRY_MARGIN_MS = 5 * 60 * 1000;

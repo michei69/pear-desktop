@@ -118,7 +118,7 @@ test("appearance tweaks: Upgrade button, like buttons", async ({ launch }) => {
   test.setTimeout(150_000);
   const app = await launch({ core: { appearance: { removeUpgradeButton: true, likeButtons: "hide" } } });
   const page = await mainWindow(app);
-  // Signed out there is no Upgrade entry: nothing else may disappear (pear-desktop's
+  // Signed out there is no Upgrade entry: nothing else may disappear (the old
   // `:last-child` fallback hid Library then).
   const entries = page.locator("#guide-renderer ytmusic-guide-entry-renderer");
   await expect(entries.last()).toBeVisible({ timeout: 30_000 });
@@ -299,7 +299,7 @@ test("podcast episodes show their host as the artist, or the listed participant"
   const before = await artists();
   expect(before.mediaType).toBe("podcast");
   expect(before.host).toBeTruthy();
-  // pear-desktop's default: the channel owner.
+  // The default: the channel owner.
   expect(before.artist).toBe(before.host);
 
   await setCore(page, "appearance", { usePodcastParticipantAsArtist: true });

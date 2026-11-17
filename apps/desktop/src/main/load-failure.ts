@@ -1,6 +1,6 @@
-// What the main window does when a page fails to load: pear-desktop's error
-// page with a Retry, or (offline) the home page, which the site's service worker
-// serves from its cache.
+// What the main window does when a page fails to load: an error page with a
+// Retry, or (offline) the home page, which the site's service worker serves from
+// its cache.
 
 import { isYtmUrl } from "../shared/user-agent.ts";
 
@@ -9,13 +9,13 @@ import { isYtmUrl } from "../shared/user-agent.ts";
  * (net_error_list.h); the site's service worker turns those into ERR_FAILED (-2).
  */
 const OFFLINE_ERRORS = new Set([-2, -21, -105, -106, -109, -118, -137]);
-/** ERR_ABORTED: a navigation replaced by another one, not a failure (as pear-desktop). */
+/** ERR_ABORTED: a navigation replaced by another one, not a failure. */
 const ABORTED = -3;
 
 /** What to do when the main frame fails to load `url`. */
 export function loadFailureAction(errorCode: number, url: string): "ignore" | "home" | "error-page" {
   const parsed = URL.parse(url);
-  // pear-desktop skipped ad frames (its #2435) and its own error page.
+  // Ignore ad frames and the error page itself.
   if (errorCode === ABORTED || !parsed || parsed.protocol === "data:" || parsed.hostname.endsWith("doubleclick.net")) return "ignore";
   // Offline, the site's service worker answers for its home page only (from its
   // cached app shell, with the Downloads page a click away).
@@ -23,7 +23,7 @@ export function loadFailureAction(errorCode: number, url: string): "ignore" | "h
   return "error-page";
 }
 
-/** pear-desktop's error page, whose Retry loads `url` again. */
+/** The error page, whose Retry loads `url` again. */
 export function errorPage(url: string, text: { title: string; message: string; retry: string }) {
   const html = (value: string) => value.replace(/[&<>"']/g, (char) => `&#${char.charCodeAt(0)};`);
   const page = `<!doctype html><html><head><meta charset="utf-8"><title>${html(text.title)}</title><style>

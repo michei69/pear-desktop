@@ -14,7 +14,7 @@ interface TimedLine {
   cueRange?: { startTimeMilliseconds: string; endTimeMilliseconds: string };
 }
 
-/** pear-desktop's public browse proxy, used before the direct browse unless turned off. */
+/** Public browse proxy, used before the direct browse unless turned off. */
 const PROXY = "https://ytmbrowseproxy.zvz.be";
 
 export interface YtmusicOptions {
@@ -134,7 +134,7 @@ function findLyricsBrowseId(next: unknown): string | undefined {
 }
 
 /**
- * As pear-desktop: the proxy first (it works where the direct InnerTube browse
+ * The proxy first (it works where the direct InnerTube browse
  * is blocked or captcha'd) and the direct request when it fails; direct only
  * when the "without proxy" switch is on.
  */
@@ -169,7 +169,7 @@ async function fetchBrowseProxied(fetch: Fetch, browseId: string): Promise<Recor
   }
 }
 
-/** One line per run: the shelf holds plain lyrics that way, as pear-desktop read it. */
+/** One line per run: the shelf holds plain lyrics that way. */
 function runsText(value: any): string | undefined {
   return Array.isArray(value?.runs) ? value.runs.map((run: { text?: string }) => run.text ?? "").join("\n") : undefined;
 }

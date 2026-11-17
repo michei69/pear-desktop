@@ -2,10 +2,10 @@ import { config, type AudioGraph, type PageContextOf } from "@pear/sdk";
 import type { ArtworkPalette } from "./palette.ts";
 import { PRESETS } from "./presets.ts";
 
-// Presets: butterchurn's base pack, as pear-desktop.
+// Presets: butterchurn's base pack.
 export const DEFAULT_PRESET = "martin [shadow harlequins shape code] - fata morgana";
 
-/** pear-desktop's default Wave animations. */
+/** Default Wave animations. */
 export const DEFAULT_WAVE = [
   {
     type: "Cubes",
@@ -63,7 +63,7 @@ export const schema = {
     ],
     { label: "Visualizer", variant: "dropdown" },
   ),
-  // pear-desktop's options for each visualizer.
+  // Options for each visualizer.
   preset: config.select(
     DEFAULT_PRESET,
     PRESETS.map((value) => ({ value, label: shorten(value) })),
@@ -100,9 +100,8 @@ export const schema = {
   ),
   vudioAccuracy: config.select(
     "128",
-    // Vudio sets fftSize = accuracy * 2, so only powers of two are valid; the
-    // options are pear-desktop's (16 is the rewrite's extra, dropped so a value
-    // saved in pear-desktop can never be reset by normalization).
+    // Vudio sets fftSize = accuracy * 2, so only powers of two are valid; 16 is
+    // omitted so a saved value cannot be reset by normalization.
     [
       { value: "32", label: "32" },
       { value: "64", label: "64" },
@@ -254,8 +253,7 @@ export interface Renderer {
   render?(): void;
   /**
    * Stops a library's own animation loop while the player is hidden or off
-   * screen, as pear-desktop's per-visualizer pause() did. Leave it out when the
-   * plugin's frame loop already drives the drawing.
+   * screen. Leave it out when the plugin's frame loop already drives the drawing.
    */
   pause?(): void;
   /** Restarts the loop paused by `pause()`. */

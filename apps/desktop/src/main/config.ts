@@ -47,7 +47,7 @@ type CoreConfigs = { [K in CoreSection]: ConfigOf<(typeof CORE_SECTIONS)[K]> };
 type Json = Record<string, unknown>;
 
 export const CONFIG_FILE = "config.json";
-/** The API server is a core section, stored where pear-desktop's plugin kept it. */
+/** The API server is a core section, still stored in its old plugin entry. */
 const API_SERVER_PLUGIN = "api-server";
 /** Core sections whose fields live in a plugin entry instead of `options`. */
 const PLUGIN_SECTIONS: Partial<Record<CoreSection, string>> = { apiServer: API_SERVER_PLUGIN, settingsUi: "settings-ui" };
@@ -73,7 +73,7 @@ export class Settings {
       Object.entries(CORE_SECTIONS).map(([name, shape]) => [name, normalizeConfig(shape, this.#coreSource(name as CoreSection))]),
     ) as CoreConfigs;
     this.#definitions = new Map(plugins.map((plugin) => [plugin.id, plugin]));
-    // A beta build follows the beta channel until the user picks one, as pear-desktop did.
+    // A beta build follows the beta channel until the user picks one.
     const storedChannel = this.#data.options?.updateChannel;
     if (storedChannel !== "beta" && storedChannel !== "stable" && defaultUpdateChannel() === "beta") {
       this.#core.general = { ...this.#core.general, updateChannel: "beta" };
@@ -181,7 +181,7 @@ export class Settings {
     this.#scheduleWrite();
   }
 
-  /** `options.themes`, the CSS-file list pear-desktop had before folder themes. */
+  /** `options.themes`, the legacy CSS-file list from before folder themes. */
   legacyThemeCss(): string[] {
     const legacy = this.#data.options?.themes;
     return Array.isArray(legacy) ? legacy.filter((path): path is string => typeof path === "string") : [];
@@ -221,8 +221,8 @@ export class Settings {
   }
 
   /**
-   * The last playing track's URL, in pear-desktop's `url` key: the startup
-   * toggle reopens it. Written as tracks change (see index.ts), flushed on quit.
+   * The last playing track's URL, in the `url` key: the startup toggle reopens
+   * it. Written as tracks change (see index.ts), flushed on quit.
    */
   get lastPlayback(): string | undefined {
     return typeof this.#data.url === "string" ? this.#data.url : undefined;
@@ -234,7 +234,7 @@ export class Settings {
     this.#scheduleWrite();
   }
 
-  /** Whether the user was told how to bring back the hidden menu bar (pear-desktop's options.hideMenuWarned). */
+  /** Whether the user was told how to bring back the hidden menu bar (options.hideMenuWarned). */
   get hideMenuWarned() {
     return isRecord(this.#data.options) && this.#data.options.hideMenuWarned === true;
   }
@@ -257,7 +257,7 @@ export class Settings {
     const nested = NESTED_SECTIONS[section];
     if (nested) {
       const value = this.#data.options?.[nested];
-      // Existing rewrite profiles stored the one boolean here; read it as all parts on.
+      // Older profiles stored a boolean here; read it as all parts on.
       return typeof value === "boolean" ? { flags: value, css: value, animations: value, plugins: value } : value;
     }
     return this.#data.options;
@@ -318,7 +318,7 @@ function placedPosition(position: unknown): { x: number; y: number } | undefined
   if (!isRecord(position)) return undefined;
   const { x, y } = position;
   if (typeof x !== "number" || typeof y !== "number") return undefined;
-  // pear-desktop writes -1/-1 for "let the OS place it".
+  // -1/-1 means "let the OS place it".
   if (x === -1 && y === -1) return undefined;
   return { x, y };
 }

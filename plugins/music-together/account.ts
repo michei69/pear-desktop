@@ -1,6 +1,5 @@
-// The signed-in account, for the user's profile in a session, as pear-desktop
-// did. pear-desktop opened YTM's account menu and read its header; this asks
-// YTM's API for the same menu instead, so nothing pops open.
+// The signed-in account, for the user's profile in a session. Fetched from
+// YTM's account-menu API instead of opening the menu, so nothing pops open.
 
 import type { Account } from "./types.ts";
 
@@ -10,7 +9,7 @@ export interface AppElement extends HTMLElement {
 
 type Runs = { runs?: { text?: string }[] };
 
-/** The header of YTM's account menu (pear-desktop read it from `ytd-active-account-header-renderer`). */
+/** The header of YTM's account menu (the `ytd-active-account-header-renderer` block). */
 interface AccountHeader {
   accountName?: Runs;
   channelHandle?: Runs;

@@ -1,5 +1,5 @@
-// pear-desktop's resume-shuffle: the last queue's shuffle state is saved, and the
-// next launch shuffles the resumed queue again.
+// The last queue's shuffle state is saved, and the next launch shuffles the
+// resumed queue again.
 
 /** How long a resumed queue may take to fill before the restore gives up. */
 export const RESTORE_TIMEOUT_MS = 10_000;

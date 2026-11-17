@@ -25,7 +25,7 @@ const PANEL_GAP = 8;
 
 export function mountTogether(ctx: Ctx) {
   const t = ctx.t;
-  // As pear-desktop: the signed-in account is the user's profile; the name setting is for when signed out.
+  // The signed-in account is the user's profile; the name setting applies when signed out.
   let account: Account | null = null;
   const together = new Together({
     // Read at host/join time, so a changed server list applies to the next session.
@@ -105,8 +105,7 @@ export function mountTogether(ctx: Ctx) {
   ctx.listen(window, "resize", () => open && draw());
 
   // YTM re-renders its nav bar on some navigations; put the button back at the
-  // right end of it. pear-desktop anchored on a `pear-launcher` button that
-  // doesn't exist here; appending is one spot whatever the start order.
+  // right end. Appending is one stable spot whatever the start order.
   ctx.mount(launcher.host, "nav_bar.right");
   draw();
 

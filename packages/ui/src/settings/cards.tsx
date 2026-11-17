@@ -121,7 +121,7 @@ export function BlockView({ dialog, block }: { dialog: Dialog; block: Block }) {
         <CoreCards dialog={dialog} section="general" groups={coreKeyGroups(dialog, "general", ["autoUpdates", "updateChannel"])} />
       );
     case "configuration": {
-      // pear-desktop's Configuration card: the restart-on-change switch with the actions.
+      // The Configuration card: the restart-on-change switch with the actions.
       const restartField = CORE_SECTIONS.advanced.restartOnConfigChanges;
       const field = dialog.localizer("core")("restartOnConfigChanges", restartField);
       const config = dialog.model.core("advanced")?.config;

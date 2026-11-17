@@ -105,7 +105,7 @@ export default definePlugin({
   style,
   host: {
     start(ctx) {
-      // A flat item cannot carry master's radio/checkbox state; it opens the
+      // A flat item cannot carry radio/checkbox state; it opens the
       // authoritative settings card instead.
       ctx.addMenuItem({
         label: ctx.t("plugins.video-toggle.menu.open", "Video toggle settings…"),
@@ -188,8 +188,8 @@ function customSwitch(ctx: Ctx, restorer: ElementState) {
     restorer.attribute(player, "playback-mode", shown ? OMV : ATV);
     songVideo.style.display = shown ? "block" : "none";
     songImage.style.display = shown ? "none" : "block";
-    // pear-desktop's 3.x workaround: the player needs a horizontal auto margin
-    // while the video is hidden, the cover art fills the panel.
+    // Workaround: the player needs a horizontal auto margin while the video is
+    // hidden, the cover art fills the panel.
     if (!shown) restorer.style(player, "margin", "auto 0px");
     else restorer.restoreStyle(player, "margin");
     if (!shown) forceThumbnail(ctx, hasVideo);
@@ -234,7 +234,7 @@ function customSwitch(ctx: Ctx, restorer: ElementState) {
 }
 
 // Video tracks get the video's largest thumbnail as cover art; audio tracks only
-// replace YTM's data: placeholder (pear-desktop's 317cecbf / original behaviour).
+// replace YTM's data with a placeholder.
 function forceThumbnail(ctx: Ctx, hasVideo: boolean) {
   const image = ctx.$<HTMLImageElement>("player.song_image_img");
   const thumbnails = ctx.player.api?.getPlayerResponse()?.videoDetails?.thumbnail?.thumbnails ?? [];

@@ -11,14 +11,14 @@ export async function butterchurnRenderer({ ctx, graph, canvas, size }: Stage): 
   butterchurn ??= ctx.host.invoke("butterchurn").then((source) => importSource<ButterchurnModule>(source));
   const [module, preset] = await Promise.all([butterchurn, ctx.host.invoke("preset", ctx.config.preset)]);
   if (ctx.signal.aborted) return;
-  // pear-desktop fed butterchurn a little louder than the track.
+  // Feed butterchurn a little louder than the track.
   const input = graph.context.createGain();
   input.gain.value = INPUT_GAIN;
   ctx.onCleanup(() => input.disconnect());
   graph.tap(input);
   // The canvas is already sized in device pixels, so a pixelRatio as well
   // multiplies its internal buffers by the DPR again (16× the GPU work on a 2×
-  // display); pear-desktop rendered at a pixelRatio of 1.
+  // display); use a pixelRatio of 1.
   const visualizer = module.default.createVisualizer(graph.context, canvas, { ...size(), pixelRatio: 1 });
   ctx.onCleanup(() => visualizer.loseGLContext());
   visualizer.connectAudio(input);

@@ -1,5 +1,5 @@
-// pear-desktop's app protocol: a second instance started with a "…music://"
-// link hands the command to the running app.
+// The app protocol: a second instance started with a "…music://" link hands the
+// command to the running app.
 
 import { expect, test } from "./fixtures.ts";
 import { playerStatus, waitForTrackPlaying } from "./helpers/playback.ts";

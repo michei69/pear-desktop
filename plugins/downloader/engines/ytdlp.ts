@@ -45,7 +45,7 @@ export class YtDlpEngine implements Engine {
   async #spawn(tools: ReadyTools, options: ArgsOptions, progress: Progress, signal: AbortSignal): Promise<EngineResult> {
     const { target } = options;
     const playlist = target.playlistId !== undefined;
-    // As pear-desktop: a whole list isn't downloaded into a folder that is there already, unless skipping existing files.
+    // A whole list isn't downloaded into a folder that is there already, unless skipping existing files.
     const refuseExisting = playlist && !target.items?.length && options.playlistFolders && !options.skipExisting;
     const existing = refuseExisting ? new Set(await readdir(options.folder).catch(() => [])) : undefined;
     let refused: EngineFailure | undefined;

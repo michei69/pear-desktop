@@ -1,5 +1,5 @@
 // Megalobiz: user-made LRC sheets, through its free public API (the site's
-// search pages that pear-desktop scraped are gone). Anonymous use allows 30
+// search pages it once scraped are gone). Anonymous use allows 30
 // requests a minute per IP; its fair-use terms ask apps to link back to the
 // sheet, which the lyrics footer does with `url`.
 

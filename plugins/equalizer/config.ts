@@ -1,9 +1,8 @@
 // The equalizer's settings: an 11-band Ears-style layout plus presets. The
-// page-side panel edits `bands`, `preset`, `recentPresets` and `userPresets`;
-// they are stored as JSON in string/list fields because the settings schema has
-// no object kind. The schema keeps the previous rewrite's keys (preamp and the
-// 10 band sliders) and the older pear-desktop `filters` JSON, so an upgrade
-// migrates the sound instead of resetting it.
+// page-side panel edits `bands`, `preset`, `recentPresets` and `userPresets`,
+// stored as JSON in string/list fields because the settings schema has no
+// object kind. Legacy preamp/slider keys and `filters` JSON are kept so an
+// upgrade migrates the sound instead of resetting it.
 
 import { config, type ConfigOf } from "@pear/sdk";
 import { clamp } from "@pear/sdk/util";
@@ -15,7 +14,7 @@ export const DEFAULT_Q = Math.SQRT1_2;
 export const MIN_GAIN_DB = -30;
 export const MAX_GAIN_DB = 30;
 export const MIN_OUTPUT_GAIN_DB = -30;
-/** The fork's trim went to +10 dB; +12 covers the previous rewrite's preamp unchanged. */
+/** +12 dB covers the legacy preamp range so migrated levels stay intact. */
 export const MAX_OUTPUT_GAIN_DB = 12;
 export const MIN_FREQUENCY = 20;
 export const MAX_FREQUENCY = 22050;
@@ -24,7 +23,7 @@ export const MAX_Q = 30;
 export const MAX_USER_PRESETS = 100;
 export const MAX_RECENT_PRESETS = 3;
 
-/** The previous rewrite's 10 bands, kept only to migrate their settings. */
+/** Legacy 10 bands, kept only to migrate their settings. */
 const LEGACY_BANDS = [
   { key: "band32", frequency: 32 },
   { key: "band64", frequency: 64 },
@@ -119,7 +118,7 @@ export const schema = {
   bands: config.string("", { label: "Bands", platforms: [] }),
   recentPresets: config.list([], { label: "Recent presets", platforms: [] }),
   userPresets: config.string("", { label: "User presets", platforms: [] }),
-  // The previous rewrite's settings, read once while `bands` is empty.
+  // Legacy settings, read once while `bands` is empty.
   preamp: legacyGain("Preamp (legacy)"),
   band32: legacyGain("32 Hz (legacy)"),
   band64: legacyGain("64 Hz (legacy)"),
@@ -198,13 +197,13 @@ export const decodeBands = (value: string): Band[] | undefined => {
 
 export const encodeBands = (bands: readonly Band[]) => JSON.stringify(normalizeBands(bands));
 
-/** The sound of the previous rewrite: its 10 bands, then a flat 11th one. */
+/** The legacy sound: 10 bands, then a flat 11th. */
 function legacyBands(config: Readonly<EqualizerConfig>): Band[] {
   const values = LEGACY_BANDS.map(({ key }) => clamp(finite(config[key], 0), -12, 12));
   const presetGains = LEGACY_PRESET_GAINS[config.preset];
   const gains = values.some((gain) => gain !== 0) ? values : (presetGains ?? values);
-  // A flat old EQ is the same sound as a flat new one; use the new layout so it
-  // is recognised as the Flat profile instead of a custom curve.
+  // A flat legacy EQ matches the Flat profile; use the new layout so it is
+  // recognised as Flat instead of a custom curve.
   if (gains.every((gain) => gain === 0)) return defaultBands();
   return [
     ...LEGACY_BANDS.map(({ frequency }, index): Band => ({
@@ -323,8 +322,8 @@ const normalizeRecent = (value: readonly string[], presets: readonly UserPreset[
 
 /**
  * The live state, from the stored config. While `bands` is empty (an upgraded
- * profile) the previous rewrite's preset, preamp and band sliders are
- * interpreted; migrating writes `bands`, after which they are ignored.
+ * profile), legacy preset/preamp/slider settings are interpreted; once migration
+ * writes `bands`, those legacy settings are ignored.
  */
 export function readConfig(config: Readonly<EqualizerConfig>): EqualizerState {
   const userPresets = decodeUserPresets(config.userPresets);
@@ -351,8 +350,8 @@ export function readConfig(config: Readonly<EqualizerConfig>): EqualizerState {
   }
 
   const bands = legacyBands(config);
-  // The old preamp was a plain gain before the bands; an output gain is the same
-  // gain after them, so it preserves the old level.
+  // The legacy preamp was a plain gain before the bands; an output gain is the
+  // same gain after them, so it preserves the old level.
   const outputGainDb = clamp(config.preamp !== 0 ? config.preamp : config.outputGainDb, MIN_OUTPUT_GAIN_DB, MAX_OUTPUT_GAIN_DB);
   const activePreset = matchingPresetId({ bands, outputGainDb, userPresets }) ?? "custom";
   return {

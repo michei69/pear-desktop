@@ -80,7 +80,7 @@ test("shows synced lyrics in the Lyrics tab, follows playback and seeks on click
   await expect.poll(() => page.evaluate(() => document.querySelector("video")!.currentTime)).toBeLessThan(25);
   await expect(active).toContainText("strangers");
 
-  // The provider picker (pear-desktop's): the provider shown, with what it found.
+  // The provider picker: the provider shown, with what it found.
   const picker = lyrics(page).locator(".picker");
   await expect(picker).toHaveAttribute("data-selected", /LrcRed|LRCLib|YTMusic/);
   const selected = (await picker.getAttribute("data-selected"))!;
@@ -241,7 +241,7 @@ test("highlights word by word when the provider has word timing", async ({ app, 
 
 test("Megalobiz lyrics as pear-desktop's preferred provider; Musixmatch says it needs a token", async ({ launch }) => {
   test.setTimeout(180_000);
-  // pear-desktop's provider name, as its config.json stores it.
+  // The legacy provider name, as config.json stores it.
   const page = await mainWindow(
     await launch({ plugins: { "synced-lyrics": { enabled: true, config: { preferredProvider: "Megalobiz" } } } }),
   );
@@ -264,7 +264,7 @@ test("Megalobiz lyrics as pear-desktop's preferred provider; Musixmatch says it 
   const musixmatch = lyrics(page).locator('.picker-item[data-provider="MusixMatch"]');
   await expect(musixmatch).toHaveAttribute("data-status", "error", { timeout: 30_000 });
   await expect(musixmatch).toHaveAttribute("title", /user token/);
-  // Selected, it shows the error with a retry button, as pear-desktop does.
+  // Selected, it shows the error with a retry button.
   await lyrics(page).locator('.dot[aria-label="MusixMatch"]').click();
   await expect(lyrics(page)).toHaveAttribute("data-state", "error");
   await expect(lyrics(page).locator(".error-detail")).toContainText("user token");

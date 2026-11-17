@@ -33,7 +33,7 @@ const RESERVED_RUN = /([<>:"/\\|?*\u0000-\u001f\u007f])[<>:"/\\|?*\u0000-\u001f\
 const WINDOWS_RESERVED = /^(con|prn|aux|nul|com\d|lpt\d)$/i;
 const MAX_NAME_LENGTH = 255;
 const REPLACEMENT = "_";
-/** pear-desktop named a playlist's folder with filenamify(title, { replacement: " " }), at most 100 characters. */
+/** A playlist's folder uses filenamify(title, { replacement: " " }), at most 100 characters. */
 const FOLDER_REPLACEMENT = " ";
 const MAX_FOLDER_LENGTH = 100;
 
@@ -117,7 +117,7 @@ export function renderTemplate(
     .join("/");
 }
 
-/** The playlist's own folder (`%(playlist_title,playlist_id)s`), as pear-desktop named it: reserved characters as spaces. */
+/** The playlist's own folder (`%(playlist_title,playlist_id)s`): reserved characters as spaces. */
 export function playlistFolder(fields: Pick<TemplateFields, "playlist_title" | "playlist_id">, platform = process.platform) {
   return cleanSegment(fields.playlist_title || fields.playlist_id || MISSING, platform, {
     replacement: FOLDER_REPLACEMENT,

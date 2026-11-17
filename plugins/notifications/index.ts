@@ -1,6 +1,6 @@
 // Native notifications when a track starts (and optionally on resume), with
 // playback buttons where the OS supports notification actions. On Windows,
-// pear-desktop's toast layouts (custom toast XML) and tray controls.
+// toast layouts (custom toast XML) and tray controls.
 
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
@@ -16,11 +16,11 @@ import { toastXml, usesLogo } from "./toast.ts";
 import { setupTrayControls } from "./tray-controls.ts";
 import { setupHoverPopup } from "./hover-popup.ts";
 
-// pear-desktop's Windows workaround: toasts otherwise linger in the corner.
+// Windows workaround: toasts otherwise linger in the corner.
 const TOAST_CLOSE_MS = 5000;
-/** pear-desktop's app protocol (see the core's protocol.ts). */
+/** The app protocol (see the core's protocol.ts). */
 const APP_PROTOCOL = "\u0079\u006f\u0075\u0074\u0075\u0062\u0065music";
-// pear-desktop's button icons for toasts.
+// Button icons for toasts.
 const BUTTON_ICONS = {
   previous: embed("media-icons-black/previous.png"),
   play: embed("media-icons-black/play.png"),
@@ -37,7 +37,7 @@ const NEXT_ACTION = 2;
 
 type ButtonIcon = keyof typeof BUTTON_ICONS;
 
-/** The app's icon, shown instead of missing artwork as pear-desktop did. */
+/** The app's icon, shown instead of missing artwork. */
 const appIcon = () => nativeImage.createFromBitmap(pearIconBitmap(ICON_SIZE), { width: ICON_SIZE, height: ICON_SIZE });
 
 interface Notifier {
@@ -59,7 +59,7 @@ export default definePlugin({
       const hover = WINDOWS ? setupHoverPopup(ctx) : undefined;
       const notifier = createNotifier(ctx, () => hover?.visible === true);
       ctx.onConfigChange((next) => hover?.setEnabled(next.hoverControls));
-      // pear-desktop's Notifications menu, as one popup: the app/tray menus are flat.
+      // The Notifications menu is one popup: the app/tray menus are flat.
       ctx.addMenuItem({
         label: ctx.t("plugins.notifications.menu.title", "Notifications…"),
         click: () => showMenu(ctx),
@@ -126,7 +126,7 @@ function createNotifier(ctx: Ctx, suppressed: () => boolean): Notifier {
     notification.show();
   };
 
-  /** pear-desktop's interactive Windows toast. */
+  /** The interactive Windows toast. */
   const showToast = async (track: Track, paused: boolean, id: number) => {
     const style = ctx.config.toastStyle;
     const image = await artwork(track.artworkUrl, usesLogo(style));
@@ -187,9 +187,8 @@ function createNotifier(ctx: Ctx, suppressed: () => boolean): Notifier {
       present(notification);
       return;
     }
-    // pear-desktop's 10 ms delay: closing a toast and showing the next one in
-    // the same instant makes Windows update the old toast instead of showing
-    // the new one.
+    // 10 ms delay: closing a toast and showing the next one in the same instant
+    // makes Windows update the old toast instead of showing the new one.
     presentTimer = ctx.setTimeout(() => {
       presentTimer = undefined;
       if (id === generation) present(notification);
@@ -262,7 +261,7 @@ function notificationFiles(ctx: Ctx) {
       try {
         writeFileSync(path, image.toPNG());
       } catch (error) {
-        // As pear-desktop: the app icon instead.
+        // Fall back to the app icon.
         ctx.log.warn("couldn't save the artwork", error);
         return this.appIcon();
       }

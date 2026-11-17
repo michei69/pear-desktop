@@ -1,13 +1,9 @@
 // Plays the studio song instead of its music video while an album release is
-// playing. The release's rows link to the song through an `MPTC` credits id; the
-// player request and the queue's rows are rewritten to the song before playback.
-//
-// This runs before YTM's own scripts (runAt: "start") so the first request is
-// already covered; enabling it mid-session covers the requests from then on,
-// like master's live toggle. Everything it adds is removed again on stop: the
-// network requests it makes are aborted, its caches are dropped, and
-// `window.fetch` is put back exactly as it was. If any lookup fails, the
-// original music video is left untouched.
+// playing. Rows link to the song through an `MPTC` credits id; the player request
+// and queue rows are rewritten before playback. Runs before YTM's own scripts
+// (runAt: "start") to cover the first request; enabling mid-session covers later
+// ones. On stop, in-flight requests are aborted, caches dropped, and `window.fetch`
+// restored. A failed lookup leaves the original video untouched.
 
 import { definePlugin, type PageContext } from "@pear/sdk";
 import {

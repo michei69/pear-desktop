@@ -12,7 +12,7 @@ export default definePlugin({
     displaySeconds: config.bool(false, { label: "Show seconds" }),
     hour12: config.bool(false, { label: "12-hour format" }),
   },
-  // The original centered the clock, but the search box lives there now.
+  // Not centered: the search box lives there now.
   style: css`
     .pear-clock {
       align-self: center;
@@ -44,8 +44,7 @@ export default definePlugin({
   page: (ctx) => {
     const clock = (<time class="pear-clock" />) as HTMLTimeElement;
 
-    // Master formats with the app language (its menu wrote the same option);
-    // an empty setting means the runtime locale, as it did there.
+    // Format with the app language; an empty setting means the runtime locale.
     const locale = () => ctx.core("general").language || navigator.language;
     const makeFormat = (hour12: boolean, displaySeconds: boolean) =>
       new Intl.DateTimeFormat(locale(), {

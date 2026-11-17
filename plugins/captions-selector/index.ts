@@ -63,7 +63,7 @@ export default definePlugin({
 
     const languageName = (track: CaptionTrack) => track.displayName ?? track.languageName ?? track.languageCode;
 
-    // As pear-desktop: the choice is remembered (None forgets it), confirmed in a toast,
+    // The choice is remembered (None forgets it), confirmed in a toast,
     // and playback goes on (the player can stop when the captions track changes).
     // `resumeIfPlaying` keeps a paused video paused.
     const resume = () => ctx.setTimeout(() => resumeIfPlaying(api), 0);
@@ -128,9 +128,8 @@ export default definePlugin({
       timer = ctx.setTimeout(loadTracks, TRACKLIST_DELAY_MS);
     };
     ctx.player.on("trackChange", onTrack);
-    // Both settings used to be read on a track change only, so turning
-    // "disable captions" off left the module unloaded and the button hidden for
-    // the rest of the track. Re-apply the new mode to the current track.
+    // Re-apply the new mode to the current track: a config change must not leave
+    // the module unloaded or the button hidden for the rest of the track.
     // `ctx.config` already holds the new values here, so remember what was applied.
     let applied = { disableCaptions: ctx.config.disableCaptions, autoload: ctx.config.autoload };
     ctx.onConfigChange((next) => {

@@ -1,6 +1,5 @@
-// pear-desktop's Music Together session logic: hosting and joining over PeerJS,
-// with YTM's own queue shared (queue.ts). Ported as is so pear-desktop and this
-// app can be in the same session.
+// Music Together session logic: hosting and joining over PeerJS, with YTM's own
+// queue shared (queue.ts). The wire format stays compatible with other clients.
 
 import type { DataConnection } from "peerjs";
 import type { Logger, YTPlayerApi } from "@pear/sdk";
@@ -27,7 +26,7 @@ export interface TogetherEnvironment {
   /** YTM's toast. */
   toast(message: string): void;
   t: Translate;
-  /** The signed-in account, as pear-desktop used for the user's profile; `null` when signed out. */
+  /** The signed-in account, used for the user's profile; `null` when signed out. */
   account(): Account | null;
   /** The user's name for others (empty: "Guest 1234"). */
   name(): string;
@@ -37,7 +36,7 @@ export interface TogetherEnvironment {
 
 export type Mode = "disconnected" | "host" | "guest";
 
-/** Seeks closer than this are left alone (pear-desktop's tolerance). */
+/** Seeks closer than this are left alone. */
 const SEEK_TOLERANCE_S = 3;
 /** The player reports progress several times a second; a 1 s cadence is plenty to notice drift. */
 const PROGRESS_INTERVAL_MS = 1000;
@@ -95,7 +94,7 @@ export class Together {
   }
 
   #profile(id: string): Profile {
-    // A signed-in user shows their pear-desktop profile; guests get a generated one.
+    // A signed-in user shows their account profile; guests get a generated one.
     const account = this.#env.account();
     if (account) return { id, ...account };
     if (!this.#me) {

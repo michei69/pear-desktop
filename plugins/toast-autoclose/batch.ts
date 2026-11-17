@@ -1,7 +1,7 @@
 // YTM reuses one `tp-yt-paper-toast` element for every message. When a close
 // and a reopen land in the same observer batch, the toast's *current* class
 // list already reads "open" again, so only the records' old values show that a
-// new message arrived (pear-desktop's d0e31b13).
+// new message arrived.
 
 export const OPEN_CLASS = "paper-toast-open";
 

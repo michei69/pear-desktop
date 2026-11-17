@@ -80,7 +80,7 @@ interface ObservedRoot {
   key?: string;
 }
 
-/** One observer per watched node, however many plugins watch it (pear-desktop's player-page observer). */
+/** One observer per watched node, however many plugins watch it. */
 const observedRoots = new WeakMap<Node, ObservedRoot>();
 
 /** `attributes: true`, `attributeFilter` or `attributeOldValue` all imply attribute mutations. */

@@ -241,10 +241,8 @@ export class ApiServer {
         // already carried the song, and a repeat would restart client UIs.
         if (JSON.stringify(this.#playerState.song) !== before) this.#playerState.emitVideoChanged(undefined, 0);
       });
-      // The fork's page-side watcher pushed the new track's lyrics on its own;
-      // it did not come over with the port, so the server asks synced-lyrics for
-      // them instead. Only while a v2 client listens: the plugin owns the fetch
-      // and its providers are network calls.
+      // Ask synced-lyrics for the new track's lyrics only while a v2 client
+      // listens: the plugin owns the fetch and its providers are network calls.
       if (this.#socketsV2.size > 0) void this.#operations.lyrics().catch(() => undefined);
     }
   }

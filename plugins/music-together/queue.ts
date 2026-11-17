@@ -1,4 +1,4 @@
-// pear-desktop's shared queue: YTM's own queue store is the session's queue.
+// The shared queue: YTM's own queue store is the session's queue.
 // Its dispatch is wrapped, so changes made in YTM (play next, add to queue,
 // remove, reorder, play) go to the session instead, and the session's changes
 // are dispatched into it; each item shows who added it.
