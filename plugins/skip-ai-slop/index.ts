@@ -1,6 +1,6 @@
 import { definePlugin } from "@pear/sdk";
 import { net } from "electron";
-import { BLACKLIST_URL, schema } from "./config.ts";
+import { AISLIST_BLOCKLIST_URL, BLACKLIST_URL, schema } from "./config.ts";
 import { HIDDEN_CSS } from "./early.ts";
 import { startSkipAiSlop } from "./page.ts";
 
@@ -32,25 +32,32 @@ export default definePlugin({
       label: "Forget the newest recent match",
       description: "Removes the newest entry of “Show recently filtered” without allowing it.",
     },
-    searchList: {
-      label: "Search the community list",
-      description: "Searches the saved names for the text in “Community list search”.",
-    },
-    allowListMatch: {
-      label: "Allow the best list match",
-      description: "Adds the first match for “Community list search” to Allowed channels.",
-    },
   },
   host: {
     commands: {
-      /** The page owns the matching cache; the host only does the network request. */
+      /** The page owns the matching cache; the host only does the network requests. */
       async fetchList() {
         const response = await net.fetch(BLACKLIST_URL, {
           cache: "no-store",
           signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
         });
         if (!response.ok) throw new Error(`the community list answered ${response.status}`);
-        return (await response.json()) as unknown;
+        const blacklist = (await response.json()) as unknown;
+
+        // AiSList is a second source, but a failure there must not cost us the
+        // main list. Only its blocklist is fetched, never its warn list.
+        let aislist = "";
+        try {
+          const aisResponse = await net.fetch(AISLIST_BLOCKLIST_URL, {
+            cache: "no-store",
+            signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
+          });
+          if (!aisResponse.ok) throw new Error(`AiSList answered ${aisResponse.status}`);
+          aislist = await aisResponse.text();
+        } catch (error) {
+          this.log.warn("could not download the AiSList blocklist; continuing without it", error);
+        }
+        return { blacklist, aislist };
       },
       async refreshList() {
         this.setStatus(this.t("plugins.skip-ai-slop.status.downloading", "Downloading…"));
@@ -77,16 +84,6 @@ export default definePlugin({
       },
       async removeRecent(id?: string) {
         const message = await this.request<string>("removeRecent", id);
-        this.setStatus(message);
-        return message;
-      },
-      async searchList() {
-        const message = await this.request<string>("searchList");
-        this.setStatus(message);
-        return message;
-      },
-      async allowListMatch() {
-        const message = await this.request<string>("allowListMatch");
         this.setStatus(message);
         return message;
       },

@@ -3441,11 +3441,6 @@
           "label": "Allowed channels",
           "description": "Channel ids (UC…), a track id or exact channel names that are never filtered. This always wins over the lists and keywords.",
           "placeholder": "UC…, track id or channel name"
-        },
-        "listSearch": {
-          "label": "Community list search",
-          "description": "A channel or track name or id; the search buttons report the matches and can allow the best one.",
-          "placeholder": "channel or track"
         }
       },
       "actions": {
@@ -3455,15 +3450,11 @@
         },
         "clearCache": {
           "label": "Clear saved data",
-          "description": "Removes the saved list, its names, recent matches and feedback history."
+          "description": "Removes the saved list, recent matches and feedback history."
         },
         "showRecent": {
           "label": "Show recently filtered",
           "description": "Puts the latest matches, with their ids, on this plugin's status line."
-        },
-        "searchList": {
-          "label": "Search the community list",
-          "description": "Searches the saved names for the text in “Community list search”."
         },
         "allowRecent": {
           "label": "Allow the newest recent match",
@@ -3472,10 +3463,6 @@
         "removeRecent": {
           "label": "Forget the newest recent match",
           "description": "Removes the newest entry of “Show recently filtered” without allowing it."
-        },
-        "allowListMatch": {
-          "label": "Allow the best list match",
-          "description": "Adds the first match for “Community list search” to Allowed channels."
         }
       },
       "status": {
@@ -3487,14 +3474,6 @@
         "recent-unknown": "“{{id}}” is not in the recently filtered list.",
         "recent-allowed": "Allowed {{name}} ({{id}}); it will not be filtered again.",
         "recent-removed": "Forgot {{name}} ({{id}}) from the recently filtered list.",
-        "channel": "channel",
-        "track": "track",
-        "search-no-query": "Set “Community list search” in the settings first.",
-        "search-no-names": "The list's names are not saved yet; download the list first.",
-        "search-none": "No community-list matches for “{{query}}”.",
-        "search-matches": "Matches for “{{query}}” ({{total}}): {{entries}}",
-        "search-allowed-more": "Allowed {{name}} ({{kind}}, {{id}}). {{remaining}} other matches remain; narrow the search to pick one.",
-        "search-allowed": "Allowed {{name}} ({{kind}}, {{id}}).",
         "downloaded": "Downloaded. {{summary}}",
         "download-failed": "Download failed, the old list was kept (details in the console).",
         "cache-cleared": "Cache cleared. The community list is off until you press \"Download list now\" (or restart the app)."

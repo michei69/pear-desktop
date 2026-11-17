@@ -23,6 +23,8 @@ import {
   decideEarly,
   isBlacklist,
   matchedChannel,
+  mergeAisList,
+  parseAisList,
   slimBlacklist,
 } from "./filter.ts";
 import { type ParsedQueueItem, type Renderer, type SearchInfo, parseQueueItem, rendererPath, searchInfo, textOf } from "./parse.ts";
@@ -30,15 +32,12 @@ import { createSkipLimiter } from "./skip-limit.ts";
 import {
   type RecentEntry,
   clearPluginStorage,
-  hasBlacklistNames,
   loadFeedbackDone,
   readCachedBlacklist,
   readRecentFiltered,
   recordFiltered,
   removeRecent as forgetRecent,
   saveFeedbackDone,
-  searchBlacklistNames,
-  writeBlacklistNames,
   writeCachedBlacklist,
 } from "./storage.ts";
 
@@ -147,14 +146,14 @@ export function startSkipAiSlop(ctx: Ctx) {
 
   async function downloadList(): Promise<boolean> {
     try {
-      const data = await ctx.host.invoke("fetchList");
-      if (!isBlacklist(data)) {
+      const { blacklist, aislist } = await ctx.host.invoke("fetchList");
+      if (!isBlacklist(blacklist)) {
         ctx.log.warn("the community list is invalid or unsupported; keeping the old one");
         return false;
       }
       if (!active) return false;
 
-      writeBlacklistNames(data);
+      const data = mergeAisList(blacklist, parseAisList(aislist));
       list = slimBlacklist(data);
       writeCachedBlacklist(list);
       return true;
@@ -709,62 +708,6 @@ export function startSkipAiSlop(ctx: Ctx) {
     });
   }
 
-  function kindLabel(kind: "channel" | "track") {
-    return kind === "channel"
-      ? ctx.t("plugins.skip-ai-slop.status.channel", "channel")
-      : ctx.t("plugins.skip-ai-slop.status.track", "track");
-  }
-
-  function listSearchInput(): { query: string } | { error: string } {
-    const query = ctx.config.listSearch.trim();
-    if (!query)
-      return { error: ctx.t("plugins.skip-ai-slop.status.search-no-query", "Set “Community list search” in the settings first.") };
-    if (!hasBlacklistNames())
-      return {
-        error: ctx.t("plugins.skip-ai-slop.status.search-no-names", "The list's names are not saved yet; download the list first."),
-      };
-    return { query };
-  }
-
-  function listSearchSummary(): string {
-    const input = listSearchInput();
-    if ("error" in input) return input.error;
-    const { query } = input;
-
-    const { matches, total } = searchBlacklistNames(query);
-    if (matches.length === 0)
-      return ctx.t("plugins.skip-ai-slop.status.search-none", "No community-list matches for “{{query}}”.", { query });
-    const entries = matches.map((entry) => `${entry.name} (${kindLabel(entry.kind)}, ${entry.id})`).join(" · ");
-    return ctx.t("plugins.skip-ai-slop.status.search-matches", "Matches for “{{query}}” ({{total}}): {{entries}}", {
-      query,
-      total,
-      entries: total > matches.length ? `${entries} …` : entries,
-    });
-  }
-
-  function allowListMatch(): string {
-    const input = listSearchInput();
-    if ("error" in input) return input.error;
-    const { query } = input;
-
-    // The name-prefix matches come first, so the best match is the one to allow.
-    const { matches, total } = searchBlacklistNames(query, 1);
-    const entry = matches[0];
-    if (!entry) return ctx.t("plugins.skip-ai-slop.status.search-none", "No community-list matches for “{{query}}”.", { query });
-    allowId(entry.id, entry.name);
-    ctx.log.info(`allowed ${entry.id} (${entry.name}) from the community list`);
-
-    const vars = { name: entry.name, kind: kindLabel(entry.kind), id: entry.id };
-    if (total > 1) {
-      return ctx.t(
-        "plugins.skip-ai-slop.status.search-allowed-more",
-        "Allowed {{name}} ({{kind}}, {{id}}). {{remaining}} other matches remain; narrow the search to pick one.",
-        { ...vars, remaining: total - 1 },
-      );
-    }
-    return ctx.t("plugins.skip-ai-slop.status.search-allowed", "Allowed {{name}} ({{kind}}, {{id}}).", vars);
-  }
-
   // ---- start -----------------------------------------------------------------
 
   active = true;
@@ -807,8 +750,6 @@ export function startSkipAiSlop(ctx: Ctx) {
   ctx.host.handle("showRecent", recentSummary);
   ctx.host.handle("allowRecent", (payload) => allowRecent(typeof payload === "string" ? payload : undefined));
   ctx.host.handle("removeRecent", (payload) => removeRecentEntry(typeof payload === "string" ? payload : undefined));
-  ctx.host.handle("searchList", listSearchSummary);
-  ctx.host.handle("allowListMatch", allowListMatch);
 
   // Pre-paint scan, installed before YTM's scripts (runAt: "start").
   ctx.observe(document, { childList: true, subtree: true, attributes: true, attributeFilter: ["href"] }, (records) => {
@@ -836,7 +777,7 @@ export function startSkipAiSlop(ctx: Ctx) {
 
   // The saved list is read synchronously; a missing or stale one downloads in
   // the background and is applied when it arrives.
-  if (config.communityList && (!readCachedBlacklist()?.fresh || !hasBlacklistNames())) {
+  if (config.communityList && !readCachedBlacklist()?.fresh) {
     void downloadList().then((ok) => {
       if (ok && active) onListChanged();
     });
@@ -851,7 +792,7 @@ export function startSkipAiSlop(ctx: Ctx) {
     scanPage();
     scanQueue();
     check();
-    if (config.communityList && (!readCachedBlacklist()?.fresh || !hasBlacklistNames())) {
+    if (config.communityList && !readCachedBlacklist()?.fresh) {
       void downloadList().then((ok) => {
         if (ok && active) onListChanged();
       });

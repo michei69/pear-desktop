@@ -29,8 +29,10 @@ export interface Rules {
   blockNames: Set<string>;
   /** Whole-word matchers, case-insensitive. */
   keywords: RegExp[];
-  /** Community list ids. */
+  /** Community list channel ids. */
   channels: Set<string>;
+  /** Lower-cased, `@`-stripped AiSList handles, matched against visible names. */
+  handleNames: Set<string>;
   tracks: Set<string>;
   /** Artists learned from a flagged uploader during this page session. */
   session: Set<string>;
@@ -99,7 +101,11 @@ const splitUserList = (raw: readonly string[]) => {
     const item = value.trim();
     if (!item) continue;
     if (looksLikeId(item)) ids.add(item);
-    else names.add(item.toLowerCase());
+    else if (item.startsWith("@")) {
+      // A listed handle is allowed both as written and as the name YTM shows.
+      names.add(item.toLowerCase());
+      names.add(item.slice(1).toLowerCase());
+    } else names.add(item.toLowerCase());
   }
   return { ids, names };
 };
@@ -107,6 +113,31 @@ const splitUserList = (raw: readonly string[]) => {
 export const isBlacklist = (value: unknown): value is Blacklist => {
   const data = asRecord(value);
   return !!data && data.version === 2 && !!asRecord(data.channels) && !!asRecord(data.tracks);
+};
+
+/**
+ * AiSList's blocklist is plain text: one `@handle` per line, `!` comments and
+ * blank lines ignored. Channel ids are accepted too, so the integration keeps
+ * working if that list ever switches format. Its warn list is never fetched.
+ */
+export const parseAisList = (text: string): string[] => {
+  const handles: string[] = [];
+  for (const rawLine of text.split(/\r?\n/)) {
+    const line = rawLine.trim();
+    if (!line || line.startsWith("!")) continue;
+    if ((line.startsWith("@") && line.length > 1) || /^UC[\w-]{22}$/.test(line)) handles.push(line);
+  }
+  return handles;
+};
+
+/** Folds AiSList's handles into the JSON list's channels without losing its names or tracks. */
+export const mergeAisList = (data: Blacklist, handles: readonly string[]): Blacklist => {
+  if (handles.length === 0) return data;
+  const channels = { ...data.channels };
+  for (const handle of handles) {
+    if (!Object.hasOwn(channels, handle)) channels[handle] = {};
+  }
+  return { ...data, channels };
 };
 
 /** Matching needs only the ids; names and reasons would make the cache large. */
@@ -125,13 +156,20 @@ export const buildRules = (source: RuleSource, list: Blacklist | null, session: 
   const allow = splitUserList(source.userAllow);
   const block = splitUserList(source.userBlock);
   const community = source.communityList ? list : null;
+  const channels = new Set<string>();
+  const handleNames = new Set<string>();
+  for (const key of community ? Object.keys(community.channels) : []) {
+    if (key.startsWith("@")) handleNames.add(key.slice(1).toLowerCase());
+    else channels.add(key);
+  }
   return {
     allowIds: allow.ids,
     allowNames: allow.names,
     blockIds: block.ids,
     blockNames: block.names,
     keywords: compileKeywords(source.keywords),
-    channels: new Set(community ? Object.keys(community.channels) : []),
+    channels,
+    handleNames,
     tracks: new Set(community ? Object.keys(community.tracks) : []),
     session,
   };
@@ -165,6 +203,9 @@ export const decide = (rules: Rules, card: CardIdentity): string | null => {
   if (author && rules.keywords.some((keyword) => keyword.test(author))) return "keyword:author";
 
   if (channelIds.some((id) => rules.channels.has(id))) return "channel";
+  // AiSList lists handles, which YTM rarely exposes as ids. Match the handle
+  // against the name the card shows; Allow still wins above.
+  if (rules.handleNames.has(lowered(title)) || rules.handleNames.has(lowered(author))) return "channel";
   if (card.videoId && rules.tracks.has(card.videoId)) return "track";
   return null;
 };
@@ -187,6 +228,7 @@ export const decideEarly = (rules: Rules, card: CardLinks): string | null => {
     return "keyword";
   }
   if (card.channelIds.some((id) => rules.channels.has(id))) return "channel";
+  if (card.texts.some((text) => rules.handleNames.has(text.trim().toLowerCase().replace(/^@/, "")))) return "channel";
   if (card.videoIds.some((id) => rules.tracks.has(id))) return "track";
   return null;
 };

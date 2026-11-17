@@ -1,6 +1,5 @@
-// The page-local stores: the slim matching cache, names for the settings search,
-// recent matches and feedback already sent. None of it belongs in the plugin
-// config, which changes far less often.
+// The page-local stores: the slim matching cache, recent matches and feedback
+// already sent. None of it belongs in the plugin config, which changes far less often.
 
 import { CACHE_KEY, CACHE_TTL_MS } from "./config.ts";
 import { type Blacklist, isBlacklist } from "./filter.ts";
@@ -14,24 +13,10 @@ export interface RecentEntry {
 const RECENT_KEY = "skip-ai-slop:recent";
 const RECENT_MAX = 60;
 
-export interface BlacklistName {
-  id: string;
-  name: string;
-  kind: "channel" | "track";
-  lower: string;
-  idLower: string;
-}
-
-interface NamedEntry {
-  name?: string;
-  title?: string;
-}
-
 const asRecord = (value: unknown): Record<string, unknown> | undefined =>
   value && typeof value === "object" && !Array.isArray(value) ? (value as Record<string, unknown>) : undefined;
 
 let recentCache: RecentEntry[] | null = null;
-let namesCache: BlacklistName[] | null = null;
 
 const readJson = (key: string): unknown => {
   try {
@@ -91,57 +76,6 @@ export const removeRecent = (id: string) => {
   writeJson(RECENT_KEY, recentCache);
 };
 
-export const NAMES_KEY = "skip-ai-slop:blacklist-names";
-
-/** Saves { id: name } for channels and { id: title } for tracks. */
-export const writeBlacklistNames = (data: { channels?: Record<string, NamedEntry>; tracks?: Record<string, NamedEntry> }) => {
-  namesCache = null;
-  const channels: Record<string, string> = {};
-  for (const [id, entry] of Object.entries(data.channels ?? {})) channels[id] = entry?.name ?? "";
-  const tracks: Record<string, string> = {};
-  for (const [id, entry] of Object.entries(data.tracks ?? {})) tracks[id] = entry?.title ?? entry?.name ?? "";
-  writeJson(NAMES_KEY, { channels, tracks });
-};
-
-export const hasBlacklistNames = () => {
-  try {
-    return localStorage.getItem(NAMES_KEY) !== null;
-  } catch {
-    return false;
-  }
-};
-
-/** Parsed once and kept; an empty result is not cached, so names that arrive later are picked up. */
-export const readBlacklistNames = (): BlacklistName[] => {
-  if (namesCache?.length) return namesCache;
-  const names: BlacklistName[] = [];
-  const parsed = asRecord(readJson(NAMES_KEY));
-  for (const kind of ["channel", "track"] as const) {
-    const group = asRecord(parsed?.[kind === "channel" ? "channels" : "tracks"]);
-    if (!group) continue;
-    for (const [id, value] of Object.entries(group)) {
-      const name = typeof value === "string" && value ? value : id;
-      names.push({ id, name, kind, lower: name.toLowerCase(), idLower: id.toLowerCase() });
-    }
-  }
-  if (names.length) namesCache = names;
-  return names;
-};
-
-/** The community-list entries whose name or id contains `query`, name matches first. */
-export const searchBlacklistNames = (query: string, limit = 10) => {
-  const needle = query.trim().toLowerCase();
-  if (!needle) return { matches: [] as BlacklistName[], total: 0 };
-  const hits = readBlacklistNames().filter((entry) => entry.lower.includes(needle) || entry.idLower.includes(needle));
-  hits.sort((a, b) => Number(b.lower.startsWith(needle)) - Number(a.lower.startsWith(needle)) || a.lower.localeCompare(b.lower));
-  return { matches: hits.slice(0, limit), total: hits.length };
-};
-
-export const clearBlacklistNames = () => {
-  namesCache = null;
-  removeKey(NAMES_KEY);
-};
-
 export interface CachedBlacklist {
   data: Blacklist;
   /** False when the cache is older than its TTL but still usable. */
@@ -183,10 +117,9 @@ export const clearFeedbackDone = () => {
   removeKey(FEEDBACK_KEY);
 };
 
-/** "Clear cache" in the settings: the matching cache, names, matches and feedback history. */
+/** "Clear saved data" in the settings: the matching cache, recent matches and feedback history. */
 export const clearPluginStorage = () => {
   clearCachedBlacklist();
-  clearBlacklistNames();
   clearRecent();
   clearFeedbackDone();
 };

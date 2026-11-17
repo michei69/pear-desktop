@@ -2,7 +2,10 @@ import { config, type ConfigOf } from "@pear/sdk";
 
 export const BLACKLIST_URL = "https://raw.githubusercontent.com/bwedirhan/pear-desktop-ai-slop-filter/main/blacklist.json";
 
-/** The slim matching cache; the names for list search live in another key. */
+/** AiSList's blocklist is plain text with one `@handle` per line; its warn list is deliberately not used. */
+export const AISLIST_BLOCKLIST_URL = "https://raw.githubusercontent.com/Override92/AiSList/main/AiSList/aislist_blocklist.txt";
+
+/** The slim matching cache: only the ids needed for filtering are kept. */
 export const CACHE_KEY = "skip-ai-slop:blacklist";
 export const CACHE_TTL_MS = 24 * 60 * 60 * 1000;
 export const REFRESH_INTERVAL_MS = 60 * 60 * 1000;
@@ -46,12 +49,6 @@ export const schema = {
       "Channel ids (UC…), a track id or exact channel names that are never filtered. This always wins over the lists and keywords.",
     placeholder: "UC…, track id or channel name",
     group: "Filters",
-  }),
-  listSearch: config.string("", {
-    label: "Community list search",
-    description: "Type a channel or track name or id here, then use the community-list actions to search or allow the best match.",
-    placeholder: "channel or track",
-    group: "Community list",
   }),
 };
 
