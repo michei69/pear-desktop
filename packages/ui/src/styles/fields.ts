@@ -330,4 +330,13 @@ export const controls = css`
     opacity: 0.38;
     cursor: default;
   }
+  .orderable-add {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .orderable-add .dropdown {
+    flex: 1;
+    min-width: 0;
+  }
 `;

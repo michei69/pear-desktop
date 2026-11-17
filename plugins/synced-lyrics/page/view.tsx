@@ -1,7 +1,7 @@
 import type { ComponentChildren } from "preact";
 import { useEffect, useLayoutEffect, useRef, useState } from "preact/hooks";
 import { lineAt } from "../lrc.ts";
-import { PROVIDER_NAMES, PROVIDERS, resultRank, type ActiveLyricLine, type LyricLine, type LyricsStyle } from "../types.ts";
+import { PROVIDER_NAMES, resultRank, type ActiveLyricLine, type LyricLine, type LyricsStyle } from "../types.ts";
 import { activeLineAt } from "./active-line.ts";
 import { AppleLyrics } from "./apple/view.tsx";
 import { FetchError, LoadingKaomoji, NoLyrics, PlainLyrics } from "./shared.tsx";
@@ -167,7 +167,8 @@ function Picker({
   /** Apple Music places the picker itself and slides it with the component; off here. */
   autoHide?: boolean;
 }) {
-  const index = PROVIDERS.indexOf(store.selected);
+  const order = store.order;
+  const index = Math.max(0, order.indexOf(store.selected));
   const ref = useRef<HTMLDivElement>(null);
   const [hidden, setHidden] = useState(false);
   const [searching, setSearching] = useState(false);
@@ -249,7 +250,7 @@ function Picker({
       </button>
       <div class="picker-content">
         <div class="picker-track">
-          {PROVIDERS.map((id, i) => {
+          {order.map((id, i) => {
             const state = store.providers[id];
             const current = i === index;
             return (
@@ -291,7 +292,7 @@ function Picker({
           })}
         </div>
         <ul class="dots">
-          {PROVIDERS.map((id, i) => (
+          {order.map((id, i) => (
             <li key={id}>
               <button
                 type="button"

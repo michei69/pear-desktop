@@ -115,7 +115,7 @@ function pageTargetLanguage(options: Options) {
 
 export class LyricsStore {
   track: Track | null = null;
-  providers = initialProviders();
+  providers = initialProviders([]);
   /** The provider in the picker; kept from track to track. */
   selected: ProviderId;
   /** Whether the user switched provider by hand for this track. */
@@ -147,7 +147,14 @@ export class LyricsStore {
     this.#priority = resolvePriority(options.priority);
     this.#typePriority = resolveTypePriority(options.typePriority);
     this.#active = active;
-    this.selected = options.preferred === "auto" ? this.#priority[0]! : options.preferred;
+    this.selected = this.#initialSelection();
+  }
+
+  /** A preferred provider that was removed from the order falls back to its first entry. */
+  #initialSelection(): ProviderId {
+    const preferred = this.#options.preferred;
+    if (preferred !== "auto" && this.#priority.includes(preferred)) return preferred;
+    return this.#priority[0] ?? "LrcRed";
   }
 
   subscribe(listener: () => void) {
@@ -155,20 +162,30 @@ export class LyricsStore {
     return () => void this.#listeners.delete(listener);
   }
 
+  /** The enabled providers, in the user's order; also the picker's order. */
+  get order(): readonly ProviderId[] {
+    return this.#priority;
+  }
+
   get loading() {
-    return PROVIDERS.some((id) => this.providers[id].status === "loading");
+    return this.#priority.some((id) => this.providers[id]?.status === "loading");
   }
 
   /** The selected provider's search. */
   get current(): ProviderState {
-    return this.providers[this.selected];
+    return this.providers[this.selected] ?? { status: "loading" };
   }
 
   setOptions(options: Options) {
     const previous = this.#options;
+    const priority = resolvePriority(options.priority);
+    const priorityChanged = priority.length !== this.#priority.length || priority.some((id, index) => id !== this.#priority[index]);
     this.#options = options;
-    this.#priority = resolvePriority(options.priority);
+    this.#priority = priority;
     this.#typePriority = resolveTypePriority(options.typePriority);
+    // A changed order can enable or disable providers: restart the fan-out so
+    // newly enabled ones are searched and the picker follows the new list.
+    if (priorityChanged) return void this.load(this.track, true);
     if (previous.inexact !== options.inexact) return void this.load(this.track, true);
     if (
       romanizationKey(previous) !== romanizationKey(options) ||
@@ -185,11 +202,12 @@ export class LyricsStore {
     if (!force && track?.videoId === this.track?.videoId) return;
     ++this.#generation;
     this.track = track;
-    this.providers = initialProviders();
+    this.providers = initialProviders(this.#priority);
     this.manual = false;
-    this.starred = track ? readStar(track.videoId) : null;
+    const starred = track ? readStar(track.videoId) : null;
+    this.starred = starred && this.#priority.includes(starred) ? starred : null;
     this.customQuery = null;
-    this.selected = this.starred ?? (this.#options.preferred === "auto" ? this.#priority[0]! : this.#options.preferred);
+    this.selected = this.starred ?? this.#initialSelection();
     this.#shownKey = "";
     this.shown = null;
     this.#emit();
@@ -243,7 +261,7 @@ export class LyricsStore {
   }
 
   retry(provider: ProviderId) {
-    if (!this.track) return;
+    if (!this.track || !this.#priority.includes(provider)) return;
     this.providers = { ...this.providers, [provider]: { status: "loading" } };
     this.#emit();
     void this.#search(provider, this.track, this.#generation);
@@ -251,20 +269,23 @@ export class LyricsStore {
 
   /** Switches to a provider by hand (the picker's arrows and dots). */
   select(provider: ProviderId) {
+    if (!this.#priority.includes(provider)) return;
     this.manual = true;
     this.selected = provider;
     this.#update();
   }
 
-  /** Moves the picker by `step` providers, wrapping around. */
+  /** Moves the picker by `step` enabled providers, wrapping around. */
   step(step: number) {
-    const index = PROVIDERS.indexOf(this.selected);
-    this.select(PROVIDERS[(index + step + PROVIDERS.length) % PROVIDERS.length]!);
+    const order = this.#priority;
+    if (order.length === 0) return;
+    const index = Math.max(0, order.indexOf(this.selected));
+    this.select(order[(index + step + order.length) % order.length]!);
   }
 
   /** Stars the selected provider for this track, or unstars it. */
   toggleStar() {
-    if (!this.track) return;
+    if (!this.track || !this.#priority.includes(this.selected)) return;
     this.starred = this.starred === this.selected ? null : this.selected;
     writeStar(this.track.videoId, this.starred);
     this.#emit();
@@ -303,9 +324,9 @@ export class LyricsStore {
   /** The provider to follow automatically: the starred/priority/preferred one, else the richest result. */
   choose(): ProviderId {
     const results: Partial<Record<ProviderId, LyricResult | null>> = {};
-    for (const id of PROVIDERS) {
+    for (const id of this.#priority) {
       const state = this.providers[id];
-      results[id] = state.status === "done" ? state.result : null;
+      results[id] = state?.status === "done" ? state.result : null;
     }
     const target = pageTargetLanguage(this.#options);
     const translation = this.#options.translation;
@@ -353,7 +374,13 @@ export class LyricsStore {
   }
 
   #update() {
-    if (this.starred && this.#rank(this.starred) > 0) this.selected = this.starred;
+    if (this.#priority.length === 0) {
+      this.shown = null;
+      this.#shownKey = "";
+      ++this.#run;
+      return this.#emit();
+    }
+    if (this.starred && this.#priority.includes(this.starred) && this.#rank(this.starred) > 0) this.selected = this.starred;
     else if (!this.manual) this.selected = this.choose();
     const provider = this.selected;
     const state = this.providers[provider];
@@ -467,8 +494,8 @@ export class LyricsStore {
   }
 }
 
-function initialProviders(): Record<ProviderId, ProviderState> {
-  return Object.fromEntries(PROVIDERS.map((id) => [id, { status: "loading" }])) as Record<ProviderId, ProviderState>;
+function initialProviders(order: readonly ProviderId[]): Record<ProviderId, ProviderState> {
+  return Object.fromEntries(order.map((id) => [id, { status: "loading" }])) as Record<ProviderId, ProviderState>;
 }
 
 /**

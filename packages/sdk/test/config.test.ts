@@ -47,6 +47,18 @@ test("orderable fields complete the stored order without adding or dropping entr
   expect(normalizeConfig(shape, { order: ["b"] }).order).toEqual(["b", "a", "c"]);
 });
 
+test("removable orderable fields keep the saved entries, even an empty list", () => {
+  const options = [
+    { value: "a", label: "A" },
+    { value: "b", label: "B" },
+  ] as const;
+  expect(normalizeOrder(["b"], options, false)).toEqual(["b"]);
+  expect(normalizeOrder([], options, false)).toEqual([]);
+  const shape = { order: config.orderable(["a", "b"], options, { label: "Order", removable: true }) };
+  expect(normalizeConfig(shape, { order: ["b"] }).order).toEqual(["b"]);
+  expect(normalizeConfig(shape, {}).order).toEqual([]);
+});
+
 test("selects: chips for up to 8 options", () => {
   const options = (n: number) => Array.from({ length: n }, (_, i) => ({ value: String(i), label: String(i) }));
   expect(selectVariant(config.select("0", options(8), { label: "" }))).toBe("chips");

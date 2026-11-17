@@ -204,7 +204,7 @@ export class LyricsHost {
         ? await this.#queryFor(request.track, request.details, request.config)
         : await this.#queryForVideo(target, request.config);
     if (!query) return { target, selected: null, results: {} };
-    const results = await this.#searchAll(query, request.config, request.t);
+    const results = await this.#searchAll(query, request.config);
     const selected = pickProvider({
       priority: resolvePriority(request.config.providerPriority),
       results,
@@ -230,9 +230,8 @@ export class LyricsHost {
     });
   }
 
-  #providerOptions(config: Readonly<LyricsConfig>, t: Translate): ProviderOptions {
+  #providerOptions(config: Readonly<LyricsConfig>): ProviderOptions {
     return {
-      musixmatch: { tokenMode: config.musixmatchTokenMode, userToken: config.musixmatchToken, t },
       ytmusic: { useProxy: !config.useYTMLyricsWithoutProxy },
     };
   }
@@ -268,8 +267,8 @@ export class LyricsHost {
     return pending;
   }
 
-  async #searchAll(query: SearchQuery, config: Readonly<LyricsConfig>, t: Translate) {
-    const options = this.#providerOptions(config, t);
+  async #searchAll(query: SearchQuery, config: Readonly<LyricsConfig>) {
+    const options = this.#providerOptions(config);
     const results: Partial<Record<ProviderId, LyricResult | null>> = {};
     await Promise.all(
       resolvePriority(config.providerPriority).map(async (provider) => {

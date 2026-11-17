@@ -178,7 +178,10 @@ const MIGRATIONS: [version: string, migration: Migration][] = [
       const preferred = synced.preferredProvider;
       delete synced.preferredProvider;
       if (isString(preferred)) {
-        synced.providerPriority = [preferred];
+        // The list is now removable, so spell out every provider: the preferred
+        // one first, the rest as fallbacks.
+        const order = ["LrcRed", "YTMusic", "LRCLib", "Megalobiz", "NetEase", "LRCHub", "SimpMusic", "KuGou", "BetterLyrics", "Paxsenix"];
+        synced.providerPriority = [preferred, ...order.filter((id) => id !== preferred)];
         synced.usePriorityList = true;
       }
     },

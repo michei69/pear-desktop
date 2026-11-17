@@ -98,8 +98,8 @@ test("shows synced lyrics in the Lyrics tab, follows playback and seeks on click
   await expect(lyrics(page)).toHaveAttribute("data-state", "synced");
   await screenshot(app, "lyrics-picker");
   // A dot jumps straight to its provider.
-  await picker.locator(".dot").nth(providers.indexOf("MusixMatch")).click();
-  await expect(picker).toHaveAttribute("data-selected", "MusixMatch");
+  await picker.locator(".dot").nth(providers.indexOf("Megalobiz")).click();
+  await expect(picker).toHaveAttribute("data-selected", "Megalobiz");
   await picker.locator(".dot").nth(providers.indexOf(selected)).click();
   await expect(lyrics(page)).toHaveAttribute("data-state", "synced");
 
@@ -239,7 +239,7 @@ test("highlights word by word when the provider has word timing", async ({ app, 
   await screenshot(app, "lyrics-words");
 });
 
-test("Megalobiz lyrics as pear-desktop's preferred provider; Musixmatch says it needs a token", async ({ launch }) => {
+test("Megalobiz lyrics as pear-desktop's preferred provider", async ({ launch }) => {
   test.setTimeout(180_000);
   // The legacy provider name, as config.json stores it.
   const page = await mainWindow(
@@ -259,16 +259,4 @@ test("Megalobiz lyrics as pear-desktop's preferred provider; Musixmatch says it 
   ).toBeAttached();
   // Megalobiz's terms ask to link to the sheet.
   await expect(lyrics(page).locator(".source a")).toHaveAttribute("href", /^https:\/\/megalobiz\.com\/lrc\/\d+/);
-
-  // Anonymous Musixmatch only has decoy lyrics: it reports why instead of showing them.
-  const musixmatch = lyrics(page).locator('.picker-item[data-provider="MusixMatch"]');
-  await expect(musixmatch).toHaveAttribute("data-status", "error", { timeout: 30_000 });
-  await expect(musixmatch).toHaveAttribute("title", /user token/);
-  // Selected, it shows the error with a retry button.
-  await lyrics(page).locator('.dot[aria-label="MusixMatch"]').click();
-  await expect(lyrics(page)).toHaveAttribute("data-state", "error");
-  await expect(lyrics(page).locator(".error-detail")).toContainText("user token");
-  // The provider's message, not Electron's IPC wrapper around it.
-  await expect(lyrics(page).locator(".error-detail")).not.toContainText("invoking remote method");
-  await expect(lyrics(page).locator(".retry")).toBeVisible();
 });

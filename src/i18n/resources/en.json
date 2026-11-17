@@ -2424,12 +2424,14 @@
             "auto": "Best available",
             "LRCLib": "LRCLIB",
             "YTMusic": "\u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063",
-            "MusixMatch": "Musixmatch",
             "Megalobiz": "Megalobiz",
             "NetEase": "NetEase",
             "LrcRed": "lrc.red",
             "LRCHub": "LRCHub",
-            "SimpMusic": "SimpMusic"
+            "SimpMusic": "SimpMusic",
+            "KuGou": "KuGou",
+            "BetterLyrics": "BetterLyrics",
+            "Paxsenix": "Paxsenix"
           }
         },
         "lineEffect": {
@@ -2475,10 +2477,6 @@
           "label": "Show lyrics even if inexact",
           "description": "Also try looser searches; may occasionally match a different version of the song."
         },
-        "musixmatchToken": {
-          "label": "Musixmatch user token",
-          "description": "The usertoken of your own signed-in Musixmatch app, sent when the token source above is your own token."
-        },
         "precise-timing": "Precise timing",
         "show-inexact": "Show inexact lyrics",
         "show-time-codes": "Show time codes",
@@ -2503,12 +2501,14 @@
           "options": {
             "YTMusic": "YTMusic",
             "LRCLib": "LRCLib",
-            "MusixMatch": "MusixMatch",
             "Megalobiz": "Megalobiz",
             "NetEase": "NetEase",
             "LrcRed": "lrc.red",
             "LRCHub": "LRCHub",
-            "SimpMusic": "SimpMusic"
+            "SimpMusic": "SimpMusic",
+            "KuGou": "KuGou",
+            "BetterLyrics": "BetterLyrics",
+            "Paxsenix": "Paxsenix"
           }
         },
         "preferSynced": {
@@ -2653,14 +2653,6 @@
           "label": "Google Translate host",
           "description": "A regional host such as translate.google.co.jp, or your own Google Translate mirror."
         },
-        "musixmatchTokenMode": {
-          "label": "Musixmatch token source",
-          "description": "Automatic asks Musixmatch for the mobile app's token and renews it every minute. Your own token sends the token below instead.",
-          "options": {
-            "auto": "Automatic (mobile app token)",
-            "user": "Your own token"
-          }
-        },
         "lyricsTypePriority": {
           "label": "Lyrics type order",
           "description": "Lyrics are picked by type in this order: a word-by-word result wins over a time-synced one over a plain text block. Providers with the same kind of lyrics are picked by the provider order.",
@@ -2789,10 +2781,6 @@
             "katakana": "Kanji → Katakana"
           }
         }
-      },
-      "musixmatch": {
-        "no-token": "Musixmatch only gives lyrics to signed-in apps: set a Musixmatch user token in the settings",
-        "token-rejected": "Musixmatch rejected the user token (expired, or asking for a captcha)"
       },
       "nothing-playing": "Nothing playing",
       "found": {

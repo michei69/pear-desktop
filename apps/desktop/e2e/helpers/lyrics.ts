@@ -21,10 +21,14 @@ export function stubLyricsProviders(
         "lrc.red",
         "lrchub.coreone.work",
         "api.megalobiz.com",
-        "apic-appmobile.musixmatch.com",
         "interface.music.163.com",
         "api-lyrics.simpmusic.org",
         "ytmbrowseproxy.zvz.be",
+        "lyrics.kugou.com",
+        "lyrics-api.boidu.dev",
+        "beta.music.apple.com",
+        "amp-api.music.apple.com",
+        "lyrics.paxsenix.org",
       ]);
       session.defaultSession.protocol.handle("https", async (request) => {
         const host = new URL(request.url).hostname;

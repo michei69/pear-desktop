@@ -3,10 +3,11 @@
 // (the server owns ISRC resolution); the song payload carries both the original
 // TTML and a JSON rendering, used when the TTML cannot be parsed.
 
-import { parseTTML, type TTMLParsedLine } from "../ttml.ts";
+import { parseTTML } from "../ttml.ts";
 import type { LyricResult, LyricTranslation, LyricWord, SearchQuery } from "../types.ts";
 import type { Fetch } from "./http.ts";
 import { cleanTrackTitle, splitArtists } from "./shared.ts";
+import { ttmlContent } from "./ttml-result.ts";
 
 const BASE = "https://lrc.red";
 const REQUEST_TIMEOUT_MS = 10_000;
@@ -118,16 +119,6 @@ export function linesFromJson(song: LrcRedSong): LyricResult["lines"] {
   });
 }
 
-const toLineLyrics = (line: TTMLParsedLine) => ({
-  startMs: line.startMs,
-  endMs: line.endMs,
-  text: line.text,
-  ...(line.words.length ? { words: line.words } : {}),
-  ...(line.background.length ? { background: line.background } : {}),
-  ...(line.alignment ? { alignment: line.alignment } : {}),
-  ...(line.rtl ? { rtl: true } : {}),
-});
-
 /**
  * lrc.red: TTML lyrics with word and syllable timings. A track is matched by
  * title/artist/album/duration, then the song payload is read.
@@ -164,17 +155,7 @@ export async function lrcred(query: SearchQuery, fetch: Fetch): Promise<LyricRes
   let translation: LyricTranslation | undefined;
 
   if (parsed?.lines.length) {
-    lines = parsed.lines.map(toLineLyrics);
-
-    const translationLines = parsed.lines.flatMap((line) => {
-      const text = line.key ? parsed.translations[line.key] : undefined;
-      return text ? [{ startMs: line.startMs, endMs: line.endMs, text }] : [];
-    });
-
-    if (translationLines.length > 0) {
-      translation = { lines: translationLines, provider: "lrc.red" };
-      if (parsed.translationLanguage) translation.language = parsed.translationLanguage;
-    }
+    ({ lines, translation } = ttmlContent(parsed, "lrc.red"));
   } else {
     lines = linesFromJson(song) ?? [];
   }

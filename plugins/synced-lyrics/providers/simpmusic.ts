@@ -56,6 +56,17 @@ export function decodeHtmlEntities(text: string) {
 }
 
 const RICH_LINE = /^\[(\d+):(\d+(?:[.:]\d+)?)\](?:v\d+:\s*)?(.*)$/;
+/** SimpMusic sheets sometimes tack a "Synced by Noob.exe" credit line onto the LRC. */
+const TIMESTAMP_PREFIX = /^(?:\[\d{1,2}:\d{2}\.\d{2,3}])+/;
+
+/** Drops the per-line "Synced by Noob.exe" credit, keeping the real lyrics. */
+export function removeNoobSyncCredit(lyrics: string) {
+  return lyrics
+    .split(/\r?\n/)
+    .filter((line) => line.trim().replace(TIMESTAMP_PREFIX, "").trim().toLowerCase() !== "synced by noob.exe")
+    .join("\n")
+    .trim();
+}
 
 /** Apple-Music-style rich sync to enhanced LRC, minus the singer prefix. */
 export function richSyncToLrc(rich: string): string {
@@ -118,8 +129,8 @@ export async function simpmusic(query: SearchQuery, fetch: Fetch): Promise<Lyric
   const entry = pickBestSimpMusicEntry(parsed.data as SimpMusicEntry[]);
   if (!entry) return null;
 
-  const rich = decodeHtmlEntities(textOf(entry.richSyncLyrics));
-  const lrc = (rich ? richSyncToLrc(rich) : "") || decodeHtmlEntities(textOf(entry.syncedLyrics));
+  const rich = removeNoobSyncCredit(decodeHtmlEntities(textOf(entry.richSyncLyrics)));
+  const lrc = (rich ? richSyncToLrc(rich) : "") || removeNoobSyncCredit(decodeHtmlEntities(textOf(entry.syncedLyrics)));
   const plain = decodeHtmlEntities(textOf(entry.plainLyric));
 
   const lines = lrc ? parseLrc(lrc, query.durationSeconds * 1000) : [];

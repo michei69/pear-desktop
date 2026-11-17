@@ -641,7 +641,12 @@ describe("synced-lyrics", () => {
     const kept = migrated({ "synced-lyrics": { enabled: true, preferredProvider: "LRCLib", lineEffect: "focus", romanization: false } })[
       "synced-lyrics"
     ];
-    expect(kept).toMatchObject({ providerPriority: ["LRCLib"], usePriorityList: true, lineEffect: "focus", romanization: false });
+    expect(kept).toMatchObject({
+      providerPriority: ["LRCLib", "LrcRed", "YTMusic", "Megalobiz", "NetEase", "LRCHub", "SimpMusic", "KuGou", "BetterLyrics", "Paxsenix"],
+      usePriorityList: true,
+      lineEffect: "focus",
+      romanization: false,
+    });
     expect(kept).not.toHaveProperty("preferredProvider");
   });
 

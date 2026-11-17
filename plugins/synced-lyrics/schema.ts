@@ -40,11 +40,13 @@ export const schema = {
       { value: "LrcRed", label: "lrc.red" },
       { value: "LRCLib", label: "LRCLIB" },
       { value: "YTMusic", label: "\u0059\u006f\u0075\u0054\u0075\u0062\u0065\u0020\u004d\u0075\u0073\u0069\u0063" },
-      { value: "MusixMatch", label: "Musixmatch" },
       { value: "Megalobiz", label: "Megalobiz" },
       { value: "NetEase", label: "NetEase" },
       { value: "LRCHub", label: "LRCHub" },
       { value: "SimpMusic", label: "SimpMusic" },
+      { value: "KuGou", label: "KuGou" },
+      { value: "BetterLyrics", label: "BetterLyrics" },
+      { value: "Paxsenix", label: "Paxsenix" },
     ],
     { label: "Preferred provider", description: "Breaks ties between providers with equally rich lyrics; the type order still wins." },
   ),
@@ -55,8 +57,8 @@ export const schema = {
   }),
   providerPriority: config.orderable([...PROVIDERS], providerOrder, {
     label: "Provider order",
-    description:
-      "Tried from top to bottom when the order is followed, and used to break ties otherwise. Providers missing from the list are tried last.",
+    description: "Tried from top to bottom when the order is followed, and used to break ties otherwise. Remove a provider to disable it.",
+    removable: true,
   }),
   lyricsTypePriority: config.orderable([...LYRICS_TYPES], lyricsTypeOrder, {
     label: "Lyrics type order",
@@ -198,24 +200,6 @@ export const schema = {
     label: "\u0059\u006f\u0075\u0054\u0075\u0062\u0065 Music lyrics without proxy",
     description:
       "Fetch \u0059\u006f\u0075\u0054\u0075\u0062\u0065 Music's own lyrics directly instead of through the public browse proxy. Off asks the proxy first and falls back to the direct request.",
-  }),
-  musixmatchTokenMode: config.select(
-    "auto",
-    [
-      { value: "auto", label: "Automatic (mobile app token)" },
-      { value: "user", label: "Your own token" },
-    ],
-    {
-      label: "Musixmatch token source",
-      description:
-        "Automatic asks Musixmatch for the mobile app's token and renews it every minute. Your own token sends the token below instead.",
-    },
-  ),
-  musixmatchToken: config.string("", {
-    label: "Musixmatch user token",
-    description: "The usertoken of your own signed-in Musixmatch app, sent when the token source above is your own token.",
-    secret: true,
-    visibleWhen: { musixmatchTokenMode: "user" },
   }),
 
   // ---- Translation (flat keys, because a plugin's config is one record) ----

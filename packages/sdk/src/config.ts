@@ -77,9 +77,11 @@ export interface MultiField<T extends string = string> extends FieldBase<"multi"
   options: readonly SelectOption<T>[];
 }
 
-/** A fixed list of options the user can only reorder; its value is one entry per option. */
+/** A list of options the user can reorder, and optionally remove from the saved value. */
 export interface OrderableField extends FieldBase<"orderable", string[]> {
   options: readonly SelectOption<string>[];
+  /** Let users remove entries; missing ones are then not added back when loading. */
+  removable?: boolean;
 }
 
 export type Field = BoolField | NumberField | StringField | SelectField | ShortcutField | ListField | MultiField | OrderableField;
@@ -127,16 +129,17 @@ export const config = {
 };
 
 /**
- * `stored` first in its own order, then the declared entries it did not name, in
- * declared order. Unknown, stale and duplicate entries are dropped, so an order
- * saved before an option existed still shows it, at the end.
+ * `stored` first in its own order, then (unless `includeMissing` is false) the
+ * declared entries it did not name, in declared order. Unknown, stale and
+ * duplicate entries are dropped, so an order saved before an option existed
+ * still shows it, at the end.
  */
-export function normalizeOrder(stored: unknown, options: readonly SelectOption<string>[]): string[] {
+export function normalizeOrder(stored: unknown, options: readonly SelectOption<string>[], includeMissing = true): string[] {
   const declared = options.map((option) => option.value);
   const known = new Set(declared);
   const order = (Array.isArray(stored) ? stored : []).filter((item): item is string => typeof item === "string" && known.has(item));
   const unique = [...new Set(order)];
-  for (const value of declared) if (!unique.includes(value)) unique.push(value);
+  if (includeMissing) for (const value of declared) if (!unique.includes(value)) unique.push(value);
   return unique;
 }
 
@@ -175,7 +178,12 @@ export function normalizeConfig<S extends ConfigShape>(shape: S, stored: unknown
   const result: Record<string, unknown> = {};
   for (const [key, field] of Object.entries(shape)) {
     const value = input[key];
-    result[key] = field.kind === "orderable" ? normalizeOrder(value, field.options) : isValid(field, value) ? value : field.default;
+    result[key] =
+      field.kind === "orderable"
+        ? normalizeOrder(value, field.options, field.removable !== true)
+        : isValid(field, value)
+          ? value
+          : field.default;
   }
   return result as ConfigOf<S>;
 }

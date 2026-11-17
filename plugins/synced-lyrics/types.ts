@@ -2,9 +2,20 @@
 
 // The ids are the provider names stored in `preferredProvider`. lrc.red comes
 // first: it is the only source with word-synced TTML for most tracks. The rest
-// keep the picker order (Megalobiz after Musixmatch, NetEase last), and providers
+// keep the picker order (SimpMusic and the newer sources last), and providers
 // added after a stored order are appended.
-export const PROVIDERS = ["LrcRed", "YTMusic", "LRCLib", "MusixMatch", "Megalobiz", "NetEase", "LRCHub", "SimpMusic"] as const;
+export const PROVIDERS = [
+  "LrcRed",
+  "YTMusic",
+  "LRCLib",
+  "Megalobiz",
+  "NetEase",
+  "LRCHub",
+  "SimpMusic",
+  "KuGou",
+  "BetterLyrics",
+  "Paxsenix",
+] as const;
 export type ProviderId = (typeof PROVIDERS)[number];
 
 /** Display names for the picker. */
@@ -12,11 +23,13 @@ export const PROVIDER_NAMES: Record<ProviderId, string> = {
   LrcRed: "lrc.red",
   YTMusic: "YTMusic",
   LRCLib: "LRCLib",
-  MusixMatch: "MusixMatch",
   Megalobiz: "Megalobiz",
   NetEase: "NetEase",
   LRCHub: "LRCHub",
   SimpMusic: "SimpMusic",
+  KuGou: "KuGou",
+  BetterLyrics: "BetterLyrics",
+  Paxsenix: "Paxsenix",
 };
 
 export interface LyricWord {

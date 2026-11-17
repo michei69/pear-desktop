@@ -55,7 +55,22 @@ describe("pre-3.12 migrations", () => {
 
   test("the single preferred provider becomes a priority list", () => {
     const { config } = migrate(legacy("3.12.2", { "synced-lyrics": { enabled: true, preferredProvider: "lrclib" } }), "4.0.0");
-    expect(config.plugins?.["synced-lyrics"]).toMatchObject({ providerPriority: ["lrclib"], usePriorityList: true });
+    expect(config.plugins?.["synced-lyrics"]).toMatchObject({
+      providerPriority: [
+        "lrclib",
+        "LrcRed",
+        "YTMusic",
+        "LRCLib",
+        "Megalobiz",
+        "NetEase",
+        "LRCHub",
+        "SimpMusic",
+        "KuGou",
+        "BetterLyrics",
+        "Paxsenix",
+      ],
+      usePriorityList: true,
+    });
     expect(config.plugins?.["synced-lyrics"]).not.toHaveProperty("preferredProvider");
   });
 

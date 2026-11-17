@@ -1,34 +1,34 @@
 // Which provider to show. Shared by the page picker and the host RPC, so the
 // lyrics tab and the API never disagree.
 //
-// `priority` is the user's provider order; providers added since the order was
-// saved are appended, so a new provider is still tried. `typePriority` is the
-// user's lyrics type order and is applied first: a word-by-word result wins over
-// a time-synced one over a plain text block, whatever the provider order says.
+// `priority` is the user's provider order and also the picker's order; removing
+// a provider from it disables it. `typePriority` is the user's lyrics type order
+// and is applied first: a word-by-word result wins over a time-synced one over
+// a plain text block, whatever the provider order says.
 // Within a type, the order decides -- or, when the priority list is off, the
 // result quality, with the preferred provider breaking ties.
 
 import { LYRICS_TYPES, lyricsType, PROVIDERS, type LyricResult, type LyricsType, type ProviderId } from "./types.ts";
 
-/** The configured order, without unknown or repeated ids, then every missing entry. */
-function normalizeOrder<T extends string>(configured: readonly string[] | undefined, known: readonly T[]): T[] {
+/** The configured order, without unknown or repeated ids, then (optionally) every missing entry. */
+function normalizeOrder<T extends string>(configured: readonly string[], known: readonly T[], appendMissing: boolean): T[] {
   const ids = new Set<string>(known);
   const order: T[] = [];
-  for (const id of configured ?? []) {
+  for (const id of configured) {
     if (ids.has(id) && !order.includes(id as T)) order.push(id as T);
   }
-  for (const id of known) if (!order.includes(id)) order.push(id);
+  if (appendMissing) for (const id of known) if (!order.includes(id)) order.push(id);
   return order;
 }
 
-/** The configured provider order, then every missing provider. */
+/** The configured provider order; absent configuration falls back to every provider. */
 export function resolvePriority(configured: readonly string[] | undefined): ProviderId[] {
-  return normalizeOrder(configured, PROVIDERS);
+  return normalizeOrder(configured ?? PROVIDERS, PROVIDERS, false);
 }
 
 /** The configured lyrics type order, then every missing type. */
 export function resolveTypePriority(configured: readonly string[] | undefined): LyricsType[] {
-  return normalizeOrder(configured, LYRICS_TYPES);
+  return normalizeOrder(configured ?? LYRICS_TYPES, LYRICS_TYPES, true);
 }
 
 export interface PickOptions {

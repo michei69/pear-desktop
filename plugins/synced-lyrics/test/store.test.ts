@@ -60,6 +60,26 @@ describe("LyricsStore", () => {
     expect(api.search).toHaveBeenCalledTimes(PROVIDERS.length);
   });
 
+  test("disabled providers are neither searched nor shown, and the picker only holds the saved order", async () => {
+    const limited: Options = { ...options, priority: ["YTMusic", "LRCLib"] };
+    const api = backend({ YTMusic: synced, LRCLib: plain, LrcRed: word });
+    const store = new LyricsStore(api, limited);
+    store.load(track);
+    await settle();
+    expect(store.order).toEqual(["YTMusic", "LRCLib"]);
+    expect(api.search).toHaveBeenCalledTimes(2);
+    expect(store.shown).toMatchObject({ provider: "YTMusic" });
+    store.step(1);
+    expect(store.selected).toBe("LRCLib");
+    store.step(1);
+    expect(store.selected).toBe("YTMusic");
+    // A preferred provider that is no longer in the order is ignored.
+    const other = new LyricsStore(backend({ YTMusic: synced, LRCLib: plain }), { ...limited, preferred: "LrcRed" });
+    other.load(track);
+    await settle();
+    expect(other.selected).toBe("YTMusic");
+  });
+
   test("shows the richest result regardless of provider order", async () => {
     const store = new LyricsStore(backend({ LRCLib: null, YTMusic: synced, LRCHub: plain }), options);
     store.load(track);
@@ -189,7 +209,7 @@ describe("LyricsStore", () => {
 
     // The arrows go through every provider, wrapping around, whatever they found.
     store.step(1);
-    expect(store.selected).toBe("MusixMatch");
+    expect(store.selected).toBe("Megalobiz");
     expect(store.current).toEqual({ status: "done", result: null });
     expect(store.shown).toBeNull();
     store.step(-2);
@@ -198,10 +218,13 @@ describe("LyricsStore", () => {
     expect(store.selected).toBe("LrcRed");
     expect(store.shown).toBeNull();
     store.step(-1);
-    // The picker wraps around.
-    expect(store.selected).toBe("SimpMusic");
+    // The picker wraps around to the newest provider at the end of the list.
+    expect(store.selected).toBe("Paxsenix");
     expect(store.shown).toBeNull();
     store.step(-1);
+    expect(store.selected).toBe("BetterLyrics");
+    expect(store.shown).toBeNull();
+    store.step(-3);
     expect(store.selected).toBe("LRCHub");
     expect(store.shown).toMatchObject({ provider: "LRCHub", synced: false });
 

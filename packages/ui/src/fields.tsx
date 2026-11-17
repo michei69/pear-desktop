@@ -378,17 +378,25 @@ function MultiControl({ id, field, value, onChange }: ControlProps<MultiField, s
   );
 }
 
-/** Every option once, in the user's order; up/down move an entry one place. */
+/** Every saved option in the user's order; up/down move, × removes, and missing ones can be added back. */
 function OrderableControl({ id, field, value, onChange }: ControlProps<OrderableField, string[]>) {
   const text = useText();
-  // Every option, in the stored order (missing entries go last, unknown ones are dropped).
-  const rows = normalizeOrder(value, field.options).map((entry) => field.options.find((option) => option.value === entry)!);
+  const removable = field.removable === true;
+  // Removable fields show only saved entries; others complete the order with the missing ones.
+  const rows = normalizeOrder(value, field.options, !removable).map((entry) => field.options.find((option) => option.value === entry)!);
+  const [toAdd, setToAdd] = useState("");
+  const missing = field.options.filter((option) => !rows.some((row) => row.value === option.value));
+  const nextAdd = missing.some((option) => option.value === toAdd) ? toAdd : (missing[0]?.value ?? "");
+  const setOrder = (next: string[]) => {
+    setToAdd("");
+    void onChange(next);
+  };
   const move = (from: number, to: number) => {
     const next = rows.map((row) => row.value);
     // Lifted out and inserted, so moving the first entry down puts it second.
     const [moved] = next.splice(from, 1);
     next.splice(to, 0, moved!);
-    onChange(next);
+    setOrder(next);
   };
   return (
     <div id={id} class="orderable" role="list" aria-labelledby={`${id}-label`}>
@@ -413,8 +421,33 @@ function OrderableControl({ id, field, value, onChange }: ControlProps<Orderable
           >
             <Icon name="chevronDown" size={18} />
           </button>
+          {removable && (
+            <button
+              type="button"
+              class="orderable-button"
+              aria-label={text("settings-ui.remove", { item: row.label })}
+              disabled={rows.length === 1}
+              onClick={() => setOrder(rows.filter((entry) => entry.value !== row.value).map((entry) => entry.value))}
+            >
+              ×
+            </button>
+          )}
         </div>
       ))}
+      {removable && missing.length > 0 && (
+        <div class="orderable-add">
+          <select class="dropdown" aria-label={field.label} value={nextAdd} onChange={(e) => setToAdd(e.currentTarget.value)}>
+            {missing.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+          <button type="button" class="outlined" onClick={() => setOrder([...rows.map((row) => row.value), nextAdd])}>
+            {text("settings-ui.add")}
+          </button>
+        </div>
+      )}
     </div>
   );
 }

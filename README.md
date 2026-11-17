@@ -299,9 +299,3 @@ If `Hide Menu` option is on - you can show the menu with the <kbd>alt</kbd> key 
 ### Why does YTM skip the cookie consent screen?
 
 The app answers it with "only essential cookies" (`SOCS=CAI`), unless you've chosen otherwise on YTM.
-
-### Musixmatch lyrics are wrong or missing?
-
-Musixmatch (synced-lyrics) asks for a token automatically by default (the mobile app's, renewed every minute). If it
-reports that it needs a token, switch its token source to "Your own token" and paste the usertoken from your signed-in
-Musixmatch app.
