@@ -16,6 +16,8 @@ const MIN_TRACK_SECONDS = 30;
 const AUTO_TRANSITION_TIMEOUT_MS = 5000;
 /** Short ramp back to full level after a next-track click that didn't navigate. */
 const RESTORE_SECONDS = 0.05;
+/** Short ramp down when a stream was expected but cannot take the track over. */
+const FAILED_HANDOVER_SECONDS = 0.2;
 
 interface FadeIn {
   startedAt: number;
@@ -168,8 +170,14 @@ export async function startCrossfade(ctx: Ctx) {
     if (stream.handover(ctx.config.fadeOutDuration / 1000)) {
       fader.splice(0, HANDOVER_SECONDS);
       handoverUntil = context.currentTime + HANDOVER_SECONDS;
-    } else {
+    } else if (fadingOut) {
+      // The fallback fade has already taken the video down.
       fader.hold(0);
+      handoverUntil = 0;
+    } else {
+      // A stream was expected but could not take over: take the video down over
+      // a moment rather than at a sample.
+      fader.ramp(1, 0, FAILED_HANDOVER_SECONDS);
       handoverUntil = 0;
     }
     // Bounded: a click that does not navigate (no next button, end of queue)
@@ -185,6 +193,8 @@ export async function startCrossfade(ctx: Ctx) {
   const onTime = () => {
     const fade = fadeWindow();
     if (!fade || video.paused) return;
+    // A URL source's tail is only worth streaming once the track is near its end.
+    stream.preload();
     pruneFadeIn();
     const position = video.currentTime;
     if (position >= fade.end) {
@@ -204,6 +214,7 @@ export async function startCrossfade(ctx: Ctx) {
 
   const resync = () => {
     if (ctx.player.state.ad || pendingFadeIn) return;
+    stream.preload();
     pruneFadeIn();
     if (video.paused) {
       freezeFadeIn();

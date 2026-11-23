@@ -29,7 +29,8 @@ export default definePlugin({
     commands: {
       /**
        * A direct audio stream of a track, used to play the end while the next one
-       * starts. The page falls back to it when the track's bytes don't arrive.
+       * starts. The page fetches it when the track nears its end, so it only ever
+       * streams the tail.
        */
       async audioUrl(videoId: string) {
         const { yt, poToken } = await streamSession(this, videoId);

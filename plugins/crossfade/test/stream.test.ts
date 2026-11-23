@@ -5,7 +5,7 @@ import type { Ctx } from "../schema.ts";
 
 /** The browser's media element surface the second stream drives. */
 class FakeMedia extends EventTarget {
-  static HAVE_FUTURE_DATA = 4;
+  static HAVE_FUTURE_DATA = 3;
 
   preload = "";
   muted = false;
@@ -13,9 +13,12 @@ class FakeMedia extends EventTarget {
   src = "";
   crossOrigin: string | null = null;
   paused = true;
-  readyState = FakeMedia.HAVE_FUTURE_DATA;
+  readyState = 4;
   seeking = false;
   currentTime = 0;
+  duration = 120;
+  /** Seconds of audio buffered ahead of `currentTime`. */
+  bufferedAhead = Infinity;
   onplaying: (() => void) | null = null;
   onerror: (() => void) | null = null;
   #volume = 1;
@@ -26,6 +29,11 @@ class FakeMedia extends EventTarget {
 
   set volume(value: number) {
     this.#volume = value;
+  }
+
+  get buffered() {
+    const end = this.currentTime + this.bufferedAhead;
+    return { length: 1, start: () => 0, end: () => end } as unknown as TimeRanges;
   }
 
   play() {
@@ -138,10 +146,21 @@ describe("the second stream", () => {
     return { stream, ctx, log, video, audio: () => audios.at(-1), externals: () => externals };
   }
 
-  /** Three failed byte fetches, then the URL fallback. */
+  /** Three failed byte fetches, then the tail is left for the URL. */
   async function flushFetches() {
     for (let attempt = 0; attempt < 4; attempt += 1) await vi.advanceTimersByTimeAsync(500);
   }
+
+  /** Settles the URL fetch's promise chain. */
+  async function flushPromises() {
+    for (let turn = 0; turn < 4; turn += 1) await Promise.resolve();
+  }
+
+  /** The settings a URL source reads: when its tail is due and how long it fades. */
+  const URL_CONFIG = { secondsBeforeEnd: 10, fadeOutDuration: 5000 };
+
+  const commandsOf = (app: { ctx: { host: { invoke: unknown } } }) =>
+    (app.ctx.host.invoke as unknown as { mock: { calls: string[][] } }).mock.calls.map(([command]) => command);
 
   it("starts the silent copy once the track's bytes arrive", async () => {
     const app = harness(async (command) => {
@@ -158,33 +177,51 @@ describe("the second stream", () => {
     expect([...app.externals().values()]).toEqual([0]);
   });
 
-  it("falls back to the track's stream URL when the bytes do not arrive", async () => {
-    const app = harness(async (command) => {
-      if (command === "audioBytes") throw new Error("the CDN refused");
-      if (command === "audioUrl") return "https://stream.example/a";
-      throw new Error(`unexpected ${command}`);
-    });
+  it("keeps a URL source's tail out of the track until its end", async () => {
+    const app = harness(
+      async (command) => {
+        if (command === "audioBytes") throw new Error("the CDN refused");
+        if (command === "audioUrl") return "https://stream.example/a";
+        throw new Error(`unexpected ${command}`);
+      },
+      undefined,
+      URL_CONFIG,
+    );
     app.stream.prepare("a");
     await flushFetches();
-    const commands = (app.ctx.host.invoke as unknown as { mock: { calls: string[][] } }).mock.calls.map(([command]) => command);
-    expect(commands.filter((command) => command === "audioBytes")).toHaveLength(3);
-    expect(commands.at(-1)).toBe("audioUrl");
+    // The bytes were tried; the URL waits for the track's end.
+    expect(commandsOf(app).filter((command) => command === "audioBytes")).toHaveLength(3);
+    expect(commandsOf(app)).not.toContain("audioUrl");
+    expect(app.audio()).toBeUndefined();
+
+    // Near the end, the tail is fetched and starts running with the video.
+    app.video.currentTime = 100;
+    app.stream.preload();
+    await flushPromises();
+    expect(commandsOf(app)).toEqual(["audioBytes", "audioBytes", "audioBytes", "audioUrl"]);
     expect(app.audio()?.src).toBe("https://stream.example/a");
     expect(app.audio()?.crossOrigin).toBe("anonymous");
     expect(app.stream.ready()).toBe(true);
   });
 
   it("goes straight to the URL when the host declines to buffer a long track", async () => {
-    const app = harness(async (command) => {
-      if (command === "audioBytes") return undefined;
-      if (command === "audioUrl") return "https://stream.example/long";
-      throw new Error(`unexpected ${command}`);
-    });
+    const app = harness(
+      async (command) => {
+        if (command === "audioBytes") return undefined;
+        if (command === "audioUrl") return "https://stream.example/long";
+        throw new Error(`unexpected ${command}`);
+      },
+      undefined,
+      URL_CONFIG,
+    );
     app.stream.prepare("a");
     await flushFetches();
-    const commands = (app.ctx.host.invoke as unknown as { mock: { calls: string[][] } }).mock.calls.map(([command]) => command);
-    // One refusal, no retries: the browser streams the tail instead of buffering hours.
-    expect(commands).toEqual(["audioBytes", "audioUrl"]);
+    // One refusal, no retries, and still no URL until the end.
+    expect(commandsOf(app)).toEqual(["audioBytes"]);
+    app.video.currentTime = 100;
+    app.stream.preload();
+    await flushPromises();
+    expect(commandsOf(app)).toEqual(["audioBytes", "audioUrl"]);
     expect(app.audio()?.src).toBe("https://stream.example/long");
     expect(app.audio()?.crossOrigin).toBe("anonymous");
     expect(app.stream.ready()).toBe(true);
@@ -197,22 +234,78 @@ describe("the second stream", () => {
         throw new Error(`unexpected ${command}`);
       },
       undefined,
-      { streamUrlOnly: true },
+      { ...URL_CONFIG, streamUrlOnly: true },
     );
     app.stream.prepare("a");
     await flushFetches();
-    const commands = (app.ctx.host.invoke as unknown as { mock: { calls: string[][] } }).mock.calls.map(([command]) => command);
-    expect(commands).toEqual(["audioUrl"]);
+    // Nothing is fetched while the track plays; the tail arrives near the end.
+    expect(commandsOf(app)).toEqual([]);
+    app.video.currentTime = 100;
+    app.stream.preload();
+    await flushPromises();
+    expect(commandsOf(app)).toEqual(["audioUrl"]);
     expect(app.audio()?.src).toBe("https://stream.example/only");
     expect(app.stream.ready()).toBe(true);
   });
 
-  it("warns and leaves no stream when neither source arrives", async () => {
-    const app = harness(async (command) => {
-      throw new Error(command === "audioBytes" ? "the CDN refused" : "no stream URL");
-    });
+  it("takes a URL tail over only once its fade is buffered", async () => {
+    const app = harness(
+      async (command) => {
+        if (command === "audioUrl") return "https://stream.example/tail";
+        throw new Error(`unexpected ${command}`);
+      },
+      undefined,
+      { ...URL_CONFIG, streamUrlOnly: true },
+    );
+    app.video.currentTime = 100;
     app.stream.prepare("a");
     await flushFetches();
+    const audio = app.audio()!;
+    // One second ahead is one stall away from a hole under the fade curve.
+    audio.bufferedAhead = 1;
+    expect(app.stream.ready()).toBe(false);
+    expect(app.stream.handover(5)).toBe(false);
+
+    audio.bufferedAhead = Infinity;
+    expect(app.stream.ready()).toBe(true);
+    expect(app.stream.handover(5)).toBe(true);
+  });
+
+  it("lets the outgoing tail outlive the site's pause between tracks", async () => {
+    const app = harness(async () => ({ bytes: new Uint8Array([1]), mimeType: "audio/webm" }));
+    app.stream.prepare("a");
+    await flushFetches();
+    const outgoing = app.audio()!;
+    expect(app.stream.handover(5)).toBe(true);
+
+    // The site pauses the video for a moment while it loads the next track: the
+    // tail keeps playing through a short pause...
+    app.video.dispatchEvent(new Event("pause"));
+    await vi.advanceTimersByTimeAsync(200);
+    expect(outgoing.paused).toBe(false);
+    app.video.dispatchEvent(new Event("playing"));
+    await vi.advanceTimersByTimeAsync(300);
+    expect(outgoing.paused).toBe(false);
+
+    // ...and stops after one long enough to be the user's.
+    app.video.dispatchEvent(new Event("pause"));
+    await vi.advanceTimersByTimeAsync(400);
+    expect(outgoing.paused).toBe(true);
+  });
+
+  it("warns and leaves no stream when neither source arrives", async () => {
+    const app = harness(
+      async (command) => {
+        throw new Error(command === "audioBytes" ? "the CDN refused" : "no stream URL");
+      },
+      undefined,
+      URL_CONFIG,
+    );
+    app.video.currentTime = 100;
+    app.stream.prepare("a");
+    await flushFetches();
+    app.stream.preload();
+    await flushPromises();
     expect(app.stream.ready()).toBe(false);
     expect(app.log.warn).toHaveBeenCalled();
     expect(app.audio()).toBeUndefined();

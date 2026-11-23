@@ -27,6 +27,7 @@ const streamOf = vi.hoisted(() => {
     },
     stream: {
       prepare: (videoId: string) => calls.push(`prepare:${videoId}`),
+      preload: () => calls.push("preload"),
       ready: () => ready,
       handover: (seconds: number) => {
         calls.push(`handover:${seconds}`);
@@ -317,6 +318,29 @@ describe("the crossfade's transition", () => {
     await app.advance(5000);
     expect(streamOf.calls.filter((call) => call === "cancelTransition")).toHaveLength(cancels);
     expect(app.gain().value).toBe(1);
+  });
+
+  it("warms a URL stream up before the fade window opens", async () => {
+    const app = harness({ duration: 120 });
+    await app.start();
+    app.video().currentTime = 100;
+    app.emitVideo("timeupdate");
+    expect(streamOf.calls).toContain("preload");
+  });
+
+  it("takes the video down over a moment when a ready stream cannot take over", async () => {
+    const app = harness({ duration: 100 });
+    streamOf.setReady(true);
+    streamOf.setHandover(false);
+    await app.start();
+    app.video().currentTime = 90.2;
+    app.emitVideo("timeupdate");
+    // The fallback fade never ran: the video is still at full level, so the cut
+    // is ramped rather than stepped.
+    const last = app.gain().curves.at(-1)!;
+    expect(last.duration).toBeCloseTo(0.2, 6);
+    expect(last.curve[0]).toBeCloseTo(1, 6);
+    expect(last.curve.at(-1)).toBeCloseTo(0, 6);
   });
 
   it("cuts the outgoing fade on a manual skip and fades the incoming track in", async () => {

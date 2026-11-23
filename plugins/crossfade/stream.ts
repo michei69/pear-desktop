@@ -12,6 +12,16 @@ import type { Ctx } from "./schema.ts";
 const AUDIO_FETCH_ATTEMPTS = 3;
 /** Delay between audio fetch attempts, in milliseconds. */
 const AUDIO_FETCH_RETRY_MS = 500;
+/** Seconds before the fade window opens that a track's stream URL is fetched. */
+const URL_WARMUP_LEAD_SECONDS = 10;
+/**
+ * Audio a URL stream must have buffered ahead before it takes the track over, in
+ * seconds: enough headroom that ordinary jitter cannot stall the fade, which
+ * runs on the audio clock. Bytes are already all there.
+ */
+const HANDOVER_BUFFER_SECONDS = 5;
+/** A pause this short is the site switching tracks, not the user stopping. */
+const OUTGOING_PAUSE_GRACE_MS = 300;
 
 // How close the silent audio has to sit on the video's clock before it is left
 // alone, in seconds. Two copies offset by that much cancel the half period of the
@@ -54,6 +64,8 @@ interface Fade {
 
 interface Stream {
   videoId: string;
+  /** Buffered bytes, or a stream URL: a URL stream is only as good as its buffer. */
+  kind: Source["kind"];
   audio: HTMLAudioElement;
   source: MediaElementAudioSourceNode;
   gain: GainNode;
@@ -110,6 +122,10 @@ export function secondStream(ctx: Ctx, graph: AudioGraph) {
    * measured: the audio starts that much ahead of the video to end up level with it.
    */
   let startLead = 0;
+  /** A track whose tail comes from its stream URL, fetched near the end. */
+  let tail: { videoId: string; generation: number } | null = null;
+  /** A pause of the outgoing fade waiting out the site's own track switch. */
+  let outgoingPause: ReturnType<typeof setTimeout> | undefined;
 
   /** The level of the video's own output: the crossfade's stream has to match it. */
   const volumeNow = () => {
@@ -121,6 +137,28 @@ export function secondStream(ctx: Ctx, graph: AudioGraph) {
 
   const isStalled = (element: HTMLMediaElement) =>
     element.paused || element.seeking || element.readyState < HTMLMediaElement.HAVE_FUTURE_DATA;
+
+  /** Seconds of the stream buffered ahead of its playhead. */
+  const bufferedAhead = (audio: HTMLMediaElement) => {
+    const { buffered, currentTime } = audio;
+    for (let index = 0; index < buffered.length; index += 1) {
+      if (buffered.start(index) <= currentTime && currentTime < buffered.end(index)) return buffered.end(index) - currentTime;
+    }
+    return 0;
+  };
+
+  /** Seconds the outgoing tail plays under the incoming track. */
+  const fadeOutSeconds = () => ctx.config.fadeOutDuration / 1000;
+
+  /**
+   * Whether the stream can take the track over now. Bytes always can; a URL
+   * stream needs enough buffered ahead that its fade cannot stall.
+   */
+  const canHandOver = (stream: Stream) => {
+    const { audio } = stream;
+    if (stream.starting || audio.paused || audio.seeking || audio.readyState < HTMLMediaElement.HAVE_FUTURE_DATA) return false;
+    return stream.kind === "bytes" || bufferedAhead(audio) >= HANDOVER_BUFFER_SECONDS;
+  };
 
   const stopAlignment = (stream: Stream) => {
     if (stream.alignment !== undefined) ctx.clearInterval(stream.alignment);
@@ -240,6 +278,7 @@ export function secondStream(ctx: Ctx, graph: AudioGraph) {
 
     const stream: Stream = {
       videoId,
+      kind: audioSource.kind,
       audio,
       source: node,
       gain,
@@ -273,46 +312,73 @@ export function secondStream(ctx: Ctx, graph: AudioGraph) {
     return stream;
   };
 
-  const fetchAudio = async (videoId: string, stale: () => boolean): Promise<Source | undefined> => {
-    let declined = false;
-    // With URL-only mode on, skip the byte download entirely: the browser streams
-    // the track with a bounded buffer instead of building a full Blob in memory.
-    if (!ctx.config.streamUrlOnly) {
-      for (let attempt = 1; attempt <= AUDIO_FETCH_ATTEMPTS; attempt += 1) {
-        if (stale() || ctx.signal.aborted) return undefined;
-        try {
-          const bytes = await ctx.host.invoke("audioBytes", videoId);
-          // No bytes at all means the host declined to buffer this track (too long,
-          // or over the byte budget). Don't retry a download that was refused: go
-          // straight to the URL, which the browser streams a piece of at a time.
-          if (bytes === undefined) {
-            declined = true;
-            break;
-          }
-          if (bytes.bytes.byteLength) return { kind: "bytes", bytes: bytes.bytes, mimeType: bytes.mimeType };
-        } catch (error) {
-          ctx.log.warn(`the audio of ${videoId} didn't arrive (attempt ${attempt}/${AUDIO_FETCH_ATTEMPTS})`, error);
-        }
-        if (attempt < AUDIO_FETCH_ATTEMPTS) {
-          const delay = Promise.withResolvers<void>();
-          ctx.setTimeout(() => delay.resolve(), AUDIO_FETCH_RETRY_MS);
-          await delay.promise;
-        }
+  const install = (videoId: string, source: Source) => {
+    const stream = create(videoId, source);
+    current = stream;
+    stream.alignment = ctx.setInterval(() => align(stream), ALIGN_INTERVAL_MS);
+    follow();
+  };
+
+  /** The track's bytes, or none when they can't be buffered (too long, refused, URL-only mode). */
+  const fetchBytes = async (videoId: string, stale: () => boolean): Promise<Source | undefined> => {
+    if (ctx.config.streamUrlOnly) return undefined;
+    for (let attempt = 1; attempt <= AUDIO_FETCH_ATTEMPTS; attempt += 1) {
+      if (stale() || ctx.signal.aborted) return undefined;
+      try {
+        const bytes = await ctx.host.invoke("audioBytes", videoId);
+        // No bytes at all means the host declined to buffer this track (too long,
+        // or over the byte budget). Don't retry a refusal: the tail streams instead.
+        if (bytes === undefined) return undefined;
+        if (bytes.bytes.byteLength) return { kind: "bytes", bytes: bytes.bytes, mimeType: bytes.mimeType };
+      } catch (error) {
+        ctx.log.warn(`the audio of ${videoId} didn't arrive (attempt ${attempt}/${AUDIO_FETCH_ATTEMPTS})`, error);
+      }
+      if (attempt < AUDIO_FETCH_ATTEMPTS) {
+        const delay = Promise.withResolvers<void>();
+        ctx.setTimeout(() => delay.resolve(), AUDIO_FETCH_RETRY_MS);
+        await delay.promise;
       }
     }
+    return undefined;
+  };
 
-    // Either the bytes failed, the host sent a long track here, or the user chose
-    // URL-only mode: the element plays the stream URL alongside the video.
-    if (stale() || ctx.signal.aborted) return undefined;
+  /** The track's stream URL, minted when the track is near its end. */
+  const fetchUrl = async (videoId: string, stale: () => boolean): Promise<Source | undefined> => {
     try {
       const url = await ctx.host.invoke("audioUrl", videoId);
-      const reason = ctx.config.streamUrlOnly ? " (URL-only mode)" : declined ? " (whole-track download skipped)" : "";
-      ctx.log.info(`using the stream URL for ${videoId}${reason}`);
+      if (stale() || ctx.signal.aborted) return undefined;
+      ctx.log.info(`using the stream URL for ${videoId}${ctx.config.streamUrlOnly ? " (URL-only mode)" : ""}`);
       return { kind: "url", url };
     } catch (error) {
       ctx.log.warn(`no second stream for ${videoId}; the track plays without a crossfade`, error);
       return undefined;
     }
+  };
+
+  /** The track is close enough to its end for its tail to be worth streaming. */
+  const nearEnd = () => {
+    const duration = video.duration;
+    if (!Number.isFinite(duration)) return false;
+    return video.currentTime >= duration - ctx.config.secondsBeforeEnd - fadeOutSeconds() - URL_WARMUP_LEAD_SECONDS;
+  };
+
+  /**
+   * Fetches a URL source's tail once the track is near its end, so the element
+   * only streams the last seconds and one URL need not stay valid for the whole
+   * track. Bytes are fetched when the track loads instead.
+   */
+  const preload = () => {
+    const plan = tail;
+    if (!plan || !nearEnd()) return;
+    tail = null;
+    const fetch = plan.generation;
+    void fetchUrl(plan.videoId, () => fetch !== generation)
+      .then((source) => {
+        if (fetch !== generation) return;
+        if (!source || ctx.signal.aborted || !isOriginalAudioTrack(ctx.player.api)) return;
+        install(plan.videoId, source);
+      })
+      .catch((error: unknown) => ctx.log.warn(`no second stream for ${plan.videoId}`, error));
   };
 
   const scheduleRelease = (stream: Stream, seconds: number) => {
@@ -342,7 +408,25 @@ export function secondStream(ctx: Ctx, graph: AudioGraph) {
     stream.gain.gain.cancelAndHoldAtTime(context.currentTime);
   };
 
+  const cancelOutgoingPause = () => {
+    if (outgoingPause !== undefined) {
+      ctx.clearTimeout(outgoingPause);
+      outgoingPause = undefined;
+    }
+  };
+
+  // The site loads the next track through the same <video>, which pauses it for a
+  // moment. The outgoing tail has to outlive that pause; a real one still stops it.
+  const pauseOutgoingSoon = () => {
+    if (!outgoing?.fade || outgoingPause !== undefined) return;
+    outgoingPause = ctx.setTimeout(() => {
+      outgoingPause = undefined;
+      pauseOutgoing();
+    }, OUTGOING_PAUSE_GRACE_MS);
+  };
+
   const resumeOutgoing = () => {
+    cancelOutgoingPause();
     const stream = outgoing;
     const fade = stream?.fade;
     if (!stream || !fade || !fade.paused) return;
@@ -373,7 +457,7 @@ export function secondStream(ctx: Ctx, graph: AudioGraph) {
 
   const pause = () => {
     pauseCurrent();
-    pauseOutgoing();
+    pauseOutgoingSoon();
   };
 
   // The stream is the same track as the video, so it plays at the video's level.
@@ -420,12 +504,13 @@ export function secondStream(ctx: Ctx, graph: AudioGraph) {
   return {
     /** Fetches the stream of the track that just started. */
     prepare(videoId: string) {
-      if (current?.videoId === videoId || pendingVideoId === videoId) return;
+      if (current?.videoId === videoId || pendingVideoId === videoId || tail?.videoId === videoId) return;
       if (current) {
         const stream = current;
         current = null;
         dispose(stream);
       }
+      tail = null;
 
       const fetch = ++generation;
       pendingVideoId = videoId;
@@ -437,21 +522,28 @@ export function secondStream(ctx: Ctx, graph: AudioGraph) {
         ctx.log.info(`no second stream for ${videoId}: its audio track isn't the original`);
         return;
       }
-      void fetchAudio(videoId, () => fetch !== generation)
+      void fetchBytes(videoId, () => fetch !== generation)
         .then((source) => {
           if (fetch !== generation) return;
           pendingVideoId = undefined;
-          if (!source || ctx.signal.aborted || !isOriginalAudioTrack(ctx.player.api)) return;
-          const stream = create(videoId, source);
-          current = stream;
-          stream.alignment = ctx.setInterval(() => align(stream), ALIGN_INTERVAL_MS);
-          follow();
+          if (ctx.signal.aborted || !isOriginalAudioTrack(ctx.player.api)) return;
+          if (source) {
+            install(videoId, source);
+            return;
+          }
+          // Only the last seconds are needed: fetch the URL when the track gets
+          // near its end, so the element never streams the whole thing.
+          tail = { videoId, generation: fetch };
+          preload();
         })
         .catch((error: unknown) => {
           if (fetch === generation) pendingVideoId = undefined;
           ctx.log.warn(`no second stream for ${videoId}`, error);
         });
     },
+
+    /** Fetches a URL source's tail once the track is near its end. */
+    preload,
 
     /** The current track's audio is loaded and running silently with the video. */
     ready() {
@@ -461,8 +553,7 @@ export function secondStream(ctx: Ctx, graph: AudioGraph) {
         !!stream &&
         !stream.gone &&
         stream.videoId === ctx.player.state.track?.videoId &&
-        !stream.audio.paused &&
-        stream.audio.readyState >= HTMLMediaElement.HAVE_FUTURE_DATA
+        canHandOver(stream)
       );
     },
 
@@ -473,11 +564,11 @@ export function secondStream(ctx: Ctx, graph: AudioGraph) {
      */
     handover(fadeSeconds: number): boolean {
       const stream = current;
-      if (!stream || stream.gone || stream.starting || fadeSeconds <= 0) return false;
+      if (!stream || stream.gone || fadeSeconds <= 0) return false;
       // The fetched copy is the original track; another one must not be spliced in.
       if (!isOriginalAudioTrack(ctx.player.api)) return false;
       if (stream.videoId !== ctx.player.state.track?.videoId) return false;
-      if (stream.audio.paused || stream.audio.readyState < HTMLMediaElement.HAVE_FUTURE_DATA) return false;
+      if (!canHandOver(stream)) return false;
 
       stopAlignment(stream);
       stream.audio.playbackRate = video.playbackRate;
@@ -498,6 +589,7 @@ export function secondStream(ctx: Ctx, graph: AudioGraph) {
 
     /** Drops an outgoing fade, for a skip or a navigation that interrupts it. */
     cancelTransition() {
+      cancelOutgoingPause();
       const stream = outgoing;
       if (!stream) return;
       outgoing = null;
@@ -521,6 +613,8 @@ export function secondStream(ctx: Ctx, graph: AudioGraph) {
     release() {
       generation += 1;
       pendingVideoId = undefined;
+      tail = null;
+      cancelOutgoingPause();
       const streams = [current, outgoing];
       current = null;
       outgoing = null;
