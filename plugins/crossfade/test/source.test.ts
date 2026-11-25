@@ -1,13 +1,15 @@
 import type { Innertube } from "\u0079\u006f\u0075\u0074\u0075\u0062\u0065i.js";
 import { describe, expect, it, vi } from "vitest";
 import {
-  chooseAudioFormat,
+  clientLookups,
   downloadAttempts,
   downloadAudio,
   lengthSecondsOf,
   mimeTypeOf,
   playableInfo,
   sniffAudioMime,
+  streamAttempts,
+  streamFormat,
   type TrackInfo,
 } from "../source.ts";
 
@@ -155,17 +157,29 @@ describe("the audio bytes", () => {
     // No second format is tried after a refusal: the caller uses the URL path.
     expect(download).toHaveBeenCalledTimes(1);
   });
+});
 
-  it("chooses the first format the account may play", () => {
-    const chosen = { mime_type: "audio/mp4", itag: 140 };
-    const chooseFormat = vi.fn(({ type }: { type: string }) => {
-      if (type === "audio") throw new Error("refused");
-      return chosen;
-    });
+describe("the stream a URL tail uses", () => {
+  it("asks for audio-only first, then the smallest muxed stream", () => {
+    expect(streamAttempts()).toEqual([
+      { type: "audio", format: "any" },
+      { type: "video+audio", format: "mp4" },
+      { type: "video+audio", format: "any" },
+    ]);
+  });
+
+  it("asks audio-only for its best quality and muxed for its smallest", () => {
+    const chooseFormat = vi.fn(() => ({ mime_type: "audio/mp4", itag: 140 }));
     const info = { chooseFormat } as unknown as TrackInfo;
-    expect(chooseAudioFormat(info, true)).toBe(chosen);
-    expect(chooseFormat).toHaveBeenCalledTimes(2);
+    streamFormat(info, streamAttempts()[0]!);
+    expect(chooseFormat).toHaveBeenLastCalledWith({ type: "audio", format: "any", quality: "best" });
+    streamFormat(info, streamAttempts()[1]!);
     // The muxed fallback's video track is never decoded, so the smallest one goes.
     expect(chooseFormat).toHaveBeenLastCalledWith({ type: "video+audio", format: "mp4", quality: "worst" });
+  });
+
+  it("lists the clients in the order they are asked", () => {
+    const client = { music: { getInfo: vi.fn() }, getBasicInfo: vi.fn() } as unknown as Innertube;
+    expect(clientLookups(client, "id").map((lookup) => lookup.name)).toEqual(["music", "TV", "iOS"]);
   });
 });

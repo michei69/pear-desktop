@@ -3,13 +3,25 @@ import { InnertubeSession, type PoTokenAnswer } from "@pear/sdk/innertube";
 import type { PoTokenRequest } from "@pear/sdk/potoken";
 import { startCrossfade } from "./page.ts";
 import { schema } from "./schema.ts";
-import { chooseAudioFormat, downloadAudio, lengthSecondsOf, MAX_FULL_DOWNLOAD_SECONDS, playableInfo } from "./source.ts";
+import {
+  clientLookups,
+  downloadAudio,
+  lengthSecondsOf,
+  MAX_FULL_DOWNLOAD_SECONDS,
+  playabilityError,
+  playableInfo,
+  streamAttempts,
+  streamFormat,
+  type TrackInfo,
+} from "./source.ts";
 
 const YTM_ORIGIN = "https://music.\u0079\u006f\u0075\u0074\u0075\u0062\u0065.com";
 /** An account rarely changes premium status mid-session. */
 const PREMIUM_CACHE_TTL_MS = 5 * 60 * 1000;
 /** BotGuard runs in the page; a page that hangs must not hold the track's second stream. */
 const PO_TOKEN_TIMEOUT_MS = 15_000;
+/** A candidate stream URL that doesn't answer a byte-range request in this long is refused. */
+const STREAM_PROBE_TIMEOUT_MS = 5_000;
 
 type Host = HostContext<ConfigOf<typeof schema>>;
 
@@ -34,12 +46,38 @@ export default definePlugin({
        */
       async audioUrl(videoId: string) {
         const { yt, poToken } = await streamSession(this, videoId);
-        const info = await playableInfo(yt, videoId, poToken);
-        const format = chooseAudioFormat(info, await isPremium(this));
-        // The format says whether a heavier muxed stream backs the tail; a
-        // stream that can't keep up is what makes a URL crossfade stutter.
-        this.log.info(`streaming ${videoId} as ${format.mime_type ?? "unknown"} (itag ${format.itag})`);
-        return await format.decipher(yt.session.player);
+        let lastError: unknown;
+        // A playable response can still have no stream a URL can use (SABR-only),
+        // and a client can offer a stream the CDN refuses for this account. Ask
+        // every client, and every format audio-only first, for one it serves.
+        for (const client of clientLookups(yt, videoId, poToken)) {
+          let info: TrackInfo;
+          try {
+            info = await client.info();
+          } catch (error) {
+            lastError = error;
+            continue;
+          }
+          if (info.playability_status?.status !== "OK") {
+            lastError = playabilityError(info);
+            continue;
+          }
+          for (const attempt of streamAttempts()) {
+            let url: string;
+            let format: ReturnType<typeof streamFormat>;
+            try {
+              format = streamFormat(info, attempt);
+              url = await format.decipher(yt.session.player);
+            } catch (error) {
+              lastError = error;
+              continue;
+            }
+            if (!(await serves(this, url))) continue;
+            this.log.info(`streaming ${videoId} as ${format.mime_type ?? "unknown"} (itag ${format.itag}) from the ${client.name} client`);
+            return url;
+          }
+        }
+        throw lastError instanceof Error ? lastError : new Error(`no playable stream for ${videoId}`);
       },
 
       /**
@@ -97,6 +135,27 @@ async function streamSession(ctx: Host, videoId: string) {
 async function cookiesOf(ctx: Host) {
   const cookies = await ctx.session.cookies.get({ url: YTM_ORIGIN });
   return cookies.length > 0 ? cookies.map((cookie) => `${cookie.name}=${cookie.value}`).join("; ") : undefined;
+}
+
+/**
+ * Whether the CDN serves a candidate stream URL to this session. A URL the
+ * account may not play (audio-only on a non-premium web client, an expired or
+ * region-blocked stream) answers 4xx here and would fail in the page too.
+ */
+async function serves(ctx: Host, url: string) {
+  try {
+    const response = await ctx.session.fetch(url, {
+      headers: { Range: "bytes=0-1023" },
+      signal: AbortSignal.timeout(STREAM_PROBE_TIMEOUT_MS),
+    });
+    // Cancel the (tiny) body: a URL that ignores the range must not be drained.
+    await response.body?.cancel();
+    if (!response.ok) ctx.log.info(`the CDN refused a stream URL (${response.status}); trying the next one`);
+    return response.ok;
+  } catch (error) {
+    ctx.log.warn("couldn't check a stream URL", error);
+    return false;
+  }
 }
 
 let premiumCache: { value: boolean; expires: number } | undefined;

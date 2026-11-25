@@ -14,6 +14,7 @@ const session = vi.hoisted(() => ({
     | {
         session: { player: { po_token?: string } };
         music: { getInfo: (videoId: string, options: { po_token?: string }) => Promise<unknown> };
+        getBasicInfo: (videoId: string, options: { client?: string }) => Promise<unknown>;
       }
     | undefined,
 }));
@@ -59,7 +60,7 @@ function trackInfo(lengthSeconds?: string) {
 }
 
 function harness() {
-  const fetch = vi.fn(async () => ({ ok: true }) as Response);
+  const fetch = vi.fn(async () => ({ ok: true }) as unknown as Response);
   const cookies = vi.fn(async () => [
     { name: "SAPISID", value: "secret" },
     { name: "PREF", value: "hl=en" },
@@ -79,10 +80,16 @@ function harness() {
   return { ctx, fetch, cookies, request, log: ctx.log };
 }
 
+const refused = { playability_status: { status: "LOGIN_REQUIRED" } };
+
 beforeEach(() => {
   session.created.length = 0;
   const { info } = trackInfo();
-  session.client = { session: { player: {} }, music: { getInfo: vi.fn(async () => info) } };
+  session.client = {
+    session: { player: {} },
+    music: { getInfo: vi.fn(async () => info) },
+    getBasicInfo: vi.fn(async () => refused),
+  };
 });
 
 describe("the crossfade's second stream", () => {
@@ -118,12 +125,65 @@ describe("the crossfade's second stream", () => {
   it("declines to buffer a track that is too long to download whole", async () => {
     const { ctx, log } = harness();
     const { info } = trackInfo("43200");
-    session.client = { session: { player: {} }, music: { getInfo: vi.fn(async () => info) } };
+    session.client = {
+      session: { player: {} },
+      music: { getInfo: vi.fn(async () => info) },
+      getBasicInfo: vi.fn(async () => refused),
+    };
     const commands = plugin.host!.commands as HostCommands;
     const audio = await commands.audioBytes.call(ctx, "long");
     expect(audio).toBeUndefined();
     expect(info.download).not.toHaveBeenCalled();
     expect(log.info).toHaveBeenCalledWith(expect.stringContaining("too long"));
+  });
+
+  it("streams the audio-only format a response offers, after checking the CDN serves it", async () => {
+    const { ctx, fetch, log } = harness();
+    const { info, format } = trackInfo();
+    session.client = {
+      session: { player: {} },
+      music: { getInfo: vi.fn(async () => info) },
+      getBasicInfo: vi.fn(async () => refused),
+    };
+    const url = await (plugin.host!.commands as HostCommands).audioUrl.call(ctx, "track");
+    expect(url).toBe("https://stream.example/audio");
+    expect(info.chooseFormat).toHaveBeenCalledWith({ type: "audio", format: "any", quality: "best" });
+    expect(format.decipher).toHaveBeenCalledOnce();
+    expect(fetch).toHaveBeenCalledWith("https://stream.example/audio", expect.objectContaining({ headers: { Range: "bytes=0-1023" } }));
+    expect(log.info).toHaveBeenCalledWith(expect.stringContaining("from the music client"));
+  });
+
+  it("asks the next client when a playable response has no stream for a URL", async () => {
+    const { ctx } = harness();
+    const noFormats = {
+      playability_status: { status: "OK" },
+      chooseFormat: vi.fn(() => {
+        throw new Error("No matching formats found");
+      }),
+    };
+    const { info } = trackInfo();
+    const getBasicInfo = vi.fn(async (_videoId: string, options: { client?: string }) =>
+      options.client === "TV_EMBEDDED" ? refused : info,
+    );
+    session.client = { session: { player: {} }, music: { getInfo: vi.fn(async () => noFormats) }, getBasicInfo };
+
+    const url = await (plugin.host!.commands as HostCommands).audioUrl.call(ctx, "track");
+    expect(url).toBe("https://stream.example/audio");
+    expect(getBasicInfo).toHaveBeenNthCalledWith(2, "track", { client: "IOS" });
+  });
+
+  it("moves to the next stream when the CDN refuses a candidate URL", async () => {
+    const { ctx, fetch } = harness();
+    fetch.mockResolvedValueOnce({ ok: false } as unknown as Response);
+    const urls = ["https://stream.example/refused", "https://stream.example/ok"];
+    let call = 0;
+    const format = { itag: 140, mime_type: "audio/mp4", decipher: vi.fn(async () => urls[call++]!) };
+    const info = { playability_status: { status: "OK" }, chooseFormat: vi.fn(() => format) };
+    session.client = { session: { player: {} }, music: { getInfo: vi.fn(async () => info) }, getBasicInfo: vi.fn() };
+
+    const url = await (plugin.host!.commands as HostCommands).audioUrl.call(ctx, "track");
+    expect(url).toBe("https://stream.example/ok");
+    expect(fetch).toHaveBeenCalledTimes(2);
   });
 
   it("asks for the bytes without a token when the page can't mint one", async () => {

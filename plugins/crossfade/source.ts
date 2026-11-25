@@ -53,48 +53,64 @@ export function mimeTypeOf(format: { mime_type?: string }, bytes: Uint8Array) {
   return format.mime_type || sniffAudioMime(bytes);
 }
 
-/**
- * A playable player response for a track, asked with its PO token. The music
- * client answers with the session's account; age-restricted songs need the TV
- * client (the music client refuses them); the iOS client is the last resort.
- */
-export async function playableInfo(yt: Innertube, videoId: string, poToken?: string): Promise<TrackInfo> {
-  let lastError: unknown;
-  const attempt = async (lookup: () => Promise<TrackInfo>) => {
-    try {
-      const info = await lookup();
-      if (info.playability_status?.status === "OK") return info;
-      const status = info.playability_status;
-      lastError = new Error(`[${status?.status ?? "unknown"}] ${status?.reason ?? ""}`.trim());
-    } catch (error) {
-      lastError = error;
-    }
-    return undefined;
-  };
-
-  const info =
-    (await attempt(() => yt.music.getInfo(videoId, poToken ? { po_token: poToken } : {}))) ??
-    (await attempt(() => yt.getBasicInfo(videoId, { client: "TV_EMBEDDED" }))) ??
-    (await attempt(() => yt.getBasicInfo(videoId, { client: "IOS" })));
-  if (!info) throw lastError instanceof Error ? lastError : new Error(`no playable response for ${videoId}`);
-  return info;
+/** One of the site's clients, in the order the crossfade asks them. */
+export interface ClientLookup {
+  /** For the log that says which one answered. */
+  name: string;
+  info(): Promise<TrackInfo>;
 }
 
 /**
- * The stream a second stream plays, in the order the premium state picked.
- * Audio-only is small enough at its best; the muxed fallback carries a video
- * track an <audio> never decodes, so it is asked for at the lowest quality.
+ * The site's clients for a track, in order. The music client answers with the
+ * session's account; age-restricted songs need the TV client (the music client
+ * refuses them); the iOS client is the fallback, and the one whose stream URLs
+ * play without a premium account.
  */
-export function chooseAudioFormat(info: TrackInfo, premium: boolean) {
+export function clientLookups(yt: Innertube, videoId: string, poToken?: string): readonly ClientLookup[] {
+  return [
+    { name: "music", info: () => yt.music.getInfo(videoId, poToken ? { po_token: poToken } : {}) },
+    { name: "TV", info: () => yt.getBasicInfo(videoId, { client: "TV_EMBEDDED" }) },
+    { name: "iOS", info: () => yt.getBasicInfo(videoId, { client: "IOS" }) },
+  ];
+}
+
+/** The refusal a player response carries. */
+export function playabilityError(info: TrackInfo) {
+  const status = info.playability_status;
+  return new Error(`[${status?.status ?? "unknown"}] ${status?.reason ?? ""}`.trim());
+}
+
+/** The first playable player response, in `clientLookups` order. */
+export async function playableInfo(yt: Innertube, videoId: string, poToken?: string): Promise<TrackInfo> {
   let lastError: unknown;
-  for (const attempt of downloadAttempts(premium)) {
+  for (const client of clientLookups(yt, videoId, poToken)) {
     try {
-      return info.chooseFormat({ ...attempt, quality: attempt.type === "audio" ? "best" : "worst" });
+      const info = await client.info();
+      if (info.playability_status?.status === "OK") return info;
+      lastError = playabilityError(info);
     } catch (error) {
       lastError = error;
     }
   }
-  throw lastError;
+  throw lastError instanceof Error ? lastError : new Error(`no playable response for ${videoId}`);
+}
+
+/**
+ * The stream a URL-backed tail is asked for, smallest first. Audio-only is all a
+ * crossfade needs; a response without one falls back to muxed at its smallest
+ * quality, whose video track an <audio> never decodes.
+ */
+export function streamAttempts(): readonly DownloadAttempt[] {
+  return [
+    { type: "audio", format: "any" },
+    { type: "video+audio", format: "mp4" },
+    { type: "video+audio", format: "any" },
+  ];
+}
+
+/** The response's format for one streaming attempt. */
+export function streamFormat(info: TrackInfo, attempt: DownloadAttempt) {
+  return info.chooseFormat({ ...attempt, quality: attempt.type === "audio" ? "best" : "worst" });
 }
 
 /**
