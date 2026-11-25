@@ -1,7 +1,9 @@
 // The second stream: the current track's own audio, played silently in step with
 // the video and handed over when the track ends, so its tail can fade out under
-// the next track. Keeping it on the video's clock from the start is what makes
-// the handover a splice instead of a switch: the two copies are the same signal.
+// the next track. Buffered bytes are already there, so they are kept on the
+// video's clock from the start, which makes the handover a splice instead of a
+// switch: the two copies are the same signal. A stream URL only needs its last
+// seconds, so it is fetched when the track nears its end instead.
 
 import type { AudioGraph, Unsubscribe, YTPlayerApi } from "@pear/sdk";
 import { listenAll } from "@pear/sdk/dom";
@@ -13,13 +15,13 @@ const AUDIO_FETCH_ATTEMPTS = 3;
 /** Delay between audio fetch attempts, in milliseconds. */
 const AUDIO_FETCH_RETRY_MS = 500;
 /** Seconds before the fade window opens that a track's stream URL is fetched. */
-const URL_WARMUP_LEAD_SECONDS = 10;
+const URL_WARMUP_LEAD_SECONDS = 30;
 /**
  * Audio a URL stream must have buffered ahead before it takes the track over, in
  * seconds: enough headroom that ordinary jitter cannot stall the fade, which
  * runs on the audio clock. Bytes are already all there.
  */
-const HANDOVER_BUFFER_SECONDS = 5;
+const HANDOVER_BUFFER_SECONDS = 2;
 /** A pause this short is the site switching tracks, not the user stopping. */
 const OUTGOING_PAUSE_GRACE_MS = 300;
 
@@ -78,6 +80,8 @@ interface Stream {
   gone: boolean;
   alignment: ReturnType<typeof setInterval> | undefined;
   fade: Fade | undefined;
+  /** Reason the last handover was refused, so retries log each state once. */
+  refusal: string | undefined;
 }
 
 /**
@@ -158,6 +162,16 @@ export function secondStream(ctx: Ctx, graph: AudioGraph) {
     const { audio } = stream;
     if (stream.starting || audio.paused || audio.seeking || audio.readyState < HTMLMediaElement.HAVE_FUTURE_DATA) return false;
     return stream.kind === "bytes" || bufferedAhead(audio) >= HANDOVER_BUFFER_SECONDS;
+  };
+
+  /** Why a stream can't take the track over, for the log that explains a plain fade. */
+  const handoverRefusal = (stream: Stream) => {
+    const { audio } = stream;
+    if (stream.starting) return "still starting";
+    if (audio.paused) return "paused";
+    if (audio.seeking) return "seeking";
+    if (audio.readyState < HTMLMediaElement.HAVE_FUTURE_DATA) return `readyState ${audio.readyState}`;
+    return `only ${bufferedAhead(audio).toFixed(1)}s buffered`;
   };
 
   const stopAlignment = (stream: Stream) => {
@@ -288,6 +302,7 @@ export function secondStream(ctx: Ctx, graph: AudioGraph) {
       gone: false,
       alignment: undefined,
       fade: undefined,
+      refusal: undefined,
     };
 
     // Measures what starting the audio costs the clock, for the next start to
@@ -317,6 +332,7 @@ export function secondStream(ctx: Ctx, graph: AudioGraph) {
     current = stream;
     stream.alignment = ctx.setInterval(() => align(stream), ALIGN_INTERVAL_MS);
     follow();
+    if (source.kind === "url") ctx.log.info(`the tail of ${videoId} is streaming ${video.currentTime.toFixed(1)}s in`);
   };
 
   /** The track's bytes, or none when they can't be buffered (too long, refused, URL-only mode). */
@@ -568,7 +584,15 @@ export function secondStream(ctx: Ctx, graph: AudioGraph) {
       // The fetched copy is the original track; another one must not be spliced in.
       if (!isOriginalAudioTrack(ctx.player.api)) return false;
       if (stream.videoId !== ctx.player.state.track?.videoId) return false;
-      if (!canHandOver(stream)) return false;
+      if (!canHandOver(stream)) {
+        const reason = handoverRefusal(stream);
+        if (stream.refusal !== reason) {
+          stream.refusal = reason;
+          ctx.log.info(`the tail of ${stream.videoId} can't take over yet: ${reason}`);
+        }
+        return false;
+      }
+      stream.refusal = undefined;
 
       stopAlignment(stream);
       stream.audio.playbackRate = video.playbackRate;

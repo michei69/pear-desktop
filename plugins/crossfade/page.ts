@@ -1,6 +1,7 @@
 // The crossfade's wiring: when to hand the track over to its own audio, click to
-// the next one, and fade it in. Without a second stream (its audio didn't arrive,
-// or wasn't playable), the track fades out before the next one fades in.
+// the next one, and fade it in. Without a second stream the track plays to its
+// end: the next one fades in when the player starts it, and the plugin never jumps
+// early to cover a missing tail.
 
 import { listenAll } from "@pear/sdk/dom";
 import { type PoTokenRequest, poTokens } from "@pear/sdk/potoken";
@@ -16,8 +17,8 @@ const MIN_TRACK_SECONDS = 30;
 const AUTO_TRANSITION_TIMEOUT_MS = 5000;
 /** Short ramp back to full level after a next-track click that didn't navigate. */
 const RESTORE_SECONDS = 0.05;
-/** Short ramp down when a stream was expected but cannot take the track over. */
-const FAILED_HANDOVER_SECONDS = 0.2;
+/** A retry this close to the real end would race the player's own transition. */
+const LATE_HANDOVER_MARGIN_SECONDS = 0.3;
 
 interface FadeIn {
   startedAt: number;
@@ -41,8 +42,6 @@ export async function startCrossfade(ctx: Ctx) {
   const fader = createFader(ctx, graph);
   const stream = secondStream(ctx, graph);
 
-  /** The fallback fade-out (no second stream) is under way. */
-  let fadingOut = false;
   /** The next track was already asked for; `timeupdate` must not ask again. */
   let skipped = false;
   /** The incoming track has loaded but has not started, so its fade waits for `playing`. */
@@ -55,6 +54,8 @@ export async function startCrossfade(ctx: Ctx) {
   let fadingIn: FadeIn | null = null;
   /** Context time the handover splice of the outgoing track runs until. */
   let handoverUntil = 0;
+  /** The handover was already tried at this end, so later attempts keep clear of the player's own. */
+  let handoverTried = false;
 
   /** Seconds of a fade-in that have run, including the part before a pause. */
   const fadeInElapsed = (fade: FadeIn) =>
@@ -72,21 +73,8 @@ export async function startCrossfade(ctx: Ctx) {
     return { start: end - length, end, length };
   };
 
-  // The fallback: with no second stream to hand over to, the video's own audio
-  // fades out over the rest of the fade window.
-  const scheduleFadeOut = () => {
-    const fade = fadeWindow();
-    if (!fade || video.paused || stream.ready()) return;
-    const position = video.currentTime;
-    if (position < fade.start || position >= fade.end) return;
-    fadingOut = true;
-    const from = fade.length > 0 ? (fade.end - position) / fade.length : 0;
-    fader.ramp(from, 0, (fade.end - position) / video.playbackRate);
-  };
-
   const startFadeIn = () => {
     pendingFadeIn = false;
-    fadingOut = false;
     const duration = ctx.config.fadeInDuration / 1000 / video.playbackRate;
     if (duration <= 0) {
       fadingIn = null;
@@ -149,14 +137,13 @@ export async function startCrossfade(ctx: Ctx) {
     handoverUntil = 0;
     pendingFadeIn = false;
     fadingIn = null;
-    fadingOut = false;
     clearAutoTransition();
   };
 
   const skip = () => {
-    skipped = true;
-    fadingOut = false;
+    handoverTried = true;
     if (ctx.player.state.repeat === "one") {
+      skipped = true;
       // The same track starts over: there is no next track to overlap, so only
       // the fade-in runs (the silent copy follows the seek).
       ctx.player.control({ type: "seek", seconds: 0 });
@@ -166,20 +153,12 @@ export async function startCrossfade(ctx: Ctx) {
     // The track's own audio is already running silently with the video, so the
     // handover is a splice: both copies play for a moment while the audio moves
     // from the video into the stream. The stream then fades its tail out under
-    // the next track.
-    if (stream.handover(ctx.config.fadeOutDuration / 1000)) {
-      fader.splice(0, HANDOVER_SECONDS);
-      handoverUntil = context.currentTime + HANDOVER_SECONDS;
-    } else if (fadingOut) {
-      // The fallback fade has already taken the video down.
-      fader.hold(0);
-      handoverUntil = 0;
-    } else {
-      // A stream was expected but could not take over: take the video down over
-      // a moment rather than at a sample.
-      fader.ramp(1, 0, FAILED_HANDOVER_SECONDS);
-      handoverUntil = 0;
-    }
+    // the next track. Without a stream to take over, the track keeps playing to
+    // its own end; the plugin does not jump early and cut it off.
+    if (!stream.handover(ctx.config.fadeOutDuration / 1000)) return;
+    skipped = true;
+    fader.splice(0, HANDOVER_SECONDS);
+    handoverUntil = context.currentTime + HANDOVER_SECONDS;
     // Bounded: a click that does not navigate (no next button, end of queue)
     // must not stay armed for the next track, and must not leave this one silent.
     clearAutoTransition();
@@ -197,19 +176,11 @@ export async function startCrossfade(ctx: Ctx) {
     stream.preload();
     pruneFadeIn();
     const position = video.currentTime;
-    if (position >= fade.end) {
-      if (!skipped) skip();
-      return;
-    }
-    // Its audio arrived after the fallback fade began: bring the video back up so
-    // the handover has both copies at full level.
-    if (fadingOut && stream.ready()) {
-      fader.splice(1, 0.05);
-      fadingOut = false;
-    }
-    if (!fadingOut && !fadingIn && !skipped && position >= fade.start && !stream.ready()) {
-      scheduleFadeOut();
-    }
+    if (position < fade.end || skipped) return;
+    // The tail may still be warming up when the handover point passes: keep
+    // trying, and only skip once it can take the track over.
+    if (handoverTried && video.duration - position <= LATE_HANDOVER_MARGIN_SECONDS) return;
+    skip();
   };
 
   const resync = () => {
@@ -221,33 +192,16 @@ export async function startCrossfade(ctx: Ctx) {
       fader.freeze();
       return;
     }
-
-    const fade = fadeWindow();
-    if (!fade || video.currentTime < fade.start) {
-      // Seeked back out of a fade-out; a fade-in in progress is left alone.
-      skipped = false;
-      fadingOut = false;
-      if (fadingIn) resumeFadeIn();
-      else if (!stream.ready()) fader.hold(1);
-      return;
-    }
-
     if (fadingIn) {
       resumeFadeIn();
       return;
     }
-
-    if (stream.ready()) {
-      // The video is not faded before the handover: both copies have to be at full
-      // level for the splice to be clickless.
-      fader.hold(1);
-      fadingOut = false;
-      return;
+    // Seeked back before the handover point: its end gets a fresh attempt.
+    const fade = fadeWindow();
+    if (!fade || video.currentTime < fade.end) {
+      skipped = false;
+      handoverTried = false;
     }
-    // A next-track click already failed for this track: leave its restored level
-    // alone instead of fading the tail out again.
-    if (skipped) return;
-    scheduleFadeOut();
   };
 
   ctx.player.on("trackLoading", (videoId) => {
@@ -260,7 +214,7 @@ export async function startCrossfade(ctx: Ctx) {
     }
     clearAutoTransition();
     skipped = false;
-    fadingOut = false;
+    handoverTried = false;
     pendingFadeIn = true;
     fadingIn = null;
     stream.prepare(videoId);

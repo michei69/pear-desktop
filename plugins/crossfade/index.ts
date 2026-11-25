@@ -35,7 +35,11 @@ export default definePlugin({
       async audioUrl(videoId: string) {
         const { yt, poToken } = await streamSession(this, videoId);
         const info = await playableInfo(yt, videoId, poToken);
-        return await chooseAudioFormat(info, await isPremium(this)).decipher(yt.session.player);
+        const format = chooseAudioFormat(info, await isPremium(this));
+        // The format says whether a heavier muxed stream backs the tail; a
+        // stream that can't keep up is what makes a URL crossfade stutter.
+        this.log.info(`streaming ${videoId} as ${format.mime_type ?? "unknown"} (itag ${format.itag})`);
+        return await format.decipher(yt.session.player);
       },
 
       /**

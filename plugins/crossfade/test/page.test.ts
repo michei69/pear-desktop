@@ -10,25 +10,19 @@ type Config = Ctx["config"];
 /** The second stream's surface, so a swap, a handover or a failed fetch can be staged. */
 const streamOf = vi.hoisted(() => {
   const calls: string[] = [];
-  let ready = false;
   let handover = false;
   return {
     calls,
-    setReady(value: boolean) {
-      ready = value;
-    },
     setHandover(value: boolean) {
       handover = value;
     },
     reset() {
       calls.length = 0;
-      ready = false;
       handover = false;
     },
     stream: {
       prepare: (videoId: string) => calls.push(`prepare:${videoId}`),
       preload: () => calls.push("preload"),
-      ready: () => ready,
       handover: (seconds: number) => {
         calls.push(`handover:${seconds}`);
         return handover;
@@ -223,18 +217,52 @@ describe("the crossfade's transition", () => {
     vi.useRealTimers();
   });
 
-  it("gives a last track its tail back when the next click does not navigate", async () => {
+  it("skips into the next track once the tail can take over", async () => {
     const app = harness({ duration: 100 });
+    streamOf.setHandover(true);
     await app.start();
-    // Inside the fallback fade window: the video fades on its own toward silence.
-    app.video().currentTime = 89;
-    app.emitVideo("timeupdate");
-    expect(app.gain().curves).toHaveLength(1);
-    // The end of the fade window: the next track is asked for, and the video is
-    // muted for the handover that will not come.
     app.video().currentTime = 90.2;
     app.emitVideo("timeupdate");
     expect(streamOf.calls).toContain("handover:5");
+    expect(app.player.controls).toEqual([{ type: "next" }]);
+    expect(app.gain().value).toBe(0);
+  });
+
+  it("leaves the track to end on its own when no stream can take over", async () => {
+    const app = harness({ duration: 100 });
+    await app.start();
+    app.video().currentTime = 90.2;
+    app.emitVideo("timeupdate");
+    expect(streamOf.calls).toContain("handover:5");
+    // No jump and no fade: the player ends the track and starts the next one,
+    // which fades in on its own.
+    expect(app.player.controls).toEqual([]);
+    expect(app.gain().value).toBe(1);
+    expect(app.gain().curves).toHaveLength(0);
+  });
+
+  it("keeps trying the handover instead of skipping while the tail gets ready", async () => {
+    const app = harness({ duration: 100 });
+    await app.start();
+    app.video().currentTime = 90.2;
+    app.emitVideo("timeupdate");
+    expect(app.player.controls).toEqual([]);
+
+    // Ready a moment later: the crossfade starts late rather than the track
+    // ending with its tail cut off.
+    streamOf.setHandover(true);
+    app.video().currentTime = 92;
+    app.emitVideo("timeupdate");
+    expect(app.player.controls).toEqual([{ type: "next" }]);
+    expect(app.gain().value).toBe(0);
+  });
+
+  it("gives a last track its tail back when the next click does not navigate", async () => {
+    const app = harness({ duration: 100 });
+    streamOf.setHandover(true);
+    await app.start();
+    app.video().currentTime = 90.2;
+    app.emitVideo("timeupdate");
     expect(app.player.controls).toEqual([{ type: "next" }]);
     expect(app.gain().value).toBe(0);
 
@@ -255,7 +283,6 @@ describe("the crossfade's transition", () => {
 
   it("ends a stale handover's outgoing stream when its navigation never comes", async () => {
     const app = harness({ duration: 100 });
-    streamOf.setReady(true);
     streamOf.setHandover(true);
     await app.start();
     app.video().currentTime = 90.2;
@@ -270,7 +297,6 @@ describe("the crossfade's transition", () => {
 
   it("crossfades an automatic transition and keeps the handover after trackLoading", async () => {
     const app = harness({ duration: 100 });
-    streamOf.setReady(true);
     streamOf.setHandover(true);
     await app.start();
 
@@ -302,6 +328,7 @@ describe("the crossfade's transition", () => {
 
   it("releases the armed transition when the navigation only reports trackChange", async () => {
     const app = harness({ duration: 100 });
+    streamOf.setHandover(true);
     await app.start();
     app.video().currentTime = 90.2;
     app.emitVideo("timeupdate");
@@ -328,28 +355,9 @@ describe("the crossfade's transition", () => {
     expect(streamOf.calls).toContain("preload");
   });
 
-  it("takes the video down over a moment when a ready stream cannot take over", async () => {
-    const app = harness({ duration: 100 });
-    streamOf.setReady(true);
-    streamOf.setHandover(false);
-    await app.start();
-    app.video().currentTime = 90.2;
-    app.emitVideo("timeupdate");
-    // The fallback fade never ran: the video is still at full level, so the cut
-    // is ramped rather than stepped.
-    const last = app.gain().curves.at(-1)!;
-    expect(last.duration).toBeCloseTo(0.2, 6);
-    expect(last.curve[0]).toBeCloseTo(1, 6);
-    expect(last.curve.at(-1)).toBeCloseTo(0, 6);
-  });
-
-  it("cuts the outgoing fade on a manual skip and fades the incoming track in", async () => {
+  it("cuts the outgoing tail on a manual skip and fades the incoming track in", async () => {
     const app = harness({ duration: 120 });
     await app.start();
-    app.video().currentTime = 106;
-    app.emitVideo("timeupdate");
-    expect(app.gain().curves).toHaveLength(1);
-
     app.emitPlayer("trackLoading", "b");
     expect(streamOf.calls).toContain("cancelTransition");
     expect(app.gain().value).toBe(0);
@@ -391,19 +399,6 @@ describe("the crossfade's transition", () => {
     expect(app.player.controls).toEqual([]);
     expect(streamOf.calls).not.toContain("handover:5");
     expect(app.gain().curves).toHaveLength(0);
-  });
-
-  it("fades with no second stream at all (failed fetch)", async () => {
-    const app = harness({ duration: 100 });
-    await app.start();
-    app.video().currentTime = 89;
-    app.emitVideo("timeupdate");
-    // The fallback fade owns the window; the handover then has nothing to hand to.
-    expect(app.gain().curves).toHaveLength(1);
-    app.video().currentTime = 90.2;
-    app.emitVideo("timeupdate");
-    expect(streamOf.calls).toContain("handover:5");
-    expect(app.player.controls).toEqual([{ type: "next" }]);
   });
 
   it("seeks to the start instead of asking for the next track while repeating one", async () => {
