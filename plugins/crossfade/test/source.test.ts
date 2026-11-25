@@ -165,5 +165,7 @@ describe("the audio bytes", () => {
     const info = { chooseFormat } as unknown as TrackInfo;
     expect(chooseAudioFormat(info, true)).toBe(chosen);
     expect(chooseFormat).toHaveBeenCalledTimes(2);
+    // The muxed fallback's video track is never decoded, so the smallest one goes.
+    expect(chooseFormat).toHaveBeenLastCalledWith({ type: "video+audio", format: "mp4", quality: "worst" });
   });
 });

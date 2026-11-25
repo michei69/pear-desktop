@@ -80,12 +80,16 @@ export async function playableInfo(yt: Innertube, videoId: string, poToken?: str
   return info;
 }
 
-/** The best stream of a playable response, in the order the premium state picked. */
+/**
+ * The stream a second stream plays, in the order the premium state picked.
+ * Audio-only is small enough at its best; the muxed fallback carries a video
+ * track an <audio> never decodes, so it is asked for at the lowest quality.
+ */
 export function chooseAudioFormat(info: TrackInfo, premium: boolean) {
   let lastError: unknown;
   for (const attempt of downloadAttempts(premium)) {
     try {
-      return info.chooseFormat({ ...attempt, quality: "best" });
+      return info.chooseFormat({ ...attempt, quality: attempt.type === "audio" ? "best" : "worst" });
     } catch (error) {
       lastError = error;
     }

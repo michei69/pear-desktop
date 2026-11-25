@@ -580,10 +580,23 @@ export function secondStream(ctx: Ctx, graph: AudioGraph) {
      */
     handover(fadeSeconds: number): boolean {
       const stream = current;
-      if (!stream || stream.gone || fadeSeconds <= 0) return false;
+      if (!stream || stream.gone) {
+        ctx.log.info(`nothing to hand ${ctx.player.state.track?.videoId} over to`);
+        return false;
+      }
+      if (fadeSeconds <= 0) {
+        ctx.log.info(`no fade-out configured; leaving ${stream.videoId} to end on its own`);
+        return false;
+      }
       // The fetched copy is the original track; another one must not be spliced in.
-      if (!isOriginalAudioTrack(ctx.player.api)) return false;
-      if (stream.videoId !== ctx.player.state.track?.videoId) return false;
+      if (!isOriginalAudioTrack(ctx.player.api)) {
+        ctx.log.info(`the audio track of ${stream.videoId} isn't the original; leaving it to end on its own`);
+        return false;
+      }
+      if (stream.videoId !== ctx.player.state.track?.videoId) {
+        ctx.log.info(`the tail of ${stream.videoId} is not ${ctx.player.state.track?.videoId}`);
+        return false;
+      }
       if (!canHandOver(stream)) {
         const reason = handoverRefusal(stream);
         if (stream.refusal !== reason) {
@@ -608,6 +621,7 @@ export function secondStream(ctx: Ctx, graph: AudioGraph) {
       scheduleRelease(stream, HANDOVER_SECONDS + fadeSeconds);
       outgoing = stream;
       current = null;
+      ctx.log.info(`the tail of ${stream.videoId} takes over ${(video.duration - video.currentTime).toFixed(1)}s before the end`);
       return true;
     },
 

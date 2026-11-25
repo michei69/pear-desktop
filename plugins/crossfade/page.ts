@@ -132,6 +132,7 @@ export async function startCrossfade(ctx: Ctx) {
    * resets it.
    */
   const restoreAfterFailedTransition = () => {
+    ctx.log.info(`the next track never arrived; taking ${ctx.player.state.track?.videoId} back`);
     stream.cancelTransition();
     fader.splice(1, RESTORE_SECONDS);
     handoverUntil = 0;
@@ -141,6 +142,11 @@ export async function startCrossfade(ctx: Ctx) {
   };
 
   const skip = () => {
+    if (!handoverTried) {
+      ctx.log.info(
+        `handover point of ${ctx.player.state.track?.videoId}: ${video.currentTime.toFixed(1)}s of ${video.duration.toFixed(1)}s`,
+      );
+    }
     handoverTried = true;
     if (ctx.player.state.repeat === "one") {
       skipped = true;
@@ -166,6 +172,7 @@ export async function startCrossfade(ctx: Ctx) {
     autoTransitionTimer = ctx.setTimeout(restoreAfterFailedTransition, AUTO_TRANSITION_TIMEOUT_MS);
     pendingFadeIn = true;
     fadingIn = null;
+    ctx.log.info(`asking the player for the next track after ${ctx.player.state.track?.videoId}`);
     ctx.player.control({ type: "next" });
   };
 
@@ -211,6 +218,8 @@ export async function startCrossfade(ctx: Ctx) {
     if (!autoTransition) {
       stream.cancelTransition();
       fader.hold(0);
+    } else {
+      ctx.log.info(`the next track (${videoId}) is loading; the outgoing tail keeps playing`);
     }
     clearAutoTransition();
     skipped = false;
