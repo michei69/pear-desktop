@@ -34,14 +34,28 @@ const BASE_ENABLED_FEATURES = [
  */
 const BASE_DISABLED_FEATURES = ["FluentScrollbar", "BackForwardCache", "Prerender2"];
 
+/**
+ * AVFoundation exposes the system's Spatial Audio controls for compatible
+ * headphones. Chromium only switches to it reliably on macOS 27 and later.
+ */
+export function macSpatialAudioFeature(platform = process.platform, version = process.getSystemVersion()): string | undefined {
+  if (platform !== "darwin") return;
+  return Number.parseInt(version, 10) >= 27 ? "MacAVFoundationPlayback" : undefined;
+}
+
 /** Must run before `app.whenReady()`. */
 export function beforeReady(app: App, settings: Settings, plugins: PluginHost, smtcLoaded = false) {
   const advanced = settings.core("advanced");
   if (advanced.disableHardwareAcceleration) app.disableHardwareAcceleration();
   registerSettingsScheme();
   const features = plugins.beforeReady(app);
-  const enabled = new Set([...BASE_ENABLED_FEATURES, ...features.enabled]);
-  const disabled = new Set([...BASE_DISABLED_FEATURES, ...features.disabled]);
+  // Keep flags another part of the launch already set: a second appendSwitch silences the first.
+  const existing = app.commandLine.getSwitchValue("enable-features").split(",");
+  const existingDisabled = app.commandLine.getSwitchValue("disable-features").split(",");
+  const enabled = new Set([...existing.filter(Boolean), ...BASE_ENABLED_FEATURES, ...features.enabled]);
+  const disabled = new Set([...existingDisabled.filter(Boolean), ...BASE_DISABLED_FEATURES, ...features.disabled]);
+  const spatialAudio = macSpatialAudioFeature();
+  if (spatialAudio) enabled.add(spatialAudio);
   // node-smtc replaces Chromium's media session on Windows (see index.ts).
   for (const feature of smtcDisabledFeatures(smtcLoaded)) disabled.add(feature);
   // One switch per list: a second appendSwitch silences the first.

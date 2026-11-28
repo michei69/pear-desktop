@@ -147,7 +147,7 @@ const AUDIO_GRAPH_PLUGINS = ["audio-compressor", "crossfade", "custom-output-dev
 const warmsAudioGraph = AUDIO_GRAPH_PLUGINS.some((id) => runner.state(id)?.enabled === true);
 void player.videoReady().then((video) => {
   ensureCORSMedia(video);
-  if (warmsAudioGraph) captureAudioGraph(video);
+  if (warmsAudioGraph) captureAudioGraph(video, bridge.bootstrap.platform);
 });
 player.on("videoChange", (video) => rebindAudioGraph(video));
 installInactivityKeepAlive(player);

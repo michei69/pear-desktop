@@ -31,9 +31,11 @@ export class AudioGraph implements AudioGraphApi {
   #bus: GainNode;
   #seq = 0;
 
-  constructor(video: HTMLVideoElement) {
+  constructor(video: HTMLVideoElement, platform = "") {
     this.#video = video;
-    this.context = new AudioContext({ latencyHint: "playback" });
+    // macOS's AVFoundation backend needs playback latency for Spatial Audio;
+    // elsewhere interactive keeps controls and analysis responsive.
+    this.context = new AudioContext({ latencyHint: platform === "darwin" ? "playback" : "interactive" });
     this.#bus = this.context.createGain();
     // Before the source node exists: Web Audio silences cross-origin media
     // that was not fetched in CORS mode (podcast/RSS audio).
@@ -173,8 +175,8 @@ let captured: AudioGraph | undefined;
  * YTM's live <video> (not a stale `videoReady()` result); plugins insert
  * stages through the graph instead of constructing their own.
  */
-export function captureAudioGraph(video: HTMLVideoElement): AudioGraph {
-  captured ??= new AudioGraph(video);
+export function captureAudioGraph(video: HTMLVideoElement, platform = ""): AudioGraph {
+  captured ??= new AudioGraph(video, platform);
   captured.rebind(video);
   return captured;
 }

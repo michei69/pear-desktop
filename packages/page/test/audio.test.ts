@@ -22,7 +22,12 @@ class FakeGain extends FakeNode {
 }
 
 class FakeContext {
+  static lastOptions: AudioContextOptions | undefined;
   readonly destination = new FakeNode();
+
+  constructor(options?: AudioContextOptions) {
+    FakeContext.lastOptions = options;
+  }
 
   createGain() {
     return new FakeGain();
@@ -56,6 +61,13 @@ describe("the shared graph's external streams", () => {
 
   afterEach(() => {
     vi.unstubAllGlobals();
+  });
+
+  it("uses playback latency on macOS and interactive latency elsewhere", () => {
+    new AudioGraph(fakeVideo(), "darwin");
+    expect(FakeContext.lastOptions?.latencyHint).toBe("playback");
+    new AudioGraph(fakeVideo(), "linux");
+    expect(FakeContext.lastOptions?.latencyHint).toBe("interactive");
   });
 
   it("joins after the stages at or below its order, before the higher ones", () => {

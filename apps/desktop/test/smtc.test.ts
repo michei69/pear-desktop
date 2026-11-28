@@ -4,7 +4,7 @@ import { join } from "node:path";
 import type { NowPlaying } from "@pear/sdk";
 import { afterEach, describe, expect, test, vi } from "vitest";
 import { startSmtc } from "../src/main/smtc.ts";
-import { smtcDisabledFeatures } from "../src/main/startup-tasks.ts";
+import { macSpatialAudioFeature, smtcDisabledFeatures } from "../src/main/startup-tasks.ts";
 
 const artwork = vi.hoisted(() => ({ artworkImage: vi.fn() }));
 
@@ -103,6 +103,14 @@ describe("Chromium's media session and SMTC", () => {
     // The fallback matters: with forceSmtc on and the addon missing, Windows keeps its media keys.
     expect(smtcDisabledFeatures(false)).toEqual([]);
     expect(smtcDisabledFeatures(true)).toEqual(["HardwareMediaKeyHandling", "MediaSessionService"]);
+  });
+
+  test("AVFoundation playback is enabled only on macOS 27 and later", () => {
+    expect(macSpatialAudioFeature("darwin", "27.0.1")).toBe("MacAVFoundationPlayback");
+    expect(macSpatialAudioFeature("darwin", "27")).toBe("MacAVFoundationPlayback");
+    expect(macSpatialAudioFeature("darwin", "26.6.1")).toBeUndefined();
+    expect(macSpatialAudioFeature("win32", "27")).toBeUndefined();
+    expect(macSpatialAudioFeature("linux", "27")).toBeUndefined();
   });
 });
 
