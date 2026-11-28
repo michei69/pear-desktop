@@ -1,7 +1,12 @@
 #!/bin/sh
 # Installed for everyone by the root `prepare` script (scripts/install-hooks.ts).
+set -e
 
 # Keep the trademarked app name out of the sources:
 # escaped in JSON (fixed here; package managers un-escape package.json), never
 # plain in code or docs (reported here).
-exec node scripts/escape-names.ts --staged
+node scripts/escape-names.ts --staged
+
+# The same gates CI runs, before the commit exists.
+nub run lint
+nub run format:check

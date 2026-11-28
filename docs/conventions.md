@@ -43,7 +43,7 @@ nub run check:packaging # the packaged files list (scripts/check-packaging.ts)
 nub run check           # lint, format:check, typecheck and check:packaging
 ```
 
-`nub run check` runs the four in order; the individual scripts are there for a quicker loop. CI runs oxlint through reviewdog and the release workflows run no tests, so run them locally.
+`nub run check` runs the four in order; the individual scripts are there for a quicker loop. The pre-commit hook runs `lint` and `format:check` too (alongside `escape-names`), so a commit cannot bypass the two style gates. CI runs oxlint through reviewdog and the release workflows run no tests, so run them locally.
 
 Other conventions:
 
