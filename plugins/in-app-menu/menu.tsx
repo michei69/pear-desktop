@@ -105,7 +105,7 @@ export class AppMenu {
     // Re-anchor panels to their trigger or item when the window resizes.
     ctx.listen(window, "resize", () => this.#placeAll());
     // The menu can be rebuilt under an open panel (a plugin toggled its items, a language change).
-    ctx.host.on("menu-changed", () => void this.#refreshOpen());
+    ctx.host.on("menu-changed", () => void this.#refreshOpen().catch((error) => ctx.log.warn("couldn't refresh the menu", error)));
     const onKeydown = (event: KeyboardEvent) => {
       if (!isMenuKey(event)) return;
       event.preventDefault();
@@ -116,7 +116,7 @@ export class AppMenu {
   }
 
   toggle(focusFirst: boolean) {
-    if (this.#panels.length === 0) void this.open(focusFirst);
+    if (this.#panels.length === 0) void this.open(focusFirst).catch((error) => this.#ctx.log.warn("couldn't open the menu", error));
     else this.close();
   }
 
@@ -244,7 +244,10 @@ export class AppMenu {
 
   #commandItem(item: HTMLButtonElement, node: MenuNode, level: number) {
     item.addEventListener("pointerenter", () => this.#closeFrom(level + 1));
-    item.addEventListener("click", () => void this.#activate(node, level));
+    item.addEventListener(
+      "click",
+      () => void this.#activate(node, level).catch((error) => this.#ctx.log.warn("menu command failed", error)),
+    );
   }
 
   /**

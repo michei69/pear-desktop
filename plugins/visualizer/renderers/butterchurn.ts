@@ -8,7 +8,14 @@ let butterchurn: Promise<ButterchurnModule> | undefined;
 
 /** Milkdrop presets on WebGL; drawn by the page's frame loop. */
 export async function butterchurnRenderer({ ctx, graph, canvas, size }: Stage): Promise<Renderer | undefined> {
-  butterchurn ??= ctx.host.invoke("butterchurn").then((source) => importSource<ButterchurnModule>(source));
+  butterchurn ??= ctx.host
+    .invoke("butterchurn")
+    .then((source) => importSource<ButterchurnModule>(source))
+    // A failed import must be retried on the next start, not cached forever.
+    .catch((error: unknown) => {
+      butterchurn = undefined;
+      throw error;
+    });
   const [module, preset] = await Promise.all([butterchurn, ctx.host.invoke("preset", ctx.config.preset)]);
   if (ctx.signal.aborted) return;
   // Feed butterchurn a little louder than the track.

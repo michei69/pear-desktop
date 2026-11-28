@@ -156,6 +156,8 @@ export interface RestartRequirement {
 
 export type HostEvent =
   | { type: "plugin-state"; id: string; state: PluginState }
+  /** Several states at once (a toggle can change a conflicting pair): one render instead of one per plugin. */
+  | { type: "plugin-states"; states: Record<string, PluginState> }
   | { type: "plugin-event"; id: string; event: string; payload: unknown }
   /** An empty message clears the plugin's host error. */
   | { type: "plugin-error"; id: string; message: string }

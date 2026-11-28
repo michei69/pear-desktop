@@ -281,7 +281,9 @@ export function migrate(
   const config: StoredConfig = structuredClone(stored ?? {});
   const files: MigratedFiles = {};
   const previous = stored ? (config.__internal__?.migrations?.version ?? "0.0.0") : appVersion;
-  for (const [version, migration] of MIGRATIONS) {
+  // Oldest first, whatever order the entries were added in: a migration may rely
+  // on an earlier one having run.
+  for (const [version, migration] of [...MIGRATIONS].sort(([a], [b]) => compareVersions(a, b))) {
     if (compareVersions(version, previous) > 0 && compareVersions(version, appVersion) <= 0) migration(config, files);
   }
   const migrated = !stored || previous !== appVersion;

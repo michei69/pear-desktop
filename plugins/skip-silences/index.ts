@@ -39,7 +39,8 @@ export default definePlugin({
         analyser.getFloatFrequencyData(bins);
         let max = Number.NEGATIVE_INFINITY;
         for (const bin of bins.subarray(FIRST_BIN)) {
-          if (bin > max && bin < 0) max = bin;
+          // 0 dB (or a clipped bin above it) is loud, not silence.
+          if (bin > max) max = bin;
         }
         return max;
       };

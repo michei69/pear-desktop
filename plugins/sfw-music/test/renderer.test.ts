@@ -1,4 +1,4 @@
-import type { QueueItem } from "@pear/sdk";
+import { type QueueItem, resetSkipClaims } from "@pear/sdk";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import plugin from "../index.ts";
 
@@ -264,6 +264,7 @@ function setup() {
 let fixture: Fixture;
 
 beforeEach(() => {
+  resetSkipClaims();
   fixture = setup();
 });
 

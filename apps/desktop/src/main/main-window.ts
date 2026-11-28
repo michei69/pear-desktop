@@ -33,7 +33,14 @@ const BACKGROUND_COLOR = "#030303";
 const HIDDEN_CACHE_RELEASE_MS = 60_000;
 
 /** The standalone settings window only follows state, not page-runtime traffic. */
-const SETTINGS_EVENTS = new Set<HostEvent["type"]>(["plugin-state", "plugin-error", "plugin-status", "core-state", "themes"]);
+const SETTINGS_EVENTS = new Set<HostEvent["type"]>([
+  "plugin-state",
+  "plugin-states",
+  "plugin-error",
+  "plugin-status",
+  "core-state",
+  "themes",
+]);
 
 interface Rect {
   x: number;
@@ -173,7 +180,7 @@ export class MainWindow {
     const start = net.isOnline() ? startUrl(general, settings.lastPlayback) : `${YTM_ORIGIN}/`;
     this.#pendingStartingPage =
       isYtmUrl(start) && new URL(start).pathname === "/watch" ? startingBrowseId(general.startingPage) : undefined;
-    void window.loadURL(start);
+    load(window, start);
     return window;
   }
 
@@ -283,7 +290,7 @@ export class MainWindow {
       const action = loadFailureAction(errorCode, url);
       if (action === "ignore") return;
       if (action === "home") {
-        void window.loadURL(`${YTM_ORIGIN}/`);
+        load(window, `${YTM_ORIGIN}/`);
         return;
       }
       console.warn(`[pear] couldn't load ${url}: ${description} (${errorCode})`);
@@ -293,7 +300,7 @@ export class MainWindow {
         message: t("main.error-page.message", "Cannot load {{applicationName}}… Internet disconnected?"),
         retry: t("main.error-page.retry", "Retry"),
       };
-      void window.loadURL(errorPage(url, text));
+      load(window, errorPage(url, text));
     });
   }
 
@@ -313,6 +320,11 @@ export class MainWindow {
   }
 }
 
+/** `loadURL` rejects on every failed navigation; `did-fail-load` reports it, so the rejection needs no handling. */
+function load(window: BrowserWindow, url: string) {
+  window.loadURL(url).catch(() => {});
+}
+
 /** YTM links stay in this window, other web pages open in the browser, the rest nowhere; popups follow the same rules. */
 function routeLinks(window: BrowserWindow) {
   const { webContents } = window;
@@ -320,7 +332,7 @@ function routeLinks(window: BrowserWindow) {
     const action = windowOpenAction(url);
     switch (action) {
       case "load":
-        void window.loadURL(url);
+        load(window, url);
         return { action: "deny" };
       case "popup":
         // Electron 45 no longer shares the opener's process with window.open()
@@ -349,7 +361,7 @@ function routeLinks(window: BrowserWindow) {
       return;
     }
     event.preventDefault();
-    void webContents.loadURL(signin);
+    webContents.loadURL(signin).catch(() => {});
   });
   // A popup could otherwise navigate its own window anywhere.
   webContents.on("did-create-window", (popup) => routeLinks(popup));

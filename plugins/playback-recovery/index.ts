@@ -254,7 +254,9 @@ export default definePlugin({
 
       if (!video.paused && video.buffered.length > 0) {
         const bufferEnd = video.buffered.end(video.buffered.length - 1);
-        if (bufferEnd - video.currentTime <= 0 && video.readyState < 3) {
+        // Respect the configured stall timeout: a normal rebuffer must get its
+        // full window, like the frozen-playback branch above.
+        if (bufferEnd - video.currentTime <= 0 && video.readyState < 3 && now - lastGoodAt > ctx.config.stallTimeoutMs) {
           log(`Buffer exhausted: readyState=${video.readyState}`);
           attemptRecovery("buffer-exhausted");
         }

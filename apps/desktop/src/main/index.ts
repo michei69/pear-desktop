@@ -1,10 +1,10 @@
 // The main process: builds the app's parts and wires them together.
 
-import { app, session } from "electron";
-import hostPlugins from "virtual:pear/host-plugins";
+import { app, dialog, session } from "electron";
+import { loadPlugins } from "virtual:pear/host-plugins";
 import { ApiServer } from "./api/index.ts";
 import { applyConfigPatch } from "./apply-config.ts";
-import { APP_ID, registerStartMenuShortcut, relaunchOptions, setAppIdentity } from "./app-identity.ts";
+import { APP_ID, APP_NAME, registerStartMenuShortcut, relaunchOptions, setAppIdentity } from "./app-identity.ts";
 import { commit, updatesSupported } from "./app-info.ts";
 import { hideOnClose, onActivate } from "./close.ts";
 import { Settings } from "./config.ts";
@@ -43,6 +43,9 @@ if (!app.requestSingleInstanceLock()) app.quit();
 else void main();
 
 async function main() {
+  // Each plugin module loads on its own; a broken one is skipped, not fatal.
+  const { plugins: hostPlugins, failed } = await loadPlugins();
+  if (failed.length > 0) console.warn(`[pear] plugins that failed to load: ${failed.join(", ")}`);
   const settings = new Settings(app.getPath("userData"), hostPlugins, app.getVersion());
   const plugins = new PluginHost(hostPlugins, settings, process.platform);
   // One-time carry-over of the tray's click and startup settings, before the
@@ -127,7 +130,7 @@ async function main() {
     else void plugins.invoke("tray", "showWindow", []).catch(() => mainWindow.focus());
   });
 
-  app.whenReady().then(async () => {
+  const ready = app.whenReady().then(async () => {
     console.info(`[pear] startup: app ready after ${Math.round(performance.now())}ms`);
     registerStartMenuShortcut();
     // Before any page loads: YTM and the settings window get only what they need.
@@ -180,6 +183,7 @@ async function main() {
       },
       restartOnConfigChanges: () => settings.core("advanced").restartOnConfigChanges,
       restart,
+      flushSettings: () => settings.flush(),
     });
     core.start();
     const checkUpdatesNow = () => {
@@ -352,6 +356,13 @@ async function main() {
     void api.apply();
     if (process.argv.includes(SETTINGS_FLAG)) openSettingsWindow(settings.core("appearance").useYtmIcons);
     scheduleLaterTasks({ settings });
+  });
+  ready.catch((error) => {
+    // The window is created late in startup; without this the app would sit in
+    // the background with no UI and an unhandled rejection.
+    console.error("[pear] startup failed", error);
+    dialog.showErrorBox(`${APP_NAME} could not start`, error instanceof Error ? error.message : String(error));
+    app.quit();
   });
 
   app.on("before-quit", () => {

@@ -3,7 +3,7 @@
 // a page DOM.
 
 import type { Logger } from "@pear/sdk";
-import { sampleImagePixels } from "@pear/sdk/image";
+import { sampleImagePixelsCached } from "@pear/sdk/image";
 import { averageColor, type Rgb, themeColors } from "./color.ts";
 
 /** Artwork that cannot be sampled tints the theme black. */
@@ -58,5 +58,5 @@ function black(): AlbumColors {
 }
 
 async function sampleImage(url: string): Promise<Rgb | undefined> {
-  return averageColor(await sampleImagePixels(url, SAMPLE_SIZE));
+  return averageColor(await sampleImagePixelsCached(url, SAMPLE_SIZE));
 }

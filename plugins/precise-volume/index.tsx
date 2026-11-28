@@ -91,7 +91,9 @@ export default definePlugin({
       // different player volume (a loudness curve), so steps follow the slider.
       const position = () => {
         // A number on the classic bar's paper-slider, a string on the new bar's range input.
-        const value = Number(ctx.$<HTMLElement & { value?: number | string }>("player_bar.volume_slider")?.value);
+        const raw = ctx.$<HTMLElement & { value?: number | string }>("player_bar.volume_slider")?.value;
+        // An empty range input means "not initialised"; `Number("")` would read as 0.
+        const value = raw === "" || raw === undefined ? Number.NaN : Number(raw);
         return Number.isFinite(value) ? value : api.getVolume();
       };
       const change = (direction: number) => {
@@ -116,7 +118,10 @@ export default definePlugin({
       ctx.onCleanup(() => saveVolume.cancel());
       setTooltips(position());
       // The bar can be built after the player facade; title its elements then.
-      void ctx.waitFor("player_bar").then(() => setTooltips(position()));
+      void ctx.waitFor("player_bar").then(
+        () => setTooltips(position()),
+        () => {},
+      );
     },
     // Every option is read when used.
     onConfigChange() {},
@@ -240,20 +245,32 @@ function listenForWheel(ctx: Ctx, change: (direction: number) => void) {
     event.stopPropagation();
     change(event.deltaY < 0 ? 1 : -1);
   };
-  void ctx.waitFor("player_bar").then((bar) => ctx.listen(bar, "wheel", onWheel, { capture: true, passive: false }));
-  void ctx.waitFor("player.main_panel").then((panel) => ctx.listen(panel, "wheel", onWheel, { passive: false }));
+  void ctx.waitFor("player_bar").then(
+    (bar) => ctx.listen(bar, "wheel", onWheel, { capture: true, passive: false }),
+    () => {},
+  );
+  void ctx.waitFor("player.main_panel").then(
+    (panel) => ctx.listen(panel, "wheel", onWheel, { passive: false }),
+    () => {},
+  );
 }
 
 function listenForArrows(ctx: Ctx, change: (direction: number) => void) {
   const onKeydown = (event: KeyboardEvent) => {
     if (!ctx.config.arrowsShortcut || event.altKey || event.ctrlKey || event.metaKey) return;
+    // Shift+Arrow selects text or extends a range; it is not a volume key.
+    if (event.shiftKey) return;
     if (event.code !== "ArrowUp" && event.code !== "ArrowDown") return;
-    if (isTyping(ctx, event)) return;
+    // Bubble phase, so a widget that owns the key (in-app menu, equalizer dot,
+    // YTM popup) has already run and marked it handled.
+    if (event.defaultPrevented || isTyping(ctx, event)) return;
     event.preventDefault();
-    event.stopPropagation();
+    // The listener is registered at document-start, before YTM's own shortcut:
+    // stop it here or it would step another 5% on top of ours.
+    event.stopImmediatePropagation();
     change(event.code === "ArrowUp" ? 1 : -1);
   };
-  ctx.listen(window, "keydown", onKeydown, { capture: true });
+  ctx.listen(window, "keydown", onKeydown);
 }
 
 /** Arrow keys in a text field or the open search box move the caret, not the volume. */

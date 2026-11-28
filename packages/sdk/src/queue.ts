@@ -103,14 +103,6 @@ export function queueShuffleEnabled(): boolean {
   return document.querySelector(selectors.player_bar)?.hasAttribute("shuffle-on") ?? false;
 }
 
-/** Shuffles the queue through YTM's own button, which works without a queue element. */
-export function queueShuffle(): boolean {
-  const button = document.querySelector<HTMLElement>("#shuffle-button, [aria-label='Shuffle']");
-  if (!button) return false;
-  button.click();
-  return true;
-}
-
 /**
  * Calls `listener` on every queue change; returns the unsubscribe. The app
  * element can take a moment to exist, so a listener registered early waits for

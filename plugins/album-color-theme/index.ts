@@ -1,6 +1,6 @@
 import { config, definePlugin } from "@pear/sdk";
 import { css } from "@pear/sdk/macros" with { type: "macro" };
-import { clamp } from "@pear/sdk/util";
+
 import { albumColors } from "./artwork.ts";
 import { mixColor } from "./color.ts";
 
@@ -171,13 +171,9 @@ export default definePlugin({
   id: "album-color-theme",
   name: "Album color theme",
   description: "Tints the interface with the colors of the current track's artwork.",
-  conflicts: [
-    {
-      id: "ambient-mode",
-      mutual: true,
-      reason: "Both paint the player page and guide backgrounds; only one can own those tints.",
-    },
-  ],
+  // Ambient mode's glow paints only the video's backdrop, so the two compose
+  // (its opt-in ambilight/sidebar styles are separate settings). The remaining
+  // overlap is with transparent-player, which declares this pair from its side.
   config: {
     ratio: config.number(50, { label: "Color strength", min: 0, max: 100, step: 5, unit: "%" }),
     enableSeekbar: config.bool(true, { label: "Color the progress bar" }),
@@ -212,18 +208,21 @@ export default definePlugin({
       const colors = await albumColors(url, ctx.log);
       if (current !== generation || ctx.signal.aborted) return;
 
-      const opacity = Number.parseFloat(getComputedStyle(root).getPropertyValue("--pear-transparent-opacity"));
-      const alpha = Number.isFinite(opacity) ? clamp(opacity, 0, 1) : 1;
+      // transparent-player is mutually exclusive with this plugin, so the tint is
+      // always fully opaque; there is no other opacity source to mix against.
       const ratio = ctx.config.ratio / 100;
       for (const [variable, base] of Object.entries(VARIABLE_MAP)) {
         const tint = DARK_KEYED[variable] ? colors.dark : colors.color;
-        root.style.setProperty(variable, mixColor(base, tint, alpha, ratio * (RATIO_MAP[variable] ?? 1)), "important");
+        root.style.setProperty(variable, mixColor(base, tint, 1, ratio * (RATIO_MAP[variable] ?? 1)), "important");
       }
       root.classList.add(ACTIVE);
     };
 
     ctx.player.on("trackChange", () => void apply());
     if (ctx.player.state.track) void apply();
+    // Ratio/seekbar changes re-tint from the cached colors instead of restarting
+    // the page part (which briefly removed the tint on every slider step).
+    ctx.onConfigChange(() => void apply());
   },
 });
 

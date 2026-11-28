@@ -82,24 +82,49 @@ export interface CachedBlacklist {
   fresh: boolean;
 }
 
+// The multi-megabyte list is parsed once per stored value, not on every
+// refreshTick/load/change; `fresh` is still computed per call.
+let cacheRaw: string | null | undefined;
+let cacheData: Blacklist | null = null;
+let cacheTs: number | undefined;
+
 /** Reads the downloaded list synchronously, so it is usable the moment the page starts. */
 export const readCachedBlacklist = (): CachedBlacklist | null => {
-  const parsed = asRecord(readJson(CACHE_KEY));
-  const data = parsed?.data;
-  if (!isBlacklist(data)) return null;
-  const timestamp = parsed?.ts;
+  let raw: string | null;
+  try {
+    raw = localStorage.getItem(CACHE_KEY);
+  } catch {
+    return null;
+  }
+  if (raw !== cacheRaw) {
+    cacheRaw = raw;
+    cacheData = null;
+    cacheTs = undefined;
+    try {
+      const parsed = asRecord(raw ? JSON.parse(raw) : null);
+      if (isBlacklist(parsed?.data)) {
+        cacheData = parsed.data;
+        cacheTs = typeof parsed.ts === "number" ? parsed.ts : undefined;
+      }
+    } catch {
+      // A corrupt cache reads as missing; the next download replaces it.
+    }
+  }
+  if (!cacheData) return null;
   return {
-    data,
-    fresh: typeof timestamp === "number" && Date.now() - timestamp < CACHE_TTL_MS,
+    data: cacheData,
+    fresh: cacheTs !== undefined && Date.now() - cacheTs < CACHE_TTL_MS,
   };
 };
 
 export const writeCachedBlacklist = (data: Blacklist) => {
   writeJson(CACHE_KEY, { data, ts: Date.now() });
+  cacheRaw = undefined;
 };
 
 export const clearCachedBlacklist = () => {
   removeKey(CACHE_KEY);
+  cacheRaw = undefined;
 };
 
 const FEEDBACK_KEY = "skip-ai-slop:feedback-done";

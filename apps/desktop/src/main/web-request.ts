@@ -145,7 +145,7 @@ export function matchesFilter(filter: WebRequestFilter | undefined, details: { u
   if (filter.types && filter.types.length > 0 && !filter.types.includes(details.resourceType as never)) return false;
   const target = URL.parse(details.url);
   const matches = (pattern: string) => !!target && compiledPattern(pattern)(target);
-  if (filter.urls.length > 0 && !filter.urls.some(matches)) return false;
+  if (filter.urls && filter.urls.length > 0 && !filter.urls.some(matches)) return false;
   if (filter.excludeUrls?.some(matches)) return false;
   return true;
 }

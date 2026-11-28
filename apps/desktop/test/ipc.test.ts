@@ -14,11 +14,13 @@ const captured = vi.hoisted(() => ({
   invoke: undefined as ((event: unknown, name: unknown, args: unknown) => unknown) | undefined,
 }));
 
+const native = vi.hoisted(() => ({ relaunch: vi.fn(), exit: vi.fn(), openExternal: vi.fn(async () => {}) }));
+
 vi.mock("electron", () => ({
-  app: { getVersion: () => "0.0.0" },
+  app: { getVersion: () => "0.0.0", relaunch: native.relaunch, exit: native.exit },
   ipcMain: { handle: vi.fn((_channel, handler) => void (captured.invoke = handler)), on: vi.fn() },
   BrowserWindow: { getAllWindows: () => [] },
-  shell: { showItemInFolder: vi.fn(), openPath: async () => "", openExternal: async () => {} },
+  shell: { showItemInFolder: vi.fn(), openPath: async () => "", openExternal: native.openExternal },
   net: {},
 }));
 
@@ -43,6 +45,7 @@ function setup(overrides: Partial<IpcEnvironment> = {}): Harness {
     core: { states: () => ({}) as never, setConfig: vi.fn(() => false) },
     restartOnConfigChanges: () => false,
     restart: vi.fn(),
+    flushSettings: vi.fn(),
     ...overrides,
   } satisfies IpcEnvironment;
   setupIpc(env);
@@ -64,6 +67,26 @@ describe("the invoke channel", () => {
 
     await expect(invoke(event(), "core:set-config", ["advanced", { restartOnConfigChanges: true }])).resolves.toBe(false);
     expect(setConfig).toHaveBeenCalledWith("advanced", { restartOnConfigChanges: true });
+  });
+
+  test("relaunch writes the debounced settings before exiting", () => {
+    const flushSettings = vi.fn();
+    const { invoke } = setup({ flushSettings });
+    invoke(event(), "app:relaunch", []);
+    expect(native.relaunch).toHaveBeenCalled();
+    expect(flushSettings).toHaveBeenCalledOnce();
+    expect(native.exit).toHaveBeenCalledWith(0);
+  });
+
+  test("open-external refuses local files and custom handlers", () => {
+    native.openExternal.mockClear();
+    const { invoke } = setup();
+    expect(() => invoke(event(), "app:open-external", ["file:///etc/passwd"])).toThrow(/refusing/);
+    expect(() => invoke(event(), "app:open-external", ["pear://settings"])).toThrow(/refusing/);
+    expect(native.openExternal).not.toHaveBeenCalled();
+
+    invoke(event(), "app:open-external", ["https://example.com/"]);
+    expect(native.openExternal).toHaveBeenCalledWith("https://example.com/");
   });
 
   test("enabling a plugin restarts only while restart-on-config-changes is on", async () => {

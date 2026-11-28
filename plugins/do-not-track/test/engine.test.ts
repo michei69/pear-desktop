@@ -1,4 +1,4 @@
-import { mkdtemp, rm } from "node:fs/promises";
+import { mkdtemp, readdir, rm, utimes } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { type FiltersEngine, Request } from "@ghostery/adblocker";
@@ -84,13 +84,23 @@ describe("loadEngine cache", () => {
   });
   afterEach(() => rm(dir, { recursive: true, force: true }));
 
-  test("remote lists refresh the cached engine in the background on every launch", async () => {
+  test("remote lists refresh the cached engine after the daily window", async () => {
     const lists = [{ url: "https://lists.example/a.txt" }];
     served = "||old.example^\n";
     expect(await (await loadEngine({ lists, cacheDir: dir })).refreshed).toBeUndefined();
 
-    // The same URL serves new rules: the cached engine blocks at once and is rebuilt.
+    // A launch right after the cache was written reuses it, without re-fetching.
+    const warm = await loadEngine({ lists, cacheDir: dir });
+    expect(await warm.refreshed).toBeUndefined();
+
+    // The same URL serves new rules: once the cache is a day old, it rebuilds in
+    // the background while the cached engine keeps blocking meanwhile.
     served = "||new.example^\n";
+    const cacheFile = join(
+      dir,
+      (await readdir(dir)).find((name) => name.startsWith("engine-"))!,
+    );
+    await utimes(cacheFile, new Date(0), new Date(0));
     const cached = await loadEngine({ lists, cacheDir: dir });
     expect(matches(cached.engine, "https://old.example/x")).toBe(true);
     const fresh = await cached.refreshed;

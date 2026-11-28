@@ -362,9 +362,9 @@ export class InnertubeEngine implements Engine {
       return { file };
     } finally {
       // A paused song continues its download later; a failed finish keeps the whole stream for the retry.
-      if (isPause(signal) && existsSync(partial)) progress.keep(partial);
-      else if (downloaded && !signal.aborted && !existsSync(file) && existsSync(partial)) {
-        this.#options.log.warn(`Download kept for retry: ${partial}`);
+      if ((isPause(signal) && existsSync(partial)) || (downloaded && !signal.aborted && !existsSync(file) && existsSync(partial))) {
+        // Registered so removing the failed job also removes the leftover part.
+        progress.keep(partial);
       } else await rm(partial, { force: true });
       await rm(converted, { force: true });
     }

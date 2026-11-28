@@ -99,16 +99,16 @@ export default definePlugin({
       if (stopped) return;
       const player = ctx.$("player.container");
       if (!player) return;
-      restorer.style(player, "margin", "auto 0px");
-      // The video toggle's switch owns the mode while it asks for video.
+      // The video toggle's switch owns the mode (and the margin) while it asks for video.
       if (!player.hasAttribute("data-pear-show-video")) {
+        restorer.style(player, "margin", "auto 0px");
         restorer.attribute(player, "playback-mode", ATV);
         restorer.style(ctx.$("player.song_video"), "display", "none");
         restorer.style(ctx.$("player.song_image"), "display", "block");
         restorer.style(ctx.$("player.video"), "display", "none");
+        forceThumbnail();
       }
       lockPlaybackMode(player);
-      forceThumbnail();
     };
 
     // The player page is re-created on navigation (not on every track), so this
@@ -119,20 +119,19 @@ export default definePlugin({
     void ctx.waitFor("player.container").then(apply, () => {});
     void ctx.player.ready().then(
       () => {
-        requestTinyQuality();
         apply();
+        if (!ctx.$("player.container")?.hasAttribute("data-pear-show-video")) requestTinyQuality();
       },
       () => {},
     );
 
     ctx.player.on("trackChange", () => {
       apply();
-      requestTinyQuality();
+      // Video mode is video-toggle's while its marker is set: lowering the quality
+      // would leave the user with a tiny video they explicitly asked to see.
+      if (!ctx.$("player.container")?.hasAttribute("data-pear-show-video")) requestTinyQuality();
       // The new track's video and artwork land a moment after the event.
-      ctx.setTimeout(() => {
-        apply();
-        forceThumbnail();
-      }, 50);
+      ctx.setTimeout(apply, 50);
     });
 
     ctx.onCleanup(() => {

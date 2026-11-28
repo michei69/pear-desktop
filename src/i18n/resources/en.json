@@ -3504,6 +3504,9 @@
           "label": "Queue was shuffled"
         }
       }
+    },
+    "needs": {
+      "status": "Needs {{plugins}}"
     }
   },
   "settings-ui": {

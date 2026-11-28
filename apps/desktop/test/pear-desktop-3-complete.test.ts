@@ -8,7 +8,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { flagOverrides, type CoreSection } from "@pear/sdk/core-config";
 import { DEFAULT_FILTERS } from "../../../plugins/scrobbler/filters.ts";
-import hostPlugins from "virtual:pear/host-plugins";
+import { loadPlugins } from "virtual:pear/host-plugins";
 import { afterAll, describe, expect, test, vi } from "vitest";
 import { Settings } from "../src/main/config.ts";
 import { CONTEXT_MENU_ENTRIES } from "@pear/sdk/context-menu";
@@ -19,6 +19,8 @@ import {
   PEAR_DESKTOP_3_PLUGIN_DEFAULTS,
   PEAR_DESKTOP_3_WINDOW_DEFAULTS,
 } from "./pear-desktop-3-defaults.ts";
+
+const { plugins: hostPlugins } = await loadPlugins();
 
 vi.mock("electron", () => ({}));
 

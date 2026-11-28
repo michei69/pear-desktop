@@ -12,7 +12,7 @@
 // - Build-time macros (`with { type: "macro" }`) run in both bundles.
 
 import { existsSync, readdirSync, readFileSync } from "node:fs";
-import { resolve } from "node:path";
+import { basename, dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { build, type Plugin as RolldownPlugin } from "rolldown";
 import Macros from "unplugin-macros/vite";
@@ -63,6 +63,40 @@ function registryModule(files: readonly string[], target: SplitTarget) {
   const splitId = (file: string) => `${file}?pear=${target}&lang.${extensionOf(file)}`;
   const imports = files.map((file, i) => `import p${i} from ${JSON.stringify(splitId(file))};`);
   return `${imports.join("\n")}\nexport default [${files.map((_, i) => `p${i}`).join(", ")}];\n`;
+}
+
+/**
+ * The host registry loads each plugin separately, so one broken module is
+ * reported instead of preventing the whole main bundle from evaluating.
+ */
+function hostRegistryModule(files: readonly string[]) {
+  const loaders = files.map((file) => {
+    const id = basename(dirname(file));
+    const split = `${file}?pear=host&lang.${extensionOf(file)}`;
+    return `{ id: ${JSON.stringify(id)}, load: () => import(${JSON.stringify(split)}) }`;
+  });
+  return `
+const loaders = [
+${loaders.join(",\n")}
+];
+export async function loadPlugins() {
+  const plugins = [];
+  const failed = [];
+  const loaded = await Promise.all(
+    loaders.map(async ({ id, load }) => {
+      try {
+        return { id, plugin: (await load()).default };
+      } catch (error) {
+        console.error("[pear] plugin " + id + " failed to load", error);
+        failed.push(id);
+        return undefined;
+      }
+    }),
+  );
+  for (const entry of loaded) if (entry) plugins.push(entry.plugin);
+  return { plugins, failed };
+}
+`;
 }
 
 function splitFile(id: string) {
@@ -134,7 +168,7 @@ export default function pear(options: PearPluginOptions): Plugin[] {
       if (id === `\0${HOST_PLUGINS_ID}`) {
         const files = discoverPlugins(options);
         this.addWatchFile(options.pluginsDir);
-        return registryModule(files, "host");
+        return hostRegistryModule(files);
       }
       if (id === `\0${I18N_ID}`) return i18nModule((file) => this.addWatchFile(file));
       const entry = bundleEntries[id];

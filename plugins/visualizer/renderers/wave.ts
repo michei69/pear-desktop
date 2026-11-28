@@ -8,12 +8,24 @@ interface Animation {
   config: unknown;
 }
 
+/**
+ * Wave starts an unconditional requestAnimationFrame loop in `_play()`. Patch
+ * the bundle so the loop checks an instance flag, which gives us a real stop
+ * (its public API only clears the animation list; the loop keeps running).
+ */
+function patchLoop(source: string) {
+  return source.replace("var i=function(){", "var i=function(){if(t._pearStopped)return;");
+}
+
 /** Wave's animations; it animates itself. */
 export async function waveRenderer({ ctx, graph, canvas }: Stage): Promise<Renderer | undefined> {
   const { context, tap } = quietAudio(ctx, graph);
-  const { Wave } = await loadUmd<WaveModule>(ctx.host.invoke("wave"));
+  const source = await ctx.host.invoke("wave");
+  const patched = patchLoop(source);
+  if (patched === source) ctx.log.warn("the Wave bundle changed; its frame loop may keep running while paused");
+  const { Wave } = await loadUmd<WaveModule>(Promise.resolve(patched));
   if (ctx.signal.aborted) return;
-  const wave = new Wave({ context, source: tap }, canvas);
+  const wave = new Wave({ context, source: tap }, canvas) as WaveInstance & { _pearStopped?: boolean; _play?(): void };
   const animations = parseAnimations(ctx.config.waveAnimations, ctx.log);
   const addAnimations = () => {
     for (const animation of animations) {
@@ -23,24 +35,28 @@ export async function waveRenderer({ ctx, graph, canvas }: Stage): Promise<Rende
     }
   };
   addAnimations();
-  ctx.onCleanup(() => wave.clearAnimations());
   let paused = false;
+  const stop = () => {
+    wave._pearStopped = true;
+    wave.clearAnimations();
+  };
+  ctx.onCleanup(stop);
   return {
     resize(width, height) {
       canvas.width = width;
       canvas.height = height;
     },
-    // Wave's own requestAnimationFrame loop can't be stopped from outside; its
-    // animations can, which is what pause() does here.
     pause() {
       if (paused) return;
       paused = true;
-      wave.clearAnimations();
+      stop();
     },
     resume() {
       if (!paused) return;
       paused = false;
+      wave._pearStopped = false;
       addAnimations();
+      wave._play?.();
     },
   };
 }

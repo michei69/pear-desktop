@@ -222,7 +222,8 @@ export default definePlugin({
         stopped = true;
         generation++;
         engine = undefined;
-        stats.active = false;
+        // The counters belong to this run, not to the module's lifetime.
+        Object.assign(stats, { active: false, blocked: 0, lists: 0 });
       };
     },
     commands: {

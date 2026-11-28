@@ -99,6 +99,7 @@ export class Tools {
   failure: string | undefined;
   #preparing: Promise<ReadyTools> | undefined;
   #updating = false;
+  #updateTask: Promise<void> | undefined;
 
   constructor(options: ToolsOptions) {
     this.#options = options;
@@ -156,7 +157,11 @@ export class Tools {
   ready(signal?: AbortSignal): Promise<ReadyTools> {
     const current = this.#current();
     if (current) return Promise.resolve(current);
-    this.#preparing ??= this.#install(signal).finally(() => (this.#preparing = undefined));
+    this.#preparing ??= (async () => {
+      // An update rewrites the same download file; let it finish before installing.
+      if (this.#updateTask) await this.#updateTask.catch(() => {});
+      return this.#current() ?? this.#install(signal);
+    })().finally(() => (this.#preparing = undefined));
     return this.#preparing;
   }
 
@@ -190,12 +195,17 @@ export class Tools {
   async #update() {
     const { installer, log } = this.#options;
     this.#updating = true;
-    try {
+    const task = (async () => {
       if (await this.#run("yt-dlp", (signal) => installer.installYtDlp(signal))) {
         await this.#probe();
         log.info(`updated yt-dlp to ${this.capabilities?.version}`);
       }
+    })();
+    this.#updateTask = task;
+    try {
+      await task;
     } finally {
+      if (this.#updateTask === task) this.#updateTask = undefined;
       this.#updating = false;
       this.#options.onChange();
     }

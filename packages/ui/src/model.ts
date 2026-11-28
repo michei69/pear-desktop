@@ -173,6 +173,12 @@ export class HostState {
     this.notify();
   }
 
+  /** A batch from one host change: subscribers see the final state once. */
+  setPlugins(states: Record<string, PluginState>) {
+    for (const [id, state] of Object.entries(states)) this.plugins.set(id, state);
+    this.notify();
+  }
+
   /** An empty message clears the error. */
   setError(id: string, message: string) {
     setMessage(this.errors, id, message);
@@ -200,6 +206,8 @@ export class HostState {
     switch (event.type) {
       case "plugin-state":
         return this.setPlugin(event.id, event.state);
+      case "plugin-states":
+        return this.setPlugins(event.states);
       case "plugin-error":
         return this.setError(event.id, event.message);
       case "plugin-status":

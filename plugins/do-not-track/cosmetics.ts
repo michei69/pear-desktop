@@ -75,25 +75,29 @@ export function applyCosmetics(ctx: Ctx) {
   });
   ctx.onCleanup(() => observer.disconnect());
 
-  // The lists load in the host after startup; ask until they're there.
+  // The lists load in the host after startup; ask until they're there, backing
+  // off so a failed engine does not cost an IPC round-trip every second forever.
+  let attempt = 0;
+  const retry = () => {
+    attempt += 1;
+    if (attempt > 8) return;
+    ctx.setTimeout(base, Math.min(COSMETICS_RETRY_MS * 2 ** (attempt - 1), 30_000));
+  };
   const base = () => {
     if (ctx.signal.aborted) return;
-    ctx.host.invoke("cosmetics", { url: location.href, base: true }).then(
-      (result) => {
-        if (ctx.signal.aborted) return;
-        if (!result) {
-          ctx.setTimeout(base, COSMETICS_RETRY_MS);
-          return;
-        }
-        add(result.styles);
-        void runScriptlets(result.scripts);
-        observer.observe(document, { childList: true, subtree: true, attributes: true, attributeFilter: ["class", "id", "href"] });
-        // What the page rendered before the lists loaded was never seen by the
-        // observer; one walk covers it, later changes are collected incrementally.
-        scanPage();
-      },
-      () => ctx.setTimeout(base, COSMETICS_RETRY_MS),
-    );
+    ctx.host.invoke("cosmetics", { url: location.href, base: true }).then((result) => {
+      if (ctx.signal.aborted) return;
+      if (!result) {
+        retry();
+        return;
+      }
+      add(result.styles);
+      void runScriptlets(result.scripts);
+      observer.observe(document, { childList: true, subtree: true, attributes: true, attributeFilter: ["class", "id", "href"] });
+      // What the page rendered before the lists loaded was never seen by the
+      // observer; one walk covers it, later changes are collected incrementally.
+      scanPage();
+    }, retry);
   };
   const scanPage = () => {
     if (ctx.signal.aborted) return;

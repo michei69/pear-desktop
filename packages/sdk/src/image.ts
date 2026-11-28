@@ -21,3 +21,32 @@ export async function sampleImagePixels(url: string, size = 32): Promise<Uint8Cl
   context.drawImage(image, 0, 0, size, size);
   return context.getImageData(0, 0, size, size).data;
 }
+
+const pixelCache = new Map<string, Promise<Uint8ClampedArray>>();
+const PIXEL_CACHE_LIMIT = 100;
+
+/**
+ * `sampleImagePixels` with an LRU by URL: the album theme and the visualizer
+ * both sample the same artwork, and a repeat/seek must not re-download it.
+ * Failed samples are not cached, so an offline start retries later.
+ */
+export function sampleImagePixelsCached(url: string, size = 32): Promise<Uint8ClampedArray> {
+  const key = `${size}:${url}`;
+  const hit = pixelCache.get(key);
+  if (hit) {
+    pixelCache.delete(key);
+    pixelCache.set(key, hit);
+    return hit;
+  }
+  const pending = sampleImagePixels(url, size).catch((error: unknown) => {
+    pixelCache.delete(key);
+    throw error;
+  });
+  pixelCache.set(key, pending);
+  while (pixelCache.size > PIXEL_CACHE_LIMIT) {
+    const oldest = pixelCache.keys().next();
+    if (oldest.done) break;
+    pixelCache.delete(oldest.value);
+  }
+  return pending;
+}

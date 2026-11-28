@@ -16,12 +16,15 @@ class BarsRenderer extends ThemeSongRenderer {
   private readonly variant: Stage["ctx"]["config"]["barsVariant"];
   private readonly barWidth: number;
   private readonly gap: number;
+  /** How many bars fit the design width; the rest of the 1024 bins would draw off-canvas. */
+  private readonly barCount: number;
 
   constructor(stage: Stage) {
     super(stage, 2048, 0.85);
     this.variant = stage.ctx.config.barsVariant;
     this.barWidth = Math.max(1, stage.ctx.config.barsBarWidth);
     this.gap = Math.max(0, stage.ctx.config.barsGap);
+    this.barCount = Math.max(1, Math.floor(DESIGN_WIDTH / (this.barWidth + this.gap)));
   }
 
   private dancingSwatch(amplitude: number): Hsl {
@@ -61,11 +64,15 @@ class BarsRenderer extends ThemeSongRenderer {
     context.strokeStyle = "#000000";
 
     let x = 0;
-    for (let index = 0; index < this.frequencyData.length; index += 1) {
+    const count = Math.min(this.frequencyData.length, this.barCount);
+    for (let bar = 0; bar < count; bar += 1) {
+      // Spread the whole spectrum over the bars that fit, instead of drawing the
+      // lowest few bins and the rest outside the canvas.
+      const index = Math.floor((bar / count) * this.frequencyData.length);
       const amplitude = this.frequencyData[index] ?? 0;
       const barHeight = amplitude * 2;
       const y = DESIGN_HEIGHT - barHeight + 6;
-      context.fillStyle = this.barColor(amplitude, index);
+      context.fillStyle = this.barColor(amplitude, bar);
       context.fillRect(x, y, this.barWidth, barHeight);
       context.strokeRect(x, y, this.barWidth, barHeight);
       x += this.barWidth + this.gap;

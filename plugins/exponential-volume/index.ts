@@ -23,6 +23,7 @@ export default definePlugin({
   description: "Makes the volume slider follow loudness perception, giving finer control at low volumes.",
   page: async (ctx) => {
     await ctx.player.videoReady();
+    if (ctx.signal.aborted) return;
     const native = Object.getOwnPropertyDescriptor(HTMLMediaElement.prototype, "volume");
     if (!native?.get || !native?.set) return;
 
@@ -34,7 +35,7 @@ export default definePlugin({
 
     // Patching the prototype makes a replaced <video> and any other media
     // element (the crossfade's second stream) follow the curve too.
-    Object.defineProperty(HTMLMediaElement.prototype, "volume", {
+    const patched = {
       configurable: true,
       get(this: HTMLMediaElement) {
         const perceived = (linear.call(this) as number) ** (1 / EXPONENT);
@@ -45,7 +46,8 @@ export default definePlugin({
         written.set(this, volume);
         setLinear.call(this, volume ** EXPONENT);
       },
-    });
+    };
+    Object.defineProperty(HTMLMediaElement.prototype, "volume", patched);
 
     // Re-map whatever is already playing through the curve (the plugin can be enabled mid-track).
     for (const element of document.querySelectorAll<HTMLMediaElement>(MEDIA)) {
@@ -59,7 +61,10 @@ export default definePlugin({
       for (const element of document.querySelectorAll<HTMLMediaElement>(MEDIA)) {
         setLinear.call(element, (linear.call(element) as number) ** (1 / EXPONENT));
       }
-      Object.defineProperty(HTMLMediaElement.prototype, "volume", native);
+      // A later patch (another instance, another plugin) owns the accessor now.
+      if (Object.getOwnPropertyDescriptor(HTMLMediaElement.prototype, "volume")?.get === patched.get) {
+        Object.defineProperty(HTMLMediaElement.prototype, "volume", native);
+      }
       announceVolumeMap();
     };
   },

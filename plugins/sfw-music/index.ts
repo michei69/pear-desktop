@@ -1,6 +1,7 @@
 import {
   appQueueStore,
   type AppQueueState,
+  claimSkip,
   definePlugin,
   onQueueChange,
   playerQueue,
@@ -132,6 +133,8 @@ export default definePlugin({
       }
 
       handled = true;
+      // Another skipper (skip-ai-slop) may own this track: don't advance twice.
+      if (!claimSkip(videoId, "sfw-music")) return;
       blockedVideoId = videoId;
       ctx.player.control({ type: "pause" });
 

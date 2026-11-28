@@ -10,6 +10,8 @@ const ACTIVITY_EVENTS = ["mousemove", "mousedown", "keydown"] as const;
 const FULLSCREEN_EVENTS = ["fullscreenchange", "webkitfullscreenchange", "mozfullscreenchange", "MSFullscreenChange"] as const;
 /** YTM's own fullscreen event can fire before its DOM state settles. */
 const RECHECK_MS = 100;
+/** mousemove arrives far faster than the bar needs to react. */
+const WAKE_THROTTLE_MS = 100;
 
 /** The native fullscreen API as the older prefixes expose it. */
 type FullscreenDocument = Document & {
@@ -43,14 +45,23 @@ export default definePlugin({
         idleTimer = undefined;
       };
 
+      // Another plugin may have inline opacity/pointer-events on the bar: put
+      // those back instead of removing whatever is there when we show it.
+      let saved: { element: HTMLElement; opacity: [string, string]; pointer: [string, string] } | undefined;
+
       const show = () => {
         document.body.classList.remove(IDLE_CLASS);
         if (!hidden) return;
         hidden = false;
-        const bar = ctx.$<HTMLElement>("player_bar");
-        if (!bar) return;
-        bar.style.removeProperty("opacity");
-        bar.style.removeProperty("pointer-events");
+        if (!saved) return;
+        for (const [property, [value, priority]] of [
+          ["opacity", saved.opacity],
+          ["pointer-events", saved.pointer],
+        ] as const) {
+          if (value) saved.element.style.setProperty(property, value, priority);
+          else saved.element.style.removeProperty(property);
+        }
+        saved = undefined;
       };
 
       const hide = () => {
@@ -61,6 +72,11 @@ export default definePlugin({
         document.body.classList.add(IDLE_CLASS);
         const bar = ctx.$<HTMLElement>("player_bar");
         if (!bar) return;
+        saved ??= {
+          element: bar,
+          opacity: [bar.style.getPropertyValue?.("opacity") ?? "", bar.style.getPropertyPriority?.("opacity") ?? ""],
+          pointer: [bar.style.getPropertyValue?.("pointer-events") ?? "", bar.style.getPropertyPriority?.("pointer-events") ?? ""],
+        };
         bar.style.setProperty("opacity", "0", "important");
         bar.style.setProperty("pointer-events", "none", "important");
       };
@@ -70,7 +86,13 @@ export default definePlugin({
         idleTimer = ctx.setTimeout(hide, IDLE_MS);
       };
 
+      // mousemove fires hundreds of times a second; a DOM query and timer reset
+      // per event is wasted work. Once per animation-frame-ish window is plenty.
+      let lastWake = 0;
       const wake = () => {
+        const now = Date.now();
+        if (now - lastWake < WAKE_THROTTLE_MS) return;
+        lastWake = now;
         if (!isFullscreen()) return;
         show();
         schedule();

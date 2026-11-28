@@ -65,7 +65,13 @@ export class Presence {
   /** Applies a config change. */
   refresh() {
     this.#armPauseTimeout();
-    if (this.#ctx.config.autoReconnect && !this.#client) this.#scheduleRetry();
+    if (!this.#ctx.config.autoReconnect) {
+      // Turning the option off also cancels a retry that was already armed.
+      this.#ctx.clearTimeout(this.#retryTimer);
+      this.#retryTimer = undefined;
+    } else if (!this.#client) {
+      this.#scheduleRetry();
+    }
     this.#update();
   }
 
@@ -113,7 +119,8 @@ export class Presence {
     if (this.#stopped || !this.#ctx.config.autoReconnect || this.#retryTimer) return;
     this.#retryTimer = this.#ctx.setTimeout(() => {
       this.#retryTimer = undefined;
-      this.#connect();
+      // The option may have been switched off after this retry was armed.
+      if (this.#ctx.config.autoReconnect) this.#connect();
     }, this.#retryDelay);
     this.#retryDelay = Math.min(this.#retryDelay * 2, RETRY_MAX_MS);
   }

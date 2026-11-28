@@ -38,6 +38,10 @@ export async function startPage(ctx: Ctx) {
   await ctx.waitFor("nav_bar.right");
   place();
   ctx.observe("nav_bar", { childList: true, subtree: true }, place);
+  // The observer above follows the first nav bar's children; if YTM replaces the
+  // nav bar itself, `mount` puts the menu and buttons back in the new one.
+  ctx.mount(menu.host, place);
+  if (controls) ctx.mount(controls.host, place);
 }
 
 /** Layouts that hide their top bar once content scrolls (unobtrusive-player and friends) read this. */

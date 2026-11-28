@@ -104,6 +104,9 @@ export default definePlugin({
     // element and hook the replacement as it arrives.
     const videos = new Set<HTMLVideoElement>();
     const enforce = () => {
+      // YTM leaves replaced elements detached; drop them so the set (and their
+      // listeners) can be collected during long sessions.
+      for (const old of videos) if (!old.isConnected) videos.delete(old);
       const video = ctx.player.video();
       if (!video) return;
       if (!videos.has(video)) {

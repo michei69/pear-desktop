@@ -30,7 +30,9 @@ export default definePlugin({
     runAt: "start",
     start(ctx) {
       // A stylesheet (not documentElement.style): there is no <html> yet at document start.
-      ctx.addStyle(variablesCss(ctx.config));
+      const style = ctx.addStyle(variablesCss(ctx.config));
+      // Slider changes update the properties in place instead of restarting the page part.
+      ctx.onConfigChange((config) => style.update(variablesCss(config)));
     },
   },
 });

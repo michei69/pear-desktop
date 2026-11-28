@@ -5,8 +5,8 @@ declare module "virtual:pear/page-runtime" {
 
 declare module "virtual:pear/host-plugins" {
   import type { AnyPlugin } from "@pear/sdk";
-  const plugins: readonly AnyPlugin[];
-  export default plugins;
+  /** One plugin module failed its own evaluation; the rest still run. */
+  export function loadPlugins(): Promise<{ plugins: readonly AnyPlugin[]; failed: readonly string[] }>;
 }
 
 declare module "virtual:pear/i18n" {

@@ -89,7 +89,7 @@ The host resolves conflicts from the stored switches every time it publishes sta
 
 A blocked plugin's card shows the switch off and disabled with the tooltip `Disabled by <blocker name>: <reason>`; its config stays editable, and `PluginHost.states()` reports `enabled: false` with `blockedBy: { id, name, reason }`. The blocked plugin does not start: `beforeReady`, `windowOptions`, the host part and the page part all see the effective state. Enabling its blocker stops its host part and page part too, except a restart-required plugin, whose host and page halves keep the state they launched with until the next launch.
 
-Conflicts only apply between plugins shipped for the current platform; an entry naming a plugin that is not available there is inert. The shipped declarations: `quality-changer` yields to `audio-only`; `transparent-player` (Windows and macOS) excludes `album-color-theme` and `blur-nav-bar` mutually; `album-color-theme` excludes `ambient-mode` mutually.
+Conflicts only apply between plugins shipped for the current platform; an entry naming a plugin that is not available there is inert. The shipped declarations: `quality-changer` yields to `audio-only`; `transparent-player` (Windows and macOS) excludes `album-color-theme` and `blur-nav-bar` mutually.
 
 ## Host part
 

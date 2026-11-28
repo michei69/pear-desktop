@@ -5,8 +5,10 @@ import type { PageContextOf } from "@pear/sdk";
 import { isolateKeys, shadowHost } from "@pear/sdk/dom";
 import { readSongDetails } from "@pear/sdk/song-details";
 import { render } from "preact";
+import { lineAt } from "../lrc.ts";
 import type { LyricsConfig, schema } from "../schema.ts";
 import { ROMANIZATION_SCRIPTS, type ActiveLyricLine, type RomanizationSettings } from "../types.ts";
+import { activeLineAt } from "./active-line.ts";
 import { LyricsStore, type Backend, type Options } from "./store.ts";
 import { appleStyles } from "./apple/styles.ts";
 import { lyricsStyles } from "./styles.ts";
@@ -104,23 +106,81 @@ export function mountLyrics(ctx: Ctx) {
     );
   };
 
+  /**
+   * Whether something outside the Lyrics tab needs the current line: the macOS
+   * menu bar. The store otherwise searches only while the tab is open.
+   */
+  const wantsHeadless = () => ctx.pluginEnabled("statusbar-lyrics");
+
+  // The view reports the active line while the tab is open, but it unmounts with
+  // the tab. This follower keeps the menu bar current the rest of the time,
+  // using the same line math as the view.
+  let follower = 0;
+  let followerIndex = -1;
+  const follow = () => {
+    follower = 0;
+    if (open || !wantsHeadless() || !store.shown) {
+      followerIndex = -1;
+      reportLine(null);
+      return;
+    }
+    // Keep the last line while minimized; no need to scan frames off screen.
+    const ms = ctx.isWindowVisible() ? position() : null;
+    if (ms !== null) {
+      const lines = store.shown.lines;
+      const shifted = ms + options.offsetMs;
+      const started = lineAt(lines, shifted);
+      const index = !options.preciseTiming ? started : started >= 0 && shifted < lines[started]!.endMs ? started : -1;
+      if (index !== followerIndex) {
+        followerIndex = index;
+        reportLine(activeLineAt(store.shown, index));
+      }
+    }
+    follower = requestAnimationFrame(follow);
+  };
+  const startHeadless = () => {
+    if (follower || open || !wantsHeadless()) return;
+    follower = requestAnimationFrame(follow);
+  };
+  const stopHeadless = () => {
+    if (!follower) return;
+    cancelAnimationFrame(follower);
+    follower = 0;
+    followerIndex = -1;
+  };
+
   const setOpen = (next: boolean) => {
     if (next === open) return;
     open = next;
     element.toggleAttribute("open", open);
-    store.setActive(open);
+    store.setActive(open || wantsHeadless());
+    if (open) {
+      stopHeadless();
+    } else {
+      // The view's cleanup cleared the line; the follower picks it up again.
+      startHeadless();
+    }
     draw();
   };
   attachToLyricsTab(ctx, element, setOpen);
 
-  ctx.player.on("trackChange", (track) => store.load(track));
+  ctx.player.on("trackChange", (track) => {
+    store.load(track);
+    store.setActive(open || wantsHeadless());
+    startHeadless();
+  });
   store.load(ctx.player.state.track);
+  store.setActive(open || wantsHeadless());
+  startHeadless();
 
   const unsubscribe = store.subscribe(() => {
     element.dataset.state = viewState(store);
+    // Lyrics can arrive after the track change that started the follower.
+    startHeadless();
   });
 
   ctx.onCleanup(() => {
+    stopHeadless();
     unsubscribe();
     render(null, root);
     element.remove();

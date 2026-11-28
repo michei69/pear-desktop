@@ -23,8 +23,8 @@ npmRebuild: false
 extraResources:
   - from: ../../license
     to: license
-# ffmpeg.wasm's core (the downloader converts with it when there is no ffmpeg) is
-# loaded from its files at runtime, so it ships next to the bundle.
+  # ffmpeg.wasm's core (the downloader converts with it when there is no ffmpeg) is
+  # loaded from its files at runtime, so it ships next to the bundle.
   - from: ../../plugins/downloader/node_modules/@ffmpeg.wasm/core-mt/dist
     to: ffmpeg-core
 # Chromium ships 55 locale packs; the app's i18n directory has no translations

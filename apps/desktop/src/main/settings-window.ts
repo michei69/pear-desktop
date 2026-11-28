@@ -116,7 +116,7 @@ export function openSettingsWindow(useYtmIcons: boolean) {
     if (url.startsWith("data:")) return;
     console.error(`[pear] settings window failed to load ${url}: ${description} (${errorCode})`);
     show();
-    void window.loadURL(settingsErrorPage(`${description} (${errorCode}), ${url}`));
+    window.loadURL(settingsErrorPage(`${description} (${errorCode}), ${url}`)).catch(() => {});
   });
   window.webContents.on("render-process-gone", (_event, details) => {
     console.error("[pear] settings window renderer gone:", details);
@@ -127,7 +127,7 @@ export function openSettingsWindow(useYtmIcons: boolean) {
   window.webContents.on("will-navigate", (event, url) => {
     if (!isSettingsUrl(url)) event.preventDefault();
   });
-  void window.loadURL(`${SETTINGS_ORIGIN}/`);
+  window.loadURL(`${SETTINGS_ORIGIN}/`).catch(() => {});
   return window;
 }
 

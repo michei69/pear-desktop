@@ -29,6 +29,12 @@ export class MenuItems {
   }
 
   #changed() {
-    for (const listener of this.#listeners) listener();
+    for (const listener of this.#listeners) {
+      try {
+        listener();
+      } catch (error) {
+        console.error("[pear] a menu items listener failed", error);
+      }
+    }
   }
 }

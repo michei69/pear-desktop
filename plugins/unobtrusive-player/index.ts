@@ -114,10 +114,13 @@ export default definePlugin({
           closePlayerPage();
           return;
         }
+        // An ad can keep YTM from closing the page. Keep the latch for the
+        // adChange(false) retry, or the page would stay open after every ad.
+        retries = 0;
+        if (ctx.player.state.ad) return;
         // The latch is only useful if the auto-close actually closed the page;
         // a toggle that never works would otherwise force-close every later
         // track, so give up until the user starts another one from a list.
-        retries = 0;
         root.classList.remove(DID_PLAY);
       }, AUTO_CLOSING_MS);
     };

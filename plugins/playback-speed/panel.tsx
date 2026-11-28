@@ -27,7 +27,9 @@ export function speedPanel(title: string, setSpeed: (speed: number) => void) {
   ];
   const render = (speed: number) => {
     label.textContent = format(speed);
-    slider.value = String(speed);
+    // The slider covers the useful range only; a wheel/setting speed outside it
+    // must not leave the thumb lying at the edge of a different value.
+    slider.value = String(Math.min(SLIDER_MAX, Math.max(SLIDER_MIN, speed)));
     for (const [i, preset] of presets.entries()) preset.setAttribute("aria-pressed", String(PRESETS[i] === speed));
   };
   return { body, render };

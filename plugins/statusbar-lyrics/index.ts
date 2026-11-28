@@ -58,6 +58,7 @@ export default definePlugin({
   name: "Status bar lyrics",
   description: "Shows the current synced lyric line in the macOS menu bar. Requires Synced lyrics.",
   platforms: ["darwin"],
+  needs: ["synced-lyrics"],
   config: schema,
   host: {
     start(ctx) {

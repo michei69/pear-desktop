@@ -7,7 +7,8 @@ import { shadowStyles } from "./styles.ts";
 import { ICONS, type WindowAction } from "./types.ts";
 
 export function windowControls(ctx: Ctx) {
-  const run = (action: WindowAction) => void ctx.host.invoke("run", action);
+  const run = (action: WindowAction) =>
+    void ctx.host.invoke("run", action).catch((error) => ctx.log.warn(`window action "${action}" failed`, error));
   const { host, root } = shadowHost("pear-window-controls", shadowStyles);
   const button = (name: string, label: string, icon: string, action: WindowAction) => (
     <button type="button" class={name} title={label} aria-label={label} onClick={() => run(action)}>

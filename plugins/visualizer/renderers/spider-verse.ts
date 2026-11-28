@@ -24,6 +24,9 @@ export function spiderVerseRenderer(stage: Stage): Renderer {
 }
 
 class SpiderVerseRenderer extends ThemeSongRenderer {
+  /** The dot field is static per size; redrawing ~90k arcs a frame is not. */
+  #dots: { width: number; height: number; layer: HTMLCanvasElement } | undefined;
+
   constructor(stage: Stage) {
     super(stage, 2048, 0.8);
   }
@@ -71,20 +74,26 @@ class SpiderVerseRenderer extends ThemeSongRenderer {
   }
 
   private drawDotField(context: CanvasRenderingContext2D, width: number, height: number): void {
-    const rows = Math.ceil(height / DOT_SPACING);
-    const cols = Math.ceil(width / DOT_SPACING);
-
-    for (let row = 0; row < rows; row += 1) {
-      const y = row * DOT_SPACING;
-      const opacity = Math.max(0, y / Math.max(1, height / 3) - 1);
-      context.fillStyle = `rgba(255, 255, 255, ${opacity * 0.07})`;
-
-      for (let col = 0; col < cols; col += 1) {
-        const x = col * DOT_SPACING + (row % 2 === 0 ? DOT_SPACING / 2 : 0);
-        context.beginPath();
-        context.arc(x, y, DOT_SIZE / 2, 0, Math.PI * 2);
-        context.fill();
+    if (this.#dots?.width !== width || this.#dots?.height !== height) {
+      const layer = document.createElement("canvas");
+      layer.width = width;
+      layer.height = height;
+      const dots = layer.getContext("2d")!;
+      const rows = Math.ceil(height / DOT_SPACING);
+      const cols = Math.ceil(width / DOT_SPACING);
+      for (let row = 0; row < rows; row += 1) {
+        const y = row * DOT_SPACING;
+        const opacity = Math.max(0, y / Math.max(1, height / 3) - 1);
+        dots.fillStyle = `rgba(255, 255, 255, ${opacity * 0.07})`;
+        for (let col = 0; col < cols; col += 1) {
+          const x = col * DOT_SPACING + (row % 2 === 0 ? DOT_SPACING / 2 : 0);
+          dots.beginPath();
+          dots.arc(x, y, DOT_SIZE / 2, 0, Math.PI * 2);
+          dots.fill();
+        }
       }
+      this.#dots = { width, height, layer };
     }
+    context.drawImage(this.#dots.layer, 0, 0);
   }
 }

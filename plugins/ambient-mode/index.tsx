@@ -293,6 +293,7 @@ export default definePlugin({
       glow?.remove();
       glow = null;
     });
+    ctx.onWindowVisibility(() => glow?.visibility?.());
 
     const sync = () => {
       if (ctx.signal.aborted) return;
@@ -346,6 +347,8 @@ interface Glow {
   source: string;
   /** Config changed without the style switching: rewrite what can be rewritten in place. */
   update(): void;
+  /** Window shown/hidden: stop or restart any animation loop. */
+  visibility?(): void;
   remove(): void;
 }
 
@@ -402,27 +405,31 @@ function mountAmbilight(ctx: Ctx, wanted: { kind: GlowKind; source: string }): G
     page: ctx.$("player.page"),
     isVisible: () => ctx.isWindowVisible(),
   });
-  return { kind: wanted.kind, source: wanted.source, update: ambient.refresh, remove: ambient.unregister };
+  return {
+    kind: wanted.kind,
+    source: wanted.source,
+    update: ambient.refresh,
+    visibility: ambient.visibility,
+    remove: ambient.unregister,
+  };
 }
 
 /** A blurred copy of the cover art; returns nothing if there is no artwork yet. */
 function mountImage(ctx: Ctx, wanted: { kind: GlowKind; source: string }): Glow | null {
-  const container = ctx.$("player.song_image");
   const source = ctx.$<HTMLImageElement>("player.song_image_img");
   // YTM shows a transparent placeholder until the artwork loads.
-  if (!container || !source || source.src.startsWith("data:")) return null;
+  if (!ctx.$("player.song_image") || !source || source.src.startsWith("data:")) return null;
   const image = <img class="pear-ambient" alt="" src={source.src} />;
   const update = () => applyStyle(ctx, image);
   update();
-  container.prepend(image);
+  ctx.mount(image, "player.song_image", "prepend");
   return { kind: wanted.kind, source: wanted.source, update, remove: () => image.remove() };
 }
 
 /** A small canvas painted from the video; returns nothing if there is no video. */
 function mountVideo(ctx: Ctx, wanted: { kind: GlowKind; source: string }): Glow | null {
-  const wrapper = ctx.$("player.song_video_wrapper");
   const video = ctx.player.video();
-  if (!wrapper || !video) return null;
+  if (!ctx.$("player.song_video_wrapper") || !video) return null;
   const canvas = (<canvas class="pear-ambient" />) as HTMLCanvasElement;
   const context = canvas.getContext("2d");
   if (!context) return null;
@@ -451,7 +458,8 @@ function mountVideo(ctx: Ctx, wanted: { kind: GlowKind; source: string }): Glow 
   let timer: ReturnType<typeof setInterval> | undefined;
   const run = () => {
     ctx.clearInterval(timer);
-    timer = video.paused || video.ended ? undefined : ctx.setInterval(draw, Math.max(1, Math.ceil(1000 / ctx.config.buffer)));
+    const active = !video.paused && !video.ended && ctx.isWindowVisible();
+    timer = active ? ctx.setInterval(draw, Math.max(1, Math.ceil(1000 / ctx.config.buffer))) : undefined;
   };
 
   const update = () => {
@@ -470,12 +478,16 @@ function mountVideo(ctx: Ctx, wanted: { kind: GlowKind; source: string }): Glow 
   draw();
   run();
   // This glow's listeners go with it; the plugin stopping removes it too.
-  const stopListening = listenAll(video, { play: run, pause: run, ended: run, loadedmetadata: update });
-  wrapper.prepend(canvas);
+  const stopListening = listenAll(video, { play: run, pause: run, ended: run, loadedmetadata: update, seeked: draw });
+  ctx.mount(canvas, "player.song_video_wrapper", "prepend");
   return {
     kind: wanted.kind,
     source: wanted.source,
     update,
+    visibility() {
+      run();
+      draw();
+    },
     remove() {
       ctx.clearInterval(timer);
       stopListening();

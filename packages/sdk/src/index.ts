@@ -15,6 +15,7 @@ export * from "./perf.ts";
 export * from "./player.ts";
 export * from "./themes.ts";
 export * from "./queue.ts";
+export * from "./skip.ts";
 export * from "./share-url.ts";
 export type { RpcMethod, RpcSchemas } from "./rpc.ts";
 export type { SelectorName } from "./selectors.ts";
@@ -289,6 +290,15 @@ export interface PageContext<C, Cmds extends AnyCommands> extends CommonContext<
    * and `document.hidden` stays false, while minimized or hidden. Visual loops check this to pause.
    */
   isWindowVisible(): boolean;
+  /** Calls `listener` when the window is shown or hidden, so visual loops can stop and restart. */
+  onWindowVisibility(listener: () => void): void;
+  /**
+   * Whether another plugin is enabled right now (blocked plugins count as off).
+   * For plugins that can work headlessly for a consumer, e.g. synced-lyrics for
+   * statusbar-lyrics. Read it when the consumer might have changed (track, tab);
+   * it is a live lookup, not a subscription.
+   */
+  pluginEnabled(id: string): boolean;
   /** Aborted when the plugin stops. */
   readonly signal: AbortSignal;
 }
@@ -351,6 +361,12 @@ export interface PluginDef<S extends ConfigShape, Cmds extends AnyCommands, Rpc 
   actions?: { readonly [K in keyof Cmds & string]?: PluginAction };
   /** Plugins that disable this one while they are enabled; shown in settings with the reason. */
   conflicts?: readonly PluginConflict[];
+  /**
+   * Plugins this one needs to do anything useful. It still starts, but its
+   * status line says which are off; there is no `conflicts` entry, since the
+   * dependency may be enabled later. Used by statusbar-lyrics.
+   */
+  needs?: readonly string[];
   host?: HostPart<ConfigOf<S>, Cmds, Rpc>;
   page?: PagePart<ConfigOf<S>, Cmds>;
   /** CSS applied while enabled; usually the result of the `css` macro. */

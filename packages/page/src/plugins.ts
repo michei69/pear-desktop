@@ -52,6 +52,7 @@ export class PluginRunner {
   readonly #meta: Readonly<Record<string, PluginMeta>>;
   #audio: Promise<AudioGraph> | undefined;
   #windowVisible: boolean;
+  #visibilityListeners = new Set<() => void>();
   /** performance.plugins: the heavy visual plugins' page halves stay off. */
   #skipHeavyPlugins: boolean;
   #bridge: Bridge;
@@ -122,7 +123,15 @@ export class PluginRunner {
   }
 
   setWindowVisible(visible: boolean) {
+    if (visible === this.#windowVisible) return;
     this.#windowVisible = visible;
+    for (const listener of this.#visibilityListeners) {
+      try {
+        listener();
+      } catch (error) {
+        console.error("[pear] a window visibility listener failed", error);
+      }
+    }
   }
 
   /** Answers host requests for the core (id "core"), e.g. the API server's. */
@@ -144,9 +153,24 @@ export class PluginRunner {
 
   /** Applies a state pushed by the host (enable/disable or config change). */
   applyState(id: string, next: PluginState) {
-    const plugin = this.#plugins.get(id);
     const previous = this.#host.plugins.get(id);
     this.#host.setPlugin(id, next);
+    this.#transition(id, previous, next);
+  }
+
+  /** Several states from one host change: one settings re-render, then the transitions. */
+  applyStates(states: Record<string, PluginState>) {
+    const previous = new Map<string, PluginState | undefined>();
+    for (const [id, next] of Object.entries(states)) {
+      previous.set(id, this.#host.plugins.get(id));
+      this.#host.plugins.set(id, next);
+    }
+    this.#host.notify();
+    for (const [id, next] of Object.entries(states)) this.#transition(id, previous.get(id), next);
+  }
+
+  #transition(id: string, previous: PluginState | undefined, next: PluginState) {
+    const plugin = this.#plugins.get(id);
     if (!plugin) return;
     const instance = this.#instances.get(id);
     // Started (or not) for good when the page loaded; the restart banner covers the rest.
@@ -276,6 +300,11 @@ export class PluginRunner {
       addStyle: (css) => styleHandle(scope, css),
       toast: showToast,
       isWindowVisible: () => this.#windowVisible,
+      onWindowVisibility: (listener) => {
+        this.#visibilityListeners.add(listener);
+        scope.onStop(() => void this.#visibilityListeners.delete(listener));
+      },
+      pluginEnabled: (target) => this.#host.plugins.get(target)?.enabled === true,
       onCleanup: (fn) => scope.onStop(fn),
       signal: scope.signal,
       t: this.t,

@@ -234,6 +234,7 @@ export class Together {
         await connection.broadcast("CLEAR_QUEUE", null);
         break;
       case "SET_INDEX":
+        if (await this.#refuse(conn)) return;
         if (typeof event.payload?.index !== "number") {
           this.#env.log.warn('received "SET_INDEX" without an index');
           break;

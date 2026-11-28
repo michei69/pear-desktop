@@ -1,5 +1,5 @@
 import type { PageContextOf } from "@pear/sdk";
-import { sampleImagePixels } from "@pear/sdk/image";
+import { sampleImagePixelsCached } from "@pear/sdk/image";
 import { clamp } from "@pear/sdk/util";
 
 // The ThemeSong visualizers color themselves from the track. album-color-theme
@@ -197,7 +197,7 @@ export function artworkPalette(ctx: PaletteContext): ArtworkPalette {
 }
 
 async function sampleArtwork(url: string): Promise<readonly Hsl[]> {
-  return quantize(await sampleImagePixels(url, SAMPLE_SIZE));
+  return quantize(await sampleImagePixelsCached(url, SAMPLE_SIZE));
 }
 
 interface Bucket {

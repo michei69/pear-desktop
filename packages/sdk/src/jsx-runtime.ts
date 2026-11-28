@@ -59,7 +59,7 @@ export function append(parent: ParentNode, child: Child) {
     for (const item of child as readonly Child[]) append(parent, item);
     return;
   }
-  parent.append(child as Node | string);
+  parent.append(typeof child === "number" ? String(child) : (child as Node | string));
 }
 
 function setProp(element: Element, name: string, value: unknown) {

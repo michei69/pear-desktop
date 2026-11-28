@@ -18,6 +18,8 @@ export class PageRequests {
   #pending = new Map<number, Pending>();
   #nextId = 1;
   #send: (event: HostEvent) => void;
+  /** The in-flight details request: every plugin reacting to one track change shares it. */
+  #details: Promise<SongDetails | null> | undefined;
 
   constructor(send: (event: HostEvent) => void) {
     this.#send = send;
@@ -44,10 +46,20 @@ export class PageRequests {
     });
   }
 
-  /** The current track's extras, from the runtime's own handler; null if the page doesn't answer. */
+  /**
+   * The current track's extras, from the runtime's own handler; null if the page
+   * doesn't answer. Discord, Lumia, Tuna, the scrobbler and the API server all
+   * ask on the same player change, so concurrent asks share one round-trip.
+   */
   songDetails(options?: { timeout?: number }): Promise<SongDetails | null> {
+    if (this.#details) return this.#details;
     const timeout = options?.timeout ?? DETAILS_TIMEOUT_MS;
-    return this.request<SongDetails | null>("core", "details", undefined, { timeout }).catch(() => null);
+    const request = this.request<SongDetails | null>("core", "details", undefined, { timeout }).catch(() => null);
+    this.#details = request;
+    void request.then(() => {
+      if (this.#details === request) this.#details = undefined;
+    });
+    return request;
   }
 
   /** Settles a request with the page's answer. */

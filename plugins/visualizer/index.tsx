@@ -78,7 +78,9 @@ export default definePlugin({
     const graph = await ctx.audio();
     const container = await ctx.waitFor("player.container");
     const canvas = (<canvas class="pear-visualizer" />) as HTMLCanvasElement;
-    container.prepend(canvas);
+    // YTM re-renders the player; `mount` puts the canvas back in the new one.
+    ctx.mount(canvas, "player.container", "prepend");
+    const current = () => ctx.$("player.container") ?? container;
     let frame = 0;
     ctx.onCleanup(() => {
       cancelAnimationFrame(frame);
@@ -87,7 +89,8 @@ export default definePlugin({
 
     const size = () => {
       const ratio = window.devicePixelRatio || 1;
-      return { width: Math.ceil(container.clientWidth * ratio), height: Math.ceil(container.clientHeight * ratio) };
+      const player = current();
+      return { width: Math.ceil(player.clientWidth * ratio), height: Math.ceil(player.clientHeight * ratio) };
     };
     // The ThemeSong visualizers follow the artwork; the palette object keeps
     // itself current across track changes.
@@ -104,25 +107,53 @@ export default definePlugin({
       const { width, height } = size();
       shown = width > 0 && height > 0;
       if (shown) renderer.resize(width, height);
+      syncLoop();
     });
+    let observed = container;
     observer.observe(container);
     ctx.onCleanup(() => observer.disconnect());
+    // If YTM replaces the player, watch its replacement (and resize to it).
+    ctx.observe("app", { childList: true, subtree: true }, () => {
+      const next = current();
+      if (next === observed) return;
+      observed = next;
+      observer.disconnect();
+      observer.observe(next);
+      const { width, height } = size();
+      shown = width > 0 && height > 0;
+      if (shown) renderer.resize(width, height);
+      syncLoop();
+    });
 
-    // One frame loop drives every visualizer. It decides whether to draw (the
-    // player page is on screen and the window is visible) and, across those
-    // transitions, pauses the libraries that animate themselves while hidden.
-    let active = true;
+    // One frame loop drives every visualizer while the player page and window
+    // are on screen. Off screen it stops completely (and pauses the libraries
+    // that animate themselves) instead of waking every frame to draw nothing.
+    const shouldRun = () => shown && ctx.isWindowVisible();
+    let running = false;
     const tick = () => {
-      const visible = shown && ctx.isWindowVisible();
-      if (visible !== active) {
-        active = visible;
-        if (visible) renderer.resume?.();
-        else renderer.pause?.();
+      if (!shouldRun()) {
+        running = false;
+        renderer.pause?.();
+        return;
       }
-      if (visible) renderer.render?.();
+      renderer.render?.();
       frame = requestAnimationFrame(tick);
     };
-    frame = requestAnimationFrame(tick);
+    const syncLoop = () => {
+      if (!renderer) return;
+      if (shouldRun() && !running) {
+        running = true;
+        renderer.resume?.();
+        frame = requestAnimationFrame(tick);
+      } else if (!shouldRun() && running) {
+        running = false;
+        cancelAnimationFrame(frame);
+        frame = 0;
+        renderer.pause?.();
+      }
+    };
+    ctx.onWindowVisibility(syncLoop);
+    syncLoop();
   },
 });
 

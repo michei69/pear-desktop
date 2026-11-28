@@ -121,7 +121,7 @@ const pictureArea = (frame: Rect, bars: AmbientBars, sourceWidth: number, source
 export const mountAmbientLight = (
   source: AmbientLightSource,
   { getConfig, page, isVisible }: AmbientLightOptions,
-): { refresh: () => void; unregister: () => void } => {
+): { refresh: () => void; visibility: () => void; unregister: () => void } => {
   const canvas = document.createElement("canvas");
   canvas.classList.add(AMBIENT_LIGHT_CANVAS_CLASS);
   const scrim = document.createElement("div");
@@ -449,6 +449,11 @@ export const mountAmbientLight = (
 
   return {
     refresh,
+    /** Stop the draw loop while hidden; resume it when the window is back. */
+    visibility() {
+      if (!isVisible()) stop();
+      else if (isVideo && !source.paused) start();
+    },
     unregister() {
       stop();
       for (const stopListeners of stopListening) stopListeners();

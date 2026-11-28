@@ -1,4 +1,4 @@
-import { type PageContextOf, type QueueAction, queueDispatch, queueItems, queueStore } from "@pear/sdk";
+import { claimSkip, type PageContextOf, type QueueAction, queueDispatch, queueItems, queueStore, releaseSkip } from "@pear/sdk";
 import { patchMethod } from "@pear/sdk/util";
 import { MAX_SKIPS, REFRESH_INTERVAL_MS, SKIP_WINDOW_MS, type SkipAiSlopConfig, type schema } from "./config.ts";
 import type { SkipAiSlopCommands } from "./contract.ts";
@@ -354,9 +354,12 @@ export function startSkipAiSlop(ctx: Ctx) {
   }
 
   function trySkip(videoId: string, reason: string) {
+    // sfw-music may be about to skip the same track: one advance per track.
+    if (!claimSkip(videoId, "skip-ai-slop")) return;
     // A rate-limited attempt is not recorded, so the queue scans retry it once
     // the skip window frees.
     if (!limiter.trySkip(videoId)) {
+      releaseSkip(videoId, "skip-ai-slop");
       if (!limiter.has(videoId)) ctx.log.warn("skip limit reached; not skipping", videoId);
       return;
     }

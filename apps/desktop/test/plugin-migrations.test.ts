@@ -4,12 +4,14 @@
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import hostPlugins from "virtual:pear/host-plugins";
+import { loadPlugins } from "virtual:pear/host-plugins";
 import { afterAll, describe, expect, test, vi } from "vitest";
 import { DEFAULT_FILTERS } from "../../../plugins/scrobbler/filters.ts";
 import { Settings } from "../src/main/config.ts";
 import { migrate, PLUGIN_MIGRATIONS, type StoredConfig } from "../src/main/migrations/index.ts";
 import { from312, PEAR_DESKTOP_3, PLAY_BUTTON } from "./pear-desktop-3.ts";
+
+const { plugins: hostPlugins } = await loadPlugins();
 
 vi.mock("electron", () => ({}));
 

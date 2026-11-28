@@ -125,6 +125,8 @@ export function nextShortcutIcon(current: string, target: string, ours: string, 
 export async function syncShortcutIcons(useYtmIcons: boolean) {
   // A portable build runs from a temporary copy; its shortcuts are not stable.
   if (process.platform !== "win32" || !app.isPackaged || process.env.PORTABLE_EXECUTABLE_FILE) return;
+  // The scanning itself is synchronous; let startup finish before it runs.
+  await new Promise<void>((resolve) => setImmediate(resolve));
   const target = process.execPath;
   const ours = shortcutIconPath();
   let changed = 0;

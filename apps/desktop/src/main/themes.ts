@@ -2,7 +2,7 @@
 // live. The host reads them (the page can't read files), gates a theme's script
 // on the user's consent to its exact SHA-256, and tells the page its state.
 
-import { copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { copyFileSync, existsSync, type FSWatcher, mkdirSync, readFileSync, watch, writeFileSync } from "node:fs";
 import { basename, extname, join } from "node:path";
 import { app, type BrowserWindow, dialog, shell } from "electron";
 import type { Translate } from "@pear/sdk/i18n";
@@ -32,7 +32,9 @@ const DEFAULT_PALETTE: ThemePalette = {
 
 const BASIC_THEME_ID = "basic";
 const BASIC_CSS_FILE = "style.css";
-/** Theme folders are re-read this often; a few files, so polling is cheap and survives editors. */
+/** Editors write in bursts; one re-read after they settle is enough. */
+const WATCH_DEBOUNCE_MS = 150;
+/** Fallback when the platform can't watch the tree recursively. */
 const POLL_MS = 1000;
 
 const getThemesDir = () => join(app.getPath("userData"), "themes");
@@ -157,7 +159,8 @@ export class Themes {
   #onCatalogChange: () => void;
   #themes: PearTheme[] = [];
   #signature = "";
-  #timer: ReturnType<typeof setInterval> | undefined;
+  #watcher: FSWatcher | undefined;
+  #pollTimer: ReturnType<typeof setTimeout> | undefined;
 
   /**
    * `onChange` runs when the folders or the selection change; `onCatalogChange`
@@ -198,13 +201,48 @@ export class Themes {
 
     this.#reload();
     this.#pruneMissingThemes();
-    this.#timer = setInterval(() => this.#poll(), POLL_MS);
+    try {
+      // Recursive because a theme is a folder, and editors often replace files
+      // atomically (rename), which a per-file watcher would miss.
+      this.#watcher = watch(getThemesDir(), { recursive: true }, () => this.#schedulePoll());
+      this.#watcher.on("error", (error) => {
+        console.warn("[pear] theme watcher stopped; falling back to polling", error);
+        this.#watcher?.close();
+        this.#watcher = undefined;
+        this.#armPoll();
+      });
+    } catch (error) {
+      console.warn("[pear] can't watch the themes folder; polling instead", error);
+      this.#armPoll();
+    }
     void this.#consentSelected();
   }
 
   stop() {
-    clearInterval(this.#timer);
-    this.#timer = undefined;
+    this.#watcher?.close();
+    this.#watcher = undefined;
+    clearTimeout(this.#pollTimer);
+    this.#pollTimer = undefined;
+  }
+
+  /** Debounced re-read after a filesystem event; polling keeps going if the watcher failed. */
+  #schedulePoll() {
+    if (this.#pollTimer !== undefined) clearTimeout(this.#pollTimer);
+    this.#pollTimer = setTimeout(() => {
+      this.#pollTimer = undefined;
+      this.#poll();
+      if (!this.#watcher) this.#armPoll();
+    }, WATCH_DEBOUNCE_MS);
+  }
+
+  /** The polling fallback loop (platforms without a recursive watcher). */
+  #armPoll() {
+    if (this.#pollTimer !== undefined) clearTimeout(this.#pollTimer);
+    this.#pollTimer = setTimeout(() => {
+      this.#pollTimer = undefined;
+      this.#poll();
+      if (!this.#watcher) this.#armPoll();
+    }, POLL_MS);
   }
 
   /** Themes as the renderer should see them: a script is withheld until consented. */

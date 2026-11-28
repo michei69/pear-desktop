@@ -141,18 +141,26 @@ export class Connection implements ConnectionLike {
   async connect(id: string) {
     this._mode = "guest";
     const conn = this.peer.connect(id, { reliable: true });
+    let onError: ((err: PeerError<`${PeerErrorType}`>) => void) | undefined;
     const unavailable = new Promise<never>((_, reject) => {
-      const onError = (err: PeerError<`${PeerErrorType}`>) => {
+      onError = (err) => {
         if (err.type === "peer-unavailable") {
-          this.peer.off("error", onError);
+          this.peer.off("error", onError!);
           reject(err);
         }
       };
       this.peer.on("error", onError);
-      conn.once("open", () => this.peer.off("error", onError));
-      conn.once("close", () => this.peer.off("error", onError));
+      conn.once("open", () => this.peer.off("error", onError!));
+      conn.once("close", () => this.peer.off("error", onError!));
     });
-    await Promise.race([this.registerConnection(conn), unavailable]);
+    try {
+      await Promise.race([this.registerConnection(conn), unavailable]);
+    } catch (error) {
+      // A failed join that never opens or closes the connection would otherwise
+      // leave this peer listener behind for every attempt.
+      if (onError) this.peer.off("error", onError);
+      throw error;
+    }
     return conn;
   }
 

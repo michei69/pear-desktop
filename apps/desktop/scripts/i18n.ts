@@ -80,7 +80,11 @@ async function loadModules() {
     optimizeDeps: { noDiscovery: true, include: [] },
   });
   try {
-    const plugins = (await server.ssrLoadModule("virtual:pear/host-plugins")).default as AnyPlugin[];
+    const { loadPlugins } = (await server.ssrLoadModule("virtual:pear/host-plugins")) as {
+      loadPlugins(): Promise<{ plugins: AnyPlugin[] }>;
+    };
+    const { plugins } = await loadPlugins();
+    validatePluginGraph(plugins);
     const { CORE_FIELD_KEYS, CORE_SECTIONS } = (await server.ssrLoadModule("@pear/sdk/core-config")) as {
       CORE_FIELD_KEYS: Readonly<Record<string, FieldTextKeys>>;
       CORE_SECTIONS: Record<string, ConfigShape>;
@@ -90,6 +94,24 @@ async function loadModules() {
     return { plugins, CORE_FIELD_KEYS, CORE_SECTIONS, UI_STRINGS, i18n };
   } finally {
     await server.close();
+  }
+}
+
+/** A typo in a conflict or dependency id would silently disable the mechanism. */
+function validatePluginGraph(plugins: readonly AnyPlugin[]) {
+  const ids = new Set(plugins.map((plugin) => plugin.id));
+  const problems: string[] = [];
+  for (const plugin of plugins) {
+    for (const conflict of plugin.conflicts ?? []) {
+      if (!ids.has(conflict.id)) problems.push(`${plugin.id}: conflict "${conflict.id}" is not a plugin id`);
+    }
+    for (const need of plugin.needs ?? []) {
+      if (!ids.has(need)) problems.push(`${plugin.id}: needs "${need}", which is not a plugin id`);
+    }
+  }
+  if (problems.length > 0) {
+    for (const problem of problems) console.error(`plugins: ${problem}`);
+    process.exit(1);
   }
 }
 

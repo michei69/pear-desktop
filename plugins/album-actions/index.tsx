@@ -219,5 +219,8 @@ export default definePlugin({
     ctx.onCleanup(() => cancelAnimationFrame(scheduled));
     ctx.observe("browse.page", { childList: true, subtree: true, attributes: true, attributeFilter: ["aria-pressed"] }, schedule);
     void ctx.waitFor("browse.page").then(update, () => {});
+    // The observer follows the first browse page; if YTM replaces it on
+    // navigation, keep re-inserting the bar into the new one.
+    ctx.mount(bar, update);
   },
 });

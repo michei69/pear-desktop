@@ -26,12 +26,23 @@ export default definePlugin({
       // The raw YTM type distinguishes an official music video from UGC; the
       // coarse Track.mediaType cannot. Keep it per track for the query shape.
       const videoTypes = new Map<string, string>();
+      const remember = (videoId: string, type: string) => {
+        videoTypes.set(videoId, type);
+        // A long session must not grow one entry per played track forever.
+        while (videoTypes.size > 100) {
+          const oldest = videoTypes.keys().next();
+          if (oldest.done) break;
+          videoTypes.delete(oldest.value);
+        }
+      };
       ctx.player.on("trackChange", (track) => {
-        if (!track) return;
+        if (!track || videoTypes.has(track.videoId)) return;
         void ctx.player
           .details()
           .then((details) => {
-            if (details?.musicVideoType) videoTypes.set(track.videoId, details.musicVideoType);
+            // The request reads the *current* player response: a track switch in
+            // flight would otherwise label the old id with the new track's type.
+            if (details?.musicVideoType && details.videoId === track.videoId) remember(track.videoId, details.musicVideoType);
           })
           .catch(() => {});
       });

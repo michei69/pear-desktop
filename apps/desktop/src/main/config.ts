@@ -160,7 +160,14 @@ export class Settings {
       this.#data.options = { ...this.#data.options, ...next };
       this.#scheduleWrite();
     }
-    for (const listener of this.#coreListeners) listener(section);
+    for (const listener of this.#coreListeners) {
+      // One plugin's failing listener must not starve the others or escape into the caller.
+      try {
+        listener(section);
+      } catch (error) {
+        console.error(`[pear] a core change listener for "${section}" failed`, error);
+      }
+    }
     return next;
   }
 

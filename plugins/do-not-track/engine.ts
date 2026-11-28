@@ -8,13 +8,16 @@
 // cosmetic filters (cosmetics()) and applies them itself.
 
 import { createHash } from "node:crypto";
-import { mkdir, readFile, rename, stat, writeFile } from "node:fs/promises";
+import { mkdir, readdir, readFile, rename, rm, stat, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { FiltersEngine, Request } from "@ghostery/adblocker";
 import { net, type WebRequest } from "electron";
 import type { FilterSource } from "./lists.ts";
 
 const MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000;
+/** Remote lists change without their URL changing: re-fetch them daily, not on every launch. */
+const REMOTE_REFRESH_MS = 24 * 60 * 60 * 1000;
+const FETCH_TIMEOUT_MS = 15_000;
 const CSP_HEADER = "content-security-policy";
 
 export interface EngineOptions {
@@ -35,7 +38,8 @@ function build(lists: readonly FilterSource[]) {
   return FiltersEngine.fromLists(
     async (url) => {
       const text = contents.get(url);
-      return text === undefined ? net.fetch(url) : new Response(text);
+      // A hung list host must not leave the refresh promise pending forever.
+      return text === undefined ? net.fetch(url, { signal: AbortSignal.timeout(FETCH_TIMEOUT_MS) }) : new Response(text);
     },
     lists.map((list) => list.url),
     {
@@ -84,6 +88,21 @@ async function save(file: string, engine: FiltersEngine) {
   await mkdir(dirname(file), { recursive: true });
   await writeFile(`${file}.tmp`, engine.serialize());
   await rename(`${file}.tmp`, file);
+  await prune(dirname(file), file);
+}
+
+/** Cache keys change with the list fingerprint; drop engines nothing will read again. */
+async function prune(dir: string, keep: string) {
+  try {
+    const names = await readdir(dir);
+    await Promise.all(
+      names
+        .filter((name) => name.startsWith("engine-") && name.endsWith(".bin") && join(dir, name) !== keep)
+        .map((name) => rm(join(dir, name), { force: true })),
+    );
+  } catch {
+    // A missing cache directory is not an error.
+  }
 }
 
 export async function loadEngine(options: EngineOptions): Promise<LoadedEngine> {
@@ -100,9 +119,9 @@ export async function loadEngine(options: EngineOptions): Promise<LoadedEngine> 
     const [buffer, info] = await Promise.all([readFile(file), stat(file)]);
     const engine = FiltersEngine.deserialize(buffer);
     // Remote lists change without their URL changing (the cache key only has the
-    // URL): the cached engine blocks at once, and a remote list means it is
-    // rebuilt in the background on every launch.
-    const stale = lists.some((list) => list.contents === undefined) || Date.now() - info.mtimeMs > MAX_AGE_MS;
+    // URL), so refresh them daily. The cached engine blocks immediately either way.
+    const remote = lists.some((list) => list.contents === undefined);
+    const stale = Date.now() - info.mtimeMs > (remote ? REMOTE_REFRESH_MS : MAX_AGE_MS);
     const refreshed = stale ? build(lists).then(async (fresh) => (await save(file, fresh), fresh)) : Promise.resolve(undefined);
     return { engine, refreshed };
   } catch {

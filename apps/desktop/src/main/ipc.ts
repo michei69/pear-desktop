@@ -41,6 +41,17 @@ function assertPatch(patch: unknown): asserts patch is Record<string, unknown> {
   if (typeof patch !== "object" || patch === null) throw new Error("[pear] config patch must be an object");
 }
 
+/** Schemes the page may hand to the system; `file:` and custom handlers stay out of reach. */
+const EXTERNAL_SCHEMES = new Set(["http:", "https:", "mailto:", "tel:"]);
+
+function openExternal(url: unknown) {
+  const parsed = URL.parse(String(url));
+  if (!parsed || !EXTERNAL_SCHEMES.has(parsed.protocol)) {
+    throw new Error(`[pear] refusing to open ${String(url)}`);
+  }
+  return shell.openExternal(parsed.toString()).then(() => undefined);
+}
+
 type Handlers = { [K in CoreCommandName]: (...args: Parameters<CoreCommands[K]>) => unknown };
 
 export interface IpcEnvironment {
@@ -79,6 +90,8 @@ export interface IpcEnvironment {
   /** The "restart on config changes" option: what a settings change from the surfaces restarts. */
   restartOnConfigChanges(): boolean;
   restart(): void;
+  /** Writes pending (debounced) settings; `app.exit()` skips `before-quit`, which would otherwise flush them. */
+  flushSettings(): void;
 }
 
 export function setupIpc({
@@ -98,6 +111,7 @@ export function setupIpc({
   core,
   restartOnConfigChanges,
   restart,
+  flushSettings,
 }: IpcEnvironment) {
   /** The `destroyed` cleanup of each open restart session, removed when it closes normally. */
   const restartDestroyed = new Map<number, () => void>();
@@ -106,6 +120,8 @@ export function setupIpc({
     "app:version": () => app.getVersion(),
     "app:relaunch": () => {
       app.relaunch(relaunchOptions());
+      // `app.exit()` skips `before-quit`, where the debounced settings write normally happens.
+      flushSettings();
       app.exit(0);
     },
     "app:open-settings-window": () => openSettingsWindow(),
@@ -134,10 +150,9 @@ export function setupIpc({
     "theme:set-preset": (themeId, preset) => themes.setPreset(String(themeId), String(preset)),
     "theme:set-palette-value": (themeId, key, value) => themes.setPaletteValue(String(themeId), String(key), String(value)),
     "theme:reset-palette": (themeId) => themes.resetPalette(String(themeId)),
-    "theme:import": (paths) => {
-      if (paths !== undefined && !Array.isArray(paths)) throw new Error("[pear] theme import paths must be an array");
-      return themes.import(paths?.map(String), window());
-    },
+    // The picker is the only source of paths: a renderer-supplied path would let
+    // the page read any file on disk into the (broadcast) theme CSS.
+    "theme:import": () => themes.import(undefined, window()),
     "theme:open-folder": () => themes.openFolder(),
     "language:from-\u0079outube": () => language.fromYtm(),
     "language:to-\u0079outube": () => language.toYtm(),
@@ -146,7 +161,7 @@ export function setupIpc({
     "app:edit-config": async () => {
       await shell.openPath(settingsPath);
     },
-    "app:open-external": (url) => shell.openExternal(String(url)).then(() => undefined),
+    "app:open-external": (url) => openExternal(url),
     "app:meta": () => getAppMeta(),
     "flags:metadata": () => flagMetadata(),
     "app:check-updates": () => checkUpdates?.(),

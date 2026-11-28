@@ -234,6 +234,12 @@ export class PluginHost {
       // keep their launch state until the next launch.
       if (meta[other.id]?.restartRequired) continue;
       const running = this.#instances.has(other.id);
+      // A plugin whose dependency was just turned off stops with it (and comes
+      // back through the start branch below when the dependency is on again).
+      if (running && other.needs?.some((need) => !states[need]?.enabled)) {
+        this.#stop(other.id);
+        continue;
+      }
       if (states[other.id]?.enabled && !running) await this.#start(other);
       else if (!states[other.id]?.enabled && running) this.#stop(other.id);
     }
@@ -299,18 +305,22 @@ export class PluginHost {
     return plugin;
   }
 
-  #broadcast(id: string, state: PluginState) {
-    this.#env?.send({ type: "plugin-state", id, state });
-  }
-
   /** States change in pairs, not one at a time: a block also stops another plugin. */
   #broadcastStates(states: Record<string, PluginState>) {
-    for (const [id, state] of Object.entries(states)) this.#broadcast(id, state);
+    // One event for all of them: the settings dialog would otherwise re-render once per plugin.
+    this.#env?.send({ type: "plugin-states", states });
   }
 
   async #start(plugin: AnyPlugin) {
     const env = this.#env;
     if (!env || !plugin.host || this.#instances.has(plugin.id) || !this.states()[plugin.id]?.enabled) return;
+    const states = this.states();
+    const missing = plugin.needs?.filter((need) => !states[need]?.enabled) ?? [];
+    if (missing.length > 0) {
+      this.#setStatus(plugin.id, this.t("plugins.needs.status", "Needs {{plugins}}", { plugins: missing.join(", ") }));
+      return;
+    }
+    this.#setStatus(plugin.id, "");
     const instance = this.#createInstance(plugin, env);
     this.#instances.set(plugin.id, instance);
     this.#clearError(plugin.id);

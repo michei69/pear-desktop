@@ -387,27 +387,36 @@ export default definePlugin({
     const initial = api.getVideoData().video_id;
     if (initial) void load(initial);
 
-    video = await ctx.player.videoReady();
-    ctx.listen(video, "timeupdate", () => {
-      applySegments();
-      syncMarkers();
-    });
-    // A deliberate seek into a segment (seek-shortcuts, click-to-seek) must not be
-    // undone by the next timeupdate. Our own skips fire `seeked` too: the target
-    // tells them apart from the user's.
-    ctx.listen(video, "seeked", () => {
-      // Seeks inside an ad belong to the ad, not to the track's segments.
-      if (ctx.player.state.ad) return;
-      const seekedTo = api.getCurrentTime();
-      const own = ownSeekTarget !== undefined && Math.abs(seekedTo - ownSeekTarget) < OWN_SEEK_TOLERANCE_S;
-      ownSeekTarget = undefined;
-      if (own) return;
-      userInsideSegment = segmentAt(segments, seekedTo) !== undefined;
-      if (userInsideSegment) ctx.log.info("not skipping: the user seeked into the segment");
-    });
-    // Duration is unknown when the plugin starts; the bar waits for it, and the
-    // stale-cut filter depends on it.
-    ctx.listen(video, "durationchange", renderMarkers);
+    // YTM replaces the <video> on some seeks and ad reloads; the replacement
+    // reports no events for the track, so re-hook every element it hands us.
+    let attached: HTMLVideoElement | undefined;
+    const attach = (next: HTMLVideoElement) => {
+      if (next === attached) return;
+      attached = next;
+      video = next;
+      ctx.listen(next, "timeupdate", () => {
+        applySegments();
+        syncMarkers();
+      });
+      // A deliberate seek into a segment (seek-shortcuts, click-to-seek) must not be
+      // undone by the next timeupdate. Our own skips fire `seeked` too: the target
+      // tells them apart from the user's.
+      ctx.listen(next, "seeked", () => {
+        // Seeks inside an ad belong to the ad, not to the track's segments.
+        if (ctx.player.state.ad) return;
+        const seekedTo = api.getCurrentTime();
+        const own = ownSeekTarget !== undefined && Math.abs(seekedTo - ownSeekTarget) < OWN_SEEK_TOLERANCE_S;
+        ownSeekTarget = undefined;
+        if (own) return;
+        userInsideSegment = segmentAt(segments, seekedTo) !== undefined;
+        if (userInsideSegment) ctx.log.info("not skipping: the user seeked into the segment");
+      });
+      // Duration is unknown when the plugin starts; the bar waits for it, and the
+      // stale-cut filter depends on it.
+      ctx.listen(next, "durationchange", renderMarkers);
+    };
+    attach(await ctx.player.videoReady());
+    ctx.player.on("videoChange", attach);
 
     return () => {
       stopHover?.();

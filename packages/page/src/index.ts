@@ -169,6 +169,8 @@ bridge.onEvent((event) => {
   switch (event.type) {
     case "plugin-state":
       return runner.applyState(event.id, event.state);
+    case "plugin-states":
+      return runner.applyStates(event.states);
     case "plugin-event":
       return runner.dispatch(event.id, event.event, event.payload);
     case "plugin-error":

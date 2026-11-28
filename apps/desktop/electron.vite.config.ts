@@ -2,6 +2,30 @@ import { execFileSync } from "node:child_process";
 import { resolve } from "node:path";
 import pear from "@pear/vite-plugin";
 import { defineConfig } from "electron-vite";
+import type { Plugin } from "vite";
+
+/**
+ * fflate's ESM entry declares a top-level `require`; electron-vite's ESM shim
+ * injects its own `const require` into every chunk that calls it, which is a
+ * duplicate binding in a lazily-split chunk. Rename fflate's local binding.
+ */
+function fflateRequireShim(): Plugin {
+  return {
+    name: "pear:fflate-require",
+    enforce: "pre",
+    transform(code, id) {
+      if (!id.includes("fflate/esm/index.mjs")) return;
+      const patched = code
+        .replace("var require = createRequire('/');", "var nodeRequire = createRequire('/');")
+        .replace("(_a = require('worker_threads')", "(_a = nodeRequire('worker_threads')");
+      if (patched === code) {
+        this.warn("fflate's require binding changed; the ESM shim may collide again");
+        return;
+      }
+      return { code: patched, map: null };
+    },
+  };
+}
 
 /** The commit an unbaked build came from; empty outside a git checkout. */
 function gitCommit() {
@@ -32,7 +56,7 @@ export default defineConfig(({ mode }) => {
 
   return {
     main: {
-      plugins: [pear(pearOptions)],
+      plugins: [fflateRequireShim(), pear(pearOptions)],
       define: buildInfo,
       // Translation files are dynamic imports; only the `default` export is used.
       json: { namedExports: false },
@@ -43,8 +67,10 @@ export default defineConfig(({ mode }) => {
           // Windows-only optional native module; imported dynamically at runtime.
           external: ["@michei69/node-smtc"],
           // Vite's ES-lib default leaves codegen (whitespace/comments) on even when
-          // minifying; packaged main bundles are fully minified here.
-          output: { minify: true },
+          // minifying; packaged main bundles are fully minified here. Dev keeps
+          // readable output (and the minifier off, which also avoids a duplicate
+          // binding it produced in shared lazily-imported chunks).
+          output: { minify: !isDev },
         },
       },
     },
